@@ -1,0 +1,350 @@
+import Vue from 'vue'
+import Router from 'vue-router'
+
+Vue.use(Router)
+
+/* Layout */
+import Layout from '@/layout'
+
+/**
+ * Note: sub-menu only appear when route children.length >= 1
+ * Detail see: https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
+ *
+ * hidden: true                   if set true, item will not show in the sidebar(default is false)
+ * alwaysShow: true               if set true, will always show the root menu
+ *                                if not set alwaysShow, when item has more than one children route,
+ *                                it will becomes nested mode, otherwise not show the root menu
+ * redirect: noRedirect           if set noRedirect will no redirect in the breadcrumb
+ * name:'router-name'             the name is used by <keep-alive> (must set!!!)
+ * meta : {
+    roles: ['admin','editor']    control the page roles (you can set multiple roles)
+    title: 'title'               the name show in sidebar and breadcrumb (recommend set)
+    icon: 'svg-name'/'el-icon-x' the icon show in the sidebar
+    breadcrumb: false            if set false, the item will hidden in breadcrumb(default is true)
+    activeMenu: '/example/list'  if set path, the sidebar will highlight the path you set
+  }
+ */
+
+/**
+ * constantRoutes
+ * a base page that does not have permission requirements
+ * all roles can be accessed
+ */
+export const constantRoutes = [{
+  path: '/login',
+  component: () => import('@/views/login/index'),
+  hidden: true
+},
+{
+  path: '/404',
+  component: () => import('@/views/404'),
+  hidden: true
+}
+  // {
+  //   path: '/',
+  //   component: Layout,
+  //   redirect: '/dashboard',
+  //   children: [{
+  //     path: 'dashboard',
+  //     component: () => import('@/views/dashboard/index'),
+  //     meta: {
+  //       title: '系统管理',
+  //       icon: 'dashboard'
+  //     }
+  //   }]
+  // }
+]
+
+// 存在权限的路由
+// meta.permissionName  权限
+export const asyncRoutes = [{
+  path: '/',
+  component: Layout,
+  redirect: '/global/codes/manage',
+  name: 'globalManage',
+  meta: {
+    title: '基础信息管理',
+    icon: 'dashboard',
+    permissionName: 'basics'
+  },
+  children: [{
+    path: '/global/codes/manage',
+    name: 'global-codes-manage',
+    component: () => import('@/views/basic/global-codes-manage/index'),
+    meta: {
+      title: '公用代码管理'
+      // permissionName: 'globalcodetype'
+    }
+  },
+  {
+    path: '/group/manage',
+    name: 'group-manage',
+    component: () => import('@/views/basic/group-manage/index'),
+    meta: {
+      title: '角色管理'
+      // permissionName: 'groupextension'
+    }
+  },
+  {
+    path: '/user/manage',
+    name: 'user-manage',
+    component: () => import('@/views/basic/user-manage/index'),
+    meta: {
+      title: '用户管理'
+      // permissionName: 'user'
+    }
+  },
+  {
+    path: '/users/by/group/manage',
+    name: 'users-by-group-manage',
+    component: () => import('@/views/basic/users-by-group-manage/index'),
+    meta: {
+      title: '角色别用户管理'
+      // permissionName: 'groupextension'
+    }
+  },
+  {
+    path: '/equip/base/info/manage',
+    name: 'equip-base-info-manage',
+    component: () => import('@/views/change_shifts_manage/index'),
+    meta: {
+      title: '倒班时间管理',
+      permissionName: 'workschedule'
+    }
+  },
+  {
+    path: '/change/shifts/manage',
+    name: 'change-shifts-manage',
+    component: () => import('@/views/factory_schedule_manage/index'),
+    meta: {
+      title: '工厂排班管理',
+      permissionName: 'globalcode'
+    }
+  },
+  {
+    path: 'factory/schedule/manage',
+    name: 'factory-schedule-manage',
+    component: () => import('@/views/factory_schedule_result/index'),
+    meta: {
+      title: '工厂排班结果',
+      permissionName: 'planschedule'
+    }
+  },
+  {
+    path: '/factory',
+    redirect: '/factory/category/manage',
+    component: {
+      render: c => c('router-view')
+    },
+    name: 'factory',
+    meta: {
+      title: '设备管理'
+    },
+    children: [{
+      path: 'category/manage',
+      name: 'category-manage',
+      component: () => import('@/views/category_manage/index'),
+      meta: {
+        title: '设备种类',
+        permissionName: 'globalcode'
+      }
+    },
+    {
+      path: 'equip/manage',
+      name: 'equip-manage',
+      component: () => import('@/views/equip_manage/index'),
+      meta: {
+        title: '设备基础信息',
+        permissionName: 'equip'
+      }
+    }
+    ]
+  }
+  ]
+},
+{
+  path: '/recipe',
+  component: Layout,
+  redirect: '/recipe/material/base/info/manage',
+  name: 'recipe',
+  meta: {
+    title: '配方管理',
+    icon: 'formula',
+    permissionName: 'recipe'
+  },
+  children: [{
+    path: 'material/base/info/manage',
+    name: 'material-base-info-manage',
+    component: () => import('@/views/material_base_info_manage/index'),
+    meta: {
+      title: '原材料基础信息',
+      permissionName: 'material'
+    }
+  },
+  {
+    path: 'rb/recipe/std/manage',
+    name: 'rb-recipe-std-manage',
+    component: () => import('@/views/rubber_recipe_standard_manage/index'),
+    meta: {
+      title: '胶料代码管理',
+      permissionName: 'productinfo'
+    }
+  },
+  {
+    path: 'rb/material/std/manage',
+    name: 'rb-material-std-manage',
+    component: () => import('@/views/rb_material_std_manage/index'),
+    meta: {
+      title: '胶料配方标准管理',
+      permissionName: 'productbatching'
+    }
+  },
+  {
+    path: 'search/rubber/info',
+    name: 'search-rubber-info',
+    component: () => import('@/views/recipe/small-material-recipe/index'),
+    meta: {
+      title: '小料配料标准管理',
+      permissionName: 'productbatching'
+    }
+  }
+  ]
+},
+{
+  path: '/plan',
+  component: Layout,
+  redirect: '/plan/rubber/schedule/daily/plan',
+  name: 'plan',
+  meta: {
+    title: '生产计划管理',
+    icon: 'productionPlanManagement',
+    permissionName: 'plan'
+  },
+  children: [{
+    path: 'rubber/schedule/daily/plan',
+    name: 'rubber-schedule-daily-plan',
+    component: () => import('@/views/rubber_schedule_daily_plan/index'),
+    meta: {
+      title: '排产胶料日计划',
+      permissionName: 'productdayplan'
+    }
+  },
+  {
+    path: 'material/requisitions/plan',
+    name: 'material-requisitions-plan',
+    component: () => import('@/views/plan/material-requisitions-plan/index'),
+    meta: {
+      title: '排产领料计划',
+      permissionName: ''
+    }
+  },
+  {
+    path: 'material/quantity/demanded',
+    name: 'material-quantity-demanded',
+    component: () => import('@/views/material_quantity_demanded/index'),
+    meta: {
+      title: '原材料需求量',
+      permissionName: 'materialdemanded'
+    }
+  }
+  ]
+},
+{
+  path: '/produce',
+  component: Layout,
+  redirect: 'produce/performance/manage',
+  name: 'ProduceManage',
+  meta: {
+    title: '生产管理',
+    icon: 'production',
+    permissionName: 'production'
+  },
+  children: [{
+    path: 'performance/manage',
+    component: () => import('@/views/production/banburying-performance-manage/index'),
+    name: 'BanburyingPerformanceManage',
+    meta: {
+      title: '密炼实绩'
+      // permissionName: 'productdayplan'
+    }
+  },
+  {
+    path: 'plan/manage',
+    component: () => import('@/views/banburying_plan/index'),
+    name: 'BanburyingPlanManage',
+    meta: {
+      title: '密炼机台别计划对比',
+      permissionName: 'trainsfeedbacks'
+    }
+  },
+  {
+    path: 'internal/mixer',
+    component: () => import('@/views/internal_mixer_production/index'),
+    name: 'InternalMixerProduction',
+    meta: {
+      title: '密炼生产履历',
+      permissionName: 'palletfeedbacks'
+    }
+  },
+  {
+    path: 'collect/rub/daily',
+    component: () => import('@/views/collect_rubber_daily_manage/index'),
+    name: 'CollectRubDailyManage',
+    meta: {
+      title: '日别胶料收皮管理',
+      permissionName: 'palletfeedbacks'
+    }
+  }
+  ]
+},
+{
+  path: '/repertory',
+  component: Layout,
+  redirect: '/repertory/material',
+  name: 'RepertoryManage',
+  meta: {
+    title: '库存管理',
+    icon: 'stock'
+  },
+  children: [{
+    path: 'material',
+    component: () => import('@/views/material_repertory_manage/index'),
+    name: 'MaterialRepertoryManage',
+    meta: {
+      title: '原料库存'
+    }
+  },
+  {
+    path: 'rubber',
+    component: () => import('@/views/rubber_repertory_manage/index'),
+    name: 'RubberRepertoryManage',
+    meta: {
+      title: '胶料库存'
+    }
+  }
+  ]
+},
+{
+  path: '*',
+  redirect: '/404',
+  hidden: true
+}
+]
+
+const createRouter = () => new Router({
+  // mode: 'history', // require service support
+  scrollBehavior: () => ({
+    y: 0
+  }),
+  routes: constantRoutes
+})
+
+const router = createRouter()
+
+// Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
+export function resetRouter() {
+  const newRouter = createRouter()
+  router.matcher = newRouter.matcher // reset router
+}
+
+export default router
