@@ -32,13 +32,13 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item style="float: right">
+      <!-- <el-form-item style="float: right">
         <el-form-item>
           <el-button>
             下载全部
           </el-button>
         </el-form-item>
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
     <el-table
       :data="tableData"
@@ -119,11 +119,11 @@
       </el-table-column>
       <el-table-column
         prop="download"
-        label="下载"
+        label="操作"
       >
-        <template slot-scope="scope">
+        <!-- <template slot-scope="scope">
           <el-button type="text" size="small" @click="downloadClick(scope.row)">下载</el-button>
-        </template>
+        </template> -->
       </el-table-column>
       <el-table-column label="发送到上辅机">
         <template slot-scope="scope">
@@ -138,6 +138,7 @@
     <el-dialog
       title="胶料产出反馈"
       :visible.sync="dialogVisibleRubber"
+      width="900px"
     >
       <el-form :inline="true">
         <el-form-item label="胶料区分: ">
@@ -211,6 +212,7 @@
     <el-dialog
       title="BAT查询"
       :visible.sync="dialogVisibleBAT"
+      width="900px"
     >
       <div style="position: relative">
         <el-form :inline="true" style="margin-right: 100px;">
@@ -231,9 +233,9 @@
           </el-form-item>
 
         </el-form>
-        <el-button style="position: absolute;right:10px;top:0" @click="viewGraph">
+        <!-- <el-button style="position: absolute;right:10px;top:0" @click="viewGraph">
           图形
-        </el-button>
+        </el-button> -->
       </div>
       <el-table
         :data="BATList"
@@ -287,6 +289,14 @@
           prop="equip_status.rpm"
           label="RPM"
         />
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              @click="clickView(scope.row,scope.$index)"
+            >查看图表</el-button>
+          </template>
+        </el-table-column>
       </el-table>
     </el-dialog>
 
@@ -297,10 +307,15 @@
       :modal-append-to-body="false"
       width="600px"
       :visible.sync="dialogVisibleGraph"
-      @opened="opens"
     >
-      <div style="margin: 0 0 20px 5px;">2020-12-12</div>
-      <div ref="main" style="width: 100%;height:400px;" />
+      <!-- <div style="margin: 0 0 20px 5px;">2020-12-12</div>
+      <div ref="main" style="width: 100%;height:400px;" /> -->
+      <ve-line
+        height="500px"
+        :data="chartData"
+        :settings="chartSettings"
+        :after-set-option="afterSetOption"
+      />
     </el-dialog>
     <page :total="total" @currentChange="currentChange" />
   </div>
@@ -309,12 +324,6 @@
 <script>
 import { getEquip, getPalletFeedBacks, getTrainsFeedbacks, getEchartsList, getProductActual, getPalletFeedbacks, postProductDayPlanNotice } from '@/api/banburying-performance-manage'
 import page from '@/components/page'
-var echartsTime = []
-var echartsTemprature = []
-var echartsPower = []
-var echartsEnergy = []
-var echartsPressure = []
-var echartsRpm = []
 export default {
   components: { page },
   data: function() {
@@ -337,120 +346,51 @@ export default {
       currentPage: 1,
       total: 0,
       getParams: {},
-      option1: {
+      chartData: {
+        columns: [
+          'created_date_date',
+          'power',
+          'temperature',
+          'energy',
+          'pressure',
+          'rpm'
+        ],
+        rows: []
+      },
+      options: {
         title: {
-          text: '折线图堆叠'
+          show: true,
+          text: '主标题',
+          textAlign: 'left'
         },
-        tooltip: {
-          trigger: 'axis'
-        },
-        legend: {
-          selectedMode: 'single'// 单选
-        },
-        grid: {
-          left: '5%',
-          right: '8%',
-          bottom: '5%',
-          containLabel: true
-        },
+        yAxis: [
+          {
+            min: 0,
+            max: 2500,
+            splitNumber: 5,
+            interval: (2500 - 0) / 5
+          },
+          {
+            min: 0,
+            max: 200,
+            splitNumber: 5,
+            interval: (200 - 0) / 5
+          }
+        ],
         toolbox: {
+          itemSize: 20,
+          itemGap: 30,
+          right: 50,
           feature: {
             dataZoom: {
               yAxisIndex: 'none'
             },
-            restore: {},
-            saveAsImage: {}
-          }
-        },
-        xAxis: {
-          name: '时间',
-          // nameLocation: 'start',
-          nameTextStyle: {
-            fontWeight: 'bold',
-            fontSize: 12
-          },
-          type: 'category',
-          boundaryGap: false,
-          data: echartsTime
-        },
-        yAxis: [{
-          position: 'left',
-          type: 'value',
-          axisLabel: {
-            formatter: '{value} ℃'
-          }
-        },
-        {
-          position: 'left',
-          type: 'value',
-          axisLabel: {
-            formatter: '{value} W'
-          }
-        },
-        {
-          position: 'left',
-          type: 'value',
-          axisLabel: {
-            formatter: '{value} J'
-          }
-        },
-        {
-          position: 'left',
-          type: 'value',
-          axisLabel: {
-            formatter: '{value} Pa'
-          }
-        },
-        {
-          position: 'left',
-          type: 'value',
-          axisLabel: {
-            formatter: '{value} rps'
+            saveAsImage: {
+              name: '',
+              pixelRatio: 2
+            }
           }
         }
-        ],
-        series: [
-          {
-            name: '温度',
-            type: 'line',
-            smooth: true,
-            stack: '总量',
-            yAxisIndex: '0',
-            data: echartsTemprature
-          },
-          {
-            name: '功率',
-            type: 'line',
-            smooth: true,
-            stack: '总量',
-            yAxisIndex: '1',
-            data: echartsPower
-          },
-          {
-            name: '能量',
-            type: 'line',
-            smooth: true,
-            stack: '总量',
-            yAxisIndex: '2',
-            data: echartsEnergy
-          },
-          {
-            name: '压力',
-            type: 'line',
-            smooth: true,
-            stack: '总量',
-            yAxisIndex: '3',
-            data: echartsPressure
-          },
-          {
-            name: '转速',
-            type: 'line',
-            smooth: true,
-            stack: '总量',
-            yAxisIndex: '4',
-            data: echartsRpm
-          }
-        ]
       }
     }
   },
@@ -488,9 +428,9 @@ export default {
         page: page
       }).then(function(response) {
         _this.palletFeedList = response.results || []
-        if (_this.tableDataTotal !== response.count) {
-          _this.tableDataTotal = response.count
-        }
+        // if (_this.tableDataTotal !== response.count) {
+        //   _this.tableDataTotal = response.count
+        // }
       })
     },
     clickBAT(row) {
@@ -508,29 +448,39 @@ export default {
         _this.BATList = response.results || []
       })
     },
-    viewGraph() {
+    clickView(row) {
       this.dialogVisibleGraph = true
-      this.getEchartsList()
+      this.getEchartsList(row)
     },
-    getEchartsList() {
+    // viewGraph() {
+    //   this.dialogVisibleGraph = true
+    //   this.getEchartsList()
+    // },
+    getEchartsList(row) {
       var _this = this
       getEchartsList({
-        product_no: _this.BATObj.product_no,
-        plan_classes_uid: _this.BATObj.plan_classes_uid,
-        equip_no: _this.BATObj.equip_no,
-        actual_trains: _this.BATObj.begin_trains + ',' + _this.BATObj.end_trains
-      }).then(function(response) {
-        var results = response.data.results
-        results.forEach(function(D) {
-          var created_date = D.created_date.split(' ')[1]
-          echartsTime.push(created_date)
-          echartsTemprature.push(D.temperature)
-          echartsPower.push(D.power)
-          echartsEnergy.push(D.energy)
-          echartsPressure.push(D.pressure)
-          echartsRpm.push(D.rpm)
-        })
+        product_no: row.product_no,
+        plan_classes_uid: row.plan_classes_uid,
+        equip_no: row.equip_no,
+        current_trains: row.actual_trains
       })
+        .then(function(response) {
+          var results = response.results
+          results.forEach((element) => {
+            element.created_date_date = element.product_time.split(' ')[1] ? element.product_time.split(' ')[1] : element.product_time
+          })
+          _this.chartData.rows = results
+          _this.options.title.text = _this.chartData.rows.length > 0 &&
+            // eslint-disable-next-line no-prototype-builtins
+            _this.chartData.rows[0].hasOwnProperty('product_time')
+            ? _this.chartData.rows[0].product_time.split(' ')[0] : ''
+          _this.options.toolbox.feature.saveAsImage.name = '工艺曲线_' + (row.equip_no || '') + '-' + (row.product_no || '') + '-' + (row.begin_time || '')
+        })
+        // eslint-disable-next-line handle-callback-err
+        .catch(() => { })
+    },
+    afterSetOption(chartObj) {
+      chartObj.setOption(this.options)
     },
     currentChange: function(page) {
       this.beforeGetData()
