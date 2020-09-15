@@ -327,6 +327,20 @@ import page from '@/components/page'
 export default {
   components: { page },
   data: function() {
+    this.chartSettings = {
+      labelMap: {
+        created_date_date: '时间',
+        power: '功率',
+        temperature: '温度',
+        energy: '能量',
+        pressure: '压力',
+        rpm: '转速'
+      },
+      axisSite: {
+        right: ['temperature', 'rpm', 'energy', 'pressure']
+      }
+      // yAxisName: ['功率']
+    }
     return {
       tableData: [],
       performanceDate: '',

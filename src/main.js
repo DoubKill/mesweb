@@ -2,6 +2,8 @@ import Vue from 'vue'
 
 import echarts from 'echarts'
 Vue.prototype.$echarts = echarts
+import VCharts from 'v-charts'
+Vue.use(VCharts)
 
 import 'normalize.css/normalize.css' // A modern alternative to CSS resets
 
