@@ -506,7 +506,7 @@ export default {
         }
       })
         .then(function(response) {
-          var results = response
+          var results = response.results
           // const results = [
           //   {
           //     id: 3,
