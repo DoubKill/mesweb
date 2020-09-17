@@ -337,9 +337,9 @@ export default {
       var shiftsPeriod = Number(this.changeShiftsPeriod)
 
       this.scheduleData = []
-      if (!workSchedule) {
-        return
-      }
+      // if (!workSchedule) {
+      //   return
+      // }
       for (var i = 0; i < workSchedule.period * shiftsPeriod; i++) {
         var day = date.get('day')
         var date_str = date.format('YYYY-MM-DD')
@@ -347,7 +347,7 @@ export default {
 
           production_time: date_str,
           day_of_the_week: '星期' + this.dayOfWeek(day),
-          group_infos: []
+          group_infos: [null, null, null]
         }
         var classes = this.classesByIndex[i % workSchedule.period]
         for (var j = 0; j < classes.length; j++) {
@@ -362,7 +362,19 @@ export default {
             this.scheduleData = []
             return
           }
-          row.group_infos.push(class_)
+
+          let index = 0
+          switch (class_.classes_name) {
+            case '早班':
+              index = 0
+              break
+            case '中班':
+              index = 1
+              break
+            case '晚班':
+              index = 2
+          }
+          row.group_infos[index] = class_;
         }
         this.scheduleData.push(row)
         date = date.add(1, 'day')
