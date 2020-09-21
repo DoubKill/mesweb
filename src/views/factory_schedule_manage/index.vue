@@ -95,7 +95,7 @@
               label="班次"
               width="180"
             />
-            <el-table-column label="班组">
+            <el-table-column label="班组" width="150">
               <template slot-scope="scope">
                 <el-select
                   v-model="scope.row.group"
@@ -152,12 +152,12 @@
         >
           <el-table-column label="班组">
             <template slot-scope="scope">
-              {{ scope.row.group_infos[index].group_name }}
+              {{ scope.row.group_infos[index] ? scope.row.group_infos[index].group_name : '' }}
             </template>
           </el-table-column>
           <el-table-column label="休息">
             <template slot-scope="scope">
-              <el-select v-model="scope.row.group_infos[index].is_rest">
+              <el-select v-if="scope.row.group_infos[index]" v-model="scope.row.group_infos[index].is_rest">
                 <el-option
                   v-for="item in [{label: '否', value: false}, {label: '是', value: true}]"
                   :key="item.value"
@@ -169,12 +169,12 @@
           </el-table-column>
           <el-table-column label="开始">
             <template slot-scope="scope">
-              {{ scope.row.group_infos[index].start_time }}
+              {{ scope.row.group_infos[index] ? scope.row.group_infos[index].start_time : '' }}
             </template>
           </el-table-column>
           <el-table-column label="结束">
             <template slot-scope="scope">
-              {{ scope.row.group_infos[index].end_time }}
+              {{ scope.row.group_infos[index] ? scope.row.group_infos[index].end_time : '' }}
             </template>
           </el-table-column>
         </el-table-column>
@@ -350,6 +350,7 @@ export default {
           group_infos: [null, null, null]
         }
         var classes = this.classesByIndex[i % workSchedule.period]
+        console.log(classes, 'classes')
         for (var j = 0; j < classes.length; j++) {
           var class_ = JSON.parse(JSON.stringify(classes[j]))
           this.$set(class_, 'is_rest', false)
@@ -374,7 +375,7 @@ export default {
             case '晚班':
               index = 2
           }
-          row.group_infos[index] = class_;
+          row.group_infos[index] = class_
         }
         this.scheduleData.push(row)
         date = date.add(1, 'day')
@@ -407,6 +408,9 @@ export default {
         var work_schedule_plan = []
         for (var j = 0; j < oneSchedule.group_infos.length; j++) {
           var group_info = oneSchedule.group_infos[j]
+          if (!group_info) {
+            continue
+          }
           work_schedule_plan.push({
 
             classes: group_info.classes,
