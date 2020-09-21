@@ -92,7 +92,7 @@
               size="mini"
               type="danger"
               @click="handleMaterialDelete(scope.row)"
-            >删除
+            >{{ scope.row.use_flag ? '停用' : '启用' }}
             </el-button>
           </el-button-group>
         </template>
@@ -108,18 +108,22 @@
       :visible.sync="dialogAddMaterialBaseInfoVisible"
     >
       <el-form
-        v-model="materialBaseInfoForm"
+        ref="materialBaseInfoForm"
+        :rules="rules"
+        :model="materialBaseInfoForm"
         :label-width="formLabelWidth"
       >
         <el-form-item
           :error="materialBaseInfoFormError.material_no"
           label="原材料编码"
+          prop="material_no"
         >
           <el-input v-model="materialBaseInfoForm.material_no" />
         </el-form-item>
         <el-form-item
           :error="materialBaseInfoFormError.material_name"
           label="原材料名称"
+          prop="material_name"
         >
           <el-input v-model="materialBaseInfoForm.material_name" />
         </el-form-item>
@@ -143,6 +147,7 @@
         <el-form-item
           :error="materialBaseInfoFormError.material_type"
           label="原材料类别"
+          prop="material_type"
         >
           <el-select
             v-model="materialBaseInfoForm.material_type"
@@ -190,18 +195,22 @@
       :visible.sync="dialogEditMaterialBaseInfoVisible"
     >
       <el-form
-        v-model="materialBaseInfoForm"
+        ref="materialBaseInfoEditForm"
+        :rules="rules"
+        :model="materialBaseInfoForm"
         :label-width="formLabelWidth"
       >
         <el-form-item
           :error="materialBaseInfoFormError.material_no"
           label="原材料编码"
+          prop="material_no"
         >
-          <el-input v-model="materialBaseInfoForm.material_no" />
+          <el-input v-model="materialBaseInfoForm.material_no" :disabled="true" />
         </el-form-item>
         <el-form-item
           :error="materialBaseInfoFormError.material_name"
           label="原材料名称"
+          prop="material_name"
         >
           <el-input v-model="materialBaseInfoForm.material_name" />
         </el-form-item>
@@ -226,6 +235,7 @@
         <el-form-item
           :error="materialBaseInfoFormError.material_type"
           label="原材料类别"
+          prop="material_type"
         >
           <el-select
             v-model="materialBaseInfoForm.material_type"
@@ -297,13 +307,24 @@ export default {
       },
       materialBaseInfoFormError: {
 
-        material_no: '',
-        material_name: '',
+        material_no: '', //
+        material_name: '', //
         for_short: '',
         // density: "",
         use_flag: '',
-        material_type: '',
+        material_type: '', //
         package_unit: ''
+      },
+      rules: {
+        material_no: [
+          { required: true, message: '请输入原材料编码', trigger: 'blur' }
+        ],
+        material_name: [
+          { required: true, message: '请输入原材料名称', trigger: 'blur' }
+        ],
+        material_type: [
+          { required: true, message: '请选择原材料类型', trigger: 'change' }
+        ]
       },
       getParams: { page: 1 },
       total: 0
@@ -388,17 +409,23 @@ export default {
     handleAddMaterialBaseInfo: function() {
       this.clearMaterialBaseInfoFormError()
       var app = this
-      materialsUrl('post', null, { data: app.materialBaseInfoForm })
-        .then(function(response) {
-          app.dialogAddMaterialBaseInfoVisible = false
-          app.$message.success(app.materialBaseInfoForm.material_name + '创建成功')
-          app.getParams.page = 1
-          app.getList()
-        }).catch(function(error) {
-          for (const key in app.materialBaseInfoFormError) {
-            if (error[key]) { app.materialBaseInfoFormError[key] = error[key].join(',') }
-          }
-        })
+      this.$refs['materialBaseInfoForm'].validate(valid => {
+        if (valid) {
+          materialsUrl('post', null, { data: app.materialBaseInfoForm })
+            .then(function(response) {
+              app.dialogAddMaterialBaseInfoVisible = false
+              app.$message.success(app.materialBaseInfoForm.material_name + '创建成功')
+              app.getParams.page = 1
+              app.getList()
+            }).catch(function(error) {
+              for (const key in app.materialBaseInfoFormError) {
+                if (error[key]) { app.materialBaseInfoFormError[key] = error[key].join(',') }
+              }
+            })
+        } else {
+          return false
+        }
+      })
     },
     showEditMaterialDialog(row) {
       this.clearMaterialBaseInfoFormError()
@@ -407,7 +434,8 @@ export default {
     },
     handleMaterialDelete(row) {
       var app = this
-      this.$confirm('此操作将永久删除' + row.material_name + ', 是否继续?', '提示', {
+      var str = row.use_flag ? '停用' : '启用'
+      this.$confirm('此操作将' + str + row.material_name + ', 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -416,7 +444,7 @@ export default {
           .then(function(response) {
             app.$message({
               type: 'success',
-              message: '删除成功!'
+              message: '操作成功!'
             })
             app.getList()
           }).catch(function() {
@@ -428,17 +456,23 @@ export default {
     handleEditMaterialBaseInfo() {
       this.clearMaterialBaseInfoFormError()
       var app = this
-      materialsUrl('put', app.materialBaseInfoForm.id, { data: app.materialBaseInfoForm })
-        .then(function(response) {
-          app.dialogEditMaterialBaseInfoVisible = false
-          app.$message.success(app.materialBaseInfoForm.material_name + '修改成功')
-          app.getParams.page = 1
-          app.getList()
-        }).catch(function(error) {
-          for (const key in app.materialBaseInfoFormError) {
-            if (error[key]) { app.materialBaseInfoFormError[key] = error[key].join(',') }
-          }
-        })
+      this.$refs['materialBaseInfoEditForm'].validate(valid => {
+        if (valid) {
+          materialsUrl('put', app.materialBaseInfoForm.id, { data: app.materialBaseInfoForm })
+            .then(function(response) {
+              app.dialogEditMaterialBaseInfoVisible = false
+              app.$message.success(app.materialBaseInfoForm.material_name + '修改成功')
+              app.getParams.page = 1
+              app.getList()
+            }).catch(function(error) {
+              for (const key in app.materialBaseInfoFormError) {
+                if (error[key]) { app.materialBaseInfoFormError[key] = error[key].join(',') }
+              }
+            })
+        } else {
+          return false
+        }
+      })
     }
   }
 }

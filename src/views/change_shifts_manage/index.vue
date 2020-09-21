@@ -2,9 +2,7 @@
   <div v-loading="loading">
     <el-form :inline="true">
       <el-form-item style="float: right">
-        <!-- {% if perms.basics.add_workschedule %} -->
         <el-button @click="showDialogCreateChangeShiftsManage">新建</el-button>
-        <!-- {% endif %} -->
       </el-form-item>
     </el-form>
     <el-table
@@ -44,24 +42,26 @@
           </template>
         </el-table-column>
       </el-table-column>
-      <el-table-column width="150">
+      <el-table-column
+        align="center"
+        :formatter="formatter"
+        prop="used_flag"
+        label="使用与否"
+      />
+      <el-table-column width="150" align="center" label="操作">
         <template slot-scope="scope">
           <el-button-group>
-            <!-- {% if perms.basics.change_workschedule %} -->
             <el-button
               size="mini"
               @click="showEditChangeShiftsManageDialog(scope.row)"
             >编辑
             </el-button>
-            <!-- {% endif %} -->
-            <!-- {% if perms.basics.delete_workschedule %} -->
             <el-button
               size="mini"
               type="danger"
               @click="handleDeleteChangeShiftsManage(scope.row)"
-            >删除
+            >{{ scope.row.use_flag ? '停用' : '启用' }}
             </el-button>
-            <!-- {% endif %} -->
           </el-button-group>
         </template>
       </el-table-column>
@@ -71,7 +71,6 @@
       @currentChange="currentChange"
     />
 
-    <!-- {% if perms.basics.add_workschedule %} -->
     <el-dialog
       title="添加倒班时间"
       :visible.sync="dialogCreateChangeShiftsManageVisible"
@@ -152,18 +151,21 @@
         >确 定</el-button>
       </div>
     </el-dialog>
-    <!-- {% endif %} -->
 
-    <!-- {% if perms.basics.change_workschedule %} -->
     <el-dialog
       title="编辑倒班时间"
       :visible.sync="dialogEditChangeShiftsManageVisible"
     >
-      <el-form :model="changeShiftsManageForm">
+      <el-form
+        ref="shiftsManageEditForm"
+        :model="changeShiftsManageForm"
+        :rules="rules"
+      >
         <el-form-item
           :error="changeShiftsManageFormError.schedule_no"
           label="倒班代码"
           :label-width="formLabelWidth"
+          prop="schedule_no"
         >
           <el-input v-model="changeShiftsManageForm.schedule_no" />
         </el-form-item>
@@ -171,6 +173,7 @@
           :error="changeShiftsManageFormError.schedule_name"
           label="倒班名"
           :label-width="formLabelWidth"
+          prop="schedule_name"
         >
           <el-input v-model="changeShiftsManageForm.schedule_name" />
         </el-form-item>
@@ -279,7 +282,8 @@ export default {
           { required: true, message: '请输入倒班代码', trigger: 'blur' }
         ],
         schedule_name: [
-          { required: true, message: '请输入倒班名', trigger: 'blur' }
+          { required: true, message: '请输入倒班名', trigger: 'blur' },
+          { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
         ]
       }
     }
@@ -405,42 +409,46 @@ export default {
       this.clearChangeShiftsManageFormError()
       var app = this
       const changeShiftsManageForm = JSON.parse(JSON.stringify(this.changeShiftsManageForm))
-      for (var i = 0; i < changeShiftsManageForm.classesdetail_set.length; ++i) {
-        if (changeShiftsManageForm.classesdetail_set[i].start_time &&
+      this.$refs['shiftsManageEditForm'].validate(function(valid) {
+        if (valid) {
+          for (var i = 0; i < changeShiftsManageForm.classesdetail_set.length; ++i) {
+            if (changeShiftsManageForm.classesdetail_set[i].start_time &&
           changeShiftsManageForm.classesdetail_set[i].end_time
-        ) {
-          // app.changeShiftsManageForm.classesdetail_set[i]['start_time'] = app.changeShiftsManageForm.classesdetail_set[i].times[0];
-          // app.changeShiftsManageForm.classesdetail_set[i]['end_time'] = app.changeShiftsManageForm.classesdetail_set[i].times[1];
-        } else {
-          changeShiftsManageForm.classesdetail_set.splice(i, 1)
-          --i
-        }
-      }
-      // for (var i = 0; i < this.changeShiftsManageForm.classesdetail_set.length; ++i) {
-      //
-      //     if (this.changeShiftsManageForm.classesdetail_set[i].times) {
-      //         this.changeShiftsManageForm.classesdetail_set[i]['start_time'] = this.changeShiftsManageForm.classesdetail_set[i].times[0];
-      //         this.changeShiftsManageForm.classesdetail_set[i]['end_time'] = this.changeShiftsManageForm.classesdetail_set[i].times[1];
-      //     } else {
-      //         this.changeShiftsManageForm.classesdetail_set.splice(i, 1)
-      //     }
-      // }
-
-      workSchedulesUrl('put', changeShiftsManageForm.id, { data: changeShiftsManageForm })
-        .then(function(response) {
-          app.dialogEditChangeShiftsManageVisible = false
-          app.$message(changeShiftsManageForm.schedule_name + '修改成功')
-          app.getList()
-        }).catch(function(error) {
-          app.$message.error(error.response.data.join(','))
-          for (var key in app.changeShiftsManageFormError) {
-            if (error.response.data[key]) { app.changeShiftsManageFormError[key] = error.response.data[key].join(',') }
+            ) {
+              // app.changeShiftsManageForm.classesdetail_set[i]['start_time'] = app.changeShiftsManageForm.classesdetail_set[i].times[0];
+              // app.changeShiftsManageForm.classesdetail_set[i]['end_time'] = app.changeShiftsManageForm.classesdetail_set[i].times[1];
+            } else {
+              changeShiftsManageForm.classesdetail_set.splice(i, 1)
+              --i
+            }
           }
-        })
+          // for (var i = 0; i < this.changeShiftsManageForm.classesdetail_set.length; ++i) {
+          //
+          //     if (this.changeShiftsManageForm.classesdetail_set[i].times) {
+          //         this.changeShiftsManageForm.classesdetail_set[i]['start_time'] = this.changeShiftsManageForm.classesdetail_set[i].times[0];
+          //         this.changeShiftsManageForm.classesdetail_set[i]['end_time'] = this.changeShiftsManageForm.classesdetail_set[i].times[1];
+          //     } else {
+          //         this.changeShiftsManageForm.classesdetail_set.splice(i, 1)
+          //     }
+          // }
+
+          workSchedulesUrl('put', changeShiftsManageForm.id, { data: changeShiftsManageForm })
+            .then(function(response) {
+              app.dialogEditChangeShiftsManageVisible = false
+              app.$message(changeShiftsManageForm.schedule_name + '修改成功')
+              app.getList()
+            }).catch(error => {
+              app.$message.error(error.join(','))
+            })
+        } else {
+          return false
+        }
+      })
     },
     handleDeleteChangeShiftsManage(workSchedule) {
       var app = this
-      this.$confirm('此操作将永久删除' + workSchedule.schedule_name + ', 是否继续?', '提示', {
+      var str = workSchedule.use_flag ? '停用' : '启用'
+      this.$confirm('此操作将' + str + workSchedule.schedule_name + ', 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -449,7 +457,7 @@ export default {
           .then(function(response) {
             app.$message({
               type: 'success',
-              message: '删除成功!'
+              message: '操作成功!'
             })
             app.getList()
           }).catch(function(error) {
@@ -478,6 +486,9 @@ export default {
     getTimeCell(row, global_no, params) {
       const obj = row.classesdetail_set.filter(D => Number(D.classes) === Number(global_no))
       return obj[0] ? obj[0][params] : ''
+    },
+    formatter: function(row, column) {
+      return row.use_flag ? 'Y' : 'N'
     }
   }
 }
