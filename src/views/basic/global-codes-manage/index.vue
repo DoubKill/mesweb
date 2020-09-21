@@ -34,7 +34,7 @@
                   size="mini"
                   type="danger"
                   @click="handleGlobalCodeTypeDelete(scope.row)"
-                >删除</el-button>
+                >{{ scope.row.use_flag ? '停用' : '启用' }}</el-button>
               </el-button-group>
             </template>
           </el-table-column>
@@ -62,7 +62,7 @@
             <template slot-scope="scope">
               <el-button-group>
                 <el-button size="mini" @click="showEditGlobalCodeDialog(scope.row)">编辑</el-button>
-                <el-button size="mini" type="danger" @click="handleGlobalCodesDelete(scope.row)">删除</el-button>
+                <el-button size="mini" type="danger" @click="handleGlobalCodesDelete(scope.row)">{{ scope.row.use_flag ? '停用' : '启用' }}</el-button>
               </el-button-group>
             </template>
           </el-table-column>
@@ -460,7 +460,7 @@ export default {
       return this.boolFormatter(row.use_flag)
     },
     globalCodeUsedFlagFormatter: function(row, column) {
-      return this.boolFormatter(row.use_flag === 0)
+      return this.boolFormatter(row.use_flag)
     },
     boolFormatter: function(flag) {
       return flag ? 'Y' : 'N'

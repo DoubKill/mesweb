@@ -95,7 +95,7 @@
               label="班次"
               width="180"
             />
-            <el-table-column label="班组">
+            <el-table-column label="班组" width="150">
               <template slot-scope="scope">
                 <el-select
                   v-model="scope.row.group"
@@ -408,6 +408,9 @@ export default {
         var work_schedule_plan = []
         for (var j = 0; j < oneSchedule.group_infos.length; j++) {
           var group_info = oneSchedule.group_infos[j]
+          if (!group_info) {
+            continue
+          }
           work_schedule_plan.push({
 
             classes: group_info.classes,

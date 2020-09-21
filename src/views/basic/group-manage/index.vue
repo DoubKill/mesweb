@@ -55,7 +55,7 @@
               size="mini"
               type="danger"
               @click="handleGroupDelete(scope.row)"
-            >删除
+            >{{ scope.row.use_flag ? '停用' : '启用' }}
             </el-button>
           </el-button-group>
         </template>
