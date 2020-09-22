@@ -13,15 +13,26 @@
     </el-form>
 
     <el-table :data="tableData" border style="width: 100%">
-      <el-table-column align="center" prop="id" label="序" width="50" />
-      <el-table-column align="center" prop="category_no" label="机型编号" />
-      <el-table-column align="center" prop="category_name" label="机型名称" />
-      <el-table-column align="center" prop="volume" label="容积" />
+      <el-table-column
+        align="center"
+        type="index"
+        label="序"
+        width="50"
+      />
+      <el-table-column align="center" width="100" prop="category_no" label="机型编号" />
+      <el-table-column align="center" width="150" prop="category_name" label="机型名称" />
+      <el-table-column align="center" width="100" prop="volume" label="容积" />
       <el-table-column align="center" prop="equip_type_name" label="设备类型" />
-      <el-table-column align="center" prop="equip_process_no" label="工序代码" />
+      <el-table-column align="center" width="50" prop="equip_process_no" label="工序代码" />
       <el-table-column align="center" prop="equip_process_name" label="工序名称" />
-
-      <el-table-column align="center" label="操作">
+      <el-table-column
+        align="center"
+        :formatter="formatter"
+        width="50"
+        prop="used_flag"
+        label="使用与否"
+      />
+      <el-table-column align="center" width="150" label="操作">
         <template slot-scope="scope">
           <el-button-group>
             <el-button
@@ -35,7 +46,7 @@
               size="mini"
               type="danger"
               @click="handleEquipCateDelete(scope.row)"
-            >删除
+            >{{ scope.row.use_flag ? '停用' : '启用' }}
             </el-button>
           </el-button-group>
         </template>
@@ -220,6 +231,9 @@ export default {
     this.category_manage_list()
   },
   methods: {
+    formatter: function(row, column) {
+      return row.use_flag ? 'Y' : 'N'
+    },
     async category_manage_list() {
       try {
         const category_manageData = await category_manage_url('get', null, { params: this.getParams })
@@ -344,14 +358,17 @@ export default {
       })
     },
     handleEquipCateDelete: function(row) {
-      this.$confirm('此操作将永久删除' + row.category_name + ', 是否继续?', '提示', {
+      var str = row.use_flag ? '停用' : '启用'
+      this.$confirm('此操作将' + str + row.category_name + ', 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         try {
-          this.category_manage_delete(row.id)
-          this.category_manage_list()
+          category_manage_url('delete', row.id, {
+          }).then(response => {
+            this.category_manage_list()
+          })
         } catch (e) { e }
       }).catch(() => {
       })
