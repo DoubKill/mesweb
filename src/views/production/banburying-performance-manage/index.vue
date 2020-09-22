@@ -55,7 +55,7 @@
       />
       <el-table-column
         prop="product_no"
-        width="140px"
+        width="180px"
         label="胶料代码"
       >
         <template slot-scope="scope">
@@ -171,6 +171,7 @@
         <el-table-column
           prop="product_no"
           label="胶料编码"
+          width="140px"
         />
         <el-table-column
           prop="equip_no"
@@ -248,6 +249,7 @@
         <el-table-column
           prop="name"
           label="日期"
+          width="110"
         >
           <template slot-scope="scope">
             {{ scope.row.end_time.split(' ')[0] }}
@@ -272,6 +274,7 @@
         <el-table-column
           prop="end_time-begin-time"
           label="时间"
+          width="160"
         >
           <template slot-scope="scope">
             {{ scope.row.begin_time }} -- {{ scope.row.end_time }}
@@ -305,7 +308,7 @@
       :modal="true"
       :close-on-click-modal="false"
       :modal-append-to-body="false"
-      width="600px"
+      width="900px"
       :visible.sync="dialogVisibleGraph"
     >
       <!-- <div style="margin: 0 0 20px 5px;">2020-12-12</div>
@@ -437,9 +440,11 @@ export default {
       var _this = this
       getPalletFeedBacks({
         product_no: _this.palletFeedObj.product_no,
+        // product_no: 'L-1MB-J260-01',
         // plan_classes_uid: _this.palletFeedObj.plan_classes_uid,
-        equip_no: _this.palletFeedObj.equip_no,
-        page: page
+        equip_no: _this.palletFeedObj.equip_no
+        // equip_no: '115A01'
+        // page: page
       }).then(function(response) {
         _this.palletFeedList = response.results || []
         // if (_this.tableDataTotal !== response.count) {
