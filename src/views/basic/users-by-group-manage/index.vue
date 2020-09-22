@@ -18,7 +18,8 @@
           @current-change="handleGroupsCurrentRowChange"
         >
           <el-table-column
-            prop="id"
+            align="center"
+            type="index"
             label="序"
             width="50"
           />
@@ -49,9 +50,10 @@
           style="width: 100%"
         >
           <el-table-column
-            prop="id"
-            label="用户Id"
-            width="100"
+            align="center"
+            type="index"
+            label="序"
+            width="50"
           />
           <el-table-column
             prop="username"

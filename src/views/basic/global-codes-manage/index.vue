@@ -17,7 +17,7 @@
           style="width: 100%"
           @current-change="handleGlobalCodeTypesCurrentRowChange"
         >
-          <el-table-column prop="id" label="序" width="50" />
+          <el-table-column align="center" type="index" label="序" width="50" />
           <el-table-column prop="type_no" label="类型代码" />
           <el-table-column prop="type_name" label="类型名称" />
           <el-table-column
@@ -48,7 +48,7 @@
           </el-form-item>
         </el-form>
         <el-table :data="globalCodes" border style="width: 100%">
-          <el-table-column label="Id" prop="id" width="50" />
+          <el-table-column label="序" align="center" type="index" width="50" />
           <el-table-column prop="global_no" label="公用代码" />
           <el-table-column prop="global_name" label="公用代码名称" />
           <el-table-column prop="description" label="备注" />

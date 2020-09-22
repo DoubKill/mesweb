@@ -20,7 +20,8 @@
       style="width: 100%"
     >
       <el-table-column
-        prop="id"
+        align="center"
+        type="index"
         label="序"
         width="50"
       />

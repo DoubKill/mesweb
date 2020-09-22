@@ -45,16 +45,18 @@
         prop="material_type_name"
         label="原材料类别"
       />
-      <el-table-column
+      <!-- <el-table-column
         prop="density"
         label="比重"
         width="100"
-      />
+      /> -->
       <el-table-column
         prop="package_unit_name"
         label="包装单位"
       />
       <el-table-column
+        width="50"
+        align="center"
         :formatter="formatter"
         prop="used_flag"
         label="使用与否"

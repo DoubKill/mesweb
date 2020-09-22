@@ -13,18 +13,23 @@
     </el-form>
 
     <el-table :data="tableData" border style="width: 100%">
-      <el-table-column align="center" prop="id" label="序" width="50" />
-      <el-table-column align="center" prop="equip_process_no" label="工序代码" />
+      <el-table-column
+        align="center"
+        type="index"
+        label="序"
+        width="50"
+      />
+      <el-table-column align="center" width="50" prop="equip_process_no" label="工序代码" />
       <el-table-column align="center" prop="equip_process_name" label="工序名称" />
       <el-table-column align="center" prop="category_no" label="机型编号" />
       <el-table-column align="center" prop="category_name" label="机型名称" />
       <el-table-column align="center" prop="equip_no" label="设备代码" />
       <el-table-column align="center" width="200%" prop="equip_name" label="设备名称" />
       <el-table-column align="center" prop="equip_type" label="设备类型" />
-      <el-table-column align="center" prop="equip_level_name" label="设备层级" />
-      <el-table-column align="center" prop="count_flag" label="产量计数" :formatter="EquipCountFlagFormatter" />
+      <el-table-column align="center" width="50" prop="equip_level_name" label="设备层级" />
+      <el-table-column align="center" width="50" prop="count_flag" label="产量计数" :formatter="EquipCountFlagFormatter" />
       <el-table-column align="center" prop="description" label="备注" />
-      <el-table-column align="center" prop="use_flag" label="是否启用" :formatter="EquipUsedFlagFormatter" />
+      <el-table-column align="center" width="50" prop="use_flag" label="是否启用" :formatter="EquipUsedFlagFormatter" />
       <el-table-column align="center" label="操作">
         <template slot-scope="scope">
           <el-button-group>
