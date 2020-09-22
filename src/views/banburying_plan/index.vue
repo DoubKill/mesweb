@@ -10,11 +10,27 @@
           @change="changeSearch"
         />
       </el-form-item>
-      <el-form-item label="班次">
+      <!-- <el-form-item label="班次">
         <el-input model="" />
-      </el-form-item>
-      <el-form-item label="机台">
+      </el-form-item> -->
+      <!-- <el-form-item label="机台">
         <el-input v-model="equip_no" @input="changeSearch" />
+      </el-form-item> -->
+      <el-form-item label="机台">
+        <el-select
+          v-model="equip_no"
+          clearable
+          placeholder="请选择"
+          @change="changeSearch"
+          @visible-change="equipNoVisibleChange"
+        >
+          <el-option
+            v-for="item in equipNoOptions"
+            :key="item.equip_no"
+            :label="item.equip_no"
+            :value="item.equip_no"
+          />
+        </el-select>
       </el-form-item>
     </el-form>
 
@@ -45,7 +61,7 @@
 
         <el-table-column prop="ach_rate" label="达成率">
           <template slot-scope="scope">
-            <el-progress :text-inside="true" :stroke-width="15" :percentage="scope.row.ach_rate" :color="customColorMethod" />
+            <el-progress :text-inside="true" :stroke-width="15" :percentage="scope.row.ach_rate / 5" :color="customColorMethod" />
           </template>
         </el-table-column>
       </el-table-column>
@@ -66,7 +82,7 @@
 
 <script>
 import page from '@/components/page'
-import { banbury_plan_url } from '@/api/display_static_fun'
+import { banbury_plan_url, getEquip } from '@/api/display_static_fun'
 
 export default {
   components: { page },
@@ -74,10 +90,12 @@ export default {
     return {
       tableData: [],
       total: 0,
+      equipNoOptions: [],
       getParams: {
         page: 1
       },
       search_time: null,
+      // classes: null,
       equip_no: null
     }
   },
@@ -85,10 +103,19 @@ export default {
     this.banbury_plan_list()
   },
   methods: {
+    equipNoVisibleChange(bool) {
+      if (bool) {
+        var app = this
+        getEquip({ all: 1 }).then(function(response) {
+          app.equipNoOptions = response.results
+        })
+      }
+    },
     async banbury_plan_list() {
       try {
         const banbury_planData = await banbury_plan_url('get', { params: this.getParams })
-        this.tableData = banbury_planData.results
+        this.tableData = banbury_planData.data
+        console.log(this.tableData)
         this.total = banbury_planData.count
       } catch (e) { throw new Error(e) }
     },
