@@ -19,7 +19,10 @@
           @input="productNameChange"
         />
       </el-form-item>
-      <el-form-item style="float: right">
+      <el-form-item
+        v-if="permissionObj.productinfo.indexOf('add')>-1"
+        style="float: right"
+      >
         <el-button @click="showAddRubberRecipeDialog">新建</el-button>
       </el-form-item>
     </el-form>
@@ -370,6 +373,7 @@
 import pagination from '@/components/page'
 import { globalCodesUrl, materialsUrl, productInfosUrl, copyProductInfosUrl } from '@/api/base_w'
 import commonVal from '@/utils/common'
+import { mapGetters } from 'vuex'
 export default {
   components: { pagination },
   data: function() {
@@ -423,7 +427,11 @@ export default {
       total: 0
     }
   },
+  computed: {
+    ...mapGetters(['permission'])
+  },
   created: function() {
+    this.permissionObj = this.permission
     var app = this
     this.getList()
     globalCodesUrl('get', {
