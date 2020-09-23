@@ -154,7 +154,7 @@ export default {
     },
     handleAddGroupUsersDialog() {
       var app = this
-      putGroupAddUser({ user_set: app.selectedUsers }, app.groupsCurrentRow.id).then(function(response) {
+      putGroupAddUser({ group_users: app.selectedUsers }, app.groupsCurrentRow.id).then(function(response) {
         app.$message(app.groupsCurrentRow.name + '修改成功')
         app.handleGroupsCurrentRowChange(app.groupsCurrentRow)
         app.dialogAddGroupUsersDialogVisible = false

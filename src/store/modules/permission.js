@@ -29,8 +29,6 @@ const actions = {
       // 使用options.routes传allRoutes过去相当于替换
       const allRoutes = constantRoutes.concat(accessedRoutes)
 
-      // router.options.routes = allRoutes;
-      // router.addRoutes(allRoutes)
       resolve(allRoutes)
     })
   }
@@ -46,16 +44,17 @@ export function filterAsyncRoutesMy(routes, permission) {
 
     if (hasPermissionMy(permission, tmp)) {
       if (tmp.children) {
-        if (tmp.meta && tmp.meta.permissionName) {
-          const permissionVal = permission[tmp.meta.permissionName]
+        // if (tmp.meta && tmp.meta.permissionName) {
+        // const permissionVal = permission[tmp.meta.permissionName]
 
-          tmp.children = filterAsyncRoutesMy(tmp.children, permissionVal)
-        } else {
-          tmp.children = filterAsyncRoutesMy(tmp.children, permission)
-        }
+        // tmp.children = filterAsyncRoutesMy(tmp.children, permissionVal)
+        tmp.children = filterAsyncRoutesMy(tmp.children, permission)
+        // }
+        //  else {
+        //   tmp.children = filterAsyncRoutesMy(tmp.children, permission)
+        // }
       }
-      // eslint-disable-next-line no-prototype-builtins
-      if (tmp.hasOwnProperty('children') && tmp.children.length === 0) {
+      if (Object.prototype.hasOwnProperty.call(tmp, 'children') && tmp.children.length === 0) {
         return
       }
       res.push(tmp)
@@ -68,14 +67,13 @@ function hasPermissionMy(permission, route) {
   if (route.meta && route.meta.permissionName) {
     const val = permission[route.meta.permissionName]
     let boolIndex = null
-
-    if (Object.prototype.toString.call(val) === '[object Object]') {
-      // 是第一层
-      boolIndex = val
-    } else {
-      // 是第二层
-      boolIndex = val && val.indexOf('view') > -1
-    }
+    // if (Object.prototype.toString.call(val) === '[object Object]') {
+    //   // 是第一层
+    //   boolIndex = val
+    // } else {
+    // 是第二层
+    boolIndex = val && val.indexOf('view') > -1
+    // }
     return boolIndex && JSON.stringify(val) !== '{}' && JSON.stringify(val) !== '[]'
   } else {
     return true

@@ -1,5 +1,6 @@
 // cover some element-ui styles
 $color-primary: rgb(11, 189, 11);
+$color-primary-a: rgba(11, 189, 11, 0.5);
 
 .navbar {
   .el-breadcrumb__separator {
@@ -38,14 +39,15 @@ $color-primary: rgb(11, 189, 11);
       background: $color-primary;
     }
 
-    // &.is-disabled {
-      // &,
-      // &:focus,
-      // &:hover {
-      //   border-color: $color-primary;
-      //   background: $color-primary;
-      // }
-    // }
+    &.is-disabled {
+
+      &,
+      &:focus,
+      &:hover {
+        border-color: $color-primary-a;
+        background: $color-primary-a;
+      }
+    }
   }
 
 }

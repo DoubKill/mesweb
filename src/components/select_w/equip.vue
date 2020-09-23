@@ -5,9 +5,7 @@
       v-model="_equip_no"
       clearable
       placeholder="请选择机台"
-      :loading="loading"
       @change="changeSearch"
-      @visible-change="visibleChange"
     >
       <el-option
         v-for="item in machineList"
@@ -31,8 +29,7 @@ export default {
   },
   data() {
     return {
-      machineList: [],
-      loading: false
+      machineList: []
     }
   },
   computed: {
@@ -46,26 +43,20 @@ export default {
     }
   },
   created() {
+    this.getMachineList()
   },
   methods: {
     getMachineList() {
       var _this = this
-      _this.loading = true
-      // eslint-disable-next-line object-curly-spacing
-      equipUrl('get', { params: { all: 1 } })
+      equipUrl('get', { params: { all: 1, category_name: '密炼设备' }})
         .then(function(response) {
           _this.machineList = response.results || []
-          _this.loading = false
         })
-        .catch(function() { _this.loading = false })
+        // eslint-disable-next-line handle-callback-err
+        .catch(function(error) { })
     },
     changeSearch(id) {
       this.$emit('changeSearch', id)
-    },
-    visibleChange(bool) {
-      if (bool && this.machineList.length === 0) {
-        this.getMachineList()
-      }
     }
   }
 }

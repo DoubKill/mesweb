@@ -64,8 +64,7 @@ export const asyncRoutes = [{
   name: 'globalManage',
   meta: {
     title: '基础信息管理',
-    icon: 'dashboard',
-    permissionName: 'basics'
+    icon: 'dashboard'
   },
   children: [{
     path: '/global/codes/manage',
@@ -81,8 +80,8 @@ export const asyncRoutes = [{
     name: 'group-manage',
     component: () => import('@/views/basic/group-manage/index'),
     meta: {
-      title: '角色管理'
-      // permissionName: 'groupextension'
+      title: '角色管理',
+      permissionName: 'groupextension'
     }
   },
   {
@@ -90,8 +89,8 @@ export const asyncRoutes = [{
     name: 'user-manage',
     component: () => import('@/views/basic/user-manage/index'),
     meta: {
-      title: '用户管理'
-      // permissionName: 'user'
+      title: '用户管理',
+      permissionName: 'user'
     }
   },
   {
@@ -99,8 +98,8 @@ export const asyncRoutes = [{
     name: 'users-by-group-manage',
     component: () => import('@/views/basic/users-by-group-manage/index'),
     meta: {
-      title: '角色别用户管理'
-      // permissionName: 'groupextension'
+      title: '角色别用户管理',
+      permissionName: 'group-user'
     }
   },
   {
@@ -118,7 +117,7 @@ export const asyncRoutes = [{
     component: () => import('@/views/factory_schedule_manage/index'),
     meta: {
       title: '工厂排班管理',
-      permissionName: 'globalcode'
+      permissionName: 'planschedule'
     }
   },
   {
@@ -146,7 +145,7 @@ export const asyncRoutes = [{
       component: () => import('@/views/category_manage/index'),
       meta: {
         title: '设备种类',
-        permissionName: 'globalcode'
+        permissionName: 'equipcategoryattribute'
       }
     },
     {
@@ -169,8 +168,8 @@ export const asyncRoutes = [{
   name: 'recipe',
   meta: {
     title: '配方管理',
-    icon: 'formula',
-    permissionName: 'recipe'
+    icon: 'formula'
+    // permissionName: 'recipe'
   },
   children: [{
     path: 'material/base/info/manage',
@@ -217,8 +216,8 @@ export const asyncRoutes = [{
   name: 'plan',
   meta: {
     title: '生产计划管理',
-    icon: 'productionPlanManagement',
-    permissionName: 'plan'
+    icon: 'productionPlanManagement'
+    // permissionName: 'plan'
   },
   children: [{
     path: 'rubber/schedule/daily/plan',
@@ -235,7 +234,7 @@ export const asyncRoutes = [{
     component: () => import('@/views/plan/material-requisitions-plan/index'),
     meta: {
       title: '排产领料计划',
-      permissionName: ''
+      permissionName: 'productdayplan'
     }
   },
   {
@@ -256,16 +255,16 @@ export const asyncRoutes = [{
   name: 'ProduceManage',
   meta: {
     title: '生产管理',
-    icon: 'production',
-    permissionName: 'production'
+    icon: 'production'
+    // permissionName: 'production'
   },
   children: [{
     path: 'performance/manage',
     component: () => import('@/views/production/banburying-performance-manage/index'),
     name: 'BanburyingPerformanceManage',
     meta: {
-      title: '密炼实绩'
-      // permissionName: 'productdayplan'
+      title: '密炼实绩',
+      permissionName: 'product_actual'
     }
   },
   {
@@ -274,7 +273,7 @@ export const asyncRoutes = [{
     name: 'BanburyingPlanManage',
     meta: {
       title: '密炼机台别计划对比',
-      permissionName: 'trainsfeedbacks'
+      permissionName: 'plan_reality'
     }
   },
   {
@@ -283,7 +282,7 @@ export const asyncRoutes = [{
     name: 'InternalMixerProduction',
     meta: {
       title: '密炼生产履历',
-      permissionName: 'palletfeedbacks'
+      permissionName: 'product_record'
     }
   },
   {
@@ -292,7 +291,7 @@ export const asyncRoutes = [{
     name: 'CollectRubDailyManage',
     meta: {
       title: '日别胶料收皮管理',
-      permissionName: 'palletfeedbacks'
+      permissionName: 'pallet_feedback'
     }
   }
   ]
@@ -311,7 +310,8 @@ export const asyncRoutes = [{
     component: () => import('@/views/material_repertory_manage/index'),
     name: 'MaterialRepertoryManage',
     meta: {
-      title: '原料库存'
+      title: '原料库存',
+      permissionName: 'material_inventory'
     }
   },
   {
@@ -319,7 +319,8 @@ export const asyncRoutes = [{
     component: () => import('@/views/rubber_repertory_manage/index'),
     name: 'RubberRepertoryManage',
     meta: {
-      title: '胶料库存'
+      title: '胶料库存',
+      permissionName: 'product_inventory'
     }
   }
   ]
