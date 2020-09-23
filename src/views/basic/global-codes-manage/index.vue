@@ -6,7 +6,10 @@
           <el-form-item label="类型名称">
             <el-input v-model="type_name" @input="typeNameChanged" />
           </el-form-item>
-          <el-form-item style="float: right">
+          <el-form-item
+            v-if="permissionObj.globalcodetype.indexOf('add')>-1"
+            style="float: right"
+          >
             <el-button @click="showCreateGlobalCodeTypeDialog">新建</el-button>
           </el-form-item>
         </el-form>
@@ -29,8 +32,13 @@
           <el-table-column label="操作">
             <template slot-scope="scope">
               <el-button-group>
-                <el-button size="mini" @click="showEditGlobalCodeTypeDialog(scope.row)">编辑</el-button>
                 <el-button
+                  v-if="permissionObj.globalcodetype.indexOf('change')>-1"
+                  size="mini"
+                  @click="showEditGlobalCodeTypeDialog(scope.row)"
+                >编辑</el-button>
+                <el-button
+                  v-if="permissionObj.globalcodetype.indexOf('delete')>-1"
                   size="mini"
                   type="danger"
                   @click="handleGlobalCodeTypeDelete(scope.row)"
@@ -43,7 +51,10 @@
       </el-col>
       <el-col :span="12">
         <el-form :inline="true">
-          <el-form-item style="float: right">
+          <el-form-item
+            v-if="permissionObj.globalcodetype.indexOf('add')>-1"
+            style="float: right"
+          >
             <el-button :disabled="!globalCodeTypesCurrentRow" @click="showCreateGlobalCodeDialog">新建</el-button>
           </el-form-item>
         </el-form>
@@ -61,8 +72,17 @@
           <el-table-column label="操作">
             <template slot-scope="scope">
               <el-button-group>
-                <el-button size="mini" @click="showEditGlobalCodeDialog(scope.row)">编辑</el-button>
-                <el-button size="mini" type="danger" @click="handleGlobalCodesDelete(scope.row)">{{ scope.row.use_flag ? '停用' : '启用' }}</el-button>
+                <el-button
+                  v-if="permissionObj.globalcodetype.indexOf('change')>-1"
+                  size="mini"
+                  @click="showEditGlobalCodeDialog(scope.row)"
+                >编辑</el-button>
+                <el-button
+                  v-if="permissionObj.globalcodetype.indexOf('delete')>-1"
+                  size="mini"
+                  type="danger"
+                  @click="handleGlobalCodesDelete(scope.row)"
+                >{{ scope.row.use_flag ? '停用' : '启用' }}</el-button>
               </el-button-group>
             </template>
           </el-table-column>
@@ -219,6 +239,7 @@
 <script>
 import { getGlobalTypes, postGlobalTypes, putGlobalTypes, deleteGlobalTypes, getGlobalCodes, postGlobalCodes, putGlobalCodes, deleteGlobalCodes } from '@/api/global-codes-manage'
 import page from '@/components/page'
+import { mapGetters } from 'vuex'
 export default {
   components: { page },
   data: function() {
@@ -258,7 +279,11 @@ export default {
       total: 1
     }
   },
+  computed: {
+    ...mapGetters(['permission'])
+  },
   created() {
+    this.permissionObj = this.permission
     this.getGlobalTypesList()
   },
   methods: {
