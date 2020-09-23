@@ -119,6 +119,7 @@
       <el-form>
         <el-form-item>
           <el-button
+            v-if="permissionObj.planschedule.indexOf('add')>-1"
             style="float: right"
             @click="savePlanSchedules"
           >保存</el-button>
@@ -191,6 +192,7 @@ import {
   globalCodesUrl, workSchedulesUrl, planSchedulesUrl,
   planScheduleUrl
 } from '@/api/base_w'
+import { mapGetters } from 'vuex'
 export default {
   data() {
     return {
@@ -215,6 +217,9 @@ export default {
       trueCalendar: false
     }
   },
+  computed: {
+    ...mapGetters(['permission'])
+  },
   watch: {
     calendarValue(value) {
       const dateValue = new Date(value)
@@ -233,6 +238,7 @@ export default {
     }
   },
   created: function() {
+    this.permissionObj = this.permission
     this.planSchedule = {
       all: 1,
       month: new Date().getMonth() + 1,
