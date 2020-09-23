@@ -64,13 +64,13 @@
       </el-form-item>
       <el-form-item style="float: right">
         <el-button
-          v-if="permissionObj.recipe.productbatching && permissionObj.recipe.productbatching.indexOf('add')>-1"
+          v-if="permissionObj.productbatching && permissionObj.productbatching.indexOf('add')>-1"
           @click="showAddRubberMaterialDialog"
         >新建</el-button>
       </el-form-item>
       <el-form-item style="float: right">
         <el-button
-          v-if="permissionObj.recipe.productbatching && permissionObj.recipe.productbatching.indexOf('change')>-1"
+          v-if="permissionObj.productbatching && permissionObj.productbatching.indexOf('change')>-1"
           :disabled="currentRow.used_type != 1"
           @click="showPutRubberMaterialDialog"
         >配料</el-button>
@@ -140,27 +140,27 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
-              v-if="scope.row.used_type === 1"
+              v-if="scope.row.used_type === 1 && permissionObj.productbatching.indexOf('submit_productbatching')>-1"
               size="mini"
               @click="status_true(scope.row)"
             >提交</el-button>
             <el-button
-              v-if="scope.row.used_type === 2"
+              v-if="scope.row.used_type === 2 && permissionObj.productbatching.indexOf('check_productbatching')>-1"
               size="mini"
               @click="status_true(scope.row)"
             >校对</el-button>
             <el-button
-              v-if="scope.row.used_type === 3"
+              v-if="scope.row.used_type === 3 && permissionObj.productbatching.indexOf('use_productbatching')>-1"
               size="mini"
               @click="status_true(scope.row)"
             >启用</el-button>
             <el-button
-              v-if="scope.row.used_type === 2 | scope.row.used_type === 3"
+              v-if="(scope.row.used_type === 2 | scope.row.used_type === 3) && permissionObj.productbatching.indexOf('refuse_productbatching')>-1"
               size="mini"
               @click="status_false(scope.row)"
             >驳回</el-button>
             <el-button
-              v-if="scope.row.used_type === 4"
+              v-if="scope.row.used_type === 4 && permissionObj.productbatching.indexOf('abandon_productbatching')>-1"
               size="mini"
               @click="status_false(scope.row)"
             >废弃</el-button>
@@ -187,7 +187,7 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
-              v-if="scope.row.used_type === 4"
+              v-if="scope.row.used_type === 4 && permissionObj.productbatching.indexOf('send_productbatching')>-1"
               size="mini"
               @click="send_auxiliary(scope.row)"
             >发送</el-button>
