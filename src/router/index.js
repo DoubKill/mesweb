@@ -99,7 +99,7 @@ export const asyncRoutes = [{
     component: () => import('@/views/basic/users-by-group-manage/index'),
     meta: {
       title: '角色别用户管理',
-      permissionName: 'group-user'
+      permissionName: 'group_user'
     }
   },
   {
