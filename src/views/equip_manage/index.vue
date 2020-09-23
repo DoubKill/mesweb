@@ -8,7 +8,7 @@
         <el-input v-model="equip" @input="changeSearch" />
       </el-form-item>
       <el-form-item>
-        <el-button v-if="permissionObj.basics.equip && permissionObj.basics.equip.indexOf('add')>-1" @click="showCreateEquipDialog">新建</el-button>
+        <el-button v-if="permissionObj.equip && permissionObj.equip.indexOf('add')>-1" @click="showCreateEquipDialog">新建</el-button>
       </el-form-item>
     </el-form>
 
@@ -34,13 +34,13 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
-              v-if="permissionObj.basics.equip && permissionObj.basics.equip.indexOf('change')>-1"
+              v-if="permissionObj.equip && permissionObj.equip.indexOf('change')>-1"
               size="mini"
               @click="showEditEquipDialog(scope.row)"
             >编辑
             </el-button>
             <el-button
-              v-if="permissionObj.basics.equip && permissionObj.basics.equip.indexOf('delete')>-1"
+              v-if="permissionObj.equip && permissionObj.equip.indexOf('delete')>-1"
               size="mini"
               type="danger"
               @click="handleEquipDelete(scope.row)"
