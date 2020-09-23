@@ -34,6 +34,7 @@
           <el-table-column label="操作">
             <template slot-scope="scope">
               <el-button
+                v-if="permissionObj.group_user.indexOf('change')>-1"
                 size="mini"
                 @click="showAddGroupUsersDialog(scope.row)"
               >编辑
@@ -85,6 +86,7 @@
 <script>
 import { getGroup, getUsersByGroup, putGroupAddUser } from '@/api/users-by-group-manage'
 import page from '@/components/page'
+import { mapGetters } from 'vuex'
 export default {
   components: { page },
   data: function() {
@@ -104,7 +106,12 @@ export default {
       name: ''
     }
   },
+  computed: {
+    ...mapGetters(['permission'])
+  },
   created() {
+    this.permissionObj = this.permission
+    console.log(this.permissionObj)
     this.getGroupList()
   },
   methods: {
