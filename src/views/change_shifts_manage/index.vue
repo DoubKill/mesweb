@@ -108,7 +108,7 @@
           label="周期天数"
           :label-width="formLabelWidth"
         >
-          <el-input v-model="changeShiftsManageForm.period" />
+          <el-input-number v-model="changeShiftsManageForm.period" :min="1" :max="30" />
         </el-form-item>
 
         <div
@@ -381,11 +381,12 @@ export default {
               app.dialogCreateChangeShiftsManageVisible = false
               app.$message.success(app.changeShiftsManageForm.schedule_name + '创建成功')
               app.getList()
+            // eslint-disable-next-line handle-callback-err
             }).catch(function(error) {
-              app.$message.error(JSON.stringify(error))
-              for (var key in app.changeShiftsManageFormError) {
-                if (error[key]) { app.changeShiftsManageFormError[key] = error[key].join(',') }
-              }
+              // app.$message.error(JSON.stringify(error))
+              // for (var key in app.changeShiftsManageFormError) {
+              //   if (error[key]) { app.changeShiftsManageFormError[key] = error[key].join(',') }
+              // }
             })
         } else {
           return false
@@ -437,9 +438,8 @@ export default {
               app.dialogEditChangeShiftsManageVisible = false
               app.$message(changeShiftsManageForm.schedule_name + '修改成功')
               app.getList()
-            }).catch(error => {
-              app.$message.error(error.join(','))
-            })
+            // eslint-disable-next-line handle-callback-err
+            }).catch(error => {})
         } else {
           return false
         }
