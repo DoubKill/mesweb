@@ -111,7 +111,6 @@ export default {
   },
   created() {
     this.permissionObj = this.permission
-    console.log(this.permissionObj)
     this.getGroupList()
   },
   methods: {
