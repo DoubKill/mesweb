@@ -49,7 +49,7 @@ const actions = {
       login({ username: username.trim(), password: password }).then(response => {
         commit('SET_TOKEN', response.token)
         commit('SET_NAME', response.username)
-        commit('SET_PERMISSION', JSON.stringify(response.results))
+        commit('SET_PERMISSION', JSON.stringify(response.permissions))
 
         // 登录获取token,存到全局中
         setToken(response.token)

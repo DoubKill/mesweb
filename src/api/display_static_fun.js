@@ -64,3 +64,11 @@ export function stage_global_url(method, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function getEquip(params) {
+  return request({
+    url: API.EquipUrl,
+    method: 'get',
+    params
+  })
+}

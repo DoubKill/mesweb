@@ -1,26 +1,56 @@
 <template>
-  <div style="margin-top: 25px">
+  <div
+    v-loading="loading"
+    class="roles-manage"
+  >
     <el-form :inline="true">
       <el-form-item label="角色">
-        <el-input v-model="group_code" @input="groupCodeChanged" />
+        <el-input
+          v-model="getParams.group_code"
+          @input="groupCodeChanged"
+        />
       </el-form-item>
       <el-form-item label="角色名">
-        <el-input v-model="name" @input="nameChanged" />
+        <el-input
+          v-model="getParams.name"
+          @input="nameChanged"
+        />
       </el-form-item>
-      <el-form-item style="float: right">
+      <el-form-item label="是否使用">
+        <el-select
+          v-model="getParams.use_flag"
+          clearable
+          placeholder="请选择"
+          @change="nameChanged"
+        >
+          <el-option
+            v-for="item in optionsUser"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item
+        v-if="permissionObj.groupextension.indexOf('add')>-1"
+        style="float: right"
+      >
         <el-button @click="showCreateGroupDialog">新建</el-button>
       </el-form-item>
     </el-form>
     <el-table
+      v-loading="loadingTable"
       :data="tableData"
       border
       style="width: 100%"
     >
       <el-table-column
+        updated
+        upstream
         align="center"
-        type="index"
-        label="序"
         width="50"
+        type="index"
+        label="No"
       />
       <el-table-column
         prop="group_code"
@@ -36,97 +66,112 @@
         width="80"
         :formatter="formatter"
       />
-      <el-table-column
-        prop="created_username"
-        label="创建人"
-      />
+      <el-table-column label="创建人">
+        <template slot-scope="scope">
+          {{ scope.row.created_username?scope.row.created_username:'--' }}
+        </template>
+      </el-table-column>
       <el-table-column
         prop="created_date"
         label="创建日期"
       />
-      <el-table-column label="操作">
+      <el-table-column
+        label="操作"
+        width="150"
+      >
         <template slot-scope="scope">
           <el-button-group>
             <el-button
+              v-if="permissionObj.groupextension.indexOf('change')>-1"
               size="mini"
               @click="showEditGroupDialog(scope.row)"
             >编辑
             </el-button>
             <el-button
+              v-if="permissionObj.groupextension.indexOf('delete')>-1"
               size="mini"
               type="danger"
               @click="handleGroupDelete(scope.row)"
-            >{{ scope.row.use_flag ? '停用' : '启用' }}
+            >{{ scope.row.use_flag?'停用':'启用' }}
             </el-button>
           </el-button-group>
         </template>
       </el-table-column>
     </el-table>
-    <page :total="total" @currentChange="currentChange" />
-    <el-dialog title="添加角色" :visible.sync="dialogCreateGroupVisible">
-      <el-form ref="groupForm" :model="groupForm" :label-width="formLabelWidth">
-        <el-form-item :error="groupFormError.group_code" label="角色代码">
+    <page
+      :total="count"
+      @currentChange="changePage"
+    />
+    <el-dialog
+      :title="dialogTitle"
+      :visible.sync="dialogEditGroupVisible"
+      :close-on-click-modal="false"
+      width="800px"
+    >
+      <el-form
+        ref="groupForm"
+        :model="groupForm"
+      >
+        <el-form-item
+          :error="groupFormError.group_code"
+          label="角色代码"
+        >
           <el-input v-model="groupForm.group_code" />
         </el-form-item>
-        <el-form-item :error="groupFormError.name" label="角色名称">
+        <el-form-item
+          :error="groupFormError.name"
+          label="角色名称"
+        >
           <el-input v-model="groupForm.name" />
         </el-form-item>
-        <el-form-item :error="groupFormError.use_flag" label="是否使用">
+        <!-- <el-form-item
+          :error="groupFormError.use_flag"
+          label="是否使用"
+        >
           <el-switch v-model="groupForm.use_flag" />
-        </el-form-item>
-        <el-form-item label="权限" size="medium">
-          <el-transfer
-            v-model="groupForm.permissions"
-            :titles="['可用 权限', '选中的 权限']"
-            :props="{key: 'id', label: 'name'}"
-            :data="permissions"
+        </el-form-item> -->
+        <el-form-item
+          label="权限设置"
+          size="medium"
+        >
+          <transferLimit
+            :group-id="groupForm.id"
+            @changeTransferPermissions="changeTransferPermissions"
           />
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogCreateGroupVisible = false">取 消</el-button>
-        <el-button type="primary" @click="handleCreateGroup('groupForm')">确 定</el-button>
-      </div>
-    </el-dialog>
-    <el-dialog title="编辑角色" :visible.sync="dialogEditGroupVisible">
-      <el-form ref="groupForm" :model="groupForm" :label-width="formLabelWidth">
-        <el-form-item :error="groupFormError.group_code" label="角色代码">
-          <el-input v-model="groupForm.group_code" />
-        </el-form-item>
-        <el-form-item :error="groupFormError.name" label="角色名称">
-          <el-input v-model="groupForm.name" />
-        </el-form-item>
-        <el-form-item :error="groupFormError.use_flag" label="是否使用">
-          <el-switch v-model="groupForm.use_flag" />
-        </el-form-item>
-
-        <el-form-item label="权限" size="medium">
-          <el-transfer
-            v-model="groupForm.permissions"
-            :titles="['可用 权限', '选中的 权限']"
-            :props="{key: 'id', label: 'name'}"
-            :data="permissions"
-          />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="dialogEditGroupVisible = false">取 消</el-button>
-        <el-button type="primary" @click="handleEditGroup('groupForm')">确 定</el-button>
+        <el-button
+          type="primary"
+          @click="handleEditGroup('groupForm')"
+        >确 定</el-button>
       </div>
     </el-dialog>
   </div>
+
 </template>
 
 <script>
-import { getGroup, postGroup, putGroup, deleteGroup, getPermission } from '@/api/group-manage'
+import { roles } from '@/api/roles-manage'
 import page from '@/components/page'
+import { mapGetters } from 'vuex'
+import transferLimit from '@/components/select_w/transferLimit'
+
 export default {
-  components: { page },
-  data: function() {
+  components: { page, transferLimit },
+  data() {
     return {
-      formLabelWidth: 'auto',
-      dialogCreateGroupVisible: false,
+      getParams: {
+        use_flag: null
+      },
       tableData: [],
+      count: 0,
+      group_code: '',
+      name: '',
       groupForm: {
         name: '',
         group_code: '',
@@ -137,133 +182,142 @@ export default {
         group_code: '',
         use_flag: ''
       },
+      permissions: [],
       dialogEditGroupVisible: false,
-      group_code: '',
-      name: '',
-      getParams: {
-        page: 1
-      },
-      currentPage: 1,
-      total: 0,
-      permissions: []
+      dialogTitle: '新增角色',
+      loading: true,
+      loadingTable: false,
+      optionsUser: [
+        {
+          value: 1,
+          label: 'Y'
+        },
+        {
+          value: 0,
+          label: 'N'
+        }
+      ]
     }
   },
+  computed: {
+    ...mapGetters(['permission'])
+  },
   created() {
-    this.getGroupList()
+    this.permissionObj = this.permission
+    this.currentChange()
   },
   methods: {
-    getGroupList() {
-      getGroup(this.getParams).then(response => {
-        this.tableData = response.results
-        this.total = response.count
-      })
-    },
-    groupCodeChanged: function() {
-      this.getParams.page = 1
-      this.beforeGetData()
-      this.getGroupList()
-    },
-    nameChanged: function() {
-      this.getParams.page = 1
-      this.beforeGetData()
-      this.getGroupList()
-    },
-    beforeGetData() {
-      this.getParams['group_code'] = this.group_code
-      this.getParams['name'] = this.name
-    },
-    clearGroupForm: function() {
-      this.groupForm = {
-
-        name: '',
-        group_code: '',
-        use_flag: true
-      }
-    },
-    clearGroupFormError: function() {
-      this.groupFormError = {
-
-        name: '',
-        group_code: '',
-        use_flag: ''
-      }
-    },
-    showCreateGroupDialog: function() {
-      this.clearGroupForm()
-      this.clearGroupFormError()
-      this.dialogCreateGroupVisible = true
-      this.getPermissionList()
-    },
-    handleCreateGroup: function() {
-      this.clearGroupFormError()
-      var app = this
-      postGroup(app.groupForm)
-        .then(function(response) {
-          app.dialogCreateGroupVisible = false
-          app.$message(app.groupForm.name + '创建成功')
-          app.currentChange(app.currentPage)
-        }).catch(function(error) {
-          for (var key in app.groupFormError) {
-            if (error[key]) { app.groupFormError[key] = error[key].join(',') }
-          }
-        })
-    },
-    showEditGroupDialog: function(row) {
-      this.clearGroupForm()
-      this.clearGroupFormError()
-      this.groupForm = Object.assign({}, row)
-      this.dialogEditGroupVisible = true
-      this.getPermissionList()
-    },
-    handleEditGroup: function() {
-      const app = this
-      putGroup(this.groupForm, this.groupForm.id)
-        .then(function(response) {
-          app.dialogEditGroupVisible = false
-          app.$message(app.groupForm.name + '修改成功')
-          app.currentChange(app.currentPage)
-        }).catch(function(error) {
-          for (var key in app.groupFormError) {
-            if (error[key]) { app.groupFormError[key] = error[key].join(',') }
-          }
-        })
-    },
-    handleGroupDelete: function(row) {
-      var app = this
-      this.$confirm('此操作将永久删除' + row.name + ', 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        deleteGroup(row.id)
-          .then(function(response) {
-            app.$message({
-              type: 'success',
-              message: '删除成功!'
-            })
-            app.currentChange(app.currentPage)
-          }).catch(function(error) {
-            app.$message.error(error)
-          })
-      }).catch(() => {
-
+    currentChange() {
+      this.loadingTable = true
+      //   this.tableData = []
+      roles('get', null, {
+        params: this.getParams
+      }).then(response => {
+        this.loading = false
+        this.loadingTable = false
+        this.count = response.count || 0
+        this.tableData = response.results || []
+        // eslint-disable-next-line handle-callback-err
+      }).catch(error => {
+        this.loading = false
+        this.loadingTable = false
       })
     },
     formatter: function(row, column) {
       return row.use_flag ? 'Y' : 'N'
     },
-    getPermissionList() {
-      getPermission().then(response => {
-        this.permissions = response.results
+    changePage(page) {
+      this.getParams['page'] = page
+      this.currentChange()
+    },
+    groupCodeChanged() {
+      this.getParams['page'] = 1
+      this.currentChange()
+    },
+    nameChanged() {
+      this.getParams['page'] = 1
+      this.currentChange()
+    },
+    clearGroupForm() {
+      this.groupForm = {
+        name: '',
+        group_code: '',
+        use_flag: true
+      }
+    },
+    clearGroupFormError() {
+      this.groupFormError = {
+        name: '',
+        group_code: '',
+        use_flag: ''
+      }
+    },
+    showCreateGroupDialog() {
+      this.clearGroupForm()
+      this.clearGroupFormError()
+      this.dialogTitle = '新增角色'
+      this.dialogEditGroupVisible = true
+    },
+    handleEditGroup() {
+      this.clearGroupFormError()
+      const type = this.groupForm.id ? 'put' : 'post'
+      const id = this.groupForm.id ? this.groupForm.id : ''
+      // eslint-disable-next-line object-curly-spacing
+      roles(type, id, { data: { ...this.groupForm } })
+        .then(response => {
+          this.dialogEditGroupVisible = false
+          this.$message.success(this.groupForm.name + this.groupForm.id ? '编辑成功' : '创建成功')
+          this.currentChange()
+          // eslint-disable-next-line handle-callback-err
+        }).catch(error => {
+
+        })
+    },
+    showEditGroupDialog(group) {
+      // this.
+      this.groupForm = JSON.parse(JSON.stringify(group))
+      this.clearGroupFormError()
+      this.dialogTitle = '编辑角色'
+      this.dialogEditGroupVisible = true
+    },
+    handleGroupDelete(group) {
+      var boolStr = group.use_flag ? '停用' : '启用'
+      this.$confirm('确定' + boolStr + group.name + ', 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        roles('delete', group.id).then(response => {
+          this.$message({
+            type: 'success',
+            message: '操作成功!'
+          })
+          // if (this.tableData.length === 1 && this.getParams.page !== 1) {
+          //   this.getParams.page = this.getParams.page - 1
+          // }
+          this.currentChange()
+        })
       })
     },
-    currentChange(page) {
-      this.getParams.page = page
-      this.getGroupList()
+    changeTransferPermissions(val) {
+      this.$set(this.groupForm, 'permissions', val)
     }
   }
 }
 </script>
-
-<style lang="scss" scoped>
+<style lang="scss">
+  .roles-manage{
+    .el-input{
+      width:auto;
+    }
+    .el-transfer__buttons{
+      padding: 0 15px;
+    }
+    .el-transfer-panel{
+      width: 240px;
+    }
+    .el-checkbox{
+      margin-right: 5px;
+    }
+  }
 </style>

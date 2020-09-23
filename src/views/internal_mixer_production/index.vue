@@ -13,7 +13,7 @@
           v-model="search_date"
           type="daterange"
           range-separator="至"
-          :clearable="false"
+          :clearable="true"
           value-format="yyyy-MM-dd HH:mm:ss"
           :default-time="['00:00:00', '23:59:59']"
           start-placeholder="开始日期"
@@ -271,12 +271,14 @@
       width="900px"
       :visible.sync="dialogVisibleGraph"
     >
-      <!-- <div style="margin: 0 0 20px 5px;">{{ chartData.rows.length>0&&chartData.rows[0].hasOwnProperty('product_time')?chartData.rows[0].product_time.split(" ")[0]:'' }}</div> -->
       <ve-line
         height="500px"
         :data="chartData"
         :settings="chartSettings"
         :after-set-option="afterSetOption"
+        :extend="extend"
+        :colors="colors"
+        :toolbox="toolbox"
       />
     </el-dialog>
   </div>
@@ -296,22 +298,34 @@ import { mapGetters } from 'vuex'
 export default {
   components: { page, selectEquip, ProductNoSelect },
   data() {
+    this.toolbox = {
+      feature: {
+        dataZoom: {
+          show: true
+        },
+        restore: {}
+      }
+    }
+    this.extend = {
+      series: {
+        smooth: false
+      }
+    }
+    this.colors = ['#FF40A3', '#B2670A', '#3B3834', '#196D26', '#2E77B4']
     this.chartSettings = {
       labelMap: {
         created_date_date: '时间',
-        power: '功率',
         temperature: '温度',
+        power: '功率',
         energy: '能量',
-        pressure: '压力',
-        rpm: '转速'
+        rpm: '转速',
+        pressure: '压力'
       },
       axisSite: {
         right: ['temperature', 'rpm', 'energy', 'pressure']
       }
-      // yAxisName: ['功率']
     }
     return {
-      // tableDataUrl: "InternalMixerUrl",
       loading: true,
       loadingTable: false,
       tableData: [],
@@ -343,15 +357,14 @@ export default {
       chartData: {
         columns: [
           'created_date_date',
-          'power',
           'temperature',
+          'power',
           'energy',
-          'pressure',
-          'rpm'
+          'rpm',
+          'pressure'
         ],
         rows: []
       },
-      total: 0,
       options: {
         title: {
           show: true,
@@ -375,11 +388,8 @@ export default {
         toolbox: {
           itemSize: 20,
           itemGap: 30,
-          right: 50,
+          right: 0,
           feature: {
-            dataZoom: {
-              yAxisIndex: 'none'
-            },
             saveAsImage: {
               name: '',
               pixelRatio: 2
