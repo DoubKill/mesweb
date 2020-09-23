@@ -33,11 +33,21 @@ service.interceptors.request.use(
 // response interceptor
 service.interceptors.response.use(
   response => {
-    const res = response.data
-    return Promise.resolve(res)
+    if (response.status < 300) {
+      const res = response.data
+      return Promise.resolve(res)
+    } else {
+      Message({
+        message: '请求失败' + response.status,
+        type: 'error',
+        duration: 3 * 1000
+      })
+      return Promise.reject(response)
+    }
   },
   error => {
-    if (error.response.status && error.response.status === 403) {
+    if (error.response.status && error.response.status === 403 ||
+      error.response.status === 401) {
       Message({
         message: '登录过期',
         type: 'error',
@@ -66,32 +76,20 @@ service.interceptors.response.use(
       })
       return Promise.reject(error.response.data)
     } else if (Object.prototype.toString.call(error.response.data) === '[object Array]') {
-      // eslint-disable-next-line no-unused-vars
       let str = ''
-      if (Object.prototype.toString.call(error.response.data[0]) === '[object Object]') {
-        // 数组里面是对象
-        error.response.data.forEach(D => {
-          for (const key in D) {
-            if (!(D[key] instanceof Array)) {
-              str += D[key]
-            } else {
-              D[key].forEach(element => {
-                str += element
-              })
-            }
-          }
-        })
-        // const obj = error.response.data
-        // eslint-disable-next-line no-unused-vars
-      } else {
-        str = error.response.data.join(',')
-      }
-      // Message({
-      //   message: str,
-      //   type: 'error',
-      //   duration: 3 * 1000
-      // })
-      // 返回[{aa:'為填寫'}]，页面需处理到对应的输入变红提示
+      let row = 0
+      error.response.data.forEach(errorData => {
+        if (errorData && Object.prototype.hasOwnProperty.call(errorData, 'non_field_errors')) {
+          str += (`${row++} : ${errorData.non_field_errors.join(',')}\n`)
+        } else {
+          str += JSON.stringify(errorData)
+        }
+      })
+      Message({
+        message: str,
+        type: 'error',
+        duration: 3 * 1000
+      })
       return Promise.reject(error.response.data)
     } else if (typeof error.message === 'string') {
       Message({

@@ -1,6 +1,6 @@
 import router from './router'
 import store from './store'
-import { Message } from 'element-ui'
+// import { Message } from 'element-ui'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
 import { getToken } from '@/utils/auth' // get token from cookie
@@ -30,15 +30,12 @@ router.beforeEach(async(to, from, next) => {
       NProgress.done()
     } else {
       // 有身份信息,存在了全局
-      // try {
       if (!hasPermission) {
         await store.dispatch('user/logout')
-        // eslint-disable-next-line no-undef
-        Message.error('Has Error')
+        // Message.error('Has Error')
         next(`/login?redirect=${to.path}`)
         NProgress.done()
       } else {
-        // eslint-disable-next-line prefer-const
         let addRoutes = store.getters.addRoutes.length !== 0
         if (addRoutes) {
           next()
@@ -49,24 +46,6 @@ router.beforeEach(async(to, from, next) => {
           next({ ...to })
         }
       }
-      // get user info 拿到权限数组
-      // const { roles } = await store.dispatch('user/getInfo')
-      // localStorage.setItem("roles", "value");
-      // localStorage.setItem("roles", "value");
-
-      // generate accessible routes map based on roles
-      // const accessRoutes = await store.dispatch('permission/generateRoutes', roles)
-
-      // router.options.routes = accessRoutes;
-      // router.addRoutes(accessRoutes)
-      // } catch (error) {
-      //   console.log(error, ';error')
-      //   // remove token and go to login page to re-login
-      //   await store.dispatch('user/logout')
-      //   Message.error(error || 'Has Error')
-      //   next(`/login?redirect=${to.path}`)
-      //   NProgress.done()
-      // }
     }
   } else {
     /* has no token*/
