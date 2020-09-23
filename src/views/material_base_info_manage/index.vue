@@ -16,7 +16,10 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item style="float: right;">
+      <el-form-item
+        v-if="permissionObj.material.indexOf('add')>-1"
+        style="float: right;"
+      >
         <el-button @click="showAddMaterialDialog">新建</el-button>
       </el-form-item>
     </el-form>
@@ -86,11 +89,13 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
+              v-if="permissionObj.material.indexOf('change')>-1"
               size="mini"
               @click="showEditMaterialDialog(scope.row)"
             >编辑
             </el-button>
             <el-button
+              v-if="permissionObj.material.indexOf('delete')>-1"
               size="mini"
               type="danger"
               @click="handleMaterialDelete(scope.row)"
@@ -286,6 +291,7 @@
 import commonVal from '@/utils/common'
 import { globalCodesUrl, materialsUrl } from '@/api/base_w'
 import pagination from '@/components/page'
+import { mapGetters } from 'vuex'
 export default {
   components: { pagination },
   data: function() {
@@ -332,7 +338,11 @@ export default {
       total: 0
     }
   },
+  computed: {
+    ...mapGetters(['permission'])
+  },
   created: function() {
+    this.permissionObj = this.permission
     var app = this
     this.getList()
     globalCodesUrl('get', {
