@@ -353,6 +353,7 @@ export default {
       palletFeedList: [],
       BATObj: {},
       BATList: [],
+      total: 0,
       dialogVisibleGraph: false,
       chartData: {
         columns: [

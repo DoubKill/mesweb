@@ -36,7 +36,7 @@ router.beforeEach(async(to, from, next) => {
         next(`/login?redirect=${to.path}`)
         NProgress.done()
       } else {
-        let addRoutes = store.getters.addRoutes.length !== 0
+        const addRoutes = store.getters.addRoutes.length !== 0
         if (addRoutes) {
           next()
         } else {

@@ -107,6 +107,7 @@
       :visible.sync="dialogEditGroupVisible"
       :close-on-click-modal="false"
       width="800px"
+      :before-close="handleClose"
     >
       <el-form
         ref="groupForm"
@@ -267,6 +268,7 @@ export default {
         .then(response => {
           this.dialogEditGroupVisible = false
           this.$message.success(this.groupForm.name + this.groupForm.id ? '编辑成功' : '创建成功')
+          this.groupForm.id = null
           this.currentChange()
           // eslint-disable-next-line handle-callback-err
         }).catch(error => {
@@ -301,6 +303,10 @@ export default {
     },
     changeTransferPermissions(val) {
       this.$set(this.groupForm, 'permissions', val)
+    },
+    handleClose(done) {
+      this.groupForm.id = null
+      done()
     }
   }
 }

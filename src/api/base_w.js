@@ -99,14 +99,14 @@ export function productDayPlanManyCreateUrl(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
-export function productDayPlanNoticeUrl(method, id, data = {}) {
-  const obj = {
-    url: id ? API.ProductDayPlanNoticeUrl + id + '/' : API.ProductDayPlanNoticeUrl,
-    method: method
-  }
-  Object.assign(obj, data)
-  return request(obj)
-}
+// export function ProductDayPlanNotice(method, id, data = {}) {
+//   const obj = {
+//     url: id ? API.ProductDayPlanNotice + id + '/' : API.ProductDayPlanNotice,
+//     method: method
+//   }
+//   Object.assign(obj, data)
+//   return request(obj)
+// }
 // 密炼生产履历
 export function internalMixerUrl(method, id, data = {}) {
   const obj = {
@@ -143,6 +143,33 @@ export function trainsFeedbacksUrl(method, id, data = {}) {
 export function echartsListUrl(method, id, data = {}) {
   const obj = {
     url: id ? API.EchartsListUrl + id + '/' : API.EchartsListUrl,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function productClassesPlanUrl(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ProductClassesPlanUrl + id + '/' : API.ProductClassesPlanUrl,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function productClassesPlanPanycreateUrl(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ProductClassesPlanPanycreateUrl + id + '/' : API.ProductClassesPlanPanycreateUrl,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function productDayPlanNotice(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ProductDayPlanNotice + id + '/' : API.ProductDayPlanNotice,
     method: method
   }
   Object.assign(obj, data)
