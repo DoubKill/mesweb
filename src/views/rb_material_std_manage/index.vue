@@ -400,14 +400,18 @@
         style="width: 10%"
       />
       炼胶时间:
-      <el-time-picker
+      <el-input-number
+        v-model.number="select_rm_time_interval"
+        size="mini"
+        controls-position="right"
+      />
+      <!-- <el-time-picker
         v-model="select_rm_time_interval"
         size="mini"
-        :disabled="true"
         value-format="HH:mm:ss"
         :picker-options="{selectableRange: '00:00:00 - 23:59:59'}"
         placeholder="选择时间"
-      />
+      /> -->
 
       <br><br>
 
@@ -1296,7 +1300,8 @@ export default {
               'stage': app.rubberMaterialForm['stage'],
               'versions': app.rubberMaterialForm['version'],
               'dev_type': app.select_dev_type,
-              'batching_details': batching_details_list
+              'batching_details': batching_details_list,
+              'production_time_interval': app.select_rm_time_interval 
             }
           }
         )
@@ -1340,9 +1345,9 @@ export default {
         }
       }
 
-      console.log('=======================================mod_put')
-      console.log(this.currentRow)
-      console.log('=======================================mod_put')
+      // console.log('=======================================mod_put')
+      // console.log(this.currentRow)
+      // console.log('=======================================mod_put')
       try {
         await this.rubber_material_put(
           this.currentRow.id,
