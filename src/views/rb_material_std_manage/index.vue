@@ -1457,12 +1457,12 @@ export default {
           {
             data: {
               'factory': this.rubberMaterialForm['factory'],
-              'site': this.rubberMaterialForm['SITE'],
-              'product_info': this.rubberMaterialForm['select_product_id'],
+              'site': this.normalReceipe ? this.rubberMaterialForm['SITE'] : null,
+              'product_info': this.normalReceipe ? this.rubberMaterialForm['select_product_id'] : null,
               'precept': this.rubberMaterialForm['scheme'],
-              'stage_product_batch_no': this.rubberMaterialForm['generate_material_no'],
-              'stage': this.rubberMaterialForm['stage'],
-              'versions': this.rubberMaterialForm['version']
+              'stage_product_batch_no': this.normalReceipe ? null : this.rubberMaterialForm['generate_material_no'],
+              'stage': this.normalReceipe ? this.rubberMaterialForm['stage'] : null,
+              'versions': this.normalReceipe ? this.rubberMaterialForm['version'] : null
             }
           }
         )
