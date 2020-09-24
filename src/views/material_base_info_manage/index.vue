@@ -29,8 +29,10 @@
       style="width: 100%"
     >
       <el-table-column
-        label="S"
-        width="30"
+        align="center"
+        type="index"
+        label="No"
+        width="50"
       />
       <el-table-column
         prop="material_no"
