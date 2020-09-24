@@ -137,7 +137,7 @@
           label="用户名"
           prop="username"
         >
-          <el-input v-model="userForm.username" />
+          <el-input v-model="userForm.username" :disabled="userForm.id" />
         </el-form-item>
         <el-form-item
           v-if="userForm.id"
