@@ -117,13 +117,13 @@
         >
           <el-input v-model="globalCodeTypeForm.description" />
         </el-form-item>
-        <el-form-item
+        <!-- <el-form-item
           :error="globalCodeTypeFormError.use_flag"
           label="是否启用"
           :label-width="formLabelWidth"
         >
           <el-switch v-model="globalCodeTypeForm.use_flag" />
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogCreateGlobalCodeTypeVisible = false">取 消</el-button>
@@ -189,13 +189,13 @@
         >
           <el-input v-model="globalCodeForm.description" />
         </el-form-item>
-        <el-form-item
+        <!-- <el-form-item
           :error="globalCodeFormError.use_flag"
           label="是否启用"
           :label-width="formLabelWidth"
         >
           <el-switch v-model="globalCodeForm.use_flag_b" />
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogCreateGlobalCodeVisible = false">取 消</el-button>
