@@ -1293,12 +1293,12 @@ export default {
           {
             data: {
               'factory': app.rubberMaterialForm['factory'],
-              'site': app.rubberMaterialForm['SITE'],
-              'product_info': app.rubberMaterialForm['select_product_id'],
+              'site': this.normalReceipe ? this.rubberMaterialForm['SITE'] : null,
+              'product_info': this.normalReceipe ? this.rubberMaterialForm['select_product_id'] : null,
               'precept': app.rubberMaterialForm['scheme'],
-              'stage_product_batch_no': app.rubberMaterialForm['generate_material_no'],
-              'stage': app.rubberMaterialForm['stage'],
-              'versions': app.rubberMaterialForm['version'],
+              'stage_product_batch_no': this.normalReceipe ? null : this.rubberMaterialForm['generate_material_no'],
+              'stage': this.normalReceipe ? this.rubberMaterialForm['stage'] : null,
+              'versions': this.normalReceipe ? this.rubberMaterialForm['version'] : null,
               'dev_type': app.select_dev_type,
               'batching_details': batching_details_list,
               'production_time_interval': app.select_rm_time_interval 
