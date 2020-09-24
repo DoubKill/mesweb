@@ -145,12 +145,12 @@
                 <el-input v-model="materialBaseInfoForm.density"></el-input>
             </el-form-item>
             -->
-        <el-form-item
+        <!-- <el-form-item
           :error="materialBaseInfoFormError.use_flag"
           label="是否启用"
         >
           <el-switch v-model="materialBaseInfoForm.use_flag" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item
           :error="materialBaseInfoFormError.material_type"
           label="原材料类别"
@@ -309,7 +309,7 @@ export default {
         material_name: '',
         for_short: '',
         // density: null,
-        use_flag: false,
+        use_flag: true,
         material_type: null,
         package_unit: null
       },
@@ -402,7 +402,7 @@ export default {
         material_name: '',
         for_short: '',
         // density: null,
-        use_flag: false,
+        use_flag: true,
         material_type: null,
         package_unit: null
       }
