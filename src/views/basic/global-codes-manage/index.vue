@@ -1,21 +1,18 @@
 <template>
   <div style="margin-top: 25px">
     <el-row>
-
-      <el-form :inline="true">
-        <el-form-item label="类型名称">
-          <el-input v-model="type_name" @input="typeNameChanged" />
-        </el-form-item>
-        <el-form-item
-          style="float: right"
-        >
-          <el-button
-            v-if="permissionObj.globalcodetype.indexOf('add')>-1"
-            @click="showCreateGlobalCodeTypeDialog"
-          >新建</el-button>
-        </el-form-item>
-      </el-form>
       <el-col :span="12">
+        <el-form :inline="true">
+          <el-form-item label="类型名称">
+            <el-input v-model="type_name" @input="typeNameChanged" />
+          </el-form-item>
+          <el-form-item>
+            <el-button
+              v-if="permissionObj.globalcodetype.indexOf('add')>-1"
+              @click="showCreateGlobalCodeTypeDialog"
+            >新建</el-button>
+          </el-form-item>
+        </el-form>
         <el-table
           :data="tableData"
           border
@@ -496,6 +493,7 @@ export default {
       return flag ? 'Y' : 'N'
     },
     currentChange(page) {
+      this.currentPage = page
       this.getParams.page = page
       this.getGlobalTypesList()
     }

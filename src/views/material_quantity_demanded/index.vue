@@ -40,7 +40,7 @@
       border
       style="width: 100%"
     >
-      <el-table-column width="40%" prop="equip_no" label="No" align="center" />
+      <el-table-column width="40%" type="index" label="No" align="center" />
       <!--
         <el-table-column width="50%" prop="sn" label="顺序" align="center"></el-table-column>
         -->
