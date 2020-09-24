@@ -44,12 +44,18 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item style="float: right">
+      <el-form-item
+        v-if="permissionObj.productdayplan.indexOf('add')>-1"
+        style="float: right"
+      >
         <el-button @click="showAddPlansDialog">
           新建
         </el-button>
       </el-form-item>
-      <el-form-item style="float: right">
+      <el-form-item
+        v-if="permissionObj.productdayplan.indexOf('delete')>-1"
+        style="float: right"
+      >
         <el-button
           :disabled="!currentRow"
           @click="deletePlan"
@@ -502,6 +508,7 @@ import {
   productDayPlanNoticeUrl
 } from '@/api/base_w'
 import pagination from '@/components/page'
+import { mapGetters } from 'vuex'
 export default {
   components: { pagination },
   data: function() {
@@ -588,7 +595,11 @@ export default {
       total: 0
     }
   },
+  computed: {
+    ...mapGetters(['permission'])
+  },
   created: function() {
+    this.permissionObj = this.permission
     this.selectDateArr = ['2020-8-5 11:20:00', '2020-8-7 11:20:00', '2020-8-15  11:20:00']
     this.selectDateArr = this.setTimeStamp(this.selectDateArr)
     var app = this

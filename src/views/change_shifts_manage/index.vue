@@ -1,7 +1,10 @@
 <template>
   <div v-loading="loading">
     <el-form :inline="true">
-      <el-form-item style="float: right">
+      <el-form-item
+        v-if="permissionObj.workschedule.indexOf('add')>-1"
+        style="float: right"
+      >
         <el-button @click="showDialogCreateChangeShiftsManage">新建</el-button>
       </el-form-item>
     </el-form>
@@ -52,11 +55,13 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
+              v-if="permissionObj.workschedule.indexOf('change')>-1"
               size="mini"
               @click="showEditChangeShiftsManageDialog(scope.row)"
             >编辑
             </el-button>
             <el-button
+              v-if="permissionObj.workschedule.indexOf('delete')>-1"
               size="mini"
               type="danger"
               @click="handleDeleteChangeShiftsManage(scope.row)"
@@ -243,6 +248,7 @@
 import { globalCodesUrl, workSchedulesUrl } from '@/api/base_w'
 import pagination from '@/components/page'
 import commonVal from '@/utils/common'
+import { mapGetters } from 'vuex'
 export default {
   components: { pagination },
   data() {
@@ -288,7 +294,11 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters(['permission'])
+  },
   created: function() {
+    this.permissionObj = this.permission
     var app = this
     globalCodesUrl('get', {
       params: {

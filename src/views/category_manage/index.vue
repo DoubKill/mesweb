@@ -8,7 +8,7 @@
         <el-input v-model="equip_type_name" @input="changeSearch" />
       </el-form-item>
       <el-form-item>
-        <el-button v-if="permissionObj.basics.globalcode && permissionObj.basics.globalcode.indexOf('add')>-1" @click="showCreateEquipCateDialog">新建</el-button>
+        <el-button v-if="permissionObj.equipcategoryattribute && permissionObj.equipcategoryattribute.indexOf('add')>-1" @click="showCreateEquipCateDialog">新建</el-button>
       </el-form-item>
     </el-form>
 
@@ -36,13 +36,13 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
-              v-if="permissionObj.basics.globalcode && permissionObj.basics.globalcode.indexOf('change')>-1"
+              v-if="permissionObj.equipcategoryattribute && permissionObj.equipcategoryattribute.indexOf('change')>-1"
               size="mini"
               @click="showEditEquipCateDialog(scope.row)"
             >编辑
             </el-button>
             <el-button
-              v-if="permissionObj.basics.globalcode && permissionObj.basics.globalcode.indexOf('delete')>-1"
+              v-if="permissionObj.equipcategoryattribute && permissionObj.equipcategoryattribute.indexOf('delete')>-1"
               size="mini"
               type="danger"
               @click="handleEquipCateDelete(scope.row)"
