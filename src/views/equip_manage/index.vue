@@ -68,9 +68,9 @@
         <el-form-item label="备注">
           <el-input v-model="AddEquipForm.description" />
         </el-form-item>
-        <el-form-item label="是否启用">
+        <!-- <el-form-item label="是否启用">
           <el-switch v-model="AddEquipForm.use_flag" />
-        </el-form-item>
+        </el-form-item> -->
 
         <el-form-item label="设备层级" prop="equip_level">
           <el-select
