@@ -16,7 +16,7 @@
       <el-table-column
         align="center"
         type="index"
-        label="序"
+        label="No"
         width="50"
       />
       <el-table-column align="center" width="100" prop="category_no" label="机型编号" />
