@@ -135,32 +135,33 @@
       />
       <el-table-column
         align="center"
+        width="148"
         label="操作"
       >
         <template slot-scope="scope">
           <el-button-group>
             <el-button
-              v-if="scope.row.used_type === 1 && permissionObj.productbatching.indexOf('submit_productbatching')>-1"
+              v-if="scope.row.used_type === 1 && permissionObj.productbatching.indexOf('submit')>-1"
               size="mini"
               @click="status_true(scope.row)"
             >提交</el-button>
             <el-button
-              v-if="scope.row.used_type === 2 && permissionObj.productbatching.indexOf('check_productbatching')>-1"
+              v-if="scope.row.used_type === 2 && permissionObj.productbatching.indexOf('check')>-1"
               size="mini"
               @click="status_true(scope.row)"
             >校对</el-button>
             <el-button
-              v-if="scope.row.used_type === 3 && permissionObj.productbatching.indexOf('use_productbatching')>-1"
+              v-if="scope.row.used_type === 3 && permissionObj.productbatching.indexOf('use')>-1"
               size="mini"
               @click="status_true(scope.row)"
             >启用</el-button>
             <el-button
-              v-if="(scope.row.used_type === 2 | scope.row.used_type === 3) && permissionObj.productbatching.indexOf('refuse_productbatching')>-1"
+              v-if="(scope.row.used_type === 2 | scope.row.used_type === 3) && permissionObj.productbatching.indexOf('refuse')>-1"
               size="mini"
               @click="status_false(scope.row)"
             >驳回</el-button>
             <el-button
-              v-if="scope.row.used_type === 4 && permissionObj.productbatching.indexOf('abandon_productbatching')>-1"
+              v-if="scope.row.used_type === 4 && permissionObj.productbatching.indexOf('abandon')>-1"
               size="mini"
               @click="status_false(scope.row)"
             >废弃</el-button>
@@ -187,7 +188,7 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
-              v-if="scope.row.used_type === 4 && permissionObj.productbatching.indexOf('send_productbatching')>-1"
+              v-if="scope.row.used_type === 4 && permissionObj.productbatching.indexOf('send')>-1"
               size="mini"
               @click="send_auxiliary(scope.row)"
             >发送</el-button>
@@ -211,6 +212,10 @@
         :model="rubberMaterialForm"
         :rules="rules"
       >
+        <el-form-item>
+          <el-radio v-model="normalReceipe" :label="true" @change="receipeTypeChange">常规配方</el-radio>
+          <el-radio v-model="normalReceipe" :label="false" @change="receipeTypeChange">特殊配方</el-radio>
+        </el-form-item>
         <el-form-item
           label="工厂"
           prop="factory"
@@ -220,6 +225,7 @@
             style="width: 100%"
             size="mini"
             placeholder="请选择"
+            :disabled="!normalReceipe"
           >
             <el-option
               v-for="item in RubberSiteOptions"
@@ -239,6 +245,7 @@
             style="width: 100%"
             size="mini"
             placeholder="请选择"
+            :disabled="!normalReceipe"
             @change="GenerateRubberMaterialNOChanged"
           >
             <el-option
@@ -259,6 +266,7 @@
             style="width: 100%"
             size="mini"
             placeholder="请选择"
+            :disabled="!normalReceipe"
             @change="GenerateRubberMaterialNOChanged"
           >
             <el-option
@@ -281,7 +289,9 @@
             value-key="product_no"
             :fetch-suggestions="rubber_no_querySearchAsync"
             placeholder="请输入内容"
+            :disabled="!normalReceipe"
             @select="RecipehandleSelect"
+            @input="GenerateRubberMaterialNOChanged"
           />
         </el-form-item>
 
@@ -294,6 +304,7 @@
             style="width: 100%"
             size="mini"
             placeholder="版本"
+            :disabled="!normalReceipe"
             @input="GenerateRubberMaterialNOChanged"
           />
         </el-form-item>
@@ -303,15 +314,15 @@
             style="width: 100%"
             size="mini"
             placeholder="方案"
+            :disabled="!normalReceipe"
           />
         </el-form-item>
-        <el-form-item label="胶料配方编码">
+        <el-form-item prop="generate_material_no" label="胶料配方编码">
           <el-input
             v-model="rubberMaterialForm.generate_material_no"
             style="width: 100%"
             size="mini"
-            :disabled="true"
-            placeholder=""
+            :disabled="normalReceipe"
           />
         </el-form-item>
         <el-form-item>
@@ -389,14 +400,18 @@
         style="width: 10%"
       />
       炼胶时间:
-      <el-time-picker
+      <el-input-number
+        v-model.number="select_rm_time_interval"
+        size="mini"
+        controls-position="right"
+      />
+      <!-- <el-time-picker
         v-model="select_rm_time_interval"
         size="mini"
-        :disabled="true"
         value-format="HH:mm:ss"
         :picker-options="{selectableRange: '00:00:00 - 23:59:59'}"
         placeholder="选择时间"
-      />
+      /> -->
 
       <br><br>
 
@@ -903,16 +918,22 @@ export default {
 
       rubberMaterialForm: {
         factory: '',
+        SITE: '',
         stage_product_batch_no: '',
+        rubber_no: '',
+        version: '',
         stage: '',
-        dev_type_name: ''
+        scheme: '',
+        dev_type_name: '',
+        generate_material_no: ''
       },
       rules: {
         factory: [{ required: true, message: '请选择产地', trigger: 'change' }],
         SITE: [{ required: true, message: '请选择SITE', trigger: 'change' }],
         rubber_no: [{ required: true, message: '请选择胶料编码', trigger: 'change' }],
         stage: [{ required: true, message: '请选择段次', trigger: 'change' }],
-        version: [{ required: true, message: '请选择版本', trigger: 'blur' }]
+        version: [{ required: true, message: '请选择版本', trigger: 'blur' }],
+        generate_material_no: [{ required: true, message: '该字段不能为空', trigger: 'blur' }]
       },
       rubberMaterialFormError: {
         factory: '',
@@ -929,7 +950,8 @@ export default {
       materialType: null,
       search_material_no: null,
       search_material_name: null,
-      select_product_id: null
+      select_product_id: null,
+      normalReceipe: true
     }
   },
   computed: {
@@ -940,6 +962,12 @@ export default {
     this.rubber_material_list()
   },
   methods: {
+    receipeTypeChange() {
+      if (!this.normalReceipe) {
+        this.$refs['rubberMaterialForm'].resetFields()
+      }
+      this.rubberMaterialForm.generate_material_no = ''
+    },
     async rubber_material_list() {
       try {
         this.loading = true
@@ -1038,9 +1066,9 @@ export default {
       } catch (e) { throw new Error(e) }
     },
     async validate_versions_list(obj) {
-      try {
-        await validate_versions_url('get', obj)
-      } catch (e) { throw new Error(e) }
+      // try {
+      await validate_versions_url('get', obj)
+      // } catch (e) { throw new Error(e) }
     },
     RubberSiteChange: function(bool) {
       if (bool) {
@@ -1118,17 +1146,22 @@ export default {
       this.rubberMaterialForm['select_product_id'] = item['id']
     },
     showAddRubberMaterialDialog: function() {
+      if (this.$refs['rubberMaterialForm']) {
+        this.$refs['rubberMaterialForm'].resetFields()
+      }
       this.site_list()
       this.SITE_global_list()
       this.stage_global_list()
       this.product_info_list()
       this.rubberMatetialError = ''
-      this.rubberMaterialForm = {
-        factory: '',
-        stage_product_batch_no: '',
-        stage: '',
-        dev_type_name: ''
-      }
+      // this.rubberMaterialForm = {
+      //   factory: '',
+      //   SITE: '',
+      //   stage_product_batch_no: '',
+      //   stage: '',
+      //   dev_type_name: '',
+      //   generate_material_no: ''
+      // }
       this.dialogAddRubberMaterial = true
       this.currentRow = {
         used_type: -1
@@ -1138,6 +1171,7 @@ export default {
       var SITE_name = ''
       var stage_name = ''
       var product_name = ''
+      var version = ''
       if (this.rubberMaterialForm.SITE) {
         for (var i = 0; i < this.PopupRubberSITEOptions.length; ++i) {
           if (this.PopupRubberSITEOptions[i]['id'] === this.rubberMaterialForm.SITE) {
@@ -1156,7 +1190,11 @@ export default {
         product_name = this.rubberMaterialForm.rubber_no
       }
 
-      this.rubberMaterialForm.generate_material_no = SITE_name + '-' + stage_name + '-' + product_name + '-' + this.rubberMaterialForm.version
+      if (this.rubberMaterialForm.version) {
+        version = this.rubberMaterialForm.version
+      }
+
+      this.rubberMaterialForm.generate_material_no = SITE_name + '-' + stage_name + '-' + product_name + '-' + version
     },
     del_raw_material_row: function(new_material_ele, index) {
       // eslint-disable-next-line no-prototype-builtins
@@ -1262,7 +1300,8 @@ export default {
               'stage': app.rubberMaterialForm['stage'],
               'versions': app.rubberMaterialForm['version'],
               'dev_type': app.select_dev_type,
-              'batching_details': batching_details_list
+              'batching_details': batching_details_list,
+              'production_time_interval': app.select_rm_time_interval 
             }
           }
         )
@@ -1306,9 +1345,9 @@ export default {
         }
       }
 
-      console.log('=======================================mod_put')
-      console.log(this.currentRow)
-      console.log('=======================================mod_put')
+      // console.log('=======================================mod_put')
+      // console.log(this.currentRow)
+      // console.log('=======================================mod_put')
       try {
         await this.rubber_material_put(
           this.currentRow.id,
@@ -1394,83 +1433,114 @@ export default {
       }
       app.dialogRawMaterialSync = false
     },
+    async addRubberMaterial() {
+      if (this.normalReceipe && this.rubberMaterialForm['select_product_id'] == null) {
+        this.$message({
+          message: '所选胶料编码不存在',
+          type: 'error'
+        })
+        return
+      }
+      try {
+        // 点击生成之前进行版本验证
+        await this.validate_versions_list({
+          params: {
+            factory: this.rubberMaterialForm['factory'],
+            site: this.normalReceipe ? this.rubberMaterialForm['SITE'] : null,
+            product_info: this.normalReceipe ? this.rubberMaterialForm['select_product_id'] : null,
+            versions: this.normalReceipe ? this.rubberMaterialForm['version'] : null,
+            stage: this.normalReceipe ? this.rubberMaterialForm['stage'] : null,
+            stage_product_batch_no: this.normalReceipe ? null : this.rubberMaterialForm['generate_material_no']
+          }
+        })
+        await this.rubber_material_post(
+          {
+            data: {
+              'factory': this.rubberMaterialForm['factory'],
+              'site': this.rubberMaterialForm['SITE'],
+              'product_info': this.rubberMaterialForm['select_product_id'],
+              'precept': this.rubberMaterialForm['scheme'],
+              'stage_product_batch_no': this.rubberMaterialForm['generate_material_no'],
+              'stage': this.rubberMaterialForm['stage'],
+              'versions': this.rubberMaterialForm['version']
+            }
+          }
+        )
+        this.dialogAddRubberMaterial = false
+        this.$message(this.rubberMaterialForm['generate_material_no'] + '保存成功')
+        this.rubber_material_list()
+      } catch (e) {
+        this.$message.error(e.join(','))
+      }
+    },
     NewhandleAddRubberMaterial(formName) {
+      if (!this.normalReceipe) {
+        this.$refs[formName].validateField('generate_material_no', error => {
+          if (!error) {
+            this.addRubberMaterial()
+          }
+        })
+        return
+      }
       this.$refs[formName].validate(async(valid) => {
         if (valid) {
-          if (this.rubberMaterialForm['select_product_id'] == null) {
-            this.$message({
-              message: '所选胶料编码不存在',
-              type: 'error'
-            })
-            return
-          }
-          try {
-            // 点击生成之前进行版本验证
-            await this.validate_versions_list({
-              params: {
-                factory: this.rubberMaterialForm['factory'],
-                site: this.rubberMaterialForm['SITE'],
-                product_info: this.rubberMaterialForm['select_product_id'],
-                versions: this.rubberMaterialForm['version'],
-                stage: this.rubberMaterialForm['stage']
-              }
-            })
-            await this.rubber_material_post(
-              {
-                data: {
-                  'factory': this.rubberMaterialForm['factory'],
-                  'site': this.rubberMaterialForm['SITE'],
-                  'product_info': this.rubberMaterialForm['select_product_id'],
-                  'precept': this.rubberMaterialForm['scheme'],
-                  'stage_product_batch_no': this.rubberMaterialForm['generate_material_no'],
-                  'stage': this.rubberMaterialForm['stage'],
-                  'versions': this.rubberMaterialForm['version']
-                }
-              }
-            )
-            this.dialogAddRubberMaterial = false
-            this.$message(this.rubberMaterialForm['generate_material_no'] + '保存成功')
-            this.rubber_material_list()
-          } catch (e) { e }
+          this.addRubberMaterial()
         } else {
           console.log('error submit!!')
           return false
         }
       })
     },
+    async showChoiceMaterialsDialog() {
+      if (this.normalReceipe && this.rubberMaterialForm['select_product_id'] == null) {
+        this.$message({
+          message: '所选胶料编码不存在',
+          type: 'error'
+        })
+        return
+      }
+      try {
+        // 点击生成之前进行版本验证
+        try {
+          await this.validate_versions_list({
+            params: {
+              factory: this.rubberMaterialForm['factory'],
+              site: this.rubberMaterialForm['SITE'],
+              product_info: this.rubberMaterialForm['select_product_id'],
+              versions: this.rubberMaterialForm['version'],
+              stage: this.rubberMaterialForm['stage'],
+              stage_product_batch_no: this.rubberMaterialForm['generate_material_no']
+            }
+          })
+        } catch (e) {
+          this.$message.error(e.join(','))
+          return
+        }
+        this.dialogAddRubberMaterial = false
+        // 炼胶机类型接口、原材料接口、原材料类型接口、胶料编码等数据加载
+        this.equip_category_list()
+        this.get_raw_material()
+        this.materials_type_list()
+        this.NewdialogChoiceMaterials = true
+        this.select_stage_product_batch_no = this.rubberMaterialForm['generate_material_no']
+        this.select_product_name = this.rubberMaterialForm['rubber_no']
+        this.select_material_weight = null
+        this.practicalWeightSum = null
+        this.NewRowMaterial = []
+      } catch (e) { e }
+    },
     NewAddMaterial(formName) {
+      if (!this.normalReceipe) {
+        this.$refs[formName].validateField('generate_material_no', error => {
+          if (!error) {
+            this.showChoiceMaterialsDialog()
+          }
+        })
+        return
+      }
       this.$refs[formName].validate(async(valid) => {
         if (valid) {
-          if (this.rubberMaterialForm['select_product_id'] == null) {
-            this.$message({
-              message: '所选胶料编码不存在',
-              type: 'error'
-            })
-            return
-          }
-          try {
-            // 点击生成之前进行版本验证
-            await this.validate_versions_list({
-              params: {
-                factory: this.rubberMaterialForm['factory'],
-                site: this.rubberMaterialForm['SITE'],
-                product_info: this.rubberMaterialForm['select_product_id'],
-                versions: this.rubberMaterialForm['version'],
-                stage: this.rubberMaterialForm['stage']
-              }
-            })
-            this.dialogAddRubberMaterial = false
-            // 炼胶机类型接口、原材料接口、原材料类型接口、胶料编码等数据加载
-            this.equip_category_list()
-            this.get_raw_material()
-            this.materials_type_list()
-            this.NewdialogChoiceMaterials = true
-            this.select_stage_product_batch_no = this.rubberMaterialForm['generate_material_no']
-            this.select_product_name = this.rubberMaterialForm['rubber_no']
-            this.select_material_weight = null
-            this.practicalWeightSum = null
-            this.NewRowMaterial = []
-          } catch (e) { e }
+          this.showChoiceMaterialsDialog()
         } else {
           console.log('error submit!!')
           return false

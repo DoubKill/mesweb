@@ -1,21 +1,18 @@
 <template>
   <div style="margin-top: 25px">
     <el-row>
-
-      <el-form :inline="true">
-        <el-form-item label="类型名称">
-          <el-input v-model="type_name" @input="typeNameChanged" />
-        </el-form-item>
-        <el-form-item
-          style="float: right"
-        >
-          <el-button
-            v-if="permissionObj.globalcodetype.indexOf('add')>-1"
-            @click="showCreateGlobalCodeTypeDialog"
-          >新建</el-button>
-        </el-form-item>
-      </el-form>
       <el-col :span="12">
+        <el-form :inline="true">
+          <el-form-item label="类型名称">
+            <el-input v-model="type_name" @input="typeNameChanged" />
+          </el-form-item>
+          <el-form-item>
+            <el-button
+              v-if="permissionObj.globalcodetype.indexOf('add')>-1"
+              @click="showCreateGlobalCodeTypeDialog"
+            >新建</el-button>
+          </el-form-item>
+        </el-form>
         <el-table
           :data="tableData"
           border
@@ -55,10 +52,13 @@
       <el-col :span="12">
         <el-form :inline="true">
           <el-form-item
-            v-if="permissionObj.globalcodetype.indexOf('add')>-1"
             style="float: right"
           >
-            <el-button :disabled="!globalCodeTypesCurrentRow" @click="showCreateGlobalCodeDialog">新建</el-button>
+            <el-button
+              v-if="permissionObj.globalcodetype.indexOf('add')>-1"
+              :disabled="!globalCodeTypesCurrentRow"
+              @click="showCreateGlobalCodeDialog"
+            >新建</el-button>
           </el-form-item>
         </el-form>
         <el-table :data="globalCodes" border style="width: 100%">
@@ -115,13 +115,13 @@
         >
           <el-input v-model="globalCodeTypeForm.description" />
         </el-form-item>
-        <el-form-item
+        <!-- <el-form-item
           :error="globalCodeTypeFormError.use_flag"
           label="是否启用"
           :label-width="formLabelWidth"
         >
           <el-switch v-model="globalCodeTypeForm.use_flag" />
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogCreateGlobalCodeTypeVisible = false">取 消</el-button>
@@ -187,13 +187,13 @@
         >
           <el-input v-model="globalCodeForm.description" />
         </el-form-item>
-        <el-form-item
+        <!-- <el-form-item
           :error="globalCodeFormError.use_flag"
           label="是否启用"
           :label-width="formLabelWidth"
         >
           <el-switch v-model="globalCodeForm.use_flag_b" />
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogCreateGlobalCodeVisible = false">取 消</el-button>
@@ -287,6 +287,7 @@ export default {
   },
   created() {
     this.permissionObj = this.permission
+    console.log(this.permissionObj)
     this.getGlobalTypesList()
   },
   methods: {
@@ -496,6 +497,7 @@ export default {
       return flag ? 'Y' : 'N'
     },
     currentChange(page) {
+      this.currentPage = page
       this.getParams.page = page
       this.getGlobalTypesList()
     }

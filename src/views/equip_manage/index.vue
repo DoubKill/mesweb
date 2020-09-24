@@ -19,13 +19,13 @@
         label="序"
         width="50"
       />
-      <el-table-column align="center" width="50" prop="equip_process_no" label="工序代码" />
-      <el-table-column align="center" prop="equip_process_name" label="工序名称" />
-      <el-table-column align="center" prop="category_no" label="机型编号" />
-      <el-table-column align="center" prop="category_name" label="机型名称" />
       <el-table-column align="center" prop="equip_no" label="设备代码" />
       <el-table-column align="center" width="200%" prop="equip_name" label="设备名称" />
       <el-table-column align="center" prop="equip_type" label="设备类型" />
+      <el-table-column align="center" width="100" prop="equip_process_no" label="工序代码" />
+      <el-table-column align="center" prop="equip_process_name" label="工序名称" />
+      <el-table-column align="center" prop="category_no" label="机型编号" />
+      <el-table-column align="center" prop="category_name" label="机型名称" />
       <el-table-column align="center" width="50" prop="equip_level_name" label="设备层级" />
       <el-table-column align="center" width="50" prop="count_flag" label="产量计数" :formatter="EquipCountFlagFormatter" />
       <el-table-column align="center" prop="description" label="备注" />
@@ -68,9 +68,9 @@
         <el-form-item label="备注">
           <el-input v-model="AddEquipForm.description" />
         </el-form-item>
-        <el-form-item label="是否启用">
+        <!-- <el-form-item label="是否启用">
           <el-switch v-model="AddEquipForm.use_flag" />
-        </el-form-item>
+        </el-form-item> -->
 
         <el-form-item label="设备层级" prop="equip_level">
           <el-select
