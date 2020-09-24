@@ -1,278 +1,58 @@
-/* eslint-disable indent */
 <template>
-  <div>
-    <el-form :inline="true">
-
-      <el-form-item label="日期">
-        <el-date-picker
-          v-model="plan_date"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="选择日期"
-          @change="queryDataChange"
-        />
-      </el-form-item>
-      <el-form-item label="机台">
-        <el-select
-          v-model="equip_no"
-          filterable
-          clearable
-          placeholder="请选择"
-          @change="queryDataChange"
-        >
-          <el-option
-            v-for="equip in equips"
-            :key="equip.id"
-            :label="equip.equip_no"
-            :value="equip.equip_no"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="胶料">
-        <el-select
-          v-model="stage_product_batch_no"
-          filterable
-          clearable
-          placeholder="请选择"
-          @change="queryDataChange"
-        >
-          <el-option
-            v-for="(no, index) in stage_product_batch_nos"
-            :key="index"
-            :label="no"
-            :value="no"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item
-        v-if="permissionObj.productdayplan.indexOf('add')>-1"
-        style="float: right"
+  <!-- <el-dialog
+    style="min-width:1200px"
+    width="90%"
+    :visible.sync="addPlanVisible"
+    :before-close="handleClose"
+    title="添加计划"
+  > -->
+  <div
+    v-loading="loading"
+    class="dialogPlanAdd"
+  >
+    <div class="leftEquip">
+      <!-- <el-checkbox-group v-for="item in equips" :key="item.id" v-model="equipIdForAdd"> -->
+      <div
+        v-for="item in equips"
+        :key="item.id"
+        style="position:relative"
       >
-        <el-button @click="showAddPlansDialog">
-          新建
-        </el-button>
-      </el-form-item>
-      <el-form-item
-        v-if="permissionObj.productdayplan.indexOf('delete')>-1"
-        style="float: right"
-      >
-        <el-button
-          :disabled="!currentRow"
-          @click="deletePlan"
+        <el-checkbox
+          v-model="item.checkbox"
+          :label="item.id"
+          :disabled="disabledEquip"
+          @change="changeEquip($event,item)"
+          @click.native="clickEquip"
         >
-          删除
-        </el-button>
-      </el-form-item>
-      <!--
-        <el-form-item style="float: right">
-            <el-button @click="dialogCopyVisible = true">
-                复制
-            </el-button>
-        </el-form-item>
-        -->
-      <!--
-        <el-form-item style="float: right">
-            <el-checkbox-button v-model="changePlanVisible">
-                修改
-            </el-checkbox-button>
-        </el-form-item>
-        -->
-    </el-form>
-
-    <el-table
-      highlight-current-row
-      :data="tableData"
-      border
-      style="width: 100%"
-      @current-change="handleCurrentChange"
-    >
-      <el-table-column
-        type="index"
-        label="No"
-        width="50"
-      />
-      <el-table-column
-        prop="equip_no"
-        label="机台"
-      />
-      <el-table-column
-        width="150"
-        prop="product_no"
-        label="胶料配方编码"
-      />
-      <el-table-column
-        prop="batching_weight"
-        label="配料重量（吨）"
-      />
-      <el-table-column
-        prop="production_time_interval"
-        label="炼胶时间（分钟）"
-      />
-      <el-table-column label="当前库存（吨）" />
-      <el-table-column label="早班计划">
-        <el-table-column
-          prop="pdp_product_classes_plan[0].sn"
-          label="顺序"
+          {{ item.equip_no }}
+        </el-checkbox>
+        <span
+          v-if="item.checkbox"
+          style="position:absolute;top:0;left:0;width:100%;height:100%;background:transparent;z-index:5"
+          @click="changeEquip(false,item)"
         />
-        <el-table-column
-          prop="pdp_product_classes_plan[0].plan_trains"
-          label="车次"
-        />
-        <el-table-column
-          prop="pdp_product_classes_plan[0].weight"
-          label="重量"
-        />
-        <el-table-column
-          prop="pdp_product_classes_plan[0].time"
-          label="时间"
-        />
-      </el-table-column>
-      <el-table-column label="中班计划">
-        <el-table-column
-          prop="pdp_product_classes_plan[1].sn"
-          label="顺序"
-        />
-        <el-table-column
-          prop="pdp_product_classes_plan[1].plan_trains"
-          label="车次"
-        />
-        <el-table-column
-          prop="pdp_product_classes_plan[1].weight"
-          label="重量"
-        />
-        <el-table-column
-          prop="pdp_product_classes_plan[1].time"
-          label="时间"
-        />
-      </el-table-column>
-      <el-table-column label="夜班计划">
-        <el-table-column
-          prop="pdp_product_classes_plan[2].sn"
-          label="顺序"
-        />
-        <el-table-column
-          prop="pdp_product_classes_plan[2].plan_trains"
-          label="车次"
-        />
-        <el-table-column
-          prop="pdp_product_classes_plan[2].weight"
-          label="重量"
-        />
-        <el-table-column
-          prop="pdp_product_classes_plan[2].time"
-          label="时间"
-        />
-      </el-table-column>
-      <el-table-column label="发送到上辅机">
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            @click="sendToAu(scope.row)"
-          >发送
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <pagination
-      :total="total"
-      @currentChange="currentChange"
-    />
-
-    <el-card v-if="changePlanVisible">
+      </div>
+      <!-- </el-checkbox-group> -->
+    </div>
+    <div class="rightContent">
       <div>
-        修改计划
-        <el-button
-          style="float: right; margin-bottom: 20px"
-          @click="changePlan"
-        >
-          确定
-        </el-button>
-      </div>
-      <div style="overflow-x: auto;clear: both; text-align: center">
-        <table
-          data-toggle="table"
-          class="table table-bordered"
-          style="color: #909399; font-size: 14px;"
-        >
-          <thead>
-            <tr>
-              <th colspan="4">早班计划</th>
-              <th colspan="4">中班计划</th>
-              <th colspan="4">夜班计划</th>
-            </tr>
-            <tr>
-              <div
-                v-for="_ in 3"
-                :key="_"
-              >
-                <th>顺序</th>
-                <th>车次</th>
-                <th>重量(吨)</th>
-                <th>时间</th>
-              </div>
-            </tr>
-          </thead>
-          <tbody>
-            <div
-              v-for="(plan, index) in rubberDailyPlanChangeForm.pdp_product_classes_plan"
-              :key="index"
-            >
-              <td>
-                <el-input-number
-                  v-model="plan.sn"
-                  :min="0"
-                />
-              </td>
-              <td>
-                <el-input-number
-                  v-model="plan.plan_trains"
-                  :min="0"
-                  @change="planTrainsChangeForUpdate(index)"
-                />
-              </td>
-              <td>
-                {{ plan.weight }}
-              </td>
-              <td>
-                {{ plan.time }}
-              </td>
-            </div>
-          </tbody>
-        </table>
-      </div>
-    </el-card>
-
-    <el-dialog
-      width="90%"
-      :visible.sync="addPlanVisible"
-      title="添加胶料日生产计划"
-    >
-      <div style="margin-bottom: 15px">
-        <el-select
-          v-model="equipIdForAdd"
-          filterable
-          placeholder="请选择机台"
-          style="margin-right: 10px"
-        >
-          <el-option
-            v-for="equip in equips"
-            :key="equip.id"
-            :label="equip.equip_no"
-            :value="equip.id"
-          />
-        </el-select>
+        日期：
         <el-date-picker
           v-model="day_time"
           style="margin-right: 10px"
           type="date"
           value-format="yyyy-MM-dd"
           placeholder="选择日期"
+          :clearable="false"
           @change="getPlanSchedules"
+          @focus="focusDatePicker"
         />
-        <el-select
+        倒班规则：<el-select
           v-model="planScheduleId"
           filterable
           placeholder="倒班规则"
+          @change="addOnePlan"
+          @focus="focusDatePicker"
         >
           <el-option
             v-for="planSchedule in planSchedules"
@@ -281,774 +61,797 @@
             :value="planSchedule.id"
           />
         </el-select>
-
-        <el-button
-          style="float: right"
-          @click="batchSave"
-        >保存</el-button>
-        <el-button @click="addOnePlan">添加</el-button>
       </div>
-      <el-table
-        :span-method="arraySpanMethod"
-        :data="plansForAdd"
-        border
-      >
-        <el-table-column
-          fixed
-          prop="equip_.equip_no"
-          label="机台"
-          width="150"
-        />
-        <el-table-column
-          label="胶料配方编码"
-          width="180"
-        >
-          <template
-            v-if="!scope.row.sum"
-            slot-scope="scope"
-          >
-            <el-select
-              v-model="scope.row.product_batching"
-              @change="productBatchingChanged(scope.row)"
-            >
-              <el-option
-                v-for="productBatching in scope.row.productBatchings"
-                :key="productBatching.id"
-                :label="productBatching.stage_product_batch_no"
-                :value="productBatching.id"
-              />
-            </el-select>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="batching_weight"
-          label="配料重量（吨）"
-        />
-        <el-table-column
-          prop="production_time_interval"
-          label="炼胶时间（分钟）"
-        />
-        <el-table-column label="当前库存（吨）" />
-        <el-table-column label="早班计划">
-          <el-table-column
-            label="顺序"
-            width="210"
-          >
-            <template
-              v-if="!scope.row.sum && scope.row.pdp_product_classes_plan[0].enable"
-              slot-scope="scope"
-            >
-              <el-input-number
-                v-model.number="scope.row.pdp_product_classes_plan[0].sn"
-                :min="0"
-              />
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="车次"
-            width="210"
-          >
-            <template
-              v-if="scope.row.pdp_product_classes_plan[0].enable"
-              slot-scope="scope"
-            >
-              <el-input-number
-                v-model.number="scope.row.pdp_product_classes_plan[0].plan_trains"
-                :disabled="scope.row.sum"
-                :min="0"
-                @change="planTrainsChanged(scope.row, 0)"
-              />
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="pdp_product_classes_plan[0].weight"
-            label="重量"
-          />
-          <el-table-column
-            prop="pdp_product_classes_plan[0].time"
-            label="时间"
-          />
-        </el-table-column>
-        <el-table-column label="中班计划">
-          <el-table-column
-            label="顺序"
-            width="210"
-          >
-            <template
-              v-if="!scope.row.sum && scope.row.pdp_product_classes_plan[1].enable"
-              slot-scope="scope"
-            >
-              <el-input-number
-                v-model.number="scope.row.pdp_product_classes_plan[1].sn"
-                :min="0"
-              />
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="车次"
-            width="210"
-          >
-            <template
-              v-if="scope.row.pdp_product_classes_plan[1].enable"
-              slot-scope="scope"
-            >
-              <el-input-number
-                v-model.number="scope.row.pdp_product_classes_plan[1].plan_trains"
-                :disabled="scope.row.sum"
-                :min="0"
-                @change="planTrainsChanged(scope.row, 1)"
-              />
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="pdp_product_classes_plan[1].weight"
-            label="重量"
-          />
-          <el-table-column
-            prop="pdp_product_classes_plan[1].time"
-            label="时间"
-          />
-        </el-table-column>
-        <el-table-column label="晚班计划">
-          <el-table-column
-            label="顺序"
-            width="210"
-          >
-            <template
-              v-if="!scope.row.sum && scope.row.pdp_product_classes_plan[2].enable"
-              slot-scope="scope"
-            >
-              <el-input-number
-                v-model.number="scope.row.pdp_product_classes_plan[2].sn"
-                :min="0"
-              />
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="车次"
-            width="210"
-          >
-            <template
-              v-if="scope.row.pdp_product_classes_plan[2].enable"
-              slot-scope="scope"
-            >
-              <el-input-number
-                v-model.number="scope.row.pdp_product_classes_plan[2].plan_trains"
-                :disabled="scope.row.sum"
-                :min="0"
-                @change="planTrainsChanged(scope.row, 2)"
-              />
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="pdp_product_classes_plan[2].weight"
-            label="重量"
-          />
-          <el-table-column
-            prop="pdp_product_classes_plan[2].time"
-            label="时间"
-          />
-        </el-table-column>
-        <el-table-column label="操作">
-          <template
-            v-if="!scope.row.sum"
-            slot-scope="scope"
-          >
-            <el-button
-              type="danger"
-              @click="deleteOnePlan(scope.row)"
-            >删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-dialog>
 
-    <el-dialog
-      :visible.sync="dialogCopyVisible"
-      title="复制胶料日生产计划"
-    >
-      <el-form>
-        <el-form-item label="来源日期">
-          <el-date-picker
-            v-model="src_date"
-            type="date"
-            value-format="yyyy-MM-dd"
-          />
-        </el-form-item>
-        <el-form-item label="新建日期">
-          <el-date-picker
-            v-model="dst_date"
-            type="date"
-            value-format="yyyy-MM-dd"
-          />
-        </el-form-item>
-      </el-form>
       <div
-        slot="footer"
-        class="dialog-footer"
+        v-loading="addPlanArrLoading"
+        element-loading-text="拼命加载中"
+        class="setFlex"
       >
-        <el-button @click="dialogCopyVisible = false">取 消</el-button>
-        <el-button
-          type="primary"
-          @click="copyPlan"
-        >确 定</el-button>
+        <div
+          v-for="(item,index) in addPlanArr"
+          :key="index"
+          class="addPlanArrBox"
+        >
+          <div class="tableTop">
+            <div class="tableTopLeft">{{ item[0][0]?item[0][0].equipNo:'--' }}</div>
+            <el-button
+              v-if="permissionArr.indexOf('add')>-1"
+              class="tableTopright"
+              @click="singleSavePlan(index,item)"
+            >保 存</el-button>
+          </div>
+          <div
+            v-for="(tableItem,i) in item"
+            :key="i"
+            style="margin-bottom:10px;margin-right:20px"
+          >
+            <el-table
+              :key="i"
+              :data="tableItem"
+              :span-method="objectSpanMethod"
+              border
+              width="100%"
+              :row-class-name="tableRowClassName"
+            >
+              >
+              <el-table-column min-width="60px">
+                <template slot-scope="scope">
+                  <div style="font-weight:700;color:#000 !important">
+                    {{ scope.row.classes_name }}
+                    <!-- {{ scope.row.start_time }} -- {{ scope.row.end_time }} -->
+                  </div>
+                </template>
+              </el-table-column>
+              <!-- <el-table-column
+                label="顺序"
+                width="60px"
+              >
+                <template slot-scope="scope">
+                  {{ scope.$index+1 }}
+                </template>
+              </el-table-column> -->
+              <el-table-column
+                min-width="180px"
+                label="胶料编码"
+              >
+                <template slot-scope="scope">
+                  <el-select
+                    v-model="scope.row.product_batching"
+                    :loading="loadingSelect"
+                    :disabled="setStatus(scope.row.status)"
+                    @change="productBatchingChanged($event,scope.row,rubberMateriaObj[scope.row.equip],tableItem,scope.$index)"
+                  >
+                    <el-option
+                      v-for="productBatching in rubberMateriaObj[scope.row.equip]"
+                      :key="productBatching.id"
+                      :label="productBatching.stage_product_batch_no"
+                      :value="productBatching.id"
+                    />
+                  </el-select>
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="车次"
+                min-width="80px"
+              >
+                <template slot-scope="scope">
+                  <el-input-number
+                    v-model.number="scope.row.plan_trains"
+                    :precision="0"
+                    size="small"
+                    :min="0"
+                    :max="999"
+                    :disabled="setStatus(scope.row.status)"
+                    @change="planTrainsChangedWh(scope.row,scope.$index,tableItem)"
+                  />
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="备注"
+                min-width="80"
+              >
+                <template slot-scope="scope">
+                  <el-input
+                    v-model="scope.row.note"
+                    :disabled="setStatus(scope.row.status)"
+                    placeholder="请输入内容"
+                  />
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="状态"
+                min-width="80"
+              >
+                <template slot-scope="scope">
+                  {{ scope.row.status }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="炼胶时间"
+              >
+                <template slot-scope="scope">
+                  {{ Number(scope.row.time) || '0' }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                width="80px"
+                label="操作"
+                fixed="right"
+              >
+                <template
+                  v-if="scope.$index!==tableItem.length-1"
+                  slot-scope="scope"
+                >
+                  <el-button
+                    size="mini"
+                    type="danger"
+                    :disabled="setStatus(scope.row.status)"
+                    @click="handleGroupDelete(scope.$index,tableItem,scope.row)"
+                  >删除
+                  </el-button>
+                  <br>
+                  <!-- <el-button
+                    style="margin-top:5px"
+                    size="mini"
+                    type="primary"
+                    :disabled="setDisabledFun(scope.$index,scope.row,tableItem,true)"
+                    @click="moveUp(scope.$index,scope.row,tableItem)"
+                  >上移
+                  </el-button> -->
+                  <!-- <el-button
+                    style="margin-top:5px"
+                    size="mini"
+                    :disabled="setDisabledFun(scope.$index,scope.row,tableItem,false)"
+                    @click="moveDown(scope.$index,scope.row,tableItem)"
+                  >下移
+                  </el-button> -->
+                </template>
+              </el-table-column>
+            </el-table>
+            <!-- <div>合计：车次250</div> -->
+          </div>
+        </div>
       </div>
-    </el-dialog>
+    </div>
   </div>
+  <!-- </el-dialog> -->
 </template>
 
 <script>
-import dayjs from 'dayjs'
 import {
-  equipUrl, workSchedulesUrl, planScheduleUrl,
-  productDayPlansUrl,
-  productDayPlansCopyUrl,
+  equipUrl,
   rubberMaterialUrl,
-  productDayPlanManyCreateUrl,
-  productDayPlanNoticeUrl
+  workSchedulesUrl,
+  planScheduleUrl,
+  productClassesPlanUrl,
+  productClassesPlanPanycreateUrl
 } from '@/api/base_w'
-import pagination from '@/components/page'
+// import { textData } from './textData'
+import { setDate } from '@/utils'
 import { mapGetters } from 'vuex'
+
 export default {
-  components: { pagination },
-  data: function() {
+  data() {
+    this._notSaved = '未保存'
+    this._saved = '已保存'
+    this._wait = '等待'
     return {
-      //   tableDataUrl: ProductDayPlansUrl,
-      plan_date: dayjs().format('YYYY-MM-DD'),
-      equips: [],
-      equipById: {},
-      equip_no: '',
-      stage_product_batch_no: '',
-      stage_product_batch_nos: [],
-      rubberDailyPlanChangeForm: {
-        equip: null,
-        product_batching: null,
-        pdp_product_classes_plan: [
-          {
-            sn: null,
-            plan_trains: null,
-            time: '00:00:00',
-            weight: ''
-          }, {
-            sn: null,
-            plan_trains: null,
-            time: '00:00:00',
-            weight: ''
-          }, {
-            sn: null,
-            plan_trains: null,
-            time: '00:00:00',
-            weight: ''
-          }
-        ]
-      },
-      rubberDailyPlanForm: {
-        equip: null,
-        product_batching: null,
-        pdp_product_classes_plan: [
-          {
-            sn: null,
-            plan_trains: null,
-            time: '00:00:00',
-            weight: '',
-            unit: '吨'
-          }, {
-            sn: null,
-            plan_trains: null,
-            time: '00:00:00',
-            weight: '',
-            unit: '吨'
-          }, {
-            sn: null,
-            plan_trains: null,
-            time: '00:00:00',
-            weight: '',
-            unit: '吨'
-          }
-        ]
-      },
-      batching_weight: '',
-      batching_time_interval: '',
-      batching_weight_for_update: '',
-      batching_time_interval_for_update: '',
-      // productBatchings: [],
-      productBatchingById: {},
-      addPlanVisible: false,
-      changePlanVisible: false,
-      currentRow: null,
-      dialogCopyVisible: false,
-      src_date: null,
-      dst_date: null,
-      plansForAdd: [],
-      statisticData: [],
       equipIdForAdd: null,
+      equips: [],
+      // equipById: {},
+      day_time: '',
       planScheduleId: null,
       planSchedules: [],
-      plan_date_for_create: dayjs().format('YYYY-MM-DD'),
       workSchedules: [],
-      day_time: '',
-      selectDateArr: [],
-      tableData: [],
-      getParams: {
-        page: 1
-      },
-      total: 0
+      plansForAdd: [],
+      productBatchingById: {},
+      addPlanArr: [],
+      // 排班列表
+      work_schedule_plan: [],
+      // 控制机台是否可选
+      disabledEquip: true,
+      // 胶料数据
+      rubberMateriaObj: {},
+      loadingSelect: true,
+      baseDefaultData: {},
+      loading: false,
+      addPlanArrLoading: false
     }
   },
   computed: {
     ...mapGetters(['permission'])
   },
-  created: function() {
-    this.permissionObj = this.permission
-    this.selectDateArr = ['2020-8-5 11:20:00', '2020-8-7 11:20:00', '2020-8-15  11:20:00']
-    this.selectDateArr = this.setTimeStamp(this.selectDateArr)
-    var app = this
-    this.getList()
-    equipUrl('get', {
-      params: {
-        all: 1
-      }
-    }).then(function(response) {
-      app.equips = response.results
-      app.equips.forEach(function(equip) {
-        app.equipById[equip.id] = equip
-      })
-    }).catch(function() {
-    })
-    workSchedulesUrl('get', null, {
-      params: {
-        all: 1
-      }
-    }).then(function(response) {
-      app.workSchedules = response.results
-    }).catch(function() {
-    })
+  created() {
+    this.permissionArr = this.permission.productbatching
+    this.getEquipList()
+    this.getWorkSchedules()
   },
   methods: {
-    getList() {
-      this.beforeGetData()
-      const app = this
-      productDayPlansUrl('get', null, {
-        params: this.getParams
-      }).then(function(response) {
-        app.total = response.count
-        app.tableData = response.results
-      }).catch(function() {
-      })
+    setStatus(status) {
+      // 可以操作
+      return status !== this._notSaved &&
+        status !== this._saved && status !== this._wait
     },
-    currentChange(page) {
-      this.getParams.page = page
-      this.getList()
-    },
-    getPlanSchedules() {
-      var app = this
-      planScheduleUrl('get', null, {
-        params: {
-          all: 1,
-          day_time: app.day_time
+    async getInfo(row, work_schedule) {
+      try {
+        this.addPlanArrLoading = true
+        const obj = {
+          day_time: this.day_time,
+          schedule_name: this.planScheduleId,
+          equip_no: row.equip_no
         }
-      }).then(function(response) {
-        app.planSchedules = response.results
-        app.planScheduleId = null
-      }).catch(function() {
-      })
-    },
-    queryDataChange: function() {
-      this.getParams.page = 1
-      this.getList()
-    },
-    beforeGetData: function() {
-      this.getParams['plan_date'] = this.plan_date
-      this.getParams['equip_no'] = this.equip_no
-      this.getParams['product_no'] = this.stage_product_batch_no
-    },
-    planTrainsChangeForUpdate: function(index) {
-      this.rubberDailyPlanChangeForm
-        .pdp_product_classes_plan[index].weight =
-        this.batching_weight_for_update * this.rubberDailyPlanChangeForm
-          .pdp_product_classes_plan[index].plan_trains
-      var time = this.batching_time_interval_for_update.split(':')
-      var second = Number(time[2]) + Number(time[1]) * 60 + Number(time[0]) * 60 * 60
-      second = this.rubberDailyPlanChangeForm
-        .pdp_product_classes_plan[index].plan_trains * second
-      var date = new Date(null)
-      date.setSeconds(second)
-      this.rubberDailyPlanChangeForm.pdp_product_classes_plan[index].time =
-        date.toISOString().substr(11, 8)
-    },
-    planTrainsChange: function(index) {
-      this.rubberDailyPlanForm
-        .pdp_product_classes_plan[index].weight =
-        this.batching_weight * this.rubberDailyPlanForm
-          .pdp_product_classes_plan[index].plan_trains
-      var time = this.batching_time_interval.split(':')
-      var second = Number(time[2]) + Number(time[1]) * 60 + Number(time[0]) * 60 * 60
-      second = this.rubberDailyPlanForm
-        .pdp_product_classes_plan[index].plan_trains * second
-      var date = new Date(null)
-      date.setSeconds(second)
-      this.rubberDailyPlanForm.pdp_product_classes_plan[index].time =
-        date.toISOString().substr(11, 8)
-    },
-    changePlan: function() {
-      if (!this.currentRow) {
-        this.$alert('请选择修改行', '修改计划', {
-          confirmButtonText: '确定'
-        })
-        return
-      }
-      var app = this
-      this.rubberDailyPlanChangeForm['plan_date'] = this.plan_date
-      productDayPlansUrl('put', this.currentRow.id,
-        { data: app.rubberDailyPlanChangeForm })
-        .then(function(response) {
-          app.$message('创建成功')
-          app.getList()
-        }).catch(function() {
-          //   var text = ''
-          //   for (var key in error) {
-          //     text += error[key] + '\n'
-          //   }
-          //   app.$message(text)
-        })
-    },
-    getPlanText: function(index) {
-      switch (index) {
-        case 0:
-          return '早班计划'
-        case 1:
-          return '中班计划'
-        case 2:
-          return '晚班计划'
-      }
-    },
-    productBatchingChange: function() {
-      this.batching_weight = this.productBatchingById[this.rubberDailyPlanForm.product_batching].batching_weight
-      this.batching_time_interval = this.productBatchingById[this.rubberDailyPlanForm.product_batching].batching_time_interval
+        const data = await productClassesPlanUrl('get', null, { params: obj })
+        // const getInfo = textData
+        const getInfo = data.results || []
 
-      for (var i = 0; i < 3; ++i) { this.planTrainsChange(i) }
-    },
-    handleCurrentChange(val) {
-      this.currentRow = val
-      if (!val) { return }
-      this.rubberDailyPlanChangeForm.equip = this.currentRow.equip
-      this.rubberDailyPlanChangeForm.product_batching =
-        this.currentRow.product_batching
-      this.batching_weight_for_update = this.currentRow.batching_weight
-      this.batching_time_interval_for_update = this.currentRow.batching_time_interval
-      for (var i = 0; i < this.currentRow.pdp_product_classes_plan.length; ++i) {
-        for (var key in this.currentRow.pdp_product_classes_plan[i]) {
-          this.rubberDailyPlanChangeForm.pdp_product_classes_plan[i][key] =
-            this.currentRow.pdp_product_classes_plan[i][key]
-        }
+        this.addPlanArrLoading = false
+        return this.setWorkSchedule(row, getInfo)
+      } catch (e) {
+        this.addPlanArrLoading = false
+        return this.setWorkSchedule(row, [])
       }
     },
-    deletePlan: function() {
-      var app = this
-      this.$confirm('此操作将永久删除' + this.currentRow.product_no + ', 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        productDayPlansUrl('delete', app.currentRow.id)
-          .then(function(response) {
-            app.$message({
-              type: 'success',
-              message: '删除成功!'
-            })
-            app.getList()
-          }).catch(function() {
-          })
-      }).catch(() => {
-
-      })
-    },
-    copyPlan: function() {
-      var app = this
-      productDayPlansCopyUrl('post', null, {
-        data: {
-          src_date: app.src_date,
-          dst_date: app.dst_date
-        }
-      }
-      ).then(function(response) {
-        app.$message({
-          type: 'success',
-          message: '复制成功!'
-        })
-        app.getList()
-        app.dialogCopyVisible = false
-      }).catch(function() {
-      })
-    },
-    deleteOnePlan(plan) {
-      this.plansForAdd.splice(this.plansForAdd.indexOf(plan), 1)
-      var plans = this.plansForAdd.filter(plan_ => {
-        return plan_.equip === plan.equip
-      })
-      if (plans.length === 1 && plans[0].sum) {
-        this.plansForAdd.splice(this.plansForAdd.indexOf(plans[0]), 1)
-      }
-      this.statistic()
-    },
-    async addOnePlan() {
-      if (!this.equipIdForAdd) {
-        return
-      }
-      const res = await planScheduleUrl('get', this.planScheduleId)
-      const planSchedule = res
-      var workSchedule = this.workSchedules.find(workSchedule => {
-        return workSchedule.id === planSchedule.work_schedule
-      })
-      if (!planSchedule.work_schedule_plan.length) {
-        this.$alert(planSchedule.work_schedule_name + '无排班', '错误', {
-          confirmButtonText: '确定'
-        })
-        return
-      }
-      var classesdetail_set_ = workSchedule.classesdetail_set
-      var pdp_product_classes_plan = []
-      for (var i = 0; i < 3; i++) {
-        var enable = !!planSchedule.work_schedule_plan[i]
-        pdp_product_classes_plan.push({
-          plan_trains: 0,
-          sn: 0,
-          unit: '吨',
-          time: enable ? 0 : '',
-          weight: enable ? 0 : '',
-          classes: classesdetail_set_[i].classes,
-          enable
-        })
-      }
-      var plan =
-      {
-        equip_: this.equipById[this.equipIdForAdd],
-        equip: this.equipIdForAdd,
-        plan_schedule: this.planScheduleId,
-        pdp_product_classes_plan
-      }
-      var app = this
-      rubberMaterialUrl('get', null, {
-        params: {
-          all: 1,
-          used_type: 4,
-          dev_type: app.equipById[app.equipIdForAdd].category
-        }
-      }).then(function(response) {
-        app.$set(plan, 'productBatchings', response.results)
-        response.results.forEach(function(batching) {
-          //
-          app.productBatchingById[batching.id] = batching
-        })
-      })
-
-      if (this.equipFirstIndexInPlansForAdd() === -1) {
-        this.plansForAdd.push(plan)
-        var planForSum = JSON.parse(JSON.stringify(plan))
-        planForSum['sum'] = true
-        planForSum['equip_'].equip_no = '小计'
-        this.plansForAdd.push(planForSum)
-      } else {
-        var lastIndex = this.equipLastIndexInPlansForAdd()
-        this.plansForAdd.splice(lastIndex, 0, plan)
-      }
-    },
-    equipLastIndexInPlansForAdd() {
-      for (var i = 0; i < this.plansForAdd.length; i++) {
-        if (this.plansForAdd[i].equip_.id === this.equipIdForAdd) {
-          var last = true
-          for (var j = i + 1; j < this.plansForAdd.length; j++) {
-            if (this.plansForAdd[j] === this.equipIdForAdd) { last = false }
-          }
-          if (last) { return i }
-        }
-      }
-      return -1
-    },
-    equipFirstIndexInPlansForAdd() {
-      for (var i = 0; i < this.plansForAdd.length; i++) {
-        if (this.plansForAdd[i].equip_.id === this.equipIdForAdd) { return i }
-      }
-      return -1
-    },
-    productBatchingChanged(planForAdd) {
-      planForAdd['batching_weight'] = this.productBatchingById[planForAdd.product_batching].batching_weight
-      planForAdd['production_time_interval'] = this.productBatchingById[planForAdd.product_batching].production_time_interval
-      for (var i = 0; i < 3; i++) {
-        this.planTrainsChanged(planForAdd, i, false)
-      }
-      this.statistic()
-    },
-    planTrainsChanged(planForAdd, columnIndex, sum = true) {
-      if (!planForAdd['pdp_product_classes_plan'][columnIndex].enable) { return }
-
-      planForAdd['pdp_product_classes_plan'][columnIndex]['time'] =
-        (planForAdd['production_time_interval'] *
-          planForAdd['pdp_product_classes_plan'][columnIndex]['plan_trains']).toFixed(2)
-
-      planForAdd['pdp_product_classes_plan'][columnIndex]['weight'] =
-        (planForAdd['batching_weight'] *
-          planForAdd['pdp_product_classes_plan'][columnIndex]['plan_trains']).toFixed(2)
-      if (sum) { this.statistic() }
-    },
-    async statistic() {
-      var plansByEquip = {}
-      var planSumByEquipId = {}
-      this.plansForAdd.forEach(function(plan) {
-        if (!plan.sum) {
-          if (!plansByEquip[plan.equip]) {
-            plansByEquip[plan.equip] = []
-          }
-          plansByEquip[plan.equip].push(plan)
-        } else {
-          planSumByEquipId[plan.equip] = plan
-        }
-      })
-      for (var equipId in plansByEquip) {
-        var plans = plansByEquip[equipId]
-        var batching_weight = 0
-        var production_time_interval = 0
-        var pdp_product_classes_plan = []
-        for (var j = 0; j < 3; j++) {
-          pdp_product_classes_plan.push({
-            plan_trains: 0,
-            weight: 0,
-            time: 0
-          })
-        }
-        var app = this
-        for (var k = 0; k < plans.length; k++) {
-          var plan = plans[k]
-          const res = await planScheduleUrl('get', plan.plan_schedule)
-          const planSchedule = res
-          batching_weight += Number(plan.batching_weight)
-          production_time_interval += Number(plan.production_time_interval)
-          for (var i = 0; i < 3; i++) {
-            var class_plan = plan.pdp_product_classes_plan[i]
-            pdp_product_classes_plan[i].plan_trains += Number(class_plan.plan_trains)
-            pdp_product_classes_plan[i].weight += Number(class_plan.weight)
-            pdp_product_classes_plan[i].time += Number(class_plan.time)
-            var workSchedulePlanTimeSpan =
-              dayjs(planSchedule.work_schedule_plan[i].end_time).diff(
-                dayjs(planSchedule.work_schedule_plan[i].start_time), 'minute')
-            if (pdp_product_classes_plan[i].time > workSchedulePlanTimeSpan) {
-              app.$alert('机台' + plan.equip_.equip_no +
-                planSchedule.work_schedule_plan[i].classes_name +
-                '计划时间大于排班时间' + '(计划时间' + pdp_product_classes_plan[i].time + '分钟' +
-                ' 排班时间' + workSchedulePlanTimeSpan + '分钟' +
-                ')', '警告', {
-                confirmButtonText: '确定'
-              })
-            }
-          }
-        }
-        // for (i = 0; i < 3; i++) {
-        //
-        //     pdp_product_classes_plan[i].weight = pdp_product_classes_plan[i].weight.toFixed(2);
-        //     pdp_product_classes_plan[i].time = pdp_product_classes_plan[i].time.toFixed(2);
-        // }
-
-        batching_weight = batching_weight.toFixed(3)
-        production_time_interval = production_time_interval.toFixed(2)
-        // eslint-disable-next-line no-unused-vars
-        var equip = this.equipById[equipId]
-        planSumByEquipId[equipId].batching_weight = batching_weight
-        planSumByEquipId[equipId].production_time_interval = production_time_interval
-        planSumByEquipId[equipId].pdp_product_classes_plan = pdp_product_classes_plan
-      }
-    },
-    batchSave() {
-      var app = this
-      var plansForAdd_ = []
-      this.plansForAdd.forEach(function(plan) {
-        if (!plan.sum) {
-          var plan_ = JSON.parse(JSON.stringify(plan))
-          plan_.pdp_product_classes_plan = []
-          for (var i = 0; i < plan.pdp_product_classes_plan.length; i++) {
-            if (plan.pdp_product_classes_plan[i].enable) {
-              plan_.pdp_product_classes_plan.push(plan.pdp_product_classes_plan[i])
-            }
-          }
-          plansForAdd_.push(plan_)
-        }
-      })
-      if (!plansForAdd_.length) { return }
-
-      productDayPlanManyCreateUrl('post', null, { data: plansForAdd_ })
-        .then(function(response) {
-          app.addPlanVisible = false
-          app.$message('创建成功')
-          app.getList()
-        }).catch(function(error) {
-          error.forEach(function(err) {
-            if (err['pdp_product_classes_plan']) {
-              for (var i = 0; i < err['pdp_product_classes_plan'].length; i++) {
-                if (err['pdp_product_classes_plan'][i].weight) {
-                  app.$alert(err['pdp_product_classes_plan'][i].weight.join(','), '错误', {
-                    confirmButtonText: '确定'
-                  })
-                }
-              }
-            }
-            if (err['product_batching']) {
-              app.$alert('胶料配方编码是必填项。', '错误', {
-                confirmButtonText: '确定'
-              })
-            }
-          })
-        })
-    },
-    arraySpanMethod({ row, column, rowIndex, columnIndex }) {
-    },
-    sendToAu(plan) {
-      var app = this
-      productDayPlanNoticeUrl('post', plan.id).then(function(response) {
-        app.$message('发送成功')
-      }).catch(function() {
-      })
-      console.log(plan)
-    },
-    showAddPlansDialog() {
-      this.plansForAdd = []
-      this.addPlanVisible = true
-    },
-    setTimeStamp() {
+    setWorkSchedule(row, getInfo) {
+      const work_schedule_plan = JSON.parse(JSON.stringify(this.work_schedule_plan))
       const arr = []
-      this.selectDateArr.forEach((D, index) => {
-        const startD = D.split(' ')[0]
-        arr[index] = (new Date(startD.replace(/-/g, '/'))).getTime()
+      work_schedule_plan.forEach((D, index) => {
+        this.$set(arr, index, [])
+        if (getInfo.length > 0) {
+          getInfo.forEach(data => {
+            if (data.work_schedule_plan === D.id) {
+              arr[index].push({
+                work_schedule_plan: data.work_schedule_plan,
+                classes_name: data.classes_name,
+                start_time: this.setstartT(data.start_time),
+                end_time: this.setstartT(data.end_time),
+                equip: row.id,
+                equipNo: row.equip_no,
+                towIndex: index,
+                oneIndex: this.addPlanArr.length,
+                plan_trains: data.plan_trains,
+                product_batching: data.product_batching,
+                status: data.status,
+                note: data.note,
+                time: data.time,
+                plan_classes_uid: data.plan_classes_uid,
+                unit: '吨',
+                weight: data.weight
+              })
+            }
+          })
+        }
+        if (arr[index].length === 0) {
+          const newArr = work_schedule_plan[index]
+          arr[index] = [{
+            work_schedule_plan: newArr.id,
+            classes_name: newArr.classes_name,
+            start_time: this.setstartT(newArr.start_time),
+            end_time: this.setstartT(newArr.end_time),
+            equip: row.id,
+            equipNo: row.equip_no,
+            towIndex: index,
+            oneIndex: this.addPlanArr.length,
+            plan_trains: 0,
+            product_batching: '',
+            status: this._notSaved,
+            note: '',
+            time: '',
+            plan_classes_uid: setPlanClassesUid(index + 1, row.equip_no),
+            unit: '吨',
+            weight: 0
+          }]
+        } else {
+          const arrData = arr[index][0]
+          arr[index].push({
+            work_schedule_plan: arrData.work_schedule_plan,
+            classes_name: arrData.classes_name,
+            start_time: arrData.start_time,
+            end_time: arrData.end_time,
+            plan_trains: 0,
+            product_batching: '',
+            status: this._notSaved,
+            note: '',
+            time: '',
+            unit: '吨',
+            towIndex: index,
+            plan_classes_uid: setPlanClassesUid(index + 1, row.equip_no),
+            oneIndex: this.addPlanArr.length,
+            equip: row.id,
+            equipNo: row.equip_no,
+            weight: 0
+          })
+        }
       })
       return arr
     },
-    _setDateModel(date, bool) {
-      const currentDate = this.setDate(date, bool)
-      const currentStamp = (new Date(currentDate.replace(/-/g, '/'))).getTime()
-      const boolVal = this.selectDateArr.findIndex(D => D === currentStamp)
-      return boolVal > -1
+    async getEquipList() {
+      try {
+        const equipData = await equipUrl('get', { params: { all: 1 }})
+        this.equips = equipData.results
+        // this.equips.forEach(equip => {
+        //   this.equipById[equip.id] = equip
+        // })
+        // eslint-disable-next-line no-empty
+      } catch (e) { }
     },
-    setDate(_data, bool) {
-      const date = _data ? new Date(_data) : new Date()
-      const formatObj = {
-        y: date.getFullYear(),
-        m: date.getMonth() + 1,
-        d: date.getDate(),
-        h: date.getHours(),
-        i: date.getMinutes(),
-        s: date.getSeconds(),
-        a: date.getDay()
+    async getRubberMateria(equip, category) {
+      const obj = {
+        all: 1,
+        used_type: 4
       }
-      if (bool) {
-        return formatObj.y + '-' + formatObj.m + '-' + formatObj.d + ' ' +
-          formatObj.h + ':' + formatObj.i + ':' + formatObj.s
+      if (category) {
+        Object.assign(obj, { dev_type: category })
+      }
+      try {
+        const rubberMateriaData = await rubberMaterialUrl('get', null, { params: obj })
+        if (equip) {
+          this.$set(this.rubberMateriaObj, equip, rubberMateriaData.results)
+          this.loadingSelect = false
+        } else {
+          // this.productBatchings = rubberMateriaData.results
+          // rubberMateriaData.results.forEach(function(batching) {
+          //   this.productBatchingById[batching.id] = batching
+          // })
+        }
+      } catch (e) {
+        this.loadingSelect = false
+      }
+    },
+    async getWorkSchedules() {
+      try {
+        // eslint-disable-next-line object-curly-spacing
+        const workSchedulesData = await workSchedulesUrl('get', null, { params: { all: 1 } })
+        this.workSchedules = workSchedulesData.results
+        // eslint-disable-next-line no-empty
+      } catch (e) { }
+    },
+    async getPlanSchedules() {
+      try {
+        // 切换日期清空下面列表
+        this.clearAddPlanArr()
+        this.disabledEquip = true
+        this.planSchedules = []
+        this.planScheduleId = null
+        if (this.day_time) {
+          const planSchedulesData = await planScheduleUrl('get', null, {
+            params: {
+              all: 1,
+              day_time: this.day_time
+            }
+          })
+          this.planSchedules = planSchedulesData.results
+        }
+        // eslint-disable-next-line no-empty
+      } catch (e) { }
+    },
+    clearAddPlanArr() {
+      if (this.addPlanArr.length > 0) {
+        this.addPlanArr = []
+        this.equips.forEach(D => {
+          D.checkbox = false
+        })
+      }
+    },
+    focusDatePicker() {
+      if (this.addPlanArr.length === []) {
+        return
+      }
+      const addPlanArr = JSON.parse(JSON.stringify(this.addPlanArr))
+      const arrSave = []
+      addPlanArr.forEach((data, index) => {
+        data.forEach(D => {
+          D.forEach(dataChild => {
+            if (!dataChild.product_batching) return
+            arrSave.push(dataChild)
+          })
+        })
+      })
+      try {
+        arrSave.forEach(saveD => {
+          if (saveD.status === this._notSaved) {
+            this.$message({
+              message: saveD.equipNo + '机台未保存,切换会消失哦',
+              offset: 120,
+              type: 'warning'
+            })
+            throw new Error('停止')
+          }
+        })
+        // eslint-disable-next-line no-empty
+      } catch (e) { }
+    },
+    batchSaveAll() {
+      // 保存全部
+    },
+    async changeEquip(val, row) {
+      const newAddPlanArr = []
+      if (val) {
+        let work_schedule = []
+        work_schedule = await this.getInfo(row)
+        this.visibleChange(row.id, row.category)
+        this.addPlanArr.push(work_schedule)
       } else {
-        return formatObj.y + '-' + formatObj.m + '-' + formatObj.d
+        const addPlanArr = JSON.parse(JSON.stringify(this.addPlanArr))
+        const arrSave = []
+        addPlanArr.forEach((data, index) => {
+          if (data[0][0].equip === row.id) {
+            addPlanArr[index].forEach(dataChild => {
+              dataChild.forEach(D => {
+                if (!D.product_batching) return
+                arrSave.push(D)
+              })
+            })
+          } else {
+            newAddPlanArr.push(data)
+          }
+        })
+        let boolSave = true
+        arrSave.forEach(saveD => {
+          if (saveD.status === this._notSaved) {
+            boolSave = false
+            return
+          }
+        })
+        if (!boolSave) {
+          this.$confirm(
+            row.equip_no + '机台未保存，是否继续操作？',
+            '提示',
+            {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }
+          ).then(() => {
+            this.addPlanArr = addPlanArr.filter(D => D[0][0].equip !== row.id)
+            row.checkbox = false
+          })
+          return
+        }
+        row.checkbox = false
+        newAddPlanArr.forEach((D, i) => {
+          D.forEach(data => {
+            data.forEach(childData => {
+              childData.oneIndex = i
+            })
+          })
+        })
+        this.addPlanArr = newAddPlanArr
+      }
+    },
+    setstartT(time) {
+      if (!time) return ''
+      return time.split(' ')[1]
+    },
+    clickEquip() {
+      if (this.disabledEquip) {
+        this.$message.info('请先选择时间和倒班规则')
+      }
+    },
+    async singleSavePlan(index, item) {
+      try {
+        const addPlanArr = JSON.parse(JSON.stringify(this.addPlanArr[index]))
+        let addPlanObj = []
+        let boolStr = false
+
+        addPlanArr.forEach(data => {
+          // D.forEach(data => {
+          data.forEach((child, i) => {
+            if (!child.product_batching) {
+              return
+            } else {
+              if (child.product_batching && !child.plan_trains) {
+                boolStr = child.equipNo + child.classes_name + '第' + (i + 1) + '条'
+                this.$message({
+                  message: boolStr + ' ' + '车次必填哦',
+                  offset: 150,
+                  type: 'warning'
+                })
+                throw new Error('停止')
+              }
+            }
+            child.sn = i + 1
+            addPlanObj.push(child)
+          })
+          // })
+        })
+        if (boolStr) {
+          return
+        } else if (addPlanObj.length === 0) {
+          // this.$message({
+          //   message: '请勿保存空哦',
+          //   offset: 130,
+          //   type: 'warning'
+          // })
+          addPlanObj = {
+            equip: item[0][0].equip,
+            work_schedule_plan: item[0][0].work_schedule_plan
+          }
+          // return
+        }
+        // console.log(JSON.stringify(addPlanObj), 7777)
+        // return
+        this.loading = true
+        const data = await productClassesPlanPanycreateUrl('post', null, { data: addPlanObj })
+        this.loading = false
+        this.$message.success(data)
+
+        // console.log(this.addPlanArr, 8888)
+        // 保存成功后把新建未保存的 全部换成新建已经保存
+        this.addPlanArr.forEach(D => {
+          D.forEach(data => {
+            data.forEach(childData => {
+              if (childData.product_batching && childData.status === this._notSaved) {
+                childData.status = this._saved
+              }
+            })
+          })
+        })
+
+        // eslint-disable-next-line no-empty
+      } catch (e) {
+        this.loading = false
+      }
+    },
+    objectSpanMethod({ row, column, rowIndex, columnIndex }) {
+      if (!this.addPlanArr[row.oneIndex] || !this.addPlanArr[row.oneIndex][row.towIndex]) return
+      const allLength = this.addPlanArr[row.oneIndex][row.towIndex].length
+      if (columnIndex === 0) {
+        if (rowIndex === 0) {
+          return {
+            rowspan: allLength,
+            colspan: 1
+          }
+        } else {
+          return {
+            rowspan: 0,
+            colspan: 0
+          }
+        }
+      }
+    },
+    tableRowClassName({ row, rowIndex }) {
+      switch (row.status) {
+        case '等待':
+          return 'wait-row'
+        case '已保存':
+          return 'saved-row'
+        case '已下达':
+          return 'issued-row'
+        case '运行中':
+          return 'operation-row'
+        case '完成':
+          return 'complete-row'
+        default:
+          return ''
+      }
+    },
+    visibleChange(equip, category) {
+      if (this.rubberMateriaObj[equip]) return
+      this.loadingSelect = true
+      this.getRubberMateria(equip, category)
+    },
+    productBatchingChanged(val, planForAdd, arr, tableItem, currentIndex) {
+      let obj = []
+      obj = (arr.filter(D => D.id === val))[0]
+      const weight = Number(obj.batching_weight) * (Number(planForAdd.plan_trains) || 1)
+      planForAdd['weight'] = Math.ceil(weight * 100) / 100
+      planForAdd['unit'] = '吨'
+
+      const time = Number(obj.production_time_interval) * (Number(planForAdd.plan_trains) || 1)
+      planForAdd['time'] = Math.ceil(time * 100) / 100
+
+      if (tableItem.length - 1 === currentIndex && planForAdd.product_batching) {
+        // 处于最后一行
+        const baseData = JSON.parse(JSON.stringify(planForAdd))
+        baseData.product_batching = ''
+        baseData.time = 0
+        baseData.weight = 0
+        baseData.note = ''
+        baseData.status = this._notSaved
+        baseData.plan_trains = 0
+        baseData.plan_classes_uid = setPlanClassesUid(currentIndex + 2, planForAdd.equipNo)
+        tableItem.push(baseData)
+      }
+    },
+    async addOnePlan() {
+      // 获取排班
+      try {
+        // 切换日期清空下面列表
+        this.clearAddPlanArr()
+
+        const planSchedule = await planScheduleUrl('get', this.planScheduleId)
+        if (!planSchedule || !planSchedule.work_schedule_plan.length) {
+          this.$alert(planSchedule.work_schedule_name + '无排班', '错误', {
+            confirmButtonText: '确定'
+          })
+        } else {
+          this.work_schedule_plan = planSchedule.work_schedule_plan || []
+          this.disabledEquip = false
+        }
+        // eslint-disable-next-line no-empty
+      } catch (e) {
+      }
+    },
+    planTrainsChangedWh(row, index, tableItem) {
+      if (!row.batching_weight) {
+        const obj = this.rubberMateriaObj[row.equip].filter(D =>
+          D.id === row.product_batching
+        )
+        row.batching_weight = obj[0].batching_weight || 0
+        row.production_time_interval = obj[0].production_time_interval || 0
+      }
+      // console.log(row.batching_weight, 88888)
+      const weight = Number(row.batching_weight || 0) * Number(row.plan_trains)
+      row['weight'] = Math.ceil(weight * 100) / 100
+      if (row['weight'] > 100000) {
+        this.$message('车次过大')
+        row['plan_trains'] = 1
+      }
+      const time = Number(row.production_time_interval || 0) * Number(row.plan_trains)
+      row['time'] = Math.ceil(time * 100) / 100
+    },
+    handleGroupDelete(index, tableItem, row) {
+      if (tableItem.length === 1) {
+        this.$message.warning('最少保留一行')
+        return
+      }
+      this.$confirm(
+        '是否删除?',
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      ).then(() => {
+        tableItem.splice(index, 1)
+      })
+    },
+    moveUp(index, row, tableItem) {
+      if (index === 0) {
+        this.$message({
+          message: '处于顶端，不能继续上移',
+          type: 'warning'
+        })
+      } else {
+        const upDate = tableItem[index - 1]
+        tableItem.splice(index - 1, 1)
+        tableItem.splice(index, 0, upDate)
+      }
+    },
+    moveDown(index, row, tableItem) {
+      var that = this
+      if (index + 1 === tableItem.length) {
+        that.$message({
+          message: '处于末端，不能继续下移',
+          type: 'warning'
+        })
+      } else {
+        const downDate = tableItem[index + 1]
+        tableItem.splice(index + 1, 1)
+        tableItem.splice(index, 0, downDate)
+      }
+    },
+    setDisabledFun(index, row, tableItem, bool) {
+      const notSaved = this._notSaved
+      const wait = this._wait
+      const saved = this._saved
+      if (row.status === notSaved || row.status === wait || row.status === saved) {
+        if (index === tableItem.length - 2 && bool) {
+          return false
+        }
+        if (index === tableItem.length - 1) {
+          return true
+        }
+        if (tableItem[index - 1]) {
+          // 上一个
+          if (tableItem[index - 1].status !== notSaved && tableItem[index - 1].status !== wait && tableItem[index - 1].status !== saved) {
+            return true
+          }
+          if (!tableItem[index - 1].product_batching) {
+            // 上一个没有选择胶料不让移动
+            return true
+          }
+        }
+        if (tableItem[index + 1]) {
+          // 下一个
+          if (tableItem[index + 1].status !== notSaved && tableItem[index + 1].status !== wait && tableItem[index + 1].status !== saved) {
+            return true
+          }
+          if (!tableItem[index + 1].product_batching) {
+            // 下一个没有选择胶料不让移动
+            return true
+          }
+        }
+        return false
+      } else {
+        return true
       }
     }
   }
+}
 
+function setPlanClassesUid(index, equip_no) {
+  return setDate(null, false, 'continuation') + zeroFilling(index) + equip_no
+}
+function zeroFilling(n) {
+  n = Number(n)
+  if (n > 99) {
+    return 1
+  }
+  return n < 10 ? '0' + n : n
 }
 </script>
+<style lang="scss">
+  .dialogPlanAdd{
+    display: flex;
+    min-width: 800px;
+    .el-input-number__decrease,
+    .el-input-number__increase{
+      display: none;
+    }
+    .el-input-number--small{
+      width:50px;
+    }
+    .el-button+.el-button{
+      margin-left: 0px;
+    }
+    .el-input-number--small .el-input__inner{
+      padding-left: 0;
+      padding-right: 0;
+    }
+    .leftEquip{
+      margin-top:70px;
+      margin-right:20px;
+      .el-checkbox{
+        display: block;
+        padding: 0 0 10px 0;
+      }
+    }
+    .rightContent{
+      flex:1
+    }
+    .tableTop{
+      display: flex;
+      align-items: center;
+          border: 1px solid #EBEEF5;
+          border-bottom: none;
+          margin-top:30px;
+          margin-right:20px;
+      .tableTopLeft{
+        flex:1;
+        text-align: center;
+      }
+      .tableTopright{
 
-<style>
-
+      }
+    }
+    .addPlanArrBox{
+      width:48%;
+      .el-table td, .el-table th{
+        padding: 5px 0;
+      }
+    }
+    .setFlex{
+      display: flex;
+      flex-wrap:wrap;
+      min-height: 100px;
+    }
+    .wait-row{
+       color: rgb(245, 112, 59) !important;
+    }
+    .saved-row{
+       color: rgb(236,128,141) !important;
+    }
+    .issued-row{
+       color: rgb(2 ,167 ,240) !important;
+    }
+    .operation-row{
+       color: rgb(83, 131, 11) !important;
+    }
+    .complete-row{
+       color: rgb(132,0,255) !important;
+    }
+  }
 </style>

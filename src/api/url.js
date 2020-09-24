@@ -77,5 +77,12 @@ export default {
   // 生成计划管理---原材料需求量
   MaterialQuantityDemandedUrl: '/api/v1/plan/materia-quantity-demande/',
 
-  ProductDayPlanNoticeUrl: '/api/v1/plan/product-day-plan-notice/?product_day_id:'
+  ProductDayPlanNoticeUrl: '/api/v1/plan/product-day-plan-notice/?product_day_id:',
+
+  // 新增计划的展示
+  ProductClassesPlanUrl: '/api/v1/plan/product-classes-plan-list/',
+  // 新增计划保存
+  ProductClassesPlanPanycreateUrl: '/api/v1/plan/product-classes-plan-manycreate/',
+  // 计划下达到上辅机
+  ProductDayPlanNotice: '/api/v1/plan/product-day-plan-notice/'
 }

@@ -123,21 +123,29 @@ export function param2Obj(url) {
  * @param {boolean} bool
  * @returns {string}
  */
-export function setDate(_data, bool) {
+export function setDate(_data, bool, type) {
   const date = _data ? new Date(_data) : new Date()
   const formatObj = {
     y: date.getFullYear(),
-    m: date.getMonth() + 1,
-    d: date.getDate(),
-    h: date.getHours(),
-    i: date.getMinutes(),
-    s: date.getSeconds(),
-    a: date.getDay()
+    m: zeroFilling(date.getMonth() + 1),
+    d: zeroFilling(date.getDate()),
+    h: zeroFilling(date.getHours()),
+    i: zeroFilling(date.getMinutes()),
+    s: zeroFilling(date.getSeconds()),
+    a: zeroFilling(date.getDay())
   }
   if (bool) {
     return formatObj.y + '-' + formatObj.m + '-' + formatObj.d + ' ' +
       formatObj.h + ':' + formatObj.i + ':' + formatObj.s
+  } else if (type && type === 'continuation') {
+    return formatObj.y + formatObj.m + formatObj.d +
+      formatObj.h + formatObj.i + formatObj.s
   } else {
     return formatObj.y + '-' + formatObj.m + '-' + formatObj.d
   }
+}
+
+function zeroFilling(n) {
+  n = Number(n)
+  return n < 10 ? '0' + n : n
 }

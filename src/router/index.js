@@ -229,6 +229,15 @@ export const asyncRoutes = [{
     }
   },
   {
+    path: 'rubber/schedule/daily/plan/release',
+    name: 'rubber-schedule-daily-plan-release',
+    component: () => import('@/views/rubber_schedule_daily_plan/release'),
+    meta: {
+      title: '排产胶料日计划下达'
+      // permissionName: 'productdayplan'
+    }
+  },
+  {
     path: 'material/requisitions/plan',
     name: 'material-requisitions-plan',
     component: () => import('@/views/plan/material-requisitions-plan/index'),

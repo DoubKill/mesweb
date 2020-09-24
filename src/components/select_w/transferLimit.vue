@@ -61,12 +61,12 @@ export default {
   },
   watch: {
     groupId() {
-      // this.permissionsData.forEach(data => {
-      //   data.permissions.forEach(D => {
-      //     D.checkedCities = []
-      //   })
-      //   data.checkAll = false
-      // })
+      this.permissionsData.forEach(data => {
+        data.permissions.forEach(D => {
+          D.checkedCities = []
+        })
+        data.checkAll = false
+      })
       this.getPermissions()
     }
   },

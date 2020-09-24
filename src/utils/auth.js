@@ -1,7 +1,7 @@
 import Cookies from 'js-cookie'
 // 登录凭证处理
 
-const TokenKey = 'vue_admin_template_token'
+const TokenKey = 'vue_admin_template_token_mes'
 
 export function getToken() {
   return Cookies.get(TokenKey)
