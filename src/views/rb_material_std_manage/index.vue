@@ -1446,11 +1446,11 @@ export default {
         await this.validate_versions_list({
           params: {
             factory: this.rubberMaterialForm['factory'],
-            site: this.rubberMaterialForm['SITE'],
-            product_info: this.rubberMaterialForm['select_product_id'],
-            versions: this.rubberMaterialForm['version'],
-            stage: this.rubberMaterialForm['stage'],
-            stage_product_batch_no: this.rubberMaterialForm['generate_material_no']
+            site: this.normalReceipe ? this.rubberMaterialForm['SITE'] : null,
+            product_info: this.normalReceipe ? this.rubberMaterialForm['select_product_id'] : null,
+            versions: this.normalReceipe ? this.rubberMaterialForm['version'] : null,
+            stage: this.normalReceipe ? this.rubberMaterialForm['stage'] : null,
+            stage_product_batch_no: this.normalReceipe ? null : this.rubberMaterialForm['generate_material_no']
           }
         })
         await this.rubber_material_post(

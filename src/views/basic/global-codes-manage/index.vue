@@ -6,9 +6,7 @@
           <el-form-item label="类型名称">
             <el-input v-model="type_name" @input="typeNameChanged" />
           </el-form-item>
-          <el-form-item
-            style="float: right"
-          >
+          <el-form-item>
             <el-button
               v-if="permissionObj.globalcodetype.indexOf('add')>-1"
               @click="showCreateGlobalCodeTypeDialog"
@@ -499,6 +497,7 @@ export default {
       return flag ? 'Y' : 'N'
     },
     currentChange(page) {
+      this.currentPage = page
       this.getParams.page = page
       this.getGlobalTypesList()
     }
