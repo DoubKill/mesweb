@@ -79,8 +79,12 @@ service.interceptors.response.use(
       let str = ''
       let row = 0
       error.response.data.forEach(errorData => {
-        if (errorData && Object.prototype.hasOwnProperty.call(errorData, 'non_field_errors')) {
-          str += (`${row++} : ${errorData.non_field_errors.join(',')}\n`)
+        let obj = {}
+        if (errorData) {
+          obj = JSON.parse(errorData)
+        }
+        if (Object.prototype.hasOwnProperty.call(obj, 'non_field_errors')) {
+          str += (`${row++} : ${obj.non_field_errors.join(',')}\n`)
         } else {
           str += JSON.stringify(errorData)
         }

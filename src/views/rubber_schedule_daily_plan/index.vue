@@ -167,9 +167,7 @@
                   {{ scope.row.status }}
                 </template>
               </el-table-column>
-              <el-table-column
-                label="炼胶时间"
-              >
+              <el-table-column label="炼胶时间">
                 <template slot-scope="scope">
                   {{ Number(scope.row.time) || '0' }}
                 </template>
@@ -209,7 +207,7 @@
                 </template>
               </el-table-column>
             </el-table>
-            <!-- <div>合计：车次250</div> -->
+            <div class="total_style">合计：车次-{{ setTrainTotal(tableItem) }}</div>
           </div>
         </div>
       </div>
@@ -369,9 +367,6 @@ export default {
       try {
         const equipData = await equipUrl('get', { params: { all: 1 }})
         this.equips = equipData.results
-        // this.equips.forEach(equip => {
-        //   this.equipById[equip.id] = equip
-        // })
         // eslint-disable-next-line no-empty
       } catch (e) { }
     },
@@ -678,10 +673,9 @@ export default {
         const obj = this.rubberMateriaObj[row.equip].filter(D =>
           D.id === row.product_batching
         )
-        row.batching_weight = obj[0].batching_weight || 0
-        row.production_time_interval = obj[0].production_time_interval || 0
+        row.batching_weight = obj[0] ? obj[0].batching_weight : 0
+        row.production_time_interval = obj[0] ? obj[0].production_time_interval : 0
       }
-      // console.log(row.batching_weight, 88888)
       const weight = Number(row.batching_weight || 0) * Number(row.plan_trains)
       row['weight'] = Math.ceil(weight * 100) / 100
       if (row['weight'] > 100000) {
@@ -768,6 +762,13 @@ export default {
       } else {
         return true
       }
+    },
+    setTrainTotal(tableItem) {
+      let Total = 0
+      tableItem.forEach(D => {
+        Total += Number(D.plan_trains)
+      })
+      return Total
     }
   }
 }
@@ -834,6 +835,16 @@ function zeroFilling(n) {
       display: flex;
       flex-wrap:wrap;
       min-height: 100px;
+    }
+    .total_style{
+      width:100%;
+      background-color: #F5F7FA;
+      color: #606266;
+      padding: 5px 0;
+      font-size: 14px;
+      padding-left:12px;
+      line-height:23px;
+      border: 1px solid #EBEEF5;
     }
     .wait-row{
        color: rgb(209, 206, 37) !important;
