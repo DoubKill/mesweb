@@ -1,5 +1,26 @@
 <template>
   <div v-loading="loading">
+    <el-form :inline="true">
+      <el-form-item
+        label="日期"
+        :label-width="formLabelWidth"
+      >
+        <el-date-picker
+          v-model="getParams.day_time"
+          style="width: 100%"
+          type="date"
+          value-format="yyyy-MM-dd"
+          placeholder="选择日期"
+          @change="getParamsChanged"
+        />
+      </el-form-item>
+      <el-form-item label="倒班名称">
+        <el-input
+          v-model="getParams.work_schedule__schedule_name"
+          @input="getParamsChanged"
+        />
+      </el-form-item>
+    </el-form>
     <el-table
       :data="tableData"
       border
@@ -82,7 +103,11 @@ export default {
   data() {
     return {
       tableData: [],
-      getParams: { page: 1 },
+      getParams: {
+        page: 1,
+        work_schedule__schedule_name: '',
+        day_time: ''
+      },
       total: 0,
       loading: true
     }
@@ -104,6 +129,10 @@ export default {
         app.loading = false
         // this.$message.error(error)
       })
+    },
+    getParamsChanged() {
+      this.getParams.page = 1
+      this.getList()
     },
     currentChange(page) {
       this.getParams.page = page
