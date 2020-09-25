@@ -94,7 +94,7 @@
         align="center"
         width="160%"
         prop="stage_product_batch_no"
-        label="胶料配方编号"
+        label="胶料配方编码"
       >
         <template slot-scope="scope">
           <el-button type="text" @click="showGridTable(scope.row.id)">{{ scope.row.stage_product_batch_no }}</el-button>
@@ -103,7 +103,7 @@
       <el-table-column
         align="center"
         prop="product_name"
-        label="胶料编码"
+        label="胶料名称"
       />
       <el-table-column
         align="center"
@@ -1265,21 +1265,25 @@ export default {
       } catch (e) { throw new Error(e) }
     },
     async send_auxiliary_post(obj) {
-      try {
-        await send_auxiliary_url('post', obj)
-        this.$message('发送至上辅机成功')
-        this.rubber_material_list()
-      } catch (e) { throw new Error(e) }
+      // try {
+      await send_auxiliary_url('post', obj)
+      this.$message('发送至上辅机成功')
+      this.rubber_material_list()
+      // } catch (e) { throw new Error(e) }
     },
     send_auxiliary: async function(row) {
-      await this.send_auxiliary_post(
-        {
-          params: {
-            'product_batching_id': row['id'],
-            'product_no': row['stage_product_batch_no']
-          }
+      send_auxiliary_url('post', {
+        params: {
+          'product_batching_id': row['id'],
+          'product_no': row['stage_product_batch_no']
         }
-      )
+      }).then(response => {
+        this.$message('发送至上辅机成功')
+        this.rubber_material_list()
+      // eslint-disable-next-line handle-callback-err
+      }).catch(error => {
+
+      })
     },
     usedTypeFormatter: function(row, column) {
       return this.usedTypeChoice(row.used_type)

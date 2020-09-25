@@ -88,7 +88,7 @@ service.interceptors.response.use(
           }
         }
         if (errorData && Object.prototype.hasOwnProperty.call(obj, 'non_field_errors')) {
-          str += (`${row++} : ${obj.non_field_errors.join(',')}\n`)
+          str += (`${obj.non_field_errors.join(',')}\n`)
         } else {
           str += errorData
         }
