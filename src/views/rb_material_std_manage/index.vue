@@ -141,6 +141,11 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
+              v-if="scope.row.used_type === 5 && permissionObj.productbatching.indexOf('edit')>-1"
+              size="mini"
+              @click="status_true(scope.row)"
+            >编辑</el-button>
+            <el-button
               v-if="scope.row.used_type === 1 && permissionObj.productbatching.indexOf('submit')>-1"
               size="mini"
               @click="status_true(scope.row)"
@@ -156,12 +161,12 @@
               @click="status_true(scope.row)"
             >启用</el-button>
             <el-button
-              v-if="(scope.row.used_type === 2 | scope.row.used_type === 3) && permissionObj.productbatching.indexOf('refuse')>-1"
+              v-if="(scope.row.used_type === 2 && permissionObj.productbatching.indexOf('check')>-1) | (scope.row.used_type === 3 && permissionObj.productbatching.indexOf('use')>-1)"
               size="mini"
               @click="status_false(scope.row)"
             >驳回</el-button>
             <el-button
-              v-if="scope.row.used_type === 4 && permissionObj.productbatching.indexOf('abandon')>-1"
+              v-if="(scope.row.used_type === 5 && permissionObj.productbatching.indexOf('edit')>-1) | (scope.row.used_type === 4 && permissionObj.productbatching.indexOf('abandon')>-1)"
               size="mini"
               @click="status_false(scope.row)"
             >废弃</el-button>
@@ -1300,7 +1305,7 @@ export default {
               'versions': this.normalReceipe ? this.rubberMaterialForm['version'] : null,
               'dev_type': app.select_dev_type,
               'batching_details': batching_details_list,
-              'production_time_interval': app.select_rm_time_interval 
+              'production_time_interval': app.select_rm_time_interval
             }
           }
         )
