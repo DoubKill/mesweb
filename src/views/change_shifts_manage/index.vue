@@ -41,7 +41,7 @@
         </el-table-column>
         <el-table-column label="总时间">
           <template slot-scope="scope">
-            {{ getTimeCell(scope.row,class_.global_no,'sum') }}
+            {{ getSum(scope.row, class_.global_no) }}
           </template>
         </el-table-column>
       </el-table-column>
@@ -244,7 +244,7 @@
 </template>
 
 <script>
-// import dayjs from 'dayjs'
+import dayjs from 'dayjs'
 import { globalCodesUrl, workSchedulesUrl } from '@/api/base_w'
 import pagination from '@/components/page'
 import commonVal from '@/utils/common'
@@ -491,6 +491,28 @@ export default {
       })
       if (classesdetail) {
         return classesdetail[key]
+      }
+    },
+    getSum(row, global_no) {
+      console.log(row, global_no)
+      const obj = row.classesdetail_set.filter(D => Number(D.classes) === Number(global_no))
+      console.log(obj, 'obj')
+      if (obj[0]) {
+        var start_time_set = obj[0].start_time.split(':')
+        var end_time_set = obj[0].end_time.split(':')
+        var start_time = dayjs()
+          .set('hour', start_time_set[0])
+          .set('minute', start_time_set[1])
+          .set('second', start_time_set[2])
+        var end_time = dayjs()
+          .set('hour', end_time_set[0])
+          .set('minute', end_time_set[1])
+          .set('second', end_time_set[2])
+        var diff_minute = end_time.diff(start_time, 'minute')
+        if (diff_minute < 0) {
+          diff_minute = -diff_minute
+        }
+        return (diff_minute / 60).toFixed(2)
       }
     },
     getTimeCell(row, global_no, params) {
