@@ -233,8 +233,8 @@ export const asyncRoutes = [{
     name: 'rubber-schedule-daily-plan-release',
     component: () => import('@/views/rubber_schedule_daily_plan/release'),
     meta: {
-      title: '排产胶料日计划下达'
-      // permissionName: 'productdayplan'
+      title: '排产胶料日计划下达',
+      permissionName: 'productdayplan'
     }
   },
   {
