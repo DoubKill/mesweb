@@ -841,12 +841,20 @@
       />
       <br><br>
       炼胶机类型:
-      <el-input
+      <el-select
         v-model="put_select_dev_type"
         size="mini"
         :disabled="true"
-        style="width: 10%"
-      />
+        clearable
+        placeholder="请选择"
+      >
+        <el-option
+          v-for="item in DevTypeOptions"
+          :key="item.id"
+          :label="item.category_name"
+          :value="item.id"
+        />
+      </el-select>
       配料重量:
       <el-input
         v-model="put_select_material_weight"
