@@ -26,11 +26,6 @@
         >
           {{ item.equip_no }}
         </el-checkbox>
-        <span
-          v-if="item.checkbox"
-          style="position:absolute;top:0;left:0;width:100%;height:100%;background:transparent;z-index:5"
-          @click="changeEquip(false,item)"
-        />
       </div>
       <!-- </el-checkbox-group> -->
     </div>
@@ -93,10 +88,12 @@
                   slot-scope="scope"
                 >
                   <el-button
+                    v-if="permissionArr.indexOf('send')>-1"
+                    :disabled="releaseDisabled"
                     type="primary"
                     size="mini"
                     class="tableTopright"
-                    @click="releasePlan(scope.$index,tableItem)"
+                    @click="releasePlan(scope.$index,tableItem,i)"
                   >下 达</el-button>
                 </template>
                 <template slot-scope="scope">
@@ -163,7 +160,7 @@ import {
   productDayPlanNotice
 } from '@/api/base_w'
 // import { textData } from './textData'
-// import { setDate } from '@/utils'
+import { setDate } from '@/utils'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -191,16 +188,20 @@ export default {
       loadingSelect: true,
       baseDefaultData: {},
       loading: false,
-      addPlanArrLoading: false
+      addPlanArrLoading: false,
+      releaseDisabled: false
     }
   },
   computed: {
     ...mapGetters(['permission'])
   },
   created() {
-    this.permissionArr = this.permission.productbatching
+    this.permissionArr = this.permission.productdayplan
     this.getEquipList()
     this.getWorkSchedules()
+
+    this.day_time = setDate(null, false)
+    this.getPlanSchedules()
   },
   methods: {
     setStatus(status) {
@@ -314,6 +315,7 @@ export default {
         this.disabledEquip = true
         this.planSchedules = []
         this.planScheduleId = null
+
         if (this.day_time) {
           const planSchedulesData = await planScheduleUrl('get', null, {
             params: {
@@ -322,6 +324,10 @@ export default {
             }
           })
           this.planSchedules = planSchedulesData.results
+          this.planScheduleId = this.planSchedules.length > 0 ? this.planSchedules[0].id : ''
+          if (this.planScheduleId) {
+            this.addOnePlan()
+          }
         }
         // eslint-disable-next-line no-empty
       } catch (e) { }
@@ -339,7 +345,6 @@ export default {
       if (val) {
         let work_schedule = []
         work_schedule = await this.getInfo(row)
-        // this.visibleChange(row.id, row.category)
         this.addPlanArr.push(work_schedule)
       } else {
         const addPlanArr = JSON.parse(JSON.stringify(this.addPlanArr))
@@ -368,18 +373,29 @@ export default {
         this.$message.info('请先选择时间和倒班规则')
       }
     },
-    async releasePlan(index, tableItem) {
-      console.log(tableItem[index], 'row')
+    async releasePlan(index, tableItem, i) {
+      const bool = tableItem.some(D => D.status === '已保存' || D.status === '等待')
+      if (!bool) {
+        this.$message.info('暂无可下达的机台哦！')
+        return
+      }
       try {
-        await productDayPlanNotice('post', null, {
+        this.releaseDisabled = true
+        const data = await productDayPlanNotice('post', null, {
           data: {
             equip: tableItem[index].equip,
             work_schedule_plan: tableItem[index].work_schedule_plan
           }
         })
-        this.$set(tableItem, index, '等待')
+        this.$message.success(data)
+        this.addPlanArr[i][index].forEach(D => {
+          D.status = '等待'
+        })
+        this.releaseDisabled = false
         // eslint-disable-next-line no-empty
-      } catch (e) { }
+      } catch (e) {
+        this.releaseDisabled = false
+      }
     },
     objectSpanMethod({ row, column, rowIndex, columnIndex }) {
       if (!this.addPlanArr[row.oneIndex] || !this.addPlanArr[row.oneIndex][row.towIndex]) return
@@ -428,6 +444,17 @@ export default {
         } else {
           this.work_schedule_plan = planSchedule.work_schedule_plan || []
           this.disabledEquip = false
+
+          if (this.day_time === setDate(null, false)) {
+            // 切换的日期等于当前时间默认6号机台
+            const arr = this.equips.filter(D => {
+              if (Number(D.id) === 6) {
+                D.checkbox = true
+              }
+              return Number(D.id) === 6
+            })
+            this.changeEquip(true, arr[0])
+          }
         }
         // eslint-disable-next-line no-empty
       } catch (e) {
@@ -477,9 +504,6 @@ export default {
         text-align: center;
         line-height: 40px;
       }
-      .tableTopright{
-
-      }
     }
     .addPlanArrBox{
       width:48%;
@@ -493,7 +517,7 @@ export default {
       min-height: 100px;
     }
     .wait-row{
-       color: rgb(206, 188, 27) !important;
+       color: rgb(209, 206, 37) !important;
     }
     .saved-row{
        color: rgb(236,128,141) !important;

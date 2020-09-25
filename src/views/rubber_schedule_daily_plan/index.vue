@@ -263,7 +263,7 @@ export default {
     ...mapGetters(['permission'])
   },
   created() {
-    this.permissionArr = this.permission.productbatching
+    this.permissionArr = this.permission.productdayplan
     this.getEquipList()
     this.getWorkSchedules()
   },
@@ -452,7 +452,7 @@ export default {
           if (saveD.status === this._notSaved) {
             this.$message({
               message: saveD.equipNo + '机台未保存,切换会消失哦',
-              offset: 120,
+              offset: 50,
               type: 'warning'
             })
             throw new Error('停止')
@@ -544,7 +544,7 @@ export default {
                 boolStr = child.equipNo + child.classes_name + '第' + (i + 1) + '条'
                 this.$message({
                   message: boolStr + ' ' + '车次必填哦',
-                  offset: 150,
+                  offset: 50,
                   type: 'warning'
                 })
                 throw new Error('停止')
@@ -823,9 +823,6 @@ function zeroFilling(n) {
         flex:1;
         text-align: center;
       }
-      .tableTopright{
-
-      }
     }
     .addPlanArrBox{
       width:48%;
@@ -839,7 +836,7 @@ function zeroFilling(n) {
       min-height: 100px;
     }
     .wait-row{
-       color: rgb(245, 112, 59) !important;
+       color: rgb(209, 206, 37) !important;
     }
     .saved-row{
        color: rgb(236,128,141) !important;

@@ -837,9 +837,9 @@ export default {
       DevTypeOptions: [],
       RawMaterialOptions: [],
       NewRowMaterial: [{
-        sn_ele: null,
         material_type: null,
         material_name: null,
+        auto_flag_radio: 0,
         practical_weight: null,
         standard_error: null
       }
@@ -1236,10 +1236,9 @@ export default {
     },
     insert_NewPracticalWeightChanged: function() {
       this.NewRowMaterial.push({
-        sn: '',
         material_type: '',
-        auto_flag_radio: 0,
-        material_name: ''
+        material_name: '',
+        auto_flag_radio: 0
         // practical_weight:"",
         // standard_error: ''
       })
@@ -1387,6 +1386,7 @@ export default {
       app.put_select_rm_time_interval = rubber_material_result['production_time_interval']
       app.put_practicalWeightSum = rubber_material_result['batching_weight']
       app.PutProductRecipe = rubber_material_result.batching_details
+      app.raw_material_index = null
     },
     pop_up_raw_material: function(new_material_ele, index) {
       // eslint-disable-next-line no-prototype-builtins
@@ -1404,8 +1404,8 @@ export default {
       // console.log('================================================111')
       // console.log(row.id)
       // console.log(app.raw_material_index)
-      // console.log(app.NewRowMaterial)
-      // console.log(app.PutProductRecipe)
+      // console.log(app.NewRowMaterial, 'NewRowMaterial')
+      // console.log(app.PutProductRecipe, 'PutProductRecipe')
       // console.log('================================================111')
       if (app.raw_material_index != null) {
         // 胶料配料post
