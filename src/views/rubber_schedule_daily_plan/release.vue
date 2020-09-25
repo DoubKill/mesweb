@@ -93,7 +93,7 @@
                     type="primary"
                     size="mini"
                     class="tableTopright"
-                    @click="releasePlan(scope.$index,tableItem,i)"
+                    @click="releasePlan(scope.$index,tableItem,index,i)"
                   >下 达</el-button>
                 </template>
                 <template slot-scope="scope">
@@ -141,7 +141,7 @@
                 </template>
               </el-table-column>
             </el-table>
-            <!-- <div>合计：车次250</div> -->
+            <div class="total_style">合计：车次-{{ setTrainTotal(tableItem) }}</div>
           </div>
         </div>
       </div>
@@ -373,10 +373,10 @@ export default {
         this.$message.info('请先选择时间和倒班规则')
       }
     },
-    async releasePlan(index, tableItem, i) {
-      const bool = tableItem.some(D => D.status === '已保存' || D.status === '等待')
+    async releasePlan(index, tableItem, oneIndex, towIndex) {
+      const bool = tableItem.some(D => (D.status === '已保存' || D.status === '等待'))
       if (!bool) {
-        this.$message.info('暂无可下达的机台哦！')
+        this.$message.info('暂无可下达的计划！')
         return
       }
       try {
@@ -388,7 +388,7 @@ export default {
           }
         })
         this.$message.success(data)
-        this.addPlanArr[i][index].forEach(D => {
+        this.addPlanArr[oneIndex][towIndex].forEach(D => {
           D.status = '等待'
         })
         this.releaseDisabled = false
@@ -429,6 +429,13 @@ export default {
         default:
           return ''
       }
+    },
+    setTrainTotal(tableItem) {
+      let Total = 0
+      tableItem.forEach(D => {
+        Total += Number(D.plan_trains)
+      })
+      return Total || 0
     },
     async addOnePlan() {
       // 获取排班
@@ -515,6 +522,16 @@ export default {
       display: flex;
       flex-wrap:wrap;
       min-height: 100px;
+    }
+    .total_style{
+      width:100%;
+      background-color: #F5F7FA;
+      color: #606266;
+      padding: 5px 0;
+      font-size: 14px;
+      padding-left:12px;
+      line-height:23px;
+      border: 1px solid #EBEEF5;
     }
     .wait-row{
        color: rgb(209, 206, 37) !important;
