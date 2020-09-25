@@ -141,7 +141,7 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
-              v-if="scope.row.used_type === 5 && permissionObj.productbatching.indexOf('edit')>-1"
+              v-if="scope.row.used_type === 5 && permissionObj.productbatching.indexOf('abandon')>-1"
               size="mini"
               @click="status_true(scope.row)"
             >编辑</el-button>
@@ -166,7 +166,7 @@
               @click="status_false(scope.row)"
             >驳回</el-button>
             <el-button
-              v-if="(scope.row.used_type === 5 && permissionObj.productbatching.indexOf('edit')>-1) | (scope.row.used_type === 4 && permissionObj.productbatching.indexOf('abandon')>-1)"
+              v-if="(scope.row.used_type === 5 && permissionObj.productbatching.indexOf('abandon')>-1) | (scope.row.used_type === 4 && permissionObj.productbatching.indexOf('abandon')>-1)"
               size="mini"
               @click="status_false(scope.row)"
             >废弃</el-button>
