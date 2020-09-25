@@ -277,7 +277,7 @@ export default {
     async getEquipList() {
       try {
         // eslint-disable-next-line object-curly-spacing
-        const equipData = await equipUrl('get', { params: { all: 1 } })
+        const equipData = await equipUrl('get', { params: { all: 1, category_name: '密炼设备' } })
         this.equips = equipData.results
         // eslint-disable-next-line no-empty
       } catch (e) { }
@@ -510,6 +510,8 @@ export default {
         flex:1;
         text-align: center;
         line-height: 40px;
+        background: #0bbd0b;
+        color:#fff;
       }
     }
     .addPlanArrBox{

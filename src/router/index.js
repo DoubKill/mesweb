@@ -39,26 +39,26 @@ export const constantRoutes = [{
   path: '/404',
   component: () => import('@/views/404'),
   hidden: true
+},
+{
+  path: '/',
+  component: Layout,
+  redirect: '/homePage',
+  children: [{
+    path: 'homePage',
+    component: () => import('@/views/homePage/index'),
+    meta: {
+      title: '首页',
+      icon: 'el-icon-s-home'
+    }
+  }]
 }
-  // {
-  //   path: '/',
-  //   component: Layout,
-  //   redirect: '/dashboard',
-  //   children: [{
-  //     path: 'dashboard',
-  //     component: () => import('@/views/dashboard/index'),
-  //     meta: {
-  //       title: '系统管理',
-  //       icon: 'dashboard'
-  //     }
-  //   }]
-  // }
 ]
 
 // 存在权限的路由
 // meta.permissionName  权限
 export const asyncRoutes = [{
-  path: '/',
+  path: '',
   component: Layout,
   redirect: '/global/codes/manage',
   name: 'globalManage',

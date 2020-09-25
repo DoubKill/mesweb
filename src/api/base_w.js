@@ -176,3 +176,12 @@ export function productDayPlanNotice(method, id, data = {}) {
   return request(obj)
 }
 
+export function homePageUrl(method, id, data = {}) {
+  const obj = {
+    url: id ? API.HomePageUrl + id + '/' : API.HomePageUrl,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
