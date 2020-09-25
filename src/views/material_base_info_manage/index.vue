@@ -16,6 +16,33 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="原材料名称">
+        <el-input
+          v-model="getParams.material_name"
+          @input="getParam"
+        />
+      </el-form-item>
+      <el-form-item label="原材料代码">
+        <el-input
+          v-model="getParams.material_no"
+          @input="getParam"
+        />
+      </el-form-item>
+      <el-form-item label="是否使用">
+        <el-select
+          v-model="getParams.use_flag"
+          clearable
+          placeholder="请选择"
+          @change="getParam"
+        >
+          <el-option
+            v-for="item in optionsUser"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item
         v-if="permissionObj.material.indexOf('add')>-1"
         style="float: right;"
@@ -299,6 +326,16 @@ export default {
   data: function() {
     return {
       tableData: [],
+      optionsUser: [
+        {
+          value: true,
+          label: 'Y'
+        },
+        {
+          value: false,
+          label: 'N'
+        }
+      ],
       formLabelWidth: commonVal.formLabelWidth,
       materialType: '',
       materialTypeOptions: [],
@@ -336,7 +373,12 @@ export default {
           { required: true, message: '请选择原材料类型', trigger: 'change' }
         ]
       },
-      getParams: { page: 1 },
+      getParams: {
+        page: 1,
+        use_flag:	'',
+        material_no:	'',
+        material_name: ''
+      },
       total: 0
     }
   },
@@ -391,6 +433,10 @@ export default {
       this.getParams['material_type_id'] = this.materialType
     },
     materialTypeChange: function() {
+      this.getParams.page = 1
+      this.getList()
+    },
+    getParam: function() {
       this.getParams.page = 1
       this.getList()
     },
