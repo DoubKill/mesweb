@@ -8,7 +8,7 @@
   > -->
   <div
     v-loading="loading"
-    class="dialogPlanAdd"
+    class="dialogPlanAddIndex"
   >
     <div class="leftEquip">
       <!-- <el-checkbox-group v-for="item in equips" :key="item.id" v-model="equipIdForAdd"> -->
@@ -786,7 +786,7 @@ function zeroFilling(n) {
 }
 </script>
 <style lang="scss">
-  .dialogPlanAdd{
+  .dialogPlanAddIndex{
     display: flex;
     min-width: 800px;
     .el-input-number__decrease,
@@ -825,9 +825,8 @@ function zeroFilling(n) {
         flex:1;
         text-align: center;
         color:#fff;
-        line-height: 20px;
-        padding: 10px;
-        background: #09a809;
+        line-height: 40px;
+        background: #0bbd0b;
       }
     }
     .addPlanArrBox{
