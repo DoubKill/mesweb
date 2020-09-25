@@ -3,6 +3,7 @@ const SystemUrl = '/api/v1/system/'
 
 export default {
   LoginUrl: '/api/v1/system/login/',
+  HomePageUrl: '/api/v1/index/',
   GlobalTypesUrl: BasicsUrl + 'global-types/',
   GlobalCodesUrl: BasicsUrl + 'global-codes/',
 
