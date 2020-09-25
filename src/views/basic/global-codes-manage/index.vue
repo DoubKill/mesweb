@@ -495,6 +495,7 @@ export default {
       return flag ? 'Y' : 'N'
     },
     currentChange(page) {
+      this.globalCodes = []
       this.currentPage = page
       this.getParams.page = page
       this.getGlobalTypesList()
