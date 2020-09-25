@@ -832,9 +832,9 @@ export default {
       DevTypeOptions: [],
       RawMaterialOptions: [],
       NewRowMaterial: [{
-        sn_ele: null,
         material_type: null,
         material_name: null,
+        auto_flag_radio: 0,
         practical_weight: null,
         standard_error: null
       }
@@ -1231,10 +1231,9 @@ export default {
     },
     insert_NewPracticalWeightChanged: function() {
       this.NewRowMaterial.push({
-        sn: '',
         material_type: '',
-        auto_flag_radio: 0,
-        material_name: ''
+        material_name: '',
+        auto_flag_radio: 0
         // practical_weight:"",
         // standard_error: ''
       })
@@ -1293,12 +1292,12 @@ export default {
           {
             data: {
               'factory': app.rubberMaterialForm['factory'],
-              'site': app.rubberMaterialForm['SITE'],
-              'product_info': app.rubberMaterialForm['select_product_id'],
+              'site': this.normalReceipe ? this.rubberMaterialForm['SITE'] : null,
+              'product_info': this.normalReceipe ? this.rubberMaterialForm['select_product_id'] : null,
               'precept': app.rubberMaterialForm['scheme'],
-              'stage_product_batch_no': app.rubberMaterialForm['generate_material_no'],
-              'stage': app.rubberMaterialForm['stage'],
-              'versions': app.rubberMaterialForm['version'],
+              'stage_product_batch_no': this.normalReceipe ? null : this.rubberMaterialForm['generate_material_no'],
+              'stage': this.normalReceipe ? this.rubberMaterialForm['stage'] : null,
+              'versions': this.normalReceipe ? this.rubberMaterialForm['version'] : null,
               'dev_type': app.select_dev_type,
               'batching_details': batching_details_list,
               'production_time_interval': app.select_rm_time_interval 
@@ -1382,6 +1381,7 @@ export default {
       app.put_select_rm_time_interval = rubber_material_result['production_time_interval']
       app.put_practicalWeightSum = rubber_material_result['batching_weight']
       app.PutProductRecipe = rubber_material_result.batching_details
+      app.raw_material_index = null
     },
     pop_up_raw_material: function(new_material_ele, index) {
       // eslint-disable-next-line no-prototype-builtins
@@ -1399,8 +1399,8 @@ export default {
       // console.log('================================================111')
       // console.log(row.id)
       // console.log(app.raw_material_index)
-      // console.log(app.NewRowMaterial)
-      // console.log(app.PutProductRecipe)
+      // console.log(app.NewRowMaterial, 'NewRowMaterial')
+      // console.log(app.PutProductRecipe, 'PutProductRecipe')
       // console.log('================================================111')
       if (app.raw_material_index != null) {
         // 胶料配料post
@@ -1457,12 +1457,12 @@ export default {
           {
             data: {
               'factory': this.rubberMaterialForm['factory'],
-              'site': this.rubberMaterialForm['SITE'],
-              'product_info': this.rubberMaterialForm['select_product_id'],
+              'site': this.normalReceipe ? this.rubberMaterialForm['SITE'] : null,
+              'product_info': this.normalReceipe ? this.rubberMaterialForm['select_product_id'] : null,
               'precept': this.rubberMaterialForm['scheme'],
-              'stage_product_batch_no': this.rubberMaterialForm['generate_material_no'],
-              'stage': this.rubberMaterialForm['stage'],
-              'versions': this.rubberMaterialForm['version']
+              'stage_product_batch_no': this.normalReceipe ? null : this.rubberMaterialForm['generate_material_no'],
+              'stage': this.normalReceipe ? this.rubberMaterialForm['stage'] : null,
+              'versions': this.normalReceipe ? this.rubberMaterialForm['version'] : null
             }
           }
         )

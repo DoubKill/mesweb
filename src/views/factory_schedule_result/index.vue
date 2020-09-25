@@ -8,7 +8,7 @@
       <el-table-column
         align="center"
         type="index"
-        label="序"
+        label="No"
         width="50"
       />
       <el-table-column

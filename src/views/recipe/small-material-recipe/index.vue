@@ -13,7 +13,7 @@
       <el-table-column
         type="index"
         label="No"
-        width="30"
+        width="50"
       />
       <el-table-column
         prop="stage_product_batch_no"
