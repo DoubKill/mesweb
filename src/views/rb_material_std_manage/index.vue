@@ -95,7 +95,11 @@
         width="160%"
         prop="stage_product_batch_no"
         label="胶料配方编号"
-      />
+      >
+        <template slot-scope="scope">
+          <el-button type="text" @click="showGridTable(scope.row.id)">{{ scope.row.stage_product_batch_no }}</el-button>
+        </template>
+      </el-table-column>
       <el-table-column
         align="center"
         prop="product_name"
@@ -175,18 +179,6 @@
       </el-table-column>
       <el-table-column
         align="center"
-        width="120%"
-        prop="created_username"
-        label="创建者"
-      />
-      <el-table-column
-        align="center"
-        width="160%"
-        prop="created_date"
-        label="创建时间"
-      />
-      <el-table-column
-        align="center"
         width="110%"
         label="发送到上辅机"
       >
@@ -200,6 +192,48 @@
           </el-button-group>
         </template>
       </el-table-column>
+      <el-table-column
+        align="center"
+        width="120%"
+        prop="created_username"
+        label="创建者"
+      />
+      <el-table-column
+        align="center"
+        width="120%"
+        prop="submit_username"
+        label="提交者"
+      />
+      <el-table-column
+        align="center"
+        width="120%"
+        prop="check_username"
+        label="校对者"
+      />
+      <el-table-column
+        align="center"
+        width="120%"
+        prop="used_username"
+        label="启用者"
+      />
+      <el-table-column
+        align="center"
+        width="120%"
+        prop="reject_username"
+        label="驳回者"
+      />
+      <el-table-column
+        align="center"
+        width="120%"
+        prop="obsolete_username"
+        label="废弃者"
+      />
+      <el-table-column
+        align="center"
+        width="160%"
+        prop="created_date"
+        label="创建时间"
+      />
 
     </el-table>
     <page
@@ -777,9 +811,145 @@
         layout="total, prev, pager, next"
         @current-change="raw_material_handleCurrentChange"
       />
-
     </el-dialog>
 
+    <el-dialog
+      width="90%"
+      title="胶料配料标准"
+      :visible.sync="gridTable"
+    >
+      胶料编码:&nbsp;&nbsp;&nbsp;&nbsp;
+      <el-input
+        v-model="put_select_stage_product_batch_no"
+        size="mini"
+        :disabled="true"
+        style="width: 20%"
+      />
+      胶料名称:
+      <el-input
+        v-model="put_select_product_name"
+        size="mini"
+        :disabled="true"
+        style="width: 10%"
+      />
+      状态:
+      <el-input
+        v-model="put_select_status"
+        size="mini"
+        :disabled="true"
+        style="width: 10%"
+      />
+      <br><br>
+      炼胶机类型:
+      <el-input
+        v-model="put_select_dev_type"
+        size="mini"
+        :disabled="true"
+        style="width: 10%"
+      />
+      配料重量:
+      <el-input
+        v-model="put_select_material_weight"
+        size="mini"
+        :disabled="true"
+        style="width: 10%"
+      />
+      炼胶时间:
+      <el-input-number
+        v-model.number="put_select_rm_time_interval"
+        size="mini"
+        :disabled="true"
+        controls-position="right"
+      />
+
+      <br><br>
+
+      <table
+        class="table table-bordered"
+        border="1"
+        bordercolor="#ebeef4"
+        style="width: 100%; color: #909399; font-size: 14px; border-collapse:collapse"
+      >
+        <thead>
+          <tr>
+            <th style="text-align: center; height: 48px">No</th>
+            <th style="text-align: center; height: 48px">类别</th>
+            <th style="text-align: center; height: 48px">自动与否</th>
+            <th style="text-align: center; height: 48px">原材料</th>
+            <td style="text-align: center; height: 48px">实际重量</td>
+            <td style="text-align: center; height: 48px">误差</td>
+          </tr>
+        </thead>
+        <tbody style="color: #606266;">
+          <!--胶料配料标准  第一行 的汇总数据-->
+          <tr style="background: rgba(189,198,210,0.73)">
+            <td
+              colspan="4"
+              style="text-align: center; height: 48px"
+            >配方结果</td>
+            <td style="text-align: center; height: 48px">{{ put_practicalWeightSum }}</td>
+            <td />
+            <td />
+          </tr>
+          <tr
+            v-for="(new_material_ele, index) in PutProductRecipe"
+            :key="index"
+          >
+            <!--<td>{{ new_material_ele.sn }}</td>-->
+            <td v-show="false">{{ new_material_ele.material }}</td>
+            <td style="text-align: center; height: 48px">{{ index + 1 }}</td>
+            <td style="text-align: center; height: 48px">{{ new_material_ele.material_type }}</td>
+            <td style="text-align: center; height: 48px">
+              <template>
+                <el-radio
+                  v-model="new_material_ele.auto_flag"
+                  :label="1"
+                  :disabled="true"
+                >自动</el-radio>
+                <el-radio
+                  v-model="new_material_ele.auto_flag"
+                  :label="2"
+                  :disabled="true"
+                >手动</el-radio>
+                <el-radio
+                  v-model="new_material_ele.auto_flag"
+                  :label="0"
+                  :disabled="true"
+                >其他</el-radio>
+              </template>
+            </td>
+            <td style="text-align: center; height: 48px">
+              <!-- <div style="margin-top: 12px;"> -->
+              <el-input
+                v-model="new_material_ele.material_name"
+                size="mini"
+                style="width: 70%"
+                class="input-with-select"
+                :disabled="true"
+              />
+              <!-- </div> -->
+            </td>
+            <td style="text-align: center; height: 48px">
+              <el-input-number
+                v-model.number="new_material_ele.actual_weight"
+                size="mini"
+                :disabled="true"
+                controls-position="right"
+              />
+            </td>
+            <td style="text-align: center; height: 48px">
+              <el-input-number
+                v-model.number="new_material_ele.standard_error"
+                size="mini"
+                :disabled="true"
+                controls-position="right"
+              />
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+    </el-dialog>
   </div>
 </template>
 
@@ -794,6 +964,8 @@ export default {
     return {
       loading: null,
       tableData: [],
+      gridTable: false,
+      gridData: [],
       total: 0,
       getParams: {
         page: 1
@@ -1375,6 +1547,26 @@ export default {
       app.materials_type_list()
       app.dialogRubberMaterialStandard = true
       var rubber_material_result = await this.rubber_material_ele(this.currentRow.id)
+      //   console.log('================================mod_get')
+      //   console.log(rubber_material_result)
+      //   console.log('================================mod_get')
+      app.put_select_stage_product_batch_no = rubber_material_result['stage_product_batch_no']
+      app.put_select_product_name = rubber_material_result['product_name']
+      app.put_select_status = app.usedTypeChoice(rubber_material_result['used_type'])
+      app.put_select_dev_type = rubber_material_result['dev_type']
+      app.put_select_material_weight = rubber_material_result['batching_weight']
+      app.put_select_rm_time_interval = rubber_material_result['production_time_interval']
+      app.put_practicalWeightSum = rubber_material_result['batching_weight']
+      app.PutProductRecipe = rubber_material_result.batching_details
+      app.raw_material_index = null
+    },
+    showGridTable: async function(id) {
+      var app = this
+      app.equip_category_list()
+      app.get_raw_material()
+      app.materials_type_list()
+      this.gridTable = true
+      var rubber_material_result = await this.rubber_material_ele(id)
       //   console.log('================================mod_get')
       //   console.log(rubber_material_result)
       //   console.log('================================mod_get')
