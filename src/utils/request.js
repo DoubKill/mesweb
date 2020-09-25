@@ -79,14 +79,18 @@ service.interceptors.response.use(
       let str = ''
       let row = 0
       error.response.data.forEach(errorData => {
-        let obj = {}
+        let obj = null
         if (errorData) {
-          obj = JSON.parse(errorData)
+          try {
+            obj = JSON.parse(errorData)
+          } catch (e) {
+            obj = errorData
+          }
         }
-        if (Object.prototype.hasOwnProperty.call(obj, 'non_field_errors')) {
+        if (errorData && Object.prototype.hasOwnProperty.call(obj, 'non_field_errors')) {
           str += (`${row++} : ${obj.non_field_errors.join(',')}\n`)
         } else {
-          str += JSON.stringify(errorData)
+          str += errorData
         }
       })
       Message({
