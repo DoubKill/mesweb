@@ -103,7 +103,7 @@
       <el-table-column
         align="center"
         prop="product_name"
-        label="胶料编码"
+        label="胶料名称"
       />
       <el-table-column
         align="center"
