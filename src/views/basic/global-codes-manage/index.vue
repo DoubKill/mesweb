@@ -228,7 +228,7 @@
           label="是否启用"
           :label-width="formLabelWidth"
         >
-          <el-switch v-model="globalCodeForm.use_flag_b" />
+          <el-switch v-model="globalCodeForm.use_flag" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -270,8 +270,7 @@ export default {
         global_no: '',
         global_name: '',
         description: '',
-        use_flag_b: true,
-        use_flag: 0, // 0用
+        use_flag: true, // 0用
         global_type: null
       },
       globalCodeFormError: {},
@@ -318,7 +317,7 @@ export default {
         type_no: '',
         type_name: '',
         description: '',
-        use_flag: ''
+        use_flag: true
       }
     },
     showCreateGlobalCodeTypeDialog: function() {
@@ -393,7 +392,7 @@ export default {
       getGlobalCodes({ id: row.id })
         .then(function(response) {
           app.globalCodes = response.results
-          app.globalCodes.use_flag_b = app.globalCodes.use_flag ? 0 : 1
+          // app.globalCodes.use_flag_b = app.globalCodes.use_flag ? 0 : 1
           app.globalCodeForm.global_type = row.id
         })
     },
@@ -403,8 +402,7 @@ export default {
         global_no: '',
         global_name: '',
         description: '',
-        use_flag_b: true,
-        use_flag: 0,
+        use_flag: true,
         global_type: this.globalCodeForm.global_type
       }
     },
@@ -425,7 +423,7 @@ export default {
     },
     handleCreateGlobalCode: function() {
       this.clearGlobalCodeFormError()
-      this.globalCodeForm.use_flag = this.globalCodeForm.use_flag_b ? 0 : 1
+      // this.globalCodeForm.use_flag = this.globalCodeForm.use_flag_b ? 0 : 1
       var app = this
       postGlobalCodes(this.globalCodeForm)
         .then(function(response) {
@@ -445,11 +443,11 @@ export default {
       this.globalCodeForm.global_no = row.global_no
       this.globalCodeForm.global_name = row.global_name
       this.globalCodeForm.description = row.description
-      this.globalCodeForm.use_flag_b = row.use_flag === 0
+      this.globalCodeForm.use_flag = row.use_flag
       this.dialogEditGlobalCodeVisible = true
     },
     handleEditGlobalCode: function() {
-      this.globalCodeForm.use_flag = this.globalCodeForm.use_flag_b ? 0 : 1
+      // this.globalCodeForm.use_flag = this.globalCodeForm.use_flag_b ? 0 : 1
       const app = this
       putGlobalCodes(this.globalCodeForm, this.globalCodeForm.id)
         .then(function(response) {
