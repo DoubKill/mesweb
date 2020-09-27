@@ -1237,7 +1237,7 @@ export default {
     async equip_category_list() {
       try {
         const equip_category_list = await equip_category_url('get', {
-          params: { all: 1 }
+          params: { all: 1, equip_type_name: '密炼设备' }
         })
         this.DevTypeOptions = equip_category_list.results
       } catch (e) { throw new Error(e) }
