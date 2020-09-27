@@ -136,6 +136,7 @@
     </el-table>
     <pagination
       :total="total"
+      :current-page="getParams.page"
       @currentChange="currentChange"
     />
 
@@ -412,6 +413,7 @@ export default {
       this.beforeGetData()
       const app = this
       app.loading = true
+      console.log(222)
       materialsUrl('get', null, {
         params: app.getParams
       }).then(function(response) {
@@ -475,7 +477,7 @@ export default {
             .then(function(response) {
               app.dialogAddMaterialBaseInfoVisible = false
               app.$message.success(app.materialBaseInfoForm.material_name + '创建成功')
-              app.getParams.page = 1
+              // app.getParams.page = 1
               app.getList()
             }).catch(function(error) {
               for (const key in app.materialBaseInfoFormError) {
