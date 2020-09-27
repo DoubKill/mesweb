@@ -8,7 +8,7 @@
   > -->
   <div
     v-loading="loading"
-    class="dialogPlanAdd"
+    class="dialogPlanAddIndex"
   >
     <div class="leftEquip">
       <!-- <el-checkbox-group v-for="item in equips" :key="item.id" v-model="equipIdForAdd"> -->
@@ -365,7 +365,8 @@ export default {
     },
     async getEquipList() {
       try {
-        const equipData = await equipUrl('get', { params: { all: 1 }})
+        // eslint-disable-next-line object-curly-spacing
+        const equipData = await equipUrl('get', { params: { all: 1, category_name: '密炼设备' } })
         this.equips = equipData.results
         // eslint-disable-next-line no-empty
       } catch (e) { }
@@ -785,7 +786,7 @@ function zeroFilling(n) {
 }
 </script>
 <style lang="scss">
-  .dialogPlanAdd{
+  .dialogPlanAddIndex{
     display: flex;
     min-width: 800px;
     .el-input-number__decrease,
@@ -823,6 +824,9 @@ function zeroFilling(n) {
       .tableTopLeft{
         flex:1;
         text-align: center;
+        color:#fff;
+        line-height: 40px;
+        background: #0bbd0b;
       }
     }
     .addPlanArrBox{
