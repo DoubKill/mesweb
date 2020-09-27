@@ -22,15 +22,14 @@ export default {
     pageSize: {
       type: Number,
       default: 10
+    },
+    currentPage: {
+      type: Number,
+      default: 1
     }
-    // currentPage:{
-    //   type: Number,
-    //   default: 1,
-    // },
   },
   data() {
     return {
-      currentPage: 1
     }
   },
   methods: {
