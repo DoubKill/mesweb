@@ -630,12 +630,13 @@ export default {
     productBatchingChanged(val, planForAdd, arr, tableItem, currentIndex) {
       let obj = []
       obj = (arr.filter(D => D.id === val))[0]
-      const weight = Number(obj.batching_weight) * (Number(planForAdd.plan_trains) || 1)
-      planForAdd['weight'] = Math.ceil(weight * 100) / 100
+      const plan_trains = Number(planForAdd.plan_trains) || 1
+      const batching_weight = Number(obj.batching_weight)
+      planForAdd['weight'] = (batching_weight * 1000) * plan_trains / 1000
       planForAdd['unit'] = '吨'
 
-      const time = Number(obj.production_time_interval) * (Number(planForAdd.plan_trains) || 1)
-      planForAdd['time'] = Math.ceil(time * 100) / 100
+      const production_time_interval = Number(obj.production_time_interval)
+      planForAdd['time'] = (production_time_interval * 1000) * plan_trains / 1000
 
       if (tableItem.length - 1 === currentIndex && planForAdd.product_batching) {
         // 处于最后一行
@@ -677,14 +678,16 @@ export default {
         row.batching_weight = obj[0] ? obj[0].batching_weight : 0
         row.production_time_interval = obj[0] ? obj[0].production_time_interval : 0
       }
-      const weight = Number(row.batching_weight || 0) * Number(row.plan_trains)
-      row['weight'] = Math.ceil(weight * 100) / 100
+
+      const batching_weight = Number(row.batching_weight || 0)
+      const plan_trains = Number(row.plan_trains) || 0
+      row['weight'] = (batching_weight * 1000) * plan_trains / 1000
       if (row['weight'] > 100000) {
         this.$message('车次过大')
         row['plan_trains'] = 1
       }
-      const time = Number(row.production_time_interval || 0) * Number(row.plan_trains)
-      row['time'] = Math.ceil(time * 100) / 100
+      const production_time_interval = Number(row.production_time_interval || 0)
+      row['time'] = (production_time_interval * 1000) * plan_trains / 1000
     },
     handleGroupDelete(index, tableItem, row) {
       if (tableItem.length === 1) {
