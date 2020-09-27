@@ -57,6 +57,7 @@
     </el-table>
     <pagination
       :total="total"
+      :current-page="getParams.page"
       @currentChange="currentChange"
     />
 
@@ -424,6 +425,7 @@ export default {
       copyError: '',
       productNo: '',
       productName: '',
+      currentPage: 1,
       total: 0
     }
   },

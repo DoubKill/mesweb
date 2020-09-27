@@ -52,7 +52,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <page :total="total" @currentChange="currentChange" />
+    <page :total="total" :current-page="getParams.page" @currentChange="currentChange" />
 
     <el-dialog title="添加设备种类" :visible.sync="dialogCreateEquipCateVisible">
       <el-form ref="AddEquipCateForm" :model="AddEquipCateForm" :rules="add_equipcate_rules">

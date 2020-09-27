@@ -320,7 +320,7 @@
         :after-set-option="afterSetOption"
       />
     </el-dialog>
-    <page :total="total" @currentChange="currentChange" />
+    <page :total="total" :current-page="getParams.page" @currentChange="currentChange" />
   </div>
 </template>
 
@@ -362,7 +362,9 @@ export default {
       dialogVisibleGraph: false,
       currentPage: 1,
       total: 0,
-      getParams: {},
+      getParams: {
+        page: 1
+      },
       chartData: {
         columns: [
           'created_date_date',

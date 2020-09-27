@@ -100,6 +100,7 @@
     </el-table>
     <page
       :total="count"
+      :current-page="getParams.page"
       @currentChange="changePage"
     />
     <el-dialog
@@ -167,6 +168,7 @@ export default {
   data() {
     return {
       getParams: {
+        page: 1,
         use_flag: null
       },
       tableData: [],
