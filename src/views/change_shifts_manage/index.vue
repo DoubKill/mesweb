@@ -494,9 +494,7 @@ export default {
       }
     },
     getSum(row, global_no) {
-      console.log(row, global_no)
       const obj = row.classesdetail_set.filter(D => Number(D.classes) === Number(global_no))
-      console.log(obj, 'obj')
       if (obj[0]) {
         var start_time_set = obj[0].start_time.split(':')
         var end_time_set = obj[0].end_time.split(':')

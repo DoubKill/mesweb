@@ -42,14 +42,13 @@
       <el-table-column label="处理" />
       <el-table-column
         width="200"
-        prop="barcode"
         label="收皮条码"
       >
         <template slot-scope="scope">
           <el-link
             type="primary"
             @click.prevent="check_(scope.row)"
-          >{{ scope.row.barcode }}</el-link>
+          >{{ scope.row.lot_no }}</el-link>
         </template>
       </el-table-column>
       <el-table-column
