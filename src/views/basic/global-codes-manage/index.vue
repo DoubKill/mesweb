@@ -47,7 +47,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <page :total="total" @currentChange="currentChange" />
+        <page :total="total" :current-page="getParams.page" @currentChange="currentChange" />
       </el-col>
       <el-col :span="12">
         <el-form :inline="true">
