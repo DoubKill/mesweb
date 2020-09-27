@@ -116,6 +116,7 @@
     </el-table>
     <page
       :total="count"
+      :current-page="getParams.page"
       @currentChange="changePage"
     />
 
@@ -283,6 +284,7 @@ export default {
       titleNewPassword: true,
       btnloading: false,
       getParams: {
+        page: 1,
         num: '',
         username: '',
         is_active: null

@@ -36,7 +36,7 @@
       <el-table-column prop="total_weight" label="总重量" align="center" />
       <el-table-column prop="standard_flag" label="品质状态" align="center" :formatter="StandardFlagFormatter" />
     </el-table>
-    <page :total="total" @currentChange="currentChange" />
+    <page :total="total" :current-page="getParams.page" @currentChange="currentChange" />
 
   </div>
 </template>

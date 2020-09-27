@@ -86,6 +86,7 @@
     </el-table>
     <pagination
       :total="total"
+      :current-page="getParams.page"
       @currentChange="currentChange"
     />
 

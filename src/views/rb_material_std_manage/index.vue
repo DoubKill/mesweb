@@ -805,7 +805,7 @@
       </el-table>
 
       <el-pagination
-        :current-page.sync="currentPage"
+        :current-page="getParams.page"
         :page-size="raw_material_pageSize"
         :total="raw_material_tableDataTotal"
         layout="total, prev, pager, next"

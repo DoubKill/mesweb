@@ -62,7 +62,7 @@
         <el-table-column align="center" prop="material_demanded" label="总重量" />
       </el-table-column>
     </el-table>
-    <page :total="total" @currentChange="currentChange" />
+    <page :total="total" :current-page="getParams.page" @currentChange="currentChange" />
 
   </div>
 </template>

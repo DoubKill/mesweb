@@ -50,7 +50,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <page :total="total" @currentChange="currentChange" />
+    <page :total="total" :current-page="getParams.page" @currentChange="currentChange" />
 
     <el-dialog title="添加设备基础信息" :visible.sync="dialogCreateEquipVisible">
       <el-form ref="AddEquipForm" :model="AddEquipForm" :rules="add_equip_rules">

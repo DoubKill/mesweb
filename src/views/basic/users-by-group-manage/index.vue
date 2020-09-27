@@ -79,7 +79,7 @@
         <el-button type="primary" @click="handleAddGroupUsersDialog">确 定</el-button>
       </div>
     </el-dialog>
-    <page :total="total" @currentChange="currentChange" />
+    <page :total="total" :current-page="getParams.page" @currentChange="currentChange" />
   </div>
 </template>
 
@@ -100,7 +100,9 @@ export default {
       users: [],
       selectedUsers: [],
       currentPage: 1,
-      getParams: {},
+      getParams: {
+        page: 1
+      },
       total: 0,
       group_code: '',
       name: ''
