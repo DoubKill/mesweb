@@ -413,7 +413,6 @@ export default {
       this.beforeGetData()
       const app = this
       app.loading = true
-      console.log(222)
       materialsUrl('get', null, {
         params: app.getParams
       }).then(function(response) {
