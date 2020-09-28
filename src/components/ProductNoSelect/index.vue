@@ -22,6 +22,11 @@ export default {
     isStageProductbatchNoRemove: {
       type: Boolean,
       default: false
+    },
+    // 过滤出启用和弃用的胶料
+    makeUseBatch: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -62,10 +67,24 @@ export default {
           }, [])
           productBatchings = newArr || []
         }
-        this.productBatchings = productBatchings
         this.loading = false
+        if (this.makeUseBatch) {
+          let arr = []
+          arr = productBatchings.filter(D => D.used_type === 4 || D.used_type === 6)
+          this.productBatchings = arr
+          return
+        }
+        this.productBatchings = productBatchings
       })
     }
   }
+  // USE_TYPE_CHOICE = (
+  //       (1, '编辑'),
+  //       (2, '提交'),
+  //       (3, '校对'),
+  //       (4, '启用'),
+  //       (5, '驳回'),
+  //       (6, '废弃')
+  //   )
 }
 </script>

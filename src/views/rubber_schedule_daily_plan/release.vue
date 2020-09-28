@@ -12,6 +12,11 @@
   >
     <div class="leftEquip">
       <!-- <el-checkbox-group v-for="item in equips" :key="item.id" v-model="equipIdForAdd"> -->
+      <el-checkbox
+        v-model="checkAll"
+        :disabled="disabledEquip"
+        @change="handleCheckAllChange"
+      >全选</el-checkbox>
       <div
         v-for="item in equips"
         :key="item.id"
@@ -189,7 +194,8 @@ export default {
       baseDefaultData: {},
       loading: false,
       addPlanArrLoading: false,
-      releaseDisabled: false
+      releaseDisabled: false,
+      checkAll: false
     }
   },
   computed: {
@@ -209,7 +215,7 @@ export default {
       return status !== this._notSaved &&
         status !== this._saved && status !== this._wait
     },
-    async getInfo(row, work_schedule) {
+    async getInfoFun(row, bool) {
       try {
         this.addPlanArrLoading = true
         const obj = {
@@ -217,14 +223,25 @@ export default {
           schedule_name: this.planScheduleId,
           equip_no: row.equip_no
         }
+        if (bool) {
+          delete obj.equip_no
+        }
         const data = await productClassesPlanUrl('get', null, { params: obj })
         // const getInfo = textData
         const getInfo = data.results || []
-
         this.addPlanArrLoading = false
+
+        if (bool) {
+          // 总的计划
+          return getInfo
+        }
         return this.setWorkSchedule(row, getInfo)
       } catch (e) {
         this.addPlanArrLoading = false
+        if (bool) {
+          // 总的计划
+          return []
+        }
         return this.setWorkSchedule(row, [])
       }
     },
@@ -344,7 +361,7 @@ export default {
       const newAddPlanArr = []
       if (val) {
         let work_schedule = []
-        work_schedule = await this.getInfo(row)
+        work_schedule = await this.getInfoFun(row)
         this.addPlanArr.push(work_schedule)
       } else {
         const addPlanArr = JSON.parse(JSON.stringify(this.addPlanArr))
@@ -374,7 +391,8 @@ export default {
       }
     },
     async releasePlan(index, tableItem, oneIndex, towIndex) {
-      const bool = tableItem.some(D => (D.status === '已保存' || D.status === '等待'))
+      const newTableItem = this.addPlanArr[oneIndex][towIndex]
+      const bool = newTableItem.some(D => (D.status === '已保存' || D.status === '等待'))
       if (!bool) {
         this.$message.info('暂无可下达的计划！')
         return
@@ -466,6 +484,26 @@ export default {
         // eslint-disable-next-line no-empty
       } catch (e) {
       }
+    },
+    async handleCheckAllChange(val) {
+      let work_schedule = []
+      if (val) {
+        work_schedule = await this.getInfoFun({}, true)
+        this.addPlanArr = []
+      }
+
+      this.equips.forEach(D => {
+        if (val) {
+          let getInfo = []
+          D.checkbox = true
+          getInfo = work_schedule.filter(data => data.equip === D.id)
+          const setWorkSchedule = this.setWorkSchedule(D, getInfo)
+          this.addPlanArr.push(setWorkSchedule)
+        } else {
+          D.checkbox = false
+          this.addPlanArr = []
+        }
+      })
     }
   }
 }
