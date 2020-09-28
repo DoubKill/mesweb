@@ -114,7 +114,12 @@
           label="周期天数"
           :label-width="formLabelWidth"
         >
-          <el-input-number v-model="changeShiftsManageForm.period" :min="1" :max="30" />
+          <el-input-number
+            v-model="changeShiftsManageForm.period"
+            :min="1"
+            :max="30"
+            @blur="period_change(changeShiftsManageForm, changeShiftsManageForm.period)"
+          />
         </el-form-item>
 
         <div
@@ -198,6 +203,7 @@
             v-model.number="changeShiftsManageForm.period"
             :min="1"
             :max="30"
+            @blur="period_change(changeShiftsManageForm, changeShiftsManageForm.period)"
           />
         </el-form-item>
         <div
@@ -520,6 +526,11 @@ export default {
     },
     formatter: function(row, column) {
       return row.use_flag ? 'Y' : 'N'
+    },
+    period_change(row, value) {
+      if (!value) {
+        row.period = 1
+      }
     }
   }
 }
