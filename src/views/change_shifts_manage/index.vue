@@ -31,17 +31,17 @@
       >
         <el-table-column label="开始">
           <template slot-scope="scope">
-            {{ getTimeCell(scope.row,class_.global_no,'start_time') }}
+            {{ getTimeCell(scope.row,class_.id,'start_time') }}
           </template>
         </el-table-column>
         <el-table-column label="结束">
           <template slot-scope="scope">
-            {{ getTimeCell(scope.row,class_.global_no,'end_time') }}
+            {{ getTimeCell(scope.row,class_.id,'end_time') }}
           </template>
         </el-table-column>
         <el-table-column label="总时间">
           <template slot-scope="scope">
-            {{ getSum(scope.row, class_.global_no) }}
+            {{ getSum(scope.row, class_.id) }}
           </template>
         </el-table-column>
       </el-table-column>
@@ -494,8 +494,8 @@ export default {
         return classesdetail[key]
       }
     },
-    getSum(row, global_no) {
-      const obj = row.classesdetail_set.filter(D => Number(D.classes) === Number(global_no))
+    getSum(row, id) {
+      const obj = row.classesdetail_set.filter(D => Number(D.classes) === Number(id))
       if (obj[0]) {
         var start_time_set = obj[0].start_time.split(':')
         var end_time_set = obj[0].end_time.split(':')
@@ -514,8 +514,8 @@ export default {
         return (diff_minute / 60).toFixed(2)
       }
     },
-    getTimeCell(row, global_no, params) {
-      const obj = row.classesdetail_set.filter(D => Number(D.classes) === Number(global_no))
+    getTimeCell(row, id, params) {
+      const obj = row.classesdetail_set.filter(D => Number(D.classes) === Number(id))
       return obj[0] ? obj[0][params] : ''
     },
     formatter: function(row, column) {
