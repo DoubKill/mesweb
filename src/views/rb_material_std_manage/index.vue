@@ -805,7 +805,7 @@
       </el-table>
 
       <el-pagination
-        :current-page="getParams.page"
+        :current-page.sync="currentPage"
         :page-size="raw_material_pageSize"
         :total="raw_material_tableDataTotal"
         layout="total, prev, pager, next"
@@ -1654,7 +1654,7 @@ export default {
         // 点击生成之前进行版本验证
         await this.validate_versions_list({
           params: {
-            factory: this.rubberMaterialForm['factory'],
+            factory: this.normalReceipe ? this.rubberMaterialForm['factory'] : null,
             site: this.normalReceipe ? this.rubberMaterialForm['SITE'] : null,
             product_info: this.normalReceipe ? this.rubberMaterialForm['select_product_id'] : null,
             versions: this.normalReceipe ? this.rubberMaterialForm['version'] : null,
@@ -1679,7 +1679,7 @@ export default {
         this.$message(this.rubberMaterialForm['generate_material_no'] + '保存成功')
         this.rubber_material_list()
       } catch (e) {
-        this.$message.error(e.join(','))
+        // this.$message.error(e.join(','))
       }
     },
     NewhandleAddRubberMaterial(formName) {
@@ -1713,16 +1713,16 @@ export default {
         try {
           await this.validate_versions_list({
             params: {
-              factory: this.rubberMaterialForm['factory'],
-              site: this.rubberMaterialForm['SITE'],
-              product_info: this.rubberMaterialForm['select_product_id'],
-              versions: this.rubberMaterialForm['version'],
-              stage: this.rubberMaterialForm['stage'],
-              stage_product_batch_no: this.rubberMaterialForm['generate_material_no']
+              factory: this.normalReceipe ? this.rubberMaterialForm['factory'] : null,
+              site: this.normalReceipe ? this.rubberMaterialForm['SITE'] : null,
+              product_info: this.normalReceipe ? this.rubberMaterialForm['select_product_id'] : null,
+              versions: this.normalReceipe ? this.rubberMaterialForm['version'] : null,
+              stage: this.normalReceipe ? this.rubberMaterialForm['stage'] : null,
+              stage_product_batch_no: this.normalReceipe ? null : this.rubberMaterialForm['generate_material_no']
             }
           })
         } catch (e) {
-          this.$message.error(e.join(','))
+          // this.$message.error(e.join(','))
           return
         }
         this.dialogAddRubberMaterial = false
