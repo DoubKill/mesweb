@@ -127,17 +127,11 @@ export default {
           this.$store.dispatch('user/login', this.loginForm).then(() => {
             this.$router.push({ path: '/' })
             this.loading = false
+          // eslint-disable-next-line handle-callback-err
           }).catch((error) => {
             this.loading = false
-            if (Object.prototype.toString.call(error === '[object Object]')) {
-              this.$message({
-                message: error.non_field_errors[0],
-                type: 'error'
-              })
-            }
           })
         } else {
-          console.log('error submit!!')
           return false
         }
       })
