@@ -77,7 +77,6 @@ service.interceptors.response.use(
       return Promise.reject(error.response.data)
     } else if (Object.prototype.toString.call(error.response.data) === '[object Array]') {
       let str = ''
-      let row = 0
       error.response.data.forEach(errorData => {
         let obj = null
         if (errorData) {
