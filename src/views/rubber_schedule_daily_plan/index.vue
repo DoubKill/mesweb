@@ -12,6 +12,11 @@
   >
     <div class="leftEquip">
       <!-- <el-checkbox-group v-for="item in equips" :key="item.id" v-model="equipIdForAdd"> -->
+      <el-checkbox
+        v-model="checkAll"
+        :disabled="disabledEquip"
+        @change="handleCheckAllChange"
+      >全选</el-checkbox>
       <div
         v-for="item in equips"
         :key="item.id"
@@ -141,7 +146,6 @@
                     :precision="0"
                     size="small"
                     :min="0"
-                    :max="999"
                     :disabled="setStatus(scope.row.status)"
                     @change="planTrainsChangedWh(scope.row,scope.$index,tableItem)"
                   />
@@ -254,7 +258,8 @@ export default {
       loadingSelect: true,
       baseDefaultData: {},
       loading: false,
-      addPlanArrLoading: false
+      addPlanArrLoading: false,
+      checkAll: false
     }
   },
   computed: {
@@ -271,7 +276,7 @@ export default {
       return status !== this._notSaved &&
         status !== this._saved && status !== this._wait
     },
-    async getInfo(row, work_schedule) {
+    async getInfoFun(row, bool) {
       try {
         this.addPlanArrLoading = true
         const obj = {
@@ -279,14 +284,25 @@ export default {
           schedule_name: this.planScheduleId,
           equip_no: row.equip_no
         }
+        if (bool) {
+          delete obj.equip_no
+        }
         const data = await productClassesPlanUrl('get', null, { params: obj })
+
         // const getInfo = textData
         const getInfo = data.results || []
 
         this.addPlanArrLoading = false
+        if (bool) {
+          // 总的计划
+          return getInfo
+        }
         return this.setWorkSchedule(row, getInfo)
       } catch (e) {
         this.addPlanArrLoading = false
+        if (bool) {
+          return []
+        }
         return this.setWorkSchedule(row, [])
       }
     },
@@ -384,11 +400,6 @@ export default {
         if (equip) {
           this.$set(this.rubberMateriaObj, equip, rubberMateriaData.results)
           this.loadingSelect = false
-        } else {
-          // this.productBatchings = rubberMateriaData.results
-          // rubberMateriaData.results.forEach(function(batching) {
-          //   this.productBatchingById[batching.id] = batching
-          // })
         }
       } catch (e) {
         this.loadingSelect = false
@@ -447,7 +458,7 @@ export default {
         arrSave.forEach(saveD => {
           if (saveD.status === this._notSaved) {
             this.$message({
-              message: saveD.equipNo + '机台未保存,切换会消失哦',
+              message: saveD.equipNo + '机台未保存,切换会消失',
               offset: 50,
               type: 'warning'
             })
@@ -464,7 +475,7 @@ export default {
       const newAddPlanArr = []
       if (val) {
         let work_schedule = []
-        work_schedule = await this.getInfo(row)
+        work_schedule = await this.getInfoFun(row)
         this.visibleChange(row.id, row.category)
         this.addPlanArr.push(work_schedule)
       } else {
@@ -531,7 +542,6 @@ export default {
         let boolStr = false
 
         addPlanArr.forEach(data => {
-          // D.forEach(data => {
           data.forEach((child, i) => {
             if (!child.product_batching) {
               return
@@ -539,7 +549,7 @@ export default {
               if (child.product_batching && !child.plan_trains) {
                 boolStr = child.equipNo + child.classes_name + '第' + (i + 1) + '条'
                 this.$message({
-                  message: boolStr + ' ' + '车次必填哦',
+                  message: boolStr + ' ' + '车次必填',
                   offset: 50,
                   type: 'warning'
                 })
@@ -549,21 +559,14 @@ export default {
             child.sn = i + 1
             addPlanObj.push(child)
           })
-          // })
         })
         if (boolStr) {
           return
         } else if (addPlanObj.length === 0) {
-          // this.$message({
-          //   message: '请勿保存空哦',
-          //   offset: 130,
-          //   type: 'warning'
-          // })
           addPlanObj = {
             equip: item[0][0].equip,
             work_schedule_plan: item[0][0].work_schedule_plan
           }
-          // return
         }
         // console.log(JSON.stringify(addPlanObj), 7777)
         // return
@@ -632,11 +635,19 @@ export default {
       obj = (arr.filter(D => D.id === val))[0]
       const plan_trains = Number(planForAdd.plan_trains) || 1
       const batching_weight = Number(obj.batching_weight)
+      const production_time_interval = Number(obj.production_time_interval)
+
       planForAdd['weight'] = (batching_weight * 1000) * plan_trains / 1000
       planForAdd['unit'] = '吨'
-
-      const production_time_interval = Number(obj.production_time_interval)
       planForAdd['time'] = (production_time_interval * 1000) * plan_trains / 1000
+      if (planForAdd['weight'] > 100000) {
+        this.$message('车次过大')
+        this.$nextTick(() => {
+          planForAdd.plan_trains = 1
+        })
+        planForAdd['weight'] = (batching_weight * 1000) * 1 / 1000
+        planForAdd['time'] = (production_time_interval * 1000) * 1 / 1000
+      }
 
       if (tableItem.length - 1 === currentIndex && planForAdd.product_batching) {
         // 处于最后一行
@@ -679,15 +690,40 @@ export default {
         row.production_time_interval = obj[0] ? obj[0].production_time_interval : 0
       }
 
-      const batching_weight = Number(row.batching_weight || 0)
-      const plan_trains = Number(row.plan_trains) || 0
+      const plan_trains = Number(row.plan_trains)
+      const batching_weight = Number(row.batching_weight)
+      const production_time_interval = Number(row.production_time_interval || 0)
+      row['time'] = (production_time_interval * 1000) * plan_trains / 1000
       row['weight'] = (batching_weight * 1000) * plan_trains / 1000
       if (row['weight'] > 100000) {
         this.$message('车次过大')
-        row['plan_trains'] = 1
+        this.$nextTick(() => {
+          tableItem[index].plan_trains = 1
+        })
+        row['weight'] = (batching_weight * 1000) * 1 / 1000
+        row['time'] = (production_time_interval * 1000) * 1 / 1000
       }
-      const production_time_interval = Number(row.production_time_interval || 0)
-      row['time'] = (production_time_interval * 1000) * plan_trains / 1000
+    },
+    async handleCheckAllChange(val) {
+      let work_schedule = []
+      if (val) {
+        work_schedule = await this.getInfoFun({}, true)
+        this.addPlanArr = []
+      }
+
+      this.equips.forEach(D => {
+        if (val) {
+          let getInfo = []
+          D.checkbox = true
+          getInfo = work_schedule.filter(data => data.equip === D.id)
+          const setWorkSchedule = this.setWorkSchedule(D, getInfo)
+          this.visibleChange(D.id, D.category)
+          this.addPlanArr.push(setWorkSchedule)
+        } else {
+          D.checkbox = false
+          this.addPlanArr = []
+        }
+      })
     },
     handleGroupDelete(index, tableItem, row) {
       if (tableItem.length === 1) {
