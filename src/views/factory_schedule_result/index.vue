@@ -3,7 +3,6 @@
     <el-form :inline="true">
       <el-form-item
         label="日期"
-        :label-width="formLabelWidth"
       >
         <el-date-picker
           v-model="getParams.day_time"
