@@ -125,7 +125,7 @@
           <el-button type="text" size="small" @click="downloadClick(scope.row)">下载</el-button>
         </template> -->
       </el-table-column>
-      <el-table-column label="发送到上辅机">
+      <!-- <el-table-column label="发送到上辅机">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -133,7 +133,7 @@
           >发送
           </el-button>
         </template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
     <el-dialog
       title="胶料产出反馈"
