@@ -434,6 +434,7 @@ export default {
     },
     clearAddPlanArr() {
       if (this.addPlanArr.length > 0) {
+        this.checkAll = false
         this.addPlanArr = []
         this.equips.forEach(D => {
           D.checkbox = false
