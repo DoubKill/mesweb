@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="banburying_plan_style">
     <el-form :inline="true">
       <el-form-item label="日期">
         <el-date-picker
@@ -40,43 +40,122 @@
       border
       style="width: 100%"
     >
-      <el-table-column prop="equip_no" label="机台" align="center" />
-      <el-table-column prop="sn" label="顺序" align="center" />
+      <el-table-column
+        prop="equip_no"
+        label="机台"
+        align="center"
+      />
+      <el-table-column
+        prop="sn"
+        label="顺序"
+        align="center"
+      />
 
-      <el-table-column align="center" label="胶料信息">
-        <el-table-column align="center" prop="product_no" label="胶料编码" />
-        <el-table-column align="center" prop="stage" label="STAGE" />
-        <el-table-column align="center" prop="actual_time" label="时间" />
-        <el-table-column align="center" prop="plan_weight" label="重量" />
+      <el-table-column
+        align="center"
+        label="胶料信息"
+      >
+        <el-table-column
+          align="center"
+          prop="product_no"
+          label="胶料编码"
+        />
+        <el-table-column
+          align="center"
+          prop="stage"
+          label="STAGE"
+        />
+        <el-table-column
+          align="center"
+          prop="actual_time"
+          label="时间"
+        />
+        <el-table-column
+          align="center"
+          prop="plan_weight"
+          label="重量"
+        />
       </el-table-column>
 
-      <el-table-column align="center" label="数量">
-        <el-table-column align="center" prop="plan_trains" label="计划" />
-        <el-table-column align="center" prop="actual_trains" label="实绩" />
+      <el-table-column
+        align="center"
+        label="数量"
+      >
+        <el-table-column
+          align="center"
+          prop="plan_trains"
+          label="计划"
+        />
+        <el-table-column
+          align="center"
+          prop="actual_trains"
+          label="实绩"
+        />
       </el-table-column>
 
-      <el-table-column align="center" label="重量">
-        <el-table-column align="center" prop="plan_weight" label="计划" />
-        <el-table-column align="center" prop="actual_weight" label="实绩" />
+      <el-table-column
+        align="center"
+        label="重量"
+      >
+        <el-table-column
+          align="center"
+          prop="plan_weight"
+          label="计划"
+        />
+        <el-table-column
+          align="center"
+          prop="actual_weight"
+          label="实绩"
+        />
 
-        <el-table-column prop="ach_rate" label="达成率">
+        <el-table-column
+          prop="ach_rate"
+          label="达成率"
+        >
           <template slot-scope="scope">
-            <el-progress :text-inside="true" :stroke-width="15" :percentage="scope.row.ach_rate / 5" :color="customColorMethod" />
+            <el-progress
+              :text-inside="true"
+              :stroke-width="15"
+              :percentage="scope.row.ach_rate / 5"
+              :color="customColorMethod"
+            />
           </template>
         </el-table-column>
       </el-table-column>
 
-      <el-table-column align="center" label="时间">
-        <el-table-column align="center" prop="plan_time" label="计划" />
-        <el-table-column align="center" prop="actual_time" label="实绩" />
+      <el-table-column
+        align="center"
+        label="时间"
+      >
+        <el-table-column
+          align="center"
+          prop="plan_time"
+          label="计划"
+        />
+        <el-table-column
+          align="center"
+          prop="actual_time"
+          label="实绩"
+        />
       </el-table-column>
 
-      <el-table-column align="center" label="分析">
-        <el-table-column align="center" prop="start_rate" label="启动率" />
+      <el-table-column
+        align="center"
+        label="分析"
+      >
+        <el-table-column
+          align="center"
+          prop="start_rate"
+          label="启动率"
+        />
       </el-table-column>
 
     </el-table>
-    <page :total="total" :current-page="getParams.page" @currentChange="currentChange" />
+    <page
+      :total="total"
+      :current-page="getParams.page"
+      @currentChange="currentChange"
+    />
   </div>
 </template>
 
@@ -147,6 +226,11 @@ export default {
 
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+.banburying_plan_style{
+  .el-progress-bar__innerText{
+    color: #000 !important;
+  }
+}
 </style>
 
