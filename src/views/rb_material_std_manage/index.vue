@@ -620,6 +620,9 @@
       炼胶时间:
       <el-input-number
         v-model.number="put_select_rm_time_interval"
+        :step="1"
+        step-strictly
+        :min="0"
         size="mini"
         controls-position="right"
       />
