@@ -6,6 +6,7 @@
       clearable
       placeholder="请选择机台"
       @change="changeSearch"
+      @visible-change="visibleChange"
     >
       <el-option
         v-for="item in machineList"
@@ -43,7 +44,7 @@ export default {
     }
   },
   created() {
-    this.getMachineList()
+    // this.getMachineList()
   },
   methods: {
     getMachineList() {
@@ -57,6 +58,11 @@ export default {
     },
     changeSearch(id) {
       this.$emit('changeSearch', id)
+    },
+    visibleChange(bool) {
+      if (bool && this.machineList.length === 0) {
+        this.getMachineList()
+      }
     }
   }
 }
