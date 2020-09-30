@@ -178,7 +178,7 @@
           label="LOT"
         >
           <template slot-scope="scope">
-            {{ scope.row.LOT||'--' }}
+            {{ scope.row.lot_no||'--' }}
           </template>
         </el-table-column>
         <el-table-column
