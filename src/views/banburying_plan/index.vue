@@ -116,7 +116,7 @@
             <el-progress
               :text-inside="true"
               :stroke-width="15"
-              :percentage="scope.row.ach_rate / 5"
+              :percentage="scope.row.ach_rate"
               :color="customColorMethod"
             />
           </template>
