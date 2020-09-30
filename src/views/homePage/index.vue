@@ -54,7 +54,7 @@ export default {
       }
     }
     this.chartSettingsCir = {
-      radius: '110'
+      radius: '90'
     }
     return {
       getInfoData: {},

@@ -185,6 +185,11 @@
           label="作业者"
         />
       </el-table>
+      <page
+        :total="totalRubber"
+        :current-page="pageRubber"
+        @currentChange="currentChangeRubber"
+      />
     </el-dialog>
 
     <el-dialog
@@ -357,6 +362,8 @@ export default {
       BATList: [],
       total: 0,
       dialogVisibleGraph: false,
+      totalRubber: 0,
+      pageRubber: 1,
       chartData: {
         columns: [
           'created_date_date',
@@ -466,22 +473,30 @@ export default {
     clickProductNo(row) {
       this.dialogVisibleRubber = true
       this.palletFeedObj = row
+      this.pageRubber = 1
       this.getRubberCoding()
     },
     getRubberCoding() {
       var _this = this
       palletFeedBacksUrl('get', null, {
         params: {
+          page: _this.pageRubber,
           product_no: _this.palletFeedObj.product_no,
           plan_classes_uid: _this.palletFeedObj.plan_classes_uid,
-          equip_no: _this.palletFeedObj.equip_no
+          equip_no: _this.palletFeedObj.equip_no,
+          day_time: _this.palletFeedObj.end_time.split(' ')[0]
         }
       })
         .then(function(response) {
+          _this.totalRubber = response.count
           _this.palletFeedList = response.results || []
         })
         // eslint-disable-next-line handle-callback-err
         .catch(function(error) { })
+    },
+    currentChangeRubber(page) {
+      this.pageRubber = page
+      this.getRubberCoding()
     },
     clickBAT(row) {
       this.dialogVisibleBAT = true
