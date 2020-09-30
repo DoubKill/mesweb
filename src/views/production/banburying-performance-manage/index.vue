@@ -3,7 +3,11 @@
     <el-form :inline="true">
 
       <el-form-item label="工程名">
-        <el-input v-model="projectName" placeholder="密炼" :disabled="true" />
+        <el-input
+          v-model="projectName"
+          placeholder="密炼"
+          :disabled="true"
+        />
       </el-form-item>
       <el-form-item label="日期">
         <el-date-picker
@@ -59,8 +63,17 @@
         label="胶料代码"
       >
         <template slot-scope="scope">
-          <span style="margin-left: 10px" v-text="scope.row.product_no" />
-          <el-button icon="el-icon-search" type="text" size="small" style="float: right; width: 30%" @click="clickProductNo(scope.row)" />
+          <span
+            style="margin-left: 10px"
+            v-text="scope.row.product_no"
+          />
+          <el-button
+            icon="el-icon-search"
+            type="text"
+            size="small"
+            style="float: right; width: 30%"
+            @click="clickProductNo(scope.row)"
+          />
         </template>
       </el-table-column>
       <el-table-column
@@ -178,9 +191,7 @@
           label="机台"
         />
 
-        <el-table-column
-          label="BAT"
-        >
+        <el-table-column label="BAT">
           <template slot-scope="scope">
             <div
               style="color:#1989fa;cursor:pointer"
@@ -193,9 +204,7 @@
           prop="actual_weight"
           label="生产重量"
         />
-        <el-table-column
-          label="生产时间"
-        >
+        <el-table-column label="生产时间">
           <template slot-scope="scope">
             {{ scope.row.end_time.split(' ')[1] }}
           </template>
@@ -209,6 +218,11 @@
           label="作业者"
         />
       </el-table>
+      <page
+        :total="totalRubber"
+        :current-page="pageRubber"
+        @currentChange="currentChangeRubber"
+      />
     </el-dialog>
     <el-dialog
       title="BAT查询"
@@ -216,7 +230,10 @@
       width="900px"
     >
       <div style="position: relative">
-        <el-form :inline="true" style="margin-right: 100px;">
+        <el-form
+          :inline="true"
+          style="margin-right: 100px;"
+        >
           <el-form-item label="胶料区分: ">
             {{ BATObj.stage }}
           </el-form-item>
@@ -320,13 +337,18 @@
         :after-set-option="afterSetOption"
       />
     </el-dialog>
-    <page :total="total" :current-page="getParams.page" @currentChange="currentChange" />
+    <page
+      :total="total"
+      :current-page="getParams.page"
+      @currentChange="currentChange"
+    />
   </div>
 </template>
 
 <script>
 import { getEquip, getPalletFeedBacks, getTrainsFeedbacks, getEchartsList, getProductActual, getPalletFeedbacks, postProductDayPlanNotice } from '@/api/banburying-performance-manage'
 import page from '@/components/page'
+import { setDate } from '@/utils'
 export default {
   components: { page },
   data: function() {
@@ -362,6 +384,8 @@ export default {
       dialogVisibleGraph: false,
       currentPage: 1,
       total: 0,
+      totalRubber: 0,
+      pageRubber: 1,
       getParams: {
         page: 1
       },
@@ -440,19 +464,30 @@ export default {
     },
     getRubberCoding(page) {
       var _this = this
+      let performanceDate = this.performanceDate
+      if (!performanceDate) {
+        performanceDate = setDate()
+      }
       getPalletFeedBacks({
+        page: _this.pageRubber,
         product_no: _this.palletFeedObj.product_no,
         // product_no: 'L-1MB-J260-01',
         // plan_classes_uid: _this.palletFeedObj.plan_classes_uid,
-        equip_no: _this.palletFeedObj.equip_no
+        equip_no: _this.palletFeedObj.equip_no,
+        day_time: performanceDate
         // equip_no: '115A01'
         // page: page
       }).then(function(response) {
+        _this.totalRubber = response.count
         _this.palletFeedList = response.results || []
         // if (_this.tableDataTotal !== response.count) {
         //   _this.tableDataTotal = response.count
         // }
       })
+    },
+    currentChangeRubber(page) {
+      this.pageRubber = page
+      this.getRubberCoding()
     },
     clickBAT(row) {
       this.dialogVisibleBAT = true
