@@ -518,7 +518,9 @@ export default {
         product_no: row.product_no,
         plan_classes_uid: row.plan_classes_uid,
         equip_no: row.equip_no,
-        current_trains: row.actual_trains
+        // current_trains: row.actual_trains,
+        st: row.begin_time,
+        et: row.end_time
       })
         .then(function(response) {
           var results = response.results
