@@ -65,17 +65,23 @@
       <el-form-item style="float: right">
         <el-button
           v-if="permissionObj.productbatching && permissionObj.productbatching.indexOf('add')>-1"
-          @click="showAddRubberMaterialDialog"
+          @click="newRubberClicked()"
         >新建</el-button>
       </el-form-item>
       <el-form-item style="float: right">
         <el-button
           v-if="permissionObj.productbatching && permissionObj.productbatching.indexOf('change')>-1"
-          :disabled="currentRow.used_type != 1"
+          :disabled="currentRow.used_type !== 1"
           @click="showPutRubberMaterialDialog"
         >配料</el-button>
       </el-form-item>
-
+      <el-form-item style="float: right">
+        <el-button
+          v-if="permissionObj.productbatching && permissionObj.productbatching.indexOf('add')>-1"
+          :disabled="!currentRow.id"
+          @click="copyClicked"
+        >复制</el-button>
+      </el-form-item>
     </el-form>
     <el-table
       highlight-current-row
@@ -243,7 +249,7 @@
     <el-dialog
       :close-on-click-modal="false"
       :close-on-press-escape="false"
-      title="新建胶料配方"
+      :title="copyRecipe ? '复制胶料配方' : '新建胶料配方'"
       :visible.sync="dialogAddRubberMaterial"
     >
       <el-form
@@ -252,8 +258,8 @@
         :rules="rules"
       >
         <el-form-item>
-          <el-radio v-model="normalReceipe" :label="true" @change="receipeTypeChange">常规配方</el-radio>
-          <el-radio v-model="normalReceipe" :label="false" @change="receipeTypeChange">特殊配方</el-radio>
+          <el-radio v-model="normalReceipe" :label="true" :disabled="copyRecipe" @change="receipeTypeChange">常规配方</el-radio>
+          <el-radio v-model="normalReceipe" :label="false" :disabled="copyRecipe" @change="receipeTypeChange">特殊配方</el-radio>
         </el-form-item>
         <el-form-item
           label="工厂"
@@ -319,10 +325,27 @@
 
         <el-form-item
           label="胶料编码"
-          prop="rubber_no"
+          prop="select_product_id"
         >
-          <el-autocomplete
+          <el-select
+            v-model="rubberMaterialForm.select_product_id"
+            :filterable="true"
+            style="width: 100%"
+            size="mini"
+            placeholder="请选择"
+            :disabled="!normalReceipe"
+            @change="GenerateRubberMaterialNOChanged"
+          >
+            <el-option
+              v-for="item in ProductBatchNoOptions"
+              :key="item.id"
+              :value="item.id"
+              :label="item.product_no"
+            />
+          </el-select>
+          <!-- <el-select
             v-model="rubberMaterialForm.rubber_no"
+            filterable="true"
             style="width: 100%"
             size="mini"
             value-key="product_no"
@@ -331,7 +354,7 @@
             :disabled="!normalReceipe"
             @select="RecipehandleSelect"
             @input="GenerateRubberMaterialNOChanged"
-          />
+          /> -->
         </el-form-item>
 
         <el-form-item
@@ -497,15 +520,15 @@
             <td style="text-align: center; height: 48px">
               <template>
                 <el-radio
-                  v-model="new_material_ele.auto_flag_radio"
+                  v-model="new_material_ele.auto_flag"
                   :label="1"
                 >自动</el-radio>
                 <el-radio
-                  v-model="new_material_ele.auto_flag_radio"
+                  v-model="new_material_ele.auto_flag"
                   :label="2"
                 >手动</el-radio>
                 <el-radio
-                  v-model="new_material_ele.auto_flag_radio"
+                  v-model="new_material_ele.auto_flag"
                   :label="0"
                 >其他</el-radio>
               </template>
@@ -530,7 +553,7 @@
             </td>
             <td style="text-align: center; height: 48px">
               <el-input-number
-                v-model.number="new_material_ele.practical_weight"
+                v-model.number="new_material_ele.actual_weight"
                 size="mini"
                 controls-position="right"
                 @change="NewPracticalWeightChanged(new_material_ele)"
@@ -1108,6 +1131,7 @@ export default {
       material_type_name: null,
 
       rubberMaterialForm: {
+        select_product_id: null,
         factory: '',
         SITE: '',
         stage_product_batch_no: '',
@@ -1119,10 +1143,10 @@ export default {
         generate_material_no: ''
       },
       rules: {
-        factory: [{ required: true, message: '请选择产地', trigger: 'change' }],
-        SITE: [{ required: true, message: '请选择SITE', trigger: 'change' }],
-        rubber_no: [{ required: true, message: '请选择胶料编码', trigger: 'change' }],
-        stage: [{ required: true, message: '请选择段次', trigger: 'change' }],
+        factory: [{ required: true, message: '请选择产地', trigger: 'blur' }],
+        SITE: [{ required: true, message: '请选择SITE', trigger: 'blur' }],
+        select_product_id: [{ required: true, message: '请选择胶料编码', trigger: 'blur' }],
+        stage: [{ required: true, message: '请选择段次', trigger: 'blur' }],
         version: [{ required: true, message: '请选择版本', trigger: 'blur' }],
         generate_material_no: [{ required: true, message: '该字段不能为空', trigger: 'blur' }]
       },
@@ -1142,7 +1166,8 @@ export default {
       search_material_no: null,
       search_material_name: null,
       select_product_id: null,
-      normalReceipe: true
+      normalReceipe: true,
+      copyRecipe: false
     }
   },
   computed: {
@@ -1153,11 +1178,26 @@ export default {
     this.rubber_material_list()
   },
   methods: {
-    receipeTypeChange() {
-      if (!this.normalReceipe) {
-        this.$refs['rubberMaterialForm'].resetFields()
-      }
+    copyClicked() {
+      this.copyRecipe = true
+      this.normalReceipe = !!this.currentRow.product_no
+      this.showAddRubberMaterialDialog()
+    },
+    clearRubberMaterialForm() {
+      this.rubberMaterialForm.factory = undefined
+      this.rubberMaterialForm.SITE = undefined
+      this.rubberMaterialForm.stage = undefined
+      this.rubberMaterialForm.rubber_no = undefined
+      this.rubberMaterialForm.select_product_id = undefined
+      this.rubberMaterialForm.version = undefined
+      this.rubberMaterialForm.scheme = undefined
       this.rubberMaterialForm.generate_material_no = ''
+      if (this.$refs['rubberMaterialForm']) {
+        this.$refs['rubberMaterialForm'].clearValidate()
+      }
+    },
+    receipeTypeChange() {
+      this.clearRubberMaterialForm()
     },
     async rubber_material_list() {
       try {
@@ -1340,27 +1380,33 @@ export default {
     RecipehandleSelect(item) {
       this.rubberMaterialForm['select_product_id'] = item['id']
     },
-    showAddRubberMaterialDialog: function() {
-      if (this.$refs['rubberMaterialForm']) {
-        this.$refs['rubberMaterialForm'].resetFields()
-      }
-      this.site_list()
-      this.SITE_global_list()
-      this.stage_global_list()
-      this.product_info_list()
+    newRubberClicked() {
+      this.normalReceipe = true
+      this.copyRecipe = false
+      this.showAddRubberMaterialDialog()
+    },
+    async showAddRubberMaterialDialog() {
+      this.clearRubberMaterialForm()
+      await this.site_list()
+      await this.SITE_global_list()
+      await this.stage_global_list()
+      await this.product_info_list()
       this.rubberMatetialError = ''
-      // this.rubberMaterialForm = {
-      //   factory: '',
-      //   SITE: '',
-      //   stage_product_batch_no: '',
-      //   stage: '',
-      //   dev_type_name: '',
-      //   generate_material_no: ''
-      // }
+      if (this.copyRecipe && this.normalReceipe) {
+        this.rubberMaterialForm.factory = this.currentRow.factory
+        this.rubberMaterialForm.SITE = this.currentRow.site
+        this.rubberMaterialForm.stage = this.currentRow.stage
+        this.rubberMaterialForm.rubber_no = this.currentRow.product_no
+        this.rubberMaterialForm.select_product_id = this.currentRow.product_info
+        this.rubberMaterialForm.version = this.currentRow.versions
+        this.rubberMaterialForm.scheme = this.currentRow.precept
+        this.GenerateRubberMaterialNOChanged()
+      } else if (this.copyRecipe && !this.normalReceipe) {
+        this.rubberMaterialForm.generate_material_no = this.currentRow.stage_product_batch_no
+      }
+      this.currentRow.used_type = -1
       this.dialogAddRubberMaterial = true
-      this.currentRow = {
-        used_type: -1
-      } // 新建和更新标志 -1新建 其他更新
+      // 新建和更新标志 -1新建 其他更新
     },
     GenerateRubberMaterialNOChanged() {
       var SITE_name = ''
@@ -1381,9 +1427,15 @@ export default {
           }
         }
       }
-      if (this.rubberMaterialForm.rubber_no) {
-        product_name = this.rubberMaterialForm.rubber_no
+      const productBatch = this.ProductBatchNoOptions.find(option => {
+        return option.id === this.rubberMaterialForm['select_product_id']
+      })
+      if (productBatch) {
+        product_name = productBatch.product_no
       }
+      // if (this.rubberMaterialForm.rubber_no) {
+      //   product_name = this.rubberMaterialForm.rubber_no
+      // }
 
       if (this.rubberMaterialForm.version) {
         version = this.rubberMaterialForm.version
@@ -1419,7 +1471,7 @@ export default {
     NewPracticalWeightChanged: function() {
       var material_weight = 0
       for (var i = 0; i < this.NewRowMaterial.length; ++i) {
-        material_weight += this.NewRowMaterial[i]['practical_weight']
+        material_weight += this.NewRowMaterial[i]['actual_weight']
       }
       this.select_material_weight = material_weight
       this.practicalWeightSum = material_weight
@@ -1428,7 +1480,7 @@ export default {
       this.NewRowMaterial.push({
         material_type: '',
         material_name: '',
-        auto_flag_radio: 0
+        auto_flag: 0
         // practical_weight:"",
         // standard_error: ''
       })
@@ -1463,14 +1515,14 @@ export default {
       }
 
       for (var i = 0; i < this.NewRowMaterial.length; ++i) {
-        if (app.NewRowMaterial[i].material_name && app.NewRowMaterial[i].practical_weight) {
+        if (app.NewRowMaterial[i].material_name && app.NewRowMaterial[i].actual_weight) {
           // post_ele_material = app.NewRowMaterial[i].material_name;
           // 判断表格中每一行中的下拉框中的数据：是用户所选，还是默认展示
           var now_stage_material = {
             sn: i + 1,
-            auto_flag: app.NewRowMaterial[i].auto_flag_radio,
+            auto_flag: app.NewRowMaterial[i].auto_flag,
             material: app.NewRowMaterial[i].material,
-            actual_weight: app.NewRowMaterial[i].practical_weight,
+            actual_weight: app.NewRowMaterial[i].actual_weight,
             standard_error: app.NewRowMaterial[i].standard_error
           }
           batching_details_list.push(now_stage_material)
@@ -1565,9 +1617,6 @@ export default {
       app.materials_type_list()
       app.dialogRubberMaterialStandard = true
       var rubber_material_result = await this.rubber_material_ele(this.currentRow.id)
-      //   console.log('================================mod_get')
-      //   console.log(rubber_material_result)
-      //   console.log('================================mod_get')
       app.put_select_stage_product_batch_no = rubber_material_result['stage_product_batch_no']
       app.put_select_product_name = rubber_material_result['product_name']
       app.put_select_status = app.usedTypeChoice(rubber_material_result['used_type'])
@@ -1600,7 +1649,7 @@ export default {
     },
     pop_up_raw_material: function(new_material_ele, index) {
       // eslint-disable-next-line no-prototype-builtins
-      if (new_material_ele.hasOwnProperty('practical_weight')) {
+      if (new_material_ele.hasOwnProperty('actual_weight')) {
         this.raw_material_index = index
       } else {
         this.put_raw_material_index = index
@@ -1742,6 +1791,14 @@ export default {
         this.select_material_weight = null
         this.practicalWeightSum = null
         this.NewRowMaterial = []
+        if (this.copyRecipe) {
+          var rubber_material_result = await this.rubber_material_ele(this.currentRow.id)
+          this.select_dev_type = rubber_material_result['dev_type']
+          this.select_material_weight = rubber_material_result['batching_weight']
+          this.select_rm_time_interval = rubber_material_result['production_time_interval']
+          this.NewRowMaterial = rubber_material_result['batching_details']
+          console.log(this.NewRowMaterial, 'this.NewRowMaterial')
+        }
       } catch (e) { e }
     },
     NewAddMaterial(formName) {

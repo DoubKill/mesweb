@@ -22,7 +22,7 @@
           @input="getParam"
         />
       </el-form-item>
-      <el-form-item label="原材料代码">
+      <el-form-item label="原材料编码">
         <el-input
           v-model="getParams.material_no"
           @input="getParam"
@@ -63,7 +63,7 @@
       />
       <el-table-column
         prop="material_no"
-        label="原材料代码"
+        label="原材料编码"
       />
       <el-table-column
         prop="material_name"
