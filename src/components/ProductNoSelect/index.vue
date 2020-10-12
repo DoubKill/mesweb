@@ -56,6 +56,11 @@ export default {
         productBatchings.forEach(productBatching => {
           this.productBatchingById[productBatching.id] = productBatching
         })
+        if (this.makeUseBatch) {
+          let arr = []
+          arr = productBatchings.filter(D => D.used_type === 4 || D.used_type === 6)
+          productBatchings = arr
+        }
         if (this.isStageProductbatchNoRemove) {
           // 根据stage_product_batch_no去重
           var obj = {}
@@ -68,12 +73,6 @@ export default {
           productBatchings = newArr || []
         }
         this.loading = false
-        if (this.makeUseBatch) {
-          let arr = []
-          arr = productBatchings.filter(D => D.used_type === 4 || D.used_type === 6)
-          this.productBatchings = arr
-          return
-        }
         this.productBatchings = productBatchings
       })
     }
