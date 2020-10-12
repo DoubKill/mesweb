@@ -103,7 +103,7 @@
         label="胶料配方编码"
       >
         <template slot-scope="scope">
-          <el-button type="text" @click="showGridTable(scope.row.id)">{{ scope.row.stage_product_batch_no }}</el-button>
+          <el-link type="primary" :underline="false" @click="showGridTable(scope.row.id)">{{ scope.row.stage_product_batch_no }}</el-link>
         </template>
       </el-table-column>
       <el-table-column
