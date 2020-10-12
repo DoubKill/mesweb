@@ -60,15 +60,24 @@ service.interceptors.response.use(
     if (Object.prototype.toString.call(error.response.data) === '[object Object]') {
       const obj = error.response.data
       let str = ''
-      for (const key in obj) {
-        if (!(obj[key] instanceof Array)) {
-          str += obj[key]
-        } else {
-          obj[key].forEach(element => {
-            str += element
-          })
+      if (obj && Object.prototype.hasOwnProperty.call(obj, 'batching_details')) {
+        obj.batching_details.forEach(details => {
+          for (const key in details) {
+            str += details[key]
+          }
+        })
+      } else {
+        for (const key in obj) {
+          if (!(obj[key] instanceof Array)) {
+            str += obj[key]
+          } else {
+            obj[key].forEach(element => {
+              str += element
+            })
+          }
         }
       }
+
       Message({
         message: str,
         type: 'error',
@@ -86,8 +95,17 @@ service.interceptors.response.use(
             obj = errorData
           }
         }
+
         if (errorData && Object.prototype.hasOwnProperty.call(obj, 'non_field_errors')) {
           str += (`${obj.non_field_errors.join(',')}\n`)
+        } else if (Object.prototype.hasOwnProperty.call(obj, 'batching_details')) {
+          obj.batching_details.forEach(details => {
+            if (details && Object.prototype.hasOwnProperty.call(details, 'non_field_errors')) {
+              str += (`${details.non_field_errors.join(',')}\n`) + ';'
+            } else {
+              str += details
+            }
+          })
         } else {
           str += errorData
         }

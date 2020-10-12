@@ -138,7 +138,10 @@
           label="用户名"
           prop="username"
         >
-          <el-input v-model="userForm.username" :disabled="userForm.id ? true:false" />
+          <el-input
+            v-model="userForm.username"
+            :disabled="userForm.id ? true:false"
+          />
         </el-form-item>
         <el-form-item
           v-if="userForm.id"
@@ -266,6 +269,8 @@ export default {
         callback(new Error('用户名格式错误，请输入字母和数字组合'))
       } else if (value.length > 64) {
         callback(new Error('长度小于64个字符!'))
+      } else if (value.length < 2) {
+        callback(new Error('请输入最少两个字符!'))
       } else {
         callback()
       }
