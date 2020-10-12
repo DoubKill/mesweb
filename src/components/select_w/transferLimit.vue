@@ -7,6 +7,7 @@
       v-if="permissionsData.length>0"
       :data="permissionsData"
       style="width: 100%"
+      border
     >
       <el-table-column
         prop="name"

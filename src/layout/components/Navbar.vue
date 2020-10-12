@@ -99,6 +99,7 @@ export default {
     float: right;
     height: 100%;
     line-height: 50px;
+    cursor: pointer;
 
     &:focus {
       outline: none;
