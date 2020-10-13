@@ -594,6 +594,9 @@ export default {
       if (this.search_date) {
         this.getParams.st = this.search_date[0]
         this.getParams.et = this.search_date[1]
+      } else {
+        delete this.getParams.st
+        delete this.getParams.et
       }
 
       this.getParams.page = 1
