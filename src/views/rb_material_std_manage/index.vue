@@ -469,6 +469,7 @@
         :min="0"
         size="mini"
         controls-position="right"
+        @blur="() => { if(!select_rm_time_interval)select_rm_time_interval=0}"
       />
       <!-- <el-time-picker
         v-model="select_rm_time_interval"
@@ -554,6 +555,7 @@
             <td style="text-align: center; height: 48px">
               <el-input-number
                 v-model.number="new_material_ele.actual_weight"
+                :min="0"
                 size="mini"
                 controls-position="right"
                 @change="NewPracticalWeightChanged(new_material_ele)"
@@ -648,6 +650,7 @@
         :min="0"
         size="mini"
         controls-position="right"
+        @blur="() => { if(!put_select_rm_time_interval)put_select_rm_time_interval=0}"
       />
 
       <br><br>
@@ -725,6 +728,7 @@
               <el-input-number
                 v-model.number="new_material_ele.actual_weight"
                 size="mini"
+                :min="0"
                 controls-position="right"
                 @change="PutNewPracticalWeightChanged(new_material_ele)"
               />
@@ -1073,7 +1077,7 @@ export default {
 
       select_stage_product_batch_no: null,
       select_product_name: null,
-      select_status: null,
+      select_status: '编辑',
       select_dev_type: null,
       select_material_weight: null,
       select_material_volume: null,
@@ -1506,7 +1510,7 @@ export default {
     NewsaveMaterialClicked: async function() {
       var app = this
       var batching_details_list = []
-      if (app.select_dev_type == null) {
+      if (!app.select_dev_type) {
         app.$message({
           message: '炼胶机类型不能为空',
           type: 'error'
@@ -1560,7 +1564,7 @@ export default {
     PutNewsaveMaterialClicked: async function() {
       var app = this
       var batching_details_list = []
-      if (app.put_select_dev_type == null) {
+      if (!app.put_select_dev_type) {
         app.$message({
           message: '炼胶机类型不能为空',
           type: 'error'
@@ -1590,10 +1594,6 @@ export default {
           return
         }
       }
-
-      // console.log('=======================================mod_put')
-      // console.log(this.currentRow)
-      // console.log('=======================================mod_put')
       try {
         await this.rubber_material_put(
           this.currentRow.id,
@@ -1634,9 +1634,6 @@ export default {
       app.materials_type_list()
       this.gridTable = true
       var rubber_material_result = await this.rubber_material_ele(id)
-      //   console.log('================================mod_get')
-      //   console.log(rubber_material_result)
-      //   console.log('================================mod_get')
       app.put_select_stage_product_batch_no = rubber_material_result['stage_product_batch_no']
       app.put_select_product_name = rubber_material_result['product_name']
       app.put_select_status = app.usedTypeChoice(rubber_material_result['used_type'])
@@ -1659,13 +1656,6 @@ export default {
     },
     handleMaterialSelect(row) {
       var app = this
-
-      // console.log('================================================111')
-      // console.log(row.id)
-      // console.log(app.raw_material_index)
-      // console.log(app.NewRowMaterial, 'NewRowMaterial')
-      // console.log(app.PutProductRecipe, 'PutProductRecipe')
-      // console.log('================================================111')
       if (app.raw_material_index != null) {
         // 胶料配料post
         for (var i = 0; i < app.NewRowMaterial.length; ++i) {
@@ -1797,7 +1787,6 @@ export default {
           this.select_material_weight = rubber_material_result['batching_weight']
           this.select_rm_time_interval = rubber_material_result['production_time_interval']
           this.NewRowMaterial = rubber_material_result['batching_details']
-          console.log(this.NewRowMaterial, 'this.NewRowMaterial')
         }
       } catch (e) { e }
     },

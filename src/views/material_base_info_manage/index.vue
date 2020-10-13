@@ -257,12 +257,12 @@
         >
           <el-input v-model="materialBaseInfoForm.for_short" />
         </el-form-item>
-        <el-form-item
+        <!-- <el-form-item
           :error="materialBaseInfoFormError.density"
           label="比重"
         >
           <el-input v-model="materialBaseInfoForm.density" />
-        </el-form-item>
+        </el-form-item> -->
         <!-- <el-form-item
           :error="materialBaseInfoFormError.use_flag"
           label="是否启用"
