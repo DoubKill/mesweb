@@ -2,35 +2,102 @@
   <div>
     <el-form :inline="true">
       <el-form-item label="工序">
-        <el-input v-model.number="process" @input="changeSearch" />
+        <el-input
+          v-model.number="process"
+          @input="changeSearch"
+        />
       </el-form-item>
       <el-form-item label="设备名">
-        <el-input v-model="equip" @input="changeSearch" />
+        <el-input
+          v-model="equip"
+          @input="changeSearch"
+        />
       </el-form-item>
       <el-form-item>
-        <el-button v-if="permissionObj.equip && permissionObj.equip.indexOf('add')>-1" @click="showCreateEquipDialog">新建</el-button>
+        <el-button
+          v-if="permissionObj.equip && permissionObj.equip.indexOf('add')>-1"
+          @click="showCreateEquipDialog"
+        >新建</el-button>
       </el-form-item>
     </el-form>
 
-    <el-table :data="tableData" border style="width: 100%">
+    <el-table
+      :data="tableData"
+      border
+      style="width: 100%"
+    >
       <el-table-column
         align="center"
         type="index"
         label="No"
         width="50"
       />
-      <el-table-column align="center" prop="equip_no" label="设备代码" />
-      <el-table-column align="center" width="200%" prop="equip_name" label="设备名称" />
-      <el-table-column align="center" prop="equip_type" label="设备类型" />
-      <el-table-column align="center" width="100" prop="equip_process_no" label="工序代码" />
-      <el-table-column align="center" prop="equip_process_name" label="工序名称" />
-      <el-table-column align="center" prop="category_no" label="机型编号" />
-      <el-table-column align="center" prop="category_name" label="机型名称" />
-      <el-table-column align="center" width="50" prop="equip_level_name" label="设备层级" />
-      <el-table-column align="center" width="50" prop="count_flag" label="产量计数" :formatter="EquipCountFlagFormatter" />
-      <el-table-column align="center" prop="description" label="备注" />
-      <el-table-column align="center" width="50" prop="use_flag" label="是否启用" :formatter="EquipUsedFlagFormatter" />
-      <el-table-column align="center" label="操作">
+      <el-table-column
+        align="center"
+        prop="equip_no"
+        label="设备代码"
+      />
+      <el-table-column
+        align="center"
+        width="200%"
+        prop="equip_name"
+        label="设备名称"
+      />
+      <el-table-column
+        align="center"
+        prop="equip_type"
+        label="设备类型"
+      />
+      <el-table-column
+        align="center"
+        width="100"
+        prop="equip_process_no"
+        label="工序代码"
+      />
+      <el-table-column
+        align="center"
+        prop="equip_process_name"
+        label="工序名称"
+      />
+      <el-table-column
+        align="center"
+        prop="category_no"
+        label="机型编号"
+      />
+      <el-table-column
+        align="center"
+        prop="category_name"
+        label="机型名称"
+      />
+      <el-table-column
+        align="center"
+        width="50"
+        prop="equip_level_name"
+        label="设备层级"
+      />
+      <el-table-column
+        align="center"
+        width="50"
+        prop="count_flag"
+        label="产量计数"
+        :formatter="EquipCountFlagFormatter"
+      />
+      <el-table-column
+        align="center"
+        prop="description"
+        label="备注"
+      />
+      <el-table-column
+        align="center"
+        width="50"
+        prop="use_flag"
+        label="是否启用"
+        :formatter="EquipUsedFlagFormatter"
+      />
+      <el-table-column
+        align="center"
+        label="操作"
+      >
         <template slot-scope="scope">
           <el-button-group>
             <el-button
@@ -50,14 +117,31 @@
         </template>
       </el-table-column>
     </el-table>
-    <page :total="total" :current-page="getParams.page" @currentChange="currentChange" />
+    <page
+      :total="total"
+      :current-page="getParams.page"
+      @currentChange="currentChange"
+    />
 
-    <el-dialog title="添加设备基础信息" :visible.sync="dialogCreateEquipVisible">
-      <el-form ref="AddEquipForm" :model="AddEquipForm" :rules="add_equip_rules">
-        <el-form-item label="设备编号" prop="equip_no">
+    <el-dialog
+      title="添加设备基础信息"
+      :visible.sync="dialogCreateEquipVisible"
+    >
+      <el-form
+        ref="AddEquipForm"
+        :model="AddEquipForm"
+        :rules="add_equip_rules"
+      >
+        <el-form-item
+          label="设备编号"
+          prop="equip_no"
+        >
           <el-input v-model="AddEquipForm.equip_no" />
         </el-form-item>
-        <el-form-item label="设备名称" prop="equip_name">
+        <el-form-item
+          label="设备名称"
+          prop="equip_name"
+        >
           <el-input v-model="AddEquipForm.equip_name" />
         </el-form-item>
 
@@ -72,7 +156,10 @@
           <el-switch v-model="AddEquipForm.use_flag" />
         </el-form-item> -->
 
-        <el-form-item label="设备层级" prop="equip_level">
+        <el-form-item
+          label="设备层级"
+          prop="equip_level"
+        >
           <el-select
             v-model="AddEquipForm.equip_level"
             style="width: 100%"
@@ -87,7 +174,10 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="设备种类" prop="category">
+        <el-form-item
+          label="设备种类"
+          prop="category"
+        >
           <el-select
             v-model="AddEquipForm.category"
             style="width: 100%"
@@ -104,18 +194,40 @@
         </el-form-item>
 
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="dialogCreateEquipVisible = false">取 消</el-button>
-        <el-button type="primary" @click="handleCreateEquip('AddEquipForm')">确 定</el-button>
+        <el-button
+          type="primary"
+          @click="handleCreateEquip('AddEquipForm')"
+        >确 定</el-button>
       </div>
     </el-dialog>
 
-    <el-dialog title="编辑设备基础信息" :visible.sync="dialogEditEquipVisible">
-      <el-form ref="ModifyEquipForm" :model="ModifyEquipForm" :rules="modify_equip_rules">
-        <el-form-item label="设备编号" prop="equip_no">
-          <el-input v-model="ModifyEquipForm.equip_no" />
+    <el-dialog
+      title="编辑设备基础信息"
+      :visible.sync="dialogEditEquipVisible"
+    >
+      <el-form
+        ref="ModifyEquipForm"
+        :model="ModifyEquipForm"
+        :rules="modify_equip_rules"
+      >
+        <el-form-item
+          label="设备编号"
+          prop="equip_no"
+        >
+          <el-input
+            v-model="ModifyEquipForm.equip_no"
+            :disabled="true"
+          />
         </el-form-item>
-        <el-form-item label="设备名称" prop="equip_name">
+        <el-form-item
+          label="设备名称"
+          prop="equip_name"
+        >
           <el-input v-model="ModifyEquipForm.equip_name" />
         </el-form-item>
 
@@ -130,7 +242,10 @@
           <el-switch v-model="ModifyEquipForm.use_flag" />
         </el-form-item> -->
 
-        <el-form-item label="设备层级" prop="equip_level">
+        <el-form-item
+          label="设备层级"
+          prop="equip_level"
+        >
           <el-select
             v-model="ModifyEquipForm.equip_level"
             style="width: 100%"
@@ -145,7 +260,10 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="设备种类" prop="category">
+        <el-form-item
+          label="设备种类"
+          prop="category"
+        >
           <el-select
             v-model="ModifyEquipForm.category"
             style="width: 100%"
@@ -161,9 +279,15 @@
           </el-select>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="dialogEditEquipVisible = false">取 消</el-button>
-        <el-button type="primary" @click="handleEditEquip('ModifyEquipForm')">确 定</el-button>
+        <el-button
+          type="primary"
+          @click="handleEditEquip('ModifyEquipForm')"
+        >确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -272,7 +396,7 @@ export default {
     async equip_level_list() {
       try {
         const equip_level_list = await equip_level_url('get', {
-          params: { }
+          params: {}
         })
         if (equip_level_list.results.length !== 0) {
           this.EquipLevelOptions = equip_level_list.results
@@ -282,7 +406,7 @@ export default {
     async equip_category_list() {
       try {
         const equip_category_list = await equip_category_url('get', {
-          params: { }
+          params: {}
         })
         if (equip_category_list.results.length !== 0) {
           this.EquipCategory = equip_category_list.results
@@ -374,15 +498,17 @@ export default {
           this.clearEquipForm()
           try {
             await this.equip_manage_post(
-              { data: {
-                'category': this.AddEquipForm['category'],
-                'count_flag': this.AddEquipForm['count_flag'],
-                'description': this.AddEquipForm['description'],
-                'equip_level': this.AddEquipForm['equip_level'],
-                'equip_name': this.AddEquipForm['equip_name'],
-                'equip_no': this.AddEquipForm['equip_no'],
-                'use_flag': this.AddEquipForm['use_flag']
-              }}
+              {
+                data: {
+                  'category': this.AddEquipForm['category'],
+                  'count_flag': this.AddEquipForm['count_flag'],
+                  'description': this.AddEquipForm['description'],
+                  'equip_level': this.AddEquipForm['equip_level'],
+                  'equip_name': this.AddEquipForm['equip_name'],
+                  'equip_no': this.AddEquipForm['equip_no'],
+                  'use_flag': this.AddEquipForm['use_flag']
+                }
+              }
             )
             this.dialogCreateEquipVisible = false
             this.equip_manage_list()
@@ -399,15 +525,17 @@ export default {
           try {
             await this.equip_manage_modify(
               this.ModifyEquipForm.id,
-              { data: {
-                'category': this.ModifyEquipForm['category'],
-                'count_flag': this.ModifyEquipForm['count_flag'],
-                'description': this.ModifyEquipForm['description'],
-                'equip_level': this.ModifyEquipForm['equip_level'],
-                'equip_name': this.ModifyEquipForm['equip_name'],
-                'equip_no': this.ModifyEquipForm['equip_no'],
-                'use_flag': this.ModifyEquipForm['use_flag']
-              }}
+              {
+                data: {
+                  'category': this.ModifyEquipForm['category'],
+                  'count_flag': this.ModifyEquipForm['count_flag'],
+                  'description': this.ModifyEquipForm['description'],
+                  'equip_level': this.ModifyEquipForm['equip_level'],
+                  'equip_name': this.ModifyEquipForm['equip_name'],
+                  'equip_no': this.ModifyEquipForm['equip_no'],
+                  'use_flag': this.ModifyEquipForm['use_flag']
+                }
+              }
             )
             this.dialogEditEquipVisible = false
             this.equip_manage_list()
