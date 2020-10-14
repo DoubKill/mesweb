@@ -12,9 +12,9 @@
         >
           <el-option
             v-for="item in RubberStageOptions"
-            :key="item.id"
+            :key="item.global_name"
             :label="item.global_name"
-            :value="item.id"
+            :value="item.global_name"
           />
         </el-select>
       </el-form-item>
@@ -53,7 +53,8 @@ export default {
       tableData: [],
       total: 0,
       getParams: {
-        page: 1
+        page: 1,
+        page_size: 10
       },
       RubberStage: null,
       RubberStageOptions: []
@@ -98,7 +99,7 @@ export default {
       }
     },
     changeSearch() {
-      this.getParams['stage_id'] = this.RubberStage
+      this.getParams['stage'] = this.RubberStage
       this.getParams.page = 1
       this.rubber_repertory_list()
     },
