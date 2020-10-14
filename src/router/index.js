@@ -71,8 +71,8 @@ export const asyncRoutes = [{
     name: 'global-codes-manage',
     component: () => import('@/views/basic/global-codes-manage/index'),
     meta: {
-      title: '公用代码管理'
-      // permissionName: 'globalcodetype'
+      title: '公用代码管理',
+      permissionName: 'globalcodetype'
     }
   },
   {
