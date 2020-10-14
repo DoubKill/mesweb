@@ -83,7 +83,7 @@
           label="总计"
         >
           <template slot-scope="scope">
-            <span v-text="scope.row.class_details.早班 + scope.row.class_details.中班 + scope.row.class_details.晚班" />
+            <span v-text="(scope.row.class_details.早班 ? scope.row.class_details.早班:0) + (scope.row.class_details.中班 ? scope.row.class_details.中班:0) + (scope.row.class_details.晚班 ? scope.row.class_details.晚班:0)" />
           </template>
         </el-table-column>
       </el-table-column>
