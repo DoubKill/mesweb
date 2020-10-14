@@ -116,6 +116,9 @@ export default {
     this.getList()
   },
   methods: {
+    findSchedulePlanByClassesName(work_schedule_plan, name) {
+      return work_schedule_plan.find(plan => plan.classes_name === name)
+    },
     getList() {
       const app = this
       app.loading = true
@@ -124,6 +127,13 @@ export default {
       }).then(function(response) {
         app.total = response.count
         app.tableData = response.results || []
+        for (const [index, row] of app.tableData.entries()) {
+          const work_schedule_plan = [null, null, null]
+          work_schedule_plan[0] = app.findSchedulePlanByClassesName(row.work_schedule_plan, '早班')
+          work_schedule_plan[1] = app.findSchedulePlanByClassesName(row.work_schedule_plan, '中班')
+          work_schedule_plan[2] = app.findSchedulePlanByClassesName(row.work_schedule_plan, '晚班')
+          row.work_schedule_plan = work_schedule_plan
+        }
         app.loading = false
       }).catch(function() {
         app.loading = false
