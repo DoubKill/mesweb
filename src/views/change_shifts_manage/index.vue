@@ -51,7 +51,11 @@
         prop="used_flag"
         label="使用与否"
       />
-      <el-table-column width="150" align="center" label="操作">
+      <el-table-column
+        width="150"
+        align="center"
+        label="操作"
+      >
         <template slot-scope="scope">
           <el-button-group>
             <el-button
@@ -178,7 +182,10 @@
           :label-width="formLabelWidth"
           prop="schedule_no"
         >
-          <el-input v-model="changeShiftsManageForm.schedule_no" />
+          <el-input
+            v-model="changeShiftsManageForm.schedule_no"
+            :disabled="true"
+          />
         </el-form-item>
         <el-form-item
           :error="changeShiftsManageFormError.schedule_name"
@@ -398,7 +405,7 @@ export default {
               app.dialogCreateChangeShiftsManageVisible = false
               app.$message.success(app.changeShiftsManageForm.schedule_name + '创建成功')
               app.getList()
-            // eslint-disable-next-line handle-callback-err
+              // eslint-disable-next-line handle-callback-err
             }).catch(function(error) {
               // app.$message.error(JSON.stringify(error))
               // for (var key in app.changeShiftsManageFormError) {
@@ -431,7 +438,7 @@ export default {
         if (valid) {
           for (var i = 0; i < changeShiftsManageForm.classesdetail_set.length; ++i) {
             if (changeShiftsManageForm.classesdetail_set[i].start_time &&
-          changeShiftsManageForm.classesdetail_set[i].end_time
+              changeShiftsManageForm.classesdetail_set[i].end_time
             ) {
               // app.changeShiftsManageForm.classesdetail_set[i]['start_time'] = app.changeShiftsManageForm.classesdetail_set[i].times[0];
               // app.changeShiftsManageForm.classesdetail_set[i]['end_time'] = app.changeShiftsManageForm.classesdetail_set[i].times[1];
@@ -455,8 +462,8 @@ export default {
               app.dialogEditChangeShiftsManageVisible = false
               app.$message(changeShiftsManageForm.schedule_name + '修改成功')
               app.getList()
-            // eslint-disable-next-line handle-callback-err
-            }).catch(error => {})
+              // eslint-disable-next-line handle-callback-err
+            }).catch(error => { })
         } else {
           return false
         }
