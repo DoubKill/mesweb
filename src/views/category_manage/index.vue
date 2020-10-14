@@ -2,29 +2,70 @@
   <div>
     <el-form :inline="true">
       <el-form-item label="机型名称">
-        <el-input v-model="category_name" @input="changeSearch" />
+        <el-input
+          v-model="category_name"
+          @input="changeSearch"
+        />
       </el-form-item>
       <el-form-item label="设备类型">
-        <el-input v-model="equip_type_name" @input="changeSearch" />
+        <el-input
+          v-model="equip_type_name"
+          @input="changeSearch"
+        />
       </el-form-item>
       <el-form-item>
-        <el-button v-if="permissionObj.equipcategoryattribute && permissionObj.equipcategoryattribute.indexOf('add')>-1" @click="showCreateEquipCateDialog">新建</el-button>
+        <el-button
+          v-if="permissionObj.equipcategoryattribute && permissionObj.equipcategoryattribute.indexOf('add')>-1"
+          @click="showCreateEquipCateDialog"
+        >新建</el-button>
       </el-form-item>
     </el-form>
 
-    <el-table :data="tableData" border style="width: 100%">
+    <el-table
+      :data="tableData"
+      border
+      style="width: 100%"
+    >
       <el-table-column
         align="center"
         type="index"
         label="No"
         width="50"
       />
-      <el-table-column align="center" width="100" prop="category_no" label="机型编号" />
-      <el-table-column align="center" width="150" prop="category_name" label="机型名称" />
-      <el-table-column align="center" width="100" prop="volume" label="容积" />
-      <el-table-column align="center" prop="equip_type_name" label="设备类型" />
-      <el-table-column align="center" width="50" prop="equip_process_no" label="工序代码" />
-      <el-table-column align="center" prop="equip_process_name" label="工序名称" />
+      <el-table-column
+        align="center"
+        width="100"
+        prop="category_no"
+        label="机型编号"
+      />
+      <el-table-column
+        align="center"
+        width="150"
+        prop="category_name"
+        label="机型名称"
+      />
+      <el-table-column
+        align="center"
+        width="100"
+        prop="volume"
+        label="容积"
+      />
+      <el-table-column
+        align="center"
+        prop="equip_type_name"
+        label="设备类型"
+      />
+      <el-table-column
+        align="center"
+        width="50"
+        prop="equip_process_no"
+        label="工序代码"
+      />
+      <el-table-column
+        align="center"
+        prop="equip_process_name"
+        label="工序名称"
+      />
       <el-table-column
         align="center"
         :formatter="formatter"
@@ -32,7 +73,11 @@
         prop="used_flag"
         label="使用与否"
       />
-      <el-table-column align="center" width="150" label="操作">
+      <el-table-column
+        align="center"
+        width="150"
+        label="操作"
+      >
         <template slot-scope="scope">
           <el-button-group>
             <el-button
@@ -52,22 +97,45 @@
         </template>
       </el-table-column>
     </el-table>
-    <page :total="total" :current-page="getParams.page" @currentChange="currentChange" />
+    <page
+      :total="total"
+      :current-page="getParams.page"
+      @currentChange="currentChange"
+    />
 
-    <el-dialog title="添加设备种类" :visible.sync="dialogCreateEquipCateVisible">
-      <el-form ref="AddEquipCateForm" :model="AddEquipCateForm" :rules="add_equipcate_rules">
-        <el-form-item label="机型编号" prop="category_no">
+    <el-dialog
+      title="添加设备种类"
+      :visible.sync="dialogCreateEquipCateVisible"
+    >
+      <el-form
+        ref="AddEquipCateForm"
+        :model="AddEquipCateForm"
+        :rules="add_equipcate_rules"
+      >
+        <el-form-item
+          label="机型编号"
+          prop="category_no"
+        >
           <el-input v-model="AddEquipCateForm.category_no" />
         </el-form-item>
-        <el-form-item label="机型名称" prop="category_name">
+        <el-form-item
+          label="机型名称"
+          prop="category_name"
+        >
           <el-input v-model="AddEquipCateForm.category_name" />
         </el-form-item>
 
-        <el-form-item label="容积" prop="volume">
+        <el-form-item
+          label="容积"
+          prop="volume"
+        >
           <el-input v-model="AddEquipCateForm.volume" />
         </el-form-item>
 
-        <el-form-item label="设备类型" prop="equip_type">
+        <el-form-item
+          label="设备类型"
+          prop="equip_type"
+        >
           <el-select
             v-model="AddEquipCateForm.equip_type"
             style="width: 100%"
@@ -83,7 +151,10 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="工序" prop="process">
+        <el-form-item
+          label="工序"
+          prop="process"
+        >
           <el-select
             v-model="AddEquipCateForm.process"
             style="width: 100%"
@@ -100,26 +171,54 @@
         </el-form-item>
 
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="dialogCreateEquipCateVisible = false">取 消</el-button>
-        <el-button type="primary" @click="handleCreateEquipCate('AddEquipCateForm')">确 定</el-button>
+        <el-button
+          type="primary"
+          @click="handleCreateEquipCate('AddEquipCateForm')"
+        >确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="编辑设备种类" :visible.sync="dialogEditEquipCateVisible">
-      <el-form ref="ModifyEquipCateForm" :model="ModifyEquipCateForm" :rules="modify_equipcate_rules">
+    <el-dialog
+      title="编辑设备种类"
+      :visible.sync="dialogEditEquipCateVisible"
+    >
+      <el-form
+        ref="ModifyEquipCateForm"
+        :model="ModifyEquipCateForm"
+        :rules="modify_equipcate_rules"
+      >
 
-        <el-form-item label="机型编号" prop="category_no">
-          <el-input v-model="ModifyEquipCateForm.category_no" />
+        <el-form-item
+          label="机型编号"
+          prop="category_no"
+        >
+          <el-input
+            v-model="ModifyEquipCateForm.category_no"
+            :disabled="true"
+          />
         </el-form-item>
-        <el-form-item label="机型名称" prop="category_name">
+        <el-form-item
+          label="机型名称"
+          prop="category_name"
+        >
           <el-input v-model="ModifyEquipCateForm.category_name" />
         </el-form-item>
 
-        <el-form-item label="容积" prop="volume">
+        <el-form-item
+          label="容积"
+          prop="volume"
+        >
           <el-input v-model="ModifyEquipCateForm.volume" />
         </el-form-item>
 
-        <el-form-item label="设备类型" prop="equip_type">
+        <el-form-item
+          label="设备类型"
+          prop="equip_type"
+        >
           <el-select
             v-model="ModifyEquipCateForm.equip_type"
             style="width: 100%"
@@ -135,7 +234,10 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="工序" prop="process">
+        <el-form-item
+          label="工序"
+          prop="process"
+        >
           <el-select
             v-model="ModifyEquipCateForm.process"
             style="width: 100%"
@@ -152,9 +254,15 @@
         </el-form-item>
 
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="dialogEditEquipCateVisible = false">取 消</el-button>
-        <el-button type="primary" @click="handleEditEquipCate('ModifyEquipCateForm')">确 定</el-button>
+        <el-button
+          type="primary"
+          @click="handleEditEquipCate('ModifyEquipCateForm')"
+        >确 定</el-button>
       </div>
     </el-dialog>
 
@@ -255,7 +363,7 @@ export default {
     async equip_type_list() {
       try {
         const equip_type_list = await equip_type_url('get', {
-          params: { }
+          params: {}
         })
         if (equip_type_list.results.length !== 0) {
           this.EquipCateOptions = equip_type_list.results
@@ -265,7 +373,7 @@ export default {
     async process_global_list() {
       try {
         const process_global_list = await process_global_url('get', {
-          params: { }
+          params: {}
         })
         if (process_global_list.results.length !== 0) {
           this.EquipCateProcessOptions = process_global_list.results
@@ -317,13 +425,15 @@ export default {
           this.clearEquipCateFormError()
           try {
             await this.category_manage_post(
-              { data: {
-                'category_name': this.AddEquipCateForm['category_name'],
-                'category_no': this.AddEquipCateForm['category_no'],
-                'equip_type': this.AddEquipCateForm['equip_type'],
-                'process': this.AddEquipCateForm['process'],
-                'volume': this.AddEquipCateForm['volume']
-              }}
+              {
+                data: {
+                  'category_name': this.AddEquipCateForm['category_name'],
+                  'category_no': this.AddEquipCateForm['category_no'],
+                  'equip_type': this.AddEquipCateForm['equip_type'],
+                  'process': this.AddEquipCateForm['process'],
+                  'volume': this.AddEquipCateForm['volume']
+                }
+              }
             )
             this.dialogCreateEquipCateVisible = false
             this.category_manage_list()
@@ -340,13 +450,15 @@ export default {
           try {
             await this.category_manage_modify(
               this.ModifyEquipCateForm.id,
-              { data: {
-                'category_name': this.ModifyEquipCateForm['category_name'],
-                'category_no': this.ModifyEquipCateForm['category_no'],
-                'equip_type': this.ModifyEquipCateForm['equip_type'],
-                'process': this.ModifyEquipCateForm['process'],
-                'volume': this.ModifyEquipCateForm['volume']
-              }}
+              {
+                data: {
+                  'category_name': this.ModifyEquipCateForm['category_name'],
+                  'category_no': this.ModifyEquipCateForm['category_no'],
+                  'equip_type': this.ModifyEquipCateForm['equip_type'],
+                  'process': this.ModifyEquipCateForm['process'],
+                  'volume': this.ModifyEquipCateForm['volume']
+                }
+              }
             )
             this.dialogEditEquipCateVisible = false
             this.category_manage_list()

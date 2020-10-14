@@ -286,7 +286,8 @@ export default {
     },
     handleGroupDelete(group) {
       var boolStr = group.use_flag ? '停用' : '启用'
-      this.$confirm('确定' + boolStr + group.name + '，且解除该角色下所有用户, 是否继续?', '提示', {
+      const _str = '确定' + boolStr + group.name + (group.use_flag ? '，且解除该角色下所有用户' : '') + ', 是否继续?'
+      this.$confirm(_str, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
