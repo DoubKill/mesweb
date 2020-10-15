@@ -337,11 +337,11 @@
         :after-set-option="afterSetOption"
       />
     </el-dialog>
-    <page
+    <!-- <page
       :total="total"
       :current-page="getParams.page"
       @currentChange="currentChange"
-    />
+    /> -->
   </div>
 </template>
 
@@ -438,6 +438,7 @@ export default {
     }
   },
   created() {
+    this.getSearchTime()
     this.currentChange(1)
   },
   methods: {
@@ -460,9 +461,10 @@ export default {
     clickProductNo(row) {
       this.dialogVisibleRubber = true
       this.palletFeedObj = row
-      this.getRubberCoding(1)
+      this.pageRubber = 1
+      this.getRubberCoding()
     },
-    getRubberCoding(page) {
+    getRubberCoding() {
       var _this = this
       let performanceDate = this.performanceDate
       if (!performanceDate) {
@@ -543,6 +545,7 @@ export default {
     currentChange: function(page) {
       this.beforeGetData()
       this.getParams['page'] = page
+      // this.performanceDate = new Date('yyyy-mm-dd')
       this.tableData = []
       getProductActual(this.getParams).then(response => {
         // this.total = response.count
@@ -552,6 +555,15 @@ export default {
     beforeGetData() {
       this.getParams['search_time'] = this.performanceDate
       this.getParams['equip_no'] = this.equipNo
+    },
+    getSearchTime() {
+      const myDate = new Date()
+      const Y = myDate.getFullYear()
+      const m = myDate.getMonth() + 1
+      const M = m < 10 ? '0' + m : m
+      const d = myDate.getDate()
+      const D = d < 10 ? ('0' + d) : d
+      this.performanceDate = Y + '-' + M + '-' + D
     },
     detailsClick(row) {
       this.getDetailsParams['product_no'] = row.product_no
