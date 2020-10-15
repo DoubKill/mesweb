@@ -132,8 +132,13 @@
                       :key="productBatching.id"
                       :label="productBatching.stage_product_batch_no"
                       :value="productBatching.id"
+                      :disabled="productBatching.disabled"
                     >
                       <span style="float: left">{{ productBatching.stage_product_batch_no }}</span>
+                      <span
+                        v-if="productBatching.disabled"
+                        style="float: right;color: #8492a6; font-size: 13px;margin-left:50px"
+                      >已废弃</span>
                     </el-option>
                   </el-select>
                 </template>
@@ -279,7 +284,7 @@ export default {
       const b = new Date().getTime()
       if (a <= b) {
         // 小于当前时间 除去当天
-        // return true
+        return true
       }
       // 可以操作
       const c = bool ? true : status !== this._wait
@@ -404,8 +409,8 @@ export default {
     },
     async getRubberMateria(equip, category, work_schedule) {
       const obj = {
-        all: 1,
-        used_type: 4
+        all: 1
+        // used_type: 4
       }
       if (category) {
         Object.assign(obj, { dev_type: category })
@@ -413,7 +418,19 @@ export default {
       try {
         const rubberMateriaData = await rubberMaterialUrl('get', null, { params: obj })
         if (equip) {
-          this.$set(this.rubberMateriaObj, equip, rubberMateriaData.results)
+          const arr = rubberMateriaData.results
+          const filterArr = arr.filter(D => D.used_type === 6 || D.used_type === 4)
+          const newArr = []
+
+          filterArr.forEach((D, i) => {
+            if (D.used_type === 6) {
+              D['disabled'] = true
+              newArr.push(D)
+            } else {
+              newArr.unshift(D)
+            }
+          })
+          this.$set(this.rubberMateriaObj, equip, newArr)
           this.loadingSelect = false
         }
       } catch (e) {
@@ -558,8 +575,8 @@ export default {
       const b = new Date().getTime()
       if (a <= b) {
         // 小于当前时间 除去当天
-        // this.$message.info('操作不了当前班次之前的计划')
-        // return true
+        this.$message.info('操作不了当前班次之前的计划')
+        return true
       }
       try {
         const addPlanArr = JSON.parse(JSON.stringify(this.addPlanArr[index]))
