@@ -124,7 +124,7 @@
                   <el-select
                     v-model="scope.row.product_batching"
                     :loading="loadingSelect"
-                    :disabled="setStatus(scope.row.status)"
+                    :disabled="setStatus(scope.row.status,scope.row,false)"
                     @change="productBatchingChanged($event,scope.row,rubberMateriaObj[scope.row.equip],tableItem,scope.$index)"
                   >
                     <el-option
@@ -132,7 +132,9 @@
                       :key="productBatching.id"
                       :label="productBatching.stage_product_batch_no"
                       :value="productBatching.id"
-                    />
+                    >
+                      <span style="float: left">{{ productBatching.stage_product_batch_no }}</span>
+                    </el-option>
                   </el-select>
                 </template>
               </el-table-column>
@@ -146,7 +148,7 @@
                     :precision="0"
                     size="small"
                     :min="0"
-                    :disabled="setStatus(scope.row.status)"
+                    :disabled="setStatus(scope.row.status,scope.row,false)"
                     @change="planTrainsChangedWh(scope.row,scope.$index,tableItem)"
                   />
                 </template>
@@ -158,7 +160,7 @@
                 <template slot-scope="scope">
                   <el-input
                     v-model="scope.row.note"
-                    :disabled="setStatus(scope.row.status)"
+                    :disabled="setStatus(scope.row.status,scope.row,false)"
                     placeholder="请输入内容"
                   />
                 </template>
@@ -188,7 +190,7 @@
                   <el-button
                     size="mini"
                     type="danger"
-                    :disabled="setStatus(scope.row.status)"
+                    :disabled="setStatus(scope.row.status,scope.row,true)"
                     @click="handleGroupDelete(scope.$index,tableItem,scope.row)"
                   >删除
                   </el-button>
@@ -271,10 +273,18 @@ export default {
     this.getWorkSchedules()
   },
   methods: {
-    setStatus(status) {
+    setStatus(status, row, bool) {
+      // 控制结束的班次不可下达
+      const a = new Date(row.end_time).getTime()
+      const b = new Date().getTime()
+      if (a <= b) {
+        // 小于当前时间 除去当天
+        // return true
+      }
       // 可以操作
+      const c = bool ? true : status !== this._wait
       return status !== this._notSaved &&
-        status !== this._saved && status !== this._wait
+        status !== this._saved && c
     },
     async getInfoFun(row, bool) {
       try {
@@ -317,14 +327,17 @@ export default {
               arr[index].push({
                 work_schedule_plan: data.work_schedule_plan,
                 classes_name: data.classes_name,
-                start_time: this.setstartT(data.start_time),
-                end_time: this.setstartT(data.end_time),
+                // start_time: this.setstartT(data.start_time),
+                // end_time: this.setstartT(data.end_time),
+                start_time: data.start_time,
+                end_time: data.end_time,
                 equip: row.id,
                 equipNo: row.equip_no,
                 towIndex: index,
                 oneIndex: this.addPlanArr.length,
                 plan_trains: data.plan_trains,
                 product_batching: data.product_batching,
+                product_no: data.product_no,
                 status: data.status,
                 note: data.note,
                 time: data.time,
@@ -340,14 +353,15 @@ export default {
           arr[index] = [{
             work_schedule_plan: newArr.id,
             classes_name: newArr.classes_name,
-            start_time: this.setstartT(newArr.start_time),
-            end_time: this.setstartT(newArr.end_time),
+            start_time: newArr.start_time,
+            end_time: newArr.end_time,
             equip: row.id,
             equipNo: row.equip_no,
             towIndex: index,
             oneIndex: this.addPlanArr.length,
             plan_trains: 0,
             product_batching: '',
+            product_no: '',
             status: this._notSaved,
             note: '',
             time: '',
@@ -364,6 +378,7 @@ export default {
             end_time: arrData.end_time,
             plan_trains: 0,
             product_batching: '',
+            product_no: '',
             status: this._notSaved,
             note: '',
             time: '',
@@ -387,7 +402,7 @@ export default {
         // eslint-disable-next-line no-empty
       } catch (e) { }
     },
-    async getRubberMateria(equip, category) {
+    async getRubberMateria(equip, category, work_schedule) {
       const obj = {
         all: 1,
         used_type: 4
@@ -477,7 +492,7 @@ export default {
       if (val) {
         let work_schedule = []
         work_schedule = await this.getInfoFun(row)
-        this.visibleChange(row.id, row.category)
+        this.visibleChange(row.id, row.category, work_schedule)
         this.addPlanArr.push(work_schedule)
       } else {
         const addPlanArr = JSON.parse(JSON.stringify(this.addPlanArr))
@@ -537,6 +552,15 @@ export default {
       }
     },
     async singleSavePlan(index, item) {
+      // 控制结束的班次不可下达
+      const day_time = this.day_time + ' 23:59:59'
+      const a = new Date(day_time).getTime()
+      const b = new Date().getTime()
+      if (a <= b) {
+        // 小于当前时间 除去当天
+        // this.$message.info('操作不了当前班次之前的计划')
+        // return true
+      }
       try {
         const addPlanArr = JSON.parse(JSON.stringify(this.addPlanArr[index]))
         let addPlanObj = []
@@ -626,10 +650,10 @@ export default {
           return ''
       }
     },
-    visibleChange(equip, category) {
+    visibleChange(equip, category, work_schedule) {
       if (this.rubberMateriaObj[equip]) return
       this.loadingSelect = true
-      this.getRubberMateria(equip, category)
+      this.getRubberMateria(equip, category, work_schedule)
     },
     productBatchingChanged(val, planForAdd, arr, tableItem, currentIndex) {
       let obj = []
