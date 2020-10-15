@@ -256,8 +256,10 @@ export default {
               arr[index].push({
                 work_schedule_plan: data.work_schedule_plan,
                 classes_name: data.classes_name,
-                start_time: this.setstartT(data.start_time),
-                end_time: this.setstartT(data.end_time),
+                start_time: data.start_time,
+                end_time: data.end_time,
+                // start_time: this.setstartT(data.start_time),
+                // end_time: this.setstartT(data.end_time),
                 equip: row.id,
                 equipNo: row.equip_no,
                 towIndex: index,
@@ -280,8 +282,8 @@ export default {
           arr[index] = [{
             work_schedule_plan: newArr.id,
             classes_name: newArr.classes_name,
-            start_time: this.setstartT(newArr.start_time),
-            end_time: this.setstartT(newArr.end_time),
+            start_time: newArr.start_time,
+            end_time: newArr.end_time,
             equip: row.id,
             equipNo: row.equip_no,
             towIndex: index,
@@ -393,6 +395,16 @@ export default {
     },
     async releasePlan(index, tableItem, oneIndex, towIndex) {
       const newTableItem = this.addPlanArr[oneIndex][towIndex]
+
+      // 控制结束的班次不可下达
+      const a = new Date(newTableItem[0].end_time).getTime()
+      const b = new Date().getTime()
+      if (a <= b) {
+        // 小于当前时间 除去当天
+        // this.$message.info('不可下达结束班次的计划！')
+        // return
+      }
+
       const bool = newTableItem.some(D => (D.status === '已保存' || D.status === '等待'))
       if (!bool) {
         this.$message.info('暂无可下达的计划！')
@@ -408,7 +420,9 @@ export default {
         })
         this.$message.success(data)
         this.addPlanArr[oneIndex][towIndex].forEach(D => {
-          D.status = '等待'
+          if (D.status === this._saved) {
+            D.status = '等待'
+          }
         })
         this.releaseDisabled = false
         // eslint-disable-next-line no-empty
