@@ -87,6 +87,7 @@ export default {
     }
   },
   created() {
+    this.getSearchTime()
     this.material_quantity_list()
   },
   methods: {
@@ -118,6 +119,16 @@ export default {
       this.getParams['product_no'] = this.rubber_recipe_no
       this.getParams.page = 1
       this.material_quantity_list()
+    },
+    getSearchTime() {
+      const myDate = new Date()
+      const Y = myDate.getFullYear()
+      const m = myDate.getMonth() + 1
+      const M = m < 10 ? '0' + m : m
+      const d = myDate.getDate()
+      const D = d < 10 ? ('0' + d) : d
+      this.search_time = Y + '-' + M + '-' + D
+      this.getParams['plan_date'] = this.search_time
     },
     currentChange(page) {
       this.getParams.page = page
