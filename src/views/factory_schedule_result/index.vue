@@ -35,11 +35,11 @@
         prop="day_time"
         label="日期"
       />
-      <el-table-column
+      <!-- <el-table-column
         prop="work_schedule"
         label="倒班id"
         width="80"
-      />
+      /> -->
       <el-table-column
         prop="work_schedule_name"
         label="倒班名"
