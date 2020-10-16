@@ -65,6 +65,7 @@ export default {
   },
   methods: {
     recipeNoChanged: function() {
+      this.getParams['page'] = 1
       this.getParams['stage_product_batch_no'] = this.recipe_no
       this.getList()
     },
