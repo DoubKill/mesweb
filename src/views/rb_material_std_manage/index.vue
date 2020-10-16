@@ -546,7 +546,7 @@
                 <el-button
                   slot="append"
                   icon="el-icon-search"
-                  @click="pop_up_raw_material(new_material_ele, index)"
+                  @click="pop_up_raw_material(true, index)"
                 />
               </el-input>
               <!-- </div> -->
@@ -719,7 +719,7 @@
                 <el-button
                   slot="append"
                   icon="el-icon-search"
-                  @click="pop_up_raw_material(new_material_ele, index)"
+                  @click="pop_up_raw_material(false, index)"
                 />
               </el-input>
               <!-- </div> -->
@@ -1211,6 +1211,7 @@ export default {
         this.total = rubber_materialData.count
         this.loading = false
         this.currentRow.used_type = -1
+        this.currentRow.id = null
         return rubber_materialData
       } catch (e) {
         this.loading = false
@@ -1408,7 +1409,7 @@ export default {
       } else if (this.copyRecipe && !this.normalReceipe) {
         this.rubberMaterialForm.generate_material_no = this.currentRow.stage_product_batch_no
       }
-      this.currentRow.used_type = -1
+      // this.currentRow.used_type = -1
       this.dialogAddRubberMaterial = true
       // 新建和更新标志 -1新建 其他更新
     },
@@ -1449,12 +1450,12 @@ export default {
     },
     del_raw_material_row: function(new_material_ele, index) {
       // eslint-disable-next-line no-prototype-builtins
-      if (new_material_ele.hasOwnProperty('practical_weight')) {
+      if (new_material_ele.hasOwnProperty('actual_weight')) {
         this.raw_material_index = index
         this.NewRowMaterial.splice(index, 1)
         var material_weight = 0
         for (var i = 0; i < this.NewRowMaterial.length; ++i) {
-          material_weight += this.NewRowMaterial[i]['practical_weight']
+          material_weight += this.NewRowMaterial[i]['actual_weight']
         }
         this.select_material_weight = material_weight
         this.practicalWeightSum = material_weight
@@ -1644,9 +1645,9 @@ export default {
       app.PutProductRecipe = rubber_material_result.batching_details
       app.raw_material_index = null
     },
-    pop_up_raw_material: function(new_material_ele, index) {
+    pop_up_raw_material: function(add, index) {
       // eslint-disable-next-line no-prototype-builtins
-      if (new_material_ele.hasOwnProperty('actual_weight')) {
+      if (add) {
         this.raw_material_index = index
       } else {
         this.put_raw_material_index = index
