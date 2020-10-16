@@ -174,7 +174,7 @@ export default {
     },
     currentChange(page) {
       this.getParams.page = page
-      this.getPlanList()
+      this.getMaterialDemanded()
     }
   }
 }
