@@ -357,7 +357,7 @@ export const asyncRoutes = [{
     component: () => import('@/views/quality_management/details'),
     name: 'Details',
     meta: {
-      title: '查询胶料的快检详细信息'
+      title: '胶料快检详细信息'
       // permissionName: 'product_inventory'
     }
   },
