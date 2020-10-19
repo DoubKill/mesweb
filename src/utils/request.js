@@ -109,6 +109,17 @@ service.interceptors.response.use(
         } else {
           str += errorData
         }
+        //  else if (Object.prototype.toString.call(error.response.data) === '[object Object]') {
+        //   for (const key in obj) {
+        //     if (!(obj[key] instanceof Array)) {
+        //       str += obj[key]
+        //     } else {
+        //       obj[key].forEach(element => {
+        //         str += element
+        //       })
+        //     }
+        //   }
+        // }
       })
       Message({
         message: str,

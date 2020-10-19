@@ -335,6 +335,44 @@ export const asyncRoutes = [{
   ]
 },
 {
+  path: '/quality',
+  component: Layout,
+  redirect: '/quality/benchmark',
+  name: 'quality',
+  meta: {
+    title: '质量管理',
+    icon: 'stock'
+  },
+  children: [{
+    path: 'benchmark',
+    component: () => import('@/views/quality_management/benchmark'),
+    name: 'Benchmark',
+    meta: {
+      title: '胶料快检判定基准管理'
+      // permissionName: 'material_inventory'
+    }
+  },
+  {
+    path: 'details',
+    component: () => import('@/views/quality_management/details'),
+    name: 'Details',
+    meta: {
+      title: '查询胶料的快检详细信息'
+      // permissionName: 'product_inventory'
+    }
+  },
+  {
+    path: 'manual-entry',
+    component: () => import('@/views/quality_management/manual_entry'),
+    name: 'ManualEntry',
+    meta: {
+      title: '手工检测数据录入'
+      // permissionName: 'product_inventory'
+    }
+  }
+  ]
+},
+{
   path: '*',
   redirect: '/404',
   hidden: true
