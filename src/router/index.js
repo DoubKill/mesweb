@@ -369,6 +369,15 @@ export const asyncRoutes = [{
       title: '手工检测数据录入'
       // permissionName: 'product_inventory'
     }
+  },
+  {
+    path: 'month-pass-detail',
+    component: () => import('@/views/quality_management/month_pass_detail'),
+    name: 'monthPassDetail',
+    meta: {
+      title: '月快检合格率统计'
+      // permissionName: 'product_inventory'
+    }
   }
   ]
 },
