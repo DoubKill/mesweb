@@ -31,7 +31,7 @@
       </el-form-item>
     </el-form>
     <el-table
-      v-if="value1.indexOf('综合合格率') > -1"
+      v-if="value1.length == 0 || value1.indexOf('综合合格率') > -1"
       :data="tableData"
       size="small"
       border
@@ -53,7 +53,7 @@
       </el-table-column>
     </el-table>
     <el-table
-      v-if="value1.indexOf('一次合格率') > -1"
+      v-if="value1.length == 0 || value1.indexOf('一次合格率') > -1"
       :data="tableData"
       border
       size="small"
@@ -75,7 +75,7 @@
       </el-table-column>
     </el-table>
     <el-table
-      v-if="value1.indexOf('流变合格率') > -1"
+      v-if="value1.length == 0 || value1.indexOf('流变合格率') > -1"
       :data="tableData"
       border
       size="small"
