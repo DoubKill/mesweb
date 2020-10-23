@@ -1,18 +1,9 @@
 <template>
   <div class="app-container">
     <el-form :inline="true">
-      <el-form-item label="开始时间">
+      <el-form-item label="月份">
         <el-date-picker
-          v-model="beginTime"
-          type="month"
-          value-format="yyyy-MM"
-          placeholder="选择日期"
-          @change="dateChange"
-        />
-      </el-form-item>
-      <el-form-item label="结束时间">
-        <el-date-picker
-          v-model="endTime"
+          v-model="searchTime"
           type="month"
           value-format="yyyy-MM"
           placeholder="选择日期"
@@ -149,20 +140,19 @@ export default {
   components: { },
   data() {
     return {
-      beginTime: dayjs().startOf('year').format('YYYY-MM'),
-      endTime: dayjs().endOf('year').format('YYYY-MM'),
-      headers: ['2020-09', '2020-10'],
+      searchTime: dayjs().format('YYYY-MM'),
+      headers: ['2020-09-04', '2020-10-05'],
       detailHeaders: ['门尼', 'MH'],
       dialogShow: false,
       tableData: [{
         'material': 'FM-C102-02',
-        '2020-09': {
+        '2020-09-04': {
           'actual_trains': 10,
           'composite_pass_percent': 1,
           'once_pass_percent': 1,
           'sulphur_pass_percent': 1
         },
-        '2020-10': {
+        '2020-10-05': {
           'actual_trains': 10,
           'composite_pass_percent': 0.99,
           'once_pass_percent': 0.99,
@@ -171,13 +161,13 @@ export default {
       },
       {
         'material': 'FM-C106-08',
-        '2020-09': {
+        '2020-09-04': {
           'actual_trains': 10,
           'composite_pass_percent': 0.98,
           'once_pass_percent': 0.98,
           'sulphur_pass_percent': 0.98
         },
-        '2020-10': {
+        '2020-10-05': {
           'composite_pass_percent': 0.97,
           'once_pass_percent': 0.97,
           'sulphur_pass_percent': 0.97
@@ -187,7 +177,7 @@ export default {
       detailData: [
         {
           'material': 'FM-C102-02',
-          'date': '2020-09',
+          'date': '2020-09-04',
           'actual_trains': 10,
           'composite_pass_percent': 1,
           'once_pass_percent': 1,
@@ -213,7 +203,7 @@ export default {
         },
         {
           'material': 'FM-C102-02',
-          'date': '2020-10',
+          'date': '2020-10-05',
           'actual_trains': 10,
           'composite_pass_percent': '100%',
           'once_pass_percent': '100%',

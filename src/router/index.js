@@ -387,6 +387,15 @@ export const asyncRoutes = [{
       title: '胶料月合格率统计'
       // permissionName: 'product_inventory'
     }
+  },
+  {
+    path: 'material-day-pass',
+    component: () => import('@/views/quality_management/material_day_pass'),
+    name: 'materialDayPass',
+    meta: {
+      title: '胶料日合格率统计'
+      // permissionName: 'product_inventory'
+    }
   }
   ]
 },

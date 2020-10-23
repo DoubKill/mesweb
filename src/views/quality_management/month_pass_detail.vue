@@ -77,6 +77,7 @@
       >
         <el-table-column type="index" label="No" />
         <el-table-column label="日期" prop="date" />
+        <el-table-column label="产量/车" prop="actual_trains" />
         <el-table-column label="一次合格率%" prop="once_pass_percent" />
         <el-table-column label="流变合格率%" prop="sulphur_pass_percent" />
         <el-table-column label="综合合格率%" prop="composite_pass_percent" />
