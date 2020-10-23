@@ -378,6 +378,15 @@ export const asyncRoutes = [{
       title: '月快检合格率统计'
       // permissionName: 'product_inventory'
     }
+  },
+  {
+    path: 'material-month-pass',
+    component: () => import('@/views/quality_management/material_month_pass'),
+    name: 'materialMonthPass',
+    meta: {
+      title: '胶料月合格率统计'
+      // permissionName: 'product_inventory'
+    }
   }
   ]
 },
