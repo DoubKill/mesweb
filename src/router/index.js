@@ -405,6 +405,14 @@ export const asyncRoutes = [{
       title: '胶料日合格率统计'
       // permissionName: 'product_inventory'
     }
+  },
+  {
+    path: 'test-methods-manage',
+    component: () => import('@/views/quality_management/test_methods_manage'),
+    namel: 'testMethodsManage',
+    meta: {
+      title: '试验方法管理'
+    }
   }
   ]
 },

@@ -87,6 +87,8 @@ export default {
   // 计划下达到上辅机
   ProductDayPlanNotice: '/api/v1/plan/product-day-plan-notice/',
 
+  TestTypeDataUrl: '/api/v1/quality/test-type-data/',
+  MaterialTestOrdersUrl: '/api/v1/quality/material-test-orders/',
   // 胶料快检判定基准管理列表
   MaterialTestTypes: '/api/v1/quality/material-test-indicators-tab/',
   // 试验指标列表

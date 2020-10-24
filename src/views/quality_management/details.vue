@@ -3,15 +3,16 @@
     <el-form :inline="true">
       <el-form-item label="日期">
         <el-date-picker
-          v-model="dayTime"
+          v-model="getParams.day_time"
           type="date"
           value-format="yyyy-MM-dd"
           placeholder="选择日期"
+          @change="dayTimeChanged"
         />
       </el-form-item>
-      <el-form-item label="倒班规则">
-        <plan-schedules-select :day-time="dayTime" @planScheduleSelected="planScheduleSelected" />
-      </el-form-item>
+      <!-- <el-form-item label="倒班规则">
+        <plan-schedules-select :day-time="getParams.day_time" @planScheduleSelected="planScheduleSelected" />
+      </el-form-item> -->
       <el-form-item label="机台">
         <equip-select @equipSelected="equipSelected" />
       </el-form-item>
@@ -35,7 +36,8 @@
       </el-form-item>
     </el-form>
     <el-table
-      :data="testData"
+      v-loading="listLoading"
+      :data="testOrders"
       border
       fit
       style="width: 100%"
@@ -43,17 +45,28 @@
       <el-table-column type="index" label="No" />
       <el-table-column label="生产信息" align="center">
         <el-table-column label="生产计划号" prop="plan_classes_uid" />
-        <el-table-column label="收皮条码" />
-        <el-table-column label="生产班次/班组" />
-        <el-table-column label="生产机台" />
-        <el-table-column label="胶料编码" />
-        <el-table-column label="车次" />
-        <el-table-column label="检测状态" />
+        <el-table-column label="收皮条码" prop="lot_no" />
+        <el-table-column label="生产班次/班组" prop="class_group" />
+        <el-table-column label="生产机台" prop="production_equip_no" />
+        <el-table-column label="胶料编码" width="150" prop="product_no" />
+        <el-table-column label="车次" width="50" align="center" prop="actual_trains" />
+        <el-table-column label="检测状态" prop="test_status" />
       </el-table-column>
-      <el-table-column v-for="header in filterData.filter(data => data.show)" :key="header.method" align="center" :label="header.method">
-        <el-table-column v-for="subHeader in header.testItems.filter(item => item.show)" :key="header.method + subHeader.name" :label="subHeader.name">
-          <template slot-scope="scope">
-            {{ scope.row[header.method][subHeader.name] }}
+      <el-table-column v-for="header in testTypeList.filter(type => type.show)" :key="header.test_type_name" align="center" :label="header.test_type_name">
+        <el-table-column v-for="subHeader in header.data_indicator_detail.filter(item => item.show)" :key="header.test_type_name + subHeader.detail" width="110" :label="subHeader.detail">
+          <template v-if="matchedTestData(scope.row, header, subHeader)[0]" slot-scope="scope">
+            <el-popover
+              placement="top-start"
+              trigger="hover"
+            >
+              <el-table border :data="matchedTestData(scope.row, header, subHeader)[1]">
+                <el-table-column label="检测次数" prop="test_times" />
+                <el-table-column label="检测值" prop="value" />
+              </el-table>
+              <el-button slot="reference">{{
+                matchedTestData(scope.row, header, subHeader)[0].value
+              }}</el-button>
+            </el-popover>
           </template>
         </el-table-column>
         <el-table-column label="等级" />
@@ -67,29 +80,29 @@
         </template>
       </el-table-column>
     </el-table>
-
+    <page :total="total" :current-page="getParams.page" @currentChange="currentChange" />
     <el-dialog
       title="选择过滤"
       :visible.sync="filterDialogVisible"
     >
       <el-table
         border
-        :data="filterData"
+        :data="testTypeList"
       >
-        <el-table-column label="选择">
+        <el-table-column label="选择" width="50">
           <template slot-scope="{row}">
             <el-checkbox v-model="row.show" />
           </template>
         </el-table-column>
-        <el-table-column label="实验方法">
+        <el-table-column label="实验方法" width="80">
           <template slot-scope="{row}">
-            <span>{{ row.method }}</span>
+            <span>{{ row.test_type_name }}</span>
           </template>
         </el-table-column>
         <el-table-column label="检测项">
           <template slot-scope="{row}">
-            <template v-for="item in row.testItems">
-              <el-checkbox :key="item.name" v-model="item.show">{{ item.name }}</el-checkbox>
+            <template v-for="item in row.data_indicator_detail">
+              <el-checkbox :key="item.detail" v-model="item.show">{{ item.detail }}</el-checkbox>
             </template>
           </template>
         </el-table-column>
@@ -109,72 +122,139 @@
 
 <script>
 import dayjs from 'dayjs'
+import Page from '@/components/page'
 import PlanSchedulesSelect from '@/components/PlanSchedulesSelect'
 import EquipSelect from '@/components/EquipSelect'
 import ClassSelect from '@/components/ClassSelect'
 import ProductNoSelect from '@/components/ProductNoSelect'
 import TestCard from '@/components/TestCard'
+import { testTypes, materialTestOrders } from '@/api/quick-check-detail'
 
 export default {
-  components: { PlanSchedulesSelect, EquipSelect, ClassSelect, ProductNoSelect, TestCard },
+  components: { PlanSchedulesSelect, EquipSelect, ClassSelect, ProductNoSelect, TestCard, Page },
   data() {
     return {
-      dayTime: dayjs().format('YYYY-MM-DD'),
+      total: 0,
+      getParams: {
+        page: 1,
+        day_time: dayjs().format('YYYY-MM-DD'),
+        equip_no: null,
+        classes: null,
+        product_no: null
+      },
+      listLoading: true,
       filterDialogVisible: false,
       testCardDialogVisible: false,
-      filterData: [
+      testTypeList: [
         {
-          method: '比重',
-          show: true,
-          testItems: [{ name: '比重值', show: false }]
-        },
-        {
-          method: '流变',
+          test_type_id: null,
+          test_type_name: '',
           show: false,
-          testItems: [{ name: 'ML', show: false }, { name: 'T10', show: true }]
+          data_indicator_detail: [{ detail: '', show: false }]
         }
       ],
-      testData: [
-        {
-          plan_classes_uid: 1,
-          '流变': {
-            'ML': 'mltest',
-            'T10': 'T10test'
-          },
-          '比重': {
-            '比重值': '比重值test'
-          }
-        },
-        {
-          plan_classes_uid: 2,
-          '流变': {
-            'ML': 'mltest2',
-            'T10': 'T10test2'
-          },
-          '比重': {
-            '比重值': '比重值test2'
-          }
-        }
-      ]
+      testOrders: [],
+      testDataByTestName: {}
     }
   },
+  created() {
+    this.getTestTypes()
+    this.getMaterialTestOrders()
+  },
   methods: {
+    dayTimeChanged() {
+      this.getMaterialTestOrdersPage1()
+    },
+    equipSelected(equip) {
+      this.getParams.equip_no = equip ? equip.equip_no : null
+      this.getMaterialTestOrdersPage1()
+    },
+    classSelected(className) {
+      this.getParams.classes = className || null
+      this.getMaterialTestOrdersPage1()
+    },
+    productBatchingChanged(val) {
+      this.getParams.product_no = val ? val.stage_product_batch_no : null
+      this.getMaterialTestOrdersPage1()
+    },
+    getMaterialTestOrdersPage1() {
+      this.getParams.page = 1
+      this.getMaterialTestOrders()
+    },
+    matchedTestData(row, header, subHeader) {
+      const name = `${header.test_type_name}-${subHeader.detail}`
+      if (name in this.testDataByTestName) {
+        return this.testDataByTestName[name]
+      }
+      let maxTestTimesCheck = null
+      const subCheckGroup = row.order_results.filter(result => {
+        return result.test_type === header.test_type_name
+      }).filter(subItem => {
+        return subItem.data_name === subHeader.detail
+      })
+      if (subCheckGroup.length > 0) {
+        maxTestTimesCheck =
+          subCheckGroup.reduce((acc, cur) => {
+            if (acc.test_times > cur.test_times) {
+              return acc
+            } else {
+              return cur
+            }
+          }, [])
+        subCheckGroup.sort(function(l, r) {
+          r.test_times - l.test_times
+        })
+      }
+      const data = [maxTestTimesCheck, subCheckGroup]
+      this.testDataByTestName[name] = data
+      return data
+    },
+    currentChange(page) {
+      this.getParams.page = page
+      this.getMaterialTestOrders()
+    },
+    async getMaterialTestOrders() {
+      this.listLoading = true
+      try {
+        this.testOrders = []
+        const response = await materialTestOrders(this.getParams)
+        this.total = response.count
+        this.testOrders = response.results.map(result => {
+          return {
+            ...result,
+            class_group: `${result.production_class}/${result.production_group}`
+          }
+        })
+      // eslint-disable-next-line no-empty
+      } catch (e) {}
+      this.listLoading = false
+    },
+    async getTestTypes() {
+      try {
+        this.testTypeList = []
+        const testTypeList = await testTypes()
+        this.testTypeList = testTypeList.map(testType => {
+          testType.data_indicator_detail = testType.data_indicator_detail.map(detail => {
+            return {
+              detail,
+              show: true
+            }
+          })
+          return {
+            ...testType,
+            show: true
+          }
+        })
+      // eslint-disable-next-line no-empty
+      } catch (e) {}
+    },
     showCard(row) {
       this.testCardDialogVisible = true
       console.log(row)
-    },
-    planScheduleSelected(planScheduleId) {
-      console.log(planScheduleId)
-    },
-    equipSelected(equip) {
-      console.log(equip)
-    },
-    classSelected(className) {
-      console.log(className)
-    },
-    productBatchingChanged(val) {
-      console.log(val)
     }
+    // planScheduleSelected(planScheduleId) {
+    //   console.log(planScheduleId)
+    // }
   }
 }
 </script>
