@@ -344,6 +344,15 @@ export const asyncRoutes = [{
     icon: 'stock'
   },
   children: [{
+    path: 'test-types',
+    component: () => import('@/views/quality_management/test_types'),
+    name: 'testTypes',
+    meta: {
+      title: '试验类型管理'
+      // permissionName: 'product_inventory'
+    }
+  },
+  {
     path: 'benchmark',
     component: () => import('@/views/quality_management/benchmark'),
     name: 'Benchmark',
