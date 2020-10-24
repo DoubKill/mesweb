@@ -142,7 +142,6 @@ export default {
       this.beforeGetData()
       this.getMaterialDemanded()
     },
-
     materialTypeVisibleChange(bool) {
       if (bool) {
         this.getMaterialType()
@@ -153,7 +152,6 @@ export default {
       this.beforeGetData()
       this.getMaterialDemanded()
     },
-
     materialNameChanged: function() {
       this.getParams.page = 1
       this.beforeGetData()
