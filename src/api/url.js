@@ -85,5 +85,21 @@ export default {
   // 新增计划保存
   ProductClassesPlanPanycreateUrl: '/api/v1/plan/product-classes-plan-manycreate/',
   // 计划下达到上辅机
-  ProductDayPlanNotice: '/api/v1/plan/product-day-plan-notice/'
+  ProductDayPlanNotice: '/api/v1/plan/product-day-plan-notice/',
+
+  // 胶料快检判定基准管理列表
+  MaterialTestTypes: '/api/v1/quality/material-test-indicators-tab/',
+  // 试验指标列表
+  TestIndicators: '/api/v1/quality/test-indicators/',
+  // 试验方法列表
+  TestSubTypes: '/api/v1/quality/test-methods/',
+  TestTypeData: '/api/v1/quality/test-indicator-data-points/',
+  // 录入新增提交
+  MaterialTestOrders: '/api/v1/quality/material-test-orders/',
+  MatIndicatorTab: '/api/v1/quality/mat-indicator-tab/',
+  MaterialDataPoints: '/api/v1/quality/material-data-points/',
+  // 试验类型数据点
+  DataPoints: '/api/v1/quality/data-points/',
+  // 试验类型
+  TestTypes: '/api/v1/quality/test-types/'
 }

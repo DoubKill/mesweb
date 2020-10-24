@@ -185,3 +185,84 @@ export function homePageUrl(method, id, data = {}) {
   return request(obj)
 }
 
+export function materialTestTypes(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MaterialTestTypes + id + '/' : API.MaterialTestTypes,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function testIndicators(method, id, data = {}) {
+  const obj = {
+    url: id ? API.TestIndicators + id + '/' : API.TestIndicators,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function testTypeData(method, id, data = {}) {
+  const obj = {
+    url: id ? API.TestTypeData + id + '/' : API.TestTypeData,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function testSubTypes(method, id, data = {}) {
+  const obj = {
+    url: id ? API.TestSubTypes + id + '/' : API.TestSubTypes,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function materialTestOrders(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MaterialTestOrders + id + '/' : API.MaterialTestOrders,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function matIndicatorTab(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MatIndicatorTab + id + '/' : API.MatIndicatorTab,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function materialDataPoints(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MaterialDataPoints + id + '/' : API.MaterialDataPoints,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function dataPoints(method, id, data = {}) {
+  const obj = {
+    url: id ? API.DataPoints + id + '/' : API.DataPoints,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function testTypes(method, id, data = {}) {
+  const obj = {
+    url: id ? API.TestTypes + id + '/' : API.TestTypes,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
