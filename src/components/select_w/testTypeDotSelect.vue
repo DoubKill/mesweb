@@ -30,12 +30,17 @@ export default {
     testTypeId: {
       type: Number,
       default: null
+    },
+    //  created里面加载
+    createdIs: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
       value: this.multipleIs ? [] : '',
-      loading: true,
+      loading: false,
       options: []
     }
   },
@@ -47,9 +52,15 @@ export default {
       }
     }
   },
+  created() {
+    if (this.createdIs) {
+      this.getList()
+    }
+  },
   methods: {
     async getList() {
       try {
+        this.loading = true
         const data = await dataPoints('get', null, { params: { test_type_id: this.testTypeId, all: 1 }})
         this.options = data.results || []
         this.loading = false

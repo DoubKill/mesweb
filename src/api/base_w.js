@@ -284,3 +284,12 @@ export function matTestMethods(method, id, data = {}) {
   return request(obj)
 }
 
+export function matDataPointIndicators(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MatDataPointIndicators + id + '/' : API.MatDataPointIndicators,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+

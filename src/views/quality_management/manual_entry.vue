@@ -89,6 +89,7 @@
           <template slot-scope="scope">
             <el-checkbox
               v-model="scope.row.checkAll"
+              :disabled="scope.row.data_indicator_detail.length === 0"
               @change="handleCheckAllChange($event,scope.row)"
             >全选</el-checkbox>
             <div style="margin: 15px 0;" />
