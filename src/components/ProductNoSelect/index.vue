@@ -2,6 +2,7 @@
   <el-select
     v-model="productBatchingId"
     clearable
+    filterable
     :loading="loading"
     @change="productBatchingChanged"
     @visible-change="visibleChange"

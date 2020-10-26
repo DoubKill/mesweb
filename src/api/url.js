@@ -103,5 +103,9 @@ export default {
   // 试验类型数据点
   DataPoints: '/api/v1/quality/data-points/',
   // 试验类型
-  TestTypes: '/api/v1/quality/test-types/'
+  TestTypes: '/api/v1/quality/test-types/',
+  // 胶料原材料列表
+  BatchingMaterials: '/api/v1/quality/batching-materials/',
+  // 物料试验方法
+  MatTestMethods: '/api/v1/quality/mat-test-methods/'
 }

@@ -266,3 +266,21 @@ export function testTypes(method, id, data = {}) {
   return request(obj)
 }
 
+export function batchingMaterials(method, id, data = {}) {
+  const obj = {
+    url: id ? API.BatchingMaterials + id + '/' : API.BatchingMaterials,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function matTestMethods(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MatTestMethods + id + '/' : API.MatTestMethods,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+

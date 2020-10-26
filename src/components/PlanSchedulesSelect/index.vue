@@ -21,8 +21,8 @@ import { planScheduleUrl } from '@/api/base_w'
 export default {
   props: {
     dayTime: {
-      type: String,
-      required: true
+      type: String
+      // required: true
     }
   },
   data() {
