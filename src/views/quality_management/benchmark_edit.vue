@@ -23,15 +23,19 @@
         label="No"
       />
       <el-table-column
-        prop="a"
+        prop="test_indicator_name"
+        label="检测指标"
+      />
+      <el-table-column
+        prop="material_no"
         label="胶料编码"
       />
       <el-table-column
-        prop="b"
+        prop="test_type_name"
         label="试验类型"
       />
       <el-table-column
-        prop="c"
+        prop="test_method_name"
         label="试验方法"
       />
       <el-table-column
@@ -39,7 +43,7 @@
       >
         <template slot-scope="scope">
           <el-button-group>
-            <el-button size="small" @click="editClick">编辑</el-button>
+            <el-button size="small" @click="editClick(scope.row)">编辑</el-button>
             <el-button size="small" type="danger" @click="clickDelete(scope.$index,scope.row)">删除</el-button>
           </el-button-group>
         </template>
@@ -102,7 +106,11 @@
       </span>
     </el-dialog>
 
-    <edit-dialog />
+    <edit-dialog
+      :edit-show="editShow"
+      :obj-edit="objEdit"
+      @handleCloseEdit="handleCloseEdit"
+    />
   </div>
 </template>
 
@@ -135,6 +143,7 @@ export default {
       loadingBtn: false,
       addForm: {},
       optionsRubber: [],
+      editShow: false,
       rules: {
         material: [
           { required: true, message: '请选择胶料编码', trigger: 'change' }
@@ -158,7 +167,8 @@ export default {
           } }
         ]
       },
-      tableData: []
+      tableData: [],
+      objEdit: {}
     }
   },
   created() {
@@ -167,8 +177,7 @@ export default {
   },
   methods: {
     async getList() {
-      // this.loading = true
-      this.loading = false
+      this.loading = true
       try {
         const data = await matTestMethods('get', null, { params: this.search })
         this.tableData = data.results
@@ -190,8 +199,16 @@ export default {
         //
       }
     },
-    typeSelectTable(val) {},
-    detectionIndexSelect() {},
+    typeSelectTable(id) {
+      this.search.test_type_id = id || ''
+      this.search.page = 1
+      this.getList()
+    },
+    detectionIndexSelect(id) {
+      this.search.test_indicator_id = id || ''
+      this.search.page = 1
+      this.getList()
+    },
     typeSelect(val) {
       this.$set(this.addForm, 'b', val)
     },
@@ -210,13 +227,17 @@ export default {
     },
     clearForm() {
       this.dialogVisible = false
-      this.$refs.addForm.resetFields()
+      if (this.$refs.addForm) {
+        this.$refs.addForm.resetFields()
+      }
       this.$refs.testTypeSelect.value = ''
       this.$refs.testMethodSelect.testMode = ''
       this.$refs.testTypeDotSelect.value = []
     },
     productBatchingChanged(val) {
-      this.addForm.material = val ? val.stage_product_batch_no : ''
+      this.search.material_no = val ? val.stage_product_batch_no : ''
+      this.search.page = 1
+      this.getList()
     },
     clickDelete(index, row) {
       this.$confirm(
@@ -242,8 +263,9 @@ export default {
             this.loadingBtn = true
             await matTestMethods('post', null, { data: this.addForm })
             this.$message.success('新建成功')
-            this.dialogVisible = false
             this.getList()
+            this.loadingBtn = false
+            this.clearForm()
           } else {
             return false
           }
@@ -252,8 +274,12 @@ export default {
         this.loadingBtn = false
       }
     },
-    editClick() {
-
+    handleCloseEdit() {
+      this.editShow = false
+    },
+    editClick(val) {
+      this.editShow = true
+      this.objEdit = val
     }
   }
 }

@@ -6,7 +6,7 @@
       :filterable="add"
       allow-create
       default-first-option
-      placeholder="请选择"
+      placeholder="请选择试验方法"
       :clearable="!createLoad"
       :loading="loading"
       @change="changeSelect"
@@ -49,7 +49,7 @@ export default {
     return {
       options: [],
       testMode: this.testmodeprop,
-      loading: true
+      loading: false
     }
   },
   computed: {
@@ -80,6 +80,7 @@ export default {
     },
     async getList() {
       try {
+        this.loading = true
         const data = await testSubTypes('get', null, { params: {
           test_indicator_id: this.testTypeId || '',
           test_type_id: this.newTestTypeId || '',
@@ -96,22 +97,9 @@ export default {
       }
     },
     visibleChange(bool) {
-      // if (bool && !this.createLoad) {
-      //   if (this.isTypeFilter) {
-      //     if (!this.newTestTypeId) {
-      //       this.options = []
-      //       this.loading = false
-      //       return
-      //     }
-      //   } else {
-      //     if (!this.testTypeId) {
-      //       this.options = []
-      //       this.loading = false
-      //       return
-      //     }
-      //   }
-      //   this.getList()
-      // }
+      if (bool && !this.createLoad) {
+        this.getList()
+      }
     }
   }
 }

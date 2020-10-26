@@ -107,5 +107,7 @@ export default {
   // 胶料原材料列表
   BatchingMaterials: '/api/v1/quality/batching-materials/',
   // 物料试验方法
-  MatTestMethods: '/api/v1/quality/mat-test-methods/'
+  MatTestMethods: '/api/v1/quality/mat-test-methods/',
+  // 物料数据点评判指标
+  MatDataPointIndicators: '/api/v1/quality/mat-data-point-indicators/'
 }
