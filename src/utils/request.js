@@ -72,7 +72,13 @@ service.interceptors.response.use(
             str += obj[key]
           } else {
             obj[key].forEach(element => {
-              str += element
+              if (Object.prototype.toString.call(element) === '[object Object]') {
+                for (const key in element) {
+                  str += element[key]
+                }
+              } else {
+                str += element
+              }
             })
           }
         }

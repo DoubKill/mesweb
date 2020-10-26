@@ -121,7 +121,9 @@
                 label="胶料编码"
               >
                 <template slot-scope="scope">
+                  <span v-if="Number(scope.row.batching_type) === _batching_type_one">{{ scope.row.product_no }}</span>
                   <el-select
+                    v-else
                     v-model="scope.row.product_batching"
                     :loading="loadingSelect"
                     :disabled="setStatus(scope.row.status,scope.row,false)"
@@ -245,6 +247,9 @@ export default {
     this._notSaved = '未保存'
     this._saved = '已保存'
     this._wait = '等待'
+    // 1表示机台  2表示机型(mes)
+    this._batching_type_one = 1
+    this._batching_type_tow = 2
     return {
       equipIdForAdd: null,
       equips: [],
@@ -284,6 +289,9 @@ export default {
       const b = new Date().getTime()
       if (a <= b) {
         // 小于当前时间 除去当天
+        return true
+      }
+      if (Number(row.batching_type) === this._batching_type_one) {
         return true
       }
       // 可以操作
@@ -343,6 +351,7 @@ export default {
                 plan_trains: data.plan_trains,
                 product_batching: data.product_batching,
                 product_no: data.product_no,
+                batching_type: data.batching_type,
                 status: data.status,
                 note: data.note,
                 time: data.time,
@@ -355,6 +364,7 @@ export default {
         }
         if (arr[index].length === 0) {
           const newArr = work_schedule_plan[index]
+
           arr[index] = [{
             work_schedule_plan: newArr.id,
             classes_name: newArr.classes_name,
@@ -367,6 +377,7 @@ export default {
             plan_trains: 0,
             product_batching: '',
             product_no: '',
+            batching_type: this._batching_type_tow,
             status: this._notSaved,
             note: '',
             time: '',
@@ -384,6 +395,7 @@ export default {
             plan_trains: 0,
             product_batching: '',
             product_no: '',
+            batching_type: this._batching_type_tow,
             status: this._notSaved,
             note: '',
             time: '',

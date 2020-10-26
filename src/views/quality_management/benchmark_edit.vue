@@ -1,0 +1,264 @@
+<template>
+  <div v-loading="loading">
+    <el-form :inline="true">
+      <el-form-item label="胶料编码:">
+        <product-no-select @productBatchingChanged="productBatchingChanged" />
+      </el-form-item>
+      <el-form-item label="试验指标:">
+        <detection-index @changeSelect="detectionIndexSelect" />
+      </el-form-item>
+      <el-form-item label="试验类型:">
+        <test-type-select @changeSelect="typeSelectTable" />
+      </el-form-item>
+      <el-form-item>
+        <el-button @click="addDialog">新增</el-button>
+      </el-form-item>
+    </el-form>
+    <el-table
+      :data="tableData"
+      border
+    >
+      <el-table-column
+        type="index"
+        label="No"
+      />
+      <el-table-column
+        prop="a"
+        label="胶料编码"
+      />
+      <el-table-column
+        prop="b"
+        label="试验类型"
+      />
+      <el-table-column
+        prop="c"
+        label="试验方法"
+      />
+      <el-table-column
+        label="操作"
+      >
+        <template slot-scope="scope">
+          <el-button-group>
+            <el-button size="small" @click="editClick">编辑</el-button>
+            <el-button size="small" type="danger" @click="clickDelete(scope.$index,scope.row)">删除</el-button>
+          </el-button-group>
+        </template>
+      </el-table-column>
+    </el-table>
+    <page
+      :total="total"
+      :current-page="search.page"
+      @currentChange="currentChange"
+    />
+
+    <el-dialog
+      title="新增"
+      :visible.sync="dialogVisible"
+      width="50%"
+      :before-close="handleClose"
+    >
+      <el-form
+        ref="addForm"
+        :model="addForm"
+        :rules="rules"
+        label-width="120px"
+      >
+        <el-form-item label="胶料编码:" prop="material">
+          <el-select
+            v-model="addForm.material"
+            placeholder="请选择胶料编码"
+          >
+            <el-option
+              v-for="item in optionsRubber"
+              :key="item.id"
+              :label="item.material_no"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="试验类型:" prop="b">
+          <test-type-select ref="testTypeSelect" @changeSelect="typeSelect" />
+        </el-form-item>
+        <el-form-item label="试验方法:" prop="test_method">
+          <test-method-select
+            ref="testMethodSelect"
+            :is-type-filter="true"
+            :new-test-type-id="addForm.b"
+            @changeSelect="testMethodChange"
+          />
+        </el-form-item>
+        <el-form-item label="数据点:" prop="data_point">
+          <test-type-dot-select
+            ref="testTypeDotSelect"
+            :multiple-is="true"
+            :test-type-id="addForm.b"
+            @changSelect="changSelectDot"
+          />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="clearForm">取 消</el-button>
+        <el-button type="primary" :loading="loadingBtn" @click="sureAdd">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <edit-dialog />
+  </div>
+</template>
+
+<script>
+import productNoSelect from '@/components/ProductNoSelect'
+import testTypeSelect from '@/components/select_w/testTypeSelect'
+import testMethodSelect from '@/components/select_w/testMethodSelect'
+import detectionIndex from '@/components/select_w/detectionIndex'
+import testTypeDotSelect from '@/components/select_w/testTypeDotSelect'
+import { batchingMaterials, matTestMethods } from '@/api/base_w'
+import page from '@/components/page'
+import editDialog from './benchmark_edit_dialog/benchmark_edit_dialog'
+export default {
+  components: { editDialog, page, testTypeDotSelect, productNoSelect, testTypeSelect, testMethodSelect, detectionIndex },
+  data() {
+    var validatePass = (rule, value, callback, _val, error) => {
+      if (!_val) {
+        callback(new Error(error))
+      } else {
+        callback()
+      }
+    }
+    return {
+      search: {
+        page: 1
+      },
+      total: 0,
+      loading: false,
+      dialogVisible: false,
+      loadingBtn: false,
+      addForm: {},
+      optionsRubber: [],
+      rules: {
+        material: [
+          { required: true, message: '请选择胶料编码', trigger: 'change' }
+        ],
+        b: [
+          { required: true, validator: (rule, value, callback) => {
+            validatePass(rule, value, callback,
+              this.addForm.b, '请选择胶料编码')
+          } }
+        ],
+        test_method: [
+          { required: true, validator: (rule, value, callback) => {
+            validatePass(rule, value, callback,
+              this.addForm.test_method, '请选择胶料编码')
+          } }
+        ],
+        data_point: [
+          { required: true, validator: (rule, value, callback) => {
+            validatePass(rule, value, callback,
+              this.addForm.data_point, '请选择数据点')
+          } }
+        ]
+      },
+      tableData: []
+    }
+  },
+  created() {
+    this.getList()
+    this.getRubber()
+  },
+  methods: {
+    async getList() {
+      // this.loading = true
+      this.loading = false
+      try {
+        const data = await matTestMethods('get', null, { params: this.search })
+        this.tableData = data.results
+        this.total = data.count
+        this.loading = false
+      } catch (e) {
+        this.loading = false
+      }
+    },
+    currentChange(page) {
+      this.search.page = page
+      this.getList()
+    },
+    async getRubber() {
+      try {
+        const data = await batchingMaterials('get')
+        this.optionsRubber = data || []
+      } catch (e) {
+        //
+      }
+    },
+    typeSelectTable(val) {},
+    detectionIndexSelect() {},
+    typeSelect(val) {
+      this.$set(this.addForm, 'b', val)
+    },
+    testMethodChange(val) {
+      this.$set(this.addForm, 'test_method', val)
+    },
+    changSelectDot(val) {
+      this.$set(this.addForm, 'data_point', val)
+    },
+    handleClose(done) {
+      this.clearForm()
+      done()
+    },
+    addDialog() {
+      this.dialogVisible = true
+    },
+    clearForm() {
+      this.dialogVisible = false
+      this.$refs.addForm.resetFields()
+      this.$refs.testTypeSelect.value = ''
+      this.$refs.testMethodSelect.testMode = ''
+      this.$refs.testTypeDotSelect.value = []
+    },
+    productBatchingChanged(val) {
+      this.addForm.material = val ? val.stage_product_batch_no : ''
+    },
+    clickDelete(index, row) {
+      this.$confirm(
+        '是否删除?',
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      ).then(async() => {
+        await matTestMethods('delete', row.id)
+        this.$message.success('删除成功')
+        this.tableData.splice(index, 1)
+      }).catch(() => {
+        //
+      })
+    },
+    sureAdd() {
+      try {
+        this.$refs.addForm.validate(async(valid) => {
+          if (valid) {
+            this.loadingBtn = true
+            await matTestMethods('post', null, { data: this.addForm })
+            this.$message.success('新建成功')
+            this.dialogVisible = false
+            this.getList()
+          } else {
+            return false
+          }
+        })
+      } catch (e) {
+        this.loadingBtn = false
+      }
+    },
+    editClick() {
+
+    }
+  }
+}
+</script>
+
+<style>
+
+</style>

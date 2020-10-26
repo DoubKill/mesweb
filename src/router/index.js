@@ -341,7 +341,7 @@ export const asyncRoutes = [{
   name: 'quality',
   meta: {
     title: '质量管理',
-    icon: 'stock'
+    icon: 'quality'
   },
   children: [{
     path: 'test-types',
@@ -353,12 +353,29 @@ export const asyncRoutes = [{
     }
   },
   {
-    path: 'benchmark',
-    component: () => import('@/views/quality_management/benchmark'),
-    name: 'Benchmark',
+    path: 'test-methods-manage',
+    component: () => import('@/views/quality_management/test_methods_manage'),
+    namel: 'testMethodsManage',
     meta: {
-      title: '胶料快检判定基准管理'
-      // permissionName: 'material_inventory'
+      title: '试验方法管理'
+    }
+  },
+  // {
+  //   path: 'benchmark',
+  //   component: () => import('@/views/quality_management/benchmark'),
+  //   name: 'Benchmark',
+  //   meta: {
+  //     title: '胶料快检判定基准管理'
+  //     // permissionName: 'material_inventory'
+  //   }
+  // },
+  {
+    path: 'benchmark_edit',
+    component: () => import('@/views/quality_management/benchmark_edit'),
+    name: 'benchmark_edit',
+    meta: {
+      title: '胶料快检判定基准录入'
+      // permissionName:'material_inventory'
     }
   },
   {
@@ -404,14 +421,6 @@ export const asyncRoutes = [{
     meta: {
       title: '胶料日合格率统计'
       // permissionName: 'product_inventory'
-    }
-  },
-  {
-    path: 'test-methods-manage',
-    component: () => import('@/views/quality_management/test_methods_manage'),
-    namel: 'testMethodsManage',
-    meta: {
-      title: '试验方法管理'
     }
   }
   ]
