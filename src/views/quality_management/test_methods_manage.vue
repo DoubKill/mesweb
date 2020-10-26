@@ -76,8 +76,8 @@ export default {
       testMethosList: [],
       listLoading: true,
       rules: {
-        name: [{ required: true, message: '该字段不能未空', trigger: 'blur' }],
-        test_type: [{ required: true, message: '该字段不能未空', trigger: 'change' }]
+        name: [{ required: true, message: '该字段不能为空', trigger: 'blur' }],
+        test_type: [{ required: true, message: '该字段不能为空', trigger: 'change' }]
       }
     }
   },
