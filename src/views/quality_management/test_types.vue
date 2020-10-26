@@ -27,7 +27,7 @@
             label="试验类型"
           />
           <el-table-column
-            prop="test_indicator"
+            prop="test_indicator_name"
             label="试验指标"
           />
           <el-table-column label="操作">
@@ -115,7 +115,19 @@
           label="试验指标"
           :label-width="formLabelWidth"
         >
-          <el-input v-model="testTypeForm.test_indicator" />
+          <el-select
+            v-model="testTypeForm.test_indicator"
+            clearable
+            placeholder="请选择"
+            @visible-change="testIndicatorsVisibleChange"
+          >
+            <el-option
+              v-for="item in testIndicatorsOptions"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
         </el-form-item>
       </el-form>
       <div
@@ -148,7 +160,19 @@
           label="试验指标"
           :label-width="formLabelWidth"
         >
-          <el-input v-model="testTypeForm.test_indicator" />
+          <el-select
+            v-model="testTypeForm.test_indicator"
+            clearable
+            placeholder="请选择"
+            @visible-change="testIndicatorsVisibleChange"
+          >
+            <el-option
+              v-for="item in testIndicatorsOptions"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
         </el-form-item>
       </el-form>
       <div
@@ -230,7 +254,7 @@
 </template>
 
 <script>
-import { getTestTypes, putTestTypes, postTestTypes, deleteTestTypes, getDataPoints, putDataPoints, postDataPoints, deleteDataPoints } from '@/api/test_types'
+import { getTestTypes, putTestTypes, postTestTypes, deleteTestTypes, getTestIndicators, getDataPoints, putDataPoints, postDataPoints, deleteDataPoints } from '@/api/test_types'
 import page from '@/components/page'
 import { mapGetters } from 'vuex'
 export default {
@@ -243,8 +267,8 @@ export default {
       testTypesCurrentRow: null,
       dialogCreateTestTypeVisible: false,
       dialogEditTestTypeVisible: false,
+      testIndicatorsOptions: [],
       testTypeForm: {
-
         name: '',
         test_indicator: ''
       },
@@ -288,21 +312,26 @@ export default {
     clearTestTypeForm: function() {
       this.testTypeForm = {
         name: '',
-        test_indicator: '',
-        description: ''
+        test_indicator: ''
       }
     },
     clearTestTypeFormError: function() {
       this.testTypeFormError = {
         name: '',
-        test_indicator: '',
-        description: ''
+        test_indicator: ''
       }
     },
     showCreateTestTypeDialog: function() {
       this.clearTestTypeForm()
       this.clearTestTypeFormError()
+      this.getTestIndicatorsOptions()
       this.dialogCreateTestTypeVisible = true
+    },
+    getTestIndicatorsOptions() {
+      getTestIndicators({ all: 1 })
+        .then(response => {
+          this.testIndicatorsOptions = response
+        })
     },
     handleCreateTestType: function() { // 创建全局代码类型
       this.clearTestTypeFormError()
@@ -321,6 +350,7 @@ export default {
       this.clearTestTypeForm()
       this.clearTestTypeFormError()
       this.testTypeForm = Object.assign({}, row)
+      this.getTestIndicatorsOptions()
       this.dialogEditTestTypeVisible = true
     },
     handleEditTestType: function() {
@@ -341,9 +371,10 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(function() {
+      }).then(() => {
         deleteTestTypes(row.id)
           .then(response => {
+            console.log('sssssssssss')
             this.$message({
               type: 'success',
               message: '删除成功!'
@@ -411,7 +442,6 @@ export default {
       this.dataPointsForm.id = row.id
       this.dataPointsForm.name = row.name
       this.dataPointsForm.unit = row.unit
-      this.dataPointsForm.description = row.description
       this.dialogEditDataPointsVisible = true
     },
     handleEditTest: function() {
@@ -434,7 +464,7 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(function() {
+      }).then(() => {
         deleteDataPoints(row.id)
           .then(response => {
             this.$message({

@@ -59,3 +59,11 @@ export function deleteDataPoints(id) {
     method: 'delete'
   })
 }
+
+export function getTestIndicators(params) {
+  return request({
+    url: API.TestIndicators,
+    method: 'get',
+    params
+  })
+}
