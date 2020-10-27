@@ -102,21 +102,22 @@
       title="添加试验类型"
       :visible.sync="dialogCreateTestTypeVisible"
     >
-      <el-form :model="testTypeForm">
+      <el-form ref="dataForm" :rules="rules" :model="testTypeForm">
         <el-form-item
-          :error="testTypeFormError.name"
           label="试验类型"
           :label-width="formLabelWidth"
+          prop="name"
         >
           <el-input v-model="testTypeForm.name" />
         </el-form-item>
         <el-form-item
-          :error="testTypeFormError.test_indicator"
           label="试验指标"
           :label-width="formLabelWidth"
+          prop="test_indicator"
         >
           <el-select
             v-model="testTypeForm.test_indicator"
+            type="test_indicator"
             clearable
             placeholder="请选择"
           >
@@ -144,20 +145,20 @@
       title="编辑试验类型"
       :visible.sync="dialogEditTestTypeVisible"
     >
-      <el-form :model="testTypeForm">
+      <el-form ref="dataForm" :rules="rules" :model="testTypeForm">
         <el-form-item
-          :error="testTypeFormError.name"
           label="试验类型"
           :label-width="formLabelWidth"
+          prop="name"
         >
           <el-input
             v-model="testTypeForm.name"
           />
         </el-form-item>
         <el-form-item
-          :error="testTypeFormError.test_indicator"
           label="试验指标"
           :label-width="formLabelWidth"
+          prop="test_indicator"
         >
           <el-select
             v-model="testTypeForm.test_indicator"
@@ -188,18 +189,18 @@
       title="添加试验"
       :visible.sync="dialogCreateDataPointsVisible"
     >
-      <el-form :model="dataPointsForm">
+      <el-form ref="dataForm" :rules="rules" :model="dataPointsForm">
         <el-form-item
-          :error="dataPointsFormError.name"
           label="数据点"
           :label-width="formLabelWidth"
+          prop="name"
         >
           <el-input v-model="dataPointsForm.name" />
         </el-form-item>
         <el-form-item
-          :error="dataPointsFormError.unit"
           label="单位"
           :label-width="formLabelWidth"
+          prop="unit"
         >
           <el-input v-model="dataPointsForm.unit" />
         </el-form-item>
@@ -219,20 +220,20 @@
       title="编辑试验"
       :visible.sync="dialogEditDataPointsVisible"
     >
-      <el-form :model="dataPointsForm">
+      <el-form ref="dataForm" :rules="rules" :model="dataPointsForm">
         <el-form-item
-          :error="dataPointsFormError.name"
           label="数据点"
           :label-width="formLabelWidth"
+          prop="name"
         >
           <el-input
             v-model="dataPointsForm.name"
           />
         </el-form-item>
         <el-form-item
-          :error="dataPointsFormError.unit"
           label="单位"
           :label-width="formLabelWidth"
+          prop="unit"
         >
           <el-input v-model="dataPointsForm.unit" />
         </el-form-item>
@@ -269,6 +270,11 @@ export default {
       testTypeForm: {
         name: '',
         test_indicator: ''
+      },
+      rules: {
+        name: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        test_indicator: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        unit: [{ required: true, message: '不能为空', trigger: 'blur' }]
       },
       testTypeFormError: {},
 
@@ -313,17 +319,13 @@ export default {
         test_indicator: ''
       }
     },
-    clearTestTypeFormError: function() {
-      this.testTypeFormError = {
-        name: '',
-        test_indicator: ''
-      }
-    },
     showCreateTestTypeDialog: function() {
       this.clearTestTypeForm()
-      this.clearTestTypeFormError()
       this.getTestIndicatorsOptions()
       this.dialogCreateTestTypeVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
     },
     getTestIndicatorsOptions() {
       getTestIndicators({ all: 1 })
@@ -331,38 +333,40 @@ export default {
           this.testIndicatorsOptions = response
         })
     },
-    handleCreateTestType: function() { // 创建全局代码类型
-      this.clearTestTypeFormError()
-      postTestTypes(this.testTypeForm)
-        .then(response => {
-          this.dialogCreateTestTypeVisible = false
-          this.$message(this.testTypeForm.name + '创建成功')
-          this.currentChange(this.currentPage)
-        }).catch(function(error) {
-          for (var key in this.testTypeFormError) {
-            if (error[key]) { this.testTypeFormError[key] = error[key].join(',') }
-          }
-        })
+    handleCreateTestType: function() {
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          // this.clearTestTypeFormError()
+          postTestTypes(this.testTypeForm)
+            .then(response => {
+              this.dialogCreateTestTypeVisible = false
+              this.$message(this.testTypeForm.name + '创建成功')
+              this.currentChange(this.currentPage)
+            })
+        }
+      })
     },
     showEditTestTypeDialog: function(row) {
       this.clearTestTypeForm()
-      this.clearTestTypeFormError()
+      // this.clearTestTypeFormError()
       this.testTypeForm = Object.assign({}, row)
       this.getTestIndicatorsOptions()
       this.dialogEditTestTypeVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
     },
     handleEditTestType: function() {
-      putTestTypes(this.testTypeForm, this.testTypeForm.id)
-        .then(response => {
-          this.dialogEditTestTypeVisible = false
-          this.$message(this.testTypeForm.name + '修改成功')
-          this.currentChange(this.currentPage)
-        }).catch(function(error) {
-          for (var key in this.testTypeFormError) {
-            console.log(error)
-            if (error[key]) { this.testTypeFormError[key] = error[key].join(',') }
-          }
-        })
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          putTestTypes(this.testTypeForm, this.testTypeForm.id)
+            .then(response => {
+              this.dialogEditTestTypeVisible = false
+              this.$message(this.testTypeForm.name + '修改成功')
+              this.currentChange(this.currentPage)
+            })
+        }
+      })
     },
     handleTestTypeDelete: function(row) {
       this.$confirm('此操作将永久删除' + row.name + ', 是否继续?', '提示', {
@@ -381,8 +385,6 @@ export default {
               --this.currentPage
             }
             this.currentChange(this.currentPage)
-          }).catch(function(error) {
-            this.$message.error(error)
           })
       }).catch(function() {
 
@@ -407,55 +409,47 @@ export default {
         test_type: this.dataPointsForm.test_type
       }
     },
-    clearDataPointsFormError: function() {
-      this.dataPointsFormError = {
-
-        name: '',
-        unit: '',
-        description: ''
-      }
-    },
     showCreateTestDialog: function() {
       if (!this.dataPointsForm.test_type) { return }
       this.clearDataPointsForm()
-      this.clearDataPointsFormError()
       this.dialogCreateDataPointsVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
     },
     handleCreateTest: function() {
-      this.clearDataPointsFormError()
-      postDataPoints(this.dataPointsForm)
-        .then(response => {
-          this.dialogCreateDataPointsVisible = false
-          this.$message(this.dataPointsForm.name + '创建成功')
-          this.handleTestTypesCurrentRowChange(this.testTypesCurrentRow)
-        }).catch(function(error) {
-          for (var key in this.dataPointsFormError) {
-            if (error[key]) { this.dataPointsFormError[key] = error[key].join(',') }
-          }
-        })
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          postDataPoints(this.dataPointsForm)
+            .then(response => {
+              this.dialogCreateDataPointsVisible = false
+              this.$message(this.dataPointsForm.name + '创建成功')
+              this.handleTestTypesCurrentRowChange(this.testTypesCurrentRow)
+            })
+        }
+      })
     },
     showEditDataPointsDialog: function(row) {
       this.clearDataPointsForm()
-      this.clearDataPointsFormError()
       this.dataPointsForm.id = row.id
       this.dataPointsForm.name = row.name
       this.dataPointsForm.unit = row.unit
       this.dialogEditDataPointsVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
     },
     handleEditTest: function() {
-      putDataPoints(this.dataPointsForm, this.dataPointsForm.id)
-        .then(response => {
-          this.dialogEditDataPointsVisible = false
-          this.$message(this.dataPointsForm.name + '修改成功')
-          this.handleTestTypesCurrentRowChange(this.testTypesCurrentRow)
-        }).catch(function(error) {
-          for (var key in this.dataPointsFormError) {
-            // eslint-disable-next-line no-redeclare
-            for (var key in this.dataPointsFormError) {
-              if (error[key]) { this.dataPointsFormError[key] = error[key].join(',') }
-            }
-          }
-        })
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          putDataPoints(this.dataPointsForm, this.dataPointsForm.id)
+            .then(response => {
+              this.dialogEditDataPointsVisible = false
+              this.$message(this.dataPointsForm.name + '修改成功')
+              this.handleTestTypesCurrentRowChange(this.testTypesCurrentRow)
+            })
+        }
+      })
     },
     handleTestsDelete: function(row) {
       this.$confirm('此操作将永久删除' + row.name + ', 是否继续?', '提示', {
@@ -470,7 +464,7 @@ export default {
               message: '删除成功!'
             })
             this.handleTestTypesCurrentRowChange(this.testTypesCurrentRow)
-          }).catch(function(error) {
+          }).catch(error => {
             this.$message.error(error)
           })
       })
