@@ -119,7 +119,6 @@
             v-model="testTypeForm.test_indicator"
             clearable
             placeholder="请选择"
-            @visible-change="testIndicatorsVisibleChange"
           >
             <el-option
               v-for="item in testIndicatorsOptions"
@@ -164,7 +163,6 @@
             v-model="testTypeForm.test_indicator"
             clearable
             placeholder="请选择"
-            @visible-change="testIndicatorsVisibleChange"
           >
             <el-option
               v-for="item in testIndicatorsOptions"
