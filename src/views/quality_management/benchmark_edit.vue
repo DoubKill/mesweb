@@ -23,12 +23,12 @@
         label="No"
       />
       <el-table-column
-        prop="test_indicator_name"
-        label="检测指标"
-      />
-      <el-table-column
         prop="material_no"
         label="胶料编码"
+      />
+      <el-table-column
+        prop="test_indicator_name"
+        label="检测指标"
       />
       <el-table-column
         prop="test_type_name"
