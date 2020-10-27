@@ -422,6 +422,13 @@ export const asyncRoutes = [{
       title: '胶料日合格率统计'
       // permissionName: 'product_inventory'
     }
+  }, {
+    path: 'inferior-quality-product-manage',
+    component: () => import('@/views/quality_management/inferior_quality_product_manage'),
+    name: 'inferiorQualityProductManage',
+    meta: {
+      title: '不合格品查询'
+    }
   }
   ]
 },

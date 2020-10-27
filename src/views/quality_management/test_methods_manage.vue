@@ -1,12 +1,12 @@
 <template>
   <div class="app-container">
     <el-form :inline="true">
-      <el-form-item label="实验指标过滤">
-        <el-select />
+      <el-form-item label="检测指标">
+        <detection-index @changeSelect="detectionChange" />
       </el-form-item>
       <el-form-item style="float: right">
         <el-button @click="handleCreate">
-          创建实验方法
+          创建试验方法
         </el-button>
       </el-form-item>
     </el-form>
@@ -18,8 +18,8 @@
       style="width: 100%"
     >
       <el-table-column label="No" type="index" align="center" />
-      <el-table-column label="实验方法名称" prop="name" />
-      <el-table-column label="实验类型" prop="test_type_name" />
+      <el-table-column label="试验方法名称" prop="name" />
+      <el-table-column label="试验类型" prop="test_type_name" />
       <el-table-column label="检测指标" prop="test_indicator_name" />
       <el-table-column label="操作" align="center">
         <template slot-scope="{row, $index}">
@@ -30,15 +30,27 @@
     </el-table>
     <page :total="total" :current-page="getParams.page" @currentChange="currentChange" />
     <el-dialog
-      :title="textMap[dialogStatus] + '实验方法'"
+      :title="textMap[dialogStatus] + '试验方法'"
       :visible.sync="dialogFormVisible"
     >
       <el-form ref="dataForm" :model="formData" :rules="rules" label-position="left" label-width="110px">
-        <el-form-item label="实验方法名称" prop="name">
+        <el-form-item label="试验方法名称" prop="name">
           <el-input v-model="formData.name" />
         </el-form-item>
-        <el-form-item label="实验类型" prop="test_type">
-          <el-select v-model="formData.test_type" />
+        <el-form-item label="试验类型" prop="test_type">
+          <el-select
+            v-model="formData.test_type"
+            placeholder="请选择试验类型"
+            clearable
+            @visible-change="testTypeSelectVisibleChange"
+          >
+            <el-option
+              v-for="item in testTypeOptions"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -55,14 +67,16 @@
 
 <script>
 import Page from '@/components/page'
-import { testMethodList } from '@/api/test-method'
+import { testTypes } from '@/api/base_w'
+import { testMethodList, editTestMethod } from '@/api/test-method'
+import DetectionIndex from '@/components/select_w/detectionIndex'
 
 export default {
-  components: { Page },
+  components: { Page, DetectionIndex },
   data() {
     return {
       total: 0,
-      getParams: { page: 1 },
+      getParams: { page: 1, test_indicator_id: null },
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
@@ -78,13 +92,35 @@ export default {
       rules: {
         name: [{ required: true, message: '该字段不能为空', trigger: 'blur' }],
         test_type: [{ required: true, message: '该字段不能为空', trigger: 'change' }]
-      }
+      },
+      testTypeOptions: []
     }
   },
   created() {
     this.getTestMethodList()
   },
   methods: {
+    async getTestTypeList() {
+      try {
+        const { results } = await testTypes('get', null, { params: { all: 1 }})
+        this.testTypeOptions = results || []
+      } catch (e) {
+        //
+      }
+    },
+    testTypeSelectVisibleChange(val) {
+      if (val && this.testTypeOptions.length === 0) {
+        this.getTestTypeList()
+      }
+    },
+    testTypeSelected(id) {
+      this.formData.test_type = id || null
+    },
+    detectionChange(id) {
+      this.getParams.test_indicator_id = id || null
+      this.getParams.page = 1
+      this.getTestMethodList()
+    },
     currentChange(page) {
       this.getParams.page = page
       this.getTestMethodList()
@@ -92,11 +128,13 @@ export default {
     async getTestMethodList() {
       this.listLoading = true
       try {
-        const response = await testMethodList('get', null, this.getParams)
+        const response = await testMethodList(this.getParams)
         this.total = response.count
         this.testMethosList = response.results
       // eslint-disable-next-line no-empty
-      } catch (e) {}
+      } catch (e) {
+        console.log(e)
+      }
       this.listLoading = false
     },
     resetFormData() {
@@ -124,7 +162,8 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          testMethodList('post', null, this.formData).then(() => {
+          console.log(this.formData, 'this.formData')
+          editTestMethod('post', null, this.formData).then(() => {
             this.dialogFormVisible = false
             this.currentChange(1)
             this.$notify({
@@ -141,7 +180,7 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const formData = Object.assign({}, this.formData)
-          testMethodList('put', formData.id, formData).then(() => {
+          editTestMethod('put', formData.id, formData).then(() => {
             this.dialogFormVisible = false
             this.currentChange(this.getParams.page)
             this.$notify({
@@ -160,7 +199,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        testMethodList('delete', row.id).then(response => {
+        editTestMethod('delete', row.id).then(response => {
           this.$message({
             type: 'success',
             message: '操作成功!'
