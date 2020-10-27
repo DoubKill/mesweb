@@ -152,6 +152,9 @@ export default {
       })
     },
     handleUpdate(row) {
+      if (this.testTypeOptions.length === 0) {
+        this.getTestTypeList()
+      }
       this.formData = Object.assign({}, row)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
