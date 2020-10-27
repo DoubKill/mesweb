@@ -6,19 +6,19 @@
     <el-row class="n-b-border">
       <el-col :span="20">
         <el-row>
-          <span />
+          <span>{{ testData.product_no }}</span>
         </el-row>
         <el-row>
           <el-col :span="6"><span>生产机台</span></el-col>
-          <el-col :span="6"><span /></el-col>
+          <el-col :span="6"><span>{{ testData.production_equip_no }}</span></el-col>
           <el-col :span="6"><span>生产班次</span></el-col>
-          <el-col :span="6"><span /></el-col>
+          <el-col :span="6"><span />{{ testData.production_class }}</el-col>
         </el-row>
         <el-row>
           <el-col :span="6"><span>生产日期</span></el-col>
-          <el-col :span="6"><span /></el-col>
+          <el-col :span="6"><span>{{ testData.production_factory_date }}</span></el-col>
           <el-col :span="6"><span>生产车次</span></el-col>
-          <el-col :span="6"><span /></el-col>
+          <el-col :span="6"><span>{{ testData.actual_trains }}</span></el-col>
         </el-row>
         <el-row>
           <el-col :span="6"><span>设重</span></el-col>
@@ -65,19 +65,18 @@
         </el-row>
         <el-row class="n-b-border">
           <el-table
-            style="width:100%"
             fit
           >
-            <el-table-column label="车次" />
-            <el-table-column label="门尼">
-              <el-table-column label="检测值" />
-              <el-table-column label="等级" />
+            <el-table-column label="车次" align="center" />
+            <el-table-column label="门尼" align="center">
+              <el-table-column label="检测值" align="center" />
+              <el-table-column label="等级" align="center" />
             </el-table-column>
-            <el-table-column label="比重">
-              <el-table-column label="检测值" />
-              <el-table-column label="等级" />
+            <el-table-column label="比重" align="center">
+              <el-table-column label="检测值" align="center" />
+              <el-table-column label="等级" align="center" />
             </el-table-column>
-            <el-table-column label="综合级别" />
+            <el-table-column label="综合级别" align="center" />
           </el-table>
         </el-row>
       </el-col>
@@ -90,6 +89,17 @@
 <script>
 export default {
 
+  data() {
+    return {
+      testData: {}
+    }
+  },
+  methods: {
+    setTestData(data) {
+      this.testData = data
+      console.log(this.testData)
+    }
+  }
 }
 </script>
 
@@ -98,6 +108,7 @@ export default {
       margin: 0 auto;
       text-align: center;
       border: 1px solid black;
+      color: #909399;
     span {
      display: inline-block;
     }
