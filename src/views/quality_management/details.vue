@@ -113,9 +113,10 @@
     </el-dialog>
     <el-dialog
       title="胶料信息卡"
+      width="80%"
       :visible.sync="testCardDialogVisible"
     >
-      <test-card />
+      <test-card ref="testCard" />
     </el-dialog>
   </div>
 </template>
@@ -188,9 +189,9 @@ export default {
       }
       let maxTestTimesCheck = null
       const subCheckGroup = row.order_results.filter(result => {
-        return result.test_type === header.test_type_name
+        return result.test_indicator_name === header.test_type_name
       }).filter(subItem => {
-        return subItem.data_name === subHeader.detail
+        return subItem.data_point_name === subHeader.detail
       })
       if (subCheckGroup.length > 0) {
         maxTestTimesCheck =
@@ -250,7 +251,9 @@ export default {
     },
     showCard(row) {
       this.testCardDialogVisible = true
-      console.log(row)
+      this.$nextTick(() => {
+        this.$refs['testCard'].setTestData(row)
+      })
     }
     // planScheduleSelected(planScheduleId) {
     //   console.log(planScheduleId)
