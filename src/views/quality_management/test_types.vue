@@ -101,6 +101,7 @@
     <el-dialog
       title="添加试验类型"
       :visible.sync="dialogCreateTestTypeVisible"
+      :close-on-click-modal="false"
     >
       <el-form ref="dataForm" :rules="rules" :model="testTypeForm">
         <el-form-item
@@ -144,6 +145,7 @@
     <el-dialog
       title="编辑试验类型"
       :visible.sync="dialogEditTestTypeVisible"
+      :close-on-click-modal="false"
     >
       <el-form ref="dataForm" :rules="rules" :model="testTypeForm">
         <el-form-item
@@ -188,6 +190,7 @@
     <el-dialog
       title="添加试验"
       :visible.sync="dialogCreateDataPointsVisible"
+      :close-on-click-modal="false"
     >
       <el-form ref="dataForm" :rules="rules" :model="dataPointsForm">
         <el-form-item
@@ -219,6 +222,7 @@
     <el-dialog
       title="编辑试验"
       :visible.sync="dialogEditDataPointsVisible"
+      :close-on-click-modal="false"
     >
       <el-form ref="dataForm" :rules="rules" :model="dataPointsForm">
         <el-form-item
@@ -394,7 +398,7 @@ export default {
     handleTestTypesCurrentRowChange: function(row) {
       if (!row) { return }
       this.testTypesCurrentRow = row
-      getDataPoints({ test_type_id: row.id })
+      getDataPoints({ all: 1, test_type_id: row.id })
         .then(response => {
           this.dataPoints = response.results
           this.dataPointsForm.test_type = row.id
