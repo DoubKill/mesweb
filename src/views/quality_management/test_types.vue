@@ -37,11 +37,11 @@
                   size="mini"
                   @click="showEditTestTypeDialog(scope.row)"
                 >编辑</el-button>
-                <el-button
+                <!-- <el-button
                   size="mini"
                   type="danger"
                   @click="handleTestTypeDelete(scope.row)"
-                >删除</el-button>
+                >删除</el-button> -->
               </el-button-group>
             </template>
           </el-table-column>
@@ -87,11 +87,11 @@
                   size="mini"
                   @click="showEditDataPointsDialog(scope.row)"
                 >编辑</el-button>
-                <el-button
+                <!-- <el-button
                   size="mini"
                   type="danger"
                   @click="handleTestsDelete(scope.row)"
-                >删除</el-button>
+                >删除</el-button> -->
               </el-button-group>
             </template>
           </el-table-column>
