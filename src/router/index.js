@@ -429,6 +429,13 @@ export const asyncRoutes = [{
     meta: {
       title: '不合格品查询'
     }
+  }, {
+    path: 'unqualified-treatment-opinions-manage',
+    component: () => import('@/views/quality_management/unqualified_treatment_opinions_manage'),
+    name: 'unqualifiedTreatmentOpinionsManage',
+    meta: {
+      title: '不合格处理意见管理'
+    }
   }
   ]
 },
