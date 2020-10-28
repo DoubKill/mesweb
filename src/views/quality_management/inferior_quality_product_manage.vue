@@ -50,9 +50,9 @@
           <el-button v-if="row.status==='待确认'" size="mini" @click="reject(row)">驳回</el-button>
         </template>
       </el-table-column>
-      <el-table-column label="是否出库" prop="be_warehouse_out" :formatter="(row)=>{ return row.be_warehouse_out ? 'Y' : 'N'}" />
-      <el-table-column label="出库时间" width="155" prop="warehouse_out_time" align="center"/>
-      <el-table-column label="处理意见" width="155" prop="deal_suggestion" />
+      <el-table-column label="是否出库" align="center" prop="be_warehouse_out" :formatter="(row)=>{ return row.be_warehouse_out ? 'Y' : 'N'}" />
+      <el-table-column label="出库时间" width="155" prop="warehouse_out_time" align="center" />
+      <el-table-column label="处理意见" align="center" width="155" prop="deal_suggestion" />
       <el-table-column label="处理结果" prop="deal_result" />
       <el-table-column label="处理人" prop="deal_user" />
       <el-table-column label="确认人" prop="confirm_user" />
@@ -63,8 +63,8 @@
       :visible.sync="dialogDisposeVisible"
     >
       <el-form ref="disposeForm" :model="disposeForm" :rules="rules" label-position="left" label-width="110px">
-        <el-form-item label="处理意见">
-          <el-select v-model="disposeForm.deal_suggestion">
+        <el-form-item label="处理意见" prop="deal_suggestion">
+          <el-select v-model="disposeForm.deal_suggestion" clearable>
             <el-option-group
               v-for="group in suggestionOptions"
               :key="group.label"
@@ -83,7 +83,7 @@
         <el-form-item label="出库">
           <el-checkbox v-model="disposeForm.be_warehouse_out" />
         </el-form-item>
-        <el-form-item label="出库时间选择">
+        <el-form-item label="出库时间选择" prop="warehouse_out_time">
           <el-date-picker
             v-model="disposeForm.warehouse_out_time"
             clearable
@@ -125,6 +125,13 @@ import { materialDealResult, editMaterialDeal, resultStatus, dealSuggestion } fr
 export default {
   components: { Page, UnqualifiedTreatmentOpinions },
   data() {
+    const validateWarehouseOutTime = (rule, value, callback) => {
+      if (this.disposeForm.be_warehouse_out && !value) {
+        callback(new Error('出库时必须选择出库时间'))
+      } else {
+        callback()
+      }
+    }
     return {
       total: 0,
       getParams: { page: 1, day: null, status: null },
@@ -135,7 +142,12 @@ export default {
         be_warehouse_out: false,
         warehouse_out_time: null
       },
-      rules: {},
+      rules: {
+        deal_suggestion: [{ required: true, message: '该字段不能为空', trigger: 'change' }],
+        warehouse_out_time: [
+          { validator: validateWarehouseOutTime, trigger: 'change' }
+        ]
+      },
       resultStatusList: [
         { status: '待处理' },
         { status: '待确认' },
@@ -183,7 +195,6 @@ export default {
       try {
         const response = await materialDealResult(this.getParams)
         this.inferiorQualityList = response.results
-        console.log(response)
       // eslint-disable-next-line no-empty
       } catch (e) {}
     },
@@ -191,13 +202,13 @@ export default {
       this.getDealSuggestions()
       this.disposeForm = Object.assign({}, row)
       this.dialogDisposeVisible = true
+      this.$nextTick(() => {
+        this.$refs['disposeForm'].clearValidate()
+      })
     },
     confirm(row) {
       editMaterialDeal('patch', row.id, {
         status: '已处理'
-        // deal_suggestion: '',
-        // be_warehouse_out: false,
-        // warehouse_out_time: null
       }).then(() => {
         this.currentChange(this.getParams.page)
         this.$notify({
@@ -225,25 +236,29 @@ export default {
       })
     },
     updateDispose() {
-      const {
-        deal_suggestion,
-        be_warehouse_out,
-        warehouse_out_time
-      } = this.disposeForm
-      editMaterialDeal('patch', this.disposeForm.id, {
-        deal_suggestion,
-        be_warehouse_out,
-        warehouse_out_time,
-        status: '待确认'
-      }).then(() => {
-        this.dialogDisposeVisible = false
-        this.currentChange(this.getParams.page)
-        this.$notify({
-          title: '成功',
-          message: '更新成功',
-          type: 'success',
-          duration: 2000
-        })
+      this.$refs['disposeForm'].validate(valid => {
+        if (valid) {
+          const {
+            deal_suggestion,
+            be_warehouse_out,
+            warehouse_out_time
+          } = this.disposeForm
+          editMaterialDeal('patch', this.disposeForm.id, {
+            deal_suggestion,
+            be_warehouse_out,
+            warehouse_out_time,
+            status: '待确认'
+          }).then(() => {
+            this.dialogDisposeVisible = false
+            this.currentChange(this.getParams.page)
+            this.$notify({
+              title: '成功',
+              message: '更新成功',
+              type: 'success',
+              duration: 2000
+            })
+          })
+        }
       })
     }
   }
