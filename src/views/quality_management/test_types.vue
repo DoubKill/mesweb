@@ -57,7 +57,7 @@
           <el-form-item style="float: right">
             <el-button
               :disabled="!testTypesCurrentRow"
-              @click="showCreateTestDialog"
+              @click="showCreateDataPointsDialog"
             >新建</el-button>
           </el-form-item>
         </el-form>
@@ -90,7 +90,7 @@
                 <!-- <el-button
                   size="mini"
                   type="danger"
-                  @click="handleTestsDelete(scope.row)"
+                  @click="handleDataPointsDelete(scope.row)"
                 >删除</el-button> -->
               </el-button-group>
             </template>
@@ -103,7 +103,7 @@
       :visible.sync="dialogCreateTestTypeVisible"
       :close-on-click-modal="false"
     >
-      <el-form ref="dataForm" :rules="rules" :model="testTypeForm">
+      <el-form ref="createTestTypeForm" :rules="rules" :model="testTypeForm">
         <el-form-item
           label="试验类型"
           :label-width="formLabelWidth"
@@ -147,7 +147,7 @@
       :visible.sync="dialogEditTestTypeVisible"
       :close-on-click-modal="false"
     >
-      <el-form ref="dataForm" :rules="rules" :model="testTypeForm">
+      <el-form ref="editTestTypeForm" :rules="rules" :model="testTypeForm">
         <el-form-item
           label="试验类型"
           :label-width="formLabelWidth"
@@ -192,7 +192,7 @@
       :visible.sync="dialogCreateDataPointsVisible"
       :close-on-click-modal="false"
     >
-      <el-form ref="dataForm" :rules="rules" :model="dataPointsForm">
+      <el-form ref="createDataPointsForm" :rules="rules" :model="dataPointsForm">
         <el-form-item
           label="数据点"
           :label-width="formLabelWidth"
@@ -215,7 +215,7 @@
         <el-button @click="dialogCreateDataPointsVisible = false">取 消</el-button>
         <el-button
           type="primary"
-          @click="handleCreateTest"
+          @click="handleCreateDataPoints"
         >确 定</el-button>
       </div>
     </el-dialog>
@@ -224,7 +224,7 @@
       :visible.sync="dialogEditDataPointsVisible"
       :close-on-click-modal="false"
     >
-      <el-form ref="dataForm" :rules="rules" :model="dataPointsForm">
+      <el-form ref="editDataPointsForm" :rules="rules" :model="dataPointsForm">
         <el-form-item
           label="数据点"
           :label-width="formLabelWidth"
@@ -249,7 +249,7 @@
         <el-button @click="dialogEditDataPointsVisible = false">取 消</el-button>
         <el-button
           type="primary"
-          @click="handleEditTest"
+          @click="handleEditDataPoints"
         >确 定</el-button>
       </div>
     </el-dialog>
@@ -328,7 +328,7 @@ export default {
       this.getTestIndicatorsOptions()
       this.dialogCreateTestTypeVisible = true
       this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
+        this.$refs.createTestTypeForm.clearValidate()
       })
     },
     getTestIndicatorsOptions() {
@@ -338,7 +338,7 @@ export default {
         })
     },
     handleCreateTestType: function() {
-      this.$refs['dataForm'].validate((valid) => {
+      this.$refs.createTestTypeForm.validate((valid) => {
         if (valid) {
           // this.clearTestTypeFormError()
           postTestTypes(this.testTypeForm)
@@ -357,11 +357,11 @@ export default {
       this.getTestIndicatorsOptions()
       this.dialogEditTestTypeVisible = true
       this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
+        this.$refs.editTestTypeForm.clearValidate()
       })
     },
     handleEditTestType: function() {
-      this.$refs['dataForm'].validate((valid) => {
+      this.$refs.editTestTypeForm.validate((valid) => {
         if (valid) {
           putTestTypes(this.testTypeForm, this.testTypeForm.id)
             .then(response => {
@@ -380,7 +380,6 @@ export default {
       }).then(() => {
         deleteTestTypes(row.id)
           .then(response => {
-            console.log('sssssssssss')
             this.$message({
               type: 'success',
               message: '删除成功!'
@@ -413,16 +412,16 @@ export default {
         test_type: this.dataPointsForm.test_type
       }
     },
-    showCreateTestDialog: function() {
+    showCreateDataPointsDialog: function() {
       if (!this.dataPointsForm.test_type) { return }
       this.clearDataPointsForm()
       this.dialogCreateDataPointsVisible = true
       this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
+        this.$refs.createDataPointsForm.clearValidate()
       })
     },
-    handleCreateTest: function() {
-      this.$refs['dataForm'].validate((valid) => {
+    handleCreateDataPoints: function() {
+      this.$refs.createDataPointsForm.validate((valid) => {
         if (valid) {
           postDataPoints(this.dataPointsForm)
             .then(response => {
@@ -440,11 +439,11 @@ export default {
       this.dataPointsForm.unit = row.unit
       this.dialogEditDataPointsVisible = true
       this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
+        this.$refs.editDataPointsForm.clearValidate()
       })
     },
-    handleEditTest: function() {
-      this.$refs['dataForm'].validate((valid) => {
+    handleEditDataPoints: function() {
+      this.$refs.editDataPointsForm.validate((valid) => {
         if (valid) {
           putDataPoints(this.dataPointsForm, this.dataPointsForm.id)
             .then(response => {
@@ -455,7 +454,7 @@ export default {
         }
       })
     },
-    handleTestsDelete: function(row) {
+    handleDataPointsDelete: function(row) {
       this.$confirm('此操作将永久删除' + row.name + ', 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
