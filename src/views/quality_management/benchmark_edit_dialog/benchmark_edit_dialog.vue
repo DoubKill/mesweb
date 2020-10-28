@@ -70,7 +70,15 @@
             label="等级"
           >
             <template slot-scope="scope">
-              <el-input v-model="scope.row.level" placeholder="请输入等级" />
+              <div class="aaaaa">
+                <el-input-number
+                  v-model="scope.row.level"
+                  controls-position="right"
+                  :min="0"
+                  :step="1"
+                  step-strictly
+                />
+              </div>
             </template>
           </el-table-column>
           <el-table-column
@@ -86,7 +94,7 @@
             <template slot-scope="scope">
               <el-button-group>
                 <el-button size="small" :disabled="disabledSubmit" @click="submitClick(scope.row)">保存</el-button>
-                <el-button size="small" type="danger" @click="clickDelete(scope.$index,scope.row)">删除</el-button>
+                <!-- <el-button size="small" type="danger" @click="clickDelete(scope.$index,scope.row)">删除</el-button> -->
               </el-button-group>
             </template>
           </el-table-column>

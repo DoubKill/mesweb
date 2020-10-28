@@ -23,12 +23,12 @@
         label="No"
       />
       <el-table-column
-        prop="test_indicator_name"
-        label="检测指标"
-      />
-      <el-table-column
         prop="material_no"
         label="胶料编码"
+      />
+      <el-table-column
+        prop="test_indicator_name"
+        label="检测指标"
       />
       <el-table-column
         prop="test_type_name"
@@ -44,7 +44,7 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button size="small" @click="editClick(scope.row)">编辑</el-button>
-            <el-button size="small" type="danger" @click="clickDelete(scope.$index,scope.row)">删除</el-button>
+            <!-- <el-button size="small" type="danger" @click="clickDelete(scope.$index,scope.row)">删除</el-button> -->
           </el-button-group>
         </template>
       </el-table-column>
@@ -87,6 +87,7 @@
           <test-method-select
             ref="testMethodSelect"
             :is-type-filter="true"
+            :is-required="true"
             :new-test-type-id="addForm.b"
             @changeSelect="testMethodChange"
           />
@@ -141,7 +142,12 @@ export default {
       loading: false,
       dialogVisible: false,
       loadingBtn: false,
-      addForm: {},
+      addForm: {
+        material: null,
+        b: null,
+        test_method: null,
+        data_point: null
+      },
       optionsRubber: [],
       editShow: false,
       rules: {
@@ -157,7 +163,7 @@ export default {
         test_method: [
           { required: true, validator: (rule, value, callback) => {
             validatePass(rule, value, callback,
-              this.addForm.test_method, '请选择胶料编码')
+              this.addForm.test_method, '请选择试验方法')
           } }
         ],
         data_point: [
@@ -210,7 +216,13 @@ export default {
       this.getList()
     },
     typeSelect(val) {
-      this.$set(this.addForm, 'b', val)
+      if (!val) {
+        this.addForm.b = null
+      } else {
+        this.$set(this.addForm, 'b', val)
+      }
+      this.$refs.testMethodSelect.testMode = ''
+      this.$refs.testTypeDotSelect.value = []
     },
     testMethodChange(val) {
       this.$set(this.addForm, 'test_method', val)
@@ -230,6 +242,7 @@ export default {
       if (this.$refs.addForm) {
         this.$refs.addForm.resetFields()
       }
+      this.addForm = {}
       this.$refs.testTypeSelect.value = ''
       this.$refs.testMethodSelect.testMode = ''
       this.$refs.testTypeDotSelect.value = []
@@ -257,22 +270,22 @@ export default {
       })
     },
     sureAdd() {
-      try {
-        this.$refs.addForm.validate(async(valid) => {
-          if (valid) {
+      this.$refs.addForm.validate(async(valid) => {
+        if (valid) {
+          try {
             this.loadingBtn = true
             await matTestMethods('post', null, { data: this.addForm })
             this.$message.success('新建成功')
             this.getList()
             this.loadingBtn = false
             this.clearForm()
-          } else {
-            return false
+          } catch (e) {
+            this.loadingBtn = false
           }
-        })
-      } catch (e) {
-        this.loadingBtn = false
-      }
+        } else {
+          return false
+        }
+      })
     },
     handleCloseEdit() {
       this.editShow = false

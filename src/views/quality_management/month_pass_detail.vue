@@ -32,9 +32,9 @@
         </template>
       </el-table-column>
       <el-table-column fixed label="产量/车" prop="actual_trains" />
-      <el-table-column fixed label="一次合格率%" prop="once_pass_percent" />
-      <el-table-column fixed label="流变合格率%" prop="sulphur_pass_percent" />
-      <el-table-column fixed label="综合合格率%" prop="composite_pass_percent" />
+      <el-table-column fixed label="一次合格率%" width="75" prop="once_pass_percent" />
+      <el-table-column fixed label="流变合格率%" width="75" prop="sulphur_pass_percent" />
+      <el-table-column fixed label="综合合格率%" width="75" prop="composite_pass_percent" />
       <el-table-column v-for="(value,index) in headers" :key="index" :label="value" align="center">
         <el-table-column label="+" align="center">
           <template slot-scope="scope">
@@ -162,7 +162,7 @@ export default {
         {
           'date': '2020-09',
           'composite_pass_percent': 1,
-          'once_pass_percent': 1,
+          'once_pass_percent': '99.99%',
           'sulphur_pass_percent': 1,
           'actual_trains': 10,
           'test_detail': {
@@ -175,6 +175,22 @@ export default {
               'lower_percent': 0.9
             },
             'MH': {
+              'test_type_name': '流变',
+              'data_name': 'MH',
+              'up_trains': 1,
+              'up_percent': 0.9,
+              'lower_trains': 1,
+              'lower_percent': 0.9
+            },
+            'MH1': {
+              'test_type_name': '流变',
+              'data_name': 'MH',
+              'up_trains': 1,
+              'up_percent': 0.9,
+              'lower_trains': 1,
+              'lower_percent': 0.9
+            },
+            'MH2': {
               'test_type_name': '流变',
               'data_name': 'MH',
               'up_trains': 1,

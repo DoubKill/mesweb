@@ -26,7 +26,12 @@
 import { testSubTypes } from '@/api/base_w'
 export default {
   props: {
-    testmodeprop: [Number, String],
+    testmodeprop: {
+      type: String,
+      default() {
+        return null
+      }
+    },
     // 指标 quota
     testTypeId: Number,
     // 过滤方法  是类型过滤true 指标过滤false
@@ -35,7 +40,12 @@ export default {
       default: false
     },
     // 类型
-    newTestTypeId: Number,
+    newTestTypeId: {
+      type: Number,
+      default() {
+        return null
+      }
+    },
     add: {
       type: Boolean,
       default: false
@@ -43,12 +53,16 @@ export default {
     createLoad: {
       type: Boolean,
       default: false
+    },
+    isRequired: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
       options: [],
-      testMode: this.testmodeprop,
+      testMode: this.testmodeprop || '',
       loading: false
     }
   },
@@ -98,6 +112,9 @@ export default {
     },
     visibleChange(bool) {
       if (bool && !this.createLoad) {
+        if (this.isRequired && !this.newTestTypeId) {
+          return
+        }
         this.getList()
       }
     }
