@@ -70,7 +70,15 @@
             label="等级"
           >
             <template slot-scope="scope">
-              <el-input v-model="scope.row.level" placeholder="请输入等级" />
+              <div class="aaaaa">
+                <el-input-number
+                  v-model="scope.row.level"
+                  controls-position="right"
+                  :min="0"
+                  :step="1"
+                  step-strictly
+                />
+              </div>
             </template>
           </el-table-column>
           <el-table-column
