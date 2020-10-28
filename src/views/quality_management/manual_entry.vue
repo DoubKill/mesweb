@@ -133,6 +133,10 @@
           label="胶料编码"
         />
         <el-table-column
+          prop="lot_no"
+          label="收皮条码"
+        />
+        <el-table-column
           prop="classes"
           label="班次"
         />
@@ -301,7 +305,7 @@ export default {
       for (let i = 0; i < num; i++) {
         const obj = JSON.parse(JSON.stringify(row))
         this.$set(obj, 'input', '')
-        this.$set(obj, 'actual_trains', i + 1)
+        this.$set(obj, 'actual_trains', Number(row.begin_trains) + i)
         this.tableDataChild.push(obj)
       }
     },
