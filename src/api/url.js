@@ -109,5 +109,11 @@ export default {
   // 物料试验方法
   MatTestMethods: '/api/v1/quality/mat-test-methods/',
   // 物料数据点评判指标
-  MatDataPointIndicators: '/api/v1/quality/mat-data-point-indicators/'
+  MatDataPointIndicators: '/api/v1/quality/mat-data-point-indicators/',
+
+  MaterialDealResultUrl: '/api/v1/quality/material-deal-result/',
+  DisposeTypeUrl: '/api/v1/basics/global-codes/',
+  DealSuggestionUrl: '/api/v1/quality/deal-suggestion/',
+
+  ResultStatusUrl: '/api/v1/quality/result-status/'
 }

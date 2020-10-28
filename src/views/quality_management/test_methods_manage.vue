@@ -23,7 +23,7 @@
       <el-table-column label="检测指标" prop="test_indicator_name" />
       <el-table-column label="操作" align="center">
         <template slot-scope="{row, $index}">
-          <el-button size="mini" type="danger" @click="handleDelete(row,$index)">删除</el-button>
+          <!-- <el-button size="mini" type="danger" @click="handleDelete(row,$index)">删除</el-button> -->
           <el-button size="mini" @click="handleUpdate(row)">编辑</el-button>
         </template>
       </el-table-column>
@@ -165,7 +165,6 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          console.log(this.formData, 'this.formData')
           editTestMethod('post', null, this.formData).then(() => {
             this.dialogFormVisible = false
             this.currentChange(1)

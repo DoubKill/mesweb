@@ -154,8 +154,7 @@ export default {
           data_indicator_detail: [{ detail: '', show: false }]
         }
       ],
-      testOrders: [],
-      testDataByTestName: {}
+      testOrders: []
     }
   },
   created() {
@@ -183,10 +182,6 @@ export default {
       this.getMaterialTestOrders()
     },
     matchedTestData(row, header, subHeader) {
-      const name = `${header.test_type_name}-${subHeader.detail}`
-      if (name in this.testDataByTestName) {
-        return this.testDataByTestName[name]
-      }
       let maxTestTimesCheck = null
       const subCheckGroup = row.order_results.filter(result => {
         return result.test_indicator_name === header.test_type_name
@@ -207,7 +202,6 @@ export default {
         })
       }
       const data = [maxTestTimesCheck, subCheckGroup]
-      this.testDataByTestName[name] = data
       return data
     },
     currentChange(page) {

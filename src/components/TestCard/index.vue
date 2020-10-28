@@ -1,5 +1,88 @@
 <template>
   <div class="card-container">
+    <table
+      border="1"
+      bordercolor="black"
+      style="width: 100%; font-size: 14px; border-collapse:collapse"
+    >
+    <tbody>
+      <tr>
+        <td colspan="5">胶料信息卡</td>
+      </tr>
+      <tr>
+        <td colspan="4">C-FM-Jsds</td>
+        <td rowspan="14" style="width: 100px"></td>
+      </tr>
+      <tr>
+        <td>工厂日期</td>
+        <td></td>
+        <td>生产班次</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>生产机台</td>
+        <td></td>
+        <td>生产车次</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>收皮重量</td>
+        <td></td>
+        <td>余量</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>生产时间</td>
+        <td colspan="3"></td>
+      </tr>
+      <tr>
+        <td>有效时间</td>
+        <td colspan="3"></td>
+      </tr>
+      <tr>
+        <td>收皮员</td>
+        <td></td>
+        <td>备注</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td colspan="4">质量信息卡</td>
+      </tr>
+      <tr>
+        <td>检测时间</td>
+        <td colspan="3"></td>
+      </tr>
+      <tr>
+        <td>打印时间</td>
+        <td colspan="3"></td>
+      </tr>
+      <tr>
+        <td>检测员</td>
+        <td></td>
+        <td>检测班次</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>检测结果</td>
+        <td></td>
+        <td>备注</td>
+        <td></td>
+      </tr>
+       <tr>
+        <td>处理人</td>
+        <td></td>
+        <td>处理时间</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>处理意见</td>
+        <td colspan="3"></td>
+      </tr>
+    </tbody>
+    
+    </table>
+  </div>
+  <!-- <div class="card-container">
     <el-row>
       <span>胶料信息卡</span>
     </el-row>
@@ -64,9 +147,7 @@
           <el-col :span="6"><span /></el-col>
         </el-row>
         <el-row class="n-b-border">
-          <el-table
-            fit
-          >
+          <el-table>
             <el-table-column label="车次" align="center" />
             <el-table-column label="门尼" align="center">
               <el-table-column label="检测值" align="center" />
@@ -82,7 +163,7 @@
       </el-col>
       <el-col :span="4" />
     </el-row>
-  </div>
+  </div> -->
 
 </template>
 
@@ -105,31 +186,45 @@ export default {
 
 <style lang="scss">
   .card-container {
-      margin: 0 auto;
-      text-align: center;
-      border: 1px solid black;
-      color: #909399;
-    span {
-     display: inline-block;
-    }
-    .el-col {
-      border-right: 1px solid black;
-    }
-    .el-row {
-      border-bottom: 1px solid black;
-      & > .el-col:last-child {
-         border-right: none;
-      }
-    }
 
-    .n-b-border {
-        border-bottom: none;;
+    margin: 0 auto;
+    text-align: center;
+
+    td {
+      min-width: 50px;
+      padding-top: 10px;
+      padding-bottom: 10px;;
     }
-    // .b-border {
-    //   border-bottom: 1px solid black;
-    // }
-    // .r-border {
-    //   border-right: 1px solid black;
-    // }
   }
+  // .card-container {
+  //     max-width: 700px;
+  //     margin: 0 auto;
+  //     text-align: center;
+  //     border: 1px solid black;
+  //     color: #909399;
+  //   span {
+  //    display: inline-block;
+  //    height: 20px;
+  //    margin: 10px auto;
+  //   }
+  //   .el-col {
+  //     border-right: 1px solid black;
+  //   }
+  //   .el-row {
+  //     border-bottom: 1px solid black;
+  //     & > .el-col:last-child {
+  //        border-right: none;
+  //     }
+  //   }
+
+  //   .n-b-border {
+  //       border-bottom: none;;
+  //   }
+  //   // .b-border {
+  //   //   border-bottom: 1px solid black;
+  //   // }
+  //   // .r-border {
+  //   //   border-right: 1px solid black;
+  //   // }
+  // }
 </style>
