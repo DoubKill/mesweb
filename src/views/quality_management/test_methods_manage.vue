@@ -165,7 +165,6 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          console.log(this.formData, 'this.formData')
           editTestMethod('post', null, this.formData).then(() => {
             this.dialogFormVisible = false
             this.currentChange(1)
