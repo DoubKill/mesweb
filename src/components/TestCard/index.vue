@@ -126,33 +126,32 @@ export default {
           displayValue: true
         }
       )
-      // this.testData.mtr_list.table_head.push('流变')
-      // this.testData.mtr_list.table_head.push('test')
-      // this.testData.mtr_list['2'].push({
-      //   'test_indicator_name': '流变',
-      //   'value': 12.0,
-      //   'result': '合格',
-      //   'test_times': 12,
-      //   'status': '12:合格'
-      // })
       this.testData.mtr_list.rows = []
       for (const key in this.testData.mtr_list) {
         if (key !== 'table_head' && key !== 'rows') {
           this.testData.mtr_list.rows.push(key)
           const data = []
-          this.testData.mtr_list.table_head.forEach(head => {
-            data.push(this.testData.mtr_list[key].find(item => {
+          for (let i = 0; i < this.testData.mtr_list.table_head.length; i++) {
+            const head = this.testData.mtr_list.table_head[i]
+            const listItem = this.testData.mtr_list[key].find(item => {
               return item.test_indicator_name === head
-            }))
-          })
-          data.push(
-            data.sort((l, r) => {
-              return r.test_times - l.test_times
-            })[0])
+            })
+            data.push(listItem || {})
+          }
+          let test_times = 0
+          let maxTestTimesItem = null
+          for (let i = 0; i < data.length; i++) {
+            if (data[i].test_times > test_times) {
+              test_times = data[i].test_times
+              maxTestTimesItem = data[i]
+            }
+          }
+          if (maxTestTimesItem) {
+            data.push(maxTestTimesItem)
+          }
           this.testData.mtr_list[key] = data
         }
       }
-      // console.log(this.testData)
     }
   }
 }
