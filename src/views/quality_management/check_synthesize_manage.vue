@@ -27,7 +27,7 @@
         />
       </el-form-item>
       <el-form-item label="处理意见">
-        <!-- <el-select /> -->
+        <deal-suggestion-select @dealSuggestionChange="dealSuggestionChange"/>
       </el-form-item>
     </el-form>
     <el-table
@@ -103,11 +103,12 @@ import PlanSchedulesSelect from '@/components/PlanSchedulesSelect'
 import EquipSelect from '@/components/EquipSelect'
 import ClassSelect from '@/components/ClassSelect'
 import ProductNoSelect from '@/components/ProductNoSelect'
+import DealSuggestionSelect from '@/components/DealSuggestionSelect'
 import TestCard from '@/components/TestCard'
 import { palletFeedTest, changelValidTime } from '@/api/quick-check-detail'
 
 export default {
-  components: { PlanSchedulesSelect, EquipSelect, ClassSelect, ProductNoSelect, Page, TestCard },
+  components: { PlanSchedulesSelect, EquipSelect, ClassSelect, ProductNoSelect, Page, TestCard, DealSuggestionSelect },
   data() {
     return {
       total: 0,
@@ -188,6 +189,10 @@ export default {
     // planScheduleSelected(val) {
 
     // },
+    dealSuggestionChange(desc) {
+      this.getParams.suggestion_desc = desc || null
+      this.currentChange(1)
+    },
     equipSelected(equip) {
       this.getParams.equip_no = equip ? equip.equip_no : null
       this.currentChange(1)
