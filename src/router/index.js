@@ -379,15 +379,6 @@ export const asyncRoutes = [{
     }
   },
   {
-    path: 'details',
-    component: () => import('@/views/quality_management/details'),
-    name: 'Details',
-    meta: {
-      title: '胶料快检详细信息'
-      // permissionName: 'product_inventory'
-    }
-  },
-  {
     path: 'manual-entry',
     component: () => import('@/views/quality_management/manual_entry'),
     name: 'ManualEntry',
@@ -425,16 +416,32 @@ export const asyncRoutes = [{
   }, {
     path: 'inferior-quality-product-manage',
     component: () => import('@/views/quality_management/inferior_quality_product_manage'),
-    name: 'inferiorQualityProductManage',
+    name: 'InferiorQualityProductManage',
     meta: {
       title: '不合格品查询'
     }
   }, {
     path: 'unqualified-treatment-opinions-manage',
     component: () => import('@/views/quality_management/unqualified_treatment_opinions_manage'),
-    name: 'unqualifiedTreatmentOpinionsManage',
+    name: 'UnqualifiedTreatmentOpinionsManage',
     meta: {
       title: '不合格处理意见管理'
+    }
+  }, {
+    path: 'details',
+    component: () => import('@/views/quality_management/details'),
+    name: 'Details',
+    meta: {
+      title: '胶料快检详细信息'
+      // permissionName: 'product_inventory'
+    }
+  },
+  {
+    path: 'check-synthesize-manage',
+    component: () => import('@/views/quality_management/check_synthesize_manage'),
+    name: 'CheckSynthesizeManage',
+    meta: {
+      title: '快检信息综合管理'
     }
   }
   ]

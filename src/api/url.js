@@ -115,5 +115,9 @@ export default {
   DisposeTypeUrl: '/api/v1/basics/global-codes/',
   DealSuggestionUrl: '/api/v1/quality/deal-suggestion/',
 
-  ResultStatusUrl: '/api/v1/quality/result-status/'
+  ResultStatusUrl: '/api/v1/quality/result-status/',
+
+  PalletFeedTestUrl: '/api/v1/quality/pallet-feed-test/',
+
+  MaterialValidTimeUrl: '/api/v1/quality/material_valid_time/'
 }

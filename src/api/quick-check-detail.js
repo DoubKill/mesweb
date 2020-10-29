@@ -15,3 +15,22 @@ export function materialTestOrders(query) {
     params: query
   })
 }
+
+export function palletFeedTest(query) {
+  return request({
+    url: API.PalletFeedTestUrl,
+    method: 'get',
+    params: query
+  })
+}
+
+export function changelValidTime(id, valid_time) {
+  return request({
+    url: API.MaterialValidTimeUrl,
+    method: 'post',
+    data: {
+      id,
+      valid_time
+    }
+  })
+}

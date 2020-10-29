@@ -44,16 +44,16 @@
     >
       <el-table-column type="index" label="No" />
       <el-table-column label="生产信息" align="center">
-        <el-table-column label="生产计划号" prop="plan_classes_uid" />
+        <el-table-column label="生产计划号" width="95" prop="plan_classes_uid" />
         <el-table-column label="收皮条码" prop="lot_no" />
-        <el-table-column label="生产班次/班组" prop="class_group" />
+        <el-table-column label="生产班次/班组" width="110" prop="class_group" />
         <el-table-column label="生产机台" prop="production_equip_no" />
-        <el-table-column label="胶料编码" width="150" prop="product_no" />
+        <el-table-column label="胶料编码" align="center" width="150" prop="product_no" />
         <el-table-column label="车次" width="50" align="center" prop="actual_trains" />
         <el-table-column label="检测状态" prop="test_status" />
       </el-table-column>
       <el-table-column v-for="header in testTypeList.filter(type => type.show)" :key="header.test_type_name" align="center" :label="header.test_type_name">
-        <el-table-column v-for="subHeader in header.data_indicator_detail.filter(item => item.show)" :key="header.test_type_name + subHeader.detail" width="110" :label="subHeader.detail">
+        <el-table-column v-for="subHeader in header.data_indicator_detail.filter(item => item.show)" :key="header.test_type_name + subHeader.detail" width="110" :label="subHeader.detail" align="center">
           <template v-if="matchedTestData(scope.row, header, subHeader)[0]" slot-scope="scope">
             <el-popover
               placement="top-start"
@@ -69,16 +69,16 @@
             </el-popover>
           </template>
         </el-table-column>
-        <el-table-column label="等级" />
-        <el-table-column label="处理意见" />
+        <el-table-column label="等级" align="center" />
+        <el-table-column label="检测结果" align="center" />
       </el-table-column>
       <el-table-column label="综合等级" />
-      <el-table-column label="综合处理意见" />
-      <el-table-column label="操作" align="center" width="120">
+      <el-table-column label="综合检测结果" width="110" />
+      <!-- <el-table-column label="操作" align="center" width="120">
         <template slot-scope="scope">
           <el-button size="mini" @click="showCard(scope.row)">显示条码</el-button>
         </template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
     <page :total="total" :current-page="getParams.page" @currentChange="currentChange" />
     <el-dialog

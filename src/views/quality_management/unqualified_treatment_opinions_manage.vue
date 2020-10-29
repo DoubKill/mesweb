@@ -154,6 +154,7 @@ export default {
     async getDisposeTypes() {
       try {
         const response = await disposeTypes()
+        console.log(response)
         this.disposeTypeList = response.results
         // console.log(response)
       // eslint-disable-next-line no-empty
