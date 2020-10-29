@@ -66,7 +66,7 @@
           <td>检测结果</td>
           <td>{{ testData.test ? testData.test.result : '' }}</td>
           <td>备注</td>
-          <td>{{ testData.test_note }}</td>
+          <td>{{ testData.test.test_note }}</td>
         </tr>
         <tr>
           <td>处理人</td>
@@ -93,7 +93,10 @@
       <tr v-for="row in testData.mtr_list.rows" :key="row">
         <td>{{ row }}</td>
         <td v-for="(item, index) in testData.mtr_list[row]" :key="index">
-          {{ item ? item.status : '' }}
+          {{ index !== testData.mtr_list[row].length - 1 ? item.value : '' }} <br>
+          {{
+            item ? item.status : ''
+          }}
         </td>
       </tr>
     </table>
@@ -169,35 +172,4 @@ export default {
       padding-bottom: 10px;;
     }
   }
-  // .card-container {
-  //     max-width: 700px;
-  //     margin: 0 auto;
-  //     text-align: center;
-  //     border: 1px solid black;
-  //     color: #909399;
-  //   span {
-  //    display: inline-block;
-  //    height: 20px;
-  //    margin: 10px auto;
-  //   }
-  //   .el-col {
-  //     border-right: 1px solid black;
-  //   }
-  //   .el-row {
-  //     border-bottom: 1px solid black;
-  //     & > .el-col:last-child {
-  //        border-right: none;
-  //     }
-  //   }
-
-  //   .n-b-border {
-  //       border-bottom: none;;
-  //   }
-  //   // .b-border {
-  //   //   border-bottom: 1px solid black;
-  //   // }
-  //   // .r-border {
-  //   //   border-right: 1px solid black;
-  //   // }
-  // }
 </style>

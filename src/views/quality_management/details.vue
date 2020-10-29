@@ -62,6 +62,9 @@
               <el-table border :data="matchedTestData(scope.row, header, subHeader)[1]">
                 <el-table-column label="检测次数" prop="test_times" />
                 <el-table-column label="检测值" prop="value" />
+                <el-table-column label="试验方法名称" prop="test_method_name" />
+                <el-table-column label="等级" prop="level" />
+                <el-table-column label="结果" prop="mes_result" />
               </el-table>
               <el-button slot="reference">{{
                 matchedTestData(scope.row, header, subHeader)[0].value
