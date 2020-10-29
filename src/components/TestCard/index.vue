@@ -5,180 +5,154 @@
       bordercolor="black"
       style="width: 100%; font-size: 14px; border-collapse:collapse"
     >
-    <tbody>
-      <tr>
-        <td colspan="5">胶料信息卡</td>
-      </tr>
-      <tr>
-        <td colspan="4">C-FM-Jsds</td>
-        <td rowspan="14" style="width: 100px"></td>
-      </tr>
-      <tr>
-        <td>工厂日期</td>
-        <td></td>
-        <td>生产班次</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>生产机台</td>
-        <td></td>
-        <td>生产车次</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>收皮重量</td>
-        <td></td>
-        <td>余量</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>生产时间</td>
-        <td colspan="3"></td>
-      </tr>
-      <tr>
-        <td>有效时间</td>
-        <td colspan="3"></td>
-      </tr>
-      <tr>
-        <td>收皮员</td>
-        <td></td>
-        <td>备注</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td colspan="4">质量信息卡</td>
-      </tr>
-      <tr>
-        <td>检测时间</td>
-        <td colspan="3"></td>
-      </tr>
-      <tr>
-        <td>打印时间</td>
-        <td colspan="3"></td>
-      </tr>
-      <tr>
-        <td>检测员</td>
-        <td></td>
-        <td>检测班次</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>检测结果</td>
-        <td></td>
-        <td>备注</td>
-        <td></td>
-      </tr>
-       <tr>
-        <td>处理人</td>
-        <td></td>
-        <td>处理时间</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>处理意见</td>
-        <td colspan="3"></td>
-      </tr>
-    </tbody>
-    
+      <tbody>
+        <tr>
+          <td colspan="5">胶料信息卡</td>
+        </tr>
+        <tr>
+          <td colspan="4">{{ testData.product_no }}</td>
+          <td rowspan="14" style="width: 100px" />
+        </tr>
+        <tr>
+          <td>工厂日期</td>
+          <td>{{ testData.day_time }}</td>
+          <td>生产班次</td>
+          <td>{{ testData.classes_group }}</td>
+        </tr>
+        <tr>
+          <td>生产机台</td>
+          <td>{{ testData.equip_no }}</td>
+          <td>生产车次</td>
+          <td>{{ testData.actual_trains }}</td>
+        </tr>
+        <tr>
+          <td>收皮重量</td>
+          <td>{{ testData.actual_weight }}</td>
+          <td>余量</td>
+          <td>{{ testData.residual_weight }}</td>
+        </tr>
+        <tr>
+          <td>生产时间</td>
+          <td colspan="3">{{ testData.production_factory_date }}</td>
+        </tr>
+        <tr>
+          <td>有效时间</td>
+          <td colspan="3">{{ testData.valid_time }}</td>
+        </tr>
+        <tr>
+          <td>收皮员</td>
+          <td>{{ testData.operation_user }}</td>
+          <td>备注</td>
+          <td />
+        </tr>
+        <tr>
+          <td colspan="4">质量信息卡</td>
+        </tr>
+        <tr>
+          <td>检测时间</td>
+          <td colspan="3">{{ testData.test ? testData.test.test_factory_date : '' }}</td>
+        </tr>
+        <tr>
+          <td>打印时间</td>
+          <td colspan="3">{{ testData.print_time }}</td>
+        </tr>
+        <tr>
+          <td>检测员</td>
+          <td>{{ testData.test ? testData.test.test_user : '' }}</td>
+          <td>检测班次</td>
+          <td>{{ testData.test ? testData.test.test_class : '' }}</td>
+        </tr>
+        <tr>
+          <td>检测结果</td>
+          <td>{{ testData.test ? testData.test.result : '' }}</td>
+          <td>备注</td>
+          <td>{{ testData.test_note }}</td>
+        </tr>
+        <tr>
+          <td>处理人</td>
+          <td>{{ testData.deal_user }}</td>
+          <td>处理时间</td>
+          <td>{{ testData.deal_time }}</td>
+        </tr>
+        <tr>
+          <td>处理意见</td>
+          <td colspan="3">{{ testData.suggestion_desc }}</td>
+        </tr>
+      </tbody>
     </table>
+    <table
+      border="2"
+      bordercolor="black"
+      style="width: 100%; font-size: 14px; border-collapse:collapse"
+    >
+      <tr>
+        <th style="width:100px">车次</th>
+        <th v-for="label in testData.mtr_list.table_head" :key="label">{{ label }}</th>
+        <th style="width:100px">综合判级</th>
+      </tr>
+      <tr v-for="row in testData.mtr_list.rows" :key="row">
+        <td>{{ row }}</td>
+        <td v-for="(item, index) in testData.mtr_list[row]" :key="index">
+          {{ item ? item.status : '' }}
+        </td>
+      </tr>
+    </table>
+    <img id="barcode">
   </div>
-  <!-- <div class="card-container">
-    <el-row>
-      <span>胶料信息卡</span>
-    </el-row>
-    <el-row class="n-b-border">
-      <el-col :span="20">
-        <el-row>
-          <span>{{ testData.product_no }}</span>
-        </el-row>
-        <el-row>
-          <el-col :span="6"><span>生产机台</span></el-col>
-          <el-col :span="6"><span>{{ testData.production_equip_no }}</span></el-col>
-          <el-col :span="6"><span>生产班次</span></el-col>
-          <el-col :span="6"><span />{{ testData.production_class }}</el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="6"><span>生产日期</span></el-col>
-          <el-col :span="6"><span>{{ testData.production_factory_date }}</span></el-col>
-          <el-col :span="6"><span>生产车次</span></el-col>
-          <el-col :span="6"><span>{{ testData.actual_trains }}</span></el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="6"><span>设重</span></el-col>
-          <el-col :span="6"><span /></el-col>
-          <el-col :span="6"><span>实重</span></el-col>
-          <el-col :span="6"><span /></el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="6"><span>生产时间</span></el-col>
-          <el-col :span="18"><span /></el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="6"><span>有效时间</span></el-col>
-          <el-col :span="18"><span /></el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="6"><span>收皮员</span></el-col>
-          <el-col :span="6"><span /></el-col>
-          <el-col :span="6"><span>备注</span></el-col>
-          <el-col :span="6"><span /></el-col>
-        </el-row>
-        <el-row>
-          <span>质量信息卡</span>
-        </el-row>
-        <el-row>
-          <el-col :span="6"><span>检验时间</span></el-col>
-          <el-col :span="18"><span /></el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="6"><span>打印时间</span></el-col>
-          <el-col :span="18"><span /></el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="6"><span>检测员</span></el-col>
-          <el-col :span="6"><span /></el-col>
-          <el-col :span="6"><span>检测班次</span></el-col>
-          <el-col :span="6"><span /></el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="6"><span>检测结果</span></el-col>
-          <el-col :span="6"><span /></el-col>
-          <el-col :span="6"><span>备注</span></el-col>
-          <el-col :span="6"><span /></el-col>
-        </el-row>
-        <el-row class="n-b-border">
-          <el-table>
-            <el-table-column label="车次" align="center" />
-            <el-table-column label="门尼" align="center">
-              <el-table-column label="检测值" align="center" />
-              <el-table-column label="等级" align="center" />
-            </el-table-column>
-            <el-table-column label="比重" align="center">
-              <el-table-column label="检测值" align="center" />
-              <el-table-column label="等级" align="center" />
-            </el-table-column>
-            <el-table-column label="综合级别" align="center" />
-          </el-table>
-        </el-row>
-      </el-col>
-      <el-col :span="4" />
-    </el-row>
-  </div> -->
-
 </template>
 
 <script>
+import jsbarcode from 'jsbarcode'
+
 export default {
 
   data() {
     return {
-      testData: {}
+      testData: {
+        test: {},
+        mtr_list: {
+          table_head: [],
+          rows: []
+        }
+      }
     }
   },
   methods: {
     setTestData(data) {
       this.testData = data
-      console.log(this.testData)
+      jsbarcode(
+        '#barcode',
+        this.testData.lot_no, {
+          displayValue: true
+        }
+      )
+      // this.testData.mtr_list.table_head.push('流变')
+      // this.testData.mtr_list.table_head.push('test')
+      // this.testData.mtr_list['2'].push({
+      //   'test_indicator_name': '流变',
+      //   'value': 12.0,
+      //   'result': '合格',
+      //   'test_times': 12,
+      //   'status': '12:合格'
+      // })
+      this.testData.mtr_list.rows = []
+      for (const key in this.testData.mtr_list) {
+        if (key !== 'table_head' && key !== 'rows') {
+          this.testData.mtr_list.rows.push(key)
+          const data = []
+          this.testData.mtr_list.table_head.forEach(head => {
+            data.push(this.testData.mtr_list[key].find(item => {
+              return item.test_indicator_name === head
+            }))
+          })
+          data.push(
+            data.sort((l, r) => {
+              return r.test_times - l.test_times
+            })[0])
+          this.testData.mtr_list[key] = data
+        }
+      }
+      // console.log(this.testData)
     }
   }
 }
@@ -186,12 +160,12 @@ export default {
 
 <style lang="scss">
   .card-container {
-
+    width: 600px;
     margin: 0 auto;
     text-align: center;
 
     td {
-      min-width: 50px;
+      min-width: 120px;
       padding-top: 10px;
       padding-bottom: 10px;;
     }
