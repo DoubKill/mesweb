@@ -66,7 +66,7 @@
           <td>检测结果</td>
           <td>{{ testData.test ? testData.test.result : '' }}</td>
           <td>备注</td>
-          <td>{{ testData.test.test_note }}</td>
+          <td>{{ testData.test ? testData.test.test_note : '' }}</td>
         </tr>
         <tr>
           <td>处理人</td>
