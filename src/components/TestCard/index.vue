@@ -3,7 +3,7 @@
     <table
       border="1"
       bordercolor="black"
-      style="width: 100%; font-size: 14px; border-collapse:collapse"
+      class="info-table"
     >
       <tbody>
         <tr>
@@ -83,11 +83,10 @@
     <table
       border="2"
       bordercolor="black"
-      style="width: 100%; font-size: 14px; border-collapse:collapse"
     >
       <tr>
         <th style="width:100px">车次</th>
-        <th v-for="label in testData.mtr_list.table_head" :key="label">{{ label }}</th>
+        <th v-for="label in testData.mtr_list.table_head" :key="label" style="min-width: 80px; max-width: 80px">{{ label }}</th>
         <th style="width:100px">综合判级</th>
       </tr>
       <tr v-for="row in testData.mtr_list.rows" :key="row">
@@ -165,11 +164,20 @@ export default {
     width: 600px;
     margin: 0 auto;
     text-align: center;
-
-    td {
-      min-width: 120px;
-      padding-top: 10px;
-      padding-bottom: 10px;;
+    font-size: 14px;
+    table {
+      width: 100%;
+      border-collapse: collapse
     }
+
+   .info-table {
+
+      td {
+        min-width: 100px;
+        padding-top: 10px;
+        padding-bottom: 10px;;
+      }
+    }
+
   }
 </style>
