@@ -12,6 +12,9 @@ $subMenuHover:#001528;
 
 $sideBarWidth: 210px;
 
+$color-primary: rgb(11, 189, 11);
+$color-primary-a: rgba(11, 189, 11, 0.5);
+
 // the :export directive is the magic sauce for webpack
 // https://www.bluematador.com/blog/how-to-share-variables-between-js-and-sass
 :export {

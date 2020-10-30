@@ -174,12 +174,13 @@ export default {
         await matDataPointIndicators(_api, id, { data: row })
         this.disabledSubmit = false
         this.$message.success('保存成功')
+        this.getInfo()
       } catch (e) {
         this.disabledSubmit = false
       }
     },
     titleInfo(val, error) {
-      if (!val) {
+      if (!val && val !== 0) {
         this.$message.info(error)
         throw new Error(error)
       }

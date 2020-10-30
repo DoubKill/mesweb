@@ -68,12 +68,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  @import "~@/styles/variables.scss";
 .navbar {
   height: 50px;
   overflow: hidden;
   position: relative;
   color:#fff !important;
-  background: #09a809;
+  background: $color-primary;
   box-shadow: 0 1px 4px rgba(0,21,41,.08);
   .right-menu .avatar-container .avatar-wrapper{
     margin-top: 0 !important;

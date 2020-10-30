@@ -96,6 +96,8 @@ export default {
   // 试验方法列表
   TestSubTypes: '/api/v1/quality/test-methods/',
   TestTypeData: '/api/v1/quality/test-indicator-data-points/',
+  // 物料指标试验方法
+  MatTestIndicatorMethods: '/api/v1/quality/mat-test-indicator-methods/',
   // 录入新增提交
   MaterialTestOrders: '/api/v1/quality/material-test-orders/',
   MatIndicatorTab: '/api/v1/quality/mat-indicator-tab/',
