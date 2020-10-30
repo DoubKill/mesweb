@@ -302,3 +302,12 @@ export function matTestIndicatorMethods(method, id, data = {}) {
   return request(obj)
 }
 
+export function levelResult(method, id, data = {}) {
+  const obj = {
+    url: id ? API.LevelResult + id + '/' : API.LevelResult,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+

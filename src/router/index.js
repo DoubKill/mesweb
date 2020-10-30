@@ -360,6 +360,14 @@ export const asyncRoutes = [{
       title: '试验方法管理'
     }
   },
+  {
+    path: 'grade-manage',
+    component: () => import('@/views/quality_management/grade_manage'),
+    namel: 'gradeManage',
+    meta: {
+      title: '等级管理'
+    }
+  },
   // {
   //   path: 'benchmark',
   //   component: () => import('@/views/quality_management/benchmark'),
@@ -442,6 +450,52 @@ export const asyncRoutes = [{
     name: 'CheckSynthesizeManage',
     meta: {
       title: '快检信息综合管理'
+    }
+  }
+  ]
+},
+{
+  path: '/equipment',
+  component: Layout,
+  redirect: '/equipment/classes-banburying-summary',
+  name: 'equipment',
+  meta: {
+    title: '设备管理',
+    icon: 'quality'
+  }, children: [{
+    path: 'classes-banburying-summary',
+    component: () => import('@/views/equipment-management/classes-banburying-summary'),
+    name: 'classes-banburying-summary',
+    meta: {
+      title: '班次密炼时间汇总'
+      // permissionName: 'product_inventory'
+    }
+  },
+  {
+    path: 'banburying-ratio-summary',
+    component: () => import('@/views/equipment-management/banburying-ratio-summary'),
+    name: 'banburying-ratio-summary',
+    meta: {
+      title: '密炼时间占比汇总'
+      // permissionName: 'product_inventory'
+    }
+  },
+  {
+    path: 'rubber-acar-summary',
+    component: () => import('@/views/equipment-management/rubber-acar-summary'),
+    name: 'rubber-acar-summary',
+    meta: {
+      title: '胶料单车次时间汇总'
+      // permissionName: 'product_inventory'
+    }
+  },
+  {
+    path: 'specs-switch-summary',
+    component: () => import('@/views/equipment-management/specs-switch-summary'),
+    name: 'specs-switch-summary',
+    meta: {
+      title: '规格切换时间汇总'
+      // permissionName: 'product_inventory'
     }
   }
   ]
