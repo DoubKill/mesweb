@@ -69,6 +69,14 @@ export default {
   font-size: 14px;
   line-height: 50px;
   margin-left: 8px;
+  .el-breadcrumb__inner{
+    // a {
+    //   color:red;
+    //   &:hover {
+    //   color: rgb(11, 58, 189);
+    // }
+    // }
+  }
 
   .no-redirect {
     color: #fff;
