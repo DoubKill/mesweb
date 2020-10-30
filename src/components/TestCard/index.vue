@@ -141,11 +141,11 @@ export default {
             })
             data.push(listItem || {})
           }
-          let test_times = 0
+          let max_test_times = 0
           let maxTestTimesItem = null
           for (let i = 0; i < data.length; i++) {
-            if (data[i].test_times > test_times) {
-              test_times = data[i].test_times
+            if (data[i].max_test_times > max_test_times) {
+              max_test_times = data[i].max_test_times
               maxTestTimesItem = data[i]
             }
           }
