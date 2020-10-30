@@ -70,22 +70,29 @@
             label="等级"
           >
             <template slot-scope="scope">
-              <div class="aaaaa">
-                <el-input-number
+              <!-- <div class="aaaaa"> -->
+              <!-- <el-input-number
                   v-model="scope.row.level"
                   controls-position="right"
                   :min="0"
                   :step="1"
                   step-strictly
-                />
-              </div>
+                /> -->
+              <grade-manage-select
+                :created-is="true"
+                :default-val="scope.row.level"
+                @changSelect="changSelectLevel($event,scope.row)"
+              />
+              <span v-if="false">{{ scope.row }}</span>
+              <!-- </div> -->
             </template>
           </el-table-column>
           <el-table-column
             label="检测结果"
           >
             <template slot-scope="scope">
-              <el-input v-model="scope.row.result" placeholder="请输入检测结果" />
+              <!-- <el-input v-model="scope.row.result" placeholder="请输入检测结果" /> -->
+              {{ scope.row.result }}
             </template>
           </el-table-column>
           <el-table-column
@@ -112,7 +119,10 @@
 
 <script>
 import { matDataPointIndicators } from '@/api/base_w'
+import gradeManageSelect from '@/components/select_w/gradeManageSelect'
+
 export default {
+  components: { gradeManageSelect },
   props: {
     editShow: {
       type: Boolean,
@@ -210,6 +220,10 @@ export default {
     keepTwo(val) {
       // 不四舍五入
       return Math.floor(val * 100) / 100
+    },
+    changSelectLevel(val, row) {
+      this.$set(row, 'result', val.deal_result)
+      this.$set(row, 'level', val.level)
     }
   }
 }

@@ -121,5 +121,7 @@ export default {
 
   PalletFeedTestUrl: '/api/v1/quality/pallet-feed-test/',
 
-  MaterialValidTimeUrl: '/api/v1/quality/material_valid_time/'
+  MaterialValidTimeUrl: '/api/v1/quality/material_valid_time/',
+
+  LevelResult: '/api/v1/quality/level-result/'
 }

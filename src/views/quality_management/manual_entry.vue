@@ -339,11 +339,16 @@ export default {
       try {
         this.tableDataChild.forEach((D, i) => {
           const arrChild = []
+          if (!D.lot_no) {
+            this.$message.error('收皮条码不能为空！')
+            throw new Error('收皮条码不能为空！')
+          }
           if (JSON.stringify(D._list) !== '{}') {
             for (const key in D._list) {
               for (const keyChild in D._list[key]) {
                 if (D._list[key][keyChild]) {
                   if (!D._list[key][keyChild].value || !D._list[key][keyChild].test_method_name) {
+                    this.$message.error('每行试验方法和数据类型点是必填！')
                     throw new Error('数据点是必填！')
                   }
                   arrChild.push(D._list[key][keyChild])
@@ -364,7 +369,6 @@ export default {
           }
         })
       } catch (ex) {
-        this.$message.error('每行试验方法和数据类型点是必填！')
         return
       }
       this.loadingBtn = true

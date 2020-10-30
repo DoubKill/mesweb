@@ -1,0 +1,70 @@
+<template>
+  <div>
+    <!-- 时间跨度下拉框 -->
+    <el-select
+      v-model="value"
+      placeholder="请选择时间跨度"
+      clearable
+      @visible-change="visibleChange"
+      @change="changeSelect"
+    >
+      <el-option
+        v-for="item in options"
+        :key="item.id"
+        :label="item.name"
+        :value="item.id"
+      />
+    </el-select>
+  </div>
+</template>
+
+<script>
+// import { testTypes } from '@/api/base_w'
+export default {
+  data() {
+    return {
+      value: '',
+      options: [
+        {
+          id: 1,
+          name: '班次'
+        },
+        {
+          id: 2,
+          name: '日'
+        },
+        {
+          id: 3,
+          name: '周'
+        },
+        {
+          id: 4,
+          name: '月'
+        }
+      ]
+    }
+  },
+  methods: {
+    async getList() {
+      try {
+        // const { results } = await testTypes('get', null, { params: { all: 1 }})
+        // this.options = results || []
+      } catch (e) {
+        //
+      }
+    },
+    visibleChange(val) {
+    //   if (val && this.options.length === 0) {
+    //     this.getList()
+    //   }
+    },
+    changeSelect(val) {
+      this.$emit('changeSelect', val)
+    }
+  }
+}
+</script>
+
+<style>
+
+</style>
