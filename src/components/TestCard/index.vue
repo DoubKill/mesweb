@@ -125,7 +125,7 @@ export default {
     setTestData(data) {
       this.testData = data
       jsbarcode(
-        '#barcode',
+        '.barcode',
         this.testData.lot_no, {
           displayValue: true
         }
