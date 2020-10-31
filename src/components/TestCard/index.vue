@@ -11,7 +11,9 @@
         </tr>
         <tr>
           <td colspan="4">{{ testData.product_no }}</td>
-          <td rowspan="14" style="width: 100px" />
+          <td rowspan="14" style="transform:rotate(-90deg); width: 150px; max-width: 150px;">
+            <img class="barcode" style="margin-left: -120px">
+          </td>
         </tr>
         <tr>
           <td>工厂日期</td>
@@ -99,7 +101,7 @@
         </td>
       </tr>
     </table>
-    <img id="barcode">
+    <img class="barcode">
   </div>
 </template>
 
