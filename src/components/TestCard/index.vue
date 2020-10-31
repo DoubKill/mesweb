@@ -136,7 +136,7 @@ export default {
           for (let i = 0; i < this.testData.mtr_list.table_head.length; i++) {
             const head = this.testData.mtr_list.table_head[i]
             const listItem = this.testData.mtr_list[key].find(item => {
-              return item.test_indicator_name === head
+              return item.data_point_name === head
             })
             data.push(listItem || {})
           }
