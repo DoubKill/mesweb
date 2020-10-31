@@ -314,24 +314,70 @@ export const asyncRoutes = [{
     title: '库存管理',
     icon: 'stock'
   },
-  children: [{
-    path: 'material',
-    component: () => import('@/views/material_repertory_manage/index'),
-    name: 'MaterialRepertoryManage',
-    meta: {
-      title: '原料库存',
-      permissionName: 'material_inventory'
+  children: [
+    {
+      path: 'material',
+      component: () => import('@/views/material_repertory_manage/index'),
+      name: 'MaterialRepertoryManage',
+      meta: {
+        title: '原料库存',
+        permissionName: 'material_inventory'
+      }
+    },
+    {
+      path: 'rubber-inventory-info',
+      component: () => import('@/views/inventory/rubber_inventory_info.vue'),
+      name: 'RubberInventoryInfo',
+      meta: {
+        title: '胶料库存信息汇总',
+        permissionName: 'product_inventory'
+      }
+    },
+    {
+      path: 'rubber',
+      component: () => import('@/views/rubber_repertory_manage/index'),
+      name: 'RubberRepertoryManage',
+      meta: {
+        title: '胶料库存',
+        permissionName: 'product_inventory'
+      }
+    },
+    {
+      path: 'material-inout-record',
+      component: () => import('@/views/inventory/material_inout_record.vue'),
+      name: 'MaterialInOutRecord',
+      meta: {
+        title: '物料出入库履历',
+        permissionName: 'product_inventory'
+      }
+    },
+    {
+      path: 'rubber-inventory-manage',
+      component: () => import('@/views/inventory/rubber-inventory-manage.vue'),
+      name: 'RubberInventoryManage',
+      meta: {
+        title: '胶料库存管理',
+        permissionName: 'product_inventory'
+      }
+    },
+    {
+      path: 'outbound-manage',
+      component: () => import('@/views/inventory/outbound_manage.vue'),
+      name: 'OutboundManage',
+      meta: {
+        title: '出库计划管理',
+        permissionName: 'product_inventory'
+      }
+    },
+    {
+      path: 'expire-rubber-manage',
+      component: () => import('@/views/inventory/expire_rubber_manage.vue'),
+      name: 'ExpireRubberManage',
+      meta: {
+        title: '过期胶料管理',
+        permissionName: 'product_inventory'
+      }
     }
-  },
-  {
-    path: 'rubber',
-    component: () => import('@/views/rubber_repertory_manage/index'),
-    name: 'RubberRepertoryManage',
-    meta: {
-      title: '胶料库存',
-      permissionName: 'product_inventory'
-    }
-  }
   ]
 },
 {
