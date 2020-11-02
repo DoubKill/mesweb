@@ -87,9 +87,12 @@
       bordercolor="black"
     >
       <tr>
-        <th style="width:100px">车次</th>
-        <th v-for="label in testData.mtr_list.table_head" :key="label" style="min-width: 80px; max-width: 80px">{{ label }}</th>
-        <th style="width:100px">综合判级</th>
+        <th style="width:100px" rowspan="2">车次</th>
+        <th v-for="(value, key) in testData.mtr_list.table_head" :key="key" :colspan="value.length" style="min-width: 80px; max-width: 80px">{{ key }}</th>
+        <th style="width:100px" rowspan="2">综合判级</th>
+      </tr>
+      <tr>
+        <th v-for="(subHead, index) in testData.mtr_list.sub_head" :key="index">{{ subHead }}</th>
       </tr>
       <tr v-for="row in testData.mtr_list.rows" :key="row">
         <td>{{ row }}</td>
@@ -100,6 +103,15 @@
           }}
         </td>
       </tr>
+      <!-- <tr v-for="row in testData.mtr_list.rows" :key="row">
+        <td>{{ row }}</td>
+        <td v-for="(item, index) in testData.mtr_list[row]" :key="index">
+          {{ index !== testData.mtr_list[row].length - 1 ? item.value : '' }} <br>
+          {{
+            item ? item.status : ''
+          }}
+        </td>
+      </tr> -->
     </table>
     <img class="barcode">
   </div>
@@ -116,6 +128,7 @@ export default {
         test: {},
         mtr_list: {
           table_head: [],
+          sub_head: [],
           rows: []
         }
       }
@@ -132,29 +145,36 @@ export default {
       )
       this.testData.mtr_list.rows = []
       for (const key in this.testData.mtr_list) {
-        if (key !== 'table_head' && key !== 'rows') {
+        if (key !== 'table_head' && key !== 'rows' && key !== 'sub_head') {
           this.testData.mtr_list.rows.push(key)
-          const data = []
-          for (let i = 0; i < this.testData.mtr_list.table_head.length; i++) {
-            const head = this.testData.mtr_list.table_head[i]
-            const listItem = this.testData.mtr_list[key].find(item => {
-              return item.data_point_name === head
+          const dataPointItems = []
+          for (const head in this.testData.mtr_list.table_head) {
+            this.testData.mtr_list.table_head[head].forEach(subHead => {
+              const dataPointItem =
+              this.testData.mtr_list[key].find(item => {
+                return item.test_indicator_name === head && item.data_point_name === subHead
+              })
+              dataPointItems.push(dataPointItem || {})
             })
-            data.push(listItem || {})
           }
           let max_test_times = 0
           let maxTestTimesItem = null
-          for (let i = 0; i < data.length; i++) {
-            if (data[i].max_test_times > max_test_times) {
-              max_test_times = data[i].max_test_times
-              maxTestTimesItem = data[i]
+          for (let i = 0; i < dataPointItems.length; i++) {
+            if (dataPointItems[i].max_test_times > max_test_times) {
+              max_test_times = dataPointItems[i].max_test_times
+              maxTestTimesItem = dataPointItems[i]
             }
           }
           if (maxTestTimesItem) {
-            data.push(maxTestTimesItem)
+            dataPointItems.push(maxTestTimesItem)
           }
-          this.testData.mtr_list[key] = data
+          this.testData.mtr_list[key] = dataPointItems
         }
+      }
+      this.testData.mtr_list.sub_head = []
+      for (const key in this.testData.mtr_list.table_head) {
+        this.testData.mtr_list.sub_head = this.testData.mtr_list.sub_head.concat(
+          this.testData.mtr_list.table_head[key])
       }
     }
   }
