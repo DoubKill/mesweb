@@ -75,7 +75,7 @@
     >
       <el-form ref="dataForm" :model="formData" :rules="rules" label-position="left" label-width="110px">
         <el-form-item label="有效时间" prop="valid_time">
-          <el-input v-model.number="formData.valid_time" />
+          <el-input-number v-model.number="formData.valid_time" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
