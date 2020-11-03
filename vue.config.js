@@ -47,9 +47,10 @@ module.exports = {
         // target: 'http://10.4.14.42:8000/', //  博文
         // target: 'http://10.4.14.35:8000/', // 李威
         // target: 'http://10.4.23.77:8000/', // 李威
-        // target: 'http://10.4.14.8:9000/', // 龙霄
+        target: 'http://10.4.14.8:9001/', // 龙霄
         // target: 'http://10.4.14.33:8000/', // 阿峰
-        target: 'http://127.0.0.1:8000/',
+        // target: 'http://127.0.0.1:8000/',
+        // target: 'http://10.4.10.54/',
         ws: true,
         changeOrigin: true,
         pathRewrite: {
