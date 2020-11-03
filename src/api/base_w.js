@@ -311,3 +311,39 @@ export function levelResult(method, id, data = {}) {
   return request(obj)
 }
 
+export function classesBanburySummary(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ClassesBanburySummary + id + '/' : API.ClassesBanburySummary,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function collectTrainsFeed(method, id, data = {}) {
+  const obj = {
+    url: id ? API.CollectTrainsFeed + id + '/' : API.CollectTrainsFeed,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipBanburySummary(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipBanburySummary + id + '/' : API.EquipBanburySummary,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function cutTimeCollect(method, id, data = {}) {
+  const obj = {
+    url: id ? API.CutTimeCollect + id + '/' : API.CutTimeCollect,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+

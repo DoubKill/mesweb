@@ -10,23 +10,25 @@
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           value-format="yyyy-MM-dd"
+          @change="changeDate"
         />
       </el-form-item>
-      <el-form-item>
+      <!-- <el-form-item>
         <el-radio-group v-model="search.radio">
           <el-radio :label="1">自然日</el-radio>
           <el-radio :label="2">工厂时间</el-radio>
         </el-radio-group>
-      </el-form-item>
-      <br>
-      <el-form-item label="时间跨度:">
+      </el-form-item> -->
+      <!-- <br> -->
+      <!-- <el-form-item label="时间跨度:">
         <time-span-select
           :equip_no_props.sync="search.equip_no"
           @changeSearch="timeSpanChanged"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="设备编码:">
         <equip-select
+          :equip_no_props.sync="search.equip_no"
           @changeSearch="equipChanged"
         />
       </el-form-item>
@@ -34,16 +36,16 @@
 
     <el-form :inline="true">
       <el-form-item label="总耗时:">
-        {{ 111 }}
+        {{ allData.sum_time }}
       </el-form-item>
       <el-form-item label="最小耗时:">
-        {{ 222 }}
+        {{ allData.min_time }}
       </el-form-item>
       <el-form-item label="最大耗时:">
-        {{ 333 }}
+        {{ allData.max_time }}
       </el-form-item>
       <el-form-item label="平均耗时:">
-        {{ 444 }}
+        {{ allData.avg_time }}
       </el-form-item>
     </el-form>
 
@@ -56,27 +58,27 @@
         label="No"
       />
       <el-table-column
-        prop="a"
+        prop="time"
         label="时间"
       />
       <el-table-column
-        prop="aa"
+        prop="plan_classes_uid"
         label="计划号"
       />
       <el-table-column
-        prop="b"
+        prop="equip_no"
         label="设备编码"
       />
       <el-table-column
-        prop="c"
+        prop="cut_ago_product_no"
         label="切换前胶料编码"
       />
       <el-table-column
-        prop="d"
+        prop="cut_later_product_no"
         label="切换后胶料编码"
       />
       <el-table-column
-        prop="e"
+        prop="time_consuming"
         label="耗时"
       />
     </el-table>
@@ -91,9 +93,10 @@
 <script>
 import equipSelect from '@/components/select_w/equip'
 import page from '@/components/page'
-import timeSpanSelect from '@/components/select_w/timeSpan'
+import { cutTimeCollect } from '@/api/base_w'
+// import timeSpanSelect from '@/components/select_w/timeSpan'
 export default {
-  components: { page, equipSelect, timeSpanSelect },
+  components: { page, equipSelect },
   data() {
     return {
       total: 0,
@@ -103,18 +106,42 @@ export default {
         equip_no: null,
         date: []
       },
+      allData: {},
       tableData: []
     }
   },
+  created() {
+    this.getList()
+  },
   methods: {
+    async getList() {
+      try {
+        this.loading = true
+        const data = await cutTimeCollect('get', null, { params: this.search })
+        this.total = data.count
+        this.allData = data.results.pop() || {}
+        this.tableData = data.results || []
+        this.loading = false
+      } catch (error) {
+        this.loading = false
+      }
+    },
     currentChange(page) {
       this.search.page = page
+      this.getList()
     },
-    productBatchingChanged(val) {
-
+    changeDate(date) {
+      this.search.st = date ? date[0] : ''
+      this.search.et = date ? date[1] : ''
+      this.getList()
+      this.search.page = 1
     },
-    equipChanged() {},
-    timeSpanChanged() {}
+    equipChanged(val) {
+      this.search.equip_no = val
+      this.getList()
+      this.search.page = 1
+    }
+    // timeSpanChanged() {}
   }
 }
 </script>

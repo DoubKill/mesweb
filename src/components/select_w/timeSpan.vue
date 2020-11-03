@@ -4,7 +4,6 @@
     <el-select
       v-model="value"
       placeholder="请选择时间跨度"
-      clearable
       @visible-change="visibleChange"
       @change="changeSelect"
     >
@@ -21,9 +20,15 @@
 <script>
 // import { testTypes } from '@/api/base_w'
 export default {
+  props: {
+    defaultVal: {
+      type: Number,
+      default: null
+    }
+  },
   data() {
     return {
-      value: '',
+      value: this.defaultVal,
       options: [
         {
           id: 1,
@@ -33,12 +38,12 @@ export default {
           id: 2,
           name: '日'
         },
+        // {
+        //   id: 3,
+        //   name: '周'
+        // },
         {
           id: 3,
-          name: '周'
-        },
-        {
-          id: 4,
           name: '月'
         }
       ]

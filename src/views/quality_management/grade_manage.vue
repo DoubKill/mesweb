@@ -109,7 +109,6 @@ export default {
       try {
         this.loading = true
         const data = await levelResult('get', null, { params: { page: this.page }})
-        console.log(data)
         this.total = data.count
         this.tableData = data.results
         this.loading = false
@@ -153,7 +152,7 @@ export default {
             this.ruleForm = {}
             this.dialogVisible = false
           } catch (e) {
-            this.loadingBtn = false
+            this.btnLoading = false
           }
         } else {
           return false
