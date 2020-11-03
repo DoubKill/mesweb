@@ -45,6 +45,9 @@ export default {
       if (val) {
         this.getList()
       }
+    },
+    defaultVal(val) {
+      this.value = val
     }
   },
   created() {

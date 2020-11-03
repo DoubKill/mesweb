@@ -70,21 +70,12 @@
             label="等级"
           >
             <template slot-scope="scope">
-              <!-- <div class="aaaaa"> -->
-              <!-- <el-input-number
-                  v-model="scope.row.level"
-                  controls-position="right"
-                  :min="0"
-                  :step="1"
-                  step-strictly
-                /> -->
               <grade-manage-select
                 :created-is="true"
                 :default-val="scope.row.level"
                 @changSelect="changSelectLevel($event,scope.row)"
               />
               <span v-if="false">{{ scope.row }}</span>
-              <!-- </div> -->
             </template>
           </el-table-column>
           <el-table-column
