@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-form :inline="true">
       <el-form-item label="胶种编码">
-        <el-select />
+        <el-select value="a" />
       </el-form-item>
     </el-form>
     <el-table
@@ -21,3 +21,19 @@
     </el-table>
   </div>
 </template>
+
+<script>
+export default {
+  data() {
+    return {
+      a: ''
+    }
+  },
+  created() {},
+  methods: {}
+}
+</script>
+
+<style>
+
+</style>

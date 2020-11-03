@@ -39,7 +39,7 @@
       <el-table-column label="班次" prop="product_info.production_class" />
       <el-table-column label="胶料编码" prop="product_info.product_no" />
       <el-table-column label="lot追踪号" width="90" prop="lot_no" />
-      <el-table-column label="检测结果" prop="test_result" />
+      <!-- <el-table-column label="检测结果" prop="test_result" /> -->
       <el-table-column label="等级" prop="level" />
       <el-table-column label="不合格原因" width="100" prop="reason">
         <template slot-scope="{row}">
@@ -65,7 +65,7 @@
       <el-table-column label="是否出库" align="center" prop="be_warehouse_out" :formatter="(row)=>{ return row.be_warehouse_out ? 'Y' : 'N'}" />
       <el-table-column label="出库时间" width="155" prop="warehouse_out_time" align="center" />
       <el-table-column label="处理意见" align="center" width="155" prop="deal_suggestion" />
-      <el-table-column label="处理结果" prop="deal_result" />
+      <el-table-column label="检测结果" prop="deal_result" />
       <el-table-column label="处理人" prop="deal_user" />
       <el-table-column label="确认人" prop="confirm_user" />
     </el-table>
