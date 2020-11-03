@@ -123,5 +123,14 @@ export default {
 
   MaterialValidTimeUrl: '/api/v1/quality/material_valid_time/',
 
-  LevelResult: '/api/v1/quality/level-result/'
+  LevelResult: '/api/v1/quality/level-result/',
+
+  // 班次密炼时间汇总
+  ClassesBanburySummary: '/api/v1/production/classes-banbury-summary/',
+  // 胶料单车次时间汇总
+  CollectTrainsFeed: '/api/v1/production/collect-trains-feed/',
+  // 密炼时间占比汇总
+  EquipBanburySummary: '/api/v1/production/equip-banbury-summary/',
+  // 规格切换时间汇总
+  CutTimeCollect: '/api/v1/production/cut-time-collect/'
 }

@@ -348,7 +348,7 @@ export default {
               for (const keyChild in D._list[key]) {
                 if (D._list[key][keyChild]) {
                   if (!D._list[key][keyChild].value || !D._list[key][keyChild].test_method_name) {
-                    this.$message.error('每行试验方法和数据类型点是必填！')
+                    this.$message.error('每行数据类型点是必填！')
                     throw new Error('数据点是必填！')
                   }
                   arrChild.push(D._list[key][keyChild])
