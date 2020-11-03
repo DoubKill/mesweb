@@ -338,7 +338,7 @@ export const asyncRoutes = [{
       component: () => import('@/views/rubber_repertory_manage/index'),
       name: 'RubberRepertoryManage',
       meta: {
-        title: '胶料库存',
+        title: '胶料库存管理',
         permissionName: 'product_inventory'
       }
     },
@@ -356,7 +356,7 @@ export const asyncRoutes = [{
       component: () => import('@/views/inventory/rubber-inventory-manage.vue'),
       name: 'RubberInventoryManage',
       meta: {
-        title: '胶料库存管理',
+        title: '物料库存管理',
         permissionName: 'product_inventory'
       }
     },

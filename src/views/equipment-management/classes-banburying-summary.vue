@@ -50,13 +50,13 @@
         <template slot-scope="scope">
           <span v-if="search.dimension === 3">{{ setMonth(scope.row.month) }}</span>
           <span v-if="search.dimension === 1&&scope.row.classes">
-            {{ (Object.prototype.hasOwnProperty.call(scope.row, 'factory_data')?
-              scope.row.factory_data:
+            {{ (Object.prototype.hasOwnProperty.call(scope.row, 'factory_date')?
+              scope.row.factory_date:
               scope.row.end_time__date)
               + ' / '+ scope.row.classes }}</span>
           <span v-if="search.dimension === 2">
-            {{ Object.prototype.hasOwnProperty.call(scope.row, 'factory_data')?
-              scope.row.factory_data:scope.row. end_time__date }}
+            {{ Object.prototype.hasOwnProperty.call(scope.row, 'factory_date')?
+              scope.row.factory_date:scope.row. end_time__date }}
           </span>
         </template>
       </el-table-column>
