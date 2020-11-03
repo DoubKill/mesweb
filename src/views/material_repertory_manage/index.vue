@@ -11,9 +11,9 @@
         >
           <el-option
             v-for="item in materialTypeOptions"
-            :key="item.id"
+            :key="item.global_name"
             :label="item.global_name"
-            :value="item.id"
+            :value="item.global_name"
           />
         </el-select>
       </el-form-item>
@@ -96,7 +96,7 @@ export default {
       }
     },
     changeSearch() {
-      this.getParams['material_type_id'] = this.materialType
+      this.getParams['material_type'] = this.materialType
       this.getParams.page = 1
       this.material_repertory_list()
     },
