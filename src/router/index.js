@@ -377,6 +377,15 @@ export const asyncRoutes = [{
         title: '过期胶料管理',
         permissionName: 'product_inventory'
       }
+    },
+    {
+      path: 'material-attribute-manage',
+      component: () => import('@/views/inventory/material-attribute-manage.vue'),
+      name: 'MaterialAttributeManage',
+      meta: {
+        title: '物料属性管理',
+        permissionName: 'product_inventory'
+      }
     }
   ]
 },
