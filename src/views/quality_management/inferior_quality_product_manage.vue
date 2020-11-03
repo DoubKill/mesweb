@@ -41,7 +41,19 @@
       <el-table-column label="lot追踪号" width="90" prop="lot_no" />
       <el-table-column label="检测结果" prop="test_result" />
       <el-table-column label="等级" prop="level" />
-      <el-table-column label="不合格原因" width="100" prop="reason" />
+      <el-table-column label="不合格原因" width="100" prop="reason">
+        <template slot-scope="{row}">
+          <el-popover
+            placement="top-start"
+            title="不合格原因"
+            width="400"
+            trigger="hover"
+            :content="row.reason"
+          >
+            <a slot="reference"> {{ row.reason.slice(0,6) }}</a>
+          </el-popover>
+        </template>
+      </el-table-column>
       <el-table-column label="状态" prop="status" />
       <el-table-column label="操作" width="160" align="center">
         <template slot-scope="{row}">
