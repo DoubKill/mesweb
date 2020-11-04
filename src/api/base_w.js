@@ -347,3 +347,12 @@ export function cutTimeCollect(method, id, data = {}) {
   return request(obj)
 }
 
+export function sumSollectTrains(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SumSollectTrains + id + '/' : API.SumSollectTrains,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
