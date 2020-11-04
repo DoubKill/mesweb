@@ -132,5 +132,7 @@ export default {
   // 密炼时间占比汇总
   EquipBanburySummary: '/api/v1/production/equip-banbury-summary/',
   // 规格切换时间汇总
-  CutTimeCollect: '/api/v1/production/cut-time-collect/'
+  CutTimeCollect: '/api/v1/production/cut-time-collect/',
+  // 设备管理计算总和
+  SumSollectTrains: '/api/v1/production/sum-collect-trains/'
 }

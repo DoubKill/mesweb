@@ -2,11 +2,11 @@
   <div v-loading="loading">
     <!-- 胶料单车次时间汇总 -->
     <el-form :inline="true">
-      <el-form-item label="开始时间:">
+      <el-form-item label="时间:">
         <el-date-picker
           v-model="search.st"
           type="date"
-          placeholder="开始日期"
+          placeholder="日期"
           value-format="yyyy-MM-dd"
           @change="changeDate"
         />
@@ -49,6 +49,10 @@
         label="No"
       />
       <el-table-column
+        prop="classes"
+        label="班次"
+      />
+      <el-table-column
         prop="equip_no"
         label="设备编码"
       />
@@ -81,7 +85,7 @@ import productNoSelect from '@/components/ProductNoSelect'
 import equipSelect from '@/components/select_w/equip'
 import page from '@/components/page'
 import classSelect from '@/components/ClassSelect'
-import { collectTrainsFeed } from '@/api/base_w'
+import { collectTrainsFeed, sumSollectTrains } from '@/api/base_w'
 import { setDate } from '@/utils/index'
 export default {
   components: { productNoSelect, page, equipSelect, classSelect },
@@ -92,7 +96,7 @@ export default {
       search: {
         page: 1,
         equip_no: null,
-        date: ''
+        st: ''
       },
       allData: {},
       tableData: []
@@ -106,10 +110,15 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const data = await collectTrainsFeed('get', null, { params: this.search })
-        this.total = data.count
-        this.allData = data.results.pop() || {}
-        this.tableData = data.results || []
+        const arr = await Promise.all([
+          collectTrainsFeed('get', null, { params: this.search }),
+          sumSollectTrains('get', null, { params: this.search })
+        ])
+        // console.log(arr, 444)
+        // const data = await collectTrainsFeed('get', null, { params: this.search })
+        this.total = arr[0].count
+        this.tableData = arr[0].results || []
+        this.allData = arr[1].results
         console.log(this.tableData, this.allData)
         this.loading = false
       } catch (error) {
