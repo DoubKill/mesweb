@@ -184,7 +184,8 @@ export default {
       }
     },
     setRange(row) {
-      const arr = deepClone(this.tableData)
+      let arr = deepClone(this.tableData)
+      arr = arr.filter(D => D.data_point === row.data_point)
       arr.sort(sortLimit)
       let i = null
       arr.forEach((D, index) => {

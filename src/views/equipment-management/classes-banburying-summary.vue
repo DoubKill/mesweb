@@ -77,7 +77,7 @@
         label="总耗时/min"
       >
         <template slot-scope="{row}">
-          {{ row.min_train_time |setTimeMin }}
+          {{ row.total_time |setTimeMin }}
         </template>
       </el-table-column>
       <!-- <el-table-column
@@ -96,7 +96,7 @@
         label="单车最大耗时/min"
       >
         <template slot-scope="{row}">
-          {{ row.min_train_time |setTimeMin }}
+          {{ row.max_train_time |setTimeMin }}
         </template>
       </el-table-column>
       <el-table-column
@@ -104,7 +104,7 @@
         label="单车平均耗时/min"
       >
         <template slot-scope="{row}">
-          {{ row.min_train_time |setTimeMin }}
+          {{ row.avg_train_time |setTimeMin }}
         </template>
       </el-table-column>
       <el-table-column
@@ -126,8 +126,10 @@ import equipSelect from '@/components/select_w/equip'
 import page from '@/components/page'
 import timeSpanSelect from '@/components/select_w/timeSpan'
 import { classesBanburySummary } from '@/api/base_w'
+import myMixin from './aminxPublic'
 export default {
   components: { productNoSelect, page, equipSelect, timeSpanSelect },
+  mixins: [myMixin],
   data() {
     return {
       total: 0,

@@ -93,8 +93,10 @@ import equipSelect from '@/components/select_w/equip'
 import page from '@/components/page'
 import timeSpanSelect from '@/components/select_w/timeSpan'
 import { equipBanburySummary } from '@/api/base_w'
+import myMixin from './aminxPublic'
 export default {
   components: { page, equipSelect, timeSpanSelect },
+  mixins: [myMixin],
   data() {
     return {
       total: 0,

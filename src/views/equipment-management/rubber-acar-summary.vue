@@ -82,6 +82,7 @@ import equipSelect from '@/components/select_w/equip'
 import page from '@/components/page'
 import classSelect from '@/components/ClassSelect'
 import { collectTrainsFeed } from '@/api/base_w'
+import { setDate } from '@/utils/index'
 export default {
   components: { productNoSelect, page, equipSelect, classSelect },
   data() {
@@ -98,6 +99,7 @@ export default {
     }
   },
   created() {
+    this.search.st = setDate()
     this.getList()
   },
   methods: {
