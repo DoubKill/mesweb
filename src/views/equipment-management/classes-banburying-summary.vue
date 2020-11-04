@@ -74,24 +74,39 @@
       />
       <el-table-column
         prop="total_time"
-        label="总耗时/s"
-      />
+        label="总耗时/min"
+      >
+        <template slot-scope="{row}">
+          {{ row.min_train_time |setTimeMin }}
+        </template>
+      </el-table-column>
       <!-- <el-table-column
         prop="f"
         label="总时间"
       /> -->
       <el-table-column
-        prop="min_train_time"
-        label="单车最小耗时/s"
-      />
+        label="单车最小耗时/min"
+      >
+        <template slot-scope="{row}">
+          {{ row.min_train_time |setTimeMin }}
+        </template>
+      </el-table-column>
       <el-table-column
         prop="max_train_time"
-        label="单车最大耗时/s"
-      />
+        label="单车最大耗时/min"
+      >
+        <template slot-scope="{row}">
+          {{ row.min_train_time |setTimeMin }}
+        </template>
+      </el-table-column>
       <el-table-column
         prop="avg_train_time"
-        label="单车平均耗时/s"
-      />
+        label="单车平均耗时/min"
+      >
+        <template slot-scope="{row}">
+          {{ row.min_train_time |setTimeMin }}
+        </template>
+      </el-table-column>
       <el-table-column
         prop="j"
         label="利用率"
@@ -149,6 +164,7 @@ export default {
     },
     currentChange(page) {
       this.search.page = page
+      this.getList()
     },
     productBatchingChanged(val) {
       this.search.product_no = val ? val.stage_product_batch_no : ''

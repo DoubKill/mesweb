@@ -111,6 +111,7 @@
 <script>
 import { matDataPointIndicators } from '@/api/base_w'
 import gradeManageSelect from '@/components/select_w/gradeManageSelect'
+import { deepClone } from '@/utils/index'
 
 export default {
   components: { gradeManageSelect },
@@ -162,13 +163,15 @@ export default {
     },
     async submitClick(row) {
       try {
-        // console.log(row, 666)
         row.material_test_method = this.objEdit.id
         this.titleInfo(row.level, '请输入等级')
         this.titleInfo(row.result, '请输入结果')
         this.titleInfo(row.upper_limit, '请输入上限')
         this.titleInfo(row.lower_limit, '请输入下限')
         this.titleInfo(row.data_point, '请输入数据点')
+
+        this.setRange(row)
+
         this.disabledSubmit = true
         const _api = row.id ? 'put' : 'post'
         const id = row.id || null
@@ -178,6 +181,31 @@ export default {
         this.getInfo()
       } catch (e) {
         this.disabledSubmit = false
+      }
+    },
+    setRange(row) {
+      const arr = deepClone(this.tableData)
+      arr.sort(sortLimit)
+      let i = null
+      arr.forEach((D, index) => {
+        if (D.id === row.id) {
+          i = index
+        }
+      })
+      if (i - 1 > -1) {
+        const previousObj = arr[i - 1]
+        if (previousObj.upper_limit >= row.lower_limit) {
+          this.$message.info('当前行上下限范围重叠!')
+          throw new Error('error')
+        }
+      }
+      if (i + 2 <= arr.length) {
+        // 最小的
+        const nextObj = arr[i + 1]
+        if (nextObj.lower_limit <= row.upper_limit) {
+          this.$message.info('当前行上下限范围重叠!')
+          throw new Error('error')
+        }
       }
     },
     titleInfo(val, error) {
@@ -222,6 +250,9 @@ export default {
 //   // 不四舍五入
 //   return Math.floor(val * 100) / 100
 // }
+function sortLimit(a, b) {
+  return a.lower_limit - b.lower_limit
+}
 </script>
 
 <style lang="scss">

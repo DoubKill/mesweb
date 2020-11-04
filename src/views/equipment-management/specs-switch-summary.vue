@@ -35,17 +35,17 @@
     </el-form>
 
     <el-form :inline="true">
-      <el-form-item label="总耗时:">
-        {{ allData.sum_time }}
+      <el-form-item label="总耗时/min:">
+        {{ allData.sum_time |setTimeMin }}
       </el-form-item>
-      <el-form-item label="最小耗时:">
-        {{ allData.min_time }}
+      <el-form-item label="最小耗时/min:">
+        {{ allData.min_time |setTimeMin }}
       </el-form-item>
-      <el-form-item label="最大耗时:">
-        {{ allData.max_time }}
+      <el-form-item label="最大耗时/min:">
+        {{ allData.max_time |setTimeMin }}
       </el-form-item>
-      <el-form-item label="平均耗时:">
-        {{ allData.avg_time }}
+      <el-form-item label="平均耗时/min:">
+        {{ allData.avg_time |setTimeMin }}
       </el-form-item>
     </el-form>
 
@@ -78,9 +78,12 @@
         label="切换后胶料编码"
       />
       <el-table-column
-        prop="time_consuming"
-        label="耗时"
-      />
+        label="耗时/min"
+      >
+        <template slot-scope="{row}">
+          {{ row.time_consuming |setTimeMin }}
+        </template>
+      </el-table-column>
     </el-table>
     <page
       :total="total"
