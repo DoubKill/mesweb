@@ -23,6 +23,7 @@
       <el-form-item label="时间跨度:">
         <time-span-select
           :default-val="search.dimension"
+          :day-type="search.day_type"
           @changeSelect="timeSpanChanged"
         />
       </el-form-item>
@@ -80,10 +81,14 @@
           {{ row.total_time |setTimeMin }}
         </template>
       </el-table-column>
-      <!-- <el-table-column
-        prop="f"
-        label="总时间"
-      /> -->
+      <el-table-column
+        v-if="Number(search.day_type) === 2&&search.dimension === 1"
+        label="总时间/min"
+      >
+        <template slot-scope="{row}">
+          {{ row.classes_time |setTimeMin }}
+        </template>
+      </el-table-column>
       <el-table-column
         label="单车最小耗时/min"
       >
@@ -108,9 +113,13 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="j"
+        v-if="Number(search.day_type) === 2&&search.dimension === 1"
         label="利用率"
-      />
+      >
+        <template slot-scope="{row}">
+          {{ (setUse(row.total_time,row.classes_time)) }}
+        </template>
+      </el-table-column>
     </el-table>
     <page
       :total="total"
@@ -145,7 +154,7 @@ export default {
     }
   },
   created() {
-    this.getList()
+    // this.getList()
   },
   methods: {
     async getList() {
@@ -193,6 +202,11 @@ export default {
       this.search.day_type = val
       this.getList()
       this.search.page = 1
+    },
+    setUse(total_time, classes_time) {
+      const a = parseFloat(total_time / classes_time).toFixed(10)
+      const num = (a.substring(0, a.lastIndexOf('.') + 2) * 100).toFixed(0)
+      return num + '%'
     }
   }
 }
