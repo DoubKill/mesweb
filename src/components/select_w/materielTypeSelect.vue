@@ -30,6 +30,10 @@ export default {
     defaultVal: {
       type: Number,
       default: null
+    },
+    warehouseName: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -42,6 +46,10 @@ export default {
   watch: {
     defaultVal(val) {
       this.value = val
+    },
+    warehouseName(val) {
+      // 仓库名称
+      this.getList()
     }
   },
   created() {
@@ -53,7 +61,11 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const data = await levelResult('get', null, { params: { all: 1 }})
+        const obj = { all: 1, warehouseName: this.warehouseName }
+        if (!this.warehouseName) {
+          delete obj.warehouseName
+        }
+        const data = await levelResult('get', null, { params: obj })
         this.options = data.results || []
         this.loading = false
       } catch (e) {

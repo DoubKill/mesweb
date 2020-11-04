@@ -80,7 +80,7 @@
       title="正常出库"
       :visible.sync="normalOutboundDialogVisible"
     >
-      <generate-normal-outbound /></el-dialog>
+      <generate-normal-outbound @visibleMethod="visibleMethodNormal" /></el-dialog>
   </div>
 </template>
 
@@ -101,6 +101,9 @@ export default {
   },
   methods: {
     changeDate(date) {},
+    visibleMethodNormal() {
+      this.normalOutboundDialogVisible = false
+    },
     setOperation(val) {
       switch (val) {
         case 1:

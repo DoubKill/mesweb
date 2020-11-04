@@ -98,8 +98,10 @@ import equipSelect from '@/components/select_w/equip'
 import page from '@/components/page'
 import { cutTimeCollect } from '@/api/base_w'
 // import timeSpanSelect from '@/components/select_w/timeSpan'
+import myMixin from './aminxPublic'
 export default {
   components: { page, equipSelect },
+  mixins: [myMixin],
   data() {
     return {
       total: 0,
