@@ -65,12 +65,15 @@
         label="总车数"
       />
       <el-table-column
-        prop="total_time"
-        label="总耗时/s"
-      />
+        label="总耗时/min"
+      >
+        <template slot-scope="{row}">
+          {{ row.total_time |setTimeMin }}
+        </template>
+      </el-table-column>
       <!-- <el-table-column
         prop="total_time"
-        label="总时间/s"
+        label="总时间/min"
       /> -->
       <el-table-column
         prop="g"

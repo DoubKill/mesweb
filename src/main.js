@@ -5,6 +5,8 @@ Vue.prototype.$echarts = echarts
 import VCharts from 'v-charts'
 Vue.use(VCharts)
 
+import '@/utils/filterPublic'
+
 import 'normalize.css/normalize.css' // A modern alternative to CSS resets
 
 import ElementUI from 'element-ui'

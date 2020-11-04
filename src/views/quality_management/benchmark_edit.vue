@@ -44,7 +44,6 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button size="small" @click="editClick(scope.row)">编辑</el-button>
-            <!-- <el-button size="small" type="danger" @click="clickDelete(scope.$index,scope.row)">删除</el-button> -->
           </el-button-group>
         </template>
       </el-table-column>
