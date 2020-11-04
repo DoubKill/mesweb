@@ -12,6 +12,7 @@
         :key="item.id"
         :label="item.name"
         :value="item.id"
+        :disabled="item.disabled"
       />
     </el-select>
   </div>
@@ -22,6 +23,10 @@
 export default {
   props: {
     defaultVal: {
+      type: Number,
+      default: null
+    },
+    dayType: {
       type: Number,
       default: null
     }
@@ -47,6 +52,14 @@ export default {
           name: '月'
         }
       ]
+    }
+  },
+  watch: {
+    dayType(val) {
+      if (val) {
+        this.value = 2
+        this.$set(this.options[0], 'disabled', val !== 2)
+      }
     }
   },
   methods: {
