@@ -399,6 +399,15 @@ export const asyncRoutes = [{
     icon: 'quality'
   },
   children: [{
+    path: 'test-indicators',
+    component: () => import('@/views/quality_management/test_indicators'),
+    name: 'testIndicators',
+    meta: {
+      title: '试验指标管理'
+      // permissionName: 'product_inventory'
+    }
+  },
+  {
     path: 'test-types',
     component: () => import('@/views/quality_management/test_types'),
     name: 'testTypes',
