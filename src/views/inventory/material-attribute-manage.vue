@@ -59,20 +59,23 @@
         </el-form-item>
       </el-form>
       <el-table
+        :data="barCodeData"
         border
         fit
         style="width: 100%"
       >
         <el-table-column label="No" type="index" align="center" />
         <el-table-column label="物料类型" align="center" prop="" />
-        <el-table-column label="物料编码" align="center" prop="" />
+        <el-table-column label="物料编码" align="center" prop="material_code" />
         <el-table-column label="物料名称" align="center" prop="" />
-        <el-table-column label="条码" align="center" prop="" />
+        <el-table-column label="条码" align="center" prop="bar_code" />
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
             <el-button-group>
               <el-button
                 size="mini"
+                type="danger"
+                @click="handleData(scope.row)"
               >删除</el-button>
             </el-button-group>
           </template>
@@ -82,7 +85,7 @@
         slot="footer"
         class="dialog-footer"
       >
-        <el-button @click="barCodeManageDialogVisible = false">取 消</el-button>
+        <el-button @click="barCodeManageDialogVisible = false">关闭</el-button>
         <!-- <el-button
           type="primary"
           @click="handleCreateGlobalCode"
@@ -93,7 +96,7 @@
       title="编辑物料属性"
       :visible.sync="attributeEditDialogVisible"
     >
-      <el-form>
+      <el-form label-width="100px">
         <el-form-item
           label="物料类型"
         >
@@ -140,7 +143,7 @@
       title="新增物料条码"
       :visible.sync="barCodeCreateDialogVisible"
     >
-      <el-form>
+      <el-form label-width="80px">
         <el-form-item
           label="物料类型"
         >
@@ -183,6 +186,8 @@ export default {
   data() {
     return {
       tableData: [{ 'material_code': 'FM-C102-02' }],
+      barCodeData: [{ 'material_code': 'FM-C102-02',
+        'bar_code': '123125327647821' }],
       barCodeManageDialogVisible: false,
       barCodeCreateDialogVisible: false,
       attributeEditDialogVisible: false
@@ -203,6 +208,24 @@ export default {
     },
     showAttributeEditDialog(row) {
       this.attributeEditDialogVisible = true
+    },
+    handleData(row) {
+      this.$confirm('此操作将永久删除' + row.material_code + '条码：' + row.bar_code + ', 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // deleteDataPoints(row.id)
+        // .then(response => {
+        //   this.$message({
+        //     type: 'success',
+        //     message: '删除成功!'
+        //   })
+        //   this.handleTestTypesCurrentRowChange(this.testTypesCurrentRow)
+        // }).catch(error => {
+        //   this.$message.error(error)
+        // })
+      })
     }
   }
 }
