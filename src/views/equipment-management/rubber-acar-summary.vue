@@ -141,7 +141,6 @@ export default {
     },
     timeSpanChanged() {},
     changeDate(date) {
-      this.search.st = date
       this.getList()
       this.search.page = 1
     },
