@@ -352,9 +352,9 @@ export const asyncRoutes = [{
       }
     },
     {
-      path: 'rubber-inventory-manage',
-      component: () => import('@/views/inventory/rubber-inventory-manage.vue'),
-      name: 'RubberInventoryManage',
+      path: 'material-inventory-manage',
+      component: () => import('@/views/inventory/material-inventory-manage.vue'),
+      name: 'MaterialInventoryManage',
       meta: {
         title: '物料库存管理',
         permissionName: 'product_inventory'
