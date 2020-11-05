@@ -10,9 +10,9 @@
     >
       <el-option
         v-for="item in options"
-        :key="item.id"
-        :label="item.level"
-        :value="item.id"
+        :key="item"
+        :label="item"
+        :value="item"
       />
     </el-select>
   </div>
@@ -36,7 +36,7 @@ export default {
     return {
       value: this.defaultVal,
       loading: false,
-      options: []
+      options: ['线边库', '终炼胶库', '原材料库']
     }
   },
   watch: {
@@ -46,7 +46,7 @@ export default {
   },
   created() {
     if (this.createdIs) {
-      this.getList()
+      // this.getList()
     }
   },
   methods: {
@@ -62,13 +62,13 @@ export default {
     },
     visibleChange(val) {
       if (val && this.options.length === 0 && !this.createdIs) {
-        this.getList()
+        // this.getList()
       }
     },
     changSelect(val) {
-      let arr = []
-      arr = this.options.filter(D => D.id === val)
-      this.$emit('changSelect', arr[0])
+      // let arr = []
+      // arr = this.options.filter(D => D.id === val)
+      this.$emit('changSelect', val)
     }
   }
 }

@@ -5,13 +5,16 @@
       v-model="value"
       placeholder="请选择物料类型"
       :loading="loading"
-      @visible-change="visibleChange"
+      filterable
+      remote
+      reserve-keyword
+      :remote-method="remoteMethod"
       @change="changSelect"
     >
       <el-option
         v-for="item in options"
         :key="item.id"
-        :label="item.level"
+        :label="item.global_name"
         :value="item.id"
       />
     </el-select>
@@ -19,7 +22,7 @@
 </template>
 
 <script>
-import { levelResult } from '@/api/base_w'
+import { classesListUrl } from '@/api/base_w'
 export default {
   props: {
     //  created里面加载
@@ -58,18 +61,25 @@ export default {
     }
   },
   methods: {
-    async getList() {
+    async getList(query) {
       try {
         this.loading = true
-        const obj = { all: 1, warehouseName: this.warehouseName }
-        if (!this.warehouseName) {
-          delete obj.warehouseName
-        }
-        const data = await levelResult('get', null, { params: obj })
+        const obj = { all: 1, class_name: '原材料类别', global_name: query }
+        // if (!this.warehouseName) {
+        //   delete obj.warehouseName
+        // }
+        const data = await classesListUrl('get', null, { params: obj })
         this.options = data.results || []
         this.loading = false
       } catch (e) {
         this.loading = false
+      }
+    },
+    remoteMethod(query) {
+      if (query !== '') {
+        this.getList(query)
+      } else {
+        this.options = []
       }
     },
     visibleChange(val) {
