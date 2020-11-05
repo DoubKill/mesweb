@@ -7,6 +7,6 @@ export default {
     const date = this.search.date
     this.search.st = date ? date[0] : ''
     this.search.et = date ? date[1] : ''
-    this.getList()
+    // this.getList()
   }
 }

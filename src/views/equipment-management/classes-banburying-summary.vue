@@ -154,7 +154,7 @@ export default {
     }
   },
   created() {
-    // this.getList()
+    this.getList()
   },
   methods: {
     async getList() {
@@ -204,6 +204,7 @@ export default {
       this.search.page = 1
     },
     setUse(total_time, classes_time) {
+      if (!total_time || !classes_time) return 0
       const a = parseFloat(total_time / classes_time).toFixed(10)
       const num = (a.substring(0, a.lastIndexOf('.') + 2) * 100).toFixed(0)
       return num + '%'
