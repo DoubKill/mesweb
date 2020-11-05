@@ -134,5 +134,7 @@ export default {
   // 规格切换时间汇总
   CutTimeCollect: '/api/v1/production/cut-time-collect/',
   // 设备管理计算总和
-  SumSollectTrains: '/api/v1/production/sum-collect-trains/'
+  SumSollectTrains: '/api/v1/production/sum-collect-trains/',
+  // 物料库存管理
+  MaterialInventoryManage: '/api/v1/inventory/material-inventory-manage/'
 }
