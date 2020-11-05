@@ -6,10 +6,11 @@
       placeholder="请选择物料类型"
       :loading="loading"
       filterable
-      remote
-      reserve-keyword
-      :remote-method="remoteMethod"
+      allow-create
+      default-first-option
+      clearable
       @change="changSelect"
+      @visible-change="visibleChange"
     >
       <el-option
         v-for="item in options"
@@ -64,7 +65,7 @@ export default {
     async getList(query) {
       try {
         this.loading = true
-        const obj = { all: 1, class_name: '原材料类别', global_name: query }
+        const obj = { all: 1, class_name: '原材料类别' }
         // if (!this.warehouseName) {
         //   delete obj.warehouseName
         // }
@@ -88,9 +89,15 @@ export default {
       }
     },
     changSelect(val) {
+      let str = ''
       let arr = []
       arr = this.options.filter(D => D.id === val)
-      this.$emit('changSelect', arr[0])
+      if (arr.length > 0) {
+        str = arr[0].global_name
+      } else {
+        str = val
+      }
+      this.$emit('changSelect', str)
     }
   }
 }

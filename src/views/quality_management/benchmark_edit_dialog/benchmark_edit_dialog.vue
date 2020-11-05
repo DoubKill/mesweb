@@ -21,6 +21,7 @@
             {{ objEdit.test_method_name }}
           </el-form-item>
         </el-form>
+        <div style="margin-bottom:5px">请数据点对应一个合格检测结果</div>
         <el-table
           :data="tableData"
           style="width: 100%"
