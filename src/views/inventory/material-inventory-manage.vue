@@ -9,7 +9,6 @@
         <el-select
           v-model="getParams.warehouse_name"
           placeholder="请选择"
-          clearable
           @change="changeSearch"
         >
           <el-option
@@ -41,7 +40,7 @@
       <el-table-column label="库存位" align="center" prop="location" />
       <el-table-column label="库存数" align="center" prop="qty" />
       <el-table-column label="单位" align="center" prop="unit" />
-      <el-table-column label="单位数量" align="center" prop="unit_weight" />
+      <el-table-column label="单位重量" align="center" prop="unit_weight" />
       <el-table-column label="总重量" align="center" prop="total_weight" />
       <el-table-column label="品质状态" align="center" prop="quality_status" />
     </el-table>
