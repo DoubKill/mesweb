@@ -9,7 +9,6 @@
         <el-select
           v-model="getParams.warehouse_name"
           placeholder="请选择"
-          clearable
           @change="changeSearch"
         >
           <el-option
