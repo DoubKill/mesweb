@@ -78,7 +78,7 @@
         </tr>
         <tr>
           <td>处理意见</td>
-          <td colspan="3">{{ testData.suggestion_desc }}</td>
+          <td colspan="3">{{ testData.deal_suggestion }}</td>
         </tr>
       </tbody>
     </table>
