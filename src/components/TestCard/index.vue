@@ -66,7 +66,7 @@
         </tr>
         <tr>
           <td>检测结果</td>
-          <td>{{ testData.test ? testData.test.result : '' }}</td>
+          <td>{{ testData.deal_result }}</td>
           <td>备注</td>
           <td>{{ testData.test ? testData.test.test_note : '' }}</td>
         </tr>
