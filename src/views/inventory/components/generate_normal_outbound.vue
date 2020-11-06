@@ -3,13 +3,10 @@
     <!-- 正常出库 -->
     <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="140px">
       <el-form-item label="仓库名称">
-        仓库名称
-      </el-form-item>
-      <el-form-item label="物料类型" prop="a">
-        <materielTypeSelect :warehouse-name="ruleForm.a" />
+        {{ warehouseval }}
       </el-form-item>
       <el-form-item label="物料编码" prop="b">
-        <el-input v-model="ruleForm.b" @blur="blurMaterialCode" />
+        <materialCodeSelect :default-val="ruleForm.b" @changSelect="materialCodeFun" />
       </el-form-item>
       <el-form-item label="可用库存数" prop="c">
         <!-- 按物料编码查到的 -->
@@ -29,26 +26,24 @@
   </div>
 </template>
 <script>
-import materielTypeSelect from '@/components/select_w/materielTypeSelect'
+import materialCodeSelect from '@/components/select_w/materialCodeSelect'
+
 export default {
-  components: { materielTypeSelect },
-  data() {
-    var validatePass = (rule, value, callback, _val, error) => {
-      if (!_val) {
-        callback(new Error(error))
-      } else {
-        callback()
+  components: { materialCodeSelect },
+  props: {
+    warehouseval: {
+      type: String,
+      default() {
+        return ''
       }
     }
+  },
+  data() {
     return {
-      ruleForm: {},
+      ruleForm: {
+        b: null
+      },
       rules: {
-        a: [
-          { required: true, validator: (rule, value, callback) => {
-            validatePass(rule, value, callback,
-              this.ruleForm.a, '请选择物料类型')
-          } }
-        ],
         b: [
           { required: true, message: '请输入物料编码', trigger: 'blur' }
         ],
@@ -64,9 +59,19 @@ export default {
     }
   },
   methods: {
-    blurMaterialCode() {},
+    creadVal() {
+      // 清空数据
+      this.$refs.ruleForm.resetFields()
+      this.ruleForm = {}
+      this.$set(this.ruleForm, 'b', null)
+      // this.ruleForm.b = null
+    },
+    materialCodeFun(val) {
+      this.ruleForm.b = val.id || null
+    },
     visibleMethod(bool) {
       if (bool) {
+        this.creadVal()
         this.$emit('visibleMethod')
       } else {
         this.$refs.ruleForm.validate((valid) => {

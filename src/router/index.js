@@ -425,6 +425,14 @@ export const asyncRoutes = [{
     }
   },
   {
+    path: 'quick-plan-manage',
+    component: () => import('@/views/quality_management/quick_plan_manage'),
+    namel: 'quickPlanManage',
+    meta: {
+      title: '快检计划管理'
+    }
+  },
+  {
     path: 'grade-manage',
     component: () => import('@/views/quality_management/grade_manage'),
     namel: 'gradeManage',
@@ -459,7 +467,7 @@ export const asyncRoutes = [{
       // permissionName: 'product_inventory'
     }
   },
-  {
+  /* {
     path: 'month-pass-detail',
     component: () => import('@/views/quality_management/month_pass_detail'),
     name: 'monthPassDetail',
@@ -485,7 +493,8 @@ export const asyncRoutes = [{
       title: '胶料日合格率统计'
       // permissionName: 'product_inventory'
     }
-  }, {
+  },*/
+  {
     path: 'inferior-quality-product-manage',
     component: () => import('@/views/quality_management/inferior_quality_product_manage'),
     name: 'InferiorQualityProductManage',

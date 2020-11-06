@@ -356,3 +356,12 @@ export function sumSollectTrains(method, id, data = {}) {
   return request(obj)
 }
 
+export function putPlanManagement(method, id, data = {}) {
+  const obj = {
+    url: id ? API.PutPlanManagement + id + '/' : API.PutPlanManagement,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
