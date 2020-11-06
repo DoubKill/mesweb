@@ -57,8 +57,9 @@ export default {
   watch: {
     dayType(val) {
       if (val) {
-        this.value = 2
+        this.value = this.value === 1 && val === 1 ? 2 : this.value
         this.$set(this.options[0], 'disabled', val !== 2)
+        this.$emit('changeSelect', this.value)
       }
     }
   },

@@ -1,18 +1,19 @@
 <template>
   <div>
-    <!-- 仓库下拉 -->
+    <!-- 物料编码下拉 -->
     <el-select
       v-model="value"
-      placeholder="请选择仓库"
+      filterable
+      placeholder="请选择物料编码"
       :loading="loading"
       @visible-change="visibleChange"
       @change="changSelect"
     >
       <el-option
         v-for="item in options"
-        :key="item"
-        :label="item"
-        :value="item"
+        :key="item.id"
+        :label="item.level"
+        :value="item.id"
       />
     </el-select>
   </div>
@@ -36,7 +37,7 @@ export default {
     return {
       value: this.defaultVal,
       loading: false,
-      options: ['1', '线边库', '终炼胶库', '原材料库']
+      options: []
     }
   },
   watch: {
@@ -45,10 +46,8 @@ export default {
     }
   },
   created() {
-    this.value = this.options[0]
-    this.$emit('changSelect', this.value)
     if (this.createdIs) {
-      // this.getList()
+      this.getList()
     }
   },
   methods: {
@@ -64,13 +63,13 @@ export default {
     },
     visibleChange(val) {
       if (val && this.options.length === 0 && !this.createdIs) {
-        // this.getList()
+        this.getList()
       }
     },
     changSelect(val) {
-      // let arr = []
-      // arr = this.options.filter(D => D.id === val)
-      this.$emit('changSelect', val)
+      let arr = []
+      arr = this.options.filter(D => D.id === val)
+      this.$emit('changSelect', arr[0])
     }
   }
 }

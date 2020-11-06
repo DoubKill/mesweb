@@ -5,6 +5,7 @@
       <el-form-item label="时间:">
         <el-date-picker
           v-model="search.date"
+          :clearable="false"
           type="daterange"
           range-separator="至"
           start-placeholder="开始日期"
@@ -109,7 +110,7 @@
         label="单车平均耗时/min"
       >
         <template slot-scope="{row}">
-          {{ row.avg_train_time |setTimeMin }}
+          {{ setUse(row.total_time,row.total_trains) }}
         </template>
       </el-table-column>
       <el-table-column

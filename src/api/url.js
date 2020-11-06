@@ -136,5 +136,7 @@ export default {
   // 设备管理计算总和
   SumSollectTrains: '/api/v1/production/sum-collect-trains/',
   // 物料库存管理
-  MaterialInventoryManage: '/api/v1/inventory/material-inventory-manage/'
+  MaterialInventoryManage: '/api/v1/inventory/material-inventory-manage/',
+  // 出库计划管理
+  PutPlanManagement: '/api/v1/inventory/put-plan-management/'
 }
