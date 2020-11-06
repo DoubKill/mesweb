@@ -56,7 +56,7 @@
         <el-table-column label="打印时间" width="160" align="center" prop="print_time" />
         <el-table-column label="检测员" prop="test.test_user" />
         <el-table-column label="检测结果" prop="deal_result" />
-        <el-table-column label="备注" prop="test.test_note" />
+        <!-- <el-table-column label="备注" prop="test.test_note" /> -->
         <el-table-column label="处理人" prop="deal_user" />
         <el-table-column label="处理意见" prop="suggestion_desc" />
         <el-table-column label="处理时间" width="160" align="center" prop="deal_time" />
