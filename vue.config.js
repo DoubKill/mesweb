@@ -40,10 +40,7 @@ module.exports = {
     disableHostCheck: true,
     proxy: {
       '/api': {
-        // target: 'http://127.0.0.1:8000',
-        // target: 'http://10.20.180.68:8000',
         // target: 'http://10.10.120.40:15008',
-        // target: 'http://192.168.137.224:8000/',
         // target: 'http://10.4.14.42:8000/', //  博文
         // target: 'http://10.4.14.35:8000/', // 李威
         // target: 'http://10.4.23.77:8000/', // 李威
@@ -51,6 +48,7 @@ module.exports = {
         target: 'http://10.4.14.33:8000/', // 阿峰
         // target: 'http://127.0.0.1:8000/',
         // target: 'http://10.4.10.54/',
+        // target: 'http://10.4.14.25:8000', // 月
         ws: true,
         changeOrigin: true,
         pathRewrite: {

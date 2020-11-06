@@ -4,11 +4,9 @@
     <el-form :inline="true">
       <el-form-item label="时间:">
         <el-date-picker
-          v-model="search.date"
-          type="daterange"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
+          v-model="search.st"
+          type="date"
+          placeholder="日期"
           value-format="yyyy-MM-dd"
           @change="changeDate"
         />
@@ -28,8 +26,9 @@
       </el-form-item> -->
       <el-form-item label="设备编码:">
         <equip-select
+          :is-created="true"
           :equip_no_props.sync="search.equip_no"
-          @changeSearch="equipChanged"
+          @changeSearch="changeDate"
         />
       </el-form-item>
     </el-form>
@@ -62,12 +61,16 @@
         label="时间"
       />
       <el-table-column
-        prop="plan_classes_uid"
-        label="计划号"
-      />
-      <el-table-column
         prop="equip_no"
         label="设备编码"
+      />
+      <el-table-column
+        prop="plan_classes_uid_age"
+        label="切换前计划号"
+      />
+      <el-table-column
+        prop="plan_classes_uid_later"
+        label="切换后计划号"
       />
       <el-table-column
         prop="cut_ago_product_no"
@@ -98,17 +101,17 @@ import equipSelect from '@/components/select_w/equip'
 import page from '@/components/page'
 import { cutTimeCollect } from '@/api/base_w'
 // import timeSpanSelect from '@/components/select_w/timeSpan'
-import myMixin from './aminxPublic'
+import { setDate } from '@/utils/index'
 export default {
   components: { page, equipSelect },
-  mixins: [myMixin],
   data() {
     return {
       total: 0,
       loading: false,
       search: {
         page: 1,
-        equip_no: null,
+        equip_no: '',
+        st: setDate(),
         date: []
       },
       allData: {},
@@ -116,7 +119,7 @@ export default {
     }
   },
   created() {
-    this.getList()
+    // this.getList()
   },
   methods: {
     async getList() {
@@ -136,17 +139,9 @@ export default {
       this.getList()
     },
     changeDate(date) {
-      this.search.st = date ? date[0] : ''
-      this.search.et = date ? date[1] : ''
-      this.getList()
-      this.search.page = 1
-    },
-    equipChanged(val) {
-      this.search.equip_no = val
       this.getList()
       this.search.page = 1
     }
-    // timeSpanChanged() {}
   }
 }
 </script>
