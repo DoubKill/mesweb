@@ -54,12 +54,12 @@
       </el-table-column>
       <el-table-column v-for="header in testTypeList.filter(type => type.show)" :key="header.test_type_name" align="center" :label="header.test_type_name">
         <el-table-column v-for="subHeader in header.data_indicator_detail.filter(item => item.show)" :key="header.test_type_name + subHeader.detail" width="110" :label="subHeader.detail" align="center">
-          <template v-if="matchedTestData(scope.row, header, subHeader)[0]" slot-scope="scope">
+          <template v-if="scope.row.test_indicator_list_[header.test_type_name][subHeader.detail][0]" slot-scope="scope">
             <el-popover
               placement="top-start"
               trigger="hover"
             >
-              <el-table border :data="matchedTestData(scope.row, header, subHeader)[1]">
+              <el-table border :data="scope.row.test_indicator_list_[header.test_type_name][subHeader.detail][1]">
                 <el-table-column label="检测次数" prop="test_times" />
                 <el-table-column label="检测值" prop="value" />
                 <el-table-column label="试验方法名称" prop="test_method_name" />
@@ -67,16 +67,24 @@
                 <el-table-column label="结果" prop="mes_result" />
               </el-table>
               <el-button slot="reference">{{
-                matchedTestData(scope.row, header, subHeader)[0].value
+                scope.row.test_indicator_list_[header.test_type_name][subHeader.detail][0].value
               }}</el-button>
             </el-popover>
           </template>
         </el-table-column>
-        <el-table-column label="等级" align="center" />
-        <el-table-column label="检测结果" align="center" />
+        <el-table-column label="等级" align="center">
+          <template slot-scope="{row}">
+            {{ row.test_indicator_list_[header.test_type_name].maxLevel }}
+          </template>
+        </el-table-column>
+        <el-table-column label="检测结果" align="center">
+          <template slot-scope="{row}">
+            {{ row.test_indicator_list_[header.test_type_name].mes_result }}
+          </template>
+        </el-table-column>
       </el-table-column>
-      <el-table-column label="综合等级" />
-      <el-table-column label="综合检测结果" width="110" />
+      <el-table-column label="综合等级" prop="maxLevel" />
+      <el-table-column label="综合检测结果" width="110" prop="mes_result" />
       <!-- <el-table-column label="操作" align="center" width="120">
         <template slot-scope="scope">
           <el-button size="mini" @click="showCard(scope.row)">显示条码</el-button>
@@ -157,7 +165,8 @@ export default {
           data_indicator_detail: [{ detail: '', show: false }]
         }
       ],
-      testOrders: []
+      testOrders: [
+      ]
     }
   },
   created() {
@@ -222,6 +231,35 @@ export default {
             ...result,
             class_group: `${result.production_class}/${result.production_group}`
           }
+        })
+        this.testOrders.forEach(row => {
+          row.maxLevel = 0
+          row.mes_result = '合格'
+          row.test_indicator_list_ = {}
+          this.testTypeList.forEach(header => {
+            row.test_indicator_list_[header.test_type_name] = {}
+            let maxLevel = 0
+            let mes_result = '合格'
+            header.data_indicator_detail.forEach(subHeader => {
+              const matchedTestData = this.matchedTestData(row, header, subHeader)
+              row.test_indicator_list_[header.test_type_name][subHeader.detail] = matchedTestData
+              console.log(matchedTestData[0])
+              if (matchedTestData[0] && matchedTestData[0].level > maxLevel) {
+                maxLevel = matchedTestData[0].level
+              }
+              if (matchedTestData[0] && matchedTestData[0].mes_result === '不合格') {
+                mes_result = '不合格'
+              }
+            })
+            row.test_indicator_list_[header.test_type_name]['maxLevel'] = maxLevel
+            row.test_indicator_list_[header.test_type_name]['mes_result'] = mes_result
+            if (maxLevel > row.maxLevel) {
+              row.maxLevel = maxLevel
+            }
+            if (mes_result === '不合格') {
+              row.mes_result = '不合格'
+            }
+          })
         })
       // eslint-disable-next-line no-empty
       } catch (e) {}
