@@ -36,7 +36,7 @@ export default {
     return {
       value: this.defaultVal,
       loading: false,
-      options: ['1', '线边库', '终炼胶库', '原材料库']
+      options: ['终炼胶库', '线边库', '原材料库']
     }
   },
   watch: {

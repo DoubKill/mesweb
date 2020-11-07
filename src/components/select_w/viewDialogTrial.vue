@@ -102,7 +102,6 @@ export default {
           a.limits_val = '下限'
           arr.push(a)
         })
-        console.log(arr, 'arr')
         return arr
       } catch (e) {
         this.loading = false

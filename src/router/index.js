@@ -360,13 +360,22 @@ export const asyncRoutes = [{
         permissionName: 'product_inventory'
       }
     },
+    // {
+    //   path: 'outbound-manage',
+    //   component: () => import('@/views/inventory/outbound_manage.vue'),
+    //   name: 'OutboundManage',
+    //   meta: {
+    //     title: '出库计划管理',
+    //     permissionName: 'product_inventory'
+    //   }
+    // },
     {
-      path: 'outbound-manage',
-      component: () => import('@/views/inventory/outbound_manage.vue'),
+      path: 'final-rubber-manage',
+      component: () => import('@/views/inventory/final_rubber_manage.vue'),
       name: 'OutboundManage',
       meta: {
-        title: '出库计划管理',
-        permissionName: 'product_inventory'
+        title: '终炼胶库计划管理'
+        // permissionName: 'product_inventory'
       }
     },
     {
@@ -374,8 +383,8 @@ export const asyncRoutes = [{
       component: () => import('@/views/inventory/expire_rubber_manage.vue'),
       name: 'ExpireRubberManage',
       meta: {
-        title: '过期胶料管理',
-        permissionName: 'product_inventory'
+        title: '过期胶料管理'
+        // permissionName: 'product_inventory'
       }
     },
     {
@@ -383,8 +392,8 @@ export const asyncRoutes = [{
       component: () => import('@/views/inventory/material-attribute-manage.vue'),
       name: 'MaterialAttributeManage',
       meta: {
-        title: '物料属性管理',
-        permissionName: 'product_inventory'
+        title: '物料属性管理'
+        // permissionName: 'product_inventory'
       }
     }
   ]

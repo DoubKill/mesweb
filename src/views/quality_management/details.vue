@@ -243,7 +243,6 @@ export default {
             header.data_indicator_detail.forEach(subHeader => {
               const matchedTestData = this.matchedTestData(row, header, subHeader)
               row.test_indicator_list_[header.test_type_name][subHeader.detail] = matchedTestData
-              console.log(matchedTestData[0])
               if (matchedTestData[0] && matchedTestData[0].level > maxLevel) {
                 maxLevel = matchedTestData[0].level
               }

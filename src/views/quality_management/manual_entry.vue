@@ -30,77 +30,84 @@
         <product-no-select @productBatchingChanged="productBatchingChanged" />
       </el-form-item>
     </el-form>
-
-    <div
-      class="rigthTable"
-      style="width:47%"
-    >
-      <el-table
-        :data="tableData"
-        :highlight-current-row="true"
-        @row-click="rowClick"
-      >
-        <el-table-column
-          label="生产信息"
-          align="center"
+    <el-row>
+      <el-col :span="12" class="rigthTable">
+        <el-table
+          :data="tableData"
+          :highlight-current-row="true"
+          @row-click="rowClick"
         >
           <el-table-column
-            prop="lot_no"
-            label="收皮条码"
-          />
+            label="生产信息"
+            align="center"
+          >
+            <el-table-column
+              prop="lot_no"
+              label="收皮条码"
+            />
+            <el-table-column
+              prop="product_no"
+              label="胶料编码"
+            />
+            <el-table-column
+              prop="classes"
+              label="班次"
+              width="60"
+            />
+            <el-table-column
+              prop="equip_no"
+              label="生产机台"
+              width="80"
+            />
+            <el-table-column label="车次" width="100">
+              <template slot-scope="scope">
+                {{ scope.row.begin_trains }}--{{ scope.row.end_trains }}
+              </template>
+            </el-table-column>
+          </el-table-column>
+        </el-table>
+        <page
+          :total="total"
+          :current-page="search.page"
+          @currentChange="currentChange"
+        />
+      </el-col>
+      <el-col :span="12">
+        <el-table
+          v-if="showTableDataChild"
+          :data="tableDataStyle"
+          border
+          class="rigthTable"
+          style=" margin-left:10px;"
+        >
           <el-table-column
-            prop="product_no"
-            label="胶料编码"
+            prop="test_indicator"
+            label="试验指标"
+            width="180"
           />
-          <el-table-column
-            prop="classes"
-            label="班次"
-          />
-          <el-table-column
-            prop="equip_no"
-            label="生产机台"
-          />
-          <el-table-column label="车次">
-            <template slot-scope="scope">
-              {{ scope.row.begin_trains }}--{{ scope.row.end_trains }}
+          <el-table-column label="试验方法">
+            <template v-if="scope.row.methods.length>0" slot-scope="scope">
+              <el-radio
+                v-for="(itemData,ik) in scope.row.methods"
+                :key="ik"
+                v-model="checkedC"
+                :label="itemData"
+                :disabled="!itemData.allowed"
+                @change="changeMethods($event,scope.row)"
+              >
+                {{ itemData.name }}
+              </el-radio>
             </template>
           </el-table-column>
-        </el-table-column>
-      </el-table>
-      <page
-        :total="total"
-        :current-page="search.page"
-        @currentChange="currentChange"
-      />
-    </div>
+        </el-table>
+      </el-col>
+    </el-row>
+    <!-- <div
+      class="rigthTable"
+      style="width:47%"
+    />
 
-    <div class="rigthTable">
-      <el-table
-        v-if="showTableDataChild"
-        :data="tableDataStyle"
-        border
-      >
-        <el-table-column
-          prop="test_indicator"
-          label="试验指标"
-          width="180"
-        />
-        <el-table-column label="试验方法">
-          <template v-if="scope.row.methods.length>0" slot-scope="scope">
-            <el-radio
-              v-for="(itemData,ik) in scope.row.methods"
-              :key="ik"
-              v-model="checkedC"
-              :label="itemData"
-              :disabled="!itemData.allowed"
-              @change="changeMethods($event,scope.row)"
-            >
-              {{ itemData.name }}
-            </el-radio>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
+    <div class="rigthTable" /> -->
 
     <el-button
       v-if="showTableDataChild"
@@ -334,7 +341,6 @@ export default {
       }
     },
     async submitTable() {
-      console.log(this.tableDataChild, 'this.tableDataChild')
       const arr = []
       try {
         this.tableDataChild.forEach((D, i) => {
@@ -408,7 +414,7 @@ function setDataChild(_this, e) {
 
 <style lang="scss" scoped>
 .rigthTable{
-  overflow-y: scroll;display:inline-block;
-   max-height: 400px;margin-left:10px;width:50%;
+  overflow-y: scroll;
+   max-height: 400px;
 }
 </style>

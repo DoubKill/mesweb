@@ -365,3 +365,12 @@ export function putPlanManagement(method, id, data = {}) {
   return request(obj)
 }
 
+export function materialCount(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MaterialCount + id + '/' : API.MaterialCount,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+

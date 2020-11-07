@@ -439,7 +439,6 @@ export default {
             this.category_manage_list()
           } catch (e) { e }
         } else {
-          console.log('error submit!!')
           return false
         }
       })
@@ -464,7 +463,6 @@ export default {
             this.category_manage_list()
           } catch (e) { e }
         } else {
-          console.log('error submit!!')
           return false
         }
       })

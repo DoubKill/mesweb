@@ -31,7 +31,8 @@
         <el-input v-model="search.material_no" @input="changeList" />
       </el-form-item>
       <el-form-item label="仓库名称">
-        <warehouseSelect @changSelect="warehouseSelect" />
+        {{ warehouseName }}
+        <!-- <warehouseSelect @changSelect="warehouseSelect" /> -->
       </el-form-item>
       <!-- <el-form-item label="物料类型">
         <materielTypeSelect />
@@ -62,10 +63,9 @@
       <el-table-column label="单位" align="center" prop="unit" />
       <el-table-column label="需求重量" align="center" prop="need_weight" />
       <el-table-column label="操作" align="center" width="220">
-        <template v-if="scope.row.status === 1" slot-scope="scope">
-          <!-- 记得改成4 新建的 才能操作 -->
+        <template v-if="scope.row.status === 4" slot-scope="scope">
           <el-button-group>
-            <el-button size="mini" type="primary" @click="manualDelivery">人工出库</el-button>
+            <el-button size="mini" type="primary" @click="manualDelivery(scope.row)">人工出库</el-button>
             <el-button size="mini" type="warning" @click="demandQuantity(scope.$index,scope.row)">编辑</el-button>
             <el-button size="mini" type="info" @click="closePlan">关闭</el-button>
           </el-button-group>
@@ -105,16 +105,28 @@
     <el-dialog
       title="指定出库"
       :visible.sync="assignOutboundDialogVisible"
+      :before-close="handleCloseNormal"
       width="80%"
     >
-      <generate-assign-outbound @visibleMethod="visibleMethodNormal" />
+      <generate-assign-outbound
+        ref="assignOutbound"
+        :warehouse-name="warehouseName"
+        @visibleMethod="visibleMethodNormal"
+        @visibleMethodSubmit="visibleMethodAssignSubmit"
+      />
     </el-dialog>
     <el-dialog
       title="正常出库"
       :visible.sync="normalOutboundDialogVisible"
       :before-close="handleCloseNormal"
     >
-      <generate-normal-outbound ref="normalOutbound" :warehouseval="search.name" @visibleMethod="visibleMethodNormal" /></el-dialog>
+      <generate-normal-outbound
+        ref="normalOutbound"
+        :warehouse-name="warehouseName"
+        :warehouse-info="warehouseInfo"
+        @visibleMethod="visibleMethodNormal"
+        @visibleMethodSubmit="visibleMethodSubmit"
+      /></el-dialog>
   </div>
 </template>
 
@@ -122,17 +134,18 @@
 import GenerateAssignOutbound from './components/generate_assign_outbound'
 import GenerateNormalOutbound from './components/generate_normal_outbound'
 // import materielTypeSelect from '@/components/select_w/materielTypeSelect'
-import warehouseSelect from '@/components/select_w/warehouseSelect'
+// import warehouseSelect from '@/components/select_w/warehouseSelect'
 import { putPlanManagement } from '@/api/base_w'
 import page from '@/components/page'
 import commitVal from '@/utils/common'
 export default {
-  components: { page, GenerateAssignOutbound, GenerateNormalOutbound, warehouseSelect },
+  components: { page, GenerateAssignOutbound, GenerateNormalOutbound },
   data() {
     return {
       loading: false,
       search: {
-        page: 1
+        page: 1,
+        name: this.warehouseName
       },
       dialogVisible: false,
       total: 0,
@@ -143,11 +156,14 @@ export default {
       currentIndex: null,
       demandQuantityVal: '',
       loadingBtn: false,
-      rowVal: {}
+      rowVal: {},
+      warehouseName: '终炼胶库',
+      warehouseInfo: 1
     }
   },
   created() {
     this.getList()
+    this.search.name = this.warehouseName
   },
   methods: {
     async getList() {
@@ -166,13 +182,16 @@ export default {
       this.getList()
     },
     warehouseSelect(val) {
-      this.search.page = 1
-      this.search.name = val
-      this.getList()
+    //   this.search.page = 1
+    //   this.search.name = this.warehouseName
+    //   this.getList()
     },
     handleCloseNormal(done) {
       if (this.$refs.normalOutbound) {
         this.$refs.normalOutbound.creadVal()
+      }
+      if (this.$refs.assignOutbound) {
+        this.$refs.assignOutbound.creadVal()
       }
       done()
     },
@@ -190,6 +209,29 @@ export default {
       this.normalOutboundDialogVisible = false
       this.assignOutboundDialogVisible = false
     },
+    async visibleMethodSubmit(val) {
+      try {
+        await putPlanManagement('post', null, { data: val })
+        this.$message.success('操作成功')
+        this.normalOutboundDialogVisible = false
+        this.getList()
+        this.$refs.normalOutbound.loadingBtn = false
+        this.$refs.normalOutbound.creadVal()
+      } catch (error) {
+        this.$refs.normalOutbound.loadingBtn = false
+      }
+    },
+    async visibleMethodAssignSubmit(val) {
+      try {
+        // await putPlanManagement('post', null, { data: val })
+        // this.$message.success('操作成功')
+        // this.normalOutboundDialogVisible = false
+        // this.getList()
+        // this.$refs.normalOutbound.loadingBtn = false
+      } catch (error) {
+        this.$refs.normalOutbound.loadingBtn = false
+      }
+    },
     handleClose(done) {
       done()
     },
@@ -201,15 +243,22 @@ export default {
     },
     async submitDemandQuantity() {
       try {
+        const row = this.tableData[this.currentIndex]
         this.loadingBtn = true
-        // const data = await putPlanManagement('get', null, { params: this.search })
+        const obj = {
+          inventory_type: 3333,
+          need_qty: this.demandQuantityVal,
+          order_no: 'order_no',
+          warehouse_info: row.warehouse_info
+        }
+        await putPlanManagement('put', row.id, { data: obj })
         this.dialogVisible = false
         this.getList()
       } catch (error) {
         this.loadingBtn = false
       }
     },
-    manualDelivery() {
+    manualDelivery(row) {
       this.$confirm(
         '确定出库?',
         '提示',
@@ -219,7 +268,15 @@ export default {
           type: 'warning'
         }
       ).then(async() => {
-        // await matTestMethods('delete', row.id)
+        const obj = {
+          warehouse_info: row.warehouse_info,
+          inventory_type: row.inventory_type,
+          order_no: row.order_no,
+          material_no: row.material_no,
+          wegit: row.need_weight || '',
+          created_date: row.created_date
+        }
+        await putPlanManagement('put', row.id, { data: obj })
         this.$message.success('操作成功')
         this.getList()
       }).catch(() => {

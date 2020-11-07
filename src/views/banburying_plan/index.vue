@@ -194,7 +194,6 @@ export default {
       try {
         const banbury_planData = await banbury_plan_url('get', { params: this.getParams })
         this.tableData = banbury_planData.data
-        console.log(this.tableData)
         this.total = banbury_planData.count
       } catch (e) { throw new Error(e) }
     },
