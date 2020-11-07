@@ -142,5 +142,8 @@ export default {
   // 物料属性管理
   materialsAttribute: '/api/v1/recipe/materials-attribute/',
   // 物料条码信息
-  materialsSupplier: '/api/v1/recipe/materials-supplier/'
+  materialsSupplier: '/api/v1/recipe/materials-supplier/',
+
+  dealSuggestionView: '/api/v1/quality/deal-suggestion-view/'
+
 }
