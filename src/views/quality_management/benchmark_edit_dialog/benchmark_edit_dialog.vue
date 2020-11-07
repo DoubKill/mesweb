@@ -244,7 +244,7 @@ export default {
     },
     changSelectLevel(val, row) {
       this.$set(row, 'result', val.deal_result)
-      this.$set(row, 'level', val.level)
+      this.$set(row, 'level', val.id)
     }
   }
 }
