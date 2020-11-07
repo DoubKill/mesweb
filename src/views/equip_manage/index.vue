@@ -514,7 +514,6 @@ export default {
             this.equip_manage_list()
           } catch (e) { e }
         } else {
-          console.log('error submit!!')
           return false
         }
       })
@@ -541,7 +540,6 @@ export default {
             this.equip_manage_list()
           } catch (e) { e }
         } else {
-          console.log('error submit!!')
           return false
         }
       })

@@ -3,20 +3,25 @@
     <!-- 正常出库 -->
     <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="140px">
       <el-form-item label="仓库名称">
-        {{ warehouseval }}
+        {{ warehouseName }}
       </el-form-item>
-      <el-form-item label="物料编码" prop="b">
-        <materialCodeSelect :default-val="ruleForm.b" @changSelect="materialCodeFun" />
+      <el-form-item label="物料编码" prop="material_no">
+        <materialCodeSelect :default-val="ruleForm.material_no" @changSelect="materialCodeFun" />
       </el-form-item>
       <el-form-item label="可用库存数" prop="c">
         <!-- 按物料编码查到的 -->
         <el-input v-model="ruleForm.c" disabled />
       </el-form-item>
-      <el-form-item label="需求数量" prop="d">
-        <el-input v-model="ruleForm.d" />
+      <el-form-item label="需求数量" prop="need_qty">
+        <!-- <el-input v-model="ruleForm.need_qty" /> -->
+        <el-input-number
+          v-model="ruleForm.need_qty"
+          controls-position="right"
+          :max="ruleForm.c"
+        />
       </el-form-item>
       <el-form-item label="需求重量">
-        <el-input v-model="ruleForm.e" />
+        <el-input v-model="ruleForm.need_weight" />
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -27,47 +32,73 @@
 </template>
 <script>
 import materialCodeSelect from '@/components/select_w/materialCodeSelect'
-
+import { materialCount } from '@/api/base_w'
 export default {
   components: { materialCodeSelect },
   props: {
-    warehouseval: {
+    warehouseName: {
       type: String,
       default() {
         return ''
+      }
+    },
+    warehouseInfo: {
+      type: Number,
+      default() {
+        return null
       }
     }
   },
   data() {
     return {
       ruleForm: {
-        b: null
+        warehouse_name: this.warehouseName,
+        warehouse_info: this.warehouseInfo,
+        material_no: 'C-HMB-F150-12',
+        inventory_type: '正常出库',
+        order_no: 'order_no',
+        status: 4,
+        need_weight: null
       },
       rules: {
-        b: [
+        material_no: [
           { required: true, message: '请输入物料编码', trigger: 'blur' }
         ],
         c: [
-          { required: true, message: '无库存数', trigger: 'blur' }
+          { required: false, message: '无库存数', trigger: 'blur' }
         ],
-        d: [
+        need_qty: [
           { required: true, message: '请输入需求数量', trigger: 'blur' }
         ]
       },
       visible: false,
-      loadingBtn: false
+      loadingBtn: null
     }
+  },
+  watch: {
+  },
+  created() {
+    this.availableStock()
   },
   methods: {
     creadVal() {
       // 清空数据
       this.$refs.ruleForm.resetFields()
       this.ruleForm = {}
-      this.$set(this.ruleForm, 'b', null)
-      // this.ruleForm.b = null
+      // this.$set(this.ruleForm, 'material_no', null)
+      this.loadingBtn = false
     },
     materialCodeFun(val) {
-      this.ruleForm.b = val.id || null
+      this.ruleForm.material_no = val.id || null
+    },
+    async availableStock() {
+      try {
+        const data = await materialCount('get', null,
+          { params: { material_no: this.ruleForm.material_no }})
+        this.$set(this.ruleForm, 'c', data.all_qty)
+      } catch (error) {
+        //
+      }
     },
     visibleMethod(bool) {
       if (bool) {
@@ -76,14 +107,12 @@ export default {
       } else {
         this.$refs.ruleForm.validate((valid) => {
           if (valid) {
-            alert('submit!')
+            this.loadingBtn = true
+            this.$emit('visibleMethodSubmit', this.ruleForm)
           } else {
             return false
           }
         })
-        // console.log(666)
-        // this.loadingBtn = true
-        //
       }
     }
   }
@@ -101,6 +130,9 @@ export default {
   .dialog-footer{
     width:100%;
     text-align: right;
+  }
+  .el-input-number{
+     width:auto;
   }
 }
 </style>

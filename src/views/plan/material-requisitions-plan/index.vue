@@ -167,7 +167,6 @@ export default {
     getMaterialType() {
       globalCodes({ 'class_name': '原材料类别' }).then(response => {
         this.materialTypeOptions = response.results
-        console.log(this.materialTypeOptions)
       })
     },
     currentChange(page) {

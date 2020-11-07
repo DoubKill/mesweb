@@ -34,7 +34,7 @@ export default {
   },
   data() {
     return {
-      value: this.defaultVal,
+      value: '',
       loading: false,
       options: []
     }
@@ -53,6 +53,7 @@ export default {
   created() {
     if (this.createdIs) {
       this.getList()
+      this.value = this.defaultVal
     }
   },
   methods: {

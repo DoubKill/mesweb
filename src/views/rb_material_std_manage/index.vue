@@ -1741,7 +1741,6 @@ export default {
         if (valid) {
           this.addRubberMaterial()
         } else {
-          console.log('error submit!!')
           return false
         }
       })

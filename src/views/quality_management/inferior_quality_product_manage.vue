@@ -40,7 +40,7 @@
       <el-table-column label="胶料编码" prop="product_info.product_no" />
       <el-table-column label="lot追踪号" width="90" prop="lot_no" />
       <!-- <el-table-column label="检测结果" prop="test_result" /> -->
-      <el-table-column label="等级" prop="level" />
+      <el-table-column label="等级" prop="level" width="60" />
       <el-table-column label="不合格原因" width="100" prop="reason">
         <template slot-scope="{row}">
           <el-popover

@@ -142,5 +142,7 @@ export default {
   // 物料属性管理
   materialsAttribute: '/api/v1/recipe/materials-attribute/',
   // 物料条码信息
-  materialsSupplier: '/api/v1/recipe/materials-supplier/'
+  materialsSupplier: '/api/v1/recipe/materials-supplier/',
+  // 查询可用库存数
+  MaterialCount: '/api/v1/inventory/material_count/'
 }

@@ -356,7 +356,6 @@ export default {
           group_infos: [null, null, null]
         }
         var classes = this.classesByIndex[i % workSchedule.period]
-        console.log(classes, 'classes')
         for (var j = 0; j < classes.length; j++) {
           var class_ = JSON.parse(JSON.stringify(classes[j]))
           this.$set(class_, 'is_rest', false)

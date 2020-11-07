@@ -83,7 +83,6 @@ export default {
   },
   methods: {
     getTableData() {
-      console.log(this.getParams)
       getMaterialInventoryManage(this.getParams)
         .then(response => {
           this.tableData = response.results

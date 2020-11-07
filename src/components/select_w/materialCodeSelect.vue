@@ -29,7 +29,7 @@ export default {
       default: false
     },
     defaultVal: {
-      type: Number,
+      type: String,
       default: null
     }
   },
