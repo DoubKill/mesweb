@@ -362,7 +362,6 @@ export default {
   },
   created() {
     this.permissionObj = this.permission
-    console.log(this.permissionObj)
     this.getGlobalTypesList()
   },
   methods: {
@@ -430,7 +429,6 @@ export default {
           app.currentChange(app.currentPage)
         }).catch(function(error) {
           for (var key in app.globalCodeTypeFormError) {
-            console.log(error)
             if (error[key]) { app.globalCodeTypeFormError[key] = error[key].join(',') }
           }
         })

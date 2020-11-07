@@ -45,9 +45,9 @@
           <el-table
             ref="produceTable"
             size="mini"
-            :data="tableData"
+            :data="tableData1"
             border
-            @selection-change="produceSelectionChange"
+            @selection-change="leftSelectionChange"
           >
             <el-table-column
               type="selection"
@@ -69,8 +69,8 @@
       </el-col>
       <el-col :span="2">
         <div class="grid-content center-botton">
-          <el-button type="primary" size="small" icon="el-icon-arrow-left" />
-          <el-button type="primary" size="small" icon="el-icon-arrow-right" />
+          <el-button type="primary" size="small" icon="el-icon-arrow-left" @click="arrowLeft" />
+          <el-button type="primary" size="small" icon="el-icon-arrow-right" @click="arrowRight" />
         </div>
       </el-col>
       <el-col :span="11">
@@ -93,9 +93,9 @@
           <el-table
             ref="planTable"
             size="mini"
-            :data="tableData"
+            :data="tableData2"
             border
-            @selection-change="planSelectionChange"
+            @selection-change="rightSelectionChange"
           >
             <el-table-column
               type="selection"
@@ -129,20 +129,45 @@ export default {
   components: { equipSelect, planSchedulesSelect, classSelect, productNoSelect },
   data() {
     return {
-      tableData: [{
+      tableData1: [{
+        id: 1,
         date: '2016-05-02',
         name: '王小虎',
         address: '上海市普陀区金沙江路 1518 弄'
       }, {
+        id: 2,
         date: '2016-05-04',
         name: '王小虎',
         address: '上海市普陀区金沙江路 1517 弄'
       }, {
+        id: 3,
         date: '2016-05-01',
         name: '王小虎',
         address: '上海市普陀区金沙江路 1519 弄'
       }, {
+        id: 4,
         date: '2016-05-03',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1516 弄'
+      }],
+      tableData2: [{
+        id: 1,
+        date: '111',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      }, {
+        id: 2,
+        date: '222',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1517 弄'
+      }, {
+        id: 7,
+        date: '333',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1519 弄'
+      }, {
+        id: 8,
+        date: '444',
         name: '王小虎',
         address: '上海市普陀区金沙江路 1516 弄'
       }],
@@ -158,20 +183,35 @@ export default {
   methods: {
     dateChange() {},
     equipSearch() {},
-    produceSelectionChange(val) {
+    leftSelectionChange(val) {
       this.produceSelectionList = val
     },
-    planSelectionChange(val) {
+    rightSelectionChange(val) {
       this.planSelectionList = val
     },
     planScheduleSelected(val) {
-
     },
     classSelected(val) {},
     productBatchingChanged(val) {},
     classSelectedPlan() {},
     productBatchingChangedPlan() {},
-    equipSearchPlan() {}
+    equipSearchPlan() {},
+    arrowLeft() {
+      //  produceSelectionList: [],
+      // const tableData1 = JSON.parse(JSON.stringify(this.tableData1))
+      // let arr = []
+      // tableData1.forEach((D, i) => {
+      //   arr = this.planSelectionList.filter(data => data.id === D.id)
+      //   if (arr.length > 0) {
+      //     // 在左侧存在，需要替换掉
+      //     this.tableData1[i] = arr[0]
+      //   }
+      // })
+
+      // console.log(arr, 7777)
+    },
+    arrowRight() {
+    }
   }
 }
 </script>

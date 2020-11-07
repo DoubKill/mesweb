@@ -1,35 +1,167 @@
 <template>
-  <div class="clearfix">
+  <div v-loading="loading" class="app-container">
     <el-form :inline="true">
-      <el-form-item label="胶料类型">
-        <el-select />
-      </el-form-item>
       <el-form-item label="仓库名称">
-        <el-select />
+        {{ warehouseName }}
+        <!-- <warehouseSelect @changSelect="warehouseSelect" /> -->
       </el-form-item>
       <el-form-item label="物料编码">
-        <el-input />
+        <el-input v-model="getParams.material_no" @input="changeSearch" />
       </el-form-item>
       <el-form-item label="品质状态">
-        <el-select />
+        <el-select v-model="getParams.quality_status" placeholder="请选择" @change="changeSearch">
+          <el-option
+            v-for="item in options"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
       </el-form-item>
     </el-form>
     <el-table
+      ref="multipleTable"
       border
+      style="width: 100%"
+      :data="tableData"
+      :row-key="getRowKeys"
+      @selection-change="handleSelectionChange"
     >
-      <el-table-column label="选择" align="center" />
-      <el-table-column label="No" type="index" align="center" />
-      <el-table-column label="物料类型" align="center" />
-      <el-table-column label="物料编码" align="center" />
-      <el-table-column label="lot" align="center" />
-      <el-table-column label="托盘号" align="center" />
-      <el-table-column label="库存位" align="center" />
-      <el-table-column label="库存数" align="center" />
-      <el-table-column label="单位" align="center" />
-      <el-table-column label="单位重量" align="center" />
-      <el-table-column label="总重量" align="center" />
-      <el-table-column label="品质状态" align="center" />
+      <el-table-column
+        type="selection"
+        width="55"
+        :reserve-selection="true"
+      />
+      <!-- <el-table-column label="No" type="index" align="center" /> -->
+      <el-table-column label="物料类型" align="center" prop="material_type" />
+      <el-table-column label="物料编码" align="center" prop="material_no" />
+      <el-table-column label="lot" align="center" prop="lot_no" />
+      <el-table-column label="托盘号" align="center" prop="container_no" />
+      <el-table-column label="库存位" align="center" prop="location" />
+      <el-table-column
+        v-if="warehouseName === '终炼胶库'"
+        label="车次"
+        align="center"
+        prop=""
+      >
+        <template slot-scope="{row}">
+          {{ row.qty }}
+        </template>
+      </el-table-column>
+      <el-table-column label="总重量" align="center" prop="total_weight" />
+      <el-table-column label="品质状态" align="center" prop="quality_status" />
     </el-table>
-    <el-button style="float: right; margin-top: 22px">生成出库单</el-button>
+    <page
+      :total="total"
+      :current-page="getParams.page"
+      @currentChange="currentChange"
+    />
+    <div slot="footer" class="dialog-footer">
+      <el-button @click="visibleMethod(true)">取 消</el-button>
+      <el-button type="primary" :loading="loadingBtn" @click="visibleMethod(false)">确 定</el-button>
+    </div>
   </div>
 </template>
+
+<script>
+// import warehouseSelect from '@/components/select_w/warehouseSelect'
+import { getMaterialInventoryManage } from '@/api/material-inventory-manage'
+// import materielTypeSelect from '@/components/select_w/materielTypeSelect'
+import page from '@/components/page'
+import { mapGetters } from 'vuex'
+export default {
+  components: { page },
+  props: {
+    warehouseName: {
+      type: String,
+      default: ''
+    }
+  },
+  data() {
+    return {
+      tableData: [],
+      getParams: {
+        page: 1,
+        material_type: '', // 物料类型
+        material_no: '', // 物料编号
+        container_no: '', // 托盘号
+        warehouse_name: '终炼胶库' // 仓库名称
+      },
+      currentPage: 1,
+      total: 0,
+      options: ['合格品', '不合格品'],
+      loading: false,
+      multipleSelection: [],
+      loadingBtn: false
+    }
+  },
+  computed: {
+    ...mapGetters(['permission'])
+  },
+  created() {
+    this.permissionObj = this.permission
+    this.getTableData()
+  },
+  methods: {
+    getTableData() {
+      this.loading = true
+      getMaterialInventoryManage(this.getParams)
+        .then(response => {
+          this.tableData = response.results
+          this.total = response.count
+          this.loading = false
+        }).catch(() => {
+          this.loading = false
+        })
+    },
+    currentChange(page) {
+      this.currentPage = page
+      this.getParams.page = page
+      this.getTableData()
+    },
+    changeSearch() {
+      this.getParams.page = 1
+      this.getTableData()
+    },
+    changeMaterialType(data) {
+      this.getParams.material_type = data
+      this.getParams.page = 1
+      this.getTableData()
+    },
+    warehouseSelect(val) {
+      this.getParams.page = 1
+      this.getParams.warehouse_name = val
+      this.getTableData()
+    },
+    creadVal() {
+      this.$refs.multipleTable.clearSelection()
+    },
+    visibleMethod(bool) {
+      if (bool) {
+        this.creadVal()
+        this.$emit('visibleMethod')
+      } else {
+        this.loadingBtn = true
+        // console.log(this.multipleSelection, 8888)
+        // const obj = {}
+
+        this.$emit('visibleMethodSubmit', this.multipleSelection)
+      }
+    },
+    handleSelectionChange(val) {
+      if (val.length > 0) {
+        this.multipleSelection = val
+      }
+    },
+    getRowKeys(row) {
+      return row.id
+    }
+  }
+}
+</script>
+<style lang="scss" scoped>
+  .dialog-footer{
+    width:100%;
+    text-align: right;
+  }
+</style>

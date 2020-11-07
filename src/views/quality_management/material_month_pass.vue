@@ -240,8 +240,6 @@ export default {
   },
   methods: {
     dateChange() {
-      console.log(this.beginTime)
-      console.log(this.endTime)
     },
     getheaders() {
       for (var n in this.tableData) {
@@ -251,9 +249,6 @@ export default {
           }
         }
       }
-      console.log(this.headers)
-      console.log(this.beginTime)
-      console.log(this.endTime)
     },
     monthPassClick() {
       this.dialogShow = true

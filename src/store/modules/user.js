@@ -50,12 +50,10 @@ const actions = {
         commit('SET_TOKEN', response.token)
         commit('SET_NAME', response.username)
         commit('SET_PERMISSION', JSON.stringify(response.permissions))
-        console.log(response.permissions)
         // 登录获取token,存到全局中
         setToken(response.token)
         resolve()
       }).catch(error => {
-        console.log(error, 'error')
         reject(error)
       })
     })

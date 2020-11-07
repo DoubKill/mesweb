@@ -133,7 +133,6 @@ export default {
         this.testMethosList = response.results
       // eslint-disable-next-line no-empty
       } catch (e) {
-        console.log(e)
       }
       this.listLoading = false
     },

@@ -119,7 +119,6 @@ export default {
         this.total = arr[0].count
         this.tableData = arr[0].results || []
         this.allData = arr[1].results
-        console.log(this.tableData, this.allData)
         this.loading = false
       } catch (error) {
         this.loading = false
