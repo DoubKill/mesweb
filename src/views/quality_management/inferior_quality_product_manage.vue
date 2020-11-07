@@ -207,6 +207,7 @@ export default {
       try {
         const response = await materialDealResult(this.getParams)
         this.inferiorQualityList = response.results
+        this.total = response.count
       // eslint-disable-next-line no-empty
       } catch (e) {}
     },
