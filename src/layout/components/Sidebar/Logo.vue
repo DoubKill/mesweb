@@ -48,7 +48,7 @@ export default {
   },
   data() {
     return {
-      title: 'mes最小系统',
+      title: '中策安吉炼胶MES系统',
       logo: ''
     }
   }
