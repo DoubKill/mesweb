@@ -9,14 +9,14 @@
     <el-option
       v-for="(item, index) in suggestionOptions"
       :key="index"
-      :label="item.suggestion_desc"
-      :value="item.suggestion_desc"
+      :label="item"
+      :value="item"
     />
   </el-select>
 </template>
 
 <script>
-import { dealSuggestion } from '@/api/material-deal-result'
+import { dealSuggestion, dealSuggestionView } from '@/api/material-deal-result'
 
 export default {
   data() {
@@ -30,8 +30,8 @@ export default {
       this.$emit('dealSuggestionChange', this.suggestion_desc)
     },
     async getDealSuggestion() {
-      const response = await dealSuggestion(null)
-      this.suggestionOptions = response.results
+      const response = await dealSuggestionView()
+      this.suggestionOptions = response
     //   console.log(response)
     },
     visibleChange(visible) {
