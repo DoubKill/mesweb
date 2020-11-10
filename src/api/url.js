@@ -147,5 +147,7 @@ export default {
   dealSuggestionView: '/api/v1/quality/deal-suggestion-view/',
 
   // 查询可用库存数
-  MaterialCount: '/api/v1/inventory/material_count/'
+  MaterialCount: '/api/v1/inventory/material_count/',
+  // 物料出入库履历列表
+  InventoryLog: '/api/v1/inventory/inventory-log/'
 }

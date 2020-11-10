@@ -9,7 +9,12 @@
         <el-input v-model="getParams.material_no" @input="changeSearch" />
       </el-form-item>
       <el-form-item label="品质状态">
-        <el-select v-model="getParams.quality_status" placeholder="请选择" @change="changeSearch">
+        <el-select
+          v-model="getParams.quality_status"
+          clearable
+          placeholder="请选择"
+          @change="changeSearch"
+        >
           <el-option
             v-for="item in options"
             :key="item"
@@ -75,6 +80,10 @@ export default {
     warehouseName: {
       type: String,
       default: ''
+    },
+    warehouseInfo: {
+      type: Number,
+      default: null
     }
   },
   data() {
@@ -135,6 +144,7 @@ export default {
     },
     creadVal() {
       this.$refs.multipleTable.clearSelection()
+      this.loadingBtn = false
     },
     visibleMethod(bool) {
       if (bool) {
@@ -142,10 +152,24 @@ export default {
         this.$emit('visibleMethod')
       } else {
         this.loadingBtn = true
-        // console.log(this.multipleSelection, 8888)
-        // const obj = {}
+        console.log(this.multipleSelection, 8888)
+        const arr = []
+        this.multipleSelection.forEach(D => {
+          arr.push({
+            order_no: 'order_no',
+            pallet_no: D.container_no,
+            need_qty: D.qty,
+            need_weight: D.total_weight,
+            material_no: D.material_no,
+            inventory_type: '指定出库',
+            inventory_reason: D.inventory_reason,
+            unit: D.unit,
+            status: 4,
+            warehouse_info: this.warehouseInfo
+          })
+        })
 
-        this.$emit('visibleMethodSubmit', this.multipleSelection)
+        this.$emit('visibleMethodSubmit', arr)
       }
     },
     handleSelectionChange(val) {

@@ -13,7 +13,6 @@
         <el-input v-model="ruleForm.c" disabled />
       </el-form-item>
       <el-form-item label="需求数量" prop="need_qty">
-        <!-- <el-input v-model="ruleForm.need_qty" /> -->
         <el-input-number
           v-model="ruleForm.need_qty"
           controls-position="right"
@@ -21,7 +20,11 @@
         />
       </el-form-item>
       <el-form-item label="需求重量">
-        <el-input v-model="ruleForm.need_weight" />
+        <el-input-number
+          v-model="ruleForm.need_weight"
+          controls-position="right"
+          :precision="3"
+        />
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -58,7 +61,7 @@ export default {
         inventory_type: '正常出库',
         order_no: 'order_no',
         status: 4,
-        need_weight: null
+        need_weight: undefined
       },
       rules: {
         material_no: [

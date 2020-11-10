@@ -21,7 +21,11 @@
             {{ objEdit.test_method_name }}
           </el-form-item>
         </el-form>
-        <div style="margin-bottom:5px">提示：请数据点对应一个合格检测结果和等级不能重复</div>
+        <div style="margin-bottom:5px;">
+          提示：请每个数据点最少一个合格检测结果、等级不能重复、
+          <br>
+          每一排上下限请给个连续区间范围(比如：第一排1-10;第二排11-100,以此类推)
+        </div>
         <el-table
           :data="tableData"
           style="width: 100%"

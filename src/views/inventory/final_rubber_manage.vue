@@ -1,7 +1,7 @@
 <template>
   <div v-loading="loading" class="app-container outbound_manage">
     <el-form :inline="true">
-      <el-form-item label="开始时间">
+      <el-form-item label="开始日期">
         <el-date-picker
           v-model="search.date"
           type="daterange"
@@ -46,8 +46,6 @@
     </el-form>
     <el-table
       border
-      fit
-      style="width: 100%"
       :data="tableData"
     >
       <el-table-column label="No" type="index" align="center" />
@@ -67,7 +65,7 @@
           <el-button-group>
             <el-button size="mini" type="primary" @click="manualDelivery(scope.row)">人工出库</el-button>
             <el-button size="mini" type="warning" @click="demandQuantity(scope.$index,scope.row)">编辑</el-button>
-            <el-button size="mini" type="info" @click="closePlan">关闭</el-button>
+            <el-button size="mini" type="info" @click="closePlan(scope.$index,scope.row)">关闭</el-button>
           </el-button-group>
         </template>
       </el-table-column>
@@ -111,6 +109,7 @@
       <generate-assign-outbound
         ref="assignOutbound"
         :warehouse-name="warehouseName"
+        :warehouse-info="warehouseInfo"
         @visibleMethod="visibleMethodNormal"
         @visibleMethodSubmit="visibleMethodAssignSubmit"
       />
@@ -138,14 +137,14 @@ import GenerateNormalOutbound from './components/generate_normal_outbound'
 import { putPlanManagement } from '@/api/base_w'
 import page from '@/components/page'
 import commitVal from '@/utils/common'
+
 export default {
   components: { page, GenerateAssignOutbound, GenerateNormalOutbound },
   data() {
     return {
       loading: false,
       search: {
-        page: 1,
-        name: this.warehouseName
+        page: 1
       },
       dialogVisible: false,
       total: 0,
@@ -163,12 +162,13 @@ export default {
   },
   created() {
     this.getList()
-    this.search.name = this.warehouseName
+    // this.search.name = this.warehouseName
   },
   methods: {
     async getList() {
       try {
         this.loading = true
+        this.tableData = []
         const data = await putPlanManagement('get', null, { params: this.search })
         this.total = data.count
         this.tableData = data.results
@@ -211,7 +211,7 @@ export default {
     },
     async visibleMethodSubmit(val) {
       try {
-        await putPlanManagement('post', null, { data: val })
+        await putPlanManagement('post', null, { data: [val] })
         this.$message.success('操作成功')
         this.normalOutboundDialogVisible = false
         this.getList()
@@ -223,13 +223,13 @@ export default {
     },
     async visibleMethodAssignSubmit(val) {
       try {
-        // await putPlanManagement('post', null, { data: val })
-        // this.$message.success('操作成功')
-        // this.normalOutboundDialogVisible = false
-        // this.getList()
-        // this.$refs.normalOutbound.loadingBtn = false
+        await putPlanManagement('post', null, { data: val })
+        this.$message.success('操作成功')
+        this.assignOutboundDialogVisible = false
+        this.$refs.assignOutbound.creadVal()
+        this.getList()
       } catch (error) {
-        this.$refs.normalOutbound.loadingBtn = false
+        this.$refs.assignOutbound.loadingBtn = false
       }
     },
     handleClose(done) {
@@ -244,15 +244,20 @@ export default {
     async submitDemandQuantity() {
       try {
         const row = this.tableData[this.currentIndex]
-        this.loadingBtn = true
+        if (!this.demandQuantityVal && this.demandQuantityVal !== 0) {
+          this.$message.info('需求数量不可为空')
+          return
+        }
         const obj = {
           inventory_type: 3333,
           need_qty: this.demandQuantityVal,
           order_no: 'order_no',
           warehouse_info: row.warehouse_info
         }
+        this.loadingBtn = true
         await putPlanManagement('put', row.id, { data: obj })
         this.dialogVisible = false
+        this.loadingBtn = false
         this.getList()
       } catch (error) {
         this.loadingBtn = false
@@ -274,13 +279,15 @@ export default {
           order_no: row.order_no,
           material_no: row.material_no,
           wegit: row.need_weight || '',
+
           created_date: row.created_date
         }
+        this.loading = true
         await putPlanManagement('put', row.id, { data: obj })
         this.$message.success('操作成功')
         this.getList()
       }).catch(() => {
-        //
+        this.loading = false
       })
     },
     demandQuantity(index, row) {
@@ -288,7 +295,7 @@ export default {
       this.dialogVisible = true
       this.demandQuantityVal = row.need_qty || ''
     },
-    closePlan() {
+    closePlan(index, row) {
       this.$confirm(
         '确定关闭?',
         '提示',
@@ -298,11 +305,17 @@ export default {
           type: 'warning'
         }
       ).then(async() => {
-        // await matTestMethods('delete', row.id)
+        const obj = {
+          status: 5,
+          order_no: 'order_no',
+          warehouse_info: this.warehouseInfo
+        }
+        this.loading = true
+        await putPlanManagement('put', row.id, { data: obj })
         this.$message.success('操作成功')
         this.getList()
       }).catch(() => {
-        //
+        this.loading = false
       })
     },
     setOperation(val) {
