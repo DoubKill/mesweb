@@ -1,5 +1,5 @@
 <template>
-  <div style="margin-top: 25px">
+  <div>
     <el-row>
       <el-col :span="12">
         <el-form :inline="true">

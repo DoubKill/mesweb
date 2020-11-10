@@ -5,7 +5,7 @@
       <el-form-item label="时间:">
         <el-date-picker
           v-model="search.date"
-          :clearable="false"
+          :clearable="true"
           type="daterange"
           range-separator="至"
           start-placeholder="开始日期"

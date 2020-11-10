@@ -373,4 +373,12 @@ export function materialCount(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function inventoryLog(method, id, data = {}) {
+  const obj = {
+    url: id ? API.InventoryLog + id + '/' : API.InventoryLog,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 

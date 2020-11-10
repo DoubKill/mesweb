@@ -374,7 +374,7 @@ export const asyncRoutes = [{
       component: () => import('@/views/inventory/final_rubber_manage.vue'),
       name: 'OutboundManage',
       meta: {
-        title: '终炼胶库计划管理'
+        title: '胶片库出库计划'
         // permissionName: 'product_inventory'
       }
     },
@@ -508,7 +508,7 @@ export const asyncRoutes = [{
     component: () => import('@/views/quality_management/inferior_quality_product_manage'),
     name: 'InferiorQualityProductManage',
     meta: {
-      title: '不合格品查询'
+      title: '不合格处理'
     }
   }, {
     path: 'unqualified-treatment-opinions-manage',

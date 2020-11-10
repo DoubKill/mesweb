@@ -70,6 +70,7 @@
           <el-select
             v-model="addForm.material"
             placeholder="请选择胶料编码"
+            filterable
           >
             <el-option
               v-for="item in optionsRubber"
