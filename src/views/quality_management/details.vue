@@ -234,17 +234,22 @@ export default {
         })
         this.testOrders.forEach(row => {
           row.maxLevel = 0
-          row.mes_result = '合格'
+          row.mes_result = '未检测'
           row.test_indicator_list_ = {}
           this.testTypeList.forEach(header => {
             row.test_indicator_list_[header.test_type_name] = {}
             let maxLevel = 0
-            let mes_result = '合格'
+            let mes_result = '未检测'
             header.data_indicator_detail.forEach(subHeader => {
               const matchedTestData = this.matchedTestData(row, header, subHeader)
               row.test_indicator_list_[header.test_type_name][subHeader.detail] = matchedTestData
               if (matchedTestData[0] && matchedTestData[0].level > maxLevel) {
                 maxLevel = matchedTestData[0].level
+              }
+              if (matchedTestData[0] && matchedTestData[0].mes_result === '合格') {
+                if (mes_result === '未检测') {
+                  mes_result = '合格' // 覆盖默认值
+                }
               }
               if (matchedTestData[0] && matchedTestData[0].mes_result === '不合格') {
                 mes_result = '不合格'
@@ -254,6 +259,9 @@ export default {
             row.test_indicator_list_[header.test_type_name]['mes_result'] = mes_result
             if (maxLevel > row.maxLevel) {
               row.maxLevel = maxLevel
+            }
+            if (mes_result === '合格' && row.mes_result === '未检测') {
+              row.mes_result = '合格' // 覆盖默认值
             }
             if (mes_result === '不合格') {
               row.mes_result = '不合格'

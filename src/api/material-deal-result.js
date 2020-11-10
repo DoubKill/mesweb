@@ -34,3 +34,10 @@ export function dealSuggestion(type_name) {
     }
   })
 }
+
+export function dealSuggestionView() {
+  return request({
+    url: API.dealSuggestionView,
+    method: 'get'
+  })
+}
