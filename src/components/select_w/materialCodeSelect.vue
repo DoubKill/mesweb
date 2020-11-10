@@ -11,16 +11,16 @@
     >
       <el-option
         v-for="item in options"
-        :key="item.id"
-        :label="item.level"
-        :value="item.id"
+        :key="item.material_no"
+        :label="item.material_no"
+        :value="item.material_no"
       />
     </el-select>
   </div>
 </template>
 
 <script>
-import { levelResult } from '@/api/base_w'
+import { materialCount } from '@/api/base_w'
 export default {
   props: {
     //  created里面加载
@@ -29,6 +29,10 @@ export default {
       default: false
     },
     defaultVal: {
+      type: String,
+      default: null
+    },
+    storeName: {
       type: String,
       default: null
     }
@@ -54,8 +58,8 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const data = await levelResult('get', null, { params: { all: 1 }})
-        this.options = data.results || []
+        const data = await materialCount('get', null, { params: { store_name: this.storeName }})
+        this.options = data || []
         this.loading = false
       } catch (e) {
         this.loading = false
@@ -68,7 +72,7 @@ export default {
     },
     changSelect(val) {
       let arr = []
-      arr = this.options.filter(D => D.id === val)
+      arr = this.options.filter(D => D.material_no === val)
       this.$emit('changSelect', arr[0])
     }
   }

@@ -433,14 +433,14 @@ export const asyncRoutes = [{
       title: '试验方法管理'
     }
   },
-  {
-    path: 'quick-plan-manage',
-    component: () => import('@/views/quality_management/quick_plan_manage'),
-    namel: 'quickPlanManage',
-    meta: {
-      title: '快检计划管理'
-    }
-  },
+  // {
+  //   path: 'quick-plan-manage',
+  //   component: () => import('@/views/quality_management/quick_plan_manage'),
+  //   namel: 'quickPlanManage',
+  //   meta: {
+  //     title: '快检计划管理'
+  //   }
+  // },
   {
     path: 'grade-manage',
     component: () => import('@/views/quality_management/grade_manage'),

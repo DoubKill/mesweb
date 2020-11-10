@@ -6,7 +6,7 @@
         {{ warehouseName }}
       </el-form-item>
       <el-form-item label="物料编码" prop="material_no">
-        <materialCodeSelect :default-val="ruleForm.material_no" @changSelect="materialCodeFun" />
+        <materialCodeSelect :store-name="warehouseName" :default-val="ruleForm.material_no" @changSelect="materialCodeFun" />
       </el-form-item>
       <el-form-item label="可用库存数" prop="c">
         <!-- 按物料编码查到的 -->
@@ -35,7 +35,7 @@
 </template>
 <script>
 import materialCodeSelect from '@/components/select_w/materialCodeSelect'
-import { materialCount } from '@/api/base_w'
+
 export default {
   components: { materialCodeSelect },
   props: {
@@ -53,11 +53,18 @@ export default {
     }
   },
   data() {
+    var validateMy = (rule, value, callback, _val, error) => {
+      if (!_val) {
+        callback(new Error(error))
+      } else {
+        callback()
+      }
+    }
     return {
       ruleForm: {
         warehouse_name: this.warehouseName,
         warehouse_info: this.warehouseInfo,
-        material_no: 'C-HMB-F150-12',
+        material_no: '',
         inventory_type: '正常出库',
         order_no: 'order_no',
         status: 4,
@@ -68,7 +75,11 @@ export default {
           { required: true, message: '请输入物料编码', trigger: 'blur' }
         ],
         c: [
-          { required: false, message: '无库存数', trigger: 'blur' }
+          { required: true, message: '无库存数', trigger: 'blur',
+            validator: (rule, value, callback) => {
+              validateMy(rule, value, callback,
+                this.ruleForm.c, '无库存数')
+            } }
         ],
         need_qty: [
           { required: true, message: '请输入需求数量', trigger: 'blur' }
@@ -81,7 +92,7 @@ export default {
   watch: {
   },
   created() {
-    this.availableStock()
+    // this.availableStock()
   },
   methods: {
     creadVal() {
@@ -92,17 +103,18 @@ export default {
       this.loadingBtn = false
     },
     materialCodeFun(val) {
-      this.ruleForm.material_no = val.id || null
+      this.ruleForm.material_no = val.material_no || null
+      this.ruleForm.c = val.all_qty || null
     },
-    async availableStock() {
-      try {
-        const data = await materialCount('get', null,
-          { params: { material_no: this.ruleForm.material_no }})
-        this.$set(this.ruleForm, 'c', data.all_qty)
-      } catch (error) {
-        //
-      }
-    },
+    // async availableStock() {
+    //   try {
+    //     const data = await materialCount('get', null,
+    //       { params: { material_no: this.ruleForm.material_no }})
+    //     this.$set(this.ruleForm, 'c', data.all_qty)
+    //   } catch (error) {
+    //     //
+    //   }
+    // },
     visibleMethod(bool) {
       if (bool) {
         this.creadVal()
