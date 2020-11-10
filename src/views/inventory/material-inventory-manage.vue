@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-form :inline="true">
-      <el-form-item label="物料类型">
+      <el-form-item v-show="getParams.warehouse_name != '终炼胶库'" label="物料类型">
         <materielTypeSelect @changSelect="changeMaterialType" />
         <!-- <el-input v-model="getParams.material_type" @input="changeSearch" /> -->
       </el-form-item>
