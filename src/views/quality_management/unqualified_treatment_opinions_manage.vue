@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-row>
       <el-col :span="12">
-        <el-button style="float: right" @click="handleNewType">新增</el-button>
+        <!-- <el-button style="float: right" @click="handleNewType">新增</el-button> -->
         <el-table
           :data="disposeTypeList"
           border
