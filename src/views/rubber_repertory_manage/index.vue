@@ -31,10 +31,10 @@
       <el-table-column prop="material_no" label="胶料编码" align="center" />
       <el-table-column prop="material_name" label="胶料名称" align="center" />
       <el-table-column prop="site" label="产地" align="center" />
-      <el-table-column prop="qty" label="库存数" align="center" />
-      <el-table-column prop="unit" label="单位" align="center" />
-      <el-table-column prop="unit_weight" label="单位重量" align="center" />
+      <el-table-column prop="qty" label="库存数(车)" align="center" />
+      <el-table-column prop="unit_weight" label="每车重量" align="center" />
       <el-table-column prop="total_weight" label="总重量" align="center" />
+      <el-table-column prop="unit" label="重量单位" align="center" />
       <el-table-column prop="standard_flag" label="品质状态" align="center" :formatter="StandardFlagFormatter" />
     </el-table>
     <page :total="total" :current-page="getParams.page" @currentChange="currentChange" />

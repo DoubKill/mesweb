@@ -5,6 +5,7 @@
       v-model="value"
       placeholder="请选择仓库"
       :loading="loading"
+      :clearable="isClear"
       @visible-change="visibleChange"
       @change="changSelect"
     >
@@ -22,7 +23,7 @@
 import { levelResult } from '@/api/base_w'
 export default {
   props: {
-    //  created里面加载
+    //  created里面加载,是否默认显示第一个
     createdIs: {
       type: Boolean,
       default: false
@@ -30,6 +31,11 @@ export default {
     defaultVal: {
       type: Number,
       default: null
+    },
+    // 是否可清空
+    isClear: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -45,10 +51,9 @@ export default {
     }
   },
   created() {
-    this.value = this.options[0]
     this.$emit('changSelect', this.value)
     if (this.createdIs) {
-      // this.getList()
+      this.value = this.options[0]
     }
   },
   methods: {

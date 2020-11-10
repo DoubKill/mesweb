@@ -144,5 +144,7 @@ export default {
   // 物料条码信息
   materialsSupplier: '/api/v1/recipe/materials-supplier/',
   // 查询可用库存数
-  MaterialCount: '/api/v1/inventory/material_count/'
+  MaterialCount: '/api/v1/inventory/material_count/',
+  // 物料出入库履历列表
+  InventoryLog: '/api/v1/inventory/inventory-log/'
 }

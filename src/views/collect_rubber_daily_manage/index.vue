@@ -11,10 +11,7 @@
         />
       </el-form-item>
       <el-form-item label="生产机号">
-        <el-input
-          v-model="equip_no"
-          @input="search"
-        />
+        <equip-select :equip_no_props="getParams.equip_no" @changeSearch="equipSearch" />
       </el-form-item>
       <el-form-item label="胶料段">
         <el-input />
@@ -203,8 +200,9 @@
 <script>
 import pagination from '@/components/page'
 import { palletFeedBacksUrl } from '@/api/base_w'
+import equipSelect from '@/components/select_w/equip'
 export default {
-  components: { pagination },
+  components: { pagination, equipSelect },
   data: function() {
     return {
       tableData: [],
@@ -254,6 +252,11 @@ export default {
     check_(row) {
       this.currentPalletFeedbacks = row
       this.dialogRubberBarCodeInfoVisible = true
+    },
+    equipSearch(val) {
+      this.getParams.equip_no = val
+      this.getParams.page = 1
+      this.getList()
     }
   }
 }
