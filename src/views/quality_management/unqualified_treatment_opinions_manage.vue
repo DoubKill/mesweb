@@ -4,6 +4,7 @@
       <el-col :span="12">
         <!-- <el-button style="float: right" @click="handleNewType">新增</el-button> -->
         <el-table
+          style="margin-top: 40px"
           :data="disposeTypeList"
           border
           highlight-current-row
