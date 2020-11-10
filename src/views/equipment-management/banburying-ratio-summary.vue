@@ -47,7 +47,9 @@
         :label="search.dimension === 3?'月份':search.dimension === 1?'班次':'时间'"
       >
         <template slot-scope="scope">
-          <span v-if="search.dimension === 3">{{ setMonth(scope.row.month) }}</span>
+          <span>{{ scope.row.date }}</span>
+          <span v-if="search.dimension === 1">/{{ scope.row.classes }}</span>
+          <!-- <span v-if="search.dimension === 3">{{ setMonth(scope.row.month) }}</span>
           <span v-if="search.dimension === 1&&scope.row.classes">
             {{ (Object.prototype.hasOwnProperty.call(scope.row, 'factory_date')?
               scope.row.factory_date:scope.row.end_time__date)
@@ -55,7 +57,7 @@
           <span v-if="search.dimension === 2">
             {{ Object.prototype.hasOwnProperty.call(scope.row, 'factory_date')?
               scope.row.factory_date:scope.row. end_time__date }}
-          </span>
+          </span> -->
         </template>
       </el-table-column>
       <el-table-column
