@@ -401,139 +401,193 @@ export const asyncRoutes = [{
 {
   path: '/quality',
   component: Layout,
-  redirect: '/quality/benchmark',
+  redirect: '/quick-check/test-indicators',
   name: 'quality',
   meta: {
     title: '质量管理',
     icon: 'quality'
   },
-  children: [{
-    path: 'test-indicators',
-    component: () => import('@/views/quality_management/test_indicators'),
-    name: 'testIndicators',
-    meta: {
-      title: '试验指标管理'
-      // permissionName: 'product_inventory'
+  children: [
+    {
+      path: '/quick-check',
+      redirect: '/quick-check/test-indicators',
+      component: {
+        render: c => c('router-view')
+      },
+      name: 'quick-check',
+      meta: {
+        title: '设备管理'
+      },
+      children: [
+        {
+          path: 'test-indicators',
+          component: () => import('@/views/quality_management/test_indicators'),
+          name: 'testIndicators',
+          meta: {
+            title: '试验指标管理'
+            // permissionName: 'product_inventory'
+          }
+        },
+        {
+          path: 'test-types',
+          component: () => import('@/views/quality_management/test_types'),
+          name: 'testTypes',
+          meta: {
+            title: '试验类型管理'
+            // permissionName: 'product_inventory'
+          }
+        },
+        {
+          path: 'test-methods-manage',
+          component: () => import('@/views/quality_management/test_methods_manage'),
+          namel: 'testMethodsManage',
+          meta: {
+            title: '试验方法管理'
+          }
+        },
+        // {
+        //   path: 'quick-plan-manage',
+        //   component: () => import('@/views/quality_management/quick_plan_manage'),
+        //   namel: 'quickPlanManage',
+        //   meta: {
+        //     title: '快检计划管理'
+        //   }
+        // },
+        {
+          path: 'grade-manage',
+          component: () => import('@/views/quality_management/grade_manage'),
+          namel: 'gradeManage',
+          meta: {
+            title: '等级管理'
+          }
+        },
+        // {
+        //   path: 'benchmark',
+        //   component: () => import('@/views/quality_management/benchmark'),
+        //   name: 'Benchmark',
+        //   meta: {
+        //     title: '胶料快检判定基准管理'
+        //     // permissionName: 'material_inventory'
+        //   }
+        // },
+        {
+          path: 'benchmark_edit',
+          component: () => import('@/views/quality_management/benchmark_edit'),
+          name: 'benchmark_edit',
+          meta: {
+            title: '胶料快检判定基准录入'
+            // permissionName:'material_inventory'
+          }
+        }
+      ]
+    },
+    {
+      path: '/statistics',
+      redirect: '/statistics/month-pass-detail',
+      component: {
+        render: c => c('router-view')
+      },
+      name: 'quality-statistics',
+      meta: {
+        title: '快检信息统计分析'
+      },
+      children: [
+        {
+          path: 'month-pass-detail',
+          component: () => import('@/views/quality_management/month_pass_detail'),
+          name: 'monthPassDetail',
+          meta: {
+            title: '月快检合格率统计'
+            // permissionName: 'product_inventory'
+          }
+        },
+        {
+          path: 'material-month-pass',
+          component: () => import('@/views/quality_management/material_month_pass'),
+          name: 'materialMonthPass',
+          meta: {
+            title: '胶料月合格率统计'
+            // permissionName: 'product_inventory'
+          }
+        },
+        {
+          path: 'material-day-pass',
+          component: () => import('@/views/quality_management/material_day_pass'),
+          name: 'materialDayPass',
+          meta: {
+            title: '胶料日合格率统计'
+            // permissionName: 'product_inventory'
+          }
+        }
+      ]
+    },
+    {
+      path: '/unqualified-handle',
+      redirect: '/unqualified-handle/inferior-quality-product-manage',
+      component: {
+        render: c => c('router-view')
+      },
+      name: 'unqualified-handle',
+      meta: {
+        title: '不合格品处理'
+      },
+      children: [
+        {
+          path: 'inferior-quality-product-manage',
+          component: () => import('@/views/quality_management/inferior_quality_product_manage'),
+          name: 'InferiorQualityProductManage',
+          meta: {
+            title: '不合格处理'
+          }
+        }, {
+          path: 'unqualified-treatment-opinions-manage',
+          component: () => import('@/views/quality_management/unqualified_treatment_opinions_manage'),
+          name: 'UnqualifiedTreatmentOpinionsManage',
+          meta: {
+            title: '不合格处理意见管理'
+          }
+        }
+      ]
+    },
+    {
+      path: '/inspection-result-management',
+      redirect: '/inspection-result-management/manual-entry',
+      component: {
+        render: c => c('router-view')
+      },
+      name: 'inspection-result-management',
+      meta: {
+        title: '快检结果管理'
+      },
+      children: [
+        {
+          path: 'manual-entry',
+          component: () => import('@/views/quality_management/manual_entry'),
+          name: 'ManualEntry',
+          meta: {
+            title: '手工检测数据录入'
+          // permissionName: 'product_inventory'
+          }
+        },
+        {
+          path: 'details',
+          component: () => import('@/views/quality_management/details'),
+          name: 'Details',
+          meta: {
+            title: '胶料快检详细信息'
+          // permissionName: 'product_inventory'
+          }
+        },
+        {
+          path: 'check-synthesize-manage',
+          component: () => import('@/views/quality_management/check_synthesize_manage'),
+          name: 'CheckSynthesizeManage',
+          meta: {
+            title: '快检信息综合管理'
+          }
+        }
+      ]
     }
-  },
-  {
-    path: 'test-types',
-    component: () => import('@/views/quality_management/test_types'),
-    name: 'testTypes',
-    meta: {
-      title: '试验类型管理'
-      // permissionName: 'product_inventory'
-    }
-  },
-  {
-    path: 'test-methods-manage',
-    component: () => import('@/views/quality_management/test_methods_manage'),
-    namel: 'testMethodsManage',
-    meta: {
-      title: '试验方法管理'
-    }
-  },
-  // {
-  //   path: 'quick-plan-manage',
-  //   component: () => import('@/views/quality_management/quick_plan_manage'),
-  //   namel: 'quickPlanManage',
-  //   meta: {
-  //     title: '快检计划管理'
-  //   }
-  // },
-  {
-    path: 'grade-manage',
-    component: () => import('@/views/quality_management/grade_manage'),
-    namel: 'gradeManage',
-    meta: {
-      title: '等级管理'
-    }
-  },
-  // {
-  //   path: 'benchmark',
-  //   component: () => import('@/views/quality_management/benchmark'),
-  //   name: 'Benchmark',
-  //   meta: {
-  //     title: '胶料快检判定基准管理'
-  //     // permissionName: 'material_inventory'
-  //   }
-  // },
-  {
-    path: 'benchmark_edit',
-    component: () => import('@/views/quality_management/benchmark_edit'),
-    name: 'benchmark_edit',
-    meta: {
-      title: '胶料快检判定基准录入'
-      // permissionName:'material_inventory'
-    }
-  },
-  {
-    path: 'manual-entry',
-    component: () => import('@/views/quality_management/manual_entry'),
-    name: 'ManualEntry',
-    meta: {
-      title: '手工检测数据录入'
-      // permissionName: 'product_inventory'
-    }
-  },
-  /* {
-    path: 'month-pass-detail',
-    component: () => import('@/views/quality_management/month_pass_detail'),
-    name: 'monthPassDetail',
-    meta: {
-      title: '月快检合格率统计'
-      // permissionName: 'product_inventory'
-    }
-  },
-  {
-    path: 'material-month-pass',
-    component: () => import('@/views/quality_management/material_month_pass'),
-    name: 'materialMonthPass',
-    meta: {
-      title: '胶料月合格率统计'
-      // permissionName: 'product_inventory'
-    }
-  },
-  {
-    path: 'material-day-pass',
-    component: () => import('@/views/quality_management/material_day_pass'),
-    name: 'materialDayPass',
-    meta: {
-      title: '胶料日合格率统计'
-      // permissionName: 'product_inventory'
-    }
-  },*/
-  {
-    path: 'inferior-quality-product-manage',
-    component: () => import('@/views/quality_management/inferior_quality_product_manage'),
-    name: 'InferiorQualityProductManage',
-    meta: {
-      title: '不合格处理'
-    }
-  }, {
-    path: 'unqualified-treatment-opinions-manage',
-    component: () => import('@/views/quality_management/unqualified_treatment_opinions_manage'),
-    name: 'UnqualifiedTreatmentOpinionsManage',
-    meta: {
-      title: '不合格处理意见管理'
-    }
-  }, {
-    path: 'details',
-    component: () => import('@/views/quality_management/details'),
-    name: 'Details',
-    meta: {
-      title: '胶料快检详细信息'
-      // permissionName: 'product_inventory'
-    }
-  },
-  {
-    path: 'check-synthesize-manage',
-    component: () => import('@/views/quality_management/check_synthesize_manage'),
-    name: 'CheckSynthesizeManage',
-    meta: {
-      title: '快检信息综合管理'
-    }
-  }
   ]
 },
 {
