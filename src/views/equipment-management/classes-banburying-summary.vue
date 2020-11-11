@@ -43,38 +43,36 @@
       border
     >
       <el-table-column
+        :key="1"
         type="index"
         label="No"
       />
       <el-table-column
+        :key="2"
         :label="search.dimension === 3?'月份':search.dimension === 1?'班次':'时间'"
       >
         <template slot-scope="scope">
-          <span v-if="search.dimension === 3">{{ setMonth(scope.row.month) }}</span>
-          <span v-if="search.dimension === 1&&scope.row.classes">
-            {{ (Object.prototype.hasOwnProperty.call(scope.row, 'factory_date')?
-              scope.row.factory_date:
-              scope.row.end_time__date)
-              + ' / '+ scope.row.classes }}</span>
-          <span v-if="search.dimension === 2">
-            {{ Object.prototype.hasOwnProperty.call(scope.row, 'factory_date')?
-              scope.row.factory_date:scope.row. end_time__date }}
-          </span>
+          <span>{{ scope.row.date }}</span>
+          <span v-if="search.dimension === 1">/{{ scope.row.classes }}</span>
         </template>
       </el-table-column>
       <el-table-column
+        :key="3"
         prop="equip_no"
         label="设备编码"
       />
       <el-table-column
+        :key="4"
         prop="product_no"
         label="胶料编码"
       />
       <el-table-column
+        :key="5"
         prop="total_trains"
         label="总车数"
       />
       <el-table-column
+        :key="6"
         prop="total_time"
         label="总耗时/min"
       >
@@ -84,6 +82,7 @@
       </el-table-column>
       <el-table-column
         v-if="Number(search.day_type) === 2&&search.dimension === 1"
+        :key="7"
         label="总时间/min"
       >
         <template slot-scope="{row}">
@@ -91,6 +90,7 @@
         </template>
       </el-table-column>
       <el-table-column
+        :key="8"
         label="单车最小耗时/min"
       >
         <template slot-scope="{row}">
@@ -98,7 +98,7 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="max_train_time"
+        :key="9"
         label="单车最大耗时/min"
       >
         <template slot-scope="{row}">
@@ -106,19 +106,20 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="avg_train_time"
+        :key="10"
         label="单车平均耗时/min"
       >
         <template slot-scope="{row}">
-          {{ setUse(row.total_time,row.total_trains) }}
+          {{ (setUse(row.total_time,row.total_trains,false)) |setTimeMin }}
         </template>
       </el-table-column>
       <el-table-column
         v-if="Number(search.day_type) === 2&&search.dimension === 1"
+        :key="11"
         label="利用率"
       >
         <template slot-scope="{row}">
-          {{ (setUse(row.total_time,row.classes_time)) }}
+          {{ (setUse(row.total_time,row.classes_time,true))+ '%' }}
         </template>
       </el-table-column>
     </el-table>
@@ -204,11 +205,18 @@ export default {
       this.getList()
       this.search.page = 1
     },
-    setUse(total_time, classes_time) {
+    setUse(total_time, classes_time, bool) {
       if (!total_time || !classes_time) return 0
       const a = parseFloat(total_time / classes_time).toFixed(10)
-      const num = (a.substring(0, a.lastIndexOf('.') + 2) * 100).toFixed(0)
-      return num + '%'
+      const val = a.substring(0, a.lastIndexOf('.') + 2)
+      console.log(val, 'val')
+      let num
+      if (bool) {
+        num = (val * 100).toFixed(0)
+      } else {
+        num = Number(val).toFixed(0)
+      }
+      return num
     }
   }
 }
