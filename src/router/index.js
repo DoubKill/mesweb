@@ -416,7 +416,7 @@ export const asyncRoutes = [{
       },
       name: 'quick-check',
       meta: {
-        title: '设备管理'
+        title: '快检标准管理'
       },
       children: [
         {
