@@ -70,8 +70,8 @@
           <el-button
             icon="el-icon-search"
             type="text"
-            size="small"
-            style="float: right; width: 30%"
+            size="mini"
+            style="float: right; width: 25%"
             @click="clickProductNo(scope.row)"
           />
         </template>
