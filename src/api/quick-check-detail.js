@@ -16,6 +16,16 @@ export function materialTestOrders(query) {
   })
 }
 
+export function testResultHistory(test_order_id) {
+  return request({
+    url: API.testResultHistoryUrl,
+    method: 'get',
+    params: {
+      test_order_id
+    }
+  })
+}
+
 export function palletFeedTest(query) {
   return request({
     url: API.PalletFeedTestUrl,
