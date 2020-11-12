@@ -41,7 +41,7 @@
               v-model="valItem.checkedC"
               :label="itemData"
               :disabled="!itemData.allowed"
-              @change="changeMethods"
+              @change="changeMethods(valItem.test_indicator)"
             >
               {{ itemData.name }}
             </el-radio>
@@ -103,11 +103,12 @@
             :label="itemChild.name"
           >
             <template
+              v-if="itemChild.name"
               slot-scope="scope"
             >
               <el-input
-                v-if="scope.row._list[itemTa.id][itemChild.name]"
-                v-model="scope.row._list[changeTable.id][itemChild.name].value"
+                v-if="scope.row._list[itemTa.test_indicator]"
+                v-model="scope.row._list[itemTa.test_indicator][itemChild.name].value"
                 placeholder="请输入检测值"
               />
             </template>
@@ -230,21 +231,22 @@ export default {
         //
       }
     },
-    changeMethods() {
-      // test_indicator_name
+    changeMethods(test_indicator) {
       const arr = this.tableDataStyle.filter(D =>
         JSON.stringify(D.checkedC) !== '{}'
       )
       this.arr = arr
       this.changeTable = deepClone(arr)
-      setDataChild(this)
+
+      setDataChild(this, test_indicator)
     },
     clearRadio(val, index) {
       this.tableDataStyle[index].checkedC = {}
       const arr = this.tableDataStyle.filter(D => {
         return JSON.stringify(D.checkedC) !== '{}'
       })
-      this.changeTable = arr
+      this.changeTable = deepClone(arr)
+      setDataChild(this)
     },
     currentChange(page) {
       this.search.page = page
@@ -322,7 +324,6 @@ export default {
       try {
         if (this.tableDataChild.length === 0) return
         this.tableDataChild.forEach((D, i) => {
-          console.log(D, 6666)
           const arrChild = []
           if (!D.lot_no) {
             this.$message.error('收皮条码不能为空！')
@@ -368,39 +369,31 @@ export default {
   }
 }
 
-function setDataChild(_this) {
+function setDataChild(_this, test_indicator) {
+  if (_this.changeTable.length === 0) {
+    _this.tableDataChild.forEach(dd => {
+      dd._list = {}
+    })
+  }
+  const newObj = {}
+
   _this.changeTable.forEach((D, index) => {
-    const newObj = {}
     const arr1 = deepClone(D.checkedC.data_points)
     const obj = {}
+    const newObjChild = {}
+
     arr1.forEach((data, i) => {
       _this.$set(obj, 'test_indicator_name', D.test_indicator)
       _this.$set(obj, 'data_point_name', data.name)
       _this.$set(obj, 'test_method_name', D.checkedC.name)
       _this.$set(obj, 'value', '')
-      _this.$set(newObj, data.name, obj)
+      const _obj = deepClone(obj)
+      _this.$set(newObjChild, data.name, _obj)
     })
-
-    _this.tableDataChild.forEach(dd => {
-      if (dd._list) {
-        if (dd._list[D.test_type_id]) {
-          Object.assign(newObj, dd._list[D.test_type_id])
-        }
-      }
-
-      const aaaaa = deepClone(newObj)
-      const _obj = {}
-      _this.$set(_obj, D.test_type_id, {
-        ...aaaaa,
-        // 试验方法
-        testMode: ''
-      })
-      if (!dd._list) {
-        _this.$set(dd, '_list', {})
-      }
-      const ccc = Object.assign({}, dd._list, _obj)
-      _this.$set(dd, '_list', ccc)
-    })
+    _this.$set(newObj, D.test_indicator, newObjChild)
+  })
+  _this.tableDataChild.forEach(dd => {
+    _this.$set(dd, '_list', newObj)
   })
 }
 </script>
