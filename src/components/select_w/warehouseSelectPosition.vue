@@ -1,9 +1,9 @@
 <template>
   <div>
-    <!-- 仓库下拉 -->
+    <!-- 仓库位置下拉 -->
     <el-select
       v-model="value"
-      placeholder="请选择仓库"
+      placeholder="请选择仓库位置"
       :loading="loading"
       :clearable="isClear"
       @visible-change="visibleChange"
@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { warehouseInfo } from '@/api/base_w'
+import { stationInfoWarehouse } from '@/api/base_w'
 export default {
   props: {
     //  created里面加载,是否默认显示第一个
@@ -42,7 +42,7 @@ export default {
     return {
       value: this.defaultVal,
       loading: false,
-      options: ['终炼胶库', '线边库', '原材料库']
+      options: []
     }
   },
   watch: {
@@ -60,7 +60,7 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const data = await warehouseInfo('get', null, { params: { all: 1 }})
+        const data = await stationInfoWarehouse('get', null, { params: { all: 1 }})
         this.options = data.results || []
         this.loading = false
       } catch (e) {

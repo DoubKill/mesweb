@@ -157,10 +157,12 @@ export default {
       loadingBtn: false,
       rowVal: {},
       warehouseName: '终炼胶库',
+      // 仓库id
       warehouseInfo: 1
     }
   },
   created() {
+    this.getListWrehouseInfo()
     this.getList()
     // this.search.name = this.warehouseName
   },
@@ -175,6 +177,13 @@ export default {
         this.loading = false
       } catch (error) {
         this.loading = false
+      }
+    },
+    async getListWrehouseInfo() {
+      try {
+        // const data = await putPlanManagement('get', null, { params: this.search })
+      } catch (error) {
+        //
       }
     },
     currentChange(page) {

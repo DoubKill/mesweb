@@ -150,5 +150,9 @@ export default {
   MaterialCount: '/api/v1/inventory/material_count/',
   // 物料出入库履历列表
   InventoryLog: '/api/v1/inventory/inventory-log/',
-  PalletTrainsFeedbacks: '/api/v1/production/pallet-trains-feedbacks/'
+  PalletTrainsFeedbacks: '/api/v1/production/pallet-trains-feedbacks/',
+  // 仓库
+  WarehouseInfo: '/api/v1/inventory/warehouse-info/',
+  // 仓库位置
+  StationInfoWarehouse: '/api/v1/inventory/station-info/'
 }

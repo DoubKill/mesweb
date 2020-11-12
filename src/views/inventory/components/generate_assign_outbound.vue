@@ -5,6 +5,9 @@
         {{ warehouseName }}
         <!-- <warehouseSelect @changSelect="warehouseSelect" /> -->
       </el-form-item>
+      <el-form-item label="仓库名称">
+        <stationInfoWarehouse />
+      </el-form-item>
       <el-form-item label="物料编码">
         <el-input v-model="getParams.material_no" @input="changeSearch" />
       </el-form-item>
@@ -73,9 +76,10 @@
 import { getMaterialInventoryManage } from '@/api/material-inventory-manage'
 // import materielTypeSelect from '@/components/select_w/materielTypeSelect'
 import page from '@/components/page'
+import stationInfoWarehouse from '@/components/select_w/warehouseSelectPosition'
 import { mapGetters } from 'vuex'
 export default {
-  components: { page },
+  components: { page, stationInfoWarehouse },
   props: {
     warehouseName: {
       type: String,
