@@ -151,10 +151,9 @@ export default {
   MaterialCount: '/api/v1/inventory/material_count/',
   // 物料出入库履历列表
   InventoryLog: '/api/v1/inventory/inventory-log/',
-
+  PalletTrainsFeedbacks: '/api/v1/production/pallet-trains-feedbacks/',
   // 仓库名
   WarehouseNamesUrl: '/api/v1/inventory/warehouse-info/warehouse_names/',
-
   // 仓库信息
   WarehouseInfoUrl: '/api/v1/inventory/warehouse-info/',
 
@@ -164,7 +163,5 @@ export default {
 
   WarehouseMaterialTypeUrl: '/api/v1/inventory/warehouse-material-type/',
 
-  MaterialTypesUrl: BasicsUrl + 'global-codes/?all=1&class_name=物料类型',
-
-  PalletTrainsFeedbacks: '/api/v1/production/pallet-trains-feedbacks/'
+  MaterialTypesUrl: BasicsUrl + 'global-codes/?all=1&class_name=物料类型'
 }

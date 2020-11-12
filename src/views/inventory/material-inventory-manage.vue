@@ -6,7 +6,8 @@
         <!-- <el-input v-model="getParams.material_type" @input="changeSearch" /> -->
       </el-form-item>
       <el-form-item label="仓库名称">
-        <el-select
+        <warehouseSelect :created-is="true" @changSelect="changeWarehouse" />
+        <!-- <el-select
           v-model="getParams.warehouse_name"
           placeholder="请选择"
           @change="changeSearch"
@@ -17,7 +18,7 @@
             :label="item"
             :value="item"
           />
-        </el-select>
+        </el-select> -->
       </el-form-item>
       <el-form-item label="物料编码">
         <el-input v-model="getParams.material_no" @input="changeSearch" />
@@ -55,10 +56,11 @@
 <script>
 import { getMaterialInventoryManage } from '@/api/material-inventory-manage'
 import materielTypeSelect from '@/components/select_w/materielTypeSelect'
+import warehouseSelect from '@/components/select_w/warehouseSelect'
 import page from '@/components/page'
 import { mapGetters } from 'vuex'
 export default {
-  components: { page, materielTypeSelect },
+  components: { page, materielTypeSelect, warehouseSelect },
   data() {
     return {
       tableData: [],
@@ -67,7 +69,7 @@ export default {
         material_type: '', // 物料类型
         material_no: '', // 物料编号
         container_no: '', // 托盘号
-        warehouse_name: '终炼胶库' // 仓库名称
+        warehouse_name: '' // 仓库名称
       },
       warehouseNameOptions: ['线边库', '终炼胶库', '原材料库'],
       currentPage: 1,
@@ -79,7 +81,7 @@ export default {
   },
   created() {
     this.permissionObj = this.permission
-    this.getTableData()
+    // this.getTableData()
   },
   methods: {
     getTableData() {
@@ -100,6 +102,11 @@ export default {
     },
     changeMaterialType(data) {
       this.getParams.material_type = data
+      this.getParams.page = 1
+      this.getTableData()
+    },
+    changeWarehouse(data) {
+      this.getParams.warehouse_name = data ? data.name : ''
       this.getParams.page = 1
       this.getTableData()
     }
