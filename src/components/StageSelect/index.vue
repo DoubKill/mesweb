@@ -7,16 +7,16 @@
     @visible-change="visibleChange"
   >
     <el-option
-      v-for="item in stationTypeOptions"
+      v-for="item in stageOptions"
       :key="item.id"
       :label="item.global_name"
-      :value="item.id"
+      :value="item.global_name"
     />
   </el-select>
 </template>
 
 <script>
-import { stationTypes } from '@/api/warehouse'
+import { stage_global_url } from '@/api/display_static_fun'
 export default {
   model: {
     prop: 'id',
@@ -31,23 +31,20 @@ export default {
   },
   data() {
     return {
-      stationTypeOptions: []
+      stageOptions: []
     }
   },
   created() {
-    this.getStationTypes()
+    this.getStageOptions()
   },
   methods: {
-    async getStationTypes() {
-      const response = await stationTypes()
-      this.stationTypeOptions = response.results
-    //   stationTypes().then(response => {
-    //     this.stationTypeOptions = response.results
-    //   })
+    async getStageOptions() {
+      const response = await stage_global_url('get')
+      this.stageOptions = response.results
     },
     visibleChange(visible) {
       if (visible) {
-        this.getStationTypes()
+        this.getStageOptions()
       }
     }
   }

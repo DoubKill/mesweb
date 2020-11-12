@@ -89,6 +89,7 @@ export default {
 
   TestTypeDataUrl: '/api/v1/quality/test-indicator-data-points/',
   MaterialTestOrdersUrl: '/api/v1/quality/material-test-orders/',
+  testResultHistoryUrl: '/api/v1/quality/test-result-history/',
   // 胶料快检判定基准管理列表
   MaterialTestTypes: '/api/v1/quality/material-test-indicators-tab/',
   // 试验指标列表
