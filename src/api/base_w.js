@@ -389,20 +389,4 @@ export function palletTrainsFeedbacks(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
-export function warehouseInfo(method, id, data = {}) {
-  const obj = {
-    url: id ? API.WarehouseInfo + id + '/' : API.WarehouseInfo,
-    method: method
-  }
-  Object.assign(obj, data)
-  return request(obj)
-}
-export function stationInfoWarehouse(method, id, data = {}) {
-  const obj = {
-    url: id ? API.StationInfoWarehouse + id + '/' : API.StationInfoWarehouse,
-    method: method
-  }
-  Object.assign(obj, data)
-  return request(obj)
-}
 

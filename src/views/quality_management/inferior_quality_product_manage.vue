@@ -221,7 +221,9 @@ export default {
     },
     confirm(row) {
       editMaterialDeal('patch', row.id, {
-        status: '已处理'
+        status: '已处理',
+        material_no: row.product_info.product_no,
+        warehouse_info: 1
       }).then(() => {
         this.currentChange(this.getParams.page)
         this.$notify({
@@ -234,7 +236,9 @@ export default {
     },
     reject(row) {
       editMaterialDeal('patch', row.id, {
-        status: '待处理'
+        status: '待处理',
+        material_no: row.product_info.product_no,
+        warehouse_info: 1
         // deal_suggestion: '',
         // be_warehouse_out: false,
         // warehouse_out_time: null
@@ -249,6 +253,7 @@ export default {
       })
     },
     updateDispose() {
+      console.log(this.disposeForm, 'here')
       this.$refs['disposeForm'].validate(valid => {
         if (valid) {
           const {
@@ -260,7 +265,9 @@ export default {
             deal_suggestion,
             be_warehouse_out,
             warehouse_out_time,
-            status: '待确认'
+            status: '待确认',
+            material_no: this.disposeForm.product_info.product_no,
+            warehouse_info: 1
           }).then(() => {
             this.dialogDisposeVisible = false
             this.currentChange(this.getParams.page)

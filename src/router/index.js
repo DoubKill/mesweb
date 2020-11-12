@@ -316,6 +316,15 @@ export const asyncRoutes = [{
   },
   children: [
     {
+      path: 'warehouse-info',
+      component: () => import('@/views/inventory/warehouse_info.vue'),
+      name: 'WarehouseInfo',
+      meta: {
+        title: '仓库信息管理',
+        permissionName: 'material_inventory'
+      }
+    },
+    {
       path: 'material',
       component: () => import('@/views/material_repertory_manage/index'),
       name: 'MaterialRepertoryManage',

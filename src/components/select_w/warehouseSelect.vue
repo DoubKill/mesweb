@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { warehouseInfo } from '@/api/base_w'
+import { WarehouseInfoUrl } from '@/api/warehouse'
 export default {
   props: {
     //  created里面加载,是否默认显示第一个
@@ -60,7 +60,7 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const data = await warehouseInfo('get', null, { params: { all: 1 }})
+        const data = await WarehouseInfoUrl('get', null, { params: { all: 1 }})
         this.options = data.results || []
         this.loading = false
       } catch (e) {

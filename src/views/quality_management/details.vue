@@ -41,8 +41,12 @@
       border
       fit
       style="width: 100%"
+      row-key="index"
+      default-expand-all
+      :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >
-      <el-table-column type="index" label="No" />
+      >
+      <el-table-column label="No" align="center" prop="index" />
       <el-table-column label="生产信息" align="center">
         <el-table-column label="生产计划号" width="95" prop="plan_classes_uid" />
         <el-table-column label="收皮条码" prop="lot_no" />
@@ -54,34 +58,34 @@
       </el-table-column>
       <el-table-column v-for="header in testTypeList.filter(type => type.show)" :key="header.test_type_name" align="center" :label="header.test_type_name">
         <el-table-column v-for="subHeader in header.data_indicator_detail.filter(item => item.show)" :key="header.test_type_name + subHeader.detail" width="110" :label="subHeader.detail" align="center">
-          <template v-if="scope.row.test_indicator_list_[header.test_type_name][subHeader.detail][0]" slot-scope="scope">
-            <el-popover
-              placement="top-start"
-              trigger="hover"
-            >
-              <el-table border :data="scope.row.test_indicator_list_[header.test_type_name][subHeader.detail][1]">
-                <el-table-column label="检测次数" prop="test_times" />
-                <el-table-column label="检测值" prop="value" />
-                <el-table-column label="试验方法名称" prop="test_method_name" />
-                <el-table-column label="等级" prop="level" />
-                <el-table-column label="结果" prop="mes_result" />
-              </el-table>
-              <el-button slot="reference">{{
-                scope.row.test_indicator_list_[header.test_type_name][subHeader.detail][0].value
-              }}</el-button>
-            </el-popover>
-          </template>
+          <el-table-column label="检测次数" align="center">
+            <template slot-scope="{ row }">
+              {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'test_times') }}
+              <!-- {{ row.order_results[header.test_type_name][subHeader.detail].value }} -->
+            </template>
+          </el-table-column>
+          <el-table-column label="检测值" align="center">
+            <template slot-scope="{ row }">
+              {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'value') }}
+              <!-- {{ row.order_results[header.test_type_name][subHeader.detail].value }} -->
+            </template>
+          </el-table-column>
+          <el-table-column label="等级" align="center">
+            <template slot-scope="{ row }">
+              {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level') }}
+            </template>
+          </el-table-column>
         </el-table-column>
         <el-table-column label="等级" align="center">
           <template slot-scope="{row}">
-            {{ row.test_indicator_list_[header.test_type_name].maxLevel }}
+            <!-- {{ row.test_indicator_list_[header.test_type_name].maxLevel }} -->
           </template>
         </el-table-column>
-        <el-table-column label="检测结果" align="center">
+        <!-- <el-table-column label="检测结果" align="center">
           <template slot-scope="{row}">
             {{ row.test_indicator_list_[header.test_type_name].mes_result }}
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table-column>
       <el-table-column label="综合等级" prop="maxLevel" />
       <el-table-column label="综合检测结果" width="110" prop="mes_result" />
@@ -91,7 +95,6 @@
         </template>
       </el-table-column> -->
     </el-table>
-    <page :total="total" :current-page="getParams.page" @currentChange="currentChange" />
     <el-dialog
       title="选择过滤"
       :visible.sync="filterDialogVisible"
@@ -134,7 +137,6 @@
 
 <script>
 import dayjs from 'dayjs'
-import Page from '@/components/page'
 import PlanSchedulesSelect from '@/components/PlanSchedulesSelect'
 import EquipSelect from '@/components/EquipSelect'
 import ClassSelect from '@/components/ClassSelect'
@@ -143,12 +145,10 @@ import TestCard from '@/components/TestCard'
 import { testTypes, materialTestOrders } from '@/api/quick-check-detail'
 
 export default {
-  components: { PlanSchedulesSelect, EquipSelect, ClassSelect, ProductNoSelect, TestCard, Page },
+  components: { PlanSchedulesSelect, EquipSelect, ClassSelect, ProductNoSelect, TestCard },
   data() {
     return {
-      total: 0,
       getParams: {
-        page: 1,
         day_time: dayjs().format('YYYY-MM-DD'),
         equip_no: null,
         classes: null,
@@ -175,22 +175,18 @@ export default {
   },
   methods: {
     dayTimeChanged() {
-      this.getMaterialTestOrdersPage1()
+      this.getMaterialTestOrders()
     },
     equipSelected(equip) {
       this.getParams.equip_no = equip ? equip.equip_no : null
-      this.getMaterialTestOrdersPage1()
+      this.getMaterialTestOrders()
     },
     classSelected(className) {
       this.getParams.classes = className || null
-      this.getMaterialTestOrdersPage1()
+      this.getMaterialTestOrders()
     },
     productBatchingChanged(val) {
       this.getParams.product_no = val ? val.stage_product_batch_no : null
-      this.getMaterialTestOrdersPage1()
-    },
-    getMaterialTestOrdersPage1() {
-      this.getParams.page = 1
       this.getMaterialTestOrders()
     },
     matchedTestData(row, header, subHeader) {
@@ -216,63 +212,63 @@ export default {
       const data = [maxTestTimesCheck, subCheckGroup]
       return data
     },
-    currentChange(page) {
-      this.getParams.page = page
-      this.getMaterialTestOrders()
-    },
     async getMaterialTestOrders() {
       this.listLoading = true
       try {
-        this.testOrders = []
         const response = await materialTestOrders(this.getParams)
-        this.total = response.count
-        this.testOrders = response.results.map(result => {
+        // console.log(response, 'response')
+        const testOrders_ = response.map(result => {
           return {
             ...result,
             class_group: `${result.production_class}/${result.production_group}`
           }
         })
-        this.testOrders.forEach(row => {
-          row.maxLevel = 0
-          row.mes_result = '未检测'
-          row.test_indicator_list_ = {}
-          this.testTypeList.forEach(header => {
-            row.test_indicator_list_[header.test_type_name] = {}
-            let maxLevel = 0
-            let mes_result = '未检测'
-            header.data_indicator_detail.forEach(subHeader => {
-              const matchedTestData = this.matchedTestData(row, header, subHeader)
-              row.test_indicator_list_[header.test_type_name][subHeader.detail] = matchedTestData
-              if (matchedTestData[0] && matchedTestData[0].level > maxLevel) {
-                maxLevel = matchedTestData[0].level
-                mes_result = matchedTestData[0].mes_result
-              }
-              // if (matchedTestData[0] && matchedTestData[0].mes_result === '合格') {
-              //   if (mes_result === '未检测') {
-              //     mes_result = '合格' // 覆盖默认值
-              //   }
-              // }
-              // if (matchedTestData[0] && matchedTestData[0].mes_result === '不合格') {
-              //   mes_result = '不合格'
-              // }
-            })
-            row.test_indicator_list_[header.test_type_name]['maxLevel'] = maxLevel
-            row.test_indicator_list_[header.test_type_name]['mes_result'] = mes_result
-            if (maxLevel > row.maxLevel) {
-              row.maxLevel = maxLevel
-              row.mes_result = mes_result
+        let index = 1
+        const unfoldTestOrders = []
+        testOrders_.forEach(row => {
+          for (const testType in row.order_results) {
+            for (const dataPoint in row.order_results[testType]) {
+              row.index = index++
+              const dataPointRow = Object.assign({}, row)
+              dataPointRow.order_results = {}
+              dataPointRow.order_results[testType] = {}
+              dataPointRow.order_results[testType][dataPoint] = row.order_results[testType][dataPoint][0]
+              unfoldTestOrders.push(dataPointRow)
             }
-            // if (mes_result === '合格' && row.mes_result === '未检测') {
-            //   row.mes_result = '合格' // 覆盖默认值
-            // }
-            // if (mes_result === '不合格') {
-            //   row.mes_result = '不合格'
-            // }
-          })
+          }
         })
+        this.testOrders = unfoldTestOrders
+        console.log(this.testOrders)
+
+        // this.testOrders.forEach(row => {
+        //   row.maxLevel = 0
+        //   row.mes_result = '未检测'
+        //   row.test_indicator_list_ = {}
+        //   this.testTypeList.forEach(header => {
+        //     row.test_indicator_list_[header.test_type_name] = {}
+        //     let maxLevel = 0
+        //     let mes_result = '未检测'
+        //     header.data_indicator_detail.forEach(subHeader => {
+        //       const matchedTestData = this.matchedTestData(row, header, subHeader)
+        //       row.test_indicator_list_[header.test_type_name][subHeader.detail] = matchedTestData
+        //       if (matchedTestData[0] && matchedTestData[0].level > maxLevel) {
+        //         maxLevel = matchedTestData[0].level
+        //         mes_result = matchedTestData[0].mes_result
+        //       }
+        //     })
+        //     row.test_indicator_list_[header.test_type_name]['maxLevel'] = maxLevel
+        //     row.test_indicator_list_[header.test_type_name]['mes_result'] = mes_result
+        //     if (maxLevel > row.maxLevel) {
+        //       row.maxLevel = maxLevel
+        //       row.mes_result = mes_result
+        //     }
+        //   })
+        // })
       // eslint-disable-next-line no-empty
       } catch (e) {}
       this.listLoading = false
+
+      console.log(this.testOrders, 'this.testOrders')
     },
     async getTestTypes() {
       try {
@@ -298,6 +294,10 @@ export default {
       this.$nextTick(() => {
         this.$refs['testCard'].setTestData(row)
       })
+    },
+    getDataPoint(testType, dataPoint, data, key) {
+      const result = data[testType] ? (data[testType][dataPoint] ? data[testType][dataPoint] : null) : null
+      return result ? result[key] : ''
     }
     // planScheduleSelected(planScheduleId) {
     //   console.log(planScheduleId)
