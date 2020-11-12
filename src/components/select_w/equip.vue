@@ -27,6 +27,7 @@ export default {
       type: String,
       default: null
     },
+    // 在created里面加载，并默认选中第一个
     isCreated: {
       type: Boolean,
       default: false
@@ -40,7 +41,7 @@ export default {
   computed: {
     _equip_no: {
       get() {
-        return this.equip_no_props
+        return this.equip_no_props || ''
       },
       set(equip_no) {
         this.$emit('update:equip_no_props', equip_no)

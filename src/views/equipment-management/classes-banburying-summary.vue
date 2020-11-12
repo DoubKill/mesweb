@@ -207,16 +207,14 @@ export default {
     },
     setUse(total_time, classes_time, bool) {
       if (!total_time || !classes_time) return 0
-      const a = parseFloat(total_time / classes_time).toFixed(10)
-      const val = a.substring(0, a.lastIndexOf('.') + 2)
-      console.log(val, 'val')
-      let num
+      let a
       if (bool) {
-        num = (val * 100).toFixed(0)
+        a = parseFloat(total_time / classes_time * 100).toFixed(10)
       } else {
-        num = Number(val).toFixed(0)
+        a = parseFloat(total_time / classes_time).toFixed(10)
       }
-      return num
+      const val = a.substring(0, a.lastIndexOf('.') + 2)
+      return Number(val)
     }
   }
 }

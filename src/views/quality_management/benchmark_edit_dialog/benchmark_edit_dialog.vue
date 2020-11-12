@@ -21,10 +21,12 @@
             {{ objEdit.test_method_name }}
           </el-form-item>
         </el-form>
-        <div style="margin-bottom:5px;">
+        <div style="margin-bottom:5px;line-height:19px">
           提示：请每个数据点最少一个合格检测结果、等级不能重复、
           <br>
-          每一排上下限请给个连续区间范围(比如：第一排1-10;第二排11-100,以此类推)
+          每一排上下限请给个连续区间范围(比如：第一排1-10;第二排11-100;第三排101-200,以此类推)
+          <br>
+          请单行保存
         </div>
         <el-table
           :data="tableData"
@@ -35,7 +37,11 @@
             label="数据点名称"
           >
             <template slot-scope="scope">
-              <el-select v-model="scope.row.data_point" placeholder="请选择">
+              <el-select
+                v-model="scope.row.data_point"
+                placeholder="请选择"
+                @change="changeMonitor(scope.$index)"
+              >
                 <el-option
                   v-for="item in objEdit.data_points"
                   :key="item.id"
@@ -54,6 +60,7 @@
                   v-model="scope.row.upper_limit"
                   controls-position="right"
                   :min="scope.row.lower_limit?keepTwo(scope.row.lower_limit +0.01):-Infinity"
+                  @change="changeMonitor(scope.$index)"
                 />
               </div>
             </template>
@@ -67,6 +74,7 @@
                   v-model="scope.row.lower_limit"
                   controls-position="right"
                   :max="scope.row.upper_limit?keepTwo(scope.row.upper_limit-0.01):Infinity"
+                  @change="changeMonitor(scope.$index)"
                 />
               </div>
             </template>
@@ -78,7 +86,7 @@
               <grade-manage-select
                 :created-is="true"
                 :default-val="scope.row.level"
-                @changSelect="changSelectLevel($event,scope.row)"
+                @changSelect="changSelectLevel($event,scope.row,scope.$index)"
               />
               <span v-if="false">{{ scope.row }}</span>
             </template>
@@ -89,6 +97,20 @@
             <template slot-scope="scope">
               <!-- <el-input v-model="scope.row.result" placeholder="请输入检测结果" /> -->
               {{ scope.row.result }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="更新人"
+          >
+            <template slot-scope="scope">
+              {{ scope.row.last_updated_username || '--' }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="更新时间"
+          >
+            <template slot-scope="scope">
+              {{ scope.row.last_updated_date || '--' }}
             </template>
           </el-table-column>
           <el-table-column
@@ -134,6 +156,7 @@ export default {
   },
   data() {
     return {
+      changeRow: {},
       dialogVisible: false,
       loading: true,
       disabledSubmit: false,
@@ -150,6 +173,10 @@ export default {
     }
   },
   methods: {
+    changeMonitor(index) {
+      this.changeRow.bool = true
+      this.changeRow.index = index
+    },
     handleClose(done) {
       this.tableData = []
       this.$emit('handleCloseEdit')
@@ -177,6 +204,7 @@ export default {
 
         this.setRange(row)
 
+        this.changeRow.bool = false
         this.disabledSubmit = true
         const _api = row.id ? 'put' : 'post'
         const id = row.id || null
@@ -241,14 +269,22 @@ export default {
     },
     addCell() {
       this.tableData.push({})
+      if (this.changeRow.bool) {
+        this.$message({
+          message: (this.changeRow.index + 1) + '行数据未保存，保存会刷新页面',
+          type: 'info',
+          offset: 150
+        })
+      }
     },
     keepTwo(val) {
       // 不四舍五入
       return Math.floor(val * 100) / 100
     },
-    changSelectLevel(val, row) {
+    changSelectLevel(val, row, index) {
       this.$set(row, 'result', val.deal_result)
       this.$set(row, 'level', val.id)
+      this.changeMonitor(index)
     }
   }
 }
