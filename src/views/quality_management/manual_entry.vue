@@ -1,26 +1,19 @@
 <template>
-  <div v-loading="loading">
-    <!-- <el-button @click="viewTrial">8888</el-button> -->
+  <div v-loading="loading" class="manual_entry_style">
     <el-form :inline="true">
-      <el-form-item label="日期：">
+      <el-form-item label="工厂日期：">
         <el-date-picker
-          v-model="search.day_time"
+          v-model="search.factory_date"
           type="date"
           placeholder="选择日期"
           value-format="yyyy-MM-dd"
           @change="pageOne"
         />
       </el-form-item>
-      <!-- <el-form-item label="倒班规则：">
-        <plan-schedules-select
-          :day-time="search.Data"
-          @planScheduleSelected="planScheduleSelected"
-        />
-      </el-form-item> -->
       <el-form-item label="生产机台：">
         <equip-select
-          :equip_no_props="search.equip_no"
-          @changeSearch="changeSearch"
+          :equip_no_props.sync="search.equip_no"
+          @changeSearch="pageOne"
         />
       </el-form-item>
       <el-form-item label="班次：">
@@ -30,93 +23,41 @@
         <product-no-select @productBatchingChanged="productBatchingChanged" />
       </el-form-item>
     </el-form>
-    <el-row>
-      <el-col :span="12" class="rigthTable">
-        <el-table
-          :data="tableData"
-          :highlight-current-row="true"
-          @row-click="rowClick"
-        >
-          <el-table-column
-            label="生产信息"
-            align="center"
-          >
-            <el-table-column
-              prop="lot_no"
-              label="收皮条码"
-            />
-            <el-table-column
-              prop="product_no"
-              label="胶料编码"
-            />
-            <el-table-column
-              prop="classes"
-              label="班次"
-              width="60"
-            />
-            <el-table-column
-              prop="equip_no"
-              label="生产机台"
-              width="80"
-            />
-            <el-table-column label="车次" width="100">
-              <template slot-scope="scope">
-                {{ scope.row.begin_trains }}--{{ scope.row.end_trains }}
-              </template>
-            </el-table-column>
-          </el-table-column>
-        </el-table>
-        <page
-          :total="total"
-          :current-page="search.page"
-          @currentChange="currentChange"
-        />
-      </el-col>
-      <el-col :span="12">
-        <el-table
-          v-if="showTableDataChild"
-          :data="tableDataStyle"
-          border
-          class="rigthTable"
-          style=" margin-left:10px;"
-        >
-          <el-table-column
-            prop="test_indicator"
-            label="试验指标"
-            width="180"
-          />
-          <el-table-column label="试验方法">
-            <template v-if="scope.row.methods.length>0" slot-scope="scope">
-              <el-radio
-                v-for="(itemData,ik) in scope.row.methods"
-                :key="ik"
-                v-model="checkedC"
-                :label="itemData"
-                :disabled="!itemData.allowed"
-                @change="changeMethods($event,scope.row)"
-              >
-                {{ itemData.name }}
-              </el-radio>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-col>
-    </el-row>
-    <!-- <div
+    <el-table
+      v-if="tableDataStyle.length>0&&tableDataChild.length>0"
+      :data="[{}]"
+      border
       class="rigthTable"
-      style="width:47%"
-    />
-
-    <div class="rigthTable" /> -->
-
+      width="100%"
+    >
+      <div v-for="(valItem,i) in tableDataStyle" :key="i">
+        <el-table-column
+          :label="valItem.test_indicator"
+        >
+          <template v-if="valItem.methods.length>0">
+            <el-radio
+              v-for="(itemData,ik) in valItem.methods"
+              :key="ik"
+              v-model="valItem.checkedC"
+              :label="itemData"
+              :disabled="!itemData.allowed"
+              @change="changeMethods"
+            >
+              {{ itemData.name }}
+            </el-radio>
+            <span v-if="false">{{ scope.row }}</span>
+            <br>
+            <el-button style="margin-top:5px" size="mini" @click="clearRadio(valItem,i)">清除</el-button>
+          </template>
+        </el-table-column>
+      </div>
+    </el-table>
     <el-button
-      v-if="showTableDataChild"
       :loading="loadingBtn"
-      style="float:right;margin-bottom:5px;"
+      style="float:right;margin:10px 0"
       @click="submitTable"
     >保 存</el-button>
     <el-table
-      v-if="showTableDataChild"
       :data="tableDataChild"
       border
     >
@@ -150,37 +91,38 @@
           label="车次"
         />
       </el-table-column>
-      <el-table-column
-        v-if="changeTable.data_points&&changeTable.data_points.length>0"
-        :label="changeTable.test_indicator"
-        align="center"
-      >
+      <div v-for="(itemTa,iTa) in changeTable" :key="iTa">
         <el-table-column
-          v-for="(itemChild,indexChild) in changeTable.data_points"
-          :key="indexChild"
-          :label="itemChild.name"
+          v-if="JSON.stringify(itemTa.checkedC) !== '{}'"
+          :label="itemTa.test_indicator"
+          align="center"
         >
-          <template
-            v-if="itemChild"
-            slot-scope="scope"
+          <el-table-column
+            v-for="(itemChild,indexChild) in itemTa.checkedC.data_points"
+            :key="indexChild"
+            :label="itemChild.name"
           >
-            <el-input
-              v-if="scope.row._list[changeTable.id][itemChild.name]"
-              v-model="scope.row._list[changeTable.id][itemChild.name].value"
-              placeholder="请输入检测值"
-            />
-          </template>
+            <template
+              slot-scope="scope"
+            >
+              <el-input
+                v-if="scope.row._list[itemTa.id][itemChild.name]"
+                v-model="scope.row._list[changeTable.id][itemChild.name].value"
+                placeholder="请输入检测值"
+              />
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="试验方法"
+          >
+            <template slot-scope="scope">
+              {{ itemTa.checkedC.name }}
+              <span v-if="false">{{ scope.row }}</span>
+            </template>
+          </el-table-column>
         </el-table-column>
-        <el-table-column
-          label="试验方法"
-        >
-          <template slot-scope="scope">
-            {{ changeTable.name }}
-            <span v-if="false">{{ scope.row }}</span>
-          </template>
-        </el-table-column>
-      </el-table-column>
-      <el-table-column label="备注">
+      </div>
+      <el-table-column :key="changeTable.length+1" label="备注">
         <template slot-scope="scope">
           <el-input
             v-model="scope.row.note"
@@ -197,7 +139,6 @@
         </template>
       </el-table-column>
     </el-table>
-
     <view-dialog-trial
       :show="dialogVisible"
       @handleClose="dialogVisible = false"
@@ -206,16 +147,17 @@
 </template>
 
 <script>
-import { palletFeedBacksUrl, matTestIndicatorMethods, materialTestOrders } from '@/api/base_w'
+import { palletFeedBacksUrl, matTestIndicatorMethods, materialTestOrders, palletTrainsFeedbacks } from '@/api/base_w'
 import { setDate, deepClone } from '@/utils/index'
 // import planSchedulesSelect from '@/components/PlanSchedulesSelect'
 import equipSelect from '@/components/select_w/equip'
 import classSelect from '@/components/ClassSelect'
 import productNoSelect from '@/components/ProductNoSelect'
 import viewDialogTrial from '@/components/select_w/viewDialogTrial'
-import page from '@/components/page'
+// import manualEntryRadio from './manual_entry_components/index'
+// import page from '@/components/page'
 export default {
-  components: { page, equipSelect, classSelect, productNoSelect, viewDialogTrial },
+  components: { equipSelect, classSelect, productNoSelect, viewDialogTrial },
   data() {
     return {
       dialogVisible: false,
@@ -223,25 +165,47 @@ export default {
       total: 0,
       search: {
         ShiftRules: '',
-        day_time: setDate(),
+        factory_date: setDate(),
+        // factory_date: '2020-11-10',
         equip_no: '',
         classes: '',
-        productNo: '',
-        page: 1
+        product_no: ''
       },
       tableData: [],
       tableDataStyle: [],
       tableDataChild: [],
       showTableDataChild: false,
-      changeTable: {},
+      changeTable: [],
       loadingBtn: false,
-      checkedC: ''
+      arr: []
     }
   },
   mounted() {
-    this.getList()
+    // this.getList()
+    // this.getTestType()
   },
   methods: {
+    async getTableDataChild() {
+      try {
+        this.titleInfo(this.search.equip_no, '请输入生产机台')
+        this.titleInfo(this.search.classes, '请输入班次')
+        this.titleInfo(this.search.product_no, '请输入胶料')
+        this.titleInfo(this.search.factory_date, '请输入时间')
+        this.loading = true
+        const data = await palletTrainsFeedbacks('get', null, { params: this.search })
+        this.getTestType(this.search.product_no)
+        this.tableDataChild = data || []
+        this.loading = false
+      } catch (e) {
+        this.loading = false
+      }
+    },
+    titleInfo(val, error) {
+      if (!val && val !== 0) {
+        this.$message.info(error)
+        throw new Error(error)
+      }
+    },
     async getList() {
       this.clearData()
       this.showTableDataChild = false
@@ -259,30 +223,43 @@ export default {
       try {
         const data = await matTestIndicatorMethods('get', null, { params: { material_no: id }})
         this.tableDataStyle = data || []
+        this.tableDataStyle.forEach(D => {
+          this.$set(D, 'checkedC', {})
+        })
       } catch (e) {
         //
       }
     },
-    changeMethods(e, obj) {
-      this.changeTable = []
-      this.$set(e, 'test_indicator', obj.test_indicator)
-      this.$nextTick(() => {
-        this.changeTable = Object.assign({}, this.changeTable, e)
+    changeMethods() {
+      // test_indicator_name
+      const arr = this.tableDataStyle.filter(D =>
+        JSON.stringify(D.checkedC) !== '{}'
+      )
+      this.arr = arr
+      this.changeTable = deepClone(arr)
+      setDataChild(this)
+    },
+    clearRadio(val, index) {
+      this.tableDataStyle[index].checkedC = {}
+      const arr = this.tableDataStyle.filter(D => {
+        return JSON.stringify(D.checkedC) !== '{}'
       })
-      setDataChild(this, e)
+      this.changeTable = arr
     },
     currentChange(page) {
       this.search.page = page
       this.getList()
     },
     pageOne() {
-      this.search.page = 1
-      this.getList()
+      this.getTableDataChild()
+      this.tableDataStyle.forEach(D => {
+        D.checkedC = {}
+      })
+      this.changeTable = []
     },
-    changeSearch(id) {
-      this.search.equip_no = id
-      this.pageOne()
-    },
+    // changeSearch() {
+    //   this.pageOne()
+    // },
     planScheduleSelected(id) {
       this.search.ShiftRules = id
       this.pageOne()
@@ -311,7 +288,7 @@ export default {
     },
     clearData() {
       // 清除下面的数据
-      this.changeTable = {}
+      this.changeTable = []
       this.tableDataStyle = []
       this.tableDataChild = []
     },
@@ -343,7 +320,9 @@ export default {
     async submitTable() {
       const arr = []
       try {
+        if (this.tableDataChild.length === 0) return
         this.tableDataChild.forEach((D, i) => {
+          console.log(D, 6666)
           const arrChild = []
           if (!D.lot_no) {
             this.$message.error('收皮条码不能为空！')
@@ -369,7 +348,7 @@ export default {
             plan_classes_uid: D.plan_classes_uid,
             production_class: D.classes,
             production_equip_no: D.equip_no,
-            production_factory_date: D.end_time,
+            production_factory_date: D.factory_date,
             note: D.note,
             order_results: arrChild
           }
@@ -389,32 +368,63 @@ export default {
   }
 }
 
-function setDataChild(_this, e) {
-  const arr1 = deepClone(e.data_points)
-  const newObj = {}
-  arr1.forEach((data, i) => {
+function setDataChild(_this) {
+  _this.changeTable.forEach((D, index) => {
+    const newObj = {}
+    const arr1 = deepClone(D.checkedC.data_points)
     const obj = {}
-    _this.$set(obj, 'test_indicator_name', e.test_indicator)
-    _this.$set(obj, 'data_point_name', data.name)
-    _this.$set(obj, 'test_method_name', e.name)
-    _this.$set(obj, 'value', '')
-    _this.$set(newObj, data.name, obj)
-  })
-  _this.tableDataChild.forEach(dd => {
-    _this.$set(dd, '_list', {})
-    const arr = deepClone(newObj)
-    _this.$set(dd._list, e.id, {
-      ...arr,
-      // 试验方法
-      testMode: ''
+    arr1.forEach((data, i) => {
+      _this.$set(obj, 'test_indicator_name', D.test_indicator)
+      _this.$set(obj, 'data_point_name', data.name)
+      _this.$set(obj, 'test_method_name', D.checkedC.name)
+      _this.$set(obj, 'value', '')
+      _this.$set(newObj, data.name, obj)
+    })
+
+    _this.tableDataChild.forEach(dd => {
+      if (dd._list) {
+        if (dd._list[D.test_type_id]) {
+          Object.assign(newObj, dd._list[D.test_type_id])
+        }
+      }
+
+      const aaaaa = deepClone(newObj)
+      const _obj = {}
+      _this.$set(_obj, D.test_type_id, {
+        ...aaaaa,
+        // 试验方法
+        testMode: ''
+      })
+      if (!dd._list) {
+        _this.$set(dd, '_list', {})
+      }
+      const ccc = Object.assign({}, dd._list, _obj)
+      _this.$set(dd, '_list', ccc)
     })
   })
 }
 </script>
 
 <style lang="scss" scoped>
-.rigthTable{
-  overflow-y: scroll;
-   max-height: 400px;
+$border-color: #EBEEF5;
+$border-weight: 1px;
+.manual_entry_style{
+  .rigthTable{
+    // overflow-y: scroll;
+    // max-height: 400px;
+  }
+ .train-one {
+    border-color: $border-color;
+    .train-one-tr-banburying {
+      td {
+        // line-height: 20px;
+        padding: 10px;
+      }
+    }
+  }
+  .el-card{
+    display: inline-block;
+  }
 }
+
 </style>

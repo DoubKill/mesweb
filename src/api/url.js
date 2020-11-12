@@ -149,5 +149,6 @@ export default {
   // 查询可用库存数
   MaterialCount: '/api/v1/inventory/material_count/',
   // 物料出入库履历列表
-  InventoryLog: '/api/v1/inventory/inventory-log/'
+  InventoryLog: '/api/v1/inventory/inventory-log/',
+  PalletTrainsFeedbacks: '/api/v1/production/pallet-trains-feedbacks/'
 }

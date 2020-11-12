@@ -381,4 +381,12 @@ export function inventoryLog(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function palletTrainsFeedbacks(method, id, data = {}) {
+  const obj = {
+    url: id ? API.PalletTrainsFeedbacks + id + '/' : API.PalletTrainsFeedbacks,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 
