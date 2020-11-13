@@ -7,7 +7,7 @@
         />
       </el-form-item>
       <el-form-item style="float: right">
-        <el-button @click="handleCreateWarehouseInfo">新增</el-button>
+        <el-button v-permission="['warehouse', 'add']" @click="handleCreateWarehouseInfo">新增</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -21,19 +21,19 @@
       <el-table-column prop="no" label="仓库编号" align="center" />
       <el-table-column label="出库站点管理" align="center">
         <template slot-scope="{ row }">
-          <el-button size="mini" @click="showStations(row)">管理</el-button>
+          <el-button v-permission="['warehouse', 'change']" size="mini" @click="showStations(row)">管理</el-button>
         </template>
       </el-table-column>
       <el-table-column label="存储物料类型" align="center">
         <template slot-scope="{ row }">
-          <el-button size="mini" @click="showMaterialType(row)">管理</el-button>
+          <el-button v-permission="['warehouse', 'change']" size="mini" @click="showMaterialType(row)">管理</el-button>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center">
         <template slot-scope="{ row }">
           <el-button-group>
-            <el-button size="mini" @click="handleUpdateWarehouseInfo(row)">修改</el-button>
-            <el-button size="mini" @click="updateSIUseFlag(row)">{{ row.use_flag ? '弃用' : '启用' }}</el-button>
+            <el-button v-permission="['warehouse', 'change']" size="mini" @click="handleUpdateWarehouseInfo(row)">修改</el-button>
+            <el-button v-permission="['warehouse', 'change']" size="mini" @click="updateSIUseFlag(row)">{{ row.use_flag ? '弃用' : '启用' }}</el-button>
           </el-button-group>
         </template>
       </el-table-column>

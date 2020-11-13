@@ -5,7 +5,7 @@
         <detection-index @changeSelect="detectionChange" />
       </el-form-item>
       <el-form-item style="float: right">
-        <el-button @click="handleCreate">
+        <el-button v-permission="['test_method', 'add']" @click="handleCreate">
           创建试验方法
         </el-button>
       </el-form-item>
@@ -24,7 +24,7 @@
       <el-table-column label="操作" align="center">
         <template slot-scope="{row, $index}">
           <!-- <el-button size="mini" type="danger" @click="handleDelete(row,$index)">删除</el-button> -->
-          <el-button size="mini" @click="handleUpdate(row)">编辑</el-button>
+          <el-button v-permission="['test_method', 'change']" size="mini" @click="handleUpdate(row)">编辑</el-button>
         </template>
       </el-table-column>
     </el-table>

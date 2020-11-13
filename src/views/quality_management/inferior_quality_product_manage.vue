@@ -57,9 +57,9 @@
       <el-table-column label="状态" prop="status" />
       <el-table-column label="操作" width="160" align="center">
         <template slot-scope="{row}">
-          <el-button v-if="row.status==='待处理'" size="mini" @click="handleDispose(row)">处理</el-button>
-          <el-button v-if="row.status==='待确认'" size="mini" @click="confirm(row)">确认</el-button>
-          <el-button v-if="row.status==='待确认'" size="mini" @click="reject(row)">驳回</el-button>
+          <el-button v-if="row.status==='待处理'" v-permission="['non-conformity_product','change']" size="mini" @click="handleDispose(row)">处理</el-button>
+          <el-button v-if="row.status==='待确认'" v-permission="['non-conformity_product','change']" size="mini" @click="confirm(row)">确认</el-button>
+          <el-button v-if="row.status==='待确认'" v-permission="['non-conformity_product','change']" size="mini" @click="reject(row)">驳回</el-button>
         </template>
       </el-table-column>
       <el-table-column label="是否出库" align="center" prop="be_warehouse_out" :formatter="(row)=>{ return row.be_warehouse_out ? 'Y' : 'N'}" />
