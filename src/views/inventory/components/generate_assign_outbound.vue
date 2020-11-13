@@ -5,8 +5,8 @@
         {{ warehouseName }}
         <!-- <warehouseSelect @changSelect="warehouseSelect" /> -->
       </el-form-item>
-      <el-form-item label="仓库名称">
-        <stationInfoWarehouse />
+      <el-form-item label="仓库位置">
+        <stationInfoWarehouse @changSelect="changSelectStation" />
       </el-form-item>
       <el-form-item label="物料编码">
         <el-input v-model="getParams.material_no" @input="changeSearch" />
@@ -155,11 +155,18 @@ export default {
         this.creadVal()
         this.$emit('visibleMethod')
       } else {
+        if (!this.getParams.location) {
+          this.$message.info('请选择仓库位置！')
+          return
+        }
+        if (this.multipleSelection.length === 0) {
+          return
+        }
         this.loadingBtn = true
-        console.log(this.multipleSelection, 8888)
         const arr = []
         this.multipleSelection.forEach(D => {
           arr.push({
+            location: this.getParams.location,
             order_no: 'order_no',
             pallet_no: D.container_no,
             need_qty: D.qty,
@@ -175,6 +182,9 @@ export default {
 
         this.$emit('visibleMethodSubmit', arr)
       }
+    },
+    changSelectStation(obj) {
+      this.getParams.location = obj ? obj.name : ''
     },
     handleSelectionChange(val) {
       if (val.length > 0) {

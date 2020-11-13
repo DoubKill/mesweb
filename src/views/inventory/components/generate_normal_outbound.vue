@@ -5,6 +5,13 @@
       <el-form-item label="仓库名称">
         {{ warehouseName }}
       </el-form-item>
+      <el-form-item label="仓库位置" prop="location">
+        <stationInfoWarehouse
+          ref="stationInfoWarehouseRef"
+          :warehouse-name="warehouseName"
+          @changSelect="changSelectStation"
+        />
+      </el-form-item>
       <el-form-item label="物料编码" prop="material_no">
         <materialCodeSelect :store-name="warehouseName" :default-val="ruleForm.material_no" @changSelect="materialCodeFun" />
       </el-form-item>
@@ -35,9 +42,9 @@
 </template>
 <script>
 import materialCodeSelect from '@/components/select_w/materialCodeSelect'
-
+import stationInfoWarehouse from '@/components/select_w/warehouseSelectPosition'
 export default {
-  components: { materialCodeSelect },
+  components: { materialCodeSelect, stationInfoWarehouse },
   props: {
     warehouseName: {
       type: String,
@@ -81,6 +88,13 @@ export default {
                 this.ruleForm.c, '无库存数')
             } }
         ],
+        location: [
+          { required: true, message: '仓库位置', trigger: 'blur',
+            validator: (rule, value, callback) => {
+              validateMy(rule, value, callback,
+                this.ruleForm.location, '仓库位置')
+            } }
+        ],
         need_qty: [
           { required: true, message: '请输入需求数量', trigger: 'blur' }
         ]
@@ -101,6 +115,9 @@ export default {
       this.ruleForm = {}
       // this.$set(this.ruleForm, 'material_no', null)
       this.loadingBtn = false
+      if (this.$refs.stationInfoWarehouseRef) {
+        this.$refs.stationInfoWarehouseRef.value = null
+      }
     },
     materialCodeFun(val) {
       this.ruleForm.material_no = val.material_no || null
@@ -129,6 +146,9 @@ export default {
           }
         })
       }
+    },
+    changSelectStation(val) {
+      this.ruleForm.location = val ? val.name : ''
     }
   }
 }

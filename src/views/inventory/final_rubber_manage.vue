@@ -60,6 +60,7 @@
       <el-table-column label="实际出库重量" align="center" prop="actual.actual_wegit" />
       <el-table-column label="单位" align="center" prop="unit" />
       <el-table-column label="需求重量" align="center" prop="need_weight" />
+      <el-table-column label="出库位置" align="center" prop="location" />
       <el-table-column label="操作" align="center" width="220">
         <template v-if="scope.row.status === 4" slot-scope="scope">
           <el-button-group>
@@ -135,6 +136,7 @@ import GenerateNormalOutbound from './components/generate_normal_outbound'
 // import materielTypeSelect from '@/components/select_w/materielTypeSelect'
 // import warehouseSelect from '@/components/select_w/warehouseSelect'
 import { putPlanManagement } from '@/api/base_w'
+import { warehouseInfo } from '@/api/warehouse'
 import page from '@/components/page'
 import commitVal from '@/utils/common'
 
@@ -158,13 +160,12 @@ export default {
       rowVal: {},
       warehouseName: '终炼胶库',
       // 仓库id
-      warehouseInfo: 1
+      warehouseInfo: null
     }
   },
   created() {
     this.getListWrehouseInfo()
     this.getList()
-    // this.search.name = this.warehouseName
   },
   methods: {
     async getList() {
@@ -181,7 +182,8 @@ export default {
     },
     async getListWrehouseInfo() {
       try {
-        // const data = await putPlanManagement('get', null, { params: this.search })
+        const data = await warehouseInfo({ all: 1, name: this.warehouseName })
+        this.warehouseInfo = data[0].id
       } catch (error) {
         //
       }
