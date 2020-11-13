@@ -52,6 +52,7 @@ const actions = {
         commit('SET_PERMISSION', JSON.stringify(response.permissions))
         // 登录获取token,存到全局中
         setToken(response.token)
+        console.log(response.permissions)
         resolve()
       }).catch(error => {
         reject(error)

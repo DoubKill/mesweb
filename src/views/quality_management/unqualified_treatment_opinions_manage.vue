@@ -29,7 +29,7 @@
         </el-table>
       </el-col>
       <el-col :span="12">
-        <el-button style="float: right" :disabled="!disposeTypeCurrentRow" @click="handleNewOpinion">新增</el-button>
+        <el-button v-permission="['deal_suggestion','add']" style="float: right" :disabled="!disposeTypeCurrentRow" @click="handleNewOpinion">新增</el-button>
         <el-table
           border
           :data="opinionsList"
@@ -39,6 +39,7 @@
           <el-table-column label="操作" align="center">
             <template slot-scope="{ row }">
               <el-button
+                v-permission="['deal_suggestion','change']"
                 size="mini"
                 @click="handleUpdateOpinion(row)"
               >编辑</el-button>
