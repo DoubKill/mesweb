@@ -41,7 +41,7 @@
               v-model="valItem.checkedC"
               :label="itemData"
               :disabled="!itemData.allowed"
-              @change="changeMethods(valItem.test_indicator)"
+              @change="changeMethods(valItem.test_indicator,valItem)"
             >
               {{ itemData.name }}
             </el-radio>
@@ -107,7 +107,8 @@
               slot-scope="scope"
             >
               <el-input
-                v-if="scope.row._list[itemTa.test_indicator]"
+                v-if="scope.row._list[itemTa.test_indicator]
+                  &&scope.row._list[itemTa.test_indicator][itemChild.name]"
                 v-model="scope.row._list[itemTa.test_indicator][itemChild.name].value"
                 placeholder="请输入检测值"
               />
@@ -131,7 +132,7 @@
           />
         </template>
       </el-table-column>
-      <el-table-column label="操作">
+      <el-table-column :key="changeTable.length+2" label="操作">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -167,7 +168,6 @@ export default {
       search: {
         ShiftRules: '',
         factory_date: setDate(),
-        // factory_date: '2020-11-10',
         equip_no: '',
         classes: '',
         product_no: ''
@@ -231,22 +231,13 @@ export default {
         //
       }
     },
-    changeMethods(test_indicator) {
-      const arr = this.tableDataStyle.filter(D =>
-        JSON.stringify(D.checkedC) !== '{}'
-      )
-      this.arr = arr
-      this.changeTable = deepClone(arr)
-
-      setDataChild(this, test_indicator)
+    changeMethods(test_indicator, valItem) {
+      setDataChild(this, valItem)
     },
     clearRadio(val, index) {
-      this.tableDataStyle[index].checkedC = {}
-      const arr = this.tableDataStyle.filter(D => {
-        return JSON.stringify(D.checkedC) !== '{}'
-      })
-      this.changeTable = deepClone(arr)
-      setDataChild(this)
+      if (JSON.stringify(val.checkedC) === '{}') return
+      this.$set(this.tableDataStyle[index], 'checkedC', {})
+      setDataChild(this, val)
     },
     currentChange(page) {
       this.search.page = page
@@ -369,32 +360,51 @@ export default {
   }
 }
 
-function setDataChild(_this, test_indicator) {
-  if (_this.changeTable.length === 0) {
-    _this.tableDataChild.forEach(dd => {
-      dd._list = {}
-    })
-  }
+function setDataChild(_this, row) {
+  const newObjChild = {}
   const newObj = {}
-
-  _this.changeTable.forEach((D, index) => {
-    const arr1 = deepClone(D.checkedC.data_points)
-    const obj = {}
-    const newObjChild = {}
-
-    arr1.forEach((data, i) => {
-      _this.$set(obj, 'test_indicator_name', D.test_indicator)
-      _this.$set(obj, 'data_point_name', data.name)
-      _this.$set(obj, 'test_method_name', D.checkedC.name)
+  let _obj = {}
+  if (JSON.stringify(row.checkedC) !== '{}') {
+    const arrData_points = deepClone(row.checkedC.data_points)
+    arrData_points.forEach(D => {
+      const obj = {}
+      _this.$set(obj, 'test_indicator_name', row.test_indicator)
+      _this.$set(obj, 'data_point_name', D.name)
+      _this.$set(obj, 'test_method_name', row.checkedC.name)
       _this.$set(obj, 'value', '')
-      const _obj = deepClone(obj)
-      _this.$set(newObjChild, data.name, _obj)
+      _obj = deepClone(obj)
+      _this.$set(newObjChild, D.name, _obj)
     })
-    _this.$set(newObj, D.test_indicator, newObjChild)
-  })
+    Object.assign(newObj, { [row.test_indicator]: newObjChild })
+  }
+
+  const changeTableNum = _this.changeTable.findIndex(D => D.test_indicator === row.test_indicator)
+  if (changeTableNum > -1) {
+    if (JSON.stringify(row.checkedC) === '{}') {
+      _this.tableDataChild.forEach(D => {
+        delete D._list[row.test_indicator]
+      })
+      _this.changeTable.splice(changeTableNum, 1)
+    } else {
+      _this.changeTable[changeTableNum] = row
+    }
+  } else {
+    _this.changeTable.push(row)
+  }
   _this.tableDataChild.forEach(dd => {
-    _this.$set(dd, '_list', newObj)
+    if (JSON.stringify(row.checkedC) === '{}') {
+      // 清空
+      delete dd._list[row.test_indicator]
+      return
+    }
+    const _newObjChild = deepClone(newObj)
+    if (!dd._list) {
+      _this.$set(dd, '_list', {})
+    }
+    const ccc = Object.assign({}, dd._list, _newObjChild)
+    _this.$set(dd, '_list', ccc)
   })
+  // console.log(_this.tableDataChild, '_this.tableDataChild')
 }
 </script>
 

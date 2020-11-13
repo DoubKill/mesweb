@@ -11,9 +11,9 @@
     >
       <el-option
         v-for="item in options"
-        :key="item"
-        :label="item"
-        :value="item"
+        :key="item.id"
+        :label="item.name"
+        :value="item.id"
       />
     </el-select>
   </div>
@@ -29,25 +29,29 @@ export default {
       default: false
     },
     defaultVal: {
-      type: Number,
+      type: String,
       default: null
     },
     // 是否可清空
     isClear: {
       type: Boolean,
       default: false
+    },
+    warehouseName: {
+      type: String,
+      default: null
     }
   },
   data() {
     return {
-      value: this.defaultVal,
+      value: null,
       loading: false,
       options: []
     }
   },
   watch: {
     defaultVal(val) {
-      this.value = val
+      this.value = val || null
     }
   },
   created() {
@@ -60,8 +64,8 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const data = await stationInfo('get', null, { params: { all: 1 }})
-        this.options = data.results || []
+        const data = await stationInfo({ all: 1, warehouse_name: this.warehouseName })
+        this.options = data || []
         this.loading = false
       } catch (e) {
         this.loading = false
@@ -69,13 +73,13 @@ export default {
     },
     visibleChange(val) {
       if (val && this.options.length === 0 && !this.createdIs) {
-        // this.getList()
+        this.getList()
       }
     },
     changSelect(val) {
-      // let arr = []
-      // arr = this.options.filter(D => D.id === val)
-      this.$emit('changSelect', val)
+      let arr = []
+      arr = this.options.filter(D => D.id === val)
+      this.$emit('changSelect', arr[0])
     }
   }
 }
