@@ -5,6 +5,7 @@
         <el-form :inline="true">
           <el-form-item style="float: right">
             <el-button
+              v-permission="['test_type', 'add']"
               @click="showCreateTestTypeDialog"
             >新建</el-button>
           </el-form-item>
@@ -34,6 +35,7 @@
             <template slot-scope="scope">
               <el-button-group>
                 <el-button
+                  v-permission="['test_type', 'change']"
                   size="mini"
                   @click="showEditTestTypeDialog(scope.row)"
                 >编辑</el-button>
@@ -56,6 +58,7 @@
         <el-form :inline="true">
           <el-form-item style="float: right">
             <el-button
+              v-permission="['test_type', 'point_add']"
               :disabled="!testTypesCurrentRow"
               @click="showCreateDataPointsDialog"
             >新建</el-button>
@@ -84,6 +87,7 @@
             <template slot-scope="scope">
               <el-button-group>
                 <el-button
+                  v-permission="['test_type', 'point_change']"
                   size="mini"
                   @click="showEditDataPointsDialog(scope.row)"
                 >编辑</el-button>

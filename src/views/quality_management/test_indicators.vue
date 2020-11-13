@@ -3,6 +3,7 @@
     <el-form :inline="true">
       <el-form-item style="float: right">
         <el-button
+          v-permission="['test_indicator', 'add']"
           @click="showCreateTestIndicatorsDialog"
         >新建</el-button>
       </el-form-item>
@@ -27,6 +28,7 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
+              v-permission="['test_indicator', 'change']"
               size="mini"
               @click="showEditTestIndicatorsDialog(scope.row)"
             >编辑</el-button>
