@@ -94,6 +94,7 @@
       <div v-for="(itemTa,iTa) in changeTable" :key="iTa">
         <el-table-column
           v-if="JSON.stringify(itemTa.checkedC) !== '{}'"
+          :key="1"
           :label="itemTa.test_indicator"
           align="center"
         >
@@ -124,7 +125,7 @@
           </el-table-column>
         </el-table-column>
       </div>
-      <el-table-column :key="changeTable.length+1" label="备注">
+      <el-table-column :key="changeTable.length>0?changeTable.length+2:2" label="备注">
         <template slot-scope="scope">
           <el-input
             v-model="scope.row.note"
@@ -132,7 +133,7 @@
           />
         </template>
       </el-table-column>
-      <el-table-column :key="changeTable.length+2" label="操作">
+      <el-table-column :key="5" label="操作">
         <template slot-scope="scope">
           <el-button
             size="mini"
