@@ -32,10 +32,9 @@
         </el-select>
       </el-form-item>
       <el-form-item
-        v-if="permissionObj.groupextension.indexOf('add')>-1"
         style="float: right"
       >
-        <el-button @click="showCreateGroupDialog">新建</el-button>
+        <el-button v-permission="['groupextension','add']" @click="showCreateGroupDialog">新建</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -82,13 +81,13 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
-              v-if="permissionObj.groupextension.indexOf('change')>-1"
+              v-permission="['groupextension','change']"
               size="mini"
               @click="showEditGroupDialog(scope.row)"
             >编辑
             </el-button>
             <el-button
-              v-if="permissionObj.groupextension.indexOf('delete')>-1"
+              v-permission="['groupextension','delete']"
               size="mini"
               type="danger"
               @click="handleGroupDelete(scope.row)"
@@ -160,7 +159,6 @@
 <script>
 import { roles } from '@/api/roles-manage'
 import page from '@/components/page'
-import { mapGetters } from 'vuex'
 import transferLimit from '@/components/select_w/transferLimit'
 
 export default {
@@ -203,10 +201,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['permission'])
   },
   created() {
-    this.permissionObj = this.permission
     this.currentChange()
   },
   methods: {

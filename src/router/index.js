@@ -321,7 +321,7 @@ export const asyncRoutes = [{
       name: 'WarehouseInfo',
       meta: {
         title: '仓库信息管理',
-        permissionName: 'material_inventory'
+        permissionName: 'warehouse'
       }
     },
     {
@@ -339,7 +339,7 @@ export const asyncRoutes = [{
       name: 'RubberInventoryInfo',
       meta: {
         title: '胶料库存信息汇总',
-        permissionName: 'product_inventory'
+        permissionName: 'warehouse_summary'
       }
     },
     {
@@ -357,7 +357,7 @@ export const asyncRoutes = [{
       name: 'MaterialInOutRecord',
       meta: {
         title: '物料出入库履历',
-        permissionName: 'product_inventory'
+        permissionName: 'in_out_history'
       }
     },
     {
@@ -366,7 +366,7 @@ export const asyncRoutes = [{
       name: 'MaterialInventoryManage',
       meta: {
         title: '物料库存管理',
-        permissionName: 'product_inventory'
+        permissionName: 'goods'
       }
     },
     // {
@@ -383,8 +383,8 @@ export const asyncRoutes = [{
       component: () => import('@/views/inventory/final_rubber_manage.vue'),
       name: 'OutboundManage',
       meta: {
-        title: '胶片库出库计划'
-        // permissionName: 'product_inventory'
+        title: '胶片库出库计划',
+        permissionName: 'inventory_plan'
       }
     },
     {
@@ -392,8 +392,8 @@ export const asyncRoutes = [{
       component: () => import('@/views/inventory/expire_rubber_manage.vue'),
       name: 'ExpireRubberManage',
       meta: {
-        title: '过期胶料管理'
-        // permissionName: 'product_inventory'
+        title: '过期胶料管理',
+        permissionName: 'expire_product'
       }
     },
     {
@@ -401,8 +401,8 @@ export const asyncRoutes = [{
       component: () => import('@/views/inventory/material-attribute-manage.vue'),
       name: 'MaterialAttributeManage',
       meta: {
-        title: '物料属性管理'
-        // permissionName: 'product_inventory'
+        title: '物料属性管理',
+        permissionName: 'material_attr'
       }
     }
   ]
@@ -433,8 +433,8 @@ export const asyncRoutes = [{
           component: () => import('@/views/quality_management/test_indicators'),
           name: 'testIndicators',
           meta: {
-            title: '试验指标管理'
-            // permissionName: 'product_inventory'
+            title: '试验指标管理',
+            permissionName: 'test_indicator'
           }
         },
         {
@@ -442,8 +442,8 @@ export const asyncRoutes = [{
           component: () => import('@/views/quality_management/test_types'),
           name: 'testTypes',
           meta: {
-            title: '试验类型管理'
-            // permissionName: 'product_inventory'
+            title: '试验类型管理',
+            permissionName: 'test_type'
           }
         },
         {
@@ -451,7 +451,8 @@ export const asyncRoutes = [{
           component: () => import('@/views/quality_management/test_methods_manage'),
           namel: 'testMethodsManage',
           meta: {
-            title: '试验方法管理'
+            title: '试验方法管理',
+            permissionName: 'test_method'
           }
         },
         // {
@@ -467,7 +468,8 @@ export const asyncRoutes = [{
           component: () => import('@/views/quality_management/grade_manage'),
           namel: 'gradeManage',
           meta: {
-            title: '等级管理'
+            title: '等级管理',
+            permissionName: 'level'
           }
         },
         // {
@@ -484,8 +486,8 @@ export const asyncRoutes = [{
           component: () => import('@/views/quality_management/benchmark_edit'),
           name: 'benchmark_edit',
           meta: {
-            title: '胶料快检判定基准录入'
-            // permissionName:'material_inventory'
+            title: '胶料快检判定基准录入',
+            permissionName: 'evaluating'
           }
         }
       ]
@@ -506,8 +508,8 @@ export const asyncRoutes = [{
           component: () => import('@/views/quality_management/month_pass_detail'),
           name: 'monthPassDetail',
           meta: {
-            title: '月快检合格率统计'
-            // permissionName: 'product_inventory'
+            title: '月快检合格率统计',
+            permissionName: 'month_passing_rate'
           }
         },
         {
@@ -515,8 +517,8 @@ export const asyncRoutes = [{
           component: () => import('@/views/quality_management/material_month_pass'),
           name: 'materialMonthPass',
           meta: {
-            title: '胶料月合格率统计'
-            // permissionName: 'product_inventory'
+            title: '胶料月合格率统计',
+            permissionName: 'product_month_passing_rate'
           }
         },
         {
@@ -524,8 +526,8 @@ export const asyncRoutes = [{
           component: () => import('@/views/quality_management/material_day_pass'),
           name: 'materialDayPass',
           meta: {
-            title: '胶料日合格率统计'
-            // permissionName: 'product_inventory'
+            title: '胶料日合格率统计',
+            permissionName: 'product_daily_passing_rate'
           }
         }
       ]
@@ -546,14 +548,16 @@ export const asyncRoutes = [{
           component: () => import('@/views/quality_management/inferior_quality_product_manage'),
           name: 'InferiorQualityProductManage',
           meta: {
-            title: '不合格处理'
+            title: '不合格品处理',
+            permissionName: 'non-conformity_product'
           }
         }, {
           path: 'unqualified-treatment-opinions-manage',
           component: () => import('@/views/quality_management/unqualified_treatment_opinions_manage'),
           name: 'UnqualifiedTreatmentOpinionsManage',
           meta: {
-            title: '不合格处理意见管理'
+            title: '不合格处理意见管理',
+            permissionName: 'deal_suggestion'
           }
         }
       ]
@@ -574,8 +578,8 @@ export const asyncRoutes = [{
           component: () => import('@/views/quality_management/manual_entry'),
           name: 'ManualEntry',
           meta: {
-            title: '手工检测数据录入'
-          // permissionName: 'product_inventory'
+            title: '手工检测数据录入',
+            permissionName: 'test_result'
           }
         },
         {
@@ -583,8 +587,8 @@ export const asyncRoutes = [{
           component: () => import('@/views/quality_management/details'),
           name: 'Details',
           meta: {
-            title: '胶料快检详细信息'
-          // permissionName: 'product_inventory'
+            title: '胶料快检详细信息',
+            permissionName: 'result_info'
           }
         },
         {
@@ -592,7 +596,8 @@ export const asyncRoutes = [{
           component: () => import('@/views/quality_management/check_synthesize_manage'),
           name: 'CheckSynthesizeManage',
           meta: {
-            title: '快检信息综合管理'
+            title: '快检信息综合管理',
+            permissionName: 'deal_result'
           }
         }
       ]
@@ -612,8 +617,8 @@ export const asyncRoutes = [{
     component: () => import('@/views/equipment-management/classes-banburying-summary'),
     name: 'classes-banburying-summary',
     meta: {
-      title: '班次密炼时间汇总'
-      // permissionName: 'product_inventory'
+      title: '班次密炼时间汇总',
+      permissionName: 'class_production_summary'
     }
   },
   {
@@ -621,8 +626,8 @@ export const asyncRoutes = [{
     component: () => import('@/views/equipment-management/banburying-ratio-summary'),
     name: 'banburying-ratio-summary',
     meta: {
-      title: '密炼时间占比汇总'
-      // permissionName: 'product_inventory'
+      title: '密炼时间占比汇总',
+      permissionName: 'production_time_summary'
     }
   },
   {
@@ -630,8 +635,8 @@ export const asyncRoutes = [{
     component: () => import('@/views/equipment-management/rubber-acar-summary'),
     name: 'rubber-acar-summary',
     meta: {
-      title: '胶料单车次时间汇总'
-      // permissionName: 'product_inventory'
+      title: '胶料单车次时间汇总',
+      permissionName: 'single_trains_time_consume'
     }
   },
   {
@@ -639,8 +644,8 @@ export const asyncRoutes = [{
     component: () => import('@/views/equipment-management/specs-switch-summary'),
     name: 'specs-switch-summary',
     meta: {
-      title: '规格切换时间汇总'
-      // permissionName: 'product_inventory'
+      title: '规格切换时间汇总',
+      permissionName: 'product_exchange_consume'
     }
   }
   ]
