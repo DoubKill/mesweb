@@ -16,6 +16,7 @@
           <el-table-column label="操作" align="center">
             <template slot-scope="{ row }">
               <el-button
+                v-permission="['deal_suggestion','change']"
                 size="mini"
                 @click="handleUpdateType(row)"
               >编辑</el-button>

@@ -105,7 +105,7 @@
           />
         </el-form-item>
         <el-form-item>
-          <el-button @click="dialogOpinionsVisible = true">新建处理意见</el-button>
+          <el-button v-permission="['deal_suggestion','add']" @click="dialogOpinionsVisible = true">新建处理意见</el-button>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
