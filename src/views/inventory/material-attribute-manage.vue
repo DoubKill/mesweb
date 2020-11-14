@@ -26,6 +26,7 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
+              v-permission="['material_attr', 'view']"
               size="mini"
               @click="showBarCodeManageDialog(scope.row)"
             >管理</el-button>
@@ -36,6 +37,7 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
+              v-permission="['material_attr', 'change']"
               size="mini"
               @click="showAttributeEditDialog(scope.row)"
             >编辑</el-button>
@@ -55,6 +57,7 @@
       <el-form :inline="true">
         <el-form-item style="float: right">
           <el-button
+            v-permission="['material_attr', 'add']"
             @click="showBarCodeCreateDialog"
           >新增</el-button>
         </el-form-item>
@@ -74,6 +77,7 @@
           <template slot-scope="scope">
             <el-button-group>
               <el-button
+                v-permission="['material_attr', 'delete']"
                 size="mini"
                 type="danger"
                 @click="handleData(scope.row)"
