@@ -14,7 +14,6 @@
       <el-form-item label="品质状态">
         <el-select
           v-model="getParams.quality_status"
-          clearable
           placeholder="请选择"
           @change="changeSearch"
         >
@@ -102,7 +101,7 @@ export default {
       },
       currentPage: 1,
       total: 0,
-      options: ['合格品', '不合格品'],
+      options: ['一等品', '三等品'],
       loading: false,
       multipleSelection: [],
       loadingBtn: false
@@ -112,6 +111,7 @@ export default {
     ...mapGetters(['permission'])
   },
   created() {
+    // this.getParams.quality_status = this.options[0]
     this.permissionObj = this.permission
     this.getTableData()
   },
@@ -176,7 +176,9 @@ export default {
             inventory_reason: D.inventory_reason,
             unit: D.unit,
             status: 4,
-            warehouse_info: this.warehouseInfo
+            warehouse_info: this.warehouseInfo,
+            // quality_status: D.quality_status
+            quality_status: '一等品'
           })
         })
 

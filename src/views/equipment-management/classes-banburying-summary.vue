@@ -81,12 +81,19 @@
         </template>
       </el-table-column>
       <el-table-column
-        v-if="Number(search.day_type) === 2&&search.dimension === 1"
         :key="7"
         label="总时间/min"
       >
         <template slot-scope="{row}">
-          {{ row.classes_time |setTimeMin }}
+          <span v-if="Number(search.day_type) === 2&&search.dimension === 1">
+            {{ row.classes_time |setTimeMin }}
+          </span>
+          <span v-if="search.dimension === 2">
+            {{ 60*24 }}
+          </span>
+          <span v-if="search.dimension === 3">
+            {{ 60*24*30 }}
+          </span>
         </template>
       </el-table-column>
       <el-table-column
@@ -114,12 +121,21 @@
         </template>
       </el-table-column>
       <el-table-column
-        v-if="Number(search.day_type) === 2&&search.dimension === 1"
         :key="11"
         label="利用率"
       >
-        <template slot-scope="{row}">
-          {{ (setUse(row.total_time,row.classes_time,true))+ '%' }}
+        <template
+          slot-scope="{row}"
+        >
+          <span v-if="Number(search.day_type) === 2&&search.dimension === 1">
+            {{ (setUse(row.total_time,row.classes_time,true))+ '%' }}
+          </span>
+          <span v-if="search.dimension === 2">
+            {{ (setUse(row.total_time,24*60*60,true))+ '%' }}
+          </span>
+          <span v-if="search.dimension === 3">
+            {{ (setUse(row.total_time,24*60*60*30*60,true))+ '%' }}
+          </span>
         </template>
       </el-table-column>
     </el-table>
@@ -209,11 +225,11 @@ export default {
       if (!total_time || !classes_time) return 0
       let a
       if (bool) {
-        a = parseFloat(total_time / classes_time * 100).toFixed(10)
+        a = parseFloat(total_time / classes_time * 100).toFixed(100)
       } else {
-        a = parseFloat(total_time / classes_time).toFixed(10)
+        a = parseFloat(total_time / classes_time).toFixed(100)
       }
-      const val = a.substring(0, a.lastIndexOf('.') + 2)
+      const val = a.substring(0, a.lastIndexOf('.') + 3)
       return Number(val)
     }
   }
