@@ -94,6 +94,7 @@ export default {
       tableData: [],
       getParams: {
         page: 1,
+        location_status: '有货货位',
         material_type: '', // 物料类型
         material_no: '', // 物料编号
         container_no: '', // 托盘号
