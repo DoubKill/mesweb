@@ -333,15 +333,15 @@ export const asyncRoutes = [{
         permissionName: 'material_inventory'
       }
     },
-    {
-      path: 'rubber-inventory-info',
-      component: () => import('@/views/inventory/rubber_inventory_info.vue'),
-      name: 'RubberInventoryInfo',
-      meta: {
-        title: '胶料库存信息汇总',
-        permissionName: 'warehouse_summary'
-      }
-    },
+    // {
+    //   path: 'rubber-inventory-info',
+    //   component: () => import('@/views/inventory/rubber_inventory_info.vue'),
+    //   name: 'RubberInventoryInfo',
+    //   meta: {
+    //     title: '胶料库存信息汇总',
+    //     permissionName: 'warehouse_summary'
+    //   }
+    // },
     {
       path: 'rubber',
       component: () => import('@/views/rubber_repertory_manage/index'),
@@ -387,15 +387,15 @@ export const asyncRoutes = [{
         permissionName: 'inventory_plan'
       }
     },
-    {
-      path: 'expire-rubber-manage',
-      component: () => import('@/views/inventory/expire_rubber_manage.vue'),
-      name: 'ExpireRubberManage',
-      meta: {
-        title: '过期胶料管理',
-        permissionName: 'expire_product'
-      }
-    },
+    // {
+    //   path: 'expire-rubber-manage',
+    //   component: () => import('@/views/inventory/expire_rubber_manage.vue'),
+    //   name: 'ExpireRubberManage',
+    //   meta: {
+    //     title: '过期胶料管理',
+    //     permissionName: 'expire_product'
+    //   }
+    // },
     {
       path: 'material-attribute-manage',
       component: () => import('@/views/inventory/material-attribute-manage.vue'),
@@ -492,7 +492,7 @@ export const asyncRoutes = [{
         }
       ]
     },
-    {
+    /* {
       path: '/statistics',
       redirect: '/statistics/month-pass-detail',
       component: {
@@ -531,7 +531,7 @@ export const asyncRoutes = [{
           }
         }
       ]
-    },
+    },*/
     {
       path: '/unqualified-handle',
       redirect: '/unqualified-handle/inferior-quality-product-manage',
