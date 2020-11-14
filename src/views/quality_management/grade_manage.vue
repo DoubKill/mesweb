@@ -1,7 +1,10 @@
 <template>
   <div v-loading="loading" class="grade_manage">
     <!-- 等级管理 -->
-    <div style="width:100%;text-align:right;margin-bottom:20px;">
+    <div
+      v-permission="['level','add']"
+      style="width:100%;text-align:right;margin-bottom:20px;"
+    >
       <el-button @click="clickAdd">新增</el-button>
     </div>
     <el-table
@@ -37,10 +40,11 @@
         label="更新时间"
       /> -->
       <el-table-column
+        ref="el-table-column"
         label="操作"
       >
         <template slot-scope="scope">
-          <el-button size="small" @click="clickDelete(scope.$index,scope.row)">删除</el-button>
+          <el-button v-permission="['level','delete']" size="small" @click="clickDelete(scope.$index,scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -105,6 +109,9 @@ export default {
     this.getList()
   },
   methods: {
+    setDome(flag) {
+      return this.$refs[flag]
+    },
     async getList() {
       try {
         this.loading = true

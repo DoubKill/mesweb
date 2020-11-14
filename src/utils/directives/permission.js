@@ -7,12 +7,20 @@ function checkPermission(el, binding) {
   if (value && value instanceof Array) {
     if (value.length > 0) {
       const permissionArr = permissionObj[value[0]]
-
+      if (!permissionArr || permissionArr.length === 0) {
+        return
+      }
       const hasPermission = permissionArr.some(D => {
         return D === value[1]
       })
 
       if (!hasPermission) {
+        // if ((binding.value)[2]) {
+        //   if ((binding.value)[2].$el) {
+        //     const bool = (binding.value)[2].$el
+        //     console.log((binding.value)[2].$el.parentNode, 666)
+        //   }
+        // }
         el.parentNode && el.parentNode.removeChild(el)
       }
     }

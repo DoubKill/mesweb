@@ -12,6 +12,19 @@
           @changSelect="changSelectStation"
         />
       </el-form-item>
+      <el-form-item label="品质状态" prop="quality_status">
+        <el-select
+          v-model="ruleForm.quality_status"
+          placeholder="请选择"
+        >
+          <el-option
+            v-for="item in options"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="物料编码" prop="material_no">
         <materialCodeSelect :store-name="warehouseName" :default-val="ruleForm.material_no" @changSelect="materialCodeFun" />
       </el-form-item>
@@ -81,6 +94,9 @@ export default {
         material_no: [
           { required: true, message: '请输入物料编码', trigger: 'blur' }
         ],
+        quality_status: [
+          { required: true, message: '请选择品质状态', trigger: 'change' }
+        ],
         c: [
           { required: true, message: '无库存数', trigger: 'blur',
             validator: (rule, value, callback) => {
@@ -100,7 +116,8 @@ export default {
         ]
       },
       visible: false,
-      loadingBtn: null
+      loadingBtn: null,
+      options: ['一等品', '三等品']
     }
   },
   watch: {
@@ -112,7 +129,8 @@ export default {
     creadVal() {
       // 清空数据
       this.$refs.ruleForm.resetFields()
-      this.ruleForm = {}
+      // this.ruleForm = {}
+      // this.ruleForm.warehouse_info = this.warehouseInfo
       // this.$set(this.ruleForm, 'material_no', null)
       this.loadingBtn = false
       if (this.$refs.stationInfoWarehouseRef) {

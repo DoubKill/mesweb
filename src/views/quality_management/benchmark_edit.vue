@@ -10,7 +10,7 @@
       <el-form-item label="试验类型:">
         <test-type-select @changeSelect="typeSelectTable" />
       </el-form-item>
-      <el-form-item>
+      <el-form-item v-permission="['evaluating','add']">
         <el-button @click="addDialog">新增</el-button>
       </el-form-item>
     </el-form>

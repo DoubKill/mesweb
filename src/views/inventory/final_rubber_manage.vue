@@ -291,7 +291,8 @@ export default {
           material_no: row.material_no,
           wegit: row.need_weight || '',
           created_date: row.created_date,
-          pallet_no: row.pallet_no || ''
+          pallet_no: row.pallet_no || '',
+          inventory_reason: row.inventory_reason || ''
         }
         this.loading = true
         await putPlanManagement('put', row.id, { data: obj })
