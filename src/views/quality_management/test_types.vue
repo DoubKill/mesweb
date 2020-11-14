@@ -58,7 +58,7 @@
         <el-form :inline="true">
           <el-form-item style="float: right">
             <el-button
-              v-permission="['test_type', 'point_add']"
+              v-permission="['test_type', 'pointAdd']"
               :disabled="!testTypesCurrentRow"
               @click="showCreateDataPointsDialog"
             >新建</el-button>
@@ -87,7 +87,7 @@
             <template slot-scope="scope">
               <el-button-group>
                 <el-button
-                  v-permission="['test_type', 'point_change']"
+                  v-permission="['test_type', 'pointChange']"
                   size="mini"
                   @click="showEditDataPointsDialog(scope.row)"
                 >编辑</el-button>
