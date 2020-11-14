@@ -42,9 +42,7 @@
         label="操作"
       >
         <template slot-scope="scope">
-          <el-button-group>
-            <el-button size="small" @click="editClick(scope.row)">编辑</el-button>
-          </el-button-group>
+          <el-button v-permission="['evaluating','change']" size="small" @click="editClick(scope.row)">编辑</el-button>
         </template>
       </el-table-column>
     </el-table>

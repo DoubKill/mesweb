@@ -53,6 +53,7 @@
       </div>
     </el-table>
     <el-button
+      v-permission="['test_result','add']"
       :loading="loadingBtn"
       style="float:right;margin:10px 0"
       @click="submitTable"

@@ -1,5 +1,7 @@
 <template>
-  <div class="app-container">
+  <div
+    class="app-container"
+  >
     <el-form :inline="true">
       <el-form-item label="日期">
         <el-date-picker
@@ -30,7 +32,7 @@
         <el-select />
       </el-form-item> -->
       <el-form-item label="段次">
-        <stage-select v-model="getParams.stage" @change="getMaterialTestOrders" />
+        <stage-select v-model="getParams.stage" @change="stageChange" />
       </el-form-item>
       <el-form-item>
         <el-button @click="filterDialogVisible = true">
@@ -40,11 +42,11 @@
     </el-form>
     <el-table
       v-loading="listLoading"
+      v-el-table-infinite-scroll="infiniteScroll"
       :data="testOrders"
       border
       fit
-      style="width: 100%"
-      max-height="500"
+      style="width: 100%;max-height:500px"
       row-key="index"
       lazy
       :load="load"
@@ -147,17 +149,24 @@ import ClassSelect from '@/components/ClassSelect'
 import ProductNoSelect from '@/components/ProductNoSelect'
 import StageSelect from '@/components/StageSelect'
 import { testTypes, materialTestOrders, testResultHistory } from '@/api/quick-check-detail'
-
+import elTableInfiniteScroll from 'el-table-infinite-scroll'
+// var isbool = true
 export default {
+  directives: {
+    'el-table-infinite-scroll': elTableInfiniteScroll
+  },
   components: { PlanSchedulesSelect, EquipSelect, ClassSelect, ProductNoSelect, StageSelect },
   data() {
     return {
+      count: 0,
+      allPage: 0,
       getParams: {
         day_time: dayjs().format('YYYY-MM-DD'),
         equip_no: null,
         classes: null,
         product_no: null,
-        stage: null
+        stage: null,
+        page: 1
       },
       listLoading: true,
       filterDialogVisible: false,
@@ -172,27 +181,59 @@ export default {
       ],
       testOrders: [
       ],
-      index: 1
+      index: 1,
+      recordList: [],
+      isMoreLoad: false,
+      // 默认每页数量
+      definePafeSize: 10
     }
   },
   created() {
     this.getTestTypes()
     this.getMaterialTestOrders()
+
+    // window.addEventListener('scroll', () => {
+    //   const scrollHeight = document.body.scrollHeight - 10
+    //   const clientHeight = document.body.clientHeight
+    //   const scrollTop = document.documentElement.scrollTop + document.body.scrollTop
+    //   console.log(clientHeight + scrollTop, 'scrollTop')
+    //   console.log(scrollHeight, 'scrollHeight')
+    //   if (clientHeight + scrollTop >= scrollHeight) {
+    //     // 滚动到了底部
+    //     if (this.isMoreLoad && isbool) {
+    //       isbool = false
+    //       this.getParams.page = this.getParams.page + 1
+    //       this.getMaterialTestOrders()
+    //     }
+    //   }
+    // })
   },
   methods: {
     dayTimeChanged() {
+      this.clearList()
       this.getMaterialTestOrders()
+    },
+    clearList() {
+      this.getParams.page = 1
+      this.allPage = 0
+      this.testOrders = []
     },
     equipSelected(equip) {
       this.getParams.equip_no = equip ? equip.equip_no : null
+      this.clearList()
       this.getMaterialTestOrders()
+    },
+    stageChange() {
+      this.clearList()
     },
     classSelected(className) {
       this.getParams.classes = className || null
+      this.clearList()
       this.getMaterialTestOrders()
     },
     productBatchingChanged(val) {
       this.getParams.product_no = val ? val.stage_product_batch_no : null
+      this.clearList()
       this.getMaterialTestOrders()
     },
     load(tree, treeNode, resolve) {
@@ -211,8 +252,10 @@ export default {
     async getMaterialTestOrders() {
       this.listLoading = true
       try {
-        this.testOrders = await materialTestOrders(this.getParams)
-        this.testOrders = this.testOrders.map(result => {
+        // this.testOrders
+        const data = await materialTestOrders(this.getParams)
+        let arr = data.results
+        arr = arr.map(result => {
           return {
             ...result,
             index: this.index++,
@@ -221,7 +264,7 @@ export default {
             class_group: `${result.production_class}/${result.production_group}`
           }
         })
-        this.testOrders.forEach(row => {
+        arr.forEach(row => {
           row.level = 0
           row.mes_result = '未检测'
           for (const testTypeName in row.order_results) {
@@ -245,9 +288,26 @@ export default {
             }
           }
         })
+        // if (data.count - this.getParams.page * this.definePafeSize > 0) {
+        //   this.isMoreLoad = true
+        // } else {
+        //   this.isMoreLoad = false
+        // }
+        this.allPage = data.count
+        this.testOrders = this.testOrders.concat(arr)
+        // isbool = true
+        this.listLoading = false
       // eslint-disable-next-line no-empty
-      } catch (e) {}
-      this.listLoading = false
+      } catch (e) {
+        this.listLoading = false
+      }
+    },
+    infiniteScroll() {
+      if (Number(this.allPage - this.getParams.page * this.definePafeSize) < 0) {
+        return
+      }
+      this.getParams.page = this.getParams.page + 1
+      this.getMaterialTestOrders()
     },
     async getTestTypes() {
       try {
