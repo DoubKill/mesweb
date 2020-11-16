@@ -38,10 +38,13 @@
     <el-table
       :data="tableData"
       border
+      show-summary
+      :summary-method="getSummaries"
     >
       <el-table-column
         type="index"
         label="No"
+        width="60"
       />
       <el-table-column
         :label="search.dimension === 3?'月份':search.dimension === 1?'班次':'时间'"
@@ -69,6 +72,7 @@
         label="总车数"
       />
       <el-table-column
+        prop="total_time"
         label="总耗时/min"
       >
         <template slot-scope="{row}">
@@ -77,9 +81,13 @@
       </el-table-column>
       <el-table-column
         label="总时间/min"
+        prop="classes_time"
       >
         <template slot-scope="{row}">
-          <span v-if="Number(search.day_type) === 2&&search.dimension === 1">
+          <span>
+            {{ row.classes_time |setTimeMin }}
+          </span>
+          <!-- <span v-if="Number(search.day_type) === 2&&search.dimension === 1">
             {{ row.classes_time |setTimeMin }}
           </span>
           <span v-if="search.dimension === 2">
@@ -87,7 +95,7 @@
           </span>
           <span v-if="search.dimension === 3">
             {{ 60*24*30 }}
-          </span>
+          </span> -->
         </template>
       </el-table-column>
       <el-table-column
@@ -146,6 +154,17 @@ export default {
         const data = await equipBanburySummary('get', null, { params: this.search })
         this.total = data.count
         this.tableData = data.results
+        if (this.tableData.length > 0 && (Number(this.search.day_type) !== 2 || this.search.dimension !== 1)) {
+          let val
+          if (this.search.dimension === 2) {
+            val = 60 * 24 * 60
+          } else if (this.search.dimension === 3) {
+            val = 60 * 24 * 30 * 60
+          }
+          this.tableData.forEach(D => {
+            D.classes_time = val
+          })
+        }
         this.loading = false
       } catch (error) {
         this.loading = false
@@ -186,6 +205,43 @@ export default {
       const a = parseFloat(total_time / classes_time * 100).toFixed(100)
       const num = (a.substring(0, a.lastIndexOf('.') + 3))
       return num + '%'
+    },
+    setNum(value) {
+      if (value < 0) return value
+      if (!value) return 0
+      const a = parseFloat(value / 60).toFixed(10)
+      const num = a.substring(0, a.lastIndexOf('.') + 2)
+      return num
+    },
+    getSummaries(param) {
+      const { columns, data } = param
+      const sums = []
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = '总价'
+          return
+        }
+
+        const values = data.map(item => Number(item[column.property]))
+        if (!values.every(value => isNaN(value))) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0)
+          if (index === 3) {
+            sums[index]
+          } else {
+            sums[index] = this.setNum(sums[index])
+          }
+        } else {
+          sums[index]
+        }
+      })
+      return sums
     }
   }
 }
