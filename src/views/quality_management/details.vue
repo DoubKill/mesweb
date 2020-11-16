@@ -40,13 +40,13 @@
         </el-button>
       </el-form-item>
     </el-form>
+    <!-- v-el-table-infinite-scroll="infiniteScroll" -->
     <el-table
       v-loading="listLoading"
-      v-el-table-infinite-scroll="infiniteScroll"
       :data="testOrders"
       border
       fit
-      style="width: 100%;max-height:500px"
+      style="width: 100%"
       row-key="index"
       lazy
       :load="load"
@@ -143,19 +143,18 @@
 
 <script>
 import dayjs from 'dayjs'
-import PlanSchedulesSelect from '@/components/PlanSchedulesSelect'
+// import PlanSchedulesSelect from '@/components/PlanSchedulesSelect'
 import EquipSelect from '@/components/EquipSelect'
 import ClassSelect from '@/components/ClassSelect'
 import ProductNoSelect from '@/components/ProductNoSelect'
 import StageSelect from '@/components/StageSelect'
 import { testTypes, materialTestOrders, testResultHistory } from '@/api/quick-check-detail'
 import elTableInfiniteScroll from 'el-table-infinite-scroll'
-// var isbool = true
 export default {
   directives: {
     'el-table-infinite-scroll': elTableInfiniteScroll
   },
-  components: { PlanSchedulesSelect, EquipSelect, ClassSelect, ProductNoSelect, StageSelect },
+  components: { EquipSelect, ClassSelect, ProductNoSelect, StageSelect },
   data() {
     return {
       count: 0,
@@ -183,7 +182,7 @@ export default {
       ],
       index: 1,
       recordList: [],
-      isMoreLoad: false,
+      isMoreLoad: true,
       // 默认每页数量
       definePafeSize: 10
     }
@@ -191,22 +190,24 @@ export default {
   created() {
     this.getTestTypes()
     this.getMaterialTestOrders()
+  },
+  mounted() {
+    window.addEventListener('scroll', () => {
+      const scrollHeight = document.body.scrollHeight - 10
+      const clientHeight = document.body.clientHeight
+      const scrollTop = document.documentElement.scrollTop + document.body.scrollTop
 
-    // window.addEventListener('scroll', () => {
-    //   const scrollHeight = document.body.scrollHeight - 10
-    //   const clientHeight = document.body.clientHeight
-    //   const scrollTop = document.documentElement.scrollTop + document.body.scrollTop
-    //   console.log(clientHeight + scrollTop, 'scrollTop')
-    //   console.log(scrollHeight, 'scrollHeight')
-    //   if (clientHeight + scrollTop >= scrollHeight) {
-    //     // 滚动到了底部
-    //     if (this.isMoreLoad && isbool) {
-    //       isbool = false
-    //       this.getParams.page = this.getParams.page + 1
-    //       this.getMaterialTestOrders()
-    //     }
-    //   }
-    // })
+      if (clientHeight + scrollTop >= scrollHeight) {
+        // 滚动到了底部
+        if (this.isMoreLoad && !this.listLoading) {
+          this.getParams.page = this.getParams.page + 1
+          this.getMaterialTestOrders()
+        }
+      }
+    })
+  },
+  beforeUpdata() {
+
   },
   methods: {
     dayTimeChanged() {
@@ -288,15 +289,16 @@ export default {
             }
           }
         })
-        // if (data.count - this.getParams.page * this.definePafeSize > 0) {
-        //   this.isMoreLoad = true
-        // } else {
-        //   this.isMoreLoad = false
-        // }
+        if (data.count - this.getParams.page * this.definePafeSize > 0) {
+          this.isMoreLoad = true
+        } else {
+          this.isMoreLoad = false
+        }
         this.allPage = data.count
-        this.testOrders = this.testOrders.concat(arr)
-        // isbool = true
-        this.listLoading = false
+        this.testOrders.push(...arr)
+        setTimeout(() => {
+          this.listLoading = false
+        }, 300)
       // eslint-disable-next-line no-empty
       } catch (e) {
         this.listLoading = false

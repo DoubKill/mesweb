@@ -15,6 +15,7 @@
         <el-select
           v-model="getParams.quality_status"
           placeholder="请选择"
+          clearable
           @change="changeSearch"
         >
           <el-option
@@ -76,7 +77,7 @@ import { getMaterialInventoryManage } from '@/api/material-inventory-manage'
 // import materielTypeSelect from '@/components/select_w/materielTypeSelect'
 import page from '@/components/page'
 import stationInfoWarehouse from '@/components/select_w/warehouseSelectPosition'
-import { mapGetters } from 'vuex'
+
 export default {
   components: { page, stationInfoWarehouse },
   props: {
@@ -109,11 +110,9 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['permission'])
   },
   created() {
     // this.getParams.quality_status = this.options[0]
-    this.permissionObj = this.permission
     this.getTableData()
   },
   methods: {
@@ -178,8 +177,8 @@ export default {
             unit: D.unit,
             status: 4,
             warehouse_info: this.warehouseInfo,
-            // quality_status: D.quality_status
-            quality_status: '一等品'
+            quality_status: D.quality_status
+            // quality_status: '一等品'
           })
         })
 
