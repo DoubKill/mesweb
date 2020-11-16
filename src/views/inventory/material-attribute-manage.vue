@@ -332,6 +332,7 @@ export default {
             this.getParamsBarCode.page = 1
             this.getBarCodelist()
           }).catch(function() {
+
           })
       })
     },

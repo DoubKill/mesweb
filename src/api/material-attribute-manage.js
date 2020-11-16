@@ -14,6 +14,7 @@ export function postMaterialsAttribute(data) {
     url: API.materialsAttribute,
     method: 'post',
     data
+
   })
 }
 
