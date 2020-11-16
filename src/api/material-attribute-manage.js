@@ -3,17 +3,18 @@ import API from '@/api/url'
 
 export function getMaterialsAttribute(params) {
   return request({
-    url: API.materialsAttribute,
+    url: API.MaterialsUrl,
     method: 'get',
     params
   })
 }
 
-export function putMaterialsAttribute(data, id) {
+export function postMaterialsAttribute(data) {
   return request({
-    url: API.materialsAttribute + id + '/',
-    method: 'put',
+    url: API.materialsAttribute,
+    method: 'post',
     data
+
   })
 }
 

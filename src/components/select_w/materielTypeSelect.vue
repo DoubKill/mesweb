@@ -6,8 +6,8 @@
       placeholder="请选择物料类型"
       :loading="loading"
       filterable
-      allow-create
-      default-first-option
+      :allow-create="paramsType"
+      :default-first-option="paramsType"
       clearable
       @change="changSelect"
       @visible-change="visibleChange"
@@ -38,6 +38,10 @@ export default {
     warehouseName: {
       type: String,
       default: ''
+    },
+    paramsType: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -90,14 +94,18 @@ export default {
     },
     changSelect(val) {
       let str = ''
-      let arr = []
-      arr = this.options.filter(D => D.id === val)
-      if (arr.length > 0) {
-        str = arr[0].global_name
-      } else {
-        str = val
+      if (this.paramsType) {
+        let arr = []
+        arr = this.options.filter(D => D.id === val)
+        if (arr.length > 0) {
+          str = arr[0].global_name
+        } else {
+          str = val
+        }
+        this.$emit('changSelect', str)
+        return
       }
-      this.$emit('changSelect', str)
+      this.$emit('changSelect', val)
     }
   }
 }

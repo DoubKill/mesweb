@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-form :inline="true">
       <el-form-item label="物料类型">
-        <materielTypeSelect @changSelect="changeMaterialType" />
+        <materielTypeSelect :params-type="false" @changSelect="changeMaterialType" />
         <!-- <el-input v-model="getParams.material_type" @input="changeSearch" /> -->
       </el-form-item>
       <el-form-item label="物料编码">
@@ -16,13 +16,13 @@
       :data="tableData"
     >
       <el-table-column label="No" type="index" align="center" />
-      <el-table-column label="物料类型" align="center" prop="material_type" />
+      <el-table-column label="物料类型" align="center" prop="material_type_name" />
       <el-table-column label="物料编码" align="center" prop="material_no" />
       <el-table-column label="物料名称" align="center" prop="material_name" />
       <el-table-column label="有效期" align="center" prop="period_of_validity" />
       <el-table-column label="安全库存标准" align="center" prop="safety_inventory" />
       <el-table-column label="有效期单位" align="center" prop="validity_unit" />
-      <el-table-column label="条码管理" align="center">
+      <el-table-column label="产地管理" align="center">
         <template slot-scope="scope">
           <el-button-group>
             <el-button
@@ -51,7 +51,7 @@
       @currentChange="currentChange"
     />
     <el-dialog
-      title="条码管理"
+      title="产地管理"
       :visible.sync="barCodeManageDialogVisible"
     >
       <el-form :inline="true">
@@ -72,17 +72,16 @@
         <el-table-column label="物料类型" align="center" prop="material_type" />
         <el-table-column label="物料编码" align="center" prop="material_no" />
         <el-table-column label="物料名称" align="center" prop="material_name" />
-        <el-table-column label="条码" align="center" prop="supplier_no" />
+        <el-table-column label="产地" align="center" prop="provenance" />
         <el-table-column label="操作" align="center">
           <template slot-scope="scope">
-            <el-button-group>
-              <el-button
-                v-permission="['material_attr', 'delete']"
-                size="mini"
-                type="danger"
-                @click="handleData(scope.row)"
-              >删除</el-button>
-            </el-button-group>
+            <el-button
+              v-permission="['material_attr', 'delete']"
+              size="mini"
+              type="danger"
+              @click="handleData(scope.row)"
+            >{{ scope.row.use_flag ? '停用' : '启用' }}
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -110,7 +109,7 @@
       <el-form ref="attributeForm" :rules="rules" label-width="120px" :model="attributeForm">
         <el-form-item
           label="物料类型"
-        >{{ attributeForm.material_type }}
+        >{{ attributeForm.material_type_name }}
           <!-- <el-input v-model="attributeForm.material_type" :disabled="true" /> -->
         </el-form-item>
         <el-form-item
@@ -154,14 +153,14 @@
       </div>
     </el-dialog>
     <el-dialog
-      title="新增物料条码"
+      title="新增物料产地"
       :visible.sync="barCodeCreateDialogVisible"
     >
       <el-form ref="barCodeForm" :rules="rules" label-width="80px" :model="barCodeForm">
         <el-form-item
           label="物料类型"
         >
-          {{ barCodeForm.material_type }}
+          {{ barCodeForm.material_type_name }}
         </el-form-item>
         <el-form-item
           label="物料编码"
@@ -174,10 +173,10 @@
           {{ barCodeForm.material_name }}
         </el-form-item>
         <el-form-item
-          label="条码"
-          prop="supplier_no"
+          label="产地"
+          prop="provenance"
         >
-          <el-input v-model="barCodeForm.supplier_no" />
+          <el-input v-model="barCodeForm.provenance" />
         </el-form-item>
       </el-form>
       <div
@@ -195,7 +194,7 @@
 </template>
 
 <script>
-import { getMaterialsAttribute, putMaterialsAttribute, getBarCode, postBarCode, deleteBarCode } from '@/api/material-attribute-manage'
+import { getMaterialsAttribute, postMaterialsAttribute, getBarCode, postBarCode, deleteBarCode } from '@/api/material-attribute-manage'
 import materielTypeSelect from '@/components/select_w/materielTypeSelect'
 import page from '@/components/page'
 import { mapGetters } from 'vuex'
@@ -205,7 +204,7 @@ export default {
     return {
       tableData: [],
       getParams: {
-        material_type: '',
+        material_type_id: '',
         material_no: '',
         page: 1
       },
@@ -216,7 +215,7 @@ export default {
         material: '',
         page: 1
       },
-      barCodeForm: { supplier_no: null },
+      barCodeForm: { provenance: null },
       totalBarCode: 0,
       rules: {
         period_of_validity: [{ required: true, message: '不能为空', trigger: 'blur' },
@@ -224,7 +223,7 @@ export default {
         safety_inventory: [{ required: true, message: '不能为空', trigger: 'blur' },
           { type: 'number', message: '请输入合法整数', trigger: 'blur' }],
         validity_unit: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        supplier_no: [{ required: true, message: '不能为空', trigger: 'blur' }]
+        provenance: [{ required: true, message: '不能为空', trigger: 'blur' }]
       },
       barCodeManageDialogVisible: false,
       barCodeCreateDialogVisible: false,
@@ -248,6 +247,7 @@ export default {
     },
     showAttributeEditDialog(row) {
       this.attributeForm = Object.assign({}, row)
+      this.attributeForm.material = row.id
       this.attributeEditDialogVisible = true
       this.$nextTick(() => {
         this.$refs.attributeForm.clearValidate()
@@ -256,10 +256,10 @@ export default {
     handleAttributeEdit() {
       this.$refs.attributeForm.validate((valid) => {
         if (valid) {
-          putMaterialsAttribute(this.attributeForm, this.attributeForm.id)
+          postMaterialsAttribute(this.attributeForm)
             .then(response => {
               this.attributeEditDialogVisible = false
-              this.$message(this.attributeForm.material_name + '修改成功')
+              this.$message(this.attributeForm.material_name + '编辑成功')
               this.getMaterialsAttributeList()
             })
         }
@@ -270,7 +270,7 @@ export default {
       this.getMaterialsAttributeList()
     },
     changeMaterialType(data) {
-      this.getParams.material_type = data
+      this.getParams.material_type_id = data
       this.getParams.page = 1
       this.getMaterialsAttributeList()
     },
@@ -286,19 +286,19 @@ export default {
         })
     },
     showBarCodeManageDialog(row) {
-      this.getParamsBarCode.material = row.material
+      this.getParamsBarCode.material = row.id
       this.barCodeManageDialogVisible = true
       this.barCodeForm = {
-        material: row.material,
-        material_type: row.material_type,
+        material: row.id,
+        material_type_name: row.material_type_name,
         material_no: row.material_no,
         material_name: row.material_name,
-        supplier_no: ''
+        provenance: ''
       }
       this.getBarCodelist()
     },
     showBarCodeCreateDialog() {
-      this.barCodeForm.supplier_no = ''
+      this.barCodeForm.provenance = ''
       this.barCodeCreateDialogVisible = true
       this.$nextTick(() => {
         this.$refs.barCodeForm.clearValidate()
@@ -317,7 +317,8 @@ export default {
       })
     },
     handleData(row) {
-      this.$confirm('此操作将永久删除' + row.material_name + '条码：' + row.supplier_no + ', 是否继续?', '提示', {
+      var str = row.use_flag ? '停用' : '启用'
+      this.$confirm('此操作将' + str + row.material_name + '产地：' + row.provenance + ', 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -326,12 +327,12 @@ export default {
           .then(response => {
             this.$message({
               type: 'success',
-              message: '删除成功!'
+              message: '操作成功!'
             })
             this.getParamsBarCode.page = 1
             this.getBarCodelist()
-          }).catch(error => {
-            this.$message.error(error)
+          }).catch(function() {
+
           })
       })
     },
