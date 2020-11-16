@@ -27,7 +27,7 @@
         />
       </el-form-item>
       <el-form-item label="处理意见">
-        <deal-suggestion-select @dealSuggestionChange="dealSuggestionChange"/>
+        <deal-suggestion-select @dealSuggestionChange="dealSuggestionChange" />
       </el-form-item>
     </el-form>
     <el-table
@@ -36,7 +36,12 @@
       fit
       style="width: 100%"
       :data="palletFeedTestList"
+      @selection-change="handleSelectionChange"
     >
+      <!-- <el-table-column
+        type="selection"
+        width="55"
+      /> -->
       <el-table-column type="index" label="No" />
       <el-table-column align="center" label="生产信息">
         <el-table-column label="工厂日期" prop="day_time" />
@@ -47,7 +52,7 @@
         <el-table-column label="收皮重量" prop="actual_weight" />
         <el-table-column label="余量" prop="residual_weight" align="center" />
         <el-table-column label="生产时间" width="160" align="center" prop="production_factory_date" />
-        <el-table-column label="有效时间" width="150" align="center" prop="valid_time" />
+        <el-table-column label="有效时间" width="90" align="center" prop="valid_time" />
       </el-table-column>
       <el-table-column label="质量信息" align="center">
         <el-table-column label="检测状态" align="center" prop="test.test_status" />
@@ -61,10 +66,10 @@
         <el-table-column label="处理意见" prop="deal_suggestion" />
         <el-table-column label="处理时间" width="160" align="center" prop="deal_time" />
       </el-table-column>
-      <el-table-column label="操作" align="center" width="160">
+      <el-table-column label="操作" align="center" width="120">
         <template slot-scope="{row}">
-          <el-button size="mini" @click="handleEdit(row)">编辑</el-button>
-          <el-button size="mini" @click="print(row)">打印</el-button>
+          <!-- <el-button size="mini" @click="handleEdit(row)">编辑</el-button> -->
+          <el-button size="mini" @click="print(row)">查看质量卡片</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -99,7 +104,7 @@
 <script>
 import dayjs from 'dayjs'
 import Page from '@/components/page'
-import PlanSchedulesSelect from '@/components/PlanSchedulesSelect'
+// import PlanSchedulesSelect from '@/components/PlanSchedulesSelect'
 import EquipSelect from '@/components/EquipSelect'
 import ClassSelect from '@/components/ClassSelect'
 import ProductNoSelect from '@/components/ProductNoSelect'
@@ -108,7 +113,7 @@ import TestCard from '@/components/TestCard'
 import { palletFeedTest, changelValidTime } from '@/api/quick-check-detail'
 
 export default {
-  components: { PlanSchedulesSelect, EquipSelect, ClassSelect, ProductNoSelect, Page, TestCard, DealSuggestionSelect },
+  components: { EquipSelect, ClassSelect, ProductNoSelect, Page, TestCard, DealSuggestionSelect },
   data() {
     return {
       total: 0,
@@ -204,6 +209,9 @@ export default {
     productBatchingChanged(val) {
       this.getParams.product_no = val ? val.stage_product_batch_no : null
       this.currentChange(1)
+    },
+    handleSelectionChange() {
+
     }
   }
 }
