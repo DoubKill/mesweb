@@ -20,6 +20,7 @@
     "echarts": "^4.9.0",
     "el-table-infinite-scroll": "^1.0.10",
     "element-ui": "2.13.2",
+    "file-saver": "^2.0.2",
     "js-cookie": "2.2.0",
     "jsbarcode": "^3.11.3",
     "normalize.css": "7.0.0",
@@ -28,7 +29,8 @@
     "v-charts": "^1.19.0",
     "vue": "2.6.10",
     "vue-router": "3.0.6",
-    "vuex": "3.1.0"
+    "vuex": "3.1.0",
+    "xlsx": "^0.16.8"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "4.4.4",

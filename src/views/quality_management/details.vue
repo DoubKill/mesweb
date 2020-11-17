@@ -6,6 +6,7 @@
       <el-form-item label="日期">
         <el-date-picker
           v-model="getParams.day_time"
+          :clearable="false"
           type="date"
           value-format="yyyy-MM-dd"
           placeholder="选择日期"
@@ -39,9 +40,15 @@
           显示过滤界面
         </el-button>
       </el-form-item>
+      <el-form-item>
+        <el-button @click="exportExcel">
+          导出
+        </el-button>
+      </el-form-item>
     </el-form>
     <!-- v-el-table-infinite-scroll="infiniteScroll" -->
     <el-table
+      id="out-table"
       v-loading="listLoading"
       :data="testOrders"
       border
@@ -151,6 +158,8 @@ import ProductNoSelect from '@/components/ProductNoSelect'
 import StageSelect from '@/components/StageSelect'
 import { testTypes, materialTestOrders, testResultHistory } from '@/api/quick-check-detail'
 import elTableInfiniteScroll from 'el-table-infinite-scroll'
+import FileSaver from 'file-saver'
+import XLSX from 'xlsx'
 export default {
   directives: {
     'el-table-infinite-scroll': elTableInfiniteScroll
@@ -193,25 +202,29 @@ export default {
     this.getMaterialTestOrders()
   },
   mounted() {
-    window.addEventListener('scroll', () => {
-      const scrollHeight = document.body.scrollHeight - 1
-      const clientHeight = document.body.clientHeight
-      const scrollTop = document.documentElement.scrollTop + document.body.scrollTop
+    // window.addEventListener('scroll', () => {
+    //   const scrollHeight = document.body.scrollHeight - 1
+    //   const clientHeight = document.body.clientHeight
+    //   const scrollTop = document.documentElement.scrollTop + document.body.scrollTop
 
-      if (clientHeight + scrollTop >= scrollHeight) {
-        // 滚动到了底部
-        if (this.isMoreLoad && !this.listLoading) {
-          this.getParams.page = this.getParams.page + 1
-          this.getMaterialTestOrders()
-        }
-      }
-    })
+    //   if (clientHeight + scrollTop >= scrollHeight) {
+    //     // 滚动到了底部
+    //     if (this.isMoreLoad && !this.listLoading) {
+    //       this.getParams.page = this.getParams.page + 1
+    //       this.getMaterialTestOrders()
+    //     }
+    //   }
+    // })
   },
   beforeUpdata() {
 
   },
   methods: {
     dayTimeChanged() {
+      if (!this.getParams.day_time) {
+        this.$message.info('请选择日期')
+        return
+      }
       this.clearList()
       this.getMaterialTestOrders()
     },
@@ -256,7 +269,7 @@ export default {
       try {
         // this.testOrders
         const data = await materialTestOrders(this.getParams)
-        let arr = data.results
+        let arr = data
         arr = arr.map(result => {
           return {
             ...result,
@@ -290,16 +303,18 @@ export default {
             }
           }
         })
-        if (data.count - this.getParams.page * this.definePafeSize > 0) {
-          this.isMoreLoad = true
-        } else {
-          this.isMoreLoad = false
-        }
-        this.allPage = data.count
-        this.testOrders.push(...arr)
-        setTimeout(() => {
-          this.listLoading = false
-        }, 300)
+        // if (data.count - this.getParams.page * this.definePafeSize > 0) {
+        //   this.isMoreLoad = true
+        // } else {
+        //   this.isMoreLoad = false
+        // }
+        this.testOrders = arr
+        this.listLoading = false
+        // this.allPage = data.count
+        // this.testOrders.push(...arr)
+        // setTimeout(() => {
+        //   this.listLoading = false
+        // }, 300)
       // eslint-disable-next-line no-empty
       } catch (e) {
         this.listLoading = false
@@ -346,10 +361,34 @@ export default {
         return 'warning-row'
       }
       return ''
-    }
+    },
     // planScheduleSelected(planScheduleId) {
     //   console.log(planScheduleId)
     // }
+    exportExcel() {
+      /* 从表生成工作簿对象 */
+      var wb = XLSX.utils.table_to_book(document.querySelector('#out-table'))
+      /* 获取二进制字符串作为输出 */
+      var wbout = XLSX.write(wb, {
+        bookType: 'xlsx',
+        bookSST: true,
+        type: 'array'
+      })
+      try {
+        FileSaver.saveAs(
+          // Blob 对象表示一个不可变、原始数据的类文件对象。
+          // Blob 表示的不一定是JavaScript原生格式的数据。
+          // File 接口基于Blob，继承了 blob 的功能并将其扩展使其支持用户系统上的文件。
+          // 返回一个新创建的 Blob 对象，其内容由参数中给定的数组串联组成。
+          new Blob([wbout], { type: 'application/octet-stream' }),
+          // 设置导出文件名称
+          '胶料快检详细信息.xlsx'
+        )
+      } catch (e) {
+        if (typeof console !== 'undefined') console.log(e, wbout)
+      }
+      return wbout
+    }
   }
 }
 </script>
