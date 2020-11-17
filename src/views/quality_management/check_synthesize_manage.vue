@@ -20,11 +20,12 @@
         <class-select @classSelected="classSelected" />
       </el-form-item>
       <el-form-item label="胶料">
-        <product-no-select
+        <all-product-no-select @productBatchingChanged="productBatchingChanged" />
+        <!-- <product-no-select
           :is-stage-productbatch-no-remove="true"
           :make-use-batch="true"
           @productBatchingChanged="productBatchingChanged"
-        />
+        /> -->
       </el-form-item>
       <el-form-item label="处理意见">
         <deal-suggestion-select @dealSuggestionChange="dealSuggestionChange" />
@@ -107,13 +108,14 @@ import Page from '@/components/page'
 // import PlanSchedulesSelect from '@/components/PlanSchedulesSelect'
 import EquipSelect from '@/components/EquipSelect'
 import ClassSelect from '@/components/ClassSelect'
-import ProductNoSelect from '@/components/ProductNoSelect'
+// import ProductNoSelect from '@/components/ProductNoSelect'
+import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import DealSuggestionSelect from '@/components/DealSuggestionSelect'
 import TestCard from '@/components/TestCard'
 import { palletFeedTest, changelValidTime } from '@/api/quick-check-detail'
 
 export default {
-  components: { EquipSelect, ClassSelect, ProductNoSelect, Page, TestCard, DealSuggestionSelect },
+  components: { EquipSelect, ClassSelect, allProductNoSelect, Page, TestCard, DealSuggestionSelect },
   data() {
     return {
       total: 0,
@@ -207,7 +209,7 @@ export default {
       this.currentChange(1)
     },
     productBatchingChanged(val) {
-      this.getParams.product_no = val ? val.stage_product_batch_no : null
+      this.getParams.product_no = val ? val.material_no : null
       this.currentChange(1)
     },
     handleSelectionChange() {
