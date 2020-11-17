@@ -6,7 +6,11 @@
         <!-- <warehouseSelect @changSelect="warehouseSelect" /> -->
       </el-form-item>
       <el-form-item label="仓库位置">
-        <stationInfoWarehouse @changSelect="changSelectStation" />
+        <stationInfoWarehouse
+          :warehouse-name="warehouseName"
+          :start-using="true"
+          @changSelect="changSelectStation"
+        />
       </el-form-item>
       <el-form-item label="物料编码">
         <el-input v-model="getParams.material_no" @input="changeSearch" />

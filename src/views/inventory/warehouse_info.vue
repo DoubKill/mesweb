@@ -33,7 +33,7 @@
         <template slot-scope="{ row }">
           <el-button-group>
             <el-button v-permission="['warehouse', 'change']" size="mini" @click="handleUpdateWarehouseInfo(row)">修改</el-button>
-            <el-button v-permission="['warehouse', 'change']" size="mini" @click="updateSIUseFlag(row)">{{ row.use_flag ? '弃用' : '启用' }}</el-button>
+            <!-- <el-button v-permission="['warehouse', 'change']" size="mini" @click="updateSIUseFlag(row)">{{ row.use_flag ? '弃用' : '启用' }}</el-button> -->
           </el-button-group>
         </template>
       </el-table-column>
@@ -78,7 +78,7 @@
           <el-table-column prop="name" label="站点名称" align="center" />
           <el-table-column prop="no" label="站点编码" align="center" />
           <el-table-column prop="type_name" label="站点类型" align="center" />
-          <el-table-column label="操作" align="center">
+          <el-table-column label="操作" align="center" width="140">
             <template slot-scope="{ row }">
               <el-button-group>
                 <el-button size="mini" @click="handleChangeStation(row)">修改</el-button>
