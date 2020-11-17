@@ -41,3 +41,12 @@ export function dealSuggestionView() {
     method: 'get'
   })
 }
+
+export function printMaterialDealResult(params) {
+  return request({
+    url: API.PrintMaterialDealResult,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
