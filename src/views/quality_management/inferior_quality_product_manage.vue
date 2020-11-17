@@ -26,6 +26,12 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item style="float: right">
+        <!-- <a href="10.4.14.33:8000/api/v1/quality/print-material-deal-result/">daoch</a> -->
+        <el-button
+          @click="exportData"
+        >导出</el-button>
+      </el-form-item>
     </el-form>
     <el-table
       border
@@ -132,7 +138,7 @@
 <script>
 import Page from '@/components/page'
 import UnqualifiedTreatmentOpinions from './unqualified_treatment_opinions_manage'
-import { materialDealResult, editMaterialDeal, resultStatus, dealSuggestion } from '@/api/material-deal-result'
+import { materialDealResult, editMaterialDeal, resultStatus, dealSuggestion, printMaterialDealResult } from '@/api/material-deal-result'
 
 export default {
   components: { Page, UnqualifiedTreatmentOpinions },
@@ -280,6 +286,19 @@ export default {
           })
         }
       })
+    },
+    exportData() {
+      printMaterialDealResult(this.getParams)
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '不合格品.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+        })
     }
   }
 }
