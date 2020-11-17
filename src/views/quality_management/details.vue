@@ -23,9 +23,7 @@
         <class-select @classSelected="classSelected" />
       </el-form-item>
       <el-form-item label="胶料">
-        <product-no-select
-          :is-stage-productbatch-no-remove="true"
-          :make-use-batch="true"
+        <all-product-no-select
           @productBatchingChanged="productBatchingChanged"
         />
       </el-form-item>
@@ -154,8 +152,9 @@ import dayjs from 'dayjs'
 // import PlanSchedulesSelect from '@/components/PlanSchedulesSelect'
 import EquipSelect from '@/components/EquipSelect'
 import ClassSelect from '@/components/ClassSelect'
-import ProductNoSelect from '@/components/ProductNoSelect'
+// import ProductNoSelect from '@/components/ProductNoSelect'
 import StageSelect from '@/components/StageSelect'
+import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import { testTypes, materialTestOrders, testResultHistory } from '@/api/quick-check-detail'
 import elTableInfiniteScroll from 'el-table-infinite-scroll'
 import FileSaver from 'file-saver'
@@ -164,7 +163,7 @@ export default {
   directives: {
     'el-table-infinite-scroll': elTableInfiniteScroll
   },
-  components: { EquipSelect, ClassSelect, ProductNoSelect, StageSelect },
+  components: { EquipSelect, allProductNoSelect, ClassSelect, StageSelect },
   data() {
     return {
       count: 0,
@@ -247,7 +246,7 @@ export default {
       this.getMaterialTestOrders()
     },
     productBatchingChanged(val) {
-      this.getParams.product_no = val ? val.stage_product_batch_no : null
+      this.getParams.product_no = val ? val.material_no : null
       this.clearList()
       this.getMaterialTestOrders()
     },

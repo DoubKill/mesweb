@@ -20,7 +20,7 @@
         <class-select @classSelected="classSelected" />
       </el-form-item>
       <el-form-item label="胶料：">
-        <product-no-select @productBatchingChanged="productBatchingChanged" />
+        <all-product-no-select @productBatchingChanged="productBatchingChanged" />
       </el-form-item>
     </el-form>
     <el-table
@@ -156,12 +156,12 @@ import { setDate, deepClone } from '@/utils/index'
 // import planSchedulesSelect from '@/components/PlanSchedulesSelect'
 import equipSelect from '@/components/select_w/equip'
 import classSelect from '@/components/ClassSelect'
-import productNoSelect from '@/components/ProductNoSelect'
+import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import viewDialogTrial from '@/components/select_w/viewDialogTrial'
 // import manualEntryRadio from './manual_entry_components/index'
 // import page from '@/components/page'
 export default {
-  components: { equipSelect, classSelect, productNoSelect, viewDialogTrial },
+  components: { equipSelect, classSelect, allProductNoSelect, viewDialogTrial },
   data() {
     return {
       dialogVisible: false,
@@ -264,7 +264,7 @@ export default {
       this.pageOne()
     },
     productBatchingChanged(val) {
-      this.search.product_no = val ? val.stage_product_batch_no : ''
+      this.search.product_no = val ? val.material_no : ''
       this.pageOne()
     },
     rowClick(row) {

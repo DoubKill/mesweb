@@ -1,5 +1,5 @@
 <template>
-  <!-- 胶料下拉框 -->
+  <!-- 上辅机和mes全部胶料下拉框 -->
   <el-select
     v-model="productBatchingId"
     clearable
@@ -11,14 +11,14 @@
     <el-option
       v-for="item in productBatchings"
       :key="item.id"
-      :label="item.stage_product_batch_no"
+      :label="item.material_no"
       :value="item.id"
     />
   </el-select>
 </template>
 
 <script>
-import { rubberMaterialUrl } from '@/api/base_w'
+import { batchingMaterials } from '@/api/base_w'
 export default {
   props: {
     isStageProductbatchNoRemove: {
@@ -53,8 +53,8 @@ export default {
     getProductBatchings() {
       this.loading = true
       // eslint-disable-next-line object-curly-spacing
-      rubberMaterialUrl('get', null, { params: { all: 1 } }).then(response => {
-        let productBatchings = response.results
+      batchingMaterials('get', null, { params: { all: 1 } }).then(response => {
+        let productBatchings = response
         productBatchings.forEach(productBatching => {
           this.productBatchingById[productBatching.id] = productBatching
         })
