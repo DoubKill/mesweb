@@ -103,6 +103,8 @@ export default {
   MaterialTestOrders: '/api/v1/quality/material-test-orders/',
   MatIndicatorTab: '/api/v1/quality/mat-indicator-tab/',
   MaterialDataPoints: '/api/v1/quality/material-data-points/',
+  // 不合格品处理导出
+  PrintMaterialDealResult: '/api/v1/quality/print-material-deal-result/',
   // 试验类型数据点
   DataPoints: '/api/v1/quality/data-points/',
   // 试验类型
