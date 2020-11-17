@@ -9,6 +9,7 @@
         <stationInfoWarehouse
           ref="stationInfoWarehouseRef"
           :warehouse-name="warehouseName"
+          :start-using="true"
           @changSelect="changSelectStation"
         />
       </el-form-item>

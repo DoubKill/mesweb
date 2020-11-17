@@ -6,6 +6,7 @@
       placeholder="请选择仓库位置"
       :loading="loading"
       :clearable="isClear"
+      no-data-text="暂无启用的仓库"
       @visible-change="visibleChange"
       @change="changSelect"
     >
@@ -40,6 +41,10 @@ export default {
     warehouseName: {
       type: String,
       default: null
+    },
+    startUsing: { // 只显示启用的
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -65,8 +70,12 @@ export default {
       try {
         this.loading = true
         const data = await stationInfo({ all: 1, warehouse_name: this.warehouseName })
-        this.options = data || []
         this.loading = false
+        if (this.startUsing) {
+          this.options = data.filter(D => { return D.use_flag })
+          return
+        }
+        this.options = data || []
       } catch (e) {
         this.loading = false
       }
