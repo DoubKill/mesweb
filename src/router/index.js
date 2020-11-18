@@ -387,6 +387,15 @@ export const asyncRoutes = [{
         permissionName: 'inventory_plan'
       }
     },
+    {
+      path: 'curtain-storehouse',
+      component: () => import('@/views/inventory/curtain-storehouse.vue'),
+      name: 'curtainStorehouse',
+      meta: {
+        title: '帘布库出库计划',
+        permissionName: 'inventory_plan'
+      }
+    },
     // {
     //   path: 'expire-rubber-manage',
     //   component: () => import('@/views/inventory/expire_rubber_manage.vue'),

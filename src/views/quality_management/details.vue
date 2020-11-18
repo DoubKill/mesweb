@@ -239,6 +239,7 @@ export default {
     },
     stageChange() {
       this.clearList()
+      this.getMaterialTestOrders()
     },
     classSelected(className) {
       this.getParams.classes = className || null

@@ -103,11 +103,11 @@ export default {
         material_type: '', // 物料类型
         material_no: '', // 物料编号
         container_no: '', // 托盘号
-        warehouse_name: '终炼胶库' // 仓库名称
+        warehouse_name: this.warehouseName // 仓库名称
       },
       currentPage: 1,
       total: 0,
-      options: ['一等品', '三等品'],
+      options: this.warehouseName === '终炼胶库' ? ['一等品', '三等品'] : ['合格品', '不合格品'],
       loading: false,
       multipleSelection: [],
       loadingBtn: false

@@ -165,5 +165,8 @@ export default {
 
   WarehouseMaterialTypeUrl: '/api/v1/inventory/warehouse-material-type/',
 
-  MaterialTypesUrl: BasicsUrl + 'global-codes/?all=1&class_name=原材料类别'
+  MaterialTypesUrl: BasicsUrl + 'global-codes/?all=1&class_name=原材料类别',
+
+  // 帘布库
+  LbPlanManagement: '/api/v1/inventory/lb-plan-management/'
 }

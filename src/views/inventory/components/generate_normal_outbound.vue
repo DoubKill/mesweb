@@ -33,7 +33,10 @@
         <!-- 按物料编码查到的 -->
         <el-input v-model="ruleForm.c" disabled />
       </el-form-item>
-      <el-form-item label="需求数量" prop="need_qty">
+      <el-form-item
+        :label="'需求数量('+(warehouseName==='终炼胶库'?'车':'托')+')'"
+        prop="need_qty"
+      >
         <el-input-number
           v-model="ruleForm.need_qty"
           controls-position="right"
@@ -118,7 +121,7 @@ export default {
       },
       visible: false,
       loadingBtn: null,
-      options: ['一等品', '三等品']
+      options: this.warehouseName === '终炼胶库' ? ['一等品', '三等品'] : ['合格品', '不合格品']
     }
   },
   watch: {
