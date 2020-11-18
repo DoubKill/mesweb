@@ -82,7 +82,7 @@
             <template slot-scope="{ row }">
               <el-button-group>
                 <el-button size="mini" @click="handleChangeStation(row)">修改</el-button>
-                <el-button size="mini" @click="updateSUseFlag(row)">{{ row.use_flag ? '弃用' : '启用' }}</el-button>
+                <!-- <el-button size="mini" @click="updateSUseFlag(row)">{{ row.use_flag ? '弃用' : '启用' }}</el-button> -->
               </el-button-group>
             </template>
           </el-table-column>
@@ -133,7 +133,7 @@
             <template slot-scope="{ row }">
               <el-button-group>
                 <el-button size="mini" @click="handleChangeMaterialType(row)">修改</el-button>
-                <el-button size="mini" @click="updateMUseFlag(row)">{{ row.use_flag ? '弃用' : '启用' }}</el-button>
+                <!-- <el-button size="mini" @click="updateMUseFlag(row)">{{ row.use_flag ? '弃用' : '启用' }}</el-button> -->
               </el-button-group>
             </template>
           </el-table-column>

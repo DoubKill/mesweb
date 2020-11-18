@@ -390,3 +390,12 @@ export function palletTrainsFeedbacks(method, id, data = {}) {
   return request(obj)
 }
 
+export function lbPlanManagement(method, id, data = {}) {
+  const obj = {
+    url: id ? API.LbPlanManagement + id + '/' : API.LbPlanManagement,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+

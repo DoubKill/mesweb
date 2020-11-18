@@ -135,7 +135,7 @@ import GenerateAssignOutbound from './components/generate_assign_outbound'
 import GenerateNormalOutbound from './components/generate_normal_outbound'
 // import materielTypeSelect from '@/components/select_w/materielTypeSelect'
 // import warehouseSelect from '@/components/select_w/warehouseSelect'
-import { putPlanManagement } from '@/api/base_w'
+import { lbPlanManagement } from '@/api/base_w'
 import { warehouseInfo } from '@/api/warehouse'
 import page from '@/components/page'
 import commitVal from '@/utils/common'
@@ -158,7 +158,7 @@ export default {
       demandQuantityVal: '',
       loadingBtn: false,
       rowVal: {},
-      warehouseName: '终炼胶库',
+      warehouseName: '帘布库',
       // 仓库id
       warehouseInfo: null
     }
@@ -172,7 +172,7 @@ export default {
       try {
         this.loading = true
         this.tableData = []
-        const data = await putPlanManagement('get', null, { params: this.search })
+        const data = await lbPlanManagement('get', null, { params: this.search })
         this.total = data.count
         this.tableData = data.results
         this.loading = false
@@ -222,7 +222,7 @@ export default {
     },
     async visibleMethodSubmit(val) {
       try {
-        await putPlanManagement('post', null, { data: [val] })
+        await lbPlanManagement('post', null, { data: [val] })
         this.$message.success('操作成功')
         this.normalOutboundDialogVisible = false
         this.getList()
@@ -234,7 +234,7 @@ export default {
     },
     async visibleMethodAssignSubmit(val) {
       try {
-        await putPlanManagement('post', null, { data: val })
+        await lbPlanManagement('post', null, { data: val })
         this.$message.success('操作成功')
         this.assignOutboundDialogVisible = false
         this.$refs.assignOutbound.creadVal()
@@ -266,7 +266,7 @@ export default {
           warehouse_info: row.warehouse_info
         }
         this.loadingBtn = true
-        await putPlanManagement('put', row.id, { data: obj })
+        await lbPlanManagement('put', row.id, { data: obj })
         this.dialogVisible = false
         this.loadingBtn = false
         this.getList()
@@ -295,7 +295,7 @@ export default {
           inventory_reason: row.inventory_reason || ''
         }
         this.loading = true
-        await putPlanManagement('put', row.id, { data: obj })
+        await lbPlanManagement('put', row.id, { data: obj })
         this.$message.success('操作成功')
         this.getList()
       }).catch(() => {
@@ -323,7 +323,7 @@ export default {
           warehouse_info: this.warehouseInfo
         }
         this.loading = true
-        await putPlanManagement('put', row.id, { data: obj })
+        await lbPlanManagement('put', row.id, { data: obj })
         this.$message.success('操作成功')
         this.getList()
       }).catch(() => {
