@@ -2,7 +2,8 @@
   <div v-loading="loading">
     <el-form :inline="true">
       <el-form-item label="胶料编码:">
-        <product-no-select @productBatchingChanged="productBatchingChanged" />
+        <all-product-no-select @productBatchingChanged="productBatchingChanged" />
+        <!-- <product-no-select @productBatchingChanged="productBatchingChanged" /> -->
       </el-form-item>
       <el-form-item label="试验指标:">
         <detection-index @changeSelect="detectionIndexSelect" />
@@ -114,16 +115,17 @@
 </template>
 
 <script>
-import productNoSelect from '@/components/ProductNoSelect'
+// import productNoSelect from '@/components/ProductNoSelect'
 import testTypeSelect from '@/components/select_w/testTypeSelect'
 import testMethodSelect from '@/components/select_w/testMethodSelect'
 import detectionIndex from '@/components/select_w/detectionIndex'
 import testTypeDotSelect from '@/components/select_w/testTypeDotSelect'
 import { batchingMaterials, matTestMethods } from '@/api/base_w'
 import page from '@/components/page'
+import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import editDialog from './benchmark_edit_dialog/benchmark_edit_dialog'
 export default {
-  components: { editDialog, page, testTypeDotSelect, productNoSelect, testTypeSelect, testMethodSelect, detectionIndex },
+  components: { editDialog, page, testTypeDotSelect, allProductNoSelect, testTypeSelect, testMethodSelect, detectionIndex },
   data() {
     var validatePass = (rule, value, callback, _val, error) => {
       if (!_val) {
@@ -246,7 +248,7 @@ export default {
       this.$refs.testTypeDotSelect.value = []
     },
     productBatchingChanged(val) {
-      this.search.material_no = val ? val.stage_product_batch_no : ''
+      this.search.material_no = val ? val.material_no : ''
       this.search.page = 1
       this.getList()
     },

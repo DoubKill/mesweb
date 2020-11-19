@@ -95,7 +95,6 @@
       <div v-for="(itemTa,iTa) in changeTable" :key="iTa">
         <el-table-column
           v-if="JSON.stringify(itemTa.checkedC) !== '{}'"
-          :key="1"
           :label="itemTa.test_indicator"
           align="center"
         >
@@ -113,6 +112,7 @@
                   &&scope.row._list[itemTa.test_indicator][itemChild.name]"
                 v-model="scope.row._list[itemTa.test_indicator][itemChild.name].value"
                 placeholder="请输入检测值"
+                @change="detectionValue(scope.row,scope.$index,scope.row._list)"
               />
             </template>
           </el-table-column>
@@ -134,7 +134,7 @@
           />
         </template>
       </el-table-column>
-      <el-table-column :key="5" label="操作">
+      <el-table-column :key="changeTable.length>0?changeTable.length+3:3" label="操作">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -170,8 +170,9 @@ export default {
       search: {
         ShiftRules: '',
         factory_date: setDate(),
-        equip_no: '',
-        classes: '',
+        // factory_date: '2020-9-22',
+        equip_no: '', // Z06
+        classes: '', // 早班
         product_no: ''
       },
       tableData: [],
@@ -198,6 +199,7 @@ export default {
         const data = await palletTrainsFeedbacks('get', null, { params: this.search })
         this.getTestType(this.search.product_no)
         this.tableDataChild = data || []
+        this.tableDataChild.forEach((D, index) => { this.$set(D, '_index', index) })
         this.loading = false
       } catch (e) {
         this.loading = false
@@ -303,6 +305,16 @@ export default {
     viewTrial() {
       this.dialogVisible = true
     },
+    detectionValue(row, index, list) {
+      row._filledIn = false
+      for (const key in list) {
+        for (const value in list[key]) {
+          if (list[key][value].value) {
+            row._filledIn = true
+          }
+        }
+      }
+    },
     testMethodChange(event, val) {
       if (val) {
         for (const key in val) {
@@ -316,7 +328,8 @@ export default {
       const arr = []
       try {
         if (this.tableDataChild.length === 0) return
-        this.tableDataChild.forEach((D, i) => {
+        const tableDataChild = this.tableDataChild.filter(D => { return D._filledIn })
+        tableDataChild.forEach((D, i) => {
           const arrChild = []
           if (!D.lot_no) {
             this.$message.error('收皮条码不能为空！')
@@ -326,9 +339,8 @@ export default {
             for (const key in D._list) {
               for (const keyChild in D._list[key]) {
                 if (D._list[key][keyChild]) {
-                  if (!D._list[key][keyChild].value || !D._list[key][keyChild].test_method_name) {
-                    this.$message.error('每行数据类型点是必填！')
-                    throw new Error('数据点是必填！')
+                  if (!D._list[key][keyChild].value) {
+                    D._list[key][keyChild].value = null
                   }
                   arrChild.push(D._list[key][keyChild])
                 }
@@ -350,6 +362,7 @@ export default {
       } catch (ex) {
         return
       }
+      // return
       this.loadingBtn = true
       try {
         await materialTestOrders('post', null, { data: arr })
