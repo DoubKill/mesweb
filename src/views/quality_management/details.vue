@@ -33,6 +33,16 @@
       <el-form-item label="段次">
         <stage-select v-model="getParams.stage" @change="stageChange" />
       </el-form-item>
+      <!-- <el-form-item label="综合检测结果">
+        <el-select v-model="valueResult" placeholder="请选择">
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item> -->
       <el-form-item>
         <el-button @click="filterDialogVisible = true">
           显示过滤界面
@@ -55,14 +65,15 @@
       row-key="index"
       lazy
       :load="load"
+      height="600"
       size="mini"
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
       :row-class-name="tableRowClassName"
     >
       <!-- <el-table-column label="No" align="center" prop="index" /> -->
       <el-table-column label="生产信息" align="center">
-        <el-table-column label="生产计划号" width="180" prop="plan_classes_uid" align="center" />
-        <el-table-column label="收皮条码" prop="lot_no" />
+        <!-- <el-table-column label="生产计划号" width="180" prop="plan_classes_uid" align="center" /> -->
+        <el-table-column label="收皮条码" prop="lot_no" width="180" />
         <el-table-column label="生产班次/班组" width="50" prop="class_group" />
         <el-table-column label="生产机台" width="70" prop="production_equip_no" />
         <el-table-column label="胶料编码" align="center" width="120" prop="product_no" />
@@ -193,7 +204,9 @@ export default {
       recordList: [],
       isMoreLoad: true,
       // 默认每页数量
-      definePafeSize: 10
+      definePafeSize: 10,
+      valueResult: '',
+      options: ['']
     }
   },
   created() {
