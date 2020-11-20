@@ -23,6 +23,7 @@
     <el-table
       :data="tableData"
       border
+      :cell-style="cellStyle"
       style="width: 100%"
     >
       <el-table-column fixed type="index" label="No" />
@@ -38,34 +39,38 @@
       <el-table-column v-for="(value,index) in headers.points" :key="index" :label="value" align="center">
         <el-table-column label="+" align="center">
           <template slot-scope="scope">
-            <span v-if="(scope.row.points.filter(d=>d.name === value)).length>0">
+            <span
+              v-if="(scope.row.points.filter(d=>d.name === value)).length>0"
+            >
               {{ (scope.row.points.filter(d=>d.name === value))[0].upper_limit_count }}
             </span>
-            <!-- <span
-              v-for="(value1,index1) in scope.row.points"
-              :key="index1"
-            > -->
-            <!-- <span v-if="value1.name === value">{{ value1.upper_limit_count }}</span> -->
-            <!-- </span> -->
           </template>
         </el-table-column>
         <el-table-column label="%" align="center">
           <template slot-scope="scope">
-            <span v-if="(scope.row.points.filter(d=>d.name === value)).length>0">
+            <span
+              v-if="(scope.row.points.filter(d=>d.name === value)).length>0"
+              :style="getStyle((scope.row.points.filter(d=>d.name === value))[0].upper_limit_percent)"
+            >
               {{ (scope.row.points.filter(d=>d.name === value))[0].upper_limit_percent }}
             </span>
           </template>
         </el-table-column>
         <el-table-column label="-" align="center">
           <template slot-scope="scope">
-            <span v-if="(scope.row.points.filter(d=>d.name === value)).length>0">
+            <span
+              v-if="(scope.row.points.filter(d=>d.name === value)).length>0"
+            >
               {{ (scope.row.points.filter(d=>d.name === value))[0].lower_limit_count }}
             </span>
           </template>
         </el-table-column>
         <el-table-column label="%" align="center">
           <template slot-scope="scope">
-            <span v-if="(scope.row.points.filter(d=>d.name === value)).length>0">
+            <span
+              v-if="(scope.row.points.filter(d=>d.name === value)).length>0"
+              :style="getStyle((scope.row.points.filter(d=>d.name === value))[0].lower_limit_percent)"
+            >
               {{ (scope.row.points.filter(d=>d.name === value))[0].lower_limit_percent }}
             </span>
           </template>
@@ -86,12 +91,13 @@
             :data="dayTableData"
             size="small"
             border
+            :cell-style="cellStyle"
             class="header body"
             style="width: 100%"
           >
             <!-- <el-table-column label="总合格率"> -->
-            <el-table-column fixed width="50" type="index" label="No" />
-            <el-table-column fixed width="90" label="日期" prop="date" />
+            <el-table-column width="50" type="index" label="No" />
+            <el-table-column width="90" label="日期" prop="date" />
             <el-table-column label="一次合格率%" prop="yc_percent_of_pass" />
             <el-table-column label="流变合格率%" prop="lb_percent_of_pass" />
             <el-table-column label="综合合格率%" prop="zh_percent_of_pass" />
@@ -113,21 +119,30 @@
             <el-table-column v-for="(value,index) in headers.equips" :key="index" :label="value" align="center">
               <el-table-column label="一次合格率%" align="center">
                 <template slot-scope="scope">
-                  <span v-if="(scope.row.equips.filter(d=>d.production_equip_no === value)).length>0">
+                  <span
+                    v-if="(scope.row.equips.filter(d=>d.production_equip_no === value)).length>0"
+                    :style="getStyle((scope.row.equips.filter(d=>d.production_equip_no === value))[0].yc_percent_of_pass)"
+                  >
                     {{ (scope.row.equips.filter(d=>d.production_equip_no === value))[0].yc_percent_of_pass }}
                   </span>
                 </template>
               </el-table-column>
               <el-table-column label="流变合格率%" align="center">
                 <template slot-scope="scope">
-                  <span v-if="(scope.row.equips.filter(d=>d.production_equip_no === value)).length>0">
+                  <span
+                    v-if="(scope.row.equips.filter(d=>d.production_equip_no === value)).length>0"
+                    :style="getStyle((scope.row.equips.filter(d=>d.production_equip_no === value))[0].lb_percent_of_pass)"
+                  >
                     {{ (scope.row.equips.filter(d=>d.production_equip_no === value))[0].lb_percent_of_pass }}
                   </span>
                 </template>
               </el-table-column>
               <el-table-column label="综合合格率%" align="center">
                 <template slot-scope="scope">
-                  <span v-if="(scope.row.equips.filter(d=>d.production_equip_no === value)).length>0">
+                  <span
+                    v-if="(scope.row.equips.filter(d=>d.production_equip_no === value)).length>0"
+                    :style="getStyle((scope.row.equips.filter(d=>d.production_equip_no === value))[0].zh_percent_of_pass)"
+                  >
                     {{ (scope.row.equips.filter(d=>d.production_equip_no === value))[0].zh_percent_of_pass }}
                   </span>
                 </template>
@@ -151,7 +166,10 @@
             <el-table-column v-for="(value,index) in headers.classes" :key="index" :label="value" align="center">
               <el-table-column label="一次合格率%" align="center">
                 <template slot-scope="scope">
-                  <span v-if="(scope.row.classes.filter(d=>d.production_class === value)).length>0">
+                  <span
+                    v-if="(scope.row.classes.filter(d=>d.production_class === value)).length>0"
+                    :style="getStyle((scope.row.classes.filter(d=>d.production_class === value))[0].yc_percent_of_pass)"
+                  >
                     {{ (scope.row.classes.filter(d=>d.production_class === value))[0].yc_percent_of_pass }}
                   </span>
                   <!-- <span v-if="scope.row.test_detail[value]">{{ scope.row.test_detail[value].up_trains }}</span> -->
@@ -159,7 +177,10 @@
               </el-table-column>
               <el-table-column label="流变合格率%" align="center">
                 <template slot-scope="scope">
-                  <span v-if="(scope.row.classes.filter(d=>d.production_class === value)).length>0">
+                  <span
+                    v-if="(scope.row.classes.filter(d=>d.production_class === value)).length>0"
+                    :style="getStyle((scope.row.classes.filter(d=>d.production_class === value))[0].yc_percent_of_pass)"
+                  >
                     {{ (scope.row.classes.filter(d=>d.production_class === value))[0].lb_percent_of_pass }}
                   </span>
                   <!-- <span v-if="scope.row.test_detail[value]">{{ scope.row.test_detail[value].up_trains }}</span> -->
@@ -167,7 +188,10 @@
               </el-table-column>
               <el-table-column label="综合合格率%" align="center">
                 <template slot-scope="scope">
-                  <span v-if="(scope.row.classes.filter(d=>d.production_class === value)).length>0">
+                  <span
+                    v-if="(scope.row.classes.filter(d=>d.production_class === value)).length>0"
+                    :style="getStyle((scope.row.classes.filter(d=>d.production_class === value))[0].yc_percent_of_pass)"
+                  >
                     {{ (scope.row.classes.filter(d=>d.production_class === value))[0].zh_percent_of_pass }}
                   </span>
                   <!-- <span v-if="scope.row.test_detail[value]">{{ scope.row.test_detail[value].up_trains }}</span> -->
@@ -237,6 +261,21 @@ export default {
         // this.total = response.count
       })
       this.dialogShow = true
+    },
+    cellStyle({ row, column, rowIndex, columnIndex }) {
+      var cc = column.property
+      if (row[cc]) {
+        if (Number((row[cc]).replace('%', '')) < 98) {
+          return 'color: #EA1B29'
+        }
+      }
+    },
+    getStyle(str) {
+      if (str) {
+        return Number(str.replace('%', '')) < 98 ? 'color: #EA1B29' : 'color: #1a1a1b'
+      } else {
+        return 'color: #EA1B29'
+      }
     }
   }
 }
