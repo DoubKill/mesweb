@@ -1,6 +1,6 @@
 <template>
   <div
-    class="app-container"
+    class="app-container details_style"
   >
     <el-form :inline="true">
       <el-form-item label="日期">
@@ -33,16 +33,21 @@
       <el-form-item label="段次">
         <stage-select v-model="getParams.stage" @change="stageChange" />
       </el-form-item>
-      <!-- <el-form-item label="综合检测结果">
-        <el-select v-model="valueResult" placeholder="请选择">
+      <el-form-item label="综合检测结果">
+        <el-select
+          v-model="valueResult"
+          placeholder="请选择"
+          clearable
+          @change="valueResultFun"
+        >
           <el-option
             v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+            :key="item"
+            :label="item"
+            :value="item"
           />
         </el-select>
-      </el-form-item> -->
+      </el-form-item>
       <el-form-item>
         <el-button @click="filterDialogVisible = true">
           显示过滤界面
@@ -97,12 +102,20 @@
           </el-table-column> -->
           <el-table-column label="检测值" align="center" width="60">
             <template slot-scope="{ row }">
-              {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'value') }}
+              <div :class="getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'level')!==1&&getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'level')!==''?'test_type_name_style':''">
+                {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'value') }}
+              </div>
             </template>
           </el-table-column>
-          <el-table-column label="等级" align="center" width="60">
+          <el-table-column
+            label="等级"
+            align="center"
+            width="60"
+          >
             <template slot-scope="{ row }">
-              {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level') }}
+              <div :class="getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'level')!==1&&getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'level')!==''?'test_type_name_style':''">
+                {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level') }}
+              </div>
             </template>
           </el-table-column>
         </el-table-column>
@@ -203,13 +216,14 @@ export default {
       ],
       testOrders: [
       ],
+      testOrdersAll: [],
       index: 1,
       recordList: [],
       isMoreLoad: true,
       // 默认每页数量
       definePafeSize: 10,
       valueResult: '',
-      options: ['']
+      options: ['一等品', '三等品']
     }
   },
   created() {
@@ -247,6 +261,7 @@ export default {
       this.getParams.page = 1
       this.allPage = 0
       this.testOrders = []
+      this.testOrdersAll = []
     },
     equipSelected(equip) {
       this.getParams.equip_no = equip ? equip.equip_no : null
@@ -280,6 +295,11 @@ export default {
         resolve(subRows)
       })
     },
+    valueResultFun(val) {
+      this.getParams.mes_result = val
+      this.getParams.page = 1
+      this.getMaterialTestOrders()
+    },
     async getMaterialTestOrders() {
       this.listLoading = true
       try {
@@ -301,7 +321,7 @@ export default {
           for (const testTypeName in row.order_results) {
             const testType = row.order_results[testTypeName]
             let maxLevel = 0
-            let mes_result = '未检测'
+            // let mes_result = '未检测'
             for (const dataPointName in testType) {
               const dataPoint = testType[dataPointName]
               if (dataPoint.test_times > 1) {
@@ -309,13 +329,13 @@ export default {
               }
               if (dataPoint.level > maxLevel) {
                 maxLevel = dataPoint.level
-                mes_result = dataPoint.mes_result
+                // mes_result = dataPoint.mes_result
                 testType['maxLevelItem'] = dataPoint
               }
             }
             if (maxLevel > row.level) {
               row.level = maxLevel
-              row.mes_result = mes_result
+              row.mes_result = row.level === 1 ? '一等品' : '三等品'
             }
           }
         })
@@ -325,7 +345,14 @@ export default {
         //   this.isMoreLoad = false
         // }
         this.testOrders = arr
+        this.testOrdersAll = arr
         this.listLoading = false
+
+        if (this.getParams.mes_result) {
+          let testOrders = []
+          testOrders = this.testOrdersAll.filter(D => D.mes_result === this.getParams.mes_result)
+          this.testOrders = testOrders
+        }
         // this.allPage = data.count
         // this.testOrders.push(...arr)
         // setTimeout(() => {
@@ -373,7 +400,7 @@ export default {
       return result ? result[key] : ''
     },
     tableRowClassName({ row, rowIndex }) {
-      if (row.mes_result !== '合格') {
+      if (row.mes_result !== '一等品') {
         return 'warning-row'
       }
       return ''
@@ -409,8 +436,28 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
+.details_style{
   .el-table .warning-row {
     background: oldlace;
   }
+  td{
+    position: relative;
+  }
+  .test_type_name_style{
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: red;
+    width: 100%;
+    line-height: auto;
+    justify-content: center;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    color:#fff;
+  }
+
+}
+
 </style>

@@ -77,7 +77,7 @@
       </el-table-column>
       <el-table-column label="发起人" align="center" prop="created_user" />
       <el-table-column label="发起时间" align="center" prop="created_date" />
-      <el-table-column label="完成时间" align="center" prop="last_updated_date" />
+      <el-table-column label="完成时间" align="center" prop="finish_time" />
     </el-table>
     <page
       :total="total"

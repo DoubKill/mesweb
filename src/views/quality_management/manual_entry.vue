@@ -59,15 +59,18 @@
       @click="submitTable"
     >保 存</el-button>
     <el-table
+      ref="table"
       :data="tableDataChild"
       border
     >
       <el-table-column
+        key="5"
         type="index"
         width="50"
         label="No"
       />
       <el-table-column
+        key="4"
         label="生产信息"
         align="center"
       >
@@ -92,41 +95,43 @@
           label="车次"
         />
       </el-table-column>
-      <div v-for="(itemTa,iTa) in changeTable" :key="iTa">
-        <el-table-column
-          v-if="JSON.stringify(itemTa.checkedC) !== '{}'"
-          :label="itemTa.test_indicator"
-          align="center"
-        >
+      <div key="1">
+        <div v-for="(itemTa,iTa) in changeTable" :key="iTa">
           <el-table-column
-            v-for="(itemChild,indexChild) in itemTa.checkedC.data_points"
-            :key="indexChild"
-            :label="itemChild.name"
+            v-if="JSON.stringify(itemTa.checkedC) !== '{}'"
+            :label="itemTa.test_indicator"
+            align="center"
           >
-            <template
-              v-if="itemChild.name"
-              slot-scope="scope"
+            <el-table-column
+              v-for="(itemChild,indexChild) in itemTa.checkedC.data_points"
+              :key="indexChild"
+              :label="itemChild.name"
             >
-              <el-input
-                v-if="scope.row._list[itemTa.test_indicator]
-                  &&scope.row._list[itemTa.test_indicator][itemChild.name]"
-                v-model="scope.row._list[itemTa.test_indicator][itemChild.name].value"
-                placeholder="请输入检测值"
-                @change="detectionValue(scope.row,scope.$index,scope.row._list)"
-              />
-            </template>
+              <template
+                v-if="itemChild.name"
+                slot-scope="scope"
+              >
+                <el-input
+                  v-if="scope.row._list[itemTa.test_indicator]
+                    &&scope.row._list[itemTa.test_indicator][itemChild.name]"
+                  v-model="scope.row._list[itemTa.test_indicator][itemChild.name].value"
+                  placeholder="请输入检测值"
+                  @change="detectionValue(scope.row,scope.$index,scope.row._list)"
+                />
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="试验方法"
+            >
+              <template slot-scope="scope">
+                {{ itemTa.checkedC.name }}
+                <span v-if="false">{{ scope.row }}</span>
+              </template>
+            </el-table-column>
           </el-table-column>
-          <el-table-column
-            label="试验方法"
-          >
-            <template slot-scope="scope">
-              {{ itemTa.checkedC.name }}
-              <span v-if="false">{{ scope.row }}</span>
-            </template>
-          </el-table-column>
-        </el-table-column>
+        </div>
       </div>
-      <el-table-column :key="changeTable.length>0?changeTable.length+2:2" label="备注">
+      <el-table-column key="2" label="备注">
         <template slot-scope="scope">
           <el-input
             v-model="scope.row.note"
@@ -134,7 +139,7 @@
           />
         </template>
       </el-table-column>
-      <el-table-column :key="changeTable.length>0?changeTable.length+3:3" label="操作">
+      <el-table-column key="3" label="操作">
         <template slot-scope="scope">
           <el-button
             size="mini"
