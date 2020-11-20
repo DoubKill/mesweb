@@ -38,7 +38,10 @@
         </el-table-column>
         <el-table-column v-for="(value,index) in headers" :key="index" :label="value" align="center">
           <template slot-scope="scope">
-            <span v-if="(scope.row.dates.filter(d=>d.date === value)).length>0">
+            <span
+              v-if="(scope.row.dates.filter(d=>d.date === value)).length>0"
+              :style="getStyle((scope.row.dates.filter(d=>d.date === value))[0].zh_percent_of_pass)"
+            >
               {{ (scope.row.dates.filter(d=>d.date === value))[0].zh_percent_of_pass }}
             </span>
           </template>
@@ -62,7 +65,10 @@
         </el-table-column>
         <el-table-column v-for="(value,index) in headers" :key="index" :label="value" align="center">
           <template slot-scope="scope">
-            <span v-if="(scope.row.dates.filter(d=>d.date === value)).length>0">
+            <span
+              v-if="(scope.row.dates.filter(d=>d.date === value)).length>0"
+              :style="getStyle((scope.row.dates.filter(d=>d.date === value))[0].yc_percent_of_pass)"
+            >
               {{ (scope.row.dates.filter(d=>d.date === value))[0].yc_percent_of_pass }}
             </span>
           </template>
@@ -86,7 +92,10 @@
         </el-table-column>
         <el-table-column v-for="(value,index) in headers" :key="index" :label="value" align="center">
           <template slot-scope="scope">
-            <span v-if="(scope.row.dates.filter(d=>d.date === value)).length>0">
+            <span
+              v-if="(scope.row.dates.filter(d=>d.date === value)).length>0"
+              :style="getStyle((scope.row.dates.filter(d=>d.date === value))[0].lb_percent_of_pass)"
+            >
               {{ (scope.row.dates.filter(d=>d.date === value))[0].lb_percent_of_pass }}
             </span>
           </template>
@@ -103,6 +112,7 @@
       <el-table
         :data="detailData"
         border
+        :cell-style="cellStyle"
         style="width: 100%"
       >
         <el-table-column fixed type="index" label="No" />
@@ -116,28 +126,38 @@
         <el-table-column v-for="(value,index) in detailHeaders.points" :key="index" :label="value" align="center">
           <el-table-column label="+" align="center">
             <template slot-scope="scope">
-              <span v-if="(scope.row.points.filter(d=>d.name === value)).length>0">
+              <span
+                v-if="(scope.row.points.filter(d=>d.name === value)).length>0"
+              >
                 {{ (scope.row.points.filter(d=>d.name === value))[0].upper_limit_count }}
               </span>
             </template>
           </el-table-column>
           <el-table-column label="%" align="center">
             <template slot-scope="scope">
-              <span v-if="(scope.row.points.filter(d=>d.name === value)).length>0">
+              <span
+                v-if="(scope.row.points.filter(d=>d.name === value)).length>0"
+                :style="getStyle((scope.row.points.filter(d=>d.name === value))[0].upper_limit_percent)"
+              >
                 {{ (scope.row.points.filter(d=>d.name === value))[0].upper_limit_percent }}
               </span>
             </template>
           </el-table-column>
           <el-table-column label="-" align="center">
             <template slot-scope="scope">
-              <span v-if="(scope.row.points.filter(d=>d.name === value)).length>0">
+              <span
+                v-if="(scope.row.points.filter(d=>d.name === value)).length>0"
+              >
                 {{ (scope.row.points.filter(d=>d.name === value))[0].lower_limit_count }}
               </span>
             </template>
           </el-table-column>
           <el-table-column label="%" align="center">
             <template slot-scope="scope">
-              <span v-if="(scope.row.points.filter(d=>d.name === value)).length>0">
+              <span
+                v-if="(scope.row.points.filter(d=>d.name === value)).length>0"
+                :style="getStyle((scope.row.points.filter(d=>d.name === value))[0].lower_limit_percent)"
+              >
                 {{ (scope.row.points.filter(d=>d.name === value))[0].lower_limit_percent }}
               </span>
             </template>
@@ -209,11 +229,24 @@ export default {
       this.getDetailHeaders()
       this.getParams.product_no = product_no
       getBatchProductNoDayStatistics(this.getParams).then(response => {
-        console.log(response.results)
         this.detailData = response.results[0].dates
-        console.log(this.detailData)
         // this.total = response.count
       })
+    },
+    cellStyle({ row, column, rowIndex, columnIndex }) {
+      var cc = column.property
+      if (row[cc]) {
+        if (Number((row[cc]).replace('%', '')) < 98) {
+          return 'color: #EA1B29'
+        }
+      }
+    },
+    getStyle(str) {
+      if (str) {
+        return Number(str.replace('%', '')) < 98 ? 'color: #EA1B29' : 'color: #1a1a1b'
+      } else {
+        return 'color: #EA1B29'
+      }
     },
     changeSearch() {
     }
