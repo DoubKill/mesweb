@@ -466,6 +466,22 @@ export const asyncRoutes = [{
     icon: 'quality'
   },
   children: [
+    /* {
+      path: '/disposal-list',
+      component: () => import('@/views/quality_management/disposal-list.vue'),
+      name: 'DisposalList',
+      meta: {
+        title: '不合格处置单管理'
+      }
+    },
+    {
+      path: '/disposal-list-generate',
+      component: () => import('@/views/quality_management/disposal-list-generate.vue'),
+      name: 'DisposalListGenerate',
+      meta: {
+        title: '不合格处置单生成'
+      }
+    },*/
     {
       path: '/quick-check',
       redirect: '/quick-check/test-indicators',
