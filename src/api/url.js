@@ -170,5 +170,15 @@ export default {
   // 帘布库
   LbPlanManagement: '/api/v1/inventory/lb-plan-management/',
   // 批量打印
-  LabelPrint: '/api/v1/quality/label-print/'
+  LabelPrint: '/api/v1/quality/label-print/',
+  // 月快检合格率
+  BatchMonthStatistics: '/api/v1/quality/batch-month-statistics/',
+  // 日快检合格率
+  BatchDayStatistics: '/api/v1/quality/batch-day-statistics/',
+  // 合格率页面表头
+  StatisticHeaders: 'api/v1/quality/batch-month-statistics/statistic_headers/',
+  // 胶料月合格率
+  BatchProductNoMonthStatistics: '/api/v1/quality/batch-product-no-month-statistics/',
+  // 胶料月合格率
+  BatchProductNoDayStatistics: '/api/v1/quality/batch-product-no-day-statistics/'
 }

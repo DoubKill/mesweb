@@ -26,19 +26,21 @@
       :data="tableData"
       size="small"
       border
-      max-height="200"
+      :max-height="(value1.length === 0 || value1.length === 3) ? 200 : value1.length === 1 ? 600 : 280"
       style="width: 100%"
     >
       <el-table-column label="综合合格率">
         <el-table-column fixed type="index" label="No" />
         <el-table-column fixed label="胶料编码">
           <template slot-scope="scope">
-            <el-link type="primary" :underline="false" @click="monthPassClick">{{ scope.row.material }}</el-link>
+            <el-link type="primary" :underline="false" @click="dayPassClick(scope.row.product_no)">{{ scope.row.product_no }}</el-link>
           </template>
         </el-table-column>
         <el-table-column v-for="(value,index) in headers" :key="index" :label="value" align="center">
           <template slot-scope="scope">
-            <span v-if="scope.row[value]">{{ scope.row[value].composite_pass_percent }}</span>
+            <span v-if="(scope.row.dates.filter(d=>d.date === value)).length>0">
+              {{ (scope.row.dates.filter(d=>d.date === value))[0].zh_percent_of_pass }}
+            </span>
           </template>
         </el-table-column>
       </el-table-column>
@@ -48,19 +50,21 @@
       :data="tableData"
       border
       size="small"
-      max-height="200"
+      :max-height="(value1.length === 0 || value1.length === 3) ? 200 : value1.length === 1 ? 600 : 280"
       style="width: 100%"
     >
       <el-table-column label="一次合格率">
         <el-table-column fixed type="index" label="No" />
         <el-table-column fixed label="胶料编码">
           <template slot-scope="scope">
-            <el-link type="primary" :underline="false" @click="monthPassClick">{{ scope.row.material }}</el-link>
+            <el-link type="primary" :underline="false" @click="dayPassClick(scope.row.product_no)">{{ scope.row.product_no }}</el-link>
           </template>
         </el-table-column>
         <el-table-column v-for="(value,index) in headers" :key="index" :label="value" align="center">
           <template slot-scope="scope">
-            <span v-if="scope.row[value]">{{ scope.row[value].once_pass_percent }}</span>
+            <span v-if="(scope.row.dates.filter(d=>d.date === value)).length>0">
+              {{ (scope.row.dates.filter(d=>d.date === value))[0].yc_percent_of_pass }}
+            </span>
           </template>
         </el-table-column>
       </el-table-column>
@@ -70,19 +74,21 @@
       :data="tableData"
       border
       size="small"
-      max-height="200"
+      :max-height="(value1.length === 0 || value1.length === 3) ? 200 : value1.length === 1 ? 600 : 280"
       style="width: 100%"
     >
       <el-table-column label="流变合格率">
         <el-table-column fixed type="index" label="No" />
         <el-table-column fixed label="胶料编码">
           <template slot-scope="scope">
-            <el-link type="primary" :underline="false" @click="monthPassClick">{{ scope.row.material }}</el-link>
+            <el-link type="primary" :underline="false" @click="dayPassClick(scope.row.product_no)">{{ scope.row.product_no }}</el-link>
           </template>
         </el-table-column>
         <el-table-column v-for="(value,index) in headers" :key="index" :label="value" align="center">
           <template slot-scope="scope">
-            <span v-if="scope.row[value]">{{ scope.row[value].sulphur_pass_percent }}</span>
+            <span v-if="(scope.row.dates.filter(d=>d.date === value)).length>0">
+              {{ (scope.row.dates.filter(d=>d.date === value))[0].lb_percent_of_pass }}
+            </span>
           </template>
         </el-table-column>
       </el-table-column>
@@ -100,31 +106,40 @@
         style="width: 100%"
       >
         <el-table-column fixed type="index" label="No" />
-        <el-table-column fixed label="月份" prop="date" />
-        <el-table-column fixed label="规格名称" prop="material" />
-        <el-table-column fixed label="产量/车" prop="actual_trains" />
-        <el-table-column fixed label="一次合格率%" prop="once_pass_percent" />
-        <el-table-column fixed label="流变合格率%" prop="sulphur_pass_percent" />
-        <el-table-column fixed label="综合合格率%" prop="composite_pass_percent" />
-        <el-table-column v-for="(value,index) in detailHeaders" :key="index" :label="value" align="center">
+        <el-table-column fixed width="100" label="月份" prop="date" />
+        <el-table-column fixed width="140" label="规格名称">
+          {{ getParams.product_no }}
+        </el-table-column>        <el-table-column fixed label="产量/车" prop="actual_trains" />
+        <el-table-column fixed label="一次合格率%" prop="yc_percent_of_pass" />
+        <el-table-column fixed label="流变合格率%" prop="lb_percent_of_pass" />
+        <el-table-column fixed label="综合合格率%" prop="zh_percent_of_pass" />
+        <el-table-column v-for="(value,index) in detailHeaders.points" :key="index" :label="value" align="center">
           <el-table-column label="+" align="center">
             <template slot-scope="scope">
-              <span v-if="scope.row.test_detail[value]">{{ scope.row.test_detail[value].up_trains }}</span>
+              <span v-if="(scope.row.points.filter(d=>d.name === value)).length>0">
+                {{ (scope.row.points.filter(d=>d.name === value))[0].upper_limit_count }}
+              </span>
             </template>
           </el-table-column>
           <el-table-column label="%" align="center">
             <template slot-scope="scope">
-              <span v-if="scope.row.test_detail[value]">{{ scope.row.test_detail[value].up_percent }}</span>
+              <span v-if="(scope.row.points.filter(d=>d.name === value)).length>0">
+                {{ (scope.row.points.filter(d=>d.name === value))[0].upper_limit_percent }}
+              </span>
             </template>
           </el-table-column>
-          <el-table-column label="+" align="center">
+          <el-table-column label="-" align="center">
             <template slot-scope="scope">
-              <span v-if="scope.row.test_detail[value]">{{ scope.row.test_detail[value].lower_trains }}</span>
+              <span v-if="(scope.row.points.filter(d=>d.name === value)).length>0">
+                {{ (scope.row.points.filter(d=>d.name === value))[0].lower_limit_count }}
+              </span>
             </template>
           </el-table-column>
           <el-table-column label="%" align="center">
             <template slot-scope="scope">
-              <span v-if="scope.row.test_detail[value]">{{ scope.row.test_detail[value].lower_percent }}</span>
+              <span v-if="(scope.row.points.filter(d=>d.name === value)).length>0">
+                {{ (scope.row.points.filter(d=>d.name === value))[0].lower_limit_percent }}
+              </span>
             </template>
           </el-table-column>
         </el-table-column>
@@ -134,6 +149,7 @@
 </template>
 
 <script>
+import { getBatchProductNoDayStatistics, getStatisticHeaders } from '@/api/passStatistics'
 import dayjs from 'dayjs'
 
 export default {
@@ -141,107 +157,63 @@ export default {
   data() {
     return {
       searchTime: dayjs().format('YYYY-MM'),
-      headers: ['2020-09-04', '2020-10-05'],
-      detailHeaders: ['门尼', 'MH'],
+      getParams: { all: 1 },
+      headers: [],
+      detailHeaders: {},
       dialogShow: false,
-      tableData: [{
-        'material': 'FM-C102-02',
-        '2020-09-04': {
-          'actual_trains': 10,
-          'composite_pass_percent': 1,
-          'once_pass_percent': 1,
-          'sulphur_pass_percent': 1
-        },
-        '2020-10-05': {
-          'actual_trains': 10,
-          'composite_pass_percent': 0.99,
-          'once_pass_percent': 0.99,
-          'sulphur_pass_percent': 0.99
-        }
-      },
-      {
-        'material': 'FM-C106-08',
-        '2020-09-04': {
-          'actual_trains': 10,
-          'composite_pass_percent': 0.98,
-          'once_pass_percent': 0.98,
-          'sulphur_pass_percent': 0.98
-        },
-        '2020-10-05': {
-          'composite_pass_percent': 0.97,
-          'once_pass_percent': 0.97,
-          'sulphur_pass_percent': 0.97
-        }
-      }
-      ],
-      detailData: [
-        {
-          'material': 'FM-C102-02',
-          'date': '2020-09-04',
-          'actual_trains': 10,
-          'composite_pass_percent': 1,
-          'once_pass_percent': 1,
-          'sulphur_pass_percent': 1,
-          'test_detail': {
-            '门尼': {
-              'test_type_name': '门尼',
-              'data_name': '门尼',
-              'up_trains': 1,
-              'up_percent': 0.9,
-              'lower_trains': 1,
-              'lower_percent': 0.9
-            },
-            'MH': {
-              'test_type_name': '流变',
-              'data_name': 'MH',
-              'up_trains': 1,
-              'up_percent': 0.9,
-              'lower_trains': 1,
-              'lower_percent': 0.9
-            }
-          }
-        },
-        {
-          'material': 'FM-C102-02',
-          'date': '2020-10-05',
-          'actual_trains': 10,
-          'composite_pass_percent': '100%',
-          'once_pass_percent': '100%',
-          'sulphur_pass_percent': '100%',
-          'test_detail': {
-            'MH': {
-              'test_type_name': '流变',
-              'data_name': 'MH',
-              'up_trains': 1,
-              'up_percent': 0.9,
-              'lower_trains': 1,
-              'lower_percent': 0.9
-            }
-          }
-        }
-
-      ],
+      tableData: [],
+      detailData: [],
       options: ['综合合格率', '一次合格率', '流变合格率'],
       value1: []
     }
   },
   created() {
-    // this.getheaders()
+    this.getTableData()
   },
   methods: {
-    dateChange() {
+    getTableData() {
+      this.getParams = { all: 1 }
+      this.getParams.date = this.searchTime
+      getBatchProductNoDayStatistics(this.getParams).then(response => {
+        this.tableData = response.results
+        // this.total = response.count
+        this.getHeaders()
+      })
     },
-    getheaders() {
-      for (var n in this.tableData) {
-        for (var m in this.tableData[n].test_detail) {
-          if (this.headers.indexOf(m) === -1) {
-            this.headers.push(m)
+    dateFormat(date) {
+      return dayjs(date).format('YYYY-MM')
+    },
+    dateChange() {
+      if (this.searchTime) {
+        this.searchTime = dayjs(this.searchTime).format('YYYY-MM')
+      }
+      this.getTableData()
+    },
+    getDetailHeaders() {
+      getStatisticHeaders().then(response => {
+        this.detailHeaders = response
+      })
+    },
+    getHeaders() {
+      this.tableData.forEach((product_no) => {
+        product_no.dates.forEach((date) => {
+          if (this.headers.indexOf(date.date) === -1) {
+            this.headers.push(date.date)
           }
         }
-      }
+        )
+      })
     },
-    monthPassClick() {
+    dayPassClick(product_no) {
       this.dialogShow = true
+      this.getDetailHeaders()
+      this.getParams.product_no = product_no
+      getBatchProductNoDayStatistics(this.getParams).then(response => {
+        console.log(response.results)
+        this.detailData = response.results[0].dates
+        console.log(this.detailData)
+        // this.total = response.count
+      })
     },
     changeSearch() {
     }
