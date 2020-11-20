@@ -31,6 +31,11 @@
         <deal-suggestion-select @dealSuggestionChange="dealSuggestionChange" />
       </el-form-item>
     </el-form>
+    <el-button
+      v-permission="['deal_result','print']"
+      style="float:right;margin-bottom:10px;"
+      @click="printingFun"
+    >打印</el-button>
     <el-table
       v-loading="listLoading"
       border
@@ -39,10 +44,10 @@
       :data="palletFeedTestList"
       @selection-change="handleSelectionChange"
     >
-      <!-- <el-table-column
+      <el-table-column
         type="selection"
         width="55"
-      /> -->
+      />
       <el-table-column type="index" label="No" />
       <el-table-column align="center" label="生产信息">
         <el-table-column label="工厂日期" prop="day_time" />
@@ -113,7 +118,7 @@ import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import DealSuggestionSelect from '@/components/DealSuggestionSelect'
 import TestCard from '@/components/TestCard'
 import { palletFeedTest, changelValidTime } from '@/api/quick-check-detail'
-
+import { labelPrint } from '@/api/base_w'
 export default {
   components: { EquipSelect, ClassSelect, allProductNoSelect, Page, TestCard, DealSuggestionSelect },
   data() {
@@ -137,7 +142,8 @@ export default {
       rules: {
         valid_time: [{ required: true, message: '该字段不能为空', trigger: 'blur' }]
       },
-      testCardDialogVisible: false
+      testCardDialogVisible: false,
+      labelPrintList: []
     }
   },
   created() {
@@ -212,8 +218,21 @@ export default {
       this.getParams.product_no = val ? val.material_no : null
       this.currentChange(1)
     },
-    handleSelectionChange() {
-
+    handleSelectionChange(arr) {
+      this.labelPrintList = arr
+    },
+    async printingFun() {
+      try {
+        if (this.labelPrintList.length === 0) return
+        const arr = []
+        this.labelPrintList.forEach(D => {
+          arr.push(D.lot_no)
+        })
+        await labelPrint('post', null, { data: { lot_no: arr }})
+        this.$message.success('打印任务已连接')
+      } catch (e) {
+        //
+      }
     }
   }
 }

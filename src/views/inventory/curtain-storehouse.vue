@@ -37,11 +37,11 @@
       <!-- <el-form-item label="物料类型">
         <materielTypeSelect />
       </el-form-item> -->
-      <el-form-item v-permission="['inventory_plan','norman']" style="float: right">
+      <el-form-item v-permission="['LB_inventory_plan','norman']" style="float: right">
         <el-button @click="normalOutbound">正常出库</el-button>
       </el-form-item>
       <el-form-item style="float: right">
-        <el-button v-permission="['inventory_plan','assign']" @click="assignOutbound">指定出库</el-button>
+        <el-button v-permission="['LB_inventory_plan','assign']" @click="assignOutbound">指定出库</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -64,9 +64,9 @@
       <el-table-column label="操作" align="center" width="220">
         <template v-if="scope.row.status === 4" slot-scope="scope">
           <el-button-group>
-            <el-button v-permission="['inventory_plan','manual']" size="mini" type="primary" @click="manualDelivery(scope.row)">人工出库</el-button>
-            <el-button v-permission="['inventory_plan','change']" size="mini" type="warning" @click="demandQuantity(scope.$index,scope.row)">编辑</el-button>
-            <el-button v-permission="['inventory_plan','close']" size="mini" type="info" @click="closePlan(scope.$index,scope.row)">关闭</el-button>
+            <el-button v-permission="['LB_inventory_plan','manual']" size="mini" type="primary" @click="manualDelivery(scope.row)">人工出库</el-button>
+            <el-button v-permission="['LB_inventory_plan','change']" size="mini" type="warning" @click="demandQuantity(scope.$index,scope.row)">编辑</el-button>
+            <el-button v-permission="['LB_inventory_plan','close']" size="mini" type="info" @click="closePlan(scope.$index,scope.row)">关闭</el-button>
           </el-button-group>
         </template>
       </el-table-column>

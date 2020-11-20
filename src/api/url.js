@@ -168,5 +168,7 @@ export default {
   MaterialTypesUrl: BasicsUrl + 'global-codes/?all=1&class_name=原材料类别',
 
   // 帘布库
-  LbPlanManagement: '/api/v1/inventory/lb-plan-management/'
+  LbPlanManagement: '/api/v1/inventory/lb-plan-management/',
+  // 批量打印
+  LabelPrint: '/api/v1/quality/label-print/'
 }

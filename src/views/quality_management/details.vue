@@ -49,7 +49,10 @@
         </el-button>
       </el-form-item>
       <el-form-item>
-        <el-button @click="exportExcel">
+        <el-button
+          v-permission="['result_info','export']"
+          @click="exportExcel"
+        >
           导出
         </el-button>
       </el-form-item>

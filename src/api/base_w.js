@@ -398,4 +398,12 @@ export function lbPlanManagement(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function labelPrint(method, id, data = {}) {
+  const obj = {
+    url: id ? API.LabelPrint + id + '/' : API.LabelPrint,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 

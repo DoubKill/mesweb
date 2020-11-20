@@ -393,7 +393,7 @@ export const asyncRoutes = [{
       name: 'curtainStorehouse',
       meta: {
         title: '帘布库出库计划',
-        permissionName: 'inventory_plan'
+        permissionName: 'LB_inventory_plan'
       }
     },
     // {
@@ -414,6 +414,46 @@ export const asyncRoutes = [{
         permissionName: 'material_attr'
       }
     }
+    /* {
+      path: '/receive-good-manage',
+      redirect: '/receive-good-manage/index',
+      component: {
+        render: c => c('router-view')
+      },
+      name: 'ReceiveGoodManage',
+      meta: {
+        title: '收发货管理'
+      },
+      children: [
+        {
+          path: '/index',
+          component: () => import('@/views/inventory/receive-good-manage/receive-list.vue'),
+          name: 'ReceiveGoodManageIndex',
+          meta: {
+            title: '发货计划管理',
+            permissionName: 'material_attr'
+          }
+        },
+        {
+          path: '/view',
+          component: () => import('@/views/inventory/receive-good-manage/receive-view.vue'),
+          name: 'ReceiveGoodManageView',
+          meta: {
+            title: '发货计划管理',
+            permissionName: 'material_attr'
+          }
+        },
+        {
+          path: '/address',
+          component: () => import('@/views/inventory/receive-good-manage/receive-address.vue'),
+          name: 'ReceiveGoodManageAddress',
+          meta: {
+            title: '发货地管理',
+            permissionName: 'material_attr'
+          }
+        }
+      ]
+    }*/
   ]
 },
 {
