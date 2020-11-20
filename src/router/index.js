@@ -557,7 +557,7 @@ export const asyncRoutes = [{
         }
       ]
     },
-    /* {
+    {
       path: '/statistics',
       redirect: '/statistics/month-pass-detail',
       component: {
@@ -596,7 +596,7 @@ export const asyncRoutes = [{
           }
         }
       ]
-    },*/
+    },
     {
       path: '/unqualified-handle',
       redirect: '/unqualified-handle/inferior-quality-product-manage',
