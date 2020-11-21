@@ -119,7 +119,7 @@
                     controls-position="right"
                     :min="0"
                     :step="itemTa.test_indicator==='比重'?0.02:1"
-                    @change="detectionValue(scope.row,scope.$index,scope.row._list)"
+                    @change="detectionValue(scope.row,scope.$index,scope.row._list,itemTa.test_indicator)"
                   />
                   <el-dropdown-menu v-if="commandList(itemTa.test_indicator).length>0" slot="dropdown">
                     <el-dropdown-item v-for="(itemCommand,indexCommand) in commandList(itemTa.test_indicator)" :key="indexCommand" style="width:150px" :command="itemCommand">{{ itemCommand }}</el-dropdown-item>
@@ -333,20 +333,33 @@ export default {
       this.detectionValue(row, index, _list)
     },
     commandList(val) {
+      const obj = JSON.parse(localStorage.getItem('detectionValue')) || {}
+      console.log(obj, 'obj')
       if (val === '比重') {
-        return [1.11, 1.13, 1.15]
+        return obj[val] || [1.11, 1.13, 1.15]
       } else if (val === '硬度') {
-        return [59]
+        return obj[val] || [59]
       } else {
         return []
       }
     },
-    detectionValue(row, index, list) {
+    detectionValue(row, index, list, test_indicator) {
+      const obj = JSON.parse(localStorage.getItem('detectionValue')) || {}
+      const arr = JSON.stringify(obj) !== '{}' && obj[test_indicator] ? obj[test_indicator] : []
+
       row._filledIn = false
       for (const key in list) {
         for (const value in list[key]) {
           if (list[key][value].value) {
             row._filledIn = true
+            if (list[test_indicator][value]) {
+              arr.unshift(list[test_indicator][value].value)
+              if (arr.length > 3) {
+                arr.pop()
+              }
+              this.$set(obj, test_indicator, arr)
+              localStorage.setItem('detectionValue', JSON.stringify(obj))
+            }
           }
         }
       }
@@ -365,7 +378,8 @@ export default {
       try {
         if (this.tableDataChild.length === 0) return
         const tableDataChild = this.tableDataChild.filter(D => { return D._filledIn })
-        tableDataChild.forEach((D, i) => {
+        const tableDataChildNew = deepClone(tableDataChild)
+        tableDataChildNew.forEach((D, i) => {
           const arrChild = []
           if (!D.lot_no) {
             this.$message.error('收皮条码不能为空！')
