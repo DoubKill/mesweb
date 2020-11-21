@@ -19,13 +19,14 @@
       <el-form-item label="机台">
         <equip-select @equipSelected="equipSelected" />
       </el-form-item>
-      <el-form-item label="班次">
-        <class-select @classSelected="classSelected" />
-      </el-form-item>
       <el-form-item label="胶料">
         <all-product-no-select
           @productBatchingChanged="productBatchingChanged"
         />
+      </el-form-item>
+      <br>
+      <el-form-item label="班次">
+        <class-select @classSelected="classSelected" />
       </el-form-item>
       <!-- <el-form-item label="综合处理意见">
         <el-select />
@@ -102,7 +103,7 @@
           </el-table-column> -->
           <el-table-column label="检测值" align="center" width="60">
             <template slot-scope="{ row }">
-              <div :class="getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'level')!==1&&getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'level')!==''?'test_type_name_style':''">
+              <div :class="getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level')!==1&&getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level')!==''?'test_type_name_style':''">
                 {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'value') }}
               </div>
             </template>
@@ -113,7 +114,7 @@
             width="60"
           >
             <template slot-scope="{ row }">
-              <div :class="getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'level')!==1&&getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'level')!==''?'test_type_name_style':''">
+              <div :class="(getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level'))!=1&&(getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level'))!=''?'test_type_name_style':''">
                 {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level') }}
               </div>
             </template>
@@ -250,10 +251,6 @@ export default {
   },
   methods: {
     dayTimeChanged() {
-      if (!this.getParams.day_time) {
-        this.$message.info('请选择日期')
-        return
-      }
       this.clearList()
       this.getMaterialTestOrders()
     },
@@ -262,6 +259,12 @@ export default {
       this.allPage = 0
       this.testOrders = []
       this.testOrdersAll = []
+    },
+    titleInfo(val, error) {
+      if (!val && val !== 0) {
+        this.$message.info(error)
+        throw new Error(error)
+      }
     },
     equipSelected(equip) {
       this.getParams.equip_no = equip ? equip.equip_no : null
@@ -303,7 +306,10 @@ export default {
     async getMaterialTestOrders() {
       this.listLoading = true
       try {
-        // this.testOrders
+        this.titleInfo(this.getParams.equip_no, '请输入生产机台')
+        // this.titleInfo(this.getParams.classes, '请输入班次')
+        this.titleInfo(this.getParams.product_no, '请输入胶料')
+        this.titleInfo(this.getParams.day_time, '请输入时间')
         const data = await materialTestOrders(this.getParams)
         let arr = data
         arr = arr.map(result => {
