@@ -191,8 +191,8 @@ export default {
         ShiftRules: '',
         factory_date: setDate(),
         // factory_date: '2020-9-22',
-        equip_no: 'Z01', // Z06
-        classes: '中班', // 早班
+        equip_no: '', // Z06
+        classes: '', // 早班
         product_no: ''
       },
       tableData: [],
