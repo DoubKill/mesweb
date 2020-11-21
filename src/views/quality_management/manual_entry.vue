@@ -111,13 +111,28 @@
                 v-if="itemChild.name"
                 slot-scope="scope"
               >
-                <el-input
+                <el-dropdown @command="handleCommand($event,scope.$index,scope.row._list,itemTa.test_indicator,itemChild.name,scope.row)">
+                  <el-input-number
+                    v-if="scope.row._list[itemTa.test_indicator]
+                      &&scope.row._list[itemTa.test_indicator][itemChild.name]"
+                    v-model="scope.row._list[itemTa.test_indicator][itemChild.name].value"
+                    controls-position="right"
+                    :min="0"
+                    :step="itemTa.test_indicator==='比重'?0.02:1"
+                    @change="detectionValue(scope.row,scope.$index,scope.row._list)"
+                  />
+                  <el-dropdown-menu v-if="commandList(itemTa.test_indicator).length>0" slot="dropdown">
+                    <el-dropdown-item v-for="(itemCommand,indexCommand) in commandList(itemTa.test_indicator)" :key="indexCommand" style="width:150px" :command="itemCommand">{{ itemCommand }}</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+
+                <!-- <el-input
                   v-if="scope.row._list[itemTa.test_indicator]
                     &&scope.row._list[itemTa.test_indicator][itemChild.name]"
                   v-model="scope.row._list[itemTa.test_indicator][itemChild.name].value"
                   placeholder="请输入检测值"
                   @change="detectionValue(scope.row,scope.$index,scope.row._list)"
-                />
+                /> -->
               </template>
             </el-table-column>
             <el-table-column
@@ -176,8 +191,8 @@ export default {
         ShiftRules: '',
         factory_date: setDate(),
         // factory_date: '2020-9-22',
-        equip_no: '', // Z06
-        classes: '', // 早班
+        equip_no: 'Z01', // Z06
+        classes: '中班', // 早班
         product_no: ''
       },
       tableData: [],
@@ -310,6 +325,22 @@ export default {
     viewTrial() {
       this.dialogVisible = true
     },
+    handleCommand(val, index, _list, test_indicator, name, row) {
+      // $event,scope.$index,scope.row._list,itemTa.test_indicator,itemChild.name,scope.row
+      this.$set(this.tableDataChild[index]._list[test_indicator][name],
+        'value', val)
+      // scope.row, scope.$index, scope.row._list
+      this.detectionValue(row, index, _list)
+    },
+    commandList(val) {
+      if (val === '比重') {
+        return [1.11, 1.13, 1.15]
+      } else if (val === '硬度') {
+        return [59]
+      } else {
+        return []
+      }
+    },
     detectionValue(row, index, list) {
       row._filledIn = false
       for (const key in list) {
@@ -391,7 +422,7 @@ function setDataChild(_this, row) {
       _this.$set(obj, 'test_indicator_name', row.test_indicator)
       _this.$set(obj, 'data_point_name', D.name)
       _this.$set(obj, 'test_method_name', row.checkedC.name)
-      _this.$set(obj, 'value', '')
+      _this.$set(obj, 'value', undefined)
       _obj = deepClone(obj)
       _this.$set(newObjChild, D.name, _obj)
     })
@@ -447,6 +478,9 @@ $border-weight: 1px;
   }
   .el-card{
     display: inline-block;
+  }
+  .el-input-number{
+    width:auto;
   }
 }
 

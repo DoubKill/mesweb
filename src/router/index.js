@@ -439,7 +439,7 @@ export const asyncRoutes = [{
           component: () => import('@/views/inventory/receive-good-manage/receive-view.vue'),
           name: 'ReceiveGoodManageView',
           meta: {
-            title: '发货计划管理',
+            title: '发货履历管理',
             permissionName: 'material_attr'
           }
         },
