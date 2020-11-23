@@ -133,7 +133,7 @@
         <el-table-column fixed width="140" label="规格名称">
           {{ getParams.product_no }}
         </el-table-column>
-        <el-table-column fixed label="产量/车" prop="actual_trains" />
+        <el-table-column fixed label="产量(车)" prop="train_count" />
         <el-table-column fixed label="一次合格率%" prop="yc_percent_of_pass" />
         <el-table-column fixed label="流变合格率%" prop="lb_percent_of_pass" />
         <el-table-column fixed label="综合合格率%" prop="zh_percent_of_pass" />
@@ -211,7 +211,7 @@ export default {
       this.getParams.start_time = this.beginTime
       this.getParams.end_time = this.endTime
       getBatchProductNoMonthStatistics(this.getParams).then(response => {
-        this.tableData = response.results
+        this.tableData = response
         // this.total = response.count
         this.getHeaders()
       })
@@ -249,7 +249,7 @@ export default {
       this.getDetailHeaders()
       this.getParams.product_no = product_no
       getBatchProductNoMonthStatistics(this.getParams).then(response => {
-        this.detailData = response.results[0].dates
+        this.detailData = response[0].dates
         // this.total = response.count
       })
     },
@@ -258,15 +258,15 @@ export default {
     },
     cellStyle({ row, column, rowIndex, columnIndex }) {
       var cc = column.property
-      if (row[cc]) {
-        if (Number((row[cc]).replace('%', '')) < 98) {
+      if (row[cc] && cc !== 'train_count') {
+        if (Number((row[cc]).replace('%', '')) < 96) {
           return 'color: #EA1B29'
         }
       }
     },
     getStyle(str) {
       if (str) {
-        return Number(str.replace('%', '')) < 98 ? 'color: #EA1B29' : 'color: #1a1a1b'
+        return Number(str.replace('%', '')) < 96 ? 'color: #EA1B29' : 'color: #1a1a1b'
       } else {
         return 'color: #EA1B29'
       }
