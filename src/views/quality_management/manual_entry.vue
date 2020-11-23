@@ -111,7 +111,23 @@
                 v-if="itemChild.name"
                 slot-scope="scope"
               >
-                <el-dropdown @command="handleCommand($event,scope.$index,scope.row._list,itemTa.test_indicator,itemChild.name,scope.row)">
+                <!-- v-if="scope.row._list[itemTa.test_indicator]
+                      &&scope.row._list[itemTa.test_indicator][itemChild.name]" -->
+                <el-input-number
+                  v-if="commandList(itemTa.test_indicator).length===0
+                    &&scope.row._list[itemTa.test_indicator]
+                    &&scope.row._list[itemTa.test_indicator][itemChild.name]"
+                  v-model="scope.row._list[itemTa.test_indicator][itemChild.name].value"
+                  controls-position="right"
+                  :min="0"
+                  :step="itemTa.test_indicator==='比重'?0.02:1"
+                  @change="detectionValue(scope.row,scope.$index,scope.row._list,itemTa.test_indicator)"
+                />
+                <el-dropdown
+                  v-if="commandList(itemTa.test_indicator).length>0"
+                  trigger="click"
+                  @command="handleCommand($event,scope.$index,scope.row._list,itemTa.test_indicator,itemChild.name,scope.row)"
+                >
                   <el-input-number
                     v-if="scope.row._list[itemTa.test_indicator]
                       &&scope.row._list[itemTa.test_indicator][itemChild.name]"
@@ -121,7 +137,7 @@
                     :step="itemTa.test_indicator==='比重'?0.02:1"
                     @change="detectionValue(scope.row,scope.$index,scope.row._list,itemTa.test_indicator)"
                   />
-                  <el-dropdown-menu v-if="commandList(itemTa.test_indicator).length>0" slot="dropdown">
+                  <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item v-for="(itemCommand,indexCommand) in commandList(itemTa.test_indicator)" :key="indexCommand" style="width:150px" :command="itemCommand">{{ itemCommand }}</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
@@ -190,8 +206,8 @@ export default {
       search: {
         ShiftRules: '',
         factory_date: setDate(),
-        // factory_date: '2020-9-22',
-        equip_no: '', // Z06
+        // factory_date: '', // 2020-11-20
+        equip_no: '', // Z02
         classes: '', // 早班
         product_no: ''
       },
@@ -261,7 +277,9 @@ export default {
     clearRadio(val, index) {
       if (JSON.stringify(val.checkedC) === '{}') return
       this.$set(this.tableDataStyle[index], 'checkedC', {})
-      setDataChild(this, val)
+      this.$nextTick(() => {
+        setDataChild(this, val)
+      })
     },
     currentChange(page) {
       this.search.page = page
@@ -326,6 +344,7 @@ export default {
       this.dialogVisible = true
     },
     handleCommand(val, index, _list, test_indicator, name, row) {
+      console.log(33333)
       // $event,scope.$index,scope.row._list,itemTa.test_indicator,itemChild.name,scope.row
       this.$set(this.tableDataChild[index]._list[test_indicator][name],
         'value', val)
@@ -334,7 +353,6 @@ export default {
     },
     commandList(val) {
       const obj = JSON.parse(localStorage.getItem('detectionValue')) || {}
-      console.log(obj, 'obj')
       if (val === '比重') {
         return obj[val] || [1.11, 1.13, 1.15]
       } else if (val === '硬度') {
@@ -344,15 +362,17 @@ export default {
       }
     },
     detectionValue(row, index, list, test_indicator) {
+      console.log(4444444)
       const obj = JSON.parse(localStorage.getItem('detectionValue')) || {}
       const arr = JSON.stringify(obj) !== '{}' && obj[test_indicator] ? obj[test_indicator] : []
 
       row._filledIn = false
       for (const key in list) {
         for (const value in list[key]) {
-          if (list[key][value].value) {
+          if (list[key][value] && list[key][value].value) {
             row._filledIn = true
-            if (list[test_indicator][value]) {
+            if (list[test_indicator] && list[test_indicator][value] &&
+            list[test_indicator][value].value) {
               arr.unshift(list[test_indicator][value].value)
               if (arr.length > 3) {
                 arr.pop()
