@@ -32,7 +32,7 @@
           <el-link type="primary" :underline="false" @click="monthPassClick(scope.row.date)">{{ dateFormat(scope.row.date) }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column fixed label="产量/车" prop="actual_trains" />
+      <el-table-column fixed label="产量(车)" prop="train_count" />
       <el-table-column fixed label="一次合格率%" width="75" prop="yc_percent_of_pass" />
       <el-table-column fixed label="流变合格率%" width="75" prop="lb_percent_of_pass" />
       <el-table-column fixed label="综合合格率%" width="75" prop="zh_percent_of_pass" />
@@ -233,7 +233,7 @@ export default {
       this.getParams.start_time = this.beginTime
       this.getParams.end_time = this.endTime
       getBatchMonthStatistics(this.getParams).then(response => {
-        this.tableData = response.results
+        this.tableData = response
         // this.total = response.count
       })
     },
@@ -257,22 +257,22 @@ export default {
     monthPassClick(date) {
       this.getDayParams.date = dayjs(date).startOf('month').format('YYYY-MM')
       getBatchDayStatistics(this.getDayParams).then(response => {
-        this.dayTableData = response.results
+        this.dayTableData = response
         // this.total = response.count
       })
       this.dialogShow = true
     },
     cellStyle({ row, column, rowIndex, columnIndex }) {
       var cc = column.property
-      if (row[cc]) {
-        if (Number((row[cc]).replace('%', '')) < 98) {
+      if (row[cc] && cc !== 'train_count') {
+        if (Number((row[cc]).replace('%', '')) < 96) {
           return 'color: #EA1B29'
         }
       }
     },
     getStyle(str) {
       if (str) {
-        return Number(str.replace('%', '')) < 98 ? 'color: #EA1B29' : 'color: #1a1a1b'
+        return Number(str.replace('%', '')) < 96 ? 'color: #EA1B29' : 'color: #1a1a1b'
       } else {
         return 'color: #EA1B29'
       }
