@@ -1,4 +1,5 @@
 <template>
+  <!-- 原材料类别 -->
   <el-select
     :value="id"
     clearable
