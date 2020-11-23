@@ -206,7 +206,7 @@ export default {
       search: {
         ShiftRules: '',
         factory_date: setDate(),
-        // factory_date: '', // 2020-11-20
+        // factory_date: '2020-11-20',
         equip_no: '', // Z02
         classes: '', // 早班
         product_no: ''
@@ -344,7 +344,6 @@ export default {
       this.dialogVisible = true
     },
     handleCommand(val, index, _list, test_indicator, name, row) {
-      console.log(33333)
       // $event,scope.$index,scope.row._list,itemTa.test_indicator,itemChild.name,scope.row
       this.$set(this.tableDataChild[index]._list[test_indicator][name],
         'value', val)
@@ -362,7 +361,6 @@ export default {
       }
     },
     detectionValue(row, index, list, test_indicator) {
-      console.log(4444444)
       const obj = JSON.parse(localStorage.getItem('detectionValue')) || {}
       const arr = JSON.stringify(obj) !== '{}' && obj[test_indicator] ? obj[test_indicator] : []
 

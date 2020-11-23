@@ -25,8 +25,14 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item>
-        <materialCodeSelect @changSelect="materialCodeFun" />
+      <el-form-item label="物料编码">
+        <material-type-select @change="materialCodeFun" />
+      </el-form-item>
+      <el-form-item label="发货类型">
+        <deliverTypeSelect @changeSelect="deliverTypeSelectFun" />
+      </el-form-item>
+      <el-form-item label="目的地">
+        <destinationSelect @changeSelect="destinationSelectFun" />
       </el-form-item>
     </el-form>
   </div>
@@ -35,9 +41,11 @@
 <script>
 import { setDate } from '@/utils/index'
 import commitVal from '@/utils/common'
-import materialCodeSelect from '@/components/select_w/materialCodeSelect'
+import MaterialTypeSelect from '@/components/MaterialTypeSelect'
+import deliverTypeSelect from '@/components/select_w/deliverTypeSelect'
+import destinationSelect from '@/components/select_w/destinationSelect'
 export default {
-  components: { materialCodeSelect },
+  components: { MaterialTypeSelect, deliverTypeSelect, destinationSelect },
   data() {
     return {
       search: {
@@ -48,7 +56,9 @@ export default {
   },
   methods: {
     changeList() {},
-    materialCodeFun() {}
+    materialCodeFun() {},
+    deliverTypeSelectFun() {},
+    destinationSelectFun() {}
   }
 }
 </script>
