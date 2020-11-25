@@ -204,7 +204,7 @@ export default {
     },
     handleData(row) {
       var str = row.use_flag ? '停用' : '启用'
-      this.$confirm('此操作将 ' + str + ' 发货目的地：' + row.address + ', 是否继续?', '提示', {
+      this.$confirm('此操作将 ' + str + ' 发货目的地：' + row.name + ', 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
