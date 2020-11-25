@@ -17,7 +17,8 @@
         <classSelect @classSelected="classSelectedFun" />
       </el-form-item>
       <el-form-item label="胶料编码">
-        <productNoSelect @productBatchingChanged="productBatchingChanged" />
+        <all-product-no-select @productBatchingChanged="productBatchingChanged" />
+        <!-- <productNoSelect @productBatchingChanged="productBatchingChanged" /> -->
       </el-form-item>
       <!-- <el-form-item label="处理状态">
         <el-select v-model="search.a" placeholder="请选择">
@@ -108,13 +109,14 @@
 <script>
 // import page from '@/components/page'
 import classSelect from '@/components/ClassSelect'
-import productNoSelect from '@/components/ProductNoSelect'
+// import productNoSelect from '@/components/ProductNoSelect'
+import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import excel from './disposal-list-components/excel'
 import { setDate } from '@/utils'
 import { unqualifiedTrains } from '@/api/base_w'
 import funMixin from './disposal-list-components/mixin'
 export default {
-  components: { classSelect, productNoSelect, excel },
+  components: { classSelect, allProductNoSelect, excel },
   mixins: [funMixin],
   data() {
     return {
@@ -157,7 +159,7 @@ export default {
       this.getList()
     },
     productBatchingChanged(val) {
-      this.search.product_no = val ? val.stage_product_batch_no : ''
+      this.search.product_no = val ? val.material_no : ''
       this.getList()
     },
     handleSelectionChange(arr) {
