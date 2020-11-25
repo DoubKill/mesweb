@@ -11,7 +11,7 @@
       <el-option
         v-for="item in options"
         :key="item.id"
-        :label="item.name"
+        :label="item.global_name"
         :value="item.id"
       />
     </el-select>
@@ -22,6 +22,15 @@
 import { globalCodesUrl } from '@/api/base_w'
 export default {
   props: {
+    //  created里面加载
+    createdIs: {
+      type: Boolean,
+      default: false
+    },
+    defaultVal: {
+      type: Number,
+      default: null
+    }
   },
   data() {
     return {
@@ -30,6 +39,15 @@ export default {
     }
   },
   watch: {
+    defaultVal(val) {
+      this.value = val
+    }
+  },
+  created() {
+    if (this.createdIs) {
+      this.getList()
+      this.value = this.defaultVal
+    }
   },
   methods: {
     async getList() {
