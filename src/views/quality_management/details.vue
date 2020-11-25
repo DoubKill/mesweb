@@ -17,7 +17,10 @@
         <plan-schedules-select :day-time="getParams.day_time" @planScheduleSelected="planScheduleSelected" />
       </el-form-item> -->
       <el-form-item label="机台">
-        <equip-select @equipSelected="equipSelected" />
+        <equip-select
+          :equip_no_props.sync="getParams.equip_no"
+          @changeSearch="equipSelected"
+        />
       </el-form-item>
       <el-form-item label="胶料">
         <all-product-no-select
@@ -181,7 +184,8 @@
 <script>
 import dayjs from 'dayjs'
 // import PlanSchedulesSelect from '@/components/PlanSchedulesSelect'
-import EquipSelect from '@/components/EquipSelect'
+// import EquipSelect from '@/components/EquipSelect'
+import EquipSelect from '@/components/select_w/equip'
 import ClassSelect from '@/components/ClassSelect'
 // import ProductNoSelect from '@/components/ProductNoSelect'
 import StageSelect from '@/components/StageSelect'
@@ -270,7 +274,7 @@ export default {
       }
     },
     equipSelected(equip) {
-      this.getParams.equip_no = equip ? equip.equip_no : null
+      // this.getParams.equip_no = equip ? equip.equip_no : null
       // this.clearList()
       // this.getMaterialTestOrders()
     },
