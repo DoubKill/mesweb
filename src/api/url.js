@@ -180,5 +180,9 @@ export default {
   // 胶料月合格率
   BatchProductNoMonthStatistics: '/api/v1/quality/batch-product-no-month-statistics/',
   // 胶料月合格率
-  BatchProductNoDayStatistics: '/api/v1/quality/batch-product-no-day-statistics/'
+  BatchProductNoDayStatistics: '/api/v1/quality/batch-product-no-day-statistics/',
+  // 不合格处置单列表
+  UnqualifiedTrains: '/api/v1/quality/unqualified-trains/',
+  // 不合格处置单创建
+  UnqualifiedDealOrders: '/api/v1/quality/unqualified-deal-orders/'
 }

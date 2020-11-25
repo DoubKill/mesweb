@@ -413,8 +413,8 @@ export const asyncRoutes = [{
         title: '物料属性管理',
         permissionName: 'material_attr'
       }
-    }
-    /* {
+    },
+    {
       path: '/receive-good-manage',
       redirect: '/receive-good-manage/index',
       component: {
@@ -453,7 +453,7 @@ export const asyncRoutes = [{
           }
         }
       ]
-    }*/
+    }
   ]
 },
 {
@@ -466,7 +466,15 @@ export const asyncRoutes = [{
     icon: 'quality'
   },
   children: [
-    /* {
+    {
+      path: '/disposal-list-generate',
+      component: () => import('@/views/quality_management/disposal-list-generates.vue'),
+      name: 'DisposalListGenerate',
+      meta: {
+        title: '不合格处置单生成'
+      }
+    },
+    {
       path: '/disposal-list',
       component: () => import('@/views/quality_management/disposal-list.vue'),
       name: 'DisposalList',
@@ -474,14 +482,6 @@ export const asyncRoutes = [{
         title: '不合格处置单管理'
       }
     },
-    {
-      path: '/disposal-list-generate',
-      component: () => import('@/views/quality_management/disposal-list-generate.vue'),
-      name: 'DisposalListGenerate',
-      meta: {
-        title: '不合格处置单生成'
-      }
-    },*/
     {
       path: '/quick-check',
       redirect: '/quick-check/test-indicators',
