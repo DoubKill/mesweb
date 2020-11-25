@@ -1,10 +1,6 @@
 <template>
   <div class="app-container">
     <el-form :inline="true">
-      <el-form-item v-show="getParams.warehouse_name != '终炼胶库'" label="物料类型">
-        <materielTypeSelect @changSelect="changeMaterialType" />
-        <!-- <el-input v-model="getParams.material_type" @input="changeSearch" /> -->
-      </el-form-item>
       <el-form-item label="仓库名称">
         <warehouseSelect :created-is="true" @changSelect="changeWarehouse" />
         <!-- <el-select
@@ -25,6 +21,10 @@
       </el-form-item>
       <el-form-item label="托盘号">
         <el-input v-model="getParams.container_no" @input="changeSearch" />
+      </el-form-item>
+      <el-form-item v-show="getParams.warehouse_name != '终炼胶库'" label="物料类型">
+        <materielTypeSelect @changSelect="changeMaterialType" />
+        <!-- <el-input v-model="getParams.material_type" @input="changeSearch" /> -->
       </el-form-item>
     </el-form>
     <el-table
