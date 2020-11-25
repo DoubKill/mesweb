@@ -406,4 +406,20 @@ export function labelPrint(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function unqualifiedTrains(method, id, data = {}) {
+  const obj = {
+    url: id ? API.UnqualifiedTrains + id + '/' : API.UnqualifiedTrains,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function unqualifiedDealOrders(method, id, data = {}) {
+  const obj = {
+    url: id ? API.UnqualifiedDealOrders + id + '/' : API.UnqualifiedDealOrders,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 
