@@ -14,7 +14,10 @@
         <plan-schedules-select :day-time="getParams.day_time" @planScheduleSelected="planScheduleSelected" />
       </el-form-item> -->
       <el-form-item label="机台">
-        <equip-select @equipSelected="equipSelected" />
+        <equip-select
+          :equip_no_props.sync="getParams.equip_no"
+          @changeSearch="equipSelected"
+        />
       </el-form-item>
       <el-form-item label="班次">
         <class-select @classSelected="classSelected" />
@@ -111,7 +114,8 @@
 import dayjs from 'dayjs'
 import Page from '@/components/page'
 // import PlanSchedulesSelect from '@/components/PlanSchedulesSelect'
-import EquipSelect from '@/components/EquipSelect'
+// import EquipSelect from '@/components/EquipSelect'
+import EquipSelect from '@/components/select_w/equip'
 import ClassSelect from '@/components/ClassSelect'
 // import ProductNoSelect from '@/components/ProductNoSelect'
 import allProductNoSelect from '@/components/select_w/allProductNoSelect'
@@ -206,8 +210,7 @@ export default {
       this.getParams.suggestion_desc = desc || null
       this.currentChange(1)
     },
-    equipSelected(equip) {
-      this.getParams.equip_no = equip ? equip.equip_no : null
+    equipSelected() {
       this.currentChange(1)
     },
     classSelected(className) {
