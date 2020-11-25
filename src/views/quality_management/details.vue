@@ -24,7 +24,6 @@
           @productBatchingChanged="productBatchingChanged"
         />
       </el-form-item>
-      <br>
       <el-form-item label="班次">
         <class-select @classSelected="classSelected" />
       </el-form-item>
@@ -36,7 +35,7 @@
       </el-form-item>
       <el-form-item label="综合检测结果">
         <el-select
-          v-model="valueResult"
+          v-model="getParams.mes_result"
           placeholder="请选择"
           clearable
           @change="valueResultFun"
@@ -49,6 +48,10 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="clickQuery">查询</el-button>
+      </el-form-item>
+      <br>
       <el-form-item>
         <el-button @click="filterDialogVisible = true">
           显示过滤界面
@@ -229,7 +232,7 @@ export default {
   },
   created() {
     this.getTestTypes()
-    this.getMaterialTestOrders()
+    // this.getMaterialTestOrders()
   },
   mounted() {
     // window.addEventListener('scroll', () => {
@@ -251,8 +254,8 @@ export default {
   },
   methods: {
     dayTimeChanged() {
-      this.clearList()
-      this.getMaterialTestOrders()
+      // this.clearList()
+      // this.getMaterialTestOrders()
     },
     clearList() {
       this.getParams.page = 1
@@ -268,22 +271,22 @@ export default {
     },
     equipSelected(equip) {
       this.getParams.equip_no = equip ? equip.equip_no : null
-      this.clearList()
-      this.getMaterialTestOrders()
+      // this.clearList()
+      // this.getMaterialTestOrders()
     },
     stageChange() {
-      this.clearList()
-      this.getMaterialTestOrders()
+      // this.clearList()
+      // this.getMaterialTestOrders()
     },
     classSelected(className) {
       this.getParams.classes = className || null
-      this.clearList()
-      this.getMaterialTestOrders()
+      // this.clearList()
+      // this.getMaterialTestOrders()
     },
     productBatchingChanged(val) {
       this.getParams.product_no = val ? val.material_no : null
-      this.clearList()
-      this.getMaterialTestOrders()
+      // this.clearList()
+      // this.getMaterialTestOrders()
     },
     load(tree, treeNode, resolve) {
       const subRows = []
@@ -299,17 +302,20 @@ export default {
       })
     },
     valueResultFun(val) {
-      this.getParams.mes_result = val
-      this.getParams.page = 1
+      // this.getParams.mes_result = val
+      // this.getParams.page = 1
+      // this.getMaterialTestOrders()
+    },
+    clickQuery() {
       this.getMaterialTestOrders()
     },
     async getMaterialTestOrders() {
       this.listLoading = true
       try {
-        this.titleInfo(this.getParams.equip_no, '请输入生产机台')
+        // this.titleInfo(this.getParams.equip_no, '请输入生产机台')
         // this.titleInfo(this.getParams.classes, '请输入班次')
-        this.titleInfo(this.getParams.product_no, '请输入胶料')
-        this.titleInfo(this.getParams.day_time, '请输入时间')
+        // this.titleInfo(this.getParams.product_no, '请输入胶料')
+        // this.titleInfo(this.getParams.day_time, '请输入时间')
         const data = await materialTestOrders(this.getParams)
         let arr = data
         arr = arr.map(result => {
@@ -392,8 +398,11 @@ export default {
             show: true
           }
         })
+        this.listLoading = false
       // eslint-disable-next-line no-empty
-      } catch (e) {}
+      } catch (e) {
+        this.listLoading = false
+      }
     },
     showCard(row) {
       this.testCardDialogVisible = true
