@@ -13,15 +13,25 @@
         :key="item.id"
         :label="item.name"
         :value="item.id"
+        :disabled="!item.use_flag"
       />
     </el-select>
   </div>
 </template>
 
 <script>
-// import { globalCodesUrl } from '@/api/base_w'
+import { getDispatchLocation } from '@/api/receive'
 export default {
   props: {
+    //  created里面加载
+    createdIs: {
+      type: Boolean,
+      default: false
+    },
+    defaultVal: {
+      type: Number,
+      default: null
+    }
   },
   data() {
     return {
@@ -30,12 +40,21 @@ export default {
     }
   },
   watch: {
+    defaultVal(val) {
+      this.value = val
+    }
+  },
+  created() {
+    if (this.createdIs) {
+      this.getList()
+      this.value = this.defaultVal
+    }
   },
   methods: {
     async getList() {
       try {
-        // const data = await globalCodesUrl('get', null, { all: 1, class_name: '发货类型' })
-        // this.options = data || []
+        const data = await getDispatchLocation({ all: 1 })
+        this.options = data.results || []
       } catch (e) {
         //
       }

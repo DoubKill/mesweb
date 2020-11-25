@@ -184,5 +184,11 @@ export default {
   // 不合格处置单列表
   UnqualifiedTrains: '/api/v1/quality/unqualified-trains/',
   // 不合格处置单创建
-  UnqualifiedDealOrders: '/api/v1/quality/unqualified-deal-orders/'
+  UnqualifiedDealOrders: '/api/v1/quality/unqualified-deal-orders/',
+  // 发货计划
+  DispatchPlan: '/api/v1/inventory/dispatch-plan/',
+  // 目的地
+  DispatchLocation: '/api/v1/inventory/dispatch-location/',
+  // 发货履历
+  DispatchLog: '/api/v1/inventory/dispatch-log/'
 }

@@ -1,9 +1,11 @@
 <template>
   <div>
-    <!-- 发货类型 -->
+    <!-- 原材料编码下拉 -->
     <el-select
       v-model="value"
-      placeholder="请选择发货类型"
+      filterable
+      placeholder="请选择物料编码"
+      :loading="loading"
       clearable
       @visible-change="visibleChange"
       @change="changeSelect"
@@ -11,7 +13,7 @@
       <el-option
         v-for="item in options"
         :key="item.id"
-        :label="item.global_name"
+        :label="item.material_no"
         :value="item.id"
       />
     </el-select>
@@ -19,7 +21,7 @@
 </template>
 
 <script>
-import { globalCodesUrl } from '@/api/base_w'
+import { materialsUrl } from '@/api/base_w'
 export default {
   props: {
     //  created里面加载
@@ -28,13 +30,18 @@ export default {
       default: false
     },
     defaultVal: {
-      type: Number,
+      type: String,
+      default: null
+    },
+    storeName: {
+      type: String,
       default: null
     }
   },
   data() {
     return {
-      value: '',
+      value: this.defaultVal,
+      loading: false,
       options: []
     }
   },
@@ -46,24 +53,27 @@ export default {
   created() {
     if (this.createdIs) {
       this.getList()
-      this.value = this.defaultVal
     }
   },
   methods: {
     async getList() {
       try {
-        const data = await globalCodesUrl('get', { params: { all: 1, class_name: '发货类型' }})
+        this.loading = true
+        const data = await materialsUrl('get', null, { params: { all: 1 }})
         this.options = data.results || []
+        this.loading = false
       } catch (e) {
-        //
+        this.loading = false
       }
     },
     visibleChange(val) {
-      if (val && this.options.length === 0) {
+      if (val && this.options.length === 0 && !this.createdIs) {
         this.getList()
       }
     },
     changeSelect(val) {
+    //   let arr = []
+    //   arr = this.options.filter(D => D.material_no === val)
       this.$emit('changeSelect', val)
     }
   }

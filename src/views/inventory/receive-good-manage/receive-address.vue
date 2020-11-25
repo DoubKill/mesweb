@@ -10,9 +10,9 @@
         >
           <el-option
             v-for="item in statusList"
-            :key="item"
-            :label="item"
-            :value="item"
+            :key="item.use_flag"
+            :label="item.name"
+            :value="item.use_flag"
           />
         </el-select>
       </el-form-item>
@@ -29,8 +29,8 @@
       :data="tableData"
     >
       <el-table-column label="No" type="index" align="center" />
-      <el-table-column label="发货目的地" align="center" prop="address" />
-      <el-table-column label="发货地编码" align="center" prop="address_no" />
+      <el-table-column label="发货目的地" align="center" prop="name" />
+      <el-table-column label="发货地编码" align="center" prop="no" />
       <el-table-column label="状态" align="center" prop="use_flag" :formatter="formatter" />
       <el-table-column label="操作" align="center">
         <template slot-scope="scope">
@@ -48,10 +48,10 @@
           </el-button-group>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" align="center" prop="period_of_validity" />
-      <el-table-column label="创建人" align="center" prop="safety_inventory" />
-      <el-table-column label="更新时间" align="center" prop="validity_unit" />
-      <el-table-column label="更新人" align="center" prop="validity_unit" />
+      <el-table-column label="创建时间" align="center" prop="created_date" />
+      <el-table-column label="创建人" align="center" prop="create_user_name" />
+      <el-table-column label="更新时间" align="center" prop="last_updated_date" />
+      <el-table-column label="更新人" align="center" prop="update_user_name" />
     </el-table>
     <page
       :total="total"
@@ -66,15 +66,15 @@
       <el-form ref="Form" :rules="rules" label-width="100px" :model="createForm">
         <el-form-item
           label="发货目的地"
-          prop="address"
+          prop="name"
         >
-          <el-input v-model="createForm.address" />
+          <el-input v-model="createForm.name" />
         </el-form-item>
         <el-form-item
           label="发货地编码"
-          prop="addressNo"
+          prop="no"
         >
-          <el-input v-model="createForm.addressNo" />
+          <el-input v-model="createForm.no" />
         </el-form-item>
       </el-form>
       <div
@@ -96,14 +96,14 @@
       <el-form ref="Form" :rules="rules" label-width="100px" :model="editForm">
         <el-form-item
           label="发货目的地"
-          prop="address"
+          prop="name"
         >
-          <el-input v-model="editForm.address" />
+          <el-input v-model="editForm.name" />
         </el-form-item>
         <el-form-item
           label="发货地编码"
         >
-          111111111111111
+          {{ editForm.no }}
         </el-form-item>
       </el-form>
       <div
@@ -121,14 +121,15 @@
 </template>
 
 <script>
+import { getDispatchLocation, postDispatchLocation, putDispatchLocation, deleteDispatchLocation } from '@/api/receive'
 import page from '@/components/page'
 export default {
   components: { page },
   data() {
     return {
-      tableData: [{ 'address': '安吉', 'address_no': 'anji', 'use_flag': true }],
+      tableData: [],
       status: '',
-      statusList: ['启用', '停用'],
+      statusList: [{ use_flag: 'True', name: '启用' }, { use_flag: 'False', name: '停用' }],
       getParams: {
         page: 1
       },
@@ -137,27 +138,39 @@ export default {
       editDialogVisible: false,
       editForm: {},
       rules: {
-        address: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        addressNo: [{ required: true, message: '不能为空', trigger: 'blur' }]
+        name: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        no: [{ required: true, message: '不能为空', trigger: 'blur' }]
       },
       total: 1
     }
   },
   created() {
+    this.getTableData()
   },
   methods: {
-    getTableList() {},
-    searchChange() {},
+    getTableData() {
+      getDispatchLocation(this.getParams).then(response => {
+        this.tableData = response.results
+        this.total = response.count
+      })
+    },
+    searchChange() {
+      this.getParams.use_flag = this.status
+      this.getParams.page = 1
+      this.getTableData()
+    },
     formatter(row, column) {
       return row.use_flag ? '启用' : '停用'
     },
     showCreateDialog() {
+      this.createForm = {}
       this.createDialogVisible = true
       this.$nextTick(() => {
         this.$refs.Form.clearValidate()
       })
     },
     showEditDialog(row) {
+      this.editForm = Object.assign({}, row)
       this.editDialogVisible = true
       this.$nextTick(() => {
         this.$refs.Form.clearValidate()
@@ -166,14 +179,26 @@ export default {
     handleCreate() {
       this.$refs.Form.validate((valid) => {
         if (valid) {
-          this.createDialogVisible = false
+          postDispatchLocation(this.createForm)
+            .then(response => {
+              this.createDialogVisible = false
+              this.$message('创建成功')
+              this.getParams.page = 1
+              this.getTableData()
+            })
         }
       })
     },
     handleEdit() {
       this.$refs.Form.validate((valid) => {
         if (valid) {
-          this.editDialogVisible = false
+          putDispatchLocation(this.editForm, this.editForm.id)
+            .then(response => {
+              this.editDialogVisible = false
+              this.$message('修改成功')
+              this.getParams.page = 1
+              this.getTableData()
+            })
         }
       })
     },
@@ -184,10 +209,23 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        row.use_flag = !row.use_flag
+        deleteDispatchLocation(row.id)
+          .then(response => {
+            this.$message({
+              type: 'success',
+              message: '操作成功!'
+            })
+            this.getParams.page = 1
+            this.getTableData()
+          }).catch(function() {
+
+          })
       })
     },
-    currentChange() {}
+    currentChange(page) {
+      this.getParams.page = page
+      this.getTableData()
+    }
   }
 }
 </script>
