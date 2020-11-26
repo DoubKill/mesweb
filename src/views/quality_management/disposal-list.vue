@@ -100,17 +100,29 @@
         prop="reason"
         label="不合格原因"
         show-overflow-tooltip
-      />
+      >
+        <template slot-scope="{row}">
+          {{ changeInputBack(row.reason) }}
+        </template>
+      </el-table-column>
       <el-table-column
         prop="t_deal_suggestion"
         label="技术不合格原因"
         show-overflow-tooltip
-      />
+      >
+        <template slot-scope="{row}">
+          {{ changeInputBack(row.t_deal_suggestion) }}
+        </template>
+      </el-table-column>
       <el-table-column
         prop="c_deal_suggestion"
         label="检查不合格原因"
         show-overflow-tooltip
-      />
+      >
+        <template slot-scope="{row}">
+          {{ changeInputBack(row.c_deal_suggestion) }}
+        </template>
+      </el-table-column>
       <el-table-column
         label="原因编辑"
       >
@@ -214,6 +226,10 @@ export default {
       } catch (e) {
         //
       }
+    },
+    changeInputBack(val) {
+      if (!val) return ''
+      return (val).replace(/<br>/g, '\r\n').replace(/<br>/g, '\n').replace(/&nbsp;/g, '\s')
     },
     editReason(index, row, num) {
       this.handleCardDialogVisible = true

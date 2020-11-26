@@ -270,6 +270,10 @@ export default {
       try {
         const data = await unqualifiedDealOrders('get', this.orderNum)
         this.formObj = data
+        this.formObj.reason = this.editType === 1 ? this.changeInputBack(this.formObj.reason) : this.formObj.reason
+        this.formObj.t_deal_suggestion = this.editType === 2 ? this.changeInputBack(this.formObj.t_deal_suggestion) : this.formObj.t_deal_suggestion
+        this.formObj.c_deal_suggestion = this.editType === 3 ? this.changeInputBack(this.formObj.c_deal_suggestion) : this.formObj.c_deal_suggestion
+
         this.headData = data.form_head_data
         this.listData = data.deal_details
       } catch (e) {
@@ -287,21 +291,30 @@ export default {
           this.listData.forEach(D => {
             arr = arr.concat(D.order_ids)
           })
-          newtFormObj.t_deal_suggestion = this.changeInput(newtFormObj.t_deal_suggestion)
-          newtFormObj.c_deal_suggestion = this.changeInput(newtFormObj.c_deal_suggestion)
-          newtFormObj.desc = this.changeInput(newtFormObj.desc)
           this.$set(newtFormObj, 'order_ids', arr)
           _api = 'post'
           _id = null
+          newtFormObj.desc = this.changeInput(newtFormObj.desc)
         } else {
           _id = this.formObj.id
           newtFormObj = {
             t_deal_suggestion: this.formObj.t_deal_suggestion,
             c_deal_suggestion: this.formObj.c_deal_suggestion,
-            reason: this.formObj.reason
+            reason: this.formObj.reason,
+            deal_user: this.formObj.deal_user,
+            deal_date: this.formObj.deal_date,
+            t_deal_user: this.formObj.t_deal_user,
+            t_deal_date: this.formObj.t_deal_date,
+            c_deal_user: this.formObj.c_deal_user,
+            c_deal_date: this.formObj.c_deal_date
           }
           _api = 'put'
         }
+        newtFormObj.reason = this.changeInput(newtFormObj.reason)
+        newtFormObj.t_deal_suggestion = this.changeInput(newtFormObj.t_deal_suggestion)
+        newtFormObj.c_deal_suggestion = this.changeInput(newtFormObj.c_deal_suggestion)
+        // console.log(newtFormObj, 'newtFormObj')
+        // return
         this.loadingBtn = true
         await unqualifiedDealOrders(_api, _id, { data: newtFormObj })
         this.$message({
@@ -320,8 +333,12 @@ export default {
       }
     },
     changeInput(val) {
-      if (!val) return ''
+      if (!val) return null
       return (val).replace(/\r\n/g, '<br>').replace(/\n/g, '<br>').replace(/\s/g, '&nbsp;')
+    },
+    changeInputBack(val) {
+      if (!val) return ''
+      return (val).replace(/<br>/g, '\r\n').replace(/<br>/g, '\n').replace(/&nbsp;/g, '\s')
     },
     editOne(val, paramsName, dateDate) {
       this.$set(this.formObj, paramsName, this.name)
@@ -365,7 +382,7 @@ export default {
 
 <style lang="scss">
  .card-container {
-    width: 800px;
+    width: 900px;
     margin: 0 auto;
     text-align: center;
     font-size: 14px;
