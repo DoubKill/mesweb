@@ -212,7 +212,7 @@ export default {
       st: null,
       currentPalletFeedbacks: null,
       total: 0,
-      getParams: { page: 1 },
+      getParams: { page: 1, equip_no: '' },
       loading: true
     }
   },
@@ -243,7 +243,7 @@ export default {
       this.getList()
     },
     beforeGetData: function() {
-      this.getParams['equip_no'] = this.equip_no
+      // this.getParams['equip_no'] = this.equip_no
       this.getParams['product_no'] = this.product_no
       this.getParams['st'] = this.st
     },

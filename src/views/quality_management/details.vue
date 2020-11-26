@@ -88,33 +88,33 @@
       <!-- <el-table-column label="No" align="center" prop="index" /> -->
       <el-table-column label="生产信息" align="center">
         <!-- <el-table-column label="生产计划号" width="180" prop="plan_classes_uid" align="center" /> -->
-        <el-table-column label="收皮条码" prop="lot_no" width="180" />
-        <el-table-column label="生产班次/班组" width="50" prop="class_group" />
-        <el-table-column label="生产机台" width="70" prop="production_equip_no" />
-        <el-table-column label="胶料编码" align="center" width="120" prop="product_no" />
-        <el-table-column label="车次" width="50" align="center" prop="actual_trains" />
-        <el-table-column label="检测状态" width="60" prop="test_status" align="center" />
+        <el-table-column label="收皮条码" prop="lot_no" />
+        <el-table-column label="生产班次/班组" prop="class_group" />
+        <el-table-column label="生产机台" prop="production_equip_no" />
+        <el-table-column label="胶料编码" align="center" prop="product_no" />
+        <el-table-column label="车次" align="center" prop="actual_trains" />
+        <el-table-column label="检测状态" prop="test_status" align="center" />
       </el-table-column>
       <el-table-column v-for="header in testTypeList.filter(type => type.show)" :key="header.test_type_name" align="center" :label="header.test_type_name">
-        <el-table-column v-for="subHeader in header.data_indicator_detail.filter(item => item.show)" :key="header.test_type_name + subHeader.detail" width="110" :label="subHeader.detail" align="center">
-          <el-table-column label="机台" align="center" width="60">
+        <el-table-column v-for="subHeader in header.data_indicator_detail.filter(item => item.show)" :key="header.test_type_name + subHeader.detail" :label="subHeader.detail" align="center">
+          <!-- <el-table-column label="机台" align="center" width="60">
             <template slot-scope="{ row }">
               {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'machine_name') }}
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <!-- <el-table-column label="检测次数" align="center">
             <template slot-scope="{ row }">
               {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'test_times') }}
             </template>
           </el-table-column> -->
-          <el-table-column label="检测值" align="center" width="60">
+          <el-table-column label="检测值" align="center">
             <template slot-scope="{ row }">
               <div :class="getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level')!==1&&getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level')!==''?'test_type_name_style':''">
                 {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'value') }}
               </div>
             </template>
           </el-table-column>
-          <el-table-column
+          <!-- <el-table-column
             label="等级"
             align="center"
             width="60"
@@ -124,9 +124,9 @@
                 {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level') }}
               </div>
             </template>
-          </el-table-column>
+          </el-table-column> -->
         </el-table-column>
-        <el-table-column label="等级" align="center" width="60">
+        <el-table-column label="等级" align="center">
           <template slot-scope="{row}">
             {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'level') }}
             <!-- {{ row.test_indicator_list_[header.test_type_name].maxLevel }} -->
@@ -138,8 +138,8 @@
           </template>
         </el-table-column> -->
       </el-table-column>
-      <el-table-column label="综合等级" prop="level" align="center" width="60" />
-      <el-table-column label="综合检测结果" width="80" prop="mes_result" align="center" />
+      <el-table-column label="综合等级" prop="level" align="center" />
+      <el-table-column label="综合检测结果" prop="mes_result" align="center" />
     </el-table>
     <el-dialog
       title="选择过滤"
