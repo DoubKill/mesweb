@@ -85,36 +85,34 @@
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
       :row-class-name="tableRowClassName"
     >
-      <!-- <el-table-column label="No" align="center" prop="index" /> -->
       <el-table-column label="生产信息" align="center">
-        <!-- <el-table-column label="生产计划号" width="180" prop="plan_classes_uid" align="center" /> -->
-        <!-- <el-table-column label="收皮条码" prop="lot_no" /> -->
         <el-table-column label="生产时间" prop="production_factory_date" align="center" />
         <el-table-column label="生产班次/班组" prop="class_group" />
         <el-table-column label="生产机台" prop="production_equip_no" />
         <el-table-column label="胶料编码" align="center" prop="product_no" />
         <el-table-column label="车次" align="center" prop="actual_trains" />
-        <el-table-column label="检测状态" prop="test_status" align="center" />
+        <el-table-column label="检测状态" prop="test_status" align="center">
+          <template slot-scope="{ row }">
+            <div :class="row.test_status === '复检' ? 'test_type_name_style': ''">
+              {{ row.test_status }}
+            </div>
+          </template>
+        </el-table-column>
       </el-table-column>
       <el-table-column v-for="header in testTypeList.filter(type => type.show)" :key="header.test_type_name" align="center" :label="header.test_type_name">
+        <!-- <el-table-column label="检测机台" align="center" width="60">
+          <template slot-scope="{ row }">
+            {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'machine_name') }}
+          </template>
+        </el-table-column> -->
         <el-table-column v-for="subHeader in header.data_indicator_detail.filter(item => item.show)" :key="header.test_type_name + subHeader.detail" :label="subHeader.detail" align="center">
-          <!-- <el-table-column label="机台" align="center" width="60">
-            <template slot-scope="{ row }">
-              {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'machine_name') }}
-            </template>
-          </el-table-column> -->
-          <!-- <el-table-column label="检测次数" align="center">
-            <template slot-scope="{ row }">
-              {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'test_times') }}
-            </template>
-          </el-table-column> -->
-          <el-table-column label="检测值" align="center">
-            <template slot-scope="{ row }">
-              <div :class="getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level')!==1&&getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level')!==''?'test_type_name_style':''">
-                {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'value') }}
-              </div>
-            </template>
-          </el-table-column>
+          <!-- <el-table-column label="检测值" align="center"> -->
+          <template slot-scope="{ row }">
+            <div :class="getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level')!==1&&getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level')!==''?'test_type_name_style':''">
+              {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'value') }}
+            </div>
+          </template>
+          <!-- </el-table-column> -->
           <!-- <el-table-column
             label="等级"
             align="center"
@@ -126,6 +124,11 @@
               </div>
             </template>
           </el-table-column> -->
+        </el-table-column>
+        <el-table-column label="检测机台" align="center" width="60">
+          <template slot-scope="{row}">
+            {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'machine_name') }}
+          </template>
         </el-table-column>
         <el-table-column label="等级" align="center">
           <template slot-scope="{row}">
@@ -327,7 +330,7 @@ export default {
           return {
             ...result,
             index: this.index++,
-            hasChildren: true,
+            hasChildren: false,
             test_status: '正常',
             class_group: `${result.production_class}/${result.production_group}`
           }
@@ -343,6 +346,7 @@ export default {
               const dataPoint = testType[dataPointName]
               if (dataPoint.test_times > 1) {
                 row.test_status = '复检'
+                row.hasChildren = true
               }
               if (dataPoint.level > maxLevel) {
                 maxLevel = dataPoint.level
