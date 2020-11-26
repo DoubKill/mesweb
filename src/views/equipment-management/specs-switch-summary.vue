@@ -31,20 +31,42 @@
           @changeSearch="changeDate"
         />
       </el-form-item>
+      <el-form-item label="时间单位:">
+        <el-select v-model="timeUnit" placeholder="请选择">
+          <el-option
+            v-for="item in options"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-form-item>
     </el-form>
 
     <el-form :inline="true">
-      <el-form-item label="总耗时/min:">
-        {{ allData.sum_time |setTimeMin }}
+      <el-form-item
+        :label="'总耗时/'+(timeUnit==='秒'?'s':'min')"
+      >
+        <span v-if="timeUnit==='秒'">{{ allData.sum_time }}</span>
+        <span v-else>{{ allData.sum_time |setTimeMin }}</span>
       </el-form-item>
-      <el-form-item label="最小耗时/min:">
-        {{ allData.min_time |setTimeMin }}
+      <el-form-item
+        :label="'最小耗时/'+(timeUnit==='秒'?'s':'min')"
+      >
+        <span v-if="timeUnit==='秒'">{{ allData.min_time }}</span>
+        <span v-else>{{ allData.min_time |setTimeMin }}</span>
       </el-form-item>
-      <el-form-item label="最大耗时/min:">
-        {{ allData.max_time |setTimeMin }}
+      <el-form-item
+        :label="'最大耗时/'+(timeUnit==='秒'?'s':'min')"
+      >
+        <span v-if="timeUnit==='秒'">{{ allData.max_time }}</span>
+        <span v-else>{{ allData.max_time |setTimeMin }}</span>
       </el-form-item>
-      <el-form-item label="平均耗时/min:">
-        {{ allData.avg_time |setTimeMin }}
+      <el-form-item
+        :label="'平均耗时/'+(timeUnit==='秒'?'s':'min')"
+      >
+        <span v-if="timeUnit==='秒'">{{ allData.avg_time }}</span>
+        <span v-else>{{ allData.avg_time |setTimeMin }}</span>
       </el-form-item>
     </el-form>
 
@@ -81,10 +103,11 @@
         label="切换后胶料编码"
       />
       <el-table-column
-        label="耗时/min"
+        :label="'耗时/'+(timeUnit==='秒'?'s':'min')"
       >
         <template slot-scope="{row}">
-          {{ row.time_consuming |setTimeMin }}
+          <span v-if="timeUnit==='秒'">{{ row.time_consuming }}</span>
+          <span v-else>{{ row.time_consuming |setTimeMin }}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -115,7 +138,9 @@ export default {
         date: []
       },
       allData: {},
-      tableData: []
+      tableData: [],
+      options: ['秒', '分钟'],
+      timeUnit: '秒'
     }
   },
   created() {
