@@ -115,26 +115,26 @@
         </template>
       </el-table-column>
     </el-table>
-    <page
+    <!-- <page
       :total="total"
       :current-page="search.page"
       @currentChange="currentChange"
-    />
+    /> -->
   </div>
 </template>
 
 <script>
 import equipSelect from '@/components/select_w/equip'
-import page from '@/components/page'
+// import page from '@/components/page'
 import timeSpanSelect from '@/components/select_w/timeSpan'
 import { equipBanburySummary } from '@/api/base_w'
 import myMixin from './aminxPublic'
 export default {
-  components: { page, equipSelect, timeSpanSelect },
+  components: { equipSelect, timeSpanSelect },
   mixins: [myMixin],
   data() {
     return {
-      total: 0,
+      // total: 0,
       loading: false,
       search: {
         page: 1,
@@ -155,8 +155,8 @@ export default {
       try {
         this.loading = true
         const data = await equipBanburySummary('get', null, { params: this.search })
-        this.total = data.count
-        this.tableData = data.results
+        // this.total = data.count
+        this.tableData = data
         if (this.tableData.length > 0 && (Number(this.search.day_type) !== 2 || this.search.dimension !== 1)) {
           let val
           if (this.search.dimension === 2) {
