@@ -35,7 +35,18 @@
         />
       </el-form-item>
       <el-form-item label="胶料编码:">
-        <product-no-select @productBatchingChanged="productBatchingChanged" />
+        <all-product-no-select @productBatchingChanged="productBatchingChanged" />
+        <!-- <product-no-select @productBatchingChanged="productBatchingChanged" /> -->
+      </el-form-item>
+      <el-form-item label="时间单位:">
+        <el-select v-model="timeUnit" placeholder="请选择">
+          <el-option
+            v-for="item in options"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
       </el-form-item>
     </el-form>
     <el-table
@@ -77,52 +88,48 @@
       <el-table-column
         :key="6"
         prop="total_time"
-        label="总耗时/min"
+        :label="'总耗时/'+(timeUnit==='秒'?'s':'min')"
       >
         <template slot-scope="{row}">
-          {{ row.total_time |setTimeMin }}
+          <span v-if="timeUnit==='秒'">{{ row.total_time }}</span>
+          <span v-else>{{ row.total_time |setTimeMin }}</span>
         </template>
       </el-table-column>
       <el-table-column
         :key="7"
-        label="总时间/min"
+        :label="'总时间/'+(timeUnit==='秒'?'s':'min')"
         prop="classes_time"
       >
         <template slot-scope="{row}">
-          <!-- v-if="Number(search.day_type) === 2&&search.dimension === 1" -->
-          <span>
-            {{ row.classes_time |setTimeMin }}
-          </span>
-          <!-- <span v-if="search.dimension === 2">
-            {{ 60*24 }}
-          </span>
-          <span v-if="search.dimension === 3">
-            {{ 60*24*30 }}
-          </span> -->
+          <span v-if="timeUnit==='秒'">{{ row.classes_time }}</span>
+          <span v-else>{{ row.classes_time |setTimeMin }}</span>
         </template>
       </el-table-column>
       <el-table-column
         :key="8"
-        label="单车最小耗时/min"
+        :label="'单车最小耗时/'+(timeUnit==='秒'?'s':'min')"
       >
         <template slot-scope="{row}">
-          {{ row.min_train_time |setTimeMin }}
+          <span v-if="timeUnit==='秒'">{{ row.min_train_time }}</span>
+          <span v-else>{{ row.min_train_time |setTimeMin }}</span>
         </template>
       </el-table-column>
       <el-table-column
         :key="9"
-        label="单车最大耗时/min"
+        :label="'单车最大耗时/'+(timeUnit==='秒'?'s':'min')"
       >
         <template slot-scope="{row}">
-          {{ row.max_train_time |setTimeMin }}
+          <span v-if="timeUnit==='秒'">{{ row.max_train_time }}</span>
+          <span v-else>{{ row.max_train_time |setTimeMin }}</span>
         </template>
       </el-table-column>
       <el-table-column
         :key="10"
-        label="单车平均耗时/min"
+        :label="'单车平均耗时/'+(timeUnit==='秒'?'s':'min')"
       >
         <template slot-scope="{row}">
-          {{ (setUse(row.total_time,row.total_trains,false)) |setTimeMin }}
+          <span v-if="timeUnit==='秒'">{{ (setUse(row.total_time,row.total_trains,false)) }}</span>
+          <span v-else>{{ (setUse(row.total_time,row.total_trains,false)) |setTimeMin }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -144,27 +151,28 @@
         </template>
       </el-table-column>
     </el-table>
-    <page
+    <!-- <page
       :total="total"
       :current-page="search.page"
       @currentChange="currentChange"
-    />
+    /> -->
   </div>
 </template>
 
 <script>
-import productNoSelect from '@/components/ProductNoSelect'
+// import productNoSelect from '@/components/ProductNoSelect'
 import equipSelect from '@/components/select_w/equip'
-import page from '@/components/page'
+// import page from '@/components/page'
 import timeSpanSelect from '@/components/select_w/timeSpan'
 import { classesBanburySummary } from '@/api/base_w'
+import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import myMixin from './aminxPublic'
 export default {
-  components: { productNoSelect, page, equipSelect, timeSpanSelect },
+  components: { allProductNoSelect, equipSelect, timeSpanSelect },
   mixins: [myMixin],
   data() {
     return {
-      total: 0,
+      // total: 0,
       loading: false,
       search: {
         page: 1,
@@ -173,7 +181,9 @@ export default {
         day_type: 2,
         date: []
       },
-      tableData: []
+      tableData: [],
+      options: ['秒', '分钟'],
+      timeUnit: '秒'
     }
   },
   created() {
@@ -184,8 +194,8 @@ export default {
       try {
         this.loading = true
         const data = await classesBanburySummary('get', null, { params: this.search })
-        this.total = data.count
-        this.tableData = data.results
+        // this.total = data.count
+        this.tableData = data
         if (this.tableData.length > 0 && (Number(this.search.day_type) !== 2 || this.search.dimension !== 1)) {
           let val
           if (this.search.dimension === 2) {
@@ -212,7 +222,7 @@ export default {
       this.getList()
     },
     productBatchingChanged(val) {
-      this.search.product_no = val ? val.stage_product_batch_no : ''
+      this.search.product_no = val ? val.material_no : ''
       this.getList()
       this.search.page = 1
     },
@@ -259,7 +269,11 @@ export default {
           if (index === 4) {
             sums[index]
           } else {
-            sums[index] = this.setNum(sums[index])
+            if (this.timeUnit !== '秒') {
+              sums[index] = this.setNum(sums[index])
+            } else {
+              sums[index]
+            }
           }
         } else {
           sums[index]

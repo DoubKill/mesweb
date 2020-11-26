@@ -34,6 +34,16 @@
           @changeSearch="equipChanged"
         />
       </el-form-item>
+      <el-form-item label="时间单位:">
+        <el-select v-model="timeUnit" placeholder="请选择">
+          <el-option
+            v-for="item in options"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-form-item>
     </el-form>
     <el-table
       :data="tableData"
@@ -73,29 +83,20 @@
       />
       <el-table-column
         prop="total_time"
-        label="总耗时/min"
+        :label="'总耗时/'+(timeUnit==='秒'?'s':'min')"
       >
         <template slot-scope="{row}">
-          {{ row.total_time |setTimeMin }}
+          <span v-if="timeUnit==='秒'">{{ row.total_time }}</span>
+          <span v-else>{{ row.total_time |setTimeMin }}</span>
         </template>
       </el-table-column>
       <el-table-column
-        label="总时间/min"
+        :label="'总时间/'+(timeUnit==='秒'?'s':'min')"
         prop="classes_time"
       >
         <template slot-scope="{row}">
-          <span>
-            {{ row.classes_time |setTimeMin }}
-          </span>
-          <!-- <span v-if="Number(search.day_type) === 2&&search.dimension === 1">
-            {{ row.classes_time |setTimeMin }}
-          </span>
-          <span v-if="search.dimension === 2">
-            {{ 60*24 }}
-          </span>
-          <span v-if="search.dimension === 3">
-            {{ 60*24*30 }}
-          </span> -->
+          <span v-if="timeUnit==='秒'">{{ row.classes_time }}</span>
+          <span v-else>{{ row.classes_time |setTimeMin }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -141,7 +142,9 @@ export default {
         day_type: 2,
         date: []
       },
-      tableData: []
+      tableData: [],
+      options: ['秒', '分钟'],
+      timeUnit: '秒'
     }
   },
   created() {
@@ -235,7 +238,11 @@ export default {
           if (index === 3) {
             sums[index]
           } else {
-            sums[index] = this.setNum(sums[index])
+            if (this.timeUnit !== '秒') {
+              sums[index] = this.setNum(sums[index])
+            } else {
+              sums[index]
+            }
           }
         } else {
           sums[index]
