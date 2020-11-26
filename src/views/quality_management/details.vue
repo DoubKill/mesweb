@@ -88,7 +88,8 @@
       <!-- <el-table-column label="No" align="center" prop="index" /> -->
       <el-table-column label="生产信息" align="center">
         <!-- <el-table-column label="生产计划号" width="180" prop="plan_classes_uid" align="center" /> -->
-        <el-table-column label="收皮条码" prop="lot_no" />
+        <!-- <el-table-column label="收皮条码" prop="lot_no" /> -->
+        <el-table-column label="生产时间" prop="production_factory_date" align="center" />
         <el-table-column label="生产班次/班组" prop="class_group" />
         <el-table-column label="生产机台" prop="production_equip_no" />
         <el-table-column label="胶料编码" align="center" prop="product_no" />
