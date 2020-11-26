@@ -103,15 +103,6 @@
           }}
         </td>
       </tr>
-      <!-- <tr v-for="row in testData.mtr_list.rows" :key="row">
-        <td>{{ row }}</td>
-        <td v-for="(item, index) in testData.mtr_list[row]" :key="index">
-          {{ index !== testData.mtr_list[row].length - 1 ? item.value : '' }} <br>
-          {{
-            item ? item.status : ''
-          }}
-        </td>
-      </tr> -->
     </table>
     <img class="barcode">
   </div>
