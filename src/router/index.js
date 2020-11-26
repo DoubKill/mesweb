@@ -293,16 +293,16 @@ export const asyncRoutes = [{
       title: '密炼生产履历',
       permissionName: 'product_record'
     }
-  },
-  {
-    path: 'collect/rub/daily',
-    component: () => import('@/views/collect_rubber_daily_manage/index'),
-    name: 'CollectRubDailyManage',
-    meta: {
-      title: '日别胶料收皮管理',
-      permissionName: 'pallet_feedback'
-    }
   }
+  // {
+  //   path: 'collect/rub/daily',
+  //   component: () => import('@/views/collect_rubber_daily_manage/index'),
+  //   name: 'CollectRubDailyManage',
+  //   meta: {
+  //     title: '日别胶料收皮管理',
+  //     permissionName: 'pallet_feedback'
+  //   }
+  // }
   ]
 },
 {
