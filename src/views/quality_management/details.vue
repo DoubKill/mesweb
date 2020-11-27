@@ -86,12 +86,12 @@
       :row-class-name="tableRowClassName"
     >
       <el-table-column label="生产信息" align="center">
-        <el-table-column label="生产时间" prop="production_factory_date" align="center" />
-        <el-table-column label="生产班次/班组" prop="class_group" />
-        <el-table-column label="生产机台" prop="production_equip_no" />
-        <el-table-column label="胶料编码" align="center" prop="product_no" />
-        <el-table-column label="车次" align="center" prop="actual_trains" />
-        <el-table-column label="检测状态" prop="test_status" align="center">
+        <el-table-column label="生产时间" prop="production_factory_date" show-overflow-tooltip align="center" />
+        <el-table-column label="生产班次/班组" prop="class_group" show-overflow-tooltip width="75px" />
+        <el-table-column label="生产机台" width="45px" prop="production_equip_no" />
+        <el-table-column label="胶料编码" width="70px" align="center" prop="product_no" />
+        <el-table-column label="车次" align="center" width="40px" prop="actual_trains" />
+        <el-table-column label="检测状态" width="50px" prop="test_status" align="center">
           <template slot-scope="{ row }">
             <div :class="row.test_status === '复检' ? 'test_type_name_style': ''">
               {{ row.test_status }}
@@ -105,7 +105,7 @@
             {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'machine_name') }}
           </template>
         </el-table-column> -->
-        <el-table-column v-for="subHeader in header.data_indicator_detail.filter(item => item.show)" :key="header.test_type_name + subHeader.detail" :label="subHeader.detail" align="center">
+        <el-table-column v-for="subHeader in header.data_indicator_detail.filter(item => item.show)" :key="header.test_type_name + subHeader.detail" width="60px" :label="subHeader.detail" align="center">
           <!-- <el-table-column label="检测值" align="center"> -->
           <template slot-scope="{ row }">
             <div :class="getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level')!==1&&getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level')!==''?'test_type_name_style':''">
@@ -125,12 +125,12 @@
             </template>
           </el-table-column> -->
         </el-table-column>
-        <el-table-column label="检测机台" align="center" width="60">
+        <el-table-column label="检测机台" width="40px" align="center">
           <template slot-scope="{row}">
             {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'machine_name') }}
           </template>
         </el-table-column>
-        <el-table-column label="等级" align="center">
+        <el-table-column width="35px" label="等级" align="center">
           <template slot-scope="{row}">
             {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'level') }}
             <!-- {{ row.test_indicator_list_[header.test_type_name].maxLevel }} -->
@@ -142,8 +142,8 @@
           </template>
         </el-table-column> -->
       </el-table-column>
-      <el-table-column label="综合等级" prop="level" align="center" />
-      <el-table-column label="综合检测结果" prop="mes_result" align="center" />
+      <el-table-column label="综合等级" width="35px" prop="level" align="center" />
+      <el-table-column label="综合检测结果" show-overflow-tooltip width="60px" prop="mes_result" align="center" />
     </el-table>
     <el-dialog
       title="选择过滤"
@@ -464,6 +464,10 @@ export default {
 .details_style{
   .el-table .warning-row {
     background: oldlace;
+  }
+  .el-table .cell{
+    line-height: 18px;
+    padding: 4px !important;
   }
   td{
     position: relative;
