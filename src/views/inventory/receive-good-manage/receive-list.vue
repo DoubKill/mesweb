@@ -37,6 +37,7 @@
       </el-form-item>
       <el-form-item style="float: right">
         <el-button
+          v-permission="['delivery_plan', 'add']"
           @click="showCreateDialog"
         >新建</el-button>
       </el-form-item>
@@ -63,11 +64,13 @@
           <el-button-group>
             <el-button
               v-if="scope.row.status == 2 || scope.row.status == 4"
+              v-permission="['delivery_plan', 'delete']"
               size="mini"
               @click="handleClose(scope.row)"
             >关闭</el-button>
             <el-button
               v-if="scope.row.status == 4"
+              v-permission="['delivery_plan', 'change']"
               size="mini"
               type="danger"
               @click="showEditDialog(scope.row)"
