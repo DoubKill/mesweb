@@ -185,7 +185,7 @@ export default {
     equipNoVisibleChange(bool) {
       if (bool) {
         var app = this
-        getEquip({ all: 1 }).then(function(response) {
+        getEquip({ all: 1, category_name: '密炼设备' }).then(function(response) {
           app.equipNoOptions = response.results
         })
       }
