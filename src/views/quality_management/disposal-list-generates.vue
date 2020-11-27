@@ -31,7 +31,11 @@
         </el-select>
       </el-form-item> -->
     </el-form>
-    <el-button style="float:right;margin-bottom:20px" @click="generateFun">生成不合格处理单</el-button>
+    <el-button
+      v-permission="['unqualified_trains','add']"
+      style="float:right;margin-bottom:20px"
+      @click="generateFun"
+    >生成不合格处理单</el-button>
 
     <el-table
       ref="multipleTable"

@@ -431,7 +431,7 @@ export const asyncRoutes = [{
           name: 'ReceiveGoodManageIndex',
           meta: {
             title: '发货计划管理',
-            permissionName: 'material_attr'
+            permissionName: 'delivery_plan'
           }
         },
         {
@@ -440,7 +440,7 @@ export const asyncRoutes = [{
           name: 'ReceiveGoodManageView',
           meta: {
             title: '发货履历管理',
-            permissionName: 'material_attr'
+            permissionName: 'delivery_history'
           }
         },
         {
@@ -449,7 +449,7 @@ export const asyncRoutes = [{
           name: 'ReceiveGoodManageAddress',
           meta: {
             title: '发货地管理',
-            permissionName: 'material_attr'
+            permissionName: 'delivery_address'
           }
         }
       ]
@@ -471,7 +471,8 @@ export const asyncRoutes = [{
       component: () => import('@/views/quality_management/disposal-list-generates.vue'),
       name: 'DisposalListGenerate',
       meta: {
-        title: '不合格处置单生成'
+        title: '不合格处置单生成',
+        permissionName: 'unqualified_trains'
       }
     },
     {
@@ -479,7 +480,8 @@ export const asyncRoutes = [{
       component: () => import('@/views/quality_management/disposal-list.vue'),
       name: 'DisposalList',
       meta: {
-        title: '不合格处置单管理'
+        title: '不合格处置单管理',
+        permissionName: 'unqualified_order'
       }
     },
     {
