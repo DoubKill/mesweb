@@ -467,24 +467,6 @@ export const asyncRoutes = [{
   },
   children: [
     {
-      path: '/disposal-list-generate',
-      component: () => import('@/views/quality_management/disposal-list-generates.vue'),
-      name: 'DisposalListGenerate',
-      meta: {
-        title: '不合格处置单生成',
-        permissionName: 'unqualified_trains'
-      }
-    },
-    {
-      path: '/disposal-list',
-      component: () => import('@/views/quality_management/disposal-list.vue'),
-      name: 'DisposalList',
-      meta: {
-        title: '不合格处置单管理',
-        permissionName: 'unqualified_order'
-      }
-    },
-    {
       path: '/quick-check',
       redirect: '/quick-check/test-indicators',
       component: {
@@ -610,21 +592,39 @@ export const asyncRoutes = [{
         title: '不合格品处理'
       },
       children: [
+        // {
+        //   path: 'inferior-quality-product-manage',
+        //   component: () => import('@/views/quality_management/inferior_quality_product_manage'),
+        //   name: 'InferiorQualityProductManage',
+        //   meta: {
+        //     title: '不合格品处理',
+        //     permissionName: 'non-conformity_product'
+        //   }
+        // }, {
+        //   path: 'unqualified-treatment-opinions-manage',
+        //   component: () => import('@/views/quality_management/unqualified_treatment_opinions_manage'),
+        //   name: 'UnqualifiedTreatmentOpinionsManage',
+        //   meta: {
+        //     title: '不合格处理意见管理',
+        //     permissionName: 'deal_suggestion'
+        //   }
+        // }
         {
-          path: 'inferior-quality-product-manage',
-          component: () => import('@/views/quality_management/inferior_quality_product_manage'),
-          name: 'InferiorQualityProductManage',
+          path: '/disposal-list-generate',
+          component: () => import('@/views/quality_management/disposal-list-generates.vue'),
+          name: 'DisposalListGenerate',
           meta: {
-            title: '不合格品处理',
-            permissionName: 'non-conformity_product'
+            title: '不合格处置单生成',
+            permissionName: 'unqualified_trains'
           }
-        }, {
-          path: 'unqualified-treatment-opinions-manage',
-          component: () => import('@/views/quality_management/unqualified_treatment_opinions_manage'),
-          name: 'UnqualifiedTreatmentOpinionsManage',
+        },
+        {
+          path: '/disposal-list',
+          component: () => import('@/views/quality_management/disposal-list.vue'),
+          name: 'DisposalList',
           meta: {
-            title: '不合格处理意见管理',
-            permissionName: 'deal_suggestion'
+            title: '不合格处置单管理',
+            permissionName: 'unqualified_order'
           }
         }
       ]
