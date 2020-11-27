@@ -18,6 +18,7 @@
       </el-form-item>
       <el-form-item style="float: right">
         <el-button
+          v-permission="['delivery_address', 'add']"
           @click="showCreateDialog"
         >新建</el-button>
       </el-form-item>
@@ -36,10 +37,12 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
+              v-permission="['delivery_address', 'change']"
               size="mini"
               @click="showEditDialog(scope.row)"
             >编辑</el-button>
             <el-button
+              v-permission="['delivery_address', 'delete']"
               size="mini"
               type="danger"
               @click="handleData(scope.row)"
