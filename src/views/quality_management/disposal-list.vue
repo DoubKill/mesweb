@@ -127,14 +127,14 @@
         label="原因编辑"
       >
         <template slot-scope="scope">
-          <el-button size="small" @click="editReason(scope.$index,scope.row,1)">编辑</el-button>
+          <el-button v-permission="['unqualified_order','tech']" size="small" @click="editReason(scope.$index,scope.row,1)">编辑</el-button>
         </template>
       </el-table-column>
       <el-table-column
         label="技术处理"
       >
         <template slot-scope="scope">
-          <el-button size="small" @click="editReason(scope.$index,scope.row,2)">编辑</el-button>
+          <el-button v-permission="['unqualified_order','check']" size="small" @click="editReason(scope.$index,scope.row,2)">编辑</el-button>
         </template>
       </el-table-column>
       <el-table-column

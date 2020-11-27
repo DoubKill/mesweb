@@ -80,7 +80,7 @@
       row-key="index"
       lazy
       :load="load"
-      height="600"
+      max-height="600"
       size="mini"
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
       :row-class-name="tableRowClassName"

@@ -252,7 +252,7 @@ export default {
       const sums = []
       columns.forEach((column, index) => {
         if (index === 0) {
-          sums[index] = '总价'
+          sums[index] = '总计'
           return
         }
 
