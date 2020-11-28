@@ -125,7 +125,7 @@
             </template>
           </el-table-column> -->
         </el-table-column>
-        <el-table-column label="检测机台" width="40px" align="center">
+        <el-table-column v-if="header.test_type_name === '门尼' || header.test_type_name === '流变'" label="检测机台" width="40px" align="center">
           <template slot-scope="{row}">
             {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'machine_name') }}
           </template>
@@ -304,6 +304,30 @@ export default {
           row.index = this.index++
           row.hasChildren = false
           row.order_results = testResul[testTime]
+
+          row.level = 0
+          row.mes_result = '未检测'
+          for (const testTypeName in row.order_results) {
+            const testType = row.order_results[testTypeName]
+            let maxLevel = 0
+            // let mes_result = '未检测'
+            for (const dataPointName in testType) {
+              const dataPoint = testType[dataPointName]
+              if (dataPoint.test_times > 1) {
+                row.test_status = '复检'
+              }
+              if (dataPoint.level > maxLevel) {
+                maxLevel = dataPoint.level
+                // mes_result = dataPoint.mes_result
+                testType['maxLevelItem'] = dataPoint
+              }
+            }
+            if (maxLevel > row.level) {
+              row.level = maxLevel
+              row.mes_result = row.level === 1 ? '一等品' : '三等品'
+            }
+          }
+
           subRows.push(row)
         }
         resolve(subRows)
