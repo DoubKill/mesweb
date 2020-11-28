@@ -22,11 +22,12 @@
         />
       </el-form-item>
       <el-form-item label="胶料">
-        <productNo-select
+        <!-- <productNo-select
           :is-stage-productbatch-no-remove="true"
           :make-use-batch="true"
           @productBatchingChanged="productBatchingChanged"
-        />
+        /> -->
+        <all-product-no-select @productBatchingChanged="productBatchingChanged" />
       </el-form-item>
       <el-form-item label="机台">
         <selectEquip
@@ -295,7 +296,8 @@
 import { setDate } from '@/utils/index'
 import page from '@/components/page'
 import selectEquip from '@/components/select_w/equip'
-import ProductNoSelect from '@/components/ProductNoSelect'
+// import ProductNoSelect from '@/components/ProductNoSelect'
+import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import {
   internalMixerUrl,
   classesListUrl, palletFeedBacksUrl, trainsFeedbacksUrl,
@@ -303,7 +305,7 @@ import {
 } from '@/api/base_w'
 import { mapGetters } from 'vuex'
 export default {
-  components: { page, selectEquip, ProductNoSelect },
+  components: { page, selectEquip, allProductNoSelect },
   data() {
     this.toolbox = {
       feature: {
@@ -583,7 +585,7 @@ export default {
       chartObj.setOption(this.options)
     },
     productBatchingChanged(val) {
-      this.getParams.product_no = val ? val.stage_product_batch_no : ''
+      this.getParams.product_no = val ? val.material_no : ''
 
       this.getParams.page = 1
       this.loadingTable = true
