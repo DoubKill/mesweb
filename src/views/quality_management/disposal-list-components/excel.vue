@@ -1,7 +1,11 @@
 <template>
   <div class="card-container">
     <div style="text-align:right;margin-bottom:10px">
-      <el-button v-if="orderNum&&!editType" @click="exportExcel">导出excel</el-button>
+      <el-button
+        v-if="orderNum&&!editType"
+        v-permission="['unqualified_order','export']"
+        @click="exportExcel"
+      >导出excel</el-button>
       <el-button v-else :loading="loadingBtn" @click="submitFun">保存</el-button>
     </div>
     <div id="out-table">

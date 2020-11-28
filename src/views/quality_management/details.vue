@@ -488,6 +488,10 @@ export default {
 .details_style{
   .el-table .warning-row {
     background: oldlace;
+
+  }
+  .el-table [class*=el-table__row--level] .el-table__expand-icon{
+    width: 10px;
   }
   .el-table .cell{
     line-height: 18px;
