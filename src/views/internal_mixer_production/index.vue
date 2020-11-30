@@ -486,7 +486,8 @@ export default {
           product_no: _this.palletFeedObj.product_no,
           plan_classes_uid: _this.palletFeedObj.plan_classes_uid,
           equip_no: _this.palletFeedObj.equip_no,
-          day_time: _this.palletFeedObj.end_time.split(' ')[0]
+          day_time: _this.palletFeedObj.end_time.split(' ')[0],
+          ordering: '-product_time'
         }
       })
         .then(function(response) {
