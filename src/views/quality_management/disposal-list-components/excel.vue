@@ -46,10 +46,23 @@
           </tr>
           <tr style="text-align:left;">
             <td colspan="4" style="padding-left:25px">不合格品状态：
-              <!-- <span v-if="orderNum">{{ formObj.status }}</span> -->
-              <span>
-                <el-radio v-for="(item,i) in stateList" :key="i" v-model="formObj.status" :label="item">
-                  <span v-if="item === formObj.status">√</span>
+              <span v-if="orderNum">
+                <span
+                  v-for="(item,i) in stateList"
+                  :key="i"
+                >
+                  <span v-if="item === formObj.status">☑</span>
+                  <span v-else>☐</span>
+                  {{ item }}
+                </span>
+              </span>
+              <span v-else>
+                <el-radio
+                  v-for="(item,i) in stateList"
+                  :key="i"
+                  v-model="formObj.status"
+                  :label="item"
+                >
                   {{ item }}
                 </el-radio>
               </span>
