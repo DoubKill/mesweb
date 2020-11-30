@@ -1,11 +1,11 @@
 <template>
   <div class="card-container">
-    <div style="text-align:right;margin-bottom:10px">
+    <div ref="PDFBtn" style="text-align:right;margin-bottom:10px">
       <el-button
         v-if="orderNum&&!editType"
         v-permission="['unqualified_order','export']"
         @click="exportExcel"
-      >导出excel</el-button>
+      >另存为PDF</el-button>
       <el-button v-else :loading="loadingBtn" @click="submitFun">保存</el-button>
     </div>
     <div id="out-table">
@@ -17,12 +17,17 @@
         <thead>
           <tr>
             <th :colspan="4">
-              <h2>中策(安吉)不合格品处置单</h2>
+              <div style="position:relative">
+                <div class="logo-style">
+                  <img style="width:100%;height:100%" src="@/assets/logo.png" alt="">
+                </div>
+                <div style="flex:1;text-align:center;font-size: 1.5em;line-height:45px">中策(安吉)不合格品处置单</div>
+              </div>
             </th>
           </tr>
           <tr v-if="orderNum">
             <td :colspan="4" style="text-align:right;padding-right:15px">
-              <div>{{ formObj.unqualified_deal_order_uid }}</div>
+              <div>质检编码：{{ formObj.unqualified_deal_order_uid }}</div>
             </td>
           </tr>
         </thead>
@@ -32,18 +37,21 @@
             </td>
             <td>
               <span v-if="orderNum">{{ formObj.deal_department }}</span>
-              <div v-else style="display:inline-block">
+              <div v-else class="deal_department">
                 <el-radio v-model="formObj.deal_department" label="分厂">分厂</el-radio>
                 <el-radio v-model="formObj.deal_department" label="车间">车间</el-radio>
               </div></td>
-            <td style="width:400px">胶料筹备组 炼胶</td>
-            <td>日期：{{ orderNum&&formObj.created_date?(formObj.created_date).split(' ')[0]: formObj.currentDate }}</td>
+            <td style="width:300px">胶料筹备组 炼胶</td>
+            <td style="width:125px">日期：{{ orderNum&&formObj.created_date?(formObj.created_date).split(' ')[0]: formObj.currentDate }}</td>
           </tr>
           <tr style="text-align:left;">
             <td colspan="4" style="padding-left:25px">不合格品状态：
-              <span v-if="orderNum">{{ formObj.status }}</span>
-              <span v-else>
-                <el-radio v-for="(item,i) in stateList" :key="i" v-model="formObj.status" :label="item">{{ item }}</el-radio>
+              <!-- <span v-if="orderNum">{{ formObj.status }}</span> -->
+              <span>
+                <el-radio v-for="(item,i) in stateList" :key="i" v-model="formObj.status" :label="item">
+                  <span v-if="item === formObj.status">√</span>
+                  {{ item }}
+                </el-radio>
               </span>
             </td>
           </tr>
@@ -54,7 +62,7 @@
               <el-input
                 v-else
                 v-model="formObj.department"
-                style="width:76%"
+                style="width:70%"
                 placeholder="请输入内容"
               />
             </td>
@@ -198,8 +206,8 @@ import { unqualifiedDealOrders } from '@/api/base_w'
 import { setDate } from '@/utils'
 import { mapGetters } from 'vuex'
 import funMixin from './mixin'
-import FileSaver from 'file-saver'
-import XLSX from 'xlsx'
+// import FileSaver from 'file-saver'
+// import XLSX from 'xlsx'
 export default {
   mixins: [funMixin],
   props: {
@@ -356,29 +364,35 @@ export default {
       this.formObj.name = this.name
       this.formObj.currentDate = setDate()
     },
-    exportExcel() {
+    async exportExcel() {
+      this.$refs.PDFBtn.style.display = 'none'
+      document.getElementsByClassName('el-dialog__headerbtn')[0].style.display = 'none'
+      window.print()
+      this.$refs.PDFBtn.style.display = 'block'
+      document.getElementsByClassName('el-dialog__headerbtn')[0].style.display = 'block'
+
       /* 从表生成工作簿对象 */
-      var wb = XLSX.utils.table_to_book(document.querySelector('#out-table'))
-      /* 获取二进制字符串作为输出 */
-      var wbout = XLSX.write(wb, {
-        bookType: 'xlsx',
-        bookSST: true,
-        type: 'array'
-      })
-      try {
-        FileSaver.saveAs(
-          // Blob 对象表示一个不可变、原始数据的类文件对象。
-          // Blob 表示的不一定是JavaScript原生格式的数据。
-          // File 接口基于Blob，继承了 blob 的功能并将其扩展使其支持用户系统上的文件。
-          // 返回一个新创建的 Blob 对象，其内容由参数中给定的数组串联组成。
-          new Blob([wbout], { type: 'application/octet-stream' }),
-          // 设置导出文件名称
-          '不合格处置单.xlsx'
-        )
-      } catch (e) {
-        if (typeof console !== 'undefined') console.log(e, wbout)
-      }
-      return wbout
+      // var wb = XLSX.utils.table_to_book(document.querySelector('#out-table'))
+      // /* 获取二进制字符串作为输出 */
+      // var wbout = XLSX.write(wb, {
+      //   bookType: 'xlsx',
+      //   bookSST: true,
+      //   type: 'array'
+      // })
+      // try {
+      //   FileSaver.saveAs(
+      //     // Blob 对象表示一个不可变、原始数据的类文件对象。
+      //     // Blob 表示的不一定是JavaScript原生格式的数据。
+      //     // File 接口基于Blob，继承了 blob 的功能并将其扩展使其支持用户系统上的文件。
+      //     // 返回一个新创建的 Blob 对象，其内容由参数中给定的数组串联组成。
+      //     new Blob([wbout], { type: 'application/octet-stream' }),
+      //     // 设置导出文件名称
+      //     '不合格处置单.xlsx'
+      //   )
+      // } catch (e) {
+      //   if (typeof console !== 'undefined') console.log(e, wbout)
+      // }
+      // return wbout
     }
   }
 }
@@ -386,13 +400,24 @@ export default {
 
 <style lang="scss">
  .card-container {
-    width: 900px;
+    width: 600px;
     margin: 0 auto;
     text-align: center;
     font-size: 14px;
     table {
       width: 100%;
       border-collapse: collapse
+    }
+    .logo-style{
+      width:100px;
+      height:45px;
+      position: absolute;
+      left: 10px;
+    }
+    .deal_department{
+      .el-radio{
+             margin-right: 0px;
+      }
     }
 
    .info-table {

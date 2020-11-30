@@ -25,12 +25,15 @@ export default {
         }
       }
       let _str = ''
+      let _i = 0
       bb.forEach((D, i) => {
         if (this.getArrMin(D) === this.getArrMax(D)) {
-          _str += this.getArrMin(D) + '  '
+          _i++
+          _str += (_i > 1 ? ',' : '') + this.getArrMin(D)
           return
         }
-        _str += this.getArrMin(D) + '-' + this.getArrMax(D) + '  '
+        _i++
+        _str += (_i > 1 ? ',' : '') + this.getArrMin(D) + '-' + this.getArrMax(D)
       })
       return _str
     },
