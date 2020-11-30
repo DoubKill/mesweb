@@ -476,7 +476,8 @@ export default {
         // product_no: 'L-1MB-J260-01',
         // plan_classes_uid: _this.palletFeedObj.plan_classes_uid,
         equip_no: _this.palletFeedObj.equip_no,
-        day_time: performanceDate
+        day_time: performanceDate,
+        ordering: '-product_time'
         // equip_no: '115A01'
         // page: page
       }).then(function(response) {
