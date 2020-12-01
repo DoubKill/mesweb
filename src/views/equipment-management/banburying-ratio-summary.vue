@@ -5,7 +5,7 @@
       <el-form-item label="时间:">
         <el-date-picker
           v-model="search.date"
-          :clearable="true"
+          :clearable="false"
           type="daterange"
           range-separator="至"
           start-placeholder="开始日期"
@@ -43,6 +43,9 @@
             :value="item"
           />
         </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button @click="viewGraph">密炼时间占比曲线图</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -103,15 +106,7 @@
         label="利用率"
       >
         <template slot-scope="{row}">
-          <span v-if="Number(search.day_type) === 2&&search.dimension === 1">
-            {{ setUse(row.total_time,row.classes_time,true) }}
-          </span>
-          <span v-if="search.dimension === 2">
-            {{ setUse(row.total_time,24*60*60,true) }}
-          </span>
-          <span v-if="search.dimension === 3">
-            {{ setUse(row.total_time,24*60*60*30*60,true) }}
-          </span>
+          <span>{{ row.availability }}%</span>
         </template>
       </el-table-column>
     </el-table>
@@ -120,6 +115,26 @@
       :current-page="search.page"
       @currentChange="currentChange"
     /> -->
+    <el-dialog
+      title="密炼时间占比曲线图"
+      :modal="true"
+      :close-on-click-modal="false"
+      :modal-append-to-body="false"
+      width="900px"
+      :visible.sync="dialogVisibleGraph"
+    >
+      <el-radio-group v-model="radioDataType" @change="changeRadioType">
+        <el-radio :label="1">车数</el-radio>
+        <el-radio :label="2">耗时/s</el-radio>
+        <el-radio :label="3">利用率%</el-radio>
+      </el-radio-group>
+      <ve-line
+        height="500px"
+        :data="chartData"
+        :extend="extend"
+        :settings="chartSettings"
+      />
+    </el-dialog>
   </div>
 </template>
 
@@ -133,6 +148,14 @@ export default {
   components: { equipSelect, timeSpanSelect },
   mixins: [myMixin],
   data() {
+    // this.colors = ['#FF40A3', '#B2670A', '#3B3834', '#196D26', '#2E77B4']
+    this.chartSettings = {
+    }
+    this.extend = {
+      series: {
+        smooth: false
+      }
+    }
     return {
       // total: 0,
       loading: false,
@@ -144,7 +167,13 @@ export default {
       },
       tableData: [],
       options: ['秒', '分钟'],
-      timeUnit: '秒'
+      timeUnit: '秒',
+      dialogVisibleGraph: false,
+      chartData: {
+        columns: [],
+        rows: []
+      },
+      radioDataType: 1
     }
   },
   created() {
@@ -168,6 +197,15 @@ export default {
             D.classes_time = val
           })
         }
+        this.tableData.forEach(D => {
+          if (this.tableData.length > 0 && (Number(this.search.day_type) === 2 && this.search.dimension === 1)) {
+            D.availability = this.setUse(D.total_time, D.classes_time, true)
+          } else if (this.search.dimension === 2) {
+            D.availability = this.setUse(D.total_time, 24 * 60 * 60, true)
+          } else if (this.search.dimension === 3) {
+            D.availability = this.setUse(D.total_time, 24 * 60 * 60 * 30 * 60, true)
+          }
+        })
         this.loading = false
       } catch (error) {
         this.loading = false
@@ -207,7 +245,7 @@ export default {
       if (!total_time || !classes_time) return 0
       const a = parseFloat(total_time / classes_time * 100).toFixed(100)
       const num = (a.substring(0, a.lastIndexOf('.') + 3))
-      return num + '%'
+      return num
     },
     setNum(value) {
       if (value < 0) return value
@@ -249,6 +287,45 @@ export default {
         }
       })
       return sums
+    },
+    changeRadioType() {
+      this.setLineData()
+    },
+    viewGraph() {
+      this.dialogVisibleGraph = true
+      this.setLineData()
+    },
+    setLineData() {
+      let equipList = []
+      const rows = []
+      const objRow = {}
+      const _params = this.radioDataType === 1 ? 'total_trains' : this.radioDataType === 2 ? 'total_time' : 'availability'
+      // console.log(this.tableData, 'this.tableData')
+      this.tableData.forEach(D => {
+        const str = this.search.dimension === 1 ? D.date + '/' + D.classes : D.date
+        equipList.push(D.equip_no)
+        if (objRow[str]) {
+          Object.assign(objRow[str], { [D.equip_no]: D[_params],
+            date: str })
+        } else {
+          objRow[str] = { [D.equip_no]: D[_params],
+            date: str }
+        }
+      })
+      for (const key in objRow) {
+        rows.push(objRow[key])
+      }
+      equipList = [...new Set(equipList)]
+      equipList.forEach(D => {
+        rows.forEach(data => {
+          if (!data[D]) {
+            data[D] = 0
+          }
+        })
+      })
+      equipList.unshift('date')
+      this.chartData.columns = equipList
+      this.chartData.rows = rows
     }
   }
 }
