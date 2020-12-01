@@ -293,6 +293,24 @@ export const asyncRoutes = [{
       title: '密炼生产履历',
       permissionName: 'product_record'
     }
+  },
+  {
+    path: 'production-plan-analysis',
+    component: () => import('@/views/production/interval-production-statistics.vue'),
+    name: 'ProductionPlanAnalysis',
+    meta: {
+      title: '产量计划实际分析（车数）',
+      permissionName: 'product_actual'
+    }
+  },
+  {
+    path: 'interval-production-statistics',
+    component: () => import('@/views/production/interval-production-statistics.vue'),
+    name: 'IntervalProductionStatistics',
+    meta: {
+      title: '区间产量统计（车数）',
+      permissionName: 'product_actual'
+    }
   }
   // {
   //   path: 'collect/rub/daily',
