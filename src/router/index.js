@@ -295,9 +295,9 @@ export const asyncRoutes = [{
     }
   },
   {
-    path: 'production-plan-analysis',
-    component: () => import('@/views/production/interval-production-statistics.vue'),
-    name: 'ProductionPlanAnalysis',
+    path: 'product-plan-reality-analyse',
+    component: () => import('@/views/production/product-plan-reality-analyse.vue'),
+    name: 'ProductPlanRealityAnalyse',
     meta: {
       title: '产量计划实际分析（车数）',
       permissionName: 'product_actual'
