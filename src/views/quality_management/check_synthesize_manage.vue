@@ -45,22 +45,23 @@
       fit
       style="width: 100%"
       :data="palletFeedTestList"
+      size="mini"
       @selection-change="handleSelectionChange"
     >
       <el-table-column
         type="selection"
-        width="55"
+        width="40"
       />
-      <el-table-column type="index" label="No" />
+      <el-table-column type="index" label="No" width="40" />
       <el-table-column align="center" label="生产信息">
         <el-table-column label="工厂日期" prop="day_time" />
         <el-table-column label="收皮条码" prop="lot_no" />
-        <el-table-column label="生产班次/班组" width="110" align="center" prop="classes_group" />
-        <el-table-column label="生产机台" prop="equip_no" />
+        <el-table-column label="生产班次/班组" width="100" align="center" prop="classes_group" />
+        <el-table-column label="生产机台" prop="equip_no" width="80" />
         <el-table-column label="胶料编码" prop="product_no" />
         <el-table-column label="收皮重量" prop="actual_weight" />
         <el-table-column label="余量" prop="residual_weight" align="center" />
-        <el-table-column label="生产时间" width="160" align="center" prop="production_factory_date" />
+        <el-table-column label="生产时间" width="140" align="center" prop="production_factory_date" />
         <el-table-column label="有效时间" width="90" align="center" prop="valid_time" />
       </el-table-column>
       <el-table-column label="质量信息" align="center">

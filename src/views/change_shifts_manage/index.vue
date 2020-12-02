@@ -15,6 +15,7 @@
       <el-table-column
         prop="schedule_no"
         label="倒班代码"
+        width="80px"
       />
       <el-table-column
         prop="schedule_name"
@@ -23,6 +24,7 @@
       <el-table-column
         prop="period"
         label="周期天数"
+        width="60px"
       />
       <el-table-column
         v-for="(class_,index) in classes"
@@ -50,6 +52,7 @@
         :formatter="formatter"
         prop="used_flag"
         label="使用与否"
+        width="60px"
       />
       <el-table-column
         width="150"

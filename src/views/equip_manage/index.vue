@@ -30,16 +30,17 @@
         align="center"
         type="index"
         label="No"
-        width="50"
+        width="40"
       />
       <el-table-column
         align="center"
         prop="equip_no"
         label="设备代码"
+        width="80"
       />
       <el-table-column
         align="center"
-        width="200%"
+        width="120"
         prop="equip_name"
         label="设备名称"
       />
@@ -97,6 +98,7 @@
       <el-table-column
         align="center"
         label="操作"
+        width="140px"
       >
         <template slot-scope="scope">
           <el-button-group>

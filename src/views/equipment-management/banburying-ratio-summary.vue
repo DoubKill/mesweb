@@ -86,19 +86,21 @@
       />
       <el-table-column
         prop="total_time"
-        :label="'总耗时/'+(timeUnit==='秒'?'s':'min')"
+        :label="'总耗时/'+(timeUnit==='秒'?'s':timeUnit==='分钟'?'min':'h')"
       >
         <template slot-scope="{row}">
           <span v-if="timeUnit==='秒'">{{ row.total_time }}</span>
+          <span v-else-if="timeUnit==='小时'">{{ setTimeHour(row.total_time) }}</span>
           <span v-else>{{ row.total_time |setTimeMin }}</span>
         </template>
       </el-table-column>
       <el-table-column
-        :label="'总时间/'+(timeUnit==='秒'?'s':'min')"
+        :label="'总时间/'+(timeUnit==='秒'?'s':timeUnit==='分钟'?'min':'h')"
         prop="classes_time"
       >
         <template slot-scope="{row}">
           <span v-if="timeUnit==='秒'">{{ row.classes_time }}</span>
+          <span v-else-if="timeUnit==='小时'">{{ setTimeHour(row.classes_time) }}</span>
           <span v-else>{{ row.classes_time |setTimeMin }}</span>
         </template>
       </el-table-column>
@@ -167,7 +169,7 @@ export default {
         date: []
       },
       tableData: [],
-      options: ['秒', '分钟'],
+      options: ['秒', '分钟', '小时'],
       timeUnit: '秒',
       dialogVisibleGraph: false,
       chartData: {
@@ -212,6 +214,13 @@ export default {
         this.loading = false
       }
     },
+    setTimeHour(value) {
+      if (value < 0) return value
+      if (!value) return 0
+      const a = (parseFloat(value / 3600)).toString()
+      const num = a.substring(0, a.lastIndexOf('.') + 2)
+      return num
+    },
     changeDate(date) {
       this.search.st = date ? date[0] : ''
       this.search.et = date ? date[1] : ''
@@ -244,14 +253,15 @@ export default {
     },
     setUse(total_time, classes_time) {
       if (!total_time || !classes_time) return 0
-      const a = parseFloat(total_time / classes_time * 100).toFixed(100)
+      const a = parseFloat(total_time / classes_time * 100).toString()
+
       const num = (a.substring(0, a.lastIndexOf('.') + 3))
       return num
     },
     setNum(value) {
       if (value < 0) return value
       if (!value) return 0
-      const a = parseFloat(value / 60).toFixed(10)
+      const a = (parseFloat(value / 60)).toString()
       const num = a.substring(0, a.lastIndexOf('.') + 2)
       return num
     },
@@ -277,8 +287,10 @@ export default {
           if (index === 3) {
             sums[index]
           } else {
-            if (this.timeUnit !== '秒') {
+            if (this.timeUnit === '分钟') {
               sums[index] = this.setNum(sums[index])
+            } else if (this.timeUnit === '小时') {
+              sums[index] = this.setTimeHour(sums[index])
             } else {
               sums[index]
             }

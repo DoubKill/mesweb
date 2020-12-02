@@ -293,8 +293,8 @@ export const asyncRoutes = [{
       title: '密炼生产履历',
       permissionName: 'product_record'
     }
-  },
-  {
+  }
+  /* {
     path: 'product-plan-reality-analyse',
     component: () => import('@/views/production/product-plan-reality-analyse.vue'),
     name: 'ProductPlanRealityAnalyse',
@@ -311,7 +311,7 @@ export const asyncRoutes = [{
       title: '区间产量统计（车数）',
       permissionName: 'product_actual'
     }
-  }
+  }*/
   // {
   //   path: 'collect/rub/daily',
   //   component: () => import('@/views/collect_rubber_daily_manage/index'),
@@ -383,7 +383,7 @@ export const asyncRoutes = [{
       component: () => import('@/views/inventory/material-inventory-manage.vue'),
       name: 'MaterialInventoryManage',
       meta: {
-        title: '物料库存管理',
+        title: '物料库存量管理',
         permissionName: 'goods'
       }
     },

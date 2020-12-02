@@ -29,11 +29,12 @@
         align="center"
         type="index"
         label="No"
-        width="50"
+        width="40"
       />
       <el-table-column
         prop="day_time"
         label="日期"
+        width="95px"
       />
       <!-- <el-table-column
         prop="work_schedule"
@@ -48,6 +49,7 @@
         <el-table-column
           prop="work_schedule_plan[0].group_name"
           label="班组"
+          width="55px"
         />
         <el-table-column
           prop="work_schedule_plan[0].start_time"
@@ -62,6 +64,7 @@
         <el-table-column
           prop="work_schedule_plan[1].group_name"
           label="班组"
+          width="55px"
         />
         <el-table-column
           prop="work_schedule_plan[1].start_time"
@@ -76,6 +79,7 @@
         <el-table-column
           prop="work_schedule_plan[2].group_name"
           label="班组"
+          width="55px"
         />
         <el-table-column
           prop="work_schedule_plan[2].start_time"
@@ -98,6 +102,7 @@
 <script>
 import { planScheduleUrl } from '@/api/base_w'
 import pagination from '@/components/page'
+import { setDate } from '@/utils/index'
 export default {
   components: { pagination },
   data() {
@@ -106,7 +111,7 @@ export default {
       getParams: {
         page: 1,
         work_schedule__schedule_name: '',
-        day_time: ''
+        day_time: setDate()
       },
       total: 0,
       loading: true
@@ -127,7 +132,7 @@ export default {
       }).then(function(response) {
         app.total = response.count
         app.tableData = response.results || []
-        for (const [index, row] of app.tableData.entries()) {
+        for (const [row] of app.tableData.entries()) {
           const work_schedule_plan = [null, null, null]
           work_schedule_plan[0] = app.findSchedulePlanByClassesName(row.work_schedule_plan, '早班')
           work_schedule_plan[1] = app.findSchedulePlanByClassesName(row.work_schedule_plan, '中班')
