@@ -146,7 +146,7 @@
             {{ (setUse(row.total_time,24*60*60,true))+ '%' }}
           </span>
           <span v-if="search.dimension === 3">
-            {{ (setUse(row.total_time,24*60*60*30*60,true))+ '%' }}
+            {{ (setUse(row.total_time,24*60*60*30,true))+ '%' }}
           </span>
         </template>
       </el-table-column>

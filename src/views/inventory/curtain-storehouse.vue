@@ -3,7 +3,7 @@
     <el-form :inline="true" label-width="80px">
       <el-form-item label="开始日期">
         <el-date-picker
-          v-model="search.date"
+          v-model="dateSearch"
           type="daterange"
           range-separator="至"
           start-placeholder="开始日期"
@@ -139,6 +139,7 @@ import { lbPlanManagement } from '@/api/base_w'
 import { warehouseInfo } from '@/api/warehouse'
 import page from '@/components/page'
 import commitVal from '@/utils/common'
+import { setDate } from '@/utils/index'
 
 export default {
   components: { page, GenerateAssignOutbound, GenerateNormalOutbound },
@@ -148,6 +149,7 @@ export default {
       search: {
         page: 1
       },
+      dateSearch: [setDate(), setDate()],
       dialogVisible: false,
       total: 0,
       options1: commitVal.statusList,
@@ -164,6 +166,8 @@ export default {
     }
   },
   created() {
+    this.search.st = setDate()
+    this.search.et = setDate()
     this.getListWrehouseInfo()
     this.getList()
   },
