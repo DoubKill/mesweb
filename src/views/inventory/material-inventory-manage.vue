@@ -33,17 +33,17 @@
       style="width: 100%"
       :data="tableData"
     >
-      <el-table-column label="No" type="index" align="center" />
-      <el-table-column label="物料类型" align="center" prop="material_type" />
+      <el-table-column label="No" type="index" align="center" width="40" />
+      <el-table-column label="物料类型" align="center" prop="material_type" width="80" />
       <el-table-column label="物料编码" align="center" prop="material_no" />
       <el-table-column label="lot" align="center" prop="lot_no" />
       <el-table-column label="托盘号" align="center" prop="container_no" />
-      <el-table-column label="库存位" align="center" prop="location" />
-      <el-table-column label="库存数" align="center" prop="qty" />
-      <el-table-column label="单位" align="center" prop="unit" />
+      <el-table-column label="库存位" align="center" prop="location" width="100" />
+      <el-table-column label="库存数" align="center" prop="qty" width="100" />
+      <el-table-column label="单位" align="center" prop="unit" width="50" />
       <el-table-column label="单位重量" align="center" prop="unit_weight" />
       <el-table-column label="总重量" align="center" prop="total_weight" />
-      <el-table-column label="品质状态" align="center" prop="quality_status" />
+      <el-table-column label="品质状态" align="center" prop="quality_status" width="80" />
     </el-table>
     <page
       :total="total"

@@ -44,11 +44,13 @@
         prop="equip_no"
         label="机台"
         align="center"
+        width="55px"
       />
       <el-table-column
         prop="sn"
         label="顺序"
         align="center"
+        width="50px"
       />
 
       <el-table-column
@@ -64,6 +66,7 @@
           align="center"
           prop="stage"
           label="STAGE"
+          width="70px"
         />
         <el-table-column
           align="center"
@@ -74,6 +77,7 @@
           align="center"
           prop="plan_weight"
           label="重量"
+          width="90px"
         />
       </el-table-column>
 
@@ -85,11 +89,13 @@
           align="center"
           prop="plan_trains"
           label="计划"
+          width="65px"
         />
         <el-table-column
           align="center"
           prop="actual_trains"
           label="实绩"
+          width="65px"
         />
       </el-table-column>
 
@@ -101,11 +107,13 @@
           align="center"
           prop="plan_weight"
           label="计划"
+          width="90px"
         />
         <el-table-column
           align="center"
           prop="actual_weight"
           label="实绩"
+          width="90px"
         />
 
         <el-table-column
@@ -131,11 +139,13 @@
           align="center"
           prop="plan_time"
           label="计划"
+          width="90px"
         />
         <el-table-column
           align="center"
           prop="all_time"
           label="实绩"
+          width="90px"
         />
       </el-table-column>
 
@@ -147,29 +157,30 @@
           align="center"
           prop="start_rate"
           label="启动率"
+          width="70px"
         />
       </el-table-column>
 
     </el-table>
-    <page
+    <!-- <page
       :total="total"
       :current-page="getParams.page"
       @currentChange="currentChange"
-    />
+    /> -->
   </div>
 </template>
 
 <script>
 import { setDate } from '@/utils'
-import page from '@/components/page'
+// import page from '@/components/page'
 import { banbury_plan_url, getEquip } from '@/api/display_static_fun'
 
 export default {
-  components: { page },
+  // components: { page },
   data: function() {
     return {
       tableData: [],
-      total: 0,
+      // total: 0,
       equipNoOptions: [],
       getParams: {
         page: 1
@@ -180,6 +191,7 @@ export default {
     }
   },
   created() {
+    this.getParams.search_time = setDate()
     this.banbury_plan_list()
   },
   methods: {
@@ -195,7 +207,7 @@ export default {
       try {
         const banbury_planData = await banbury_plan_url('get', { params: this.getParams })
         this.tableData = banbury_planData.data
-        this.total = banbury_planData.count
+        // this.total = banbury_planData.count
       } catch (e) { throw new Error(e) }
     },
     customColorMethod(percentage) {

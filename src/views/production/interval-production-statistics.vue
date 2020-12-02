@@ -11,7 +11,7 @@
           value-format="yyyy-MM-dd"
         />
       </el-form-item>
-      <el-form-item label="时间区间">
+      <el-form-item label="时间区间/h">
         <el-select
           v-model="search.a"
           placeholder="请选择"
@@ -41,11 +41,39 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="班次">
+      <el-form-item>
         <el-button @click="searchFun">查询</el-button>
       </el-form-item>
       <el-button style="float:right" @click="viewChartsFun">显示图表</el-button>
     </el-form>
+    <div v-for="(itemDiv,i) in list" :key="i">
+      <el-table
+        :data="itemDiv"
+        border
+        style="margin-top:20px;"
+      >
+        <el-table-column
+          type="index"
+          label="序号"
+        />
+        <el-table-column
+          prop="name"
+          :label="'时间区间('+')'"
+        />
+        <el-table-column
+          :label="'机台名称'"
+        >
+          <el-table-column
+            prop="name"
+            label="总车"
+          />
+          <el-table-column
+            prop="name"
+            label="区间车次"
+          />
+        </el-table-column>
+      </el-table>
+    </div>
   </div>
 </template>
 
@@ -60,7 +88,11 @@ export default {
       },
       timeInterval: [1, 2, 4, 8],
       classesList: ['早班', '中班', '夜班', '整日'],
-      disabled: false
+      disabled: false,
+      list: [
+        [],
+        []
+      ]
     }
   },
   methods: {
@@ -74,7 +106,13 @@ export default {
         this.disabled = false
       }
     },
-    searchFun() {},
+    async searchFun() {
+      try {
+        // await
+      } catch (e) {
+        //
+      }
+    },
     viewChartsFun() {}
   }
 }

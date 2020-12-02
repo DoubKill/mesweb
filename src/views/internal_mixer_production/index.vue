@@ -61,33 +61,39 @@
       <el-table-column
         type="index"
         label="No"
+        width="40px"
       />
       <el-table-column
         prop="equip_no"
         label="机台"
+        width="55px"
       />
       <el-table-column
         prop="equip_no"
         label="作业时间"
+        width="95px"
       >
         <template slot-scope="scope">{{ scope.row.end_time.split(' ')[0] }}</template>
       </el-table-column>
       <el-table-column
         prop="classes"
         label="班次"
+        width="55px"
       />
       <el-table-column
         prop="class_group"
         label="班组"
+        width="60px"
       >
         <template slot-scope="scope">{{ scope.row.class_group?scope.row.class_group:'--' }}</template>
       </el-table-column>
-      <el-table-column label="生产时间">
+      <el-table-column label="生产时间" width="80px">
         <template slot-scope="scope">{{ scope.row.end_time.split(' ')[1] }}</template>
       </el-table-column>
       <el-table-column
         prop="product_no"
         label="胶料编码"
+        min-width="40px"
       >
         <template slot-scope="scope">
           <div
@@ -99,16 +105,24 @@
       <el-table-column
         prop="equip_no"
         label="BATNO"
+        width="90px"
       >
-        <template slot-scope="scope">{{ scope.row.begin_trains }}--{{ scope.row.end_trains }}</template>
+        <template slot-scope="scope">
+          <span v-if="scope.row.begin_trains===scope.row.end_trains">
+            {{ scope.row.begin_trains }}
+          </span>
+          <span v-else>
+            {{ scope.row.begin_trains }}--{{ scope.row.end_trains }}
+          </span>
+        </template>
       </el-table-column>
       <el-table-column
         prop="actual_weight"
         label="生产重量"
+        width="90px"
       />
       <el-table-column
         prop="equip_no"
-        width="150"
         label="有效时间"
       >
         <template slot-scope="scope">{{ scope.row.end_time }} -- {{ setEndTime(scope.row.end_time) }}</template>
@@ -116,12 +130,14 @@
       <el-table-column
         prop="lot_no"
         label="LOT NO"
+        width="200px"
       >
         <template slot-scope="scope">{{ scope.row.lot_no?scope.row.lot_no:'--' }}</template>
       </el-table-column>
       <el-table-column
         prop="operation_user"
         label="作业者"
+        width="70px"
       />
     </el-table>
 

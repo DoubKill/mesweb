@@ -3,7 +3,7 @@
     <el-form :inline="true">
       <el-form-item label="时间">
         <el-date-picker
-          v-model="search.date"
+          v-model="searchDate"
           type="datetimerange"
           range-separator="至"
           start-placeholder="开始日期"
@@ -47,18 +47,18 @@
       border
       fit
     >
-      <el-table-column label="No" type="index" align="center" />
-      <el-table-column label="类型" align="center" prop="order_type" />
+      <el-table-column label="No" type="index" align="center" width="40" />
+      <el-table-column label="类型" align="center" prop="order_type" width="50" />
       <el-table-column label="出入库单号" align="center" prop="order_no" />
       <el-table-column label="仓库类型" align="center" prop="warehouse_type" />
       <el-table-column label="托盘号" align="center" prop="pallet_no" />
       <el-table-column label="物料编码" align="center" prop="material_no" />
       <el-table-column label="出入库原因" align="center" prop="inout_reason" />
       <el-table-column label="出入库类型" align="center" prop="inout_num_type" />
-      <el-table-column label="出入库数" align="center" prop="qty" />
-      <el-table-column label="单位" align="center" prop="unit" />
-      <el-table-column label="重量" align="center" prop="weight" />
-      <el-table-column label="发起人" align="center" prop="initiator" />
+      <el-table-column label="出入库数" align="center" prop="qty" width="50" />
+      <el-table-column label="单位" align="center" prop="unit" width="40" />
+      <el-table-column label="重量" align="center" prop="weight" width="80" />
+      <el-table-column label="发起人" align="center" prop="initiator" width="80" />
       <el-table-column label="发起时间" align="center" prop="start_time" />
       <el-table-column label="完成时间" align="center" prop="end_time" />
     </el-table>
@@ -73,7 +73,7 @@
 import { inventoryLog } from '@/api/base_w'
 import page from '@/components/page'
 import warehouseSelect from '@/components/select_w/warehouseSelect'
-
+import { setDate } from '@/utils'
 export default {
   components: { page, warehouseSelect },
   data() {
@@ -81,6 +81,7 @@ export default {
       search: {
         page: 1
       },
+      searchDate: [setDate(null, true), setDate(null, true)],
       total: 0,
       loading: false,
       options1: ['指定出库', '正常出库'],
@@ -94,6 +95,8 @@ export default {
     }
   },
   created() {
+    this.search.start_time = setDate(null, true)
+    this.search.end_time = setDate(null, true)
     this.getList()
   },
   methods: {

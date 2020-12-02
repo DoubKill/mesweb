@@ -30,17 +30,15 @@
         align="center"
         type="index"
         label="No"
-        width="50"
+        width="40px"
       />
       <el-table-column
         align="center"
-        width="100"
         prop="category_no"
         label="机型编号"
       />
       <el-table-column
         align="center"
-        width="150"
         prop="category_name"
         label="机型名称"
       />

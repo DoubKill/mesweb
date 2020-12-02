@@ -76,6 +76,7 @@
       <el-table-column
         prop="material_type_name"
         label="原材料类别"
+        width="95px"
       />
       <!-- <el-table-column
         prop="density"
@@ -85,6 +86,7 @@
       <el-table-column
         prop="package_unit_name"
         label="包装单位"
+        width="60px"
       />
       <el-table-column
         width="50"
@@ -96,14 +98,17 @@
       <el-table-column
         prop="created_user_name"
         label="创建人员"
+        width="100px"
       />
       <el-table-column
         prop="created_date"
         label="创建时间"
+        width="160px"
       />
       <el-table-column
         prop="update_user_name"
         label="更新人员"
+        width="100px"
       />
       <!--
         <el-table-column
