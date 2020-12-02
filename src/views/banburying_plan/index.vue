@@ -134,7 +134,7 @@
         />
         <el-table-column
           align="center"
-          prop="actual_time"
+          prop="all_time"
           label="实绩"
         />
       </el-table-column>
@@ -160,6 +160,7 @@
 </template>
 
 <script>
+import { setDate } from '@/utils'
 import page from '@/components/page'
 import { banbury_plan_url, getEquip } from '@/api/display_static_fun'
 
@@ -173,7 +174,7 @@ export default {
       getParams: {
         page: 1
       },
-      search_time: null,
+      search_time: setDate(),
       // classes: null,
       equip_no: null
     }

@@ -120,7 +120,7 @@
       :modal="true"
       :close-on-click-modal="false"
       :modal-append-to-body="false"
-      width="900px"
+      width="95%"
       :visible.sync="dialogVisibleGraph"
     >
       <el-radio-group v-model="radioDataType" @change="changeRadioType">
@@ -128,7 +128,7 @@
         <el-radio :label="2">耗时/s</el-radio>
         <el-radio :label="3">利用率%</el-radio>
       </el-radio-group>
-      <ve-line
+      <ve-histogram
         height="500px"
         :data="chartData"
         :extend="extend"
@@ -154,6 +154,7 @@ export default {
     this.extend = {
       series: {
         smooth: false
+        // label: { show: true, position: 'top' }
       }
     }
     return {
@@ -203,7 +204,7 @@ export default {
           } else if (this.search.dimension === 2) {
             D.availability = this.setUse(D.total_time, 24 * 60 * 60, true)
           } else if (this.search.dimension === 3) {
-            D.availability = this.setUse(D.total_time, 24 * 60 * 60 * 30 * 60, true)
+            D.availability = this.setUse(D.total_time, 24 * 60 * 60 * 30, true)
           }
         })
         this.loading = false

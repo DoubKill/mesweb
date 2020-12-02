@@ -108,8 +108,10 @@
           <td
             v-for="(headDataItem,headDataI) in headData"
             :key="headDataI"
-          >{{ setTrains(itemVal.indicator_data[headDataItem]) }}</td>
-
+          >
+            {{ getArrMin(itemVal.indicator_data[headDataItem]) }}-
+            {{ getArrMax(itemVal.indicator_data[headDataItem]) }}
+          </td>
         </tr>
         <tr style="text-align:right">
           <td :colspan="5+(headData.length||1)">
@@ -278,6 +280,7 @@ export default {
       if (val) {
         // 打开
         this.orderNum = this.orderRow.id || null
+        this.listData = this.listDataProps || []
         if (this.orderNum) {
           this.getInfo()
         }

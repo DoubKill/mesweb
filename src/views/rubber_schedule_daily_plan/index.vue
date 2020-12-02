@@ -254,7 +254,7 @@ export default {
       equipIdForAdd: null,
       equips: [],
       // equipById: {},
-      day_time: '',
+      day_time: setDate(),
       planScheduleId: null,
       planSchedules: [],
       workSchedules: [],
