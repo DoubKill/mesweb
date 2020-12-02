@@ -7,6 +7,12 @@ $color-primary-a: rgba(11, 189, 11, 0.5);
     color: #fff !important;
   }
 }
+.el-table td{
+  padding: 6px 0 !important;
+}
+.el-table .cell{
+  padding: 0 6px !important;
+}
 
 .el-button {
   &--primary {
