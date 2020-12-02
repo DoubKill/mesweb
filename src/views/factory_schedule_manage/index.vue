@@ -377,7 +377,7 @@ export default {
             case '中班':
               index = 1
               break
-            case '晚班':
+            case '夜班':
               index = 2
           }
           row.group_infos[index] = class_

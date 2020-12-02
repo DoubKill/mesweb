@@ -72,7 +72,7 @@
           label="结束"
         />
       </el-table-column>
-      <el-table-column label="晚班">
+      <el-table-column label="夜班">
         <el-table-column
           prop="work_schedule_plan[2].group_name"
           label="班组"
@@ -131,7 +131,7 @@ export default {
           const work_schedule_plan = [null, null, null]
           work_schedule_plan[0] = app.findSchedulePlanByClassesName(row.work_schedule_plan, '早班')
           work_schedule_plan[1] = app.findSchedulePlanByClassesName(row.work_schedule_plan, '中班')
-          work_schedule_plan[2] = app.findSchedulePlanByClassesName(row.work_schedule_plan, '晚班')
+          work_schedule_plan[2] = app.findSchedulePlanByClassesName(row.work_schedule_plan, '夜班')
           row.work_schedule_plan = work_schedule_plan
         }
         app.loading = false

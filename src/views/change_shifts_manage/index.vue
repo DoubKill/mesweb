@@ -491,7 +491,7 @@ export default {
       })
     },
     getCellText(workSchedule, index, key) {
-      var class_name = '晚班'
+      var class_name = '夜班'
       switch (index) {
         case 0:
           class_name = '早班'

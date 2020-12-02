@@ -119,7 +119,7 @@
       <el-table-column
         align="center"
         prop="mr_material_requisition_classes"
-        label="晚班"
+        label="夜班"
       >
         <el-table-column
           prop="classes_data[2].plan_trains"
