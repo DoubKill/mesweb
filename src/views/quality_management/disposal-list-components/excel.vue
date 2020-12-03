@@ -109,8 +109,18 @@
             v-for="(headDataItem,headDataI) in headData"
             :key="headDataI"
           >
-            {{ getArrMin(itemVal.indicator_data[headDataItem]) }}-
-            {{ getArrMax(itemVal.indicator_data[headDataItem]) }}
+            <div v-if="itemVal.indicator_data[headDataItem]">
+              <span
+                v-if="getArrMin(itemVal.indicator_data[headDataItem]) ===
+                  getArrMax(itemVal.indicator_data[headDataItem])"
+              >
+                {{ getArrMin(itemVal.indicator_data[headDataItem]) }}
+              </span>
+              <span v-else>
+                {{ getArrMin(itemVal.indicator_data[headDataItem]) }}-
+                {{ getArrMax(itemVal.indicator_data[headDataItem]) }}
+              </span>
+            </div>
           </td>
         </tr>
         <tr style="text-align:right">
