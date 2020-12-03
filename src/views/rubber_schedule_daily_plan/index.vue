@@ -279,6 +279,7 @@ export default {
   },
   created() {
     this.permissionArr = this.permission.productdayplan
+    this.getPlanSchedules()
     this.getEquipList()
     this.getWorkSchedules()
   },

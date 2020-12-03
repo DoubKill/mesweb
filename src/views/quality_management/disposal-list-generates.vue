@@ -84,16 +84,18 @@
           :label="item"
         >
           <template slot-scope="scope">
-            <span
-              v-if="getArrMin(scope.row.indicator_data[item]) ===
-                getArrMax(scope.row.indicator_data[item])"
-            >
-              {{ getArrMin(scope.row.indicator_data[item]) }}
-            </span>
-            <span v-else>
-              {{ getArrMin(scope.row.indicator_data[item]) }}-
-              {{ getArrMax(scope.row.indicator_data[item]) }}
-            </span>
+            <div v-if="scope.row.indicator_data[item]">
+              <span
+                v-if="getArrMin(scope.row.indicator_data[item]) ===
+                  getArrMax(scope.row.indicator_data[item])"
+              >
+                {{ getArrMin(scope.row.indicator_data[item]) }}
+              </span>
+              <span v-else>
+                {{ getArrMin(scope.row.indicator_data[item]) }}-
+                {{ getArrMax(scope.row.indicator_data[item]) }}
+              </span>
+            </div>
           </template>
         </el-table-column>
       </el-table-column>

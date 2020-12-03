@@ -194,5 +194,7 @@ export default {
 
   // 产量计划实际分析
   ProductionPlanRealityAnalysis: '/api/v1/production/production-plan-reality-analysis/',
-  UpdateCause: '/api/v1/production/update-cause/'
+  UpdateCause: '/api/v1/production/update-cause/',
+  // 区间产量统计（车数）
+  IntervalOutputStatistics: '/api/v1/production/interval-output-statistics/'
 }
