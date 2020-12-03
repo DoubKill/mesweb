@@ -132,7 +132,8 @@ export default {
       }).then(function(response) {
         app.total = response.count
         app.tableData = response.results || []
-        for (const [row] of app.tableData.entries()) {
+        console.log(app.tableData, 'app.tableData')
+        for (const [index, row] of app.tableData.entries()) {
           const work_schedule_plan = [null, null, null]
           work_schedule_plan[0] = app.findSchedulePlanByClassesName(row.work_schedule_plan, '早班')
           work_schedule_plan[1] = app.findSchedulePlanByClassesName(row.work_schedule_plan, '中班')
