@@ -294,6 +294,24 @@ export const asyncRoutes = [{
       permissionName: 'product_record'
     }
   }
+  /* {
+    path: 'product-plan-reality-analyse',
+    component: () => import('@/views/production/product-plan-reality-analyse.vue'),
+    name: 'ProductPlanRealityAnalyse',
+    meta: {
+      title: '产量计划实际分析（车数）',
+      permissionName: 'product_actual'
+    }
+  },
+  {
+    path: 'interval-production-statistics',
+    component: () => import('@/views/production/interval-production-statistics.vue'),
+    name: 'IntervalProductionStatistics',
+    meta: {
+      title: '区间产量统计（车数）',
+      permissionName: 'product_actual'
+    }
+  }*/
   // {
   //   path: 'collect/rub/daily',
   //   component: () => import('@/views/collect_rubber_daily_manage/index'),
@@ -365,7 +383,7 @@ export const asyncRoutes = [{
       component: () => import('@/views/inventory/material-inventory-manage.vue'),
       name: 'MaterialInventoryManage',
       meta: {
-        title: '物料库存管理',
+        title: '物料库存量管理',
         permissionName: 'goods'
       }
     },

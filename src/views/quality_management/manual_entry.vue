@@ -313,7 +313,7 @@ export default {
       this.clearData()
       this.showTableDataChild = true
 
-      const num = (Number(row.end_trains) - Number(row.begin_trains) + 1).toFixed(0)
+      const num = parseInt(Number(row.end_trains) - Number(row.begin_trains) + 1)
       for (let i = 0; i < num; i++) {
         const obj = JSON.parse(JSON.stringify(row))
         this.$set(obj, 'input', '')

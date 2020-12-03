@@ -3,7 +3,7 @@
     <el-form :inline="true" label-width="80px">
       <el-form-item label="开始日期">
         <el-date-picker
-          v-model="search.date"
+          v-model="dateSearch"
           type="daterange"
           range-separator="至"
           start-placeholder="开始日期"
@@ -48,17 +48,17 @@
       border
       :data="tableData"
     >
-      <el-table-column label="No" type="index" align="center" />
+      <el-table-column label="No" type="index" align="center" width="40" />
       <el-table-column label="仓库名称" align="center" prop="name" />
-      <el-table-column label="出库类型" align="center" prop="inventory_type" />
+      <el-table-column label="出库类型" align="center" prop="inventory_type" width="80" />
       <el-table-column label="出库单号" align="center" prop="order_no" />
       <el-table-column label="托盘号" align="center" prop="pallet_no" />
       <el-table-column label="物料编码" align="center" prop="material_no" />
-      <el-table-column label="出库原因" align="center" prop="inventory_reason" />
-      <el-table-column label="需求数量" align="center" prop="need_qty" />
+      <el-table-column label="出库原因" align="center" prop="inventory_reason" width="80" />
+      <el-table-column label="需求数量" align="center" prop="need_qty" width="60" />
       <el-table-column label="出库数量" align="center" prop="actual.actual_qty" />
       <el-table-column label="实际出库重量" align="center" prop="actual.actual_wegit" />
-      <el-table-column label="单位" align="center" prop="unit" />
+      <el-table-column label="单位" align="center" prop="unit" width="60" />
       <el-table-column label="需求重量" align="center" prop="need_weight" />
       <el-table-column label="出库位置" align="center" prop="location" />
       <el-table-column label="操作" align="center" width="220">
@@ -139,6 +139,7 @@ import { putPlanManagement } from '@/api/base_w'
 import { warehouseInfo } from '@/api/warehouse'
 import page from '@/components/page'
 import commitVal from '@/utils/common'
+import { setDate } from '@/utils/index'
 
 export default {
   components: { page, GenerateAssignOutbound, GenerateNormalOutbound },
@@ -148,6 +149,7 @@ export default {
       search: {
         page: 1
       },
+      dateSearch: [setDate(), setDate()],
       dialogVisible: false,
       total: 0,
       options1: commitVal.statusList,
@@ -164,6 +166,8 @@ export default {
     }
   },
   created() {
+    this.search.st = setDate()
+    this.search.et = setDate()
     this.getListWrehouseInfo()
     this.getList()
   },

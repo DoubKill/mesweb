@@ -115,15 +115,17 @@
         align="center"
         prop="site_name"
         label="site"
+        width="50px"
       />
       <el-table-column
         align="center"
         prop="stage_name"
         label="段次"
+        width="60px"
       />
       <el-table-column
         align="center"
-        width="110%"
+        width="100px"
         prop="dev_type_name"
         label="炼胶机类型"
       />
@@ -142,6 +144,7 @@
         prop="used_type"
         label="状态"
         :formatter="usedTypeFormatter"
+        width="60px"
       />
       <el-table-column
         align="center"
@@ -185,7 +188,7 @@
       </el-table-column>
       <el-table-column
         align="center"
-        width="110%"
+        width="80px"
         label="发送到上辅机"
       >
         <template slot-scope="scope">
@@ -200,37 +203,31 @@
       </el-table-column>
       <el-table-column
         align="center"
-        width="120%"
         prop="created_username"
         label="创建者"
       />
       <el-table-column
         align="center"
-        width="120%"
         prop="submit_username"
         label="提交者"
       />
       <el-table-column
         align="center"
-        width="120%"
         prop="check_username"
         label="校对者"
       />
       <el-table-column
         align="center"
-        width="120%"
         prop="used_username"
         label="启用者"
       />
       <el-table-column
         align="center"
-        width="120%"
         prop="reject_username"
         label="驳回者"
       />
       <el-table-column
         align="center"
-        width="120%"
         prop="obsolete_username"
         label="废弃者"
       />

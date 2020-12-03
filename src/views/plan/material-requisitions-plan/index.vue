@@ -40,12 +40,11 @@
       <el-table-column
         label="S"
         prop="unit"
-        width="30"
+        width="35"
       />
       <el-table-column
         type="index"
         label="No"
-        width="30"
       />
       <el-table-column
         prop="material_type"
@@ -62,6 +61,7 @@
       <el-table-column
         prop="storage_weight"
         label="原材料库存（Kg）"
+        width="140px"
       />
       <el-table-column
         align="center"
@@ -70,17 +70,21 @@
         <el-table-column
           prop="class_details.早班"
           label="早班"
+          width="75px"
         />
         <el-table-column
           prop="class_details.中班"
           label="中班"
+          width="75px"
         />
         <el-table-column
           prop="class_details.夜班"
           label="夜班"
+          width="75px"
         />
         <el-table-column
           label="总计"
+          width="80px"
         >
           <template slot-scope="scope">
             <span v-text="(scope.row.class_details.早班 ? scope.row.class_details.早班:0) + (scope.row.class_details.中班 ? scope.row.class_details.中班:0) + (scope.row.class_details.夜班 ? scope.row.class_details.夜班:0)" />
@@ -93,15 +97,19 @@
       >
         <el-table-column
           label="早班"
+          width="75px"
         />
         <el-table-column
           label="中班"
+          width="75px"
         />
         <el-table-column
           label="夜班"
+          width="75px"
         />
         <el-table-column
           label="总计"
+          width="80px"
         />
       </el-table-column>
     </el-table>
@@ -112,12 +120,13 @@
 <script>
 import { materialDemandeds, globalCodes } from '@/api/material-requisitions-plan'
 import page from '@/components/page'
+import { setDate } from '@/utils'
 export default {
   components: { page },
   data: function() {
     return {
       tableData: [],
-      planDate: null,
+      planDate: setDate(),
       materialType: '',
       materialName: '',
       materialTypeOptions: [],

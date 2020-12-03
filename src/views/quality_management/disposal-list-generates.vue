@@ -84,7 +84,16 @@
           :label="item"
         >
           <template slot-scope="scope">
-            {{ setTrains(scope.row.indicator_data[item]) }}
+            <span
+              v-if="getArrMin(scope.row.indicator_data[item]) ===
+                getArrMax(scope.row.indicator_data[item])"
+            >
+              {{ getArrMin(scope.row.indicator_data[item]) }}
+            </span>
+            <span v-else>
+              {{ getArrMin(scope.row.indicator_data[item]) }}-
+              {{ getArrMax(scope.row.indicator_data[item]) }}
+            </span>
           </template>
         </el-table-column>
       </el-table-column>

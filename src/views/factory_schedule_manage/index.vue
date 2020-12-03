@@ -78,24 +78,20 @@
             <el-table-column
               prop="date"
               label="日期"
-              width="180"
             />
             <el-table-column
               prop="start_time"
               label="开始"
-              width="180"
             />
             <el-table-column
               prop="end_time"
               label="结束"
-              width="180"
             />
             <el-table-column
               prop="classes_name"
               label="班次"
-              width="180"
             />
-            <el-table-column label="班组" width="150">
+            <el-table-column label="班组">
               <template slot-scope="scope">
                 <el-select
                   v-model="scope.row.group"

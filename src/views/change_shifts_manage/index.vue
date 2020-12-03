@@ -15,6 +15,7 @@
       <el-table-column
         prop="schedule_no"
         label="倒班代码"
+        width="80px"
       />
       <el-table-column
         prop="schedule_name"
@@ -23,6 +24,7 @@
       <el-table-column
         prop="period"
         label="周期天数"
+        width="60px"
       />
       <el-table-column
         v-for="(class_,index) in classes"
@@ -50,6 +52,7 @@
         :formatter="formatter"
         prop="used_flag"
         label="使用与否"
+        width="60px"
       />
       <el-table-column
         width="150"
@@ -489,6 +492,23 @@ export default {
           })
       }).catch(() => {
       })
+    },
+    getCellText(workSchedule, index, key) {
+      var class_name = '夜班'
+      switch (index) {
+        case 0:
+          class_name = '早班'
+          break
+        case 1:
+          class_name = '中班'
+          break
+      }
+      var classesdetail = workSchedule.classesdetail_set.find(detail => {
+        return detail.classes_name === class_name
+      })
+      if (classesdetail) {
+        return classesdetail[key]
+      }
     },
     getSum(row, id) {
       const obj = row.classesdetail_set.filter(D => Number(D.classes) === Number(id))

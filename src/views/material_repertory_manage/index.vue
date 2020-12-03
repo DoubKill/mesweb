@@ -25,7 +25,7 @@
       border
       style="width: 100%"
     >
-      <el-table-column prop="sn" label="No" align="center" />
+      <el-table-column prop="sn" label="No" align="center" width="40px" />
       <el-table-column prop="material_type" label="原材料类型" align="center" />
       <el-table-column prop="material_no" label="原材料编码" align="center" />
       <el-table-column prop="material_name" label="原材料名称" align="center" />

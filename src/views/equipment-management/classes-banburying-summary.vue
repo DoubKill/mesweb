@@ -146,7 +146,7 @@
             {{ (setUse(row.total_time,24*60*60,true))+ '%' }}
           </span>
           <span v-if="search.dimension === 3">
-            {{ (setUse(row.total_time,24*60*60*30*60,true))+ '%' }}
+            {{ (setUse(row.total_time,24*60*60*30,true))+ '%' }}
           </span>
         </template>
       </el-table-column>
@@ -285,9 +285,9 @@ export default {
       if (!total_time || !classes_time) return 0
       let a
       if (bool) {
-        a = parseFloat(total_time / classes_time * 100).toFixed(100)
+        a = (parseFloat(total_time / classes_time * 100)).toString()
       } else {
-        a = parseFloat(total_time / classes_time).toFixed(100)
+        a = (parseFloat(total_time / classes_time)).toString()
       }
       const val = a.substring(0, a.lastIndexOf('.') + 3)
       return Number(val)
@@ -295,7 +295,7 @@ export default {
     setNum(value) {
       if (value < 0) return value
       if (!value) return 0
-      const a = parseFloat(value / 60).toFixed(10)
+      const a = parseFloat(value / 60).toString()
       const num = a.substring(0, a.lastIndexOf('.') + 2)
       return num
     }
