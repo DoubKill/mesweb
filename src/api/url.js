@@ -190,5 +190,9 @@ export default {
   // 目的地
   DispatchLocation: '/api/v1/inventory/dispatch-location/',
   // 发货履历
-  DispatchLog: '/api/v1/inventory/dispatch-log/'
+  DispatchLog: '/api/v1/inventory/dispatch-log/',
+
+  // 产量计划实际分析
+  ProductionPlanRealityAnalysis: '/api/v1/production/production-plan-reality-analysis/',
+  UpdateCause: '/api/v1/production/update-cause/'
 }
