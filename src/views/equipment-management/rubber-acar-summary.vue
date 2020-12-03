@@ -19,6 +19,7 @@
       <el-form-item label="设备编码:">
         <equip-select
           :equip_no_props.sync="search.equip_no"
+          :is-created="true"
           @changeSearch="equipChanged"
         />
       </el-form-item>
@@ -92,9 +93,12 @@
         <template slot-scope="{row}">
           <span v-if="timeUnit==='秒'">{{ row.time_consuming }}</span>
           <span v-else>{{ row.time_consuming |setTimeMin }}</span>
-          <!-- {{ row.time_consuming |setTimeMin }} -->
         </template>
       </el-table-column>
+      <el-table-column
+        prop="interval_time"
+        label="间隔时间/s"
+      />
     </el-table>
     <page
       :total="total"
@@ -131,7 +135,7 @@ export default {
   },
   created() {
     this.search.st = setDate()
-    this.getList()
+    // this.getList()
   },
   methods: {
     async getList() {

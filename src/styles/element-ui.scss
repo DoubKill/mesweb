@@ -13,6 +13,10 @@ $color-primary-a: rgba(11, 189, 11, 0.5);
 .el-table .cell{
   padding: 0 6px !important;
 }
+body .el-table th.gutter{
+  display: table-cell!important;
+}
+
 
 .el-button {
   &--primary {
