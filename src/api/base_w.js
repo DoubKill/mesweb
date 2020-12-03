@@ -422,4 +422,12 @@ export function unqualifiedDealOrders(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function intervalOutputStatistics(method, id, data = {}) {
+  const obj = {
+    url: id ? API.IntervalOutputStatistics + id + '/' : API.IntervalOutputStatistics,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 
