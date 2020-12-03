@@ -490,23 +490,6 @@ export default {
       }).catch(() => {
       })
     },
-    getCellText(workSchedule, index, key) {
-      var class_name = '晚班'
-      switch (index) {
-        case 0:
-          class_name = '早班'
-          break
-        case 1:
-          class_name = '中班'
-          break
-      }
-      var classesdetail = workSchedule.classesdetail_set.find(detail => {
-        return detail.classes_name === class_name
-      })
-      if (classesdetail) {
-        return classesdetail[key]
-      }
-    },
     getSum(row, id) {
       const obj = row.classesdetail_set.filter(D => Number(D.classes) === Number(id))
       if (obj[0]) {

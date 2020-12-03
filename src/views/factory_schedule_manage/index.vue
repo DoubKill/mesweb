@@ -271,6 +271,7 @@ export default {
       }
     }).then(function(response) {
       app.classes = response.results
+      console.log(app.classes, 'app.classes')
     }).catch(function() {
     })
     // eslint-disable-next-line object-curly-spacing
@@ -377,7 +378,7 @@ export default {
             case '中班':
               index = 1
               break
-            case '晚班':
+            case '夜班':
               index = 2
           }
           row.group_infos[index] = class_

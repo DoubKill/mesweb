@@ -76,14 +76,14 @@
           label="中班"
         />
         <el-table-column
-          prop="class_details.晚班"
-          label="晚班"
+          prop="class_details.夜班"
+          label="夜班"
         />
         <el-table-column
           label="总计"
         >
           <template slot-scope="scope">
-            <span v-text="(scope.row.class_details.早班 ? scope.row.class_details.早班:0) + (scope.row.class_details.中班 ? scope.row.class_details.中班:0) + (scope.row.class_details.晚班 ? scope.row.class_details.晚班:0)" />
+            <span v-text="(scope.row.class_details.早班 ? scope.row.class_details.早班:0) + (scope.row.class_details.中班 ? scope.row.class_details.中班:0) + (scope.row.class_details.夜班 ? scope.row.class_details.夜班:0)" />
           </template>
         </el-table-column>
       </el-table-column>
@@ -98,7 +98,7 @@
           label="中班"
         />
         <el-table-column
-          label="晚班"
+          label="夜班"
         />
         <el-table-column
           label="总计"
