@@ -50,7 +50,7 @@
     >
       <el-table-column
         type="selection"
-        width="40"
+        width="30"
       />
       <el-table-column type="index" label="No" width="30" />
       <el-table-column align="center" label="生产信息">
