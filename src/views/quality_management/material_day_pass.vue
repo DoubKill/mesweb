@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container month_pass_detail">
     <el-form :inline="true">
       <el-form-item label="月份">
         <el-date-picker
@@ -105,66 +105,68 @@
     <el-dialog
       :close-on-click-modal="false"
       :close-on-press-escape="false"
-      width="80%"
+      width="95%"
       title="胶料月合格率详情"
       :visible.sync="dialogShow"
     >
-      <el-table
-        :data="detailData"
-        border
-        :cell-style="cellStyle"
-        style="width: 100%"
-      >
-        <el-table-column fixed type="index" label="No" />
-        <el-table-column fixed width="100" label="月份" prop="date" />
-        <el-table-column fixed width="140" label="规格名称">
-          {{ getParams.product_no }}
-        </el-table-column>
-        <el-table-column fixed label="产量(车)" prop="train_count" />
-        <el-table-column fixed label="一次合格率%" prop="yc_percent_of_pass" />
-        <el-table-column fixed label="流变合格率%" prop="lb_percent_of_pass" />
-        <el-table-column fixed label="综合合格率%" prop="zh_percent_of_pass" />
-        <el-table-column v-for="(value,index) in detailHeaders.points" :key="index" :label="value" align="center">
-          <el-table-column label="+" align="center">
-            <template slot-scope="scope">
-              <span
-                v-if="(scope.row.points.filter(d=>d.name === value)).length>0"
-              >
-                {{ (scope.row.points.filter(d=>d.name === value))[0].upper_limit_count }}
-              </span>
-            </template>
+      <div class="table_data">
+        <el-table
+          :data="detailData"
+          border
+          :cell-style="cellStyle"
+          style="width: 100%"
+        >
+          <el-table-column fixed type="index" label="No" width="10" />
+          <el-table-column fixed width="44" label="月份" prop="date" />
+          <el-table-column fixed width="70" label="规格名称">
+            {{ getParams.product_no }}
           </el-table-column>
-          <el-table-column label="%" align="center">
-            <template slot-scope="scope">
-              <span
-                v-if="(scope.row.points.filter(d=>d.name === value)).length>0"
-                :style="getStyle((scope.row.points.filter(d=>d.name === value))[0].upper_limit_percent)"
-              >
-                {{ (scope.row.points.filter(d=>d.name === value))[0].upper_limit_percent }}
-              </span>
-            </template>
+          <el-table-column fixed label="产量(车)" min-width="32" prop="train_count" />
+          <el-table-column fixed label="一次合格率%" min-width="32" prop="yc_percent_of_pass" />
+          <el-table-column fixed label="流变合格率%" min-width="32" prop="lb_percent_of_pass" />
+          <el-table-column fixed label="综合合格率%" min-width="32" prop="zh_percent_of_pass" />
+          <el-table-column v-for="(value,index) in detailHeaders.points" :key="index" :label="value" align="center">
+            <el-table-column label="+" align="center" min-width="32">
+              <template slot-scope="scope">
+                <span
+                  v-if="(scope.row.points.filter(d=>d.name === value)).length>0"
+                >
+                  {{ (scope.row.points.filter(d=>d.name === value))[0].upper_limit_count }}
+                </span>
+              </template>
+            </el-table-column>
+            <el-table-column label="%" align="center" min-width="32">
+              <template slot-scope="scope">
+                <span
+                  v-if="(scope.row.points.filter(d=>d.name === value)).length>0"
+                  :style="getStyle((scope.row.points.filter(d=>d.name === value))[0].upper_limit_percent)"
+                >
+                  {{ (scope.row.points.filter(d=>d.name === value))[0].upper_limit_percent }}
+                </span>
+              </template>
+            </el-table-column>
+            <el-table-column label="-" align="center" min-width="32">
+              <template slot-scope="scope">
+                <span
+                  v-if="(scope.row.points.filter(d=>d.name === value)).length>0"
+                >
+                  {{ (scope.row.points.filter(d=>d.name === value))[0].lower_limit_count }}
+                </span>
+              </template>
+            </el-table-column>
+            <el-table-column label="%" align="center" min-width="32">
+              <template slot-scope="scope">
+                <span
+                  v-if="(scope.row.points.filter(d=>d.name === value)).length>0"
+                  :style="getStyle((scope.row.points.filter(d=>d.name === value))[0].lower_limit_percent)"
+                >
+                  {{ (scope.row.points.filter(d=>d.name === value))[0].lower_limit_percent }}
+                </span>
+              </template>
+            </el-table-column>
           </el-table-column>
-          <el-table-column label="-" align="center">
-            <template slot-scope="scope">
-              <span
-                v-if="(scope.row.points.filter(d=>d.name === value)).length>0"
-              >
-                {{ (scope.row.points.filter(d=>d.name === value))[0].lower_limit_count }}
-              </span>
-            </template>
-          </el-table-column>
-          <el-table-column label="%" align="center">
-            <template slot-scope="scope">
-              <span
-                v-if="(scope.row.points.filter(d=>d.name === value)).length>0"
-                :style="getStyle((scope.row.points.filter(d=>d.name === value))[0].lower_limit_percent)"
-              >
-                {{ (scope.row.points.filter(d=>d.name === value))[0].lower_limit_percent }}
-              </span>
-            </template>
-          </el-table-column>
-        </el-table-column>
-      </el-table>
+        </el-table>
+      </div>
     </el-dialog>
   </div>
 </template>
