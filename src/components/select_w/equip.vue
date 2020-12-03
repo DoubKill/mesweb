@@ -60,8 +60,7 @@ export default {
         .then(function(response) {
           _this.machineList = response.results || []
           if (_this.isCreated) {
-            _this._equip_no = _this.machineList[0].equip_no
-            _this.$emit('changeSearch', _this._equip_no)
+            _this.changeSearch(_this.machineList[0].equip_no)
           }
         })
         // eslint-disable-next-line handle-callback-err
