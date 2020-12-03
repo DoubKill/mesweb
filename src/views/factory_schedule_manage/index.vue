@@ -267,6 +267,7 @@ export default {
       }
     }).then(function(response) {
       app.classes = response.results
+      console.log(app.classes, 'app.classes')
     }).catch(function() {
     })
     // eslint-disable-next-line object-curly-spacing
