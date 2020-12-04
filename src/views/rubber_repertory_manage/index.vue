@@ -18,6 +18,12 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="加硫：">
+        共{{ sulfurAddition || 0 }}车
+      </el-form-item>
+      <el-form-item label="无硫：">
+        共{{ sulfurFree || 0 }}车
+      </el-form-item>
     </el-form>
 
     <el-table
@@ -96,7 +102,9 @@ export default {
       RubberStageOptions: [],
       dialogVisible: false,
       totalDialog: 0,
-      pageDialog: 1
+      pageDialog: 1,
+      sulfurAddition: 0,
+      sulfurFree: 0
     }
   },
   created() {
@@ -108,6 +116,8 @@ export default {
         const rubber_repertoryData = await rubber_repertory_url('get', { params: this.getParams })
         this.tableData = rubber_repertoryData.results
         this.total = rubber_repertoryData.count
+        this.sulfurAddition = rubber_repertoryData.fm_count
+        this.sulfurFree = rubber_repertoryData.other_count
       } catch (e) { throw new Error(e) }
     },
     async stage_global_list() {
