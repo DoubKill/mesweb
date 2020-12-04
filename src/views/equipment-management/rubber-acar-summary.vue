@@ -97,8 +97,13 @@
       </el-table-column>
       <el-table-column
         prop="interval_time"
-        label="间隔时间/s"
-      />
+        :label="'间隔时间/'+(timeUnit==='秒'?'s':'min')"
+      >
+        <template slot-scope="{row}">
+          <span v-if="timeUnit==='秒'">{{ row.interval_time }}</span>
+          <span v-else>{{ row.interval_time |setTimeMin }}</span>
+        </template>
+      </el-table-column>
     </el-table>
     <page
       :total="total"
