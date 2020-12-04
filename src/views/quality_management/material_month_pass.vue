@@ -33,19 +33,19 @@
     <el-table
       v-if="value1.length == 0 || value1.indexOf('综合合格率') > -1"
       :data="tableData"
-      size="small"
+      size="mini"
       border
       :max-height="(value1.length === 0 || value1.length === 3) ? 200 : value1.length === 1 ? 600 : 280"
       style="width: 100%"
     >
       <el-table-column label="综合合格率">
-        <el-table-column fixed type="index" label="No" />
-        <el-table-column fixed label="胶料编码">
+        <el-table-column fixed type="index" label="No" align="center" />
+        <el-table-column fixed label="胶料编码" min-width="130" align="center">
           <template slot-scope="scope">
             <el-link type="primary" :underline="false" @click="monthPassClick(scope.row.product_no)">{{ scope.row.product_no }}</el-link>
           </template>
         </el-table-column>
-        <el-table-column v-for="(value,index) in headers" :key="index" :label="dateFormat(value)" align="center">
+        <el-table-column v-for="(value,index) in headers" :key="index" min-width="58" :label="dateFormat(value)" align="center">
           <template slot-scope="scope">
             <span
               v-if="(scope.row.dates.filter(d=>d.date === value)).length>0"
@@ -61,18 +61,18 @@
       v-if="value1.length == 0 || value1.indexOf('一次合格率') > -1"
       :data="tableData"
       border
-      size="small"
+      size="mini"
       :max-height="(value1.length === 0 || value1.length === 3) ? 200 : value1.length === 1 ? 600 : 280"
       style="width: 100%"
     >
       <el-table-column label="一次合格率">
-        <el-table-column fixed type="index" label="No" />
-        <el-table-column fixed label="胶料编码">
+        <el-table-column fixed type="index" label="No" align="center" />
+        <el-table-column fixed label="胶料编码" min-width="130" align="center">
           <template slot-scope="scope">
             <el-link type="primary" :underline="false" @click="monthPassClick(scope.row.product_no)">{{ scope.row.product_no }}</el-link>
           </template>
         </el-table-column>
-        <el-table-column v-for="(value,index) in headers" :key="index" :label="dateFormat(value)" align="center">
+        <el-table-column v-for="(value,index) in headers" :key="index" min-width="58" :label="dateFormat(value)" align="center">
           <template slot-scope="scope">
             <span
               v-if="(scope.row.dates.filter(d=>d.date === value)).length>0"
@@ -88,18 +88,18 @@
       v-if="value1.length == 0 || value1.indexOf('流变合格率') > -1"
       :data="tableData"
       border
-      size="small"
+      size="mini"
       :max-height="(value1.length === 0 || value1.length === 3) ? 200 : value1.length === 1 ? 600 : 280"
       style="width: 100%"
     >
       <el-table-column label="流变合格率">
-        <el-table-column fixed type="index" label="No" />
-        <el-table-column fixed label="胶料编码">
+        <el-table-column fixed type="index" label="No" align="center" />
+        <el-table-column fixed label="胶料编码" min-width="130" align="center">
           <template slot-scope="scope">
             <el-link type="primary" :underline="false" @click="monthPassClick(scope.row.product_no)">{{ scope.row.product_no }}</el-link>
           </template>
         </el-table-column>
-        <el-table-column v-for="(value,index) in headers" :key="index" :label="dateFormat(value)" align="center">
+        <el-table-column v-for="(value,index) in headers" :key="index" min-width="58" :label="dateFormat(value)" align="center">
           <template slot-scope="scope">
             <span
               v-if="(scope.row.dates.filter(d=>d.date === value)).length>0"
@@ -125,21 +125,21 @@
           :cell-style="cellStyle"
           style="width: 100%"
         >
-          <el-table-column fixed type="index" width="10" label="No" />
-          <el-table-column fixed label="月份" width="34">
+          <el-table-column fixed type="index" width="14" label="No" />
+          <el-table-column fixed label="月份" width="46" align="center">
             <template slot-scope="scope">
               {{ dateFormat(scope.row.date) }}
             </template>
           </el-table-column>
-          <el-table-column fixed width="70" label="规格名称">
+          <el-table-column fixed width="96" label="规格名称" align="center">
             {{ getParams.product_no }}
           </el-table-column>
-          <el-table-column fixed label="产量(车)" min-width="32" prop="train_count" />
-          <el-table-column fixed label="一次合格率%" min-width="32" prop="yc_percent_of_pass" />
-          <el-table-column fixed label="流变合格率%" min-width="32" prop="lb_percent_of_pass" />
-          <el-table-column fixed label="综合合格率%" min-width="32" prop="zh_percent_of_pass" />
+          <el-table-column fixed label="产量(车)" min-width="32" prop="train_count" align="center" />
+          <el-table-column fixed label="一次合格率%" min-width="46" prop="yc_percent_of_pass" align="center" />
+          <el-table-column fixed label="流变合格率%" min-width="46" prop="lb_percent_of_pass" align="center" />
+          <el-table-column fixed label="综合合格率%" min-width="46" prop="zh_percent_of_pass" align="center" />
           <el-table-column v-for="(value,index) in detailHeaders.points" :key="index" :label="value" align="center">
-            <el-table-column label="+" align="center" min-width="32">
+            <el-table-column label="+" align="center" min-width="20">
               <template slot-scope="scope">
                 <span
                   v-if="(scope.row.points.filter(d=>d.name === value)).length>0"
@@ -148,7 +148,7 @@
                 </span>
               </template>
             </el-table-column>
-            <el-table-column label="%" align="center" min-width="32">
+            <el-table-column label="%" align="center" min-width="46">
               <template slot-scope="scope">
                 <span
                   v-if="(scope.row.points.filter(d=>d.name === value)).length>0"
@@ -158,7 +158,7 @@
                 </span>
               </template>
             </el-table-column>
-            <el-table-column label="-" align="center" min-width="32">
+            <el-table-column label="-" align="center" min-width="20">
               <template slot-scope="scope">
                 <span
                   v-if="(scope.row.points.filter(d=>d.name === value)).length>0"
@@ -167,7 +167,7 @@
                 </span>
               </template>
             </el-table-column>
-            <el-table-column label="%" align="center" min-width="32">
+            <el-table-column label="%" align="center" min-width="46">
               <template slot-scope="scope">
                 <span
                   v-if="(scope.row.points.filter(d=>d.name === value)).length>0"
