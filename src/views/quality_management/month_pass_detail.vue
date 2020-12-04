@@ -28,18 +28,18 @@
         :cell-style="cellStyle"
         style="width: 100%"
       >
-        <el-table-column fixed type="index" width="10" label="No" />
-        <el-table-column fixed label="月份" width="54" prop="date">
+        <el-table-column fixed type="index" width="14" label="No" align="center" />
+        <el-table-column fixed label="月份" width="54" prop="date" align="center">
           <template slot-scope="scope">
             <el-link type="primary" :underline="false" @click="monthPassClick(scope.row.date)">{{ dateFormat(scope.row.date) }}</el-link>
           </template>
         </el-table-column>
-        <el-table-column fixed label="产量(车)" min-width="32" prop="train_count" />
-        <el-table-column fixed label="一次合格率%" min-width="32" prop="yc_percent_of_pass" />
-        <el-table-column fixed label="流变合格率%" min-width="32" prop="lb_percent_of_pass" />
-        <el-table-column fixed label="综合合格率%" min-width="32" prop="zh_percent_of_pass" />
+        <el-table-column fixed label="产量(车)" min-width="32" prop="train_count" align="center" />
+        <el-table-column fixed label="一次合格率%" min-width="46" prop="yc_percent_of_pass" align="center" />
+        <el-table-column fixed label="流变合格率%" min-width="46" prop="lb_percent_of_pass" align="center" />
+        <el-table-column fixed label="综合合格率%" min-width="46" prop="zh_percent_of_pass" align="center" />
         <el-table-column v-for="(value,index) in headers.points" :key="index" :label="value" align="center">
-          <el-table-column label="+" align="center" min-width="32">
+          <el-table-column label="+" align="center" min-width="20">
             <template slot-scope="scope">
               <span
                 v-if="(scope.row.points.filter(d=>d.name === value)).length>0"
@@ -48,7 +48,7 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column label="%" align="center" min-width="32">
+          <el-table-column label="%" align="center" min-width="46">
             <template slot-scope="scope">
               <span
                 v-if="(scope.row.points.filter(d=>d.name === value)).length>0"
@@ -58,7 +58,7 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column label="-" align="center" min-width="32">
+          <el-table-column label="-" align="center" min-width="20">
             <template slot-scope="scope">
               <span
                 v-if="(scope.row.points.filter(d=>d.name === value)).length>0"
@@ -67,7 +67,7 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column label="%" align="center" min-width="32">
+          <el-table-column label="%" align="center" min-width="46">
             <template slot-scope="scope">
               <span
                 v-if="(scope.row.points.filter(d=>d.name === value)).length>0"
@@ -99,11 +99,11 @@
             style="width: 100%"
           >
             <!-- <el-table-column label="总合格率"> -->
-            <el-table-column width="50" type="index" label="No" />
-            <el-table-column width="90" label="日期" prop="date" />
-            <el-table-column label="一次合格率%" prop="yc_percent_of_pass" />
-            <el-table-column label="流变合格率%" prop="lb_percent_of_pass" />
-            <el-table-column label="综合合格率%" prop="zh_percent_of_pass" />
+            <el-table-column width="24" type="index" label="No" align="center" />
+            <el-table-column width="75" label="日期" prop="date" align="center" />
+            <el-table-column label="一次合格率%" min-width="54" prop="yc_percent_of_pass" align="center" />
+            <el-table-column label="流变合格率%" min-width="54" prop="lb_percent_of_pass" align="center" />
+            <el-table-column label="综合合格率%" min-width="54" prop="zh_percent_of_pass" align="center" />
             <!-- </el-table-column> -->
           </el-table>
         </el-col>
@@ -120,7 +120,7 @@
             <!-- <el-table-column fixed width="50" type="index" label="No" />
             <el-table-column fixed width="90" label="日期" prop="date" /> -->
             <el-table-column v-for="(value,index) in headers.equips" :key="index" :label="value" align="center">
-              <el-table-column label="一次合格率%" align="center">
+              <el-table-column label="一次合格率%" min-width="54" align="center">
                 <template slot-scope="scope">
                   <span
                     v-if="(scope.row.equips.filter(d=>d.production_equip_no === value)).length>0"
@@ -130,7 +130,7 @@
                   </span>
                 </template>
               </el-table-column>
-              <el-table-column label="流变合格率%" align="center">
+              <el-table-column label="流变合格率%" min-width="54" align="center">
                 <template slot-scope="scope">
                   <span
                     v-if="(scope.row.equips.filter(d=>d.production_equip_no === value)).length>0"
@@ -140,7 +140,7 @@
                   </span>
                 </template>
               </el-table-column>
-              <el-table-column label="综合合格率%" align="center">
+              <el-table-column label="综合合格率%" min-width="54" align="center">
                 <template slot-scope="scope">
                   <span
                     v-if="(scope.row.equips.filter(d=>d.production_equip_no === value)).length>0"
@@ -167,7 +167,7 @@
             <!-- <el-table-column fixed width="50" type="index" label="No" />
             <el-table-column fixed width="90" label="日期" prop="date" /> -->
             <el-table-column v-for="(value,index) in headers.classes" :key="index" :label="value" align="center">
-              <el-table-column label="一次合格率%" align="center">
+              <el-table-column label="一次合格率%" min-width="54" align="center">
                 <template slot-scope="scope">
                   <span
                     v-if="(scope.row.classes.filter(d=>d.production_class === value)).length>0"
@@ -178,7 +178,7 @@
                   <!-- <span v-if="scope.row.test_detail[value]">{{ scope.row.test_detail[value].up_trains }}</span> -->
                 </template>
               </el-table-column>
-              <el-table-column label="流变合格率%" align="center">
+              <el-table-column label="流变合格率%" min-width="54" align="center">
                 <template slot-scope="scope">
                   <span
                     v-if="(scope.row.classes.filter(d=>d.production_class === value)).length>0"
@@ -189,7 +189,7 @@
                   <!-- <span v-if="scope.row.test_detail[value]">{{ scope.row.test_detail[value].up_trains }}</span> -->
                 </template>
               </el-table-column>
-              <el-table-column label="综合合格率%" align="center">
+              <el-table-column label="综合合格率%" min-width="54" align="center">
                 <template slot-scope="scope">
                   <span
                     v-if="(scope.row.classes.filter(d=>d.production_class === value)).length>0"
@@ -307,8 +307,9 @@ export default {
 }
   .table_data{
     .el-table .cell {
-      font-size: 1px;
+      font-size: 12px;
       padding: 0 !important;
+      // transform: scale(0.5);
     }
     .el-table .cell span {
       padding: 0 !important;
