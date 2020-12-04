@@ -87,6 +87,11 @@
         <el-table-column label="单托重量" align="center" prop="weight" />
         <el-table-column label="发货人" align="center" prop="dispatch_user" />
         <el-table-column label="发货时间" align="center" prop="order_created_time" />
+        <el-table-column label="状态" align="center" prop="status">
+          <template slot-scope="scope">
+            {{ scope.row.status===1?'发货':'撤销' }}
+          </template>
+        </el-table-column>
       </el-table>
       <page
         :total="totalDetail"
