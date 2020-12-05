@@ -137,7 +137,7 @@
       </div>
     </el-dialog>
     <el-dialog
-      title="编辑发货地"
+      title="编辑发货计划"
       :visible.sync="editDialogVisible"
       :close-on-click-modal="false"
     >
