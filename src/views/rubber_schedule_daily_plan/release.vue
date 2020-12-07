@@ -87,7 +87,7 @@
               :row-class-name="tableRowClassName"
             >
               >
-              <el-table-column min-width="90px">
+              <el-table-column min-width="80px">
                 <template
                   slot="header"
                   slot-scope="scope"
@@ -118,7 +118,7 @@
               </el-table-column>
               <el-table-column
                 label="车次"
-                min-width="80px"
+                min-width="60px"
               >
                 <template slot-scope="scope">
                   {{ scope.row.plan_trains }}
@@ -126,7 +126,7 @@
               </el-table-column>
               <el-table-column
                 label="备注"
-                min-width="80"
+                min-width="60"
               >
                 <template slot-scope="scope">
                   {{ scope.row.note }}
@@ -134,7 +134,7 @@
               </el-table-column>
               <el-table-column
                 label="状态"
-                min-width="80"
+                min-width="60"
               >
                 <template slot-scope="scope">
                   {{ scope.row.status }}
@@ -143,6 +143,11 @@
               <el-table-column label="炼胶时间">
                 <template slot-scope="scope">
                   {{ Number(scope.row.time) || '' }}
+                </template>
+              </el-table-column>
+              <el-table-column label="创建时间">
+                <template slot-scope="scope">
+                  {{ scope.row.created_date }}
                 </template>
               </el-table-column>
             </el-table>
@@ -272,7 +277,8 @@ export default {
                 plan_classes_uid: data.plan_classes_uid,
                 unit: '吨',
                 weight: data.weight,
-                product_no: data.product_no
+                product_no: data.product_no,
+                created_date: data.created_date
               })
             }
           })
