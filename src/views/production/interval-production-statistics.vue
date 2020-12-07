@@ -115,8 +115,8 @@
 
 <script>
 import { setDate } from '@/utils/index'
-import { class_arrange_url } from '@/api/display_static_fun'
-import { intervalOutputStatistics } from '@/api/base_w'
+// import { class_arrange_url } from '@/api/display_static_fun'
+import { intervalOutputStatistics, globalCodesUrl } from '@/api/base_w'
 export default {
   data() {
     this.chartSettings = {
@@ -168,8 +168,8 @@ export default {
     },
     changeSearch() {},
     getClasses() {
-      class_arrange_url('get', {
-        params: { }
+      globalCodesUrl('get', {
+        params: { all: 1, class_name: '班次' }
       }).then(response => {
         this.classesList = response.results || []
         if (this.classesList.length > 0) {
