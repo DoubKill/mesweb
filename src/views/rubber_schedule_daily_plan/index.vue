@@ -100,7 +100,7 @@
               :row-class-name="tableRowClassName"
             >
               >
-              <el-table-column min-width="60px">
+              <el-table-column min-width="50px">
                 <template slot-scope="scope">
                   <div style="font-weight:700;color:#000 !important">
                     {{ scope.row.classes_name }}
@@ -147,7 +147,7 @@
               </el-table-column>
               <el-table-column
                 label="车次"
-                min-width="80px"
+                min-width="65px"
               >
                 <template slot-scope="scope">
                   <el-input-number
@@ -174,15 +174,20 @@
               </el-table-column>
               <el-table-column
                 label="状态"
-                min-width="80"
+                min-width="60"
               >
                 <template slot-scope="scope">
                   {{ scope.row.status }}
                 </template>
               </el-table-column>
-              <el-table-column label="炼胶时间">
+              <el-table-column label="炼胶时间" min-width="70">
                 <template slot-scope="scope">
                   {{ Number(scope.row.time) || '0' }}
+                </template>
+              </el-table-column>
+              <el-table-column label="创建时间">
+                <template slot-scope="scope">
+                  {{ scope.row.created_date }}
                 </template>
               </el-table-column>
               <el-table-column
@@ -358,7 +363,8 @@ export default {
                 time: data.time,
                 plan_classes_uid: data.plan_classes_uid,
                 unit: '吨',
-                weight: data.weight
+                weight: data.weight,
+                created_date: data.created_date
               })
             }
           })
