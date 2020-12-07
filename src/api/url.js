@@ -196,5 +196,13 @@ export default {
   ProductionPlanRealityAnalysis: '/api/v1/production/production-plan-reality-analysis/',
   UpdateCause: '/api/v1/production/update-cause/',
   // 区间产量统计（车数）
-  IntervalOutputStatistics: '/api/v1/production/interval-output-statistics/'
+  IntervalOutputStatistics: '/api/v1/production/interval-output-statistics/',
+  // 报表-车次列表
+  TrainsFeedbacksApiview: '/api/v1/production/trains-feedbacks-apiview/',
+  // 报表-车次记录-称量信息{id}
+  WeighInformationUrl: '/api/v1/production/weigh-information-list/',
+  // 报表-车次记录-密炼信息{id}
+  MixerInformationUrl: '/api/v1/production/mixer-information-list/',
+  // 报表-车次记录-曲线图{id}
+  CurveInformationUrl: '/api/v1/production/curve-information-list/'
 }

@@ -295,6 +295,15 @@ export const asyncRoutes = [{
     }
   },
   {
+    path: 'train-number-report',
+    component: () => import('@/views/production/train-number-report.vue'),
+    name: 'train-number-report',
+    meta: {
+      title: '车次报表',
+      permissionName: 'product_actual'
+    }
+  },
+  {
     path: 'product-plan-reality-analyse',
     component: () => import('@/views/production/product-plan-reality-analyse.vue'),
     name: 'ProductPlanRealityAnalyse',
