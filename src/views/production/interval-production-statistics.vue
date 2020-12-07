@@ -168,7 +168,9 @@ export default {
     },
     changeSearch() {},
     getClasses() {
-      class_arrange_url('get').then(response => {
+      class_arrange_url('get', {
+        params: { }
+      }).then(response => {
         this.classesList = response.results || []
         if (this.classesList.length > 0) {
           if (this.classesList.length > 1) {
