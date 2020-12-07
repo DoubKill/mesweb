@@ -8,7 +8,8 @@ const getDefaultState = () => {
     token: '',
     name: '',
     avatar: '',
-    permission: ''
+    permission: '',
+    editionNo: ''
   }
 }
 
@@ -17,7 +18,8 @@ const state = () => {
     token: getToken(),
     name: Cookies.get('name'),
     avatar: '',
-    permission: localStorage.getItem('permission')
+    permission: localStorage.getItem('permission'),
+    editionNo: Cookies.get('editionNo') || 'v1'
   }
 }
 
@@ -38,6 +40,10 @@ const mutations = {
   SET_PERMISSION: (state, permission) => {
     state.permission = permission
     localStorage.setItem('permission', permission)
+  },
+  SET_EDITION: (state, name) => {
+    state.editionNo = name
+    Cookies.set('editionNo', name)
   }
 }
 

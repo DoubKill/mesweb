@@ -12,7 +12,8 @@ const getters = {
   },
   name: state => state.user.name,
   routes: state => state.permission.routes,
-  addRoutes: state => state.permission.addRoutes
+  addRoutes: state => state.permission.addRoutes,
+  editionNo: state => state.user.editionNo
 }
 // 获取vuex数据
 // import { mapGetters } from "vuex";

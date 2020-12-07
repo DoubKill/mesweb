@@ -431,3 +431,39 @@ export function intervalOutputStatistics(method, id, data = {}) {
   return request(obj)
 }
 
+export function trainsFeedbacksApiview(method, id, data = {}) {
+  const obj = {
+    url: id ? API.TrainsFeedbacksApiview + id + '/' : API.TrainsFeedbacksApiview,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function weighInformationUrl(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WeighInformationUrl + id + '/' : API.WeighInformationUrl,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function mixerInformationUrl(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MixerInformationUrl + id + '/' : API.MixerInformationUrl,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function curveInformationUrl(method, id, data = {}) {
+  const obj = {
+    url: id ? API.CurveInformationUrl + id + '/' : API.CurveInformationUrl,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
