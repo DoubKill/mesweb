@@ -467,3 +467,12 @@ export function curveInformationUrl(method, id, data = {}) {
   return request(obj)
 }
 
+export function alarmLogList(method, id, data = {}) {
+  const obj = {
+    url: id ? API.AlarmLogList + id + '/' : API.AlarmLogList,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+

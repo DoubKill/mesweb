@@ -204,5 +204,6 @@ export default {
   // 报表-车次记录-密炼信息{id}
   MixerInformationUrl: '/api/v1/production/mixer-information-list/',
   // 报表-车次记录-曲线图{id}
-  CurveInformationUrl: '/api/v1/production/curve-information-list/'
+  CurveInformationUrl: '/api/v1/production/curve-information-list/',
+  AlarmLogList: '/api/v1/production/alarm_log-list/'
 }
