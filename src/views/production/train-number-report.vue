@@ -394,32 +394,29 @@
               frame="hsides"
             >
               <tr class="train-one-tr-banburying">
-                <td>ID</td>
-                <td>名称</td>
-                <td>设定值(kg)</td>
-                <td>实重(kg)</td>
-                <td>状态</td>
-                <td>种类</td>
-                <td>超差(kg)</td>
+                <td>No</td>
+                <td>时间</td>
+                <td>报警信息</td>
               </tr>
               <tr
                 v-for="(item,index) in alarmRecordList"
                 :key="index"
                 class="train-one-tr-banburying"
               >
-                <td>ID</td>
-                <td>名称</td>
-                <td>设定值(kg)</td>
-                <td>实重(kg)</td>
-                <td>状态</td>
-                <td>种类</td>
-                <td>超差(kg)</td>
+                <td>{{ index+1 }}</td>
+                <td>{{ item.product_time }}</td>
+                <td>{{ item.content }}</td>
               </tr>
             </table>
             <div
               v-if="alarmRecordList.length===0"
               class="noneData"
             >暂无数据</div>
+            <page
+              style="text-align: right;"
+              :total="totalAlarmRecord"
+              @currentChange="ChangePageAlarmRecord"
+            />
           </div>
         </el-col>
         <el-col
@@ -505,7 +502,8 @@ import {
   trainsFeedbacksApiview,
   weighInformationUrl,
   mixerInformationUrl,
-  curveInformationUrl
+  curveInformationUrl,
+  alarmLogList
 } from '@/api/base_w'
 import { personnelsUrl } from '@/api/user'
 import page from '@/components/page'
@@ -539,6 +537,7 @@ export default {
       curveInformationList: [],
       totalWeighing: 0,
       totalMixer: 0,
+      totalAlarmRecord: 0,
       // table高度
       maxHeightTable: '',
       dialogVisible: false
@@ -626,7 +625,6 @@ export default {
         })
         this.loading = false
         this.$store.commit('user/SET_EDITION', obj.version)
-        // this.editionNo = obj.version
       } catch (e) {
         this.loading = false
       }
@@ -728,6 +726,16 @@ export default {
         // eslint-disable-next-line no-empty
       } catch (e) { }
     },
+    async getAlarmRecordList(id, page) {
+      try {
+        const data = await alarmLogList('get', null, { params: { feed_back_id: id,
+          page: page }})
+        this.totalAlarmRecord = data.count
+        return data.results || []
+      } catch (e) {
+        //
+      }
+    },
     async getCurveInformation(id) {
       try {
         // eslint-disable-next-line object-curly-spacing
@@ -796,12 +804,13 @@ export default {
         const arr = await Promise.all([
           this.getWeighInformation(id, 1),
           this.getMixerInformation(id, 1),
-          this.getCurveInformation(id)
+          this.getCurveInformation(id),
+          this.getAlarmRecordList(id, 1)
         ])
         this.weighInformationList = arr[0] || []
         this.mixerInformationList = arr[1] || []
         this.curveInformationList = arr[2] || []
-        console.log(this.curveInformationList, 77777)
+        this.alarmRecordList = arr[3] || []
         this.chartData.rows = this.curveInformationList
 
         this.options.title.text = this.curveInformationList.length > 0 ? this.curveInformationList[0].product_time.split(' ')[0] : '暂无数据'
@@ -816,6 +825,9 @@ export default {
     },
     async ChangePageMixer(page) {
       this.mixerInformationList = await this.getMixerInformation(this.currentRowId, page)
+    },
+    async ChangePageAlarmRecord(page) {
+      this.alarmRecordList = await this.getAlarmRecordList(this.currentRowId, page)
     },
     handleClose(done) {
       done()
