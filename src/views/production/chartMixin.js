@@ -21,7 +21,7 @@ export default {
         'power': '功率(W)',
         'energy': '能量(J)',
         'rpm': '转速(r/min)',
-        'pressure': '压力(Pa)'
+        'pressure': '压力(bar)'
       },
       axisSite: {
         right: ['temperature', 'rpm', 'energy', 'pressure']

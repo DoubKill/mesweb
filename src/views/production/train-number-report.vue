@@ -335,7 +335,7 @@
                   <td>能量(J)</td>
                   <td>动作名称</td>
                   <td>速度(r/min)</td>
-                  <td>压力(Pa)</td>
+                  <td>压力(bar)</td>
                 </tr>
                 <template v-if="editionNo === 'v1'">
                   <tr
