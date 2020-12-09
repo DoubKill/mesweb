@@ -304,6 +304,7 @@ export default {
       testResultHistory(tree.id).then(testResul => {
         for (const testTime in testResul) {
           const row = JSON.parse(JSON.stringify(tree))
+          row.test_status = '正常'
           row.index = this.index++
           row.hasChildren = false
           row.order_results = testResul[testTime]
