@@ -288,19 +288,27 @@
                   <td>{{ index+1 }}</td>
                   <template v-if="editionNo === 'v2'">
                     <td>{{ item.material_name }}</td>
-                    <td>{{ item.plan_weight }}</td>
-                    <td>{{ item.actual_weight }}</td>
+                    <td>
+                      {{ Math.round(item.plan_weight/100*100)/100 }}
+                    </td>
+                    <td>
+                      {{ Math.round(item.actual_weight/100*100)/100 }}
+                    </td>
                     <td>{{ item.state_balance }}</td>
                     <td>{{ item.material_type }}</td>
-                    <td>{{ Math.round((Number(item.plan_weight) - Number(item.actual_weight))*100)/100 }}</td>
+                    <td>{{ Math.round((Number(item.plan_weight) - Number(item.actual_weight))/100*100)/100 }}</td>
                   </template>
                   <template v-if="editionNo === 'v1'">
                     <td>{{ item.物料名称 }}</td>
-                    <td>{{ item.设定重量 }}</td>
-                    <td>{{ item.实际重量 }}</td>
+                    <td>
+                      {{ Math.round(item.设定重量/100*100)/100 }}
+                    </td>
+                    <td>
+                      {{ Math.round(item.实际重量/100*100)/100 }}
+                    </td>
                     <td>{{ item.秤状态 }}</td>
                     <td>{{ item.物料类型 }}</td>
-                    <td>{{ Math.round((Number(item.设定重量) - Number(item.实际重量))*100)/100 }}</td>
+                    <td>{{ Math.round((Number(item.设定重量) - Number(item.实际重量))/100*100)/100 }}</td>
                   </template>
                 </tr>
               </table>

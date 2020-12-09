@@ -59,7 +59,7 @@
         <el-table-column
           prop="name"
           :label="'时间区间('+itemDiv+')'"
-          min-width="110px"
+          min-width="80px"
         >
           <template slot-scope="{row}">
             {{ row.time_span }}
@@ -73,7 +73,7 @@
           <el-table-column
             prop="name"
             label="总车"
-            min-width="10px"
+            min-width="20px"
           >
             <template slot-scope="{row}">
               {{ row[itemEquips]?row[itemEquips][0]:'' }}
@@ -82,7 +82,7 @@
           <el-table-column
             prop="name"
             label="区间车次"
-            min-width="10px"
+            min-width="20px"
           >
             <template slot-scope="{row}">
               {{ row[itemEquips]?row[itemEquips][1]:'' }}
