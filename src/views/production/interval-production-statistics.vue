@@ -59,7 +59,7 @@
         <el-table-column
           prop="name"
           :label="'时间区间('+itemDiv+')'"
-          min-width="80px"
+          min-width="50px"
         >
           <template slot-scope="{row}">
             {{ row.time_span }}
@@ -73,7 +73,7 @@
           <el-table-column
             prop="name"
             label="总车"
-            min-width="20px"
+            min-width="30px"
           >
             <template slot-scope="{row}">
               {{ row[itemEquips]?row[itemEquips][0]:'' }}
@@ -82,7 +82,7 @@
           <el-table-column
             prop="name"
             label="区间车次"
-            min-width="20px"
+            min-width="30px"
           >
             <template slot-scope="{row}">
               {{ row[itemEquips]?row[itemEquips][1]:'' }}
@@ -143,8 +143,9 @@ export default {
       histogramList: []
     }
   },
-  created() {
-    this.getClasses()
+  async created() {
+    await this.getClasses()
+    await this.getList()
   },
   methods: {
     async getList() {
@@ -167,11 +168,12 @@ export default {
       }
     },
     changeSearch() {},
-    getClasses() {
-      globalCodesUrl('get', {
-        params: { all: 1, class_name: '班次' }
-      }).then(response => {
-        this.classesList = response.results || []
+    async getClasses() {
+      try {
+        const data = await globalCodesUrl('get', {
+          params: { all: 1, class_name: '班次' }
+        })
+        this.classesList = data.results || []
         if (this.classesList.length > 0) {
           if (this.classesList.length > 1) {
             this.search.classes = [this.classesList[0].global_name, this.classesList[1].global_name]
@@ -180,7 +182,22 @@ export default {
           }
         }
         this.classesList.push({ global_name: '整日' })
-      })
+      } catch (e) {
+        //
+      }
+      // globalCodesUrl('get', {
+      //   params: { all: 1, class_name: '班次' }
+      // }).then(response => {
+      //   this.classesList = response.results || []
+      //   if (this.classesList.length > 0) {
+      //     if (this.classesList.length > 1) {
+      //       this.search.classes = [this.classesList[0].global_name, this.classesList[1].global_name]
+      //     } else {
+      //       this.search.classes = [this.classesList[0].global_name]
+      //     }
+      //   }
+      //   this.classesList.push({ global_name: '整日' })
+      // })
     },
     changeClasses(val) {
       const a = val.find(D => D === '整日')

@@ -218,8 +218,13 @@ export default {
       if (value < 0) return value
       if (!value) return 0
       const a = (parseFloat(value / 3600)).toString()
-      const num = a.substring(0, a.lastIndexOf('.') + 2)
-      return num
+      let num
+      if (a.lastIndexOf('.') > -1) {
+        num = a.substring(0, a.lastIndexOf('.') + 2)
+      } else {
+        num = a
+      }
+      return Number(num)
     },
     changeDate(date) {
       this.search.st = date ? date[0] : ''
@@ -254,16 +259,25 @@ export default {
     setUse(total_time, classes_time) {
       if (!total_time || !classes_time) return 0
       const a = parseFloat(total_time / classes_time * 100).toString()
-
-      const num = (a.substring(0, a.lastIndexOf('.') + 3))
-      return num
+      let num
+      if (a.lastIndexOf('.') > -1) {
+        num = a.substring(0, a.lastIndexOf('.') + 3)
+      } else {
+        num = a
+      }
+      return Number(num)
     },
     setNum(value) {
       if (value < 0) return value
       if (!value) return 0
       const a = (parseFloat(value / 60)).toString()
-      const num = a.substring(0, a.lastIndexOf('.') + 2)
-      return num
+      let num
+      if (a.lastIndexOf('.') > -1) {
+        num = a.substring(0, a.lastIndexOf('.') + 2)
+      } else {
+        num = a
+      }
+      return Number(num)
     },
     getSummaries(param) {
       const { columns, data } = param
