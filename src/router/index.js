@@ -745,6 +745,34 @@ export const asyncRoutes = [{
   ]
 },
 {
+  path: '/spare-part',
+  component: Layout,
+  redirect: '/spare-partt/location-site',
+  name: 'spare-part',
+  meta: {
+    title: '备品备件管理',
+    icon: 'quality'
+  }, children: [{
+    path: 'location-site',
+    component: () => import('@/views/spare-part/location-site'),
+    name: 'location-site',
+    meta: {
+      title: '位置站点管理',
+      permissionName: 'class_production_summary'
+    }
+  },
+  {
+    path: 'shelf-material-binding',
+    component: () => import('@/views/spare-part/shelf-material-binding'),
+    name: 'shelf-material-binding',
+    meta: {
+      title: '货架物料绑定管理',
+      permissionName: 'class_production_summary'
+    }
+  }
+  ]
+},
+{
   path: '*',
   redirect: '/404',
   hidden: true
