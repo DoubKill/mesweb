@@ -755,7 +755,7 @@ export const asyncRoutes = [{
     children: [
       {
         path: 'location-site',
-        component: () => import('@/views/spare-part/location-site'),
+        component: () => import('@/views/equipment-management/spare-part/location-site'),
         name: 'location-site',
         meta: {
           title: '位置站点管理',
@@ -764,7 +764,7 @@ export const asyncRoutes = [{
       },
       {
         path: 'shelf-material-binding',
-        component: () => import('@/views/spare-part/shelf-material-binding'),
+        component: () => import('@/views/equipment-management/spare-part/shelf-material-binding'),
         name: 'shelf-material-binding',
         meta: {
           title: '货架物料绑定管理',
