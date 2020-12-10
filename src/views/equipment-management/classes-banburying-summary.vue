@@ -289,15 +289,25 @@ export default {
       } else {
         a = (parseFloat(total_time / classes_time)).toString()
       }
-      const val = a.substring(0, a.lastIndexOf('.') + 3)
+      let val
+      if (a.lastIndexOf('.') > -1) {
+        val = a.substring(0, a.lastIndexOf('.') + 3)
+      } else {
+        val = a
+      }
       return Number(val)
     },
     setNum(value) {
       if (value < 0) return value
       if (!value) return 0
       const a = parseFloat(value / 60).toString()
-      const num = a.substring(0, a.lastIndexOf('.') + 2)
-      return num
+      let num
+      if (a.lastIndexOf('.') > -1) {
+        num = a.substring(0, a.lastIndexOf('.') + 2)
+      } else {
+        num = a
+      }
+      return Number(num)
     }
   }
 }
