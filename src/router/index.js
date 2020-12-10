@@ -770,6 +770,51 @@ export const asyncRoutes = [{
           title: '货架物料绑定管理',
           permissionName: 'class_production_summary'
         }
+      },
+      {
+        path: 'warehousing',
+        component: () => import('@/views/equipment-management/spare-part/warehousing'),
+        name: 'spare-part-warehousing',
+        meta: {
+          title: '备品备件入库管理',
+          permissionName: 'class_production_summary'
+        }
+      },
+      {
+        path: 'warehouse-out',
+        component: () => import('@/views/equipment-management/spare-part/warehouse-out'),
+        name: 'spare-part-warehouse-out',
+        meta: {
+          title: '备品备件出库管理',
+          permissionName: 'class_production_summary'
+        }
+      },
+      {
+        path: 'inventory',
+        component: () => import('@/views/equipment-management/spare-part/inventory'),
+        name: 'spare-part-inventory',
+        meta: {
+          title: '备品备件盘点管理',
+          permissionName: 'class_production_summary'
+        }
+      },
+      {
+        path: 'warehousing-out-record',
+        component: () => import('@/views/equipment-management/spare-part/all-record'),
+        name: 'spare-part-warehousing-out-record',
+        meta: {
+          title: '备品备件出库履历',
+          permissionName: 'class_production_summary'
+        }
+      },
+      {
+        path: 'warehousing-record',
+        component: () => import('@/views/equipment-management/spare-part/all-record'),
+        name: 'spare-part-warehousing-record',
+        meta: {
+          title: '备品备件入库履历',
+          permissionName: 'class_production_summary'
+        }
       }
     ]
   }
