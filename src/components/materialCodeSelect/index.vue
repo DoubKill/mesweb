@@ -4,7 +4,7 @@
     <el-select
       v-model="value"
       filterable
-      placeholder="请选择物料编码"
+      placeholder="请选择"
       :loading="loading"
       clearable
       @visible-change="visibleChange"
@@ -13,7 +13,7 @@
       <el-option
         v-for="item in options"
         :key="item.id"
-        :label="item.material_no"
+        :label="item[labelName]"
         :value="item.id"
       />
     </el-select>
@@ -33,9 +33,13 @@ export default {
       type: String,
       default: null
     },
-    storeName: {
+    labelName: {
       type: String,
-      default: null
+      default: 'material_no'
+    },
+    isAllObj: { // 是否返回全部对象
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -72,8 +76,12 @@ export default {
       }
     },
     changeSelect(val) {
-    //   let arr = []
-    //   arr = this.options.filter(D => D.material_no === val)
+      if (this.isAllObj) {
+        let arr = []
+        arr = this.options.filter(D => D.material_no === val)
+        this.$emit('changeSelect', arr)
+        return
+      }
       this.$emit('changeSelect', val)
     }
   }
