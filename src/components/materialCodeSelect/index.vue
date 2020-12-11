@@ -7,6 +7,7 @@
       placeholder="请选择"
       :loading="loading"
       clearable
+      :disabled="isDisabled"
       @visible-change="visibleChange"
       @change="changeSelect"
     >
@@ -38,6 +39,10 @@ export default {
       default: 'material_no'
     },
     isAllObj: { // 是否返回全部对象
+      type: Boolean,
+      default: false
+    },
+    isDisabled: { // 是否只读
       type: Boolean,
       default: false
     }
@@ -78,8 +83,8 @@ export default {
     changeSelect(val) {
       if (this.isAllObj) {
         let arr = []
-        arr = this.options.filter(D => D.material_no === val)
-        this.$emit('changeSelect', arr)
+        arr = this.options.filter(D => D.id === val)
+        this.$emit('changeSelect', arr[0])
         return
       }
       this.$emit('changeSelect', val)

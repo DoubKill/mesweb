@@ -9,3 +9,12 @@ export function locationNameList(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function spareInventory(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SpareInventory + id + '/' : API.SpareInventory,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

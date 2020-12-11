@@ -1,10 +1,21 @@
 <template>
   <div>
     <el-pagination
+      v-if="oldPage"
       layout="total,prev,pager,next"
       :total="total"
       :page-size="pageSize"
       :current-page.sync="_currentPage"
+      @current-change="currentChange"
+    />
+    <el-pagination
+      v-else
+      :current-page.sync="_currentPage"
+      :page-sizes="[10, 20, 30, 40,50]"
+      :page-size="_pageSize"
+      layout="sizes, prev, pager, next"
+      :total="total"
+      @size-change="currentChange(1,$event)"
       @current-change="currentChange"
     />
   </div>
@@ -26,6 +37,10 @@ export default {
     currentPage: {
       type: Number,
       default: 1
+    },
+    oldPage: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -40,11 +55,24 @@ export default {
       set() {
         return 1
       }
+    },
+    _pageSize: {
+      get() {
+        return this.pageSize
+      },
+      set(val) {
+        return val
+      }
     }
   },
   methods: {
-    currentChange(page) {
-      this.$emit('currentChange', page)
+    currentChange(page, page_size) {
+      this._pageSize = page_size
+      if (this.oldPage) {
+        this.$emit('currentChange', page)
+        return
+      }
+      this.$emit('currentChange', page, page_size)
     }
   }
 }
