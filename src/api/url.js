@@ -208,5 +208,7 @@ export default {
   AlarmLogList: '/api/v1/production/alarm_log-list/',
 
   // 库存位
-  LocationNameList: '/api/v1/spare/location/name_list/'
+  LocationNameList: '/api/v1/basics/location/name_list/',
+  // 入库
+  SpareInventory: '/api/v1/spareparts/spare-inventory/'
 }

@@ -6,6 +6,7 @@
       filterable
       placeholder="请选择库存位"
       :loading="loading"
+      clearable
       @visible-change="visibleChange"
       @change="changSelect"
     >
@@ -29,7 +30,7 @@ export default {
       default: false
     },
     defaultVal: {
-      type: String,
+      type: Number,
       default: null
     },
     isEnable: { // 是否只显示启用
