@@ -3,13 +3,20 @@
     <!-- 备品备件入库管理 -->
     <el-form :inline="true">
       <el-form-item label="物料编码:">
-        //
+        <materialCodeSelect
+          :is-all-obj="true"
+          @changeSelect="changeMaterialCode"
+        />
       </el-form-item>
       <el-form-item label="物料名称:">
-        <el-input v-model="search.b" placeholder="请输入内容" />
+        <materialCodeSelect
+          :is-all-obj="true"
+          label-name="material_name"
+          @changeSelect="changeMaterialName"
+        />
       </el-form-item>
       <el-form-item label="库存位:">
-        <inventoryPosition @changSelect="changInventoryPosition" />
+        <inventoryPosition @changSelect="changeInventoryPosition" />
       </el-form-item>
     </el-form>
   </div>
@@ -17,17 +24,21 @@
 
 <script>
 import inventoryPosition from '@/components/select_w/inventoryPosition'
+import materialCodeSelect from '@/components/materialCodeSelect/index'
 export default {
-  components: { inventoryPosition },
+  components: { inventoryPosition, materialCodeSelect },
   data() {
     return {
       search: {}
     }
   },
   methods: {
-    changInventoryPosition(obj) {
-      console.log(obj, 444)
-    }
+    changeInventoryPosition(obj) {
+    },
+    changeMaterialCode(obj) {
+
+    },
+    changeMaterialName(obj) {}
   }
 }
 </script>
