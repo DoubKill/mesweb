@@ -130,6 +130,15 @@ export const asyncRoutes = [{
     }
   },
   {
+    path: 'location-site',
+    component: () => import('@/views/equipment-management/spare-part/location-site'),
+    name: 'location-site',
+    meta: {
+      title: '位置站点管理',
+      permissionName: 'class_production_summary'
+    }
+  },
+  {
     path: '/factory',
     redirect: '/factory/category/manage',
     component: {
@@ -753,15 +762,6 @@ export const asyncRoutes = [{
       title: '备品备件管理'
     },
     children: [
-      {
-        path: 'location-site',
-        component: () => import('@/views/equipment-management/spare-part/location-site'),
-        name: 'location-site',
-        meta: {
-          title: '位置站点管理',
-          permissionName: 'class_production_summary'
-        }
-      },
       {
         path: 'shelf-material-binding',
         component: () => import('@/views/equipment-management/spare-part/shelf-material-binding'),
