@@ -210,5 +210,9 @@ export default {
   // 库存位
   LocationNameList: '/api/v1/basics/location/name_list/',
   // 入库
-  SpareInventory: '/api/v1/spareparts/spare-inventory/'
+  SpareInventory: '/api/v1/spareparts/spare-inventory/',
+  // 位置点
+  Location: '/api/v1/basics/location/',
+  // 货架物料绑定
+  MaterialLocationBinding: '/api/v1/spareparts/material-location-binding/'
 }
