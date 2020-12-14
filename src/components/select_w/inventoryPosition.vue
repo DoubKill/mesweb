@@ -7,6 +7,7 @@
       placeholder="请选择库存位"
       :loading="loading"
       clearable
+      :disabled="isDisabled"
       @visible-change="visibleChange"
       @change="changSelect"
     >
@@ -34,6 +35,10 @@ export default {
       default: null
     },
     isEnable: { // 是否只显示启用
+      type: Boolean,
+      default: false
+    },
+    isDisabled: { // 是否只读
       type: Boolean,
       default: false
     }

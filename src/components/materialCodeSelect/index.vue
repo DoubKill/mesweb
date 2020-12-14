@@ -31,7 +31,7 @@ export default {
       default: false
     },
     defaultVal: {
-      type: String,
+      type: Number,
       default: null
     },
     labelName: {

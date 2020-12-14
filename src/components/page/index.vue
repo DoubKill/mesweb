@@ -12,11 +12,11 @@
       v-else
       :current-page.sync="_currentPage"
       :page-sizes="[10, 20, 30, 40,50]"
-      :page-size="_pageSize"
+      :page-size="pageSize"
       layout="sizes, prev, pager, next"
       :total="total"
       @size-change="currentChange(1,$event)"
-      @current-change="currentChange"
+      @current-change="currentChange($event,pageSize)"
     />
   </div>
 </template>
@@ -30,10 +30,10 @@ export default {
       default: 0
     },
     // 统一的当前展示多少页，一般不会用到
-    pageSize: {
-      type: Number,
-      default: 10
-    },
+    // pageSize: {
+    //   type: Number,
+    //   default: 10
+    // },
     currentPage: {
       type: Number,
       default: 1
@@ -45,6 +45,7 @@ export default {
   },
   data() {
     return {
+      pageSize: 10
     }
   },
   computed: {
@@ -55,19 +56,11 @@ export default {
       set() {
         return 1
       }
-    },
-    _pageSize: {
-      get() {
-        return this.pageSize
-      },
-      set(val) {
-        return val
-      }
     }
   },
   methods: {
     currentChange(page, page_size) {
-      this._pageSize = page_size
+      this.pageSize = page_size
       if (this.oldPage) {
         this.$emit('currentChange', page)
         return
