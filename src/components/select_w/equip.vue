@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="display:inline-block">
     <!-- 机台下拉框 -->
     <el-select
       v-model="_equip_no"

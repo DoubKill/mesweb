@@ -799,20 +799,20 @@ export const asyncRoutes = [{
         }
       },
       {
-        path: 'warehousing-out-record',
-        component: () => import('@/views/equipment-management/spare-part/all-record'),
-        name: 'spare-part-warehousing-out-record',
-        meta: {
-          title: '备品备件出库履历',
-          permissionName: 'class_production_summary'
-        }
-      },
-      {
         path: 'warehousing-record',
         component: () => import('@/views/equipment-management/spare-part/all-record'),
         name: 'spare-part-warehousing-record',
         meta: {
           title: '备品备件入库履历',
+          permissionName: 'class_production_summary'
+        }
+      },
+      {
+        path: 'warehousing-out-record',
+        component: () => import('@/views/equipment-management/spare-part/all-record'),
+        name: 'spare-part-warehousing-out-record',
+        meta: {
+          title: '备品备件出库履历',
           permissionName: 'class_production_summary'
         }
       }
