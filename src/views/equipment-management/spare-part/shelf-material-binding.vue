@@ -59,7 +59,9 @@
               size="mini"
               type="danger"
               @click="handleDelete(scope.row)"
-            >{{ scope.row.delete_flag?'停用':'启用' }}
+            >
+              删除
+            <!-- {{ scope.row.delete_flag?'停用':'启用' }} -->
             </el-button>
           </el-button-group>
         </template>
@@ -283,8 +285,8 @@ export default {
       })
     },
     handleDelete: function(row) {
-      var str = row.delete_flag ? '停用' : '启用'
-      this.$confirm('此操作将' + str + row.name + ', 是否继续?', '提示', {
+      // var str = row.delete_flag ? '停用' : '启用'
+      this.$confirm('是否确定删除?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
