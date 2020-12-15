@@ -195,6 +195,7 @@ export default {
       if (val) {
         this.getParams.name = val.name
       } else { this.getParams.name = '' }
+      this.getParams.page = 1
       this.getTableData()
     },
     getTypeOptions() {
