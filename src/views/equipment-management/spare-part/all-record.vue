@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-loading="loading">
     <el-form :inline="true">
       <el-form-item label="时间:">
         <el-date-picker
@@ -48,7 +48,7 @@
       <el-table-column
         prop="type"
         label="类型"
-        width="60"
+        width="80"
       />
       <el-table-column
         prop="material_no"
@@ -75,8 +75,14 @@
       />
       <el-table-column
         v-if="currentRoute === 1"
+        prop="reason"
+        label="出库原因"
+        show-overflow-tooltip
+      />
+      <el-table-column
+        v-if="currentRoute === 1"
         prop="created_username"
-        label="出库人"
+        label="出库员"
       />
       <el-table-column
         v-if="currentRoute === 1"
@@ -85,8 +91,28 @@
       />
       <el-table-column
         v-if="currentRoute === 2"
-        prop="created_user"
+        prop="created_username"
         label="入库员"
+      />
+      <el-table-column
+        v-if="currentRoute === 3"
+        prop="src_qty"
+        label="变更前数量(件)"
+      />
+      <el-table-column
+        v-if="currentRoute === 3"
+        prop="dst_qty"
+        label="变更后数量(件)"
+      />
+      <el-table-column
+        v-if="currentRoute === 3"
+        prop="reason"
+        label="备注"
+      />
+      <el-table-column
+        v-if="currentRoute === 3"
+        prop="created_username"
+        label="操作人"
       />
     </el-table>
     <page
@@ -131,7 +157,8 @@ export default {
       },
       dataValue: [setDate(), setDate()],
       tableData: [],
-      total: 0
+      total: 0,
+      loading: false
     }
   },
   watch: {
@@ -159,7 +186,7 @@ export default {
       this.search.type = '入库'
     } else {
       this.currentRoute = 3
-      this.search.type = '盘点'
+      this.search.type = '数量变更'
     }
     if (this.isDialog) {
       Object.assign(this.search, this.dialogObj)
@@ -169,11 +196,13 @@ export default {
   methods: {
     async getList() {
       try {
+        this.loading = true
         const data = await spareInventoryLog('get', null, { params: this.search })
         this.tableData = data.results
         this.total = data.count
+        this.loading = false
       } catch (e) {
-        //
+        this.loading = false
       }
     },
     changeInventoryPosition(obj) {
