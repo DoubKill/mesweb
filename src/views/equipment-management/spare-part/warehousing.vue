@@ -111,6 +111,9 @@
             :created-is="true"
             :default-val="currentRow.location"
             :is-disabled="currentRow.id?true:false"
+            :is-binding="true"
+            :material-no="currentRow.materialNo"
+            :material-name="currentRow.b"
             @changSelect="dialogInventoryPosition"
           />
         </el-form-item>
@@ -209,6 +212,7 @@ export default {
       } else {
         this.currentRow = {}
         this.currentRow.warehouse_info = this.warehouse_info
+        this.currentRow.location = null
       }
       this.dialogVisible = true
     },
@@ -217,8 +221,10 @@ export default {
       this.dialogObj = row
     },
     handleClose(done) {
-      this.currentRow = {}
-      this.$refs.ruleForm.resetFields()
+      setTimeout(() => {
+        this.currentRow = {}
+        this.$refs.ruleForm.resetFields()
+      }, 300)
       this.dialogVisible = false
       if (done) {
         done()
@@ -248,13 +254,15 @@ export default {
     dialogMaterialFun(obj) {
       this.$set(this.currentRow, 'b', obj ? obj.material_name : '')
       this.$set(this.currentRow, 'material', obj ? obj.id : '')
+      this.$set(this.currentRow, 'materialNo', obj ? obj.material_no : '')
     },
     changWarehouse(obj) {
       this.warehouse_info = obj.id || null
       this.$set(this.currentRow, 'warehouse_info', obj ? obj.id : null)
     },
     dialogInventoryPosition(obj) {
-      this.$set(this.currentRow, 'location', obj ? obj.id : '')
+      console.log(obj)
+      this.$set(this.currentRow, 'location', obj ? obj.location : '')
     },
     currentChange(page, pageSize) {
       this.search.page = page

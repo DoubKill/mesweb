@@ -815,6 +815,15 @@ export const asyncRoutes = [{
           title: '备品备件出库履历',
           permissionName: 'class_production_summary'
         }
+      },
+      {
+        path: 'inventory-record',
+        component: () => import('@/views/equipment-management/spare-part/all-record'),
+        name: 'spare-part-inventory-record',
+        meta: {
+          title: '备品备件盘点履历',
+          permissionName: 'class_production_summary'
+        }
       }
     ]
   }
