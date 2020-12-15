@@ -1,0 +1,123 @@
+<template>
+  <div>
+    <!-- 备品备件库存管理 -->
+    <el-form :inline="true">
+
+      <el-form-item label="物料编码:">
+        <materialCodeSelect
+          :is-all-obj="true"
+          @changeSelect="changeMaterialCode"
+        />
+      </el-form-item>
+      <el-form-item label="物料名称:">
+        <materialCodeSelect
+          :is-all-obj="true"
+          label-name="material_name"
+          @changeSelect="changeMaterialName"
+        />
+      </el-form-item>
+
+    </el-form>
+    <el-table
+      :data="tableData"
+      border
+    >
+      <el-table-column
+        type="index"
+        width="50"
+        label="No"
+      />
+      <el-table-column
+        prop="material__material_no"
+        label="物料编码"
+      />
+      <el-table-column
+        prop="material__material_name"
+        label="物料名称"
+      />
+      <el-table-column
+        prop="sum_qty"
+        label="数量（件）"
+      >
+        <template slot-scope="scope">
+          <el-link type="primary" :underline="false" @click="view(scope.row)">{{ scope.row.sum_qty }}</el-link>
+        </template>
+      </el-table-column>
+    </el-table>
+    <page
+      :old-page="false"
+      :total="total"
+      :current-page="search.page"
+      @currentChange="currentChange"
+    />
+    <el-dialog
+      title="备品备件库位库存"
+      :visible.sync="dialogVisibleResume"
+      width="90%"
+    >
+      <locationManage :is-dialog="true" :show="dialogVisibleResume" :dialog-obj="dialogObj" />
+    </el-dialog>
+  </div>
+</template>
+
+<script>
+import materialCodeSelect from '@/components/materialCodeSelect/index'
+import page from '@/components/page'
+import { getCountSpareInventory } from '@/api/inventory-manage'
+import locationManage from './location-manage.vue'
+
+export default {
+  components: { page, materialCodeSelect, locationManage },
+  data() {
+    return {
+      search: {
+        page: 1,
+        page_size: 10
+      },
+      tableData: [],
+      dialogVisibleResume: false,
+      dialogObj: {},
+      total: 0
+    }
+  },
+  created() {
+    this.getList()
+  },
+  methods: {
+    async getList() {
+      try {
+        const data = await getCountSpareInventory(this.search)
+        this.tableData = data.results
+        this.total = data.count
+      } catch (e) {
+        //
+      }
+    },
+    changeMaterialCode(obj) {
+      this.search.material_no = obj ? obj.material_no : null
+      this.search.page = 1
+      console.log(this.search)
+      this.getList()
+    },
+    changeMaterialName(obj) {
+      this.search.material_name = obj ? obj.material_name : null
+      this.search.page = 1
+      console.log(this.search)
+      this.getList()
+    },
+    view(row) {
+      this.dialogVisibleResume = true
+      this.dialogObj = row
+    },
+    currentChange(page, pageSize) {
+      this.search.page = page
+      this.search.page_size = pageSize
+      this.getList()
+    }
+  }
+}
+</script>
+
+<style>
+
+</style>

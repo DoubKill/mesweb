@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div>
     <!-- 货架物料绑定合格管理 -->
     <el-form :inline="true">
       <el-form-item label="物料编码">

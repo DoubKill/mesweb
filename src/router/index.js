@@ -824,6 +824,24 @@ export const asyncRoutes = [{
           title: '备品备件盘点履历',
           permissionName: 'class_production_summary'
         }
+      },
+      {
+        path: 'location-manage',
+        component: () => import('@/views/equipment-management/spare-part/location-manage'),
+        name: 'spare-part-location-manage',
+        meta: {
+          title: '备品备件库位管理',
+          permissionName: 'class_production_summary'
+        }
+      },
+      {
+        path: 'inventory-manage',
+        component: () => import('@/views/equipment-management/spare-part/inventory-manage'),
+        name: 'spare-part-inventory-manage',
+        meta: {
+          title: '备品备件库存管理',
+          permissionName: 'class_production_summary'
+        }
       }
     ]
   }
