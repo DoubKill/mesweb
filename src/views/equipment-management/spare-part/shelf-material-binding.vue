@@ -295,8 +295,9 @@ export default {
           .then(response => {
             this.$message({
               type: 'success',
-              message: '操作成功!'
+              message: '删除成功!'
             })
+            this.getParams.page = 1
             this.getTableData()
           })
       })
