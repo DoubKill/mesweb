@@ -95,6 +95,11 @@
         label="入库员"
       />
       <el-table-column
+        v-if="currentRoute !== 3"
+        prop="dst_qty"
+        label="当前数量"
+      />
+      <el-table-column
         v-if="currentRoute === 3"
         prop="src_qty"
         label="变更前数量(件)"

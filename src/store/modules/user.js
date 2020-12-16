@@ -105,6 +105,7 @@ const actions = {
       commit('RESET_STATE', '')
       commit('SET_PERMISSION', '')
       commit('SET_NAME', '')
+      localStorage.clear()
       resolve()
       // }).catch(error => {
       //   reject(error)
