@@ -72,3 +72,14 @@ export function getEquip(params) {
     params
   })
 }
+
+export function getProcesses() {
+  return request({
+    url: API.GlobalCodesUrl,
+    method: 'get',
+    params: {
+      all: 1,
+      class_name: '工序'
+    }
+  })
+}

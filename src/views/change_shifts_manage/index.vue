@@ -22,6 +22,11 @@
         label="倒班名"
       />
       <el-table-column
+        prop="work_procedure_name"
+        label="工序"
+        width="60px"
+      />
+      <el-table-column
         prop="period"
         label="周期天数"
         width="60px"
@@ -129,6 +134,14 @@
           />
         </el-form-item>
 
+        <el-form-item
+          label="工序"
+          :label-width="formLabelWidth"
+          prop="work_procedure"
+        >
+          <process-select v-model="changeShiftsManageForm.work_procedure" />
+        </el-form-item>
+
         <div
           v-for="(classesdetail, index) in changeShiftsManageForm.classesdetail_set"
           :key="index"
@@ -216,6 +229,13 @@
             @blur="period_change(changeShiftsManageForm, changeShiftsManageForm.period)"
           />
         </el-form-item>
+        <el-form-item
+          label="工序"
+          :label-width="formLabelWidth"
+          prop="work_procedure"
+        >
+          <process-select v-model="changeShiftsManageForm.work_procedure" />
+        </el-form-item>
         <div
           v-for="(classesdetail, index) in changeShiftsManageForm.classesdetail_set"
           :key="index"
@@ -264,10 +284,11 @@
 import dayjs from 'dayjs'
 import { globalCodesUrl, workSchedulesUrl } from '@/api/base_w'
 import pagination from '@/components/page'
+import processSelect from '@/components/ProcessSelect'
 import commonVal from '@/utils/common'
 import { mapGetters } from 'vuex'
 export default {
-  components: { pagination },
+  components: { pagination, processSelect },
   data() {
     return {
       loading: true,
@@ -284,6 +305,7 @@ export default {
         schedule_name: '',
         description: '',
         period: 0,
+        work_procedure: null,
         classesdetail_set: [{
           start_time: null,
           end_time: null,
@@ -307,6 +329,9 @@ export default {
         schedule_name: [
           { required: true, message: '请输入倒班名', trigger: 'blur' },
           { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
+        ],
+        work_procedure: [
+          { required: true, message: '请输选择工序', trigger: 'change' }
         ]
       }
     }
@@ -354,6 +379,7 @@ export default {
         schedule_name: '',
         description: '',
         period: 0,
+        work_procedure: null,
         classesdetail_set: []
       }
       for (var i = 0; i < this.classes.length; ++i) {
