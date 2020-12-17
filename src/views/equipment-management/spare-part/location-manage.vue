@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="location-manage">
     <!-- 备品备件库位管理 -->
     <el-form :inline="true">
       <div v-if="!isDialog">
@@ -24,6 +24,7 @@
     <el-table
       :data="tableData"
       border
+      :row-class-name="tableRowClassName"
     >
       <el-table-column
         type="index"
@@ -45,6 +46,14 @@
       <el-table-column
         prop="qty"
         label="数量（件）"
+      />
+      <el-table-column
+        prop="unit_count"
+        label="单价"
+      />
+      <el-table-column
+        prop="total_count"
+        label="总价"
       />
     </el-table>
     <page
@@ -131,6 +140,12 @@ export default {
       this.search.page = 1
       this.getList()
     },
+    tableRowClassName({ row, rowIndex }) {
+      if (row.bound === '-') {
+        return 'warning-row'
+      }
+      return ''
+    },
     currentChange(page, pageSize) {
       this.search.page = page
       this.search.page_size = pageSize
@@ -140,6 +155,13 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang="scss">
+.location-manage{
+  .warning-row{
+    color:red;
+  }
+  .max-warning-row{
+    color:green;
+  }
+}
 </style>

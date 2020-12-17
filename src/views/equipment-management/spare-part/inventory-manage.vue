@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="inventory-manage">
     <!-- 备品备件库存管理 -->
     <el-form :inline="true">
 
@@ -21,6 +21,7 @@
     <el-table
       :data="tableData"
       border
+      :row-class-name="tableRowClassName"
     >
       <el-table-column
         type="index"
@@ -43,6 +44,14 @@
           <el-link type="primary" :underline="false" @click="view(scope.row)">{{ scope.row.sum_qty }}</el-link>
         </template>
       </el-table-column>
+      <el-table-column
+        prop="unit_count"
+        label="单价"
+      />
+      <el-table-column
+        prop="total_count"
+        label="总价"
+      />
     </el-table>
     <page
       :old-page="false"
@@ -109,6 +118,12 @@ export default {
       this.dialogVisibleResume = true
       this.dialogObj = row
     },
+    tableRowClassName({ row, rowIndex }) {
+      if (row.bound === '-') {
+        return 'warning-row'
+      }
+      return ''
+    },
     currentChange(page, pageSize) {
       this.search.page = page
       this.search.page_size = pageSize
@@ -118,6 +133,13 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang="scss">
+.inventory-manage{
+  .warning-row{
+    color:red;
+  }
+  .max-warning-row{
+    color:green;
+  }
+}
 </style>
