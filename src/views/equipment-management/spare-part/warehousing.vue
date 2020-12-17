@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-loading="loading" class="warehousing">
     <!-- 备品备件入库管理 -->
     <el-form :inline="true">
       <el-form-item label="物料编码:">
@@ -25,6 +25,7 @@
     <el-table
       :data="tableData"
       border
+      :row-class-name="tableRowClassName"
     >
       <el-table-column
         type="index"
@@ -108,6 +109,7 @@
         </el-form-item>
         <el-form-item label="库存位">
           <inventoryPosition
+            ref="inventoryPosition"
             :created-is="true"
             :default-val="currentRow.location"
             :is-disabled="currentRow.id?true:false"
@@ -163,6 +165,7 @@ export default {
       dialogObj: {},
       total: 0,
       warehouse_info: '',
+      loading: false,
       rules: {
         material: [
           { required: true, message: '请输入物料编码', trigger: 'change' }
@@ -182,12 +185,14 @@ export default {
   methods: {
     async getList() {
       try {
+        this.loading = true
         const data = await spareInventory('get', null, { params: this.search })
         this.tableData = data.results
         this.total = data.count
       } catch (e) {
         //
       }
+      this.loading = false
     },
     changeInventoryPosition(obj) {
       this.search.location_name = obj ? obj.name : null
@@ -255,24 +260,39 @@ export default {
       this.$set(this.currentRow, 'b', obj ? obj.material_name : '')
       this.$set(this.currentRow, 'material', obj ? obj.id : '')
       this.$set(this.currentRow, 'materialNo', obj ? obj.material_no : '')
+      this.$refs.inventoryPosition.value = null
+      this.currentRow.location = null
     },
     changWarehouse(obj) {
       this.warehouse_info = obj.id || null
       this.$set(this.currentRow, 'warehouse_info', obj ? obj.id : null)
     },
     dialogInventoryPosition(obj) {
-      console.log(obj)
       this.$set(this.currentRow, 'location', obj ? obj.location : '')
     },
     currentChange(page, pageSize) {
       this.search.page = page
       this.search.page_size = pageSize
       this.getList()
+    },
+    tableRowClassName({ row, rowIndex }) {
+      if (row.bound === '-') {
+        return 'warning-row'
+      }
+      return ''
     }
   }
 }
 </script>
 
-<style>
+<style lang="scss">
+.warehousing{
+  .warning-row{
+    color:red;
+  }
+  .max-warning-row{
+    color:green;
+  }
+}
 
 </style>

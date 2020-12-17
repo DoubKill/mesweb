@@ -1,5 +1,5 @@
 <template>
-  <div class="warehouse-out">
+  <div v-loading="loading" class="warehouse-out">
     <!-- 备品备件盘点管理 -->
     <el-form :inline="true">
       <el-form-item label="物料编码:">
@@ -25,6 +25,7 @@
     <el-table
       :data="tableData"
       border
+      :row-class-name="tableRowClassName"
     >
       <el-table-column
         type="index"
@@ -49,6 +50,7 @@
       />
       <el-table-column
         label="操作"
+        width="150"
       >
         <template slot-scope="scope">
           <el-button-group>
@@ -156,6 +158,7 @@ export default {
       dialogObj: {},
       total: 0,
       restaurants: [],
+      loading: false,
       rules: {
         material: [
           { required: true, message: '请输入物料编码', trigger: 'change' }
@@ -175,12 +178,14 @@ export default {
   methods: {
     async getList() {
       try {
+        this.loading = true
         const data = await spareInventory('get', null, { params: this.search })
         this.tableData = data.results
         this.total = data.count
       } catch (e) {
         //
       }
+      this.loading = false
     },
     changeInventoryPosition(obj) {
       this.search.location_name = obj ? obj.name : null
@@ -246,6 +251,12 @@ export default {
       this.search.page_size = pageSize
       this.getList()
     },
+    tableRowClassName({ row, rowIndex }) {
+      if (row.bound === '-') {
+        return 'warning-row'
+      }
+      return ''
+    },
     openInfo() {
       const h = this.$createElement
       this.$msgbox({
@@ -270,5 +281,11 @@ export default {
  .el-pagination .el-select{
     width:auto;
  }
+   .warning-row{
+    color:red;
+  }
+  .max-warning-row{
+    color:green;
+  }
 }
 </style>

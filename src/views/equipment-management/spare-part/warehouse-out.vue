@@ -1,5 +1,5 @@
 <template>
-  <div class="warehouse-out">
+  <div v-loading="loading" class="warehouse-out">
     <!-- 备品备件出库管理 -->
     <el-form :inline="true">
       <el-form-item label="物料编码:">
@@ -25,6 +25,7 @@
     <el-table
       :data="tableData"
       border
+      :row-class-name="tableRowClassName"
     >
       <el-table-column
         type="index"
@@ -214,6 +215,7 @@ export default {
       warehouse_info: '',
       restaurants: [],
       positionList: [],
+      loading: false,
       rules: {
         material: [
           { required: true, message: '请输入物料编码', trigger: 'change' }
@@ -250,12 +252,14 @@ export default {
   methods: {
     async getList() {
       try {
+        this.loading = true
         const data = await spareInventory('get', null, { params: this.search })
         this.tableData = data.results
         this.total = data.count
       } catch (e) {
         //
       }
+      this.loading = false
     },
     async getListReason() {
       try {
@@ -360,6 +364,12 @@ export default {
     },
     purposeChangeFun() {
       this.$refs.ruleForm.clearValidate()
+    },
+    tableRowClassName({ row, rowIndex }) {
+      if (row.bound === '-') {
+        return 'warning-row'
+      }
+      return ''
     }
   }
 }
@@ -373,5 +383,11 @@ export default {
  .el-pagination .el-select{
     width:auto;
  }
+   .warning-row{
+    color:red;
+  }
+  .max-warning-row{
+    color:green;
+  }
 }
 </style>
