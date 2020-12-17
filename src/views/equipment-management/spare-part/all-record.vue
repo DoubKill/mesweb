@@ -9,7 +9,7 @@
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           value-format="yyyy-MM-dd"
-          :clearable="false"
+          :clearable="true"
           @change="setDataValue"
         />
       </el-form-item>
@@ -30,9 +30,16 @@
         <el-form-item label="库存位:">
           <inventoryPosition @changSelect="changeInventoryPosition" />
         </el-form-item>
+        <el-form-item>
+          <!-- // 1出库 2入库 3盘点 -->
+          <el-button v-if="currentRoute === 1" @click="exportTable('备品备件出库履历')">导出表格</el-button>
+          <el-button v-if="currentRoute === 2" @click="exportTable('备品备件入库履历')">导出表格</el-button>
+          <el-button v-if="currentRoute === 3" @click="exportTable('备品备件盘点履历')">导出表格</el-button>
+        </el-form-item>
       </div>
     </el-form>
     <el-table
+      id="out-table"
       :data="tableData"
       border
     >
@@ -44,6 +51,7 @@
       <el-table-column
         prop="fin_time"
         label="时间"
+        width="90"
       />
       <el-table-column
         prop="type"
@@ -63,11 +71,6 @@
         label="库存位"
       />
       <el-table-column
-        prop="qty"
-        label="数量(件)"
-        width="90"
-      />
-      <el-table-column
         v-if="currentRoute === 1"
         prop="purpose"
         label="用途"
@@ -78,6 +81,28 @@
         prop="reason"
         label="出库原因"
         show-overflow-tooltip
+      />
+      <el-table-column
+        v-if="currentRoute !== 3"
+        prop="qty"
+        label="数量(件)"
+        width="80"
+      />
+      <el-table-column
+        v-if="currentRoute !== 3"
+        prop="dst_qty"
+        label="剩余数量(件)"
+        width="100"
+      />
+      <el-table-column
+        v-if="currentRoute === 3"
+        prop="src_qty"
+        label="变更前数量(件)"
+      />
+      <el-table-column
+        v-if="currentRoute === 3"
+        prop="dst_qty"
+        label="变更后数量(件)"
       />
       <el-table-column
         v-if="currentRoute === 1"
@@ -93,21 +118,6 @@
         v-if="currentRoute === 2"
         prop="created_username"
         label="入库员"
-      />
-      <el-table-column
-        v-if="currentRoute !== 3"
-        prop="dst_qty"
-        label="当前数量"
-      />
-      <el-table-column
-        v-if="currentRoute === 3"
-        prop="src_qty"
-        label="变更前数量(件)"
-      />
-      <el-table-column
-        v-if="currentRoute === 3"
-        prop="dst_qty"
-        label="变更后数量(件)"
       />
       <el-table-column
         v-if="currentRoute === 3"
@@ -133,7 +143,7 @@
 import inventoryPosition from '@/components/select_w/inventoryPosition'
 import materialCodeSelect from '@/components/materialCodeSelect/index'
 import page from '@/components/page'
-import { setDate } from '@/utils/index'
+import { setDate, exportExcel } from '@/utils/index'
 import { spareInventoryLog } from '@/api/base_w_two'
 export default {
   components: { page, inventoryPosition, materialCodeSelect },
@@ -235,6 +245,9 @@ export default {
       this.search.page = page
       this.search.page_size = pageSize
       this.getList()
+    },
+    exportTable(val) {
+      exportExcel(val)
     }
   }
 }

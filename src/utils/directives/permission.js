@@ -15,12 +15,6 @@ function checkPermission(el, binding) {
       })
 
       if (!hasPermission) {
-        // if ((binding.value)[2]) {
-        //   if ((binding.value)[2].$el) {
-        //     const bool = (binding.value)[2].$el
-        //     console.log((binding.value)[2].$el.parentNode, 666)
-        //   }
-        // }
         el.parentNode && el.parentNode.removeChild(el)
       }
     }

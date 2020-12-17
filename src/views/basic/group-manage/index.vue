@@ -34,7 +34,7 @@
       <el-form-item
         style="float: right"
       >
-        <el-button v-permission="['groupextension','add']" @click="showCreateGroupDialog">新建</el-button>
+        <el-button v-if="checkPermission(['groupextension','add'])" @click="showCreateGroupDialog">新建</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -160,6 +160,7 @@
 import { roles } from '@/api/roles-manage'
 import page from '@/components/page'
 import transferLimit from '@/components/select_w/transferLimit'
+import { checkPermission } from '@/utils/index'
 
 export default {
   components: { page, transferLimit },
@@ -206,6 +207,7 @@ export default {
     this.currentChange()
   },
   methods: {
+    checkPermission,
     currentChange() {
       this.loadingTable = true
       //   this.tableData = []

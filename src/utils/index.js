@@ -2,6 +2,7 @@
  * Created by PanJiaChen on 16/11/18.
  * 公用方法
  */
+import store from '@/store'
 
 /**
  * Parse the time to string
@@ -164,3 +165,58 @@ export function deepClone(source) {
   })
   return targetObj
 }
+
+/**
+ * @param {Array} value
+ * @returns {Boolean}
+ * @example see @/views/permission/directive.vue
+ */
+export function checkPermission(value) {
+  if (value && value instanceof Array && value.length > 0) {
+    const permissionObj = store.getters && store.getters.permission
+    const permissionArr = permissionObj[value[0]]
+    if (!permissionArr || permissionArr.length === 0) {
+      return
+    }
+    const hasPermission = permissionArr.some(D => {
+      return D === value[1]
+    })
+
+    return hasPermission
+  } else {
+    console.error(`need roles! Like v-permission="['admin','editor']"`)
+    return false
+  }
+}
+
+import FileSaver from 'file-saver'
+import XLSX from 'xlsx'
+/**
+ *
+ * @param {*文件名称} value
+ */
+export function exportExcel(value) {
+  /* 从表生成工作簿对象 */
+  var wb = XLSX.utils.table_to_book(document.querySelector('#out-table'), { raw: true })
+  /* 获取二进制字符串作为输出 */
+  var wbout = XLSX.write(wb, {
+    bookType: 'xlsx',
+    bookSST: true,
+    type: 'array'
+  })
+  try {
+    FileSaver.saveAs(
+      // Blob 对象表示一个不可变、原始数据的类文件对象。
+      // Blob 表示的不一定是JavaScript原生格式的数据。
+      // File 接口基于Blob，继承了 blob 的功能并将其扩展使其支持用户系统上的文件。
+      // 返回一个新创建的 Blob 对象，其内容由参数中给定的数组串联组成。
+      new Blob([wbout], { type: 'application/octet-stream' }),
+      // 设置导出文件名称
+      value + '.xlsx'
+    )
+  } catch (e) {
+    if (typeof console !== 'undefined') console.log(e, wbout)
+  }
+  return wbout
+}
+
