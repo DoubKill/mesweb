@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <!-- 位置站点管理 -->
+    <!-- 库存位管理 -->
     <el-form :inline="true">
       <el-form-item label="类型">
         <el-select
@@ -45,7 +45,7 @@
       />
       <el-table-column
         prop="name"
-        label="位置点"
+        label="库存位"
       />
       <el-table-column label="操作">
         <template slot-scope="scope">
