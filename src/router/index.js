@@ -130,15 +130,6 @@ export const asyncRoutes = [{
     }
   },
   {
-    path: 'location-site',
-    component: () => import('@/views/equipment-management/spare-part/location-site'),
-    name: 'location-site',
-    meta: {
-      title: '位置站点管理',
-      permissionName: 'class_production_summary'
-    }
-  },
-  {
     path: '/factory',
     redirect: '/factory/category/manage',
     component: {
@@ -383,7 +374,7 @@ export const asyncRoutes = [{
       component: () => import('@/views/rubber_repertory_manage/index'),
       name: 'RubberRepertoryManage',
       meta: {
-        title: '胶料库存管理',
+        title: '混炼胶库存',
         permissionName: 'product_inventory'
       }
     },
@@ -401,7 +392,7 @@ export const asyncRoutes = [{
       component: () => import('@/views/inventory/material-inventory-manage.vue'),
       name: 'MaterialInventoryManage',
       meta: {
-        title: '物料库存量管理',
+        title: '物料库位信息',
         permissionName: 'goods'
       }
     },
@@ -762,6 +753,15 @@ export const asyncRoutes = [{
       title: '备品备件管理'
     },
     children: [
+      {
+        path: 'location-site',
+        component: () => import('@/views/equipment-management/spare-part/location-site'),
+        name: 'location-site',
+        meta: {
+          title: '库存位管理',
+          permissionName: 'class_production_summary'
+        }
+      },
       {
         path: 'shelf-material-binding',
         component: () => import('@/views/equipment-management/spare-part/shelf-material-binding'),
