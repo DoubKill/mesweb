@@ -18,7 +18,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="位置点">
+      <el-form-item label="库存位">
         <inventoryPosition @changSelect="changSelect" />
       </el-form-item>
       <el-form-item style="float: right">
