@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 货架物料绑定合格管理 -->
+    <!-- 货架物料绑定管理 -->
     <el-form :inline="true">
       <el-form-item label="物料编码">
         <materialCodeSelect
@@ -103,6 +103,7 @@
         >
           <inventoryPosition
             :created-is="true"
+            :is-enable="true"
             :default-val="bindingForm.location"
             @changSelect="dialogInventoryPosition"
           />
@@ -149,6 +150,7 @@
         >
           <inventoryPosition
             :created-is="true"
+            :is-enable="true"
             :default-val="bindingForm.location"
             @changSelect="dialogInventoryPosition"
           />
