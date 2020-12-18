@@ -26,9 +26,9 @@
       </el-form-item> -->
       <el-form-item label="设备编码:">
         <equip-select
-          :is-created="true"
           :equip_no_props.sync="search.equip_no"
-          @changeSearch="changeDate"
+          :is-created="true"
+          @changeSearch="equipChanged"
         />
       </el-form-item>
       <el-form-item label="时间单位:">
@@ -164,6 +164,11 @@ export default {
       this.getList()
     },
     changeDate(date) {
+      this.getList()
+      this.search.page = 1
+    },
+    equipChanged(val) {
+      this.search.equip_no = val
       this.getList()
       this.search.page = 1
     }
