@@ -13,6 +13,7 @@
         <el-date-picker
           v-model="performanceDate"
           type="date"
+          :clearable="false"
           placeholder="选择日期"
           format="yyyy-MM-dd"
           value-format="yyyy-MM-dd"
@@ -59,7 +60,7 @@
       />
       <el-table-column
         prop="product_no"
-        width="180px"
+        width="190"
         label="胶料代码"
       >
         <template slot-scope="scope">
@@ -68,6 +69,7 @@
             v-text="scope.row.product_no"
           />
           <el-button
+            v-if="scope.row.product_no != '合计'"
             icon="el-icon-search"
             type="text"
             size="mini"
@@ -550,7 +552,50 @@ export default {
       this.tableData = []
       getProductActual(this.getParams).then(response => {
         // this.total = response.count
-        this.tableData = response.data
+        var eq_sum = {
+          equip_no: '',
+          product_no: '合计',
+          plan_trains: 0,
+          actual_trains: 0,
+          classes_data: [
+            { plan_trains: 0, actual_trains: 0 },
+            { plan_trains: 0, actual_trains: 0 },
+            { plan_trains: 0, actual_trains: 0 }
+          ]
+        }
+        response.data.forEach(item => {
+          if (eq_sum.equip_no === '') {
+            eq_sum.equip_no = item.equip_no
+          } else if (eq_sum.equip_no !== item.equip_no) {
+            this.tableData.push(eq_sum)
+            eq_sum = {
+              equip_no: '',
+              product_no: '合计',
+              plan_trains: 0,
+              actual_trains: 0,
+              classes_data: [
+                { plan_trains: 0, actual_trains: 0 },
+                { plan_trains: 0, actual_trains: 0 },
+                { plan_trains: 0, actual_trains: 0 }
+              ]
+            }
+            eq_sum.equip_no = item.equip_no
+          }
+          eq_sum.plan_trains = eq_sum.plan_trains + item.plan_trains
+          eq_sum.actual_trains = eq_sum.actual_trains + item.actual_trains
+          eq_sum.classes_data[0].plan_trains = eq_sum.classes_data[0].plan_trains + item.classes_data[0].plan_trains
+          eq_sum.classes_data[0].actual_trains = eq_sum.classes_data[0].actual_trains + item.classes_data[0].actual_trains
+          eq_sum.classes_data[1].plan_trains = eq_sum.classes_data[1].plan_trains + item.classes_data[1].plan_trains
+          eq_sum.classes_data[1].actual_trains = eq_sum.classes_data[1].actual_trains + item.classes_data[1].actual_trains
+          eq_sum.classes_data[2].plan_trains = eq_sum.classes_data[2].plan_trains + item.classes_data[2].plan_trains
+          eq_sum.classes_data[2].actual_trains = eq_sum.classes_data[2].actual_trains + item.classes_data[2].actual_trains
+          this.tableData.push(item)
+        })
+        this.tableData.push(eq_sum)
+        if ((response.data).length === 0) {
+          this.tableData = response.data
+        }
+        // this.tableData = response.data
       })
     },
     beforeGetData() {
