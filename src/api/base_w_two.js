@@ -43,10 +43,17 @@ export function outStorage(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
-export function inventoryUrl(method, id, data = {}) {
-  // 盘点
+export function sparepartsSpareType(method, id, data = {}) {
   const obj = {
-    url: (id ? API.SpareInventory + id + '/' : API.SpareInventory) + 'check_storage/',
+    url: id ? API.SparepartsSpareType + id + '/' : API.SparepartsSpareType,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function sparepartsSpare(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SparepartsSpare + id + '/' : API.SparepartsSpare,
     method: method
   }
   Object.assign(obj, data)

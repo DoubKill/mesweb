@@ -207,14 +207,18 @@ export default {
   CurveInformationUrl: '/api/v1/production/curve-information-list/',
   AlarmLogList: '/api/v1/production/alarm_log-list/',
 
+  // 备品备件物料类型
+  SparepartsSpareType: '/api/v1/spareparts/spare-type/',
+  // 备品备件物料编码
+  SparepartsSpare: '/api/v1/spareparts/spare/',
   // 库存位
-  LocationNameList: '/api/v1/basics/location/name_list/',
+  LocationNameList: '/api/v1/spareparts/spare-location/name_list/',
   // 入库管理
   SpareInventory: '/api/v1/spareparts/spare-inventory/',
   // 位置点
   Location: '/api/v1/basics/location/',
   // 货架物料绑定
-  MaterialLocationBinding: '/api/v1/spareparts/material-location-binding/',
+  MaterialLocationBinding: '/api/v1/spareparts/spare-location-binding/',
   SpareInventoryLog: '/api/v1/spareparts/spare-inventory-log/',
   // 备品备件库存
   CountSpareInventory: '/api/v1/spareparts/spare-inventory/count_spare_inventory/'

@@ -1,5 +1,6 @@
 <template>
   <div v-loading="loading" class="app-container outbound_manage">
+    <!-- 胶片库 -->
     <el-form :inline="true" label-width="80px">
       <el-form-item label="开始日期">
         <el-date-picker
@@ -47,20 +48,23 @@
     <el-table
       border
       :data="tableData"
+      size="mini"
     >
-      <el-table-column label="No" type="index" align="center" width="40" />
+      <el-table-column label="No" type="index" align="center" width="30" />
       <el-table-column label="仓库名称" align="center" prop="name" />
-      <el-table-column label="出库类型" align="center" prop="inventory_type" width="80" />
+      <el-table-column label="出库类型" align="center" prop="inventory_type" width="65" />
       <el-table-column label="出库单号" align="center" prop="order_no" />
       <el-table-column label="托盘号" align="center" prop="pallet_no" />
       <el-table-column label="物料编码" align="center" prop="material_no" />
-      <el-table-column label="出库原因" align="center" prop="inventory_reason" width="80" />
-      <el-table-column label="需求数量" align="center" prop="need_qty" width="60" />
-      <el-table-column label="出库数量" align="center" prop="actual.actual_qty" />
+      <el-table-column label="出库原因" align="center" prop="inventory_reason" width="50" />
+      <el-table-column label="需求数量" align="center" prop="need_qty" width="50" />
+      <el-table-column label="出库数量" align="center" prop="actual.actual_qty" width="50" />
       <el-table-column label="实际出库重量" align="center" prop="actual.actual_wegit" />
-      <el-table-column label="单位" align="center" prop="unit" width="60" />
+      <el-table-column label="单位" align="center" prop="unit" width="40" />
       <el-table-column label="需求重量" align="center" prop="need_weight" />
-      <el-table-column label="出库位置" align="center" prop="location" />
+      <el-table-column label="出库位置" align="center" prop="location" width="40" />
+      <!-- 改动 -->
+      <!-- <el-table-column label="目的地" align="center" prop="location" /> -->
       <el-table-column label="操作" align="center" width="220">
         <template v-if="scope.row.status === 4" slot-scope="scope">
           <el-button-group>
@@ -70,7 +74,7 @@
           </el-button-group>
         </template>
       </el-table-column>
-      <el-table-column label="订单状态" align="center" prop="">
+      <el-table-column label="订单状态" align="center" prop="" width="60">
         <template slot-scope="{row}">
           {{ setOperation(row.status) }}
         </template>

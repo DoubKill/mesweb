@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div v-loading="loading">
     <!-- 发货计划管理 -->
     <el-form :inline="true">
       <el-form-item label="时间">
@@ -11,7 +11,7 @@
           @change="changeList"
         />
       </el-form-item>
-      <el-form-item label="订单状态">
+      <el-form-item v-if="!isDialog" label="订单状态">
         <el-select
           v-model="getParams.status"
           clearable
@@ -26,7 +26,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="物料编码">
+      <el-form-item v-if="!isDialog" label="物料编码">
         <material-code-select @changeSelect="materialCodeFun" />
       </el-form-item>
       <el-form-item label="发货类型">
@@ -35,7 +35,7 @@
       <el-form-item label="目的地">
         <destinationSelect @changeSelect="destinationSelectFun" />
       </el-form-item>
-      <el-form-item style="float: right">
+      <el-form-item v-if="!isDialog" style="float: right">
         <el-button
           v-permission="['delivery_plan', 'add']"
           @click="showCreateDialog"
@@ -43,12 +43,20 @@
       </el-form-item>
     </el-form>
     <el-table
+      ref="multipleTable"
       border
-      fit
       :cell-style="cellStyle"
       style="width: 100%"
       :data="tableData"
+      :row-key="getRowKeys"
+      @selection-change="handleSelectionChange"
     >
+      <el-table-column
+        v-if="isDialog"
+        type="selection"
+        width="40"
+        :reserve-selection="true"
+      />
       <el-table-column label="No" type="index" align="center" />
       <el-table-column label="目的地" align="center" prop="dispatch_location_name" />
       <el-table-column label="发货单号" align="center" prop="order_no" />
@@ -59,7 +67,7 @@
       <el-table-column label="发货重量" align="center" prop="need_weight" />
       <el-table-column label="已发重量" align="center" prop="actual_weight" />
       <el-table-column label="订单状态" align="center" prop="status_name" />
-      <el-table-column label="操作" width="134" align="center">
+      <el-table-column v-if="!isDialog" label="操作" width="134" align="center">
         <template slot-scope="scope">
           <el-button-group>
             <el-button
@@ -81,7 +89,7 @@
       </el-table-column>
       <el-table-column label="发起人" align="center" prop="dispatch_user" />
       <el-table-column label="发起时间" align="center" prop="start_time" />
-      <el-table-column label="完成时间" align="center" prop="fin_time" />
+      <el-table-column v-if="!isDialog" label="完成时间" align="center" prop="fin_time" />
     </el-table>
     <page
       :total="total"
@@ -191,6 +199,26 @@ import deliverTypeSelect from '@/components/select_w/deliverTypeSelect'
 import destinationSelect from '@/components/select_w/destinationSelect'
 export default {
   components: { page, MaterialCodeSelect, deliverTypeSelect, destinationSelect },
+  props: {
+    isDialog: {
+      type: Boolean,
+      default: false
+    },
+    materialNo: { // 物料编码No
+      type: String,
+      default: null
+    },
+    show: {
+      type: Boolean,
+      default: false
+    },
+    defalutVal: {
+      type: Array,
+      default() {
+        return []
+      }
+    }
+  },
   data() {
     return {
       tableData: [],
@@ -212,17 +240,50 @@ export default {
         need_weight: [{ required: true, message: '不能为空', trigger: 'blur' },
           { type: 'number', message: '请输入合法数字', trigger: 'blur' }]
       },
-      total: 1
+      total: 1,
+      handleSelection: [],
+      loading: false
     }
   },
+  watch: {
+    show(val) {
+      if (val) {
+        this.$refs.multipleTable.clearSelection()
+        this.getParams.page = 1
+        this.getParams.material_no = this.materialNo || null
+        this.getTableData()
+      }
+    }
+  },
+  updated() {
+  },
   created() {
+    this.getParams.material_no = this.materialNo || null
     this.getTableData()
   },
   methods: {
-    getTableData() {
-      getDispatchPlan(this.getParams).then(response => {
+    async getTableData() {
+      this.loading = true
+      await getDispatchPlan(this.getParams).then(response => {
+        this.loading = false
         this.tableData = response.results
         this.total = response.count
+        if (this.isDialog) {
+          this.tableData = this.tableData.filter(D => [4, 2].includes(D.status))
+        }
+
+        if (this.tableData.length > 0) {
+          if (this.defalutVal && this.defalutVal.length > 0) {
+            this.tableData.forEach((D, i) => {
+              if (this.defalutVal.findIndex(data => data.id === D.id) > -1) {
+                // 用列表的id查找当前选中的列
+                this.$refs.multipleTable.toggleRowSelection(D)
+              }
+            })
+          }
+        }
+      }).catch(() => {
+        this.loading = false
       })
     },
     changeList() {
@@ -340,6 +401,15 @@ export default {
     currentChange(page) {
       this.getParams.page = page
       this.getTableData()
+    },
+    handleSelectionChange(arr) {
+      this.handleSelection = arr
+    },
+    clearReceiveSelect() {
+      this.$refs.multipleTable.clearSelection()
+    },
+    getRowKeys(row) {
+      return row.id
     },
     cellStyle({ row, column, rowIndex, columnIndex }) {
       var cc = column.property

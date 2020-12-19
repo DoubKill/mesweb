@@ -141,7 +141,8 @@
 
 <script>
 import inventoryPosition from '@/components/select_w/inventoryPosition'
-import materialCodeSelect from '@/components/materialCodeSelect/index'
+// import materialCodeSelect from '@/components/materialCodeSelect/index'
+import materialCodeSelect from '@/components/select_w/sparePartsMCodeSelect'
 import page from '@/components/page'
 import { setDate, exportExcel } from '@/utils/index'
 import { spareInventoryLog } from '@/api/base_w_two'

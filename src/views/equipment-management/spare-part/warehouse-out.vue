@@ -190,7 +190,8 @@
 
 <script>
 import inventoryPosition from '@/components/select_w/inventoryPosition'
-import materialCodeSelect from '@/components/materialCodeSelect/index'
+// import materialCodeSelect from '@/components/materialCodeSelect/index'
+import materialCodeSelect from '@/components/select_w/sparePartsMCodeSelect'
 // import warehouseSelect from '@/components/select_w/warehouseSelect'
 import page from '@/components/page'
 import { spareInventory, outStorage } from '@/api/base_w_two'

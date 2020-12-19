@@ -50,18 +50,40 @@
           :precision="3"
         />
       </el-form-item>
+      <el-form-item v-if="$route.meta.title==='终炼胶出库计划'" label="关联发货计划">
+        {{ ruleForm.deliveryPlan }}
+        <el-button type="primary" @click="deliverClick">请添加</el-button>
+      </el-form-item>
+      <el-form-item v-if="$route.meta.title==='混炼胶出库计划'" label="机台号">
+        <EquipSelect ref="EquipSelect" :is-multiple="true" @equipSelected="equipSelected" />
+      </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button @click="visibleMethod(true)">取 消</el-button>
       <el-button type="primary" :loading="loadingBtn" @click="visibleMethod(false)">确 定</el-button>
     </div>
+
+    <el-dialog
+      title="发货计划管理"
+      :visible.sync="dialogVisible"
+      width="90%"
+      append-to-body
+    >
+      <receiveList ref="receiveList" :show="dialogVisible" :defalut-val="handleSelection" :is-dialog="true" :material-no="ruleForm.material_no" />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="sureDeliveryPlan">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
 import materialCodeSelect from '@/components/select_w/materialCodeSelect'
 import stationInfoWarehouse from '@/components/select_w/warehouseSelectPosition'
+import receiveList from '../receive-good-manage/receive-list.vue'
+import EquipSelect from '@/components/EquipSelect'
 export default {
-  components: { materialCodeSelect, stationInfoWarehouse },
+  components: { EquipSelect, materialCodeSelect, stationInfoWarehouse, receiveList },
   props: {
     warehouseName: {
       type: String,
@@ -102,14 +124,14 @@ export default {
           { required: true, message: '请选择品质状态', trigger: 'change' }
         ],
         c: [
-          { required: true, message: '无库存数', trigger: 'blur',
+          { required: true, trigger: 'blur',
             validator: (rule, value, callback) => {
               validateMy(rule, value, callback,
                 this.ruleForm.c, '无库存数')
             } }
         ],
         location: [
-          { required: true, message: '仓库位置', trigger: 'blur',
+          { required: true, trigger: 'blur',
             validator: (rule, value, callback) => {
               validateMy(rule, value, callback,
                 this.ruleForm.location, '仓库位置')
@@ -121,21 +143,27 @@ export default {
       },
       visible: false,
       loadingBtn: null,
+      dialogVisible: false,
+      handleSelection: [],
       options: this.warehouseName === '终炼胶库' ? ['一等品', '三等品'] : ['合格品', '不合格品']
     }
   },
   watch: {
   },
   created() {
-    // this.availableStock()
   },
   methods: {
     creadVal() {
       // 清空数据
       this.$refs.ruleForm.resetFields()
-      // this.ruleForm = {}
-      // this.ruleForm.warehouse_info = this.warehouseInfo
-      // this.$set(this.ruleForm, 'material_no', null)
+      if (this.$refs.receiveList) {
+        this.$refs.receiveList.clearReceiveSelect()
+      }
+      if (this.$refs.EquipSelect) {
+        this.$refs.EquipSelect.equipId = null
+      }
+      this.handleSelection = []
+      this.ruleForm.deliveryPlan = ''
       this.loadingBtn = false
       if (this.$refs.stationInfoWarehouseRef) {
         this.$refs.stationInfoWarehouseRef.value = null
@@ -144,16 +172,13 @@ export default {
     materialCodeFun(val) {
       this.ruleForm.material_no = val.material_no || null
       this.ruleForm.c = val.all_qty || null
+
+      if (this.$refs.receiveList) {
+        this.$refs.receiveList.clearReceiveSelect()
+      }
+      this.ruleForm.deliveryPlan = ''
+      this.handleSelection = []
     },
-    // async availableStock() {
-    //   try {
-    //     const data = await materialCount('get', null,
-    //       { params: { material_no: this.ruleForm.material_no }})
-    //     this.$set(this.ruleForm, 'c', data.all_qty)
-    //   } catch (error) {
-    //     //
-    //   }
-    // },
     visibleMethod(bool) {
       if (bool) {
         this.creadVal()
@@ -171,6 +196,34 @@ export default {
     },
     changSelectStation(val) {
       this.ruleForm.location = val ? val.name : ''
+    },
+    deliverClick() {
+      if (!this.ruleForm.material_no) {
+        this.$message.info('请选择物料编码')
+        return
+      }
+      this.dialogVisible = true
+    },
+    sureDeliveryPlan() {
+      // 选中发货计划
+      let handleSelectionNum = 0
+      this.handleSelection = this.$refs.receiveList.handleSelection
+      this.ruleForm.deliveryPlan = ''
+      this.handleSelection.forEach(D => {
+        this.ruleForm.deliveryPlan += D.order_no + ';'
+        handleSelectionNum += D.need_qty
+      })
+      if (handleSelectionNum > this.ruleForm.c) {
+        this.$message.info('物料可用库存数不足')
+      } else if (handleSelectionNum < this.ruleForm.c) {
+        this.$message.info('物料可用库存数有余')
+      }
+      this.dialogVisible = false
+    },
+    equipSelected(arr) {
+      // arr 机台数组id
+      console.log(arr, 7777)
+      this.$set(this.ruleForm, 'equipArrId', arr)
     }
   }
 }
