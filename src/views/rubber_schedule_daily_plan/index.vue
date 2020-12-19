@@ -459,7 +459,8 @@ export default {
     async getWorkSchedules() {
       try {
         // eslint-disable-next-line object-curly-spacing
-        const workSchedulesData = await workSchedulesUrl('get', null, { params: { all: 1 } })
+        const workSchedulesData = await workSchedulesUrl('get', null,
+          { params: { all: 1, work_procedure: '密炼' }})
         this.workSchedules = workSchedulesData.results
         // eslint-disable-next-line no-empty
       } catch (e) { }
