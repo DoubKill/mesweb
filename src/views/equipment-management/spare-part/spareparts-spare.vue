@@ -99,10 +99,9 @@
       :visible.sync="dialogCreateVisible"
       :close-on-click-modal="false"
     >
-      <el-form ref="createForm" :rules="rules" :model="spareForm">
+      <el-form ref="createForm" :rules="rules" :model="spareForm" label-width="120px">
         <el-form-item
           label="物料类型"
-          :label-width="formLabelWidth"
           prop="type"
         >
           <el-select v-model="spareForm.type" placeholder="请选择">
@@ -116,42 +115,36 @@
         </el-form-item>
         <el-form-item
           label="物料编码"
-          :label-width="formLabelWidth"
           prop="no"
         >
           <el-input v-model="spareForm.no" />
         </el-form-item>
         <el-form-item
           label="物料名称"
-          :label-width="formLabelWidth"
           prop="name"
         >
           <el-input v-model="spareForm.name" />
         </el-form-item>
         <el-form-item
           label="单价（元）"
-          :label-width="formLabelWidth"
           prop="cost"
         >
           <el-input v-model="spareForm.cost" />
         </el-form-item>
         <el-form-item
           label="安全库存下限"
-          :label-width="formLabelWidth"
           prop="lower"
         >
           <el-input v-model="spareForm.lower" />
         </el-form-item>
         <el-form-item
           label="安全库存上限"
-          :label-width="formLabelWidth"
           prop="upper"
         >
           <el-input v-model="spareForm.upper" />
         </el-form-item>
         <el-form-item
           label="单位"
-          :label-width="formLabelWidth"
           prop="unit"
         >
           <el-input v-model="spareForm.unit" />
@@ -173,10 +166,9 @@
       :visible.sync="dialogEditVisible"
       :close-on-click-modal="false"
     >
-      <el-form ref="editForm" :rules="rules" :model="spareForm">
+      <el-form ref="editForm" :rules="rules" :model="spareForm" label-width="120px">
         <el-form-item
           label="物料类型"
-          :label-width="formLabelWidth"
           prop="type"
         >
           <el-select v-model="spareForm.type" placeholder="请选择">
@@ -190,42 +182,36 @@
         </el-form-item>
         <el-form-item
           label="物料编码"
-          :label-width="formLabelWidth"
           prop="no"
         >
           <el-input v-model="spareForm.no" />
         </el-form-item>
         <el-form-item
           label="物料名称"
-          :label-width="formLabelWidth"
           prop="name"
         >
           <el-input v-model="spareForm.name" />
         </el-form-item>
         <el-form-item
           label="单价（元）"
-          :label-width="formLabelWidth"
           prop="cost"
         >
           <el-input v-model="spareForm.cost" />
         </el-form-item>
         <el-form-item
           label="安全库存下限"
-          :label-width="formLabelWidth"
           prop="lower"
         >
           <el-input v-model="spareForm.lower" />
         </el-form-item>
         <el-form-item
           label="安全库存上限"
-          :label-width="formLabelWidth"
           prop="upper"
         >
           <el-input v-model="spareForm.upper" />
         </el-form-item>
         <el-form-item
           label="单位"
-          :label-width="formLabelWidth"
           prop="unit"
         >
           <el-input v-model="spareForm.unit" />
@@ -254,7 +240,6 @@ export default {
   components: { page },
   data: function() {
     return {
-      formLabelWidth: 'auto',
       tableData: [],
       typeOptions: [],
       dialogCreateVisible: false,
