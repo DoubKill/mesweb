@@ -5,13 +5,13 @@
       <el-form-item label="物料编码">
         <materialCodeSelect
           :is-all-obj="true"
+          label-name="no"
           @changeSelect="changeMaterialCode"
         />
       </el-form-item>
       <el-form-item label="物料名称">
         <materialCodeSelect
           :is-all-obj="true"
-          label-name="name"
           @changeSelect="changeMaterialName"
         />
       </el-form-item>
@@ -79,11 +79,11 @@
       :close-on-click-modal="false"
     >
       <el-form ref="createForm" :rules="rules" :model="bindingForm">
-        <el-form-item label="物料编码" prop="material">
+        <el-form-item label="物料编码" prop="spare">
           <materialCodeSelect
             :created-is="true"
             :is-all-obj="true"
-            :default-val="bindingForm.material"
+            :default-val="bindingForm.spare"
             @changeSelect="dialogMaterialFun"
           />
         </el-form-item>
@@ -91,7 +91,7 @@
           <materialCodeSelect
             :created-is="true"
             :is-all-obj="true"
-            :default-val="bindingForm.material"
+            :default-val="bindingForm.spare"
             label-name="name"
             @changeSelect="dialogMaterialFun"
           />
@@ -126,11 +126,12 @@
       :close-on-click-modal="false"
     >
       <el-form ref="editForm" :rules="rules" :model="bindingForm">
-        <el-form-item label="物料编码" prop="material">
+        <el-form-item label="物料编码" prop="spare">
           <materialCodeSelect
             :created-is="true"
             :is-all-obj="true"
-            :default-val="bindingForm.material"
+            :default-val="bindingForm.spare"
+            label-name="no"
             @changeSelect="dialogMaterialFun"
           />
         </el-form-item>
@@ -138,8 +139,7 @@
           <materialCodeSelect
             :created-is="true"
             :is-all-obj="true"
-            :default-val="bindingForm.material"
-            label-name="name"
+            :default-val="bindingForm.spare"
             @changeSelect="dialogMaterialFun"
           />
         </el-form-item>
@@ -189,7 +189,7 @@ export default {
       bindingForm: {
       },
       rules: {
-        material: [
+        spare: [
           { required: true, message: '请输入物料编码', trigger: 'change' }
         ],
         b: [
@@ -246,8 +246,8 @@ export default {
       })
     },
     dialogMaterialFun(obj) {
-      this.$set(this.bindingForm, 'b', obj ? obj.material_name : null)
-      this.$set(this.bindingForm, 'material', obj ? obj.id : null)
+      this.$set(this.bindingForm, 'b', obj ? obj.name : null)
+      this.$set(this.bindingForm, 'spare', obj ? obj.id : null)
       console.log(this.bindingForm)
     },
     dialogInventoryPosition(obj) {

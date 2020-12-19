@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { sparepartsSpareType } from '@/api/base_w_two'
+import { sparepartsSpare } from '@/api/base_w_two'
 export default {
   props: {
     //  created里面加载
@@ -36,7 +36,7 @@ export default {
     },
     labelName: {
       type: String,
-      default: 'material_no'
+      default: 'name'
     },
     isAllObj: { // 是否返回全部对象
       type: Boolean,
@@ -68,7 +68,7 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const data = await sparepartsSpareType('get', null, { params: { all: 1 }})
+        const data = await sparepartsSpare('get', null, { params: { all: 1 }})
         this.options = data.results || []
         this.loading = false
       } catch (e) {
