@@ -781,6 +781,15 @@ export const asyncRoutes = [{
         }
       },
       {
+        path: 'spareparts-spare',
+        component: () => import('@/views/equipment-management/spare-part/spareparts-spare'),
+        name: 'spareparts-spare',
+        meta: {
+          title: '基本信息管理',
+          permissionName: 'class_production_summary'
+        }
+      },
+      {
         path: 'shelf-material-binding',
         component: () => import('@/views/equipment-management/spare-part/shelf-material-binding'),
         name: 'shelf-material-binding',
