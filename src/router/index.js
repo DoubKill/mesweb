@@ -772,6 +772,15 @@ export const asyncRoutes = [{
         }
       },
       {
+        path: 'spare-type',
+        component: () => import('@/views/equipment-management/spare-part/spare-type'),
+        name: 'spare-type',
+        meta: {
+          title: '类型管理',
+          permissionName: 'class_production_summary'
+        }
+      },
+      {
         path: 'shelf-material-binding',
         component: () => import('@/views/equipment-management/spare-part/shelf-material-binding'),
         name: 'shelf-material-binding',
