@@ -103,13 +103,13 @@ export default {
       }
     },
     changeMaterialCode(obj) {
-      this.search.material_no = obj ? obj.no : null
+      this.search.spare_no = obj ? obj.no : null
       this.search.page = 1
       console.log(this.search)
       this.getList()
     },
     changeMaterialName(obj) {
-      this.search.material_name = obj ? obj.name : null
+      this.search.spare_name = obj ? obj.name : null
       this.search.page = 1
       console.log(this.search)
       this.getList()

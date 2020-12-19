@@ -62,17 +62,15 @@
       :visible.sync="dialogCreateVisible"
       :close-on-click-modal="false"
     >
-      <el-form ref="createForm" :rules="rules" :model="typeForm">
+      <el-form ref="createForm" :rules="rules" :model="typeForm" label-width="100px">
         <el-form-item
           label="类型编码"
-          :label-width="formLabelWidth"
           prop="no"
         >
           <el-input v-model="typeForm.no" />
         </el-form-item>
         <el-form-item
           label="类型名称"
-          :label-width="formLabelWidth"
           prop="name"
         >
           <el-input v-model="typeForm.name" />
@@ -94,17 +92,15 @@
       :visible.sync="dialogEditVisible"
       :close-on-click-modal="false"
     >
-      <el-form ref="editForm" :rules="rules" :model="typeForm">
+      <el-form ref="editForm" :rules="rules" :model="typeForm" label-width="100px">
         <el-form-item
           label="类型编码"
-          :label-width="formLabelWidth"
           prop="no"
         >
           <el-input v-model="typeForm.no" />
         </el-form-item>
         <el-form-item
           label="类型名称"
-          :label-width="formLabelWidth"
           prop="name"
         >
           <el-input v-model="typeForm.name" />
@@ -132,7 +128,6 @@ export default {
   components: { page },
   data: function() {
     return {
-      formLabelWidth: 'auto',
       tableData: [],
       dialogCreateVisible: false,
       dialogEditVisible: false,
