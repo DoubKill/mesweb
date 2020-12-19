@@ -5,13 +5,13 @@
       <el-form-item label="物料编码:">
         <materialCodeSelect
           :is-all-obj="true"
+          label-name="no"
           @changeSelect="changeMaterialCode"
         />
       </el-form-item>
       <el-form-item label="物料名称:">
         <materialCodeSelect
           :is-all-obj="true"
-          label-name="material_name"
           @changeSelect="changeMaterialName"
         />
       </el-form-item>
@@ -94,6 +94,7 @@
             :is-all-obj="true"
             :default-val="currentRow.material"
             :is-disabled="currentRow.id?true:false"
+            label-name="no"
             @changeSelect="dialogMaterialFun"
           />
         </el-form-item>
@@ -102,7 +103,6 @@
             :created-is="true"
             :is-all-obj="true"
             :default-val="currentRow.material"
-            label-name="material_name"
             :is-disabled="currentRow.id?true:false"
             @changeSelect="dialogMaterialFun"
           />
@@ -200,12 +200,12 @@ export default {
       this.getList()
     },
     changeMaterialCode(obj) {
-      this.search.material_no = obj ? obj.material_no : null
+      this.search.material_no = obj ? obj.no : null
       this.search.page = 1
       this.getList()
     },
     changeMaterialName(obj) {
-      this.search.material_name = obj ? obj.material_name : null
+      this.search.material_name = obj ? obj.name : null
       this.search.page = 1
       this.getList()
     },
@@ -257,13 +257,14 @@ export default {
       })
     },
     dialogMaterialFun(obj) {
-      this.$set(this.currentRow, 'b', obj ? obj.material_name : '')
+      this.$set(this.currentRow, 'b', obj ? obj.name : '')
       this.$set(this.currentRow, 'material', obj ? obj.id : '')
-      this.$set(this.currentRow, 'materialNo', obj ? obj.material_no : '')
+      this.$set(this.currentRow, 'materialNo', obj ? obj.no : '')
       this.$refs.inventoryPosition.value = null
       this.currentRow.location = null
     },
     changWarehouse(obj) {
+      `  `
       this.warehouse_info = obj.id || null
       this.$set(this.currentRow, 'warehouse_info', obj ? obj.id : null)
     },
