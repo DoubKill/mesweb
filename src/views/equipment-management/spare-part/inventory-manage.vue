@@ -6,13 +6,13 @@
       <el-form-item label="物料编码:">
         <materialCodeSelect
           :is-all-obj="true"
+          label-name="no"
           @changeSelect="changeMaterialCode"
         />
       </el-form-item>
       <el-form-item label="物料名称:">
         <materialCodeSelect
           :is-all-obj="true"
-          label-name="material_name"
           @changeSelect="changeMaterialName"
         />
       </el-form-item>
@@ -103,13 +103,13 @@ export default {
       }
     },
     changeMaterialCode(obj) {
-      this.search.material_no = obj ? obj.material_no : null
+      this.search.material_no = obj ? obj.no : null
       this.search.page = 1
       console.log(this.search)
       this.getList()
     },
     changeMaterialName(obj) {
-      this.search.material_name = obj ? obj.material_name : null
+      this.search.material_name = obj ? obj.name : null
       this.search.page = 1
       console.log(this.search)
       this.getList()
