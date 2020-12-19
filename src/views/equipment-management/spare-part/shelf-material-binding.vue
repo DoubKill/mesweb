@@ -11,7 +11,7 @@
       <el-form-item label="物料名称">
         <materialCodeSelect
           :is-all-obj="true"
-          label-name="material_name"
+          label-name="name"
           @changeSelect="changeMaterialName"
         />
       </el-form-item>
@@ -92,7 +92,7 @@
             :created-is="true"
             :is-all-obj="true"
             :default-val="bindingForm.material"
-            label-name="material_name"
+            label-name="name"
             @changeSelect="dialogMaterialFun"
           />
         </el-form-item>
@@ -139,7 +139,7 @@
             :created-is="true"
             :is-all-obj="true"
             :default-val="bindingForm.material"
-            label-name="material_name"
+            label-name="name"
             @changeSelect="dialogMaterialFun"
           />
         </el-form-item>
