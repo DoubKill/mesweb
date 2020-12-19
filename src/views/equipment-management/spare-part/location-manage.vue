@@ -16,6 +16,11 @@
             @changeSelect="changeMaterialName"
           />
         </el-form-item>
+        <el-form-item label="物料类型:">
+          <materialTypeSelect
+            @changeSelect="changeMaterialType"
+          />
+        </el-form-item>
         <el-form-item label="库存位:">
           <inventoryPosition @changSelect="changeInventoryPosition" />
         </el-form-item>
@@ -30,6 +35,10 @@
         type="index"
         width="50"
         label="No"
+      />
+      <el-table-column
+        prop="type_name"
+        label="物料类型"
       />
       <el-table-column
         prop="spare_no"
@@ -48,7 +57,7 @@
         label="数量（件）"
       />
       <el-table-column
-        prop="unit_count"
+        prop="cost"
         label="单价"
       />
       <el-table-column
@@ -70,9 +79,10 @@ import inventoryPosition from '@/components/select_w/inventoryPosition'
 import materialCodeSelect from '@/components/select_w/sparePartsMCodeSelect'
 import page from '@/components/page'
 import { spareInventory } from '@/api/base_w_two'
+import materialTypeSelect from '@/components/select_w/sparePartsMTypeSelect'
 
 export default {
-  components: { page, inventoryPosition, materialCodeSelect },
+  components: { page, inventoryPosition, materialCodeSelect, materialTypeSelect },
   props: {
     isDialog: {
       type: Boolean,
@@ -137,6 +147,11 @@ export default {
     },
     changeMaterialName(obj) {
       this.search.spare_name = obj ? obj.name : null
+      this.search.page = 1
+      this.getList()
+    },
+    changeMaterialType(obj) {
+      this.search.type_name = obj ? obj.name : null
       this.search.page = 1
       this.getList()
     },
