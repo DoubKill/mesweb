@@ -173,7 +173,7 @@
 <script>
 import { getMaterialLocationBinding, putMaterialLocationBinding, postMaterialLocationBinding, deleteMaterialLocationBinding } from '@/api/shelf-material-binding'
 import inventoryPosition from '@/components/select_w/inventoryPosition'
-import materialCodeSelect from '@/components/materialCodeSelect/index'
+import materialCodeSelect from '@/components/select_w/sparePartsMCodeSelect'
 import page from '@/components/page'
 
 export default {
