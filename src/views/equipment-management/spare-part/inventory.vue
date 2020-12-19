@@ -33,11 +33,11 @@
         label="No"
       />
       <el-table-column
-        prop="material_no"
+        prop="spare_no"
         label="物料编码"
       />
       <el-table-column
-        prop="material_name"
+        prop="spare_name"
         label="物料名称"
       />
       <el-table-column
@@ -82,11 +82,11 @@
       :before-close="handleClose"
     >
       <el-form ref="ruleForm" :model="currentRow" :rules="rules" label-width="130px">
-        <el-form-item label="物料编码" prop="material">
+        <el-form-item label="物料编码" prop="spare">
           <materialCodeSelect
             :created-is="true"
             :is-all-obj="true"
-            :default-val="currentRow.material"
+            :default-val="currentRow.spare"
             :is-disabled="true"
             label-name="no"
             @changeSelect="dialogMaterialFun"
@@ -96,7 +96,7 @@
           <materialCodeSelect
             :created-is="true"
             :is-all-obj="true"
-            :default-val="currentRow.material"
+            :default-val="currentRow.spare"
             :is-disabled="true"
             @changeSelect="dialogMaterialFun"
           />
@@ -141,7 +141,7 @@ import inventoryPosition from '@/components/select_w/inventoryPosition'
 import materialCodeSelect from '@/components/select_w/sparePartsMCodeSelect'
 // import warehouseSelect from '@/components/select_w/warehouseSelect'
 import page from '@/components/page'
-import { spareInventory, inventoryUrl } from '@/api/base_w_two'
+import { spareInventory, spareStorage } from '@/api/base_w_two'
 import allRecord from './all-record.vue'
 
 export default {
@@ -161,7 +161,7 @@ export default {
       restaurants: [],
       loading: false,
       rules: {
-        material: [
+        spare: [
           { required: true, message: '请输入物料编码', trigger: 'change' }
         ],
         b: [
@@ -194,18 +194,18 @@ export default {
       this.getList()
     },
     changeMaterialCode(obj) {
-      this.search.material_no = obj ? obj.no : null
+      this.search.spare_no = obj ? obj.no : null
       this.search.page = 1
       this.getList()
     },
     changeMaterialName(obj) {
-      this.search.material_name = obj ? obj.name : null
+      this.search.spare_name = obj ? obj.name : null
       this.search.page = 1
       this.getList()
     },
     edit(row) {
       this.currentRow = JSON.parse(JSON.stringify(row))
-      this.currentRow.b = row.material_name
+      this.currentRow.b = row.spare_name
 
       this.dialogVisible = true
     },
@@ -228,7 +228,8 @@ export default {
             const obj = {}
             obj.qty = this.currentRow.qty
             obj.reason = this.currentRow.reason
-            await inventoryUrl('post', this.currentRow.id, { data: obj })
+
+            await spareStorage('post', this.currentRow.id, { data: obj })
             this.$message.success('盘点操作成功')
             this.handleClose(null)
             this.getList()
@@ -236,13 +237,14 @@ export default {
             //
           }
         } else {
+          console.log(222)
           return false
         }
       })
     },
     dialogMaterialFun(obj) {
       this.$set(this.currentRow, 'b', obj ? obj.name : '')
-      this.$set(this.currentRow, 'material', obj ? obj.id : '')
+      this.$set(this.currentRow, 'spare', obj ? obj.id : '')
     },
     dialogInventoryPosition(obj) {
       this.$set(this.currentRow, 'location', obj ? obj.id : '')
