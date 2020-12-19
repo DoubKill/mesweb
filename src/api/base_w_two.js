@@ -18,7 +18,17 @@ export function spareInventory(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function spareStorage(method, id, data = {}) {
+  // 盘点
+  const obj = {
+    url: (id ? API.SpareInventory + id + '/' : API.SpareInventory) + 'check_storage/',
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 export function putStorage(method, id, data = {}) {
+  // 入库
   const obj = {
     url: (id ? API.SpareInventory + id + '/' : API.SpareInventory) + 'put_storage/',
     method: method
