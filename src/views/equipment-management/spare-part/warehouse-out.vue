@@ -33,11 +33,11 @@
         label="No"
       />
       <el-table-column
-        prop="material_no"
+        prop="spare_no"
         label="物料编码"
       />
       <el-table-column
-        prop="material_name"
+        prop="spare_name"
         label="物料名称"
       />
       <el-table-column
@@ -95,11 +95,11 @@
             </template>
           </el-autocomplete>
         </el-form-item>
-        <el-form-item label="物料编码" prop="material">
+        <el-form-item label="物料编码" prop="spare">
           <materialCodeSelect
             :created-is="true"
             :is-all-obj="true"
-            :default-val="currentRow.material"
+            :default-val="currentRow.spare"
             :is-disabled="true"
             label-name="no"
             @changeSelect="dialogMaterialFun"
@@ -109,7 +109,7 @@
           <materialCodeSelect
             :created-is="true"
             :is-all-obj="true"
-            :default-val="currentRow.material"
+            :default-val="currentRow.spare"
             :is-disabled="true"
             @changeSelect="dialogMaterialFun"
           />
@@ -218,7 +218,7 @@ export default {
       positionList: [],
       loading: false,
       rules: {
-        material: [
+        spare: [
           { required: true, message: '请输入物料编码', trigger: 'change' }
         ],
         b: [
@@ -308,7 +308,7 @@ export default {
     },
     edit(row) {
       this.currentRow = JSON.parse(JSON.stringify(row))
-      this.currentRow.b = row.material_name
+      this.currentRow.b = row.spare_name
       this.currentRow.qty = 1
       this.$set(this.currentRow, 'purposeChange', '设备')
 
@@ -353,7 +353,7 @@ export default {
     },
     dialogMaterialFun(obj) {
       this.$set(this.currentRow, 'b', obj ? obj.name : '')
-      this.$set(this.currentRow, 'material', obj ? obj.id : '')
+      this.$set(this.currentRow, 'spare', obj ? obj.id : '')
     },
     dialogInventoryPosition(obj) {
       this.$set(this.currentRow, 'location', obj ? obj.id : '')

@@ -37,11 +37,11 @@
         width="50"
       />
       <el-table-column
-        prop="material_no"
+        prop="spare_no"
         label="物料编码"
       />
       <el-table-column
-        prop="material_name"
+        prop="spare_name"
         label="物料名称"
       />
       <el-table-column
@@ -218,14 +218,14 @@ export default {
     },
     changeMaterialCode(obj) {
       if (obj) {
-        this.getParams.material_no = obj.material_no
+        this.getParams.material_no = obj.no
       } else { this.getParams.material_no = '' }
       this.getParams.page = 1
       this.getTableData()
     },
     changeMaterialName(obj) {
       if (obj) {
-        this.getParams.material_name = obj.material_name
+        this.getParams.material_name = obj.name
       } else { this.getParams.material_name = '' }
       this.getParams.page = 1
       this.getTableData()
