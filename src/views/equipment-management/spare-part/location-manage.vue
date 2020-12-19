@@ -32,11 +32,11 @@
         label="No"
       />
       <el-table-column
-        prop="material_no"
+        prop="spare_no"
         label="物料编码"
       />
       <el-table-column
-        prop="material_name"
+        prop="spare_name"
         label="物料名称"
       />
       <el-table-column
@@ -67,7 +67,7 @@
 
 <script>
 import inventoryPosition from '@/components/select_w/inventoryPosition'
-import materialCodeSelect from '@/components/materialCodeSelect/index'
+import materialCodeSelect from '@/components/select_w/sparePartsMCodeSelect'
 import page from '@/components/page'
 import { spareInventory } from '@/api/base_w_two'
 

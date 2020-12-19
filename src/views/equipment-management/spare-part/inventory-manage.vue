@@ -29,11 +29,11 @@
         label="No"
       />
       <el-table-column
-        prop="material__material_no"
+        prop="spare__no"
         label="物料编码"
       />
       <el-table-column
-        prop="material__material_name"
+        prop="spare__name"
         label="物料名称"
       />
       <el-table-column
@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import materialCodeSelect from '@/components/materialCodeSelect/index'
+import materialCodeSelect from '@/components/select_w/sparePartsMCodeSelect'
 import page from '@/components/page'
 import { getCountSpareInventory } from '@/api/inventory-manage'
 import locationManage from './location-manage.vue'
@@ -103,6 +103,7 @@ export default {
       }
     },
     changeMaterialCode(obj) {
+      console.log(obj)
       this.search.spare_no = obj ? obj.no : null
       this.search.page = 1
       console.log(this.search)
