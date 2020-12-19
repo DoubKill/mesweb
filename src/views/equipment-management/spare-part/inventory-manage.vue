@@ -16,7 +16,11 @@
           @changeSelect="changeMaterialName"
         />
       </el-form-item>
-
+      <el-form-item label="物料类型:">
+        <materialTypeSelect
+          @changeSelect="changeMaterialType"
+        />
+      </el-form-item>
     </el-form>
     <el-table
       :data="tableData"
@@ -27,6 +31,10 @@
         type="index"
         width="50"
         label="No"
+      />
+      <el-table-column
+        prop="type_name"
+        label="物料类型"
       />
       <el-table-column
         prop="spare__no"
@@ -74,9 +82,10 @@ import materialCodeSelect from '@/components/select_w/sparePartsMCodeSelect'
 import page from '@/components/page'
 import { getCountSpareInventory } from '@/api/inventory-manage'
 import locationManage from './location-manage.vue'
+import materialTypeSelect from '@/components/select_w/sparePartsMTypeSelect'
 
 export default {
-  components: { page, materialCodeSelect, locationManage },
+  components: { page, materialCodeSelect, locationManage, materialTypeSelect },
   data() {
     return {
       search: {
@@ -103,16 +112,18 @@ export default {
       }
     },
     changeMaterialCode(obj) {
-      console.log(obj)
       this.search.spare_no = obj ? obj.no : null
       this.search.page = 1
-      console.log(this.search)
       this.getList()
     },
     changeMaterialName(obj) {
       this.search.spare_name = obj ? obj.name : null
       this.search.page = 1
-      console.log(this.search)
+      this.getList()
+    },
+    changeMaterialType(obj) {
+      this.search.type_name = obj ? obj.name : null
+      this.search.page = 1
       this.getList()
     },
     view(row) {
