@@ -218,15 +218,15 @@ export default {
     },
     changeMaterialCode(obj) {
       if (obj) {
-        this.getParams.material_no = obj.no
-      } else { this.getParams.material_no = '' }
+        this.getParams.spare_no = obj.no
+      } else { this.getParams.spare_no = '' }
       this.getParams.page = 1
       this.getTableData()
     },
     changeMaterialName(obj) {
       if (obj) {
-        this.getParams.material_name = obj.name
-      } else { this.getParams.material_name = '' }
+        this.getParams.spare_name = obj.name
+      } else { this.getParams.spare_name = '' }
       this.getParams.page = 1
       this.getTableData()
     },
@@ -267,7 +267,7 @@ export default {
     },
     showEditDialog: function(row) {
       this.bindingForm = Object.assign({}, row)
-      this.bindingForm.b = row.material_name
+      this.bindingForm.b = row.spare_name
       this.dialogEditVisible = true
       this.$nextTick(() => {
         this.$refs.editForm.clearValidate()

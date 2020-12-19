@@ -12,6 +12,7 @@
         <el-select
           v-model="getParams.type_name"
           placeholder="请选择"
+          clearable
           @change="getTableData"
           @visible-change="visibleChange"
         >
