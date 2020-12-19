@@ -58,7 +58,7 @@
       @currentChange="currentChange"
     />
     <el-dialog
-      title="添加类型"
+      title="添加备品备件类型"
       :visible.sync="dialogCreateVisible"
       :close-on-click-modal="false"
     >
@@ -90,7 +90,7 @@
       </div>
     </el-dialog>
     <el-dialog
-      title="编辑位置点"
+      title="编辑备品备件类型"
       :visible.sync="dialogEditVisible"
       :close-on-click-modal="false"
     >
