@@ -3,6 +3,7 @@
     v-model="equipId"
     clearable
     placeholder="请选择"
+    :multiple="isMultiple"
     @change="equipChanged"
     @visible-change="visibleChange"
   >
@@ -19,10 +20,25 @@
 import { getEquip } from '@/api/banburying-performance-manage'
 
 export default {
+  props: {
+    isMultiple: {
+      type: Boolean,
+      default: false
+    },
+    defaultVal: {
+      type: Array,
+      default: null
+    }
+  },
   data() {
     return {
-      equipId: null,
+      equipId: this.defaultVal || null,
       equipOptions: []
+    }
+  },
+  watch: {
+    defaultVal(val) {
+      this.equipId = val
     }
   },
   methods: {
@@ -33,7 +49,11 @@ export default {
         })
       }
     },
-    equipChanged() {
+    equipChanged(arr) {
+      if (this.isMultiple) {
+        this.$emit('equipSelected', arr)
+        return
+      }
       this.$emit('equipSelected', this.equipOptions.find(option => option.id === this.equipId))
     }
   }

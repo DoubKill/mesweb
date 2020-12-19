@@ -79,7 +79,7 @@ export default {
         this.loading = true
         let listData
         if (this.isBinding) {
-          const obj = { material_no: this.materialNo, material_name: this.materialName, all: 1 }
+          const obj = { spare_no: this.materialNo, material_name: this.materialName, all: 1 }
           const { results } = await getMaterialLocationBinding(obj)
           listData = results || []
         } else {

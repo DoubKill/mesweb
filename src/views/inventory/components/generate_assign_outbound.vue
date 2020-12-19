@@ -62,6 +62,17 @@
       </el-table-column>
       <el-table-column label="总重量" align="center" prop="total_weight" />
       <el-table-column label="品质状态" align="center" prop="quality_status" />
+      <el-table-column v-if="$route.meta.title==='终炼胶出库计划'" label="关联发货计划" align="center" min-width="100">
+        <template slot-scope="scope">
+          {{ scope.row.deliveryPlan }}
+          <el-button type="primary" @click="deliverClick(scope.row,scope.$index)">添加发货计划</el-button>
+        </template>
+      </el-table-column>
+      <el-table-column v-if="$route.meta.title==='混炼胶出库计划'" label="机台号" align="center" min-width="100">
+        <template slot-scope="scope">
+          <EquipSelect :is-multiple="true" @equipSelected="equipSelected($event,scope.$index)" />
+        </template>
+      </el-table-column>
     </el-table>
     <page
       :total="total"
@@ -72,6 +83,25 @@
       <el-button @click="visibleMethod(true)">取 消</el-button>
       <el-button type="primary" :loading="loadingBtn" @click="visibleMethod(false)">确 定</el-button>
     </div>
+
+    <el-dialog
+      title="发货计划管理"
+      :visible.sync="dialogVisible"
+      width="90%"
+      append-to-body
+    >
+      <receiveList
+        ref="receiveList"
+        :show="dialogVisible"
+        :is-dialog="true"
+        :defalut-val="handleSelection"
+        :material-no="material_no_current"
+      />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="sureDeliveryPlan">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -81,9 +111,11 @@ import { getMaterialInventoryManage } from '@/api/material-inventory-manage'
 // import materielTypeSelect from '@/components/select_w/materielTypeSelect'
 import page from '@/components/page'
 import stationInfoWarehouse from '@/components/select_w/warehouseSelectPosition'
+import receiveList from '../receive-good-manage/receive-list.vue'
+import EquipSelect from '@/components/EquipSelect'
 
 export default {
-  components: { page, stationInfoWarehouse },
+  components: { EquipSelect, page, stationInfoWarehouse, receiveList },
   props: {
     warehouseName: {
       type: String,
@@ -110,13 +142,16 @@ export default {
       options: this.warehouseName === '终炼胶库' ? ['一等品', '三等品'] : ['合格品', '不合格品'],
       loading: false,
       multipleSelection: [],
-      loadingBtn: false
+      loadingBtn: false,
+      dialogVisible: false,
+      material_no_current: '',
+      currentIndex: null,
+      handleSelection: []
     }
   },
   computed: {
   },
   created() {
-    // this.getParams.quality_status = this.options[0]
     this.getTableData()
   },
   methods: {
@@ -124,8 +159,44 @@ export default {
       this.loading = true
       getMaterialInventoryManage(this.getParams)
         .then(response => {
+          // const arr = [
+          //   { container_no: '20110368',
+          //     location: '2-1-4-2',
+          //     lot_no: 'AAJ1Z052020121230002',
+          //     material_no: '2MB-J157',
+          //     material_type: 'HMB',
+          //     product_info: { equip_no: '', classes: '', product_time: '' },
+          //     classes: '',
+          //     equip_no: '',
+          //     product_time: '',
+          //     qty: '2.000',
+          //     quality_status: '合格品',
+          //     total_weight: '670.000',
+          //     unit: 'kg',
+          //     unit_weight: '335.000' },
+          //   { container_no: '20110368',
+          //     location: '2-1-4-2',
+          //     lot_no: 'AAJ1Z052020121230002',
+          //     material_no: '2MB-B166',
+          //     material_type: 'HMB',
+          //     product_info: { equip_no: '', classes: '', product_time: '' },
+          //     classes: '',
+          //     equip_no: '',
+          //     product_time: '',
+          //     qty: '2.000',
+          //     quality_status: '合格品',
+          //     total_weight: '670.000',
+          //     unit: 'kg',
+          //     unit_weight: '335.000' }
+          // ]
+          // this.tableData = arr
+
           this.tableData = response.results
           this.total = response.count
+          this.tableData.forEach(D => {
+            // _DeliveryPlan 放发货计划
+            this.$set(D, '_DeliveryPlan', [])
+          })
           this.loading = false
         }).catch(() => {
           this.loading = false
@@ -153,12 +224,20 @@ export default {
     creadVal() {
       this.$refs.multipleTable.clearSelection()
       this.loadingBtn = false
+      this.multipleSelection = []
+      this.tableData.forEach(D => {
+        D.equipNoArr = null
+        D._DeliveryPlan = null
+        D.deliveryPlan = null
+      })
     },
     visibleMethod(bool) {
       if (bool) {
         this.creadVal()
         this.$emit('visibleMethod')
       } else {
+        // console.log(this.multipleSelection)
+        // return
         if (!this.getParams.location) {
           this.$message.info('请选择仓库位置！')
           return
@@ -166,9 +245,8 @@ export default {
         if (this.multipleSelection.length === 0) {
           return
         }
-        this.loadingBtn = true
         const arr = []
-        this.multipleSelection.forEach(D => {
+        this.multipleSelection.forEach((D) => {
           arr.push({
             location: this.getParams.location,
             order_no: 'order_no',
@@ -185,7 +263,7 @@ export default {
             // quality_status: '一等品'
           })
         })
-
+        this.loadingBtn = true
         this.$emit('visibleMethodSubmit', arr)
       }
     },
@@ -199,6 +277,29 @@ export default {
     },
     getRowKeys(row) {
       return row.id
+    },
+    sureDeliveryPlan() {
+      console.log(this.$refs.receiveList.handleSelection, 'arr')
+      this.dialogVisible = false
+      this.tableData[this.currentIndex]._DeliveryPlan = this.$refs.receiveList.handleSelection
+      this.handleSelection = this.tableData[this.currentIndex]._DeliveryPlan
+      let str = ''
+      this.$refs.receiveList.handleSelection.forEach(D => {
+        str += D.order_no + ';'
+        this.$set(this.tableData[this.currentIndex], 'deliveryPlan', str)
+      })
+      if (!this.handleSelection || this.handleSelection.length === 0) {
+        this.$set(this.tableData[this.currentIndex], 'deliveryPlan', '')
+      }
+    },
+    deliverClick(row, index) {
+      this.material_no_current = row.material_no
+      this.currentIndex = index
+      this.handleSelection = this.tableData[this.currentIndex]._DeliveryPlan
+      this.dialogVisible = true
+    },
+    equipSelected(arr, index) {
+      this.$set(this.tableData[index], 'equipNoArr', arr)
     }
   }
 }
