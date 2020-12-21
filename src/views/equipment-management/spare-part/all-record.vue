@@ -14,6 +14,11 @@
         />
       </el-form-item>
       <div v-if="!isDialog">
+        <el-form-item label="物料类型:">
+          <materialTypeSelect
+            @changeSelect="changeMaterialType"
+          />
+        </el-form-item>
         <el-form-item label="物料编码:">
           <materialCodeSelect
             :is-all-obj="true"
@@ -59,6 +64,10 @@
         width="80"
       />
       <el-table-column
+        prop="spare_type"
+        label="物料类型"
+      />
+      <el-table-column
         prop="spare_no"
         label="物料编码"
       />
@@ -69,6 +78,14 @@
       <el-table-column
         prop="location"
         label="库存位"
+      />
+      <el-table-column
+        prop="unit_count"
+        label="单价（元）"
+      />
+      <el-table-column
+        prop="cost"
+        label="总价（元）"
       />
       <el-table-column
         v-if="currentRoute === 1"
@@ -142,12 +159,13 @@
 <script>
 import inventoryPosition from '@/components/select_w/inventoryPosition'
 // import materialCodeSelect from '@/components/materialCodeSelect/index'
+import materialTypeSelect from '@/components/select_w/sparePartsMTypeSelect'
 import materialCodeSelect from '@/components/select_w/sparePartsMCodeSelect'
 import page from '@/components/page'
 import { setDate, exportExcel } from '@/utils/index'
 import { spareInventoryLog } from '@/api/base_w_two'
 export default {
-  components: { page, inventoryPosition, materialCodeSelect },
+  components: { page, inventoryPosition, materialCodeSelect, materialTypeSelect },
   props: {
     isDialog: {
       type: Boolean,
@@ -220,6 +238,11 @@ export default {
       } catch (e) {
         this.loading = false
       }
+    },
+    changeMaterialType(obj) {
+      this.search.type_name = obj ? obj.name : null
+      this.search.page = 1
+      this.getList()
     },
     changeInventoryPosition(obj) {
       this.search.location_name = obj ? obj.name : null

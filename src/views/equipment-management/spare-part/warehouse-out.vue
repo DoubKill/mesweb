@@ -2,6 +2,11 @@
   <div v-loading="loading" class="warehouse-out">
     <!-- 备品备件出库管理 -->
     <el-form :inline="true">
+      <el-form-item label="物料类型:">
+        <materialTypeSelect
+          @changeSelect="changeMaterialType"
+        />
+      </el-form-item>
       <el-form-item label="物料编码:">
         <materialCodeSelect
           :is-all-obj="true"
@@ -33,6 +38,10 @@
         label="No"
       />
       <el-table-column
+        prop="type_name"
+        label="物料类型"
+      />
+      <el-table-column
         prop="spare_no"
         label="物料编码"
       />
@@ -47,6 +56,14 @@
       <el-table-column
         prop="qty"
         label="数量（件）"
+      />
+      <el-table-column
+        prop="cost"
+        label="单价（元）"
+      />
+      <el-table-column
+        prop="total_count"
+        label="总价（元）"
       />
       <el-table-column
         label="操作"
@@ -190,9 +207,8 @@
 
 <script>
 import inventoryPosition from '@/components/select_w/inventoryPosition'
-// import materialCodeSelect from '@/components/materialCodeSelect/index'
 import materialCodeSelect from '@/components/select_w/sparePartsMCodeSelect'
-// import warehouseSelect from '@/components/select_w/warehouseSelect'
+import materialTypeSelect from '@/components/select_w/sparePartsMTypeSelect'
 import page from '@/components/page'
 import { spareInventory, outStorage } from '@/api/base_w_two'
 import { globalCodesUrl } from '@/api/base_w'
@@ -200,7 +216,7 @@ import allRecord from './all-record.vue'
 import EquipSelect from '@/components/select_w/equip'
 
 export default {
-  components: { EquipSelect, allRecord, page, inventoryPosition, materialCodeSelect },
+  components: { materialTypeSelect, EquipSelect, allRecord, page, inventoryPosition, materialCodeSelect },
   data() {
     return {
       search: {
@@ -303,6 +319,11 @@ export default {
     },
     changeMaterialName(obj) {
       this.search.spare_name = obj ? obj.name : null
+      this.search.page = 1
+      this.getList()
+    },
+    changeMaterialType(obj) {
+      this.search.type_name = obj ? obj.name : null
       this.search.page = 1
       this.getList()
     },
