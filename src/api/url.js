@@ -224,5 +224,7 @@ export default {
   MaterialLocationBinding: '/api/v1/spareparts/spare-location-binding/',
   SpareInventoryLog: '/api/v1/spareparts/spare-inventory-log/',
   // 备品备件库存
-  CountSpareInventory: '/api/v1/spareparts/spare-inventory/count_spare_inventory/'
+  CountSpareInventory: '/api/v1/spareparts/spare-inventory/count_spare_inventory/',
+  // 备品备件基本信息导入导出
+  SpareImportExport: '/api/v1/spareparts/spare-import-export/'
 }
