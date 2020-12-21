@@ -215,6 +215,24 @@ export const asyncRoutes = [{
       title: '小料配料标准管理',
       permissionName: 'productbatching'
     }
+  },
+  {
+    path: 'rubber-plan-release',
+    name: 'rubber-plan-release',
+    component: () => import('@/views/recipe/rubber-plan-release'),
+    meta: {
+      title: '小料计划下达',
+      permissionName: 'productbatching'
+    }
+  },
+  {
+    path: 'actual-comparison',
+    name: 'actual-comparison',
+    component: () => import('@/views/recipe/actual-comparison'),
+    meta: {
+      title: '小料称量计划与实际对比',
+      permissionName: 'productbatching'
+    }
   }
   ]
 },
