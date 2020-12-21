@@ -36,8 +36,9 @@
           action="string"
           accept=".xls, .xlsx"
           :http-request="Upload"
+          :show-file-list="false"
         >
-          <el-button size="small" type="primary">导入</el-button>
+          <el-button>导入</el-button>
         </el-upload>
       </el-form-item>
       <el-form-item style="float: right">
@@ -383,10 +384,14 @@ export default {
     },
     templateDownload() {
       getSpareImportExport().then(response => {
-        this.$message({
-          type: 'success',
-          message: '下载成功!'
-        })
+        const link = document.createElement('a')
+        const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
+        link.style.display = 'none'
+        link.href = URL.createObjectURL(blob)
+        link.download = '备品备件基本信息模板.xlsx' // 下载的文件名
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
       })
     },
     Upload(param) {

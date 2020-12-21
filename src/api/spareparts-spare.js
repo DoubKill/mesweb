@@ -36,7 +36,8 @@ export function getSpareImportExport(params) {
   return request({
     url: API.SpareImportExport,
     method: 'get',
-    params
+    params,
+    responseType: 'blob'
   })
 }
 
