@@ -414,7 +414,7 @@ export const asyncRoutes = [{
     //     permissionName: 'product_inventory'
     //   }
     // },
-    {
+    /* {
       path: 'final-mixing-rubber-manage',
       component: () => import('@/views/inventory/final-mixing-rubber-manage.vue'),
       name: 'final-mixing-rubber',
@@ -431,7 +431,7 @@ export const asyncRoutes = [{
         title: '混炼胶出库计划',
         permissionName: 'inventory_plan'
       }
-    },
+    },*/
     {
       path: 'final-rubber-manage',
       component: () => import('@/views/inventory/final_rubber_manage.vue'),
@@ -450,7 +450,7 @@ export const asyncRoutes = [{
         permissionName: 'LB_inventory_plan'
       }
     },
-    {
+    /* {
       path: 'warehouse-out-kanban',
       component: () => import('@/views/inventory/warehouse-out-kanban.vue'),
       name: 'warehouseOutKanban',
@@ -458,7 +458,7 @@ export const asyncRoutes = [{
         title: '出库看板',
         permissionName: 'LB_inventory_plan'
       }
-    },
+    },*/
     // {
     //   path: 'expire-rubber-manage',
     //   component: () => import('@/views/inventory/expire_rubber_manage.vue'),
