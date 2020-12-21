@@ -415,6 +415,24 @@ export const asyncRoutes = [{
     //   }
     // },
     {
+      path: 'final-mixing-rubber-manage',
+      component: () => import('@/views/inventory/final-mixing-rubber-manage.vue'),
+      name: 'final-mixing-rubber',
+      meta: {
+        title: '终炼胶出库计划',
+        permissionName: 'inventory_plan'
+      }
+    },
+    {
+      path: 'compound-rubber-manage',
+      component: () => import('@/views/inventory/compound-rubber-manage.vue'),
+      name: 'CompoundManage',
+      meta: {
+        title: '混炼胶出库计划',
+        permissionName: 'inventory_plan'
+      }
+    },
+    {
       path: 'final-rubber-manage',
       component: () => import('@/views/inventory/final_rubber_manage.vue'),
       name: 'OutboundManage',
@@ -429,6 +447,15 @@ export const asyncRoutes = [{
       name: 'curtainStorehouse',
       meta: {
         title: '帘布库出库计划',
+        permissionName: 'LB_inventory_plan'
+      }
+    },
+    {
+      path: 'warehouse-out-kanban',
+      component: () => import('@/views/inventory/warehouse-out-kanban.vue'),
+      name: 'warehouseOutKanban',
+      meta: {
+        title: '出库看板',
         permissionName: 'LB_inventory_plan'
       }
     },
@@ -715,7 +742,8 @@ export const asyncRoutes = [{
   meta: {
     title: '设备管理',
     icon: 'quality'
-  }, children: [{
+  },
+  children: [{
     path: 'classes-banburying-summary',
     component: () => import('@/views/equipment-management/classes-banburying-summary'),
     name: 'classes-banburying-summary',
@@ -753,7 +781,7 @@ export const asyncRoutes = [{
   },
   {
     path: '/spare-part',
-    redirect: '/spare-partt/spare-location',
+    redirect: '/spare-part/base/spare-location',
     component: {
       render: c => c('router-view')
     },
@@ -763,112 +791,152 @@ export const asyncRoutes = [{
     },
     children: [
       {
-        path: 'spare-location',
-        component: () => import('@/views/equipment-management/spare-part/spare-location'),
-        name: 'spare-location',
+        path: 'base',
+        redirect: '/spare-location',
+        component: {
+          render: c => c('router-view')
+        },
+        name: 'spare-part-base',
         meta: {
-          title: '库存位管理',
-          permissionName: 'class_production_summary'
-        }
+          title: '基础管理'
+        },
+        breadcrumb: false,
+        children: [
+          {
+            path: 'spare-location',
+            component: () => import('@/views/equipment-management/spare-part/spare-location'),
+            name: 'spare-location',
+            meta: {
+              title: '库存位管理'
+            }
+          },
+          {
+            path: 'spare-type',
+            component: () => import('@/views/equipment-management/spare-part/spare-type'),
+            name: 'spare-type',
+            meta: {
+              title: '类型管理',
+              permissionName: 'class_production_summary'
+            }
+          },
+          {
+            path: 'spareparts-spare',
+            component: () => import('@/views/equipment-management/spare-part/spareparts-spare'),
+            name: 'spareparts-spare',
+            meta: {
+              title: '基本信息管理',
+              permissionName: 'class_production_summary'
+            }
+          },
+          {
+            path: 'shelf-material-binding',
+            component: () => import('@/views/equipment-management/spare-part/shelf-material-binding'),
+            name: 'shelf-material-binding',
+            meta: {
+              title: '货架物料绑定管理',
+              permissionName: 'class_production_summary'
+            }
+          },
+          {
+            path: 'location-manage',
+            component: () => import('@/views/equipment-management/spare-part/location-manage'),
+            name: 'spare-part-location-manage',
+            meta: {
+              title: '备品备件库位管理',
+              permissionName: 'class_production_summary'
+            }
+          },
+          {
+            path: 'inventory-manage',
+            component: () => import('@/views/equipment-management/spare-part/inventory-manage'),
+            name: 'spare-part-inventory-manage',
+            meta: {
+              title: '备品备件库存管理',
+              permissionName: 'class_production_summary'
+            }
+          }
+        ]
       },
       {
-        path: 'spare-type',
-        component: () => import('@/views/equipment-management/spare-part/spare-type'),
-        name: 'spare-type',
+        path: 'warehous',
+        redirect: '/warehousing',
+        component: {
+          render: c => c('router-view')
+        },
+        name: 'spare-part-warehousing-managr',
         meta: {
-          title: '类型管理',
-          permissionName: 'class_production_summary'
-        }
-      },
-      {
-        path: 'spareparts-spare',
-        component: () => import('@/views/equipment-management/spare-part/spareparts-spare'),
-        name: 'spareparts-spare',
+          title: '出入库管理'
+        },
+        breadcrumb: false,
+        children: [
+          {
+            path: 'warehousing',
+            component: () => import('@/views/equipment-management/spare-part/warehousing'),
+            name: 'spare-part-warehousing',
+            meta: {
+              title: '备品备件入库管理',
+              permissionName: 'class_production_summary'
+            }
+          },
+          {
+            path: 'warehouse-out',
+            component: () => import('@/views/equipment-management/spare-part/warehouse-out'),
+            name: 'spare-part-warehouse-out',
+            meta: {
+              title: '备品备件出库管理',
+              permissionName: 'class_production_summary'
+            }
+          },
+          {
+            path: 'inventory',
+            component: () => import('@/views/equipment-management/spare-part/inventory'),
+            name: 'spare-part-inventory',
+            meta: {
+              title: '备品备件盘点管理',
+              permissionName: 'class_production_summary'
+            }
+          }
+        ]
+      }, {
+        path: 'record',
+        redirect: '/warehousing-record',
+        component: {
+          render: c => c('router-view')
+        },
+        name: 'spare-part-record-managr',
         meta: {
-          title: '基本信息管理',
-          permissionName: 'class_production_summary'
-        }
-      },
-      {
-        path: 'shelf-material-binding',
-        component: () => import('@/views/equipment-management/spare-part/shelf-material-binding'),
-        name: 'shelf-material-binding',
-        meta: {
-          title: '货架物料绑定管理',
-          permissionName: 'class_production_summary'
-        }
-      },
-      {
-        path: 'warehousing',
-        component: () => import('@/views/equipment-management/spare-part/warehousing'),
-        name: 'spare-part-warehousing',
-        meta: {
-          title: '备品备件入库管理',
-          permissionName: 'class_production_summary'
-        }
-      },
-      {
-        path: 'warehouse-out',
-        component: () => import('@/views/equipment-management/spare-part/warehouse-out'),
-        name: 'spare-part-warehouse-out',
-        meta: {
-          title: '备品备件出库管理',
-          permissionName: 'class_production_summary'
-        }
-      },
-      {
-        path: 'inventory',
-        component: () => import('@/views/equipment-management/spare-part/inventory'),
-        name: 'spare-part-inventory',
-        meta: {
-          title: '备品备件盘点管理',
-          permissionName: 'class_production_summary'
-        }
-      },
-      {
-        path: 'warehousing-record',
-        component: () => import('@/views/equipment-management/spare-part/all-record'),
-        name: 'spare-part-warehousing-record',
-        meta: {
-          title: '备品备件入库履历',
-          permissionName: 'class_production_summary'
-        }
-      },
-      {
-        path: 'warehousing-out-record',
-        component: () => import('@/views/equipment-management/spare-part/all-record'),
-        name: 'spare-part-warehousing-out-record',
-        meta: {
-          title: '备品备件出库履历',
-          permissionName: 'class_production_summary'
-        }
-      },
-      {
-        path: 'inventory-record',
-        component: () => import('@/views/equipment-management/spare-part/all-record'),
-        name: 'spare-part-inventory-record',
-        meta: {
-          title: '备品备件盘点履历',
-          permissionName: 'class_production_summary'
-        }
-      },
-      {
-        path: 'location-manage',
-        component: () => import('@/views/equipment-management/spare-part/location-manage'),
-        name: 'spare-part-location-manage',
-        meta: {
-          title: '备品备件库位管理',
-          permissionName: 'class_production_summary'
-        }
-      },
-      {
-        path: 'inventory-manage',
-        component: () => import('@/views/equipment-management/spare-part/inventory-manage'),
-        name: 'spare-part-inventory-manage',
-        meta: {
-          title: '备品备件库存管理',
-          permissionName: 'class_production_summary'
-        }
+          title: '履历管理'
+        },
+        breadcrumb: false,
+        children: [
+          {
+            path: 'warehousing-record',
+            component: () => import('@/views/equipment-management/spare-part/all-record'),
+            name: 'spare-part-warehousing-record',
+            meta: {
+              title: '备品备件入库履历',
+              permissionName: 'class_production_summary'
+            }
+          },
+          {
+            path: 'warehousing-out-record',
+            component: () => import('@/views/equipment-management/spare-part/all-record'),
+            name: 'spare-part-warehousing-out-record',
+            meta: {
+              title: '备品备件出库履历',
+              permissionName: 'class_production_summary'
+            }
+          },
+          {
+            path: 'inventory-record',
+            component: () => import('@/views/equipment-management/spare-part/all-record'),
+            name: 'spare-part-inventory-record',
+            meta: {
+              title: '备品备件盘点履历',
+              permissionName: 'class_production_summary'
+            }
+          }
+        ]
       }
     ]
   }

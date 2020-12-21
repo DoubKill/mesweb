@@ -142,6 +142,8 @@ export default {
   MaterialInventoryManage: '/api/v1/inventory/material-inventory-manage/',
   // 出库计划管理
   PutPlanManagement: '/api/v1/inventory/put-plan-management/',
+  //  终炼胶计划管理
+  FinalPlanManagement: '/api/v1/inventory/final-plan-management/',
   // 物料属性管理
   materialsAttribute: '/api/v1/recipe/materials-attribute/',
   // 物料条码信息
