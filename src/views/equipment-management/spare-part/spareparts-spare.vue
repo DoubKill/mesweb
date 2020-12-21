@@ -25,10 +25,20 @@
         </el-select>
       </el-form-item>
       <el-form-item style="float: right">
-        <el-button>模板下载</el-button>
+        <el-button
+          @click="templateDownload"
+        >模板下载</el-button>
       </el-form-item>
       <el-form-item style="float: right">
-        <el-button>导入</el-button>
+        <!-- <el-button>导入</el-button> -->
+        <el-upload
+          class="upload-demo"
+          action="string"
+          accept=".xls, .xlsx"
+          :http-request="Upload"
+        >
+          <el-button size="small" type="primary">导入</el-button>
+        </el-upload>
       </el-form-item>
       <el-form-item style="float: right">
         <el-button
@@ -55,6 +65,10 @@
       <el-table-column
         prop="no"
         label="物料编码"
+      />
+      <el-table-column
+        prop="name"
+        label="物料名称"
       />
       <el-table-column
         prop="cost"
@@ -233,7 +247,12 @@
 </template>
 
 <script>
-import { getSparepartsSpare, putSparepartsSpare, postSparepartsSpare, deleteSparepartsSpare } from '@/api/spareparts-spare'
+import { getSparepartsSpare,
+  putSparepartsSpare,
+  postSparepartsSpare,
+  deleteSparepartsSpare,
+  getSpareImportExport,
+  postSpareImportExport } from '@/api/spareparts-spare'
 import page from '@/components/page'
 import { getSpareType } from '@/api/spare-type'
 
@@ -360,6 +379,24 @@ export default {
             })
             this.getTableData()
           })
+      })
+    },
+    templateDownload() {
+      getSpareImportExport().then(response => {
+        this.$message({
+          type: 'success',
+          message: '下载成功!'
+        })
+      })
+    },
+    Upload(param) {
+      const formData = new FormData()
+      formData.append('file', param.file)
+      postSpareImportExport(formData).then(response => {
+        this.$message({
+          type: 'success',
+          message: '导入成功!'
+        })
       })
     },
     currentChange(page, pageSize) {
