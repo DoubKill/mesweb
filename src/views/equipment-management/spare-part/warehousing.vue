@@ -2,6 +2,11 @@
   <div v-loading="loading" class="warehousing">
     <!-- 备品备件入库管理 -->
     <el-form :inline="true">
+      <el-form-item label="物料类型:">
+        <materialTypeSelect
+          @changeSelect="changeMaterialType"
+        />
+      </el-form-item>
       <el-form-item label="物料编码:">
         <materialCodeSelect
           :is-all-obj="true"
@@ -33,6 +38,10 @@
         label="No"
       />
       <el-table-column
+        prop="type_name"
+        label="物料类型"
+      />
+      <el-table-column
         prop="spare_no"
         label="物料编码"
       />
@@ -47,6 +56,14 @@
       <el-table-column
         prop="qty"
         label="数量（件）"
+      />
+      <el-table-column
+        prop="cost"
+        label="单价（元）"
+      />
+      <el-table-column
+        prop="total_count"
+        label="总价（元）"
       />
       <el-table-column
         label="操作"
@@ -145,13 +162,14 @@
 <script>
 import inventoryPosition from '@/components/select_w/inventoryPosition'
 import materialCodeSelect from '@/components/select_w/sparePartsMCodeSelect'
+import materialTypeSelect from '@/components/select_w/sparePartsMTypeSelect'
 import warehouseSelect from '@/components/select_w/warehouseSelect'
 import page from '@/components/page'
 import { spareInventory, putStorage } from '@/api/base_w_two'
 import allRecord from './all-record.vue'
 
 export default {
-  components: { allRecord, page, inventoryPosition, materialCodeSelect, warehouseSelect },
+  components: { materialTypeSelect, allRecord, page, inventoryPosition, materialCodeSelect, warehouseSelect },
   data() {
     return {
       search: {
@@ -201,6 +219,11 @@ export default {
     },
     changeMaterialCode(obj) {
       this.search.spare_no = obj ? obj.no : null
+      this.search.page = 1
+      this.getList()
+    },
+    changeMaterialType(obj) {
+      this.search.type_name = obj ? obj.name : null
       this.search.page = 1
       this.getList()
     },
