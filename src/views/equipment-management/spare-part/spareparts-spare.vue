@@ -37,7 +37,7 @@
           accept=".xls, .xlsx"
           :http-request="Upload"
         >
-          <el-button size="small" type="primary">点击上传</el-button>
+          <el-button size="small" type="primary">导入</el-button>
         </el-upload>
       </el-form-item>
       <el-form-item style="float: right">
