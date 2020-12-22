@@ -23,7 +23,7 @@
       </el-col>
       <el-col :span="10">
         <el-card shadow="never">
-          <el-form :label-width="formLabelWidth">
+          <el-form >
             <el-form-item>
               <el-button
                 style="float: right"
@@ -32,7 +32,7 @@
             </el-form-item>
             <el-form-item
               label="开始时间"
-              :label-width="formLabelWidth"
+              
             >
               <el-date-picker
                 v-model="startTime"
@@ -44,7 +44,7 @@
             </el-form-item>
             <el-form-item
               label="倒班时间"
-              :label-width="formLabelWidth"
+              
             >
               <el-select
                 v-model="workScheduleIndex"
@@ -62,7 +62,7 @@
             </el-form-item>
             <el-form-item
               label="倒班周期"
-              :label-width="formLabelWidth"
+              
             >
               <el-input-number
                 v-model.number="changeShiftsPeriod"

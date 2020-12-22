@@ -134,28 +134,25 @@
         <el-form-item
           :error="globalCodeTypeFormError.type_no"
           label="类型编号"
-          :label-width="formLabelWidth"
         >
           <el-input v-model="globalCodeTypeForm.type_no" />
         </el-form-item>
         <el-form-item
           :error="globalCodeTypeFormError.type_name"
           label="类型名称"
-          :label-width="formLabelWidth"
         >
           <el-input v-model="globalCodeTypeForm.type_name" />
         </el-form-item>
         <el-form-item
           :error="globalCodeTypeFormError.description"
           label="说明"
-          :label-width="formLabelWidth"
         >
           <el-input v-model="globalCodeTypeForm.description" />
         </el-form-item>
         <!-- <el-form-item
           :error="globalCodeTypeFormError.use_flag"
           label="是否启用"
-          :label-width="formLabelWidth"
+
         >
           <el-switch v-model="globalCodeTypeForm.use_flag" />
         </el-form-item> -->
@@ -179,7 +176,6 @@
         <el-form-item
           :error="globalCodeTypeFormError.type_no"
           label="类型编号"
-          :label-width="formLabelWidth"
         >
           <el-input
             v-model="globalCodeTypeForm.type_no"
@@ -189,21 +185,19 @@
         <el-form-item
           :error="globalCodeTypeFormError.type_name"
           label="类型名称"
-          :label-width="formLabelWidth"
         >
           <el-input v-model="globalCodeTypeForm.type_name" />
         </el-form-item>
         <el-form-item
           :error="globalCodeTypeFormError.description"
           label="说明"
-          :label-width="formLabelWidth"
         >
           <el-input v-model="globalCodeTypeForm.description" />
         </el-form-item>
         <!-- <el-form-item
           :error="globalCodeTypeFormError.use_flag"
           label="是否启用"
-          :label-width="formLabelWidth"
+
         >
           <el-switch v-model="globalCodeTypeForm.use_flag" />
         </el-form-item> -->
@@ -227,28 +221,25 @@
         <el-form-item
           :error="globalCodeFormError.global_no"
           label="公用代码编号"
-          :label-width="formLabelWidth"
         >
           <el-input v-model="globalCodeForm.global_no" />
         </el-form-item>
         <el-form-item
           :error="globalCodeFormError.global_name"
           label="公用代码名称"
-          :label-width="formLabelWidth"
         >
           <el-input v-model="globalCodeForm.global_name" />
         </el-form-item>
         <el-form-item
           :error="globalCodeFormError.description"
           label="说明"
-          :label-width="formLabelWidth"
         >
           <el-input v-model="globalCodeForm.description" />
         </el-form-item>
         <!-- <el-form-item
           :error="globalCodeFormError.use_flag"
           label="是否启用"
-          :label-width="formLabelWidth"
+
         >
           <el-switch v-model="globalCodeForm.use_flag_b" />
         </el-form-item> -->
@@ -272,7 +263,6 @@
         <el-form-item
           :error="globalCodeFormError.global_no"
           label="公用代码编号"
-          :label-width="formLabelWidth"
         >
           <el-input
             v-model="globalCodeForm.global_no"
@@ -282,21 +272,19 @@
         <el-form-item
           :error="globalCodeFormError.global_name"
           label="公用代码名称"
-          :label-width="formLabelWidth"
         >
           <el-input v-model="globalCodeForm.global_name" />
         </el-form-item>
         <el-form-item
           :error="globalCodeFormError.description"
           label="说明"
-          :label-width="formLabelWidth"
         >
           <el-input v-model="globalCodeForm.description" />
         </el-form-item>
         <!-- <el-form-item
           :error="globalCodeFormError.use_flag"
           label="是否启用"
-          :label-width="formLabelWidth"
+
         >
           <el-switch v-model="globalCodeForm.use_flag" />
         </el-form-item> -->

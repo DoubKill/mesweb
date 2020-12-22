@@ -153,7 +153,7 @@
         ref="materialBaseInfoForm"
         :rules="rules"
         :model="materialBaseInfoForm"
-        :label-width="formLabelWidth"
+        
       >
         <el-form-item
           :error="materialBaseInfoFormError.material_no"
@@ -240,7 +240,7 @@
         ref="materialBaseInfoEditForm"
         :rules="rules"
         :model="materialBaseInfoForm"
-        :label-width="formLabelWidth"
+        
       >
         <el-form-item
           :error="materialBaseInfoFormError.material_no"
