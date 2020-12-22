@@ -142,6 +142,8 @@ export default {
   MaterialInventoryManage: '/api/v1/inventory/material-inventory-manage/',
   // 出库计划管理
   PutPlanManagement: '/api/v1/inventory/put-plan-management/',
+  //  终炼胶计划管理
+  FinalPlanManagement: '/api/v1/inventory/final-plan-management/',
   // 物料属性管理
   materialsAttribute: '/api/v1/recipe/materials-attribute/',
   // 物料条码信息
@@ -227,6 +229,10 @@ export default {
   // 小料配方
   WeighBatchingUrl: '/api/v1/recipe/weigh-batching/',
   ProductBatchingDetailUrl: '/api/v1/recipe/product-batching-detail/',
-  WeighCntTypeUrl: '/api/v1/recipe/weigh-cnt-type/'
+  WeighCntTypeUrl: '/api/v1/recipe/weigh-cnt-type/',
 
+  // 备品备件基本信息导入导出
+  SpareImportExport: '/api/v1/spareparts/spare-import-export/',
+  // 备品备件库存导入
+  SpareInventoryImportExport: '/api/v1/spareparts/spare-inventory-import-export/'
 }

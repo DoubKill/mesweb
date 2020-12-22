@@ -31,3 +31,20 @@ export function deleteSparepartsSpare(id) {
     method: 'delete'
   })
 }
+
+export function getSpareImportExport(params) {
+  return request({
+    url: API.SpareImportExport,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
+
+export function postSpareImportExport(data) {
+  return request({
+    url: API.SpareImportExport,
+    method: 'post',
+    data
+  })
+}

@@ -257,6 +257,8 @@ export default {
     tableRowClassName({ row, rowIndex }) {
       if (row.bound === '-') {
         return 'warning-row'
+      } else if (row.bound === '+') {
+        return 'max-warning-row'
       }
       return ''
     },

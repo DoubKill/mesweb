@@ -1,6 +1,6 @@
 <template>
   <div class="location-manage">
-    <!-- 备品备件库位管理 -->
+    <!-- 备品备件库位导入 -->
     <el-form :inline="true">
       <div v-if="!isDialog">
         <el-form-item label="物料编码:">
@@ -23,6 +23,23 @@
         </el-form-item>
         <el-form-item label="库存位:">
           <inventoryPosition @changSelect="changeInventoryPosition" />
+        </el-form-item>
+        <el-form-item style="float: right">
+          <el-button
+            @click="templateDownload"
+          >模板下载</el-button>
+        </el-form-item>
+        <el-form-item style="float: right">
+          <!-- <el-button>导入</el-button> -->
+          <el-upload
+            class="upload-demo"
+            action="string"
+            accept=".xls, .xlsx"
+            :http-request="Upload"
+            :show-file-list="false"
+          >
+            <el-button>导入</el-button>
+          </el-upload>
         </el-form-item>
       </div>
     </el-form>
@@ -80,6 +97,7 @@ import materialCodeSelect from '@/components/select_w/sparePartsMCodeSelect'
 import page from '@/components/page'
 import { spareInventory } from '@/api/base_w_two'
 import materialTypeSelect from '@/components/select_w/sparePartsMTypeSelect'
+import { getSpareInventoryImportExport, postSpareInventoryImportExport } from '@/api/inventory-manage'
 
 export default {
   components: { page, inventoryPosition, materialCodeSelect, materialTypeSelect },
@@ -162,6 +180,28 @@ export default {
         return 'max-warning-row'
       }
       return ''
+    },
+    templateDownload() {
+      getSpareInventoryImportExport().then(response => {
+        const link = document.createElement('a')
+        const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
+        link.style.display = 'none'
+        link.href = URL.createObjectURL(blob)
+        link.download = '备品备件库存模板.xlsx' // 下载的文件名
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      })
+    },
+    Upload(param) {
+      const formData = new FormData()
+      formData.append('file', param.file)
+      postSpareInventoryImportExport(formData).then(response => {
+        this.$message({
+          type: 'success',
+          message: '导入成功!'
+        })
+      })
     },
     currentChange(page, pageSize) {
       this.search.page = page

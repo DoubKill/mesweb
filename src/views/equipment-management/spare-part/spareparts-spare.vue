@@ -25,10 +25,21 @@
         </el-select>
       </el-form-item>
       <el-form-item style="float: right">
-        <el-button>模板下载</el-button>
+        <el-button
+          @click="templateDownload"
+        >模板下载</el-button>
       </el-form-item>
       <el-form-item style="float: right">
-        <el-button>导入</el-button>
+        <!-- <el-button>导入</el-button> -->
+        <el-upload
+          class="upload-demo"
+          action="string"
+          accept=".xls, .xlsx"
+          :http-request="Upload"
+          :show-file-list="false"
+        >
+          <el-button>导入</el-button>
+        </el-upload>
       </el-form-item>
       <el-form-item style="float: right">
         <el-button
@@ -55,6 +66,10 @@
       <el-table-column
         prop="no"
         label="物料编码"
+      />
+      <el-table-column
+        prop="name"
+        label="物料名称"
       />
       <el-table-column
         prop="cost"
@@ -185,7 +200,7 @@
           label="物料编码"
           prop="no"
         >
-          <el-input v-model="spareForm.no" />
+          <el-input v-model="spareForm.no" :disabled="true" />
         </el-form-item>
         <el-form-item
           label="物料名称"
@@ -233,7 +248,12 @@
 </template>
 
 <script>
-import { getSparepartsSpare, putSparepartsSpare, postSparepartsSpare, deleteSparepartsSpare } from '@/api/spareparts-spare'
+import { getSparepartsSpare,
+  putSparepartsSpare,
+  postSparepartsSpare,
+  deleteSparepartsSpare,
+  getSpareImportExport,
+  postSpareImportExport } from '@/api/spareparts-spare'
 import page from '@/components/page'
 import { getSpareType } from '@/api/spare-type'
 
@@ -360,6 +380,28 @@ export default {
             })
             this.getTableData()
           })
+      })
+    },
+    templateDownload() {
+      getSpareImportExport().then(response => {
+        const link = document.createElement('a')
+        const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
+        link.style.display = 'none'
+        link.href = URL.createObjectURL(blob)
+        link.download = '备品备件基本信息模板.xlsx' // 下载的文件名
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      })
+    },
+    Upload(param) {
+      const formData = new FormData()
+      formData.append('file', param.file)
+      postSpareImportExport(formData).then(response => {
+        this.$message({
+          type: 'success',
+          message: '导入成功!'
+        })
       })
     },
     currentChange(page, pageSize) {

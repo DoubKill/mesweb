@@ -364,6 +364,14 @@ export function putPlanManagement(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function finalPlanManagement(method, id, data = {}) {
+  const obj = {
+    url: id ? API.FinalPlanManagement + id + '/' : API.FinalPlanManagement,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 
 export function materialCount(method, id, data = {}) {
   const obj = {

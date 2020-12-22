@@ -69,7 +69,7 @@
     >
       <el-form
         v-model="rubberRecipeForm"
-        :label-width="formLabelWidth"
+        
       >
         <!--
             <el-form-item label="产地">
@@ -86,24 +86,24 @@
         <el-form-item
           :error="rubberRecipeFormError.product_no"
           label="胶料编码"
-          :label-width="formLabelWidth"
+          
         >
           <el-input v-model="rubberRecipeForm.product_no" />
         </el-form-item>
         <!--
-            <el-form-item label="版本" :label-width="formLabelWidth">
+            <el-form-item label="版本" >
                 <el-input v-model="rubberRecipeForm.versions"></el-input>
             </el-form-item>
             -->
         <el-form-item
           :error="rubberRecipeFormError.product_name"
           label="胶料名称"
-          :label-width="formLabelWidth"
+          
         >
           <el-input v-model="rubberRecipeForm.product_name" />
         </el-form-item>
         <!--
-            <el-form-item label="方案" :label-width="formLabelWidth">
+            <el-form-item label="方案" >
                 <el-input v-model="rubberRecipeForm.precept"></el-input>
             </el-form-item>
             -->
@@ -295,7 +295,7 @@
       :close-on-press-escape="false"
       :visible.sync="dialogCopyRubberRecipeStandardVisible"
     >
-      <el-form :label-width="formLabelWidth">
+      <el-form >
         <el-form-item label="来源胶料">
           <el-col :span="6">
             <el-input

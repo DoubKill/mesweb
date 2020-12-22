@@ -184,7 +184,6 @@ export default {
     }
 
    .info-table {
-
       td {
         min-width: 100px;
         padding-top: 10px;
