@@ -78,7 +78,6 @@
       <el-form ref="createForm" :rules="rules" :model="locationForm">
         <el-form-item
           label="类型"
-          
         >
           <el-select v-model="locationForm.type" placeholder="请选择">
             <el-option
@@ -91,7 +90,7 @@
         </el-form-item>
         <el-form-item
           label="位置点"
-          
+
           prop="name"
         >
           <el-input v-model="locationForm.name" />
@@ -116,7 +115,6 @@
       <el-form ref="editForm" :rules="rules" :model="locationForm">
         <el-form-item
           label="类型"
-          
         >
           <el-select v-model="locationForm.type" placeholder="请选择">
             <el-option
@@ -129,7 +127,7 @@
         </el-form-item>
         <el-form-item
           label="位置点"
-          
+
           prop="name"
         >
           <el-input v-model="locationForm.name" />
