@@ -69,3 +69,11 @@ export function sparepartsSpare(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function revocationLog(method, id, data = {}) {
+  const obj = {
+    url: (id ? API.SpareInventoryLog + id + '/' : API.SpareInventoryLog) + 'revocation_log/',
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

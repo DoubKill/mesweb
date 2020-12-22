@@ -98,7 +98,6 @@
         </el-form-item>
         <el-form-item
           label="库存位"
-          
           prop="location"
         >
           <inventoryPosition
@@ -145,7 +144,7 @@
         </el-form-item>
         <el-form-item
           label="库存位"
-          
+
           prop="location"
         >
           <inventoryPosition

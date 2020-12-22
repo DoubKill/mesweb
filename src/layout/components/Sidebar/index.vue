@@ -31,7 +31,17 @@ export default {
       'sidebar'
     ]),
     routes() {
-      return this.$router.options.routes
+      const route = this.$route
+      const { matched } = route
+
+      // new
+      const arr = this.$router.options.routes.filter(D => {
+        return D.meta && D.meta.title === matched[0].meta.title
+      })
+
+      // old
+      // return this.$router.options.routes
+      return arr
     },
     activeMenu() {
       const route = this.$route

@@ -42,6 +42,22 @@
           <el-button v-if="currentRoute === 3" @click="exportTable('备品备件盘点履历')">导出表格</el-button>
         </el-form-item>
       </div>
+      <el-form-item v-if="currentRoute === 1" label="状态:">
+        <!-- // 1出库 2入库 3盘点 -->
+        <el-select
+          v-model="search.status"
+          placeholder="请选择"
+          clearable
+          @change="changeStatus"
+        >
+          <el-option
+            v-for="item in statusList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          />
+        </el-select>
+      </el-form-item>
     </el-form>
     <el-table
       id="out-table"
@@ -146,6 +162,24 @@
         prop="created_username"
         label="操作人"
       />
+      <el-table-column
+        v-if="currentRoute === 1"
+        prop="created_username"
+        label="状态"
+      >
+        <template slot-scope="{row}">
+          {{ row.status===1?'完成':'注销' }}
+        </template>
+      </el-table-column>
+      <el-table-column
+        v-if="currentRoute === 1"
+        label="操作"
+        width="80"
+      >
+        <template slot-scope="scope">
+          <el-button v-if="scope.row.status===1" size="mini" @click="revokeFun(scope.row,scope.$index)">撤销</el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <page
       :old-page="false"
@@ -163,7 +197,7 @@ import materialTypeSelect from '@/components/select_w/sparePartsMTypeSelect'
 import materialCodeSelect from '@/components/select_w/sparePartsMCodeSelect'
 import page from '@/components/page'
 import { setDate, exportExcel } from '@/utils/index'
-import { spareInventoryLog } from '@/api/base_w_two'
+import { spareInventoryLog, revocationLog } from '@/api/base_w_two'
 export default {
   components: { page, inventoryPosition, materialCodeSelect, materialTypeSelect },
   props: {
@@ -192,7 +226,8 @@ export default {
       dataValue: [setDate(), setDate()],
       tableData: [],
       total: 0,
-      loading: false
+      loading: false,
+      statusList: [{ id: 1, name: '完成' }, { id: 2, name: '注销' }]
     }
   },
   watch: {
@@ -272,6 +307,26 @@ export default {
     },
     exportTable(val) {
       exportExcel(val)
+    },
+    changeStatus(val) {
+      this.search.page = 1
+      this.getList()
+    },
+    revokeFun(row, index) {
+      this.$confirm(
+        '确定撤销?',
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      ).then(async() => {
+        await revocationLog('patch', row.id)
+        this.$message.success('撤销成功')
+        this.search.page = 1
+        this.getList()
+      })
     }
   }
 }

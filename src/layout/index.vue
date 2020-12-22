@@ -11,6 +11,7 @@
     <sidebar class="sidebar-container" />
     <div class="main-container">
       <div :class="{'fixed-header':fixedHeader}">
+        <TopNavber />
         <navbar />
       </div>
       <app-main />
@@ -19,7 +20,7 @@
 </template>
 
 <script>
-import { Navbar, Sidebar, AppMain } from './components'
+import { Navbar, Sidebar, AppMain, TopNavber } from './components'
 import ResizeMixin from './mixin/ResizeHandler'
 
 export default {
@@ -27,7 +28,8 @@ export default {
   components: {
     Navbar,
     Sidebar,
-    AppMain
+    AppMain,
+    TopNavber
   },
   mixins: [ResizeMixin],
   computed: {

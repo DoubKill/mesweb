@@ -1,14 +1,36 @@
 <template>
-  <div class="navbar">
-    <!-- <hamburger
+  <div class="TopNavber">
+    <hamburger
       :is-active="sidebar.opened"
       class="hamburger-container"
       @toggleClick="toggleSideBar"
-    /> -->
+    />
+    <el-menu
+      :default-active="activeMenu"
+      background-color="rgb(48 65 86)"
+      text-color="#fff"
+      class="el-menu-demo"
+      mode="horizontal"
+      active-text-color="rgb(11, 189, 11)"
+      @select="handleSelect"
+    >
+      <div
+        v-for="route in routes"
+        :key="route.path"
+        style="display:inline-block"
+      >
+        <app-link
+          v-if="!route.hasOwnProperty('hidden')||!route.hidden"
+          :to="resolvePath(route.path)"
+        >
+          <el-menu-item :index="route.meta.title">
+            {{ route.meta.title }}
+          </el-menu-item>
+        </app-link>
+      </div>
+    </el-menu>
 
-    <breadcrumb class="breadcrumb-container" />
-
-    <!--<div class="right-menu">
+    <div class="right-menu">
       <el-dropdown
         class="avatar-container"
         trigger="click"
@@ -34,25 +56,51 @@
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
-    </div>-->
+    </div>
   </div>
 </template>
 
 <script>
+import path from 'path'
 import { mapGetters } from 'vuex'
-import Breadcrumb from '@/components/Breadcrumb'
-// import Hamburger from '@/components/Hamburger'
-
+import Hamburger from '@/components/Hamburger'
+import { isExternal } from '@/utils/validate'
+import AppLink from './Sidebar/Link'
 export default {
   components: {
-    Breadcrumb
-    // Hamburger
+    Hamburger,
+    AppLink
+  },
+  data() {
+    return {
+      basePath: ''
+    }
   },
   computed: {
     ...mapGetters([
       'sidebar',
       'name'
-    ])
+    ]),
+    routes() {
+      return this.$router.options.routes
+    },
+    activeMenu: {
+      get() {
+        const route = this.$route
+        const { meta, matched } = route
+        if (meta.activeMenu) {
+          return meta.activeMenu
+        }
+        return matched[0].meta.title
+      },
+      set(val) {
+        return val
+      }
+    }
+  },
+  watch: {
+    $route(to, from) {
+    }
   },
   methods: {
     toggleSideBar() {
@@ -61,6 +109,18 @@ export default {
     async logout() {
       await this.$store.dispatch('user/logout')
       this.$router.push(`/login`)
+    },
+    handleSelect(val) {
+      this.activeMenu = val
+    },
+    resolvePath(routePath) {
+      if (isExternal(routePath)) {
+        return routePath
+      }
+      if (isExternal(this.basePath)) {
+        return this.basePath
+      }
+      return path.resolve(this.basePath, routePath)
     }
   }
 }
@@ -68,21 +128,28 @@ export default {
 
 <style lang="scss" scoped>
   @import "~@/styles/variables.scss";
-.navbar {
-  height: 40px;
+
+.TopNavber {
+//   height: 60px;
   overflow: hidden;
   position: relative;
   color:#fff !important;
-  background: $color-primary;
+  background: rgb(48 65 86);
   box-shadow: 0 1px 4px rgba(0,21,41,.08);
+  .el-menu.el-menu--horizontal{
+      border-bottom: none;
+  }
+  .is-active{
+      border-bottom: 3px solid;
+  }
+  .el-menu-demo{
+      display: inline-block;
+  }
   .right-menu .avatar-container .avatar-wrapper{
     margin-top: 0 !important;
   }
-  .app-breadcrumb.el-breadcrumb{
-        line-height: 40px;
-  }
   .hamburger-container {
-    line-height: 46px;
+    line-height: 56px;
     height: 100%;
     float: left;
     cursor: pointer;
@@ -101,7 +168,8 @@ export default {
   .right-menu {
     float: right;
     height: 100%;
-    line-height: 40px;
+    line-height: 56px;
+    margin-bottom:4px;
     cursor: pointer;
 
     &:focus {
@@ -145,7 +213,7 @@ export default {
           cursor: pointer;
           position: absolute;
           right: -20px;
-          top: 17px;
+          top: 22px;
           font-size: 12px;
         }
       }

@@ -1,14 +1,14 @@
 <template>
   <div v-if="!item.hidden">
-    <template v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!item.alwaysShow">
+    <!-- <template v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!item.alwaysShow">
       <app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path)">
         <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{'submenu-title-noDropdown':!isNest}">
           <item :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" :title="onlyOneChild.meta.title" />
         </el-menu-item>
       </app-link>
-    </template>
+    </template> -->
 
-    <el-submenu v-else ref="subMenu" :index="resolvePath(item.path)" popper-append-to-body>
+    <!-- <el-submenu v-else ref="subMenu" :index="resolvePath(item.path)" popper-append-to-body>
       <template slot="title">
         <item v-if="item.meta" :icon="item.meta && item.meta.icon" :title="item.meta.title" />
       </template>
@@ -20,13 +20,44 @@
         :base-path="resolvePath(child.path)"
         class="nest-menu"
       />
-    </el-submenu>
+    </el-submenu> -->
+
+    <template v-if="!Object.prototype.hasOwnProperty.call(item, 'children')">
+      <app-link :to="item.path">
+        <el-menu-item :index="item.path" :class="{'submenu-title-noDropdown':!isNest}">
+          <item :icon="item.meta.icon||(item.meta&&item.meta.icon)" :title="item.meta.title" />
+        </el-menu-item>
+      </app-link>
+    </template>
+    <div v-for="(itemC,i) in item.children" :key="i">
+      <template v-if="hasOneShowingChild(itemC.children,itemC) && (!itemC.children||itemC.noShowingChildren)&&!itemC.alwaysShow">
+        <app-link v-if="itemC.meta" :to="itemC.path">
+          <el-menu-item :index="itemC.path" :class="{'submenu-title-noDropdown':!isNest}">
+            <item :icon="itemC.meta.icon||(itemC.meta&&itemC.meta.icon)" :title="itemC.meta.title" />
+          </el-menu-item>
+        </app-link>
+      </template>
+
+      <el-submenu v-else ref="subMenu" :index="itemC.path" popper-append-to-body>
+        <template slot="title">
+          <item v-if="itemC.meta" :icon="itemC.meta && itemC.meta.icon" :title="itemC.meta.title" />
+        </template>
+        <sidebar-item
+          v-for="child in itemC.children"
+          :key="child.path"
+          :is-nest="true"
+          :item="child"
+          :base-path="child.path"
+          class="nest-menu"
+        />
+      </el-submenu>
+    </div>
   </div>
 </template>
 
 <script>
-import path from 'path'
-import { isExternal } from '@/utils/validate'
+// import path from 'path'
+// import { isExternal } from '@/utils/validate'
 import Item from './Item'
 import AppLink from './Link'
 import FixiOSBug from './FixiOSBug'
@@ -56,6 +87,8 @@ export default {
     this.onlyOneChild = null
     return {}
   },
+  created() {
+  },
   methods: {
     hasOneShowingChild(children = [], parent) {
       const showingChildren = children.filter(item => {
@@ -82,13 +115,13 @@ export default {
       return false
     },
     resolvePath(routePath) {
-      if (isExternal(routePath)) {
-        return routePath
-      }
-      if (isExternal(this.basePath)) {
-        return this.basePath
-      }
-      return path.resolve(this.basePath, routePath)
+      // if (isExternal(routePath)) {
+      //   return routePath
+      // }
+      // if (isExternal(this.basePath)) {
+      //   return this.basePath
+      // }
+      // return path.resolve(this.basePath, routePath)
     }
   }
 }
