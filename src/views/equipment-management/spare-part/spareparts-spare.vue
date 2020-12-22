@@ -367,7 +367,7 @@ export default {
     },
     handleDelete: function(row) {
       // var str = row.delete_flag ? '启用' : '停用'
-      this.$confirm('是否确定删除?' + row.name + '信息', '提示', {
+      this.$confirm('是否确定删除' + row.name + '信息？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
