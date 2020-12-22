@@ -127,7 +127,6 @@
         </el-form-item>
         <el-form-item
           label="位置点"
-
           prop="name"
         >
           <el-input v-model="locationForm.name" />
