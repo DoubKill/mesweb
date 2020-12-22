@@ -872,6 +872,15 @@ export const asyncRoutes = [{
               title: '备品备件库存管理',
               permissionName: 'class_production_summary'
             }
+          },
+          {
+            path: 'inventory-upload',
+            component: () => import('@/views/equipment-management/spare-part/inventory-upload'),
+            name: 'inventory-upload',
+            meta: {
+              title: '备品备件库存导入',
+              permissionName: 'class_production_summary'
+            }
           }
         ]
       },

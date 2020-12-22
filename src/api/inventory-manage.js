@@ -8,3 +8,20 @@ export function getCountSpareInventory(params) {
     params
   })
 }
+
+export function getSpareInventoryImportExport(params) {
+  return request({
+    url: API.SpareInventoryImportExport,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
+
+export function postSpareInventoryImportExport(data) {
+  return request({
+    url: API.SpareInventoryImportExport,
+    method: 'post',
+    data
+  })
+}
