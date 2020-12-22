@@ -222,5 +222,11 @@ export default {
   MaterialLocationBinding: '/api/v1/spareparts/spare-location-binding/',
   SpareInventoryLog: '/api/v1/spareparts/spare-inventory-log/',
   // 备品备件库存
-  CountSpareInventory: '/api/v1/spareparts/spare-inventory/count_spare_inventory/'
+  CountSpareInventory: '/api/v1/spareparts/spare-inventory/count_spare_inventory/',
+
+  // 小料配方
+  WeighBatchingUrl: '/api/v1/recipe/weigh-batching/',
+  ProductBatchingDetailUrl: '/api/v1/recipe/product-batching-detail/',
+  WeighCntTypeUrl: '/api/v1/recipe/weigh-cnt-type/'
+
 }
