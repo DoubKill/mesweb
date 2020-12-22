@@ -402,6 +402,8 @@ export default {
           type: 'success',
           message: '导入成功!'
         })
+        this.getParams.page = 1
+        this.getTableData()
       })
     },
     currentChange(page, pageSize) {
