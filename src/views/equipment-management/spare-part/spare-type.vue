@@ -179,6 +179,22 @@ export default {
             this.dialogCreateVisible = false
             this.$message(this.typeForm.name + '创建成功')
             this.getTableData()
+          }).catch(e => {
+            // 先关闭之前提示
+            this.$message.closeAll()
+            // 重复提示
+            if (Object.prototype.toString.call(e) === '[object Object]') {
+              let errorStr = ''
+              for (const key in e) {
+                console.log(e[key])
+                e[key].forEach(D => {
+                  errorStr += D
+                })
+              }
+              if (errorStr.includes('已存在')) {
+                this.$message.error('备品备件类型已存在!')
+              }
+            }
           })
         }
       })
