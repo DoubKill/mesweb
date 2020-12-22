@@ -201,6 +201,8 @@ export default {
           type: 'success',
           message: '导入成功!'
         })
+        this.search.page = 1
+        this.getList()
       })
     },
     currentChange(page, pageSize) {
