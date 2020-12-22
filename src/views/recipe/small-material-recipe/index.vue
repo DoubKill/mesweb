@@ -1,83 +1,259 @@
 <template>
-  <div style="margin-top: 25px">
+  <div>
     <el-form :inline="true">
-      <el-form-item label="胶料配方编码">
-        <el-input v-model="recipe_no" @input="recipeNoChanged" />
+      <el-form-item label="状态">
+        <batching-used-type-select @usedTypeChange="usedTypeChange" />
+      </el-form-item>
+      <el-form-item label="段次">
+        <stage-id-select
+          v-model="getParams.stage_id"
+          @change="stageChange"
+        />
+      </el-form-item>
+      <el-form-item label="胶料编码">
+        <el-input
+          v-model="getParams.stage_product_batch_no"
+          @input="()=>{
+            getParams.page = 1
+            getWeighBatchingList()
+          }"
+        />
+      </el-form-item>
+      <el-form-item style="float: right">
+        <el-button
+          @click="() => {
+            weighBatching = null
+            productBatchingListVisible=true
+          }"
+        >新建</el-button>
+      </el-form-item>
+      <el-form-item style="float: right">
+        <el-button :disabled="!currentRow||currentRow.used_type!==1" @click="batching">配料</el-button>
       </el-form-item>
     </el-form>
     <el-table
-      :data="tableData"
+      v-loading="listLoading"
+      :data="weighBatchingList"
       border
+      fit
+      highlight-current-row
       style="width: 100%"
+      @current-change="handleCurrentChange"
     >
+      <el-table-column label="No" type="index" align="center" />
+      <el-table-column label="小料配方编码" prop="weight_batch_no" align="center">
+        <template slot-scope="scope">
+          <el-link type="primary" :underline="false" @click="showDetail(scope.row)">{{ scope.row.weight_batch_no }}</el-link>
+        </template>
+      </el-table-column>
+      <el-table-column label="胶料配方编码" prop="stage_product_batch_no" align="center" />
+      <el-table-column label="炼胶机类型" prop="category_name" align="center" />
+      <el-table-column label="硫磺重量" prop="sulfur_weight" align="center" />
+      <el-table-column label="化工a重量" prop="a_weight" align="center" />
+      <el-table-column label="化工b重量" prop="b_weight" align="center" />
+      <el-table-column label="炼胶时间" prop="production_time_interval" align="center" />
       <el-table-column
-        type="index"
-        label="No"
-        width="50"
+        label="状态"
+        prop="used_type"
+        :formatter="usedTypeFormatter"
+        align="center"
       />
-      <el-table-column
-        prop="stage_product_batch_no"
-        label="胶料配方编码"
-      />
-      <el-table-column
-        prop="product_no"
-        label="胶料编码"
-      />
-      <el-table-column
-        prop="stage_name"
-        label="段次"
-      />
-      <el-table-column
-        prop="dev_type_name"
-        label="炼胶机类型"
-      />
-      <el-table-column
-        prop="auto_material_weight"
-        label="自动小料重量"
-      />
-      <el-table-column
-        prop="manual_material_weight"
-        label="手动小料重量"
-      />
+      <el-table-column label="操作" width="148" align="center">
+        <template slot-scope="{row}">
+          <el-button-group>
+            <el-button
+              v-if="row.used_type === 5"
+              size="mini"
+              @click="() => {
+                changeUsedType(row.id, 1)
+              }"
+            >编辑</el-button>
+            <el-button
+              v-if="row.used_type === 1"
+              size="mini"
+              @click="() => {
+                changeUsedType(row.id, null)
+              }"
+            >提交</el-button>
+            <el-button
+              v-if="row.used_type === 2"
+              size="mini"
+              @click="() => {
+                changeUsedType(row.id, 3)
+              }"
+            >校对</el-button>
+            <el-button
+              v-if="row.used_type === 3"
+              size="mini"
+              @click="() => {
+                changeUsedType(row.id, 4)
+              }"
+            >启用</el-button>
+            <el-button
+              v-if="row.used_type === 2"
+              size="mini"
+              @click="() => {
+                changeUsedType(row.id, 5)
+              }"
+            >驳回</el-button>
+            <el-button
+              v-if="row.used_type === 5|row.used_type === 4"
+              size="mini"
+              @click="() => {
+                changeUsedType(row.id, 6)
+              }"
+            >废弃</el-button>
+          </el-button-group>
+        </template>
+      </el-table-column>
+      <el-table-column label="下发" align="center">
+        <template slot-scope="{row}">
+          <el-button v-if="row.used_type === 4" size="mini">发送</el-button>
+        </template>
+      </el-table-column>
+      <el-table-column label="发送计数" prop="send_cnt" align="center" />
+      <el-table-column label="创建者" prop="created_user" align="center" />
+      <el-table-column label="创建时间" prop="created_date" align="center" />
     </el-table>
     <page :total="total" :current-page="getParams.page" @currentChange="currentChange" />
+
+    <el-dialog
+      title="胶料配方列表"
+      width="90%"
+      :visible.sync="productBatchingListVisible"
+    >
+      <product-batching-list @productBatchingSelect="productBatchingSelect" />
+      <span slot="footer">
+        <el-button @click="productBatchingListVisible = false">取 消</el-button>
+        <el-button type="primary" :disabled="!productBatching" @click="handleCreateWeighBatching">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
+      :title="textMap[dialogStatus] + '小料配方称量信息'"
+      width="90%"
+      :visible.sync="dialogFormVisible"
+    >
+      <weigh-batching-detail-form
+        :product-batching="productBatching"
+        :weigh-batching="weighBatching"
+        :edit="dialogStatus != 'show'"
+        @created="() => {
+          dialogFormVisible=false
+          getParams.page = 1
+          getWeighBatchingList()
+        }"
+      />
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { rubberMaterial } from '@/api/small-material-recipe'
+import { weighBatchingList, changeUsedType } from '@/api/small-material-recipe'
+import { rubber_material_url } from '@/api/rubber_recipe_fun'
 import page from '@/components/page'
+import BatchingUsedTypeSelect from '@/components/BatchingUsedTypeSelect'
+import StageIdSelect from '@/components/StageSelect/StageIdSelect'
+import ProductBatchingList from './components/product_batching_list'
+import WeighBatchingDetailForm from './components/weigh_batching_detail_form'
+
 export default {
-  components: { page },
-  data: function() {
+  components: { page, BatchingUsedTypeSelect, StageIdSelect, ProductBatchingList, WeighBatchingDetailForm },
+  data() {
     return {
-      recipe_no: '',
+      total: 0,
       getParams: {
-        page: 1
+        page: 1,
+        used_type: null,
+        stage_id: null,
+        stage_product_batch_no: ''
       },
-      tableData: [],
-      currentPage: 1,
-      total: 0
+      weighBatchingList: [],
+      listLoading: true,
+      productBatchingListVisible: false,
+      productBatching: null,
+      dialogStatus: '',
+      dialogFormVisible: false,
+      textMap: {
+        update: '编辑',
+        create: '创建',
+        show: '显示'
+      },
+      currentRow: null,
+      weighBatching: null
     }
   },
   created() {
-    this.getList()
+    this.getWeighBatchingList()
   },
   methods: {
-    recipeNoChanged: function() {
-      this.getParams['page'] = 1
-      this.getParams['stage_product_batch_no'] = this.recipe_no
-      this.getList()
+    async showDetail(row) {
+      this.productBatching = await rubber_material_url('get', row.product_batching)
+      this.weighBatching = row
+      this.dialogStatus = 'show'
+      this.dialogFormVisible = true
     },
-    getList() {
-      rubberMaterial(this.getParams).then(response => {
-        this.tableData = response.results
-        this.total = response.count
+    async batching() {
+      this.productBatching = await rubber_material_url('get', this.currentRow.product_batching)
+      this.weighBatching = this.currentRow
+      this.dialogStatus = 'update'
+      this.dialogFormVisible = true
+    },
+    handleCurrentChange(val) {
+      this.currentRow = val
+    },
+    handleCreateWeighBatching() {
+      this.dialogStatus = 'create'
+      this.dialogFormVisible = true
+      this.productBatchingListVisible = false
+    },
+    productBatchingSelect(productBatching) {
+      this.productBatching = productBatching
+    },
+    changeUsedType(id, target_used_type) {
+      changeUsedType(id, target_used_type).then(response => {
+        this.getWeighBatchingList()
       })
+    },
+    usedTypeFormatter(row, column) {
+      switch (row.used_type) {
+        case 1:
+          return '编辑'
+        case 2:
+          return '提交'
+        case 3:
+          return '校对'
+        case 4:
+          return '启用'
+        case 5:
+          return '驳回'
+        case 6:
+          return '废弃'
+      }
+    },
+    usedTypeChange(used_type) {
+      this.getParams.used_type = used_type
+      this.getParams.page = 1
+      this.getWeighBatchingList()
+    },
+    stageChange() {
+      this.getParams.page = 1
+      this.getWeighBatchingList()
     },
     currentChange(page) {
       this.getParams.page = page
-      this.getList()
+      this.getWeighBatchingList()
+    },
+    async getWeighBatchingList() {
+      this.listLoading = true
+      try {
+        const response = await weighBatchingList(this.getParams)
+        this.total = response.count
+        this.weighBatchingList = response.results
+      // eslint-disable-next-line no-empty
+      } catch (e) {
+        console.log(e)
+      }
+      this.listLoading = false
     }
   }
 }

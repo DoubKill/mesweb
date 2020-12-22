@@ -1,10 +1,48 @@
 import request from '@/utils/request'
 import API from '@/api/url'
 
-export function rubberMaterial(params) {
+export function weighBatchingList(params) {
   return request({
-    url: API.RubberMaterialUrl,
+    url: API.WeighBatchingUrl,
     method: 'get',
     params
+  })
+}
+
+export function createWeighBatching(product_batching) {
+  return request({
+    url: API.WeighBatchingUrl,
+    method: 'post',
+    data: {
+      product_batching
+    }
+  })
+}
+
+export function changeUsedType(id, used_type) {
+  return request({
+    url: API.WeighBatchingUrl + id + '/change_used_type/',
+    method: 'put',
+    data: {
+      used_type
+    }
+  })
+}
+
+export function productBatchingDetail(product_batching) {
+  return request({
+    url: API.ProductBatchingDetailUrl,
+    method: 'get',
+    params: {
+      product_batching
+    }
+  })
+}
+
+export function updateWeighCntType(id, data) {
+  return request({
+    url: API.WeighCntTypeUrl + id + '/',
+    method: 'put',
+    data
   })
 }

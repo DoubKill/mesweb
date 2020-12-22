@@ -225,6 +225,12 @@ export default {
   SpareInventoryLog: '/api/v1/spareparts/spare-inventory-log/',
   // 备品备件库存
   CountSpareInventory: '/api/v1/spareparts/spare-inventory/count_spare_inventory/',
+
+  // 小料配方
+  WeighBatchingUrl: '/api/v1/recipe/weigh-batching/',
+  ProductBatchingDetailUrl: '/api/v1/recipe/product-batching-detail/',
+  WeighCntTypeUrl: '/api/v1/recipe/weigh-cnt-type/',
+
   // 备品备件基本信息导入导出
   SpareImportExport: '/api/v1/spareparts/spare-import-export/',
   // 备品备件库存导入
