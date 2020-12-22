@@ -110,14 +110,14 @@
       <el-form ref="createTestTypeForm" :rules="rules" :model="testTypeForm">
         <el-form-item
           label="试验类型"
-          :label-width="formLabelWidth"
+          
           prop="name"
         >
           <el-input v-model="testTypeForm.name" />
         </el-form-item>
         <el-form-item
           label="试验指标"
-          :label-width="formLabelWidth"
+          
           prop="test_indicator"
         >
           <el-select
@@ -154,7 +154,7 @@
       <el-form ref="editTestTypeForm" :rules="rules" :model="testTypeForm">
         <el-form-item
           label="试验类型"
-          :label-width="formLabelWidth"
+          
           prop="name"
         >
           <el-input
@@ -163,7 +163,7 @@
         </el-form-item>
         <el-form-item
           label="试验指标"
-          :label-width="formLabelWidth"
+          
           prop="test_indicator"
         >
           <el-select
@@ -199,14 +199,14 @@
       <el-form ref="createDataPointsForm" :rules="rules" :model="dataPointsForm">
         <el-form-item
           label="数据点"
-          :label-width="formLabelWidth"
+          
           prop="name"
         >
           <el-input v-model="dataPointsForm.name" />
         </el-form-item>
         <el-form-item
           label="单位"
-          :label-width="formLabelWidth"
+          
           prop="unit"
         >
           <el-input v-model="dataPointsForm.unit" />
@@ -231,7 +231,7 @@
       <el-form ref="editDataPointsForm" :rules="rules" :model="dataPointsForm">
         <el-form-item
           label="数据点"
-          :label-width="formLabelWidth"
+          
           prop="name"
         >
           <el-input
@@ -240,7 +240,7 @@
         </el-form-item>
         <el-form-item
           label="单位"
-          :label-width="formLabelWidth"
+          
           prop="unit"
         >
           <el-input v-model="dataPointsForm.unit" />

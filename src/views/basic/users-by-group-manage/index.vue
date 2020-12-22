@@ -64,7 +64,7 @@
       </el-col>
     </el-row>
     <el-dialog :title="addGroupUsersTitle" :visible.sync="dialogAddGroupUsersDialogVisible">
-      <el-form :label-width="formLabelWidth">
+      <el-form >
         <el-form-item label="用户">
           <el-transfer
             v-model="selectedUsers"

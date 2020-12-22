@@ -101,7 +101,7 @@
         <el-form-item
           :error="changeShiftsManageFormError.schedule_no"
           label="倒班代码"
-          :label-width="formLabelWidth"
+          
           prop="schedule_no"
         >
           <el-input v-model="changeShiftsManageForm.schedule_no" />
@@ -109,7 +109,7 @@
         <el-form-item
           :error="changeShiftsManageFormError.schedule_name"
           label="倒班名"
-          :label-width="formLabelWidth"
+          
           prop="schedule_name"
         >
           <el-input v-model="changeShiftsManageForm.schedule_name" />
@@ -117,14 +117,14 @@
         <el-form-item
           :error="changeShiftsManageFormError.description"
           label="描述"
-          :label-width="formLabelWidth"
+          
         >
           <el-input v-model="changeShiftsManageForm.description" />
         </el-form-item>
 
         <el-form-item
           label="周期天数"
-          :label-width="formLabelWidth"
+          
         >
           <el-input-number
             v-model="changeShiftsManageForm.period"
@@ -136,7 +136,7 @@
 
         <el-form-item
           label="工序"
-          :label-width="formLabelWidth"
+          
           prop="work_procedure"
         >
           <process-select v-model="changeShiftsManageForm.work_procedure" />
@@ -149,7 +149,7 @@
           <el-divider>{{ classesdetail.classes_name }}</el-divider>
           <el-form-item
             label="时间范围"
-            :label-width="formLabelWidth"
+            
           >
             <el-time-picker
               v-model="classesdetail.start_time"
@@ -165,7 +165,7 @@
           </el-form-item>
           <el-form-item
             label="描述"
-            :label-width="formLabelWidth"
+            
           >
             <el-input v-model="classesdetail.description" />
           </el-form-item>
@@ -195,7 +195,7 @@
         <el-form-item
           :error="changeShiftsManageFormError.schedule_no"
           label="倒班代码"
-          :label-width="formLabelWidth"
+          
           prop="schedule_no"
         >
           <el-input
@@ -206,7 +206,7 @@
         <el-form-item
           :error="changeShiftsManageFormError.schedule_name"
           label="倒班名"
-          :label-width="formLabelWidth"
+          
           prop="schedule_name"
         >
           <el-input v-model="changeShiftsManageForm.schedule_name" />
@@ -214,13 +214,13 @@
         <el-form-item
           :error="changeShiftsManageFormError.description"
           label="描述"
-          :label-width="formLabelWidth"
+          
         >
           <el-input v-model="changeShiftsManageForm.description" />
         </el-form-item>
         <el-form-item
           label="周期天数"
-          :label-width="formLabelWidth"
+          
         >
           <el-input-number
             v-model.number="changeShiftsManageForm.period"
@@ -231,7 +231,7 @@
         </el-form-item>
         <el-form-item
           label="工序"
-          :label-width="formLabelWidth"
+          
           prop="work_procedure"
         >
           <process-select v-model="changeShiftsManageForm.work_procedure" />
@@ -243,7 +243,7 @@
           <el-divider>{{ classesdetail.classes_name }}</el-divider>
           <el-form-item
             label="时间范围"
-            :label-width="formLabelWidth"
+            
           >
             <el-time-picker
               v-model="classesdetail.start_time"
@@ -259,7 +259,7 @@
           </el-form-item>
           <el-form-item
             label="描述"
-            :label-width="formLabelWidth"
+            
           >
             <el-input v-model="classesdetail.description" />
           </el-form-item>
