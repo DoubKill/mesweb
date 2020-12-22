@@ -200,7 +200,7 @@
           label="物料编码"
           prop="no"
         >
-          <el-input v-model="spareForm.no" />
+          <el-input v-model="spareForm.no" :disabled="true" />
         </el-form-item>
         <el-form-item
           label="物料名称"
