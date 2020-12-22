@@ -31,7 +31,7 @@
         <el-table-column label="原材料名称" align="center">
           <template slot-scope="{ row }">
             <el-select
-              v-model="row.id"
+              v-model="row.material"
               :disabled="!edit"
               @change="updateRow(row)"
             >
@@ -39,7 +39,7 @@
                 v-for="item in productBatchingDetail"
                 :key="item.id"
                 :label="item.material_name"
-                :value="item.id"
+                :value="item.material"
                 :disabled="item.disabled"
               />
             </el-select>
@@ -92,25 +92,25 @@ export default {
     }
   },
   created() {
+    //   console.log()
     this.updateTable()
   },
   methods: {
     updateTable() {
       for (let i = 0; i < this.weightType.weigh_batching_detail.length; ++i) {
         const batching_detail = this.weightType.weigh_batching_detail[i]
-        const detail = this.productBatchingDetail.find(item => {
-          return (item.material === batching_detail.material && item.actual_weight === batching_detail.actual_weight)
+        let detail = this.productBatchingDetail.find(item => {
+          return item.material === batching_detail.material
         })
-        if (detail) {
-          this.weightType.weigh_batching_detail[i] = JSON.parse(JSON.stringify(detail))
-          for (let j = 0; j < this.productBatchingDetail.length; j++) {
-            const deltail_ = this.productBatchingDetail[j]
-            if (deltail_.material === this.weightType.weigh_batching_detail[i].material) {
-              this.$set(deltail_, 'disabled', true)
-            }
+        if (!detail) {
+          detail = batching_detail
+          this.productBatchingDetail.push(batching_detail)
+        }
+        for (let j = 0; j < this.productBatchingDetail.length; j++) {
+          const deltail_ = this.productBatchingDetail[j]
+          if (deltail_.material === this.weightType.weigh_batching_detail[i].material) {
+            this.$set(deltail_, 'disabled', true)
           }
-        } else {
-          this.weightType.weigh_batching_detail.splice(i, 1)
         }
       }
     },
@@ -128,10 +128,10 @@ export default {
     },
     updateRow(row) {
       const detail = this.productBatchingDetail.find(item => {
-        return item.id === row.id
+        return item.material === row.material
       })
       for (let j = 0; j < this.weightType.weigh_batching_detail.length; ++j) {
-        if (this.weightType.weigh_batching_detail[j].id === detail.id) {
+        if (this.weightType.weigh_batching_detail[j].material === detail.material) {
           this.weightType.weigh_batching_detail[j] = JSON.parse(JSON.stringify(detail))
 
           for (let i = 0; i < this.productBatchingDetail.length; i++) {

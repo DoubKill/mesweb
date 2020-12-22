@@ -149,7 +149,9 @@ export default {
             const detail = cnttype.weighbatchingdetail_set[i]
             weight_type.weigh_batching_detail.push({
               material: detail.material,
-              actual_weight: detail.standard_weight
+              actual_weight: detail.standard_weight,
+              material_name: detail.material_name,
+              material_no: detail.material_no
             })
           }
         })
