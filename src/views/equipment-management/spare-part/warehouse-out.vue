@@ -203,6 +203,7 @@
       title="备品备件出库履历"
       :visible.sync="dialogVisibleResume"
       width="90%"
+      :before-close="handleCloseResume"
     >
       <allRecord :is-dialog="true" :show="dialogVisibleResume" :dialog-obj="dialogObj" />
     </el-dialog>
@@ -350,6 +351,10 @@ export default {
       if (done) {
         done()
       }
+    },
+    handleCloseResume(done) {
+      this.getList()
+      done()
     },
     submitFun() {
       this.$refs.ruleForm.validate(async(valid) => {
