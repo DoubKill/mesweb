@@ -274,9 +274,6 @@ import { mapGetters } from 'vuex'
 
 export default {
   components: { page },
-  computed: {
-    ...mapGetters(['permission'])
-  },
   data: function() {
     return {
       tableData: [],
@@ -331,6 +328,9 @@ export default {
       dialogCreateEquipCateVisible: false,
       dialogEditEquipCateVisible: false
     }
+  },
+  computed: {
+    ...mapGetters(['permission'])
   },
   created() {
     this.permissionObj = this.permission

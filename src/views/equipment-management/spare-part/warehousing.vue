@@ -55,7 +55,11 @@
       />
       <el-table-column
         prop="qty"
-        label="数量（件）"
+        label="数量"
+      />
+      <el-table-column
+        prop="unit"
+        label="单位"
       />
       <el-table-column
         prop="cost"
@@ -316,7 +320,7 @@ export default {
     color:red;
   }
   .max-warning-row{
-    color:green;
+    color:#e6a23c;
   }
 }
 

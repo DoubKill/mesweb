@@ -46,7 +46,7 @@
       />
       <el-table-column
         prop="sum_qty"
-        label="数量（件）"
+        label="数量"
       >
         <template slot-scope="scope">
           <el-link type="primary" :underline="false" @click="view(scope.row)">{{ scope.row.sum_qty }}</el-link>
@@ -54,11 +54,15 @@
       </el-table-column>
       <el-table-column
         prop="unit_count"
-        label="单价"
+        label="单价（元）"
+      />
+      <el-table-column
+        prop="unit"
+        label="单位"
       />
       <el-table-column
         prop="total_count"
-        label="总价"
+        label="总价（元）"
       />
     </el-table>
     <page
@@ -153,7 +157,7 @@ export default {
     color:red;
   }
   .max-warning-row{
-    color:green;
+    color:#e6a23c;
   }
 }
 </style>

@@ -49,7 +49,7 @@
       <el-form ref="createTestIndicatorsForm" :rules="rules" :model="TestIndicatorsForm">
         <el-form-item
           label="试验指标"
-          
+
           prop="name"
         >
           <el-input v-model="TestIndicatorsForm.name" />
@@ -74,7 +74,7 @@
       <el-form ref="editTestIndicatorsForm" :rules="rules" :model="TestIndicatorsForm">
         <el-form-item
           label="试验指标"
-          
+
           prop="name"
         >
           <el-input v-model="TestIndicatorsForm.name" />

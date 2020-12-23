@@ -71,15 +71,15 @@
       />
       <el-table-column
         prop="qty"
-        label="数量（件）"
+        label="数量"
       />
       <el-table-column
         prop="cost"
-        label="单价"
+        label="单价（元）"
       />
       <el-table-column
         prop="total_count"
-        label="总价"
+        label="总价（元）"
       />
     </el-table>
     <page
@@ -220,7 +220,7 @@ export default {
     color:red;
   }
   .max-warning-row{
-    color:green;
+    color:#e6a23c;
   }
 }
 </style>
