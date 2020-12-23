@@ -24,13 +24,12 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item style="float: right">
+      <!-- <el-form-item style="float: right">
         <el-button
           @click="templateDownload"
         >模板下载</el-button>
       </el-form-item>
       <el-form-item style="float: right">
-        <!-- <el-button>导入</el-button> -->
         <el-upload
           class="upload-demo"
           action="string"
@@ -40,7 +39,7 @@
         >
           <el-button>导入</el-button>
         </el-upload>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item style="float: right">
         <el-button
           @click="showCreateDialog"
