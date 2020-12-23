@@ -21,37 +21,52 @@
         class="nest-menu"
       />
     </el-submenu> -->
-
-    <template v-if="!Object.prototype.hasOwnProperty.call(item, 'children')">
+    <template v-if="hasOneShowingChild(item.children,item) && (!item.children||item.noShowingChildren)&&!item.alwaysShow&&!item.meta.icon">
       <app-link :to="item.path">
         <el-menu-item :index="item.path" :class="{'submenu-title-noDropdown':!isNest}">
           <item :icon="item.meta.icon||(item.meta&&item.meta.icon)" :title="item.meta.title" />
         </el-menu-item>
       </app-link>
     </template>
-    <div v-for="(itemC,i) in item.children" :key="i">
-      <template v-if="hasOneShowingChild(itemC.children,itemC) && (!itemC.children||itemC.noShowingChildren)&&!itemC.alwaysShow">
-        <app-link v-if="itemC.meta" :to="itemC.path">
-          <el-menu-item :index="itemC.path" :class="{'submenu-title-noDropdown':!isNest}">
-            <item :icon="itemC.meta.icon||(itemC.meta&&itemC.meta.icon)" :title="itemC.meta.title" />
-          </el-menu-item>
-        </app-link>
+    <el-submenu v-else-if="!item.meta.icon" ref="subMenu" :index="item.path" popper-append-to-body>
+      <template slot="title">
+        <item v-if="item.meta" :icon="item.meta && item.meta.icon" :title="item.meta.title" />
       </template>
-
-      <el-submenu v-else ref="subMenu" :index="itemC.path" popper-append-to-body>
-        <template slot="title">
-          <item v-if="itemC.meta" :icon="itemC.meta && itemC.meta.icon" :title="itemC.meta.title" />
+      <sidebar-item
+        v-for="child in item.children"
+        :key="child.path"
+        :is-nest="true"
+        :item="child"
+        :base-path="child.path"
+        class="nest-menu"
+      />
+    </el-submenu>
+    <div v-else>
+      <div v-for="(itemC,i) in item.children" :key="i">
+        <template v-if="hasOneShowingChild(itemC.children,itemC) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!itemC.alwaysShow">
+          <app-link v-if="itemC.meta" :to="itemC.path">
+            <el-menu-item :index="itemC.path" :class="{'submenu-title-noDropdown':!isNest}">
+              <item :icon="itemC.meta.icon||(itemC.meta&&itemC.meta.icon)" :title="itemC.meta.title" />
+            </el-menu-item>
+          </app-link>
         </template>
-        <sidebar-item
-          v-for="child in itemC.children"
-          :key="child.path"
-          :is-nest="true"
-          :item="child"
-          :base-path="child.path"
-          class="nest-menu"
-        />
-      </el-submenu>
+
+        <el-submenu v-else ref="subMenu" :index="itemC.path" popper-append-to-body>
+          <template slot="title">
+            <item v-if="itemC.meta" :icon="itemC.meta && itemC.meta.icon" :title="itemC.meta.title" />
+          </template>
+          <sidebar-item
+            v-for="child in itemC.children"
+            :key="child.path"
+            :is-nest="true"
+            :item="child"
+            :base-path="child.path"
+            class="nest-menu"
+          />
+        </el-submenu>
+      </div>
     </div>
+
   </div>
 </template>
 
