@@ -234,7 +234,11 @@ export default {
     show(val) {
       if (val) {
         if (this.isDialog) {
-          Object.assign(this.search, this.dialogObj)
+          const obj = {
+            spare_no: this.dialogObj.spare_no,
+            location_no: this.dialogObj.location_no
+          }
+          Object.assign(this.search, obj)
         }
         this.dataValue = [setDate(), setDate()]
         this.search.begin_time = setDate()
@@ -258,7 +262,11 @@ export default {
       this.search.type = '数量变更'
     }
     if (this.isDialog) {
-      Object.assign(this.search, this.dialogObj)
+      const obj = {
+        spare_no: this.dialogObj.spare_no,
+        location_no: this.dialogObj.location_no
+      }
+      Object.assign(this.search, obj)
     }
     this.getList()
   },

@@ -813,7 +813,7 @@ export const asyncRoutes = [{
     },
     children: [
       {
-        path: 'base',
+        path: '/base',
         redirect: '/spare-location',
         component: {
           render: c => c('router-view')
@@ -822,7 +822,6 @@ export const asyncRoutes = [{
         meta: {
           title: '基础管理'
         },
-        breadcrumb: false,
         children: [
           {
             path: '/spare-location',
@@ -898,7 +897,6 @@ export const asyncRoutes = [{
         meta: {
           title: '出入库管理'
         },
-        breadcrumb: false,
         children: [
           {
             path: '/warehousing',
@@ -938,7 +936,6 @@ export const asyncRoutes = [{
         meta: {
           title: '履历管理'
         },
-        breadcrumb: false,
         children: [
           {
             path: '/warehousing-record',
