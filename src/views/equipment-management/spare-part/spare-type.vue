@@ -97,7 +97,7 @@
           label="类型编码"
           prop="no"
         >
-          <el-input v-model="typeForm.no" />
+          <el-input v-model="typeForm.no" :disabled="true" />
         </el-form-item>
         <el-form-item
           label="类型名称"
