@@ -126,6 +126,7 @@
               :key="item.id"
               :label="item.name"
               :value="item.id"
+              :disabled="item.delete_flag"
             />
           </el-select>
         </el-form-item>
@@ -193,6 +194,7 @@
               :key="item.id"
               :label="item.name"
               :value="item.id"
+              :disabled="item.delete_flag"
             />
           </el-select>
         </el-form-item>
