@@ -118,24 +118,28 @@
       <el-table-column
         v-if="currentRoute !== 3"
         prop="qty"
-        label="数量(件)"
+        label="数量"
         width="80"
       />
       <el-table-column
         v-if="currentRoute !== 3"
         prop="dst_qty"
-        label="剩余数量(件)"
+        label="剩余数量"
         width="100"
       />
       <el-table-column
         v-if="currentRoute === 3"
         prop="src_qty"
-        label="变更前数量(件)"
+        label="变更前数量"
       />
       <el-table-column
         v-if="currentRoute === 3"
         prop="dst_qty"
-        label="变更后数量(件)"
+        label="变更后数量"
+      />
+      <el-table-column
+        prop="unit"
+        label="单位"
       />
       <el-table-column
         v-if="currentRoute === 1"
@@ -156,6 +160,7 @@
         v-if="currentRoute === 3"
         prop="reason"
         label="备注"
+        show-overflow-tooltip
       />
       <el-table-column
         v-if="currentRoute === 3"

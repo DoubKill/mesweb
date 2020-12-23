@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <div style="display:flex;margin-top:5px">
+    <!-- <el-button type="success" size="mini">查看全部</el-button> -->
     <el-pagination
       v-if="oldPage"
       layout="total,prev,pager,next"
@@ -11,7 +12,7 @@
     <el-pagination
       v-else
       :current-page.sync="_currentPage"
-      :page-sizes="[10, 20, 30, 40,50]"
+      :page-sizes="[10, 50, 100]"
       :page-size="pageSize"
       layout="sizes, prev, pager, next"
       :total="total"

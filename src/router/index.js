@@ -76,6 +76,7 @@ export const asyncRoutes = [{
     component: () => import('@/views/basic/global-codes-manage/index'),
     meta: {
       title: '公用代码管理',
+      icon: 'dashboard',
       permissionName: 'globalcodetype'
     }
   },
@@ -85,6 +86,7 @@ export const asyncRoutes = [{
     component: () => import('@/views/basic/group-manage/index'),
     meta: {
       title: '角色管理',
+      icon: 'dashboard',
       permissionName: 'groupextension'
     }
   },
@@ -94,6 +96,7 @@ export const asyncRoutes = [{
     component: () => import('@/views/basic/user-manage/index'),
     meta: {
       title: '用户管理',
+      icon: 'dashboard',
       permissionName: 'user'
     }
   },
@@ -103,6 +106,7 @@ export const asyncRoutes = [{
     component: () => import('@/views/basic/users-by-group-manage/index'),
     meta: {
       title: '角色别用户管理',
+      icon: 'dashboard',
       permissionName: 'group_user'
     }
   },
@@ -112,6 +116,7 @@ export const asyncRoutes = [{
     component: () => import('@/views/change_shifts_manage/index'),
     meta: {
       title: '倒班时间管理',
+      icon: 'dashboard',
       permissionName: 'workschedule'
     }
   },
@@ -121,6 +126,7 @@ export const asyncRoutes = [{
     component: () => import('@/views/factory_schedule_manage/index'),
     meta: {
       title: '工厂排班管理',
+      icon: 'dashboard',
       permissionName: 'planschedule'
     }
   },
@@ -130,6 +136,7 @@ export const asyncRoutes = [{
     component: () => import('@/views/factory_schedule_result/index'),
     meta: {
       title: '工厂排班结果',
+      icon: 'dashboard',
       permissionName: 'planschedule'
     }
   },
@@ -139,6 +146,7 @@ export const asyncRoutes = [{
     name: 'location-site',
     meta: {
       title: '库存位管理',
+      icon: 'dashboard',
       permissionName: 'class_production_summary'
     }
   },
@@ -150,7 +158,8 @@ export const asyncRoutes = [{
     },
     name: 'factory',
     meta: {
-      title: '设备管理'
+      title: '设备管理',
+      icon: 'dashboard'
     },
     children: [{
       path: '/factory/category/manage',
@@ -190,6 +199,7 @@ export const asyncRoutes = [{
     component: () => import('@/views/material_base_info_manage/index'),
     meta: {
       title: '原材料基础信息',
+      icon: 'formula',
       permissionName: 'material'
     }
   },
@@ -199,6 +209,7 @@ export const asyncRoutes = [{
     component: () => import('@/views/rubber_recipe_standard_manage/index'),
     meta: {
       title: '胶料代码管理',
+      icon: 'formula',
       permissionName: 'productinfo'
     }
   },
@@ -208,6 +219,7 @@ export const asyncRoutes = [{
     component: () => import('@/views/rb_material_std_manage/index'),
     meta: {
       title: '胶料配方标准管理',
+      icon: 'formula',
       permissionName: 'productbatching'
     }
   },
@@ -217,6 +229,7 @@ export const asyncRoutes = [{
     component: () => import('@/views/recipe/small-material-recipe/index'),
     meta: {
       title: '小料配料标准管理',
+      icon: 'formula',
       permissionName: 'productbatching'
     }
   },
@@ -226,6 +239,7 @@ export const asyncRoutes = [{
     component: () => import('@/views/recipe/rubber-plan-release'),
     meta: {
       title: '小料计划下达',
+      icon: 'formula',
       permissionName: 'productbatching'
     }
   },
@@ -235,6 +249,7 @@ export const asyncRoutes = [{
     component: () => import('@/views/recipe/actual-comparison'),
     meta: {
       title: '小料称量计划与实际对比',
+      icon: 'formula',
       permissionName: 'productbatching'
     }
   }
@@ -256,6 +271,7 @@ export const asyncRoutes = [{
     component: () => import('@/views/rubber_schedule_daily_plan/index'),
     meta: {
       title: '排产胶料日计划',
+      icon: 'productionPlanManagement',
       permissionName: 'productdayplan'
     }
   },
@@ -265,6 +281,7 @@ export const asyncRoutes = [{
     component: () => import('@/views/rubber_schedule_daily_plan/release'),
     meta: {
       title: '排产胶料日计划下达',
+      icon: 'productionPlanManagement',
       permissionName: 'productdayplan'
     }
   },
@@ -274,6 +291,7 @@ export const asyncRoutes = [{
     component: () => import('@/views/plan/material-requisitions-plan/index'),
     meta: {
       title: '排产领料计划',
+      icon: 'productionPlanManagement',
       permissionName: 'productdayplan'
     }
   },
@@ -283,6 +301,7 @@ export const asyncRoutes = [{
     component: () => import('@/views/material_quantity_demanded/index'),
     meta: {
       title: '原材料需求量',
+      icon: 'productionPlanManagement',
       permissionName: 'materialdemanded'
     }
   }
@@ -304,6 +323,7 @@ export const asyncRoutes = [{
     name: 'BanburyingPerformanceManage',
     meta: {
       title: '密炼实绩',
+      icon: 'production',
       permissionName: 'product_actual'
     }
   },
@@ -313,6 +333,7 @@ export const asyncRoutes = [{
     name: 'BanburyingPlanManage',
     meta: {
       title: '密炼机台别计划对比',
+      icon: 'production',
       permissionName: 'plan_reality'
     }
   },
@@ -322,6 +343,7 @@ export const asyncRoutes = [{
     name: 'InternalMixerProduction',
     meta: {
       title: '密炼生产履历',
+      icon: 'production',
       permissionName: 'product_record'
     }
   },
@@ -331,6 +353,7 @@ export const asyncRoutes = [{
     name: 'train-number-report',
     meta: {
       title: '车次报表',
+      icon: 'production',
       permissionName: 'product_actual'
     }
   },
@@ -340,6 +363,7 @@ export const asyncRoutes = [{
     name: 'ProductPlanRealityAnalyse',
     meta: {
       title: '产量计划实际分析（车数）',
+      icon: 'production',
       permissionName: 'product_actual'
     }
   },
@@ -349,6 +373,7 @@ export const asyncRoutes = [{
     name: 'IntervalProductionStatistics',
     meta: {
       title: '区间产量统计（车数）',
+      icon: 'production',
       permissionName: 'product_actual'
     }
   }
@@ -379,6 +404,7 @@ export const asyncRoutes = [{
       name: 'WarehouseInfo',
       meta: {
         title: '仓库信息管理',
+        icon: 'stock',
         permissionName: 'warehouse'
       }
     },
@@ -388,6 +414,7 @@ export const asyncRoutes = [{
       name: 'MaterialRepertoryManage',
       meta: {
         title: '原料库存',
+        icon: 'stock',
         permissionName: 'material_inventory'
       }
     },
@@ -406,6 +433,7 @@ export const asyncRoutes = [{
       name: 'RubberRepertoryManage',
       meta: {
         title: '混炼胶库存',
+        icon: 'stock',
         permissionName: 'product_inventory'
       }
     },
@@ -415,6 +443,7 @@ export const asyncRoutes = [{
       name: 'MaterialInOutRecord',
       meta: {
         title: '物料出入库履历',
+        icon: 'stock',
         permissionName: 'in_out_history'
       }
     },
@@ -424,6 +453,7 @@ export const asyncRoutes = [{
       name: 'MaterialInventoryManage',
       meta: {
         title: '物料库位信息',
+        icon: 'stock',
         permissionName: 'goods'
       }
     },
@@ -460,6 +490,7 @@ export const asyncRoutes = [{
       name: 'OutboundManage',
       meta: {
         title: '胶片库出库计划',
+        icon: 'stock',
         permissionName: 'inventory_plan'
       }
     },
@@ -469,6 +500,7 @@ export const asyncRoutes = [{
       name: 'curtainStorehouse',
       meta: {
         title: '帘布库出库计划',
+        icon: 'stock',
         permissionName: 'LB_inventory_plan'
       }
     },
@@ -495,6 +527,7 @@ export const asyncRoutes = [{
       component: () => import('@/views/inventory/material-attribute-manage.vue'),
       name: 'MaterialAttributeManage',
       meta: {
+        icon: 'stock',
         title: '物料属性管理',
         permissionName: 'material_attr'
       }
@@ -507,7 +540,8 @@ export const asyncRoutes = [{
       },
       name: 'ReceiveGoodManage',
       meta: {
-        title: '收发货管理'
+        title: '收发货管理',
+        icon: 'stock'
       },
       children: [
         {
@@ -559,7 +593,8 @@ export const asyncRoutes = [{
       },
       name: 'quick-check',
       meta: {
-        title: '快检标准管理'
+        title: '快检标准管理',
+        icon: 'quality'
       },
       children: [
         {
@@ -634,7 +669,8 @@ export const asyncRoutes = [{
       },
       name: 'quality-statistics',
       meta: {
-        title: '快检信息统计分析'
+        title: '快检信息统计分析',
+        icon: 'quality'
       },
       children: [
         {
@@ -674,7 +710,8 @@ export const asyncRoutes = [{
       },
       name: 'unqualified-handle',
       meta: {
-        title: '不合格品处理'
+        title: '不合格品处理',
+        icon: 'quality'
       },
       children: [
         // {
@@ -722,7 +759,8 @@ export const asyncRoutes = [{
       },
       name: 'inspection-result-management',
       meta: {
-        title: '快检结果管理'
+        title: '快检结果管理',
+        icon: 'quality'
       },
       children: [
         {
@@ -771,6 +809,7 @@ export const asyncRoutes = [{
     name: 'classes-banburying-summary',
     meta: {
       title: '班次密炼时间汇总',
+      icon: 'quality',
       permissionName: 'class_production_summary'
     }
   },
@@ -780,6 +819,7 @@ export const asyncRoutes = [{
     name: 'banburying-ratio-summary',
     meta: {
       title: '密炼时间占比汇总',
+      icon: 'quality',
       permissionName: 'production_time_summary'
     }
   },
@@ -789,6 +829,7 @@ export const asyncRoutes = [{
     name: 'rubber-acar-summary',
     meta: {
       title: '胶料单车次时间汇总',
+      icon: 'quality',
       permissionName: 'single_trains_time_consume'
     }
   },
@@ -798,6 +839,7 @@ export const asyncRoutes = [{
     name: 'specs-switch-summary',
     meta: {
       title: '规格切换时间汇总',
+      icon: 'quality',
       permissionName: 'product_exchange_consume'
     }
   },
@@ -809,7 +851,8 @@ export const asyncRoutes = [{
     },
     name: 'spare-part',
     meta: {
-      title: '备品备件管理'
+      title: '备品备件管理',
+      icon: 'quality'
     },
     children: [
       {

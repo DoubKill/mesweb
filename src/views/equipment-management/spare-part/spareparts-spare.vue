@@ -277,7 +277,7 @@ export default {
         unit: ''
       },
       rules: {
-        type: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        type: [{ required: false, message: '不能为空', trigger: 'blur' }],
         name: [{ required: true, message: '不能为空', trigger: 'blur' }],
         no: [{ required: true, message: '不能为空', trigger: 'blur' }],
         cost: [{ required: true, message: '不能为空', trigger: 'blur' }],
