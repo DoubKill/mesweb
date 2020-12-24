@@ -9,16 +9,29 @@
       :current-page.sync="_currentPage"
       @current-change="currentChange"
     />
-    <el-pagination
-      v-else
-      :current-page.sync="_currentPage"
-      :page-sizes="[10, 50, 100]"
-      :page-size="pageSize"
-      layout="sizes, prev, pager, next"
-      :total="total"
-      @size-change="currentChange(1,$event)"
-      @current-change="currentChange($event,pageSize)"
-    />
+    <div v-else style="display:flex">
+      <el-select
+        v-model="pageSize"
+        style="width:110px"
+        size="mini"
+        placeholder="请选择"
+        @change="currentChange(1,$event)"
+      >
+        <el-option
+          v-for="item in options"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
+        />
+      </el-select>
+      <el-pagination
+        :current-page.sync="_currentPage"
+        layout="total,prev,pager,next"
+        :page-size="pageSize"
+        :total="total"
+        @current-change="currentChange($event,pageSize)"
+      />
+    </div>
   </div>
 </template>
 
@@ -46,7 +59,13 @@ export default {
   },
   data() {
     return {
-      pageSize: 10
+      pageSize: 10,
+      options: [
+        { id: 10, name: '10条/页' },
+        { id: 50, name: '50条/页' },
+        { id: 100, name: '100条/页' },
+        { id: 1000000000000, name: '全部' }
+      ]
     }
   },
   computed: {

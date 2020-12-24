@@ -139,6 +139,13 @@ export default {
   .el-menu.el-menu--horizontal{
       border-bottom: none;
   }
+  .el-menu--horizontal .el-menu-item:not(.is-disabled):hover{
+    background-color: rgba(0, 0, 0,.2) !important;
+  }
+
+  .el-menu-item{
+     background-color: rgb(48, 65, 86) !important;
+  }
   .is-active{
       border-bottom: 3px solid;
   }
