@@ -83,6 +83,7 @@
           <materialCodeSelect
             :created-is="true"
             :is-all-obj="true"
+            label-name="no"
             :default-val="bindingForm.spare"
             @changeSelect="dialogMaterialFun"
           />
@@ -92,7 +93,6 @@
             :created-is="true"
             :is-all-obj="true"
             :default-val="bindingForm.spare"
-            label-name="name"
             @changeSelect="dialogMaterialFun"
           />
         </el-form-item>
