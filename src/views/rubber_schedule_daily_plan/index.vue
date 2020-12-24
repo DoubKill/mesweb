@@ -637,19 +637,14 @@ export default {
         this.loading = false
         this.$message.success(data)
 
-        // console.log(this.addPlanArr, 8888)
         // 保存成功后把新建未保存的 全部换成新建已经保存
-        this.addPlanArr.forEach(D => {
-          D.forEach(data => {
-            data.forEach(childData => {
-              if (childData.product_batching && childData.status === this._notSaved) {
-                childData.status = this._saved
-              }
-            })
+        this.addPlanArr[index].forEach(data => {
+          data.forEach(childData => {
+            if (childData.product_batching && childData.status === this._notSaved) {
+              childData.status = this._saved
+            }
           })
         })
-
-        // eslint-disable-next-line no-empty
       } catch (e) {
         this.loading = false
       }
