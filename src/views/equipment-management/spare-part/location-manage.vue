@@ -117,7 +117,7 @@ export default {
     show(val) {
       if (val) {
         if (this.isDialog) {
-          this.search.material_no = this.dialogObj.material__material_no
+          this.search.spare_no = this.dialogObj.spare__no
         }
         this.getList()
       }
@@ -125,7 +125,7 @@ export default {
   },
   created() {
     if (this.isDialog) {
-      this.search.material_no = this.dialogObj.material__material_no
+      this.search.spare_no = this.dialogObj.spare__no
     }
     this.getList()
   },
