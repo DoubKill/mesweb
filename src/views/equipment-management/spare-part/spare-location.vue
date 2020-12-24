@@ -151,6 +151,7 @@ import { getSpareLocation, putSpareLocation, postSpareLocation, deleteSpareLocat
 import inventoryPosition from '@/components/select_w/inventoryPosition'
 import page from '@/components/page'
 import { getGlobalCodes } from '@/api/global-codes-manage'
+import { errorRepeat } from '@/utils'
 
 export default {
   components: { inventoryPosition, page },
@@ -224,6 +225,8 @@ export default {
             this.dialogCreateVisible = false
             this.$message(this.locationForm.name + '创建成功')
             this.getTableData()
+          }).catch(e => {
+            errorRepeat(this, e)
           })
         }
       })
