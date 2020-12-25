@@ -41,7 +41,7 @@
                 >编辑</el-button>
                 <!-- <el-button
                   size="mini"
-                  type="blue"
+                  type="danger"
                   @click="handleTestTypeDelete(scope.row)"
                 >删除</el-button> -->
               </el-button-group>
@@ -93,7 +93,7 @@
                 >编辑</el-button>
                 <!-- <el-button
                   size="mini"
-                  type="blue"
+                  type="danger"
                   @click="handleDataPointsDelete(scope.row)"
                 >删除</el-button> -->
               </el-button-group>

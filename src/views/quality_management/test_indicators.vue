@@ -34,7 +34,7 @@
             >编辑</el-button>
             <!-- <el-button
                   size="mini"
-                  type="blue"
+                  type="danger"
                   @click="handleTestIndicatorsDelete(scope.row)"
                 >删除</el-button> -->
           </el-button-group>

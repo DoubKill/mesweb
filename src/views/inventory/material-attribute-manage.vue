@@ -78,7 +78,7 @@
             <el-button
               v-permission="['material_attr', 'delete']"
               size="mini"
-              type="blue"
+              type="danger"
               @click="handleData(scope.row)"
             >{{ scope.row.use_flag ? '停用' : '启用' }}
             </el-button>

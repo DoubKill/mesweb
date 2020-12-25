@@ -89,7 +89,7 @@
             <el-button
               v-permission="['groupextension','delete']"
               size="mini"
-              type="blue"
+              type="danger"
               @click="handleGroupDelete(scope.row)"
             >{{ scope.row.use_flag?'停用':'启用' }}
             </el-button>
