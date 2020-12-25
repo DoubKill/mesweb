@@ -75,6 +75,10 @@
         label="数量"
       />
       <el-table-column
+        prop="unit"
+        label="单位"
+      />
+      <el-table-column
         prop="cost"
         label="单价（元）"
       />
