@@ -44,7 +44,7 @@
             <el-button
               v-permission="['delivery_address', 'delete']"
               size="mini"
-              type="danger"
+              type="blue"
               @click="handleData(scope.row)"
             >{{ scope.row.use_flag ? '停用' : '启用' }}
             </el-button>

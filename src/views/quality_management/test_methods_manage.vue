@@ -23,7 +23,7 @@
       <el-table-column label="检测指标" prop="test_indicator_name" />
       <el-table-column label="操作" align="center">
         <template slot-scope="{row, $index}">
-          <!-- <el-button size="mini" type="danger" @click="handleDelete(row,$index)">删除</el-button> -->
+          <!-- <el-button size="mini" type="blue" @click="handleDelete(row,$index)">删除</el-button> -->
           <el-button v-permission="['test_method', 'change']" size="mini" @click="handleUpdate(row)">编辑</el-button>
         </template>
       </el-table-column>

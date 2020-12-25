@@ -105,7 +105,7 @@
             <el-button
               v-if="permissionObj.user.indexOf('delete')>-1"
               size="mini"
-              type="danger"
+              type="blue"
               @click="handleUserDelete(scope.row)"
             >
               {{ scope.row.is_active?'停用':'启用' }}

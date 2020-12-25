@@ -80,7 +80,7 @@
               v-if="scope.row.status == 4"
               v-permission="['delivery_plan', 'change']"
               size="mini"
-              type="danger"
+              type="blue"
               @click="showEditDialog(scope.row)"
             >编辑
             </el-button>

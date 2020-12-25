@@ -57,7 +57,7 @@
             >编辑</el-button>
             <el-button
               size="mini"
-              type="danger"
+              type="blue"
               @click="handleDelete(scope.row)"
             >
               删除

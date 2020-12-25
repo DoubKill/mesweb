@@ -184,6 +184,20 @@ export default {
         this.creadVal()
         this.$emit('visibleMethod')
       } else {
+        let dispatchArr = []
+        if (this.handleSelection && this.handleSelection.length > 0) {
+          this.handleSelection.forEach(D => {
+            dispatchArr.push(D.id)
+          })
+          this.$set(this.ruleForm, 'dispatch', dispatchArr)
+        } else {
+          dispatchArr = []
+          if (Object.prototype.hasOwnProperty.call(this.ruleForm, 'dispatch')) {
+            delete this.ruleForm.dispatch
+          }
+        }
+        console.log(this.handleSelection, '选中的数组')
+        console.log(this.ruleForm, 'ruleForm')
         this.$refs.ruleForm.validate((valid) => {
           if (valid) {
             this.loadingBtn = true
@@ -222,8 +236,13 @@ export default {
     },
     equipSelected(arr) {
       // arr 机台数组id
-      console.log(arr, 7777)
-      this.$set(this.ruleForm, 'equipArrId', arr)
+      if (arr && arr.length > 0) {
+        this.$set(this.ruleForm, 'equip', arr)
+      } else {
+        if (Object.prototype.hasOwnProperty.call(this.ruleForm, 'equip')) {
+          delete this.ruleForm.equip
+        }
+      }
     }
   }
 }

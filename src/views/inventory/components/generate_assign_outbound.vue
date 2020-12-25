@@ -279,15 +279,18 @@ export default {
       return row.id
     },
     sureDeliveryPlan() {
-      console.log(this.$refs.receiveList.handleSelection, 'arr')
       this.dialogVisible = false
       this.tableData[this.currentIndex]._DeliveryPlan = this.$refs.receiveList.handleSelection
       this.handleSelection = this.tableData[this.currentIndex]._DeliveryPlan
       let str = ''
+      const arr = []
       this.$refs.receiveList.handleSelection.forEach(D => {
         str += D.order_no + ';'
         this.$set(this.tableData[this.currentIndex], 'deliveryPlan', str)
+        arr.push(D.id)
       })
+      this.tableData[this.currentIndex].dispatch = arr || []
+
       if (!this.handleSelection || this.handleSelection.length === 0) {
         this.$set(this.tableData[this.currentIndex], 'deliveryPlan', '')
       }
@@ -299,7 +302,7 @@ export default {
       this.dialogVisible = true
     },
     equipSelected(arr, index) {
-      this.$set(this.tableData[index], 'equipNoArr', arr)
+      this.$set(this.tableData[index], 'equip', arr)
     }
   }
 }

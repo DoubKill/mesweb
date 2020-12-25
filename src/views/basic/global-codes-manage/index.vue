@@ -54,7 +54,7 @@
                 <el-button
                   v-if="permissionObj.globalcodetype.indexOf('delete')>-1"
                   size="mini"
-                  type="danger"
+                  type="blue"
                   @click="handleGlobalCodeTypeDelete(scope.row)"
                 >{{ scope.row.use_flag ? '停用' : '启用' }}</el-button>
               </el-button-group>
@@ -117,7 +117,7 @@
                 <el-button
                   v-if="permissionObj.globalcodetype.indexOf('delete')>-1"
                   size="mini"
-                  type="danger"
+                  type="blue"
                   @click="handleGlobalCodesDelete(scope.row)"
                 >{{ scope.row.use_flag ? '停用' : '启用' }}</el-button>
               </el-button-group>
