@@ -140,10 +140,14 @@ export default {
   SumSollectTrains: '/api/v1/production/sum-collect-trains/',
   // 物料库存管理
   MaterialInventoryManage: '/api/v1/inventory/material-inventory-manage/',
-  // 出库计划管理
+
+  // 混炼胶库计划管理
   PutPlanManagement: '/api/v1/inventory/put-plan-management/',
-  //  终炼胶计划管理
+  //  终炼胶库计划管理
   FinalPlanManagement: '/api/v1/inventory/final-plan-management/',
+  // 帘布库计划管理
+  LbPlanManagement: '/api/v1/inventory/lb-plan-management/',
+
   // 物料属性管理
   materialsAttribute: '/api/v1/recipe/materials-attribute/',
   // 物料条码信息
@@ -169,8 +173,6 @@ export default {
 
   MaterialTypesUrl: BasicsUrl + 'global-codes/?all=1&class_name=原材料类别',
 
-  // 帘布库
-  LbPlanManagement: '/api/v1/inventory/lb-plan-management/',
   // 批量打印
   LabelPrint: '/api/v1/quality/label-print/',
   // 月快检合格率
@@ -240,5 +242,11 @@ export default {
   BatchingClassesPlanUrl: '/api/v1/plan/batching-classes-plan/',
 
   // 下发配料计划
-  IssueBatchingClassesPlanUrl: '/api/v1/plan/issue-batching-classes-plan/'
+  IssueBatchingClassesPlanUrl: '/api/v1/plan/issue-batching-classes-plan/',
+  // 看板1
+  InventoryNow: '/api/v1/inventory/inventory-log-out/inventory-now/',
+  // 看板2
+  InventoryToday: '/api/v1/inventory/inventory-log-out/inventory-today/',
+  // 看板3
+  MixGumOutInventoryLog: '/api/v1/inventory/inventory-log-out/'
 }

@@ -82,7 +82,7 @@
             </el-button>
             <el-button
               size="mini"
-              type="danger"
+              type="blue"
               @click="view(scope.row)"
             >查看履历
             </el-button>
@@ -171,11 +171,16 @@
         </el-form-item>
         <el-form-item v-if="currentRow.purposeChange==='设备'" style="display:inline-block" label="机台" prop="equip_no">
           <equip-select
-            :equip_no_props.sync="currentRow.equip_no"
+            @equipSelected="equipSelected"
           />
         </el-form-item>
         <el-form-item v-if="currentRow.purposeChange==='设备'" style="display:inline-block" label="部位" prop="positionChange">
-          <el-select v-model="currentRow.positionChange" placeholder="请选择">
+          <el-select
+            v-model="currentRow.positionChange"
+            filterable
+            allow-create
+            placeholder="请选择"
+          >
             <el-option
               v-for="item in positionList"
               :key="item.global_name"
@@ -218,7 +223,7 @@ import page from '@/components/page'
 import { spareInventory, outStorage } from '@/api/base_w_two'
 import { globalCodesUrl } from '@/api/base_w'
 import allRecord from './all-record.vue'
-import EquipSelect from '@/components/select_w/equip'
+import EquipSelect from '@/components/EquipSelect'
 
 export default {
   components: { materialTypeSelect, EquipSelect, allRecord, page, inventoryPosition, materialCodeSelect },
@@ -252,7 +257,13 @@ export default {
           { required: true, message: '请选择部位', trigger: 'change' }
         ],
         equip_no: [
-          { required: true, message: '请选择机台', trigger: 'change' }
+          { required: true, validator: (rule, value, callback) => {
+            if (!this.currentRow.equip_no) {
+              callback(new Error('请选择机台'))
+            } else {
+              callback()
+            }
+          } }
         ],
         qty: [
           { required: true, message: '请输入数量', trigger: 'blur' }
@@ -395,6 +406,9 @@ export default {
     },
     purposeChangeFun() {
       this.$refs.ruleForm.clearValidate()
+    },
+    equipSelected(obj) {
+      this.currentRow.equip_no = obj ? obj.equip_no : null
     },
     tableRowClassName({ row, rowIndex }) {
       if (row.bound === '-') {

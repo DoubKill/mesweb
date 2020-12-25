@@ -63,8 +63,7 @@
       <el-table-column label="单位" align="center" prop="unit" width="40" />
       <el-table-column label="需求重量" align="center" prop="need_weight" />
       <el-table-column label="出库位置" align="center" prop="location" width="40" />
-      <!-- 改动 -->
-      <!-- <el-table-column label="目的地" align="center" prop="location" /> -->
+      <el-table-column label="目的地" align="center" prop="destination" />
       <el-table-column label="操作" align="center" width="220">
         <template v-if="scope.row.status === 4" slot-scope="scope">
           <el-button-group>
@@ -153,7 +152,7 @@ export default {
       search: {
         page: 1
       },
-      dateSearch: [setDate(), setDate()],
+      dateSearch: [],
       dialogVisible: false,
       total: 0,
       options1: commitVal.statusList,
@@ -170,8 +169,12 @@ export default {
     }
   },
   created() {
+    const start = new Date()
+    const oneDate = start.getTime() + 3600 * 1000 * 24
     this.search.st = setDate()
-    this.search.et = setDate()
+    this.search.et = setDate(oneDate)
+    this.dateSearch = [this.search.st, this.search.et]
+
     this.getListWrehouseInfo()
     this.getList()
   },

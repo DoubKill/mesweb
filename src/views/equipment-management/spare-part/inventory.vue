@@ -65,7 +65,7 @@
             </el-button>
             <el-button
               size="mini"
-              type="danger"
+              type="blue"
               @click="view(scope.row)"
             >查看履历
             </el-button>

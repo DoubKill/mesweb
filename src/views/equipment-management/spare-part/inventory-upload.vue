@@ -26,6 +26,7 @@
         </el-form-item>
         <el-form-item style="float: right">
           <el-button
+            v-permission="['spare_import', 'download']"
             @click="templateDownload"
           >模板下载</el-button>
         </el-form-item>
@@ -38,7 +39,7 @@
             :http-request="Upload"
             :show-file-list="false"
           >
-            <el-button>导入</el-button>
+            <el-button v-permission="['spare_import', 'import']">导入</el-button>
           </el-upload>
         </el-form-item>
       </div>

@@ -236,8 +236,6 @@ export default {
         this.creadVal()
         this.$emit('visibleMethod')
       } else {
-        // console.log(this.multipleSelection)
-        // return
         if (!this.getParams.location) {
           this.$message.info('请选择仓库位置！')
           return
@@ -259,7 +257,9 @@ export default {
             unit: D.unit,
             status: 4,
             warehouse_info: this.warehouseInfo,
-            quality_status: D.quality_status
+            quality_status: D.quality_status,
+            dispatch: D.dispatch || [],
+            equip: D.equip || []
             // quality_status: '一等品'
           })
         })
@@ -279,15 +279,18 @@ export default {
       return row.id
     },
     sureDeliveryPlan() {
-      console.log(this.$refs.receiveList.handleSelection, 'arr')
       this.dialogVisible = false
       this.tableData[this.currentIndex]._DeliveryPlan = this.$refs.receiveList.handleSelection
       this.handleSelection = this.tableData[this.currentIndex]._DeliveryPlan
       let str = ''
+      const arr = []
       this.$refs.receiveList.handleSelection.forEach(D => {
         str += D.order_no + ';'
         this.$set(this.tableData[this.currentIndex], 'deliveryPlan', str)
+        arr.push(D.id)
       })
+      this.tableData[this.currentIndex].dispatch = arr || []
+
       if (!this.handleSelection || this.handleSelection.length === 0) {
         this.$set(this.tableData[this.currentIndex], 'deliveryPlan', '')
       }
@@ -299,7 +302,7 @@ export default {
       this.dialogVisible = true
     },
     equipSelected(arr, index) {
-      this.$set(this.tableData[index], 'equipNoArr', arr)
+      this.$set(this.tableData[index], 'equip', arr)
     }
   }
 }
