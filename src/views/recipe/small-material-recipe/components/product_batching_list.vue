@@ -116,7 +116,8 @@ export default {
         page: 1,
         stage_id: null,
         dev_type: null,
-        stage_product_batch_no: ''
+        stage_product_batch_no: '',
+        used_type: 4
       },
       tableData: [],
       loading: true,
