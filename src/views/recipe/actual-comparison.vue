@@ -120,7 +120,6 @@ export default {
     async class_arrange_list() {
       try {
         const class_arrange_list = await class_arrange_url('get')
-        console.log(class_arrange_list.results, 777)
         this.classHeard = class_arrange_list.results
       } catch (e) { throw new Error(e) }
     },
