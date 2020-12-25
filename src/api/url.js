@@ -238,9 +238,9 @@ export default {
   // 备品备件库存导入
   SpareInventoryImportExport: '/api/v1/spareparts/spare-inventory-import-export/',
   // 看板1
-  InventoryNow: 'api/v1/inventory/inventory-log-out/inventory-now/',
+  InventoryNow: '/api/v1/inventory/inventory-log-out/inventory-now/',
   // 看板2
   InventoryToday: '/api/v1/inventory/inventory-log-out/inventory-today/',
   // 看板3
-  MixGumOutInventoryLog: '/api/v1/inventory/mix-gum-out-inventory-log/'
+  MixGumOutInventoryLog: '/api/v1/inventory/inventory-log-out/'
 }
