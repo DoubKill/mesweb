@@ -30,7 +30,6 @@
     <el-table
       :data="tableData"
       border
-      highlight-current-row
       style="width: 100%"
     >
       <el-table-column
