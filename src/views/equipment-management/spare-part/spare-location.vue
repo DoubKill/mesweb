@@ -56,7 +56,7 @@
             >编辑</el-button>
             <el-button
               size="mini"
-              type="danger"
+              type="blue"
               @click="handleDelete(scope.row)"
             >{{ scope.row.used_flag?'停用':'启用' }}
             </el-button>

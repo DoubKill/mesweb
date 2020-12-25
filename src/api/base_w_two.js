@@ -77,3 +77,28 @@ export function revocationLog(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function inventoryNow(method, id, data = {}) {
+  const obj = {
+    url: id ? API.InventoryNow + id + '/' : API.InventoryNow,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function inventoryToday(method, id, data = {}) {
+  const obj = {
+    url: id ? API.InventoryToday + id + '/' : API.InventoryToday,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function mixGumOutInventoryLog(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MixGumOutInventoryLog + id + '/' : API.MixGumOutInventoryLog,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+

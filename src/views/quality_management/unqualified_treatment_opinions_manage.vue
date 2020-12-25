@@ -22,7 +22,7 @@
               >编辑</el-button>
               <!-- <el-button
                 size="mini"
-                type="danger"
+                type="blue"
                 @click="handleDisposeTypeDelete(row)"
               >删除</el-button> -->
             </template>
@@ -46,7 +46,7 @@
               >编辑</el-button>
               <!-- <el-button
                 size="mini"
-                type="danger"
+                type="blue"
                 @click="(row)"
               >删除</el-button> -->
             </template>
