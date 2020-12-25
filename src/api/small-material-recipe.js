@@ -46,3 +46,26 @@ export function updateWeighCntType(id, data) {
     data
   })
 }
+
+export function getWeighCntType(id) {
+  return request({
+    url: API.WeighCntTypeUrl + id + '/',
+    method: 'get'
+  })
+}
+
+export function batchingClassesPlan(params) {
+  return request({
+    url: API.BatchingClassesPlanUrl,
+    method: 'get',
+    params
+  })
+}
+
+export function issueBatchingClassesPlan(id) {
+  return request({
+    url: API.IssueBatchingClassesPlanUrl + id + '/',
+    method: 'put'
+  })
+}
+

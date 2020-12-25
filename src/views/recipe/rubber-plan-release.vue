@@ -1,20 +1,28 @@
 <template>
   <div v-loading="loading">
     <!-- 小料计划下达 -->
-    <el-form :inline="true" :model="formInline">
+    <el-form :inline="true">
       <el-form-item label="时间">
         <el-date-picker
-          v-model="formInline.data"
+          v-model="getParams.day_time"
           type="date"
           placeholder="选择日期"
           value-format="yyyy-MM-dd"
+          @change="getList"
         />
       </el-form-item>
       <el-form-item label="生产机型">
-        <selectModel @selectChanged="selectModel" />
+        <equip-category-select
+          v-model="getParams.dev_type"
+          @change="getList"
+        />
       </el-form-item>
       <el-form-item label="小料配方编码">
-        <el-input v-model="formInline.input" placeholder="请输入小料配方编码" />
+        <el-input
+          v-model="getParams.weight_batch_no"
+          placeholder="请输入小料配方编码"
+          @input="getList"
+        />
       </el-form-item>
       <br>
       <el-form-item label="班次">
@@ -26,113 +34,203 @@
         <selectBatchingEquip @selectChanged="selectBatchEquip" />
       </el-form-item>
       <el-form-item label="状态">
-        <el-input v-model="formInline.state" placeholder="请输入状态" />
+        <el-select
+          v-model="getParams.status"
+          clearable
+          @change="getList"
+        >
+          <el-option
+            v-for="(item, index) in [[1, '未下发'], [2, '已下发']]"
+            :key="index"
+            :label="item[1]"
+            :value="item[0]"
+          />
+        </el-select>
       </el-form-item>
     </el-form>
     <el-table
       :data="tableData"
       style="width: 100%"
+      fit
       border
     >
       <el-table-column
         type="index"
         label="No"
         width="40"
+        align="center"
       />
       <el-table-column
-        prop="date"
         label="工厂时间"
+        prop="day_time"
+        align="center"
+        width="90"
       />
       <el-table-column
-        prop="name"
+        prop="classes_name"
         label="班次"
+        align="center"
+        width="45"
       />
       <el-table-column
-        prop="address"
+        prop="weight_batch_no"
         label="小料配方编码"
+        align="center"
+        width="165"
       />
       <el-table-column
-        prop="date"
+        prop="category_name"
         label="生产机型"
+        align="center"
       />
       <el-table-column
-        prop="name"
         label="配料设备"
+        align="center"
+      />
       />
       <el-table-column
-        prop="address"
+        prop="stage_product_batch_no"
         label="胶料编码"
+        align="center"
+        width="130"
+      />
       />
       <el-table-column
-        prop="date"
+        prop="plan_package"
         label="计划数量"
+        align="center"
       />
       <el-table-column
-        prop="name"
+        label="产线"
+        align="center"
+      />
+      <el-table-column
+        prop="weigh_batching_used_type"
+        label="小料配方状态"
+        width="100"
+        :formatter="usedTypeFormatter"
+        align="center"
+      />
+      <el-table-column
         label="明细查看"
+        align="center"
+        width="70"
       >
         <template slot-scope="scope">
-          <el-button @click="view(scope.row,scope.$index)">查看</el-button>
+          <el-button size="mini" @click="view(scope.row,scope.$index)">查看</el-button>
         </template>
       </el-table-column>
       <el-table-column
-        prop="address"
         label="下发"
+        align="center"
+        width="70"
       >
         <template slot-scope="scope">
-          <el-button @click="sendOut(scope.row,scope.$index)">发送</el-button>
+          <el-button :disabled="scope.row.status!==1||scope.row.weigh_batching_used_type !== 4" size="mini" @click="sendOut(scope.row,scope.$index)">发送</el-button>
         </template>
       </el-table-column>
       <el-table-column
-        prop="date"
+        prop="status"
         label="状态"
+        width="70"
+        align="center"
+        :formatter="(row, column) => {
+          switch(row.status) {
+          case 1:
+            return '未下发'
+          case 2:
+            return '已下发'
+          }
+        }"
       />
       <el-table-column
-        prop="name"
+        prop="send_user"
         label="下发人"
+        align="center"
       />
       <el-table-column
-        prop="address"
+        prop="send_time"
         label="下发时间"
+        align="center"
       />
     </el-table>
+    <el-dialog
+      title="小料计划明细"
+      width="90%"
+      :visible.sync="dialogVisible"
+    >
+      <weigh-batching-plan-detail
+        :batching-classes-plan="batchingClassesPlan"
+      />
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import classSelect from '@/components/ClassSelect'
-import selectModel from './components/select-model'
+import EquipCategorySelect from '@/components/EquipCategorySelect'
 import selectBatchingEquip from './components/select-batching-equip'
+import WeighBatchingPlanDetail from './components/weigh_batching_plan_detail'
+
+import { batchingClassesPlan, issueBatchingClassesPlan } from '@/api/small-material-recipe'
+
 export default {
-  components: { classSelect, selectModel, selectBatchingEquip },
+  components: { classSelect, EquipCategorySelect, selectBatchingEquip, WeighBatchingPlanDetail },
   data() {
     return {
-      formInline: {},
+      getParams: {
+        day_time: null,
+        dev_type: null,
+        weight_batch_no: '',
+        classes_name: '',
+        status: ''
+      },
       loading: false,
-      tableData: []
+      tableData: [],
+      dialogVisible: false,
+      batchingClassesPlan: null
     }
+  },
+  created() {
+    this.getList()
   },
   methods: {
     async getList() {
-      try {
-        this.loading = true
-        // const data = await materialsUrl('get', null, { params: { all: 1 }})
-        // this.options = data.results || []
-        // this.loading = false
-      } catch (e) {
-        this.loading = false
-      }
+      this.loading = true
+      const data = await batchingClassesPlan(this.getParams)
+      this.tableData = data.results || []
+      this.loading = false
     },
     classChanged(val) {
-      this.formInline.class = val
-    },
-    selectModel(val) {
-      console.log(val, 555)
+      this.getParams.classes_name = val
+      this.getList()
     },
     selectBatchEquip(val) {
     },
-    sendOut(row, index) {},
-    view(row, index) {}
+    async sendOut(row, index) {
+      await issueBatchingClassesPlan(row.id)
+      this.getList()
+    },
+    view(row, index) {
+      this.batchingClassesPlan = row
+      this.dialogVisible = true
+    },
+    usedTypeFormatter(row, column) {
+      switch (row.weigh_batching_used_type) {
+        case 1:
+          return '编辑'
+        case 2:
+          return '提交'
+        case 3:
+          return '校对'
+        case 4:
+          return '启用'
+        case 5:
+          return '驳回'
+        case 6:
+          return '废弃'
+      }
+    }
   }
 }
 </script>

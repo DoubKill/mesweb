@@ -234,5 +234,11 @@ export default {
   // 备品备件基本信息导入导出
   SpareImportExport: '/api/v1/spareparts/spare-import-export/',
   // 备品备件库存导入
-  SpareInventoryImportExport: '/api/v1/spareparts/spare-inventory-import-export/'
+  SpareInventoryImportExport: '/api/v1/spareparts/spare-inventory-import-export/',
+
+  // 配料日班次计划
+  BatchingClassesPlanUrl: '/api/v1/plan/batching-classes-plan/',
+
+  // 下发配料计划
+  IssueBatchingClassesPlanUrl: '/api/v1/plan/issue-batching-classes-plan/'
 }

@@ -41,12 +41,12 @@
       @current-change="handleCurrentChange"
     >
       <el-table-column label="No" type="index" align="center" />
-      <el-table-column label="小料配方编码" prop="weight_batch_no" align="center">
+      <el-table-column label="小料配方编码" width="165" prop="weight_batch_no_" align="center">
         <template slot-scope="scope">
-          <el-link type="primary" :underline="false" @click="showDetail(scope.row)">{{ scope.row.weight_batch_no }}</el-link>
+          <el-link type="primary" :underline="false" @click="showDetail(scope.row)">{{ scope.row.weight_batch_no_ }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column label="胶料配方编码" prop="stage_product_batch_no" align="center" />
+      <el-table-column label="胶料配方编码" width="130" prop="stage_product_batch_no" align="center" />
       <el-table-column label="炼胶机类型" prop="category_name" align="center" />
       <el-table-column label="硫磺重量" prop="sulfur_weight" align="center" />
       <el-table-column label="化工a重量" prop="a_weight" align="center" />
@@ -62,7 +62,7 @@
         <template slot-scope="{row}">
           <el-button-group>
             <el-button
-              v-if="row.used_type === 5"
+              v-if="row.used_type === 5|row.used_type === 6"
               size="mini"
               @click="() => {
                 changeUsedType(row.id, 1)
@@ -113,7 +113,7 @@
       </el-table-column>
       <el-table-column label="发送计数" prop="send_cnt" align="center" />
       <el-table-column label="创建者" prop="created_user" align="center" />
-      <el-table-column label="创建时间" prop="created_date" align="center" />
+      <el-table-column label="创建时间" width="150" prop="created_date" align="center" />
     </el-table>
     <page :total="total" :current-page="getParams.page" @currentChange="currentChange" />
 
@@ -201,7 +201,14 @@ export default {
     handleCurrentChange(val) {
       this.currentRow = val
     },
-    handleCreateWeighBatching() {
+    async handleCreateWeighBatching() {
+      const response = await weighBatchingList({ product_batching: this.productBatching.id })
+      if (response.results.length > 0) {
+        this.$alert('该胶料配方已关联小料配方', '注意', {
+          confirmButtonText: '确定'
+        })
+        return
+      }
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
       this.productBatchingListVisible = false
@@ -245,14 +252,9 @@ export default {
     },
     async getWeighBatchingList() {
       this.listLoading = true
-      try {
-        const response = await weighBatchingList(this.getParams)
-        this.total = response.count
-        this.weighBatchingList = response.results
-      // eslint-disable-next-line no-empty
-      } catch (e) {
-        console.log(e)
-      }
+      const response = await weighBatchingList(this.getParams)
+      this.total = response.count
+      this.weighBatchingList = response.results
       this.listLoading = false
     }
   }
