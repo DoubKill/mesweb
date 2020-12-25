@@ -75,7 +75,7 @@
             <el-button
               v-if="permissionObj.workschedule.indexOf('delete')>-1"
               size="mini"
-              type="blue"
+              type="danger"
               @click="handleDeleteChangeShiftsManage(scope.row)"
             >{{ scope.row.use_flag ? '停用' : '启用' }}
             </el-button>

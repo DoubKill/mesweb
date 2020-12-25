@@ -119,7 +119,7 @@
             <template slot-scope="scope">
               <el-button-group>
                 <el-button size="small" :disabled="disabledSubmit" @click="submitClick(scope.row)">保存</el-button>
-                <!-- <el-button size="small" type="blue" @click="clickDelete(scope.$index,scope.row)">删除</el-button> -->
+                <!-- <el-button size="small" type="danger" @click="clickDelete(scope.$index,scope.row)">删除</el-button> -->
               </el-button-group>
             </template>
           </el-table-column>

@@ -201,7 +201,7 @@
                 >
                   <el-button
                     size="mini"
-                    type="blue"
+                    type="danger"
                     :disabled="setStatus(scope.row.status,scope.row,true)"
                     @click="handleGroupDelete(scope.$index,tableItem,scope.row)"
                   >删除
