@@ -152,7 +152,7 @@ export default {
       search: {
         page: 1
       },
-      dateSearch: [setDate(), setDate()],
+      dateSearch: [],
       dialogVisible: false,
       total: 0,
       options1: commitVal.statusList,
@@ -169,8 +169,12 @@ export default {
     }
   },
   created() {
+    const start = new Date()
+    const oneDate = start.getTime() + 3600 * 1000 * 24
     this.search.st = setDate()
-    this.search.et = setDate()
+    this.search.et = setDate(oneDate)
+    this.dateSearch = [this.search.st, this.search.et]
+
     this.getListWrehouseInfo()
     this.getList()
   },
