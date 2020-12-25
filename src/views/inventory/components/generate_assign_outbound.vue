@@ -236,8 +236,6 @@ export default {
         this.creadVal()
         this.$emit('visibleMethod')
       } else {
-        // console.log(this.multipleSelection)
-        // return
         if (!this.getParams.location) {
           this.$message.info('请选择仓库位置！')
           return
@@ -259,7 +257,9 @@ export default {
             unit: D.unit,
             status: 4,
             warehouse_info: this.warehouseInfo,
-            quality_status: D.quality_status
+            quality_status: D.quality_status,
+            dispatch: D.dispatch || [],
+            equip: D.equip || []
             // quality_status: '一等品'
           })
         })
