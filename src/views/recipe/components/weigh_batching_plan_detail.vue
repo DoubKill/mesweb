@@ -11,7 +11,7 @@
         <el-input size="mini" :value="batchingClassesPlan.category_name" :disabled="true" />
       </el-form-item>
       <el-form-item label="配料设备">
-        <el-input size="mini" :disabled="true" />
+        <el-input size="mini" :value="batchingClassesPlan.equip_name" :disabled="true" />
       </el-form-item>
       <el-form-item label="计划数量">
         <el-input size="mini" :value="batchingClassesPlan.plan_package" :disabled="true" />
