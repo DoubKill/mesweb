@@ -20,10 +20,13 @@
         style="display:inline-block"
       >
         <app-link
-          v-if="!route.hasOwnProperty('hidden')||!route.hidden"
-          :to="resolvePath(route.path)"
+          v-if="hasOneShowingChild(route.children,route)"
+          :to="resolvePath(onlyOneChild.path)"
         >
-          <el-menu-item :index="route.meta.title">
+          <el-menu-item
+            :index="route.meta.title"
+          >
+            <!-- {{ onlyOneChild.path }} -->
             {{ route.meta.title }}
           </el-menu-item>
         </app-link>
@@ -113,6 +116,26 @@ export default {
     handleSelect(val) {
       this.activeMenu = val
     },
+    hasOneShowingChild(children = [], parent) {
+      if (Object.prototype.hasOwnProperty.call(parent, 'hidden') && parent.hidden) {
+        return false
+      } else {
+        this.onlyOneChild = a(parent.children, parent)
+
+        // console.log(this.onlyOneChild, 'this.onlyOneChild')
+        // this.onlyOneChild(a(parent.children, parent))
+        // const showingChildren = children.filter(item => {
+        //   if (item.hidden) {
+        //     return false
+        //   } else {
+        //     // this.onlyOneChild = item
+        //     return true
+        //   }
+        // })
+        // console.log(showingChildren, 'this.showingChildren')
+        return true
+      }
+    },
     resolvePath(routePath) {
       if (isExternal(routePath)) {
         return routePath
@@ -122,6 +145,23 @@ export default {
       }
       return path.resolve(this.basePath, routePath)
     }
+  }
+}
+function a(childrenVal = [], val) {
+  let obj
+
+  if (childrenVal.length > 0) {
+    let _childrenObj = {}
+    _childrenObj = childrenVal.find(D => D.path === val.redirect)
+
+    if (JSON.stringify(_childrenObj) === '{}' || !_childrenObj) {
+      obj = a(childrenVal[0].children, childrenVal[0])
+      return obj
+    } else {
+      return _childrenObj
+    }
+  } else {
+    return val
   }
 }
 </script>

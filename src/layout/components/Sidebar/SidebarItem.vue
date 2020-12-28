@@ -44,9 +44,9 @@
     <div v-else>
       <div v-for="(itemC,i) in item.children" :key="i">
         <template v-if="hasOneShowingChild(itemC.children,itemC) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!itemC.alwaysShow">
-          <app-link v-if="itemC.meta" :to="itemC.path">
-            <el-menu-item :index="itemC.path" :class="{'submenu-title-noDropdown':!isNest}">
-              <item :icon="itemC.meta.icon||(itemC.meta&&itemC.meta.icon)" :title="itemC.meta.title" />
+          <app-link v-if="onlyOneChild.meta" :to="onlyOneChild.path">
+            <el-menu-item :index="onlyOneChild.path" :class="{'submenu-title-noDropdown':!isNest}">
+              <item :icon="onlyOneChild.meta.icon||(onlyOneChild.meta&&itemC.meta.icon)" :title="onlyOneChild.meta.title" />
             </el-menu-item>
           </app-link>
         </template>
@@ -115,7 +115,6 @@ export default {
           return true
         }
       })
-
       // When there is only one child router, the child router is displayed by default
       if (showingChildren.length === 1) {
         return true
@@ -123,7 +122,8 @@ export default {
 
       // Show parent if there are no child router to display
       if (showingChildren.length === 0) {
-        this.onlyOneChild = { ... parent, path: '', noShowingChildren: true }
+        // this.onlyOneChild = { ... parent, path: '', noShowingChildren: true }
+        this.onlyOneChild = { ... parent, noShowingChildren: true }
         return true
       }
 
