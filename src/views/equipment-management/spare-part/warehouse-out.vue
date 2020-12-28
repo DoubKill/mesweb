@@ -62,10 +62,12 @@
         label="单位"
       />
       <el-table-column
+        v-if="checkPermission(['spare_inbound','price'])"
         prop="cost"
         label="单价（元）"
       />
       <el-table-column
+        v-if="checkPermission(['spare_inbound','price'])"
         prop="total_count"
         label="总价（元）"
       />
@@ -76,11 +78,13 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
+              v-permission="['spare_outbound','inbound']"
               size="mini"
               @click="edit(scope.row)"
             >出库
             </el-button>
             <el-button
+              v-permission="['spare_outbound','history']"
               size="mini"
               type="blue"
               @click="view(scope.row)"
@@ -224,6 +228,7 @@ import { spareInventory, outStorage } from '@/api/base_w_two'
 import { globalCodesUrl } from '@/api/base_w'
 import allRecord from './all-record.vue'
 import EquipSelect from '@/components/EquipSelect'
+import { checkPermission } from '@/utils'
 
 export default {
   components: { materialTypeSelect, EquipSelect, allRecord, page, inventoryPosition, materialCodeSelect },
@@ -283,6 +288,7 @@ export default {
     this.getListPosition()
   },
   methods: {
+    checkPermission,
     async getList() {
       try {
         this.loading = true

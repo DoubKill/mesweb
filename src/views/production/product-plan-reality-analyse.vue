@@ -73,6 +73,7 @@
       <el-table-column fixed="right" label="操作" width="60" align="center">
         <template slot-scope="scope">
           <el-button
+            v-permission="['production_analyze','change']"
             size="mini"
             @click="showEditDialog(scope.row)"
           >编辑</el-button>

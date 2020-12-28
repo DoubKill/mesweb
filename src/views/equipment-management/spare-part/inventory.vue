@@ -59,11 +59,13 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
+              v-permission="['stock_count','change']"
               size="mini"
               @click="edit(scope.row)"
             >更改
             </el-button>
             <el-button
+              v-permission="['stock_count','history']"
               size="mini"
               type="blue"
               @click="view(scope.row)"
