@@ -208,6 +208,17 @@ export default {
   },
   created() {
     this.getList()
+
+    const _this = this
+    document.onkeydown = function(ev) {
+      // 监听enter键
+      var event = ev || event
+      if (_this.dialogVisible === true) {
+        if (event.keyCode === 13) {
+          _this.submitFun()
+        }
+      }
+    }
   },
   methods: {
     checkPermission,

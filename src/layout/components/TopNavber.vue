@@ -120,19 +120,15 @@ export default {
       if (Object.prototype.hasOwnProperty.call(parent, 'hidden') && parent.hidden) {
         return false
       } else {
-        this.onlyOneChild = a(parent.children, parent)
-
-        // console.log(this.onlyOneChild, 'this.onlyOneChild')
-        // this.onlyOneChild(a(parent.children, parent))
-        // const showingChildren = children.filter(item => {
-        //   if (item.hidden) {
-        //     return false
-        //   } else {
-        //     // this.onlyOneChild = item
-        //     return true
-        //   }
-        // })
-        // console.log(showingChildren, 'this.showingChildren')
+        const showingChildren = children.filter(item => {
+          if (item.hidden) {
+            // 过滤掉hidden 要隐藏的
+            return false
+          } else {
+            return true
+          }
+        })
+        this.onlyOneChild = a(showingChildren, parent)
         return true
       }
     },
