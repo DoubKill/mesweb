@@ -62,10 +62,13 @@ export function batchingClassesPlan(params) {
   })
 }
 
-export function issueBatchingClassesPlan(id) {
+export function issueBatchingClassesPlan(id, batchingEquip) {
   return request({
     url: API.IssueBatchingClassesPlanUrl + id + '/',
-    method: 'put'
+    method: 'put',
+    data: {
+      equip: batchingEquip
+    }
   })
 }
 

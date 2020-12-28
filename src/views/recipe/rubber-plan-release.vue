@@ -31,7 +31,7 @@
         />
       </el-form-item>
       <el-form-item label="配料设备">
-        <selectBatchingEquip @selectChanged="selectBatchEquip" />
+        <select-batching-equip v-model="getParams.equip" @change="getList" />
       </el-form-item>
       <el-form-item label="状态">
         <el-select
@@ -86,6 +86,7 @@
       <el-table-column
         label="配料设备"
         align="center"
+        prop="equip_name"
       />
       />
       <el-table-column
@@ -98,10 +99,6 @@
       <el-table-column
         prop="plan_package"
         label="计划数量"
-        align="center"
-      />
-      <el-table-column
-        label="产线"
         align="center"
       />
       <el-table-column
@@ -126,7 +123,7 @@
         width="70"
       >
         <template slot-scope="scope">
-          <el-button :disabled="scope.row.status!==1||scope.row.weigh_batching_used_type !== 4" size="mini" @click="sendOut(scope.row,scope.$index)">发送</el-button>
+          <el-button :disabled="scope.row.status!==1||scope.row.weigh_batching_used_type !== 4" size="mini" @click="showSendOut(scope.row,scope.$index)">发送</el-button>
         </template>
       </el-table-column>
       <el-table-column
@@ -163,19 +160,45 @@
         :batching-classes-plan="batchingClassesPlan"
       />
     </el-dialog>
+    <el-dialog
+      title="配料设备选择"
+      :visible.sync="choiceDeviceDialogVisible"
+    >
+      <el-form ref="form" :model="form" :rules="rules">
+        <el-form-item label="小料配方编码">
+          <el-input :value="form.weight_batch_no" disabled />
+        </el-form-item>
+        <el-form-item label="胶料编码">
+          <el-input :value="form.stage_product_batch_no" disabled />
+        </el-form-item>
+        <el-form-item label="生产机型">
+          <el-input :value="form.category_name" disabled />
+        </el-form-item>
+        <el-form-item label="计划数量">
+          <el-input :value="form.plan_package" disabled />
+        </el-form-item>
+        <el-form-item label="配料设备" prop="equip">
+          <select-batching-equip v-model="form.equip" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="choiceDeviceDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="sendOut">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import classSelect from '@/components/ClassSelect'
 import EquipCategorySelect from '@/components/EquipCategorySelect'
-import selectBatchingEquip from './components/select-batching-equip'
+import SelectBatchingEquip from './components/select-batching-equip'
 import WeighBatchingPlanDetail from './components/weigh_batching_plan_detail'
 
 import { batchingClassesPlan, issueBatchingClassesPlan } from '@/api/small-material-recipe'
 
 export default {
-  components: { classSelect, EquipCategorySelect, selectBatchingEquip, WeighBatchingPlanDetail },
+  components: { classSelect, EquipCategorySelect, SelectBatchingEquip, WeighBatchingPlanDetail },
   data() {
     return {
       getParams: {
@@ -183,12 +206,25 @@ export default {
         dev_type: null,
         weight_batch_no: '',
         classes_name: '',
-        status: ''
+        status: '',
+        equip: null
       },
       loading: false,
       tableData: [],
       dialogVisible: false,
-      batchingClassesPlan: null
+      batchingClassesPlan: {},
+      choiceDeviceDialogVisible: false,
+      // batchingEquip: null
+      form: {
+        weight_batch_no: '',
+        stage_product_batch_no: '',
+        category_name: '',
+        plan_package: '',
+        equip: null
+      },
+      rules: {
+        equip: [{ required: true, message: '该字段不能为空', trigger: 'change' }]
+      }
     }
   },
   created() {
@@ -206,10 +242,24 @@ export default {
       this.getList()
     },
     selectBatchEquip(val) {
-    },
-    async sendOut(row, index) {
-      await issueBatchingClassesPlan(row.id)
+      this.getParams.equip = val ? val.id : null
       this.getList()
+    },
+    async sendOut() {
+      this.$refs['form'].validate(async valid => {
+        if (valid) {
+          await issueBatchingClassesPlan(this.form.id, this.form.equip)
+          this.getList()
+          this.choiceDeviceDialogVisible = false
+        }
+      })
+    },
+    showSendOut(row, index) {
+      this.form = Object.assign({}, row)
+      this.choiceDeviceDialogVisible = true
+      this.$nextTick(() => {
+        this.$refs['form'].clearValidate()
+      })
     },
     view(row, index) {
       this.batchingClassesPlan = row

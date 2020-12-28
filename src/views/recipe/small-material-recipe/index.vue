@@ -106,12 +106,7 @@
           </el-button-group>
         </template>
       </el-table-column>
-      <el-table-column label="下发" align="center">
-        <template slot-scope="{row}">
-          <el-button v-if="row.used_type === 4" size="mini">发送</el-button>
-        </template>
-      </el-table-column>
-      <el-table-column label="发送计数" prop="send_cnt" align="center" />
+      <!-- <el-table-column label="发送计数" prop="send_cnt" align="center" /> -->
       <el-table-column label="创建者" prop="created_user" align="center" />
       <el-table-column label="创建时间" width="150" prop="created_date" align="center" />
     </el-table>

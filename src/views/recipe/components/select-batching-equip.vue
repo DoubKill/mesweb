@@ -1,44 +1,54 @@
 <template>
   <el-select
-    v-model="name"
+    :value="id"
     clearable
-    placeholder="请选择配料设备"
+    placeholder="请选择"
+    @change="$emit('change', $event)"
     @visible-change="visibleChange"
-    @change="selectChanged"
   >
     <el-option
-      v-for="item in options"
+      v-for="item in equipOptions"
       :key="item.id"
-      :label="item.name"
+      :label="item.equip_no"
       :value="item.id"
     />
   </el-select>
 </template>
 
 <script>
-import { warehouseNames } from '@/api/warehouse'
+import { getEquip } from '@/api/banburying-performance-manage'
 
 export default {
-  data() {
-    return {
-      name: '',
-      options: []
+  model: {
+    prop: 'id',
+    event: 'change'
+  },
+  props: {
+    id: {
+      type: [Number, String],
+      required: false,
+      default: undefined
     }
   },
+  data() {
+    return {
+      // equipId: null,
+      equipOptions: []
+    }
+  },
+  created() {
+    this.getEquip()
+  },
   methods: {
-    getList() {
-      warehouseNames().then(response => {
-        this.options = response
+    getEquip() {
+      getEquip({ all: 1, category_name: '称量设备' }).then(response => {
+        this.equipOptions = response.results
       })
     },
     visibleChange(visible) {
-      if (visible && this.options.length === 0) {
-        this.getList()
+      if (visible) {
+        this.getEquip()
       }
-    },
-    selectChanged(val) {
-      const obj = this.options.find(D => D.id === val)
-      this.$emit('selectChanged', obj)
     }
   }
 }
