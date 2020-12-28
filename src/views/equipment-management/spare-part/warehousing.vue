@@ -23,7 +23,7 @@
       <el-form-item label="库存位:">
         <inventoryPosition @changSelect="changeInventoryPosition" />
       </el-form-item>
-      <el-form-item>
+      <el-form-item v-permission="['spare_inbound','add']">
         <el-button @click="edit(null)">新增</el-button>
       </el-form-item>
     </el-form>
@@ -62,10 +62,12 @@
         label="单位"
       />
       <el-table-column
+        v-if="checkPermission(['spare_inbound','price'])"
         prop="cost"
         label="单价（元）"
       />
       <el-table-column
+        v-if="checkPermission(['spare_inbound','price'])"
         prop="total_count"
         label="总价（元）"
       />
@@ -76,11 +78,13 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
+              v-permission="['spare_inbound','inbound']"
               size="mini"
               @click="edit(scope.row)"
             >入库
             </el-button>
             <el-button
+              v-permission="['spare_inbound','history']"
               size="mini"
               type="blue"
               @click="view(scope.row)"
@@ -171,6 +175,7 @@ import warehouseSelect from '@/components/select_w/warehouseSelect'
 import page from '@/components/page'
 import { spareInventory, putStorage } from '@/api/base_w_two'
 import allRecord from './all-record.vue'
+import { checkPermission } from '@/utils'
 
 export default {
   components: { materialTypeSelect, allRecord, page, inventoryPosition, materialCodeSelect, warehouseSelect },
@@ -205,6 +210,7 @@ export default {
     this.getList()
   },
   methods: {
+    checkPermission,
     async getList() {
       try {
         this.loading = true

@@ -41,6 +41,7 @@ export default {
 
       // old
       // return this.$router.options.routes
+      // console.log(arr, 777777)
       return arr
     },
     activeMenu() {

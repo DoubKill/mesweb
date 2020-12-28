@@ -75,6 +75,10 @@
         label="数量"
       />
       <el-table-column
+        prop="unit"
+        label="单位"
+      />
+      <el-table-column
         prop="cost"
         label="单价（元）"
       />
@@ -188,7 +192,7 @@ export default {
         const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
         link.style.display = 'none'
         link.href = URL.createObjectURL(blob)
-        link.download = '备品备件库存模板.xlsx' // 下载的文件名
+        link.download = '备品备件库存模板.xls' // 下载的文件名
         document.body.appendChild(link)
         link.click()
         document.body.removeChild(link)
