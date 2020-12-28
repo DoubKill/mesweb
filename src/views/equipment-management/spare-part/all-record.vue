@@ -37,9 +37,21 @@
         </el-form-item>
         <el-form-item>
           <!-- // 1出库 2入库 3盘点 -->
-          <el-button v-if="currentRoute === 1" @click="exportTable('备品备件出库履历')">导出表格</el-button>
-          <el-button v-if="currentRoute === 2" @click="exportTable('备品备件入库履历')">导出表格</el-button>
-          <el-button v-if="currentRoute === 3" @click="exportTable('备品备件盘点履历')">导出表格</el-button>
+          <el-button
+            v-if="currentRoute === 1&&
+              checkPermission(['outbound_history','export'])"
+            @click="exportTable('备品备件出库履历')"
+          >导出表格</el-button>
+          <el-button
+            v-if="currentRoute === 2&&
+              checkPermission(['inbound_history','export'])"
+            @click="exportTable('备品备件入库履历')"
+          >导出表格</el-button>
+          <el-button
+            v-if="currentRoute === 3&&
+              checkPermission(['stock_history','export'])"
+            @click="exportTable('备品备件盘点履历')"
+          >导出表格</el-button>
         </el-form-item>
       </div>
       <el-form-item v-if="currentRoute === 1" label="状态:">
@@ -96,10 +108,18 @@
         label="库存位"
       />
       <el-table-column
+        v-if="(currentRoute === 1
+          &&checkPermission(['outbound_history','price']))
+          ||(currentRoute === 2
+            &&checkPermission(['inbound_history','price']))"
         prop="unit_count"
         label="单价（元）"
       />
       <el-table-column
+        v-if="(currentRoute === 1
+          &&checkPermission(['outbound_history','price']))
+          ||(currentRoute === 2
+            &&checkPermission(['inbound_history','price']))"
         prop="cost"
         label="总价（元）"
       />
@@ -203,6 +223,8 @@ import materialCodeSelect from '@/components/select_w/sparePartsMCodeSelect'
 import page from '@/components/page'
 import { setDate, exportExcel } from '@/utils/index'
 import { spareInventoryLog, revocationLog } from '@/api/base_w_two'
+import { checkPermission } from '@/utils'
+
 export default {
   components: { page, inventoryPosition, materialCodeSelect, materialTypeSelect },
   props: {
@@ -276,6 +298,7 @@ export default {
     this.getList()
   },
   methods: {
+    checkPermission,
     async getList() {
       try {
         this.loading = true
