@@ -26,6 +26,7 @@
         </el-form-item>
         <el-form-item style="float: right">
           <el-button
+            v-permission="['spare_import', 'download']"
             @click="templateDownload"
           >模板下载</el-button>
         </el-form-item>
@@ -38,7 +39,7 @@
             :http-request="Upload"
             :show-file-list="false"
           >
-            <el-button>导入</el-button>
+            <el-button v-permission="['spare_import', 'import']">导入</el-button>
           </el-upload>
         </el-form-item>
       </div>
@@ -72,6 +73,10 @@
       <el-table-column
         prop="qty"
         label="数量"
+      />
+      <el-table-column
+        prop="unit"
+        label="单位"
       />
       <el-table-column
         prop="cost"
@@ -187,7 +192,7 @@ export default {
         const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
         link.style.display = 'none'
         link.href = URL.createObjectURL(blob)
-        link.download = '备品备件库存模板.xlsx' // 下载的文件名
+        link.download = '备品备件库存模板.xls' // 下载的文件名
         document.body.appendChild(link)
         link.click()
         document.body.removeChild(link)
