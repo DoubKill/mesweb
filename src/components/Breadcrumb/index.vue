@@ -30,13 +30,23 @@ export default {
     getBreadcrumb() {
       // only show routes with meta.title
       const matched = this.$route.matched.filter(item => item.meta && item.meta.title)
-      const first = matched[0]
+      // const first = matched[0]
 
-      if (!this.isDashboard(first)) {
-        // matched = [{ path: '/dashboard', meta: { title: '首页' }}].concat(matched)
-      }
+      // if (!this.isDashboard(first)) {
+      // matched = [{ path: '/dashboard', meta: { title: '首页' }}].concat(matched)
+      // }
 
-      this.levelList = matched.filter(item => item.meta && item.meta.title && item.meta.breadcrumb !== false)
+      // this.levelList = matched.filter(item => item.meta && item.meta.title && item.meta.breadcrumb !== false)
+      // console.log(this.levelList, 'this.levelList')
+
+      const levelList = matched.filter(item => item.meta && item.meta.title && item.meta.breadcrumb !== false)
+      const _length = levelList.length
+
+      // if (_length > 1 && levelList[0].meta.title === levelList[_length - 1].meta.title) {
+      //   this.levelList = [levelList[0]]
+      //   return
+      // }
+      this.levelList = [levelList[0], levelList[_length - 1]]
     },
     isDashboard(route) {
       const path = route && route.meta.icon

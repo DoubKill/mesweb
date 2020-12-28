@@ -147,7 +147,7 @@ export const asyncRoutes = [{
     meta: {
       title: '库存位管理',
       icon: 'dashboard',
-      permissionName: 'class_production_summary'
+      permissionName: 'location'
     }
   },
   {
@@ -354,7 +354,7 @@ export const asyncRoutes = [{
     meta: {
       title: '车次报表',
       icon: 'production',
-      permissionName: 'product_actual'
+      permissionName: 'trains_report'
     }
   },
   {
@@ -364,7 +364,7 @@ export const asyncRoutes = [{
     meta: {
       title: '产量计划实际分析（车数）',
       icon: 'production',
-      permissionName: 'product_actual'
+      permissionName: 'production_analyze'
     }
   },
   {
@@ -374,7 +374,7 @@ export const asyncRoutes = [{
     meta: {
       title: '区间产量统计（车数）',
       icon: 'production',
-      permissionName: 'product_actual'
+      permissionName: 'section_production'
     }
   }
   // {
@@ -473,7 +473,7 @@ export const asyncRoutes = [{
       meta: {
         title: '终炼胶出库计划',
         icon: 'stock',
-        permissionName: 'inventory_plan'
+        permissionName: 'finalRubber_plan'
       }
     },
     {
@@ -483,7 +483,7 @@ export const asyncRoutes = [{
       meta: {
         title: '混炼胶出库计划',
         icon: 'stock',
-        permissionName: 'inventory_plan'
+        permissionName: 'compoundRubber_plan'
       }
     },
     {
@@ -512,7 +512,7 @@ export const asyncRoutes = [{
       name: 'warehouseOutKanban',
       meta: {
         title: '出库看板', icon: 'stock',
-        permissionName: 'LB_inventory_plan'
+        permissionName: 'outbound_display'
       }
     },
     // {
@@ -873,7 +873,8 @@ export const asyncRoutes = [{
             component: () => import('@/views/equipment-management/spare-part/spare-location'),
             name: 'spare-location',
             meta: {
-              title: '库存位管理'
+              title: '库存位管理',
+              permissionName: 'spare_location'
             }
           },
           {
@@ -882,7 +883,7 @@ export const asyncRoutes = [{
             name: 'spare-type',
             meta: {
               title: '类型管理',
-              permissionName: 'class_production_summary'
+              permissionName: 'spare_type'
             }
           },
           {
@@ -891,7 +892,7 @@ export const asyncRoutes = [{
             name: 'spareparts-spare',
             meta: {
               title: '基本信息管理',
-              permissionName: 'class_production_summary'
+              permissionName: 'spare_info'
             }
           },
           {
@@ -900,7 +901,7 @@ export const asyncRoutes = [{
             name: 'shelf-material-binding',
             meta: {
               title: '货架物料绑定管理',
-              permissionName: 'class_production_summary'
+              permissionName: 'location_binding'
             }
           },
           {
@@ -909,7 +910,7 @@ export const asyncRoutes = [{
             name: 'spare-part-location-manage',
             meta: {
               title: '备品备件库位管理',
-              permissionName: 'class_production_summary'
+              permissionName: 'spare_inventory'
             }
           },
           {
@@ -918,7 +919,7 @@ export const asyncRoutes = [{
             name: 'spare-part-inventory-manage',
             meta: {
               title: '备品备件库存管理',
-              permissionName: 'class_production_summary'
+              permissionName: 'spare_stock'
             }
           },
           {
@@ -927,7 +928,7 @@ export const asyncRoutes = [{
             name: 'inventory-upload',
             meta: {
               title: '备品备件库存导入',
-              permissionName: 'class_production_summary'
+              permissionName: 'spare_import'
             }
           }
         ]
@@ -949,7 +950,7 @@ export const asyncRoutes = [{
             name: 'spare-part-warehousing',
             meta: {
               title: '备品备件入库管理',
-              permissionName: 'class_production_summary'
+              permissionName: 'spare_inbound'
             }
           },
           {
@@ -958,7 +959,7 @@ export const asyncRoutes = [{
             name: 'spare-part-warehouse-out',
             meta: {
               title: '备品备件出库管理',
-              permissionName: 'class_production_summary'
+              permissionName: 'spare_outbound'
             }
           },
           {
@@ -967,7 +968,7 @@ export const asyncRoutes = [{
             name: 'spare-part-inventory',
             meta: {
               title: '备品备件盘点管理',
-              permissionName: 'class_production_summary'
+              permissionName: 'stock_count'
             }
           }
         ]
@@ -988,7 +989,7 @@ export const asyncRoutes = [{
             name: 'spare-part-warehousing-record',
             meta: {
               title: '备品备件入库履历',
-              permissionName: 'class_production_summary'
+              permissionName: 'inbound_history'
             }
           },
           {
@@ -997,7 +998,7 @@ export const asyncRoutes = [{
             name: 'spare-part-warehousing-out-record',
             meta: {
               title: '备品备件出库履历',
-              permissionName: 'class_production_summary'
+              permissionName: 'outbound_history'
             }
           },
           {
@@ -1006,7 +1007,7 @@ export const asyncRoutes = [{
             name: 'spare-part-inventory-record',
             meta: {
               title: '备品备件盘点履历',
-              permissionName: 'class_production_summary'
+              permissionName: 'stock_history'
             }
           }
         ]

@@ -36,7 +36,6 @@ const actions = {
 
 export function filterAsyncRoutesMy(routes, permission) {
   const res = []
-
   routes.forEach(route => {
     const tmp = {
       ...route
@@ -46,8 +45,6 @@ export function filterAsyncRoutesMy(routes, permission) {
       if (tmp.children) {
         // if (tmp.meta && tmp.meta.permissionName) {
         // const permissionVal = permission[tmp.meta.permissionName]
-
-        // tmp.children = filterAsyncRoutesMy(tmp.children, permissionVal)
         tmp.children = filterAsyncRoutesMy(tmp.children, permission)
         // }
         //  else {

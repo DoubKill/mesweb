@@ -1,7 +1,9 @@
 <template>
-  <component :is="type" v-bind="linkProps(to)">
-    <slot />
-  </component>
+  <div>
+    <component :is="type" v-bind="linkProps(to)">
+      <slot />
+    </component>
+  </div>
 </template>
 
 <script>
