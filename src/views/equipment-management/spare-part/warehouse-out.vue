@@ -433,6 +433,9 @@ export default {
 .el-autocomplete,.el-input,.el-select,.el-input-number{
   width:250px;
 }
+.page-style .el-input{
+  // width:auto;
+}
  .el-pagination .el-select{
     width:auto;
  }

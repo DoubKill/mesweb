@@ -9,7 +9,7 @@
       :current-page.sync="_currentPage"
       @current-change="currentChange"
     />
-    <div v-else style="display:flex">
+    <div v-else style="display:flex" class="page-style">
       <el-select
         v-model="pageSize"
         style="width:110px"
@@ -91,5 +91,10 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
+.page-style{
+  .el-input,.el-select{
+    width:120px !important;
+  }
+}
 </style>
