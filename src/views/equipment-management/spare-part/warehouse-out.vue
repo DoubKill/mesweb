@@ -62,12 +62,12 @@
         label="单位"
       />
       <el-table-column
-        v-if="checkPermission(['spare_inbound','price'])"
+        v-if="checkPermission(['spare_outbound','price'])"
         prop="cost"
         label="单价（元）"
       />
       <el-table-column
-        v-if="checkPermission(['spare_inbound','price'])"
+        v-if="checkPermission(['spare_outbound','price'])"
         prop="total_count"
         label="总价（元）"
       />
