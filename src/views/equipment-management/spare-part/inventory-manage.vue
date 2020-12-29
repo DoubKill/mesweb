@@ -53,6 +53,7 @@
         </template>
       </el-table-column>
       <el-table-column
+        v-if="checkPermission(['spare_stock','price'])"
         prop="unit_count"
         label="单价（元）"
       />
@@ -61,6 +62,7 @@
         label="单位"
       />
       <el-table-column
+        v-if="checkPermission(['spare_stock','price'])"
         prop="total_count"
         label="总价（元）"
       />
@@ -87,6 +89,7 @@ import page from '@/components/page'
 import { getCountSpareInventory } from '@/api/inventory-manage'
 import locationManage from './location-manage.vue'
 import materialTypeSelect from '@/components/select_w/sparePartsMTypeSelect'
+import { checkPermission } from '@/utils'
 
 export default {
   components: { page, materialCodeSelect, locationManage, materialTypeSelect },
@@ -106,6 +109,7 @@ export default {
     this.getList()
   },
   methods: {
+    checkPermission,
     async getList() {
       try {
         const data = await getCountSpareInventory(this.search)
