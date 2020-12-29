@@ -61,10 +61,12 @@
         label="单位"
       />
       <el-table-column
+        v-if="checkPermission(['spare_inventory','price'])"
         prop="cost"
         label="单价（元）"
       />
       <el-table-column
+        v-if="checkPermission(['spare_inventory','price'])"
         prop="total_count"
         label="总价（元）"
       />
@@ -84,6 +86,7 @@ import materialCodeSelect from '@/components/select_w/sparePartsMCodeSelect'
 import page from '@/components/page'
 import { spareInventory } from '@/api/base_w_two'
 import materialTypeSelect from '@/components/select_w/sparePartsMTypeSelect'
+import { checkPermission } from '@/utils'
 
 export default {
   components: { page, inventoryPosition, materialCodeSelect, materialTypeSelect },
@@ -130,6 +133,7 @@ export default {
     this.getList()
   },
   methods: {
+    checkPermission,
     async getList() {
       try {
         const data = await spareInventory('get', null, { params: this.search })

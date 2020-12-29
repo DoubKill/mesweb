@@ -316,7 +316,7 @@ export default {
       this.getList()
     },
     changeInventoryPosition(obj) {
-      this.search.location_name = obj ? obj.name : null
+      this.search.location_no = obj ? obj.no : null
       this.search.page = 1
       this.getList()
     },

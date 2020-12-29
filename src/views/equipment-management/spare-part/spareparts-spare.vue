@@ -42,6 +42,7 @@
       </el-form-item> -->
       <el-form-item style="float: right">
         <el-button
+          v-permission="['spare_info', 'add']"
           @click="showCreateDialog"
         >新建</el-button>
       </el-form-item>
@@ -89,10 +90,12 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
+              v-permission="['spare_info', 'change']"
               size="mini"
               @click="showEditDialog(scope.row)"
             >编辑</el-button>
             <el-button
+              v-permission="['spare_info', 'delete']"
               size="mini"
               type="danger"
               @click="handleDelete(scope.row)"
