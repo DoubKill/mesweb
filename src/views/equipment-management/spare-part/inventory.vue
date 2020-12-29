@@ -132,7 +132,7 @@
       </span>
     </el-dialog>
     <el-dialog
-      title="备品备件入库履历"
+      title="备品备件盘点履历"
       :visible.sync="dialogVisibleResume"
       width="90%"
     >
