@@ -197,7 +197,7 @@
         </template>
       </el-table-column>
       <el-table-column
-        v-if="currentRoute === 1"
+        v-if="currentRoute === 1&&checkPermission(['outbound_history','cancel'])"
         label="操作"
         width="80"
       >
