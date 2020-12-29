@@ -3,7 +3,6 @@
     <!-- 库存位下拉框 -->
     <el-select
       v-model="value"
-      filterable
       placeholder="请选择库存位"
       :loading="loading"
       clearable
