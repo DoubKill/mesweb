@@ -1,4 +1,5 @@
 <template>
+  <!-- 配料设备编码 -->
   <el-select
     :value="id"
     clearable
@@ -28,6 +29,11 @@ export default {
       type: [Number, String],
       required: false,
       default: undefined
+    },
+    //  created里面加载
+    createdIs: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -37,16 +43,22 @@ export default {
     }
   },
   created() {
-    this.getEquip()
+    if (this.createdIs) {
+      this.getEquip()
+    }
   },
   methods: {
     getEquip() {
       getEquip({ all: 1, category_name: '称量设备' }).then(response => {
         this.equipOptions = response.results
+
+        if (this.createdIs) {
+          this.$emit('change', this.equipOptions[0].id)
+        }
       })
     },
     visibleChange(visible) {
-      if (visible) {
+      if (visible && this.equipOptions.length === 0) {
         this.getEquip()
       }
     }
