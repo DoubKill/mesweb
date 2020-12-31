@@ -45,7 +45,7 @@
           <td>收皮员</td>
           <td>{{ testData.operation_user }}</td>
           <td>备注</td>
-          <td />
+          <td>{{ testData.test ? testData.test.pallet_no : '' }}</td>
         </tr>
         <tr>
           <td colspan="4">质量信息卡</td>
