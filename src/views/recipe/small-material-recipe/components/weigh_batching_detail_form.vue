@@ -125,7 +125,7 @@ export default {
         package_cnt: 1,
         weigh_batching_detail: []
       }]
-      if (this.productBatching && this.productBatching.stage_name.toLowerCase() === 'fm') {
+      if (this.productBatching && this.productBatching.stage_name && this.productBatching.stage_name.toLowerCase() === 'fm') {
         this.weight_types.push({
           name: '硫磺',
           weigh_type: 3,
