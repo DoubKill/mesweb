@@ -62,6 +62,16 @@ export function batchingClassesPlan(params) {
   })
 }
 
+export function changePlanPackage(id, plan_package) {
+  return request({
+    url: API.BatchingClassesPlanUrl + id + '/',
+    method: 'patch',
+    data: {
+      plan_package
+    }
+  })
+}
+
 export function issueBatchingClassesPlan(id, batchingEquip) {
   return request({
     url: API.IssueBatchingClassesPlanUrl + id + '/',
