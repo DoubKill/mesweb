@@ -248,5 +248,7 @@ export default {
   // 看板2
   InventoryToday: '/api/v1/inventory/inventory-log-out/inventory-today/',
   // 看板3
-  MixGumOutInventoryLog: '/api/v1/inventory/inventory-log-out/'
+  MixGumOutInventoryLog: '/api/v1/inventory/inventory-log-out/',
+  // 物料罐列表
+  WeightingTackStatus: '/api/v1/terminal/weighting-tack-status/'
 }

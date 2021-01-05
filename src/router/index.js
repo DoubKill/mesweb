@@ -55,7 +55,24 @@ export const constantRoutes = [{
       title: '首页',
       icon: 'el-icon-s-home'
     }
-  }]
+  }
+  // {
+  //   path: '/Kanban',
+  //   component: () => import('@/views/homePage/Kanban'),
+  //   meta: {
+  //     title: '看板',
+  //     icon: 'el-icon-s-home'
+  //   }
+  // },
+  // {
+  //   path: '/2code',
+  //   component: () => import('@/views/homePage/2code'),
+  //   meta: {
+  //     title: '二维码',
+  //     icon: 'el-icon-s-home'
+  //   }
+  // }
+  ]
 }
 ]
 
@@ -221,6 +238,16 @@ export const asyncRoutes = [{
       title: '胶料配方标准管理',
       icon: 'formula',
       permissionName: 'productbatching'
+    }
+  },
+  {
+    path: '/rb/material-tank/manage',
+    name: 'material-tank',
+    component: () => import('@/views/recipe/tankInformation/list'),
+    meta: {
+      title: '称量系统料仓信息管理',
+      icon: 'formula',
+      permissionName: ''
     }
   },
   {

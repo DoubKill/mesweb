@@ -2,9 +2,10 @@
   <!-- 配料设备编码 -->
   <el-select
     :value="id"
-    clearable
-    placeholder="请选择"
-    @change="$emit('change', $event)"
+    :clearable="!createdIs"
+    placeholder="请选择配料设备"
+    :disabled="readIs"
+    @change="changeFun"
     @visible-change="visibleChange"
   >
     <el-option
@@ -34,6 +35,11 @@ export default {
     createdIs: {
       type: Boolean,
       default: false
+    },
+    //  是否只读
+    readIs: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -52,10 +58,17 @@ export default {
       getEquip({ all: 1, category_name: '称量设备' }).then(response => {
         this.equipOptions = response.results
 
-        if (this.createdIs) {
+        if (this.createdIs && this.equipOptions.length > 0) {
           this.$emit('change', this.equipOptions[0].id)
         }
       })
+    },
+    changeFun(id) {
+      if (this.createdIs) {
+        this.$emit('changeFun', this.equipOptions.find(D => D.id === id))
+        return
+      }
+      this.$emit('change', id)
     },
     visibleChange(visible) {
       if (visible && this.equipOptions.length === 0) {

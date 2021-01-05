@@ -1,20 +1,17 @@
 <template>
   <div>
-    <!-- 原材料编码下拉 -->
+    <!-- 料罐下拉框 暂时没用到 -->
     <el-select
       v-model="value"
-      filterable
-      placeholder="请选择"
+      placeholder="请选择料罐编码"
       :loading="loading"
-      clearable
-      :disabled="isDisabled"
       @visible-change="visibleChange"
-      @change="changeSelect"
+      @change="changSelect"
     >
       <el-option
         v-for="item in options"
         :key="item.id"
-        :label="item[labelName]"
+        :label="item.level"
         :value="item.id"
       />
     </el-select>
@@ -22,7 +19,7 @@
 </template>
 
 <script>
-import { materialsUrl } from '@/api/base_w'
+import { levelResult } from '@/api/base_w'
 export default {
   props: {
     //  created里面加载
@@ -31,30 +28,24 @@ export default {
       default: false
     },
     defaultVal: {
-      type: [Number, String],
+      type: Number,
       default: null
-    },
-    labelName: {
-      type: String,
-      default: 'material_no'
-    },
-    isAllObj: { // 是否返回全部对象
-      type: Boolean,
-      default: false
-    },
-    isDisabled: { // 是否只读
-      type: Boolean,
-      default: false
     }
   },
   data() {
     return {
-      value: this.defaultVal,
+      value: '',
       loading: false,
       options: []
     }
   },
   watch: {
+    testTypeId(val) {
+      this.options = []
+      if (val) {
+        this.getList()
+      }
+    },
     defaultVal(val) {
       this.value = val
     }
@@ -62,13 +53,14 @@ export default {
   created() {
     if (this.createdIs) {
       this.getList()
+      this.value = this.defaultVal
     }
   },
   methods: {
     async getList() {
       try {
         this.loading = true
-        const data = await materialsUrl('get', null, { params: { all: 1 }})
+        const data = await levelResult('get', null, { params: { all: 1 }})
         this.options = data.results || []
         this.loading = false
       } catch (e) {
@@ -80,14 +72,10 @@ export default {
         this.getList()
       }
     },
-    changeSelect(val) {
-      if (this.isAllObj) {
-        let arr = []
-        arr = this.options.filter(D => D.id === val)
-        this.$emit('changeSelect', arr[0])
-        return
-      }
-      this.$emit('changeSelect', val)
+    changSelect(val) {
+      let arr = []
+      arr = this.options.filter(D => D.id === val)
+      this.$emit('changSelect', arr[0])
     }
   }
 }

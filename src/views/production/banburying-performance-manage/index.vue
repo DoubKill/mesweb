@@ -330,8 +330,6 @@
       width="900px"
       :visible.sync="dialogVisibleGraph"
     >
-      <!-- <div style="margin: 0 0 20px 5px;">2020-12-12</div>
-      <div ref="main" style="width: 100%;height:400px;" /> -->
       <ve-line
         height="500px"
         :data="chartData"
@@ -339,11 +337,6 @@
         :after-set-option="afterSetOption"
       />
     </el-dialog>
-    <!-- <page
-      :total="total"
-      :current-page="getParams.page"
-      @currentChange="currentChange"
-    /> -->
   </div>
 </template>
 

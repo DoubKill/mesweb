@@ -102,3 +102,12 @@ export function mixGumOutInventoryLog(method, id, data = {}) {
   return request(obj)
 }
 
+export function weightingTackStatus(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WeightingTackStatus + id + '/' : API.WeightingTackStatus,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
