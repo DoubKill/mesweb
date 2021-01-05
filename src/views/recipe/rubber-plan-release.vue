@@ -100,7 +100,11 @@
         prop="plan_package"
         label="计划数量"
         align="center"
-      />
+      >
+        <template slot-scope="{ row }">
+          <span :class="{ 'b-r': row.package_changed }">{{ row.plan_package }}</span>
+        </template>
+      </el-table-column>
       <el-table-column
         prop="weigh_batching_used_type"
         label="小料配方状态"
@@ -109,12 +113,14 @@
         align="center"
       />
       <el-table-column
-        label="明细查看"
+        label="操作"
         align="center"
-        width="70"
       >
         <template slot-scope="scope">
-          <el-button size="mini" @click="view(scope.row,scope.$index)">查看</el-button>
+          <el-button-group>
+            <el-button size="mini" @click="view(scope.row,scope.$index)">查看</el-button>
+            <el-button size="mini" @click="handleChangePlanPackage(scope.row)">修改</el-button>
+          </el-button-group>
         </template>
       </el-table-column>
       <el-table-column
@@ -123,7 +129,7 @@
         width="70"
       >
         <template slot-scope="scope">
-          <el-button :disabled="scope.row.status!==1||scope.row.weigh_batching_used_type !== 4" size="mini" @click="showSendOut(scope.row,scope.$index)">发送</el-button>
+          <el-button :disabled="!sendInabled(scope.row)" size="mini" @click="showSendOut(scope.row,scope.$index)">发送</el-button>
         </template>
       </el-table-column>
       <el-table-column
@@ -186,6 +192,24 @@
         <el-button type="primary" @click="sendOut">确 定</el-button>
       </div>
     </el-dialog>
+    <el-dialog
+      title="修改计划数量"
+      :visible.sync="changePlanPackageVisible"
+    >
+      <el-form ref="planPackageForm" :model="planPackageFormData" :rules="planPackageFormRules" label-position="left" label-width="110px">
+        <el-form-item label="计划数量" prop="plan_package">
+          <el-input v-model.number="planPackageFormData.plan_package" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="changePlanPackageVisible = false">
+          取消
+        </el-button>
+        <el-button type="primary" @click="updatePlanPackage">
+          确定
+        </el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -195,7 +219,7 @@ import EquipCategorySelect from '@/components/EquipCategorySelect'
 import SelectBatchingEquip from './components/select-batching-equip'
 import WeighBatchingPlanDetail from './components/weigh_batching_plan_detail'
 
-import { batchingClassesPlan, issueBatchingClassesPlan } from '@/api/small-material-recipe'
+import { batchingClassesPlan, issueBatchingClassesPlan, changePlanPackage } from '@/api/small-material-recipe'
 
 export default {
   components: { classSelect, EquipCategorySelect, SelectBatchingEquip, WeighBatchingPlanDetail },
@@ -224,6 +248,13 @@ export default {
       },
       rules: {
         equip: [{ required: true, message: '该字段不能为空', trigger: 'change' }]
+      },
+      changePlanPackageVisible: false,
+      planPackageFormData: {
+        plan_package: null
+      },
+      planPackageFormRules: {
+        plan_package: [{ required: true, message: '该字段不能为空', trigger: 'blur' }]
       }
     }
   },
@@ -231,6 +262,30 @@ export default {
     this.getList()
   },
   methods: {
+    async updatePlanPackage() {
+      this.$refs['planPackageForm'].validate(async valid => {
+        if (valid) {
+          this.changePlanPackageVisible = false
+          await changePlanPackage(this.planPackageFormData.id,
+            this.planPackageFormData.plan_package)
+          this.getList()
+        }
+      })
+    },
+    handleChangePlanPackage(row) {
+      this.planPackageFormData = Object.assign({}, row)
+      this.changePlanPackageVisible = true
+      this.$nextTick(() => {
+        this.$refs['planPackageForm'].clearValidate()
+      })
+    },
+    sendInabled(row) {
+      if (row.weigh_batching_used_type === 4 &&
+         (row.status === 1 || (row.status === 2 && row.package_changed))) {
+        return true
+      }
+      return false
+    },
     async getList() {
       this.loading = true
       const data = await batchingClassesPlan(this.getParams)
@@ -285,6 +340,10 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+  .b-r {
+    display: block;
+    background: red;
+    color: white;
+  }
 </style>
