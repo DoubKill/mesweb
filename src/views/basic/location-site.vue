@@ -1,6 +1,6 @@
 <template>
-  <div class="app-container">
-    <!-- 库存位管理 -->
+  <div>
+    <!-- 库存位管理 基础信息里面的-->
     <el-form :inline="true">
       <el-form-item label="类型">
         <el-select
@@ -78,9 +78,15 @@
       :visible.sync="dialogCreateVisible"
       :close-on-click-modal="false"
     >
-      <el-form ref="createForm" :rules="rules" :model="locationForm">
+      <el-form
+        ref="createForm"
+        :rules="rules"
+        label-width="100px"
+        :model="locationForm"
+      >
         <el-form-item
           label="类型"
+          prop="type"
         >
           <el-select v-model="locationForm.type" placeholder="请选择">
             <el-option
@@ -93,7 +99,6 @@
         </el-form-item>
         <el-form-item
           label="位置点"
-
           prop="name"
         >
           <el-input v-model="locationForm.name" />
@@ -115,9 +120,15 @@
       :visible.sync="dialogEditVisible"
       :close-on-click-modal="false"
     >
-      <el-form ref="editForm" :rules="rules" :model="locationForm">
+      <el-form
+        ref="editForm"
+        :rules="rules"
+        :model="locationForm"
+        label-width="100px"
+      >
         <el-form-item
           label="类型"
+          prop="type"
         >
           <el-select v-model="locationForm.type" placeholder="请选择">
             <el-option
@@ -130,7 +141,6 @@
         </el-form-item>
         <el-form-item
           label="位置点"
-
           prop="name"
         >
           <el-input v-model="locationForm.name" />
@@ -171,7 +181,8 @@ export default {
         name: ''
       },
       rules: {
-        name: [{ required: true, message: '不能为空', trigger: 'blur' }]
+        name: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        type: [{ required: true, message: '不能为空', trigger: 'change' }]
       },
       getParams: {
         page: 1,
