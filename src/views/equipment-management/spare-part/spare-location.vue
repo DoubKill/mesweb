@@ -1,6 +1,6 @@
 <template>
-  <div class="app-container">
-    <!-- 库存位管理 -->
+  <div>
+    <!-- 库存位管理 备品备件里面的-->
     <el-form :inline="true">
       <el-form-item label="类型">
         <el-select
@@ -77,9 +77,15 @@
       :visible.sync="dialogCreateVisible"
       :close-on-click-modal="false"
     >
-      <el-form ref="createForm" :rules="rules" :model="locationForm">
+      <el-form
+        ref="createForm"
+        :rules="rules"
+        :model="locationForm"
+        label-width="100px"
+      >
         <el-form-item
           label="类型"
+          prop="type"
         >
           <el-select v-model="locationForm.type" placeholder="请选择">
             <el-option
@@ -92,7 +98,6 @@
         </el-form-item>
         <el-form-item
           label="位置点"
-
           prop="name"
         >
           <el-input v-model="locationForm.name" />
@@ -114,9 +119,15 @@
       :visible.sync="dialogEditVisible"
       :close-on-click-modal="false"
     >
-      <el-form ref="editForm" :rules="rules" :model="locationForm">
+      <el-form
+        ref="editForm"
+        :rules="rules"
+        :model="locationForm"
+        label-width="100px"
+      >
         <el-form-item
           label="类型"
+          prop="type"
         >
           <el-select v-model="locationForm.type" placeholder="请选择">
             <el-option
@@ -153,7 +164,7 @@ import { getSpareLocation, putSpareLocation, postSpareLocation, deleteSpareLocat
 import inventoryPosition from '@/components/select_w/inventoryPosition'
 import page from '@/components/page'
 import { getGlobalCodes } from '@/api/global-codes-manage'
-import { errorRepeat } from '@/utils'
+// import { errorRepeat } from '@/utils'
 
 export default {
   components: { inventoryPosition, page },
@@ -170,7 +181,8 @@ export default {
         name: ''
       },
       rules: {
-        name: [{ required: true, message: '不能为空', trigger: 'blur' }]
+        name: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        type: [{ required: true, message: '不能为空', trigger: 'change' }]
       },
       getParams: {
         page: 1,
@@ -228,7 +240,7 @@ export default {
             this.$message(this.locationForm.name + '创建成功')
             this.getTableData()
           }).catch(e => {
-            errorRepeat(this, e)
+            // errorRepeat(this, e)
           })
         }
       })
