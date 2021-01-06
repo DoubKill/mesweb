@@ -422,7 +422,7 @@ export default {
             plan_classes_uid: D.plan_classes_uid,
             production_class: D.classes,
             production_equip_no: D.equip_no,
-            production_factory_date: D.factory_date,
+            production_factory_date: this.search.factory_date,
             note: D.note,
             order_results: arrChild
           }
@@ -430,7 +430,6 @@ export default {
       } catch (ex) {
         return
       }
-      // return
       this.loadingBtn = true
       try {
         await materialTestOrders('post', null, { data: arr })
@@ -487,7 +486,6 @@ function setDataChild(_this, row) {
     const ccc = Object.assign({}, dd._list, _newObjChild)
     _this.$set(dd, '_list', ccc)
   })
-  // console.log(_this.tableDataChild, '_this.tableDataChild')
 }
 </script>
 

@@ -85,16 +85,16 @@
       :row-class-name="tableRowClassName"
     >
       <el-table-column label="生产信息" align="center">
-        <el-table-column label="生产时间" width="90px" prop="production_factory_date" align="center">
+        <el-table-column label="工厂日期" min-width="90px" prop="production_factory_date" align="center">
           <template slot-scope="{row}">
             {{ (row.production_factory_date).split(' ')[0] }}
           </template>
         </el-table-column>
-        <el-table-column label="生产班次/班组" prop="class_group" show-overflow-tooltip width="75px" />
-        <el-table-column label="生产机台" width="40px" prop="production_equip_no" />
-        <el-table-column label="胶料编码" width="105px" align="center" prop="product_no" />
-        <el-table-column label="车次" align="center" width="35px" prop="actual_trains" />
-        <el-table-column label="检测状态" width="35px" prop="test_status" align="center">
+        <el-table-column label="生产班次/班组" prop="class_group" show-overflow-tooltip min-width="75px" />
+        <el-table-column label="生产机台" min-width="40px" prop="production_equip_no" />
+        <el-table-column label="胶料编码" min-width="105px" align="center" prop="product_no" />
+        <el-table-column label="车次" align="center" min-width="35px" prop="actual_trains" />
+        <el-table-column label="检测状态" min-width="35px" prop="test_status" align="center">
           <template slot-scope="{ row }">
             <div :class="row.test_status === '复检' ? 'test_type_name_style': ''">
               {{ row.test_status }}
@@ -108,7 +108,7 @@
             {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'machine_name') }}
           </template>
         </el-table-column> -->
-        <el-table-column v-for="subHeader in header.data_indicator_detail.filter(item => item.show)" :key="header.test_type_name + subHeader.detail" width="55px" :label="subHeader.detail" align="center">
+        <el-table-column v-for="subHeader in header.data_indicator_detail.filter(item => item.show)" :key="header.test_type_name + subHeader.detail" min-width="55px" :label="subHeader.detail" align="center">
           <!-- <el-table-column label="检测值" align="center"> -->
           <template slot-scope="{ row }">
             <div :class="getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level')!==1&&getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level')!==''?'test_type_name_style':''">
@@ -128,12 +128,12 @@
             </template>
           </el-table-column> -->
         </el-table-column>
-        <el-table-column v-if="header.test_type_name === '门尼' || header.test_type_name === '流变'" label="检测机台" width="50px" align="center">
+        <el-table-column v-if="header.test_type_name === '门尼' || header.test_type_name === '流变'" label="检测机台" min-width="50px" align="center">
           <template slot-scope="{row}">
             {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'machine_name') }}
           </template>
         </el-table-column>
-        <el-table-column width="35px" label="等级" align="center">
+        <el-table-column min-width="35px" label="等级" align="center">
           <template slot-scope="{row}">
             {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'level') }}
             <!-- {{ row.test_indicator_list_[header.test_type_name].maxLevel }} -->
@@ -145,7 +145,7 @@
           </template>
         </el-table-column> -->
       </el-table-column>
-      <el-table-column label="综合等级" width="35px" prop="level" align="center" />
+      <el-table-column label="综合等级" min-width="35px" prop="level" align="center" />
       <el-table-column label="综合检测结果" show-overflow-tooltip min-width="60px" prop="mes_result" align="center" />
     </el-table>
     <el-dialog
@@ -156,12 +156,12 @@
         border
         :data="testTypeList"
       >
-        <el-table-column label="选择" width="50">
+        <el-table-column label="选择" min-width="50">
           <template slot-scope="{row}">
             <el-checkbox v-model="row.show" />
           </template>
         </el-table-column>
-        <el-table-column label="实验方法" width="80">
+        <el-table-column label="实验方法" min-width="80">
           <template slot-scope="{row}">
             <span>{{ row.test_type_name }}</span>
           </template>
