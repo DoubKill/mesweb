@@ -125,7 +125,7 @@
 <script>
 import { getSpareType, putSpareType, postSpareType, deleteSpareType } from '@/api/spare-type'
 import page from '@/components/page'
-import { errorRepeat } from '@/utils'
+// import { errorRepeat } from '@/utils'
 
 export default {
   components: { page },
@@ -183,7 +183,7 @@ export default {
             this.$message(this.typeForm.name + '创建成功')
             this.getTableData()
           }).catch(e => {
-            errorRepeat(this, e)
+            // errorRepeat(this, e)
           })
         }
       })

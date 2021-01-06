@@ -301,9 +301,9 @@ export default {
       })
     },
     dialogMaterialFun(obj) {
-      this.$set(this.currentRow, 'b', obj ? obj.name : '')
-      this.$set(this.currentRow, 'spare', obj ? obj.id : '')
-      this.$set(this.currentRow, 'materialNo', obj ? obj.no : '')
+      this.$set(this.currentRow, 'b', obj ? obj.name : null)
+      this.$set(this.currentRow, 'spare', obj ? obj.id : null)
+      this.$set(this.currentRow, 'materialNo', obj ? obj.no : null)
       this.$refs.inventoryPosition.value = null
       this.currentRow.location = null
     },
