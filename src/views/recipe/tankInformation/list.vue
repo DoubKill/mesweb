@@ -246,7 +246,7 @@ export default {
         if (valid) {
           const _post = this.currentObj.id ? 'put' : 'post'
           this.currentObj.status = this.currentObj.status || 2
-          this.currentObj.open_flag = this.currentObj.open_flag || 2
+          // this.currentObj.open_flag = this.currentObj.open_flag || 2
           await weightingTackStatus(_post, this.currentObj.id || null,
             { data: this.currentObj })
           this.dialogVisible = false
