@@ -19,10 +19,10 @@
       <el-form-item label="炼胶时间">
         <el-input v-model="productBatching.production_time_interval" size="mini" :disabled="true" />
       </el-form-item>
-      <el-form-item style="float: right">
-        <el-button v-if="edit" @click="save">保存</el-button>
-      </el-form-item>
     </el-form>
+    <div style="width:100%;text-align:right;margin-bottom:10px">
+      <el-button v-if="edit" @click="save">保存</el-button>
+    </div>
     <weigh-type-form
       v-for="type in weight_types"
       :key="type.name"
