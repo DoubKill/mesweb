@@ -256,5 +256,6 @@ export default {
   // 罐号 和 投入设备
   EquipTank: '/api/v1/production/equip-tank/',
   // 药品投入统计
-  WeightBatchingLogList: '/api/v1/terminal/weight-batching-log-list/'
+  WeightBatchingLogList: '/api/v1/terminal/weight-batching-log-list/',
+  MaterialInventoryList: '/api/v1/inventory/material-inventory-list/'
 }

@@ -137,3 +137,12 @@ export function weightBatchingLogList(method, id, data = {}) {
   return request(obj)
 }
 
+export function materialInventoryList(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MaterialInventoryList + id + '/' : API.MaterialInventoryList,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
