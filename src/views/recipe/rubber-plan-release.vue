@@ -86,7 +86,7 @@
       <el-table-column
         label="配料设备"
         align="center"
-        prop="equip_name"
+        prop="equip_no"
       />
       />
       <el-table-column

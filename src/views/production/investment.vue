@@ -178,7 +178,7 @@
         <el-table-column label="库存数" align="center" prop="qty" />
         <el-table-column label="单位" align="center" prop="unit" />
         <el-table-column label="单位重量" align="center" prop="unit_weight" />
-        <el-table-column label="总重量" align="center" prop="total_weight" />
+        <!-- <el-table-column label="总重量" align="center" prop="total_weight" /> -->
         <el-table-column label="品质状态" align="center" prop="quality_status" />
       </el-table>
       <page
@@ -195,10 +195,10 @@
 import EquipSelect from '@/components/EquipSelect/index'
 import classSelect from '@/components/ClassSelect'
 import MaterialCodeSelect from '@/components/materialCodeSelect'
-import { batchChargeLogList } from '@/api/base_w_two'
+import { batchChargeLogList, materialInventoryList } from '@/api/base_w_two'
 import { palletFeedBacksUrl } from '@/api/base_w'
 import Page from '@/components/page'
-import { getMaterialInventoryManage } from '@/api/material-inventory-manage'
+import { setDate } from '@/utils'
 
 export default {
   components: { Page, EquipSelect, classSelect, MaterialCodeSelect },
@@ -206,7 +206,8 @@ export default {
     return {
       getParams: {
         page: 1,
-        page_size: 10
+        page_size: 10,
+        production_factory_date: setDate()
       },
       tableData: [],
       tableDataList: [],
@@ -221,7 +222,8 @@ export default {
       totalMaterial: 0,
       pageMaterial: 1,
       page_sizeMaterial: 10,
-      lot_no_obj: {}
+      lot_no_obj: {},
+      tableDataDialog: []
     }
   },
   created() {
@@ -242,7 +244,6 @@ export default {
     },
     async getTrackList() {
       this.showTableDataChild = true
-      console.log(this.currentObj)
       try {
         const data = await palletFeedBacksUrl('get', null, { params: {
           page: this.pageTrack,
@@ -296,9 +297,9 @@ export default {
       this.getList()
     },
     getTableData() {
-      getMaterialInventoryManage({ page: this.pageMaterial,
+      materialInventoryList('get', null, { params: { page: this.pageMaterial,
         page_size: this.page_sizeMaterial,
-        lot_no: this.lot_no_obj.lot_no })
+        lot_no: this.lot_no_obj.lot_no }})
         .then(response => {
           this.tableDataDialog = response.results
           this.totalMaterial = response.count
