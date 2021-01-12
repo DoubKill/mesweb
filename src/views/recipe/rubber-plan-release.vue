@@ -8,20 +8,20 @@
           type="date"
           placeholder="选择日期"
           value-format="yyyy-MM-dd"
-          @change="getList"
+          @change="changeList"
         />
       </el-form-item>
       <el-form-item label="生产机型">
         <equip-category-select
           v-model="getParams.dev_type"
-          @change="getList"
+          @change="changeList"
         />
       </el-form-item>
       <el-form-item label="小料配方编码">
         <el-input
           v-model="getParams.weight_batch_no"
           placeholder="请输入小料配方编码"
-          @input="getList"
+          @input="changeList"
         />
       </el-form-item>
       <br>
@@ -31,13 +31,13 @@
         />
       </el-form-item>
       <el-form-item label="配料设备">
-        <select-batching-equip v-model="getParams.equip" @change="getList" />
+        <select-batching-equip v-model="getParams.equip" @change="changeList" />
       </el-form-item>
       <el-form-item label="状态">
         <el-select
           v-model="getParams.status"
           clearable
-          @change="getList"
+          @change="changeList"
         >
           <el-option
             v-for="(item, index) in [[1, '未下发'], [2, '已下发']]"
@@ -157,6 +157,13 @@
         align="center"
       />
     </el-table>
+    <page
+      :old-page="false"
+      :total="total"
+      :current-page="getParams.page"
+      @currentChange="currentChange"
+    />
+
     <el-dialog
       title="小料计划明细"
       width="90%"
@@ -218,21 +225,24 @@ import classSelect from '@/components/ClassSelect'
 import EquipCategorySelect from '@/components/EquipCategorySelect'
 import SelectBatchingEquip from './components/select-batching-equip'
 import WeighBatchingPlanDetail from './components/weigh_batching_plan_detail'
-
+import Page from '@/components/page'
 import { batchingClassesPlan, issueBatchingClassesPlan, changePlanPackage } from '@/api/small-material-recipe'
-
+import { setDate } from '@/utils'
 export default {
-  components: { classSelect, EquipCategorySelect, SelectBatchingEquip, WeighBatchingPlanDetail },
+  components: { Page, classSelect, EquipCategorySelect, SelectBatchingEquip, WeighBatchingPlanDetail },
   data() {
     return {
       getParams: {
-        day_time: null,
+        page: 1,
+        page_size: 10,
+        day_time: setDate(),
         dev_type: null,
         weight_batch_no: '',
         classes_name: '',
         status: '',
         equip: null
       },
+      total: 0,
       loading: false,
       tableData: [],
       dialogVisible: false,
@@ -290,14 +300,26 @@ export default {
       this.loading = true
       const data = await batchingClassesPlan(this.getParams)
       this.tableData = data.results || []
+      this.total = data.count
       this.loading = false
     },
     classChanged(val) {
       this.getParams.classes_name = val
+      this.getParams.page = 1
       this.getList()
     },
     selectBatchEquip(val) {
+      this.getParams.page = 1
       this.getParams.equip = val ? val.id : null
+      this.getList()
+    },
+    changeList() {
+      this.getParams.page = 1
+      this.getList()
+    },
+    currentChange(page, page_size) {
+      this.getParams.page = page
+      this.getParams.page_size = page_size
       this.getList()
     },
     async sendOut() {

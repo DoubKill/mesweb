@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-loading="loading">
     <!-- 出库看板 -->
     <div style="display:flex">
       <table
@@ -98,80 +98,75 @@
         />
       </el-table-column>
     </el-table>
-    <page
-      :old-page="false"
-      :total="total"
-      :current-page="pageCurrent"
-      @currentChange="currentChange"
+
+    <el-dialog
+      title="看板"
+      :visible.sync="centerDialogVisible"
+      width="100%"
+      fullscreen
+      center
     />
   </div>
 </template>
 
 <script>
 import { inventoryNow, inventoryToday, mixGumOutInventoryLog } from '@/api/base_w_two'
-import page from '@/components/page'
+// import page from '@/components/page'
 export default {
-  components: { page },
+  components: { },
   data() {
     return {
       oneObj: {},
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }],
+      tableData: [],
       tableData1: [],
-      total: 0,
       pageCurrent: 1,
-      page_size: 10
+      centerDialogVisible: false,
+      loading: true
     }
   },
   created() {
-    this.getList()
+    this.currentRoute = this.$route.path === '/zl-warehouse-out-kanban' ? '终炼' : '混炼'
+    timeInterFun(this)
+  },
+  destroyed() {
+    window.clearInterval(this.timeInter)
   },
   methods: {
     async getList() {
       try {
+        const obj = { mixing_finished: this.currentRoute }
         const arr = await Promise.all([
-          inventoryNow('get'),
-          inventoryToday('get'),
-          mixGumOutInventoryLog('get')
+          inventoryNow('get', null, { params: obj }),
+          inventoryToday('get', null, { params: obj }),
+          mixGumOutInventoryLog('get', null, { params: obj })
         ])
         this.oneObj = arr[0].results || {}
         this.tableData = arr[1].results || []
         this.tableData1 = arr[2].results || []
+        this.tableData1.splice(5)
         this.total = arr[2].count
       } catch (e) {
-        //
+        window.clearInterval(this.timeInter)
       }
+      this.loading = false
     },
     async currentChange(page, pageSize) {
       try {
         this.pageCurrent = page
-        this.page_size = pageSize
         const data = await mixGumOutInventoryLog('get', null, { params: {
-          page: this.pageCurrent,
-          page_size: this.page_size
+          page: this.pageCurrent
         }})
-        this.total = data.count
         this.tableData1 = data.results || []
       } catch (e) {
         //
       }
     }
   }
+}
+function timeInterFun(_this) {
+  _this.timeInter = setInterval(() => {
+    _this.getList()
+  }, 1000)
 }
 </script>
 

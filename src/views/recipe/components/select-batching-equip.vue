@@ -59,16 +59,13 @@ export default {
         this.equipOptions = response.results
 
         if (this.createdIs && this.equipOptions.length > 0) {
-          this.$emit('change', this.equipOptions[0].id)
+          this.changeFun(this.equipOptions[0].id)
         }
       })
     },
     changeFun(id) {
-      if (this.createdIs) {
-        this.$emit('changeFun', this.equipOptions.find(D => D.id === id))
-        return
-      }
       this.$emit('change', id)
+      this.$emit('changeFun', this.equipOptions.find(D => D.id === id))
     },
     visibleChange(visible) {
       if (visible && this.equipOptions.length === 0) {
