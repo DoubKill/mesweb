@@ -1,20 +1,8 @@
 <template>
-  <div class="app-container">
+  <div>
     <el-form :inline="true">
       <el-form-item label="仓库名称">
         <warehouseSelect :created-is="true" @changSelect="changeWarehouse" />
-        <!-- <el-select
-          v-model="getParams.warehouse_name"
-          placeholder="请选择"
-          @change="changeSearch"
-        >
-          <el-option
-            v-for="item in warehouseNameOptions"
-            :key="item"
-            :label="item"
-            :value="item"
-          />
-        </el-select> -->
       </el-form-item>
       <el-form-item label="物料编码">
         <el-input v-model="getParams.material_no" @input="changeSearch" />
@@ -24,7 +12,6 @@
       </el-form-item>
       <el-form-item v-show="getParams.warehouse_name != '终炼胶库'" label="物料类型">
         <materielTypeSelect @changSelect="changeMaterialType" />
-        <!-- <el-input v-model="getParams.material_type" @input="changeSearch" /> -->
       </el-form-item>
     </el-form>
     <el-table
@@ -38,17 +25,17 @@
       <el-table-column label="物料编码" align="center" prop="material_no" />
       <el-table-column label="lot" align="center" prop="lot_no" />
       <el-table-column label="机台号" align="center" width="50">
-        <template slot-scope="{row}">
+        <template v-if="row.product_info" slot-scope="{row}">
           {{ row.product_info.equip_no }}
         </template>
       </el-table-column>
       <el-table-column label="生产时间" align="center">
-        <template slot-scope="{row}">
+        <template v-if="row.product_info" slot-scope="{row}">
           {{ row.product_info.product_time }}
         </template>
       </el-table-column>
       <el-table-column label="班次" align="center">
-        <template slot-scope="{row}">
+        <template v-if="row.product_info" slot-scope="{row}">
           {{ row.product_info.classes }}
         </template>
       </el-table-column>

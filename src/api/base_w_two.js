@@ -111,3 +111,29 @@ export function weightingTackStatus(method, id, data = {}) {
   return request(obj)
 }
 
+export function batchChargeLogList(method, id, data = {}) {
+  const obj = {
+    url: id ? API.BatchChargeLogList + id + '/' : API.BatchChargeLogList,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipTank(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipTank + id + '/' : API.EquipTank,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function weightBatchingLogList(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WeightBatchingLogList + id + '/' : API.WeightBatchingLogList,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+

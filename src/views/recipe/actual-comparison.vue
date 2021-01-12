@@ -23,7 +23,7 @@
         />
       </el-form-item>
       <el-form-item label="配料设备">
-        <selectBatchingEquip @selectChanged="selectBatchEquip" />
+        <selectBatchingEquip v-model="formInline.equip" @selectChanged="selectBatchEquip" />
       </el-form-item>
     </el-form>
     <el-table

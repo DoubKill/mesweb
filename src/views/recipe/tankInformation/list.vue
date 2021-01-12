@@ -105,10 +105,11 @@
         :rules="rules"
         label-width="100px"
       >
-        <el-form-item label="配料设备" prop="equip_no">
+        <el-form-item label="配料设备" prop="equip_id">
           <select-batching-equip
-            v-model="currentObj.equip_no"
+            v-model="currentObj.equip_id"
             :read-is="currentObj.id?true:false"
+            @changeFun="changeEquipDialog"
           />
         </el-form-item>
         <el-form-item label="料仓编码" prop="tank_no">
@@ -160,7 +161,7 @@ export default {
       currentObj: {},
       statusList: [{ id: 2, name: '高位' }, { id: 1, name: '低位' }],
       rules: {
-        equip_no: [
+        equip_id: [
           { required: true, message: '请选择配料设备', trigger: 'change' }
         ],
         tank_no: [
@@ -179,7 +180,7 @@ export default {
     }
   },
   created() {
-    this.getList()
+    // this.getList()
   },
   methods: {
     async getList() {
@@ -196,6 +197,9 @@ export default {
       this.getParams.equip_id = val.id
       this.getParams.equip_no = val.equip_no
       this.getList()
+    },
+    changeEquipDialog(obj) {
+      this.currentObj.equip_no = obj ? obj.equip_no : ''
     },
     setList() {
       this.getList()
@@ -225,6 +229,8 @@ export default {
     showEditDialog(row) {
       this.dialogVisible = true
       this.currentObj = JSON.parse(JSON.stringify(row))
+      console.log(this.getParams.equip_id, 2222)
+      this.currentObj.equip_id = this.getParams.equip_id
     },
     handleDelete: function(row) {
       var str = row.use_flag ? '停用' : '启用'

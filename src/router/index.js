@@ -375,6 +375,16 @@ export const asyncRoutes = [{
     }
   },
   {
+    path: '/internal/investment',
+    component: () => import('@/views/production/investment'),
+    name: 'InternalInvestment',
+    meta: {
+      title: '密炼投入履历',
+      icon: 'production',
+      permissionName: ''
+    }
+  },
+  {
     path: '/train-number-report',
     component: () => import('@/views/production/train-number-report.vue'),
     name: 'train-number-report',
@@ -402,6 +412,34 @@ export const asyncRoutes = [{
       title: '区间产量统计（车数）',
       icon: 'production',
       permissionName: 'section_production'
+    }
+  },
+  {
+    path: '/drug-investment',
+    component: () => import('@/views/production/drug-investment'),
+    name: 'drug-investment',
+    meta: {
+      title: '药品投入统计',
+      icon: 'production',
+      permissionName: ''
+    }
+  },
+  {
+    path: '/zl-warehouse-out-kanban',
+    component: () => import('@/views/production/warehouse-out-kanban.vue'),
+    name: 'zl-warehouseOutKanban',
+    meta: {
+      title: '终炼胶出库看板', icon: 'production',
+      permissionName: 'outbound_display'
+    }
+  },
+  {
+    path: '/hl-warehouse-out-kanban',
+    component: () => import('@/views/production/warehouse-out-kanban.vue'),
+    name: 'hl-warehouseOutKanban',
+    meta: {
+      title: '混炼胶出库看板', icon: 'production',
+      permissionName: 'outbound_display'
     }
   }
   // {
@@ -531,15 +569,6 @@ export const asyncRoutes = [{
         title: '帘布库出库计划',
         icon: 'stock',
         permissionName: 'LB_inventory_plan'
-      }
-    },
-    {
-      path: '/warehouse-out-kanban',
-      component: () => import('@/views/inventory/warehouse-out-kanban.vue'),
-      name: 'warehouseOutKanban',
-      meta: {
-        title: '出库看板', icon: 'stock',
-        permissionName: 'outbound_display'
       }
     },
     // {

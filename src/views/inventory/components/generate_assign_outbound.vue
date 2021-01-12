@@ -159,38 +159,6 @@ export default {
       this.loading = true
       getMaterialInventoryManage(this.getParams)
         .then(response => {
-          // const arr = [
-          //   { container_no: '20110368',
-          //     location: '2-1-4-2',
-          //     lot_no: 'AAJ1Z052020121230002',
-          //     material_no: '2MB-J157',
-          //     material_type: 'HMB',
-          //     product_info: { equip_no: '', classes: '', product_time: '' },
-          //     classes: '',
-          //     equip_no: '',
-          //     product_time: '',
-          //     qty: '2.000',
-          //     quality_status: '合格品',
-          //     total_weight: '670.000',
-          //     unit: 'kg',
-          //     unit_weight: '335.000' },
-          //   { container_no: '20110368',
-          //     location: '2-1-4-2',
-          //     lot_no: 'AAJ1Z052020121230002',
-          //     material_no: '2MB-B166',
-          //     material_type: 'HMB',
-          //     product_info: { equip_no: '', classes: '', product_time: '' },
-          //     classes: '',
-          //     equip_no: '',
-          //     product_time: '',
-          //     qty: '2.000',
-          //     quality_status: '合格品',
-          //     total_weight: '670.000',
-          //     unit: 'kg',
-          //     unit_weight: '335.000' }
-          // ]
-          // this.tableData = arr
-
           this.tableData = response.results
           this.total = response.count
           this.tableData.forEach(D => {

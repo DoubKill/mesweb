@@ -250,5 +250,11 @@ export default {
   // 看板3
   MixGumOutInventoryLog: '/api/v1/inventory/inventory-log-out/',
   // 物料罐列表
-  WeightingTackStatus: '/api/v1/terminal/weighting-tack-status/'
+  WeightingTackStatus: '/api/v1/terminal/weighting-tack-status/',
+  // 密炼投入履历
+  BatchChargeLogList: '/api/v1/terminal/batch-charge-log-list/',
+  // 罐号 和 投入设备
+  EquipTank: '/api/v1/production/equip-tank/',
+  // 药品投入统计
+  WeightBatchingLogList: '/api/v1/terminal/weight-batching-log-list/'
 }
