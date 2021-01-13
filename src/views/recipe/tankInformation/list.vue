@@ -31,7 +31,7 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button @click="add">新建</el-button>
+        <el-button v-permission="['weight_tank','add']" @click="add">新建</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -79,10 +79,12 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
+              v-permission="['weight_tank','change']"
               size="mini"
               @click="showEditDialog(scope.row)"
             >编辑</el-button>
             <el-button
+              v-permission="['weight_tank','delete']"
               size="mini"
               type="danger"
               @click="handleDelete(scope.row)"

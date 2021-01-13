@@ -119,7 +119,11 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button size="mini" @click="view(scope.row,scope.$index)">查看</el-button>
-            <el-button size="mini" @click="handleChangePlanPackage(scope.row)">修改</el-button>
+            <el-button
+              v-permission="['batching_plan','change']"
+              size="mini"
+              @click="handleChangePlanPackage(scope.row)"
+            >修改</el-button>
           </el-button-group>
         </template>
       </el-table-column>
@@ -129,7 +133,12 @@
         width="70"
       >
         <template slot-scope="scope">
-          <el-button :disabled="!sendInabled(scope.row)" size="mini" @click="showSendOut(scope.row,scope.$index)">发送</el-button>
+          <el-button
+            v-permission="['batching_plan','send']"
+            :disabled="!sendInabled(scope.row)"
+            size="mini"
+            @click="showSendOut(scope.row,scope.$index)"
+          >发送</el-button>
         </template>
       </el-table-column>
       <el-table-column

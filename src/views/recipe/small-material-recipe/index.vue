@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- 小料配料标准管理 -->
     <el-form :inline="true">
       <el-form-item label="状态">
         <batching-used-type-select @usedTypeChange="usedTypeChange" />
@@ -21,13 +22,17 @@
       </el-form-item>
       <el-form-item style="float: right">
         <el-button
+          v-permission="['weight_batching','add']"
           @click="() => {
             weighBatching = null
             productBatchingListVisible=true
           }"
         >新建</el-button>
       </el-form-item>
-      <el-form-item style="float: right">
+      <el-form-item
+        v-permission="['weight_batching','change']"
+        style="float: right"
+      >
         <el-button :disabled="!currentRow||currentRow.used_type!==1" @click="batching">配料</el-button>
       </el-form-item>
     </el-form>
@@ -63,6 +68,7 @@
           <el-button-group>
             <el-button
               v-if="row.used_type === 5|row.used_type === 6"
+              v-permission="['weight_batching','edit']"
               size="mini"
               @click="() => {
                 changeUsedType(row.id, 1)
@@ -70,6 +76,7 @@
             >编辑</el-button>
             <el-button
               v-if="row.used_type === 1"
+              v-permission="['weight_batching','submit']"
               size="mini"
               @click="() => {
                 changeUsedType(row.id, null)
@@ -77,6 +84,7 @@
             >提交</el-button>
             <el-button
               v-if="row.used_type === 2"
+              v-permission="['weight_batching','check']"
               size="mini"
               @click="() => {
                 changeUsedType(row.id, 3)
@@ -84,6 +92,7 @@
             >校对</el-button>
             <el-button
               v-if="row.used_type === 3"
+              v-permission="['weight_batching','use']"
               size="mini"
               @click="() => {
                 changeUsedType(row.id, 4)
@@ -91,6 +100,7 @@
             >启用</el-button>
             <el-button
               v-if="row.used_type === 2"
+              v-permission="['weight_batching','refuse']"
               size="mini"
               @click="() => {
                 changeUsedType(row.id, 5)
@@ -98,6 +108,7 @@
             >驳回</el-button>
             <el-button
               v-if="row.used_type === 5|row.used_type === 4"
+              v-permission="['weight_batching','abandon']"
               size="mini"
               @click="() => {
                 changeUsedType(row.id, 6)
