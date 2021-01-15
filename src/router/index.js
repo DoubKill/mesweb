@@ -239,15 +239,15 @@ export const asyncRoutes = [{
       icon: 'formula',
       permissionName: 'productbatching'
     }
-  },
-  {
+  }
+  /* {
     path: '/rb/material-tank/manage',
     name: 'material-tank',
     component: () => import('@/views/recipe/tankInformation/list'),
     meta: {
       title: '称量系统料仓信息管理',
       icon: 'formula',
-      permissionName: ''
+      permissionName: 'weight_tank'
     }
   },
   {
@@ -257,7 +257,7 @@ export const asyncRoutes = [{
     meta: {
       title: '小料配料标准管理',
       icon: 'formula',
-      permissionName: 'productbatching'
+      permissionName: 'weight_batching'
     }
   },
   {
@@ -267,7 +267,7 @@ export const asyncRoutes = [{
     meta: {
       title: '小料计划下达',
       icon: 'formula',
-      permissionName: 'productbatching'
+      permissionName: 'batching_plan'
     }
   },
   {
@@ -277,9 +277,9 @@ export const asyncRoutes = [{
     meta: {
       title: '小料称量计划与实际对比',
       icon: 'formula',
-      permissionName: 'productbatching'
+      permissionName: 'batching_reality'
     }
-  }
+  }*/
   ]
 },
 {
@@ -375,16 +375,6 @@ export const asyncRoutes = [{
     }
   },
   {
-    path: '/internal/investment',
-    component: () => import('@/views/production/investment'),
-    name: 'InternalInvestment',
-    meta: {
-      title: '密炼投入履历',
-      icon: 'production',
-      permissionName: ''
-    }
-  },
-  {
     path: '/train-number-report',
     component: () => import('@/views/production/train-number-report.vue'),
     name: 'train-number-report',
@@ -413,6 +403,16 @@ export const asyncRoutes = [{
       icon: 'production',
       permissionName: 'section_production'
     }
+  }
+  /* {
+    path: '/internal/investment',
+    component: () => import('@/views/production/investment'),
+    name: 'InternalInvestment',
+    meta: {
+      title: '密炼投入履历',
+      icon: 'production',
+      permissionName: 'batch_log'
+    }
   },
   {
     path: '/drug-investment',
@@ -421,7 +421,7 @@ export const asyncRoutes = [{
     meta: {
       title: '药品投入统计',
       icon: 'production',
-      permissionName: ''
+      permissionName: 'drug_analyze'
     }
   },
   {
@@ -430,7 +430,7 @@ export const asyncRoutes = [{
     name: 'zl-warehouseOutKanban',
     meta: {
       title: '终炼胶出库看板', icon: 'production',
-      permissionName: 'outbound_display'
+      permissionName: 'zl_dashboard'
     }
   },
   {
@@ -439,9 +439,9 @@ export const asyncRoutes = [{
     name: 'hl-warehouseOutKanban',
     meta: {
       title: '混炼胶出库看板', icon: 'production',
-      permissionName: 'outbound_display'
+      permissionName: 'hl_dashboard'
     }
-  }
+  }*/
   // {
   //   path: 'collect/rub/daily',
   //   component: () => import('@/views/collect_rubber_daily_manage/index'),

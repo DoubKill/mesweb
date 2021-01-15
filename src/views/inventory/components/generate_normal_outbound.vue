@@ -34,7 +34,7 @@
         <el-input v-model="ruleForm.c" disabled />
       </el-form-item>
       <el-form-item
-        :label="'需求数量('+(warehouseName==='终炼胶库'?'车':'托')+')'"
+        :label="'需求数量('+(warehouseName==='帘布库'?'托':'车')+')'"
         prop="need_qty"
       >
         <el-input-number
@@ -145,7 +145,7 @@ export default {
       loadingBtn: null,
       dialogVisible: false,
       handleSelection: [],
-      options: this.warehouseName === '终炼胶库' ? ['一等品', '三等品'] : ['合格品', '不合格品']
+      options: ['终炼胶库', '混炼胶库'].includes(this.warehouseName) ? ['一等品', '三等品'] : ['合格品', '不合格品']
     }
   },
   watch: {

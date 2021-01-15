@@ -196,6 +196,23 @@ import XLSX from 'xlsx'
  * @param {*文件名称} value
  */
 export function exportExcel(value) {
+  // var aoa = [['主要信息', null, null, '其它信息'],
+  //   ['姓名', '性别', '年龄', '注册时间'], ['张三', '男', 18, 1111], ['李四', '女', 22, 2222]]
+  // var sheet = XLSX.utils.aoa_to_sheet(aoa)
+  // sheet['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 2 }}]
+  // var wbout = XLSX.write(sheet, {
+  //   bookType: 'xlsx',
+  //   bookSST: true,
+  //   type: 'array'
+  // })
+
+  // console.log(sheet)
+  // FileSaver.saveAs(
+  //   new Blob([sheet], { type: 'application/octet-stream' }),
+  //   value + '.xlsx'
+  // )
+  // return
+  // type: "binary" wb可直接放数据
   /* 从表生成工作簿对象 */
   var wb = XLSX.utils.table_to_book(document.querySelector('#out-table'), { raw: true })
   /* 获取二进制字符串作为输出 */

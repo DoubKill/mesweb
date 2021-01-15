@@ -259,6 +259,10 @@ export default {
       done()
     },
     normalOutbound() {
+      if (!commitVal.normalOutboundSwitch) {
+        this.$message.info('该功能wms暂时无法使用')
+        return
+      }
       this.normalOutboundDialogVisible = true
     },
     assignOutbound() {

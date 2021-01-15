@@ -41,7 +41,7 @@
     >
       <el-table-column
         type="selection"
-        width="55"
+        width="40"
         :reserve-selection="true"
       />
       <!-- <el-table-column label="No" type="index" align="center" /> -->
@@ -61,11 +61,22 @@
         </template>
       </el-table-column>
       <el-table-column label="总重量" align="center" prop="total_weight" />
-      <el-table-column label="品质状态" align="center" prop="quality_status" />
-      <el-table-column v-if="$route.meta.title==='终炼胶出库计划'" label="关联发货计划" align="center" min-width="100">
+      <el-table-column
+        label="品质状态"
+        align="center"
+      >
+        <template slot-scope="{row}">
+          <span v-if="$route.meta.title==='帘布库出库计划'">{{ row.quality_status }}</span>
+          <span v-else>{{ row.quality_level }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="入库时间" align="center" prop="in_storage_time" />
+      <el-table-column label="机台号" align="center" prop="equip_no" />
+      <el-table-column label="车号" align="center" prop="memo" />
+      <el-table-column v-if="$route.meta.title==='终炼胶出库计划'" label="关联发货计划" align="center" width="120">
         <template slot-scope="scope">
           {{ scope.row.deliveryPlan }}
-          <el-button type="primary" @click="deliverClick(scope.row,scope.$index)">添加发货计划</el-button>
+          <el-button size="mini" type="primary" @click="deliverClick(scope.row,scope.$index)">添加发货计划</el-button>
         </template>
       </el-table-column>
       <el-table-column v-if="$route.meta.title==='混炼胶出库计划'" label="机台号" align="center" min-width="100">
@@ -139,7 +150,7 @@ export default {
       },
       currentPage: 1,
       total: 0,
-      options: this.warehouseName === '终炼胶库' ? ['一等品', '三等品'] : ['合格品', '不合格品'],
+      options: ['终炼胶库', '混炼胶库'].includes(this.warehouseName) ? ['一等品', '三等品'] : ['合格品', '不合格品'],
       loading: false,
       multipleSelection: [],
       loadingBtn: false,
