@@ -77,7 +77,7 @@
           <div
             v-for="(tableItem,i) in item"
             :key="i"
-            style="margin-bottom:10px;margin-right:20px"
+            style="margin-bottom:10px;margin-left:10px"
           >
             <el-table
               :data="tableItem"
@@ -87,7 +87,7 @@
               :row-class-name="tableRowClassName"
             >
               >
-              <el-table-column min-width="80px">
+              <el-table-column min-width="65px">
                 <template
                   slot="header"
                   slot-scope="scope"
@@ -549,7 +549,6 @@ export default {
     }
     .leftEquip{
       margin-top:70px;
-      margin-right:20px;
       .el-checkbox{
         display: block;
         padding: 0 0 10px 0;
@@ -564,7 +563,7 @@ export default {
           border: 1px solid #EBEEF5;
           border-bottom: none;
           margin-top:30px;
-          margin-right:20px;
+          margin-left:10px;
       .tableTopLeft{
         flex:1;
         text-align: center;
@@ -574,7 +573,7 @@ export default {
       }
     }
     .addPlanArrBox{
-      width:48%;
+      width:50%;
       .el-table td, .el-table th{
         padding: 5px 0;
       }

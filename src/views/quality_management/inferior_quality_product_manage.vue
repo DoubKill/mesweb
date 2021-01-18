@@ -75,7 +75,12 @@
       <el-table-column label="处理人" prop="deal_user" />
       <el-table-column label="确认人" prop="confirm_user" />
     </el-table>
-    <page :total="total" :current-page="getParams.page" @currentChange="currentChange" />
+    <page
+      :old-page="false"
+      :total="total"
+      :current-page="getParams.page"
+      @currentChange="currentChange"
+    />
     <el-dialog
       title="处理不合格品"
       :visible.sync="dialogDisposeVisible"
@@ -205,8 +210,9 @@ export default {
     statusChanged() {
       this.currentChange(1)
     },
-    currentChange(page) {
+    currentChange(page, page_size) {
       this.getParams.page = page
+      this.getParams.page_size = page_size || this.getParams.page_size
       this.getMaterialDealResult()
     },
     async getMaterialDealResult() {
