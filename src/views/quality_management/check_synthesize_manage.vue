@@ -33,6 +33,21 @@
       <el-form-item label="处理意见">
         <deal-suggestion-select @dealSuggestionChange="dealSuggestionChange" />
       </el-form-item>
+      <el-form-item label="打印状态">
+        <el-select
+          v-model="getParams.is_print"
+          clearable
+          placeholder="请选择"
+          @change="dayTimeChanged"
+        >
+          <el-option
+            v-for="item in ['已打印','未打印']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-form-item>
     </el-form>
     <el-button
       v-permission="['deal_result','print']"
@@ -83,7 +98,12 @@
         </template>
       </el-table-column>
     </el-table>
-    <page :total="total" :current-page="getParams.page" @currentChange="currentChange" />
+    <page
+      :old-page="false"
+      :total="total"
+      :current-page="getParams.page"
+      @currentChange="currentChange"
+    />
     <el-dialog
       title="修改有效时间"
       :visible.sync="dialogFormVisible"
@@ -131,6 +151,7 @@ export default {
       total: 0,
       getParams: {
         page: 1,
+        page_size: 10,
         day_time: dayjs().format('YYYY-MM-DD'),
         // day_time: null,
         equip_no: null,
@@ -185,8 +206,9 @@ export default {
         this.$refs['dataForm'].clearValidate()
       })
     },
-    currentChange(page) {
+    currentChange(page, page_size) {
       this.getParams.page = page
+      this.getParams.page_size = page_size || this.getParams.page_size
       this.getPalletFeedTest()
     },
     async getPalletFeedTest() {

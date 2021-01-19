@@ -8,6 +8,13 @@ export function getLocation(params) {
     params
   })
 }
+export function basicsLocationNameList(params) {
+  return request({
+    url: API.BasicsLocationNameList,
+    method: 'get',
+    params
+  })
+}
 
 export function postLocation(data) {
   return request({
