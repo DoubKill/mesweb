@@ -258,5 +258,6 @@ export default {
   EquipTank: '/api/v1/production/equip-tank/',
   // 药品投入统计
   WeightBatchingLogList: '/api/v1/terminal/weight-batching-log-list/',
-  MaterialInventoryList: '/api/v1/inventory/material-inventory-list/'
+  MaterialInventoryList: '/api/v1/inventory/material-inventory-list/',
+  QualityPalletFeedTest: '/api/v1/quality/pallet-feed-test/'
 }
