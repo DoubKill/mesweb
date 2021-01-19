@@ -215,7 +215,7 @@ export default {
         this.creadVal()
         this.$emit('visibleMethod')
       } else {
-        if (!this.getParams.location) {
+        if (!this.getParams.station) {
           this.$message.info('请选择仓库位置！')
           return
         }
@@ -225,7 +225,7 @@ export default {
         const arr = []
         this.multipleSelection.forEach((D) => {
           arr.push({
-            location: this.getParams.location,
+            station: this.getParams.station,
             order_no: 'order_no',
             pallet_no: D.container_no,
             need_qty: D.qty,
@@ -238,8 +238,8 @@ export default {
             warehouse_info: this.warehouseInfo,
             quality_status: D.quality_status,
             dispatch: D.dispatch || [],
-            equip: D.equip || []
-            // quality_status: '一等品'
+            equip: D.equip || [],
+            location: D.location
           })
         })
         this.loadingBtn = true
@@ -247,7 +247,8 @@ export default {
       }
     },
     changSelectStation(obj) {
-      this.getParams.location = obj ? obj.name : ''
+      // this.getParams.location = obj ? obj.name : ''
+      this.getParams.station = obj ? obj.name : ''
     },
     handleSelectionChange(val) {
       if (val.length > 0) {

@@ -44,3 +44,11 @@ export function changelValidTime(id, valid_time) {
     }
   })
 }
+
+export function qualityPalletFeedTest(id, params) {
+  return request({
+    url: API.QualityPalletFeedTest + id + '/',
+    method: 'get',
+    params
+  })
+}
