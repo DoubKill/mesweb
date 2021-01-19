@@ -89,7 +89,7 @@
           <div
             v-for="(tableItem,i) in item"
             :key="i"
-            style="margin-bottom:10px;margin-right:20px"
+            style="margin-bottom:10px;margin-left:10px"
           >
             <el-table
               :key="i"
@@ -100,7 +100,7 @@
               :row-class-name="tableRowClassName"
             >
               >
-              <el-table-column min-width="50px">
+              <el-table-column min-width="30px">
                 <template slot-scope="scope">
                   <div style="font-weight:700;color:#000 !important">
                     {{ scope.row.classes_name }}
@@ -117,7 +117,7 @@
                 </template>
               </el-table-column> -->
               <el-table-column
-                min-width="180px"
+                min-width="130px"
                 label="胶料编码"
               >
                 <template slot-scope="scope">
@@ -174,7 +174,7 @@
               </el-table-column>
               <el-table-column
                 label="状态"
-                min-width="60"
+                min-width="55"
               >
                 <template slot-scope="scope">
                   {{ scope.row.status }}
@@ -191,7 +191,7 @@
                 </template>
               </el-table-column>
               <el-table-column
-                width="80px"
+                width="70px"
                 label="操作"
                 fixed="right"
               >
@@ -901,7 +901,6 @@ function zeroFilling(n) {
     }
     .leftEquip{
       margin-top:70px;
-      margin-right:20px;
       .el-checkbox{
         display: block;
         padding: 0 0 10px 0;
@@ -916,7 +915,7 @@ function zeroFilling(n) {
           border: 1px solid #EBEEF5;
           border-bottom: none;
           margin-top:30px;
-          margin-right:20px;
+          margin-left:10px;
       .tableTopLeft{
         flex:1;
         text-align: center;
@@ -926,7 +925,7 @@ function zeroFilling(n) {
       }
     }
     .addPlanArrBox{
-      width:48%;
+      width:50%;
       .el-table td, .el-table th{
         padding: 5px 0;
       }

@@ -19,6 +19,9 @@ body .el-table th.gutter{
   display: table-cell!important;
 }
 
+.el-checkbox__inner,.el-radio__inner{
+  border: 1px solid #756d6d;
+}
 
 .el-button {
   &--primary {

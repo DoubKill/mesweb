@@ -162,7 +162,7 @@ export const asyncRoutes = [{
     component: () => import('@/views/basic/location-site'),
     name: 'location-site',
     meta: {
-      title: '库存位管理',
+      title: '位置点管理',
       icon: 'dashboard',
       permissionName: 'location'
     }
@@ -239,8 +239,8 @@ export const asyncRoutes = [{
       icon: 'formula',
       permissionName: 'productbatching'
     }
-  }
-  /* {
+  },
+  {
     path: '/rb/material-tank/manage',
     name: 'material-tank',
     component: () => import('@/views/recipe/tankInformation/list'),
@@ -279,7 +279,7 @@ export const asyncRoutes = [{
       icon: 'formula',
       permissionName: 'batching_reality'
     }
-  }*/
+  }
   ]
 },
 {
@@ -403,8 +403,8 @@ export const asyncRoutes = [{
       icon: 'production',
       permissionName: 'section_production'
     }
-  }
-  /* {
+  },
+  {
     path: '/internal/investment',
     component: () => import('@/views/production/investment'),
     name: 'InternalInvestment',
@@ -441,7 +441,7 @@ export const asyncRoutes = [{
       title: '混炼胶出库看板', icon: 'production',
       permissionName: 'hl_dashboard'
     }
-  }*/
+  }
   // {
   //   path: 'collect/rub/daily',
   //   component: () => import('@/views/collect_rubber_daily_manage/index'),
@@ -1070,6 +1070,88 @@ export const asyncRoutes = [{
       }
     ]
   }
+  /** {
+    path: '/location-definition',
+    component: () => import('@/views/equipment-management/repair/location-definition'),
+    name: 'location-definition',
+    meta: {
+      title: '设备部位定义',
+      icon: 'quality',
+      permissionName: ''
+    }
+  },
+  {
+    path: '/cause-of-shutdown',
+    redirect: '/cause-of-shutdown/mold',
+    component: {
+      render: c => c('router-view')
+    },
+    name: 'cause-of-shutdown',
+    meta: {
+      title: '停机原因管理',
+      icon: 'quality'
+    },
+    children: [
+      {
+        path: '/cause-of-shutdown/mold',
+        component: () => import('@/views/equipment-management/repair/shutdown-mold'),
+        name: 'cause-of-shutdown-mold',
+        meta: {
+          title: '停机类型定义',
+          permissionName: ''
+        }
+      },
+      {
+        path: '/cause-of-shutdown/reason',
+        component: () => import('@/views/equipment-management/repair/shutdown-reason'),
+        name: 'cause-of-shutdown-reason',
+        meta: {
+          title: '停机原因定义',
+          permissionName: ''
+        }
+      }
+    ]
+  },
+  {
+    path: '/repair-apply',
+    component: () => import('@/views/equipment-management/repair/repair-apply'),
+    name: 'repair-apply',
+    meta: {
+      icon: 'quality',
+      title: '设备维修申请页面',
+      permissionName: ''
+    }
+  },
+  {
+    path: '/repair-manage',
+    component: () => import('@/views/equipment-management/repair/repair-manage'),
+    name: 'repair-manage',
+    meta: {
+      icon: 'quality',
+      title: '设备维修单管理',
+      permissionName: ''
+    }
+  },
+  {
+    path: '/work-state',
+    component: () => import('@/views/equipment-management/repair/work-state'),
+    name: 'work-state',
+    meta: {
+      icon: 'quality',
+      title: '设备运行现况',
+      permissionName: ''
+    }
+  },
+  {
+    path: '/repair-resume',
+    component: () => import('@/views/equipment-management/repair/repair-resume'),
+    name: 'repair-resume',
+    meta: {
+      icon: 'quality',
+      title: '设备维修履历',
+      permissionName: ''
+    }
+  }**/
   ]
 },
 {

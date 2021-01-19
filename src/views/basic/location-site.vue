@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 库存位管理 基础信息里面的-->
+    <!-- 位置点管理 基础信息里面的-->
     <el-form :inline="true">
       <el-form-item label="类型">
         <el-select
@@ -18,7 +18,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="库存位">
+      <el-form-item label="位置点">
         <inventoryPosition @changSelect="changSelect" />
       </el-form-item>
       <el-form-item style="float: right">
@@ -46,7 +46,7 @@
       />
       <el-table-column
         prop="name"
-        label="库存位"
+        label="位置点"
       />
       <el-table-column label="操作">
         <template slot-scope="scope">

@@ -1,6 +1,6 @@
 <template>
   <div style="display:inline-block">
-    <!-- 机台下拉框 -->
+    <!-- 机台下拉框 设备编码-->
     <el-select
       v-model="_equip_no"
       :clearable="!isCreated"
@@ -31,6 +31,11 @@ export default {
     isCreated: {
       type: Boolean,
       default: false
+    },
+    // 设备类型
+    equipType: {
+      type: String,
+      default: '密炼设备'
     }
   },
   data() {
@@ -56,7 +61,7 @@ export default {
   methods: {
     getMachineList() {
       var _this = this
-      equipUrl('get', { params: { all: 1, category_name: '密炼设备' }})
+      equipUrl('get', { params: { all: 1, category_name: this.equipType }})
         .then(function(response) {
           _this.machineList = response.results || []
           if (_this.isCreated) {

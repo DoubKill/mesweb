@@ -13,9 +13,6 @@
           @change="dayTimeChanged"
         />
       </el-form-item>
-      <!-- <el-form-item label="倒班规则">
-        <plan-schedules-select :day-time="getParams.day_time" @planScheduleSelected="planScheduleSelected" />
-      </el-form-item> -->
       <el-form-item label="机台">
         <equip-select
           :equip_no_props.sync="getParams.equip_no"
@@ -30,9 +27,6 @@
       <el-form-item label="班次">
         <class-select @classSelected="classSelected" />
       </el-form-item>
-      <!-- <el-form-item label="综合处理意见">
-        <el-select />
-      </el-form-item> -->
       <el-form-item label="段次">
         <stage-select v-model="getParams.stage" @change="stageChange" />
       </el-form-item>
@@ -103,30 +97,12 @@
         </el-table-column>
       </el-table-column>
       <el-table-column v-for="header in testTypeList.filter(type => type.show)" :key="header.test_type_name" align="center" :label="header.test_type_name">
-        <!-- <el-table-column label="检测机台" align="center" width="60">
-          <template slot-scope="{ row }">
-            {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'machine_name') }}
-          </template>
-        </el-table-column> -->
         <el-table-column v-for="subHeader in header.data_indicator_detail.filter(item => item.show)" :key="header.test_type_name + subHeader.detail" min-width="55px" :label="subHeader.detail" align="center">
-          <!-- <el-table-column label="检测值" align="center"> -->
           <template slot-scope="{ row }">
             <div :class="getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level')!==1&&getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level')!==''?'test_type_name_style':''">
               {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'value') }}
             </div>
           </template>
-          <!-- </el-table-column> -->
-          <!-- <el-table-column
-            label="等级"
-            align="center"
-            width="60"
-          >
-            <template slot-scope="{ row }">
-              <div :class="(getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level'))!=1&&(getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level'))!=''?'test_type_name_style':''">
-                {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level') }}
-              </div>
-            </template>
-          </el-table-column> -->
         </el-table-column>
         <el-table-column v-if="header.test_type_name === '门尼' || header.test_type_name === '流变'" label="检测机台" min-width="50px" align="center">
           <template slot-scope="{row}">
@@ -136,14 +112,8 @@
         <el-table-column min-width="35px" label="等级" align="center">
           <template slot-scope="{row}">
             {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'level') }}
-            <!-- {{ row.test_indicator_list_[header.test_type_name].maxLevel }} -->
           </template>
         </el-table-column>
-        <!-- <el-table-column label="检测结果" align="center">
-          <template slot-scope="{row}">
-            {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'mes_result') }}
-          </template>
-        </el-table-column> -->
       </el-table-column>
       <el-table-column label="综合等级" min-width="35px" prop="level" align="center" />
       <el-table-column label="综合检测结果" show-overflow-tooltip min-width="60px" prop="mes_result" align="center" />
@@ -190,11 +160,8 @@
 
 <script>
 import dayjs from 'dayjs'
-// import PlanSchedulesSelect from '@/components/PlanSchedulesSelect'
-// import EquipSelect from '@/components/EquipSelect'
 import EquipSelect from '@/components/select_w/equip'
 import ClassSelect from '@/components/ClassSelect'
-// import ProductNoSelect from '@/components/ProductNoSelect'
 import StageSelect from '@/components/StageSelect'
 import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import { testTypes, materialTestOrders, testResultHistory } from '@/api/quick-check-detail'
@@ -281,23 +248,14 @@ export default {
       }
     },
     equipSelected(equip) {
-      // this.getParams.equip_no = equip ? equip.equip_no : null
-      // this.clearList()
-      // this.getMaterialTestOrders()
     },
     stageChange() {
-      // this.clearList()
-      // this.getMaterialTestOrders()
     },
     classSelected(className) {
       this.getParams.classes = className || null
-      // this.clearList()
-      // this.getMaterialTestOrders()
     },
     productBatchingChanged(val) {
       this.getParams.product_no = val ? val.material_no : null
-      // this.clearList()
-      // this.getMaterialTestOrders()
     },
     load(tree, treeNode, resolve) {
       const subRows = []
@@ -338,9 +296,6 @@ export default {
       })
     },
     valueResultFun(val) {
-      // this.getParams.mes_result = val
-      // this.getParams.page = 1
-      // this.getMaterialTestOrders()
     },
     clickQuery() {
       this.getMaterialTestOrders()
@@ -348,22 +303,9 @@ export default {
     async getMaterialTestOrders() {
       this.listLoading = true
       try {
-        // this.titleInfo(this.getParams.equip_no, '请输入生产机台')
-        // this.titleInfo(this.getParams.classes, '请输入班次')
-        // this.titleInfo(this.getParams.product_no, '请输入胶料')
-        // this.titleInfo(this.getParams.day_time, '请输入时间')
         const data = await materialTestOrders(this.getParams)
         let arr = data
-        arr = arr.map(result => {
-          return {
-            ...result,
-            index: this.index++,
-            hasChildren: false,
-            test_status: '正常',
-            class_group: `${result.production_class}/${result.production_group}`
-          }
-        })
-        arr.forEach(row => {
+        arr = arr.map(row => {
           row.level = 0
           row.mes_result = '未检测'
           for (const testTypeName in row.order_results) {
@@ -387,7 +329,16 @@ export default {
               row.mes_result = row.level === 1 ? '一等品' : '三等品'
             }
           }
+          return {
+            ...row,
+            index: this.index++,
+            hasChildren: false,
+            test_status: '正常',
+            class_group: `${row.production_class}/${row.production_group}`
+          }
         })
+        // arr.forEach(row => {
+        // })
         // if (data.count - this.getParams.page * this.definePafeSize > 0) {
         //   this.isMoreLoad = true
         // } else {
