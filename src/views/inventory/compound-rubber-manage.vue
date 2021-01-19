@@ -38,13 +38,9 @@
       <!-- <el-form-item label="物料类型">
         <materielTypeSelect />
       </el-form-item> -->
-      <el-form-item v-permission="['compoundRubber_plan','norman']" style="float: right">
-        <el-button @click="normalOutbound">正常出库</el-button>
-      </el-form-item>
-      <el-form-item style="float: right">
-        <el-button v-permission="['compoundRubber_plan','assign']" @click="assignOutbound">指定出库</el-button>
-      </el-form-item>
     </el-form>
+    <el-button v-permission="['compoundRubber_plan','norman']" class="button-right" @click="normalOutbound">正常出库</el-button>
+    <el-button v-permission="['compoundRubber_plan','assign']" class="button-right" @click="assignOutbound">指定出库</el-button>
     <el-table
       border
       :data="tableData"
@@ -62,7 +58,7 @@
       <el-table-column label="实际出库重量" align="center" prop="actual.actual_wegit" />
       <el-table-column label="单位" align="center" prop="unit" width="40" />
       <el-table-column label="需求重量" align="center" prop="need_weight" />
-      <el-table-column label="出库位置" align="center" prop="location" width="40" />
+      <el-table-column label="出库位置" align="center" prop="station" width="40" />
       <el-table-column label="目的地" align="center" prop="destination" />
       <el-table-column label="操作" align="center" width="220">
         <template v-if="scope.row.status === 4" slot-scope="scope">

@@ -484,3 +484,11 @@ export function alarmLogList(method, id, data = {}) {
   return request(obj)
 }
 
+export function importMaterialMestMrders(data) {
+  return request({
+    url: API.ImportMaterialMestMrders,
+    method: 'post',
+    data
+  })
+}
+

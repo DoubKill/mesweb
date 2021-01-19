@@ -32,16 +32,16 @@
       </el-form-item>
       <el-form-item label="综合检测结果">
         <el-select
-          v-model="getParams.mes_result"
+          v-model="getParams.is_qualified"
           placeholder="请选择"
           clearable
           @change="valueResultFun"
         >
           <el-option
-            v-for="item in options"
-            :key="item"
-            :label="item"
-            :value="item"
+            v-for="(item,i) in options"
+            :key="i"
+            :label="item.name"
+            :value="item.bool"
           />
         </el-select>
       </el-form-item>
@@ -63,61 +63,72 @@
         </el-button>
       </el-form-item>
     </el-form>
-    <!-- v-el-table-infinite-scroll="infiniteScroll" -->
-    <el-table
-      id="out-table"
-      v-loading="listLoading"
+    <u-table
+      v-el-table-infinite-scroll="infiniteScroll"
+      style="height:auto"
       :data="testOrders"
+      fixed-columns-roll
       border
       fit
-      row-key="index"
-      lazy
-      :load="load"
+      row-id="id"
+      use-virtual
       max-height="600"
       size="mini"
-      :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+      :tree-config="{
+        children: 'children',
+        expandAll: false,
+        lazy: true,
+        load: load,
+        hasChildren: 'hasChildren'}"
+      :data-changes-scroll-top="false"
       :row-class-name="tableRowClassName"
     >
-      <el-table-column label="生产信息" align="center">
-        <el-table-column label="工厂日期" min-width="90px" prop="production_factory_date" align="center">
-          <template slot-scope="{row}">
+      <u-table-column label="生产信息" align="center">
+        <u-table-column
+          label="工厂日期"
+          min-width="90px"
+          prop="production_factory_date"
+          align="center"
+          :tree-node="true"
+        >
+          <template v-if="row.production_factory_date" slot-scope="{row}">
             {{ (row.production_factory_date).split(' ')[0] }}
           </template>
-        </el-table-column>
-        <el-table-column label="生产班次/班组" prop="class_group" show-overflow-tooltip min-width="75px" />
-        <el-table-column label="生产机台" min-width="40px" prop="production_equip_no" />
-        <el-table-column label="胶料编码" min-width="105px" align="center" prop="product_no" />
-        <el-table-column label="车次" align="center" min-width="35px" prop="actual_trains" />
-        <el-table-column label="检测状态" min-width="35px" prop="test_status" align="center">
+        </u-table-column>
+        <u-table-column label="生产班次/班组" prop="class_group" min-width="75px" />
+        <u-table-column align="center" label="生产机台" min-width="50px" prop="production_equip_no" />
+        <u-table-column label="胶料编码" min-width="105px" align="center" prop="product_no" />
+        <u-table-column label="车次" align="center" min-width="35px" prop="actual_trains" />
+        <u-table-column label="检测状态" min-width="35px" prop="test_status" align="center">
           <template slot-scope="{ row }">
             <div :class="row.test_status === '复检' ? 'test_type_name_style': ''">
               {{ row.test_status }}
             </div>
           </template>
-        </el-table-column>
-      </el-table-column>
-      <el-table-column v-for="header in testTypeList.filter(type => type.show)" :key="header.test_type_name" align="center" :label="header.test_type_name">
-        <el-table-column v-for="subHeader in header.data_indicator_detail.filter(item => item.show)" :key="header.test_type_name + subHeader.detail" min-width="55px" :label="subHeader.detail" align="center">
+        </u-table-column>
+      </u-table-column>
+      <u-table-column v-for="header in testTypeList.filter(type => type.show)" :key="header.test_type_name" align="center" :label="header.test_type_name">
+        <u-table-column v-for="subHeader in header.data_indicator_detail.filter(item => item.show)" :key="header.test_type_name + subHeader.detail" min-width="55px" :label="subHeader.detail" align="center">
           <template slot-scope="{ row }">
             <div :class="getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level')!==1&&getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level')!==''?'test_type_name_style':''">
               {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'value') }}
             </div>
           </template>
-        </el-table-column>
-        <el-table-column v-if="header.test_type_name === '门尼' || header.test_type_name === '流变'" label="检测机台" min-width="50px" align="center">
+        </u-table-column>
+        <u-table-column v-if="header.test_type_name === '门尼' || header.test_type_name === '流变'" label="检测机台" min-width="50px" align="center">
           <template slot-scope="{row}">
             {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'machine_name') }}
           </template>
-        </el-table-column>
-        <el-table-column min-width="35px" label="等级" align="center">
+        </u-table-column>
+        <u-table-column min-width="35px" label="等级" align="center">
           <template slot-scope="{row}">
             {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'level') }}
           </template>
-        </el-table-column>
-      </el-table-column>
-      <el-table-column label="综合等级" min-width="35px" prop="level" align="center" />
-      <el-table-column label="综合检测结果" show-overflow-tooltip min-width="60px" prop="mes_result" align="center" />
-    </el-table>
+        </u-table-column>
+      </u-table-column>
+      <u-table-column label="综合等级" min-width="35px" prop="level" align="center" />
+      <u-table-column label="综合检测结果" min-width="60px" prop="mes_result" align="center" />
+    </u-table>
     <el-dialog
       title="选择过滤"
       :visible.sync="filterDialogVisible"
@@ -155,6 +166,15 @@
     >
       <test-card ref="testCard" />
     </el-dialog>
+
+    <!-- 下载使用 -->
+    <DetailsUTable
+      v-show="false"
+      id="out-table"
+      :test-orders="ALLData"
+      :test-type-list="testTypeList"
+    />
+
   </div>
 </template>
 
@@ -168,11 +188,12 @@ import { testTypes, materialTestOrders, testResultHistory } from '@/api/quick-ch
 import elTableInfiniteScroll from 'el-table-infinite-scroll'
 import FileSaver from 'file-saver'
 import XLSX from 'xlsx'
+import DetailsUTable from './components/details-u-table'
 export default {
   directives: {
     'el-table-infinite-scroll': elTableInfiniteScroll
   },
-  components: { EquipSelect, allProductNoSelect, ClassSelect, StageSelect },
+  components: { EquipSelect, DetailsUTable, allProductNoSelect, ClassSelect, StageSelect },
   data() {
     return {
       count: 0,
@@ -196,8 +217,7 @@ export default {
           data_indicator_detail: [{ detail: '', show: false }]
         }
       ],
-      testOrders: [
-      ],
+      testOrders: [],
       testOrdersAll: [],
       index: 1,
       recordList: [],
@@ -205,12 +225,12 @@ export default {
       // 默认每页数量
       definePafeSize: 10,
       valueResult: '',
-      options: ['一等品', '三等品']
+      ALLData: [],
+      options: [{ name: '一等品', bool: true }, { name: '三等品', bool: false }]
     }
   },
   created() {
     this.getTestTypes()
-    // this.getMaterialTestOrders()
   },
   mounted() {
     // window.addEventListener('scroll', () => {
@@ -232,8 +252,6 @@ export default {
   },
   methods: {
     dayTimeChanged() {
-      // this.clearList()
-      // this.getMaterialTestOrders()
     },
     clearList() {
       this.getParams.page = 1
@@ -257,7 +275,8 @@ export default {
     productBatchingChanged(val) {
       this.getParams.product_no = val ? val.material_no : null
     },
-    load(tree, treeNode, resolve) {
+    load(tree, resolve) {
+      // expand-change
       const subRows = []
       testResultHistory(tree.id).then(testResul => {
         for (const testTime in testResul) {
@@ -298,12 +317,26 @@ export default {
     valueResultFun(val) {
     },
     clickQuery() {
+      this.getParams.page = 1
+      this.testOrdersAll = []
       this.getMaterialTestOrders()
+      this.getALLData()
     },
-    async getMaterialTestOrders() {
+    async getALLData() {
+      try {
+        const arr = await this.getMaterialTestOrders(true)
+        this.ALLData = arr || []
+      } catch (e) {
+        //
+      }
+    },
+    async getMaterialTestOrders(bool = false) {
       this.listLoading = true
       try {
-        const data = await materialTestOrders(this.getParams)
+        const paramsObj = JSON.parse(JSON.stringify(this.getParams))
+        paramsObj.page_size = bool ? 99999999 : 10
+        const data = await materialTestOrders(paramsObj)
+        // let arr = data.results
         let arr = data
         arr = arr.map(row => {
           row.level = 0
@@ -315,8 +348,11 @@ export default {
             for (const dataPointName in testType) {
               const dataPoint = testType[dataPointName]
               if (dataPoint.test_times > 1) {
-                row.test_status = '复检'
-                row.hasChildren = true
+                this.$set(row, 'test_status', '复检')
+                this.$set(row, 'hasChildren', true)
+              } else {
+                this.$set(row, 'test_status', '正常')
+                this.$set(row, 'hasChildren', false)
               }
               if (dataPoint.level > maxLevel) {
                 maxLevel = dataPoint.level
@@ -332,39 +368,29 @@ export default {
           return {
             ...row,
             index: this.index++,
-            hasChildren: false,
-            test_status: '正常',
             class_group: `${row.production_class}/${row.production_group}`
           }
         })
         // arr.forEach(row => {
         // })
-        // if (data.count - this.getParams.page * this.definePafeSize > 0) {
-        //   this.isMoreLoad = true
-        // } else {
-        //   this.isMoreLoad = false
+        // for (let i = 1; i < 8; i++) {
+        //   arr = arr.concat(arr)
         // }
-        this.testOrders = arr
-        this.testOrdersAll = arr
-        this.listLoading = false
 
-        if (this.getParams.mes_result) {
-          let testOrders = []
-          testOrders = this.testOrdersAll.filter(D => D.mes_result === this.getParams.mes_result)
-          this.testOrders = testOrders
+        if (bool) {
+          return arr
         }
-        // this.allPage = data.count
-        // this.testOrders.push(...arr)
-        // setTimeout(() => {
-        //   this.listLoading = false
-        // }, 300)
-      // eslint-disable-next-line no-empty
+        this.listLoading = false
+        this.allPage = data.count
+
+        this.testOrdersAll.push(...arr)
+        this.testOrders = this.testOrdersAll
       } catch (e) {
         this.listLoading = false
       }
     },
     infiniteScroll() {
-      if (Number(this.allPage - this.getParams.page * this.definePafeSize) < 0) {
+      if (Number(this.allPage - this.getParams.page * this.definePafeSize) <= 0) {
         return
       }
       this.getParams.page = this.getParams.page + 1
@@ -408,9 +434,6 @@ export default {
       }
       return ''
     },
-    // planScheduleSelected(planScheduleId) {
-    //   console.log(planScheduleId)
-    // }
     exportExcel() {
       /* 从表生成工作簿对象 */
       var wb = XLSX.utils.table_to_book(document.querySelector('#out-table'))
@@ -453,19 +476,27 @@ export default {
     padding: 4px !important;
   }
   td{
-    position: relative;
+    // position: relative;
+    padding:0 !important;
+    margin:0 !important;
+  }
+  .el-table .cell{
+    padding: 0px 4px !important;
+  }
+  .el-table td, .el-table th.is-center{
+    // padding: 2px !important;
   }
   .test_type_name_style{
-    position: absolute;
-    top: 0;
-    left: 0;
+    // position: absolute;
+    // top: 0;
+    // left: 0;
     background: red;
-    width: 100%;
-    line-height: auto;
-    justify-content: center;
-    height: 100%;
-    display: flex;
-    align-items: center;
+    // width: 100%;
+    // line-height: auto;
+    // justify-content: center;
+    // height: 100%;
+    // display: flex !important;
+    // align-items: center;
     color:#fff;
   }
 

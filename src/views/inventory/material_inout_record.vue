@@ -27,6 +27,21 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="出库/入库">
+        <el-select
+          v-model="search.order_type"
+          placeholder="请选择"
+          clearable
+          @change="changeList"
+        >
+          <el-option
+            v-for="item in ['出库','入库']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="库存位置">
         <warehouseSelect :is-clear="true" @changSelect="warehouseSelectFun" />
         <!-- <el-select v-model="search.b" placeholder="请选择">
@@ -59,7 +74,7 @@
       <el-table-column label="单位" align="center" prop="unit" width="40" />
       <el-table-column label="重量" align="center" prop="weight" width="80" />
       <el-table-column label="发起人" align="center" prop="initiator" width="80" />
-      <el-table-column label="发起时间" align="center" prop="start_time" />
+      <el-table-column label="发起时间" align="center" prop="fin_time" />
       <el-table-column label="完成时间" align="center" prop="end_time" />
     </el-table>
     <page
@@ -123,7 +138,7 @@ export default {
     },
     warehouseSelectFun(val) {
       this.search.page = 1
-      this.search.location = val
+      this.search.store_name = val ? val.name : ''
       this.getList()
     },
     changeList() {

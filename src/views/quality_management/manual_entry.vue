@@ -59,6 +59,15 @@
       style="float:right;margin:10px 0"
       @click="submitTable"
     >保 存</el-button>
+    <el-upload
+      style="float:right;margin:10px 10px"
+      action="string"
+      accept=".xls, .xlsx"
+      :http-request="Upload"
+      :show-file-list="false"
+    >
+      <el-button>导入</el-button>
+    </el-upload>
     <el-table
       ref="table"
       :data="tableDataChild"
@@ -106,14 +115,17 @@
             <el-table-column
               v-for="(itemChild,indexChild) in itemTa.checkedC.data_points"
               :key="indexChild"
-              :label="itemChild.name"
             >
+              <template slot="header">
+                <div @click="clickValue(itemTa.test_indicator,itemChild.name)">
+                  {{ itemChild.name }}
+                  <i class="el-icon-edit" />
+                </div>
+              </template>
               <template
                 v-if="itemChild.name"
                 slot-scope="scope"
               >
-                <!-- v-if="scope.row._list[itemTa.test_indicator]
-                      &&scope.row._list[itemTa.test_indicator][itemChild.name]" -->
                 <el-input-number
                   v-if="commandList(itemTa.test_indicator).length===0
                     &&scope.row._list[itemTa.test_indicator]
@@ -184,11 +196,23 @@
       :show="dialogVisible"
       @handleClose="dialogVisible = false"
     />
+
+    <el-dialog
+      title="编辑"
+      :visible.sync="dialogVisibleEdit"
+      width="300px"
+    >
+      <el-input-number v-model="allValue" />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleEdit = false">取 消</el-button>
+        <el-button type="primary" @click="allValueSure">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { palletFeedBacksUrl, matTestIndicatorMethods, materialTestOrders, palletTrainsFeedbacks } from '@/api/base_w'
+import { palletFeedBacksUrl, matTestIndicatorMethods, materialTestOrders, palletTrainsFeedbacks, importMaterialMestMrders } from '@/api/base_w'
 import { setDate, deepClone } from '@/utils/index'
 // import planSchedulesSelect from '@/components/PlanSchedulesSelect'
 import equipSelect from '@/components/select_w/equip'
@@ -207,7 +231,7 @@ export default {
       search: {
         ShiftRules: '',
         factory_date: setDate(),
-        // factory_date: '2020-11-20',
+        // factory_date: '2021-1-16',
         equip_no: '', // Z02
         classes: '', // 早班
         product_no: ''
@@ -218,7 +242,12 @@ export default {
       showTableDataChild: false,
       changeTable: [],
       loadingBtn: false,
-      arr: []
+      arr: [],
+      dialogVisibleEdit: false,
+      allValue: undefined,
+      // 当前的 指标点 和 数据点
+      current_test_indicator: '',
+      current_data_point_name: ''
     }
   },
   mounted() {
@@ -392,6 +421,30 @@ export default {
         }
       }
     },
+    Upload(param) {
+      const formData = new FormData()
+      formData.append('file', param.file)
+      importMaterialMestMrders(formData).then(response => {
+        this.$message({
+          type: 'success',
+          message: '导入成功!'
+        })
+      })
+    },
+    clickValue(test_indicator_name, data_point_name) {
+      this.allValue = undefined
+      this.dialogVisibleEdit = true
+      this.current_test_indicator = test_indicator_name
+      this.current_data_point_name = data_point_name
+    },
+    allValueSure() {
+      this.tableDataChild.map(D => {
+        D._list[this.current_test_indicator][this.current_data_point_name].value = this.allValue
+        D._filledIn = true
+        return D
+      })
+      this.dialogVisibleEdit = false
+    },
     async submitTable() {
       const arr = []
       try {
@@ -490,13 +543,21 @@ function setDataChild(_this, row) {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 $border-color: #EBEEF5;
 $border-weight: 1px;
 .manual_entry_style{
   .rigthTable{
     // overflow-y: scroll;
     // max-height: 400px;
+  }
+  .el-input-number__increase,.el-input-number__decrease{
+    display: none;
+    padding:0;
+  }
+  .el-input-number.is-controls-right .el-input__inner{
+    padding-left: 1px;
+    padding-right: 1px;
   }
  .train-one {
     border-color: $border-color;

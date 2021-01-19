@@ -259,5 +259,7 @@ export default {
   // 药品投入统计
   WeightBatchingLogList: '/api/v1/terminal/weight-batching-log-list/',
   MaterialInventoryList: '/api/v1/inventory/material-inventory-list/',
-  QualityPalletFeedTest: '/api/v1/quality/pallet-feed-test/'
+  QualityPalletFeedTest: '/api/v1/quality/pallet-feed-test/',
+  // 录入导入
+  ImportMaterialMestMrders: '/api/v1/quality/import-material-test-orders/'
 }
