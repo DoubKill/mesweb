@@ -10,9 +10,6 @@
           @change="dayTimeChanged"
         />
       </el-form-item>
-      <!-- <el-form-item label="倒班规则">
-        <plan-schedules-select :day-time="getParams.day_time" @planScheduleSelected="planScheduleSelected" />
-      </el-form-item> -->
       <el-form-item label="机台">
         <equip-select
           :equip_no_props.sync="getParams.equip_no"
@@ -24,11 +21,6 @@
       </el-form-item>
       <el-form-item label="胶料">
         <all-product-no-select @productBatchingChanged="productBatchingChanged" />
-        <!-- <product-no-select
-          :is-stage-productbatch-no-remove="true"
-          :make-use-batch="true"
-          @productBatchingChanged="productBatchingChanged"
-        /> -->
       </el-form-item>
       <el-form-item label="处理意见">
         <deal-suggestion-select @dealSuggestionChange="dealSuggestionChange" />
@@ -86,7 +78,6 @@
         <el-table-column label="打印时间" width="80" align="center" prop="print_time" />
         <el-table-column label="检测员" prop="test.test_user" width="60" />
         <el-table-column label="检测结果" prop="deal_result" width="30" />
-        <!-- <el-table-column label="备注" prop="test.test_note" /> -->
         <el-table-column label="处理人" prop="deal_user" width="50" />
         <el-table-column label="处理意见" prop="deal_suggestion" width="40" />
         <el-table-column label="处理时间" align="center" prop="deal_time" width="80" />
@@ -134,15 +125,12 @@
 <script>
 import dayjs from 'dayjs'
 import Page from '@/components/page'
-// import PlanSchedulesSelect from '@/components/PlanSchedulesSelect'
-// import EquipSelect from '@/components/EquipSelect'
 import EquipSelect from '@/components/select_w/equip'
 import ClassSelect from '@/components/ClassSelect'
-// import ProductNoSelect from '@/components/ProductNoSelect'
 import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import DealSuggestionSelect from '@/components/DealSuggestionSelect'
 import TestCard from '@/components/TestCard'
-import { palletFeedTest, changelValidTime } from '@/api/quick-check-detail'
+import { palletFeedTest, changelValidTime, qualityPalletFeedTest } from '@/api/quick-check-detail'
 import { labelPrint } from '@/api/base_w'
 export default {
   components: { EquipSelect, ClassSelect, allProductNoSelect, Page, TestCard, DealSuggestionSelect },
@@ -153,7 +141,6 @@ export default {
         page: 1,
         page_size: 10,
         day_time: dayjs().format('YYYY-MM-DD'),
-        // day_time: null,
         equip_no: null,
         classes: null,
         product_no: null,
@@ -176,11 +163,19 @@ export default {
     this.getPalletFeedTest()
   },
   methods: {
+    async getCardInfo(id) {
+      try {
+        const data = await qualityPalletFeedTest(id)
+        this.$nextTick(() => {
+          this.$refs['testCard'].setTestData(data)
+        })
+      } catch (e) {
+        //
+      }
+    },
     print(row) {
+      this.getCardInfo(row.id)
       this.testCardDialogVisible = true
-      this.$nextTick(() => {
-        this.$refs['testCard'].setTestData(row)
-      })
     },
     updateData() {
       this.$refs['dataForm'].validate(valid => {
@@ -218,17 +213,14 @@ export default {
         const response = await palletFeedTest(this.getParams)
         this.total = response.count
         this.palletFeedTestList = response.results
-        // console.log(response, 'response')
-      // eslint-disable-next-line no-empty
-      } catch (e) {}
+      } catch (e) {
+        //
+      }
       this.listLoading = false
     },
     dayTimeChanged() {
       this.currentChange(1)
     },
-    // planScheduleSelected(val) {
-
-    // },
     dealSuggestionChange(desc) {
       this.getParams.suggestion_desc = desc || null
       this.currentChange(1)
