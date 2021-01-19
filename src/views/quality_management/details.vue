@@ -336,8 +336,8 @@ export default {
         const paramsObj = JSON.parse(JSON.stringify(this.getParams))
         paramsObj.page_size = bool ? 99999999 : 10
         const data = await materialTestOrders(paramsObj)
-        // let arr = data.results
-        let arr = data
+        let arr = data.results
+        // let arr = data
         arr = arr.map(row => {
           row.level = 0
           row.mes_result = '未检测'
