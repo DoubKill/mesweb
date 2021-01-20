@@ -95,7 +95,7 @@
             {{ (row.production_factory_date).split(' ')[0] }}
           </template>
         </u-table-column>
-        <u-table-column label="生产班次/班组" prop="class_group" min-width="75px" />
+        <u-table-column label="生产班次/班组" prop="class_group" min-width="55px" />
         <u-table-column align="center" label="生产机台" min-width="50px" prop="production_equip_no" />
         <u-table-column label="胶料编码" min-width="105px" align="center" prop="product_no" />
         <u-table-column label="车次" align="center" min-width="35px" prop="actual_trains" />
@@ -118,6 +118,11 @@
         <u-table-column v-if="header.test_type_name === '门尼' || header.test_type_name === '流变'" label="检测机台" min-width="50px" align="center">
           <template slot-scope="{row}">
             {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'machine_name') }}
+          </template>
+        </u-table-column>
+        <u-table-column min-width="50px" label="合格区间" align="center">
+          <template slot-scope="{row}">
+            {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'upper_lower') }}
           </template>
         </u-table-column>
         <u-table-column min-width="35px" label="等级" align="center">
@@ -336,7 +341,7 @@ export default {
         const paramsObj = JSON.parse(JSON.stringify(this.getParams))
         paramsObj.page_size = bool ? 99999999 : 10
         const data = await materialTestOrders(paramsObj)
-        let arr = data.results
+        let arr = data.results // 加分页
         // let arr = data
         arr = arr.map(row => {
           row.level = 0
