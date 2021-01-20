@@ -105,7 +105,7 @@
       title="指定出库"
       :visible.sync="assignOutboundDialogVisible"
       :before-close="handleCloseNormal"
-      width="80%"
+      width="90%"
     >
       <generate-assign-outbound
         ref="assignOutbound"

@@ -5,13 +5,6 @@
         {{ warehouseName }}
         <!-- <warehouseSelect @changSelect="warehouseSelect" /> -->
       </el-form-item>
-      <el-form-item label="仓库位置">
-        <stationInfoWarehouse
-          :warehouse-name="warehouseName"
-          :start-using="true"
-          @changSelect="changSelectStation"
-        />
-      </el-form-item>
       <el-form-item label="物料编码">
         <el-input v-model="getParams.material_no" @input="changeSearch" />
       </el-form-item>
@@ -52,6 +45,7 @@
       <el-table-column label="库存位" align="center" prop="location" />
       <el-table-column
         v-if="warehouseName === '终炼胶库'"
+        width="60"
         label="车次"
         align="center"
         prop=""
@@ -71,8 +65,17 @@
         </template>
       </el-table-column>
       <el-table-column label="入库时间" align="center" prop="in_storage_time" />
-      <el-table-column label="机台号" align="center" prop="equip_no" />
+      <el-table-column label="机台号" width="50" align="center" prop="equip_no" />
       <el-table-column label="车号" align="center" prop="memo" />
+      <el-table-column label="出库位置选择" align="center">
+        <template slot-scope="scope">
+          <stationInfoWarehouse
+            :warehouse-name="warehouseName"
+            :start-using="true"
+            @changSelect="selectStation($event,scope.$index)"
+          />
+        </template>
+      </el-table-column>
       <el-table-column v-if="$route.meta.title==='终炼胶出库计划'" label="关联发货计划" align="center" width="120">
         <template slot-scope="scope">
           {{ scope.row.deliveryPlan }}
@@ -215,17 +218,21 @@ export default {
         this.creadVal()
         this.$emit('visibleMethod')
       } else {
-        if (!this.getParams.station) {
-          this.$message.info('请选择仓库位置！')
-          return
-        }
+        // if (!this.getParams.station) {
+        //   this.$message.info('请选择仓库位置！')
+        //   return
+        // }
         if (this.multipleSelection.length === 0) {
           return
         }
+        let bool = false
         const arr = []
         this.multipleSelection.forEach((D) => {
+          if (!D.station) {
+            bool = true
+            return
+          }
           arr.push({
-            station: this.getParams.station,
             order_no: 'order_no',
             pallet_no: D.container_no,
             need_qty: D.qty,
@@ -239,9 +246,14 @@ export default {
             quality_status: D.quality_status,
             dispatch: D.dispatch || [],
             equip: D.equip || [],
-            location: D.location
+            location: D.location,
+            station: D.station
           })
         })
+        if (bool) {
+          this.$message.info('出库位置必填')
+          return
+        }
         this.loadingBtn = true
         this.$emit('visibleMethodSubmit', arr)
       }
@@ -283,6 +295,9 @@ export default {
     },
     equipSelected(arr, index) {
       this.$set(this.tableData[index], 'equip', arr)
+    },
+    selectStation(obj, index) {
+      this.$set(this.tableData[index], 'station', obj ? obj.name : '')
     }
   }
 }

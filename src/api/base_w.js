@@ -492,3 +492,12 @@ export function importMaterialMestMrders(data) {
   })
 }
 
+export function importMaterialTestOrders(params) {
+  return request({
+    url: API.ImportMaterialMestMrders,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
+

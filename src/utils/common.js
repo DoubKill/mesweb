@@ -1,7 +1,7 @@
 // 公用数据
 export default {
   formLabelWidth: '120px',
-  normalOutboundSwitch: false,
+  normalOutboundSwitch: true,
   statusList: [
     { id: 1, name: '完成' },
     { id: 2, name: '执行中' },

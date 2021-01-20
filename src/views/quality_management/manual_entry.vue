@@ -59,6 +59,10 @@
       style="float:right;margin:10px 0"
       @click="submitTable"
     >保 存</el-button>
+    <el-button
+      style="float:right;margin:10px 0"
+      @click="templateDownload"
+    >下载模板</el-button>
     <el-upload
       style="float:right;margin:10px 10px"
       action="string"
@@ -212,7 +216,7 @@
 </template>
 
 <script>
-import { palletFeedBacksUrl, matTestIndicatorMethods, materialTestOrders, palletTrainsFeedbacks, importMaterialMestMrders } from '@/api/base_w'
+import { palletFeedBacksUrl, matTestIndicatorMethods, materialTestOrders, palletTrainsFeedbacks, importMaterialMestMrders, importMaterialTestOrders } from '@/api/base_w'
 import { setDate, deepClone } from '@/utils/index'
 // import planSchedulesSelect from '@/components/PlanSchedulesSelect'
 import equipSelect from '@/components/select_w/equip'
@@ -429,6 +433,18 @@ export default {
           type: 'success',
           message: '导入成功!'
         })
+      })
+    },
+    templateDownload() {
+      importMaterialTestOrders().then(response => {
+        const link = document.createElement('a')
+        const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
+        link.style.display = 'none'
+        link.href = URL.createObjectURL(blob)
+        link.download = '手工检测数据录入模板.xls' // 下载的文件名
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
       })
     },
     clickValue(test_indicator_name, data_point_name) {

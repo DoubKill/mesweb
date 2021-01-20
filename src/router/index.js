@@ -239,8 +239,8 @@ export const asyncRoutes = [{
       icon: 'formula',
       permissionName: 'productbatching'
     }
-  }
-  /** {
+  },
+  {
     path: '/rb/material-tank/manage',
     name: 'material-tank',
     component: () => import('@/views/recipe/tankInformation/list'),
@@ -279,7 +279,7 @@ export const asyncRoutes = [{
       icon: 'formula',
       permissionName: 'batching_reality'
     }
-  }**/
+  }
   ]
 },
 {
@@ -403,8 +403,8 @@ export const asyncRoutes = [{
       icon: 'production',
       permissionName: 'section_production'
     }
-  }
-  /** {
+  },
+  {
     path: '/internal/investment',
     component: () => import('@/views/production/investment'),
     name: 'InternalInvestment',
@@ -441,7 +441,7 @@ export const asyncRoutes = [{
       title: '混炼胶出库看板', icon: 'production',
       permissionName: 'hl_dashboard'
     }
-  }**/
+  }
   // {
   //   path: 'collect/rub/daily',
   //   component: () => import('@/views/collect_rubber_daily_manage/index'),
@@ -512,6 +512,16 @@ export const asyncRoutes = [{
         permissionName: 'in_out_history'
       }
     },
+    // {
+    //   path: '/film-inout-record',
+    //   component: () => import('@/views/inventory/film-inout-record.vue'),
+    //   name: 'film-inout-record',
+    //   meta: {
+    //     title: '胶片出入库履历',
+    //     icon: 'stock',
+    //     permissionName: ''
+    //   }
+    // },
     {
       path: '/material-inventory-manage',
       component: () => import('@/views/inventory/material-inventory-manage.vue'),
@@ -551,16 +561,16 @@ export const asyncRoutes = [{
         permissionName: 'compoundRubber_plan'
       }
     },
-    {
-      path: '/final-rubber-manage',
-      component: () => import('@/views/inventory/final_rubber_manage.vue'),
-      name: 'OutboundManage',
-      meta: {
-        title: '胶片库出库计划',
-        icon: 'stock',
-        permissionName: 'inventory_plan'
-      }
-    },
+    // {
+    //   path: '/final-rubber-manage',
+    //   component: () => import('@/views/inventory/final_rubber_manage.vue'),
+    //   name: 'OutboundManage',
+    //   meta: {
+    //     title: '胶片库出库计划',
+    //     icon: 'stock',
+    //     permissionName: 'inventory_plan'
+    //   }
+    // },
     {
       path: '/curtain-storehouse',
       component: () => import('@/views/inventory/curtain-storehouse.vue'),
@@ -849,6 +859,26 @@ export const asyncRoutes = [{
           }
         }
       ]
+    },
+    {
+      path: '/material-info-mapping',
+      component: () => import('@/views/quality_management/material-info-mapping/material-info-mapping'),
+      name: 'material-info-mapping',
+      meta: {
+        title: 'mes与子系统物料信息映射',
+        icon: 'quality',
+        permissionName: ''
+      }
+    },
+    {
+      path: '/barcode-change',
+      component: () => import('@/views/quality_management/material-info-mapping/barcode-change'),
+      name: 'barcode-change',
+      meta: {
+        title: '条码变更和打印',
+        icon: 'quality',
+        permissionName: ''
+      }
     }
   ]
 },
@@ -1069,8 +1099,8 @@ export const asyncRoutes = [{
         ]
       }
     ]
-  }
-  /** {
+  },
+  {
     path: '/location-definition',
     component: () => import('@/views/equipment-management/repair/location-definition'),
     name: 'location-definition',
@@ -1151,7 +1181,7 @@ export const asyncRoutes = [{
       title: '设备维修履历',
       permissionName: ''
     }
-  }**/
+  }
   ]
 },
 {

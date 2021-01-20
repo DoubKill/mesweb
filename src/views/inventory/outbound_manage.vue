@@ -105,7 +105,7 @@
     <el-dialog
       title="指定出库"
       :visible.sync="assignOutboundDialogVisible"
-      width="80%"
+      width="90%"
     >
       <generate-assign-outbound @visibleMethod="visibleMethodNormal" />
     </el-dialog>

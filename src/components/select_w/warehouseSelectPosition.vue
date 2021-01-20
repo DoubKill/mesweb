@@ -57,6 +57,9 @@ export default {
   watch: {
     defaultVal(val) {
       this.value = val || null
+    },
+    warehouseName(val) {
+      this.value = ''
     }
   },
   created() {
@@ -68,7 +71,12 @@ export default {
   methods: {
     async getList() {
       try {
+        if (!this.warehouseName) {
+          this.options = []
+          return
+        }
         this.loading = true
+
         const data = await stationInfo({ all: 1, warehouse_name: this.warehouseName })
         this.loading = false
         if (this.startUsing) {
@@ -81,7 +89,7 @@ export default {
       }
     },
     visibleChange(val) {
-      if (val && this.options.length === 0 && !this.createdIs) {
+      if (val && !this.createdIs) {
         this.getList()
       }
     },
