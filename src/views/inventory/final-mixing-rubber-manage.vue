@@ -38,15 +38,10 @@
       <!-- <el-form-item label="物料类型">
         <materielTypeSelect />
       </el-form-item> -->
-      <!-- <el-form-item v-permission="['finalRubber_plan','norman']" style="float: right">
-        <el-button @click="normalOutbound">正常出库</el-button>
-      </el-form-item>
-      <el-form-item style="float: right">
-        <el-button v-permission="['finalRubber_plan','assign']" @click="assignOutbound">指定出库</el-button>
-      </el-form-item> -->
     </el-form>
     <el-button v-permission="['finalRubber_plan','norman']" class="button-right" @click="normalOutbound">正常出库</el-button>
     <el-button v-permission="['finalRubber_plan','assign']" class="button-right" @click="assignOutbound">指定出库</el-button>
+    <el-button class="button-right" @click="getList">刷新</el-button>
     <el-table
       border
       :data="tableData"

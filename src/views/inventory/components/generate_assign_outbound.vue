@@ -8,6 +8,12 @@
       <el-form-item label="物料编码">
         <el-input v-model="getParams.material_no" @input="changeSearch" />
       </el-form-item>
+      <el-form-item label="库存位">
+        <el-input v-model="getParams.location" @input="changeSearch" />
+      </el-form-item>
+      <el-form-item label="托盘号">
+        <el-input v-model="getParams.container_no" @input="changeSearch" />
+      </el-form-item>
       <el-form-item label="品质状态">
         <el-select
           v-model="getParams.quality_status"

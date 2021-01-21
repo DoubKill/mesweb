@@ -60,11 +60,11 @@
       @click="submitTable"
     >保 存</el-button>
     <el-button
-      style="float:right;margin:10px 0"
+      style="float:right;margin:10px 10px"
       @click="templateDownload"
     >下载模板</el-button>
     <el-upload
-      style="float:right;margin:10px 10px"
+      style="float:right;margin:10px 0"
       action="string"
       accept=".xls, .xlsx"
       :http-request="Upload"
@@ -454,6 +454,10 @@ export default {
       this.current_data_point_name = data_point_name
     },
     allValueSure() {
+      if (!this.allValue) {
+        this.dialogVisibleEdit = false
+        return
+      }
       this.tableDataChild.map(D => {
         D._list[this.current_test_indicator][this.current_data_point_name].value = this.allValue
         D._filledIn = true

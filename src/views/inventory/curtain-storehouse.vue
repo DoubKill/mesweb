@@ -1,5 +1,6 @@
 <template>
   <div v-loading="loading" class="app-container outbound_manage">
+    <!-- 帘布库出库计划 -->
     <el-form :inline="true" label-width="80px">
       <el-form-item label="开始日期">
         <el-date-picker
@@ -40,6 +41,7 @@
     </el-form>
     <el-button v-permission="['LB_inventory_plan','norman']" class="button-right" @click="normalOutbound">正常出库</el-button>
     <el-button v-permission="['LB_inventory_plan','assign']" class="button-right" @click="assignOutbound">指定出库</el-button>
+    <el-button class="button-right" @click="getList">刷新</el-button>
     <el-table
       border
       :data="tableData"

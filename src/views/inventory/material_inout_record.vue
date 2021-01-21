@@ -1,5 +1,6 @@
 <template>
   <div v-loading="loading" class="app-container">
+    <!-- 物料出入库履历 -->
     <el-form :inline="true">
       <el-form-item label="时间">
         <el-date-picker
@@ -44,17 +45,12 @@
       </el-form-item>
       <el-form-item label="库存位置">
         <warehouseSelect :is-clear="true" @changSelect="warehouseSelectFun" />
-        <!-- <el-select v-model="search.b" placeholder="请选择">
-          <el-option
-            v-for="item in options2"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select> -->
       </el-form-item>
       <el-form-item label="物料编码">
         <el-input v-model="search.material_no" @input="changeList" />
+      </el-form-item>
+      <el-form-item label="出入库单号">
+        <el-input v-model="search.order_no" @input="changeList" />
       </el-form-item>
     </el-form>
     <el-table
@@ -94,7 +90,8 @@ export default {
   data() {
     return {
       search: {
-        page: 1
+        page: 1,
+        order_type: '出库'
       },
       searchDate: [setDate(null, true), setDate(null, true)],
       total: 0,
