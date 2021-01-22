@@ -239,8 +239,8 @@ export const asyncRoutes = [{
       icon: 'formula',
       permissionName: 'productbatching'
     }
-  },
-  {
+  }
+  /** {
     path: '/rb/material-tank/manage',
     name: 'material-tank',
     component: () => import('@/views/recipe/tankInformation/list'),
@@ -279,7 +279,7 @@ export const asyncRoutes = [{
       icon: 'formula',
       permissionName: 'batching_reality'
     }
-  }
+  }**/
   ]
 },
 {
@@ -403,8 +403,8 @@ export const asyncRoutes = [{
       icon: 'production',
       permissionName: 'section_production'
     }
-  },
-  {
+  }
+  /** {
     path: '/internal/investment',
     component: () => import('@/views/production/investment'),
     name: 'InternalInvestment',
@@ -441,7 +441,7 @@ export const asyncRoutes = [{
       title: '混炼胶出库看板', icon: 'production',
       permissionName: 'hl_dashboard'
     }
-  }
+  }**/
   // {
   //   path: 'collect/rub/daily',
   //   component: () => import('@/views/collect_rubber_daily_manage/index'),
@@ -859,8 +859,8 @@ export const asyncRoutes = [{
           }
         }
       ]
-    },
-    {
+    }
+    /** {
       path: '/material-info-mapping',
       component: () => import('@/views/quality_management/material-info-mapping/material-info-mapping'),
       name: 'material-info-mapping',
@@ -875,11 +875,11 @@ export const asyncRoutes = [{
       component: () => import('@/views/quality_management/material-info-mapping/barcode-change'),
       name: 'barcode-change',
       meta: {
-        title: '条码变更和打印',
+        title: '条码变更',
         icon: 'quality',
         permissionName: ''
       }
-    }
+    }**/
   ]
 },
 {
@@ -1099,8 +1099,8 @@ export const asyncRoutes = [{
         ]
       }
     ]
-  },
-  {
+  }
+  /** {
     path: '/location-definition',
     component: () => import('@/views/equipment-management/repair/location-definition'),
     name: 'location-definition',
@@ -1181,7 +1181,7 @@ export const asyncRoutes = [{
       title: '设备维修履历',
       permissionName: ''
     }
-  }
+  }**/
   ]
 },
 {
