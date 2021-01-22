@@ -63,6 +63,21 @@
       <el-table-column label="出入库单号" align="center" prop="order_no" />
       <el-table-column label="仓库类型" align="center" prop="warehouse_type" />
       <el-table-column label="托盘号" align="center" prop="pallet_no" />
+      <el-table-column label="机台" align="center">
+        <template v-if="row.product_info" slot-scope="{row}">
+          {{ row.product_info.equip_no }}
+        </template>
+      </el-table-column>
+      <el-table-column label="时间/班次" align="center">
+        <template v-if="row.product_info" slot-scope="{row}">
+          {{ row.product_info.classes }}
+        </template>
+      </el-table-column>
+      <el-table-column label="车号" align="center">
+        <template v-if="row.product_info" slot-scope="{row}">
+          {{ row.product_info.memo }}
+        </template>
+      </el-table-column>
       <el-table-column label="物料编码" align="center" prop="material_no" />
       <el-table-column label="出入库原因" align="center" prop="inout_reason" />
       <el-table-column label="出入库类型" align="center" prop="inout_num_type" />
@@ -98,12 +113,7 @@ export default {
       loading: false,
       options1: ['指定出库', '正常出库'],
       options2: [],
-      tableData: [
-        {
-          a: 1,
-          b: 2
-        }
-      ]
+      tableData: []
     }
   },
   created() {
