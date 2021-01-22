@@ -1,5 +1,6 @@
 <template>
   <div v-loading="loading" class="app-container">
+    <!-- 物料出入库履历 -->
     <el-form :inline="true">
       <el-form-item label="时间">
         <el-date-picker
@@ -12,7 +13,7 @@
           @change="changeDate"
         />
       </el-form-item>
-      <el-form-item label="类型">
+      <!-- <el-form-item label="类型">
         <el-select
           v-model="search.type"
           placeholder="请选择"
@@ -26,20 +27,30 @@
             :value="item"
           />
         </el-select>
+      </el-form-item> -->
+      <el-form-item label="出库/入库">
+        <el-select
+          v-model="search.order_type"
+          placeholder="请选择"
+          clearable
+          @change="changeList"
+        >
+          <el-option
+            v-for="item in ['出库','入库']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="库存位置">
         <warehouseSelect :is-clear="true" @changSelect="warehouseSelectFun" />
-        <!-- <el-select v-model="search.b" placeholder="请选择">
-          <el-option
-            v-for="item in options2"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select> -->
       </el-form-item>
       <el-form-item label="物料编码">
         <el-input v-model="search.material_no" @input="changeList" />
+      </el-form-item>
+      <el-form-item label="出入库单号">
+        <el-input v-model="search.order_no" @input="changeList" />
       </el-form-item>
     </el-form>
     <el-table
@@ -52,6 +63,21 @@
       <el-table-column label="出入库单号" align="center" prop="order_no" />
       <el-table-column label="仓库类型" align="center" prop="warehouse_type" />
       <el-table-column label="托盘号" align="center" prop="pallet_no" />
+      <el-table-column label="机台" align="center">
+        <template v-if="row.product_info" slot-scope="{row}">
+          {{ row.product_info.equip_no }}
+        </template>
+      </el-table-column>
+      <el-table-column label="时间/班次" align="center">
+        <template v-if="row.product_info" slot-scope="{row}">
+          {{ row.product_info.classes }}
+        </template>
+      </el-table-column>
+      <el-table-column label="车号" align="center">
+        <template v-if="row.product_info" slot-scope="{row}">
+          {{ row.product_info.memo }}
+        </template>
+      </el-table-column>
       <el-table-column label="物料编码" align="center" prop="material_no" />
       <el-table-column label="出入库原因" align="center" prop="inout_reason" />
       <el-table-column label="出入库类型" align="center" prop="inout_num_type" />
@@ -59,7 +85,7 @@
       <el-table-column label="单位" align="center" prop="unit" width="40" />
       <el-table-column label="重量" align="center" prop="weight" width="80" />
       <el-table-column label="发起人" align="center" prop="initiator" width="80" />
-      <el-table-column label="发起时间" align="center" prop="start_time" />
+      <el-table-column label="发起时间" align="center" prop="fin_time" />
       <el-table-column label="完成时间" align="center" prop="end_time" />
     </el-table>
     <page
@@ -79,19 +105,15 @@ export default {
   data() {
     return {
       search: {
-        page: 1
+        page: 1,
+        order_type: '出库'
       },
       searchDate: [setDate(null, true), setDate(null, true)],
       total: 0,
       loading: false,
       options1: ['指定出库', '正常出库'],
       options2: [],
-      tableData: [
-        {
-          a: 1,
-          b: 2
-        }
-      ]
+      tableData: []
     }
   },
   created() {
@@ -123,7 +145,7 @@ export default {
     },
     warehouseSelectFun(val) {
       this.search.page = 1
-      this.search.location = val
+      this.search.store_name = val ? val.name : ''
       this.getList()
     },
     changeList() {

@@ -512,6 +512,16 @@ export const asyncRoutes = [{
         permissionName: 'in_out_history'
       }
     },
+    // {
+    //   path: '/film-inout-record',
+    //   component: () => import('@/views/inventory/film-inout-record.vue'),
+    //   name: 'film-inout-record',
+    //   meta: {
+    //     title: '胶片出入库履历',
+    //     icon: 'stock',
+    //     permissionName: ''
+    //   }
+    // },
     {
       path: '/material-inventory-manage',
       component: () => import('@/views/inventory/material-inventory-manage.vue'),
@@ -551,16 +561,16 @@ export const asyncRoutes = [{
         permissionName: 'compoundRubber_plan'
       }
     },
-    {
-      path: '/final-rubber-manage',
-      component: () => import('@/views/inventory/final_rubber_manage.vue'),
-      name: 'OutboundManage',
-      meta: {
-        title: '胶片库出库计划',
-        icon: 'stock',
-        permissionName: 'inventory_plan'
-      }
-    },
+    // {
+    //   path: '/final-rubber-manage',
+    //   component: () => import('@/views/inventory/final_rubber_manage.vue'),
+    //   name: 'OutboundManage',
+    //   meta: {
+    //     title: '胶片库出库计划',
+    //     icon: 'stock',
+    //     permissionName: 'inventory_plan'
+    //   }
+    // },
     {
       path: '/curtain-storehouse',
       component: () => import('@/views/inventory/curtain-storehouse.vue'),
@@ -850,6 +860,26 @@ export const asyncRoutes = [{
         }
       ]
     }
+    /** {
+      path: '/material-info-mapping',
+      component: () => import('@/views/quality_management/material-info-mapping/material-info-mapping'),
+      name: 'material-info-mapping',
+      meta: {
+        title: 'mes与子系统物料信息映射',
+        icon: 'quality',
+        permissionName: ''
+      }
+    },
+    {
+      path: '/barcode-change',
+      component: () => import('@/views/quality_management/material-info-mapping/barcode-change'),
+      name: 'barcode-change',
+      meta: {
+        title: '条码变更',
+        icon: 'quality',
+        permissionName: ''
+      }
+    }**/
   ]
 },
 {

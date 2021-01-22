@@ -8,6 +8,7 @@
       :loading="loading"
       clearable
       :disabled="isDisabled"
+      :allow-create="isCreated"
       @visible-change="visibleChange"
       @change="changeSelect"
     >
@@ -45,6 +46,10 @@ export default {
     isDisabled: { // 是否只读
       type: Boolean,
       default: false
+    },
+    isCreated: { // 是可创建条目
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -70,6 +75,11 @@ export default {
         this.loading = true
         const data = await materialsUrl('get', null, { params: { all: 1 }})
         this.options = data.results || []
+        const arr = this.options.map(D => {
+          D.material_str = '名称:' + D.material_name + '; ' + '编码:' + D.material_no + '; ' + '类型:' + D.material_type__global_name
+          return D
+        })
+        this.options = arr
         this.loading = false
       } catch (e) {
         this.loading = false
@@ -84,9 +94,20 @@ export default {
       if (this.isAllObj) {
         let arr = []
         arr = this.options.filter(D => D.id === val)
+        if (this.isCreated) {
+          if (arr.length > 0) {
+          // 返回物料编码名称
+            this.$emit('changeSelect', arr[0].material_no)
+            return
+          } else {
+            this.$emit('changeSelect', val)
+            return
+          }
+        }
         this.$emit('changeSelect', arr[0])
         return
       }
+
       this.$emit('changeSelect', val)
     }
   }

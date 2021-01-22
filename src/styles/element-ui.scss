@@ -9,11 +9,17 @@ $color-blue-a: rgba(64, 158, 255, 0.5);
     color: #fff !important;
   }
 }
+.el-card__body{
+  padding: 10px;
+}
 .el-table td{
-  padding: 6px 0 !important;
+  padding: 4px 0 !important;
 }
 .el-table .cell{
   padding: 0 6px !important;
+}
+.el-table td, .el-table th{
+  padding: 8px 0;
 }
 body .el-table th.gutter{
   display: table-cell!important;

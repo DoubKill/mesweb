@@ -181,6 +181,25 @@ export default {
         done()
       }
     },
+    handleDelete: function(row) {
+      this.$confirm('是否确定删除?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // deleteMaterialLocationBinding(row.id)
+        //   .then(response => {
+        //     this.$message({
+        //       type: 'success',
+        //       message: '删除成功!'
+        //     })
+        //     this.getParams.page = 1
+        //     this.getTableData()
+        //   }).catch(e=>{
+        //  this.$message.error('删除失败')
+        // })
+      })
+    },
     submitFun() {
       this.$refs.editForm.validate(async(valid) => {
         if (valid) {

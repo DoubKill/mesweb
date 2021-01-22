@@ -9,6 +9,8 @@
       :allow-create="paramsType"
       :default-first-option="paramsType"
       clearable
+      :disabled="isDisabled"
+      :multiple="isMultiple"
       @change="changSelect"
       @visible-change="visibleChange"
     >
@@ -39,9 +41,17 @@ export default {
       type: String,
       default: ''
     },
-    paramsType: {
+    paramsType: { // 自定义参数
       type: Boolean,
       default: true
+    },
+    isMultiple: {
+      type: Boolean,
+      default: false
+    },
+    isDisabled: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

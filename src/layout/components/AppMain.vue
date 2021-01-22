@@ -24,7 +24,7 @@ export default {
 
 <style scoped>
 .box-card{
-  margin: 20px;
+  margin: 10px;
 }
 .app-main {
   /*50 = navbar  */
