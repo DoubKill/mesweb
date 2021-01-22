@@ -13,7 +13,7 @@
           @change="changeDate"
         />
       </el-form-item>
-      <el-form-item label="类型">
+      <!-- <el-form-item label="类型">
         <el-select
           v-model="search.type"
           placeholder="请选择"
@@ -27,7 +27,7 @@
             :value="item"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="出库/入库">
         <el-select
           v-model="search.order_type"
