@@ -120,7 +120,7 @@
             {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'machine_name') }}
           </template>
         </u-table-column>
-        <u-table-column min-width="50px" label="合格区间" align="center">
+        <u-table-column min-width="50px" label="标准" align="center">
           <template slot-scope="{row}">
             {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'upper_lower') }}
           </template>
