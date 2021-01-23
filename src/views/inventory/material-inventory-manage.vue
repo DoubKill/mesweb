@@ -24,6 +24,7 @@
       <el-table-column label="物料类型" align="center" prop="material_type" width="80" />
       <el-table-column label="物料编码" align="center" prop="material_no" />
       <el-table-column label="lot" align="center" prop="lot_no" />
+      <el-table-column label="货位状态" align="center" prop="location_status" />
       <el-table-column label="机台号" align="center" width="50">
         <template v-if="row.product_info" slot-scope="{row}">
           {{ row.product_info.equip_no }}
