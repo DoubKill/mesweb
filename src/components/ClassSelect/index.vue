@@ -1,7 +1,7 @@
 <template>
   <el-select
     v-model="className"
-    clearable
+    :clearable="isClearable"
     placeholder="请选择"
     @visible-change="visibleChange"
     @change="classChanged"
@@ -18,10 +18,25 @@
 <script>
 import { class_arrange_url } from '@/api/display_static_fun'
 export default {
+  props: {
+    isClearable: {
+      type: Boolean,
+      default: true
+    },
+    valueDefault: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
     return {
-      className: '',
+      className: this.valueDefault || '',
       classOptions: []
+    }
+  },
+  watch: {
+    valueDefault(val) {
+      this.className = val || ''
     }
   },
   methods: {
