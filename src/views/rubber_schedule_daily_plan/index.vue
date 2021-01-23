@@ -100,7 +100,7 @@
               :row-class-name="tableRowClassName"
             >
               >
-              <el-table-column min-width="30px">
+              <el-table-column min-width="10px">
                 <template slot-scope="scope">
                   <div style="font-weight:700;color:#000 !important">
                     {{ scope.row.classes_name }}
@@ -117,7 +117,7 @@
                 </template>
               </el-table-column> -->
               <el-table-column
-                min-width="130px"
+                min-width="40px"
                 label="胶料编码"
               >
                 <template slot-scope="scope">
@@ -147,7 +147,7 @@
               </el-table-column>
               <el-table-column
                 label="车次"
-                min-width="65px"
+                min-width="15px"
               >
                 <template slot-scope="scope">
                   <el-input-number
@@ -162,7 +162,7 @@
               </el-table-column>
               <el-table-column
                 label="备注"
-                min-width="80"
+                min-width="20"
               >
                 <template slot-scope="scope">
                   <el-input
@@ -174,18 +174,18 @@
               </el-table-column>
               <el-table-column
                 label="状态"
-                min-width="55"
+                min-width="15"
               >
                 <template slot-scope="scope">
                   {{ scope.row.status }}
                 </template>
               </el-table-column>
-              <el-table-column label="炼胶时间" min-width="70">
+              <el-table-column label="炼胶时间" min-width="18">
                 <template slot-scope="scope">
                   {{ Number(scope.row.time) || '0' }}
                 </template>
               </el-table-column>
-              <el-table-column label="创建时间">
+              <el-table-column label="创建时间" min-width="20">
                 <template slot-scope="scope">
                   {{ scope.row.created_date }}
                 </template>

@@ -73,6 +73,7 @@
       <el-table-column label="入库时间" align="center" prop="in_storage_time" />
       <el-table-column label="机台号" width="50" align="center" prop="equip_no" />
       <el-table-column label="车号" align="center" prop="memo" />
+      <el-table-column label="货位状态" align="center" prop="location_status" />
       <el-table-column label="出库位置选择" align="center">
         <template slot-scope="scope">
           <stationInfoWarehouse
