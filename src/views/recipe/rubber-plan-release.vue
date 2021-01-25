@@ -2,7 +2,7 @@
   <div v-loading="loading">
     <!-- 小料计划下达 -->
     <el-form :inline="true">
-      <el-form-item label="时间">
+      <el-form-item label="日期">
         <el-date-picker
           v-model="getParams.day_time"
           type="date"
@@ -50,8 +50,6 @@
     </el-form>
     <el-table
       :data="tableData"
-      style="width: 100%"
-      fit
       border
     >
       <el-table-column
@@ -84,6 +82,12 @@
         align="center"
       />
       <el-table-column
+        prop="weigh_type"
+        label="料包类型"
+        :formatter="weighTypeFun"
+        align="center"
+      />
+      <el-table-column
         label="配料设备"
         align="center"
         prop="equip_no"
@@ -98,32 +102,54 @@
       />
       <el-table-column
         prop="plan_package"
-        label="计划数量"
+        label="计划数量(包)"
         align="center"
       >
-        <template slot-scope="{ row }">
-          <span :class="{ 'b-r': row.package_changed }">{{ row.plan_package }}</span>
+        <template slot-scope="scope">
+          <span :class="{ 'b-r': scope.row.package_changed }">{{ scope.row.plan_package }}</span>
+
+          <el-popover
+            v-model="scope.row.visible"
+            placement="right"
+            width="400"
+            trigger="manual"
+          >
+            <el-input
+              v-model="reason"
+              type="textarea"
+              :rows="2"
+              placeholder="请输入内容"
+            />
+            <i slot="reference" class="el-icon-edit slotIconStyle" @click="iconEdit(scope.row,scope.$index)" />
+            <el-button style="float:right;margin-top:5px" size="mini" @click="submitFun(scope.row,scope.$index)">确定</el-button>
+            <el-button style="float:right;margin-top:5px;margin-right:5px" size="mini" @click="scope.row.visible = false">取消</el-button>
+          </el-popover>
         </template>
       </el-table-column>
       <el-table-column
         prop="weigh_batching_used_type"
         label="小料配方状态"
         width="100"
-        :formatter="usedTypeFormatter"
         align="center"
-      />
+      >
+        <template slot-scope="scoped">
+          <span :style="{'color':scoped.row.weigh_batching_used_type === 6?'red':''}">
+            {{ usedTypeFormatter(scoped.row) }}
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column
         label="操作"
         align="center"
       >
         <template slot-scope="scope">
           <el-button-group>
-            <el-button size="mini" @click="view(scope.row,scope.$index)">查看</el-button>
-            <el-button
+            <el-button size="mini" @click="view(scope.row,scope.$index)">明细</el-button>
+            <!-- <el-button
               v-permission="['batching_plan','change']"
               size="mini"
               @click="handleChangePlanPackage(scope.row)"
-            >修改</el-button>
+            >修改</el-button> -->
           </el-button-group>
         </template>
       </el-table-column>
@@ -196,7 +222,7 @@
         <el-form-item label="生产机型">
           <el-input :value="form.category_name" disabled />
         </el-form-item>
-        <el-form-item label="计划数量">
+        <el-form-item label="计划数量(包)">
           <el-input :value="form.plan_package" disabled />
         </el-form-item>
         <el-form-item label="配料设备" prop="equip">
@@ -213,7 +239,7 @@
       :visible.sync="changePlanPackageVisible"
     >
       <el-form ref="planPackageForm" :model="planPackageFormData" :rules="planPackageFormRules" label-position="left" label-width="110px">
-        <el-form-item label="计划数量" prop="plan_package">
+        <el-form-item label="计划数量(包)" prop="plan_package">
           <el-input v-model.number="planPackageFormData.plan_package" />
         </el-form-item>
       </el-form>
@@ -274,7 +300,8 @@ export default {
       },
       planPackageFormRules: {
         plan_package: [{ required: true, message: '该字段不能为空', trigger: 'blur' }]
-      }
+      },
+      reason: ''
     }
   },
   created() {
@@ -290,6 +317,29 @@ export default {
           this.getList()
         }
       })
+    },
+    iconEdit(row, index) {
+      this.tableData.forEach((D) => {
+        D.visible = false
+      })
+      row.visible = true
+      this.reason = row.plan_package
+    },
+    async submitFun(row, index) {
+      row.visible = false
+      await changePlanPackage(row.id,
+        this.reason)
+      this.getList()
+    },
+    weighTypeFun(row) {
+      switch (row.weigh_type) {
+        case 1:
+          return 'a类'
+        case 2:
+          return 'b类'
+        case 3:
+          return '硫磺'
+      }
     },
     handleChangePlanPackage(row) {
       this.planPackageFormData = Object.assign({}, row)
@@ -351,7 +401,7 @@ export default {
       this.batchingClassesPlan = row
       this.dialogVisible = true
     },
-    usedTypeFormatter(row, column) {
+    usedTypeFormatter(row) {
       switch (row.weigh_batching_used_type) {
         case 1:
           return '编辑'
@@ -371,10 +421,20 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
   .b-r {
-    display: block;
+    display:inline-block;
     background: red;
     color: white;
+    width:73%;
+  }
+  .discardClass{
+    color:red !important;
+  }
+    .slotIconStyle{
+    color: rgb(11, 189, 11);
+    font-size: 20px;
+    display: inline-block;
+    height: 25px;
   }
 </style>

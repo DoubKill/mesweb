@@ -451,7 +451,7 @@
         />
       </el-select>
 
-      配料重量:
+      配料重量/kg:
       <el-input
         v-model="select_material_weight"
         size="mini"
@@ -490,7 +490,7 @@
             <th style="text-align: center; height: 48px">类别</th>
             <th style="text-align: center; height: 48px">自动与否</th>
             <th style="text-align: center; height: 48px">原材料</th>
-            <td style="text-align: center; height: 48px">实际重量</td>
+            <td style="text-align: center; height: 48px">实际重量/kg</td>
             <td style="text-align: center; height: 48px">误差</td>
             <td style="text-align: center; height: 48px">操作</td>
           </tr>
@@ -632,7 +632,7 @@
           :value="item.id"
         />
       </el-select>
-      配料重量:
+      配料重量/kg:
       <el-input
         v-model="put_select_material_weight"
         size="mini"
@@ -664,7 +664,7 @@
             <th style="text-align: center; height: 48px">类别</th>
             <th style="text-align: center; height: 48px">自动与否</th>
             <th style="text-align: center; height: 48px">原材料</th>
-            <td style="text-align: center; height: 48px">实际重量</td>
+            <td style="text-align: center; height: 48px">实际重量/kg</td>
             <td style="text-align: center; height: 48px">误差</td>
             <td style="text-align: center; height: 48px">操作</td>
           </tr>
@@ -885,7 +885,7 @@
           :value="item.id"
         />
       </el-select>
-      配料重量:
+      配料重量/kg:
       <el-input
         v-model="put_select_material_weight"
         size="mini"
@@ -914,7 +914,7 @@
             <th style="text-align: center; height: 48px">类别</th>
             <th style="text-align: center; height: 48px">自动与否</th>
             <th style="text-align: center; height: 48px">原材料</th>
-            <td style="text-align: center; height: 48px">实际重量</td>
+            <td style="text-align: center; height: 48px">实际重量/kg</td>
             <td style="text-align: center; height: 48px">误差</td>
           </tr>
         </thead>

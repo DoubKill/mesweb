@@ -46,11 +46,11 @@
         -->
       <el-table-column width="60%" prop="classes" label="班次" align="center" />
       <el-table-column prop="product_no" label="胶料配料编码" align="center" />
-      <el-table-column prop="material_type" label="原材料类型" align="center" />
-      <el-table-column prop="material_no" label="原材料编码" align="center" />
-      <el-table-column prop="material_name" label="原材料名称" align="center" />
+      <el-table-column prop="material_type" label="物料类型" align="center" />
+      <el-table-column prop="material_no" label="物料编码" align="center" />
+      <el-table-column prop="material_name" label="物料名称" align="center" />
 
-      <el-table-column align="center" label="原材料库存">
+      <el-table-column align="center" label="物料库存">
         <el-table-column align="center" prop="qty" label="数量" width="90px" />
         <el-table-column align="center" prop="unit_weight" label="单位重量" width="80px" />
         <el-table-column align="center" prop="total_weight" label="总重量" width="110px" />

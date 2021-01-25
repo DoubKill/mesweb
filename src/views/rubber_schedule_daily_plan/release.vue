@@ -72,7 +72,11 @@
           class="addPlanArrBox"
         >
           <div class="tableTop">
-            <div class="tableTopLeft">{{ item[0][0]?item[0][0].equipNo:'--' }}</div>
+            <div class="tableTopLeft">
+              {{ item[0][0]?item[0][0].equipNo:'--' }}
+              --
+              {{ item[0][0]?item[0][0].category__category_name:'--' }}
+            </div>
           </div>
           <div
             v-for="(tableItem,i) in item"
@@ -220,7 +224,7 @@ export default {
       return status !== this._notSaved &&
         status !== this._saved && status !== this._wait
     },
-    async getInfoFun(row, bool) {
+    async getInfoFun(row = {}, bool) {
       try {
         this.addPlanArrLoading = true
         const obj = {
@@ -267,6 +271,7 @@ export default {
                 // end_time: this.setstartT(data.end_time),
                 equip: row.id,
                 equipNo: row.equip_no,
+                category__category_name: row.category__category_name,
                 towIndex: index,
                 oneIndex: this.addPlanArr.length,
                 plan_trains: data.plan_trains,
@@ -292,6 +297,7 @@ export default {
             end_time: newArr.end_time,
             equip: row.id,
             equipNo: row.equip_no,
+            category__category_name: row.category__category_name,
             towIndex: index,
             oneIndex: this.addPlanArr.length
           }]
@@ -366,7 +372,7 @@ export default {
         })
       }
     },
-    async changeEquip(val, row) {
+    async changeEquip(val, row = {}) {
       const newAddPlanArr = []
       if (val) {
         let work_schedule = []
@@ -499,7 +505,9 @@ export default {
               }
               return Number(D.id) === 6
             })
-            this.changeEquip(true, arr[0])
+            if (arr.length > 0) {
+              this.changeEquip(true, arr[0])
+            }
           }
         }
         // eslint-disable-next-line no-empty

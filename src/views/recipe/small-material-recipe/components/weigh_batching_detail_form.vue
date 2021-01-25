@@ -13,7 +13,7 @@
       <el-form-item label="炼胶机类型">
         <el-input v-model="productBatching.dev_type_name" size="mini" :disabled="true" />
       </el-form-item>
-      <el-form-item label="配料重量">
+      <el-form-item label="配料重量/kg">
         <el-input v-model="productBatching.batching_weight" size="mini" :disabled="true" />
       </el-form-item>
       <el-form-item label="炼胶时间">

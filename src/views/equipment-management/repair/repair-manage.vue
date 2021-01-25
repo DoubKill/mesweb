@@ -93,27 +93,27 @@
               style="margin-bottom:2px"
               size="mini"
               type="primary"
-              @click="showEditChangeShiftsManageDialog(scope.row)"
+              @click="add(scope.row)"
             >派发
             </el-button>
             <el-button
               style="margin-bottom:2px"
               size="mini"
-              @click="handleDeleteChangeShiftsManage(scope.row)"
+              @click="add(scope.row)"
             >关闭
             </el-button>
             <el-button
               style="margin-bottom:2px"
               size="mini"
               type="warning"
-              @click="handleDeleteChangeShiftsManage(scope.row)"
+              @click="add(scope.row)"
             >认领
             </el-button>
             <el-button
               style="margin-bottom:2px"
               size="mini"
               type="info"
-              @click="handleDeleteChangeShiftsManage(scope.row)"
+              @click="add(scope.row)"
             >退单
             </el-button>
           </el-button-group>
@@ -244,9 +244,18 @@ export default {
     shutdownMoldChange() {},
     onChangeImg(file, fileList) {
       console.log(file, fileList)
-    },
-    handleRemove(file, fileList) {
-      console.log(file, fileList)
+      const isJPG = ['image/jpeg', 'image/jpg', 'image/png'].includes(file.raw.type)
+      const isLt2M = file.size / 1024 / 1024 < 2
+      if (!isJPG) {
+        this.$message.error('上传头像图片只能是 jpeg、jpg 、png格式!')
+        fileList.pop()
+        return
+      }
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!')
+        fileList.pop()
+        return
+      }
     },
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url
