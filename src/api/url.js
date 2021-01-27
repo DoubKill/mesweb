@@ -261,5 +261,8 @@ export default {
   MaterialInventoryList: '/api/v1/inventory/material-inventory-list/',
   QualityPalletFeedTest: '/api/v1/quality/pallet-feed-test/',
   // 录入导入
-  ImportMaterialMestMrders: '/api/v1/quality/import-material-test-orders/'
+  ImportMaterialMestMrders: '/api/v1/quality/import-material-test-orders/',
+  // mes与子系统物料信息映射
+  MaterialSupplierCollect: '/api/v1/terminal/material-supplier-collect/',
+  WeightingPackageLog: '/api/v1/terminal/weighting-package-log/'
 }

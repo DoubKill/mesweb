@@ -137,13 +137,14 @@ export default {
           for (let i = 0; i < this.productBatchingDetail.length; i++) {
             const deltail_ = this.productBatchingDetail[i]
             if (deltail_.material === this.weightType.weigh_batching_detail[j].material) {
-              this.$set(deltail_, 'disabled', true)
+              // this.$set(deltail_, 'disabled', true)
             }
           }
           break
         }
       }
       this.tableKey += 1
+      this.$emit('updateRow')
     }
   }
 }

@@ -13,7 +13,7 @@
       <el-form-item label="炼胶机类型">
         <el-input v-model="productBatching.dev_type_name" size="mini" :disabled="true" />
       </el-form-item>
-      <el-form-item label="配料重量">
+      <el-form-item label="配料重量/kg">
         <el-input v-model="productBatching.batching_weight" size="mini" :disabled="true" />
       </el-form-item>
       <el-form-item label="炼胶时间">
@@ -29,6 +29,7 @@
       :product-batching-detail="product_batching_detail"
       :weight-type="type"
       :edit="edit"
+      @updateRow="updateRow"
     />
   </div>
 </template>
@@ -97,21 +98,41 @@ export default {
             return item.weigh_type === cnt_type.weigh_type
           })
           const weighbatchingdetail_set = []
-          for (let i = 0; i < weight_type.weigh_batching_detail.length; ++i) {
-            if (weight_type.weigh_batching_detail[i].material) {
-              weighbatchingdetail_set.push({
-                material: weight_type.weigh_batching_detail[i].material,
-                standard_weight: weight_type.weigh_batching_detail[i].actual_weight
-              })
+          if (weight_type) {
+            for (let i = 0; i < weight_type.weigh_batching_detail.length; ++i) {
+              if (weight_type.weigh_batching_detail[i].material) {
+                weighbatchingdetail_set.push({
+                  material: weight_type.weigh_batching_detail[i].material,
+                  standard_weight: weight_type.weigh_batching_detail[i].actual_weight
+                })
+              }
             }
+            await updateWeighCntType(cnt_type.id, {
+              package_cnt: weight_type.package_cnt,
+              weighbatchingdetail_set
+            })
           }
-          await updateWeighCntType(cnt_type.id, {
-            package_cnt: weight_type.package_cnt,
-            weighbatchingdetail_set
-          })
         })
         this.$emit('created')
       }
+    },
+    updateRow() {
+      const _weighbatchingdetail_set = []
+      this.weight_types.forEach(cnt_type => {
+        cnt_type.weigh_batching_detail
+        _weighbatchingdetail_set.push(...cnt_type.weigh_batching_detail)
+      })
+
+      this.product_batching_detail.forEach(D => {
+        const arr = _weighbatchingdetail_set.filter(d =>
+          d.material === D.material
+        )
+        if (arr.length > 0) {
+          this.$set(D, 'disabled', true)
+        } else {
+          this.$set(D, 'disabled', false)
+        }
+      })
     },
     async updateWeightTypes() {
       this.weight_types = [{
@@ -144,15 +165,17 @@ export default {
           const weight_type = this.weight_types.find(type => {
             return type.weigh_type === cnttype.weigh_type
           })
-          weight_type.package_cnt = cnttype.package_cnt
-          for (let i = 0; i < cnttype.weighbatchingdetail_set.length; i++) {
-            const detail = cnttype.weighbatchingdetail_set[i]
-            weight_type.weigh_batching_detail.push({
-              material: detail.material,
-              actual_weight: detail.standard_weight,
-              material_name: detail.material_name,
-              material_no: detail.material_no
-            })
+          if (weight_type) {
+            weight_type.package_cnt = cnttype.package_cnt
+            for (let i = 0; i < cnttype.weighbatchingdetail_set.length; i++) {
+              const detail = cnttype.weighbatchingdetail_set[i]
+              weight_type.weigh_batching_detail.push({
+                material: detail.material,
+                actual_weight: detail.standard_weight,
+                material_name: detail.material_name,
+                material_no: detail.material_no
+              })
+            }
           }
         })
       }

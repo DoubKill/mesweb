@@ -146,3 +146,21 @@ export function materialInventoryList(method, id, data = {}) {
   return request(obj)
 }
 
+export function materialSupplierCollect(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MaterialSupplierCollect + id + '/' : API.MaterialSupplierCollect,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function weightingPackageLog(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WeightingPackageLog + id + '/' : API.WeightingPackageLog,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+

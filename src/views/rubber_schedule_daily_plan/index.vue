@@ -79,7 +79,11 @@
           class="addPlanArrBox"
         >
           <div class="tableTop">
-            <div class="tableTopLeft">{{ item[0][0]?item[0][0].equipNo:'--' }}</div>
+            <div class="tableTopLeft">
+              {{ item[0][0]?item[0][0].equipNo:'--' }}
+              --
+              {{ item[0][0]?item[0][0].category__category_name:'--' }}
+            </div>
             <el-button
               v-if="permissionArr.indexOf('add')>-1"
               class="tableTopright"
@@ -126,6 +130,7 @@
                     v-else
                     v-model="scope.row.product_batching"
                     :loading="loadingSelect"
+                    filterable
                     :disabled="setStatus(scope.row.status,scope.row,false)"
                     @change="productBatchingChanged($event,scope.row,rubberMateriaObj[scope.row.equip],tableItem,scope.$index)"
                   >
@@ -336,6 +341,7 @@ export default {
       }
     },
     setWorkSchedule(row, getInfo) {
+      console.log(row, 777)
       const work_schedule_plan = JSON.parse(JSON.stringify(this.work_schedule_plan))
       const arr = []
       work_schedule_plan.forEach((D, index) => {
@@ -352,6 +358,7 @@ export default {
                 end_time: data.end_time,
                 equip: row.id,
                 equipNo: row.equip_no,
+                category__category_name: row.category__category_name,
                 towIndex: index,
                 oneIndex: this.addPlanArr.length,
                 plan_trains: data.plan_trains,
@@ -379,6 +386,7 @@ export default {
             end_time: newArr.end_time,
             equip: row.id,
             equipNo: row.equip_no,
+            category__category_name: row.category__category_name,
             towIndex: index,
             oneIndex: this.addPlanArr.length,
             plan_trains: 0,
@@ -412,6 +420,7 @@ export default {
             oneIndex: this.addPlanArr.length,
             equip: row.id,
             equipNo: row.equip_no,
+            category__category_name: row.category__category_name,
             weight: 0
           })
         }
@@ -480,6 +489,10 @@ export default {
             }
           })
           this.planSchedules = planSchedulesData.results
+          this.planScheduleId = this.planSchedules.length > 0 ? this.planSchedules[0].id : ''
+          if (this.planScheduleId) {
+            this.addOnePlan()
+          }
         }
         // eslint-disable-next-line no-empty
       } catch (e) { }
@@ -530,6 +543,7 @@ export default {
         let work_schedule = []
         work_schedule = await this.getInfoFun(row)
         this.visibleChange(row.id, row.category, work_schedule)
+        console.log(work_schedule, 8888)
         this.addPlanArr.push(work_schedule)
       } else {
         const addPlanArr = JSON.parse(JSON.stringify(this.addPlanArr))
@@ -734,6 +748,7 @@ export default {
           this.work_schedule_plan = planSchedule.work_schedule_plan || []
           this.disabledEquip = false
         }
+
         // eslint-disable-next-line no-empty
       } catch (e) {
       }
