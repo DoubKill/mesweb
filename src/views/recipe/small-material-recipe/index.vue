@@ -14,26 +14,20 @@
       <el-form-item label="胶料编码">
         <el-input
           v-model="getParams.stage_product_batch_no"
-          @input="()=>{
-            getParams.page = 1
-            getWeighBatchingList()
-          }"
+          placeholder="请输入胶料编码"
+          @input="stageChange"
         />
       </el-form-item>
       <el-form-item style="float: right">
         <el-button
           v-permission="['weight_batching','add']"
-          @click="() => {
-            weighBatching = null
-            productBatchingListVisible=true
-          }"
+          @click="add"
         >新建</el-button>
       </el-form-item>
       <el-form-item
-        v-permission="['weight_batching','change']"
         style="float: right"
       >
-        <el-button :disabled="!currentRow||currentRow.used_type!==1" @click="batching">配料</el-button>
+        <el-button v-permission="['weight_batching','change']" :disabled="!currentRow||currentRow.used_type!==1" @click="batching">配料</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -67,57 +61,38 @@
         <template slot-scope="{row}">
           <el-button-group>
             <el-button
-              v-if="row.used_type === 5|row.used_type === 6"
-              v-permission="['weight_batching','edit']"
+              v-if="(row.used_type === 5||row.used_type === 6)&&checkPermission(['weight_batching','edit'])"
               size="mini"
-              @click="() => {
-                changeUsedType(row.id, 1)
-              }"
+              @click="changeUsedType(row.id, 1)"
             >编辑</el-button>
             <el-button
-              v-if="row.used_type === 1"
-              v-permission="['weight_batching','submit']"
+              v-if="row.used_type === 1&&checkPermission(['weight_batching','submit'])"
               size="mini"
-              @click="() => {
-                changeUsedType(row.id, null)
-              }"
+              @click="changeUsedType(row.id, null)"
             >提交</el-button>
             <el-button
-              v-if="row.used_type === 2"
-              v-permission="['weight_batching','check']"
+              v-if="row.used_type === 2&&checkPermission(['weight_batching','check'])"
               size="mini"
-              @click="() => {
-                changeUsedType(row.id, 3)
-              }"
+              @click="changeUsedType(row.id, 3)"
             >校对</el-button>
             <el-button
-              v-if="row.used_type === 3"
-              v-permission="['weight_batching','use']"
+              v-if="row.used_type === 3&&checkPermission(['weight_batching','use'])"
               size="mini"
-              @click="() => {
-                changeUsedType(row.id, 4)
-              }"
+              @click="changeUsedType(row.id, 4)"
             >启用</el-button>
             <el-button
-              v-if="row.used_type === 2"
-              v-permission="['weight_batching','refuse']"
+              v-if="row.used_type === 2&&checkPermission(['weight_batching','refuse'])"
               size="mini"
-              @click="() => {
-                changeUsedType(row.id, 5)
-              }"
+              @click="changeUsedType(row.id, 5)"
             >驳回</el-button>
             <el-button
-              v-if="row.used_type === 5|row.used_type === 4"
-              v-permission="['weight_batching','abandon']"
+              v-if="(row.used_type === 5||row.used_type === 4)&&checkPermission(['weight_batching','abandon'])"
               size="mini"
-              @click="() => {
-                changeUsedType(row.id, 6)
-              }"
+              @click="changeUsedType(row.id, 6)"
             >废弃</el-button>
           </el-button-group>
         </template>
       </el-table-column>
-      <!-- <el-table-column label="发送计数" prop="send_cnt" align="center" /> -->
       <el-table-column label="创建者" prop="created_user" align="center" />
       <el-table-column label="创建时间" width="150" prop="created_date" align="center" />
     </el-table>
@@ -143,11 +118,7 @@
         :product-batching="productBatching"
         :weigh-batching="weighBatching"
         :edit="dialogStatus != 'show'"
-        @created="() => {
-          dialogFormVisible=false
-          getParams.page = 1
-          getWeighBatchingList()
-        }"
+        @created="createdFun"
       />
     </el-dialog>
   </div>
@@ -161,7 +132,7 @@ import BatchingUsedTypeSelect from '@/components/BatchingUsedTypeSelect'
 import StageIdSelect from '@/components/StageSelect/StageIdSelect'
 import ProductBatchingList from './components/product_batching_list'
 import WeighBatchingDetailForm from './components/weigh_batching_detail_form'
-
+import { checkPermission } from '@/utils/index'
 export default {
   components: { page, BatchingUsedTypeSelect, StageIdSelect, ProductBatchingList, WeighBatchingDetailForm },
   data() {
@@ -192,6 +163,7 @@ export default {
     this.getWeighBatchingList()
   },
   methods: {
+    checkPermission,
     async showDetail(row) {
       this.productBatching = await rubber_material_url('get', row.product_batching)
       this.weighBatching = row
@@ -203,6 +175,10 @@ export default {
       this.weighBatching = this.currentRow
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
+    },
+    changeList() {
+      this.getParams.page = 1
+      this.getWeighBatchingList()
     },
     handleCurrentChange(val) {
       this.currentRow = val
@@ -262,6 +238,15 @@ export default {
       this.total = response.count
       this.weighBatchingList = response.results
       this.listLoading = false
+    },
+    add() {
+      this.weighBatching = null
+      this.productBatchingListVisible = true
+    },
+    createdFun() {
+      this.dialogFormVisible = false
+      this.getParams.page = 1
+      this.getWeighBatchingList()
     }
   }
 }

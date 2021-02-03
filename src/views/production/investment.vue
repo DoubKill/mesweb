@@ -13,10 +13,11 @@
       </el-form-item>
       <el-form-item label="生产机台">
         <equip-select
-          @equipSelected="equipSelected"
+          :equip_no_props="getParams.equip_no"
+          @changeSearch="equipSelected"
         />
       </el-form-item>
-      <el-form-item label="混炼/终练">
+      <el-form-item label="混炼/终炼">
         <el-select
           v-model="getParams.mixing_finished"
           clearable
@@ -24,7 +25,7 @@
           @change="changeList"
         >
           <el-option
-            v-for="item in ['混炼','终练']"
+            v-for="item in ['混炼','终炼']"
             :key="item"
             :label="item"
             :value="item"
@@ -37,11 +38,7 @@
         />
       </el-form-item>
       <el-form-item label="投入编码:">
-        <material-code-select
-          ref="materialCodeSelect"
-          :is-all-obj="true"
-          @changeSelect="materialCreateForm"
-        />
+        <el-input v-model="getParams.material_no" @input="changeList" />
       </el-form-item>
     </el-form>
 
@@ -192,16 +189,15 @@
 </template>
 
 <script>
-import EquipSelect from '@/components/EquipSelect/index'
+import equipSelect from '@/components/select_w/equip'
 import classSelect from '@/components/ClassSelect'
-import MaterialCodeSelect from '@/components/materialCodeSelect'
 import { batchChargeLogList, materialInventoryList } from '@/api/base_w_two'
 import { palletFeedBacksUrl } from '@/api/base_w'
 import Page from '@/components/page'
 import { setDate } from '@/utils'
 
 export default {
-  components: { Page, EquipSelect, classSelect, MaterialCodeSelect },
+  components: { Page, equipSelect, classSelect },
   data() {
     return {
       getParams: {
@@ -264,16 +260,12 @@ export default {
       this.getParams.page = 1
       this.getList()
     },
-    equipSelected(obj) {
-      this.getParams.equip_no = obj ? obj.equip_no : ''
+    equipSelected(val) {
+      this.getParams.equip_no = val
       this.changeList()
     },
     classChanged(val) {
       this.getParams.production_classes = val
-      this.changeList()
-    },
-    materialCreateForm(obj) {
-      this.getParams.material_no = obj ? obj.material_no : ''
       this.changeList()
     },
     clickTrack(row) {
