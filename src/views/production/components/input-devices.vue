@@ -3,7 +3,7 @@
     <!-- 投入设备 罐号 选择器 -->
     <el-select
       v-model="value"
-      placeholder="请选择投入设备"
+      placeholder="请选择"
       :loading="loading"
       clearable
       @visible-change="visibleChange"
