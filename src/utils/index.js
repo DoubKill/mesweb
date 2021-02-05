@@ -141,6 +141,8 @@ export function setDate(_data, bool, type) {
   } else if (type && type === 'continuation') {
     return formatObj.y + formatObj.m + formatObj.d +
       formatObj.h + formatObj.i + formatObj.s
+  } else if (type && type === 'month') {
+    return formatObj.y + '-' + formatObj.m
   } else {
     return formatObj.y + '-' + formatObj.m + '-' + formatObj.d
   }

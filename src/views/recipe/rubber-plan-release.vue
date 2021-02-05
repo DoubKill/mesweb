@@ -106,24 +106,29 @@
         align="center"
       >
         <template slot-scope="scope">
-          <span :class="{ 'b-r': scope.row.package_changed }">{{ scope.row.plan_package }}</span>
+          <div :class="{ 'b-r': scope.row.package_changed }">{{ scope.row.plan_package }}
 
-          <el-popover
-            v-model="scope.row.visible"
-            placement="right"
-            width="400"
-            trigger="manual"
-          >
-            <el-input
-              v-model="reason"
-              type="textarea"
-              :rows="2"
-              placeholder="请输入内容"
-            />
-            <i slot="reference" class="el-icon-edit slotIconStyle" @click="iconEdit(scope.row,scope.$index)" />
-            <el-button style="float:right;margin-top:5px" size="mini" @click="submitFun(scope.row,scope.$index)">确定</el-button>
-            <el-button style="float:right;margin-top:5px;margin-right:5px" size="mini" @click="scope.row.visible = false">取消</el-button>
-          </el-popover>
+            <el-tooltip class="item" effect="dark" content="编辑" placement="top-start">
+              <el-popover
+                v-model="scope.row.visible"
+                placement="right"
+                width="400"
+                trigger="manual"
+              >
+                <el-input
+                  v-model="reason"
+                  type="textarea"
+                  :rows="2"
+                  placeholder="请输入内容"
+                />
+
+                <i slot="reference" class="el-icon-edit slotIconStyle" @click="iconEdit(scope.row,scope.$index)" />
+                <el-button style="float:right;margin-top:5px" size="mini" @click="submitFun(scope.row,scope.$index)">确定</el-button>
+                <el-button style="float:right;margin-top:5px;margin-right:5px" size="mini" @click="scope.row.visible = false">取消</el-button>
+              </el-popover>
+            </el-tooltip>
+
+          </div>
         </template>
       </el-table-column>
       <el-table-column
@@ -426,15 +431,14 @@ export default {
     display:inline-block;
     background: red;
     color: white;
-    width:73%;
+    width:100%;
   }
   .discardClass{
     color:red !important;
   }
     .slotIconStyle{
-    color: rgb(11, 189, 11);
-    font-size: 20px;
+    font-size: 25px;
     display: inline-block;
-    height: 25px;
+    /* height: 25px; */
   }
 </style>

@@ -1,12 +1,12 @@
 <template>
   <div>
-    <!-- 仓库位置下拉 -->
+    <!-- 仓库位置 出库口下拉 -->
     <el-select
       v-model="value"
-      placeholder="请选择仓库位置"
+      placeholder="请选择"
       :loading="loading"
       :clearable="isClear"
-      no-data-text="暂无启用的仓库"
+      no-data-text="暂无启用的"
       @visible-change="visibleChange"
       @change="changSelect"
     >

@@ -5,7 +5,7 @@
       <el-form-item label="仓库名称">
         {{ warehouseName }}
       </el-form-item>
-      <el-form-item label="仓库位置" prop="station">
+      <el-form-item label="出库口" prop="station">
         <stationInfoWarehouse
           ref="stationInfoWarehouseRef"
           :warehouse-name="warehouseName"
@@ -134,7 +134,7 @@ export default {
           { required: true, trigger: 'blur',
             validator: (rule, value, callback) => {
               validateMy(rule, value, callback,
-                this.ruleForm.station, '仓库位置')
+                this.ruleForm.station, '出库口')
             } }
         ],
         need_qty: [

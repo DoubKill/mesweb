@@ -4,6 +4,7 @@
     clearable
     placeholder="请选择"
     :multiple="isMultiple"
+    :disabled="isDisabled"
     @change="equipChanged"
     @visible-change="visibleChange"
   >
@@ -25,14 +26,22 @@ export default {
       type: Boolean,
       default: false
     },
+    isCreated: {
+      type: Boolean,
+      default: false
+    },
+    isDisabled: {
+      type: Boolean,
+      default: false
+    },
     defaultVal: {
-      type: Array,
+      type: [String, Number],
       default: null
     }
   },
   data() {
     return {
-      equipId: this.defaultVal || null,
+      equipId: this.defaultVal || '',
       equipOptions: []
     }
   },
@@ -41,12 +50,20 @@ export default {
       this.equipId = val
     }
   },
+  created() {
+    if (this.isCreated) {
+      this.getList()
+    }
+  },
   methods: {
+    getList() {
+      getEquip({ all: 1 }).then(response => {
+        this.equipOptions = response.results
+      })
+    },
     visibleChange(visible) {
-      if (visible) {
-        getEquip({ all: 1 }).then(response => {
-          this.equipOptions = response.results
-        })
+      if (visible && this.equipOptions.length === 0) {
+        this.getList()
       }
     },
     equipChanged(arr) {

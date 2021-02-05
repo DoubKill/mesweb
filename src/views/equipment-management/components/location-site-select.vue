@@ -21,14 +21,29 @@ import { basicsLocationNameList } from '@/api/location-site'
 export default {
   props: {
     defaultVal: {
-      type: Array,
-      default: null
+      type: [Number, String],
+      required: false,
+      default: undefined
+    },
+    isCreated: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
       className: this.defaultVal || '',
       EquipCateOptions: []
+    }
+  },
+  watch: {
+    defaultVal(val) {
+      this.className = val
+    }
+  },
+  created() {
+    if (this.isCreated) {
+      this.equip_type_list()
     }
   },
   methods: {

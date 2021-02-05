@@ -24,6 +24,7 @@
       capture="camera"
     > -->
     <img id="imgUrl" :src="_url" alt="">
+
   </div>
 </template>
 
@@ -38,12 +39,17 @@ export default {
   },
   created() {
     this._url = ''
+    this._setInterval = null
+    this.mediaStreamTrack = null
   },
   beforeCreate() {
   },
   mounted() {
   },
   updated() {
+  },
+  destroyed() {
+    window.clearInterval(this._setInterval)
   },
   methods: {
     async getUrl(type) {
@@ -110,6 +116,14 @@ export default {
 
       return url
     },
+    stopCapture() {
+      if (window.stream) {
+        window.stream.getTracks().forEach(track => {
+          track.stop()
+        })
+        window.clearInterval(this._setInterval)
+      }
+    },
     startRecognize() {
       // window.addEventListener('DOMContentLoaded', function() {
       var video = document.getElementById('video'); var canvas; var context
@@ -118,8 +132,8 @@ export default {
         context = canvas.getContext('2d')
       } catch (e) { alert('not support canvas!'); return }
 
-      alert(navigator.mediaDevices + '111')
-      alert(navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia + '2222')
+      // alert(navigator.mediaDevices + '111')
+      // alert(navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia + '2222')
       // 老的浏览器可能根本没有实现 mediaDevices，所以我们可以先设置一个空的对象
       if (navigator.mediaDevices === undefined) {
         navigator.mediaDevices = {}
@@ -141,10 +155,10 @@ export default {
           })
         }
       }
-
-      const constraints = { video: true }
+      const constraints = { video: { facingMode: { exact: 'environment' }}}
       navigator.mediaDevices.getUserMedia(constraints)
-        .then(function(stream) {
+        .then((stream) => {
+          window.stream = stream
           // 旧的浏览器可能没有srcObject
           if ('srcObject' in video) {
             video.srcObject = stream
@@ -160,7 +174,6 @@ export default {
           console.log(err)
           alert('摄像头开启错误')
         })
-
       // navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia
       // alert(navigator.getUserMedia)
 
@@ -187,7 +200,7 @@ export default {
       } else alert('Native device media streaming (getUserMedia) not supported in this browser')**/
 
       // const qr = new QrcodeDecoder()
-      setInterval(() => {
+      this._setInterval = setInterval(() => {
         context.drawImage(video, 0, 0, canvas.width = video.videoWidth, canvas.height = video.videoHeight)
         var imageData = context.getImageData(0, 0, video.videoWidth, video.videoHeight)
         var code = jsQR(imageData.data, imageData.width, imageData.height, {
@@ -216,7 +229,6 @@ export default {
       }, 5000)
       // }, false)
     },
-    sweep() { },
     next() { }
   }
 }
