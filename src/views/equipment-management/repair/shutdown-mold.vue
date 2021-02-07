@@ -12,32 +12,39 @@
         type="index"
       />
       <el-table-column
-        prop="date"
+        prop="name"
         label="停机类型"
       />
       <el-table-column
-        prop="name"
-        label="停机编码"
+        prop="no"
+        label="停机类型编码"
       />
       <el-table-column
-        prop="date"
+        prop="created_username"
         label="创建人"
       />
       <el-table-column
-        prop="name"
+        prop="created_date"
         label="创建时间"
       />
       <el-table-column
-        prop="address"
         label="操作"
       >
-        <el-button
-          size="mini"
-          type="danger"
-          @click="handleDelete(row)"
-        >删除</el-button>
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="danger"
+            @click="handleDelete(scope.row)"
+          >删除</el-button>
+        </template>
       </el-table-column>
     </el-table>
+    <page
+      :old-page="false"
+      :total="total"
+      :current-page="searchPage"
+      @currentChange="currentChange"
+    />
 
     <el-dialog
       title="新增"
@@ -53,49 +60,67 @@
       >
         <el-form-item
           label="停机类型"
-          prop="type"
-        >
-          <el-input v-model="editForm.type" />
-        </el-form-item>
-        <el-form-item
-          label="停机类型编码"
           prop="name"
         >
           <el-input v-model="editForm.name" />
         </el-form-item>
+        <el-form-item
+          label="停机类型编码"
+          prop="no"
+        >
+          <el-input v-model="editForm.no" />
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose(false)">取 消</el-button>
-        <el-button type="primary" @click="submitBtn">确 定</el-button>
+        <el-button type="primary" :loading="loadingBtn" @click="submitBtn">确 定</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import { equipEownType } from '@/api/base_w_two'
+import page from '@/components/page'
 export default {
+  components: { page },
   data() {
     return {
       tableData: [],
       dialogVisible: false,
       rules: {
         name: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        type: [{ required: true, message: '不能为空', trigger: 'blur' }]
+        no: [{ required: true, message: '不能为空', trigger: 'blur' }]
       },
       editForm: {
-        type: null,
+        no: null,
         name: null
-      }
+      },
+      loadingBtn: false,
+      total: 0,
+      searchPage: 1,
+      page_size: 10
     }
+  },
+  created() {
+    this.getList()
   },
   methods: {
     async getList() {
       try {
-        // const data = await globalCodesUrl('get', { params: { all: 1, class_name: '发货类型' }})
-        // this.options = data.results || []
+        const data = await equipEownType('get', null, { params: {
+          page: this.searchPage, page_size: this.page_size
+        }})
+        this.tableData = data.results || []
+        this.total = data.count
       } catch (e) {
         //
       }
+    },
+    currentChange(page, page_size) {
+      this.searchPage = page
+      this.page_size = page_size
+      this.getList()
     },
     add() {
       this.dialogVisible = true
@@ -109,13 +134,18 @@ export default {
       }
     },
     submitBtn() {
-      this.$refs.editForm.validate((valid) => {
+      this.$refs.editForm.validate(async(valid) => {
         if (valid) {
-          // postLocation(this.locationForm).then(response => {
-          //   this.dialogCreateVisible = false
-          //   this.$message('创建成功')
-          //   this.getList()
-          // })
+          this.loadingBtn = true
+          try {
+            await equipEownType('post', null, { data: this.editForm })
+            this.handleClose(false)
+            this.$message.success('创建成功')
+            this.getList()
+          } catch (e) {
+            //
+          }
+          this.loadingBtn = false
         }
       })
     },
@@ -125,17 +155,16 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        // deleteMaterialLocationBinding(row.id)
-        //   .then(response => {
-        //     this.$message({
-        //       type: 'success',
-        //       message: '删除成功!'
-        //     })
-        //     this.getParams.page = 1
-        //     this.getList()
-        //   }).catch(e=>{
-        //     this.$message.error('删除失败')
-        // })
+        equipEownType('delete', row.id)
+          .then(response => {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+            this.getList()
+          }).catch(e => {
+            this.$message.error('删除失败')
+          })
       })
     }
   }

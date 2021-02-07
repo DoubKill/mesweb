@@ -11,6 +11,7 @@ const getters = {
     }
   },
   name: state => state.user.name,
+  userId: state => state.user.userId,
   routes: state => state.permission.routes,
   addRoutes: state => state.permission.addRoutes,
   editionNo: state => state.user.editionNo

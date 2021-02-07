@@ -259,26 +259,6 @@ export const asyncRoutes = [{
       icon: 'formula',
       permissionName: 'weight_batching'
     }
-  },
-  {
-    path: '/rubber-plan-release',
-    name: 'rubber-plan-release',
-    component: () => import('@/views/recipe/rubber-plan-release'),
-    meta: {
-      title: '小料计划下达',
-      icon: 'formula',
-      permissionName: 'batching_plan'
-    }
-  },
-  {
-    path: '/actual-comparison',
-    name: 'actual-comparison',
-    component: () => import('@/views/recipe/actual-comparison'),
-    meta: {
-      title: '小料称量计划与实际对比',
-      icon: 'formula',
-      permissionName: 'batching_reality'
-    }
   }
   ]
 },
@@ -327,9 +307,29 @@ export const asyncRoutes = [{
     name: 'material-quantity-demanded',
     component: () => import('@/views/material_quantity_demanded/index'),
     meta: {
-      title: '原材料需求量',
+      title: '物料需求量',
       icon: 'productionPlanManagement',
       permissionName: 'materialdemanded'
+    }
+  },
+  {
+    path: '/rubber-plan-release',
+    name: 'rubber-plan-release',
+    component: () => import('@/views/recipe/rubber-plan-release'),
+    meta: {
+      title: '小料计划下达',
+      icon: 'formula',
+      permissionName: 'batching_plan'
+    }
+  },
+  {
+    path: '/actual-comparison',
+    name: 'actual-comparison',
+    component: () => import('@/views/recipe/actual-comparison'),
+    meta: {
+      title: '小料称量计划与实际对比',
+      icon: 'formula',
+      permissionName: 'batching_reality'
     }
   }
   ]
@@ -478,7 +478,7 @@ export const asyncRoutes = [{
       component: () => import('@/views/material_repertory_manage/index'),
       name: 'MaterialRepertoryManage',
       meta: {
-        title: '原料库存',
+        title: '原材料库',
         icon: 'stock',
         permissionName: 'material_inventory'
       }
@@ -1099,8 +1099,8 @@ export const asyncRoutes = [{
         ]
       }
     ]
-  }
-  /** {
+  },
+  {
     path: '/location-definition',
     component: () => import('@/views/equipment-management/repair/location-definition'),
     name: 'location-definition',
@@ -1181,7 +1181,27 @@ export const asyncRoutes = [{
       title: '设备维修履历',
       permissionName: ''
     }
-  }**/
+  },
+  {
+    path: '/equipment-assets',
+    component: () => import('@/views/equipment-management/repair/equipment-assets'),
+    name: 'equipment-assets',
+    meta: {
+      icon: 'quality',
+      title: '设备资产',
+      permissionName: ''
+    }
+  },
+  {
+    path: '/platform-manage',
+    component: () => import('@/views/equipment-management/repair/platform-manage'),
+    name: 'platform-manage',
+    meta: {
+      icon: 'quality',
+      title: '平台信息管理',
+      permissionName: ''
+    }
+  }
   ]
 },
 {

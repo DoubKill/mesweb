@@ -2,18 +2,28 @@
   <div class="work-state-style">
     <!-- 设备运行现况 -->
     <el-tag
-      v-for="item in stateList"
-      :key="item.label"
-      :color="item.type"
+      v-for="(item,key) in stateList"
+      :key="item"
+      :color="item"
       effect="dark"
     >
-      {{ item.label }}
+      {{ key }}
     </el-tag>
 
-    <el-row style="margin-top:20px" :gutter="20">
-      <el-col v-for="(o) in 3" :key="o" :span="8">
-        <el-card :body-style="{ padding: '0px' }">
-          99
+    <el-row style="margin-top:40px" :gutter="20">
+      <el-col v-for="(o,index) in dataList" :key="index" :span="8">
+        <el-card :body-style="{ padding: '0px' }" class="el-card-style">
+          <h3>{{ index }}</h3>
+          <el-tag
+            v-for="(itemO,i) in o"
+            :key="i"
+            :color="stateList[itemO.status]"
+            effect="dark"
+            class="el-tag-style"
+          >
+            {{ itemO.equip_no }}
+            {{ itemO.user }}
+          </el-tag>
         </el-card>
       </el-col>
     </el-row>
@@ -21,35 +31,46 @@
 </template>
 
 <script>
+import { equipCurrentStatusList } from '@/api/base_w_two'
 export default {
   data() {
     return {
-      stateList: [
-        { type: '#ff9000', label: '停机' },
-        { type: '#FF0000', label: '故障' },
-        { type: '#81D3F8', label: '维修开始' },
-        { type: '#F4B084', label: '维修结束' },
-        { type: '#AAAAAA', label: '空转' },
-        { type: '#76C86F', label: '运行中' }
-      ],
+      stateList: {
+        停机: '#ff9000', 故障: '#FF0000', 维修开始: '#81D3F8', 维修结束: '#F4B084', 空转: '#AAAAAA', 运行中: '#76C86F'
+      },
       list: [
         { name: 111, type: '停机' }
-      ]
+      ],
+      dataList: []
     }
   },
   created() {
-    this.list.forEach(D => {
-      // 按状态匹配颜色
-      const obj = this.stateList.find(d => d.label === D.type)
-      D._color = obj.type
-    })
-    console.log(this.list, 777)
+    this.getList()
+  },
+  methods: {
+    async getList() {
+      try {
+        const data = await equipCurrentStatusList('get')
+        this.dataList = data.results || []
+      } catch (e) {
+      //
+      }
+    }
   }
+
 }
 </script>
 
 <style lang="scss" scoped>
 .el-tag--dark{
       border-color:#fff;
+}
+.el-card-style{
+  padding:20px;
+  padding-top:0px;
+  margin-bottom:15px;
+}
+.el-tag-style{
+  margin:5px;
 }
 </style>

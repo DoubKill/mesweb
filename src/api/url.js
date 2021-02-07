@@ -264,5 +264,20 @@ export default {
   ImportMaterialMestMrders: '/api/v1/quality/import-material-test-orders/',
   // mes与子系统物料信息映射
   MaterialSupplierCollect: '/api/v1/terminal/material-supplier-collect/',
-  WeightingPackageLog: '/api/v1/terminal/weighting-package-log/'
+  WeightingPackageLog: '/api/v1/terminal/weighting-package-log/',
+  EquipEownType: '/api/v1/equipment/equip-down-type/',
+  EquipDownReason: '/api/v1/equipment/equip-down-reason/',
+  EquipCurrentStatusList: '/api/v1/equipment/equip-current-status-list/',
+  EquipCurrentStatus: '/api/v1/equipment/equip-current-status/',
+  // 设备部位
+  EquipPart: '/api/v1/equipment/equip-part/',
+  PropertyTypeNode: '/api/v1/equipment/property-type-node/',
+  ExportProperty: '/api/v1/equipment/property/export-property/',
+  ImportProperty: '/api/v1/equipment/property/import-property/',
+  EquipmentProperty: '/api/v1/equipment/property/',
+  // 维修表单
+  EquipMaintenanceOrder: '/api/v1/equipment/equip-maintenance-order/',
+  // 通知配置
+  PlatformConfig: '/api/v1/equipment/platform-config/',
+  EquipMaintenanceOrderLog: '/api/v1/equipment/equip-maintenance-order-log/'
 }

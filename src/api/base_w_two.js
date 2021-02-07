@@ -164,3 +164,112 @@ export function weightingPackageLog(method, id, data = {}) {
   return request(obj)
 }
 
+export function equipEownType(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipEownType + id + '/' : API.EquipEownType,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipDownReason(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipDownReason + id + '/' : API.EquipDownReason,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipCurrentStatusList(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipCurrentStatusList + id + '/' : API.EquipCurrentStatusList,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipCurrentStatus(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipCurrentStatus + id + '/' : API.EquipCurrentStatus,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipPart(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipPart + id + '/' : API.EquipPart,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function propertyTypeNode(method, id, data = {}) {
+  const obj = {
+    url: id ? API.PropertyTypeNode + id + '/' : API.PropertyTypeNode,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function exportProperty(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ExportProperty + id + '/' : API.ExportProperty,
+    method: method,
+    responseType: 'blob'
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function importProperty(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ImportProperty + id + '/' : API.ImportProperty,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipmentProperty(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipmentProperty + id + '/' : API.EquipmentProperty,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipMaintenanceOrder(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipMaintenanceOrder + id + '/' : API.EquipMaintenanceOrder,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function platformConfig(method, id, data = {}) {
+  const obj = {
+    url: id ? API.PlatformConfig + id + '/' : API.PlatformConfig,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function EquipMaintenanceOrderLog(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipMaintenanceOrderLog + id + '/' : API.EquipMaintenanceOrderLog,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
