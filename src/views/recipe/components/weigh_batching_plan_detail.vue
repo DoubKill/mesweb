@@ -10,9 +10,9 @@
       <el-form-item label="生产机型">
         <el-input size="mini" :value="batchingClassesPlan.category_name" :disabled="true" />
       </el-form-item>
-      <el-form-item label="配料设备">
+      <!-- <el-form-item label="配料设备">
         <el-input size="mini" :value="batchingClassesPlan.equip_name" :disabled="true" />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="计划数量(包)">
         <el-input size="mini" :value="batchingClassesPlan.plan_package" :disabled="true" />
       </el-form-item>
@@ -29,10 +29,9 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="24" style="">
-            <span>
-              {{ typeName() }}
-            </span>
+          <el-col :span="24" style="text-align:right;padding-right:5px">
+            <span>{{ cntType.package_type===1?'自动':'手动' }}</span>
+            {{ cntType.weigh_type===1?'硫磺包':'细料包' }}
           </el-col>
         </el-row>
       </el-col>
@@ -41,7 +40,7 @@
           border
           style="width: 100%"
           fit
-          :data="cntType.weighbatchingdetail_set"
+          :data="cntType.weight_details"
         >
           <el-table-column label="原材料编码" prop="material_no" align="center" />
           <el-table-column label="原材料名称" align="center" prop="material_name" />

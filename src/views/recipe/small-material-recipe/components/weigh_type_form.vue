@@ -18,26 +18,27 @@
         </el-col>
       </el-row>
       <el-row>
-        <el-col :span="24" style=""><span>{{ weightType.name }}</span></el-col>
+        <el-col :span="24" style="text-align:right;padding-right:5px"><span>{{ weightType.package_type===1?'自动':'手动' }}</span></el-col>
+        <el-col :span="24" style="text-align:right;padding-right:5px"><span>{{ weightType.weigh_type===1?'硫磺包':'细料包' }}</span></el-col>
       </el-row>
     </el-col>
     <el-col :span="20">
       <el-table
         :key="tableKey"
-        border
-        :data="weightType.weigh_batching_detail"
+        borderming
+        :data="weightType.weight_details"
       >
         <el-table-column label="原材料编码" prop="material_no" align="center" />
         <el-table-column label="原材料名称" align="center">
-          <template slot-scope="{ row }">
+          <template slot-scope="{ row, $index }">
             <el-select
               v-model="row.material"
               :disabled="!edit"
-              @change="updateRow(row)"
+              @change="updateRow(row,$index)"
             >
               <el-option
                 v-for="item in productBatchingDetail"
-                :key="item.id"
+                :key="item.material"
                 :label="item.material_name"
                 :value="item.material"
                 :disabled="item.disabled"
@@ -45,7 +46,7 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column label="实际重量(kg)" prop="actual_weight" align="center" />
+        <el-table-column label="实际重量(kg)" prop="standard_weight" align="center" />
         <el-table-column v-if="edit" align="center" label="操作">
           <template slot-scope="{row}">
             <el-button size="mini" @click="deleteRow(row)">删除</el-button>
@@ -55,6 +56,7 @@
       <el-form>
         <el-form-item style="text-align: center">
           <el-button v-if="edit" @click="insertOneRow">插入一行</el-button>
+          <el-button v-if="edit" @click="deleteWholeRow">删除料包</el-button>
         </el-form-item>
       </el-form>
     </el-col>
@@ -71,7 +73,10 @@ export default {
     },
     productBatchingDetail: {
       type: Array,
-      required: true
+      required: false,
+      default() {
+        return []
+      }
     },
     edit: {
       type: Boolean,
@@ -87,18 +92,18 @@ export default {
   watch: {
     productBatchingDetail() {
       if (this.productBatchingDetail) {
-        this.updateTable()
+        this.$emit('updateRow')
       }
     }
   },
   created() {
-    //   console.log()
-    this.updateTable()
+    console.log(this.weightType)
+    this.$emit('updateRow')
   },
   methods: {
     updateTable() {
-      for (let i = 0; i < this.weightType.weigh_batching_detail.length; ++i) {
-        const batching_detail = this.weightType.weigh_batching_detail[i]
+      for (let i = 0; i < this.weightType.weight_details.length; ++i) {
+        const batching_detail = this.weightType.weight_details[i]
         let detail = this.productBatchingDetail.find(item => {
           return item.material === batching_detail.material
         })
@@ -108,7 +113,7 @@ export default {
         }
         for (let j = 0; j < this.productBatchingDetail.length; j++) {
           const deltail_ = this.productBatchingDetail[j]
-          if (deltail_.material === this.weightType.weigh_batching_detail[i].material) {
+          if (deltail_.material === this.weightType.weight_details[i].material) {
             this.$set(deltail_, 'disabled', true)
           }
         }
@@ -121,28 +126,22 @@ export default {
           deltail.disabled = false
         }
       }
-      this.weightType.weigh_batching_detail.splice(this.weightType.weigh_batching_detail.indexOf(row), 1)
+      this.weightType.weight_details.splice(this.weightType.weight_details.indexOf(row), 1)
     },
     insertOneRow() {
-      this.weightType.weigh_batching_detail.push({})
+      this.weightType.weight_details.push({})
     },
-    updateRow(row) {
+    deleteWholeRow() {
+      this.$emit('deleteWholeRow')
+    },
+    updateRow(row, index) {
       const detail = this.productBatchingDetail.find(item => {
         return item.material === row.material
       })
-      for (let j = 0; j < this.weightType.weigh_batching_detail.length; ++j) {
-        if (this.weightType.weigh_batching_detail[j].material === detail.material) {
-          this.weightType.weigh_batching_detail[j] = JSON.parse(JSON.stringify(detail))
+      const _obj = JSON.parse(JSON.stringify(detail))
+      _obj.standard_weight = _obj.actual_weight
+      this.weightType.weight_details[index] = _obj
 
-          for (let i = 0; i < this.productBatchingDetail.length; i++) {
-            const deltail_ = this.productBatchingDetail[i]
-            if (deltail_.material === this.weightType.weigh_batching_detail[j].material) {
-              // this.$set(deltail_, 'disabled', true)
-            }
-          }
-          break
-        }
-      }
       this.tableKey += 1
       this.$emit('updateRow')
     }

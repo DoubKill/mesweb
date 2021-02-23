@@ -30,6 +30,7 @@
       </el-form-item>
     </el-form>
     <el-table
+      ref="singleTable"
       highlight-current-row
       :data="tableData"
       border
@@ -109,6 +110,12 @@ import { rubber_material_url } from '@/api/rubber_recipe_fun'
 
 export default {
   components: { page, StageIdSelect, EquipCategorySelect },
+  props: {
+    show: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       total: 0,
@@ -138,13 +145,22 @@ export default {
       }]
     }
   },
+  watch: {
+    show(val) {
+      if (!val) {
+        this.$refs.singleTable.setCurrentRow()
+      }
+    }
+  },
   created() {
     this.rubber_material_list()
   },
   methods: {
     handleCurrentChange(val) {
       this.currentRow = val
-      this.$emit('productBatchingSelect', val)
+      if (val) {
+        this.$emit('productBatchingSelect', val)
+      }
     },
     stageChange() {
       this.getParams.page = 1

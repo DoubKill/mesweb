@@ -104,7 +104,7 @@
       <el-table-column
         prop="address"
         label="操作"
-        min-width="26"
+        min-width="27"
       >
         <template
           v-if="!([6,4,5].includes(scope.row.status))"
@@ -127,7 +127,7 @@
               style="margin-bottom:2px"
               size="mini"
               type="primary"
-            >派发
+            >指派
             </el-button>
           </el-popover>
           <el-button-group>
@@ -143,8 +143,8 @@
               style="margin-bottom:2px"
               size="mini"
               type="warning"
-              @click="claimFun(scope.row,'认领',2)"
-            >认领
+              @click="claimFun(scope.row,'接单',2)"
+            >接单
             </el-button>
             <el-button
               v-if="scope.row.assign_user === Number(userId)&&[3,2].includes(scope.row.status)"
@@ -248,7 +248,7 @@
             type="textarea"
             :rows="3"
             placeholder="请输入内容"
-            :disabled="operateType!=='新建'&&(operateType==='初步诊断'||!(ruleForm.maintenance_user === Number(userId)&&[3,4].includes(ruleForm.status)))"
+            :disabled="operateType!=='新建'&&(operateType==='初步诊断'||!(ruleForm.maintenance_user === Number(userId)&&[2,3].includes(ruleForm.status)))"
           />
         </el-form-item>
         <el-form-item label="备注" prop="note">
@@ -257,7 +257,7 @@
             type="textarea"
             :rows="3"
             placeholder="请输入内容"
-            :disabled="operateType!=='新建'&&(operateType==='初步诊断'||!(ruleForm.maintenance_user === Number(userId)&&[3,4].includes(ruleForm.status)))"
+            :disabled="operateType!=='新建'&&(operateType==='初步诊断'||!(ruleForm.maintenance_user === Number(userId)&&[2,3].includes(ruleForm.status)))"
           />
         </el-form-item>
         <el-form-item label="上传图片">
@@ -290,7 +290,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose(false)">取 消</el-button>
-        <el-button v-if="!(operateType!=='新建'&&(operateType==='初步诊断'||!(ruleForm.maintenance_user === Number(userId)&&[3,4].includes(ruleForm.status))))" type="primary" @click="addSubmitFun">确 定</el-button>
+        <el-button v-if="!(operateType!=='新建'&&(operateType==='初步诊断'||!(ruleForm.maintenance_user === Number(userId)&&[2,3].includes(ruleForm.status))))" type="primary" @click="addSubmitFun">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -366,7 +366,7 @@ export default {
       dialogImageUrl: '',
       operateType: '',
       currentObj: {},
-      // 派发给谁
+      // 指派给谁
       maintenance_user: ''
     }
   },
@@ -453,11 +453,11 @@ export default {
         .then(response => {
           this.$message({
             type: 'success',
-            message: '派发成功!'
+            message: '指派成功!'
           })
           this.changeList()
         }).catch(e => {
-          this.$message.error('派发失败')
+          this.$message.error('指派失败')
         })
     },
     onChangeImg(file, fileList) {

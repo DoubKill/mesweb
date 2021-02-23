@@ -241,6 +241,7 @@ export default {
 
   // 配料日班次计划
   BatchingClassesPlanUrl: '/api/v1/plan/batching-classes-plan/',
+  BatchingClassesEquipPlan: '/api/v1/plan/batching-classes-equip-plan/',
 
   // 下发配料计划
   IssueBatchingClassesPlanUrl: '/api/v1/plan/issue-batching-classes-plan/',
