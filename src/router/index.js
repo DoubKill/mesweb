@@ -1101,96 +1101,103 @@ export const asyncRoutes = [{
     ]
   },
   {
-    path: '/location-definition',
-    component: () => import('@/views/equipment-management/repair/location-definition'),
-    name: 'location-definition',
-    meta: {
-      title: '设备部位定义',
-      icon: 'quality',
-      permissionName: ''
-    }
-  },
-  {
-    path: '/cause-of-shutdown',
-    redirect: '/cause-of-shutdown/mold',
+    path: '/equipment-maintenance',
+    redirect: '/location-definition',
     component: {
       render: c => c('router-view')
     },
-    name: 'cause-of-shutdown',
+    name: 'equipment-maintenance',
     meta: {
-      title: '停机原因管理',
+      title: '设备维修管理',
       icon: 'quality'
     },
     children: [
       {
-        path: '/cause-of-shutdown/mold',
-        component: () => import('@/views/equipment-management/repair/shutdown-mold'),
-        name: 'cause-of-shutdown-mold',
+        path: '/location-definition',
+        component: () => import('@/views/equipment-management/repair/location-definition'),
+        name: 'location-definition',
         meta: {
-          title: '停机类型定义',
+          title: '设备部位定义',
           permissionName: ''
         }
       },
       {
-        path: '/cause-of-shutdown/reason',
-        component: () => import('@/views/equipment-management/repair/shutdown-reason'),
-        name: 'cause-of-shutdown-reason',
+        path: '/cause-of-shutdown',
+        redirect: '/cause-of-shutdown/mold',
+        component: {
+          render: c => c('router-view')
+        },
+        name: 'cause-of-shutdown',
         meta: {
-          title: '停机原因定义',
+          title: '停机原因管理'
+        },
+        children: [
+          {
+            path: '/cause-of-shutdown/mold',
+            component: () => import('@/views/equipment-management/repair/shutdown-mold'),
+            name: 'cause-of-shutdown-mold',
+            meta: {
+              title: '停机类型定义',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/cause-of-shutdown/reason',
+            component: () => import('@/views/equipment-management/repair/shutdown-reason'),
+            name: 'cause-of-shutdown-reason',
+            meta: {
+              title: '停机原因定义',
+              permissionName: ''
+            }
+          }
+        ]
+      },
+      {
+        path: '/repair-apply',
+        component: () => import('@/views/equipment-management/repair/repair-apply'),
+        name: 'repair-apply',
+        meta: {
+          title: '设备维修申请页面',
+          permissionName: ''
+        }
+      },
+      {
+        path: '/repair-manage',
+        component: () => import('@/views/equipment-management/repair/repair-manage'),
+        name: 'repair-manage',
+        meta: {
+          title: '设备维修单管理',
+          permissionName: ''
+        }
+      },
+      {
+        path: '/work-state',
+        component: () => import('@/views/equipment-management/repair/work-state'),
+        name: 'work-state',
+        meta: {
+          title: '设备运行现况',
+          permissionName: ''
+        }
+      },
+      {
+        path: '/repair-resume',
+        component: () => import('@/views/equipment-management/repair/repair-resume'),
+        name: 'repair-resume',
+        meta: {
+          title: '设备维修履历',
+          permissionName: ''
+        }
+      },
+      {
+        path: '/equipment-assets',
+        component: () => import('@/views/equipment-management/repair/equipment-assets'),
+        name: 'equipment-assets',
+        meta: {
+          title: '设备资产',
           permissionName: ''
         }
       }
     ]
-  },
-  {
-    path: '/repair-apply',
-    component: () => import('@/views/equipment-management/repair/repair-apply'),
-    name: 'repair-apply',
-    meta: {
-      icon: 'quality',
-      title: '设备维修申请页面',
-      permissionName: ''
-    }
-  },
-  {
-    path: '/repair-manage',
-    component: () => import('@/views/equipment-management/repair/repair-manage'),
-    name: 'repair-manage',
-    meta: {
-      icon: 'quality',
-      title: '设备维修单管理',
-      permissionName: ''
-    }
-  },
-  {
-    path: '/work-state',
-    component: () => import('@/views/equipment-management/repair/work-state'),
-    name: 'work-state',
-    meta: {
-      icon: 'quality',
-      title: '设备运行现况',
-      permissionName: ''
-    }
-  },
-  {
-    path: '/repair-resume',
-    component: () => import('@/views/equipment-management/repair/repair-resume'),
-    name: 'repair-resume',
-    meta: {
-      icon: 'quality',
-      title: '设备维修履历',
-      permissionName: ''
-    }
-  },
-  {
-    path: '/equipment-assets',
-    component: () => import('@/views/equipment-management/repair/equipment-assets'),
-    name: 'equipment-assets',
-    meta: {
-      icon: 'quality',
-      title: '设备资产',
-      permissionName: ''
-    }
   },
   {
     path: '/platform-manage',
