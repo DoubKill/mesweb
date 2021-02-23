@@ -27,7 +27,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="物料编码" prop="material_no">
-        <materialCodeSelect :store-name="warehouseName" :default-val="ruleForm.material_no" @changSelect="materialCodeFun" />
+        <materialCodeSelect :store-name="warehouseName" :status="ruleForm.quality_status" :default-val="ruleForm.material_no" @changSelect="materialCodeFun" />
       </el-form-item>
       <el-form-item label="可用库存数" prop="c">
         <!-- 按物料编码查到的 -->
@@ -55,7 +55,7 @@
         <el-button type="primary" @click="deliverClick">请添加</el-button>
       </el-form-item>
       <el-form-item v-if="$route.meta.title==='混炼胶出库计划'" label="机台号">
-        <EquipSelect ref="EquipSelect" :is-multiple="true" @equipSelected="equipSelected" />
+        <EquipSelect equipType="密炼设备" ref="EquipSelect" :is-multiple="true" @equipSelected="equipSelected" />
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -114,7 +114,8 @@ export default {
         inventory_type: '正常出库',
         order_no: 'order_no',
         status: 4,
-        need_weight: undefined
+        need_weight: undefined,
+        quality_status:null
       },
       rules: {
         material_no: [
@@ -164,9 +165,11 @@ export default {
       }
       this.ruleForm.dispatch = []
       this.ruleForm.equip = []
+      this.ruleForm.need_weight = undefined
       this.handleSelection = []
       this.ruleForm.deliveryPlan = ''
       this.loadingBtn = false
+      this.ruleForm.quality_status = ''
       if (this.$refs.stationInfoWarehouseRef) {
         this.$refs.stationInfoWarehouseRef.value = null
       }

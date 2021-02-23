@@ -37,6 +37,11 @@ export default {
     defaultVal: {
       type: [String, Number],
       default: null
+    },
+    // 设备类型
+    equipType: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -57,7 +62,13 @@ export default {
   },
   methods: {
     getList() {
-      getEquip({ all: 1 }).then(response => {
+      const obj = { all: 1 }
+      if (this.equipType) {
+        obj.category_name = this.equipType
+      } else {
+        delete obj.category_name
+      }
+      getEquip(obj).then(response => {
         this.equipOptions = response.results
       })
     },

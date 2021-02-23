@@ -91,7 +91,7 @@
       </el-table-column>
       <el-table-column v-if="$route.meta.title==='混炼胶出库计划'" label="机台号" align="center" min-width="100">
         <template slot-scope="scope">
-          <EquipSelect :is-multiple="true" @equipSelected="equipSelected($event,scope.$index)" />
+          <EquipSelect equipType="密炼设备" :is-multiple="true" @equipSelected="equipSelected($event,scope.$index)" />
         </template>
       </el-table-column>
     </el-table>

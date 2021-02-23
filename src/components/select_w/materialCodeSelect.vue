@@ -35,6 +35,10 @@ export default {
     storeName: {
       type: String,
       default: null
+    },
+    status: {
+      type: String,
+      default: null
     }
   },
   data() {
@@ -47,6 +51,12 @@ export default {
   watch: {
     defaultVal(val) {
       this.value = val
+    },
+    status(val){
+      if(val){
+        this.value = ''
+        this.getList()
+      }
     }
   },
   created() {
@@ -58,7 +68,7 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const data = await materialCount('get', null, { params: { store_name: this.storeName }})
+        const data = await materialCount('get', null, { params: { store_name: this.storeName,status:this.status }})
         this.options = data || []
         this.loading = false
       } catch (e) {
