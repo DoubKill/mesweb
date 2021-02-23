@@ -28,6 +28,11 @@ export default {
     defaultVal: {
       type: Array,
       default: null
+    },
+     // 设备类型
+    equipType: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -44,7 +49,13 @@ export default {
   methods: {
     visibleChange(visible) {
       if (visible) {
-        getEquip({ all: 1 }).then(response => {
+        let obj = {all:1}
+        if(this.equipType){
+          obj.category_name = this.equipType
+        }else{
+          delete obj.category_name
+        }
+        getEquip(obj).then(response => {
           this.equipOptions = response.results
         })
       }
