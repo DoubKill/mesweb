@@ -154,6 +154,12 @@
         label="已下达数量(包)"
         align="center"
         min-width="16"
+        :formatter="(row, column) => {
+          if(row.packages){
+            return row.packages
+          }
+          return row.plan_package-row.undistributed_package
+        }"
       />
       <el-table-column
         prop="weigh_batching_used_type"

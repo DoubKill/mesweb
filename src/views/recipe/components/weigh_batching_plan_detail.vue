@@ -44,7 +44,14 @@
         >
           <el-table-column label="原材料编码" prop="material_no" align="center" />
           <el-table-column label="原材料名称" align="center" prop="material_name" />
-          <el-table-column label="实际重量(kg)" prop="standard_weight" align="center" />
+          <el-table-column label="总重量(kg)" prop="standard_weight" align="center" />
+          <el-table-column
+            label="单包重量(kg)"
+            align="center"
+            :formatter="(row, column) => {
+              return (Number(row.standard_weight)/ Number(cntType.package_cnt)).toFixed(2)
+            }"
+          />
         </el-table>
       </el-col>
     </el-row>

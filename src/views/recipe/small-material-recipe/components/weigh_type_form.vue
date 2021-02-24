@@ -19,7 +19,7 @@
       </el-row>
       <el-row>
         <el-col :span="24" style="text-align:right;padding-right:5px"><span>{{ weightType.package_type===1?'自动':'手动' }}</span></el-col>
-        <el-col :span="24" style="text-align:right;padding-right:5px"><span>{{ weightType.weigh_type===1?'硫磺包':'细料包' }}</span></el-col>
+        <el-col :span="24" style="text-align:right;padding-right:5px"><span>{{ weightType.weigh_type===1?'硫磺包':'细料包' }}{{ weightType.tag }}</span></el-col>
       </el-row>
     </el-col>
     <el-col :span="20">
@@ -46,7 +46,15 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column label="实际重量(kg)" prop="standard_weight" align="center" />
+        <el-table-column label="总重量(kg)" prop="standard_weight" align="center" />
+        <el-table-column
+          label="单包重量(kg)"
+          align="center"
+          :formatter="(row, column) => {
+            return (Number(row.standard_weight)/ Number(weightType.package_cnt)).toFixed(2)
+          }"
+        />
+        <!-- return Math.floor((Number(row.standard_weight) *100 / Number(weightType.package_cnt))/100) -->
         <el-table-column v-if="edit" align="center" label="操作">
           <template slot-scope="{row}">
             <el-button size="mini" @click="deleteRow(row)">删除</el-button>
@@ -97,7 +105,6 @@ export default {
     }
   },
   created() {
-    console.log(this.weightType)
     this.$emit('updateRow')
   },
   methods: {

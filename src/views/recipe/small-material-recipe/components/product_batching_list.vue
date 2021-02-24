@@ -149,6 +149,8 @@ export default {
     show(val) {
       if (!val) {
         this.$refs.singleTable.setCurrentRow()
+      } else {
+        this.rubber_material_list()
       }
     }
   },

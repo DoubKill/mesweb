@@ -8,7 +8,7 @@
         <el-input v-model="productBatching.product_name" size="mini" :disabled="true" />
       </el-form-item>
       <el-form-item label="状态">
-        <el-input size="mini" value="编辑" :disabled="true" />
+        <el-input size="mini" :value="productBatching.state" :disabled="true" />
       </el-form-item>
       <el-form-item label="炼胶机类型">
         <el-input v-model="productBatching.category_name" size="mini" :disabled="true" />

@@ -164,12 +164,14 @@ export default {
     checkPermission,
     async showDetail(row) {
       this.productBatching = await weighBatchingInfo(row.id)
+      this.productBatching.state = this.usedTypeFormatter(row)
       this.currentId = row.id
       this.dialogStatus = 'show'
       this.dialogFormVisible = true
     },
     async batching() {
       this.productBatching = await weighBatchingInfo(this.currentRow.id)
+      this.productBatching.state = this.usedTypeFormatter(this.currentRow)
       this.currentId = this.currentRow.id
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
