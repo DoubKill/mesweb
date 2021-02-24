@@ -31,7 +31,7 @@
         <el-row>
           <el-col :span="24" style="text-align:right;padding-right:5px">
             <span>{{ cntType.package_type===1?'自动':'手动' }}</span>
-            {{ cntType.weigh_type===1?'硫磺包':'细料包' }}
+            {{ cntType.weigh_type===1?'硫磺包':'细料包' }}{{ cntType.tag }}
           </el-col>
         </el-row>
       </el-col>
