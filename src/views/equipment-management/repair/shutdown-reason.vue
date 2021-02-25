@@ -130,20 +130,23 @@ export default {
       tableData: [],
       reason: '',
       dialogVisible: false,
-      ruleForm: {},
+      ruleForm: {
+        no: '',
+        desc: ''
+      },
       loadingBtn: false,
       rules: {
         no: [{ required: true, message: '不能为空', trigger: 'blur' }],
         desc: [{ required: true, message: '不能为空', trigger: 'blur' }],
         equip_down_type: [{ required: true, message: '不能为空',
           validator: (rule, value, callback) => {
-            if (!this.ruleForm.equip_down_type || !value) {
+            if (!this.ruleForm.equip_down_type) {
               callback(new Error('选择停机类型'))
             } else {
               callback()
             }
           },
-          trigger: 'blur' }]
+          trigger: 'change' }]
       },
       total: 0,
       searchData: {
