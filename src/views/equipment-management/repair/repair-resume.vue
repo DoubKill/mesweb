@@ -136,6 +136,7 @@ export default {
         this.loading = true
         const data = await EquipMaintenanceOrderLog('get', null, { params: this.search })
         this.tableData = data.results || []
+        this.tableData.pop()
         this.loading = false
 
         const arr = []
