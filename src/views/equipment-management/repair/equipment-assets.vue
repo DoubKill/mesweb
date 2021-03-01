@@ -309,7 +309,12 @@ export default {
       formitem: {
         use_date: '',
         status: null,
-        leave_factory_date: null
+        leave_factory_date: null,
+        property_no: '',
+        src_no: '',
+        financial_no: '',
+        equip_type: '',
+        equip_no: ''
       },
       tableData: [],
       loading: false,
