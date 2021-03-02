@@ -49,8 +49,18 @@
       >
         <template slot-scope="{row}">
           <el-button-group>
-            <el-button v-if="['运行中','空转'].includes(row.status)" type="primary" size="mini" @click="clickDialog(row)">维修申请</el-button>
-            <el-button v-if="['停机','维修结束'].includes(row.status)" type="primary" size="mini" @click="startUpFun(row)">启动确认</el-button>
+            <el-button
+              v-if="['运行中','空转'].includes(row.status)"
+              type="primary"
+              size="mini"
+              @click="clickDialog(row)"
+            >维修申请</el-button>
+            <el-button
+              v-if="['停机','维修结束'].includes(row.status)"
+              type="primary"
+              size="mini"
+              @click="startUpFun(row)"
+            >启动确认</el-button>
           </el-button-group>
         </template>
       </el-table-column>
@@ -73,26 +83,62 @@
         :model="ruleForm"
         label-width="120px"
       >
-        <el-form-item label="日期" prop="note_time">
+        <el-form-item
+          label="日期"
+          prop="note_time"
+        >
           {{ ruleForm.note_time }}
         </el-form-item>
-        <el-form-item label="设备" prop="equip">
+        <el-form-item
+          label="设备"
+          prop="equip"
+        >
           {{ ruleForm.equip }}
         </el-form-item>
-        <el-form-item label="设备部位" prop="equip_part">
-          <locationDefinitionDelect ref="locationDefinitionDelect" :equip-no="ruleForm.equip" @locationSelect="locationSelect" />
+        <el-form-item
+          label="设备部位"
+          prop="equip_part"
+        >
+          <locationDefinitionDelect
+            ref="locationDefinitionDelect"
+            :equip-no="ruleForm.equip"
+            @locationSelect="locationSelect"
+          />
         </el-form-item>
-        <el-form-item label="停机类型" prop="first_down_type">
-          <shutdownMoldSelect ref="shutdownMoldSelect" @shutdownMoldChange="shutdownMoldChange" />
-          <el-checkbox v-model="ruleForm.down_flag" style="margin-left:10px">已停机</el-checkbox>
+        <el-form-item
+          label="停机类型"
+          prop="first_down_type"
+        >
+          <shutdownMoldSelect
+            ref="shutdownMoldSelect"
+            @shutdownMoldChange="shutdownMoldChange"
+          />
+          <el-checkbox
+            v-model="ruleForm.down_flag"
+            style="margin-left:10px"
+          >已停机</el-checkbox>
         </el-form-item>
-        <el-form-item label="原因" prop="first_down_reason">
-          <shutdownReasonSelect ref="shutdownReasonSelect" :equip-down-type-name="ruleForm.first_down_type" @shutdownReasonChange="shutdownReasonChange" />
+        <el-form-item
+          label="原因"
+          prop="first_down_reason"
+        >
+          <shutdownReasonSelect
+            ref="shutdownReasonSelect"
+            :equip-down-type-name="ruleForm.first_down_type"
+            @shutdownReasonChange="shutdownReasonChange"
+          />
         </el-form-item>
       </el-form>
-      <span slot="footer" class="dialog-footer">
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="handleClose(false)">取 消</el-button>
-        <el-button :loading="loadingBtn" type="primary" @click="submitFun">确 定</el-button>
+        <el-button
+          :loading="loadingBtn"
+          type="primary"
+          @click="submitFun"
+        >确 定</el-button>
       </span>
     </el-dialog>
 
@@ -184,6 +230,7 @@ export default {
     clickDialog(row) {
       this.ruleForm.equip = row.equip_no
       this.ruleForm.id = row.id
+      this.ruleForm.note_time = setDate('', true)
       this.dialogVisible = true
     },
     locationSelect(obj) {
@@ -207,7 +254,7 @@ export default {
           })
       })
     },
-    equipSelected() {},
+    equipSelected() { },
     shutdownMoldChange(obj) {
       this.$set(this.ruleForm, 'first_down_type', obj ? obj.name : '')
       this.$refs.shutdownReasonSelect.className = ''
