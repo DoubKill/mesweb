@@ -24,13 +24,13 @@
 import { stationInfo } from '@/api/warehouse'
 export default {
   props: {
-    //  created里面加载,是否默认显示第一个
+    //  created里面加载
     createdIs: {
       type: Boolean,
       default: false
     },
     defaultVal: {
-      type: String,
+      type: [Number, String],
       default: null
     },
     // 是否可清空
@@ -63,9 +63,8 @@ export default {
     }
   },
   created() {
-    this.$emit('changSelect', this.value)
     if (this.createdIs) {
-      this.value = this.options[0]
+      this.getList()
     }
   },
   methods: {
@@ -84,6 +83,15 @@ export default {
           return
         }
         this.options = data || []
+        if (this.warehouseName === '混炼胶库' && this.createdIs) {
+          const a = localStorage.getItem('hl-station')
+          this.value = a ? JSON.parse(a).id : ''
+          this.$emit('changSelect', this.options.filter(D => D.id === this.value)[0])
+          return
+        }
+        if (this.createdIs) {
+          this.$emit('changSelect', {})
+        }
       } catch (e) {
         this.loading = false
       }

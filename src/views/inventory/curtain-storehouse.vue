@@ -31,6 +31,13 @@
       <el-form-item label="物料编码">
         <el-input v-model="search.material_no" @input="changeList" />
       </el-form-item>
+      <el-form-item label="出库位置">
+        <stationInfoWarehouse
+          :warehouse-name="warehouseName"
+          :is-clear="true"
+          @changSelect="selectStation"
+        />
+      </el-form-item>
       <el-form-item label="仓库名称">
         {{ warehouseName }}
         <!-- <warehouseSelect @changSelect="warehouseSelect" /> -->
@@ -138,9 +145,10 @@ import { warehouseInfo } from '@/api/warehouse'
 import page from '@/components/page'
 import commitVal from '@/utils/common'
 import { setDate } from '@/utils/index'
+import stationInfoWarehouse from '@/components/select_w/warehouseSelectPosition'
 
 export default {
-  components: { page, GenerateAssignOutbound, GenerateNormalOutbound },
+  components: { page, stationInfoWarehouse, GenerateAssignOutbound, GenerateNormalOutbound },
   data() {
     return {
       loading: false,
@@ -219,8 +227,11 @@ export default {
     changeDate(date) {
       this.search.st = date ? date[0] : ''
       this.search.et = date ? date[1] : ''
-      this.getList()
-      this.search.page = 1
+      this.changeList()
+    },
+    selectStation(val) {
+      this.search.station = val ? val.name : ''
+      this.changeList()
     },
     visibleMethodNormal() {
       this.normalOutboundDialogVisible = false
