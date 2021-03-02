@@ -562,6 +562,16 @@ export const asyncRoutes = [{
       }
     },
     // {
+    //   path: '/raw-material-manage',
+    //   component: () => import('@/views/inventory/raw-material-manage.vue'),
+    //   name: 'raw-material',
+    //   meta: {
+    //     title: '原材料出库计划',
+    //     icon: 'stock',
+    //     permissionName: ''
+    //   }
+    // },
+    // {
     //   path: '/final-rubber-manage',
     //   component: () => import('@/views/inventory/final_rubber_manage.vue'),
     //   name: 'OutboundManage',
@@ -1099,8 +1109,8 @@ export const asyncRoutes = [{
         ]
       }
     ]
-  },
-  {
+  }
+    /** {
     path: '/equipment-maintenance',
     redirect: '/location-definition',
     component: {
@@ -1198,8 +1208,49 @@ export const asyncRoutes = [{
         }
       }
     ]
-  },
-  {
+  },**/
+    /** {
+    path: '/equipment-maintain',
+    redirect: '/location-definition',
+    component: {
+      render: c => c('router-view')
+    },
+    name: 'equipment-maintain',
+    meta: {
+      title: '设备维护管理',
+      icon: 'quality'
+    },
+    children: [
+      {
+        path: '/maintain-standard',
+        component: () => import('@/views/equipment-management/maintain/standard'),
+        name: 'maintain-standard',
+        meta: {
+          title: '维护标准定义',
+          permissionName: ''
+        }
+      },
+      {
+        path: '/maintain-plan',
+        component: () => import('@/views/equipment-management/maintain/plan'),
+        name: 'maintain-plan',
+        meta: {
+          title: '设备维护计划',
+          permissionName: ''
+        }
+      },
+      {
+        path: '/maintain-resume',
+        component: () => import('@/views/equipment-management/maintain/resume'),
+        name: 'maintain-resume',
+        meta: {
+          title: '设备维护履历',
+          permissionName: ''
+        }
+      }
+    ]
+  },**/
+  /** {
     path: '/platform-manage',
     component: () => import('@/views/equipment-management/repair/platform-manage'),
     name: 'platform-manage',
@@ -1208,7 +1259,7 @@ export const asyncRoutes = [{
       title: '平台信息管理',
       permissionName: ''
     }
-  }
+  }**/
   ]
 },
 {
