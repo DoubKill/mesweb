@@ -43,7 +43,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="库存位置">
+      <el-form-item label="仓库名称">
         <warehouseSelect :is-clear="true" @changSelect="warehouseSelectFun" />
       </el-form-item>
       <el-form-item label="物料编码">

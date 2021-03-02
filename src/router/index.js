@@ -259,26 +259,6 @@ export const asyncRoutes = [{
       icon: 'formula',
       permissionName: 'weight_batching'
     }
-  },
-  {
-    path: '/rubber-plan-release',
-    name: 'rubber-plan-release',
-    component: () => import('@/views/recipe/rubber-plan-release'),
-    meta: {
-      title: '小料计划下达',
-      icon: 'formula',
-      permissionName: 'batching_plan'
-    }
-  },
-  {
-    path: '/actual-comparison',
-    name: 'actual-comparison',
-    component: () => import('@/views/recipe/actual-comparison'),
-    meta: {
-      title: '小料称量计划与实际对比',
-      icon: 'formula',
-      permissionName: 'batching_reality'
-    }
   }
   ]
 },
@@ -327,9 +307,29 @@ export const asyncRoutes = [{
     name: 'material-quantity-demanded',
     component: () => import('@/views/material_quantity_demanded/index'),
     meta: {
-      title: '原材料需求量',
+      title: '物料需求量',
       icon: 'productionPlanManagement',
       permissionName: 'materialdemanded'
+    }
+  },
+  {
+    path: '/rubber-plan-release',
+    name: 'rubber-plan-release',
+    component: () => import('@/views/recipe/rubber-plan-release'),
+    meta: {
+      title: '小料计划下达',
+      icon: 'formula',
+      permissionName: 'batching_plan'
+    }
+  },
+  {
+    path: '/actual-comparison',
+    name: 'actual-comparison',
+    component: () => import('@/views/recipe/actual-comparison'),
+    meta: {
+      title: '小料称量计划与实际对比',
+      icon: 'formula',
+      permissionName: 'batching_reality'
     }
   }
   ]
@@ -478,7 +478,7 @@ export const asyncRoutes = [{
       component: () => import('@/views/material_repertory_manage/index'),
       name: 'MaterialRepertoryManage',
       meta: {
-        title: '原料库存',
+        title: '原材料库',
         icon: 'stock',
         permissionName: 'material_inventory'
       }
@@ -561,6 +561,16 @@ export const asyncRoutes = [{
         permissionName: 'compoundRubber_plan'
       }
     },
+    // {
+    //   path: '/raw-material-manage',
+    //   component: () => import('@/views/inventory/raw-material-manage.vue'),
+    //   name: 'raw-material',
+    //   meta: {
+    //     title: '原材料出库计划',
+    //     icon: 'stock',
+    //     permissionName: ''
+    //   }
+    // },
     // {
     //   path: '/final-rubber-manage',
     //   component: () => import('@/views/inventory/final_rubber_manage.vue'),
@@ -1100,85 +1110,153 @@ export const asyncRoutes = [{
       }
     ]
   }
-  /** {
-    path: '/location-definition',
-    component: () => import('@/views/equipment-management/repair/location-definition'),
-    name: 'location-definition',
-    meta: {
-      title: '设备部位定义',
-      icon: 'quality',
-      permissionName: ''
-    }
-  },
-  {
-    path: '/cause-of-shutdown',
-    redirect: '/cause-of-shutdown/mold',
+    /** {
+    path: '/equipment-maintenance',
+    redirect: '/location-definition',
     component: {
       render: c => c('router-view')
     },
-    name: 'cause-of-shutdown',
+    name: 'equipment-maintenance',
     meta: {
-      title: '停机原因管理',
+      title: '设备维修管理',
       icon: 'quality'
     },
     children: [
       {
-        path: '/cause-of-shutdown/mold',
-        component: () => import('@/views/equipment-management/repair/shutdown-mold'),
-        name: 'cause-of-shutdown-mold',
+        path: '/location-definition',
+        component: () => import('@/views/equipment-management/repair/location-definition'),
+        name: 'location-definition',
         meta: {
-          title: '停机类型定义',
+          title: '设备部位定义',
           permissionName: ''
         }
       },
       {
-        path: '/cause-of-shutdown/reason',
-        component: () => import('@/views/equipment-management/repair/shutdown-reason'),
-        name: 'cause-of-shutdown-reason',
+        path: '/cause-of-shutdown',
+        redirect: '/cause-of-shutdown/mold',
+        component: {
+          render: c => c('router-view')
+        },
+        name: 'cause-of-shutdown',
         meta: {
-          title: '停机原因定义',
+          title: '停机原因管理'
+        },
+        children: [
+          {
+            path: '/cause-of-shutdown/mold',
+            component: () => import('@/views/equipment-management/repair/shutdown-mold'),
+            name: 'cause-of-shutdown-mold',
+            meta: {
+              title: '停机类型定义',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/cause-of-shutdown/reason',
+            component: () => import('@/views/equipment-management/repair/shutdown-reason'),
+            name: 'cause-of-shutdown-reason',
+            meta: {
+              title: '停机原因定义',
+              permissionName: ''
+            }
+          }
+        ]
+      },
+      {
+        path: '/repair-apply',
+        component: () => import('@/views/equipment-management/repair/repair-apply'),
+        name: 'repair-apply',
+        meta: {
+          title: '设备维修申请页面',
+          permissionName: ''
+        }
+      },
+      {
+        path: '/repair-manage',
+        component: () => import('@/views/equipment-management/repair/repair-manage'),
+        name: 'repair-manage',
+        meta: {
+          title: '设备维修单管理',
+          permissionName: ''
+        }
+      },
+      {
+        path: '/work-state',
+        component: () => import('@/views/equipment-management/repair/work-state'),
+        name: 'work-state',
+        meta: {
+          title: '设备运行现况',
+          permissionName: ''
+        }
+      },
+      {
+        path: '/repair-resume',
+        component: () => import('@/views/equipment-management/repair/repair-resume'),
+        name: 'repair-resume',
+        meta: {
+          title: '设备维修履历',
+          permissionName: ''
+        }
+      },
+      {
+        path: '/equipment-assets',
+        component: () => import('@/views/equipment-management/repair/equipment-assets'),
+        name: 'equipment-assets',
+        meta: {
+          title: '设备资产',
           permissionName: ''
         }
       }
     ]
-  },
-  {
-    path: '/repair-apply',
-    component: () => import('@/views/equipment-management/repair/repair-apply'),
-    name: 'repair-apply',
+  },**/
+    /** {
+    path: '/equipment-maintain',
+    redirect: '/location-definition',
+    component: {
+      render: c => c('router-view')
+    },
+    name: 'equipment-maintain',
+    meta: {
+      title: '设备维护管理',
+      icon: 'quality'
+    },
+    children: [
+      {
+        path: '/maintain-standard',
+        component: () => import('@/views/equipment-management/maintain/standard'),
+        name: 'maintain-standard',
+        meta: {
+          title: '维护标准定义',
+          permissionName: ''
+        }
+      },
+      {
+        path: '/maintain-plan',
+        component: () => import('@/views/equipment-management/maintain/plan'),
+        name: 'maintain-plan',
+        meta: {
+          title: '设备维护计划',
+          permissionName: ''
+        }
+      },
+      {
+        path: '/maintain-resume',
+        component: () => import('@/views/equipment-management/maintain/resume'),
+        name: 'maintain-resume',
+        meta: {
+          title: '设备维护履历',
+          permissionName: ''
+        }
+      }
+    ]
+  },**/
+  /** {
+    path: '/platform-manage',
+    component: () => import('@/views/equipment-management/repair/platform-manage'),
+    name: 'platform-manage',
     meta: {
       icon: 'quality',
-      title: '设备维修申请页面',
-      permissionName: ''
-    }
-  },
-  {
-    path: '/repair-manage',
-    component: () => import('@/views/equipment-management/repair/repair-manage'),
-    name: 'repair-manage',
-    meta: {
-      icon: 'quality',
-      title: '设备维修单管理',
-      permissionName: ''
-    }
-  },
-  {
-    path: '/work-state',
-    component: () => import('@/views/equipment-management/repair/work-state'),
-    name: 'work-state',
-    meta: {
-      icon: 'quality',
-      title: '设备运行现况',
-      permissionName: ''
-    }
-  },
-  {
-    path: '/repair-resume',
-    component: () => import('@/views/equipment-management/repair/repair-resume'),
-    name: 'repair-resume',
-    meta: {
-      icon: 'quality',
-      title: '设备维修履历',
+      title: '平台信息管理',
       permissionName: ''
     }
   }**/

@@ -1,10 +1,12 @@
 <template>
   <div>
     <!-- 设备维修申请页面 -->
-    <el-button @click="clickDialog">维修申请</el-button>
     <el-table
+      v-loading="loading"
       :data="tableData"
       border
+      element-loading-text="拼命加载中"
+      element-loading-spinner="el-icon-loading"
     >
       <el-table-column
         label="No"
@@ -12,32 +14,32 @@
         type="index"
       />
       <el-table-column
-        prop="date"
+        prop="process"
         label="工序"
         min-width="20"
       />
       <el-table-column
-        prop="name"
+        prop="equip_no"
         label="设备编码"
         min-width="20"
       />
       <el-table-column
-        prop="address"
+        prop="equip_name"
         label="设备名称"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="equip_type"
         label="设备类型"
         min-width="20"
       />
       <el-table-column
-        prop="name"
+        prop="status"
         label="状态"
         min-width="20"
       />
       <el-table-column
-        prop="address"
+        prop="user"
         label="操作人"
         min-width="20"
       />
@@ -46,15 +48,29 @@
         min-width="20"
       >
         <template slot-scope="{row}">
-          {{ row }}
           <el-button-group>
-            <el-button type="primary" size="mini" />
-            <el-button type="primary" size="mini" />
-            <el-button type="primary" size="mini" />
+            <el-button
+              v-if="['运行中','空转'].includes(row.status)"
+              type="primary"
+              size="mini"
+              @click="clickDialog(row)"
+            >维修申请</el-button>
+            <el-button
+              v-if="['停机','维修结束'].includes(row.status)"
+              type="primary"
+              size="mini"
+              @click="startUpFun(row)"
+            >启动确认</el-button>
           </el-button-group>
         </template>
       </el-table-column>
     </el-table>
+    <page
+      :old-page="false"
+      :total="total"
+      :current-page="searchPage"
+      @currentChange="currentChange"
+    />
 
     <el-dialog
       title="维修申请"
@@ -65,31 +81,64 @@
       <el-form
         ref="ruleForm"
         :model="ruleForm"
-        :rules="rules"
         label-width="120px"
       >
-        <el-form-item label="日期" prop="name">
-          {{ ruleForm.data }}
+        <el-form-item
+          label="日期"
+          prop="note_time"
+        >
+          {{ ruleForm.note_time }}
         </el-form-item>
-        <el-form-item label="设备" prop="a">
-          <EquipSelect @equipSelected="equipSelected" />
+        <el-form-item
+          label="设备"
+          prop="equip"
+        >
+          {{ ruleForm.equip }}
         </el-form-item>
-        <el-form-item label="停机类型" prop="b">
-          <shutdownMoldSelect @shutdownMoldChange="shutdownMoldChange" />
-          <el-checkbox v-model="ruleForm.checked" style="margin-left:10px">已停机</el-checkbox>
+        <el-form-item
+          label="设备部位"
+          prop="equip_part"
+        >
+          <locationDefinitionDelect
+            ref="locationDefinitionDelect"
+            :equip-no="ruleForm.equip"
+            @locationSelect="locationSelect"
+          />
         </el-form-item>
-        <el-form-item label="原因" prop="c">
-          <el-input
-            v-model="ruleForm.textarea"
-            type="textarea"
-            :rows="3"
-            placeholder="请输入内容"
+        <el-form-item
+          label="停机类型"
+          prop="first_down_type"
+        >
+          <shutdownMoldSelect
+            ref="shutdownMoldSelect"
+            @shutdownMoldChange="shutdownMoldChange"
+          />
+          <el-checkbox
+            v-model="ruleForm.down_flag"
+            style="margin-left:10px"
+          >已停机</el-checkbox>
+        </el-form-item>
+        <el-form-item
+          label="原因"
+          prop="first_down_reason"
+        >
+          <shutdownReasonSelect
+            ref="shutdownReasonSelect"
+            :equip-down-type-name="ruleForm.first_down_type"
+            @shutdownReasonChange="shutdownReasonChange"
           />
         </el-form-item>
       </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button @click="handleClose(false)">取 消</el-button>
+        <el-button
+          :loading="loadingBtn"
+          type="primary"
+          @click="submitFun"
+        >确 定</el-button>
       </span>
     </el-dialog>
 
@@ -98,39 +147,121 @@
 
 <script>
 import { setDate } from '@/utils'
-import EquipSelect from '@/components/EquipSelect'
 import shutdownMoldSelect from '../components/shutdown-mold-select'
+import shutdownReasonSelect from '../components/shutdown-reason-select'
+import locationDefinitionDelect from '../components/location-definition-select'
+import { equipCurrentStatus } from '@/api/base_w_two'
+import page from '@/components/page'
 export default {
-  components: { EquipSelect, shutdownMoldSelect },
+  components: { page, locationDefinitionDelect, shutdownMoldSelect, shutdownReasonSelect },
   data() {
     return {
       tableData: [],
       dialogVisible: false,
       ruleForm: {
-        data: setDate('', true)
+        note_time: setDate('', true),
+        down_flag: false
       },
-      rules: {
-        a: [
-          // { required: true, validator: validatePass3, trigger: 'blur' }
-        ],
-        b: [
-          // { required: true, validator: validatePass3, trigger: 'blur' }
-        ],
-        c: [
-          // { required: true, validator: validatePass3, trigger: 'blur' }
-        ]
-      }
+      searchPage: 1,
+      total: 0,
+      page_size: 10,
+      loadingBtn: false,
+      loading: false
     }
   },
+  created() {
+    this.getList()
+  },
   methods: {
-    handleClose(done) {
-      done()
+    async getList() {
+      try {
+        this.loading = true
+        const data = await equipCurrentStatus('get', null,
+          { params: { page: this.searchPage, page_size: this.page_size }})
+        this.tableData = data.results || []
+        this.total = data.count
+      } catch (e) {
+        //
+      }
+      this.loading = false
     },
-    clickDialog() {
+    async submitFun() {
+      try {
+        if (!this.ruleForm.first_down_type) {
+          this.$message.info('停机类型必填')
+          return
+        }
+        if (!this.ruleForm.equip_part) {
+          this.$message.info('设备部位必填')
+          return
+        }
+        if (!this.ruleForm.first_down_reason) {
+          this.$message.info('停机原因必填')
+          return
+        }
+        const obj = JSON.parse(JSON.stringify(this.ruleForm))
+        delete obj.equip
+        this.loadingBtn = true
+        await equipCurrentStatus('patch', this.ruleForm.id,
+          { data: obj })
+        this.$message.success('操作成功')
+        this.handleClose(false)
+      } catch (e) {
+        //
+      }
+      this.loadingBtn = false
+    },
+    currentChange(page, page_size) {
+      this.searchPage = page
+      this.page_size = page_size
+      this.getList()
+    },
+    handleClose(done) {
+      this.$refs.shutdownMoldSelect.className = ''
+      this.$refs.shutdownReasonSelect.className = ''
+      this.$refs.locationDefinitionDelect.className = ''
+      this.ruleForm.equip_part = ''
+      this.ruleForm.down_flag = false
+      this.dialogVisible = false
+      if (done) {
+        done()
+      }
+    },
+    clickDialog(row) {
+      this.ruleForm.equip = row.equip_no
+      this.ruleForm.id = row.id
+      this.ruleForm.note_time = setDate('', true)
       this.dialogVisible = true
     },
-    equipSelected() {},
-    shutdownMoldChange() {}
+    locationSelect(obj) {
+      this.ruleForm.equip_part = obj ? obj.id : ''
+    },
+    startUpFun(row) {
+      this.$confirm('是否启动?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        equipCurrentStatus('patch', row.id)
+          .then(response => {
+            this.$message({
+              type: 'success',
+              message: '启动成功!'
+            })
+            this.getList()
+          }).catch(e => {
+            // this.$message.error('启动失败')
+          })
+      })
+    },
+    equipSelected() { },
+    shutdownMoldChange(obj) {
+      this.$set(this.ruleForm, 'first_down_type', obj ? obj.name : '')
+      this.$refs.shutdownReasonSelect.className = ''
+    },
+    shutdownReasonChange(obj) {
+      this.$set(this.ruleForm, 'first_down_reason', obj ? obj.desc : '')
+    }
   }
 }
 </script>

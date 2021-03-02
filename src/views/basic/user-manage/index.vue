@@ -63,6 +63,10 @@
         prop="username"
         label="用户名"
       />
+      <el-table-column
+        prop="phone_number"
+        label="手机号"
+      />
       <!-- <el-table-column label="组织">
         <template slot-scope="scope">
           {{ scope.row.section?scope.row.section:'--' }}
@@ -184,6 +188,15 @@
           <el-input
             v-model.number="userForm.num"
             :error="userFormError.num"
+          />
+        </el-form-item>
+        <el-form-item
+          label="手机号码"
+          prop="phone_number"
+        >
+          <el-input
+            v-model.number="userForm.phone_number"
+            :error="userFormError.phone_number"
           />
         </el-form-item>
         <el-form-item

@@ -30,7 +30,10 @@ export default {
       type: Boolean,
       default: false
     },
-    defaultVal: [Number || String],
+    defaultVal: {
+      type: [Number, String],
+      default: null
+    },
     isEnable: { // 是否只显示启用
       type: Boolean,
       default: false

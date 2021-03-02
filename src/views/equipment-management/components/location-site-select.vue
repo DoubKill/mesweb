@@ -12,6 +12,7 @@
       :key="item.id"
       :label="item.name"
       :value="item.id"
+      :disabled="item.disabled"
     />
   </el-select>
 </template>
@@ -21,8 +22,13 @@ import { basicsLocationNameList } from '@/api/location-site'
 export default {
   props: {
     defaultVal: {
-      type: Array,
-      default: null
+      type: [Number, String],
+      required: false,
+      default: undefined
+    },
+    isCreated: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -31,13 +37,30 @@ export default {
       EquipCateOptions: []
     }
   },
+  watch: {
+    defaultVal(val) {
+      this.className = val
+    }
+  },
+  created() {
+    if (this.isCreated) {
+      this.equip_type_list()
+    }
+  },
   methods: {
     async equip_type_list() {
       try {
         const equip_type_list = await basicsLocationNameList({ all: 1 })
-        let arr = [] // 过滤启用的
-        arr = equip_type_list.filter(D => D.used_flag === 1)
-        this.EquipCateOptions = arr || []
+        // const arr = [] // 过滤启用的
+        equip_type_list.forEach(D => {
+          if (D.used_flag === 0) {
+            D.disabled = true
+          } else {
+            D.disabled = false
+          }
+        })
+        // arr = equip_type_list.filter(D => D.used_flag === 1)
+        this.EquipCateOptions = equip_type_list || []
       } catch (e) { throw new Error(e) }
     },
     visibleChange(visible) {

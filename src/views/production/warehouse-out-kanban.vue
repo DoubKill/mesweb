@@ -166,7 +166,7 @@ export default {
 function timeInterFun(_this) {
   _this.timeInter = setInterval(() => {
     _this.getList()
-  }, 1000)
+  }, 5000)
 }
 </script>
 

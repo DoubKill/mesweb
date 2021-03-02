@@ -1,5 +1,5 @@
 <template>
-  <!-- 停机类型 -->
+  <!-- 设备部位定义 下拉框 -->
   <el-select
     v-model="className"
     clearable
@@ -19,16 +19,25 @@
 </template>
 
 <script>
-import { equipEownType } from '@/api/base_w_two'
+import { equipPart } from '@/api/base_w_two'
 export default {
   props: {
     defaultVal: {
-      type: [String, Number],
-      default: null
+      type: [Number, String],
+      required: false,
+      default: undefined
+    },
+    isCreated: {
+      type: Boolean,
+      default: false
     },
     isDisabled: {
       type: Boolean,
       default: false
+    },
+    equipNo: {
+      type: [Number, String],
+      default: null
     }
   },
   data() {
@@ -40,18 +49,31 @@ export default {
   },
   watch: {
     defaultVal(val) {
-      this.className = val
+      if (!val) {
+        this.className = ''
+      } else {
+        this.className = val
+      }
+    },
+    equipNo() {
+      this.equip_type_list()
+    }
+  },
+  created() {
+    if (this.isCreated) {
+      this.equip_type_list()
     }
   },
   methods: {
     async equip_type_list() {
       try {
-        const equip_type_list = await equipEownType('get', null, {
-          params: { all: 1 }
-        })
-        this.EquipCateOptions = equip_type_list.results || []
-      } catch (e) { throw new Error(e) }
-      this.loading = false
+        this.loading = true
+        const data = await equipPart('get', null, { params: { all: 1, equip_no: this.equipNo }})
+        this.EquipCateOptions = data.results || []
+        this.loading = false
+      } catch (e) {
+        this.loading = false
+      }
     },
     visibleChange(visible) {
       if (visible && this.EquipCateOptions.length === 0) {
@@ -60,7 +82,7 @@ export default {
     },
     classChanged(val) {
       const obj = this.EquipCateOptions.find(D => D.id === val)
-      this.$emit('shutdownMoldChange', obj)
+      this.$emit('locationSelect', obj)
     }
   }
 }

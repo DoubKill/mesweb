@@ -21,7 +21,7 @@ import { equip_type_url } from '@/api/equip_fun'
 export default {
   props: {
     defaultVal: {
-      type: Array,
+      type: [String, Number],
       default: null
     }
   },

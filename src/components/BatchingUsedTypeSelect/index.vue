@@ -27,7 +27,7 @@ export default {
         [6, '废弃'],
         [7, '停用']
       ],
-      usedType: 1
+      usedType: ''
     }
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <div style="margin-top: 25px">
+  <div style="margin-top: 25px" class="banburying-p-manage">
     <el-form :inline="true">
 
       <el-form-item label="工程名">
@@ -49,6 +49,7 @@
       :data="tableData"
       border
       style="width: 100%"
+      :row-class-name="tableRowClassName"
     >
       <el-table-column
         label="处理"
@@ -439,6 +440,12 @@ export default {
   methods: {
     downloadClick(rew) {
     },
+    tableRowClassName({ row, rowIndex }) {
+      if (row.product_no === '合计') {
+        return 'warning-row'
+      }
+      return ''
+    },
     performanceDateChange() {
       this.currentChange(1)
     },
@@ -637,5 +644,10 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+.banburying-p-manage{
+.warning-row{
+  background: oldlace;
+}
+}
 </style>

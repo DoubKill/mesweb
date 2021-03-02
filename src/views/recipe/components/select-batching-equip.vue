@@ -5,6 +5,7 @@
     :clearable="!createdIs"
     placeholder="请选择配料设备"
     :disabled="readIs"
+    :multiple="multipleIs"
     @change="changeFun"
     @visible-change="visibleChange"
   >
@@ -27,7 +28,7 @@ export default {
   },
   props: {
     id: {
-      type: [Number, String],
+      type: [Number, String, Array],
       required: false,
       default: undefined
     },
@@ -38,6 +39,10 @@ export default {
     },
     //  是否只读
     readIs: {
+      type: Boolean,
+      default: false
+    },
+    multipleIs: { // 是否多选
       type: Boolean,
       default: false
     }
@@ -65,6 +70,15 @@ export default {
     },
     changeFun(id) {
       this.$emit('change', id)
+      if (this.multipleIs) {
+        const arr = []
+        id.forEach(D => {
+          const obj = this.equipOptions.find(d => d.id === D)
+          arr.push(obj)
+        })
+        this.$emit('changeFun', arr)
+        return
+      }
       this.$emit('changeFun', this.equipOptions.find(D => D.id === id))
     },
     visibleChange(visible) {

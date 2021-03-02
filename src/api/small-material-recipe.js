@@ -9,20 +9,34 @@ export function weighBatchingList(params) {
   })
 }
 
-export function createWeighBatching(product_batching) {
+export function weighBatchingInfo(id, params) {
+  return request({
+    url: API.WeighBatchingUrl + id + '/',
+    method: 'get',
+    params
+  })
+}
+
+export function createWeighBatching(id, data) {
   return request({
     url: API.WeighBatchingUrl,
     method: 'post',
-    data: {
-      product_batching
-    }
+    data
+  })
+}
+
+export function changeWeighBatching(id, data) {
+  return request({
+    url: API.WeighBatchingUrl + id + '/',
+    method: 'put',
+    data
   })
 }
 
 export function changeUsedType(id, used_type) {
   return request({
-    url: API.WeighBatchingUrl + id + '/change_used_type/',
-    method: 'put',
+    url: API.WeighBatchingUrl + id + '/',
+    method: 'patch',
     data: {
       used_type
     }
@@ -72,13 +86,18 @@ export function changePlanPackage(id, plan_package) {
   })
 }
 
-export function issueBatchingClassesPlan(id, batchingEquip) {
+export function issueBatchingClassesPlan(data) {
   return request({
-    url: API.IssueBatchingClassesPlanUrl + id + '/',
-    method: 'put',
-    data: {
-      equip: batchingEquip
-    }
+    url: API.BatchingClassesEquipPlan,
+    method: 'post',
+    data
   })
 }
 
+export function batchingClassesEquipPlan(params) {
+  return request({
+    url: API.BatchingClassesEquipPlan,
+    method: 'get',
+    params
+  })
+}

@@ -1,5 +1,5 @@
 <template>
-  <div v-loading="loading">
+  <div v-loading="loading" class="rubber-plan-release">
     <!-- 小料计划下达 -->
     <el-form :inline="true">
       <el-form-item label="日期">
@@ -30,9 +30,9 @@
           @classSelected="classChanged"
         />
       </el-form-item>
-      <el-form-item label="配料设备">
+      <!-- <el-form-item label="配料设备">
         <select-batching-equip v-model="getParams.equip" @change="changeList" />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="状态">
         <el-select
           v-model="getParams.status"
@@ -49,8 +49,13 @@
       </el-form-item>
     </el-form>
     <el-table
+      ref="table"
       :data="tableData"
       border
+      row-key="id"
+      lazy
+      :load="loadTableData"
+      :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >
       <el-table-column
         type="index"
@@ -62,74 +67,104 @@
         label="工厂时间"
         prop="day_time"
         align="center"
-        width="90"
+        width="110px"
       />
       <el-table-column
         prop="classes_name"
         label="班次"
         align="center"
-        width="45"
+        min-width="10"
       />
       <el-table-column
         prop="weight_batch_no"
         label="小料配方编码"
         align="center"
-        width="165"
+        min-width="20"
       />
       <el-table-column
-        prop="category_name"
-        label="生产机型"
+        prop="plan_batching_uid"
+        label="计划编号"
         align="center"
+        min-width="20"
       />
       <el-table-column
         prop="weigh_type"
         label="料包类型"
         :formatter="weighTypeFun"
         align="center"
+        min-width="20"
       />
       <el-table-column
         label="配料设备"
         align="center"
         prop="equip_no"
-      />
+        min-width="20"
       />
       <el-table-column
         prop="stage_product_batch_no"
         label="胶料编码"
         align="center"
-        width="130"
-      />
+        min-width="20"
       />
       <el-table-column
         prop="plan_package"
         label="计划数量(包)"
         align="center"
+        min-width="17"
       >
         <template slot-scope="scope">
-          <span :class="{ 'b-r': scope.row.package_changed }">{{ scope.row.plan_package }}</span>
+          <div v-if="!scope.row.isChildren" :class="{ 'b-r': scope.row.package_changed }">{{ scope.row.plan_package }}
 
-          <el-popover
-            v-model="scope.row.visible"
-            placement="right"
-            width="400"
-            trigger="manual"
-          >
-            <el-input
-              v-model="reason"
-              type="textarea"
-              :rows="2"
-              placeholder="请输入内容"
-            />
-            <i slot="reference" class="el-icon-edit slotIconStyle" @click="iconEdit(scope.row,scope.$index)" />
-            <el-button style="float:right;margin-top:5px" size="mini" @click="submitFun(scope.row,scope.$index)">确定</el-button>
-            <el-button style="float:right;margin-top:5px;margin-right:5px" size="mini" @click="scope.row.visible = false">取消</el-button>
-          </el-popover>
+            <el-tooltip class="item" effect="dark" content="编辑" placement="top-start">
+              <el-popover
+                v-model="scope.row.visible"
+                placement="right"
+                width="400"
+                trigger="manual"
+              >
+                <el-input
+                  v-model="reason"
+                  type="textarea"
+                  :rows="2"
+                  placeholder="请输入内容"
+                />
+
+                <i slot="reference" class="el-icon-edit slotIconStyle" @click="iconEdit(scope.row,scope.$index)" />
+                <el-button style="float:right;margin-top:5px" size="mini" @click="submitFun(scope.row,scope.$index)">确定</el-button>
+                <el-button style="float:right;margin-top:5px;margin-right:5px" size="mini" @click="scope.row.visible = false">取消</el-button>
+              </el-popover>
+            </el-tooltip>
+          </div>
+          <div v-else>
+            {{ scope.row.plan_package }}
+          </div>
         </template>
       </el-table-column>
       <el-table-column
+        prop="undistributed_package"
+        label="剩余计划数量(包)"
+        align="center"
+        min-width="16"
+        :formatter="(row, column) => {
+          return row.undistributed_package?row.undistributed_package:0
+        }"
+      />
+      <el-table-column
+        prop="packages"
+        label="已下达数量(包)"
+        align="center"
+        min-width="16"
+        :formatter="(row, column) => {
+          if(row.packages){
+            return row.packages
+          }
+          return row.plan_package-row.undistributed_package
+        }"
+      />
+      <el-table-column
         prop="weigh_batching_used_type"
         label="小料配方状态"
-        width="100"
+        min-width="10"
         align="center"
       >
         <template slot-scope="scoped">
@@ -141,24 +176,20 @@
       <el-table-column
         label="操作"
         align="center"
+        min-width="16"
       >
-        <template slot-scope="scope">
+        <template v-if="!scope.row.isChildren" slot-scope="scope">
           <el-button-group>
             <el-button size="mini" @click="view(scope.row,scope.$index)">明细</el-button>
-            <!-- <el-button
-              v-permission="['batching_plan','change']"
-              size="mini"
-              @click="handleChangePlanPackage(scope.row)"
-            >修改</el-button> -->
           </el-button-group>
         </template>
       </el-table-column>
       <el-table-column
         label="下发"
         align="center"
-        width="70"
+        min-width="16"
       >
-        <template slot-scope="scope">
+        <template v-if="!scope.row.isChildren" slot-scope="scope">
           <el-button
             v-permission="['batching_plan','send']"
             :disabled="!sendInabled(scope.row)"
@@ -170,7 +201,7 @@
       <el-table-column
         prop="status"
         label="状态"
-        width="70"
+        min-width="15"
         align="center"
         :formatter="(row, column) => {
           switch(row.status) {
@@ -182,14 +213,16 @@
         }"
       />
       <el-table-column
-        prop="send_user"
+        prop="send_username"
         label="下发人"
         align="center"
+        min-width="20"
       />
       <el-table-column
         prop="send_time"
         label="下发时间"
         align="center"
+        min-width="20"
       />
     </el-table>
     <page
@@ -211,6 +244,7 @@
     <el-dialog
       title="配料设备选择"
       :visible.sync="choiceDeviceDialogVisible"
+      :before-close="handleClose"
     >
       <el-form ref="form" :model="form" :rules="rules">
         <el-form-item label="小料配方编码">
@@ -225,12 +259,26 @@
         <el-form-item label="计划数量(包)">
           <el-input :value="form.plan_package" disabled />
         </el-form-item>
+        <el-form-item label="剩余数量(包)">
+          <el-input :value="form.undistributed_package" disabled />
+        </el-form-item>
+        <span v-for="item1 in classeseEquipPlan" :key="item1.id" style="margin-right:18px">
+          <span>{{ item1.equip_no }}设备 已配置：{{ item1.packages }}包</span>
+        </span>
         <el-form-item label="配料设备" prop="equip">
-          <select-batching-equip v-model="form.equip" />
+          <select-batching-equip v-model="form.equip" :multiple-is="true" @changeFun="changeFun" /><br>
+          <div v-for="(item,i) in equip_num_list" :key="i" style="display:inline-block;margin-top:6px">
+            <span style="margin:0 6px">{{ item.equip_no }}</span>+
+            <el-input
+              v-model="item.packages"
+              type="number"
+              style="width:80px"
+            /> (包)
+          </div>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="choiceDeviceDialogVisible = false">取 消</el-button>
+        <el-button @click="handleClose(false)">取 消</el-button>
         <el-button type="primary" @click="sendOut">确 定</el-button>
       </div>
     </el-dialog>
@@ -261,7 +309,7 @@ import EquipCategorySelect from '@/components/EquipCategorySelect'
 import SelectBatchingEquip from './components/select-batching-equip'
 import WeighBatchingPlanDetail from './components/weigh_batching_plan_detail'
 import Page from '@/components/page'
-import { batchingClassesPlan, issueBatchingClassesPlan, changePlanPackage } from '@/api/small-material-recipe'
+import { batchingClassesPlan, issueBatchingClassesPlan, batchingClassesEquipPlan, changePlanPackage } from '@/api/small-material-recipe'
 import { setDate } from '@/utils'
 export default {
   components: { Page, classSelect, EquipCategorySelect, SelectBatchingEquip, WeighBatchingPlanDetail },
@@ -301,7 +349,10 @@ export default {
       planPackageFormRules: {
         plan_package: [{ required: true, message: '该字段不能为空', trigger: 'blur' }]
       },
-      reason: ''
+      reason: '',
+      equip_num_list: [],
+      classeseEquipPlan: [],
+      maps: new Map()
     }
   },
   created() {
@@ -332,14 +383,9 @@ export default {
       this.getList()
     },
     weighTypeFun(row) {
-      switch (row.weigh_type) {
-        case 1:
-          return 'a类'
-        case 2:
-          return 'b类'
-        case 3:
-          return '硫磺'
-      }
+      const str1 = row.weigh_type === 1 ? '硫磺包' : '细料包'
+      const str2 = row.package_type === 1 ? '自动' : '手动'
+      return str1 + '-' + str2
     },
     handleChangePlanPackage(row) {
       this.planPackageFormData = Object.assign({}, row)
@@ -349,18 +395,26 @@ export default {
       })
     },
     sendInabled(row) {
-      if (row.weigh_batching_used_type === 4 &&
-         (row.status === 1 || (row.status === 2 && row.package_changed))) {
+      // 剩余包数 === 0
+      if (row.weigh_batching_used_type === 4 && row.undistributed_package) {
         return true
       }
       return false
     },
     async getList() {
       this.loading = true
-      const data = await batchingClassesPlan(this.getParams)
-      this.tableData = data.results || []
-      this.total = data.count
-      this.loading = false
+      try {
+        const data = await batchingClassesPlan(this.getParams)
+        this.tableData = data.results || []
+        this.tableData.forEach(D => {
+          D.hasChildren = true
+        })
+        this.total = data.count
+        this.loading = false
+      } catch (e) {
+        this.loading = false
+        console.log(e)
+      }
     },
     classChanged(val) {
       this.getParams.classes_name = val
@@ -384,9 +438,32 @@ export default {
     async sendOut() {
       this.$refs['form'].validate(async valid => {
         if (valid) {
-          await issueBatchingClassesPlan(this.form.id, this.form.equip)
+          let allNum = 0
+          let bool
+          const equip_num_list = JSON.parse(JSON.stringify(this.equip_num_list))
+          equip_num_list.map(D => {
+            D.batching_class_plan = this.form.id
+            D.equip = D.id
+            allNum += Number(D.packages)
+            if (!D.packages) {
+              bool = true
+              return
+            }
+          })
+          if (allNum > this.form.undistributed_package || bool) {
+          // 判断是否大于剩余包数，大于不让提交，且bool是true
+            this.$message.info('超过了计划包数')
+            bool = false
+            return
+          }
+          await issueBatchingClassesPlan(equip_num_list)
+          this.handleClose(false)
           this.getList()
-          this.choiceDeviceDialogVisible = false
+
+          const { id } = this.form // 取出当前删除行的pid
+          const { tree, treeNode, resolve } = this.maps.get(id) // 根据pid取出对应的节点数据
+          this.$set(this.$refs.table.store.states.lazyTreeNodeMap, id, []) // 将对应节点下的数据清空，从而实现数据的重新加载
+          this.loadTableData(tree, treeNode, resolve)
         }
       })
     },
@@ -396,10 +473,47 @@ export default {
       this.$nextTick(() => {
         this.$refs['form'].clearValidate()
       })
+      this.getHistoryList(row.id)
+    },
+    async getHistoryList(id) {
+      try {
+        const data = await batchingClassesEquipPlan({ batching_class_plan: id })
+        this.classeseEquipPlan = data
+        return data
+      } catch (e) {
+        console.log(e)
+      }
     },
     view(row, index) {
       this.batchingClassesPlan = row
       this.dialogVisible = true
+    },
+    handleClose(done) {
+      this.choiceDeviceDialogVisible = false
+      this.equip_num_list.map(D => {
+        D.packages = undefined
+      })
+      this.equip_num_list = []
+      if (done) {
+        done()
+      }
+    },
+    async loadTableData(tree, treeNode, resolve) {
+      this.maps.set(tree.id, { tree, treeNode, resolve })
+      // 唯一标识
+      const numId = 88888888
+      const data = await this.getHistoryList(tree.id)
+      data.forEach(D => {
+        D.isChildren = true
+        D.id = D.id + numId
+        D.day_time = '--'
+        D.classes_name = tree.classes_name
+        D.undistributed_package = '--'
+      })
+      resolve(data)
+    },
+    changeFun(arr) {
+      this.equip_num_list = arr
     },
     usedTypeFormatter(row) {
       switch (row.weigh_batching_used_type) {
@@ -421,20 +535,26 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
+.rubber-plan-release{
   .b-r {
     display:inline-block;
     background: red;
     color: white;
-    width:73%;
+    width:100%;
   }
   .discardClass{
     color:red !important;
   }
     .slotIconStyle{
-    color: rgb(11, 189, 11);
-    font-size: 20px;
+    font-size: 25px;
     display: inline-block;
-    height: 25px;
+    /* height: 25px; */
   }
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none !important;
+    margin: 0;
+  }
+}
 </style>

@@ -17,6 +17,7 @@ const state = () => {
   return {
     token: getToken(),
     name: Cookies.get('name'),
+    userId: Cookies.get('userId'),
     avatar: '',
     permission: localStorage.getItem('permission'),
     editionNo: Cookies.get('editionNo') || 'v1'
@@ -33,6 +34,10 @@ const mutations = {
   SET_NAME: (state, name) => {
     state.name = name
     Cookies.set('name', name)
+  },
+  SET_USER_ID: (state, id) => {
+    state.userId = id
+    Cookies.set('userId', id)
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
@@ -55,6 +60,7 @@ const actions = {
       login({ username: username.trim(), password: password }).then(response => {
         commit('SET_TOKEN', response.token)
         commit('SET_NAME', response.username)
+        commit('SET_USER_ID', response.id)
         commit('SET_PERMISSION', JSON.stringify(response.permissions))
         // 登录获取token,存到全局中
         setToken(response.token)

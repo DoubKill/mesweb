@@ -385,7 +385,8 @@ export default {
       this.detectionValue(row, index, _list)
     },
     commandList(val) {
-      const obj = JSON.parse(localStorage.getItem('detectionValue')) || {}
+      const a = localStorage.getItem('detectionValue')
+      const obj = a ? JSON.parse(a) : {}
       if (val === '比重') {
         return obj[val] || [1.11, 1.13, 1.15]
       } else if (val === '硬度') {
@@ -395,7 +396,8 @@ export default {
       }
     },
     detectionValue(row, index, list, test_indicator) {
-      const obj = JSON.parse(localStorage.getItem('detectionValue')) || {}
+      const a = localStorage.getItem('detectionValue')
+      const obj = a ? JSON.parse(a) : {}
       const arr = JSON.stringify(obj) !== '{}' && obj[test_indicator] ? obj[test_indicator] : []
 
       row._filledIn = false

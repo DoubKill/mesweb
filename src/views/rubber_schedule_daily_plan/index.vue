@@ -82,7 +82,7 @@
             <div class="tableTopLeft">
               {{ item[0][0]?item[0][0].equipNo:'--' }}
               --
-              {{ item[0][0]?item[0][0].category__category_name:'--' }}
+              机型{{ item[0][0]?item[0][0].category__category_name:'--' }}
             </div>
             <el-button
               v-if="permissionArr.indexOf('add')>-1"

@@ -5,11 +5,12 @@
       <el-form-item label="仓库名称">
         {{ warehouseName }}
       </el-form-item>
-      <el-form-item label="仓库位置" prop="station">
+      <el-form-item label="出库口" prop="station">
         <stationInfoWarehouse
           ref="stationInfoWarehouseRef"
           :warehouse-name="warehouseName"
           :start-using="true"
+          :created-is="true"
           @changSelect="changSelectStation"
         />
       </el-form-item>
@@ -17,6 +18,7 @@
         <el-select
           v-model="ruleForm.quality_status"
           placeholder="请选择"
+          @change="changeQuality"
         >
           <el-option
             v-for="item in options"
@@ -55,7 +57,7 @@
         <el-button type="primary" @click="deliverClick">请添加</el-button>
       </el-form-item>
       <el-form-item v-if="$route.meta.title==='混炼胶出库计划'" label="机台号">
-        <EquipSelect equipType="密炼设备" ref="EquipSelect" :is-multiple="true" @equipSelected="equipSelected" />
+        <EquipSelect ref="EquipSelect" equip-type="密炼设备" :is-multiple="true" @equipSelected="equipSelected" />
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -96,6 +98,10 @@ export default {
       default() {
         return null
       }
+    },
+    show: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -115,7 +121,8 @@ export default {
         order_no: 'order_no',
         status: 4,
         need_weight: undefined,
-        quality_status:null
+        station: '',
+        quality_status: null
       },
       rules: {
         material_no: [
@@ -135,7 +142,7 @@ export default {
           { required: true, trigger: 'blur',
             validator: (rule, value, callback) => {
               validateMy(rule, value, callback,
-                this.ruleForm.station, '仓库位置')
+                this.ruleForm.station, '出库口')
             } }
         ],
         need_qty: [
@@ -150,8 +157,32 @@ export default {
     }
   },
   watch: {
+    show(val) {
+      if (val) {
+        if (this.warehouseName === '混炼胶库') {
+          if (this.$refs.stationInfoWarehouseRef) {
+            const a = localStorage.getItem('hl-station')
+            const b = a ? JSON.parse(a) : null
+            this.ruleForm.station = b.name
+            this.$refs.stationInfoWarehouseRef.value = b.id
+          }
+          this.ruleForm.quality_status = localStorage.getItem('hl-quality') || ''
+        }
+      }
+    }
   },
-  created() {
+  updated() {
+    if (this.warehouseName === '混炼胶库') {
+      if (this.$refs.stationInfoWarehouseRef) {
+        const a = localStorage.getItem('hl-station')
+        const b = a ? JSON.parse(a) : null
+        this.ruleForm.station = b.name
+        this.$refs.stationInfoWarehouseRef.value = b.id
+      }
+      this.ruleForm.quality_status = localStorage.getItem('hl-quality') || ''
+    }
+  },
+  mounted() {
   },
   methods: {
     creadVal() {
@@ -169,6 +200,11 @@ export default {
       this.handleSelection = []
       this.ruleForm.deliveryPlan = ''
       this.loadingBtn = false
+      if (this.warehouseName === '混炼胶库') {
+        // 不让清除出库口和品质状态
+        this.$emit('refresList')
+        return
+      }
       this.ruleForm.quality_status = ''
       if (this.$refs.stationInfoWarehouseRef) {
         this.$refs.stationInfoWarehouseRef.value = null
@@ -210,6 +246,10 @@ export default {
     },
     changSelectStation(val) {
       this.ruleForm.station = val ? val.name : ''
+      if (val && this.warehouseName === '混炼胶库') {
+        const obj = { name: val.name, id: val.id }
+        localStorage.setItem('hl-station', JSON.stringify(obj))
+      }
     },
     deliverClick() {
       if (!this.ruleForm.material_no) {
@@ -242,6 +282,11 @@ export default {
         if (Object.prototype.hasOwnProperty.call(this.ruleForm, 'equip')) {
           delete this.ruleForm.equip
         }
+      }
+    },
+    changeQuality(val) {
+      if (val && this.warehouseName === '混炼胶库') {
+        localStorage.setItem('hl-quality', val)
       }
     }
   }

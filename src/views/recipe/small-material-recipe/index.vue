@@ -40,16 +40,13 @@
       @current-change="handleCurrentChange"
     >
       <el-table-column label="No" type="index" align="center" />
-      <el-table-column label="小料配方编码" width="165" prop="weight_batch_no_" align="center">
+      <el-table-column label="小料配方编码" width="165" prop="weight_batch_no" align="center">
         <template slot-scope="scope">
-          <el-link type="primary" :underline="false" @click="showDetail(scope.row)">{{ scope.row.weight_batch_no_ }}</el-link>
+          <el-link type="primary" :underline="false" @click.stop="showDetail(scope.row)">{{ scope.row.weight_batch_no }}</el-link>
         </template>
       </el-table-column>
       <el-table-column label="胶料配方编码" width="130" prop="stage_product_batch_no" align="center" />
       <el-table-column label="炼胶机类型" prop="category_name" align="center" />
-      <el-table-column label="硫磺重量" prop="sulfur_weight" align="center" />
-      <el-table-column label="化工a重量" prop="a_weight" align="center" />
-      <el-table-column label="化工b重量" prop="b_weight" align="center" />
       <el-table-column label="炼胶时间" prop="production_time_interval" align="center" />
       <el-table-column
         label="状态"
@@ -93,7 +90,7 @@
           </el-button-group>
         </template>
       </el-table-column>
-      <el-table-column label="创建者" prop="created_user" align="center" />
+      <el-table-column label="创建者" prop="created_username" align="center" />
       <el-table-column label="创建时间" width="150" prop="created_date" align="center" />
     </el-table>
     <page :total="total" :current-page="getParams.page" @currentChange="currentChange" />
@@ -103,7 +100,7 @@
       width="90%"
       :visible.sync="productBatchingListVisible"
     >
-      <product-batching-list @productBatchingSelect="productBatchingSelect" />
+      <product-batching-list :show="productBatchingListVisible" @productBatchingSelect="productBatchingSelect" />
       <span slot="footer">
         <el-button @click="productBatchingListVisible = false">取 消</el-button>
         <el-button type="primary" :disabled="!productBatching" @click="handleCreateWeighBatching">确 定</el-button>
@@ -116,8 +113,9 @@
     >
       <weigh-batching-detail-form
         :product-batching="productBatching"
-        :weigh-batching="weighBatching"
         :edit="dialogStatus != 'show'"
+        :is-create-text="dialogStatus==='create'"
+        :current-id="currentId"
         @created="createdFun"
       />
     </el-dialog>
@@ -125,8 +123,8 @@
 </template>
 
 <script>
-import { weighBatchingList, changeUsedType } from '@/api/small-material-recipe'
-import { rubber_material_url } from '@/api/rubber_recipe_fun'
+import { weighBatchingList, changeUsedType, weighBatchingInfo } from '@/api/small-material-recipe'
+// import { rubber_material_url } from '@/api/rubber_recipe_fun'
 import page from '@/components/page'
 import BatchingUsedTypeSelect from '@/components/BatchingUsedTypeSelect'
 import StageIdSelect from '@/components/StageSelect/StageIdSelect'
@@ -156,7 +154,7 @@ export default {
         show: '显示'
       },
       currentRow: null,
-      weighBatching: null
+      currentId: ''
     }
   },
   created() {
@@ -165,14 +163,16 @@ export default {
   methods: {
     checkPermission,
     async showDetail(row) {
-      this.productBatching = await rubber_material_url('get', row.product_batching)
-      this.weighBatching = row
+      this.productBatching = await weighBatchingInfo(row.id)
+      this.productBatching.state = this.usedTypeFormatter(row)
+      this.currentId = row.id
       this.dialogStatus = 'show'
       this.dialogFormVisible = true
     },
     async batching() {
-      this.productBatching = await rubber_material_url('get', this.currentRow.product_batching)
-      this.weighBatching = this.currentRow
+      this.productBatching = await weighBatchingInfo(this.currentRow.id)
+      this.productBatching.state = this.usedTypeFormatter(this.currentRow)
+      this.currentId = this.currentRow.id
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
     },
@@ -184,19 +184,29 @@ export default {
       this.currentRow = val
     },
     async handleCreateWeighBatching() {
-      const response = await weighBatchingList({ product_batching: this.productBatching.id })
-      if (response.results.length > 0) {
-        this.$alert('该胶料配方已关联小料配方', '注意', {
-          confirmButtonText: '确定'
-        })
-        return
-      }
+      // const response = await weighBatchingList({ product_batching: this.productBatching.product_batching })
+      // if (response.results.length > 0) {
+      //   this.$alert('该胶料配方已关联小料配方', '注意', {
+      //     confirmButtonText: '确定'
+      //   })
+      //   return
+      // }
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
       this.productBatchingListVisible = false
     },
     productBatchingSelect(productBatching) {
-      this.productBatching = productBatching
+      if (productBatching.id) {
+        console.log(productBatching, 'productBatching')
+        this.productBatching = {
+          product_batching: productBatching.id,
+          category_name: productBatching.dev_type_name,
+          stage_product_batch_no: productBatching.stage_product_batch_no,
+          product_name: productBatching.product_name,
+          batching_weight: productBatching.batching_weight,
+          production_time_interval: productBatching.production_time_interval
+        }
+      }
     },
     changeUsedType(id, target_used_type) {
       changeUsedType(id, target_used_type).then(response => {
@@ -234,13 +244,17 @@ export default {
     },
     async getWeighBatchingList() {
       this.listLoading = true
-      const response = await weighBatchingList(this.getParams)
-      this.total = response.count
-      this.weighBatchingList = response.results
+      try {
+        const response = await weighBatchingList(this.getParams)
+        this.total = response.count
+        this.weighBatchingList = response.results
+      } catch {
+        //
+      }
       this.listLoading = false
     },
     add() {
-      this.weighBatching = null
+      this.productBatching = null
       this.productBatchingListVisible = true
     },
     createdFun() {

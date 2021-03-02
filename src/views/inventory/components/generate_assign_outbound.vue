@@ -74,7 +74,7 @@
       <el-table-column label="机台号" width="50" align="center" prop="equip_no" />
       <el-table-column label="车号" align="center" prop="memo" />
       <el-table-column label="货位状态" align="center" prop="location_status" />
-      <el-table-column label="出库位置选择" align="center">
+      <el-table-column label="出库口选择" align="center">
         <template slot-scope="scope">
           <stationInfoWarehouse
             :warehouse-name="warehouseName"
@@ -258,7 +258,7 @@ export default {
           })
         })
         if (bool) {
-          this.$message.info('出库位置必填')
+          this.$message.info('出库口必填')
           return
         }
         this.loadingBtn = true
