@@ -50,13 +50,17 @@
     </el-form>
     <el-button v-permission="['compoundRubber_plan','norman']" class="button-right" @click="normalOutbound">正常出库</el-button>
     <el-button v-permission="['compoundRubber_plan','assign']" class="button-right" @click="assignOutbound">指定出库</el-button>
+    <el-button class="button-right" @click="manualDeliveryBatch">批量人工出库</el-button>
     <el-button class="button-right" @click="getList">刷新</el-button>
+
     <el-table
       border
       :data="tableData"
       size="mini"
+      @selection-change="handleSelectionChange"
     >
       <el-table-column label="No" type="index" align="center" width="30" />
+      <el-table-column type="selection" width="40" />
       <el-table-column label="仓库名称" align="center" prop="name" min-width="10" />
       <el-table-column label="出库类型" align="center" prop="inventory_type" min-width="10" />
       <el-table-column label="出库单号" align="center" prop="order_no" min-width="10" />
@@ -174,7 +178,8 @@ export default {
       rowVal: {},
       warehouseName: '混炼胶库',
       // 仓库id
-      warehouseInfo: null
+      warehouseInfo: null,
+      handleSelection: []
     }
   },
   created() {
@@ -314,6 +319,41 @@ export default {
       } catch (error) {
         this.loadingBtn = false
       }
+    },
+    handleSelectionChange(val) {
+      this.handleSelection = val
+    },
+    manualDeliveryBatch() {
+      if (this.handleSelection.length === 0) {
+        return
+      }
+      const arr = this.handleSelection.filter(D => D.status !== 4)
+      if (arr.length !== 0) {
+        this.$message.info('选中的有出过库的')
+        return
+      }
+      let _i = 0
+      this.handleSelection.forEach(async(row, i) => {
+        const obj = {
+          warehouse_info: row.warehouse_info,
+          inventory_type: row.inventory_type,
+          order_no: row.order_no,
+          material_no: row.material_no,
+          wegit: row.need_weight || '',
+          created_date: row.created_date,
+          pallet_no: row.pallet_no || '',
+          inventory_reason: row.inventory_reason || ''
+        }
+        try {
+          await putPlanManagement('put', row.id, { data: obj })
+          _i++
+          if (_i === this.handleSelection.length) {
+            this.getList()
+          }
+        } catch (e) {
+          this.getList()
+        }
+      })
     },
     manualDelivery(row) {
       this.$confirm(

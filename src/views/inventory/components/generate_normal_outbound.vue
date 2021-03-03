@@ -163,10 +163,10 @@ export default {
           if (this.$refs.stationInfoWarehouseRef) {
             const a = localStorage.getItem('hl-station')
             const b = a ? JSON.parse(a) : null
-            this.ruleForm.station = b.name
-            this.$refs.stationInfoWarehouseRef.value = b.id
+            this.ruleForm.station = b ? b.name : ''
+            this.$refs.stationInfoWarehouseRef.value = b ? b.id : ''
           }
-          this.ruleForm.quality_status = localStorage.getItem('hl-quality') || ''
+          this.ruleForm.quality_status = localStorage.getItem('hl-quality') || null
         }
       }
     }
@@ -176,10 +176,10 @@ export default {
       if (this.$refs.stationInfoWarehouseRef) {
         const a = localStorage.getItem('hl-station')
         const b = a ? JSON.parse(a) : null
-        this.ruleForm.station = b.name
-        this.$refs.stationInfoWarehouseRef.value = b.id
+        this.ruleForm.station = b ? b.name : ''
+        this.$refs.stationInfoWarehouseRef.value = b ? b.id : ''
       }
-      this.ruleForm.quality_status = localStorage.getItem('hl-quality') || ''
+      this.ruleForm.quality_status = localStorage.getItem('hl-quality') || null
     }
   },
   mounted() {
