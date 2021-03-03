@@ -332,7 +332,8 @@ export default {
         image: null,
         first_down_reason: '',
         equip_part: '',
-        equip_no: ''
+        equip_no: '',
+        down_flag: false
       },
       rules: {
         down_time: [
@@ -421,7 +422,8 @@ export default {
           image: null,
           first_down_reason: '',
           equip_part: '',
-          equip_no: ''
+          equip_no: '',
+          down_flag: false
         }
       }
       this.operateType = type
