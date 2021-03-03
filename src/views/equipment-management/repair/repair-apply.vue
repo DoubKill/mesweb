@@ -205,6 +205,7 @@ export default {
         await equipCurrentStatus('patch', this.ruleForm.id,
           { data: obj })
         this.$message.success('操作成功')
+        this.getList()
         this.handleClose(false)
       } catch (e) {
         //
