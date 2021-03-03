@@ -1109,8 +1109,8 @@ export const asyncRoutes = [{
         ]
       }
     ]
-  }
-    /** {
+  },
+  {
     path: '/equipment-maintenance',
     redirect: '/location-definition',
     component: {
@@ -1208,8 +1208,8 @@ export const asyncRoutes = [{
         }
       }
     ]
-  },**/
-    /** {
+  },
+  /** {
     path: '/equipment-maintain',
     redirect: '/location-definition',
     component: {
@@ -1250,7 +1250,7 @@ export const asyncRoutes = [{
       }
     ]
   },**/
-  /** {
+  {
     path: '/platform-manage',
     component: () => import('@/views/equipment-management/repair/platform-manage'),
     name: 'platform-manage',
@@ -1259,7 +1259,7 @@ export const asyncRoutes = [{
       title: '平台信息管理',
       permissionName: ''
     }
-  }**/
+  }
   ]
 },
 {
