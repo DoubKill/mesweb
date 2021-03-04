@@ -13,11 +13,14 @@
         />
       </el-form-item>
       <el-form-item label="设备类型:">
-        <equipTypeSelect @equipTypeSelect="equipTypeSelect" />
+        <equipTypeSelect
+          @equipTypeSelect="equipTypeSelect"
+        />
       </el-form-item>
       <el-form-item label="设备编码:">
         <equip-select
           :equip_no_props.sync="search.equip_no"
+          :equip-type="''"
           @changeSearch="changeList"
         />
       </el-form-item>
