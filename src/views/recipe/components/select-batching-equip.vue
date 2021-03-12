@@ -37,6 +37,11 @@ export default {
       type: Boolean,
       default: false
     },
+    //  created里面加载
+    isDefault: {
+      type: Boolean,
+      default: false
+    },
     //  是否只读
     readIs: {
       type: Boolean,
@@ -45,12 +50,23 @@ export default {
     multipleIs: { // 是否多选
       type: Boolean,
       default: false
+    },
+    show: { // 输入框显示
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
       // equipId: null,
       equipOptions: []
+    }
+  },
+  watch: {
+    show(val) {
+      if (val) {
+        this.getEquip()
+      }
     }
   },
   created() {
@@ -63,7 +79,7 @@ export default {
       getEquip({ all: 1, category_name: '称量设备' }).then(response => {
         this.equipOptions = response.results
 
-        if (this.createdIs && this.equipOptions.length > 0) {
+        if (this.createdIs && this.equipOptions.length > 0 && this.isDefault) {
           this.changeFun(this.equipOptions[0].id)
         }
       })

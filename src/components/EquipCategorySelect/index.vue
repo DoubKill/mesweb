@@ -1,10 +1,11 @@
 <template>
+  <!-- 炼胶机类型 -->
   <el-select
     :value="id"
     clearable
     placeholder="请选择"
-    @change="$emit('change', $event)"
-    @visible-change="visibleChange"
+    :size="isMini"
+    @change="changeFun"
   >
     <el-option
       v-for="item in equipsCategories"
@@ -32,6 +33,10 @@ export default {
       type: String,
       required: false,
       default: '密炼设备'
+    },
+    isMini: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -52,10 +57,13 @@ export default {
       })
       this.equipsCategories = response.results
     },
-    visibleChange(visible) {
-      if (visible) {
-        this.getEquipsCategories()
-      }
+    // visibleChange(visible) {
+    //   if (visible) {
+    //     this.getEquipsCategories()
+    //   }
+    // },
+    changeFun(event) {
+      this.$emit('change', event)
     }
   }
 }

@@ -24,6 +24,13 @@
       <el-form-item label="无硫：">
         共{{ sulfurFree || 0 }}车
       </el-form-item>
+      <el-form-item label="物料编码">
+        <materialCodeSelect
+          :is-clearable="true"
+          store-name="混炼胶库"
+          @changSelect="materialCodeFun"
+        />
+      </el-form-item>
     </el-form>
 
     <el-table
@@ -86,9 +93,10 @@
 import page from '@/components/page'
 import { getMaterialInventoryManage } from '@/api/material-inventory-manage'
 import { rubber_repertory_url, stage_global_url } from '@/api/display_static_fun'
+import materialCodeSelect from '@/components/select_w/materialCodeSelect'
 
 export default {
-  components: { page },
+  components: { page, materialCodeSelect },
   data: function() {
     return {
       tableData: [],
@@ -134,6 +142,10 @@ export default {
       if (bool) {
         this.stage_global_list()
       }
+    },
+    materialCodeFun() {
+      this.getParams.page = 1
+      this.rubber_repertory_list()
     },
     StandardFlagFormatter: function(row, column) {
       return this.StandardFlagChoice(row.standard_flag)

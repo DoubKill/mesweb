@@ -3,7 +3,8 @@
     :value="id"
     clearable
     placeholder="请选择"
-    @change="$emit('change', $event)"
+    :disabled="isDisabled"
+    @change="changeFun"
     @visible-change="visibleChange"
   >
     <el-option
@@ -27,6 +28,10 @@ export default {
       type: [Number, String],
       required: false,
       default: undefined
+    },
+    isDisabled: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -42,10 +47,15 @@ export default {
       const response = await stage_global_url('get')
       this.stageOptions = response.results
     },
+    changeFun(id) {
+      this.$emit('change', id)
+      const arr = this.stageOptions.filter(D => D.id === id)
+      this.$emit('changeFun', arr[0])
+    },
     visibleChange(visible) {
-      if (visible) {
-        this.getStageOptions()
-      }
+      // if (visible) {
+      //   this.getStageOptions()
+      // }
     }
   }
 }

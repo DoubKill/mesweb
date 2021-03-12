@@ -1,12 +1,17 @@
 <template>
   <div v-loading="loading" class="app-container">
+    <!-- 指定出库 -->
     <el-form :inline="true">
       <el-form-item label="仓库名称">
         {{ warehouseName }}
         <!-- <warehouseSelect @changSelect="warehouseSelect" /> -->
       </el-form-item>
       <el-form-item label="物料编码">
-        <el-input v-model="getParams.material_no" @input="changeSearch" />
+        <materialCodeSelect
+          :store-name="warehouseName"
+          :is-clearable="true"
+          @changSelect="materialCodeFun"
+        />
       </el-form-item>
       <el-form-item label="库存位">
         <el-input v-model="getParams.location" @input="changeSearch" />
@@ -28,6 +33,9 @@
             :value="item"
           />
         </el-select>
+      </el-form-item>
+      <el-form-item label="巷道">
+        <el-input v-model="getParams.tunnel" @input="changeSearch" />
       </el-form-item>
     </el-form>
     <el-table
@@ -91,7 +99,7 @@
       </el-table-column>
       <el-table-column v-if="$route.meta.title==='混炼胶出库计划'" label="机台号" align="center" min-width="100">
         <template slot-scope="scope">
-          <EquipSelect equipType="密炼设备" :is-multiple="true" @equipSelected="equipSelected($event,scope.$index)" />
+          <EquipSelect equip-type="密炼设备" :is-multiple="true" @equipSelected="equipSelected($event,scope.$index)" />
         </template>
       </el-table-column>
     </el-table>
@@ -134,9 +142,10 @@ import page from '@/components/page'
 import stationInfoWarehouse from '@/components/select_w/warehouseSelectPosition'
 import receiveList from '../receive-good-manage/receive-list.vue'
 import EquipSelect from '@/components/EquipSelect'
+import materialCodeSelect from '@/components/select_w/materialCodeSelect'
 
 export default {
-  components: { EquipSelect, page, stationInfoWarehouse, receiveList },
+  components: { materialCodeSelect, EquipSelect, page, stationInfoWarehouse, receiveList },
   props: {
     warehouseName: {
       type: String,
@@ -199,6 +208,10 @@ export default {
     changeSearch() {
       this.getParams.page = 1
       this.getTableData()
+    },
+    materialCodeFun(val) {
+      this.getParams.material_no = val ? val.material_no : ''
+      this.changeSearch()
     },
     changeMaterialType(data) {
       this.getParams.material_type = data

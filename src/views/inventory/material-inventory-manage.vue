@@ -5,7 +5,11 @@
         <warehouseSelect :created-is="true" @changSelect="changeWarehouse" />
       </el-form-item>
       <el-form-item label="物料编码">
-        <el-input v-model="getParams.material_no" @input="changeSearch" />
+        <materialCodeSelect
+          :store-name="getParams.warehouse_name"
+          :is-clearable="true"
+          @changSelect="materialCodeFun"
+        />
       </el-form-item>
       <el-form-item label="托盘号">
         <el-input v-model="getParams.container_no" @input="changeSearch" />
@@ -62,8 +66,10 @@ import materielTypeSelect from '@/components/select_w/materielTypeSelect'
 import warehouseSelect from '@/components/select_w/warehouseSelect'
 import page from '@/components/page'
 import { mapGetters } from 'vuex'
+import materialCodeSelect from '@/components/select_w/materialCodeSelect'
+
 export default {
-  components: { page, materielTypeSelect, warehouseSelect },
+  components: { materialCodeSelect, page, materielTypeSelect, warehouseSelect },
   data() {
     return {
       tableData: [],
@@ -102,6 +108,10 @@ export default {
     changeSearch() {
       this.getParams.page = 1
       this.getTableData()
+    },
+    materialCodeFun(val) {
+      this.getParams.material_no = val ? val.material_no : ''
+      this.changeSearch()
     },
     changeMaterialType(data) {
       this.getParams.material_type = data

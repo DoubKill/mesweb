@@ -6,6 +6,7 @@
         <select-batching-equip
           v-model="getParams.equip_id"
           :created-is="true"
+          :is-default="true"
           @changeFun="changeEquip"
         />
       </el-form-item>

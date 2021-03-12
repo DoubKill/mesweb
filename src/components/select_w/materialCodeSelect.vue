@@ -6,6 +6,7 @@
       filterable
       placeholder="请选择物料编码"
       :loading="loading"
+      :clearable="isClearable"
       @visible-change="visibleChange"
       @change="changSelect"
     >
@@ -25,6 +26,10 @@ export default {
   props: {
     //  created里面加载
     createdIs: {
+      type: Boolean,
+      default: false
+    },
+    isClearable: {
       type: Boolean,
       default: false
     },
@@ -52,11 +57,15 @@ export default {
     defaultVal(val) {
       this.value = val
     },
-    status(val){
-      if(val){
+    status(val) {
+      if (val) {
         this.value = ''
         this.getList()
       }
+    },
+    storeName(val) {
+      this.value = ''
+      this.options = []
     }
   },
   created() {
@@ -68,7 +77,7 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const data = await materialCount('get', null, { params: { store_name: this.storeName,status:this.status }})
+        const data = await materialCount('get', null, { params: { store_name: this.storeName, status: this.status }})
         this.options = data || []
         this.loading = false
       } catch (e) {
