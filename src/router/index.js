@@ -889,6 +889,16 @@ export const asyncRoutes = [{
         icon: 'quality',
         permissionName: ''
       }
+    },
+    {
+      path: '/result-entry',
+      component: () => import('@/views/quality_management/result-entry'),
+      name: 'result-entry',
+      meta: {
+        title: '原材料临时快检结果录入',
+        icon: 'quality',
+        permissionName: ''
+      }
     }
   ]
 },

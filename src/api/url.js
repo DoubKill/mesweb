@@ -280,5 +280,9 @@ export default {
   EquipMaintenanceOrder: '/api/v1/equipment/equip-maintenance-order/',
   // 通知配置
   PlatformConfig: '/api/v1/equipment/platform-config/',
-  EquipMaintenanceOrderLog: '/api/v1/equipment/equip-maintenance-order-log/'
+  EquipMaintenanceOrderLog: '/api/v1/equipment/equip-maintenance-order-log/',
+  // 原材料临时快检结果录入
+  BarcodeQuality: '/api/v1/inventory/barcode-quality/',
+  // 原材料临时快检结果录入导出
+  BarcodeQualityExport: '/api/v1/inventory/barcode-quality/export/'
 }
