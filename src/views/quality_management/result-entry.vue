@@ -6,20 +6,17 @@
         <materielTypeSelect @changSelect="changMateriel" />
       </el-form-item>
       <el-form-item label="物料编码">
-        <el-input
-          v-model="search.material_no"
-          placeholder="请输入内容"
-          @input="changeList"
-        />
+        <materialCodeSelect :is-all-obj="true" @changeSelect="changeMaterialCode" />
       </el-form-item>
       <el-form-item label="条码">
         <el-input
+          ref="lot_no_input"
           v-model="search.lot_no"
           placeholder="请输入内容"
-          @input="changeList"
+          @input="changeListLot"
         />
       </el-form-item>
-      <el-form-item label="条码">
+      <el-form-item>
         <el-button :loading="btnExportLoad" @click="exportTable">导出</el-button>
       </el-form-item>
     </el-form>
@@ -56,7 +53,7 @@
         min-width="20"
       />
       <el-table-column
-        prop="batch_no"
+        prop="container_no"
         label="托盘号"
         min-width="20"
       />
@@ -117,8 +114,10 @@
 import materielTypeSelect from '@/components/select_w/materielTypeSelect'
 import { barcodeQuality, barcodeQualityExport } from '@/api/base_w_three'
 import Page from '@/components/page'
+import materialCodeSelect from '@/components/materialCodeSelect'
+import { debounce } from '@/utils'
 export default {
-  components: { Page, materielTypeSelect },
+  components: { Page, materielTypeSelect, materialCodeSelect },
   data() {
     return {
       tableData: [],
@@ -131,6 +130,11 @@ export default {
   },
   created() {
     this.getList()
+  },
+  mounted() {
+    if (this.$refs.lot_no_input) {
+      this.$refs.lot_no_input.focus()
+    }
   },
   methods: {
     async getList() {
@@ -148,9 +152,16 @@ export default {
       this.search.material_type = val
       this.changeList()
     },
+    changeMaterialCode(val) {
+      this.search.material_no = val ? val.material_no : ''
+      this.changeList()
+    },
     changeList() {
       this.search.page = 1
       this.getList()
+    },
+    changeListLot() {
+      debounce(this, 'changeList')
     },
     currentChange(page, page_size) {
       this.search.page = page
