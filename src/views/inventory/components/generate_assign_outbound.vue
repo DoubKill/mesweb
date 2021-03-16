@@ -35,7 +35,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="巷道">
-        <el-input v-model="getParams.tunnel" @input="changeSearch" />
+        <el-input v-model="getParams.tunnel" @input="changeSearchTunnel" />
       </el-form-item>
     </el-form>
     <el-table
@@ -143,7 +143,7 @@ import stationInfoWarehouse from '@/components/select_w/warehouseSelectPosition'
 import receiveList from '../receive-good-manage/receive-list.vue'
 import EquipSelect from '@/components/EquipSelect'
 import materialCodeSelect from '@/components/select_w/materialCodeSelect'
-
+import { debounce } from '@/utils'
 export default {
   components: { materialCodeSelect, EquipSelect, page, stationInfoWarehouse, receiveList },
   props: {
@@ -208,6 +208,9 @@ export default {
     changeSearch() {
       this.getParams.page = 1
       this.getTableData()
+    },
+    changeSearchTunnel() {
+      debounce(this, 'changeSearch')
     },
     materialCodeFun(val) {
       this.getParams.material_no = val ? val.material_no : ''

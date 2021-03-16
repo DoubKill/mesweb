@@ -94,7 +94,10 @@ export default {
       loading: false,
       page: 1,
       total: 0,
-      ruleForm: {},
+      ruleForm: {
+        level: '',
+        deal_result: ''
+      },
       rules: {
         level: [
           { required: true, message: '请填写等级', trigger: 'blur' }

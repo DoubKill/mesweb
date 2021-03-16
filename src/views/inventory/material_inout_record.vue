@@ -61,7 +61,8 @@
       <el-table-column label="No" type="index" align="center" width="40" />
       <el-table-column label="类型" align="center" prop="order_type" width="50" />
       <el-table-column label="出入库单号" align="center" prop="order_no" />
-      <el-table-column label="仓库类型" align="center" prop="warehouse_type" />
+      <!-- <el-table-column label="仓库类型" align="center" prop="warehouse_type" /> -->
+      <el-table-column label="仓库名称" align="center" prop="warehouse_name" />
       <el-table-column label="托盘号" align="center" prop="pallet_no" />
       <el-table-column label="机台" align="center">
         <template v-if="row.product_info" slot-scope="{row}">
@@ -85,8 +86,8 @@
       <el-table-column label="单位" align="center" prop="unit" width="40" />
       <el-table-column label="重量" align="center" prop="weight" width="80" />
       <el-table-column label="发起人" align="center" prop="initiator" width="80" />
-      <el-table-column label="发起时间" align="center" prop="fin_time" />
-      <el-table-column label="完成时间" align="center" prop="end_time" />
+      <el-table-column label="发起时间" align="center" prop="start_time" />
+      <el-table-column label="完成时间" align="center" prop="fin_time" />
     </el-table>
     <page
       :total="total"

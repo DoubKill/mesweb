@@ -2,20 +2,7 @@
   <div>
     <el-form :inline="true">
       <el-form-item label="原材料类别">
-        <el-select
-          v-model="materialType"
-          clearable
-          placeholder="请选择"
-          @visible-change="materialTypeChange"
-          @change="changeSearch"
-        >
-          <el-option
-            v-for="item in materialTypeOptions"
-            :key="item.global_name"
-            :label="item.global_name"
-            :value="item.global_name"
-          />
-        </el-select>
+        <el-input v-model="getParams.material_type" @input="changeSearch" />
       </el-form-item>
     </el-form>
 
@@ -44,7 +31,7 @@
 <script>
 import page from '@/components/page'
 import { material_repertory_url, materials_type_url } from '@/api/display_static_fun'
-
+import { debounce } from '@/utils'
 export default {
   components: { page },
   data: function() {
@@ -96,9 +83,8 @@ export default {
       }
     },
     changeSearch() {
-      this.getParams['material_type'] = this.materialType
       this.getParams.page = 1
-      this.material_repertory_list()
+      debounce(this, 'material_repertory_list')
     },
     currentChange(page) {
       this.getParams.page = page

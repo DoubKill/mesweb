@@ -10,6 +10,7 @@
           :is-clearable="true"
           @changSelect="materialCodeFun"
         />
+        <!-- <el-input v-model="getParams.material_no" @input="changeSearch" /> -->
       </el-form-item>
       <el-form-item label="托盘号">
         <el-input v-model="getParams.container_no" @input="changeSearch" />

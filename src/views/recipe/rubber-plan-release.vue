@@ -154,7 +154,10 @@
           if(row.packages){
             return row.packages
           }
-          return row.plan_package-row.undistributed_package
+          if(row.plan_package){
+            return row.plan_package+row.undistributed_package
+          }
+          return 0
         }"
       />
       <el-table-column
@@ -404,6 +407,7 @@ export default {
     },
     async submitFun(row, index) {
       row.visible = false
+      console.log(this.reason, 888)
       await changePlanPackage(row.id,
         this.reason)
       this.getList()
@@ -469,6 +473,7 @@ export default {
     clickSend(row) {
       row.textEquipId = []
       this.equip_num_list = []
+      this.form = Object.assign({}, row)
       if (row.textEquipObj && row.textEquipObj.length !== 0) {
         row.textEquipObj.forEach((D, i) => {
           this.equip_num_list.push({
@@ -497,7 +502,7 @@ export default {
         D.batching_class_plan = row.id
         D.equip = D.equip || D.id
         allNum += Number(D.packages)
-        if (!D.packages) {
+        if (!Number(D.packages)) {
           bool = true
           return
         }
@@ -517,10 +522,12 @@ export default {
       this.tableData[i].visibleSend = false
 
       const { id } = this.form // 取出当前删除行的pid
-      if (id) {
+      if (id && this.maps.get(id)) {
         const { tree, treeNode, resolve } = this.maps.get(id) // 根据pid取出对应的节点数据
         this.$set(this.$refs.table.store.states.lazyTreeNodeMap, id, []) // 将对应节点下的数据清空，从而实现数据的重新加载
-        this.loadTableData(tree, treeNode, resolve)
+        if (tree) {
+          this.loadTableData(tree, treeNode, resolve)
+        }
       }
     },
     showSendOut(row, index) {

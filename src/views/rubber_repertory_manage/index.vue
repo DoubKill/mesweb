@@ -18,18 +18,18 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="加硫：">
-        共{{ sulfurAddition || 0 }}车
-      </el-form-item>
-      <el-form-item label="无硫：">
-        共{{ sulfurFree || 0 }}车
-      </el-form-item>
       <el-form-item label="胶料编码">
         <materialCodeSelect
           :is-clearable="true"
           store-name="混炼胶库"
           @changSelect="materialCodeFun"
         />
+      </el-form-item>
+      <el-form-item label="加硫：">
+        共{{ sulfurAddition || 0 }}车
+      </el-form-item>
+      <el-form-item label="无硫：">
+        共{{ sulfurFree || 0 }}车
       </el-form-item>
     </el-form>
 
