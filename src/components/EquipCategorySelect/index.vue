@@ -5,6 +5,7 @@
     clearable
     placeholder="请选择"
     :size="isMini"
+    :disabled="isDisabled"
     @change="changeFun"
   >
     <el-option
@@ -37,6 +38,10 @@ export default {
     isMini: {
       type: String,
       default: ''
+    },
+    isDisabled: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -63,6 +68,8 @@ export default {
     //   }
     // },
     changeFun(event) {
+      const arr = this.equipsCategories.filter(D => D.id === event)
+      this.$emit('changeFun', arr[0])
       this.$emit('change', event)
     }
   }

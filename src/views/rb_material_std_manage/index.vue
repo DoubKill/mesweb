@@ -253,6 +253,7 @@
         ref="rubberMaterialForm"
         :model="rubberMaterialForm"
         :rules="rules"
+        :inline="true"
       >
         <el-form-item>
           <el-radio v-model="normalReceipe" :label="true" :disabled="copyRecipe" @change="receipeTypeChange">常规配方</el-radio>
@@ -384,6 +385,7 @@
             :disabled="normalReceipe"
           />
         </el-form-item>
+        <br>
         <el-form-item>
           <!--<el-button @click="dialogAddRubberMaterial = false">取 消</el-button>-->
           <el-button
@@ -407,10 +409,15 @@
       title="胶料配料标准"
       :visible.sync="NewdialogChoiceMaterials"
     >
-
+      <ingredientStandard
+        :dialog-visible-is="dialogVisible"
+        @handleClose="handleClose"
+        @pop_up_raw_material="pop_up_raw_material"
+      />
       <el-form :inline="true">
         <el-form-item style="float: right">
           <el-button @click="NewsaveMaterialClicked">保存</el-button>
+          <el-button @click="addMaterial">新建料包</el-button>
         </el-form-item>
       </el-form>
 
@@ -451,13 +458,13 @@
         />
       </el-select>
 
-      配料重量/kg:
+      <!-- 配料重量/kg:
       <el-input
         v-model="select_material_weight"
         size="mini"
         :disabled="true"
         style="width: 10%"
-      />
+      /> -->
       炼胶时间:
       <el-input-number
         v-model.number="select_rm_time_interval"
@@ -488,7 +495,6 @@
           <tr>
             <th style="text-align: center; height: 48px">No</th>
             <th style="text-align: center; height: 48px">类别</th>
-            <th style="text-align: center; height: 48px">自动与否</th>
             <th style="text-align: center; height: 48px">原材料</th>
             <td style="text-align: center; height: 48px">实际重量/kg</td>
             <td style="text-align: center; height: 48px">误差</td>
@@ -499,7 +505,7 @@
           <!--胶料配料标准  第一行 的汇总数据-->
           <tr style="background: rgba(189,198,210,0.73)">
             <td
-              colspan="4"
+              colspan="3"
               style="text-align: center; height: 48px"
             >配方结果</td>
             <td style="text-align: center; height: 48px">{{ practicalWeightSum }}</td>
@@ -510,12 +516,11 @@
             v-for="(new_material_ele, index) in NewRowMaterial"
             :key="index"
           >
-            <!--<td>{{ new_material_ele.sn_ele }}</td>-->
             <td v-show="false">{{ new_material_ele.material }}</td>
             <td style="text-align: center; height: 48px">{{ index + 1 }}
             </td>
             <td style="text-align: center; height: 48px">{{ new_material_ele.material_type }}</td>
-            <td style="text-align: center; height: 48px">
+            <!-- <td style="text-align: center; height: 48px">
               <template>
                 <el-radio
                   v-model="new_material_ele.auto_flag"
@@ -530,9 +535,8 @@
                   :label="0"
                 >其他</el-radio>
               </template>
-            </td>
+            </td> -->
             <td style="text-align: center; height: 48px">
-              <!-- <div style="margin-top: 12px;"> -->
               <el-input
                 v-model="new_material_ele.material_name"
                 size="mini"
@@ -546,8 +550,6 @@
                   @click="pop_up_raw_material(true, index)"
                 />
               </el-input>
-              <!-- </div> -->
-
             </td>
             <td style="text-align: center; height: 48px">
               <el-input-number
@@ -572,12 +574,11 @@
               >删除</el-button>
             </td>
           </tr>
-
         </tbody>
       </table>
       <el-form>
         <el-form-item style="text-align: center">
-          <el-button @click="insert_NewPracticalWeightChanged">插入一行</el-button>
+          <el-button size="mini" @click="insert_NewPracticalWeightChanged">插入一行</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -632,13 +633,13 @@
           :value="item.id"
         />
       </el-select>
-      配料重量/kg:
+      <!-- 配料重量/kg:
       <el-input
         v-model="put_select_material_weight"
         size="mini"
         :disabled="true"
         style="width: 10%"
-      />
+      /> -->
       炼胶时间:
       <el-input-number
         v-model.number="put_select_rm_time_interval"
@@ -676,7 +677,7 @@
               colspan="4"
               style="text-align: center; height: 48px"
             >配方结果</td>
-            <td style="text-align: center; height: 48px">{{ put_practicalWeightSum }}</td>
+            <td style="text-align: center; height: 48px">{{ Number(put_practicalWeightSum).toFixed(2) }}</td>
             <td />
             <td />
           </tr>
@@ -885,13 +886,13 @@
           :value="item.id"
         />
       </el-select>
-      配料重量/kg:
+      <!-- 配料重量/kg:
       <el-input
         v-model="put_select_material_weight"
         size="mini"
         :disabled="true"
         style="width: 10%"
-      />
+      /> -->
       炼胶时间:
       <el-input-number
         v-model.number="put_select_rm_time_interval"
@@ -925,7 +926,7 @@
               colspan="4"
               style="text-align: center; height: 48px"
             >配方结果</td>
-            <td style="text-align: center; height: 48px">{{ put_practicalWeightSum }}</td>
+            <td style="text-align: center; height: 48px">{{ Number(put_practicalWeightSum).toFixed(2) }}</td>
             <td />
             <td />
           </tr>
@@ -988,6 +989,41 @@
         </tbody>
       </table>
     </el-dialog>
+
+    <!-- <el-dialog
+      title="新建料包"
+      :visible.sync="dialogVisible"
+      width="500px"
+      :before-close="handleClose"
+      append-to-body
+    >
+      <el-form ref="ruleForm" :model="ruleForm" :rules="rulesMaterial" label-width="100px">
+        <el-form-item label="料包编码" prop="a">
+          <el-input v-model="ruleForm.a" />
+        </el-form-item>
+        <el-form-item label="分包数量" prop="b">
+          <el-input-number
+            v-model="ruleForm.b"
+            controls-position="right"
+            :min="1"
+          />
+        </el-form-item>
+        <el-form-item label="配料方式" prop="c">
+          <el-select v-model="ruleForm.c" placeholder="请选择">
+            <el-option
+              v-for="item in ['手动','自动']"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitAdd">确 定</el-button>
+      </span>
+    </el-dialog> -->
   </div>
 </template>
 
@@ -995,11 +1031,15 @@
 import page from '@/components/page'
 import { rubber_material_url, send_auxiliary_url, SITE_global_url, stage_global_url, site_url, product_info_url, validate_versions_url, equip_category_url, materials_url, materials_type_url } from '@/api/rubber_recipe_fun'
 import { mapGetters } from 'vuex'
+import { getToken } from '@/utils/auth'
+import ingredientStandard from './components/ingredient-standard'
 
 export default {
-  components: { page },
+  components: { page, ingredientStandard },
   data: function() {
     return {
+      ruleForm: {},
+      dialogVisible: false,
       loading: null,
       tableData: [],
       gridTable: false,
@@ -1143,6 +1183,9 @@ export default {
         dev_type_name: '',
         generate_material_no: ''
       },
+      rulesMaterial: {
+
+      },
       rules: {
         factory: [{ required: true, message: '请选择产地', trigger: 'blur' }],
         SITE: [{ required: true, message: '请选择SITE', trigger: 'blur' }],
@@ -1168,7 +1211,8 @@ export default {
       search_material_name: null,
       select_product_id: null,
       normalReceipe: true,
-      copyRecipe: false
+      copyRecipe: false,
+      currentMaterialList: []
     }
   },
   computed: {
@@ -1183,6 +1227,9 @@ export default {
       this.copyRecipe = true
       this.normalReceipe = !!this.currentRow.product_no
       this.showAddRubberMaterialDialog()
+    },
+    submitAdd() {
+
     },
     clearRubberMaterialForm() {
       this.rubberMaterialForm.factory = undefined
@@ -1336,6 +1383,9 @@ export default {
       }).then(response => {
         this.$message('发送至上辅机成功')
         this.rubber_material_list()
+        window.open(process.env.VUE_APP_AUX_URL + '?AAA=' + getToken() +
+        '&batch_no=' + row.stage_product_batch_no)
+
       // eslint-disable-next-line handle-callback-err
       }).catch(error => {
 
@@ -1505,6 +1555,12 @@ export default {
         // standard_error: ''
       })
     },
+    addMaterial() {
+      this.dialogVisible = true
+    },
+    handleClose() {
+      this.dialogVisible = false
+    },
     NewsaveMaterialClicked: async function() {
       var app = this
       var batching_details_list = []
@@ -1537,22 +1593,23 @@ export default {
         }
       }
       try {
-        await this.rubber_material_post(
-          {
-            data: {
-              'factory': app.rubberMaterialForm['factory'],
-              'site': this.normalReceipe ? this.rubberMaterialForm['SITE'] : null,
-              'product_info': this.normalReceipe ? this.rubberMaterialForm['select_product_id'] : null,
-              'precept': app.rubberMaterialForm['scheme'],
-              'stage_product_batch_no': this.normalReceipe ? null : this.rubberMaterialForm['generate_material_no'],
-              'stage': this.normalReceipe ? this.rubberMaterialForm['stage'] : null,
-              'versions': this.normalReceipe ? this.rubberMaterialForm['version'] : null,
-              'dev_type': app.select_dev_type,
-              'batching_details': batching_details_list,
-              'production_time_interval': app.select_rm_time_interval
-            }
+        const obj = {
+          data: {
+            'factory': app.rubberMaterialForm['factory'],
+            'site': this.normalReceipe ? this.rubberMaterialForm['SITE'] : null,
+            'product_info': this.normalReceipe ? this.rubberMaterialForm['select_product_id'] : null,
+            'precept': app.rubberMaterialForm['scheme'],
+            'stage_product_batch_no': this.normalReceipe ? null : this.rubberMaterialForm['generate_material_no'],
+            'stage': this.normalReceipe ? this.rubberMaterialForm['stage'] : null,
+            'versions': this.normalReceipe ? this.rubberMaterialForm['version'] : null,
+            'dev_type': app.select_dev_type,
+            'batching_details': batching_details_list,
+            'production_time_interval': app.select_rm_time_interval
           }
-        )
+        }
+        console.log(obj)
+        return
+        await this.rubber_material_post(obj)
         app.NewdialogChoiceMaterials = false
         app.$message(app.rubberMaterialForm['generate_material_no'] + '保存成功')
         this.rubber_material_list()
@@ -1654,17 +1711,16 @@ export default {
     },
     handleMaterialSelect(row) {
       var app = this
+      const arr = this.currentMaterialList.filter(D => D.material_no === row.material_no)
+      if (arr.length > 0) {
+        app.$message.info({
+          message: '不能选择相同的原料',
+          type: 'error'
+        })
+        return
+      }
       if (app.raw_material_index != null) {
         // 胶料配料post
-        for (var i = 0; i < app.NewRowMaterial.length; ++i) {
-          if (app.NewRowMaterial[i]['material'] === row.id) {
-            app.$message({
-              message: '不能选择相同的原料',
-              type: 'error'
-            })
-            return
-          }
-        }
         app.NewRowMaterial[app.raw_material_index].material_name = row.material_name
         app.NewRowMaterial[app.raw_material_index].material = row.id
         app.NewRowMaterial[app.raw_material_index].material_type = row.material_type_name
@@ -1683,6 +1739,8 @@ export default {
         app.PutProductRecipe[app.put_raw_material_index].material = row.id
         app.PutProductRecipe[app.put_raw_material_index].material_type = row.material_type_name
       }
+
+      this.currentMaterialList.push(row)
       app.dialogRawMaterialSync = false
     },
     async addRubberMaterial() {

@@ -61,60 +61,58 @@
         type="index"
         label="No"
         width="40"
-        align="center"
       />
       <el-table-column
         label="工厂时间"
         prop="day_time"
-        align="center"
         width="110px"
       />
       <el-table-column
         prop="classes_name"
         label="班次"
-        align="center"
         min-width="10"
       />
       <el-table-column
         prop="weight_batch_no"
         label="小料配方编码"
-        align="center"
         min-width="20"
       />
       <el-table-column
         prop="plan_batching_uid"
         label="计划编号"
-        align="center"
         min-width="20"
       />
       <el-table-column
+        prop="plan_batching_uid"
+        label="配料方式"
+        min-width="20"
+        :formatter="(row, column) => {
+          return true?'自动':'手动'
+        }"
+      />
+      <!-- <el-table-column
         prop="weigh_type"
         label="料包类型"
         :formatter="weighTypeFun"
-        align="center"
         min-width="20"
-      />
+      /> -->
       <el-table-column
         label="配料设备"
-        align="center"
         prop="equip_no"
         min-width="20"
       />
       <el-table-column
         prop="stage_product_batch_no"
         label="胶料编码"
-        align="center"
         min-width="20"
       />
       <el-table-column
         prop="plan_package"
         label="计划数量(包)"
-        align="center"
         min-width="17"
       >
         <template slot-scope="scope">
           <div v-if="!scope.row.isChildren" :class="{ 'b-r': scope.row.package_changed }">{{ scope.row.plan_package }}
-
             <el-tooltip class="item" effect="dark" content="编辑" placement="top-start">
               <el-popover
                 v-model="scope.row.visible"
@@ -143,7 +141,6 @@
       <el-table-column
         prop="undistributed_package"
         label="剩余计划数量(包)"
-        align="center"
         min-width="16"
         :formatter="(row, column) => {
           return row.undistributed_package?row.undistributed_package:0
@@ -152,7 +149,6 @@
       <el-table-column
         prop="packages"
         label="已下达数量(包)"
-        align="center"
         min-width="16"
         :formatter="(row, column) => {
           if(row.packages){
@@ -162,21 +158,24 @@
         }"
       />
       <el-table-column
+        prop=""
+        label="默认机台"
+        min-width="16"
+      />
+      <!-- <el-table-column
         prop="weigh_batching_used_type"
         label="小料配方状态"
         min-width="10"
-        align="center"
       >
         <template slot-scope="scoped">
           <span :style="{'color':scoped.row.weigh_batching_used_type === 6?'red':''}">
             {{ usedTypeFormatter(scoped.row) }}
           </span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         label="操作"
-        align="center"
-        min-width="16"
+        width="70"
       >
         <template v-if="!scope.row.isChildren" slot-scope="scope">
           <el-button-group>
@@ -186,23 +185,50 @@
       </el-table-column>
       <el-table-column
         label="下发"
-        align="center"
-        min-width="16"
+        width="70"
       >
         <template v-if="!scope.row.isChildren" slot-scope="scope">
-          <el-button
+          <el-popover
+            v-model="scope.row.visibleSend"
+            placement="right"
+            width="500"
+            trigger="click"
+          >
+            <div>
+              配料设备：<select-batching-equip v-model="scope.row.textEquipId" :multiple-is="true" :show="scope.row.visibleSend" :created-is="false" @changeFun="changeFun" /><br>
+              <div v-for="(item,i) in equip_num_list" :key="i" style="display:inline-block;margin-top:6px">
+                <span style="margin:0 6px">{{ item.equip_no }}</span>+
+                <el-input
+                  v-model="item.packages"
+                  type="number"
+                  style="width:80px"
+                  controls-position="right"
+                /> (包)
+              </div>
+            </div>
+            <el-button
+              slot="reference"
+              v-permission="['batching_plan','send']"
+              size="mini"
+              :disabled="!sendInabled(scope.row)"
+              @click="clickSend(scope.row)"
+            >发送</el-button>
+            <el-button style="float:right;margin-top:5px" size="mini" type="primary" @click="submitSendFun(scope.row,scope.$index)">确定</el-button>
+            <el-button style="float:right;margin-top:5px;margin-right:5px" size="mini" @click="scope.row.visibleSend = false">取消</el-button>
+          </el-popover>
+
+          <!-- <el-button
             v-permission="['batching_plan','send']"
             :disabled="!sendInabled(scope.row)"
             size="mini"
             @click="showSendOut(scope.row,scope.$index)"
-          >发送</el-button>
+          >发送</el-button> -->
         </template>
       </el-table-column>
       <el-table-column
         prop="status"
         label="状态"
         min-width="15"
-        align="center"
         :formatter="(row, column) => {
           switch(row.status) {
           case 1:
@@ -215,13 +241,11 @@
       <el-table-column
         prop="send_username"
         label="下发人"
-        align="center"
         min-width="20"
       />
       <el-table-column
         prop="send_time"
         label="下发时间"
-        align="center"
         min-width="20"
       />
     </el-table>
@@ -310,7 +334,7 @@ import SelectBatchingEquip from './components/select-batching-equip'
 import WeighBatchingPlanDetail from './components/weigh_batching_plan_detail'
 import Page from '@/components/page'
 import { batchingClassesPlan, issueBatchingClassesPlan, batchingClassesEquipPlan, changePlanPackage } from '@/api/small-material-recipe'
-import { setDate } from '@/utils'
+// import { setDate } from '@/utils'
 export default {
   components: { Page, classSelect, EquipCategorySelect, SelectBatchingEquip, WeighBatchingPlanDetail },
   data() {
@@ -318,7 +342,8 @@ export default {
       getParams: {
         page: 1,
         page_size: 10,
-        day_time: setDate(),
+        // day_time: setDate(),
+        day_time: '',
         dev_type: null,
         weight_batch_no: '',
         classes_name: '',
@@ -352,7 +377,8 @@ export default {
       reason: '',
       equip_num_list: [],
       classeseEquipPlan: [],
-      maps: new Map()
+      maps: new Map(),
+      formSend: {}
     }
   },
   created() {
@@ -408,6 +434,11 @@ export default {
         this.tableData = data.results || []
         this.tableData.forEach(D => {
           D.hasChildren = true
+          // D.textEquipObj = [
+          //   { id: 16, equip_no: 'XLC01' },
+          //   { id: 17, equip_no: 'XLC02' }
+          // ]
+          // D.textEquipId = [16, 17]
         })
         this.total = data.count
         this.loading = false
@@ -435,37 +466,62 @@ export default {
       this.getParams.page_size = page_size
       this.getList()
     },
+    clickSend(row) {
+      row.textEquipId = []
+      this.equip_num_list = []
+      if (row.textEquipObj && row.textEquipObj.length !== 0) {
+        row.textEquipObj.forEach((D, i) => {
+          this.equip_num_list.push({
+            equip_no: D.equip_no,
+            equip: D.id,
+            packages: i === 0 ? row.undistributed_package : ''
+          })
+        })
+      }
+    },
+    submitSendFun(row, i) {
+      this.sendOutFun(row, i)
+    },
     async sendOut() {
       this.$refs['form'].validate(async valid => {
         if (valid) {
-          let allNum = 0
-          let bool
-          const equip_num_list = JSON.parse(JSON.stringify(this.equip_num_list))
-          equip_num_list.map(D => {
-            D.batching_class_plan = this.form.id
-            D.equip = D.id
-            allNum += Number(D.packages)
-            if (!D.packages) {
-              bool = true
-              return
-            }
-          })
-          if (allNum > this.form.undistributed_package || bool) {
-          // 判断是否大于剩余包数，大于不让提交，且bool是true
-            this.$message.info('超过了计划包数')
-            bool = false
-            return
-          }
-          await issueBatchingClassesPlan(equip_num_list)
-          this.handleClose(false)
-          this.getList()
-
-          const { id } = this.form // 取出当前删除行的pid
-          const { tree, treeNode, resolve } = this.maps.get(id) // 根据pid取出对应的节点数据
-          this.$set(this.$refs.table.store.states.lazyTreeNodeMap, id, []) // 将对应节点下的数据清空，从而实现数据的重新加载
-          this.loadTableData(tree, treeNode, resolve)
+          this.sendOutFun()
         }
       })
+    },
+    async sendOutFun(row, i) {
+      let allNum = 0
+      let bool
+      const equip_num_list = JSON.parse(JSON.stringify(this.equip_num_list))
+      equip_num_list.map(D => {
+        D.batching_class_plan = row.id
+        D.equip = D.equip || D.id
+        allNum += Number(D.packages)
+        if (!D.packages) {
+          bool = true
+          return
+        }
+      })
+      if (bool) {
+        this.$message.info('未配置设备包数')
+        bool = false
+        return
+      }
+      if (allNum > row.undistributed_package) {
+        this.$message.info('超过了计划包数')
+        return
+      }
+      await issueBatchingClassesPlan(equip_num_list)
+      this.handleClose(false)
+      this.getList()
+      this.tableData[i].visibleSend = false
+
+      const { id } = this.form // 取出当前删除行的pid
+      if (id) {
+        const { tree, treeNode, resolve } = this.maps.get(id) // 根据pid取出对应的节点数据
+        this.$set(this.$refs.table.store.states.lazyTreeNodeMap, id, []) // 将对应节点下的数据清空，从而实现数据的重新加载
+        this.loadTableData(tree, treeNode, resolve)
+      }
     },
     showSendOut(row, index) {
       this.form = Object.assign({}, row)
@@ -536,12 +592,18 @@ export default {
 </script>
 
 <style lang="scss">
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0;
+}
 .rubber-plan-release{
   .b-r {
     display:inline-block;
     background: red;
     color: white;
     width:100%;
+    padding-left:4px;
   }
   .discardClass{
     color:red !important;
