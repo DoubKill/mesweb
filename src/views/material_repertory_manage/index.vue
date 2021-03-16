@@ -1,8 +1,12 @@
 <template>
   <div v-loading="loading">
+    <!-- 原材料库 -->
     <el-form :inline="true">
       <el-form-item label="原材料类别">
         <el-input v-model="getParams.material_type" @input="changeSearch" />
+      </el-form-item>
+      <el-form-item label="原材料编码">
+        <el-input v-model="getParams.material_no" @input="changeSearch" />
       </el-form-item>
     </el-form>
 
