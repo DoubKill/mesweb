@@ -350,7 +350,7 @@ export default {
     },
     async send_auxiliary(row) {
       try {
-        await send_auxiliary_url('post', {
+        const data = await send_auxiliary_url('post', {
           params: {
             'product_batching_id': row.id,
             'product_no': row.stage_product_batch_no
@@ -358,7 +358,9 @@ export default {
         })
         this.$message.success('发送至上辅机成功')
         this.rubber_material_list()
-        window.open(process.env.VUE_APP_AUX_URL + '?AAA=' + getToken() +
+        const url = data.auxiliary_url + '#/recipe/list'
+
+        window.open(url + '?AAA=' + getToken() +
         '&batch_no=' + row.stage_product_batch_no)
       } catch (e) {
         //

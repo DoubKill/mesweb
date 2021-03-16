@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-loading="loading">
     <el-form :inline="true">
       <el-form-item label="原材料类别">
         <el-input v-model="getParams.material_type" @input="changeSearch" />
@@ -42,7 +42,8 @@ export default {
         page: 1
       },
       materialType: null,
-      materialTypeOptions: []
+      materialTypeOptions: [],
+      loading: true
     }
   },
   created() {
@@ -51,10 +52,12 @@ export default {
   methods: {
     async material_repertory_list() {
       try {
+        this.loading = true
         const material_repertoryData = await material_repertory_url('get', { params: this.getParams })
         this.tableData = material_repertoryData.results
         this.total = material_repertoryData.count
-      } catch (e) { throw new Error(e) }
+        this.loading = false
+      } catch (e) { this.loading = false }
     },
     async materials_type_list() {
       try {
