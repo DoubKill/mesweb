@@ -379,6 +379,12 @@ export default {
       this.dialogRawMaterialSync = false
     },
     addMaterial() {
+      if (!this.formInline.dev_type) {
+        this.$message.info({
+          message: '请选择炼胶机类型'
+        })
+        return
+      }
       this.dialogVisibleAdd = true
     },
     async putNewsaveMaterialClicked() {

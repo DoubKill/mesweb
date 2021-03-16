@@ -288,8 +288,11 @@ export default {
           // // 配料
           this.objParames = objParames
           if (objParames.id) {
+            // 获取详情 复制
             this.directBatching(objParames.id, true)
           } else {
+            // 新增
+            this.objParames._add = true
             this.showIngredient = true
           }
         }
