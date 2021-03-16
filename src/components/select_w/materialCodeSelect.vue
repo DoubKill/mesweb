@@ -7,6 +7,7 @@
       placeholder="请选择物料编码"
       :loading="loading"
       :clearable="isClearable"
+      :allow-create="isAllowCreate"
       @visible-change="visibleChange"
       @change="changSelect"
     >
@@ -30,6 +31,10 @@ export default {
       default: false
     },
     isClearable: {
+      type: Boolean,
+      default: false
+    },
+    isAllowCreate: { // 创建条目
       type: Boolean,
       default: false
     },
@@ -90,6 +95,10 @@ export default {
       }
     },
     changSelect(val) {
+      if (this.isAllowCreate) {
+        this.$emit('changSelect', { material_no: val })
+        return
+      }
       let arr = []
       arr = this.options.filter(D => D.material_no === val)
       this.$emit('changSelect', arr[0])

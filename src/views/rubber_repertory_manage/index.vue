@@ -22,6 +22,7 @@
         <materialCodeSelect
           :is-clearable="true"
           store-name="混炼胶库"
+          :is-allow-create="true"
           @changSelect="materialCodeFun"
         />
       </el-form-item>
