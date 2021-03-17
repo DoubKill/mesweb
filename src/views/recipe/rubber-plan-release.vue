@@ -155,7 +155,7 @@
             return row.packages
           }
           if(row.plan_package){
-            return row.plan_package+row.undistributed_package
+            return row.plan_package-row.undistributed_package
           }
           return 0
         }"
@@ -213,19 +213,12 @@
               slot="reference"
               v-permission="['batching_plan','send']"
               size="mini"
-              :disabled="!sendInabled(scope.row)"
+              :disabled="sendInabled(scope.row)"
               @click="clickSend(scope.row)"
             >发送</el-button>
             <el-button style="float:right;margin-top:5px" size="mini" type="primary" @click="submitSendFun(scope.row,scope.$index)">确定</el-button>
             <el-button style="float:right;margin-top:5px;margin-right:5px" size="mini" @click="scope.row.visibleSend = false">取消</el-button>
           </el-popover>
-
-          <!-- <el-button
-            v-permission="['batching_plan','send']"
-            :disabled="!sendInabled(scope.row)"
-            size="mini"
-            @click="showSendOut(scope.row,scope.$index)"
-          >发送</el-button> -->
         </template>
       </el-table-column>
       <el-table-column
@@ -426,10 +419,10 @@ export default {
     },
     sendInabled(row) {
       // 剩余包数 === 0
-      if (row.weigh_batching_used_type === 4 && row.undistributed_package) {
-        return true
+      if (row.undistributed_package) {
+        return false
       }
-      return false
+      return true
     },
     async getList() {
       this.loading = true
