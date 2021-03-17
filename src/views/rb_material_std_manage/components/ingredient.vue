@@ -409,7 +409,6 @@ export default {
       let ingredientList = []
       if (this.$refs.ingredientStandardRef) {
         ingredientList = this.$refs.ingredientStandardRef.tableData
-
         if (ingredientList.length > 0) {
           try {
             ingredientList.forEach(D => {
@@ -423,9 +422,6 @@ export default {
             this.$message.info('原材料与实际重量不能为空')
             return
           }
-        } else {
-          this.$message.info('原材料与实际重量不能为空')
-          return
         }
       }
       const parameter = {}
@@ -448,8 +444,6 @@ export default {
       parameter.batching_detail_ids = this.batching_details_delete || []
       parameter.weight_detail_ids = this.weight_material_delete || []
       parameter.cnt_type_ids = this.weight_cnt_types_delete || []
-      console.log(parameter, 7777)
-
       try {
         const _api = parameter._add ? 'post' : 'put'
         const _id = parameter._add ? null : parameter.id
