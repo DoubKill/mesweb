@@ -216,6 +216,7 @@ export default {
       this.$emit('handleCloseMaterial')
       this.dialogAddRubberMaterial = false
       this.receipeTypeChange()
+      this.batchingList = {}
       if (done) {
         done()
       }

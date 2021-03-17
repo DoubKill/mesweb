@@ -249,7 +249,6 @@ export default {
         this.$nextTick(() => {
           this.addTableData = this.batchingList.weight_cnt_types || []
         })
-        console.log(this.addTableData, 'this.addTableData')
       }
     }
   },
