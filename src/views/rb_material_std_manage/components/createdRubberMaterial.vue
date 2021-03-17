@@ -280,8 +280,8 @@ export default {
         if (!bool) {
           // 直接生成
           this.btnLoading = true
-          delete objParames.production_time_interval
-          await rubber_material_url('post', null, { data: objParames })
+          delete a.production_time_interval
+          await rubber_material_url('post', null, { data: a })
           this.$message.success('生成成功')
           this.$emit('refreshList')
           this.btnLoading = false
