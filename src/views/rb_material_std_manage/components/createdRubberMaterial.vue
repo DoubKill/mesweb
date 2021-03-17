@@ -244,7 +244,6 @@ export default {
       } catch (e) { throw new Error(e) }
     },
     NewAddMaterial(formName, bool) {
-      console.log(this.rubberMaterialForm, 77777)
       if (!this.normalReceipe) {
         this.$refs[formName].validateField('stage_product_batch_no', error => {
           if (!error) {
@@ -281,6 +280,7 @@ export default {
         if (!bool) {
           // 直接生成
           this.btnLoading = true
+          delete objParames.production_time_interval
           await rubber_material_url('post', null, { data: objParames })
           this.$message.success('生成成功')
           this.$emit('refreshList')
