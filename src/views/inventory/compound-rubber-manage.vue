@@ -50,7 +50,11 @@
     </el-form>
     <el-button v-permission="['compoundRubber_plan','norman']" class="button-right" @click="normalOutbound">正常出库</el-button>
     <el-button v-permission="['compoundRubber_plan','assign']" class="button-right" @click="assignOutbound">指定出库</el-button>
-    <el-button class="button-right" @click="manualDeliveryBatch">批量人工出库</el-button>
+    <el-button
+      v-permission="['compoundRubber_plan','manual']"
+      class="button-right"
+      @click="manualDeliveryBatch"
+    >批量人工出库</el-button>
     <el-button class="button-right" @click="getList">刷新</el-button>
 
     <el-table
