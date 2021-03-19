@@ -18,11 +18,8 @@
           @change="changeSearch"
         />
       </el-form-item>
-      <el-form-item label="配方">
-        <productNo-select
-          :is-stage-productbatch-no-remove="true"
-          @productBatchingChanged="productBatchingChanged"
-        />
+      <el-form-item label="胶料">
+        <all-product-no-select @productBatchingChanged="productBatchingChanged" />
       </el-form-item>
       <el-form-item label="机台">
         <selectEquip
@@ -516,12 +513,13 @@ import {
 import { personnelsUrl } from '@/api/user'
 import page from '@/components/page'
 import selectEquip from '@/components/select_w/equip'
-import ProductNoSelect from '@/components/ProductNoSelect'
+// import ProductNoSelect from '@/components/ProductNoSelect'
 import chartMixin from './chartMixin'
 import { mapGetters } from 'vuex'
+import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 
 export default {
-  components: { page, selectEquip, ProductNoSelect },
+  components: { page, selectEquip, allProductNoSelect },
   mixins: [chartMixin],
   data() {
     return {
@@ -663,7 +661,7 @@ export default {
       }
     },
     productBatchingChanged(val) {
-      this.getParams.product_no = val ? val.stage_product_batch_no : ''
+      this.getParams.product_no = val ? val.material_no : ''
 
       this.getParams.page = 1
       this.getList()

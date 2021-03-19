@@ -79,18 +79,6 @@
           </el-button-group>
         </template>
       </el-table-column>
-      <!-- <div v-for="item in 3" :key="item">
-        <el-table-column
-          min-width="20"
-          prop="date"
-          label="物料编码别称"
-        />
-        <el-table-column
-          min-width="20"
-          prop="name"
-          label="物料类型别称"
-        />
-      </div> -->
     </el-table>
     <page
       :old-page="false"
@@ -124,22 +112,15 @@
             />
           </el-select>
         </el-form-item>
-        <!-- <el-form-item label="物料选择"> -->
-        <!-- <materialCodeSelect
-            :is-all-obj="true"
-            label-name="material_str"
-            @changeSelect="changeMaterialCodeAdd"
-          /> -->
-        <!-- </el-form-item> -->
         <el-form-item label="物料编码" prop="material_no">
           <el-input v-model="ruleForm.material_no" />
         </el-form-item>
         <el-form-item label="物料名称" prop="material_name">
           <el-input v-model="ruleForm.material_name" />
         </el-form-item>
-        <el-form-item label="条形码" prop="bra_code">
+        <!-- <el-form-item label="条形码" prop="bra_code">
           <el-input v-model="ruleForm.bra_code" />
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose(false)">取 消</el-button>
@@ -168,10 +149,10 @@
           prop="material_no"
           label="物料编码"
         />
-        <el-table-column
+        <!-- <el-table-column
           prop="bra_code"
           label="一维码"
-        />
+        /> -->
       </el-table>
       <page
         :old-page="false"

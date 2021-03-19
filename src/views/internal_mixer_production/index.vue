@@ -22,11 +22,6 @@
         />
       </el-form-item>
       <el-form-item label="胶料">
-        <!-- <productNo-select
-          :is-stage-productbatch-no-remove="true"
-          :make-use-batch="true"
-          @productBatchingChanged="productBatchingChanged"
-        /> -->
         <all-product-no-select @productBatchingChanged="productBatchingChanged" />
       </el-form-item>
       <el-form-item label="机台">

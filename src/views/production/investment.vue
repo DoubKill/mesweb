@@ -38,7 +38,7 @@
         />
       </el-form-item>
       <el-form-item label="投入编码:">
-        <el-input v-model="getParams.material_no" @input="changeList" />
+        <el-input v-model="getParams.material_no" @input="changeInput" />
       </el-form-item>
     </el-form>
 
@@ -233,10 +233,10 @@ export default {
         const data = await batchChargeLogList('get', null, { params: this.getParams })
         this.tableData = data.results || []
         this.total = data.count
+        this.loading = false
       } catch (e) {
-        //
+        this.loading = false
       }
-      this.loading = false
     },
     async getTrackList() {
       this.showTableDataChild = true
@@ -259,6 +259,10 @@ export default {
     changeList() {
       this.getParams.page = 1
       this.getList()
+    },
+    changeInput() {
+      // 防抖
+      debounce(this)
     },
     equipSelected(val) {
       this.getParams.equip_no = val
@@ -303,6 +307,13 @@ export default {
       this.getTableData()
     }
   }
+}
+var timer
+function debounce(_this) {
+  clearTimeout(timer)
+  timer = setTimeout(() => {
+    _this.changeList()
+  }, 600)
 }
 </script>
 

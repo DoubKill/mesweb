@@ -6,6 +6,8 @@
       filterable
       placeholder="请选择物料编码"
       :loading="loading"
+      :clearable="isClearable"
+      :allow-create="isAllowCreate"
       @visible-change="visibleChange"
       @change="changSelect"
     >
@@ -25,6 +27,14 @@ export default {
   props: {
     //  created里面加载
     createdIs: {
+      type: Boolean,
+      default: false
+    },
+    isClearable: {
+      type: Boolean,
+      default: false
+    },
+    isAllowCreate: { // 创建条目
       type: Boolean,
       default: false
     },
@@ -52,11 +62,15 @@ export default {
     defaultVal(val) {
       this.value = val
     },
-    status(val){
-      if(val){
+    status(val) {
+      if (val) {
         this.value = ''
         this.getList()
       }
+    },
+    storeName(val) {
+      this.value = ''
+      this.options = []
     }
   },
   created() {
@@ -68,7 +82,7 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const data = await materialCount('get', null, { params: { store_name: this.storeName,status:this.status }})
+        const data = await materialCount('get', null, { params: { store_name: this.storeName, status: this.status }})
         this.options = data || []
         this.loading = false
       } catch (e) {
@@ -81,6 +95,10 @@ export default {
       }
     },
     changSelect(val) {
+      if (this.isAllowCreate) {
+        this.$emit('changSelect', { material_no: val })
+        return
+      }
       let arr = []
       arr = this.options.filter(D => D.material_no === val)
       this.$emit('changSelect', arr[0])

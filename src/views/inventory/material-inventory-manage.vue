@@ -1,18 +1,23 @@
 <template>
-  <div>
+  <div v-loading="loading">
     <el-form :inline="true">
       <el-form-item label="仓库名称">
         <warehouseSelect :created-is="true" @changSelect="changeWarehouse" />
       </el-form-item>
       <el-form-item label="物料编码">
-        <el-input v-model="getParams.material_no" @input="changeSearch" />
+        <materialCodeSelect
+          :store-name="getParams.warehouse_name"
+          :is-clearable="true"
+          @changSelect="materialCodeFun"
+        />
+        <!-- <el-input v-model="getParams.material_no" @input="changeSearch" /> -->
       </el-form-item>
       <el-form-item label="托盘号">
         <el-input v-model="getParams.container_no" @input="changeSearch" />
       </el-form-item>
-      <el-form-item v-show="getParams.warehouse_name != '终炼胶库'" label="物料类型">
+      <!-- <el-form-item v-show="getParams.warehouse_name != '终炼胶库'" label="物料类型">
         <materielTypeSelect @changSelect="changeMaterialType" />
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
     <el-table
       border
@@ -58,12 +63,14 @@
 
 <script>
 import { getMaterialInventoryManage } from '@/api/material-inventory-manage'
-import materielTypeSelect from '@/components/select_w/materielTypeSelect'
+// import materielTypeSelect from '@/components/select_w/materielTypeSelect'
 import warehouseSelect from '@/components/select_w/warehouseSelect'
 import page from '@/components/page'
 import { mapGetters } from 'vuex'
+import materialCodeSelect from '@/components/select_w/materialCodeSelect'
+
 export default {
-  components: { page, materielTypeSelect, warehouseSelect },
+  components: { materialCodeSelect, page, warehouseSelect },
   data() {
     return {
       tableData: [],
@@ -76,7 +83,8 @@ export default {
       },
       warehouseNameOptions: ['线边库', '终炼胶库', '原材料库'],
       currentPage: 1,
-      total: 0
+      total: 0,
+      loading: true
     }
   },
   computed: {
@@ -88,10 +96,15 @@ export default {
   },
   methods: {
     getTableData() {
+      this.loading = true
+      this.tableData = []
       getMaterialInventoryManage(this.getParams)
         .then(response => {
           this.tableData = response.results
           this.total = response.count
+          this.loading = false
+        }).catch(e => {
+          this.loading = false
         })
     },
     currentChange(page) {
@@ -102,6 +115,10 @@ export default {
     changeSearch() {
       this.getParams.page = 1
       this.getTableData()
+    },
+    materialCodeFun(val) {
+      this.getParams.material_no = val ? val.material_no : ''
+      this.changeSearch()
     },
     changeMaterialType(data) {
       this.getParams.material_type = data

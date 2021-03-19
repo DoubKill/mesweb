@@ -233,13 +233,23 @@ export const asyncRoutes = [{
   {
     path: '/rb/material/std/manage',
     name: 'rb-material-std-manage',
-    component: () => import('@/views/rb_material_std_manage/index'),
+    component: () => import('@/views/rb_material_std_manage/newIndex'),
     meta: {
       title: '胶料配方标准管理',
       icon: 'formula',
       permissionName: 'productbatching'
     }
   },
+  // {
+  //   path: '/rb/material/std/manage111',
+  //   name: 'rb-material-std-manage111',
+  //   component: () => import('@/views/rb_material_std_manage/index'),
+  //   meta: {
+  //     title: '胶料配方标准管理1111',
+  //     icon: 'formula',
+  //     permissionName: 'productbatching'
+  //   }
+  // },
   {
     path: '/rb/material-tank/manage',
     name: 'material-tank',
@@ -249,17 +259,17 @@ export const asyncRoutes = [{
       icon: 'formula',
       permissionName: 'weight_tank'
     }
-  },
-  {
-    path: '/search/rubber/info',
-    name: 'search-rubber-info',
-    component: () => import('@/views/recipe/small-material-recipe/index'),
-    meta: {
-      title: '小料配料标准管理',
-      icon: 'formula',
-      permissionName: 'weight_batching'
-    }
   }
+  // {
+  //   path: '/search/rubber/info',
+  //   name: 'search-rubber-info',
+  //   component: () => import('@/views/recipe/small-material-recipe/index'),
+  //   meta: {
+  //     title: '小料配料标准管理',
+  //     icon: 'formula',
+  //     permissionName: 'weight_batching'
+  //   }
+  // }
   ]
 },
 {
@@ -342,7 +352,6 @@ export const asyncRoutes = [{
   meta: {
     title: '生产管理',
     icon: 'production'
-    // permissionName: 'production'
   },
   children: [{
     path: '/performance/manage',
@@ -441,7 +450,90 @@ export const asyncRoutes = [{
       title: '混炼胶出库看板', icon: 'production',
       permissionName: 'hl_dashboard'
     }
+  },
+  {
+    path: '/summary-statistics',
+    redirect: '/equipment/classes-banburying-summary',
+    component: {
+      render: c => c('router-view')
+    },
+    name: 'summary-statistics',
+    meta: {
+      title: '生产信息汇总',
+      icon: 'production'
+    },
+    children: [
+      {
+        path: '/equipment/classes-banburying-summary',
+        component: () => import('@/views/equipment-management/classes-banburying-summary'),
+        name: 'classes-banburying-summary',
+        meta: {
+          title: '班次密炼时间汇总',
+          permissionName: 'class_production_summary'
+        }
+      },
+      {
+        path: '/equipment/banburying-ratio-summary',
+        component: () => import('@/views/equipment-management/banburying-ratio-summary'),
+        name: 'banburying-ratio-summary',
+        meta: {
+          title: '密炼时间占比汇总',
+          permissionName: 'production_time_summary'
+        }
+      },
+      {
+        path: '/equipment/rubber-acar-summary',
+        component: () => import('@/views/equipment-management/rubber-acar-summary'),
+        name: 'rubber-acar-summary',
+        meta: {
+          title: '胶料单车次时间汇总',
+          permissionName: 'single_trains_time_consume'
+        }
+      },
+      {
+        path: '/equipment/specs-switch-summary',
+        component: () => import('@/views/equipment-management/specs-switch-summary'),
+        name: 'specs-switch-summary',
+        meta: {
+          title: '规格切换时间汇总',
+          permissionName: 'product_exchange_consume'
+        }
+      }
+    ]
   }
+    /** {
+    path: '/track',
+    redirect: '/track-raw-material',
+    component: {
+      render: c => c('router-view')
+    },
+    name: 'track',
+    meta: {
+      title: '条码追朔',
+      icon: 'production'
+    },
+    children: [
+      {
+        path: '/track-raw-material',
+        name: 'track-raw-material',
+        component: () => import('@/views/production/track/track-raw-material'),
+        meta: {
+          title: '原材料条码追朔',
+          permissionName: ''
+        }
+      },
+      {
+        path: '/track-raw-rubber',
+        name: 'track-raw-rubber',
+        component: () => import('@/views/production/track/track-raw-rubber'),
+        meta: {
+          title: '胶片条码追朔',
+          permissionName: ''
+        }
+      }
+    ]
+  }**/
+
   // {
   //   path: 'collect/rub/daily',
   //   component: () => import('@/views/collect_rubber_daily_manage/index'),
@@ -911,314 +1003,275 @@ export const asyncRoutes = [{
     title: '设备管理',
     icon: 'quality'
   },
-  children: [{
-    path: '/equipment/classes-banburying-summary',
-    component: () => import('@/views/equipment-management/classes-banburying-summary'),
-    name: 'classes-banburying-summary',
-    meta: {
-      title: '班次密炼时间汇总',
-      icon: 'quality',
-      permissionName: 'class_production_summary'
-    }
-  },
-  {
-    path: '/equipment/banburying-ratio-summary',
-    component: () => import('@/views/equipment-management/banburying-ratio-summary'),
-    name: 'banburying-ratio-summary',
-    meta: {
-      title: '密炼时间占比汇总',
-      icon: 'quality',
-      permissionName: 'production_time_summary'
-    }
-  },
-  {
-    path: '/equipment/rubber-acar-summary',
-    component: () => import('@/views/equipment-management/rubber-acar-summary'),
-    name: 'rubber-acar-summary',
-    meta: {
-      title: '胶料单车次时间汇总',
-      icon: 'quality',
-      permissionName: 'single_trains_time_consume'
-    }
-  },
-  {
-    path: '/equipment/specs-switch-summary',
-    component: () => import('@/views/equipment-management/specs-switch-summary'),
-    name: 'specs-switch-summary',
-    meta: {
-      title: '规格切换时间汇总',
-      icon: 'quality',
-      permissionName: 'product_exchange_consume'
-    }
-  },
-  {
-    path: '/equipment/spare-part',
-    redirect: '/spare-part/base/spare-location',
-    component: {
-      render: c => c('router-view')
+  children: [
+    {
+      path: '/equipment/spare-part',
+      redirect: '/spare-part/base/spare-location',
+      component: {
+        render: c => c('router-view')
+      },
+      name: 'spare-part',
+      meta: {
+        title: '备品备件管理',
+        icon: 'quality'
+      },
+      children: [
+        {
+          path: '/base',
+          redirect: '/spare-location',
+          component: {
+            render: c => c('router-view')
+          },
+          name: 'spare-part-base',
+          meta: {
+            title: '基础管理'
+          },
+          children: [
+            {
+              path: '/spare-location',
+              component: () => import('@/views/equipment-management/spare-part/spare-location'),
+              name: 'spare-location',
+              meta: {
+                title: '库存位管理',
+                permissionName: 'spare_location'
+              }
+            },
+            {
+              path: '/spare-type',
+              component: () => import('@/views/equipment-management/spare-part/spare-type'),
+              name: 'spare-type',
+              meta: {
+                title: '类型管理',
+                permissionName: 'spare_type'
+              }
+            },
+            {
+              path: '/spareparts-spare',
+              component: () => import('@/views/equipment-management/spare-part/spareparts-spare'),
+              name: 'spareparts-spare',
+              meta: {
+                title: '基本信息管理',
+                permissionName: 'spare_info'
+              }
+            },
+            {
+              path: '/shelf-material-binding',
+              component: () => import('@/views/equipment-management/spare-part/shelf-material-binding'),
+              name: 'shelf-material-binding',
+              meta: {
+                title: '货架物料绑定管理',
+                permissionName: 'location_binding'
+              }
+            },
+            {
+              path: '/location-manage',
+              component: () => import('@/views/equipment-management/spare-part/location-manage'),
+              name: 'spare-part-location-manage',
+              meta: {
+                title: '备品备件库位管理',
+                permissionName: 'spare_inventory'
+              }
+            },
+            {
+              path: '/inventory-manage',
+              component: () => import('@/views/equipment-management/spare-part/inventory-manage'),
+              name: 'spare-part-inventory-manage',
+              meta: {
+                title: '备品备件库存管理',
+                permissionName: 'spare_stock'
+              }
+            },
+            {
+              path: '/inventory-upload',
+              component: () => import('@/views/equipment-management/spare-part/inventory-upload'),
+              name: 'inventory-upload',
+              meta: {
+                title: '备品备件库存导入',
+                permissionName: 'spare_import'
+              }
+            }
+          ]
+        },
+        {
+          path: '/warehous',
+          redirect: '/warehousing',
+          component: {
+            render: c => c('router-view')
+          },
+          name: 'spare-part-warehousing-managr',
+          meta: {
+            title: '出入库管理'
+          },
+          children: [
+            {
+              path: '/warehousing',
+              component: () => import('@/views/equipment-management/spare-part/warehousing'),
+              name: 'spare-part-warehousing',
+              meta: {
+                title: '备品备件入库管理',
+                permissionName: 'spare_inbound'
+              }
+            },
+            {
+              path: '/warehouse-out',
+              component: () => import('@/views/equipment-management/spare-part/warehouse-out'),
+              name: 'spare-part-warehouse-out',
+              meta: {
+                title: '备品备件出库管理',
+                permissionName: 'spare_outbound'
+              }
+            },
+            {
+              path: '/inventory',
+              component: () => import('@/views/equipment-management/spare-part/inventory'),
+              name: 'spare-part-inventory',
+              meta: {
+                title: '备品备件盘点管理',
+                permissionName: 'stock_count'
+              }
+            }
+          ]
+        }, {
+          path: '/record',
+          redirect: '/warehousing-record',
+          component: {
+            render: c => c('router-view')
+          },
+          name: 'spare-part-record-managr',
+          meta: {
+            title: '履历管理'
+          },
+          children: [
+            {
+              path: '/warehousing-record',
+              component: () => import('@/views/equipment-management/spare-part/all-record'),
+              name: 'spare-part-warehousing-record',
+              meta: {
+                title: '备品备件入库履历',
+                permissionName: 'inbound_history'
+              }
+            },
+            {
+              path: '/warehousing-out-record',
+              component: () => import('@/views/equipment-management/spare-part/all-record'),
+              name: 'spare-part-warehousing-out-record',
+              meta: {
+                title: '备品备件出库履历',
+                permissionName: 'outbound_history'
+              }
+            },
+            {
+              path: '/inventory-record',
+              component: () => import('@/views/equipment-management/spare-part/all-record'),
+              name: 'spare-part-inventory-record',
+              meta: {
+                title: '备品备件盘点履历',
+                permissionName: 'stock_history'
+              }
+            }
+          ]
+        }
+      ]
     },
-    name: 'spare-part',
-    meta: {
-      title: '备品备件管理',
-      icon: 'quality'
+    {
+      path: '/equipment-maintenance',
+      redirect: '/location-definition',
+      component: {
+        render: c => c('router-view')
+      },
+      name: 'equipment-maintenance',
+      meta: {
+        title: '设备维修管理',
+        icon: 'quality'
+      },
+      children: [
+        {
+          path: '/location-definition',
+          component: () => import('@/views/equipment-management/repair/location-definition'),
+          name: 'location-definition',
+          meta: {
+            title: '设备部位定义',
+            permissionName: ''
+          }
+        },
+        {
+          path: '/cause-of-shutdown',
+          redirect: '/cause-of-shutdown/mold',
+          component: {
+            render: c => c('router-view')
+          },
+          name: 'cause-of-shutdown',
+          meta: {
+            title: '停机原因管理'
+          },
+          children: [
+            {
+              path: '/cause-of-shutdown/mold',
+              component: () => import('@/views/equipment-management/repair/shutdown-mold'),
+              name: 'cause-of-shutdown-mold',
+              meta: {
+                title: '停机类型定义',
+                permissionName: ''
+              }
+            },
+            {
+              path: '/cause-of-shutdown/reason',
+              component: () => import('@/views/equipment-management/repair/shutdown-reason'),
+              name: 'cause-of-shutdown-reason',
+              meta: {
+                title: '停机原因定义',
+                permissionName: ''
+              }
+            }
+          ]
+        },
+        {
+          path: '/repair-apply',
+          component: () => import('@/views/equipment-management/repair/repair-apply'),
+          name: 'repair-apply',
+          meta: {
+            title: '设备维修申请页面',
+            permissionName: ''
+          }
+        },
+        {
+          path: '/repair-manage',
+          component: () => import('@/views/equipment-management/repair/repair-manage'),
+          name: 'repair-manage',
+          meta: {
+            title: '设备维修单管理',
+            permissionName: ''
+          }
+        },
+        {
+          path: '/work-state',
+          component: () => import('@/views/equipment-management/repair/work-state'),
+          name: 'work-state',
+          meta: {
+            title: '设备运行现况',
+            permissionName: ''
+          }
+        },
+        {
+          path: '/repair-resume',
+          component: () => import('@/views/equipment-management/repair/repair-resume'),
+          name: 'repair-resume',
+          meta: {
+            title: '设备维修履历',
+            permissionName: ''
+          }
+        },
+        {
+          path: '/equipment-assets',
+          component: () => import('@/views/equipment-management/repair/equipment-assets'),
+          name: 'equipment-assets',
+          meta: {
+            title: '设备资产',
+            permissionName: ''
+          }
+        }
+      ]
     },
-    children: [
-      {
-        path: '/base',
-        redirect: '/spare-location',
-        component: {
-          render: c => c('router-view')
-        },
-        name: 'spare-part-base',
-        meta: {
-          title: '基础管理'
-        },
-        children: [
-          {
-            path: '/spare-location',
-            component: () => import('@/views/equipment-management/spare-part/spare-location'),
-            name: 'spare-location',
-            meta: {
-              title: '库存位管理',
-              permissionName: 'spare_location'
-            }
-          },
-          {
-            path: '/spare-type',
-            component: () => import('@/views/equipment-management/spare-part/spare-type'),
-            name: 'spare-type',
-            meta: {
-              title: '类型管理',
-              permissionName: 'spare_type'
-            }
-          },
-          {
-            path: '/spareparts-spare',
-            component: () => import('@/views/equipment-management/spare-part/spareparts-spare'),
-            name: 'spareparts-spare',
-            meta: {
-              title: '基本信息管理',
-              permissionName: 'spare_info'
-            }
-          },
-          {
-            path: '/shelf-material-binding',
-            component: () => import('@/views/equipment-management/spare-part/shelf-material-binding'),
-            name: 'shelf-material-binding',
-            meta: {
-              title: '货架物料绑定管理',
-              permissionName: 'location_binding'
-            }
-          },
-          {
-            path: '/location-manage',
-            component: () => import('@/views/equipment-management/spare-part/location-manage'),
-            name: 'spare-part-location-manage',
-            meta: {
-              title: '备品备件库位管理',
-              permissionName: 'spare_inventory'
-            }
-          },
-          {
-            path: '/inventory-manage',
-            component: () => import('@/views/equipment-management/spare-part/inventory-manage'),
-            name: 'spare-part-inventory-manage',
-            meta: {
-              title: '备品备件库存管理',
-              permissionName: 'spare_stock'
-            }
-          },
-          {
-            path: '/inventory-upload',
-            component: () => import('@/views/equipment-management/spare-part/inventory-upload'),
-            name: 'inventory-upload',
-            meta: {
-              title: '备品备件库存导入',
-              permissionName: 'spare_import'
-            }
-          }
-        ]
-      },
-      {
-        path: '/warehous',
-        redirect: '/warehousing',
-        component: {
-          render: c => c('router-view')
-        },
-        name: 'spare-part-warehousing-managr',
-        meta: {
-          title: '出入库管理'
-        },
-        children: [
-          {
-            path: '/warehousing',
-            component: () => import('@/views/equipment-management/spare-part/warehousing'),
-            name: 'spare-part-warehousing',
-            meta: {
-              title: '备品备件入库管理',
-              permissionName: 'spare_inbound'
-            }
-          },
-          {
-            path: '/warehouse-out',
-            component: () => import('@/views/equipment-management/spare-part/warehouse-out'),
-            name: 'spare-part-warehouse-out',
-            meta: {
-              title: '备品备件出库管理',
-              permissionName: 'spare_outbound'
-            }
-          },
-          {
-            path: '/inventory',
-            component: () => import('@/views/equipment-management/spare-part/inventory'),
-            name: 'spare-part-inventory',
-            meta: {
-              title: '备品备件盘点管理',
-              permissionName: 'stock_count'
-            }
-          }
-        ]
-      }, {
-        path: '/record',
-        redirect: '/warehousing-record',
-        component: {
-          render: c => c('router-view')
-        },
-        name: 'spare-part-record-managr',
-        meta: {
-          title: '履历管理'
-        },
-        children: [
-          {
-            path: '/warehousing-record',
-            component: () => import('@/views/equipment-management/spare-part/all-record'),
-            name: 'spare-part-warehousing-record',
-            meta: {
-              title: '备品备件入库履历',
-              permissionName: 'inbound_history'
-            }
-          },
-          {
-            path: '/warehousing-out-record',
-            component: () => import('@/views/equipment-management/spare-part/all-record'),
-            name: 'spare-part-warehousing-out-record',
-            meta: {
-              title: '备品备件出库履历',
-              permissionName: 'outbound_history'
-            }
-          },
-          {
-            path: '/inventory-record',
-            component: () => import('@/views/equipment-management/spare-part/all-record'),
-            name: 'spare-part-inventory-record',
-            meta: {
-              title: '备品备件盘点履历',
-              permissionName: 'stock_history'
-            }
-          }
-        ]
-      }
-    ]
-  }
-    /** {
-    path: '/equipment-maintenance',
-    redirect: '/location-definition',
-    component: {
-      render: c => c('router-view')
-    },
-    name: 'equipment-maintenance',
-    meta: {
-      title: '设备维修管理',
-      icon: 'quality'
-    },
-    children: [
-      {
-        path: '/location-definition',
-        component: () => import('@/views/equipment-management/repair/location-definition'),
-        name: 'location-definition',
-        meta: {
-          title: '设备部位定义',
-          permissionName: ''
-        }
-      },
-      {
-        path: '/cause-of-shutdown',
-        redirect: '/cause-of-shutdown/mold',
-        component: {
-          render: c => c('router-view')
-        },
-        name: 'cause-of-shutdown',
-        meta: {
-          title: '停机原因管理'
-        },
-        children: [
-          {
-            path: '/cause-of-shutdown/mold',
-            component: () => import('@/views/equipment-management/repair/shutdown-mold'),
-            name: 'cause-of-shutdown-mold',
-            meta: {
-              title: '停机类型定义',
-              permissionName: ''
-            }
-          },
-          {
-            path: '/cause-of-shutdown/reason',
-            component: () => import('@/views/equipment-management/repair/shutdown-reason'),
-            name: 'cause-of-shutdown-reason',
-            meta: {
-              title: '停机原因定义',
-              permissionName: ''
-            }
-          }
-        ]
-      },
-      {
-        path: '/repair-apply',
-        component: () => import('@/views/equipment-management/repair/repair-apply'),
-        name: 'repair-apply',
-        meta: {
-          title: '设备维修申请页面',
-          permissionName: ''
-        }
-      },
-      {
-        path: '/repair-manage',
-        component: () => import('@/views/equipment-management/repair/repair-manage'),
-        name: 'repair-manage',
-        meta: {
-          title: '设备维修单管理',
-          permissionName: ''
-        }
-      },
-      {
-        path: '/work-state',
-        component: () => import('@/views/equipment-management/repair/work-state'),
-        name: 'work-state',
-        meta: {
-          title: '设备运行现况',
-          permissionName: ''
-        }
-      },
-      {
-        path: '/repair-resume',
-        component: () => import('@/views/equipment-management/repair/repair-resume'),
-        name: 'repair-resume',
-        meta: {
-          title: '设备维修履历',
-          permissionName: ''
-        }
-      },
-      {
-        path: '/equipment-assets',
-        component: () => import('@/views/equipment-management/repair/equipment-assets'),
-        name: 'equipment-assets',
-        meta: {
-          title: '设备资产',
-          permissionName: ''
-        }
-      }
-    ]
-  },**/
     /** {
     path: '/equipment-maintain',
     redirect: '/location-definition',
@@ -1260,16 +1313,26 @@ export const asyncRoutes = [{
       }
     ]
   },**/
-  /** {
-    path: '/platform-manage',
-    component: () => import('@/views/equipment-management/repair/platform-manage'),
-    name: 'platform-manage',
-    meta: {
-      icon: 'quality',
-      title: '平台信息管理',
-      permissionName: ''
+    {
+      path: '/platform-manage',
+      component: () => import('@/views/equipment-management/repair/platform-manage'),
+      name: 'platform-manage',
+      meta: {
+        icon: 'quality',
+        title: '平台信息管理',
+        permissionName: ''
+      }
     }
-  }**/
+    // {
+    //   path: '/fault-day-statistics',
+    //   component: () => import('@/views/quality_management/fault/fault-day-statistics'),
+    //   name: 'fault-day-statistics',
+    //   meta: {
+    //     title: '设备别故障日统计',
+    //     icon: 'quality',
+    //     permissionName: ''
+    //   }
+    // }
   ]
 },
 {

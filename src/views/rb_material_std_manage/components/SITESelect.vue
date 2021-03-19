@@ -1,6 +1,7 @@
 <template>
+  <!-- SITE下拉框 -->
   <el-select
-    :value="id"
+    :value="give"
     clearable
     placeholder="请选择"
     :disabled="isDisabled"
@@ -8,7 +9,7 @@
     @visible-change="visibleChange"
   >
     <el-option
-      v-for="item in stageOptions"
+      v-for="item in list"
       :key="item.id"
       :label="item.global_name"
       :value="item.id"
@@ -17,14 +18,14 @@
 </template>
 
 <script>
-import { stage_global_url } from '@/api/display_static_fun'
+import { SITE_global_url } from '@/api/rubber_recipe_fun'
 export default {
   model: {
-    prop: 'id',
-    event: 'change'
+    prop: 'give',
+    event: 'returnBack'
   },
   props: {
-    id: {
+    give: {
       type: [Number, String],
       required: false,
       default: undefined
@@ -36,26 +37,27 @@ export default {
   },
   data() {
     return {
-      stageOptions: []
+      list: []
     }
   },
   created() {
-    this.getStageOptions()
+    this.getOptions()
   },
   methods: {
-    async getStageOptions() {
-      const response = await stage_global_url('get')
-      this.stageOptions = response.results
-    },
-    changeFun(id) {
-      this.$emit('change', id)
-      const arr = this.stageOptions.filter(D => D.id === id)
-      this.$emit('changeFun', arr[0])
+    async getOptions() {
+      const response = await SITE_global_url('get')
+      this.list = response.results
     },
     visibleChange(visible) {
-      // if (visible) {
-      //   this.getStageOptions()
-      // }
+    //   if (visible && this.list.length === 0) {
+    //     this.getOptions()
+    //   }
+    },
+    changeFun(event) {
+      this.$emit('returnBack', event)
+      const arr = this.list.filter(D => event === D.id)
+      this.$emit('changeFun', arr[0])
+      // 可以加其他得事件
     }
   }
 }

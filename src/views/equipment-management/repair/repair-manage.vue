@@ -269,6 +269,7 @@
             list-type="picture-card"
             :on-preview="handlePictureCardPreview"
             :on-change="onChangeImg"
+            :on-exceed="onExceed"
             :limit="1"
           >
             <i class="el-icon-plus" />
@@ -332,7 +333,8 @@ export default {
         image: null,
         first_down_reason: '',
         equip_part: '',
-        equip_no: ''
+        equip_no: '',
+        down_flag: false
       },
       rules: {
         down_time: [
@@ -421,7 +423,8 @@ export default {
           image: null,
           first_down_reason: '',
           equip_part: '',
-          equip_no: ''
+          equip_no: '',
+          down_flag: false
         }
       }
       this.operateType = type
@@ -459,6 +462,9 @@ export default {
         }).catch(e => {
           this.$message.error('指派失败')
         })
+    },
+    onExceed() {
+      this.$message.info('最多上传一张图片')
     },
     onChangeImg(file, fileList) {
       const isJPG = ['image/jpeg', 'image/jpg', 'image/png'].includes(file.raw.type)

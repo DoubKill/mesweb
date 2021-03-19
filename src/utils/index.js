@@ -257,3 +257,17 @@ export function errorRepeat(_this, e) {
     }
   }
 }
+
+/**
+ * 去除输入框抖动
+ * _this    this
+ * val      要加载的列表名
+ */
+var timer
+export function debounce(_this, val) {
+  clearTimeout(timer)
+  timer = setTimeout(() => {
+    // 执行要加载的接口函数
+    _this[val]()
+  }, 600)
+}

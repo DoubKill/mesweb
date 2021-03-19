@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-loading="loading">
     <el-form :inline="true">
       <el-form-item label="段次">
         <el-select
@@ -17,6 +17,14 @@
             :value="item.global_name"
           />
         </el-select>
+      </el-form-item>
+      <el-form-item label="胶料编码">
+        <materialCodeSelect
+          :is-clearable="true"
+          store-name="混炼胶库"
+          :is-allow-create="true"
+          @changSelect="materialCodeFun"
+        />
       </el-form-item>
       <el-form-item label="加硫：">
         共{{ sulfurAddition || 0 }}车
@@ -86,11 +94,13 @@
 import page from '@/components/page'
 import { getMaterialInventoryManage } from '@/api/material-inventory-manage'
 import { rubber_repertory_url, stage_global_url } from '@/api/display_static_fun'
+import materialCodeSelect from '@/components/select_w/materialCodeSelect'
 
 export default {
-  components: { page },
+  components: { page, materialCodeSelect },
   data: function() {
     return {
+      loading: true,
       tableData: [],
       tableDataDialog: [],
       total: 0,
@@ -113,12 +123,16 @@ export default {
   methods: {
     async rubber_repertory_list() {
       try {
+        this.loading = true
         const rubber_repertoryData = await rubber_repertory_url('get', { params: this.getParams })
         this.tableData = rubber_repertoryData.results
         this.total = rubber_repertoryData.count
         this.sulfurAddition = rubber_repertoryData.fm_count
         this.sulfurFree = rubber_repertoryData.other_count
-      } catch (e) { throw new Error(e) }
+        this.loading = false
+      } catch (e) {
+        this.loading = false
+      }
     },
     async stage_global_list() {
       try {
@@ -134,6 +148,11 @@ export default {
       if (bool) {
         this.stage_global_list()
       }
+    },
+    materialCodeFun(obj) {
+      this.getParams.page = 1
+      this.getParams.material_no = obj ? obj.material_no : ''
+      this.rubber_repertory_list()
     },
     StandardFlagFormatter: function(row, column) {
       return this.StandardFlagChoice(row.standard_flag)
