@@ -1,4 +1,5 @@
 <template>
+  <!-- 快检信息综合管理 -->
   <div class="app-container">
     <el-form :inline="true">
       <el-form-item label="日期">

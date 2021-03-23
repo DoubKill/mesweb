@@ -39,6 +39,14 @@
         min-width="20"
       />
       <el-table-column
+        label="正在维修部位"
+        min-width="20"
+      >
+        <template slot-scope="{row}">
+          {{ row.maintain_list?row.maintain_list.join(','):'--' }}
+        </template>
+      </el-table-column>
+      <el-table-column
         prop="user"
         label="操作人"
         min-width="20"
@@ -50,13 +58,13 @@
         <template slot-scope="{row}">
           <el-button-group>
             <el-button
-              v-if="['运行中','空转'].includes(row.status)"
+              v-if="['运行中','空转'].includes(row.status)&&checkPermission(['equip_current_status','maintenance_request'])"
               type="primary"
               size="mini"
               @click="clickDialog(row)"
             >维修申请</el-button>
             <el-button
-              v-if="['停机','维修结束'].includes(row.status)"
+              v-if="['停机','维修结束'].includes(row.status)&&checkPermission(['equip_current_status','affirm'])"
               type="primary"
               size="mini"
               @click="startUpFun(row)"
@@ -152,6 +160,7 @@ import shutdownReasonSelect from '../components/shutdown-reason-select'
 import locationDefinitionDelect from '../components/location-definition-select'
 import { equipCurrentStatus } from '@/api/base_w_two'
 import page from '@/components/page'
+import { checkPermission } from '@/utils'
 export default {
   components: { page, locationDefinitionDelect, shutdownMoldSelect, shutdownReasonSelect },
   data() {
@@ -173,6 +182,7 @@ export default {
     this.getList()
   },
   methods: {
+    checkPermission,
     async getList() {
       try {
         this.loading = true
