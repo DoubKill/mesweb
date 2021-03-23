@@ -136,14 +136,14 @@
           <el-button-group>
             <el-button
               v-if="(scope.row.status===1&&scope.row.created_user===Number(userId))||([3,2].includes(scope.row.status)&&scope.row.maintenance_user===Number(userId))
-                &&checkPermission(['equip_maintenance_order','order_receiving'])"
+                &&checkPermission(['equip_maintenance_order','close'])"
               style="margin-bottom:2px"
               size="mini"
               @click="claimFun(scope.row,'关闭',6)"
             >关闭
             </el-button>
             <el-button
-              v-if="scope.row.status === 1&&checkPermission(['equip_maintenance_order','order_receiving'])"
+              v-if="scope.row.status === 1&&checkPermission(['equip_maintenance_order','order'])"
               style="margin-bottom:2px"
               size="mini"
               type="warning"
