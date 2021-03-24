@@ -58,7 +58,7 @@
         <template slot-scope="{row}">
           <el-button-group>
             <el-button
-              v-if="['运行中','空转'].includes(row.status)&&checkPermission(['equip_current_status','maintenance_request'])"
+              v-if="['运行中','空转'].includes(row.status)&&checkPermission(['equip_current_status','maintenance'])"
               type="primary"
               size="mini"
               @click="clickDialog(row)"
