@@ -73,8 +73,8 @@ export const constantRoutes = [{
   //   }
   // }
   ]
-},
-{
+}
+/** {
   path: '/phone/fault-day-statistics',
   // component: () => import('@/views/login/index'),
   component: () => import('@/views/quality_management/phone/fault-day-statistics'),
@@ -98,7 +98,7 @@ export const constantRoutes = [{
   meta: {
     isPhone: true
   }
-}
+}**/
 ]
 
 // 存在权限的路由
