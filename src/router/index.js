@@ -74,6 +74,31 @@ export const constantRoutes = [{
   // }
   ]
 }
+/** {
+  path: '/phone/fault-day-statistics',
+  // component: () => import('@/views/login/index'),
+  component: () => import('@/views/quality_management/phone/fault-day-statistics'),
+  hidden: true,
+  meta: {
+    isPhone: true
+  }
+},
+{
+  path: '/phone/fault-week-statistics',
+  component: () => import('@/views/quality_management/phone/fault-week-statistics'),
+  hidden: true,
+  meta: {
+    isPhone: true
+  }
+},
+{
+  path: '/phone/fault-month-statistics',
+  component: () => import('@/views/quality_management/phone/fault-month-statistics'),
+  hidden: true,
+  meta: {
+    isPhone: true
+  }
+}**/
 ]
 
 // 存在权限的路由
@@ -992,6 +1017,92 @@ export const asyncRoutes = [{
         permissionName: ''
       }
     }
+    /** {
+      path: '/material-quality',
+      redirect: '/material-quality',
+      component: {
+        render: c => c('router-view')
+      },
+      name: 'material-quality',
+      meta: {
+        title: '原材料质检管理',
+        icon: 'quality'
+      },
+      children: [
+        {
+          path: '/material-quality/test-indicators',
+          component: () => import('@/views/quality_management/material/test_indicators'),
+          name: 'material-testIndicators',
+          meta: {
+            title: '试验指标管理',
+            permissionName: ''
+          }
+        },
+        {
+          path: '/material-quality/test-types',
+          component: () => import('@/views/quality_management/material/test_types'),
+          name: 'material-testTypes',
+          meta: {
+            title: '试验类型管理',
+            permissionName: ''
+          }
+        },
+        {
+          path: '/material-quality/test-methods-manage',
+          component: () => import('@/views/quality_management/material/test_methods_manage'),
+          namel: 'material-testMethodsManage',
+          meta: {
+            title: '试验方法管理',
+            permissionName: ''
+          }
+        },
+        {
+          path: '/material-quality/grade-manage',
+          component: () => import('@/views/quality_management/material/grade_manage'),
+          namel: 'material-gradeManage',
+          meta: {
+            title: '等级管理',
+            permissionName: ''
+          }
+        },
+        {
+          path: '/material-quality/benchmark_edit',
+          component: () => import('@/views/quality_management/material/benchmark_edit'),
+          name: 'material-benchmark_edit',
+          meta: {
+            title: '物料快检判定基准录入',
+            permissionName: ''
+          }
+        },
+        {
+          path: '/material-quality/info_entry',
+          component: () => import('@/views/quality_management/material/info_entry'),
+          name: 'material-info_entry',
+          meta: {
+            title: '原材料快检信息录入',
+            permissionName: ''
+          }
+        },
+        {
+          path: '/material-quality/results-view',
+          component: () => import('@/views/quality_management/material/results-view'),
+          name: 'material-results-view',
+          meta: {
+            title: '原材料快检结果查看',
+            permissionName: ''
+          }
+        },
+        {
+          path: '/material-quality/material-unqualified',
+          component: () => import('@/views/quality_management/material/material-unqualified'),
+          name: 'material-unqualified',
+          meta: {
+            title: '原材料不合格处理',
+            permissionName: ''
+          }
+        }
+      ]
+    }**/
   ]
 },
 {
@@ -1191,7 +1302,7 @@ export const asyncRoutes = [{
           name: 'location-definition',
           meta: {
             title: '设备部位定义',
-            permissionName: ''
+            permissionName: 'equip_part'
           }
         },
         {
@@ -1211,7 +1322,7 @@ export const asyncRoutes = [{
               name: 'cause-of-shutdown-mold',
               meta: {
                 title: '停机类型定义',
-                permissionName: ''
+                permissionName: 'equip_down_type'
               }
             },
             {
@@ -1220,7 +1331,7 @@ export const asyncRoutes = [{
               name: 'cause-of-shutdown-reason',
               meta: {
                 title: '停机原因定义',
-                permissionName: ''
+                permissionName: 'equip_down_reason'
               }
             }
           ]
@@ -1231,7 +1342,7 @@ export const asyncRoutes = [{
           name: 'repair-apply',
           meta: {
             title: '设备维修申请页面',
-            permissionName: ''
+            permissionName: 'equip_current_status'
           }
         },
         {
@@ -1240,7 +1351,7 @@ export const asyncRoutes = [{
           name: 'repair-manage',
           meta: {
             title: '设备维修单管理',
-            permissionName: ''
+            permissionName: 'equip_maintenance_order'
           }
         },
         {
@@ -1249,7 +1360,7 @@ export const asyncRoutes = [{
           name: 'work-state',
           meta: {
             title: '设备运行现况',
-            permissionName: ''
+            permissionName: 'equip_status'
           }
         },
         {
@@ -1258,7 +1369,7 @@ export const asyncRoutes = [{
           name: 'repair-resume',
           meta: {
             title: '设备维修履历',
-            permissionName: ''
+            permissionName: 'equip_maintenance_order_log'
           }
         },
         {
@@ -1267,7 +1378,7 @@ export const asyncRoutes = [{
           name: 'equipment-assets',
           meta: {
             title: '设备资产',
-            permissionName: ''
+            permissionName: 'property'
           }
         }
       ]
@@ -1320,19 +1431,39 @@ export const asyncRoutes = [{
       meta: {
         icon: 'quality',
         title: '平台信息管理',
-        permissionName: ''
+        permissionName: 'platform_config'
       }
     }
-    // {
-    //   path: '/fault-day-statistics',
-    //   component: () => import('@/views/quality_management/fault/fault-day-statistics'),
-    //   name: 'fault-day-statistics',
-    //   meta: {
-    //     title: '设备别故障日统计',
-    //     icon: 'quality',
-    //     permissionName: ''
-    //   }
-    // }
+    /** {
+      path: '/fault-day-statistics',
+      component: () => import('@/views/quality_management/fault/fault-day-statistics'),
+      name: 'fault-day-statistics',
+      meta: {
+        title: '设备别故障日统计',
+        icon: 'quality',
+        permissionName: ''
+      }
+    },
+    {
+      path: '/fault-week-statistics',
+      component: () => import('@/views/quality_management/fault/fault-week-statistics'),
+      name: 'fault-week-statistics',
+      meta: {
+        title: '设备别故障周统计',
+        icon: 'quality',
+        permissionName: ''
+      }
+    },
+    {
+      path: '/fault-month-statistics',
+      component: () => import('@/views/quality_management/fault/fault-month-statistics'),
+      name: 'fault-month-statistics',
+      meta: {
+        title: '设备别故障月统计',
+        icon: 'quality',
+        permissionName: ''
+      }
+    }**/
   ]
 },
 {

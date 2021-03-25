@@ -16,7 +16,10 @@
         <el-input v-model="search.equip_name" placeholder="请输入内容" @input="changeList" />
       </el-form-item>
       <el-form-item>
-        <el-button @click="add">新增</el-button>
+        <el-button
+          v-permission="['equip_part', 'add']"
+          @click="add"
+        >新增</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -73,10 +76,12 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
+              v-permission="['equip_part', 'change']"
               size="mini"
               @click="showEditDialog(scope.row)"
             >编辑</el-button>
             <el-button
+              v-permission="['equip_part', 'delete']"
               size="mini"
               type="danger"
               @click="handleDelete(scope.row)"

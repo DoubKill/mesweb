@@ -60,7 +60,7 @@
         min-width="15"
       />
       <el-table-column
-        prop="first_down_reason"
+        prop="down_reason"
         label="故障原因"
         min-width="15"
         show-overflow-tooltip
@@ -187,14 +187,12 @@ export default {
         this.search.data = setDate(null, null, 'month')
         return
       }
-      console.log(val, 888)
       this.search.year = val.split('-')[0]
       this.search.month = val.split('-')[1]
       this.changeList()
     },
     tableRowClassName({ row, rowIndex }) {
       if (row.equip_name === '合计') {
-        console.log(555)
         return 'warning-row'
       }
       return ''

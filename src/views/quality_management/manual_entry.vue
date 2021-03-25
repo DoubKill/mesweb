@@ -506,6 +506,10 @@ export default {
       } catch (ex) {
         return
       }
+      if (arr.length === 0) {
+        this.$message.error('不能为空！')
+        return
+      }
       this.loadingBtn = true
       try {
         await materialTestOrders('post', null, { data: arr })
@@ -569,10 +573,10 @@ function setDataChild(_this, row) {
 $border-color: #EBEEF5;
 $border-weight: 1px;
 .manual_entry_style{
-  .rigthTable{
+  // .rigthTable{
     // overflow-y: scroll;
     // max-height: 400px;
-  }
+  // }
   .el-input-number__increase,.el-input-number__decrease{
     display: none;
     padding:0;

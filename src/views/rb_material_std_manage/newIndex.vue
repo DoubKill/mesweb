@@ -46,7 +46,7 @@
       <el-form-item style="float: right">
         <el-button
           v-if="checkPermission(['productbatching','change'])"
-          :disabled="currentRow.used_type !== 1"
+          :disabled="![1,4].includes(currentRow.used_type)"
           @click="showPutRubberMaterialDialog"
         >配料</el-button>
       </el-form-item>

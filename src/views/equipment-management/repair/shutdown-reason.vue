@@ -6,7 +6,10 @@
         <shutdownMoldSelect @shutdownMoldChange="shutdownMoldChange" />
       </el-form-item>
       <el-form-item class="button-right">
-        <el-button @click="add">新建</el-button>
+        <el-button
+          v-permission="['equip_down_reason', 'add']"
+          @click="add"
+        >新建</el-button>
       </el-form-item>
     </el-form>
 
@@ -47,7 +50,12 @@
               :rows="2"
               placeholder="请输入内容"
             />
-            <i slot="reference" class="el-icon-edit slotIconStyle" @click="iconEdit(scope.row,scope.$index)" />
+            <i
+              slot="reference"
+              v-permission="['equip_down_reason', 'change']"
+              class="el-icon-edit slotIconStyle"
+              @click="iconEdit(scope.row,scope.$index)"
+            />
             <el-button style="float:right;margin-top:5px" size="mini" @click="submitFun(scope.row,scope.$index)">确定</el-button>
             <el-button style="float:right;margin-top:5px;margin-right:5px" size="mini" @click="scope.row.visible = false">取消</el-button>
           </el-popover>
@@ -71,6 +79,7 @@
       >
         <template slot-scope="{row}">
           <el-button
+            v-permission="['equip_down_reason', 'delete']"
             size="mini"
             type="danger"
             @click="handleDelete(row)"

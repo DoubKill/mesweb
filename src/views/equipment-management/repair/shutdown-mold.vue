@@ -1,7 +1,11 @@
 <template>
   <div>
     <!-- 停机类型定义 -->
-    <el-button style="margin-bottom:10px" @click="add">新建</el-button>
+    <el-button
+      v-permission="['equip_down_type', 'add']"
+      style="margin-bottom:10px"
+      @click="add"
+    >新建</el-button>
     <el-table
       :data="tableData"
       border
@@ -32,6 +36,7 @@
       >
         <template slot-scope="scope">
           <el-button
+            v-permission="['equip_down_type', 'delete']"
             size="mini"
             type="danger"
             @click="handleDelete(scope.row)"

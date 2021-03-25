@@ -22,7 +22,7 @@
       </el-form-item>
       <el-form-item style="float:right;">
         <div style="float:right;display:flex">
-          <el-button style="margin-right:8px" @click="templateDownload">模板下载</el-button>
+          <el-button v-permission="['property', 'download']" style="margin-right:8px" @click="templateDownload">模板下载</el-button>
           <el-upload
             style="margin-right:8px"
             action="string"
@@ -30,9 +30,9 @@
             :http-request="Upload"
             :show-file-list="false"
           >
-            <el-button>导入</el-button>
+            <el-button v-permission="['property', 'import']">导入</el-button>
           </el-upload>
-          <el-button style="margin-right:8px" @click="add">新增</el-button>
+          <el-button v-permission="['property', 'add']" style="margin-right:8px" @click="add">新增</el-button>
         </div>
       </el-form-item>
     </el-form>
@@ -126,11 +126,13 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
+              v-permission="['property', 'change']"
               size="mini"
               @click="showEditUserDialog(scope.row)"
             >编辑
             </el-button>
             <el-button
+              v-permission="['property', 'delete']"
               size="mini"
               type="danger"
               @click="handleUserDelete(scope.row)"
@@ -155,6 +157,7 @@
     >
       <el-button
         v-if="!addBool"
+        v-permission="['property_type_node', 'add']"
         type="text"
         size="mini"
         @click="() => append(false)"
@@ -174,20 +177,23 @@
 
           <span v-if="!addBool" style="display:inline-block;margin-left:50px">
             <el-button
+              v-permission="['property_type_node', 'add']"
               type="text"
               size="mini"
               @click="() => append(data)"
             >
               添加
             </el-button>
-            <el-button
-              v-if="!data.children||data.children.length===0"
-              type="text"
-              size="mini"
-              @click="() => remove(node, data)"
-            >
-              删除
-            </el-button>
+            <div v-permission="['property_type_node', 'delete']" style="display:inline-block">
+              <el-button
+                v-if="!data.children||data.children.length===0"
+                type="text"
+                size="mini"
+                @click="() => remove(node, data)"
+              >
+                删除
+              </el-button>
+            </div>
           </span>
         </span>
       </el-tree>
@@ -314,7 +320,8 @@ export default {
         src_no: '',
         financial_no: '',
         equip_type: '',
-        equip_no: ''
+        equip_no: '',
+        equip_name: ''
       },
       tableData: [],
       loading: false,
@@ -513,6 +520,7 @@ export default {
             this.$message.success('创建成功')
             this.getList()
             this.submitListLoading = false
+            this.handleCloseList(false)
           }).catch(e => {
             this.submitListLoading = false
           })

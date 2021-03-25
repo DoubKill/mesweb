@@ -21,7 +21,7 @@
         <el-input v-model="search.order_uid" @input="changeList" />
       </el-form-item>
       <el-form-item class="button-right">
-        <el-button @click="add(false,'新建')">新建</el-button>
+        <el-button v-permission="['equip_maintenance_order', 'add']" @click="add(false,'新建')">新建</el-button>
       </el-form-item>
     </el-form>
 
@@ -77,8 +77,11 @@
         width="104px"
       >
         <template slot-scope="{row}">
-          <el-button v-if="!row.down_reason" size="mini" @click="add(row,'故障原因')">添加故障原因</el-button>
-          <el-link type="primary" @click="add(row,'故障原因')">{{ row.down_reason }}</el-link>
+          <div v-if="checkPermission(['equip_maintenance_order','change'])">
+            <el-button v-if="!row.down_reason" size="mini" @click="add(row,'故障原因')">添加故障原因</el-button>
+            <el-link type="primary" @click="add(row,'故障原因')">{{ row.down_reason }}</el-link>
+          </div>
+          <span v-else>{{ row.down_reason }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -111,7 +114,7 @@
           slot-scope="scope"
         >
           <el-popover
-            v-if="scope.row.status === 1"
+            v-if="scope.row.status === 1&&checkPermission(['equip_maintenance_order','designate'])"
             v-model="scope.row.visible"
             placement="right"
             width="160"
@@ -132,14 +135,16 @@
           </el-popover>
           <el-button-group>
             <el-button
-              v-if="(scope.row.status===1&&scope.row.created_user===Number(userId))||([3,2].includes(scope.row.status)&&scope.row.maintenance_user===Number(userId))"
+              v-if="
+                ((scope.row.status===1&&scope.row.created_user===Number(userId))||([3,2].includes(scope.row.status)&&scope.row.maintenance_user===Number(userId)))
+                  &&checkPermission(['equip_maintenance_order','close'])"
               style="margin-bottom:2px"
               size="mini"
               @click="claimFun(scope.row,'关闭',6)"
             >关闭
             </el-button>
             <el-button
-              v-if="scope.row.status === 1"
+              v-if="scope.row.status === 1&&checkPermission(['equip_maintenance_order','order'])"
               style="margin-bottom:2px"
               size="mini"
               type="warning"
@@ -147,7 +152,8 @@
             >接单
             </el-button>
             <el-button
-              v-if="scope.row.assign_user === Number(userId)&&[3,2].includes(scope.row.status)"
+              v-if="scope.row.assign_user === Number(userId)&&[3,2].includes(scope.row.status)
+                &&checkPermission(['equip_maintenance_order','chargeback'])"
               style="margin-bottom:2px"
               size="mini"
               type="info"
@@ -171,13 +177,11 @@
         prop="end_time"
         label="维修结束时间"
         min-width="20"
-        show-overflow-tooltip
       />
       <el-table-column
         prop="take_time"
         label="维修时间"
         min-width="20"
-        show-overflow-tooltip
       />
       <el-table-column
         prop="affirm_time"
@@ -308,6 +312,7 @@ import { equipMaintenanceOrder } from '@/api/base_w_two'
 import userMangeSelect from '@/components/select_w/userMangeSelect'
 import page from '@/components/page'
 import { mapGetters } from 'vuex'
+import { checkPermission } from '@/utils'
 export default {
   components: { shutdownReasonSelect, page, userMangeSelect, EquipSelect, shutdownMoldSelect, locationDefinitionDelect },
   data() {
@@ -381,6 +386,7 @@ export default {
     this.getList()
   },
   methods: {
+    checkPermission,
     async getList() {
       try {
         this.loading = true
