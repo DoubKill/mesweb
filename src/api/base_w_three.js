@@ -10,6 +10,24 @@ export function barcodeQuality(method, id, data = {}) {
   return request(obj)
 }
 
+export function materialTrace(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MaterialTrace + id + '/' : API.MaterialTrace,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function ProductTrace(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ProductTrace + id + '/' : API.ProductTrace,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function barcodeQualityExport(params) {
   return request({
     url: API.BarcodeQualityExport,
@@ -19,10 +37,94 @@ export function barcodeQualityExport(params) {
   })
 }
 
-// export function barcodeQualityChange(method, data) {
-//   return request({
-//     url: API.BarcodeQuality,
-//     method: method,
-//     data
-//   })
-// }
+export function testIndicatorsRaw(method, id, data = {}) {
+  const obj = {
+    url: id ? API.TestIndicatorsRaw + id + '/' : API.TestIndicatorsRaw,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function testTypesRaw(method, id, data = {}) {
+  const obj = {
+    url: id ? API.TestTypesRaw + id + '/' : API.TestTypesRaw,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function dataPointsRaw(method, id, data = {}) {
+  const obj = {
+    url: id ? API.DataPointsRaw + id + '/' : API.DataPointsRaw,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function testMethodsRaw(method, id, data = {}) {
+  const obj = {
+    url: id ? API.TestMethodsRaw + id + '/' : API.TestMethodsRaw,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function levelResultRaw(method, id, data = {}) {
+  const obj = {
+    url: id ? API.LevelResultRaw + id + '/' : API.LevelResultRaw,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function matTestMethodsRaw(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MatTestMethodsRaw + id + '/' : API.MatTestMethodsRaw,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function matDataPointIndicatorsRaw(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MatDataPointIndicatorsRaw + id + '/' : API.MatDataPointIndicatorsRaw,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function materialInventory(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MaterialInventory + id + '/' : API.MaterialInventory,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function materialTestOrdersRaw(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MaterialTestOrdersRaw + id + '/' : API.MaterialTestOrdersRaw,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function matTestIndicatorMethodsRaw(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MatTestIndicatorMethodsRaw + id + '/' : API.MatTestIndicatorMethodsRaw,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function testIndicatorDataPointsRaw(method, id, data = {}) {
+  const obj = {
+    url: id ? API.TestIndicatorDataPointsRaw + id + '/' : API.TestIndicatorDataPointsRaw,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+

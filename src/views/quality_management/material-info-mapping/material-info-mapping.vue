@@ -68,6 +68,7 @@
         <template slot-scope="{row}">
           <el-button-group>
             <el-button
+              v-permission="['material_map','add']"
               size="mini"
               @click="add(row)"
             >新增别称</el-button>

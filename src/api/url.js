@@ -284,5 +284,23 @@ export default {
   // 原材料临时快检结果录入
   BarcodeQuality: '/api/v1/inventory/barcode-quality/',
   // 原材料临时快检结果录入导出
-  BarcodeQualityExport: '/api/v1/inventory/barcode-quality/export/'
+  BarcodeQualityExport: '/api/v1/inventory/barcode-quality/export/',
+  // 原材料条码追溯
+  MaterialTrace: '/api/v1/inventory/material-trace/',
+  ProductTrace: '/api/v1/inventory/product-trace/',
+  // 试验指标列表
+  TestIndicatorsRaw: '/api/v1/quality/test-indicators-raw/',
+  // 试验类型管理
+  TestTypesRaw: '/api/v1/quality/test-types-raw/',
+  DataPointsRaw: '/api/v1/quality/data-points-raw/',
+  TestMethodsRaw: '/api/v1/quality/test-methods-raw/',
+  LevelResultRaw: '/api/v1/quality/level-result-raw/',
+  MatTestMethodsRaw: '/api/v1/quality/mat-test-methods-raw/',
+  MatDataPointIndicatorsRaw: '/api/v1/quality/mat-data-point-indicators-raw/',
+  // 获取原材料指标试验方法
+  MatTestIndicatorMethodsRaw: '/api/v1/quality/mat-test-indicator-methods-raw/',
+  // 录入
+  MaterialInventory: '/api/v1/quality/material-inventory/',
+  MaterialTestOrdersRaw: '/api/v1/quality/material-test-orders-raw/',
+  TestIndicatorDataPointsRaw: '/api/v1/quality/test-indicator-data-points-raw/'
 }

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="fault-day-statistics">
     <el-date-picker
       v-model="searchDate"
       type="date"
@@ -10,44 +10,56 @@
       @change="datePicker"
     />
     <!-- 设备别故障日统计 -->
-    <el-table
-      :data="tableData"
-      :summary-method="getSummaries"
-      show-summary
-    >
-      <el-table-column
-        prop="date"
-        label="设备名称"
-        min-width="20"
-      />
-      <el-table-column v-for="(item,index) in classList" :key="index" :label="item.global_name">
-        <el-table-column
-          prop="name"
-          label="故障时间"
-          min-width="20"
+    <div style="display:flex">
+      <div style="width:65%">
+        <el-table
+          :data="tableData"
+          :summary-method="getSummaries"
+          show-summary
+        >
+          <el-table-column
+            prop="date"
+            label="设备名称"
+            min-width="20"
+          />
+          <el-table-column v-for="(item,index) in classList" :key="index" :label="item.global_name">
+            <el-table-column
+              prop="name"
+              label="故障时间"
+              min-width="20"
+            />
+            <el-table-column
+              prop="province"
+              label="故障率"
+              min-width="20"
+            />
+          </el-table-column>
+          <el-table-column
+            :label="searchDate"
+            min-width="20"
+          >
+            <el-table-column
+              prop="name"
+              label="故障时间"
+              min-width="20"
+            />
+            <el-table-column
+              prop="address"
+              label="故障率"
+              min-width="20"
+            />
+          </el-table-column>
+        </el-table>
+      </div>
+      <div style="width:30%;text-align:center">
+        <h3 style="margin-top: 0;">炼胶工程设备故障占比</h3>
+        <ve-pie
+          style="width:100%;"
+          :data="chartData2"
+          :extend="extend"
         />
-        <el-table-column
-          prop="province"
-          label="故障率"
-          min-width="20"
-        />
-      </el-table-column>
-      <el-table-column
-        :label="searchDate"
-        min-width="20"
-      >
-        <el-table-column
-          prop="name"
-          label="故障时间"
-          min-width="20"
-        />
-        <el-table-column
-          prop="address"
-          label="故障率"
-          min-width="20"
-        />
-      </el-table-column>
-    </el-table>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -56,6 +68,11 @@ import { setDate } from '@/utils'
 import { globalCodesUrl } from '@/api/base_w'
 export default {
   data() {
+    this.extend = {
+      series: {
+        animation: false
+      }
+    }
     return {
       searchDate: setDate(),
       classList: [],
@@ -73,7 +90,19 @@ export default {
         city: '普陀区',
         address: '0.8',
         zip: 200333
-      }]
+      }],
+      chartData2: {
+        columns: ['global_name', 'global_no'],
+        rows: [
+          { global_name: 1, global_no: 2 },
+          { global_name: 2, global_no: 2 },
+          { global_name: 3, global_no: 2 },
+          { global_name: 4, global_no: 0 },
+          { global_name: 5, global_no: 0 },
+          { global_name: 6, global_no: 0 },
+          { global_name: 7, global_no: 2 }
+        ]
+      }
     }
   },
   created() {
@@ -141,5 +170,6 @@ export default {
 </script>
 
 <style>
-
+/* .fault-day-statistics{
+} */
 </style>

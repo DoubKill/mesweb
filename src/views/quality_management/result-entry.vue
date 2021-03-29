@@ -17,6 +17,10 @@
         />
       </el-form-item>
       <el-form-item>
+        <!-- <el-button
+          style="margin-left:10px;"
+          @click="printingFun"
+        >打印</el-button> -->
         <el-button :loading="btnExportLoad" @click="exportTable">导出</el-button>
       </el-form-item>
     </el-form>
@@ -26,7 +30,12 @@
       :data="tableData"
       border
       element-loading-text="拼命加载中"
+      @selection-change="handleSelectionChange"
     >
+      <el-table-column
+        type="selection"
+        width="30"
+      />
       <el-table-column
         label="No"
         width="45"
@@ -72,6 +81,11 @@
         label="总重量"
         min-width="20"
       />
+      <!-- <el-table-column label="操作" align="center" width="100">
+        <template slot-scope="{row}">
+          <el-button size="mini" @click="print(row)">查看卡片</el-button>
+        </template>
+      </el-table-column> -->
       <el-table-column
         prop="quality"
         label="品质状态"
@@ -81,6 +95,7 @@
           {{ scope.row.quality }}
           <el-popover
             v-model="scope.row.visible"
+            v-permission="['material_temp_input','add']"
             placement="right"
             width="160"
           >
@@ -107,6 +122,13 @@
       :current-page="search.page"
       @currentChange="currentChange"
     />
+
+    <el-dialog
+      :fullscreen="true"
+      :visible.sync="testCardDialogVisible"
+    >
+      <testCardResultEntry ref="testCard" />
+    </el-dialog>
   </div>
 </template>
 
@@ -116,8 +138,10 @@ import { barcodeQuality, barcodeQualityExport } from '@/api/base_w_three'
 import Page from '@/components/page'
 import materialCodeSelect from '@/components/materialCodeSelect'
 import { debounce } from '@/utils'
+import testCardResultEntry from './components/testCardResultEntry'
+
 export default {
-  components: { Page, materielTypeSelect, materialCodeSelect },
+  components: { Page, testCardResultEntry, materielTypeSelect, materialCodeSelect },
   data() {
     return {
       tableData: [],
@@ -125,7 +149,9 @@ export default {
       total: 0,
       loading: true,
       qualityValue: '',
-      btnExportLoad: false
+      btnExportLoad: false,
+      labelPrintList: [],
+      testCardDialogVisible: false
     }
   },
   created() {
@@ -196,6 +222,37 @@ export default {
         }).catch(e => {
           this.btnExportLoad = false
         })
+    },
+    async getCardInfo(id) {
+      try {
+        if (this.$refs['testCard']) {
+          this.$nextTick(() => {
+            this.$refs['testCard'].setTestData()
+          })
+        }
+      } catch (e) {
+        //
+      }
+    },
+    print(row) {
+      this.getCardInfo(row.id)
+      this.testCardDialogVisible = true
+    },
+    async printingFun() {
+      try {
+        // if (this.labelPrintList.length === 0) return
+        // const arr = []
+        // this.labelPrintList.forEach(D => {
+        //   arr.push(D.lot_no)
+        // })
+        // await labelPrint('post', null, { data: { lot_no: arr }})
+        // this.$message.success('打印任务已连接')
+      } catch (e) {
+        //
+      }
+    },
+    handleSelectionChange(arr) {
+      this.labelPrintList = arr
     }
   }
 }

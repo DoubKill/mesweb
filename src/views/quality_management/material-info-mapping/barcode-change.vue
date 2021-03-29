@@ -35,6 +35,7 @@
       >
         <template slot-scope="scope">
           <el-button
+            v-permission="['bar_code','rebuild']"
             size="mini"
             @click="add(scope.row)"
           >重新生成条形码
