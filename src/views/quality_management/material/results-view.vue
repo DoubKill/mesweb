@@ -11,12 +11,13 @@
           @change="changeList"
         />
       </el-form-item>
-      <el-form-item label="物料编码：">
-        <materialCodeSelect ref="materialCodeA" :is-created="true" :created-is="true" :is-all-obj="true" @changeSelect="changeMaterialCode" />
+      <el-form-item label="原材料编码：">
+        <all-product-no-select :type-parms="2" @productBatchingChanged="changeMaterialCode" />
       </el-form-item>
-      <el-form-item label="物料名称：">
-        <materialCodeSelect ref="materialCodeB" :is-created="true" :created-is="true" :is-all-obj="true" label-name="material_name" @changeSelect="changeMaterialName" />
+      <el-form-item label="原材料名称：">
+        <all-product-no-select :type-parms="2" label-name="material_name" @productBatchingChanged="changeMaterialName" />
       </el-form-item>
+
       <el-form-item label="条码：">
         <el-input
           v-model="search.lot_no"
@@ -64,12 +65,12 @@
         />
         <el-table-column
           prop="material_no"
-          label="物料编码"
+          label="原材料编码"
           min-width="10"
         />
         <el-table-column
           prop="material_name"
-          label="物料名称"
+          label="原材料名称"
           min-width="10"
         />
         <el-table-column
@@ -133,11 +134,13 @@
 
 <script>
 // import qualityTestMethodSelect from '../components/qualityTestMethodSelect'
-import materialCodeSelect from '@/components/materialCodeSelect'
+// import materialCodeSelect from '@/components/materialCodeSelect'
 import { materialTestOrdersRaw, testIndicatorDataPointsRaw } from '@/api/base_w_three'
 import page from '@/components/page'
+import allProductNoSelect from '@/components/select_w/allProductNoSelect'
+
 export default {
-  components: { page, materialCodeSelect },
+  components: { page, allProductNoSelect },
   data() {
     return {
       search: {},

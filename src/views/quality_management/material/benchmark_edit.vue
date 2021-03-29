@@ -2,8 +2,8 @@
   <div v-loading="loading">
     <!-- 原料判断基准录入 -->
     <el-form :inline="true">
-      <el-form-item label="胶料编码:">
-        <all-product-no-select @productBatchingChanged="productBatchingChanged" />
+      <el-form-item label="原材料编码:">
+        <all-product-no-select :type-parms="2" @productBatchingChanged="productBatchingChanged" />
         <!-- <product-no-select @productBatchingChanged="productBatchingChanged" /> -->
       </el-form-item>
       <el-form-item label="试验指标:">
@@ -26,7 +26,7 @@
       />
       <el-table-column
         prop="material_no"
-        label="胶料编码"
+        label="原材料编码"
       />
       <el-table-column
         prop="test_indicator_name"
@@ -66,10 +66,10 @@
         :rules="rules"
         label-width="120px"
       >
-        <el-form-item label="胶料编码:" prop="material">
+        <el-form-item label="原材料编码:" prop="material">
           <el-select
             v-model="addForm.material"
-            placeholder="请选择胶料编码"
+            placeholder="请选择原材料编码"
             filterable
           >
             <el-option
@@ -153,12 +153,12 @@ export default {
       editShow: false,
       rules: {
         material: [
-          { required: true, message: '请选择胶料编码', trigger: 'change' }
+          { required: true, message: '请选择原材料编码', trigger: 'change' }
         ],
         b: [
           { required: true, validator: (rule, value, callback) => {
             validatePass(rule, value, callback,
-              this.addForm.b, '请选择胶料编码')
+              this.addForm.b, '请选择试验类型')
           } }
         ],
         test_method: [
@@ -200,7 +200,7 @@ export default {
     },
     async getRubber() {
       try {
-        const data = await batchingMaterials('get')
+        const data = await batchingMaterials('get', null, { params: { type: 2 }})
         this.optionsRubber = data || []
       } catch (e) {
         //

@@ -5,13 +5,14 @@
     clearable
     filterable
     :loading="loading"
+    :allow-create="isCreated"
     @change="productBatchingChanged"
     @visible-change="visibleChange"
   >
     <el-option
       v-for="item in productBatchings"
       :key="item.id"
-      :label="item.material_no"
+      :label="item[labelName]"
       :value="item.id"
     />
   </el-select>
@@ -29,6 +30,18 @@ export default {
     makeUseBatch: {
       type: Boolean,
       default: false
+    },
+    typeParms: {
+      type: [String, Number],
+      default: null
+    },
+    isCreated: { // 是可创建条目
+      type: Boolean,
+      default: false
+    },
+    labelName: {
+      type: String,
+      default: 'material_no'
     }
   },
   data() {
@@ -53,7 +66,7 @@ export default {
     getProductBatchings() {
       this.loading = true
       // eslint-disable-next-line object-curly-spacing
-      batchingMaterials('get', null, { params: { all: 1 } }).then(response => {
+      batchingMaterials('get', null, { params: { all: 1, type: this.typeParms } }).then(response => {
         let productBatchings = response
         productBatchings.forEach(productBatching => {
           this.productBatchingById[productBatching.id] = productBatching

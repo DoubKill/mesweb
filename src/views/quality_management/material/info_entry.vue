@@ -2,11 +2,11 @@
   <div v-loading="loading" class="info_entry_style">
     <!-- 原料检测数据录入 -->
     <el-form :inline="true">
-      <el-form-item label="物料编码：">
-        <materialCodeSelect ref="materialCodeA" :is-created="true" :created-is="true" :is-all-obj="true" @changeSelect="changeMaterialCode" />
+      <el-form-item label="原材料编码：">
+        <all-product-no-select :type-parms="2" @productBatchingChanged="changeMaterialCode" />
       </el-form-item>
-      <el-form-item label="物料名称：">
-        <materialCodeSelect ref="materialCodeB" :is-created="true" :created-is="true" :is-all-obj="true" label-name="material_name" @changeSelect="changeMaterialName" />
+      <el-form-item label="原材料名称：">
+        <all-product-no-select :type-parms="2" label-name="material_name" @productBatchingChanged="changeMaterialName" />
       </el-form-item>
       <el-form-item label="条码：">
         <el-input
@@ -99,7 +99,7 @@
         </el-table-column>
         <el-table-column
           prop="material_no"
-          label="物料编码"
+          label="原材料编码"
         />
         <el-table-column
           prop="supplier_name"
@@ -214,12 +214,14 @@ import { matTestIndicatorMethodsRaw, materialInventory, materialTestOrdersRaw } 
 import { deepClone } from '@/utils/index'
 // import planSchedulesSelect from '@/components/PlanSchedulesSelect'
 import viewDialogTrial from '@/components/select_w/viewDialogTrial'
-import materialCodeSelect from '@/components/materialCodeSelect'
+// import materialCodeSelect from '@/components/materialCodeSelect'
 import { debounce, setDate } from '@/utils'
+import allProductNoSelect from '@/components/select_w/allProductNoSelect'
+
 // import manualEntryRadio from './manual_entry_components/index'
 // import page from '@/components/page'
 export default {
-  components: { viewDialogTrial, materialCodeSelect },
+  components: { allProductNoSelect, viewDialogTrial },
   data() {
     return {
       dialogVisible: false,
