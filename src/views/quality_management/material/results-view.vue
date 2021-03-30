@@ -178,11 +178,11 @@ export default {
     //   console.log(val, 666)
     // },
     changeMaterialName(val) {
-      this.search.material_name = val
+      this.search.material_name = val ? val.material_name : ''
       this.changeList()
     },
     changeMaterialCode(val) {
-      this.search.material_no = val
+      this.search.material_no = val ? val.material_no : ''
       this.changeList()
     },
     async submitUser(row, index) {

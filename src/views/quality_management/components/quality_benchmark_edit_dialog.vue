@@ -8,7 +8,7 @@
     >
       <div v-loading="loading">
         <el-form :inline="true">
-          <el-form-item label="胶料编码:">
+          <el-form-item label="原材料编码:">
             {{ objEdit.material_no }}
           </el-form-item>
           <el-form-item label="检测指标:">

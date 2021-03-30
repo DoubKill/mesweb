@@ -308,11 +308,11 @@ export default {
       this.changeTable = []
     },
     changeMaterialName(val) {
-      this.search.material_name = val
+      this.search.material_name = val ? val.material_name : ''
       this.pageOne()
     },
     changeMaterialCode(val) {
-      this.search.material_no = val
+      this.search.material_no = val ? val.material_no : ''
       this.pageOne()
     },
     // changeSearch() {

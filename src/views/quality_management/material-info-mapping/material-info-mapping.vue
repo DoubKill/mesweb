@@ -182,8 +182,7 @@ export default {
       ruleForm: {
         child_system: '',
         material_name: '',
-        material_no: '',
-        bra_code: ''
+        material_no: ''
       },
       options: [],
       total: 0,
@@ -263,9 +262,8 @@ export default {
       console.log(obj)
     },
     async submitFun() {
-      if (!this.ruleForm.material_no || !this.ruleForm.material_name ||
-      !this.ruleForm.bra_code) {
-        this.$message.info('物料编码、物料名称、条形码必填')
+      if (!this.ruleForm.material_no || !this.ruleForm.material_name) {
+        this.$message.info('物料编码、物料名称必填')
         return
       }
       if (!this.ruleForm.child_system) {
