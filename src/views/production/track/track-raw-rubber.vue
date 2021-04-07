@@ -214,7 +214,9 @@
               <td>{{ itemVal.product_no }}</td>
               <td>{{ itemVal.begin_trains }}-{{ itemVal.end_trains }}</td>
               <td>{{ setDate(itemVal.product_time) }}</td>
-              <td>查看</td>
+              <td style="cursor: pointer;">
+                <el-button size="mini" @click="trainReport(itemVal)">查看</el-button>
+              </td>
             </tr>
             <tr v-if="activity.label === 'product_in'">
               <td>{{ itemVal.lot_no }}</td>
@@ -234,18 +236,123 @@
         </table>
       </el-timeline-item>
     </el-timeline>
+
+    <el-dialog
+      title="车次报表"
+      :visible.sync="dialogVisible"
+      width="90%"
+    >
+      <el-table
+        :data="tableData1"
+        border
+      >
+        <el-table-column
+          prop="equip_no"
+          label="机台"
+          min-width="10"
+        />
+        <el-table-column
+          prop="product_no"
+          label="配方编号"
+          min-width="10"
+        />
+        <el-table-column
+          prop="plan_classes_uid"
+          label="计划编号"
+          min-width="10"
+        />
+        <el-table-column
+          prop="begin_time"
+          min-width="10"
+          sortable
+          label="开始时间"
+        />
+        <el-table-column
+          prop="end_time"
+          label="结束时间"
+          sortable
+          min-width="10"
+        />
+        <el-table-column
+          prop="plan_trains"
+          label="设定车次"
+          min-width="10"
+        />
+        <el-table-column
+          prop="actual_trains"
+          label="实际车次"
+          min-width="10"
+        />
+        <el-table-column
+          :prop="editionNo === 'v1'?'production_details.控制方式':'control_mode'"
+          label="本/远控"
+          min-width="10"
+        />
+        <el-table-column
+          :prop="editionNo === 'v1'?'production_details.作业方式':'operating_type'"
+          label="手/自动"
+          min-width="10"
+        />
+        <el-table-column
+          :prop="editionNo === 'v1'?'production_details.总重量':'actual_weight'"
+          label="总重量(kg)"
+          min-width="10"
+        />
+        <el-table-column
+          :prop="editionNo === 'v1'?'production_details.排胶时间':'evacuation_time'"
+          label="排胶时间(s)"
+          min-width="10"
+        />
+        <el-table-column
+          :prop="editionNo === 'v1'?'production_details.排胶温度':'evacuation_temperature'"
+          label="排胶温度(c°)"
+        />
+        <el-table-column
+          :prop="editionNo === 'v1'?'production_details.排胶能量':'evacuation_energy'"
+          label="排胶能量(J)"
+          min-width="10"
+        />
+        <el-table-column
+          :prop="editionNo === 'v1'?'production_details.员工代号':'operation_user'"
+          label="操作人"
+          min-width="10"
+        />
+        <el-table-column
+          :prop="editionNo === 'v1'?'production_details.存盘时间':'product_time'"
+          label="存盘时间(s)"
+          width="100"
+          min-width="10"
+        />
+        <el-table-column
+          :prop="editionNo === 'v1'?'production_details.密炼时间':'mixer_time'"
+          label="密炼时间(s)"
+          width="100"
+          min-width="10"
+        />
+        <el-table-column
+          :prop="editionNo === 'v1'?'production_details.间隔时间':'interval_time'"
+          label="间隔时间(s)"
+          min-width="10"
+        />
+      </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { ProductTrace } from '@/api/base_w_three'
 import { debounce, setDate } from '@/utils'
+import { trainsFeedbacksApiview } from '@/api/base_w'
+import { mapGetters } from 'vuex'
 export default {
   data() {
     return {
       value: '',
-      barCodeSearch: '2021031911250102', // 2021031911250102
-      activities: [],
+      barCodeSearch: 'KTP005', // 2021031911250102
+      activities: {}, // pallet_feed: [{}]
       options: [
         { label: 'material_in', value: '入库', _show: true },
         { label: 'product_info', value: '配方创建', _show: true },
@@ -262,8 +369,14 @@ export default {
       ],
       headList: {
         material_in: []
-      }
+      },
+      dialogVisible: false,
+      tableData1: [],
+      loadingTrain: false
     }
+  },
+  computed: {
+    ...mapGetters(['editionNo'])
   },
   created() {
     this.getList()
@@ -274,22 +387,55 @@ export default {
       this.loading = true
       try {
         const data = await ProductTrace('get', null, { params: { lot_no: this.barCodeSearch }})
-        data.material_load[0].created_date = data.material_load[0].weight_time
-        data.product_in[0].created_date = data.product_in[0].start_time
-        data.material_load[0].batch_classes = data.material_load[0].feed_log__batch_classes
-        data.pallet_feed[0].batch_classes = data.pallet_feed[0].classes
-        data.plan_info[0].batch_classes = data.plan_info[0].work_schedule_plan__classes__global_name
-        data.product_info[0].batch_classes = data.product_info[0].classes_name
-        data.batch_plan[0].batch_classes = data.batch_plan[0].work_schedule_plan__classes__global_name
-        data.product_in[0].batch_classes = data.product_in[0].classes_name
-        data.dispatch_log[0].batch_classes = data.dispatch_log[0].classes_name
-        data.product_details[0].batch_classes = data.product_info[0].classes_name
-        data.product_details[0].created_date = data.product_info[0].created_date
-
+        if (data.product_in[0]) {
+          data.product_in[0].created_date = data.product_in[0] ? data.product_in[0].start_time : ''
+        }
+        if (data.material_load[0]) {
+          data.material_load[0].created_date = data.material_load[0].weight_time || ''
+          data.material_load[0].batch_classes = data.material_load[0].feed_log__batch_classes || ''
+        }
+        if (data.pallet_feed[0]) {
+          data.pallet_feed[0].batch_classes = data.pallet_feed[0].classes || ''
+        }
+        if (data.plan_info[0]) {
+          data.plan_info[0].batch_classes = data.plan_info[0].work_schedule_plan__classes__global_name || ''
+        }
+        if (data.product_info[0]) {
+          data.product_info[0].batch_classes = data.product_info[0].classes_name || ''
+        }
+        if (data.batch_plan[0]) {
+          data.batch_plan[0].batch_classes = data.batch_plan[0].work_schedule_plan__classes__global_name || ''
+        }
+        if (data.product_in[0]) {
+          data.product_in[0].batch_classes = data.product_in[0].classes_name || ''
+        }
+        if (data.dispatch_log[0]) {
+          data.dispatch_log[0].batch_classes = data.dispatch_log[0].classes_name || ''
+        }
+        if (data.product_details[0]) {
+          data.product_details[0].batch_classes = data.product_info[0].classes_name || ''
+          data.product_details[0].created_date = data.product_info[0].created_date || ''
+        }
         this.activities = data
         this.loading = false
       } catch (e) {
         this.loading = false
+      }
+    },
+    trainReport(row) {
+      this.dialogVisible = true
+      // this.getTrainReport()
+    },
+    async getTrainReport() {
+      try {
+        this.loadingTrain = true
+        const data = await trainsFeedbacksApiview('get', null, { params: this.getParams })
+        this.loadingTrain = false
+        const obj = this.tableData1.pop()
+        this.tableData1 = data.results || []
+        this.$store.commit('user/SET_EDITION', obj.version)
+      } catch (e) {
+        this.loadingTrain = false
       }
     },
     clickFun(val) {

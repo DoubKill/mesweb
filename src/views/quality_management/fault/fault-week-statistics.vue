@@ -35,73 +35,41 @@
         show-summary
       >
         <el-table-column
-          prop="id"
+          prop="machine"
           label="机台"
           min-width="20"
         />
         <el-table-column
-          prop="name"
-          label="投料"
+          v-for="(item,i) in title_set"
+          :key="i+99"
+          :label="item"
           min-width="20"
-        />
+          :prop="item"
+        >
+          <template slot-scope="{row}">
+            {{ row[item] }}
+          </template>
+        </el-table-column>
         <el-table-column
-          prop="name"
-          label="主机"
-          min-width="20"
-        />
-        <el-table-column
-          prop="name"
-          label="挤出压片"
-          min-width="20"
-        />
-        <el-table-column
-          prop="name"
-          label="液压站"
-          min-width="20"
-        />
-        <el-table-column
-          prop="name"
-          label="水冷"
-          min-width="20"
-        />
-        <el-table-column
-          prop="name"
-          label="收皮"
-          min-width="20"
-        />
-        <el-table-column
-          prop="name"
-          label="上辅机"
-          min-width="20"
-        />
-        <el-table-column
-          prop="name"
-          label="上顶栓"
-          min-width="20"
-        />
-        <el-table-column
-          prop="name"
-          label="御料门"
-          min-width="20"
-        />
-        <el-table-column
-          prop="name"
-          label="加料门"
-          min-width="20"
-        />
-        <el-table-column
-          prop="name"
+          :key="1"
+          prop="sum"
           label="小计"
           min-width="20"
         />
         <el-table-column
-          prop="name"
+          :key="2"
           label="停机时间/h"
           min-width="20"
-        />
+          prop="sumHouse"
+        >
+          <template slot-scope="{row}">
+            {{ row.sumHouse }}
+          </template>
+        </el-table-column>
       </el-table>
       <ve-histogram
-        style="width:70%;"
+        v-if="chartData1.rows.length>0"
+        style="width:70%;margin-top:20px"
         :data="chartData1"
         :extend="extend1"
         :judge-width="true"
@@ -110,16 +78,16 @@
     </div>
     <el-row v-if="activeName==='second'">
       <el-col
-        v-for="(item,i) in 5"
+        v-for="(item,i) in tableData"
         :key="i"
         :span="8"
         style="text-align:center"
       >
-        <h4>各部位故障占比</h4>
+        <h4>{{ item.machine }}各部位故障占比</h4>
         <div>
           <ve-pie
-            style="height:200px"
-            :data="chartData"
+            style="height:250px"
+            :data="item.data"
             :extend="extend"
             :judge-width="true"
             :settings="chartSettings"
@@ -131,6 +99,8 @@
 </template>
 
 <script>
+import { setDate, getWeekDay } from '@/utils'
+import { weekErrorStatistics } from '@/api/base_w_three'
 export default {
   data() {
     this.extend = {
@@ -138,12 +108,17 @@ export default {
         show: false
       },
       series: {
-        center: ['220', '90'],
-        animation: false
+        center: ['200', '120'],
+        animation: false,
+        labelLine: {
+          normal: {
+            length: 1
+          }
+        }
       }
     }
     this.chartSettings = {
-      radius: '90'
+      radius: '80'
     }
     this.chartSettings1 = {
       labelMap: {
@@ -153,34 +128,23 @@ export default {
       backgroundColor: '#eee'
     }
     return {
-      searchDate: '',
+      searchDate: setDate(),
       tableData: [],
       activeName: 'first',
-      chartData: {
+      title_set: [],
+      chartData: { // 部位   数值
         columns: ['global_name', 'global_no'],
-        rows: [
-          { global_name: 1, global_no: 2 },
-          { global_name: 5566655, global_no: 2 },
-          { global_name: 3, global_no: 2 },
-          { global_name: 4, global_no: 0 },
-          { global_name: 99, global_no: 0 },
-          { global_name: 888888, global_no: 0 },
-          { global_name: 22225, global_no: 2 }
-        ]
+        rows: []
       },
       chartData1: {
         columns: ['global_name', 'global_no'],
-        rows: [
-          { global_name: 11, global_no: 22 },
-          { global_name: 22, global_no: 33 },
-          { global_name: 33, global_no: 22 }
-        ]
+        rows: []
       },
       extend1: {
         title: {
           text: '',
           x: 'middle',	 // left, right, middle
-          // y: 'bottom', // top, bottom
+          y: '10', // top, bottom
           textAlign: 'center' // auto, left, right, center
         },
         legend: {
@@ -188,31 +152,67 @@ export default {
         },
         series: {
           animation: false,
-          label: { show: true, position: 'top' }
+          label: { show: true, position: 'top' },
+          barMaxWidth: 50
         },
         backgroundColor: '#eee'
       }
     }
   },
   created() {
+    this.$nextTick(d => {
+      this.extend1.title.text = getWeekDay(this.searchDate)[0] + '至' + getWeekDay(this.searchDate)[6] + '  各机台停机时间(h)'
+    })
+    this.getList()
   },
   methods: {
+    async getList() {
+      try {
+        const data = await weekErrorStatistics('get', null, { params: { day_time: this.searchDate }})
+        const arr = []
+        const chartData = []
+        this.title_set = data.title_set || []
+        for (const iterator in data.equips) {
+          data.equips[iterator].machine = iterator
+          data.equips[iterator].sumHouse = (data.equips[iterator].sum / 60).toFixed(2)
+          arr.push(data.equips[iterator])
+        }
+        this.tableData = arr || []
+        this.tableData.forEach((D, key, i) => {
+          chartData.push({ global_name: D.machine, global_no: D.sumHouse })
+          const arr = []
+          this.title_set.forEach(d => {
+            if (D[d]) {
+              arr.push({ global_name: d, global_no: D[d] })
+            }
+          })
+          D.data = {
+            columns: ['global_name', 'global_no'],
+            rows: arr
+          }
+        })
+        this.chartData1.rows = chartData
+      } catch (e) {
+        this.loading = false
+      }
+    },
     changeDate(val) {
       // 星期一-星期天 返回得星期二
-      console.log(val)
       if (!val) {
         this.$message.info('请选择时间')
         return
       }
       this.$nextTick(d => {
-        this.extend1.title.text = new Date(val).getFullYear() + '各机台停机时间(h)'
+        this.extend1.title.text = getWeekDay(val)[0] + '至' + getWeekDay(val)[6] + '  各机台停机时间(h)'
       })
+      this.getList()
     },
     handleClick() {
 
     }
   }
 }
+
 </script>
 
 <style>

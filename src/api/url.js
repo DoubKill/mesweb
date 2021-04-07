@@ -302,5 +302,9 @@ export default {
   // 录入
   MaterialInventory: '/api/v1/quality/material-inventory/',
   MaterialTestOrdersRaw: '/api/v1/quality/material-test-orders-raw/',
-  TestIndicatorDataPointsRaw: '/api/v1/quality/test-indicator-data-points-raw/'
+  UnqualifiedMaterialDealResult: '/api/v1/quality/unqualified-material-deal-result/',
+  TestIndicatorDataPointsRaw: '/api/v1/quality/test-indicator-data-points-raw/',
+  // 设备故障别日统计
+  DayErrorStatistics: '/api/v1/equipment/day-error-statistics/',
+  WeekErrorStatistics: '/api/v1/equipment/week-error-statistics/'
 }

@@ -111,6 +111,14 @@ export function materialTestOrdersRaw(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function unqualifiedMaterialDealResult(method, id, data = {}) {
+  const obj = {
+    url: id ? API.UnqualifiedMaterialDealResult + id + '/' : API.UnqualifiedMaterialDealResult,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 export function matTestIndicatorMethodsRaw(method, id, data = {}) {
   const obj = {
     url: id ? API.MatTestIndicatorMethodsRaw + id + '/' : API.MatTestIndicatorMethodsRaw,
@@ -122,6 +130,22 @@ export function matTestIndicatorMethodsRaw(method, id, data = {}) {
 export function testIndicatorDataPointsRaw(method, id, data = {}) {
   const obj = {
     url: id ? API.TestIndicatorDataPointsRaw + id + '/' : API.TestIndicatorDataPointsRaw,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function dayErrorStatistics(method, id, data = {}) {
+  const obj = {
+    url: id ? API.DayErrorStatistics + id + '/' : API.DayErrorStatistics,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function weekErrorStatistics(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WeekErrorStatistics + id + '/' : API.WeekErrorStatistics,
     method: method
   }
   Object.assign(obj, data)

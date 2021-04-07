@@ -14,40 +14,32 @@
       <div style="width:65%">
         <el-table
           :data="tableData"
-          :summary-method="getSummaries"
-          show-summary
+          border
         >
           <el-table-column
-            prop="date"
+            prop="machine"
             label="设备名称"
             min-width="20"
           />
-          <el-table-column v-for="(item,index) in classList" :key="index" :label="item.global_name">
+          <el-table-column v-for="(item,index) in classList" :key="index" :label="item">
             <el-table-column
-              prop="name"
               label="故障时间"
               min-width="20"
-            />
+              prop="error_time"
+            >
+              <template slot-scope="{row}">
+                {{ row.error_time[index] }}
+              </template>
+            </el-table-column>
             <el-table-column
-              prop="province"
+              prop="error_percent"
               label="故障率"
               min-width="20"
-            />
-          </el-table-column>
-          <el-table-column
-            :label="searchDate"
-            min-width="20"
-          >
-            <el-table-column
-              prop="name"
-              label="故障时间"
-              min-width="20"
-            />
-            <el-table-column
-              prop="address"
-              label="故障率"
-              min-width="20"
-            />
+            >
+              <template slot-scope="{row}">
+                {{ row.error_percent[index] *100 }}%
+              </template>
+            </el-table-column>
           </el-table-column>
         </el-table>
       </div>
@@ -65,7 +57,7 @@
 
 <script>
 import { setDate } from '@/utils'
-import { globalCodesUrl } from '@/api/base_w'
+import { dayErrorStatistics } from '@/api/base_w_three'
 export default {
   data() {
     this.extend = {
@@ -76,94 +68,70 @@ export default {
     return {
       searchDate: setDate(),
       classList: [],
-      tableData: [{
-        date: '2016-05-03',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '0.8',
-        zip: 200333
-      }, {
-        date: '2016-05-02',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '0.8',
-        zip: 200333
-      }],
+      tableData: [],
       chartData2: {
         columns: ['global_name', 'global_no'],
-        rows: [
-          { global_name: 1, global_no: 2 },
-          { global_name: 2, global_no: 2 },
-          { global_name: 3, global_no: 2 },
-          { global_name: 4, global_no: 0 },
-          { global_name: 5, global_no: 0 },
-          { global_name: 6, global_no: 0 },
-          { global_name: 7, global_no: 2 }
-        ]
+        rows: []
       }
     }
   },
   created() {
-    this.getClass()
+    this.getList()
   },
   methods: {
     async getList() {
       this.loading = true
       try {
-        // const data = await matTestMethods('get', null, { params: this.search })
-        // this.tableData = data.results
-        // this.total = data.count
-        // this.loading = false
+        const data = await dayErrorStatistics('get', null, { params: { day_time: this.searchDate }})
+        const arr = []
+        const chartData = []
+        for (const iterator in data) {
+          data[iterator].machine = iterator
+          arr.push(data[iterator])
+        }
+        this.tableData = arr || []
+        const error_percentArr = []
+        const error_timeArr = []
+        this.tableData.forEach((D, index) => {
+          D.error_percent.forEach((d, i) => {
+            if (!error_percentArr[i]) {
+              error_percentArr[i] = 0
+            }
+            error_percentArr[i] += d
+          })
+          D.error_time.forEach((d, i) => {
+            if (!error_timeArr[i]) {
+              error_timeArr[i] = 0
+            }
+            error_timeArr[i] += d
+          })
+
+          chartData[index] = {
+            global_name: D.machine,
+            global_no: D.error_percent[D.error_percent.length - 1] * 100
+          }
+        })
+        this.tableData.push({
+          class_name: this.tableData[0].class_name,
+          error_percent: error_percentArr,
+          error_time: error_timeArr,
+          machine: '合计'
+        })
+        this.classList = arr[0].class_name
+        this.total = data.count
+
+        this.chartData2.rows = chartData
+        this.loading = false
       } catch (e) {
         this.loading = false
       }
-    },
-    getClass() {
-      globalCodesUrl('get', {
-        params: {
-          class_name: '班次'
-        }
-      }).then((response) => {
-        this.classList = response.results
-        this.getList()
-
-      // eslint-disable-next-line handle-callback-err
-      }).catch((error) => {
-      })
     },
     datePicker(val) {
       if (!val) {
         this.$message.info('请选择日期')
         return
       }
-    },
-    getSummaries(param) {
-      const { columns, data } = param
-      const sums = []
-      columns.forEach((column, index) => {
-        if (index === 0) {
-          sums[index] = '总价'
-          return
-        }
-        const values = data.map(item => Number(item[column.property]))
-        if (!values.every(value => isNaN(value))) {
-          sums[index] = values.reduce((prev, curr) => {
-            const value = Number(curr)
-            if (!isNaN(value)) {
-              return prev + curr
-            } else {
-              return prev
-            }
-          }, 0)
-        //   sums[index] += ' 元'
-        } else {
-          sums[index] = ''
-        }
-      })
-
-      return sums
+      this.getList()
     }
   }
 }
