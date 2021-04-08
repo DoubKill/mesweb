@@ -525,8 +525,8 @@ export const asyncRoutes = [{
         }
       }
     ]
-  },
-  {
+  }
+    /** {
     path: '/track',
     redirect: '/track-raw-material',
     component: {
@@ -557,7 +557,7 @@ export const asyncRoutes = [{
         }
       }
     ]
-  }
+  }**/
 
   // {
   //   path: 'collect/rub/daily',
@@ -1433,8 +1433,8 @@ export const asyncRoutes = [{
         title: '平台信息管理',
         permissionName: 'platform_config'
       }
-    },
-    {
+    }
+    /** {
       path: '/fault-day-statistics',
       component: () => import('@/views/quality_management/fault/fault-day-statistics'),
       name: 'fault-day-statistics',
@@ -1463,7 +1463,7 @@ export const asyncRoutes = [{
         icon: 'quality',
         permissionName: ''
       }
-    }
+    }**/
   ]
 },
 {
