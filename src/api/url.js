@@ -147,6 +147,10 @@ export default {
   FinalPlanManagement: '/api/v1/inventory/final-plan-management/',
   // 帘布库计划管理
   LbPlanManagement: '/api/v1/inventory/lb-plan-management/',
+  // 原材料出库计划
+  MaterialPlanManagement: '/api/v1/inventory/material-plan-management/',
+  // 原材料出库口
+  MaterialPlanManagementStations: '/api/v1/inventory/material-plan-management/stations/',
 
   // 物料属性管理
   materialsAttribute: '/api/v1/recipe/materials-attribute/',
@@ -306,5 +310,9 @@ export default {
   TestIndicatorDataPointsRaw: '/api/v1/quality/test-indicator-data-points-raw/',
   // 设备故障别日统计
   DayErrorStatistics: '/api/v1/equipment/day-error-statistics/',
-  WeekErrorStatistics: '/api/v1/equipment/week-error-statistics/'
+  WeekErrorStatistics: '/api/v1/equipment/week-error-statistics/',
+  MonthErrorStatistics: '/api/v1/equipment/month-error-statistics/',
+  MonthErrorSort: '/api/v1/equipment/month-error-sort/',
+
+  BarcodePreview: '/api/v1/quality/barcode-preview/'
 }

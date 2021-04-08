@@ -33,63 +33,39 @@
         show-summary
       >
         <el-table-column
-          prop="id"
+          prop="machine"
           label="机台"
           min-width="20"
         />
         <el-table-column
-          prop="name"
-          label="0投料"
+          v-for="(item,i) in title_set"
+          :key="i+99"
+          :label="item"
           min-width="20"
-        />
+          :prop="item"
+        >
+          <template slot-scope="{row}">
+            {{ row[item] }}
+          </template>
+        </el-table-column>
         <el-table-column
-          prop="name"
-          label="1主机"
-          min-width="20"
-        />
-        <el-table-column
-          prop="name"
-          label="2挤压"
-          min-width="20"
-        />
-        <el-table-column
-          prop="name"
-          label="3液压站"
-          min-width="20"
-        />
-        <el-table-column
-          prop="name"
-          label="4水冷"
-          min-width="20"
-        />
-        <el-table-column
-          prop="name"
-          label="5收皮"
-          min-width="20"
-        />
-        <el-table-column
-          prop="name"
-          label="6上辅机"
-          min-width="20"
-        />
-        <el-table-column
-          prop="name"
-          label="8立体库"
-          min-width="20"
-        />
-        <el-table-column
-          prop="name"
+          prop="sum"
           label="小计"
           min-width="20"
         />
         <el-table-column
-          prop="name"
+          prop="sumHouse"
           label="停机时间/h"
           min-width="20"
-        />
+        >
+          <template slot-scope="{row}">
+            {{ row.sumHouse }}
+          </template>
+        </el-table-column>
       </el-table>
       <ve-histogram
-        style="width:70%;"
+        v-if="chartData1.rows.length>0"
+        style="width:70%;margin-top:20px"
         :data="chartData1"
         :extend="extend1"
         :judge-width="true"
@@ -98,50 +74,52 @@
     </div>
     <div v-if="activeName==='second'" style="display:flex">
       <div style="width:60%;text-align:center">
-        <h4>{{ searchDate.slice(0, 7) }}故障频发去排名</h4>
+        <h4>{{ searchDate.slice(0, 7) }}故障频发去排行</h4>
         <el-table
-          :data="tableData1"
+          :data="monthErrorSortData"
           border
-          show-summary
         >
           <el-table-column
-            prop="id"
             label="排行"
             min-width="20"
-          />
+          >
+            <template slot-scope="{$index}">
+              top{{ $index+1 }}
+            </template>
+          </el-table-column>
           <el-table-column
-            prop="id"
+            prop="machine"
             label="机台"
             min-width="20"
           />
           <el-table-column
-            prop="id"
+            prop="sumHouse"
             label="停机时间/h"
             min-width="20"
           />
           <el-table-column
-            prop="id"
+            prop="faultName1"
             label="故障集中区1"
             min-width="20"
           />
           <el-table-column
-            prop="id"
+            prop="faultVal1"
             label="故障1时间"
             min-width="20"
           />
           <el-table-column
-            prop="id"
+            prop="faultName2"
             label="故障集中区2"
             min-width="20"
           />
           <el-table-column
-            prop="id"
+            prop="faultVal2"
             label="故障2时间"
             min-width="20"
           />
         </el-table>
       </div>
-      <div style="width:40%;text-align:center">
+      <div v-if="chartData.rows.length>0" style="width:40%;text-align:center;">
         <h4>{{ searchDate.slice(0, 7) }}设备故障分类</h4>
         <ve-pie
           style="width:100%"
@@ -156,12 +134,13 @@
 
 <script>
 import { setDate } from '@/utils'
+import { monthErrorStatistics, monthErrorSort } from '@/api/base_w_three'
 export default {
   data() {
     this.chartSettings1 = {
       labelMap: {
         global_name: '时间',
-        global_no: '温度'
+        global_no: '停机时间'
       },
       backgroundColor: '#eee'
     }
@@ -173,33 +152,22 @@ export default {
     return {
       searchDate: setDate(),
       tableData: [],
-      tableData1: [],
       activeName: 'first',
+      title_set: [],
+      monthErrorSortData: [],
       chartData: {
         columns: ['global_name', 'global_no'],
-        rows: [
-          { global_name: 1, global_no: 2 },
-          { global_name: 5566655, global_no: 2 },
-          { global_name: 3, global_no: 2 },
-          { global_name: 4, global_no: 0 },
-          { global_name: 99, global_no: 0 },
-          { global_name: 888888, global_no: 0 },
-          { global_name: 22225, global_no: 2 }
-        ]
+        rows: []
       },
       chartData1: {
         columns: ['global_name', 'global_no'],
-        rows: [
-          { global_name: 11, global_no: 22 },
-          { global_name: 22, global_no: 33 },
-          { global_name: 33, global_no: 22 }
-        ]
+        rows: []
       },
       extend1: {
         title: {
           text: '',
           x: 'middle',	 // left, right, middle
-          // y: 'bottom', // top, bottom
+          y: '10', // top, bottom
           textAlign: 'center' // auto, left, right, center
         },
         legend: {
@@ -207,7 +175,8 @@ export default {
         },
         series: {
           animation: false,
-          label: { show: true, position: 'top' }
+          label: { show: true, position: 'top' },
+          barMaxWidth: 50
         },
         backgroundColor: '#eee'
       }
@@ -216,10 +185,80 @@ export default {
   created() {
     const a = this.searchDate.slice(0, 7)
     this.extend1.title.text = a + '各机台停机时间(h)'
+    this.getList()
+    this.monthErrorSortList()
   },
   methods: {
+    async getList() {
+      try {
+        const data = await monthErrorStatistics('get', null, { params: { day_time: this.searchDate }})
+        const arr = []
+        const chartData = []
+        this.title_set = data.title || []
+        for (const iterator in data.equips) {
+          data.equips[iterator].machine = iterator
+          data.equips[iterator].sumHouse = (data.equips[iterator].sum / 60).toFixed(2)
+          arr.push(data.equips[iterator])
+        }
+        this.tableData = arr || []
+
+        const obj = []
+        this.tableData.forEach((D, key, i) => {
+          chartData.push({ global_name: D.machine, global_no: D.sumHouse })
+          const arr1 = []
+
+          this.title_set.forEach(d => {
+            if (!obj[d]) {
+              obj[d] = 0
+            }
+            obj[d] += D[d]
+            if (D[d]) {
+              arr1.push({ global_name: d, global_no: D[d] })
+            }
+          })
+          D.data = {
+            columns: ['global_name', 'global_no'],
+            rows: arr1
+          }
+        })
+
+        this.chartData.rows = []
+        for (const iterator in obj) {
+          this.chartData.rows.push({
+            global_name: iterator,
+            global_no: obj[iterator]
+          })
+        }
+        this.chartData1.rows = chartData
+      } catch (e) {
+        this.loading = false
+      }
+    },
+    async monthErrorSortList() {
+      try {
+        const data = await monthErrorSort('get', null, { params: { day_time: this.searchDate }})
+        const arr = []
+        data.forEach(D => {
+          for (const val in D) {
+            arr.push({
+              machine: val,
+              sumHouse: (D[val][0][1] || 0 / 60).toFixed(2),
+              faultName1: D[val][1][0] || '',
+              faultVal1: D[val][1][1] || '',
+              faultName2: D[val][2][0] || '',
+              faultVal2: D[val][2][1] || ''
+            })
+          }
+        })
+
+        this.monthErrorSortData = arr || []
+
+        console.log(this.monthErrorSortData, 11)
+      } catch (e) {
+        this.loading = false
+      }
+    },
     changeDate(val) {
-      console.log(val)
       if (!val) {
         this.$message.info('请选择时间')
         return
@@ -228,6 +267,8 @@ export default {
         const a = val.slice(0, 7)
         this.extend1.title.text = a + '各机台停机时间(h)'
       })
+      this.getList()
+      this.monthErrorSortList()
     },
     handleClick() {
 

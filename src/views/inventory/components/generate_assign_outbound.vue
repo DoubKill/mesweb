@@ -1,6 +1,8 @@
 <template>
   <div v-loading="loading" class="app-container">
     <!-- 指定出库 -->
+    {{ warehouseName }}
+
     <el-form :inline="true">
       <el-form-item label="仓库名称">
         {{ warehouseName }}
@@ -74,19 +76,20 @@
         align="center"
       >
         <template slot-scope="{row}">
-          <span v-if="$route.meta.title==='帘布库出库计划'">{{ row.quality_status }}</span>
+          <span v-if="['帘布库出库计划','原材料出库计划'].includes($route.meta.title)">{{ row.quality_status }}</span>
           <span v-else>{{ row.quality_level }}</span>
         </template>
       </el-table-column>
       <el-table-column label="入库时间" align="center" prop="in_storage_time" />
-      <el-table-column label="机台号" width="50" align="center" prop="equip_no" />
-      <el-table-column label="车号" align="center" prop="memo" />
+      <el-table-column v-if="!['原材料出库计划'].includes($route.meta.title)" label="机台号" width="50" align="center" prop="equip_no" />
+      <el-table-column v-if="!['原材料出库计划'].includes($route.meta.title)" label="车号" align="center" prop="memo" />
       <el-table-column label="货位状态" align="center" prop="location_status" />
       <el-table-column label="出库口选择" align="center">
         <template slot-scope="scope">
           <stationInfoWarehouse
             :warehouse-name="warehouseName"
             :start-using="true"
+            :raw-material="rawMaterial"
             @changSelect="selectStation($event,scope.$index)"
           />
         </template>
@@ -154,6 +157,10 @@ export default {
     warehouseInfo: {
       type: Number,
       default: null
+    },
+    rawMaterial: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

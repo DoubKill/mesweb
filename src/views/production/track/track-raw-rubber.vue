@@ -177,7 +177,7 @@
             </tr>
             <tr v-if="activity.label === 'batch_plan'">
               <td>{{ itemVal.plan_batching_uid }}</td>
-              <td>{{ itemVal.weigh_cnt_type__product_batching__equip__equip_no }}</td>
+              <td>{{ itemVal.weigh_cnt_type__product_batching__equip__equip_no ||'--' }}</td>
               <td>{{ setDate(itemVal.created_date) }}</td>
               <td>{{ setDate(itemVal.last_updated_date) }}</td>
               <td>--</td>
@@ -223,7 +223,9 @@
               <td>{{ itemVal.material_no }}</td>
               <td>{{ itemVal.pallet_no }}</td>
               <td>{{ setDate(itemVal.start_time) }}</td>
-              <td>{{ itemVal.quality_status }}</td>
+              <td style="cursor: pointer;">
+                <el-button size="mini" @click="productInView(itemVal)">查看</el-button>
+              </td>
             </tr>
             <tr v-if="activity.label === 'dispatch_log'">
               <td>{{ itemVal.order_no }}</td>
@@ -339,15 +341,24 @@
         <el-button @click="dialogVisible = false">取 消</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      width="900px"
+      :visible.sync="testCardDialogVisible"
+    >
+      <test-card ref="testCard" />
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { ProductTrace } from '@/api/base_w_three'
+import { ProductTrace, barcodePreview } from '@/api/base_w_three'
 import { debounce, setDate } from '@/utils'
 import { trainsFeedbacksApiview } from '@/api/base_w'
 import { mapGetters } from 'vuex'
+import testCard from '../components/productInCard'
 export default {
+  components: { testCard },
   data() {
     return {
       value: '',
@@ -372,7 +383,8 @@ export default {
       },
       dialogVisible: false,
       tableData1: [],
-      loadingTrain: false
+      loadingTrain: false,
+      testCardDialogVisible: false
     }
   },
   computed: {
@@ -420,6 +432,20 @@ export default {
         this.loading = false
       } catch (e) {
         this.loading = false
+      }
+    },
+    productInView(row) {
+      this.getCardInfo(row.lot_no)
+      this.testCardDialogVisible = true
+    },
+    async getCardInfo(lot_no) {
+      try {
+        const data = await barcodePreview('get', null, { params: { lot_no: lot_no }})
+        this.$nextTick(() => {
+          this.$refs['testCard'].setTestData(data)
+        })
+      } catch (e) {
+        //
       }
     },
     trainReport(row) {

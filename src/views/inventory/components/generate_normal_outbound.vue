@@ -11,6 +11,7 @@
           :warehouse-name="warehouseName"
           :start-using="true"
           :created-is="true"
+          :raw-material="rawMaterial"
           @changSelect="changSelectStation"
         />
       </el-form-item>
@@ -37,8 +38,8 @@
       </el-form-item>
       <el-form-item
         :label="'需求数量('+(warehouseName==='帘布库'?'托':'车')+')'"
-        prop="need_qty"
       >
+        <!-- prop="need_qty" -->
         <el-input-number
           v-model="ruleForm.need_qty"
           controls-position="right"
@@ -98,6 +99,10 @@ export default {
       default() {
         return null
       }
+    },
+    rawMaterial: {
+      type: Boolean,
+      default: false
     },
     show: {
       type: Boolean,
@@ -233,6 +238,14 @@ export default {
           this.$set(this.ruleForm, 'dispatch', dispatchArr)
         } else {
           this.$set(this.ruleForm, 'dispatch', [])
+        }
+        if (!this.ruleForm.need_qty && !this.rawMaterial) {
+          this.$message.info('请输入需求数量!')
+          return
+        }
+        if (!this.ruleForm.need_weight && this.rawMaterial) {
+          this.$message.info('请输入需求重量!')
+          return
         }
         this.$refs.ruleForm.validate((valid) => {
           if (valid) {

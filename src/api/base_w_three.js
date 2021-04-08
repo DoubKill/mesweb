@@ -151,4 +151,28 @@ export function weekErrorStatistics(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function monthErrorStatistics(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MonthErrorStatistics + id + '/' : API.MonthErrorStatistics,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function monthErrorSort(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MonthErrorSort + id + '/' : API.MonthErrorSort,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function barcodePreview(method, id, data = {}) {
+  const obj = {
+    url: id ? API.BarcodePreview + id + '/' : API.BarcodePreview,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 

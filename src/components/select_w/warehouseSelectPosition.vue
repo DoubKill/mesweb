@@ -12,16 +12,16 @@
     >
       <el-option
         v-for="item in options"
-        :key="item.id"
-        :label="item.name"
-        :value="item.id"
+        :key="rawMaterial?item.station_no:item.id"
+        :label="rawMaterial?item.station_no:item.name"
+        :value="rawMaterial?item.station_no:item.id"
       />
     </el-select>
   </div>
 </template>
 
 <script>
-import { stationInfo } from '@/api/warehouse'
+import { stationInfo, stationInfoRawMaterial } from '@/api/warehouse'
 export default {
   props: {
     //  created里面加载
@@ -43,6 +43,10 @@ export default {
       default: null
     },
     startUsing: { // 只显示启用的
+      type: Boolean,
+      default: false
+    },
+    rawMaterial: { // 是不是原材料出库
       type: Boolean,
       default: false
     }
@@ -76,7 +80,13 @@ export default {
         }
         this.loading = true
 
-        const data = await stationInfo({ all: 1, warehouse_name: this.warehouseName })
+        let _api
+        if (this.rawMaterial) {
+          _api = stationInfoRawMaterial
+        } else {
+          _api = stationInfo
+        }
+        const data = await _api({ all: 1, warehouse_name: this.warehouseName })
         this.loading = false
         if (this.startUsing) {
           this.options = data.filter(D => { return D.use_flag })
@@ -102,6 +112,10 @@ export default {
       }
     },
     changSelect(val) {
+      if (this.rawMaterial) { // 原材料出库 station_no
+        this.$emit('changSelect', val)
+        return
+      }
       let arr = []
       arr = this.options.filter(D => D.id === val)
       this.$emit('changSelect', arr[0])
