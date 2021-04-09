@@ -321,6 +321,7 @@ export default {
     this.getWorkSchedules()
 
     console.log(process.env.BASE_URL, 1111)
+    console.log(process.env, 2222)
   },
   methods: {
     setStatus(status, row, bool) {
