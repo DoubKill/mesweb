@@ -52,7 +52,7 @@
     </el-form>
     <el-button v-permission="['compoundRubber_plan','norman']" class="button-right" @click="normalOutbound">正常出库</el-button>
     <el-button v-permission="['compoundRubber_plan','assign']" class="button-right" @click="assignOutbound">指定出库</el-button>
-    <el-button class="button-right" @click="getList">刷新</el-button>
+    <el-button class="button-right" @click="refresList">刷新</el-button>
     <el-table
       border
       :data="tableData"
@@ -103,8 +103,8 @@
       :before-close="handleClose"
     >
       <el-form :inline="true">
-        <el-form-item label="需求数量">
-          <el-input v-model="demandQuantityVal" placeholder="需求数量" />
+        <el-form-item label="需求重量">
+          <el-input v-model="demandQuantityVal" placeholder="需求重量" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -137,6 +137,7 @@
         :warehouse-name="warehouseName"
         :warehouse-info="warehouseInfo"
         :raw-material="true"
+        :show="normalOutboundDialogVisible"
         @visibleMethod="visibleMethodNormal"
         @visibleMethodSubmit="visibleMethodSubmit"
       /></el-dialog>
@@ -159,7 +160,7 @@ export default {
   components: { stationInfoWarehouse, page, GenerateAssignOutbound, GenerateNormalOutbound },
   data() {
     return {
-      loading: false,
+      loading: true,
       search: {
         page: 1
       },
@@ -180,14 +181,24 @@ export default {
     }
   },
   created() {
+
+  },
+  mounted() {
     const start = new Date()
     const oneDate = start.getTime() + 3600 * 1000 * 24
     this.search.st = setDate()
     this.search.et = setDate(oneDate)
     this.dateSearch = [this.search.st, this.search.et]
 
+    const a = localStorage.getItem('ycl-station')
+    const b = a ? JSON.parse(a) : ''
+    this.search.station = b.station
+    if (this.$refs.stationInfoWarehouse) {
+      this.$refs.stationInfoWarehouse.value = b.station_no
+    }
+
     this.getListWrehouseInfo()
-    this.getList()
+    // this.getList()
   },
   methods: {
     async getList() {
@@ -219,6 +230,9 @@ export default {
     //   this.search.name = this.warehouseName
     //   this.getList()
     },
+    refresList() {
+      this.getList()
+    },
     handleCloseNormal(done) {
       if (this.$refs.normalOutbound) {
         this.$refs.normalOutbound.creadVal()
@@ -243,7 +257,10 @@ export default {
       this.assignOutboundDialogVisible = false
     },
     selectStation(val) {
-      this.search.station = val || ''
+      this.search.station = val ? val.station : ''
+      if (this.search.station) {
+        localStorage.setItem('ycl-station', JSON.stringify(val))
+      }
       this.changeList()
     },
     async visibleMethodSubmit(val) {
@@ -286,12 +303,12 @@ export default {
       try {
         const row = this.tableData[this.currentIndex]
         if (!this.demandQuantityVal && this.demandQuantityVal !== 0) {
-          this.$message.info('需求数量不可为空')
+          this.$message.info('需求重量不可为空')
           return
         }
         const obj = {
           inventory_type: 3333,
-          need_qty: this.demandQuantityVal,
+          need_weight: this.demandQuantityVal,
           order_no: 'order_no',
           warehouse_info: row.warehouse_info
         }
@@ -335,7 +352,7 @@ export default {
     demandQuantity(index, row) {
       this.currentIndex = index
       this.dialogVisible = true
-      this.demandQuantityVal = row.need_qty || ''
+      this.demandQuantityVal = row.need_weight || ''
     },
     closePlan(index, row) {
       this.$confirm(

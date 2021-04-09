@@ -13,7 +13,7 @@
       <el-option
         v-for="item in options"
         :key="rawMaterial?item.station_no:item.id"
-        :label="rawMaterial?item.station_no:item.name"
+        :label="rawMaterial?item.station:item.name"
         :value="rawMaterial?item.station_no:item.id"
       />
     </el-select>
@@ -49,6 +49,10 @@ export default {
     rawMaterial: { // 是不是原材料出库
       type: Boolean,
       default: false
+    },
+    show: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -64,6 +68,16 @@ export default {
     },
     warehouseName(val) {
       this.value = ''
+    },
+    show(val) {
+      if (val) {
+        if (this.rawMaterial && this.createdIs) {
+          const a = localStorage.getItem('ycl-station')
+          this.value = a ? JSON.parse(a).station_no : ''
+          this.$emit('changSelect', this.options.filter(D => D.station_no === this.value)[0])
+          return
+        }
+      }
     }
   },
   created() {
@@ -88,7 +102,7 @@ export default {
         }
         const data = await _api({ all: 1, warehouse_name: this.warehouseName })
         this.loading = false
-        if (this.startUsing) {
+        if (this.startUsing && !this.rawMaterial) {
           this.options = data.filter(D => { return D.use_flag })
           return
         }
@@ -99,9 +113,16 @@ export default {
           this.$emit('changSelect', this.options.filter(D => D.id === this.value)[0])
           return
         }
+        if (this.rawMaterial && this.createdIs) {
+          const a = localStorage.getItem('ycl-station')
+          this.value = a ? JSON.parse(a).station_no : ''
+          this.$emit('changSelect', this.options.filter(D => D.station_no === this.value)[0])
+          return
+        }
         if (this.createdIs) {
           this.$emit('changSelect', {})
         }
+        console.log(this.options, 11111)
       } catch (e) {
         this.loading = false
       }
@@ -113,7 +134,8 @@ export default {
     },
     changSelect(val) {
       if (this.rawMaterial) { // 原材料出库 station_no
-        this.$emit('changSelect', val)
+        arr = this.options.filter(D => D.station_no === val)
+        this.$emit('changSelect', arr[0])
         return
       }
       let arr = []

@@ -1,8 +1,6 @@
 <template>
   <div v-loading="loading" class="app-container">
     <!-- 指定出库 -->
-    {{ warehouseName }}
-
     <el-form :inline="true">
       <el-form-item label="仓库名称">
         {{ warehouseName }}
@@ -253,6 +251,7 @@ export default {
         //   return
         // }
         if (this.multipleSelection.length === 0) {
+          this.$message.info('请选择物料！')
           return
         }
         let bool = false
@@ -277,7 +276,8 @@ export default {
             dispatch: D.dispatch || [],
             equip: D.equip || [],
             location: D.location,
-            station: D.station
+            station: D.station,
+            station_no: D.station_no
           })
         })
         if (bool) {
@@ -327,7 +327,12 @@ export default {
       this.$set(this.tableData[index], 'equip', arr)
     },
     selectStation(obj, index) {
-      this.$set(this.tableData[index], 'station', obj ? obj.name : '')
+      if (this.rawMaterial) {
+        this.$set(this.tableData[index], 'station', obj ? obj.station : '')
+        this.$set(this.tableData[index], 'station_no', obj ? obj.station_no : '')
+      } else {
+        this.$set(this.tableData[index], 'station', obj ? obj.name : '')
+      }
     }
   }
 }
