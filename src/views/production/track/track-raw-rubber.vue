@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <!-- 原材料条码追朔 -->
+  <div v-loading="loading">
+    <!-- 胶片条码追朔 -->
     lot_no：
     <el-input
       v-model="barCodeSearch"
@@ -242,101 +242,13 @@
     <el-dialog
       title="车次报表"
       :visible.sync="dialogVisible"
-      width="90%"
+      width="96%"
     >
-      <el-table
-        :data="tableData1"
-        border
-      >
-        <el-table-column
-          prop="equip_no"
-          label="机台"
-          min-width="10"
-        />
-        <el-table-column
-          prop="product_no"
-          label="配方编号"
-          min-width="10"
-        />
-        <el-table-column
-          prop="plan_classes_uid"
-          label="计划编号"
-          min-width="10"
-        />
-        <el-table-column
-          prop="begin_time"
-          min-width="10"
-          sortable
-          label="开始时间"
-        />
-        <el-table-column
-          prop="end_time"
-          label="结束时间"
-          sortable
-          min-width="10"
-        />
-        <el-table-column
-          prop="plan_trains"
-          label="设定车次"
-          min-width="10"
-        />
-        <el-table-column
-          prop="actual_trains"
-          label="实际车次"
-          min-width="10"
-        />
-        <el-table-column
-          :prop="editionNo === 'v1'?'production_details.控制方式':'control_mode'"
-          label="本/远控"
-          min-width="10"
-        />
-        <el-table-column
-          :prop="editionNo === 'v1'?'production_details.作业方式':'operating_type'"
-          label="手/自动"
-          min-width="10"
-        />
-        <el-table-column
-          :prop="editionNo === 'v1'?'production_details.总重量':'actual_weight'"
-          label="总重量(kg)"
-          min-width="10"
-        />
-        <el-table-column
-          :prop="editionNo === 'v1'?'production_details.排胶时间':'evacuation_time'"
-          label="排胶时间(s)"
-          min-width="10"
-        />
-        <el-table-column
-          :prop="editionNo === 'v1'?'production_details.排胶温度':'evacuation_temperature'"
-          label="排胶温度(c°)"
-        />
-        <el-table-column
-          :prop="editionNo === 'v1'?'production_details.排胶能量':'evacuation_energy'"
-          label="排胶能量(J)"
-          min-width="10"
-        />
-        <el-table-column
-          :prop="editionNo === 'v1'?'production_details.员工代号':'operation_user'"
-          label="操作人"
-          min-width="10"
-        />
-        <el-table-column
-          :prop="editionNo === 'v1'?'production_details.存盘时间':'product_time'"
-          label="存盘时间(s)"
-          width="100"
-          min-width="10"
-        />
-        <el-table-column
-          :prop="editionNo === 'v1'?'production_details.密炼时间':'mixer_time'"
-          label="密炼时间(s)"
-          width="100"
-          min-width="10"
-        />
-        <el-table-column
-          :prop="editionNo === 'v1'?'production_details.间隔时间':'interval_time'"
-          label="间隔时间(s)"
-          min-width="10"
-        />
-      </el-table>
+      <trainNumberReport
+        :show="dialogVisible"
+        :is-components="true"
+        :current-row-train="currentRowTrain"
+      />
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
       </span>
@@ -346,7 +258,7 @@
       width="900px"
       :visible.sync="testCardDialogVisible"
     >
-      <test-card ref="testCard" />
+      <test-card ref="testCard" v-loading="cardLoading" />
     </el-dialog>
   </div>
 </template>
@@ -354,15 +266,18 @@
 <script>
 import { ProductTrace, barcodePreview } from '@/api/base_w_three'
 import { debounce, setDate } from '@/utils'
-import { trainsFeedbacksApiview } from '@/api/base_w'
+// import { trainsFeedbacksApiview } from '@/api/base_w'
 import { mapGetters } from 'vuex'
 import testCard from '../components/productInCard'
+import trainNumberReport from '../train-number-report'
 export default {
-  components: { testCard },
+  components: { testCard, trainNumberReport },
   data() {
     return {
+      loading: true,
+      cardLoading: true,
       value: '',
-      barCodeSearch: 'KTP005', // 2021031911250102
+      barCodeSearch: '', // KTP005
       activities: {}, // pallet_feed: [{}]
       options: [
         { label: 'material_in', value: '入库', _show: true },
@@ -384,7 +299,8 @@ export default {
       dialogVisible: false,
       tableData1: [],
       loadingTrain: false,
-      testCardDialogVisible: false
+      testCardDialogVisible: false,
+      currentRowTrain: {}
     }
   },
   computed: {
@@ -440,29 +356,19 @@ export default {
     },
     async getCardInfo(lot_no) {
       try {
+        this.cardLoading = true
         const data = await barcodePreview('get', null, { params: { lot_no: lot_no }})
         this.$nextTick(() => {
           this.$refs['testCard'].setTestData(data)
         })
+        this.cardLoading = false
       } catch (e) {
-        //
+        this.cardLoading = false
       }
     },
     trainReport(row) {
+      this.currentRowTrain = row
       this.dialogVisible = true
-      // this.getTrainReport()
-    },
-    async getTrainReport() {
-      try {
-        this.loadingTrain = true
-        const data = await trainsFeedbacksApiview('get', null, { params: this.getParams })
-        this.loadingTrain = false
-        const obj = this.tableData1.pop()
-        this.tableData1 = data.results || []
-        this.$store.commit('user/SET_EDITION', obj.version)
-      } catch (e) {
-        this.loadingTrain = false
-      }
     },
     clickFun(val) {
       try {

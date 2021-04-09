@@ -150,7 +150,7 @@ export default {
   data() {
     return {
       value: '',
-      barCodeSearch: 'KTP001', // KTP001
+      barCodeSearch: '', // KTP001
       activities: [],
       options: [{ label: 'material_sample', value: '取样', _show: true },
         { label: 'material_in', value: '入库', _show: true },

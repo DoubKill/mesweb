@@ -66,6 +66,31 @@
             :value="planSchedule.id"
           />
         </el-select>
+
+        <div style="color:red;display:inline-block">
+          <span>
+            注：1、上传的文件名必须以计划日期开头,例: 2021-02-01生产计划
+            2、配方名称必须与MES-致,例: C-FM-590-07
+          </span>
+          <div style="text-align:right">
+            <el-button style="margin-right:5px">
+              <a
+                href="/plan.xlsx"
+                download="生产计划.xls"
+                target="_blank"
+              >下载模板</a>
+            </el-button>
+            <el-upload
+              style="display:inline-block"
+              action="string"
+              accept=".xls, .xlsx"
+              :http-request="Upload"
+              :show-file-list="false"
+            >
+              <el-button>导入</el-button>
+            </el-upload>
+          </div>
+        </div>
       </div>
 
       <div
@@ -246,7 +271,8 @@ import {
   workSchedulesUrl,
   planScheduleUrl,
   productClassesPlanUrl,
-  productClassesPlanPanycreateUrl
+  productClassesPlanPanycreateUrl,
+  planImport
 } from '@/api/base_w'
 // import { textData } from './textData'
 import { setDate } from '@/utils'
@@ -596,6 +622,16 @@ export default {
     setstartT(time) {
       if (!time) return ''
       return time.split(' ')[1]
+    },
+    Upload(param) {
+      const formData = new FormData()
+      formData.append('excel_file', param.file)
+      planImport('post', null, { data: formData }).then(response => {
+        this.$message({
+          type: 'success',
+          message: '导入成功!'
+        })
+      })
     },
     clickEquip() {
       if (this.disabledEquip) {

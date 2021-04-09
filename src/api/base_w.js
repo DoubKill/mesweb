@@ -167,6 +167,15 @@ export function productClassesPlanPanycreateUrl(method, id, data = {}) {
   return request(obj)
 }
 
+export function planImport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.PlanImport + id + '/' : API.PlanImport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function productDayPlanNotice(method, id, data = {}) {
   const obj = {
     url: id ? API.ProductDayPlanNotice + id + '/' : API.ProductDayPlanNotice,

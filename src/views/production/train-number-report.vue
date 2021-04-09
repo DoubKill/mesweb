@@ -4,7 +4,7 @@
     class="report-train-style"
   >
     <!-- 车次报表 -->
-    <el-form :inline="true">
+    <el-form v-if="!isComponents" :inline="true">
       <el-form-item label="日期">
         <el-date-picker
           v-model="search_date"
@@ -521,6 +521,22 @@ import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 export default {
   components: { page, selectEquip, allProductNoSelect },
   mixins: [chartMixin],
+  props: {
+    isComponents: {
+      type: Boolean,
+      default: false
+    },
+    show: {
+      type: Boolean,
+      default: false
+    },
+    currentRowTrain: {
+      type: Object,
+      default() {
+        return {}
+      }
+    }
+  },
   data() {
     return {
       currentRowId: '',
@@ -552,17 +568,29 @@ export default {
   computed: {
     ...mapGetters(['editionNo'])
   },
+  watch: {
+    show(val) {
+      if (val) {
+        this.getList()
+      }
+    }
+  },
   created() {
     this.maxHeightTable = (document.body.clientHeight / 1.8) + 'px'
     this.clientHeight = (document.body.clientHeight - 300) + 'px'
     this.currentRowId = ''
     // this.getList()
 
+    if (this.isComponents) {
+      this.getParams.plan_classes_uid = this.currentRowTrain.plan_classes_uid
+      this.getParams.trains = this.currentRowTrain.begin_trains + ',' + this.currentRowTrain.end_trains
+      this.getList()
+      return
+    }
     this.currentTime = setDate('', true)
     const _setDateCurrent = setDate()
     this.getParams.begin_time = _setDateCurrent + ' 00:00:00'
     this.getParams.end_time = _setDateCurrent + ' 23:59:59'
-
     this.search_date = [this.getParams.begin_time, this.getParams.end_time]
   },
   methods: {

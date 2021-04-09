@@ -86,6 +86,7 @@ export default {
   ProductClassesPlanPanycreateUrl: '/api/v1/plan/product-classes-plan-manycreate/',
   // 计划下达到上辅机
   ProductDayPlanNotice: '/api/v1/plan/product-day-plan-notice/',
+  PlanImport: '/api/v1/plan/plan-import/',
 
   TestTypeDataUrl: '/api/v1/quality/test-indicator-data-points/',
   MaterialTestOrdersUrl: '/api/v1/quality/material-test-orders/',
