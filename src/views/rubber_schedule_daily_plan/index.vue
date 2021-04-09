@@ -77,7 +77,6 @@
               <a
                 :href="templateFileUrl"
                 download="生产计划.xlsx"
-                target="_blank"
               >下载模板</a>
             </el-button>
             <el-upload
@@ -308,7 +307,7 @@ export default {
       loading: false,
       addPlanArrLoading: false,
       checkAll: false,
-      templateFileUrl: process.env.BASE_URL + 'plan.xlsx'
+      templateFileUrl: document.location.origin + '/#/' + 'plan.xlsx'
     }
   },
   computed: {
@@ -319,9 +318,10 @@ export default {
     this.getPlanSchedules()
     this.getEquipList()
     this.getWorkSchedules()
-
-    console.log(process.env.BASE_URL, 1111)
-    console.log(process.env, 2222)
+    // static/files/
+    // console.log(process.env.BASE_URL, 1111)
+    console.log(this.templateFileUrl, 2222)
+    console.log(document.location.origin, 1111)
   },
   methods: {
     setStatus(status, row, bool) {
