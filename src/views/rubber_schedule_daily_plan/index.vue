@@ -73,15 +73,10 @@
             2、配方名称必须与MES-致,例: C-FM-590-07
           </span>
           <div style="text-align:right">
-            <img
-              class="pic-404__child left"
-              src="@/assets/404_images/404_cloud.png"
-              alt="404"
-            >
             <el-button style="margin-right:5px">
               <a
-                :href="templateFileUrl"
-                download="生产计划.xlsx"
+                :href="`${templateFileUrl}plan.xlsx`"
+                download="plan.xlsx"
               >下载模板</a>
             </el-button>
             <el-upload
@@ -311,8 +306,7 @@ export default {
       baseDefaultData: {},
       loading: false,
       addPlanArrLoading: false,
-      checkAll: false,
-      templateFileUrl: '../plan.xlsx'
+      checkAll: false
     }
   },
   computed: {
@@ -323,6 +317,8 @@ export default {
     this.getPlanSchedules()
     this.getEquipList()
     this.getWorkSchedules()
+
+    this.templateFileUrl = process.env.BASE_URL
     // console.log(process.env.BASE_URL, 1111)
     console.log(this.templateFileUrl, 2222)
   },
