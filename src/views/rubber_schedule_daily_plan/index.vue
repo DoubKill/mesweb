@@ -75,7 +75,7 @@
           <div style="text-align:right">
             <el-button style="margin-right:5px">
               <a
-                href="../plan.xlsx"
+                :href="templateFileUrl"
                 download="生产计划.xlsx"
                 target="_blank"
               >下载模板</a>
@@ -307,7 +307,8 @@ export default {
       baseDefaultData: {},
       loading: false,
       addPlanArrLoading: false,
-      checkAll: false
+      checkAll: false,
+      templateFileUrl: process.env.BASE_URL + 'plan.xlsx'
     }
   },
   computed: {
@@ -318,6 +319,8 @@ export default {
     this.getPlanSchedules()
     this.getEquipList()
     this.getWorkSchedules()
+
+    console.log(process.env.BASE_URL, 1111)
   },
   methods: {
     setStatus(status, row, bool) {
@@ -367,7 +370,6 @@ export default {
       }
     },
     setWorkSchedule(row, getInfo) {
-      console.log(row, 777)
       const work_schedule_plan = JSON.parse(JSON.stringify(this.work_schedule_plan))
       const arr = []
       work_schedule_plan.forEach((D, index) => {
