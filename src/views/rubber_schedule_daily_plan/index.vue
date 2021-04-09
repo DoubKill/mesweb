@@ -307,7 +307,7 @@ export default {
       loading: false,
       addPlanArrLoading: false,
       checkAll: false,
-      templateFileUrl: process.env.BASE_URL + 'plan.xlsx'
+      templateFileUrl: process.env.BASE_URL + 'static/files/' + 'plan.xlsx'
     }
   },
   computed: {
