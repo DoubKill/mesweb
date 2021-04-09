@@ -75,8 +75,8 @@
           <div style="text-align:right">
             <el-button style="margin-right:5px">
               <a
-                href="./plan.xlsx"
-                download="生产计划.xls"
+                href="../plan.xlsx"
+                download="生产计划.xlsx"
                 target="_blank"
               >下载模板</a>
             </el-button>
