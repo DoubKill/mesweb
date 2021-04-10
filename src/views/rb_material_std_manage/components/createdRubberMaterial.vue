@@ -129,7 +129,6 @@
       :show="showIngredient"
       :batching-list="batchingList"
       :is-view="isView"
-      :is-copy="isCopy"
       @handleCloseIngredient="handleCloseIngredient"
       @changeList="changeList"
     />
@@ -249,6 +248,7 @@ export default {
       } catch (e) { throw new Error(e) }
     },
     NewAddMaterial(formName, bool) {
+      // bool true 为配料
       if (!this.normalReceipe) {
         this.$refs[formName].validateField('stage_product_batch_no', error => {
           if (!error) {
@@ -346,7 +346,7 @@ export default {
         })
         this.batchingList = {
           batching_details: data.batching_details,
-          weight_cnt_types: arr
+          weight_cnt_types: this.isCopy ? [] : arr
         }
         this.showIngredient = true
       } catch (e) { throw new Error(e) }

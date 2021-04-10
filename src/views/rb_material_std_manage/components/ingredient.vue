@@ -124,7 +124,6 @@
         :add-table-data="addTableData"
         :is-ingredient-obj="isIngredientObj"
         :is-view="isView"
-        :is-copy="isCopy"
         @pop_up_raw_material="pop_up_raw_material"
         @deleteRow="deleteRow"
         @deleteOneRow="deleteOneRow"
@@ -204,10 +203,6 @@ export default {
     isView: {
       type: Boolean,
       default: false
-    },
-    isCopy: { // 是不是复制
-      type: Boolean,
-      default: false
     }
   },
   data() {
@@ -244,6 +239,8 @@ export default {
         ]
       }
     }
+  },
+  computed: {
   },
   watch: {
     show(val) {
@@ -292,7 +289,6 @@ export default {
     },
     submitAdd() {
       const obj = JSON.parse(JSON.stringify(this.ruleForm))
-
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           const _name = this.formInline.stage_product_batch_no + '-' +

@@ -1,10 +1,6 @@
 <template>
   <div>
     <!-- 胶料配料标准 -->
-    <!-- <div style="float: right"> -->
-    <!-- <el-button style="margin-bottom:10px" @click="addMaterial">新建料包</el-button> -->
-    <!-- <el-button @click="NewsaveMaterialClicked">保存</el-button> -->
-    <!-- </div> -->
     <div v-if="tableData.length>0">
       <div
         v-for="(tableItem,_i) in tableData"
@@ -96,7 +92,7 @@
         </el-table>
         <div v-if="!isView" style="text-align: center;">
           <el-button size="mini" @click="insertOneRow(_i)">插入一行</el-button>
-          <el-button size="mini" @click="deleteOneRow(_i)">删除</el-button>
+          <!-- <el-button size="mini" @click="deleteOneRow(_i)">删除</el-button> -->
         </div>
       </div>
     </div>
@@ -125,12 +121,6 @@ export default {
       default() {
         return false
       }
-    },
-    isCopy: {
-      type: Boolean,
-      default() {
-        return false
-      }
     }
   },
   data() {
@@ -147,9 +137,6 @@ export default {
   },
   watch: {
     addTableData(val) {
-      if (this.isCopy) {
-        return
-      }
       this.tableData = val
     },
     isIngredientObj(row) {
@@ -213,13 +200,16 @@ export default {
       }
     },
     deleteRow(index, faIndex) {
-      if (this.tableData[faIndex].length === 1) {
-        this.$message.info('保留最少一行数据')
-        return
-      }
+      // if (this.tableData[faIndex].length === 1) {
+      //   this.$message.info('保留最少一行数据')
+      //   return
+      // }
       const a = this.tableData[faIndex].splice(index, 1)
       if (a[0].id) {
         this.weight_material_delete.push(a[0].id)
+      }
+      if (this.tableData[faIndex].length === 0) {
+        this.tableData.splice(faIndex, 1)
       }
       this.$emit('deleteRow', this.weight_material_delete)
     },
