@@ -286,6 +286,7 @@ export default {
         stage_product_batch_no: '',
         production_time_interval: ''
       }
+      this.isCopy = false
       this.dialogAddRubberMaterial = true
     },
     copyClicked() {
