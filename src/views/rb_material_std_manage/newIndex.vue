@@ -58,7 +58,6 @@
         >复制</el-button>
       </el-form-item>
     </el-form>
-
     <el-table
       highlight-current-row
       :data="tableData"
@@ -218,7 +217,6 @@
       :old-page="false"
       @currentChange="currentChange"
     />
-
     <createdRubberMaterial
       ref="createdRubberMaterialRef"
       :show="dialogAddRubberMaterial"
@@ -376,7 +374,6 @@ export default {
       this.dialogAddRubberMaterial = false
       this.materialForm = {}
       this.isView = false
-      this.isCopy = false
     },
     usedTypeFormatter: function(row) {
       return this.usedTypeChoice(row.used_type)
