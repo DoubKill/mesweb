@@ -224,6 +224,7 @@
       :show="dialogAddRubberMaterial"
       :material-form="materialForm"
       :is-view="isView"
+      :is-copy="isCopy"
       @handleCloseMaterial="handleCloseMaterial"
       @refreshList="changeSearch"
     />
@@ -255,7 +256,9 @@ export default {
       materialForm: {},
       total: 0,
       // 是否是查看
-      isView: false
+      isView: false,
+      // 是否是复制
+      isCopy: false
     }
   },
   computed: {
@@ -305,16 +308,19 @@ export default {
         production_time_interval: this.currentRow.production_time_interval || ''
       }
       this.dialogAddRubberMaterial = true
+      this.isCopy = true
     },
     showPutRubberMaterialDialog() {
       if (this.$refs.createdRubberMaterialRef) {
         this.isView = false
+        this.isCopy = false
         this.$refs.createdRubberMaterialRef.directBatching(this.currentRow.id, false)
       }
     },
     showGridTable(id) {
       if (this.$refs.createdRubberMaterialRef) {
         this.isView = true
+        this.isCopy = false
         this.$refs.createdRubberMaterialRef.directBatching(id, false)
       }
     },
@@ -370,6 +376,7 @@ export default {
       this.dialogAddRubberMaterial = false
       this.materialForm = {}
       this.isView = false
+      this.isCopy = false
     },
     usedTypeFormatter: function(row) {
       return this.usedTypeChoice(row.used_type)

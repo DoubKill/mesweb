@@ -124,6 +124,7 @@
         :add-table-data="addTableData"
         :is-ingredient-obj="isIngredientObj"
         :is-view="isView"
+        :is-copy="isCopy"
         @pop_up_raw_material="pop_up_raw_material"
         @deleteRow="deleteRow"
         @deleteOneRow="deleteOneRow"
@@ -201,6 +202,10 @@ export default {
       default: false
     },
     isView: {
+      type: Boolean,
+      default: false
+    },
+    isCopy: { // 是不是复制
       type: Boolean,
       default: false
     }

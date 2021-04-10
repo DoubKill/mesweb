@@ -129,6 +129,7 @@
       :show="showIngredient"
       :batching-list="batchingList"
       :is-view="isView"
+      :is-copy="isCopy"
       @handleCloseIngredient="handleCloseIngredient"
       @changeList="changeList"
     />
@@ -155,6 +156,10 @@ export default {
       default: false
     },
     isView: {
+      type: Boolean,
+      default: false
+    },
+    isCopy: {
       type: Boolean,
       default: false
     }

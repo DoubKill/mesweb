@@ -125,6 +125,12 @@ export default {
       default() {
         return false
       }
+    },
+    isCopy: {
+      type: Boolean,
+      default() {
+        return false
+      }
     }
   },
   data() {
@@ -141,6 +147,9 @@ export default {
   },
   watch: {
     addTableData(val) {
+      if (this.isCopy) {
+        return
+      }
       this.tableData = val
     },
     isIngredientObj(row) {

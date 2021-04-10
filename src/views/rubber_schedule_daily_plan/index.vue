@@ -76,7 +76,7 @@
             <el-button style="margin-right:5px">
               <a
                 :href="`${templateFileUrl}plan.xlsx`"
-                :download="download"
+                download="xxxx-xx-xx 生产计划.xlsx"
               >下载模板</a>
             </el-button>
             <el-upload
@@ -319,7 +319,6 @@ export default {
     this.getWorkSchedules()
 
     this.templateFileUrl = process.env.BASE_URL
-    this.download = setDate() + ' 生产计划.xlsx'
   },
   methods: {
     setStatus(status, row, bool) {
