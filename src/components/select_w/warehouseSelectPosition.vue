@@ -29,6 +29,10 @@ export default {
       type: Boolean,
       default: false
     },
+    assignType: {
+      type: Boolean,
+      default: false
+    },
     defaultVal: {
       type: [Number, String],
       default: null
@@ -71,7 +75,7 @@ export default {
     },
     show(val) {
       if (val) {
-        if (this.rawMaterial && this.createdIs) {
+        if (this.rawMaterial && this.createdIs && !this.assignType) {
           const a = localStorage.getItem('ycl-station')
           this.value = a ? JSON.parse(a).station_no : ''
           this.$emit('changSelect', this.options.filter(D => D.station_no === this.value)[0])
@@ -113,7 +117,7 @@ export default {
           this.$emit('changSelect', this.options.filter(D => D.id === this.value)[0])
           return
         }
-        if (this.rawMaterial && this.createdIs) {
+        if (this.rawMaterial && this.createdIs && !this.assignType) {
           const a = localStorage.getItem('ycl-station')
           this.value = a ? JSON.parse(a).station_no : ''
           this.$emit('changSelect', this.options.filter(D => D.station_no === this.value)[0])
@@ -122,7 +126,7 @@ export default {
         if (this.createdIs) {
           this.$emit('changSelect', {})
         }
-        console.log(this.options, 11111)
+        // console.log(this.options, 11111)
       } catch (e) {
         this.loading = false
       }

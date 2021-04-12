@@ -87,6 +87,9 @@
           <stationInfoWarehouse
             :warehouse-name="warehouseName"
             :start-using="true"
+            :default-val="scope.row.station_no"
+            :created-is="true"
+            :assign-type="true"
             :raw-material="rawMaterial"
             @changSelect="selectStation($event,scope.$index)"
           />
@@ -239,6 +242,8 @@ export default {
         D.equipNoArr = null
         D._DeliveryPlan = null
         D.deliveryPlan = null
+        D.station = null
+        D.station_no = null
       })
     },
     visibleMethod(bool) {
@@ -298,7 +303,7 @@ export default {
       }
     },
     getRowKeys(row) {
-      return row.id
+      return row.sn
     },
     sureDeliveryPlan() {
       this.dialogVisible = false
