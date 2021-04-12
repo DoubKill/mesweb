@@ -74,19 +74,20 @@
         align="center"
       >
         <template slot-scope="{row}">
-          <span v-if="$route.meta.title==='帘布库出库计划'">{{ row.quality_status }}</span>
+          <span v-if="['帘布库出库计划','原材料出库计划'].includes($route.meta.title)">{{ row.quality_status }}</span>
           <span v-else>{{ row.quality_level }}</span>
         </template>
       </el-table-column>
       <el-table-column label="入库时间" align="center" prop="in_storage_time" />
-      <el-table-column label="机台号" width="50" align="center" prop="equip_no" />
-      <el-table-column label="车号" align="center" prop="memo" />
+      <el-table-column v-if="!['原材料出库计划'].includes($route.meta.title)" label="机台号" width="50" align="center" prop="equip_no" />
+      <el-table-column v-if="!['原材料出库计划'].includes($route.meta.title)" label="车号" align="center" prop="memo" />
       <el-table-column label="货位状态" align="center" prop="location_status" />
       <el-table-column label="出库口选择" align="center">
         <template slot-scope="scope">
           <stationInfoWarehouse
             :warehouse-name="warehouseName"
             :start-using="true"
+            :raw-material="rawMaterial"
             @changSelect="selectStation($event,scope.$index)"
           />
         </template>
@@ -154,6 +155,10 @@ export default {
     warehouseInfo: {
       type: Number,
       default: null
+    },
+    rawMaterial: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -246,6 +251,7 @@ export default {
         //   return
         // }
         if (this.multipleSelection.length === 0) {
+          this.$message.info('请选择物料！')
           return
         }
         let bool = false
@@ -270,7 +276,8 @@ export default {
             dispatch: D.dispatch || [],
             equip: D.equip || [],
             location: D.location,
-            station: D.station
+            station: D.station,
+            station_no: D.station_no
           })
         })
         if (bool) {
@@ -320,7 +327,12 @@ export default {
       this.$set(this.tableData[index], 'equip', arr)
     },
     selectStation(obj, index) {
-      this.$set(this.tableData[index], 'station', obj ? obj.name : '')
+      if (this.rawMaterial) {
+        this.$set(this.tableData[index], 'station', obj ? obj.station : '')
+        this.$set(this.tableData[index], 'station_no', obj ? obj.station_no : '')
+      } else {
+        this.$set(this.tableData[index], 'station', obj ? obj.name : '')
+      }
     }
   }
 }

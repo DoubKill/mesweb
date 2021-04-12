@@ -86,6 +86,7 @@ export default {
   ProductClassesPlanPanycreateUrl: '/api/v1/plan/product-classes-plan-manycreate/',
   // 计划下达到上辅机
   ProductDayPlanNotice: '/api/v1/plan/product-day-plan-notice/',
+  PlanImport: '/api/v1/plan/plan-import/',
 
   TestTypeDataUrl: '/api/v1/quality/test-indicator-data-points/',
   MaterialTestOrdersUrl: '/api/v1/quality/material-test-orders/',
@@ -147,6 +148,10 @@ export default {
   FinalPlanManagement: '/api/v1/inventory/final-plan-management/',
   // 帘布库计划管理
   LbPlanManagement: '/api/v1/inventory/lb-plan-management/',
+  // 原材料出库计划
+  MaterialPlanManagement: '/api/v1/inventory/material-plan-management/',
+  // 原材料出库口
+  MaterialPlanManagementStations: '/api/v1/inventory/material-plan-management/stations/',
 
   // 物料属性管理
   materialsAttribute: '/api/v1/recipe/materials-attribute/',
@@ -284,5 +289,31 @@ export default {
   // 原材料临时快检结果录入
   BarcodeQuality: '/api/v1/inventory/barcode-quality/',
   // 原材料临时快检结果录入导出
-  BarcodeQualityExport: '/api/v1/inventory/barcode-quality/export/'
+  BarcodeQualityExport: '/api/v1/inventory/barcode-quality/export/',
+  // 原材料条码追溯
+  MaterialTrace: '/api/v1/inventory/material-trace/',
+  ProductTrace: '/api/v1/inventory/product-trace/',
+  // 试验指标列表
+  TestIndicatorsRaw: '/api/v1/quality/test-indicators-raw/',
+  // 试验类型管理
+  TestTypesRaw: '/api/v1/quality/test-types-raw/',
+  DataPointsRaw: '/api/v1/quality/data-points-raw/',
+  TestMethodsRaw: '/api/v1/quality/test-methods-raw/',
+  LevelResultRaw: '/api/v1/quality/level-result-raw/',
+  MatTestMethodsRaw: '/api/v1/quality/mat-test-methods-raw/',
+  MatDataPointIndicatorsRaw: '/api/v1/quality/mat-data-point-indicators-raw/',
+  // 获取原材料指标试验方法
+  MatTestIndicatorMethodsRaw: '/api/v1/quality/mat-test-indicator-methods-raw/',
+  // 录入
+  MaterialInventory: '/api/v1/quality/material-inventory/',
+  MaterialTestOrdersRaw: '/api/v1/quality/material-test-orders-raw/',
+  UnqualifiedMaterialDealResult: '/api/v1/quality/unqualified-material-deal-result/',
+  TestIndicatorDataPointsRaw: '/api/v1/quality/test-indicator-data-points-raw/',
+  // 设备故障别日统计
+  DayErrorStatistics: '/api/v1/equipment/day-error-statistics/',
+  WeekErrorStatistics: '/api/v1/equipment/week-error-statistics/',
+  MonthErrorStatistics: '/api/v1/equipment/month-error-statistics/',
+  MonthErrorSort: '/api/v1/equipment/month-error-sort/',
+
+  BarcodePreview: '/api/v1/quality/barcode-preview/'
 }

@@ -4,7 +4,10 @@
       name="fade-transform"
       mode="out-in"
     >
-      <el-card class="box-card">
+      <div v-if="key === '/homePage'">
+        <router-view :key="key" />
+      </div>
+      <el-card v-else class="box-card">
         <router-view :key="key" />
       </el-card>
     </transition>

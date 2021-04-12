@@ -12,16 +12,16 @@
     >
       <el-option
         v-for="item in options"
-        :key="item.id"
-        :label="item.name"
-        :value="item.id"
+        :key="rawMaterial?item.station_no:item.id"
+        :label="rawMaterial?item.station:item.name"
+        :value="rawMaterial?item.station_no:item.id"
       />
     </el-select>
   </div>
 </template>
 
 <script>
-import { stationInfo } from '@/api/warehouse'
+import { stationInfo, stationInfoRawMaterial } from '@/api/warehouse'
 export default {
   props: {
     //  created里面加载
@@ -45,6 +45,14 @@ export default {
     startUsing: { // 只显示启用的
       type: Boolean,
       default: false
+    },
+    rawMaterial: { // 是不是原材料出库
+      type: Boolean,
+      default: false
+    },
+    show: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -60,6 +68,16 @@ export default {
     },
     warehouseName(val) {
       this.value = ''
+    },
+    show(val) {
+      if (val) {
+        if (this.rawMaterial && this.createdIs) {
+          const a = localStorage.getItem('ycl-station')
+          this.value = a ? JSON.parse(a).station_no : ''
+          this.$emit('changSelect', this.options.filter(D => D.station_no === this.value)[0])
+          return
+        }
+      }
     }
   },
   created() {
@@ -76,9 +94,15 @@ export default {
         }
         this.loading = true
 
-        const data = await stationInfo({ all: 1, warehouse_name: this.warehouseName })
+        let _api
+        if (this.rawMaterial) {
+          _api = stationInfoRawMaterial
+        } else {
+          _api = stationInfo
+        }
+        const data = await _api({ all: 1, warehouse_name: this.warehouseName })
         this.loading = false
-        if (this.startUsing) {
+        if (this.startUsing && !this.rawMaterial) {
           this.options = data.filter(D => { return D.use_flag })
           return
         }
@@ -89,9 +113,16 @@ export default {
           this.$emit('changSelect', this.options.filter(D => D.id === this.value)[0])
           return
         }
+        if (this.rawMaterial && this.createdIs) {
+          const a = localStorage.getItem('ycl-station')
+          this.value = a ? JSON.parse(a).station_no : ''
+          this.$emit('changSelect', this.options.filter(D => D.station_no === this.value)[0])
+          return
+        }
         if (this.createdIs) {
           this.$emit('changSelect', {})
         }
+        console.log(this.options, 11111)
       } catch (e) {
         this.loading = false
       }
@@ -102,6 +133,11 @@ export default {
       }
     },
     changSelect(val) {
+      if (this.rawMaterial) { // 原材料出库 station_no
+        arr = this.options.filter(D => D.station_no === val)
+        this.$emit('changSelect', arr[0])
+        return
+      }
       let arr = []
       arr = this.options.filter(D => D.id === val)
       this.$emit('changSelect', arr[0])

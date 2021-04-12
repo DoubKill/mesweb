@@ -58,7 +58,6 @@
         >复制</el-button>
       </el-form-item>
     </el-form>
-
     <el-table
       highlight-current-row
       :data="tableData"
@@ -218,12 +217,12 @@
       :old-page="false"
       @currentChange="currentChange"
     />
-
     <createdRubberMaterial
       ref="createdRubberMaterialRef"
       :show="dialogAddRubberMaterial"
       :material-form="materialForm"
       :is-view="isView"
+      :is-copy="isCopy"
       @handleCloseMaterial="handleCloseMaterial"
       @refreshList="changeSearch"
     />
@@ -255,7 +254,9 @@ export default {
       materialForm: {},
       total: 0,
       // 是否是查看
-      isView: false
+      isView: false,
+      // 是否是复制
+      isCopy: false
     }
   },
   computed: {
@@ -285,6 +286,7 @@ export default {
         stage_product_batch_no: '',
         production_time_interval: ''
       }
+      this.isCopy = false
       this.dialogAddRubberMaterial = true
     },
     copyClicked() {
@@ -305,16 +307,19 @@ export default {
         production_time_interval: this.currentRow.production_time_interval || ''
       }
       this.dialogAddRubberMaterial = true
+      this.isCopy = true
     },
     showPutRubberMaterialDialog() {
       if (this.$refs.createdRubberMaterialRef) {
         this.isView = false
+        this.isCopy = false
         this.$refs.createdRubberMaterialRef.directBatching(this.currentRow.id, false)
       }
     },
     showGridTable(id) {
       if (this.$refs.createdRubberMaterialRef) {
         this.isView = true
+        this.isCopy = false
         this.$refs.createdRubberMaterialRef.directBatching(id, false)
       }
     },

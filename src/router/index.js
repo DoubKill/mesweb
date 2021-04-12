@@ -73,8 +73,8 @@ export const constantRoutes = [{
   //   }
   // }
   ]
-}
-/** {
+},
+{
   path: '/phone/fault-day-statistics',
   // component: () => import('@/views/login/index'),
   component: () => import('@/views/quality_management/phone/fault-day-statistics'),
@@ -98,7 +98,7 @@ export const constantRoutes = [{
   meta: {
     isPhone: true
   }
-}**/
+}
 ]
 
 // 存在权限的路由
@@ -544,7 +544,7 @@ export const asyncRoutes = [{
         component: () => import('@/views/production/track/track-raw-material'),
         meta: {
           title: '原材料条码追朔',
-          permissionName: ''
+          permissionName: 'material_retrospect'
         }
       },
       {
@@ -553,7 +553,7 @@ export const asyncRoutes = [{
         component: () => import('@/views/production/track/track-raw-rubber'),
         meta: {
           title: '胶片条码追朔',
-          permissionName: ''
+          permissionName: 'product_retrospect'
         }
       }
     ]
@@ -678,16 +678,16 @@ export const asyncRoutes = [{
         permissionName: 'compoundRubber_plan'
       }
     },
-    // {
-    //   path: '/raw-material-manage',
-    //   component: () => import('@/views/inventory/raw-material-manage.vue'),
-    //   name: 'raw-material',
-    //   meta: {
-    //     title: '原材料出库计划',
-    //     icon: 'stock',
-    //     permissionName: ''
-    //   }
-    // },
+    {
+      path: '/raw-material-manage',
+      component: () => import('@/views/inventory/raw-material-manage.vue'),
+      name: 'raw-material',
+      meta: {
+        title: '原材料出库计划',
+        icon: 'stock',
+        permissionName: ''
+      }
+    },
     // {
     //   path: '/final-rubber-manage',
     //   component: () => import('@/views/inventory/final_rubber_manage.vue'),
@@ -994,7 +994,7 @@ export const asyncRoutes = [{
       meta: {
         title: 'mes与子系统物料信息映射',
         icon: 'quality',
-        permissionName: ''
+        permissionName: 'material_map'
       }
     },
     {
@@ -1004,7 +1004,7 @@ export const asyncRoutes = [{
       meta: {
         title: '条码变更',
         icon: 'quality',
-        permissionName: ''
+        permissionName: 'bar_code'
       }
     },
     {
@@ -1014,10 +1014,10 @@ export const asyncRoutes = [{
       meta: {
         title: '原材料临时快检结果录入',
         icon: 'quality',
-        permissionName: ''
+        permissionName: 'material_temp_input'
       }
-    }
-    /** {
+    },
+    {
       path: '/material-quality',
       redirect: '/material-quality',
       component: {
@@ -1035,7 +1035,7 @@ export const asyncRoutes = [{
           name: 'material-testIndicators',
           meta: {
             title: '试验指标管理',
-            permissionName: ''
+            permissionName: 'raw_test_indicator'
           }
         },
         {
@@ -1044,7 +1044,7 @@ export const asyncRoutes = [{
           name: 'material-testTypes',
           meta: {
             title: '试验类型管理',
-            permissionName: ''
+            permissionName: 'raw_test_type'
           }
         },
         {
@@ -1053,7 +1053,7 @@ export const asyncRoutes = [{
           namel: 'material-testMethodsManage',
           meta: {
             title: '试验方法管理',
-            permissionName: ''
+            permissionName: 'raw_test_method'
           }
         },
         {
@@ -1062,7 +1062,7 @@ export const asyncRoutes = [{
           namel: 'material-gradeManage',
           meta: {
             title: '等级管理',
-            permissionName: ''
+            permissionName: 'raw_level'
           }
         },
         {
@@ -1071,7 +1071,7 @@ export const asyncRoutes = [{
           name: 'material-benchmark_edit',
           meta: {
             title: '物料快检判定基准录入',
-            permissionName: ''
+            permissionName: 'raw_evaluating'
           }
         },
         {
@@ -1080,7 +1080,7 @@ export const asyncRoutes = [{
           name: 'material-info_entry',
           meta: {
             title: '原材料快检信息录入',
-            permissionName: ''
+            permissionName: 'raw_test_result'
           }
         },
         {
@@ -1089,7 +1089,7 @@ export const asyncRoutes = [{
           name: 'material-results-view',
           meta: {
             title: '原材料快检结果查看',
-            permissionName: ''
+            permissionName: 'raw_result_info'
           }
         },
         {
@@ -1098,11 +1098,11 @@ export const asyncRoutes = [{
           name: 'material-unqualified',
           meta: {
             title: '原材料不合格处理',
-            permissionName: ''
+            permissionName: 'raw_unqualified_material'
           }
         }
       ]
-    }**/
+    }
   ]
 },
 {

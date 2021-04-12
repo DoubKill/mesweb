@@ -240,6 +240,8 @@ export default {
       }
     }
   },
+  computed: {
+  },
   watch: {
     show(val) {
       this.dialogVisible = val
@@ -287,7 +289,6 @@ export default {
     },
     submitAdd() {
       const obj = JSON.parse(JSON.stringify(this.ruleForm))
-
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           const _name = this.formInline.stage_product_batch_no + '-' +

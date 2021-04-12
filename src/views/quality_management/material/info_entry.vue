@@ -1,27 +1,28 @@
 <template>
-  <div v-loading="loading" class="manual_entry_style">
+  <div v-loading="loading" class="info_entry_style">
+    <!-- 原料检测数据录入 -->
     <el-form :inline="true">
-      <el-form-item label="工厂日期：">
-        <el-date-picker
-          v-model="search.factory_date"
-          type="date"
-          placeholder="选择日期"
-          value-format="yyyy-MM-dd"
-          @change="pageOne"
+      <el-form-item label="原材料编码：">
+        <all-product-no-select :type-parms="2" @productBatchingChanged="changeMaterialCode" />
+      </el-form-item>
+      <el-form-item label="原材料名称：">
+        <all-product-no-select :type-parms="2" label-name="material_name" @productBatchingChanged="changeMaterialName" />
+      </el-form-item>
+      <el-form-item label="条码：">
+        <el-input
+          ref="lot_no_input"
+          v-model="search.lot_no"
+          placeholder="请输入内容"
+          @input="changeListLot"
         />
       </el-form-item>
-      <el-form-item label="生产机台：">
-        <equip-select
-          :equip_no_props.sync="search.equip_no"
-          @changeSearch="pageOne"
+      <!-- <el-form-item label="批次号：">
+        <el-input
+          v-model="search.batch_no"
+          placeholder="请输入内容"
+          @input="changeListLot"
         />
-      </el-form-item>
-      <el-form-item label="班次：">
-        <class-select @classSelected="classSelected" />
-      </el-form-item>
-      <el-form-item label="胶料：">
-        <all-product-no-select @productBatchingChanged="productBatchingChanged" />
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
     <el-table
       v-if="tableDataStyle.length>0&&tableDataChild.length>0"
@@ -54,24 +55,24 @@
       </el-table-column>
     </el-table>
     <el-button
-      v-permission="['test_result','add']"
+      v-permission="['raw_test_result','add']"
       :loading="loadingBtn"
       style="float:right;margin:10px 0"
       @click="submitTable"
     >保 存</el-button>
-    <el-button
+    <!-- <el-button
       style="float:right;margin:10px 10px"
       @click="templateDownload"
-    >下载模板</el-button>
-    <el-upload
+    >下载模板</el-button> -->
+    <!-- <el-upload
       style="float:right;margin:10px 0"
       action="string"
       accept=".xls, .xlsx"
       :http-request="Upload"
       :show-file-list="false"
     >
-      <el-button v-permission="['test_result','add']">导入</el-button>
-    </el-upload>
+      <el-button>导入</el-button>
+    </el-upload> -->
     <el-table
       ref="table"
       :data="tableDataChild"
@@ -85,28 +86,28 @@
       />
       <el-table-column
         key="4"
-        label="生产信息"
+        label="物料信息"
         align="center"
       >
         <el-table-column
-          prop="product_no"
-          label="胶料编码"
+          prop="in_storage_time"
+          label="入库时间"
+        >
+          <template slot-scope="{row}">
+            {{ row.in_storage_time }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="material_no"
+          label="原材料编码"
+        />
+        <el-table-column
+          prop="supplier_name"
+          label="厂商信息"
         />
         <el-table-column
           prop="lot_no"
-          label="收皮条码"
-        />
-        <el-table-column
-          prop="classes"
-          label="班次"
-        />
-        <el-table-column
-          prop="equip_no"
-          label="生产机台"
-        />
-        <el-table-column
-          prop="actual_trains"
-          label="车次"
+          label="条码"
         />
       </el-table-column>
       <div key="1">
@@ -158,14 +159,6 @@
                     <el-dropdown-item v-for="(itemCommand,indexCommand) in commandList(itemTa.test_indicator)" :key="indexCommand" style="width:150px" :command="itemCommand">{{ itemCommand }}</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
-
-                <!-- <el-input
-                  v-if="scope.row._list[itemTa.test_indicator]
-                    &&scope.row._list[itemTa.test_indicator][itemChild.name]"
-                  v-model="scope.row._list[itemTa.test_indicator][itemChild.name].value"
-                  placeholder="请输入检测值"
-                  @change="detectionValue(scope.row,scope.$index,scope.row._list)"
-                /> -->
               </template>
             </el-table-column>
             <el-table-column
@@ -216,17 +209,19 @@
 </template>
 
 <script>
-import { palletFeedBacksUrl, matTestIndicatorMethods, materialTestOrders, palletTrainsFeedbacks, importMaterialMestMrders, importMaterialTestOrders } from '@/api/base_w'
-import { setDate, deepClone } from '@/utils/index'
+import { importMaterialMestMrders, importMaterialTestOrders } from '@/api/base_w'
+import { matTestIndicatorMethodsRaw, materialInventory, materialTestOrdersRaw } from '@/api/base_w_three'
+import { deepClone } from '@/utils/index'
 // import planSchedulesSelect from '@/components/PlanSchedulesSelect'
-import equipSelect from '@/components/select_w/equip'
-import classSelect from '@/components/ClassSelect'
-import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import viewDialogTrial from '@/components/select_w/viewDialogTrial'
+// import materialCodeSelect from '@/components/materialCodeSelect'
+import { debounce, setDate } from '@/utils'
+import allProductNoSelect from '@/components/select_w/allProductNoSelect'
+
 // import manualEntryRadio from './manual_entry_components/index'
 // import page from '@/components/page'
 export default {
-  components: { equipSelect, classSelect, allProductNoSelect, viewDialogTrial },
+  components: { allProductNoSelect, viewDialogTrial },
   data() {
     return {
       dialogVisible: false,
@@ -234,11 +229,8 @@ export default {
       total: 0,
       search: {
         ShiftRules: '',
-        factory_date: setDate(),
-        // factory_date: '2021-1-16',
-        equip_no: '', // Z02
-        classes: '', // 早班
-        product_no: ''
+        lot_no: '',
+        batch_no: ''
       },
       tableData: [],
       tableDataStyle: [],
@@ -251,7 +243,8 @@ export default {
       allValue: undefined,
       // 当前的 指标点 和 数据点
       current_test_indicator: '',
-      current_data_point_name: ''
+      current_data_point_name: '',
+      material_id: ''
     }
   },
   mounted() {
@@ -259,15 +252,16 @@ export default {
     // this.getTestType()
   },
   methods: {
+    setDate,
     async getTableDataChild() {
       try {
-        this.titleInfo(this.search.equip_no, '请输入生产机台')
-        this.titleInfo(this.search.classes, '请输入班次')
-        this.titleInfo(this.search.product_no, '请输入胶料')
-        this.titleInfo(this.search.factory_date, '请输入时间')
+        if (!this.search.lot_no && !this.search.batch_no) {
+          this.$message.info('请输入条码或批次号')
+          return
+        }
         this.loading = true
-        const data = await palletTrainsFeedbacks('get', null, { params: this.search })
-        this.getTestType(this.search.product_no)
+        const data = await materialInventory('get', null, { params: this.search })
+        this.getTestType(this.search.lot_no)
         this.tableDataChild = data || []
         this.tableDataChild.forEach((D, index) => { this.$set(D, '_index', index) })
         this.loading = false
@@ -275,29 +269,20 @@ export default {
         this.loading = false
       }
     },
+    changeListLot() {
+      debounce(this, 'pageOne')
+    },
     titleInfo(val, error) {
       if (!val && val !== 0) {
         this.$message.info(error)
         throw new Error(error)
       }
     },
-    async getList() {
-      this.clearData()
-      this.showTableDataChild = false
-      try {
-        this.loading = true
-        const data = await palletFeedBacksUrl('get', null, { params: this.search })
-        this.tableData = data.results || []
-        this.total = data.count
-        this.loading = false
-      } catch (e) {
-        this.loading = false
-      }
-    },
     async getTestType(id) {
       try {
-        const data = await matTestIndicatorMethods('get', null, { params: { material_no: id }})
-        this.tableDataStyle = data || []
+        const data = await matTestIndicatorMethodsRaw('get', null, { params: { lot_no: id }})
+        this.tableDataStyle = data.ret || []
+        this.material_id = data.material_id || ''
         this.tableDataStyle.forEach(D => {
           this.$set(D, 'checkedC', {})
         })
@@ -315,10 +300,6 @@ export default {
         setDataChild(this, val)
       })
     },
-    currentChange(page) {
-      this.search.page = page
-      this.getList()
-    },
     pageOne() {
       this.getTableDataChild()
       this.tableDataStyle.forEach(D => {
@@ -326,19 +307,19 @@ export default {
       })
       this.changeTable = []
     },
+    changeMaterialName(val) {
+      this.search.material_name = val ? val.material_name : ''
+      this.pageOne()
+    },
+    changeMaterialCode(val) {
+      this.search.material_no = val ? val.material_no : ''
+      this.pageOne()
+    },
     // changeSearch() {
     //   this.pageOne()
     // },
     planScheduleSelected(id) {
       this.search.ShiftRules = id
-      this.pageOne()
-    },
-    classSelected(val) {
-      this.search.classes = val
-      this.pageOne()
-    },
-    productBatchingChanged(val) {
-      this.search.product_no = val ? val.material_no : ''
       this.pageOne()
     },
     rowClick(row) {
@@ -443,7 +424,7 @@ export default {
         const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
         link.style.display = 'none'
         link.href = URL.createObjectURL(blob)
-        link.download = '手工检测数据录入模板.xls' // 下载的文件名
+        link.download = '原料检测数据录入模板.xls' // 下载的文件名
         document.body.appendChild(link)
         link.click()
         document.body.removeChild(link)
@@ -493,14 +474,13 @@ export default {
           }
           arr[i] = {
             lot_no: D.lot_no,
-            actual_trains: D.actual_trains,
-            product_no: D.product_no,
-            plan_classes_uid: D.plan_classes_uid,
-            production_class: D.classes,
+            batch_no: D.batch_no,
+            storage_date: setDate(D.in_storage_time),
+            supplier_name: D.supplier_name,
             production_equip_no: D.equip_no,
-            production_factory_date: this.search.factory_date,
+            material: this.material_id,
             note: D.note,
-            order_results: arrChild
+            order_results_raw: arrChild
           }
         })
       } catch (ex) {
@@ -512,7 +492,7 @@ export default {
       }
       this.loadingBtn = true
       try {
-        await materialTestOrders('post', null, { data: arr })
+        await materialTestOrdersRaw('post', null, { data: arr })
         this.$message.success('录入成功')
         this.loadingBtn = false
       } catch (e) {
@@ -523,6 +503,7 @@ export default {
 }
 
 function setDataChild(_this, row) {
+  console.log(row, 4444)
   const newObjChild = {}
   const newObj = {}
   let _obj = {}
@@ -531,8 +512,10 @@ function setDataChild(_this, row) {
     arrData_points.forEach(D => {
       const obj = {}
       _this.$set(obj, 'test_indicator_name', row.test_indicator)
+      _this.$set(obj, 'data_point', D.id)
       _this.$set(obj, 'data_point_name', D.name)
       _this.$set(obj, 'test_method_name', row.checkedC.name)
+      _this.$set(obj, 'test_method', row.checkedC.id)
       _this.$set(obj, 'value', undefined)
       _obj = deepClone(obj)
       _this.$set(newObjChild, D.name, _obj)
@@ -572,11 +555,7 @@ function setDataChild(_this, row) {
 <style lang="scss">
 $border-color: #EBEEF5;
 $border-weight: 1px;
-.manual_entry_style{
-  // .rigthTable{
-    // overflow-y: scroll;
-    // max-height: 400px;
-  // }
+.info_entry_style{
   .el-input-number__increase,.el-input-number__decrease{
     display: none;
     padding:0;

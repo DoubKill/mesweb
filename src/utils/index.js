@@ -264,10 +264,40 @@ export function errorRepeat(_this, e) {
  * val      要加载的列表名
  */
 var timer
+var count = 0
 export function debounce(_this, val) {
   clearTimeout(timer)
-  timer = setTimeout(() => {
-    // 执行要加载的接口函数
+  if (!count) {
     _this[val]()
-  }, 600)
+    count++
+  } else {
+    timer = setTimeout(() => {
+      // 执行要加载的接口函数
+      _this[val]()
+      count = 0
+    }, 800)
+  }
+}
+
+/**
+ * 获取当前的星期一
+ * dateString   查询的日期
+ */
+export function getWeekDay(dateString) {
+  const dateStringReg = /^\d{4}[/-]\d{1,2}[/-]\d{1,2}$/
+
+  if (dateString.match(dateStringReg)) {
+    const presentDate = new Date(dateString)
+    const today = presentDate.getDay() !== 0 ? presentDate.getDay() : 7
+
+    return Array.from(new Array(7), function(val, index) {
+      return formatDate(new Date(presentDate.getTime() - (today - index - 1) * 24 * 60 * 60 * 1000))
+    })
+  } else {
+    throw new Error('dateString should be like "yyyy-mm-dd" or "yyyy/mm/dd"')
+  }
+
+  function formatDate(date) {
+    return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
+  }
 }

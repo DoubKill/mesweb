@@ -89,16 +89,34 @@
         prop="waiting_repair"
         label="等待维修时间/s"
         min-width="16"
+        :formatter="(row)=>{
+          if(!row.waiting_repair){
+            return
+          }
+          return row.waiting_repair.split('.')[0]
+        }"
       />
       <el-table-column
         prop="repair_time"
         label="维修时间/s"
         min-width="15"
+        :formatter="(row)=>{
+          if(!row.repair_time){
+            return
+          }
+          return row.repair_time.split('.')[0]
+        }"
       />
       <el-table-column
         prop="stop_time"
         label="停机时间/s"
         min-width="15"
+        :formatter="(row)=>{
+          if(!row.stop_time){
+            return
+          }
+          return row.stop_time.split('.')[0]
+        }"
       />
     </el-table>
     <!-- <page
@@ -173,6 +191,10 @@ export default {
       } catch (e) {
         this.loading = false
       }
+    },
+    setTime(row, val) {
+      console.log(row, val, 888)
+      // return val.join(',')[0]
     },
     equipTypeSelect(obj) {
       this.search.equip_type = obj ? obj.global_name : ''

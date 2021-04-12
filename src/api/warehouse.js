@@ -38,6 +38,13 @@ export function stationInfo(params) {
     params
   })
 }
+export function stationInfoRawMaterial(params) {
+  return request({
+    url: API.MaterialPlanManagementStations,
+    method: 'get',
+    params
+  })
+}
 
 export function editStationInfo(method, id, data) {
   return request({

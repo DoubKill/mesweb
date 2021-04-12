@@ -31,6 +31,17 @@
       <el-form-item label="物料编码">
         <el-input v-model="search.material_no" @input="changeList" />
       </el-form-item>
+      <el-form-item label="出库位置">
+        <stationInfoWarehouse
+          ref="stationInfoWarehouse"
+          :warehouse-name="warehouseName"
+          :is-clear="true"
+          :created-is="true"
+          :raw-material="true"
+          @changSelect="selectStation"
+        />
+      </el-form-item>
+
       <el-form-item label="仓库名称">
         {{ warehouseName }}
         <!-- <warehouseSelect @changSelect="warehouseSelect" /> -->
@@ -41,26 +52,26 @@
     </el-form>
     <el-button v-permission="['compoundRubber_plan','norman']" class="button-right" @click="normalOutbound">正常出库</el-button>
     <el-button v-permission="['compoundRubber_plan','assign']" class="button-right" @click="assignOutbound">指定出库</el-button>
-    <el-button class="button-right" @click="getList">刷新</el-button>
+    <el-button class="button-right" @click="refresList">刷新</el-button>
     <el-table
       border
       :data="tableData"
       size="mini"
     >
       <el-table-column label="No" type="index" align="center" width="30" />
-      <el-table-column label="仓库名称" align="center" prop="name" />
-      <el-table-column label="出库类型" align="center" prop="inventory_type" width="65" />
-      <el-table-column label="出库单号" align="center" prop="order_no" />
-      <el-table-column label="托盘号" align="center" prop="pallet_no" />
-      <el-table-column label="物料编码" align="center" prop="material_no" />
-      <el-table-column label="出库原因" align="center" prop="inventory_reason" width="50" />
-      <el-table-column label="需求数量" align="center" prop="need_qty" width="50" />
-      <el-table-column label="出库数量" align="center" prop="actual.actual_qty" width="50" />
-      <el-table-column label="实际出库重量" align="center" prop="actual.actual_wegit" />
-      <el-table-column label="单位" align="center" prop="unit" width="40" />
-      <el-table-column label="需求重量" align="center" prop="need_weight" />
-      <el-table-column label="出库位置" align="center" prop="station" width="40" />
-      <el-table-column label="目的地" align="center" prop="destination" />
+      <el-table-column label="仓库名称" align="center" prop="name" min-width="20" />
+      <el-table-column label="出库类型" align="center" prop="inventory_type" min-width="20" />
+      <el-table-column label="出库单号" align="center" prop="order_no" min-width="20" />
+      <el-table-column label="托盘号" align="center" prop="pallet_no" min-width="20" />
+      <el-table-column label="物料编码" align="center" prop="material_no" min-width="20" />
+      <el-table-column label="出库原因" align="center" prop="inventory_reason" min-width="20" />
+      <el-table-column label="需求数量" align="center" prop="need_qty" min-width="20" />
+      <el-table-column label="出库数量" align="center" prop="actual.actual_qty" min-width="20" />
+      <el-table-column label="实际出库重量" align="center" prop="actual.actual_wegit" min-width="20" />
+      <el-table-column label="单位" align="center" prop="unit" width="40" min-width="20" />
+      <el-table-column label="需求重量" align="center" prop="need_weight" min-width="20" />
+      <el-table-column label="出库位置" align="center" prop="station" min-width="20" />
+      <el-table-column label="目的地" align="center" prop="destination" min-width="20" />
       <el-table-column label="操作" align="center" width="220">
         <template v-if="scope.row.status === 4" slot-scope="scope">
           <el-button-group>
@@ -70,14 +81,14 @@
           </el-button-group>
         </template>
       </el-table-column>
-      <el-table-column label="订单状态" align="center" prop="" width="60">
+      <el-table-column label="订单状态" align="center" prop="" min-width="20">
         <template slot-scope="{row}">
           {{ setOperation(row.status) }}
         </template>
       </el-table-column>
-      <el-table-column label="发起人" align="center" prop="created_user" />
-      <el-table-column label="发起时间" align="center" prop="created_date" />
-      <el-table-column label="完成时间" align="center" prop="finish_time" />
+      <el-table-column label="发起人" align="center" prop="created_user" min-width="20" />
+      <el-table-column label="发起时间" align="center" prop="created_date" min-width="20" />
+      <el-table-column label="完成时间" align="center" prop="finish_time" min-width="20" />
     </el-table>
     <page
       :total="total"
@@ -92,8 +103,8 @@
       :before-close="handleClose"
     >
       <el-form :inline="true">
-        <el-form-item label="需求数量">
-          <el-input v-model="demandQuantityVal" placeholder="需求数量" />
+        <el-form-item label="需求重量">
+          <el-input v-model="demandQuantityVal" placeholder="需求重量" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -111,6 +122,7 @@
         ref="assignOutbound"
         :warehouse-name="warehouseName"
         :warehouse-info="warehouseInfo"
+        :raw-material="true"
         @visibleMethod="visibleMethodNormal"
         @visibleMethodSubmit="visibleMethodAssignSubmit"
       />
@@ -124,6 +136,8 @@
         ref="normalOutbound"
         :warehouse-name="warehouseName"
         :warehouse-info="warehouseInfo"
+        :raw-material="true"
+        :show="normalOutboundDialogVisible"
         @visibleMethod="visibleMethodNormal"
         @visibleMethodSubmit="visibleMethodSubmit"
       /></el-dialog>
@@ -135,17 +149,18 @@ import GenerateAssignOutbound from './components/generate_assign_outbound'
 import GenerateNormalOutbound from './components/generate_normal_outbound'
 // import materielTypeSelect from '@/components/select_w/materielTypeSelect'
 // import warehouseSelect from '@/components/select_w/warehouseSelect'
-import { putPlanManagement } from '@/api/base_w'
+import { materialPlanManagement } from '@/api/base_w'
 import { warehouseInfo } from '@/api/warehouse'
 import page from '@/components/page'
 import commitVal from '@/utils/common'
 import { setDate } from '@/utils/index'
+import stationInfoWarehouse from '@/components/select_w/warehouseSelectPosition'
 
 export default {
-  components: { page, GenerateAssignOutbound, GenerateNormalOutbound },
+  components: { stationInfoWarehouse, page, GenerateAssignOutbound, GenerateNormalOutbound },
   data() {
     return {
-      loading: false,
+      loading: true,
       search: {
         page: 1
       },
@@ -166,21 +181,31 @@ export default {
     }
   },
   created() {
+
+  },
+  mounted() {
     const start = new Date()
     const oneDate = start.getTime() + 3600 * 1000 * 24
     this.search.st = setDate()
     this.search.et = setDate(oneDate)
     this.dateSearch = [this.search.st, this.search.et]
 
+    const a = localStorage.getItem('ycl-station')
+    const b = a ? JSON.parse(a) : ''
+    this.search.station = b.station
+    if (this.$refs.stationInfoWarehouse) {
+      this.$refs.stationInfoWarehouse.value = b.station_no
+    }
+
     this.getListWrehouseInfo()
-    this.getList()
+    // this.getList()
   },
   methods: {
     async getList() {
       try {
         this.loading = true
         this.tableData = []
-        const data = await putPlanManagement('get', null, { params: this.search })
+        const data = await materialPlanManagement('get', null, { params: this.search })
         this.total = data.count
         this.tableData = data.results
         this.loading = false
@@ -205,6 +230,9 @@ export default {
     //   this.search.name = this.warehouseName
     //   this.getList()
     },
+    refresList() {
+      this.getList()
+    },
     handleCloseNormal(done) {
       if (this.$refs.normalOutbound) {
         this.$refs.normalOutbound.creadVal()
@@ -228,9 +256,16 @@ export default {
       this.normalOutboundDialogVisible = false
       this.assignOutboundDialogVisible = false
     },
+    selectStation(val) {
+      this.search.station = val ? val.station : ''
+      if (this.search.station) {
+        localStorage.setItem('ycl-station', JSON.stringify(val))
+      }
+      this.changeList()
+    },
     async visibleMethodSubmit(val) {
       try {
-        await putPlanManagement('post', null, { data: [val] })
+        await materialPlanManagement('post', null, { data: [val] })
         this.$message.success('操作成功')
         this.normalOutboundDialogVisible = false
         this.getList()
@@ -242,7 +277,7 @@ export default {
     },
     async visibleMethodAssignSubmit(val) {
       try {
-        await putPlanManagement('post', null, { data: val })
+        await materialPlanManagement('post', null, { data: val })
         this.$message.success('操作成功')
         this.assignOutboundDialogVisible = false
         this.$refs.assignOutbound.creadVal()
@@ -268,17 +303,17 @@ export default {
       try {
         const row = this.tableData[this.currentIndex]
         if (!this.demandQuantityVal && this.demandQuantityVal !== 0) {
-          this.$message.info('需求数量不可为空')
+          this.$message.info('需求重量不可为空')
           return
         }
         const obj = {
           inventory_type: 3333,
-          need_qty: this.demandQuantityVal,
+          need_weight: this.demandQuantityVal,
           order_no: 'order_no',
           warehouse_info: row.warehouse_info
         }
         this.loadingBtn = true
-        await putPlanManagement('put', row.id, { data: obj })
+        await materialPlanManagement('put', row.id, { data: obj })
         this.dialogVisible = false
         this.loadingBtn = false
         this.getList()
@@ -307,7 +342,7 @@ export default {
           inventory_reason: row.inventory_reason || ''
         }
         this.loading = true
-        await putPlanManagement('put', row.id, { data: obj })
+        await materialPlanManagement('put', row.id, { data: obj })
         this.$message.success('操作成功')
         this.getList()
       }).catch(() => {
@@ -317,7 +352,7 @@ export default {
     demandQuantity(index, row) {
       this.currentIndex = index
       this.dialogVisible = true
-      this.demandQuantityVal = row.need_qty || ''
+      this.demandQuantityVal = row.need_weight || ''
     },
     closePlan(index, row) {
       this.$confirm(
@@ -335,7 +370,7 @@ export default {
           warehouse_info: this.warehouseInfo
         }
         this.loading = true
-        await putPlanManagement('put', row.id, { data: obj })
+        await materialPlanManagement('put', row.id, { data: obj })
         this.$message.success('操作成功')
         this.getList()
       }).catch(() => {
