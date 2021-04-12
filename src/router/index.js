@@ -525,8 +525,8 @@ export const asyncRoutes = [{
         }
       }
     ]
-  }
-    /** {
+  },
+  {
     path: '/track',
     redirect: '/track-raw-material',
     component: {
@@ -554,6 +554,56 @@ export const asyncRoutes = [{
         meta: {
           title: '胶片条码追朔',
           permissionName: 'product_retrospect'
+        }
+      }
+    ]
+  }
+    /** {
+    path: '/statistical-report',
+    redirect: '/report/produce-work',
+    component: {
+      render: c => c('router-view')
+    },
+    name: 'statistical-report',
+    meta: {
+      title: '统计报表',
+      icon: 'production'
+    },
+    children: [
+      {
+        path: '/report/produce-work',
+        component: () => import('@/views/equipment-management/report/produce-work'),
+        name: 'produce-work',
+        meta: {
+          title: '生产运行记录',
+          permissionName: ''
+        }
+      },
+      {
+        path: '/report/material-requirement',
+        component: () => import('@/views/equipment-management/report/material-requirement'),
+        name: 'material-requirement',
+        meta: {
+          title: '物料需求汇总',
+          permissionName: ''
+        }
+      },
+      {
+        path: '/report/rubber-stock',
+        component: () => import('@/views/equipment-management/report/rubber-stock'),
+        name: 'rubber-stock',
+        meta: {
+          title: '胶料库存明细',
+          permissionName: ''
+        }
+      },
+      {
+        path: '/report/workshop-stock',
+        component: () => import('@/views/equipment-management/report/workshop-stock'),
+        name: 'workshop-stock',
+        meta: {
+          title: '车间库存明细',
+          permissionName: ''
         }
       }
     ]
@@ -1433,8 +1483,8 @@ export const asyncRoutes = [{
         title: '平台信息管理',
         permissionName: 'platform_config'
       }
-    }
-    /** {
+    },
+    {
       path: '/fault-day-statistics',
       component: () => import('@/views/quality_management/fault/fault-day-statistics'),
       name: 'fault-day-statistics',
@@ -1463,7 +1513,7 @@ export const asyncRoutes = [{
         icon: 'quality',
         permissionName: ''
       }
-    }**/
+    }
   ]
 },
 {
