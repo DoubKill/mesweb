@@ -24,6 +24,7 @@
           :to="resolvePath(onlyOneChild.path)"
         >
           <el-menu-item
+            v-if="route.meta"
             :index="route.meta.title"
           >
             <!-- {{ onlyOneChild.path }} -->

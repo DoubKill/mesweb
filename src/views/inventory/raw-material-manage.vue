@@ -9,7 +9,8 @@
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
-          value-format="yyyy-MM-dd"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          :default-time="['00:00:00', '23:59:59']"
           @change="changeDate"
         />
       </el-form-item>
@@ -104,7 +105,13 @@
     >
       <el-form :inline="true">
         <el-form-item label="需求重量">
-          <el-input v-model="demandQuantityVal" placeholder="需求重量" />
+          <el-input-number
+            v-model="demandQuantityVal"
+            controls-position="right"
+            :precision="3"
+            :min="0"
+          />
+          <!-- <el-input v-model="demandQuantityVal" placeholder="需求重量" /> -->
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">

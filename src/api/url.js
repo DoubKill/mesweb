@@ -315,5 +315,6 @@ export default {
   MonthErrorStatistics: '/api/v1/equipment/month-error-statistics/',
   MonthErrorSort: '/api/v1/equipment/month-error-sort/',
 
-  BarcodePreview: '/api/v1/quality/barcode-preview/'
+  BarcodePreview: '/api/v1/quality/barcode-preview/',
+  ProductStationStatics: '/api/v1/inventory/product-station-statics/'
 }

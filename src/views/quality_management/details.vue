@@ -482,8 +482,8 @@ export default {
   }
   td{
     // position: relative;
-    padding:0 !important;
-    margin:0 !important;
+    // padding:2px !important;
+    // margin:2px !important;
   }
   .el-table .cell{
     padding: 0px 4px !important;

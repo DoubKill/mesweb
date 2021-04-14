@@ -175,4 +175,12 @@ export function barcodePreview(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function productStationStatics(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ProductStationStatics + id + '/' : API.ProductStationStatics,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 

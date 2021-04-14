@@ -49,6 +49,7 @@
           v-model="ruleForm.need_qty"
           controls-position="right"
           :max="ruleForm.c"
+          :min="0"
         />
       </el-form-item>
       <el-form-item label="需求重量">
@@ -56,6 +57,7 @@
           v-model="ruleForm.need_weight"
           controls-position="right"
           :precision="3"
+          :min="0"
         />
       </el-form-item>
       <el-form-item v-if="$route.meta.title==='终炼胶出库计划'" label="关联发货计划">
@@ -210,6 +212,7 @@ export default {
       this.handleSelection = []
       this.ruleForm.deliveryPlan = ''
       this.loadingBtn = false
+      this.ruleForm.need_qty = undefined
       if (this.warehouseName === '混炼胶库') {
         // 不让清除出库口和品质状态
         this.$emit('refresList')
