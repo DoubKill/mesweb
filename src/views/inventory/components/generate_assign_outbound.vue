@@ -303,7 +303,11 @@ export default {
       }
     },
     getRowKeys(row) {
-      return row.sn
+      if (this.rawMaterial) {
+        return row.sn
+      } else {
+        return row.id
+      }
     },
     sureDeliveryPlan() {
       this.dialogVisible = false

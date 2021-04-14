@@ -3,6 +3,8 @@
     :value="id"
     clearable
     placeholder="请选择"
+    :multiple="isMultiple"
+    :style="{'width':widthSelect}"
     @change="$emit('change', $event)"
     @visible-change="visibleChange"
   >
@@ -24,9 +26,17 @@ export default {
   },
   props: {
     id: {
-      type: [Number, String],
+      type: [Number, String, Array],
       required: false,
       default: undefined
+    },
+    isMultiple: {
+      type: Boolean,
+      default: false
+    },
+    widthSelect: {
+      type: String,
+      default: ''
     }
   },
   data() {
