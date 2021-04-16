@@ -110,6 +110,7 @@
         <el-form-item v-if="!currentRow.id" label="仓库">
           <warehouseSelect
             :created-is="true"
+            :is-clear="true"
             @changSelect="changWarehouse"
           />
         </el-form-item>

@@ -24,12 +24,18 @@
 import { stationInfo, stationInfoRawMaterial } from '@/api/warehouse'
 export default {
   props: {
+    optionsList: { // 从父组件传过来的值
+      type: Array,
+      default() {
+        return []
+      }
+    },
     //  created里面加载
     createdIs: {
       type: Boolean,
       default: false
     },
-    assignType: {
+    assignType: { // 指定出库
       type: Boolean,
       default: false
     },
@@ -75,6 +81,10 @@ export default {
     },
     show(val) {
       if (val) {
+        if (this.optionsList.length > 0) {
+          this.options = this.optionsList
+        }
+
         if (this.rawMaterial && this.createdIs && !this.assignType) {
           const a = localStorage.getItem('ycl-station')
           this.value = a ? JSON.parse(a).station_no : ''
@@ -86,6 +96,9 @@ export default {
   },
   created() {
     if (this.createdIs) {
+      if (this.optionsList.length > 0) {
+        this.options = this.optionsList
+      }
       this.getList()
     }
   },
@@ -96,16 +109,22 @@ export default {
           this.options = []
           return
         }
-        this.loading = true
 
-        let _api
-        if (this.rawMaterial) {
-          _api = stationInfoRawMaterial
+        let data = []
+        if (this.optionsList.length === 0) {
+          this.loading = true
+          let _api
+          if (this.rawMaterial) {
+            _api = stationInfoRawMaterial
+          } else {
+            _api = stationInfo
+          }
+          data = await _api({ all: 1, warehouse_name: this.warehouseName })
+          this.loading = false
         } else {
-          _api = stationInfo
+          data = this.optionsList
         }
-        const data = await _api({ all: 1, warehouse_name: this.warehouseName })
-        this.loading = false
+
         if (this.startUsing && !this.rawMaterial) {
           this.options = data.filter(D => { return D.use_flag })
           return
@@ -126,13 +145,12 @@ export default {
         if (this.createdIs) {
           this.$emit('changSelect', {})
         }
-        // console.log(this.options, 11111)
       } catch (e) {
         this.loading = false
       }
     },
     visibleChange(val) {
-      if (val && !this.createdIs) {
+      if (val && !this.createdIs && this.options.length === 0) {
         this.getList()
       }
     },

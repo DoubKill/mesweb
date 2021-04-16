@@ -167,7 +167,7 @@ export default {
   components: { stationInfoWarehouse, page, GenerateAssignOutbound, GenerateNormalOutbound },
   data() {
     return {
-      loading: true,
+      loading: false,
       search: {
         page: 1
       },

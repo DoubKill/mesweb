@@ -9,7 +9,8 @@
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
-          value-format="yyyy-MM-dd"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          :default-time="['00:00:00', '23:59:59']"
           @change="changeDate"
         />
       </el-form-item>
@@ -232,7 +233,7 @@ export default {
       this.changeList()
     },
     selectStation(val) {
-      this.search.station = val ? val.name : ''
+      this.search.station = val ? val.name : null
       this.changeList()
     },
     visibleMethodNormal() {

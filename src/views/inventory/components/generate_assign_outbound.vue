@@ -88,8 +88,9 @@
             :warehouse-name="warehouseName"
             :start-using="true"
             :default-val="scope.row.station_no"
-            :created-is="true"
             :assign-type="true"
+            :created-is="true"
+            :options-list="optionsList"
             :raw-material="rawMaterial"
             @changSelect="selectStation($event,scope.$index)"
           />
@@ -148,6 +149,7 @@ import receiveList from '../receive-good-manage/receive-list.vue'
 import EquipSelect from '@/components/EquipSelect'
 import materialCodeSelect from '@/components/select_w/materialCodeSelect'
 import { debounce } from '@/utils'
+import { stationInfo, stationInfoRawMaterial } from '@/api/warehouse'
 export default {
   components: { materialCodeSelect, EquipSelect, page, stationInfoWarehouse, receiveList },
   props: {
@@ -184,13 +186,15 @@ export default {
       dialogVisible: false,
       material_no_current: '',
       currentIndex: null,
-      handleSelection: []
+      handleSelection: [],
+      optionsList: []
     }
   },
   computed: {
   },
   created() {
     this.getTableData()
+    this.getWarehouseSelectPosition()
   },
   methods: {
     getTableData() {
@@ -202,11 +206,41 @@ export default {
           this.tableData.forEach(D => {
             // _DeliveryPlan 放发货计划
             this.$set(D, '_DeliveryPlan', [])
+            let arr
+            if (this.multipleSelection.length > 0) {
+              arr = this.multipleSelection.filter(d =>
+                this.rawMaterial ? d.sn === D.sn : d.id === D.id)
+            }
+
+            if (arr.length > 0) {
+              this.$nextTick(() => {
+                this.$set(D, 'station', arr[0].station)
+                this.$set(D, 'station_no', arr[0].station_no)
+              })
+            }
           })
           this.loading = false
         }).catch(() => {
           this.loading = false
         })
+    },
+    async getWarehouseSelectPosition() {
+      try {
+        if (!this.warehouseName) {
+          this.optionsList = []
+          return
+        }
+        let _api
+        if (this.rawMaterial) {
+          _api = stationInfoRawMaterial
+        } else {
+          _api = stationInfo
+        }
+        const data = await _api({ all: 1, warehouse_name: this.warehouseName })
+        this.optionsList = data || []
+      } catch (e) {
+        //
+      }
     },
     currentChange(page) {
       this.currentPage = page
@@ -277,7 +311,7 @@ export default {
             unit: D.unit,
             status: 4,
             warehouse_info: this.warehouseInfo,
-            quality_status: D.quality_status,
+            quality_status: ['帘布库出库计划', '原材料出库计划'].includes(this.$route.meta.title) ? D.quality_status : D.quality_level,
             dispatch: D.dispatch || [],
             equip: D.equip || [],
             location: D.location,
@@ -298,9 +332,7 @@ export default {
       this.getParams.station = obj ? obj.name : ''
     },
     handleSelectionChange(val) {
-      if (val.length > 0) {
-        this.multipleSelection = val
-      }
+      this.multipleSelection = val
     },
     getRowKeys(row) {
       if (this.rawMaterial) {
@@ -341,6 +373,7 @@ export default {
         this.$set(this.tableData[index], 'station_no', obj ? obj.station_no : '')
       } else {
         this.$set(this.tableData[index], 'station', obj ? obj.name : '')
+        this.$set(this.tableData[index], 'station_no', obj ? obj.id : '')
       }
     }
   }
