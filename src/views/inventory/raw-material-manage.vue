@@ -195,7 +195,7 @@ export default {
     const oneDate = start.getTime() + 3600 * 1000 * 24
     this.search.st = setDate()
     this.search.et = setDate(oneDate)
-    this.dateSearch = [this.search.st, this.search.et]
+    this.dateSearch = [this.search.st + ' 00:00:00', this.search.et + ' 23:59:59']
 
     const a = localStorage.getItem('ycl-station')
     const b = a ? JSON.parse(a) : ''

@@ -770,16 +770,16 @@ export const asyncRoutes = [
           permissionName: ''
         }
       },
-      // {
-      //   path: '/druss-delivery',
-      //   component: () => import('@/views/inventory/druss-delivery.vue'),
-      //   name: 'druss-delivery',
-      //   meta: {
-      //     title: '炭黑出库计划',
-      //     icon: 'stock',
-      //     permissionName: ''
-      //   }
-      // },
+      {
+        path: '/druss-delivery',
+        component: () => import('@/views/inventory/druss-delivery.vue'),
+        name: 'druss-delivery',
+        meta: {
+          title: '炭黑出库计划',
+          icon: 'stock',
+          permissionName: ''
+        }
+      },
       // {
       //   path: '/final-rubber-manage',
       //   component: () => import('@/views/inventory/final_rubber_manage.vue'),

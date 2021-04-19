@@ -12,16 +12,16 @@
     >
       <el-option
         v-for="item in options"
-        :key="rawMaterial?item.station_no:item.id"
-        :label="rawMaterial?item.station:item.name"
-        :value="rawMaterial?item.station_no:item.id"
+        :key="rawMaterial||drussDelivery?item.station_no:item.id"
+        :label="rawMaterial||drussDelivery?item.station:item.name"
+        :value="rawMaterial||drussDelivery?item.station_no:item.id"
       />
     </el-select>
   </div>
 </template>
 
 <script>
-import { stationInfo, stationInfoRawMaterial } from '@/api/warehouse'
+import { stationInfo, stationInfoRawMaterial, drussPlanManagementStations } from '@/api/warehouse'
 export default {
   props: {
     optionsList: { // 从父组件传过来的值
@@ -60,6 +60,10 @@ export default {
       type: Boolean,
       default: false
     },
+    drussDelivery: { // 是不是炭黑出库
+      type: Boolean,
+      default: false
+    },
     show: {
       type: Boolean,
       default: false
@@ -91,6 +95,12 @@ export default {
           this.$emit('changSelect', this.options.filter(D => D.station_no === this.value)[0])
           return
         }
+        if (this.drussDelivery && this.createdIs && !this.assignType) {
+          const a = localStorage.getItem('th-station')
+          this.value = a ? JSON.parse(a).station_no : ''
+          this.$emit('changSelect', this.options.filter(D => D.station_no === this.value)[0])
+          return
+        }
       }
     }
   },
@@ -116,6 +126,8 @@ export default {
           let _api
           if (this.rawMaterial) {
             _api = stationInfoRawMaterial
+          } else if (this.drussDelivery) {
+            _api = drussPlanManagementStations
           } else {
             _api = stationInfo
           }
@@ -125,7 +137,7 @@ export default {
           data = this.optionsList
         }
 
-        if (this.startUsing && !this.rawMaterial) {
+        if (this.startUsing && !this.rawMaterial && !this.drussDelivery) {
           this.options = data.filter(D => { return D.use_flag })
           return
         }
@@ -138,6 +150,12 @@ export default {
         }
         if (this.rawMaterial && this.createdIs && !this.assignType) {
           const a = localStorage.getItem('ycl-station')
+          this.value = a ? JSON.parse(a).station_no : ''
+          this.$emit('changSelect', this.options.filter(D => D.station_no === this.value)[0])
+          return
+        }
+        if (this.drussDelivery && this.createdIs && !this.assignType) {
+          const a = localStorage.getItem('th-station')
           this.value = a ? JSON.parse(a).station_no : ''
           this.$emit('changSelect', this.options.filter(D => D.station_no === this.value)[0])
           return
@@ -156,6 +174,11 @@ export default {
     },
     changSelect(val) {
       if (this.rawMaterial) { // 原材料出库 station_no
+        arr = this.options.filter(D => D.station_no === val)
+        this.$emit('changSelect', arr[0])
+        return
+      }
+      if (this.drussDelivery) { // 炭黑出库 station_no
         arr = this.options.filter(D => D.station_no === val)
         this.$emit('changSelect', arr[0])
         return

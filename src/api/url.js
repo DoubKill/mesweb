@@ -152,6 +152,10 @@ export default {
   MaterialPlanManagement: '/api/v1/inventory/material-plan-management/',
   // 原材料出库口
   MaterialPlanManagementStations: '/api/v1/inventory/material-plan-management/stations/',
+  // 炭黑出库计划
+  DrussPlanManagement: '/api/v1/inventory/carbon-plan-management/',
+  // 炭黑出库口
+  DrussPlanManagementStations: '/api/v1/inventory/carbon-plan-management/stations/',
 
   // 物料属性管理
   materialsAttribute: '/api/v1/recipe/materials-attribute/',

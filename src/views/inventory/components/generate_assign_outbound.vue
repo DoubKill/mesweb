@@ -74,7 +74,7 @@
         align="center"
       >
         <template slot-scope="{row}">
-          <span v-if="['帘布库出库计划','原材料出库计划'].includes($route.meta.title)">{{ row.quality_status }}</span>
+          <span v-if="['帘布库出库计划','原材料出库计划','炭黑出库计划'].includes($route.meta.title)">{{ row.quality_status }}</span>
           <span v-else>{{ row.quality_level }}</span>
         </template>
       </el-table-column>
@@ -92,6 +92,7 @@
             :created-is="true"
             :options-list="optionsList"
             :raw-material="rawMaterial"
+            :druss-delivery="drussDelivery"
             @changSelect="selectStation($event,scope.$index)"
           />
         </template>
@@ -149,7 +150,7 @@ import receiveList from '../receive-good-manage/receive-list.vue'
 import EquipSelect from '@/components/EquipSelect'
 import materialCodeSelect from '@/components/select_w/materialCodeSelect'
 import { debounce } from '@/utils'
-import { stationInfo, stationInfoRawMaterial } from '@/api/warehouse'
+import { stationInfo, stationInfoRawMaterial, drussPlanManagementStations } from '@/api/warehouse'
 export default {
   components: { materialCodeSelect, EquipSelect, page, stationInfoWarehouse, receiveList },
   props: {
@@ -162,6 +163,10 @@ export default {
       default: null
     },
     rawMaterial: {
+      type: Boolean,
+      default: false
+    },
+    drussDelivery: {
       type: Boolean,
       default: false
     }
@@ -209,7 +214,7 @@ export default {
             let arr
             if (this.multipleSelection.length > 0) {
               arr = this.multipleSelection.filter(d =>
-                this.rawMaterial ? d.sn === D.sn : d.id === D.id)
+                (this.rawMaterial || this.drussDelivery) ? d.sn === D.sn : d.id === D.id)
             }
 
             if (arr.length > 0) {
@@ -233,6 +238,8 @@ export default {
         let _api
         if (this.rawMaterial) {
           _api = stationInfoRawMaterial
+        } else if (this.drussDelivery) {
+          _api = drussPlanManagementStations
         } else {
           _api = stationInfo
         }
@@ -311,7 +318,7 @@ export default {
             unit: D.unit,
             status: 4,
             warehouse_info: this.warehouseInfo,
-            quality_status: ['帘布库出库计划', '原材料出库计划'].includes(this.$route.meta.title) ? D.quality_status : D.quality_level,
+            quality_status: ['帘布库出库计划', '原材料出库计划', '炭黑出库计划'].includes(this.$route.meta.title) ? D.quality_status : D.quality_level,
             dispatch: D.dispatch || [],
             equip: D.equip || [],
             location: D.location,
@@ -335,7 +342,7 @@ export default {
       this.multipleSelection = val
     },
     getRowKeys(row) {
-      if (this.rawMaterial) {
+      if (this.rawMaterial || this.drussDelivery) {
         return row.sn
       } else {
         return row.id
@@ -368,7 +375,7 @@ export default {
       this.$set(this.tableData[index], 'equip', arr)
     },
     selectStation(obj, index) {
-      if (this.rawMaterial) {
+      if (this.rawMaterial || this.drussDelivery) {
         this.$set(this.tableData[index], 'station', obj ? obj.station : '')
         this.$set(this.tableData[index], 'station_no', obj ? obj.station_no : '')
       } else {
