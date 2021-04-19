@@ -12,6 +12,7 @@
           :start-using="true"
           :created-is="true"
           :raw-material="rawMaterial"
+          :druss-delivery="drussDelivery"
           :show="show"
           @changSelect="changSelectStation"
         />
@@ -33,11 +34,11 @@
       <el-form-item label="物料编码" prop="material_no">
         <materialCodeSelect :store-name="warehouseName" :status="ruleForm.quality_status" :default-val="ruleForm.material_no" @changSelect="materialCodeFun" />
       </el-form-item>
-      <el-form-item v-if="rawMaterial" label="库存余量" prop="c">
+      <el-form-item v-if="rawMaterial||drussDelivery" label="库存余量" prop="c">
         <!-- 按物料编码查到的 -->
         <el-input v-model="ruleForm.c" disabled />
       </el-form-item>
-      <el-form-item v-if="!rawMaterial" label="可用库存数" prop="c">
+      <el-form-item v-if="!rawMaterial&&!drussDelivery" label="可用库存数" prop="c">
         <!-- 按物料编码查到的 -->
         <el-input v-model="ruleForm.c" disabled />
       </el-form-item>
@@ -108,6 +109,10 @@ export default {
       }
     },
     rawMaterial: { // 是不是原材料
+      type: Boolean,
+      default: false
+    },
+    drussDelivery: { // 是不是炭黑
       type: Boolean,
       default: false
     },
@@ -225,7 +230,7 @@ export default {
     },
     materialCodeFun(val) {
       this.ruleForm.material_no = val.material_no || null
-      if (this.rawMaterial) {
+      if (this.rawMaterial || this.drussDelivery) {
         this.ruleForm.c = val.all_weight || null
       } else {
         this.ruleForm.c = val.all_qty || null
@@ -251,15 +256,15 @@ export default {
         } else {
           this.$set(this.ruleForm, 'dispatch', [])
         }
-        if (!this.ruleForm.need_qty && !this.rawMaterial) {
+        if (!this.ruleForm.need_qty && !this.rawMaterial && !this.drussDelivery) {
           this.$message.info('请输入需求数量!')
           return
         }
-        if (!this.ruleForm.need_weight && this.rawMaterial) {
+        if (!this.ruleForm.need_weight && (this.rawMaterial || this.drussDelivery)) {
           this.$message.info('请输入需求重量!')
           return
         }
-        if (this.rawMaterial) {
+        if (this.rawMaterial || this.drussDelivery) {
           if (this.ruleForm.c < this.ruleForm.need_weight) {
             this.$message.info('库存余量不足!')
             return
@@ -276,7 +281,7 @@ export default {
       }
     },
     changSelectStation(val) {
-      if (this.rawMaterial) {
+      if (this.rawMaterial || this.drussDelivery) {
         this.ruleForm.station = val ? val.station : ''
         this.ruleForm.station_no = val ? val.station_no : ''
         localStorage.setItem('ycl-station', JSON.stringify(val))

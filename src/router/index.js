@@ -41,6 +41,17 @@ export const constantRoutes = [{
   hidden: true
 },
 {
+  path: '/redirect',
+  component: Layout,
+  hidden: true,
+  children: [
+    {
+      path: '/redirect/:path(.*)',
+      component: () => import('@/views/redirect/index')
+    }
+  ]
+},
+{
   path: '/',
   redirect: '/home'
   // component: Layout,
@@ -546,8 +557,8 @@ export const asyncRoutes = [
           }
         }
       ]
-    }
-      /** {
+    },
+    {
       path: '/track',
       redirect: '/track-raw-material',
       component: {
@@ -578,8 +589,8 @@ export const asyncRoutes = [
           }
         }
       ]
-    },
-    {
+    }
+      /** {
       path: '/statistical-report',
       redirect: '/report/produce-work',
       component: {
@@ -755,6 +766,16 @@ export const asyncRoutes = [
         name: 'raw-material',
         meta: {
           title: '原材料出库计划',
+          icon: 'stock',
+          permissionName: ''
+        }
+      },
+      {
+        path: '/druss-delivery',
+        component: () => import('@/views/inventory/druss-delivery.vue'),
+        name: 'druss-delivery',
+        meta: {
+          title: '炭黑出库计划',
           icon: 'stock',
           permissionName: ''
         }
@@ -1504,8 +1525,8 @@ export const asyncRoutes = [
           title: '平台信息管理',
           permissionName: 'platform_config'
         }
-      }
-      /** {
+      },
+      {
         path: '/fault-day-statistics',
         component: () => import('@/views/quality_management/fault/fault-day-statistics'),
         name: 'fault-day-statistics',
@@ -1534,7 +1555,7 @@ export const asyncRoutes = [
           icon: 'quality',
           permissionName: ''
         }
-      }**/
+      }
     ]
   },
   {

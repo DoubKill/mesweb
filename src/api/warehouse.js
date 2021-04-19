@@ -45,6 +45,13 @@ export function stationInfoRawMaterial(params) {
     params
   })
 }
+export function drussPlanManagementStations(params) {
+  return request({
+    url: API.DrussPlanManagementStations,
+    method: 'get',
+    params
+  })
+}
 
 export function editStationInfo(method, id, data) {
   return request({
