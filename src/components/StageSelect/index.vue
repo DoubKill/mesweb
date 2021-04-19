@@ -34,6 +34,10 @@ export default {
       type: Boolean,
       default: false
     },
+    isDefault: {
+      type: Boolean,
+      default: false
+    },
     widthSelect: {
       type: String,
       default: ''
@@ -45,15 +49,22 @@ export default {
     }
   },
   created() {
-    this.getStageOptions()
+    if (this.isDefault) {
+      this.getStageOptions()
+    }
   },
   methods: {
     async getStageOptions() {
       const response = await stage_global_url('get')
       this.stageOptions = response.results
+      if (this.isDefault && this.stageOptions.length > 0 && this.isMultiple) {
+        const value = [this.stageOptions[0].global_name, this.stageOptions[1].global_name,
+          this.stageOptions[2].global_name, this.stageOptions[3].global_name]
+        this.$emit('change', value)
+      }
     },
     visibleChange(visible) {
-      if (visible) {
+      if (visible && !this.isDefault) {
         this.getStageOptions()
       }
     }
