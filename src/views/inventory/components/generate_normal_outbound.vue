@@ -32,7 +32,7 @@
         </el-select>
       </el-form-item>
       <div>
-        <el-form-item v-if="['帘布库出库计划','炭黑出库计划'].includes($route.meta.title)" label="物料名称" prop="material_no">
+        <el-form-item v-if="['帘布库出库计划','炭黑出库计划','原材料出库计划'].includes($route.meta.title)" label="物料名称" prop="material_no">
           <materialCodeSelect label-show="material_name" :store-name="warehouseName" :status="ruleForm.quality_status" :default-val="ruleForm.material_no" @changSelect="materialCodeFun" />
         </el-form-item>
         <el-form-item v-else label="物料编码" prop="material_no">
