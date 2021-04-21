@@ -6,7 +6,15 @@
         {{ warehouseName }}
         <!-- <warehouseSelect @changSelect="warehouseSelect" /> -->
       </el-form-item>
-      <el-form-item label="物料编码">
+      <el-form-item v-if="['帘布库出库计划','炭黑出库计划'].includes($route.meta.title)" label="物料名称">
+        <materialCodeSelect
+          :store-name="warehouseName"
+          :is-clearable="true"
+          label-show="material_name"
+          @changSelect="materialCodeFun"
+        />
+      </el-form-item>
+      <el-form-item v-else label="物料编码">
         <materialCodeSelect
           :store-name="warehouseName"
           :is-clearable="true"
@@ -54,13 +62,14 @@
       <!-- <el-table-column label="No" type="index" align="center" /> -->
       <el-table-column label="物料类型" align="center" prop="material_type" />
       <el-table-column label="物料编码" align="center" prop="material_no" />
+      <el-table-column v-if="['帘布库出库计划','炭黑出库计划'].includes($route.meta.title)" label="物料名称" align="center" prop="material_name" />
       <el-table-column label="lot" align="center" prop="lot_no" />
       <el-table-column label="托盘号" align="center" prop="container_no" />
       <el-table-column label="库存位" align="center" prop="location" />
       <el-table-column
         v-if="warehouseName === '终炼胶库'"
         width="60"
-        label="车次"
+        label="车数"
         align="center"
         prop=""
       >
@@ -80,7 +89,8 @@
       </el-table-column>
       <el-table-column label="入库时间" align="center" prop="in_storage_time" />
       <el-table-column v-if="!['原材料出库计划'].includes($route.meta.title)" label="机台号" width="50" align="center" prop="equip_no" />
-      <el-table-column v-if="!['原材料出库计划'].includes($route.meta.title)" label="车号" align="center" prop="memo" />
+      <el-table-column v-if="!['原材料出库计划','终炼胶出库计划'].includes($route.meta.title)" label="车号" align="center" prop="memo" />
+      <el-table-column v-if="['终炼胶出库计划'].includes($route.meta.title)" label="车次" align="center" prop="memo" />
       <el-table-column label="货位状态" align="center" prop="location_status" />
       <el-table-column label="出库口选择" align="center">
         <template slot-scope="scope">
@@ -292,10 +302,6 @@ export default {
         this.creadVal()
         this.$emit('visibleMethod')
       } else {
-        // if (!this.getParams.station) {
-        //   this.$message.info('请选择仓库位置！')
-        //   return
-        // }
         if (this.multipleSelection.length === 0) {
           this.$message.info('请选择物料！')
           return
@@ -313,6 +319,7 @@ export default {
             need_qty: D.qty,
             need_weight: D.total_weight,
             material_no: D.material_no,
+            material_name: D.material_name,
             inventory_type: '指定出库',
             inventory_reason: D.inventory_reason,
             unit: D.unit,

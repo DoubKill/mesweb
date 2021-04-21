@@ -13,10 +13,11 @@
         </el-select>
       </el-form-item>
       <el-form-item label="段次表头过滤:">
-        <stage-select v-model="stageVal" :is-multiple="true" width-select="400px" />
+        <stage-select v-model="stageVal" :is-multiple="true" :is-default="true" width-select="400px" @change="stageChange" />
       </el-form-item>
     </el-form>
     <el-table
+      v-loading="loading"
       :data="tableData"
       border
     >
@@ -26,37 +27,53 @@
         width="50"
       />
       <el-table-column
-        prop="date"
         label="胶种类"
         min-width="10"
-      />
+      >
+        <template slot-scope="{row}">
+          <span v-if="false"> {{ row }}</span>
+          {{ search.no }}
+        </template>
+      </el-table-column>
       <el-table-column label="立库各段位库存">
         <el-table-column
-          prop="name"
-          label="HMB"
+          v-for="item in stageVal"
+          :key="item.id"
+          :label="item+'(车/吨)'"
           min-width="10"
-        />
+        >
+          <template v-if="row.subject[item]" slot-scope="{row}">
+            {{ row.subject[item].qty }}/
+            {{ row.subject[item].weight }}
+          </template>
+        </el-table-column>
       </el-table-column>
       <el-table-column label="车间各段位库存">
         <el-table-column
-          prop="name"
-          label="HMB"
+          v-for="item in stageVal"
+          :key="item.id"
+          :label="item+'(车/吨)'"
           min-width="10"
-        />
+        >
+          <template v-if="row.edge[item]" slot-scope="{row}">
+            {{ row.edge[item].qty }}/
+            {{ row.edge[item].weight }}
+          </template>
+        </el-table-column>
       </el-table-column>
       <el-table-column
-        prop="date"
+        prop="error"
         label="不合格(加硫)"
         min-width="10"
       />
       <el-table-column label="核算">
         <el-table-column
-          prop="name"
+          prop="fm_all"
           label="加硫(吨)"
           min-width="10"
         />
         <el-table-column
-          prop="name"
+          prop="ufm_all"
           label="无硫(吨)"
           min-width="10"
         />
@@ -66,7 +83,7 @@
 </template>
 
 <script>
-// import { productStationStatics } from '@/api/base_w_three'
+import { productStationStatics } from '@/api/base_w_three'
 import { productInfosUrl } from '@/api/base_w'
 import StageSelect from '@/components/StageSelect'
 export default {
@@ -77,26 +94,61 @@ export default {
       stageVal: '',
       options: [],
       tableData: [],
-      allTableData: []
+      allTableData: [],
+      stageList: [],
+      loading: true
     }
   },
   created() {
     this.getGlue()
   },
   methods: {
-    async getGlue() {
+    getGlue() {
+      const app = this
+      productInfosUrl('get', null, {
+        params: { all: 1 }
+      }).then(function(response) {
+        app.options = response.results
+        app.search.no = app.options[0].product_no
+        app.getList()
+      }).catch(function() {
+        this.loading = false
+      })
+    },
+    async getList() {
       try {
-        const app = this
-        productInfosUrl('get', null, {
-          params: { all: 1 }
-        }).then(function(response) {
-          app.options = response.results
-        }).catch(function() {
-        })
-        // const data = await productStationStatics('get', null, { params: { name: '胶种' }})
-        // this.tableData = data.results
+        this.loading = true
+        const data = await productStationStatics('get', null, { params: { name: this.search.no }})
+        this.tableData = data.results
+        this.loading = false
+        // this.tableData = [{
+        //   'subject': {
+        //     'HMB': {
+        //       'weight': 6.5143,
+        //       'qty': 20.0
+        //     },
+        //     '1MB': {
+        //       'weight': 26.2947,
+        //       'qty': 74.0
+        //     },
+        //     'FM': {
+        //       'weight': 2.7958,
+        //       'qty': 8.0
+        //     }
+        //   },
+        //   'edge': {},
+        //   'error': 0,
+        //   'fm_all': 2.7958,
+        //   'ufm_all': 32.809,
+        //   'edge_titles': [],
+        //   'main_titles': [
+        //     'HMB',
+        //     '1MB',
+        //     'FM'
+        //   ]
+        // }]
       } catch (e) {
-        //
+        this.loading = false
       }
     },
     productBatchingChanged(val) {
@@ -105,6 +157,9 @@ export default {
     //   this.search.page = 1
     },
     visibleChange() {
+      this.getList()
+    },
+    stageChange() {
 
     }
   }

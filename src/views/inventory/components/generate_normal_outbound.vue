@@ -31,9 +31,14 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="物料编码" prop="material_no">
-        <materialCodeSelect :store-name="warehouseName" :status="ruleForm.quality_status" :default-val="ruleForm.material_no" @changSelect="materialCodeFun" />
-      </el-form-item>
+      <div>
+        <el-form-item v-if="['帘布库出库计划','炭黑出库计划'].includes($route.meta.title)" label="物料名称" prop="material_no">
+          <materialCodeSelect label-show="material_name" :store-name="warehouseName" :status="ruleForm.quality_status" :default-val="ruleForm.material_no" @changSelect="materialCodeFun" />
+        </el-form-item>
+        <el-form-item v-else label="物料编码" prop="material_no">
+          <materialCodeSelect :store-name="warehouseName" :status="ruleForm.quality_status" :default-val="ruleForm.material_no" @changSelect="materialCodeFun" />
+        </el-form-item>
+      </div>
       <el-form-item v-if="rawMaterial||drussDelivery" label="库存余量" prop="c">
         <!-- 按物料编码查到的 -->
         <el-input v-model="ruleForm.c" disabled />
@@ -230,6 +235,9 @@ export default {
     },
     materialCodeFun(val) {
       this.ruleForm.material_no = val.material_no || null
+      if (val.material_name) {
+        this.ruleForm.material_name = val.material_name || null
+      }
       if (this.rawMaterial || this.drussDelivery) {
         this.ruleForm.c = val.all_weight || null
       } else {
