@@ -12,8 +12,8 @@
       @change="changSelect"
     >
       <el-option
-        v-for="item in options"
-        :key="item.material_no"
+        v-for="(item,i) in options"
+        :key="i"
         :label="item.label"
         :value="item.material_no"
       />

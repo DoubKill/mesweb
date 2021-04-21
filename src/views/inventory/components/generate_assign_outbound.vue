@@ -6,7 +6,7 @@
         {{ warehouseName }}
         <!-- <warehouseSelect @changSelect="warehouseSelect" /> -->
       </el-form-item>
-      <el-form-item v-if="['帘布库出库计划','炭黑出库计划'].includes($route.meta.title)" label="物料名称">
+      <el-form-item v-if="['帘布库出库计划','炭黑出库计划','原材料出库计划'].includes($route.meta.title)" label="物料名称">
         <materialCodeSelect
           :store-name="warehouseName"
           :is-clearable="true"
@@ -62,7 +62,7 @@
       <!-- <el-table-column label="No" type="index" align="center" /> -->
       <el-table-column label="物料类型" align="center" prop="material_type" />
       <el-table-column label="物料编码" align="center" prop="material_no" />
-      <el-table-column v-if="['帘布库出库计划','炭黑出库计划'].includes($route.meta.title)" label="物料名称" align="center" prop="material_name" />
+      <el-table-column v-if="['帘布库出库计划','炭黑出库计划','原材料出库计划'].includes($route.meta.title)" label="物料名称" align="center" prop="material_name" />
       <el-table-column label="lot" align="center" prop="lot_no" />
       <el-table-column label="托盘号" align="center" prop="container_no" />
       <el-table-column label="库存位" align="center" prop="location" />
