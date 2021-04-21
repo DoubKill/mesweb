@@ -108,8 +108,9 @@ export default {
     if (this.createdIs) {
       if (this.optionsList.length > 0) {
         this.options = this.optionsList
+      } else {
+        this.getList()
       }
-      this.getList()
     }
   },
   methods: {
