@@ -120,6 +120,7 @@ export const asyncRoutes = [
     path: '/home',
     component: Layout,
     redirect: '/homePage',
+    name: 'home',
     meta: {
       title: '首页',
       icon: 'el-icon-s-home'
@@ -275,6 +276,16 @@ export const asyncRoutes = [
         title: '原材料基础信息',
         icon: 'formula',
         permissionName: 'material'
+      }
+    },
+    {
+      path: '/material-info-mapping',
+      component: () => import('@/views/quality_management/material-info-mapping/material-info-mapping'),
+      name: 'material-info-mapping',
+      meta: {
+        title: 'mes与子系统物料信息映射',
+        icon: 'formula',
+        permissionName: 'material_map'
       }
     },
     {
@@ -1078,16 +1089,6 @@ export const asyncRoutes = [
             }
           }
         ]
-      },
-      {
-        path: '/material-info-mapping',
-        component: () => import('@/views/quality_management/material-info-mapping/material-info-mapping'),
-        name: 'material-info-mapping',
-        meta: {
-          title: 'mes与子系统物料信息映射',
-          icon: 'quality',
-          permissionName: 'material_map'
-        }
       },
       {
         path: '/barcode-change',
