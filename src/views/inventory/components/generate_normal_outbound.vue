@@ -56,12 +56,15 @@
           controls-position="right"
           :max="ruleForm.c"
           :min="0"
+          step-strictly
+          @change="changeNeedQty"
         />
       </el-form-item>
       <el-form-item label="需求重量">
         <el-input-number
           v-model="ruleForm.need_weight"
           controls-position="right"
+          :disabled="!rawMaterial&&!drussDelivery"
           :precision="3"
           :min="0"
         />
@@ -235,13 +238,21 @@ export default {
     },
     materialCodeFun(val) {
       this.ruleForm.material_no = val.material_no || null
+      this.ruleForm.all_weight = val.all_weight || null
       if (val.material_name) {
         this.ruleForm.material_name = val.material_name || null
       }
+
       if (this.rawMaterial || this.drussDelivery) {
         this.ruleForm.c = val.all_weight || null
       } else {
         this.ruleForm.c = val.all_qty || null
+        const a = (val.all_weight / val.all_qty).toFixed(2)
+        if (this.ruleForm.c === this.ruleForm.need_qty) {
+          this.ruleForm.need_weight = this.ruleForm.all_weight
+          return
+        }
+        this.ruleForm.need_weight = this.ruleForm.need_qty * a
       }
 
       if (this.$refs.receiveList) {
@@ -249,6 +260,17 @@ export default {
       }
       this.ruleForm.deliveryPlan = ''
       this.handleSelection = []
+    },
+    changeNeedQty() {
+      if (!this.rawMaterial && !this.drussDelivery) {
+        const a = (this.ruleForm.all_weight / this.ruleForm.c).toFixed(2)
+
+        if (this.ruleForm.c === this.ruleForm.need_qty) {
+          this.ruleForm.need_weight = this.ruleForm.all_weight
+          return
+        }
+        this.ruleForm.need_weight = this.ruleForm.need_qty * a
+      }
     },
     visibleMethod(bool) {
       if (bool) {
