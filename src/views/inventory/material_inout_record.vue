@@ -44,13 +44,13 @@
         </el-select>
       </el-form-item>
       <el-form-item label="仓库名称">
-        <warehouseSelect :is-clear="true" @changSelect="warehouseSelectFun" />
+        <warehouseSelect :created-is="true" @changSelect="warehouseSelectFun" />
       </el-form-item>
       <el-form-item label="物料编码">
-        <el-input v-model="search.material_no" @input="changeList" />
+        <el-input v-model="search.material_no" @input="debounceList" />
       </el-form-item>
       <el-form-item label="出入库单号">
-        <el-input v-model="search.order_no" @input="changeList" />
+        <el-input v-model="search.order_no" @input="debounceList" />
       </el-form-item>
     </el-form>
     <el-table
@@ -62,7 +62,7 @@
       <el-table-column label="类型" align="center" prop="order_type" width="50" />
       <el-table-column label="出入库单号" align="center" prop="order_no" />
       <!-- <el-table-column label="仓库类型" align="center" prop="warehouse_type" /> -->
-      <el-table-column label="仓库名称" align="center" prop="warehouse_name" />
+      <!-- <el-table-column  label="仓库名称" align="center" prop="warehouse_name" /> -->
       <el-table-column label="托盘号" align="center" prop="pallet_no" />
       <el-table-column label="机台" align="center">
         <template v-if="row.product_info" slot-scope="{row}">
@@ -87,7 +87,11 @@
       <el-table-column label="重量" align="center" prop="weight" width="80" />
       <el-table-column label="发起人" align="center" prop="initiator" width="80" />
       <el-table-column label="发起时间" align="center" prop="start_time" />
-      <el-table-column label="完成时间" align="center" prop="fin_time" />
+      <el-table-column
+        label="完成时间"
+        align="center"
+        prop="fin_time"
+      />
     </el-table>
     <page
       :total="total"
@@ -100,7 +104,7 @@
 import { inventoryLog } from '@/api/base_w'
 import page from '@/components/page'
 import warehouseSelect from '@/components/select_w/warehouseSelect'
-import { setDate } from '@/utils'
+import { setDate, debounce } from '@/utils'
 export default {
   components: { page, warehouseSelect },
   data() {
@@ -120,9 +124,10 @@ export default {
   created() {
     this.search.start_time = setDate(null, true)
     this.search.end_time = setDate(null, true)
-    this.getList()
+    // this.getList()
   },
   methods: {
+    setDate,
     async getList() {
       try {
         this.loading = true
@@ -152,6 +157,10 @@ export default {
     changeList() {
       this.search.page = 1
       this.getList()
+    },
+    debounceList() {
+      this.search.page = 1
+      debounce(this, 'getList')
     }
   }
 }

@@ -179,6 +179,10 @@ export default {
     drussDelivery: {
       type: Boolean,
       default: false
+    },
+    show: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -206,6 +210,18 @@ export default {
     }
   },
   computed: {
+  },
+  watch: {
+    show(bool) {
+      if (bool) {
+        this.getParams = {
+          location_status: '有货货位',
+          warehouse_name: this.warehouseName
+        }
+        this.tableData = []
+        this.getTableData()
+      }
+    }
   },
   created() {
     this.getTableData()
