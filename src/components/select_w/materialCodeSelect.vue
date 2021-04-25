@@ -4,7 +4,7 @@
     <el-select
       v-model="value"
       filterable
-      placeholder="请选择物料编码"
+      placeholder="请选择"
       :loading="loading"
       :clearable="isClearable"
       :allow-create="isAllowCreate"
@@ -12,9 +12,9 @@
       @change="changSelect"
     >
       <el-option
-        v-for="item in options"
-        :key="item.material_no"
-        :label="item.material_no"
+        v-for="(item,i) in options"
+        :key="i"
+        :label="item.label"
         :value="item.material_no"
       />
     </el-select>
@@ -45,6 +45,10 @@ export default {
     storeName: {
       type: String,
       default: null
+    },
+    labelShow: { // label取值
+      type: String,
+      default: 'material_no'
     },
     status: {
       type: String,
@@ -83,6 +87,16 @@ export default {
       try {
         this.loading = true
         const data = await materialCount('get', null, { params: { store_name: this.storeName, status: this.status }})
+        if (this.labelShow === 'material_name') {
+          data.forEach(d => {
+            d.label = d.material_name + ' / ' + d.material_no
+          })
+        } else {
+          data.forEach(d => {
+            d.label = d.material_no
+          })
+        }
+
         this.options = data || []
         this.loading = false
       } catch (e) {

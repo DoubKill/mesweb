@@ -152,6 +152,10 @@ export default {
   MaterialPlanManagement: '/api/v1/inventory/material-plan-management/',
   // 原材料出库口
   MaterialPlanManagementStations: '/api/v1/inventory/material-plan-management/stations/',
+  // 炭黑出库计划
+  DrussPlanManagement: '/api/v1/inventory/carbon-plan-management/',
+  // 炭黑出库口
+  DrussPlanManagementStations: '/api/v1/inventory/carbon-plan-management/stations/',
 
   // 物料属性管理
   materialsAttribute: '/api/v1/recipe/materials-attribute/',
@@ -315,5 +319,6 @@ export default {
   MonthErrorStatistics: '/api/v1/equipment/month-error-statistics/',
   MonthErrorSort: '/api/v1/equipment/month-error-sort/',
 
-  BarcodePreview: '/api/v1/quality/barcode-preview/'
+  BarcodePreview: '/api/v1/quality/barcode-preview/',
+  ProductStationStatics: '/api/v1/inventory/product-station-statics/'
 }

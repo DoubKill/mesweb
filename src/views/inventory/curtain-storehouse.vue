@@ -9,7 +9,8 @@
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
-          value-format="yyyy-MM-dd"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          :default-time="['00:00:00', '23:59:59']"
           @change="changeDate"
         />
       </el-form-item>
@@ -52,37 +53,39 @@
     <el-table
       border
       :data="tableData"
+      size="mini"
     >
-      <el-table-column label="No" type="index" align="center" width="40" />
-      <el-table-column label="仓库名称" align="center" prop="name" />
-      <el-table-column label="出库类型" align="center" prop="inventory_type" width="80" />
-      <el-table-column label="出库单号" align="center" prop="order_no" />
-      <el-table-column label="托盘号" align="center" prop="pallet_no" />
-      <el-table-column label="物料编码" align="center" prop="material_no" />
-      <el-table-column label="出库原因" align="center" prop="inventory_reason" width="80" />
-      <el-table-column label="需求数量" align="center" prop="need_qty" width="60" />
-      <el-table-column label="出库数量" align="center" prop="actual.actual_qty" />
-      <el-table-column label="实际出库重量" align="center" prop="actual.actual_wegit" />
-      <el-table-column label="单位" align="center" prop="unit" width="60" />
-      <el-table-column label="需求重量" align="center" prop="need_weight" />
-      <el-table-column label="出库位置" align="center" prop="station" />
+      <el-table-column label="No" type="index" align="center" width="30" />
+      <el-table-column label="仓库名称" align="center" prop="name" min-width="20" />
+      <el-table-column label="出库类型" align="center" prop="inventory_type" min-width="20" />
+      <el-table-column label="出库单号" align="center" prop="order_no" min-width="20" />
+      <el-table-column label="托盘号" align="center" prop="pallet_no" min-width="20" />
+      <el-table-column label="物料编码" align="center" prop="material_no" min-width="20" />
+      <el-table-column label="物料名称" align="center" prop="material_name" min-width="20" />
+      <el-table-column label="出库原因" align="center" prop="inventory_reason" min-width="20" />
+      <el-table-column label="需求数量" align="center" prop="need_qty" min-width="20" />
+      <el-table-column label="出库数量" align="center" prop="actual.actual_qty" min-width="20" />
+      <el-table-column label="实际出库重量" align="center" prop="actual.actual_wegit" min-width="20" />
+      <el-table-column label="单位" align="center" prop="unit" min-width="20" />
+      <el-table-column label="需求重量" align="center" prop="need_weight" min-width="20" />
+      <el-table-column label="出库位置" align="center" prop="station" min-width="20" />
       <el-table-column label="操作" align="center" width="220">
         <template v-if="scope.row.status === 4" slot-scope="scope">
           <el-button-group>
             <el-button v-permission="['LB_inventory_plan','manual']" size="mini" type="primary" @click="manualDelivery(scope.row)">人工出库</el-button>
-            <el-button v-permission="['LB_inventory_plan','change']" size="mini" type="warning" @click="demandQuantity(scope.$index,scope.row)">编辑</el-button>
+            <!-- <el-button v-permission="['LB_inventory_plan','change']" size="mini" type="warning" @click="demandQuantity(scope.$index,scope.row)">编辑</el-button> -->
             <el-button v-permission="['LB_inventory_plan','close']" size="mini" type="info" @click="closePlan(scope.$index,scope.row)">关闭</el-button>
           </el-button-group>
         </template>
       </el-table-column>
-      <el-table-column label="订单状态" align="center" prop="">
+      <el-table-column label="订单状态" align="center" prop="" min-width="20">
         <template slot-scope="{row}">
           {{ setOperation(row.status) }}
         </template>
       </el-table-column>
-      <el-table-column label="发起人" align="center" prop="created_user" />
-      <el-table-column label="发起时间" align="center" prop="created_date" />
-      <el-table-column label="完成时间" align="center" prop="finish_time" />
+      <el-table-column label="发起人" align="center" prop="created_user" min-width="20" />
+      <el-table-column label="发起时间" align="center" prop="created_date" min-width="20" />
+      <el-table-column label="完成时间" align="center" prop="finish_time" min-width="20" />
     </el-table>
     <page
       :total="total"
@@ -116,6 +119,7 @@
         ref="assignOutbound"
         :warehouse-name="warehouseName"
         :warehouse-info="warehouseInfo"
+        :show="assignOutboundDialogVisible"
         @visibleMethod="visibleMethodNormal"
         @visibleMethodSubmit="visibleMethodAssignSubmit"
       />
@@ -176,7 +180,7 @@ export default {
     const oneDate = start.getTime() + 3600 * 1000 * 24
     this.search.st = setDate()
     this.search.et = setDate(oneDate)
-    this.dateSearch = [this.search.st, this.search.et]
+    this.dateSearch = [this.search.st + ' 00:00:00', this.search.et + ' 23:59:59']
 
     this.getListWrehouseInfo()
     this.getList()
@@ -321,6 +325,7 @@ export default {
         this.getList()
       }).catch(() => {
         this.loading = false
+        this.getList()
       })
     },
     demandQuantity(index, row) {

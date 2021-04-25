@@ -389,6 +389,14 @@ export function materialPlanManagement(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function drussPlanManagement(method, id, data = {}) {
+  const obj = {
+    url: id ? API.DrussPlanManagement + id + '/' : API.DrussPlanManagement,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 
 export function materialCount(method, id, data = {}) {
   const obj = {

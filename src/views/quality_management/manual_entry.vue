@@ -130,17 +130,22 @@
                 v-if="itemChild.name"
                 slot-scope="scope"
               >
-                <el-input-number
-                  v-if="commandList(itemTa.test_indicator).length===0
-                    &&scope.row._list[itemTa.test_indicator]
+                <el-input
+                  v-if="scope.row._list[itemTa.test_indicator]
                     &&scope.row._list[itemTa.test_indicator][itemChild.name]"
+                  :ref="'elInputNumber'+scope.$index"
                   v-model="scope.row._list[itemTa.test_indicator][itemChild.name].value"
                   controls-position="right"
-                  :min="0"
-                  :step="itemTa.test_indicator==='比重'?0.02:1"
-                  @change="detectionValue(scope.row,scope.$index,scope.row._list,itemTa.test_indicator)"
+                  :label="itemTa.test_indicator+'-'+itemChild.name"
+                  @keyup.38.native.prevent="upKeyFun(scope.row,scope.$index,indexChild,itemTa.test_indicator+'-'+itemChild.name)"
+                  @keyup.40.native.prevent="downKeyFun(scope.row,scope.$index,indexChild,itemTa.test_indicator+'-'+itemChild.name)"
+                  @change="detectionValue(scope.row,scope.$index,scope.row._list,itemTa.test_indicator,itemChild.name)"
                 />
-                <el-dropdown
+                <!-- type="number"
+                :step="itemTa.test_indicator==='比重'?0.02:1" -->
+
+                <!-- 37左 38上 39右 40下 -->
+                <!-- <el-dropdown
                   v-if="commandList(itemTa.test_indicator).length>0"
                   trigger="click"
                   @command="handleCommand($event,scope.$index,scope.row._list,itemTa.test_indicator,itemChild.name,scope.row)"
@@ -157,7 +162,7 @@
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item v-for="(itemCommand,indexCommand) in commandList(itemTa.test_indicator)" :key="indexCommand" style="width:150px" :command="itemCommand">{{ itemCommand }}</el-dropdown-item>
                   </el-dropdown-menu>
-                </el-dropdown>
+                </el-dropdown> -->
 
                 <!-- <el-input
                   v-if="scope.row._list[itemTa.test_indicator]
@@ -182,8 +187,11 @@
       <el-table-column key="2" label="备注">
         <template slot-scope="scope">
           <el-input
+            :ref="'noteInput'+scope.$index"
             v-model="scope.row.note"
             placeholder="请输入内容"
+            @keyup.38.native.prevent="upKeyFun(scope.row,scope.$index)"
+            @keyup.40.native.prevent="downKeyFun(scope.row,scope.$index)"
           />
         </template>
       </el-table-column>
@@ -235,10 +243,9 @@ export default {
       search: {
         ShiftRules: '',
         factory_date: setDate(),
-        // factory_date: '2021-1-16',
         equip_no: '', // Z02
         classes: '', // 早班
-        product_no: ''
+        product_no: '' // C-FM-K504-10
       },
       tableData: [],
       tableDataStyle: [],
@@ -319,6 +326,36 @@ export default {
       this.search.page = page
       this.getList()
     },
+    upKeyFun(row, index, indexChild, label) {
+      if (!label) {
+        // 备注
+        if (this.$refs['noteInput' + (index - 1)]) {
+          const noteInput = (this.$refs['noteInput' + (index - 1)])
+          noteInput.focus()
+        }
+        return
+      }
+      if (this.$refs['elInputNumber' + (index - 1)]) {
+        const dom = (this.$refs['elInputNumber' + (index - 1)])
+        const objDom = dom.filter(d => d.label === label)
+        objDom[0].focus()
+      }
+    },
+    downKeyFun(row, index, indexChild, label) {
+      if (!label) {
+        // 备注
+        if (this.$refs['noteInput' + (index + 1)]) {
+          const noteInput = (this.$refs['noteInput' + (index + 1)])
+          noteInput.focus()
+        }
+        return
+      }
+      if (this.$refs['elInputNumber' + (index + 1)]) {
+        const dom = (this.$refs['elInputNumber' + (index + 1)])
+        const objDom = dom.filter(d => d.label === label)
+        objDom[0].focus()
+      }
+    },
     pageOne() {
       this.getTableDataChild()
       this.tableDataStyle.forEach(D => {
@@ -395,7 +432,9 @@ export default {
         return []
       }
     },
-    detectionValue(row, index, list, test_indicator) {
+    detectionValue(row, index, list, test_indicator, name) {
+      row._list[test_indicator][name].value = clearNoNum(row._list[test_indicator][name])
+
       const a = localStorage.getItem('detectionValue')
       const obj = a ? JSON.parse(a) : {}
       const arr = JSON.stringify(obj) !== '{}' && obj[test_indicator] ? obj[test_indicator] : []
@@ -567,6 +606,32 @@ function setDataChild(_this, row) {
     _this.$set(dd, '_list', ccc)
   })
 }
+function clearNoNum(obj) {
+  // 正数
+  // 先把非数字的都替换掉，除了数字和.
+  obj.value = obj.value.replace(/[^\d.]/g, '')
+  // 保证只有出现一个.而没有多个.
+  obj.value = obj.value.replace(/\.{2,}/g, '.')
+  // 必须保证第一个为数字而不是.
+  obj.value = obj.value.replace(/^\./g, '')
+  // 保证.只出现一次，而不能出现两次以上
+  obj.value = obj.value.replace('.', '$#$').replace(/\./g, '').replace('$#$', '.')
+  // // 只能输入两个小数
+  // obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d\d\d).*$/, '$1$2.$3')
+  // 如果没有小数点，首位不能为类似于 01、02的金额
+  if (obj.value.indexOf('.') < 0 && obj.value !== '') {
+    obj.value = parseFloat(obj.value)
+  }
+  obj.value = obj.value.toString()
+  // 如果第一位是0，第二位不是点，就用数字把点替换掉
+  var len1 = obj.value.substr(0, 1)
+  var len2 = obj.value.substr(1, 1)
+  if (obj.value.length > 1 && Number(len1) === 0 && len2 !== '.') {
+    obj.value = obj.value.substr(1, 1)
+  }
+
+  return Number(obj.value)
+}
 </script>
 
 <style lang="scss">
@@ -600,6 +665,13 @@ $border-weight: 1px;
   .el-input-number{
     width:auto;
   }
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button{
+   -webkit-appearance: none !important;
+   margin: 0;
+}
+input[type="number"]{-moz-appearance:textfield;}
 }
 
 </style>

@@ -9,10 +9,11 @@
       @click="handleClickOutside"
     />
     <sidebar class="sidebar-container" />
-    <div class="main-container">
+    <div :class="{hasTagsView:needTagsView}" class="main-container">
       <div :class="{'fixed-header':fixedHeader}">
         <TopNavber />
         <navbar />
+        <tags-view v-if="needTagsView" />
       </div>
       <app-main />
     </div>
@@ -20,7 +21,7 @@
 </template>
 
 <script>
-import { Navbar, Sidebar, AppMain, TopNavber } from './components'
+import { Navbar, Sidebar, AppMain, TopNavber, TagsView } from './components'
 import ResizeMixin from './mixin/ResizeHandler'
 
 export default {
@@ -29,10 +30,14 @@ export default {
     Navbar,
     Sidebar,
     AppMain,
-    TopNavber
+    TopNavber,
+    TagsView
   },
   mixins: [ResizeMixin],
   computed: {
+    needTagsView() {
+      return this.$store.state.settings.tagsView
+    },
     sidebar() {
       return this.$store.state.app.sidebar
     },
@@ -63,6 +68,16 @@ export default {
   @import "~@/styles/mixin.scss";
   @import "~@/styles/variables.scss";
 
+  .hasTagsView {
+    .app-main {
+      /* 84 = navbar + tags-view = 50 + 34 */
+      min-height: calc(100vh - 84px);
+    }
+
+    .fixed-header+.app-main {
+      padding-top: 84px;
+    }
+  }
   .app-wrapper {
     @include clearfix;
     position: relative;

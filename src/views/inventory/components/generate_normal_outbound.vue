@@ -12,6 +12,7 @@
           :start-using="true"
           :created-is="true"
           :raw-material="rawMaterial"
+          :druss-delivery="drussDelivery"
           :show="show"
           @changSelect="changSelectStation"
         />
@@ -30,14 +31,19 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="物料编码" prop="material_no">
-        <materialCodeSelect :store-name="warehouseName" :status="ruleForm.quality_status" :default-val="ruleForm.material_no" @changSelect="materialCodeFun" />
-      </el-form-item>
-      <el-form-item v-if="rawMaterial" label="库存余量" prop="c">
+      <div>
+        <el-form-item v-if="['帘布库出库计划','炭黑出库计划','原材料出库计划'].includes($route.meta.title)" label="物料名称" prop="material_no">
+          <materialCodeSelect label-show="material_name" :store-name="warehouseName" :status="ruleForm.quality_status" :default-val="ruleForm.material_no" @changSelect="materialCodeFun" />
+        </el-form-item>
+        <el-form-item v-else label="物料编码" prop="material_no">
+          <materialCodeSelect :store-name="warehouseName" :status="ruleForm.quality_status" :default-val="ruleForm.material_no" @changSelect="materialCodeFun" />
+        </el-form-item>
+      </div>
+      <el-form-item v-if="rawMaterial||drussDelivery" label="库存余量" prop="c">
         <!-- 按物料编码查到的 -->
         <el-input v-model="ruleForm.c" disabled />
       </el-form-item>
-      <el-form-item v-if="!rawMaterial" label="可用库存数" prop="c">
+      <el-form-item v-if="!rawMaterial&&!drussDelivery" label="可用库存数" prop="c">
         <!-- 按物料编码查到的 -->
         <el-input v-model="ruleForm.c" disabled />
       </el-form-item>
@@ -50,12 +56,15 @@
           controls-position="right"
           :max="ruleForm.c"
           :min="0"
+          step-strictly
+          @change="changeNeedQty"
         />
       </el-form-item>
       <el-form-item label="需求重量">
         <el-input-number
           v-model="ruleForm.need_weight"
           controls-position="right"
+          :disabled="!rawMaterial&&!drussDelivery"
           :precision="3"
           :min="0"
         />
@@ -108,6 +117,10 @@ export default {
       }
     },
     rawMaterial: { // 是不是原材料
+      type: Boolean,
+      default: false
+    },
+    drussDelivery: { // 是不是炭黑
       type: Boolean,
       default: false
     },
@@ -225,10 +238,21 @@ export default {
     },
     materialCodeFun(val) {
       this.ruleForm.material_no = val.material_no || null
-      if (this.rawMaterial) {
+      this.ruleForm.all_weight = val.all_weight || null
+      if (val.material_name) {
+        this.ruleForm.material_name = val.material_name || null
+      }
+
+      if (this.rawMaterial || this.drussDelivery) {
         this.ruleForm.c = val.all_weight || null
       } else {
         this.ruleForm.c = val.all_qty || null
+        const a = (val.all_weight / val.all_qty).toFixed(2)
+        if (this.ruleForm.c === this.ruleForm.need_qty) {
+          this.ruleForm.need_weight = this.ruleForm.all_weight
+          return
+        }
+        this.ruleForm.need_weight = this.ruleForm.need_qty * a
       }
 
       if (this.$refs.receiveList) {
@@ -236,6 +260,17 @@ export default {
       }
       this.ruleForm.deliveryPlan = ''
       this.handleSelection = []
+    },
+    changeNeedQty() {
+      if (!this.rawMaterial && !this.drussDelivery) {
+        const a = (this.ruleForm.all_weight / this.ruleForm.c).toFixed(2)
+
+        if (this.ruleForm.c === this.ruleForm.need_qty) {
+          this.ruleForm.need_weight = this.ruleForm.all_weight
+          return
+        }
+        this.ruleForm.need_weight = this.ruleForm.need_qty * a
+      }
     },
     visibleMethod(bool) {
       if (bool) {
@@ -251,15 +286,15 @@ export default {
         } else {
           this.$set(this.ruleForm, 'dispatch', [])
         }
-        if (!this.ruleForm.need_qty && !this.rawMaterial) {
+        if (!this.ruleForm.need_qty && !this.rawMaterial && !this.drussDelivery) {
           this.$message.info('请输入需求数量!')
           return
         }
-        if (!this.ruleForm.need_weight && this.rawMaterial) {
+        if (!this.ruleForm.need_weight && (this.rawMaterial || this.drussDelivery)) {
           this.$message.info('请输入需求重量!')
           return
         }
-        if (this.rawMaterial) {
+        if (this.rawMaterial || this.drussDelivery) {
           if (this.ruleForm.c < this.ruleForm.need_weight) {
             this.$message.info('库存余量不足!')
             return
@@ -276,7 +311,7 @@ export default {
       }
     },
     changSelectStation(val) {
-      if (this.rawMaterial) {
+      if (this.rawMaterial || this.drussDelivery) {
         this.ruleForm.station = val ? val.station : ''
         this.ruleForm.station_no = val ? val.station_no : ''
         localStorage.setItem('ycl-station', JSON.stringify(val))

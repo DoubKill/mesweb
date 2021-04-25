@@ -6,7 +6,15 @@
         {{ warehouseName }}
         <!-- <warehouseSelect @changSelect="warehouseSelect" /> -->
       </el-form-item>
-      <el-form-item label="物料编码">
+      <el-form-item v-if="['帘布库出库计划','炭黑出库计划','原材料出库计划'].includes($route.meta.title)" label="物料名称">
+        <materialCodeSelect
+          :store-name="warehouseName"
+          :is-clearable="true"
+          label-show="material_name"
+          @changSelect="materialCodeFun"
+        />
+      </el-form-item>
+      <el-form-item v-else label="物料编码">
         <materialCodeSelect
           :store-name="warehouseName"
           :is-clearable="true"
@@ -54,13 +62,14 @@
       <!-- <el-table-column label="No" type="index" align="center" /> -->
       <el-table-column label="物料类型" align="center" prop="material_type" />
       <el-table-column label="物料编码" align="center" prop="material_no" />
+      <el-table-column v-if="['帘布库出库计划','炭黑出库计划','原材料出库计划'].includes($route.meta.title)" label="物料名称" align="center" prop="material_name" />
       <el-table-column label="lot" align="center" prop="lot_no" />
       <el-table-column label="托盘号" align="center" prop="container_no" />
       <el-table-column label="库存位" align="center" prop="location" />
       <el-table-column
         v-if="warehouseName === '终炼胶库'"
         width="60"
-        label="车次"
+        label="车数"
         align="center"
         prop=""
       >
@@ -74,13 +83,14 @@
         align="center"
       >
         <template slot-scope="{row}">
-          <span v-if="['帘布库出库计划','原材料出库计划'].includes($route.meta.title)">{{ row.quality_status }}</span>
+          <span v-if="['帘布库出库计划','原材料出库计划','炭黑出库计划'].includes($route.meta.title)">{{ row.quality_status }}</span>
           <span v-else>{{ row.quality_level }}</span>
         </template>
       </el-table-column>
       <el-table-column label="入库时间" align="center" prop="in_storage_time" />
       <el-table-column v-if="!['原材料出库计划'].includes($route.meta.title)" label="机台号" width="50" align="center" prop="equip_no" />
-      <el-table-column v-if="!['原材料出库计划'].includes($route.meta.title)" label="车号" align="center" prop="memo" />
+      <el-table-column v-if="!['原材料出库计划','终炼胶出库计划'].includes($route.meta.title)" label="车号" align="center" prop="memo" />
+      <el-table-column v-if="['终炼胶出库计划'].includes($route.meta.title)" label="车次" align="center" prop="memo" />
       <el-table-column label="货位状态" align="center" prop="location_status" />
       <el-table-column label="出库口选择" align="center">
         <template slot-scope="scope">
@@ -88,9 +98,11 @@
             :warehouse-name="warehouseName"
             :start-using="true"
             :default-val="scope.row.station_no"
-            :created-is="true"
             :assign-type="true"
+            :created-is="true"
+            :options-list="optionsList"
             :raw-material="rawMaterial"
+            :druss-delivery="drussDelivery"
             @changSelect="selectStation($event,scope.$index)"
           />
         </template>
@@ -148,6 +160,7 @@ import receiveList from '../receive-good-manage/receive-list.vue'
 import EquipSelect from '@/components/EquipSelect'
 import materialCodeSelect from '@/components/select_w/materialCodeSelect'
 import { debounce } from '@/utils'
+import { stationInfo, stationInfoRawMaterial, drussPlanManagementStations } from '@/api/warehouse'
 export default {
   components: { materialCodeSelect, EquipSelect, page, stationInfoWarehouse, receiveList },
   props: {
@@ -160,6 +173,14 @@ export default {
       default: null
     },
     rawMaterial: {
+      type: Boolean,
+      default: false
+    },
+    drussDelivery: {
+      type: Boolean,
+      default: false
+    },
+    show: {
       type: Boolean,
       default: false
     }
@@ -184,13 +205,27 @@ export default {
       dialogVisible: false,
       material_no_current: '',
       currentIndex: null,
-      handleSelection: []
+      handleSelection: [],
+      optionsList: []
     }
   },
   computed: {
   },
+  watch: {
+    show(bool) {
+      if (bool) {
+        this.getParams = {
+          location_status: '有货货位',
+          warehouse_name: this.warehouseName
+        }
+        this.tableData = []
+        this.getTableData()
+      }
+    }
+  },
   created() {
     this.getTableData()
+    this.getWarehouseSelectPosition()
   },
   methods: {
     getTableData() {
@@ -202,11 +237,43 @@ export default {
           this.tableData.forEach(D => {
             // _DeliveryPlan 放发货计划
             this.$set(D, '_DeliveryPlan', [])
+            let arr
+            if (this.multipleSelection.length > 0) {
+              arr = this.multipleSelection.filter(d =>
+                (this.rawMaterial || this.drussDelivery) ? d.sn === D.sn : d.id === D.id)
+            }
+
+            if (arr.length > 0) {
+              this.$nextTick(() => {
+                this.$set(D, 'station', arr[0].station)
+                this.$set(D, 'station_no', arr[0].station_no)
+              })
+            }
           })
           this.loading = false
         }).catch(() => {
           this.loading = false
         })
+    },
+    async getWarehouseSelectPosition() {
+      try {
+        if (!this.warehouseName) {
+          this.optionsList = []
+          return
+        }
+        let _api
+        if (this.rawMaterial) {
+          _api = stationInfoRawMaterial
+        } else if (this.drussDelivery) {
+          _api = drussPlanManagementStations
+        } else {
+          _api = stationInfo
+        }
+        const data = await _api({ all: 1, warehouse_name: this.warehouseName })
+        this.optionsList = data || []
+      } catch (e) {
+        //
+      }
     },
     currentChange(page) {
       this.currentPage = page
@@ -251,10 +318,6 @@ export default {
         this.creadVal()
         this.$emit('visibleMethod')
       } else {
-        // if (!this.getParams.station) {
-        //   this.$message.info('请选择仓库位置！')
-        //   return
-        // }
         if (this.multipleSelection.length === 0) {
           this.$message.info('请选择物料！')
           return
@@ -272,12 +335,13 @@ export default {
             need_qty: D.qty,
             need_weight: D.total_weight,
             material_no: D.material_no,
+            material_name: D.material_name,
             inventory_type: '指定出库',
             inventory_reason: D.inventory_reason,
             unit: D.unit,
             status: 4,
             warehouse_info: this.warehouseInfo,
-            quality_status: D.quality_status,
+            quality_status: ['帘布库出库计划', '原材料出库计划', '炭黑出库计划'].includes(this.$route.meta.title) ? D.quality_status : D.quality_level,
             dispatch: D.dispatch || [],
             equip: D.equip || [],
             location: D.location,
@@ -298,12 +362,14 @@ export default {
       this.getParams.station = obj ? obj.name : ''
     },
     handleSelectionChange(val) {
-      if (val.length > 0) {
-        this.multipleSelection = val
-      }
+      this.multipleSelection = val
     },
     getRowKeys(row) {
-      return row.sn
+      if (this.rawMaterial || this.drussDelivery) {
+        return row.sn
+      } else {
+        return row.id
+      }
     },
     sureDeliveryPlan() {
       this.dialogVisible = false
@@ -332,11 +398,12 @@ export default {
       this.$set(this.tableData[index], 'equip', arr)
     },
     selectStation(obj, index) {
-      if (this.rawMaterial) {
+      if (this.rawMaterial || this.drussDelivery) {
         this.$set(this.tableData[index], 'station', obj ? obj.station : '')
         this.$set(this.tableData[index], 'station_no', obj ? obj.station_no : '')
       } else {
         this.$set(this.tableData[index], 'station', obj ? obj.name : '')
+        this.$set(this.tableData[index], 'station_no', obj ? obj.id : '')
       }
     }
   }
