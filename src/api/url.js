@@ -320,5 +320,12 @@ export default {
   MonthErrorSort: '/api/v1/equipment/month-error-sort/',
 
   BarcodePreview: '/api/v1/quality/barcode-preview/',
-  ProductStationStatics: '/api/v1/inventory/product-station-statics/'
+  ProductStationStatics: '/api/v1/inventory/product-station-statics/',
+
+  // 首页
+  IndexOverview: '/api/v1/index/overview/',
+  IndexProductionAyalyze: '/api/v1/index/production-ayalyze/',
+  IndexEquipProductionAyalyze: '/api/v1/index/equip-production-ayalyze/',
+  IndexEquipMaintenanceAyalyze: '/api/v1/index/equip-maintenance-ayalyze/'
+
 }
