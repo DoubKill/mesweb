@@ -166,6 +166,16 @@ export const asyncRoutes = [
       }
     },
     {
+      path: '/global/department',
+      name: 'department-manage',
+      component: () => import('@/views/basic/department-manage/index'),
+      meta: {
+        title: '部门管理',
+        icon: 'dashboard',
+        permissionName: ''
+      }
+    },
+    {
       path: '/user/manage',
       name: 'user-manage',
       component: () => import('@/views/basic/user-manage/index'),
@@ -600,7 +610,17 @@ export const asyncRoutes = [
           }
         }
       ]
-    }
+    },
+      {
+        path: '/report/material-requirement',
+        component: () => import('@/views/equipment-management/report/material-requirement'),
+        name: 'material-requirement',
+        meta: {
+          title: '物料需求汇总',
+          permissionName: ''
+        }
+      },
+    
       /** {
       path: '/statistical-report',
       redirect: '/report/produce-work',
@@ -622,15 +642,7 @@ export const asyncRoutes = [
             permissionName: ''
           }
         },
-        {
-          path: '/report/material-requirement',
-          component: () => import('@/views/equipment-management/report/material-requirement'),
-          name: 'material-requirement',
-          meta: {
-            title: '物料需求汇总',
-            permissionName: ''
-          }
-        },
+     
         {
           path: '/report/rubber-stock',
           component: () => import('@/views/equipment-management/report/rubber-stock'),
