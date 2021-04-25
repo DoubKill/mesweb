@@ -557,8 +557,8 @@ export const asyncRoutes = [{
         }
       }
     ]
-  }
-  ,{
+  },
+  {
     path: '/statistical-report',
     redirect: '/report/produce-work',
     component: {
