@@ -183,4 +183,36 @@ export function productStationStatics(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function indexOverview(method, id, data = {}) {
+  const obj = {
+    url: id ? API.IndexOverview + id + '/' : API.IndexOverview,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function indexProductionAyalyze(method, id, data = {}) {
+  const obj = {
+    url: id ? API.IndexProductionAyalyze + id + '/' : API.IndexProductionAyalyze,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function indexEquipProductionAyalyze(method, id, data = {}) {
+  const obj = {
+    url: id ? API.IndexEquipProductionAyalyze + id + '/' : API.IndexEquipProductionAyalyze,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function indexEquipMaintenanceAyalyze(method, id, data = {}) {
+  const obj = {
+    url: id ? API.IndexEquipMaintenanceAyalyze + id + '/' : API.IndexEquipMaintenanceAyalyze,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 
