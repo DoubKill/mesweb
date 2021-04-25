@@ -228,6 +228,11 @@ export default {
   LocationNameList: '/api/v1/spareparts/spare-location/name_list/',
   // 入库管理
   SpareInventory: '/api/v1/spareparts/spare-inventory/',
+
+
+  // 部门管理
+  DepartmentManage:'/api/v1/system/section/',
+
   // 位置点
   Location: '/api/v1/basics/location/',
   BasicsLocationNameList: '/api/v1/basics/location/name_list/',
@@ -320,5 +325,12 @@ export default {
   MonthErrorSort: '/api/v1/equipment/month-error-sort/',
 
   BarcodePreview: '/api/v1/quality/barcode-preview/',
-  ProductStationStatics: '/api/v1/inventory/product-station-statics/'
+  ProductStationStatics: '/api/v1/inventory/product-station-statics/',
+
+  // 首页
+  IndexOverview: '/api/v1/index/overview/',
+  IndexProductionAyalyze: '/api/v1/index/production-ayalyze/',
+  IndexEquipProductionAyalyze: '/api/v1/index/equip-production-ayalyze/',
+  IndexEquipMaintenanceAyalyze: '/api/v1/index/equip-maintenance-ayalyze/'
+
 }
