@@ -104,7 +104,7 @@
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
-            @change="handleClickDate"
+            @change="handleClickDate($event,'equipProduction')"
           />
         </div>
 
@@ -316,15 +316,15 @@ export default {
             data: []
           }
         ],
-        yAxis: [
-          {
-            type: 'value',
-            name: '%',
-            axisLine: {
-              show: true
-            }
-          }
-        ],
+        yAxis: {
+          type: 'value',
+          name: '%',
+          axisLine: {
+            show: true
+          },
+          max: 100,
+          min: 0
+        },
         series: [
           {
             name: '合格率',
@@ -370,11 +370,11 @@ export default {
           left: '3%',
           right: '6%',
           bottom: '3%',
-          top: '25%',
+          // top: '25%',
           containLabel: true
         },
         xAxis: {
-          type: 'category',
+          // type: 'category',
           name: '机台',
           data: []
         },
@@ -386,20 +386,18 @@ export default {
           {
             name: '实际车次',
             type: 'bar',
-            stack: 'sum',
+            stack: '11',
             barMaxWidth: 150,
             label: {
               show: true
-            },
-            emphasis: {
-              focus: 'series'
             },
             data: []
           },
           {
             name: '计划车次',
             type: 'bar',
-            stack: 'sum',
+            stack: '11',
+            barMaxWidth: 150,
             label: {
               show: true
             },
@@ -416,19 +414,18 @@ export default {
           {
             name: '总数',
             type: 'bar',
-            stack: 'sum',
+            stack: '11',
+            itemStyle: {
+              barBorderColor: 'rgba(0,0,0,0)',
+              color: 'rgba(0,0,0,0)'
+            },
             label: {
               normal: {
-                offset: ['50', '80'],
+                // offset: ['50', '80'],
                 show: true,
                 position: 'insideBottom',
                 formatter: '{c}', // 显示的总数
                 textStyle: { color: '#000' }
-              }
-            },
-            itemStyle: {
-              normal: {
-                color: 'rgba(128, 128, 128, 0)' // 柱状图颜色设为透明
               }
             },
             data: []
@@ -520,8 +517,8 @@ export default {
 
     this.myChartShutdownBar = echarts.init(document.getElementById('shutdownBar'))
     this.myChartShutdownBar.setOption(this.optionShutdownBar)
-    this.myChartOEEBar = echarts.init(document.getElementById('OEEBar'))
-    this.myChartOEEBar.setOption(this.optionOEEBar)
+    // this.myChartOEEBar = echarts.init(document.getElementById('OEEBar'))
+    // this.myChartOEEBar.setOption(this.optionOEEBar)
   },
   methods: {
     async getList(bool, bool1, bool2) {
@@ -545,9 +542,20 @@ export default {
         }
         if (!bool && !bool2) {
           // 第三个数据
+
           const plan_actual_actual_trains = this.setVal(arr[2].plan_actual_data, 'actual_trains')
           const plan_actual_diff_trains = this.setVal(arr[2].plan_actual_data, 'diff_trains')
           const plan_actual_plan_trains = this.setVal(arr[2].plan_actual_data, 'plan_trains')
+
+          // 算y最大值
+          const maxVal = Math.max(...plan_actual_plan_trains)
+          const legMaxVal = maxVal.toString().length
+          let str = '1'
+          for (let index = 1; index < legMaxVal; index++) {
+            str += '0'
+          }
+
+          this.optionFinishChart.yAxis.max = Math.ceil(maxVal / Number(str)) * str
           this.optionFinishChart.xAxis.data = arr[2].equip_data
           this.optionFinishChart.series[0].data = plan_actual_actual_trains
           this.optionFinishChart.series[1].data = plan_actual_diff_trains
