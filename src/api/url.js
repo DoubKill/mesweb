@@ -228,6 +228,11 @@ export default {
   LocationNameList: '/api/v1/spareparts/spare-location/name_list/',
   // 入库管理
   SpareInventory: '/api/v1/spareparts/spare-inventory/',
+
+
+  // 部门管理
+  DepartmentManage:'/api/v1/system/section/',
+
   // 位置点
   Location: '/api/v1/basics/location/',
   BasicsLocationNameList: '/api/v1/basics/location/name_list/',
