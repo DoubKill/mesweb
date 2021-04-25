@@ -1,5 +1,5 @@
 <template>
-  <div style="margin-top: 25px">
+  <div>
     <el-form :inline="true">
       <el-form-item label="日期">
         <el-date-picker

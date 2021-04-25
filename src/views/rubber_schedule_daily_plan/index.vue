@@ -187,6 +187,7 @@
                     :disabled="setStatus(scope.row.status,scope.row,false)"
                     @change="planTrainsChangedWh(scope.row,scope.$index,tableItem)"
                   />
+
                 </template>
               </el-table-column>
               <el-table-column
@@ -199,6 +200,7 @@
                     :disabled="setStatus(scope.row.status,scope.row,false)"
                     placeholder="请输入内容"
                   />
+
                 </template>
               </el-table-column>
               <el-table-column
@@ -334,6 +336,7 @@ export default {
       }
       // 可以操作
       const c = bool ? true : status !== this._wait
+
       return status !== this._notSaved &&
         status !== this._saved && c
     },
@@ -569,7 +572,6 @@ export default {
         let work_schedule = []
         work_schedule = await this.getInfoFun(row)
         this.visibleChange(row.id, row.category, work_schedule)
-        console.log(work_schedule, 8888)
         this.addPlanArr.push(work_schedule)
       } else {
         const addPlanArr = JSON.parse(JSON.stringify(this.addPlanArr))

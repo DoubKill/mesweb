@@ -68,6 +68,16 @@ export default {
   @import "~@/styles/mixin.scss";
   @import "~@/styles/variables.scss";
 
+  .hasTagsView {
+    .app-main {
+      /* 84 = navbar + tags-view = 50 + 34 */
+      min-height: calc(100vh - 84px);
+    }
+
+    .fixed-header+.app-main {
+      padding-top: 84px;
+    }
+  }
   .app-wrapper {
     @include clearfix;
     position: relative;

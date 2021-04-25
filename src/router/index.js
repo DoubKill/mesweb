@@ -41,6 +41,17 @@ export const constantRoutes = [{
   hidden: true
 },
 {
+  path: '/redirect',
+  component: Layout,
+  hidden: true,
+  children: [
+    {
+      path: '/redirect/:path(.*)',
+      component: () => import('@/views/redirect/index')
+    }
+  ]
+},
+{
   path: '/',
   redirect: '/home'
   // component: Layout,
@@ -109,6 +120,7 @@ export const asyncRoutes = [
     path: '/home',
     component: Layout,
     redirect: '/homePage',
+    name: 'home',
     meta: {
       title: '首页',
       icon: 'el-icon-s-home'
@@ -264,6 +276,16 @@ export const asyncRoutes = [
         title: '原材料基础信息',
         icon: 'formula',
         permissionName: 'material'
+      }
+    },
+    {
+      path: '/material-info-mapping',
+      component: () => import('@/views/quality_management/material-info-mapping/material-info-mapping'),
+      name: 'material-info-mapping',
+      meta: {
+        title: 'mes与子系统物料信息映射',
+        icon: 'formula',
+        permissionName: 'material_map'
       }
     },
     {
@@ -759,6 +781,16 @@ export const asyncRoutes = [
           permissionName: ''
         }
       },
+      {
+        path: '/druss-delivery',
+        component: () => import('@/views/inventory/druss-delivery.vue'),
+        name: 'druss-delivery',
+        meta: {
+          title: '炭黑出库计划',
+          icon: 'stock',
+          permissionName: ''
+        }
+      },
       // {
       //   path: '/final-rubber-manage',
       //   component: () => import('@/views/inventory/final_rubber_manage.vue'),
@@ -1057,16 +1089,6 @@ export const asyncRoutes = [
             }
           }
         ]
-      },
-      {
-        path: '/material-info-mapping',
-        component: () => import('@/views/quality_management/material-info-mapping/material-info-mapping'),
-        name: 'material-info-mapping',
-        meta: {
-          title: 'mes与子系统物料信息映射',
-          icon: 'quality',
-          permissionName: 'material_map'
-        }
       },
       {
         path: '/barcode-change',
