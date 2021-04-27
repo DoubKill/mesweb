@@ -103,7 +103,7 @@
         slot="footer"
         class="dialog-footer"
       >
-        <el-button @click="dialogEditVisible = false">取 消</el-button>
+        <el-button @click="dialogCreateVisible = false">取 消</el-button>
         <el-button
           type="primary"
           :loading="btnloading"
