@@ -3,17 +3,25 @@
     <!-- 车间库存明细 -->
     <el-form :inline="true">
       <el-form-item label="物料类型:">
-        <materielTypeSelect
-          @changeSelect="changeMaterialType"
+        <stage-select
+          v-model="search.material_type"
+          @change="stageChange"
         />
+        <!-- <materielTypeSelect
+          :obj-all="true"
+          :params-type="false"
+          @changSelect="changeMaterialType"
+        /> -->
       </el-form-item>
       <el-form-item label="物料编码:">
         <materialCodeSelect
+          :is-all-obj="true"
+          :default-val="search.material_no"
           @changeSelect="changeMaterialCode"
         />
       </el-form-item>
       <el-form-item label="切换库存明细:">
-        <el-select v-model="switchDetails" placeholder="请选择">
+        <el-select v-model="switchDetails" placeholder="请选择" @change="changeDetails">
           <el-option
             v-for="item in [{name:'胶片车间库存明细',id:1},{name:'原材料车间库存明细',id:2}]"
             :key="item.id"
@@ -34,54 +42,54 @@
           width="50"
         />
         <el-table-column
-          prop="province"
+          prop="material_type"
           label="物料类型"
           min-width="20"
         />
         <el-table-column
-          prop="province"
+          prop="material_no"
           label="物料编码"
           min-width="20"
         />
         <el-table-column
-          prop="province"
+          prop="material_name"
           label="物料名称"
           min-width="20"
         />
       </el-table-column>
       <el-table-column label="立库库存量">
         <el-table-column
-          prop="province"
+          prop="qty"
           label="数量"
           min-width="20"
         />
         <el-table-column
-          prop="province"
-          label="重量"
+          prop="weight"
+          label="重量/kg"
           min-width="20"
         />
       </el-table-column>
       <el-table-column label="线边库库存量">
         <el-table-column
-          prop="province"
+          prop="other_qty"
           label="数量"
           min-width="20"
         />
         <el-table-column
-          prop="province"
-          label="重量"
+          prop="other_weight"
+          label="重量/kg"
           min-width="20"
         />
       </el-table-column>
       <el-table-column label="总量">
         <el-table-column
-          prop="province"
+          prop="all_qty"
           label="数量"
           min-width="20"
         />
         <el-table-column
-          prop="province"
-          label="重量"
+          prop="all_weight"
+          label="重量/kg"
           min-width="20"
         />
       </el-table-column>
@@ -90,13 +98,16 @@
 </template>
 
 <script>
-import materielTypeSelect from '@/components/select_w/materielTypeSelect'
+// import materielTypeSelect from '@/components/select_w/materielTypeSelect'
 import materialCodeSelect from '@/components/materialCodeSelect/index'
+import StageSelect from '@/components/StageSelect'
+import { productDetails } from '@/api/base_w_three'
 
 export default {
-  components: { materielTypeSelect, materialCodeSelect },
+  components: { StageSelect, materialCodeSelect },
   data() {
     return {
+      search: {},
       switchDetails: 1,
       tableData: [],
       loading: true
@@ -108,16 +119,31 @@ export default {
   methods: {
     async getList() {
       try {
+        this.tableData = []
         this.loading = true
-        // const data = await spareInventoryLog('get', null, { params: this.search })
-        // this.tableData = data.results
+        const data = await productDetails('get', null, { params: this.search })
+        this.tableData = data.results
         this.loading = false
       } catch (e) {
         this.loading = false
       }
     },
-    changeMaterialType() {},
-    changeMaterialCode() {}
+    changeMaterialCode(val) {
+      this.search.material_no = val ? val.material_no : ''
+      this.getList()
+    },
+    stageChange() {
+      this.getList()
+    },
+    changeDetails() {
+      this.search = {}
+      this.tableData = []
+      if (this.switchDetails !== 1) {
+        //
+      } else {
+        this.getList()
+      }
+    }
   }
 }
 </script>

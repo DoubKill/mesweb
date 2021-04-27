@@ -215,4 +215,20 @@ export function indexEquipMaintenanceAyalyze(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function runtimeRecord(method, id, data = {}) {
+  const obj = {
+    url: id ? API.RuntimeRecord + id + '/' : API.RuntimeRecord,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function productDetails(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ProductDetails + id + '/' : API.ProductDetails,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 
