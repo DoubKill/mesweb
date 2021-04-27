@@ -19,7 +19,7 @@
       <el-form-item style="float: right">
         <el-button
           v-permission="['department','add']"
-          @click="dialogCreateVisible = true"
+          @click="showCreateDialog"
         >新建</el-button>
       </el-form-item>
     </el-form>
@@ -76,6 +76,8 @@
     />
     <el-dialog
       title="添加部门"
+      :before-close="handleClose"
+      :close-on-click-modal="false"
       :visible.sync="dialogCreateVisible"
     >
       <el-form
@@ -173,6 +175,7 @@ export default {
       disabled: false,
       currentPage: 1,
       btnloading: false,
+      btnloading2: false,
       loading: true,
       loadingTable: false,
       sercialForm: {
@@ -184,6 +187,8 @@ export default {
         section_id: ''
       },
       WaterForm: [],
+      isError: false,
+      isErrorOldPassword: false,
       dialogCreateVisible: false,
       dialogEditVisible: false,
       dialogWaterVisible: false,
@@ -227,13 +232,6 @@ export default {
       this.getParams.page = 1
       this.currentChange()
     },
-    // 清空
-    clearsercialForm: function() {
-      this.sercialForm = {
-        name: '',
-        section_id: ''
-      }
-    },
     // async getTableData() {
     //   try {
     //     const res = await departmentManage('get', null, { params: { all: 1 }})
@@ -253,6 +251,7 @@ export default {
         await departmentManage('put', id, obj)
         this.$message({ message: '修改成功', type: 'success' })
         this.btnloading = true
+        this.cleareditsercialForm()
       } catch (e) { throw new Error(e) }
     },
     async dedpartmentDel(id) {
@@ -263,18 +262,26 @@ export default {
     // 查看
     showWaterDialog: function(row) {
       console.log(row)
-
       if (row.users.length === 0) {
         this.$message({ message: '此人员数据为空', type: 'warning' })
       } else {
-        this.WaterForm = row.users
+        this.WaterForm = JSON.parse(JSON.stringify(row))
+        console.log(this.WaterForm)
         this.dialogWaterVisible = true
       }
     },
     // 编辑
     showEditDialog: function(row) {
+      this.cleareditsercialForm()
+      if (this.$refs['editsercialForm']) { this.$refs['editsercialForm'].resetFields() }
       this.editsercialForm = Object.assign({}, row)
       this.dialogEditVisible = true
+    },
+    cleareditsercialForm() {
+      this.editsercialForm = {
+        name: '',
+        section_id: ''
+      }
     },
     // dialogWaterVisible
     // 编辑提交
@@ -291,8 +298,10 @@ export default {
                 }
               }
             )
-            this.dialogEditVisible = false
             this.currentChange()
+            this.dialogEditVisible = false
+            this.btnloading = false
+            this.cleareditsercialForm()
           } catch (e) { e }
         } else {
           return false
@@ -300,10 +309,26 @@ export default {
       })
     },
     // 新建
+    clearsercialForm() {
+      this.sercialForm = {
+        name: '',
+        section_id: ''
+      }
+    },
+    showCreateDialog() {
+      this.clearsercialForm()
+      if (this.$refs['sercialForm']) { this.$refs['sercialForm'].resetFields() }
+      this.dialogCreateVisible = true
+    },
+    handleClose(done) {
+      this.$refs['sercialForm'].resetFields()
+      this.isError = false
+      this.isErrorOldPassword = false
+      done()
+    },
     handleCreate: function(sercialForm) {
       this.$refs[sercialForm].validate(async(valid) => {
         if (valid) {
-          this.btnloading = true
           try {
             await this.dedpartmentpost(
               {
@@ -336,7 +361,7 @@ export default {
         try {
           departmentManage('delete', row.id, {
           }).then(response => {
-            this.$message({ message: '停用成功', type: 'success' })
+            this.$message({ message: '操作成功', type: 'success' })
             this.currentChange()
           })
         } catch (e) { e }
