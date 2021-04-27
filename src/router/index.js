@@ -629,7 +629,7 @@ export const asyncRoutes = [
           name: 'produce-work',
           meta: {
             title: '生产运行记录',
-            permissionName: ''
+            permissionName: 'production_record'
           }
         },
         // {
@@ -647,7 +647,7 @@ export const asyncRoutes = [
           name: 'rubber-stock',
           meta: {
             title: '胶料库存明细',
-            permissionName: ''
+            permissionName: 'product_stock_detail'
           }
         },
         {
@@ -656,7 +656,7 @@ export const asyncRoutes = [
           name: 'workshop-stock',
           meta: {
             title: '车间库存明细',
-            permissionName: ''
+            permissionName: 'workshop_stock_detail'
           }
         }
       ]
