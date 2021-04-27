@@ -14,11 +14,13 @@
         /> -->
       </el-form-item>
       <el-form-item label="物料编码:">
-        <materialCodeSelect
+        <el-input v-model="search.material_no" @input="changeMaterialCode" />
+        <!-- <materialCodeSelect
           :is-all-obj="true"
+          :is-clearable="true"
           :default-val="search.material_no"
-          @changeSelect="changeMaterialCode"
-        />
+          @changSelect="changeMaterialCode"
+        /> -->
       </el-form-item>
       <el-form-item label="切换库存明细:">
         <el-select v-model="switchDetails" placeholder="请选择" @change="changeDetails">
@@ -99,12 +101,13 @@
 
 <script>
 // import materielTypeSelect from '@/components/select_w/materielTypeSelect'
-import materialCodeSelect from '@/components/materialCodeSelect/index'
+// import materialCodeSelect from '@/components/select_w/materialCodeSelect'
 import StageSelect from '@/components/StageSelect'
 import { productDetails } from '@/api/base_w_three'
+import { debounce } from '@/utils'
 
 export default {
-  components: { StageSelect, materialCodeSelect },
+  components: { StageSelect },
   data() {
     return {
       search: {},
@@ -129,8 +132,11 @@ export default {
       }
     },
     changeMaterialCode(val) {
-      this.search.material_no = val ? val.material_no : ''
-      this.getList()
+      debounce(this, 'getList')
+
+      // console.log(val, 666)
+      // this.search.material_no = val ? val.material_no : ''
+      // this.getList()
     },
     stageChange() {
       this.getList()
