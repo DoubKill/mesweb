@@ -130,6 +130,7 @@
         ref="assignOutbound"
         :warehouse-name="warehouseName"
         :warehouse-info="warehouseInfo"
+        :show="assignOutboundDialogVisible"
         :druss-delivery="true"
         @visibleMethod="visibleMethodNormal"
         @visibleMethodSubmit="visibleMethodAssignSubmit"
