@@ -265,7 +265,7 @@ export default {
       if (row.users.length === 0) {
         this.$message({ message: '此人员数据为空', type: 'warning' })
       } else {
-        this.WaterForm = JSON.parse(JSON.stringify(row))
+        this.WaterForm = JSON.parse(JSON.stringify(row.users))
         console.log(this.WaterForm)
         this.dialogWaterVisible = true
       }
