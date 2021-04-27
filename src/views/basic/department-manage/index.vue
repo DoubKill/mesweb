@@ -17,7 +17,10 @@
         />
       </el-form-item>
       <el-form-item style="float: right">
-        <el-button @click="dialogCreateVisible = true">新建</el-button>
+        <el-button
+          v-permission="['department','add']"
+          @click="dialogCreateVisible = true"
+        >新建</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -46,6 +49,7 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
+              v-permission="['department','change']"
               size="mini"
               @click="showEditDialog(scope.row)"
             >编辑</el-button>
@@ -55,6 +59,7 @@
               @click="showWaterDialog(scope.row)"
             >查看</el-button>
             <el-button
+              v-permission="['department','delete']"
               size="mini"
               type="danger"
               @click="handleEquipCateDelete(scope.row)"
