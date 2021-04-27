@@ -9,3 +9,11 @@ import API from '@/api/url'
     Object.assign(obj, data)
     return request(obj)
   }
+
+//   export function departmentManage(data) {
+//   return request({
+//     url: API.DepartmentManage,
+//     method: method,
+//     data
+//   })
+// }

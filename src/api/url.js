@@ -229,9 +229,8 @@ export default {
   // 入库管理
   SpareInventory: '/api/v1/spareparts/spare-inventory/',
 
-
   // 部门管理
-  DepartmentManage:'/api/v1/system/section/',
+  DepartmentManage: '/api/v1/system/section/',
 
   // 位置点
   Location: '/api/v1/basics/location/',
@@ -331,6 +330,8 @@ export default {
   IndexOverview: '/api/v1/index/overview/',
   IndexProductionAyalyze: '/api/v1/index/production-ayalyze/',
   IndexEquipProductionAyalyze: '/api/v1/index/equip-production-ayalyze/',
-  IndexEquipMaintenanceAyalyze: '/api/v1/index/equip-maintenance-ayalyze/'
+  IndexEquipMaintenanceAyalyze: '/api/v1/index/equip-maintenance-ayalyze/',
 
+  RuntimeRecord: '/api/v1/production/runtime-record/',
+  ProductDetails: '/api/v1/inventory/product-details/'
 }

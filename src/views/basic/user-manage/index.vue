@@ -53,18 +53,35 @@
         label="No"
         width="50"
       />
-      <el-table-column label="工号">
+      <el-table-column label="工号" min-width="8">
         <template slot-scope="scope">
           {{ scope.row.num?scope.row.num:'--' }}
         </template>
       </el-table-column>
       <el-table-column
+        min-width="10"
         prop="username"
         label="用户名"
       />
       <el-table-column
+        min-width="10"
         prop="phone_number"
         label="手机号"
+      />
+      <el-table-column
+        min-width="10"
+        prop="section_name"
+        label="部门"
+      />
+      <el-table-column
+        min-width="10"
+        prop="workshop"
+        label="车间"
+      />
+      <el-table-column
+        min-width="10"
+        prop="technology"
+        label="技术资格"
       />
       <!-- <el-table-column label="组织">
         <template slot-scope="scope">
@@ -78,17 +95,17 @@
         :formatter="formatter"
       /> -->
       <el-table-column
+        min-width="5"
         prop="use_flag"
         label="使用"
-        width="80"
         :formatter="formatter"
       />
-      <el-table-column label="创建人">
+      <el-table-column label="创建人" min-width="10">
         <template slot-scope="scope">
           {{ scope.row.created_username?scope.row.created_username:'--' }}
         </template>
       </el-table-column>
-      <el-table-column label="创建日期">
+      <el-table-column label="创建日期" min-width="10">
         <template slot-scope="scope">
           {{ scope.row.created_date?scope.row.created_date:'--' }}
         </template>
@@ -136,6 +153,7 @@
         :model="userForm"
         :rules="rules"
         label-width="100px"
+        inline
       >
         <el-form-item
           label="用户名"
@@ -199,14 +217,49 @@
           />
         </el-form-item>
         <el-form-item
+          label="车间"
+        >
+          <el-input
+            v-model="userForm.workshop"
+            placeholder="车间"
+            :error="userFormError.workshop"
+          />
+        </el-form-item>
+        <el-form-item
+          label="技术资格"
+        >
+          <el-input
+            v-model="userForm.technology"
+            placeholder="技术资格"
+            :error="userFormError.technology"
+          />
+        </el-form-item>
+        <el-form-item
+          label="部门"
+          :error="userFormError.section"
+        >
+          <el-select v-model="userForm.section" placeholder="请选择" clearable>
+            <el-option
+              v-for="item in optionsSection"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+              :disabled="item.delete_flag"
+            />
+          </el-select>
+        </el-form-item>
+        <br>
+        <el-form-item
           label="角色"
           size="medium"
         >
-          <transferRoles
-            :default-groups="userForm.group_extensions"
-            :groups="group_extensions"
-            @changeTransferGroup="changeTransferGroup"
-          />
+          <div>
+            <transferRoles
+              :default-groups="userForm.group_extensions"
+              :groups="group_extensions"
+              @changeTransferGroup="changeTransferGroup"
+            />
+          </div>
         </el-form-item>
         <!-- <el-form-item
           label="权限"
@@ -237,6 +290,7 @@
 
 <script>
 import { personnelsUrl } from '@/api/user'
+import { departmentManage } from '@/api/department-manage'
 // import { permissions } from '@/api/permission'
 import { roles } from '@/api/roles-manage'
 import page from '@/components/page'
@@ -345,7 +399,8 @@ export default {
           value: 0,
           label: 'N'
         }
-      ]
+      ],
+      optionsSection: []
     }
   },
   computed: {
@@ -380,6 +435,7 @@ export default {
       // })
     }
     this.currentChange()
+    this.getOptionsSection()
   },
   methods: {
     changeUsername(e) {
@@ -394,6 +450,14 @@ export default {
     },
     changeOldPassword(e) {
       this.userForm.oldPassword = e.target.value
+    },
+    async getOptionsSection() {
+      try {
+        const data = await departmentManage('get', null, { params: { all: 1 }})
+        this.optionsSection = data.results || []
+      } catch (error) {
+        //
+      }
     },
     currentChange() {
       const app = this
@@ -464,7 +528,6 @@ export default {
       var app = this
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.btnloading = true
           // eslint-disable-next-line prefer-const
           let type = app.userForm.id ? 'put' : 'post'
           // eslint-disable-next-line prefer-const
@@ -483,8 +546,12 @@ export default {
             delete app.userForm.num
           }
           // app.userForm.group_extensions = app.userForm.groups
-          // eslint-disable-next-line object-curly-spacing
-          personnelsUrl(type, paramsId, { data: { ...app.userForm } })
+          if (app.userForm.group_extensions.length === 0) {
+            app.$message.info('请选择角色')
+            return
+          }
+          this.btnloading = true
+          personnelsUrl(type, paramsId, { data: app.userForm })
             .then((response) => {
               app.dialogCreateUserVisible = false
               app.$message.success(app.userForm.username + '操作成功')
@@ -492,9 +559,6 @@ export default {
               this.btnloading = false
             }).catch((e) => {
               this.userFormError = e
-              // for (const key in this.userFormError) {
-              //   if (error[key]) { this.userFormError[key] = error[key].join(',') }
-              // }
               this.btnloading = false
             })
         } else {

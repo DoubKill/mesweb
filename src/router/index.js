@@ -166,14 +166,15 @@ export const asyncRoutes = [
       }
     },
     {
-        path: '/group/department',
-        name: 'departmen-manage',
-        component: () => import('@/views/basic/department-manage/index'),
-        meta: {
-          title: '部门管理',
-          icon: 'dashboard'
-        }
-      },
+      path: '/group/department',
+      name: 'departmen-manage',
+      component: () => import('@/views/basic/department-manage/index'),
+      meta: {
+        title: '部门管理',
+        icon: 'dashboard',
+        permissionName: 'department'
+      }
+    },
     {
       path: '/user/manage',
       name: 'user-manage',
@@ -609,8 +610,8 @@ export const asyncRoutes = [
           }
         }
       ]
-    }
-      /** {
+    },
+    {
       path: '/statistical-report',
       redirect: '/report/produce-work',
       component: {
@@ -631,15 +632,15 @@ export const asyncRoutes = [
             permissionName: ''
           }
         },
-        {
-          path: '/report/material-requirement',
-          component: () => import('@/views/equipment-management/report/material-requirement'),
-          name: 'material-requirement',
-          meta: {
-            title: '物料需求汇总',
-            permissionName: ''
-          }
-        },
+        // {
+        //   path: '/report/material-requirement',
+        //   component: () => import('@/views/equipment-management/report/material-requirement'),
+        //   name: 'material-requirement',
+        //   meta: {
+        //     title: '物料需求汇总',
+        //     permissionName: ''
+        //   }
+        // },
         {
           path: '/report/rubber-stock',
           component: () => import('@/views/equipment-management/report/rubber-stock'),
@@ -659,7 +660,7 @@ export const asyncRoutes = [
           }
         }
       ]
-    }**/
+    }
 
       // {
       //   path: 'collect/rub/daily',
@@ -787,7 +788,7 @@ export const asyncRoutes = [
         meta: {
           title: '原材料出库计划',
           icon: 'stock',
-          permissionName: ''
+          permissionName: 'material_outbound_plan'
         }
       },
       {
@@ -797,7 +798,7 @@ export const asyncRoutes = [
         meta: {
           title: '炭黑出库计划',
           icon: 'stock',
-          permissionName: ''
+          permissionName: 'carbon_outbound_plan'
         }
       },
       // {
@@ -1525,7 +1526,8 @@ export const asyncRoutes = [
         }
       }
     ]
-  },**/
+  },
+  **/
       {
         path: '/platform-manage',
         component: () => import('@/views/equipment-management/repair/platform-manage'),
@@ -1543,7 +1545,7 @@ export const asyncRoutes = [
         meta: {
           title: '设备别故障日统计',
           icon: 'quality',
-          permissionName: ''
+          permissionName: 'equip_daily_summary'
         }
       },
       {
@@ -1553,7 +1555,7 @@ export const asyncRoutes = [
         meta: {
           title: '设备别故障周统计',
           icon: 'quality',
-          permissionName: ''
+          permissionName: 'equip_daily_summary'
         }
       },
       {
@@ -1563,7 +1565,7 @@ export const asyncRoutes = [
         meta: {
           title: '设备别故障月统计',
           icon: 'quality',
-          permissionName: ''
+          permissionName: 'equip_monthly_summary'
         }
       }
     ]
