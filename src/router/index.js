@@ -165,7 +165,7 @@ export const asyncRoutes = [
         permissionName: 'groupextension'
       }
     },
-    /** {
+    {
       path: '/group/department',
       name: 'departmen-manage',
       component: () => import('@/views/basic/department-manage/index'),
@@ -174,7 +174,7 @@ export const asyncRoutes = [
         icon: 'dashboard',
         permissionName: 'department'
       }
-    },**/
+    },
     {
       path: '/user/manage',
       name: 'user-manage',
