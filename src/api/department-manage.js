@@ -9,11 +9,3 @@ export function departmentManage(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
-
-//   export function departmentManage(data) {
-//   return request({
-//     url: API.DepartmentManage,
-//     method: method,
-//     data
-//   })
-// }
