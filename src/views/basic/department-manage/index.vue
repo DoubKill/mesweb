@@ -152,8 +152,8 @@
       :visible.sync="dialogWaterVisible"
       :close-on-click-modal="false"
     >
-      <div class="tag-group">
-        <el-tag v-for="item in WaterForm" :key="item" effect="dark">{{ item[0] }}</el-tag>
+      <div v-for="(item,index) in WaterForm" :key="index" class="tag-group" effect="dark">
+        <el-tag>{{ item }}</el-tag>
       </div>
     </el-dialog>
   </div>
@@ -201,7 +201,7 @@ export default {
   },
 
   created() {
-    // this.loading = true
+    this.loading = true
     this.currentChange()
   },
   methods: {
@@ -261,19 +261,16 @@ export default {
     },
     // 查看
     showWaterDialog: function(row) {
-      console.log(row)
       if (row.users.length === 0) {
         this.$message({ message: '此人员数据为空', type: 'warning' })
       } else {
-        this.WaterForm = JSON.parse(JSON.stringify(row.users))
-        console.log(this.WaterForm)
+        this.WaterForm = JSON.parse(JSON.stringify(row)).users
         this.dialogWaterVisible = true
       }
     },
     // 编辑
     showEditDialog: function(row) {
       this.cleareditsercialForm()
-      if (this.$refs['editsercialForm']) { this.$refs['editsercialForm'].resetFields() }
       this.editsercialForm = Object.assign({}, row)
       this.dialogEditVisible = true
     },
@@ -288,6 +285,7 @@ export default {
     handleEditEquip: function(formName) {
       this.$refs[formName].validate(async(valid) => {
         if (valid) {
+          this.btnloading = true
           try {
             await this.dedpartmentput(
               this.editsercialForm.id,
@@ -329,6 +327,7 @@ export default {
     handleCreate: function(sercialForm) {
       this.$refs[sercialForm].validate(async(valid) => {
         if (valid) {
+          this.btnloading = true
           try {
             await this.dedpartmentpost(
               {
