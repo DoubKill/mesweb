@@ -75,15 +75,16 @@
       @currentChange="changePage"
     />
     <el-dialog
-      title="添加部门"
+      :title="sercialForm.id?'编辑部门':'新增部门'"
       :before-close="handleClose"
       :close-on-click-modal="false"
-      :visible.sync="dialogCreateVisible"
+      :visible.sync="dialogEditVisible"
     >
       <el-form
         ref="sercialForm"
         :rules="rules"
         :model="sercialForm"
+        inline
         label-width="100px"
       >
         <el-form-item
@@ -103,47 +104,11 @@
         slot="footer"
         class="dialog-footer"
       >
-        <el-button @click="dialogCreateVisible = false">取 消</el-button>
-        <el-button
-          type="primary"
-          :loading="btnloading"
-          @click="handleCreate('sercialForm')"
-        >确 定</el-button>
-      </div>
-    </el-dialog>
-    <el-dialog
-      title="编辑部门"
-      :visible.sync="dialogEditVisible"
-      :close-on-click-modal="false"
-    >
-      <el-form
-        ref="editsercialForm"
-        :rules="rules"
-        :model="editsercialForm"
-        label-width="100px"
-      >
-        <el-form-item
-          label="部门名称"
-          prop="name"
-        >
-          <el-input v-model="editsercialForm.name" />
-        </el-form-item>
-        <el-form-item
-          label="部门编号"
-          prop="section_id"
-        >
-          <el-input v-model="editsercialForm.section_id" />
-        </el-form-item>
-      </el-form>
-      <div
-        slot="footer"
-        class="dialog-footer"
-      >
         <el-button @click="dialogEditVisible = false">取 消</el-button>
         <el-button
           type="primary"
           :loading="btnloading"
-          @click="handleEditEquip('editsercialForm')"
+          @click="handleEditEquip('sercialForm')"
         >确 定</el-button>
       </div>
     </el-dialog>
@@ -153,7 +118,7 @@
       :close-on-click-modal="false"
     >
       <div class="tag-group">
-        <el-tag v-for="item in WaterForm" :key="item" effect="dark">{{ item[0] }}</el-tag>
+        <el-tag v-for="item in WaterForm" :key="item" effect="dark">{{ item }}</el-tag>
       </div>
     </el-dialog>
   </div>
@@ -179,10 +144,6 @@ export default {
       loading: true,
       loadingTable: false,
       sercialForm: {
-        name: '',
-        section_id: ''
-      },
-      editsercialForm: {
         name: '',
         section_id: ''
       },
@@ -232,28 +193,6 @@ export default {
       this.getParams.page = 1
       this.currentChange()
     },
-    // async getTableData() {
-    //   try {
-    //     const res = await departmentManage('get', null, { params: { all: 1 }})
-    //     this.tableData = res.results
-    //   } catch (e) { e }
-    // },
-    async dedpartmentpost(obj) {
-      try {
-        await departmentManage('post', null, obj)
-        this.$message({ message: '新建成功', type: 'success' })
-        this.btnloading = true
-        this.clearsercialForm()
-      } catch (e) { throw new Error(e) }
-    },
-    async dedpartmentput(id, obj) {
-      try {
-        await departmentManage('put', id, obj)
-        this.$message({ message: '修改成功', type: 'success' })
-        this.btnloading = true
-        this.cleareditsercialForm()
-      } catch (e) { throw new Error(e) }
-    },
     async dedpartmentDel(id) {
       try {
         await departmentManage('delete', id, {})
@@ -261,52 +200,12 @@ export default {
     },
     // 查看
     showWaterDialog: function(row) {
-      console.log(row)
       if (row.users.length === 0) {
         this.$message({ message: '此人员数据为空', type: 'warning' })
       } else {
-        this.WaterForm = JSON.parse(JSON.stringify(row))
-        console.log(this.WaterForm)
+        this.WaterForm = JSON.parse(JSON.stringify(row)).users
         this.dialogWaterVisible = true
       }
-    },
-    // 编辑
-    showEditDialog: function(row) {
-      this.cleareditsercialForm()
-      if (this.$refs['editsercialForm']) { this.$refs['editsercialForm'].resetFields() }
-      this.editsercialForm = Object.assign({}, row)
-      this.dialogEditVisible = true
-    },
-    cleareditsercialForm() {
-      this.editsercialForm = {
-        name: '',
-        section_id: ''
-      }
-    },
-    // dialogWaterVisible
-    // 编辑提交
-    handleEditEquip: function(formName) {
-      this.$refs[formName].validate(async(valid) => {
-        if (valid) {
-          try {
-            await this.dedpartmentput(
-              this.editsercialForm.id,
-              {
-                data: {
-                  'name': this.editsercialForm['name'],
-                  'section_id': this.editsercialForm['section_id']
-                }
-              }
-            )
-            this.currentChange()
-            this.dialogEditVisible = false
-            this.btnloading = false
-            this.cleareditsercialForm()
-          } catch (e) { e }
-        } else {
-          return false
-        }
-      })
     },
     // 新建
     clearsercialForm() {
@@ -318,7 +217,7 @@ export default {
     showCreateDialog() {
       this.clearsercialForm()
       if (this.$refs['sercialForm']) { this.$refs['sercialForm'].resetFields() }
-      this.dialogCreateVisible = true
+      this.dialogEditVisible = true
     },
     handleClose(done) {
       this.$refs['sercialForm'].resetFields()
@@ -326,24 +225,25 @@ export default {
       this.isErrorOldPassword = false
       done()
     },
-    handleCreate: function(sercialForm) {
-      this.$refs[sercialForm].validate(async(valid) => {
+    // 编辑
+    showEditDialog: function(row) {
+      this.sercialForm = Object.assign({}, row)
+      this.dialogEditVisible = true
+    },
+    // 编辑提交
+    handleEditEquip: function(formName) {
+      this.$refs[formName].validate(async(valid) => {
         if (valid) {
-          try {
-            await this.dedpartmentpost(
-              {
-                data: {
-                  'name': this.sercialForm['name'],
-                  'section_id': this.sercialForm['section_id']
-                }
-              }
-
-            )
+          this.btnloading = true
+          const type = this.sercialForm.id ? 'put' : 'post'
+          const id = this.sercialForm.id ? this.sercialForm.id : ''
+          departmentManage(type, id, { data: { ...this.sercialForm }}).then(response => {
+            console.log(response)
+            this.dialogEditVisible = false
+            this.$message.success(this.sercialForm.id ? '编辑成功' : '创建成功')
             this.currentChange()
-            this.dialogCreateVisible = false
             this.btnloading = false
-            this.clearsercialForm()
-          } catch (e) { e }
+          }).catch(error => { error })
         } else {
           return false
         }
