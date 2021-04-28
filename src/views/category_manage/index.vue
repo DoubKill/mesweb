@@ -88,6 +88,7 @@
               v-if="permissionObj.equipcategoryattribute && permissionObj.equipcategoryattribute.indexOf('delete')>-1"
               size="mini"
               type="danger"
+              plain
               @click="handleEquipCateDelete(scope.row)"
             >{{ scope.row.use_flag ? '停用' : '启用' }}
             </el-button>

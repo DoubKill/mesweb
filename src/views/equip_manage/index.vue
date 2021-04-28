@@ -112,6 +112,7 @@
               v-if="permissionObj.equip && permissionObj.equip.indexOf('delete')>-1"
               size="mini"
               type="danger"
+              plain
               @click="handleEquipDelete(scope.row)"
             >{{ scope.row.use_flag ? '停用' : '启用' }}
             </el-button>

@@ -1,5 +1,6 @@
 <template>
   <div class="app-container month_pass_detail">
+    <!-- 月快检合格率统计 -->
     <el-form :inline="true">
       <el-form-item label="开始时间">
         <el-date-picker
@@ -22,10 +23,12 @@
     </el-form>
     <div class="table_data">
       <el-table
+        v-loading="tableLoading"
         :data="tableData"
         border
         size="mini"
         :cell-style="cellStyle"
+        :header-row-style="headerRowStyle"
         style="width: 100%"
       >
         <el-table-column fixed type="index" width="14" label="No" align="center" />
@@ -35,7 +38,7 @@
           </template>
         </el-table-column>
         <el-table-column fixed label="产量(车)" min-width="32" prop="train_count" align="center" />
-        <el-table-column fixed label="一次合格率%" min-width="46" prop="yc_percent_of_pass" align="center" />
+        <el-table-column fixed label="一次合格率%" min-width="54" prop="yc_percent_of_pass" align="center" />
         <el-table-column fixed label="流变合格率%" min-width="46" prop="lb_percent_of_pass" align="center" />
         <el-table-column fixed label="综合合格率%" min-width="46" prop="zh_percent_of_pass" align="center" />
         <el-table-column v-for="(value,index) in headers.points" :key="index" :label="value" align="center">
@@ -81,13 +84,12 @@
       </el-table>
     </div>
     <el-dialog
-      :close-on-click-modal="false"
       :close-on-press-escape="false"
-      width="90%"
+      width="98%"
       title="合格率统计"
       :visible.sync="dialogShow"
     >
-      <el-row>
+      <el-row v-loading="dialogTableLoading">
         <el-col :span="8">
           <span>总合格率</span>
           <el-table
@@ -99,11 +101,11 @@
             style="width: 100%"
           >
             <!-- <el-table-column label="总合格率"> -->
-            <el-table-column width="24" type="index" label="No" align="center" />
-            <el-table-column width="75" label="日期" prop="date" align="center" />
-            <el-table-column label="一次合格率%" min-width="54" prop="yc_percent_of_pass" align="center" />
-            <el-table-column label="流变合格率%" min-width="54" prop="lb_percent_of_pass" align="center" />
-            <el-table-column label="综合合格率%" min-width="54" prop="zh_percent_of_pass" align="center" />
+            <el-table-column type="index" label="No" align="center" />
+            <el-table-column label="日期" prop="date" align="center" />
+            <el-table-column label="一次合格率%" prop="yc_percent_of_pass" align="center" />
+            <el-table-column label="流变合格率%" prop="lb_percent_of_pass" align="center" />
+            <el-table-column label="综合合格率%" prop="zh_percent_of_pass" align="center" />
             <!-- </el-table-column> -->
           </el-table>
         </el-col>
@@ -120,7 +122,7 @@
             <!-- <el-table-column fixed width="50" type="index" label="No" />
             <el-table-column fixed width="90" label="日期" prop="date" /> -->
             <el-table-column v-for="(value,index) in headers.equips" :key="index" :label="value" align="center">
-              <el-table-column label="一次合格率%" min-width="54" align="center">
+              <el-table-column label="一次合格率%" align="center">
                 <template slot-scope="scope">
                   <span
                     v-if="(scope.row.equips.filter(d=>d.production_equip_no === value)).length>0"
@@ -130,7 +132,7 @@
                   </span>
                 </template>
               </el-table-column>
-              <el-table-column label="流变合格率%" min-width="54" align="center">
+              <el-table-column label="流变合格率%" align="center">
                 <template slot-scope="scope">
                   <span
                     v-if="(scope.row.equips.filter(d=>d.production_equip_no === value)).length>0"
@@ -140,7 +142,7 @@
                   </span>
                 </template>
               </el-table-column>
-              <el-table-column label="综合合格率%" min-width="54" align="center">
+              <el-table-column label="综合合格率%" align="center">
                 <template slot-scope="scope">
                   <span
                     v-if="(scope.row.equips.filter(d=>d.production_equip_no === value)).length>0"
@@ -167,7 +169,7 @@
             <!-- <el-table-column fixed width="50" type="index" label="No" />
             <el-table-column fixed width="90" label="日期" prop="date" /> -->
             <el-table-column v-for="(value,index) in headers.classes" :key="index" :label="value" align="center">
-              <el-table-column label="一次合格率%" min-width="54" align="center">
+              <el-table-column label="一次合格率%" align="center">
                 <template slot-scope="scope">
                   <span
                     v-if="(scope.row.classes.filter(d=>d.production_class === value)).length>0"
@@ -178,7 +180,7 @@
                   <!-- <span v-if="scope.row.test_detail[value]">{{ scope.row.test_detail[value].up_trains }}</span> -->
                 </template>
               </el-table-column>
-              <el-table-column label="流变合格率%" min-width="54" align="center">
+              <el-table-column label="流变合格率%" align="center">
                 <template slot-scope="scope">
                   <span
                     v-if="(scope.row.classes.filter(d=>d.production_class === value)).length>0"
@@ -189,7 +191,7 @@
                   <!-- <span v-if="scope.row.test_detail[value]">{{ scope.row.test_detail[value].up_trains }}</span> -->
                 </template>
               </el-table-column>
-              <el-table-column label="综合合格率%" min-width="54" align="center">
+              <el-table-column label="综合合格率%" align="center">
                 <template slot-scope="scope">
                   <span
                     v-if="(scope.row.classes.filter(d=>d.production_class === value)).length>0"
@@ -224,7 +226,9 @@ export default {
       getDayParams: { all: 1 },
       dialogShow: false,
       tableData: [],
-      dayTableData: []
+      dayTableData: [],
+      dialogTableLoading: false,
+      tableLoading: true
     }
   },
   created() {
@@ -235,9 +239,14 @@ export default {
     getTableData() {
       this.getParams.start_time = this.beginTime
       this.getParams.end_time = this.endTime
+      this.tableLoading = true
+      this.tableData = []
       getBatchMonthStatistics(this.getParams).then(response => {
         this.tableData = response
+        this.tableLoading = false
         // this.total = response.count
+      }).catch(e => {
+        this.tableLoading = false
       })
     },
     dateFormat(date) {
@@ -258,10 +267,15 @@ export default {
       })
     },
     monthPassClick(date) {
+      this.dayTableData = []
       this.getDayParams.date = dayjs(date).startOf('month').format('YYYY-MM')
+      this.dialogTableLoading = true
       getBatchDayStatistics(this.getDayParams).then(response => {
         this.dayTableData = response
+        this.dialogTableLoading = false
         // this.total = response.count
+      }).catch(e => {
+        this.dialogTableLoading = false
       })
       this.dialogShow = true
     },
@@ -272,6 +286,9 @@ export default {
           return 'color: #EA1B29'
         }
       }
+    },
+    headerRowStyle() {
+      return 'height:100px'
     },
     getStyle(str) {
       if (str) {

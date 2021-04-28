@@ -57,7 +57,8 @@
       <el-form-item>
         <el-button
           v-permission="['result_info','export']"
-          @click="exportExcel"
+          :loading="btnLoading"
+          @click="getALLData"
         >
           导出
         </el-button>
@@ -231,6 +232,7 @@ export default {
       definePafeSize: 10,
       valueResult: '',
       ALLData: [],
+      btnLoading: false,
       options: [{ name: '一等品', bool: true }, { name: '三等品', bool: false }]
     }
   },
@@ -325,12 +327,14 @@ export default {
       this.getParams.page = 1
       this.testOrdersAll = []
       this.getMaterialTestOrders()
-      this.getALLData()
     },
     async getALLData() {
       try {
+        this.btnLoading = true
         const arr = await this.getMaterialTestOrders(true)
         this.ALLData = arr || []
+        this.btnLoading = false
+        this.exportExcel()
       } catch (e) {
         //
       }

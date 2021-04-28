@@ -48,4 +48,11 @@ export default {
     padding-right: 15px;
   }
 }
+.el-card{
+    border-top: none !important;
+}
+.box-card{
+    margin: 14px !important;
+    margin-top: 2px !important;
+}
 </style>

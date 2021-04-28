@@ -1,5 +1,6 @@
 <template>
   <div class="app-container  month_pass_detail">
+    <!-- 胶料月合格率统计 -->
     <el-form :inline="true">
       <el-form-item label="开始时间">
         <el-date-picker
@@ -30,95 +31,97 @@
         </el-select>
       </el-form-item>
     </el-form>
-    <el-table
-      v-if="value1.length == 0 || value1.indexOf('综合合格率') > -1"
-      :data="tableData"
-      size="mini"
-      border
-      :max-height="(value1.length === 0 || value1.length === 3) ? 200 : value1.length === 1 ? 600 : 280"
-      style="width: 100%"
-    >
-      <el-table-column label="综合合格率">
-        <el-table-column fixed type="index" label="No" align="center" />
-        <el-table-column fixed label="胶料编码" min-width="130" align="center">
-          <template slot-scope="scope">
-            <el-link type="primary" :underline="false" @click="monthPassClick(scope.row.product_no)">{{ scope.row.product_no }}</el-link>
-          </template>
+    <div v-loading="loading">
+      <el-table
+        v-if="value1.length == 0 || value1.indexOf('综合合格率') > -1"
+        :data="tableData"
+        size="mini"
+        border
+        :max-height="(value1.length === 0 || value1.length === 3) ? 200 : value1.length === 1 ? 600 : 280"
+        style="width: 100%"
+      >
+        <el-table-column label="综合合格率">
+          <el-table-column fixed type="index" label="No" align="center" />
+          <el-table-column fixed label="胶料编码" min-width="130" align="center">
+            <template slot-scope="scope">
+              <el-link type="primary" :underline="false" @click="monthPassClick(scope.row.product_no)">{{ scope.row.product_no }}</el-link>
+            </template>
+          </el-table-column>
+          <el-table-column v-for="(value,index) in headers" :key="index" min-width="58" :label="dateFormat(value)" align="center">
+            <template slot-scope="scope">
+              <span
+                v-if="(scope.row.dates.filter(d=>d.date === value)).length>0"
+                :style="getStyle((scope.row.dates.filter(d=>d.date === value))[0].zh_percent_of_pass)"
+              >
+                {{ (scope.row.dates.filter(d=>d.date === value))[0].zh_percent_of_pass }}
+              </span>
+            </template>
+          </el-table-column>
         </el-table-column>
-        <el-table-column v-for="(value,index) in headers" :key="index" min-width="58" :label="dateFormat(value)" align="center">
-          <template slot-scope="scope">
-            <span
-              v-if="(scope.row.dates.filter(d=>d.date === value)).length>0"
-              :style="getStyle((scope.row.dates.filter(d=>d.date === value))[0].zh_percent_of_pass)"
-            >
-              {{ (scope.row.dates.filter(d=>d.date === value))[0].zh_percent_of_pass }}
-            </span>
-          </template>
+      </el-table>
+      <el-table
+        v-if="value1.length == 0 || value1.indexOf('一次合格率') > -1"
+        :data="tableData"
+        border
+        size="mini"
+        :max-height="(value1.length === 0 || value1.length === 3) ? 200 : value1.length === 1 ? 600 : 280"
+        style="width: 100%"
+      >
+        <el-table-column label="一次合格率">
+          <el-table-column fixed type="index" label="No" align="center" />
+          <el-table-column fixed label="胶料编码" min-width="130" align="center">
+            <template slot-scope="scope">
+              <el-link type="primary" :underline="false" @click="monthPassClick(scope.row.product_no)">{{ scope.row.product_no }}</el-link>
+            </template>
+          </el-table-column>
+          <el-table-column v-for="(value,index) in headers" :key="index" min-width="58" :label="dateFormat(value)" align="center">
+            <template slot-scope="scope">
+              <span
+                v-if="(scope.row.dates.filter(d=>d.date === value)).length>0"
+                :style="getStyle((scope.row.dates.filter(d=>d.date === value))[0].yc_percent_of_pass)"
+              >
+                {{ (scope.row.dates.filter(d=>d.date === value))[0].yc_percent_of_pass }}
+              </span>
+            </template>
+          </el-table-column>
         </el-table-column>
-      </el-table-column>
-    </el-table>
-    <el-table
-      v-if="value1.length == 0 || value1.indexOf('一次合格率') > -1"
-      :data="tableData"
-      border
-      size="mini"
-      :max-height="(value1.length === 0 || value1.length === 3) ? 200 : value1.length === 1 ? 600 : 280"
-      style="width: 100%"
-    >
-      <el-table-column label="一次合格率">
-        <el-table-column fixed type="index" label="No" align="center" />
-        <el-table-column fixed label="胶料编码" min-width="130" align="center">
-          <template slot-scope="scope">
-            <el-link type="primary" :underline="false" @click="monthPassClick(scope.row.product_no)">{{ scope.row.product_no }}</el-link>
-          </template>
+      </el-table>
+      <el-table
+        v-if="value1.length == 0 || value1.indexOf('流变合格率') > -1"
+        :data="tableData"
+        border
+        size="mini"
+        :max-height="(value1.length === 0 || value1.length === 3) ? 200 : value1.length === 1 ? 600 : 280"
+        style="width: 100%"
+      >
+        <el-table-column label="流变合格率">
+          <el-table-column fixed type="index" label="No" align="center" />
+          <el-table-column fixed label="胶料编码" min-width="130" align="center">
+            <template slot-scope="scope">
+              <el-link type="primary" :underline="false" @click="monthPassClick(scope.row.product_no)">{{ scope.row.product_no }}</el-link>
+            </template>
+          </el-table-column>
+          <el-table-column v-for="(value,index) in headers" :key="index" min-width="58" :label="dateFormat(value)" align="center">
+            <template slot-scope="scope">
+              <span
+                v-if="(scope.row.dates.filter(d=>d.date === value)).length>0"
+                :style="getStyle((scope.row.dates.filter(d=>d.date === value))[0].lb_percent_of_pass)"
+              >
+                {{ (scope.row.dates.filter(d=>d.date === value))[0].lb_percent_of_pass }}
+              </span>
+            </template>
+          </el-table-column>
         </el-table-column>
-        <el-table-column v-for="(value,index) in headers" :key="index" min-width="58" :label="dateFormat(value)" align="center">
-          <template slot-scope="scope">
-            <span
-              v-if="(scope.row.dates.filter(d=>d.date === value)).length>0"
-              :style="getStyle((scope.row.dates.filter(d=>d.date === value))[0].yc_percent_of_pass)"
-            >
-              {{ (scope.row.dates.filter(d=>d.date === value))[0].yc_percent_of_pass }}
-            </span>
-          </template>
-        </el-table-column>
-      </el-table-column>
-    </el-table>
-    <el-table
-      v-if="value1.length == 0 || value1.indexOf('流变合格率') > -1"
-      :data="tableData"
-      border
-      size="mini"
-      :max-height="(value1.length === 0 || value1.length === 3) ? 200 : value1.length === 1 ? 600 : 280"
-      style="width: 100%"
-    >
-      <el-table-column label="流变合格率">
-        <el-table-column fixed type="index" label="No" align="center" />
-        <el-table-column fixed label="胶料编码" min-width="130" align="center">
-          <template slot-scope="scope">
-            <el-link type="primary" :underline="false" @click="monthPassClick(scope.row.product_no)">{{ scope.row.product_no }}</el-link>
-          </template>
-        </el-table-column>
-        <el-table-column v-for="(value,index) in headers" :key="index" min-width="58" :label="dateFormat(value)" align="center">
-          <template slot-scope="scope">
-            <span
-              v-if="(scope.row.dates.filter(d=>d.date === value)).length>0"
-              :style="getStyle((scope.row.dates.filter(d=>d.date === value))[0].lb_percent_of_pass)"
-            >
-              {{ (scope.row.dates.filter(d=>d.date === value))[0].lb_percent_of_pass }}
-            </span>
-          </template>
-        </el-table-column>
-      </el-table-column>
-    </el-table>
+      </el-table>
+    </div>
     <el-dialog
-      :close-on-click-modal="false"
       :close-on-press-escape="false"
       width="95%"
       title="胶料月合格率详情"
       :visible.sync="dialogShow"
     >
-      <div class="table_data">
+      <!-- :close-on-click-modal="false" -->
+      <div v-loading="dialogLoading" class="table_data">
         <el-table
           :data="detailData"
           border
@@ -201,7 +204,9 @@ export default {
       tableData: [],
       detailData: [],
       options: ['综合合格率', '一次合格率', '流变合格率'],
-      value1: []
+      value1: [],
+      loading: true,
+      dialogLoading: false
     }
   },
   created() {
@@ -212,10 +217,14 @@ export default {
       this.getParams = { all: 1 }
       this.getParams.start_time = this.beginTime
       this.getParams.end_time = this.endTime
+      this.loading = true
       getBatchProductNoMonthStatistics(this.getParams).then(response => {
         this.tableData = response
         // this.total = response.count
         this.getHeaders()
+        this.loading = false
+      }).catch(e => {
+        this.loading = false
       })
     },
     dateFormat(date) {
@@ -248,11 +257,16 @@ export default {
     },
     monthPassClick(product_no) {
       this.dialogShow = true
+      this.dialogLoading = true
       this.getDetailHeaders()
       this.getParams.product_no = product_no
+      this.detailData = []
       getBatchProductNoMonthStatistics(this.getParams).then(response => {
         this.detailData = response[0].dates
+        this.dialogLoading = false
         // this.total = response.count
+      }).catch(e => {
+        this.dialogLoading = false
       })
     },
     getHeight() {

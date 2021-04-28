@@ -2,18 +2,20 @@
   <div class="homePage-container">
     <el-row :gutter="20" style="font-weight:700;font-size:16px">
       <el-col :span="4">
-        <div class="volumeBox">
+        <el-card class="box-card">
+          <!-- <div class="volumeBox"> -->
           <span :style="{'color':color[1]}">日计划量(车/吨)</span><br>
           <div class="volumeBoxChild" :style="{'color':color[0]}">
             <span v-if="overviewObj.plan_data">
               {{ overviewObj.plan_data.total_trains||'-' }}/{{ overviewObj.plan_data.total_weight||'-' }}
             </span>
             <span v-else>-</span>
+            <!-- </div> -->
           </div>
-        </div>
+        </el-card>
       </el-col>
       <el-col :span="4">
-        <div class="volumeBox">
+        <el-card class="">
           <span :style="{'color':color[1]}">日总产量(车/吨)</span><br>
           <div class="volumeBoxChild" :style="{'color':color[0]}">
             <span v-if="overviewObj.actual_data">
@@ -21,10 +23,10 @@
             </span>
             <span v-else>-</span>
           </div>
-        </div>
+        </el-card>
       </el-col>
       <el-col :span="4">
-        <div class="volumeBox">
+        <el-card class="">
           <span :style="{'color':color[1]}">日入库量(车/吨)</span><br>
           <div class="volumeBoxChild" :style="{'color':color[0]}">
             <span v-if="overviewObj.inbound_data">
@@ -32,10 +34,10 @@
             </span>
             <span v-else>-</span>
           </div>
-        </div>
+        </el-card>
       </el-col>
       <el-col :span="4">
-        <div class="volumeBox">
+        <el-card class="">
           <span :style="{'color':color[1]}">日出库量(车/吨)</span><br>
           <div class="volumeBoxChild" :style="{'color':color[0]}">
             <span v-if="overviewObj.outbound_data">
@@ -43,16 +45,16 @@
             </span>
             <span v-else>-</span>
           </div>
-        </div>
+        </el-card>
       </el-col>
       <el-col :span="4">
-        <div class="volumeBox">
+        <el-card class="">
           <span :style="{'color':color[1]}">日合格率</span><br>
           <div class="volumeBoxChild" :style="{'color':color[0]}">{{ overviewObj.qualified_rate||'-' }}</div>
-        </div>
+        </el-card>
       </el-col>
       <el-col :span="4">
-        <div class="volumeBox">
+        <el-card class="">
           <span :style="{'color':color[1]}">日发货量(车/吨)</span><br>
           <div class="volumeBoxChild" :style="{'color':color[0]}">
             <span v-if="overviewObj.dispatch_data">
@@ -60,78 +62,85 @@
             </span>
             <span v-else>-</span>
           </div>
-        </div>
+        </el-card>
       </el-col>
     </el-row>
 
     <el-row :gutter="20">
-      <el-col :span="24" class="yieldBar" style="display:flex;">
-        <div
-          id="yieldBar"
-          class="volumeBox"
-          style="width: 100%;height:300px;flex:1;border-radius: 0"
-        />
-        <div class="yieldBarRadio">
-          <el-radio-group v-model="yieldBarRadio" size="mini" @change="yieldBarChange">
-            <el-radio-button label="1">本周</el-radio-button>
-            <el-radio-button label="2">本月</el-radio-button>
-          </el-radio-group>
-        </div>
-        <div
-          id="passRateLine"
-          class="volumeBox"
-          style="width: 100%;height:300px;flex:1;border-radius: 0"
-        />
+      <el-col :span="24" style="margin-top:5px;margin-bottom:10px">
+        <el-card>
+          <div class="yieldBar" style="display:flex;">
+            <div
+              id="yieldBar"
+              class="volumeBox"
+              style="width: 100%;height:300px;flex:1;border-radius: 0"
+            />
+            <div class="yieldBarRadio">
+              <el-radio-group v-model="yieldBarRadio" size="mini" @change="yieldBarChange">
+                <el-radio-button label="1">本周</el-radio-button>
+                <el-radio-button label="2">本月</el-radio-button>
+              </el-radio-group>
+            </div>
+            <div
+              id="passRateLine"
+              class="volumeBox"
+              style="width: 100%;height:300px;flex:1;border-radius: 0"
+            />
+          </div>
+        </el-card>
       </el-col>
 
-      <el-col :span="12" class="relativeFa">
-        <div
-          id="finishChart"
-          class="volumeBox"
-          style="width: 100%;height:300px;"
-        />
-        <div class="absoluteFa">
-          <el-tabs v-model="equipProduction.dimension" style="width:190px" @tab-click="handleClick('equipProduction')">
-            <el-tab-pane label="总计" name="0" />
-            <el-tab-pane label="今天" name="1" />
-            <el-tab-pane label="昨天" name="2" />
-          </el-tabs>
-          <el-date-picker
-            v-model="equipProduction.dateFinish"
-            style="width:240px;"
-            type="daterange"
-            value-format="yyyy-MM-dd"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            @change="handleClickDate($event,'equipProduction')"
+      <el-col :span="12">
+        <el-card class="relativeFa">
+          <div
+            id="finishChart"
+            class="volumeBox"
+            style="width: 100%;height:300px;"
           />
-        </div>
-
+          <div class="absoluteFa">
+            <el-tabs v-model="equipProduction.dimension" style="width:190px" @tab-click="handleClick('equipProduction')">
+              <el-tab-pane label="总计" name="0" />
+              <el-tab-pane label="今天" name="1" />
+              <el-tab-pane label="昨天" name="2" />
+            </el-tabs>
+            <el-date-picker
+              v-model="equipProduction.dateFinish"
+              style="width:240px;"
+              type="daterange"
+              value-format="yyyy-MM-dd"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              @change="handleClickDate($event,'equipProduction')"
+            />
+          </div>
+        </el-card>
       </el-col>
-      <el-col :span="12" class="relativeFa">
-        <div
-          id="shutdownBar"
-          class="volumeBox"
-          style="width: 100%;height:300px;"
-        />
-        <div class="absoluteFa">
-          <el-tabs v-model="equipMaintenance.dimension" style="width:190px" @tab-click="handleClick('equipMaintenance')">
-            <el-tab-pane label="总计" name="0" />
-            <el-tab-pane label="今天" name="1" />
-            <el-tab-pane label="昨天" name="2" />
-          </el-tabs>
-          <el-date-picker
-            v-model="equipMaintenance.dateFinish"
-            style="width:240px;"
-            type="daterange"
-            value-format="yyyy-MM-dd"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            @change="handleClickDate($event,'equipMaintenance')"
+      <el-col :span="12">
+        <el-card class="relativeFa">
+          <div
+            id="shutdownBar"
+            class="volumeBox"
+            style="width: 100%;height:300px;"
           />
-        </div>
+          <div class="absoluteFa">
+            <el-tabs v-model="equipMaintenance.dimension" style="width:190px" @tab-click="handleClick('equipMaintenance')">
+              <el-tab-pane label="总计" name="0" />
+              <el-tab-pane label="今天" name="1" />
+              <el-tab-pane label="昨天" name="2" />
+            </el-tabs>
+            <el-date-picker
+              v-model="equipMaintenance.dateFinish"
+              style="width:240px;"
+              type="daterange"
+              value-format="yyyy-MM-dd"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              @change="handleClickDate($event,'equipMaintenance')"
+            />
+          </div>
+        </el-card>
       </el-col>
       <!-- <el-col :span="24">
         <div
@@ -364,6 +373,12 @@ export default {
           trigger: 'axis',
           axisPointer: {
             type: 'shadow'
+          },
+          formatter: function(params) {
+            const firstParams = params[0]
+            const sndParams = params[2]
+            return firstParams.name + '<br>' + firstParams.seriesName + '：' + firstParams.value + '<br>' +
+            sndParams.seriesName + '：' + sndParams.value
           }
         },
         grid: {
@@ -394,15 +409,15 @@ export default {
             data: []
           },
           {
-            name: '计划车次',
+            name: '',
             type: 'bar',
             stack: '11',
             barMaxWidth: 150,
             label: {
-              show: true
-            },
-            emphasis: {
-              focus: 'series'
+              normal: {
+                show: false,
+                position: 'center'
+              }
             },
             data: []
           },
@@ -412,7 +427,7 @@ export default {
           //   data: [120, 132, 101, 134, 90, 230, 210]
           // },
           {
-            name: '总数',
+            name: '计划车次',
             type: 'bar',
             stack: '11',
             itemStyle: {
@@ -638,8 +653,8 @@ export default {
 
 <style lang="scss" scoped>
 .homePage-container {
-  background-color: #f0f2f5;
-  padding:20px;
+  // background-color: #f0f2f5;
+  padding:0 20px;
   .yieldBar{
     position: relative;
   }
@@ -651,7 +666,7 @@ export default {
   }
   .volumeBox{
     background: #fff;
-    padding:10px;
+    // padding:10px;
     border-radius: 20px;
     margin-bottom:10px;
   }
@@ -700,7 +715,7 @@ export default {
   }
   .absoluteFa{
     position: absolute;
-    top:0;right:15px;
+    top:0;right:0px;
     display: flex;
   }
 }

@@ -253,7 +253,7 @@ export default {
 
 <style lang="scss" scoped>
   .slotIconStyle{
-    color: rgb(11, 189, 11);
+    color: #0bbd0b;
     font-size: 20px;
     display: inline-block;
     width: 30px;

@@ -27,10 +27,9 @@
         to="/"
       >
         <img
-          v-if="logo"
-          :src="logo"
           class="sidebar-logo"
         >
+        <!-- src="@/assets/logoHeard.png" -->
         <h1 class="sidebar-title">{{ title }} </h1>
       </router-link>
     </transition>
@@ -48,8 +47,7 @@ export default {
   },
   data() {
     return {
-      title: '中策安吉炼胶MES系统',
-      logo: ''
+      title: '中策安吉炼胶MES系统'
     }
   }
 }
@@ -79,7 +77,7 @@ export default {
     width: 100%;
 
     & .sidebar-logo {
-      width: 32px;
+      // width: 32px;
       height: 32px;
       vertical-align: middle;
       margin-right: 12px;

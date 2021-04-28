@@ -88,6 +88,7 @@
               v-permission="['weight_tank','delete']"
               size="mini"
               type="danger"
+              plain
               @click="handleDelete(scope.row)"
             >{{ scope.row.use_flag?'停用':'启用' }}
             </el-button>
@@ -232,7 +233,6 @@ export default {
     showEditDialog(row) {
       this.dialogVisible = true
       this.currentObj = JSON.parse(JSON.stringify(row))
-      console.log(this.getParams.equip_id, 2222)
       this.currentObj.equip_id = this.getParams.equip_id
     },
     handleDelete: function(row) {

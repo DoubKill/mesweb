@@ -88,7 +88,6 @@ export const constantRoutes = [{
 },
 {
   path: '/phone/fault-day-statistics',
-  // component: () => import('@/views/login/index'),
   component: () => import('@/views/quality_management/phone/fault-day-statistics'),
   hidden: true,
   meta: {
