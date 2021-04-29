@@ -7,7 +7,7 @@
     />
     <el-menu
       :default-active="activeMenu"
-      background-color="rgb(48 65 86)"
+      background-color="#3e4553"
       text-color="#fff"
       class="el-menu-demo"
       mode="horizontal"

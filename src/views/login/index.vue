@@ -201,7 +201,7 @@ $light_gray:#eee;
   background-color: $bg;
   background: linear-gradient(70deg,  $bg, #294a6aad);
   overflow: hidden;
-  background: #fff url('../../assets/login.jpg') no-repeat left;
+  background: url('../../assets/login.jpg') no-repeat left;
     // background-size:cover;
   .el-button{
     line-height: 1.5;

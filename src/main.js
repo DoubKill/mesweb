@@ -5,9 +5,9 @@ Vue.prototype.$echarts = echarts
 import VCharts from 'v-charts'
 Vue.use(VCharts)
 
-// import UmyUi from 'umy-ui'
-// import 'umy-ui/lib/theme-chalk/index.css'
-// Vue.use(UmyUi)
+import UmyUi from 'umy-ui'
+import 'umy-ui/lib/theme-chalk/index.css'
+Vue.use(UmyUi)
 
 import '@/utils/filterPublic'
 import '@/utils/directives/index.js'

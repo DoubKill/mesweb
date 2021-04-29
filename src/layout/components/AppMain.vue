@@ -31,13 +31,13 @@ export default {
 }
 .app-main {
   /*50 = navbar  */
-  min-height: calc(100vh - 50px);
+  /* min-height: calc(100vh - 200px); */
   width: 100%;
   position: relative;
   overflow: hidden;
 }
 .fixed-header+.app-main {
-  padding-top: 50px;
+  /* padding-top: 200px; */
 }
 </style>
 
