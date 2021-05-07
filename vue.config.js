@@ -41,7 +41,7 @@ module.exports = {
     proxy: {
       '/api': {
         // target: 'http://10.10.120.40:15008',
-        // target: 'http://10.10.120.40:9009/', //  测试环境
+        target: 'http://10.10.120.40:9009/', //  测试环境
         // target: 'http://10.20.180.145:8000', //  博文
         // target: 'http://10.4.14.42:8000', //  博文外
         // target: 'http:// 10.10.120.220:8000/', // 龙霄
@@ -51,7 +51,7 @@ module.exports = {
         // target: 'http://10.4.14.112:8000/', // 李威外
         // target: 'http://10.20.180.167:8000', // 李威
         // target: 'http://10.4.14.25:8000', // 月
-        target: 'http://10.4.10.54/',
+        // target: 'http://10.4.10.54/',
         ws: true,
         changeOrigin: true,
         pathRewrite: {
