@@ -18,52 +18,55 @@
       </el-form-item>
       <el-form-item style="float:right">
         <el-button @click="reportBrowse">报表浏览</el-button>
-        <el-button @click="exportTable">导出</el-button>
+        <!-- <el-button @click="exportTable">导出</el-button> -->
       </el-form-item>
     </el-form>
     <el-table
       id="out-table"
+      v-loading="loading"
       :data="dataList"
       :span-method="objectSpanMethod"
       border
     >
-      <!-- <el-table-column
-        label="ID"
-        width="50"
-        type="index"
-      /> -->
       <el-table-column
-        prop="a"
+        prop="equip_no"
         label="机台"
-        min-width="20"
+        min-width="10"
       />
       <el-table-column
-        prop="b"
+        prop="product_no"
         label="胶料编码"
         min-width="20"
       />
       <el-table-column
-        prop="c"
+        prop="plan_trains"
         label="计划量(车)"
-        min-width="20"
+        min-width="14"
       />
       <el-table-column
-        prop="c"
+        prop="actual_trains"
         label="完成量(车)"
-        min-width="20"
+        min-width="14"
       />
       <el-table-column
         prop="c"
         label="达成率"
         min-width="20"
-      />
+      >
+        <template v-if="row.actual_trains" slot-scope="{row}">
+          <el-progress :text-inside="true" :stroke-width="24" :percentage="parseInt(row.actual_trains/row.plan_trains * 100)" />
+        </template>
+      </el-table-column>
       <el-table-column
-        prop="c"
         label="完成总量(车)"
-        min-width="20"
-      />
+        min-width="14"
+      >
+        <template v-if="row.trains_sum" slot-scope="{row}">
+          {{ row.trains_sum[0] }}
+        </template>
+      </el-table-column>
       <el-table-column
-        prop="c"
+        prop="put_user"
         label="投料人员"
         min-width="20"
       />
@@ -73,40 +76,14 @@
         min-width="20"
       />
       <el-table-column
-        prop="c"
         label="设备启动率"
         min-width="20"
-      />
+      >
+        <template v-if="row.start_rate" slot-scope="{row}">
+          <el-progress :text-inside="true" :stroke-width="24" status="success" :percentage="parseInt(row.start_rate *100)" />
+        </template>
+      </el-table-column>
     </el-table>
-    <!-- <table
-      border="1"
-      bordercolor="#EBEEF5"
-      class="info-table"
-    >
-     <thead>
-        <tr>
-          <td>机台</td>
-          <td>胶料编码</td>
-          <td>计划量(车)</td>
-          <td>完成量(车)</td>
-          <td>达成率</td>
-          <td>完成总量(车)</td>
-          <td>投料人员</td>
-          <td>生产时间</td>
-          <td>设备启动率</td>
-        </tr>
-      </thead>
-      <tbody>
-      <tr
-          v-for="(item,index) in dataList"
-          :key="index"
-          :rowspan="item.list.length"
-        >
-          <td>{{ item.a }}</td>
-          <td>{{ item.a }}</td>
-        </tr>
-      </tbody>
-    </table> -->
     <el-dialog
       title="浏览"
       :visible.sync="dialogVisible"
@@ -124,10 +101,10 @@
           <td colspan="4">炼胶生产运行记录</td>
         </tr>
         <tr style="">
-          <td>班组：方法</td>
-          <td>班次：反对法</td>
-          <td>值班长：否适度放大</td>
-          <td style="width:300px">2014年02月06日</td>
+          <td>班组：--</td>
+          <td>班次：--</td>
+          <td>值班长：--</td>
+          <td style="width:300px">{{ search.date }}</td>
         </tr>
       </table>
       <div style="display:flex">
@@ -138,42 +115,42 @@
           style="width:70%"
         >
           <el-table-column
-            prop="a"
+            prop="equip_no"
             label="机台"
             min-width="20"
           />
           <el-table-column
-            prop="b"
+            prop="product_no"
             label="胶料编码"
             min-width="20"
           />
           <el-table-column
-            prop="c"
+            prop="plan_trains"
             label="计划量(车)"
             min-width="20"
           />
           <el-table-column
-            prop="c"
+            prop="actual_trains"
             label="完成量(车)"
             min-width="20"
           />
           <el-table-column
-            prop="c"
             label="合计(车)"
             min-width="20"
-          />
+          >
+            <template slot-scope="{row}">
+              {{ row.trains_sum[0] }}
+            </template>
+          </el-table-column>
           <el-table-column
-            prop="c"
             label="岗位人员配置"
             min-width="30"
           >
             <template slot-scope="{row}">
               <div>
-                <div>
-                  投料岗位：54545454
-                </div>
-                <div>挤出岗位：54545454</div>
-                <div>收皮岗位：54545454</div>
+                <div>投料岗位：{{ row.put_user }}</div>
+                <div>挤出岗位：--</div>
+                <div>收皮岗位：--</div>
               </div>
             </template>
           </el-table-column>
@@ -188,25 +165,25 @@
             <td>相关记录</td>
           </tr>
           <tr>
-            <td class="rightHeight">6565656565656565</td>
+            <td class="rightHeight">--</td>
           </tr>
           <tr>
             <td>工艺停机</td>
           </tr>
           <tr>
-            <td class="rightHeight">65656565</td>
+            <td class="rightHeight">--</td>
           </tr>
           <tr>
             <td>生产停机</td>
           </tr>
           <tr>
-            <td class="rightHeight">65656565</td>
+            <td class="rightHeight">--</td>
           </tr>
           <tr>
             <td>辅助岗位名单</td>
           </tr>
           <tr>
-            <td class="rightHeight">65656565</td>
+            <td class="rightHeight">--</td>
           </tr>
         </table>
       </div>
@@ -219,6 +196,7 @@
 
 <script>
 import classSelect from '@/components/ClassSelect'
+import { runtimeRecord } from '@/api/base_w_three'
 import { setDate, exportExcel } from '@/utils/index'
 export default {
   components: { classSelect },
@@ -227,6 +205,7 @@ export default {
       search: {
         date: setDate()
       },
+      loading: true,
       dialogVisible: false,
       dataList: [
         {
@@ -257,31 +236,49 @@ export default {
     }
   },
   created() {
-    this.spanArr = []
-    this.pos = null
-    for (var i = 0; i < this.dataList.length; i++) {
-      if (i === 0) {
-        // 如果是第一条记录（即索引是0的时候），向数组中加入１
-        this.spanArr.push(1)
-        this.pos = 0
-      } else {
-        if (this.dataList[i].a === this.dataList[i - 1].a) {
-          // 如果a相等就累加，并且push 0  这里是根据一样的a匹配
-          this.spanArr[this.pos] += 1
-          this.spanArr.push(0)
-        } else {
-          // 不相等push 1
-          this.spanArr.push(1)
-          this.pos = i
-        }
-      }
-    }
+    this.getList()
   },
   methods: {
-    changeSearch() {},
-    classChanged() {},
+    async getList() {
+      try {
+        this.loading = true
+        const data = await runtimeRecord('get', null, { params: this.search })
+        this.dataList = data.results || []
+        this.loading = false
+
+        if (this.dataList.length === 0) return
+        this.spanArr = []
+        this.pos = null
+        for (var i = 0; i < this.dataList.length; i++) {
+          if (i === 0) {
+            // 如果是第一条记录（即索引是0的时候），向数组中加入１
+            this.spanArr.push(1)
+            this.pos = 0
+          } else {
+            if (this.dataList[i].equip_no === this.dataList[i - 1].equip_no) {
+              // 如果a相等就累加，并且push 0  这里是根据一样的a匹配
+              this.spanArr[this.pos] += 1
+              this.spanArr.push(0)
+            } else {
+              // 不相等push 1
+              this.spanArr.push(1)
+              this.pos = i
+            }
+          }
+        }
+      } catch (e) {
+        this.loading = false
+      }
+    },
+    changeSearch() {
+      this.getList()
+    },
+    classChanged(obj) {
+      this.search.classes = obj
+      this.getList()
+    },
     objectSpanMethod({ row, column, rowIndex, columnIndex }) {
-      if ([0].includes(columnIndex)) {
+      if ([0].includes(columnIndex) && this.spanArr) {
         const _row = this.spanArr[rowIndex]
         const _col = _row > 0 ? 1 : 0
         return {
@@ -291,7 +288,7 @@ export default {
       }
     },
     objectSpanMethodChid({ row, column, rowIndex, columnIndex }) {
-      if ([0, 5].includes(columnIndex)) {
+      if ([0, 5].includes(columnIndex) && this.spanArr) {
         const _row = this.spanArr[rowIndex]
         const _col = _row > 0 ? 1 : 0
         return {

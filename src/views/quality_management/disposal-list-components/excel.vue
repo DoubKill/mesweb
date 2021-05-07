@@ -14,204 +14,204 @@
         bordercolor="black"
         class="info-table"
       >
-        <thead>
-          <tr>
-            <th :colspan="4">
-              <div style="position:relative">
-                <div class="logo-style">
-                  <img style="width:100%;height:100%" src="@/assets/logo.png" alt="">
-                </div>
-                <div style="flex:1;text-align:center;font-size: 1.5em;line-height:45px">中策(安吉)不合格品处置单</div>
+        <!-- <thead> -->
+        <!-- </thead> -->
+        <tr>
+          <th :colspan="5+headDataLength">
+            <div style="position:relative">
+              <div class="logo-style">
+                <img style="width:100%;height:100%" src="@/assets/logo.png" alt="">
               </div>
-            </th>
-          </tr>
-          <tr v-if="orderNum">
-            <td :colspan="4" style="text-align:right;padding-right:15px">
-              <div>质检编码：{{ formObj.unqualified_deal_order_uid }}</div>
-            </td>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td style="text-align:left;padding-left:25px;width:108px">发生部门：
-            </td>
-            <td>
-              <span v-if="orderNum">{{ formObj.deal_department }}</span>
-              <div v-else class="deal_department">
-                <el-radio v-model="formObj.deal_department" label="分厂">分厂</el-radio>
-                <el-radio v-model="formObj.deal_department" label="车间">车间</el-radio>
-              </div></td>
-            <td style="width:300px">胶料筹备组 炼胶</td>
-            <td style="width:125px">日期：{{ orderNum&&formObj.created_date?(formObj.created_date).split(' ')[0]: formObj.currentDate }}</td>
-          </tr>
-          <tr style="text-align:left;">
-            <td colspan="4" style="padding-left:25px">不合格品状态：
-              <span v-if="orderNum">
-                <span
-                  v-for="(item,i) in stateList"
-                  :key="i"
-                >
-                  <span v-if="item === formObj.status">☑</span>
-                  <span v-else>☐</span>
-                  {{ item }}
-                </span>
+              <div style="flex:1;text-align:center;font-size: 1.5em;line-height:45px">中策(安吉)不合格品处置单</div>
+            </div>
+          </th>
+        </tr>
+        <tr v-if="orderNum">
+          <td :colspan="5+headDataLength" style="text-align:right;padding-right:15px">
+            <div>质检编码：{{ formObj.unqualified_deal_order_uid }}</div>
+          </td>
+        </tr>
+        <tr>
+          <td :colspan="2" style="text-align:left;padding-left:25px;width:108px">发生部门：
+          </td>
+          <td :colspan="2">
+            <span v-if="orderNum">{{ formObj.deal_department }}</span>
+            <div v-else class="deal_department">
+              <el-radio v-model="formObj.deal_department" label="分厂">分厂</el-radio>
+              <el-radio v-model="formObj.deal_department" label="车间">车间</el-radio>
+            </div></td>
+          <td>胶料筹备组 炼胶</td>
+          <td :colspan="headDataLength" style="width:125px">日期：{{ orderNum&&formObj.created_date?(formObj.created_date).split(' ')[0]: formObj.currentDate }}</td>
+        </tr>
+        <tr style="text-align:left;">
+          <td :colspan="5+headDataLength" style="padding-left:25px">不合格品状态：
+            <span v-if="orderNum">
+              <span
+                v-for="(item,i) in stateList"
+                :key="i"
+              >
+                <span v-if="item === formObj.status">☑</span>
+                <span v-else>☐</span>
+                {{ item }}
               </span>
-              <span v-else>
-                <el-radio
-                  v-for="(item,i) in stateList"
-                  :key="i"
-                  v-model="formObj.status"
-                  :label="item"
-                >
-                  {{ item }}
-                </el-radio>
-              </span>
-            </td>
-          </tr>
-          <tr style="text-align:left;">
-            <td colspan="4" style="padding-left:25px">
-              <span>不合格品信息(发生部门)：</span>
-              <span v-if="orderNum" v-html="formObj.department" />
-              <el-input
-                v-else
-                v-model="formObj.department"
-                style="width:70%"
-                placeholder="请输入内容"
-              />
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            </span>
+            <span v-else>
+              <el-radio
+                v-for="(item,i) in stateList"
+                :key="i"
+                v-model="formObj.status"
+                :label="item"
+              >
+                {{ item }}
+              </el-radio>
+            </span>
+          </td>
+        </tr>
+        <tr style="text-align:left;">
+          <td :colspan="5+headDataLength" style="padding-left:25px">
+            <span>不合格品信息(发生部门)：</span>
+            <span v-if="orderNum" v-html="formObj.department" />
+            <el-input
+              v-else
+              v-model="formObj.department"
+              style="width:70%"
+              placeholder="请输入内容"
+            />
+          </td>
+        </tr>
+        <!-- </table>
       <table
         border="1"
         bordercolor="black"
         class="info-table"
         style="border-top-color: #fff;"
-      >
-        <tr>
-          <th rowspan="2">序号</th>
-          <th rowspan="2">生产日期/班次</th>
-          <th rowspan="2">生产机台</th>
-          <th rowspan="2">胶料编码</th>
-          <th rowspan="2">车次</th>
-          <th :colspan="headData.length">不合格项</th>
-        </tr>
-        <tr>
-          <th v-for="(subHead, index) in headData" :key="index">{{ subHead }}</th>
-        </tr>
-        <tr v-for="(itemVal,i) in listData" :key="i">
-          <td>{{ Number(i) + 1 }}</td>
-          <td>{{ itemVal.date }}/{{ itemVal.classes }}</td>
-          <td>{{ itemVal.equip_no }}</td>
-          <td>{{ itemVal.product_no }}</td>
-          <td>{{ setTrains(itemVal.actual_trains) }}</td>
-          <td
-            v-for="(headDataItem,headDataI) in headData"
-            :key="headDataI"
-          >
-            <div v-if="itemVal.indicator_data[headDataItem]">
-              <span
-                v-if="getArrMin(itemVal.indicator_data[headDataItem]) ===
-                  getArrMax(itemVal.indicator_data[headDataItem])"
-              >
-                {{ getArrMin(itemVal.indicator_data[headDataItem]) }}
-              </span>
-              <span v-else>
-                {{ getArrMin(itemVal.indicator_data[headDataItem]) }}-
-                {{ getArrMax(itemVal.indicator_data[headDataItem]) }}
-              </span>
-            </div>
-          </td>
-        </tr>
-        <tr style="text-align:right">
-          <td :colspan="5+(headData.length||1)">
-            经办人：
-            {{ orderNum?formObj.created_username:name }}
-            <span style="margin:0 100px">日期：{{ orderNum&&formObj.created_date?(formObj.created_date).split(' ')[0]: formObj.currentDate }}</span>
-          </td>
-        </tr>
-        <tr style="text-align:left;">
-          <td :colspan="5+(headData.length||1)" style="padding-left:25px">
-            <div>不合格品情况(包括产品生产过程、原因及程度)：</div>
-            <el-input
-              v-if="!orderNum||editType === 1"
-              v-model="formObj.reason"
-              type="textarea"
-              :rows="5"
-              resize="none"
-              style="margin-top:10px;width:97%"
-              placeholder="请输入内容"
-              @change="editOne($event,'deal_user','deal_date')"
-            />
-            <div v-else class="deal_suggestion" v-html="formObj.reason" />
-          </td>
-        </tr>
-        <tr style="text-align:right">
-          <td :colspan="5+(headData.length||1)">
-            经办人：{{ formObj.deal_user }}
-            <span style="margin:0 100px">日期：{{ formObj.deal_date }}</span>
-          </td>
-        </tr>
-        <tr style="text-align:left;">
-          <td :colspan="5+(headData.length||1)" style="padding-left:25px">
-            <div>处理意见(品质技术部工艺技术科)：</div>
-            <el-input
-              v-if="!orderNum||editType === 2"
-              v-model="formObj.t_deal_suggestion"
-              type="textarea"
-              :rows="5"
-              resize="none"
-              style="margin-top:10px;width:97%"
-              placeholder="请输入内容"
-              @change="editOne($event,'t_deal_user','t_deal_date')"
-            />
-            <div v-else class="deal_suggestion" v-html="formObj.t_deal_suggestion" />
-          </td>
-        </tr>
-        <tr style="text-align:right">
-          <td :colspan="5+(headData.length||1)">
-            经办人：{{ formObj.t_deal_user }}
-            <span style="margin:0 100px">日期：{{ formObj.t_deal_date }}</span>
-          </td>
-        </tr>
-        <tr style="text-align:left;">
-          <td :colspan="5+(headData.length||1)" style="padding-left:25px">
-            <div>处理意见(品质技术部工艺检查科)：</div>
-            <el-input
-              v-if="!orderNum||editType === 3"
-              v-model="formObj.c_deal_suggestion"
-              type="textarea"
-              :rows="5"
-              resize="none"
-              style="margin-top:10px;width:97%"
-              placeholder="请输入内容"
-              @change="editOne($event,'c_deal_user','c_deal_date')"
-            />
-            <div v-else class="deal_suggestion" v-html="formObj.c_deal_suggestion" />
-          </td>
-        </tr>
-        <tr style="text-align:right">
-          <td :colspan="5+(headData.length||1)">
-            经办人：{{ formObj.c_deal_user }}
-            <span style="margin:0 100px">日期：{{ formObj.c_deal_date }}</span>
-          </td>
-        </tr>
-        <tr style="text-align:left;">
-          <td :colspan="5+(headData.length||1)" style="padding-left:25px">
-            <div>备注：</div>
-            <el-input
-              v-if="!orderNum"
-              v-model="formObj.desc"
-              type="textarea"
-              :rows="5"
-              resize="none"
-              style="margin-top:10px;width:97%"
-              placeholder="请输入内容"
-            />
-            <div v-else class="deal_suggestion" v-html="formObj.desc" />
-            <div style="margin-top:10px" />
-          </td>
-        </tr>
+      > -->
+        <tbody>
+          <tr>
+            <th rowspan="2">序号</th>
+            <th rowspan="2">生产日期/班次</th>
+            <th rowspan="2">生产机台</th>
+            <th rowspan="2">胶料编码</th>
+            <th rowspan="2">车次</th>
+            <th :colspan="headDataLength">不合格项</th>
+          </tr>
+
+          <tr>
+            <th v-for="(subHead, index) in headData" :key="index">{{ subHead }}</th>
+          </tr>
+          <tr v-for="(itemVal,i) in listData" :key="i">
+            <td>{{ Number(i) + 1 }}</td>
+            <td>{{ itemVal.date }}/{{ itemVal.classes }}</td>
+            <td>{{ itemVal.equip_no }}</td>
+            <td>{{ itemVal.product_no }}</td>
+            <td>{{ setTrains(itemVal.actual_trains) }}</td>
+            <td
+              v-for="(headDataItem,headDataI) in headData"
+              :key="headDataI"
+            >
+              <div v-if="itemVal.indicator_data[headDataItem]">
+                <span
+                  v-if="getArrMin(itemVal.indicator_data[headDataItem]) ===
+                    getArrMax(itemVal.indicator_data[headDataItem])"
+                >
+                  {{ getArrMin(itemVal.indicator_data[headDataItem]) }}
+                </span>
+                <span v-else>
+                  {{ getArrMin(itemVal.indicator_data[headDataItem]) }}-
+                  {{ getArrMax(itemVal.indicator_data[headDataItem]) }}
+                </span>
+              </div>
+            </td>
+          </tr>
+          <tr style="text-align:right">
+            <td :colspan="5+headDataLength">
+              经办人：
+              {{ orderNum?formObj.created_username:name }}
+              <span style="margin:0 100px">日期：{{ orderNum&&formObj.created_date?(formObj.created_date).split(' ')[0]: formObj.currentDate }}</span>
+            </td>
+          </tr>
+          <tr style="text-align:left;">
+            <td :colspan="5+headDataLength" style="padding-left:25px">
+              <div>不合格品情况(包括产品生产过程、原因及程度)：</div>
+              <el-input
+                v-if="!orderNum||editType === 1"
+                v-model="formObj.reason"
+                type="textarea"
+                :rows="5"
+                resize="none"
+                style="margin-top:10px;width:97%"
+                placeholder="请输入内容"
+                @change="editOne($event,'deal_user','deal_date')"
+              />
+              <div v-else class="deal_suggestion" v-html="formObj.reason" />
+            </td>
+          </tr>
+          <tr style="text-align:right">
+            <td :colspan="5+headDataLength">
+              经办人：{{ formObj.deal_user }}
+              <span style="margin:0 100px">日期：{{ formObj.deal_date }}</span>
+            </td>
+          </tr>
+          <tr style="text-align:left;">
+            <td :colspan="5+headDataLength" style="padding-left:25px">
+              <div>处理意见(品质技术部工艺技术科)：</div>
+              <el-input
+                v-if="!orderNum||editType === 2"
+                v-model="formObj.t_deal_suggestion"
+                type="textarea"
+                :rows="5"
+                resize="none"
+                style="margin-top:10px;width:97%"
+                placeholder="请输入内容"
+                @change="editOne($event,'t_deal_user','t_deal_date')"
+              />
+              <div v-else class="deal_suggestion" v-html="formObj.t_deal_suggestion" />
+            </td>
+          </tr>
+          <tr style="text-align:right">
+            <td :colspan="5+headDataLength">
+              经办人：{{ formObj.t_deal_user }}
+              <span style="margin:0 100px">日期：{{ formObj.t_deal_date }}</span>
+            </td>
+          </tr>
+          <tr style="text-align:left;">
+            <td :colspan="5+headDataLength" style="padding-left:25px">
+              <div>处理意见(品质技术部工艺检查科)：</div>
+              <el-input
+                v-if="!orderNum||editType === 3"
+                v-model="formObj.c_deal_suggestion"
+                type="textarea"
+                :rows="5"
+                resize="none"
+                style="margin-top:10px;width:97%"
+                placeholder="请输入内容"
+                @change="editOne($event,'c_deal_user','c_deal_date')"
+              />
+              <div v-else class="deal_suggestion" v-html="formObj.c_deal_suggestion" />
+            </td>
+          </tr>
+          <tr style="text-align:right">
+            <td :colspan="5+headDataLength">
+              经办人：{{ formObj.c_deal_user }}
+              <span style="margin:0 100px">日期：{{ formObj.c_deal_date }}</span>
+            </td>
+          </tr>
+          <tr style="text-align:left;">
+            <td :colspan="5+headDataLength" style="padding-left:25px">
+              <div>备注：</div>
+              <el-input
+                v-if="!orderNum"
+                v-model="formObj.desc"
+                type="textarea"
+                :rows="5"
+                resize="none"
+                style="margin-top:10px;width:97%"
+                placeholder="请输入内容"
+              />
+              <div v-else class="deal_suggestion" v-html="formObj.desc" />
+              <div style="margin-top:10px" />
+            </td>
+          </tr>
         <!-- <tr style="text-align:left;">
           <td :colspan="5+headData.length" style="padding-left:25px">
             <div style="text-align:left;margin-top:4px">
@@ -221,6 +221,7 @@
             </div>
           </td>
         </tr> -->
+        </tbody>
       </table>
     </div>
   </div>
@@ -283,7 +284,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['name'])
+    ...mapGetters(['name']),
+    headDataLength() {
+      return this.formHeadData.length || 1
+    }
   },
   watch: {
     show(val) {
@@ -291,6 +295,7 @@ export default {
         // 打开
         this.orderNum = this.orderRow.id || null
         this.listData = this.listDataProps || []
+        this.headData = this.formHeadData || []
         if (this.orderNum) {
           this.getInfo()
         }

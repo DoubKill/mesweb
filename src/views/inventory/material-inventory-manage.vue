@@ -1,5 +1,6 @@
 <template>
   <div v-loading="loading">
+    <!-- 物料库位信息 -->
     <el-form :inline="true">
       <el-form-item label="仓库名称">
         <warehouseSelect :created-is="true" @changSelect="changeWarehouse" />

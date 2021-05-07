@@ -83,6 +83,7 @@
         <el-table-column label="处理意见" prop="deal_suggestion" width="40" />
         <el-table-column label="处理时间" align="center" prop="deal_time" width="80" />
       </el-table-column>
+      <el-table-column label="车次" prop="trains" width="60" />
       <el-table-column label="操作" align="center" width="120">
         <template slot-scope="{row}">
           <!-- <el-button size="mini" @click="handleEdit(row)">编辑</el-button> -->

@@ -51,8 +51,8 @@
         <materielTypeSelect />
       </el-form-item> -->
     </el-form>
-    <el-button v-permission="['compoundRubber_plan','norman']" class="button-right" @click="normalOutbound">正常出库</el-button>
-    <el-button v-permission="['compoundRubber_plan','assign']" class="button-right" @click="assignOutbound">指定出库</el-button>
+    <el-button v-permission="['carbon_outbound_plan','norman']" class="button-right" @click="normalOutbound">正常出库</el-button>
+    <el-button v-permission="['carbon_outbound_plan','assign']" class="button-right" @click="assignOutbound">指定出库</el-button>
     <el-button class="button-right" @click="refresList">刷新</el-button>
     <el-table
       border
@@ -77,9 +77,9 @@
       <el-table-column label="操作" align="center" width="220">
         <template v-if="scope.row.status === 4" slot-scope="scope">
           <el-button-group>
-            <el-button v-permission="['compoundRubber_plan','manual']" size="mini" type="primary" @click="manualDelivery(scope.row)">人工出库</el-button>
-            <el-button v-permission="['compoundRubber_plan','change']" size="mini" type="warning" @click="demandQuantity(scope.$index,scope.row)">编辑</el-button>
-            <el-button v-permission="['compoundRubber_plan','close']" size="mini" type="info" @click="closePlan(scope.$index,scope.row)">关闭</el-button>
+            <el-button v-permission="['carbon_outbound_plan','manual']" size="mini" type="primary" @click="manualDelivery(scope.row)">人工出库</el-button>
+            <el-button v-permission="['carbon_outbound_plan','change']" size="mini" type="warning" @click="demandQuantity(scope.$index,scope.row)">编辑</el-button>
+            <el-button v-permission="['carbon_outbound_plan','close']" size="mini" type="info" @click="closePlan(scope.$index,scope.row)">关闭</el-button>
           </el-button-group>
         </template>
       </el-table-column>
@@ -130,6 +130,7 @@
         ref="assignOutbound"
         :warehouse-name="warehouseName"
         :warehouse-info="warehouseInfo"
+        :show="assignOutboundDialogVisible"
         :druss-delivery="true"
         @visibleMethod="visibleMethodNormal"
         @visibleMethodSubmit="visibleMethodAssignSubmit"

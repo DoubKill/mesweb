@@ -1,5 +1,6 @@
 // cover some element-ui styles
-$color-primary: rgb(11, 189, 11);
+$--color-primary: #0bbd0b !default;
+$color-primary: #0bbd0b;
 $color-primary-a: rgba(11, 189, 11, 0.5);
 $color-blue: rgb(64, 158, 255);
 $color-blue-a: rgba(64, 158, 255, 0.5);
@@ -7,6 +8,14 @@ $color-blue-a: rgba(64, 158, 255, 0.5);
 .navbar {
   .el-breadcrumb__separator {
     color: #fff !important;
+  }
+}
+.el-pager li{
+  &.active{
+    color:$color-primary;
+  }
+  &:hover,&:visited,&:active ,&:link{
+    color:$color-primary;
   }
 }
 .el-card__body{

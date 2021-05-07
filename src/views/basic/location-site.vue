@@ -60,6 +60,7 @@
               v-permission="['location', 'delete']"
               size="mini"
               type="danger"
+              plain
               @click="handleDelete(scope.row)"
             >{{ scope.row.used_flag?'停用':'启用' }}
             </el-button>

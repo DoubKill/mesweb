@@ -42,7 +42,7 @@
       />
     </div>
     <table
-      v-if="monthErrorSort.length>0"
+      v-if="monthErrorSortData.length>0"
       cellspacing="0"
       border="1"
       cellpadding="1"

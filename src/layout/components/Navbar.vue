@@ -74,6 +74,7 @@ export default {
   position: relative;
   color:#fff !important;
   background: $color-primary;
+  background: linear-gradient(70deg, $color-primary, #0bbd0b5e);
   box-shadow: 0 1px 4px rgba(0,21,41,.08);
   .right-menu .avatar-container .avatar-wrapper{
     margin-top: 0 !important;

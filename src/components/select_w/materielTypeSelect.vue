@@ -52,6 +52,10 @@ export default {
     isDisabled: {
       type: Boolean,
       default: false
+    },
+    objAll: { // 是否返回全部
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -107,12 +111,19 @@ export default {
       if (this.paramsType) {
         let arr = []
         arr = this.options.filter(D => D.id === val)
+
         if (arr.length > 0) {
           str = arr[0].global_name
         } else {
           str = val
         }
         this.$emit('changSelect', str)
+        return
+      }
+
+      if (this.objAll) {
+        const arr1 = this.options.filter(D => D.id === val)
+        this.$emit('changSelect', arr1[0])
         return
       }
       this.$emit('changSelect', val)

@@ -121,32 +121,6 @@ export default {
         const data = await productStationStatics('get', null, { params: { name: this.search.no }})
         this.tableData = data.results
         this.loading = false
-        // this.tableData = [{
-        //   'subject': {
-        //     'HMB': {
-        //       'weight': 6.5143,
-        //       'qty': 20.0
-        //     },
-        //     '1MB': {
-        //       'weight': 26.2947,
-        //       'qty': 74.0
-        //     },
-        //     'FM': {
-        //       'weight': 2.7958,
-        //       'qty': 8.0
-        //     }
-        //   },
-        //   'edge': {},
-        //   'error': 0,
-        //   'fm_all': 2.7958,
-        //   'ufm_all': 32.809,
-        //   'edge_titles': [],
-        //   'main_titles': [
-        //     'HMB',
-        //     '1MB',
-        //     'FM'
-        //   ]
-        // }]
       } catch (e) {
         this.loading = false
       }
