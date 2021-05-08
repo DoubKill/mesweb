@@ -41,7 +41,8 @@ export default {
           type: 'category',
           // boundaryGap: false,
           boundaryGap: true,
-          data: ['2020-11-05', '2020-11-06', '2020-11-07', '2020-11-08', '2020-11-09', '2020-11-10'],
+          // data: ['2020-11-05', '2020-11-06', '2020-11-07', '2020-11-08', '2020-11-09', '2020-11-10'],
+          data: [],
           axisPointer: {
             type: 'shadow'
           },
@@ -51,7 +52,7 @@ export default {
         },
         yAxis: {
           // type: 'value',
-          name: '合格率/数量',
+          name: '合格率%/数量'
           // axisLine: {
           //   show: false // y轴线消失
           // },
@@ -59,14 +60,11 @@ export default {
           //   show: false // y轴坐标点消失
 
           // }
-          axisLabel: {
-            show: false
-          }
         },
         dataZoom: [
           {
             show: true,
-            start: 0,
+            start: 94,
             end: 100
           }
         ],
@@ -84,15 +82,6 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '5',
                 color: '#000000 '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
 
             },
@@ -122,16 +111,8 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '5',
                 color: '#000000 '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
+
             },
             itemStyle: {
               normal: {
@@ -159,16 +140,8 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '5',
                 color: '#000000 '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
+
             },
             itemStyle: {
               normal: {
@@ -196,16 +169,8 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '5',
                 color: '#000000 '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
+
             },
             itemStyle: {
               normal: {
@@ -233,16 +198,8 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '5',
                 color: '#000000 '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
+
             },
             itemStyle: {
               normal: {
@@ -270,16 +227,8 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '5',
                 color: '#000000 '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
+
             },
             itemStyle: {
               normal: {
@@ -307,16 +256,8 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '5',
                 color: '#000000 '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
+
             },
             itemStyle: {
               normal: {
@@ -344,16 +285,8 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '5',
                 color: '#000000 '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
+
             },
             itemStyle: {
               normal: {
@@ -381,16 +314,8 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '5',
                 color: '#000000 '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
+
             },
             itemStyle: {
               normal: {
@@ -418,16 +343,8 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '5',
                 color: '#000000 '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
+
             },
             itemStyle: {
               normal: {
@@ -455,16 +372,8 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '5',
                 color: '#000000 '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
+
             },
             itemStyle: {
               normal: {
@@ -492,15 +401,6 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '5',
                 color: '#000000 '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
             },
             itemStyle: {
@@ -529,15 +429,6 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '5',
                 color: '#000000 '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
             },
             itemStyle: {
@@ -566,15 +457,6 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '5',
                 color: '#000000 '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
             },
             itemStyle: {
@@ -603,14 +485,6 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '5',
                 color: '#000000 '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-                return rs
               }
             },
             itemStyle: {
@@ -639,14 +513,6 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '5',
                 color: '#000000 '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-                return rs
               }
             },
             itemStyle: {
@@ -675,14 +541,6 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '5',
                 color: '#000000 '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-                return rs
               }
             },
             itemStyle: {
@@ -710,15 +568,6 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '5',
                 color: '#800000 '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
             },
             itemStyle: {
@@ -738,15 +587,6 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '5',
                 color: '#800000 '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
             },
             itemStyle: {
@@ -766,15 +606,6 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '5',
                 color: '#800000 '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
             },
             itemStyle: {
@@ -794,15 +625,6 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '5',
                 color: '#800000 '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
             },
             itemStyle: {
@@ -822,15 +644,6 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '5',
                 color: '#800000 '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
             },
             itemStyle: {
@@ -849,15 +662,6 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '5',
                 color: '	#800000  '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
             },
             type: 'line',
@@ -878,15 +682,6 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '5',
                 color: '	#800000 0 '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
             },
             itemStyle: {
@@ -906,15 +701,6 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '5',
                 color: '	#800000 '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
             },
             itemStyle: {
@@ -934,15 +720,6 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '5',
                 color: '	#800000  '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
             },
             itemStyle: {
@@ -962,15 +739,6 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '5',
                 color: '	#800000 '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
             },
             itemStyle: {
@@ -990,15 +758,6 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '5',
                 color: '	#800000  '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
             },
             itemStyle: {
@@ -1018,15 +777,6 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '5',
                 color: '	#800000  '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
             },
             itemStyle: {
@@ -1046,15 +796,6 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '5',
                 color: '	#800000  '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
             },
             itemStyle: {
@@ -1074,15 +815,6 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '5',
                 color: '	#800000  '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
             },
             itemStyle: {
@@ -1143,6 +875,7 @@ export default {
   methods: {
     drawLine() {
       const array = this.chartsdata
+      const daydatas = []
       const yici = []
       const liubian = []
       const zonghe = []
@@ -1180,9 +913,13 @@ export default {
       const zYDZad = []
       const zYDZLower = []
       array.forEach(item => {
+        console.log('item', item)
+        const day = item.date
         const D = item.yc_percent_of_pass ? item.yc_percent_of_pass.replace(/%/g, '') : '' // 一次
         const E = item.lb_percent_of_pass ? item.lb_percent_of_pass.replace(/%/g, '') : '' // 流变
         const F = item.zh_percent_of_pass ? item.zh_percent_of_pass.replace(/%/g, '') : '' // 综合
+
+        daydatas.push(day)
         yici.push(D)
         liubian.push(E)
         zonghe.push(F)
@@ -1261,6 +998,8 @@ export default {
           }
         })
       })
+      // console.log('day', daydatas)
+      this.option.xAxis.data = daydatas
       this.option.series[0].data = yici
       this.option.series[1].data = liubian
       this.option.series[2].data = zonghe

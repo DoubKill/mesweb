@@ -25,7 +25,13 @@ export default {
           // text: '未来一周气温变化'
         },
         tooltip: {
-          trigger: 'axis'
+          trigger: 'axis',
+          axisPointer: {
+            type: 'cross',
+            crossStyle: {
+              color: '#999'
+            }
+          }
         },
         // legend: {
         //   data: ['一次', '流变', '综合', 'TC90+', 'TC90-', 'TC90-', 'TC90+']
@@ -42,7 +48,8 @@ export default {
           type: 'category',
           // boundaryGap: false,
           boundaryGap: true,
-          data: ['2020-11-05', '2020-11-06', '2020-11-07', '2020-11-08', '2020-11-09', '2020-11-10'],
+          // data: ['2020-11-05', '2020-11-06', '2020-11-07', '2020-11-08', '2020-11-09', '2020-11-10'],
+          data: [],
           axisPointer: {
             type: 'shadow'
           },
@@ -52,18 +59,25 @@ export default {
         },
         yAxis: {
           type: 'value',
-          name: '合格率'
+          name: '合格率%'
         //   axisLabel: {
         //     formatter: '{value} °C'
         //   }
         },
+        dataZoom: [
+          {
+            show: true,
+            start: 80,
+            end: 100
+          }
+        ],
         series: [
           {
             name: '一次',
             type: 'bar',
-            barWidth: 6,
+            barWidth: 10,
             // data: [10.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3],
-            data: this.yici,
+            data: [],
             label: {
               show: true,
               position: 'insideTop',
@@ -71,14 +85,6 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '6',
                 color: '#000000 '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-                return rs
               }
 
             },
@@ -99,8 +105,8 @@ export default {
           {
             name: '流变',
             type: 'bar',
-            barWidth: 6,
-            data: this.liubian,
+            barWidth: 10,
+            data: [],
             label: {
               show: true,
               position: 'insideTop',
@@ -108,16 +114,8 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '6',
                 color: '#000000 '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
+
             },
             itemStyle: {
               normal: {
@@ -136,7 +134,7 @@ export default {
           {
             name: '综合',
             type: 'bar',
-            barWidth: 6,
+            barWidth: 10,
             data: [],
             label: {
               show: true,
@@ -145,16 +143,8 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '6',
                 color: '#000000 '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
+
             },
             itemStyle: {
               normal: {
@@ -173,7 +163,7 @@ export default {
           {
             name: 'Z01一次',
             type: 'bar',
-            barWidth: 6,
+            barWidth: 10,
             data: [],
             label: {
               show: true,
@@ -182,16 +172,8 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '6',
                 color: '#000000 '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
+
             },
             itemStyle: {
               normal: {
@@ -210,7 +192,7 @@ export default {
           {
             name: 'Z01流变',
             type: 'bar',
-            barWidth: 6,
+            barWidth: 10,
             data: [],
             label: {
               show: true,
@@ -219,16 +201,8 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '6',
                 color: '#000000 '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
+
             },
             itemStyle: {
               normal: {
@@ -247,7 +221,7 @@ export default {
           {
             name: 'Z01综合',
             type: 'bar',
-            barWidth: 6,
+            barWidth: 10,
             data: [],
             label: {
               show: true,
@@ -256,16 +230,8 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '6',
                 color: '#000000 '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
+
             },
             itemStyle: {
               normal: {
@@ -284,7 +250,7 @@ export default {
           {
             name: '早班一次',
             type: 'bar',
-            barWidth: 6,
+            barWidth: 10,
             data: [],
             label: {
               show: true,
@@ -293,16 +259,8 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '6',
                 color: '#000000 '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
+
             },
             itemStyle: {
               normal: {
@@ -321,7 +279,7 @@ export default {
           {
             name: '早班流变',
             type: 'bar',
-            barWidth: 6,
+            barWidth: 10,
             data: [],
             label: {
               show: true,
@@ -330,16 +288,8 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '6',
                 color: '#000000 '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
+
             },
             itemStyle: {
               normal: {
@@ -358,7 +308,7 @@ export default {
           {
             name: '早班综合',
             type: 'bar',
-            barWidth: 6,
+            barWidth: 10,
             data: [],
             label: {
               show: true,
@@ -367,16 +317,8 @@ export default {
                 fontWeight: 'bolder',
                 fontSize: '6',
                 color: '#000000 '
-              },
-              formatter: function(params) {
-                const txtArry = params.seriesName.split('')
-                let rs = ''
-                for (var i = 0; i < txtArry.length; i++) {
-                  rs += txtArry[i] + '\n'
-                }
-
-                return rs
               }
+
             },
             itemStyle: {
               normal: {
@@ -411,6 +353,7 @@ export default {
   methods: {
     drawLine() {
       const Array = this.dayTableData
+      const daydatas = []
       const yici = []
       const liubian = []
       const zonghe = []
@@ -423,9 +366,12 @@ export default {
       const Zbliubian = []
       const Zbzonghe = []
       Array.forEach(item => {
+        console.log('item', item)
+        const day = item.date
         const D = item.yc_percent_of_pass ? item.yc_percent_of_pass.replace(/%/g, '') : '' // 一次
         const E = item.lb_percent_of_pass ? item.lb_percent_of_pass.replace(/%/g, '') : '' // 流变
         const F = item.zh_percent_of_pass ? item.zh_percent_of_pass.replace(/%/g, '') : '' // 综合
+        daydatas.push(day)
         yici.push(D)
         liubian.push(E)
         zonghe.push(F)
@@ -450,6 +396,7 @@ export default {
           }
         })
       })
+      this.option.xAxis.data = daydatas
       this.option.series[0].data = yici
       this.option.series[1].data = liubian
       this.option.series[2].data = zonghe
