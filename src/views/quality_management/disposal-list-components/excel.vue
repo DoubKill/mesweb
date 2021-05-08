@@ -1,5 +1,5 @@
 <template>
-  <div class="card-container">
+  <div class="unqualified-card-container">
     <div ref="PDFBtn" style="text-align:right;margin-bottom:10px">
       <el-button
         v-if="orderNum&&!editType"
@@ -32,13 +32,16 @@
           </td>
         </tr>
         <tr>
-          <td :colspan="2" style="text-align:left;padding-left:25px;width:108px">发生部门：
+          <td :colspan="2" style="text-align:left;padding-left:25px;">发生部门：
           </td>
           <td :colspan="2">
             <span v-if="orderNum">{{ formObj.deal_department }}</span>
             <div v-else class="deal_department">
-              <el-radio v-model="formObj.deal_department" label="分厂">分厂</el-radio>
-              <el-radio v-model="formObj.deal_department" label="车间">车间</el-radio>
+              <el-radio v-model="formObj.deal_department" label="准备分厂">准备分厂</el-radio>
+              <el-radio v-model="formObj.deal_department" label="加硫车间">加硫车间</el-radio>
+              <el-radio v-model="formObj.deal_department" label="混炼车间">混炼车间</el-radio>
+              <el-radio v-model="formObj.deal_department" label="硫磺车间">硫磺车间</el-radio>
+              <el-radio v-model="formObj.deal_department" label="细料车间">细料车间</el-radio>
             </div></td>
           <td>胶料筹备组 炼胶</td>
           <td :colspan="headDataLength" style="width:125px">日期：{{ orderNum&&formObj.created_date?(formObj.created_date).split(' ')[0]: formObj.currentDate }}</td>
@@ -69,7 +72,7 @@
         </tr>
         <tr style="text-align:left;">
           <td :colspan="5+headDataLength" style="padding-left:25px">
-            <span>不合格品信息(发生部门)：</span>
+            <span style="display:inline-block;width:170px">不合格品信息(发生部门)：</span>
             <span v-if="orderNum" v-html="formObj.department" />
             <el-input
               v-else
@@ -77,6 +80,35 @@
               style="width:70%"
               placeholder="请输入内容"
             />
+          </td>
+        </tr>
+        <tr style="text-align:left;">
+          <td :colspan="5+headDataLength" style="padding-left:25px">
+            <span style="display:inline-block;width:170px">不合格品处理方式：</span>
+            <span v-if="orderNum" v-html="formObj.deal_method" />
+            <el-select
+              v-else
+              v-model="formObj.deal_method"
+              filterable
+              allow-create
+              default-first-option
+              clearable
+              placeholder="请选择"
+              @visible-change="visibleChange"
+            >
+              <el-option
+                v-for="(item,i) in optionsDisposal"
+                :key="i"
+                :label="item"
+                :value="item"
+              />
+            </el-select>
+            <!-- <el-input
+              v-else
+              v-model="formObj.department"
+              style="width:70%"
+              placeholder="请输入内容"
+            /> -->
           </td>
         </tr>
         <!-- </table>
@@ -228,7 +260,7 @@
 </template>
 
 <script>
-import { unqualifiedDealOrders } from '@/api/base_w'
+import { unqualifiedDealOrders, dealMathodHistory } from '@/api/base_w'
 import { setDate } from '@/utils'
 import { mapGetters } from 'vuex'
 import funMixin from './mixin'
@@ -280,7 +312,8 @@ export default {
       orderNum: null,
       loadingBtn: false,
       listData: this.listDataProps,
-      aaa: ''
+      aaa: '',
+      optionsDisposal: []
     }
   },
   computed: {
@@ -395,6 +428,19 @@ export default {
       this.formObj.name = this.name
       this.formObj.currentDate = setDate()
     },
+    visibleChange(bool) {
+      if (bool) {
+        this.getOptionsDisposal()
+      }
+    },
+    async getOptionsDisposal() {
+      try {
+        const data = await dealMathodHistory()
+        this.optionsDisposal = data
+      } catch (e) {
+        //
+      }
+    },
     async exportExcel() {
       this.$refs.PDFBtn.style.display = 'none'
       document.getElementsByClassName('el-dialog__headerbtn')[0].style.display = 'none'
@@ -430,7 +476,7 @@ export default {
 </script>
 
 <style lang="scss">
- .card-container {
+ .unqualified-card-container {
     width: 600px;
     margin: 0 auto;
     text-align: center;

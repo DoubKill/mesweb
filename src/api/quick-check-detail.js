@@ -52,3 +52,11 @@ export function qualityPalletFeedTest(id, params) {
     params
   })
 }
+
+export function datapointCurve(params) {
+  return request({
+    url: API.DatapointCurve,
+    method: 'get',
+    params
+  })
+}
