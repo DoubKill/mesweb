@@ -9,6 +9,7 @@
 
 <script>
 import echarts from 'echarts'
+import dayjs from 'dayjs'
 export default {
   props: {
     chartsdata: {
@@ -72,798 +73,190 @@ export default {
           {
             name: '一次',
             type: 'bar',
-            fontSize: '10',
-            // data: [10.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3],
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '5',
-                color: '#000000 '
-              }
 
-            },
-            itemStyle: {
-              normal: {
-                color: '#F4F4F4' // 柱状图颜色设为透明
-              //   label: {
-              //     show: true, // 开启显示
-              //     position: 'center', // 在上方显示
-              //     textStyle: { // 数值样式
-              //       color: '#FF0000 ',
-              //       fontSize: 8
-              //     }
-              //   }
-              }
-            }
+            // data: [10.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3],
+            data: []
           },
           {
             name: '流变',
             type: 'bar',
-            fontSize: '10',
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '5',
-                color: '#000000 '
-              }
 
-            },
-            itemStyle: {
-              normal: {
-                color: '#8ED8F9' // 柱状图颜色设为透明
-                // label: {
-                //   show: true, // 开启显示
-                //   position: 'center', // 在上方显示
-                //   textStyle: { // 数值样式
-                //     color: '#FF0000 ',
-                //     fontSize: 8
-                //   }
-                // }
-              }
-            }
+            data: []
           },
           {
             name: '综合',
             type: 'bar',
             fontSize: '10',
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '5',
-                color: '#000000 '
-              }
-
-            },
-            itemStyle: {
-              normal: {
-                color: '#D0FA8F' // 柱状图颜色设为透明
-                // label: {
-                //   show: true, // 开启显示
-                //   position: 'center', // 在上方显示
-                //   textStyle: { // 数值样式
-                //     color: '#FF0000 ',
-                //     fontSize: 8
-                //   }
-                // }
-              }
-            }
+            data: []
           },
           {
             name: 'ML1+4',
             type: 'bar',
-            fontSize: '10',
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '5',
-                color: '#000000 '
-              }
 
-            },
-            itemStyle: {
-              normal: {
-                color: '#FFB6C1 ' // 柱状图颜色设为透明
-                // label: {
-                //   show: true, // 开启显示
-                //   position: 'center', // 在上方显示
-                //   textStyle: { // 数值样式
-                //     color: '#FF0000 ',
-                //     fontSize: 8
-                //   }
-                // }
-              }
-            }
+            data: []
           },
           {
             name: 'ML1-4',
             type: 'bar',
-            fontSize: '10',
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '5',
-                color: '#000000 '
-              }
 
-            },
-            itemStyle: {
-              normal: {
-                color: '#FFE4E1' // 柱状图颜色设为透明
-                // label: {
-                //   show: true, // 开启显示
-                //   position: 'center', // 在上方显示
-                //   textStyle: { // 数值样式
-                //     color: '#FF0000 ',
-                //     fontSize: 8
-                //   }
-                // }
-              }
-            }
+            data: []
           },
           {
             name: 'MH+',
             type: 'bar',
-            fontSize: '10',
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '5',
-                color: '#000000 '
-              }
 
-            },
-            itemStyle: {
-              normal: {
-                color: '#6A5ACD ' // 柱状图颜色设为透明
-                // label: {
-                //   show: true, // 开启显示
-                //   position: 'center', // 在上方显示
-                //   textStyle: { // 数值样式
-                //     color: '#FF0000 ',
-                //     fontSize: 8
-                //   }
-                // }
-              }
-            }
+            data: []
           },
           {
             name: 'MH-',
             type: 'bar',
-            fontSize: '10',
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '5',
-                color: '#000000 '
-              }
 
-            },
-            itemStyle: {
-              normal: {
-                color: '#9370DB ' // 柱状图颜色设为透明
-                // label: {
-                //   show: true, // 开启显示
-                //   position: 'center', // 在上方显示
-                //   textStyle: { // 数值样式
-                //     color: '#FF0000 ',
-                //     fontSize: 8
-                //   }
-                // }
-              }
-            }
+            data: []
           },
           {
             name: 'TC10+',
             type: 'bar',
-            fontSize: '10',
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '5',
-                color: '#000000 '
-              }
 
-            },
-            itemStyle: {
-              normal: {
-                color: '#FA8072' // 柱状图颜色设为透明
-                // label: {
-                //   show: true, // 开启显示
-                //   position: 'center', // 在上方显示
-                //   textStyle: { // 数值样式
-                //     color: '#FF0000 ',
-                //     fontSize: 8
-                //   }
-                // }
-              }
-            }
+            data: []
           },
           {
             name: 'TC10-',
             type: 'bar',
-            fontSize: '10',
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '5',
-                color: '#000000 '
-              }
 
-            },
-            itemStyle: {
-              normal: {
-                color: '#FFA07A' // 柱状图颜色设为透明
-                // label: {
-                //   show: true, // 开启显示
-                //   position: 'center', // 在上方显示
-                //   textStyle: { // 数值样式
-                //     color: '#FF0000 ',
-                //     fontSize: 8
-                //   }
-                // }
-              }
-            }
+            data: []
           },
           {
             name: 'TC50+',
             type: 'bar',
             fontSize: '10',
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '5',
-                color: '#000000 '
-              }
-
-            },
-            itemStyle: {
-              normal: {
-                color: '#F0E68C ' // 柱状图颜色设为透明
-                // label: {
-                //   show: true, // 开启显示
-                //   position: 'center', // 在上方显示
-                //   textStyle: { // 数值样式
-                //     color: '#FF0000 ',
-                //     fontSize: 8
-                //   }
-                // }
-              }
-            }
+            data: []
           },
           {
             name: 'TC50-',
             type: 'bar',
-            fontSize: '10',
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '5',
-                color: '#000000 '
-              }
 
-            },
-            itemStyle: {
-              normal: {
-                color: '#EEE8AA  ' // 柱状图颜色设为透明
-                // label: {
-                //   show: true, // 开启显示
-                //   position: 'center', // 在上方显示
-                //   textStyle: { // 数值样式
-                //     color: '#FF0000 ',
-                //     fontSize: 8
-                //   }
-                // }
-              }
-            }
+            data: []
           },
           {
             name: 'TC90+',
             type: 'bar',
-            fontSize: '10',
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '5',
-                color: '#000000 '
-              }
-            },
-            itemStyle: {
-              normal: {
-                color: '#C98DFF' // 柱状图颜色设为透明
-                // label: {
-                //   show: true, // 开启显示
-                //   position: 'center', // 在上方显示
-                //   textStyle: { // 数值样式
-                //     color: '#FF0000 ',
-                //     fontSize: 8
-                //   }
-                // }
-              }
-            }
+
+            data: []
           },
           {
             name: 'TC90-',
             type: 'bar',
-            fontSize: '10',
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '5',
-                color: '#000000 '
-              }
-            },
-            itemStyle: {
-              normal: {
-                color: '#C98DFF' // 柱状图颜色设为透明
-                // label: {
-                //   show: true, // 开启显示
-                //   position: 'center', // 在上方显示
-                //   textStyle: { // 数值样式
-                //     color: '#FF0000 ',
-                //     fontSize: 8
-                //   }
-                // }
-              }
-            }
+
+            data: []
           },
           {
             name: '比重值+',
             type: 'bar',
-            fontSize: '10',
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '5',
-                color: '#000000 '
-              }
-            },
-            itemStyle: {
-              normal: {
-                color: '#ADFF2F' // 柱状图颜色设为透明
-                // label: {
-                //   show: true, // 开启显示
-                //   position: 'center', // 在上方显示
-                //   textStyle: { // 数值样式
-                //     color: '#FF0000 ',
-                //     fontSize: 8
-                //   }
-                // }
-              }
-            }
+            data: []
           },
           {
             name: '比重值-',
             type: 'bar',
-            fontSize: '10',
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '5',
-                color: '#000000 '
-              }
-            },
-            itemStyle: {
-              normal: {
-                color: '#00FA9A ' // 柱状图颜色设为透明
-                // label: {
-                //   show: true, // 开启显示
-                //   position: 'center', // 在上方显示
-                //   textStyle: { // 数值样式
-                //     color: '#FF0000 ',
-                //     fontSize: 8
-                //   }
-                // }
-              }
-            }
+            data: []
           },
           {
             name: '硬度值+',
             type: 'bar',
-            fontSize: '10',
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '5',
-                color: '#000000 '
-              }
-            },
-            itemStyle: {
-              normal: {
-                color: '#C98DFF' // 柱状图颜色设为透明
-                // label: {
-                //   show: true, // 开启显示
-                //   position: 'center', // 在上方显示
-                //   textStyle: { // 数值样式
-                //     color: '#FF0000 ',
-                //     fontSize: 8
-                //   }
-                // }
-              }
-            }
+
+            data: []
           },
           {
             name: '硬度值-',
             type: 'bar',
-            fontSize: '10',
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '5',
-                color: '#000000 '
-              }
-            },
-            itemStyle: {
-              normal: {
-                color: '#87CEFA  ' // 柱状图颜色设为透明
-                // label: {
-                //   show: true, // 开启显示
-                //   position: 'center', // 在上方显示
-                //   textStyle: { // 数值样式
-                //     color: '#FF0000 ',
-                //     fontSize: 8
-                //   }
-                // }
-              }
-            }
+
+            data: []
           },
           {
             name: 'ML14+',
             type: 'line',
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '5',
-                color: '#800000 '
-              }
-            },
-            itemStyle: {
-              normal: {
-                color: '	#87CEFA ' // 柱状图颜色设为透明
-              }
-            }
+            data: []
           },
           {
             name: 'ML14-',
             type: 'line',
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '5',
-                color: '#800000 '
-              }
-            },
-            itemStyle: {
-              normal: {
-                color: '#C28331' // 柱状图颜色设为透明
-              }
-            }
+            data: []
           },
           {
             name: 'MH+',
             type: 'line',
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '5',
-                color: '#800000 '
-              }
-            },
-            itemStyle: {
-              normal: {
-                color: '#6A5ACD ' // 柱状图颜色设为透明
-              }
-            }
+            data: []
           },
           {
             name: 'MH-',
             type: 'line',
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '5',
-                color: '#800000 '
-              }
-            },
-            itemStyle: {
-              normal: {
-                color: '#9370DB' // 柱状图颜色设为透明
-              }
-            }
+            data: []
           },
           {
             name: 'TC10+',
             type: 'line',
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '5',
-                color: '#800000 '
-              }
-            },
-            itemStyle: {
-              normal: {
-                color: '#FA8072' // 柱状图颜色设为透明
-              }
-            }
+            data: []
           },
           {
             name: 'TC10-',
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '5',
-                color: '	#800000  '
-              }
-            },
             type: 'line',
-            itemStyle: {
-              normal: {
-                color: '#FFA07A' // 柱状图颜色设为透明
-              }
-            }
+            data: []
           },
           {
             name: 'TC50+',
             type: 'line',
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '5',
-                color: '	#800000 0 '
-              }
-            },
-            itemStyle: {
-              normal: {
-                color: '#F0E68C' // 柱状图颜色设为透明
-              }
-            }
+            data: []
           },
           {
             name: 'TC50-',
             type: 'line',
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '5',
-                color: '	#800000 '
-              }
-            },
-            itemStyle: {
-              normal: {
-                color: '#EEE8AA' // 柱状图颜色设为透明
-              }
-            }
+            data: []
           },
           {
             name: 'TC90+',
             type: 'line',
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '5',
-                color: '	#800000  '
-              }
-            },
-            itemStyle: {
-              normal: {
-                color: '#C98DFF' // 柱状图颜色设为透明
-              }
-            }
+            data: []
           },
           {
             name: 'TC90-',
             type: 'line',
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '5',
-                color: '	#800000 '
-              }
-            },
-            itemStyle: {
-              normal: {
-                color: '#C98DFF' // 柱状图颜色设为透明
-              }
-            }
+            data: []
           },
           {
             name: '比重值+',
             type: 'line',
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '5',
-                color: '	#800000  '
-              }
-            },
-            itemStyle: {
-              normal: {
-                color: '#ADFF2F' // 柱状图颜色设为透明
-              }
-            }
+            data: []
           },
           {
             name: '比重值-',
             type: 'line',
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '5',
-                color: '	#800000  '
-              }
-            },
-            itemStyle: {
-              normal: {
-                color: '#00FA9A' // 柱状图颜色设为透明
-              }
-            }
+            data: []
           },
           {
             name: '硬度值+',
             type: 'line',
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '5',
-                color: '	#800000  '
-              }
-            },
-            itemStyle: {
-              normal: {
-                color: '#C98DFF' // 柱状图颜色设为透明
-              }
-            }
+            data: []
           },
           {
             name: '硬度值-',
             type: 'line',
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '5',
-                color: '	#800000  '
-              }
-            },
-            itemStyle: {
-              normal: {
-                color: '#87CEFA' // 柱状图颜色设为透明
-              }
-            }
+            data: []
           }
-          // {
-          //   name: 'TC90-',
-          //   type: 'line',
-          //   data: [10, 11, 13, 11, 12, 12, 9],
-          //   markPoint: {
-          //     data: [
-          //       { type: 'max', name: '最大值' },
-          //       { type: 'min', name: '最小值' }
-          //     ]
-          //   },
-          //   itemStyle: {
-          //     normal: {
-          //       color: '#C98DFF' // 柱状图颜色设为透明
-          //     }
-          //   }
-
-          // },
-          // {
-          //   name: 'TC90+',
-          //   type: 'line',
-          //   data: [1, -2, 2, 5, 3, 2, 0],
-          //   markPoint: {
-          //     data: [
-          //       { type: 'max', name: '最大值' },
-          //       { type: 'min', name: '最小值' }
-          //     ]
-          //   },
-          //   itemStyle: {
-          //     normal: {
-          //       color: '#C28331' // 柱状图颜色设为透明
-          //     }
-          //   }
-          // }
         ]
       }
     }
   },
+  watch: {
+    chartsdata: {
+      deep: true, // true 深度监听
+      handler() {
+        this.drawLine()
+        const myChart = echarts.init(this.$refs.myChart)
+        myChart.setOption(this.option)
+      }
+    }
 
+  },
   created() {
-    // console.log(this.chartsdata)
-    // console.log('this.option', this.option)
   },
   mounted() {
     this.$nextTick(function() {
@@ -913,8 +306,7 @@ export default {
       const zYDZad = []
       const zYDZLower = []
       array.forEach(item => {
-        console.log('item', item)
-        const day = item.date
+        const day = dayjs(item.date).format('YYYY-MM')
         const D = item.yc_percent_of_pass ? item.yc_percent_of_pass.replace(/%/g, '') : '' // 一次
         const E = item.lb_percent_of_pass ? item.lb_percent_of_pass.replace(/%/g, '') : '' // 流变
         const F = item.zh_percent_of_pass ? item.zh_percent_of_pass.replace(/%/g, '') : '' // 综合
