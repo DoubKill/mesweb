@@ -9,6 +9,7 @@
 
 <script>
 import echarts from 'echarts'
+import dayjs from 'dayjs'
 export default {
   props: {
     dayTableData: {
@@ -77,266 +78,72 @@ export default {
             type: 'bar',
             barWidth: 10,
             // data: [10.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3],
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '6',
-                color: '#000000 '
-              }
-
-            },
-            itemStyle: {
-              normal: {
-                color: '#F4F4F4' // 柱状图颜色设为透明
-              //   label: {
-              //     show: true, // 开启显示
-              //     position: 'center', // 在上方显示
-              //     textStyle: { // 数值样式
-              //       color: '#FF0000 ',
-              //       fontSize: 8
-              //     }
-              //   }
-              }
-            }
+            data: []
           },
           {
             name: '流变',
             type: 'bar',
             barWidth: 10,
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '6',
-                color: '#000000 '
-              }
+            data: []
 
-            },
-            itemStyle: {
-              normal: {
-                color: '#8ED8F9' // 柱状图颜色设为透明
-                // label: {
-                //   show: true, // 开启显示
-                //   position: 'center', // 在上方显示
-                //   textStyle: { // 数值样式
-                //     color: '#FF0000 ',
-                //     fontSize: 8
-                //   }
-                // }
-              }
-            }
           },
           {
             name: '综合',
             type: 'bar',
             barWidth: 10,
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '6',
-                color: '#000000 '
-              }
-
-            },
-            itemStyle: {
-              normal: {
-                color: '#D0FA8F' // 柱状图颜色设为透明
-                // label: {
-                //   show: true, // 开启显示
-                //   position: 'center', // 在上方显示
-                //   textStyle: { // 数值样式
-                //     color: '#FF0000 ',
-                //     fontSize: 8
-                //   }
-                // }
-              }
-            }
+            data: []
           },
           {
             name: 'Z01一次',
             type: 'bar',
             barWidth: 10,
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '6',
-                color: '#000000 '
-              }
+            data: []
 
-            },
-            itemStyle: {
-              normal: {
-                color: '#FFB6C1 ' // 柱状图颜色设为透明
-                // label: {
-                //   show: true, // 开启显示
-                //   position: 'center', // 在上方显示
-                //   textStyle: { // 数值样式
-                //     color: '#FF0000 ',
-                //     fontSize: 8
-                //   }
-                // }
-              }
-            }
           },
           {
             name: 'Z01流变',
             type: 'bar',
             barWidth: 10,
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '6',
-                color: '#000000 '
-              }
-
-            },
-            itemStyle: {
-              normal: {
-                color: '#FFE4E1' // 柱状图颜色设为透明
-                // label: {
-                //   show: true, // 开启显示
-                //   position: 'center', // 在上方显示
-                //   textStyle: { // 数值样式
-                //     color: '#FF0000 ',
-                //     fontSize: 8
-                //   }
-                // }
-              }
-            }
+            data: []
           },
           {
             name: 'Z01综合',
             type: 'bar',
             barWidth: 10,
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '6',
-                color: '#000000 '
-              }
-
-            },
-            itemStyle: {
-              normal: {
-                color: '#6A5ACD ' // 柱状图颜色设为透明
-                // label: {
-                //   show: true, // 开启显示
-                //   position: 'center', // 在上方显示
-                //   textStyle: { // 数值样式
-                //     color: '#FF0000 ',
-                //     fontSize: 8
-                //   }
-                // }
-              }
-            }
+            data: []
           },
           {
             name: '早班一次',
             type: 'bar',
             barWidth: 10,
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '6',
-                color: '#000000 '
-              }
-
-            },
-            itemStyle: {
-              normal: {
-                color: '#9370DB ' // 柱状图颜色设为透明
-                // label: {
-                //   show: true, // 开启显示
-                //   position: 'center', // 在上方显示
-                //   textStyle: { // 数值样式
-                //     color: '#FF0000 ',
-                //     fontSize: 8
-                //   }
-                // }
-              }
-            }
+            data: []
           },
           {
             name: '早班流变',
             type: 'bar',
             barWidth: 10,
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '6',
-                color: '#000000 '
-              }
-
-            },
-            itemStyle: {
-              normal: {
-                color: '#FA8072' // 柱状图颜色设为透明
-                // label: {
-                //   show: true, // 开启显示
-                //   position: 'center', // 在上方显示
-                //   textStyle: { // 数值样式
-                //     color: '#FF0000 ',
-                //     fontSize: 8
-                //   }
-                // }
-              }
-            }
+            data: []
           },
           {
             name: '早班综合',
             type: 'bar',
             barWidth: 10,
-            data: [],
-            label: {
-              show: true,
-              position: 'insideTop',
-              textStyle: {
-                fontWeight: 'bolder',
-                fontSize: '6',
-                color: '#000000 '
-              }
-
-            },
-            itemStyle: {
-              normal: {
-                color: '#FFA07A' // 柱状图颜色设为透明
-                // label: {
-                //   show: true, // 开启显示
-                //   position: 'center', // 在上方显示
-                //   textStyle: { // 数值样式
-                //     color: '#FF0000 ',
-                //     fontSize: 8
-                //   }
-                // }
-              }
-            }
+            data: []
           }
         ]
       }
     }
+  },
+  watch: {
+    dayTableData: {
+      deep: true, // true 深度监听
+      handler() {
+        this.drawLine()
+        const myChart = echarts.init(this.$refs.myChart)
+        myChart.setOption(this.option)
+      }
+    }
+
   },
 
   created() {
@@ -366,8 +173,7 @@ export default {
       const Zbliubian = []
       const Zbzonghe = []
       Array.forEach(item => {
-        console.log('item', item)
-        const day = item.date
+        const day = dayjs(item.date).format('YYYY-MM')
         const D = item.yc_percent_of_pass ? item.yc_percent_of_pass.replace(/%/g, '') : '' // 一次
         const E = item.lb_percent_of_pass ? item.lb_percent_of_pass.replace(/%/g, '') : '' // 流变
         const F = item.zh_percent_of_pass ? item.zh_percent_of_pass.replace(/%/g, '') : '' // 综合
