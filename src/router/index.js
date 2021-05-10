@@ -1204,6 +1204,75 @@ export const asyncRoutes = [
             }
           }
         ]
+      },
+      // 新添加的
+      {
+        path: '/material-quickcheck',
+        redirect: '/material-quickcheck',
+        component: {
+          render: c => c('router-view')
+        },
+        name: 'material-quickcheck',
+        meta: {
+          title: '原材料质检管理',
+          icon: 'quality'
+        },
+        // equipment
+        children: [
+          {
+            path: '/material-quickcheck/quickcheck-equipment',
+            component: () => import('@/views/material_quickcheck_manage/material_quickcheck_equipment'),
+            name: 'material-quickcheck-equipment',
+            meta: {
+              title: '快检设备管理',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/material-quickcheck/quickcheck-type',
+            component: () => import('@/views/material_quickcheck_manage/material_quickcheck_type'),
+            name: 'material-quickcheck-type',
+            // 快检类型管理
+            meta: {
+              title: '快检类型管理',
+              permissionName: ''
+            }
+
+          },
+          {
+            path: '/material-quickcheck/quickcheck-value',
+            component: () => import('@/views/material_quickcheck_manage/material_quickcheck_value'),
+            name: 'material-quickcheck-value',
+            // 检测值管理
+            meta: {
+              title: '检测值管理',
+              permissionName: ''
+            }
+
+          },
+          {
+            path: '/material-quickcheck/meniequipmentdata',
+            component: () => import('@/views/material_quickcheck_manage/meniequipmentdata'),
+            name: 'meniequipmentdata',
+            // 门尼设备数据绑定管理
+            meta: {
+              title: '门尼设备数据绑定管理',
+              permissionName: ''
+            }
+
+          },
+          {
+            path: '/material-quickcheck/raw-material',
+            component: () => import('@/views/material_quickcheck_manage/raw_material'),
+            name: 'raw-material',
+            // 原材料管理
+            meta: {
+              title: '原材料管理',
+              permissionName: ''
+            }
+
+          }
+        ]
       }
     ]
   },
