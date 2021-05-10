@@ -132,7 +132,7 @@
               :value="item.id"
             >
               <span style="float: left">{{ item.material_name }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">编码: {{ item.material_no }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px;margin-right:18px">编码: {{ item.material_no }}</span>
             </el-option>
           </el-select>
         </el-form-item>
