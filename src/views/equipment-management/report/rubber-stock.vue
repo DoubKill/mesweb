@@ -119,7 +119,8 @@ export default {
       try {
         this.loading = true
         const data = await productStationStatics('get', null, { params: { name: this.search.no }})
-        this.tableData = data.results
+        this.tableData = [data] || []
+
         this.loading = false
       } catch (e) {
         this.loading = false
