@@ -93,9 +93,9 @@
       title="合格率统计"
       :visible.sync="dialogShow"
     >
-      <!-- <el-checkbox-button class="tubiao" @click="chartDialog">图表</el-checkbox-button> -->
-      <el-button type="primary" @click="chartTojiDialog">图表</el-button>
+      <!-- <el-checkbox-button  @click="chartDialog">图表</el-checkbox-button> -->
       <el-row v-loading="dialogTableLoading">
+        <el-button type="primary" class="tubiao" @click="chartTojiDialog">图表</el-button>
         <el-col :span="8">
           <span>总合格率</span>
           <el-table
@@ -217,14 +217,14 @@
     </el-dialog>
     <!-- 图表 -->
     <div v-if="comprehensiveBarShow">
-      <monthpassdetailChart :chartsdata="chartsdatas" />
+      <monthpassdetailChart :chartsdata="chartsdatas" :headers="headers" :comprehensive-bar-show="comprehensiveBarShow" />
     </div>
     <!-- <el-dialog :visible.sync="dialogChartVisible" width="90%" title="月合格率">
 
     </el-dialog> -->
     <el-dialog :visible.sync="chartTojiDialogVisible" title="月快检合格率" width="90%">
       <!-- this.headers = response -->
-      <monthpassdetailChart2 :day-table-data="dayTableData" :headers="headers" />
+      <monthpassdetailChart2 :data-list="dayTableData" />
     </el-dialog>
   </div>
 </template>
@@ -290,6 +290,7 @@ export default {
       getBatchMonthStatistics(this.getParams).then(response => {
         this.tableData = response
         this.tableLoading = false
+
         // this.total = response.count
       }).catch(e => {
         this.tableLoading = false
@@ -370,8 +371,8 @@ export default {
 }
 .tubiao{
   position: absolute;
-  left: 140px;
-  top:10px;
+  left: 110px;
+  top:-70px;
 }
   .table_data{
     .el-table .cell {
