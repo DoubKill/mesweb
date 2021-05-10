@@ -99,7 +99,7 @@
         :model="ruleForm"
         label-width="120px"
       >
-        <el-form-item label="子系统" prop="child_system">
+        <!-- <el-form-item label="子系统" prop="child_system">
           <el-select
             v-model="ruleForm.child_system"
             placeholder="请选择"
@@ -112,12 +112,29 @@
               :value="item.id"
             />
           </el-select>
-        </el-form-item>
-        <el-form-item label="物料编码" prop="material_no">
-          <el-input v-model="ruleForm.material_no" />
-        </el-form-item>
-        <el-form-item label="物料名称" prop="material_name">
-          <el-input v-model="ruleForm.material_name" />
+        </el-form-item> -->
+        <el-form-item label="物料名称" prop="zc_material_ids">
+          <el-select
+            v-model="ruleForm.zc_material_ids"
+            filterable
+            remote
+            multiple
+            reserve-keyword
+            placeholder="请输入物料名称关键词"
+            :remote-method="remoteMethod"
+            :loading="loadingMaterial"
+            style="width:300px"
+          >
+            <el-option
+              v-for="item in optionsMaterial"
+              :key="item.id"
+              :label="item.material_name"
+              :value="item.id"
+            >
+              <span style="float: left">{{ item.material_name }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">编码: {{ item.material_no }}</span>
+            </el-option>
+          </el-select>
         </el-form-item>
         <!-- <el-form-item label="条形码" prop="bra_code">
           <el-input v-model="ruleForm.bra_code" />
@@ -135,13 +152,14 @@
       width="600"
     >
       <el-table
+        v-loading="dialogListLoading"
         :data="dialogList"
         border
       >
-        <el-table-column
+        <!-- <el-table-column
           prop="child_system_name"
           label="系统"
-        />
+        /> -->
         <el-table-column
           prop="material_name"
           label="物料名称"
@@ -155,12 +173,6 @@
           label="一维码"
         /> -->
       </el-table>
-      <page
-        :old-page="false"
-        :total="totalDialog"
-        :current-page="pageDialog"
-        @currentChange="currentChangeDialog"
-      />
     </el-dialog>
   </div>
 </template>
@@ -169,7 +181,7 @@
 import materialCodeSelect from '@/components/materialCodeSelect'
 import materielTypeSelect from '@/components/select_w/materielTypeSelect'
 import { getMaterialsAttribute } from '@/api/material-attribute-manage'
-import { materialSupplierCollect } from '@/api/base_w_two'
+import { zcMaterials } from '@/api/base_w_two'
 import { globalCodesUrl } from '@/api/base_w'
 import page from '@/components/page'
 export default {
@@ -180,19 +192,19 @@ export default {
       search: { page: 1, page_size: 10 },
       dialogVisible: false,
       ruleForm: {
-        child_system: '',
-        material_name: '',
-        material_no: ''
+        zc_material_ids: []
       },
       options: [],
       total: 0,
-      totalDialog: 0,
-      pageDialog: 1,
       pageSizeDialog: 10,
       dialogList: [],
+      dialogListLoading: false,
       dialogVisibleList: false,
       btnLoading: false,
-      currentId: ''
+      currentId: '',
+      dialogMaterial: '',
+      loadingMaterial: false,
+      optionsMaterial: []
     }
   },
   created() {
@@ -227,25 +239,20 @@ export default {
       this.getList()
     },
     view(row) {
+      this.dialogList = []
       this.dialogVisibleList = true
       this.currentId = row.id
       this.getDialogList()
     },
     async getDialogList() {
       try {
-        const data = await materialSupplierCollect('get', null, { params: { material_id: this.currentId,
-          page: this.pageDialog,
-          page_size: this.pageSizeDialog }})
-        this.totalDialog = data.count
-        this.dialogList = data.results
+        this.dialogListLoading = true
+        const data = await zcMaterials('get', null, { params: { material_id: this.currentId }})
+        this.dialogList = data || []
+        this.dialogListLoading = false
       } catch (e) {
-        //
+        this.dialogListLoading = false
       }
-    },
-    currentChangeDialog(page, page_size) {
-      this.pageDialog = page
-      this.pageSizeDialog = page_size
-      this.getDialogList()
     },
     add(row) {
       this.ruleForm.material = row.id
@@ -262,19 +269,16 @@ export default {
       console.log(obj)
     },
     async submitFun() {
-      if (!this.ruleForm.material_no || !this.ruleForm.material_name) {
-        this.$message.info('物料编码、物料名称必填')
-        return
-      }
-      if (!this.ruleForm.child_system) {
-        this.$message.info('子系统必填')
+      if (!this.ruleForm.zc_material_ids || this.ruleForm.zc_material_ids.length === 0) {
+        this.$message.info('物料名称必填')
         return
       }
       try {
         this.btnLoading = true
-        await materialSupplierCollect('post', null, { data: this.ruleForm })
+        await zcMaterials('post', null, { data: this.ruleForm })
         this.dialogVisible = false
         this.$message.success('新增成功')
+        this.$refs.ruleForm.resetFields()
       } catch (e) {
         //
       }
@@ -289,6 +293,20 @@ export default {
       const str = arr.length > 0 ? arr.join(',') : ''
       this.$set(this.search, 'material_type_ids', str)
       this.changeList()
+    },
+    async remoteMethod(query) {
+      if (query !== '') {
+        this.loadingMaterial = true
+        try {
+          const data = await zcMaterials('get', null, { params: { material_name: query }})
+          this.optionsMaterial = data || []
+          this.loadingMaterial = false
+        } catch (e) {
+          this.loadingMaterial = false
+        }
+      } else {
+        this.optionsMaterial = []
+      }
     },
     changeMaterialCodeAdd() {},
     templateDownload() {

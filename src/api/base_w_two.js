@@ -154,6 +154,14 @@ export function materialSupplierCollect(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function zcMaterials(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ZcMaterials + id + '/' : API.ZcMaterials,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 
 export function weightingPackageLog(method, id, data = {}) {
   const obj = {
