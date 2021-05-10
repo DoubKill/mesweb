@@ -278,6 +278,7 @@ export default {
   ImportMaterialMestMrders: '/api/v1/quality/import-material-test-orders/',
   // mes与子系统物料信息映射
   MaterialSupplierCollect: '/api/v1/terminal/material-supplier-collect/',
+  ZcMaterials: '/api/v1/recipe/zc-materials/',
   WeightingPackageLog: '/api/v1/terminal/weighting-package-log/',
   EquipEownType: '/api/v1/equipment/equip-down-type/',
   EquipDownReason: '/api/v1/equipment/equip-down-reason/',
