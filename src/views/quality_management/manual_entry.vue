@@ -20,7 +20,7 @@
         <class-select @classSelected="classSelected" />
       </el-form-item>
       <el-form-item label="胶料：">
-        <all-product-no-select @productBatchingChanged="productBatchingChanged" />
+        <all-product-no-select :params-obj="search" @productBatchingChanged="productBatchingChanged" />
       </el-form-item>
     </el-form>
     <el-table

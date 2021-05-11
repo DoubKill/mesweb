@@ -20,6 +20,10 @@
           @change="dateChange"
         />
       </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="chartDialog">图表</el-button>
+      </el-form-item>
+
     </el-form>
     <div class="table_data">
       <el-table
@@ -31,7 +35,7 @@
         :header-row-style="headerRowStyle"
         style="width: 100%"
       >
-        <el-table-column fixed type="index" width="14" label="No" align="center" />
+        <!-- <el-table-column fixed width="30" label="No" align="center" type="selection" /> -->
         <el-table-column fixed label="月份" width="54" prop="date" align="center">
           <template slot-scope="scope">
             <el-link type="primary" :underline="false" @click="monthPassClick(scope.row.date)">{{ dateFormat(scope.row.date) }}</el-link>
@@ -89,7 +93,9 @@
       title="合格率统计"
       :visible.sync="dialogShow"
     >
+      <!-- <el-checkbox-button  @click="chartDialog">图表</el-checkbox-button> -->
       <el-row v-loading="dialogTableLoading">
+        <el-button type="primary" class="tubiao" @click="chartTojiDialog">图表</el-button>
         <el-col :span="8">
           <span>总合格率</span>
           <el-table
@@ -207,16 +213,29 @@
           </el-table>
         </el-col>
       </el-row>
+
+    </el-dialog>
+    <!-- 图表 -->
+    <div v-if="comprehensiveBarShow">
+      <monthpassdetailChart :chartsdata="chartsdatas" :headers="headers" :comprehensive-bar-show="comprehensiveBarShow" />
+    </div>
+    <!-- <el-dialog :visible.sync="dialogChartVisible" width="90%" title="月合格率">
+
+    </el-dialog> -->
+    <el-dialog :visible.sync="chartTojiDialogVisible" title="月快检合格率" width="90%">
+      <!-- this.headers = response -->
+      <monthpassdetailChart2 :data-list="dayTableData" />
     </el-dialog>
   </div>
 </template>
 
 <script>
 import { getBatchMonthStatistics, getBatchDayStatistics, getStatisticHeaders } from '@/api/passStatistics'
+import monthpassdetailChart from '@/components/MonthPassdeTailChart'
+import monthpassdetailChart2 from '@/components/MonthPassdeTailChart2'
 import dayjs from 'dayjs'
-
 export default {
-  components: { },
+  components: { monthpassdetailChart, monthpassdetailChart2 },
   data() {
     return {
       beginTime: dayjs().startOf('year').format('YYYY-MM'),
@@ -228,14 +247,41 @@ export default {
       tableData: [],
       dayTableData: [],
       dialogTableLoading: false,
-      tableLoading: true
+      chartTojiDialogVisible: false,
+      comprehensiveBarShow: false,
+      tableLoading: true,
+      chartsdatas: []
+      // 图表
     }
   },
   created() {
     this.getHeaders()
     this.getTableData()
   },
+  // mounted() {
+  //   this.$nextTick(function() {
+  //     this.drawLine2()
+  //   })
+  // },
   methods: {
+
+    chartDialog() {
+      // this.dialogChartVisible = true
+      this.comprehensiveBarShow = !this.comprehensiveBarShow
+      this.chartsdatas = this.tableData
+    },
+    chartTojiDialog() {
+      this.chartTojiDialogVisible = true
+    },
+    // 统计图表
+
+    // handleSelectionChange(val) {
+    //   console.log('1111111111', val)
+    //   if (val) {
+    //     this.dialogChartVisible = true
+    //     this.chartsdatas = val
+    //   } else { return }
+    // },
     getTableData() {
       this.getParams.start_time = this.beginTime
       this.getParams.end_time = this.endTime
@@ -244,6 +290,7 @@ export default {
       getBatchMonthStatistics(this.getParams).then(response => {
         this.tableData = response
         this.tableLoading = false
+
         // this.total = response.count
       }).catch(e => {
         this.tableLoading = false
@@ -321,6 +368,11 @@ export default {
     background: #ffffff;
     // font-size: 1px;
     // transform: scale(1);
+}
+.tubiao{
+  position: absolute;
+  left: 110px;
+  top:-70px;
 }
   .table_data{
     .el-table .cell {

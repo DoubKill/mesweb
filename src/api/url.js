@@ -274,8 +274,11 @@ export default {
   WeightBatchingLogList: '/api/v1/terminal/weight-batching-log-list/',
   MaterialInventoryList: '/api/v1/inventory/material-inventory-list/',
   QualityPalletFeedTest: '/api/v1/quality/pallet-feed-test/',
+  DatapointCurve: '/api/v1/quality/datapoint-curve/',
   // 录入导入
   ImportMaterialMestMrders: '/api/v1/quality/import-material-test-orders/',
+  // 不合格历史记录
+  DealMathodHistory: '/api/v1/quality/deal-mathod-history/',
   // mes与子系统物料信息映射
   MaterialSupplierCollect: '/api/v1/terminal/material-supplier-collect/',
   ZcMaterials: '/api/v1/recipe/zc-materials/',

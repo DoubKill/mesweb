@@ -526,3 +526,11 @@ export function importMaterialTestOrders(params) {
   })
 }
 
+export function dealMathodHistory(params) {
+  return request({
+    url: API.DealMathodHistory,
+    method: 'get',
+    params
+  })
+}
+

@@ -5,18 +5,19 @@
     <el-form :inline="true">
       <el-form-item label="日期">
         <el-date-picker
-          v-model="getParams.day_time"
-          :clearable="false"
-          type="date"
+          v-model="day_time"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
           value-format="yyyy-MM-dd"
-          placeholder="选择日期"
-          @change="dayTimeChanged"
+          @change="dayChange"
         />
       </el-form-item>
       <el-form-item label="机台">
         <equip-select
           :equip_no_props.sync="getParams.equip_no"
-          @changeSearch="equipSelected"
+          @changeSearch="clickQuery"
         />
       </el-form-item>
       <el-form-item label="胶料">
@@ -28,14 +29,14 @@
         <class-select @classSelected="classSelected" />
       </el-form-item>
       <el-form-item label="段次">
-        <stage-select v-model="getParams.stage" @change="stageChange" />
+        <stage-select v-model="getParams.stage" @change="clickQuery" />
       </el-form-item>
       <el-form-item label="综合检测结果">
         <el-select
           v-model="getParams.is_qualified"
           placeholder="请选择"
           clearable
-          @change="valueResultFun"
+          @change="clickQuery"
         >
           <el-option
             v-for="(item,i) in options"
@@ -45,9 +46,9 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item>
+      <!-- <el-form-item>
         <el-button type="primary" @click="clickQuery">查询</el-button>
-      </el-form-item>
+      </el-form-item> -->
       <br>
       <el-form-item>
         <el-button @click="filterDialogVisible = true">
@@ -98,10 +99,14 @@
         </u-table-column>
         <u-table-column label="生产班次/班组" prop="class_group" min-width="20px" />
         <u-table-column align="center" label="生产机台" min-width="20px" prop="production_equip_no" />
-        <u-table-column label="胶料编码" min-width="20px" align="center" prop="product_no" />
+        <u-table-column label="胶料编码" min-width="20px" align="center" prop="product_no">
+          <template slot-scope="scope">
+            <el-link type="primary" @click="clickOrderNum(scope.$index,scope.row)">{{ scope.row.product_no }}</el-link>
+          </template>
+        </u-table-column>
         <u-table-column label="车次" align="center" min-width="20px" prop="actual_trains" />
-        <u-table-column label="检测状态" prop="test_status" align="center">
-          <template slot-scope="{ row }" min-width="20px">
+        <u-table-column label="检测状态" prop="test_status" align="center" min-width="20px">
+          <template slot-scope="{ row }">
             <div :class="row.test_status === '复检' ? 'test_type_name_style': ''">
               {{ row.test_status }}
             </div>
@@ -172,6 +177,26 @@
     >
       <test-card ref="testCard" />
     </el-dialog>
+    <el-dialog
+      title="快检值历史曲线"
+      :visible.sync="historyDialogVisible"
+      width="80%"
+    >
+      <el-date-picker
+        v-model="historyDate"
+        type="daterange"
+        range-separator="至"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        value-format="yyyy-MM-dd"
+        :clearable="false"
+        @change="changeHistoryDate"
+      />
+      <div
+        id="historyBar"
+        style="width: 100%;height:300px;margin-top:8px"
+      />
+    </el-dialog>
 
     <!-- 下载使用 -->
     <DetailsUTable
@@ -190,11 +215,13 @@ import EquipSelect from '@/components/select_w/equip'
 import ClassSelect from '@/components/ClassSelect'
 import StageSelect from '@/components/StageSelect'
 import allProductNoSelect from '@/components/select_w/allProductNoSelect'
-import { testTypes, materialTestOrders, testResultHistory } from '@/api/quick-check-detail'
+import { testTypes, materialTestOrders, testResultHistory, datapointCurve } from '@/api/quick-check-detail'
 import elTableInfiniteScroll from 'el-table-infinite-scroll'
 import FileSaver from 'file-saver'
 import XLSX from 'xlsx'
 import DetailsUTable from './components/details-u-table'
+import { setDate } from '@/utils'
+import * as echarts from 'echarts'
 export default {
   directives: {
     'el-table-infinite-scroll': elTableInfiniteScroll
@@ -204,8 +231,10 @@ export default {
     return {
       count: 0,
       allPage: 0,
+      day_time: [dayjs().format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')],
       getParams: {
-        day_time: dayjs().format('YYYY-MM-DD'),
+        st: dayjs().format('YYYY-MM-DD'),
+        et: dayjs().format('YYYY-MM-DD'),
         equip_no: null,
         classes: null,
         product_no: null,
@@ -233,11 +262,41 @@ export default {
       valueResult: '',
       ALLData: [],
       btnLoading: false,
-      options: [{ name: '一等品', bool: true }, { name: '三等品', bool: false }]
+      options: [{ name: '一等品', bool: true }, { name: '三等品', bool: false }],
+      historyDialogVisible: false,
+      historyDate: [],
+      row_roduct_no: '',
+      optionBar: {
+        tooltip: {
+          trigger: 'axis'
+        },
+        legend: {
+          data: []
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: []
+        },
+        yAxis: {
+          type: 'value',
+          name: '测试点值'
+        },
+        series: []
+      }
     }
   },
   created() {
     this.getTestTypes()
+    this.testOrders = []
+    this.testOrdersAll = []
+    this.getMaterialTestOrders()
   },
   mounted() {
     // window.addEventListener('scroll', () => {
@@ -259,6 +318,7 @@ export default {
   },
   methods: {
     dayTimeChanged() {
+      this.clickQuery()
     },
     clearList() {
       this.getParams.page = 1
@@ -272,15 +332,13 @@ export default {
         throw new Error(error)
       }
     },
-    equipSelected(equip) {
-    },
-    stageChange() {
-    },
     classSelected(className) {
       this.getParams.classes = className || null
+      this.clickQuery()
     },
     productBatchingChanged(val) {
       this.getParams.product_no = val ? val.material_no : null
+      this.clickQuery()
     },
     load(tree, resolve) {
       // expand-change
@@ -321,12 +379,16 @@ export default {
         resolve(subRows)
       })
     },
-    valueResultFun(val) {
-    },
     clickQuery() {
       this.getParams.page = 1
+      this.testOrders = []
       this.testOrdersAll = []
       this.getMaterialTestOrders()
+    },
+    dayChange(val) {
+      this.getParams.st = val ? val[0] : ''
+      this.getParams.et = val ? val[1] : ''
+      this.clickQuery()
     },
     async getALLData() {
       try {
@@ -422,7 +484,6 @@ export default {
           }
         })
         this.listLoading = false
-      // eslint-disable-next-line no-empty
       } catch (e) {
         this.listLoading = false
       }
@@ -442,6 +503,63 @@ export default {
         return 'warning-row'
       }
       return ''
+    },
+    changeHistoryDate() {
+      this.getHistoryDate()
+    },
+    clickOrderNum(index, row) {
+      let a = setDate()
+      let timestamp = new Date().getTime()
+      let b = setDate(timestamp - 1000 * 60 * 60 * 24 * 10)
+      if (this.day_time && this.day_time.length > 0) {
+        a = this.day_time[1]
+        timestamp = new Date(this.day_time[0]).getTime()
+        b = setDate(timestamp - 1000 * 60 * 60 * 24 * 10)
+      }
+      this.historyDate = [b, a]
+
+      this.historyDialogVisible = true
+      this.row_roduct_no = row.product_no
+      this.getHistoryDate()
+    },
+    async getHistoryDate() {
+      try {
+        const obj = {
+          st: this.historyDate[0] || '',
+          et: this.historyDate[1] || '',
+          product_no: this.row_roduct_no || ''
+        }
+        this.historyLoading = true
+        const data = await datapointCurve(obj)
+        this.historyLoading = false
+
+        data.y_axis.forEach(d => {
+          d.markLine = {
+            silent: true,
+            lineStyle: {
+              color: '#333'
+            },
+            data: [{
+              yAxis: data.indicators[d.name] ? data.indicators[d.name][0] : ''
+            }, {
+              yAxis: data.indicators[d.name] ? data.indicators[d.name][1] : ''
+            }]
+          }
+        })
+
+        const arr = []
+        for (const iterator in data.indicators) {
+          arr.push(iterator)
+        }
+
+        this.optionBar.xAxis.data = data.x_axis || []
+        this.optionBar.series = data.y_axis || []
+        this.optionBar.legend.data = arr
+        this.chartHistoryBar = echarts.init(document.getElementById('historyBar'))
+        this.chartHistoryBar.setOption(this.optionBar, true)
+      } catch (e) {
+        //
+      }
     },
     exportExcel() {
       /* 从表生成工作簿对象 */

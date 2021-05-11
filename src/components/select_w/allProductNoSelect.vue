@@ -42,6 +42,12 @@ export default {
     labelName: {
       type: String,
       default: 'material_no'
+    },
+    paramsObj: {
+      type: Object,
+      default() {
+        return {}
+      }
     }
   },
   data() {
@@ -52,6 +58,8 @@ export default {
       loading: true
     }
   },
+  watch: {
+  },
   created() {
   },
   methods: {
@@ -59,14 +67,20 @@ export default {
       this.$emit('productBatchingChanged', this.productBatchingById[this.productBatchingId])
     },
     visibleChange(bool) {
-      if (bool && this.productBatchings.length === 0) {
+      if (bool) {
         this.getProductBatchings()
       }
     },
     getProductBatchings() {
       this.loading = true
       // eslint-disable-next-line object-curly-spacing
-      batchingMaterials('get', null, { params: { all: 1, type: this.typeParms } }).then(response => {
+      const obj = Object.assign({ all: 1, type: this.typeParms }, this.paramsObj)
+      if (JSON.stringify(this.paramsObj) === '{}') {
+        obj.all = 1
+      } else {
+        delete obj.all
+      }
+      batchingMaterials('get', null, { params: obj }).then(response => {
         let productBatchings = response
         productBatchings.forEach(productBatching => {
           this.productBatchingById[productBatching.id] = productBatching
