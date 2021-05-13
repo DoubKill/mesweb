@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- 试验类型管理 -->
     <el-row>
       <el-col :span="12">
         <el-form :inline="true">
@@ -91,6 +92,11 @@
                   size="mini"
                   @click="showEditDataPointsDialog(scope.row)"
                 >编辑</el-button>
+                <el-button
+                  size="mini"
+                  type="primary"
+                  @click="showNorm(scope.row)"
+                >操作pass指标</el-button>
                 <!-- <el-button
                   size="mini"
                   type="danger"
@@ -255,6 +261,13 @@
         >确 定</el-button>
       </div>
     </el-dialog>
+
+    <el-dialog
+      title="不合格品pass指标"
+      :visible.sync="passVisible"
+    >
+      uuu
+    </el-dialog>
   </div>
 </template>
 
@@ -298,7 +311,8 @@ export default {
         page: 1
       },
       currentPage: 1,
-      total: 1
+      total: 1,
+      passVisible: false
     }
   },
   computed: {

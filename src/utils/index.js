@@ -259,7 +259,7 @@ export function errorRepeat(_this, e) {
 }
 
 /**
- * 去除输入框抖动
+ * 去除输入框抖动  防抖
  * _this    this
  * val      要加载的列表名
  */

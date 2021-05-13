@@ -1217,7 +1217,6 @@ export const asyncRoutes = [
           title: '原材料快检管理',
           icon: 'quality'
         },
-
         children: [
           {
             path: '/material-quickcheck/quickcheck-equipment',
@@ -1236,7 +1235,6 @@ export const asyncRoutes = [
               title: '快检类型管理',
               permissionName: ''
             }
-
           },
           {
             path: '/material-quickcheck/quickcheck-value',
@@ -1246,7 +1244,6 @@ export const asyncRoutes = [
               title: '检测值管理',
               permissionName: ''
             }
-
           },
           {
             path: '/material-quickcheck/meniequipmentdata',
@@ -1256,17 +1253,15 @@ export const asyncRoutes = [
               title: '门尼设备数据绑定管理',
               permissionName: ''
             }
-
           },
           {
             path: '/material-quickcheck/raw-material',
             component: () => import('@/views/material_quickcheck_manage/raw_material'),
-            name: 'raw-material',
+            name: 'quickcheck-raw-material',
             meta: {
               title: '原材料管理',
               permissionName: ''
             }
-
           }
         ]
       }
