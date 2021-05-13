@@ -92,11 +92,11 @@
                   size="mini"
                   @click="showEditDataPointsDialog(scope.row)"
                 >编辑</el-button>
-                <el-button
+                <!-- <el-button
                   size="mini"
                   type="primary"
                   @click="showNorm(scope.row)"
-                >操作pass指标</el-button>
+                >操作pass指标</el-button> -->
                 <!-- <el-button
                   size="mini"
                   type="danger"
