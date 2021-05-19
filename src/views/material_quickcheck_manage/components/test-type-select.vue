@@ -1,23 +1,24 @@
 <template>
-  <!-- 原材料快检  设备类型 -->
+  <!-- 原材料快检  检测类型 -->
   <el-select
     v-model="className"
     clearable
     placeholder="请选择"
+    filterable
     @visible-change="visibleChange"
     @change="classChanged"
   >
     <el-option
       v-for="item in EquipCateOptions"
       :key="item.id"
-      :label="item.type_name"
+      :label="item.name"
       :value="item.id"
     />
   </el-select>
 </template>
 
 <script>
-import { materialEquipmentType } from '@/api/base_w_three'
+import { materialExamineType } from '@/api/base_w_three'
 
 export default {
   props: {
@@ -49,10 +50,10 @@ export default {
   methods: {
     async equip_type_list() {
       try {
-        const equip_type_list = await materialEquipmentType('get', null, {
-          params: {}
+        const equip_type_list = await materialExamineType('get', null, {
+          params: { all: 1 }
         })
-        this.EquipCateOptions = equip_type_list || []
+        this.EquipCateOptions = equip_type_list.results || []
       } catch (e) { throw new Error(e) }
     },
     visibleChange(visible) {
@@ -62,7 +63,7 @@ export default {
     },
     classChanged(val) {
       const obj = this.EquipCateOptions.find(D => D.id === val)
-      this.$emit('equipTypeSelect', obj)
+      this.$emit('typeSelect', obj)
     }
   }
 }

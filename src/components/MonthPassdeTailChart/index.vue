@@ -104,8 +104,6 @@ export default {
     }
   },
   created() {
-    console.log(this.chartsdata)
-    console.log(this.headers)
     // console.log('this.option', this.option)
   },
   mounted() {
@@ -157,7 +155,6 @@ export default {
             _arr3.push(0)
             _arr4.push(0)
           }
-          console.log('_arr1', _arr1)
         })
         arr1.push({
           name: D + '% +',
@@ -201,7 +198,6 @@ export default {
         const allArr = [obj1, obj2, obj3, obj4, ...arr1]
         this.option.xAxis[0].data = headers2
         this.option.series = allArr
-        console.log(this.option, 87777)
         this.chartDialogRateBar.setOption(this.option)
       })
     }

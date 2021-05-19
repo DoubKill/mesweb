@@ -21,10 +21,31 @@
 <script>
 import { personnelsUrl } from '@/api/user'
 export default {
+  props: {
+    defaultVal: {
+      type: [String, Number],
+      default: null
+    },
+    isCreated: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
-      value: '',
+      value: this.defaultVal,
       options: []
+    }
+  },
+  watch: {
+    defaultVal(val) {
+      this.value = val || null
+      this.getList()
+    }
+  },
+  created() {
+    if (this.isCreated) {
+      this.getList()
     }
   },
   methods: {

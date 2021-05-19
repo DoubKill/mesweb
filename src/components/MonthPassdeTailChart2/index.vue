@@ -8,7 +8,6 @@
 
 <script>
 import echarts from 'echarts'
-// import dayjs from 'dayjs'
 
 export default {
   props: {
@@ -27,37 +26,17 @@ export default {
   },
   data() {
     return {
-    }
-  },
-  watch: {
-    dataList(val) {
-      if (val) {
-        this.drawLine()
-      }
-    }
-  },
-  created() {
-    console.log('this.dayTableData', this.dataList)
-  },
-  mounted() {
-    this.$nextTick(function() {
-      this.drawLine()
-    })
-    // this.drawLine()
-  },
-  methods: {
-    drawLine() {
-      const option = {
-        legend: {},
+      option: {
         tooltip: {
           trigger: 'axis',
-          confine: true,
           axisPointer: {
             type: 'cross',
             crossStyle: {
               color: '#999'
             }
-          }
+          },
+          formatter: (params) => { return this.formatterFun(params) },
+          extraCssText: 'white-space: normal; word-break: break-all;'
         },
         grid: {
           top: '12%',
@@ -68,14 +47,20 @@ export default {
         dataZoom: [
           {
             show: true,
-            start: 0,
+            start: 90,
             end: 100
           }
         ],
-        dataset: {
-          source: [['一次', '流变', '综合']]
-        },
-        xAxis: { type: 'category', name: '月份' },
+        // dataset: {
+        //   source: [['一次', '流变', '综合']]
+        // },
+        xAxis: [
+          {
+            type: 'category',
+            name: '月份',
+            data: []
+          }
+        ],
         yAxis: [
           {
             type: 'value',
@@ -84,58 +69,138 @@ export default {
         ],
         series: []
       }
-
-      // 数据采集
-      const datas = this.dataList.map((item) => {
-        const { date, classes, equips } = item
-        // const a = dayjs(date).format('YYYY-MM')
-        const c = classes[0]
-        const e = equips[0]
-        return [
-          // a
-          date,
-          parseFloat(item.yc_percent_of_pass || 0),
-          parseFloat(item.lb_percent_of_pass || 0),
-          parseFloat(item.zh_percent_of_pass || 0),
-          parseFloat(e.yc_percent_of_pass || 0),
-          parseFloat(e.lb_percent_of_pass || 0),
-          parseFloat(e.zh_percent_of_pass || 0),
-          parseFloat(c.yc_percent_of_pass || 0),
-          parseFloat(c.lb_percent_of_pass || 0),
-          parseFloat(c.zh_percent_of_pass || 0)
-        ]
-      })
-      option.dataset.source.push(...datas)
-
-      // 名称排序
-      const dataList = this.dataList[0]
-      const title = option.dataset.source[0]
-      const equipsNames = title.map(
-        (item) => dataList.equips[0].production_equip_no + item
-      )
-      const classesgNames = title.map(
-        (item) => dataList.classes[0].production_class + item
-      )
-      option.dataset.source[0] = [
-        '类型',
-        ...title,
-        ...equipsNames,
-        ...classesgNames
-      ]
-
-      // 添加series
-      const type = []
-      for (let i = 1; i < option.dataset.source[0].length; i++) {
-        type.push({ type: 'bar' })
+    }
+  },
+  watch: {
+    dataList(val) {
+      if (val) {
+        this.drawLine()
       }
-      option.series.push(...type)
+    }
+  },
+  created() {
+  },
+  mounted() {
+    this.$nextTick(function() {
+      this.drawLine()
+    })
+  },
+  methods: {
+    formatterFun(params) {
+      if (params instanceof Array) {
+        let str = ''
+        str += `${params[0].axisValue}<br/>`
+        params.forEach((m, index) => {
+          str += `<span class="chart-tooltip-color" style="display: inline-block; margin-right: 10px; background-color: ${m.color}; width: 10px; height: 10px; border-radius:100%; margin-right: 5px"></span>`
+          str += `${m.seriesName}：${m.data}`
+          str += `${index % 6 === 0 ? '<br/>' : '     '}` // 一排放几个可根据实际情况改变
+        })
+        return str
+      }
+    },
+    drawLine() {
+      const headers2 = []
+      const obj2 = {
+        name: '一次合格率%',
+        type: 'bar',
+        data: []
+      }
+      const obj3 = {
+        name: '流变合格率%',
+        type: 'bar',
+        data: []
+      }
+      const obj4 = {
+        name: '综合合格率%',
+        type: 'bar',
+        data: []
+      }
+      const arr1 = []
+      this.headers.equips.forEach(D => {
+        const _arr1 = []
+        const _arr2 = []
+        const _arr3 = []
+        this.dataList.forEach(d => {
+          const a1 = d.equips.filter(d1 => d1.production_equip_no === D)
+          if (a1.length > 0) {
+            _arr1.push(a1[0].yc_percent_of_pass ? a1[0].yc_percent_of_pass.replace(/%/g, '') : '')
+            _arr2.push(a1[0].lb_percent_of_pass ? a1[0].lb_percent_of_pass.replace(/%/g, '') : '')
+            _arr3.push(a1[0].zh_percent_of_pass ? a1[0].zh_percent_of_pass.replace(/%/g, '') : '')
+          } else {
+            _arr1.push(0)
+            _arr2.push(0)
+            _arr3.push(0)
+          }
+        })
+        arr1.push({
+          name: D + '一次',
+          value: D,
+          type: 'bar',
+          data: _arr1
+        })
+        arr1.push({
+          name: D + '流变',
+          value: D,
+          type: 'bar',
+          data: _arr2
+        })
+        arr1.push({
+          name: D + '综合',
+          value: D,
+          type: 'bar',
+          data: _arr3
+        })
+      })
+      const arr2 = []
+      this.headers.classes.forEach(D => {
+        const _arr1 = []
+        const _arr2 = []
+        const _arr3 = []
+        this.dataList.forEach(d => {
+          const a1 = d.classes.filter(d1 => d1.production_class === D)
+          if (a1.length > 0) {
+            _arr1.push(a1[0].yc_percent_of_pass ? a1[0].yc_percent_of_pass.replace(/%/g, '') : '')
+            _arr2.push(a1[0].lb_percent_of_pass ? a1[0].lb_percent_of_pass.replace(/%/g, '') : '')
+            _arr3.push(a1[0].zh_percent_of_pass ? a1[0].zh_percent_of_pass.replace(/%/g, '') : '')
+          } else {
+            _arr1.push(0)
+            _arr2.push(0)
+            _arr3.push(0)
+          }
+        })
+        arr1.push({
+          name: D + '一次',
+          value: D,
+          type: 'bar',
+          data: _arr1
+        })
+        arr1.push({
+          name: D + '流变',
+          value: D,
+          type: 'bar',
+          data: _arr2
+        })
+        arr1.push({
+          name: D + '综合',
+          value: D,
+          type: 'bar',
+          data: _arr3
+        })
+      })
+      this.dataList.forEach(D => {
+        headers2.push(D.date)
+        obj2.data.push(D.yc_percent_of_pass ? D.yc_percent_of_pass.replace(/%/g, '') : '')
+        obj3.data.push(D.lb_percent_of_pass ? D.lb_percent_of_pass.replace(/%/g, '') : '')
+        obj4.data.push(D.zh_percent_of_pass ? D.zh_percent_of_pass.replace(/%/g, '') : '')
+      })
 
       // 图表初始化
       this.$nextTick(() => {
-        this.chartDialogRateBar = echarts.init(
-          document.getElementById('dialogRateBar')
-        )
-        this.chartDialogRateBar.setOption(option)
+        this.chartDialogRateBar = echarts.init(document.getElementById('dialogRateBar'))
+        const allArr = [obj2, obj3, obj4, ...arr1, ...arr2]
+        this.option.xAxis[0].data = headers2
+        this.option.series = allArr
+        this.chartDialogRateBar.setOption(this.option)
       })
     }
   }

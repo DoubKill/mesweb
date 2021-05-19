@@ -66,7 +66,7 @@
         </tr>
         <tr>
           <td>检测结果</td>
-          <td>{{ testData.deal_result }}</td>
+          <td>{{ testData.test_result }}</td>
           <td>备注</td>
           <td>{{ testData.test ? testData.test.test_note : '' }}</td>
         </tr>
@@ -98,6 +98,8 @@
         <td>{{ row }}</td>
         <td v-for="(item, index) in testData.mtr_list[row]" :key="index">
           {{ index !== testData.mtr_list[row].length - 1 ? item.value : '' }}
+
+          <span>{{ setGraph(index !== testData.mtr_list[row].length - 1 ? item.result : '') }}</span>
           {{
             index !== testData.mtr_list[row].length - 1 ? item.add_subtract : item.status
           }}
@@ -105,6 +107,8 @@
       </tr>
     </table>
     <img class="barcode">
+
+    <div v-if="testData.test_result&&testData.test_result!=='三等品'" class="seal-style">{{ testData.test_result }}</div>
   </div>
 </template>
 
@@ -126,6 +130,15 @@ export default {
     }
   },
   methods: {
+    setGraph(result) {
+      if (result === 'pass') {
+        return '⚪'
+      } else if (result === '不合格') {
+        return '∆'
+      } else {
+        return ''
+      }
+    },
     setTestData(data) {
       this.testData = data
       jsbarcode(
@@ -178,6 +191,7 @@ export default {
     margin: 0 auto;
     text-align: center;
     font-size: 14px;
+    position: relative;
     table {
       width: 100%;
       border-collapse: collapse
@@ -189,6 +203,17 @@ export default {
         padding-top: 10px;
         padding-bottom: 10px;
       }
+    }
+    .seal-style{
+      position:absolute;
+      top:0;
+      right:0;
+      border:1px solid rgb(59, 59, 59);
+      width:300px;
+      height:300px;
+      border-radius: 50%;
+      font-size:60px;
+      line-height: 300px;
     }
   }
 </style>

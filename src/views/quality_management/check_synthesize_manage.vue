@@ -78,7 +78,7 @@
         <el-table-column label="检测班次" prop="test.test_class" width="45" />
         <el-table-column label="打印时间" width="80" align="center" prop="print_time" />
         <el-table-column label="检测员" prop="test.test_user" width="60" />
-        <el-table-column label="检测结果" prop="deal_result" width="30" />
+        <el-table-column label="检测结果" prop="test_result" width="30" />
         <el-table-column label="处理人" prop="deal_user" width="50" />
         <el-table-column label="处理意见" prop="deal_suggestion" width="40" />
         <el-table-column label="处理时间" align="center" prop="deal_time" width="80" />

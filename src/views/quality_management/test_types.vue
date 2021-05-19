@@ -92,11 +92,11 @@
                   size="mini"
                   @click="showEditDataPointsDialog(scope.row)"
                 >编辑</el-button>
-                <!-- <el-button
+                <el-button
                   size="mini"
                   type="primary"
                   @click="showNorm(scope.row)"
-                >操作pass指标</el-button> -->
+                >操作pass指标</el-button>
                 <!-- <el-button
                   size="mini"
                   type="danger"
@@ -266,13 +266,101 @@
       title="不合格品pass指标"
       :visible.sync="passVisible"
     >
-      uuu
+      <el-button
+        type="primary"
+        size="mini"
+        style="margin-bottom:10px"
+        @click="addNorm"
+      >新 增</el-button>
+      <el-table
+        v-loading="loadingPass"
+        :data="passTableData"
+        border
+        style="width: 100%"
+      >
+        <el-table-column
+          prop="date"
+          label="范围指标"
+        >
+          <template slot-scope="{row}">
+            {{ row.value }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="tracking_card"
+          label="追踪卡"
+        />
+        <el-table-column
+          prop="label"
+          label="标志及处理"
+        />
+        <el-table-column
+          prop="address"
+          label="操作"
+        >
+          <template slot-scope="scope">
+            <el-button-group>
+              <el-button
+                size="mini"
+                @click="editNorm(scope.row)"
+              >编辑</el-button>
+              <el-button
+                size="mini"
+                type="danger"
+                @click="delNorm(scope.row)"
+              >删除</el-button>
+            </el-button-group>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
+
+    <el-dialog
+      :title="(passForm.id?'编辑':'新增')+'pass指标'"
+      :visible.sync="passVisible1"
+      width="600px"
+      :before-close="passVisibleClose"
+    >
+      <el-form ref="passForm" :model="passForm" :rules="passRules" label-width="100px">
+        <el-form-item label="范围指标" prop="value">
+          <el-input v-model="passForm.value" />
+          <br>
+          请以' ( '或' [ '开头和 ' ) '或' ] ' 结尾;例子：(1,2]、[1,2)、[1,2]、(1,2)
+        </el-form-item>
+        <el-form-item label="标志及处理" prop="label">
+          <el-select
+            v-model="passForm.label"
+            filterable
+            allow-create
+            default-first-options
+            placeholder="请选择标志及处理"
+          >
+            <el-option
+              v-for="item in options"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button @click="passVisibleClose(false)">取 消</el-button>
+        <el-button
+          type="primary"
+          :loading="btnPassLoading"
+          @click="submitPass"
+        >确 定</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { getTestTypes, putTestTypes, postTestTypes, deleteTestTypes, getTestIndicators, getDataPoints, putDataPoints, postDataPoints, deleteDataPoints } from '@/api/test_types'
+import { getTestTypes, putTestTypes, postTestTypes, deleteTestTypes, getTestIndicators, getDataPoints, putDataPoints, postDataPoints, deleteDataPoints, dataPointStandardErrors, dataPointLabelHistory } from '@/api/test_types'
 import page from '@/components/page'
 import { mapGetters } from 'vuex'
 export default {
@@ -312,7 +400,35 @@ export default {
       },
       currentPage: 1,
       total: 1,
-      passVisible: false
+      passVisible: false,
+      passVisible1: false,
+      passTableData: [],
+      passForm: {
+        tracking_card: 'pass章',
+        value: '',
+        label: null
+      },
+      passRules: {
+        value: [{ required: true, trigger: 'blur',
+          validator: (rule, value, callback) => {
+            if (!value) {
+              callback(new Error('范围指标不能为空'))
+            } else {
+              const arg = /^(\(|\[)+((\-|\+)?\d+(\.\d+)?)+(\,)+((\-|\+)?\d+(\.\d+)?)+(\)|\])$/
+              var re = new RegExp(arg)
+              const a = re.test(value)
+              if (!a) {
+                callback(new Error(`请以' ( '或' [ '开头和 ' ) '或' ] ' 结尾`))
+              } else {
+                callback()
+              }
+            }
+          } }],
+        label: [{ required: true, message: '不能为空', trigger: 'change' }]
+      },
+      options: [],
+      loadingPass: false,
+      btnPassLoading: false
     }
   },
   computed: {
@@ -321,6 +437,7 @@ export default {
   created() {
     this.permissionObj = this.permission
     this.getTestTypesList()
+    this.getOptionsList()
   },
   methods: {
     afterGetData: function() {
@@ -492,10 +609,118 @@ export default {
       this.currentPage = page
       this.getParams.page = page
       this.getTestTypesList()
+    },
+    showNorm(row) {
+      this.passVisible = true
+      this.passForm.data_point = row.id
+      this.getPassList(row.id)
+    },
+    editNorm(row) {
+      this.passForm = JSON.parse(JSON.stringify(row))
+      this.passVisible1 = true
+    },
+    async getPassList(id) {
+      try {
+        this.loadingPass = true
+        const data = await dataPointStandardErrors('get', null, { params: { data_point_id: id }})
+        this.passTableData = data
+        this.loadingPass = false
+      } catch (e) { this.loadingPass = false }
+    },
+    async getOptionsList() {
+      try {
+        const data = await dataPointLabelHistory('get')
+        this.options = data
+      } catch (e) { //
+      }
+    },
+    delNorm(row) {
+      this.$confirm('是否确定删除?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        try {
+          await dataPointStandardErrors('delete', row.id || '')
+          this.getPassList(this.passForm.data_point)
+        } catch (e) {
+          //
+        }
+      })
+    },
+    addNorm() {
+      this.passVisible1 = true
+    },
+    submitPass() {
+      this.$refs.passForm.validate(async(valid) => {
+        if (valid) {
+          const obj = JSON.parse(JSON.stringify(this.passForm))
+          const a = obj.value.split(',')
+          if (obj.lower_value) {
+            delete obj.lower_value
+          }
+          if (Object.prototype.hasOwnProperty.call(obj, 'lower_value')) {
+            delete obj.lower_value
+          }
+          if (Object.prototype.hasOwnProperty.call(obj, 'upper_value')) {
+            delete obj.upper_value
+          }
+          if (a[0].substr(1) > a[1].substr(0, a[1].length - 1)) {
+            return this.$message.info('范围指标：第二个数字不可大于第一个数字')
+          }
+          if (a[0].substr(1) < 0 && a[1].substr(0, a[1].length - 1) > 0) {
+            // 需要循环a 调2次接口
+            this.$confirm(`指标范围${obj.value}将分解为${a[0]},0)(0,${a[1]}`, '警告', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
+              a.forEach((d, i) => {
+                if (i === 0) {
+                  obj.value = d + ',0)'
+                } else {
+                  obj.value = '(0,' + d
+                }
+                this.dataPointStandardEdit(JSON.parse(JSON.stringify(obj)))
+              })
+            })
+          } else {
+            // 调1次接口就可
+            this.dataPointStandardEdit(obj)
+          }
+        } else {
+          return false
+        }
+      })
+    },
+    async dataPointStandardEdit(obj) {
+      try {
+        this.btnPassLoading = true
+        const _api = this.passForm.id ? 'patch' : 'post'
+        await dataPointStandardErrors(_api, this.passForm.id || '', { data: obj })
+        this.passVisibleClose(false)
+        this.btnPassLoading = false
+        this.getPassList(this.passForm.data_point)
+      } catch (e) { this.btnPassLoading = false }
+    },
+    passVisibleClose(done) {
+      this.passVisible1 = false
+      this.passForm.value = ''
+      this.passForm.label = null
+      delete this.passForm.id
+      setTimeout(() => {
+        this.$refs.passForm.clearValidate()
+      }, 300)
+      if (done) {
+        done()
+      }
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.el-input{
+  width: 210px;
+}
 </style>
