@@ -48,7 +48,7 @@
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           value-format="yyyy-MM-dd HH:mm:ss"
-          @input="materialCreateTimeshandleFilter"
+          @change="materialCreateTimeshandleFilter"
         />
       </el-form-item>
       <!--
@@ -177,15 +177,19 @@
           </el-table>
         </template>
       </el-table-column>
-      <el-table-column label="原材料名称" prop="name" align="center" />
+      <el-table-column label="原材料名称" prop="name" align="center">
+        <template slot-scope="{row}">
+          <el-link type="primary" @click="showLineFun(row)">{{ row.name }}</el-link>
+        </template>
+      </el-table-column>
       <el-table-column label="样品名称" prop="sample_name" align="center" />
       <el-table-column label="批次" prop="batch" align="center">
         <template slot-scope="{row}">
           <el-link type="primary" @click="unqualifiedFun(row, false)">{{ row.batch }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column label="产地" width="60" prop="supplier" align="center" />
-      <el-table-column label="最新检测结果" prop="qualified" align="center">
+      <el-table-column label="产地" width="90" prop="supplier" align="center" />
+      <el-table-column label="最新检测结果" width="80" prop="qualified" align="center">
         <template slot-scope="{ row }">
           <div :class="row.qualified ? '' : 'error'">
             {{ row.qualified ? "合格" : "不合格" }}
@@ -266,15 +270,36 @@
       </el-form>
       <span v-if="unqualifiedObj.boolOperate" slot="footer" class="dialog-footer">
         <el-button @click="handleClose(false)">取 消</el-button>
-        <el-button type="primary" :loading="btnDealLoading" @click="submitDeal">确 定</el-button>
+        <el-button v-permission="['examine_material','deal']" type="primary" :loading="btnDealLoading" @click="submitDeal">确 定</el-button>
       </span>
+    </el-dialog>
+
+    <el-dialog
+      title="历史检测曲线图"
+      :visible.sync="dialogVisible1"
+      width="80%"
+      :before-close="handleClose1"
+    >
+      <el-date-picker
+        v-model="dialogTimes"
+        type="daterange"
+        range-separator="至"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        value-format="yyyy-MM-dd"
+        :clearable="false"
+        @change="dialogTimesChange"
+      />
+      <div id="yieldLine" style="width: 100%;height:400px" />
     </el-dialog>
   </div>
 </template>
 
 <script>
 import page from '@/components/page'
-import { examineMaterial, materialUnqualifiedTypes, materialUnqualifiedProcess } from '@/api/material-check'
+import * as echarts from 'echarts'
+import { setDate } from '@/utils'
+import { examineMaterial, materialUnqualifiedTypes, materialUnqualifiedProcess, materialExamineResultCurve } from '@/api/material-check'
 // import testTypeSelect from '../components/test-type-select'
 
 export default {
@@ -306,11 +331,53 @@ export default {
       formData: {},
       unqualifiedObj: {},
       unqualifiedLoading: false,
-      btnDealLoading: false
+      btnDealLoading: false,
+      dialogVisible1: false,
+      dialogTimes: [],
+      currentMaterial: '',
+      optionYieldLine: {
+        title: {
+        },
+        tooltip: {
+          trigger: 'axis'
+        },
+        legend: {
+          data: []
+        },
+        grid: {
+          left: '3%',
+          right: '7%',
+          bottom: '3%',
+          containLabel: true
+        },
+        toolbox: {
+        },
+        xAxis: {
+          type: 'category',
+          name: '检测日期',
+          boundaryGap: false,
+          data: []
+        },
+        yAxis: {
+          type: 'value',
+          name: '值'
+        },
+        series: []
+      }
     }
   },
 
   created() {
+    let a = setDate()
+    let timestamp = new Date().getTime()
+    let b = setDate(timestamp - 1000 * 60 * 60 * 24 * 10)
+    if (this.day_time && this.day_time.length > 0) {
+      a = this.day_time[1]
+      timestamp = new Date(this.day_time[0]).getTime()
+      b = setDate(timestamp - 1000 * 60 * 60 * 24 * 10)
+    }
+    this.dialogTimes = [b, a]
+
     this.getExamineMaterial()
   },
 
@@ -387,6 +454,35 @@ export default {
         this.dialogVisible = false
       } catch (e) {
         this.btnDealLoading = false
+      }
+    },
+    dialogTimesChange() {
+      this.getLine()
+    },
+    showLineFun(row) {
+      this.dialogVisible1 = true
+      this.currentMaterial = row.id
+      this.getLine()
+    },
+    async getLine() {
+      try {
+        const a = this.dialogTimes ? this.dialogTimes[0] : ''
+        const b = this.dialogTimes ? this.dialogTimes[1] : ''
+        const data = await materialExamineResultCurve('get', null, { params: { st: a, et: b, material: this.currentMaterial }})
+        this.optionYieldLine.xAxis.data = data.x_axis
+        this.optionYieldLine.series = data.y_axis
+
+        this.$nextTick(() => {
+          this.myChartYieldLine = echarts.init(document.getElementById('yieldLine'))
+          this.myChartYieldLine.setOption(this.optionYieldLine)
+        })
+      } catch (e) {
+        //
+      }
+    },
+    handleClose1(done) {
+      if (done) {
+        done()
       }
     }
   }

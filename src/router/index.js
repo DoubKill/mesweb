@@ -1119,7 +1119,7 @@ export const asyncRoutes = [
           permissionName: 'material_temp_input'
         }
       },
-      {
+      /** {
         path: '/material-quality',
         redirect: '/material-quality',
         component: {
@@ -1204,7 +1204,7 @@ export const asyncRoutes = [
             }
           }
         ]
-      },
+      },**/
       // 新添加的
       {
         path: '/material-quickcheck',
@@ -1224,7 +1224,7 @@ export const asyncRoutes = [
             name: 'material-quickcheck-equipment',
             meta: {
               title: '快检设备管理',
-              permissionName: ''
+              permissionName: 'material_equipment'
             }
           },
           {
@@ -1233,7 +1233,7 @@ export const asyncRoutes = [
             name: 'material-quickcheck-type',
             meta: {
               title: '快检类型管理',
-              permissionName: ''
+              permissionName: 'material_examine_type'
             }
           },
           {
@@ -1242,25 +1242,25 @@ export const asyncRoutes = [
             name: 'material-quickcheck-value',
             meta: {
               title: '检测值管理',
-              permissionName: ''
+              permissionName: 'material_examine_value'
             }
           },
-          {
-            path: '/material-quickcheck/meniequipmentdata',
-            component: () => import('@/views/material_quickcheck_manage/meniequipmentdata'),
-            name: 'meniequipmentdata',
-            meta: {
-              title: '门尼设备数据绑定管理',
-              permissionName: ''
-            }
-          },
+          // {
+          //   path: '/material-quickcheck/meniequipmentdata',
+          //   component: () => import('@/views/material_quickcheck_manage/meniequipmentdata'),
+          //   name: 'meniequipmentdata',
+          //   meta: {
+          //     title: '门尼设备数据绑定管理',
+          //     permissionName: ''
+          //   }
+          // },
           {
             path: '/material-quickcheck/raw-material',
             component: () => import('@/views/material_quickcheck_manage/raw_material'),
             name: 'quickcheck-raw-material',
             meta: {
               title: '原材料管理',
-              permissionName: ''
+              permissionName: 'examine_material'
             }
           }
         ]

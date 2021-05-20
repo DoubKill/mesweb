@@ -45,9 +45,13 @@
       </el-form-item>
       <el-form-item style="float:right">
         <el-button type="primary" @click="heardFun">表头过滤</el-button>
-        <el-button type="primary" @click="downloadFun">下载模板</el-button>
-        <el-button type="primary" @click="leadingInFun">导入</el-button>
-        <el-button type="primary" @click="addFun">添加</el-button>
+        <!-- <el-button type="primFary" @click="downloadFun">下载模板</el-button>
+        <el-button type="primary" @click="leadingInFun">导入</el-button> -->
+        <el-button
+          v-permission="['material_examine_value','add']"
+          type="primary"
+          @click="addFun"
+        >添加</el-button>
       </el-form-item>
     </el-form>
 
@@ -160,11 +164,13 @@
         <template slot-scope="{row}">
           <el-button-group>
             <el-button
+              v-permission="['material_examine_value','change']"
               size="mini"
               @click="editFun(row,true)"
             >编辑
             </el-button>
             <el-button
+              v-permission="['material_examine_value','add']"
               size="mini"
               @click="editFun(row,false)"
             >添加同批次检测值
@@ -251,9 +257,14 @@
               :is-created="true"
               @typeSelect="formTypeSelect($event,index)"
             />
-            <el-checkbox v-if="false" v-model="formData.single_examine_results[index].qualified" style="margin-left:10px">合格</el-checkbox>
+            <el-checkbox
+              v-if="formData.single_examine_results[index].interval_type===4"
+              v-model="formData.single_examine_results[index].mes_decide_qualified"
+              style="margin-left:10px"
+            >合格</el-checkbox>
           </el-form-item>
           <el-form-item
+            v-if="formData.single_examine_results[index].interval_type!==4"
             label="检测值"
             :prop="'single_examine_results.' + index + '.value'"
             :rules="{
@@ -268,20 +279,22 @@
                 @input="rangeWatchFun($event,index)"
               />
               <span style="width:60px;text-align:right">
-                {{ formData.single_examine_results[index]._state }}
+                {{ setqualified(formData.single_examine_results[index].mes_decide_qualified) }}
               </span>
             </div>
           </el-form-item>
           <el-form-item
+            v-if="formData.single_examine_results[index].interval_type!==4"
             label="检测值设备"
             :prop="'single_examine_results.' + index + '.equipment'"
-            :rules="{
-              required: true, message: '不能为空', trigger: 'change'
-            }"
           >
+            <!-- :rules="{
+              required: true, message: '不能为空', trigger: 'change'
+            }" -->
             <el-select
               v-model="formData.single_examine_results[index].equipment"
               placeholder="请选择"
+              clearable
               @visible-change="visibleChangeExamine($event,formData.single_examine_results[index].type)"
             >
               <el-option
@@ -295,7 +308,7 @@
 
           <i v-if="formData.single_examine_results.length!==1" title="删除检测值" class="el-icon-remove-outline dialogIconDEL" @click="delClick(index)" />
           <i v-if="index===formData.single_examine_results.length-1" title="添加此检测值" class="el-icon-circle-plus-outline dialogIconAdd" @click="addClick" />
-          <div style="width:100%;height:0.5px;background:#DCDFE6;margin-bottom:20px" />
+          <!-- <div style="width:100%;height:0.5px;background:#DCDFE6;margin-bottom:20px" /> -->
         </div>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -450,13 +463,13 @@ export default {
       if (!bool) {
         delete this.formData.id
       } else {
-        this.formData.single_examine_results.forEach(d => {
-          if (d.mes_decide_qualified) {
-            d._state = '合格'
-          } else {
-            d._state = '不合格'
-          }
-        })
+        // this.formData.single_examine_results.forEach(d => {
+        //   if (d.mes_decide_qualified) {
+        //     d._state = '合格'
+        //   } else {
+        //     d._state = '不合格'
+        //   }
+        // })
       }
       this.dialogVisible = true
     },
@@ -496,7 +509,7 @@ export default {
         _qualified: '待定',
         single_examine_results: [{
           type: '',
-          value: '',
+          value: null,
           equipment: ''
         }] }
     },
@@ -507,6 +520,7 @@ export default {
             const obj = JSON.parse(JSON.stringify(this.formData))
             const _api = this.formData.id ? 'patch' : 'post'
             this.btnLoading = true
+
             await materialExamineResult(_api, this.formData.id || '', { data: obj })
             this.handleClose(false)
             this.btnLoading = false
@@ -571,6 +585,7 @@ export default {
       this.$set(this.formData.single_examine_results[index], 'type', val ? val.id : '')
       this.$set(this.formData.single_examine_results[index], 'equipment', '')
       this.$set(this.formData.single_examine_results[index], 'qualified_range', val && val.qualified_range ? val.qualified_range : [])
+      this.$set(this.formData.single_examine_results[index], 'interval_type', val && val.interval_type ? val.interval_type : '')
     },
     dialogEquipTypeSelect(val, index) {
       this.$set(this.formData.single_examine_results[index], 'equipment', val ? val.id : '')
@@ -612,12 +627,12 @@ export default {
 
       if (_range) {
         if ((b < a && a < c) || (b > a && a > c)) {
-          this.formData.single_examine_results[index]._state = '合格'
+          this.formData.single_examine_results[index].mes_decide_qualified = true
         } else {
-          this.formData.single_examine_results[index]._state = '不合格'
+          this.formData.single_examine_results[index].mes_decide_qualified = false
         }
       } else {
-        this.formData.single_examine_results[index]._state = '待定'
+        this.formData.single_examine_results[index].mes_decide_qualified = null
       }
     },
     changeMaterial(id) {
@@ -632,9 +647,18 @@ export default {
     addClick() {
       this.formData.single_examine_results.push({
         type: '',
-        value: '',
+        value: null,
         equipment: ''
       })
+    },
+    setqualified(val) {
+      if (val === true) {
+        return '合格'
+      } else if (val === false) {
+        return '不合格'
+      } else if (val === null) {
+        return '待定'
+      }
     }
   }
 }

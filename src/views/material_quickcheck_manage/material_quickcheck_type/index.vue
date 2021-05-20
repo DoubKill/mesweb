@@ -26,7 +26,7 @@
         >
           <el-button type="primary">导入</el-button>
         </el-upload> -->
-        <el-button type="primary" @click="addFun">添加快检类型</el-button>
+        <el-button v-permission="['material_examine_type','add']" type="primary" @click="addFun">添加快检类型</el-button>
       </el-form-item>
     </el-form>
 
@@ -60,6 +60,7 @@
           >
             <template slot-scope="{row}">
               <el-button
+                v-permission="['material_examine_type','change']"
                 size="mini"
                 @click="editFun(row)"
               >编辑
@@ -126,6 +127,7 @@
       >
         <template slot-scope="{row}">
           <el-button
+            v-permission="['material_examine_type','change']"
             size="mini"
             @click="editFun(row)"
           >编辑
@@ -155,6 +157,7 @@
       >
         <template slot-scope="{row}">
           <el-button
+            v-permission="['material_examine_type','change']"
             size="mini"
             @click="editFun(row)"
           >编辑
@@ -277,7 +280,7 @@
 
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button @click="handleClose(false)">取 消</el-button>
         <el-button type="primary" :loading="btnLoading" @click="submitFun">确 定</el-button>
       </span>
     </el-dialog>

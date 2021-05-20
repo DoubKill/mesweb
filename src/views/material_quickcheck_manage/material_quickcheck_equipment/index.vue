@@ -9,7 +9,7 @@
         <EquipTypeSelect ref="EquipTypeSelect" :is-created="true" @equipTypeSelect="searchList" />
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button type="primary" @click="addFun">新增</el-button>
+        <el-button v-permission="['material_equipment','add']" type="primary" @click="addFun">新增</el-button>
       </el-form-item>
     </el-form>
 
@@ -35,6 +35,7 @@
       >
         <template slot-scope="{row}">
           <el-button
+            v-permission="['material_equipment','change']"
             size="mini"
             @click="editFun(row)"
           >编辑
@@ -85,7 +86,12 @@
       <el-input v-model="equipTypeName" placeholder="请输入类型名称" />
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose1(false)">取 消</el-button>
-        <el-button type="primary" :loading="typeBtnLoad" @click="submitEquipType">确 定</el-button>
+        <el-button
+          v-permission="['material_equipment','add']"
+          type="primary"
+          :loading="typeBtnLoad"
+          @click="submitEquipType"
+        >确 定</el-button>
       </span>
     </el-dialog>
 
@@ -137,7 +143,12 @@
       <span slot="footer" class="dialog-footer">
         <!-- <el-button @click="addTestType">添加检测类型</el-button> -->
         <el-button @click="handleClose2(false)">取 消</el-button>
-        <el-button type="primary" :loading="testBtnLoad" @click="submitTestType">确 定</el-button>
+        <el-button
+          v-permission="['material_equipment','add']"
+          type="primary"
+          :loading="testBtnLoad"
+          @click="submitTestType"
+        >确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -163,6 +174,9 @@ export default {
       rulesEquip: {
         equip_name: [
           { required: true, message: '请输入设备名', trigger: 'blur' }
+        ],
+        equip_type: [
+          { required: true, message: '请选择设备类型', trigger: 'change' }
         ],
         category: [{ required: true, message: '不能为空',
           validator: (rule, value, callback) => {

@@ -353,5 +353,6 @@ export default {
   MaterialEquipment: '/api/v1/quality/material-equips/',
   MaterialExamineResult: '/api/v1/quality/material-examine-result/',
   MaterialUnqualifiedTypes: '/api/v1/quality/material-unqualified-types/',
-  MaterialUnqualifiedProcess: '/api/v1/quality/material-unqualified-process/'
+  MaterialUnqualifiedProcess: '/api/v1/quality/material-unqualified-process/',
+  MaterialExamineResultCurve: '/api/v1/quality/material-examine-result-curve/'
 }
