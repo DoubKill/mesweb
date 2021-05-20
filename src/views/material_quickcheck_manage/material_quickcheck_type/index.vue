@@ -16,7 +16,7 @@
         <el-input v-model="search.name" placeholder="请输入" @input="changeSearch" />
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button type="primary" @click="downloadFun">下载模板</el-button>
+        <!-- <el-button type="primary" @click="downloadFun">下载模板</el-button>
         <el-upload
           style="margin:0 8px;display:inline-block"
           action="string"
@@ -25,7 +25,7 @@
           :show-file-list="false"
         >
           <el-button type="primary">导入</el-button>
-        </el-upload>
+        </el-upload> -->
         <el-button type="primary" @click="addFun">添加快检类型</el-button>
       </el-form-item>
     </el-form>
@@ -33,6 +33,7 @@
     <el-row v-if="search.compare === 1" style="clear:both">
       <el-col :span="14">
         <el-table
+          ref="singleTable"
           :data="tableData"
           style="width: 100%"
           border
@@ -96,25 +97,30 @@
       border
     >
       <el-table-column
+        :key="1"
         prop="id"
         label="id"
         width="80"
       />
       <el-table-column
+        :key="2"
         prop="name"
         label="检测类型"
       />
       <el-table-column
+        :key="3"
         prop="limit_value"
         width="120"
         label="边界值"
       />
       <el-table-column
+        :key="4"
         prop="unit_name"
         width="120"
         label="单位"
       />
       <el-table-column
+        :key="5"
         label="操作"
         width="120"
       >
@@ -355,6 +361,9 @@ export default {
         this.loading = false
         this.tableData = data.results
         this.total = data.count
+        if (this.$refs.singleTable) {
+          this.$refs.singleTable.setCurrentRow({})
+        }
       } catch (e) { this.loading = false }
     },
     async getOptionsUnit() {
@@ -409,7 +418,9 @@ export default {
       this.dialogVisible = true
     },
     handleCurrentChange(val) {
-      this.tableData1 = val.standards || []
+      if (val) {
+        this.tableData1 = val.standards || []
+      }
     },
     handleClose(done) {
       this.clearVal()
@@ -448,13 +459,14 @@ export default {
           try {
             const obj = JSON.parse(JSON.stringify(this.formData))
             if (obj.interval_type === 1) {
-              const a = obj.standards.filter(d => Number(d.level) === 1)[0]
-              if (!a) {
-                this.$message.info('请添加：级别1 评级标准')
+              const a = obj.standards.filter(d => Number(d.level) === 1)
+              if (a.length === 0 || a.length > 1) {
+                this.$message.info('请添加：级别1 评级标准，只能添加一条')
                 return
               }
+              const aa = a[0]
               delete obj.limit_value
-              obj.name = obj.actual_name + ' ' + a.lower_limiting_value + '-' + a.upper_limit_value
+              obj.name = obj.actual_name + ' ' + aa.lower_limiting_value + '-' + aa.upper_limit_value
             }
             if ([2, 3].includes(obj.interval_type)) {
               obj.name = obj.actual_name + ' ' + this.options.find(d => d.id === obj.interval_type).name + obj.limit_value + obj.unitname
