@@ -213,6 +213,7 @@
           <el-select
             v-model="formData.material"
             placeholder="请选择"
+            :disabled="formData.id||formData._copy?true:false"
             @visible-change="visibleChange"
             @change="changeMaterial"
           >
@@ -460,16 +461,10 @@ export default {
     leadingInFun() {},
     editFun(row, bool) {
       this.formData = JSON.parse(JSON.stringify(row))
+      this.formData._copy = false
       if (!bool) {
+        this.formData._copy = true
         delete this.formData.id
-      } else {
-        // this.formData.single_examine_results.forEach(d => {
-        //   if (d.mes_decide_qualified) {
-        //     d._state = '合格'
-        //   } else {
-        //     d._state = '不合格'
-        //   }
-        // })
       }
       this.dialogVisible = true
     },
@@ -492,6 +487,8 @@ export default {
       this.$refs.formData.clearValidate()
 
       this.clearVal()
+      this.getExamine()
+
       if (done) {
         done()
       }
@@ -605,7 +602,7 @@ export default {
     },
     async getExamine(type) {
       try {
-        const data = await materialEquipment('get', null, { params: { examine_type: type }})
+        const data = await materialEquipment('get', null, { params: { examine_type: type, all: 1 }})
         this.optionsExamine = data.results
       } catch (e) {
         //
