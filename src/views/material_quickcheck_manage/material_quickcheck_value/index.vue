@@ -619,11 +619,11 @@ export default {
     rangeWatchFun(val, index) {
       const a = Number(val)
       const _range = this.formData.single_examine_results[index].qualified_range
-      const b = _range[0]
-      const c = _range[1]
+      const b = _range[0] === 0 || _range[0] ? _range[0] : -Infinity
+      const c = _range[1] === 0 || _range[1] ? _range[1] : Infinity
 
       if (_range) {
-        if ((b < a && a < c) || (b > a && a > c)) {
+        if ((b <= a && a <= c) || (b >= a && a >= c)) {
           this.formData.single_examine_results[index].mes_decide_qualified = true
         } else {
           this.formData.single_examine_results[index].mes_decide_qualified = false
