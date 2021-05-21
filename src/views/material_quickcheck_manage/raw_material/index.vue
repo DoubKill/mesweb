@@ -185,7 +185,8 @@
       <el-table-column label="样品名称" prop="sample_name" align="center" />
       <el-table-column label="批次" prop="batch" align="center">
         <template slot-scope="{row}">
-          <el-link type="primary" @click="unqualifiedFun(row, false)">{{ row.batch }}</el-link>
+          <span v-if="row.qualified">{{ row.name }}</span>
+          <el-link v-else type="primary" @click="unqualifiedFun(row, false)">{{ row.batch }}</el-link>
         </template>
       </el-table-column>
       <el-table-column label="产地" width="90" prop="supplier" align="center" />
