@@ -52,9 +52,9 @@
       <el-form-item label="出入库单号">
         <el-input v-model="search.order_no" @input="debounceList" />
       </el-form-item>
-      <el-form-item label="托盘号">
+      <!-- <el-form-item label="托盘号">
         <el-input v-model="search.pallet_no" @input="debounceList" />
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
     <el-table
       :data="tableData"
