@@ -111,12 +111,14 @@
         :label="item.name"
         min-width="20"
       >
-        <template slot-scope="scope">
+        <template v-if="scope.row.single_examine_results.find(d=>d.type === item.id)" slot-scope="scope">
           <span
-            v-if="scope.row.single_examine_results.find(d=>d.type === item.id)"
             :style="{'color':scope.row.single_examine_results.find(d=>d.type === item.id).mes_decide_qualified?'':'red'}"
           >
             {{ scope.row.single_examine_results.find(d=>d.type === item.id).value }}
+          </span>
+          <span v-if="scope.row.single_examine_results.find(d=>d.type === item.id).interval_type===4">
+            {{ scope.row.single_examine_results.find(d=>d.type === item.id).mes_decide_qualified?'合格':'不合格' }}
           </span>
         </template>
       </el-table-column>
