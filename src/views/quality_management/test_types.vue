@@ -414,7 +414,7 @@ export default {
             if (!value) {
               callback(new Error('范围指标不能为空'))
             } else {
-              const arg = /^(\(|\[)+((\-|\+)?\d+(\.\d+)?)+(\,)+((\-|\+)?\d+(\.\d+)?)+(\)|\])$/
+              const arg = /^(\(|\[|\（)+((\-|\+)?\d+(\.\d+)?)+(\,|\，)+((\-|\+)?\d+(\.\d+)?)+(\)|\]|\）)$/
               var re = new RegExp(arg)
               const a = re.test(value)
               if (!a) {
@@ -655,7 +655,10 @@ export default {
       this.$refs.passForm.validate(async(valid) => {
         if (valid) {
           const obj = JSON.parse(JSON.stringify(this.passForm))
-          const a = obj.value.split(',')
+          let a = obj.value.split(',')
+          if (a.length === 1) {
+            a = obj.value.split('，')
+          }
           if (obj.lower_value) {
             delete obj.lower_value
           }
