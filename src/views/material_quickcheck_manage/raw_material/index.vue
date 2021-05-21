@@ -137,9 +137,12 @@
               :label="type"
               align="center"
             >
-              <template slot-scope="{row}">
-                <span v-if="row.single_examine_results.find(d=>d.type_name === type)">
+              <template v-if="row.single_examine_results.find(d=>d.type_name === type)" slot-scope="{row}">
+                <span>
                   {{ row.single_examine_results.find(d=>d.type_name === type).value }}
+                </span>
+                <span v-if="row.single_examine_results.find(d=>d.type_name === type).interval_type===4">
+                  {{ row.single_examine_results.find(d=>d.type_name === type).mes_decide_qualified?'合格':'不合格' }}
                 </span>
               </template>
             </el-table-column>
