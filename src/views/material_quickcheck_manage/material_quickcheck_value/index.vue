@@ -3,7 +3,7 @@
     <!-- 检测值管理 -->
     <el-form :inline="true">
       <el-form-item label="原材料名称">
-        <el-input v-model="search.material" placeholder="请输入" @input="changeSearch" />
+        <el-input v-model="search.material_name" placeholder="请输入" @input="changeSearch" />
       </el-form-item>
       <el-form-item label="样品名称">
         <el-input v-model="search.sample_name" placeholder="请输入" @input="changeSearch" />
