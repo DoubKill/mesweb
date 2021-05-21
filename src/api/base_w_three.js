@@ -232,3 +232,63 @@ export function productDetails(method, id, data = {}) {
   return request(obj)
 }
 
+export function materialExamineType(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MaterialExamineType + id + '/' : API.MaterialExamineType,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function exportTemplate(params) {
+  return request({
+    url: API.ExportTemplate,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
+export function importData(data) {
+  return request({
+    url: API.ImportData,
+    method: 'post',
+    data
+  })
+}
+
+export function materialUnit(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MaterialUnit + id + '/' : API.MaterialUnit,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function materialEquipmentType(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MaterialEquipmentType + id + '/' : API.MaterialEquipmentType,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function materialEquipment(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MaterialEquipment + id + '/' : API.MaterialEquipment,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function materialExamineResult(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MaterialExamineResult + id + '/' : API.MaterialExamineResult,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+

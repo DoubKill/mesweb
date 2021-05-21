@@ -95,6 +95,10 @@ export default {
   MaterialTestTypes: '/api/v1/quality/material-test-indicators-tab/',
   // 试验指标列表
   TestIndicators: '/api/v1/quality/test-indicators/',
+  // 数据点误差(不合格pass指标管理)
+  DataPointStandardErrors: '/api/v1/quality/data-point-standard-errors/',
+  // 标记历史记录
+  DataPointLabelHistory: '/api/v1/quality/data-point-label-history/',
   // 试验方法列表
   TestSubTypes: '/api/v1/quality/test-methods/',
   TestTypeData: '/api/v1/quality/test-indicator-data-points/',
@@ -337,5 +341,18 @@ export default {
   IndexEquipMaintenanceAyalyze: '/api/v1/index/equip-maintenance-ayalyze/',
 
   RuntimeRecord: '/api/v1/production/runtime-record/',
-  ProductDetails: '/api/v1/inventory/product-details/'
+  ProductDetails: '/api/v1/inventory/product-details/',
+  ExamineMaterial: '/api/v1/quality/examine-material/',
+  // 检测类型
+  MaterialExamineType: '/api/v1/quality/material-examine-type/',
+  ExportTemplate: '/api/v1/quality/material-examine-type/export-template/',
+  ImportData: '/api/v1/quality/material-examine-type/import-data/',
+  // 单位管理
+  MaterialUnit: '/api/v1/quality/material-unit/',
+  MaterialEquipmentType: '/api/v1/quality/material-equip-types/',
+  MaterialEquipment: '/api/v1/quality/material-equips/',
+  MaterialExamineResult: '/api/v1/quality/material-examine-result/',
+  MaterialUnqualifiedTypes: '/api/v1/quality/material-unqualified-types/',
+  MaterialUnqualifiedProcess: '/api/v1/quality/material-unqualified-process/',
+  MaterialExamineResultCurve: '/api/v1/quality/material-examine-result-curve/'
 }

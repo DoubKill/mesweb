@@ -547,10 +547,10 @@ export default {
             delete app.userForm.num
           }
           // app.userForm.group_extensions = app.userForm.groups
-          if (app.userForm.group_extensions.length === 0) {
-            app.$message.info('请选择角色')
-            return
-          }
+          // if (app.userForm.group_extensions.length === 0) {
+          //   app.$message.info('请选择角色')
+          //   return
+          // }
           this.btnloading = true
           personnelsUrl(type, paramsId, { data: app.userForm })
             .then((response) => {

@@ -308,8 +308,9 @@ export default {
       // this.banbury_plan_list()
       console.log(value)
     },
-    currentChange(page) {
+    currentChange(page, pageSize) {
       this.getParams.page = page
+      this.search.page_size = pageSize
       this.getList()
     },
     // 选择日期

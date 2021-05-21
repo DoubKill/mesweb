@@ -1119,7 +1119,7 @@ export const asyncRoutes = [
           permissionName: 'material_temp_input'
         }
       },
-      {
+      /** {
         path: '/material-quality',
         redirect: '/material-quality',
         component: {
@@ -1201,6 +1201,66 @@ export const asyncRoutes = [
             meta: {
               title: '原材料不合格处理',
               permissionName: 'raw_unqualified_material'
+            }
+          }
+        ]
+      },**/
+      // 新添加的
+      {
+        path: '/material-quickcheck',
+        redirect: '/material-quickcheck',
+        component: {
+          render: c => c('router-view')
+        },
+        name: 'material-quickcheck',
+        meta: {
+          title: '原材料快检管理',
+          icon: 'quality'
+        },
+        children: [
+          {
+            path: '/material-quickcheck/quickcheck-equipment',
+            component: () => import('@/views/material_quickcheck_manage/material_quickcheck_equipment'),
+            name: 'material-quickcheck-equipment',
+            meta: {
+              title: '快检设备管理',
+              permissionName: 'material_equipment'
+            }
+          },
+          {
+            path: '/material-quickcheck/quickcheck-type',
+            component: () => import('@/views/material_quickcheck_manage/material_quickcheck_type'),
+            name: 'material-quickcheck-type',
+            meta: {
+              title: '快检类型管理',
+              permissionName: 'material_examine_type'
+            }
+          },
+          {
+            path: '/material-quickcheck/quickcheck-value',
+            component: () => import('@/views/material_quickcheck_manage/material_quickcheck_value'),
+            name: 'material-quickcheck-value',
+            meta: {
+              title: '检测值管理',
+              permissionName: 'material_examine_value'
+            }
+          },
+          // {
+          //   path: '/material-quickcheck/meniequipmentdata',
+          //   component: () => import('@/views/material_quickcheck_manage/meniequipmentdata'),
+          //   name: 'meniequipmentdata',
+          //   meta: {
+          //     title: '门尼设备数据绑定管理',
+          //     permissionName: ''
+          //   }
+          // },
+          {
+            path: '/material-quickcheck/raw-material',
+            component: () => import('@/views/material_quickcheck_manage/raw_material'),
+            name: 'quickcheck-raw-material',
+            meta: {
+              title: '原材料管理',
+              permissionName: 'examine_material'
             }
           }
         ]
