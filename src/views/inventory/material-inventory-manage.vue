@@ -14,7 +14,7 @@
         <!-- <el-input v-model="getParams.material_no" @input="changeSearch" /> -->
       </el-form-item>
       <el-form-item label="托盘号">
-        <el-input v-model="getParams.container_no" @input="changeSearch" />
+        <el-input v-model="getParams.container_no" clearable @input="changeSearch" />
       </el-form-item>
       <el-form-item label="质检条码">
         <el-input v-model="getParams.lot_no" clearable @input="changeSearch" />

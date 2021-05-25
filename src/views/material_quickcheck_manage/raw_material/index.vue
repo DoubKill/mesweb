@@ -137,11 +137,17 @@
               :label="type"
               align="center"
             >
-              <template v-if="row.single_examine_results.find(d=>d.type_name === type)" slot-scope="{row}">
-                <span>
+              <template
+                v-if="row.single_examine_results.find(d=>d.type_name === type)"
+                slot-scope="{row}"
+              >
+                <span :style="{'color':row.single_examine_results.find(d=>d.type_name === type).mes_decide_qualified?'':'red'}">
                   {{ row.single_examine_results.find(d=>d.type_name === type).value }}
                 </span>
-                <span v-if="row.single_examine_results.find(d=>d.type_name === type).interval_type===4">
+                <span
+                  v-if="row.single_examine_results.find(d=>d.type_name === type).interval_type===4"
+                  :style="{'color':row.single_examine_results.find(d=>d.type_name === type).mes_decide_qualified?'':'red'}"
+                >
                   {{ row.single_examine_results.find(d=>d.type_name === type).mes_decide_qualified?'合格':'不合格' }}
                 </span>
               </template>

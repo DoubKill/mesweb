@@ -268,7 +268,7 @@ import { ProductTrace, barcodePreview } from '@/api/base_w_three'
 import { debounce, setDate } from '@/utils'
 // import { trainsFeedbacksApiview } from '@/api/base_w'
 import { mapGetters } from 'vuex'
-import testCard from '../components/productInCard'
+import testCard from '@/components/TestCard'
 import trainNumberReport from '../train-number-report'
 export default {
   components: { testCard, trainNumberReport },

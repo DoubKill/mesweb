@@ -5,6 +5,7 @@
       v-model="value"
       placeholder="请选择用户"
       clearable
+      filterable
       @visible-change="visibleChange"
       @change="changeSelect"
     >

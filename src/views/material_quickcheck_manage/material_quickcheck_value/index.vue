@@ -216,6 +216,7 @@
             v-model="formData.material"
             placeholder="请选择"
             :disabled="formData.id||formData._copy?true:false"
+            filterable
             @visible-change="visibleChange"
             @change="changeMaterial"
           >
