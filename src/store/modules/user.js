@@ -102,7 +102,7 @@ const actions = {
   },
 
   // user logout
-  logout({ commit, rootState }) {
+  logout({ commit, rootState, dispatch }) {
     return new Promise((resolve, reject) => {
       // logout(state.token).then(() => {
       removeToken() // must remove  token  first
@@ -112,6 +112,9 @@ const actions = {
       commit('SET_PERMISSION', '')
       commit('SET_NAME', '')
       localStorage.clear()
+
+      dispatch('tagsView/delAllViews', null, { root: true })
+
       resolve()
       // }).catch(error => {
       //   reject(error)

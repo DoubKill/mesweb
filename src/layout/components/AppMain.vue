@@ -1,12 +1,11 @@
 <template>
   <section class="app-main">
     <transition name="fade-transform" mode="out-in">
-      <!-- :include="cachedViews" -->
       <div v-if="key === '/homePage'">
         <router-view :key="key" />
       </div>
       <el-card v-else class="box-card">
-        <keep-alive>
+        <keep-alive :include="cachedViews">
           <router-view :key="key" />
         </keep-alive>
       </el-card>
@@ -18,6 +17,9 @@
 export default {
   name: 'AppMain',
   computed: {
+    cachedViews() {
+      return this.$store.state.tagsView.cachedViews
+    },
     key() {
       return this.$route.path
     }

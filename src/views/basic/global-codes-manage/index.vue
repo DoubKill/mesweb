@@ -312,6 +312,7 @@ import { getGlobalTypes, postGlobalTypes, putGlobalTypes, deleteGlobalTypes, get
 import page from '@/components/page'
 import { mapGetters } from 'vuex'
 export default {
+  name: 'GlobalCodesManage',
   components: { page },
   data: function() {
     return {
