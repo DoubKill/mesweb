@@ -226,6 +226,7 @@ import { spareInventoryLog, revocationLog } from '@/api/base_w_two'
 import { checkPermission } from '@/utils'
 
 export default {
+  name: 'SparePartWarehousingRecord',
   components: { page, inventoryPosition, materialCodeSelect, materialTypeSelect },
   props: {
     isDialog: {
