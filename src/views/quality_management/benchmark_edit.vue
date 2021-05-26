@@ -125,6 +125,7 @@ import page from '@/components/page'
 import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import editDialog from './benchmark_edit_dialog/benchmark_edit_dialog'
 export default {
+  name: 'BenchmarkEdit',
   components: { editDialog, page, testTypeDotSelect, allProductNoSelect, testTypeSelect, testMethodSelect, detectionIndex },
   data() {
     var validatePass = (rule, value, callback, _val, error) => {

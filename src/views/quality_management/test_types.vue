@@ -364,6 +364,7 @@ import { getTestTypes, putTestTypes, postTestTypes, deleteTestTypes, getTestIndi
 import page from '@/components/page'
 import { mapGetters } from 'vuex'
 export default {
+  name: 'TestTypes',
   components: { page },
   data: function() {
     return {

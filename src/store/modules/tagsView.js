@@ -16,8 +16,12 @@ const mutations = {
     if (state.cachedViews.includes(view.name)) return
     if (!view.meta.noCache) {
       if (view.meta.faName) {
-        if (state.cachedViews.includes(view.faName)) return
+        if (state.cachedViews.includes(view.meta.faName)) return
         state.cachedViews.push(view.meta.faName)
+      }
+      if (view.meta.fourFaName) {
+        if (state.cachedViews.includes(view.meta.fourFaName)) return
+        state.cachedViews.push(view.meta.fourFaName)
       }
       state.cachedViews.push(view.name)
     }
@@ -34,6 +38,12 @@ const mutations = {
   DEL_CACHED_VIEW: (state, view) => {
     const index = state.cachedViews.indexOf(view.name)
     index > -1 && state.cachedViews.splice(index, 1)
+
+    const index1 = state.cachedViews.indexOf(view.meta.faName)
+    index1 > -1 && state.cachedViews.splice(index1, 1)
+
+    const index2 = state.cachedViews.indexOf(view.meta.fourFaName)
+    index2 > -1 && state.cachedViews.splice(index2, 1)
   },
 
   DEL_OTHERS_VISITED_VIEWS: (state, view) => {

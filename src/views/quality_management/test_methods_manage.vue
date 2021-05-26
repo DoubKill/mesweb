@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <!-- 试验方法管理 -->
     <el-form :inline="true">
       <el-form-item label="检测指标">
         <detection-index @changeSelect="detectionChange" />
@@ -72,6 +73,7 @@ import { testMethodList, editTestMethod } from '@/api/test-method'
 import DetectionIndex from '@/components/select_w/detectionIndex'
 
 export default {
+  name: 'TestMethodsManage',
   components: { Page, DetectionIndex },
   data() {
     return {
