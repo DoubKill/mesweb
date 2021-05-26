@@ -682,10 +682,8 @@ export const asyncRoutes = [
     {
       path: '/statistical-report',
       redirect: '/report/produce-work',
-      component: {
-        render: c => c('router-view')
-      },
-      name: 'statistical-report',
+      component: () => import('@/views/equipment-management/report/report-fa'),
+      name: 'StatisticalReport',
       meta: {
         title: '统计报表',
         icon: 'production'
@@ -696,6 +694,7 @@ export const asyncRoutes = [
           component: () => import('@/views/equipment-management/report/produce-work'),
           name: 'ProduceWork',
           meta: {
+            faName: 'StatisticalReport',
             title: '生产运行记录',
             permissionName: 'production_record'
           }
@@ -714,6 +713,7 @@ export const asyncRoutes = [
           component: () => import('@/views/equipment-management/report/rubber-stock'),
           name: 'RubberStock',
           meta: {
+            faName: 'StatisticalReport',
             title: '胶料库存明细',
             permissionName: 'product_stock_detail'
           }
@@ -723,6 +723,7 @@ export const asyncRoutes = [
           component: () => import('@/views/equipment-management/report/workshop-stock'),
           name: 'WorkshopStock',
           meta: {
+            faName: 'StatisticalReport',
             title: '车间库存明细',
             permissionName: 'workshop_stock_detail'
           }
@@ -963,10 +964,8 @@ export const asyncRoutes = [
       {
         path: '/quick-check',
         redirect: '/quick-check/test-indicators',
-        component: {
-          render: c => c('router-view')
-        },
-        name: 'quick-check',
+        component: () => import('@/views/quality_management/QuickCheck-fa'),
+        name: 'QuickCheck',
         meta: {
           title: '快检标准管理',
           icon: 'quality'
@@ -977,6 +976,7 @@ export const asyncRoutes = [
             component: () => import('@/views/quality_management/test_indicators'),
             name: 'testIndicators',
             meta: {
+              faName: 'QuickCheck',
               title: '试验指标管理',
               permissionName: 'test_indicator'
             }
@@ -986,6 +986,7 @@ export const asyncRoutes = [
             component: () => import('@/views/quality_management/test_types'),
             name: 'testTypes',
             meta: {
+              faName: 'QuickCheck',
               title: '试验类型管理',
               permissionName: 'test_type'
             }
@@ -993,8 +994,9 @@ export const asyncRoutes = [
           {
             path: '/quick-check/test-methods-manage',
             component: () => import('@/views/quality_management/test_methods_manage'),
-            namel: 'testMethodsManage',
+            name: 'testMethodsManage',
             meta: {
+              faName: 'QuickCheck',
               title: '试验方法管理',
               permissionName: 'test_method'
             }
@@ -1010,8 +1012,9 @@ export const asyncRoutes = [
           {
             path: '/quick-check/grade-manage',
             component: () => import('@/views/quality_management/grade_manage'),
-            namel: 'gradeManage',
+            name: 'gradeManage',
             meta: {
+              faName: 'QuickCheck',
               title: '等级管理',
               permissionName: 'level'
             }
@@ -1030,6 +1033,7 @@ export const asyncRoutes = [
             component: () => import('@/views/quality_management/benchmark_edit'),
             name: 'benchmark_edit',
             meta: {
+              faName: 'QuickCheck',
               title: '胶料快检判定基准录入',
               permissionName: 'evaluating'
             }
@@ -1039,10 +1043,8 @@ export const asyncRoutes = [
       {
         path: '/statistics',
         redirect: '/statistics/month-pass-detail',
-        component: {
-          render: c => c('router-view')
-        },
-        name: 'quality-statistics',
+        component: () => import('@/views/quality_management/quality-statistics-fa'),
+        name: 'QualityStatistics',
         meta: {
           title: '快检信息统计分析',
           icon: 'quality'
@@ -1053,6 +1055,7 @@ export const asyncRoutes = [
             component: () => import('@/views/quality_management/month_pass_detail'),
             name: 'MonthPassDetail',
             meta: {
+              faName: 'QualityStatistics',
               title: '月快检合格率统计',
               permissionName: 'month_passing_rate'
             }
@@ -1062,6 +1065,7 @@ export const asyncRoutes = [
             component: () => import('@/views/quality_management/material_month_pass'),
             name: 'MaterialMonthPass',
             meta: {
+              faName: 'QualityStatistics',
               title: '胶料月合格率统计',
               permissionName: 'product_month_passing_rate'
             }
@@ -1071,6 +1075,7 @@ export const asyncRoutes = [
             component: () => import('@/views/quality_management/material_day_pass'),
             name: 'MaterialDayPass',
             meta: {
+              faName: 'QualityStatistics',
               title: '胶料日合格率统计',
               permissionName: 'product_daily_passing_rate'
             }
@@ -1080,10 +1085,8 @@ export const asyncRoutes = [
       {
         path: '/unqualified-handle',
         redirect: '/unqualified-handle/inferior-quality-product-manage',
-        component: {
-          render: c => c('router-view')
-        },
-        name: 'unqualified-handle',
+        component: () => import('@/views/quality_management/DisposalListGenerate-fa'),
+        name: 'UnqualifiedHandle',
         meta: {
           title: '不合格品处理',
           icon: 'quality'
@@ -1111,6 +1114,7 @@ export const asyncRoutes = [
             component: () => import('@/views/quality_management/disposal-list-generates.vue'),
             name: 'DisposalListGenerate',
             meta: {
+              faName: 'UnqualifiedHandle',
               title: '不合格处置单生成',
               permissionName: 'unqualified_trains'
             }
@@ -1120,6 +1124,7 @@ export const asyncRoutes = [
             component: () => import('@/views/quality_management/disposal-list.vue'),
             name: 'DisposalList',
             meta: {
+              faName: 'UnqualifiedHandle',
               title: '不合格处置单管理',
               permissionName: 'unqualified_order'
             }
@@ -1129,10 +1134,8 @@ export const asyncRoutes = [
       {
         path: '/inspection-result-management',
         redirect: '/inspection-result-management/manual-entry',
-        component: {
-          render: c => c('router-view')
-        },
-        name: 'inspection-result-management',
+        component: () => import('@/views/quality_management/a-inspection-result-management-fa'),
+        name: 'InspectionResultManagement',
         meta: {
           title: '快检结果管理',
           icon: 'quality'
@@ -1143,6 +1146,7 @@ export const asyncRoutes = [
             component: () => import('@/views/quality_management/manual_entry'),
             name: 'ManualEntry',
             meta: {
+              faName: 'InspectionResultManagement',
               title: '手工检测数据录入',
               permissionName: 'test_result'
             }
@@ -1152,6 +1156,7 @@ export const asyncRoutes = [
             component: () => import('@/views/quality_management/details'),
             name: 'Details',
             meta: {
+              faName: 'InspectionResultManagement',
               title: '胶料快检详细信息',
               permissionName: 'result_info'
             }
@@ -1161,6 +1166,7 @@ export const asyncRoutes = [
             component: () => import('@/views/quality_management/check_synthesize_manage'),
             name: 'CheckSynthesizeManage',
             meta: {
+              faName: 'InspectionResultManagement',
               title: '快检信息综合管理',
               permissionName: 'deal_result'
             }
@@ -1289,7 +1295,7 @@ export const asyncRoutes = [
           {
             path: '/material-quickcheck/quickcheck-equipment',
             component: () => import('@/views/material_quickcheck_manage/material_quickcheck_equipment'),
-            name: '-quickcheckmaterial-equipment',
+            name: 'MaterialQuickcheckEquipment',
             meta: {
               title: '快检设备管理',
               permissionName: 'material_equipment'
