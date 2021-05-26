@@ -191,7 +191,7 @@
     <el-dialog
       :title="(formData.id?'编辑':'添加')+'检测值'"
       :visible.sync="dialogVisible"
-      width="1200px"
+      width="1300px"
       :before-close="handleClose"
     >
       <el-form ref="formData" inline :rules="rulesFormData" :model="formData" label-width="100px">
