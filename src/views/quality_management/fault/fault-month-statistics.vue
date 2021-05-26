@@ -136,6 +136,7 @@
 import { setDate } from '@/utils'
 import { monthErrorStatistics, monthErrorSort } from '@/api/base_w_three'
 export default {
+  name: 'FaultMonthStatistics',
   data() {
     this.chartSettings1 = {
       labelMap: {

@@ -133,6 +133,7 @@ import shutdownMoldSelect from '../components/shutdown-mold-select'
 import { equipDownReason } from '@/api/base_w_two'
 import page from '@/components/page'
 export default {
+  name: 'CauseOfShutdownReason',
   components: { shutdownMoldSelect, page },
   data() {
     return {

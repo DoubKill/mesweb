@@ -59,6 +59,7 @@
 import { setDate } from '@/utils'
 import { dayErrorStatistics } from '@/api/base_w_three'
 export default {
+  name: 'FaultDayStatistics',
   data() {
     this.extend = {
       series: {

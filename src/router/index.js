@@ -911,9 +911,7 @@ export const asyncRoutes = [
       {
         path: '/receive-good-manage',
         redirect: '/receive-good-manage/index',
-        component: {
-          render: c => c('router-view')
-        },
+        component: () => import('@/views/inventory/receive-good-manage/index.vue'),
         name: 'ReceiveGoodManage',
         meta: {
           title: '收发货管理',
@@ -925,6 +923,7 @@ export const asyncRoutes = [
             component: () => import('@/views/inventory/receive-good-manage/receive-list.vue'),
             name: 'ReceiveGoodManageIndex',
             meta: {
+              faName: 'ReceiveGoodManage',
               title: '发货计划管理',
               permissionName: 'delivery_plan'
             }
@@ -1372,7 +1371,7 @@ export const asyncRoutes = [
               {
                 path: '/spare-location',
                 component: () => import('@/views/equipment-management/spare-part/spare-location'),
-                name: 'spare-location',
+                name: 'SpareLocation',
                 meta: {
                   title: '库存位管理',
                   permissionName: 'spare_location'
@@ -1381,7 +1380,7 @@ export const asyncRoutes = [
               {
                 path: '/spare-type',
                 component: () => import('@/views/equipment-management/spare-part/spare-type'),
-                name: 'spare-type',
+                name: 'SpareType',
                 meta: {
                   title: '类型管理',
                   permissionName: 'spare_type'
@@ -1390,7 +1389,7 @@ export const asyncRoutes = [
               {
                 path: '/spareparts-spare',
                 component: () => import('@/views/equipment-management/spare-part/spareparts-spare'),
-                name: 'spareparts-spare',
+                name: 'SparepartsSpare',
                 meta: {
                   title: '基本信息管理',
                   permissionName: 'spare_info'
@@ -1399,7 +1398,7 @@ export const asyncRoutes = [
               {
                 path: '/shelf-material-binding',
                 component: () => import('@/views/equipment-management/spare-part/shelf-material-binding'),
-                name: 'shelf-material-binding',
+                name: 'ShelfMaterialBinding',
                 meta: {
                   title: '货架物料绑定管理',
                   permissionName: 'location_binding'
@@ -1408,7 +1407,7 @@ export const asyncRoutes = [
               {
                 path: '/location-manage',
                 component: () => import('@/views/equipment-management/spare-part/location-manage'),
-                name: 'spare-part-location-manage',
+                name: 'SparePartLocationManage',
                 meta: {
                   title: '备品备件库位管理',
                   permissionName: 'spare_inventory'
@@ -1417,7 +1416,7 @@ export const asyncRoutes = [
               {
                 path: '/inventory-manage',
                 component: () => import('@/views/equipment-management/spare-part/inventory-manage'),
-                name: 'spare-part-inventory-manage',
+                name: 'SparePartInventoryManage',
                 meta: {
                   title: '备品备件库存管理',
                   permissionName: 'spare_stock'
@@ -1426,7 +1425,7 @@ export const asyncRoutes = [
               {
                 path: '/inventory-upload',
                 component: () => import('@/views/equipment-management/spare-part/inventory-upload'),
-                name: 'inventory-upload',
+                name: 'InventoryUpload',
                 meta: {
                   title: '备品备件库存导入',
                   permissionName: 'spare_import'
@@ -1448,7 +1447,7 @@ export const asyncRoutes = [
               {
                 path: '/warehousing',
                 component: () => import('@/views/equipment-management/spare-part/warehousing'),
-                name: 'spare-part-warehousing',
+                name: 'SparePartWarehousing',
                 meta: {
                   title: '备品备件入库管理',
                   permissionName: 'spare_inbound'
@@ -1457,7 +1456,7 @@ export const asyncRoutes = [
               {
                 path: '/warehouse-out',
                 component: () => import('@/views/equipment-management/spare-part/warehouse-out'),
-                name: 'spare-part-warehouse-out',
+                name: 'SparePartWarehouseOut',
                 meta: {
                   title: '备品备件出库管理',
                   permissionName: 'spare_outbound'
@@ -1466,7 +1465,7 @@ export const asyncRoutes = [
               {
                 path: '/inventory',
                 component: () => import('@/views/equipment-management/spare-part/inventory'),
-                name: 'spare-part-inventory',
+                name: 'SparePartInventory',
                 meta: {
                   title: '备品备件盘点管理',
                   permissionName: 'stock_count'
@@ -1487,7 +1486,7 @@ export const asyncRoutes = [
               {
                 path: '/warehousing-record',
                 component: () => import('@/views/equipment-management/spare-part/all-record'),
-                name: 'spare-part-warehousing-record',
+                name: 'SparePartWarehousingRecord',
                 meta: {
                   title: '备品备件入库履历',
                   permissionName: 'inbound_history'
@@ -1495,8 +1494,8 @@ export const asyncRoutes = [
               },
               {
                 path: '/warehousing-out-record',
-                component: () => import('@/views/equipment-management/spare-part/all-record'),
-                name: 'spare-part-warehousing-out-record',
+                component: () => import('@/views/equipment-management/spare-part/out-record'),
+                name: 'SparePartWarehousingOutRecord',
                 meta: {
                   title: '备品备件出库履历',
                   permissionName: 'outbound_history'
@@ -1505,7 +1504,7 @@ export const asyncRoutes = [
               {
                 path: '/inventory-record',
                 component: () => import('@/views/equipment-management/spare-part/all-record'),
-                name: 'spare-part-inventory-record',
+                name: 'SparePartInventoryRecord',
                 meta: {
                   title: '备品备件盘点履历',
                   permissionName: 'stock_history'
@@ -1530,7 +1529,7 @@ export const asyncRoutes = [
           {
             path: '/location-definition',
             component: () => import('@/views/equipment-management/repair/location-definition'),
-            name: 'location-definition',
+            name: 'LocationDefinition',
             meta: {
               title: '设备部位定义',
               permissionName: 'equip_part'
@@ -1550,7 +1549,7 @@ export const asyncRoutes = [
               {
                 path: '/cause-of-shutdown/mold',
                 component: () => import('@/views/equipment-management/repair/shutdown-mold'),
-                name: 'cause-of-shutdown-mold',
+                name: 'CauseOfShutdownMold',
                 meta: {
                   title: '停机类型定义',
                   permissionName: 'equip_down_type'
@@ -1559,7 +1558,7 @@ export const asyncRoutes = [
               {
                 path: '/cause-of-shutdown/reason',
                 component: () => import('@/views/equipment-management/repair/shutdown-reason'),
-                name: 'cause-of-shutdown-reason',
+                name: 'CauseOfShutdownReason',
                 meta: {
                   title: '停机原因定义',
                   permissionName: 'equip_down_reason'
@@ -1570,7 +1569,7 @@ export const asyncRoutes = [
           {
             path: '/repair-apply',
             component: () => import('@/views/equipment-management/repair/repair-apply'),
-            name: 'repair-apply',
+            name: 'RepairApply',
             meta: {
               title: '设备维修申请页面',
               permissionName: 'equip_current_status'
@@ -1579,7 +1578,7 @@ export const asyncRoutes = [
           {
             path: '/repair-manage',
             component: () => import('@/views/equipment-management/repair/repair-manage'),
-            name: 'repair-manage',
+            name: 'RepairManage',
             meta: {
               title: '设备维修单管理',
               permissionName: 'equip_maintenance_order'
@@ -1588,7 +1587,7 @@ export const asyncRoutes = [
           {
             path: '/work-state',
             component: () => import('@/views/equipment-management/repair/work-state'),
-            name: 'work-state',
+            name: 'WorkState',
             meta: {
               title: '设备运行现况',
               permissionName: 'equip_status'
@@ -1597,7 +1596,7 @@ export const asyncRoutes = [
           {
             path: '/repair-resume',
             component: () => import('@/views/equipment-management/repair/repair-resume'),
-            name: 'repair-resume',
+            name: 'RepairResume',
             meta: {
               title: '设备维修履历',
               permissionName: 'equip_maintenance_order_log'
@@ -1606,7 +1605,7 @@ export const asyncRoutes = [
           {
             path: '/equipment-assets',
             component: () => import('@/views/equipment-management/repair/equipment-assets'),
-            name: 'equipment-assets',
+            name: 'EquipmentAssets',
             meta: {
               title: '设备资产',
               permissionName: 'property'
@@ -1659,7 +1658,7 @@ export const asyncRoutes = [
       {
         path: '/platform-manage',
         component: () => import('@/views/equipment-management/repair/platform-manage'),
-        name: 'platform-manage',
+        name: 'PlatformManage',
         meta: {
           icon: 'quality',
           title: '平台信息管理',
@@ -1669,7 +1668,7 @@ export const asyncRoutes = [
       {
         path: '/fault-day-statistics',
         component: () => import('@/views/quality_management/fault/fault-day-statistics'),
-        name: 'fault-day-statistics',
+        name: 'FaultDayStatistics',
         meta: {
           title: '设备别故障日统计',
           icon: 'quality',
@@ -1679,7 +1678,7 @@ export const asyncRoutes = [
       {
         path: '/fault-week-statistics',
         component: () => import('@/views/quality_management/fault/fault-week-statistics'),
-        name: 'fault-week-statistics',
+        name: 'FaultWeekStatistics',
         meta: {
           title: '设备别故障周统计',
           icon: 'quality',
@@ -1689,7 +1688,7 @@ export const asyncRoutes = [
       {
         path: '/fault-month-statistics',
         component: () => import('@/views/quality_management/fault/fault-month-statistics'),
-        name: 'fault-month-statistics',
+        name: 'FaultMonthStatistics',
         meta: {
           title: '设备别故障月统计',
           icon: 'quality',

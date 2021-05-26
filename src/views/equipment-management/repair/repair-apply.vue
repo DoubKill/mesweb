@@ -162,6 +162,7 @@ import { equipCurrentStatus } from '@/api/base_w_two'
 import page from '@/components/page'
 import { checkPermission } from '@/utils'
 export default {
+  name: 'RepairApply',
   components: { page, locationDefinitionDelect, shutdownMoldSelect, shutdownReasonSelect },
   data() {
     return {

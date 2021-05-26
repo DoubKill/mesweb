@@ -305,6 +305,7 @@
 import { propertyTypeNode, exportProperty, importProperty, equipmentProperty } from '@/api/base_w_two'
 import page from '@/components/page'
 export default {
+  name: 'EquipmentAssets',
   components: { page },
   data() {
     return {

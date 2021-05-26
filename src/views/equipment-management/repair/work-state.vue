@@ -33,6 +33,7 @@
 <script>
 import { equipCurrentStatusList } from '@/api/base_w_two'
 export default {
+  name: 'WorkState',
   data() {
     return {
       stateList: {
