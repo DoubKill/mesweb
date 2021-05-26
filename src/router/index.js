@@ -30,30 +30,31 @@ import Layout from '@/layout'
  * a base page that does not have permission requirements
  * all roles can be accessed
  */
-export const constantRoutes = [{
-  path: '/login',
-  component: () => import('@/views/login/index'),
-  hidden: true
-},
-{
-  path: '/404',
-  component: () => import('@/views/404'),
-  hidden: true
-},
-{
-  path: '/redirect',
-  component: Layout,
-  hidden: true,
-  children: [
-    {
-      path: '/redirect/:path(.*)',
-      component: () => import('@/views/redirect/index')
-    }
-  ]
-},
-{
-  path: '/',
-  redirect: '/home'
+export const constantRoutes = [
+  {
+    path: '/redirect',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '/redirect/:path(.*)',
+        component: () => import('@/views/redirect/index')
+      }
+    ]
+  },
+  {
+    path: '/login',
+    component: () => import('@/views/login/index'),
+    hidden: true
+  },
+  {
+    path: '/404',
+    component: () => import('@/views/404'),
+    hidden: true
+  },
+  {
+    path: '/',
+    redirect: '/home'
   // component: Layout,
   // meta: {
   //   title: '首页',
@@ -85,31 +86,31 @@ export const constantRoutes = [{
   //   }
   // }
   // ]
-},
-{
-  path: '/phone/fault-day-statistics',
-  component: () => import('@/views/quality_management/phone/fault-day-statistics'),
-  hidden: true,
-  meta: {
-    isPhone: true
+  },
+  {
+    path: '/phone/fault-day-statistics',
+    component: () => import('@/views/quality_management/phone/fault-day-statistics'),
+    hidden: true,
+    meta: {
+      isPhone: true
+    }
+  },
+  {
+    path: '/phone/fault-week-statistics',
+    component: () => import('@/views/quality_management/phone/fault-week-statistics'),
+    hidden: true,
+    meta: {
+      isPhone: true
+    }
+  },
+  {
+    path: '/phone/fault-month-statistics',
+    component: () => import('@/views/quality_management/phone/fault-month-statistics'),
+    hidden: true,
+    meta: {
+      isPhone: true
+    }
   }
-},
-{
-  path: '/phone/fault-week-statistics',
-  component: () => import('@/views/quality_management/phone/fault-week-statistics'),
-  hidden: true,
-  meta: {
-    isPhone: true
-  }
-},
-{
-  path: '/phone/fault-month-statistics',
-  component: () => import('@/views/quality_management/phone/fault-month-statistics'),
-  hidden: true,
-  meta: {
-    isPhone: true
-  }
-}
 ]
 
 // 存在权限的路由
@@ -146,7 +147,7 @@ export const asyncRoutes = [
     },
     children: [{
       path: '/global/codes/manage',
-      name: 'global-codes-manage',
+      name: 'GlobalCodesManage',
       component: () => import('@/views/basic/global-codes-manage/index'),
       meta: {
         title: '公用代码管理',
@@ -419,6 +420,74 @@ export const asyncRoutes = [
         permissionName: 'batching_reality'
       }
     }
+    /** {
+      path: '/small-material-weight',
+      redirect: '/small-material-weight/material',
+      component: {
+        render: c => c('router-view')
+      },
+      name: 'small-material-weight',
+      meta: {
+        title: '小料称量管理',
+        icon: 'formula'
+      },
+      children: [
+        {
+          path: '/small-material-weight/material',
+          component: () => import('@/views/recipe/small-material-weight/material'),
+          name: '/small-material-weight-material',
+          meta: {
+            title: '物料管理',
+            permissionName: ''
+          }
+        },
+        {
+          path: '/small-material-weight/feed-bin',
+          component: () => import('@/views/recipe/small-material-weight/feed-bin'),
+          name: '/small-material-weight-feedBin',
+          meta: {
+            title: '料仓管理',
+            permissionName: ''
+          }
+        },
+        {
+          path: '/small-material-weight/formula',
+          component: () => import('@/views/recipe/small-material-weight/formula'),
+          name: '/small-material-weight-formula',
+          meta: {
+            title: '配方管理',
+            permissionName: ''
+          }
+        },
+        {
+          path: '/small-material-weight/plan',
+          component: () => import('@/views/recipe/small-material-weight/plan'),
+          name: '/small-material-weight-plan',
+          meta: {
+            title: '计划管理',
+            permissionName: ''
+          }
+        },
+        {
+          path: '/small-material-weight/train-number',
+          component: () => import('@/views/recipe/small-material-weight/train-number'),
+          name: '/small-material-weight-trainNumber',
+          meta: {
+            title: '车次报表',
+            permissionName: ''
+          }
+        },
+        {
+          path: '/small-material-weight/consumption',
+          component: () => import('@/views/recipe/small-material-weight/consumption'),
+          name: '/small-material-weight-consumption',
+          meta: {
+            title: '物料消耗报表',
+            permissionName: ''
+          }
+        }
+      ]
+    }**/
     ]
   },
   {
