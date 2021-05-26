@@ -85,6 +85,7 @@
 import { levelResult } from '@/api/base_w'
 import page from '@/components/page'
 export default {
+  name: 'GradeManage',
   components: { page },
   data() {
     return {

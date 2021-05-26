@@ -199,6 +199,7 @@ import excel from './disposal-list-components/excel'
 import { unqualifiedDealOrders } from '@/api/base_w'
 import { setDate } from '@/utils'
 export default {
+  name: 'DisposalList',
   components: { excel, page },
   data() {
     return {
