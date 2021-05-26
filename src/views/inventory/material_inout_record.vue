@@ -52,9 +52,12 @@
       <el-form-item label="出入库单号">
         <el-input v-model="search.order_no" @input="debounceList" />
       </el-form-item>
-      <!-- <el-form-item label="托盘号">
+      <el-form-item label="托盘号">
         <el-input v-model="search.pallet_no" @input="debounceList" />
-      </el-form-item> -->
+      </el-form-item>
+      <el-form-item label="质检条码">
+        <el-input v-model="search.lot_no" @input="debounceList" />
+      </el-form-item>
     </el-form>
     <el-table
       :data="tableData"
@@ -64,6 +67,7 @@
       <el-table-column label="No" type="index" align="center" width="40" />
       <el-table-column label="类型" align="center" prop="order_type" width="50" />
       <el-table-column label="出入库单号" align="center" prop="order_no" />
+      <el-table-column label="质检条码" align="center" prop="lot_no" />
       <!-- <el-table-column label="仓库类型" align="center" prop="warehouse_type" /> -->
       <!-- <el-table-column  label="仓库名称" align="center" prop="warehouse_name" /> -->
       <el-table-column label="托盘号" align="center" prop="pallet_no" />

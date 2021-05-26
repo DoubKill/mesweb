@@ -14,7 +14,10 @@
         <!-- <el-input v-model="getParams.material_no" @input="changeSearch" /> -->
       </el-form-item>
       <el-form-item label="托盘号">
-        <el-input v-model="getParams.container_no" @input="changeSearch" />
+        <el-input v-model="getParams.container_no" clearable @input="changeSearch" />
+      </el-form-item>
+      <el-form-item label="质检条码">
+        <el-input v-model="getParams.lot_no" clearable @input="changeSearch" />
       </el-form-item>
       <!-- <el-form-item v-show="getParams.warehouse_name != '终炼胶库'" label="物料类型">
         <materielTypeSelect @changSelect="changeMaterialType" />
@@ -29,7 +32,7 @@
       <el-table-column label="No" type="index" align="center" width="40" />
       <el-table-column label="物料类型" align="center" prop="material_type" width="80" />
       <el-table-column label="物料编码" align="center" prop="material_no" />
-      <el-table-column label="lot" align="center" prop="lot_no" />
+      <el-table-column label="质检条码" align="center" prop="lot_no" />
       <el-table-column label="货位状态" align="center" prop="location_status" />
       <el-table-column label="机台号" align="center" width="50">
         <template v-if="row.product_info" slot-scope="{row}">

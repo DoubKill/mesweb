@@ -1,14 +1,14 @@
 <template>
   <section class="app-main">
-    <transition
-      name="fade-transform"
-      mode="out-in"
-    >
+    <transition name="fade-transform" mode="out-in">
+      <!-- :include="cachedViews" -->
       <div v-if="key === '/homePage'">
         <router-view :key="key" />
       </div>
       <el-card v-else class="box-card">
-        <router-view :key="key" />
+        <keep-alive>
+          <router-view :key="key" />
+        </keep-alive>
       </el-card>
     </transition>
   </section>

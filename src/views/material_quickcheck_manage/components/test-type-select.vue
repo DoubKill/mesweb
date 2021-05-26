@@ -5,6 +5,7 @@
     clearable
     placeholder="请选择"
     filterable
+    style="width:320px"
     @visible-change="visibleChange"
     @change="classChanged"
   >

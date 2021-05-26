@@ -1,5 +1,5 @@
 <template>
-  <!-- 配料设备编码 -->
+  <!-- 配料设备 -->
   <el-select
     :value="id"
     :clearable="!createdIs"

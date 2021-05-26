@@ -41,6 +41,9 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="收皮条码">
+        <el-input v-model="getParams.lot_no" clearable @input="changeSearch" />
+      </el-form-item>
     </el-form>
     <el-button
       v-permission="['deal_result','print']"
@@ -74,7 +77,11 @@
       </el-table-column>
       <el-table-column label="质量信息" align="center">
         <el-table-column label="检测状态" align="center" prop="test.test_status" width="45" />
-        <el-table-column label="检测时间" width="80" align="center" prop="test.test_factory_date" />
+        <el-table-column label="检测时间" width="80" align="center">
+          <template slot-scope="{row}">
+            {{ setDate(row.test.test_factory_date,true) }}
+          </template>
+        </el-table-column>
         <el-table-column label="检测班次" prop="test.test_class" width="45" />
         <el-table-column label="打印时间" width="80" align="center" prop="print_time" />
         <el-table-column label="检测员" prop="test.test_user" width="60" />
@@ -134,6 +141,7 @@ import DealSuggestionSelect from '@/components/DealSuggestionSelect'
 import TestCard from '@/components/TestCard'
 import { palletFeedTest, changelValidTime, qualityPalletFeedTest } from '@/api/quick-check-detail'
 import { labelPrint } from '@/api/base_w'
+import { debounce, setDate } from '@/utils'
 export default {
   components: { EquipSelect, ClassSelect, allProductNoSelect, Page, TestCard, DealSuggestionSelect },
   data() {
@@ -165,6 +173,11 @@ export default {
     this.getPalletFeedTest()
   },
   methods: {
+    setDate,
+    changeSearch() {
+      this.getParams.page = 1
+      debounce(this, 'getPalletFeedTest')
+    },
     async getCardInfo(id) {
       try {
         const data = await qualityPalletFeedTest(id)

@@ -219,19 +219,6 @@
               <el-input v-model="item.level" placeholder="请输入" />
             </el-form-item>
             <el-form-item
-              label="上限值"
-              :prop="'standards.' + index + '.upper_limit_value'"
-              :rules="{
-                required: true, message: '不能为空', trigger: 'blur'
-              }"
-            >
-              <el-input-number
-                v-model="item.upper_limit_value"
-                controls-position="right"
-                :min="item.lower_limiting_value?keepTwo(item.lower_limiting_value +0.01):-Infinity"
-              />
-            </el-form-item>
-            <el-form-item
               label="下限值"
               :prop="'standards.' + index + '.lower_limiting_value'"
               :rules="{
@@ -243,6 +230,19 @@
                 v-model="item.lower_limiting_value"
                 controls-position="right"
                 :max="item.upper_limit_value!==''?keepTwo(item.upper_limit_value-0.01):Infinity"
+              />
+            </el-form-item>
+            <el-form-item
+              label="上限值"
+              :prop="'standards.' + index + '.upper_limit_value'"
+              :rules="{
+                required: true, message: '不能为空', trigger: 'blur'
+              }"
+            >
+              <el-input-number
+                v-model="item.upper_limit_value"
+                controls-position="right"
+                :min="item.lower_limiting_value?keepTwo(item.lower_limiting_value +0.01):-Infinity"
               />
             </el-form-item>
             <i v-if="formData.standards.length!==1" title="删除评级标准" class="el-icon-remove-outline dialogIconDEL" @click="delGrade(index)" />
