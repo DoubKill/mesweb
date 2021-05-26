@@ -128,6 +128,7 @@
 import { getDispatchLocation, postDispatchLocation, putDispatchLocation, deleteDispatchLocation } from '@/api/receive'
 import page from '@/components/page'
 export default {
+  name: 'ReceiveGoodManageAddress',
   components: { page },
   data() {
     return {

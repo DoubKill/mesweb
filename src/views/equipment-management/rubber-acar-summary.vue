@@ -122,6 +122,7 @@ import { collectTrainsFeed, sumSollectTrains } from '@/api/base_w'
 import { setDate } from '@/utils/index'
 import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 export default {
+  name: 'RubberAcarSummary',
   components: { allProductNoSelect, page, equipSelect, classSelect },
   data() {
     return {

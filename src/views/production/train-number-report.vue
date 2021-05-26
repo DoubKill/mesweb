@@ -519,6 +519,7 @@ import { mapGetters } from 'vuex'
 import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 
 export default {
+  name: 'TrainNumberReport',
   components: { page, selectEquip, allProductNoSelect },
   mixins: [chartMixin],
   props: {

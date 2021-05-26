@@ -157,7 +157,7 @@ export const asyncRoutes = [
     },
     {
       path: '/group/manage',
-      name: 'group-manage',
+      name: 'GroupManage',
       component: () => import('@/views/basic/group-manage/index'),
       meta: {
         title: '角色管理',
@@ -167,7 +167,7 @@ export const asyncRoutes = [
     },
     {
       path: '/group/department',
-      name: 'departmen-manage',
+      name: 'DepartmenManage',
       component: () => import('@/views/basic/department-manage/index'),
       meta: {
         title: '部门管理',
@@ -177,7 +177,7 @@ export const asyncRoutes = [
     },
     {
       path: '/user/manage',
-      name: 'user-manage',
+      name: 'UserManage',
       component: () => import('@/views/basic/user-manage/index'),
       meta: {
         title: '用户管理',
@@ -187,7 +187,7 @@ export const asyncRoutes = [
     },
     {
       path: '/users/by/group/manage',
-      name: 'users-by-group-manage',
+      name: 'UsersByGroupManage',
       component: () => import('@/views/basic/users-by-group-manage/index'),
       meta: {
         title: '角色别用户管理',
@@ -197,7 +197,7 @@ export const asyncRoutes = [
     },
     {
       path: '/equip/base/info/manage',
-      name: 'equip-base-info-manage',
+      name: 'EquipBaseInfoManage',
       component: () => import('@/views/change_shifts_manage/index'),
       meta: {
         title: '倒班时间管理',
@@ -207,7 +207,7 @@ export const asyncRoutes = [
     },
     {
       path: '/change/shifts/manage',
-      name: 'change-shifts-manage',
+      name: 'ChangeShiftsManage',
       component: () => import('@/views/factory_schedule_manage/index'),
       meta: {
         title: '工厂排班管理',
@@ -217,7 +217,7 @@ export const asyncRoutes = [
     },
     {
       path: '/factory/schedule/manage',
-      name: 'factory-schedule-manage',
+      name: 'FactoryScheduleManage',
       component: () => import('@/views/factory_schedule_result/index'),
       meta: {
         title: '工厂排班结果',
@@ -228,7 +228,7 @@ export const asyncRoutes = [
     {
       path: '/location-site',
       component: () => import('@/views/basic/location-site'),
-      name: 'location-site',
+      name: 'LocationSite',
       meta: {
         title: '位置点管理',
         icon: 'dashboard',
@@ -248,7 +248,7 @@ export const asyncRoutes = [
       },
       children: [{
         path: '/factory/category/manage',
-        name: 'category-manage',
+        name: 'CategoryManage',
         component: () => import('@/views/category_manage/index'),
         meta: {
           title: '设备种类',
@@ -257,7 +257,7 @@ export const asyncRoutes = [
       },
       {
         path: '/factory/equip/manage',
-        name: 'equip-manage',
+        name: 'EquipManage',
         component: () => import('@/views/equip_manage/index'),
         meta: {
           title: '设备基础信息',
@@ -280,7 +280,7 @@ export const asyncRoutes = [
     },
     children: [{
       path: '/material/base/info/manage',
-      name: 'material-base-info-manage',
+      name: 'MaterialBaseInfoManage',
       component: () => import('@/views/material_base_info_manage/index'),
       meta: {
         title: '原材料基础信息',
@@ -291,7 +291,7 @@ export const asyncRoutes = [
     {
       path: '/material-info-mapping',
       component: () => import('@/views/quality_management/material-info-mapping/material-info-mapping'),
-      name: 'material-info-mapping',
+      name: 'MaterialInfoMapping',
       meta: {
         title: 'mes与子系统物料信息映射',
         icon: 'formula',
@@ -300,7 +300,7 @@ export const asyncRoutes = [
     },
     {
       path: '/rb/recipe/std/manage',
-      name: 'rb-recipe-std-manage',
+      name: 'RbRecipeStdManage',
       component: () => import('@/views/rubber_recipe_standard_manage/index'),
       meta: {
         title: '胶料代码管理',
@@ -310,7 +310,7 @@ export const asyncRoutes = [
     },
     {
       path: '/rb/material/std/manage',
-      name: 'rb-material-std-manage',
+      name: 'RbMaterialStdManage',
       component: () => import('@/views/rb_material_std_manage/newIndex'),
       meta: {
         title: '胶料配方标准管理',
@@ -330,7 +330,7 @@ export const asyncRoutes = [
     // },
     {
       path: '/rb/material-tank/manage',
-      name: 'material-tank',
+      name: 'MaterialTank',
       component: () => import('@/views/recipe/tankInformation/list'),
       meta: {
         title: '称量系统料仓信息管理',
@@ -362,7 +362,7 @@ export const asyncRoutes = [
     },
     children: [{
       path: '/rubber/schedule/daily/plan',
-      name: 'rubber-schedule-daily-plan',
+      name: 'RubberScheduleDailyPlan',
       component: () => import('@/views/rubber_schedule_daily_plan/index'),
       meta: {
         title: '排产胶料日计划',
@@ -372,7 +372,7 @@ export const asyncRoutes = [
     },
     {
       path: '/rubber/schedule/daily/plan/release',
-      name: 'rubber-schedule-daily-plan-release',
+      name: 'RubberScheduleDailyPlanRelease',
       component: () => import('@/views/rubber_schedule_daily_plan/release'),
       meta: {
         title: '排产胶料日计划下达',
@@ -382,7 +382,7 @@ export const asyncRoutes = [
     },
     {
       path: '/material/requisitions/plan',
-      name: 'material-requisitions-plan',
+      name: 'MaterialRequisitionsPlan',
       component: () => import('@/views/plan/material-requisitions-plan/index'),
       meta: {
         title: '排产领料计划',
@@ -392,7 +392,7 @@ export const asyncRoutes = [
     },
     {
       path: '/material/quantity/demanded',
-      name: 'material-quantity-demanded',
+      name: 'MaterialQuantityDemanded',
       component: () => import('@/views/material_quantity_demanded/index'),
       meta: {
         title: '物料需求量',
@@ -402,7 +402,7 @@ export const asyncRoutes = [
     },
     {
       path: '/rubber-plan-release',
-      name: 'rubber-plan-release',
+      name: 'RubberPlanRelease',
       component: () => import('@/views/recipe/rubber-plan-release'),
       meta: {
         title: '小料计划下达',
@@ -532,7 +532,7 @@ export const asyncRoutes = [
     {
       path: '/train-number-report',
       component: () => import('@/views/production/train-number-report.vue'),
-      name: 'train-number-report',
+      name: 'TrainNumberReport',
       meta: {
         title: '车次报表',
         icon: 'production',
@@ -572,7 +572,7 @@ export const asyncRoutes = [
     {
       path: '/drug-investment',
       component: () => import('@/views/production/drug-investment'),
-      name: 'drug-investment',
+      name: 'DrugInvestment',
       meta: {
         title: '药品投入统计',
         icon: 'production',
@@ -582,7 +582,7 @@ export const asyncRoutes = [
     {
       path: '/zl-warehouse-out-kanban',
       component: () => import('@/views/production/warehouse-out-kanban.vue'),
-      name: 'zl-warehouseOutKanban',
+      name: 'ZlWarehouseOutKanban',
       meta: {
         title: '终炼胶出库看板', icon: 'production',
         permissionName: 'zl_dashboard'
@@ -612,7 +612,7 @@ export const asyncRoutes = [
         {
           path: '/equipment/classes-banburying-summary',
           component: () => import('@/views/equipment-management/classes-banburying-summary'),
-          name: 'classes-banburying-summary',
+          name: 'ClassesBanburyingSummary',
           meta: {
             title: '班次密炼时间汇总',
             permissionName: 'class_production_summary'
@@ -621,7 +621,7 @@ export const asyncRoutes = [
         {
           path: '/equipment/banburying-ratio-summary',
           component: () => import('@/views/equipment-management/banburying-ratio-summary'),
-          name: 'banburying-ratio-summary',
+          name: 'BanburyingRatioSummary',
           meta: {
             title: '密炼时间占比汇总',
             permissionName: 'production_time_summary'
@@ -630,7 +630,7 @@ export const asyncRoutes = [
         {
           path: '/equipment/rubber-acar-summary',
           component: () => import('@/views/equipment-management/rubber-acar-summary'),
-          name: 'rubber-acar-summary',
+          name: 'RubberAcarSummary',
           meta: {
             title: '胶料单车次时间汇总',
             permissionName: 'single_trains_time_consume'
@@ -639,7 +639,7 @@ export const asyncRoutes = [
         {
           path: '/equipment/specs-switch-summary',
           component: () => import('@/views/equipment-management/specs-switch-summary'),
-          name: 'specs-switch-summary',
+          name: 'SpecsSwitchSummary',
           meta: {
             title: '规格切换时间汇总',
             permissionName: 'product_exchange_consume'
@@ -661,7 +661,7 @@ export const asyncRoutes = [
       children: [
         {
           path: '/track-raw-material',
-          name: 'track-raw-material',
+          name: 'TrackRawMaterial',
           component: () => import('@/views/production/track/track-raw-material'),
           meta: {
             title: '原材料条码追朔',
@@ -670,7 +670,7 @@ export const asyncRoutes = [
         },
         {
           path: '/track-raw-rubber',
-          name: 'track-raw-rubber',
+          name: 'TrackRawRubber',
           component: () => import('@/views/production/track/track-raw-rubber'),
           meta: {
             title: '胶片条码追朔',
@@ -694,7 +694,7 @@ export const asyncRoutes = [
         {
           path: '/report/produce-work',
           component: () => import('@/views/equipment-management/report/produce-work'),
-          name: 'produce-work',
+          name: 'ProduceWork',
           meta: {
             title: '生产运行记录',
             permissionName: 'production_record'
@@ -712,7 +712,7 @@ export const asyncRoutes = [
         {
           path: '/report/rubber-stock',
           component: () => import('@/views/equipment-management/report/rubber-stock'),
-          name: 'rubber-stock',
+          name: 'RubberStock',
           meta: {
             title: '胶料库存明细',
             permissionName: 'product_stock_detail'
@@ -721,7 +721,7 @@ export const asyncRoutes = [
         {
           path: '/report/workshop-stock',
           component: () => import('@/views/equipment-management/report/workshop-stock'),
-          name: 'workshop-stock',
+          name: 'WorkshopStock',
           meta: {
             title: '车间库存明细',
             permissionName: 'workshop_stock_detail'
@@ -832,7 +832,7 @@ export const asyncRoutes = [
       {
         path: '/final-mixing-rubber-manage',
         component: () => import('@/views/inventory/final-mixing-rubber-manage.vue'),
-        name: 'final-mixing-rubber',
+        name: 'FinalMixingRubber',
         meta: {
           title: '终炼胶出库计划',
           icon: 'stock',
@@ -852,7 +852,7 @@ export const asyncRoutes = [
       {
         path: '/raw-material-manage',
         component: () => import('@/views/inventory/raw-material-manage.vue'),
-        name: 'raw-material',
+        name: 'RawMaterial',
         meta: {
           title: '原材料出库计划',
           icon: 'stock',
@@ -862,7 +862,7 @@ export const asyncRoutes = [
       {
         path: '/druss-delivery',
         component: () => import('@/views/inventory/druss-delivery.vue'),
-        name: 'druss-delivery',
+        name: 'DrussDelivery',
         meta: {
           title: '炭黑出库计划',
           icon: 'stock',
@@ -882,7 +882,7 @@ export const asyncRoutes = [
       {
         path: '/curtain-storehouse',
         component: () => import('@/views/inventory/curtain-storehouse.vue'),
-        name: 'curtainStorehouse',
+        name: 'CurtainStorehouse',
         meta: {
           title: '帘布库出库计划',
           icon: 'stock',
@@ -1052,7 +1052,7 @@ export const asyncRoutes = [
           {
             path: '/statistics/month-pass-detail',
             component: () => import('@/views/quality_management/month_pass_detail'),
-            name: 'monthPassDetail',
+            name: 'MonthPassDetail',
             meta: {
               title: '月快检合格率统计',
               permissionName: 'month_passing_rate'
@@ -1061,7 +1061,7 @@ export const asyncRoutes = [
           {
             path: '/statistics/material-month-pass',
             component: () => import('@/views/quality_management/material_month_pass'),
-            name: 'materialMonthPass',
+            name: 'MaterialMonthPass',
             meta: {
               title: '胶料月合格率统计',
               permissionName: 'product_month_passing_rate'
@@ -1070,7 +1070,7 @@ export const asyncRoutes = [
           {
             path: '/statistics/material-day-pass',
             component: () => import('@/views/quality_management/material_day_pass'),
-            name: 'materialDayPass',
+            name: 'MaterialDayPass',
             meta: {
               title: '胶料日合格率统计',
               permissionName: 'product_daily_passing_rate'
@@ -1181,7 +1181,7 @@ export const asyncRoutes = [
       {
         path: '/result-entry',
         component: () => import('@/views/quality_management/result-entry'),
-        name: 'result-entry',
+        name: 'ResultEntry',
         meta: {
           title: '原材料临时快检结果录入',
           icon: 'quality',
@@ -1290,7 +1290,7 @@ export const asyncRoutes = [
           {
             path: '/material-quickcheck/quickcheck-equipment',
             component: () => import('@/views/material_quickcheck_manage/material_quickcheck_equipment'),
-            name: 'material-quickcheck-equipment',
+            name: '-quickcheckmaterial-equipment',
             meta: {
               title: '快检设备管理',
               permissionName: 'material_equipment'
@@ -1308,7 +1308,7 @@ export const asyncRoutes = [
           {
             path: '/material-quickcheck/quickcheck-value',
             component: () => import('@/views/material_quickcheck_manage/material_quickcheck_value'),
-            name: 'material-quickcheck-value',
+            name: 'MaterialQuickcheckValue',
             meta: {
               title: '检测值管理',
               permissionName: 'material_examine_value'
@@ -1326,7 +1326,7 @@ export const asyncRoutes = [
           {
             path: '/material-quickcheck/raw-material',
             component: () => import('@/views/material_quickcheck_manage/raw_material'),
-            name: 'quickcheck-raw-material',
+            name: 'QuickcheckRawMaterial',
             meta: {
               title: '原材料管理',
               permissionName: 'examine_material'

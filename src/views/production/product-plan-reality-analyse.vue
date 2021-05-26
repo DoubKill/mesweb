@@ -129,6 +129,7 @@
 import { getProductionPlanRealityAnalysis, putUpdateCause } from '@/api/product-plan-reality-analyse'
 import { setDate } from '@/utils/index'
 export default {
+  name: 'ProductPlanRealityAnalyse',
   data() {
     return {
       formLabelWidth: 'auto',

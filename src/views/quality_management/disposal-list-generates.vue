@@ -131,6 +131,7 @@ import { setDate } from '@/utils'
 import { unqualifiedTrains } from '@/api/base_w'
 import funMixin from './disposal-list-components/mixin'
 export default {
+  name: 'DisposalListGenerate',
   components: { classSelect, allProductNoSelect, excel },
   mixins: [funMixin],
   data() {

@@ -368,6 +368,7 @@ import testTypeSelect from '../components/test-type-select'
 import userMangeSelect from '@/components/select_w/userMangeSelect'
 import { examineMaterial, examineMaterialPost } from '@/api/material-check'
 export default {
+  name: 'MaterialQuickcheckValue',
   components: { page, testTypeSelect, userMangeSelect },
   data() {
     return {

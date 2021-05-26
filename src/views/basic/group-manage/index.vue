@@ -164,6 +164,7 @@ import transferLimit from '@/components/select_w/transferLimit'
 import { checkPermission } from '@/utils/index'
 
 export default {
+  name: 'GroupManage',
   components: { page, transferLimit },
   data() {
     return {

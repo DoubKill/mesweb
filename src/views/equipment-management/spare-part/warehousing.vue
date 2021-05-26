@@ -179,6 +179,7 @@ import allRecord from './all-record.vue'
 import { checkPermission } from '@/utils'
 
 export default {
+  name: 'SparePartWarehousing',
   components: { materialTypeSelect, allRecord, page, inventoryPosition, materialCodeSelect, warehouseSelect },
   data() {
     return {

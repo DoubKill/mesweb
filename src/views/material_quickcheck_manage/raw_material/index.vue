@@ -313,6 +313,7 @@ import { examineMaterial, materialUnqualifiedTypes, materialUnqualifiedProcess, 
 // import testTypeSelect from '../components/test-type-select'
 
 export default {
+  name: 'QuickcheckRawMaterial',
   components: { page },
   data() {
     return {

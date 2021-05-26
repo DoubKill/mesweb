@@ -232,6 +232,7 @@ import monthpassdetailChart from '@/components/MonthPassdeTailChart'
 import monthpassdetailChart2 from '@/components/MonthPassdeTailChart2'
 import dayjs from 'dayjs'
 export default {
+  name: 'MonthPassDetail',
   components: { monthpassdetailChart, monthpassdetailChart2 },
   data() {
     return {

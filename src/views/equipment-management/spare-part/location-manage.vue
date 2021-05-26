@@ -89,6 +89,7 @@ import materialTypeSelect from '@/components/select_w/sparePartsMTypeSelect'
 import { checkPermission } from '@/utils'
 
 export default {
+  name: 'SparePartLocationManage',
   components: { page, inventoryPosition, materialCodeSelect, materialTypeSelect },
   props: {
     isDialog: {

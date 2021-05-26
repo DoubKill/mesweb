@@ -248,6 +248,7 @@ import dayjs from 'dayjs'
 import * as echarts from 'echarts'
 
 export default {
+  name: 'MaterialDayPass',
   components: { },
   data() {
     return {

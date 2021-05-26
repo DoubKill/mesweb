@@ -187,6 +187,7 @@ import {
 } from '@/api/base_w'
 import { mapGetters } from 'vuex'
 export default {
+  name: 'ChangeShiftsManage',
   data() {
     return {
       formLabelWidth: commonVal.formLabelWidth,

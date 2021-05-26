@@ -88,6 +88,7 @@ import { getGroup, getUsersByGroup, putGroupAddUser } from '@/api/users-by-group
 import page from '@/components/page'
 import { mapGetters } from 'vuex'
 export default {
+  name: 'UsersByGroupManage',
   components: { page },
   data: function() {
     return {

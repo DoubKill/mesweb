@@ -94,6 +94,7 @@ import selectBatchingEquip from './components/select-batching-equip'
 import { class_arrange_url } from '@/api/display_static_fun'
 
 export default {
+  name: 'ActualComparison',
   components: { classSelect, selectModel, selectBatchingEquip },
   data() {
     return {

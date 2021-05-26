@@ -281,6 +281,7 @@ import processSelect from '@/components/ProcessSelect'
 import commonVal from '@/utils/common'
 import { mapGetters } from 'vuex'
 export default {
+  name: 'EquipBaseInfoManage',
   components: { pagination, processSelect },
   data() {
     return {

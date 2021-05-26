@@ -143,6 +143,7 @@ import { palletFeedTest, changelValidTime, qualityPalletFeedTest } from '@/api/q
 import { labelPrint } from '@/api/base_w'
 import { debounce, setDate } from '@/utils'
 export default {
+  name: 'CheckSynthesizeManage',
   components: { EquipSelect, ClassSelect, allProductNoSelect, Page, TestCard, DealSuggestionSelect },
   data() {
     return {

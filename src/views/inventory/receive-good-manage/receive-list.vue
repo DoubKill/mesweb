@@ -198,6 +198,7 @@ import MaterialCodeSelect from '@/components/materialCodeSelect'
 import deliverTypeSelect from '@/components/select_w/deliverTypeSelect'
 import destinationSelect from '@/components/select_w/destinationSelect'
 export default {
+  name: 'ReceiveGoodManageIndex',
   components: { page, MaterialCodeSelect, deliverTypeSelect, destinationSelect },
   props: {
     isDialog: {

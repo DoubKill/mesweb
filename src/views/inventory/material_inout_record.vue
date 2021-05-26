@@ -113,6 +113,7 @@ import page from '@/components/page'
 import warehouseSelect from '@/components/select_w/warehouseSelect'
 import { setDate, debounce } from '@/utils'
 export default {
+  name: 'MaterialInOutRecord',
   components: { page, warehouseSelect },
   data() {
     return {

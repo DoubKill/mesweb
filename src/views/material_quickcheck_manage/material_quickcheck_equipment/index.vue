@@ -160,6 +160,7 @@ import EquipTypeSelect from '../components/equip-type-select'
 import page from '@/components/page'
 import { materialEquipmentType, materialEquipment, materialExamineType } from '@/api/base_w_three'
 export default {
+  name: 'MaterialQuickcheckEquipment',
   components: { EquipTypeSelect, page },
   data() {
     return {

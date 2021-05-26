@@ -129,6 +129,7 @@ import page from '@/components/page'
 // import { errorRepeat } from '@/utils'
 
 export default {
+  name: 'SpareType',
   components: { page },
   data: function() {
     return {

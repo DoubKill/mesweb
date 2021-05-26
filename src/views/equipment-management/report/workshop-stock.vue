@@ -107,6 +107,7 @@ import { productDetails } from '@/api/base_w_three'
 import { debounce } from '@/utils'
 
 export default {
+  name: 'WorkshopStock',
   components: { StageSelect },
   data() {
     return {

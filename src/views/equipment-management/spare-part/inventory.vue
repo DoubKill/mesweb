@@ -151,6 +151,7 @@ import { spareInventory, spareStorage } from '@/api/base_w_two'
 import allRecord from './all-record.vue'
 
 export default {
+  name: 'SparePartInventory',
   components: { allRecord, page, inventoryPosition, materialCodeSelect },
   data() {
     return {

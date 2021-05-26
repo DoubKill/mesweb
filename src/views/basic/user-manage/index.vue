@@ -299,6 +299,7 @@ import { mapGetters } from 'vuex'
 // import transferLimit from '@/components/select_w/transferLimit'
 import transferRoles from '@/components/select_w/transferRoles'
 export default {
+  name: 'UserManage',
   components: { page, transferRoles },
   data() {
     var validatePass = (rule, value, callback) => {

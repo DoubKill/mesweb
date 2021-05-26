@@ -199,6 +199,7 @@ import classSelect from '@/components/ClassSelect'
 import { runtimeRecord } from '@/api/base_w_three'
 import { setDate, exportExcel } from '@/utils/index'
 export default {
+  name: 'ProduceWork',
   components: { classSelect },
   data() {
     return {

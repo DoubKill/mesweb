@@ -262,6 +262,7 @@ import dayjs from 'dayjs'
 import * as echarts from 'echarts'
 
 export default {
+  name: 'MaterialMonthPass',
   components: { },
   data() {
     return {
