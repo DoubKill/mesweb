@@ -413,7 +413,7 @@ export const asyncRoutes = [
     },
     {
       path: '/actual-comparison',
-      name: 'actual-comparison',
+      name: 'ActualComparison',
       component: () => import('@/views/recipe/actual-comparison'),
       meta: {
         title: '小料称量计划与实际对比',
@@ -424,10 +424,8 @@ export const asyncRoutes = [
     /** {
       path: '/small-material-weight',
       redirect: '/small-material-weight/material',
-      component: {
-        render: c => c('router-view')
-      },
-      name: 'small-material-weight',
+      component: () => import('@/views/recipe/small-material-weight/index'),
+      name: 'SmallMaterialWeight',
       meta: {
         title: '小料称量管理',
         icon: 'formula'
@@ -436,8 +434,9 @@ export const asyncRoutes = [
         {
           path: '/small-material-weight/material',
           component: () => import('@/views/recipe/small-material-weight/material'),
-          name: '/small-material-weight-material',
+          name: 'SmallMaterialWeightMaterial',
           meta: {
+            faName: 'SmallMaterialWeight',
             title: '物料管理',
             permissionName: ''
           }
@@ -445,8 +444,9 @@ export const asyncRoutes = [
         {
           path: '/small-material-weight/feed-bin',
           component: () => import('@/views/recipe/small-material-weight/feed-bin'),
-          name: '/small-material-weight-feedBin',
+          name: 'SmallMaterialWeightFeedBin',
           meta: {
+            faName: 'SmallMaterialWeight',
             title: '料仓管理',
             permissionName: ''
           }
@@ -454,8 +454,9 @@ export const asyncRoutes = [
         {
           path: '/small-material-weight/formula',
           component: () => import('@/views/recipe/small-material-weight/formula'),
-          name: '/small-material-weight-formula',
+          name: 'SmallMaterialWeightFormula',
           meta: {
+            faName: 'SmallMaterialWeight',
             title: '配方管理',
             permissionName: ''
           }
@@ -463,8 +464,9 @@ export const asyncRoutes = [
         {
           path: '/small-material-weight/plan',
           component: () => import('@/views/recipe/small-material-weight/plan'),
-          name: '/small-material-weight-plan',
+          name: 'SmallMaterialWeightPlan',
           meta: {
+            faName: 'SmallMaterialWeight',
             title: '计划管理',
             permissionName: ''
           }
@@ -472,8 +474,9 @@ export const asyncRoutes = [
         {
           path: '/small-material-weight/train-number',
           component: () => import('@/views/recipe/small-material-weight/train-number'),
-          name: '/small-material-weight-trainNumber',
+          name: 'SmallMaterialWeightTrainNumber',
           meta: {
+            faName: 'SmallMaterialWeight',
             title: '车次报表',
             permissionName: ''
           }
@@ -481,8 +484,9 @@ export const asyncRoutes = [
         {
           path: '/small-material-weight/consumption',
           component: () => import('@/views/recipe/small-material-weight/consumption'),
-          name: '/small-material-weight-consumption',
+          name: 'SmallMaterialWeightConsumption',
           meta: {
+            faName: 'SmallMaterialWeight',
             title: '物料消耗报表',
             permissionName: ''
           }
@@ -1179,7 +1183,7 @@ export const asyncRoutes = [
       {
         path: '/barcode-change',
         component: () => import('@/views/quality_management/material-info-mapping/barcode-change'),
-        name: 'barcode-change',
+        name: 'BarcodeChange',
         meta: {
           title: '条码变更',
           icon: 'quality',
@@ -1285,7 +1289,7 @@ export const asyncRoutes = [
       {
         path: '/material-quickcheck',
         redirect: '/material-quickcheck',
-        component: () => import('@/views/material_quickcheck_manage/material_quickcheck_equipment'),
+        component: () => import('@/views/material_quickcheck_manage/quickcheck-fa'),
         name: 'MaterialQuickcheck',
         meta: {
           title: '原材料快检管理',
@@ -1558,6 +1562,7 @@ export const asyncRoutes = [
             component: () => import('@/views/equipment-management/repair/location-definition'),
             name: 'LocationDefinition',
             meta: {
+              faName: 'EquipmentMaintenance',
               title: '设备部位定义',
               permissionName: 'equip_part'
             }
@@ -1600,6 +1605,7 @@ export const asyncRoutes = [
             component: () => import('@/views/equipment-management/repair/repair-apply'),
             name: 'RepairApply',
             meta: {
+              faName: 'EquipmentMaintenance',
               title: '设备维修申请页面',
               permissionName: 'equip_current_status'
             }
@@ -1609,6 +1615,7 @@ export const asyncRoutes = [
             component: () => import('@/views/equipment-management/repair/repair-manage'),
             name: 'RepairManage',
             meta: {
+              faName: 'EquipmentMaintenance',
               title: '设备维修单管理',
               permissionName: 'equip_maintenance_order'
             }
@@ -1618,6 +1625,7 @@ export const asyncRoutes = [
             component: () => import('@/views/equipment-management/repair/work-state'),
             name: 'WorkState',
             meta: {
+              faName: 'EquipmentMaintenance',
               title: '设备运行现况',
               permissionName: 'equip_status'
             }
@@ -1627,6 +1635,7 @@ export const asyncRoutes = [
             component: () => import('@/views/equipment-management/repair/repair-resume'),
             name: 'RepairResume',
             meta: {
+              faName: 'EquipmentMaintenance',
               title: '设备维修履历',
               permissionName: 'equip_maintenance_order_log'
             }
@@ -1636,6 +1645,7 @@ export const asyncRoutes = [
             component: () => import('@/views/equipment-management/repair/equipment-assets'),
             name: 'EquipmentAssets',
             meta: {
+              faName: 'EquipmentMaintenance',
               title: '设备资产',
               permissionName: 'property'
             }

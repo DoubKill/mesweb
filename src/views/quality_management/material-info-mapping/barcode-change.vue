@@ -129,6 +129,7 @@ import equipSelect from '@/components/select_w/equip'
 import page from '@/components/page'
 import { weightingPackageLog } from '@/api/base_w_two'
 export default {
+  name: 'BarcodeChange',
   components: { codeCard, equipSelect, page },
   data() {
     return {
