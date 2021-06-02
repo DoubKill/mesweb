@@ -354,5 +354,14 @@ export default {
   MaterialExamineResult: '/api/v1/quality/material-examine-result/',
   MaterialUnqualifiedTypes: '/api/v1/quality/material-unqualified-types/',
   MaterialUnqualifiedProcess: '/api/v1/quality/material-unqualified-process/',
-  MaterialExamineResultCurve: '/api/v1/quality/material-examine-result-curve/'
+  MaterialExamineResultCurve: '/api/v1/quality/material-examine-result-curve/',
+  // 小料原材料列表
+  XlMaterial: '/api/v1/terminal/xl-material/',
+  XlBin: '/api/v1/terminal/xl-bin/',
+  SaveBin: '/api/v1/terminal/xl-bin/save_bin/',
+  XlRecipe: '/api/v1/terminal/xl-recipe/',
+  XlRecipeMaterial: '/api/v1/terminal/xl-recipe-material/',
+  XlReportBasic: '/api/v1/terminal/xl-report-basic/',
+  XlReportWeight: '/api/v1/terminal/xl-report-weight/',
+  XlPlan: '/api/v1/terminal/xl-plan/'
 }

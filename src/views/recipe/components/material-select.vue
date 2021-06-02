@@ -1,9 +1,9 @@
 <template>
-  <!-- 配料设备 -->
+  <!-- 物料 -->
   <el-select
     :value="id"
     :clearable="!createdIs"
-    placeholder="请选择配料设备"
+    placeholder="请选择物料"
     :disabled="readIs"
     :multiple="multipleIs"
     @change="changeFun"
@@ -12,14 +12,14 @@
     <el-option
       v-for="item in equipOptions"
       :key="item.id"
-      :label="item.equip_no"
+      :label="item.name"
       :value="item.id"
     />
   </el-select>
 </template>
 
 <script>
-import { getEquip } from '@/api/banburying-performance-manage'
+import { xlMaterial } from '@/api/base_w_three'
 
 export default {
   model: {
@@ -54,6 +54,10 @@ export default {
     show: { // 输入框显示
       type: Boolean,
       default: false
+    },
+    equipNoVal: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -76,15 +80,11 @@ export default {
   },
   methods: {
     getEquip() {
-      getEquip({ all: 1, category_name: '称量设备' }).then(response => {
-        this.equipOptions = response.results
+      xlMaterial('get', null, { params: { equip_no: this.equipNoVal }}).then(response => {
+        this.equipOptions = response
 
         if (this.createdIs && this.equipOptions.length > 0 && this.isDefault) {
-          if (this.multipleIs) {
-            this.changeFun([this.equipOptions[0].id])
-          } else {
-            this.changeFun(this.equipOptions[0].id)
-          }
+          this.changeFun(this.equipOptions[0].id)
         }
       })
     },

@@ -113,6 +113,11 @@ const actions = {
       commit('SET_NAME', '')
       localStorage.clear()
 
+      Cookies.remove('zc-userId')
+      Cookies.remove('editionNo')
+      Cookies.remove('userId')
+      Cookies.remove('name')
+
       dispatch('tagsView/delAllViews', null, { root: true })
 
       resolve()
