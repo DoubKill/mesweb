@@ -45,9 +45,16 @@
         <el-input v-model="getParams.lot_no" clearable @input="changeSearch" />
       </el-form-item>
     </el-form>
+    <div style="width:100%;text-align:right;margin-top:-10px">
+      <el-switch
+        v-model="is_showed"
+        active-text="打印时显示区间"
+        @change="showedChange"
+      />
+    </div>
     <el-button
       v-permission="['deal_result','print']"
-      style="float:right;margin-bottom:10px;"
+      style="float:right;margin:10px 0;"
       @click="printingFun"
     >打印</el-button>
     <el-table
@@ -140,7 +147,7 @@ import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import DealSuggestionSelect from '@/components/DealSuggestionSelect'
 import TestCard from '@/components/TestCard'
 import { palletFeedTest, changelValidTime, qualityPalletFeedTest } from '@/api/quick-check-detail'
-import { labelPrint } from '@/api/base_w'
+import { labelPrint, showQualifiedRange } from '@/api/base_w'
 import { debounce, setDate } from '@/utils'
 export default {
   name: 'CheckSynthesizeManage',
@@ -167,11 +174,13 @@ export default {
         valid_time: [{ required: true, message: '该字段不能为空', trigger: 'blur' }]
       },
       testCardDialogVisible: false,
-      labelPrintList: []
+      labelPrintList: [],
+      is_showed: false
     }
   },
   created() {
     this.getPalletFeedTest()
+    this.getShowed()
   },
   methods: {
     setDate,
@@ -264,6 +273,21 @@ export default {
         })
         await labelPrint('post', null, { data: { lot_no: arr }})
         this.$message.success('打印任务已连接')
+      } catch (e) {
+        //
+      }
+    },
+    async getShowed() {
+      try {
+        const data = await showQualifiedRange('get')
+        this.is_showed = data.is_showed
+      } catch (e) {
+        //
+      }
+    },
+    async showedChange() {
+      try {
+        await showQualifiedRange('post', null, { data: { is_showed: this.is_showed }})
       } catch (e) {
         //
       }

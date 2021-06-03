@@ -99,6 +99,7 @@ export default {
   DataPointStandardErrors: '/api/v1/quality/data-point-standard-errors/',
   // 标记历史记录
   DataPointLabelHistory: '/api/v1/quality/data-point-label-history/',
+  IgnoredProductInfo: '/api/v1/quality/ignored-product-info/',
   // 试验方法列表
   TestSubTypes: '/api/v1/quality/test-methods/',
   TestTypeData: '/api/v1/quality/test-indicator-data-points/',
@@ -188,6 +189,7 @@ export default {
 
   // 批量打印
   LabelPrint: '/api/v1/quality/label-print/',
+  ShowQualifiedRange: '/api/v1/quality/show-qualified-range/',
   // 月快检合格率
   BatchMonthStatistics: '/api/v1/quality/batch-month-statistics/',
   // 日快检合格率

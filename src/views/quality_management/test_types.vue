@@ -108,6 +108,87 @@
         </el-table>
       </el-col>
     </el-row>
+
+    <div style="width: 60%">
+      <h3>pass指标失效胶种</h3>
+      <el-button
+        type="primary"
+        style="margin-bottom:4px;float:right"
+        @click="addInvalid"
+      >添加</el-button>
+    </div>
+
+    <el-table
+      :data="tableData1"
+      border
+      style="width: 60%"
+    >
+      <el-table-column
+        prop="id"
+        label="No"
+        width="50"
+      />
+      <el-table-column
+        prop="product_no"
+        label="胶料编码"
+      />
+      <el-table-column
+        prop="created_date"
+        label="添加时间"
+      />
+      <el-table-column
+        prop="created_username"
+        label="添加人"
+      />
+      <el-table-column
+        label="操作"
+      >
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="danger"
+            @click="delInvalid(scope.row)"
+          >删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <page
+      :old-page="false"
+      :total="total1"
+      :current-page="page1"
+      @currentChange="currentChange1"
+    />
+    <el-dialog
+      title="添加pass指标失效胶种"
+      :visible.sync="dialogInvalid"
+    >
+      <el-form>
+        <el-form-item
+          label="胶料编码"
+          prop="name"
+        >
+          <el-select v-model="product_nos" multiple filterable placeholder="请选择" @visible-change="visibleChange">
+            <el-option
+              v-for="item in option1"
+              :key="item.id"
+              :label="item.product_name"
+              :value="item.product_no"
+            />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button @click="dialogInvalid = false">取 消</el-button>
+        <el-button
+          type="primary"
+          @click="handleCreateInvalid"
+        >确 定</el-button>
+      </div>
+    </el-dialog>
+
     <el-dialog
       title="添加试验类型"
       :visible.sync="dialogCreateTestTypeVisible"
@@ -158,7 +239,6 @@
       <el-form ref="editTestTypeForm" :rules="rules" :model="testTypeForm">
         <el-form-item
           label="试验类型"
-
           prop="name"
         >
           <el-input
@@ -167,7 +247,6 @@
         </el-form-item>
         <el-form-item
           label="试验指标"
-
           prop="test_indicator"
         >
           <el-select
@@ -203,14 +282,12 @@
       <el-form ref="createDataPointsForm" :rules="rules" :model="dataPointsForm">
         <el-form-item
           label="数据点"
-
           prop="name"
         >
           <el-input v-model="dataPointsForm.name" />
         </el-form-item>
         <el-form-item
           label="单位"
-
           prop="unit"
         >
           <el-input v-model="dataPointsForm.unit" />
@@ -235,7 +312,6 @@
       <el-form ref="editDataPointsForm" :rules="rules" :model="dataPointsForm">
         <el-form-item
           label="数据点"
-
           prop="name"
         >
           <el-input
@@ -244,7 +320,6 @@
         </el-form-item>
         <el-form-item
           label="单位"
-
           prop="unit"
         >
           <el-input v-model="dataPointsForm.unit" />
@@ -360,7 +435,8 @@
 </template>
 
 <script>
-import { getTestTypes, putTestTypes, postTestTypes, deleteTestTypes, getTestIndicators, getDataPoints, putDataPoints, postDataPoints, deleteDataPoints, dataPointStandardErrors, dataPointLabelHistory } from '@/api/test_types'
+import { getTestTypes, putTestTypes, postTestTypes, deleteTestTypes, getTestIndicators, getDataPoints, putDataPoints, postDataPoints, deleteDataPoints, dataPointStandardErrors, dataPointLabelHistory, ignoredProductInfo } from '@/api/test_types'
+import { productInfosUrl } from '@/api/base_w'
 import page from '@/components/page'
 import { mapGetters } from 'vuex'
 export default {
@@ -370,6 +446,7 @@ export default {
     return {
       formLabelWidth: 'auto',
       tableData: [],
+      tableData1: [],
       test_indicator: '',
       testTypesCurrentRow: null,
       dialogCreateTestTypeVisible: false,
@@ -390,7 +467,6 @@ export default {
       dialogCreateDataPointsVisible: false,
       dialogEditDataPointsVisible: false,
       dataPointsForm: {
-
         name: '',
         unit: '',
         test_type: null
@@ -429,7 +505,13 @@ export default {
       },
       options: [],
       loadingPass: false,
-      btnPassLoading: false
+      btnPassLoading: false,
+      total1: 0,
+      page1: 1,
+      page_size1: 10,
+      dialogInvalid: false,
+      product_nos: [],
+      option1: []
     }
   },
   computed: {
@@ -439,6 +521,7 @@ export default {
     this.permissionObj = this.permission
     this.getTestTypesList()
     this.getOptionsList()
+    this.getInvalidList()
   },
   methods: {
     afterGetData: function() {
@@ -717,6 +800,62 @@ export default {
       }, 300)
       if (done) {
         done()
+      }
+    },
+    async getInvalidList() {
+      try {
+        const data = await ignoredProductInfo('get', null, { params: { page_size: this.page_size1, page: this.page1 }})
+        this.total1 = data.count
+        this.tableData1 = data.results
+      } catch (e) {
+        //
+      }
+    },
+    addInvalid() {
+      this.product_nos = []
+      this.dialogInvalid = true
+    },
+    delInvalid(row) {
+      this.$confirm('是否确定删除?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        try {
+          await ignoredProductInfo('delete', row.id || '')
+          this.getInvalidList()
+        } catch (e) {
+          //
+        }
+      })
+    },
+    currentChange1(page, pageSize) {
+      this.page1 = page
+      this.page_size1 = pageSize
+      this.getInvalidList()
+    },
+    visibleChange(bool) {
+      if (bool) {
+        const app = this
+        productInfosUrl('get', null, {
+          params: { all: 1 }
+        }).then(function(response) {
+          app.option1 = response.results
+        }).catch(function() {
+        })
+      }
+    },
+    async handleCreateInvalid() {
+      try {
+        if (this.product_nos.length === 0) {
+          this.$message.info('请选择胶料编码')
+          return
+        }
+        await ignoredProductInfo('post', null, { data: { product_nos: this.product_nos }})
+        this.dialogInvalid = false
+        this.getInvalidList()
+      } catch (e) {
+        //
       }
     }
   }

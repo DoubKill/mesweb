@@ -85,3 +85,11 @@ export function dataPointLabelHistory(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function ignoredProductInfo(method, id, data = {}) {
+  const obj = {
+    url: id ? API.IgnoredProductInfo + id + '/' : API.IgnoredProductInfo,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

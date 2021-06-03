@@ -439,6 +439,14 @@ export function labelPrint(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function showQualifiedRange(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ShowQualifiedRange + id + '/' : API.ShowQualifiedRange,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 export function unqualifiedTrains(method, id, data = {}) {
   const obj = {
     url: id ? API.UnqualifiedTrains + id + '/' : API.UnqualifiedTrains,
