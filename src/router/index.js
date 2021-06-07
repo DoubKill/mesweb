@@ -419,8 +419,8 @@ export const asyncRoutes = [
         icon: 'formula',
         permissionName: 'batching_reality'
       }
-    }
-    /** {
+    },
+    {
       path: '/small-material-weight',
       redirect: '/small-material-weight/material',
       component: () => import('@/views/recipe/small-material-weight/index'),
@@ -491,7 +491,7 @@ export const asyncRoutes = [
           }
         }
       ]
-    }**/
+    }
     ]
   },
   {
