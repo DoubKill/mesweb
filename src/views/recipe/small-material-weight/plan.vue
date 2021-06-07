@@ -147,7 +147,6 @@ import classSelect from '@/components/ClassSelect'
 import recipeSelect from '../components/recipe-select'
 import { xlPlan } from '@/api/base_w_three'
 
-// import request from '@/utils/request-zc'
 export default {
   name: 'SmallMaterialWeightPlan',
   components: { selectBatchingEquip, classSelect, recipeSelect },
@@ -185,22 +184,7 @@ export default {
     }
   },
   created() {
-    // request({
-    //   url: '/MESApi/UpdateTestingResult',
-    //   method: 'post',
-    //   data: {
-    //     'TestingType': 2,
-    //     'SpotCheckDetailList': [{
-    //       'BatchNo': 'DJ301B-20210403',
-    //       'MaterialCode': 'DJ301B',
-    //       'CheckResult': 2
-    //     }]
-    //   }
-    // }).then(data => {
-    //   console.log(data, '7777')
-    // }).catch((e) => {
-    //   console.log(e, 'zc获取失败')
-    // })
+
   },
   methods: {
     async getList() {

@@ -359,7 +359,6 @@ export const asyncRoutes = [
     meta: {
       title: '生产计划管理',
       icon: 'productionPlanManagement'
-    // permissionName: 'plan'
     },
     children: [{
       path: '/rubber/schedule/daily/plan',
@@ -858,6 +857,37 @@ export const asyncRoutes = [
         }
       },
       {
+        path: '/material-delivery-manage',
+        redirect: '/material-delivery-manage/task',
+        component: () => import('@/views/inventory/material-delivery-manage/a-index.vue'),
+        name: 'MaterialDelivery',
+        meta: {
+          title: '原材料出库管理',
+          icon: 'stock'
+        },
+        children: [
+          {
+            path: '/material-delivery-manage/task',
+            component: () => import('@/views/inventory/material-delivery-manage/task.vue'),
+            name: 'DeliveryTask',
+            meta: {
+              faName: 'MaterialDelivery',
+              title: '出库任务',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/receive-good-manage/bill',
+            component: () => import('@/views/inventory/material-delivery-manage/bill.vue'),
+            name: 'DeliveryBill',
+            meta: {
+              title: '出库单据',
+              permissionName: ''
+            }
+          }
+        ]
+      },
+      {
         path: '/raw-material-manage',
         component: () => import('@/views/inventory/raw-material-manage.vue'),
         name: 'RawMaterial',
@@ -1190,16 +1220,16 @@ export const asyncRoutes = [
           permissionName: 'bar_code'
         }
       },
-      {
-        path: '/result-entry',
-        component: () => import('@/views/quality_management/result-entry'),
-        name: 'ResultEntry',
-        meta: {
-          title: '原材料临时快检结果录入',
-          icon: 'quality',
-          permissionName: 'material_temp_input'
-        }
-      },
+      // {
+      //   path: '/result-entry',
+      //   component: () => import('@/views/quality_management/result-entry'),
+      //   name: 'ResultEntry',
+      //   meta: {
+      //     title: '原材料临时快检结果录入',
+      //     icon: 'quality',
+      //     permissionName: 'material_temp_input'
+      //   }
+      // },
       /** {
         path: '/material-quality',
         redirect: '/material-quality',

@@ -353,6 +353,7 @@ export default {
   MaterialUnit: '/api/v1/quality/material-unit/',
   MaterialEquipmentType: '/api/v1/quality/material-equip-types/',
   MaterialEquipment: '/api/v1/quality/material-equips/',
+  WmsMaterialSearch: '/api/v1/quality/wms-material-search/',
   MaterialExamineResult: '/api/v1/quality/material-examine-result/',
   MaterialUnqualifiedTypes: '/api/v1/quality/material-unqualified-types/',
   MaterialUnqualifiedProcess: '/api/v1/quality/material-unqualified-process/',
@@ -365,5 +366,8 @@ export default {
   XlRecipeMaterial: '/api/v1/terminal/xl-recipe-material/',
   XlReportBasic: '/api/v1/terminal/xl-report-basic/',
   XlReportWeight: '/api/v1/terminal/xl-report-weight/',
-  XlPlan: '/api/v1/terminal/xl-plan/'
+  XlPlan: '/api/v1/terminal/xl-plan/',
+  WmsStock: '/api/v1/inventory/wms-stock/',
+  WmsWeightStock: '/api/v1/inventory/wms-weight-stock/',
+  WmsEntrance: '/api/v1/inventory/wms-entrance/'
 }

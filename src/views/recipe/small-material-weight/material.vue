@@ -180,6 +180,7 @@ export default {
         code: '',
         use_not: 0
       }
+      this.$refs.ruleForm.resetFields()
       if (done) {
         done()
       }
@@ -188,6 +189,7 @@ export default {
       this.$refs.ruleForm.validate(async(valid) => {
         if (valid) {
           try {
+            this.ruleForm.use_not = this.ruleForm.use_not ? 1 : 0
             const ruleForm = JSON.parse(JSON.stringify(this.ruleForm))
             ruleForm.equip_no = this.currentSearch.equip_no
             const _api = ruleForm.id ? 'patch' : 'post'

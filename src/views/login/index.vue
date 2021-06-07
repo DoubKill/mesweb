@@ -73,8 +73,8 @@
 <script>
 // import { validUsername } from '@/utils/validate'
 
-// import request from '@/utils/request-zc'
-// import Cookies from 'js-cookie'
+import request from '@/utils/request-zc'
+import Cookies from 'js-cookie'
 export default {
   name: 'Login',
   data() {
@@ -134,17 +134,17 @@ export default {
             this.loading = false
 
             // 登录中策
-            // request({
-            //   url: '/user/Login',
-            //   method: 'POST',
-            //   data: { loginId: 'guozi',
-            //     password: '123456' }}
-            // ).then(data => {
-            //   const userId = data.datas.userId
-            //   Cookies.set('zc-userId', userId)
-            // }).catch((e) => {
-            //   console.log(e, 'zc登录失败')
-            // })
+            request({
+              url: '/user/Login',
+              method: 'POST',
+              data: { loginId: 'guozi',
+                password: '123456' }}
+            ).then(data => {
+              const userId = data.datas.userId
+              Cookies.set('zc-userId', userId)
+            }).catch((e) => {
+              console.log(e, 'zc登录失败')
+            })
           }).catch(() => {
             this.loading = false
           })

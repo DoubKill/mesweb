@@ -283,6 +283,14 @@ export function materialEquipment(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function wmsMaterialSearch(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WmsMaterialSearch + id + '/' : API.WmsMaterialSearch,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 export function materialExamineResult(method, id, data = {}) {
   const obj = {
     url: id ? API.MaterialExamineResult + id + '/' : API.MaterialExamineResult,
@@ -350,6 +358,30 @@ export function xlReportWeight(method, id, data = {}) {
 export function xlPlan(method, id, data = {}) {
   const obj = {
     url: id ? API.XlPlan + id + '/' : API.XlPlan,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function wmsStock(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WmsStock + id + '/' : API.WmsStock,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function wmsWeightStock(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WmsWeightStock + id + '/' : API.WmsWeightStock,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function wmsEntrance(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WmsEntrance + id + '/' : API.WmsEntrance,
     method: method
   }
   Object.assign(obj, data)
