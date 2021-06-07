@@ -68,17 +68,11 @@
         }"
       />
       <el-table-column
-        prop="taskNumber"
-        label="创建人"
-        min-width="20"
-      />
-      <el-table-column
         prop="createUserId"
         label="创建人"
         min-width="20"
       />
       <el-table-column
-        prop="taskNumber"
         label="操作"
         min-width="20"
       >
