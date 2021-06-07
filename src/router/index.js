@@ -437,7 +437,7 @@ export const asyncRoutes = [
           meta: {
             faName: 'SmallMaterialWeight',
             title: '物料管理',
-            permissionName: ''
+            permissionName: 'xl_material'
           }
         },
         {
@@ -447,7 +447,7 @@ export const asyncRoutes = [
           meta: {
             faName: 'SmallMaterialWeight',
             title: '料仓管理',
-            permissionName: ''
+            permissionName: 'xl_bin'
           }
         },
         {
@@ -457,7 +457,7 @@ export const asyncRoutes = [
           meta: {
             faName: 'SmallMaterialWeight',
             title: '配方管理',
-            permissionName: ''
+            permissionName: 'xl_recipe'
           }
         },
         {
@@ -467,7 +467,7 @@ export const asyncRoutes = [
           meta: {
             faName: 'SmallMaterialWeight',
             title: '计划管理',
-            permissionName: ''
+            permissionName: 'xl_plan'
           }
         },
         {
@@ -477,7 +477,7 @@ export const asyncRoutes = [
           meta: {
             faName: 'SmallMaterialWeight',
             title: '车次报表',
-            permissionName: ''
+            permissionName: 'xl_report_basic'
           }
         },
         {
@@ -487,7 +487,7 @@ export const asyncRoutes = [
           meta: {
             faName: 'SmallMaterialWeight',
             title: '物料消耗报表',
-            permissionName: ''
+            permissionName: 'xl_report_weight'
           }
         }
       ]
@@ -873,7 +873,7 @@ export const asyncRoutes = [
             meta: {
               faName: 'MaterialDelivery',
               title: '出库任务',
-              permissionName: ''
+              permissionName: 'material_outbound_task'
             }
           },
           {
@@ -882,7 +882,7 @@ export const asyncRoutes = [
             name: 'DeliveryBill',
             meta: {
               title: '出库单据',
-              permissionName: ''
+              permissionName: 'material_outbound_record'
             }
           }
         ]

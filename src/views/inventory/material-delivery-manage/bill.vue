@@ -16,10 +16,12 @@
         </el-select>
       </el-form-item>
       <el-button
+        v-permission="['material_outbound_record', 'space']"
         type="primary"
         @click="showLocationDialog"
       >指定库位出库</el-button>
       <el-button
+        v-permission="['material_outbound_record', 'weight']"
         type="primary"
         @click="showWeightDialog"
       >指定重量出库</el-button>

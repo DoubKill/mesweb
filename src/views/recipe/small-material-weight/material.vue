@@ -23,7 +23,7 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="showAdd(item,index)">新增</el-button>
+          <el-button v-permission="['xl_material', 'add']" type="primary" @click="showAdd(item,index)">新增</el-button>
         </el-form-item>
       </el-form>
       <el-table

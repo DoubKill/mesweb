@@ -28,12 +28,12 @@
           <el-input v-model="item.search.setno" clearable placeholder="设定车次" @input="debounceListChange(item,index)" />
         </el-form-item> -->
           <el-form-item>
-            <el-button type="primary" @click="addFun(item,index,true)">新增计划</el-button>
-            <el-button type="primary" :disabled="item.currentRow&&item.currentRow.state!=='等待'" @click="delFun(item,index,'删除')">删除计划</el-button>
-            <el-button type="primary" :disabled="item.currentRow&&item.currentRow.state!=='等待'" @click="delFun(item,index,'下达',1)">下达计划</el-button>
-            <el-button type="primary" :disabled="item.currentRow&&item.currentRow.state!=='运行'" @click="delFun(item,index,'重传',2)">计划重传</el-button>
-            <el-button type="primary" :disabled="item.currentRow&&item.currentRow.state!=='运行'" @click="addFun(item,index,false)">修改车次</el-button>
-            <el-button type="primary" :disabled="item.currentRow&&item.currentRow.state!=='运行'" @click="delFun(item,index,'停止',4)">计划停止</el-button>
+            <el-button v-permission="['xl_plan', 'add']" type="primary" @click="addFun(item,index,true)">新增计划</el-button>
+            <el-button v-permission="['xl_plan', 'delete']" type="primary" :disabled="item.currentRow&&item.currentRow.state!=='等待'" @click="delFun(item,index,'删除')">删除计划</el-button>
+            <el-button v-permission="['xl_plan', 'issue']" type="primary" :disabled="item.currentRow&&item.currentRow.state!=='等待'" @click="delFun(item,index,'下达',1)">下达计划</el-button>
+            <el-button v-permission="['xl_plan', 'reload']" type="primary" :disabled="item.currentRow&&item.currentRow.state!=='运行'" @click="delFun(item,index,'重传',2)">计划重传</el-button>
+            <el-button v-permission="['xl_plan', 'change']" type="primary" :disabled="item.currentRow&&item.currentRow.state!=='运行'" @click="addFun(item,index,false)">修改车次</el-button>
+            <el-button v-permission="['xl_plan', 'stop']" type="primary" :disabled="item.currentRow&&item.currentRow.state!=='运行'" @click="delFun(item,index,'停止',4)">计划停止</el-button>
             <el-button type="primary" @click="debounceList(item,index)">刷新</el-button>
           </el-form-item>
         </el-form>

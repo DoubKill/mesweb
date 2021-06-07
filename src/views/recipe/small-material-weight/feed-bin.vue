@@ -6,7 +6,12 @@
     <div v-for="(item,index) in allTable" :key="index" class="cardBoxMy">
       <h3 style="margin:10px 0 0 10px;float:left;">{{ item.equip_no }}料仓物料维护</h3>
       <el-button v-if="!item.btnState" style="float:right" type="primary" :loading="btnLoading" @click="showAdd(item,index)">保存</el-button>
-      <el-button v-else style="float:right" type="primary" @click="item.btnState=!item.btnState">编辑</el-button>
+      <el-button
+        v-if="item.btnState&&checkPermission(['xl_bin','change'])"
+        style="float:right"
+        type="primary"
+        @click="item.btnState=!item.btnState"
+      >编辑</el-button>
       <el-row style="clear:both">
         <el-col :span="8">
           <ul>
@@ -64,6 +69,7 @@
 <script>
 import selectBatchingEquip from '../components/select-batching-equip'
 import { xlBin, xlMaterial, saveBin } from '@/api/base_w_three'
+import { checkPermission } from '@/utils'
 export default {
   name: 'SmallMaterialWeightFeedBin',
   components: { selectBatchingEquip },
@@ -80,6 +86,7 @@ export default {
     }
   },
   methods: {
+    checkPermission,
     async getList() {
       try {
         const data = await xlBin('get', null, { params: this.currentSearch })
@@ -155,7 +162,6 @@ export default {
       } catch (e) {
         this.btnLoading = false
       }
-      console.log(item, 'item')
     },
     showEdit() {}
   }
