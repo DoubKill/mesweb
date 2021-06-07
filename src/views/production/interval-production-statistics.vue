@@ -118,6 +118,7 @@ import { setDate } from '@/utils/index'
 // import { class_arrange_url } from '@/api/display_static_fun'
 import { intervalOutputStatistics, globalCodesUrl } from '@/api/base_w'
 export default {
+  name: 'IntervalProductionStatistics',
   data() {
     this.chartSettings = {
       yAxisName: ['生产车']

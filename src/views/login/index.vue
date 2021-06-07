@@ -73,6 +73,8 @@
 <script>
 // import { validUsername } from '@/utils/validate'
 
+import request from '@/utils/request-zc'
+import Cookies from 'js-cookie'
 export default {
   name: 'Login',
   data() {
@@ -130,8 +132,20 @@ export default {
           this.$store.dispatch('user/login', this.loginForm).then(() => {
             this.$router.push({ path: '/' })
             this.loading = false
-          // eslint-disable-next-line handle-callback-err
-          }).catch((error) => {
+
+            // 登录中策
+            request({
+              url: '/user/Login',
+              method: 'POST',
+              data: { loginId: 'guozi',
+                password: '123456' }}
+            ).then(data => {
+              const userId = data.datas.userId
+              Cookies.set('zc-userId', userId)
+            }).catch((e) => {
+              console.log(e, 'zc登录失败')
+            })
+          }).catch(() => {
             this.loading = false
           })
         } else {
@@ -152,9 +166,9 @@ $light_gray:#fff;
 $cursor: #fff;
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
-  .login-container .el-input input {
+  // .login-container .el-input input {
     // color: $cursor;
-  }
+  // }
 }
 
 /* reset element-ui css */
@@ -164,7 +178,7 @@ $cursor: #fff;
     height: 47px;
     width: 85%;
 
-    input {
+    // input {
       // background: transparent;
       // border: 0px;
       // -webkit-appearance: none;
@@ -174,19 +188,19 @@ $cursor: #fff;
       // height: 47px;
       // caret-color: $cursor;
 
-      &:-webkit-autofill {
+      // &:-webkit-autofill {
         // box-shadow: 0 0 0px 1000px $bg inset !important;
         // -webkit-text-fill-color: $cursor !important;
-      }
-    }
+      // }
+    // }
   }
 
-  .el-form-item {
+  // .el-form-item {
     // border: 1px solid rgba(255, 255, 255, 0.1);
     // background: rgba(0, 0, 0, 0.1);
     // border-radius: 5px;
     // color: #454545;
-  }
+  // }
 }
 </style>
 

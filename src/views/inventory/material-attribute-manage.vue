@@ -200,6 +200,7 @@ import materielTypeSelect from '@/components/select_w/materielTypeSelect'
 import page from '@/components/page'
 import { mapGetters } from 'vuex'
 export default {
+  name: 'MaterialAttributeManage',
   components: { page, materielTypeSelect },
   data() {
     return {

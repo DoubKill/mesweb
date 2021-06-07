@@ -168,6 +168,7 @@ import page from '@/components/page'
 import { getGlobalCodes } from '@/api/global-codes-manage'
 
 export default {
+  name: 'LocationSite',
   components: { inventoryPosition, page },
   data: function() {
     return {

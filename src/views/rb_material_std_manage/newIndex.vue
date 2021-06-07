@@ -241,6 +241,7 @@ import createdRubberMaterial from './components/createdRubberMaterial'
 import page from '@/components/page'
 
 export default {
+  name: 'RbMaterialStdManage',
   components: { page, StageIdSelect, createdRubberMaterial, SITESelect },
   data() {
     return {

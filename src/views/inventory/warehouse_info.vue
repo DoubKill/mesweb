@@ -171,6 +171,7 @@ import MaterialTypeSelect from '@/components/MaterialTypeSelect'
 import { warehouseInfo, editWarehouseInfo, editStationInfo, updateSIUseFlag, stationInfo, updateSUseFlag, warehouseMaterialTypes, editWarehouseMaterialType, updateMUseFlag } from '@/api/warehouse'
 
 export default {
+  name: 'WarehouseInfo',
   components: { WareHouseNameSelect, StationTypeSelect, MaterialTypeSelect, Page },
   data() {
     return {

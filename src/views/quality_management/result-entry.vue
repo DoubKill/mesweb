@@ -141,6 +141,7 @@ import { debounce } from '@/utils'
 import testCardResultEntry from './components/testCardResultEntry'
 
 export default {
+  name: 'ResultEntry',
   components: { Page, testCardResultEntry, materielTypeSelect, materialCodeSelect },
   data() {
     return {

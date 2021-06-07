@@ -185,6 +185,7 @@ import { zcMaterials } from '@/api/base_w_two'
 import { globalCodesUrl } from '@/api/base_w'
 import page from '@/components/page'
 export default {
+  name: 'MaterialInfoMapping',
   components: { page, materialCodeSelect, materielTypeSelect },
   data() {
     return {

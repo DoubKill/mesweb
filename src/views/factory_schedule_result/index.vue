@@ -84,6 +84,7 @@ import { planScheduleUrl, globalCodesUrl } from '@/api/base_w'
 import pagination from '@/components/page'
 import { setDate } from '@/utils/index'
 export default {
+  name: 'FactoryScheduleManage',
   components: { pagination },
   data() {
     return {

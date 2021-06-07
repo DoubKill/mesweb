@@ -128,6 +128,7 @@
 import { departmentManage } from '@/api/department-manage'
 import page from '@/components/page'
 export default {
+  name: 'DepartmenManage',
   components: { page },
   data() {
     return {

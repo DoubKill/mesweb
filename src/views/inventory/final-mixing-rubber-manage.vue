@@ -152,6 +152,7 @@ import { setDate } from '@/utils/index'
 import stationInfoWarehouse from '@/components/select_w/warehouseSelectPosition'
 
 export default {
+  name: 'FinalMixingRubber',
   components: { page, stationInfoWarehouse, GenerateAssignOutbound, GenerateNormalOutbound },
   data() {
     return {

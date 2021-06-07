@@ -274,6 +274,7 @@ import { category_manage_url, equip_type_url, process_global_url } from '@/api/e
 import { mapGetters } from 'vuex'
 
 export default {
+  name: 'CategoryManage',
   components: { page },
   data: function() {
     return {

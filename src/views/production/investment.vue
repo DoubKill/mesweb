@@ -197,6 +197,7 @@ import Page from '@/components/page'
 import { setDate } from '@/utils'
 
 export default {
+  name: 'InternalInvestment',
   components: { Page, equipSelect, classSelect },
   data() {
     return {

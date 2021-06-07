@@ -168,6 +168,7 @@ import { getGlobalCodes } from '@/api/global-codes-manage'
 // import { errorRepeat } from '@/utils'
 
 export default {
+  name: 'SpareLocation',
   components: { inventoryPosition, page },
   data: function() {
     return {

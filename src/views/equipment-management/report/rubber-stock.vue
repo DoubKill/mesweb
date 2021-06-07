@@ -87,6 +87,7 @@ import { productStationStatics } from '@/api/base_w_three'
 import { productInfosUrl } from '@/api/base_w'
 import StageSelect from '@/components/StageSelect'
 export default {
+  name: 'RubberStock',
   components: { StageSelect },
   data() {
     return {

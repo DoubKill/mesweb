@@ -30,30 +30,31 @@ import Layout from '@/layout'
  * a base page that does not have permission requirements
  * all roles can be accessed
  */
-export const constantRoutes = [{
-  path: '/login',
-  component: () => import('@/views/login/index'),
-  hidden: true
-},
-{
-  path: '/404',
-  component: () => import('@/views/404'),
-  hidden: true
-},
-{
-  path: '/redirect',
-  component: Layout,
-  hidden: true,
-  children: [
-    {
-      path: '/redirect/:path(.*)',
-      component: () => import('@/views/redirect/index')
-    }
-  ]
-},
-{
-  path: '/',
-  redirect: '/home'
+export const constantRoutes = [
+  {
+    path: '/redirect',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '/redirect/:path(.*)',
+        component: () => import('@/views/redirect/index')
+      }
+    ]
+  },
+  {
+    path: '/login',
+    component: () => import('@/views/login/index'),
+    hidden: true
+  },
+  {
+    path: '/404',
+    component: () => import('@/views/404'),
+    hidden: true
+  },
+  {
+    path: '/',
+    redirect: '/home'
   // component: Layout,
   // meta: {
   //   title: '首页',
@@ -85,31 +86,31 @@ export const constantRoutes = [{
   //   }
   // }
   // ]
-},
-{
-  path: '/phone/fault-day-statistics',
-  component: () => import('@/views/quality_management/phone/fault-day-statistics'),
-  hidden: true,
-  meta: {
-    isPhone: true
+  },
+  {
+    path: '/phone/fault-day-statistics',
+    component: () => import('@/views/quality_management/phone/fault-day-statistics'),
+    hidden: true,
+    meta: {
+      isPhone: true
+    }
+  },
+  {
+    path: '/phone/fault-week-statistics',
+    component: () => import('@/views/quality_management/phone/fault-week-statistics'),
+    hidden: true,
+    meta: {
+      isPhone: true
+    }
+  },
+  {
+    path: '/phone/fault-month-statistics',
+    component: () => import('@/views/quality_management/phone/fault-month-statistics'),
+    hidden: true,
+    meta: {
+      isPhone: true
+    }
   }
-},
-{
-  path: '/phone/fault-week-statistics',
-  component: () => import('@/views/quality_management/phone/fault-week-statistics'),
-  hidden: true,
-  meta: {
-    isPhone: true
-  }
-},
-{
-  path: '/phone/fault-month-statistics',
-  component: () => import('@/views/quality_management/phone/fault-month-statistics'),
-  hidden: true,
-  meta: {
-    isPhone: true
-  }
-}
 ]
 
 // 存在权限的路由
@@ -146,7 +147,7 @@ export const asyncRoutes = [
     },
     children: [{
       path: '/global/codes/manage',
-      name: 'global-codes-manage',
+      name: 'GlobalCodesManage',
       component: () => import('@/views/basic/global-codes-manage/index'),
       meta: {
         title: '公用代码管理',
@@ -156,7 +157,7 @@ export const asyncRoutes = [
     },
     {
       path: '/group/manage',
-      name: 'group-manage',
+      name: 'GroupManage',
       component: () => import('@/views/basic/group-manage/index'),
       meta: {
         title: '角色管理',
@@ -166,7 +167,7 @@ export const asyncRoutes = [
     },
     {
       path: '/group/department',
-      name: 'departmen-manage',
+      name: 'DepartmenManage',
       component: () => import('@/views/basic/department-manage/index'),
       meta: {
         title: '部门管理',
@@ -176,7 +177,7 @@ export const asyncRoutes = [
     },
     {
       path: '/user/manage',
-      name: 'user-manage',
+      name: 'UserManage',
       component: () => import('@/views/basic/user-manage/index'),
       meta: {
         title: '用户管理',
@@ -186,7 +187,7 @@ export const asyncRoutes = [
     },
     {
       path: '/users/by/group/manage',
-      name: 'users-by-group-manage',
+      name: 'UsersByGroupManage',
       component: () => import('@/views/basic/users-by-group-manage/index'),
       meta: {
         title: '角色别用户管理',
@@ -196,7 +197,7 @@ export const asyncRoutes = [
     },
     {
       path: '/equip/base/info/manage',
-      name: 'equip-base-info-manage',
+      name: 'EquipBaseInfoManage',
       component: () => import('@/views/change_shifts_manage/index'),
       meta: {
         title: '倒班时间管理',
@@ -206,7 +207,7 @@ export const asyncRoutes = [
     },
     {
       path: '/change/shifts/manage',
-      name: 'change-shifts-manage',
+      name: 'ChangeShiftsManage',
       component: () => import('@/views/factory_schedule_manage/index'),
       meta: {
         title: '工厂排班管理',
@@ -216,7 +217,7 @@ export const asyncRoutes = [
     },
     {
       path: '/factory/schedule/manage',
-      name: 'factory-schedule-manage',
+      name: 'FactoryScheduleManage',
       component: () => import('@/views/factory_schedule_result/index'),
       meta: {
         title: '工厂排班结果',
@@ -227,7 +228,7 @@ export const asyncRoutes = [
     {
       path: '/location-site',
       component: () => import('@/views/basic/location-site'),
-      name: 'location-site',
+      name: 'LocationSite',
       meta: {
         title: '位置点管理',
         icon: 'dashboard',
@@ -237,28 +238,29 @@ export const asyncRoutes = [
     {
       path: '/factory',
       redirect: '/factory/category/manage',
-      component: {
-        render: c => c('router-view')
-      },
-      name: 'factory',
+      component: () => import('@/views/category_manage/category-fa'),
+      // component: {render: c => c('router-view')},
+      name: 'Factory',
       meta: {
         title: '设备管理',
         icon: 'dashboard'
       },
       children: [{
         path: '/factory/category/manage',
-        name: 'category-manage',
+        name: 'CategoryManage',
         component: () => import('@/views/category_manage/index'),
         meta: {
+          faName: 'Factory',
           title: '设备种类',
           permissionName: 'equipcategoryattribute'
         }
       },
       {
         path: '/factory/equip/manage',
-        name: 'equip-manage',
+        name: 'EquipManage',
         component: () => import('@/views/equip_manage/index'),
         meta: {
+          faName: 'Factory',
           title: '设备基础信息',
           permissionName: 'equip'
         }
@@ -279,7 +281,7 @@ export const asyncRoutes = [
     },
     children: [{
       path: '/material/base/info/manage',
-      name: 'material-base-info-manage',
+      name: 'MaterialBaseInfoManage',
       component: () => import('@/views/material_base_info_manage/index'),
       meta: {
         title: '原材料基础信息',
@@ -290,7 +292,7 @@ export const asyncRoutes = [
     {
       path: '/material-info-mapping',
       component: () => import('@/views/quality_management/material-info-mapping/material-info-mapping'),
-      name: 'material-info-mapping',
+      name: 'MaterialInfoMapping',
       meta: {
         title: 'mes与子系统物料信息映射',
         icon: 'formula',
@@ -299,7 +301,7 @@ export const asyncRoutes = [
     },
     {
       path: '/rb/recipe/std/manage',
-      name: 'rb-recipe-std-manage',
+      name: 'RbRecipeStdManage',
       component: () => import('@/views/rubber_recipe_standard_manage/index'),
       meta: {
         title: '胶料代码管理',
@@ -309,7 +311,7 @@ export const asyncRoutes = [
     },
     {
       path: '/rb/material/std/manage',
-      name: 'rb-material-std-manage',
+      name: 'RbMaterialStdManage',
       component: () => import('@/views/rb_material_std_manage/newIndex'),
       meta: {
         title: '胶料配方标准管理',
@@ -329,7 +331,7 @@ export const asyncRoutes = [
     // },
     {
       path: '/rb/material-tank/manage',
-      name: 'material-tank',
+      name: 'MaterialTank',
       component: () => import('@/views/recipe/tankInformation/list'),
       meta: {
         title: '称量系统料仓信息管理',
@@ -357,11 +359,10 @@ export const asyncRoutes = [
     meta: {
       title: '生产计划管理',
       icon: 'productionPlanManagement'
-    // permissionName: 'plan'
     },
     children: [{
       path: '/rubber/schedule/daily/plan',
-      name: 'rubber-schedule-daily-plan',
+      name: 'RubberScheduleDailyPlan',
       component: () => import('@/views/rubber_schedule_daily_plan/index'),
       meta: {
         title: '排产胶料日计划',
@@ -371,7 +372,7 @@ export const asyncRoutes = [
     },
     {
       path: '/rubber/schedule/daily/plan/release',
-      name: 'rubber-schedule-daily-plan-release',
+      name: 'RubberScheduleDailyPlanRelease',
       component: () => import('@/views/rubber_schedule_daily_plan/release'),
       meta: {
         title: '排产胶料日计划下达',
@@ -381,7 +382,7 @@ export const asyncRoutes = [
     },
     {
       path: '/material/requisitions/plan',
-      name: 'material-requisitions-plan',
+      name: 'MaterialRequisitionsPlan',
       component: () => import('@/views/plan/material-requisitions-plan/index'),
       meta: {
         title: '排产领料计划',
@@ -391,7 +392,7 @@ export const asyncRoutes = [
     },
     {
       path: '/material/quantity/demanded',
-      name: 'material-quantity-demanded',
+      name: 'MaterialQuantityDemanded',
       component: () => import('@/views/material_quantity_demanded/index'),
       meta: {
         title: '物料需求量',
@@ -401,7 +402,7 @@ export const asyncRoutes = [
     },
     {
       path: '/rubber-plan-release',
-      name: 'rubber-plan-release',
+      name: 'RubberPlanRelease',
       component: () => import('@/views/recipe/rubber-plan-release'),
       meta: {
         title: '小料计划下达',
@@ -411,7 +412,7 @@ export const asyncRoutes = [
     },
     {
       path: '/actual-comparison',
-      name: 'actual-comparison',
+      name: 'ActualComparison',
       component: () => import('@/views/recipe/actual-comparison'),
       meta: {
         title: '小料称量计划与实际对比',
@@ -419,6 +420,78 @@ export const asyncRoutes = [
         permissionName: 'batching_reality'
       }
     }
+    /** {
+      path: '/small-material-weight',
+      redirect: '/small-material-weight/material',
+      component: () => import('@/views/recipe/small-material-weight/index'),
+      name: 'SmallMaterialWeight',
+      meta: {
+        title: '小料称量管理',
+        icon: 'formula'
+      },
+      children: [
+        {
+          path: '/small-material-weight/material',
+          component: () => import('@/views/recipe/small-material-weight/material'),
+          name: 'SmallMaterialWeightMaterial',
+          meta: {
+            faName: 'SmallMaterialWeight',
+            title: '物料管理',
+            permissionName: 'xl_material'
+          }
+        },
+        {
+          path: '/small-material-weight/feed-bin',
+          component: () => import('@/views/recipe/small-material-weight/feed-bin'),
+          name: 'SmallMaterialWeightFeedBin',
+          meta: {
+            faName: 'SmallMaterialWeight',
+            title: '料仓管理',
+            permissionName: 'xl_bin'
+          }
+        },
+        {
+          path: '/small-material-weight/formula',
+          component: () => import('@/views/recipe/small-material-weight/formula'),
+          name: 'SmallMaterialWeightFormula',
+          meta: {
+            faName: 'SmallMaterialWeight',
+            title: '配方管理',
+            permissionName: 'xl_recipe'
+          }
+        },
+        {
+          path: '/small-material-weight/plan',
+          component: () => import('@/views/recipe/small-material-weight/plan'),
+          name: 'SmallMaterialWeightPlan',
+          meta: {
+            faName: 'SmallMaterialWeight',
+            title: '计划管理',
+            permissionName: 'xl_plan'
+          }
+        },
+        {
+          path: '/small-material-weight/train-number',
+          component: () => import('@/views/recipe/small-material-weight/train-number'),
+          name: 'SmallMaterialWeightTrainNumber',
+          meta: {
+            faName: 'SmallMaterialWeight',
+            title: '车次报表',
+            permissionName: 'xl_report_basic'
+          }
+        },
+        {
+          path: '/small-material-weight/consumption',
+          component: () => import('@/views/recipe/small-material-weight/consumption'),
+          name: 'SmallMaterialWeightConsumption',
+          meta: {
+            faName: 'SmallMaterialWeight',
+            title: '物料消耗报表',
+            permissionName: 'xl_report_weight'
+          }
+        }
+      ]
+    }**/
     ]
   },
   {
@@ -463,7 +536,7 @@ export const asyncRoutes = [
     {
       path: '/train-number-report',
       component: () => import('@/views/production/train-number-report.vue'),
-      name: 'train-number-report',
+      name: 'TrainNumberReport',
       meta: {
         title: '车次报表',
         icon: 'production',
@@ -503,7 +576,7 @@ export const asyncRoutes = [
     {
       path: '/drug-investment',
       component: () => import('@/views/production/drug-investment'),
-      name: 'drug-investment',
+      name: 'DrugInvestment',
       meta: {
         title: '药品投入统计',
         icon: 'production',
@@ -513,7 +586,7 @@ export const asyncRoutes = [
     {
       path: '/zl-warehouse-out-kanban',
       component: () => import('@/views/production/warehouse-out-kanban.vue'),
-      name: 'zl-warehouseOutKanban',
+      name: 'ZlWarehouseOutKanban',
       meta: {
         title: '终炼胶出库看板', icon: 'production',
         permissionName: 'zl_dashboard'
@@ -521,8 +594,8 @@ export const asyncRoutes = [
     },
     {
       path: '/hl-warehouse-out-kanban',
-      component: () => import('@/views/production/warehouse-out-kanban.vue'),
-      name: 'hl-warehouseOutKanban',
+      component: () => import('@/views/production/hl-warehouseOutKanban.vue'),
+      name: 'HlWarehouseOutKanban',
       meta: {
         title: '混炼胶出库看板', icon: 'production',
         permissionName: 'hl_dashboard'
@@ -531,10 +604,8 @@ export const asyncRoutes = [
     {
       path: '/summary-statistics',
       redirect: '/equipment/classes-banburying-summary',
-      component: {
-        render: c => c('router-view')
-      },
-      name: 'summary-statistics',
+      component: () => import('@/views/equipment-management/summary-statistics-fa'),
+      name: 'SummaryStatistics',
       meta: {
         title: '生产信息汇总',
         icon: 'production'
@@ -543,8 +614,9 @@ export const asyncRoutes = [
         {
           path: '/equipment/classes-banburying-summary',
           component: () => import('@/views/equipment-management/classes-banburying-summary'),
-          name: 'classes-banburying-summary',
+          name: 'ClassesBanburyingSummary',
           meta: {
+            faName: 'SummaryStatistics',
             title: '班次密炼时间汇总',
             permissionName: 'class_production_summary'
           }
@@ -552,8 +624,9 @@ export const asyncRoutes = [
         {
           path: '/equipment/banburying-ratio-summary',
           component: () => import('@/views/equipment-management/banburying-ratio-summary'),
-          name: 'banburying-ratio-summary',
+          name: 'BanburyingRatioSummary',
           meta: {
+            faName: 'SummaryStatistics',
             title: '密炼时间占比汇总',
             permissionName: 'production_time_summary'
           }
@@ -561,8 +634,9 @@ export const asyncRoutes = [
         {
           path: '/equipment/rubber-acar-summary',
           component: () => import('@/views/equipment-management/rubber-acar-summary'),
-          name: 'rubber-acar-summary',
+          name: 'RubberAcarSummary',
           meta: {
+            faName: 'SummaryStatistics',
             title: '胶料单车次时间汇总',
             permissionName: 'single_trains_time_consume'
           }
@@ -570,8 +644,9 @@ export const asyncRoutes = [
         {
           path: '/equipment/specs-switch-summary',
           component: () => import('@/views/equipment-management/specs-switch-summary'),
-          name: 'specs-switch-summary',
+          name: 'SpecsSwitchSummary',
           meta: {
+            faName: 'SummaryStatistics',
             title: '规格切换时间汇总',
             permissionName: 'product_exchange_consume'
           }
@@ -581,10 +656,8 @@ export const asyncRoutes = [
     {
       path: '/track',
       redirect: '/track-raw-material',
-      component: {
-        render: c => c('router-view')
-      },
-      name: 'track',
+      component: () => import('@/views/production/track/track-raw-material'),
+      name: 'Track',
       meta: {
         title: '条码追朔',
         icon: 'production'
@@ -592,18 +665,20 @@ export const asyncRoutes = [
       children: [
         {
           path: '/track-raw-material',
-          name: 'track-raw-material',
+          name: 'TrackRawMaterial',
           component: () => import('@/views/production/track/track-raw-material'),
           meta: {
+            faName: 'Track',
             title: '原材料条码追朔',
             permissionName: 'material_retrospect'
           }
         },
         {
           path: '/track-raw-rubber',
-          name: 'track-raw-rubber',
+          name: 'TrackRawRubber',
           component: () => import('@/views/production/track/track-raw-rubber'),
           meta: {
+            faName: 'Track',
             title: '胶片条码追朔',
             permissionName: 'product_retrospect'
           }
@@ -613,10 +688,8 @@ export const asyncRoutes = [
     {
       path: '/statistical-report',
       redirect: '/report/produce-work',
-      component: {
-        render: c => c('router-view')
-      },
-      name: 'statistical-report',
+      component: () => import('@/views/equipment-management/report/report-fa'),
+      name: 'StatisticalReport',
       meta: {
         title: '统计报表',
         icon: 'production'
@@ -625,8 +698,9 @@ export const asyncRoutes = [
         {
           path: '/report/produce-work',
           component: () => import('@/views/equipment-management/report/produce-work'),
-          name: 'produce-work',
+          name: 'ProduceWork',
           meta: {
+            faName: 'StatisticalReport',
             title: '生产运行记录',
             permissionName: 'production_record'
           }
@@ -643,8 +717,9 @@ export const asyncRoutes = [
         {
           path: '/report/rubber-stock',
           component: () => import('@/views/equipment-management/report/rubber-stock'),
-          name: 'rubber-stock',
+          name: 'RubberStock',
           meta: {
+            faName: 'StatisticalReport',
             title: '胶料库存明细',
             permissionName: 'product_stock_detail'
           }
@@ -652,8 +727,9 @@ export const asyncRoutes = [
         {
           path: '/report/workshop-stock',
           component: () => import('@/views/equipment-management/report/workshop-stock'),
-          name: 'workshop-stock',
+          name: 'WorkshopStock',
           meta: {
+            faName: 'StatisticalReport',
             title: '车间库存明细',
             permissionName: 'workshop_stock_detail'
           }
@@ -763,7 +839,7 @@ export const asyncRoutes = [
       {
         path: '/final-mixing-rubber-manage',
         component: () => import('@/views/inventory/final-mixing-rubber-manage.vue'),
-        name: 'final-mixing-rubber',
+        name: 'FinalMixingRubber',
         meta: {
           title: '终炼胶出库计划',
           icon: 'stock',
@@ -780,10 +856,41 @@ export const asyncRoutes = [
           permissionName: 'compoundRubber_plan'
         }
       },
+      /** {
+        path: '/material-delivery-manage',
+        redirect: '/material-delivery-manage/task',
+        component: () => import('@/views/inventory/material-delivery-manage/a-index.vue'),
+        name: 'MaterialDelivery',
+        meta: {
+          title: '原材料出库管理',
+          icon: 'stock'
+        },
+        children: [
+          {
+            path: '/material-delivery-manage/task',
+            component: () => import('@/views/inventory/material-delivery-manage/task.vue'),
+            name: 'DeliveryTask',
+            meta: {
+              faName: 'MaterialDelivery',
+              title: '出库任务',
+              permissionName: 'material_outbound_task'
+            }
+          },
+          {
+            path: '/receive-good-manage/bill',
+            component: () => import('@/views/inventory/material-delivery-manage/bill.vue'),
+            name: 'DeliveryBill',
+            meta: {
+              title: '出库单据',
+              permissionName: 'material_outbound_record'
+            }
+          }
+        ]
+      },**/
       {
         path: '/raw-material-manage',
         component: () => import('@/views/inventory/raw-material-manage.vue'),
-        name: 'raw-material',
+        name: 'RawMaterial',
         meta: {
           title: '原材料出库计划',
           icon: 'stock',
@@ -793,7 +900,7 @@ export const asyncRoutes = [
       {
         path: '/druss-delivery',
         component: () => import('@/views/inventory/druss-delivery.vue'),
-        name: 'druss-delivery',
+        name: 'DrussDelivery',
         meta: {
           title: '炭黑出库计划',
           icon: 'stock',
@@ -813,7 +920,7 @@ export const asyncRoutes = [
       {
         path: '/curtain-storehouse',
         component: () => import('@/views/inventory/curtain-storehouse.vue'),
-        name: 'curtainStorehouse',
+        name: 'CurtainStorehouse',
         meta: {
           title: '帘布库出库计划',
           icon: 'stock',
@@ -842,9 +949,7 @@ export const asyncRoutes = [
       {
         path: '/receive-good-manage',
         redirect: '/receive-good-manage/index',
-        component: {
-          render: c => c('router-view')
-        },
+        component: () => import('@/views/inventory/receive-good-manage/index.vue'),
         name: 'ReceiveGoodManage',
         meta: {
           title: '收发货管理',
@@ -856,6 +961,7 @@ export const asyncRoutes = [
             component: () => import('@/views/inventory/receive-good-manage/receive-list.vue'),
             name: 'ReceiveGoodManageIndex',
             meta: {
+              faName: 'ReceiveGoodManage',
               title: '发货计划管理',
               permissionName: 'delivery_plan'
             }
@@ -895,10 +1001,8 @@ export const asyncRoutes = [
       {
         path: '/quick-check',
         redirect: '/quick-check/test-indicators',
-        component: {
-          render: c => c('router-view')
-        },
-        name: 'quick-check',
+        component: () => import('@/views/quality_management/QuickCheck-fa'),
+        name: 'QuickCheck',
         meta: {
           title: '快检标准管理',
           icon: 'quality'
@@ -907,8 +1011,9 @@ export const asyncRoutes = [
           {
             path: '/quick-check/test-indicators',
             component: () => import('@/views/quality_management/test_indicators'),
-            name: 'testIndicators',
+            name: 'TestIndicators',
             meta: {
+              faName: 'QuickCheck',
               title: '试验指标管理',
               permissionName: 'test_indicator'
             }
@@ -916,8 +1021,9 @@ export const asyncRoutes = [
           {
             path: '/quick-check/test-types',
             component: () => import('@/views/quality_management/test_types'),
-            name: 'testTypes',
+            name: 'TestTypes',
             meta: {
+              faName: 'QuickCheck',
               title: '试验类型管理',
               permissionName: 'test_type'
             }
@@ -925,8 +1031,9 @@ export const asyncRoutes = [
           {
             path: '/quick-check/test-methods-manage',
             component: () => import('@/views/quality_management/test_methods_manage'),
-            namel: 'testMethodsManage',
+            name: 'TestMethodsManage',
             meta: {
+              faName: 'QuickCheck',
               title: '试验方法管理',
               permissionName: 'test_method'
             }
@@ -942,8 +1049,9 @@ export const asyncRoutes = [
           {
             path: '/quick-check/grade-manage',
             component: () => import('@/views/quality_management/grade_manage'),
-            namel: 'gradeManage',
+            name: 'GradeManage',
             meta: {
+              faName: 'QuickCheck',
               title: '等级管理',
               permissionName: 'level'
             }
@@ -960,8 +1068,9 @@ export const asyncRoutes = [
           {
             path: '/quick-check/benchmark_edit',
             component: () => import('@/views/quality_management/benchmark_edit'),
-            name: 'benchmark_edit',
+            name: 'BenchmarkEdit',
             meta: {
+              faName: 'QuickCheck',
               title: '胶料快检判定基准录入',
               permissionName: 'evaluating'
             }
@@ -971,10 +1080,8 @@ export const asyncRoutes = [
       {
         path: '/statistics',
         redirect: '/statistics/month-pass-detail',
-        component: {
-          render: c => c('router-view')
-        },
-        name: 'quality-statistics',
+        component: () => import('@/views/quality_management/quality-statistics-fa'),
+        name: 'QualityStatistics',
         meta: {
           title: '快检信息统计分析',
           icon: 'quality'
@@ -983,8 +1090,9 @@ export const asyncRoutes = [
           {
             path: '/statistics/month-pass-detail',
             component: () => import('@/views/quality_management/month_pass_detail'),
-            name: 'monthPassDetail',
+            name: 'MonthPassDetail',
             meta: {
+              faName: 'QualityStatistics',
               title: '月快检合格率统计',
               permissionName: 'month_passing_rate'
             }
@@ -992,8 +1100,9 @@ export const asyncRoutes = [
           {
             path: '/statistics/material-month-pass',
             component: () => import('@/views/quality_management/material_month_pass'),
-            name: 'materialMonthPass',
+            name: 'MaterialMonthPass',
             meta: {
+              faName: 'QualityStatistics',
               title: '胶料月合格率统计',
               permissionName: 'product_month_passing_rate'
             }
@@ -1001,8 +1110,9 @@ export const asyncRoutes = [
           {
             path: '/statistics/material-day-pass',
             component: () => import('@/views/quality_management/material_day_pass'),
-            name: 'materialDayPass',
+            name: 'MaterialDayPass',
             meta: {
+              faName: 'QualityStatistics',
               title: '胶料日合格率统计',
               permissionName: 'product_daily_passing_rate'
             }
@@ -1012,10 +1122,8 @@ export const asyncRoutes = [
       {
         path: '/unqualified-handle',
         redirect: '/unqualified-handle/inferior-quality-product-manage',
-        component: {
-          render: c => c('router-view')
-        },
-        name: 'unqualified-handle',
+        component: () => import('@/views/quality_management/DisposalListGenerate-fa'),
+        name: 'UnqualifiedHandle',
         meta: {
           title: '不合格品处理',
           icon: 'quality'
@@ -1043,6 +1151,7 @@ export const asyncRoutes = [
             component: () => import('@/views/quality_management/disposal-list-generates.vue'),
             name: 'DisposalListGenerate',
             meta: {
+              faName: 'UnqualifiedHandle',
               title: '不合格处置单生成',
               permissionName: 'unqualified_trains'
             }
@@ -1052,6 +1161,7 @@ export const asyncRoutes = [
             component: () => import('@/views/quality_management/disposal-list.vue'),
             name: 'DisposalList',
             meta: {
+              faName: 'UnqualifiedHandle',
               title: '不合格处置单管理',
               permissionName: 'unqualified_order'
             }
@@ -1061,10 +1171,8 @@ export const asyncRoutes = [
       {
         path: '/inspection-result-management',
         redirect: '/inspection-result-management/manual-entry',
-        component: {
-          render: c => c('router-view')
-        },
-        name: 'inspection-result-management',
+        component: () => import('@/views/quality_management/a-inspection-result-management-fa'),
+        name: 'InspectionResultManagement',
         meta: {
           title: '快检结果管理',
           icon: 'quality'
@@ -1075,6 +1183,7 @@ export const asyncRoutes = [
             component: () => import('@/views/quality_management/manual_entry'),
             name: 'ManualEntry',
             meta: {
+              faName: 'InspectionResultManagement',
               title: '手工检测数据录入',
               permissionName: 'test_result'
             }
@@ -1084,6 +1193,7 @@ export const asyncRoutes = [
             component: () => import('@/views/quality_management/details'),
             name: 'Details',
             meta: {
+              faName: 'InspectionResultManagement',
               title: '胶料快检详细信息',
               permissionName: 'result_info'
             }
@@ -1093,6 +1203,7 @@ export const asyncRoutes = [
             component: () => import('@/views/quality_management/check_synthesize_manage'),
             name: 'CheckSynthesizeManage',
             meta: {
+              faName: 'InspectionResultManagement',
               title: '快检信息综合管理',
               permissionName: 'deal_result'
             }
@@ -1102,23 +1213,23 @@ export const asyncRoutes = [
       {
         path: '/barcode-change',
         component: () => import('@/views/quality_management/material-info-mapping/barcode-change'),
-        name: 'barcode-change',
+        name: 'BarcodeChange',
         meta: {
           title: '条码变更',
           icon: 'quality',
           permissionName: 'bar_code'
         }
       },
-      {
-        path: '/result-entry',
-        component: () => import('@/views/quality_management/result-entry'),
-        name: 'result-entry',
-        meta: {
-          title: '原材料临时快检结果录入',
-          icon: 'quality',
-          permissionName: 'material_temp_input'
-        }
-      },
+      // {
+      //   path: '/result-entry',
+      //   component: () => import('@/views/quality_management/result-entry'),
+      //   name: 'ResultEntry',
+      //   meta: {
+      //     title: '原材料临时快检结果录入',
+      //     icon: 'quality',
+      //     permissionName: 'material_temp_input'
+      //   }
+      // },
       /** {
         path: '/material-quality',
         redirect: '/material-quality',
@@ -1205,14 +1316,11 @@ export const asyncRoutes = [
           }
         ]
       },**/
-      // 新添加的
       {
         path: '/material-quickcheck',
         redirect: '/material-quickcheck',
-        component: {
-          render: c => c('router-view')
-        },
-        name: 'material-quickcheck',
+        component: () => import('@/views/material_quickcheck_manage/quickcheck-fa'),
+        name: 'MaterialQuickcheck',
         meta: {
           title: '原材料快检管理',
           icon: 'quality'
@@ -1221,8 +1329,9 @@ export const asyncRoutes = [
           {
             path: '/material-quickcheck/quickcheck-equipment',
             component: () => import('@/views/material_quickcheck_manage/material_quickcheck_equipment'),
-            name: 'material-quickcheck-equipment',
+            name: 'MaterialQuickcheckEquipment',
             meta: {
+              faName: 'MaterialQuickcheck',
               title: '快检设备管理',
               permissionName: 'material_equipment'
             }
@@ -1230,8 +1339,9 @@ export const asyncRoutes = [
           {
             path: '/material-quickcheck/quickcheck-type',
             component: () => import('@/views/material_quickcheck_manage/material_quickcheck_type'),
-            name: 'material-quickcheck-type',
+            name: 'MaterialQuickcheckType',
             meta: {
+              faName: 'MaterialQuickcheck',
               title: '快检类型管理',
               permissionName: 'material_examine_type'
             }
@@ -1239,8 +1349,9 @@ export const asyncRoutes = [
           {
             path: '/material-quickcheck/quickcheck-value',
             component: () => import('@/views/material_quickcheck_manage/material_quickcheck_value'),
-            name: 'material-quickcheck-value',
+            name: 'MaterialQuickcheckValue',
             meta: {
+              faName: 'MaterialQuickcheck',
               title: '检测值管理',
               permissionName: 'material_examine_value'
             }
@@ -1250,6 +1361,7 @@ export const asyncRoutes = [
           //   component: () => import('@/views/material_quickcheck_manage/meniequipmentdata'),
           //   name: 'meniequipmentdata',
           //   meta: {
+          // faName: 'MaterialQuickcheck',
           //     title: '门尼设备数据绑定管理',
           //     permissionName: ''
           //   }
@@ -1257,8 +1369,9 @@ export const asyncRoutes = [
           {
             path: '/material-quickcheck/raw-material',
             component: () => import('@/views/material_quickcheck_manage/raw_material'),
-            name: 'quickcheck-raw-material',
+            name: 'QuickcheckRawMaterial',
             meta: {
+              faName: 'MaterialQuickcheck',
               title: '原材料管理',
               permissionName: 'examine_material'
             }
@@ -1280,10 +1393,8 @@ export const asyncRoutes = [
       {
         path: '/equipment/spare-part',
         redirect: '/spare-part/base/spare-location',
-        component: {
-          render: c => c('router-view')
-        },
-        name: 'spare-part',
+        component: () => import('@/views/equipment-management/a-spare-part-fa'),
+        name: 'SparePart',
         meta: {
           title: '备品备件管理',
           icon: 'quality'
@@ -1292,10 +1403,8 @@ export const asyncRoutes = [
           {
             path: '/base',
             redirect: '/spare-location',
-            component: {
-              render: c => c('router-view')
-            },
-            name: 'spare-part-base',
+            component: () => import('@/views/equipment-management/spare-part/a-spare-part-fa'),
+            name: 'SparePartBase',
             meta: {
               title: '基础管理'
             },
@@ -1303,8 +1412,10 @@ export const asyncRoutes = [
               {
                 path: '/spare-location',
                 component: () => import('@/views/equipment-management/spare-part/spare-location'),
-                name: 'spare-location',
+                name: 'SpareLocation',
                 meta: {
+                  faName: 'SparePartBase',
+                  fourFaName: 'SparePart',
                   title: '库存位管理',
                   permissionName: 'spare_location'
                 }
@@ -1312,8 +1423,10 @@ export const asyncRoutes = [
               {
                 path: '/spare-type',
                 component: () => import('@/views/equipment-management/spare-part/spare-type'),
-                name: 'spare-type',
+                name: 'SpareType',
                 meta: {
+                  faName: 'SparePartBase',
+                  fourFaName: 'SparePart',
                   title: '类型管理',
                   permissionName: 'spare_type'
                 }
@@ -1321,8 +1434,10 @@ export const asyncRoutes = [
               {
                 path: '/spareparts-spare',
                 component: () => import('@/views/equipment-management/spare-part/spareparts-spare'),
-                name: 'spareparts-spare',
+                name: 'SparepartsSpare',
                 meta: {
+                  faName: 'SparePartBase',
+                  fourFaName: 'SparePart',
                   title: '基本信息管理',
                   permissionName: 'spare_info'
                 }
@@ -1330,8 +1445,10 @@ export const asyncRoutes = [
               {
                 path: '/shelf-material-binding',
                 component: () => import('@/views/equipment-management/spare-part/shelf-material-binding'),
-                name: 'shelf-material-binding',
+                name: 'ShelfMaterialBinding',
                 meta: {
+                  faName: 'SparePartBase',
+                  fourFaName: 'SparePart',
                   title: '货架物料绑定管理',
                   permissionName: 'location_binding'
                 }
@@ -1339,8 +1456,10 @@ export const asyncRoutes = [
               {
                 path: '/location-manage',
                 component: () => import('@/views/equipment-management/spare-part/location-manage'),
-                name: 'spare-part-location-manage',
+                name: 'SparePartLocationManage',
                 meta: {
+                  faName: 'SparePartBase',
+                  fourFaName: 'SparePart',
                   title: '备品备件库位管理',
                   permissionName: 'spare_inventory'
                 }
@@ -1348,8 +1467,10 @@ export const asyncRoutes = [
               {
                 path: '/inventory-manage',
                 component: () => import('@/views/equipment-management/spare-part/inventory-manage'),
-                name: 'spare-part-inventory-manage',
+                name: 'SparePartInventoryManage',
                 meta: {
+                  faName: 'SparePartBase',
+                  fourFaName: 'SparePart',
                   title: '备品备件库存管理',
                   permissionName: 'spare_stock'
                 }
@@ -1357,8 +1478,10 @@ export const asyncRoutes = [
               {
                 path: '/inventory-upload',
                 component: () => import('@/views/equipment-management/spare-part/inventory-upload'),
-                name: 'inventory-upload',
+                name: 'InventoryUpload',
                 meta: {
+                  faName: 'SparePartBase',
+                  fourFaName: 'SparePart',
                   title: '备品备件库存导入',
                   permissionName: 'spare_import'
                 }
@@ -1368,10 +1491,8 @@ export const asyncRoutes = [
           {
             path: '/warehous',
             redirect: '/warehousing',
-            component: {
-              render: c => c('router-view')
-            },
-            name: 'spare-part-warehousing-managr',
+            component: () => import('@/views/equipment-management/spare-part/a-spare-part-warehousing-fa'),
+            name: 'SparePartWarehousingManage',
             meta: {
               title: '出入库管理'
             },
@@ -1379,8 +1500,10 @@ export const asyncRoutes = [
               {
                 path: '/warehousing',
                 component: () => import('@/views/equipment-management/spare-part/warehousing'),
-                name: 'spare-part-warehousing',
+                name: 'SparePartWarehousing',
                 meta: {
+                  faName: 'SparePartWarehousing',
+                  fourFaName: 'SparePart',
                   title: '备品备件入库管理',
                   permissionName: 'spare_inbound'
                 }
@@ -1388,8 +1511,10 @@ export const asyncRoutes = [
               {
                 path: '/warehouse-out',
                 component: () => import('@/views/equipment-management/spare-part/warehouse-out'),
-                name: 'spare-part-warehouse-out',
+                name: 'SparePartWarehouseOut',
                 meta: {
+                  faName: 'SparePartWarehousing',
+                  fourFaName: 'SparePart',
                   title: '备品备件出库管理',
                   permissionName: 'spare_outbound'
                 }
@@ -1397,8 +1522,10 @@ export const asyncRoutes = [
               {
                 path: '/inventory',
                 component: () => import('@/views/equipment-management/spare-part/inventory'),
-                name: 'spare-part-inventory',
+                name: 'SparePartInventory',
                 meta: {
+                  faName: 'SparePartWarehousing',
+                  fourFaName: 'SparePart',
                   title: '备品备件盘点管理',
                   permissionName: 'stock_count'
                 }
@@ -1407,10 +1534,8 @@ export const asyncRoutes = [
           }, {
             path: '/record',
             redirect: '/warehousing-record',
-            component: {
-              render: c => c('router-view')
-            },
-            name: 'spare-part-record-managr',
+            component: () => import('@/views/equipment-management/spare-part/a-spare-part-record-manage'),
+            name: 'SparePartRecordManage',
             meta: {
               title: '履历管理'
             },
@@ -1418,17 +1543,21 @@ export const asyncRoutes = [
               {
                 path: '/warehousing-record',
                 component: () => import('@/views/equipment-management/spare-part/all-record'),
-                name: 'spare-part-warehousing-record',
+                name: 'SparePartWarehousingRecord',
                 meta: {
+                  faName: 'SparePartWarehousingRecord',
+                  fourFaName: 'SparePart',
                   title: '备品备件入库履历',
                   permissionName: 'inbound_history'
                 }
               },
               {
                 path: '/warehousing-out-record',
-                component: () => import('@/views/equipment-management/spare-part/all-record'),
-                name: 'spare-part-warehousing-out-record',
+                component: () => import('@/views/equipment-management/spare-part/out-record'),
+                name: 'SparePartWarehousingOutRecord',
                 meta: {
+                  faName: 'SparePartWarehousingRecord',
+                  fourFaName: 'SparePart',
                   title: '备品备件出库履历',
                   permissionName: 'outbound_history'
                 }
@@ -1436,8 +1565,10 @@ export const asyncRoutes = [
               {
                 path: '/inventory-record',
                 component: () => import('@/views/equipment-management/spare-part/all-record'),
-                name: 'spare-part-inventory-record',
+                name: 'SparePartInventoryRecord',
                 meta: {
+                  faName: 'SparePartWarehousingRecord',
+                  fourFaName: 'SparePart',
                   title: '备品备件盘点履历',
                   permissionName: 'stock_history'
                 }
@@ -1449,10 +1580,8 @@ export const asyncRoutes = [
       {
         path: '/equipment-maintenance',
         redirect: '/location-definition',
-        component: {
-          render: c => c('router-view')
-        },
-        name: 'equipment-maintenance',
+        component: () => import('@/views/equipment-management/repair/a-equipment-maintenance-fa'),
+        name: 'EquipmentMaintenance',
         meta: {
           title: '设备维修管理',
           icon: 'quality'
@@ -1461,8 +1590,9 @@ export const asyncRoutes = [
           {
             path: '/location-definition',
             component: () => import('@/views/equipment-management/repair/location-definition'),
-            name: 'location-definition',
+            name: 'LocationDefinition',
             meta: {
+              faName: 'EquipmentMaintenance',
               title: '设备部位定义',
               permissionName: 'equip_part'
             }
@@ -1470,10 +1600,8 @@ export const asyncRoutes = [
           {
             path: '/cause-of-shutdown',
             redirect: '/cause-of-shutdown/mold',
-            component: {
-              render: c => c('router-view')
-            },
-            name: 'cause-of-shutdown',
+            component: () => import('@/views/equipment-management/repair/a-repair-fa'),
+            name: 'CauseOfShutdown',
             meta: {
               title: '停机原因管理'
             },
@@ -1481,8 +1609,10 @@ export const asyncRoutes = [
               {
                 path: '/cause-of-shutdown/mold',
                 component: () => import('@/views/equipment-management/repair/shutdown-mold'),
-                name: 'cause-of-shutdown-mold',
+                name: 'CauseOfShutdownMold',
                 meta: {
+                  faName: 'CauseOfShutdown',
+                  fourFaName: 'EquipmentMaintenance',
                   title: '停机类型定义',
                   permissionName: 'equip_down_type'
                 }
@@ -1490,8 +1620,10 @@ export const asyncRoutes = [
               {
                 path: '/cause-of-shutdown/reason',
                 component: () => import('@/views/equipment-management/repair/shutdown-reason'),
-                name: 'cause-of-shutdown-reason',
+                name: 'CauseOfShutdownReason',
                 meta: {
+                  faName: 'CauseOfShutdown',
+                  fourFaName: 'EquipmentMaintenance',
                   title: '停机原因定义',
                   permissionName: 'equip_down_reason'
                 }
@@ -1501,8 +1633,9 @@ export const asyncRoutes = [
           {
             path: '/repair-apply',
             component: () => import('@/views/equipment-management/repair/repair-apply'),
-            name: 'repair-apply',
+            name: 'RepairApply',
             meta: {
+              faName: 'EquipmentMaintenance',
               title: '设备维修申请页面',
               permissionName: 'equip_current_status'
             }
@@ -1510,8 +1643,9 @@ export const asyncRoutes = [
           {
             path: '/repair-manage',
             component: () => import('@/views/equipment-management/repair/repair-manage'),
-            name: 'repair-manage',
+            name: 'RepairManage',
             meta: {
+              faName: 'EquipmentMaintenance',
               title: '设备维修单管理',
               permissionName: 'equip_maintenance_order'
             }
@@ -1519,8 +1653,9 @@ export const asyncRoutes = [
           {
             path: '/work-state',
             component: () => import('@/views/equipment-management/repair/work-state'),
-            name: 'work-state',
+            name: 'WorkState',
             meta: {
+              faName: 'EquipmentMaintenance',
               title: '设备运行现况',
               permissionName: 'equip_status'
             }
@@ -1528,8 +1663,9 @@ export const asyncRoutes = [
           {
             path: '/repair-resume',
             component: () => import('@/views/equipment-management/repair/repair-resume'),
-            name: 'repair-resume',
+            name: 'RepairResume',
             meta: {
+              faName: 'EquipmentMaintenance',
               title: '设备维修履历',
               permissionName: 'equip_maintenance_order_log'
             }
@@ -1537,8 +1673,9 @@ export const asyncRoutes = [
           {
             path: '/equipment-assets',
             component: () => import('@/views/equipment-management/repair/equipment-assets'),
-            name: 'equipment-assets',
+            name: 'EquipmentAssets',
             meta: {
+              faName: 'EquipmentMaintenance',
               title: '设备资产',
               permissionName: 'property'
             }
@@ -1590,7 +1727,7 @@ export const asyncRoutes = [
       {
         path: '/platform-manage',
         component: () => import('@/views/equipment-management/repair/platform-manage'),
-        name: 'platform-manage',
+        name: 'PlatformManage',
         meta: {
           icon: 'quality',
           title: '平台信息管理',
@@ -1600,7 +1737,7 @@ export const asyncRoutes = [
       {
         path: '/fault-day-statistics',
         component: () => import('@/views/quality_management/fault/fault-day-statistics'),
-        name: 'fault-day-statistics',
+        name: 'FaultDayStatistics',
         meta: {
           title: '设备别故障日统计',
           icon: 'quality',
@@ -1610,7 +1747,7 @@ export const asyncRoutes = [
       {
         path: '/fault-week-statistics',
         component: () => import('@/views/quality_management/fault/fault-week-statistics'),
-        name: 'fault-week-statistics',
+        name: 'FaultWeekStatistics',
         meta: {
           title: '设备别故障周统计',
           icon: 'quality',
@@ -1620,7 +1757,7 @@ export const asyncRoutes = [
       {
         path: '/fault-month-statistics',
         component: () => import('@/views/quality_management/fault/fault-month-statistics'),
-        name: 'fault-month-statistics',
+        name: 'FaultMonthStatistics',
         meta: {
           title: '设备别故障月统计',
           icon: 'quality',

@@ -113,6 +113,7 @@
 import { inventoryNow, inventoryToday, mixGumOutInventoryLog } from '@/api/base_w_two'
 // import page from '@/components/page'
 export default {
+  name: 'ZlWarehouseOutKanban',
   components: { },
   data() {
     return {

@@ -212,7 +212,8 @@
           />
         </el-form-item>
         <el-form-item label="原材料" prop="material">
-          <el-select
+          <el-input v-model="formData.material" placeholder="请输入" @input="changeFormDataMaterial" />
+          <!-- <el-select
             v-model="formData.material"
             placeholder="请选择"
             :disabled="formData.id||formData._copy?true:false"
@@ -226,17 +227,17 @@
               :label="item.name"
               :value="item.id"
             />
-          </el-select>
-          <el-button size="mini" type="primary" style="margin-left:5px" @click="addMaterialFun">添加原材料</el-button>
+          </el-select> -->
+          <!-- <el-button size="mini" type="primary" style="margin-left:5px" @click="addMaterialFun">添加原材料</el-button> -->
         </el-form-item>
         <el-form-item label="样品名称">
-          {{ formData.sample_name }}
+          {{ formData.material_sample_name }}
         </el-form-item>
         <el-form-item label="批次">
-          {{ formData.batch }}
+          {{ formData.material_batch }}
         </el-form-item>
         <el-form-item label="产地">
-          {{ formData.supplier }}
+          {{ formData.material_supplier }}
         </el-form-item>
         <el-form-item label="抽样人" prop="sampling_user">
           <userMangeSelect :default-val="formData.sampling_user" :is-created="true" @changeSelect="changeSelectUser" />
@@ -362,12 +363,13 @@
 <script>
 import { debounce } from '@/utils'
 import page from '@/components/page'
-import { materialExamineResult, materialExamineType, materialEquipment } from '@/api/base_w_three'
+import { materialExamineResult, materialExamineType, materialEquipment, wmsMaterialSearch } from '@/api/base_w_three'
 import testTypeSelect from '../components/test-type-select'
 // import equipTypeSelect from '../components/equip-type-select'
 import userMangeSelect from '@/components/select_w/userMangeSelect'
 import { examineMaterial, examineMaterialPost } from '@/api/material-check'
 export default {
+  name: 'MaterialQuickcheckValue',
   components: { page, testTypeSelect, userMangeSelect },
   data() {
     return {
@@ -384,7 +386,7 @@ export default {
           { required: true, message: '请选择时间', trigger: 'change' }
         ],
         material: [
-          { required: true, message: '请选择', trigger: 'change' }
+          { required: true, message: '请选择', trigger: 'blur' }
         ],
         sampling_user: [
           { required: true, message: '请选择', trigger: 'blur' }
@@ -517,6 +519,10 @@ export default {
       this.$refs.formData.validate(async(valid) => {
         if (valid) {
           try {
+            if (!this.formData.material_sample_name) {
+              this.$message.info('未找到该条码对应物料信息')
+              return
+            }
             const obj = JSON.parse(JSON.stringify(this.formData))
             const _api = this.formData.id ? 'patch' : 'post'
             this.btnLoading = true
@@ -658,6 +664,20 @@ export default {
         return '不合格'
       } else if (val === null) {
         return '待定'
+      }
+    },
+    async changeFormDataMaterial(val) {
+      try {
+        const data = await wmsMaterialSearch('get', null, { params: { tmh: val }})
+        // this.formDataMaterial = data[0]
+        this.$set(this.formData, 'material_tmh', data[0].TMH)
+        this.$set(this.formData, 'material_wlxxid', data[0].WLXXID)
+        this.$set(this.formData, 'material_name', data[0].WLMC)
+        this.$set(this.formData, 'material_batch', data[0].PH)
+        this.$set(this.formData, 'material_supplier', data[0].CD)
+        this.$set(this.formData, 'material_sample_name', data[0].WLMC)
+      } catch (e) {
+        //
       }
     }
   }

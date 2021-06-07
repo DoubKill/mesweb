@@ -223,6 +223,7 @@ import DetailsUTable from './components/details-u-table'
 import { setDate } from '@/utils'
 import * as echarts from 'echarts'
 export default {
+  name: 'Details',
   directives: {
     'el-table-infinite-scroll': elTableInfiniteScroll
   },

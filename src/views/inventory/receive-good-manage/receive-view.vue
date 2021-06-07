@@ -111,6 +111,7 @@ import MaterialCodeSelect from '@/components/materialCodeSelect'
 import deliverTypeSelect from '@/components/select_w/deliverTypeSelect'
 import destinationSelect from '@/components/select_w/destinationSelect'
 export default {
+  name: 'ReceiveGoodManageView',
   components: { page, MaterialCodeSelect, deliverTypeSelect, destinationSelect },
   data() {
     return {

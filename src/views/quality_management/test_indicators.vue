@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- 试验指标管理 -->
     <el-form :inline="true">
       <el-form-item style="float: right">
         <el-button
@@ -99,6 +100,7 @@ import { getTestIndicators, postTestIndicators, putTestIndicators } from '@/api/
 // import page from '@/components/page'
 import { mapGetters } from 'vuex'
 export default {
+  name: 'TestIndicators',
   data: function() {
     return {
       formLabelWidth: 'auto',

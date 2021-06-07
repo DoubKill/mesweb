@@ -271,6 +271,7 @@ import { mapGetters } from 'vuex'
 import testCard from '@/components/TestCard'
 import trainNumberReport from '../train-number-report'
 export default {
+  name: 'TrackRawRubber',
   components: { testCard, trainNumberReport },
   data() {
     return {

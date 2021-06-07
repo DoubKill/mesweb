@@ -74,6 +74,7 @@ import { mapGetters } from 'vuex'
 import materialCodeSelect from '@/components/select_w/materialCodeSelect'
 
 export default {
+  name: 'MaterialInventoryManage',
   components: { materialCodeSelect, page, warehouseSelect },
   data() {
     return {

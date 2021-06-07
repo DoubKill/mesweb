@@ -1,6 +1,6 @@
 <template>
   <div v-loading="loading">
-    <!-- 小料称量计划与实际对比 -->
+    <!-- 小料称量计划与实际对比  未做-->
     <el-form :inline="true" :model="formInline">
       <el-form-item label="时间">
         <el-date-picker
@@ -11,7 +11,10 @@
         />
       </el-form-item>
       <el-form-item label="生产机型">
-        <selectModel @selectChanged="selectModel" />
+        <equip-category-select
+          v-model="formInline.dev_type"
+          @change="selectModel"
+        />
       </el-form-item>
       <el-form-item label="小料配方编码">
         <el-input v-model="formInline.input" placeholder="请输入小料配方编码" />
@@ -89,12 +92,14 @@
 
 <script>
 import classSelect from '@/components/ClassSelect'
-import selectModel from './components/select-model'
+// import selectModel from './components/select-model'
+import EquipCategorySelect from '@/components/EquipCategorySelect'
 import selectBatchingEquip from './components/select-batching-equip'
 import { class_arrange_url } from '@/api/display_static_fun'
 
 export default {
-  components: { classSelect, selectModel, selectBatchingEquip },
+  name: 'ActualComparison',
+  components: { classSelect, EquipCategorySelect, selectBatchingEquip },
   data() {
     return {
       formInline: {},

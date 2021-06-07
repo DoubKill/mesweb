@@ -327,6 +327,7 @@ import { globalCodesUrl, materialsUrl } from '@/api/base_w'
 import pagination from '@/components/page'
 import { mapGetters } from 'vuex'
 export default {
+  name: 'MaterialBaseInfoManage',
   components: { pagination },
   data: function() {
     return {

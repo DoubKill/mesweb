@@ -155,6 +155,7 @@ import selectBatchingEquip from '../components/select-batching-equip'
 import materialCodeSelect from '@/components/materialCodeSelect'
 import { weightingTackStatus } from '@/api/base_w_two'
 export default {
+  name: 'MaterialTank',
   components: { selectBatchingEquip, materialCodeSelect },
   data() {
     return {

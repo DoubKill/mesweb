@@ -147,6 +147,7 @@
 import { materialTrace } from '@/api/base_w_three'
 import { debounce } from '@/utils'
 export default {
+  name: 'TrackRawMaterial',
   data() {
     return {
       value: '',

@@ -283,9 +283,105 @@ export function materialEquipment(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function wmsMaterialSearch(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WmsMaterialSearch + id + '/' : API.WmsMaterialSearch,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 export function materialExamineResult(method, id, data = {}) {
   const obj = {
     url: id ? API.MaterialExamineResult + id + '/' : API.MaterialExamineResult,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function xlMaterial(method, id, data = {}) {
+  const obj = {
+    url: id ? API.XlMaterial + id + '/' : API.XlMaterial,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function xlBin(method, id, data = {}) {
+  const obj = {
+    url: id ? API.XlBin + id + '/' : API.XlBin,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function saveBin(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SaveBin + id + '/' : API.SaveBin,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function xlRecipe(method, id, data = {}) {
+  const obj = {
+    url: id ? API.XlRecipe + id + '/' : API.XlRecipe,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function xlRecipeMaterial(method, id, data = {}) {
+  const obj = {
+    url: id ? API.XlRecipeMaterial + id + '/' : API.XlRecipeMaterial,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function xlReportBasic(method, id, data = {}) {
+  const obj = {
+    url: id ? API.XlReportBasic + id + '/' : API.XlReportBasic,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function xlReportWeight(method, id, data = {}) {
+  const obj = {
+    url: id ? API.XlReportWeight + id + '/' : API.XlReportWeight,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function xlPlan(method, id, data = {}) {
+  const obj = {
+    url: id ? API.XlPlan + id + '/' : API.XlPlan,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function wmsStock(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WmsStock + id + '/' : API.WmsStock,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function wmsWeightStock(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WmsWeightStock + id + '/' : API.WmsWeightStock,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function wmsEntrance(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WmsEntrance + id + '/' : API.WmsEntrance,
     method: method
   }
   Object.assign(obj, data)

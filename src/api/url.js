@@ -99,6 +99,7 @@ export default {
   DataPointStandardErrors: '/api/v1/quality/data-point-standard-errors/',
   // 标记历史记录
   DataPointLabelHistory: '/api/v1/quality/data-point-label-history/',
+  IgnoredProductInfo: '/api/v1/quality/ignored-product-info/',
   // 试验方法列表
   TestSubTypes: '/api/v1/quality/test-methods/',
   TestTypeData: '/api/v1/quality/test-indicator-data-points/',
@@ -188,6 +189,7 @@ export default {
 
   // 批量打印
   LabelPrint: '/api/v1/quality/label-print/',
+  ShowQualifiedRange: '/api/v1/quality/show-qualified-range/',
   // 月快检合格率
   BatchMonthStatistics: '/api/v1/quality/batch-month-statistics/',
   // 日快检合格率
@@ -351,8 +353,21 @@ export default {
   MaterialUnit: '/api/v1/quality/material-unit/',
   MaterialEquipmentType: '/api/v1/quality/material-equip-types/',
   MaterialEquipment: '/api/v1/quality/material-equips/',
+  WmsMaterialSearch: '/api/v1/quality/wms-material-search/',
   MaterialExamineResult: '/api/v1/quality/material-examine-result/',
   MaterialUnqualifiedTypes: '/api/v1/quality/material-unqualified-types/',
   MaterialUnqualifiedProcess: '/api/v1/quality/material-unqualified-process/',
-  MaterialExamineResultCurve: '/api/v1/quality/material-examine-result-curve/'
+  MaterialExamineResultCurve: '/api/v1/quality/material-examine-result-curve/',
+  // 小料原材料列表
+  XlMaterial: '/api/v1/terminal/xl-material/',
+  XlBin: '/api/v1/terminal/xl-bin/',
+  SaveBin: '/api/v1/terminal/xl-bin/save_bin/',
+  XlRecipe: '/api/v1/terminal/xl-recipe/',
+  XlRecipeMaterial: '/api/v1/terminal/xl-recipe-material/',
+  XlReportBasic: '/api/v1/terminal/xl-report-basic/',
+  XlReportWeight: '/api/v1/terminal/xl-report-weight/',
+  XlPlan: '/api/v1/terminal/xl-plan/',
+  WmsStock: '/api/v1/inventory/wms-stock/',
+  WmsWeightStock: '/api/v1/inventory/wms-weight-stock/',
+  WmsEntrance: '/api/v1/inventory/wms-entrance/'
 }

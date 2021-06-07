@@ -332,6 +332,7 @@ import Page from '@/components/page'
 import { batchingClassesPlan, issueBatchingClassesPlan, batchingClassesEquipPlan, changePlanPackage } from '@/api/small-material-recipe'
 // import { setDate } from '@/utils'
 export default {
+  name: 'RubberPlanRelease',
   components: { Page, classSelect, EquipCategorySelect, SelectBatchingEquip, WeighBatchingPlanDetail },
   data() {
     return {

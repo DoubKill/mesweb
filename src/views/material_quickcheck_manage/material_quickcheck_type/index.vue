@@ -292,6 +292,7 @@ import { debounce } from '@/utils'
 import page from '@/components/page'
 import { materialExamineType, materialUnit, exportTemplate, importData } from '@/api/base_w_three'
 export default {
+  name: 'MaterialQuickcheckType',
   components: { page },
   data() {
     return {

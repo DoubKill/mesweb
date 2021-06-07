@@ -80,7 +80,11 @@ export default {
         this.equipOptions = response.results
 
         if (this.createdIs && this.equipOptions.length > 0 && this.isDefault) {
-          this.changeFun(this.equipOptions[0].id)
+          if (this.multipleIs) {
+            this.changeFun([this.equipOptions[0].id])
+          } else {
+            this.changeFun(this.equipOptions[0].id)
+          }
         }
       })
     },

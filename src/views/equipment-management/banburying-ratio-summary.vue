@@ -147,6 +147,7 @@ import timeSpanSelect from '@/components/select_w/timeSpan'
 import { equipBanburySummary } from '@/api/base_w'
 import myMixin from './aminxPublic'
 export default {
+  name: 'BanburyingRatioSummary',
   components: { equipSelect, timeSpanSelect },
   mixins: [myMixin],
   data() {

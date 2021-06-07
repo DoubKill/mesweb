@@ -346,6 +346,7 @@ import { getEquip, getPalletFeedBacks, getTrainsFeedbacks, getEchartsList, getPr
 import page from '@/components/page'
 import { setDate } from '@/utils'
 export default {
+  name: 'BanburyingPerformanceManage',
   components: { page },
   data: function() {
     this.chartSettings = {

@@ -136,6 +136,7 @@ import { setDate } from '@/utils'
 // import page from '@/components/page'
 import { EquipMaintenanceOrderLog } from '@/api/base_w_two'
 export default {
+  name: 'RepairResume',
   components: { equipTypeSelect, EquipSelect },
   data() {
     return {

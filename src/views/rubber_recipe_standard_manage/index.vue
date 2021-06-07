@@ -373,6 +373,7 @@ import { globalCodesUrl, materialsUrl, productInfosUrl, copyProductInfosUrl } fr
 import commonVal from '@/utils/common'
 import { mapGetters } from 'vuex'
 export default {
+  name: 'RbRecipeStdManage',
   components: { pagination },
   data: function() {
     return {

@@ -234,6 +234,7 @@ import viewDialogTrial from '@/components/select_w/viewDialogTrial'
 // import manualEntryRadio from './manual_entry_components/index'
 // import page from '@/components/page'
 export default {
+  name: 'ManualEntry',
   components: { equipSelect, classSelect, allProductNoSelect, viewDialogTrial },
   data() {
     return {

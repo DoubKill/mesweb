@@ -316,6 +316,7 @@ import {
 } from '@/api/base_w'
 import { mapGetters } from 'vuex'
 export default {
+  name: 'InternalMixerProduction',
   components: { page, selectEquip, allProductNoSelect },
   data() {
     this.toolbox = {

@@ -178,6 +178,7 @@ import materialCodeSelect from '@/components/select_w/sparePartsMCodeSelect'
 import page from '@/components/page'
 
 export default {
+  name: 'ShelfMaterialBinding',
   components: { inventoryPosition, page, materialCodeSelect },
   data: function() {
     return {

@@ -88,6 +88,7 @@
 import { equipEownType } from '@/api/base_w_two'
 import page from '@/components/page'
 export default {
+  name: 'CauseOfShutdownMold',
   components: { page },
   data() {
     return {

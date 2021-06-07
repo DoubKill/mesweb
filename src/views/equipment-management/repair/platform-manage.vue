@@ -118,6 +118,7 @@
 import { platformConfig } from '@/api/base_w_two'
 import page from '@/components/page'
 export default {
+  name: 'PlatformManage',
   components: { page },
   data() {
     return {
