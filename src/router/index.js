@@ -419,8 +419,8 @@ export const asyncRoutes = [
         icon: 'formula',
         permissionName: 'batching_reality'
       }
-    },
-    {
+    }
+    /** {
       path: '/small-material-weight',
       redirect: '/small-material-weight/material',
       component: () => import('@/views/recipe/small-material-weight/index'),
@@ -491,7 +491,7 @@ export const asyncRoutes = [
           }
         }
       ]
-    }
+    }**/
     ]
   },
   {
@@ -856,7 +856,7 @@ export const asyncRoutes = [
           permissionName: 'compoundRubber_plan'
         }
       },
-      {
+      /** {
         path: '/material-delivery-manage',
         redirect: '/material-delivery-manage/task',
         component: () => import('@/views/inventory/material-delivery-manage/a-index.vue'),
@@ -886,7 +886,7 @@ export const asyncRoutes = [
             }
           }
         ]
-      },
+      },**/
       {
         path: '/raw-material-manage',
         component: () => import('@/views/inventory/raw-material-manage.vue'),
