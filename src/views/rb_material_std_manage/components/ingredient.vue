@@ -169,6 +169,7 @@
       </span>
     </el-dialog>
     <materialSelection
+      ref="rawMaterialSync"
       :show="dialogRawMaterialSync"
       @handleCloseMaterialSelection="handleCloseMaterialSelection"
       @handleMaterialSelect="handleMaterialSelect"
@@ -272,6 +273,9 @@ export default {
         // 清空删除的id
         this.$refs.ingredientStandardRef.weight_cnt_types_delete = []
         this.$refs.ingredientStandardRef.weight_material_delete = []
+      }
+      if (this.$refs.rawMaterialSync) {
+        this.$refs.rawMaterialSync.clearVal()
       }
       this.$emit('handleCloseIngredient')
       if (done) {

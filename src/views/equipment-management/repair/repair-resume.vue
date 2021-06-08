@@ -194,7 +194,7 @@ export default {
       }
     },
     setTime(row, val) {
-      console.log(row, val, 888)
+      // console.log(row, val, 888)
       // return val.join(',')[0]
     },
     equipTypeSelect(obj) {

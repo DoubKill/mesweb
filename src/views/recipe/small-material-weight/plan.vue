@@ -127,7 +127,7 @@
         <el-form-item label="设定车次" prop="setno">
           <el-input-number
             v-model="ruleForm.setno"
-            :min="ruleForm.actno"
+            :min="ruleForm.actno||0"
             controls-position="right"
           />
         </el-form-item>
