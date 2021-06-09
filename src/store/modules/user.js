@@ -2,6 +2,7 @@ import { login } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 import Cookies from 'js-cookie'
+import request from '@/utils/request-zc'
 
 const getDefaultState = () => {
   return {
@@ -58,14 +59,26 @@ const actions = {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password }).then(response => {
+        // 登录中策
+        Cookies.set('zc-url', response.wms_url)
+        request({
+          url: '/user/Login',
+          method: 'POST',
+          data: { loginId: 'guozi',
+            password: '123456' }}
+        ).then(data => {
+          const userId = data.datas.userId
+          Cookies.set('zc-userId', userId)
+        }).catch((e) => {
+          console.log(e, 'zc登录失败')
+        })
         commit('SET_TOKEN', response.token)
         commit('SET_NAME', response.username)
         commit('SET_USER_ID', response.id)
         commit('SET_PERMISSION', JSON.stringify(response.permissions))
         // 登录获取token,存到全局中
         setToken(response.token)
-        Cookies.set('zc-url', response.wms_url)
-        resolve(response)
+        resolve()
       }).catch(error => {
         reject(error)
       })
