@@ -14,7 +14,7 @@ const service = axios.create({
   // 合到dev的时候手动改一下 改成线上地址
   // baseURL: Cookies.get('zc-url'),
   // 'http://124.160.19.254:60001/',
-  baseURL: 'http://10.4.24.25:8168/',
+  baseURL: 'http://10.4.24.25:8169/',
   timeout: 10000000000
 })
 
