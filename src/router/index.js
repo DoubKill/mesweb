@@ -887,16 +887,16 @@ export const asyncRoutes = [
           }
         ]
       },
-      {
-        path: '/raw-material-manage',
-        component: () => import('@/views/inventory/raw-material-manage.vue'),
-        name: 'RawMaterial',
-        meta: {
-          title: '原材料出库计划',
-          icon: 'stock',
-          permissionName: 'material_outbound_plan'
-        }
-      },
+      // {
+      //   path: '/raw-material-manage',
+      //   component: () => import('@/views/inventory/raw-material-manage.vue'),
+      //   name: 'RawMaterial',
+      //   meta: {
+      //     title: '原材料出库计划',
+      //     icon: 'stock',
+      //     permissionName: 'material_outbound_plan'
+      //   }
+      // },
       {
         path: '/druss-delivery',
         component: () => import('@/views/inventory/druss-delivery.vue'),
