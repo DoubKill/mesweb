@@ -118,7 +118,7 @@
                 v-model="scope.row.visible"
                 placement="right"
                 width="400"
-                trigger="manual"
+                trigger="click"
               >
                 <el-input
                   v-model="reason"
@@ -401,7 +401,7 @@ export default {
     },
     async submitFun(row, index) {
       row.visible = false
-      console.log(this.reason, 888)
+      // console.log(this.reason, 888)
       await changePlanPackage(row.id,
         this.reason)
       this.getList()

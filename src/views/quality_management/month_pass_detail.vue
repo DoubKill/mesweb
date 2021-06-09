@@ -217,7 +217,7 @@
     </el-dialog>
     <!-- 图表 -->
     <div v-if="comprehensiveBarShow">
-      <monthpassdetailChart ref="monthpassdetailChart" :chartsdata="chartsdatas" :headers="headers" :comprehensive-bar-show="comprehensiveBarShow" />
+      <monthpassdetailChart :chartsdata="chartsdatas" :headers="headers" :comprehensive-bar-show="comprehensiveBarShow" />
     </div>
 
     <el-dialog :visible.sync="chartTojiDialogVisible" title="月快检合格率" width="90%">

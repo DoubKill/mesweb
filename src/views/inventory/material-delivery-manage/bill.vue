@@ -94,7 +94,7 @@
     <el-dialog
       title="物料明细"
       :visible.sync="dialogVisible"
-      width="60%"
+      width="70%"
     >
       <el-table
         v-loading="loading1"
@@ -120,7 +120,7 @@
         <el-table-column
           prop="quantity"
           label="数量"
-          min-width="20"
+          min-width="10"
         />
         <el-table-column
           prop="entranceCode"
@@ -141,7 +141,7 @@
       width="80%"
       :before-close="handleClose1"
     >
-      <el-form :inline="true">
+      <el-form v-if="!loading2" :inline="true">
         <el-form-item label="出库口(必选)">
           <el-select v-model="formSearch.entrance_name" placeholder="请选择" @change="changeEntrance">
             <el-option
@@ -323,7 +323,7 @@
           </el-table-column>
         </el-table>
       </div>
-      <span slot="footer" class="dialog-footer">
+      <span v-if="!loading2" slot="footer" class="dialog-footer">
         <el-button @click="handleClose1(false)">取 消</el-button>
         <el-button type="primary" :loading="btnLoading" @click="submitForm">确 定</el-button>
       </span>
@@ -517,12 +517,12 @@ export default {
       this.getDialogGoods()
     },
     changeEntrance(val) {
+      let obj
+      if (val) {
+        obj = this.optionsEntrance.find(d => d.name === val)
+      }
+      this.formSearch.code = obj.code || ''
       if (this.isLocation) {
-        let obj
-        if (val) {
-          obj = this.optionsEntrance.find(d => d.name === val)
-        }
-        this.formSearch.code = obj.code || ''
         this.tableData4 = []
         this.formSearch.page = 1
         this.getDialogGoods()

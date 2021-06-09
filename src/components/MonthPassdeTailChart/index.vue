@@ -1,7 +1,7 @@
 <template>
   <el-row>
     <el-col :xs="24" :sm="24" :md="24" :lg="24">
-      <div id="dialogRateBar" style="width: 100%;height:400px" />
+      <div id="dialogRateBar1" style="width: 100%;height:400px" />
     </el-col>
   </el-row>
 
@@ -190,11 +190,9 @@ export default {
         obj3.data.push(D.lb_percent_of_pass ? D.lb_percent_of_pass.replace(/%/g, '') : '')
         obj4.data.push(D.zh_percent_of_pass ? D.zh_percent_of_pass.replace(/%/g, '') : '')
       })
-      // console.log(this.detailData, 'this.detailData')
-      // console.log(this.detailHeaders, 'this.detailHeaders')
 
       this.$nextTick(() => {
-        this.chartDialogRateBar = echarts.init(document.getElementById('dialogRateBar'))
+        this.chartDialogRateBar = echarts.init(document.getElementById('dialogRateBar1'))
         const allArr = [obj1, obj2, obj3, obj4, ...arr1]
         this.option.xAxis[0].data = headers2
         this.option.series = allArr

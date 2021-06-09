@@ -133,6 +133,12 @@ export default {
       this.search.page_size = page_size
       this.getList()
     },
+    clearVal() {
+      this.search = {
+        use_flag: true
+      }
+      this.getList()
+    },
     handleClose(done) {
       this.$emit('handleCloseMaterialSelection')
       done()

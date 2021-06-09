@@ -212,7 +212,7 @@
           />
         </el-form-item>
         <el-form-item label="原材料" prop="material">
-          <el-input v-model="formData.material" placeholder="请输入" @input="changeFormDataMaterial" />
+          <el-input ref="materialInput" v-model="formData.material" placeholder="请输入" @input="changeFormDataMaterial" />
           <!-- <el-select
             v-model="formData.material"
             placeholder="请选择"
@@ -472,12 +472,18 @@ export default {
         delete this.formData.id
       }
       this.dialogVisible = true
+      this.$nextTick(d => {
+        this.$refs.materialInput.focus()
+      })
     },
     addFun() {
       if (this.$refs.formData) {
         this.$refs.formData.clearValidate()
       }
       this.dialogVisible = true
+      this.$nextTick(d => {
+        this.$refs.materialInput.focus()
+      })
     },
     changeSearch() {
       this.search.page = 1
@@ -490,8 +496,8 @@ export default {
     handleClose(done) {
       this.dialogVisible = false
       this.$refs.formData.clearValidate()
-
       this.clearVal()
+
       this.getExamine()
 
       if (done) {
