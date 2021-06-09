@@ -139,7 +139,7 @@
     <page
       v-if="!loading"
       :total="total"
-      :current-page="search.page"
+      :current-page="search.pageNo"
       @currentChange="currentChange"
     />
   </div>
