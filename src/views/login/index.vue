@@ -73,8 +73,6 @@
 <script>
 // import { validUsername } from '@/utils/validate'
 
-import request from '@/utils/request-zc'
-import Cookies from 'js-cookie'
 export default {
   name: 'Login',
   data() {
@@ -129,22 +127,9 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('user/login', this.loginForm).then(response => {
+          this.$store.dispatch('user/login', this.loginForm).then(() => {
             this.$router.push({ path: '/' })
             this.loading = false
-
-            // 登录中策
-            request({
-              url: '/user/Login',
-              method: 'POST',
-              data: { loginId: 'guozi',
-                password: '123456' }}
-            ).then(data => {
-              const userId = data.datas.userId
-              Cookies.set('zc-userId', userId)
-            }).catch((e) => {
-              console.log(e, 'zc登录失败')
-            })
           }).catch(() => {
             this.loading = false
           })
