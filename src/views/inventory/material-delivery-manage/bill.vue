@@ -94,7 +94,7 @@
     <el-dialog
       title="物料明细"
       :visible.sync="dialogVisible"
-      width="60%"
+      width="70%"
     >
       <el-table
         v-loading="loading1"
@@ -120,7 +120,7 @@
         <el-table-column
           prop="quantity"
           label="数量"
-          min-width="20"
+          min-width="10"
         />
         <el-table-column
           prop="entranceCode"

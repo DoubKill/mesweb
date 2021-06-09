@@ -64,7 +64,8 @@ const actions = {
         commit('SET_PERMISSION', JSON.stringify(response.permissions))
         // 登录获取token,存到全局中
         setToken(response.token)
-        resolve()
+        Cookies.set('zc-url', response.wms_url)
+        resolve(response)
       }).catch(error => {
         reject(error)
       })
@@ -117,6 +118,7 @@ const actions = {
       Cookies.remove('editionNo')
       Cookies.remove('userId')
       Cookies.remove('name')
+      Cookies.remove('zc-url')
 
       dispatch('tagsView/delAllViews', null, { root: true })
 
