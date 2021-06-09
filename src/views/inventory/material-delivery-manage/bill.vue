@@ -573,6 +573,10 @@ export default {
           AllocationInventoryDetails: arr
         }
       }
+      if (obj.AllocationInventoryDetails.length === 0) {
+        this.$message.info('未添加物料')
+        return
+      }
       const _api = this.isLocation ? '/MESApi/AllocateSpaceDelivery' : '/MESApi/AllocateWeightDelivery'
       this.btnLoading = true
       request({
