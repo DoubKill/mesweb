@@ -12,9 +12,9 @@ import Cookies from 'js-cookie'
 // create an axios instance
 const service = axios.create({
   // 合到dev的时候手动改一下 改成线上地址
-  // baseURL: Cookies.get('zc-url'),
+  baseURL: Cookies.get('zc-url'),
   // 'http://124.160.19.254:60001/',
-  baseURL: 'http://10.4.24.25:8169/',
+  // baseURL: 'http://10.4.24.25:8169/',
   timeout: 10000000000
 })
 
@@ -24,6 +24,9 @@ service.interceptors.request.use(
     if (Cookies.get('zc-userId')) {
       config.headers['TenantNumber'] = 1
       config.headers['UserId'] = Cookies.get('zc-userId')
+    }
+    if (Cookies.get('zc-url')) {
+      config.baseURL = Cookies.get('zc-url') || ''
     }
     return config
   },

@@ -48,6 +48,9 @@
           @change="changeDate"
         />
       </el-form-item>
+      <el-form-item label="">
+        <el-button type="primary" @click="getList">刷新</el-button>
+      </el-form-item>
     </el-form>
     <el-table
       v-loading="loading"
@@ -139,7 +142,7 @@
     <page
       v-if="!loading"
       :total="total"
-      :current-page="search.page"
+      :current-page="search.pageNo"
       @currentChange="currentChange"
     />
   </div>

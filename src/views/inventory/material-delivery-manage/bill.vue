@@ -25,6 +25,7 @@
         type="primary"
         @click="showWeightDialog"
       >指定重量出库</el-button>
+      <el-button type="primary" @click="getList">刷新</el-button>
     </el-form>
 
     <el-table
@@ -238,6 +239,11 @@
           style="width: 100%;margin-top:5px"
           border
         >
+          <el-table-column
+            label="序号"
+            type="index"
+            min-width="20"
+          />
           <el-table-column
             prop="MaterialName"
             label="物料名称"
