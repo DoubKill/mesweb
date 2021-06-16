@@ -881,8 +881,101 @@ export const asyncRoutes = [
             component: () => import('@/views/inventory/material-delivery-manage/bill.vue'),
             name: 'DeliveryBill',
             meta: {
+              faName: 'MaterialDelivery',
               title: '出库单据',
               permissionName: 'material_outbound_record'
+            }
+          },
+          {
+            path: '/material-delivery-manage/daily',
+            component: () => import('@/views/inventory/material-delivery-manage/daily.vue'),
+            name: 'DeliveryDaily',
+            meta: {
+              faName: 'MaterialDelivery',
+              title: '出库日报',
+              permissionName: 'material_daily_summary'
+            }
+          },
+          {
+            path: '/receive-good-manage/monthly',
+            component: () => import('@/views/inventory/material-delivery-manage/monthly.vue'),
+            name: 'DeliveryMonthly',
+            meta: {
+              faName: 'MaterialDelivery',
+              title: '出库月报',
+              permissionName: 'material_monthly_summary'
+            }
+          },
+          {
+            path: '/receive-good-manage/yearly',
+            component: () => import('@/views/inventory/material-delivery-manage/yearly.vue'),
+            name: 'DeliveryYearly',
+            meta: {
+              faName: 'MaterialDelivery',
+              title: '出库年报',
+              permissionName: 'material_yearly_summary'
+            }
+          }
+        ]
+      },
+      {
+        path: '/carbon-delivery-manage',
+        redirect: '/carbon-delivery-manage/task',
+        component: () => import('@/views/inventory/carbon-delivery-manage/a-index.vue'),
+        name: 'CarbonDelivery',
+        meta: {
+          title: '炭黑出库管理',
+          icon: 'stock'
+        },
+        children: [
+          {
+            path: '/carbon-delivery-manage/task',
+            component: () => import('@/views/inventory/carbon-delivery-manage/task.vue'),
+            name: 'CarbonDeliveryTask',
+            meta: {
+              faName: 'CarbonDelivery',
+              title: '出库任务',
+              permissionName: 'th_outbound_task'
+            }
+          },
+          {
+            path: '/carbon-good-manage/bill',
+            component: () => import('@/views/inventory/carbon-delivery-manage/bill.vue'),
+            name: 'CarbonDeliveryBill',
+            meta: {
+              faName: 'CarbonDelivery',
+              title: '出库单据',
+              permissionName: 'th_outbound_record'
+            }
+          },
+          {
+            path: '/carbon-delivery-manage/daily',
+            component: () => import('@/views/inventory/carbon-delivery-manage/daily.vue'),
+            name: 'CarbonDeliveryDaily',
+            meta: {
+              faName: 'CarbonDelivery',
+              title: '出库日报',
+              permissionName: 'th_daily_summary'
+            }
+          },
+          {
+            path: '/carbon-delivery-manage/monthly',
+            component: () => import('@/views/inventory/carbon-delivery-manage/monthly.vue'),
+            name: 'CarbonDeliveryMonthly',
+            meta: {
+              faName: 'CarbonDelivery',
+              title: '出库月报',
+              permissionName: 'material_th_summary'
+            }
+          },
+          {
+            path: '/carbon-delivery-manage/yearly',
+            component: () => import('@/views/inventory/carbon-delivery-manage/yearly.vue'),
+            name: 'CarbonDeliveryYearly',
+            meta: {
+              faName: 'CarbonDelivery',
+              title: '出库年报',
+              permissionName: 'th_yearly_summary'
             }
           }
         ]
@@ -897,16 +990,16 @@ export const asyncRoutes = [
       //     permissionName: 'material_outbound_plan'
       //   }
       // },
-      {
-        path: '/druss-delivery',
-        component: () => import('@/views/inventory/druss-delivery.vue'),
-        name: 'DrussDelivery',
-        meta: {
-          title: '炭黑出库计划',
-          icon: 'stock',
-          permissionName: 'carbon_outbound_plan'
-        }
-      },
+      // {
+      //   path: '/druss-delivery',
+      //   component: () => import('@/views/inventory/druss-delivery.vue'),
+      //   name: 'DrussDelivery',
+      //   meta: {
+      //     title: '炭黑出库计划',
+      //     icon: 'stock',
+      //     permissionName: 'carbon_outbound_plan'
+      //   }
+      // },
       // {
       //   path: '/final-rubber-manage',
       //   component: () => import('@/views/inventory/final_rubber_manage.vue'),

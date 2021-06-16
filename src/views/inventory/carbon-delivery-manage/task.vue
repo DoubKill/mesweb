@@ -149,11 +149,11 @@
 </template>
 
 <script>
-import request from '@/utils/request-zc'
+import request from '@/utils/request-zc-th'
 import page from '@/components/page'
 import { debounce } from '@/utils'
 export default {
-  name: 'DeliveryTask',
+  name: 'CarbonDeliveryTask',
   components: { page },
   data() {
     return {
