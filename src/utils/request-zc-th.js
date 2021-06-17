@@ -12,9 +12,7 @@ import Cookies from 'js-cookie'
 // create an axios instance
 const service = axios.create({
   // 合到dev的时候手动改一下 改成线上地址
-  baseURL: Cookies.get('zc-url'),
-  // 'http://124.160.19.254:60001/',
-  // baseURL: 'http://10.4.24.25:8169/',
+  baseURL: Cookies.get('zc-th-url'),
   timeout: 10000000000
 })
 
@@ -23,11 +21,10 @@ service.interceptors.request.use(
   config => {
     if (Cookies.get('zc-userId')) {
       config.headers['TenantNumber'] = 1
-      config.headers['UserId'] = Cookies.get('zc-userId')
+      config.headers['UserId'] = Cookies.get('zc-th-userId')
     }
-    if (Cookies.get('zc-url')) {
-      config.baseURL = Cookies.get('zc-url') || ''
-      // config.baseURL = 'http://10.4.24.25:8169/'
+    if (Cookies.get('zc-th-url')) {
+      config.baseURL = Cookies.get('zc-th-url') || ''
     }
     return config
   },
@@ -47,11 +44,6 @@ service.interceptors.response.use(
           type: 'error',
           duration: 3 * 1000
         })
-        // if (response.data.msg === `对象名 't_stock_out_task' 无效。`) {
-        //   store.dispatch('user/logout')
-        //   router.push('/login')
-        //   return Promise.reject()
-        // }
         return Promise.reject(response)
       } else {
         const res = response.data

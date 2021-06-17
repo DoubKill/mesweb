@@ -369,5 +369,11 @@ export default {
   XlPlan: '/api/v1/terminal/xl-plan/',
   WmsStock: '/api/v1/inventory/wms-stock/',
   WmsWeightStock: '/api/v1/inventory/wms-weight-stock/',
-  WmsEntrance: '/api/v1/inventory/wms-entrance/'
+  WmsEntrance: '/api/v1/inventory/wms-entrance/',
+  // 炭黑库货位列表
+  ThStock: '/api/v1/inventory/th-stock/',
+  // 炭黑库货物重量列表
+  ThWeightStock: '/api/v1/inventory/th-weight-stock/',
+  // 炭黑库出库口列表
+  ThEntrance: '/api/v1/inventory/th-entrance/'
 }
