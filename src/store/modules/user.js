@@ -63,10 +63,11 @@ const actions = {
         // 登录中策
         Cookies.set('zc-url', response.wms_url)
         Cookies.set('zc-th-url', response.th_url)
+        const loginId = process.env.NODE_ENV === 'production' ? 'mes' : 'guozi'
         request({
           url: '/user/Login',
           method: 'POST',
-          data: { loginId: 'guozi',
+          data: { loginId: loginId,
             password: '123456' }}
         ).then(data => {
           const userId = data.datas.userId
