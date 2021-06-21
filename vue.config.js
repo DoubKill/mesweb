@@ -47,6 +47,8 @@ module.exports = {
         // target: 'http://10.20.180.40:8000/', // 龙霄
         // target: 'http://10.4.14.107:8000/', // 冯强外
         // target: 'http://10.20.180.40:8000/', // 冯强
+        // target: 'http://10.4.14.68:8000/', // 杨振超外
+        // target: 'http://10.20.180.250:8000/', // 杨振超
         // target: 'http://10.4.10.54:80',
         ws: true,
         changeOrigin: true,
