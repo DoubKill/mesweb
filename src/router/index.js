@@ -1300,6 +1300,26 @@ export const asyncRoutes = [
               title: '快检信息综合管理',
               permissionName: 'deal_result'
             }
+          },
+          {
+            path: '/inspection-result-management/menni-equip',
+            component: () => import('@/views/quality_management/menni-equip'),
+            name: 'RubberMenniEquip',
+            meta: {
+              faName: 'InspectionResultManagement',
+              title: '胶料门尼设备管理',
+              permissionName: 'product_report_equip'
+            }
+          },
+          {
+            path: '/inspection-result-management/menni-report',
+            component: () => import('@/views/quality_management/menni-report'),
+            name: 'RubberMenniReport',
+            meta: {
+              faName: 'InspectionResultManagement',
+              title: '胶料门尼数据上报',
+              permissionName: 'product_report_value'
+            }
           }
         ]
       },
@@ -1467,6 +1487,26 @@ export const asyncRoutes = [
               faName: 'MaterialQuickcheck',
               title: '原材料管理',
               permissionName: 'examine_material'
+            }
+          },
+          {
+            path: '/material-quickcheck/menni-equip',
+            component: () => import('@/views/material_quickcheck_manage/menni-equip'),
+            name: 'MenniEquip',
+            meta: {
+              faName: 'MaterialQuickcheck',
+              title: '原材料门尼设备管理',
+              permissionName: 'material_report_equip'
+            }
+          },
+          {
+            path: '/material-quickcheck/menni-report',
+            component: () => import('@/views/material_quickcheck_manage/menni-report'),
+            name: 'MenniReport',
+            meta: {
+              faName: 'MaterialQuickcheck',
+              title: '原材料门尼数据上报',
+              permissionName: 'material_report_value'
             }
           }
         ]

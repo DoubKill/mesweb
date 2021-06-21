@@ -375,5 +375,11 @@ export default {
   // 炭黑库货物重量列表
   ThWeightStock: '/api/v1/inventory/th-weight-stock/',
   // 炭黑库出库口列表
-  ThEntrance: '/api/v1/inventory/th-entrance/'
+  ThEntrance: '/api/v1/inventory/th-entrance/',
+  // 原材料上报设备
+  MaterialReportEquip: '/api/v1/quality/material-report-equip/',
+  MaterialReportValue: '/api/v1/quality/material-report-value/',
+  // 胶料上报设备
+  ProductReportEquip: '/api/v1/quality/product-report-equip/',
+  ProductReportValue: '/api/v1/quality/product-report-value/'
 }

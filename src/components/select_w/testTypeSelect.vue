@@ -20,10 +20,31 @@
 <script>
 import { testTypes } from '@/api/base_w'
 export default {
+  props: {
+    // 在created里面加载
+    isCreated: {
+      type: Boolean,
+      default: false
+    },
+    defaultVal: {
+      type: [Array, String, Number],
+      default: null
+    }
+  },
   data() {
     return {
-      value: '',
+      value: this.defaultVal,
       options: []
+    }
+  },
+  watch: {
+    defaultVal(val) {
+      this.value = val
+    }
+  },
+  created() {
+    if (this.isCreated) {
+      this.getList()
     }
   },
   methods: {
@@ -36,7 +57,7 @@ export default {
       }
     },
     visibleChange(val) {
-      if (val && this.options.length === 0) {
+      if (val && this.options.length === 0 && !this.isCreated) {
         this.getList()
       }
     },

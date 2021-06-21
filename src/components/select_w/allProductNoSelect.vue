@@ -39,6 +39,10 @@ export default {
       type: Boolean,
       default: false
     },
+    isCreatedList: { // 一进来就加载数据
+      type: Boolean,
+      default: false
+    },
     labelName: {
       type: String,
       default: 'material_no'
@@ -48,26 +52,40 @@ export default {
       default() {
         return {}
       }
+    },
+    defaultVal: {
+      type: [String, Number],
+      default: null
     }
   },
   data() {
     return {
       productBatchings: [],
-      productBatchingId: '',
+      productBatchingId: this.defaultVal,
       productBatchingById: {},
       loading: true
     }
   },
   watch: {
+    defaultVal(val) {
+      this.productBatchingId = val
+    },
+    paramsObj: {
+      handler(newValue, oldValue) {
+      }
+    }
   },
   created() {
+    if (this.isCreatedList) {
+      this.getProductBatchings()
+    }
   },
   methods: {
     productBatchingChanged() {
       this.$emit('productBatchingChanged', this.productBatchingById[this.productBatchingId])
     },
     visibleChange(bool) {
-      if (bool) {
+      if (bool && !this.isCreatedList) {
         this.getProductBatchings()
       }
     },
