@@ -327,20 +327,27 @@ export default {
         this.$message('暂无可提交的信息')
         return
       }
-      try {
-        this.tableData.forEach(d => {
-          if (!d.transport_date || !d.material_sample_name) {
-            throw new Error('每行：原材料、抽检人、收货日期必填')
-          }
-        })
-      } catch (error) {
-        this.$message(error.message)
+      // try {
+      //   this.tableData.forEach(d => {
+      //     if (!d.transport_date || !d.material_sample_name) {
+      //       throw new Error('每行：原材料、抽检人、收货日期必填')
+      //     }
+      //   })
+      // } catch (error) {
+      //   this.$message(error.message)
+      //   return
+      // }
+      let arr = []
+      arr = this.tableData.filter(d => d.transport_date &&
+        d.material_sample_name)
+      if (arr.length === 0) {
+        this.$message('暂无可提交数据；原材料、抽检人、收货日期必填')
         return
       }
       try {
         this.loadingBtn = true
         await materialReportValue('post', null, {
-          data: this.tableData
+          data: arr
         })
         this.$message.success('提交成功')
         this.getList()
