@@ -603,17 +603,17 @@ export default {
     line-height: 18px;
     padding: 4px !important;
   }
-  td{
+  // td{
     // position: relative;
     // padding:2px !important;
     // margin:2px !important;
-  }
+  // }
   .el-table .cell{
     padding: 0px 4px !important;
   }
-  .el-table td, .el-table th.is-center{
+  // .el-table td, .el-table th.is-center{
     // padding: 2px !important;
-  }
+  // }
   .test_type_name_style{
     // position: absolute;
     // top: 0;
