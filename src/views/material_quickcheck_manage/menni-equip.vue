@@ -62,7 +62,6 @@
       </el-table-column>
     </el-table>
     <page
-      v-if="!loading"
       :total="total"
       :old-page="false"
       :current-page="search.page"
@@ -193,6 +192,7 @@ export default {
             this.$message.success('操作成功')
             this.getList()
             this.loadingBtn = false
+            this.handleClose(false)
           } catch (e) {
             this.loadingBtn = false
           }

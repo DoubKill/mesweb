@@ -160,7 +160,7 @@ export default {
       optionTaskLine: {
         title: {
           text: `${this.$route.name === 'CarbonDeliveryYearly' ? '当年'
-            : this.$route.name === 'CarbonDeliveryMonthly' ? '当月' : '当日'}出库任务数量统计`,
+            : this.$route.name === 'CarbonDeliveryMonthly' ? '当月' : '当日'}出库物资编码数量统计`,
           textStyle: {
             fontSize: 14
           }

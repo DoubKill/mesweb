@@ -17,39 +17,41 @@
       :loading="loadingBtn"
       @click="addFun"
     >提交</el-button>
-    <el-table
+    <u-table
       v-loading="loading"
       :data="tableData"
       :span-method="objectSpanMethod"
       border
+      use-virtual
+      max-height="600"
       style="width: 100%; margin-top: 20px"
     >
-      <el-table-column
+      <u-table-column
         prop="report_equip_no"
         label="设备编号"
         min-width="20"
       />
-      <el-table-column
+      <u-table-column
         prop="data_point_name"
         label="数据点"
         min-width="20"
       />
-      <el-table-column
+      <u-table-column
         prop="created_date"
         label="上报时间"
         min-width="20"
       />
-      <el-table-column
+      <u-table-column
         prop="value"
         label="检测值"
         min-width="20"
       />
-      <el-table-column
+      <u-table-column
         prop="created_date"
         label="提交时间"
         min-width="20"
       />
-      <el-table-column
+      <u-table-column
         label="工厂日期"
         width="160"
       >
@@ -86,8 +88,8 @@
             />
           </div>
         </template>
-      </el-table-column>
-      <el-table-column
+      </u-table-column>
+      <u-table-column
         label="生产机台"
         width="120"
       >
@@ -105,8 +107,8 @@
             />
           </el-select>
         </template>
-      </el-table-column>
-      <el-table-column
+      </u-table-column>
+      <u-table-column
         label="班次"
         width="120"
       >
@@ -124,8 +126,8 @@
             />
           </el-select>
         </template>
-      </el-table-column>
-      <el-table-column
+      </u-table-column>
+      <u-table-column
         label="胶料"
         width="180"
       >
@@ -140,8 +142,8 @@
             @productBatchingChanged="productBatchingChanged($event,row,$index)"
           />
         </template>
-      </el-table-column>
-      <el-table-column
+      </u-table-column>
+      <u-table-column
         prop="id"
         label="车次"
         width="120"
@@ -151,8 +153,8 @@
             v-model="row.actual_trains"
           />
         </template>
-      </el-table-column>
-    </el-table>
+      </u-table-column>
+    </u-table>
   </div>
 </template>
 
@@ -188,7 +190,7 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const data = await productReportValue('get', null, { params: this.search })
+        const data = await productReportValue('get', null, { params: { created_date: this.created_date }})
         this.tableData = data
         this.loading = false
         if (this.tableData.length === 0) return
@@ -252,7 +254,7 @@ export default {
       this.$set(this.tableData[index], 'product_no', '')
     },
     changeList() {
-      if (!this.report_date) {
+      if (!this.created_date) {
         this.$message('请选择上报日期')
         return
       }
@@ -296,6 +298,9 @@ export default {
       .el-input, .el-input__inner{
           width: 150px;
       }
+  }
+  .plTableBox .el-table .umy-table-beyond{
+        white-space: normal!important;
   }
     .slotIconStyle{
         font-size:24px;

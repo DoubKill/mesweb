@@ -68,7 +68,6 @@
       </el-table-column>
     </el-table>
     <page
-      v-if="!loading"
       :total="total"
       :old-page="false"
       :current-page="search.page"

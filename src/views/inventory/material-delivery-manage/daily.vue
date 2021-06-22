@@ -114,6 +114,7 @@
         min-width="8"
       />
       <el-table-column
+        v-if="currentRouter==='DeliveryDaily'"
         prop="batchNo"
         label="批次号"
         min-width="20"
@@ -193,7 +194,7 @@ export default {
       optionCodeLine: {
         title: {
           text: `${this.$route.name === 'DeliveryYearly' ? '当年'
-            : this.$route.name === 'DeliveryMonthly' ? '当月' : '当日'}出库任务数量统计`,
+            : this.$route.name === 'DeliveryMonthly' ? '当月' : '当日'}出库物资编码数量统计`,
           textStyle: {
             fontSize: 14
           }
