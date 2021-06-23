@@ -43,11 +43,11 @@ export default {
       type: Number,
       default: 0
     },
-    // 统一的当前展示多少页，一般不会用到
-    // pageSize: {
-    //   type: Number,
-    //   default: 10
-    // },
+    // 统一的当前展示多少页
+    pageSizeProps: {
+      type: Number,
+      default: 10
+    },
     currentPage: {
       type: Number,
       default: 1
@@ -59,7 +59,7 @@ export default {
   },
   data() {
     return {
-      pageSize: 10,
+      pageSize: this.pageSizeProps,
       options: [
         { id: 10, name: '10条/页' },
         { id: 50, name: '50条/页' },
@@ -80,7 +80,9 @@ export default {
   },
   methods: {
     currentChange(page, page_size) {
-      this.pageSize = page_size
+      if (page_size) {
+        this.pageSize = page_size
+      }
       if (this.oldPage) {
         this.$emit('currentChange', page)
         return
