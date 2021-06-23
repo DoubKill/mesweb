@@ -68,8 +68,7 @@ export default {
             _this.changeSearch(_this.machineList[0].equip_no)
           }
         })
-        // eslint-disable-next-line handle-callback-err
-        .catch(function(error) { })
+        .catch(function() { })
     },
     changeSearch(id) {
       this.$emit('changeSearch', id)

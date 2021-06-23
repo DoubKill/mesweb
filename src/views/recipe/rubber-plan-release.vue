@@ -118,7 +118,7 @@
                 v-model="scope.row.visible"
                 placement="right"
                 width="400"
-                trigger="click"
+                trigger="manual"
               >
                 <el-input
                   v-model="reason"

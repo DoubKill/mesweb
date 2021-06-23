@@ -3,6 +3,7 @@ import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 import Cookies from 'js-cookie'
 import request from '@/utils/request-zc'
+import requestTH from '@/utils/request-zc-th'
 
 const getDefaultState = () => {
   return {
@@ -61,14 +62,29 @@ const actions = {
       login({ username: username.trim(), password: password }).then(response => {
         // 登录中策
         Cookies.set('zc-url', response.wms_url)
+        Cookies.set('zc-th-url', response.th_url)
+        const loginId = process.env.NODE_ENV === 'production'
+          ? window.location.host === '10.10.120.40:9009' ? 'guozi' : 'mes' : 'guozi'
+
         request({
           url: '/user/Login',
           method: 'POST',
-          data: { loginId: 'guozi',
+          data: { loginId: loginId,
             password: '123456' }}
         ).then(data => {
           const userId = data.datas.userId
           Cookies.set('zc-userId', userId)
+        }).catch((e) => {
+          console.log(e, 'zc登录失败')
+        })
+        requestTH({
+          url: '/user/Login',
+          method: 'POST',
+          data: { loginId: 'admin',
+            password: '123456' }}
+        ).then(data => {
+          const userId = data.datas.userId
+          Cookies.set('zc-th-userId', userId)
         }).catch((e) => {
           console.log(e, 'zc登录失败')
         })

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 原材料 出库单据 -->
+    <!-- 出库单据 -->
     <el-form :inline="true">
       <el-form-item label="出库单据号">
         <el-input v-model="search.TaskNumber" clearable placeholder="请输入内容" @input="getDebounce" />
@@ -16,12 +16,12 @@
         </el-select>
       </el-form-item>
       <el-button
-        v-permission="['material_outbound_record', 'space']"
+        v-permission="['th_outbound_record', 'space']"
         type="primary"
         @click="showLocationDialog"
       >指定库位出库</el-button>
       <el-button
-        v-permission="['material_outbound_record', 'weight']"
+        v-permission="['th_outbound_record', 'weight']"
         type="primary"
         @click="showWeightDialog"
       >指定重量出库</el-button>
@@ -209,11 +209,6 @@
             min-width="20"
           />
           <el-table-column
-            prop="unit"
-            label="单位"
-            min-width="20"
-          />
-          <el-table-column
             prop=""
             label="库位状态"
             min-width="15"
@@ -276,11 +271,6 @@
           <el-table-column
             prop="SpaceId"
             label="库位编号"
-            min-width="20"
-          />
-          <el-table-column
-            prop="unit"
-            label="单位"
             min-width="20"
           />
           <el-table-column
@@ -348,12 +338,12 @@
 </template>
 
 <script>
-import request from '@/utils/request-zc'
+import request from '@/utils/request-zc-th'
 import page from '@/components/page'
 import { debounce } from '@/utils'
-import { wmsStock, wmsWeightStock, wmsEntrance } from '@/api/base_w_three'
+import { thStock, thWeightStock, thEntrance } from '@/api/base_w_three'
 export default {
-  name: 'DeliveryBill',
+  name: 'CarbonDeliveryBill',
   components: { page },
   data() {
     return {
@@ -461,7 +451,7 @@ export default {
     async getDialogGoods() {
       try {
         this.loading2 = true
-        const data = await wmsStock('get', null, { params: this.formSearch })
+        const data = await thStock('get', null, { params: this.formSearch })
         this.tableData2 = data.results
         this.loading2 = false
         this.total1 = data.count
@@ -505,7 +495,7 @@ export default {
       try {
         this.tableData5 = []
         this.loading2 = true
-        const data = await wmsWeightStock('get', null, { params: this.formSearch })
+        const data = await thWeightStock('get', null, { params: this.formSearch })
         this.tableData5 = data.results
         this.loading2 = false
       } catch (error) {
@@ -549,7 +539,7 @@ export default {
     async getEntrance() {
       try {
         this.loading2 = true
-        const data = await wmsEntrance('get')
+        const data = await thEntrance('get')
         this.optionsEntrance = data
         this.formSearch.entrance_name = this.optionsEntrance[0].name
         this.formSearch.code = this.optionsEntrance[0].code
@@ -559,7 +549,7 @@ export default {
           this.getWeight()
         }
       } catch (error) {
-        //
+        this.loading2 = false
       }
     },
     submitForm() {

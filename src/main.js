@@ -5,9 +5,10 @@ Vue.prototype.$echarts = echarts
 import VCharts from 'v-charts'
 Vue.use(VCharts)
 
-import UmyUi from 'umy-ui'
-import 'umy-ui/lib/theme-chalk/index.css'
-Vue.use(UmyUi)
+// 按需引入虚拟表格
+import { UTable, UTableColumn } from 'umy-ui'
+Vue.component(UTable.name, UTable)
+Vue.component(UTableColumn.name, UTableColumn)
 
 import '@/utils/filterPublic'
 import '@/utils/directives/index.js'
