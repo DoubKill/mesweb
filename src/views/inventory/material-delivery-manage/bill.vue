@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 出库单据 -->
+    <!-- 原材料 出库单据 -->
     <el-form :inline="true">
       <el-form-item label="出库单据号">
         <el-input v-model="search.TaskNumber" clearable placeholder="请输入内容" @input="getDebounce" />
@@ -209,6 +209,11 @@
             min-width="20"
           />
           <el-table-column
+            prop="unit"
+            label="单位"
+            min-width="20"
+          />
+          <el-table-column
             prop=""
             label="库位状态"
             min-width="15"
@@ -271,6 +276,11 @@
           <el-table-column
             prop="SpaceId"
             label="库位编号"
+            min-width="20"
+          />
+          <el-table-column
+            prop="unit"
+            label="单位"
             min-width="20"
           />
           <el-table-column
