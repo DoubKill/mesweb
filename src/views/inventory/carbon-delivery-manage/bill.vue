@@ -209,6 +209,11 @@
             min-width="20"
           />
           <el-table-column
+            prop="unit"
+            label="单位"
+            min-width="20"
+          />
+          <el-table-column
             prop=""
             label="库位状态"
             min-width="15"
@@ -272,6 +277,11 @@
           <el-table-column
             prop="SpaceId"
             label="库位编号"
+            min-width="20"
+          />
+          <el-table-column
+            prop="unit"
+            label="单位"
             min-width="20"
           />
           <el-table-column
