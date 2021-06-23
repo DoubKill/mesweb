@@ -235,6 +235,7 @@
         </el-table>
         <page
           :total="total1"
+          :page-size-props="15"
           :current-page="formSearch.page"
           @currentChange="currentChange1"
         />
