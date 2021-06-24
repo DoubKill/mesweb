@@ -975,7 +975,7 @@ export const asyncRoutes = [
             meta: {
               faName: 'MaterialDelivery',
               title: '库存管理',
-              permissionName: ''
+              permissionName: 'material_inventory_summary'
             }
           }
         ]
@@ -1047,7 +1047,7 @@ export const asyncRoutes = [
             meta: {
               faName: 'CarbonDelivery',
               title: '库存管理',
-              permissionName: ''
+              permissionName: 'th_inventory_summary'
             }
           }
         ]
