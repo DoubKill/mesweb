@@ -36,3 +36,57 @@ export function productReportValue(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function wmsInventory(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WmsInventory + id + '/' : API.WmsInventory,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function wmsMaterialGroups(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WmsMaterialGroups + id + '/' : API.WmsMaterialGroups,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function wmsTunnels(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WmsTunnels + id + '/' : API.WmsTunnels,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function thInventory(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ThInventory + id + '/' : API.ThInventory,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function thMaterialGroups(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ThMaterialGroups + id + '/' : API.ThMaterialGroups,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function thTunnels(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ThTunnels + id + '/' : API.ThTunnels,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
