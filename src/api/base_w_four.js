@@ -90,3 +90,30 @@ export function thTunnels(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function depot(method, id, data = {}) {
+  const obj = {
+    url: id ? API.Depot + id + '/' : API.Depot,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function depotSite(method, id, data = {}) {
+  const obj = {
+    url: id ? API.DepotSite + id + '/' : API.DepotSite,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function depotPallet(method, id, data = {}) {
+  const obj = {
+    url: id ? API.DepotPallet + id + '/' : API.DepotPallet,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

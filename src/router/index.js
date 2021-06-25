@@ -797,7 +797,7 @@ export const asyncRoutes = [
           permissionName: 'product_inventory'
         }
       },
-      /** {
+      {
         path: '/lineSideLibrary',
         redirect: '/lineSideLibrary/Location',
         component: () => import('@/views/inventory/lineSideLibrary/a-index.vue'),
@@ -848,7 +848,59 @@ export const asyncRoutes = [
             }
           }
         ]
-      },**/
+      },
+      {
+        path: '/sulphurLibrary',
+        redirect: '/sulphurLibrary/Location',
+        component: () => import('@/views/inventory/sulphurLibrary/a-index.vue'),
+        name: 'SulphurLibrary',
+        meta: {
+          title: '硫磺库存',
+          icon: 'stock'
+        },
+        children: [
+          {
+            path: '/sulphurLibrary/location',
+            component: () => import('@/views/inventory/sulphurLibrary/location.vue'),
+            name: 'SulphurLocation',
+            meta: {
+              faName: 'SulphurLibrary',
+              title: '库区库位管理',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/sulphurLibrary/stockRecord',
+            component: () => import('@/views/inventory/sulphurLibrary/stockRecord.vue'),
+            name: 'SulphurStockRecord',
+            meta: {
+              faName: 'SulphurLibrary',
+              title: '库存查询',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/sulphurLibrary/inOutWarehouse',
+            component: () => import('@/views/inventory/sulphurLibrary/inOutWarehouse.vue'),
+            name: 'SulphurInOutWarehouse',
+            meta: {
+              faName: 'SulphurLibrary',
+              title: '出入库管理',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/sulphurLibrary/inOutWarehouseResume',
+            component: () => import('@/views/inventory/sulphurLibrary/inOutWarehouseResume.vue'),
+            name: 'SulphurInOutWarehouseResume',
+            meta: {
+              faName: 'SulphurLibrary',
+              title: '出入库履历',
+              permissionName: ''
+            }
+          }
+        ]
+      },
       {
         path: '/material-inout-record',
         component: () => import('@/views/inventory/material_inout_record.vue'),

@@ -389,5 +389,11 @@ export default {
   // 炭黑库库存
   ThInventory: '/api/v1/inventory/th-inventory/',
   ThMaterialGroups: '/api/v1/inventory/th-material-groups/',
-  ThTunnels: '/api/v1/inventory/th-tunnels/'
+  ThTunnels: '/api/v1/inventory/th-tunnels/',
+  // 线边库 库区
+  Depot: '/api/v1/inventory/depot/',
+  // 库位
+  DepotSite: '/api/v1/inventory/depot-site/',
+  PalletData: '/api/v1/inventory/pallet-data/',
+  DepotPallet: '/api/v1/inventory/depot-pallet/'
 }
