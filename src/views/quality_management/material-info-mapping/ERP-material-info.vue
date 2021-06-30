@@ -85,6 +85,7 @@
       </el-form-item>
     </el-form>
     <el-button
+      v-permission="['material_map','add']"
       style="margin-bottom:8px;float:right"
       type="primary"
       @click="addFun"
@@ -148,7 +149,7 @@
         min-width="20"
       />
       <el-table-column
-        prop="delete_user"
+        prop="update_user_name"
         label="更新人员"
         min-width="20"
       />
@@ -159,6 +160,7 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
+              v-permission="['material_map','change']"
               size="mini"
               @click="editFun(scope.row)"
             >编辑
@@ -182,24 +184,36 @@
     />
 
     <el-dialog
-      :title="'ERP原材料'+(formObj.id?'编辑':'新增')"
+      :title="'ERP原材料'+(objForm.id?'编辑':'新增')"
       :visible.sync="dialogVisible"
       width="60%"
       :before-close="handleClose"
     >
       <el-form ref="objForm" :model="objForm" :inline="true" :rules="rules">
         <el-form-item label="原材料编码" prop="material_no">
-          <el-input v-model="objForm.material_no" />
+          <el-autocomplete
+            v-model="objForm.material_no"
+            :fetch-suggestions="querySearchAsyncNo"
+            placeholder="请输入原材料编码"
+            :disabled="objForm.id?true:false"
+            value-key="material_no"
+          />
         </el-form-item>
         <el-form-item label="原材料名称" prop="material_name">
-          <el-input v-model="objForm.material_name" />
+          <el-autocomplete
+            v-model="objForm.material_name"
+            :fetch-suggestions="querySearchAsyncName"
+            placeholder="请输入原材料名称"
+            value-key="material_name"
+          />
         </el-form-item>
-        <el-form-item label="原材料简称" prop="for_short">
+        <el-form-item label="原材料简称">
           <el-input v-model="objForm.for_short" />
         </el-form-item>
         <el-form-item label="原材料类别" prop="material_type">
           <MaterialTypeSelect
             v-model="objForm.material_type"
+            :is-disabled="objForm.id?true:false"
           />
         </el-form-item>
         <el-form-item label="是否使用">
@@ -215,7 +229,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="包装单位" prop="package_unit">
+        <el-form-item label="包装单位">
           <el-select
             v-model="objForm.package_unit"
             filterable
@@ -286,11 +300,19 @@
       :before-close="handleClose1"
     >
       <el-form :inline="true">
-        <el-form-item label="原材料编码" prop="type">
-          <el-input v-model="search1.material_no" clearable @input="changeDebounce1" />
+        <el-form-item label="物料编码" prop="type">
+          <el-input
+            v-model="search1.material_no"
+            clearable
+            @input="changeDebounce1"
+          />
         </el-form-item>
-        <el-form-item label="原材料名称">
-          <el-input v-model="search1.material_name" clearable @input="changeDebounce1" />
+        <el-form-item label="物料名称">
+          <el-input
+            v-model="search1.material_name"
+            clearable
+            @input="changeDebounce1"
+          />
         </el-form-item>
       </el-form>
       <el-table
@@ -339,6 +361,7 @@ import materialCodeSelect from '@/components/materialCodeSelect'
 import { zcMaterials } from '@/api/base_w_two'
 import { classesListUrl } from '@/api/base_w'
 import { debounce } from '@/utils'
+import { materialsUrl } from '@/api/base_w'
 export default {
   name: 'ERPMaterialInfo',
   components: { MaterialTypeSelect, Page, materialCodeSelect },
@@ -349,7 +372,6 @@ export default {
       tableData1: [],
       options: [],
       options1: [],
-      formObj: {},
       dialogVisible: false,
       objForm: {
         use_flag: true,
@@ -365,14 +387,8 @@ export default {
         material_name: [
           { required: true, message: '请填写原材料名称', trigger: 'blur' }
         ],
-        for_short: [
-          { required: true, message: '请填写原材料简称', trigger: 'blur' }
-        ],
         material_type: [
           { required: true, message: '请选择原材料类别', trigger: 'change' }
-        ],
-        package_unit: [
-          { required: true, message: '请选择单位', trigger: 'change' }
         ]
       },
       search1: {},
@@ -382,10 +398,12 @@ export default {
       handleSelectionList: [],
       loading1: false,
       btnLoading: false,
-      loading2: false
+      loading2: false,
+      optionsMaterials: []
     }
   },
   created() {
+    this.getMaterials()
     this.getList()
     this.getGlobalCodes()
     this.getZcMaterialsList(false)
@@ -414,7 +432,6 @@ export default {
         if (bool) {
           this.tableData2 = data.results || []
           this.total1 = data.count
-          this.$refs.multipleTable1.clearSelection()
           if (this.tableData1.length > 0) {
             this.tableData1.forEach(row => {
               this.$refs.multipleTable1.toggleRowSelection(row)
@@ -434,6 +451,27 @@ export default {
       } catch (e) {
         //
       }
+    },
+    async getMaterials() {
+      const data = await materialsUrl('get', null, { params: { all: 1 }})
+      this.optionsMaterials = data.results || []
+    },
+    querySearchAsyncNo(queryString, cb) {
+      var restaurants = this.optionsMaterials
+      var results = queryString ? restaurants.filter(this.createStateFilter(queryString, 'material_no')) : restaurants
+
+      cb(results)
+    },
+    createStateFilter(queryString, val) {
+      return (state) => {
+        return (state[val].toLowerCase().indexOf(queryString.toLowerCase()) > -1)
+      }
+    },
+    querySearchAsyncName(queryString, cb) {
+      var restaurants = this.optionsMaterials
+      var results = queryString ? restaurants.filter(this.createStateFilter(queryString, 'material_name')) : restaurants
+
+      cb(results)
     },
     changeList() {
       if (!this.search.is_binding) {
@@ -488,6 +526,9 @@ export default {
     },
     addFun1() {
       this.dialogVisible1 = true
+      if (this.$refs.multipleTable1) {
+        this.$refs.multipleTable1.clearSelection()
+      }
       this.getZcMaterialsList(true)
     },
     searchSubimt() {
@@ -519,6 +560,7 @@ export default {
       })
     },
     changeDebounce1() {
+      this.search1.page = 1
       debounce(this, 'getChangeDebounce1')
     },
     getChangeDebounce1() {

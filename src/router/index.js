@@ -306,7 +306,7 @@ export const asyncRoutes = [
       meta: {
         title: 'ERP原材料信息',
         icon: 'formula',
-        permissionName: ''
+        permissionName: 'material_map'
       }
     },
     {
