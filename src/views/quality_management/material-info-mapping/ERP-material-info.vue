@@ -513,6 +513,7 @@ export default {
       if (!this.search.is_binding) {
         delete this.search.is_binding
       }
+      this.search.page = 1
       this.getList()
     },
     changeMaterialName(val) {
