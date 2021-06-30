@@ -43,13 +43,17 @@
           v-model="search.erp_material_name"
           clearable
           filterable
+          remote
+          reserve-keyword
+          :remote-method="remoteMethodName"
+          :loading="loading_erp_material"
           @change="changeList"
         >
           <el-option
             v-for="item in options"
             :key="item.id"
             :label="item.material_name"
-            :value="item.id"
+            :value="item.material_name"
           />
         </el-select>
       </el-form-item>
@@ -58,13 +62,17 @@
           v-model="search.erp_material_no"
           clearable
           filterable
+          remote
+          reserve-keyword
+          :remote-method="remoteMethodNo"
+          :loading="loading_erp_material"
           @change="changeList"
         >
           <el-option
             v-for="item in options"
             :key="item.id"
             :label="item.material_no"
-            :value="item.id"
+            :value="item.material_no"
           />
         </el-select>
       </el-form-item>
@@ -362,6 +370,7 @@ import { zcMaterials } from '@/api/base_w_two'
 import { classesListUrl } from '@/api/base_w'
 import { debounce } from '@/utils'
 import { materialsUrl } from '@/api/base_w'
+let timer
 export default {
   name: 'ERPMaterialInfo',
   components: { MaterialTypeSelect, Page, materialCodeSelect },
@@ -399,14 +408,15 @@ export default {
       loading1: false,
       btnLoading: false,
       loading2: false,
-      optionsMaterials: []
+      optionsMaterials: [],
+      loading_erp_material: false
     }
   },
   created() {
     this.getMaterials()
     this.getList()
     this.getGlobalCodes()
-    this.getZcMaterialsList(false)
+    // this.getZcMaterialsList(false)
   },
   methods: {
     async getList() {
@@ -420,9 +430,10 @@ export default {
         this.loading = false
       }
     },
-    async getZcMaterialsList(bool) {
+    async getZcMaterialsList(bool, objParams = {}) {
       try {
         let obj = { all: 1, is_binding: 1 }
+        Object.assign(obj, objParams)
         if (bool) {
           obj = this.search1
         }
@@ -440,8 +451,10 @@ export default {
           return
         }
         this.options = data.results || []
+        this.loading_erp_material = false
       } catch (e) {
         this.loading1 = false
+        this.loading_erp_material = false
       }
     },
     async getGlobalCodes() {
@@ -472,6 +485,28 @@ export default {
       var results = queryString ? restaurants.filter(this.createStateFilter(queryString, 'material_name')) : restaurants
 
       cb(results)
+    },
+    remoteMethodName(query) {
+      if (query !== '') {
+        clearTimeout(timer)
+        this.loading_erp_material = true
+        timer = setTimeout(() => {
+          this.getZcMaterialsList(false, { material_name: query })
+        }, 2000)
+      } else {
+        this.options = []
+      }
+    },
+    remoteMethodNo(query) {
+      if (query !== '') {
+        clearTimeout(timer)
+        this.loading_erp_material = true
+        timer = setTimeout(() => {
+          this.getZcMaterialsList(false, { material_no: query })
+        }, 2000)
+      } else {
+        this.options = []
+      }
     },
     changeList() {
       if (!this.search.is_binding) {
