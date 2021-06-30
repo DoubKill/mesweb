@@ -433,7 +433,7 @@ export default {
     },
     async getZcMaterialsList(bool, objParams = {}) {
       try {
-        let obj = { all: 1, is_binding: 1 }
+        let obj = { all: 1, is_binding: 'Y' }
         Object.assign(obj, objParams)
         if (bool) {
           obj = this.search1
