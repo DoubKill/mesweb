@@ -174,6 +174,7 @@
             >编辑
             </el-button>
             <el-button
+              v-permission="['material_map','delete']"
               size="mini"
               type="danger"
               plain
