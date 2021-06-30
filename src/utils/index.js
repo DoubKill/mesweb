@@ -265,7 +265,7 @@ export function errorRepeat(_this, e) {
  */
 var timer
 // var count = 0
-export function debounce(_this, val) {
+export function debounce(_this, val, _time = 2000) {
   clearTimeout(timer)
   // if (!count) {
   //   _this[val]()
@@ -275,7 +275,7 @@ export function debounce(_this, val) {
     // 执行要加载的接口函数
     _this[val]()
     // count = 0
-  }, 800)
+  }, _time)
   // }
 }
 

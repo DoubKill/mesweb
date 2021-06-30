@@ -395,5 +395,7 @@ export default {
   // 库位
   DepotSite: '/api/v1/inventory/depot-site/',
   PalletData: '/api/v1/inventory/pallet-data/',
-  DepotPallet: '/api/v1/inventory/depot-pallet/'
+  DepotPallet: '/api/v1/inventory/depot-pallet/',
+  // erp原材料信息管理
+  ErpMaterials: '/api/v1/recipe/erp-materials/'
 }

@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- 原材料基础信息 -->
     <el-form :inline="true">
       <el-form-item label="原材料类别">
         <el-select

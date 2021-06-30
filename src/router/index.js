@@ -289,14 +289,24 @@ export const asyncRoutes = [
         permissionName: 'material'
       }
     },
+    // {
+    //   path: '/material-info-mapping',
+    //   component: () => import('@/views/quality_management/material-info-mapping/material-info-mapping'),
+    //   name: 'MaterialInfoMapping',
+    //   meta: {
+    //     title: 'mes与子系统物料信息映射',
+    //     icon: 'formula',
+    //     permissionName: 'material_map'
+    //   }
+    // },
     {
-      path: '/material-info-mapping',
-      component: () => import('@/views/quality_management/material-info-mapping/material-info-mapping'),
-      name: 'MaterialInfoMapping',
+      path: '/rb/recipe/ERP-material-info',
+      component: () => import('@/views/quality_management/material-info-mapping/ERP-material-info'),
+      name: 'ERPMaterialInfo',
       meta: {
-        title: 'mes与子系统物料信息映射',
+        title: 'ERP原材料信息',
         icon: 'formula',
-        permissionName: 'material_map'
+        permissionName: ''
       }
     },
     {
@@ -583,24 +593,24 @@ export const asyncRoutes = [
         permissionName: 'drug_analyze'
       }
     },
-    {
-      path: '/zl-warehouse-out-kanban',
-      component: () => import('@/views/production/warehouse-out-kanban.vue'),
-      name: 'ZlWarehouseOutKanban',
-      meta: {
-        title: '终炼胶出库看板', icon: 'production',
-        permissionName: 'zl_dashboard'
-      }
-    },
-    {
-      path: '/hl-warehouse-out-kanban',
-      component: () => import('@/views/production/hl-warehouseOutKanban.vue'),
-      name: 'HlWarehouseOutKanban',
-      meta: {
-        title: '混炼胶出库看板', icon: 'production',
-        permissionName: 'hl_dashboard'
-      }
-    },
+    // {
+    //   path: '/zl-warehouse-out-kanban',
+    //   component: () => import('@/views/production/warehouse-out-kanban.vue'),
+    //   name: 'ZlWarehouseOutKanban',
+    //   meta: {
+    //     title: '终炼胶出库看板', icon: 'production',
+    //     permissionName: 'zl_dashboard'
+    //   }
+    // },
+    // {
+    //   path: '/hl-warehouse-out-kanban',
+    //   component: () => import('@/views/production/hl-warehouseOutKanban.vue'),
+    //   name: 'HlWarehouseOutKanban',
+    //   meta: {
+    //     title: '混炼胶出库看板', icon: 'production',
+    //     permissionName: 'hl_dashboard'
+    //   }
+    // },
     {
       path: '/summary-statistics',
       redirect: '/equipment/classes-banburying-summary',
@@ -797,7 +807,7 @@ export const asyncRoutes = [
           permissionName: 'product_inventory'
         }
       },
-      {
+      /* {
         path: '/lineSideLibrary',
         redirect: '/lineSideLibrary/Location',
         component: () => import('@/views/inventory/lineSideLibrary/a-index.vue'),
@@ -900,7 +910,7 @@ export const asyncRoutes = [
             }
           }
         ]
-      },
+      },*/
       {
         path: '/material-inout-record',
         component: () => import('@/views/inventory/material_inout_record.vue'),

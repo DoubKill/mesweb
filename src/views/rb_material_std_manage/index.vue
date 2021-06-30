@@ -1609,10 +1609,10 @@ export default {
         }
         console.log(obj)
         return
-        await this.rubber_material_post(obj)
-        app.NewdialogChoiceMaterials = false
-        app.$message(app.rubberMaterialForm['generate_material_no'] + '保存成功')
-        this.rubber_material_list()
+        // await this.rubber_material_post(obj)
+        // app.NewdialogChoiceMaterials = false
+        // app.$message(app.rubberMaterialForm['generate_material_no'] + '保存成功')
+        // this.rubber_material_list()
       } catch (e) { e }
     },
 
