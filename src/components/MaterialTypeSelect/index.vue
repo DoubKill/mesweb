@@ -4,6 +4,7 @@
     :value="id"
     clearable
     placeholder="请选择"
+    :disabled="isDisabled"
     @change="$emit('change', $event)"
     @visible-change="visibleChange"
   >
@@ -28,6 +29,10 @@ export default {
       type: [Number, String],
       required: false,
       default: undefined
+    },
+    isDisabled: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

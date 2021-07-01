@@ -90,7 +90,18 @@
       <el-table-column label="入库时间" align="center" prop="in_storage_time" />
       <el-table-column v-if="!['原材料出库计划'].includes($route.meta.title)" label="机台号" width="50" align="center" prop="equip_no" />
       <el-table-column v-if="!['原材料出库计划','终炼胶出库计划'].includes($route.meta.title)" label="车号" align="center" prop="memo" />
-      <el-table-column v-if="['终炼胶出库计划'].includes($route.meta.title)" label="车次" align="center" prop="memo" />
+      <el-table-column
+        v-if="['终炼胶出库计划'].includes($route.meta.title)"
+        label="车次"
+        align="center"
+        prop="memo"
+        :formatter="(row)=>{
+          if(!row.memo){
+            return
+          }
+          return row.memo.replace(',','-')
+        }"
+      />
       <el-table-column label="货位状态" align="center" prop="location_status" />
       <el-table-column label="出库口选择" align="center">
         <template slot-scope="scope">
