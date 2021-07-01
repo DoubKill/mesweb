@@ -20,7 +20,7 @@
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             value-format="yyyy-MM-dd"
-            @change="debounceList(item,index)"
+            @change="changeList(item,index)"
           />
         </el-form-item>
         <el-form-item label="计划创建日期">
@@ -31,7 +31,7 @@
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             value-format="yyyy-MM-dd"
-            @change="debounceList(item,index)"
+            @change="changeList(item,index)"
           />
         </el-form-item>
       </el-form>
@@ -40,6 +40,7 @@
         :data="item.tableList"
         style="width: 100%"
         border
+        max-height="400px"
       >
         <el-table-column
           prop="planid"
@@ -111,6 +112,12 @@
           min-width="20"
         />
       </el-table>
+      <page
+        :old-page="false"
+        :total="item.total"
+        :current-page="item.search.page"
+        @currentChange="currentChange(arguments,item,index)"
+      />
     </div>
   </div>
 </template>
@@ -119,9 +126,10 @@
 import { debounce } from '@/utils'
 import selectBatchingEquip from '../components/select-batching-equip'
 import { xlReportBasic } from '@/api/base_w_three'
+import page from '@/components/page'
 export default {
   name: 'SmallMaterialWeightTrainNumber',
-  components: { selectBatchingEquip },
+  components: { selectBatchingEquip, page },
   data() {
     return {
       equipValue: [],
@@ -138,15 +146,26 @@ export default {
         this.loading = true
         const data = await xlReportBasic('get', null, { params: this.currentSearch })
         this.loading = false
-        return data
+        return { data: data.results, total: data.count }
       } catch (e) {
         this.loading = false
       }
     },
     debounceListChange(row, index) {
+      row.search.page = 1
       this.currentSearch = { ...row.search, equip_no: row.equip_no }
       this.currentIndex = index
       debounce(this, 'debounceList')
+    },
+    currentChange(arguments1, row, index) {
+      var arr = [].slice.call(arguments1, 0)
+      row.search.page = arr[0]
+      row.search.page_size = arr[1]
+      this.debounceList(row, index)
+    },
+    changeList(row, index) {
+      row.search.page = 1
+      this.debounceList(row, index)
     },
     async debounceList(row, index) {
       try {
@@ -162,7 +181,8 @@ export default {
         this.currentSearch.c_et = b ? b[1] : ''
         //   获取当前改变的那个列表 替换上去
         const data = await this.getList()
-        this.allTable[this.currentIndex].tableList = data
+        this.allTable[this.currentIndex].tableList = data.data
+        this.allTable[this.currentIndex].total = data.total
       } catch (e) {
         //
       }
@@ -186,7 +206,8 @@ export default {
                 {
                   equip_no: d.equip_no,
                   search: {},
-                  tableList: a
+                  tableList: a.data,
+                  total: a.total
                 }
               )
             }

@@ -86,7 +86,7 @@ export default {
       }
     },
     visibleChange(val) {
-      if (val && this.options.length === 0 && !this.createdIs) {
+      if (val && !this.createdIs) {
         this.getList()
       }
     },

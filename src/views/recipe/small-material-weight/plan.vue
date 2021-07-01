@@ -13,7 +13,7 @@
               type="date"
               placeholder="选择日期"
               value-format="yyyy-MM-dd"
-              @change="debounceList(item,index)"
+              @change="changeList(item,index)"
             />
           </el-form-item>
           <el-form-item label="班次">
@@ -22,7 +22,12 @@
             />
           </el-form-item>
           <el-form-item label="配方">
-            <recipeSelect v-model="item.search.recipe_id" :equip-no-val="item.equip_no" @changeFun="debounceList(item,index)" />
+            <recipeSelect
+              v-model="item.search.recipe_id"
+              :equip-no-val="item.equip_no"
+              @changeFun="changeRecipeSelect($event,item,index)"
+            />
+            <!-- @changeFun="changeList(item,index)" -->
           </el-form-item>
           <!-- <el-form-item label="设定车次">
           <el-input v-model="item.search.setno" clearable placeholder="设定车次" @input="debounceListChange(item,index)" />
@@ -91,6 +96,12 @@
             min-width="20"
           />
         </el-table>
+        <page
+          :old-page="false"
+          :total="item.total"
+          :current-page="item.search.page"
+          @currentChange="currentChange(arguments,item,index)"
+        />
       </div>
     </div>
 
@@ -141,15 +152,16 @@
 </template>
 
 <script>
-import { debounce } from '@/utils'
+import { debounce, setDate } from '@/utils'
 import selectBatchingEquip from '../components/select-batching-equip'
 import classSelect from '@/components/ClassSelect'
 import recipeSelect from '../components/recipe-select'
 import { xlPlan } from '@/api/base_w_three'
+import page from '@/components/page'
 
 export default {
   name: 'SmallMaterialWeightPlan',
-  components: { selectBatchingEquip, classSelect, recipeSelect },
+  components: { selectBatchingEquip, classSelect, recipeSelect, page },
   data() {
     return {
       equipValue: [],
@@ -198,7 +210,7 @@ export default {
         this.loading = true
         const data = await xlPlan('get', null, { params: this.currentSearch })
         this.loading = false
-        return data
+        return { data: data.results || [], total: data.count || 0 }
       } catch (e) {
         this.loading = false
       }
@@ -211,10 +223,25 @@ export default {
       this.ruleForm.grouptime = val
     },
     debounceListChange(row, index) {
+      row.search.page = 1
       this.currentSearch = { ...row.search, equip_no: row.equip_no }
       this.currentIndex = index
 
       debounce(this, 'debounceList')
+    },
+    currentChange(arguments1, row, index) {
+      var arr = [].slice.call(arguments1, 0)
+      row.search.page = arr[0]
+      row.search.page_size = arr[1]
+      this.debounceList(row, index)
+    },
+    changeList(row, index) {
+      row.search.page = 1
+      this.debounceList(row, index)
+    },
+    changeRecipeSelect(val, row, index) {
+      row.search.recipe = val ? val.name : ''
+      this.changeList(row, index)
     },
     async debounceList(row, index) {
       try {
@@ -224,7 +251,8 @@ export default {
         }
         //   获取当前改变的那个列表 替换上去
         const data = await this.getList()
-        this.$set(this.allTable[this.currentIndex], 'tableList', data)
+        this.$set(this.allTable[this.currentIndex], 'tableList', data.data)
+        this.$set(this.allTable[this.currentIndex], 'total', data.total)
       } catch (e) {
         //
       }
@@ -235,7 +263,8 @@ export default {
         this.allTable = []
         val.forEach(async d => {
           this.currentSearch = {
-            equip_no: d.equip_no
+            equip_no: d.equip_no,
+            date_time: setDate()
           }
           const b = this.allTable.filter(D => D.equip_no === d.equip_no)
           if (b.length === 0) {
@@ -248,8 +277,9 @@ export default {
               this.allTable.push(
                 {
                   equip_no: d.equip_no,
-                  search: {},
-                  tableList: a,
+                  search: { date_time: setDate() },
+                  tableList: a.data,
+                  total: a.total,
                   currentRow: {}
                 }
               )
@@ -299,7 +329,6 @@ export default {
               type: 'success',
               message: val + '成功!'
             })
-            console.log(index, 'index')
             this.debounceList(row, index)
             this.handleClose(false)
           }).catch(e => {

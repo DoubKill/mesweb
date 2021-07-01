@@ -127,6 +127,15 @@ export function depotPallet(method, id, data = {}) {
   return request(obj)
 }
 
+export function depotPalletInfo(method, id, data = {}) {
+  const obj = {
+    url: id ? API.DepotPalletInfo + id + '/' : API.DepotPalletInfo,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function erpMaterials(method, id, data = {}) {
   const obj = {
     url: id ? API.ErpMaterials + id + '/' : API.ErpMaterials,

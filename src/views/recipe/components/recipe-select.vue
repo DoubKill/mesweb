@@ -6,6 +6,7 @@
     placeholder="请选择配方"
     :disabled="readIs"
     :multiple="multipleIs"
+    filterable
     @change="changeFun"
     @visible-change="visibleChange"
   >
@@ -79,7 +80,7 @@ export default {
   },
   methods: {
     getEquip() {
-      xlRecipe('get', null, { params: { equip_no: this.equipNoVal }}).then(response => {
+      xlRecipe('get', null, { params: { equip_no: this.equipNoVal, all: 1 }}).then(response => {
         this.equipOptions = response
 
         if (this.createdIs && this.equipOptions.length > 0 && this.isDefault) {
