@@ -323,11 +323,11 @@
           />
           <el-table-column
             prop="WeightOfActual"
-            label="所在巷道库存总重量"
+            label="所在巷道库存总重量/kg"
             min-width="20"
           />
           <el-table-column
-            label="出库重量"
+            label="出库重量/kg"
             min-width="20"
           >
             <template slot-scope="{row}">

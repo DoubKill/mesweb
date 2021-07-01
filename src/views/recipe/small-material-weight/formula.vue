@@ -23,11 +23,11 @@
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             value-format="yyyy-MM-dd HH:mm:ss"
-            @change="debounceList(item,index)"
+            @change="changeList(item,index)"
           />
         </el-form-item>
         <el-form-item label="是否使用">
-          <el-select v-model="item.search.use_not" clearable placeholder="请选择" @change="debounceList(item,index)">
+          <el-select v-model="item.search.use_not" clearable placeholder="请选择" @change="changeList(item,index)">
             <el-option
               v-for="itemChild in [{name:'已使用',value:0},{name:'未使用',value:1}]"
               :key="itemChild.value"
@@ -45,6 +45,7 @@
             style="width: 100%"
             highlight-current-row
             border
+            max-height="400px"
             @current-change="handleCurrentChange($event,item,index)"
           >
             <el-table-column
@@ -89,12 +90,19 @@
               }"
             />
           </el-table>
+          <page
+            :old-page="false"
+            :total="item.total"
+            :current-page="item.search.page"
+            @currentChange="currentChange(arguments,item,index)"
+          />
         </el-col>
         <el-col :span="10">
           <el-table
             :data="item.tableList1"
             style="width: 100%"
             border
+            max-height="400px"
           >
             <el-table-column
               prop="id"
@@ -127,9 +135,10 @@
 import { debounce } from '@/utils'
 import selectBatchingEquip from '../components/select-batching-equip'
 import { xlRecipe, xlRecipeMaterial } from '@/api/base_w_three'
+import page from '@/components/page'
 export default {
   name: 'SmallMaterialWeightFormula',
-  components: { selectBatchingEquip },
+  components: { selectBatchingEquip, page },
   data() {
     return {
       equipValue: [],
@@ -151,15 +160,26 @@ export default {
           this.$refs['singleTable'][this.currentIndex].setCurrentRow()
         }
         this.loading = false
-        return data || []
+        return { data: data.results || [], total: data.count || 0 }
       } catch (e) {
         this.loading = false
       }
     },
     debounceListChange(row, index) {
+      row.search.page = 1
       this.currentSearch = { ...row.search, equip_no: row.equip_no }
       this.currentIndex = index
       debounce(this, 'debounceList')
+    },
+    currentChange(arguments1, row, index) {
+      var arr = [].slice.call(arguments1, 0)
+      row.search.page = arr[0]
+      row.search.page_size = arr[1]
+      this.debounceList(row, index)
+    },
+    changeList(row, index) {
+      row.search.page = 1
+      this.debounceList(row, index)
     },
     async debounceList(row, index) {
       try {
@@ -173,7 +193,8 @@ export default {
 
         //   获取当前改变的那个列表 替换上去
         const data = await this.getList()
-        this.allTable[this.currentIndex].tableList = data
+        this.allTable[this.currentIndex].tableList = data.data
+        this.allTable[this.currentIndex].total = data.total
       } catch (e) {
         //
       }
@@ -197,7 +218,8 @@ export default {
                 {
                   equip_no: d.equip_no,
                   search: {},
-                  tableList: a,
+                  tableList: a.data,
+                  total: a.total,
                   tableList1: []
                 }
               )
