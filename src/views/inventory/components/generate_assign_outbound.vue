@@ -78,7 +78,7 @@
           {{ row.qty }}
         </template>
       </el-table-column>
-      <el-table-column label="总重量" align="center" prop="total_weight" />
+      <el-table-column :key="17" label="总重量" align="center" prop="total_weight" />
       <el-table-column
         :key="8"
         label="品质状态"
