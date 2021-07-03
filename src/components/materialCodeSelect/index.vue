@@ -50,6 +50,12 @@ export default {
     isCreated: { // 是可创建条目
       type: Boolean,
       default: false
+    },
+    objParams: {
+      type: Object,
+      default() {
+        return {}
+      }
     }
   },
   data() {
@@ -73,7 +79,9 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const data = await materialsUrl('get', null, { params: { all: 1 }})
+        const obj = { all: 1 }
+        Object.assign(obj, this.objParams)
+        const data = await materialsUrl('get', null, { params: obj })
         this.options = data.results || []
         const arr = this.options.map(D => {
           D.material_str = '名称:' + D.material_name + '; ' + '编码:' + D.material_no + '; ' + '类型:' + D.material_type__global_name

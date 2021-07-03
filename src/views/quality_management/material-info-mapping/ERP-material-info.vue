@@ -5,6 +5,7 @@
       <el-form-item label="原材料类别">
         <MaterialTypeSelect
           v-model="search.material_type_id"
+          :is-material="true"
           @change="changeList"
         />
       </el-form-item>
@@ -12,6 +13,7 @@
         <materialCodeSelect
           :is-all-obj="true"
           :default-val="search.material_no"
+          :obj-params="{exclude_stage:1}"
           @changeSelect="changeMaterialCode"
         />
       </el-form-item>
@@ -20,6 +22,7 @@
           :is-all-obj="true"
           :default-val="search.material_name"
           label-name="material_name"
+          :obj-params="{exclude_stage:1}"
           @changeSelect="changeMaterialCode"
         />
       </el-form-item>
@@ -38,25 +41,6 @@
           />
         </el-select>
       </el-form-item> -->
-      <el-form-item label="物料名称">
-        <el-select
-          v-model="search.erp_material_name"
-          clearable
-          filterable
-          remote
-          reserve-keyword
-          :remote-method="remoteMethodName"
-          :loading="loading_erp_material"
-          @change="changeList"
-        >
-          <el-option
-            v-for="item in options"
-            :key="item.id"
-            :label="item.material_name"
-            :value="item.material_name"
-          />
-        </el-select>
-      </el-form-item>
       <el-form-item label="物料编码">
         <el-select
           v-model="search.erp_material_no"
@@ -73,6 +57,25 @@
             :key="item.id"
             :label="item.material_no"
             :value="item.material_no"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="物料名称">
+        <el-select
+          v-model="search.erp_material_name"
+          clearable
+          filterable
+          remote
+          reserve-keyword
+          :remote-method="remoteMethodName"
+          :loading="loading_erp_material"
+          @change="changeList"
+        >
+          <el-option
+            v-for="item in options"
+            :key="item.id"
+            :label="item.material_name"
+            :value="item.material_name"
           />
         </el-select>
       </el-form-item>
@@ -206,6 +209,7 @@
             placeholder="请输入原材料编码"
             :disabled="objForm.id?true:false"
             value-key="material_no"
+            @select="changeMaterialNo('material_no')"
           />
         </el-form-item>
         <el-form-item label="原材料名称" prop="material_name">
@@ -214,6 +218,7 @@
             :fetch-suggestions="querySearchAsyncName"
             placeholder="请输入原材料名称"
             value-key="material_name"
+            @select="changeMaterialNo('material_name')"
           />
         </el-form-item>
         <el-form-item label="原材料简称">
@@ -222,6 +227,8 @@
         <el-form-item label="原材料类别" prop="material_type">
           <MaterialTypeSelect
             v-model="objForm.material_type"
+            :is-created="true"
+            :is-material="true"
             :is-disabled="objForm.id?true:false"
           />
         </el-form-item>
@@ -444,6 +451,7 @@ export default {
         if (bool) {
           this.tableData2 = data.results || []
           this.total1 = data.count
+          this.$refs.multipleTable1.clearSelection()
           if (this.tableData1.length > 0) {
             this.tableData1.forEach(row => {
               this.$refs.multipleTable1.toggleRowSelection(row)
@@ -467,7 +475,7 @@ export default {
       }
     },
     async getMaterials() {
-      const data = await materialsUrl('get', null, { params: { all: 1 }})
+      const data = await materialsUrl('get', null, { params: { all: 1, exclude_stage: 1 }})
       this.optionsMaterials = data.results || []
     },
     querySearchAsyncNo(queryString, cb) {
@@ -486,6 +494,19 @@ export default {
       var results = queryString ? restaurants.filter(this.createStateFilter(queryString, 'material_name')) : restaurants
 
       cb(results)
+    },
+    async changeMaterialNo(material) {
+      if (this.objForm.id) {
+        return
+      }
+      const obj = this.optionsMaterials.find(d => d[material] === this.objForm[material])
+      this.$set(this.objForm, 'material_name', obj.material_name)
+      this.$set(this.objForm, 'material_no', obj.material_no)
+      this.$set(this.objForm, 'material_type', obj.material_type)
+      this.$set(this.objForm, 'material_type', obj.material_type)
+      this.$set(this.objForm, 'package_unit', obj.package_unit)
+      this.$set(this.objForm, 'use_flag', obj.use_flag)
+      this.$set(this.objForm, 'for_short', obj.for_short)
     },
     remoteMethodName(query) {
       if (query !== '') {
@@ -563,9 +584,9 @@ export default {
     },
     addFun1() {
       this.dialogVisible1 = true
-      if (this.$refs.multipleTable1) {
-        this.$refs.multipleTable1.clearSelection()
-      }
+      // if (this.$refs.multipleTable1) {
+      //   this.$refs.multipleTable1.clearSelection()
+      // }
       this.getZcMaterialsList(true)
     },
     searchSubimt() {
@@ -584,7 +605,7 @@ export default {
             this.btnLoading = true
             const _api = this.objForm.id ? 'put' : 'post'
             await erpMaterials(_api, this.objForm.id || null, { data: this.objForm })
-            this.$message.success('新增成功')
+            this.$message.success('操作成功')
             this.handleClose(false)
             this.btnLoading = false
             this.getList()
@@ -625,6 +646,10 @@ export default {
       }
     },
     searchSubimt1() {
+      if (this.handleSelectionList.length === 0) {
+        this.$message.info('未选择ERP物料选择')
+        return
+      }
       this.tableData1 = []
       this.handleSelectionList.forEach(d => {
         this.tableData1.push({ material_no: d.material_no, material_name: d.material_name,
