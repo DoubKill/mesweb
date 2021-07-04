@@ -57,6 +57,11 @@
         />
         <el-table-column
           align="center"
+          prop="is_binding"
+          label="是否绑定物料"
+        />
+        <el-table-column
+          align="center"
           label="操作"
         >
           <template slot-scope="scope">
@@ -126,7 +131,19 @@ export default {
       this.getList()
     },
     handleMaterialSelect(row) {
-      this.$emit('handleMaterialSelect', row)
+      if (row.is_binding === 'N') {
+        this.$confirm('该原材料未绑定ERP物料信息，投料防错可能会不合格，是否继续选中?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$emit('handleMaterialSelect', row)
+        }).catch(() => {
+          return
+        })
+      } else {
+        this.$emit('handleMaterialSelect', row)
+      }
     },
     currentChange(page, page_size) {
       this.search.page = page
