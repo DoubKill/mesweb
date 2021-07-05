@@ -807,7 +807,7 @@ export const asyncRoutes = [
           permissionName: 'product_inventory'
         }
       },
-      /* {
+      {
         path: '/lineSideLibrary',
         redirect: '/lineSideLibrary/Location',
         component: () => import('@/views/inventory/lineSideLibrary/a-index.vue'),
@@ -910,7 +910,7 @@ export const asyncRoutes = [
             }
           }
         ]
-      },*/
+      },
       {
         path: '/material-inout-record',
         component: () => import('@/views/inventory/material_inout_record.vue'),

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 出入库管理 -->
+    <!--线边库 出入库管理 -->
     <el-form :inline="true">
       <el-form-item label="胶料编码:">
         <all-product-no-select @productBatchingChanged="productBatchingChanged" />
@@ -19,7 +19,7 @@
       </el-form-item>
       <el-form-item label="工厂日期:">
         <el-date-picker
-          v-model="search.production_factory_date"
+          v-model="search.factory_date"
           type="date"
           value-format="yyyy-MM-dd"
           placeholder="选择日期"
@@ -43,33 +43,33 @@
               border
             >
               <el-table-column
-                prop="date"
+                prop="trains"
                 label="车次"
                 min-width="20"
               />
-              <el-table-column label="门尼">
-                <el-table-column label="ML(1+4)">
-                  <el-table-column
-                    prop="name"
-                    label="姓名"
-                    min-width="20"
-                  />
-                </el-table-column>
-                <el-table-column label="ML(1+4)1">
-                  <el-table-column
-                    prop="name"
-                    label="姓名"
-                    min-width="20"
-                  />
+              <el-table-column
+                v-for="(item,i) in row.table_head"
+                :key="i"
+                :label="i"
+              >
+                <el-table-column
+                  v-for="(itemChild,iChild) in item"
+                  :key="iChild"
+                  :label="itemChild"
+                  min-width="20"
+                >
+                  <template slot-scope="scopeChild">
+                    {{ scopeChild.row.test_data[i][itemChild] }}
+                  </template>
                 </el-table-column>
               </el-table-column>
               <el-table-column
-                prop="date"
+                prop="status"
                 label="综合判级"
                 min-width="20"
               />
               <el-table-column
-                prop="date"
+                prop="test_result"
                 label="综合结果"
                 min-width="20"
               />
@@ -115,20 +115,30 @@
       <el-table-column label="线边库信息">
         <el-table-column
           label="状态"
-          prop="id"
+          prop="pallet_status"
           min-width="20"
+          :formatter="(row)=>{
+            if(!row.pallet_status){
+              return '待入库'
+            }
+            if(row.pallet_status === 1){
+              return '已入库'
+            }
+            return '已出库'
+          }"
         />
         <el-table-column
           label="操作"
-          prop="id"
           width="100px"
         >
           <template slot-scope="{row}">
             <el-button
+              v-if="row.pallet_status === 1"
               type="primary"
               @click="deliveryFun(row)"
             >出库</el-button>
             <el-button
+              v-if="!row.pallet_status"
               type="primary"
               @click="warehousingFun(row)"
             >入库</el-button>
@@ -136,7 +146,7 @@
         </el-table-column>
         <el-table-column
           label="入库时间"
-          prop="id"
+          prop="enter_time"
           min-width="20"
         />
         <el-table-column
@@ -144,7 +154,14 @@
           width="210px"
         >
           <template slot-scope="{row}">
-            <el-select v-model="row.b" placeholder="请选择" @change="changeDepot(row)">
+            <span v-if="row.pallet_status">{{ row.depot_name }}</span>
+            <el-select
+              v-else
+              v-model="row.get_depot_name"
+              placeholder="请选择"
+              @visible-change="visibleChangeDepot"
+              @change="changeDepot(row)"
+            >
               <el-option
                 v-for="item in options"
                 :key="item.id"
@@ -159,12 +176,18 @@
           width="210px"
         >
           <template slot-scope="{row}">
-            <el-select v-model="row.a" placeholder="请选择">
+            <span v-if="row.pallet_status">{{ row.depot_site_name }}</span>
+            <el-select
+              v-else
+              v-model="row.depot_site"
+              placeholder="请选择"
+              @visible-change="visibleChangeSite"
+            >
               <el-option
-                v-for="item in row.b?options1.filter(d=>d.depot === row.b):[]"
+                v-for="item in row.get_depot_name?options1.filter(d=>d.depot === row.get_depot_name):[]"
                 :key="item.id"
                 :label="item.depot_site_name"
-                :value="item.id"
+                :value="item.depot_site_name"
               />
             </el-select>
           </template>
@@ -185,9 +208,8 @@ import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import classSelect from '@/components/ClassSelect'
 import selectEquip from '@/components/select_w/equip'
 import { debounce } from '@/utils'
-import { depotPallet } from '@/api/base_w_four'
 import page from '@/components/page'
-import { depot, depotSite } from '@/api/base_w_four'
+import { palletData, depot, depotSite, palletTestResult } from '@/api/base_w_four'
 export default {
   name: 'LineSideInOutWarehouse',
   components: { page, selectEquip, allProductNoSelect, classSelect },
@@ -195,29 +217,10 @@ export default {
     return {
       search: {},
       loading: false,
-      tableData: [{ a: 2 }, { a: 2 }],
+      tableData: [],
       options: [],
       options1: [],
-      total: 0,
-      testData: {
-        test: {},
-        mtr_list: {
-          7: [
-            { add_subtract: '',
-              data_point_name: '比重值',
-              max_test_times: 1,
-              result: '合格',
-              status: '1:一等品',
-              test_indicator_name: '比重',
-              value: 7 }
-          ],
-          table_head: [{ '比重': [' "比重值"'] }, { '流变': ['TC10', 'TC50', 'TC90', 'MH'] }],
-          // 第一个头部
-          sub_head: ['比重值', 'TC10', 'TC50', 'TC90', 'MH'],
-          // 车次
-          rows: ['7', '8']
-        }
-      }
+      total: 0
     }
   },
   created() {
@@ -229,8 +232,12 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const data = await depotPallet('get', null, { params: this.search })
+        const data = await palletData('get', null, { params: this.search })
         this.tableData = data.results
+        this.tableData.forEach(d => {
+          this.$set(d, 'tableData', [])
+          this.$set(d, 'table_head', [])
+        })
         this.total = data.count
       } catch (e) {
         //
@@ -253,8 +260,18 @@ export default {
         //
       }
     },
+    visibleChangeDepot(bool) {
+      if (bool) {
+        this.getDepotList()
+      }
+    },
+    visibleChangeSite(bool) {
+      if (bool) {
+        this.getDepotSiteList()
+      }
+    },
     changeDepot(row) {
-      this.$set(row, 'a', null)
+      this.$set(row, 'depot_site', null)
     },
     productBatchingChanged(val) {
       this.search.product_no = val ? val.material_no : ''
@@ -265,7 +282,8 @@ export default {
       this.search.page = 1
       this.getList()
     },
-    classChanged() {
+    classChanged(val) {
+      this.search.classes = val
       this.search.page = 1
       this.getList()
     },
@@ -279,34 +297,70 @@ export default {
       debounce(this, 'getList')
     },
     changeList() {},
-    descriptionFun(row, expanded) {
-      row.tableData = [
-        { date: 11 },
-        { date: 11 },
-        { date: 11 },
-        { date: 11 }
-      ]
+    async descriptionFun(row, expanded) {
+      let bool = false
+      if (expanded.length > 0) {
+        expanded.forEach(d => {
+          if (d.id === row.id) {
+            bool = true
+            return
+          }
+        })
+      } else {
+        bool = false
+      }
+      if (!bool) {
+        return
+      }
+      let _index = null
+      this.tableData.forEach((d, i) => {
+        if (d.id === row.id) {
+          _index = i
+        }
+      })
+      try {
+        // row.lot_no = '339443b2-a8c0-11eb-86a0-a4bb6dc64b4f'
+        const data = await palletTestResult('get', null, { params: { lot_no: row.lot_no }})
+        data.results.forEach(d => { d.test_result = data.test_result })
+        this.tableData[_index].table_head = data.table_head
+        this.tableData[_index].tableData = data.results
+      } catch (e) {
+        //
+      }
     },
-    deliveryFun() {
+    async getPalletTestResult() {
+      try {
+        const data = await depotSite('get', null, { params: { all: 1 }})
+        this.options1 = data.results
+      } catch (e) {
+        //
+      }
+    },
+    deliveryFun(row) {
       this.$confirm('是否确定出库?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        // propertyTypeNode('delete', data.id)
-        //   .then(response => {
-        //     this.$message({
-        //       type: 'success',
-        //       message: '出库成功!'
-        //     })
-        //     this.getList()
-        //   }).catch(e => {
-        //     this.$message.error('出库失败')
-        //   })
+        palletData('post', null, {
+          data: {
+            status: 2,
+            id: row.id,
+            depot_site: row.depot_site_name
+          }})
+          .then(response => {
+            this.$message({
+              type: 'success',
+              message: '出库成功!'
+            })
+            this.getList()
+          }).catch(e => {
+            //
+          })
       })
     },
     warehousingFun(row) {
-      if (!row.a || !row.b) {
+      if (!row.depot_site || !row.get_depot_name) {
         this.$message.info('请输入库位或库区')
         return
       }
@@ -315,16 +369,21 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        // propertyTypeNode('delete', data.id)
-        //   .then(response => {
-        //     this.$message({
-        //       type: 'success',
-        //       message: '入库成功!'
-        //     })
-        //     this.getList()
-        //   }).catch(e => {
-        //     this.$message.error('入库失败')
-        //   })
+        palletData('post', null, {
+          data: {
+            status: 1,
+            id: row.id,
+            depot_site: row.depot_site
+          }})
+          .then(response => {
+            this.$message({
+              type: 'success',
+              message: '入库成功!'
+            })
+            this.getList()
+          }).catch(e => {
+            //
+          })
       })
     },
     arraySpanMethod({ row, column, rowIndex, columnIndex }) {

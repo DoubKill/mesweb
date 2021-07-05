@@ -69,7 +69,6 @@ export default {
           const set = materialSegment.map(item => item.global_name)
           resArr = materialTypeOptions.filter(item => !set.includes(item.global_name))
         }
-
         this.materialTypeOptions = resArr
       } catch (e) {
         //

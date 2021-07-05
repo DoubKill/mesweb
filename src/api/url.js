@@ -397,6 +397,18 @@ export default {
   PalletData: '/api/v1/inventory/pallet-data/',
   DepotPallet: '/api/v1/inventory/depot-pallet/',
   DepotPalletInfo: '/api/v1/inventory/depot-pallet-info/',
+  PalletTestResult: '/api/v1/inventory/pallet-test-result/',
+  DepotResume: '/api/v1/inventory/depot-resume/',
   // erp原材料信息管理
-  ErpMaterials: '/api/v1/recipe/erp-materials/'
+  ErpMaterials: '/api/v1/recipe/erp-materials/',
+  // 硫磺库库区
+  SulfurDepot: '/api/v1/inventory/sulfur-depot/',
+  // 硫磺库库位
+  SulfurDepotSite: '/api/v1/inventory/sulfur-depot-site/',
+  // 硫磺库库存查询
+  DepotSulfur: '/api/v1/inventory/depot-sulfur/',
+  DepotSulfurInfo: '/api/v1/inventory/depot-sulfur-info/',
+  // 硫磺库出入库管理
+  SulfurData: '/api/v1/inventory/sulfur-data/',
+  SulfurResume: '/api/v1/inventory/sulfur-resume/'
 }

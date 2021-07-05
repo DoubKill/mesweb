@@ -1,6 +1,6 @@
 <template>
   <div class="loaction-style">
-    <!-- 库区库位管理 -->
+    <!--线边库 库区库位管理 -->
     <el-row :gutter="20">
       <el-col v-loading="loading" :span="12">
         <el-button
@@ -101,7 +101,10 @@
           <el-input v-model="formObj.depot_site_name" />
         </el-form-item>
         <el-form-item v-if="!isArea" label="库区" prop="depot">
-          <el-select v-model="formObj.depot" placeholder="请选择">
+          <el-select
+            v-model="formObj.depot"
+            placeholder="请选择"
+          >
             <el-option
               v-for="item in tableData"
               :key="item.id"

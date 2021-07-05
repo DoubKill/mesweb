@@ -123,7 +123,7 @@
 </template>
 
 <script>
-import { depot, depotSite } from '@/api/base_w_four'
+import { sulfurDepot, sulfurDepotSite } from '@/api/base_w_four'
 import page from '@/components/page'
 export default {
   name: 'SulphurLocation',
@@ -169,7 +169,7 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const data = await depot('get', null, { params: { page: this.pageNo, page_size: this.pageSize }})
+        const data = await sulfurDepot('get', null, { params: { page: this.pageNo, page_size: this.pageSize }})
         this.tableData = data.results
         this.total = data.count
         this.loading = false
@@ -180,7 +180,7 @@ export default {
     async getList1() {
       try {
         this.loading1 = true
-        const data = await depotSite('get', null, { params: { page: this.pageNo1, page_size: this.pageSize1 }})
+        const data = await sulfurDepotSite('get', null, { params: { page: this.pageNo1, page_size: this.pageSize1 }})
         this.tableData1 = data.results
         this.total1 = data.count
         this.loading1 = false
@@ -222,7 +222,7 @@ export default {
         if (valid) {
           try {
             this.loadingBtn = true
-            const _api = this.isArea ? depot : depotSite
+            const _api = this.isArea ? sulfurDepot : sulfurDepotSite
             const _method = this.formObj.id ? 'put' : 'post'
             await _api(_method, this.formObj.id, { data: this.formObj })
             this.$message.success('操作成功')

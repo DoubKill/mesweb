@@ -144,3 +144,75 @@ export function erpMaterials(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function sulfurDepot(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SulfurDepot + id + '/' : API.SulfurDepot,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function sulfurDepotSite(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SulfurDepotSite + id + '/' : API.SulfurDepotSite,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function depotSulfur(method, id, data = {}) {
+  const obj = {
+    url: id ? API.DepotSulfur + id + '/' : API.DepotSulfur,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function depotSulfurInfo(method, id, data = {}) {
+  const obj = {
+    url: id ? API.DepotSulfurInfo + id + '/' : API.DepotSulfurInfo,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function sulfurData(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SulfurData + id + '/' : API.SulfurData,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function sulfurResume(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SulfurResume + id + '/' : API.SulfurResume,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function palletTestResult(method, id, data = {}) {
+  const obj = {
+    url: id ? API.PalletTestResult + id + '/' : API.PalletTestResult,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function depotResume(method, id, data = {}) {
+  const obj = {
+    url: id ? API.DepotResume + id + '/' : API.DepotResume,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
