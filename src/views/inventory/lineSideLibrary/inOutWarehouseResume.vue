@@ -134,18 +134,18 @@
         />
         <el-table-column
           label="出库时间"
-          prop="enter_time"
+          prop="outer_time"
           min-width="20"
         />
         <el-table-column
           label="库区"
-          prop="enter_time"
+          prop="depot_name"
           min-width="20"
         />
         <el-table-column
           label="库位"
           min-width="20"
-          prop="enter_time"
+          prop="depot_site_name"
         />
       </el-table-column>
     </el-table>
