@@ -3,7 +3,21 @@
     <!--线边库 出入库履历 -->
     <el-form :inline="true">
       <el-form-item label="胶料编码:">
-        <all-product-no-select @productBatchingChanged="productBatchingChanged" />
+        <el-select
+          v-model="search.product_no"
+          clearable
+          filterable
+          placeholder="请选择"
+          @visible-change="getProductList"
+          @change="changeSearch"
+        >
+          <el-option
+            v-for="(item,key) in productList"
+            :key="key"
+            :label="item.pallet_data__product_no"
+            :value="item.pallet_data__product_no"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="生产机台:">
         <selectEquip
@@ -159,7 +173,7 @@
 </template>
 
 <script>
-import allProductNoSelect from '@/components/select_w/allProductNoSelect'
+// import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import classSelect from '@/components/ClassSelect'
 import selectEquip from '@/components/select_w/equip'
 import { debounce } from '@/utils'
@@ -167,13 +181,14 @@ import { depotResume, palletTestResult } from '@/api/base_w_four'
 import page from '@/components/page'
 export default {
   name: 'LineSideInOutWarehouseResume',
-  components: { page, selectEquip, allProductNoSelect, classSelect },
+  components: { page, selectEquip, classSelect },
   data() {
     return {
       search: {},
       loading: false,
       tableData: [],
-      total: 0
+      total: 0,
+      productList: []
     }
   },
   created() {
@@ -195,13 +210,16 @@ export default {
       }
       this.loading = false
     },
+    async getProductList() {
+      try {
+        const data = await depotResume('get', null, { params: { all: 1 }})
+        this.productList = data.results
+      } catch (e) {
+        //
+      }
+    },
     changeDepot(row) {
       this.$set(row, 'depot_site', null)
-    },
-    productBatchingChanged(val) {
-      this.search.product_no = val ? val.material_no : ''
-      this.search.page = 1
-      this.getList()
     },
     changeSearch() {
       this.search.page = 1

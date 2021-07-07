@@ -3,25 +3,33 @@
     <!--线边库 库存查询 -->
     <el-form :inline="true">
       <el-form-item label="胶料编码:">
-        <all-product-no-select @productBatchingChanged="productBatchingChanged" />
+        <el-select v-model="search.product_no" clearable filterable placeholder="请选择" @change="changeList">
+          <el-option
+            v-for="item in tableData"
+            :key="item.id"
+            :label="item.product_no"
+            :value="item.product_no"
+          />
+        </el-select>
+        <!-- <all-product-no-select @productBatchingChanged="productBatchingChanged" /> -->
       </el-form-item>
       <el-form-item label="库区:">
-        <el-select v-model="search.depot_name" clearable filterable placeholder="请选择" @change="changeList">
+        <el-select v-model="search.depot" clearable filterable placeholder="请选择" @change="changeList">
           <el-option
             v-for="item in options"
             :key="item.id"
             :label="item.depot_name"
-            :value="item.depot_name"
+            :value="item.id"
           />
         </el-select>
       </el-form-item>
       <el-form-item label="库位:">
-        <el-select v-model="search.depot_site_name" clearable filterable placeholder="请选择" @change="changeList">
+        <el-select v-model="search.depot_site" clearable filterable placeholder="请选择" @change="changeList">
           <el-option
             v-for="item in options1"
             :key="item.id"
             :label="item.depot_site_name"
-            :value="item.depot_site_name"
+            :value="item.id"
           />
         </el-select>
       </el-form-item>
@@ -86,12 +94,12 @@
 </template>
 
 <script>
-import allProductNoSelect from '@/components/select_w/allProductNoSelect'
+// import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import { depot, depotSite, depotPallet, depotPalletInfo } from '@/api/base_w_four'
 
 export default {
   name: 'LineSideStockRecord',
-  components: { allProductNoSelect },
+  components: { },
   data() {
     return {
       search: {},
@@ -131,7 +139,9 @@ export default {
     async getList1(row) {
       try {
         this.loading1 = true
-        const data = await depotPalletInfo('get', null, { params: { product_no: row.product_no }})
+        const obj = { product_no: row.product_no }
+        Object.assign(obj, this.search)
+        const data = await depotPalletInfo('get', null, { params: obj })
         this.tableData1 = data
         this.loading1 = false
       } catch (e) {

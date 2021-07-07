@@ -3,7 +3,21 @@
     <!--线边库 出入库管理 -->
     <el-form :inline="true">
       <el-form-item label="胶料编码:">
-        <all-product-no-select @productBatchingChanged="productBatchingChanged" />
+        <el-select
+          v-model="search.product_no"
+          clearable
+          filterable
+          placeholder="请选择"
+          @visible-change="getProductList"
+          @change="changeSearch"
+        >
+          <el-option
+            v-for="(item,key) in productList"
+            :key="key"
+            :label="item.product_no"
+            :value="item.product_no"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="生产机台:">
         <selectEquip
@@ -204,7 +218,7 @@
 </template>
 
 <script>
-import allProductNoSelect from '@/components/select_w/allProductNoSelect'
+// import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import classSelect from '@/components/ClassSelect'
 import selectEquip from '@/components/select_w/equip'
 import { debounce, checkPermission } from '@/utils'
@@ -212,7 +226,7 @@ import page from '@/components/page'
 import { palletData, depot, depotSite, palletTestResult } from '@/api/base_w_four'
 export default {
   name: 'LineSideInOutWarehouse',
-  components: { page, selectEquip, allProductNoSelect, classSelect },
+  components: { page, selectEquip, classSelect },
   data() {
     return {
       search: {},
@@ -220,7 +234,8 @@ export default {
       tableData: [],
       options: [],
       options1: [],
-      total: 0
+      total: 0,
+      productList: []
     }
   },
   created() {
@@ -261,6 +276,14 @@ export default {
         //
       }
     },
+    async getProductList() {
+      try {
+        const data = await palletData('get', null, { params: { all: 1 }})
+        this.productList = data.results
+      } catch (e) {
+        //
+      }
+    },
     visibleChangeDepot(bool) {
       if (bool) {
         this.getDepotList()
@@ -273,11 +296,6 @@ export default {
     },
     changeDepot(row) {
       this.$set(row, 'depot_site', null)
-    },
-    productBatchingChanged(val) {
-      this.search.product_no = val ? val.material_no : ''
-      this.search.page = 1
-      this.getList()
     },
     changeSearch() {
       this.search.page = 1
@@ -297,7 +315,6 @@ export default {
       this.search.page = 1
       debounce(this, 'getList')
     },
-    changeList() {},
     async descriptionFun(row, expanded) {
       let bool = false
       if (expanded.length > 0) {
