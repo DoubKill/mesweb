@@ -54,10 +54,10 @@
           :data="tableData1"
           border
         >
-          <el-table-column
+          <!-- <el-table-column
             prop="depot__depot_name"
             label="库区"
-          />
+          /> -->
           <el-table-column
             prop="depot_site_name"
             label="库位名称"
