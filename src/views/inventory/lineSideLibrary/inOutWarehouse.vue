@@ -65,6 +65,7 @@
                 v-for="(item,i) in row.table_head"
                 :key="i"
                 :label="i"
+                align="center"
               >
                 <el-table-column
                   v-for="(itemChild,iChild) in item"
