@@ -824,17 +824,7 @@ export const asyncRoutes = [
             meta: {
               faName: 'LineSideLibrary',
               title: '库区库位管理',
-              permissionName: ''
-            }
-          },
-          {
-            path: '/lineSideLibrary/stockRecord',
-            component: () => import('@/views/inventory/lineSideLibrary/stockRecord.vue'),
-            name: 'LineSideStockRecord',
-            meta: {
-              faName: 'LineSideLibrary',
-              title: '库存查询',
-              permissionName: ''
+              permissionName: 'depot'
             }
           },
           {
@@ -844,7 +834,17 @@ export const asyncRoutes = [
             meta: {
               faName: 'LineSideLibrary',
               title: '出入库管理',
-              permissionName: ''
+              permissionName: 'pallet_data'
+            }
+          },
+          {
+            path: '/lineSideLibrary/stockRecord',
+            component: () => import('@/views/inventory/lineSideLibrary/stockRecord.vue'),
+            name: 'LineSideStockRecord',
+            meta: {
+              faName: 'LineSideLibrary',
+              title: '库存查询',
+              permissionName: 'depot_pallet'
             }
           },
           {
@@ -854,7 +854,7 @@ export const asyncRoutes = [
             meta: {
               faName: 'MaterialDelivery',
               title: '出入库履历',
-              permissionName: ''
+              permissionName: 'depot_resume'
             }
           }
         ]
@@ -876,17 +876,7 @@ export const asyncRoutes = [
             meta: {
               faName: 'SulphurLibrary',
               title: '库区库位管理',
-              permissionName: ''
-            }
-          },
-          {
-            path: '/sulphurLibrary/stockRecord',
-            component: () => import('@/views/inventory/sulphurLibrary/stockRecord.vue'),
-            name: 'SulphurStockRecord',
-            meta: {
-              faName: 'SulphurLibrary',
-              title: '库存查询',
-              permissionName: ''
+              permissionName: 'sulfur_depot'
             }
           },
           {
@@ -896,7 +886,17 @@ export const asyncRoutes = [
             meta: {
               faName: 'SulphurLibrary',
               title: '出入库管理',
-              permissionName: ''
+              permissionName: 'sulfur_data'
+            }
+          },
+          {
+            path: '/sulphurLibrary/stockRecord',
+            component: () => import('@/views/inventory/sulphurLibrary/stockRecord.vue'),
+            name: 'SulphurStockRecord',
+            meta: {
+              faName: 'SulphurLibrary',
+              title: '库存查询',
+              permissionName: 'depot_sulfur'
             }
           },
           {
@@ -906,7 +906,7 @@ export const asyncRoutes = [
             meta: {
               faName: 'SulphurLibrary',
               title: '出入库履历',
-              permissionName: ''
+              permissionName: 'sulfur_resume'
             }
           }
         ]

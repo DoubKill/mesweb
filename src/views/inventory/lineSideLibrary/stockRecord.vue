@@ -41,7 +41,15 @@
           />
           <el-table-column
             prop="num"
-            label="线边库现存数量"
+            label="现存数量/托"
+          />
+          <el-table-column
+            prop="trains"
+            label="车数"
+          />
+          <el-table-column
+            prop="actual_weight"
+            label="重量"
           />
         </el-table>
       </el-col>

@@ -15,7 +15,7 @@
         <class-select @classSelected="classChanged" />
       </el-form-item>
       <el-form-item label="生产班组:">
-        <el-input v-model="search.bbb" placeholder="生产班组" @input="debounceFun" />
+        <el-input v-model="search.group" placeholder="生产班组" @input="debounceFun" />
       </el-form-item>
       <el-form-item label="工厂日期:">
         <el-date-picker
@@ -89,7 +89,7 @@
           min-width="20"
         >
           <template slot-scope="{row}">
-            {{ row.classes }}
+            {{ row.classes }}/{{ row.group }}
           </template>
         </el-table-column>
         <el-table-column

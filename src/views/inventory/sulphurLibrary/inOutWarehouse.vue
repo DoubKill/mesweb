@@ -47,11 +47,13 @@
       </el-form-item>
     </el-form>
     <el-form :inline="true" style="text-align:right">
-      <el-form-item label="扫码入库:">
-        <el-input v-model="scanCode" clearable @input="changeScanCode" />
-      </el-form-item>
+      <div v-permission="['sulfur_data', 'enter']" style="display:inline-block">
+        <el-form-item label="扫码入库:">
+          <el-input v-model="scanCode" clearable @input="changeScanCode" />
+        </el-form-item>
+      </div>
       <el-form-item>
-        <el-button type="primary" @click="changeManual">手动入库</el-button>
+        <el-button v-permission="['sulfur_data', 'enter']" type="primary" @click="changeManual">手动入库</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -98,7 +100,11 @@
         width="120"
       >
         <template slot-scope="{row}">
-          <el-button type="primary" @click="deliveryFun(row)">出库</el-button>
+          <el-button
+            v-permission="['sulfur_data', 'outer']"
+            type="primary"
+            @click="deliveryFun(row)"
+          >出库</el-button>
         </template>
       </el-table-column>
     </el-table>

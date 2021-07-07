@@ -1,16 +1,19 @@
 <template>
   <div class="loaction-style">
     <!--线边库 库区库位管理 -->
-    <el-row :gutter="20">
+    <el-row>
       <el-col v-loading="loading" :span="12">
         <el-button
-          type="primary"
+          v-permission="['depot', 'add']"
           style="margin-bottom:10px"
           @click="addArea(true)"
         >添加库区</el-button>
         <el-table
+          ref="currentRow"
           :data="tableData"
           border
+          highlight-current-row
+          @current-change="handleCurrentChange"
         >
           <el-table-column
             prop="depot_name"
@@ -25,6 +28,7 @@
           >
             <template slot-scope="scope">
               <el-button
+                v-permission="['depot', 'change']"
                 size="mini"
                 type="primary"
                 @click="editArea(scope.row,true)"
@@ -41,8 +45,9 @@
       </el-col>
       <el-col v-loading="loading1" :span="12">
         <el-button
-          type="primary"
-          style="margin-bottom:10px"
+          v-permission="['depot', 'addSite']"
+          style="margin-bottom:10px;float:right"
+          :disabled="depot?false:true"
           @click="addArea(false)"
         >添加库位</el-button>
         <el-table
@@ -50,12 +55,12 @@
           border
         >
           <el-table-column
-            prop="depot_site_name"
-            label="库位名称"
+            prop="depot__depot_name"
+            label="库区"
           />
           <el-table-column
-            prop="depot_name"
-            label="库区"
+            prop="depot_site_name"
+            label="库位名称"
           />
           <el-table-column
             prop="description"
@@ -66,6 +71,7 @@
           >
             <template slot-scope="scope">
               <el-button
+                v-permission="['depot', 'changeSite']"
                 size="mini"
                 type="primary"
                 @click="editArea(scope.row,false)"
@@ -73,12 +79,12 @@
             </template>
           </el-table-column>
         </el-table>
-        <page
+        <!-- <page
           :old-page="false"
           :total="total1"
           :current-page="pageNo1"
           @currentChange="currentChange1"
-        />
+        /> -->
       </el-col>
     </el-row>
 
@@ -94,16 +100,11 @@
         :rules="rules"
         label-width="100px"
       >
-        <el-form-item v-if="isArea" label="库区名称" prop="depot_name">
-          <el-input v-model="formObj.depot_name" />
-        </el-form-item>
-        <el-form-item v-if="!isArea" label="库位名称" prop="depot_site_name">
-          <el-input v-model="formObj.depot_site_name" />
-        </el-form-item>
         <el-form-item v-if="!isArea" label="库区" prop="depot">
           <el-select
             v-model="formObj.depot"
             placeholder="请选择"
+            :disabled="formObj.depot"
           >
             <el-option
               v-for="item in tableData"
@@ -112,6 +113,12 @@
               :value="item.id"
             />
           </el-select>
+        </el-form-item>
+        <el-form-item v-if="isArea" label="库区名称" prop="depot_name">
+          <el-input v-model="formObj.depot_name" />
+        </el-form-item>
+        <el-form-item v-if="!isArea" label="库位名称" prop="depot_site_name">
+          <el-input v-model="formObj.depot_site_name" />
         </el-form-item>
         <el-form-item label="描述" prop="description">
           <el-input v-model="formObj.description" />
@@ -128,6 +135,7 @@
 <script>
 import { depot, depotSite } from '@/api/base_w_four'
 import page from '@/components/page'
+import { checkPermission } from '@/utils'
 export default {
   name: 'LineSideInOutWarehouse',
   components: { page },
@@ -161,31 +169,39 @@ export default {
       pageNo: 1,
       pageNo1: 1,
       pageSize: 10,
-      pageSize1: 10
+      pageSize1: 10,
+      depot: null
     }
   },
   created() {
     this.getList()
-    this.getList1()
+    // this.getList1()
   },
   methods: {
+    checkPermission,
     async getList() {
       try {
         this.loading = true
         const data = await depot('get', null, { params: { page: this.pageNo, page_size: this.pageSize }})
         this.tableData = data.results
         this.total = data.count
+        this.$refs.currentRow.setCurrentRow(this.tableData[0])
+        this.depot = this.tableData[0].id
         this.loading = false
       } catch (e) {
         this.loading = false
       }
     },
+    handleCurrentChange(row) {
+      this.depot = row.id
+      this.getList1()
+    },
     async getList1() {
       try {
         this.loading1 = true
-        const data = await depotSite('get', null, { params: { page: this.pageNo1, page_size: this.pageSize1 }})
+        const data = await depotSite('get', null, { params: { all: 1, id: this.depot }})
         this.tableData1 = data.results
-        this.total1 = data.count
+        // this.total1 = data.count
         this.loading1 = false
       } catch (e) {
         this.loading1 = false
@@ -202,6 +218,7 @@ export default {
       this.getList1()
     },
     addArea(bool) {
+      this.formObj.depot = this.depot
       this.isArea = bool
       this.dialogVisible = true
     },

@@ -15,7 +15,7 @@
         <class-select @classSelected="classChanged" />
       </el-form-item>
       <el-form-item label="生产班组:">
-        <el-input v-model="search.bbb" placeholder="生产班组" @input="debounceFun" />
+        <el-input v-model="search.group" placeholder="生产班组" @input="debounceFun" />
       </el-form-item>
       <el-form-item label="工厂日期:">
         <el-date-picker
@@ -89,7 +89,7 @@
           min-width="20"
         >
           <template slot-scope="{row}">
-            {{ row.classes }}
+            {{ row.classes }}/{{ row.group }}
           </template>
         </el-table-column>
         <el-table-column
@@ -133,12 +133,12 @@
         >
           <template slot-scope="{row}">
             <el-button
-              v-if="row.pallet_status === 1"
+              v-if="row.pallet_status === 1&& checkPermission(['pallet_data','outer'])"
               type="primary"
               @click="deliveryFun(row)"
             >出库</el-button>
             <el-button
-              v-if="!row.pallet_status"
+              v-if="!row.pallet_status&&checkPermission(['pallet_data','enter'])"
               type="primary"
               @click="warehousingFun(row)"
             >入库</el-button>
@@ -207,7 +207,7 @@
 import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import classSelect from '@/components/ClassSelect'
 import selectEquip from '@/components/select_w/equip'
-import { debounce } from '@/utils'
+import { debounce, checkPermission } from '@/utils'
 import page from '@/components/page'
 import { palletData, depot, depotSite, palletTestResult } from '@/api/base_w_four'
 export default {
@@ -229,6 +229,7 @@ export default {
     this.getDepotSiteList()
   },
   methods: {
+    checkPermission,
     async getList() {
       try {
         this.loading = true

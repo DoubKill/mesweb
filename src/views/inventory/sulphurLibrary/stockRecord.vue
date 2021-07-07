@@ -39,7 +39,7 @@
           />
           <el-table-column
             prop="num"
-            label="硫磺库现存数量"
+            label="现存数量"
           />
         </el-table>
       </el-col>
