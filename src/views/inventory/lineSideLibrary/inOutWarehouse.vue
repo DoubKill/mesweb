@@ -270,7 +270,7 @@ export default {
     },
     async getDepotSiteList() {
       try {
-        const data = await depotSite('get', null, { params: { all: 1 }})
+        const data = await depotSite('get', null, { params: { depot_site: 1 }})
         this.options1 = data.results
       } catch (e) {
         //
@@ -342,14 +342,6 @@ export default {
         data.results.forEach(d => { d.test_result = data.test_result })
         this.tableData[_index].table_head = data.table_head
         this.tableData[_index].tableData = data.results
-      } catch (e) {
-        //
-      }
-    },
-    async getPalletTestResult() {
-      try {
-        const data = await depotSite('get', null, { params: { all: 1 }})
-        this.options1 = data.results
       } catch (e) {
         //
       }

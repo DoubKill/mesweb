@@ -852,7 +852,7 @@ export const asyncRoutes = [
             component: () => import('@/views/inventory/lineSideLibrary/inOutWarehouseResume.vue'),
             name: 'LineSideInOutWarehouseResume',
             meta: {
-              faName: 'MaterialDelivery',
+              faName: 'LineSideLibrary',
               title: '出入库履历',
               permissionName: 'depot_resume'
             }
@@ -1645,6 +1645,48 @@ export const asyncRoutes = [
           }
         ]
       }
+      /** {
+        path: '/quickCheck',
+        redirect: '/quickCheck/deviceMonitor',
+        component: () => import('@/views/quality_management/quickCheck/a-index'),
+        name: 'QuickCheckGather',
+        meta: {
+          title: '快检数据采集',
+          icon: 'quality'
+        },
+        children: [
+          {
+            path: '/quickCheck/deviceMonitor',
+            component: () => import('@/views/quality_management/quickCheck/deviceMonitor'),
+            name: 'DeviceMonitor',
+            meta: {
+              faName: 'QuickCheckGather',
+              title: '快检设备监控',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/quickCheck/testPlan',
+            component: () => import('@/views/quality_management/quickCheck/testPlan'),
+            name: 'TestPlan',
+            meta: {
+              faName: 'QuickCheckGather',
+              title: '快检检测计划',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/quickCheck/resume',
+            component: () => import('@/views/quality_management/quickCheck/resume'),
+            name: 'QuickCheckResume',
+            meta: {
+              faName: 'QuickCheckGather',
+              title: '检测履历查询',
+              permissionName: ''
+            }
+          }
+        ]
+      }**/
     ]
   },
   {
