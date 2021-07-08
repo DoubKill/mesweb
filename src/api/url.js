@@ -376,6 +376,8 @@ export default {
   ThWeightStock: '/api/v1/inventory/th-weight-stock/',
   // 炭黑库出库口列表
   ThEntrance: '/api/v1/inventory/th-entrance/',
+  // 炭黑库 获取内伸位货物信息
+  ThInstock: '/api/v1/inventory/th-instock/',
   // 原材料上报设备
   MaterialReportEquip: '/api/v1/quality/material-report-equip/',
   MaterialReportValue: '/api/v1/quality/material-report-value/',
@@ -386,6 +388,8 @@ export default {
   WmsInventory: '/api/v1/inventory/wms-inventory/',
   WmsMaterialGroups: '/api/v1/inventory/wms-material-groups/',
   WmsTunnels: '/api/v1/inventory/wms-tunnels/',
+  // 原材料 获取内伸位货物信息
+  WmsInstock: '/api/v1/inventory/wms-instock/',
   // 炭黑库库存
   ThInventory: '/api/v1/inventory/th-inventory/',
   ThMaterialGroups: '/api/v1/inventory/th-material-groups/',
@@ -397,6 +401,18 @@ export default {
   PalletData: '/api/v1/inventory/pallet-data/',
   DepotPallet: '/api/v1/inventory/depot-pallet/',
   DepotPalletInfo: '/api/v1/inventory/depot-pallet-info/',
+  PalletTestResult: '/api/v1/inventory/pallet-test-result/',
+  DepotResume: '/api/v1/inventory/depot-resume/',
   // erp原材料信息管理
-  ErpMaterials: '/api/v1/recipe/erp-materials/'
+  ErpMaterials: '/api/v1/recipe/erp-materials/',
+  // 硫磺库库区
+  SulfurDepot: '/api/v1/inventory/sulfur-depot/',
+  // 硫磺库库位
+  SulfurDepotSite: '/api/v1/inventory/sulfur-depot-site/',
+  // 硫磺库库存查询
+  DepotSulfur: '/api/v1/inventory/depot-sulfur/',
+  DepotSulfurInfo: '/api/v1/inventory/depot-sulfur-info/',
+  // 硫磺库出入库管理
+  SulfurData: '/api/v1/inventory/sulfur-data/',
+  SulfurResume: '/api/v1/inventory/sulfur-resume/'
 }

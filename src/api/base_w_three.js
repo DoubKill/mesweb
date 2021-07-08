@@ -388,6 +388,15 @@ export function wmsEntrance(method, id, data = {}) {
   return request(obj)
 }
 
+export function wmsInstock(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WmsInstock + id + '/' : API.WmsInstock,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function thStock(method, id, data = {}) {
   const obj = {
     url: id ? API.ThStock + id + '/' : API.ThStock,
@@ -409,6 +418,15 @@ export function thWeightStock(method, id, data = {}) {
 export function thEntrance(method, id, data = {}) {
   const obj = {
     url: id ? API.ThEntrance + id + '/' : API.ThEntrance,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function thInstock(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ThInstock + id + '/' : API.ThInstock,
     method: method
   }
   Object.assign(obj, data)
