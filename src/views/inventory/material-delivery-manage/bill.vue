@@ -133,6 +133,13 @@
           label="站台名称"
           min-width="20"
         />
+        <el-table-column
+          label="状态"
+          min-width="20"
+          :formatter="(row)=>{
+            return taskStateList[row.taskState]
+          }"
+        />
       </el-table>
     </el-dialog>
 
@@ -169,7 +176,16 @@
             />
           </el-select>
         </el-form-item>
-
+        <el-form-item v-if="isLocation" label="伸位">
+          <el-select v-model="formSearch.position" clearable placeholder="请选择" @change="getDialog">
+            <el-option
+              v-for="(item,i) in [{name:'外伸位',id:'外'},{name:'内伸位',id:'内'}]"
+              :key="i"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
       </el-form>
       <div v-if="isLocation" :key="1" v-loading="loading2">
         <h3>库位货物列表</h3>
@@ -222,12 +238,22 @@
             }"
           />
           <el-table-column
+            prop="inventory_time"
+            label="入库时间"
+            min-width="20"
+          />
+          <el-table-column
+            prop="position"
+            label="伸位"
+            min-width="20"
+          />
+          <el-table-column
             label="操作"
             width="100"
           >
             <template slot-scope="{row,$index}">
               <el-button
-                :disabled="row.btnDisabled"
+                :disabled="row.btnDisabled||btnDisabled"
                 @click="showDialog(row,$index)"
               >添加</el-button>
             </template>
@@ -292,6 +318,16 @@
             }"
           />
           <el-table-column
+            prop="inventory_time"
+            label="入库时间"
+            min-width="20"
+          />
+          <el-table-column
+            prop="position"
+            label="伸位"
+            min-width="20"
+          />
+          <el-table-column
             label="操作"
             width="100"
           >
@@ -345,6 +381,57 @@
         <el-button type="primary" :loading="btnLoading" @click="submitForm">确 定</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      title="选择内外伸位"
+      :visible.sync="dialogVisible2"
+      width="60%"
+      :before-close="handleClose2"
+    >
+      <el-form :inline="true">
+        <el-form-item label="物料名称">
+          {{ positionObj.MaterialName }}
+        </el-form-item>
+        <el-form-item label="当前库位">
+          {{ positionObj.SpaceId }}
+        </el-form-item>
+        <el-form-item label="伸位">
+          {{ positionObj.position }}
+        </el-form-item>
+      </el-form>
+      <el-table
+        :data="tableData3"
+        border
+      >
+        <el-table-column
+          width="55"
+          label="选择"
+        >
+          <template slot-scope="{row}">
+            <el-checkbox v-model="row.checked" :disabled="row.position==='外'" />
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="SpaceId"
+          label="库位号"
+          min-width="20"
+        />
+        <el-table-column
+          prop="position"
+          label="伸位"
+          min-width="20"
+        />
+        <el-table-column
+          prop="MaterialName"
+          label="物料名称"
+          min-width="20"
+        />
+      </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleClose2(false)">取 消</el-button>
+        <el-button type="primary" @click="submitLocation">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -352,7 +439,7 @@
 import request from '@/utils/request-zc'
 import page from '@/components/page'
 import { debounce } from '@/utils'
-import { wmsStock, wmsWeightStock, wmsEntrance } from '@/api/base_w_three'
+import { wmsStock, wmsWeightStock, wmsEntrance, wmsInstock } from '@/api/base_w_three'
 export default {
   name: 'DeliveryBill',
   components: { page },
@@ -385,7 +472,7 @@ export default {
       dialogVisible1: false,
       formSearch: {},
       tableData2: [],
-      tableData3: [{}],
+      tableData3: [],
       tableData4: [],
       EntranceCode: '',
       isLocation: '',
@@ -393,7 +480,29 @@ export default {
       loading2: false,
       total1: 0,
       optionsEntrance: [],
-      btnLoading: false
+      btnLoading: false,
+      taskStateList: {
+        1: '待处理',
+        2: '处理中',
+        3: '完成',
+        4: '已解绑',
+        5: '取消',
+        6: '异常',
+        7: '盘点下架中',
+        8: '盘点下架完成',
+        9: '盘点上架中',
+        10: '盘点下线',
+        11: '盘点下线完成',
+        12: '强制完成',
+        13: '盘点确认无货',
+        14: '检测下架',
+        15: '检测下架完成',
+        16: '检测上架中',
+        17: '盘点上架移库中'
+      },
+      dialogVisible2: false,
+      btnDisabled: false,
+      positionObj: {}
     }
   },
   created() {
@@ -513,12 +622,97 @@ export default {
         this.loading2 = false
       }
     },
-    showDialog(row, index) {
+    handleClose2(done) {
+      this.dialogVisible2 = false
+      if (done) {
+        done()
+      }
+    },
+    async setWmsInstock(row, index) {
+      try {
+        this.btnDisabled = true
+        const data = await wmsInstock('get', null, { params: {
+          material_no: row.MaterialCode, entrance_name: this.formSearch.entrance_name,
+          space_id: row.SpaceId
+        }})
+        this.btnDisabled = false
+        if (data.length > 0) {
+          // 内伸位有货 弹弹框
+          this.positionObj = row
+          this.dialogVisible2 = true
+          this.tableData3 = data
+          this.tableData3.forEach(d => {
+            if (d.position === '外') {
+              d.checked = true
+            } else {
+              this.$set(d, 'checked', false)
+            }
+          })
+        } else {
+          this.showDialog(row, index, true)
+        }
+      } catch (error) {
+        this.btnDisabled = false
+      }
+    },
+    showDialog(row, index, bool) {
+      if (row.position === '外' && !bool) {
+        // 是外伸位
+        this.setWmsInstock(row, index)
+        return
+      }
       this.$set(this.tableData2[index], 'btnDisabled', true)
       row.Quantity = 1
       row.TaskDetailNumber = 'MesD' + new Date().getTime()
       row.SpaceCode = row.SpaceId
       this.tableData4.push(row)
+    },
+    submitLocation() {
+      const _table = []
+      const preRow = this.tableData3[0].MaterialCode
+      let bool
+      this.tableData3.forEach((d, i) => {
+        if (d.checked) {
+          d.Quantity = 1
+          d.TaskDetailNumber = 'MesD' + (new Date().getTime() + i)
+          d.SpaceCode = d.SpaceId
+          _table.push(d)
+        }
+        if (d.position === '内' && !d.checked) {
+          // 内伸位有货
+          bool = '1'
+        } if (d.checked && d.MaterialCode !== preRow) {
+          // 物料不一样
+          bool = '2'
+        }
+      })
+      if (bool === '1' || bool === '2') {
+        this.$confirm(bool === '1' ? '建议内伸位也打钩出库,是否继续？' : '内伸位物料与所选择的物料不同，是否确定出库？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.submitLocationFor(_table)
+        })
+      } else {
+        this.submitLocationFor(_table)
+      }
+    },
+    submitLocationFor(_table) {
+      const arr = _table.map(d => d.Sn)
+      this.tableData2.forEach((d, i) => {
+        const a = arr.indexOf(d.Sn)
+        if (a > -1) {
+          this.$set(this.tableData2[i], 'btnDisabled', true)
+        }
+      })
+      _table.forEach(d => {
+        const _arr = this.tableData4.filter(D => D.Sn === d.Sn)
+        if (_arr.length === 0) {
+          this.tableData4.push(d)
+        }
+      })
+      this.dialogVisible2 = false
     },
     cancelDialog(row) {
       const arr = this.tableData4.filter(d => d.Sn !== row.Sn)
@@ -536,7 +730,7 @@ export default {
     changeEntrance(val) {
       let obj
       if (val) {
-        obj = this.optionsEntrance.find(d => d.name === val)
+        obj = this.optionsEntrance.find(d => d.name && d.name === val)
       }
       this.formSearch.code = obj.code || ''
       if (this.isLocation) {
@@ -552,8 +746,8 @@ export default {
         this.loading2 = true
         const data = await wmsEntrance('get')
         this.optionsEntrance = data
-        this.formSearch.entrance_name = this.optionsEntrance[0].name
-        this.formSearch.code = this.optionsEntrance[0].code
+        this.formSearch.entrance_name = data ? this.optionsEntrance[0].name : ''
+        this.formSearch.code = data ? this.optionsEntrance[0].code : ''
         if (this.isLocation) {
           this.getDialogGoods()
         } else {

@@ -39,7 +39,7 @@
           />
           <el-table-column
             prop="num"
-            label="现存数量"
+            label="现存数量/箱"
           />
         </el-table>
       </el-col>

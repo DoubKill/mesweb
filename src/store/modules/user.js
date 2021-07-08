@@ -65,7 +65,7 @@ const actions = {
         Cookies.set('zc-th-url', response.th_url)
         const loginId = process.env.NODE_ENV === 'production'
           ? window.location.host === '10.10.120.40:9009' ? 'guozi' : 'mes' : 'guozi'
-
+        // const loginId = 'mes'
         request({
           url: '/user/Login',
           method: 'POST',
