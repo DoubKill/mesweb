@@ -104,7 +104,7 @@
           <el-select
             v-model="formObj.depot"
             placeholder="请选择"
-            :disabled="formObj.depot"
+            :disabled="formObj.depot?true:false"
           >
             <el-option
               v-for="item in tableData"

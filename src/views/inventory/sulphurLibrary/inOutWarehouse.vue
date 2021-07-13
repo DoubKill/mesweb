@@ -15,7 +15,13 @@
         <el-input v-model="search.lot_no" clearable @input="changeDebounce" />
       </el-form-item>
       <el-form-item label="库区:">
-        <el-select v-model="search.depot_name" clearable placeholder="请选择" @change="changeList">
+        <el-select
+          v-model="search.depot_name"
+          clearable
+          placeholder="请选择"
+          @change="changeList"
+          @visible-change="visibleChange"
+        >
           <el-option
             v-for="item in options"
             :key="item.id"
@@ -25,7 +31,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="库位:">
-        <el-select v-model="search.depot_site_name" clearable placeholder="请选择" @change="changeList">
+        <el-select v-model="search.depot_site_name" clearable placeholder="请选择" @visible-change="visibleChange1" @change="changeList">
           <el-option
             v-for="item in options1"
             :key="item.id"
@@ -139,7 +145,12 @@
           <el-input v-model="formObj.lot_no" />
         </el-form-item>
         <el-form-item label="库区" prop="depot">
-          <el-select v-model="formObj.depot" placeholder="请选择" @change="changeDepot">
+          <el-select
+            v-model="formObj.depot"
+            placeholder="请选择"
+            @visible-change="visibleChange"
+            @change="changeDepot"
+          >
             <el-option
               v-for="item in options"
               :key="item.id"
@@ -149,7 +160,11 @@
           </el-select>
         </el-form-item>
         <el-form-item label="库位" prop="depot_site">
-          <el-select v-model="formObj.depot_site" placeholder="请选择">
+          <el-select
+            v-model="formObj.depot_site"
+            placeholder="请选择"
+            @visible-change="visibleChange1"
+          >
             <el-option
               v-for="item in formObj.depot?options1.filter(d=>d.depot === formObj.depot):[]"
               :key="item.id"
@@ -209,8 +224,8 @@ export default {
     }
   },
   created() {
-    this.getDepotList()
-    this.getDepotSiteList()
+    // this.getDepotList()
+    // this.getDepotSiteList()
     this.getList()
   },
   methods: {
@@ -235,7 +250,7 @@ export default {
     },
     async getDepotSiteList() {
       try {
-        const data = await sulfurDepotSite('get', null, { params: { all: 1 }})
+        const data = await sulfurDepotSite('get', null, { params: { depot_site: 1 }})
         this.options1 = data.results
       } catch (e) {
         //
@@ -255,6 +270,16 @@ export default {
       this.search.s_time = this.search.enter_time ? this.search.enter_time[0] : ''
       this.search.e_time = this.search.enter_time ? this.search.enter_time[1] : ''
       this.getList()
+    },
+    visibleChange(bool) {
+      if (bool) {
+        this.getDepotList()
+      }
+    },
+    visibleChange1(bool) {
+      if (bool) {
+        this.getDepotSiteList()
+      }
     },
     changeScanCode() {
       // 去获取接口 在接口获取回来后去打开弹框
