@@ -399,7 +399,7 @@ export default {
           })
         })
         this.loadingBtn = true
-        this.$emit('visibleMethodSubmit', this.ruleForm)
+        this.$emit('visibleMethodSubmit', arr)
       }
     },
     changSelectStation(val) {
