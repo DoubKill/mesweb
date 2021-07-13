@@ -23,6 +23,7 @@
 
 <script>
 import { materialCount } from '@/api/base_w'
+import { bzMixinInventorySummary } from '@/api/base_w_four'
 export default {
   props: {
     //  created里面加载
@@ -43,6 +44,10 @@ export default {
       default: null
     },
     storeName: {
+      type: String,
+      default: null
+    },
+    station: {
       type: String,
       default: null
     },
@@ -69,12 +74,19 @@ export default {
     status(val) {
       if (val) {
         this.value = ''
+        this.options = []
         this.getList()
       }
     },
     storeName(val) {
       this.value = ''
       this.options = []
+    },
+    station(val) {
+      if (this.storeName === '混炼胶库') {
+        this.value = ''
+        this.options = []
+      }
     }
   },
   created() {
@@ -85,8 +97,13 @@ export default {
   methods: {
     async getList() {
       try {
+        if (this.storeName === '混炼胶库' && (!this.station || !this.status)) {
+          this.$message.info('请选择出库口 和 品质状态')
+          return
+        }
         this.loading = true
-        const data = await materialCount('get', null, { params: { store_name: this.storeName, status: this.status }})
+        const _api = this.storeName === '混炼胶库' ? bzMixinInventorySummary : materialCount
+        const data = await _api('get', null, { params: { store_name: this.storeName, status: this.status, station: this.station }})
         if (this.labelShow === 'material_name') {
           data.forEach(d => {
             d.label = d.material_name + ' / ' + d.material_no
@@ -104,7 +121,7 @@ export default {
       }
     },
     visibleChange(val) {
-      if (val && this.options.length === 0 && !this.createdIs) {
+      if (val && !this.createdIs) {
         this.getList()
       }
     },

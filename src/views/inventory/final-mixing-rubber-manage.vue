@@ -128,6 +128,7 @@
       title="正常出库"
       :visible.sync="normalOutboundDialogVisible"
       :before-close="handleCloseNormal"
+      width="90%"
     >
       <generate-normal-outbound
         ref="normalOutbound"
@@ -140,10 +141,8 @@
 </template>
 
 <script>
-import GenerateAssignOutbound from './components/generate_assign_outbound'
-import GenerateNormalOutbound from './components/generate_normal_outbound'
-// import materielTypeSelect from '@/components/select_w/materielTypeSelect'
-// import warehouseSelect from '@/components/select_w/warehouseSelect'
+import GenerateAssignOutbound from './components-zl-hl/generate_assign_outbound'
+import GenerateNormalOutbound from './components-zl-hl/generate_normal_outbound'
 import { finalPlanManagement } from '@/api/base_w'
 import { warehouseInfo } from '@/api/warehouse'
 import page from '@/components/page'
@@ -244,7 +243,7 @@ export default {
     },
     async visibleMethodSubmit(val) {
       try {
-        await finalPlanManagement('post', null, { data: [val] })
+        await finalPlanManagement('post', null, { data: val })
         this.$message.success('操作成功')
         this.normalOutboundDialogVisible = false
         this.getList()

@@ -147,6 +147,8 @@ export default {
   // 物料库存管理
   MaterialInventoryManage: '/api/v1/inventory/material-inventory-manage/',
 
+  // 北自混炼胶库存列表
+  BzMixinInventory: '/api/v1/inventory/bz-mixin-inventory/',
   // 混炼胶库计划管理
   PutPlanManagement: '/api/v1/inventory/put-plan-management/',
   //  终炼胶库计划管理
@@ -414,5 +416,9 @@ export default {
   DepotSulfurInfo: '/api/v1/inventory/depot-sulfur-info/',
   // 硫磺库出入库管理
   SulfurData: '/api/v1/inventory/sulfur-data/',
-  SulfurResume: '/api/v1/inventory/sulfur-resume/'
+  SulfurResume: '/api/v1/inventory/sulfur-resume/',
+
+  BzMixinInventorySummary: '/api/v1/inventory/bz-mixin-inventory-summary/',
+  BzFinalInventorySearch: '/api/v1/inventory/bz-final-inventory-search/',
+  BzMixinInventorySearch: '/api/v1/inventory/bz-mixin-inventory-search/'
 }
