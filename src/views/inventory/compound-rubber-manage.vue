@@ -73,6 +73,7 @@
       <el-table-column label="物料编码" align="center" prop="material_no" min-width="10" />
       <el-table-column label="出库原因" align="center" prop="inventory_reason" min-width="10" />
       <el-table-column label="需求数量" align="center" prop="need_qty" min-width="10" />
+      <el-table-column label="库位信息" align="center" prop="location" min-width="10" />
       <el-table-column label="出库数量" align="center" prop="actual.actual_qty" min-width="10" />
       <el-table-column label="实际出库重量" align="center" prop="actual.actual_wegit" min-width="10" />
       <el-table-column label="单位" align="center" prop="unit" min-width="10" />
@@ -83,7 +84,7 @@
         <template v-if="scope.row.status === 4" slot-scope="scope">
           <el-button-group>
             <el-button v-permission="['compoundRubber_plan','manual']" size="mini" type="primary" @click="manualDelivery(scope.row)">人工出库</el-button>
-            <el-button v-permission="['compoundRubber_plan','change']" size="mini" type="warning" @click="demandQuantity(scope.$index,scope.row)">编辑</el-button>
+            <!-- <el-button v-permission="['compoundRubber_plan','change']" size="mini" type="warning" @click="demandQuantity(scope.$index,scope.row)">编辑</el-button> -->
             <el-button v-permission="['compoundRubber_plan','close']" size="mini" type="info" @click="closePlan(scope.$index,scope.row)">关闭</el-button>
           </el-button-group>
           <!-- <el-button-group style="margin-top:5px">
@@ -133,6 +134,7 @@
         ref="assignOutbound"
         :warehouse-name="warehouseName"
         :warehouse-info="warehouseInfo"
+        :show="assignOutboundDialogVisible"
         @visibleMethod="visibleMethodNormal"
         @visibleMethodSubmit="visibleMethodAssignSubmit"
       />

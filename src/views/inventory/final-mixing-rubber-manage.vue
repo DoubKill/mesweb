@@ -63,6 +63,7 @@
       <el-table-column label="物料编码" align="center" prop="material_no" min-width="10" />
       <el-table-column label="出库原因" align="center" prop="inventory_reason" min-width="10" />
       <el-table-column label="需求数量" align="center" prop="need_qty" min-width="10" />
+      <el-table-column label="库位信息" align="center" prop="location" min-width="10" />
       <el-table-column label="出库数量" align="center" prop="actual.actual_qty" min-width="10" />
       <el-table-column label="实际出库重量" align="center" prop="actual.actual_wegit" min-width="10" />
       <el-table-column label="单位" align="center" prop="unit" width="40" min-width="10" />
