@@ -243,3 +243,12 @@ export function bzMixinInventorySearch(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function weightingPackageExpire(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WeightingPackageExpire + id + '/' : API.WeightingPackageExpire,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

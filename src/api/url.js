@@ -420,5 +420,7 @@ export default {
 
   BzMixinInventorySummary: '/api/v1/inventory/bz-mixin-inventory-summary/',
   BzFinalInventorySearch: '/api/v1/inventory/bz-final-inventory-search/',
-  BzMixinInventorySearch: '/api/v1/inventory/bz-mixin-inventory-search/'
+  BzMixinInventorySearch: '/api/v1/inventory/bz-mixin-inventory-search/',
+
+  WeightingPackageExpire: '/api/v1/terminal/weighting-package-expire/'
 }
