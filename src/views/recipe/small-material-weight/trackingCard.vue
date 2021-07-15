@@ -3,7 +3,7 @@
     <!-- 料包产出-质量追踪卡管理 -->
     <el-form :inline="true">
       <el-form-item label="配料机台">
-        <select-batching-equip v-model="formInline.equip" @changeFun="changeEquipList" />
+        <select-batching-equip v-model="formInline.equip" :is-default="true" :created-is="true" @changeFun="changeEquipList" />
       </el-form-item>
       <el-form-item label="配料日期">
         <el-date-picker
@@ -11,6 +11,7 @@
           type="date"
           placeholder="选择日期"
           value-format="yyyy-MM-dd"
+          :clearable="false"
           @change="changeList"
         />
       </el-form-item>
@@ -18,6 +19,7 @@
         <el-select
           v-model="formInline.product_no"
           clearable
+          filterable
           @change="changeList"
           @visible-change="visibleChange"
         >
@@ -223,13 +225,16 @@ import SelectBatchingEquip from '../components/select-batching-equip'
 import page from '@/components/page'
 import { xlPlan } from '@/api/base_w_three'
 import { weightingPackageLog } from '@/api/base_w_two'
+import { setDate } from '@/utils'
 
 export default {
   name: 'SmallMaterialWeightTrackingCard',
   components: { SelectBatchingEquip, page },
   data() {
     return {
-      formInline: {},
+      formInline: {
+        batch_time: setDate()
+      },
       tableData: [],
       total: 0,
       loading: false,
@@ -285,6 +290,10 @@ export default {
       }
     },
     changeList() {
+      if (!this.formInline.batch_time) {
+        this.$message.info('请选择配料日期')
+        return
+      }
       if (!this.formInline.status) {
         delete this.formInline.status
       }
