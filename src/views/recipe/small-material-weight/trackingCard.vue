@@ -170,6 +170,7 @@
             :max="ruleForm.package_fufil"
             :step="1"
             step-strictly
+            @change="ruleForm.package_count=1"
           />
         </el-form-item>
         <el-form-item label="配置数量" prop="package_count">
@@ -177,6 +178,18 @@
             v-model="ruleForm.package_count"
             controls-position="right"
             :min="1"
+            :max="ruleForm.package_fufil+1-ruleForm.print_begin_trains"
+            :step="1"
+            step-strictly
+            @change="ruleForm.print_count=1"
+          />
+        </el-form-item>
+        <el-form-item label="打印张数" prop="print_count">
+          <el-input-number
+            v-model="ruleForm.print_count"
+            controls-position="right"
+            :min="1"
+            :max="ruleForm.package_count"
             :step="1"
             step-strictly
           />
@@ -245,9 +258,14 @@ export default {
         ],
         package_count: [
           { required: true, message: '请填写', trigger: 'blur' }
+        ],
+        print_count: [
+          { required: true, message: '请填写', trigger: 'blur' }
         ]
       },
-      ruleForm: {},
+      ruleForm: {
+        print_count: 1
+      },
       option: [],
       btnLoading: false
     }
@@ -318,6 +336,7 @@ export default {
     reprintFun(row) {
       this.dialogVisible = true
       this.ruleForm = JSON.parse(JSON.stringify(row))
+      this.ruleForm.print_count = 1
     },
     submitFun() {
       this.$refs.ruleForm.validate(async(valid) => {
