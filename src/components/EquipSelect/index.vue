@@ -35,7 +35,7 @@ export default {
       default: false
     },
     defaultVal: {
-      type: [String, Number],
+      type: [String, Number, Array],
       default: null
     },
     // 设备类型

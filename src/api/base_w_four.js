@@ -216,3 +216,39 @@ export function depotResume(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function bzMixinInventorySummary(method, id, data = {}) {
+  const obj = {
+    url: id ? API.BzMixinInventorySummary + id + '/' : API.BzMixinInventorySummary,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function bzFinalInventorySearch(method, id, data = {}) {
+  const obj = {
+    url: id ? API.BzFinalInventorySearch + id + '/' : API.BzFinalInventorySearch,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function bzMixinInventorySearch(method, id, data = {}) {
+  const obj = {
+    url: id ? API.BzMixinInventorySearch + id + '/' : API.BzMixinInventorySearch,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function weightingPackageExpire(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WeightingPackageExpire + id + '/' : API.WeightingPackageExpire,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

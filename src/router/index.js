@@ -420,16 +420,16 @@ export const asyncRoutes = [
         permissionName: 'batching_plan'
       }
     },
-    {
-      path: '/actual-comparison',
-      name: 'ActualComparison',
-      component: () => import('@/views/recipe/actual-comparison'),
-      meta: {
-        title: '小料称量计划与实际对比',
-        icon: 'formula',
-        permissionName: 'batching_reality'
-      }
-    },
+    // {
+    //   path: '/actual-comparison',
+    //   name: 'ActualComparison',
+    //   component: () => import('@/views/recipe/actual-comparison'),
+    //   meta: {
+    //     title: '小料称量计划与实际对比',
+    //     icon: 'formula',
+    //     permissionName: 'batching_reality'
+    //   }
+    // },
     {
       path: '/small-material-weight',
       redirect: '/small-material-weight/material',
@@ -500,6 +500,26 @@ export const asyncRoutes = [
             permissionName: 'xl_report_weight'
           }
         }
+        /** {
+          path: '/small-material-weight/trackingCard',
+          component: () => import('@/views/recipe/small-material-weight/trackingCard'),
+          name: 'SmallMaterialWeightTrackingCard',
+          meta: {
+            faName: 'SmallMaterialWeight',
+            title: '料包产出-质量追踪卡管理',
+            permissionName: ''
+          }
+        },
+        {
+          path: '/small-material-weight/valid',
+          component: () => import('@/views/recipe/small-material-weight/valid'),
+          name: 'SmallMaterialWeightValid',
+          meta: {
+            faName: 'SmallMaterialWeight',
+            title: '料包有效期管理',
+            permissionName: ''
+          }
+        }**/
       ]
     }
     ]
@@ -1457,16 +1477,16 @@ export const asyncRoutes = [
           }
         ]
       },
-      {
-        path: '/barcode-change',
-        component: () => import('@/views/quality_management/material-info-mapping/barcode-change'),
-        name: 'BarcodeChange',
-        meta: {
-          title: '条码变更',
-          icon: 'quality',
-          permissionName: 'bar_code'
-        }
-      },
+      // {
+      //   path: '/barcode-change',
+      //   component: () => import('@/views/quality_management/material-info-mapping/barcode-change'),
+      //   name: 'BarcodeChange',
+      //   meta: {
+      //     title: '条码变更',
+      //     icon: 'quality',
+      //     permissionName: 'bar_code'
+      //   }
+      // },
       // {
       //   path: '/result-entry',
       //   component: () => import('@/views/quality_management/result-entry'),

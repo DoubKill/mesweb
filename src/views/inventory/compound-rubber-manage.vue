@@ -51,11 +51,11 @@
     </el-form>
     <el-button v-permission="['compoundRubber_plan','norman']" class="button-right" @click="normalOutbound">正常出库</el-button>
     <el-button v-permission="['compoundRubber_plan','assign']" class="button-right" @click="assignOutbound">指定出库</el-button>
-    <el-button
+    <!-- <el-button
       v-permission="['compoundRubber_plan','manual']"
       class="button-right"
       @click="manualDeliveryBatch"
-    >批量人工出库</el-button>
+    >批量人工出库</el-button> -->
     <el-button class="button-right" @click="getList">刷新</el-button>
 
     <el-table
@@ -73,6 +73,7 @@
       <el-table-column label="物料编码" align="center" prop="material_no" min-width="10" />
       <el-table-column label="出库原因" align="center" prop="inventory_reason" min-width="10" />
       <el-table-column label="需求数量" align="center" prop="need_qty" min-width="10" />
+      <el-table-column label="库位信息" align="center" prop="location" min-width="10" />
       <el-table-column label="出库数量" align="center" prop="actual.actual_qty" min-width="10" />
       <el-table-column label="实际出库重量" align="center" prop="actual.actual_wegit" min-width="10" />
       <el-table-column label="单位" align="center" prop="unit" min-width="10" />
@@ -83,9 +84,13 @@
         <template v-if="scope.row.status === 4" slot-scope="scope">
           <el-button-group>
             <el-button v-permission="['compoundRubber_plan','manual']" size="mini" type="primary" @click="manualDelivery(scope.row)">人工出库</el-button>
-            <el-button v-permission="['compoundRubber_plan','change']" size="mini" type="warning" @click="demandQuantity(scope.$index,scope.row)">编辑</el-button>
+            <!-- <el-button v-permission="['compoundRubber_plan','change']" size="mini" type="warning" @click="demandQuantity(scope.$index,scope.row)">编辑</el-button> -->
             <el-button v-permission="['compoundRubber_plan','close']" size="mini" type="info" @click="closePlan(scope.$index,scope.row)">关闭</el-button>
           </el-button-group>
+          <!-- <el-button-group style="margin-top:5px">
+            <el-button size="mini" @click="viewPlan(scope.$index,scope.row)">查看</el-button>
+            <el-button size="mini" type="danger" @click="forcedEndPlan(scope.$index,scope.row)">强制结束</el-button>
+          </el-button-group> -->
         </template>
       </el-table-column>
       <el-table-column label="订单状态" align="center" prop="" min-width="10">
@@ -129,6 +134,7 @@
         ref="assignOutbound"
         :warehouse-name="warehouseName"
         :warehouse-info="warehouseInfo"
+        :show="assignOutboundDialogVisible"
         @visibleMethod="visibleMethodNormal"
         @visibleMethodSubmit="visibleMethodAssignSubmit"
       />
@@ -137,6 +143,7 @@
       title="正常出库"
       :visible.sync="normalOutboundDialogVisible"
       :before-close="handleCloseNormal"
+      width="90%"
     >
       <generate-normal-outbound
         ref="normalOutbound"
@@ -147,24 +154,84 @@
         @visibleMethodSubmit="visibleMethodSubmit"
         @refresList="refresList"
       /></el-dialog>
+
+    <el-dialog
+      title="出库单据"
+      :visible.sync="dialogVisibleView"
+      width="50%"
+      :before-close="handleCloseView"
+    >
+      <el-form :inline="true">
+        <el-form-item label="仓库名称">
+          {{}}
+        </el-form-item>
+        <el-form-item label="出库单号">
+          {{}}
+        </el-form-item>
+        <el-form-item label="出库位置">
+          {{}}
+        </el-form-item>
+      </el-form>
+      <el-table
+        :data="tableDataView"
+        border
+      >
+        <el-table-column
+          prop="date"
+          label="物料编码"
+          min-width="20"
+        />
+        <el-table-column
+          prop="date"
+          label="Lot_No"
+          min-width="20"
+        />
+        <el-table-column
+          prop="date"
+          label="托盘号"
+          min-width="20"
+        />
+        <el-table-column
+          prop="date"
+          label="车次"
+          min-width="20"
+        />
+        <el-table-column
+          prop="date"
+          label="库位编号"
+          min-width="20"
+        />
+        <el-table-column
+          prop="date"
+          label="状态"
+          min-width="20"
+        />
+      </el-table>
+      <page
+        :old-page="false"
+        :total="totalView"
+        :current-page="searchView.page"
+        @currentChange="currentChangeView"
+      />
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import GenerateAssignOutbound from './components/generate_assign_outbound'
-import GenerateNormalOutbound from './components/generate_normal_outbound'
-// import materielTypeSelect from '@/components/select_w/materielTypeSelect'
-// import warehouseSelect from '@/components/select_w/warehouseSelect'
+import GenerateAssignOutbound from './components-zl-hl/generate_assign_outbound'
+import GenerateNormalOutbound from './components-zl-hl/generate_normal_outbound'
 import { putPlanManagement } from '@/api/base_w'
 import { warehouseInfo } from '@/api/warehouse'
 import page from '@/components/page'
 import commitVal from '@/utils/common'
 import { setDate } from '@/utils/index'
 import stationInfoWarehouse from '@/components/select_w/warehouseSelectPosition'
+import myMixin from './components-zl-hl/mixin-zl-hl'
 
 export default {
   name: 'CompoundManage',
   components: { page, GenerateAssignOutbound, GenerateNormalOutbound, stationInfoWarehouse },
+  mixins: [myMixin],
   data() {
     return {
       loading: false,
@@ -270,7 +337,7 @@ export default {
     },
     async visibleMethodSubmit(val) {
       try {
-        await putPlanManagement('post', null, { data: [val] })
+        await putPlanManagement('post', null, { data: val })
         this.$message.success('操作成功')
         this.normalOutboundDialogVisible = false
         this.getList()

@@ -363,6 +363,7 @@ export function xlPlan(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
 export function wmsStock(method, id, data = {}) {
   const obj = {
     url: id ? API.WmsStock + id + '/' : API.WmsStock,
