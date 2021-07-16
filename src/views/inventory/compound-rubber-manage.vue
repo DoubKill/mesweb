@@ -163,7 +163,7 @@
           label="状态"
           min-width="20"
           :formatter="(row)=>{
-            let obj = optionsState.find(d=>d.id === row.status)
+            let obj = optionsState1.find(d=>d.id === row.status)
             return obj.name
           }"
         />
@@ -217,6 +217,13 @@ export default {
         { name: '已出库', id: 3 },
         { name: '关闭', id: 4 },
         { name: '失败', id: 5 }
+      ],
+      optionsState1: [
+        { name: '完成', id: 1 },
+        { name: '执行中', id: 2 },
+        { name: '失败', id: 3 },
+        { name: '新建', id: 4 },
+        { name: '关闭', id: 5 }
       ]
     }
   },
