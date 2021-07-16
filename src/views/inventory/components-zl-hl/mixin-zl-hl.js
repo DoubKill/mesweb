@@ -1,3 +1,4 @@
+import { putPlanManagement, finalPlanManagement } from '@/api/base_w'
 export default {
   data() {
     return {
@@ -8,41 +9,25 @@ export default {
       loadingView: false
     }
   },
+  watch: {
+  },
   methods: {
     async getListView() {
       try {
         this.loadingView = true
-        // const data = await putPlanManagement('get', null, { params: this.search })
-        // this.totalView = data.count
-        // this.tableDataView = data.results
+        const _api = this.warehouseName === '混炼胶库' ? putPlanManagement : finalPlanManagement
+        const data = await _api('get', null, { params: this.search })
+        this.totalView = data.count
+        this.tableDataView = data.results
         this.loadingView = false
       } catch (error) {
         this.loadingView = false
       }
     },
-    viewPlan(index, row) {
+    showEditDialog(row) {
+      // 查看
       this.dialogVisibleView = true
-    },
-    forcedEndPlan(index, row) {
-      this.$confirm(
-        '确定强制关闭?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }
-      ).then(async() => {
-        // const obj = {
-        //   status: 5,
-        //   order_no: 'order_no',
-        //   warehouse_info: this.warehouseInfo
-        // }
-        // this.loading = true
-        // await putPlanManagement('put', row.id, { data: obj })
-        // this.$message.success('操作成功')
-        // this.getList()
-      }).catch(() => {
-        this.loading = false
-      })
+      this.getListView()
     },
     handleCloseView(done) {
       this.dialogVisibleView = false
