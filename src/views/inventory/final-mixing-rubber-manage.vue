@@ -41,7 +41,7 @@
         min-width="20"
       />
       <el-table-column
-        prop="creater_date"
+        prop="create_date"
         label="创建时间"
         min-width="20"
       />
@@ -67,7 +67,7 @@
             size="mini"
             @click="showEditDialog(row)"
           >查看</el-button>
-          <div v-if="row.status === 4" style="display:inline-block">
+          <div v-if="row.status === 1" style="display:inline-block">
             <el-button v-permission="['finalRubber_plan','manual']" size="mini" type="primary" @click="manualDelivery(scope.row)">人工出库</el-button>
             <el-button v-permission="['finalRubber_plan','close']" size="mini" type="info" @click="closePlan(scope.$index,scope.row)">关闭</el-button>
           </div>
@@ -110,6 +110,7 @@
     </el-dialog>
 
     <el-dialog
+      v-loading="loadingView"
       title="出库单据"
       :visible.sync="dialogVisibleView"
       width="50%"

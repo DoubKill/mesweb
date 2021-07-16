@@ -41,7 +41,7 @@
         min-width="20"
       />
       <el-table-column
-        prop="creater_date"
+        prop="create_date"
         label="创建时间"
         min-width="20"
       />
@@ -112,6 +112,7 @@
       /></el-dialog>
 
     <el-dialog
+      v-loading="loadingView"
       title="出库单据"
       :visible.sync="dialogVisibleView"
       width="50%"
