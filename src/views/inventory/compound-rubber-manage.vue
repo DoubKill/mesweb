@@ -41,7 +41,7 @@
         min-width="20"
       />
       <el-table-column
-        prop="create_date"
+        prop="created_date"
         label="创建时间"
         min-width="20"
       />
@@ -60,16 +60,16 @@
       />
       <el-table-column
         label="操作"
-        width="200"
+        width="230"
       >
-        <template slot-scope="{row}">
+        <template slot-scope="{row,$index}">
           <el-button
             size="mini"
             @click="showEditDialog(row)"
           >查看</el-button>
           <div v-if="row.status === 1" style="display:inline-block">
-            <el-button v-permission="['compoundRubber_plan','manual']" size="mini" type="primary" @click="manualDelivery(scope.row)">人工出库</el-button>
-            <el-button v-permission="['compoundRubber_plan','close']" size="mini" type="info" @click="closePlan(scope.$index,scope.row)">关闭</el-button>
+            <el-button v-permission="['compoundRubber_plan','manual']" size="mini" type="primary" @click="manualDelivery(row,$index)">人工出库</el-button>
+            <el-button v-permission="['compoundRubber_plan','close']" size="mini" type="info" @click="closePlan($index,row)">关闭</el-button>
           </div>
         </template>
       </el-table-column>
@@ -112,7 +112,6 @@
       /></el-dialog>
 
     <el-dialog
-      v-loading="loadingView"
       title="出库单据"
       :visible.sync="dialogVisibleView"
       width="50%"
@@ -130,6 +129,7 @@
         </el-form-item>
       </el-form>
       <el-table
+        v-loading="loadingView"
         :data="tableDataView"
         border
       >

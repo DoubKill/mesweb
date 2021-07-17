@@ -17,7 +17,8 @@ export default {
       try {
         this.loadingView = true
         const _api = this.warehouseName === '混炼胶库' ? putPlanManagement : finalPlanManagement
-        const data = await _api('get', null, { params: { outbound_order: this.outbound_order }})
+        this.searchView.outbound_order = this.outbound_order
+        const data = await _api('get', null, { params: this.searchView })
         this.totalView = data.count
         this.tableDataView = data.results
         this.loadingView = false
