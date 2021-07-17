@@ -329,7 +329,10 @@ export default {
         await finalRubberyOutboundOrder('put', row.id, { data: { status: 2 }})
         this.$message.success('操作成功')
         this.getList()
-      }).catch(() => {
+      }).catch((error) => {
+        if (error && error instanceof Array && error[0] === '出库失败') {
+          this.getList()
+        }
         this.loading = false
       })
     },
