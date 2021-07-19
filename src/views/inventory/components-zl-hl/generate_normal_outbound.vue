@@ -388,6 +388,8 @@ export default {
             inventory_type: '指定出库',
             inventory_reason: D.inventory_reason,
             unit: D.unit,
+            lot_no: D.lot_no,
+            memo: D.memo,
             status: 4,
             warehouse_info: this.warehouseInfo,
             quality_status: ['帘布库出库计划'].includes(this.$route.meta.title) ? D.quality_status : D.quality_level,

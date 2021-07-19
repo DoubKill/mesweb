@@ -151,8 +151,11 @@ export default {
   BzMixinInventory: '/api/v1/inventory/bz-mixin-inventory/',
   // 混炼胶库计划管理
   PutPlanManagement: '/api/v1/inventory/put-plan-management/',
+  MixinRubberyOutboundOrder: 'api/v1/inventory/mixin-rubbery-outbound-order/',
+
   //  终炼胶库计划管理
   FinalPlanManagement: '/api/v1/inventory/final-plan-management/',
+  FinalRubberyOutboundOrder: '/api/v1/inventory/final-rubbery-outbound-order/',
   // 帘布库计划管理
   LbPlanManagement: '/api/v1/inventory/lb-plan-management/',
   // 原材料出库计划

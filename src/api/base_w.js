@@ -373,9 +373,27 @@ export function putPlanManagement(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function mixinRubberyOutboundOrder(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MixinRubberyOutboundOrder + id + '/' : API.MixinRubberyOutboundOrder,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function finalPlanManagement(method, id, data = {}) {
   const obj = {
     url: id ? API.FinalPlanManagement + id + '/' : API.FinalPlanManagement,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function finalRubberyOutboundOrder(method, id, data = {}) {
+  const obj = {
+    url: id ? API.FinalRubberyOutboundOrder + id + '/' : API.FinalRubberyOutboundOrder,
     method: method
   }
   Object.assign(obj, data)
