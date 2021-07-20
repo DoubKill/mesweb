@@ -131,6 +131,12 @@
             @changSelect="changSelectDot"
           />
         </el-form-item>
+        <el-form-item label="是否判级项目">
+          <el-switch
+            v-model="addForm.is_judged"
+            active-color="#13ce66"
+          />
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="clearForm">取 消</el-button>
@@ -179,7 +185,8 @@ export default {
         material: null,
         b: null,
         test_method: null,
-        data_point: null
+        data_point: null,
+        is_judged: true
       },
       optionsRubber: [],
       editShow: false,
@@ -275,7 +282,9 @@ export default {
       if (this.$refs.addForm) {
         this.$refs.addForm.resetFields()
       }
-      this.addForm = {}
+      this.addForm = {
+        is_judged: true
+      }
 
       if (this.$refs.testTypeSelect) {
         this.$refs.testTypeSelect.value = ''
