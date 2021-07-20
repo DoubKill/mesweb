@@ -120,7 +120,7 @@
           {{ warehouseName }}
         </el-form-item>
         <el-form-item label="出库单号">
-          {{ tableDataView[0]?tableDataView[0].order_no:'' }}
+          {{ rowObj.order_no }}
         </el-form-item>
         <el-form-item label="出库位置">
           {{ tableDataView[0]?tableDataView[0].station:'' }}
