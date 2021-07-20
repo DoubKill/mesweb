@@ -1,5 +1,6 @@
 <template>
   <div v-loading="loading">
+    <!-- 胶料快检判定基准录入 -->
     <el-form :inline="true">
       <el-form-item label="胶料编码:">
         <all-product-no-select @productBatchingChanged="productBatchingChanged" />
@@ -39,6 +40,18 @@
         prop="test_method_name"
         label="试验方法"
       />
+      <el-table-column
+        prop="test_method_name"
+        label="是否判级项目"
+      >
+        <template slot-scope="{row,$index}">
+          <el-switch
+            v-model="row.is_judged"
+            active-color="#13ce66"
+            @change="judgedFun($event,row,$index)"
+          />
+        </template>
+      </el-table-column>
       <el-table-column
         label="操作"
         width="200px"
@@ -326,6 +339,14 @@ export default {
       this.dialogVisible = true
       this.addForm = JSON.parse(JSON.stringify(row))
       this.addForm.b = this.addForm.test_type
+    },
+    async judgedFun(bool, row, index) {
+      try {
+        await matTestMethods('patch', row.id, { data: { is_judged: bool }})
+        this.$message.success('修改成功')
+      } catch (e) {
+        this.tableData[index].is_judged = !this.tableData[index].is_judged
+      }
     }
   }
 }
