@@ -11,8 +11,15 @@
         </tr>
         <tr>
           <td colspan="4">{{ testData.product_no }}</td>
-          <td rowspan="14" style="transform:rotate(-90deg); width: 150px; max-width: 150px;">
+          <!-- <td rowspan="14" style="transform:rotate(-90deg); width: 150px; max-width: 150px;">
             <img class="barcode" style="margin-left: -120px">
+          </td> -->
+          <td rowspan="14" style="width:200px;position:relative">
+            <img
+              class="barcode"
+              style="max-width:540px;position:absolute;top:50%;left:50%;
+              transform:translateX(-50%) translateY(-50%) rotate(-90deg)"
+            >
           </td>
         </tr>
         <tr>
@@ -87,26 +94,32 @@
       bordercolor="black"
     >
       <tr>
-        <th style="width:100px" rowspan="2">车次</th>
-        <th v-for="(value, key) in testData.mtr_list.table_head" :key="key" :colspan="value.length" style="min-width: 80px; max-width: 80px">{{ key }}</th>
-        <th style="width:100px" rowspan="2">综合判级</th>
+        <th style="width:100px">车次</th>
+        <th v-for="(value, key) in mtrListHead" :key="key" style="min-width: 80px; max-width: 80px">{{ value }}</th>
+        <th style="width:100px">综合判级</th>
       </tr>
-      <tr>
+      <!-- <tr>
         <th v-for="(subHead, index) in testData.mtr_list.sub_head" :key="index">{{ subHead }}</th>
-      </tr>
-      <tr v-for="row in testData.mtr_list.rows" :key="row">
-        <td>{{ row }}</td>
-        <td v-for="(item, index) in testData.mtr_list[row]" :key="index">
+      </tr> -->
+      <tr v-for="(row,i) in mtrListRow" :key="i">
+        <td>{{ row.trains }}</td>
+        <td v-for="(item, index) in mtrListHead" :key="index">
+          {{ row[item].value }}
+          <div v-if="row[item].value > mtrListRow[0][item].value">+</div>
+          <div v-if="row[item].value < mtrListRow[1][item].value">-</div>
+        </td>
+        <td>{{ row.status }}</td>
+        <!-- <td v-for="(item, index) in testData.mtr_list[row]" :key="index">
           {{ index !== testData.mtr_list[row].length - 1 ? item.value : '' }}
-
-          <span>{{ setGraph(index !== testData.mtr_list[row].length - 1 ? item.result : '') }}</span>
           {{
             index !== testData.mtr_list[row].length - 1 ? item.add_subtract : item.status
           }}
-        </td>
+
+          <div>{{ setGraph(index !== testData.mtr_list[row].length - 1 ? item.result : '') }}</div>
+        </td> -->
       </tr>
     </table>
-    <img class="barcode">
+    <img class="barcode" style="max-width:600px">
 
     <div v-if="testData.test_result&&testData.test_result!=='三等品'" class="seal-style">{{ testData.test_result }}</div>
   </div>
@@ -119,14 +132,9 @@ export default {
 
   data() {
     return {
-      testData: {
-        test: {},
-        mtr_list: {
-          table_head: [],
-          sub_head: [],
-          rows: []
-        }
-      }
+      mtrListHead: [],
+      mtrListRow: [],
+      testData: {}
     }
   },
   methods: {
@@ -147,8 +155,39 @@ export default {
           displayValue: true
         }
       )
-      this.testData.mtr_list.rows = []
-      for (const key in this.testData.mtr_list) {
+
+      this.mtrListRow = []
+      this.mtrListHead = []
+      this.testData.mtr_list.trains.forEach(D => {
+        const obj = {
+          trains: D.train
+        }
+        D.content.forEach(d => {
+          obj[d.data_point_name] = { ...d }
+          obj.status = d.status
+        })
+        this.mtrListRow.push(obj)
+      })
+      const obj1 = {
+        trains: '上区间'
+      }
+      const obj2 = {
+        trains: '下区间'
+      }
+      this.testData.mtr_list.table_head.forEach(D => {
+        D.point_head.forEach(d => {
+          this.mtrListHead.push(d.point)
+          obj1[d.point] = {
+            value: d.upper_limit
+          }
+          obj2[d.point] = {
+            value: d.lower_limit
+          }
+        })
+      })
+      this.mtrListRow.unshift(obj2)
+      this.mtrListRow.unshift(obj1)
+      /** for (const key in this.testData.mtr_list) {
         if (key !== 'table_head' && key !== 'rows' && key !== 'sub_head') {
           this.testData.mtr_list.rows.push(key)
           const dataPointItems = []
@@ -179,7 +218,7 @@ export default {
       for (const key in this.testData.mtr_list.table_head) {
         this.testData.mtr_list.sub_head = this.testData.mtr_list.sub_head.concat(
           this.testData.mtr_list.table_head[key])
-      }
+      }**/
     }
   }
 }

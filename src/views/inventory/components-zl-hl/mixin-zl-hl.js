@@ -7,7 +7,8 @@ export default {
       totalView: 0,
       searchView: {},
       loadingView: false,
-      outbound_order: ''
+      outbound_order: '',
+      rowObj: {}
     }
   },
   watch: {
@@ -30,6 +31,7 @@ export default {
       // 查看
       this.outbound_order = row.id
       this.dialogVisibleView = true
+      this.rowObj = JSON.parse(JSON.stringify(row))
       this.getListView()
     },
     handleCloseView(done) {

@@ -1,4 +1,5 @@
 <template>
+  <!-- 混炼胶库存 -->
   <div v-loading="loading">
     <el-form :inline="true">
       <el-form-item label="段次">

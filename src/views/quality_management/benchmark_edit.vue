@@ -1,5 +1,6 @@
 <template>
   <div v-loading="loading">
+    <!-- 胶料快检判定基准录入 -->
     <el-form :inline="true">
       <el-form-item label="胶料编码:">
         <all-product-no-select @productBatchingChanged="productBatchingChanged" />
@@ -39,6 +40,18 @@
         prop="test_method_name"
         label="试验方法"
       />
+      <el-table-column
+        prop="test_method_name"
+        label="是否判级项目"
+      >
+        <template slot-scope="{row,$index}">
+          <el-switch
+            v-model="row.is_judged"
+            active-color="#13ce66"
+            @change="judgedFun($event,row,$index)"
+          />
+        </template>
+      </el-table-column>
       <el-table-column
         label="操作"
         width="200px"
@@ -118,6 +131,12 @@
             @changSelect="changSelectDot"
           />
         </el-form-item>
+        <el-form-item label="是否判级项目">
+          <el-switch
+            v-model="addForm.is_judged"
+            active-color="#13ce66"
+          />
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="clearForm">取 消</el-button>
@@ -166,7 +185,8 @@ export default {
         material: null,
         b: null,
         test_method: null,
-        data_point: null
+        data_point: null,
+        is_judged: true
       },
       optionsRubber: [],
       editShow: false,
@@ -262,7 +282,9 @@ export default {
       if (this.$refs.addForm) {
         this.$refs.addForm.resetFields()
       }
-      this.addForm = {}
+      this.addForm = {
+        is_judged: true
+      }
 
       if (this.$refs.testTypeSelect) {
         this.$refs.testTypeSelect.value = ''
@@ -326,6 +348,14 @@ export default {
       this.dialogVisible = true
       this.addForm = JSON.parse(JSON.stringify(row))
       this.addForm.b = this.addForm.test_type
+    },
+    async judgedFun(bool, row, index) {
+      try {
+        await matTestMethods('patch', row.id, { data: { is_judged: bool }})
+        this.$message.success('修改成功')
+      } catch (e) {
+        this.tableData[index].is_judged = !this.tableData[index].is_judged
+      }
     }
   }
 }

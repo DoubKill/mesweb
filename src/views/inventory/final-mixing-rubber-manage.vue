@@ -69,6 +69,8 @@
           >查看</el-button>
           <div v-if="row.status === 1" style="display:inline-block">
             <el-button v-permission="['finalRubber_plan','manual']" size="mini" type="primary" @click="manualDelivery(row,$index)">人工出库</el-button>
+          </div>
+          <div v-if="row.status === 1||row.status === 2" style="display:inline-block">
             <el-button v-permission="['finalRubber_plan','close']" size="mini" type="info" @click="closePlan($index,row)">关闭</el-button>
           </div>
         </template>
@@ -120,7 +122,7 @@
           {{ warehouseName }}
         </el-form-item>
         <el-form-item label="出库单号">
-          {{ tableDataView[0]?tableDataView[0].order_no:'' }}
+          {{ rowObj.order_no }}
         </el-form-item>
         <el-form-item label="出库位置">
           {{ tableDataView[0]?tableDataView[0].station:'' }}
