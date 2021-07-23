@@ -291,6 +291,7 @@ export default {
         }
         const data = await xlPlan('get', null, { params: {
           equip_no: this.formInline.equip_no,
+          batch_time: this.formInline.batch_time,
           state: '完成,运行中',
           all: 1
         }})
