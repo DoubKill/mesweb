@@ -526,15 +526,15 @@ export default {
     }
     return {
       search: {
-        equip_no: 'Z01',
-        product_no: 'C-3MB-A019-02',
-        classes: '早班',
-        factory_date: '2021-07-21', // 2021-04-29
+        equip_no: '', // Z01
+        product_no: '', // C-3MB-A019-02
+        classes: '', // 早班
+        factory_date: '', // 2021-04-29 2021-07-21
         test_indicator_name: ''
       },
       loading: false,
       tableData: [],
-      tableDataRight: [{}],
+      tableDataRight: [],
       rules: {
         test_time: { required: true, message: '请选择检测日期', trigger: 'change' },
         test_group: { required: true, message: '请选择检测班组', trigger: 'change' },
