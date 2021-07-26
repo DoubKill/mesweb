@@ -560,7 +560,7 @@ export default {
       handleList: [],
       dialogVisible: false,
       searchValue: {},
-      tableDataValue: [{}]
+      tableDataValue: []
     }
   },
   watch: {
