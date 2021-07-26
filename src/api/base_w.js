@@ -465,6 +465,14 @@ export function showQualifiedRange(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function trainsFix(method, id, data = {}) {
+  const obj = {
+    url: id ? API.TrainsFix + id + '/' : API.TrainsFix,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 export function unqualifiedTrains(method, id, data = {}) {
   const obj = {
     url: id ? API.UnqualifiedTrains + id + '/' : API.UnqualifiedTrains,

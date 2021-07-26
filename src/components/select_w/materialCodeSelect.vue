@@ -97,12 +97,12 @@ export default {
   methods: {
     async getList() {
       try {
-        if (this.storeName === '混炼胶库' && (!this.station || !this.status)) {
+        if (this.$route.fullPath === '/compound-rubber-manage' && this.storeName === '混炼胶库' && (!this.station || !this.status)) {
           this.$message.info('请选择出库口 和 品质状态')
           return
         }
         this.loading = true
-        const _api = this.storeName === '混炼胶库' ? bzMixinInventorySummary : materialCount
+        const _api = this.storeName === '混炼胶库' && this.$route.fullPath === '/compound-rubber-manage' ? bzMixinInventorySummary : materialCount
         const data = await _api('get', null, { params: { store_name: this.storeName, status: this.status, station: this.station }})
         if (this.labelShow === 'material_name') {
           data.forEach(d => {
