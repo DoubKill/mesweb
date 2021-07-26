@@ -44,7 +44,7 @@
       <el-form-item label="收皮条码">
         <el-input v-model="getParams.lot_no" clearable @input="changeSearch" />
       </el-form-item>
-      <!-- <el-form-item>
+      <el-form-item>
         <el-button
           type="primary"
           @click="modifyTrainFun(false)"
@@ -53,7 +53,7 @@
           type="primary"
           @click="modifyTrainFun(true)"
         >修改特定托的车次</el-button>
-      </el-form-item> -->
+      </el-form-item>
     </el-form>
     <div style="width:100%;text-align:right;margin-top:-10px">
       <el-switch
