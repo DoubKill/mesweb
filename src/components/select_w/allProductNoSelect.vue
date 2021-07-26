@@ -6,6 +6,7 @@
     filterable
     :loading="loading"
     :allow-create="isCreated"
+    :disabled="isDisabled"
     @change="productBatchingChanged"
     @visible-change="visibleChange"
   >
@@ -56,6 +57,10 @@ export default {
     defaultVal: {
       type: [String, Number],
       default: null
+    },
+    isDisabled: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

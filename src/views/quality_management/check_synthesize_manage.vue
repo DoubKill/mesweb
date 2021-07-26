@@ -44,6 +44,16 @@
       <el-form-item label="收皮条码">
         <el-input v-model="getParams.lot_no" clearable @input="changeSearch" />
       </el-form-item>
+      <el-form-item>
+        <el-button
+          type="primary"
+          @click="modifyTrainFun(false)"
+        >批量修改车次</el-button>
+        <el-button
+          type="primary"
+          @click="modifyTrainFun(true)"
+        >修改特定托的车次</el-button>
+      </el-form-item>
     </el-form>
     <div style="width:100%;text-align:right;margin-top:-10px">
       <el-switch
@@ -64,7 +74,9 @@
       style="width: 100%"
       :data="palletFeedTestList"
       size="mini"
+      highlight-current-row
       @selection-change="handleSelectionChange"
+      @current-change="handleCurrentChange"
     >
       <el-table-column
         type="selection"
@@ -135,6 +147,69 @@
     >
       <test-card ref="testCard" />
     </el-dialog>
+
+    <el-dialog
+      :title="modifyTrain?'修改特定托的车次':'批量修改车次'"
+      :visible.sync="dialogVisibleTrain"
+      width="500px"
+      :before-close="handleClose"
+    >
+      <el-form ref="ruleFormTrain" :model="ruleFormTrain" label-width="130px" :rules="rulesTrain">
+        <el-form-item :key="10" label="生产日期" prop="factory_date">
+          <span v-if="ruleFormTrain.id">{{ ruleFormTrain.factory_date }}</span>
+          <el-date-picker
+            v-else
+            v-model="ruleFormTrain.factory_date"
+            type="date"
+            value-format="yyyy-MM-dd"
+            placeholder="选择日期"
+          />
+        </el-form-item>
+        <el-form-item :key="9" label="生产班次" prop="classes">
+          <span v-if="ruleFormTrain.id">{{ ruleFormTrain.classes }}</span>
+          <class-select v-else :value-default="ruleFormTrain.classes" @classSelected="classSelectedTrain" />
+        </el-form-item>
+        <el-form-item :key="8" label="生产机台" prop="equip_no">
+          <span v-if="ruleFormTrain.id">{{ ruleFormTrain.equip_no }}</span>
+          <equip-select
+            v-else
+            :equip_no_props.sync="ruleFormTrain.equip_no"
+          />
+        </el-form-item>
+        <el-form-item :key="7" label="胶料规格" prop="product_no">
+          <span v-if="ruleFormTrain.id">{{ ruleFormTrain.product_no }}</span>
+          <all-product-no-select v-else :default-val="ruleFormTrain.product_no" @productBatchingChanged="productBatchingTrain" />
+        </el-form-item>
+        <el-form-item v-if="!modifyTrain" :key="1" label="开始车次" prop="begin_trains">
+          <el-input-number v-model="ruleFormTrain.begin_trains" :max="ruleFormTrain.end_trains" controls-position="right" :step="1" step-strictly />
+        </el-form-item>
+        <el-form-item v-if="!modifyTrain" :key="2" label="结束车次" prop="end_trains">
+          <el-input-number v-model="ruleFormTrain.end_trains" :min="ruleFormTrain.begin_trains" controls-position="right" :step="1" step-strictly />
+        </el-form-item>
+        <el-form-item v-if="!modifyTrain" :key="3" label="修改车次" prop="fix_num">
+          <el-input-number v-model="ruleFormTrain.fix_num" :disabled="true" controls-position="right" :step="1" step-strictly />
+          <el-button style="margin-left:5px" type="primary" circle @click="ruleFormTrain.fix_num++">+1</el-button>
+          <el-button type="primary" circle @click="ruleFormTrain.fix_num--">-1</el-button>
+        </el-form-item>
+        <el-form-item v-if="modifyTrain" :key="4" label="收皮条码" prop="lot_no">
+          <!-- <el-input v-model="ruleFormTrain.lot_no" @input="debounceLotNo" /> -->
+          {{ ruleFormTrain.lot_no }}
+        </el-form-item>
+        <el-form-item v-if="modifyTrain" :key="5" label="现有车次" prop="">
+          {{ ruleFormTrain.trains }}
+          <!-- <el-input v-model="ruleFormTrain.trains" /> -->
+        </el-form-item>
+        <el-form-item v-if="modifyTrain" :key="6" label="修改车次" prop="begin_trains">
+          <!-- <el-input v-model="ruleFormTrain.ggg" />  例：17-18-19 -->
+          <el-input-number v-model="ruleFormTrain.begin_trains" style="width:100px" :max="ruleFormTrain.end_trains" controls-position="right" :step="1" step-strictly /> —
+          <el-input-number v-model="ruleFormTrain.end_trains" style="width:100px" :min="ruleFormTrain.begin_trains" controls-position="right" :step="1" step-strictly />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleClose(false)">取 消</el-button>
+        <el-button type="primary" :loading="btnLoading" @click="submitTrain">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -147,12 +222,19 @@ import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import DealSuggestionSelect from '@/components/DealSuggestionSelect'
 import TestCard from '@/components/TestCard'
 import { palletFeedTest, changelValidTime, qualityPalletFeedTest } from '@/api/quick-check-detail'
-import { labelPrint, showQualifiedRange } from '@/api/base_w'
+import { labelPrint, showQualifiedRange, trainsFix } from '@/api/base_w'
 import { debounce, setDate } from '@/utils'
 export default {
   name: 'CheckSynthesizeManage',
   components: { EquipSelect, ClassSelect, allProductNoSelect, Page, TestCard, DealSuggestionSelect },
   data() {
+    const validator = (rule, value, callback, _value, str) => {
+      if (!_value) {
+        callback(new Error(str))
+      } else {
+        callback()
+      }
+    }
     return {
       total: 0,
       getParams: {
@@ -175,7 +257,47 @@ export default {
       },
       testCardDialogVisible: false,
       labelPrintList: [],
-      is_showed: false
+      is_showed: false,
+      modifyTrain: false,
+      dialogVisibleTrain: false,
+      ruleFormTrain: {
+        fix_num: -1,
+        factory_date: '',
+        equip_no: '',
+        lot_no: ''
+      },
+      rulesTrain: {
+        factory_date: [{ required: true, message: '请选择生产日期', trigger: 'change' }],
+        classes: [{ required: true, trigger: 'change', validator: (rule, value, callback) => {
+          validator(rule, value, callback,
+            this.ruleFormTrain.classes, '请选择生产班次')
+        } }],
+        equip_no: [{ required: true, message: '请选择生产机台', trigger: 'change' }],
+        product_no: [{ required: true, message: '请选择生产机台', trigger: 'change', validator: (rule, value, callback) => {
+          validator(rule, value, callback,
+            this.ruleFormTrain.product_no, '请选择胶料规格')
+        } }],
+        begin_trains: [{ required: true, trigger: 'blur', validator: (rule, value, callback) => {
+          if (this.ruleFormTrain.id) {
+            if (!this.ruleFormTrain.begin_trains || !this.ruleFormTrain.end_trains) {
+              callback(new Error('请填写'))
+            } else {
+              callback()
+            }
+          } else {
+            if (!this.ruleFormTrain.begin_trains) {
+              callback(new Error('请填写开始车次'))
+            } else {
+              callback()
+            }
+          }
+        } }],
+        end_trains: [{ required: true, message: '请填写结束车次', trigger: 'blur' }],
+        lot_no: [{ required: true, message: '请填写收皮条码', trigger: 'blur' }],
+        trains: [{ required: true, message: '请填写现有车次', trigger: 'blur' }]
+      },
+      valCurrent: {},
+      btnLoading: false
     }
   },
   created() {
@@ -264,6 +386,9 @@ export default {
     handleSelectionChange(arr) {
       this.labelPrintList = arr
     },
+    handleCurrentChange(val) {
+      this.valCurrent = val
+    },
     async printingFun() {
       try {
         if (this.labelPrintList.length === 0) return
@@ -291,7 +416,74 @@ export default {
       } catch (e) {
         //
       }
+    },
+    modifyTrainFun(bool) {
+      if (bool) {
+        this.ruleFormTrain = {
+          id: this.valCurrent.id,
+          factory_date: this.valCurrent.day_time,
+          classes: this.valCurrent.classes_group ? this.valCurrent.classes_group.split('/')[0] : '',
+          equip_no: this.valCurrent.equip_no,
+          product_no: this.valCurrent.product_no,
+          trains: this.valCurrent.trains,
+          lot_no: this.valCurrent.lot_no,
+          fix_num: -1
+        }
+        if (!this.ruleFormTrain.id) {
+          this.$message.info('请单击选中列表某一行')
+          return
+        }
+      }
+      this.modifyTrain = bool
+      this.dialogVisibleTrain = true
+      this.$nextTick(() => {
+        this.$refs.ruleFormTrain.clearValidate()
+      })
+    },
+    handleClose(done) {
+      this.dialogVisibleTrain = false
+      this.ruleFormTrain = {}
+      this.$set(this.ruleFormTrain, 'product_no', '')
+      this.$set(this.ruleFormTrain, 'classes', '')
+      this.$set(this.ruleFormTrain, 'fix_num', -1)
+      this.$set(this.ruleFormTrain, 'id', '')
+      // this.$set(this.ruleFormTrain, 'end_trains', '')
+      this.$nextTick(() => {
+        this.$refs.ruleFormTrain.clearValidate()
+      })
+      if (done) {
+        done()
+      }
+    },
+    classSelectedTrain(val) {
+      this.$set(this.ruleFormTrain, 'classes', val)
+    },
+    productBatchingTrain(val) {
+      this.ruleFormTrain.product_no = val ? val.material_no : ''
+    },
+    submitTrain() {
+      this.$refs.ruleFormTrain.validate(async(valid) => {
+        if (valid) {
+          try {
+            this.btnLoading = true
+            await trainsFix('post', null, { data: this.ruleFormTrain })
+            this.$message.success('修改成功')
+            this.handleClose(false)
+            this.getPalletFeedTest()
+            this.btnLoading = false
+          } catch (e) {
+            this.btnLoading = false
+          }
+        } else {
+          return false
+        }
+      })
     }
   }
 }
 </script>
+<style lang="scss" scoped>
+  .el-input {
+    width: auto;
+  }
+</style>
