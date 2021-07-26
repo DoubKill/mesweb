@@ -252,3 +252,21 @@ export function weightingPackageExpire(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function productTestResume(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ProductTestResume + id + '/' : API.ProductTestResume,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function productTestPlan(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ProductTestPlan + id + '/' : API.ProductTestPlan,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

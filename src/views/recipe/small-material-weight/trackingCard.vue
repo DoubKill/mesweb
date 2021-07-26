@@ -189,7 +189,7 @@
             v-model="ruleForm.print_count"
             controls-position="right"
             :min="1"
-            :max="ruleForm.package_count"
+            :max="ruleForm.package_count?ruleForm.package_count:99999"
             :step="1"
             step-strictly
           />
@@ -263,9 +263,7 @@ export default {
           { required: true, message: '请填写', trigger: 'blur' }
         ]
       },
-      ruleForm: {
-        print_count: 1
-      },
+      ruleForm: {},
       option: [],
       btnLoading: false
     }
@@ -293,6 +291,7 @@ export default {
         }
         const data = await xlPlan('get', null, { params: {
           equip_no: this.formInline.equip_no,
+          batch_time: this.formInline.batch_time,
           state: '完成,运行中',
           all: 1
         }})
@@ -336,7 +335,7 @@ export default {
     reprintFun(row) {
       this.dialogVisible = true
       this.ruleForm = JSON.parse(JSON.stringify(row))
-      this.ruleForm.print_count = 1
+      this.$set(this.ruleForm, 'print_count', 1)
     },
     submitFun() {
       this.$refs.ruleForm.validate(async(valid) => {
