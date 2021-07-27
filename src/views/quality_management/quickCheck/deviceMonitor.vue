@@ -4,7 +4,7 @@
     <div v-for="(item,i) in topTableData" :key="i" class="tagBox">
       <el-tag :type="item.status===1?'success':'danger'">{{ item.no }}</el-tag>
       <el-tag type="info" effect="plain">
-        {{ item.last_time }}
+        {{ item.last_time||'--' }}
       </el-tag>
     </div>
     <el-table
@@ -14,18 +14,7 @@
       style="margin-top:10px;"
     >
       <el-table-column
-        prop="date"
-        label="日期"
-        min-width="20"
-      />
-      <el-table-column
-        prop="name"
-        label="姓名"
-        min-width="20"
-      />
-      <el-table-column
-        prop="address"
-        label="地址"
+        prop="raw_value"
         min-width="20"
       />
     </el-table>
@@ -33,7 +22,7 @@
 </template>
 
 <script>
-import { productReportEquip } from '@/api/base_w_four'
+import { productReportEquip, equipTestData } from '@/api/base_w_four'
 export default {
   name: 'DeviceMonitor',
   data() {
@@ -44,9 +33,11 @@ export default {
   },
   created() {
     this.getInfo()
+    this.getBottomList()
     this.timer = setInterval(() => {
       this.getInfo()
-    }, 10000)
+      this.getBottomList()
+    }, 20000)
   },
   destroyed() {
     clearInterval(this.timer)
@@ -57,13 +48,22 @@ export default {
   activated() {
     this.timer = setInterval(() => {
       this.getInfo()
-    }, 10000)
+      this.getBottomList()
+    }, 20000)
   },
   methods: {
     async getInfo() {
       try {
         const data = await productReportEquip('get', null, { params: { all: 1 }})
         this.topTableData = data
+      } catch (e) {
+        //
+      }
+    },
+    async getBottomList() {
+      try {
+        const data = await equipTestData('get', null, { params: { all: 1 }})
+        this.tableData = data
       } catch (e) {
         //
       }
