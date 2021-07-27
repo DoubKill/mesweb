@@ -199,9 +199,9 @@
           <el-form-item label="胶料规格">
             {{ ruleForm.product_no }}
           </el-form-item>
-          <el-form-item label="检测间隔">
+          <el-form-item label="检测间隔" prop="test_interval">
             <el-select
-              v-model="ruleForm.aaa"
+              v-model="ruleForm.test_interval"
               clearable
               placeholder="请选择"
             >
@@ -542,6 +542,7 @@ export default {
         test_group: { required: true, message: '请选择检测班组', trigger: 'change' },
         test_method_name: { required: true, message: '请选择试验方法', trigger: 'change' },
         test_times: { required: true, message: '请选择试验次数', trigger: 'change' },
+        test_interval: { required: true, message: '请选择检测间隔', trigger: 'change' },
         test_classes: [
           { required: true, trigger: 'change', validator: (rule, value, callback) => {
             validator(rule, value, callback,
@@ -551,7 +552,9 @@ export default {
       },
       rulesLeft: {},
       groups: [],
-      ruleForm: {},
+      ruleForm: {
+        test_interval: 1
+      },
       btnLoading: false,
       testEquipList: [],
       testIndicatorsList: [],
@@ -858,7 +861,7 @@ export default {
       }
     },
     addSpace() {
-      if (!this.ruleForm.aaa) {
+      if (!this.ruleForm.test_interval) {
         this.$message.info('请选择检测间隔')
         return
       }
@@ -878,7 +881,7 @@ export default {
         if (index === this.ruleForm.num) {
           obj.actual_trains = _val
         } else {
-          _val = _val + this.ruleForm.aaa
+          _val = _val + this.ruleForm.test_interval
           if (_val <= this.ruleForm.num1) {
             obj.actual_trains = _val
           } else {
