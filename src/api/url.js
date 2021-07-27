@@ -390,6 +390,8 @@ export default {
   MaterialReportValue: '/api/v1/quality/material-report-value/',
   // 胶料上报设备
   ProductReportEquip: '/api/v1/quality/product-report-equip/',
+  // 快检设备监控
+  EquipTestData: '/api/v1/quality/equip-test-data/',
   ProductReportValue: '/api/v1/quality/product-report-value/',
   // 原材料库存
   WmsInventory: '/api/v1/inventory/wms-inventory/',
