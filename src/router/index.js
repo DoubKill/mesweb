@@ -89,16 +89,16 @@ export const constantRoutes = [
     meta: {
       isPhone: true
     }
+  },
+  {
+    path: '/Outbound-Kanban/:id',
+    component: () => import('@/views/Z-Outbound-Kanban'),
+    hidden: true,
+    meta: {
+      // 是否是单独页面
+      isPhone: true
+    }
   }
-  // {
-  //   path: '/Outbound-Kanban/:id',
-  //   component: () => import('@/views/Z-Outbound-Kanban'),
-  //   hidden: true,
-  //   meta: {
-  //     // 是否是单独页面
-  //     isPhone: true
-  //   }
-  // }
 ]
 
 // 存在权限的路由
