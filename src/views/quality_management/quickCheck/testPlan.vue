@@ -227,6 +227,7 @@
               size="mini"
               controls-position="right"
               :min="ruleForm.num"
+              :max="tableData[tableData.length-1]&&tableData[tableData.length-1].actual_trains"
               clearable
             />
           </el-form-item>
@@ -697,8 +698,9 @@ export default {
           this.$message.info('全部检测完毕')
           this.tableDataRight = []
           this.btnLoading = false
-          this.ruleForm = {}
-          this.$refs.ruleForm.clearValidate()
+          this.ruleForm.plan_uid = ''
+          // this.ruleForm = {}
+          // this.$refs.ruleForm.clearValidate()
         }
       } catch (e) {
         //
@@ -865,6 +867,10 @@ export default {
         this.$message.info('请选择检测间隔')
         return
       }
+      if (!this.ruleForm.num || !this.ruleForm.num1) {
+        this.$message.info('请输入试验车次')
+        return
+      }
       if (!this.ruleForm.product_no) {
         this.$message.info('请选择胶料规格')
         return
@@ -888,8 +894,6 @@ export default {
             return
           }
         }
-        console.log(obj.actual_trains)
-
         const _obj = JSON.parse(JSON.stringify(obj))
         if (!this.removeFun(_obj)) {
           this.tableDataRight.push(_obj)
