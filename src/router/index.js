@@ -55,28 +55,7 @@ export const constantRoutes = [
   {
     path: '/',
     redirect: '/home'
-  // component: Layout,
-  // meta: {
-  //   title: '首页',
-  //   icon: 'el-icon-s-home'
-  // },
-  // children: [{
-  //   path: '/homePage',
-  //   component: () => import('@/views/homePage/index'),
-  //   name: 'HomePageMain',
-  //   meta: {
-  //     title: '首页',
-  //     icon: 'el-icon-s-home'
-  //   }
-  // }
-  // {
-  //   path: '/Kanban',
-  //   component: () => import('@/views/homePage/Kanban'),
-  //   meta: {
-  //     title: '看板',
-  //     icon: 'el-icon-s-home'
-  //   }
-  // },
+  // children: [
   // {
   //   path: '/2code',
   //   component: () => import('@/views/homePage/2code'),
@@ -111,6 +90,15 @@ export const constantRoutes = [
       isPhone: true
     }
   }
+  // {
+  //   path: '/Outbound-Kanban/:id',
+  //   component: () => import('@/views/Z-Outbound-Kanban'),
+  //   hidden: true,
+  //   meta: {
+  //     // 是否是单独页面
+  //     isPhone: true
+  //   }
+  // }
 ]
 
 // 存在权限的路由
@@ -507,7 +495,7 @@ export const asyncRoutes = [
           meta: {
             faName: 'SmallMaterialWeight',
             title: '料包产出-质量追踪卡管理',
-            permissionName: ''
+            permissionName: 'xl_weight_card'
           }
         },
         {
@@ -517,7 +505,7 @@ export const asyncRoutes = [
           meta: {
             faName: 'SmallMaterialWeight',
             title: '料包有效期管理',
-            permissionName: ''
+            permissionName: 'xl_expire_data'
           }
         }
       ]
@@ -1682,7 +1670,7 @@ export const asyncRoutes = [
             meta: {
               faName: 'QuickCheckGather',
               title: '快检设备监控',
-              permissionName: ''
+              permissionName: 'examine_equip'
             }
           },
           {
@@ -1692,7 +1680,7 @@ export const asyncRoutes = [
             meta: {
               faName: 'QuickCheckGather',
               title: '快检检测计划',
-              permissionName: ''
+              permissionName: 'examine_test_plan'
             }
           },
           {
@@ -1702,7 +1690,7 @@ export const asyncRoutes = [
             meta: {
               faName: 'QuickCheckGather',
               title: '检测履历查询',
-              permissionName: ''
+              permissionName: 'examine_sulfur'
             }
           }
         ]

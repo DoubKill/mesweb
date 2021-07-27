@@ -67,7 +67,7 @@
         min-width="20"
       >
         <template slot-scope="scoped">
-          <el-button :loading="loadingBtn" @click="buttonSubmit(scoped.row,scoped.$index)">保存</el-button>
+          <el-button v-permission="['xl_weight_card', 'print']" :loading="loadingBtn" @click="buttonSubmit(scoped.row,scoped.$index)">保存</el-button>
         </template>
       </el-table-column>
     </el-table>
