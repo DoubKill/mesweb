@@ -235,6 +235,15 @@ export function bzMixinInventorySummary(method, id, data = {}) {
   return request(obj)
 }
 
+export function bzFinalInventorySummary(method, id, data = {}) {
+  const obj = {
+    url: id ? API.BzFinalInventorySummary + id + '/' : API.BzFinalInventorySummary,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function bzFinalInventorySearch(method, id, data = {}) {
   const obj = {
     url: id ? API.BzFinalInventorySearch + id + '/' : API.BzFinalInventorySearch,

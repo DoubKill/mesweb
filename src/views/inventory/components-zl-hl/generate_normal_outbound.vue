@@ -35,7 +35,7 @@
         <materialCodeSelect label-show="material_name" :store-name="warehouseName" :status="ruleForm.quality_status" :default-val="ruleForm.material_no" @changSelect="materialCodeFun" />
       </el-form-item>
       <el-form-item v-else label="物料编码" prop="material_no">
-        <materialCodeSelect :store-name="warehouseName" :status="ruleForm.quality_status" :station="ruleForm.station" :default-val="ruleForm.material_no" @changSelect="materialCodeFun" />
+        <materialCodeSelect :is-normal="true" :ex-warehouse="true" :store-name="warehouseName" :status="ruleForm.quality_status" :station="ruleForm.station" :default-val="ruleForm.material_no" @changSelect="materialCodeFun" />
       </el-form-item>
       <el-form-item v-if="rawMaterial||drussDelivery" label="库存余量" prop="c">
         <!-- 按物料编码查到的 -->

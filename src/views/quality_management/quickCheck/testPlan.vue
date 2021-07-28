@@ -281,7 +281,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="value"
+            prop="values"
             label="检测值"
             min-width="20"
           />
@@ -289,7 +289,7 @@
             label="状态"
             min-width="20"
             :formatter="(row)=>{
-              return row.value?'已检测':'待检测'
+              return row.values?'已检测':'待检测'
             }"
           />
           <el-table-column
@@ -838,6 +838,9 @@ export default {
       this.tableDataRight.push(obj)
     },
     moveRight() {
+      if (this.handleList.length === 0) {
+        return
+      }
       let bool
       this.handleList.forEach(d => {
         if (this.removeFun(d)) {

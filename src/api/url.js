@@ -149,6 +149,8 @@ export default {
 
   // 北自混炼胶库存列表
   BzMixinInventory: '/api/v1/inventory/bz-mixin-inventory/',
+  // 终练出库弹框列表
+  BzFinalInventory: 'api/v1/inventory/bz-final-inventory/',
   // 混炼胶库计划管理
   PutPlanManagement: '/api/v1/inventory/put-plan-management/',
   MixinRubberyOutboundOrder: 'api/v1/inventory/mixin-rubbery-outbound-order/',
@@ -426,6 +428,7 @@ export default {
   SulfurResume: '/api/v1/inventory/sulfur-resume/',
 
   BzMixinInventorySummary: '/api/v1/inventory/bz-mixin-inventory-summary/',
+  BzFinalInventorySummary: '/api/v1/inventory/bz-final-inventory-summary/',
   BzFinalInventorySearch: '/api/v1/inventory/bz-final-inventory-search/',
   BzMixinInventorySearch: '/api/v1/inventory/bz-mixin-inventory-search/',
 
