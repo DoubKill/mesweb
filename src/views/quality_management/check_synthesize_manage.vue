@@ -45,13 +45,13 @@
         <el-input v-model="getParams.lot_no" clearable @input="changeSearch" />
       </el-form-item>
       <el-form-item>
+        <!-- v-permission="['deal_result','all']" -->
         <el-button
-          v-permission="['deal_result','all']"
           type="primary"
           @click="modifyTrainFun(false)"
         >批量修改车次</el-button>
+        <!-- v-permission="['deal_result','only']" -->
         <el-button
-          v-permission="['deal_result','only']"
           type="primary"
           @click="modifyTrainFun(true)"
         >修改特定托的车次</el-button>
@@ -467,6 +467,10 @@ export default {
       const a = this.ruleFormTrain.begin_trains + ',' + this.ruleFormTrain.end_trains
       if (this.ruleFormTrain.trains === a) {
         this.$message.info('修改车次和现有车次相同')
+        return
+      }
+      if (!this.ruleFormTrain.fix_num) {
+        this.$message.info('修改车次不能为0')
         return
       }
       this.$refs.ruleFormTrain.validate(async(valid) => {
