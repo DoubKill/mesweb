@@ -45,13 +45,13 @@
         <el-input v-model="getParams.lot_no" clearable @input="changeSearch" />
       </el-form-item>
       <el-form-item>
-        <!-- v-permission="['deal_result','all']" -->
         <el-button
+          v-permission="['deal_result','all']"
           type="primary"
           @click="modifyTrainFun(false)"
         >批量修改车次</el-button>
-        <!-- v-permission="['deal_result','only']" -->
         <el-button
+          v-permission="['deal_result','only']"
           type="primary"
           @click="modifyTrainFun(true)"
         >修改特定托的车次</el-button>
@@ -165,6 +165,7 @@
             type="date"
             value-format="yyyy-MM-dd"
             placeholder="选择日期"
+            @change="changeProduct"
           />
         </el-form-item>
         <el-form-item :key="9" label="生产班次" prop="classes">
@@ -176,11 +177,12 @@
           <equip-select
             v-else
             :equip_no_props.sync="ruleFormTrain.equip_no"
+            @changeSearch="changeProduct"
           />
         </el-form-item>
         <el-form-item :key="7" label="胶料规格" prop="product_no">
           <span v-if="ruleFormTrain.id">{{ ruleFormTrain.product_no }}</span>
-          <all-product-no-select v-else :default-val="ruleFormTrain.product_no" @productBatchingChanged="productBatchingTrain" />
+          <all-product-no-select v-else :params-obj="ruleFormTrain" :default-val="ruleFormTrain.product_no" @productBatchingChanged="productBatchingTrain" />
         </el-form-item>
         <el-form-item v-if="!modifyTrain" :key="1" label="开始车次" prop="begin_trains">
           <el-input-number v-model="ruleFormTrain.begin_trains" :max="ruleFormTrain.end_trains" controls-position="right" :step="1" step-strictly />
@@ -458,10 +460,16 @@ export default {
       }
     },
     classSelectedTrain(val) {
+      this.changeProduct()
       this.$set(this.ruleFormTrain, 'classes', val)
     },
     productBatchingTrain(val) {
       this.ruleFormTrain.product_no = val ? val.material_no : ''
+    },
+    async changeProduct() {
+      if (!this.modifyTrain) {
+        this.$set(this.ruleFormTrain, 'product_no', null)
+      }
     },
     submitTrain() {
       const a = this.ruleFormTrain.begin_trains + ',' + this.ruleFormTrain.end_trains
