@@ -189,7 +189,7 @@
           <el-input-number v-model="ruleFormTrain.end_trains" :min="ruleFormTrain.begin_trains" controls-position="right" :step="1" step-strictly />
         </el-form-item>
         <el-form-item v-if="!modifyTrain" :key="3" label="修改车次" prop="fix_num">
-          <el-input-number v-model="ruleFormTrain.fix_num" :disabled="true" controls-position="right" :step="1" step-strictly />
+          <el-input-number v-model="ruleFormTrain.fix_num" :disabled="true" controls-position="right" :min="-5" :max="5" :step="1" step-strictly />
           <el-button style="margin-left:5px" type="primary" circle @click="ruleFormTrain.fix_num++">+1</el-button>
           <el-button type="primary" circle @click="ruleFormTrain.fix_num--">-1</el-button>
         </el-form-item>
