@@ -188,12 +188,12 @@
         min-width="20"
       />
       <el-table-column
-        prop="value"
+        prop="values"
         label="检测值"
         min-width="20"
       />
       <el-table-column
-        prop=""
+        prop="test_user"
         label="检测人员"
         min-width="20"
       />

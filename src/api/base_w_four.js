@@ -28,6 +28,15 @@ export function productReportEquip(method, id, data = {}) {
   return request(obj)
 }
 
+export function equipTestData(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipTestData + id + '/' : API.EquipTestData,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function productReportValue(method, id, data = {}) {
   const obj = {
     url: id ? API.ProductReportValue + id + '/' : API.ProductReportValue,
@@ -220,6 +229,15 @@ export function depotResume(method, id, data = {}) {
 export function bzMixinInventorySummary(method, id, data = {}) {
   const obj = {
     url: id ? API.BzMixinInventorySummary + id + '/' : API.BzMixinInventorySummary,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function bzFinalInventorySummary(method, id, data = {}) {
+  const obj = {
+    url: id ? API.BzFinalInventorySummary + id + '/' : API.BzFinalInventorySummary,
     method: method
   }
   Object.assign(obj, data)

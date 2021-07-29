@@ -44,16 +44,18 @@
       <el-form-item label="收皮条码">
         <el-input v-model="getParams.lot_no" clearable @input="changeSearch" />
       </el-form-item>
-      <!-- <el-form-item>
+      <el-form-item>
         <el-button
+          v-permission="['deal_result','all']"
           type="primary"
           @click="modifyTrainFun(false)"
         >批量修改车次</el-button>
         <el-button
+          v-permission="['deal_result','only']"
           type="primary"
           @click="modifyTrainFun(true)"
         >修改特定托的车次</el-button>
-      </el-form-item> -->
+      </el-form-item>
     </el-form>
     <div style="width:100%;text-align:right;margin-top:-10px">
       <el-switch
@@ -163,6 +165,7 @@
             type="date"
             value-format="yyyy-MM-dd"
             placeholder="选择日期"
+            @change="changeProduct"
           />
         </el-form-item>
         <el-form-item :key="9" label="生产班次" prop="classes">
@@ -174,11 +177,12 @@
           <equip-select
             v-else
             :equip_no_props.sync="ruleFormTrain.equip_no"
+            @changeSearch="changeProduct"
           />
         </el-form-item>
         <el-form-item :key="7" label="胶料规格" prop="product_no">
           <span v-if="ruleFormTrain.id">{{ ruleFormTrain.product_no }}</span>
-          <all-product-no-select v-else :default-val="ruleFormTrain.product_no" @productBatchingChanged="productBatchingTrain" />
+          <all-product-no-select v-else :params-obj="ruleFormTrain" :default-val="ruleFormTrain.product_no" @productBatchingChanged="productBatchingTrain" />
         </el-form-item>
         <el-form-item v-if="!modifyTrain" :key="1" label="开始车次" prop="begin_trains">
           <el-input-number v-model="ruleFormTrain.begin_trains" :max="ruleFormTrain.end_trains" controls-position="right" :step="1" step-strictly />
@@ -187,7 +191,7 @@
           <el-input-number v-model="ruleFormTrain.end_trains" :min="ruleFormTrain.begin_trains" controls-position="right" :step="1" step-strictly />
         </el-form-item>
         <el-form-item v-if="!modifyTrain" :key="3" label="修改车次" prop="fix_num">
-          <el-input-number v-model="ruleFormTrain.fix_num" :disabled="true" controls-position="right" :step="1" step-strictly />
+          <el-input-number v-model="ruleFormTrain.fix_num" :disabled="true" controls-position="right" :min="-5" :max="5" :step="1" step-strictly />
           <el-button style="margin-left:5px" type="primary" circle @click="ruleFormTrain.fix_num++">+1</el-button>
           <el-button type="primary" circle @click="ruleFormTrain.fix_num--">-1</el-button>
         </el-form-item>
@@ -201,8 +205,8 @@
         </el-form-item>
         <el-form-item v-if="modifyTrain" :key="6" label="修改车次" prop="begin_trains">
           <!-- <el-input v-model="ruleFormTrain.ggg" />  例：17-18-19 -->
-          <el-input-number v-model="ruleFormTrain.begin_trains" style="width:100px" :max="ruleFormTrain.end_trains" controls-position="right" :step="1" step-strictly /> —
-          <el-input-number v-model="ruleFormTrain.end_trains" style="width:100px" :min="ruleFormTrain.begin_trains" controls-position="right" :step="1" step-strictly />
+          <el-input-number v-model="ruleFormTrain.begin_trains" style="width:100px" :max="ruleFormTrain.end_trains" :min="ruleFormTrain.end_trains-5" controls-position="right" :step="1" step-strictly /> —
+          <el-input-number v-model="ruleFormTrain.end_trains" style="width:100px" :min="ruleFormTrain.begin_trains" :max="ruleFormTrain.begin_trains+5" controls-position="right" :step="1" step-strictly />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -456,12 +460,27 @@ export default {
       }
     },
     classSelectedTrain(val) {
+      this.changeProduct()
       this.$set(this.ruleFormTrain, 'classes', val)
     },
     productBatchingTrain(val) {
       this.ruleFormTrain.product_no = val ? val.material_no : ''
     },
+    async changeProduct() {
+      if (!this.modifyTrain) {
+        this.$set(this.ruleFormTrain, 'product_no', null)
+      }
+    },
     submitTrain() {
+      const a = this.ruleFormTrain.begin_trains + ',' + this.ruleFormTrain.end_trains
+      if (this.ruleFormTrain.trains === a) {
+        this.$message.info('修改车次和现有车次相同')
+        return
+      }
+      if (!this.ruleFormTrain.fix_num) {
+        this.$message.info('修改车次不能为0')
+        return
+      }
       this.$refs.ruleFormTrain.validate(async(valid) => {
         if (valid) {
           try {

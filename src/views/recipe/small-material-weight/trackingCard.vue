@@ -141,6 +141,7 @@
       >
         <template slot-scope="scope">
           <el-button
+            v-permission="['xl_expire_data', 'save']"
             type="primary"
             @click="reprintFun(scope.row)"
           >{{ scope.row.status === 'N'?'打印':'重新打印' }}

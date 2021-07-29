@@ -1,308 +1,310 @@
 <template>
   <div class="quickCheck-testPlan">
     <!-- 快检检测计划 -->
-    <div class="left-box">
-      <el-form ref="searchForm" :model="search" :inline="true" :rules="rulesLeft">
-        <el-form-item label="检测机号">
-          <el-select
-            v-model="search.test_equip"
-            clearable
-            placeholder="请选择"
-            @visible-change="changeVisibleTestEquip"
-            @change="changeTestEquip"
-          >
-            <el-option
-              v-for="group in testEquipList"
-              :key="group.id"
-              :label="group.no"
-              :value="group.no"
+    <el-row :gutter="20">
+      <el-col :span="11">
+        <el-form ref="searchForm" :model="search" :inline="true" :rules="rulesLeft">
+          <el-form-item label="检测机号">
+            <el-select
+              v-model="search.test_equip"
+              clearable
+              placeholder="请选择"
+              @visible-change="changeVisibleTestEquip"
+              @change="changeTestEquip"
+            >
+              <el-option
+                v-for="group in testEquipList"
+                :key="group.id"
+                :label="group.no"
+                :value="group.no"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="实验区分">
+            <el-select
+              v-model="search.test_indicator_name"
+              placeholder="请选择"
+              @visible-change="changeVisibleTestIndicators"
+              @change="changeTestIndicators"
+            >
+              <el-option
+                v-for="group in testIndicatorsList"
+                :key="group.id"
+                :label="group.name"
+                :value="group.name"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="工厂日期">
+            <el-date-picker
+              v-model="search.factory_date"
+              type="date"
+              value-format="yyyy-MM-dd"
+              placeholder="选择日期"
+              clearable
+              @change="searchList"
             />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="实验区分">
-          <el-select
-            v-model="search.test_indicator_name"
-            placeholder="请选择"
-            @visible-change="changeVisibleTestIndicators"
-            @change="changeTestIndicators"
-          >
-            <el-option
-              v-for="group in testIndicatorsList"
-              :key="group.id"
-              :label="group.name"
-              :value="group.name"
+          </el-form-item>
+          <el-form-item label="生产班次">
+            <class-select
+              @classSelected="classChanged"
             />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="工厂日期">
-          <el-date-picker
-            v-model="search.factory_date"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="选择日期"
-            clearable
-            @change="searchList"
-          />
-        </el-form-item>
-        <el-form-item label="生产班次">
-          <class-select
-            @classSelected="classChanged"
-          />
-        </el-form-item>
-        <el-form-item label="生产机号">
-          <equip-select :equip_no_props="search.equip_no" @changeSearch="equipSearch" />
-        </el-form-item>
-        <el-form-item label="胶料规格">
-          <allProductNoSelect :is-disabled="btnLoading" :default-val="search.product_no" :params-obj="search" @productBatchingChanged="productBatchingChanged" />
-        </el-form-item>
-        <el-form-item label="胶料段次">
-          <el-select
-            v-model="search.stage"
-            clearable
-            placeholder="请选择"
-            @visible-change="visibleStageList"
-            @change="getList"
-          >
-            <el-option
-              v-for="(item,k) in stageList"
-              :key="k"
-              :label="item.global_name"
-              :value="item.global_name"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="是否已检测">
-          <el-select
-            v-model="search.is_tested"
-            clearable
-            placeholder="请选择"
-            @change="changeTested"
-          >
-            <el-option
-              v-for="(item,k) in [{name:'已检测',id:'Y'},{name:'未检测',id:'N'}]"
-              :key="k"
-              :label="item.name"
-              :value="item.id"
-            />
-          </el-select>
-        </el-form-item>
-      </el-form>
+          </el-form-item>
+          <el-form-item label="生产机号">
+            <equip-select :equip_no_props="search.equip_no" @changeSearch="equipSearch" />
+          </el-form-item>
+          <el-form-item label="胶料规格">
+            <allProductNoSelect :is-disabled="btnLoading" :default-val="search.product_no" :params-obj="search" @productBatchingChanged="productBatchingChanged" />
+          </el-form-item>
+          <el-form-item label="胶料段次">
+            <el-select
+              v-model="search.stage"
+              clearable
+              placeholder="请选择"
+              @visible-change="visibleStageList"
+              @change="getList"
+            >
+              <el-option
+                v-for="(item,k) in stageList"
+                :key="k"
+                :label="item.global_name"
+                :value="item.global_name"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="是否已检测">
+            <el-select
+              v-model="search.is_tested"
+              clearable
+              placeholder="请选择"
+              @change="changeTested"
+            >
+              <el-option
+                v-for="(item,k) in [{name:'已检测',id:'Y'},{name:'未检测',id:'N'}]"
+                :key="k"
+                :label="item.name"
+                :value="item.id"
+              />
+            </el-select>
+          </el-form-item>
+        </el-form>
 
-      <el-table
-        ref="multipleTable"
-        :data="tableData"
-        style="width: 100%"
-        border
-        :cell-style="cellStyle"
-        @selection-change="handleSelectionChange"
-      >
-        <el-table-column
-          type="selection"
-          width="55"
-        />
-        <el-table-column
-          prop="equip_no"
-          label="生产机号"
-          min-width="10"
-        />
-        <el-table-column
-          prop="classes"
-          label="生产班次"
-          min-width="10"
-        />
-        <el-table-column
-          prop="product_no"
-          label="胶料规格"
-          min-width="20"
-        />
-        <el-table-column
-          prop="actual_trains"
-          label="车次"
-          min-width="10"
-        />
-        <el-table-column
-          prop="lot_no"
-          label="收皮条码"
-          min-width="20"
-        />
-        <el-table-column
-          prop="is_tested"
-          label="已检测"
-          min-width="10"
-        />
-      </el-table>
-    </div>
-    <div class="center-box">
-      <div class="center-box-child">
-        <el-button size="small" type="primary" :disabled="btnLoading" @click="moveRight">>></el-button>
-      </div>
-    </div>
-    <div class="right-box">
-      <el-form ref="ruleForm" :inline="true" :rules="rules" :model="ruleForm">
-        <el-form-item label="检测日期" prop="test_time">
-          <el-date-picker
-            v-model="ruleForm.test_time"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="选择日期"
-          />
-        </el-form-item>
-        <el-form-item label="检测班次" prop="test_classes">
-          <class-select
-            :value-default="ruleForm.test_classes"
-            @classSelected="classChangedTest"
-          />
-        </el-form-item>
-        <el-form-item label="检测班组" prop="test_group">
-          <el-select
-            v-model="ruleForm.test_group"
-            placeholder="请选择"
-            @visible-change="changeGroup"
-          >
-            <el-option
-              v-for="group in groups"
-              :key="group.id"
-              :label="group.global_name"
-              :value="group.id"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="试验方法" prop="test_method_name">
-          <!-- test_method_name -->
-          <el-select
-            v-model="ruleForm.test_method_name"
-            placeholder="请选择"
-            @visible-change="changeTestMethod"
-          >
-            <el-option
-              v-for="group in testMethodList"
-              :key="group.id"
-              :label="group.name"
-              :value="group.name"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="试验次数" prop="test_times">
-          <el-select
-            v-model="ruleForm.test_times"
-            placeholder="请选择"
-          >
-            <el-option
-              v-for="group in 5"
-              :key="group"
-              :label="group"
-              :value="group"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="胶料规格">
-          {{ ruleForm.product_no }}
-        </el-form-item>
-        <el-form-item label="检测间隔">
-          <el-select
-            v-model="ruleForm.aaa"
-            clearable
-            placeholder="请选择"
-          >
-            <el-option
-              v-for="group in 5"
-              :key="group"
-              :label="group"
-              :value="group"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="试验车次">
-          <el-input-number
-            v-model="ruleForm.num"
-            controls-position="right"
-            :min="1"
-            :max="ruleForm.num1"
-            size="mini"
-            clearable
-          /> --
-          <el-input-number
-            v-model="ruleForm.num1"
-            size="mini"
-            controls-position="right"
-            :min="ruleForm.num"
-            clearable
-          />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" :disabled="btnLoading" @click="addSpace">添加</el-button>
-        </el-form-item>
-      </el-form>
-      <el-button type="primary" :disabled="btnLoading" @click="startTestFun">开始检测</el-button>
-      <el-button type="primary" :disabled="endBtnLoading" @click="endTestFun">结束检测</el-button>
-      <el-button type="primary" @click="refreshFun">刷新</el-button>
-      <div style="float:right">
-        检测计划单据号:
-        <el-input
-          v-model="ruleForm.plan_uid"
-          :disabled="true"
-        />
-      </div>
-      <el-table
-        :data="tableDataRight"
-        style="width: 100%;margin-top:10px"
-        border
-      >
-        <el-table-column
-          prop="factory_date"
-          label="生产日期"
-          min-width="20"
-        />
-        <el-table-column
-          prop="classes"
-          label="生产班次"
-          min-width="20"
-        />
-        <el-table-column
-          prop="equip_no"
-          label="生产机号"
-          min-width="20"
-        />
-        <el-table-column
-          prop="product_no"
-          label="胶料规格"
-          min-width="20"
-        />
-        <el-table-column
-          prop="actual_trains"
-          label="车次"
-          width="80px"
+        <el-table
+          ref="multipleTable"
+          :data="tableData"
+          style="width: 100%"
+          border
+          :cell-style="cellStyle"
+          @selection-change="handleSelectionChange"
         >
-          <template slot-scope="{row,$index}">
-            <el-input-number v-if="row.add" v-model="row.actual_trains" style="width:113px" controls-position="right" @blur="trainsBlur(row.actual_trains,$index)" />
-            <span v-else>{{ row.actual_trains }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="value"
-          label="检测值"
-          min-width="20"
-        />
-        <el-table-column
-          label="状态"
-          min-width="20"
-          :formatter="(row)=>{
-            return row.value?'已检测':'待检测'
-          }"
-        />
-        <el-table-column
-          prop="lot_no"
-          label="收皮条码"
-          width="100px"
-        />
-        <el-table-column
-          label="操作"
-          width="70"
+          <el-table-column
+            type="selection"
+            width="55"
+          />
+          <el-table-column
+            prop="equip_no"
+            label="生产机号"
+            min-width="10"
+          />
+          <el-table-column
+            prop="classes"
+            label="生产班次"
+            min-width="10"
+          />
+          <el-table-column
+            prop="product_no"
+            label="胶料规格"
+            min-width="20"
+          />
+          <el-table-column
+            prop="actual_trains"
+            label="车次"
+            min-width="10"
+          />
+          <el-table-column
+            prop="lot_no"
+            label="收皮条码"
+            min-width="20"
+          />
+          <el-table-column
+            prop="is_tested"
+            label="已检测"
+            min-width="10"
+          />
+        </el-table>
+      </el-col>
+      <el-col :span="1" class="center-box">
+        <div class="center-box-child">
+          <el-button size="small" type="primary" :disabled="btnLoading" @click="moveRight">>></el-button>
+        </div>
+      </el-col>
+      <el-col :span="12">
+        <el-form ref="ruleForm" :inline="true" :rules="rules" :model="ruleForm">
+          <el-form-item label="检测日期" prop="test_time">
+            <el-date-picker
+              v-model="ruleForm.test_time"
+              type="date"
+              value-format="yyyy-MM-dd"
+              placeholder="选择日期"
+            />
+          </el-form-item>
+          <el-form-item label="检测班次" prop="test_classes">
+            <class-select
+              :value-default="ruleForm.test_classes"
+              @classSelected="classChangedTest"
+            />
+          </el-form-item>
+          <el-form-item label="检测班组" prop="test_group">
+            <el-select
+              v-model="ruleForm.test_group"
+              placeholder="请选择"
+              @visible-change="changeGroup"
+            >
+              <el-option
+                v-for="group in groups"
+                :key="group.id"
+                :label="group.global_name"
+                :value="group.id"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="试验方法" prop="test_method_name">
+            <!-- test_method_name -->
+            <el-select
+              v-model="ruleForm.test_method_name"
+              placeholder="请选择"
+              @visible-change="changeTestMethod"
+            >
+              <el-option
+                v-for="group in testMethodList"
+                :key="group.id"
+                :label="group.name"
+                :value="group.name"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="试验次数" prop="test_times">
+            <el-select
+              v-model="ruleForm.test_times"
+              placeholder="请选择"
+            >
+              <el-option
+                v-for="group in 5"
+                :key="group"
+                :label="group"
+                :value="group"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="胶料规格">
+            {{ ruleForm.product_no }}
+          </el-form-item>
+          <el-form-item label="检测间隔" prop="test_interval">
+            <el-select
+              v-model="ruleForm.test_interval"
+              clearable
+              placeholder="请选择"
+            >
+              <el-option
+                v-for="group in 5"
+                :key="group"
+                :label="group"
+                :value="group"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="试验车次">
+            <el-input-number
+              v-model="ruleForm.num"
+              controls-position="right"
+              :min="1"
+              :max="ruleForm.num1"
+              size="mini"
+              clearable
+            /> --
+            <el-input-number
+              v-model="ruleForm.num1"
+              size="mini"
+              controls-position="right"
+              :min="ruleForm.num"
+              :max="tableData[tableData.length-1]&&tableData[tableData.length-1].actual_trains"
+              clearable
+            />
+          </el-form-item>
+          <el-form-item>
+            <el-button v-permission="['examine_test_plan', 'begin']" type="primary" :disabled="btnLoading" @click="addSpace">添加</el-button>
+          </el-form-item>
+        </el-form>
+        <el-button v-permission="['examine_test_plan', 'begin']" type="primary" :disabled="btnLoading" @click="startTestFun">开始检测</el-button>
+        <el-button v-permission="['examine_test_plan', 'end']" type="primary" :disabled="endBtnLoading" @click="endTestFun">结束检测</el-button>
+        <el-button type="primary" @click="refreshFun">刷新</el-button>
+        <div style="float:right">
+          检测计划单据号:
+          <el-input
+            v-model="ruleForm.plan_uid"
+            :disabled="true"
+          />
+        </div>
+        <el-table
+          :data="tableDataRight"
+          style="width: 100%;margin-top:10px"
+          border
         >
-          <template slot-scope="{$index}">
-            <el-button size="mini" type="primary" :disabled="btnLoading" @click="delRow($index)">删除</el-button>
-          </template>
-        </el-table-column>
+          <el-table-column
+            prop="factory_date"
+            label="生产日期"
+            min-width="20"
+          />
+          <el-table-column
+            prop="classes"
+            label="生产班次"
+            min-width="20"
+          />
+          <el-table-column
+            prop="equip_no"
+            label="生产机号"
+            min-width="20"
+          />
+          <el-table-column
+            prop="product_no"
+            label="胶料规格"
+            min-width="20"
+          />
+          <el-table-column
+            prop="actual_trains"
+            label="车次"
+            width="80px"
+          >
+            <template slot-scope="{row,$index}">
+              <el-input-number v-if="row.add" v-model="row.actual_trains" style="width:113px" controls-position="right" @blur="trainsBlur(row.actual_trains,$index)" />
+              <span v-else>{{ row.actual_trains }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="values"
+            label="检测值"
+            min-width="20"
+          />
+          <el-table-column
+            label="状态"
+            min-width="20"
+            :formatter="(row)=>{
+              return row.values?'已检测':'待检测'
+            }"
+          />
+          <el-table-column
+            prop="lot_no"
+            label="收皮条码"
+            width="100px"
+          />
+          <el-table-column
+            label="操作"
+            width="70"
+          >
+            <template slot-scope="{$index}">
+              <el-button size="mini" type="primary" :disabled="btnLoading" @click="delRow($index)">删除</el-button>
+            </template>
+          </el-table-column>
         <!-- <el-table-column
           v-if="['物性','钢拔'].includes(search.test_indicator_name)"
           label="查看"
@@ -312,11 +314,12 @@
             <el-button size="mini" type="primary" :disabled="btnLoading" @click="showTestData">查看</el-button>
           </template>
         </el-table-column> -->
-      </el-table>
-      <div style="text-align:center;margin-top:5px;">
-        <el-button type="primary" :disabled="btnLoading" @click="addRowFun">新增一行</el-button>
-      </div>
-    </div>
+        </el-table>
+        <div style="text-align:center;margin-top:5px;">
+          <el-button v-permission="['examine_test_plan', 'begin']" type="primary" :disabled="btnLoading" @click="addRowFun">新增一行</el-button>
+        </div>
+      </el-col>
+    </el-row>
 
     <el-dialog
       :title="search.test_indicator_name+'检测数据查看'"
@@ -526,20 +529,21 @@ export default {
     }
     return {
       search: {
-        equip_no: 'Z01',
-        product_no: 'C-3MB-A019-02',
-        classes: '早班',
-        factory_date: '2021-07-21', // 2021-04-29
+        equip_no: '', // Z01
+        product_no: '', // C-3MB-A019-02
+        classes: '', // 早班
+        factory_date: '', // 2021-04-29 2021-07-21
         test_indicator_name: ''
       },
       loading: false,
       tableData: [],
-      tableDataRight: [{}],
+      tableDataRight: [],
       rules: {
         test_time: { required: true, message: '请选择检测日期', trigger: 'change' },
         test_group: { required: true, message: '请选择检测班组', trigger: 'change' },
         test_method_name: { required: true, message: '请选择试验方法', trigger: 'change' },
         test_times: { required: true, message: '请选择试验次数', trigger: 'change' },
+        test_interval: { required: true, message: '请选择检测间隔', trigger: 'change' },
         test_classes: [
           { required: true, trigger: 'change', validator: (rule, value, callback) => {
             validator(rule, value, callback,
@@ -549,7 +553,9 @@ export default {
       },
       rulesLeft: {},
       groups: [],
-      ruleForm: {},
+      ruleForm: {
+        test_interval: 1
+      },
       btnLoading: false,
       testEquipList: [],
       testIndicatorsList: [],
@@ -560,7 +566,7 @@ export default {
       handleList: [],
       dialogVisible: false,
       searchValue: {},
-      tableDataValue: [{}]
+      tableDataValue: []
     }
   },
   watch: {
@@ -667,6 +673,7 @@ export default {
       this.tableDataRight = []
       this.btnLoading = false
       this.ruleForm.plan_uid = ''
+      this.ruleForm.product_no = ''
       this.getWaitPlan()
     },
     async getWaitPlan(bool) {
@@ -691,8 +698,9 @@ export default {
           this.$message.info('全部检测完毕')
           this.tableDataRight = []
           this.btnLoading = false
-          this.ruleForm = {}
-          this.$refs.ruleForm.clearValidate()
+          this.ruleForm.plan_uid = ''
+          // this.ruleForm = {}
+          // this.$refs.ruleForm.clearValidate()
         }
       } catch (e) {
         //
@@ -830,6 +838,9 @@ export default {
       this.tableDataRight.push(obj)
     },
     moveRight() {
+      if (this.handleList.length === 0) {
+        return
+      }
       let bool
       this.handleList.forEach(d => {
         if (this.removeFun(d)) {
@@ -855,8 +866,16 @@ export default {
       }
     },
     addSpace() {
-      if (!this.ruleForm.aaa) {
+      if (!this.ruleForm.test_interval) {
         this.$message.info('请选择检测间隔')
+        return
+      }
+      if (!this.ruleForm.num || !this.ruleForm.num1) {
+        this.$message.info('请输入试验车次')
+        return
+      }
+      if (!this.ruleForm.product_no) {
+        this.$message.info('请选择胶料规格')
         return
       }
       const obj = {
@@ -866,11 +885,17 @@ export default {
         product_no: this.search.product_no
       }
       let bool = false
+      let _val = this.ruleForm.num
       for (let index = this.ruleForm.num; index < this.ruleForm.num1 + 1; index++) {
         if (index === this.ruleForm.num) {
-          obj.actual_trains = index
-        } else if (index % this.ruleForm.aaa === 0) {
-          obj.actual_trains = index
+          obj.actual_trains = _val
+        } else {
+          _val = _val + this.ruleForm.test_interval
+          if (_val <= this.ruleForm.num1) {
+            obj.actual_trains = _val
+          } else {
+            return
+          }
         }
         const _obj = JSON.parse(JSON.stringify(obj))
         if (!this.removeFun(_obj)) {
@@ -904,8 +929,8 @@ export default {
       width:auto;
     }
     .center-box{
-      width:100px;
       position: relative;
+      height: 100vh;
         .center-box-child{
           position: absolute;
           text-align: center;
@@ -913,12 +938,6 @@ export default {
           left: 50%;
           transform: translate(-50%,-50%);
         }
-    }
-    .left-box{
-      flex: 1;
-    }
-    .right-box{
-      flex:1.1;
     }
   }
 </style>
