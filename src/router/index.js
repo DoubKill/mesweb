@@ -1694,6 +1694,48 @@ export const asyncRoutes = [
             }
           }
         ]
+      },
+      {
+        path: '/feed',
+        redirect: '/feed/raw-plan',
+        component: () => import('@/views/quality_management/feed/a-index'),
+        name: 'Feed',
+        meta: {
+          title: '炭黑罐投料报错',
+          icon: 'quality'
+        },
+        children: [
+          {
+            path: '/feed/raw-plan',
+            component: () => import('@/views/quality_management/feed/raw-plan'),
+            name: 'RawPlan',
+            meta: {
+              faName: 'Feed',
+              title: '投料计划',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/feed/raw-weightSet',
+            component: () => import('@/views/quality_management/feed/raw-weightSet'),
+            name: 'RawWeightSet',
+            meta: {
+              faName: 'Feed',
+              title: '投料重量设定',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/feed/raw-query',
+            component: () => import('@/views/quality_management/feed/raw-query'),
+            name: 'RawQuery',
+            meta: {
+              faName: 'Feed',
+              title: '投料操作履历查询',
+              permissionName: ''
+            }
+          }
+        ]
       }
     ]
   },
