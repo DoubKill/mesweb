@@ -1,10 +1,11 @@
 // sidebar 自定义到html的样式 全局css属性
 // import variables from '@/styles/variables.scss' 定义成方法 .的方式获取
 $menuText:#bfcbd9;
-$menuActiveText:rgb(11, 189, 11);
+$menuActiveText:#0bbd0b;
 $subMenuActiveText:#f4f4f5; //https://github.com/ElemeFE/element/issues/12951
 
-$menuBg:#304156;
+// $menuBg:#304156;
+$menuBg:rgb(62, 69, 83);
 $menuHover:#263445;
 
 $subMenuBg:#1f2d3d;
@@ -12,7 +13,7 @@ $subMenuHover:#001528;
 
 $sideBarWidth: 220px;
 
-$color-primary: rgb(11, 189, 11);
+$color-primary: #0bbd0b;
 $color-primary-a: rgba(11, 189, 11, 0.5);
 
 // the :export directive is the magic sauce for webpack

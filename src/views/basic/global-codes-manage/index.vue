@@ -1,5 +1,6 @@
 <template>
-  <div style="margin-top: 25px">
+  <div>
+    <!-- 公用代码管理 -->
     <el-row>
       <el-col :span="12">
         <el-form :inline="true">
@@ -49,12 +50,14 @@
                 <el-button
                   v-if="permissionObj.globalcodetype.indexOf('change')>-1"
                   size="mini"
+                  plain
                   @click="showEditGlobalCodeTypeDialog(scope.row)"
                 >编辑</el-button>
                 <el-button
                   v-if="permissionObj.globalcodetype.indexOf('delete')>-1"
                   size="mini"
                   type="danger"
+                  plain
                   @click="handleGlobalCodeTypeDelete(scope.row)"
                 >{{ scope.row.use_flag ? '停用' : '启用' }}</el-button>
               </el-button-group>
@@ -118,6 +121,7 @@
                   v-if="permissionObj.globalcodetype.indexOf('delete')>-1"
                   size="mini"
                   type="danger"
+                  plain
                   @click="handleGlobalCodesDelete(scope.row)"
                 >{{ scope.row.use_flag ? '停用' : '启用' }}</el-button>
               </el-button-group>
@@ -308,6 +312,7 @@ import { getGlobalTypes, postGlobalTypes, putGlobalTypes, deleteGlobalTypes, get
 import page from '@/components/page'
 import { mapGetters } from 'vuex'
 export default {
+  name: 'GlobalCodesManage',
   components: { page },
   data: function() {
     return {

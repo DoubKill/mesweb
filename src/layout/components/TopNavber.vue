@@ -7,11 +7,11 @@
     />
     <el-menu
       :default-active="activeMenu"
-      background-color="rgb(48 65 86)"
+      background-color="#3e4553"
       text-color="#fff"
       class="el-menu-demo"
       mode="horizontal"
-      active-text-color="rgb(11, 189, 11)"
+      active-text-color="#0bbd0b"
       @select="handleSelect"
     >
       <div
@@ -40,7 +40,9 @@
         trigger="click"
       >
         <div class="avatar-wrapper">
-          <span>用户名：{{ name }}</span>
+          <span>
+            <el-button type="text" icon="el-icon-s-custom" style="color:#fff;margin-right:6px" /></span>
+          {{ name }}
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu
@@ -171,7 +173,7 @@ function a(childrenVal = [], val) {
   overflow: hidden;
   position: relative;
   color:#fff !important;
-  background: rgb(48 65 86);
+  background: $menuBg;
   box-shadow: 0 1px 4px rgba(0,21,41,.08);
   .el-menu.el-menu--horizontal{
       border-bottom: none;
@@ -181,7 +183,8 @@ function a(childrenVal = [], val) {
   }
 
   .el-menu-item{
-     background-color: rgb(48, 65, 86) !important;
+    //  background-color: rgb(48, 65, 86) !important;
+     background-color: rgb(62, 69, 83) !important;
   }
   .is-active{
       border-bottom: 3px solid;

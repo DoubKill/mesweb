@@ -95,6 +95,11 @@ export default {
   MaterialTestTypes: '/api/v1/quality/material-test-indicators-tab/',
   // 试验指标列表
   TestIndicators: '/api/v1/quality/test-indicators/',
+  // 数据点误差(不合格pass指标管理)
+  DataPointStandardErrors: '/api/v1/quality/data-point-standard-errors/',
+  // 标记历史记录
+  DataPointLabelHistory: '/api/v1/quality/data-point-label-history/',
+  IgnoredProductInfo: '/api/v1/quality/ignored-product-info/',
   // 试验方法列表
   TestSubTypes: '/api/v1/quality/test-methods/',
   TestTypeData: '/api/v1/quality/test-indicator-data-points/',
@@ -142,10 +147,17 @@ export default {
   // 物料库存管理
   MaterialInventoryManage: '/api/v1/inventory/material-inventory-manage/',
 
+  // 北自混炼胶库存列表
+  BzMixinInventory: '/api/v1/inventory/bz-mixin-inventory/',
+  // 终练出库弹框列表
+  BzFinalInventory: 'api/v1/inventory/bz-final-inventory/',
   // 混炼胶库计划管理
   PutPlanManagement: '/api/v1/inventory/put-plan-management/',
+  MixinRubberyOutboundOrder: 'api/v1/inventory/mixin-rubbery-outbound-order/',
+
   //  终炼胶库计划管理
   FinalPlanManagement: '/api/v1/inventory/final-plan-management/',
+  FinalRubberyOutboundOrder: '/api/v1/inventory/final-rubbery-outbound-order/',
   // 帘布库计划管理
   LbPlanManagement: '/api/v1/inventory/lb-plan-management/',
   // 原材料出库计划
@@ -184,6 +196,9 @@ export default {
 
   // 批量打印
   LabelPrint: '/api/v1/quality/label-print/',
+  ShowQualifiedRange: '/api/v1/quality/show-qualified-range/',
+  // 修改车次
+  TrainsFix: '/api/v1/production/trains-fix/',
   // 月快检合格率
   BatchMonthStatistics: '/api/v1/quality/batch-month-statistics/',
   // 日快检合格率
@@ -274,10 +289,14 @@ export default {
   WeightBatchingLogList: '/api/v1/terminal/weight-batching-log-list/',
   MaterialInventoryList: '/api/v1/inventory/material-inventory-list/',
   QualityPalletFeedTest: '/api/v1/quality/pallet-feed-test/',
+  DatapointCurve: '/api/v1/quality/datapoint-curve/',
   // 录入导入
   ImportMaterialMestMrders: '/api/v1/quality/import-material-test-orders/',
+  // 不合格历史记录
+  DealMathodHistory: '/api/v1/quality/deal-mathod-history/',
   // mes与子系统物料信息映射
   MaterialSupplierCollect: '/api/v1/terminal/material-supplier-collect/',
+  ZcMaterials: '/api/v1/recipe/zc-materials/',
   WeightingPackageLog: '/api/v1/terminal/weighting-package-log/',
   EquipEownType: '/api/v1/equipment/equip-down-type/',
   EquipDownReason: '/api/v1/equipment/equip-down-reason/',
@@ -333,5 +352,88 @@ export default {
   IndexEquipMaintenanceAyalyze: '/api/v1/index/equip-maintenance-ayalyze/',
 
   RuntimeRecord: '/api/v1/production/runtime-record/',
-  ProductDetails: '/api/v1/inventory/product-details/'
+  ProductDetails: '/api/v1/inventory/product-details/',
+  ExamineMaterial: '/api/v1/quality/examine-material/',
+  // 检测类型
+  MaterialExamineType: '/api/v1/quality/material-examine-type/',
+  ExportTemplate: '/api/v1/quality/material-examine-type/export-template/',
+  ImportData: '/api/v1/quality/material-examine-type/import-data/',
+  // 单位管理
+  MaterialUnit: '/api/v1/quality/material-unit/',
+  MaterialEquipmentType: '/api/v1/quality/material-equip-types/',
+  MaterialEquipment: '/api/v1/quality/material-equips/',
+  WmsMaterialSearch: '/api/v1/quality/wms-material-search/',
+  MaterialExamineResult: '/api/v1/quality/material-examine-result/',
+  MaterialUnqualifiedTypes: '/api/v1/quality/material-unqualified-types/',
+  MaterialUnqualifiedProcess: '/api/v1/quality/material-unqualified-process/',
+  MaterialExamineResultCurve: '/api/v1/quality/material-examine-result-curve/',
+  // 小料原材料列表
+  XlMaterial: '/api/v1/terminal/xl-material/',
+  XlBin: '/api/v1/terminal/xl-bin/',
+  SaveBin: '/api/v1/terminal/xl-bin/save_bin/',
+  XlRecipe: '/api/v1/terminal/xl-recipe/',
+  XlRecipeMaterial: '/api/v1/terminal/xl-recipe-material/',
+  XlReportBasic: '/api/v1/terminal/xl-report-basic/',
+  XlReportWeight: '/api/v1/terminal/xl-report-weight/',
+  XlPlan: '/api/v1/terminal/xl-plan/',
+  WmsStock: '/api/v1/inventory/wms-stock/',
+  WmsWeightStock: '/api/v1/inventory/wms-weight-stock/',
+  WmsEntrance: '/api/v1/inventory/wms-entrance/',
+  // 炭黑库货位列表
+  ThStock: '/api/v1/inventory/th-stock/',
+  // 炭黑库货物重量列表
+  ThWeightStock: '/api/v1/inventory/th-weight-stock/',
+  // 炭黑库出库口列表
+  ThEntrance: '/api/v1/inventory/th-entrance/',
+  // 炭黑库 获取内伸位货物信息
+  ThInstock: '/api/v1/inventory/th-instock/',
+  // 原材料上报设备
+  MaterialReportEquip: '/api/v1/quality/material-report-equip/',
+  MaterialReportValue: '/api/v1/quality/material-report-value/',
+  // 胶料上报设备
+  ProductReportEquip: '/api/v1/quality/product-report-equip/',
+  // 快检设备监控
+  EquipTestData: '/api/v1/quality/equip-test-data/',
+  ProductReportValue: '/api/v1/quality/product-report-value/',
+  // 原材料库存
+  WmsInventory: '/api/v1/inventory/wms-inventory/',
+  WmsMaterialGroups: '/api/v1/inventory/wms-material-groups/',
+  WmsTunnels: '/api/v1/inventory/wms-tunnels/',
+  // 原材料 获取内伸位货物信息
+  WmsInstock: '/api/v1/inventory/wms-instock/',
+  // 炭黑库库存
+  ThInventory: '/api/v1/inventory/th-inventory/',
+  ThMaterialGroups: '/api/v1/inventory/th-material-groups/',
+  ThTunnels: '/api/v1/inventory/th-tunnels/',
+  // 线边库 库区
+  Depot: '/api/v1/inventory/depot/',
+  // 库位
+  DepotSite: '/api/v1/inventory/depot-site/',
+  PalletData: '/api/v1/inventory/pallet-data/',
+  DepotPallet: '/api/v1/inventory/depot-pallet/',
+  DepotPalletInfo: '/api/v1/inventory/depot-pallet-info/',
+  PalletTestResult: '/api/v1/inventory/pallet-test-result/',
+  DepotResume: '/api/v1/inventory/depot-resume/',
+  // erp原材料信息管理
+  ErpMaterials: '/api/v1/recipe/erp-materials/',
+  // 硫磺库库区
+  SulfurDepot: '/api/v1/inventory/sulfur-depot/',
+  // 硫磺库库位
+  SulfurDepotSite: '/api/v1/inventory/sulfur-depot-site/',
+  // 硫磺库库存查询
+  DepotSulfur: '/api/v1/inventory/depot-sulfur/',
+  DepotSulfurInfo: '/api/v1/inventory/depot-sulfur-info/',
+  // 硫磺库出入库管理
+  SulfurData: '/api/v1/inventory/sulfur-data/',
+  SulfurResume: '/api/v1/inventory/sulfur-resume/',
+
+  BzMixinInventorySummary: '/api/v1/inventory/bz-mixin-inventory-summary/',
+  BzFinalInventorySummary: '/api/v1/inventory/bz-final-inventory-summary/',
+  BzFinalInventorySearch: '/api/v1/inventory/bz-final-inventory-search/',
+  BzMixinInventorySearch: '/api/v1/inventory/bz-mixin-inventory-search/',
+
+  WeightingPackageExpire: '/api/v1/terminal/weighting-package-expire/',
+  // 快检设备履历
+  ProductTestResume: '/api/v1/quality/product-test-resume/',
+  ProductTestPlan: '/api/v1/quality/product-test-plan/'
 }

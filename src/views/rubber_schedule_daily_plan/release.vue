@@ -178,6 +178,7 @@ import { setDate } from '@/utils'
 import { mapGetters } from 'vuex'
 
 export default {
+  name: 'RubberScheduleDailyPlanRelease',
   data() {
     this._notSaved = '未保存'
     this._saved = '已保存'

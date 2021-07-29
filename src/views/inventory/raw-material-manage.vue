@@ -165,6 +165,7 @@ import { setDate } from '@/utils/index'
 import stationInfoWarehouse from '@/components/select_w/warehouseSelectPosition'
 
 export default {
+  name: 'RawMaterial',
   components: { stationInfoWarehouse, page, GenerateAssignOutbound, GenerateNormalOutbound },
   data() {
     return {

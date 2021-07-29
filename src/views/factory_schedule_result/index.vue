@@ -1,5 +1,6 @@
 <template>
   <div v-loading="loading">
+    <!-- 工厂排班结果 -->
     <el-form :inline="true">
       <el-form-item
         label="日期"
@@ -45,50 +46,29 @@
         prop="work_schedule_name"
         label="倒班名"
       />
-      <el-table-column label="早班">
+      <el-table-column v-for="(item,i) in heardClasses" :key="i" :label="item.global_name">
         <el-table-column
-          prop="work_schedule_plan[0].group_name"
           label="班组"
           width="55px"
-        />
+        >
+          <template v-if="(row.work_schedule_plan.filter(d=>d.classes === item.id))[0]" slot-scope="{row}">
+            {{ (row.work_schedule_plan.filter(d=>d.classes === item.id))[0].group_name }}
+          </template>
+        </el-table-column>
         <el-table-column
-          prop="work_schedule_plan[0].start_time"
           label="开始"
-        />
+        >
+          <template v-if="(row.work_schedule_plan.filter(d=>d.classes === item.id))[0]" slot-scope="{row}">
+            {{ (row.work_schedule_plan.filter(d=>d.classes === item.id))[0].start_time }}
+          </template>
+        </el-table-column>
         <el-table-column
-          prop="work_schedule_plan[0].end_time"
           label="结束"
-        />
-      </el-table-column>
-      <el-table-column label="中班">
-        <el-table-column
-          prop="work_schedule_plan[1].group_name"
-          label="班组"
-          width="55px"
-        />
-        <el-table-column
-          prop="work_schedule_plan[1].start_time"
-          label="开始"
-        />
-        <el-table-column
-          prop="work_schedule_plan[1].end_time"
-          label="结束"
-        />
-      </el-table-column>
-      <el-table-column label="夜班">
-        <el-table-column
-          prop="work_schedule_plan[2].group_name"
-          label="班组"
-          width="55px"
-        />
-        <el-table-column
-          prop="work_schedule_plan[2].start_time"
-          label="开始"
-        />
-        <el-table-column
-          prop="work_schedule_plan[2].end_time"
-          label="结束"
-        />
+        >
+          <template v-if="(row.work_schedule_plan.filter(d=>d.classes === item.id))[0]" slot-scope="{row}">
+            {{ (row.work_schedule_plan.filter(d=>d.classes === item.id))[0].end_time }}
+          </template>
+        </el-table-column>
       </el-table-column>
     </el-table>
     <pagination
@@ -100,10 +80,11 @@
 </template>
 
 <script>
-import { planScheduleUrl } from '@/api/base_w'
+import { planScheduleUrl, globalCodesUrl } from '@/api/base_w'
 import pagination from '@/components/page'
 import { setDate } from '@/utils/index'
 export default {
+  name: 'FactoryScheduleManage',
   components: { pagination },
   data() {
     return {
@@ -114,11 +95,21 @@ export default {
         day_time: setDate()
       },
       total: 0,
-      loading: true
+      loading: true,
+      heardClasses: []
     }
   },
   created() {
-    this.getList()
+    globalCodesUrl('get', {
+      params: {
+        class_name: '班次'
+      }
+    }).then((response) => {
+      this.heardClasses = response.results
+      this.getList()
+      // eslint-disable-next-line handle-callback-err
+    }).catch(function(error) {
+    })
   },
   methods: {
     findSchedulePlanByClassesName(work_schedule_plan, name) {

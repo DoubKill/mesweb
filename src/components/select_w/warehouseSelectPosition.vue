@@ -122,21 +122,21 @@ export default {
         }
 
         let data = []
-        if (this.optionsList.length === 0) {
-          this.loading = true
-          let _api
-          if (this.rawMaterial) {
-            _api = stationInfoRawMaterial
-          } else if (this.drussDelivery) {
-            _api = drussPlanManagementStations
-          } else {
-            _api = stationInfo
-          }
-          data = await _api({ all: 1, warehouse_name: this.warehouseName })
-          this.loading = false
+        // if (this.optionsList.length === 0) {
+        this.loading = true
+        let _api
+        if (this.rawMaterial) {
+          _api = stationInfoRawMaterial
+        } else if (this.drussDelivery) {
+          _api = drussPlanManagementStations
         } else {
-          data = this.optionsList
+          _api = stationInfo
         }
+        data = await _api({ all: 1, warehouse_name: this.warehouseName })
+        this.loading = false
+        // } else {
+        //   data = this.optionsList
+        // }
 
         if (this.startUsing && !this.rawMaterial && !this.drussDelivery) {
           this.options = data.filter(D => { return D.use_flag })
@@ -145,18 +145,30 @@ export default {
         this.options = data || []
         if (this.warehouseName === '混炼胶库' && this.createdIs) {
           const a = localStorage.getItem('hl-station')
+          const value = a ? JSON.parse(a).id : ''
+          if (this.value || (!value && this.value === value)) {
+            return
+          }
           this.value = a ? JSON.parse(a).id : ''
           this.$emit('changSelect', this.options.filter(D => D.id === this.value)[0])
           return
         }
         if (this.rawMaterial && this.createdIs && !this.assignType) {
           const a = localStorage.getItem('ycl-station')
+          const value = a ? JSON.parse(a).id : ''
+          if (this.value || (!value && this.value === value)) {
+            return
+          }
           this.value = a ? JSON.parse(a).station_no : ''
           this.$emit('changSelect', this.options.filter(D => D.station_no === this.value)[0])
           return
         }
         if (this.drussDelivery && this.createdIs && !this.assignType) {
           const a = localStorage.getItem('th-station')
+          const value = a ? JSON.parse(a).id : ''
+          if (this.value || (!value && this.value === value)) {
+            return
+          }
           this.value = a ? JSON.parse(a).station_no : ''
           this.$emit('changSelect', this.options.filter(D => D.station_no === this.value)[0])
           return
@@ -169,7 +181,7 @@ export default {
       }
     },
     visibleChange(val) {
-      if (val && !this.createdIs && this.options.length === 0) {
+      if (val) {
         this.getList()
       }
     },

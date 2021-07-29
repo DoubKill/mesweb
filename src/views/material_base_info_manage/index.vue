@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- 原材料基础信息 -->
     <el-form :inline="true">
       <el-form-item label="原材料类别">
         <el-select
@@ -132,6 +133,7 @@
               v-if="permissionObj.material.indexOf('delete')>-1"
               size="mini"
               type="danger"
+              plain
               @click="handleMaterialDelete(scope.row)"
             >{{ scope.row.use_flag ? '停用' : '启用' }}
             </el-button>
@@ -326,6 +328,7 @@ import { globalCodesUrl, materialsUrl } from '@/api/base_w'
 import pagination from '@/components/page'
 import { mapGetters } from 'vuex'
 export default {
+  name: 'MaterialBaseInfoManage',
   components: { pagination },
   data: function() {
     return {

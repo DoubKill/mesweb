@@ -59,6 +59,7 @@
               v-permission="['spare_location', 'delete']"
               size="mini"
               type="danger"
+              plain
               @click="handleDelete(scope.row)"
             >{{ scope.row.used_flag?'停用':'启用' }}
             </el-button>
@@ -167,6 +168,7 @@ import { getGlobalCodes } from '@/api/global-codes-manage'
 // import { errorRepeat } from '@/utils'
 
 export default {
+  name: 'SpareLocation',
   components: { inventoryPosition, page },
   data: function() {
     return {

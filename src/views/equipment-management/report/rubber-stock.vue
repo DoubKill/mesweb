@@ -87,6 +87,7 @@ import { productStationStatics } from '@/api/base_w_three'
 import { productInfosUrl } from '@/api/base_w'
 import StageSelect from '@/components/StageSelect'
 export default {
+  name: 'RubberStock',
   components: { StageSelect },
   data() {
     return {
@@ -119,7 +120,8 @@ export default {
       try {
         this.loading = true
         const data = await productStationStatics('get', null, { params: { name: this.search.no }})
-        this.tableData = data.results
+        this.tableData = [data] || []
+
         this.loading = false
       } catch (e) {
         this.loading = false

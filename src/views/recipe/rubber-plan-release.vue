@@ -332,6 +332,7 @@ import Page from '@/components/page'
 import { batchingClassesPlan, issueBatchingClassesPlan, batchingClassesEquipPlan, changePlanPackage } from '@/api/small-material-recipe'
 // import { setDate } from '@/utils'
 export default {
+  name: 'RubberPlanRelease',
   components: { Page, classSelect, EquipCategorySelect, SelectBatchingEquip, WeighBatchingPlanDetail },
   data() {
     return {
@@ -400,7 +401,7 @@ export default {
     },
     async submitFun(row, index) {
       row.visible = false
-      console.log(this.reason, 888)
+      // console.log(this.reason, 888)
       await changePlanPackage(row.id,
         this.reason)
       this.getList()

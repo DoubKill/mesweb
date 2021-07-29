@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- 试验类型管理 -->
     <el-row>
       <el-col :span="12">
         <el-form :inline="true">
@@ -91,6 +92,11 @@
                   size="mini"
                   @click="showEditDataPointsDialog(scope.row)"
                 >编辑</el-button>
+                <el-button
+                  size="mini"
+                  type="primary"
+                  @click="showNorm(scope.row)"
+                >操作pass指标</el-button>
                 <!-- <el-button
                   size="mini"
                   type="danger"
@@ -102,6 +108,87 @@
         </el-table>
       </el-col>
     </el-row>
+
+    <div style="width: 60%">
+      <h3>pass指标失效胶种</h3>
+      <el-button
+        type="primary"
+        style="margin-bottom:4px;float:right"
+        @click="addInvalid"
+      >添加</el-button>
+    </div>
+
+    <el-table
+      :data="tableData1"
+      border
+      style="width: 60%"
+    >
+      <el-table-column
+        prop="id"
+        label="No"
+        width="50"
+      />
+      <el-table-column
+        prop="product_no"
+        label="胶料编码"
+      />
+      <el-table-column
+        prop="created_date"
+        label="添加时间"
+      />
+      <el-table-column
+        prop="created_username"
+        label="添加人"
+      />
+      <el-table-column
+        label="操作"
+      >
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="danger"
+            @click="delInvalid(scope.row)"
+          >删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <page
+      :old-page="false"
+      :total="total1"
+      :current-page="page1"
+      @currentChange="currentChange1"
+    />
+    <el-dialog
+      title="添加pass指标失效胶种"
+      :visible.sync="dialogInvalid"
+    >
+      <el-form>
+        <el-form-item
+          label="胶料编码"
+          prop="name"
+        >
+          <el-select v-model="product_nos" multiple filterable placeholder="请选择" @visible-change="visibleChange">
+            <el-option
+              v-for="item in option1"
+              :key="item.id"
+              :label="item.product_name"
+              :value="item.product_no"
+            />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button @click="dialogInvalid = false">取 消</el-button>
+        <el-button
+          type="primary"
+          @click="handleCreateInvalid"
+        >确 定</el-button>
+      </div>
+    </el-dialog>
+
     <el-dialog
       title="添加试验类型"
       :visible.sync="dialogCreateTestTypeVisible"
@@ -152,7 +239,6 @@
       <el-form ref="editTestTypeForm" :rules="rules" :model="testTypeForm">
         <el-form-item
           label="试验类型"
-
           prop="name"
         >
           <el-input
@@ -161,7 +247,6 @@
         </el-form-item>
         <el-form-item
           label="试验指标"
-
           prop="test_indicator"
         >
           <el-select
@@ -197,14 +282,12 @@
       <el-form ref="createDataPointsForm" :rules="rules" :model="dataPointsForm">
         <el-form-item
           label="数据点"
-
           prop="name"
         >
           <el-input v-model="dataPointsForm.name" />
         </el-form-item>
         <el-form-item
           label="单位"
-
           prop="unit"
         >
           <el-input v-model="dataPointsForm.unit" />
@@ -229,7 +312,6 @@
       <el-form ref="editDataPointsForm" :rules="rules" :model="dataPointsForm">
         <el-form-item
           label="数据点"
-
           prop="name"
         >
           <el-input
@@ -238,7 +320,6 @@
         </el-form-item>
         <el-form-item
           label="单位"
-
           prop="unit"
         >
           <el-input v-model="dataPointsForm.unit" />
@@ -255,19 +336,117 @@
         >确 定</el-button>
       </div>
     </el-dialog>
+
+    <el-dialog
+      title="不合格品pass指标"
+      :visible.sync="passVisible"
+    >
+      <el-button
+        type="primary"
+        size="mini"
+        style="margin-bottom:10px"
+        @click="addNorm"
+      >新 增</el-button>
+      <el-table
+        v-loading="loadingPass"
+        :data="passTableData"
+        border
+        style="width: 100%"
+      >
+        <el-table-column
+          prop="date"
+          label="范围指标"
+        >
+          <template slot-scope="{row}">
+            {{ row.value }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="tracking_card"
+          label="追踪卡"
+        />
+        <el-table-column
+          prop="label"
+          label="标志及处理"
+        />
+        <el-table-column
+          prop="address"
+          label="操作"
+        >
+          <template slot-scope="scope">
+            <el-button-group>
+              <el-button
+                size="mini"
+                @click="editNorm(scope.row)"
+              >编辑</el-button>
+              <el-button
+                size="mini"
+                type="danger"
+                @click="delNorm(scope.row)"
+              >删除</el-button>
+            </el-button-group>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
+
+    <el-dialog
+      :title="(passForm.id?'编辑':'新增')+'pass指标'"
+      :visible.sync="passVisible1"
+      width="600px"
+      :before-close="passVisibleClose"
+    >
+      <el-form ref="passForm" :model="passForm" :rules="passRules" label-width="100px">
+        <el-form-item label="范围指标" prop="value">
+          <el-input v-model="passForm.value" />
+          <br>
+          请以' ( '或' [ '开头和 ' ) '或' ] ' 结尾;例子：(1,2]、[1,2)、[1,2]、(1,2)
+        </el-form-item>
+        <el-form-item label="标志及处理" prop="label">
+          <el-select
+            v-model="passForm.label"
+            filterable
+            allow-create
+            default-first-options
+            placeholder="请选择标志及处理"
+          >
+            <el-option
+              v-for="item in options"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button @click="passVisibleClose(false)">取 消</el-button>
+        <el-button
+          type="primary"
+          :loading="btnPassLoading"
+          @click="submitPass"
+        >确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getTestTypes, putTestTypes, postTestTypes, deleteTestTypes, getTestIndicators, getDataPoints, putDataPoints, postDataPoints, deleteDataPoints } from '@/api/test_types'
+import { getTestTypes, putTestTypes, postTestTypes, deleteTestTypes, getTestIndicators, getDataPoints, putDataPoints, postDataPoints, deleteDataPoints, dataPointStandardErrors, dataPointLabelHistory, ignoredProductInfo } from '@/api/test_types'
+import { productInfosUrl } from '@/api/base_w'
 import page from '@/components/page'
 import { mapGetters } from 'vuex'
 export default {
+  name: 'TestTypes',
   components: { page },
   data: function() {
     return {
       formLabelWidth: 'auto',
       tableData: [],
+      tableData1: [],
       test_indicator: '',
       testTypesCurrentRow: null,
       dialogCreateTestTypeVisible: false,
@@ -288,7 +467,6 @@ export default {
       dialogCreateDataPointsVisible: false,
       dialogEditDataPointsVisible: false,
       dataPointsForm: {
-
         name: '',
         unit: '',
         test_type: null
@@ -298,7 +476,42 @@ export default {
         page: 1
       },
       currentPage: 1,
-      total: 1
+      total: 1,
+      passVisible: false,
+      passVisible1: false,
+      passTableData: [],
+      passForm: {
+        tracking_card: 'pass章',
+        value: '',
+        label: null
+      },
+      passRules: {
+        value: [{ required: true, trigger: 'blur',
+          validator: (rule, value, callback) => {
+            if (!value) {
+              callback(new Error('范围指标不能为空'))
+            } else {
+              const arg = /^(\(|\[|\（)+((\-|\+)?\d+(\.\d+)?)+(\,|\，)+((\-|\+)?\d+(\.\d+)?)+(\)|\]|\）)$/
+              var re = new RegExp(arg)
+              const a = re.test(value)
+              if (!a) {
+                callback(new Error(`请以' ( '或' [ '开头和 ' ) '或' ] ' 结尾`))
+              } else {
+                callback()
+              }
+            }
+          } }],
+        label: [{ required: true, message: '不能为空', trigger: 'change' }]
+      },
+      options: [],
+      loadingPass: false,
+      btnPassLoading: false,
+      total1: 0,
+      page1: 1,
+      page_size1: 10,
+      dialogInvalid: false,
+      product_nos: [],
+      option1: []
     }
   },
   computed: {
@@ -307,6 +520,8 @@ export default {
   created() {
     this.permissionObj = this.permission
     this.getTestTypesList()
+    this.getOptionsList()
+    this.getInvalidList()
   },
   methods: {
     afterGetData: function() {
@@ -478,10 +693,177 @@ export default {
       this.currentPage = page
       this.getParams.page = page
       this.getTestTypesList()
+    },
+    showNorm(row) {
+      this.passVisible = true
+      this.passForm.data_point = row.id
+      this.getPassList(row.id)
+    },
+    editNorm(row) {
+      this.passForm = JSON.parse(JSON.stringify(row))
+      this.passVisible1 = true
+    },
+    async getPassList(id) {
+      try {
+        this.loadingPass = true
+        const data = await dataPointStandardErrors('get', null, { params: { data_point_id: id }})
+        this.passTableData = data
+        this.loadingPass = false
+      } catch (e) { this.loadingPass = false }
+    },
+    async getOptionsList() {
+      try {
+        const data = await dataPointLabelHistory('get')
+        this.options = data
+      } catch (e) { //
+      }
+    },
+    delNorm(row) {
+      this.$confirm('是否确定删除?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        try {
+          await dataPointStandardErrors('delete', row.id || '')
+          this.getPassList(this.passForm.data_point)
+        } catch (e) {
+          //
+        }
+      })
+    },
+    addNorm() {
+      this.passVisible1 = true
+    },
+    submitPass() {
+      this.$refs.passForm.validate(async(valid) => {
+        if (valid) {
+          const obj = JSON.parse(JSON.stringify(this.passForm))
+          let a = obj.value.split(',')
+          if (a.length === 1) {
+            a = obj.value.split('，')
+          }
+          if (obj.lower_value) {
+            delete obj.lower_value
+          }
+          if (Object.prototype.hasOwnProperty.call(obj, 'lower_value')) {
+            delete obj.lower_value
+          }
+          if (Object.prototype.hasOwnProperty.call(obj, 'upper_value')) {
+            delete obj.upper_value
+          }
+          if (a[0].substr(1) > a[1].substr(0, a[1].length - 1)) {
+            return this.$message.info('范围指标：第二个数字不可大于第一个数字')
+          }
+          if (a[0].substr(1) < 0 && a[1].substr(0, a[1].length - 1) > 0) {
+            // 需要循环a 调2次接口
+            this.$confirm(`指标范围${obj.value}将分解为${a[0]},0)(0,${a[1]}`, '警告', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
+              a.forEach((d, i) => {
+                if (i === 0) {
+                  obj.value = d + ',0)'
+                } else {
+                  obj.value = '(0,' + d
+                }
+                this.dataPointStandardEdit(JSON.parse(JSON.stringify(obj)))
+              })
+            })
+          } else {
+            // 调1次接口就可
+            this.dataPointStandardEdit(obj)
+          }
+        } else {
+          return false
+        }
+      })
+    },
+    async dataPointStandardEdit(obj) {
+      try {
+        this.btnPassLoading = true
+        const _api = this.passForm.id ? 'patch' : 'post'
+        await dataPointStandardErrors(_api, this.passForm.id || '', { data: obj })
+        this.passVisibleClose(false)
+        this.btnPassLoading = false
+        this.getPassList(this.passForm.data_point)
+      } catch (e) { this.btnPassLoading = false }
+    },
+    passVisibleClose(done) {
+      this.passVisible1 = false
+      this.passForm.value = ''
+      this.passForm.label = null
+      delete this.passForm.id
+      setTimeout(() => {
+        this.$refs.passForm.clearValidate()
+      }, 300)
+      if (done) {
+        done()
+      }
+    },
+    async getInvalidList() {
+      try {
+        const data = await ignoredProductInfo('get', null, { params: { page_size: this.page_size1, page: this.page1 }})
+        this.total1 = data.count
+        this.tableData1 = data.results
+      } catch (e) {
+        //
+      }
+    },
+    addInvalid() {
+      this.product_nos = []
+      this.dialogInvalid = true
+    },
+    delInvalid(row) {
+      this.$confirm('是否确定删除?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        try {
+          await ignoredProductInfo('delete', row.id || '')
+          this.getInvalidList()
+        } catch (e) {
+          //
+        }
+      })
+    },
+    currentChange1(page, pageSize) {
+      this.page1 = page
+      this.page_size1 = pageSize
+      this.getInvalidList()
+    },
+    visibleChange(bool) {
+      if (bool) {
+        const app = this
+        productInfosUrl('get', null, {
+          params: { all: 1 }
+        }).then(function(response) {
+          app.option1 = response.results
+        }).catch(function() {
+        })
+      }
+    },
+    async handleCreateInvalid() {
+      try {
+        if (this.product_nos.length === 0) {
+          this.$message.info('请选择胶料编码')
+          return
+        }
+        await ignoredProductInfo('post', null, { data: { product_nos: this.product_nos }})
+        this.dialogInvalid = false
+        this.getInvalidList()
+      } catch (e) {
+        //
+      }
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.el-input{
+  width: 210px;
+}
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div v-loading="loading" class="app-container">
-    <!-- 指定出库 -->
+    <!-- 指定出库 暂时就帘布库使用-->
     <el-form :inline="true">
       <el-form-item label="仓库名称">
         {{ warehouseName }}
@@ -60,14 +60,15 @@
         :reserve-selection="true"
       />
       <!-- <el-table-column label="No" type="index" align="center" /> -->
-      <el-table-column label="物料类型" align="center" prop="material_type" />
-      <el-table-column label="物料编码" align="center" prop="material_no" />
-      <el-table-column v-if="['帘布库出库计划','炭黑出库计划','原材料出库计划'].includes($route.meta.title)" label="物料名称" align="center" prop="material_name" />
-      <el-table-column label="lot" align="center" prop="lot_no" />
-      <el-table-column label="托盘号" align="center" prop="container_no" />
-      <el-table-column label="库存位" align="center" prop="location" />
+      <el-table-column :key="1" label="物料类型" align="center" prop="material_type" />
+      <el-table-column :key="2" label="物料编码" align="center" prop="material_no" />
+      <el-table-column v-if="['帘布库出库计划','炭黑出库计划','原材料出库计划'].includes($route.meta.title)" :key="3" label="物料名称" align="center" prop="material_name" />
+      <el-table-column :key="4" label="lot" align="center" prop="lot_no" />
+      <el-table-column :key="5" label="托盘号" align="center" prop="container_no" />
+      <el-table-column :key="6" label="库存位" align="center" prop="location" />
       <el-table-column
         v-if="warehouseName === '终炼胶库'"
+        :key="7"
         width="60"
         label="车数"
         align="center"
@@ -77,8 +78,9 @@
           {{ row.qty }}
         </template>
       </el-table-column>
-      <el-table-column label="总重量" align="center" prop="total_weight" />
+      <el-table-column :key="17" label="总重量" align="center" prop="total_weight" />
       <el-table-column
+        :key="8"
         label="品质状态"
         align="center"
       >
@@ -87,12 +89,24 @@
           <span v-else>{{ row.quality_level }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="入库时间" align="center" prop="in_storage_time" />
-      <el-table-column v-if="!['原材料出库计划'].includes($route.meta.title)" label="机台号" width="50" align="center" prop="equip_no" />
-      <el-table-column v-if="!['原材料出库计划','终炼胶出库计划'].includes($route.meta.title)" label="车号" align="center" prop="memo" />
-      <el-table-column v-if="['终炼胶出库计划'].includes($route.meta.title)" label="车次" align="center" prop="memo" />
-      <el-table-column label="货位状态" align="center" prop="location_status" />
-      <el-table-column label="出库口选择" align="center">
+      <el-table-column :key="9" label="入库时间" align="center" prop="in_storage_time" />
+      <el-table-column v-if="!['原材料出库计划'].includes($route.meta.title)" :key="10" label="机台号" width="50" align="center" prop="equip_no" />
+      <el-table-column v-if="!['原材料出库计划','终炼胶出库计划'].includes($route.meta.title)" :key="11" label="车号" align="center" prop="memo" />
+      <el-table-column
+        v-if="['终炼胶出库计划'].includes($route.meta.title)"
+        :key="12"
+        label="车次"
+        align="center"
+        prop="memo"
+        :formatter="(row)=>{
+          if(!row.memo){
+            return
+          }
+          return row.memo.replace(',','-')
+        }"
+      />
+      <el-table-column :key="13" label="货位状态" align="center" prop="location_status" />
+      <el-table-column :key="14" label="出库口选择" align="center">
         <template slot-scope="scope">
           <stationInfoWarehouse
             :warehouse-name="warehouseName"
@@ -107,13 +121,13 @@
           />
         </template>
       </el-table-column>
-      <el-table-column v-if="$route.meta.title==='终炼胶出库计划'" label="关联发货计划" align="center" width="120">
+      <el-table-column v-if="$route.meta.title==='终炼胶出库计划'" :key="15" label="关联发货计划" align="center" width="120">
         <template slot-scope="scope">
           {{ scope.row.deliveryPlan }}
           <el-button size="mini" type="primary" @click="deliverClick(scope.row,scope.$index)">添加发货计划</el-button>
         </template>
       </el-table-column>
-      <el-table-column v-if="$route.meta.title==='混炼胶出库计划'" label="机台号" align="center" min-width="100">
+      <el-table-column v-if="$route.meta.title==='混炼胶出库计划'" :key="16" label="机台号" align="center" min-width="100">
         <template slot-scope="scope">
           <EquipSelect equip-type="密炼设备" :is-multiple="true" @equipSelected="equipSelected($event,scope.$index)" />
         </template>

@@ -67,3 +67,29 @@ export function getTestIndicators(params) {
     params
   })
 }
+
+export function dataPointStandardErrors(method, id, data = {}) {
+  const obj = {
+    url: id ? API.DataPointStandardErrors + id + '/' : API.DataPointStandardErrors,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function dataPointLabelHistory(method, id, data = {}) {
+  const obj = {
+    url: id ? API.DataPointLabelHistory + id + '/' : API.DataPointLabelHistory,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function ignoredProductInfo(method, id, data = {}) {
+  const obj = {
+    url: id ? API.IgnoredProductInfo + id + '/' : API.IgnoredProductInfo,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

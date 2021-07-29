@@ -92,6 +92,7 @@ import materialTypeSelect from '@/components/select_w/sparePartsMTypeSelect'
 import { checkPermission } from '@/utils'
 
 export default {
+  name: 'SparePartInventoryManage',
   components: { page, materialCodeSelect, locationManage, materialTypeSelect },
   data() {
     return {

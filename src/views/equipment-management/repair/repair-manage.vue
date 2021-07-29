@@ -314,6 +314,7 @@ import page from '@/components/page'
 import { mapGetters } from 'vuex'
 import { checkPermission } from '@/utils'
 export default {
+  name: 'RepairManage',
   components: { shutdownReasonSelect, page, userMangeSelect, EquipSelect, shutdownMoldSelect, locationDefinitionDelect },
   data() {
     const validator = (rule, value, callback, _value, str) => {

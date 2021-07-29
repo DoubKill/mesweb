@@ -1,5 +1,5 @@
 <template>
-  <!-- 配料设备编码 -->
+  <!-- 配料设备 -->
   <el-select
     :value="id"
     :clearable="!createdIs"
@@ -80,7 +80,11 @@ export default {
         this.equipOptions = response.results
 
         if (this.createdIs && this.equipOptions.length > 0 && this.isDefault) {
-          this.changeFun(this.equipOptions[0].id)
+          if (this.multipleIs) {
+            this.changeFun([this.equipOptions[0].id])
+          } else {
+            this.changeFun(this.equipOptions[0].id)
+          }
         }
       })
     },

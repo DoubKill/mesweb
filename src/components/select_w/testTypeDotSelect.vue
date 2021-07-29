@@ -23,6 +23,10 @@
 import { dataPoints } from '@/api/base_w'
 export default {
   props: {
+    defaultVal: {
+      type: [Array, String, Number],
+      default: null
+    },
     multipleIs: {
       type: Boolean,
       default: false
@@ -35,11 +39,15 @@ export default {
     createdIs: {
       type: Boolean,
       default: false
+    },
+    isVisibleChange: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
-      value: this.multipleIs ? [] : '',
+      value: this.defaultVal,
       loading: false,
       options: []
     }
@@ -50,6 +58,15 @@ export default {
       if (val) {
         this.getList()
       }
+    },
+    show(val) {
+      this.options = []
+      if (val) {
+        this.getList()
+      }
+    },
+    defaultVal(val) {
+      this.value = val
     }
   },
   created() {
@@ -69,9 +86,9 @@ export default {
       }
     },
     visibleChange(val) {
-    //   if (val && this.options.length === 0) {
-    //     this.getList()
-    //   }
+      if (val && this.isVisibleChange) {
+        this.getList()
+      }
     },
     changSelect(val) {
       this.$emit('changSelect', val)

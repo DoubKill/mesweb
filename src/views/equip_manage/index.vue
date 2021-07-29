@@ -112,6 +112,7 @@
               v-if="permissionObj.equip && permissionObj.equip.indexOf('delete')>-1"
               size="mini"
               type="danger"
+              plain
               @click="handleEquipDelete(scope.row)"
             >{{ scope.row.use_flag ? '停用' : '启用' }}
             </el-button>
@@ -301,6 +302,7 @@ import { equip_manage_url, equip_level_url, equip_category_url } from '@/api/equ
 import { mapGetters } from 'vuex'
 
 export default {
+  name: 'EquipManage',
   components: { page },
   data: function() {
     return {

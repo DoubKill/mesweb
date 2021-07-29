@@ -1,14 +1,13 @@
 <template>
   <section class="app-main">
-    <transition
-      name="fade-transform"
-      mode="out-in"
-    >
+    <transition name="fade-transform" mode="out-in">
       <div v-if="key === '/homePage'">
         <router-view :key="key" />
       </div>
       <el-card v-else class="box-card">
-        <router-view :key="key" />
+        <keep-alive :include="cachedViews">
+          <router-view :key="key" />
+        </keep-alive>
       </el-card>
     </transition>
   </section>
@@ -18,6 +17,9 @@
 export default {
   name: 'AppMain',
   computed: {
+    cachedViews() {
+      return this.$store.state.tagsView.cachedViews
+    },
     key() {
       return this.$route.path
     }
@@ -31,13 +33,13 @@ export default {
 }
 .app-main {
   /*50 = navbar  */
-  min-height: calc(100vh - 50px);
+  /* min-height: calc(100vh - 200px); */
   width: 100%;
   position: relative;
   overflow: hidden;
 }
 .fixed-header+.app-main {
-  padding-top: 50px;
+  /* padding-top: 200px; */
 }
 </style>
 
@@ -47,5 +49,12 @@ export default {
   .fixed-header {
     padding-right: 15px;
   }
+}
+.el-card{
+    border-top: none !important;
+}
+.box-card{
+    margin: 14px !important;
+    margin-top: 2px !important;
 }
 </style>

@@ -122,6 +122,7 @@ import { materialDemandeds, globalCodes } from '@/api/material-requisitions-plan
 import page from '@/components/page'
 import { setDate } from '@/utils'
 export default {
+  name: 'MaterialRequisitionsPlan',
   components: { page },
   data: function() {
     return {

@@ -45,6 +45,7 @@
               v-permission="['delivery_address', 'delete']"
               size="mini"
               type="danger"
+              plain
               @click="handleData(scope.row)"
             >{{ scope.row.use_flag ? '停用' : '启用' }}
             </el-button>
@@ -127,6 +128,7 @@
 import { getDispatchLocation, postDispatchLocation, putDispatchLocation, deleteDispatchLocation } from '@/api/receive'
 import page from '@/components/page'
 export default {
+  name: 'ReceiveGoodManageAddress',
   components: { page },
   data() {
     return {

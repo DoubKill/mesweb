@@ -88,6 +88,7 @@
               v-permission="['weight_tank','delete']"
               size="mini"
               type="danger"
+              plain
               @click="handleDelete(scope.row)"
             >{{ scope.row.use_flag?'停用':'启用' }}
             </el-button>
@@ -154,6 +155,7 @@ import selectBatchingEquip from '../components/select-batching-equip'
 import materialCodeSelect from '@/components/materialCodeSelect'
 import { weightingTackStatus } from '@/api/base_w_two'
 export default {
+  name: 'MaterialTank',
   components: { selectBatchingEquip, materialCodeSelect },
   data() {
     return {
@@ -232,7 +234,6 @@ export default {
     showEditDialog(row) {
       this.dialogVisible = true
       this.currentObj = JSON.parse(JSON.stringify(row))
-      console.log(this.getParams.equip_id, 2222)
       this.currentObj.equip_id = this.getParams.equip_id
     },
     handleDelete: function(row) {

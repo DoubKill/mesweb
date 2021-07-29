@@ -6,6 +6,7 @@
     filterable
     :loading="loading"
     :allow-create="isCreated"
+    :disabled="isDisabled"
     @change="productBatchingChanged"
     @visible-change="visibleChange"
   >
@@ -39,34 +40,70 @@ export default {
       type: Boolean,
       default: false
     },
+    isCreatedList: { // 一进来就加载数据
+      type: Boolean,
+      default: false
+    },
     labelName: {
       type: String,
       default: 'material_no'
+    },
+    paramsObj: {
+      type: Object,
+      default() {
+        return {}
+      }
+    },
+    defaultVal: {
+      type: [String, Number],
+      default: null
+    },
+    isDisabled: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
       productBatchings: [],
-      productBatchingId: '',
+      productBatchingId: this.defaultVal,
       productBatchingById: {},
       loading: true
     }
   },
+  watch: {
+    defaultVal(val) {
+      this.productBatchingId = val
+    },
+    paramsObj: {
+      handler(newValue, oldValue) {
+      }
+    }
+  },
   created() {
+    if (this.isCreatedList) {
+      this.getProductBatchings()
+    }
   },
   methods: {
     productBatchingChanged() {
       this.$emit('productBatchingChanged', this.productBatchingById[this.productBatchingId])
     },
     visibleChange(bool) {
-      if (bool && this.productBatchings.length === 0) {
+      if (bool && !this.isCreatedList) {
         this.getProductBatchings()
       }
     },
     getProductBatchings() {
       this.loading = true
       // eslint-disable-next-line object-curly-spacing
-      batchingMaterials('get', null, { params: { all: 1, type: this.typeParms } }).then(response => {
+      const obj = Object.assign({ all: 1, type: this.typeParms }, this.paramsObj)
+      if (JSON.stringify(this.paramsObj) === '{}') {
+        obj.all = 1
+      } else {
+        delete obj.all
+      }
+      batchingMaterials('get', null, { params: obj }).then(response => {
         let productBatchings = response
         productBatchings.forEach(productBatching => {
           this.productBatchingById[productBatching.id] = productBatching

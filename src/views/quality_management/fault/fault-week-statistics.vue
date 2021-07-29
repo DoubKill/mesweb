@@ -102,6 +102,7 @@
 import { setDate, getWeekDay } from '@/utils'
 import { weekErrorStatistics } from '@/api/base_w_three'
 export default {
+  name: 'FaultWeekStatistics',
   data() {
     this.extend = {
       legend: {

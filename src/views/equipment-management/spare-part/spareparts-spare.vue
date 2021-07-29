@@ -261,6 +261,7 @@ import page from '@/components/page'
 import { getSpareType } from '@/api/spare-type'
 
 export default {
+  name: 'SparepartsSpare',
   components: { page },
   data: function() {
     return {

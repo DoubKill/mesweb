@@ -373,9 +373,27 @@ export function putPlanManagement(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function mixinRubberyOutboundOrder(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MixinRubberyOutboundOrder + id + '/' : API.MixinRubberyOutboundOrder,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function finalPlanManagement(method, id, data = {}) {
   const obj = {
     url: id ? API.FinalPlanManagement + id + '/' : API.FinalPlanManagement,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function finalRubberyOutboundOrder(method, id, data = {}) {
+  const obj = {
+    url: id ? API.FinalRubberyOutboundOrder + id + '/' : API.FinalRubberyOutboundOrder,
     method: method
   }
   Object.assign(obj, data)
@@ -434,6 +452,22 @@ export function lbPlanManagement(method, id, data = {}) {
 export function labelPrint(method, id, data = {}) {
   const obj = {
     url: id ? API.LabelPrint + id + '/' : API.LabelPrint,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function showQualifiedRange(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ShowQualifiedRange + id + '/' : API.ShowQualifiedRange,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function trainsFix(method, id, data = {}) {
+  const obj = {
+    url: id ? API.TrainsFix + id + '/' : API.TrainsFix,
     method: method
   }
   Object.assign(obj, data)
@@ -523,6 +557,14 @@ export function importMaterialTestOrders(params) {
     method: 'get',
     params,
     responseType: 'blob'
+  })
+}
+
+export function dealMathodHistory(params) {
+  return request({
+    url: API.DealMathodHistory,
+    method: 'get',
+    params
   })
 }
 

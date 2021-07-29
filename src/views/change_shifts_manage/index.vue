@@ -76,6 +76,7 @@
               v-if="permissionObj.workschedule.indexOf('delete')>-1"
               size="mini"
               type="danger"
+              plain
               @click="handleDeleteChangeShiftsManage(scope.row)"
             >{{ scope.row.use_flag ? '停用' : '启用' }}
             </el-button>
@@ -280,6 +281,7 @@ import processSelect from '@/components/ProcessSelect'
 import commonVal from '@/utils/common'
 import { mapGetters } from 'vuex'
 export default {
+  name: 'EquipBaseInfoManage',
   components: { pagination, processSelect },
   data() {
     return {

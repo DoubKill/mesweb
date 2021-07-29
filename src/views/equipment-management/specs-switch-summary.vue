@@ -126,6 +126,7 @@ import { cutTimeCollect } from '@/api/base_w'
 // import timeSpanSelect from '@/components/select_w/timeSpan'
 import { setDate } from '@/utils/index'
 export default {
+  name: 'SpecsSwitchSummary',
   components: { page, equipSelect },
   data() {
     return {

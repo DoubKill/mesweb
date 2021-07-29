@@ -231,6 +231,7 @@ import EquipSelect from '@/components/EquipSelect'
 import { checkPermission } from '@/utils'
 
 export default {
+  name: 'SparePartWarehouseOut',
   components: { materialTypeSelect, EquipSelect, allRecord, page, inventoryPosition, materialCodeSelect },
   data() {
     return {

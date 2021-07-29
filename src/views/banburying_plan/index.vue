@@ -176,6 +176,7 @@ import { setDate } from '@/utils'
 import { banbury_plan_url, getEquip } from '@/api/display_static_fun'
 
 export default {
+  name: 'BanburyingPlanManage',
   // components: { page },
   data: function() {
     return {

@@ -1,5 +1,6 @@
 <template>
   <div v-loading="loading">
+    <!-- 胶料快检判定基准录入 -->
     <el-form :inline="true">
       <el-form-item label="胶料编码:">
         <all-product-no-select @productBatchingChanged="productBatchingChanged" />
@@ -40,10 +41,33 @@
         label="试验方法"
       />
       <el-table-column
+        prop="test_method_name"
+        label="是否判级项目"
+      >
+        <template slot-scope="{row,$index}">
+          <el-switch
+            v-model="row.is_judged"
+            active-color="#13ce66"
+            @change="judgedFun($event,row,$index)"
+          />
+        </template>
+      </el-table-column>
+      <el-table-column
         label="操作"
+        width="200px"
       >
         <template slot-scope="scope">
-          <el-button v-permission="['evaluating','change']" size="small" @click="editClick(scope.row)">编辑</el-button>
+          <el-button
+            v-permission="['evaluating','change']"
+            size="small"
+            type="primary"
+            @click="editClick(scope.row)"
+          >判定基准</el-button>
+          <el-button
+            v-permission="['evaluating','change']"
+            size="small"
+            @click="pointClick(scope.row)"
+          >编辑</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -54,7 +78,7 @@
     />
 
     <el-dialog
-      title="新增"
+      :title="addForm.id?'编辑':'新增'"
       :visible.sync="dialogVisible"
       width="50%"
       :before-close="handleClose"
@@ -66,7 +90,9 @@
         label-width="120px"
       >
         <el-form-item label="胶料编码:" prop="material">
+          <div v-if="addForm.id">{{ addForm.material_no }}</div>
           <el-select
+            v-else
             v-model="addForm.material"
             placeholder="请选择胶料编码"
             filterable
@@ -80,10 +106,13 @@
           </el-select>
         </el-form-item>
         <el-form-item label="试验类型:" prop="b">
-          <test-type-select ref="testTypeSelect" @changeSelect="typeSelect" />
+          <div v-if="addForm.id">{{ addForm.test_type_name }}</div>
+          <test-type-select v-else ref="testTypeSelect" @changeSelect="typeSelect" />
         </el-form-item>
         <el-form-item label="试验方法:" prop="test_method">
+          <div v-if="addForm.id">{{ addForm.test_method_name }}</div>
           <test-method-select
+            v-else
             ref="testMethodSelect"
             :is-type-filter="true"
             :is-required="true"
@@ -96,7 +125,16 @@
             ref="testTypeDotSelect"
             :multiple-is="true"
             :test-type-id="addForm.b"
+            :created-is="true"
+            :default-val="addForm.data_point"
+            :show="dialogVisible"
             @changSelect="changSelectDot"
+          />
+        </el-form-item>
+        <el-form-item label="是否判级项目">
+          <el-switch
+            v-model="addForm.is_judged"
+            active-color="#13ce66"
           />
         </el-form-item>
       </el-form>
@@ -125,10 +163,11 @@ import page from '@/components/page'
 import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import editDialog from './benchmark_edit_dialog/benchmark_edit_dialog'
 export default {
+  name: 'BenchmarkEdit',
   components: { editDialog, page, testTypeDotSelect, allProductNoSelect, testTypeSelect, testMethodSelect, detectionIndex },
   data() {
     var validatePass = (rule, value, callback, _val, error) => {
-      if (!_val) {
+      if (!_val || _val.length === 0) {
         callback(new Error(error))
       } else {
         callback()
@@ -146,7 +185,8 @@ export default {
         material: null,
         b: null,
         test_method: null,
-        data_point: null
+        data_point: null,
+        is_judged: true
       },
       optionsRubber: [],
       editShow: false,
@@ -242,10 +282,19 @@ export default {
       if (this.$refs.addForm) {
         this.$refs.addForm.resetFields()
       }
-      this.addForm = {}
-      this.$refs.testTypeSelect.value = ''
-      this.$refs.testMethodSelect.testMode = ''
-      this.$refs.testTypeDotSelect.value = []
+      this.addForm = {
+        is_judged: true
+      }
+
+      if (this.$refs.testTypeSelect) {
+        this.$refs.testTypeSelect.value = ''
+      }
+      if (this.$refs.testMethodSelect) {
+        this.$refs.testMethodSelect.testMode = ''
+      }
+      if (this.$refs.testTypeDotSelect) {
+        this.$refs.testTypeDotSelect.value = []
+      }
     },
     productBatchingChanged(val) {
       this.search.material_no = val ? val.material_no : ''
@@ -274,8 +323,9 @@ export default {
         if (valid) {
           try {
             this.loadingBtn = true
-            await matTestMethods('post', null, { data: this.addForm })
-            this.$message.success('新建成功')
+            const _api = this.addForm.id ? 'put' : 'post'
+            await matTestMethods(_api, this.addForm.id || '', { data: this.addForm })
+            this.$message.success('操作成功')
             this.getList()
             this.loadingBtn = false
             this.clearForm()
@@ -293,6 +343,19 @@ export default {
     editClick(val) {
       this.editShow = true
       this.objEdit = val
+    },
+    pointClick(row) {
+      this.dialogVisible = true
+      this.addForm = JSON.parse(JSON.stringify(row))
+      this.addForm.b = this.addForm.test_type
+    },
+    async judgedFun(bool, row, index) {
+      try {
+        await matTestMethods('patch', row.id, { data: { is_judged: bool }})
+        this.$message.success('修改成功')
+      } catch (e) {
+        this.tableData[index].is_judged = !this.tableData[index].is_judged
+      }
     }
   }
 }

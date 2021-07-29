@@ -4,6 +4,7 @@
     :value="id"
     clearable
     placeholder="请选择"
+    :disabled="isDisabled"
     @change="$emit('change', $event)"
     @visible-change="visibleChange"
   >
@@ -18,6 +19,7 @@
 
 <script>
 import { materialTypes } from '@/api/warehouse'
+import { globalCodesUrl } from '@/api/base_w'
 export default {
   model: {
     prop: 'id',
@@ -28,6 +30,18 @@ export default {
       type: [Number, String],
       required: false,
       default: undefined
+    },
+    isDisabled: {
+      type: Boolean,
+      default: false
+    },
+    isCreated: {
+      type: Boolean,
+      default: false
+    },
+    isMaterial: { // 只显示原材料 去掉胶料段次
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -37,19 +51,28 @@ export default {
     }
   },
   created() {
-    this.getMaterialTypes()
+    if (this.isCreated) {
+      this.getMaterialTypes()
+    }
   },
   methods: {
     async getMaterialTypes() {
       try {
         const response = await materialTypes()
-        this.materialTypeOptions = response.results
+        const materialTypeOptions = response.results
+        let resArr = materialTypeOptions
+        let materialSegment
+        if (this.isMaterial) {
+          const response1 = await globalCodesUrl('get', { params: { class_name: '胶料段次' }})
+          materialSegment = response1.results
+
+          const set = materialSegment.map(item => item.global_name)
+          resArr = materialTypeOptions.filter(item => !set.includes(item.global_name))
+        }
+        this.materialTypeOptions = resArr
       } catch (e) {
         //
       }
-    //   stationTypes().then(response => {
-    //     this.stationTypeOptions = response.results
-    //   })
     },
     visibleChange(visible) {
       if (visible) {

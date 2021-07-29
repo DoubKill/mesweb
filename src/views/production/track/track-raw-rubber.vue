@@ -180,8 +180,8 @@
               <td>{{ itemVal.weigh_cnt_type__product_batching__equip__equip_no ||'--' }}</td>
               <td>{{ setDate(itemVal.created_date) }}</td>
               <td>{{ setDate(itemVal.last_updated_date) }}</td>
-              <td>--</td>
-              <td>--</td>
+              <td>{{ itemVal.start_time?setDate(itemVal.start_time):'--' }}</td>
+              <td>{{ itemVal.end_time?setDate(itemVal.end_time):'--' }}</td>
             </tr>
             <tr v-if="activity.label === 'material_out'">
               <!-- <td>{{}}</td> -->
@@ -268,9 +268,10 @@ import { ProductTrace, barcodePreview } from '@/api/base_w_three'
 import { debounce, setDate } from '@/utils'
 // import { trainsFeedbacksApiview } from '@/api/base_w'
 import { mapGetters } from 'vuex'
-import testCard from '../components/productInCard'
+import testCard from '@/components/TestCard'
 import trainNumberReport from '../train-number-report'
 export default {
+  name: 'TrackRawRubber',
   components: { testCard, trainNumberReport },
   data() {
     return {

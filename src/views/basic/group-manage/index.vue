@@ -90,6 +90,7 @@
               v-permission="['groupextension','delete']"
               size="mini"
               type="danger"
+              plain
               @click="handleGroupDelete(scope.row)"
             >{{ scope.row.use_flag?'停用':'启用' }}
             </el-button>
@@ -163,6 +164,7 @@ import transferLimit from '@/components/select_w/transferLimit'
 import { checkPermission } from '@/utils/index'
 
 export default {
+  name: 'GroupManage',
   components: { page, transferLimit },
   data() {
     return {

@@ -9,7 +9,7 @@
       @click="handleClickOutside"
     />
     <sidebar class="sidebar-container" />
-    <div :class="{hasTagsView:needTagsView}" class="main-container">
+    <div :class="{hasTagsView:needTagsView,'main-container':true}">
       <div :class="{'fixed-header':fixedHeader}">
         <TopNavber />
         <navbar />
@@ -70,12 +70,13 @@ export default {
 
   .hasTagsView {
     .app-main {
-      /* 84 = navbar + tags-view = 50 + 34 */
-      min-height: calc(100vh - 84px);
+      /* 84 = navbar + tags-view = 40 + 44 + 228  */
+      // min-height: calc(100vh - 1000px);
+      min-height: calc(100vh - 320px);
     }
 
     .fixed-header+.app-main {
-      padding-top: 84px;
+      padding-top: 320px;
     }
   }
   .app-wrapper {

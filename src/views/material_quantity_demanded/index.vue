@@ -72,6 +72,7 @@ import page from '@/components/page'
 import { material_quantity_url, class_arrange_url } from '@/api/display_static_fun'
 
 export default {
+  name: 'MaterialQuantityDemanded',
   components: { page },
   data: function() {
     return {

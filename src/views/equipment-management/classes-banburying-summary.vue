@@ -168,6 +168,7 @@ import { classesBanburySummary } from '@/api/base_w'
 import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import myMixin from './aminxPublic'
 export default {
+  name: 'ClassesBanburyingSummary',
   components: { allProductNoSelect, equipSelect, timeSpanSelect },
   mixins: [myMixin],
   data() {

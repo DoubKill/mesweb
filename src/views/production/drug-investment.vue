@@ -95,6 +95,7 @@ import Page from '@/components/page'
 import { setDate } from '@/utils'
 import { weightBatchingLogList } from '@/api/base_w_two'
 export default {
+  name: 'DrugInvestment',
   components: { Page, MaterialCodeSelect, inputDevices },
   data() {
     return {

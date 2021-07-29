@@ -67,7 +67,7 @@
         label-width="100px"
       >
         <el-form-item label="等级" prop="level">
-          <el-input v-model="ruleForm.level" />
+          <el-input-number v-model="ruleForm.level" controls-position="right" :min="1" :step="1" step-strictly />
         </el-form-item>
         <el-form-item label="检测结果" prop="deal_result">
           <el-input v-model="ruleForm.deal_result" />
@@ -85,6 +85,7 @@
 import { levelResult } from '@/api/base_w'
 import page from '@/components/page'
 export default {
+  name: 'GradeManage',
   components: { page },
   data() {
     return {
@@ -95,7 +96,7 @@ export default {
       page: 1,
       total: 0,
       ruleForm: {
-        level: '',
+        level: undefined,
         deal_result: ''
       },
       rules: {

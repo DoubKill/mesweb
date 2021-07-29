@@ -126,6 +126,7 @@
               v-if="permissionObj.user.indexOf('delete')>-1"
               size="mini"
               type="danger"
+              plain
               @click="handleUserDelete(scope.row)"
             >
               {{ scope.row.is_active?'停用':'启用' }}
@@ -298,6 +299,7 @@ import { mapGetters } from 'vuex'
 // import transferLimit from '@/components/select_w/transferLimit'
 import transferRoles from '@/components/select_w/transferRoles'
 export default {
+  name: 'UserManage',
   components: { page, transferRoles },
   data() {
     var validatePass = (rule, value, callback) => {
@@ -546,10 +548,10 @@ export default {
             delete app.userForm.num
           }
           // app.userForm.group_extensions = app.userForm.groups
-          if (app.userForm.group_extensions.length === 0) {
-            app.$message.info('请选择角色')
-            return
-          }
+          // if (app.userForm.group_extensions.length === 0) {
+          //   app.$message.info('请选择角色')
+          //   return
+          // }
           this.btnloading = true
           personnelsUrl(type, paramsId, { data: app.userForm })
             .then((response) => {

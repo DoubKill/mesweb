@@ -71,7 +71,7 @@
         min-width="20"
       />
       <el-table-column
-        prop="c"
+        prop="product_time"
         label="生产时间"
         min-width="20"
       />
@@ -199,6 +199,7 @@ import classSelect from '@/components/ClassSelect'
 import { runtimeRecord } from '@/api/base_w_three'
 import { setDate, exportExcel } from '@/utils/index'
 export default {
+  name: 'ProduceWork',
   components: { classSelect },
   data() {
     return {

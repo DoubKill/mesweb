@@ -105,6 +105,7 @@ import materialTypeSelect from '@/components/select_w/sparePartsMTypeSelect'
 import { getSpareInventoryImportExport, postSpareInventoryImportExport } from '@/api/inventory-manage'
 
 export default {
+  name: 'InventoryUpload',
   components: { page, inventoryPosition, materialCodeSelect, materialTypeSelect },
   props: {
     isDialog: {

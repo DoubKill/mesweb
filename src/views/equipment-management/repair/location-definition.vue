@@ -141,6 +141,7 @@ import EquipSelect from '@/components/EquipSelect'
 import page from '@/components/page'
 import { equipPart } from '@/api/base_w_two'
 export default {
+  name: 'LocationDefinition',
   components: { page, equipTypeSelect, EquipSelect, locationSiteSelect },
   data() {
     const validator = (rule, value, callback, _value, str) => {

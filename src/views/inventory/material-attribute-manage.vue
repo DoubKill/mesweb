@@ -79,6 +79,7 @@
               v-permission="['material_attr', 'delete']"
               size="mini"
               type="danger"
+              plain
               @click="handleData(scope.row)"
             >{{ scope.row.use_flag ? '停用' : '启用' }}
             </el-button>
@@ -199,6 +200,7 @@ import materielTypeSelect from '@/components/select_w/materielTypeSelect'
 import page from '@/components/page'
 import { mapGetters } from 'vuex'
 export default {
+  name: 'MaterialAttributeManage',
   components: { page, materielTypeSelect },
   data() {
     return {

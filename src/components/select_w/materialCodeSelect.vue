@@ -23,6 +23,7 @@
 
 <script>
 import { materialCount } from '@/api/base_w'
+import { bzMixinInventorySummary, bzFinalInventorySummary } from '@/api/base_w_four'
 export default {
   props: {
     //  created里面加载
@@ -46,6 +47,10 @@ export default {
       type: String,
       default: null
     },
+    station: {
+      type: String,
+      default: null
+    },
     labelShow: { // label取值
       type: String,
       default: 'material_no'
@@ -53,6 +58,14 @@ export default {
     status: {
       type: String,
       default: null
+    },
+    isNormal: { // 是正常出库
+      type: Boolean,
+      default: false
+    },
+    exWarehouse: { // 是出库
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -69,12 +82,19 @@ export default {
     status(val) {
       if (val) {
         this.value = ''
+        this.options = []
         this.getList()
       }
     },
     storeName(val) {
       this.value = ''
       this.options = []
+    },
+    station(val) {
+      if (this.storeName === '混炼胶库') {
+        this.value = ''
+        this.options = []
+      }
     }
   },
   created() {
@@ -85,8 +105,29 @@ export default {
   methods: {
     async getList() {
       try {
+        if (this.$route.fullPath === '/compound-rubber-manage' && this.storeName === '混炼胶库' && !this.station) {
+          this.$message.info('请选择出库口')
+          return
+        }
         this.loading = true
-        const data = await materialCount('get', null, { params: { store_name: this.storeName, status: this.status }})
+        let _api = this.storeName === '混炼胶库' ? bzMixinInventorySummary : bzFinalInventorySummary
+        if (!['混炼胶库', '终炼胶库'].includes(this.storeName)) {
+          _api = materialCount
+        }
+        const obj = {
+          store_name: this.storeName,
+          status: this.status,
+          station: this.station,
+          location_status: '有货货位',
+          lot_existed: 1
+        }
+        if (!this.exWarehouse) {
+          delete obj.location_status
+        }
+        if (!this.isNormal) {
+          delete obj.lot_existed
+        }
+        const data = await _api('get', null, { params: obj })
         if (this.labelShow === 'material_name') {
           data.forEach(d => {
             d.label = d.material_name + ' / ' + d.material_no
@@ -104,7 +145,7 @@ export default {
       }
     },
     visibleChange(val) {
-      if (val && this.options.length === 0 && !this.createdIs) {
+      if (val && !this.createdIs) {
         this.getList()
       }
     },

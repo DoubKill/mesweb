@@ -259,24 +259,24 @@ export function errorRepeat(_this, e) {
 }
 
 /**
- * 去除输入框抖动
+ * 去除输入框抖动  防抖
  * _this    this
  * val      要加载的列表名
  */
 var timer
-var count = 0
-export function debounce(_this, val) {
+// var count = 0
+export function debounce(_this, val, _time = 2000) {
   clearTimeout(timer)
-  if (!count) {
+  // if (!count) {
+  //   _this[val]()
+  //   count++
+  // } else {
+  timer = setTimeout(() => {
+    // 执行要加载的接口函数
     _this[val]()
-    count++
-  } else {
-    timer = setTimeout(() => {
-      // 执行要加载的接口函数
-      _this[val]()
-      count = 0
-    }, 800)
-  }
+    // count = 0
+  }, _time)
+  // }
 }
 
 /**

@@ -1,5 +1,6 @@
 <template>
   <div class="app-container month_pass_detail">
+    <!-- 月快检合格率统计 -->
     <el-form :inline="true">
       <el-form-item label="开始时间">
         <el-date-picker
@@ -19,23 +20,29 @@
           @change="dateChange"
         />
       </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="chartDialog">图表</el-button>
+      </el-form-item>
+
     </el-form>
     <div class="table_data">
       <el-table
+        v-loading="tableLoading"
         :data="tableData"
         border
         size="mini"
         :cell-style="cellStyle"
+        :header-row-style="headerRowStyle"
         style="width: 100%"
       >
-        <el-table-column fixed type="index" width="14" label="No" align="center" />
+        <!-- <el-table-column fixed width="30" label="No" align="center" type="selection" /> -->
         <el-table-column fixed label="月份" width="54" prop="date" align="center">
           <template slot-scope="scope">
             <el-link type="primary" :underline="false" @click="monthPassClick(scope.row.date)">{{ dateFormat(scope.row.date) }}</el-link>
           </template>
         </el-table-column>
         <el-table-column fixed label="产量(车)" min-width="32" prop="train_count" align="center" />
-        <el-table-column fixed label="一次合格率%" min-width="46" prop="yc_percent_of_pass" align="center" />
+        <el-table-column fixed label="一次合格率%" min-width="54" prop="yc_percent_of_pass" align="center" />
         <el-table-column fixed label="流变合格率%" min-width="46" prop="lb_percent_of_pass" align="center" />
         <el-table-column fixed label="综合合格率%" min-width="46" prop="zh_percent_of_pass" align="center" />
         <el-table-column v-for="(value,index) in headers.points" :key="index" :label="value" align="center">
@@ -81,140 +88,152 @@
       </el-table>
     </div>
     <el-dialog
-      :close-on-click-modal="false"
       :close-on-press-escape="false"
-      width="90%"
+      width="98%"
       title="合格率统计"
       :visible.sync="dialogShow"
     >
-      <el-row>
-        <el-col :span="8">
-          <span>总合格率</span>
-          <el-table
-            :data="dayTableData"
-            size="small"
-            border
-            :cell-style="cellStyle"
-            class="header body"
-            style="width: 100%"
-          >
-            <!-- <el-table-column label="总合格率"> -->
-            <el-table-column width="24" type="index" label="No" align="center" />
-            <el-table-column width="75" label="日期" prop="date" align="center" />
-            <el-table-column label="一次合格率%" min-width="54" prop="yc_percent_of_pass" align="center" />
-            <el-table-column label="流变合格率%" min-width="54" prop="lb_percent_of_pass" align="center" />
-            <el-table-column label="综合合格率%" min-width="54" prop="zh_percent_of_pass" align="center" />
+      <div v-loading="dialogTableLoading">
+        <el-row>
+          <el-button :disabled="dialogTableLoading" type="primary" class="tubiao" @click="chartTojiDialog">图表</el-button>
+          <el-col :span="8">
+            <span>总合格率</span>
+            <el-table
+              :data="dayTableData"
+              size="small"
+              border
+              :cell-style="cellStyle"
+              class="header body"
+              style="width: 100%"
+            >
+              <!-- <el-table-column label="总合格率"> -->
+              <el-table-column type="index" label="No" align="center" />
+              <el-table-column label="日期" prop="date" align="center" />
+              <el-table-column label="一次合格率%" prop="yc_percent_of_pass" align="center" />
+              <el-table-column label="流变合格率%" prop="lb_percent_of_pass" align="center" />
+              <el-table-column label="综合合格率%" prop="zh_percent_of_pass" align="center" />
             <!-- </el-table-column> -->
-          </el-table>
-        </el-col>
-        <el-col :span="8">
-          <span>机台别合格率</span>
-          <el-table
-            :data="dayTableData"
-            border
-            size="small"
-            class="header2 body"
-            style="width: 100%"
-          >
-            <!-- <el-table-column label="机台别合格率"> -->
-            <!-- <el-table-column fixed width="50" type="index" label="No" />
+            </el-table>
+          </el-col>
+          <el-col :span="8">
+            <span>机台别合格率</span>
+            <el-table
+              :data="dayTableData"
+              border
+              size="small"
+              class="header2 body"
+              style="width: 100%"
+            >
+              <!-- <el-table-column label="机台别合格率"> -->
+              <!-- <el-table-column fixed width="50" type="index" label="No" />
             <el-table-column fixed width="90" label="日期" prop="date" /> -->
-            <el-table-column v-for="(value,index) in headers.equips" :key="index" :label="value" align="center">
-              <el-table-column label="一次合格率%" min-width="54" align="center">
-                <template slot-scope="scope">
-                  <span
-                    v-if="(scope.row.equips.filter(d=>d.production_equip_no === value)).length>0"
-                    :style="getStyle((scope.row.equips.filter(d=>d.production_equip_no === value))[0].yc_percent_of_pass)"
-                  >
-                    {{ (scope.row.equips.filter(d=>d.production_equip_no === value))[0].yc_percent_of_pass }}
-                  </span>
-                </template>
+              <el-table-column v-for="(value,index) in headers.equips" :key="index" :label="value" align="center">
+                <el-table-column label="一次合格率%" align="center">
+                  <template slot-scope="scope">
+                    <span
+                      v-if="(scope.row.equips.filter(d=>d.production_equip_no === value)).length>0"
+                      :style="getStyle((scope.row.equips.filter(d=>d.production_equip_no === value))[0].yc_percent_of_pass)"
+                    >
+                      {{ (scope.row.equips.filter(d=>d.production_equip_no === value))[0].yc_percent_of_pass }}
+                    </span>
+                  </template>
+                </el-table-column>
+                <el-table-column label="流变合格率%" align="center">
+                  <template slot-scope="scope">
+                    <span
+                      v-if="(scope.row.equips.filter(d=>d.production_equip_no === value)).length>0"
+                      :style="getStyle((scope.row.equips.filter(d=>d.production_equip_no === value))[0].lb_percent_of_pass)"
+                    >
+                      {{ (scope.row.equips.filter(d=>d.production_equip_no === value))[0].lb_percent_of_pass }}
+                    </span>
+                  </template>
+                </el-table-column>
+                <el-table-column label="综合合格率%" align="center">
+                  <template slot-scope="scope">
+                    <span
+                      v-if="(scope.row.equips.filter(d=>d.production_equip_no === value)).length>0"
+                      :style="getStyle((scope.row.equips.filter(d=>d.production_equip_no === value))[0].zh_percent_of_pass)"
+                    >
+                      {{ (scope.row.equips.filter(d=>d.production_equip_no === value))[0].zh_percent_of_pass }}
+                    </span>
+                  </template>
+                </el-table-column>
               </el-table-column>
-              <el-table-column label="流变合格率%" min-width="54" align="center">
-                <template slot-scope="scope">
-                  <span
-                    v-if="(scope.row.equips.filter(d=>d.production_equip_no === value)).length>0"
-                    :style="getStyle((scope.row.equips.filter(d=>d.production_equip_no === value))[0].lb_percent_of_pass)"
-                  >
-                    {{ (scope.row.equips.filter(d=>d.production_equip_no === value))[0].lb_percent_of_pass }}
-                  </span>
-                </template>
-              </el-table-column>
-              <el-table-column label="综合合格率%" min-width="54" align="center">
-                <template slot-scope="scope">
-                  <span
-                    v-if="(scope.row.equips.filter(d=>d.production_equip_no === value)).length>0"
-                    :style="getStyle((scope.row.equips.filter(d=>d.production_equip_no === value))[0].zh_percent_of_pass)"
-                  >
-                    {{ (scope.row.equips.filter(d=>d.production_equip_no === value))[0].zh_percent_of_pass }}
-                  </span>
-                </template>
-              </el-table-column>
-            </el-table-column>
             <!-- </el-table-column> -->
-          </el-table>
-        </el-col>
-        <el-col :span="8">
-          <span>班组别合格率</span>
-          <el-table
-            :data="dayTableData"
-            border
-            size="small"
-            class="header2 body"
-            style="width: 100%"
-          >
-            <!-- <el-table-column label="班组别合格率"> -->
-            <!-- <el-table-column fixed width="50" type="index" label="No" />
+            </el-table>
+          </el-col>
+          <el-col :span="8">
+            <span>班组别合格率</span>
+            <el-table
+              :data="dayTableData"
+              border
+              size="small"
+              class="header2 body"
+              style="width: 100%"
+            >
+              <!-- <el-table-column label="班组别合格率"> -->
+              <!-- <el-table-column fixed width="50" type="index" label="No" />
             <el-table-column fixed width="90" label="日期" prop="date" /> -->
-            <el-table-column v-for="(value,index) in headers.classes" :key="index" :label="value" align="center">
-              <el-table-column label="一次合格率%" min-width="54" align="center">
-                <template slot-scope="scope">
-                  <span
-                    v-if="(scope.row.classes.filter(d=>d.production_class === value)).length>0"
-                    :style="getStyle((scope.row.classes.filter(d=>d.production_class === value))[0].yc_percent_of_pass)"
-                  >
-                    {{ (scope.row.classes.filter(d=>d.production_class === value))[0].yc_percent_of_pass }}
-                  </span>
+              <el-table-column v-for="(value,index) in headers.classes" :key="index" :label="value" align="center">
+                <el-table-column label="一次合格率%" align="center">
+                  <template slot-scope="scope">
+                    <span
+                      v-if="(scope.row.classes.filter(d=>d.production_class === value)).length>0"
+                      :style="getStyle((scope.row.classes.filter(d=>d.production_class === value))[0].yc_percent_of_pass)"
+                    >
+                      {{ (scope.row.classes.filter(d=>d.production_class === value))[0].yc_percent_of_pass }}
+                    </span>
                   <!-- <span v-if="scope.row.test_detail[value]">{{ scope.row.test_detail[value].up_trains }}</span> -->
-                </template>
-              </el-table-column>
-              <el-table-column label="流变合格率%" min-width="54" align="center">
-                <template slot-scope="scope">
-                  <span
-                    v-if="(scope.row.classes.filter(d=>d.production_class === value)).length>0"
-                    :style="getStyle((scope.row.classes.filter(d=>d.production_class === value))[0].yc_percent_of_pass)"
-                  >
-                    {{ (scope.row.classes.filter(d=>d.production_class === value))[0].lb_percent_of_pass }}
-                  </span>
+                  </template>
+                </el-table-column>
+                <el-table-column label="流变合格率%" align="center">
+                  <template slot-scope="scope">
+                    <span
+                      v-if="(scope.row.classes.filter(d=>d.production_class === value)).length>0"
+                      :style="getStyle((scope.row.classes.filter(d=>d.production_class === value))[0].yc_percent_of_pass)"
+                    >
+                      {{ (scope.row.classes.filter(d=>d.production_class === value))[0].lb_percent_of_pass }}
+                    </span>
                   <!-- <span v-if="scope.row.test_detail[value]">{{ scope.row.test_detail[value].up_trains }}</span> -->
-                </template>
-              </el-table-column>
-              <el-table-column label="综合合格率%" min-width="54" align="center">
-                <template slot-scope="scope">
-                  <span
-                    v-if="(scope.row.classes.filter(d=>d.production_class === value)).length>0"
-                    :style="getStyle((scope.row.classes.filter(d=>d.production_class === value))[0].yc_percent_of_pass)"
-                  >
-                    {{ (scope.row.classes.filter(d=>d.production_class === value))[0].zh_percent_of_pass }}
-                  </span>
+                  </template>
+                </el-table-column>
+                <el-table-column label="综合合格率%" align="center">
+                  <template slot-scope="scope">
+                    <span
+                      v-if="(scope.row.classes.filter(d=>d.production_class === value)).length>0"
+                      :style="getStyle((scope.row.classes.filter(d=>d.production_class === value))[0].yc_percent_of_pass)"
+                    >
+                      {{ (scope.row.classes.filter(d=>d.production_class === value))[0].zh_percent_of_pass }}
+                    </span>
                   <!-- <span v-if="scope.row.test_detail[value]">{{ scope.row.test_detail[value].up_trains }}</span> -->
-                </template>
+                  </template>
+                </el-table-column>
               </el-table-column>
-            </el-table-column>
             <!-- </el-table-column> -->
-          </el-table>
-        </el-col>
-      </el-row>
+            </el-table>
+          </el-col>
+        </el-row>
+      </div>
+    </el-dialog>
+    <!-- 图表 -->
+    <div v-if="comprehensiveBarShow">
+      <monthpassdetailChart :chartsdata="chartsdatas" :headers="headers" :comprehensive-bar-show="comprehensiveBarShow" />
+    </div>
+
+    <el-dialog :visible.sync="chartTojiDialogVisible" title="月快检合格率" width="90%">
+      <monthpassdetailChart2 :data-list="dayTableData" :headers="headers" />
     </el-dialog>
   </div>
 </template>
 
 <script>
 import { getBatchMonthStatistics, getBatchDayStatistics, getStatisticHeaders } from '@/api/passStatistics'
+import monthpassdetailChart from '@/components/MonthPassdeTailChart'
+import monthpassdetailChart2 from '@/components/MonthPassdeTailChart2'
 import dayjs from 'dayjs'
-
 export default {
-  components: { },
+  name: 'MonthPassDetail',
+  components: { monthpassdetailChart, monthpassdetailChart2 },
   data() {
     return {
       beginTime: dayjs().startOf('year').format('YYYY-MM'),
@@ -224,7 +243,19 @@ export default {
       getDayParams: { all: 1 },
       dialogShow: false,
       tableData: [],
-      dayTableData: []
+      dayTableData: [],
+      dialogTableLoading: false,
+      chartTojiDialogVisible: false,
+      comprehensiveBarShow: false,
+      tableLoading: true,
+      chartsdatas: [],
+      barShow: false
+      // 图表
+    }
+  },
+  watch: {
+    comprehensiveBarShow(val) {
+      this.barShow = val
     }
   },
   created() {
@@ -232,12 +263,24 @@ export default {
     this.getTableData()
   },
   methods: {
+    chartDialog() {
+      this.comprehensiveBarShow = !this.comprehensiveBarShow
+      this.chartsdatas = this.tableData
+    },
+    chartTojiDialog() {
+      this.chartTojiDialogVisible = true
+    },
     getTableData() {
       this.getParams.start_time = this.beginTime
       this.getParams.end_time = this.endTime
+      this.tableLoading = true
+      this.tableData = []
       getBatchMonthStatistics(this.getParams).then(response => {
         this.tableData = response
+        this.tableLoading = false
         // this.total = response.count
+      }).catch(e => {
+        this.tableLoading = false
       })
     },
     dateFormat(date) {
@@ -250,6 +293,7 @@ export default {
       if (this.endTime) {
         this.endTime = dayjs(this.endTime).endOf('month').format('YYYY-MM')
       }
+      this.comprehensiveBarShow = false
       this.getTableData()
     },
     getHeaders() {
@@ -258,10 +302,15 @@ export default {
       })
     },
     monthPassClick(date) {
+      this.dayTableData = []
       this.getDayParams.date = dayjs(date).startOf('month').format('YYYY-MM')
+      this.dialogTableLoading = true
       getBatchDayStatistics(this.getDayParams).then(response => {
         this.dayTableData = response
+        this.dialogTableLoading = false
         // this.total = response.count
+      }).catch(e => {
+        this.dialogTableLoading = false
       })
       this.dialogShow = true
     },
@@ -272,6 +321,9 @@ export default {
           return 'color: #EA1B29'
         }
       }
+    },
+    headerRowStyle() {
+      return 'height:100px'
     },
     getStyle(str) {
       if (str) {
@@ -304,6 +356,11 @@ export default {
     background: #ffffff;
     // font-size: 1px;
     // transform: scale(1);
+}
+.tubiao{
+  position: absolute;
+  left: 110px;
+  top:-70px;
 }
   .table_data{
     .el-table .cell {
