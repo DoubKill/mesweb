@@ -296,7 +296,7 @@ export default {
       this.getList()
     },
     equipSearch(val) {
-      this.search.test_equip = val
+      this.search.equip_no = val
       this.search.page = 1
       this.getList()
     },

@@ -310,9 +310,29 @@
           label="修改车次"
           width="250"
         >
-          <template slot-scope="{row}">
-            <el-input-number v-model="row.begin_trains" style="width:100px" size="mini" controls-position="right" :min="1" :max="row.end_trains" :step="1" step-strictly /> --
-            <el-input-number v-model="row.end_trains" style="width:100px" size="mini" controls-position="right" :min="row.begin_trains" :max="999" :step="1" step-strictly />
+          <template slot-scope="{row,$index}">
+            <el-input-number
+              v-model="row.begin_trains"
+              style="width:100px"
+              size="mini"
+              controls-position="right"
+              :min="1"
+              :max="row.end_trains"
+              :step="1"
+              step-strictly
+              @change="handleChangeBegin($event,$index)"
+            /> --
+            <el-input-number
+              v-model="row.end_trains"
+              style="width:100px"
+              size="mini"
+              controls-position="right"
+              :min="row.begin_trains"
+              :max="999"
+              :step="1"
+              step-strictly
+              @change="handleChangeEnd($event,row,$index)"
+            />
           </template>
         </el-table-column>
       </el-table>
@@ -658,15 +678,38 @@ export default {
         throw new Error(error)
       }
     },
-    handleChange(val) {
+    handleChangeBegin(val, index) {
+      if (!this.vehicleNum) return
+      this.setValTrains(index, val, val)
+    },
+    handleChangeEnd(val, row, index) {
+      if (!this.vehicleNum) return
+      const _val = val + 1
+      const _index = index + 1
+      this.setValTrains(_index, _val, val - (this.vehicleNum - 1))
+    },
+    setValTrains(_index, _val, val) {
+      // _index：当前的改变得值得index； _val：当前值  val:当前改变得值的起始车次（可能是他本身）
       this.tableData1.forEach((D, i) => {
-        if (i === 0) {
-          D.begin_trains = 1
-        } else {
-          D.begin_trains = i * val + 1
+        if (_index <= i) {
+          if (_index === i) {
+            D.begin_trains = _val
+          } else {
+            D.begin_trains = (i * this.vehicleNum + val)
+          }
+          D.end_trains = (i * this.vehicleNum + val) + (this.vehicleNum - 1)
         }
-        D.end_trains = (i + 1) * val
       })
+    },
+    handleChange(val) {
+      // this.tableData1.forEach((D, i) => {
+      //   if (i === 0) {
+      //     D.begin_trains = 1
+      //   } else {
+      //     D.begin_trains = i * val + 1
+      //   }
+      //   D.end_trains = (i + 1) * val
+      // })
     },
     setVal() {
       // 车次重复提示
