@@ -32,16 +32,16 @@
         label="Ip"
         min-width="20"
       />
-      <el-table-column
+      <!-- <el-table-column
         prop="test_type_name"
         label="试验类型"
         min-width="20"
-      />
-      <el-table-column
+      /> -->
+      <!-- <el-table-column
         prop="data_point_name"
         label="数据点"
         min-width="20"
-      />
+      /> -->
       <el-table-column
         prop="created_date"
         label="创建时间"
@@ -94,10 +94,10 @@
         <!-- <el-form-item label="绑定胶料" prop="material">
           <all-product-no-select :default-val="formObj.material" :is-created-list="true" @productBatchingChanged="productBatchingChangedForm" />
         </el-form-item> -->
-        <el-form-item label="试验类型:" prop="test_type">
+        <!-- <el-form-item label="试验类型:" prop="test_type">
           <test-type-select ref="testTypeSelect" :default-val="formObj.test_type" :is-created="true" @changeSelect="typeSelect" />
-        </el-form-item>
-        <el-form-item label="数据点:" prop="data_point">
+        </el-form-item> -->
+        <!-- <el-form-item label="数据点:" prop="data_point">
           <test-type-dot-select
             :test-type-id="formObj.test_type"
             :created-is="true"
@@ -105,7 +105,7 @@
             :show="dialogVisible"
             @changSelect="changSelectDot"
           />
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose(false)">取 消</el-button>
@@ -118,21 +118,21 @@
 <script>
 import { debounce } from '@/utils'
 // import allProductNoSelect from '@/components/select_w/allProductNoSelect'
-import testTypeSelect from '@/components/select_w/testTypeSelect'
-import testTypeDotSelect from '@/components/select_w/testTypeDotSelect'
+// import testTypeSelect from '@/components/select_w/testTypeSelect'
+// import testTypeDotSelect from '@/components/select_w/testTypeDotSelect'
 import { productReportEquip } from '@/api/base_w_four'
 import page from '@/components/page'
 export default {
   name: 'RubberMenniEquip',
-  components: { testTypeSelect, testTypeDotSelect, page },
+  components: { page },
   data() {
-    var validatePass = (rule, value, callback, _val, error) => {
-      if (!_val || _val.length === 0) {
-        callback(new Error(error))
-      } else {
-        callback()
-      }
-    }
+    // var validatePass = (rule, value, callback, _val, error) => {
+    //   if (!_val || _val.length === 0) {
+    //     callback(new Error(error))
+    //   } else {
+    //     callback()
+    //   }
+    // }
     return {
       search: {},
       tableData: [],
@@ -155,19 +155,19 @@ export default {
             } else {
               callback()
             }
-          }, trigger: 'change' }],
-        test_type: [
-          { required: true, validator: (rule, value, callback) => {
-            validatePass(rule, value, callback,
-              this.formObj.test_type, '请选择试验类型')
-          } }
-        ],
-        data_point: [
-          { required: true, validator: (rule, value, callback) => {
-            validatePass(rule, value, callback,
-              this.formObj.data_point, '请选择数据点')
-          } }
-        ]
+          }, trigger: 'change' }]
+        // test_type: [
+        //   { required: true, validator: (rule, value, callback) => {
+        //     validatePass(rule, value, callback,
+        //       this.formObj.test_type, '请选择试验类型')
+        //   } }
+        // ],
+        // data_point: [
+        //   { required: true, validator: (rule, value, callback) => {
+        //     validatePass(rule, value, callback,
+        //       this.formObj.data_point, '请选择数据点')
+        //   } }
+        // ]
       }
     }
   },
@@ -211,9 +211,7 @@ export default {
       this.dialogVisible = false
       this.formObj = {
         no: '',
-        ip: '',
-        test_type: '',
-        data_point: null
+        ip: ''
       }
       this.$refs.formObj.resetFields()
       this.$refs.testTypeSelect.value = null
@@ -221,13 +219,13 @@ export default {
         done()
       }
     },
-    typeSelect(val) {
-      this.$set(this.formObj, 'test_type', val || null)
-      this.$set(this.formObj, 'data_point', null)
-    },
-    changSelectDot(val) {
-      this.$set(this.formObj, 'data_point', val)
-    },
+    // typeSelect(val) {
+    //   this.$set(this.formObj, 'test_type', val || null)
+    //   this.$set(this.formObj, 'data_point', null)
+    // },
+    // changSelectDot(val) {
+    //   this.$set(this.formObj, 'data_point', val)
+    // },
     submitFun() {
       this.$refs.formObj.validate(async(valid) => {
         if (valid) {
