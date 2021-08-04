@@ -137,7 +137,7 @@
       />
       <el-table-column
         label="操作"
-        width="100"
+        width="120"
       >
         <template slot-scope="scope">
           <el-button
@@ -240,6 +240,7 @@ import page from '@/components/page'
 import { xlPlan } from '@/api/base_w_three'
 import { weightingPackageLog } from '@/api/base_w_two'
 import { setDate } from '@/utils'
+// import axios from 'axios'
 
 export default {
   name: 'SmallMaterialWeightTrackingCard',
@@ -271,12 +272,32 @@ export default {
   },
   created() {
     this.getList()
+    // this._setInterval = setInterval(() => {
+    //   this.getList()
+    // }, 3000)
   },
+  // destroyed() {
+  //   clearInterval(this._setInterval)
+  // },
+  // deactivated() {
+  //   clearInterval(this._setInterval)
+  // },
+  // activated() {
+  //   this._setInterval = setInterval(() => {
+  //     this.getList()
+  //   }, 3000)
+  // },
   methods: {
     async getList() {
       try {
+        // const self = this
         this.loading = true
-        const data = await weightingPackageLog('get', null, { params: this.formInline })
+        const data = await weightingPackageLog('get', null, { params: this.formInline }
+          // new axios.CancelToken(function executor(c) {
+          //   self.cancel = c
+          //   console.log(c)
+          // })
+        )
         this.total = data.count
         this.tableData = data.results || []
         this.loading = false
@@ -308,6 +329,7 @@ export default {
       }
     },
     changeList() {
+      // this.cancel()
       if (!this.formInline.batch_time) {
         this.$message.info('请选择配料日期')
         return

@@ -199,6 +199,7 @@ export default {
   ShowQualifiedRange: '/api/v1/quality/show-qualified-range/',
   // 修改车次
   TrainsFix: '/api/v1/production/trains-fix/',
+  PalletTrainBatchFix: '/api/v1/production/pallet-train-batch-fix/',
   // 月快检合格率
   BatchMonthStatistics: '/api/v1/quality/batch-month-statistics/',
   // 日快检合格率
@@ -435,5 +436,8 @@ export default {
   WeightingPackageExpire: '/api/v1/terminal/weighting-package-expire/',
   // 快检设备履历
   ProductTestResume: '/api/v1/quality/product-test-resume/',
-  ProductTestPlan: '/api/v1/quality/product-test-plan/'
+  ProductTestPlan: '/api/v1/quality/product-test-plan/',
+  // 看板
+  OutBoundTasks: '/api/v1/inventory/out-bound-tasks/',
+  InoutBoundSummary: '/api/v1/inventory/inout-bound-summary/'
 }

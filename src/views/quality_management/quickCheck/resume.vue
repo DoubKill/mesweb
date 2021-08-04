@@ -235,7 +235,7 @@ export default {
       search: {},
       tableData: [],
       loading: false,
-      statusList: { 1: '待检测', 2: '完成', 3: '强制结束' },
+      statusList: { 1: '待检测', 2: '完成', 4: '强制结束' },
       testEquipList: []
     }
   },

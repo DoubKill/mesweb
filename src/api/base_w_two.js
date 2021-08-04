@@ -163,10 +163,11 @@ export function zcMaterials(method, id, data = {}) {
   return request(obj)
 }
 
-export function weightingPackageLog(method, id, data = {}) {
+export function weightingPackageLog(method, id, data = {}, aaa) {
   const obj = {
     url: id ? API.WeightingPackageLog + id + '/' : API.WeightingPackageLog,
-    method: method
+    method: method,
+    cancelToken: aaa
   }
   Object.assign(obj, data)
   return request(obj)
