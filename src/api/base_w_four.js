@@ -288,3 +288,21 @@ export function productTestPlan(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function outBoundTasks(method, id, data = {}) {
+  const obj = {
+    url: id ? API.OutBoundTasks + id + '/' : API.OutBoundTasks,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function inoutBoundSummary(method, id, data = {}) {
+  const obj = {
+    url: id ? API.InoutBoundSummary + id + '/' : API.InoutBoundSummary,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
