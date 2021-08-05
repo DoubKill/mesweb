@@ -317,7 +317,6 @@
               size="mini"
               controls-position="right"
               :min="1"
-              :max="row.end_trains"
               :step="1"
               step-strictly
               @change="handleChangeBegin($event,$index)"
@@ -394,10 +393,10 @@ export default {
       ruleFormTrain: {
         fix_num: -1,
         factory_date: '',
-        day_time: '',
-        equip_no: '',
+        day_time: '2021-08-04',
+        equip_no: 'Z01',
         lot_no: '',
-        product_no: ''
+        product_no: 'C-RE-J260-02'
       },
       rulesTrain: {
         factory_date: [{ required: true, message: '请选择生产日期', trigger: 'change' }],
@@ -680,24 +679,23 @@ export default {
     },
     handleChangeBegin(val, index) {
       if (!this.vehicleNum) return
-      this.setValTrains(index, val, val)
+      let num = val
+      this.tableData1.forEach((D, i) => {
+        if (index <= i) {
+          D.end_trains = num + (this.vehicleNum - 1)
+          D.begin_trains = num
+          num = D.end_trains + 1
+        }
+      })
     },
     handleChangeEnd(val, row, index) {
       if (!this.vehicleNum) return
-      const _val = val + 1
-      const _index = index + 1
-      this.setValTrains(_index, _val, val - (this.vehicleNum - 1))
-    },
-    setValTrains(_index, _val, val) {
-      // _index：当前的改变得值得index； _val：当前值  val:当前改变得值的起始车次（可能是他本身）
+      let num = val + 1
       this.tableData1.forEach((D, i) => {
-        if (_index <= i) {
-          if (_index === i) {
-            D.begin_trains = _val
-          } else {
-            D.begin_trains = (i * this.vehicleNum + val)
-          }
-          D.end_trains = (i * this.vehicleNum + val) + (this.vehicleNum - 1)
+        if (index < i) {
+          D.begin_trains = num
+          D.end_trains = num + (this.vehicleNum - 1)
+          num = D.end_trains + 1
         }
       })
     },
