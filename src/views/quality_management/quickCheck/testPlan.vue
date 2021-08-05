@@ -3,7 +3,7 @@
     <!-- 快检检测计划 -->
     <el-row :gutter="20">
       <el-col :span="11">
-        <el-form ref="searchForm" :model="search" :inline="true" :rules="rulesLeft">
+        <el-form ref="searchForm" label-width="80px" :model="search" :inline="true" :rules="rulesLeft">
           <el-form-item label="检测机号">
             <el-select
               v-model="search.test_equip"
@@ -13,10 +13,10 @@
               @change="changeTestEquip"
             >
               <el-option
-                v-for="group in testEquipList"
-                :key="group.id"
-                :label="group.no"
-                :value="group.no"
+                v-for="(group,groupI) in testEquipList"
+                :key="groupI"
+                :label="group&&group.no"
+                :value="group&&group.no"
               />
             </el-select>
           </el-form-item>
@@ -24,7 +24,7 @@
             <el-select
               v-model="search.test_indicator_name"
               placeholder="请选择"
-              @change="changeTestIndicators"
+              @change="changeTestEquip"
             >
               <!-- @visible-change="changeVisibleTestIndicators" -->
               <el-option
@@ -51,7 +51,7 @@
             />
           </el-form-item>
           <el-form-item label="生产机号">
-            <equip-select :equip_no_props="search.equip_no" @changeSearch="equipSearch" />
+            <equip-select class="equipStyle" :equip_no_props="search.equip_no" @changeSearch="equipSearch" />
           </el-form-item>
           <el-form-item label="胶料规格">
             <allProductNoSelect :is-disabled="btnLoading" :default-val="search.product_no" :params-obj="search" @productBatchingChanged="productBatchingChanged" />
@@ -72,7 +72,7 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="是否已检测">
+          <el-form-item label="是否检测">
             <el-select
               v-model="search.is_tested"
               clearable
@@ -99,7 +99,7 @@
         >
           <el-table-column
             type="selection"
-            width="55"
+            width="40"
           />
           <el-table-column
             prop="equip_no"
@@ -119,7 +119,7 @@
           <el-table-column
             prop="actual_trains"
             label="车次"
-            min-width="10"
+            min-width="8"
           />
           <el-table-column
             prop="lot_no"
@@ -139,7 +139,7 @@
         </div>
       </el-col>
       <el-col :span="12">
-        <el-form ref="ruleForm" :inline="true" :rules="rules" :model="ruleForm">
+        <el-form ref="ruleForm" label-width="80px" :inline="true" :rules="rules" :model="ruleForm">
           <el-form-item label="检测日期" prop="test_time">
             <el-date-picker
               v-model="ruleForm.test_time"
@@ -213,7 +213,7 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="试验车次">
+          <el-form-item label="试验车次" class="trainsNumStyle">
             <el-input-number
               v-model="ruleForm.num"
               controls-position="right"
@@ -232,7 +232,7 @@
             />
           </el-form-item>
           <el-form-item>
-            <el-button v-permission="['examine_test_plan', 'begin']" type="primary" :disabled="btnLoading" @click="addSpace">添加</el-button>
+            <el-button v-permission="['examine_test_plan', 'begin']" size="mini" style="margin-left:10px" type="primary" :disabled="btnLoading" @click="addSpace">添加</el-button>
           </el-form-item>
         </el-form>
         <el-button v-permission="['examine_test_plan', 'begin']" type="primary" :disabled="btnLoading" @click="startTestFun">开始检测</el-button>
@@ -253,17 +253,17 @@
           <el-table-column
             prop="factory_date"
             label="生产日期"
-            min-width="20"
+            min-width="24"
           />
           <el-table-column
             prop="classes"
             label="生产班次"
-            min-width="20"
+            min-width="15"
           />
           <el-table-column
             prop="equip_no"
             label="生产机号"
-            min-width="20"
+            min-width="15"
           />
           <el-table-column
             prop="product_no"
@@ -276,7 +276,9 @@
             width="80px"
           >
             <template slot-scope="{row,$index}">
-              <el-input-number v-if="row.add" v-model="row.actual_trains" style="width:113px" controls-position="right" @blur="trainsBlur(row.actual_trains,$index)" />
+              <div v-if="row.add" class="actualTrains">
+                <el-input-number v-model="row.actual_trains" controls-position="right" @blur="trainsBlur(row.actual_trains,$index)" />
+              </div>
               <span v-else>{{ row.actual_trains }}</span>
             </template>
           </el-table-column>
@@ -287,7 +289,7 @@
           />
           <el-table-column
             label="状态"
-            min-width="20"
+            min-width="18"
             :formatter="(row)=>{
               return row.values?'已检测':'待检测'
             }"
@@ -305,15 +307,15 @@
               <el-button size="mini" type="primary" :disabled="btnLoading" @click="delRow($index)">删除</el-button>
             </template>
           </el-table-column>
-        <!-- <el-table-column
-          v-if="['物性','钢拔'].includes(search.test_indicator_name)"
-          label="查看"
-          width="70"
-        >
-          <template>
-            <el-button size="mini" type="primary" :disabled="btnLoading" @click="showTestData">查看</el-button>
-          </template>
-        </el-table-column> -->
+          <el-table-column
+            v-if="['物性','钢拔'].includes(search.test_indicator_name)&&ruleForm.plan_uid"
+            label="查看绑定"
+            width="70"
+          >
+            <template>
+              <el-button size="mini" type="primary" @click="showTestData">查看</el-button>
+            </template>
+          </el-table-column>
         </el-table>
         <div style="text-align:center;margin-top:5px;">
           <el-button v-permission="['examine_test_plan', 'begin']" type="primary" :disabled="btnLoading" @click="addRowFun">新增一行</el-button>
@@ -606,9 +608,9 @@ export default {
     async getTestEquipList(bool) {
       try {
         const data = await productReportEquip('get', null, { params: { all: 1 }})
-        this.testEquipList = data
+        this.testEquipList = data || []
         if (bool) {
-          this.search.test_equip = data[0].no
+          this.search.test_equip = data && data[0].no
           this.getWaitPlan()
         }
       } catch (e) {
@@ -617,7 +619,7 @@ export default {
     },
     changeVisibleTestEquip(bool) {
       if (bool) {
-        this.getTestEquipList()
+        this.getTestEquipList(false)
       }
     },
     visibleStageList(bool) {
@@ -679,11 +681,12 @@ export default {
       this.btnLoading = false
       this.ruleForm.plan_uid = ''
       this.ruleForm.product_no = ''
+      this.search.product_no = ''
       this.getWaitPlan()
     },
     async getWaitPlan(bool) {
       try {
-        const obj = { test_equip: this.search.test_equip }
+        const obj = { test_equip: this.search.test_equip, test_indicator_name: this.search.test_indicator_name }
         delete obj.plan_uid
         if (bool) {
           obj.plan_uid = this.ruleForm.plan_uid
@@ -927,11 +930,36 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
   .quickCheck-testPlan{
-    display: flex;
-    .el-input{
-      width:auto;
+    .el-input,.el-select{
+      width:170px !important;
+    }
+    .equipStyle{
+      width:170px !important;
+    }
+    .el-form-item{
+      margin-bottom:0px;
+    }
+    .el-input__inner{
+      height: 30px !important;
+      line-height: 30px !important;
+    }
+    .trainsNumStyle{
+      .el-input,.el-input-number--mini{
+        width:80px !important;
+      }
+    }
+    .actualTrains{
+      .el-input{
+        width:70px !important;
+      }
+      .el-input__inner{
+        padding:0;
+      }
+    }
+    .el-form-item__error{
+      display: none;
     }
     .center-box{
       position: relative;

@@ -225,8 +225,9 @@
       :visible.sync="dialogVisibleTrainNew"
       width="80%"
       :before-close="handleCloseNew"
+      class="dialogStyle"
     >
-      <el-form ref="ruleFormTraineee" inline :model="ruleFormTrain" label-width="130px" :rules="rulesTrain">
+      <el-form ref="ruleFormTraineee" inline :model="ruleFormTrain" label-width="85px" :rules="rulesTrain">
         <el-form-item :key="10" label="生产日期" prop="day_time">
           <el-date-picker
             v-model="ruleFormTrain.day_time"
@@ -248,8 +249,8 @@
         <el-form-item :key="7" label="胶料规格" prop="product_no">
           <all-product-no-select :params-obj="ruleFormTrain" :default-val="ruleFormTrain.product_no" @productBatchingChanged="productBatchingTrain" />
         </el-form-item>
-        <el-form-item :key="11" label="车数/托">
-          <el-input-number v-model="vehicleNum" controls-position="right" :step="1" step-strictly :min="1" :max="5" @change="handleChange" />
+        <el-form-item :key="11" class="vehicleNumStyle" label="车数/托" prop="vehicleNum">
+          <el-input-number v-model="ruleFormTrain.vehicleNum" controls-position="right" :step="1" step-strictly :min="1" :max="5" @change="handleChange" />
         </el-form-item>
       </el-form>
       <el-table
@@ -311,27 +312,29 @@
           width="250"
         >
           <template slot-scope="{row,$index}">
-            <el-input-number
-              v-model="row.begin_trains"
-              style="width:100px"
-              size="mini"
-              controls-position="right"
-              :min="1"
-              :step="1"
-              step-strictly
-              @change="handleChangeBegin($event,$index)"
-            /> --
-            <el-input-number
-              v-model="row.end_trains"
-              style="width:100px"
-              size="mini"
-              controls-position="right"
-              :min="row.begin_trains"
-              :max="999"
-              :step="1"
-              step-strictly
-              @change="handleChangeEnd($event,row,$index)"
-            />
+            <div class="numberStyle">
+              <el-input-number
+                v-model="row.begin_trains"
+                style="width:100px"
+                size="mini"
+                controls-position="right"
+                :min="1"
+                :step="1"
+                step-strictly
+                @change="handleChangeBegin($event,$index)"
+              /> --
+              <el-input-number
+                v-model="row.end_trains"
+                style="width:100px"
+                size="mini"
+                controls-position="right"
+                :min="row.begin_trains"
+                :max="999"
+                :step="1"
+                step-strictly
+                @change="handleChangeEnd($event,row,$index)"
+              />
+            </div>
           </template>
         </el-table-column>
       </el-table>
@@ -396,7 +399,8 @@ export default {
         day_time: '',
         equip_no: '',
         lot_no: '',
-        product_no: ''
+        product_no: '',
+        vehicleNum: 2
       },
       rulesTrain: {
         factory_date: [{ required: true, message: '请选择生产日期', trigger: 'change' }],
@@ -406,6 +410,7 @@ export default {
             this.ruleFormTrain.classes, '请选择生产班次')
         } }],
         equip_no: [{ required: true, message: '请选择生产机台', trigger: 'change' }],
+        vehicleNum: [{ required: true, message: '请选择车数/托', trigger: 'change' }],
         product_no: [{ required: true, message: '请选择生产机台', trigger: 'change', validator: (rule, value, callback) => {
           validator(rule, value, callback,
             this.ruleFormTrain.product_no, '请选择胶料规格')
@@ -433,7 +438,6 @@ export default {
       btnLoading: false,
       dialogVisibleTrainNew: false,
       btnLoadingNew: false,
-      vehicleNum: 2,
       tableData1: []
     }
   },
@@ -652,10 +656,10 @@ export default {
       this.$set(this.ruleFormTrain, 'classes', '')
       this.$set(this.ruleFormTrain, 'fix_num', -1)
       this.$set(this.ruleFormTrain, 'id', '')
+      this.$set(this.ruleFormTrain, 'vehicleNum', 2)
       this.$nextTick(() => {
         this.$refs.ruleFormTraineee.clearValidate()
       })
-      this.vehicleNum = 2
       this.tableData1 = []
       if (done) {
         done()
@@ -663,7 +667,7 @@ export default {
     },
     async changeNewTrain(bool) {
       if (!bool) {
-        this.$set(this.ruleFormTrain, 'product_no', null)
+        this.$set(this.ruleFormTrain, 'product_no', '')
       }
       try {
         this.titleInfo(this.ruleFormTrain.equip_no, '请输入生产机台')
@@ -687,23 +691,23 @@ export default {
       }
     },
     handleChangeBegin(val, index) {
-      if (!this.vehicleNum) return
+      if (!this.ruleFormTrain.vehicleNum) return
       let num = val
       this.tableData1.forEach((D, i) => {
         if (index <= i) {
-          D.end_trains = num + (this.vehicleNum - 1)
+          D.end_trains = num + (this.ruleFormTrain.vehicleNum - 1)
           D.begin_trains = num
           num = D.end_trains + 1
         }
       })
     },
     handleChangeEnd(val, row, index) {
-      if (!this.vehicleNum) return
+      if (!this.ruleFormTrain.vehicleNum) return
       let num = val + 1
       this.tableData1.forEach((D, i) => {
         if (index < i) {
           D.begin_trains = num
-          D.end_trains = num + (this.vehicleNum - 1)
+          D.end_trains = num + (this.ruleFormTrain.vehicleNum - 1)
           num = D.end_trains + 1
         }
       })
@@ -742,10 +746,6 @@ export default {
       }
     },
     submitTrainNew() {
-      if (!this.vehicleNum) {
-        this.$message.info('请填入车次/托')
-        return
-      }
       this.$refs.ruleFormTraineee.validate(async(valid) => {
         if (valid) {
           try {
@@ -768,8 +768,23 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
-  .el-input {
-    width: auto;
-  }
+<style lang="scss">
+  // .el-input {
+  //   width: auto;
+  // }
+    .dialogStyle{
+      .el-input,.el-select{
+        width:150px !important;
+      }
+    }
+    .numberStyle{
+      .el-input,.el-select{
+        width:auto !important;
+      }
+    }
+    .vehicleNumStyle{
+      .el-input,.el-select{
+        width:auto !important;
+      }
+    }
 </style>
