@@ -264,7 +264,7 @@
         />
         <el-table-column
           label="工厂日期"
-          min-width="20"
+          min-width="10"
         >
           <template>
             {{ ruleFormTrain.day_time }}
@@ -272,7 +272,7 @@
         </el-table-column>
         <el-table-column
           label="班次"
-          min-width="20"
+          min-width="6"
         >
           <template>
             {{ ruleFormTrain.classes }}
@@ -281,7 +281,7 @@
         <el-table-column
           prop="address"
           label="生产机台"
-          min-width="20"
+          min-width="6"
         >
           <template>
             {{ ruleFormTrain.equip_no }}
@@ -290,7 +290,7 @@
         <el-table-column
           prop="product_no"
           label="胶料规格"
-          min-width="20"
+          min-width="12"
         />
         <el-table-column
           prop="lot_no"
@@ -300,10 +300,10 @@
         <el-table-column
           prop="address"
           label="收皮车次"
-          min-width="20"
+          min-width="10"
         >
           <template slot-scope="{row}">
-            {{ row.begin_trains }}--{{ row.end_trains }}
+            {{ row._begin_trains }}--{{ row._end_trains }}
           </template>
         </el-table-column>
         <el-table-column
@@ -433,8 +433,13 @@ export default {
       btnLoading: false,
       dialogVisibleTrainNew: false,
       btnLoadingNew: false,
-      vehicleNum: undefined,
+      vehicleNum: 2,
       tableData1: []
+    }
+  },
+  watch: {
+    'ruleFormTrain.day_time'(val) {
+      this.ruleFormTrain.factory_date = val
     }
   },
   created() {
@@ -650,7 +655,7 @@ export default {
       this.$nextTick(() => {
         this.$refs.ruleFormTraineee.clearValidate()
       })
-      this.vehicleNum = undefined
+      this.vehicleNum = 2
       this.tableData1 = []
       if (done) {
         done()
@@ -667,6 +672,10 @@ export default {
         this.titleInfo(this.ruleFormTrain.day_time, '请输入时间')
         const data = await palletTrainBatchFix('get', null, { params: this.ruleFormTrain })
         this.tableData1 = data
+        this.tableData1.forEach(d => {
+          this.$set(d, '_begin_trains', d.begin_trains)
+          this.$set(d, '_end_trains', d.end_trains)
+        })
       } catch (e) {
         this.loading = false
       }
@@ -733,6 +742,10 @@ export default {
       }
     },
     submitTrainNew() {
+      if (!this.vehicleNum) {
+        this.$message.info('请填入车次/托')
+        return
+      }
       this.$refs.ruleFormTraineee.validate(async(valid) => {
         if (valid) {
           try {
