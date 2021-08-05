@@ -59,7 +59,7 @@
           v-permission="['deal_result','all']"
           type="primary"
           @click="modifyTrainNewFun(true)"
-        >修改车次</el-button>
+        >设定批量修改车次</el-button>
       </el-form-item>
     </el-form>
     <div style="width:100%;text-align:right;margin-top:-10px">
@@ -393,10 +393,10 @@ export default {
       ruleFormTrain: {
         fix_num: -1,
         factory_date: '',
-        day_time: '2021-08-04',
-        equip_no: 'Z01',
+        day_time: '',
+        equip_no: '',
         lot_no: '',
-        product_no: 'C-RE-J260-02'
+        product_no: ''
       },
       rulesTrain: {
         factory_date: [{ required: true, message: '请选择生产日期', trigger: 'change' }],
@@ -742,6 +742,8 @@ export default {
             this.$message.success('修改成功')
             this.handleCloseNew(false)
             this.btnLoadingNew = false
+
+            this.getPalletFeedTest()
           } catch (e) {
             this.btnLoadingNew = false
           }
