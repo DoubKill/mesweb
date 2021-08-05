@@ -11,33 +11,39 @@
       :data="tableData"
       :show-header="false"
       border
-      style="margin-top:10px;"
+      max-height="50vh"
+      style="margin:10px 0;"
     >
       <el-table-column
         prop="raw_value"
         min-width="20"
       />
     </el-table>
+
+    <el-tag :type="stateVal?'success':'danger'">数据采集程序通信{{ stateVal?'正常':'不正常' }}</el-tag>
   </div>
 </template>
 
 <script>
-import { productReportEquip, equipTestData } from '@/api/base_w_four'
+import { productReportEquip, equipTestData, checkEquip } from '@/api/base_w_four'
 export default {
   name: 'DeviceMonitor',
   data() {
     return {
       topTableData: [],
-      tableData: []
+      tableData: [],
+      stateVal: false
     }
   },
   created() {
     this.getInfo()
     this.getBottomList()
+    this.getCheckEquip()
     this.timer = setInterval(() => {
       this.getInfo()
       this.getBottomList()
-    }, 20000)
+      this.getCheckEquip()
+    }, 10000)
   },
   destroyed() {
     clearInterval(this.timer)
@@ -49,7 +55,8 @@ export default {
     this.timer = setInterval(() => {
       this.getInfo()
       this.getBottomList()
-    }, 20000)
+      this.getCheckEquip()
+    }, 10000)
   },
   methods: {
     async getInfo() {
@@ -63,7 +70,16 @@ export default {
     async getBottomList() {
       try {
         const data = await equipTestData('get', null, { params: { all: 1 }})
-        this.tableData = data
+        const arr = data.filter(d => d.raw_value)
+        this.tableData = arr || []
+      } catch (e) {
+        //
+      }
+    },
+    async getCheckEquip() {
+      try {
+        const data = await checkEquip('get', null, { params: { all: 1 }})
+        this.stateVal = data.status
       } catch (e) {
         //
       }

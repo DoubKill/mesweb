@@ -37,6 +37,15 @@ export function equipTestData(method, id, data = {}) {
   return request(obj)
 }
 
+export function checkEquip(method, id, data = {}) {
+  const obj = {
+    url: id ? API.CheckEquip + id + '/' : API.CheckEquip,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function productReportValue(method, id, data = {}) {
   const obj = {
     url: id ? API.ProductReportValue + id + '/' : API.ProductReportValue,

@@ -229,7 +229,12 @@ export default {
   components: { page, equipSelect, classSelect, allProductNoSelect },
   data() {
     return {
-      options: [],
+      options: [
+        { name: '门尼', id: 1 },
+        { name: '流变', id: 2 },
+        { name: '物性', id: 3 },
+        { name: '钢拔', id: 4 }
+      ],
       total: 0,
       groups: [],
       search: {},
@@ -240,7 +245,7 @@ export default {
     }
   },
   created() {
-    this.getTestIndicators()
+    // this.getTestIndicators()
     this.getList()
   },
   methods: {
@@ -260,9 +265,9 @@ export default {
       this.getList()
     },
     visibleChange(bool) {
-      if (bool) {
-        this.getTestIndicators()
-      }
+      // if (bool) {
+      //   this.getTestIndicators()
+      // }
     },
     async getTestIndicators() {
       try {
@@ -291,7 +296,7 @@ export default {
       this.getList()
     },
     equipSearch(val) {
-      this.search.test_equip = val
+      this.search.equip_no = val
       this.search.page = 1
       this.getList()
     },

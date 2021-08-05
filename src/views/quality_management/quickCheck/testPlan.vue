@@ -24,9 +24,9 @@
             <el-select
               v-model="search.test_indicator_name"
               placeholder="请选择"
-              @visible-change="changeVisibleTestIndicators"
               @change="changeTestIndicators"
             >
+              <!-- @visible-change="changeVisibleTestIndicators" -->
               <el-option
                 v-for="group in testIndicatorsList"
                 :key="group.id"
@@ -533,7 +533,7 @@ export default {
         product_no: '', // C-3MB-A019-02
         classes: '', // 早班
         factory_date: '', // 2021-04-29 2021-07-21
-        test_indicator_name: ''
+        test_indicator_name: '门尼'
       },
       loading: false,
       tableData: [],
@@ -558,7 +558,12 @@ export default {
       },
       btnLoading: false,
       testEquipList: [],
-      testIndicatorsList: [],
+      testIndicatorsList: [
+        { name: '门尼', id: 1 },
+        { name: '流变', id: 2 },
+        { name: '物性', id: 3 },
+        { name: '钢拔', id: 4 }
+      ],
       endBtnLoading: false,
       stageList: [],
       alltableData: [],
@@ -573,7 +578,7 @@ export default {
   },
   created() {
     this.getTestEquipList(true)
-    this.getTestIndicators(true)
+    // this.getTestIndicators(true)
   },
   methods: {
     titleInfo(val, error) {

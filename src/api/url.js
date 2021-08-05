@@ -395,6 +395,7 @@ export default {
   ProductReportEquip: '/api/v1/quality/product-report-equip/',
   // 快检设备监控
   EquipTestData: '/api/v1/quality/equip-test-data/',
+  CheckEquip: '/api/v1/quality/check-equip/',
   ProductReportValue: '/api/v1/quality/product-report-value/',
   // 原材料库存
   WmsInventory: '/api/v1/inventory/wms-inventory/',
