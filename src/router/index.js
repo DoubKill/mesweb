@@ -496,8 +496,8 @@ export const asyncRoutes = [
             title: '物料消耗报表',
             permissionName: 'xl_report_weight'
           }
-        },
-        {
+        }
+        /** {
           path: '/small-material-weight/trackingCard',
           component: () => import('@/views/recipe/small-material-weight/trackingCard'),
           name: 'SmallMaterialWeightTrackingCard',
@@ -516,7 +516,7 @@ export const asyncRoutes = [
             title: '料包有效期管理',
             permissionName: 'xl_expire_data'
           }
-        }
+        }**/
       ]
     }
     ]
@@ -1651,8 +1651,8 @@ export const asyncRoutes = [
             }
           }
         ]
-      },
-      {
+      }
+      /** {
         path: '/quickCheck',
         redirect: '/quickCheck/deviceMonitor',
         component: () => import('@/views/quality_management/quickCheck/a-index'),
@@ -1745,7 +1745,7 @@ export const asyncRoutes = [
             }
           }
         ]
-      }
+      }**/
     ]
   },
   {
