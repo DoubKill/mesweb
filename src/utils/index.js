@@ -203,26 +203,60 @@ export function exportExcel(value = 'excel', val) {
   var wb = XLSX.utils.table_to_book(document.querySelector('#out-table'), { raw: true })
 
   if (val && val === 'disposal-list-components') {
-    console.log(wb, 4444)
-    wb.Sheets['Sheet1']['A1'].s = {									// 为某个单元格设置单独样式
+    const tableTitleFont = {
       font: {
-        name: '宋体',
-        sz: 16,
-        height: 100,
         italic: false,
         underline: false
       },
-      alignment: { horizontal: 'center', vertical: 'center' },
-      fill: {},
-      border: {
-        // top: { style: 'thin' },
-        // left: { style: 'thin' },
-        // bottom: { style: 'thin' },
-        // right: { style: 'thin' }
+      alignment: {
+        horizontal: 'center',
+        vertical: 'center'
       }
     }
-    // wb.Sheets['Sheet1']['!rows'].push({ hpt: 200 })
-    wb.Sheets['Sheet1']['!cols'].push({ wpx: 200 })
+    const _wpx = []
+    const _tableTitleFont = JSON.parse(JSON.stringify(tableTitleFont))
+    const _tableTitleFont1 = JSON.parse(JSON.stringify(tableTitleFont))
+    // const _length = Object.keys(wb.Sheets['Sheet1']).length
+    const arr = Object.keys(wb.Sheets['Sheet1'])
+    const obj = wb.Sheets['Sheet1']
+
+    arr.forEach(D => {
+      if (['!cols', '!fullref', '!merges', '!ref', '!rows'].includes(D)) {
+        return
+      }
+      if (obj[D]) {
+        if (obj[D].v.indexOf('经办人') > -1) {
+          _tableTitleFont.alignment = {
+            horizontal: 'right',
+            vertical: 'right'
+          }
+          obj[D].s = _tableTitleFont
+        } else if (obj[D].v.indexOf('处理意见') > -1 ||
+        obj[D].v.indexOf('不合格品情况') > -1 || obj[D].v.indexOf('备注') > -1) {
+          _tableTitleFont1.alignment = {
+            horizontal: 'left',
+            vertical: 'left'
+          }
+          obj[D].s = _tableTitleFont1
+        } else {
+          obj[D].s = tableTitleFont
+        }
+      }
+      _wpx.push({ wpx: 100 })
+    })
+    wb.Sheets['Sheet1']['A1'].s = {									// 为某个单元格设置单独样式
+      font: {
+        name: '宋体',
+        sz: 20,
+        italic: false,
+        underline: false
+      },
+      alignment: {
+        horizontal: 'center',
+        vertical: 'center'
+      }
+    }
+    wb.Sheets['Sheet1']['!cols'] = _wpx
   }
 
   var wbout = XLSXStyle.write(wb, {
