@@ -193,37 +193,43 @@ export function checkPermission(value) {
 
 import FileSaver from 'file-saver'
 import XLSX from 'xlsx'
+import XLSXStyle from 'xlsx-style'
 /**
  *
  * @param {*文件名称} value
  */
-export function exportExcel(value) {
-  // var aoa = [['主要信息', null, null, '其它信息'],
-  //   ['姓名', '性别', '年龄', '注册时间'], ['张三', '男', 18, 1111], ['李四', '女', 22, 2222]]
-  // var sheet = XLSX.utils.aoa_to_sheet(aoa)
-  // sheet['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 2 }}]
-  // var wbout = XLSX.write(sheet, {
-  //   bookType: 'xlsx',
-  //   bookSST: true,
-  //   type: 'array'
-  // })
-
-  // console.log(sheet)
-  // FileSaver.saveAs(
-  //   new Blob([sheet], { type: 'application/octet-stream' }),
-  //   value + '.xlsx'
-  // )
-  // return
-  // type: "binary" wb可直接放数据
+export function exportExcel(value = 'excel', val) {
   /* 从表生成工作簿对象 */
   var wb = XLSX.utils.table_to_book(document.querySelector('#out-table'), { raw: true })
-  /* 获取二进制字符串作为输出 */
-  var wbout = XLSX.write(wb, {
-    bookType: 'xlsx',
-    bookSST: true,
-    type: 'array'
+
+  if (val && val === 'disposal-list-components') {
+    console.log(wb, 4444)
+    wb.Sheets['Sheet1']['A1'].s = {									// 为某个单元格设置单独样式
+      font: {
+        name: '宋体',
+        sz: 16,
+        height: 100,
+        italic: false,
+        underline: false
+      },
+      alignment: { horizontal: 'center', vertical: 'center' },
+      fill: {},
+      border: {
+        // top: { style: 'thin' },
+        // left: { style: 'thin' },
+        // bottom: { style: 'thin' },
+        // right: { style: 'thin' }
+      }
+    }
+    // wb.Sheets['Sheet1']['!rows'].push({ hpt: 200 })
+    wb.Sheets['Sheet1']['!cols'].push({ wpx: 200 })
+  }
+
+  var wbout = XLSXStyle.write(wb, {
+    bookType: 'xlsx', type: 'buffer'
   })
   try {
+    // XLSX.writeFile(wb, value + '.xlsx')
     FileSaver.saveAs(
       // Blob 对象表示一个不可变、原始数据的类文件对象。
       // Blob 表示的不一定是JavaScript原生格式的数据。

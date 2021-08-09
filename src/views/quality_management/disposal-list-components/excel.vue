@@ -4,15 +4,19 @@
       <el-button
         v-if="orderNum&&!editType"
         v-permission="['unqualified_order','export']"
-        @click="exportExcel"
+        @click="exportPDF"
       >另存为PDF</el-button>
+      <el-button
+        v-if="orderNum&&!editType"
+        @click="exportExcel"
+      >下载表格</el-button>
       <el-button v-else :loading="loadingBtn" @click="submitFun">保存</el-button>
     </div>
     <div id="out-table">
       <table
         border="1"
         bordercolor="black"
-        class="info-table"
+        class="info-table out-table"
       >
         <!-- <thead> -->
         <!-- </thead> -->
@@ -261,7 +265,7 @@
 
 <script>
 import { unqualifiedDealOrders, dealMathodHistory } from '@/api/base_w'
-import { setDate } from '@/utils'
+import { setDate, exportExcel } from '@/utils'
 import { mapGetters } from 'vuex'
 import funMixin from './mixin'
 // import FileSaver from 'file-saver'
@@ -319,7 +323,7 @@ export default {
   computed: {
     ...mapGetters(['name']),
     headDataLength() {
-      return this.formHeadData.length || 1
+      return this.headData.length || 1
     }
   },
   watch: {
@@ -441,35 +445,15 @@ export default {
         //
       }
     },
-    async exportExcel() {
+    async exportPDF() {
       this.$refs.PDFBtn.style.display = 'none'
       document.getElementsByClassName('el-dialog__headerbtn')[0].style.display = 'none'
       window.print()
       this.$refs.PDFBtn.style.display = 'block'
       document.getElementsByClassName('el-dialog__headerbtn')[0].style.display = 'block'
-
-      /* 从表生成工作簿对象 */
-      // var wb = XLSX.utils.table_to_book(document.querySelector('#out-table'))
-      // /* 获取二进制字符串作为输出 */
-      // var wbout = XLSX.write(wb, {
-      //   bookType: 'xlsx',
-      //   bookSST: true,
-      //   type: 'array'
-      // })
-      // try {
-      //   FileSaver.saveAs(
-      //     // Blob 对象表示一个不可变、原始数据的类文件对象。
-      //     // Blob 表示的不一定是JavaScript原生格式的数据。
-      //     // File 接口基于Blob，继承了 blob 的功能并将其扩展使其支持用户系统上的文件。
-      //     // 返回一个新创建的 Blob 对象，其内容由参数中给定的数组串联组成。
-      //     new Blob([wbout], { type: 'application/octet-stream' }),
-      //     // 设置导出文件名称
-      //     '不合格处置单.xlsx'
-      //   )
-      // } catch (e) {
-      //   if (typeof console !== 'undefined') console.log(e, wbout)
-      // }
-      // return wbout
+    },
+    exportExcel() {
+      exportExcel('不合格品处置单', 'disposal-list-components')
     }
   }
 }
