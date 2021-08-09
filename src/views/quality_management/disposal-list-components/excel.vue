@@ -6,10 +6,10 @@
         v-permission="['unqualified_order','export']"
         @click="exportPDF"
       >另存为PDF</el-button>
-      <el-button
+      <!-- <el-button
         v-if="orderNum&&!editType"
         @click="exportExcel"
-      >下载表格</el-button>
+      >下载表格</el-button> -->
       <el-button v-else :loading="loadingBtn" @click="submitFun">保存</el-button>
     </div>
     <div id="out-table">
