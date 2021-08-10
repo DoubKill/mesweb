@@ -298,6 +298,15 @@ export function productTestPlan(method, id, data = {}) {
   return request(obj)
 }
 
+export function rubberMaxStretchTestResult(method, id, data = {}) {
+  const obj = {
+    url: id ? API.RubberMaxStretchTestResult + id + '/' : API.RubberMaxStretchTestResult,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function outBoundTasks(method, id, data = {}) {
   const obj = {
     url: id ? API.OutBoundTasks + id + '/' : API.OutBoundTasks,
