@@ -83,7 +83,7 @@ export default {
       if (val) {
         this.value = ''
         this.options = []
-        this.getList()
+        // this.getList()
       }
     },
     storeName(val) {
@@ -156,6 +156,7 @@ export default {
       }
       let arr = []
       arr = this.options.filter(D => D.material_no === val)
+
       this.$emit('changSelect', arr[0])
     }
   }
