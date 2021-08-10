@@ -32,11 +32,18 @@
         label="Ip"
         min-width="20"
       />
-      <!-- <el-table-column
+      <el-table-column
         prop="test_type_name"
-        label="试验类型"
+        label="试验指标"
         min-width="20"
-      /> -->
+      >
+        <template slot-scope="{row}">
+          <span v-for="(item,i) in row.test_indicator_name" :key="i">
+            {{ item.test_indicator__name }}
+            <span v-if="row.test_indicator.length>1&&row.test_indicator.length!==i+1">/</span>
+          </span>
+        </template>
+      </el-table-column>
       <!-- <el-table-column
         prop="data_point_name"
         label="数据点"
@@ -97,6 +104,17 @@
         <!-- <el-form-item label="试验类型:" prop="test_type">
           <test-type-select ref="testTypeSelect" :default-val="formObj.test_type" :is-created="true" @changeSelect="typeSelect" />
         </el-form-item> -->
+        <el-form-item
+          label="试验指标:"
+          prop="test_indicator"
+        >
+          <detectionIndex
+            :is-multiple="true"
+            :default-val="formObj.test_indicator"
+            :is-created="true"
+            @changeSelect="typeIndicatorSelect"
+          />
+        </el-form-item>
         <!-- <el-form-item label="数据点:" prop="data_point">
           <test-type-dot-select
             :test-type-id="formObj.test_type"
@@ -120,19 +138,20 @@ import { debounce } from '@/utils'
 // import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 // import testTypeSelect from '@/components/select_w/testTypeSelect'
 // import testTypeDotSelect from '@/components/select_w/testTypeDotSelect'
+import detectionIndex from '@/components/select_w/detectionIndex'
 import { productReportEquip } from '@/api/base_w_four'
 import page from '@/components/page'
 export default {
   name: 'RubberMenniEquip',
-  components: { page },
+  components: { page, detectionIndex },
   data() {
-    // var validatePass = (rule, value, callback, _val, error) => {
-    //   if (!_val || _val.length === 0) {
-    //     callback(new Error(error))
-    //   } else {
-    //     callback()
-    //   }
-    // }
+    var validatePass = (rule, value, callback, _val, error) => {
+      if (!_val || _val.length === 0) {
+        callback(new Error(error))
+      } else {
+        callback()
+      }
+    }
     return {
       search: {},
       tableData: [],
@@ -155,13 +174,13 @@ export default {
             } else {
               callback()
             }
-          }, trigger: 'change' }]
-        // test_type: [
-        //   { required: true, validator: (rule, value, callback) => {
-        //     validatePass(rule, value, callback,
-        //       this.formObj.test_type, '请选择试验类型')
-        //   } }
-        // ],
+          }, trigger: 'change' }],
+        test_indicator: [
+          { required: true, validator: (rule, value, callback) => {
+            validatePass(rule, value, callback,
+              this.formObj.test_indicator, '请选择试验指标')
+          } }
+        ]
         // data_point: [
         //   { required: true, validator: (rule, value, callback) => {
         //     validatePass(rule, value, callback,
@@ -194,7 +213,12 @@ export default {
     },
     editFun(row) {
       this.dialogVisible = true
-      this.formObj = JSON.parse(JSON.stringify(row))
+      this.formObj = {
+        id: row.id,
+        ip: row.ip,
+        no: row.no,
+        test_indicator: row.test_indicator
+      }
     },
     addFun() {
       this.dialogVisible = true
@@ -211,18 +235,17 @@ export default {
       this.dialogVisible = false
       this.formObj = {
         no: '',
-        ip: ''
+        ip: '',
+        test_indicator: ''
       }
       this.$refs.formObj.resetFields()
-      this.$refs.testTypeSelect.value = null
       if (done) {
         done()
       }
     },
-    // typeSelect(val) {
-    //   this.$set(this.formObj, 'test_type', val || null)
-    //   this.$set(this.formObj, 'data_point', null)
-    // },
+    typeIndicatorSelect(val) {
+      this.$set(this.formObj, 'test_indicator', val || null)
+    },
     // changSelectDot(val) {
     //   this.$set(this.formObj, 'data_point', val)
     // },

@@ -5,6 +5,7 @@
       v-model="value"
       placeholder="请选择试验指标"
       clearable
+      :multiple="isMultiple"
       @visible-change="visibleChange"
       @change="changeSelect"
     >
@@ -22,14 +23,34 @@
 import { testIndicators } from '@/api/base_w'
 export default {
   props: {
+    isMultiple: {
+      type: Boolean,
+      default: false
+    },
+    isCreated: {
+      type: Boolean,
+      default: false
+    },
+    defaultVal: {
+      type: [String, Array],
+      default: null
+    }
   },
   data() {
     return {
-      value: '',
+      value: this.defaultVal || '',
       options: []
     }
   },
   watch: {
+    defaultVal(val) {
+      this.value = val
+    }
+  },
+  created() {
+    if (this.isCreated) {
+      this.getList()
+    }
   },
   methods: {
     async getList() {
