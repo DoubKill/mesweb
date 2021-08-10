@@ -453,7 +453,7 @@ export default {
       document.getElementsByClassName('el-dialog__headerbtn')[0].style.display = 'block'
     },
     exportExcel() {
-      exportExcel('不合格品处置单', 'disposal-list-components')
+      exportExcel('不合格品处置单', 'disposal-list-components', this.headDataLength)
     }
   }
 }
