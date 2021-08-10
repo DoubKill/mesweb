@@ -4,48 +4,45 @@
     <div v-for="(item,i) in topTableData" :key="i" class="tagBox">
       <el-tag :type="item.status===1?'success':'danger'">{{ item.no }}</el-tag>
       <el-tag type="info" effect="plain">
-        {{ item.last_time }}
+        {{ item.last_time||'--' }}
       </el-tag>
     </div>
     <el-table
       :data="tableData"
       :show-header="false"
       border
-      style="margin-top:10px;"
+      max-height="50vh"
+      style="margin:10px 0;"
     >
       <el-table-column
-        prop="date"
-        label="日期"
-        min-width="20"
-      />
-      <el-table-column
-        prop="name"
-        label="姓名"
-        min-width="20"
-      />
-      <el-table-column
-        prop="address"
-        label="地址"
+        prop="raw_value"
         min-width="20"
       />
     </el-table>
+
+    <el-tag :type="stateVal?'success':'danger'">数据采集程序通信{{ stateVal?'正常':'不正常' }}</el-tag>
   </div>
 </template>
 
 <script>
-import { productReportEquip } from '@/api/base_w_four'
+import { productReportEquip, equipTestData, checkEquip } from '@/api/base_w_four'
 export default {
   name: 'DeviceMonitor',
   data() {
     return {
       topTableData: [],
-      tableData: []
+      tableData: [],
+      stateVal: false
     }
   },
   created() {
     this.getInfo()
+    this.getBottomList()
+    this.getCheckEquip()
     this.timer = setInterval(() => {
       this.getInfo()
+      this.getBottomList()
+      this.getCheckEquip()
     }, 10000)
   },
   destroyed() {
@@ -57,6 +54,8 @@ export default {
   activated() {
     this.timer = setInterval(() => {
       this.getInfo()
+      this.getBottomList()
+      this.getCheckEquip()
     }, 10000)
   },
   methods: {
@@ -64,6 +63,23 @@ export default {
       try {
         const data = await productReportEquip('get', null, { params: { all: 1 }})
         this.topTableData = data
+      } catch (e) {
+        //
+      }
+    },
+    async getBottomList() {
+      try {
+        const data = await equipTestData('get', null, { params: { all: 1 }})
+        const arr = data.filter(d => d.raw_value)
+        this.tableData = arr || []
+      } catch (e) {
+        //
+      }
+    },
+    async getCheckEquip() {
+      try {
+        const data = await checkEquip('get', null, { params: { all: 1 }})
+        this.stateVal = data.status
       } catch (e) {
         //
       }

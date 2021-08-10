@@ -241,8 +241,8 @@ export default {
   },
   created() {
     this.getList()
-    this.getDepotList()
-    this.getDepotSiteList()
+    // this.getDepotList()
+    // this.getDepotSiteList()
   },
   methods: {
     checkPermission,

@@ -6,6 +6,7 @@
     :before-close="handleClose"
     title="添加计划"
   > -->
+  <!-- 排产胶料日计划 -->
   <div
     v-loading="loading"
     class="dialogPlanAddIndex"

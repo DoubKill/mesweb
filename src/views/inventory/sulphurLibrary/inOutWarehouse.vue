@@ -47,17 +47,18 @@
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
-          value-format="yyyy-MM-dd"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          :default-time="['00:00:00', '23:59:59']"
           @change="changeList"
         />
       </el-form-item>
     </el-form>
     <el-form :inline="true" style="text-align:right">
-      <div v-permission="['sulfur_data', 'enter']" style="display:inline-block">
+      <!-- <div v-permission="['sulfur_data', 'enter']" style="display:inline-block">
         <el-form-item label="扫码入库:">
           <el-input v-model="scanCode" clearable @input="changeScanCode" />
         </el-form-item>
-      </div>
+      </div> -->
       <el-form-item>
         <el-button v-permission="['sulfur_data', 'enter']" type="primary" @click="changeManual">手动入库</el-button>
       </el-form-item>
@@ -121,31 +122,64 @@
       @currentChange="currentChange"
     />
     <el-dialog
-      title="硫磺入库"
+      :title="formObj.id?'硫磺出库':'硫磺入库'"
       :visible.sync="dialogVisible"
-      width="500px"
+      width="700px"
       :before-close="handleClose"
     >
       <el-form
         ref="formObj"
         :model="formObj"
         :rules="rules"
+        inline
         label-width="100px"
       >
-        <el-form-item label="名称" prop="name">
-          <el-input v-model="formObj.name" />
-        </el-form-item>
         <el-form-item label="物料编码" prop="product_no">
-          <el-input v-model="formObj.product_no" />
+          <el-autocomplete
+            v-if="!formObj.id"
+            v-model="formObj.product_no"
+            :fetch-suggestions="querySearch"
+            placeholder="请输入内容"
+            value-key="product_no"
+            :debounce="1000"
+            @input="productSelect"
+            @focus="productFocus(false)"
+          />
+          <span v-else>{{ formObj.product_no }}</span>
+        </el-form-item>
+        <el-form-item label="物料名称" prop="name">
+          <el-autocomplete
+            v-if="!formObj.id"
+            v-model="formObj.name"
+            :fetch-suggestions="querySearch"
+            placeholder="请输入内容"
+            value-key="name"
+            :debounce="1000"
+            @input="productSelect"
+            @focus="productFocus(true)"
+          />
+          <span v-else>{{ formObj.name }}</span>
         </el-form-item>
         <el-form-item label="供应商" prop="provider">
-          <el-input v-model="formObj.provider" />
+          <el-autocomplete
+            v-if="!formObj.id"
+            v-model="formObj.provider"
+            :fetch-suggestions="querySearch"
+            placeholder="请输入内容"
+            value-key="provider"
+            :debounce="1000"
+            @focus="productFocus(1)"
+            @input="productSelect"
+          />
+          <span v-else>{{ formObj.provider }}</span>
         </el-form-item>
         <el-form-item label="批号" prop="lot_no">
-          <el-input v-model="formObj.lot_no" />
+          <el-input v-if="!formObj.id" v-model="formObj.lot_no" :disabled="formObj.id" />
+          <span v-else>{{ formObj.lot_no }}</span>
         </el-form-item>
         <el-form-item label="库区" prop="depot">
           <el-select
+            v-if="!formObj.id"
             v-model="formObj.depot"
             placeholder="请选择"
             @visible-change="visibleChange"
@@ -158,20 +192,33 @@
               :value="item.id"
             />
           </el-select>
+          <span v-else>{{ formObj.depot_name }}</span>
         </el-form-item>
         <el-form-item label="库位" prop="depot_site">
           <el-select
+            v-if="!formObj.id"
             v-model="formObj.depot_site"
             placeholder="请选择"
             @visible-change="visibleChange1"
           >
             <el-option
-              v-for="item in formObj.depot?options1.filter(d=>d.depot === formObj.depot):[]"
+              v-for="item in formObj.depot?options1.filter(d=>d.depot === formObj.depot):options1"
               :key="item.id"
               :label="item.depot_site_name"
               :value="item.id"
             />
           </el-select>
+          <span v-else>{{ formObj.depot_site_name }}</span>
+        </el-form-item>
+        <el-form-item label="单重（kg）" prop="weight">
+          <el-input v-if="!formObj.id" v-model="formObj.weight" />
+          <span v-else>{{ formObj.weight }}</span>
+        </el-form-item>
+        <el-form-item label="数量（包）" prop="num">
+          <el-input v-model="formObj.num" />
+        </el-form-item>
+        <el-form-item label="总重（kg）" prop="ccc">
+          <el-input v-model="formObj.ccc" disabled />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -202,7 +249,7 @@ export default {
       total: 0,
       rules: {
         name: [
-          { required: true, message: '请输入名称', trigger: 'blur' }
+          { required: true, message: '请输入物料名称', trigger: 'blur' }
         ],
         product_no: [
           { required: true, message: '请输入物料编码', trigger: 'blur' }
@@ -218,14 +265,34 @@ export default {
         ],
         depot_site: [
           { required: true, message: '请选择库位', trigger: 'change' }
+        ],
+        weight: [
+          { required: true, message: '请输入单重', trigger: 'blur' }
+        ],
+        num: [
+          { required: true, message: '请输入包数', trigger: 'blur' }
         ]
       },
-      loadingBtn: false
+      loadingBtn: false,
+      restaurants: [],
+      isProductName: false
+    }
+  },
+  watch: {
+    'formObj.num'() {
+      const num = this.formObj.num ? this.formObj.num : 0
+      const weight = this.formObj.weight ? this.formObj.weight : 0
+      this.formObj.ccc = num * weight
+    },
+    'formObj.weight'() {
+      const num = this.formObj.num ? this.formObj.num : 0
+      const weight = this.formObj.weight ? this.formObj.weight : 0
+      this.formObj.ccc = num * weight
     }
   },
   created() {
-    // this.getDepotList()
-    // this.getDepotSiteList()
+    this.getDepotList()
+    this.getDepotSiteList()
     this.getList()
   },
   methods: {
@@ -304,27 +371,8 @@ export default {
       this.dialogVisible = true
     },
     deliveryFun(row) {
-      this.$confirm('是否确定出库?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        sulfurData('post', null, {
-          data: {
-            id: row.id,
-            sulfur_status: 2
-          }})
-          .then(response => {
-            this.$message({
-              type: 'success',
-              message: '出库成功!'
-            })
-            this.search.page = 1
-            this.getList()
-          }).catch(e => {
-            //
-          })
-      })
+      this.dialogVisible = true
+      this.formObj = JSON.parse(JSON.stringify(row))
     },
     handleClose(done) {
       this.formObj = {}
@@ -342,7 +390,7 @@ export default {
         if (valid) {
           try {
             this.loadingBtn = true
-            this.formObj.sulfur_status = 1
+            this.formObj.sulfur_status = this.formObj.id ? 2 : 1
             await sulfurData('post', null, { data: this.formObj })
             this.$message.success('入库成功')
             this.handleClose(false)
@@ -355,6 +403,52 @@ export default {
           return false
         }
       })
+    },
+    productSelect() {
+      debounce(this, 'getProductSelect')
+    },
+    async getProductSelect() {
+      try {
+        const obj = {
+          name: this.formObj.name,
+          product_no: this.formObj.product_no,
+          provider: this.formObj.provider
+        }
+        const data = await sulfurData('get', null, { params: obj })
+        const _obj = data.results[0]
+        this.formObj.depot = _obj.depot
+        this.formObj.depot_site = _obj.depot_site
+        this.formObj.weight = _obj.weight
+      } catch (e) {
+        //
+      }
+    },
+    async productFocus(bool) {
+      this.isProductName = bool
+      this.restaurants = []
+    },
+    async querySearch(queryString, cb) {
+      if (queryString) {
+        try {
+          let obj = {
+            _name: this.formObj.name
+          }
+          if (this.isProductName === 1) {
+            obj = {
+              _provider: this.formObj.provider
+            }
+          } else if (!this.isProductName) {
+            obj = {
+              _product_no: this.formObj.product_no
+            }
+          }
+          const data = await sulfurData('get', null, { params: obj })
+          this.restaurants = data || []
+        } catch (e) {
+        //
+        }
+      }
+      cb(this.restaurants)
     }
   }
 }
@@ -362,6 +456,6 @@ export default {
 
 <style>
 .liuh .el-input{
-  width:auto;
+  width:209px;
 }
 </style>

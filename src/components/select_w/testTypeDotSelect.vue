@@ -32,7 +32,7 @@ export default {
       default: false
     }, // 试验类型
     testTypeId: {
-      type: Number,
+      type: [Number, String],
       default: null
     },
     //  created里面加载
