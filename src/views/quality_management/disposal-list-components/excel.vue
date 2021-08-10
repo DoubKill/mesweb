@@ -169,6 +169,21 @@
           <tr style="text-align:left;">
             <td :colspan="5+headDataLength" style="padding-left:25px">
               <div>不合格品情况(包括产品生产过程、原因及程度)：</div>
+              <!-- <el-input
+                v-if="!orderNum||editType === 1"
+                v-model="formObj.reason"
+                type="textarea"
+                :rows="5"
+                resize="none"
+                style="margin-top:10px;width:97%"
+                placeholder="请输入内容"
+                @change="editOne($event,'deal_user','deal_date')"
+              />
+              <div v-else class="deal_suggestion" v-html="formObj.reason" /> -->
+            </td>
+          </tr>
+          <tr style="text-align:left;">
+            <td :colspan="5+headDataLength" style="padding-left:25px">
               <el-input
                 v-if="!orderNum||editType === 1"
                 v-model="formObj.reason"
@@ -191,6 +206,21 @@
           <tr style="text-align:left;">
             <td :colspan="5+headDataLength" style="padding-left:25px">
               <div>处理意见(品质技术部工艺技术科)：</div>
+              <!-- <el-input
+                v-if="!orderNum||editType === 2"
+                v-model="formObj.t_deal_suggestion"
+                type="textarea"
+                :rows="5"
+                resize="none"
+                style="margin-top:10px;width:97%"
+                placeholder="请输入内容"
+                @change="editOne($event,'t_deal_user','t_deal_date')"
+              />
+              <div v-else class="deal_suggestion" v-html="formObj.t_deal_suggestion" /> -->
+            </td>
+          </tr>
+          <tr style="text-align:left;">
+            <td :colspan="5+headDataLength" style="padding-left:25px">
               <el-input
                 v-if="!orderNum||editType === 2"
                 v-model="formObj.t_deal_suggestion"
@@ -213,6 +243,21 @@
           <tr style="text-align:left;">
             <td :colspan="5+headDataLength" style="padding-left:25px">
               <div>处理意见(品质技术部工艺检查科)：</div>
+              <!-- <el-input
+                v-if="!orderNum||editType === 3"
+                v-model="formObj.c_deal_suggestion"
+                type="textarea"
+                :rows="5"
+                resize="none"
+                style="margin-top:10px;width:97%"
+                placeholder="请输入内容"
+                @change="editOne($event,'c_deal_user','c_deal_date')"
+              />
+              <div v-else class="deal_suggestion" v-html="formObj.c_deal_suggestion" /> -->
+            </td>
+          </tr>
+          <tr style="text-align:left;">
+            <td :colspan="5+headDataLength" style="padding-left:25px">
               <el-input
                 v-if="!orderNum||editType === 3"
                 v-model="formObj.c_deal_suggestion"
@@ -453,7 +498,7 @@ export default {
       document.getElementsByClassName('el-dialog__headerbtn')[0].style.display = 'block'
     },
     exportExcel() {
-      exportExcel('不合格品处置单', 'disposal-list-components', this.headDataLength)
+      exportExcel('不合格品处置单', 'disposal-list-components')
     }
   }
 }
