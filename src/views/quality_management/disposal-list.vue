@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 不合格处置单 -->
+    <!-- 不合格处置单管理 -->
     <el-form :inline="true">
       <el-form-item label="时间">
         <el-date-picker

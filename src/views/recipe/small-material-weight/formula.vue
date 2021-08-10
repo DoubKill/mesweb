@@ -154,12 +154,13 @@ export default {
       try {
         this.loading = true
         const data = await xlRecipe('get', null, { params: this.currentSearch })
-        if (this.$refs['singleTable']) {
-        //   去掉当前操作的列表的 单行选中
+        if (this.$refs['singleTable'] && this.currentIndex) {
+          //   去掉当前操作的列表的 单行选中
           this.allTable[this.currentIndex].tableList1 = []
           this.$refs['singleTable'][this.currentIndex].setCurrentRow()
         }
         this.loading = false
+
         return { data: data.results || [], total: data.count || 0 }
       } catch (e) {
         this.loading = false

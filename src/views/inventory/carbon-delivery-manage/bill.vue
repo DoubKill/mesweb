@@ -116,26 +116,26 @@
         <el-table-column
           prop="materialName"
           label="物料名称"
-          min-width="20"
+          min-width="16"
         />
         <el-table-column
           prop="quantity"
           label="数量"
-          min-width="10"
+          min-width="6"
         />
         <el-table-column
           prop="entranceCode"
           label="站台编码"
-          min-width="20"
+          min-width="12"
         />
         <el-table-column
           prop="entranceName"
           label="站台名称"
-          min-width="20"
+          min-width="10"
         />
         <el-table-column
           label="状态"
-          min-width="20"
+          min-width="8"
           :formatter="(row)=>{
             return taskStateList[row.taskState]
           }"

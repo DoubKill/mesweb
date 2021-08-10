@@ -33,7 +33,10 @@ export default {
       }
     },
     // 指标 quota
-    testTypeId: Number,
+    testTypeId: {
+      type: Number,
+      default: null
+    },
     // 过滤方法  是类型过滤true 指标过滤false
     isTypeFilter: {
       type: Boolean,

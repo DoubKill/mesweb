@@ -27,12 +27,21 @@
             label="操作"
           >
             <template slot-scope="scope">
-              <el-button
-                v-permission="['sulfur_depot', 'change']"
-                size="mini"
-                type="primary"
-                @click="editArea(scope.row,true)"
-              >编辑</el-button>
+              <el-button-group>
+                <el-button
+                  v-permission="['sulfur_depot', 'change']"
+                  size="mini"
+                  @click="editArea(scope.row,true)"
+                >编辑
+                </el-button>
+                <el-button
+                  size="mini"
+                  type="danger"
+                  plain
+                  @click.stop="delArea(scope.row,true)"
+                > 删除
+                </el-button>
+              </el-button-group>
             </template>
           </el-table-column>
         </el-table>
@@ -70,12 +79,21 @@
             label="操作"
           >
             <template slot-scope="scope">
-              <el-button
-                v-permission="['sulfur_depot', 'changeSite']"
-                size="mini"
-                type="primary"
-                @click="editArea(scope.row,false)"
-              >编辑</el-button>
+              <el-button-group>
+                <el-button
+                  v-permission="['sulfur_depot', 'changeSite']"
+                  size="mini"
+                  @click="editArea(scope.row,false)"
+                >编辑
+                </el-button>
+                <el-button
+                  size="mini"
+                  type="danger"
+                  plain
+                  @click="delArea(scope.row,false)"
+                > 删除
+                </el-button>
+              </el-button-group>
             </template>
           </el-table-column>
         </el-table>
@@ -224,6 +242,29 @@ export default {
       this.isArea = bool
       this.dialogVisible = true
       this.formObj = JSON.parse(JSON.stringify(row))
+    },
+    delArea(row, bool) {
+      this.$confirm('是否确定删除?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const _api = bool ? sulfurDepot : sulfurDepotSite
+        _api('delete', row.id)
+          .then(response => {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+            if (bool) {
+              this.pageNo = 1
+              this.getList()
+            } else {
+              this.getList1()
+            }
+          }).catch(e => {
+          })
+      })
     },
     handleClose(done) {
       this.dialogVisible = false

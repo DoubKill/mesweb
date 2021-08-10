@@ -255,6 +255,16 @@ export const asyncRoutes = [
       }
       ]
     }
+    // {
+    //   path: '/powder-tank',
+    //   component: () => import('@/views/basic/powder-tank'),
+    //   name: 'PowderTank',
+    //   meta: {
+    //     title: '粉料罐-油料罐 物料设定',
+    //     icon: 'dashboard',
+    //     permissionName: ''
+    //   }
+    // }
     ]
   },
   {
@@ -265,7 +275,6 @@ export const asyncRoutes = [
     meta: {
       title: '配方管理',
       icon: 'formula'
-    // permissionName: 'recipe'
     },
     children: [{
       path: '/material/base/info/manage',
@@ -1442,27 +1451,17 @@ export const asyncRoutes = [
               title: '快检信息综合管理',
               permissionName: 'deal_result'
             }
-          },
-          {
-            path: '/inspection-result-management/menni-equip',
-            component: () => import('@/views/quality_management/menni-equip'),
-            name: 'RubberMenniEquip',
-            meta: {
-              faName: 'InspectionResultManagement',
-              title: '胶料门尼设备管理',
-              permissionName: 'product_report_equip'
-            }
-          },
-          {
-            path: '/inspection-result-management/menni-report',
-            component: () => import('@/views/quality_management/menni-report'),
-            name: 'RubberMenniReport',
-            meta: {
-              faName: 'InspectionResultManagement',
-              title: '胶料门尼数据上报',
-              permissionName: 'product_report_value'
-            }
           }
+          // {
+          //   path: '/inspection-result-management/menni-report',
+          //   component: () => import('@/views/quality_management/menni-report'),
+          //   name: 'RubberMenniReport',
+          //   meta: {
+          //     faName: 'InspectionResultManagement',
+          //     title: '胶料门尼数据上报',
+          //     permissionName: 'product_report_value'
+          //   }
+          // }
         ]
       },
       // {
@@ -1652,8 +1651,8 @@ export const asyncRoutes = [
             }
           }
         ]
-      },
-      {
+      }
+      /** {
         path: '/quickCheck',
         redirect: '/quickCheck/deviceMonitor',
         component: () => import('@/views/quality_management/quickCheck/a-index'),
@@ -1663,6 +1662,16 @@ export const asyncRoutes = [
           icon: 'quality'
         },
         children: [
+          {
+            path: '/inspection-result-management/menni-equip',
+            component: () => import('@/views/quality_management/menni-equip'),
+            name: 'RubberMenniEquip',
+            meta: {
+              faName: 'InspectionResultManagement',
+              title: '胶料门尼设备管理',
+              permissionName: 'product_report_equip'
+            }
+          },
           {
             path: '/quickCheck/deviceMonitor',
             component: () => import('@/views/quality_management/quickCheck/deviceMonitor'),
@@ -1694,8 +1703,8 @@ export const asyncRoutes = [
             }
           }
         ]
-      }
-      /** {
+      },
+      {
         path: '/feed',
         redirect: '/feed/raw-plan',
         component: () => import('@/views/quality_management/feed/a-index'),
