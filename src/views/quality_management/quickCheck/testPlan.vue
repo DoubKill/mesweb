@@ -283,10 +283,14 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="values"
+            prop="value"
             label="检测值"
-            min-width="20"
-          />
+            min-width="40"
+          >
+            <template v-if="row.value" slot-scope="{row}">
+              {{ row.value.replace(/{|}|'/g,"") }}
+            </template>
+          </el-table-column>
           <el-table-column
             label="状态"
             min-width="18"
@@ -382,7 +386,6 @@
           </template>
         </el-table-column>
         <el-table-column
-          prop="date"
           label="检测时间"
           min-width="20"
         >
@@ -537,7 +540,7 @@
           width="160px"
         >
           <template slot-scope="{row,$index}">
-            <el-button v-if="tableDataValue.length!==$index" type="primary" @click="modifyFun(row)">{{ row.edit?'保存':'修改' }}</el-button>
+            <el-button v-if="tableDataValue.length-1!==$index" type="primary" @click="modifyFun(row)">{{ row.edit?'保存':'修改' }}</el-button>
             <el-upload
               v-if="false"
               style="display:inline-block;margin-left:5px"
@@ -603,7 +606,8 @@ export default {
       rulesLeft: {},
       groups: [],
       ruleForm: {
-        test_interval: 1
+        test_interval: 1,
+        test_method_name: ''
       },
       btnLoading: false,
       testEquipList: [],
@@ -782,6 +786,7 @@ export default {
     },
     changeTestIndicators() {
       // this.getWaitPlan()
+      this.ruleForm.test_method_name = ''
     },
     classChanged(val) {
       this.search.classes = val
@@ -1043,17 +1048,19 @@ export default {
         this.tableDataValue = []
         const data = await rubberMaxStretchTestResult('get', null, { params: { product_test_plan_detail_id: this.TableDataValueId }})
         this.tableDataValue = data.results || []
+
+        const num = 1000
         if (this.tableDataValue.length > 0) {
           this.tableDataValue.push({
             ordering: this.search.test_indicator_name === '物性' ? '平均值' : 'Mid',
             product_no: this.tableDataValue[0].product_no,
-            thickness: data.avg_value['厚度'],
-            ds1: data.avg_value['百分之百'],
-            ds2: data.avg_value['百分之三百'],
-            break_strength: data.avg_value['断裂强力'],
-            break_length: data.avg_value['断裂伸长'],
-            max_strength: data.avg_value['最大力'],
-            end_strength: data.avg_value['结束力']
+            thickness: Math.round(data.avg_value['厚度'] * num) / num,
+            ds1: Math.round(data.avg_value['百分之百'] * num) / num,
+            ds2: Math.round(data.avg_value['百分之三百'] * num) / num,
+            break_strength: Math.round(data.avg_value['断裂强力'] * num) / num,
+            break_length: Math.round(data.avg_value['断裂伸长'] * num) / num,
+            max_strength: Math.round(data.avg_value['最大力'] * num) / num,
+            end_strength: Math.round(data.avg_value['结束力'] * num) / num
           })
         }
       } catch (e) {
