@@ -219,16 +219,35 @@ export function exportExcel(value = 'excel', val) {
         right: { style: 'thin' }
       }
     }
+    var myDate = new Date()
+    var year = myDate.getFullYear() // 获取当前年
+    var mon = myDate.getMonth() + 1 // 获取当前月
+    if (mon < 10) {
+      mon = '0' + mon
+    }
+    var date = myDate.getDate() // 获取当前日
+    if (date < 10) {
+      date = '0' + date
+    }
+    var hours = myDate.getHours() // 获取当前小时
+    if (hours < 10) {
+      hours = '0' + hours
+    }
+    var minutes = myDate.getMinutes() // 获取当前分钟
+    if (minutes < 10) {
+      minutes = '0' + minutes
+    }
+    var seconds = myDate.getSeconds() // 获取当前秒
+    if (seconds < 10) {
+      seconds = '0' + seconds
+    }
+    var now = year + '' + mon + '' + date + '' + hours + '' + minutes + '' + seconds
     const _wpx = []
     // const _tableTitleFont = JSON.parse(JSON.stringify(tableTitleFont))
     const _tableTitleFont1 = JSON.parse(JSON.stringify(tableTitleFont))
     // const _length = Object.keys(wb.Sheets['Sheet1']).length
     const arr = Object.keys(wb.Sheets['Sheet1'])
     const obj = wb.Sheets['Sheet1']
-    const length = obj['!ref'].split(':')[1].length
-    const num = obj['!ref'].split(':')[1].substring(1, length) - 8
-    const num1 = obj['!ref'].split(':')[1].substring(1, length) - 5
-    const num2 = obj['!ref'].split(':')[1].substring(1, length) - 2
     const arr1 = []
     let arr2 = []
     arr.forEach(D => {
@@ -243,12 +262,18 @@ export function exportExcel(value = 'excel', val) {
     })
 
     arr2 = [...new Set(arr2)]
-    arr1.forEach(D => {
+    const number = Math.max(...arr1) + 1
+    const num = number - 13
+    const num1 = number - 9
+    const num2 = number - 5
+    const num3 = number - 1
+    for (var D = 1; D <= number; D++) {
       arr2.forEach(d => {
         if (obj[d + D]) {
           if (obj[d + D].v && (obj[d + D].v.indexOf('处理意见') > -1 ||
         obj[d + D].v.indexOf('不合格品') > -1 || obj[d + D].v.indexOf('备注') > -1 ||
-        obj[d + D].v.indexOf('质检编码') > -1 || obj[d + D].v.indexOf('经办人') > -1)) {
+        obj[d + D].v.indexOf('质检编码') > -1 || obj[d + D].v.indexOf('经办人') > -1 ||
+        (d === 'A' && [num, num1, num2, num3].includes(D)))) {
             _tableTitleFont1.alignment = {
               horizontal: 'left',
               vertical: 'left'
@@ -268,27 +293,6 @@ export function exportExcel(value = 'excel', val) {
           }
         }
       })
-    })
-
-    wb.Sheets['Sheet1']['A' + num].s = {									// 为某个单元格设置单独样式
-      alignment: {
-        horizontal: 'left',
-        vertical: 'left'
-      }
-    }
-
-    wb.Sheets['Sheet1']['A' + num1].s = {									// 为某个单元格设置单独样式
-      alignment: {
-        horizontal: 'left',
-        vertical: 'left'
-      }
-    }
-
-    wb.Sheets['Sheet1']['A' + num2].s = {									// 为某个单元格设置单独样式
-      alignment: {
-        horizontal: 'left',
-        vertical: 'left'
-      }
     }
 
     wb.Sheets['Sheet1']['A1'].s = {									// 为某个单元格设置单独样式
@@ -324,7 +328,7 @@ export function exportExcel(value = 'excel', val) {
       // 返回一个新创建的 Blob 对象，其内容由参数中给定的数组串联组成。
       new Blob([wbout], { type: 'application/octet-stream' }),
       // 设置导出文件名称
-      value + '.xlsx'
+      value + '_' + now + '.xlsx'
     )
   } catch (e) {
     if (typeof console !== 'undefined') console.log(e, wbout)
