@@ -243,6 +243,7 @@
           <el-input
             v-model="ruleForm.plan_uid"
             :disabled="true"
+            style="width:250px !important"
           />
         </div>
         <el-table
