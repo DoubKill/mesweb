@@ -295,7 +295,7 @@
             label="状态"
             min-width="18"
             :formatter="(row)=>{
-              return row.values?'已检测':'待检测'
+              return row.value?'已检测':'待检测'
             }"
           />
           <el-table-column
