@@ -24,14 +24,15 @@
             <el-select
               v-model="search.test_indicator_name"
               placeholder="请选择"
-              @change="changeTestEquip"
+              :disabled="!!ruleForm.plan_uid"
+              @change="changeTestIndicators"
             >
               <!-- @visible-change="changeVisibleTestIndicators" -->
               <el-option
-                v-for="group in testIndicatorsList"
-                :key="group.id"
-                :label="group.name"
-                :value="group.name"
+                v-for="(group,_i) in testIndicatorsList"
+                :key="_i"
+                :label="group.test_indicator__name"
+                :value="group.test_indicator__name"
               />
             </el-select>
           </el-form-item>
@@ -169,7 +170,6 @@
             </el-select>
           </el-form-item>
           <el-form-item label="试验方法" prop="test_method_name">
-            <!-- test_method_name -->
             <el-select
               v-model="ruleForm.test_method_name"
               placeholder="请选择"
@@ -283,15 +283,19 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="values"
+            prop="value"
             label="检测值"
-            min-width="20"
-          />
+            min-width="40"
+          >
+            <template v-if="row.value" slot-scope="{row}">
+              {{ row.value.replace(/{|}|'/g,"") }}
+            </template>
+          </el-table-column>
           <el-table-column
             label="状态"
             min-width="18"
             :formatter="(row)=>{
-              return row.values?'已检测':'待检测'
+              return row.value?'已检测':'待检测'
             }"
           />
           <el-table-column
@@ -308,12 +312,12 @@
             </template>
           </el-table-column>
           <el-table-column
-            v-if="['物性','钢拔'].includes(search.test_indicator_name)&&ruleForm.plan_uid"
+            v-if="['物性','钢拔'].includes(search.test_indicator_name)"
             label="查看绑定"
             width="70"
           >
-            <template>
-              <el-button size="mini" type="primary" @click="showTestData">查看</el-button>
+            <template slot-scope="{row}">
+              <el-button size="mini" type="primary" @click="showTestData(row)">查看</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -332,25 +336,25 @@
       <el-form :inline="true">
         <el-form-item label="检测计划单据号">
           <el-input
-            v-model="searchValue.aaaa"
+            v-model="ruleForm.plan_uid"
             :disabled="true"
           />
         </el-form-item>
         <el-form-item label="物料规格">
           <el-input
-            v-model="searchValue.aaaa"
+            v-model="ruleForm.product_no"
             :disabled="true"
           />
         </el-form-item>
         <el-form-item label="车次">
           <el-input
-            v-model="searchValue.aaaa"
+            v-model="searchValue.actual_trains"
             :disabled="true"
           />
         </el-form-item>
         <el-form-item label="检测方法">
           <el-input
-            v-model="searchValue.aaaa"
+            v-model="ruleForm.test_method_name"
             :disabled="true"
           />
         </el-form-item>
@@ -359,29 +363,38 @@
         :data="tableDataValue"
         style="width: 100%"
         border
+        class="trainsNumStyle"
       >
         <el-table-column
-          prop="date"
-          label="次序（ID)"
-          min-width="20"
+          prop="ordering"
+          label="次序
+          （ID)"
+          width="60"
         />
         <el-table-column
-          prop="date"
+          prop="product_no"
           label="材料"
           min-width="20"
         />
         <el-table-column
-          prop="date"
+          prop="test_time"
           label="检测日期"
           min-width="20"
-        />
+        >
+          <template v-if="row.test_time" slot-scope="{row}">
+            {{ row.test_time.split(' ')[0] }}
+          </template>
+        </el-table-column>
         <el-table-column
-          prop="date"
           label="检测时间"
           min-width="20"
-        />
+        >
+          <template v-if="row.test_time" slot-scope="{row}">
+            {{ row.test_time.split(' ')[1] }}
+          </template>
+        </el-table-column>
         <el-table-column
-          prop="date"
+          prop="speed"
           label="速度(mm/min)"
           min-width="20"
         />
@@ -389,99 +402,135 @@
           v-if="search.test_indicator_name==='物性'"
           :key="1"
           label="厚度(mm)"
-          min-width="20"
+          min-width="15"
         >
           <template slot-scope="{row}">
-            <el-input v-if="row.edit" v-model="row.aaaa" />
-            <span v-else>{{ row.aaaa }}</span>
+            <el-input-number
+              v-if="row.edit"
+              v-model="row.thickness"
+              controls-position="right"
+              size="mini"
+              :min="0"
+            />
+            <span v-else>{{ row.thickness }}</span>
           </template>
         </el-table-column>
         <el-table-column
           v-if="search.test_indicator_name==='物性'"
           :key="2"
-          prop="date"
+          prop="width"
           label="宽度(mm)"
-          min-width="20"
+          min-width="15"
         />
         <el-table-column
           v-if="search.test_indicator_name==='物性'"
           :key="3"
-          prop="date"
           label="100%（Mpa）"
           min-width="20"
         >
           <template slot-scope="{row}">
-            <el-input v-if="row.edit" v-model="row.aaaa" />
-            <span v-else>{{ row.aaaa }}</span>
+            <el-input-number
+              v-if="row.edit"
+              v-model="row.ds1"
+              controls-position="right"
+              size="mini"
+              :min="0"
+            />
+            <span v-else>{{ row.ds1 }}</span>
           </template>
         </el-table-column>
         <el-table-column
           v-if="search.test_indicator_name==='物性'"
           :key="4"
-          prop="date"
           label="300%（Mpa）"
           min-width="20"
         >
           <template slot-scope="{row}">
-            <el-input v-if="row.edit" v-model="row.aaaa" />
-            <span v-else>{{ row.aaaa }}</span>
+            <el-input-number
+              v-if="row.edit"
+              v-model="row.ds2"
+              controls-position="right"
+              size="mini"
+              :min="0"
+            />
+            <span v-else>{{ row.ds2 }}</span>
           </template>
         </el-table-column>
         <el-table-column
           v-if="search.test_indicator_name==='物性'"
           :key="5"
-          prop="date"
           label="断裂强力（Mpa）"
-          min-width="20"
+          min-width="23"
         >
           <template slot-scope="{row}">
-            <el-input v-if="row.edit" v-model="row.aaaa" />
-            <span v-else>{{ row.aaaa }}</span>
+            <el-input-number
+              v-if="row.edit"
+              v-model="row.break_strength"
+              controls-position="right"
+              size="mini"
+              :min="0"
+            />
+            <span v-else>{{ row.break_strength }}</span>
           </template>
         </el-table-column>
         <el-table-column
           v-if="search.test_indicator_name==='物性'"
           :key="6"
-          prop="date"
           label="断裂伸长（%）"
           min-width="20"
         >
           <template slot-scope="{row}">
-            <el-input v-if="row.edit" v-model="row.aaaa" />
-            <span v-else>{{ row.aaaa }}</span>
+            <el-input-number
+              v-if="row.edit"
+              v-model="row.break_length"
+              controls-position="right"
+              size="mini"
+              :min="0"
+            />
+            <span v-else>{{ row.break_length }}</span>
           </template>
         </el-table-column>
         <el-table-column
           v-if="search.test_indicator_name==='钢拔'"
           :key="7"
-          prop="date"
           label="最大力（N)"
           min-width="20"
         >
           <template slot-scope="{row}">
-            <el-input v-if="row.edit" v-model="row.aaaa" />
-            <span v-else>{{ row.aaaa }}</span>
+            <el-input-number
+              v-if="row.edit"
+              v-model="row.max_strength"
+              controls-position="right"
+              size="mini"
+              :min="0"
+            />
+            <span v-else>{{ row.max_strength }}</span>
           </template>
         </el-table-column>
         <el-table-column
           v-if="search.test_indicator_name==='钢拔'"
           :key="8"
-          prop="date"
           label="结束力（N）"
           min-width="20"
         >
           <template slot-scope="{row}">
-            <el-input v-if="row.edit" v-model="row.aaaa" />
-            <span v-else>{{ row.aaaa }}</span>
+            <el-input-number
+              v-if="row.edit"
+              v-model="row.end_strength"
+              controls-position="right"
+              size="mini"
+              :min="0"
+            />
+            <span v-else>{{ row.end_strength }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          prop="date"
+          prop="result"
           label="检测结果"
           min-width="20"
         />
         <el-table-column
-          prop="date"
+          prop=""
           label="检测文件名称"
           min-width="20"
         />
@@ -490,10 +539,11 @@
           label="操作"
           width="160px"
         >
-          <template slot-scope="{row}">
-            <el-button type="primary" @click="modifyFun(row)">{{ row.edit?'保存':'修改' }}</el-button>
+          <template slot-scope="{row,$index}">
+            <el-button v-if="tableDataValue.length-1!==$index" type="primary" @click="modifyFun(row)">{{ row.edit?'保存':'修改' }}</el-button>
             <el-upload
-              style="display:inline-block"
+              v-if="false"
+              style="display:inline-block;margin-left:5px"
               action="string"
               accept=".xls, .xlsx"
               :http-request="Upload"
@@ -515,7 +565,7 @@
 import classSelect from '@/components/ClassSelect'
 import equipSelect from '@/components/select_w/equip'
 import { globalCodesUrl, testIndicators, palletTrainsFeedbacks, matTestIndicatorMethods } from '@/api/base_w'
-import { productReportEquip, productTestPlan } from '@/api/base_w_four'
+import { productReportEquip, productTestPlan, rubberMaxStretchTestResult } from '@/api/base_w_four'
 import allProductNoSelect from '@/components/select_w/allProductNoSelect.vue'
 
 export default {
@@ -535,7 +585,7 @@ export default {
         product_no: '', // C-3MB-A019-02
         classes: '', // 早班
         factory_date: '', // 2021-04-29 2021-07-21
-        test_indicator_name: '门尼'
+        test_indicator_name: ''
       },
       loading: false,
       tableData: [],
@@ -556,16 +606,16 @@ export default {
       rulesLeft: {},
       groups: [],
       ruleForm: {
-        test_interval: 1
+        test_interval: 1,
+        test_method_name: ''
       },
       btnLoading: false,
       testEquipList: [],
-      testIndicatorsList: [
-        { name: '门尼', id: 1 },
-        { name: '流变', id: 2 },
-        { name: '物性', id: 3 },
-        { name: '钢拔', id: 4 }
-      ],
+      // { name: '门尼', id: 1 },
+      // { name: '流变', id: 2 },
+      // { name: '物性', id: 3 },
+      // { name: '钢拔', id: 4 }
+      testIndicatorsList: [],
       endBtnLoading: false,
       stageList: [],
       alltableData: [],
@@ -573,7 +623,8 @@ export default {
       handleList: [],
       dialogVisible: false,
       searchValue: {},
-      tableDataValue: []
+      tableDataValue: [],
+      TableDataValueId: ''
     }
   },
   watch: {
@@ -612,6 +663,7 @@ export default {
         if (bool) {
           this.search.test_equip = data && data[0].no
           this.getWaitPlan()
+          this.getTestIndicatorsList()
         }
       } catch (e) {
         //
@@ -658,7 +710,7 @@ export default {
         arr = data.filter(d => d.test_indicator === this.search.test_indicator_name)
         this.testMethodList = arr[0].methods
       } catch (e) {
-        //
+        this.testMethodList = []
       }
     },
     changeGroup(bool) {
@@ -682,7 +734,16 @@ export default {
       this.ruleForm.plan_uid = ''
       this.ruleForm.product_no = ''
       this.search.product_no = ''
+      this.getTestIndicatorsList()
       this.getWaitPlan()
+    },
+    getTestIndicatorsList() {
+      this.search.test_indicator_name = ''
+      const obj = this.testEquipList.find(d => d.no === this.search.test_equip)
+      this.testIndicatorsList = obj.test_indicator_name || []
+      if (!this.ruleForm.plan_uid) {
+        this.search.test_indicator_name = this.testIndicatorsList[0].test_indicator__name
+      }
     },
     async getWaitPlan(bool) {
       try {
@@ -696,17 +757,26 @@ export default {
         if (data.results.length === 0) {
           return
         }
+        // const _test_indicator_name = data.results[0].test_indicator_name
+        // if (this.search.test_indicator_name !== _test_indicator_name) {
+        //   this.btnLoading = false
+        //   this.ruleForm.plan_uid = ''
+        //   this.tableDataRight = []
+        //   return
+        // }
         if (!data.msg) {
           this.btnLoading = true
           this.ruleForm = data.results[0]
           this.tableDataRight = data.results[0].product_test_plan_detail
           this.$message.info('正在检测中')
+          this.search.test_indicator_name = data.results[0].test_indicator_name
           this.ruleForm.product_no = data.results[0].product_test_plan_detail[0].product_no
         } else {
           this.$message.info('全部检测完毕')
           this.tableDataRight = []
           this.btnLoading = false
           this.ruleForm.plan_uid = ''
+          this.testMethodList = []
           // this.ruleForm = {}
           // this.$refs.ruleForm.clearValidate()
         }
@@ -714,7 +784,10 @@ export default {
         //
       }
     },
-    changeTestIndicators() {},
+    changeTestIndicators() {
+      // this.getWaitPlan()
+      this.ruleForm.test_method_name = ''
+    },
     classChanged(val) {
       this.search.classes = val
       this.searchList()
@@ -724,6 +797,7 @@ export default {
     },
     searchList() {
       this.search.product_no = ''
+      this.ruleForm.product_no = ''
       this.getList()
     },
     equipSearch(val) {
@@ -734,6 +808,7 @@ export default {
       this.search.product_no = val ? val.material_no : ''
       this.ruleForm.product_no = this.search.product_no
       this.tableDataRight = []
+      this.ruleForm.test_method_name = ''
       this.getList()
     },
     changeTested(val) {
@@ -748,6 +823,10 @@ export default {
     startTestFun() {
       if (this.tableDataRight.length === 0) {
         this.$message.info('没有可检测数据，请添加')
+        return
+      }
+      if (!this.search.test_indicator_name) {
+        this.$message.info('请选择实验区分！')
         return
       }
       this.$refs.ruleForm.validate(async(valid) => {
@@ -769,6 +848,8 @@ export default {
             const { plan_uid } = await productTestPlan('post', null, { data: obj })
             this.ruleForm.plan_uid = plan_uid
             this.$message.success('已开始检测')
+
+            this.getWaitPlan(true)
           } catch (e) {
             if (e.message) {
               this.$message.info(e.message)
@@ -812,8 +893,16 @@ export default {
       }
       this.getWaitPlan(true)
     },
-    showTestData() {
+    showTestData(row) {
       this.dialogVisible = true
+      this.searchValue = {
+        actual_trains: row.actual_trains
+      }
+      if (!row.id) {
+        return
+      }
+      this.TableDataValueId = row.id
+      this.getTableDataValue()
     },
     handleClose(done) {
       done()
@@ -828,21 +917,59 @@ export default {
       //   })
       // })
     },
-    modifyFun(row) {
-      this.$set(row, 'edit', !row.edit)
+    async modifyFun(row) {
+      let obj = {
+        thickness: row.thickness,
+        ds1: row.ds1,
+        ds2: row.ds2,
+        break_strength: row.break_strength,
+        break_length: row.break_length
+      }
+      let bool = false
+      if (this.search.test_indicator_name === '钢拔') {
+        obj = {
+          max_strength: row.max_strength,
+          end_strength: row.end_strength
+        }
+        if (row.max_strength && row.end_strength) {
+          bool = true
+        }
+      } else if (this.search.test_indicator_name === '物性') {
+        if (row.thickness && row.ds1 && !row.ds2 && !row.break_strength && !row.break_length) {
+          bool = true
+        }
+      }
+      if (!bool && !row.edit) {
+        this.$set(row, 'edit', !row.edit)
+        return
+      } else if (row.edit) {
+        this.$set(row, 'edit', !row.edit)
+      } else {
+        return
+      }
+      if (!row.edit) {
+        try {
+          await rubberMaxStretchTestResult('put', row.id, { data: obj })
+          this.getTableDataValue()
+          this.$message.success('操作成功')
+        } catch (e) {
+          this.getTableDataValue()
+        }
+      }
     },
     addRowFun() {
       if (!this.search.product_no) {
         this.$message.info('请选择胶料规格')
         return
       }
-      const obj = {
+      let obj = {
         classes: this.search.classes,
         equip_no: this.search.equip_no,
         factory_date: this.search.factory_date,
         product_no: this.search.product_no,
         add: 1
       }
+      obj = JSON.parse(JSON.stringify(obj))
       this.tableDataRight.push(obj)
     },
     moveRight() {
@@ -918,6 +1045,30 @@ export default {
         this.$message.success('已添加到右侧检测列表')
       }
     },
+    async getTableDataValue() {
+      try {
+        this.tableDataValue = []
+        const data = await rubberMaxStretchTestResult('get', null, { params: { product_test_plan_detail_id: this.TableDataValueId }})
+        this.tableDataValue = data.results || []
+
+        const num = 1000
+        if (this.tableDataValue.length > 0) {
+          this.tableDataValue.push({
+            ordering: this.search.test_indicator_name === '物性' ? '平均值' : 'Mid',
+            product_no: this.tableDataValue[0].product_no,
+            thickness: Math.round(data.avg_value['厚度'] * num) / num,
+            ds1: Math.round(data.avg_value['百分之百'] * num) / num,
+            ds2: Math.round(data.avg_value['百分之三百'] * num) / num,
+            break_strength: Math.round(data.avg_value['断裂强力'] * num) / num,
+            break_length: Math.round(data.avg_value['断裂伸长'] * num) / num,
+            max_strength: Math.round(data.avg_value['最大力'] * num) / num,
+            end_strength: Math.round(data.avg_value['结束力'] * num) / num
+          })
+        }
+      } catch (e) {
+        this.tableDataValue = []
+      }
+    },
     delRow(index) {
       this.tableDataRight.splice(index, 1)
     },
@@ -947,7 +1098,7 @@ export default {
     }
     .trainsNumStyle{
       .el-input,.el-input-number--mini{
-        width:80px !important;
+        width:120px !important;
       }
     }
     .actualTrains{

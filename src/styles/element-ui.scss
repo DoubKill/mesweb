@@ -143,3 +143,10 @@ body .el-table th.gutter{
 .el-range-separator {
   box-sizing: content-box;
 }
+
+.el-input,.el-input__inner{
+  width:200px;
+}
+.el-input-number .el-input,.el-input, .el-input__inner{
+  width:100%;
+}
