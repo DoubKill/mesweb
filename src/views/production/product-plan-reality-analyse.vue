@@ -30,7 +30,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item style="float: right">
+      <el-form-item>
         <el-button
           @click="changeSearch"
         >查询</el-button>

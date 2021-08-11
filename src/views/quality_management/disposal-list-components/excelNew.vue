@@ -2,12 +2,12 @@
   <div class="unqualified-card-container">
     <div ref="PDFBtn" style="text-align:right;margin-bottom:10px">
       <el-button
-        v-if="orderNum&&!editType"
+        v-if="!isEdit"
         v-permission="['unqualified_order','export']"
         @click="exportPDF"
       >另存为PDF</el-button>
       <!-- <el-button
-        v-if="orderNum&&!editType"
+        v-if="!isEdit"
         @click="exportExcel"
       >下载表格</el-button> -->
       <el-button v-else :loading="loadingBtn" @click="submitFun">保存</el-button>
@@ -37,20 +37,21 @@
           <td :colspan="2" style="text-align:left;padding-left:25px;">发生部门：
           </td>
           <td :colspan="2">
-            <span v-if="orderNum">{{ formObj.deal_department }}</span>
-            <div v-else class="deal_department">
-              <el-radio v-model="formObj.deal_department" label="准备分厂">准备分厂</el-radio>
-              <el-radio v-model="formObj.deal_department" label="加硫车间">加硫车间</el-radio>
+            <span>{{ formObj.deal_department }}</span>
+            <!-- <div v-else class="deal_department"> -->
+            <!-- <el-radio v-model="formObj.deal_department" label="准备分厂">准备分厂</el-radio> -->
+            <!-- <el-radio v-model="formObj.deal_department" label="加硫车间">加硫车间</el-radio>
               <el-radio v-model="formObj.deal_department" label="混炼车间">混炼车间</el-radio>
               <el-radio v-model="formObj.deal_department" label="硫磺车间">硫磺车间</el-radio>
-              <el-radio v-model="formObj.deal_department" label="细料车间">细料车间</el-radio>
-            </div></td>
+              <el-radio v-model="formObj.deal_department" label="细料车间">细料车间</el-radio> -->
+            <!-- </div> -->
+          </td>
           <td>胶料筹备组 炼胶</td>
           <td :colspan="headDataLength" style="width:125px">日期：{{ orderNum&&formObj.created_date?(formObj.created_date).split(' ')[0]: formObj.currentDate }}</td>
         </tr>
         <tr style="text-align:left;">
           <td :colspan="5+headDataLength" style="padding-left:25px">不合格品状态：
-            <span v-if="orderNum">
+            <span v-if="!isEdit">
               <span
                 v-for="(item,i) in stateList"
                 :key="i"
@@ -172,7 +173,7 @@
           <tr style="text-align:left;">
             <td rowspan="2" :colspan="5+headDataLength" style="padding-left:25px">
               <el-input
-                v-if="!orderNum||editType === 1"
+                v-if="isEdit&&editType === 1"
                 v-model="formObj.reason"
                 type="textarea"
                 :rows="5"
@@ -191,15 +192,15 @@
               <span style="margin:0 100px">日期：{{ formObj.deal_date }}</span>
             </td>
           </tr>
-          <tr style="text-align:left;">
+          <tr v-if="editType !== 1" style="text-align:left;">
             <td :colspan="5+headDataLength" style="padding-left:25px">
               <div>处理意见(品质技术部工艺技术科)：</div>
             </td>
           </tr>
-          <tr style="text-align:left;">
+          <tr v-if="editType !== 1" style="text-align:left;">
             <td rowspan="2" :colspan="5+headDataLength" style="padding-left:25px">
               <el-input
-                v-if="!orderNum||editType === 2"
+                v-if="isEdit&&editType === 2"
                 v-model="formObj.t_deal_suggestion"
                 type="textarea"
                 :rows="5"
@@ -211,22 +212,22 @@
               <div v-else class="deal_suggestion" v-html="formObj.t_deal_suggestion" />
             </td>
           </tr>
-          <tr />
-          <tr style="text-align:right">
+          <tr v-if="![1].includes(editType)" />
+          <tr v-if="editType !== 1" style="text-align:right">
             <td :colspan="5+headDataLength">
               经办人：{{ formObj.t_deal_user }}
               <span style="margin:0 100px">日期：{{ formObj.t_deal_date }}</span>
             </td>
           </tr>
-          <tr style="text-align:left;">
+          <tr v-if="![1,2].includes(editType)" style="text-align:left;">
             <td :colspan="5+headDataLength" style="padding-left:25px">
               <div>处理意见(品质技术部工艺检查科)：</div>
             </td>
           </tr>
-          <tr style="text-align:left;">
+          <tr v-if="![1,2].includes(editType)" style="text-align:left;">
             <td rowspan="2" :colspan="5+headDataLength" style="padding-left:25px">
               <el-input
-                v-if="!orderNum||editType === 3"
+                v-if="isEdit&&editType === 3"
                 v-model="formObj.c_deal_suggestion"
                 type="textarea"
                 :rows="5"
@@ -238,22 +239,22 @@
               <div v-else class="deal_suggestion" v-html="formObj.c_deal_suggestion" />
             </td>
           </tr>
-          <tr />
-          <tr style="text-align:right">
+          <tr v-if="![1,2].includes(editType)" />
+          <tr v-if="![1,2].includes(editType)" style="text-align:right">
             <td :colspan="5+headDataLength">
               经办人：{{ formObj.c_deal_user }}
               <span style="margin:0 100px">日期：{{ formObj.c_deal_date }}</span>
             </td>
           </tr>
-          <tr style="text-align:left;">
+          <tr v-if="![1,2].includes(editType)" style="text-align:left;">
             <td :colspan="5+headDataLength" style="padding-left:25px">
               <div>备注：</div>
             </td>
           </tr>
-          <tr style="text-align:left;">
+          <tr v-if="![1,2].includes(editType)" style="text-align:left;">
             <td rowspan="2" :colspan="5+headDataLength" style="padding-left:25px">
               <el-input
-                v-if="!orderNum"
+                v-if="isEdit&&editType === 3"
                 v-model="formObj.desc"
                 type="textarea"
                 :rows="5"
@@ -265,7 +266,7 @@
               <!-- <div style="margin-top:10px" /> -->
             </td>
           </tr>
-          <tr />
+          <tr v-if="![1,2].includes(editType)" />
         <!-- <tr style="text-align:left;">
           <td :colspan="5+headData.length" style="padding-left:25px">
             <div style="text-align:left;margin-top:4px">
@@ -315,11 +316,17 @@ export default {
         return false
       }
     },
-    // 编辑类型  1原因编辑 2技术处理 3检查处理
+    // 编辑类型  1不合格品详情 2处理意见(技术科) 3处理意见(检查科)
     editType: {
       type: Number,
       default() {
         return null
+      }
+    },
+    isEdit: { // 是不是编辑 编辑true
+      type: Boolean,
+      default() {
+        return false
       }
     }
   },
@@ -329,7 +336,7 @@ export default {
         status: '来料',
         currentDate: setDate()
       },
-      stateList: ['来料', '半成品', '成品', '库存'],
+      stateList: ['来料', '半成品'],
       headData: this.formHeadData,
       orderNum: null,
       loadingBtn: false,
