@@ -254,6 +254,16 @@ export const asyncRoutes = [
         }
       }
       ]
+    // },
+    // {
+    //   path: '/pinkSet',
+    //   component: () => import('@/views/pinkSet/index'),
+    //   name: 'PinkSet',
+    //   meta: {
+    //     title: '粉料罐-油料罐物料设定',
+    //     icon: 'dashboard',
+    //     permissionName: ''
+    //   }
     }
     // {
     //   path: '/powder-tank',
@@ -1409,6 +1419,46 @@ export const asyncRoutes = [
               title: '不合格处置单管理',
               permissionName: 'unqualified_order'
             }
+          // },
+          // {
+          //   path: '/unqualified-handle/disposalLaunch',
+          //   component: () => import('@/views/quality_management/disposal/disposalLaunch.vue'),
+          //   name: 'DisposalLaunch',
+          //   meta: {
+          //     faName: 'UnqualifiedHandle',
+          //     title: '不合格处置发生部门发起',
+          //     permissionName: ''
+          //   }
+          // },
+          // {
+          //   path: '/unqualified-handle/disposalTechnology',
+          //   component: () => import('@/views/quality_management/disposal/disposalTechnology.vue'),
+          //   name: 'DisposalTechnology',
+          //   meta: {
+          //     faName: 'UnqualifiedHandle',
+          //     title: '不合格处置工艺技术科处理',
+          //     permissionName: ''
+          //   }
+          // },
+          // {
+          //   path: '/unqualified-handle/disposalInspection',
+          //   component: () => import('@/views/quality_management/disposal/disposalInspection.vue'),
+          //   name: 'DisposalInspection',
+          //   meta: {
+          //     faName: 'UnqualifiedHandle',
+          //     title: '不合格处置工艺检查科处理',
+          //     permissionName: ''
+          //   }
+          // },
+          // {
+          //   path: '/unqualified-handle/disposalSee',
+          //   component: () => import('@/views/quality_management/disposal/disposalSee.vue'),
+          //   name: 'DisposalSee',
+          //   meta: {
+          //     faName: 'UnqualifiedHandle',
+          //     title: '不合格处置单查看',
+          //     permissionName: ''
+          //   }
           }
         ]
       },
