@@ -549,7 +549,7 @@ export default {
     },
     getHeaders() {
       this.headers = []
-      const headers = []
+      let headers = []
       this.tableData.forEach((product_no) => {
         product_no.dates.forEach((date) => {
           if (this.headers.indexOf(date.date) === -1) {
@@ -559,6 +559,10 @@ export default {
         }
         )
       })
+
+      headers = headers.sort(sortUpDate)
+      this.headers = this.headers.sort(sortUpDate)
+
       this.optionBar1.xAxis[0].data = headers
       this.optionBar2.xAxis[0].data = headers
       this.optionBar3.xAxis[0].data = headers
@@ -673,7 +677,7 @@ export default {
     clickCharts() {
       this.dialogChartsShow = true
       // 弹框折线柱形图 数据处理
-      const headers = []
+      let headers = []
       const obj1 = {
         name: '产量',
         type: 'line',
@@ -742,6 +746,7 @@ export default {
           data: _arr4
         })
       })
+
       this.detailData.forEach(D => {
         headers.push(dayjs(D.date).format('YYYY-MM'))
         obj1.data.push(D.train_count)
@@ -751,17 +756,21 @@ export default {
       })
       // console.log(this.detailData, 'this.detailData')
       // console.log(this.detailHeaders, 'this.detailHeaders')
-
       this.$nextTick(() => {
         this.chartDialogRateBar = echarts.init(document.getElementById('dialogRateBar'))
 
         const allArr = [obj1, obj2, obj3, obj4, ...arr1]
+
+        headers = headers.sort(sortUpDate)
         this.optionBar4.xAxis[0].data = headers
         this.optionBar4.series = allArr
         this.chartDialogRateBar.setOption(this.optionBar4)
       })
     }
   }
+}
+function sortUpDate(a, b) {
+  return Date.parse(a) - Date.parse(b)
 }
 </script>
 

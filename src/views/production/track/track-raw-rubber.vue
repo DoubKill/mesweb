@@ -6,6 +6,7 @@
       v-model="barCodeSearch"
       style="width:200px;margin-right:20px"
       placeholder="请输入内容"
+      clearable
       @input="barCodeInput"
     />
     流程：<el-select v-model="value" placeholder="流程" @change="clickFun">
