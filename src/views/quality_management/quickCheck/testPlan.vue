@@ -797,6 +797,7 @@ export default {
     },
     searchList() {
       this.search.product_no = ''
+      this.ruleForm.product_no = ''
       this.getList()
     },
     equipSearch(val) {
@@ -961,13 +962,14 @@ export default {
         this.$message.info('请选择胶料规格')
         return
       }
-      const obj = {
+      let obj = {
         classes: this.search.classes,
         equip_no: this.search.equip_no,
         factory_date: this.search.factory_date,
         product_no: this.search.product_no,
         add: 1
       }
+      obj = JSON.parse(JSON.stringify(obj))
       this.tableDataRight.push(obj)
     },
     moveRight() {
