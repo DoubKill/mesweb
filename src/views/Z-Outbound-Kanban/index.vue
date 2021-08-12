@@ -104,7 +104,7 @@
             style="width: 100%;"
             :span-method="objectSpanMethod"
           >
-            <el-table-column label="出库履历信息" align="center">
+            <el-table-column :label="`${dataTime.split(' ')[0]}（24小时）入出库统计信息`" align="center">
               <el-table-column
                 prop="tunnel"
                 label="巷道"
