@@ -358,6 +358,8 @@ export default {
         }
         this.ruleForm.need_weight = this.ruleForm.need_qty * a
       }
+
+      this.inventorySearch()
     },
     handleSelectionChange(arr) {
       this.multipleSelection = arr
