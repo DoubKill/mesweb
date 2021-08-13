@@ -307,19 +307,21 @@ export function rubberMaxStretchTestResult(method, id, data = {}) {
   return request(obj)
 }
 
-export function outBoundTasks(method, id, data = {}) {
+export function outBoundTasks(method, id, data = {}, cancelToken) {
   const obj = {
     url: id ? API.OutBoundTasks + id + '/' : API.OutBoundTasks,
-    method: method
+    method: method,
+    cancelToken: cancelToken
   }
   Object.assign(obj, data)
   return request(obj)
 }
 
-export function inoutBoundSummary(method, id, data = {}) {
+export function inoutBoundSummary(method, id, data = {}, cancelToken) {
   const obj = {
     url: id ? API.InoutBoundSummary + id + '/' : API.InoutBoundSummary,
-    method: method
+    method: method,
+    cancelToken: cancelToken
   }
   Object.assign(obj, data)
   return request(obj)

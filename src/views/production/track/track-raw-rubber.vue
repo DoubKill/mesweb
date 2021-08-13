@@ -4,7 +4,7 @@
     lot_no：
     <el-input
       v-model="barCodeSearch"
-      style="width:200px;margin-right:20px"
+      style="width:300px;margin-right:20px"
       placeholder="请输入内容"
       clearable
       @input="barCodeInput"
@@ -346,10 +346,11 @@ export default {
           data.product_details[0].batch_classes = data.product_info[0].classes_name || ''
           data.product_details[0].created_date = data.product_info[0].created_date || ''
         }
-        this.activities = data
+        this.activities = data || []
         this.loading = false
       } catch (e) {
         this.loading = false
+        this.activities = []
       }
     },
     productInView(row) {
