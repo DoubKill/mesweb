@@ -150,6 +150,7 @@ import echarts from 'echarts'
 import { stationInfo } from '@/api/warehouse'
 import { outBoundTasks, inoutBoundSummary } from '@/api/base_w_four'
 import { setDate } from '@/utils'
+import common from '@/utils/common'
 import axios from 'axios'
 export default {
   data() {
@@ -163,6 +164,7 @@ export default {
       optionsStation: [],
       dataTime: setDate(null, true),
       option: {
+        color: common.echartColor,
         title: {
           text: '1巷道',
           left: 'center'
