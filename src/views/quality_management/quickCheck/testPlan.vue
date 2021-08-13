@@ -183,7 +183,7 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="试验次数" prop="test_times">
+          <!-- <el-form-item label="试验次数" prop="test_times">
             <el-select
               v-model="ruleForm.test_times"
               placeholder="请选择"
@@ -195,7 +195,7 @@
                 :value="group"
               />
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label="胶料规格">
             {{ ruleForm.product_no }}
           </el-form-item>
@@ -243,6 +243,7 @@
           <el-input
             v-model="ruleForm.plan_uid"
             :disabled="true"
+            style="width:250px !important"
           />
         </div>
         <el-table
@@ -283,15 +284,19 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="values"
+            prop="value"
             label="检测值"
-            min-width="20"
-          />
+            min-width="40"
+          >
+            <template v-if="row.value" slot-scope="{row}">
+              {{ row.value.replace(/{|}|'/g,"") }}
+            </template>
+          </el-table-column>
           <el-table-column
             label="状态"
             min-width="18"
             :formatter="(row)=>{
-              return row.values?'已检测':'待检测'
+              return row.value?'已检测':'待检测'
             }"
           />
           <el-table-column
@@ -382,7 +387,6 @@
           </template>
         </el-table-column>
         <el-table-column
-          prop="date"
           label="检测时间"
           min-width="20"
         >
@@ -537,7 +541,7 @@
           width="160px"
         >
           <template slot-scope="{row,$index}">
-            <el-button v-if="tableDataValue.length!==$index" type="primary" @click="modifyFun(row)">{{ row.edit?'保存':'修改' }}</el-button>
+            <el-button v-if="tableDataValue.length-1!==$index" type="primary" @click="modifyFun(row)">{{ row.edit?'保存':'修改' }}</el-button>
             <el-upload
               v-if="false"
               style="display:inline-block;margin-left:5px"
@@ -591,7 +595,7 @@ export default {
         test_time: { required: true, message: '请选择检测日期', trigger: 'change' },
         test_group: { required: true, message: '请选择检测班组', trigger: 'change' },
         test_method_name: { required: true, message: '请选择试验方法', trigger: 'change' },
-        test_times: { required: true, message: '请选择试验次数', trigger: 'change' },
+        // test_times: { required: true, message: '请选择试验次数', trigger: 'change' },
         test_interval: { required: true, message: '请选择检测间隔', trigger: 'change' },
         test_classes: [
           { required: true, trigger: 'change', validator: (rule, value, callback) => {
@@ -603,7 +607,8 @@ export default {
       rulesLeft: {},
       groups: [],
       ruleForm: {
-        test_interval: 1
+        test_interval: 1,
+        test_method_name: ''
       },
       btnLoading: false,
       testEquipList: [],
@@ -782,6 +787,7 @@ export default {
     },
     changeTestIndicators() {
       // this.getWaitPlan()
+      this.ruleForm.test_method_name = ''
     },
     classChanged(val) {
       this.search.classes = val
@@ -792,6 +798,7 @@ export default {
     },
     searchList() {
       this.search.product_no = ''
+      this.ruleForm.product_no = ''
       this.getList()
     },
     equipSearch(val) {
@@ -956,13 +963,14 @@ export default {
         this.$message.info('请选择胶料规格')
         return
       }
-      const obj = {
+      let obj = {
         classes: this.search.classes,
         equip_no: this.search.equip_no,
         factory_date: this.search.factory_date,
         product_no: this.search.product_no,
         add: 1
       }
+      obj = JSON.parse(JSON.stringify(obj))
       this.tableDataRight.push(obj)
     },
     moveRight() {
@@ -1043,17 +1051,19 @@ export default {
         this.tableDataValue = []
         const data = await rubberMaxStretchTestResult('get', null, { params: { product_test_plan_detail_id: this.TableDataValueId }})
         this.tableDataValue = data.results || []
+
+        const num = 1000
         if (this.tableDataValue.length > 0) {
           this.tableDataValue.push({
             ordering: this.search.test_indicator_name === '物性' ? '平均值' : 'Mid',
             product_no: this.tableDataValue[0].product_no,
-            thickness: data.avg_value['厚度'],
-            ds1: data.avg_value['百分之百'],
-            ds2: data.avg_value['百分之三百'],
-            break_strength: data.avg_value['断裂强力'],
-            break_length: data.avg_value['断裂伸长'],
-            max_strength: data.avg_value['最大力'],
-            end_strength: data.avg_value['结束力']
+            thickness: Math.round(data.avg_value['厚度'] * num) / num,
+            ds1: Math.round(data.avg_value['百分之百'] * num) / num,
+            ds2: Math.round(data.avg_value['百分之三百'] * num) / num,
+            break_strength: Math.round(data.avg_value['断裂强力'] * num) / num,
+            break_length: Math.round(data.avg_value['断裂伸长'] * num) / num,
+            max_strength: Math.round(data.avg_value['最大力'] * num) / num,
+            end_strength: Math.round(data.avg_value['结束力'] * num) / num
           })
         }
       } catch (e) {

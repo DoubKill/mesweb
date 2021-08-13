@@ -34,13 +34,13 @@
               align="center"
             />
             <el-table-column
-              prop=""
+              prop="created_user"
               label="出库员"
               min-width="20"
               align="center"
             />
             <el-table-column
-              prop="production_info.production_info"
+              prop="production_info.factory_date"
               label="生产日期"
               min-width="20"
               align="center"
@@ -104,7 +104,7 @@
             style="width: 100%;"
             :span-method="objectSpanMethod"
           >
-            <el-table-column label="出库履历信息" align="center">
+            <el-table-column :label="`${dataTime.split(' ')[0]}（24小时）入出库统计信息`" align="center">
               <el-table-column
                 prop="tunnel"
                 label="巷道"
@@ -185,7 +185,7 @@ export default {
                 position: 'inside'
               }
             },
-            center: ['50%', '40%'],
+            center: ['50%', '45%'],
             labelLine: {
               show: false
             },

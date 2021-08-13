@@ -220,12 +220,11 @@ export function exportExcel(value = 'excel', val) {
       }
     }
     const _wpx = []
-    const _tableTitleFont = JSON.parse(JSON.stringify(tableTitleFont))
+    // const _tableTitleFont = JSON.parse(JSON.stringify(tableTitleFont))
     const _tableTitleFont1 = JSON.parse(JSON.stringify(tableTitleFont))
     // const _length = Object.keys(wb.Sheets['Sheet1']).length
     const arr = Object.keys(wb.Sheets['Sheet1'])
     const obj = wb.Sheets['Sheet1']
-
     const arr1 = []
     let arr2 = []
     arr.forEach(D => {
@@ -235,21 +234,23 @@ export function exportExcel(value = 'excel', val) {
       arr1.push(D.substr(1))
       arr2.push(D.substr(0, 1))
 
-      _wpx.push({ wpx: 100 })
+      _wpx.push({ wpx: 80 }, { wpx: 130 }, { wpx: 100 }, { wpx: 150 }, { wpx: 170 },
+        { wpx: 100 }, { wpx: 100 }, { wpx: 100 }, { wpx: 100 }, { wpx: 100 }, { wpx: 100 }, { wpx: 100 })
     })
 
     arr2 = [...new Set(arr2)]
-    arr1.forEach(D => {
+    const number = Math.max(...arr1) + 1
+    const num = number - 13
+    const num1 = number - 9
+    const num2 = number - 5
+    const num3 = number - 1
+    for (var D = 1; D <= number; D++) {
       arr2.forEach(d => {
         if (obj[d + D]) {
-          if (obj[d + D].v && obj[d + D].v.indexOf('经办人') > -1) {
-            _tableTitleFont.alignment = {
-              horizontal: 'right',
-              vertical: 'right'
-            }
-            obj[d + D].s = _tableTitleFont
-          } else if (obj[d + D].v && (obj[d + D].v.indexOf('处理意见') > -1 ||
-        obj[d + D].v.indexOf('不合格品情况') > -1 || obj[d + D].v.indexOf('备注') > -1)) {
+          if (obj[d + D].v && (obj[d + D].v.indexOf('处理意见') > -1 ||
+        obj[d + D].v.indexOf('不合格品') > -1 || obj[d + D].v.indexOf('备注') > -1 ||
+        obj[d + D].v.indexOf('质检编码') > -1 || obj[d + D].v.indexOf('经办人') > -1 ||
+        (d === 'A' && [num, num1, num2, num3].includes(D)))) {
             _tableTitleFont1.alignment = {
               horizontal: 'left',
               vertical: 'left'
@@ -269,7 +270,7 @@ export function exportExcel(value = 'excel', val) {
           }
         }
       })
-    })
+    }
 
     wb.Sheets['Sheet1']['A1'].s = {									// 为某个单元格设置单独样式
       font: {
