@@ -34,13 +34,13 @@
               align="center"
             />
             <el-table-column
-              prop=""
+              prop="created_user"
               label="出库员"
               min-width="20"
               align="center"
             />
             <el-table-column
-              prop="production_info.production_info"
+              prop="production_info.factory_date"
               label="生产日期"
               min-width="20"
               align="center"
@@ -185,7 +185,7 @@ export default {
                 position: 'inside'
               }
             },
-            center: ['50%', '40%'],
+            center: ['50%', '45%'],
             labelLine: {
               show: false
             },
