@@ -1701,8 +1701,8 @@ export const asyncRoutes = [
             }
           }
         ]
-      }
-      /** {
+      },
+      {
         path: '/quickCheck',
         redirect: '/quickCheck/deviceMonitor',
         component: () => import('@/views/quality_management/quickCheck/a-index'),
@@ -1753,8 +1753,8 @@ export const asyncRoutes = [
             }
           }
         ]
-      },
-      {
+      }
+      /** {
         path: '/feed',
         redirect: '/feed/raw-plan',
         component: () => import('@/views/quality_management/feed/a-index'),
