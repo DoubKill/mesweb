@@ -183,7 +183,7 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="试验次数" prop="test_times">
+          <!-- <el-form-item label="试验次数" prop="test_times">
             <el-select
               v-model="ruleForm.test_times"
               placeholder="请选择"
@@ -195,7 +195,7 @@
                 :value="group"
               />
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label="胶料规格">
             {{ ruleForm.product_no }}
           </el-form-item>
@@ -595,7 +595,7 @@ export default {
         test_time: { required: true, message: '请选择检测日期', trigger: 'change' },
         test_group: { required: true, message: '请选择检测班组', trigger: 'change' },
         test_method_name: { required: true, message: '请选择试验方法', trigger: 'change' },
-        test_times: { required: true, message: '请选择试验次数', trigger: 'change' },
+        // test_times: { required: true, message: '请选择试验次数', trigger: 'change' },
         test_interval: { required: true, message: '请选择检测间隔', trigger: 'change' },
         test_classes: [
           { required: true, trigger: 'change', validator: (rule, value, callback) => {
