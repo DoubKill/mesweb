@@ -165,7 +165,7 @@
                 v-for="group in groups"
                 :key="group.id"
                 :label="group.global_name"
-                :value="group.id"
+                :value="group.global_name"
               />
             </el-select>
           </el-form-item>
@@ -180,6 +180,7 @@
                 :key="group.id"
                 :label="group.name"
                 :value="group.name"
+                :disabled="!group.allowed"
               />
             </el-select>
           </el-form-item>
