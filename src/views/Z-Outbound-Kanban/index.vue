@@ -34,13 +34,13 @@
               align="center"
             />
             <el-table-column
-              prop=""
+              prop="created_user"
               label="出库员"
               min-width="20"
               align="center"
             />
             <el-table-column
-              prop="production_info.production_info"
+              prop="production_info.factory_date"
               label="生产日期"
               min-width="20"
               align="center"
@@ -104,7 +104,7 @@
             style="width: 100%;"
             :span-method="objectSpanMethod"
           >
-            <el-table-column label="出库履历信息" align="center">
+            <el-table-column :label="`${dataTime.split(' ')[0]}（24小时）入出库统计信息`" align="center">
               <el-table-column
                 prop="tunnel"
                 label="巷道"
@@ -150,6 +150,8 @@ import echarts from 'echarts'
 import { stationInfo } from '@/api/warehouse'
 import { outBoundTasks, inoutBoundSummary } from '@/api/base_w_four'
 import { setDate } from '@/utils'
+import common from '@/utils/common'
+import axios from 'axios'
 export default {
   data() {
     return {
@@ -162,6 +164,7 @@ export default {
       optionsStation: [],
       dataTime: setDate(null, true),
       option: {
+        color: common.echartColor,
         title: {
           text: '1巷道',
           left: 'center'
@@ -185,7 +188,7 @@ export default {
                 position: 'inside'
               }
             },
-            center: ['50%', '40%'],
+            center: ['50%', '45%'],
             labelLine: {
               show: false
             },
@@ -254,14 +257,23 @@ export default {
         // this.getStation(true)
       }
     },
-    changeStation() {
-      this.getOutBoundTasks()
-      this.getInoutBoundSummary()
+    async changeStation() {
+      // 阻止请求 this.cancel()
+      await this.cancel()
+      await this.cancel1()
+      await this.getOutBoundTasks()
+      await this.getInoutBoundSummary()
     },
     async getOutBoundTasks() {
       try {
+      // 阻止请求 this.cancel()
         this.obj.page_size = 50
-        const data = await outBoundTasks('get', null, { params: this.obj })
+        const self = this
+        const data = await outBoundTasks('get', null, { params: this.obj },
+          new axios.CancelToken(function executor(c) {
+            self.cancel = c
+          })
+        )
         this.tableData = data.results || []
       } catch (e) {
         //
@@ -269,7 +281,13 @@ export default {
     },
     async getInoutBoundSummary() {
       try {
-        const data = await inoutBoundSummary('get', null, { params: this.obj })
+        const self = this
+        const data = await inoutBoundSummary('get', null, { params: this.obj },
+          new axios.CancelToken(function executor(c) {
+            self.cancel1 = c
+          })
+        )
+
         const a = data
         let b = 0
         if (a.production_count && a.total_inbound_count) {
@@ -279,7 +297,10 @@ export default {
 
         this.obj1 = JSON.parse(JSON.stringify(data))
 
-        this.obj1.data[0].all = all
+        if (this.obj1.data.length > 0) {
+          this.obj1.data[0].all = all
+        }
+
         this.obj1.data.push({ tunnel: '合计(24小时)', in_bound_count: data.total_inbound_count,
           out_bound_count: data.total_outbound_count })
 

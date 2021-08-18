@@ -140,7 +140,19 @@
       <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px">
         <el-form-item label="料包编码" prop="oldName">
           {{ formInline.stage_product_batch_no }}-{{ formInline.dev_type_name }}-
-          <el-input v-model="ruleForm.oldName" style="width:80px;margin-left:6px" />
+          <el-select
+            v-model="ruleForm.oldName"
+            placeholder="请选择"
+            style="width:100px;margin-left:6px"
+            @change="changeOldName"
+          >
+            <el-option
+              v-for="item in [{name:'硫磺包',id:1},{name:'细料包',id:2}]"
+              :key="item.id"
+              :label="item.name"
+              :value="item.name"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="分包数量" prop="package_cnt">
           <el-input-number
@@ -300,7 +312,8 @@ export default {
           this.addTableData.push([{
             name: _name,
             package_cnt: obj.package_cnt,
-            package_type: obj.package_type
+            package_type: obj.package_type,
+            weigh_type: obj.weigh_type
           }])
 
           this.handleCloseAdd(false)
@@ -326,6 +339,11 @@ export default {
     },
     insert_NewPracticalWeightChanged() {
       this.tableData.push({})
+    },
+    changeOldName(val) {
+      const arr = [{ name: '硫磺包', id: 1 }, { name: '细料包', id: 2 }]
+      const obj = arr.find(d => d.name === val)
+      this.ruleForm.weigh_type = obj.id
     },
     setCurrentMaterialList() {
       if (this.$refs.ingredientStandardRef) {
@@ -436,6 +454,7 @@ export default {
         ingredientListParams.push({
           name: D[0].name,
           package_cnt: D[0].package_cnt,
+          weigh_type: D[0].weigh_type,
           package_type: D[0].package_type,
           weight_details: D,
           id: D[0].weight_cnt_types_id || null

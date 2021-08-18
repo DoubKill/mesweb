@@ -693,7 +693,7 @@ export const asyncRoutes = [
     {
       path: '/track',
       redirect: '/track-raw-material',
-      component: () => import('@/views/production/track/track-raw-material'),
+      component: () => import('@/views/production/track/track-fa'),
       name: 'Track',
       meta: {
         title: '条码追朔',
@@ -1379,7 +1379,7 @@ export const asyncRoutes = [
         component: () => import('@/views/quality_management/DisposalListGenerate-fa'),
         name: 'UnqualifiedHandle',
         meta: {
-          title: '不合格品处理',
+          title: '胶料不合格品处理',
           icon: 'quality'
         },
         children: [
@@ -1419,47 +1419,47 @@ export const asyncRoutes = [
               title: '不合格处置单管理',
               permissionName: 'unqualified_order'
             }
-          // },
-          // {
-          //   path: '/unqualified-handle/disposalLaunch',
-          //   component: () => import('@/views/quality_management/disposal/disposalLaunch.vue'),
-          //   name: 'DisposalLaunch',
-          //   meta: {
-          //     faName: 'UnqualifiedHandle',
-          //     title: '不合格处置发生部门发起',
-          //     permissionName: ''
-          //   }
-          // },
-          // {
-          //   path: '/unqualified-handle/disposalTechnology',
-          //   component: () => import('@/views/quality_management/disposal/disposalTechnology.vue'),
-          //   name: 'DisposalTechnology',
-          //   meta: {
-          //     faName: 'UnqualifiedHandle',
-          //     title: '不合格处置工艺技术科处理',
-          //     permissionName: ''
-          //   }
-          // },
-          // {
-          //   path: '/unqualified-handle/disposalInspection',
-          //   component: () => import('@/views/quality_management/disposal/disposalInspection.vue'),
-          //   name: 'DisposalInspection',
-          //   meta: {
-          //     faName: 'UnqualifiedHandle',
-          //     title: '不合格处置工艺检查科处理',
-          //     permissionName: ''
-          //   }
-          // },
-          // {
-          //   path: '/unqualified-handle/disposalSee',
-          //   component: () => import('@/views/quality_management/disposal/disposalSee.vue'),
-          //   name: 'DisposalSee',
-          //   meta: {
-          //     faName: 'UnqualifiedHandle',
-          //     title: '不合格处置单查看',
-          //     permissionName: ''
-          //   }
           }
+          /** {
+            path: '/unqualified-handle/disposalLaunch',
+            component: () => import('@/views/quality_management/disposal/disposalLaunch.vue'),
+            name: 'DisposalLaunch',
+            meta: {
+              faName: 'UnqualifiedHandle',
+              title: '不合格处置发生部门发起',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/unqualified-handle/disposalTechnology',
+            component: () => import('@/views/quality_management/disposal/disposalTechnology.vue'),
+            name: 'DisposalTechnology',
+            meta: {
+              faName: 'UnqualifiedHandle',
+              title: '不合格处置工艺技术科处理',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/unqualified-handle/disposalInspection',
+            component: () => import('@/views/quality_management/disposal/disposalInspection.vue'),
+            name: 'DisposalInspection',
+            meta: {
+              faName: 'UnqualifiedHandle',
+              title: '不合格处置工艺检查科处理',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/unqualified-handle/disposalSee',
+            component: () => import('@/views/quality_management/disposal/disposalSee.vue'),
+            name: 'DisposalSee',
+            meta: {
+              faName: 'UnqualifiedHandle',
+              title: '不合格处置单查看',
+              permissionName: ''
+            }
+          }**/
         ]
       },
       {
@@ -1701,8 +1701,8 @@ export const asyncRoutes = [
             }
           }
         ]
-      }
-      /** {
+      },
+      {
         path: '/quickCheck',
         redirect: '/quickCheck/deviceMonitor',
         component: () => import('@/views/quality_management/quickCheck/a-index'),
@@ -1753,8 +1753,8 @@ export const asyncRoutes = [
             }
           }
         ]
-      },
-      {
+      }
+      /** {
         path: '/feed',
         redirect: '/feed/raw-plan',
         component: () => import('@/views/quality_management/feed/a-index'),
