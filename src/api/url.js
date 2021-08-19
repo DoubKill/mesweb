@@ -455,5 +455,5 @@ export default {
   // 不合格车次列表查询
   disposalList: '/api/v1/quality/unqialified-pallet-list/',
   // 不合格项
-  dataPoint: 'api/v1/quality/data-point-list/'
+  dataPoint: '/api/v1/quality/data-point-list/'
 }

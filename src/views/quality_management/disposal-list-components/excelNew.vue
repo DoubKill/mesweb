@@ -1,5 +1,5 @@
 <template>
-  <div class="unqualified-card-container">
+  <div v-loading="loading" class="unqualified-card-container">
     <div ref="PDFBtn" style="text-align:right;margin-bottom:10px">
       <el-button
         v-if="!isEdit"
@@ -125,10 +125,10 @@
           </tr>
           <tr v-for="(itemVal,i) in listData" :key="i">
             <td>{{ Number(i) + 1 }}</td>
-            <td>{{ itemVal.created_date?(itemVal.created_date).split(' ')[0]: itemVal.currentDate }}/{{ itemVal.classes }}</td>
+            <td>{{ itemVal.factory_date }}/{{ itemVal.classes }}</td>
             <td>{{ itemVal.equip_no }}</td>
             <td>{{ itemVal.product_no }}</td>
-            <td>{{ itemVal.trains }}</td>
+            <td>{{ itemVal.train?itemVal.train:itemVal.trains }}</td>
             <td
               v-for="(headDataItem,headDataI) in headData"
               :key="headDataI"
@@ -343,7 +343,8 @@ export default {
       loadingBtn: false,
       listData: this.listDataProps,
       aaa: '',
-      optionsDisposal: []
+      optionsDisposal: [],
+      loading: false
     }
   },
   computed: {
@@ -358,35 +359,67 @@ export default {
         // 打开
         this.orderNum = this.orderRow.id || null
         this.formObj = this.orderRow || {}
+
         this.listData = this.listDataProps || []
         this.headData = this.formHeadData || []
         if (this.orderNum) {
           this.getInfo()
+        } else {
+          this.setName()
         }
       }
     }
   },
   created() {
     this.orderNum = this.orderRow.id || null
-    this.formObj = this.orderRow || {}
     if (this.orderNum) {
       this.getInfo()
+    } else {
+      this.formObj = this.orderRow || {}
+      this.setName()
     }
   },
   methods: {
     async getInfo() {
       try {
+        this.loading = true
         const data = await unqualifiedDealOrders('get', this.orderNum)
         this.formObj = data
 
-        this.formObj.reason = this.editType === 1 ? this.changeInputBack(this.formObj.reason) : this.formObj.reason
-        this.formObj.t_deal_suggestion = this.editType === 2 ? this.changeInputBack(this.formObj.t_deal_suggestion) : this.formObj.t_deal_suggestion
-        this.formObj.c_deal_suggestion = this.editType === 3 ? this.changeInputBack(this.formObj.c_deal_suggestion) : this.formObj.c_deal_suggestion
+        this.loading = false
+        this.setName()
+        if (this.orderRow.t_deal_suggestion && this.isEdit) {
+          this.formObj.t_deal_suggestion = this.orderRow.t_deal_suggestion
+        }
+        if (this.orderRow.c_deal_suggestion && this.isEdit) {
+          this.formObj.c_deal_suggestion = this.orderRow.c_deal_suggestion
+        }
+        if (!this.isEdit) {
+          this.formObj.reason = this.editType === 1 ? this.changeInputBack(this.formObj.reason) : this.formObj.reason
+          this.formObj.t_deal_suggestion = this.editType === 2 ? this.changeInputBack(this.formObj.t_deal_suggestion) : this.formObj.t_deal_suggestion
+          this.formObj.c_deal_suggestion = this.editType === 3 ? this.changeInputBack(this.formObj.c_deal_suggestion) : this.formObj.c_deal_suggestion
+        }
 
+        data.deal_details.forEach(d => {
+          d.train = ''
+          d.trains.forEach((D, i) => {
+            d.train += D.train + (d.trains.length > 1 && d.trains.length - 1 > i ? ',' : '')
+          })
+        })
         this.listData = data.deal_details
       } catch (e) {
-        //
+        this.listData = []
+        this.formObj = {}
+        this.loading = false
       }
+    },
+    setName() {
+      this.formObj.t_deal_user = this.formObj.t_deal_user || this.name
+      this.formObj.t_deal_date = this.formObj.t_deal_date || setDate()
+      this.formObj.c_deal_user = this.formObj.c_deal_user || this.name
+      this.formObj.c_deal_date = this.formObj.c_deal_date || setDate()
+      this.formObj.created_username = this.formObj.created_username || this.name
+      this.formObj.created_date = this.formObj.created_date || setDate()
     },
     async submitFun() {
       try {
@@ -442,11 +475,11 @@ export default {
     },
     changeInput(val) {
       if (!val) return null
-      return (val).replace(/\r\n/g, '<br>').replace(/\n/g, '<br>').replace(/\s/g, '&nbsp;')
+      return (val).replace(/\r|\n/g, '<br>').replace(/\n/g, '<br>').replace(/\s/g, '&nbsp;')
     },
     changeInputBack(val) {
       if (!val) return ''
-      return (val).replace(/<br>/g, '\r\n').replace(/<br>/g, '\n').replace(/&nbsp;/g, '\s')
+      return (val).replace(/<br>/g, '\r').replace(/<br>/g, '\n').replace(/&nbsp;/g, '\s')
     },
     editOne(val, paramsName, dateDate) {
       this.$set(this.formObj, paramsName, this.name)
@@ -484,7 +517,12 @@ export default {
       this.$emit('exportExcelFrame')
     },
     preserveFun() {
-      this.$emit('preserveFun')
+      const newtFormObj = JSON.parse(JSON.stringify(this.formObj))
+      newtFormObj.reason = this.changeInput(newtFormObj.reason)
+      newtFormObj.t_deal_suggestion = this.changeInput(newtFormObj.t_deal_suggestion)
+      newtFormObj.c_deal_suggestion = this.changeInput(newtFormObj.c_deal_suggestion)
+      console.log(newtFormObj, 44444)
+      this.$emit('preserveFun', newtFormObj)
     },
     cancelFun() {
       this.$emit('cancelFun')

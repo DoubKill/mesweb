@@ -179,13 +179,16 @@
       @currentChange="currentChange"
     />
     <el-dialog
-      :fullscreen="true"
+      title="中策(安吉)不合格品处置单 修改"
       :visible.sync="handleCardDialogVisible"
+      :close-on-click-modal="false"
+      width="800px"
     >
       <excel
         ref="handleCard"
         :order-row="currentRow"
         :edit-type="editType"
+        :is-edit="false"
         :show="handleCardDialogVisible"
         @submitFun="submitFun"
       />
@@ -195,7 +198,7 @@
 
 <script>
 import page from '@/components/page'
-import excel from './disposal-list-components/excel'
+import excel from './disposal-list-components/excelNew'
 import { unqualifiedDealOrders } from '@/api/base_w'
 import { setDate } from '@/utils'
 export default {
