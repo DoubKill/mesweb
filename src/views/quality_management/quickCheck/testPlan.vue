@@ -1053,18 +1053,18 @@ export default {
         const data = await rubberMaxStretchTestResult('get', null, { params: { product_test_plan_detail_id: this.TableDataValueId }})
         this.tableDataValue = data.results || []
 
-        const num = 1000
         if (this.tableDataValue.length > 0) {
           this.tableDataValue.push({
             ordering: this.search.test_indicator_name === '物性' ? '平均值' : 'Mid',
             product_no: this.tableDataValue[0].product_no,
-            thickness: Math.round(data.avg_value['厚度'] * num) / num,
-            ds1: Math.round(data.avg_value['百分之百'] * num) / num,
-            ds2: Math.round(data.avg_value['百分之三百'] * num) / num,
-            break_strength: Math.round(data.avg_value['断裂强力'] * num) / num,
-            break_length: Math.round(data.avg_value['断裂伸长'] * num) / num,
-            max_strength: Math.round(data.avg_value['最大力'] * num) / num,
-            end_strength: Math.round(data.avg_value['结束力'] * num) / num
+            // Math.round(data.avg_value['厚度'] * num) / num,
+            thickness: data.avg_value['厚度'],
+            ds1: data.avg_value['百分之百'],
+            ds2: data.avg_value['百分之三百'],
+            break_strength: data.avg_value['断裂强力'],
+            break_length: data.avg_value['断裂伸长'],
+            max_strength: data.avg_value['最大力'],
+            end_strength: data.avg_value['结束力']
           })
         }
       } catch (e) {
