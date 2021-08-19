@@ -927,28 +927,30 @@ export default {
         break_strength: row.break_strength,
         break_length: row.break_length
       }
-      let bool = false
+      // let bool = false
       if (this.search.test_indicator_name === '钢拔') {
         obj = {
           max_strength: row.max_strength,
           end_strength: row.end_strength
         }
-        if (row.max_strength && row.end_strength) {
-          bool = true
-        }
-      } else if (this.search.test_indicator_name === '物性') {
-        if (row.thickness && row.ds1 && !row.ds2 && !row.break_strength && !row.break_length) {
-          bool = true
-        }
+        // if (row.max_strength && row.end_strength) {
+        //   bool = true
+        // }
       }
-      if (!bool && !row.edit) {
-        this.$set(row, 'edit', !row.edit)
-        return
-      } else if (row.edit) {
-        this.$set(row, 'edit', !row.edit)
-      } else {
-        return
-      }
+      // else if (this.search.test_indicator_name === '物性') {
+      //   if (row.thickness && row.ds1 && !row.ds2 && !row.break_strength && !row.break_length) {
+      //     bool = true
+      //   }
+      // }
+      // if (!bool && !row.edit) {
+      //   this.$set(row, 'edit', !row.edit)
+      //   return
+      // } else if (row.edit) {
+      //   this.$set(row, 'edit', !row.edit)
+      // } else {
+      //   return
+      // }
+      this.$set(row, 'edit', !row.edit)
       if (!row.edit) {
         try {
           await rubberMaxStretchTestResult('put', row.id, { data: obj })
