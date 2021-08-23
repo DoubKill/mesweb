@@ -30,7 +30,7 @@
       </el-form-item>
       <el-form-item label="工艺技术科">
         <el-select
-          v-model="search.t_deal"
+          v-model="search.t_solved"
           clearable
           placeholder="请选择"
           @change="changeDate"
@@ -45,7 +45,7 @@
       </el-form-item>
       <el-form-item label="工艺检查科">
         <el-select
-          v-model="search.c_deal"
+          v-model="search.c_solved"
           clearable
           placeholder="请选择"
           @change="changeDate"
