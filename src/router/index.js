@@ -1400,7 +1400,7 @@ export const asyncRoutes = [
         //     permissionName: 'deal_suggestion'
         //   }
         // }
-          {
+          /** {
             path: '/unqualified-handle/disposal-list-generate',
             component: () => import('@/views/quality_management/disposal-list-generates.vue'),
             name: 'DisposalListGenerate',
@@ -1419,7 +1419,7 @@ export const asyncRoutes = [
               title: '不合格处置单管理',
               permissionName: 'unqualified_order'
             }
-          }
+          },**/
           /** {
             path: '/unqualified-handle/disposalLaunch',
             component: () => import('@/views/quality_management/disposal/disposalLaunch.vue'),
@@ -1717,7 +1717,7 @@ export const asyncRoutes = [
             component: () => import('@/views/quality_management/menni-equip'),
             name: 'RubberMenniEquip',
             meta: {
-              faName: 'InspectionResultManagement',
+              faName: 'QuickCheckGather',
               title: '胶料门尼设备管理',
               permissionName: 'product_report_equip'
             }
