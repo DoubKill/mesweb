@@ -628,10 +628,6 @@ export default {
       },
       btnLoading: false,
       testEquipList: [],
-      // { name: '门尼', id: 1 },
-      // { name: '流变', id: 2 },
-      // { name: '物性', id: 3 },
-      // { name: '钢拔', id: 4 }
       testIndicatorsList: [],
       endBtnLoading: false,
       stageList: [],
@@ -774,13 +770,6 @@ export default {
         if (data.results.length === 0) {
           return
         }
-        // const _test_indicator_name = data.results[0].test_indicator_name
-        // if (this.search.test_indicator_name !== _test_indicator_name) {
-        //   this.btnLoading = false
-        //   this.ruleForm.plan_uid = ''
-        //   this.tableDataRight = []
-        //   return
-        // }
         if (!data.msg) {
           this.btnLoading = true
           this.ruleForm = data.results[0]
@@ -802,7 +791,6 @@ export default {
       }
     },
     changeTestIndicators() {
-      // this.getWaitPlan()
       this.ruleForm.test_method_name = ''
     },
     classChanged(val) {
@@ -894,14 +882,13 @@ export default {
         await productTestPlan('get', null, { params: { close: 1, plan_uid: this.ruleForm.plan_uid }})
         this.btnLoading = false
         this.$message.success('已全部结束检测')
-        // this.ruleForm = {}
         this.ruleForm.plan_uid = ''
         this.tableDataRight = []
         // this.$nextTick(() => {
         // this.$refs.ruleForm.clearValidate()
         // })
       } catch (e) {
-        // this.btnLoading = false
+        //
       }
     },
     refreshFun() {
