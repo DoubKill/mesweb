@@ -443,17 +443,15 @@ export default {
   OutBoundTasks: '/api/v1/inventory/out-bound-tasks/',
   InoutBoundSummary: '/api/v1/inventory/inout-bound-summary/',
   // 投料重量设定
-  rawWeight: '/api/v1/terminal/carbon_tank_set/',
+  RawWeight: '/api/v1/terminal/carbon_tank_set/',
   // 投料履历查询
-  rawQuery: '/api/v1/terminal/feed_check_operation/',
+  RawQuery: '/api/v1/terminal/feed_check_operation/',
   // 油料罐物料设定
-  oliSet: '/api/v1/terminal/oli-tank-setting/',
+  OliSet: '/api/v1/terminal/oli-tank-setting/',
   // 粉料罐物料设定
-  pinkSet: '/api/v1/terminal/powder-tank-setting/',
-  // 料罐物料名称查询
-  materialsList: 'api/v1/recipe/materials/',
+  PinkSet: '/api/v1/terminal/powder-tank-setting/',
   // 不合格车次列表查询
-  disposalList: '/api/v1/quality/unqialified-pallet-list/',
+  DisposalList: '/api/v1/quality/unqialified-pallet-list/',
   // 不合格项
-  dataPoint: '/api/v1/quality/data-point-list/'
+  DataPoint: '/api/v1/quality/data-point-list/'
 }
