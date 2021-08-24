@@ -576,6 +576,7 @@ export default {
         const data = await rubberMaxStretchTestResult('get', null, { params: { product_test_plan_detail_id: id }})
         this.tableDataValue = data.results || []
         this.tableDataValueLoading = false
+
         if (this.tableDataValue.length > 0) {
           this.tableDataValue.push({
             ordering: this.search.test_indicator_name === '物性' ? '平均值' : 'Mid',

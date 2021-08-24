@@ -16,12 +16,15 @@
       <table
         border="1"
         bordercolor="black"
-        class="info-table out-table"
+        style="width:100%;border-collapse: collapse;"
+        class="info-table"
       >
         <tr>
           <th :colspan="5+headDataLength">
             <div style="position:relative">
-              <div class="logo-style">
+              <div
+                style="width:100px;height:45px;position: absolute;left: 10px;"
+              >
                 <img style="width:100%;height:100%" src="@/assets/logo.png" alt="">
               </div>
               <div style="flex:1;text-align:center;font-size: 1.5em;line-height:45px">中策(安吉)不合格品处置单</div>
@@ -105,7 +108,7 @@
                 :value="item"
               />
             </el-select>
-            <!-- <el-input
+          <!-- <el-input
               v-else
               v-model="formObj.department"
               style="width:70%"
@@ -113,13 +116,6 @@
             /> -->
           </td>
         </tr>
-        <!-- </table>
-      <table
-        border="1"
-        bordercolor="black"
-        class="info-table"
-        style="border-top-color: #fff;"
-      > -->
         <tbody>
           <tr>
             <th rowspan="2">序号</th>
@@ -157,6 +153,7 @@
               </div>
             </td>
           </tr>
+
           <tr style="text-align:right">
             <td :colspan="5+headDataLength">
               经办人：
@@ -235,7 +232,10 @@
                 placeholder="请输入内容"
                 @change="editOne($event,'c_deal_user','c_deal_date')"
               />
-              <div v-else class="deal_suggestion" v-html="formObj.c_deal_suggestion" />
+              <div v-else>
+                <div v-if="!formObj.c_deal_suggestion" style="height:80px" />
+                <div v-else class="deal_suggestion" v-html="formObj.c_deal_suggestion" />
+              </div>
             </td>
           </tr>
           <tr />
@@ -261,8 +261,10 @@
                 style="margin-top:10px;width:97%"
                 placeholder="请输入内容"
               />
-              <div v-else class="deal_suggestion" v-html="formObj.desc" />
-              <!-- <div style="margin-top:10px" /> -->
+              <div v-else>
+                <div v-if="!formObj.desc" style="height:80px" />
+                <div v-else class="deal_suggestion" v-html="formObj.desc" />
+              </div>
             </td>
           </tr>
           <tr />
@@ -464,11 +466,30 @@ export default {
       }
     },
     async exportPDF() {
-      this.$refs.PDFBtn.style.display = 'none'
-      document.getElementsByClassName('el-dialog__headerbtn')[0].style.display = 'none'
-      window.print()
-      this.$refs.PDFBtn.style.display = 'block'
-      document.getElementsByClassName('el-dialog__headerbtn')[0].style.display = 'block'
+      var iframe = ''
+      if (!iframe) {
+        var el = document.getElementById('out-table')
+        iframe = document.createElement('IFRAME')
+        var doc = null
+        iframe.setAttribute('id', 'print-iframe')
+        iframe.setAttribute('style', 'position:absolute;width:0px;height:0px;left:-500px;top:-500px;')
+        document.body.appendChild(iframe)
+        doc = iframe.contentWindow.document
+        doc.write('<style media="print">@page {size: auto;margin: 20px;} table{font-size:14px}' + '</style>') // 解决出现页眉页脚和路径的问题
+
+        doc.write('<div style="width:100%">' + el.innerHTML + '</div>')
+        doc.close()
+        iframe.contentWindow.focus()
+      }
+      setTimeout(function() { iframe.contentWindow.print() }, 50) // 解决第一次样式不生效的问题
+      if (navigator.userAgent.indexOf('MSIE') > 0) {
+        document.body.removeChild(iframe)
+      }
+      // this.$refs.PDFBtn.style.display = 'none'
+      // document.getElementsByClassName('el-dialog__headerbtn')[0].style.display = 'none'
+      // window.print()
+      // this.$refs.PDFBtn.style.display = 'block'
+      // document.getElementsByClassName('el-dialog__headerbtn')[0].style.display = 'block'
     },
     exportExcel() {
       var myDate = new Date()
@@ -502,21 +523,12 @@ export default {
 </script>
 
 <style lang="scss">
+
  .unqualified-card-container {
     width: 600px;
     margin: 0 auto;
     text-align: center;
     font-size: 14px;
-    table {
-      width: 100%;
-      border-collapse: collapse
-    }
-    .logo-style{
-      width:100px;
-      height:45px;
-      position: absolute;
-      left: 10px;
-    }
     .deal_department{
       .el-radio{
              margin-right: 0px;

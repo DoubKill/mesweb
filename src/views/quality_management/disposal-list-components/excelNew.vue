@@ -1,43 +1,46 @@
 <template>
-  <div class="unqualified-card-container">
+  <div v-loading="loading" class="unqualified-card-container">
     <div ref="PDFBtn" style="text-align:right;margin-bottom:10px">
       <el-button
-        v-if="!isEdit"
+        v-if="!isEdit&&editType!==2"
         v-permission="['unqualified_order','export']"
         @click="exportPDF"
       >另存为PDF</el-button>
-      <!-- <el-button
-        v-if="!isEdit"
+      <el-button
+        v-if="!isEdit&&editType!==2"
         @click="exportExcel"
-      >下载表格</el-button> -->
-      <el-button v-else :loading="loadingBtn" @click="submitFun">保存</el-button>
+      >下载表格</el-button>
     </div>
     <div id="out-table">
       <table
         border="1"
         bordercolor="black"
-        class="info-table out-table"
+        style="width:100%;border-collapse: collapse;"
+        class="info-table"
       >
         <tr>
           <th :colspan="5+headDataLength">
             <div style="position:relative">
-              <div class="logo-style">
+              <div style="width:100px;height:45px;position: absolute;left: 10px;">
                 <img style="width:100%;height:100%" src="@/assets/logo.png" alt="">
               </div>
               <div style="flex:1;text-align:center;font-size: 1.5em;line-height:45px">中策(安吉)不合格品处置单</div>
             </div>
           </th>
         </tr>
-        <tr v-if="orderNum">
-          <td :colspan="5+headDataLength" style="text-align:right;padding-right:15px">
-            <div>质检编码：{{ formObj.unqualified_deal_order_uid }}</div>
+        <tr>
+          <td :colspan="headDataLength" style="text-align:left;padding-left:15px">
+            <div>单据编号：{{ formObj.unqualified_deal_order_uid }}</div>
+          </td>
+          <td :colspan="5" style="text-align:right;padding-right:15px">
+            <div>质J05-034</div>
           </td>
         </tr>
         <tr>
           <td :colspan="2" style="text-align:left;padding-left:25px;">发生部门：
           </td>
-          <td :colspan="2">
-            <span>{{ formObj.deal_department }}</span>
+          <td :colspan="3">
+            <span>{{ formObj.department }}</span>
             <!-- <div v-else class="deal_department"> -->
             <!-- <el-radio v-model="formObj.deal_department" label="准备分厂">准备分厂</el-radio> -->
             <!-- <el-radio v-model="formObj.deal_department" label="加硫车间">加硫车间</el-radio>
@@ -46,22 +49,12 @@
               <el-radio v-model="formObj.deal_department" label="细料车间">细料车间</el-radio> -->
             <!-- </div> -->
           </td>
-          <td>胶料筹备组 炼胶</td>
+          <!-- <td>胶料筹备组 炼胶</td> -->
           <td :colspan="headDataLength" style="width:125px">日期：{{ orderNum&&formObj.created_date?(formObj.created_date).split(' ')[0]: formObj.currentDate }}</td>
         </tr>
         <tr style="text-align:left;">
           <td :colspan="5+headDataLength" style="padding-left:25px">不合格品状态：
-            <span v-if="!isEdit">
-              <span
-                v-for="(item,i) in stateList"
-                :key="i"
-              >
-                <span v-if="item === formObj.status">☑</span>
-                <span v-else>☐</span>
-                {{ item }}
-              </span>
-            </span>
-            <span v-else>
+            <span v-if="isEdit&&editType === 1">
               <el-radio
                 v-for="(item,i) in stateList"
                 :key="i"
@@ -71,21 +64,31 @@
                 {{ item }}
               </el-radio>
             </span>
+            <span v-else>
+              <span
+                v-for="(item,i) in stateList"
+                :key="i"
+              >
+                <span v-if="item === formObj.status">☑</span>
+                <span v-else>☐</span>
+                {{ item }}
+              </span>
+            </span>
           </td>
         </tr>
         <tr style="text-align:left;">
           <td :colspan="5+headDataLength" style="padding-left:25px">
             <span style="display:inline-block;width:170px">不合格品信息(发生部门)：</span>
-            <span v-if="orderNum" v-html="formObj.department" />
             <el-input
-              v-else
-              v-model="formObj.department"
+              v-if="isEdit&&editType === 1"
+              v-model="formObj.deal_department"
               style="width:70%"
               placeholder="请输入内容"
             />
+            <span v-else v-html="formObj.deal_department" />
           </td>
         </tr>
-        <tr style="text-align:left;">
+        <!-- <tr style="text-align:left;">
           <td :colspan="5+headDataLength" style="padding-left:25px">
             <span style="display:inline-block;width:170px">不合格品处理方式：</span>
             <span v-if="orderNum" v-html="formObj.deal_method" />
@@ -106,21 +109,8 @@
                 :value="item"
               />
             </el-select>
-            <!-- <el-input
-              v-else
-              v-model="formObj.department"
-              style="width:70%"
-              placeholder="请输入内容"
-            /> -->
           </td>
-        </tr>
-        <!-- </table>
-      <table
-        border="1"
-        bordercolor="black"
-        class="info-table"
-        style="border-top-color: #fff;"
-      > -->
+        </tr> -->
         <tbody>
           <tr>
             <th rowspan="2">序号</th>
@@ -136,24 +126,24 @@
           </tr>
           <tr v-for="(itemVal,i) in listData" :key="i">
             <td>{{ Number(i) + 1 }}</td>
-            <td>{{ itemVal.date }}/{{ itemVal.classes }}</td>
+            <td>{{ itemVal.factory_date }}/{{ itemVal.classes }}</td>
             <td>{{ itemVal.equip_no }}</td>
             <td>{{ itemVal.product_no }}</td>
-            <td>{{ setTrains(itemVal.actual_trains) }}</td>
+            <td>{{ itemVal.train?itemVal.train:itemVal.trains }}</td>
             <td
               v-for="(headDataItem,headDataI) in headData"
               :key="headDataI"
             >
-              <div v-if="itemVal.indicator_data[headDataItem]">
+              <div v-if="itemVal.test_data.filter(d=>d.data_point_name === headDataItem).length>0">
                 <span
-                  v-if="getArrMin(itemVal.indicator_data[headDataItem]) ===
-                    getArrMax(itemVal.indicator_data[headDataItem])"
+                  v-if="itemVal.test_data.filter(d=>d.data_point_name === headDataItem)[0].max_value ===
+                    itemVal.test_data.filter(d=>d.data_point_name === headDataItem)[0].min_value"
                 >
-                  {{ getArrMin(itemVal.indicator_data[headDataItem]) }}
+                  {{ itemVal.test_data.filter(d=>d.data_point_name === headDataItem)[0].min_value }}
                 </span>
                 <span v-else>
-                  {{ getArrMin(itemVal.indicator_data[headDataItem]) }}-
-                  {{ getArrMax(itemVal.indicator_data[headDataItem]) }}
+                  {{ itemVal.test_data.filter(d=>d.data_point_name === headDataItem)[0].min_value }}-
+                  {{ itemVal.test_data.filter(d=>d.data_point_name === headDataItem)[0].max_value }}
                 </span>
               </div>
             </td>
@@ -171,7 +161,7 @@
             </td>
           </tr>
           <tr style="text-align:left;">
-            <td rowspan="2" :colspan="5+headDataLength" style="padding-left:25px">
+            <td rowspan="4" :colspan="5+headDataLength" style="padding-left:25px">
               <el-input
                 v-if="isEdit&&editType === 1"
                 v-model="formObj.reason"
@@ -186,19 +176,21 @@
             </td>
           </tr>
           <tr />
-          <tr style="text-align:right">
+          <tr />
+          <tr />
+          <!-- <tr style="text-align:right">
             <td :colspan="5+headDataLength">
               经办人：{{ formObj.deal_user }}
               <span style="margin:0 100px">日期：{{ formObj.deal_date }}</span>
             </td>
-          </tr>
+          </tr> -->
           <tr v-if="editType !== 1" style="text-align:left;">
             <td :colspan="5+headDataLength" style="padding-left:25px">
               <div>处理意见(品质技术部工艺技术科)：</div>
             </td>
           </tr>
           <tr v-if="editType !== 1" style="text-align:left;">
-            <td rowspan="2" :colspan="5+headDataLength" style="padding-left:25px">
+            <td rowspan="4" :colspan="5+headDataLength" style="padding-left:25px">
               <el-input
                 v-if="isEdit&&editType === 2"
                 v-model="formObj.t_deal_suggestion"
@@ -213,6 +205,8 @@
             </td>
           </tr>
           <tr v-if="![1].includes(editType)" />
+          <tr v-if="![1].includes(editType)" />
+          <tr v-if="![1].includes(editType)" />
           <tr v-if="editType !== 1" style="text-align:right">
             <td :colspan="5+headDataLength">
               经办人：{{ formObj.t_deal_user }}
@@ -225,7 +219,7 @@
             </td>
           </tr>
           <tr v-if="![1,2].includes(editType)" style="text-align:left;">
-            <td rowspan="2" :colspan="5+headDataLength" style="padding-left:25px">
+            <td rowspan="4" :colspan="5+headDataLength" style="padding-left:25px">
               <el-input
                 v-if="isEdit&&editType === 3"
                 v-model="formObj.c_deal_suggestion"
@@ -236,9 +230,14 @@
                 placeholder="请输入内容"
                 @change="editOne($event,'c_deal_user','c_deal_date')"
               />
-              <div v-else class="deal_suggestion" v-html="formObj.c_deal_suggestion" />
+              <div v-else>
+                <div v-if="!formObj.c_deal_suggestion" style="height:80px" />
+                <div v-else class="deal_suggestion" v-html="formObj.c_deal_suggestion" />
+              </div>
             </td>
           </tr>
+          <tr v-if="![1,2].includes(editType)" />
+          <tr v-if="![1,2].includes(editType)" />
           <tr v-if="![1,2].includes(editType)" />
           <tr v-if="![1,2].includes(editType)" style="text-align:right">
             <td :colspan="5+headDataLength">
@@ -252,7 +251,7 @@
             </td>
           </tr>
           <tr v-if="![1,2].includes(editType)" style="text-align:left;">
-            <td rowspan="2" :colspan="5+headDataLength" style="padding-left:25px">
+            <td rowspan="4" :colspan="5+headDataLength" style="padding-left:25px">
               <el-input
                 v-if="isEdit&&editType === 3"
                 v-model="formObj.desc"
@@ -262,10 +261,14 @@
                 style="margin-top:10px;width:97%"
                 placeholder="请输入内容"
               />
-              <div v-else class="deal_suggestion" v-html="formObj.desc" />
-              <!-- <div style="margin-top:10px" /> -->
+              <div v-else>
+                <div v-if="!formObj.desc" style="height:80px" />
+                <div v-else class="deal_suggestion" v-html="formObj.desc" />
+              </div>
             </td>
           </tr>
+          <tr v-if="![1,2].includes(editType)" />
+          <tr v-if="![1,2].includes(editType)" />
           <tr v-if="![1,2].includes(editType)" />
         <!-- <tr style="text-align:left;">
           <td :colspan="5+headData.length" style="padding-left:25px">
@@ -278,6 +281,11 @@
         </tr> -->
         </tbody>
       </table>
+    </div>
+    <div style="text-align:right;margin-top:10px;">
+      <!-- <el-button v-if="isEdit" type="primary" :loading="loadingBtn" @click="exportExcelFrame">导出Excel</el-button> -->
+      <el-button v-if="isEdit" type="primary" :loading="loadingBtn" @click="preserveFun">提交</el-button>
+      <el-button v-if="isEdit" type="primary" :loading="loadingBtn" @click="cancelFun">返回</el-button>
     </div>
   </div>
 </template>
@@ -326,7 +334,7 @@ export default {
     isEdit: { // 是不是编辑 编辑true
       type: Boolean,
       default() {
-        return false
+        return true
       }
     }
   },
@@ -336,13 +344,14 @@ export default {
         status: '来料',
         currentDate: setDate()
       },
-      stateList: ['来料', '半成品'],
+      stateList: ['半成品', '来料'],
       headData: this.formHeadData,
       orderNum: null,
       loadingBtn: false,
       listData: this.listDataProps,
       aaa: '',
-      optionsDisposal: []
+      optionsDisposal: [],
+      loading: false
     }
   },
   computed: {
@@ -356,10 +365,14 @@ export default {
       if (val) {
         // 打开
         this.orderNum = this.orderRow.id || null
+        this.formObj = this.orderRow || {}
+
         this.listData = this.listDataProps || []
         this.headData = this.formHeadData || []
         if (this.orderNum) {
           this.getInfo()
+        } else {
+          this.setName()
         }
       }
     }
@@ -368,21 +381,56 @@ export default {
     this.orderNum = this.orderRow.id || null
     if (this.orderNum) {
       this.getInfo()
+    } else {
+      this.formObj = this.orderRow || {}
+      this.setName()
     }
   },
   methods: {
     async getInfo() {
       try {
+        this.loading = true
         const data = await unqualifiedDealOrders('get', this.orderNum)
         this.formObj = data
-        this.formObj.reason = this.editType === 1 ? this.changeInputBack(this.formObj.reason) : this.formObj.reason
-        this.formObj.t_deal_suggestion = this.editType === 2 ? this.changeInputBack(this.formObj.t_deal_suggestion) : this.formObj.t_deal_suggestion
-        this.formObj.c_deal_suggestion = this.editType === 3 ? this.changeInputBack(this.formObj.c_deal_suggestion) : this.formObj.c_deal_suggestion
 
-        this.headData = data.form_head_data
+        this.loading = false
+        this.setName()
+        if (this.orderRow.t_deal_suggestion && this.isEdit) {
+          this.formObj.t_deal_suggestion = this.orderRow.t_deal_suggestion
+        }
+        if (this.orderRow.c_deal_suggestion && this.isEdit) {
+          this.formObj.c_deal_suggestion = this.orderRow.c_deal_suggestion
+        }
+        if (!this.isEdit) {
+          this.formObj.reason = this.editType === 1 ? this.changeInputBack(this.formObj.reason) : this.formObj.reason
+          this.formObj.t_deal_suggestion = this.editType === 2 ? this.changeInputBack(this.formObj.t_deal_suggestion) : this.formObj.t_deal_suggestion
+          this.formObj.c_deal_suggestion = this.editType === 3 ? this.changeInputBack(this.formObj.c_deal_suggestion) : this.formObj.c_deal_suggestion
+        }
+
+        data.deal_details.forEach(d => {
+          d.train = ''
+          d.trains.forEach((D, i) => {
+            d.train += D.train + (d.trains.length > 1 && d.trains.length - 1 > i ? ',' : '')
+          })
+        })
         this.listData = data.deal_details
       } catch (e) {
-        //
+        this.listData = []
+        this.formObj = {}
+        this.loading = false
+      }
+    },
+    setName() {
+      if (this.isEdit && this.editType === 1) {
+        this.formObj.created_username = this.name
+        this.formObj.created_date = setDate()
+      }
+      if (this.isEdit && this.editType === 2) {
+        this.formObj.t_deal_user = this.name
+        this.formObj.t_deal_date = setDate()
+      } else if (this.isEdit && this.editType === 3) {
+        this.formObj.c_deal_user = this.name
+        this.formObj.c_deal_date = setDate()
       }
     },
     async submitFun() {
@@ -439,11 +487,11 @@ export default {
     },
     changeInput(val) {
       if (!val) return null
-      return (val).replace(/\r\n/g, '<br>').replace(/\n/g, '<br>').replace(/\s/g, '&nbsp;')
+      return (val).replace(/\r|\n/g, '<br>').replace(/\n/g, '<br>').replace(/\s/g, '&nbsp;')
     },
     changeInputBack(val) {
       if (!val) return ''
-      return (val).replace(/<br>/g, '\r\n').replace(/<br>/g, '\n').replace(/&nbsp;/g, '\s')
+      return (val).replace(/<br>/g, '\r').replace(/<br>/g, '\n').replace(/&nbsp;/g, '\s')
     },
     editOne(val, paramsName, dateDate) {
       this.$set(this.formObj, paramsName, this.name)
@@ -471,11 +519,44 @@ export default {
       }
     },
     async exportPDF() {
-      this.$refs.PDFBtn.style.display = 'none'
-      document.getElementsByClassName('el-dialog__headerbtn')[0].style.display = 'none'
-      window.print()
-      this.$refs.PDFBtn.style.display = 'block'
-      document.getElementsByClassName('el-dialog__headerbtn')[0].style.display = 'block'
+      var iframe = ''
+      if (!iframe) {
+        var el = document.getElementById('out-table')
+        iframe = document.createElement('IFRAME')
+        var doc = null
+        iframe.setAttribute('id', 'print-iframe')
+        iframe.setAttribute('style', 'position:absolute;width:0px;height:0px;left:-500px;top:-500px;')
+        document.body.appendChild(iframe)
+        doc = iframe.contentWindow.document
+        doc.write('<style media="print">@page {size: auto;margin: 20px;} table{font-size:14px}' + '</style>') // 解决出现页眉页脚和路径的问题
+
+        doc.write('<div style="width:100%">' + el.innerHTML + '</div>')
+        doc.close()
+        iframe.contentWindow.focus()
+      }
+      setTimeout(function() { iframe.contentWindow.print() }, 50) // 解决第一次样式不生效的问题
+      if (navigator.userAgent.indexOf('MSIE') > 0) {
+        document.body.removeChild(iframe)
+      }
+      // this.$refs.PDFBtn.style.display = 'none'
+      // document.getElementsByClassName('el-dialog__headerbtn')[0].style.display = 'none'
+      // window.print()
+      // this.$refs.PDFBtn.style.display = 'block'
+      // document.getElementsByClassName('el-dialog__headerbtn')[0].style.display = 'block'
+    },
+    exportExcelFrame() {
+      this.$emit('exportExcelFrame')
+    },
+    preserveFun() {
+      const newtFormObj = JSON.parse(JSON.stringify(this.formObj))
+      newtFormObj.reason = this.changeInput(newtFormObj.reason)
+      newtFormObj.t_deal_suggestion = this.changeInput(newtFormObj.t_deal_suggestion)
+      newtFormObj.c_deal_suggestion = this.changeInput(newtFormObj.c_deal_suggestion)
+      console.log(newtFormObj, 44444)
+      this.$emit('preserveFun', newtFormObj)
+    },
+    cancelFun() {
+      this.$emit('cancelFun')
     },
     exportExcel() {
       var myDate = new Date()
@@ -506,6 +587,7 @@ export default {
     }
   }
 }
+
 </script>
 
 <style lang="scss">
@@ -514,16 +596,6 @@ export default {
     margin: 0 auto;
     text-align: center;
     font-size: 14px;
-    table {
-      width: 100%;
-      border-collapse: collapse
-    }
-    .logo-style{
-      width:100px;
-      height:45px;
-      position: absolute;
-      left: 10px;
-    }
     .deal_department{
       .el-radio{
              margin-right: 0px;

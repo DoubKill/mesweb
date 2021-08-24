@@ -233,23 +233,29 @@ export function exportExcel(value = 'excel', val) {
       }
       arr1.push(D.substr(1))
       arr2.push(D.substr(0, 1))
-
-      _wpx.push({ wpx: 80 }, { wpx: 130 }, { wpx: 100 }, { wpx: 150 }, { wpx: 170 },
-        { wpx: 100 }, { wpx: 100 }, { wpx: 100 }, { wpx: 100 }, { wpx: 100 }, { wpx: 100 }, { wpx: 100 })
     })
 
     arr2 = [...new Set(arr2)]
-    const number = Math.max(...arr1) + 1
-    const num = number - 13
-    const num1 = number - 9
-    const num2 = number - 5
-    const num3 = number - 1
+    const number = Math.max(...arr1) + 3
+    const num = number - 20
+    const num1 = number - 15
+    const num2 = number - 9
+    const num3 = number - 3
     for (var D = 1; D <= number; D++) {
+      if (D === 2) {
+        _wpx.push({ wpx: 130 })
+      } else if (D === 4) {
+        _wpx.push({ wpx: 150 })
+      } else if (D === 5) {
+        _wpx.push({ wpx: 170 })
+      } else {
+        _wpx.push({ wpx: 70 })
+      }
       arr2.forEach(d => {
         if (obj[d + D]) {
           if (obj[d + D].v && (obj[d + D].v.indexOf('处理意见') > -1 ||
         obj[d + D].v.indexOf('不合格品') > -1 || obj[d + D].v.indexOf('备注') > -1 ||
-        obj[d + D].v.indexOf('质检编码') > -1 || obj[d + D].v.indexOf('经办人') > -1 ||
+        obj[d + D].v.indexOf('单据编号') > -1 || obj[d + D].v.indexOf('经办人') > -1 ||
         (d === 'A' && [num, num1, num2, num3].includes(D)))) {
             _tableTitleFont1.alignment = {
               horizontal: 'left',

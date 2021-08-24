@@ -179,13 +179,16 @@
       @currentChange="currentChange"
     />
     <el-dialog
-      :fullscreen="true"
       :visible.sync="handleCardDialogVisible"
+      :close-on-click-modal="false"
+      :fullscreen="true"
+      width="800px"
     >
       <excel
         ref="handleCard"
         :order-row="currentRow"
         :edit-type="editType"
+        :is-edit="false"
         :show="handleCardDialogVisible"
         @submitFun="submitFun"
       />
