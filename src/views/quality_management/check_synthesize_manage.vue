@@ -299,6 +299,11 @@
           min-width="20"
         />
         <el-table-column
+          prop="actual_weight"
+          label="重量"
+          min-width="10"
+        />
+        <el-table-column
           prop="address"
           label="收皮车次"
           min-width="10"
