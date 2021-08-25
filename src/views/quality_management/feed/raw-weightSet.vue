@@ -1,10 +1,11 @@
 <template>
   <div>
-    <router-view />
+    <!-- 投料重量设定 -->
   </div>
 </template>
+
 <script>
 export default {
-  name: 'QuickCheckGather'
+  name: 'RawWeightSet'
 }
 </script>

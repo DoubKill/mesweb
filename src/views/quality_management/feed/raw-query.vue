@@ -1,10 +1,11 @@
 <template>
   <div>
-    <router-view />
+    <!-- 投料操作履历查询 -->
   </div>
 </template>
+
 <script>
 export default {
-  name: 'QuickCheckGather'
+  name: 'RawQuery'
 }
 </script>

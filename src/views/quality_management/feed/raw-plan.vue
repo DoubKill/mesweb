@@ -1,10 +1,11 @@
 <template>
   <div>
-    <router-view />
+    <!-- 投料计划 -->
   </div>
 </template>
+
 <script>
 export default {
-  name: 'QuickCheckGather'
+  name: 'RawPlan'
 }
 </script>

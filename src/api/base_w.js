@@ -473,6 +473,14 @@ export function trainsFix(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function palletTrainBatchFix(method, id, data = {}) {
+  const obj = {
+    url: id ? API.PalletTrainBatchFix + id + '/' : API.PalletTrainBatchFix,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 export function unqualifiedTrains(method, id, data = {}) {
   const obj = {
     url: id ? API.UnqualifiedTrains + id + '/' : API.UnqualifiedTrains,

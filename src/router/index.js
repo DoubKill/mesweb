@@ -55,28 +55,7 @@ export const constantRoutes = [
   {
     path: '/',
     redirect: '/home'
-  // component: Layout,
-  // meta: {
-  //   title: '首页',
-  //   icon: 'el-icon-s-home'
-  // },
-  // children: [{
-  //   path: '/homePage',
-  //   component: () => import('@/views/homePage/index'),
-  //   name: 'HomePageMain',
-  //   meta: {
-  //     title: '首页',
-  //     icon: 'el-icon-s-home'
-  //   }
-  // }
-  // {
-  //   path: '/Kanban',
-  //   component: () => import('@/views/homePage/Kanban'),
-  //   meta: {
-  //     title: '看板',
-  //     icon: 'el-icon-s-home'
-  //   }
-  // },
+  // children: [
   // {
   //   path: '/2code',
   //   component: () => import('@/views/homePage/2code'),
@@ -108,6 +87,15 @@ export const constantRoutes = [
     component: () => import('@/views/quality_management/phone/fault-month-statistics'),
     hidden: true,
     meta: {
+      isPhone: true
+    }
+  },
+  {
+    path: '/Outbound-Kanban/:id',
+    component: () => import('@/views/Z-Outbound-Kanban'),
+    hidden: true,
+    meta: {
+      // 是否是单独页面
       isPhone: true
     }
   }
@@ -266,7 +254,27 @@ export const asyncRoutes = [
         }
       }
       ]
+    // },
+    // {
+    //   path: '/pinkSet',
+    //   component: () => import('@/views/pinkSet/index'),
+    //   name: 'PinkSet',
+    //   meta: {
+    //     title: '粉料罐-油料罐物料设定',
+    //     icon: 'dashboard',
+    //     permissionName: ''
+    //   }
     }
+    // {
+    //   path: '/powder-tank',
+    //   component: () => import('@/views/basic/powder-tank'),
+    //   name: 'PowderTank',
+    //   meta: {
+    //     title: '粉料罐-油料罐 物料设定',
+    //     icon: 'dashboard',
+    //     permissionName: ''
+    //   }
+    // }
     ]
   },
   {
@@ -277,7 +285,6 @@ export const asyncRoutes = [
     meta: {
       title: '配方管理',
       icon: 'formula'
-    // permissionName: 'recipe'
     },
     children: [{
       path: '/material/base/info/manage',
@@ -507,7 +514,7 @@ export const asyncRoutes = [
           meta: {
             faName: 'SmallMaterialWeight',
             title: '料包产出-质量追踪卡管理',
-            permissionName: ''
+            permissionName: 'xl_weight_card'
           }
         },
         {
@@ -517,7 +524,7 @@ export const asyncRoutes = [
           meta: {
             faName: 'SmallMaterialWeight',
             title: '料包有效期管理',
-            permissionName: ''
+            permissionName: 'xl_expire_data'
           }
         }
       ]
@@ -686,7 +693,7 @@ export const asyncRoutes = [
     {
       path: '/track',
       redirect: '/track-raw-material',
-      component: () => import('@/views/production/track/track-raw-material'),
+      component: () => import('@/views/production/track/track-fa'),
       name: 'Track',
       meta: {
         title: '条码追朔',
@@ -1199,7 +1206,7 @@ export const asyncRoutes = [
         component: () => import('@/views/inventory/receive-good-manage/index.vue'),
         name: 'ReceiveGoodManage',
         meta: {
-          title: '收发货管理',
+          title: '发货管理',
           icon: 'stock'
         },
         children: [
@@ -1372,7 +1379,7 @@ export const asyncRoutes = [
         component: () => import('@/views/quality_management/DisposalListGenerate-fa'),
         name: 'UnqualifiedHandle',
         meta: {
-          title: '不合格品处理',
+          title: '胶料不合格品处理',
           icon: 'quality'
         },
         children: [
@@ -1393,7 +1400,7 @@ export const asyncRoutes = [
         //     permissionName: 'deal_suggestion'
         //   }
         // }
-          {
+          /** {
             path: '/unqualified-handle/disposal-list-generate',
             component: () => import('@/views/quality_management/disposal-list-generates.vue'),
             name: 'DisposalListGenerate',
@@ -1412,7 +1419,47 @@ export const asyncRoutes = [
               title: '不合格处置单管理',
               permissionName: 'unqualified_order'
             }
-          }
+          },**/
+          /** {
+            path: '/unqualified-handle/disposalLaunch',
+            component: () => import('@/views/quality_management/disposal/disposalLaunch.vue'),
+            name: 'DisposalLaunch',
+            meta: {
+              faName: 'UnqualifiedHandle',
+              title: '不合格处置发生部门发起',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/unqualified-handle/disposalTechnology',
+            component: () => import('@/views/quality_management/disposal/disposalTechnology.vue'),
+            name: 'DisposalTechnology',
+            meta: {
+              faName: 'UnqualifiedHandle',
+              title: '不合格处置工艺技术科处理',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/unqualified-handle/disposalInspection',
+            component: () => import('@/views/quality_management/disposal/disposalInspection.vue'),
+            name: 'DisposalInspection',
+            meta: {
+              faName: 'UnqualifiedHandle',
+              title: '不合格处置工艺检查科处理',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/unqualified-handle/disposalSee',
+            component: () => import('@/views/quality_management/disposal/disposalSee.vue'),
+            name: 'DisposalSee',
+            meta: {
+              faName: 'UnqualifiedHandle',
+              title: '不合格处置单查看',
+              permissionName: ''
+            }
+          }**/
         ]
       },
       {
@@ -1454,27 +1501,17 @@ export const asyncRoutes = [
               title: '快检信息综合管理',
               permissionName: 'deal_result'
             }
-          },
-          {
-            path: '/inspection-result-management/menni-equip',
-            component: () => import('@/views/quality_management/menni-equip'),
-            name: 'RubberMenniEquip',
-            meta: {
-              faName: 'InspectionResultManagement',
-              title: '胶料门尼设备管理',
-              permissionName: 'product_report_equip'
-            }
-          },
-          {
-            path: '/inspection-result-management/menni-report',
-            component: () => import('@/views/quality_management/menni-report'),
-            name: 'RubberMenniReport',
-            meta: {
-              faName: 'InspectionResultManagement',
-              title: '胶料门尼数据上报',
-              permissionName: 'product_report_value'
-            }
           }
+          // {
+          //   path: '/inspection-result-management/menni-report',
+          //   component: () => import('@/views/quality_management/menni-report'),
+          //   name: 'RubberMenniReport',
+          //   meta: {
+          //     faName: 'InspectionResultManagement',
+          //     title: '胶料门尼数据上报',
+          //     permissionName: 'product_report_value'
+          //   }
+          // }
         ]
       },
       // {
@@ -1676,13 +1713,23 @@ export const asyncRoutes = [
         },
         children: [
           {
+            path: '/inspection-result-management/menni-equip',
+            component: () => import('@/views/quality_management/menni-equip'),
+            name: 'RubberMenniEquip',
+            meta: {
+              faName: 'QuickCheckGather',
+              title: '胶料门尼设备管理',
+              permissionName: 'product_report_equip'
+            }
+          },
+          {
             path: '/quickCheck/deviceMonitor',
             component: () => import('@/views/quality_management/quickCheck/deviceMonitor'),
             name: 'DeviceMonitor',
             meta: {
               faName: 'QuickCheckGather',
               title: '快检设备监控',
-              permissionName: ''
+              permissionName: 'examine_equip'
             }
           },
           {
@@ -1692,7 +1739,7 @@ export const asyncRoutes = [
             meta: {
               faName: 'QuickCheckGather',
               title: '快检检测计划',
-              permissionName: ''
+              permissionName: 'examine_test_plan'
             }
           },
           {
@@ -1702,11 +1749,53 @@ export const asyncRoutes = [
             meta: {
               faName: 'QuickCheckGather',
               title: '检测履历查询',
-              permissionName: ''
+              permissionName: 'examine_sulfur'
             }
           }
         ]
       }
+      /** {
+        path: '/feed',
+        redirect: '/feed/raw-plan',
+        component: () => import('@/views/quality_management/feed/a-index'),
+        name: 'Feed',
+        meta: {
+          title: '炭黑罐投料报错',
+          icon: 'quality'
+        },
+        children: [
+          {
+            path: '/feed/raw-plan',
+            component: () => import('@/views/quality_management/feed/raw-plan'),
+            name: 'RawPlan',
+            meta: {
+              faName: 'Feed',
+              title: '投料计划',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/feed/raw-weightSet',
+            component: () => import('@/views/quality_management/feed/raw-weightSet'),
+            name: 'RawWeightSet',
+            meta: {
+              faName: 'Feed',
+              title: '投料重量设定',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/feed/raw-query',
+            component: () => import('@/views/quality_management/feed/raw-query'),
+            name: 'RawQuery',
+            meta: {
+              faName: 'Feed',
+              title: '投料操作履历查询',
+              permissionName: ''
+            }
+          }
+        ]
+      }**/
     ]
   },
   {

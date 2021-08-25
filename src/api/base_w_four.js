@@ -28,6 +28,24 @@ export function productReportEquip(method, id, data = {}) {
   return request(obj)
 }
 
+export function equipTestData(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipTestData + id + '/' : API.EquipTestData,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function checkEquip(method, id, data = {}) {
+  const obj = {
+    url: id ? API.CheckEquip + id + '/' : API.CheckEquip,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function productReportValue(method, id, data = {}) {
   const obj = {
     url: id ? API.ProductReportValue + id + '/' : API.ProductReportValue,
@@ -226,6 +244,15 @@ export function bzMixinInventorySummary(method, id, data = {}) {
   return request(obj)
 }
 
+export function bzFinalInventorySummary(method, id, data = {}) {
+  const obj = {
+    url: id ? API.BzFinalInventorySummary + id + '/' : API.BzFinalInventorySummary,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function bzFinalInventorySearch(method, id, data = {}) {
   const obj = {
     url: id ? API.BzFinalInventorySearch + id + '/' : API.BzFinalInventorySearch,
@@ -266,6 +293,35 @@ export function productTestPlan(method, id, data = {}) {
   const obj = {
     url: id ? API.ProductTestPlan + id + '/' : API.ProductTestPlan,
     method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function rubberMaxStretchTestResult(method, id, data = {}) {
+  const obj = {
+    url: id ? API.RubberMaxStretchTestResult + id + '/' : API.RubberMaxStretchTestResult,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function outBoundTasks(method, id, data = {}, cancelToken) {
+  const obj = {
+    url: id ? API.OutBoundTasks + id + '/' : API.OutBoundTasks,
+    method: method,
+    cancelToken: cancelToken
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function inoutBoundSummary(method, id, data = {}, cancelToken) {
+  const obj = {
+    url: id ? API.InoutBoundSummary + id + '/' : API.InoutBoundSummary,
+    method: method,
+    cancelToken: cancelToken
   }
   Object.assign(obj, data)
   return request(obj)

@@ -193,37 +193,117 @@ export function checkPermission(value) {
 
 import FileSaver from 'file-saver'
 import XLSX from 'xlsx'
+import XLSXStyle from 'xlsx-style'
 /**
  *
  * @param {*文件名称} value
  */
-export function exportExcel(value) {
-  // var aoa = [['主要信息', null, null, '其它信息'],
-  //   ['姓名', '性别', '年龄', '注册时间'], ['张三', '男', 18, 1111], ['李四', '女', 22, 2222]]
-  // var sheet = XLSX.utils.aoa_to_sheet(aoa)
-  // sheet['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 2 }}]
-  // var wbout = XLSX.write(sheet, {
-  //   bookType: 'xlsx',
-  //   bookSST: true,
-  //   type: 'array'
-  // })
-
-  // console.log(sheet)
-  // FileSaver.saveAs(
-  //   new Blob([sheet], { type: 'application/octet-stream' }),
-  //   value + '.xlsx'
-  // )
-  // return
-  // type: "binary" wb可直接放数据
+export function exportExcel(value = 'excel', val) {
   /* 从表生成工作簿对象 */
   var wb = XLSX.utils.table_to_book(document.querySelector('#out-table'), { raw: true })
-  /* 获取二进制字符串作为输出 */
-  var wbout = XLSX.write(wb, {
-    bookType: 'xlsx',
-    bookSST: true,
-    type: 'array'
+
+  if (val && val === 'disposal-list-components') {
+    const tableTitleFont = {
+      font: {
+        italic: false,
+        underline: false
+      },
+      alignment: {
+        horizontal: 'center',
+        vertical: 'center'
+      },
+      border: {
+        bottom: { style: 'thin' },
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        right: { style: 'thin' }
+      }
+    }
+    const _wpx = []
+    // const _tableTitleFont = JSON.parse(JSON.stringify(tableTitleFont))
+    const _tableTitleFont1 = JSON.parse(JSON.stringify(tableTitleFont))
+    // const _length = Object.keys(wb.Sheets['Sheet1']).length
+    const arr = Object.keys(wb.Sheets['Sheet1'])
+    const obj = wb.Sheets['Sheet1']
+    const arr1 = []
+    let arr2 = []
+    arr.forEach(D => {
+      if (['!cols', '!fullref', '!merges', '!ref', '!rows'].includes(D)) {
+        return
+      }
+      arr1.push(D.substr(1))
+      arr2.push(D.substr(0, 1))
+    })
+
+    arr2 = [...new Set(arr2)]
+    const number = Math.max(...arr1) + 3
+    const num = number - 20
+    const num1 = number - 15
+    const num2 = number - 9
+    const num3 = number - 3
+    for (var D = 1; D <= number; D++) {
+      if (D === 2) {
+        _wpx.push({ wpx: 130 })
+      } else if (D === 4) {
+        _wpx.push({ wpx: 150 })
+      } else if (D === 5) {
+        _wpx.push({ wpx: 170 })
+      } else {
+        _wpx.push({ wpx: 70 })
+      }
+      arr2.forEach(d => {
+        if (obj[d + D]) {
+          if (obj[d + D].v && (obj[d + D].v.indexOf('处理意见') > -1 ||
+        obj[d + D].v.indexOf('不合格品') > -1 || obj[d + D].v.indexOf('备注') > -1 ||
+        obj[d + D].v.indexOf('单据编号') > -1 || obj[d + D].v.indexOf('经办人') > -1 ||
+        (d === 'A' && [num, num1, num2, num3].includes(D)))) {
+            _tableTitleFont1.alignment = {
+              horizontal: 'left',
+              vertical: 'left'
+            }
+            obj[d + D].s = _tableTitleFont1
+          } else {
+            obj[d + D].s = tableTitleFont
+          }
+        } else {
+          obj[d + D] = {
+            s: { border: {
+              bottom: { style: 'thin' },
+              top: { style: 'thin' },
+              left: { style: 'thin' },
+              right: { style: 'thin' }
+            }}
+          }
+        }
+      })
+    }
+
+    wb.Sheets['Sheet1']['A1'].s = {									// 为某个单元格设置单独样式
+      font: {
+        name: '宋体',
+        sz: 20,
+        italic: false,
+        underline: false
+      },
+      alignment: {
+        horizontal: 'center',
+        vertical: 'center'
+      },
+      border: {
+        bottom: { style: 'thin' },
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        right: { style: 'thin' }
+      }
+    }
+    wb.Sheets['Sheet1']['!cols'] = _wpx
+  }
+
+  var wbout = XLSXStyle.write(wb, {
+    bookType: 'xlsx', type: 'buffer'
   })
   try {
+    // XLSX.writeFile(wb, value + '.xlsx')
     FileSaver.saveAs(
       // Blob 对象表示一个不可变、原始数据的类文件对象。
       // Blob 表示的不一定是JavaScript原生格式的数据。

@@ -4,8 +4,9 @@
     条形码：
     <el-input
       v-model="barCodeSearch"
-      style="width:200px;margin-right:20px"
+      style="width:300px;margin-right:20px"
       placeholder="请输入内容"
+      clearable
       @input="barCodeInput"
     />
     流程：<el-select v-model="value" placeholder="流程" @change="clickFun">
@@ -20,7 +21,7 @@
       <el-timeline-item
         v-for="(activity, key) in options"
         :key="key"
-        :timestamp="activities[activity.label]?activities[activity.label][0].time:''"
+        :timestamp="activities[activity.label]&&activities[activity.label][0]?activities[activity.label][0].time:''"
         placement="top"
         size="large"
         :color="value === activity.value?'#0bbd87':''"
@@ -30,7 +31,7 @@
           :ref="activity.value"
           style="width:35px;display: inline-block;"
         >
-          {{ activities[activity.label]?activities[activity.label][0].classes_name:'--' }}
+          {{ activities[activity.label]&&activities[activity.label][0]?activities[activity.label][0].classes_name:'--' }}
         </span>
         <span style="margin-left:10px;display: inline-block;" @click="activity._show = !activity._show">{{ activity.value }}</span>
         <i v-if="activity._show" class="el-icon-arrow-down" style="vertical-align: middle;margin-left:10px;" @click="activity._show = !activity._show" />
@@ -171,10 +172,11 @@ export default {
       this.loading = true
       try {
         const data = await materialTrace('get', null, { params: { lot_no: this.barCodeSearch }})
-        this.activities = data
+        this.activities = data || []
         this.loading = false
       } catch (e) {
         this.loading = false
+        this.activities = []
       }
     },
     clickFun(val) {

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 不合格处置单 -->
+    <!-- 不合格处置单管理 -->
     <el-form :inline="true">
       <el-form-item label="时间">
         <el-date-picker
@@ -179,13 +179,16 @@
       @currentChange="currentChange"
     />
     <el-dialog
-      :fullscreen="true"
       :visible.sync="handleCardDialogVisible"
+      :close-on-click-modal="false"
+      :fullscreen="true"
+      width="800px"
     >
       <excel
         ref="handleCard"
         :order-row="currentRow"
         :edit-type="editType"
+        :is-edit="false"
         :show="handleCardDialogVisible"
         @submitFun="submitFun"
       />

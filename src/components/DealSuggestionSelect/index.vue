@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { dealSuggestion, dealSuggestionView } from '@/api/material-deal-result'
+import { dealSuggestionView } from '@/api/material-deal-result'
 
 export default {
   data() {

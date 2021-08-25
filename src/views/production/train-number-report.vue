@@ -44,6 +44,11 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="班次">
+        <class-select
+          @classSelected="classChanged"
+        />
+      </el-form-item>
       <el-form-item>
         <!-- <el-button @click="showRowTable = true">展示详情</el-button> -->
 
@@ -67,10 +72,6 @@
         type="index"
         label="No"
       />
-      <!-- <el-table-column
-        type="selection"
-        width="55"
-      /> -->
       <el-table-column
         prop="equip_no"
         label="机台"
@@ -78,6 +79,10 @@
       <el-table-column
         prop="product_no"
         label="配方编号"
+      />
+      <el-table-column
+        prop="classes"
+        label="班次"
       />
       <el-table-column
         prop="plan_classes_uid"
@@ -517,10 +522,10 @@ import selectEquip from '@/components/select_w/equip'
 import chartMixin from './chartMixin'
 import { mapGetters } from 'vuex'
 import allProductNoSelect from '@/components/select_w/allProductNoSelect'
-
+import classSelect from '@/components/ClassSelect'
 export default {
   name: 'TrainNumberReport',
-  components: { page, selectEquip, allProductNoSelect },
+  components: { page, selectEquip, allProductNoSelect, classSelect },
   mixins: [chartMixin],
   props: {
     isComponents: {
@@ -704,6 +709,11 @@ export default {
       this.getParams.page = 1
       this.getList()
     },
+    classChanged(val) {
+      this.getParams.classes = val
+      this.getParams.page = 1
+      this.getList()
+    },
     handleSelectionChange() { },
     selectRubber() { },
     clickChartData() {
@@ -734,12 +744,12 @@ export default {
         // return test
         this.totalWeighing = data.count
         return data.results || []
-        // eslint-disable-next-line no-empty
-      } catch (e) { }
+      } catch (e) {
+        //
+      }
     },
     async getMixerInformation(id, page) {
       try {
-        // eslint-disable-next-line object-curly-spacing
         const data = await mixerInformationUrl('get', null, { params: { feed_back_id: id,
           page: page, equip_no: this.getParams.equip_no }})
         // const test = [
@@ -758,8 +768,9 @@ export default {
         // return test
         this.totalMixer = data.count
         return data.results || []
-        // eslint-disable-next-line no-empty
-      } catch (e) { }
+      } catch (e) {
+        //
+      }
     },
     async getAlarmRecordList(id, page) {
       try {
@@ -773,8 +784,7 @@ export default {
     },
     async getCurveInformation(id) {
       try {
-        // eslint-disable-next-line object-curly-spacing
-        const data = await curveInformationUrl('get', null, { params: { feed_back_id: id } })
+        const data = await curveInformationUrl('get', null, { params: { feed_back_id: id }})
         // const test = [
         //   {
         //     id: 3,
@@ -872,8 +882,6 @@ export default {
 
 function createImage(_this) {
   const canvas = document.getElementsByTagName('canvas')[0]
-  // eslint-disable-next-line no-unused-vars
-  const newcanvas = JSON.parse(JSON.stringify(canvas))
   if (!canvas.toDataURL) {
     _this.$message.info('请更新浏览器')
     return

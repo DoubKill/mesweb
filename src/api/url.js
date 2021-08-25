@@ -149,6 +149,8 @@ export default {
 
   // 北自混炼胶库存列表
   BzMixinInventory: '/api/v1/inventory/bz-mixin-inventory/',
+  // 终练出库弹框列表
+  BzFinalInventory: 'api/v1/inventory/bz-final-inventory/',
   // 混炼胶库计划管理
   PutPlanManagement: '/api/v1/inventory/put-plan-management/',
   MixinRubberyOutboundOrder: 'api/v1/inventory/mixin-rubbery-outbound-order/',
@@ -197,6 +199,7 @@ export default {
   ShowQualifiedRange: '/api/v1/quality/show-qualified-range/',
   // 修改车次
   TrainsFix: '/api/v1/production/trains-fix/',
+  PalletTrainBatchFix: '/api/v1/production/pallet-train-batch-fix/',
   // 月快检合格率
   BatchMonthStatistics: '/api/v1/quality/batch-month-statistics/',
   // 日快检合格率
@@ -390,6 +393,9 @@ export default {
   MaterialReportValue: '/api/v1/quality/material-report-value/',
   // 胶料上报设备
   ProductReportEquip: '/api/v1/quality/product-report-equip/',
+  // 快检设备监控
+  EquipTestData: '/api/v1/quality/equip-test-data/',
+  CheckEquip: '/api/v1/quality/check-equip/',
   ProductReportValue: '/api/v1/quality/product-report-value/',
   // 原材料库存
   WmsInventory: '/api/v1/inventory/wms-inventory/',
@@ -424,11 +430,28 @@ export default {
   SulfurResume: '/api/v1/inventory/sulfur-resume/',
 
   BzMixinInventorySummary: '/api/v1/inventory/bz-mixin-inventory-summary/',
+  BzFinalInventorySummary: '/api/v1/inventory/bz-final-inventory-summary/',
   BzFinalInventorySearch: '/api/v1/inventory/bz-final-inventory-search/',
   BzMixinInventorySearch: '/api/v1/inventory/bz-mixin-inventory-search/',
 
   WeightingPackageExpire: '/api/v1/terminal/weighting-package-expire/',
   // 快检设备履历
   ProductTestResume: '/api/v1/quality/product-test-resume/',
-  ProductTestPlan: '/api/v1/quality/product-test-plan/'
+  ProductTestPlan: '/api/v1/quality/product-test-plan/',
+  RubberMaxStretchTestResult: '/api/v1/quality/rubber-max-stretch-test-result/',
+  // 看板
+  OutBoundTasks: '/api/v1/inventory/out-bound-tasks/',
+  InoutBoundSummary: '/api/v1/inventory/inout-bound-summary/',
+  // 投料重量设定
+  RawWeight: '/api/v1/terminal/carbon_tank_set/',
+  // 投料履历查询
+  RawQuery: '/api/v1/terminal/feed_check_operation/',
+  // 油料罐物料设定
+  OliSet: '/api/v1/terminal/oli-tank-setting/',
+  // 粉料罐物料设定
+  PinkSet: '/api/v1/terminal/powder-tank-setting/',
+  // 不合格车次列表查询
+  DisposalList: '/api/v1/quality/unqialified-pallet-list/',
+  // 不合格项
+  DataPoint: '/api/v1/quality/data-point-list/'
 }

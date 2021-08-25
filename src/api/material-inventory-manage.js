@@ -15,3 +15,10 @@ export function bzMixinInventory(params) {
     params
   })
 }
+export function bzFinalInventory(params) {
+  return request({
+    url: API.BzFinalInventory,
+    method: 'get',
+    params
+  })
+}

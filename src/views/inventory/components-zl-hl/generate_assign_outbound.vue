@@ -43,7 +43,7 @@
           @changSelect="selectStation"
         />
       </el-form-item>
-      <el-form-item :label="warehouseName === '混炼胶库'?`品质状态(必填)`:'品质状态'">
+      <el-form-item label="品质状态">
         <el-select
           v-model="getParams.quality_status"
           placeholder="请选择"
@@ -74,6 +74,7 @@
           :station="getParams.station"
           :status="getParams.quality_status"
           :default-val="getParams.material_no"
+          :ex-warehouse="true"
           @changSelect="materialCodeFun($event,true)"
         />
       </el-form-item>
@@ -218,7 +219,7 @@
 </template>
 
 <script>
-import { getMaterialInventoryManage, bzMixinInventory } from '@/api/material-inventory-manage'
+import { bzMixinInventory, bzFinalInventory } from '@/api/material-inventory-manage'
 import page from '@/components/page'
 import stationInfoWarehouse from '@/components/select_w/warehouseSelectPosition'
 import receiveList from '../receive-good-manage/receive-list.vue'
@@ -300,7 +301,7 @@ export default {
   methods: {
     getTableData() {
       this.loading = true
-      const _api = this.warehouseName === '混炼胶库' ? bzMixinInventory : getMaterialInventoryManage
+      const _api = this.warehouseName === '混炼胶库' ? bzMixinInventory : bzFinalInventory
       _api(this.getParams)
         .then(response => {
           this.tableData = response.results

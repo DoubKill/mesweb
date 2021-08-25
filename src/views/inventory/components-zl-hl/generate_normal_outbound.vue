@@ -35,7 +35,7 @@
         <materialCodeSelect label-show="material_name" :store-name="warehouseName" :status="ruleForm.quality_status" :default-val="ruleForm.material_no" @changSelect="materialCodeFun" />
       </el-form-item>
       <el-form-item v-else label="物料编码" prop="material_no">
-        <materialCodeSelect :store-name="warehouseName" :status="ruleForm.quality_status" :station="ruleForm.station" :default-val="ruleForm.material_no" @changSelect="materialCodeFun" />
+        <materialCodeSelect :is-normal="true" :ex-warehouse="true" :store-name="warehouseName" :status="ruleForm.quality_status" :station="ruleForm.station" :default-val="ruleForm.material_no" @changSelect="materialCodeFun" />
       </el-form-item>
       <el-form-item v-if="rawMaterial||drussDelivery" label="库存余量" prop="c">
         <!-- 按物料编码查到的 -->
@@ -74,7 +74,7 @@
       <el-form-item v-if="$route.meta.title==='混炼胶出库计划'" label="机台号">
         <EquipSelect ref="EquipSelect" equip-type="密炼设备" :is-multiple="true" @equipSelected="equipSelected" />
       </el-form-item>
-      <el-button type="primary" @click="inventorySearch">查找库位</el-button>
+      <!-- <el-button type="primary" @click="inventorySearch">查找库位</el-button> -->
     </el-form>
 
     <el-table
@@ -302,6 +302,7 @@ export default {
       if (this.$refs.EquipSelect) {
         this.$refs.EquipSelect.equipId = null
       }
+      this.tableData = []
       this.ruleForm.dispatch = []
       this.ruleForm.equip = []
       this.ruleForm.need_weight = undefined
@@ -331,11 +332,12 @@ export default {
       } else {
         this.ruleForm.c = val.all_qty || null
         const a = (val.all_weight / val.all_qty).toFixed(2)
+        this.ruleForm.need_qty = this.ruleForm.c
         if (this.ruleForm.c === this.ruleForm.need_qty) {
           this.ruleForm.need_weight = this.ruleForm.all_weight
-          return
+        } else {
+          this.ruleForm.need_weight = this.ruleForm.need_qty * a
         }
-        this.ruleForm.need_weight = this.ruleForm.need_qty * a
       }
 
       if (this.$refs.receiveList) {
@@ -343,6 +345,8 @@ export default {
       }
       this.ruleForm.deliveryPlan = ''
       this.handleSelection = []
+
+      this.inventorySearch()
     },
     changeNeedQty() {
       if (!this.rawMaterial && !this.drussDelivery) {
@@ -354,6 +358,8 @@ export default {
         }
         this.ruleForm.need_weight = this.ruleForm.need_qty * a
       }
+
+      this.inventorySearch()
     },
     handleSelectionChange(arr) {
       this.multipleSelection = arr
@@ -422,6 +428,8 @@ export default {
         const obj = { name: val.name, id: val.id }
         localStorage.setItem('hl-station', JSON.stringify(obj))
       }
+
+      this.inventorySearch()
     },
     deliverClick() {
       if (!this.ruleForm.material_no) {
@@ -461,6 +469,8 @@ export default {
       if (val && this.warehouseName === '混炼胶库') {
         localStorage.setItem('hl-quality', val)
       }
+      this.ruleForm.material_no = ''
+      this.inventorySearch()
     },
     inventorySearch() {
       this.$refs.ruleForm.validate(async(valid) => {
