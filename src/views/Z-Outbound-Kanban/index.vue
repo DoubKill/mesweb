@@ -30,13 +30,13 @@
             <el-table-column
               prop="finish_time"
               label="出库时间"
-              min-width="20"
+              min-width="32"
               align="center"
             />
             <el-table-column
               prop="created_user"
               label="出库员"
-              min-width="20"
+              min-width="18"
               align="center"
             />
             <el-table-column
@@ -48,25 +48,30 @@
             <el-table-column
               prop="production_info.classes"
               label="班次"
-              min-width="20"
+              min-width="16"
               align="center"
             />
             <el-table-column
               prop="production_info.equip_no"
               label="机台"
-              min-width="20"
+              min-width="16"
               align="center"
             />
             <el-table-column
-              prop="memo"
               label="车次"
-              min-width="20"
+              min-width="18"
               align="center"
+              :formatter="row=>{
+                if(!row.memo){
+                  return
+                }
+                return row.memo.replace(',','-')
+              }"
             />
             <el-table-column
               prop="material_no"
               label="胶料编码"
-              min-width="20"
+              min-width="22"
               align="center"
             />
             <el-table-column
@@ -78,7 +83,7 @@
             <el-table-column
               prop="inventory_reason"
               label="品质"
-              min-width="20"
+              min-width="18"
               align="center"
             />
             <el-table-column
