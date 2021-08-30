@@ -198,9 +198,13 @@ import XLSXStyle from 'xlsx-style'
  *
  * @param {*文件名称} value
  */
-export function exportExcel(value = 'excel', val) {
+export function exportExcel(value = 'excel', val, _wpxArr = []) {
   /* 从表生成工作簿对象 */
   var wb = XLSX.utils.table_to_book(document.querySelector('#out-table'), { raw: true })
+  const arr = Object.keys(wb.Sheets['Sheet1'])
+  const obj = wb.Sheets['Sheet1']
+
+  wb.Sheets['Sheet1']['!cols'] = _wpxArr
 
   if (val && val === 'disposal-list-components') {
     const tableTitleFont = {
@@ -223,8 +227,6 @@ export function exportExcel(value = 'excel', val) {
     // const _tableTitleFont = JSON.parse(JSON.stringify(tableTitleFont))
     const _tableTitleFont1 = JSON.parse(JSON.stringify(tableTitleFont))
     // const _length = Object.keys(wb.Sheets['Sheet1']).length
-    const arr = Object.keys(wb.Sheets['Sheet1'])
-    const obj = wb.Sheets['Sheet1']
     const arr1 = []
     let arr2 = []
     arr.forEach(D => {
