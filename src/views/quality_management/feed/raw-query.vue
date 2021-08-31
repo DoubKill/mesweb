@@ -19,13 +19,13 @@
       </el-form-item>
       <el-form-item label="投料口">
         <el-select
-          v-model="searchForm.feeding_portno"
+          v-model="searchForm.feeding_port_no"
           placeholder="请选择"
           clearable
           @change="changeSearch"
         >
           <el-option
-            v-for="item in ['Z01T01','Z01T02','Z01F01','Z01F02','OIL01','OIL02',]"
+            v-for="item in ['掺混','白炭黑','炭黑','Z01T01','Z01T02','Z01F01','Z01F02','OIL01','OIL02']"
             :key="item"
             :label="item"
             :value="item"
@@ -48,7 +48,7 @@
       </el-form-item>
       <el-form-item label="投料结果">
         <el-select
-          v-model="searchForm.feeding_result"
+          v-model="searchForm.feed_result"
           placeholder="请选择"
           clearable
           @change="changeSearch"
@@ -62,7 +62,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="投料人员">
-        <el-input v-model="searchForm.feeding_user" clearable @input="changeSearch" />
+        <el-input v-model="searchForm.feeding_username" clearable @input="debounceList" />
       </el-form-item>
     </el-form>
     <el-table
@@ -94,7 +94,7 @@
       />
       <el-table-column
         prop="feeding_classes"
-        label="投料班组"
+        label="投料班次"
         min-width="20"
       />
       <el-table-column
@@ -151,6 +151,7 @@
 import page from '@/components/page'
 import ClassSelect from '@/components/ClassSelect'
 import { rawQuery } from '@/api/jqy'
+import { debounce } from '@/utils/'
 export default {
   name: 'RawQuery',
   components: { page, ClassSelect },
@@ -179,11 +180,11 @@ export default {
     changeSearch() {
       this.loading = true
       if (this.searchForm.feeding_datetime) {
-        this.searchForm.feeding_datetime_after = this.searchForm.feeding_datetime[0]
-        this.searchForm.feeding_datetime_before = this.searchForm.feeding_datetime[1]
+        this.searchForm.feeding_time_after = this.searchForm.feeding_datetime[0]
+        this.searchForm.feeding_time_before = this.searchForm.feeding_datetime[1]
       } else {
-        delete this.searchForm.feeding_datetime_before
-        delete this.searchForm.feeding_datetime_after
+        delete this.searchForm.feeding_time_before
+        delete this.searchForm.feeding_time_after
       }
       this.searchForm.page = 1
       this.getList()
@@ -198,7 +199,7 @@ export default {
       } catch (e) { this.loading = false }
     },
     classSelected(className) {
-      this.searchForm.feeding_class = className || null
+      this.searchForm.feeding_classes = className || null
       this.searchForm.page = 1
       this.getList()
     },
@@ -206,6 +207,10 @@ export default {
       this.searchForm.page = page
       this.searchForm.page_size = pageSize
       this.getList()
+    },
+    debounceList() {
+      this.searchForm.page = 1
+      debounce(this, 'getList')
     }
   }
 }
