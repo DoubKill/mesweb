@@ -1420,7 +1420,7 @@ export const asyncRoutes = [
               permissionName: 'unqualified_order'
             }
           },**/
-          /** {
+          {
             path: '/unqualified-handle/disposalLaunch',
             component: () => import('@/views/quality_management/disposal/disposalLaunch.vue'),
             name: 'DisposalLaunch',
@@ -1459,7 +1459,7 @@ export const asyncRoutes = [
               title: '不合格处置单查看',
               permissionName: ''
             }
-          }**/
+          }
         ]
       },
       {
@@ -1753,8 +1753,8 @@ export const asyncRoutes = [
             }
           }
         ]
-      }
-      /** {
+      },
+      {
         path: '/feed',
         redirect: '/feed/raw-plan',
         component: () => import('@/views/quality_management/feed/a-index'),
@@ -1795,7 +1795,7 @@ export const asyncRoutes = [
             }
           }
         ]
-      }**/
+      }
     ]
   },
   {
