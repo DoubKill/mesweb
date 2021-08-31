@@ -77,28 +77,28 @@
         min-width="20"
       >
         <template slot-scope="scope">
-          <span v-if="scope.row.feeding_type == 1">炭黑罐投料</span>
-          <span v-if="scope.row.feeding_type == 2">油料罐投料</span>
-          <span v-if="scope.row.feeding_type == 3">粉料罐投料</span>
+          <span v-if="scope.row.feeding_type == 1">粉料罐投料</span>
+          <span v-if="scope.row.feeding_type == 2">炭黑罐投料</span>
+          <span v-if="scope.row.feeding_type == 3">油料罐投料</span>
         </template>
       </el-table-column>
       <el-table-column
-        prop="feeding_portno"
+        prop="feeding_port_no"
         label="投料口"
         min-width="20"
       />
       <el-table-column
-        prop="feeding_datetime"
+        prop="feeding_time"
         label="投料时间"
         min-width="20"
       />
       <el-table-column
-        prop="feeding_class"
+        prop="feeding_classes"
         label="投料班组"
         min-width="20"
       />
       <el-table-column
-        prop="tank_code"
+        prop="tank_bar_code"
         label="料罐条码"
         min-width="20"
       />
@@ -108,7 +108,7 @@
         min-width="20"
       />
       <el-table-column
-        prop="feeding_material_code"
+        prop="feeding_bar_code"
         label="投料物料条码"
         min-width="20"
       />
@@ -128,12 +128,12 @@
         min-width="20"
       />
       <el-table-column
-        prop="feeding_result"
+        prop="feed_result"
         label="投料防错结果"
         min-width="20"
       />
       <el-table-column
-        prop="feeding_user"
+        prop="feeding_username"
         label="投料人员"
         min-width="20"
       />
@@ -159,15 +159,16 @@ export default {
       searchForm: {},
       loading: false,
       tableData: [],
+      total: 0,
       options: [{
         value: '1',
-        label: '炭黑罐投料'
+        label: '粉料罐投料'
       }, {
         value: '2',
-        label: '油料罐投料'
+        label: '炭黑罐投料'
       }, {
         value: '3',
-        label: '粉料罐投料'
+        label: '油料罐投料'
       }]
     }
   },
