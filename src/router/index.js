@@ -1760,7 +1760,7 @@ export const asyncRoutes = [
         component: () => import('@/views/quality_management/feed/a-index'),
         name: 'Feed',
         meta: {
-          title: '炭黑罐投料报错',
+          title: '炭黑罐投料防错',
           icon: 'quality'
         },
         children: [
