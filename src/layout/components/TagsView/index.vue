@@ -46,7 +46,13 @@ export default {
   },
   computed: {
     visitedViews() {
-      return this.$store.state.tagsView.visitedViews
+      const arr = this.$store.state.tagsView.visitedViews
+      arr.forEach(d => {
+        if (d.meta.faShowName) {
+          d.title = d.meta.faShowName + '-' + d.meta.title
+        }
+      })
+      return arr
     },
     routes() {
       return this.$store.state.permission.routes

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 车间库存明细 -->
+    <!-- 车间库存统计 -->
     <el-form :inline="true">
       <el-form-item label="物料类型:">
         <stage-select
@@ -32,6 +32,12 @@
           />
         </el-select>
       </el-form-item>
+      <!-- <el-form-item style="float:right">
+        <el-button
+          type="primary"
+          @click="exportTable"
+        >导出表格</el-button>
+      </el-form-item> -->
     </el-form>
     <el-table
       v-loading="loading"
@@ -150,6 +156,24 @@ export default {
       } else {
         this.getList()
       }
+    },
+    exportTable() {
+      // responseType: 'blob'  get请求
+
+      // barcodeQualityExport()
+      //   .then(res => {
+      //     const link = document.createElement('a')
+      //     const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+      //     link.style.display = 'none'
+      //     link.href = URL.createObjectURL(blob)
+      //     link.download = '车间库存统计.xlsx' // 下载的文件名
+      //     document.body.appendChild(link)
+      //     link.click()
+      //     document.body.removeChild(link)
+      //     this.btnExportLoad = false
+      //   }).catch(e => {
+      //     this.btnExportLoad = false
+      //   })
     }
   }
 }

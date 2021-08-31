@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 胶料库存明细 -->
+    <!-- 胶料段次别数量统计 -->
     <el-form :inline="true">
       <el-form-item label="胶种编码:">
         <el-select v-model="search.no" filterable placeholder="请选择" @change="visibleChange">
@@ -35,11 +35,11 @@
           {{ search.no }}
         </template>
       </el-table-column>
-      <el-table-column label="立库各段位库存">
+      <el-table-column label="立库各段位库存" header-align="center">
         <el-table-column
           v-for="item in stageVal"
           :key="item.id"
-          :label="item+'(车/吨)'"
+          :label="item+'  (车/吨)'"
           min-width="10"
         >
           <template v-if="row.subject[item]" slot-scope="{row}">
@@ -48,7 +48,7 @@
           </template>
         </el-table-column>
       </el-table-column>
-      <el-table-column label="车间各段位库存">
+      <el-table-column label="车间各段位库存" header-align="center">
         <el-table-column
           v-for="item in stageVal"
           :key="item.id"
@@ -66,7 +66,7 @@
         label="不合格(加硫)"
         min-width="10"
       />
-      <el-table-column label="核算">
+      <el-table-column label="核算" header-align="center">
         <el-table-column
           prop="fm_all"
           label="加硫(吨)"
