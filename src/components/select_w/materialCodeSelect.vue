@@ -2,6 +2,7 @@
   <div>
     <!-- 物料编码下拉 -->
     <el-select
+      v-if="!isSearch"
       v-model="value"
       filterable
       placeholder="请选择"
@@ -18,14 +19,28 @@
         :value="item.material_no"
       />
     </el-select>
+    <el-autocomplete
+      v-else
+      v-model="value"
+      :fetch-suggestions="querySearch"
+      placeholder="请输入内容"
+      clearable
+      @input="handleSelect"
+    />
   </div>
 </template>
 
 <script>
 import { materialCount } from '@/api/base_w'
 import { bzMixinInventorySummary, bzFinalInventorySummary } from '@/api/base_w_four'
+import { debounce } from '@/utils/'
 export default {
   props: {
+    //  是不是输入搜索框
+    isSearch: {
+      type: Boolean,
+      default: false
+    },
     //  created里面加载
     createdIs: {
       type: Boolean,
@@ -72,7 +87,8 @@ export default {
     return {
       value: this.defaultVal,
       loading: false,
-      options: []
+      options: [],
+      currentVal: ''
     }
   },
   watch: {
@@ -139,6 +155,12 @@ export default {
         }
 
         this.options = data || []
+        if (this.isSearch) {
+          this.options.forEach(d => {
+            d.value = d.material_no
+          })
+        }
+
         this.loading = false
       } catch (e) {
         this.loading = false
@@ -158,6 +180,23 @@ export default {
       arr = this.options.filter(D => D.material_no === val)
 
       this.$emit('changSelect', arr[0])
+    },
+    handleSelect(val) {
+      this.currentVal = val
+      debounce(this, 'setDebounce')
+    },
+    setDebounce() {
+      this.$emit('handleSelect', this.currentVal)
+    },
+    querySearch(queryString, cb) {
+      var restaurants = this.options
+      var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants
+      cb(results)
+    },
+    createFilter(queryString) {
+      return (restaurant) => {
+        return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) > -1)
+      }
     }
   }
 }

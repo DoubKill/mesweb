@@ -200,6 +200,19 @@
           <el-form-item label="胶料规格">
             {{ ruleForm.product_no }}
           </el-form-item>
+          <el-form-item v-if="search.test_indicator_name==='钢拔'" label="检测次数" prop="count">
+            <el-select
+              v-model="ruleForm.count"
+              placeholder="请选择"
+            >
+              <el-option
+                v-for="group in [5,4]"
+                :key="group"
+                :label="group"
+                :value="group"
+              />
+            </el-select>
+          </el-form-item>
           <el-form-item label="检测间隔" prop="test_interval">
             <el-select
               v-model="ruleForm.test_interval"
@@ -598,6 +611,7 @@ export default {
         test_method_name: { required: true, message: '请选择试验方法', trigger: 'change' },
         // test_times: { required: true, message: '请选择试验次数', trigger: 'change' },
         test_interval: { required: true, message: '请选择检测间隔', trigger: 'change' },
+        count: { required: true, message: '请选择检测次数', trigger: 'change' },
         test_classes: [
           { required: true, trigger: 'change', validator: (rule, value, callback) => {
             validator(rule, value, callback,
@@ -609,14 +623,11 @@ export default {
       groups: [],
       ruleForm: {
         test_interval: 1,
-        test_method_name: ''
+        test_method_name: '',
+        count: 5
       },
       btnLoading: false,
       testEquipList: [],
-      // { name: '门尼', id: 1 },
-      // { name: '流变', id: 2 },
-      // { name: '物性', id: 3 },
-      // { name: '钢拔', id: 4 }
       testIndicatorsList: [],
       endBtnLoading: false,
       stageList: [],
@@ -759,13 +770,6 @@ export default {
         if (data.results.length === 0) {
           return
         }
-        // const _test_indicator_name = data.results[0].test_indicator_name
-        // if (this.search.test_indicator_name !== _test_indicator_name) {
-        //   this.btnLoading = false
-        //   this.ruleForm.plan_uid = ''
-        //   this.tableDataRight = []
-        //   return
-        // }
         if (!data.msg) {
           this.btnLoading = true
           this.ruleForm = data.results[0]
@@ -787,7 +791,6 @@ export default {
       }
     },
     changeTestIndicators() {
-      // this.getWaitPlan()
       this.ruleForm.test_method_name = ''
     },
     classChanged(val) {
@@ -879,14 +882,13 @@ export default {
         await productTestPlan('get', null, { params: { close: 1, plan_uid: this.ruleForm.plan_uid }})
         this.btnLoading = false
         this.$message.success('已全部结束检测')
-        // this.ruleForm = {}
         this.ruleForm.plan_uid = ''
         this.tableDataRight = []
         // this.$nextTick(() => {
         // this.$refs.ruleForm.clearValidate()
         // })
       } catch (e) {
-        // this.btnLoading = false
+        //
       }
     },
     refreshFun() {

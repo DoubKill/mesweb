@@ -52,7 +52,7 @@
       </el-form-item>
       <el-form-item label="是否已处理">
         <el-select
-          v-model="search.t_deal"
+          v-model="search.t_solved"
           clearable
           placeholder="请选择"
           @change="changeDate"
@@ -104,7 +104,7 @@
       <el-table-column
         prop="address"
         label="操作"
-        width="100"
+        width="200"
       >
         <template slot-scope="scope">
           <el-button
@@ -113,6 +113,12 @@
             :disabled="isDisabled"
             @click="dealFun(scope.row)"
           >处理
+          </el-button>
+          <el-button
+            type="primary"
+            size="mini"
+            @click="viewFun(scope.row)"
+          >查看
           </el-button>
         </template>
       </el-table-column>
@@ -283,6 +289,7 @@
         :form-head-data="formHeadData"
         :list-data-props="currentRow.deal_details"
         :edit-type="2"
+        :is-edit="isEdit"
         :show="handleCardDialogVisible"
         @preserveFun="preserveFun"
         @cancelFun="cancelFun"
@@ -308,6 +315,7 @@ export default {
       loading: false,
       isDisabled: false,
       checkedAll: false,
+      isEdit: false,
       handleCardDialogVisible: false,
       formHeadData: [],
       tableData1: [
@@ -403,6 +411,11 @@ export default {
       this.tableData2 = []
       this.checkedAll = false
     },
+    viewFun(row) {
+      this.currentRow = { id: row.id }
+      this.isEdit = false
+      this.handleCardDialogVisible = true
+    },
     async dealFun(row) {
       this.clearTable()
       try {
@@ -429,9 +442,7 @@ export default {
     handleCheckChange(bool, row) {
       if (row.ordering) {
         // 点击的父选择器
-        if (!row._checkedStr) {
-          row._checkedStr = []
-        }
+        row._checkedStr = []
         row.children.forEach((d) => {
           if (d.forbidden) {
             return
@@ -439,6 +450,7 @@ export default {
           row._checkedStr.push(d.train)
           this.$set(d, 'checked', bool)
         })
+        this.$set(row, 'isIndeterminate', false)
       } else {
         // 点击的子选择器
         const faIndex = this.tableData1.findIndex(d => d.id === row.faId)
@@ -583,6 +595,7 @@ export default {
         })
         this.tech_deal_result = arr
         this.currentRow.t_deal_suggestion = t_deal_suggestion
+        this.isEdit = true
         this.handleCardDialogVisible = true
       } catch (e) {
         //

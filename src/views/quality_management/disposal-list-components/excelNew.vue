@@ -2,12 +2,12 @@
   <div v-loading="loading" class="unqualified-card-container">
     <div ref="PDFBtn" style="text-align:right;margin-bottom:10px">
       <el-button
-        v-if="!isEdit"
+        v-if="!isEdit&&editType!==2"
         v-permission="['unqualified_order','export']"
         @click="exportPDF"
       >另存为PDF</el-button>
       <el-button
-        v-if="!isEdit"
+        v-if="!isEdit&&editType!==2"
         @click="exportExcel"
       >下载表格</el-button>
     </div>
@@ -15,12 +15,13 @@
       <table
         border="1"
         bordercolor="black"
-        class="info-table out-table"
+        style="width:100%;border-collapse: collapse;"
+        class="info-table"
       >
         <tr>
           <th :colspan="5+headDataLength">
             <div style="position:relative">
-              <div class="logo-style">
+              <div style="width:100px;height:45px;position: absolute;left: 10px;">
                 <img style="width:100%;height:100%" src="@/assets/logo.png" alt="">
               </div>
               <div style="flex:1;text-align:center;font-size: 1.5em;line-height:45px">中策(安吉)不合格品处置单</div>
@@ -38,7 +39,7 @@
         <tr>
           <td :colspan="2" style="text-align:left;padding-left:25px;">发生部门：
           </td>
-          <td :colspan="2">
+          <td :colspan="3">
             <span>{{ formObj.department }}</span>
             <!-- <div v-else class="deal_department"> -->
             <!-- <el-radio v-model="formObj.deal_department" label="准备分厂">准备分厂</el-radio> -->
@@ -48,22 +49,12 @@
               <el-radio v-model="formObj.deal_department" label="细料车间">细料车间</el-radio> -->
             <!-- </div> -->
           </td>
-          <td>胶料筹备组 炼胶</td>
+          <!-- <td>胶料筹备组 炼胶</td> -->
           <td :colspan="headDataLength" style="width:125px">日期：{{ orderNum&&formObj.created_date?(formObj.created_date).split(' ')[0]: formObj.currentDate }}</td>
         </tr>
         <tr style="text-align:left;">
           <td :colspan="5+headDataLength" style="padding-left:25px">不合格品状态：
-            <span v-if="!isEdit">
-              <span
-                v-for="(item,i) in stateList"
-                :key="i"
-              >
-                <span v-if="item === formObj.status">☑</span>
-                <span v-else>☐</span>
-                {{ item }}
-              </span>
-            </span>
-            <span v-else>
+            <span v-if="isEdit&&editType === 1">
               <el-radio
                 v-for="(item,i) in stateList"
                 :key="i"
@@ -72,6 +63,16 @@
               >
                 {{ item }}
               </el-radio>
+            </span>
+            <span v-else>
+              <span
+                v-for="(item,i) in stateList"
+                :key="i"
+              >
+                <span v-if="item === formObj.status">☑</span>
+                <span v-else>☐</span>
+                {{ item }}
+              </span>
             </span>
           </td>
         </tr>
@@ -229,7 +230,10 @@
                 placeholder="请输入内容"
                 @change="editOne($event,'c_deal_user','c_deal_date')"
               />
-              <div v-else class="deal_suggestion" v-html="formObj.c_deal_suggestion" />
+              <div v-else>
+                <div v-if="!formObj.c_deal_suggestion" style="height:80px" />
+                <div v-else class="deal_suggestion" v-html="formObj.c_deal_suggestion" />
+              </div>
             </td>
           </tr>
           <tr v-if="![1,2].includes(editType)" />
@@ -257,7 +261,10 @@
                 style="margin-top:10px;width:97%"
                 placeholder="请输入内容"
               />
-              <div v-else class="deal_suggestion" v-html="formObj.desc" />
+              <div v-else>
+                <div v-if="!formObj.desc" style="height:80px" />
+                <div v-else class="deal_suggestion" v-html="formObj.desc" />
+              </div>
             </td>
           </tr>
           <tr v-if="![1,2].includes(editType)" />
@@ -337,7 +344,7 @@ export default {
         status: '来料',
         currentDate: setDate()
       },
-      stateList: ['来料', '半成品'],
+      stateList: ['半成品', '来料'],
       headData: this.formHeadData,
       orderNum: null,
       loadingBtn: false,
@@ -414,12 +421,17 @@ export default {
       }
     },
     setName() {
-      this.formObj.t_deal_user = this.formObj.t_deal_user || this.name
-      this.formObj.t_deal_date = this.formObj.t_deal_date || setDate()
-      this.formObj.c_deal_user = this.formObj.c_deal_user || this.name
-      this.formObj.c_deal_date = this.formObj.c_deal_date || setDate()
-      this.formObj.created_username = this.formObj.created_username || this.name
-      this.formObj.created_date = this.formObj.created_date || setDate()
+      if (this.isEdit && this.editType === 1) {
+        this.formObj.created_username = this.name
+        this.formObj.created_date = setDate()
+      }
+      if (this.isEdit && this.editType === 2) {
+        this.formObj.t_deal_user = this.name
+        this.formObj.t_deal_date = setDate()
+      } else if (this.isEdit && this.editType === 3) {
+        this.formObj.c_deal_user = this.name
+        this.formObj.c_deal_date = setDate()
+      }
     },
     async submitFun() {
       try {
@@ -507,11 +519,30 @@ export default {
       }
     },
     async exportPDF() {
-      this.$refs.PDFBtn.style.display = 'none'
-      document.getElementsByClassName('el-dialog__headerbtn')[0].style.display = 'none'
-      window.print()
-      this.$refs.PDFBtn.style.display = 'block'
-      document.getElementsByClassName('el-dialog__headerbtn')[0].style.display = 'block'
+      var iframe = ''
+      if (!iframe) {
+        var el = document.getElementById('out-table')
+        iframe = document.createElement('IFRAME')
+        var doc = null
+        iframe.setAttribute('id', 'print-iframe')
+        iframe.setAttribute('style', 'position:absolute;width:0px;height:0px;left:-500px;top:-500px;')
+        document.body.appendChild(iframe)
+        doc = iframe.contentWindow.document
+        doc.write('<style media="print">@page {size: auto;margin: 20px;} table{font-size:14px}' + '</style>') // 解决出现页眉页脚和路径的问题
+
+        doc.write('<div style="width:100%">' + el.innerHTML + '</div>')
+        doc.close()
+        iframe.contentWindow.focus()
+      }
+      setTimeout(function() { iframe.contentWindow.print() }, 50) // 解决第一次样式不生效的问题
+      if (navigator.userAgent.indexOf('MSIE') > 0) {
+        document.body.removeChild(iframe)
+      }
+      // this.$refs.PDFBtn.style.display = 'none'
+      // document.getElementsByClassName('el-dialog__headerbtn')[0].style.display = 'none'
+      // window.print()
+      // this.$refs.PDFBtn.style.display = 'block'
+      // document.getElementsByClassName('el-dialog__headerbtn')[0].style.display = 'block'
     },
     exportExcelFrame() {
       this.$emit('exportExcelFrame')
@@ -556,6 +587,7 @@ export default {
     }
   }
 }
+
 </script>
 
 <style lang="scss">
@@ -564,16 +596,6 @@ export default {
     margin: 0 auto;
     text-align: center;
     font-size: 14px;
-    table {
-      width: 100%;
-      border-collapse: collapse
-    }
-    .logo-style{
-      width:100px;
-      height:45px;
-      position: absolute;
-      left: 10px;
-    }
     .deal_department{
       .el-radio{
              margin-right: 0px;

@@ -181,14 +181,14 @@
 </template>
 
 <script>
-import GenerateAssignOutbound from './components-zl-hl/generate_assign_outbound'
-import GenerateNormalOutbound from './components-zl-hl/generate_normal_outbound'
+import GenerateAssignOutbound from '../components-zl-hl/generate_assign_outbound'
+import GenerateNormalOutbound from '../components-zl-hl/generate_normal_outbound'
 import { putPlanManagement, mixinRubberyOutboundOrder } from '@/api/base_w'
 import { warehouseInfo } from '@/api/warehouse'
 import page from '@/components/page'
 import commitVal from '@/utils/common'
 import { debounce } from '@/utils/index'
-import myMixin from './components-zl-hl/mixin-zl-hl'
+import myMixin from '../components-zl-hl/mixin-zl-hl'
 
 export default {
   name: 'CompoundManage',

@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <!-- 物料基础信息管理 -->
     <el-form :inline="true">
       <el-form-item label="物料类型">
         <materielTypeSelect :params-type="false" @changSelect="changeMaterialType" />

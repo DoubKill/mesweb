@@ -1,6 +1,6 @@
 <template>
   <div class="kanban-style">
-    <!-- 出库看板 大屏 -->
+    <!-- 出库看板 大屏 /Outbound-Kanban/:id-->
     <h2 class="head-style">{{ obj.warehouse_name }}-运行综合看板</h2>
     <div class="top-center">
       {{ obj.warehouse_name }}
@@ -16,7 +16,7 @@
       <span class="top-right-style">
         <span>总入库数：{{ obj1.total_inbound_count }}</span>
         <span>总出库数：{{ obj1.total_outbound_count }}</span>
-        <span>{{ dataTime }}</span>
+        <span>{{ realTime }}</span>
       </span>
     </div>
     <div class="center-style">
@@ -30,13 +30,13 @@
             <el-table-column
               prop="finish_time"
               label="出库时间"
-              min-width="20"
+              min-width="32"
               align="center"
             />
             <el-table-column
               prop="created_user"
               label="出库员"
-              min-width="20"
+              min-width="18"
               align="center"
             />
             <el-table-column
@@ -48,25 +48,30 @@
             <el-table-column
               prop="production_info.classes"
               label="班次"
-              min-width="20"
+              min-width="16"
               align="center"
             />
             <el-table-column
               prop="production_info.equip_no"
               label="机台"
-              min-width="20"
+              min-width="16"
               align="center"
             />
             <el-table-column
-              prop="memo"
               label="车次"
-              min-width="20"
+              min-width="18"
               align="center"
+              :formatter="row=>{
+                if(!row.memo){
+                  return
+                }
+                return row.memo.replace(',','-')
+              }"
             />
             <el-table-column
               prop="material_no"
               label="胶料编码"
-              min-width="20"
+              min-width="22"
               align="center"
             />
             <el-table-column
@@ -78,7 +83,7 @@
             <el-table-column
               prop="inventory_reason"
               label="品质"
-              min-width="20"
+              min-width="18"
               align="center"
             />
             <el-table-column
@@ -86,6 +91,9 @@
               label="出库类型"
               align="center"
               min-width="20"
+              :formatter="()=>{
+                return '快检出库'
+              }"
             />
             <el-table-column
               prop="destination"
@@ -133,7 +141,7 @@
           </el-table>
         </el-col>
         <el-col :span="11">
-          <div style="width:100%;height:34vh;display:flex">
+          <div style="width:100%;height:30vh;display:flex">
             <div v-for="(item,i) in listPie" :id="'tunnel'+i" :key="i" style="width:100%;height:100%" />
           </div>
         </el-col>
@@ -163,19 +171,24 @@ export default {
       listPie: [{}, {}, {}],
       optionsStation: [],
       dataTime: setDate(null, true),
+      realTime: '',
       option: {
         color: common.echartColor,
         title: {
           text: '1巷道',
           left: 'center'
         },
+
         tooltip: {
           trigger: 'item',
           formatter: '{a} <br/>{b}: {c} ({d}%)'
         },
         legend: {
           top: 'bottom',
-          left: '2%'
+          left: '8%',
+          textStyle: {
+            fontSize: '20'
+          }
         },
         series: [
           {
@@ -192,10 +205,20 @@ export default {
             labelLine: {
               show: false
             },
-            data: []
+            data: [],
+            itemStyle: {
+              normal: {
+                label: {
+                  textStyle: {
+                    fontSize: '80%'
+                  }
+                }
+              }
+            }
           }
         ]
       },
+      // 未使用
       option1: {
         title: {
           text: '入库率',
@@ -235,9 +258,13 @@ export default {
     }, 10000)
   },
   mounted() {
+    this._setIntervalRealTime = setInterval(() => {
+      this.realTime = setDate(null, true)
+    }, 1000)
   },
   destroyed() {
     clearInterval(this._setInterval)
+    clearInterval(this._setIntervalRealTime)
   },
   methods: {
     async getStation(bool) {
@@ -384,7 +411,7 @@ export default {
     .center-style{
         padding:0 1.5em;
         .tableData-style{
-           height: 50vh;
+           height: 53vh;
             overflow: hidden;
         }
         .bar-right-style{

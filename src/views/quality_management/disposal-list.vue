@@ -179,9 +179,9 @@
       @currentChange="currentChange"
     />
     <el-dialog
-      title="中策(安吉)不合格品处置单 修改"
       :visible.sync="handleCardDialogVisible"
       :close-on-click-modal="false"
+      :fullscreen="true"
       width="800px"
     >
       <excel
@@ -198,7 +198,7 @@
 
 <script>
 import page from '@/components/page'
-import excel from './disposal-list-components/excelNew'
+import excel from './disposal-list-components/excel'
 import { unqualifiedDealOrders } from '@/api/base_w'
 import { setDate } from '@/utils'
 export default {
