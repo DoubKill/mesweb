@@ -13,21 +13,6 @@
           @change="searchDate"
         />
       </el-form-item>
-      <el-form-item label="发生部门">
-        <el-select
-          v-model="search.department"
-          clearable
-          placeholder="请选择"
-          @change="changeSearch"
-        >
-          <el-option
-            v-for="item in options"
-            :key="item"
-            :label="item"
-            :value="item"
-          />
-        </el-select>
-      </el-form-item>
       <el-form-item label="不合格状态">
         <el-select
           v-model="search.status"
@@ -172,7 +157,7 @@ export default {
       loading: false,
       total: 0,
       options: ['准备分厂', '加硫车间', '混炼车间', '硫磺车间', '细料车间'],
-      options1: ['来料', '半成品', '成品', '库存'],
+      options1: ['来料', '半成品'],
       options2: ['Y', 'N'],
       handleCardDialogVisible: false,
       orderRow: {},

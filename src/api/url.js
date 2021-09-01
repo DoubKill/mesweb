@@ -453,5 +453,8 @@ export default {
   // 不合格车次列表查询
   DisposalList: '/api/v1/quality/unqialified-pallet-list/',
   // 不合格项
-  DataPoint: '/api/v1/quality/data-point-list/'
+  DataPoint: '/api/v1/quality/data-point-list/',
+  // 炭黑投料提示-计划显示
+  FeedCapacityPlan: '/api/v1/terminal/feed_capacity_plan/',
+  CarbonFeedingPrompt: '/api/v1/terminal/carbon_feeding_prompt/'
 }

@@ -526,7 +526,7 @@ export default {
     this.myChartYieldBar = echarts.init(document.getElementById('yieldBar'))
     this.myChartYieldBar.setOption(this.optionYieldBar)
     this.myChartPassRateLine = echarts.init(document.getElementById('passRateLine'))
-    this.myChartPassRateLine.setOption(this.optionPassRateLine)
+    this.myChartPassRateLine.setOption(this.optionPassRateLine, true)
     this.myChartFinishChart = echarts.init(document.getElementById('finishChart'))
     this.myChartFinishChart.setOption(this.optionFinishChart)
 
@@ -545,19 +545,23 @@ export default {
           bool || bool2 ? '' : indexEquipProductionAyalyze('get', null, { params: this.equipProduction }),
           bool || bool1 ? '' : indexEquipMaintenanceAyalyze('get', null, { params: this.equipMaintenance })
         ])
-        if (!bool && !bool1 && !bool2) {
-          // 第一个数据
+        if (!bool1 && !bool2 && !bool) {
           this.overviewObj = arr[0]
+        }
+        if (!bool1 && !bool2) {
+          // 第一个数据 第二个图
           const qualified_rate_data_rate = this.setVal(arr[1].qualified_rate_data, 'rate')
           const qualified_rate_data_qualified_count = this.setVal(arr[1].qualified_rate_data, 'qualified_count')
           const qualified_rate_data_total = this.setVal(arr[1].qualified_rate_data, 'total')
           this.optionPassRateLine.series[0].data = qualified_rate_data_rate
           this.optionPassRateLine.series[1].data = qualified_rate_data_qualified_count
           this.optionPassRateLine.series[2].data = qualified_rate_data_total
+
+          this.optionPassRateLine.xAxis[0].data = arr[1].date_range
+          this.myChartPassRateLine.setOption(this.optionPassRateLine, true)
         }
         if (!bool && !bool2) {
           // 第三个数据
-
           const plan_actual_actual_trains = this.setVal(arr[2].plan_actual_data, 'actual_trains')
           const plan_actual_diff_trains = this.setVal(arr[2].plan_actual_data, 'diff_trains')
           const plan_actual_plan_trains = this.setVal(arr[2].plan_actual_data, 'plan_trains')
@@ -579,7 +583,7 @@ export default {
         }
 
         if (!bool1 && !bool2) {
-          // 第二个数据
+          // 第一个数据 第一个图
           const plan_actual_data_plan_trains = this.setVal(arr[1].plan_actual_data, 'plan_trains')
           const plan_actual_data_actual_trains = this.setVal(arr[1].plan_actual_data, 'actual_trains')
           const plan_add_sulfur_trains = this.setVal(arr[1].plan_actual_data, 'plan_add_sulfur_trains')
@@ -594,8 +598,6 @@ export default {
           this.optionYieldBar.series[4].data = actual_add_sulfur_trains
           this.optionYieldBar.series[5].data = actual_without_sulfur_trains
           this.myChartYieldBar.setOption(this.optionYieldBar)
-          this.optionPassRateLine.xAxis[0].data = arr[1].date_range
-          this.myChartPassRateLine.setOption(this.optionPassRateLine)
         }
         if (!bool && !bool1) {
           // 第四个数据

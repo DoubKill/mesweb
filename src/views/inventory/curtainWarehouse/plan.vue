@@ -1,6 +1,6 @@
 <template>
   <div v-loading="loading" class="app-container outbound_manage">
-    <!-- 终炼胶出库计划 -->
+    <!-- 帘布库出库计划 -->
     <el-form :inline="true" label-width="80px">
       <el-form-item label="开始日期">
         <el-date-picker
@@ -47,8 +47,8 @@
         <materielTypeSelect />
       </el-form-item> -->
     </el-form>
-    <el-button v-permission="['finalRubber_plan','norman']" class="button-right" @click="normalOutbound">正常出库</el-button>
-    <el-button v-permission="['finalRubber_plan','assign']" class="button-right" @click="assignOutbound">指定出库</el-button>
+    <el-button v-permission="['LB_inventory_plan','norman']" class="button-right" @click="normalOutbound">正常出库</el-button>
+    <el-button v-permission="['LB_inventory_plan','assign']" class="button-right" @click="assignOutbound">指定出库</el-button>
     <el-button class="button-right" @click="getList">刷新</el-button>
     <el-table
       border
@@ -56,37 +56,36 @@
       size="mini"
     >
       <el-table-column label="No" type="index" align="center" width="30" />
-      <el-table-column label="仓库名称" align="center" prop="name" min-width="10" />
-      <el-table-column label="出库类型" align="center" prop="inventory_type" min-width="10" />
-      <el-table-column label="出库单号" align="center" prop="order_no" min-width="10" />
-      <el-table-column label="托盘号" align="center" prop="pallet_no" min-width="10" />
-      <el-table-column label="物料编码" align="center" prop="material_no" min-width="10" />
-      <el-table-column label="出库原因" align="center" prop="inventory_reason" min-width="10" />
-      <el-table-column label="需求数量" align="center" prop="need_qty" min-width="10" />
-      <el-table-column label="库位信息" align="center" prop="location" min-width="10" />
-      <el-table-column label="出库数量" align="center" prop="actual.actual_qty" min-width="10" />
-      <el-table-column label="实际出库重量" align="center" prop="actual.actual_wegit" min-width="10" />
-      <el-table-column label="单位" align="center" prop="unit" width="40" min-width="10" />
-      <el-table-column label="需求重量" align="center" prop="need_weight" min-width="10" />
-      <el-table-column label="出库位置" align="center" prop="station" min-width="10" />
-      <el-table-column label="目的地" align="center" prop="destination" min-width="10" />
-      <el-table-column label="操作" align="center" width="210">
+      <el-table-column label="仓库名称" align="center" prop="name" min-width="20" />
+      <el-table-column label="出库类型" align="center" prop="inventory_type" min-width="20" />
+      <el-table-column label="出库单号" align="center" prop="order_no" min-width="20" />
+      <el-table-column label="托盘号" align="center" prop="pallet_no" min-width="20" />
+      <el-table-column label="物料编码" align="center" prop="material_no" min-width="20" />
+      <el-table-column label="物料名称" align="center" prop="material_name" min-width="20" />
+      <el-table-column label="出库原因" align="center" prop="inventory_reason" min-width="20" />
+      <el-table-column label="需求数量" align="center" prop="need_qty" min-width="20" />
+      <el-table-column label="出库数量" align="center" prop="actual.actual_qty" min-width="20" />
+      <el-table-column label="实际出库重量" align="center" prop="actual.actual_wegit" min-width="20" />
+      <el-table-column label="单位" align="center" prop="unit" min-width="20" />
+      <el-table-column label="需求重量" align="center" prop="need_weight" min-width="20" />
+      <el-table-column label="出库位置" align="center" prop="station" min-width="20" />
+      <el-table-column label="操作" align="center" width="220">
         <template v-if="scope.row.status === 4" slot-scope="scope">
           <el-button-group>
-            <el-button v-permission="['finalRubber_plan','manual']" size="mini" type="primary" @click="manualDelivery(scope.row)">人工出库</el-button>
-            <!-- <el-button v-permission="['finalRubber_plan','change']" size="mini" type="warning" @click="demandQuantity(scope.$index,scope.row)">编辑</el-button> -->
-            <el-button v-permission="['finalRubber_plan','close']" size="mini" type="info" @click="closePlan(scope.$index,scope.row)">关闭</el-button>
+            <el-button v-permission="['LB_inventory_plan','manual']" size="mini" type="primary" @click="manualDelivery(scope.row)">人工出库</el-button>
+            <!-- <el-button v-permission="['LB_inventory_plan','change']" size="mini" type="warning" @click="demandQuantity(scope.$index,scope.row)">编辑</el-button> -->
+            <el-button v-permission="['LB_inventory_plan','close']" size="mini" type="info" @click="closePlan(scope.$index,scope.row)">关闭</el-button>
           </el-button-group>
         </template>
       </el-table-column>
-      <el-table-column label="订单状态" align="center" prop="" min-width="10">
+      <el-table-column label="订单状态" align="center" prop="" min-width="20">
         <template slot-scope="{row}">
           {{ setOperation(row.status) }}
         </template>
       </el-table-column>
-      <el-table-column label="发起人" align="center" prop="created_user" min-width="10" />
-      <el-table-column label="发起时间" align="center" prop="created_date" min-width="10" />
-      <el-table-column label="完成时间" align="center" prop="finish_time" min-width="10" />
+      <el-table-column label="发起人" align="center" prop="created_user" min-width="20" />
+      <el-table-column label="发起时间" align="center" prop="created_date" min-width="20" />
+      <el-table-column label="完成时间" align="center" prop="finish_time" min-width="20" />
     </el-table>
     <page
       :total="total"
@@ -129,7 +128,6 @@
       title="正常出库"
       :visible.sync="normalOutboundDialogVisible"
       :before-close="handleCloseNormal"
-      width="90%"
     >
       <generate-normal-outbound
         ref="normalOutbound"
@@ -142,9 +140,11 @@
 </template>
 
 <script>
-import GenerateAssignOutbound from './components-zl-hl/generate_assign_outbound'
-import GenerateNormalOutbound from './components-zl-hl/generate_normal_outbound'
-import { finalPlanManagement } from '@/api/base_w'
+import GenerateAssignOutbound from '../components/generate_assign_outbound'
+import GenerateNormalOutbound from '../components/generate_normal_outbound'
+// import materielTypeSelect from '@/components/select_w/materielTypeSelect'
+// import warehouseSelect from '@/components/select_w/warehouseSelect'
+import { lbPlanManagement } from '@/api/base_w'
 import { warehouseInfo } from '@/api/warehouse'
 import page from '@/components/page'
 import commitVal from '@/utils/common'
@@ -152,7 +152,7 @@ import { setDate } from '@/utils/index'
 import stationInfoWarehouse from '@/components/select_w/warehouseSelectPosition'
 
 export default {
-  name: 'FinalMixingRubber',
+  name: 'CurtainStorehousePlan',
   components: { page, stationInfoWarehouse, GenerateAssignOutbound, GenerateNormalOutbound },
   data() {
     return {
@@ -171,7 +171,7 @@ export default {
       demandQuantityVal: '',
       loadingBtn: false,
       rowVal: {},
-      warehouseName: '终炼胶库',
+      warehouseName: '帘布库',
       // 仓库id
       warehouseInfo: null
     }
@@ -191,7 +191,7 @@ export default {
       try {
         this.loading = true
         this.tableData = []
-        const data = await finalPlanManagement('get', null, { params: this.search })
+        const data = await lbPlanManagement('get', null, { params: this.search })
         this.total = data.count
         this.tableData = data.results
         this.loading = false
@@ -235,7 +235,7 @@ export default {
       this.changeList()
     },
     selectStation(val) {
-      this.search.station = val ? val.name : null
+      this.search.station = val ? val.name : ''
       this.changeList()
     },
     visibleMethodNormal() {
@@ -244,7 +244,7 @@ export default {
     },
     async visibleMethodSubmit(val) {
       try {
-        await finalPlanManagement('post', null, { data: val })
+        await lbPlanManagement('post', null, { data: [val] })
         this.$message.success('操作成功')
         this.normalOutboundDialogVisible = false
         this.getList()
@@ -256,7 +256,7 @@ export default {
     },
     async visibleMethodAssignSubmit(val) {
       try {
-        await finalPlanManagement('post', null, { data: val })
+        await lbPlanManagement('post', null, { data: val })
         this.$message.success('操作成功')
         this.assignOutboundDialogVisible = false
         this.$refs.assignOutbound.creadVal()
@@ -292,7 +292,7 @@ export default {
           warehouse_info: row.warehouse_info
         }
         this.loadingBtn = true
-        await finalPlanManagement('put', row.id, { data: obj })
+        await lbPlanManagement('put', row.id, { data: obj })
         this.dialogVisible = false
         this.loadingBtn = false
         this.getList()
@@ -321,11 +321,12 @@ export default {
           inventory_reason: row.inventory_reason || ''
         }
         this.loading = true
-        await finalPlanManagement('put', row.id, { data: obj })
+        await lbPlanManagement('put', row.id, { data: obj })
         this.$message.success('操作成功')
         this.getList()
       }).catch(() => {
         this.loading = false
+        this.getList()
       })
     },
     demandQuantity(index, row) {
@@ -349,7 +350,7 @@ export default {
           warehouse_info: this.warehouseInfo
         }
         this.loading = true
-        await finalPlanManagement('put', row.id, { data: obj })
+        await lbPlanManagement('put', row.id, { data: obj })
         this.$message.success('操作成功')
         this.getList()
       }).catch(() => {

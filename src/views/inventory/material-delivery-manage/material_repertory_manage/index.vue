@@ -1,6 +1,6 @@
 <template>
   <div v-loading="loading">
-    <!-- 原材料库 -->
+    <!-- 原材料库存 -->
     <el-form :inline="true">
       <el-form-item label="原材料类别">
         <el-input v-model="getParams.material_type" @input="changeSearch" />
@@ -37,6 +37,7 @@ import page from '@/components/page'
 import { material_repertory_url, materials_type_url } from '@/api/display_static_fun'
 import { debounce } from '@/utils'
 export default {
+  name: 'MaterialRepertoryManage',
   components: { page },
   data: function() {
     return {
