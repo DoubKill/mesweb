@@ -1,6 +1,6 @@
 <template>
   <div v-loading="loading" class="app-container">
-    <!-- 物料出入库履历 -->
+    <!-- 入出库履历查询 -->
     <el-form :inline="true">
       <el-form-item label="时间">
         <el-date-picker
@@ -58,6 +58,12 @@
       <el-form-item label="质检条码">
         <el-input v-model="search.lot_no" @input="debounceList" />
       </el-form-item>
+      <!-- <el-form-item style="float:right">
+        <el-button
+          type="primary"
+          @click="exportTable"
+        >导出表格</el-button>
+      </el-form-item> -->
     </el-form>
     <el-table
       :data="tableData"
@@ -169,6 +175,24 @@ export default {
     debounceList() {
       this.search.page = 1
       debounce(this, 'getList')
+    },
+    exportTable() {
+      // responseType: 'blob'  get请求
+
+      // barcodeQualityExport()
+      //   .then(res => {
+      //     const link = document.createElement('a')
+      //     const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+      //     link.style.display = 'none'
+      //     link.href = URL.createObjectURL(blob)
+      //     link.download = '车间库存统计.xlsx' // 下载的文件名
+      //     document.body.appendChild(link)
+      //     link.click()
+      //     document.body.removeChild(link)
+      //     this.btnExportLoad = false
+      //   }).catch(e => {
+      //     this.btnExportLoad = false
+      //   })
     }
   }
 }

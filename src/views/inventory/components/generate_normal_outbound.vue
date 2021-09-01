@@ -99,7 +99,7 @@
 <script>
 import materialCodeSelect from '@/components/select_w/materialCodeSelect'
 import stationInfoWarehouse from '@/components/select_w/warehouseSelectPosition'
-import receiveList from '../receive-good-manage/receive-list.vue'
+import receiveList from '../material-outgoing/receive-list.vue'
 import EquipSelect from '@/components/EquipSelect'
 export default {
   components: { EquipSelect, materialCodeSelect, stationInfoWarehouse, receiveList },

@@ -1,7 +1,6 @@
 <template>
-  <div style="margin-top: 25px" class="banburying-p-manage">
+  <div class="banburying-p-manage">
     <el-form :inline="true">
-
       <el-form-item label="工程名">
         <el-input
           v-model="projectName"
@@ -36,16 +35,14 @@
           />
         </el-select>
       </el-form-item>
-
-      <!-- <el-form-item style="float: right">
-        <el-form-item>
-          <el-button>
-            下载全部
-          </el-button>
-        </el-form-item>
-      </el-form-item> -->
+      <el-form-item>
+        <el-button type="primary" @click="exportTable">
+          导出Excel
+        </el-button>
+      </el-form-item>
     </el-form>
     <el-table
+      id="out-table"
       :data="tableData"
       border
       style="width: 100%"
@@ -81,15 +78,15 @@
       </el-table-column>
       <el-table-column
         prop="plan_weight"
-        label="标准重量"
+        label="标准重量(kg)"
       />
       <el-table-column
         prop="plan_trains"
-        label="日计划"
+        label="日计划(车)"
       />
       <el-table-column
         prop="actual_trains"
-        label="日结果"
+        label="日结果(车)"
       />
       <el-table-column
         align="center"
@@ -98,11 +95,11 @@
       >
         <el-table-column
           prop="classes_data[0].plan_trains"
-          label="计划"
+          label="计划(车)"
         />
         <el-table-column
           prop="classes_data[0].actual_trains"
-          label="结果"
+          label="结果(车)"
         />
       </el-table-column>
       <el-table-column
@@ -112,11 +109,11 @@
       >
         <el-table-column
           prop="classes_data[1].plan_trains"
-          label="计划"
+          label="计划(车)"
         />
         <el-table-column
           prop="classes_data[1].actual_trains"
-          label="结果"
+          label="结果(车)"
         />
       </el-table-column>
       <el-table-column
@@ -126,21 +123,21 @@
       >
         <el-table-column
           prop="classes_data[2].plan_trains"
-          label="计划"
+          label="计划(车)"
         />
         <el-table-column
           prop="classes_data[2].actual_trains"
-          label="结果"
+          label="结果(车)"
         />
       </el-table-column>
-      <el-table-column
+      <!-- <el-table-column
         prop="download"
         label="操作"
       >
-        <!-- <template slot-scope="scope">
+        <template slot-scope="scope">
           <el-button type="text" size="small" @click="downloadClick(scope.row)">下载</el-button>
-        </template> -->
-      </el-table-column>
+        </template>
+      </el-table-column> -->
       <!-- <el-table-column label="发送到上辅机">
         <template slot-scope="scope">
           <el-button
@@ -344,7 +341,7 @@
 <script>
 import { getEquip, getPalletFeedBacks, getTrainsFeedbacks, getEchartsList, getProductActual, getPalletFeedbacks, postProductDayPlanNotice } from '@/api/banburying-performance-manage'
 import page from '@/components/page'
-import { setDate } from '@/utils'
+import { setDate, exportExcel } from '@/utils'
 export default {
   name: 'BanburyingPerformanceManage',
   components: { page },
@@ -636,6 +633,9 @@ export default {
       }).catch(function() {
         app.$message('发送失败')
       })
+    },
+    exportTable() {
+      exportExcel('密炼实绩', null, [{ wpx: 50 }, { wpx: 50 }, { wpx: 120 }])
     }
     // currentChange(page) {
     //   this.getParams.page = page

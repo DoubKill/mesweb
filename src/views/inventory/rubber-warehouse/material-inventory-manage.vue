@@ -1,14 +1,30 @@
 <template>
   <div v-loading="loading">
-    <!-- 物料库位信息 -->
+    <!-- 立库库存明细 -->
     <el-form :inline="true">
       <el-form-item label="仓库名称">
-        <warehouseSelect :created-is="true" @changSelect="changeWarehouse" />
+        <span v-if="warehouseNameProps">{{ warehouseNameProps }}</span>
+        <el-select
+          v-else
+          v-model="getParams.warehouse_name"
+          placeholder="请选择"
+          clearable
+          @change="changeWarehouse"
+        >
+          <el-option
+            v-for="item in ['混炼胶库','终炼胶库']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+        <!-- <warehouseSelect :created-is="true" @changSelect="changeWarehouse" /> -->
       </el-form-item>
       <el-form-item label="物料编码">
         <materialCodeSelect
           :store-name="getParams.warehouse_name"
           :is-clearable="true"
+          :is-allow-create="true"
           @changSelect="materialCodeFun"
         />
         <!-- <el-input v-model="getParams.material_no" @input="changeSearch" /> -->
@@ -22,6 +38,12 @@
       <!-- <el-form-item v-show="getParams.warehouse_name != '终炼胶库'" label="物料类型">
         <materielTypeSelect @changSelect="changeMaterialType" />
       </el-form-item> -->
+      <!-- <el-form-item style="float:right">
+        <el-button
+          type="primary"
+          @click="exportTable"
+        >导出全部</el-button>
+      </el-form-item> -->
     </el-form>
     <el-table
       border
@@ -31,31 +53,31 @@
     >
       <el-table-column label="No" type="index" align="center" width="40" />
       <el-table-column label="物料类型" align="center" prop="material_type" width="80" />
-      <el-table-column label="物料编码" align="center" prop="material_no" />
-      <el-table-column label="质检条码" align="center" prop="lot_no" />
-      <el-table-column label="货位状态" align="center" prop="location_status" />
-      <el-table-column label="机台号" align="center" width="50">
+      <el-table-column label="物料编码" align="center" prop="material_no" min-width="22" />
+      <el-table-column label="质检条码" align="center" prop="lot_no" min-width="20" />
+      <el-table-column label="货位状态" align="center" prop="location_status" min-width="16" />
+      <el-table-column label="机台号" align="center" min-width="12">
         <template v-if="row.product_info" slot-scope="{row}">
           {{ row.product_info.equip_no }}
         </template>
       </el-table-column>
-      <el-table-column label="生产时间" align="center">
+      <el-table-column label="生产时间" align="center" width="90">
         <template v-if="row.product_info" slot-scope="{row}">
           {{ row.product_info.product_time }}
         </template>
       </el-table-column>
-      <el-table-column label="班次" align="center">
+      <el-table-column label="班次" align="center" min-width="12">
         <template v-if="row.product_info" slot-scope="{row}">
           {{ row.product_info.classes }}
         </template>
       </el-table-column>
-      <el-table-column label="托盘号" align="center" prop="container_no" />
-      <el-table-column label="库存位" align="center" prop="location" width="100" />
-      <el-table-column label="库存数" align="center" prop="qty" width="100" />
-      <el-table-column label="单位" align="center" prop="unit" width="40" />
-      <el-table-column label="单位重量" align="center" prop="unit_weight" />
-      <el-table-column label="总重量" align="center" prop="total_weight" />
-      <el-table-column label="品质状态" align="center" prop="quality_status" width="60" />
+      <el-table-column label="托盘号" align="center" prop="container_no" min-width="18" />
+      <el-table-column label="库存位" align="center" prop="location" min-width="18" />
+      <el-table-column label="库存数" align="center" prop="qty" min-width="16" />
+      <el-table-column label="单位" align="center" prop="unit" min-width="10" />
+      <el-table-column label="单位重量" align="center" prop="unit_weight" min-width="18" />
+      <el-table-column label="总重量" align="center" prop="total_weight" min-width="18" />
+      <el-table-column label="品质状态" align="center" prop="quality_status" min-width="16" />
     </el-table>
     <page
       :total="total"
@@ -68,14 +90,20 @@
 <script>
 import { getMaterialInventoryManage } from '@/api/material-inventory-manage'
 // import materielTypeSelect from '@/components/select_w/materielTypeSelect'
-import warehouseSelect from '@/components/select_w/warehouseSelect'
+// import warehouseSelect from '@/components/select_w/warehouseSelect'
 import page from '@/components/page'
 import { mapGetters } from 'vuex'
 import materialCodeSelect from '@/components/select_w/materialCodeSelect'
 
 export default {
   name: 'MaterialInventoryManage',
-  components: { materialCodeSelect, page, warehouseSelect },
+  components: { materialCodeSelect, page },
+  props: {
+    warehouseNameProps: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
     return {
       tableData: [],
@@ -84,12 +112,11 @@ export default {
         material_type: '', // 物料类型
         material_no: '', // 物料编号
         container_no: '', // 托盘号
-        warehouse_name: '' // 仓库名称
+        warehouse_name: '混炼胶库' // 仓库名称
       },
-      warehouseNameOptions: ['线边库', '终炼胶库', '原材料库'],
       currentPage: 1,
       total: 0,
-      loading: true
+      loading: false
     }
   },
   computed: {
@@ -97,7 +124,10 @@ export default {
   },
   created() {
     this.permissionObj = this.permission
-    // this.getTableData()
+    if (this.warehouseNameProps) {
+      this.getParams.warehouse_name = this.warehouseNameProps
+    }
+    this.getTableData()
   },
   methods: {
     getTableData() {
@@ -130,10 +160,28 @@ export default {
       this.getParams.page = 1
       this.getTableData()
     },
-    changeWarehouse(data) {
-      this.getParams.warehouse_name = data ? data.name : ''
+    changeWarehouse() {
+      // this.getParams.warehouse_name = data ? data.name : ''
       this.getParams.page = 1
       this.getTableData()
+    },
+    exportTable() {
+      // responseType: 'blob'  get请求
+
+      // barcodeQualityExport()
+      //   .then(res => {
+      //     const link = document.createElement('a')
+      //     const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+      //     link.style.display = 'none'
+      //     link.href = URL.createObjectURL(blob)
+      //     link.download = '车间库存统计.xlsx' // 下载的文件名
+      //     document.body.appendChild(link)
+      //     link.click()
+      //     document.body.removeChild(link)
+      //     this.btnExportLoad = false
+      //   }).catch(e => {
+      //     this.btnExportLoad = false
+      //   })
     }
   }
 }

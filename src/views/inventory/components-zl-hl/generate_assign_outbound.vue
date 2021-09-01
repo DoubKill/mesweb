@@ -222,7 +222,7 @@
 import { bzMixinInventory, bzFinalInventory } from '@/api/material-inventory-manage'
 import page from '@/components/page'
 import stationInfoWarehouse from '@/components/select_w/warehouseSelectPosition'
-import receiveList from '../receive-good-manage/receive-list.vue'
+import receiveList from '../material-outgoing/receive-list.vue'
 import EquipSelect from '@/components/EquipSelect'
 import materialCodeSelect from '@/components/select_w/materialCodeSelect'
 import { debounce } from '@/utils'

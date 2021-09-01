@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <!-- 仓库基础信息管理 -->
     <el-form :inline="true">
       <el-form-item label="仓库名称">
         <ware-house-name-select
