@@ -54,6 +54,12 @@ export default {
         return {}
       }
     },
+    paramsObjMust: {
+      type: Boolean,
+      default() {
+        return true
+      }
+    },
     defaultVal: {
       type: [String, Number],
       default: null
@@ -102,9 +108,11 @@ export default {
           obj.all = 1
         } else {
           delete obj.all
-          this.titleInfo(obj.classes, '请输入班次')
-          this.titleInfo(obj.equip_no, '请输入胶料')
-          this.titleInfo(obj.factory_date, '请输入时间')
+          if (this.paramsObjMust) {
+            this.titleInfo(obj.classes, '请输入班次')
+            this.titleInfo(obj.equip_no, '请输入胶料')
+            this.titleInfo(obj.factory_date, '请输入时间')
+          }
         }
         this.loading = true
         batchingMaterials('get', null, { params: obj }).then(response => {
