@@ -19,13 +19,13 @@
       </el-form-item>
       <el-form-item label="投料口">
         <el-select
-          v-model="searchForm.feeding_portno"
+          v-model="searchForm.feeding_port_no"
           placeholder="请选择"
           clearable
           @change="changeSearch"
         >
           <el-option
-            v-for="item in ['Z01T01','Z01T02','Z01F01','Z01F02','OIL01','OIL02',]"
+            v-for="item in ['掺混','白炭黑','炭黑','Z01T01','Z01T02','Z01F01','Z01F02','OIL01','OIL02']"
             :key="item"
             :label="item"
             :value="item"
@@ -48,7 +48,7 @@
       </el-form-item>
       <el-form-item label="投料结果">
         <el-select
-          v-model="searchForm.feeding_result"
+          v-model="searchForm.feed_result"
           placeholder="请选择"
           clearable
           @change="changeSearch"
@@ -62,7 +62,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="投料人员">
-        <el-input v-model="searchForm.feeding_user" clearable @input="changeSearch" />
+        <el-input v-model="searchForm.feeding_username" clearable @input="debounceList" />
       </el-form-item>
     </el-form>
     <el-table
@@ -77,28 +77,28 @@
         min-width="20"
       >
         <template slot-scope="scope">
-          <span v-if="scope.row.feeding_type == 1">炭黑罐投料</span>
-          <span v-if="scope.row.feeding_type == 2">油料罐投料</span>
-          <span v-if="scope.row.feeding_type == 3">粉料罐投料</span>
+          <span v-if="scope.row.feeding_type == 1">粉料罐投料</span>
+          <span v-if="scope.row.feeding_type == 2">炭黑罐投料</span>
+          <span v-if="scope.row.feeding_type == 3">油料罐投料</span>
         </template>
       </el-table-column>
       <el-table-column
-        prop="feeding_portno"
+        prop="feeding_port_no"
         label="投料口"
         min-width="20"
       />
       <el-table-column
-        prop="feeding_datetime"
+        prop="feeding_time"
         label="投料时间"
         min-width="20"
       />
       <el-table-column
-        prop="feeding_class"
-        label="投料班组"
+        prop="feeding_classes"
+        label="投料班次"
         min-width="20"
       />
       <el-table-column
-        prop="tank_code"
+        prop="tank_bar_code"
         label="料罐条码"
         min-width="20"
       />
@@ -108,7 +108,7 @@
         min-width="20"
       />
       <el-table-column
-        prop="feeding_material_code"
+        prop="feeding_bar_code"
         label="投料物料条码"
         min-width="20"
       />
@@ -128,12 +128,12 @@
         min-width="20"
       />
       <el-table-column
-        prop="feeding_result"
+        prop="feed_result"
         label="投料防错结果"
         min-width="20"
       />
       <el-table-column
-        prop="feeding_user"
+        prop="feeding_username"
         label="投料人员"
         min-width="20"
       />
@@ -151,6 +151,7 @@
 import page from '@/components/page'
 import ClassSelect from '@/components/ClassSelect'
 import { rawQuery } from '@/api/jqy'
+import { debounce } from '@/utils/'
 export default {
   name: 'RawQuery',
   components: { page, ClassSelect },
@@ -159,15 +160,16 @@ export default {
       searchForm: {},
       loading: false,
       tableData: [],
+      total: 0,
       options: [{
         value: '1',
-        label: '炭黑罐投料'
+        label: '粉料罐投料'
       }, {
         value: '2',
-        label: '油料罐投料'
+        label: '炭黑罐投料'
       }, {
         value: '3',
-        label: '粉料罐投料'
+        label: '油料罐投料'
       }]
     }
   },
@@ -178,11 +180,11 @@ export default {
     changeSearch() {
       this.loading = true
       if (this.searchForm.feeding_datetime) {
-        this.searchForm.feeding_datetime_after = this.searchForm.feeding_datetime[0]
-        this.searchForm.feeding_datetime_before = this.searchForm.feeding_datetime[1]
+        this.searchForm.feeding_time_after = this.searchForm.feeding_datetime[0]
+        this.searchForm.feeding_time_before = this.searchForm.feeding_datetime[1]
       } else {
-        delete this.searchForm.feeding_datetime_before
-        delete this.searchForm.feeding_datetime_after
+        delete this.searchForm.feeding_time_before
+        delete this.searchForm.feeding_time_after
       }
       this.searchForm.page = 1
       this.getList()
@@ -197,7 +199,7 @@ export default {
       } catch (e) { this.loading = false }
     },
     classSelected(className) {
-      this.searchForm.feeding_class = className || null
+      this.searchForm.feeding_classes = className || null
       this.searchForm.page = 1
       this.getList()
     },
@@ -205,6 +207,10 @@ export default {
       this.searchForm.page = page
       this.searchForm.page_size = pageSize
       this.getList()
+    },
+    debounceList() {
+      this.searchForm.page = 1
+      debounce(this, 'getList')
     }
   }
 }
