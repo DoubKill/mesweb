@@ -3,6 +3,7 @@
     <!-- 投料计划 -->
     <h4>本日班次密炼生产计划</h4>
     <el-table
+      v-loading="loading"
       :data="tableData"
       style="width: 50%;"
       border
@@ -164,6 +165,7 @@
                   v-model="scope.row.bb"
                   placeholder="请选择"
                   @change="MaterialChange($event,scope.$index,i,scope.row)"
+                  @visible-change="visibleChangeMaterial($event,scope.row)"
                 >
                   <el-option
                     v-for="(item,portI) in optionsMaterial"
@@ -249,7 +251,7 @@
 
 <script>
 import { equipUrl } from '@/api/base_w'
-import { feedCapacityPlan, carbonFeedingPrompt } from '@/api/base_w_four'
+import { feedCapacityPlan, carbonFeedingPrompt, thInventory } from '@/api/base_w_four'
 export default {
   name: 'RawPlan',
   data() {
@@ -270,7 +272,8 @@ export default {
       ],
       optionsMaterial: [],
       dialogVisible: false,
-      form: {}
+      form: {},
+      loading: true
     }
   },
   created() {
@@ -290,14 +293,15 @@ export default {
       try {
         const data = await feedCapacityPlan('get')
         this.tableData = data || []
+        this.loading = false
       } catch (e) {
-        //
+        this.loading = false
       }
     },
-    getOptionsMaterial() {
+    async getOptionsMaterial() {
       try {
-        // const equipData = await equipUrl('get', { params: { all: 1, category_name: '密炼设备' }})
-        // this.optionsMaterial = equipData.results
+        const DATA = await thInventory('get', { params: { material_name: 1 }})
+        this.optionsMaterial = DATA.results
       } catch (e) {
         //
       }
@@ -342,6 +346,11 @@ export default {
     },
     MaterialChange(val, index, i, row) {
 
+    },
+    visibleChangeMaterial(bool, row) {
+      if (bool) {
+        this.getOptionsMaterial()
+      }
     },
     portChange(val, index, faIndex, row) {
       const row1 = this.addPlanArr[faIndex][index + 1] || null
