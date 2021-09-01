@@ -4,7 +4,7 @@
     <el-form :inline="true">
       <el-form-item label="生产日期">
         <el-date-picker
-          v-model="search.factory_date"
+          v-model="paramsObj.factory_date"
           type="date"
           value-format="yyyy-MM-dd"
           @change="changeSearch"
@@ -15,7 +15,7 @@
       </el-form-item>
       <el-form-item label="生产机号">
         <selectEquip
-          :equip_no_props.sync="search.equip_no"
+          :equip_no_props.sync="paramsObj.equip_no"
           @changeSearch="changeSearch"
         />
       </el-form-item>
@@ -35,7 +35,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="胶料规格">
-        <all-product-no-select @productBatchingChanged="productBatchingChanged" />
+        <all-product-no-select :params-obj="paramsObj" :params-obj-must="false" @productBatchingChanged="productBatchingChanged" />
       </el-form-item>
     </el-form>
     <h3>
@@ -281,6 +281,7 @@ export default {
       tableData: [],
       tableData1: [],
       tableData2: [],
+      paramsObj: { factory_date: setDate() },
       list: [],
       dialogVisible: false,
       handleCardDialogVisible: false,
@@ -337,15 +338,26 @@ export default {
       }
     },
     dialog() {
+      if (!this.listData || this.listData.length === 0) {
+        // this.$message({
+        //   showClose: true,
+        //   message: '请勾选不合格品车次',
+        //   type: 'error'
+        // })
+        return
+      }
       this.dialogVisible = true
     },
     changeSearch() {
+      this.search.factory_date = this.paramsObj.factory_date
+      this.search.equip_no = this.paramsObj.equip_no
       this.search.page = 1
       this.getList()
     },
     classSelectedFun(val) {
       this.search.page = 1
       this.search.classes = val
+      this.paramsObj.classes = val
       this.getList()
     },
     productBatchingChanged(val) {
