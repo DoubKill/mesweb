@@ -13,7 +13,7 @@
           @change="changeDate"
         />
       </el-form-item>
-      <el-form-item label="发生部门">
+      <!-- <el-form-item label="发生部门">
         <el-select
           v-model="search.department"
           clearable
@@ -27,7 +27,7 @@
             :value="item"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="不合格状态">
         <el-select
           v-model="search.status"
@@ -36,7 +36,7 @@
           @change="changeDate"
         >
           <el-option
-            v-for="item in ['来料','半成品','成品','库存']"
+            v-for="item in ['来料','半成品']"
             :key="item"
             :label="item"
             :value="item"
