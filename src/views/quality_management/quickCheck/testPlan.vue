@@ -743,6 +743,7 @@ export default {
     },
     changeTestEquip() {
       this.tableDataRight = []
+      this.tableData = []
       this.btnLoading = false
       this.ruleForm.plan_uid = ''
       this.ruleForm.product_no = ''
@@ -877,6 +878,7 @@ export default {
     async endTestFun() {
       try {
         if (!this.ruleForm.plan_uid) {
+          this.$message.info('没有可结束计划,如果存在请f5刷新页面查看')
           return
         }
         await productTestPlan('get', null, { params: { close: 1, plan_uid: this.ruleForm.plan_uid }})
