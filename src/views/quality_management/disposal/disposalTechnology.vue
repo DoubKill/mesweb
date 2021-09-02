@@ -108,6 +108,7 @@
       >
         <template slot-scope="scope">
           <el-button
+            v-permission="['tech_unqualified_order','add']"
             type="primary"
             size="mini"
             :disabled="isDisabled"
@@ -212,6 +213,7 @@
     <h3>不合格品 处理意见</h3>
     <div style="text-align:right;margin-top:-35px;margin-bottom:8px;">
       <el-button
+        v-permission="['tech_unqualified_order','add']"
         size="mini"
         type="primary"
         @click="unqualifiedFun"

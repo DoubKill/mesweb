@@ -1556,7 +1556,7 @@ export const asyncRoutes = [
             meta: {
               faName: 'UnqualifiedHandle',
               title: '不合格处置发生部门发起',
-              permissionName: ''
+              permissionName: 'product_unqualified_order'
             }
           },
           {
@@ -1566,7 +1566,7 @@ export const asyncRoutes = [
             meta: {
               faName: 'UnqualifiedHandle',
               title: '不合格处置工艺技术科处理',
-              permissionName: ''
+              permissionName: 'tech_unqualified_order'
             }
           },
           {
@@ -1576,7 +1576,7 @@ export const asyncRoutes = [
             meta: {
               faName: 'UnqualifiedHandle',
               title: '不合格处置工艺检查科处理',
-              permissionName: ''
+              permissionName: 'check_unqualified_order'
             }
           },
           {
@@ -1586,7 +1586,7 @@ export const asyncRoutes = [
             meta: {
               faName: 'UnqualifiedHandle',
               title: '不合格处置单查看',
-              permissionName: ''
+              permissionName: 'product_unqualified_order'
             }
           }
         ]

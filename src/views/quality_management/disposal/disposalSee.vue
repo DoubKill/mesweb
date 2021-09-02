@@ -13,15 +13,15 @@
           @change="changeDate"
         />
       </el-form-item>
-      <el-form-item label="处置状态">
+      <el-form-item label="处置意见">
         <el-select
-          v-model="search.c_deal_suggestion"
+          v-model="search.c_agreed"
           clearable
           placeholder="请选择"
           @change="changeDate"
         >
           <el-option
-            v-for="item in [{name:'已完成',id:1},{name:'未完成',id:2}]"
+            v-for="item in [{name:'同意',id:true},{name:'不同意',id:false}]"
             :key="item.id"
             :label="item.name"
             :value="item.id"
