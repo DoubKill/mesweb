@@ -121,8 +121,11 @@
       @currentChange="currentChange"
     />
     <el-dialog
-      :fullscreen="true"
+      :fullscreen="false"
+      width="800px"
       :visible.sync="handleCardDialogVisible"
+      title="不合格处置工艺检查科处理"
+      center
     >
       <excel
         ref="handleCard"

@@ -232,8 +232,11 @@
       </el-table-column>
     </el-table>
     <el-dialog
-      :fullscreen="true"
+      title="不合格处置单发起"
+      :fullscreen="false"
+      width="800px"
       :visible.sync="handleCardDialogVisible"
+      center
     >
       <excel
         ref="handleCard"
