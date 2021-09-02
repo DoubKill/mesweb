@@ -167,6 +167,7 @@
       不合格品 待处理清单
     </h3>
     <el-button
+      v-permission="['product_unqualified_order','add']"
       type="primary"
       style="float:right;margin-bottom:20px"
       @click="creatExcel"

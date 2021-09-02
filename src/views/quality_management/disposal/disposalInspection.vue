@@ -85,13 +85,13 @@
         show-overflow-tooltip
       />
       <el-table-column
-        prop="use_flag"
+        prop="c_agreed"
         label="处理类型"
         min-width="50"
       >
         <template slot-scope="scope">
           <el-switch
-            v-model="scope.row.use_flag"
+            v-model="scope.row.c_agreed"
             style="display: block"
             active-color="#13ce66"
             inactive-color="#ff4949"
@@ -106,6 +106,7 @@
       >
         <template slot-scope="scope">
           <el-button
+            v-permission="['check_unqualified_order','add']"
             type="primary"
             size="mini"
             @click="creatExcel(scope)"
@@ -223,7 +224,7 @@ export default {
       // } else {
       this.orderRow.id = scope.row.id
       this.handleCardDialogVisible = true
-      if (scope.row.use_flag === true) {
+      if (scope.row.c_agreed === true) {
         this.orderRow.c_deal_suggestion = '同意'
       } else {
         this.orderRow.c_deal_suggestion = '不同意'
@@ -240,6 +241,11 @@ export default {
           c_deal_date: obj.c_deal_date,
           c_deal_user: obj.c_deal_user,
           desc: obj.desc
+        }
+        if (obj.c_deal_suggestion === '同意') {
+          paramsData.c_agreed = true
+        } else {
+          paramsData.c_agreed = false
         }
         await unqualifiedDealOrders('patch', obj.id, { data: paramsData })
         this.$message.success('处理成功！！！！')

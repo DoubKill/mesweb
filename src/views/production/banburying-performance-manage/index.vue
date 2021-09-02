@@ -63,16 +63,9 @@
       >
         <template slot-scope="scope">
           <span
-            style="margin-left: 10px"
-            v-text="scope.row.product_no"
-          />
-          <el-button
-            v-if="scope.row.product_no != '合计'"
-            icon="el-icon-search"
-            type="text"
-            size="mini"
-            style="float: right; width: 25%"
+            style="margin-left: 10px;cursor:pointer"
             @click="clickProductNo(scope.row)"
+            v-text="scope.row.product_no"
           />
         </template>
       </el-table-column>
@@ -459,6 +452,9 @@ export default {
       this.currentChange(1)
     },
     clickProductNo(row) {
+      if (row.product_no === '合计') {
+        return
+      }
       this.dialogVisibleRubber = true
       this.palletFeedObj = row
       this.pageRubber = 1
