@@ -194,11 +194,17 @@ export default {
         this.tableData = []
         const data = await unqualifiedDealOrders('get', null, { params: this.search })
         this.total = data.count
-        data.results.forEach(d => {
-          this.tableData.push(
-            Object.assign({}, d, { use_flag: true })
-          )
+        this.tableData = data.results
+        this.tableData.forEach(d => {
+          if (d.c_agreed === null) {
+            d.c_agreed = true
+          }
         })
+        // data.results.forEach(d => {
+        //   this.tableData.push(
+        //     Object.assign({}, d, { use_flag: true })
+        //   )
+        // })
         this.loading = false
       } catch (e) {
         this.loading = false
