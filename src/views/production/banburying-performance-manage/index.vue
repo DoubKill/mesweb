@@ -62,11 +62,8 @@
         label="胶料代码"
       >
         <template slot-scope="scope">
-          <span
-            style="margin-left: 10px;cursor:pointer"
-            @click="clickProductNo(scope.row)"
-            v-text="scope.row.product_no"
-          />
+          <el-link v-if="scope.row.product_no!=='合计'" type="primary" @click="clickProductNo(scope.row)">{{ scope.row.product_no }}</el-link>
+          <span v-else>{{ scope.row.product_no }}</span>
         </template>
       </el-table-column>
       <el-table-column
