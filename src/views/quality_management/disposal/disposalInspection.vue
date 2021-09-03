@@ -155,7 +155,8 @@ export default {
       tableData: [],
       formHeadData: [],
       search: {
-        page: 1
+        page: 1,
+        t_solved: 'Y'
       },
       use_flag: true,
       loading: false,
