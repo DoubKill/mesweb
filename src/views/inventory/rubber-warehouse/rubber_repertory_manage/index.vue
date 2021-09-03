@@ -2,9 +2,19 @@
   <!-- 库内库存统计 -->
   <div v-loading="loading">
     <el-form :inline="true">
+      <el-form-item label="库区">
+        <el-select v-model="getParams.warehouse_name" clearable placeholder="请选择" @change="changeSearch">
+          <el-option
+            v-for="item in ['终炼胶库','混炼胶库']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="段次">
         <el-select
-          v-model="RubberStage"
+          v-model="getParams.stage"
           style="width: 150px"
           clearable
           placeholder="请选择"
@@ -27,11 +37,21 @@
           @changSelect="materialCodeFun"
         />
       </el-form-item>
-      <el-form-item label="加硫：">
+      <!-- <el-form-item label="加硫：">
         共{{ sulfurAddition || 0 }}车
       </el-form-item>
       <el-form-item label="无硫：">
         共{{ sulfurFree || 0 }}车
+      </el-form-item> -->
+      <el-form-item style="float:right">
+        <el-button
+          type="primary"
+          @click="exportTable(1)"
+        >导出当前页面</el-button>
+        <el-button
+          type="primary"
+          @click="exportTable('all')"
+        >导出所有</el-button>
       </el-form-item>
     </el-form>
 
@@ -55,7 +75,7 @@
       <el-table-column prop="unit_weight" label="每车重量" align="center" />
       <el-table-column prop="total_weight" label="总重量" align="center" />
       <el-table-column prop="unit" label="重量单位" align="center" />
-      <el-table-column prop="standard_flag" label="品质状态" align="center" />
+      <el-table-column prop="quality_level" label="品质状态" align="center" />
       <!-- :formatter="StandardFlagFormatter" -->
     </el-table>
     <page :total="total" :current-page="getParams.page" @currentChange="currentChange" />
@@ -95,7 +115,7 @@
 <script>
 import page from '@/components/page'
 import { getMaterialInventoryManage } from '@/api/material-inventory-manage'
-import { rubber_repertory_url, stage_global_url } from '@/api/display_static_fun'
+import { stage_global_url, inLibraryInventory } from '@/api/display_static_fun'
 import materialCodeSelect from '@/components/select_w/materialCodeSelect'
 
 export default {
@@ -103,7 +123,7 @@ export default {
   components: { page, materialCodeSelect },
   data: function() {
     return {
-      loading: true,
+      loading: false,
       tableData: [],
       tableDataDialog: [],
       total: 0,
@@ -111,7 +131,6 @@ export default {
         page: 1,
         page_size: 10
       },
-      RubberStage: null,
       RubberStageOptions: [],
       dialogVisible: false,
       totalDialog: 0,
@@ -127,11 +146,11 @@ export default {
     async rubber_repertory_list() {
       try {
         this.loading = true
-        const rubber_repertoryData = await rubber_repertory_url('get', { params: this.getParams })
+        const rubber_repertoryData = await inLibraryInventory('get', null, { params: this.getParams })
         this.tableData = rubber_repertoryData.results
         this.total = rubber_repertoryData.count
-        this.sulfurAddition = rubber_repertoryData.fm_count
-        this.sulfurFree = rubber_repertoryData.other_count
+        // this.sulfurAddition = rubber_repertoryData.fm_count
+        // this.sulfurFree = rubber_repertoryData.other_count
         this.loading = false
       } catch (e) {
         this.loading = false
@@ -169,7 +188,6 @@ export default {
       }
     },
     changeSearch() {
-      this.getParams['stage'] = this.RubberStage
       this.getParams.page = 1
       this.rubber_repertory_list()
     },
@@ -192,6 +210,23 @@ export default {
         .then(response => {
           this.tableDataDialog = response.results
           this.totalDialog = response.count
+        })
+    },
+    exportTable(val) {
+      // responseType: 'blob'  get请求
+      inLibraryInventory('get', null, { params: { export: val }, responseType: 'blob' })
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '车间库存统计.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
         })
     }
   }

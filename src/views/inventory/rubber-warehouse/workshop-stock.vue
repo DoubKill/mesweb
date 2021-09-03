@@ -32,12 +32,12 @@
           />
         </el-select>
       </el-form-item>
-      <!-- <el-form-item style="float:right">
+      <el-form-item style="float:right">
         <el-button
           type="primary"
           @click="exportTable"
         >导出表格</el-button>
-      </el-form-item> -->
+      </el-form-item>
     </el-form>
     <el-table
       v-loading="loading"
@@ -158,22 +158,21 @@ export default {
       }
     },
     exportTable() {
-      // responseType: 'blob'  get请求
-
-      // barcodeQualityExport()
-      //   .then(res => {
-      //     const link = document.createElement('a')
-      //     const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
-      //     link.style.display = 'none'
-      //     link.href = URL.createObjectURL(blob)
-      //     link.download = '车间库存统计.xlsx' // 下载的文件名
-      //     document.body.appendChild(link)
-      //     link.click()
-      //     document.body.removeChild(link)
-      //     this.btnExportLoad = false
-      //   }).catch(e => {
-      //     this.btnExportLoad = false
-      //   })
+      const obj = Object.assign({ export: 'all' }, this.search)
+      productDetails('get', null, { responseType: 'blob', params: obj })
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '车间库存统计.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
     }
   }
 }

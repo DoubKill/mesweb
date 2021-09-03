@@ -55,6 +55,14 @@ export function rubber_repertory_url(method, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function inLibraryInventory(method, id, data = {}) {
+  const obj = {
+    url: id ? API.InLibraryInventory + id + '/' : API.InLibraryInventory,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 // 胶料段次接口函数
 export function stage_global_url(method, data = {}) {
   const obj = {

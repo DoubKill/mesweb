@@ -964,6 +964,16 @@ export const asyncRoutes = [
               title: '原材料库存',
               permissionName: 'material_inventory'
             }
+          },
+          {
+            path: '/delivery-inout-record',
+            component: () => import('@/views/inventory/material-delivery-manage/material_inout_record.vue'),
+            name: 'DeliveryInOutRecord',
+            meta: {
+              faName: 'MaterialDelivery',
+              title: '入出库履历查询',
+              permissionName: 'in_out_history'
+            }
           }
         ]
       },
@@ -1054,6 +1064,16 @@ export const asyncRoutes = [
               permissionName: 'th_yearly_summary'
             }
           }
+          // {
+          //   path: '/carbon-inout-record',
+          //   component: () => import('@/views/inventory/carbon-delivery-manage/material_inout_record.vue'),
+          //   name: 'CarbonInOutRecord',
+          //   meta: {
+          //     faName: 'CarbonDelivery',
+          //     title: '入出库履历查询',
+          //     permissionName: 'in_out_history'
+          //   }
+          // }
 
         ]
       },
@@ -1263,6 +1283,16 @@ export const asyncRoutes = [
               faShowName: '帘布库',
               title: '库存明细',
               permissionName: 'goods'
+            }
+          },
+          {
+            path: '/Curtain-inout-record',
+            component: () => import('@/views/inventory/curtainWarehouse/material_inout_record.vue'),
+            name: 'CurtainInOutRecord',
+            meta: {
+              faName: 'CurtainStorehouse',
+              title: '入出库履历查询',
+              permissionName: 'in_out_history'
             }
           }
         ]
