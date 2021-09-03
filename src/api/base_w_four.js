@@ -326,3 +326,21 @@ export function inoutBoundSummary(method, id, data = {}, cancelToken) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function feedCapacityPlan(method, id, data = {}) {
+  const obj = {
+    url: id ? API.FeedCapacityPlan + id + '/' : API.FeedCapacityPlan,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function carbonFeedingPrompt(method, id, data = {}) {
+  const obj = {
+    url: id ? API.CarbonFeedingPrompt + id + '/' : API.CarbonFeedingPrompt,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

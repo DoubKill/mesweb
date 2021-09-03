@@ -58,9 +58,11 @@ export default {
       const response = await stage_global_url('get')
       this.stageOptions = response.results
       if (this.isDefault && this.stageOptions.length > 0 && this.isMultiple) {
-        const value = [this.stageOptions[0].global_name, this.stageOptions[1].global_name,
-          this.stageOptions[2].global_name, this.stageOptions[3].global_name]
-        this.$emit('change', value)
+        const arr = []
+        this.stageOptions.forEach(d => {
+          arr.push(d.global_name)
+        })
+        this.$emit('change', arr)
       }
     },
     visibleChange(visible) {

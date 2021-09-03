@@ -1,5 +1,5 @@
 <template>
-  <!-- 混炼胶库存 -->
+  <!-- 库内库存统计 -->
   <div v-loading="loading">
     <el-form :inline="true">
       <el-form-item label="段次">
@@ -99,6 +99,7 @@ import { rubber_repertory_url, stage_global_url } from '@/api/display_static_fun
 import materialCodeSelect from '@/components/select_w/materialCodeSelect'
 
 export default {
+  name: 'RubberRepertoryManage',
   components: { page, materialCodeSelect },
   data: function() {
     return {

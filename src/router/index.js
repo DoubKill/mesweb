@@ -753,7 +753,7 @@ export const asyncRoutes = [
         // },
         {
           path: '/report/rubber-stock',
-          component: () => import('@/views/equipment-management/report/rubber-stock'),
+          component: () => import('@/views/inventory/rubber-warehouse/rubber-stock'),
           name: 'RubberStock',
           meta: {
             faName: 'StatisticalReport',
@@ -763,7 +763,7 @@ export const asyncRoutes = [
         },
         {
           path: '/report/workshop-stock',
-          component: () => import('@/views/equipment-management/report/workshop-stock'),
+          component: () => import('@/views/inventory/rubber-warehouse/workshop-stock'),
           name: 'WorkshopStock',
           meta: {
             faName: 'StatisticalReport',
@@ -807,7 +807,7 @@ export const asyncRoutes = [
       },
       {
         path: '/material',
-        component: () => import('@/views/material_repertory_manage/index'),
+        component: () => import('@/views/inventory/material-delivery-manage/material_repertory_manage/index'),
         name: 'MaterialRepertoryManage',
         meta: {
           title: '原材料库存',
@@ -826,7 +826,7 @@ export const asyncRoutes = [
       // },
       {
         path: '/rubber',
-        component: () => import('@/views/rubber_repertory_manage/index'),
+        component: () => import('@/views/inventory/rubber-warehouse/rubber_repertory_manage/index'),
         name: 'RubberRepertoryManage',
         meta: {
           title: '混炼胶库存',
@@ -1420,7 +1420,7 @@ export const asyncRoutes = [
               permissionName: 'unqualified_order'
             }
           },**/
-          /** {
+          {
             path: '/unqualified-handle/disposalLaunch',
             component: () => import('@/views/quality_management/disposal/disposalLaunch.vue'),
             name: 'DisposalLaunch',
@@ -1459,7 +1459,7 @@ export const asyncRoutes = [
               title: '不合格处置单查看',
               permissionName: ''
             }
-          }**/
+          }
         ]
       },
       {
