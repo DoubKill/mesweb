@@ -414,12 +414,14 @@ export default {
         this.$set(this.tableData[this.currentMaterialIndex], 'material', row.id)
         this.$set(this.tableData[this.currentMaterialIndex], 'sn', 0)
         this.$set(this.tableData[this.currentMaterialIndex], 'material_type', row.material_type_name)
-        if (row.material_type_name.indexOf('炭黑') > -1) {
-          this.$set(this.tableData[this.currentMaterialIndex], 'type', 2)
-        } else if (row.material_type_name.indexOf('油料') > -1) {
-          this.$set(this.tableData[this.currentMaterialIndex], 'type', 3)
-        } else {
-          this.$set(this.tableData[this.currentMaterialIndex], 'type', 1)
+        if (!this.tableData[this.currentMaterialIndex].type) {
+          if (row.material_type_name.indexOf('炭黑') > -1) {
+            this.$set(this.tableData[this.currentMaterialIndex], 'type', 2)
+          } else if (row.material_type_name.indexOf('油料') > -1) {
+            this.$set(this.tableData[this.currentMaterialIndex], 'type', 3)
+          } else {
+            this.$set(this.tableData[this.currentMaterialIndex], 'type', 1)
+          }
         }
       } else {
         this.isIngredientObj = row
