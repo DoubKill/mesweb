@@ -105,6 +105,25 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="投料方式"
+        >
+          <template slot-scope="{row}">
+            <el-select
+              v-model="row.type"
+              clearable
+              placeholder="请选择"
+              :disabled="isView"
+            >
+              <el-option
+                v-for="item in [{name:'密炼机投料口',id:1},{name:'炭黑粉料罐',id:2},{name:'油料罐',id:3}]"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              />
+            </el-select>
+          </template>
+        </el-table-column>
+        <el-table-column
           v-if="!isView"
           label="操作"
         >
@@ -250,7 +269,8 @@ export default {
         package_type: [
           { required: true, message: '请选择', trigger: 'change' }
         ]
-      }
+      },
+      listType: []
     }
   },
   computed: {
@@ -394,6 +414,15 @@ export default {
         this.$set(this.tableData[this.currentMaterialIndex], 'material', row.id)
         this.$set(this.tableData[this.currentMaterialIndex], 'sn', 0)
         this.$set(this.tableData[this.currentMaterialIndex], 'material_type', row.material_type_name)
+        if (!this.tableData[this.currentMaterialIndex].type) {
+          if (row.material_type_name.indexOf('炭黑') > -1) {
+            this.$set(this.tableData[this.currentMaterialIndex], 'type', 2)
+          } else if (row.material_type_name.indexOf('油料') > -1) {
+            this.$set(this.tableData[this.currentMaterialIndex], 'type', 3)
+          } else {
+            this.$set(this.tableData[this.currentMaterialIndex], 'type', 1)
+          }
+        }
       } else {
         this.isIngredientObj = row
       }
@@ -419,12 +448,12 @@ export default {
       if (this.tableData.length > 0) {
         try {
           this.tableData.forEach(D => {
-            if (!D.material || !D.actual_weight) {
+            if (!D.material || !D.actual_weight || !D.type) {
               throw Error()
             }
           })
         } catch (e) {
-          this.$message.info('原材料与实际重量不能为空')
+          this.$message.info('原材料、实际重量、投料方式不能为空')
           return
         }
       }

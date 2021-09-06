@@ -13,21 +13,6 @@
           @change="searchDate"
         />
       </el-form-item>
-      <el-form-item label="发生部门">
-        <el-select
-          v-model="search.department"
-          clearable
-          placeholder="请选择"
-          @change="changeSearch"
-        >
-          <el-option
-            v-for="item in options"
-            :key="item"
-            :label="item"
-            :value="item"
-          />
-        </el-select>
-      </el-form-item>
       <el-form-item label="不合格状态">
         <el-select
           v-model="search.status"
@@ -100,13 +85,13 @@
         show-overflow-tooltip
       />
       <el-table-column
-        prop="use_flag"
+        prop="c_agreed"
         label="处理类型"
         min-width="50"
       >
         <template slot-scope="scope">
           <el-switch
-            v-model="scope.row.use_flag"
+            v-model="scope.row.c_agreed"
             style="display: block"
             active-color="#13ce66"
             inactive-color="#ff4949"
@@ -121,6 +106,7 @@
       >
         <template slot-scope="scope">
           <el-button
+            v-permission="['check_unqualified_order','add']"
             type="primary"
             size="mini"
             @click="creatExcel(scope)"
@@ -136,8 +122,11 @@
       @currentChange="currentChange"
     />
     <el-dialog
-      :fullscreen="true"
+      :fullscreen="false"
+      width="800px"
       :visible.sync="handleCardDialogVisible"
+      title="不合格处置工艺检查科处理"
+      center
     >
       <excel
         ref="handleCard"
@@ -166,13 +155,14 @@ export default {
       tableData: [],
       formHeadData: [],
       search: {
-        page: 1
+        page: 1,
+        t_solved: 'Y'
       },
       use_flag: true,
       loading: false,
       total: 0,
       options: ['准备分厂', '加硫车间', '混炼车间', '硫磺车间', '细料车间'],
-      options1: ['来料', '半成品', '成品', '库存'],
+      options1: ['来料', '半成品'],
       options2: ['Y', 'N'],
       handleCardDialogVisible: false,
       orderRow: {},
@@ -205,11 +195,17 @@ export default {
         this.tableData = []
         const data = await unqualifiedDealOrders('get', null, { params: this.search })
         this.total = data.count
-        data.results.forEach(d => {
-          this.tableData.push(
-            Object.assign({}, d, { use_flag: true })
-          )
+        this.tableData = data.results
+        this.tableData.forEach(d => {
+          if (d.c_agreed === null) {
+            d.c_agreed = true
+          }
         })
+        // data.results.forEach(d => {
+        //   this.tableData.push(
+        //     Object.assign({}, d, { use_flag: true })
+        //   )
+        // })
         this.loading = false
       } catch (e) {
         this.loading = false
@@ -235,7 +231,7 @@ export default {
       // } else {
       this.orderRow.id = scope.row.id
       this.handleCardDialogVisible = true
-      if (scope.row.use_flag === true) {
+      if (scope.row.c_agreed === true) {
         this.orderRow.c_deal_suggestion = '同意'
       } else {
         this.orderRow.c_deal_suggestion = '不同意'
@@ -252,6 +248,11 @@ export default {
           c_deal_date: obj.c_deal_date,
           c_deal_user: obj.c_deal_user,
           desc: obj.desc
+        }
+        if (obj.c_deal_suggestion === '同意') {
+          paramsData.c_agreed = true
+        } else {
+          paramsData.c_agreed = false
         }
         await unqualifiedDealOrders('patch', obj.id, { data: paramsData })
         this.$message.success('处理成功！！！！')

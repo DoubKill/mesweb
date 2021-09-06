@@ -30,13 +30,13 @@
             <el-table-column
               prop="finish_time"
               label="出库时间"
-              min-width="20"
+              min-width="32"
               align="center"
             />
             <el-table-column
               prop="created_user"
               label="出库员"
-              min-width="20"
+              min-width="18"
               align="center"
             />
             <el-table-column
@@ -48,25 +48,30 @@
             <el-table-column
               prop="production_info.classes"
               label="班次"
-              min-width="20"
+              min-width="16"
               align="center"
             />
             <el-table-column
               prop="production_info.equip_no"
               label="机台"
-              min-width="20"
+              min-width="16"
               align="center"
             />
             <el-table-column
-              prop="memo"
               label="车次"
-              min-width="20"
+              min-width="18"
               align="center"
+              :formatter="row=>{
+                if(!row.memo){
+                  return
+                }
+                return row.memo.replace(',','-')
+              }"
             />
             <el-table-column
               prop="material_no"
               label="胶料编码"
-              min-width="20"
+              min-width="22"
               align="center"
             />
             <el-table-column
@@ -78,7 +83,7 @@
             <el-table-column
               prop="inventory_reason"
               label="品质"
-              min-width="20"
+              min-width="18"
               align="center"
             />
             <el-table-column
@@ -136,7 +141,7 @@
           </el-table>
         </el-col>
         <el-col :span="11">
-          <div style="width:100%;height:34vh;display:flex">
+          <div style="width:100%;height:30vh;display:flex">
             <div v-for="(item,i) in listPie" :id="'tunnel'+i" :key="i" style="width:100%;height:100%" />
           </div>
         </el-col>
@@ -173,13 +178,17 @@ export default {
           text: '1巷道',
           left: 'center'
         },
+
         tooltip: {
           trigger: 'item',
           formatter: '{a} <br/>{b}: {c} ({d}%)'
         },
         legend: {
           top: 'bottom',
-          left: '2%'
+          left: '8%',
+          textStyle: {
+            fontSize: '20'
+          }
         },
         series: [
           {
@@ -196,10 +205,20 @@ export default {
             labelLine: {
               show: false
             },
-            data: []
+            data: [],
+            itemStyle: {
+              normal: {
+                label: {
+                  textStyle: {
+                    fontSize: '80%'
+                  }
+                }
+              }
+            }
           }
         ]
       },
+      // 未使用
       option1: {
         title: {
           text: '入库率',
@@ -392,7 +411,7 @@ export default {
     .center-style{
         padding:0 1.5em;
         .tableData-style{
-           height: 50vh;
+           height: 53vh;
             overflow: hidden;
         }
         .bar-right-style{

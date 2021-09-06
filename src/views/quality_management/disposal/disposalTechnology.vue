@@ -13,7 +13,7 @@
           @change="changeDate"
         />
       </el-form-item>
-      <el-form-item label="发生部门">
+      <!-- <el-form-item label="发生部门">
         <el-select
           v-model="search.department"
           clearable
@@ -27,7 +27,7 @@
             :value="item"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="不合格状态">
         <el-select
           v-model="search.status"
@@ -36,7 +36,7 @@
           @change="changeDate"
         >
           <el-option
-            v-for="item in ['来料','半成品','成品','库存']"
+            v-for="item in ['来料','半成品']"
             :key="item"
             :label="item"
             :value="item"
@@ -108,6 +108,7 @@
       >
         <template slot-scope="scope">
           <el-button
+            v-permission="['tech_unqualified_order','add']"
             type="primary"
             size="mini"
             :disabled="isDisabled"
@@ -212,6 +213,7 @@
     <h3>不合格品 处理意见</h3>
     <div style="text-align:right;margin-top:-35px;margin-bottom:8px;">
       <el-button
+        v-permission="['tech_unqualified_order','add']"
         size="mini"
         type="primary"
         @click="unqualifiedFun"
