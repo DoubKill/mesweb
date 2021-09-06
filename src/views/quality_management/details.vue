@@ -2,7 +2,7 @@
   <div
     class="app-container details_style"
   >
-    <el-form :inline="true">
+    <el-form v-if="!isProps" :inline="true">
       <el-form-item label="日期">
         <el-date-picker
           v-model="day_time"
@@ -228,6 +228,32 @@ export default {
     'el-table-infinite-scroll': elTableInfiniteScroll
   },
   components: { EquipSelect, DetailsUTable, allProductNoSelect, ClassSelect, StageSelect },
+  props: {
+    isProps: {
+      type: Boolean,
+      default: false
+    },
+    equipNo: {
+      type: String,
+      default: ''
+    },
+    productNo: {
+      type: String,
+      default: ''
+    },
+    classesNo: {
+      type: String,
+      default: ''
+    },
+    isQualified: {
+      type: String,
+      default: ''
+    },
+    show: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       count: 0,
@@ -293,7 +319,27 @@ export default {
       }
     }
   },
+  watch: {
+    show(bool) {
+      if (bool) {
+        this.getMaterialTestOrders()
+      }
+    }
+  },
   created() {
+    if (this.isProps) {
+      this.day_time = ''
+      this.getParams = {
+        st: '',
+        et: '',
+        equip_no: this.equipNo,
+        classes: this.classesNo,
+        product_no: this.productNo,
+        is_qualified: this.isQualified,
+        stage: null,
+        page: 1
+      }
+    }
     this.getTestTypes()
     this.testOrders = []
     this.testOrdersAll = []

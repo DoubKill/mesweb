@@ -35,6 +35,7 @@ import { materialCount } from '@/api/base_w'
 import { bzMixinInventorySummary, bzFinalInventorySummary } from '@/api/base_w_four'
 import { debounce } from '@/utils/'
 export default {
+  name: 'MaterialCodeSelect',
   props: {
     //  是不是输入搜索框
     isSearch: {

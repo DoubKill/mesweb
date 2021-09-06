@@ -4,7 +4,7 @@
     <el-form :inline="true">
       <el-form-item label="仓库名称">
         <span v-if="warehouseNameProps">{{ warehouseNameProps }}</span>
-        <el-select
+        <!-- <el-select
           v-else
           v-model="getParams.warehouse_name"
           placeholder="请选择"
@@ -17,33 +17,40 @@
             :label="item"
             :value="item"
           />
-        </el-select>
+        </el-select> -->
         <!-- <warehouseSelect :created-is="true" @changSelect="changeWarehouse" /> -->
       </el-form-item>
       <el-form-item label="物料编码">
+        <span v-if="materialNo">{{ materialNo }}</span>
         <materialCodeSelect
+          v-else
           :store-name="getParams.warehouse_name"
           :is-clearable="true"
           :is-allow-create="true"
           @changSelect="materialCodeFun"
         />
-        <!-- <el-input v-model="getParams.material_no" @input="changeSearch" /> -->
       </el-form-item>
       <el-form-item label="托盘号">
-        <el-input v-model="getParams.container_no" clearable @input="changeSearch" />
+        <span v-if="containerNo">{{ containerNo }}</span>
+        <el-input v-else v-model="getParams.container_no" clearable @input="changeSearch" />
       </el-form-item>
       <el-form-item label="质检条码">
-        <el-input v-model="getParams.lot_no" clearable @input="changeSearch" />
+        <span v-if="lotNo">{{ lotNo }}</span>
+        <el-input v-else v-model="getParams.lot_no" clearable @input="changeSearch" />
       </el-form-item>
       <!-- <el-form-item v-show="getParams.warehouse_name != '终炼胶库'" label="物料类型">
         <materielTypeSelect @changSelect="changeMaterialType" />
       </el-form-item> -->
-      <!-- <el-form-item style="float:right">
+      <el-form-item style="float:right">
         <el-button
           type="primary"
-          @click="exportTable"
+          @click="exportTable('1')"
+        >导出当前页面</el-button>
+        <el-button
+          type="primary"
+          @click="exportTable('all')"
         >导出全部</el-button>
-      </el-form-item> -->
+      </el-form-item>
     </el-form>
     <el-table
       border
@@ -54,7 +61,7 @@
       <el-table-column label="No" type="index" align="center" width="40" />
       <el-table-column label="物料类型" align="center" prop="material_type" width="80" />
       <el-table-column label="物料编码" align="center" prop="material_no" min-width="22" />
-      <el-table-column label="质检条码" align="center" prop="lot_no" min-width="20" />
+      <el-table-column label="质检条码" align="center" prop="lot_no" min-width="35" />
       <el-table-column label="货位状态" align="center" prop="location_status" min-width="16" />
       <el-table-column label="机台号" align="center" min-width="12">
         <template v-if="row.product_info" slot-scope="{row}">
@@ -78,12 +85,37 @@
       <el-table-column label="单位重量" align="center" prop="unit_weight" min-width="18" />
       <el-table-column label="总重量" align="center" prop="total_weight" min-width="18" />
       <el-table-column label="品质状态" align="center" prop="quality_status" min-width="16" />
+      <el-table-column label="操作" align="center" min-width="20">
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="primary"
+            @click="viewFun(scope.row)"
+          >查看</el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <page
       :total="total"
       :current-page="getParams.page"
       @currentChange="currentChange"
     />
+
+    <el-dialog
+      title="胶料快检详细信息"
+      :visible.sync="dialogVisible"
+      width="90%"
+      append-to-body
+    >
+      <detailsDialog
+        :is-props="true"
+        :equip-no="equipNo"
+        :product-no="productNo"
+        :classes-no="classesNo"
+        :is-qualified="qualityStatus"
+        :show="dialogVisible"
+      />
+    </el-dialog>
   </div>
 </template>
 
@@ -94,14 +126,30 @@ import { getMaterialInventoryManage } from '@/api/material-inventory-manage'
 import page from '@/components/page'
 import { mapGetters } from 'vuex'
 import materialCodeSelect from '@/components/select_w/materialCodeSelect'
-
+import detailsDialog from '@/views/quality_management/details.vue'
 export default {
   name: 'MaterialInventoryManage',
-  components: { materialCodeSelect, page },
+  components: { materialCodeSelect, page, detailsDialog },
   props: {
     warehouseNameProps: {
       type: String,
       default: ''
+    },
+    materialNo: {
+      type: String,
+      default: ''
+    },
+    containerNo: {
+      type: String,
+      default: ''
+    },
+    lotNo: {
+      type: String,
+      default: ''
+    },
+    show: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -110,17 +158,30 @@ export default {
       getParams: {
         page: 1,
         material_type: '', // 物料类型
-        material_no: '', // 物料编号
-        container_no: '', // 托盘号
+        material_no: this.materialNo, // 物料编号
+        container_no: this.containerNo, // 托盘号
+        lot_no: this.lotNo,
         warehouse_name: '混炼胶库' // 仓库名称
       },
       currentPage: 1,
       total: 0,
-      loading: false
+      loading: false,
+      dialogVisible: false,
+      equipNo: '',
+      productNo: '',
+      classesNo: '',
+      qualityStatus: ''
     }
   },
   computed: {
     ...mapGetters(['permission'])
+  },
+  watch: {
+    show(bool) {
+      if (bool) {
+        this.getTableData()
+      }
+    }
   },
   created() {
     this.permissionObj = this.permission
@@ -164,6 +225,13 @@ export default {
       // this.getParams.warehouse_name = data ? data.name : ''
       this.getParams.page = 1
       this.getTableData()
+    },
+    viewFun(row) {
+      this.equipNo = row.product_info.equip_no
+      this.productNo = row.material_no
+      this.classesNo = row.product_info.classes
+      this.qualityStatus = row.quality_status
+      this.dialogVisible = true
     },
     exportTable() {
       // responseType: 'blob'  get请求

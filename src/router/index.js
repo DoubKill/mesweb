@@ -846,23 +846,23 @@ export const asyncRoutes = [
               permissionName: 'product_stock_detail'
             }
           },
-          {
-            path: '/material-inventory-manage',
-            component: () => import('@/views/inventory/rubber-warehouse/material-inventory-manage.vue'),
-            name: 'MaterialInventoryManage',
-            meta: {
-              faName: 'RubberWarehouse',
-              title: '立库库存明细',
-              permissionName: 'goods'
-            }
-          },
+          // {
+          //   path: '/material-inventory-manage',
+          //   component: () => import('@/views/inventory/rubber-warehouse/material-inventory-manage.vue'),
+          //   name: 'MaterialInventoryManage',
+          //   meta: {
+          //     faName: 'RubberWarehouse',
+          //     title: '立库库存明细',
+          //     permissionName: 'goods'
+          //   }
+          // },
           {
             path: '/material-inout-record',
             component: () => import('@/views/inventory/rubber-warehouse/material_inout_record.vue'),
             name: 'MaterialInOutRecord',
             meta: {
               faName: 'RubberWarehouse',
-              title: '入出库履历查询',
+              title: '出入库履历查询',
               permissionName: 'in_out_history'
             }
           }
@@ -971,7 +971,7 @@ export const asyncRoutes = [
             name: 'DeliveryInOutRecord',
             meta: {
               faName: 'MaterialDelivery',
-              title: '入出库履历查询',
+              title: '出入库履历查询',
               permissionName: 'in_out_history'
             }
           }
@@ -1070,7 +1070,7 @@ export const asyncRoutes = [
           //   name: 'CarbonInOutRecord',
           //   meta: {
           //     faName: 'CarbonDelivery',
-          //     title: '入出库履历查询',
+          //     title: '出入库履历查询',
           //     permissionName: 'in_out_history'
           //   }
           // }
@@ -1291,7 +1291,7 @@ export const asyncRoutes = [
             name: 'CurtainInOutRecord',
             meta: {
               faName: 'CurtainStorehouse',
-              title: '入出库履历查询',
+              title: '出入库履历查询',
               permissionName: 'in_out_history'
             }
           }

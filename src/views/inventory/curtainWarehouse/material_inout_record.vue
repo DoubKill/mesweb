@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 帘布库 入出库履历查询 -->
+    <!-- 帘布库 出入库履历查询 -->
     <materialInoutRecord :warehouse-name-props="'帘布库'" />
   </div>
 </template>
