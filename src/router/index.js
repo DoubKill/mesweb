@@ -817,6 +817,16 @@ export const asyncRoutes = [
             }
           },
           {
+            path: '/compound-manage',
+            component: () => import('@/views/inventory/rubber-warehouse/compoundManage.vue'),
+            name: 'compoundManage',
+            meta: {
+              faName: 'RubberWarehouse',
+              title: '胶片库出库计划',
+              permissionName: ''
+            }
+          },
+          {
             path: '/rubber',
             component: () => import('@/views/inventory/rubber-warehouse/rubber_repertory_manage/index'),
             name: 'RubberRepertoryManage',

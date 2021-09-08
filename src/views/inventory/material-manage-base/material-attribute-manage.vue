@@ -222,9 +222,9 @@ export default {
       totalBarCode: 0,
       rules: {
         period_of_validity: [{ required: true, message: '不能为空', trigger: 'blur' },
-          { type: 'number', message: '请输入合法整数', trigger: 'blur' }],
+          { pattern: /^[1-9]\d*$/, message: '请输入正整数', trigger: 'blur' }],
         safety_inventory: [{ required: true, message: '不能为空', trigger: 'blur' },
-          { type: 'number', message: '请输入合法整数', trigger: 'blur' }],
+          { pattern: /^[1-9]\d*$/, message: '请输入正整数', trigger: 'blur' }],
         validity_unit: [{ required: true, message: '不能为空', trigger: 'blur' }],
         provenance: [{ required: true, message: '不能为空', trigger: 'blur' }]
       },

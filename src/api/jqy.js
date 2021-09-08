@@ -87,3 +87,23 @@ export function dataPoint(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+// 胶片库列表
+export function compoundManage(method, id, data = {}) {
+  const obj = {
+    url: id ? API.CompoundManage + id + '/' : API.CompoundManage,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+// 出库
+export function outbound(method, id, data = {}) {
+  const obj = {
+    url: id ? API.Outbound + id + '/' : API.Outbound,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

@@ -465,5 +465,10 @@ export default {
   // 炭黑投料提示-计划显示
   FeedCapacityPlan: '/api/v1/terminal/feed_capacity_plan/',
   CarbonFeedingPrompt: '/api/v1/terminal/carbon_feeding_prompt/',
-  CarOutCheck: '/api/v1/terminal/car_out_check/'
+  CarOutCheck: '/api/v1/terminal/car_out_check/',
+  // 胶片库出库单列表
+  CompoundManage: '/api/v1/inventory/outbound-delivery-orders/',
+  // 出库
+  Outbound: '/api/v1/inventory/outbound-delivery-order-details/'
+
 }
