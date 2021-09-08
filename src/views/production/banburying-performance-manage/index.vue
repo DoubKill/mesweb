@@ -62,18 +62,8 @@
         label="胶料代码"
       >
         <template slot-scope="scope">
-          <span
-            style="margin-left: 10px"
-            v-text="scope.row.product_no"
-          />
-          <el-button
-            v-if="scope.row.product_no != '合计'"
-            icon="el-icon-search"
-            type="text"
-            size="mini"
-            style="float: right; width: 25%"
-            @click="clickProductNo(scope.row)"
-          />
+          <el-link v-if="scope.row.product_no!=='合计'" type="primary" @click="clickProductNo(scope.row)">{{ scope.row.product_no }}</el-link>
+          <span v-else>{{ scope.row.product_no }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -459,6 +449,9 @@ export default {
       this.currentChange(1)
     },
     clickProductNo(row) {
+      if (row.product_no === '合计') {
+        return
+      }
       this.dialogVisibleRubber = true
       this.palletFeedObj = row
       this.pageRubber = 1

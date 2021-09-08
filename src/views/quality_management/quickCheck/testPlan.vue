@@ -92,6 +92,7 @@
 
         <el-table
           ref="multipleTable"
+          v-loading="loading"
           :data="tableData"
           style="width: 100%"
           border
@@ -743,6 +744,7 @@ export default {
     },
     changeTestEquip() {
       this.tableDataRight = []
+      this.tableData = []
       this.btnLoading = false
       this.ruleForm.plan_uid = ''
       this.ruleForm.product_no = ''
@@ -768,6 +770,11 @@ export default {
         }
         const data = await productTestPlan('get', null, { params: obj })
         if (data.results.length === 0) {
+          this.btnLoading = false
+          this.tableDataRight = []
+          this.btnLoading = false
+          this.ruleForm.plan_uid = ''
+          this.testMethodList = []
           return
         }
         if (!data.msg) {
@@ -877,6 +884,7 @@ export default {
     async endTestFun() {
       try {
         if (!this.ruleForm.plan_uid) {
+          this.$message.info('没有可结束计划,如果存在请刷新页面查看')
           return
         }
         await productTestPlan('get', null, { params: { close: 1, plan_uid: this.ruleForm.plan_uid }})
@@ -884,6 +892,7 @@ export default {
         this.$message.success('已全部结束检测')
         this.ruleForm.plan_uid = ''
         this.tableDataRight = []
+        this.ruleForm.product_no = ''
         // this.$nextTick(() => {
         // this.$refs.ruleForm.clearValidate()
         // })
@@ -893,9 +902,10 @@ export default {
     },
     refreshFun() {
       if (!this.ruleForm.plan_uid) {
-        return
+        this.changeTestEquip()
+      } else {
+        this.getWaitPlan(true)
       }
-      this.getWaitPlan(true)
     },
     showTestData(row) {
       this.dialogVisible = true

@@ -191,7 +191,7 @@
           </tr>
           <tr v-if="editType !== 1" style="text-align:left;">
             <td rowspan="4" :colspan="5+headDataLength" style="padding-left:25px">
-              <el-input
+              <!-- <el-input
                 v-if="isEdit&&editType === 2"
                 v-model="formObj.t_deal_suggestion"
                 type="textarea"
@@ -200,8 +200,8 @@
                 style="margin-top:10px;width:97%"
                 placeholder="请输入内容"
                 @change="editOne($event,'t_deal_user','t_deal_date')"
-              />
-              <div v-else class="deal_suggestion" v-html="formObj.t_deal_suggestion" />
+              /> -->
+              <div class="deal_suggestion" v-html="formObj.t_deal_suggestion" />
             </td>
           </tr>
           <tr v-if="![1].includes(editType)" />
@@ -220,7 +220,7 @@
           </tr>
           <tr v-if="![1,2].includes(editType)" style="text-align:left;">
             <td rowspan="4" :colspan="5+headDataLength" style="padding-left:25px">
-              <el-input
+              <!-- <el-input
                 v-if="isEdit&&editType === 3"
                 v-model="formObj.c_deal_suggestion"
                 type="textarea"
@@ -229,8 +229,8 @@
                 style="margin-top:10px;width:97%"
                 placeholder="请输入内容"
                 @change="editOne($event,'c_deal_user','c_deal_date')"
-              />
-              <div v-else>
+              /> -->
+              <div>
                 <div v-if="!formObj.c_deal_suggestion" style="height:80px" />
                 <div v-else class="deal_suggestion" v-html="formObj.c_deal_suggestion" />
               </div>
