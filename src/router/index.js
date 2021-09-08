@@ -926,16 +926,6 @@ export const asyncRoutes = [
               permissionName: 'depot_sulfur'
             }
           },
-          // {
-          //   path: '/material-inventory-manage',
-          //   component: () => import('@/views/inventory/rubber-warehouse/material-inventory-manage.vue'),
-          //   name: 'MaterialInventoryManage',
-          //   meta: {
-          //     faName: 'RubberWarehouse',
-          //     title: '立库库存明细',
-          //     permissionName: 'goods'
-          //   }
-          // },
           {
             path: '/sulphurLibrary/inOutWarehouseResume',
             component: () => import('@/views/inventory/sulphurLibrary/inOutWarehouseResume.vue'),
