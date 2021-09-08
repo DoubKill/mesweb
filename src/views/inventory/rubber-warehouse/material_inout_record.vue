@@ -1,6 +1,6 @@
 <template>
   <div v-loading="loading" class="app-container">
-    <!-- 入出库履历查询 -->
+    <!-- 出入库履历查询 -->
     <el-form :inline="true">
       <el-form-item label="时间">
         <el-date-picker
@@ -44,7 +44,22 @@
         </el-select>
       </el-form-item>
       <el-form-item label="仓库名称">
-        <warehouseSelect :created-is="true" @changSelect="warehouseSelectFun" />
+        <span v-if="warehouseNameProps">{{ warehouseNameProps }}</span>
+        <el-select
+          v-else
+          v-model="search.warehouse_name"
+          placeholder="请选择"
+          clearable
+          @change="warehouseSelectFun"
+        >
+          <el-option
+            v-for="item in ['混炼胶库','终炼胶库']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+        <!-- <warehouseSelect :created-is="true" @changSelect="warehouseSelectFun" /> -->
       </el-form-item>
       <el-form-item label="物料编码">
         <el-input v-model="search.material_no" @input="debounceList" />
@@ -58,14 +73,21 @@
       <el-form-item label="质检条码">
         <el-input v-model="search.lot_no" @input="debounceList" />
       </el-form-item>
-      <!-- <el-form-item style="float:right">
+      <el-form-item style="float:right">
         <el-button
           type="primary"
-          @click="exportTable"
-        >导出表格</el-button>
-      </el-form-item> -->
+          :loading="btnExportLoad"
+          @click="exportTable(false)"
+        >导出当前页</el-button>
+        <el-button
+          type="primary"
+          :loading="btnExportLoad"
+          @click="exportTable(true)"
+        >导出所有</el-button>
+      </el-form-item>
     </el-form>
     <el-table
+      id="out-table"
       :data="tableData"
       border
       fit
@@ -116,29 +138,40 @@
 <script>
 import { inventoryLog } from '@/api/base_w'
 import page from '@/components/page'
-import warehouseSelect from '@/components/select_w/warehouseSelect'
-import { setDate, debounce } from '@/utils'
+// import warehouseSelect from '@/components/select_w/warehouseSelect'
+import { setDate, debounce, exportExcel } from '@/utils'
 export default {
   name: 'MaterialInOutRecord',
-  components: { page, warehouseSelect },
+  components: { page },
+  props: {
+    warehouseNameProps: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
     return {
       search: {
         page: 1,
-        order_type: '出库'
+        order_type: '出库',
+        warehouse_name: ''
       },
       searchDate: [setDate(null, true), setDate(null, true)],
       total: 0,
       loading: false,
       options1: ['指定出库', '正常出库'],
       options2: [],
-      tableData: []
+      tableData: [],
+      btnExportLoad: false
     }
   },
   created() {
+    if (this.warehouseNameProps) {
+      this.search.warehouse_name = this.warehouseNameProps
+    }
     this.search.start_time = setDate(null, true)
     this.search.end_time = setDate(null, true)
-    // this.getList()
+    this.getList()
   },
   methods: {
     setDate,
@@ -163,9 +196,8 @@ export default {
       this.search.page = 1
       this.getList()
     },
-    warehouseSelectFun(val) {
+    warehouseSelectFun() {
       this.search.page = 1
-      this.search.store_name = val ? val.name : ''
       this.getList()
     },
     changeList() {
@@ -176,23 +208,32 @@ export default {
       this.search.page = 1
       debounce(this, 'getList')
     },
-    exportTable() {
-      // responseType: 'blob'  get请求
-
-      // barcodeQualityExport()
-      //   .then(res => {
-      //     const link = document.createElement('a')
-      //     const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
-      //     link.style.display = 'none'
-      //     link.href = URL.createObjectURL(blob)
-      //     link.download = '车间库存统计.xlsx' // 下载的文件名
-      //     document.body.appendChild(link)
-      //     link.click()
-      //     document.body.removeChild(link)
-      //     this.btnExportLoad = false
-      //   }).catch(e => {
-      //     this.btnExportLoad = false
-      //   })
+    exportTable(bool) {
+      // true导出所有
+      if (bool) {
+        if (this.tableData.length === 0) {
+          this.$message.info('暂无数据')
+          return
+        }
+        const obj = Object.assign({ export: 'all' }, this.search)
+        inventoryLog('get', null, { responseType: 'blob', params: obj })
+          .then(res => {
+            const link = document.createElement('a')
+            const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+            link.style.display = 'none'
+            link.href = URL.createObjectURL(blob)
+            link.download = this.search.warehouse_name + '出入库履历.xlsx' // 下载的文件名
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+            this.btnExportLoad = false
+          }).catch(e => {
+            this.btnExportLoad = false
+          })
+      } else {
+        // null, [{ wpx: 50 }, { wpx: 50 }, { wpx: 120 }]
+        exportExcel(this.search.warehouse_name + '出入库履历')
+      }
     }
   }
 }

@@ -3,6 +3,7 @@
     <!-- 投料计划 -->
     <h4>本日班次密炼生产计划</h4>
     <el-table
+      v-loading="loading"
       :data="tableData"
       style="width: 50%;"
       border
@@ -39,9 +40,10 @@
       />
     </el-table>
     <h4>炭黑罐投料提示信息</h4>
-    <el-row class="dialogPlanAddIndex">
+    <el-row class="dialogPlanAdd">
       <el-col :span="1" class="leftEquip">
         <el-checkbox
+          v-if="equips.length>0"
           v-model="checkAll"
           :disabled="disabledEquip"
           @change="handleCheckAllChange"
@@ -69,60 +71,60 @@
       <!-- </div> -->
       </el-col>
       <el-col
-        v-loading="addPlanArrLoading"
         :span="23"
         class="rightContent"
-        element-loading-text="拼命加载中"
       >
         <div
-          v-for="(tableItem,i) in addPlanArr"
-          :key="i"
-          style="margin-bottom:10px;margin-left:10px"
+          v-for="(tableItem,key) in addPlanArr"
+          :key="key"
+          v-loading="addPlanArrLoading"
+          style="margin-left:10px;"
+          element-loading-text="拼命加载中"
         >
-          <div class="tableTop">
-            4443333
-            <el-button style="float:right;margin:5px 10px" size="small">保存</el-button>
-            <!-- {{ tableItem[0][0]?tableItem[0][0].equipNo:'--' }} -->
-          </div>
-          <el-table
-            :key="i"
-            :data="tableItem"
-            border
-            width="100%"
-            :row-class-name="tableRowClassName"
-            :span-method="objectSpanMethod"
-          >
+          <div v-for="(tableItem1,key1) in tableItem" :key="key1" class="tableTop">
+            <div>
+              <el-button style="float:right;margin:5px 10px" size="small" @click="saveFun(key,key1)">保存</el-button>
+              {{ key1 }}
+            </div>
+            <el-table
+              :key="key1"
+              :data="tableItem1"
+              border
+              width="100%"
+              :cell-class-name="tableRowClassName"
+              :span-method="objectSpanMethod"
             >
-            <el-table-column label="炭黑罐号" min-width="20">
-              <template slot-scope="scope">
-                {{ scope.row.classes_name }}
-              </template>
-            </el-table-column>
-            <el-table-column
-              min-width="20"
-              label="料罐类别"
-            >
-              <template slot-scope="scope">
-                {{ scope.row.classes_name }}
-              </template>
-            </el-table-column>
-            <el-table-column
-              label="炭黑物料名称"
-              min-width="20"
-            >
-              <template slot-scope="scope">
-                {{ scope.row.classes_name }}
-              </template>
-            </el-table-column>
-            <el-table-column
-              label="料位状态"
-              min-width="20"
-            >
-              <template slot-scope="scope">
-                {{ scope.row.classes_name }}
-              </template>
-            </el-table-column>
-            <!-- <el-table-column
+              >
+              <el-table-column label="炭黑罐号" min-width="20">
+                <template slot-scope="scope">
+                  {{ scope.row.tank_no }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                min-width="20"
+                label="料罐类别"
+              >
+                <template slot-scope="scope">
+                  {{ scope.row.tank_capacity_type ===0?'小':'大' }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="炭黑物料名称"
+                min-width="20"
+              >
+                <template slot-scope="scope">
+                  {{ scope.row.tank_material_name }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="料位状态"
+                min-width="20"
+              >
+                <template slot-scope="scope">
+                  {{ scope.row.tank_level_status }}
+                </template>
+              </el-table-column>
+              <!-- <el-table-column
               label="班次补料计算值kg"
               min-width="20"
             >
@@ -130,83 +132,86 @@
                 {{ scope.row.status }}
               </template>
             </el-table-column> -->
-            <!-- <el-table-column label="2小时补料计算值kg" min-width="20">
+              <!-- <el-table-column label="2小时补料计算值kg" min-width="20">
               <template slot-scope="scope">
                 {{ scope.row.status }}
               </template>
             </el-table-column> -->
-            <el-table-column label="补料设定值kg" min-width="20">
-              <template slot-scope="scope">
-                {{ scope.row.created_date }}
-              </template>
-            </el-table-column>
-            <el-table-column label="投料口" width="170">
-              <template slot-scope="scope">
-                <el-select
-                  v-if="!scope.row.isNoPortOne"
-                  v-model="scope.row.aaaa"
-                  placeholder="请选择"
-                  @change="portChange($event,scope.$index,i,scope.row)"
-                >
-                  <el-option
-                    v-for="(item,portI) in options"
-                    :key="portI"
-                    :label="item.name"
-                    :value="item.name"
+              <el-table-column label="补料设定值kg" min-width="20">
+                <template slot-scope="scope">
+                  {{ scope.row.feedcapacity_weight_set }}
+                </template>
+              </el-table-column>
+              <el-table-column label="投料口" width="170">
+                <template slot-scope="scope">
+                  <el-select
+                    v-if="!scope.row.is_no_port_one"
+                    v-model="scope.row.feedport_code"
+                    placeholder="请选择"
+                    @change="portChange($event,scope.$index,key,key1,scope.row)"
+                  >
+                    <el-option
+                      v-for="(item,portI) in options"
+                      :key="portI"
+                      :label="item.name"
+                      :value="item.name"
+                    />
+                  </el-select>
+                  <span v-else>{{ scope.row.feedport_code }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="投料物料信息" width="170">
+                <template slot-scope="scope">
+                  <el-select
+                    v-model="scope.row.feed_material_name"
+                    placeholder="请选择"
+                    filterable
+                    @change="MaterialChange($event,scope.$index,key,key1,scope.row)"
+                    @visible-change="visibleChangeMaterial($event,scope.row)"
+                  >
+                    <el-option
+                      v-for="(item,portI) in optionsMaterial"
+                      :key="portI"
+                      :label="item.material_name"
+                      :value="item.material_name"
+                    />
+                  </el-select>
+                </template>
+              </el-table-column>
+              <el-table-column label="是否出库" min-width="20">
+                <template slot-scope="scope">
+                  <el-switch
+                    v-model="scope.row.ex_warehouse_flag"
                   />
-                </el-select>
-                <span v-else>{{ scope.row.aaaa }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="投料物料信息" width="170">
-              <template slot-scope="scope">
-                <el-select
-                  v-model="scope.row.bb"
-                  placeholder="请选择"
-                  @change="MaterialChange($event,scope.$index,i,scope.row)"
-                >
-                  <el-option
-                    v-for="(item,portI) in optionsMaterial"
-                    :key="portI"
-                    :label="item.name"
-                    :value="item.name"
-                  />
-                </el-select>
-              </template>
-            </el-table-column>
-            <el-table-column label="是否出库" min-width="20">
-              <template slot-scope="scope">
-                <el-switch
-                  v-model="scope.row.aaa"
-                />
-              </template>
-            </el-table-column>
-            <el-table-column label="投料状态" min-width="20">
-              <template slot-scope="scope">
-                {{ scope.row.created_date }}
-              </template>
-            </el-table-column>
-            <el-table-column
-              width="160"
-              label="操作"
-              fixed="right"
-            >
-              <template slot-scope="scope">
-                <el-button
-                  size="mini"
-                  type="primary"
-                  @click="handleStart(scope.$index,scope.row,i,true)"
-                >开始
-                </el-button>
-                <el-button
-                  size="mini"
-                  type="primary"
-                  @click="handleGroupDelete(scope.$index,scope.row,i,false)"
-                >结束
-                </el-button>
-              </template>
-            </el-table-column>
-          </el-table>
+                </template>
+              </el-table-column>
+              <el-table-column label="投料状态" min-width="20">
+                <template slot-scope="scope">
+                  {{ scope.row.feed_status===0?'投料中':scope.row.feed_status===1?'投料完成':'空' }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                width="160"
+                label="操作"
+                fixed="right"
+              >
+                <template slot-scope="scope">
+                  <el-button
+                    size="mini"
+                    type="primary"
+                    @click="handleStart(scope.row,key1,key,scope.$index)"
+                  >开始
+                  </el-button>
+                  <el-button
+                    size="mini"
+                    type="primary"
+                    @click="handleGroupDelete(scope.row)"
+                  >结束
+                  </el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
         </div>
       </el-col>
     </el-row>
@@ -216,32 +221,32 @@
       :visible.sync="dialogVisible"
       width="30%"
     >
-      <el-form ref="form" :model="form" label-width="160px">
+      <el-form ref="form" :model="formData" label-width="160px">
         <el-form-item label="生产机台:">
-          {{ '生产机台' }}
+          {{ formData.equip_id }}
         </el-form-item>
         <el-form-item label="炭黑罐号:">
-          {{ '炭黑罐号' }}
+          {{ formData.tank_no }}
         </el-form-item>
         <el-form-item label="料罐物料:">
-          {{ '料罐物料' }}
+          {{ formData.tank_material_name }}
         </el-form-item>
         <el-form-item label="投料口:">
-          {{ '投料口' }}
+          {{ formData.feedport_code }}
         </el-form-item>
         <el-form-item label="投料重量（kg）:">
-          {{ '投料重量（kg）' }}
+          {{ formData.aa }}
         </el-form-item>
         <el-form-item label="库存数量（托）:">
-          {{ '投料口' }}
+          {{ formData.bb }}
         </el-form-item>
         <el-form-item label="库库存重量（kg）:">
-          {{ '库库存重量（kg）' }}
+          {{ formData.cc }}
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button type="primary" @click="submitForm(false,formData.id)">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -249,7 +254,8 @@
 
 <script>
 import { equipUrl } from '@/api/base_w'
-import { feedCapacityPlan, carbonFeedingPrompt } from '@/api/base_w_four'
+import { zcMaterials } from '@/api/base_w_two'
+import { feedCapacityPlan, carbonFeedingPrompt, carOutCheck } from '@/api/base_w_four'
 export default {
   name: 'RawPlan',
   data() {
@@ -270,7 +276,8 @@ export default {
       ],
       optionsMaterial: [],
       dialogVisible: false,
-      form: {}
+      formData: {},
+      loading: true
     }
   },
   created() {
@@ -290,22 +297,34 @@ export default {
       try {
         const data = await feedCapacityPlan('get')
         this.tableData = data || []
+        this.loading = false
       } catch (e) {
-        //
+        this.loading = false
       }
     },
-    getOptionsMaterial() {
+    async getOptionsMaterial(row) {
       try {
-        // const equipData = await equipUrl('get', { params: { all: 1, category_name: '密炼设备' }})
-        // this.optionsMaterial = equipData.results
+        const DATA = await zcMaterials('get', null, { params: { material_name: row.tank_material_name, is_binding: 'Y', all: 1 }})
+        this.optionsMaterial = DATA.results || []
       } catch (e) {
         //
       }
     },
     async handleCheckAllChange(val) {
-      // const work_schedule = []
+      let work_schedule = []
+      const arr = []
       if (val) {
         // 获取全部机台数据全部循环  this.addPlanArr不存在的就push
+        work_schedule = await this.getInfoFun(false)
+
+        for (const key in work_schedule) {
+          if (Object.hasOwnProperty.call(work_schedule, key)) {
+            const element = work_schedule[key]
+            arr.push({ [key]: element })
+          }
+        }
+        console.log(arr, 'work_schedule')
+        this.addPlanArr = arr
       }
 
       this.equips.forEach(D => {
@@ -316,133 +335,282 @@ export default {
           this.addPlanArr = []
         }
       })
+
+      console.log(this.addPlanArr, 2222)
     },
     async changeEquip(val, row) {
       if (val) {
-        const work_schedule = await this.getInfoFun(row)
+        const work_schedule = await this.getInfoFun(row) || { [row.equip_no]: [] }
         // this.visibleChange(row.id, row.category, work_schedule)
-        this.addPlanArr.push([{ equip_id: row.id }, { equip_id: row.id }, { equip_id: row.id }])
+        this.addPlanArr.push(work_schedule)
       } else {
-        const arr = []
-        this.addPlanArr.forEach(d => {
-          if (d[0].equip_id !== row.id) {
-            arr.push(d)
+        const newAddPlanArr = []
+        const addPlanArr = JSON.parse(JSON.stringify(this.addPlanArr))
+        for (const iterator of addPlanArr) {
+          if (Object.keys(iterator)[0] !== row.equip_no) {
+            newAddPlanArr.push(iterator)
           }
-        })
-        this.addPlanArr = arr
+        }
+        row.checkbox = false
+        this.addPlanArr = newAddPlanArr
       }
     },
     async getInfoFun(row) {
       try {
-        const data = await carbonFeedingPrompt('get', null, { params: { equip_no: row.equip_no }})
-        // this.tableData = data || []
-      } catch (e) {
-        //
-      }
-    },
-    MaterialChange(val, index, i, row) {
-
-    },
-    portChange(val, index, faIndex, row) {
-      const row1 = this.addPlanArr[faIndex][index + 1] || null
-      const _row = JSON.parse(JSON.stringify(row))
-      // isNoPortOne 表示是附属添加的数据
-      if (val === '掺混1-1号口') {
-        _row.aaaa = '掺混1-2号口'
-        _row.isNoPortOne = true
-      } else if (val === '掺混1-2号口') {
-        _row.aaaa = '掺混1-1号口'
-        _row.isNoPortOne = true
-      } else if (val === '掺混2-1号口') {
-        _row.aaaa = '掺混2-2号口'
-        _row.isNoPortOne = true
-      } else if (val === '掺混2-2号口') {
-        _row.aaaa = '掺混2-1号口'
-        _row.isNoPortOne = true
-      } else {
-        if (row1 && row1.isNoPortOne) {
-          this.addPlanArr[faIndex].splice(index + 1, 1)
+        this.disabledEquip = true
+        this.addPlanArrLoading = true
+        let obj = {}
+        if (row) {
+          obj = { equip_id: row.equip_no }
+        } else {
+          delete obj.equip_id
+          obj = { all: 1 }
         }
-        console.log(this.addPlanArr, 8888)
+        const data = await carbonFeedingPrompt('get', null, { params: obj })
+        this.disabledEquip = false
+        this.addPlanArrLoading = false
+        for (const key in data) {
+          if (Object.hasOwnProperty.call(data, key)) {
+            data[key].forEach(d => {
+              d.is_no_port_one = d.is_no_port_one ? d.is_no_port_one : false
+            })
+          }
+        }
+        return data
+      } catch (e) {
+        this.disabledEquip = false
+        this.addPlanArrLoading = false
+      }
+    },
+    MaterialChange(val, index, faIndex, zo, row) {
+      const arr = this.optionsMaterial.filter(d => d.material_name === val)
+      if (arr.length > 0) {
+        row.material_no = arr[0].material_no
+      }
+    },
+    visibleChangeMaterial(bool, row) {
+      if (bool) {
+        this.optionsMaterial = []
+        this.getOptionsMaterial(row)
+      }
+    },
+    portChange(val, index, faindex, key1, row) {
+      const row1 = this.addPlanArr[faindex][key1][index + 1] || null
+      const _row = JSON.parse(JSON.stringify(row))
+      // is_no_port_one 表示是附属添加的数据
+      if (val === '掺混1-1号口') {
+        _row.feedport_code = '掺混1-2号口'
+        _row.is_no_port_one = true
+        _row.feed_change = 2
+        row.feed_change = 2
+      } else if (val === '掺混1-2号口') {
+        _row.feedport_code = '掺混1-1号口'
+        _row.is_no_port_one = true
+        _row.feed_change = 2
+        row.feed_change = 2
+      } else if (val === '掺混2-1号口') {
+        _row.feedport_code = '掺混2-2号口'
+        _row.is_no_port_one = true
+        _row.feed_change = 2
+        row.feed_change = 2
+      } else if (val === '掺混2-2号口') {
+        _row.feedport_code = '掺混2-1号口'
+        _row.is_no_port_one = true
+        _row.feed_change = 2
+        row.feed_change = 2
+      } else {
+        if (row1 && row1.is_no_port_one) {
+          this.addPlanArr[faindex][key1].splice(index + 1, 1)
+          row.feed_change = 1
+          _row.feed_change = 1
+        }
         return
       }
-      if (row1 && row1.isNoPortOne) {
-        this.addPlanArr[faIndex][index + 1].aaaa = _row.aaaa
+      if (row1 && row1.is_no_port_one) {
+        this.addPlanArr[faindex][key1][index + 1].feedport_code = _row.feedport_code
         return
       }
-      this.addPlanArr[faIndex].splice(index + 1, 0, _row)
+      this.addPlanArr[faindex][key1].splice(index + 1, 0, _row)
       console.log(this.addPlanArr, 8888)
     },
     clickEquip() {},
-    handleGroupDelete(index, row, faIndex, bool) {
+    handleGroupDelete(row) {
       this.$confirm(`是否确定结束?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        // propertyTypeNode('delete', data.id)
-        //   .then(response => {
-        //     this.$message({
-        //       type: 'success',
-        //       message: '操作成功!'
-        //     })
-        //   }).catch(e => {
-        //     //
-        //   })
+        carbonFeedingPrompt('put', row.id, { data: { feed_status: 1 }})
+          .then(response => {
+            this.$message({
+              type: 'success',
+              message: '操作成功!'
+            })
+            row.feed_status = 1
+          }).catch(e => {
+            //
+          })
       })
     },
-    handleStart(index, row, faIndex, bool) {
-      this.dialogVisible = true
+    async handleStart(row, zo, faIndex, index) {
+      try {
+        if (!row.feed_material_name || !row.feedport_code) {
+          this.$message({ type: 'error', message: '投料口或投入物料未选择!' })
+          return
+        }
+        const obj = JSON.parse(JSON.stringify(row))
+        obj.equip_id = zo
+        delete obj.is_plan_used
+        // delete obj.id
+
+        const data = await carOutCheck('post', null, { data: obj })
+        if (data === 'OK') {
+          this.formData = obj
+          this.formData._faIdex = faIndex
+          this.formData._index = index
+          this.dialogVisible = true
+        } else {
+          this.formData = {}
+          this.submitForm(true, obj.id, row)
+        }
+      } catch (e) {
+        //
+      }
     },
-    submitForm() {
-      this.$confirm(`请预先切换好管路，点击确定后炭黑料包将从炭黑立库里输出，解包房将开始投料，是否继续？`, '提示', {
+    submitForm(bool, id, row) {
+      // bool 等于true 出库关闭得情况
+      const _value = bool ? '请预先切换好管路，点击确定后解包房将开始投料，是否继续？'
+        : '请预先切换好管路，点击确定后炭黑料包将从炭黑立库里输出，解包房将开始投料，是否继续？'
+      const _api = bool ? carbonFeedingPrompt : carbonFeedingPrompt
+      let obj = {}
+      // if (bool) {
+      obj = { feed_status: 0 }
+      // }
+      this.$confirm(_value, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         this.dialogVisible = false
-        // propertyTypeNode('delete', data.id)
-        //   .then(response => {
-        //     this.$message({
-        //       type: 'success',
-        //       message: '操作成功!'
-        //     })
-        //   }).catch(e => {
-        //     //
-        //   })
+        _api('put', id, { data: obj })
+          .then(response => {
+            this.$message({
+              type: 'success',
+              message: '操作成功!'
+            })
+            if (row) {
+              row.feed_status = 0
+            } else {
+              this.addPlanArr[this.formData._faIdex][this.formData.equip_id][this.formData._index].feed_status = 0
+            }
+          }).catch(e => {
+            //
+          })
       })
     },
-    objectSpanMethod({ row, column, rowIndex, columnIndex }) {
-      // if (columnIndex < 5) {
-      //   const _row = row.isOneMerge ? 2 : 1
-      //   const _col = row.isOneMerge ? 1 : 0
-      //   return {
-      //     rowspan: _row,
-      //     colspan: _col
-      //   }
+    async startFun() {
+      // try {
+      //   await carbonFeedingPrompt('post', null, { data: { }})
+      // } catch (e) {
+      //   //
       // }
     },
-    tableRowClassName({ row, rowIndex }) {
-      switch (row.status) {
-        case '等待':
-          return 'wait-row'
-        case '已保存':
-          return 'danger-row'
-        default:
-          return ''
+    async saveFun(faIndex, zo) {
+      try {
+        let arr = []
+        for (const key in this.addPlanArr[faIndex]) {
+          if (Object.hasOwnProperty.call(this.addPlanArr[faIndex], key)) {
+            const element = this.addPlanArr[faIndex][key]
+            arr = element
+          }
+        }
+        arr.forEach(d => {
+          d.equip_id = zo
+          // if (!d.feedport_code || !d.feed_material_name) {
+          //   throw new Error('投料口或投入物料未选择!')
+          // }
+        })
+        console.log(arr)
+        if (this.addPlanArr[faIndex][zo].length === 0) {
+          this.$message.info('暂无数据保存')
+          return
+        }
+        await carbonFeedingPrompt('post', null, { data: arr })
+        this.$message.success('保存成功')
+        const work_schedule = await this.getInfoFun({ equip_no: zo })
+        this.addPlanArr[faIndex][zo] = work_schedule[zo]
+      } catch (e) {
+        if (e.message) {
+          this.$message.info(e.message)
+        }
       }
+    },
+    objectSpanMethod({ row, column, rowIndex, columnIndex }) {
+      // console.log(row, column, rowIndex, columnIndex, 333)
+      // let arr = []
+      // if (row.equip_id) {
+      //   console.log(this.addPlanArr.filter(d => Object.keys(d)[0] === row.equip_id), 2222)
+      //   arr = this.addPlanArr.filter(d => Object.keys(d)[0] === row.equip_id)
+      // }
+      if (columnIndex < 5) {
+        if (row.feed_change === 2) {
+          if (!row.is_no_port_one) {
+            return {
+              rowspan: 2,
+              colspan: 1
+            }
+          } else {
+            return {
+              rowspan: 0,
+              colspan: 0
+            }
+          }
+        }
+      }
+    },
+    tableRowClassName({ row, column, rowIndex, columnIndex }) {
+      if (columnIndex > 4) {
+        return
+      }
+      if (row.is_plan_used) {
+        if (row.tank_level_status === '低') {
+          return 'danger-row'
+        } else if (row.tank_level_status === '中') {
+          return 'wait-row'
+        }
+      } else {
+        if (row.tank_level_status === '低' || row.tank_level_status === '中') {
+          return 'green-row'
+        }
+      }
+      return ''
     }
   }
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
+.raw-plan-style{
+  ::-webkit-scrollbar {
+    width: 1px;
+}
+::-webkit-scrollbar-button {
+    background: #ccc
+}
+::-webkit-scrollbar-track-piece {
+    background: #888
+}
+::-webkit-scrollbar-thumb {
+    background: #eee
+}
  .wait-row{
-       color: rgb(209, 206, 37) !important;
+       background: rgb(255, 255, 0) !important;
+ }
+ .green-row{
+       background: rgb(149, 240, 4) !important;
  }
  .danger-row{
-       color: rgb(236,128,141) !important;
+    background: rgb(217, 0, 25)  !important;
  }
- .raw-plan-style{
    .el-form-item{
      margin-bottom:0;
    }
@@ -456,7 +624,7 @@ export default {
     border: 1px solid #EBEEF5;
     border-bottom: none;
  }
-   .dialogPlanAddIndex{
+   .dialogPlanAdd{
     // display: flex;
     // min-width: 800px;
       .leftEquip{
@@ -467,7 +635,10 @@ export default {
       }
       .rightContent{
         padding-left:20px;
+        max-height:800px;
+        overflow-y: scroll;
       }
-   }
  }
+}
+
 </style>

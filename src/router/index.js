@@ -926,6 +926,16 @@ export const asyncRoutes = [
               permissionName: 'depot_sulfur'
             }
           },
+          // {
+          //   path: '/material-inventory-manage',
+          //   component: () => import('@/views/inventory/rubber-warehouse/material-inventory-manage.vue'),
+          //   name: 'MaterialInventoryManage',
+          //   meta: {
+          //     faName: 'RubberWarehouse',
+          //     title: '立库库存明细',
+          //     permissionName: 'goods'
+          //   }
+          // },
           {
             path: '/sulphurLibrary/inOutWarehouseResume',
             component: () => import('@/views/inventory/sulphurLibrary/inOutWarehouseResume.vue'),
@@ -1066,6 +1076,16 @@ export const asyncRoutes = [
               title: '库存管理',
               permissionName: 'material_inventory_summary'
             }
+          },
+          {
+            path: '/delivery-inout-record',
+            component: () => import('@/views/inventory/material-delivery-manage/material_inout_record.vue'),
+            name: 'DeliveryInOutRecord',
+            meta: {
+              faName: 'MaterialDelivery',
+              title: '出入库履历查询',
+              permissionName: 'in_out_history'
+            }
           }
         ]
       },
@@ -1128,6 +1148,49 @@ export const asyncRoutes = [
               title: '出库年报',
               permissionName: 'th_yearly_summary'
             }
+          }
+          // {
+          //   path: '/carbon-inout-record',
+          //   component: () => import('@/views/inventory/carbon-delivery-manage/material_inout_record.vue'),
+          //   name: 'CarbonInOutRecord',
+          //   meta: {
+          //     faName: 'CarbonDelivery',
+          //     title: '出入库履历查询',
+          //     permissionName: 'in_out_history'
+          //   }
+          // }
+
+        ]
+      },
+      {
+        path: '/material-outgoing',
+        redirect: '/receive-good-manage/index',
+        component: () => import('@/views/inventory/material-outgoing/a-index.vue'),
+        name: 'MaterialOutgoing',
+        meta: {
+          title: '胶料外发',
+          icon: 'stock'
+        },
+        children: [
+          {
+            path: '/receive-good-manage/index',
+            component: () => import('@/views/inventory/material-outgoing/receive-list.vue'),
+            name: 'ReceiveGoodManageIndex',
+            meta: {
+              faName: 'MaterialOutgoing',
+              title: '发货计划管理',
+              permissionName: 'delivery_plan'
+            }
+          },
+          {
+            path: '/receive-good-manage/view',
+            component: () => import('@/views/inventory/material-outgoing/receive-view.vue'),
+            name: 'ReceiveGoodManageView',
+            meta: {
+              faName: 'MaterialOutgoing',
+              title: '发货履历管理',
+              permissionName: 'delivery_history'
+            }
           },
           {
             path: '/carbon-delivery-manage/stock',
@@ -1137,6 +1200,16 @@ export const asyncRoutes = [
               faName: 'CarbonDelivery',
               title: '库存管理',
               permissionName: 'th_inventory_summary'
+            }
+          },
+          {
+            path: '/Curtain-inout-record',
+            component: () => import('@/views/inventory/curtainWarehouse/material_inout_record.vue'),
+            name: 'CurtainInOutRecord',
+            meta: {
+              faName: 'CurtainStorehouse',
+              title: '出入库履历查询',
+              permissionName: 'in_out_history'
             }
           }
         ]
@@ -1760,7 +1833,7 @@ export const asyncRoutes = [
         component: () => import('@/views/quality_management/feed/a-index'),
         name: 'Feed',
         meta: {
-          title: '炭黑罐投料报错',
+          title: '炭黑罐投料防错',
           icon: 'quality'
         },
         children: [

@@ -344,3 +344,11 @@ export function carbonFeedingPrompt(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function carOutCheck(method, id, data = {}) {
+  const obj = {
+    url: id ? API.CarOutCheck + id + '/' : API.CarOutCheck,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

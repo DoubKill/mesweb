@@ -1,4 +1,7 @@
-import { putPlanManagement, finalPlanManagement } from '@/api/base_w'
+
+// import { putPlanManagement, finalPlanManagement } from '@/api/base_w'
+import { outboundDeliveryOrderDetails } from '@/api/base_w'
+// import { debounce } from '@/utils/index'
 export default {
   data() {
     return {
@@ -17,8 +20,8 @@ export default {
     async getListView() {
       try {
         this.loadingView = true
-        const _api = this.warehouseName === '混炼胶库' ? putPlanManagement : finalPlanManagement
-        this.searchView.outbound_order = this.outbound_order
+        const _api = outboundDeliveryOrderDetails
+        this.searchView.outbound_delivery_order_id = this.outbound_order
         const data = await _api('get', null, { params: this.searchView })
         this.totalView = data.count
         this.tableDataView = data.results
