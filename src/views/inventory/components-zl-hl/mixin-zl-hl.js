@@ -1,8 +1,5 @@
-
-// import { putPlanManagement, finalPlanManagement } from '@/api/base_w'
 import { outboundDeliveryOrderDetails } from '@/api/base_w'
-// import { debounce } from '@/utils/index'
-
+import { debounce } from '@/utils/index'
 export default {
   data() {
     return {
@@ -30,6 +27,10 @@ export default {
       } catch (error) {
         this.loadingView = false
       }
+    },
+    getDebounceView() {
+      this.searchView.page = 1
+      debounce(this, 'getListView')
     },
     showEditDialog(row) {
       // 查看
