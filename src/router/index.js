@@ -796,7 +796,7 @@ export const asyncRoutes = [
               permissionName: ''
             }
           },
-          {
+          /** {
             path: '/compound-rubber-manage',
             component: () => import('@/views/inventory/rubber-warehouse/compound-rubber-manage.vue'),
             name: 'CompoundManage',
@@ -815,7 +815,7 @@ export const asyncRoutes = [
               title: '终炼胶出库',
               permissionName: 'finalRubber_plan'
             }
-          },
+          },**/
           {
             path: '/compound-manage',
             component: () => import('@/views/inventory/rubber-warehouse/compoundManage.vue'),
@@ -1922,8 +1922,8 @@ export const asyncRoutes = [
             }
           }
         ]
-      },
-      {
+      }
+      /** {
         path: '/feed',
         redirect: '/feed/raw-plan',
         component: () => import('@/views/quality_management/feed/a-index'),
@@ -1964,7 +1964,7 @@ export const asyncRoutes = [
             }
           }
         ]
-      }
+      }**/
     ]
   },
   {
