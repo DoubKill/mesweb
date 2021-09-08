@@ -1066,6 +1066,16 @@ export const asyncRoutes = [
               title: '库存管理',
               permissionName: 'material_inventory_summary'
             }
+          },
+          {
+            path: '/delivery-inout-record',
+            component: () => import('@/views/inventory/material-delivery-manage/material_inout_record.vue'),
+            name: 'DeliveryInOutRecord',
+            meta: {
+              faName: 'MaterialDelivery',
+              title: '出入库履历查询',
+              permissionName: 'in_out_history'
+            }
           }
         ]
       },
@@ -1137,6 +1147,16 @@ export const asyncRoutes = [
               faName: 'CarbonDelivery',
               title: '库存管理',
               permissionName: 'th_inventory_summary'
+            }
+          },
+          {
+            path: '/Curtain-inout-record',
+            component: () => import('@/views/inventory/curtainWarehouse/material_inout_record.vue'),
+            name: 'CurtainInOutRecord',
+            meta: {
+              faName: 'CurtainStorehouse',
+              title: '出入库履历查询',
+              permissionName: 'in_out_history'
             }
           }
         ]
@@ -1760,7 +1780,7 @@ export const asyncRoutes = [
         component: () => import('@/views/quality_management/feed/a-index'),
         name: 'Feed',
         meta: {
-          title: '炭黑罐投料报错',
+          title: '炭黑罐投料防错',
           icon: 'quality'
         },
         children: [
