@@ -181,6 +181,7 @@
       title="快检值历史曲线"
       :visible.sync="historyDialogVisible"
       width="80%"
+      append-to-body
     >
       <el-date-picker
         v-model="historyDate"
@@ -232,6 +233,10 @@ export default {
     isProps: {
       type: Boolean,
       default: false
+    },
+    lotNo: {
+      type: String,
+      default: ''
     },
     equipNo: {
       type: String,
@@ -322,6 +327,12 @@ export default {
   watch: {
     show(bool) {
       if (bool) {
+        this.testOrders = []
+        this.testOrdersAll = []
+        this.day_time = ''
+        this.getParams.st = ''
+        this.getParams.et = ''
+        this.getParams.lot_no = this.lotNo
         this.getMaterialTestOrders()
       }
     }
@@ -329,16 +340,9 @@ export default {
   created() {
     if (this.isProps) {
       this.day_time = ''
-      this.getParams = {
-        st: '',
-        et: '',
-        equip_no: this.equipNo,
-        classes: this.classesNo,
-        product_no: this.productNo,
-        is_qualified: this.isQualified,
-        stage: null,
-        page: 1
-      }
+      this.getParams.st = ''
+      this.getParams.et = ''
+      this.getParams.lot_no = this.lotNo
     }
     this.getTestTypes()
     this.testOrders = []

@@ -7,7 +7,6 @@
           v-model="getParams.warehouse_name"
           clearable
           placeholder="请选择"
-          style="width: 120px"
           @change="changeSearch"
         >
           <el-option
@@ -21,9 +20,9 @@
       <el-form-item label="段次">
         <el-select
           v-model="getParams.stage"
-          style="width: 100px"
           clearable
           placeholder="请选择"
+          style="width:120px"
           @visible-change="RubberStageChange"
           @change="changeSearch"
         >
@@ -43,7 +42,7 @@
           @changSelect="materialCodeFun"
         />
       </el-form-item>
-      <el-form-item label="品质状态">
+      <!-- <el-form-item label="品质状态">
         <el-select
           v-model="getParams.aaa"
           style="width: 120px"
@@ -58,7 +57,7 @@
             :value="item"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="巷道">
         <el-select
           v-model="getParams.aaa"
@@ -77,14 +76,14 @@
       </el-form-item>
       <el-form-item label="有无封闭库位">
         <el-select
-          v-model="getParams.aaa"
+          v-model="getParams.location_status"
           style="width: 100px"
           clearable
           placeholder="请选择"
           @change="changeSearch"
         >
           <el-option
-            v-for="item in [{name:'有',id:1},{name:'无',id:2}]"
+            v-for="item in [{name:'有',id:'Y'},{name:'无',id:'N'}]"
             :key="item.id"
             :label="item.name"
             :value="item.id"
@@ -100,10 +99,12 @@
       <el-form-item style="float:right">
         <el-button
           type="primary"
+          :loading="btnLoading"
           @click="exportTable(1)"
         >导出当前页面</el-button>
         <el-button
           type="primary"
+          :loading="btnLoading"
           @click="exportTable('all')"
         >导出所有</el-button>
       </el-form-item>
@@ -114,7 +115,14 @@
       border
       style="width: 100%"
     >
-      <el-table-column prop="sn" label="No" align="center" min-width="6" />
+      <el-table-column
+        label="no"
+        width="75"
+      >
+        <template slot-scope="{row,$index}">
+          {{ row.all===1?'汇总': row.all===2?"页面小计":$index+1 }}
+        </template>
+      </el-table-column>
       <el-table-column prop="material_type" label="胶料类型" align="center" min-width="16" />
       <el-table-column prop="material_no" label="胶料编码" align="center" min-width="28">
         <template slot-scope="{row}">
@@ -122,31 +130,66 @@
           {{ row.material_no }}
         </template>
       </el-table-column>
-      <el-table-column prop="material_name" label="胶料名称" align="center" min-width="28" />
-      <el-table-column prop="" label="库区" align="center" min-width="20" />
+      <el-table-column prop="material_no" label="胶料名称" align="center" min-width="28" />
+      <el-table-column prop="site" label="库区" align="center" min-width="20" />
       <el-table-column label="一等品库存数(车)" align="center" min-width="20">
         <template slot-scope="{row}">
-          <el-link type="primary" @click="clickVehicle(row,'一等品')">{{ row.bbb }}</el-link>
+          <el-link v-if="row['一等品']" :type="row.all?'':'primary'" :underline="false" @click="clickVehicle(row,'一等品')">
+            {{ row['一等品'].qty }}
+          </el-link>
         </template>
       </el-table-column>
-      <el-table-column prop="" label="重量(kg)" align="center" min-width="20" />
+      <el-table-column prop="" label="重量(kg)" align="center" min-width="20">
+        <template slot-scope="{row}">
+          <span v-if="row['一等品']">
+            {{ row['一等品'].weight }}
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column prop="" label="三等品库存数(车)" align="center" min-width="20">
         <template slot-scope="{row}">
-          <el-link type="primary" @click="clickVehicle(row,'三等品')">{{ row.bbb }}</el-link>
+          <el-link v-if="row['三等品']" :type="row.all?'':'primary'" :underline="false" @click="clickVehicle(row,'三等品')">
+            {{ row['三等品'].qty }}
+          </el-link>
         </template>
       </el-table-column>
-      <el-table-column prop="" label="重量(kg)" align="center" min-width="20" />
+      <el-table-column prop="" label="重量(kg)" align="center" min-width="20">
+        <template slot-scope="{row}">
+          <span v-if="row['三等品']">
+            {{ row['三等品'].weight }}
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column label="待检品库存数(车)" align="center" min-width="20">
         <template slot-scope="{row}">
-          <el-link type="primary" @click="clickVehicle(row,'待检品')">{{ row.aaa }}</el-link>
+          <el-link v-if="row['待检品']" :type="row.all?'':'primary'" :underline="false" @click="clickVehicle(row,'待检品')">
+            {{ row['待检品'].qty }}
+          </el-link>
         </template>
       </el-table-column>
-      <el-table-column prop="" label="重量(kg)" align="center" min-width="20" />
-
-      <el-table-column prop="" label="总库存数(车)" align="center" min-width="20" />
+      <el-table-column prop="" label="重量(kg)" align="center" min-width="20">
+        <template slot-scope="{row}">
+          <span v-if="row['待检品']">
+            {{ row['待检品'].weight }}
+          </span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="qty" label="总库存数(车)" align="center" min-width="20" />
       <el-table-column prop="total_weight" label="总重量(kg)" align="center" min-width="20" />
-      <el-table-column prop="" label="封存库存数(车)" align="center" min-width="20" />
-      <el-table-column prop="" label="总重量(kg)" align="center" min-width="20" />
+      <el-table-column label="封存库存数(车)" align="center" min-width="20">
+        <template slot-scope="{row}">
+          <el-link v-if="row['fb']&&row['fb'].length>0" :type="row.all?'':'primary'" :underline="false" @click="clickVehicle(row,'封存库存')">
+            {{ row['fb'][0].qty }}
+          </el-link>
+        </template>
+      </el-table-column>
+      <el-table-column prop="" label="总重量(kg)" align="center" min-width="20">
+        <template slot-scope="{row}">
+          <span v-if="row['fb']&&row['fb'].length>0">
+            {{ row['fb'][0].weight }}
+          </span>
+        </template>
+      </el-table-column>
 
       <!-- :formatter="StandardFlagChoice" -->
     </el-table>
@@ -158,7 +201,7 @@
       width="90%"
       :before-close="handleClose"
     >
-      <generateAssignOutbound :warehouse-name="'混炼胶库'" :material-no="materialNo" :quality-status="qualityStatus" :show="dialogVisible" />
+      <generateAssignOutbound :warehouse-name="warehouseName" :location-status="locationStatus" :material-no="materialNo" :quality-status="qualityStatus" :show="dialogVisible" />
     </el-dialog>
   </div>
 </template>
@@ -175,7 +218,7 @@ export default {
   data: function() {
     return {
       loading: false,
-      tableData: [{ material_no: 'C-1MB-C911-03', aaa: '6' }],
+      tableData: [],
       total: 0,
       getParams: {
         page: 1,
@@ -186,7 +229,10 @@ export default {
       sulfurAddition: 0,
       sulfurFree: 0,
       qualityStatus: '',
-      materialNo: ''
+      materialNo: '',
+      locationStatus: '',
+      warehouseName: '',
+      btnLoading: false
     }
   },
   created() {
@@ -196,11 +242,29 @@ export default {
     async rubber_repertory_list() {
       try {
         this.loading = true
-        const rubber_repertoryData = await inLibraryInventory('get', null, { params: this.getParams })
-        this.tableData = rubber_repertoryData.results
-        this.total = rubber_repertoryData.count
-        // this.sulfurAddition = rubber_repertoryData.fm_count
-        // this.sulfurFree = rubber_repertoryData.other_count
+        const data = await inLibraryInventory('get', null, { params: this.getParams })
+
+        this.tableData = data.results
+
+        this.tableData.push({
+          all: 2,
+          '一等品': { qty: sum(this.tableData, '一等品', 'qty'), weight: sum(this.tableData, '一等品', 'weight') },
+          '待检品': { qty: sum(this.tableData, '待检品', 'qty'), weight: sum(this.tableData, '待检品', 'weight') },
+          '三等品': { qty: sum(this.tableData, '三等品', 'qty'), weight: sum(this.tableData, '三等品', 'weight') },
+          fb: [{ qty: sum(this.tableData, 'fb', 'qty'), weight: sum(this.tableData, 'fb', 'weight') }],
+          qty: sum(this.tableData, '', 'qty'),
+          total_weight: sum(this.tableData, '', 'total_weight')
+        }, {
+          all: 1,
+          '一等品': { qty: data.qty_1, weight: data.weight_1 },
+          '待检品': { qty: data.qty_dj, weight: data.weight_dj },
+          '三等品': { qty: data.qty_3, weight: data.weight_3 },
+          fb: [{ qty: data.qty_fb, weight: data.weight_fb }],
+          qty: data.total_count,
+          total_weight: data.total_weight
+        }
+        )
+        this.total = data.count
         this.loading = false
       } catch (e) {
         this.loading = false
@@ -249,12 +313,21 @@ export default {
       this.pageDialog = page
     },
     clickVehicle(row, str) {
-      this.qualityStatus = str
+      if (row.all) return
+      if (str === '封存库存') {
+        this.locationStatus = '封闭货位'
+        this.qualityStatus = ''
+      } else {
+        this.qualityStatus = str
+        this.locationStatus = ''
+      }
       this.materialNo = row.material_no ? row.material_no : ''
+      this.warehouseName = row.site ? row.site : ''
       this.dialogVisible = true
     },
     exportTable(val) {
       // responseType: 'blob'  get请求
+      this.btnLoading = true
       inLibraryInventory('get', null, { params: { export: val }, responseType: 'blob' })
         .then(res => {
           const link = document.createElement('a')
@@ -265,14 +338,30 @@ export default {
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)
-          this.btnExportLoad = false
+          this.btnLoading = false
         }).catch(e => {
-          this.btnExportLoad = false
+          this.btnLoading = false
         })
     }
   }
 }
+function sum(arr, str, params) {
+  var s = 0
 
+  arr.forEach(function(val, idx, arr) {
+    let a = 0
+    if (str === 'fb') {
+      a = val.fb.length > 0 ? Number(val.fb[0][params]) : 0
+    } else if (!str) {
+      a = val[params] ? Number(val[params]) : 0
+    } else {
+      a = val[str] ? Number(val[str][params]) : 0
+    }
+    s += a
+  }, 0)
+  s = Math.round(s * 1000) / 1000
+  return s
+}
 </script>
 
 <style lang="scss" scoped>

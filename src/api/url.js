@@ -150,11 +150,18 @@ export default {
 
   // 北自混炼胶库存列表
   BzMixinInventory: '/api/v1/inventory/bz-mixin-inventory/',
-  // 终练出库弹框列表
+  // 终练出库弹框列表(帘布库存明细)
   BzFinalInventory: 'api/v1/inventory/bz-final-inventory/',
+  // 原材料库存明细
+  WmsStorage: '/api/v1/inventory/wms-storage/',
+  // 炭黑库存明细
+  ThStorage: '/api/v1/inventory/th-storage/',
   // 混炼胶库计划管理
   PutPlanManagement: '/api/v1/inventory/put-plan-management/',
   MixinRubberyOutboundOrder: 'api/v1/inventory/mixin-rubbery-outbound-order/',
+  OutboundDeliveryOrders: '/api/v1/inventory/outbound-delivery-orders/',
+  OutboundDeliveryOrderDetails: '/api/v1/inventory/outbound-delivery-order-details/',
+  OutboundDeliveryOrdersExport: '/api/v1/inventory/outbound-delivery-orders/export/',
 
   //  终炼胶库计划管理
   FinalPlanManagement: '/api/v1/inventory/final-plan-management/',

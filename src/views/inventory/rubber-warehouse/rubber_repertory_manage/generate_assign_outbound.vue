@@ -5,16 +5,19 @@
       <el-form-item label="仓库名称">
         {{ warehouseName }}
       </el-form-item>
-      <el-form-item label="库存位">
+      <!-- <el-form-item label="库存位">
         <el-input v-model="getParams.location" @input="changeSearch" />
+      </el-form-item> -->
+      <!-- <el-form-item label="托盘号">
+        <el-input v-model="getParams.container_no" clearable @input="changeSearch" />
       </el-form-item>
-      <el-form-item label="托盘号">
-        <el-input v-model="getParams.container_no" @input="changeSearch" />
-      </el-form-item>
-      <el-form-item label="巷道">
+      <el-form-item label="质检条码">
+        <el-input v-model="getParams.lot_no" clearable @input="changeSearchLotNo" />
+      </el-form-item> -->
+      <!-- <el-form-item label="巷道">
         <el-input v-model="getParams.tunnel" @input="changeSearchTunnel" />
-      </el-form-item>
-      <el-form-item label="lot_no有无">
+      </el-form-item> -->
+      <!-- <el-form-item label="lot_no有无">
         <el-select
           v-model="getParams.lot_existed"
           placeholder="请选择"
@@ -28,8 +31,8 @@
             :value="item.id"
           />
         </el-select>
-      </el-form-item>
-      <el-form-item v-if="warehouseName ==='混炼胶库'" label="出库口">
+      </el-form-item> -->
+      <!-- <el-form-item v-if="warehouseName ==='混炼胶库'" label="出库口">
         <stationInfoWarehouse
           :warehouse-name="warehouseName"
           :assign-type="true"
@@ -39,6 +42,18 @@
           :default-val="station_no"
           @changSelect="selectStation"
         />
+      </el-form-item> -->
+      <el-form-item style="float:right">
+        <el-button
+          type="primary"
+          :loading="btnLoading"
+          @click="exportTable(1)"
+        >导出当前页面</el-button>
+        <el-button
+          type="primary"
+          :loading="btnLoading"
+          @click="exportTable(2)"
+        >导出所有</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -53,7 +68,6 @@
       <el-table-column :key="5" label="托盘号" align="center" prop="container_no" min-width="50" />
       <el-table-column :key="6" label="库存位" align="center" prop="location" min-width="50" />
       <el-table-column
-        v-if="warehouseName === '终炼胶库'"
         :key="7"
         min-width="40"
         label="车数"
@@ -77,7 +91,7 @@
       </el-table-column>
       <el-table-column :key="9" label="入库时间" align="center" prop="in_storage_time" />
       <el-table-column :key="10" label="机台号" width="60" align="center" prop="equip_no" />
-      <el-table-column
+      <!-- <el-table-column
         :key="18"
         min-width="40"
         label="计划车数"
@@ -89,9 +103,9 @@
           let a = Number(row.qty)
           return a.toFixed(0)
         }"
-      />
-      <el-table-column
-        v-if="['终炼胶出库计划'].includes($route.meta.title)"
+      /> -->
+      <!-- <el-table-column
+        v-if="['终炼胶库'].includes($route.meta.title)"
         :key="12"
         label="车次"
         min-width="40"
@@ -103,14 +117,16 @@
           }
           return row.memo.replace(',','-')
         }"
-      />
-      <el-table-column v-else :key="11" label="车号" align="center" prop="memo" min-width="40" />
+      /> -->
+      <el-table-column :key="11" label="车号" align="center" prop="memo" min-width="40" />
       <el-table-column :key="13" label="货位状态" align="center" prop="location_status" min-width="40" />
       <el-table-column :key="14" label="操作" align="center" min-width="40">
         <template slot-scope="scope">
           <el-button
+            v-if="!scope.row.all"
             size="mini"
             type="primary"
+            :disabled="!['一等品','三等品'].includes(scope.row.quality_level)"
             @click="viewFun(scope.row)"
           >查看</el-button>
         </template>
@@ -123,35 +139,35 @@
     />
 
     <el-dialog
-      title="立库库存明细"
+      title="快检信息"
       :visible.sync="dialogVisible"
       width="90%"
       append-to-body
     >
-      <materialInventoryManage
-        :warehouse-name-props="warehouseName"
-        :material-no="materialNo"
-        :container-no="containerNo"
-        :lot-no="lotNo"
+      <detailsDialog
+        :is-props="true"
         :show="dialogVisible"
+        :lot-no="lotNo"
       />
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { bzMixinInventory, bzFinalInventory } from '@/api/material-inventory-manage'
+import { bzMixinInventory, bzFinalInventory,
+  bzMixinInventoryDown, bzFinalInventoryDown } from '@/api/material-inventory-manage'
 import page from '@/components/page'
-import stationInfoWarehouse from '@/components/select_w/warehouseSelectPosition'
+// import stationInfoWarehouse from '@/components/select_w/warehouseSelectPosition'
 // import receiveList from '../material-outgoing/receive-list.vue'
 // import EquipSelect from '@/components/EquipSelect'
 // import materialCodeSelect from '@/components/select_w/materialCodeSelect'
 import { debounce } from '@/utils'
+import detailsDialog from '@/views/quality_management/details.vue'
 import { stationInfo } from '@/api/warehouse'
-import materialInventoryManage from '@/views/inventory/rubber-warehouse/material-inventory-manage.vue'
+// import materialInventoryManage from '@/views/inventory/rubber-warehouse/material-inventory-manage.vue'
 export default {
   name: 'GenerateAssignOutbound1',
-  components: { page, stationInfoWarehouse, materialInventoryManage },
+  components: { page, detailsDialog },
   props: {
     warehouseName: {
       type: String,
@@ -169,6 +185,10 @@ export default {
       type: String,
       default: null
     },
+    locationStatus: {
+      type: String,
+      default: null
+    },
     show: {
       type: Boolean,
       default: false
@@ -179,7 +199,7 @@ export default {
       tableData: [],
       getParams: {
         page: 1,
-        // location_status: '',
+        location_status: this.locationStatus,
         container_no: '', // 托盘号
         station_no: '', // 出库口
         quality_status: this.qualityStatus,
@@ -202,7 +222,8 @@ export default {
       station_no: '',
       dispatch: '',
       containerNo: '',
-      lotNo: ''
+      lotNo: '',
+      btnLoading: false
     }
   },
   computed: {
@@ -211,6 +232,15 @@ export default {
     show(bool) {
       if (bool) {
         this.tableData = []
+        this.getParams = {
+          page: 1,
+          location_status: this.locationStatus,
+          container_no: '', // 托盘号
+          station_no: '', // 出库口
+          quality_status: this.qualityStatus,
+          material_no: this.materialNo,
+          warehouse_name: this.warehouseName // 仓库名称
+        }
         this.getTableData()
       }
     }
@@ -227,20 +257,19 @@ export default {
         .then(response => {
           this.tableData = response.results
           this.total = response.count
-          this.tableData.forEach(D => {
-            let arr
-            if (this.multipleSelection.length > 0) {
-              arr = this.multipleSelection.filter(d =>
-                d.id === D.id)
-            }
 
-            if (arr.length > 0) {
-              this.$nextTick(() => {
-                this.$set(D, 'station', arr[0].station)
-                this.$set(D, 'station_no', arr[0].station_no)
-              })
-            }
+          this.tableData.push({
+            all: 2,
+            material_type: '单页合计',
+            qty: sum(this.tableData, 'qty'),
+            total_weight: sum(this.tableData, 'total_weight')
+          }, {
+            all: 1,
+            material_type: '汇总',
+            qty: response.total_trains,
+            total_weight: response.total_weight
           })
+
           this.loading = false
         }).catch(() => {
           this.loading = false
@@ -274,6 +303,9 @@ export default {
       this.getTableData()
     },
     changeSearchTunnel() {
+      debounce(this, 'changeSearch')
+    },
+    changeSearchLotNo() {
       debounce(this, 'changeSearch')
     },
     changeMaterialType(data) {
@@ -310,7 +342,7 @@ export default {
     },
     viewFun(row) {
       this.dialogVisible = true
-      this.containerNo = row.container_no
+      // this.containerNo = row.container_no
       this.lotNo = row.lot_no
     },
     selectStation(obj, index) {
@@ -325,8 +357,37 @@ export default {
         this.multipleSelection = []
         this.handleSelection = []
       }
+    },
+    exportTable(val) {
+      this.btnLoading = true
+      const obj = Object.assign({ export: val }, this.getParams)
+      const _api = this.warehouseName === '混炼胶库' ? bzMixinInventoryDown : bzFinalInventoryDown
+      _api(obj)
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '车间库存统计.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnLoading = false
+        }).catch(e => {
+          this.btnLoading = false
+        })
     }
   }
+}
+function sum(arr, params) {
+  var s = 0
+
+  arr.forEach(function(val, idx, arr) {
+    const a = val[params] ? Number(val[params]) : 0
+    s += a
+  }, 0)
+  s = Math.round(s * 1000) / 1000
+  return s
 }
 </script>
 <style lang="scss" scoped>

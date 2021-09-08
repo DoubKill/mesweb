@@ -383,6 +383,32 @@ export function mixinRubberyOutboundOrder(method, id, data = {}) {
   return request(obj)
 }
 
+export function outboundDeliveryOrdersExport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.OutboundDeliveryOrdersExport + id + '/' : API.OutboundDeliveryOrdersExport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function outboundDeliveryOrders(method, id, data = {}) {
+  const obj = {
+    url: id ? API.OutboundDeliveryOrders + id + '/' : API.OutboundDeliveryOrders,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function outboundDeliveryOrderDetails(method, id, data = {}) {
+  const obj = {
+    url: id ? API.OutboundDeliveryOrderDetails + id + '/' : API.OutboundDeliveryOrderDetails,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function finalPlanManagement(method, id, data = {}) {
   const obj = {
     url: id ? API.FinalPlanManagement + id + '/' : API.FinalPlanManagement,

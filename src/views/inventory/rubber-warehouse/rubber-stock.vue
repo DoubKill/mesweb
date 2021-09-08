@@ -44,11 +44,13 @@
       v-loading="loading"
       :data="tableData"
       border
+      :summary-method="getSummaries"
+      :show-summary="showSummary"
     >
       <el-table-column
         label="No"
         type="index"
-        width="30"
+        width="50"
       />
       <el-table-column
         label="胶种类"
@@ -64,6 +66,7 @@
           :key="item.id"
           :label="item+'  (车/吨)'"
           min-width="10"
+          :property="item+'*1'"
         >
           <template v-if="row.subject[item]" slot-scope="{row}">
             {{ row.subject[item].qty }}/{{ row.subject[item].weight }}
@@ -76,6 +79,7 @@
           :key="item.id"
           :label="item+'(车/吨)'"
           min-width="10"
+          :property="item+'*2'"
         >
           <template v-if="row.edge[item]" slot-scope="{row}">
             {{ row.edge[item].qty }}/
@@ -121,7 +125,8 @@ export default {
       allTableData: [],
       stageList: [],
       loading: true,
-      dateValue: null
+      dateValue: null,
+      showSummary: true
     }
   },
   created() {
@@ -142,6 +147,10 @@ export default {
     },
     async getList() {
       try {
+        if (!this.search.name) {
+          this.$message.info('胶种编码必填')
+          return
+        }
         this.loading = true
         const data = await productStationStatics('get', null, { params: this.search })
         const arr = []
@@ -180,9 +189,65 @@ export default {
           arr.push({ wpx: 60 })
         }
       }
-      exportExcel('胶料段次别数量统计', null, arr)
+      this.showSummary = false
+      setTimeout(() => {
+        exportExcel('胶料段次别数量统计', null, arr)
+        this.showSummary = true
+      }, 300)
+    },
+    getSummaries(param) {
+      const { columns, data } = param
+      const sums = []
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = '汇总'
+          return
+        }
+        const values = data.map(item => Number(item[column.property]))
+        if (!values.every(value => isNaN(value))) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0)
+          sums[index]
+        } else {
+          if (column.property) {
+            const _property = column.property.split('*')
+            console.log(_property)
+            if (_property[1] === '1') {
+              sums[index] = a(data, _property, 'subject')
+              return
+            }
+            if (_property[1] === '2') {
+              sums[index] = a(data, _property, 'edge')
+              return
+            }
+          }
+
+          sums[index]
+        }
+      })
+
+      return sums
     }
   }
+}
+function a(data, _property, params) {
+  let s = 0
+  let s1 = 0
+  data.forEach(function(val, idx, arr) {
+    const a = val[params][_property[0]] ? Number(val[params][_property[0]].qty) : 0
+    const b = val[params][_property[0]] ? Number(val[params][_property[0]].weight) : 0
+    s += a
+    s1 += b
+  }, 0)
+  s = Math.round(s * 1000) / 1000
+  s1 = Math.round(s1 * 1000) / 1000
+  return s + '/' + s1
 }
 </script>
 
