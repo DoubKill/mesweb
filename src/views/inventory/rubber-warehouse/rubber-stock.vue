@@ -217,7 +217,6 @@ export default {
         } else {
           if (column.property) {
             const _property = column.property.split('*')
-            console.log(_property)
             if (_property[1] === '1') {
               sums[index] = a(data, _property, 'subject')
               return
