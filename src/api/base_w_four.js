@@ -352,3 +352,11 @@ export function carOutCheck(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function carbonOutTask(method, id, data = {}) {
+  const obj = {
+    url: id ? API.CarbonOutTask + id + '/' : API.CarbonOutTask,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

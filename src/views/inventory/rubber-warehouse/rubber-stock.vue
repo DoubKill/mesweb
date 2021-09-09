@@ -6,6 +6,7 @@
         <el-select
           v-model="search.name"
           allow-create
+          clearable
           default-first-option
           filterable
           placeholder="请选择"
@@ -19,9 +20,6 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="段次表头过滤:">
-        <stage-select v-model="stageVal" :is-multiple="true" :is-default="true" width-select="400px" @change="stageChange" />
-      </el-form-item>
       <el-form-item label="统计起止时间:">
         <el-date-picker
           v-model="dateValue"
@@ -33,6 +31,9 @@
           value-format="yyyy-MM-dd"
           @change="visibleChange"
         />
+      </el-form-item>
+      <el-form-item label="段次表头过滤:">
+        <stage-select v-model="stageVal" :is-multiple="true" :is-default="true" width-select="400px" @change="stageChange" />
       </el-form-item>
       <el-button
         type="primary"
@@ -147,21 +148,19 @@ export default {
     },
     async getList() {
       try {
-        if (!this.search.name) {
-          this.$message.info('胶种编码必填')
-          return
-        }
+        // if (!this.search.name) {
+        //   this.$message.info('胶种编码必填')
+        //   return
+        // }
         this.loading = true
         const data = await productStationStatics('get', null, { params: this.search })
         const arr = []
-        data.results.forEach(d => {
-          for (const key in d) {
-            if (Object.hasOwnProperty.call(d, key)) {
-              const element = d[key]
-              arr.push({ name: key, ...element })
-            }
+        for (const key in data.results) {
+          if (Object.hasOwnProperty.call(data.results, key)) {
+            const element = data.results[key]
+            arr.push({ name: key, ...element })
           }
-        })
+        }
         this.tableData = arr || []
 
         this.loading = false
@@ -213,7 +212,7 @@ export default {
               return prev
             }
           }, 0)
-          sums[index]
+          sums[index] = Math.round(sums[index] * 1000) / 1000
         } else {
           if (column.property) {
             const _property = column.property.split('*')
@@ -226,7 +225,6 @@ export default {
               return
             }
           }
-
           sums[index]
         }
       })

@@ -60,7 +60,7 @@
       </el-form-item> -->
       <el-form-item label="巷道">
         <el-select
-          v-model="getParams.aaa"
+          v-model="getParams.location"
           style="width: 100px"
           clearable
           placeholder="请选择"
@@ -131,7 +131,7 @@
         </template>
       </el-table-column>
       <el-table-column prop="material_no" label="胶料名称" align="center" min-width="28" />
-      <el-table-column prop="site" label="库区" align="center" min-width="20" />
+      <el-table-column prop="warehouse_name" label="库区" align="center" min-width="20" />
       <el-table-column label="一等品库存数(车)" align="center" min-width="20">
         <template slot-scope="{row}">
           <el-link v-if="row['一等品']" :type="row.all?'':'primary'" :underline="false" @click="clickVehicle(row,'一等品')">
@@ -142,7 +142,7 @@
       <el-table-column prop="" label="重量(kg)" align="center" min-width="20">
         <template slot-scope="{row}">
           <span v-if="row['一等品']">
-            {{ row['一等品'].weight }}
+            {{ row['一等品'].total_weight }}
           </span>
         </template>
       </el-table-column>
@@ -156,7 +156,7 @@
       <el-table-column prop="" label="重量(kg)" align="center" min-width="20">
         <template slot-scope="{row}">
           <span v-if="row['三等品']">
-            {{ row['三等品'].weight }}
+            {{ row['三等品'].total_weight }}
           </span>
         </template>
       </el-table-column>
@@ -170,23 +170,23 @@
       <el-table-column prop="" label="重量(kg)" align="center" min-width="20">
         <template slot-scope="{row}">
           <span v-if="row['待检品']">
-            {{ row['待检品'].weight }}
+            {{ row['待检品'].total_weight }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column prop="qty" label="总库存数(车)" align="center" min-width="20" />
+      <el-table-column prop="all_qty" label="总库存数(车)" align="center" min-width="20" />
       <el-table-column prop="total_weight" label="总重量(kg)" align="center" min-width="20" />
       <el-table-column label="封存库存数(车)" align="center" min-width="20">
         <template slot-scope="{row}">
-          <el-link v-if="row['fb']&&row['fb'].length>0" :type="row.all?'':'primary'" :underline="false" @click="clickVehicle(row,'封存库存')">
-            {{ row['fb'][0].qty }}
+          <el-link v-if="row['封闭']" :type="row.all?'':'primary'" :underline="false" @click="clickVehicle(row,'封存库存')">
+            {{ row['封闭'].qty }}
           </el-link>
         </template>
       </el-table-column>
       <el-table-column prop="" label="总重量(kg)" align="center" min-width="20">
         <template slot-scope="{row}">
-          <span v-if="row['fb']&&row['fb'].length>0">
-            {{ row['fb'][0].weight }}
+          <span v-if="row['封闭']">
+            {{ row['封闭'].total_weight }}
           </span>
         </template>
       </el-table-column>
@@ -248,18 +248,18 @@ export default {
 
         this.tableData.push({
           all: 2,
-          '一等品': { qty: sum(this.tableData, '一等品', 'qty'), weight: sum(this.tableData, '一等品', 'weight') },
-          '待检品': { qty: sum(this.tableData, '待检品', 'qty'), weight: sum(this.tableData, '待检品', 'weight') },
-          '三等品': { qty: sum(this.tableData, '三等品', 'qty'), weight: sum(this.tableData, '三等品', 'weight') },
-          fb: [{ qty: sum(this.tableData, 'fb', 'qty'), weight: sum(this.tableData, 'fb', 'weight') }],
+          '一等品': { qty: sum(this.tableData, '一等品', 'qty'), total_weight: sum(this.tableData, '一等品', 'total_weight') },
+          '待检品': { qty: sum(this.tableData, '待检品', 'qty'), total_weight: sum(this.tableData, '待检品', 'total_weight') },
+          '三等品': { qty: sum(this.tableData, '三等品', 'qty'), total_weight: sum(this.tableData, '三等品', 'total_weight') },
+          '封闭': { qty: sum(this.tableData, '封闭', 'qty'), total_weight: sum(this.tableData, '封闭', 'total_weight') },
           qty: sum(this.tableData, '', 'qty'),
           total_weight: sum(this.tableData, '', 'total_weight')
         }, {
           all: 1,
-          '一等品': { qty: data.qty_1, weight: data.weight_1 },
-          '待检品': { qty: data.qty_dj, weight: data.weight_dj },
-          '三等品': { qty: data.qty_3, weight: data.weight_3 },
-          fb: [{ qty: data.qty_fb, weight: data.weight_fb }],
+          '一等品': { qty: data.qty_1, total_weight: data.weight_1 },
+          '待检品': { qty: data.qty_dj, total_weight: data.weight_dj },
+          '三等品': { qty: data.qty_3, total_weight: data.weight_3 },
+          '封闭': [{ qty: data.qty_fb, total_weight: data.weight_fb }],
           qty: data.total_count,
           total_weight: data.total_weight
         }
@@ -350,9 +350,7 @@ function sum(arr, str, params) {
 
   arr.forEach(function(val, idx, arr) {
     let a = 0
-    if (str === 'fb') {
-      a = val.fb.length > 0 ? Number(val.fb[0][params]) : 0
-    } else if (!str) {
+    if (!str) {
       a = val[params] ? Number(val[params]) : 0
     } else {
       a = val[str] ? Number(val[str][params]) : 0
