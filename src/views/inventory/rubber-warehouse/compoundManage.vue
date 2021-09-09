@@ -3,10 +3,10 @@
     <!-- 混炼胶出库计划 -->
     <el-form :inline="true">
       <el-form-item label="单据号">
-        <el-input v-model="search.order_no" clearable placeholder="请输入内容" @input="changeList" />
+        <el-input v-model="search.order_no" clearable placeholder="请输入单据号" @input="changeList" />
       </el-form-item>
-      <el-form-item label="胶料编码">
-        <all-product-no-select @productBatchingChanged="productBatchingChanged" />
+      <el-form-item label="物料编码">
+        <el-input v-model="search.product_no" clearable placeholder="请输入物料编码" @input="changeList" />
       </el-form-item>
       <el-form-item label="建单起止时间">
         <el-date-picker
@@ -22,7 +22,7 @@
       <el-form-item label="库区">
         <el-select
           v-model="search.warehouse"
-          placeholder="请选择"
+          placeholder="请选择库区"
           clearable
           @change="changeList"
         >
@@ -37,7 +37,7 @@
       <el-form-item label="出库口">
         <el-select
           v-model="search.station"
-          placeholder="请选择"
+          placeholder="请选择出库口"
           clearable
           @visible-change="getStation"
           @change="changeList"
@@ -66,15 +66,6 @@
         :model="creatOrder"
         :rules="rules"
       >
-        <el-form-item label="胶料编码" prop="product_no">
-          <all-product-no-select v-model="creatOrder.product_no" @productBatchingChanged="productBatchingChanged1" />
-        </el-form-item>
-        <el-form-item style="marginLeft:10px" label="订单数量" prop="order_qty">
-          <el-input
-            v-model="creatOrder.order_qty"
-            placeholder="请输入内容"
-          />
-        </el-form-item>
         <el-form-item style="marginLeft:29px" label="库区" prop="warehouse">
           <el-select
             v-model="creatOrder.warehouse"
@@ -105,10 +96,31 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item label="胶料编码" prop="product_no">
+          <el-select
+            v-model="creatOrder.product_no"
+            placeholder="请选择胶料编码"
+            clearable
+            @visible-change="productBatchingChanged"
+          >
+            <el-option
+              v-for="item in batchList"
+              :key="item.material_no"
+              :label="item.material_name"
+              :value="item.material_no"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item style="marginLeft:10px" label="订单数量" prop="order_qty">
+          <el-input
+            v-model="creatOrder.order_qty"
+            placeholder="请输入订单数量"
+          />
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose(false)">取 消</el-button>
-        <el-button type="primary" @click="generateFun">确 定</el-button>
+        <el-button :loading="submit" type="primary" @click="generateFun">确 定</el-button>
       </span>
     </el-dialog>
     <el-table
@@ -122,6 +134,7 @@
       >
         <template slot-scope="scope">
           <el-button
+            :disabled="scope.row.status!==1"
             size="mini"
             type="primary"
             @click="normalOutbound(scope)"
@@ -134,6 +147,7 @@
       >
         <template slot-scope="scope">
           <el-button
+            :disabled="scope.row.status!==1"
             size="mini"
             type="primary"
             @click="assignOutbound(scope)"
@@ -146,6 +160,7 @@
       >
         <template slot-scope="scope">
           <el-button
+            :disabled="scope.row.status!==1"
             size="mini"
             type="danger"
             @click="deleteList(scope)"
@@ -222,6 +237,7 @@
         :list="list"
         :warehouse-info="warehouseInfo"
         :show="assignOutboundDialogVisible"
+        @getList="getList"
         @visibleMethod="visibleMethodNormal"
       />
     </el-dialog>
@@ -237,6 +253,7 @@
         :list="list"
         :warehouse-info="warehouseInfo"
         :show="normalOutboundDialogVisible"
+        @getList="getList"
         @visibleMethod="visibleMethodNormal"
       /></el-dialog>
   </div>
@@ -245,17 +262,18 @@
 <script>
 import GenerateAssignOutbound from '../components-film/generate_assign_outbound'
 import GenerateNormalOutbound from '../components-film/generate_normal_outbound'
-import allProductNoSelect from '@/components/select_w/allProductNoSelect'
+import { bzMixinInventorySummary, bzFinalInventorySummary } from '@/api/base_w_four'
 import { compoundManage } from '@/api/jqy'
 import { stationInfo } from '@/api/warehouse'
 import page from '@/components/page'
 
 export default {
   name: 'CompoundManage',
-  components: { page, GenerateAssignOutbound, GenerateNormalOutbound, allProductNoSelect },
+  components: { page, GenerateAssignOutbound, GenerateNormalOutbound },
   data() {
     return {
       loading: false,
+      submit: false,
       search: {
         page: 1
       },
@@ -266,6 +284,7 @@ export default {
       },
       dateSearch: [],
       stationList: [],
+      batchList: [],
       stationList1: [],
       total: 0,
       list: {},
@@ -300,37 +319,45 @@ export default {
   },
   methods: {
     dialog() {
+      this.creatOrder.product_no = ''
       this.creatOrder.warehouse = localStorage.getItem('warehouse')
       this.creatOrder.station = localStorage.getItem('station')
       this.dialogVisibleNo = true
     },
-    productBatchingChanged(val) {
-      this.search.product_no = val ? val.material_no : ''
-      this.getList()
+    async productBatchingChanged() {
+      if (this.creatOrder.warehouse === '') {
+        this.batchList = []
+        this.$message.info('请先选择库区')
+      } else {
+        try {
+          const _api = this.creatOrder.warehouse === '混炼胶库' ? bzMixinInventorySummary : bzFinalInventorySummary
+          const obj = {}
+          obj.all = 1
+          const data = await _api('get', null, { params: obj })
+          this.batchList = data
+        } catch (e) { this.batchList = [] }
+      }
     },
-    productBatchingChanged1(val) {
-      this.creatOrder.product_no = val ? val.material_no : ''
-    },
-    deleteList(scope) {
+    async deleteList(scope) {
       try {
-        compoundManage('patch', scope.row.id, { data: { status: '4' }})
+        await compoundManage('patch', scope.row.id, { data: { status: '4' }})
         this.$message.success('关闭成功')
+        this.getList()
       } catch (e) { this.$message.info('关闭失败') }
     },
     generateFun() {
-      // if (this.creatOrder.product_no !== '' &&
-      // this.creatOrder.warehouse !== '' &&
-      // this.creatOrder.station !== '') {
-      this.$refs.ruleForm.validate((valid) => {
+      this.$refs.ruleForm.validate(async(valid) => {
         if (valid) {
           try {
-            compoundManage('post', null, { data: this.creatOrder })
+            this.submit = true
+            await compoundManage('post', null, { data: this.creatOrder })
+            this.submit = false
             this.$message.success('新建成功')
             localStorage.setItem('warehouse', this.creatOrder.warehouse)
             localStorage.setItem('station', this.creatOrder.station)
             this.dialogVisibleNo = false
             this.getList()
-          } catch (e) { this.$message.info('新建失败') }
+          } catch (e) { this.submit = false }
         } else {
           this.$message.info('输入必填项')
         }
@@ -364,8 +391,9 @@ export default {
     clear() {
       if (this.creatOrder.station !== '') {
         this.creatOrder.station = ''
+      }
+      if (this.creatOrder.product_no !== '') {
         this.creatOrder.product_no = ''
-        console.log()
       }
     },
     async getStation1() {
