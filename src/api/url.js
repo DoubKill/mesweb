@@ -451,9 +451,9 @@ export default {
   OutBoundTasks: '/api/v1/inventory/out-bound-tasks/',
   InoutBoundSummary: '/api/v1/inventory/inout-bound-summary/',
   // 投料重量设定
-  RawWeight: '/api/v1/terminal/carbon_tank_set/',
+  RawWeight: '/api/v1/terminal/carbon-tank-set/',
   // 投料履历查询
-  RawQuery: '/api/v1/terminal/feed_check_operation/',
+  RawQuery: '/api/v1/terminal/feed-check-operation/',
   // 油料罐物料设定
   OliSet: '/api/v1/terminal/oli-tank-setting/',
   // 粉料罐物料设定
@@ -463,9 +463,11 @@ export default {
   // 不合格项
   DataPoint: '/api/v1/quality/data-point-list/',
   // 炭黑投料提示-计划显示
-  FeedCapacityPlan: '/api/v1/terminal/feed_capacity_plan/',
-  CarbonFeedingPrompt: '/api/v1/terminal/carbon_feeding_prompt/',
-  CarOutCheck: '/api/v1/terminal/car_out_check/',
+  FeedCapacityPlan: '/api/v1/terminal/feed-capacity-plan/',
+  CarbonFeedingPrompt: '/api/v1/terminal/carbon-feeding-prompt/',
+  CarOutCheck: '/api/v1/terminal/car-out-check/',
+  // 炭黑投料-下出库任务
+  CarbonOutTask: '/api/v1/terminal/carbon-out-task/',
   // 胶片库出库单列表
   CompoundManage: '/api/v1/inventory/outbound-delivery-orders/',
   // 出库
