@@ -51,31 +51,47 @@
     >
       <el-table-column
         prop="unqualified_deal_order_uid"
-        label="处置单号"
+        label="橡胶规格"
         show-overflow-tooltip
       />
       <el-table-column
         prop="created_date"
-        label="处置时间"
+        label="检查数"
         show-overflow-tooltip
-      >
-        <template slot-scope="{row}">
-          {{ (row.created_date).split(' ')[0] }}
-        </template>
-      </el-table-column>
+      />
       <el-table-column
         prop="department"
-        label="发生部门"
+        label="合格量"
         show-overflow-tooltip
       />
       <el-table-column
         prop="status"
-        label="不合格状态"
+        label="门尼不合格"
         show-overflow-tooltip
       />
       <el-table-column
         prop="c_solved"
-        label="是否已处理"
+        label="硬度不合格"
+        show-overflow-tooltip
+      />
+      <el-table-column
+        prop="c_solved"
+        label="一次合格率"
+        show-overflow-tooltip
+      />
+      <el-table-column
+        prop="c_solved"
+        label="硫变合格率"
+        show-overflow-tooltip
+      />
+      <el-table-column
+        prop="c_solved"
+        label="次品合计"
+        show-overflow-tooltip
+      />
+      <el-table-column
+        prop="c_solved"
+        label="合格率"
         show-overflow-tooltip
       />
     </el-table>

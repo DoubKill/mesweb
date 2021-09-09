@@ -23,11 +23,12 @@
       <el-form-item label="入库起止时间">
         <el-date-picker
           v-model="dateSearch"
-          type="daterange"
+          type="datetimerange"
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
-          value-format="yyyy-MM-dd"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          format="yyyy-MM-dd HH:mm:ss"
           @change="searchDate"
         />
       </el-form-item>
@@ -35,7 +36,7 @@
       <el-form-item label="巷道">
         <el-select
           v-model="getParams.tunnel"
-          placeholder="请选择"
+          placeholder="请选择巷道"
           clearable
           @change="quality_statusSearch"
         >
@@ -131,6 +132,10 @@ export default {
         return null
       }
     },
+    getList: {
+      type: Function,
+      default: null
+    },
     show: {
       type: Boolean,
       default: false
@@ -158,7 +163,7 @@ export default {
         label: '4#巷道'
       }],
       loading: false,
-      loadingBtn: null,
+      loadingBtn: false,
       tableData: [],
       multipleSelection: [],
       options: ['一等品', '三等品', '待检品']
@@ -191,6 +196,11 @@ export default {
   },
   methods: {
     async getTableData() {
+      if (this.warehouseName === '混炼胶库') {
+        this.getParams.station = this.list.station
+      } else {
+        delete this.getParams.station
+      }
       this.qtyTotal = 0
       this.weightTotal = 0
       this.loading = true
@@ -214,7 +224,7 @@ export default {
         this.loading = false
       }
     },
-    submitFun() {
+    async submitFun() {
       console.log(this.multipleSelection)
       if (this.multipleSelection.length === 0) {
         this.$message.info('请选择出库')
@@ -233,12 +243,15 @@ export default {
             outbound_delivery_order: this.id })
         })
         try {
-          outbound('post', null, { data: obj })
+          this.loadingBtn = true
+          await outbound('post', null, { data: obj })
+          this.loadingBtn = false
           this.$message.success('出库成功')
           this.$refs.multipleTable.clearSelection()
-          this.getTableData()
+          this.visibleMethod(true)
+          this.$emit('getList')
         } catch (error) {
-          this.$message.error('出库失败')
+          this.loadingBtn = false
         }
       }
     },
@@ -247,7 +260,7 @@ export default {
       var nowTime = new Date()
       var timeDifference = nowTime.getTime() - time.getTime()
       var days = Math.floor(timeDifference / (24 * 3600 * 1000))
-      if (this.period_of_validity >= 0) {
+      if (this.period_of_validity >= 0 && this.period_of_validity !== null) {
         if (days > (0.5 * this.period_of_validity) && days < this.period_of_validity) {
           return 'warning-row'
         } else if (days > this.period_of_validity) {
@@ -294,6 +307,7 @@ export default {
     // width:280px;
   // }
   .dialog-footer{
+    margin-top: 20px;
     width:100%;
     text-align: right;
   }
