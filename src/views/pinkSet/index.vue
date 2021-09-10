@@ -119,7 +119,7 @@
               >
                 <el-option
                   v-for="item in machineList"
-                  :key="item"
+                  :key="item.id"
                   :label="item.material_name"
                   :value="item.id"
                 />
@@ -174,20 +174,20 @@ export default {
     async getList() {
       try {
         this.loading = true
+        const data1 = await materialsUrl('get', null, { params: { material_type_name: '白色填料', all: 1 }})
         const data = await pinkSet('get', null, { params: this.searchForm })
-        const data1 = await materialsUrl('get', null, { params: { page_size: 400 }})
         this.machineList = data1.results || null
-        this.tableData = data.results
+        this.tableData = data
         this.loading = false
       } catch (e) { this.loading = false }
     },
     async getList1() {
       try {
         this.loading1 = true
+        const data1 = await materialsUrl('get', null, { params: { material_type_name: '油料', all: 1 }})
         const data = await oliSet('get', null, { params: {}})
-        const data1 = await materialsUrl('get', null, { params: { page_size: 400 }})
         this.machineList = data1.results || null
-        this.tableData1 = data.results
+        this.tableData1 = data
         this.loading1 = false
       } catch (e) { this.loading1 = false }
     },
@@ -195,7 +195,7 @@ export default {
       this.loading = true
       this.getList()
     },
-    currentChange(scope) {
+    async currentChange(scope) {
       try {
         if (scope.row.use_flag === true) {
           scope.row.use_flag = 1
@@ -203,22 +203,20 @@ export default {
           scope.row.use_flag = 0
         }
         const id = scope.row.id || null
-        pinkSetPut('put', id, { data: JSON.parse(JSON.stringify(scope.row)) })
-        if (scope.row.use_flag === 1 || scope.row.use_flag === true) {
+        await pinkSetPut('put', id, { data: JSON.parse(JSON.stringify(scope.row)) })
+        this.$message.success('修改成功')
+        if (scope.row.use_flag === 1) {
+          // eslint-disable-next-line require-atomic-updates
           scope.row.use_flag = true
         } else {
+          // eslint-disable-next-line require-atomic-updates
           scope.row.use_flag = false
         }
       } catch (e) {
-        if (scope.row.use_flag === 1 || scope.row.use_flag === true) {
-          scope.row.use_flag = true
-        } else {
-          scope.row.use_flag = false
-        }
-        scope.row.use_flag = !scope.row.use_flag
+        console.log(1)
       }
     },
-    currentChange1(scope) {
+    async currentChange1(scope) {
       try {
         if (scope.row.use_flag === true) {
           scope.row.use_flag = 1
@@ -226,31 +224,31 @@ export default {
           scope.row.use_flag = 0
         }
         const id = scope.row.id || null
-        oliSetPut('put', id, { data: JSON.parse(JSON.stringify(scope.row)) })
-        if (scope.row.use_flag === 1 || scope.row.use_flag === true) {
+        await oliSetPut('put', id, { data: JSON.parse(JSON.stringify(scope.row)) })
+        this.$message.success('修改成功')
+        if (scope.row.use_flag === 1) {
+          // eslint-disable-next-line require-atomic-updates
           scope.row.use_flag = true
         } else {
+          // eslint-disable-next-line require-atomic-updates
           scope.row.use_flag = false
         }
       } catch (e) {
-        if (scope.row.use_flag === 1 || scope.row.use_flag === true) {
-          scope.row.use_flag = true
-        } else {
-          scope.row.use_flag = false
-        }
-        scope.row.use_flag = !scope.row.use_flag
+        console.log(1)
       }
     },
-    currentChange2(scope) {
+    async currentChange2(scope) {
       try {
         const id = scope.row.id || null
-        pinkSetPut('put', id, { data: JSON.parse(JSON.stringify(scope.row)) })
+        await pinkSetPut('put', id, { data: JSON.parse(JSON.stringify(scope.row)) })
+        this.$message.success('修改成功')
       } catch (e) { this.getList() }
     },
-    currentChange3(scope) {
+    async currentChange3(scope) {
       try {
         const id = scope.row.id || null
-        oliSetPut('put', id, { data: JSON.parse(JSON.stringify(scope.row)) })
+        await oliSetPut('put', id, { data: JSON.parse(JSON.stringify(scope.row)) })
+        this.$message.success('修改成功')
       } catch (e) { this.getList1() }
     }
 
