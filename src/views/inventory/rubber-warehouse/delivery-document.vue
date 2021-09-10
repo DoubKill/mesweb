@@ -80,7 +80,7 @@
       <el-table-column
         prop="order_no"
         label="出库单据号"
-        min-width="20"
+        min-width="30"
       />
       <el-table-column
         prop="order_type"
@@ -92,13 +92,28 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="created_date"
-        label="创建时间"
+        prop="warehouse"
+        label="库区"
         min-width="20"
       />
       <el-table-column
-        label="状态"
+        prop="station"
+        label="出库口"
         min-width="20"
+      />
+      <el-table-column
+        prop="product_no"
+        label="胶料名称"
+        min-width="25"
+      />
+      <el-table-column
+        prop="created_date"
+        label="创建时间"
+        min-width="25"
+      />
+      <el-table-column
+        label="状态"
+        min-width="15"
         :formatter="(row)=>{
           let obj = optionsState.find(d=>d.id === row.status)
           return obj.name
@@ -111,7 +126,7 @@
       />
       <el-table-column
         label="操作"
-        width="230"
+        width="100"
       >
         <template slot-scope="{row}">
           <el-button
