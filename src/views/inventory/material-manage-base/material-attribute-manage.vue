@@ -20,9 +20,8 @@
       <el-table-column label="物料类型" align="center" prop="material_type_name" />
       <el-table-column label="物料编码" align="center" prop="material_no" />
       <el-table-column label="物料名称" align="center" prop="material_name" />
-      <el-table-column label="有效期" align="center" prop="period_of_validity" />
-      <el-table-column label="安全库存标准" align="center" prop="safety_inventory" />
-      <el-table-column label="有效期单位" align="center" prop="validity_unit" />
+      <el-table-column label="有效期(天)" align="center" prop="period_of_validity" />
+      <el-table-column label="安全库存标准(车)" align="center" prop="safety_inventory" />
       <el-table-column label="产地管理" align="center">
         <template slot-scope="scope">
           <el-button-group>
@@ -108,7 +107,7 @@
       :visible.sync="attributeEditDialogVisible"
       :close-on-click-modal="false"
     >
-      <el-form ref="attributeForm" :rules="rules" label-width="120px" :model="attributeForm">
+      <el-form ref="attributeForm" :rules="rules" label-width="130px" :model="attributeForm">
         <el-form-item
           label="物料类型"
         >{{ attributeForm.material_type_name }}
@@ -125,22 +124,16 @@
           <!-- <el-input v-model="attributeForm.material_name" :disabled="true" /> -->
         </el-form-item>
         <el-form-item
-          label="有效期"
+          label="有效期(天)"
           prop="period_of_validity"
         >
           <el-input v-model.number="attributeForm.period_of_validity" type="age" />
         </el-form-item>
         <el-form-item
-          label="安全库存标准"
+          label="安全库存标准(车)"
           prop="safety_inventory"
         >
           <el-input v-model.number="attributeForm.safety_inventory" type="age" />
-        </el-form-item>
-        <el-form-item
-          label="有效期单位"
-          prop="validity_unit"
-        >
-          <el-input v-model="attributeForm.validity_unit" />
         </el-form-item>
       </el-form>
       <div
@@ -224,9 +217,7 @@ export default {
         period_of_validity: [{ required: true, message: '不能为空', trigger: 'blur' },
           { pattern: /^[1-9]\d*$/, message: '请输入正整数', trigger: 'blur' }],
         safety_inventory: [{ required: true, message: '不能为空', trigger: 'blur' },
-          { pattern: /^[1-9]\d*$/, message: '请输入正整数', trigger: 'blur' }],
-        validity_unit: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        provenance: [{ required: true, message: '不能为空', trigger: 'blur' }]
+          { pattern: /^[1-9]\d*$/, message: '请输入正整数', trigger: 'blur' }]
       },
       barCodeManageDialogVisible: false,
       barCodeCreateDialogVisible: false,
@@ -251,6 +242,7 @@ export default {
     showAttributeEditDialog(row) {
       this.attributeForm = Object.assign({}, row)
       this.attributeForm.material = row.id
+      this.attributeForm.validity_unit = '天'
       this.attributeEditDialogVisible = true
       this.$nextTick(() => {
         this.$refs.attributeForm.clearValidate()
