@@ -69,6 +69,11 @@
           @change="searchDate"
         />
       </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="getTableData">查询</el-button>
+        <el-button type="primary" :loading="loadingBtn" @click="submitFun">确 定</el-button>
+        <el-button type="primary" @click="visibleMethod(true)">取 消</el-button>
+      </el-form-item>
     </el-form>
     <el-table
       ref="multipleTable"
@@ -101,10 +106,10 @@
       :current-page="getParams.page"
       @currentChange="currentChange"
     />
-    <div slot="footer" class="dialog-footer">
+    <!-- <div slot="footer" class="dialog-footer">
       <el-button @click="visibleMethod(true)">取 消</el-button>
       <el-button type="primary" :loading="loadingBtn" @click="submitFun">确 定</el-button>
-    </div>
+    </div> -->
   </div>
 </template>
 
