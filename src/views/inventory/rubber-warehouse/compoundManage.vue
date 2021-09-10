@@ -102,6 +102,7 @@
           <el-select
             v-model="creatOrder.product_no"
             placeholder="请选择胶料编码"
+            filterable
             clearable
             @visible-change="productBatchingChanged"
           >
@@ -186,7 +187,7 @@
       />
       <el-table-column
         prop="product_no"
-        label="胶料编码"
+        label="物料编码"
         min-width="20"
       />
       <el-table-column
@@ -308,7 +309,7 @@ export default {
           { pattern: /^[1-9]\d*$/, message: '只能输入正整数' }
         ],
         warehouse: [
-          { required: true, message: '请先选择库区', trigger: 'blur' }
+          { required: true, message: '请选择库区', trigger: 'blur' }
         ],
         station: [
           { required: true, message: '请选择出库口', trigger: 'blur' }
@@ -326,18 +327,20 @@ export default {
       this.creatOrder.station = localStorage.getItem('station')
       this.dialogVisibleNo = true
     },
-    async productBatchingChanged() {
-      if (this.creatOrder.warehouse === '') {
-        this.batchList = []
-        this.$message.info('请先选择库区')
-      } else {
-        try {
-          const _api = this.creatOrder.warehouse === '混炼胶库' ? bzMixinInventorySummary : bzFinalInventorySummary
-          const obj = {}
-          obj.all = 1
-          const data = await _api('get', null, { params: obj })
-          this.batchList = data
-        } catch (e) { this.batchList = [] }
+    async productBatchingChanged(val) {
+      if (val === true) {
+        if (this.creatOrder.warehouse === '' || this.creatOrder.warehouse === null) {
+          this.batchList = []
+          this.$message.info('请先选择库区')
+        } else {
+          try {
+            const _api = this.creatOrder.warehouse === '混炼胶库' ? bzMixinInventorySummary : bzFinalInventorySummary
+            const obj = {}
+            obj.all = 1
+            const data = await _api('get', null, { params: obj })
+            this.batchList = data
+          } catch (e) { this.batchList = [] }
+        }
       }
     },
     async deleteList(scope) {
@@ -398,17 +401,19 @@ export default {
         this.creatOrder.product_no = ''
       }
     },
-    async getStation1() {
-      try {
-        if (this.creatOrder.warehouse !== '') {
-          const data1 = await stationInfo({ warehouse_name: this.creatOrder.warehouse })
-          this.stationList1 = data1.results
-        } else {
-          this.stationList1 = []
-          this.$message.info('请先选择库区')
+    async getStation1(val) {
+      if (val === true) {
+        try {
+          if (this.creatOrder.warehouse !== '' && this.creatOrder.warehouse !== null) {
+            const data1 = await stationInfo({ warehouse_name: this.creatOrder.warehouse })
+            this.stationList1 = data1.results
+          } else {
+            this.stationList1 = []
+            this.$message.info('请先选择库区')
+          }
+        } catch (error) {
+          console.log()
         }
-      } catch (error) {
-        console.log()
       }
     },
     currentChange(page, page_size) {
@@ -450,7 +455,6 @@ export default {
       this.normalOutboundDialogVisible = true
     },
     assignOutbound(scope) {
-      console.log(scope.row)
       this.list = scope.row
       this.warehouseName = scope.row.warehouse
       this.assignOutboundDialogVisible = true

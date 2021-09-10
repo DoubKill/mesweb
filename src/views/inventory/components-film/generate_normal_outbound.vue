@@ -63,7 +63,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="指定出库数量">
+      <el-form-item label="指定出库数量(必填)">
         <el-input
           v-model="getParams.need_qty"
           @input="quality_statusSearch"
@@ -107,10 +107,11 @@
       <el-table-column :key="8" label="重量kg" align="center" prop="total_weight" />
       <el-table-column :key="9" label="入库时间" align="center" prop="in_storage_time" />
     </el-table>
-    <!-- <div slot="footer" class="dialog-footer">
-      <el-button @click="visibleMethod(true)">取 消</el-button>
-      <el-button type="primary" :loading="loadingBtn" @click="submitFun">确 定</el-button>
-    </div> -->
+    <el-alert
+      style="color:black"
+      title="表格背景色说明：红色超期报警；黄色超期预警；白色放置期正常；紫色未设置有效期"
+      type="success"
+    />
   </div>
 </template>
 <script>
@@ -149,8 +150,7 @@ export default {
   data() {
     return {
       getParams: {
-        quality_status: '一等品',
-        need_qty: 9999
+        quality_status: '一等品'
       },
       period_of_validity: '',
       dateSearch: [],
@@ -185,7 +185,7 @@ export default {
         this.getParams.material_no = this.list.product_no || null
         this.id = this.list.id || null
         this.tableData = []
-        this.getTableData()
+        // this.getTableData()
       }
     }
   },
@@ -197,7 +197,8 @@ export default {
     this.station = this.list.station || null
     this.getParams.material_no = this.list.product_no || null
     this.id = this.list.id || null
-    this.getTableData()
+    this.tableData = []
+    // this.getTableData()
   },
   methods: {
     async getTableData() {
@@ -225,6 +226,7 @@ export default {
         })
         this.tableData.push({ warehouse: '汇总', qty: this.qtyTotal.toFixed(3), total_weight: this.weightTotal.toFixed(3) })
         this.loading = false
+        this.$refs.multipleTable.toggleAllSelection()
       } catch (error) {
         this.loading = false
       }
@@ -264,13 +266,17 @@ export default {
       const time = new Date(row.in_storage_time)
       var nowTime = new Date()
       var timeDifference = nowTime.getTime() - time.getTime()
-      var days = Math.floor(timeDifference / (24 * 3600 * 1000))
+      var days = timeDifference / (24 * 3600 * 1000)
+      console.log(days, 111)
+      console.log(this.period_of_validity, 222)
       if (this.period_of_validity >= 0 && this.period_of_validity !== null) {
-        if (days > (0.5 * this.period_of_validity) && days < this.period_of_validity) {
+        if (days >= (0.5 * this.period_of_validity) && days < this.period_of_validity) {
           return 'warning-row'
-        } else if (days > this.period_of_validity) {
+        } else if (days >= this.period_of_validity) {
           return 'maxwarning-row'
         } else { return '' }
+      } else {
+        return 'warn-row'
       }
     },
     select(row, index) {
@@ -281,8 +287,12 @@ export default {
       }
     },
     quality_statusSearch() {
-      this.getParams.page = 1
-      this.getTableData()
+      if (this.getParams.need_qty === '') {
+        return
+      } else {
+        this.getParams.page = 1
+        this.getTableData()
+      }
     },
     searchDate(arr) {
       this.getParams.st = arr ? arr[0] : ''
@@ -319,7 +329,10 @@ export default {
   .el-input-number{
      width:auto;
   }
-.el-table .warning-row {
+  .el-table .warn-row {
+    background: #D1CBE4;
+  }
+  .el-table .warning-row {
     background: #e6a23c;
   }
   .el-table .maxwarning-row {
