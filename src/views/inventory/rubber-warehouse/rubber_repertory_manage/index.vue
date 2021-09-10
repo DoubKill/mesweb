@@ -245,22 +245,21 @@ export default {
         const data = await inLibraryInventory('get', null, { params: this.getParams })
 
         this.tableData = data.results
-
         this.tableData.push({
           all: 2,
           '一等品': { qty: sum(this.tableData, '一等品', 'qty'), total_weight: sum(this.tableData, '一等品', 'total_weight') },
           '待检品': { qty: sum(this.tableData, '待检品', 'qty'), total_weight: sum(this.tableData, '待检品', 'total_weight') },
           '三等品': { qty: sum(this.tableData, '三等品', 'qty'), total_weight: sum(this.tableData, '三等品', 'total_weight') },
           '封闭': { qty: sum(this.tableData, '封闭', 'qty'), total_weight: sum(this.tableData, '封闭', 'total_weight') },
-          qty: sum(this.tableData, '', 'qty'),
+          all_qty: sum(this.tableData, '', 'all_qty'),
           total_weight: sum(this.tableData, '', 'total_weight')
         }, {
           all: 1,
           '一等品': { qty: data.qty_1, total_weight: data.weight_1 },
           '待检品': { qty: data.qty_dj, total_weight: data.weight_dj },
           '三等品': { qty: data.qty_3, total_weight: data.weight_3 },
-          '封闭': [{ qty: data.qty_fb, total_weight: data.weight_fb }],
-          qty: data.total_count,
+          '封闭': { qty: data.qty_fb, total_weight: data.weight_fb },
+          all_qty: data.total_count,
           total_weight: data.total_weight
         }
         )
@@ -322,11 +321,10 @@ export default {
         this.locationStatus = ''
       }
       this.materialNo = row.material_no ? row.material_no : ''
-      this.warehouseName = row.site ? row.site : ''
+      this.warehouseName = row.warehouse_name ? row.warehouse_name : ''
       this.dialogVisible = true
     },
     exportTable(val) {
-      // responseType: 'blob'  get请求
       this.btnLoading = true
       inLibraryInventory('get', null, { params: { export: val }, responseType: 'blob' })
         .then(res => {
