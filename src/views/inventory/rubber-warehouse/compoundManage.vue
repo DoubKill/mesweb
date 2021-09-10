@@ -3,7 +3,7 @@
     <!-- 混炼胶出库计划 -->
     <el-form :inline="true">
       <el-form-item label="单据号">
-        <el-input v-model="search.order_no" clearable placeholder="请输入单据号" @input="changeList" />
+        <el-input v-model="search.order_no" size="" clearable placeholder="请输入单据号" @input="changeList" />
       </el-form-item>
       <el-form-item label="物料编码">
         <el-input v-model="search.product_no" clearable placeholder="请输入物料编码" @input="changeList" />
@@ -19,6 +19,7 @@
           @change="searchDate"
         />
       </el-form-item>
+      <br>
       <el-form-item label="库区">
         <el-select
           v-model="search.warehouse"
@@ -51,6 +52,7 @@
         </el-select>
       </el-form-item>
       <el-form-item>
+        <el-button class="button-right" type="primary" @click="getList">查询</el-button>
         <el-button class="button-right" type="primary" @click="dialog">新建单据</el-button>
       </el-form-item>
     </el-form>
@@ -229,7 +231,7 @@
       title="指定出库"
       :visible.sync="assignOutboundDialogVisible"
       :before-close="handleCloseNormal"
-      width="90%"
+      width="80%"
     >
       <generate-assign-outbound
         ref="assignOutbound"
@@ -245,7 +247,7 @@
       title="正常出库"
       :visible.sync="normalOutboundDialogVisible"
       :before-close="handleCloseNormal"
-      width="90%"
+      width="80%"
     >
       <generate-normal-outbound
         ref="normalOutbound"
