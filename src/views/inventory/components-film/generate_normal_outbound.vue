@@ -309,7 +309,9 @@ export default {
     quality_statusSearch() {
       this.$refs.multipleTable.clearSelection()
       this.getParams.page = 1
-      this.getParams.need_qty = (this.need_qty !== 0 ? this.need_qty : 99999)
+      console.log(this.need_qty)
+      this.getParams.need_qty = (this.need_qty !== 0 && this.need_qty !== '') ? this.need_qty : 99999
+      console.log(this.getParams.need_qty)
       this.getTableData()
     },
     quality_statusSearch1() {
@@ -338,7 +340,7 @@ export default {
     },
     searchDate(arr) {
       this.$refs.multipleTable.clearSelection()
-      this.getParams.need_qty = (this.need_qty !== 0 ? this.need_qty : 99999)
+      this.getParams.need_qty = (this.need_qty !== 0 && this.need_qty !== '') ? this.need_qty : 99999
       // this.getParams.need_qty = this.need_qty
       this.getParams.st = arr ? arr[0] : ''
       this.getParams.et = arr ? arr[1] : ''
