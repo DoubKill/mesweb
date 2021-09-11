@@ -51,6 +51,7 @@
       <el-form-item label="品质状态">
         <el-select
           v-model="getParams.quality_status"
+          :disabled="unqualified"
           placeholder="请选择"
           clearable
           @change="quality_statusSearch"
@@ -66,7 +67,7 @@
       <el-form-item label="指定出库数量(必填)">
         <el-input
           v-model="getParams.need_qty"
-          @input="quality_statusSearch"
+          @input="quality_statusSearch1"
         />
       </el-form-item>
       <el-form-item label="可用库存数">
@@ -116,6 +117,7 @@
 </template>
 <script>
 import { outbound } from '@/api/jqy'
+import { checkPermission } from '@/utils'
 import { bzFinalInventorySearch, bzMixinInventorySearch } from '@/api/base_w_four'
 export default {
   components: { },
@@ -153,8 +155,10 @@ export default {
         quality_status: '一等品',
         need_qty: 99999
       },
+      need_qty: '',
       period_of_validity: '',
       dateSearch: [],
+      unqualified: true,
       qty_total: '',
       options1: [{
         value: '1',
@@ -179,7 +183,13 @@ export default {
   watch: {
     show(bool) {
       if (bool) {
-        this.getParams.need_qty = 99999
+        if (checkPermission(['product_outbound_plan', 'unqualified'])) {
+          this.unqualified = false
+        }
+        this.getParams = {
+          quality_status: '一等品',
+          need_qty: 99999
+        }
         this.period_of_validity = this.list.period_of_validity || null
         this.order_no = this.list.order_no || null
         this.warehouse = this.list.warehouse || null
@@ -192,6 +202,9 @@ export default {
     }
   },
   created() {
+    if (checkPermission(['product_outbound_plan', 'unqualified'])) {
+      this.unqualified = false
+    }
     this.period_of_validity = this.list.period_of_validity || null
     this.order_no = this.list.order_no || null
     this.warehouse = this.list.warehouse || null
@@ -202,8 +215,10 @@ export default {
     this.getTableData()
   },
   methods: {
+    checkPermission,
     getTableData1() {
       this.$refs.multipleTable.clearSelection()
+      this.getParams.need_qty = this.need_qty
       this.getTableData()
     },
     async getTableData() {
@@ -220,7 +235,6 @@ export default {
         const data = await _api('get', null, { params: this.getParams })
         this.tableData = data.data
         this.qty_total = data.total_trains
-        this.getParams.need_qty = data.total_trains
         this.tableData.forEach(D => {
           this.qtyTotal += Number(D.qty)
           this.weightTotal += Number(D.total_weight)
@@ -228,15 +242,17 @@ export default {
         this.tableData.forEach(D => {
           D.warehouse = this.warehouse
         })
+        // console.log(this.multipleSelection)
+        this.$refs.multipleTable.clearSelection()
+
         this.tableData.push({ warehouse: '汇总', qty: this.qtyTotal.toFixed(3), total_weight: this.weightTotal.toFixed(3) })
         this.loading = false
-        this.$refs.multipleTable.toggleAllSelection()
       } catch (error) {
         this.loading = false
       }
+      this.$refs.multipleTable.toggleAllSelection()
     },
     async submitFun() {
-      console.log(this.multipleSelection)
       if (this.multipleSelection.length === 0) {
         this.$message.info('请选择出库')
         return
@@ -289,16 +305,38 @@ export default {
       }
     },
     quality_statusSearch() {
-      if (this.getParams.need_qty === '') {
+      this.$refs.multipleTable.clearSelection()
+      this.getParams.page = 1
+      this.getParams.need_qty = this.need_qty
+      this.getTableData()
+    },
+    quality_statusSearch1() {
+      console.log(this.getParams.need_qty)
+      if (this.getParams.need_qty === '' || this.getParams.need_qty === '0') {
         return
       } else {
-        this.$refs.multipleTable.clearSelection()
-        this.getParams.page = 1
-        this.getTableData()
+        console.log(this.tableData.length - 1)
+        console.log(this.multipleSelection.length)
+        console.log((this.tableData.length - 1) !== this.multipleSelection.length)
+        if ((this.tableData.length - 1) === this.multipleSelection.length) {
+          this.$refs.multipleTable.toggleAllSelection()
+          this.getParams.page = 1
+          this.getTableData()
+        } else {
+          this.tableData = []
+          this.multipleSelection = []
+          // this.$refs.multipleTable.clearSelection()
+          console.log(this.multipleSelection)
+          // this.$refs.multipleTable = []
+          // this.$refs.multipleTable.toggleAllSelection()
+          this.getParams.page = 1
+          this.getTableData()
+        }
       }
     },
     searchDate(arr) {
       this.$refs.multipleTable.clearSelection()
+      this.getParams.need_qty = this.need_qty
       this.getParams.st = arr ? arr[0] : ''
       this.getParams.et = arr ? arr[1] : ''
       this.getTableData()
@@ -314,6 +352,12 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
+      this.need_qty = this.getParams.need_qty
+      this.getParams.need_qty = 0
+      console.log(this.multipleSelection)
+      this.multipleSelection.forEach(d => {
+        this.getParams.need_qty += Number(d.qty)
+      })
     }
   }}
 </script>
