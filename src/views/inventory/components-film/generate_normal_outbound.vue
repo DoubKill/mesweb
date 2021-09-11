@@ -67,7 +67,6 @@
       <el-form-item label="指定出库数量(必填)">
         <el-input
           v-model="getParams.need_qty"
-          @input="quality_statusSearch1"
         />
       </el-form-item>
       <el-form-item label="可用库存数">
@@ -77,7 +76,7 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="getTableData1">查询</el-button>
+        <el-button type="primary" @click="quality_statusSearch1">查询</el-button>
         <el-button type="primary" :loading="loadingBtn" @click="submitFun">确 定</el-button>
         <el-button type="primary" @click="visibleMethod(true)">取 消</el-button>
       </el-form-item>
@@ -155,11 +154,11 @@ export default {
         quality_status: '一等品',
         need_qty: 99999
       },
-      need_qty: '',
+      need_qty: 0,
       period_of_validity: '',
       dateSearch: [],
       unqualified: true,
-      qty_total: '',
+      qty_total: 0,
       options1: [{
         value: '1',
         label: '1#巷道'
@@ -216,11 +215,15 @@ export default {
   },
   methods: {
     checkPermission,
-    getTableData1() {
-      this.$refs.multipleTable.clearSelection()
-      this.getParams.need_qty = this.need_qty
-      this.getTableData()
-    },
+    // getTableData1() {
+    //   if (this.getParams.need_qty !== '') {
+    //     this.quality_statusSearch1()
+    //   } else {
+    //     this.$refs.multipleTable.clearSelection()
+    //     this.getParams.need_qty = (this.need_qty !== 0 ? this.need_qty : 99999)
+    //     this.getTableData()
+    //   }
+    // },
     async getTableData() {
       if (this.warehouseName === '混炼胶库') {
         this.getParams.station = this.list.station
@@ -242,7 +245,6 @@ export default {
         this.tableData.forEach(D => {
           D.warehouse = this.warehouse
         })
-        // console.log(this.multipleSelection)
         this.$refs.multipleTable.clearSelection()
 
         this.tableData.push({ warehouse: '汇总', qty: this.qtyTotal.toFixed(3), total_weight: this.weightTotal.toFixed(3) })
@@ -307,13 +309,13 @@ export default {
     quality_statusSearch() {
       this.$refs.multipleTable.clearSelection()
       this.getParams.page = 1
-      this.getParams.need_qty = this.need_qty
+      this.getParams.need_qty = (this.need_qty !== 0 ? this.need_qty : 99999)
       this.getTableData()
     },
     quality_statusSearch1() {
       console.log(this.getParams.need_qty)
       if (this.getParams.need_qty === '' || this.getParams.need_qty === '0') {
-        return
+        this.$message.info('请填写指定出库数量，再点击查询')
       } else {
         console.log(this.tableData.length - 1)
         console.log(this.multipleSelection.length)
@@ -336,7 +338,8 @@ export default {
     },
     searchDate(arr) {
       this.$refs.multipleTable.clearSelection()
-      this.getParams.need_qty = this.need_qty
+      this.getParams.need_qty = (this.need_qty !== 0 ? this.need_qty : 99999)
+      // this.getParams.need_qty = this.need_qty
       this.getParams.st = arr ? arr[0] : ''
       this.getParams.et = arr ? arr[1] : ''
       this.getTableData()
