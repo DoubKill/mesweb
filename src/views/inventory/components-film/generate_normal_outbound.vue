@@ -67,6 +67,8 @@
       <el-form-item label="指定出库数量(必填)">
         <el-input
           v-model="getParams.need_qty"
+          on-keypress="return(/[\d]/.test(String.fromCharCode(event.keyCode)))"
+          type="number"
         />
       </el-form-item>
       <el-form-item label="可用库存数">
@@ -309,19 +311,13 @@ export default {
     quality_statusSearch() {
       this.$refs.multipleTable.clearSelection()
       this.getParams.page = 1
-      console.log(this.need_qty)
       this.getParams.need_qty = (this.need_qty !== 0 && this.need_qty !== '') ? this.need_qty : 99999
-      console.log(this.getParams.need_qty)
       this.getTableData()
     },
     quality_statusSearch1() {
-      console.log(this.getParams.need_qty)
-      if (this.getParams.need_qty === '' || this.getParams.need_qty === '0') {
-        this.$message.info('请填写指定出库数量，再点击查询')
+      if (this.getParams.need_qty === '' || this.getParams.need_qty <= 0) {
+        this.$message.info('请填写大于0的指定出库数量，再点击查询')
       } else {
-        console.log(this.tableData.length - 1)
-        console.log(this.multipleSelection.length)
-        console.log((this.tableData.length - 1) !== this.multipleSelection.length)
         if ((this.tableData.length - 1) === this.multipleSelection.length) {
           this.$refs.multipleTable.toggleAllSelection()
           this.getParams.page = 1
@@ -329,10 +325,6 @@ export default {
         } else {
           this.tableData = []
           this.multipleSelection = []
-          // this.$refs.multipleTable.clearSelection()
-          console.log(this.multipleSelection)
-          // this.$refs.multipleTable = []
-          // this.$refs.multipleTable.toggleAllSelection()
           this.getParams.page = 1
           this.getTableData()
         }
@@ -341,7 +333,6 @@ export default {
     searchDate(arr) {
       this.$refs.multipleTable.clearSelection()
       this.getParams.need_qty = (this.need_qty !== 0 && this.need_qty !== '') ? this.need_qty : 99999
-      // this.getParams.need_qty = this.need_qty
       this.getParams.st = arr ? arr[0] : ''
       this.getParams.et = arr ? arr[1] : ''
       this.getTableData()
@@ -359,7 +350,6 @@ export default {
       this.multipleSelection = val
       this.need_qty = this.getParams.need_qty
       this.getParams.need_qty = 0
-      console.log(this.multipleSelection)
       this.multipleSelection.forEach(d => {
         this.getParams.need_qty += Number(d.qty)
       })
