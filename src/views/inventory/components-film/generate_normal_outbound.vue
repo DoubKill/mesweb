@@ -63,7 +63,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="指定出库数量">
+      <el-form-item label="指定出库数量(必填)">
         <el-input
           v-model="getParams.need_qty"
           @input="quality_statusSearch"
@@ -71,12 +71,12 @@
       </el-form-item>
       <el-form-item label="可用库存数">
         <el-input
-          v-model="qtyTotal"
+          v-model="qty_total"
           :disabled="true"
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="getTableData">查询</el-button>
+        <el-button type="primary" @click="getTableData1">查询</el-button>
         <el-button type="primary" :loading="loadingBtn" @click="submitFun">确 定</el-button>
         <el-button type="primary" @click="visibleMethod(true)">取 消</el-button>
       </el-form-item>
@@ -107,10 +107,11 @@
       <el-table-column :key="8" label="重量kg" align="center" prop="total_weight" />
       <el-table-column :key="9" label="入库时间" align="center" prop="in_storage_time" />
     </el-table>
-    <!-- <div slot="footer" class="dialog-footer">
-      <el-button @click="visibleMethod(true)">取 消</el-button>
-      <el-button type="primary" :loading="loadingBtn" @click="submitFun">确 定</el-button>
-    </div> -->
+    <el-alert
+      style="color:black"
+      title="表格背景色说明：红色超期报警；黄色超期预警；白色放置期正常；紫色未设置有效期"
+      type="success"
+    />
   </div>
 </template>
 <script>
@@ -150,10 +151,11 @@ export default {
     return {
       getParams: {
         quality_status: '一等品',
-        need_qty: 9999
+        need_qty: 99999
       },
       period_of_validity: '',
       dateSearch: [],
+      qty_total: '',
       options1: [{
         value: '1',
         label: '1#巷道'
@@ -177,9 +179,9 @@ export default {
   watch: {
     show(bool) {
       if (bool) {
+        this.getParams.need_qty = 99999
         this.period_of_validity = this.list.period_of_validity || null
         this.order_no = this.list.order_no || null
-        this.need_qty = this.list.need_qty || null
         this.warehouse = this.list.warehouse || null
         this.station = this.list.station || null
         this.getParams.material_no = this.list.product_no || null
@@ -192,14 +194,18 @@ export default {
   created() {
     this.period_of_validity = this.list.period_of_validity || null
     this.order_no = this.list.order_no || null
-    this.need_qty = this.list.need_qty || null
     this.warehouse = this.list.warehouse || null
     this.station = this.list.station || null
     this.getParams.material_no = this.list.product_no || null
     this.id = this.list.id || null
+    this.tableData = []
     this.getTableData()
   },
   methods: {
+    getTableData1() {
+      this.$refs.multipleTable.clearSelection()
+      this.getTableData()
+    },
     async getTableData() {
       if (this.warehouseName === '混炼胶库') {
         this.getParams.station = this.list.station
@@ -209,13 +215,12 @@ export default {
       this.qtyTotal = 0
       this.weightTotal = 0
       this.loading = true
-      console.log(this.warehouseName)
       const _api = this.warehouseName === '混炼胶库' ? bzMixinInventorySearch : bzFinalInventorySearch
       try {
         const data = await _api('get', null, { params: this.getParams })
-        this.tableData = data
+        this.tableData = data.data
         this.qty_total = data.total_trains
-        this.weight_total = data.total_weight
+        this.getParams.need_qty = data.total_trains
         this.tableData.forEach(D => {
           this.qtyTotal += Number(D.qty)
           this.weightTotal += Number(D.total_weight)
@@ -225,6 +230,7 @@ export default {
         })
         this.tableData.push({ warehouse: '汇总', qty: this.qtyTotal.toFixed(3), total_weight: this.weightTotal.toFixed(3) })
         this.loading = false
+        this.$refs.multipleTable.toggleAllSelection()
       } catch (error) {
         this.loading = false
       }
@@ -264,32 +270,41 @@ export default {
       const time = new Date(row.in_storage_time)
       var nowTime = new Date()
       var timeDifference = nowTime.getTime() - time.getTime()
-      var days = Math.floor(timeDifference / (24 * 3600 * 1000))
+      var days = timeDifference / (24 * 3600 * 1000)
       if (this.period_of_validity >= 0 && this.period_of_validity !== null) {
-        if (days > (0.5 * this.period_of_validity) && days < this.period_of_validity) {
+        if (days >= (0.5 * this.period_of_validity) && days < this.period_of_validity) {
           return 'warning-row'
-        } else if (days > this.period_of_validity) {
+        } else if (days >= this.period_of_validity) {
           return 'maxwarning-row'
         } else { return '' }
+      } else {
+        return 'warn-row'
       }
     },
     select(row, index) {
-      if (row.warehouse === '单页小计' || row.warehouse === '汇总') { // 判断条件
+      if (row.warehouse === '汇总') { // 判断条件
         return false // 不可勾选
       } else {
         return true // 可勾选
       }
     },
     quality_statusSearch() {
-      this.getParams.page = 1
-      this.getTableData()
+      if (this.getParams.need_qty === '') {
+        return
+      } else {
+        this.$refs.multipleTable.clearSelection()
+        this.getParams.page = 1
+        this.getTableData()
+      }
     },
     searchDate(arr) {
+      this.$refs.multipleTable.clearSelection()
       this.getParams.st = arr ? arr[0] : ''
       this.getParams.et = arr ? arr[1] : ''
       this.getTableData()
     },
     creadVal() {
+      this.$refs.multipleTable.clearSelection()
     },
     visibleMethod(bool) {
       if (bool) {
@@ -319,7 +334,10 @@ export default {
   .el-input-number{
      width:auto;
   }
-.el-table .warning-row {
+  .el-table .warn-row {
+    background: #D1CBE4;
+  }
+  .el-table .warning-row {
     background: #e6a23c;
   }
   .el-table .maxwarning-row {

@@ -101,6 +101,11 @@
       <el-table-column :key="8" label="重量kg" align="center" prop="total_weight" />
       <el-table-column :key="9" label="入库时间" align="center" prop="in_storage_time" />
     </el-table>
+    <el-alert
+      style="color:black"
+      title="表格背景色说明：红色超期报警；黄色超期预警；白色放置期正常；紫色未设置有效期"
+      type="success"
+    />
     <page
       :total="total"
       :current-page="getParams.page"
@@ -282,13 +287,15 @@ export default {
       const time = new Date(row.in_storage_time)
       var nowTime = new Date()
       var timeDifference = nowTime.getTime() - time.getTime()
-      var days = Math.floor(timeDifference / (24 * 3600 * 1000))
+      var days = timeDifference / (24 * 3600 * 1000)
       if (this.period_of_validity >= 0 && this.period_of_validity !== null) {
-        if (days > (0.5 * this.period_of_validity) && days < this.period_of_validity) {
+        if (days >= (0.5 * this.period_of_validity) && days < this.period_of_validity) {
           return 'warning-row'
-        } else if (days > this.period_of_validity) {
+        } else if (days >= this.period_of_validity) {
           return 'maxwarning-row'
         } else { return '' }
+      } else {
+        return 'warn-row'
       }
     },
     select(row, index) {
@@ -328,7 +335,9 @@ export default {
     width:100%;
     text-align: right;
   }
-
+  .el-table .warn-row {
+    background: #D1CBE4;
+  }
   .el-table .warning-row {
     background: #e6a23c;
   }
