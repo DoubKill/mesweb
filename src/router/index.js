@@ -778,7 +778,7 @@ export const asyncRoutes = [
     children: [
       {
         path: '/rubber-warehouse',
-        redirect: '/delivery-document',
+        redirect: '/compound-manage',
         component: () => import('@/views/inventory/rubber-warehouse/a-index.vue'),
         name: 'RubberWarehouse',
         meta: {
@@ -786,16 +786,6 @@ export const asyncRoutes = [
           icon: 'stock'
         },
         children: [
-          {
-            path: '/delivery-document',
-            component: () => import('@/views/inventory/rubber-warehouse/delivery-document.vue'),
-            name: 'DeliveryDocument',
-            meta: {
-              faName: 'RubberWarehouse',
-              title: '出库单据信息查询',
-              permissionName: ''
-            }
-          },
           /** {
             path: '/compound-rubber-manage',
             component: () => import('@/views/inventory/rubber-warehouse/compound-rubber-manage.vue'),
@@ -823,7 +813,17 @@ export const asyncRoutes = [
             meta: {
               faName: 'RubberWarehouse',
               title: '胶片库出库计划',
-              permissionName: ''
+              permissionName: 'product_outbound_plan'
+            }
+          },
+          {
+            path: '/delivery-document',
+            component: () => import('@/views/inventory/rubber-warehouse/delivery-document.vue'),
+            name: 'DeliveryDocument',
+            meta: {
+              faName: 'RubberWarehouse',
+              title: '出库单据信息查询',
+              permissionName: 'product_outbound_plan'
             }
           },
           {
@@ -929,7 +929,7 @@ export const asyncRoutes = [
               faName: 'MaterialDelivery',
               faShowName: '原材料库',
               title: '库存明细',
-              permissionName: 'goods'
+              permissionName: 'material_stock_detail'
             }
           },
           {
@@ -982,7 +982,7 @@ export const asyncRoutes = [
             meta: {
               faName: 'MaterialDelivery',
               title: '出入库履历查询',
-              permissionName: 'in_out_history'
+              permissionName: 'material_inout_history'
             }
           }
         ]
@@ -1038,7 +1038,7 @@ export const asyncRoutes = [
               faName: 'CarbonDelivery',
               faShowName: '炭黑库',
               title: '库存明细',
-              permissionName: 'goods'
+              permissionName: 'th_stock_detail'
             }
           },
           {
@@ -1073,17 +1073,17 @@ export const asyncRoutes = [
               title: '出库年报',
               permissionName: 'th_yearly_summary'
             }
+          },
+          {
+            path: '/carbon-inout-record',
+            component: () => import('@/views/inventory/carbon-delivery-manage/material_inout_record.vue'),
+            name: 'CarbonInOutRecord',
+            meta: {
+              faName: 'CarbonDelivery',
+              title: '出入库履历查询',
+              permissionName: 'th_inout_history'
+            }
           }
-          // {
-          //   path: '/carbon-inout-record',
-          //   component: () => import('@/views/inventory/carbon-delivery-manage/material_inout_record.vue'),
-          //   name: 'CarbonInOutRecord',
-          //   meta: {
-          //     faName: 'CarbonDelivery',
-          //     title: '出入库履历查询',
-          //     permissionName: 'in_out_history'
-          //   }
-          // }
 
         ]
       },
@@ -1229,17 +1229,17 @@ export const asyncRoutes = [
               permissionName: 'depot_pallet'
             }
           },
-          {
-            path: '/lineSide-inventory-details',
-            component: () => import('@/views/inventory/lineSideLibrary/inventory-details.vue'),
-            name: 'LineSideInventoryDetails',
-            meta: {
-              faName: 'LineSideLibrary',
-              faShowName: '线边库',
-              title: '库存明细',
-              permissionName: 'goods'
-            }
-          },
+          // {
+          //   path: '/lineSide-inventory-details',
+          //   component: () => import('@/views/inventory/lineSideLibrary/inventory-details.vue'),
+          //   name: 'LineSideInventoryDetails',
+          //   meta: {
+          //     faName: 'LineSideLibrary',
+          //     faShowName: '线边库',
+          //     title: '库存明细',
+          //     permissionName: ''
+          //   }
+          // },
           {
             path: '/lineSideLibrary/inOutWarehouseResume',
             component: () => import('@/views/inventory/lineSideLibrary/inOutWarehouseResume.vue'),
@@ -1292,7 +1292,7 @@ export const asyncRoutes = [
               faName: 'CurtainStorehouse',
               faShowName: '帘布库',
               title: '库存明细',
-              permissionName: 'goods'
+              permissionName: 'LB_stock_detail'
             }
           },
           {
@@ -1302,7 +1302,7 @@ export const asyncRoutes = [
             meta: {
               faName: 'CurtainStorehouse',
               title: '出入库履历查询',
-              permissionName: 'in_out_history'
+              permissionName: 'LB_inout_history'
             }
           }
         ]
@@ -1314,26 +1314,6 @@ export const asyncRoutes = [
       //   meta: {
       //     title: '胶料库存信息汇总',
       //     permissionName: 'warehouse_summary'
-      //   }
-      // },
-      // {
-      //   path: '/film-inout-record',
-      //   component: () => import('@/views/inventory/film-inout-record.vue'),
-      //   name: 'film-inout-record',
-      //   meta: {
-      //     title: '胶片出入库履历',
-      //     icon: 'stock',
-      //     permissionName: ''
-      //   }
-      // },
-
-      // {
-      //   path: 'outbound-manage',
-      //   component: () => import('@/views/inventory/outbound_manage.vue'),
-      //   name: 'OutboundManage',
-      //   meta: {
-      //     title: '出库计划管理',
-      //     permissionName: 'product_inventory'
       //   }
       // },
 

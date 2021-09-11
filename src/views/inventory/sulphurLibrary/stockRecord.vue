@@ -19,6 +19,7 @@
           :data="tableData"
           border
           highlight-current-row
+          show-summary
           @current-change="handleCurrentChange"
         >
           <el-table-column

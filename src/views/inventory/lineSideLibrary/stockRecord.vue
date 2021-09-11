@@ -40,6 +40,7 @@
           ref="singleTable"
           :data="tableData"
           border
+          show-summary
           highlight-current-row
           @current-change="handleCurrentChange"
         >
