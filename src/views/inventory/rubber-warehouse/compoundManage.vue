@@ -53,7 +53,7 @@
       </el-form-item>
       <el-form-item>
         <el-button class="button-right" type="primary" @click="getList">查询</el-button>
-        <el-button class="button-right" type="primary" @click="dialog">新建单据</el-button>
+        <el-button v-permission="['product_outbound_plan','add']" class="button-right" type="primary" @click="dialog">新建单据</el-button>
       </el-form-item>
     </el-form>
     <el-dialog
@@ -137,7 +137,7 @@
       >
         <template slot-scope="scope">
           <el-button
-            :disabled="scope.row.status!==1"
+            :disabled="scope.row.status!==1||normal"
             size="mini"
             type="primary"
             @click="normalOutbound(scope)"
@@ -150,7 +150,7 @@
       >
         <template slot-scope="scope">
           <el-button
-            :disabled="scope.row.status!==1"
+            :disabled="scope.row.status!==1||assign"
             size="mini"
             type="primary"
             @click="assignOutbound(scope)"
@@ -163,7 +163,7 @@
       >
         <template slot-scope="scope">
           <el-button
-            :disabled="scope.row.status!==1"
+            :disabled="scope.row.status!==1||close"
             size="mini"
             type="danger"
             @click="deleteList(scope)"
@@ -188,7 +188,7 @@
       <el-table-column
         prop="product_no"
         label="物料编码"
-        min-width="20"
+        min-width="25"
       />
       <el-table-column
         prop="order_qty"
@@ -268,6 +268,7 @@ import GenerateNormalOutbound from '../components-film/generate_normal_outbound'
 import { bzMixinInventorySummary, bzFinalInventorySummary } from '@/api/base_w_four'
 import { compoundManage } from '@/api/jqy'
 import { stationInfo } from '@/api/warehouse'
+import { checkPermission } from '@/utils'
 import page from '@/components/page'
 
 export default {
@@ -286,6 +287,9 @@ export default {
         station: '',
         order_qty: 99999
       },
+      close: true,
+      assign: true,
+      normal: true,
       dateSearch: [],
       stationList: [],
       batchList: [],
@@ -320,8 +324,18 @@ export default {
   },
   created() {
     this.getList()
+    if (checkPermission(['product_outbound_plan', 'close'])) {
+      this.close = false
+    }
+    if (checkPermission(['product_outbound_plan', 'assign'])) {
+      this.assign = false
+    }
+    if (checkPermission(['product_outbound_plan', 'normal'])) {
+      this.normal = false
+    }
   },
   methods: {
+    checkPermission,
     dialog() {
       this.creatOrder.product_no = ''
       this.creatOrder.warehouse = localStorage.getItem('warehouse')
