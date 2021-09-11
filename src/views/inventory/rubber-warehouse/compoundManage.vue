@@ -283,7 +283,8 @@ export default {
       creatOrder: {
         product_no: '',
         warehouse: '',
-        station: ''
+        station: '',
+        order_qty: 99999
       },
       dateSearch: [],
       stationList: [],
@@ -332,11 +333,17 @@ export default {
         if (this.creatOrder.warehouse === '' || this.creatOrder.warehouse === null) {
           this.batchList = []
           this.$message.info('请先选择库区')
+        } else if (this.creatOrder.warehouse === '混炼胶库' && this.creatOrder.station === '') {
+          this.batchList = []
+          this.$message.info('请先选择出库口')
         } else {
           try {
             const _api = this.creatOrder.warehouse === '混炼胶库' ? bzMixinInventorySummary : bzFinalInventorySummary
             const obj = {}
             obj.all = 1
+            if (this.creatOrder.warehouse === '混炼胶库') {
+              obj.station = this.creatOrder.station
+            }
             const data = await _api('get', null, { params: obj })
             this.batchList = data
           } catch (e) { this.batchList = [] }

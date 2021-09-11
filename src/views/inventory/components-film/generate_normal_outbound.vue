@@ -71,12 +71,12 @@
       </el-form-item>
       <el-form-item label="可用库存数">
         <el-input
-          v-model="qtyTotal"
+          v-model="qty_total"
           :disabled="true"
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="getTableData">查询</el-button>
+        <el-button type="primary" @click="getTableData1">查询</el-button>
         <el-button type="primary" :loading="loadingBtn" @click="submitFun">确 定</el-button>
         <el-button type="primary" @click="visibleMethod(true)">取 消</el-button>
       </el-form-item>
@@ -150,10 +150,12 @@ export default {
   data() {
     return {
       getParams: {
-        quality_status: '一等品'
+        quality_status: '一等品',
+        need_qty: 99999
       },
       period_of_validity: '',
       dateSearch: [],
+      qty_total: '',
       options1: [{
         value: '1',
         label: '1#巷道'
@@ -177,30 +179,33 @@ export default {
   watch: {
     show(bool) {
       if (bool) {
+        this.getParams.need_qty = 99999
         this.period_of_validity = this.list.period_of_validity || null
         this.order_no = this.list.order_no || null
-        this.need_qty = this.list.need_qty || null
         this.warehouse = this.list.warehouse || null
         this.station = this.list.station || null
         this.getParams.material_no = this.list.product_no || null
         this.id = this.list.id || null
         this.tableData = []
-        // this.getTableData()
+        this.getTableData()
       }
     }
   },
   created() {
     this.period_of_validity = this.list.period_of_validity || null
     this.order_no = this.list.order_no || null
-    this.need_qty = this.list.need_qty || null
     this.warehouse = this.list.warehouse || null
     this.station = this.list.station || null
     this.getParams.material_no = this.list.product_no || null
     this.id = this.list.id || null
     this.tableData = []
-    // this.getTableData()
+    this.getTableData()
   },
   methods: {
+    getTableData1() {
+      this.$refs.multipleTable.clearSelection()
+      this.getTableData()
+    },
     async getTableData() {
       if (this.warehouseName === '混炼胶库') {
         this.getParams.station = this.list.station
@@ -210,13 +215,12 @@ export default {
       this.qtyTotal = 0
       this.weightTotal = 0
       this.loading = true
-      console.log(this.warehouseName)
       const _api = this.warehouseName === '混炼胶库' ? bzMixinInventorySearch : bzFinalInventorySearch
       try {
         const data = await _api('get', null, { params: this.getParams })
-        this.tableData = data
+        this.tableData = data.data
         this.qty_total = data.total_trains
-        this.weight_total = data.total_weight
+        this.getParams.need_qty = data.total_trains
         this.tableData.forEach(D => {
           this.qtyTotal += Number(D.qty)
           this.weightTotal += Number(D.total_weight)
@@ -267,8 +271,6 @@ export default {
       var nowTime = new Date()
       var timeDifference = nowTime.getTime() - time.getTime()
       var days = timeDifference / (24 * 3600 * 1000)
-      console.log(days, 111)
-      console.log(this.period_of_validity, 222)
       if (this.period_of_validity >= 0 && this.period_of_validity !== null) {
         if (days >= (0.5 * this.period_of_validity) && days < this.period_of_validity) {
           return 'warning-row'
@@ -280,7 +282,7 @@ export default {
       }
     },
     select(row, index) {
-      if (row.warehouse === '单页小计' || row.warehouse === '汇总') { // 判断条件
+      if (row.warehouse === '汇总') { // 判断条件
         return false // 不可勾选
       } else {
         return true // 可勾选
@@ -290,16 +292,19 @@ export default {
       if (this.getParams.need_qty === '') {
         return
       } else {
+        this.$refs.multipleTable.clearSelection()
         this.getParams.page = 1
         this.getTableData()
       }
     },
     searchDate(arr) {
+      this.$refs.multipleTable.clearSelection()
       this.getParams.st = arr ? arr[0] : ''
       this.getParams.et = arr ? arr[1] : ''
       this.getTableData()
     },
     creadVal() {
+      this.$refs.multipleTable.clearSelection()
     },
     visibleMethod(bool) {
       if (bool) {
