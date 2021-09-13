@@ -7,7 +7,7 @@
           v-model="getParams.warehouse_name"
           clearable
           placeholder="请选择"
-          @change="changeSearch"
+          @change="changeWarehouse"
         >
           <el-option
             v-for="item in ['终炼胶库','混炼胶库']"
@@ -302,6 +302,10 @@ export default {
       this.getParams.page = 1
       this.rubber_repertory_list()
     },
+    changeWarehouse() {
+      this.getParams.material_no = ''
+      this.changeSearch()
+    },
     currentChange(page) {
       this.getParams.page = page
       this.rubber_repertory_list()
@@ -327,7 +331,8 @@ export default {
     },
     exportTable(val) {
       this.btnLoading = true
-      inLibraryInventory('get', null, { params: { export: val }, responseType: 'blob' })
+      const obj = Object.assign({ export: val }, this.getParams)
+      inLibraryInventory('get', null, { params: obj, responseType: 'blob' })
         .then(res => {
           const link = document.createElement('a')
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
