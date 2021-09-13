@@ -93,6 +93,10 @@ export default {
   },
   methods: {
     productBatchingChanged() {
+      if (this.isCreated) {
+        this.$emit('productBatchingChanged', this.productBatchingById[this.productBatchingId] ? this.productBatchingById[this.productBatchingId] : this.productBatchingId)
+        return
+      }
       this.$emit('productBatchingChanged', this.productBatchingById[this.productBatchingId])
     },
     visibleChange(bool) {

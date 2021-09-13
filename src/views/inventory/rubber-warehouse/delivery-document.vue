@@ -1,6 +1,6 @@
 <template>
   <div v-loading="loading" class="delivery-document">
-    <!-- 出库单据信息查询 -->
+    <!-- 出库单据查询 -->
     <el-form :inline="true">
       <el-form-item label="库区">
         <el-select v-model="search.warehouse" clearable placeholder="请选择" @change="changeWarehouseList">
@@ -43,12 +43,11 @@
       <el-form-item label="出库起止时间">
         <el-date-picker
           v-model="searchDate"
-          type="datetimerange"
+          type="daterange"
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
-          value-format="yyyy-MM-dd HH:mm:ss"
-          :default-time="['00:00:00', '23:59:59']"
+          value-format="yyyy-MM-dd"
           @change="changeList"
         />
       </el-form-item>
@@ -153,13 +152,13 @@
     >
       <el-form :inline="true">
         <el-form-item label="仓库名称">
-          {{ warehouseName }}
+          {{ rowObj.warehouse }}
         </el-form-item>
         <el-form-item label="出库单号">
           {{ rowObj.order_no }}
         </el-form-item>
         <el-form-item label="出库位置">
-          {{ tableDataView[0]?tableDataView[0].station:'' }}
+          {{ rowObj.station }}
         </el-form-item>
         <el-form-item label="订单子编号">
           <el-input
@@ -208,7 +207,7 @@
           min-width="20"
         />
         <el-table-column
-          prop="last_updated_date"
+          prop="finish_time"
           label="出库时间"
           min-width="20"
         />
@@ -315,7 +314,7 @@ export default {
       this.search.station = ''
     },
     materialCodeFun(obj) {
-      this.search.product_no = obj ? obj.material_no : ''
+      this.search.product_no = obj ? obj.material_no ? obj.material_no : obj : ''
       this.changeList()
     },
     changSelectStation(val) {
