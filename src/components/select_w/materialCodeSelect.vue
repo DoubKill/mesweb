@@ -126,11 +126,15 @@ export default {
           this.$message.info('请选择出库口')
           return
         }
-        this.loading = true
         let _api = this.storeName === '混炼胶库' ? bzMixinInventorySummary : bzFinalInventorySummary
         if (!['混炼胶库', '终炼胶库'].includes(this.storeName)) {
           _api = materialCount
         }
+        if (!this.storeName) {
+          this.$message.info('请选择库区')
+          return
+        }
+        this.loading = true
         const obj = {
           store_name: this.storeName,
           status: this.status,

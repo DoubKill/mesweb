@@ -123,7 +123,7 @@
           {{ row.all===1?'汇总': row.all===2?"页面小计":$index+1 }}
         </template>
       </el-table-column>
-      <el-table-column prop="material_type" label="胶料类型" align="center" min-width="16" />
+      <el-table-column prop="stage" label="胶料类型" align="center" min-width="16" />
       <el-table-column prop="material_no" label="胶料编码" align="center" min-width="28">
         <template slot-scope="{row}">
           <!-- <el-link type="primary" @click="clickMaterialNo">{{ row.material_no }}</el-link> -->
@@ -132,6 +132,7 @@
       </el-table-column>
       <el-table-column prop="material_no" label="胶料名称" align="center" min-width="28" />
       <el-table-column prop="warehouse_name" label="库区" align="center" min-width="20" />
+      <el-table-column prop="location" label="巷道" align="center" min-width="10" />
       <el-table-column label="一等品库存数(车)" align="center" min-width="20">
         <template slot-scope="{row}">
           <el-link v-if="row['一等品']" :type="row.all?'':'primary'" :underline="false" @click="clickVehicle(row,'一等品')">
