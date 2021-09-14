@@ -22,7 +22,7 @@
           @changSelect="changeMaterialCode"
         /> -->
       </el-form-item>
-      <el-form-item label="切换库存明细:">
+      <!-- <el-form-item label="切换库存明细:">
         <el-select v-model="switchDetails" placeholder="请选择" @change="changeDetails">
           <el-option
             v-for="item in [{name:'胶片车间库存明细',id:1},{name:'原材料车间库存明细',id:2}]"
@@ -31,7 +31,7 @@
             :value="item.id"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item style="float:right">
         <el-button
           type="primary"
