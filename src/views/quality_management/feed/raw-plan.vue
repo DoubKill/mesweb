@@ -187,7 +187,7 @@
               </el-table-column>
               <el-table-column label="投料状态" min-width="20">
                 <template slot-scope="scope">
-                  {{ scope.row.feed_status===0?'投料中':scope.row.feed_status===1?'投料完成':'空' }}
+                  {{ scope.row.feed_status===0?'投料中':scope.row.feed_status===1?'投料完成':'无' }}
                 </template>
               </el-table-column>
               <el-table-column
