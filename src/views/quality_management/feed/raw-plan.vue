@@ -71,19 +71,19 @@
       <!-- </div> -->
       </el-col>
       <el-col
+        v-loading="addPlanArrLoading"
         :span="23"
         class="rightContent"
       >
         <div
           v-for="(tableItem,key) in addPlanArr"
           :key="key"
-          v-loading="addPlanArrLoading"
           style="margin-left:10px;"
           element-loading-text="拼命加载中"
         >
           <div v-for="(tableItem1,key1) in tableItem" :key="key1" class="tableTop">
             <div>
-              <el-button style="float:right;margin:5px 10px" size="small" @click="saveFun(key,key1)">保存</el-button>
+              <el-button style="float:right;margin:5px 10px" size="small" :disabled="loadingBtn" @click="saveFun(key,key1)">保存</el-button>
               {{ key1 }}
             </div>
             <el-table
@@ -199,12 +199,14 @@
                   <el-button
                     size="mini"
                     type="primary"
+                    :disabled="loadingBtn"
                     @click="handleStart(scope.row,key1,key,scope.$index)"
                   >开始
                   </el-button>
                   <el-button
                     size="mini"
                     type="primary"
+                    :disabled="loadingBtn"
                     @click="handleGroupDelete(scope.row)"
                   >结束
                   </el-button>
@@ -235,18 +237,18 @@
           {{ formData.feedport_code }}
         </el-form-item>
         <el-form-item label="投料重量（kg）:">
-          {{ formData.aa }}
+          {{ formData.feedcapacity_weight_set }}
         </el-form-item>
         <el-form-item label="库存数量（托）:">
-          {{ formData.bb }}
+          {{ formData.pallets }}
         </el-form-item>
         <el-form-item label="库库存重量（kg）:">
-          {{ formData.cc }}
+          {{ formData.total_weight }}
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitForm(false,formData.id)">确 定</el-button>
+        <el-button type="primary" :loading="loadingBtn" @click="submitForm(false,formData.id)">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -255,7 +257,7 @@
 <script>
 import { equipUrl } from '@/api/base_w'
 import { zcMaterials } from '@/api/base_w_two'
-import { feedCapacityPlan, carbonFeedingPrompt, carOutCheck } from '@/api/base_w_four'
+import { feedCapacityPlan, carbonFeedingPrompt, carOutCheck, carbonOutTask } from '@/api/base_w_four'
 export default {
   name: 'RawPlan',
   data() {
@@ -277,7 +279,8 @@ export default {
       optionsMaterial: [],
       dialogVisible: false,
       formData: {},
-      loading: true
+      loading: true,
+      loadingBtn: false
     }
   },
   created() {
@@ -336,7 +339,7 @@ export default {
         }
       })
 
-      console.log(this.addPlanArr, 2222)
+      // console.log(this.addPlanArr, 2222)
     },
     async changeEquip(val, row) {
       if (val) {
@@ -358,7 +361,6 @@ export default {
     async getInfoFun(row) {
       try {
         this.disabledEquip = true
-        this.addPlanArrLoading = true
         let obj = {}
         if (row) {
           obj = { equip_id: row.equip_no }
@@ -366,6 +368,7 @@ export default {
           delete obj.equip_id
           obj = { all: 1 }
         }
+        this.addPlanArrLoading = true
         const data = await carbonFeedingPrompt('get', null, { params: obj })
         this.disabledEquip = false
         this.addPlanArrLoading = false
@@ -385,7 +388,7 @@ export default {
     MaterialChange(val, index, faIndex, zo, row) {
       const arr = this.optionsMaterial.filter(d => d.material_name === val)
       if (arr.length > 0) {
-        row.material_no = arr[0].material_no
+        row.wlxxid = arr[0].wlxxid
       }
     },
     visibleChangeMaterial(bool, row) {
@@ -431,7 +434,7 @@ export default {
         return
       }
       this.addPlanArr[faindex][key1].splice(index + 1, 0, _row)
-      console.log(this.addPlanArr, 8888)
+      // console.log(this.addPlanArr, 8888)
     },
     clickEquip() {},
     handleGroupDelete(row) {
@@ -440,6 +443,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        this.loadingBtn = true
         carbonFeedingPrompt('put', row.id, { data: { feed_status: 1 }})
           .then(response => {
             this.$message({
@@ -447,8 +451,9 @@ export default {
               message: '操作成功!'
             })
             row.feed_status = 1
+            this.loadingBtn = false
           }).catch(e => {
-            //
+            this.loadingBtn = false
           })
       })
     },
@@ -462,49 +467,57 @@ export default {
         obj.equip_id = zo
         delete obj.is_plan_used
         // delete obj.id
-
+        this.loadingBtn = true
         const data = await carOutCheck('post', null, { data: obj })
-        if (data === 'OK') {
-          this.formData = obj
+        this.loadingBtn = false
+        if (data === 'NO') {
+          this.formData = {}
+          this.submitForm(true, obj.id, row)
+        } else {
+          obj.feedcapacity_weight_set = Number(obj.feedcapacity_weight_set) > Number(data.total_weight) ? data.total_weight : obj.feedcapacity_weight_set
+          this.formData = Object.assign({ total_weight: data.total_weight, pallets: data.pallets }, obj)
           this.formData._faIdex = faIndex
           this.formData._index = index
           this.dialogVisible = true
-        } else {
-          this.formData = {}
-          this.submitForm(true, obj.id, row)
         }
       } catch (e) {
-        //
+        this.loadingBtn = false
       }
     },
     submitForm(bool, id, row) {
       // bool 等于true 出库关闭得情况
       const _value = bool ? '请预先切换好管路，点击确定后解包房将开始投料，是否继续？'
         : '请预先切换好管路，点击确定后炭黑料包将从炭黑立库里输出，解包房将开始投料，是否继续？'
-      const _api = bool ? carbonFeedingPrompt : carbonFeedingPrompt
+      const _api = bool ? carbonFeedingPrompt : carbonOutTask
       let obj = {}
-      // if (bool) {
-      obj = { feed_status: 0 }
-      // }
+      if (bool) {
+        obj = { feed_status: 0 }
+      } else {
+        obj = Object.assign({ total_weight: this.formData.total_weight,
+          material_name: this.addPlanArr[this.formData._faIdex][this.formData.equip_id][this.formData._index].feed_material_name,
+          feedcapacity_weight_set: this.formData.feedcapacity_weight_set }, this.addPlanArr[this.formData._faIdex][this.formData.equip_id][this.formData._index])
+      }
       this.$confirm(_value, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.dialogVisible = false
-        _api('put', id, { data: obj })
+        this.loadingBtn = true
+        _api(bool ? 'put' : 'post', bool ? id : '', { data: obj })
           .then(response => {
             this.$message({
               type: 'success',
               message: '操作成功!'
             })
-            if (row) {
+            if (bool) {
               row.feed_status = 0
             } else {
               this.addPlanArr[this.formData._faIdex][this.formData.equip_id][this.formData._index].feed_status = 0
             }
+            this.loadingBtn = false
+            this.dialogVisible = false
           }).catch(e => {
-            //
+            this.loadingBtn = false
           })
       })
     },
@@ -530,28 +543,27 @@ export default {
           //   throw new Error('投料口或投入物料未选择!')
           // }
         })
-        console.log(arr)
+        // 记得删除
+        // arr = arr.filter(d => d.feed_material_name)
+        // console.log(arr)
         if (this.addPlanArr[faIndex][zo].length === 0) {
           this.$message.info('暂无数据保存')
           return
         }
+        this.loadingBtn = true
         await carbonFeedingPrompt('post', null, { data: arr })
         this.$message.success('保存成功')
         const work_schedule = await this.getInfoFun({ equip_no: zo })
         this.addPlanArr[faIndex][zo] = work_schedule[zo]
+        this.loadingBtn = false
       } catch (e) {
+        this.loadingBtn = false
         if (e.message) {
           this.$message.info(e.message)
         }
       }
     },
     objectSpanMethod({ row, column, rowIndex, columnIndex }) {
-      // console.log(row, column, rowIndex, columnIndex, 333)
-      // let arr = []
-      // if (row.equip_id) {
-      //   console.log(this.addPlanArr.filter(d => Object.keys(d)[0] === row.equip_id), 2222)
-      //   arr = this.addPlanArr.filter(d => Object.keys(d)[0] === row.equip_id)
-      // }
       if (columnIndex < 5) {
         if (row.feed_change === 2) {
           if (!row.is_no_port_one) {
