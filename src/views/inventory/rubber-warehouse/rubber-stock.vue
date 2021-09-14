@@ -23,13 +23,12 @@
       <el-form-item label="统计起止时间:">
         <el-date-picker
           v-model="dateValue"
+          type="datetimerange"
           clearable
-          type="daterange"
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           value-format="yyyy-MM-dd HH:mm:ss"
-          :default-time="['00:00:00', '23:59:59']"
           @change="visibleChange"
         />
       </el-form-item>
@@ -114,7 +113,7 @@
 import { productStationStatics } from '@/api/base_w_three'
 import { productInfosUrl } from '@/api/base_w'
 import StageSelect from '@/components/StageSelect'
-import { exportExcel } from '@/utils'
+import { exportExcel, setDate } from '@/utils'
 export default {
   name: 'RubberStock',
   components: { StageSelect },
@@ -132,6 +131,10 @@ export default {
     }
   },
   created() {
+    var _setDateCurrent = setDate()
+    this.search.s_time = _setDateCurrent + ' 00:00:00'
+    this.search.e_time = _setDateCurrent + ' 23:59:59'
+    this.dateValue = [this.search.s_time, this.search.e_time]
     this.getGlue()
   },
   methods: {
