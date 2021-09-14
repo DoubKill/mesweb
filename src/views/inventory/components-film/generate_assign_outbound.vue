@@ -45,6 +45,7 @@
       <el-form-item label="品质状态">
         <el-select
           v-model="getParams.quality_status"
+          :disabled="unqualified"
           placeholder="请选择品质状态"
           clearable
           @change="quality_statusSearch"
@@ -120,6 +121,7 @@
 
 <script>
 import { outbound } from '@/api/jqy'
+import { checkPermission } from '@/utils'
 import { bzMixinInventory, bzFinalInventory } from '@/api/material-inventory-manage'
 import page from '@/components/page'
 // import { stationInfo, stationInfoRawMaterial, drussPlanManagementStations } from '@/api/warehouse'
@@ -175,6 +177,7 @@ export default {
         label: '4#巷道'
       }],
       dateSearch: [],
+      unqualified: true,
       qtyTotal: 0,
       weightTotal: 0,
       qty_total: '',
@@ -192,6 +195,9 @@ export default {
   watch: {
     show(bool) {
       if (bool) {
+        if (checkPermission(['product_outbound_plan', 'unqualified'])) {
+          this.unqualified = false
+        }
         this.period_of_validity = this.list.period_of_validity || null
         this.order_no = this.list.order_no || null
         this.need_qty = this.list.need_qty || null
@@ -205,6 +211,9 @@ export default {
     }
   },
   created() {
+    if (checkPermission(['product_outbound_plan', 'unqualified'])) {
+      this.unqualified = false
+    }
     this.period_of_validity = this.list.period_of_validity || null
     this.order_no = this.list.order_no || null
     this.need_qty = this.list.need_qty || null
@@ -215,6 +224,7 @@ export default {
     this.getTableData()
   },
   methods: {
+    checkPermission,
     getTableData() {
       if (this.warehouseName === '混炼胶库') {
         this.getParams.station = this.list.station
