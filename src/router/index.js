@@ -822,7 +822,7 @@ export const asyncRoutes = [
             name: 'DeliveryDocument',
             meta: {
               faName: 'RubberWarehouse',
-              title: '出库单据信息查询',
+              title: '出库单据查询',
               permissionName: 'product_outbound_plan'
             }
           },
@@ -1902,8 +1902,8 @@ export const asyncRoutes = [
             }
           }
         ]
-      }
-      /** {
+      },
+      {
         path: '/feed',
         redirect: '/feed/raw-plan',
         component: () => import('@/views/quality_management/feed/a-index'),
@@ -1944,7 +1944,7 @@ export const asyncRoutes = [
             }
           }
         ]
-      }**/
+      }
     ]
   },
   {
