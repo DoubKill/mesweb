@@ -769,7 +769,7 @@ export const asyncRoutes = [
   {
     path: '/repertory',
     component: Layout,
-    redirect: '/rubber-warehouse',
+    redirect: '/compound-manage',
     name: 'RepertoryManage',
     meta: {
       title: '库存管理',
@@ -876,6 +876,16 @@ export const asyncRoutes = [
               permissionName: 'in_out_history'
             }
           }
+          // {
+          //   path: '/material-print-card',
+          //   component: () => import('@/views/inventory/rubber-warehouse/material-print-card.vue'),
+          //   name: 'MaterialPrintCard',
+          //   meta: {
+          //     faName: 'RubberWarehouse',
+          //     title: '出库口补打印卡片',
+          //     permissionName: ''
+          //   }
+          // }
         ]
       },
       {
@@ -1131,7 +1141,7 @@ export const asyncRoutes = [
       },
       {
         path: '/sulphurLibrary',
-        redirect: '/sulphurLibrary/Location',
+        redirect: '/sulphurLibrary/inOutWarehouse',
         component: () => import('@/views/inventory/sulphurLibrary/a-index.vue'),
         name: 'SulphurLibrary',
         meta: {
@@ -1199,7 +1209,7 @@ export const asyncRoutes = [
       },
       {
         path: '/lineSideLibrary',
-        redirect: '/lineSideLibrary/Location',
+        redirect: '/lineSideLibrary/inOutWarehouse',
         component: () => import('@/views/inventory/lineSideLibrary/a-index.vue'),
         name: 'LineSideLibrary',
         meta: {
@@ -1524,7 +1534,7 @@ export const asyncRoutes = [
       },
       {
         path: '/unqualified-handle',
-        redirect: '/unqualified-handle/inferior-quality-product-manage',
+        redirect: '/unqualified-handle/disposalLaunch',
         component: () => import('@/views/quality_management/DisposalListGenerate-fa'),
         name: 'UnqualifiedHandle',
         meta: {
@@ -1771,7 +1781,7 @@ export const asyncRoutes = [
       },**/
       {
         path: '/material-quickcheck',
-        redirect: '/material-quickcheck',
+        redirect: '/material-quickcheck/quickcheck-equipment',
         component: () => import('@/views/material_quickcheck_manage/quickcheck-fa'),
         name: 'MaterialQuickcheck',
         meta: {
@@ -1853,7 +1863,7 @@ export const asyncRoutes = [
       },
       {
         path: '/quickCheck',
-        redirect: '/quickCheck/deviceMonitor',
+        redirect: '/inspection-result-management/menni-equip',
         component: () => import('@/views/quality_management/quickCheck/a-index'),
         name: 'QuickCheckGather',
         meta: {
@@ -1902,8 +1912,8 @@ export const asyncRoutes = [
             }
           }
         ]
-      },
-      {
+      }
+      /** {
         path: '/feed',
         redirect: '/feed/raw-plan',
         component: () => import('@/views/quality_management/feed/a-index'),
@@ -1944,7 +1954,7 @@ export const asyncRoutes = [
             }
           }
         ]
-      }
+      }**/
     ]
   },
   {
