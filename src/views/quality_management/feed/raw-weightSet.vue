@@ -157,12 +157,12 @@ export default {
       this.loading = true
       this.getList()
     },
-    save(scope) {
+    async save(scope) {
       try {
         const id = scope.row.id || null
-        saveRawWeight('put', id, { data: JSON.parse(JSON.stringify(scope.row)) })
+        await saveRawWeight('put', id, { data: JSON.parse(JSON.stringify(scope.row)) })
         this.$message.success('操作成功')
-      } catch (e) { this.getList() }
+      } catch (e) { this.loading = false }
     }
 
   }

@@ -75,6 +75,7 @@ export default {
   MaterialRepertoryUrl: '/api/v1/inventory/material-inventory-view/',
   // 库存管理---胶料库存
   RubberRepertoryUrl: '/api/v1/inventory/product-inventory/',
+  InLibraryInventory: '/api/v1/inventory/In-library_inventory/',
   // 生成计划管理---原材料需求量
   MaterialQuantityDemandedUrl: '/api/v1/plan/materia-quantity-demande/',
 
@@ -149,11 +150,18 @@ export default {
 
   // 北自混炼胶库存列表
   BzMixinInventory: '/api/v1/inventory/bz-mixin-inventory/',
-  // 终练出库弹框列表
+  // 终练出库弹框列表(帘布库存明细)
   BzFinalInventory: 'api/v1/inventory/bz-final-inventory/',
+  // 原材料库存明细
+  WmsStorage: '/api/v1/inventory/wms-storage/',
+  // 炭黑库存明细
+  ThStorage: '/api/v1/inventory/th-storage/',
   // 混炼胶库计划管理
   PutPlanManagement: '/api/v1/inventory/put-plan-management/',
   MixinRubberyOutboundOrder: 'api/v1/inventory/mixin-rubbery-outbound-order/',
+  OutboundDeliveryOrders: '/api/v1/inventory/outbound-delivery-orders/',
+  OutboundDeliveryOrderDetails: '/api/v1/inventory/outbound-delivery-order-details/',
+  OutboundDeliveryOrdersExport: '/api/v1/inventory/outbound-delivery-orders/export/',
 
   //  终炼胶库计划管理
   FinalPlanManagement: '/api/v1/inventory/final-plan-management/',
@@ -443,9 +451,9 @@ export default {
   OutBoundTasks: '/api/v1/inventory/out-bound-tasks/',
   InoutBoundSummary: '/api/v1/inventory/inout-bound-summary/',
   // 投料重量设定
-  RawWeight: '/api/v1/terminal/carbon_tank_set/',
+  RawWeight: '/api/v1/terminal/carbon-tank-set/',
   // 投料履历查询
-  RawQuery: '/api/v1/terminal/feed_check_operation/',
+  RawQuery: '/api/v1/terminal/feed-check-operation/',
   // 油料罐物料设定
   OliSet: '/api/v1/terminal/oli-tank-setting/',
   // 粉料罐物料设定
@@ -455,6 +463,14 @@ export default {
   // 不合格项
   DataPoint: '/api/v1/quality/data-point-list/',
   // 炭黑投料提示-计划显示
-  FeedCapacityPlan: '/api/v1/terminal/feed_capacity_plan/',
-  CarbonFeedingPrompt: '/api/v1/terminal/carbon_feeding_prompt/'
+  FeedCapacityPlan: '/api/v1/terminal/feed-capacity-plan/',
+  CarbonFeedingPrompt: '/api/v1/terminal/carbon-feeding-prompt/',
+  CarOutCheck: '/api/v1/terminal/car-out-check/',
+  // 炭黑投料-下出库任务
+  CarbonOutTask: '/api/v1/terminal/carbon-out-task/',
+  // 胶片库出库单列表
+  CompoundManage: '/api/v1/inventory/outbound-delivery-orders/',
+  // 出库
+  Outbound: '/api/v1/inventory/outbound-delivery-order-details/'
+
 }

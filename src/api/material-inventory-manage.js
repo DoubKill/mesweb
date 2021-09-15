@@ -22,3 +22,50 @@ export function bzFinalInventory(params) {
     params
   })
 }
+export function wmsStorage(params) {
+  return request({
+    url: API.WmsStorage,
+    method: 'get',
+    params
+  })
+}
+export function thStorage(params) {
+  return request({
+    url: API.ThStorage,
+    method: 'get',
+    params
+  })
+}
+
+export function bzMixinInventoryDown(params) {
+  return request({
+    url: API.BzMixinInventory,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
+export function bzFinalInventoryDown(params) {
+  return request({
+    url: API.BzFinalInventory,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
+export function wmsStorageDown(params) {
+  return request({
+    url: API.WmsStorage,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
+export function thStorageDown(params) {
+  return request({
+    url: API.ThStorage,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}

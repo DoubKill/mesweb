@@ -1,30 +1,30 @@
 <template>
   <div v-loading="loading" class="delivery-document">
-    <!-- 出库单据信息查询 -->
+    <!-- 出库单据查询 -->
     <el-form :inline="true">
       <el-form-item label="库区">
-        <el-select v-model="search.aaa" clearable placeholder="请选择" @change="changeList">
+        <el-select v-model="search.warehouse" clearable placeholder="请选择" @change="changeWarehouseList">
           <el-option
-            v-for="item in ['终炼胶库','混炼胶库']"
-            :key="item"
-            :label="item"
-            :value="item"
+            v-for="item in [{name:'终炼胶库',id:2},{name:'混炼胶库',id:1}]"
+            :key="item.id"
+            :label="item.name"
+            :value="item.name"
           />
         </el-select>
       </el-form-item>
       <el-form-item label="出库口">
         <stationInfoWarehouse
-          :warehouse-name="search.aaa"
-          :start-using="true"
+          :warehouse-name="search.warehouse"
+          :is-clear="true"
           @changSelect="changSelectStation"
         />
       </el-form-item>
       <el-form-item label="胶料编码">
-        <materialCodeSelect
+        <allProductNoSelect
           :is-clearable="true"
-          :store-name="search.aaa"
-          :is-allow-create="true"
-          @changSelect="materialCodeFun"
+          :is-created="true"
+          :params-obj-must="false"
+          @productBatchingChanged="materialCodeFun"
         />
       </el-form-item>
       <el-form-item label="出库单据号">
@@ -43,25 +43,33 @@
       <el-form-item label="出库起止时间">
         <el-date-picker
           v-model="searchDate"
-          type="datetimerange"
+          type="daterange"
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
-          value-format="yyyy-MM-dd HH:mm:ss"
+          value-format="yyyy-MM-dd"
           @change="changeList"
         />
       </el-form-item>
-      <!-- <el-form-item style="float:right">
+      <el-form-item style="float:right">
         <el-button
           type="primary"
           @click="exportTable"
-        >导出表格</el-button>
-      </el-form-item> -->
+        >导出Excel</el-button>
+      </el-form-item>
     </el-form>
     <el-table
+      ref="multipleTable"
       :data="tableData"
       border
+      row-key="id"
+      @selection-change="handleSelectionChange"
     >
+      <el-table-column
+        type="selection"
+        width="55"
+        :reserve-selection="true"
+      />
       <el-table-column
         prop="id"
         label="序号"
@@ -71,21 +79,40 @@
       <el-table-column
         prop="order_no"
         label="出库单据号"
-        min-width="20"
+        min-width="30"
       />
       <el-table-column
         prop="order_type"
         label="单据类型"
         min-width="20"
+      >
+        <template>
+          指定出库
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="warehouse"
+        label="库区"
+        min-width="20"
+      />
+      <el-table-column
+        prop="station"
+        label="出库口"
+        min-width="20"
+      />
+      <el-table-column
+        prop="product_no"
+        label="胶料名称"
+        min-width="25"
       />
       <el-table-column
         prop="created_date"
         label="创建时间"
-        min-width="20"
+        min-width="25"
       />
       <el-table-column
         label="状态"
-        min-width="20"
+        min-width="15"
         :formatter="(row)=>{
           let obj = optionsState.find(d=>d.id === row.status)
           return obj.name
@@ -98,16 +125,16 @@
       />
       <el-table-column
         label="操作"
-        width="230"
+        width="100"
       >
         <template slot-scope="{row}">
           <el-button
             size="mini"
             @click="showEditDialog(row)"
           >查看</el-button>
-          <div v-if="row.status === 1||row.status === 2" style="display:inline-block">
+          <!-- <div v-if="row.status === 1||row.status === 2" style="display:inline-block">
             <el-button v-permission="['compoundRubber_plan','close']" size="mini" type="info" @click="closePlan($index,row)">关闭</el-button>
-          </div>
+          </div> -->
         </template>
       </el-table-column>
     </el-table>
@@ -125,17 +152,17 @@
     >
       <el-form :inline="true">
         <el-form-item label="仓库名称">
-          {{ warehouseName }}
+          {{ rowObj.warehouse }}
         </el-form-item>
         <el-form-item label="出库单号">
           {{ rowObj.order_no }}
         </el-form-item>
         <el-form-item label="出库位置">
-          {{ tableDataView[0]?tableDataView[0].station:'' }}
+          {{ rowObj.station }}
         </el-form-item>
         <el-form-item label="订单子编号">
           <el-input
-            v-model="searchView.subnumber"
+            v-model="searchView.order_no"
             clearable
             placeholder="请输入内容"
             @input="getDebounceView"
@@ -148,7 +175,7 @@
         border
       >
         <el-table-column
-          prop=""
+          prop="order_no"
           label="订单子编号"
           min-width="20"
         />
@@ -156,7 +183,9 @@
           prop="material_no"
           label="物料编码"
           min-width="20"
-        />
+        >
+          <template>{{ rowObj.product_no }}</template>
+        </el-table-column>
         <el-table-column
           prop="lot_no"
           label="Lot_No"
@@ -178,7 +207,7 @@
           min-width="20"
         />
         <el-table-column
-          prop="last_updated_date"
+          prop="finish_time"
           label="出库时间"
           min-width="20"
         />
@@ -203,23 +232,23 @@
 </template>
 
 <script>
-import { mixinRubberyOutboundOrder } from '@/api/base_w'
+import { outboundDeliveryOrders, outboundDeliveryOrdersExport } from '@/api/base_w'
 import { warehouseInfo } from '@/api/warehouse'
 import page from '@/components/page'
 import commitVal from '@/utils/common'
 import { debounce } from '@/utils/index'
 import myMixin from '../components-zl-hl/mixin-zl-hl'
-import materialCodeSelect from '@/components/select_w/materialCodeSelect'
+import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import stationInfoWarehouse from '@/components/select_w/warehouseSelectPosition'
 
 export default {
   name: 'CompoundManage',
-  components: { stationInfoWarehouse, materialCodeSelect, page },
+  components: { stationInfoWarehouse, allProductNoSelect, page },
   mixins: [myMixin],
   data() {
     return {
       loading: false,
-      searchDate: [],
+      searchDate: null,
       search: {
         page: 1
       },
@@ -242,11 +271,11 @@ export default {
         { name: '失败', id: 5 }
       ],
       optionsState1: [
-        { name: '完成', id: 1 },
+        { name: '新建', id: 1 },
         { name: '执行中', id: 2 },
-        { name: '失败', id: 3 },
-        { name: '新建', id: 4 },
-        { name: '关闭', id: 5 }
+        { name: '已出库', id: 3 },
+        { name: '关闭', id: 4 },
+        { name: '失败', id: 5 }
       ]
     }
   },
@@ -260,7 +289,7 @@ export default {
       try {
         this.loading = true
         this.tableData = []
-        const data = await mixinRubberyOutboundOrder('get', null, { params: this.search })
+        const data = await outboundDeliveryOrders('get', null, { params: this.search })
         this.total = data.count
         this.tableData = data.results
         this.loading = false
@@ -280,8 +309,12 @@ export default {
     getDebounce() {
       debounce(this, 'changeList')
     },
+    changeWarehouseList() {
+      this.changeList()
+      this.search.station = ''
+    },
     materialCodeFun(obj) {
-      this.search.material_no = obj ? obj.material_no : ''
+      this.search.product_no = obj ? obj.material_no ? obj.material_no : obj : ''
       this.changeList()
     },
     changSelectStation(val) {
@@ -292,9 +325,9 @@ export default {
       this.search.page = page
       this.getList()
     },
-    changeList(val) {
-      this.search.start_time = val ? val[0] : ''
-      this.search.end_time = val ? val[1] : ''
+    changeList() {
+      this.search.st = this.searchDate ? this.searchDate[0] : ''
+      this.search.et = this.searchDate ? this.searchDate[1] : ''
       this.search.page = 1
       this.getList()
     },
@@ -320,22 +353,28 @@ export default {
       })
     },
     exportTable() {
-      // responseType: 'blob'  get请求
-
-      // barcodeQualityExport()
-      //   .then(res => {
-      //     const link = document.createElement('a')
-      //     const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
-      //     link.style.display = 'none'
-      //     link.href = URL.createObjectURL(blob)
-      //     link.download = '车间库存统计.xlsx' // 下载的文件名
-      //     document.body.appendChild(link)
-      //     link.click()
-      //     document.body.removeChild(link)
-      //     this.btnExportLoad = false
-      //   }).catch(e => {
-      //     this.btnExportLoad = false
-      //   })
+      if (this.handleSelection.length === 0) {
+        this.$message('请选择要导出的出库单据')
+        return
+      }
+      const arr = []
+      this.handleSelection.forEach(d => {
+        arr.push(d.id)
+      })
+      outboundDeliveryOrdersExport('get', null, { params: { order_ids: arr.join(',') }, responseType: 'blob' })
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '出库单据信息.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
     }
   }
 }

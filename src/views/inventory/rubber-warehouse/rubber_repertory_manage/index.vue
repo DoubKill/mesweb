@@ -2,12 +2,27 @@
   <!-- 库内库存统计 -->
   <div v-loading="loading">
     <el-form :inline="true">
-      <el-form-item label="段次">
+      <el-form-item label="库区">
         <el-select
-          v-model="RubberStage"
-          style="width: 150px"
+          v-model="getParams.warehouse_name"
           clearable
           placeholder="请选择"
+          @change="changeWarehouse"
+        >
+          <el-option
+            v-for="item in ['终炼胶库','混炼胶库']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="段次">
+        <el-select
+          v-model="getParams.stage"
+          clearable
+          placeholder="请选择"
+          style="width:120px"
           @visible-change="RubberStageChange"
           @change="changeSearch"
         >
@@ -22,102 +37,203 @@
       <el-form-item label="胶料编码">
         <materialCodeSelect
           :is-clearable="true"
-          store-name="混炼胶库"
+          :store-name="getParams.warehouse_name"
           :is-allow-create="true"
           @changSelect="materialCodeFun"
         />
       </el-form-item>
-      <el-form-item label="加硫：">
+      <!-- <el-form-item label="品质状态">
+        <el-select
+          v-model="getParams.aaa"
+          style="width: 120px"
+          clearable
+          placeholder="请选择"
+          @change="changeSearch"
+        >
+          <el-option
+            v-for="item in ['一等品','三等品','待检品']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-form-item> -->
+      <el-form-item label="巷道">
+        <el-select
+          v-model="getParams.location"
+          style="width: 100px"
+          clearable
+          placeholder="请选择"
+          @change="changeSearch"
+        >
+          <el-option
+            v-for="item in ['1','2','3','4']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="有无封闭库位">
+        <el-select
+          v-model="getParams.location_status"
+          style="width: 100px"
+          clearable
+          placeholder="请选择"
+          @change="changeSearch"
+        >
+          <el-option
+            v-for="item in [{name:'有',id:'Y'},{name:'无',id:'N'}]"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          />
+        </el-select>
+      </el-form-item>
+      <!-- <el-form-item label="加硫：">
         共{{ sulfurAddition || 0 }}车
       </el-form-item>
       <el-form-item label="无硫：">
         共{{ sulfurFree || 0 }}车
+      </el-form-item> -->
+      <el-form-item style="float:right">
+        <el-button
+          type="primary"
+          :loading="btnLoading"
+          @click="exportTable(1)"
+        >导出当前页面</el-button>
+        <el-button
+          type="primary"
+          :loading="btnLoading"
+          @click="exportTable('all')"
+        >导出所有</el-button>
       </el-form-item>
     </el-form>
 
     <el-table
-      highlight-current-row
       :data="tableData"
       border
       style="width: 100%"
     >
-      <el-table-column prop="sn" label="No" align="center" width="40px" />
-      <el-table-column prop="material_type" label="胶料类型" align="center" width="90px" />
-      <el-table-column prop="material_no" label="胶料编码" align="center">
+      <el-table-column
+        label="no"
+        width="75"
+      >
+        <template slot-scope="{row,$index}">
+          {{ row.all===1?'汇总': row.all===2?"页面小计":$index+1 }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="stage" label="胶料类型" align="center" min-width="16" />
+      <el-table-column prop="material_no" label="胶料编码" align="center" min-width="28">
         <template slot-scope="{row}">
           <!-- <el-link type="primary" @click="clickMaterialNo">{{ row.material_no }}</el-link> -->
           {{ row.material_no }}
         </template>
       </el-table-column>
-      <el-table-column prop="material_name" label="胶料名称" align="center" />
-      <el-table-column prop="site" label="产地" align="center" />
-      <el-table-column prop="qty" label="库存数(车)" align="center" />
-      <el-table-column prop="unit_weight" label="每车重量" align="center" />
-      <el-table-column prop="total_weight" label="总重量" align="center" />
-      <el-table-column prop="unit" label="重量单位" align="center" />
-      <el-table-column prop="standard_flag" label="品质状态" align="center" />
-      <!-- :formatter="StandardFlagFormatter" -->
+      <el-table-column prop="material_no" label="胶料名称" align="center" min-width="28" />
+      <el-table-column prop="warehouse_name" label="库区" align="center" min-width="20" />
+      <el-table-column prop="location" label="巷道" align="center" min-width="10" />
+      <el-table-column label="一等品库存数(车)" align="center" min-width="20">
+        <template slot-scope="{row}">
+          <el-link v-if="row['一等品']" :type="row.all?'':'primary'" :underline="false" @click="clickVehicle(row,'一等品')">
+            {{ row['一等品'].qty }}
+          </el-link>
+        </template>
+      </el-table-column>
+      <el-table-column prop="" label="重量(kg)" align="center" min-width="20">
+        <template slot-scope="{row}">
+          <span v-if="row['一等品']">
+            {{ row['一等品'].total_weight }}
+          </span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="" label="三等品库存数(车)" align="center" min-width="20">
+        <template slot-scope="{row}">
+          <el-link v-if="row['三等品']" :type="row.all?'':'primary'" :underline="false" @click="clickVehicle(row,'三等品')">
+            {{ row['三等品'].qty }}
+          </el-link>
+        </template>
+      </el-table-column>
+      <el-table-column prop="" label="重量(kg)" align="center" min-width="20">
+        <template slot-scope="{row}">
+          <span v-if="row['三等品']">
+            {{ row['三等品'].total_weight }}
+          </span>
+        </template>
+      </el-table-column>
+      <el-table-column label="待检品库存数(车)" align="center" min-width="20">
+        <template slot-scope="{row}">
+          <el-link v-if="row['待检品']" :type="row.all?'':'primary'" :underline="false" @click="clickVehicle(row,'待检品')">
+            {{ row['待检品'].qty }}
+          </el-link>
+        </template>
+      </el-table-column>
+      <el-table-column prop="" label="重量(kg)" align="center" min-width="20">
+        <template slot-scope="{row}">
+          <span v-if="row['待检品']">
+            {{ row['待检品'].total_weight }}
+          </span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="all_qty" label="总库存数(车)" align="center" min-width="20" />
+      <el-table-column prop="total_weight" label="总重量(kg)" align="center" min-width="20" />
+      <el-table-column label="封存库存数(车)" align="center" min-width="20">
+        <template slot-scope="{row}">
+          <el-link v-if="row['封闭']" :type="row.all?'':'primary'" :underline="false" @click="clickVehicle(row,'封存库存')">
+            {{ row['封闭'].qty }}
+          </el-link>
+        </template>
+      </el-table-column>
+      <el-table-column prop="" label="总重量(kg)" align="center" min-width="20">
+        <template slot-scope="{row}">
+          <span v-if="row['封闭']">
+            {{ row['封闭'].total_weight }}
+          </span>
+        </template>
+      </el-table-column>
+
+      <!-- :formatter="StandardFlagChoice" -->
     </el-table>
     <page :total="total" :current-page="getParams.page" @currentChange="currentChange" />
+
     <el-dialog
-      title="物料库存列表"
+      title="库位列表"
       :visible.sync="dialogVisible"
-      width="80%"
+      width="90%"
       :before-close="handleClose"
     >
-      <el-table
-        border
-        fit
-        style="width: 100%"
-        :data="tableDataDialog"
-      >
-        <el-table-column label="No" type="index" align="center" />
-        <el-table-column label="物料类型" align="center" prop="material_type" />
-        <el-table-column label="物料编码" align="center" prop="material_no" />
-        <el-table-column label="lot" align="center" prop="lot_no" />
-        <el-table-column label="托盘号" align="center" prop="container_no" />
-        <el-table-column label="库存位" align="center" prop="location" />
-        <el-table-column label="库存数" align="center" prop="qty" />
-        <el-table-column label="单位" align="center" prop="unit" />
-        <el-table-column label="单位重量" align="center" prop="unit_weight" />
-        <el-table-column label="总重量" align="center" prop="total_weight" />
-        <el-table-column label="品质状态" align="center" prop="quality_status" />
-      </el-table>
-      <page
-        :total="totalDialog"
-        :current-page="pageDialog"
-        @currentChange="currentChangeDialog"
-      />
+      <generateAssignOutbound :warehouse-name="warehouseName" :location-status="locationStatus" :material-no="materialNo" :quality-status="qualityStatus" :show="dialogVisible" />
     </el-dialog>
   </div>
 </template>
 
 <script>
 import page from '@/components/page'
-import { getMaterialInventoryManage } from '@/api/material-inventory-manage'
-import { rubber_repertory_url, stage_global_url } from '@/api/display_static_fun'
+// import { getMaterialInventoryManage } from '@/api/material-inventory-manage'
+import { stage_global_url, inLibraryInventory } from '@/api/display_static_fun'
 import materialCodeSelect from '@/components/select_w/materialCodeSelect'
-
+import generateAssignOutbound from './generate_assign_outbound.vue'
 export default {
   name: 'RubberRepertoryManage',
-  components: { page, materialCodeSelect },
+  components: { page, materialCodeSelect, generateAssignOutbound },
   data: function() {
     return {
-      loading: true,
+      loading: false,
       tableData: [],
-      tableDataDialog: [],
       total: 0,
       getParams: {
         page: 1,
         page_size: 10
       },
-      RubberStage: null,
       RubberStageOptions: [],
       dialogVisible: false,
-      totalDialog: 0,
-      pageDialog: 1,
       sulfurAddition: 0,
-      sulfurFree: 0
+      sulfurFree: 0,
+      qualityStatus: '',
+      materialNo: '',
+      locationStatus: '',
+      warehouseName: '',
+      btnLoading: false
     }
   },
   created() {
@@ -127,11 +243,28 @@ export default {
     async rubber_repertory_list() {
       try {
         this.loading = true
-        const rubber_repertoryData = await rubber_repertory_url('get', { params: this.getParams })
-        this.tableData = rubber_repertoryData.results
-        this.total = rubber_repertoryData.count
-        this.sulfurAddition = rubber_repertoryData.fm_count
-        this.sulfurFree = rubber_repertoryData.other_count
+        const data = await inLibraryInventory('get', null, { params: this.getParams })
+
+        this.tableData = data.results
+        this.tableData.push({
+          all: 2,
+          '一等品': { qty: sum(this.tableData, '一等品', 'qty'), total_weight: sum(this.tableData, '一等品', 'total_weight') },
+          '待检品': { qty: sum(this.tableData, '待检品', 'qty'), total_weight: sum(this.tableData, '待检品', 'total_weight') },
+          '三等品': { qty: sum(this.tableData, '三等品', 'qty'), total_weight: sum(this.tableData, '三等品', 'total_weight') },
+          '封闭': { qty: sum(this.tableData, '封闭', 'qty'), total_weight: sum(this.tableData, '封闭', 'total_weight') },
+          all_qty: sum(this.tableData, '', 'all_qty'),
+          total_weight: sum(this.tableData, '', 'total_weight')
+        }, {
+          all: 1,
+          '一等品': { qty: data.qty_1, total_weight: data.weight_1 },
+          '待检品': { qty: data.qty_dj, total_weight: data.weight_dj },
+          '三等品': { qty: data.qty_3, total_weight: data.weight_3 },
+          '封闭': { qty: data.qty_fb, total_weight: data.weight_fb },
+          all_qty: data.total_count,
+          total_weight: data.total_weight
+        }
+        )
+        this.total = data.count
         this.loading = false
       } catch (e) {
         this.loading = false
@@ -157,9 +290,6 @@ export default {
       this.getParams.material_no = obj ? obj.material_no : ''
       this.rubber_repertory_list()
     },
-    StandardFlagFormatter: function(row, column) {
-      return this.StandardFlagChoice(row.standard_flag)
-    },
     StandardFlagChoice: function(standard_flag) {
       switch (standard_flag) {
         case true:
@@ -169,17 +299,16 @@ export default {
       }
     },
     changeSearch() {
-      this.getParams['stage'] = this.RubberStage
       this.getParams.page = 1
       this.rubber_repertory_list()
+    },
+    changeWarehouse() {
+      this.getParams.material_no = ''
+      this.changeSearch()
     },
     currentChange(page) {
       this.getParams.page = page
       this.rubber_repertory_list()
-    },
-    clickMaterialNo() {
-      this.dialogVisible = true
-      this.getTableData()
     },
     handleClose(done) {
       done()
@@ -187,16 +316,54 @@ export default {
     currentChangeDialog(page) {
       this.pageDialog = page
     },
-    getTableData() {
-      getMaterialInventoryManage({ page: this.pageDialog })
-        .then(response => {
-          this.tableDataDialog = response.results
-          this.totalDialog = response.count
+    clickVehicle(row, str) {
+      if (row.all) return
+      if (str === '封存库存') {
+        this.locationStatus = '封闭货位'
+        this.qualityStatus = ''
+      } else {
+        this.qualityStatus = str
+        this.locationStatus = ''
+      }
+      this.materialNo = row.material_no ? row.material_no : ''
+      this.warehouseName = row.warehouse_name ? row.warehouse_name : ''
+      this.dialogVisible = true
+    },
+    exportTable(val) {
+      this.btnLoading = true
+      const obj = Object.assign({ export: val }, this.getParams)
+      inLibraryInventory('get', null, { params: obj, responseType: 'blob' })
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '车间库存统计.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnLoading = false
+        }).catch(e => {
+          this.btnLoading = false
         })
     }
   }
 }
+function sum(arr, str, params) {
+  var s = 0
 
+  arr.forEach(function(val, idx, arr) {
+    let a = 0
+    if (!str) {
+      a = val[params] ? Number(val[params]) : 0
+    } else {
+      a = val[str] ? Number(val[str][params]) : 0
+    }
+    s += a
+  }, 0)
+  s = Math.round(s * 1000) / 1000
+  return s
+}
 </script>
 
 <style lang="scss" scoped>

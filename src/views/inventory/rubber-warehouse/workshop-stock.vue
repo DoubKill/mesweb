@@ -22,7 +22,7 @@
           @changSelect="changeMaterialCode"
         /> -->
       </el-form-item>
-      <el-form-item label="切换库存明细:">
+      <!-- <el-form-item label="切换库存明细:">
         <el-select v-model="switchDetails" placeholder="请选择" @change="changeDetails">
           <el-option
             v-for="item in [{name:'胶片车间库存明细',id:1},{name:'原材料车间库存明细',id:2}]"
@@ -31,13 +31,13 @@
             :value="item.id"
           />
         </el-select>
-      </el-form-item>
-      <!-- <el-form-item style="float:right">
+      </el-form-item> -->
+      <el-form-item style="float:right">
         <el-button
           type="primary"
           @click="exportTable"
         >导出表格</el-button>
-      </el-form-item> -->
+      </el-form-item>
     </el-form>
     <el-table
       v-loading="loading"
@@ -158,22 +158,21 @@ export default {
       }
     },
     exportTable() {
-      // responseType: 'blob'  get请求
-
-      // barcodeQualityExport()
-      //   .then(res => {
-      //     const link = document.createElement('a')
-      //     const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
-      //     link.style.display = 'none'
-      //     link.href = URL.createObjectURL(blob)
-      //     link.download = '车间库存统计.xlsx' // 下载的文件名
-      //     document.body.appendChild(link)
-      //     link.click()
-      //     document.body.removeChild(link)
-      //     this.btnExportLoad = false
-      //   }).catch(e => {
-      //     this.btnExportLoad = false
-      //   })
+      const obj = Object.assign({ export: 'all' }, this.search)
+      productDetails('get', null, { responseType: 'blob', params: obj })
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '车间库存统计.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
     }
   }
 }
