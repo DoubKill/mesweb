@@ -54,7 +54,7 @@
       />
       <el-table-column
         prop="equip_no"
-        label="机型"
+        label="机台"
       />
       <el-table-column
         prop="product_no"
