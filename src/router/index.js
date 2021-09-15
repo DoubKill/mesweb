@@ -1902,8 +1902,8 @@ export const asyncRoutes = [
             }
           }
         ]
-      },
-      {
+      }
+      /** {
         path: '/feed',
         redirect: '/feed/raw-plan',
         component: () => import('@/views/quality_management/feed/a-index'),
@@ -1944,7 +1944,7 @@ export const asyncRoutes = [
             }
           }
         ]
-      }
+      }**/
     ]
   },
   {
