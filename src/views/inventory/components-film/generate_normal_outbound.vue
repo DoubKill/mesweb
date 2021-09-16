@@ -248,8 +248,8 @@ export default {
           D.warehouse = this.warehouse
         })
         this.$refs.multipleTable.clearSelection()
-
         this.tableData.push({ warehouse: '汇总', qty: this.qtyTotal, total_weight: this.weightTotal.toFixed(3) })
+        this.handleSelectionChange()
         this.loading = false
       } catch (error) {
         this.loading = false
@@ -314,8 +314,9 @@ export default {
     },
     quality_statusSearch() {
       this.$refs.multipleTable.clearSelection()
+
       this.getParams.page = 1
-      this.getParams.need_qty = (this.need_qty !== 0 && this.need_qty !== '') ? this.need_qty : 99999
+      this.getParams.need_qty = 99999
       this.getTableData()
     },
     quality_statusSearch1() {
@@ -336,7 +337,8 @@ export default {
     },
     searchDate(arr) {
       this.$refs.multipleTable.clearSelection()
-      this.getParams.need_qty = (this.need_qty !== 0 && this.need_qty !== '') ? this.need_qty : 99999
+      this.getParams.need_qty = 99999
+      // this.getParams.need_qty = (this.need_qty !== 0 && this.need_qty !== '') ? this.need_qty : 99999
       this.getParams.st = arr ? arr[0] : ''
       this.getParams.et = arr ? arr[1] : ''
       this.getTableData()
@@ -352,7 +354,6 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
-      this.need_qty = this.getParams.need_qty
       this.getParams.need_qty = 0
       this.multipleSelection.forEach(d => {
         this.getParams.need_qty += Number(d.qty)

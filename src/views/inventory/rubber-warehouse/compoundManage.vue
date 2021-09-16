@@ -367,7 +367,8 @@
 import GenerateAssignOutbound from '../components-film/generate_assign_outbound'
 import GenerateNormalOutbound from '../components-film/generate_normal_outbound'
 import { bzMixinInventorySummary, bzFinalInventorySummary } from '@/api/base_w_four'
-import { compoundManage } from '@/api/jqy'
+import { compoundManage, userStation } from '@/api/jqy'
+import { mapGetters } from 'vuex'
 import myMixin from '../components-zl-hl/mixin-zl-hl'
 import { stationInfo } from '@/api/warehouse'
 import { checkPermission } from '@/utils'
@@ -432,8 +433,14 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters({ // 获取不到数据
+      userId: 'userId'
+
+    })
+  },
   created() {
-    this.getList()
+    this.getUser()
     if (checkPermission(['product_outbound_plan', 'close'])) {
       this.close = false
     }
@@ -448,8 +455,6 @@ export default {
     checkPermission,
     dialog() {
       this.creatOrder.product_no = ''
-      this.creatOrder.warehouse = localStorage.getItem('warehouse')
-      this.creatOrder.station = localStorage.getItem('station')
       this.dialogVisibleNo = true
     },
     async productBatchingChanged(val) {
@@ -489,15 +494,25 @@ export default {
             await compoundManage('post', null, { data: this.creatOrder })
             this.submit = false
             this.$message.success('新建成功')
-            localStorage.setItem('warehouse', this.creatOrder.warehouse)
-            localStorage.setItem('station', this.creatOrder.station)
             this.dialogVisibleNo = false
-            this.getList()
+            this.getUser()
           } catch (e) { this.submit = false }
         } else {
           this.$message.info('输入必填项')
         }
       })
+    },
+    async getUser() {
+      try {
+        const data = await userStation('get', null, { params: { user_id: this.userId }})
+        this.search.warehouse = data.warehouse || null
+        this.search.station = data.station || null
+        this.creatOrder.warehouse = data.warehouse || null
+        this.creatOrder.station = data.station || null
+        this.getList()
+      } catch (error) {
+        this.getList()
+      }
     },
     async getList() {
       try {
