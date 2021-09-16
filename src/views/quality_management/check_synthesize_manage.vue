@@ -463,12 +463,17 @@ export default {
     },
     async getCardInfo(id) {
       try {
+        if (this.$refs['testCard']) {
+          this.$refs['testCard'].loading = true
+        }
         const data = await qualityPalletFeedTest(id)
         this.$nextTick(() => {
           this.$refs['testCard'].setTestData(data)
         })
       } catch (e) {
-        //
+        if (this.$refs['testCard']) {
+          this.$refs['testCard'].loading = false
+        }
       }
     },
     print(row) {

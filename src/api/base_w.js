@@ -491,6 +491,22 @@ export function showQualifiedRange(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function additionalPrintDetail(method, id, data = {}) {
+  const obj = {
+    url: id ? API.AdditionalPrintDetail + id + '/' : API.AdditionalPrintDetail,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function additionalPrint(method, id, data = {}) {
+  const obj = {
+    url: id ? API.AdditionalPrint + id + '/' : API.AdditionalPrint,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 export function trainsFix(method, id, data = {}) {
   const obj = {
     url: id ? API.TrainsFix + id + '/' : API.TrainsFix,

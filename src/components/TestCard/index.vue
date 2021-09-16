@@ -1,6 +1,7 @@
 <template>
-  <div class="card-container">
+  <div v-loading="loading" class="card-container">
     <table
+
       border="1"
       bordercolor="black"
       class="info-table"
@@ -134,6 +135,7 @@ export default {
     return {
       mtrListHead: [],
       mtrListRow: [],
+      loading: true,
       testData: {}
     }
   },
@@ -187,6 +189,7 @@ export default {
       })
       this.mtrListRow.unshift(obj2)
       this.mtrListRow.unshift(obj1)
+      this.loading = false
       /** for (const key in this.testData.mtr_list) {
         if (key !== 'table_head' && key !== 'rows' && key !== 'sub_head') {
           this.testData.mtr_list.rows.push(key)
