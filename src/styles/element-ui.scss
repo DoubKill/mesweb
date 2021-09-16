@@ -147,6 +147,9 @@ body .el-table th.gutter{
 .summary-cell-style{
   background: #D1CBE4 !important;
 }
+.el-table__footer-wrapper tbody td, .el-table__header-wrapper tbody td{
+  background: #D1CBE4 !important;
+}
 // .el-input{
 //   width:200px;
 //   input{
