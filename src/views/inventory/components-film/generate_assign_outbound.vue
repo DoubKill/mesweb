@@ -104,7 +104,7 @@
     </el-table>
     <el-alert
       style="color:black"
-      title="表格背景色说明：红色超期报警；黄色超期预警；白色放置期正常；紫色未设置有效期"
+      title="表格背景色说明：红色超期报警；黄色超期预警；白色放置期正常；灰色未设置有效期"
       type="success"
     />
     <page
@@ -249,7 +249,7 @@ export default {
           this.tableData.forEach(D => {
             D.warehouse = this.warehouse
           })
-          this.tableData.push({ warehouse: '单页小计', qty: this.qtyTotal.toFixed(3), total_weight: this.weightTotal.toFixed(3) },
+          this.tableData.push({ warehouse: '单页小计', qty: this.qtyTotal, total_weight: this.weightTotal.toFixed(3) },
             { warehouse: '汇总', qty: this.qty_total, total_weight: this.weight_total })
           this.loading = false
         }).catch(() => {
@@ -303,9 +303,13 @@ export default {
           return 'warning-row'
         } else if (days >= this.period_of_validity) {
           return 'maxwarning-row'
-        } else { return '' }
+        } else { return 'summary-cell-style' }
       } else {
-        return 'warn-row'
+        if (days) {
+          return 'warn-row'
+        } else {
+          return 'summary-cell-style'
+        }
       }
     },
     select(row, index) {
@@ -346,7 +350,7 @@ export default {
     text-align: right;
   }
   .el-table .warn-row {
-    background: #D1CBE4;
+    background: #F5F7FA;
   }
   .el-table .warning-row {
     background: #e6a23c;
