@@ -205,6 +205,10 @@ export default {
   // 批量打印
   LabelPrint: '/api/v1/quality/label-print/',
   ShowQualifiedRange: '/api/v1/quality/show-qualified-range/',
+  // 出库口补打印卡片- 详情
+  AdditionalPrintDetail: '/api/v1/inventory/additional-print-detail/',
+  // 出库口补打印卡片- 打印
+  AdditionalPrint: '/api/v1/inventory/additional-print/',
   // 修改车次
   TrainsFix: '/api/v1/production/trains-fix/',
   PalletTrainBatchFix: '/api/v1/production/pallet-train-batch-fix/',

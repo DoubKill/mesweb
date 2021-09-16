@@ -875,17 +875,17 @@ export const asyncRoutes = [
               title: '出入库履历查询',
               permissionName: 'in_out_history'
             }
+          },
+          {
+            path: '/material-print-card',
+            component: () => import('@/views/inventory/rubber-warehouse/material-print-card.vue'),
+            name: 'MaterialPrintCard',
+            meta: {
+              faName: 'RubberWarehouse',
+              title: '出库口补打印卡片',
+              permissionName: ''
+            }
           }
-          // {
-          //   path: '/material-print-card',
-          //   component: () => import('@/views/inventory/rubber-warehouse/material-print-card.vue'),
-          //   name: 'MaterialPrintCard',
-          //   meta: {
-          //     faName: 'RubberWarehouse',
-          //     title: '出库口补打印卡片',
-          //     permissionName: ''
-          //   }
-          // }
         ]
       },
       {
