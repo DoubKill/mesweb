@@ -323,15 +323,19 @@ export default {
       if (this.getParams.need_qty === '' || this.getParams.need_qty <= 0) {
         this.$message.info('请填写大于0的指定出库数量，再点击查询')
       } else {
-        if ((this.tableData.length - 1) === this.multipleSelection.length) {
-          this.$refs.multipleTable.toggleAllSelection()
-          this.getParams.page = 1
-          this.getTableData()
+        if (this.multipleSelection !== undefined) {
+          if ((this.tableData.length - 1) === this.multipleSelection.length) {
+            this.$refs.multipleTable.toggleAllSelection()
+            this.getParams.page = 1
+            this.getTableData()
+          } else {
+            this.tableData = []
+            this.multipleSelection = []
+            this.getParams.page = 1
+            this.getTableData()
+          }
         } else {
-          this.tableData = []
-          this.multipleSelection = []
-          this.getParams.page = 1
-          this.getTableData()
+          this.$message.info('可用库存为0')
         }
       }
     },
