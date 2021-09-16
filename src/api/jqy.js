@@ -107,3 +107,23 @@ export function outbound(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+// 机台别不合格率
+export function machinePass(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MachinePass + id + '/' : API.MachinePass,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+// 用户出库口库区
+export function userStation(method, id, data = {}) {
+  const obj = {
+    url: id ? API.UserStation + id + '/' : API.UserStation,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
