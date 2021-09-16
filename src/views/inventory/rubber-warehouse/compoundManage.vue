@@ -189,7 +189,11 @@
         prop="product_no"
         label="物料编码"
         min-width="25"
-      />
+      >
+        <template slot-scope="{row}">
+          <el-link type="primary" @click="showEditDialog(row)">{{ row.product_no }}</el-link>
+        </template>
+      </el-table-column>
       <el-table-column
         prop="order_qty"
         label="订单数量"
@@ -259,6 +263,103 @@
         @getList="getList"
         @visibleMethod="visibleMethodNormal"
       /></el-dialog>
+    <el-dialog
+      title="出库单据"
+      :visible.sync="dialogVisibleView"
+      width="80%"
+      :before-close="handleCloseView"
+    >
+      <el-form :inline="true">
+        <el-form-item label="仓库名称">
+          {{ rowObj.warehouse }}
+        </el-form-item>
+        <el-form-item label="出库单号">
+          {{ rowObj.order_no }}
+        </el-form-item>
+        <el-form-item label="出库位置">
+          {{ rowObj.station }}
+        </el-form-item>
+        <el-form-item label="订单子编号">
+          <el-input
+            v-model="searchView.sub_no"
+            clearable
+            placeholder="请输入内容"
+            @input="getDebounceView"
+          />
+        </el-form-item>
+      </el-form>
+      <el-table
+        v-loading="loadingView"
+        :data="tableDataView"
+        border
+      >
+        <el-table-column
+          prop="order_no"
+          label="出库任务号"
+          min-width="20"
+        />
+        <el-table-column
+          prop="sub_no"
+          label="订单子编号"
+          min-width="20"
+        />
+        <el-table-column
+          prop="material_no"
+          label="物料编码"
+          min-width="20"
+        >
+          <template>{{ rowObj.product_no }}</template>
+        </el-table-column>
+        <el-table-column
+          prop="lot_no"
+          label="Lot_No"
+          min-width="25"
+        />
+        <el-table-column
+          prop="pallet_no"
+          label="托盘号"
+          min-width="15"
+        />
+        <el-table-column
+          prop="memo"
+          label="车次"
+          min-width="15"
+        />
+        <el-table-column
+          prop="location"
+          label="库位编号"
+          min-width="20"
+        />
+        <el-table-column
+          prop="finish_time"
+          label="出库时间"
+          min-width="20"
+        />
+        <el-table-column
+          prop="status"
+          label="状态"
+          min-width="10"
+          :formatter="(row)=>{
+            let obj = optionsState1.find(d=>d.id === row.status)
+            return obj.name
+          }"
+        />
+        <el-table-column
+          label="操作"
+          min-width="10"
+        >
+          <template slot-scope="{row}">
+            <el-button :disabled="row.status===3||row.status===4||row.status===5" type="danger" @click="closeOrderNo(row)">关闭</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <page
+        :old-page="false"
+        :total="totalView"
+        :current-page="searchView.page"
+        @currentChange="currentChangeView"
+      />
+    </el-dialog>
   </div>
 </template>
 
@@ -267,6 +368,7 @@ import GenerateAssignOutbound from '../components-film/generate_assign_outbound'
 import GenerateNormalOutbound from '../components-film/generate_normal_outbound'
 import { bzMixinInventorySummary, bzFinalInventorySummary } from '@/api/base_w_four'
 import { compoundManage } from '@/api/jqy'
+import myMixin from '../components-zl-hl/mixin-zl-hl'
 import { stationInfo } from '@/api/warehouse'
 import { checkPermission } from '@/utils'
 import page from '@/components/page'
@@ -274,6 +376,7 @@ import page from '@/components/page'
 export default {
   name: 'CompoundManage',
   components: { page, GenerateAssignOutbound, GenerateNormalOutbound },
+  mixins: [myMixin],
   data() {
     return {
       loading: false,
@@ -306,6 +409,13 @@ export default {
       // 仓库id
       warehouseInfo: null,
       handleSelection: [],
+      optionsState1: [
+        { name: '新建', id: 1 },
+        { name: '执行中', id: 2 },
+        { name: '已出库', id: 3 },
+        { name: '关闭', id: 4 },
+        { name: '失败', id: 5 }
+      ],
       rules: {
         product_no: [
           { required: true, message: '请选择胶料编码', trigger: 'blur' }

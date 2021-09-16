@@ -162,7 +162,7 @@
         </el-form-item>
         <el-form-item label="订单子编号">
           <el-input
-            v-model="searchView.order_no"
+            v-model="searchView.sub_no"
             clearable
             placeholder="请输入内容"
             @input="getDebounceView"
@@ -176,6 +176,11 @@
       >
         <el-table-column
           prop="order_no"
+          label="出库任务号"
+          min-width="20"
+        />
+        <el-table-column
+          prop="sub_no"
           label="订单子编号"
           min-width="20"
         />

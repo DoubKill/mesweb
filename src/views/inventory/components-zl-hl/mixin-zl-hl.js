@@ -1,4 +1,5 @@
 import { outboundDeliveryOrderDetails } from '@/api/base_w'
+import { outbound } from '@/api/jqy'
 import { debounce } from '@/utils/index'
 export default {
   data() {
@@ -42,9 +43,17 @@ export default {
     handleCloseView(done) {
       this.dialogVisibleView = false
       this.searchView.page = 1
+      this.searchView.sub_no = ''
       if (done) {
         done()
       }
+    },
+    async closeOrderNo(row) {
+      try {
+        await outbound('patch', row.id, { data: { status: '4' }})
+        this.$message.success('关闭成功')
+        this.getListView()
+      } catch (e) { this.$message.info('关闭失败') }
     },
     currentChangeView(page, page_size) {
       this.searchView.page = page
