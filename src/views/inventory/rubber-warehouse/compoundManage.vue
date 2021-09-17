@@ -98,6 +98,22 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item label="品质状态" prop="quality_status">
+          <el-select
+            v-model="creatOrder.quality_status"
+            :disabled="unqualified"
+            placeholder="请选择"
+            clearable
+            @change="clear2"
+          >
+            <el-option
+              v-for="item in options"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item label="胶料编码" prop="product_no">
           <el-select
             v-model="creatOrder.product_no"
@@ -105,6 +121,7 @@
             filterable
             clearable
             @visible-change="productBatchingChanged"
+            @change="clear1"
           >
             <el-option
               v-for="item in batchList"
@@ -189,11 +206,12 @@
         prop="product_no"
         label="物料编码"
         min-width="25"
-      >
-        <template slot-scope="{row}">
-          <el-link type="primary" @click="showEditDialog(row)">{{ row.product_no }}</el-link>
-        </template>
-      </el-table-column>
+      />
+      <el-table-column
+        prop="quality_status"
+        label="品质状态"
+        min-width="20"
+      />
       <el-table-column
         prop="order_qty"
         label="订单数量"
@@ -224,6 +242,14 @@
         label="创建时间"
         min-width="25"
       />
+      <el-table-column
+        label="查看"
+        width="80"
+      >
+        <template slot-scope="{row}">
+          <el-button type="primary" size="mini" @click="showEditDialog(row)">查看</el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <page
       :old-page="false"
@@ -287,6 +313,22 @@
             @input="getDebounceView"
           />
         </el-form-item>
+        <el-form-item label="托盘号">
+          <el-input
+            v-model="searchView.pallet_no"
+            clearable
+            placeholder="请输入内容"
+            @input="getDebounceView"
+          />
+        </el-form-item>
+        <el-form-item label="收皮条码">
+          <el-input
+            v-model="searchView.lot_no"
+            clearable
+            placeholder="请输入内容"
+            @input="getDebounceView"
+          />
+        </el-form-item>
       </el-form>
       <el-table
         v-loading="loadingView"
@@ -310,6 +352,11 @@
         >
           <template>{{ rowObj.product_no }}</template>
         </el-table-column>
+        <el-table-column
+          prop="quality_status"
+          label="订单子编号"
+          min-width="20"
+        />
         <el-table-column
           prop="lot_no"
           label="Lot_No"
@@ -367,11 +414,13 @@
 import GenerateAssignOutbound from '../components-film/generate_assign_outbound'
 import GenerateNormalOutbound from '../components-film/generate_normal_outbound'
 import { bzMixinInventorySummary, bzFinalInventorySummary } from '@/api/base_w_four'
-import { compoundManage } from '@/api/jqy'
+import { compoundManage, userStation } from '@/api/jqy'
+import { mapGetters } from 'vuex'
 import myMixin from '../components-zl-hl/mixin-zl-hl'
 import { stationInfo } from '@/api/warehouse'
 import { checkPermission } from '@/utils'
 import page from '@/components/page'
+import { setDate } from '@/utils'
 
 export default {
   name: 'CompoundManage',
@@ -388,12 +437,15 @@ export default {
         product_no: '',
         warehouse: '',
         station: '',
-        order_qty: 99999
+        order_qty: '',
+        quality_status: '一等品'
       },
+      options: ['一等品', '三等品', '待检品'],
       close: true,
       assign: true,
       normal: true,
-      dateSearch: [],
+      unqualified: true,
+      dateSearch: [setDate(), setDate()],
       stationList: [],
       batchList: [],
       stationList1: [],
@@ -420,6 +472,9 @@ export default {
         product_no: [
           { required: true, message: '请选择胶料编码', trigger: 'blur' }
         ],
+        quality_status: [
+          { required: true, message: '请选择品质状态', trigger: 'blur' }
+        ],
         order_qty: [
           { pattern: /^[1-9]\d*$/, message: '只能输入正整数' }
         ],
@@ -432,8 +487,16 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters({ // 获取不到数据
+      userId: 'userId'
+
+    })
+  },
   created() {
-    this.getList()
+    this.search.st = setDate()
+    this.search.et = setDate()
+    this.getUser()
     if (checkPermission(['product_outbound_plan', 'close'])) {
       this.close = false
     }
@@ -443,13 +506,20 @@ export default {
     if (checkPermission(['product_outbound_plan', 'normal'])) {
       this.normal = false
     }
+    if (checkPermission(['product_outbound_plan', 'unqualified'])) {
+      this.unqualified = false
+    }
   },
   methods: {
     checkPermission,
     dialog() {
       this.creatOrder.product_no = ''
-      this.creatOrder.warehouse = localStorage.getItem('warehouse')
-      this.creatOrder.station = localStorage.getItem('station')
+      if (this.creatOrder.warehouse === '终炼胶库') {
+        this.creatOrder.quality_status = '一等品'
+      } else if (this.creatOrder.warehouse === '混炼胶库') {
+        this.creatOrder.quality_status = '一等品'
+        this.creatOrder.order_qty = 99999
+      }
       this.dialogVisibleNo = true
     },
     async productBatchingChanged(val) {
@@ -464,7 +534,8 @@ export default {
           try {
             const _api = this.creatOrder.warehouse === '混炼胶库' ? bzMixinInventorySummary : bzFinalInventorySummary
             const obj = {}
-            obj.all = 1
+            obj.location_status = '有货货位'
+            obj.quality_status = this.creatOrder.quality_status
             if (this.creatOrder.warehouse === '混炼胶库') {
               obj.station = this.creatOrder.station
             }
@@ -489,15 +560,25 @@ export default {
             await compoundManage('post', null, { data: this.creatOrder })
             this.submit = false
             this.$message.success('新建成功')
-            localStorage.setItem('warehouse', this.creatOrder.warehouse)
-            localStorage.setItem('station', this.creatOrder.station)
             this.dialogVisibleNo = false
-            this.getList()
+            this.getUser()
           } catch (e) { this.submit = false }
         } else {
           this.$message.info('输入必填项')
         }
       })
+    },
+    async getUser() {
+      try {
+        const data = await userStation('get', null, { params: { user_id: this.userId }})
+        this.search.warehouse = data.warehouse || null
+        this.search.station = data.station || null
+        this.creatOrder.warehouse = data.warehouse || null
+        this.creatOrder.station = data.station || null
+        this.getList()
+      } catch (error) {
+        this.getList()
+      }
     },
     async getList() {
       try {
@@ -530,6 +611,29 @@ export default {
       }
       if (this.creatOrder.product_no !== '') {
         this.creatOrder.product_no = ''
+      }
+      if (this.creatOrder.warehouse === '混炼胶库') {
+        this.creatOrder.order_qty = 99999
+      } else {
+        this.creatOrder.order_qty = ''
+      }
+    },
+    clear1(val) {
+      if (this.creatOrder.warehouse === '终炼胶库') {
+        const val1 = this.batchList.filter(D => {
+          return D.material_no === val
+        })
+        this.creatOrder.order_qty = val1[0].all_qty
+      } else if (this.creatOrder.warehouse === '混炼胶库') {
+        this.creatOrder.order_qty = 99999
+      }
+    },
+    clear2() {
+      if (this.creatOrder.product_no !== '') {
+        this.creatOrder.product_no = ''
+      }
+      if (this.creatOrder.order_qty !== '') {
+        this.creatOrder.order_qty = ''
       }
     },
     async getStation1(val) {

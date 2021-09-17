@@ -44,6 +44,8 @@ export default {
       this.dialogVisibleView = false
       this.searchView.page = 1
       this.searchView.sub_no = ''
+      this.searchView.pallet_no = ''
+      this.searchView.lot_no = ''
       if (done) {
         done()
       }

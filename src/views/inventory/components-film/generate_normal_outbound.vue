@@ -20,6 +20,23 @@
           :disabled="true"
         />
       </el-form-item>
+      <el-form-item label="品质状态">
+        <el-select
+          v-model="getParams.quality_status"
+          style="width:120px"
+          :disabled="true"
+          placeholder="请选择"
+          clearable
+          @change="quality_statusSearch"
+        >
+          <el-option
+            v-for="item in options"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="入库起止时间">
         <el-date-picker
           v-model="dateSearch"
@@ -45,22 +62,6 @@
             :key="item.value"
             :label="item.label"
             :value="item.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="品质状态">
-        <el-select
-          v-model="getParams.quality_status"
-          :disabled="unqualified"
-          placeholder="请选择"
-          clearable
-          @change="quality_statusSearch"
-        >
-          <el-option
-            v-for="item in options"
-            :key="item"
-            :label="item"
-            :value="item"
           />
         </el-select>
       </el-form-item>
@@ -153,13 +154,11 @@ export default {
   data() {
     return {
       getParams: {
-        quality_status: '一等品',
         need_qty: 99999
       },
       need_qty: 0,
       period_of_validity: '',
       dateSearch: [],
-      unqualified: true,
       qty_total: 0,
       options1: [{
         value: '1',
@@ -184,17 +183,14 @@ export default {
   watch: {
     show(bool) {
       if (bool) {
-        if (checkPermission(['product_outbound_plan', 'unqualified'])) {
-          this.unqualified = false
-        }
         this.getParams = {
-          quality_status: '一等品',
           need_qty: 99999
         }
         this.period_of_validity = this.list.period_of_validity || null
         this.order_no = this.list.order_no || null
         this.warehouse = this.list.warehouse || null
         this.station = this.list.station || null
+        this.getParams.quality_status = this.list.quality_status || null
         this.getParams.material_no = this.list.product_no || null
         this.id = this.list.id || null
         this.tableData = []
@@ -203,13 +199,11 @@ export default {
     }
   },
   created() {
-    if (checkPermission(['product_outbound_plan', 'unqualified'])) {
-      this.unqualified = false
-    }
     this.period_of_validity = this.list.period_of_validity || null
     this.order_no = this.list.order_no || null
     this.warehouse = this.list.warehouse || null
     this.station = this.list.station || null
+    this.getParams.quality_status = this.list.quality_status || null
     this.getParams.material_no = this.list.product_no || null
     this.id = this.list.id || null
     this.tableData = []
@@ -248,8 +242,8 @@ export default {
           D.warehouse = this.warehouse
         })
         this.$refs.multipleTable.clearSelection()
-
         this.tableData.push({ warehouse: '汇总', qty: this.qtyTotal, total_weight: this.weightTotal.toFixed(3) })
+        this.handleSelectionChange()
         this.loading = false
       } catch (error) {
         this.loading = false
@@ -314,29 +308,35 @@ export default {
     },
     quality_statusSearch() {
       this.$refs.multipleTable.clearSelection()
+
       this.getParams.page = 1
-      this.getParams.need_qty = (this.need_qty !== 0 && this.need_qty !== '') ? this.need_qty : 99999
+      this.getParams.need_qty = 99999
       this.getTableData()
     },
     quality_statusSearch1() {
       if (this.getParams.need_qty === '' || this.getParams.need_qty <= 0) {
         this.$message.info('请填写大于0的指定出库数量，再点击查询')
       } else {
-        if ((this.tableData.length - 1) === this.multipleSelection.length) {
-          this.$refs.multipleTable.toggleAllSelection()
-          this.getParams.page = 1
-          this.getTableData()
+        if (this.multipleSelection !== undefined) {
+          if ((this.tableData.length - 1) === this.multipleSelection.length) {
+            this.$refs.multipleTable.toggleAllSelection()
+            this.getParams.page = 1
+            this.getTableData()
+          } else {
+            this.tableData = []
+            this.multipleSelection = []
+            this.getParams.page = 1
+            this.getTableData()
+          }
         } else {
-          this.tableData = []
-          this.multipleSelection = []
-          this.getParams.page = 1
-          this.getTableData()
+          this.$message.info('可用库存为0')
         }
       }
     },
     searchDate(arr) {
       this.$refs.multipleTable.clearSelection()
-      this.getParams.need_qty = (this.need_qty !== 0 && this.need_qty !== '') ? this.need_qty : 99999
+      this.getParams.need_qty = 99999
+      // this.getParams.need_qty = (this.need_qty !== 0 && this.need_qty !== '') ? this.need_qty : 99999
       this.getParams.st = arr ? arr[0] : ''
       this.getParams.et = arr ? arr[1] : ''
       this.getTableData()
@@ -352,7 +352,6 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
-      this.need_qty = this.getParams.need_qty
       this.getParams.need_qty = 0
       this.multipleSelection.forEach(d => {
         this.getParams.need_qty += Number(d.qty)
