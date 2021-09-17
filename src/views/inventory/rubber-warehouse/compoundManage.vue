@@ -57,7 +57,7 @@
       </el-form-item>
     </el-form>
     <el-dialog
-      title="新建混炼胶出库单据"
+      title="新建胶料出库单据"
       :visible.sync="dialogVisibleNo"
       width="20%"
       :before-close="handleClose"
@@ -190,7 +190,7 @@
       <el-table-column
         prop="warehouse"
         label="库房"
-        min-width="20"
+        width="80"
       />
       <el-table-column
         prop="station"
@@ -200,42 +200,42 @@
       <el-table-column
         prop="order_no"
         label="单据号"
-        min-width="25"
+        width="160"
       />
       <el-table-column
         prop="product_no"
         label="物料编码"
-        min-width="25"
+        width="140"
       />
       <el-table-column
         prop="quality_status"
         label="品质状态"
-        min-width="20"
+        width="70"
       />
       <el-table-column
         prop="order_qty"
-        label="订单数量"
+        label="订单数量(车)"
         min-width="20"
       />
       <el-table-column
         prop="need_qty"
-        label="需求数量"
+        label="需求数量(车)"
         min-width="20"
       />
       <el-table-column
         prop="work_qty"
-        label="工作数量"
+        label="工作数量(车)"
         min-width="20"
       />
       <el-table-column
         prop="finished_qty"
-        label="完成数量"
+        label="完成数量(车)"
         min-width="20"
       />
       <el-table-column
         prop="created_username"
         label="创建人员"
-        min-width="20"
+        width="70"
       />
       <el-table-column
         prop="created_date"
@@ -308,6 +308,7 @@
         <el-form-item label="订单子编号">
           <el-input
             v-model="searchView.sub_no"
+            style="width:150px"
             clearable
             placeholder="请输入内容"
             @input="getDebounceView"
@@ -316,6 +317,7 @@
         <el-form-item label="托盘号">
           <el-input
             v-model="searchView.pallet_no"
+            style="width:150px"
             clearable
             placeholder="请输入内容"
             @input="getDebounceView"
@@ -324,6 +326,7 @@
         <el-form-item label="收皮条码">
           <el-input
             v-model="searchView.lot_no"
+            style="width:220px"
             clearable
             placeholder="请输入内容"
             @input="getDebounceView"
@@ -343,19 +346,19 @@
         <el-table-column
           prop="sub_no"
           label="订单子编号"
-          min-width="20"
+          width="90"
         />
         <el-table-column
           prop="material_no"
           label="物料编码"
-          min-width="20"
+          width="140"
         >
           <template>{{ rowObj.product_no }}</template>
         </el-table-column>
         <el-table-column
           prop="quality_status"
           label="品质状态"
-          min-width="20"
+          width="70"
         />
         <el-table-column
           prop="lot_no"
@@ -393,7 +396,7 @@
         />
         <el-table-column
           label="操作"
-          min-width="10"
+          width="85"
         >
           <template slot-scope="{row}">
             <el-button :disabled="row.status===3||row.status===4||row.status===5" type="danger" @click="closeOrderNo(row)">关闭</el-button>
@@ -420,6 +423,7 @@ import myMixin from '../components-zl-hl/mixin-zl-hl'
 import { stationInfo } from '@/api/warehouse'
 import { checkPermission } from '@/utils'
 import page from '@/components/page'
+import { debounce } from '@/utils/index'
 import { setDate } from '@/utils'
 
 export default {
@@ -659,7 +663,7 @@ export default {
     },
     changeList() {
       this.search.page = 1
-      this.getList()
+      debounce(this, 'getList')
     },
     searchDate(arr) {
       this.search.st = arr ? arr[0] : ''

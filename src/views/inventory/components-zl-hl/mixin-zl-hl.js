@@ -7,7 +7,7 @@ export default {
       dialogVisibleView: false,
       tableDataView: [],
       totalView: 0,
-      searchView: {},
+      searchView: { sub_no: '', pallet_no: '', lot_no: '' },
       loadingView: false,
       outbound_order: '',
       rowObj: {}
