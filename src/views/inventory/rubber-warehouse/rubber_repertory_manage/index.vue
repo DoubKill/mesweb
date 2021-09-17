@@ -7,6 +7,7 @@
           v-model="getParams.warehouse_name"
           clearable
           placeholder="请选择"
+          style="width:150px"
           @change="changeWarehouse"
         >
           <el-option
@@ -90,12 +91,15 @@
           />
         </el-select>
       </el-form-item>
-      <!-- <el-form-item label="加硫：">
-        共{{ sulfurAddition || 0 }}车
+      <el-form-item label="总货位数：">
+        {{ allObj.total_goods_num || 0 }}
       </el-form-item>
-      <el-form-item label="无硫：">
-        共{{ sulfurFree || 0 }}车
-      </el-form-item> -->
+      <el-form-item label="已占用货位数：">
+        {{ allObj.used_goods_num || 0 }}
+      </el-form-item>
+      <el-form-item label="空货位数：">
+        {{ allObj.empty_goods_num || 0 }}
+      </el-form-item>
       <el-form-item style="float:right">
         <el-button
           type="primary"
@@ -114,6 +118,7 @@
       :data="tableData"
       border
       style="width: 100%"
+      :row-class-name="rowClassNameFn"
     >
       <el-table-column
         label="no"
@@ -191,7 +196,7 @@
           </span>
         </template>
       </el-table-column>
-
+      <el-table-column prop="active_qty" label="有效库存数(车)" align="center" min-width="20" />
       <!-- :formatter="StandardFlagChoice" -->
     </el-table>
     <page :total="total" :current-page="getParams.page" @currentChange="currentChange" />
@@ -227,13 +232,12 @@ export default {
       },
       RubberStageOptions: [],
       dialogVisible: false,
-      sulfurAddition: 0,
-      sulfurFree: 0,
       qualityStatus: '',
       materialNo: '',
       locationStatus: '',
       warehouseName: '',
-      btnLoading: false
+      btnLoading: false,
+      allObj: {}
     }
   },
   created() {
@@ -244,7 +248,11 @@ export default {
       try {
         this.loading = true
         const data = await inLibraryInventory('get', null, { params: this.getParams })
-
+        this.allObj = {
+          empty_goods_num: data.empty_goods_num,
+          total_goods_num: data.total_goods_num,
+          used_goods_num: data.used_goods_num
+        }
         this.tableData = data.results
         this.tableData.push({
           all: 2,
@@ -253,7 +261,8 @@ export default {
           '三等品': { qty: sum(this.tableData, '三等品', 'qty'), total_weight: sum(this.tableData, '三等品', 'total_weight') },
           '封闭': { qty: sum(this.tableData, '封闭', 'qty'), total_weight: sum(this.tableData, '封闭', 'total_weight') },
           all_qty: sum(this.tableData, '', 'all_qty'),
-          total_weight: sum(this.tableData, '', 'total_weight')
+          total_weight: sum(this.tableData, '', 'total_weight'),
+          active_qty: sum(this.tableData, '', 'active_qty')
         }, {
           all: 1,
           '一等品': { qty: data.qty_1, total_weight: data.weight_1 },
@@ -261,7 +270,8 @@ export default {
           '三等品': { qty: data.qty_3, total_weight: data.weight_3 },
           '封闭': { qty: data.qty_fb, total_weight: data.weight_fb },
           all_qty: data.total_count,
-          total_weight: data.total_weight
+          total_weight: data.total_weight,
+          active_qty: Math.round((data.total_count - data.qty_fb) * 1000) / 1000
         }
         )
         this.total = data.count
@@ -346,6 +356,11 @@ export default {
         }).catch(e => {
           this.btnLoading = false
         })
+    },
+    rowClassNameFn({ row, rowIndex }) {
+      if (row.all) {
+        return 'summary-cell-style'
+      }
     }
   }
 }
@@ -366,6 +381,7 @@ function sum(arr, str, params) {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+
 </style>
 

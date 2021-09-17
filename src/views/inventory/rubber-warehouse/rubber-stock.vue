@@ -133,7 +133,7 @@ export default {
   created() {
     var _setDateCurrent = setDate()
     this.search.s_time = _setDateCurrent + ' 00:00:00'
-    this.search.e_time = _setDateCurrent + ' 23:59:59'
+    this.search.e_time = setDate(null, true)
     this.dateValue = [this.search.s_time, this.search.e_time]
     this.getGlue()
   },

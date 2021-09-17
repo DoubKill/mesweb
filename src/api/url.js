@@ -205,6 +205,10 @@ export default {
   // 批量打印
   LabelPrint: '/api/v1/quality/label-print/',
   ShowQualifiedRange: '/api/v1/quality/show-qualified-range/',
+  // 出库口补打印卡片- 详情
+  AdditionalPrintDetail: '/api/v1/inventory/additional-print-detail/',
+  // 出库口补打印卡片- 打印
+  AdditionalPrint: '/api/v1/inventory/additional-print/',
   // 修改车次
   TrainsFix: '/api/v1/production/trains-fix/',
   PalletTrainBatchFix: '/api/v1/production/pallet-train-batch-fix/',
@@ -471,6 +475,9 @@ export default {
   // 胶片库出库单列表
   CompoundManage: '/api/v1/inventory/outbound-delivery-orders/',
   // 出库
-  Outbound: '/api/v1/inventory/outbound-delivery-order-details/'
-
+  Outbound: '/api/v1/inventory/outbound-delivery-order-details/',
+  // 机台别不合格率
+  MachinePass: '/api/v1/quality/unqialified-equip/',
+  // 用户出库口库区
+  UserStation: '/api/v1/inventory/outbound-history/'
 }
