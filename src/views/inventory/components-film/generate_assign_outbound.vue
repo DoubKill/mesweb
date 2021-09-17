@@ -27,6 +27,22 @@
         />
       </el-form-item>
       <br>
+      <el-form-item label="品质状态">
+        <el-select
+          v-model="getParams.quality_status"
+          :disabled="true"
+          placeholder="请选择品质状态"
+          clearable
+          @change="quality_statusSearch"
+        >
+          <el-option
+            v-for="item in options"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="巷道">
         <el-select
           v-model="getParams.tunnel"
@@ -39,22 +55,6 @@
             :key="item.value"
             :label="item.label"
             :value="item.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="品质状态">
-        <el-select
-          v-model="getParams.quality_status"
-          :disabled="unqualified"
-          placeholder="请选择品质状态"
-          clearable
-          @change="quality_statusSearch"
-        >
-          <el-option
-            v-for="item in options"
-            :key="item"
-            :label="item"
-            :value="item"
           />
         </el-select>
       </el-form-item>
@@ -156,7 +156,6 @@ export default {
       tableData: [],
       getParams: {
         page: 1,
-        quality_status: '一等品',
         location_status: '有货货位'
       },
       period_of_validity: '',
@@ -177,7 +176,6 @@ export default {
         label: '4#巷道'
       }],
       dateSearch: [],
-      unqualified: true,
       qtyTotal: 0,
       weightTotal: 0,
       qty_total: '',
@@ -195,14 +193,12 @@ export default {
   watch: {
     show(bool) {
       if (bool) {
-        if (checkPermission(['product_outbound_plan', 'unqualified'])) {
-          this.unqualified = false
-        }
         this.period_of_validity = this.list.period_of_validity || null
         this.order_no = this.list.order_no || null
         this.need_qty = this.list.need_qty || null
         this.warehouse = this.list.warehouse || null
         this.station = this.list.station || null
+        this.getParams.quality_status = this.list.quality_status || null
         this.getParams.material_no = this.list.product_no || null
         this.id = this.list.id || null
         this.tableData = []
@@ -211,14 +207,12 @@ export default {
     }
   },
   created() {
-    if (checkPermission(['product_outbound_plan', 'unqualified'])) {
-      this.unqualified = false
-    }
     this.period_of_validity = this.list.period_of_validity || null
     this.order_no = this.list.order_no || null
     this.need_qty = this.list.need_qty || null
     this.warehouse = this.list.warehouse || null
     this.station = this.list.station || null
+    this.getParams.quality_status = this.list.quality_status || null
     this.getParams.material_no = this.list.product_no || null
     this.id = this.list.id || null
     this.getTableData()
