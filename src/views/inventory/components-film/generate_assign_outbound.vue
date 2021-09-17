@@ -27,6 +27,22 @@
         />
       </el-form-item>
       <br>
+      <el-form-item label="品质状态">
+        <el-select
+          v-model="getParams.quality_status"
+          :disabled="true"
+          placeholder="请选择品质状态"
+          clearable
+          @change="quality_statusSearch"
+        >
+          <el-option
+            v-for="item in options"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="巷道">
         <el-select
           v-model="getParams.tunnel"
@@ -39,22 +55,6 @@
             :key="item.value"
             :label="item.label"
             :value="item.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="品质状态">
-        <el-select
-          v-model="getParams.quality_status"
-          :disabled="unqualified"
-          placeholder="请选择品质状态"
-          clearable
-          @change="quality_statusSearch"
-        >
-          <el-option
-            v-for="item in options"
-            :key="item"
-            :label="item"
-            :value="item"
           />
         </el-select>
       </el-form-item>
@@ -104,7 +104,7 @@
     </el-table>
     <el-alert
       style="color:black"
-      title="表格背景色说明：红色超期报警；黄色超期预警；白色放置期正常；紫色未设置有效期"
+      title="表格背景色说明：红色超期报警；黄色超期预警；白色放置期正常；灰色未设置有效期"
       type="success"
     />
     <page
@@ -156,7 +156,6 @@ export default {
       tableData: [],
       getParams: {
         page: 1,
-        quality_status: '一等品',
         location_status: '有货货位'
       },
       period_of_validity: '',
@@ -177,7 +176,6 @@ export default {
         label: '4#巷道'
       }],
       dateSearch: [],
-      unqualified: true,
       qtyTotal: 0,
       weightTotal: 0,
       qty_total: '',
@@ -195,14 +193,12 @@ export default {
   watch: {
     show(bool) {
       if (bool) {
-        if (checkPermission(['product_outbound_plan', 'unqualified'])) {
-          this.unqualified = false
-        }
         this.period_of_validity = this.list.period_of_validity || null
         this.order_no = this.list.order_no || null
         this.need_qty = this.list.need_qty || null
         this.warehouse = this.list.warehouse || null
         this.station = this.list.station || null
+        this.getParams.quality_status = this.list.quality_status || null
         this.getParams.material_no = this.list.product_no || null
         this.id = this.list.id || null
         this.tableData = []
@@ -211,14 +207,12 @@ export default {
     }
   },
   created() {
-    if (checkPermission(['product_outbound_plan', 'unqualified'])) {
-      this.unqualified = false
-    }
     this.period_of_validity = this.list.period_of_validity || null
     this.order_no = this.list.order_no || null
     this.need_qty = this.list.need_qty || null
     this.warehouse = this.list.warehouse || null
     this.station = this.list.station || null
+    this.getParams.quality_status = this.list.quality_status || null
     this.getParams.material_no = this.list.product_no || null
     this.id = this.list.id || null
     this.getTableData()
@@ -249,7 +243,7 @@ export default {
           this.tableData.forEach(D => {
             D.warehouse = this.warehouse
           })
-          this.tableData.push({ warehouse: '单页小计', qty: this.qtyTotal.toFixed(3), total_weight: this.weightTotal.toFixed(3) },
+          this.tableData.push({ warehouse: '单页小计', qty: this.qtyTotal, total_weight: this.weightTotal.toFixed(3) },
             { warehouse: '汇总', qty: this.qty_total, total_weight: this.weight_total })
           this.loading = false
         }).catch(() => {
@@ -303,9 +297,13 @@ export default {
           return 'warning-row'
         } else if (days >= this.period_of_validity) {
           return 'maxwarning-row'
-        } else { return '' }
+        } else { return 'summary-cell-style' }
       } else {
-        return 'warn-row'
+        if (days) {
+          return 'warn-row'
+        } else {
+          return 'summary-cell-style'
+        }
       }
     },
     select(row, index) {
@@ -346,7 +344,7 @@ export default {
     text-align: right;
   }
   .el-table .warn-row {
-    background: #D1CBE4;
+    background: #F5F7FA;
   }
   .el-table .warning-row {
     background: #e6a23c;

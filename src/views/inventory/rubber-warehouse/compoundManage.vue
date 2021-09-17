@@ -57,7 +57,7 @@
       </el-form-item>
     </el-form>
     <el-dialog
-      title="新建混炼胶出库单据"
+      title="新建胶料出库单据"
       :visible.sync="dialogVisibleNo"
       width="20%"
       :before-close="handleClose"
@@ -68,7 +68,7 @@
         :model="creatOrder"
         :rules="rules"
       >
-        <el-form-item style="marginLeft:29px" label="库区" prop="warehouse">
+        <el-form-item style="marginLeft:54px" label="库区" prop="warehouse">
           <el-select
             v-model="creatOrder.warehouse"
             placeholder="请选择"
@@ -83,7 +83,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item style="marginLeft:15px" label="出库口" prop="station">
+        <el-form-item style="marginLeft:40px" label="出库口" prop="station">
           <el-select
             v-model="creatOrder.station"
             placeholder="请选择"
@@ -98,13 +98,30 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="胶料编码" prop="product_no">
+        <el-form-item style="marginLeft:25px" label="品质状态" prop="quality_status">
+          <el-select
+            v-model="creatOrder.quality_status"
+            :disabled="unqualified"
+            placeholder="请选择"
+            clearable
+            @change="clear2"
+          >
+            <el-option
+              v-for="item in options"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item style="marginLeft:25px" label="胶料编码" prop="product_no">
           <el-select
             v-model="creatOrder.product_no"
             placeholder="请选择胶料编码"
             filterable
             clearable
             @visible-change="productBatchingChanged"
+            @change="clear1"
           >
             <el-option
               v-for="item in batchList"
@@ -114,7 +131,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item style="marginLeft:10px" label="订单数量" prop="order_qty">
+        <el-form-item style="marginLeft:10px" label="订单数量(车)" prop="order_qty">
           <el-input
             v-model="creatOrder.order_qty"
             placeholder="请输入订单数量"
@@ -173,7 +190,7 @@
       <el-table-column
         prop="warehouse"
         label="库房"
-        min-width="20"
+        width="80"
       />
       <el-table-column
         prop="station"
@@ -183,43 +200,56 @@
       <el-table-column
         prop="order_no"
         label="单据号"
-        min-width="25"
+        width="160"
       />
       <el-table-column
         prop="product_no"
         label="物料编码"
-        min-width="25"
+        width="140"
+      />
+      <el-table-column
+        prop="quality_status"
+        label="品质状态"
+        width="70"
       />
       <el-table-column
         prop="order_qty"
-        label="订单数量"
+        label="订单数量(车)"
         min-width="20"
       />
       <el-table-column
         prop="need_qty"
-        label="需求数量"
+        label="需求数量(车)"
         min-width="20"
       />
       <el-table-column
         prop="work_qty"
-        label="工作数量"
+        label="工作数量(车)"
         min-width="20"
       />
       <el-table-column
         prop="finished_qty"
-        label="完成数量"
+        label="完成数量(车)"
         min-width="20"
       />
       <el-table-column
         prop="created_username"
         label="创建人员"
-        min-width="20"
+        width="70"
       />
       <el-table-column
         prop="created_date"
         label="创建时间"
         min-width="25"
       />
+      <el-table-column
+        label="查看"
+        width="80"
+      >
+        <template slot-scope="{row}">
+          <el-button type="primary" size="mini" @click="showEditDialog(row)">查看</el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <page
       :old-page="false"
@@ -259,6 +289,127 @@
         @getList="getList"
         @visibleMethod="visibleMethodNormal"
       /></el-dialog>
+    <el-dialog
+      title="出库单据"
+      :visible.sync="dialogVisibleView"
+      width="80%"
+      :before-close="handleCloseView"
+    >
+      <el-form :inline="true">
+        <el-form-item label="仓库名称">
+          {{ rowObj.warehouse }}
+        </el-form-item>
+        <el-form-item label="出库单号">
+          {{ rowObj.order_no }}
+        </el-form-item>
+        <el-form-item label="出库位置">
+          {{ rowObj.station }}
+        </el-form-item>
+        <el-form-item label="订单子编号">
+          <el-input
+            v-model="searchView.sub_no"
+            style="width:150px"
+            clearable
+            placeholder="请输入内容"
+            @input="getDebounceView"
+          />
+        </el-form-item>
+        <el-form-item label="托盘号">
+          <el-input
+            v-model="searchView.pallet_no"
+            style="width:150px"
+            clearable
+            placeholder="请输入内容"
+            @input="getDebounceView"
+          />
+        </el-form-item>
+        <el-form-item label="收皮条码">
+          <el-input
+            v-model="searchView.lot_no"
+            style="width:220px"
+            clearable
+            placeholder="请输入内容"
+            @input="getDebounceView"
+          />
+        </el-form-item>
+      </el-form>
+      <el-table
+        v-loading="loadingView"
+        :data="tableDataView"
+        border
+      >
+        <el-table-column
+          prop="order_no"
+          label="出库任务号"
+          min-width="20"
+        />
+        <el-table-column
+          prop="sub_no"
+          label="订单子编号"
+          width="90"
+        />
+        <el-table-column
+          prop="material_no"
+          label="物料编码"
+          width="140"
+        >
+          <template>{{ rowObj.product_no }}</template>
+        </el-table-column>
+        <el-table-column
+          prop="quality_status"
+          label="品质状态"
+          width="70"
+        />
+        <el-table-column
+          prop="lot_no"
+          label="Lot_No"
+          min-width="25"
+        />
+        <el-table-column
+          prop="pallet_no"
+          label="托盘号"
+          min-width="15"
+        />
+        <el-table-column
+          prop="memo"
+          label="车次"
+          min-width="15"
+        />
+        <el-table-column
+          prop="location"
+          label="库位编号"
+          min-width="20"
+        />
+        <el-table-column
+          prop="finish_time"
+          label="出库时间"
+          min-width="20"
+        />
+        <el-table-column
+          prop="status"
+          label="状态"
+          min-width="10"
+          :formatter="(row)=>{
+            let obj = optionsState1.find(d=>d.id === row.status)
+            return obj.name
+          }"
+        />
+        <el-table-column
+          label="操作"
+          width="85"
+        >
+          <template slot-scope="{row}">
+            <el-button :disabled="row.status===3||row.status===4||row.status===5" type="danger" @click="closeOrderNo(row)">关闭</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <page
+        :old-page="false"
+        :total="totalView"
+        :current-page="searchView.page"
+        @currentChange="currentChangeView"
+      />
+    </el-dialog>
   </div>
 </template>
 
@@ -266,14 +417,19 @@
 import GenerateAssignOutbound from '../components-film/generate_assign_outbound'
 import GenerateNormalOutbound from '../components-film/generate_normal_outbound'
 import { bzMixinInventorySummary, bzFinalInventorySummary } from '@/api/base_w_four'
-import { compoundManage } from '@/api/jqy'
+import { compoundManage, userStation } from '@/api/jqy'
+import { mapGetters } from 'vuex'
+import myMixin from '../components-zl-hl/mixin-zl-hl'
 import { stationInfo } from '@/api/warehouse'
 import { checkPermission } from '@/utils'
 import page from '@/components/page'
+import { debounce } from '@/utils/index'
+import { setDate } from '@/utils'
 
 export default {
   name: 'CompoundManage',
   components: { page, GenerateAssignOutbound, GenerateNormalOutbound },
+  mixins: [myMixin],
   data() {
     return {
       loading: false,
@@ -285,12 +441,15 @@ export default {
         product_no: '',
         warehouse: '',
         station: '',
-        order_qty: 99999
+        order_qty: '',
+        quality_status: '一等品'
       },
+      options: ['一等品', '三等品', '待检品'],
       close: true,
       assign: true,
       normal: true,
-      dateSearch: [],
+      unqualified: true,
+      dateSearch: [setDate(), setDate()],
       stationList: [],
       batchList: [],
       stationList1: [],
@@ -306,9 +465,19 @@ export default {
       // 仓库id
       warehouseInfo: null,
       handleSelection: [],
+      optionsState1: [
+        { name: '新建', id: 1 },
+        { name: '执行中', id: 2 },
+        { name: '已出库', id: 3 },
+        { name: '关闭', id: 4 },
+        { name: '失败', id: 5 }
+      ],
       rules: {
         product_no: [
           { required: true, message: '请选择胶料编码', trigger: 'blur' }
+        ],
+        quality_status: [
+          { required: true, message: '请选择品质状态', trigger: 'blur' }
         ],
         order_qty: [
           { pattern: /^[1-9]\d*$/, message: '只能输入正整数' }
@@ -322,8 +491,16 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters({ // 获取不到数据
+      userId: 'userId'
+
+    })
+  },
   created() {
-    this.getList()
+    this.search.st = setDate()
+    this.search.et = setDate()
+    this.getUser()
     if (checkPermission(['product_outbound_plan', 'close'])) {
       this.close = false
     }
@@ -333,13 +510,15 @@ export default {
     if (checkPermission(['product_outbound_plan', 'normal'])) {
       this.normal = false
     }
+    if (checkPermission(['product_outbound_plan', 'unqualified'])) {
+      this.unqualified = false
+    }
   },
   methods: {
     checkPermission,
     dialog() {
       this.creatOrder.product_no = ''
-      this.creatOrder.warehouse = localStorage.getItem('warehouse')
-      this.creatOrder.station = localStorage.getItem('station')
+      this.creatOrder.order_qty = ''
       this.dialogVisibleNo = true
     },
     async productBatchingChanged(val) {
@@ -354,7 +533,8 @@ export default {
           try {
             const _api = this.creatOrder.warehouse === '混炼胶库' ? bzMixinInventorySummary : bzFinalInventorySummary
             const obj = {}
-            obj.all = 1
+            obj.location_status = '有货货位'
+            obj.quality_status = this.creatOrder.quality_status
             if (this.creatOrder.warehouse === '混炼胶库') {
               obj.station = this.creatOrder.station
             }
@@ -379,15 +559,25 @@ export default {
             await compoundManage('post', null, { data: this.creatOrder })
             this.submit = false
             this.$message.success('新建成功')
-            localStorage.setItem('warehouse', this.creatOrder.warehouse)
-            localStorage.setItem('station', this.creatOrder.station)
             this.dialogVisibleNo = false
-            this.getList()
+            this.getUser()
           } catch (e) { this.submit = false }
         } else {
           this.$message.info('输入必填项')
         }
       })
+    },
+    async getUser() {
+      try {
+        const data = await userStation('get', null, { params: { user_id: this.userId }})
+        this.search.warehouse = data.warehouse || null
+        this.search.station = data.station || null
+        this.creatOrder.warehouse = data.warehouse || null
+        this.creatOrder.station = data.station || null
+        this.getList()
+      } catch (error) {
+        this.getList()
+      }
     },
     async getList() {
       try {
@@ -420,6 +610,20 @@ export default {
       }
       if (this.creatOrder.product_no !== '') {
         this.creatOrder.product_no = ''
+      }
+    },
+    clear1(val) {
+      const val1 = this.batchList.filter(D => {
+        return D.material_no === val
+      })
+      this.creatOrder.order_qty = val1[0].all_qty
+    },
+    clear2() {
+      if (this.creatOrder.product_no !== '') {
+        this.creatOrder.product_no = ''
+      }
+      if (this.creatOrder.order_qty !== '') {
+        this.creatOrder.order_qty = ''
       }
     },
     async getStation1(val) {
@@ -459,7 +663,7 @@ export default {
     },
     changeList() {
       this.search.page = 1
-      this.getList()
+      debounce(this, 'getList')
     },
     searchDate(arr) {
       this.search.st = arr ? arr[0] : ''

@@ -156,7 +156,7 @@ export default {
         order_type: '出库',
         warehouse_name: ''
       },
-      searchDate: [setDate(null, true), setDate(null, true)],
+      searchDate: [],
       total: 0,
       loading: false,
       options1: ['指定出库', '正常出库'],
@@ -169,8 +169,10 @@ export default {
     if (this.warehouseNameProps) {
       this.search.warehouse_name = this.warehouseNameProps
     }
-    this.search.start_time = setDate(null, true)
+
+    this.search.start_time = setDate() + ' 00:00:00'
     this.search.end_time = setDate(null, true)
+    this.searchDate = [this.search.start_time, this.search.end_time]
     this.getList()
   },
   methods: {
