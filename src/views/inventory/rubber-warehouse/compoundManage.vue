@@ -68,7 +68,7 @@
         :model="creatOrder"
         :rules="rules"
       >
-        <el-form-item style="marginLeft:29px" label="库区" prop="warehouse">
+        <el-form-item style="marginLeft:54px" label="库区" prop="warehouse">
           <el-select
             v-model="creatOrder.warehouse"
             placeholder="请选择"
@@ -83,7 +83,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item style="marginLeft:15px" label="出库口" prop="station">
+        <el-form-item style="marginLeft:40px" label="出库口" prop="station">
           <el-select
             v-model="creatOrder.station"
             placeholder="请选择"
@@ -98,7 +98,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="品质状态" prop="quality_status">
+        <el-form-item style="marginLeft:25px" label="品质状态" prop="quality_status">
           <el-select
             v-model="creatOrder.quality_status"
             :disabled="unqualified"
@@ -114,7 +114,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="胶料编码" prop="product_no">
+        <el-form-item style="marginLeft:25px" label="胶料编码" prop="product_no">
           <el-select
             v-model="creatOrder.product_no"
             placeholder="请选择胶料编码"
@@ -131,7 +131,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item style="marginLeft:10px" label="订单数量" prop="order_qty">
+        <el-form-item style="marginLeft:10px" label="订单数量(车)" prop="order_qty">
           <el-input
             v-model="creatOrder.order_qty"
             placeholder="请输入订单数量"
@@ -354,7 +354,7 @@
         </el-table-column>
         <el-table-column
           prop="quality_status"
-          label="订单子编号"
+          label="品质状态"
           min-width="20"
         />
         <el-table-column
@@ -514,12 +514,7 @@ export default {
     checkPermission,
     dialog() {
       this.creatOrder.product_no = ''
-      if (this.creatOrder.warehouse === '终炼胶库') {
-        this.creatOrder.quality_status = '一等品'
-      } else if (this.creatOrder.warehouse === '混炼胶库') {
-        this.creatOrder.quality_status = '一等品'
-        this.creatOrder.order_qty = 99999
-      }
+      this.creatOrder.order_qty = ''
       this.dialogVisibleNo = true
     },
     async productBatchingChanged(val) {
@@ -612,21 +607,12 @@ export default {
       if (this.creatOrder.product_no !== '') {
         this.creatOrder.product_no = ''
       }
-      if (this.creatOrder.warehouse === '混炼胶库') {
-        this.creatOrder.order_qty = 99999
-      } else {
-        this.creatOrder.order_qty = ''
-      }
     },
     clear1(val) {
-      if (this.creatOrder.warehouse === '终炼胶库') {
-        const val1 = this.batchList.filter(D => {
-          return D.material_no === val
-        })
-        this.creatOrder.order_qty = val1[0].all_qty
-      } else if (this.creatOrder.warehouse === '混炼胶库') {
-        this.creatOrder.order_qty = 99999
-      }
+      const val1 = this.batchList.filter(D => {
+        return D.material_no === val
+      })
+      this.creatOrder.order_qty = val1[0].all_qty
     },
     clear2() {
       if (this.creatOrder.product_no !== '') {
