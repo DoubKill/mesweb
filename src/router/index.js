@@ -816,16 +816,16 @@ export const asyncRoutes = [
               permissionName: 'product_outbound_plan'
             }
           },
-          {
-            path: '/delivery-document',
-            component: () => import('@/views/inventory/rubber-warehouse/delivery-document.vue'),
-            name: 'DeliveryDocument',
-            meta: {
-              faName: 'RubberWarehouse',
-              title: '出库单据查询',
-              permissionName: 'product_outbound_plan'
-            }
-          },
+          // {
+          //   path: '/delivery-document',
+          //   component: () => import('@/views/inventory/rubber-warehouse/delivery-document.vue'),
+          //   name: 'DeliveryDocument',
+          //   meta: {
+          //     faName: 'RubberWarehouse',
+          //     title: '出库单据查询',
+          //     permissionName: 'product_outbound_plan'
+          //   }
+          // },
           {
             path: '/rubber',
             component: () => import('@/views/inventory/rubber-warehouse/rubber_repertory_manage/index'),
@@ -1500,6 +1500,15 @@ export const asyncRoutes = [
           icon: 'quality'
         },
         children: [
+          // { path: '/statistics/machine-pass',
+          //   component: () => import('@/views/quality_management/pass/machine.vue'),
+          //   name: 'Classes',
+          //   meta: {
+          //     faName: 'QualityStatistics',
+          //     title: '机台别合格率统计',
+          //     permissionName: 'month_passing_rate'
+          //   }
+          // },
           {
             path: '/statistics/month-pass-detail',
             component: () => import('@/views/quality_management/month_pass_detail'),
