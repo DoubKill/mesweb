@@ -478,6 +478,10 @@ export default {
   Outbound: '/api/v1/inventory/outbound-delivery-order-details/',
   // 机台别不合格率
   MachinePass: '/api/v1/quality/unqialified-equip/',
+  // 胶料别不合格率
+  RubberPass: '/api/v1/quality/product-test-statics/',
+  // 班次别不合格率
+  ClassesPass: '/api/v1/quality/class-test-statics/',
   // 用户出库口库区
   UserStation: '/api/v1/inventory/outbound-history/'
 }
