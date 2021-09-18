@@ -25,7 +25,7 @@
           v-model="search.warehouse"
           placeholder="请选择库区"
           clearable
-          @change="changeList"
+          @change="changeList1"
         >
           <el-option
             v-for="item in ['终炼胶库','混炼胶库']"
@@ -424,7 +424,6 @@ import { stationInfo } from '@/api/warehouse'
 import { checkPermission } from '@/utils'
 import page from '@/components/page'
 import { debounce } from '@/utils/index'
-import { setDate } from '@/utils'
 
 export default {
   name: 'CompoundManage',
@@ -435,7 +434,9 @@ export default {
       loading: false,
       submit: false,
       search: {
-        page: 1
+        page: 1,
+        warehouse: '',
+        station: ''
       },
       creatOrder: {
         product_no: '',
@@ -449,7 +450,7 @@ export default {
       assign: true,
       normal: true,
       unqualified: true,
-      dateSearch: [setDate(), setDate()],
+      dateSearch: [],
       stationList: [],
       batchList: [],
       stationList1: [],
@@ -498,8 +499,6 @@ export default {
     })
   },
   created() {
-    this.search.st = setDate()
-    this.search.et = setDate()
     this.getUser()
     if (checkPermission(['product_outbound_plan', 'close'])) {
       this.close = false
@@ -591,17 +590,19 @@ export default {
         this.loading = false
       }
     },
-    async getStation() {
-      try {
-        if (this.search.warehouse) {
-          const data1 = await stationInfo({ warehouse_name: this.search.warehouse })
-          this.stationList = data1.results
-        } else {
-          const data1 = await stationInfo({ all: 1 })
-          this.stationList = data1
+    async getStation(val) {
+      if (val === true) {
+        try {
+          if (this.search.warehouse !== '' && this.search.warehouse !== null) {
+            const data1 = await stationInfo({ warehouse_name: this.search.warehouse })
+            this.stationList = data1.results
+          } else {
+            this.stationList = []
+            this.$message.info('请先选择库区')
+          }
+        } catch (error) {
+          this.stationList = []
         }
-      } catch (error) {
-        console.log()
       }
     },
     clear() {
@@ -637,7 +638,7 @@ export default {
             this.$message.info('请先选择库区')
           }
         } catch (error) {
-          console.log()
+          this.stationList1 = []
         }
       }
     },
@@ -662,6 +663,11 @@ export default {
       done()
     },
     changeList() {
+      this.search.page = 1
+      debounce(this, 'getList')
+    },
+    changeList1() {
+      this.search.station = ''
       this.search.page = 1
       debounce(this, 'getList')
     },

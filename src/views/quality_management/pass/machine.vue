@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 胶料别合格率 -->
+    <!-- 机台别合格率 -->
     <el-form :inline="true">
       <el-form-item label="时间">
         <el-date-picker
@@ -15,146 +15,143 @@
       </el-form-item>
       <el-form-item label="胶料段">
         <el-select
-          v-model="search.c_solved"
+          v-model="search.station"
           clearable
           placeholder="请选择"
+          @visible-change="visibleStageList"
           @change="changeSearch"
         >
           <el-option
-            v-for="item in options"
-            :key="item"
-            :label="item"
-            :value="item"
+            v-for="(item,k) in options"
+            :key="k"
+            :label="item.global_name"
+            :value="item.global_name"
           />
         </el-select>
       </el-form-item>
       <el-form-item label="胶料规格">
-        <all-product-no-select :params-obj="paramsObj" :params-obj-must="false" @productBatchingChanged="productBatchingChanged" />
+        <el-input v-model="search.product_type" size="" clearable placeholder="请输入胶料规格" @input="changeSearch" />
       </el-form-item>
       <el-form-item label="生产机台">
-        <selectEquip
-          :equip_no_props.sync="search.equip_id"
-          @changeSearch="changeSearch"
-        />
+        <el-input v-model="search.equip_no" clearable placeholder="请输入生产机台" @input="changeSearch" />
       </el-form-item>
       <el-form-item label="班次">
-        <class-select />
+        <class-select @classSelected="classChanged" />
       </el-form-item>
     </el-form>
 
     <el-table
       v-loading="loading"
       :data="tableData"
+      :row-class-name="tableRowClassName"
       border
       tooltip-effect="dark"
       style="width: 100%"
     >
       <el-table-column
-        prop="unqualified_deal_order_uid"
-        label="橡胶规格"
-        show-overflow-tooltip
+        prop="equip"
+        label="机台号"
+        width="60"
       />
       <el-table-column
-        prop="created_date"
+        prop="test_all"
         label="检查数"
-        show-overflow-tooltip
+        width="70"
       />
       <el-table-column
-        prop="department"
+        prop="test_right"
         label="合格量"
-        show-overflow-tooltip
+        width="70"
       />
       <el-table-column
-        prop="status"
+        prop="mn"
         label="门尼不合格"
-        show-overflow-tooltip
+        width="100"
       />
       <el-table-column
-        prop="c_solved"
+        prop="yd"
         label="硬度不合格"
-        show-overflow-tooltip
+        width="100"
       />
       <el-table-column
-        prop="c_solved"
+        prop="bz"
+        label="比重不合格"
+        width="100"
+      />
+      <el-table-column
+        prop="rate_1"
         label="一次合格率"
-        show-overflow-tooltip
+        width="100"
       />
+      <el-table-column label="硫变不合格" align="center">
+        <el-table-column
+          prop="MH"
+          label="MH"
+        />
+        <el-table-column
+          prop="ML"
+          label="ML"
+        />
+        <el-table-column
+          prop="TC10"
+          label="TC10"
+        />
+        <el-table-column
+          prop="TC50"
+          label="TC50"
+        />
+        <el-table-column
+          prop="TC90"
+          label="TC90"
+        />
+        <el-table-column
+          prop="lb_all"
+          label="硫变合计"
+        />
+      </el-table-column>
       <el-table-column
-        prop="c_solved"
+        prop="rate_lb"
         label="硫变合格率"
-        show-overflow-tooltip
+        width="100"
       />
       <el-table-column
-        prop="c_solved"
+        prop="cp_all"
         label="次品合计"
-        show-overflow-tooltip
+        width="100"
       />
       <el-table-column
-        prop="c_solved"
+        prop="rate"
         label="合格率"
-        show-overflow-tooltip
+        width="80"
       />
     </el-table>
-    <page
-      :old-page="false"
-      :total="total"
-      :current-page="search.page"
-      @currentChange="currentChange"
-    />
-    <el-dialog
-      :fullscreen="false"
-      width="800px"
-      :visible.sync="handleCardDialogVisible"
-      title="不合格处置工艺检查科处理"
-      center
-    >
-      <excel
-        ref="handleCard"
-        :order-row="orderRow"
-        :form-head-data="formHeadData"
-        :edit-type="3"
-        :show="handleCardDialogVisible"
-        @cancelFun="cancelFun"
-        @preserveFun="preserveFun"
-      />
-    </el-dialog>
   </div>
 </template>
 
 <script>
-import excel from '.././disposal-list-components/excelNew'
-import page from '@/components/page'
-import selectEquip from '@/components/select_w/equip'
 import ClassSelect from '@/components/ClassSelect'
-import allProductNoSelect from '@/components/select_w/allProductNoSelect'
-import { unqualifiedDealOrders } from '@/api/base_w'
-import { dataPoint } from '@/api/jqy'
-// import { setDate } from '@/utils'
+import { globalCodesUrl } from '@/api/base_w'
+import { machinePass } from '@/api/jqy'
+import { debounce } from '@/utils/index'
+import { setDate } from '@/utils'
 export default {
   name: 'Machine',
-  components: { excel, page, allProductNoSelect, ClassSelect, selectEquip },
+  components: { ClassSelect },
   data() {
     return {
       tableData: [],
       formHeadData: [],
       search: {
-        page: 1,
-        t_solved: 'Y'
       },
-      use_flag: true,
       loading: false,
-      total: 0,
-      options: ['FM', 'N'],
+      options: [],
       handleCardDialogVisible: false,
-      orderRow: {},
-      editType: null,
-      dateValue: []
+      dateValue: [setDate(), setDate()]
     }
   },
   created() {
-    // this.search.st = setDate()
-    // this.search.et = setDate()
-    this.getDataPoint()
+    this.search.s_time = setDate()
+    this.search.e_time = setDate()
     this.getList()
   },
   methods: {
@@ -162,49 +159,100 @@ export default {
       this.handleCardDialogVisible = false
       this.getList()
     },
-    async getDataPoint() {
-      try {
-        const data = await dataPoint('get')
-        this.formHeadData = data || []
-      } catch (e) {
-        this.formHeadData = []
-      }
-    },
     async getList() {
       try {
         this.loading = true
         this.tableData = []
-        const data = await unqualifiedDealOrders('get', null, { params: this.search })
-        this.total = data.count
+        const data = await machinePass('get', null, { params: this.search })
         this.tableData = data.results
-        this.tableData.forEach(d => {
-          if (d.c_agreed === null) {
-            d.c_agreed = true
-          }
-        })
-        // data.results.forEach(d => {
-        //   this.tableData.push(
-        //     Object.assign({}, d, { use_flag: true })
-        //   )
-        // })
+        if (this.tableData.length > 0) {
+          this.test_all = 0
+          this.test_right = 0
+          this.mn = 0
+          this.yd = 0
+          this.bz = 0
+          this.MH = 0
+          this.ML = 0
+          this.TC10 = 0
+          this.TC50 = 0
+          this.TC90 = 0
+          this.lb_all = 0
+          this.cp_all = 0
+          this.tableData.forEach(D => {
+            this.test_all += Number(D.test_all)
+            this.test_right += Number(D.test_right)
+            this.mn += Number(D.mn)
+            this.yd += Number(D.yd)
+            this.bz += Number(D.bz)
+            this.MH += Number(D.MH)
+            this.ML += Number(D.ML)
+            this.TC10 += Number(D.TC10)
+            this.TC50 += Number(D.TC50)
+            this.TC90 += Number(D.TC90)
+            this.lb_all += Number(D.lb_all)
+            this.cp_all += Number(D.cp_all)
+          })
+          console.log(this.mn)
+          this.tableData.push({
+            equip: '合计',
+            test_all: this.test_all,
+            test_right: this.test_right,
+            mn: this.mn,
+            yd: this.yd,
+            bz: this.bz,
+            rate_1: ((this.test_all - Math.max(this.mn, this.yd, this.bz)) / this.test_all * 100).toFixed(2),
+            MH: this.MH,
+            ML: this.MH,
+            TC10: this.TC10,
+            TC50: this.TC50,
+            TC90: this.TC90,
+            lb_all: this.lb_all,
+            rate_lb: ((this.test_all - Math.max(this.MH, this.MH, this.TC10, this.TC50, this.TC90)) / this.test_all * 100).toFixed(2),
+            cp_all: this.cp_all,
+            rate: (this.test_right / this.test_all * 100).toFixed(2) })
+        }
         this.loading = false
       } catch (e) {
         this.loading = false
       }
     },
+    visibleStageList(bool) {
+      if (bool) {
+        globalCodesUrl('get', {
+          params: {
+            class_name: '胶料段次'
+          }
+        }).then((response) => {
+          this.options = response.results
+        }).catch(function() {
+        })
+      }
+    },
     searchDate(arr) {
-      this.search.st = arr ? arr[0] : ''
-      this.search.et = arr ? arr[1] : ''
+      if (arr === null) {
+        this.$message.info('请选择时间')
+        return
+      } else {
+        this.search.s_time = arr ? arr[0] : ''
+        this.search.e_time = arr ? arr[1] : ''
+        this.getList()
+      }
+    },
+    tableRowClassName({ row, rowIndex }) {
+      if (row.equip === '合计') {
+        return 'summary-cell-style'
+      }
+    },
+    classChanged(val) {
+      this.search.classes = val
+      this.getList()
+    },
+    productBatchingChanged(val) {
+      this.search.product_type = val.material_name
       this.getList()
     },
     changeSearch() {
-      this.search.page = 1
-      this.getList()
-    },
-    currentChange(page, page_size) {
-      this.search.page = page
-      this.search.page_size = page_size
-      this.getList()
+      debounce(this, 'getList')
     }
   }
 }
