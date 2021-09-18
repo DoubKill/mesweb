@@ -13,7 +13,7 @@
           @change="changeDate"
         />
       </el-form-item>
-      <el-form-item label="出库/入库">
+      <!-- <el-form-item label="出库/入库">
         <el-select
           v-model="search.order_type"
           placeholder="请选择"
@@ -27,7 +27,7 @@
             :value="item"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="仓库名称">
         <span v-if="warehouseNameProps">{{ warehouseNameProps }}</span>
         <el-select
@@ -78,6 +78,7 @@
           style="float:right;margin:10px 0;"
           @click="printingFun"
           :loading="loadingBtn"
+          v-permission="['additional_print', 'print']"
         >打印</el-button>
       </el-form-item>
     </el-form>
@@ -116,8 +117,8 @@
       <el-table-column label="出入库原因" align="center" prop="inout_reason" min-width="20" />
       <el-table-column label="出入库类型" align="center" prop="inout_num_type"  min-width="20"/>
       <el-table-column label="出入库数" align="center" prop="qty"  min-width="20" />
-      <el-table-column label="单位" align="center" prop="unit"  min-width="20"/>
       <el-table-column label="重量" align="center" prop="weight" min-width="20"/>
+      <el-table-column label="单位" align="center" prop="unit"  min-width="20"/>
       <el-table-column label="库位号" align="center" prop="location" min-width="20" />
       <el-table-column label="发起人" align="center" prop="initiator" min-width="20"/>
       <el-table-column label="发起时间" align="center" prop="start_time" min-width="20" />

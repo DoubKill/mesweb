@@ -118,6 +118,26 @@ export function machinePass(method, id, data = {}) {
   return request(obj)
 }
 
+// 胶料别不合格率
+export function rubberPass(method, id, data = {}) {
+  const obj = {
+    url: id ? API.RubberPass + id + '/' : API.RubberPass,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+// 班次别不合格率
+export function classesPass(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ClassesPass + id + '/' : API.ClassesPass,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 // 用户出库口库区
 export function userStation(method, id, data = {}) {
   const obj = {
