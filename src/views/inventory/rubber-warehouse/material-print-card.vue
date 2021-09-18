@@ -78,6 +78,7 @@
           style="float:right;margin:10px 0;"
           @click="printingFun"
           :loading="loadingBtn"
+          v-permission="['additional_print', 'print']"
         >打印</el-button>
       </el-form-item>
     </el-form>

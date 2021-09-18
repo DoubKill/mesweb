@@ -883,7 +883,7 @@ export const asyncRoutes = [
             meta: {
               faName: 'RubberWarehouse',
               title: '出库口补打印卡片',
-              permissionName: ''
+              permissionName: 'additional_print'
             }
           }
         ]
