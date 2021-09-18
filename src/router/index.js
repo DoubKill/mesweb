@@ -875,8 +875,8 @@ export const asyncRoutes = [
               title: '出入库履历查询',
               permissionName: 'in_out_history'
             }
-          }
-          /** {
+          },
+          {
             path: '/material-print-card',
             component: () => import('@/views/inventory/rubber-warehouse/material-print-card.vue'),
             name: 'MaterialPrintCard',
@@ -885,7 +885,7 @@ export const asyncRoutes = [
               title: '出库口补打印卡片',
               permissionName: 'additional_print'
             }
-          }**/
+          }
         ]
       },
       {
@@ -1500,7 +1500,7 @@ export const asyncRoutes = [
           icon: 'quality'
         },
         children: [
-          { path: '/statistics/rubber-pass',
+          /** { path: '/statistics/rubber-pass',
             component: () => import('@/views/quality_management/pass/rubberCompound.vue'),
             name: 'RubberCompound',
             meta: {
@@ -1526,7 +1526,7 @@ export const asyncRoutes = [
               title: '班次别合格率统计',
               permissionName: ''
             }
-          },
+          },**/
           {
             path: '/statistics/month-pass-detail',
             component: () => import('@/views/quality_management/month_pass_detail'),
@@ -1939,8 +1939,8 @@ export const asyncRoutes = [
             }
           }
         ]
-      },
-      {
+      }
+      /** {
         path: '/feed',
         redirect: '/feed/raw-plan',
         component: () => import('@/views/quality_management/feed/a-index'),
@@ -1981,7 +1981,7 @@ export const asyncRoutes = [
             }
           }
         ]
-      }
+      }**/
     ]
   },
   {
