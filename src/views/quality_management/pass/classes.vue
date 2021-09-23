@@ -19,7 +19,7 @@
           clearable
           placeholder="请选择"
           @visible-change="visibleStageList"
-          @change="changeSearch"
+          @change="changeSearch1"
         >
           <el-option
             v-for="(item,k) in options"
@@ -199,23 +199,25 @@ export default {
             this.sum_s += Number(D.sum_s)
             this.cp_all += Number(D.cp_all)
           })
-          this.tableData.push({
-            class: '合计',
-            JC: this.JC,
-            HG: this.HG,
-            MN: this.MN,
-            YD: this.YD,
-            BZ: this.BZ,
-            RATE_1_PASS: ((this.JC - Math.max(this.MN, this.YD, this.BZ)) / this.JC * 100).toFixed(2),
-            MH: this.MH,
-            ML: this.ML,
-            TC10: this.TC10,
-            TC50: this.TC50,
-            TC90: this.TC90,
-            sum_s: this.sum_s,
-            RATE_S_PASS: ((this.JC - Math.max(this.MH, this.MH, this.TC10, this.TC50, this.TC90)) / this.JC * 100).toFixed(2),
-            cp_all: this.cp_all,
-            rate: (this.HG / this.JC * 100).toFixed(2) })
+          if (this.JC !== 0) {
+            this.tableData.push({
+              class: '合计',
+              JC: this.JC,
+              HG: this.HG,
+              MN: this.MN,
+              YD: this.YD,
+              BZ: this.BZ,
+              RATE_1_PASS: data.all.rate_1,
+              MH: this.MH,
+              ML: this.ML,
+              TC10: this.TC10,
+              TC50: this.TC50,
+              TC90: this.TC90,
+              sum_s: this.sum_s,
+              RATE_S_PASS: data.all.rate_lb,
+              cp_all: this.cp_all,
+              rate: data.all.rate })
+          }
           this.spanArr = []
           this.pos = null
           for (var i = 0; i < this.tableData.length; i++) {
@@ -288,6 +290,9 @@ export default {
     },
     changeSearch() {
       debounce(this, 'getList')
+    },
+    changeSearch1() {
+      this.getList()
     }
   }
 }
