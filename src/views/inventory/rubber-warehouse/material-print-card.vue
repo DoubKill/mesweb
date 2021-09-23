@@ -75,29 +75,30 @@
           @change="showedChange"
         />
         <el-button
-          style="float:right;margin:10px 0;"
-          @click="printingFun"
-          :loading="loadingBtn"
           v-permission="['additional_print', 'print']"
+          style="float:right;margin:10px 0;"
+          :loading="loadingBtn"
+          @click="printingFun"
         >打印</el-button>
       </el-form-item>
     </el-form>
 
     <el-table
       id="out-table"
+      v-loading="loading"
       :data="tableData"
       border
-      fit v-loading="loading"
+      fit
       @selection-change="handleSelectionChange"
     >
-       <el-table-column type="selection" width="30"/>
+      <el-table-column type="selection" width="30" />
       <el-table-column label="No" type="index" align="center" width="40" />
       <el-table-column label="类型" align="center" prop="order_type" min-width="20" />
-      <el-table-column label="出入库单号" align="center" prop="order_no"  min-width="20"/>
-      <el-table-column label="质检条码" align="center" prop="lot_no"  min-width="20"/>
+      <el-table-column label="出入库单号" align="center" prop="order_no" min-width="20" />
+      <el-table-column label="质检条码" align="center" prop="lot_no" min-width="20" />
       <!-- <el-table-column label="仓库类型" align="center" prop="warehouse_type" /> -->
       <!-- <el-table-column  label="仓库名称" align="center" prop="warehouse_name" /> -->
-      <el-table-column label="托盘号" align="center" prop="pallet_no"  min-width="20"/>
+      <el-table-column label="托盘号" align="center" prop="pallet_no" min-width="20" />
       <el-table-column label="机台" align="center" min-width="20">
         <template v-if="row.product_info" slot-scope="{row}" min-width="20">
           {{ row.product_info.equip_no }}
@@ -115,19 +116,20 @@
       </el-table-column>
       <el-table-column label="物料编码" align="center" prop="material_no" min-width="20" />
       <el-table-column label="出入库原因" align="center" prop="inout_reason" min-width="20" />
-      <el-table-column label="出入库类型" align="center" prop="inout_num_type"  min-width="20"/>
-      <el-table-column label="出入库数" align="center" prop="qty"  min-width="20" />
-      <el-table-column label="重量" align="center" prop="weight" min-width="20"/>
-      <el-table-column label="单位" align="center" prop="unit"  min-width="20"/>
+      <el-table-column label="出入库类型" align="center" prop="inout_num_type" min-width="20" />
+      <el-table-column label="出入库数" align="center" prop="qty" min-width="20" />
+      <el-table-column label="重量" align="center" prop="weight" min-width="20" />
+      <el-table-column label="单位" align="center" prop="unit" min-width="20" />
       <el-table-column label="库位号" align="center" prop="location" min-width="20" />
-      <el-table-column label="发起人" align="center" prop="initiator" min-width="20"/>
+      <el-table-column label="发起人" align="center" prop="initiator" min-width="20" />
       <el-table-column label="发起时间" align="center" prop="start_time" min-width="20" />
       <el-table-column
         label="完成时间"
         align="center"
-        prop="fin_time" min-width="20"
+        prop="fin_time"
+        min-width="20"
       />
-       <el-table-column label="操作" align="center" width="120">
+      <el-table-column label="操作" align="center" width="120">
         <template slot-scope="{row}">
           <el-button size="mini" @click="print(row)">查看质量卡片</el-button>
         </template>
@@ -148,7 +150,7 @@
   </div>
 </template>
 <script>
-import { inventoryLog,showQualifiedRange,additionalPrintDetail,additionalPrint } from '@/api/base_w'
+import { inventoryLog, showQualifiedRange, additionalPrintDetail, additionalPrint } from '@/api/base_w'
 import stationInfoWarehouse from '@/components/select_w/warehouseSelectPosition'
 import page from '@/components/page'
 // import warehouseSelect from '@/components/select_w/warehouseSelect'
@@ -156,7 +158,7 @@ import { setDate, debounce } from '@/utils'
 import TestCard from '@/components/TestCard'
 export default {
   name: 'MaterialPrintCard',
-  components: { page, stationInfoWarehouse,TestCard },
+  components: { page, stationInfoWarehouse, TestCard },
   props: {
     warehouseNameProps: {
       type: String,
@@ -178,16 +180,16 @@ export default {
       tableData: [],
       btnExportLoad: false,
       is_showed: false,
-      labelPrintList:[],
-      testCardDialogVisible:false,
-      loadingBtn:false
+      labelPrintList: [],
+      testCardDialogVisible: false,
+      loadingBtn: false
     }
   },
   created() {
     if (this.warehouseNameProps) {
       this.search.warehouse_name = this.warehouseNameProps
     }
-     this.search.start_time = setDate() + ' 00:00:00'
+    this.search.start_time = setDate() + ' 00:00:00'
     this.search.end_time = setDate(null, true)
     this.searchDate = [this.search.start_time, this.search.end_time]
     this.getList()
@@ -236,27 +238,27 @@ export default {
     },
     async getCardInfo(row) {
       try {
-          let obj = {
-            pallet_no:row.pallet_no,
-            start_time:row.start_time,
-            lot_no:row.lot_no,
-            weight:row.weight,
-            initiator:row.initiator,
-            material_no:row.material_no,
-            type:row.material_no==='混炼胶库'?'H':'Z',
-            location:row.location
-          }
-        if(this.$refs['testCard']){
-         this.$refs['testCard'].loading = true 
+        const obj = {
+          pallet_no: row.pallet_no,
+          start_time: row.start_time,
+          lot_no: row.lot_no,
+          weight: row.weight,
+          initiator: row.initiator,
+          material_no: row.material_no,
+          type: row.warehouse_name === '混炼胶库' ? 'H' : 'Z',
+          location: row.location
         }
-        const data = await additionalPrintDetail('get',null,{params:obj})
-    
+        if (this.$refs['testCard']) {
+          this.$refs['testCard'].loading = true
+        }
+        const data = await additionalPrintDetail('get', null, { params: obj })
+
         this.$nextTick(() => {
           this.$refs['testCard'].setTestData(data)
         })
       } catch (e) {
-        if(this.$refs['testCard']){
-         this.$refs['testCard'].loading = false 
+        if (this.$refs['testCard']) {
+          this.$refs['testCard'].loading = false
         }
       }
     },
@@ -264,7 +266,7 @@ export default {
       this.getCardInfo(row)
       this.testCardDialogVisible = true
     },
-    handleSelectionChange(arr){
+    handleSelectionChange(arr) {
       this.labelPrintList = arr
     },
     async getShowed() {
@@ -279,35 +281,35 @@ export default {
       try {
         await showQualifiedRange('post', null, { data: { is_showed: this.is_showed }})
       } catch (e) {
-         this.is_showed = !this.is_showed
+        this.is_showed = !this.is_showed
       }
     },
     async printingFun() {
       try {
-          if(!this.search.warehouse_name||!this.search.station){
-              this.$message('请选择仓库和出库口')
-              return
-          }
-          if(this.labelPrintList.length === 0){
-              this.$message('请选择列表信息')
-              return
-          }
+        if (!this.search.warehouse_name || !this.search.station) {
+          this.$message('请选择仓库和出库口')
+          return
+        }
+        if (this.labelPrintList.length === 0) {
+          this.$message('请选择列表信息')
+          return
+        }
         const arr = []
         this.labelPrintList.forEach(row => {
           arr.push({
-            pallet_no:row.pallet_no,
+            pallet_no: row.pallet_no,
             station: this.search.station,
-            start_time:row.start_time,
-            lot_no:row.lot_no,
-            weight:row.weight,
-            initiator:row.initiator,
-            material_no:row.material_no,
-            type:row.material_no==='混炼胶库'?'H':'Z',
-            location:row.location
+            start_time: row.start_time,
+            lot_no: row.lot_no,
+            weight: row.weight,
+            initiator: row.initiator,
+            material_no: row.material_no,
+            type: row.warehouse_name === '混炼胶库' ? 'H' : 'Z',
+            location: row.location
           })
         })
         this.loadingBtn = true
-        await additionalPrint('post', null, { data: arr})
+        await additionalPrint('post', null, { data: arr })
         this.$message.success('打印任务已连接')
         this.loadingBtn = false
       } catch (e) {
