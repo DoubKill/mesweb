@@ -19,7 +19,7 @@
           clearable
           placeholder="请选择"
           @visible-change="visibleStageList"
-          @change="changeSearch"
+          @change="changeSearch1"
         >
           <el-option
             v-for="(item,k) in options"
@@ -192,7 +192,6 @@ export default {
             this.lb_all += Number(D.lb_all)
             this.cp_all += Number(D.cp_all)
           })
-          console.log(this.mn)
           this.tableData.push({
             equip: '合计',
             test_all: this.test_all,
@@ -200,16 +199,16 @@ export default {
             mn: this.mn,
             yd: this.yd,
             bz: this.bz,
-            rate_1: ((this.test_all - Math.max(this.mn, this.yd, this.bz)) / this.test_all * 100).toFixed(2),
+            rate_1: data.all.rate_1,
             MH: this.MH,
-            ML: this.MH,
+            ML: this.ML,
             TC10: this.TC10,
             TC50: this.TC50,
             TC90: this.TC90,
             lb_all: this.lb_all,
-            rate_lb: ((this.test_all - Math.max(this.MH, this.MH, this.TC10, this.TC50, this.TC90)) / this.test_all * 100).toFixed(2),
+            rate_lb: data.all.rate_lb,
             cp_all: this.cp_all,
-            rate: (this.test_right / this.test_all * 100).toFixed(2) })
+            rate: data.all.rate })
         }
         this.loading = false
       } catch (e) {
@@ -253,6 +252,9 @@ export default {
     },
     changeSearch() {
       debounce(this, 'getList')
+    },
+    changeSearch1() {
+      this.getList()
     }
   }
 }
