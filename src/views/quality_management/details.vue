@@ -449,7 +449,9 @@ export default {
         const arr = await this.getMaterialTestOrders(true)
         this.ALLData = arr || []
         this.btnLoading = false
-        this.exportExcel()
+        this.$nextTick(() => {
+          this.exportExcel()
+        })
       } catch (e) {
         //
       }
@@ -459,9 +461,9 @@ export default {
       try {
         const paramsObj = JSON.parse(JSON.stringify(this.getParams))
         paramsObj.page_size = bool ? 99999999 : 10
+        paramsObj.page = bool ? 1 : this.getParams.page
         const data = await materialTestOrders(paramsObj)
         let arr = data.results // 加分页
-        // let arr = data
         arr = arr.map(row => {
           row.level = 0
           row.mes_result = '未检测'
@@ -500,11 +502,10 @@ export default {
         // for (let i = 1; i < 8; i++) {
         //   arr = arr.concat(arr)
         // }
-
+        this.listLoading = false
         if (bool) {
           return arr
         }
-        this.listLoading = false
         this.allPage = data.count
 
         this.testOrdersAll.push(...arr)
