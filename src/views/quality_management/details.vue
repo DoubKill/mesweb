@@ -517,6 +517,9 @@ export default {
       if (Number(this.allPage - this.getParams.page * this.definePafeSize) <= 0) {
         return
       }
+      if (this.listLoading) {
+        return
+      }
       this.getParams.page = this.getParams.page + 1
       this.getMaterialTestOrders()
     },
