@@ -434,6 +434,8 @@ export default {
       this.getParams.page = 1
       this.testOrders = []
       this.testOrdersAll = []
+      this.allPage = 0
+      this.definePafeSize = 0
       this.getMaterialTestOrders()
     },
     dayChange(val) {
