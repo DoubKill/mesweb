@@ -1500,13 +1500,14 @@ export const asyncRoutes = [
           icon: 'quality'
         },
         children: [
-          /** { path: '/statistics/rubber-pass',
+          {
+            path: '/statistics/rubber-pass',
             component: () => import('@/views/quality_management/pass/rubberCompound.vue'),
             name: 'RubberCompound',
             meta: {
               faName: 'QualityStatistics',
               title: '胶料规格别合格率统计',
-              permissionName: ''
+              permissionName: 'product_quality_analyze'
             }
           },
           { path: '/statistics/machine-pass',
@@ -1515,7 +1516,7 @@ export const asyncRoutes = [
             meta: {
               faName: 'QualityStatistics',
               title: '机台别合格率统计',
-              permissionName: ''
+              permissionName: 'equip_quality_analyze'
             }
           },
           { path: '/statistics/classes-pass',
@@ -1524,10 +1525,10 @@ export const asyncRoutes = [
             meta: {
               faName: 'QualityStatistics',
               title: '班次别合格率统计',
-              permissionName: ''
+              permissionName: 'classes_quality_analyze'
             }
-          },**/
-          {
+          }
+          /** {
             path: '/statistics/month-pass-detail',
             component: () => import('@/views/quality_management/month_pass_detail'),
             name: 'MonthPassDetail',
@@ -1556,7 +1557,7 @@ export const asyncRoutes = [
               title: '胶料日合格率统计',
               permissionName: 'product_daily_passing_rate'
             }
-          }
+          }**/
         ]
       },
       {
