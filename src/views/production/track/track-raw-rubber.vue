@@ -276,7 +276,7 @@ export default {
   components: { testCard, trainNumberReport },
   data() {
     return {
-      loading: true,
+      loading: false,
       cardLoading: true,
       value: '',
       barCodeSearch: '', // KTP005
@@ -309,7 +309,7 @@ export default {
     ...mapGetters(['editionNo'])
   },
   created() {
-    this.getList()
+    // this.getList()
   },
   methods: {
     setDate,
