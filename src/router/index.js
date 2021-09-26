@@ -254,7 +254,8 @@ export const asyncRoutes = [
         }
       }
       ]
-    },
+    }
+    /*,
     {
       path: '/pinkSet',
       component: () => import('@/views/basic/pinkSet/index'),
@@ -264,7 +265,7 @@ export const asyncRoutes = [
         icon: 'dashboard',
         permissionName: ''
       }
-    }
+    }*/
     ]
   },
   {
@@ -1958,7 +1959,7 @@ export const asyncRoutes = [
             meta: {
               faName: 'Feed',
               title: '投料重量设定',
-              permissionName: 'carbon_tank_set'
+              permissionName: ''
             }
           },
           {

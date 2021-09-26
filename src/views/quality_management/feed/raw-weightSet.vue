@@ -24,7 +24,7 @@
         </el-select>
       </el-form-item> -->
       <el-form-item label="罐号">
-        <el-input v-model="searchForm.tank_no" clearable @input="changeSearch" />
+        <el-input v-model="searchForm.tank_no" type="number" clearable @input="changeSearch1" />
       </el-form-item>
     </el-form>
     <el-table
@@ -125,6 +125,7 @@
 <script>
 import selectEquip from '@/components/select_w/equip'
 import { rawWeight, saveRawWeight } from '@/api/jqy'
+import { debounce } from '@/utils'
 import { checkPermission } from '@/utils'
 export default {
   name: 'RawWeightSet',
@@ -163,6 +164,13 @@ export default {
     changeSearch() {
       this.loading = true
       this.getList()
+    },
+    changeSearch1() {
+      if (this.searchForm.tank_no > 0 || this.searchForm.tank_no === '') {
+        debounce(this, 'getList')
+      } else {
+        this.$message.info('请输入正确罐号')
+      }
     },
     async save(scope) {
       try {
