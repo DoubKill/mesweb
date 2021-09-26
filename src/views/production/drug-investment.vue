@@ -12,10 +12,16 @@
           @change="changeList"
         />
       </el-form-item>
+      <el-form-item label="投入设备:">
+        <inputDevices @changSelect="inputDevicesChange" />
+      </el-form-item>
       <el-form-item label="罐号">
         <inputDevices is-equip="tank_no" @changSelect="tankNoChange" />
       </el-form-item>
-      <el-form-item label="区间">
+      <el-form-item label="班次">
+        <class-select @classSelected="classChanged" />
+      </el-form-item>
+      <!-- <el-form-item label="区间">
         <el-select
           v-model="getParams.interval"
           placeholder="请选择"
@@ -35,10 +41,7 @@
           :is-all-obj="true"
           @changeSelect="materialCreateForm"
         />
-      </el-form-item>
-      <el-form-item label="投入设备:">
-        <inputDevices @changSelect="inputDevicesChange" />
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
 
     <el-table
@@ -49,6 +52,10 @@
         type="index"
         width="40"
         label="No"
+      />
+      <el-table-column
+        prop="tank_no"
+        label="罐号"
       />
       <el-table-column
         prop="production_factory_date"
@@ -65,10 +72,6 @@
       <el-table-column
         prop="material_no"
         label="物料编码"
-      />
-      <el-table-column
-        prop="tank_no"
-        label="罐号"
       />
       <el-table-column
         prop="quantity"
@@ -89,14 +92,15 @@
 </template>
 
 <script>
-import MaterialCodeSelect from '@/components/materialCodeSelect'
+import ClassSelect from '@/components/ClassSelect'
+// import MaterialCodeSelect from '@/components/materialCodeSelect'
 import inputDevices from './components/input-devices'
 import Page from '@/components/page'
 import { setDate } from '@/utils'
 import { weightBatchingLogList } from '@/api/base_w_two'
 export default {
   name: 'DrugInvestment',
-  components: { Page, MaterialCodeSelect, inputDevices },
+  components: { Page, inputDevices, ClassSelect },
   data() {
     return {
       getParams: {
@@ -119,6 +123,10 @@ export default {
       } catch (e) {
         //
       }
+    },
+    classChanged(val) {
+      this.getParams.classes = val
+      this.getList()
     },
     currentChange(page, page_size) {
       this.getParams.page = page

@@ -58,6 +58,7 @@
       border
       fit
       style="width: 100%"
+      :row-class-name="tableRowClassName"
       :data="tableData"
     >
       <el-table-column label="No" type="index" align="center" width="40" />
@@ -222,18 +223,23 @@ export default {
           this.loading = false
           this.tableData.push({
             all: 2,
-            material_type: '单页合计',
+            material_name: '单页合计',
             qty: sum(this.tableData, 'qty'),
             total_weight: sum(this.tableData, 'total_weight')
           }, {
             all: 1,
-            material_type: '汇总',
+            material_name: '汇总',
             qty: response.total_trains,
             total_weight: response.total_weight
           })
         }).catch(e => {
           this.loading = false
         })
+    },
+    tableRowClassName({ row, rowIndex }) {
+      if (row.material_name === '单页合计' || row.material_name === '汇总') {
+        return 'summary-cell-style'
+      }
     },
     getDebounce() {
       debounce(this, 'changeSearch')

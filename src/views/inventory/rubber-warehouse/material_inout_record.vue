@@ -99,7 +99,7 @@
       <!-- <el-table-column label="仓库类型" align="center" prop="warehouse_type" /> -->
       <!-- <el-table-column  label="仓库名称" align="center" prop="warehouse_name" /> -->
       <el-table-column label="托盘号" align="center" prop="pallet_no" />
-      <el-table-column label="机台" align="center">
+      <!-- <el-table-column label="机台" align="center">
         <template v-if="row.product_info" slot-scope="{row}">
           {{ row.product_info.equip_no }}
         </template>
@@ -113,10 +113,10 @@
         <template v-if="row.product_info" slot-scope="{row}">
           {{ row.product_info.memo }}
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="物料编码" align="center" prop="material_no" />
-      <el-table-column label="出入库原因" align="center" prop="inout_reason" />
-      <el-table-column label="出入库类型" align="center" prop="inout_num_type" />
+      <!-- <el-table-column label="出入库原因" align="center" prop="inout_reason" /> -->
+      <!-- <el-table-column label="出入库类型" align="center" prop="inout_num_type" /> -->
       <el-table-column label="出入库数" align="center" prop="qty" width="50" />
       <el-table-column label="单位" align="center" prop="unit" width="40" />
       <el-table-column label="重量" align="center" prop="weight" width="80" />
