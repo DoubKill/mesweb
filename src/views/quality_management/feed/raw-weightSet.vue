@@ -112,6 +112,7 @@
           <el-button
             type="primary"
             size="mini"
+            :disabled="update"
             @click="save(scope)"
           >保存
           </el-button>
@@ -124,6 +125,7 @@
 <script>
 import selectEquip from '@/components/select_w/equip'
 import { rawWeight, saveRawWeight } from '@/api/jqy'
+import { checkPermission } from '@/utils'
 export default {
   name: 'RawWeightSet',
   components: { selectEquip },
@@ -138,13 +140,18 @@ export default {
       }, {
         value: 0,
         label: '小'
-      }]
+      }],
+      update: true
     }
   },
   created() {
     this.getList()
+    if (checkPermission(['carbon_tank_set', 'update'])) {
+      this.update = false
+    }
   },
   methods: {
+    checkPermission,
     async getList() {
       try {
         this.loading = true

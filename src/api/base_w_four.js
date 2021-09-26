@@ -64,6 +64,15 @@ export function wmsInventory(method, id, data = {}) {
   return request(obj)
 }
 
+export function wmsInventoryDown(params) {
+  return request({
+    url: API.WmsInventory,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
+
 export function wmsMaterialGroups(method, id, data = {}) {
   const obj = {
     url: id ? API.WmsMaterialGroups + id + '/' : API.WmsMaterialGroups,
@@ -89,6 +98,15 @@ export function thInventory(method, id, data = {}) {
   }
   Object.assign(obj, data)
   return request(obj)
+}
+
+export function thInventoryDown(params) {
+  return request({
+    url: API.ThInventory,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
 }
 
 export function thMaterialGroups(method, id, data = {}) {
