@@ -110,6 +110,7 @@
       >
         <template slot-scope="scope">
           <el-button
+            :loading="saveLoading"
             type="primary"
             size="mini"
             :disabled="update"
@@ -135,6 +136,7 @@ export default {
       searchForm: {},
       tableData: [],
       loading: false,
+      saveLoading: false,
       options: [{
         value: 1,
         label: '大'
@@ -174,10 +176,15 @@ export default {
     },
     async save(scope) {
       try {
+        this.saveLoading = true
         const id = scope.row.id || null
         await saveRawWeight('put', id, { data: JSON.parse(JSON.stringify(scope.row)) })
         this.$message.success('操作成功')
-      } catch (e) { this.loading = false }
+        this.saveLoading = false
+      } catch (e) {
+        this.$message.info('修改失败')
+        this.saveLoading = false
+      }
     }
 
   }
