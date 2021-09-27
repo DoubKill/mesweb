@@ -83,7 +83,7 @@
         >
           <div v-for="(tableItem1,key1) in tableItem" :key="key1" class="tableTop">
             <div>
-              <el-button style="float:right;margin:5px 10px" size="small" :disabled="loadingBtn" @click="saveFun(key,key1)">保存</el-button>
+              <el-button v-permission="['carbon_feeding_prompt', 'add']" style="float:right;margin:5px 10px" size="small" :disabled="loadingBtn" @click="saveFun(key,key1)">保存</el-button>
               {{ key1 }}
             </div>
             <el-table
@@ -137,9 +137,9 @@
                 {{ scope.row.status }}
               </template>
             </el-table-column> -->
-              <el-table-column label="补料设定值kg" min-width="20">
+              <el-table-column label="补料设定值kg" min-width="30">
                 <template slot-scope="scope">
-                  {{ scope.row.feedcapacity_weight_set }}
+                  <el-input-number v-model="scope.row.feedcapacity_weight_set" style="width:150px" controls-position="right" :min="0" :max="scope.row._feedcapacity_weight_set" />
                 </template>
               </el-table-column>
               <el-table-column label="投料口" width="170">
@@ -197,6 +197,7 @@
               >
                 <template slot-scope="scope">
                   <el-button
+                    v-permission="['carbon_feeding_prompt', 'begin']"
                     size="mini"
                     type="primary"
                     :disabled="loadingBtn"
@@ -204,6 +205,7 @@
                   >开始
                   </el-button>
                   <el-button
+                    v-permission="['carbon_feeding_prompt', 'end']"
                     size="mini"
                     type="primary"
                     :disabled="loadingBtn"
@@ -326,7 +328,7 @@ export default {
             arr.push({ [key]: element })
           }
         }
-        console.log(arr, 'work_schedule')
+        // console.log(arr, 'work_schedule')
         this.addPlanArr = arr
       }
 
@@ -376,6 +378,7 @@ export default {
           if (Object.hasOwnProperty.call(data, key)) {
             data[key].forEach(d => {
               d.is_no_port_one = d.is_no_port_one ? d.is_no_port_one : false
+              this.$set(d, '_feedcapacity_weight_set', d.feedcapacity_weight_set)
             })
           }
         }
@@ -426,6 +429,8 @@ export default {
           this.addPlanArr[faindex][key1].splice(index + 1, 1)
           row.feed_change = 1
           _row.feed_change = 1
+          row.is_no_port_one = false
+          _row.is_no_port_one = false
         }
         return
       }
