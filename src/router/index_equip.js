@@ -49,6 +49,36 @@ export const equipRoutes = [
               title: '设备位置区域定义',
               permissionName: ''
             }
+          },
+          {
+            path: '/equipment/appoint-rule',
+            component: () => import('@/views/equipment-manage/master-data/appoint-rule'),
+            name: 'EquipmentMasterDataAppointRule',
+            meta: {
+              faName: 'EquipmentMasterData',
+              title: '工单指派规则定义',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/repair-all',
+            component: () => import('@/views/equipment-manage/master-data/repair-all'),
+            name: 'EquipmentMasterDataRepairAll',
+            meta: {
+              faName: 'EquipmentMasterData',
+              title: '维修包干定义',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/fixed-assets',
+            component: () => import('@/views/equipment-manage/master-data/fixed-assets'),
+            name: 'EquipmentMasterDataFixedAssets',
+            meta: {
+              faName: 'EquipmentMasterData',
+              title: '设备固定资产台账',
+              permissionName: ''
+            }
           }
         ]
       }
