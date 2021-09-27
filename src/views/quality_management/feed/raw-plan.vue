@@ -485,6 +485,7 @@ export default {
         const obj = JSON.parse(JSON.stringify(row))
         obj.equip_id = zo
         delete obj.is_plan_used
+        delete obj._feedcapacity_weight_set
         // delete obj.id
         this.loadingBtn = true
         const data = await carOutCheck('post', null, { data: obj })
