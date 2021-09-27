@@ -254,7 +254,8 @@ export const asyncRoutes = [
         }
       }
       ]
-    },
+    }
+    /*,
     {
       path: '/pinkSet',
       component: () => import('@/views/basic/pinkSet/index'),
@@ -264,7 +265,7 @@ export const asyncRoutes = [
         icon: 'dashboard',
         permissionName: ''
       }
-    }
+    }*/
     ]
   },
   {
