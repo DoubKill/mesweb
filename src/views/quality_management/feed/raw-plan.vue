@@ -139,7 +139,14 @@
             </el-table-column> -->
               <el-table-column label="补料设定值kg" min-width="30">
                 <template slot-scope="scope">
-                  <el-input-number v-model="scope.row.feedcapacity_weight_set" style="width:150px" controls-position="right" :min="0" :max="scope.row._feedcapacity_weight_set" />
+                  <el-input-number
+                    v-model="scope.row.feedcapacity_weight_set"
+                    style="width:150px"
+                    controls-position="right"
+                    :min="0"
+                    :max="scope.row._feedcapacity_weight_set"
+                    @change="weightSetChange(tableItem1,scope.row)"
+                  />
                 </template>
               </el-table-column>
               <el-table-column label="投料口" width="170">
@@ -442,6 +449,13 @@ export default {
       // console.log(this.addPlanArr, 8888)
     },
     clickEquip() {},
+    weightSetChange(arr, row) {
+      arr.forEach(d => {
+        if (d.tank_no === row.tank_no) {
+          d.feedcapacity_weight_set = row.feedcapacity_weight_set
+        }
+      })
+    },
     handleGroupDelete(row) {
       this.$confirm(`是否确定结束?`, '提示', {
         confirmButtonText: '确定',
@@ -548,9 +562,6 @@ export default {
           //   throw new Error('投料口或投入物料未选择!')
           // }
         })
-        // 记得删除
-        // arr = arr.filter(d => d.feed_material_name)
-        // console.log(arr)
         if (this.addPlanArr[faIndex][zo].length === 0) {
           this.$message.info('暂无数据保存')
           return
