@@ -1959,7 +1959,7 @@ export const asyncRoutes = [
             meta: {
               faName: 'Feed',
               title: '投料重量设定',
-              permissionName: ''
+              permissionName: 'carbon_tank_set'
             }
           },
           {
