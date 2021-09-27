@@ -5,6 +5,7 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
+import { equipRoutes } from './index_equip'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -100,10 +101,9 @@ export const constantRoutes = [
     }
   }
 ]
-
 // 存在权限的路由
 // meta.permissionName  权限
-export const asyncRoutes = [
+export let asyncRoutes = [
   {
     path: '/home',
     component: Layout,
@@ -2127,7 +2127,8 @@ export const asyncRoutes = [
                 }
               }
             ]
-          }, {
+          },
+          {
             path: '/record',
             redirect: '/warehousing-record',
             component: () => import('@/views/equipment-management/spare-part/a-spare-part-record-manage'),
@@ -2368,6 +2369,8 @@ export const asyncRoutes = [
     hidden: true
   }
 ]
+console.log(equipRoutes, 'equipRoutes')
+asyncRoutes = asyncRoutes.concat(equipRoutes)
 
 const createRouter = () => new Router({
   // mode: 'history', // require service support
