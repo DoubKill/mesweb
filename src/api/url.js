@@ -483,5 +483,7 @@ export default {
   // 班次别不合格率
   ClassesPass: '/api/v1/quality/class-test-statics/',
   // 用户出库口库区
-  UserStation: '/api/v1/inventory/outbound-history/'
+  UserStation: '/api/v1/inventory/outbound-history/',
+  // 生产运行记录修改
+  RuntimeDetail: '/api/v1/production/runtime-record-detail/'
 }
