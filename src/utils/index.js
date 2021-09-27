@@ -301,6 +301,117 @@ export function exportExcel(value = 'excel', val, _wpxArr = []) {
     wb.Sheets['Sheet1']['!cols'] = _wpx
   }
 
+  if (val && val === 'disposal-list') {
+    const _wpx = []
+    const tableTitleFont1 = {
+      font: {
+        italic: false,
+        underline: false
+      },
+      alignment: {
+        wrapText: 1,
+        horizontal: 'center',
+        vertical: 'center'
+      },
+      border: {
+        bottom: { style: 'thin' },
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        right: { style: 'thin' }
+      }
+    }
+    const arr1 = []
+    let arr2 = []
+    arr.forEach(D => {
+      if (['!cols', '!fullref', '!merges', '!ref', '!rows'].includes(D)) {
+        return
+      }
+      arr1.push(D.substr(1))
+      arr2.push(D.substr(0, 1))
+    })
+
+    arr2 = [...new Set(arr2)]
+    const number = Math.max(...arr1)
+    for (var i = 1; i <= number; i++) {
+      if (i === 2) {
+        _wpx.push({ wpx: 130 })
+      } else if (i === 6) {
+        _wpx.push({ wpx: 280 })
+      } else {
+        _wpx.push({ wpx: 70 })
+      }
+      arr2.forEach(d => {
+        if (obj[d + i]) {
+          obj[d + i].s = tableTitleFont1
+        } else {
+          obj[d + i] = {
+            s: { border: {
+              bottom: { style: 'thin' },
+              top: { style: 'thin' },
+              left: { style: 'thin' },
+              right: { style: 'thin' }
+            }}
+          }
+          obj['G' + i] = {
+            s: { border: {
+              bottom: { style: 'thin' },
+              top: { style: 'thin' },
+              left: { style: 'thin' },
+              right: { style: 'thin' }
+            }}
+          }
+          obj['I' + i] = {
+            s: { border: {
+              bottom: { style: 'thin' },
+              top: { style: 'thin' },
+              left: { style: 'thin' },
+              right: { style: 'thin' }
+            }}
+          }
+        }
+      })
+      wb.Sheets['Sheet1']['A1'].s = {									// 为某个单元格设置单独样式
+        font: {
+          name: '宋体',
+          sz: 20,
+          italic: false,
+          underline: false
+        },
+        alignment: {
+          horizontal: 'center',
+          vertical: 'center'
+        },
+        border: {
+          bottom: { style: 'thin' },
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          right: { style: 'thin' }
+        }
+      }
+
+      wb.Sheets['Sheet1']['A2'].s = {									// 为某个单元格设置单独样式
+        font: {
+          name: '宋体',
+          sz: 12,
+          italic: false,
+          underline: false
+        },
+        alignment: {
+          horizontal: 'center',
+          vertical: 'center'
+        },
+        border: {
+          bottom: { style: 'thin' },
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          right: { style: 'thin' }
+        }
+      }
+
+      wb.Sheets['Sheet1']['!cols'] = _wpx
+    }
+  }
+
   var wbout = XLSXStyle.write(wb, {
     bookType: 'xlsx', type: 'buffer'
   })
