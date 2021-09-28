@@ -469,7 +469,7 @@ export default {
   // 炭黑投料提示-计划显示
   FeedCapacityPlan: '/api/v1/terminal/feed-capacity-plan/',
   CarbonFeedingPrompt: '/api/v1/terminal/carbon-feeding-prompt/',
-  CarOutCheck: '/api/v1/terminal/car-out-check/',
+  CarOutCheck: '/api/v1/terminal/carbon-out-check/',
   // 炭黑投料-下出库任务
   CarbonOutTask: '/api/v1/terminal/carbon-out-task/',
   // 胶片库出库单列表
