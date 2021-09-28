@@ -95,7 +95,7 @@ export const equipRoutes = [
           {
             path: '/equipment/maintenance',
             component: () => import('@/views/equipment-manage/operation-flow/maintenance'),
-            name: 'EquipmentMaintenance',
+            name: 'Maintenance',
             meta: {
               faName: 'EquipmentOperationFlow',
               title: '设备维护计划',
@@ -159,6 +159,16 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentOperationFlow',
               title: '设备维修工单查询',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/apare-parts',
+            component: () => import('@/views/equipment-manage/operation-flow/apare-parts'),
+            name: 'ApareParts',
+            meta: {
+              faName: 'EquipmentOperationFlow',
+              title: '备件领料申请处理',
               permissionName: ''
             }
           }
