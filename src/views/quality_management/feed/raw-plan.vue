@@ -179,8 +179,8 @@
                     <el-option
                       v-for="(item,portI) in optionsMaterial"
                       :key="portI"
-                      :label="item.material_name"
-                      :value="item.material_name"
+                      :label="item.zc_material__material_name"
+                      :value="item.zc_material__material_name"
                     />
                   </el-select>
                 </template>
@@ -265,7 +265,7 @@
 
 <script>
 import { equipUrl } from '@/api/base_w'
-import { zcMaterials } from '@/api/base_w_two'
+import { zcMaterialsThoughMes } from '@/api/base_w_two'
 import { feedCapacityPlan, carbonFeedingPrompt, carOutCheck, carbonOutTask } from '@/api/base_w_four'
 export default {
   name: 'RawPlan',
@@ -316,7 +316,7 @@ export default {
     },
     async getOptionsMaterial(row) {
       try {
-        const DATA = await zcMaterials('get', null, { params: { material_name: row.tank_material_name, is_binding: 'Y', all: 1 }})
+        const DATA = await zcMaterialsThoughMes('get', null, { params: { material_name: row.tank_material_name }})
         this.optionsMaterial = DATA.results || []
       } catch (e) {
         //
@@ -396,9 +396,9 @@ export default {
       }
     },
     MaterialChange(val, index, faIndex, zo, row) {
-      const arr = this.optionsMaterial.filter(d => d.material_name === val)
+      const arr = this.optionsMaterial.filter(d => d.zc_material__material_name === val)
       if (arr.length > 0) {
-        row.wlxxid = arr[0].wlxxid
+        row.wlxxid = arr[0].zc_material__wlxxid
       }
     },
     visibleChangeMaterial(bool, row) {
