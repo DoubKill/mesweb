@@ -13,20 +13,24 @@
             <i class="el-icon-truck icon-style" />
             <span>B01</span>
           </div>
-          <div style="inline-block;flex:1;margin:6px;">
-            <div style="display:flex;justify-content: space-around;margin-top:10px">
+          <div style="inline-block;flex:1;margin:0px;">
+            <div class="right-font-style">
               <span>时间：</span>
               <span>温度：</span>
             </div>
-            <div style="display:flex;justify-content: space-around;margin-top:10px">
+            <div class="right-font-style">
               <span>时间：</span>
               <span>温度：</span>
             </div>
-            <div style="display:flex;justify-content: space-around;margin-top:10px">
+            <div class="right-font-style">
               <span>时间：</span>
               <span>温度：</span>
             </div>
           </div>
+        </div>
+        <div>
+          <div class="bottom-font-style">时间：</div>
+          <div class="bottom-font-style">温度：</div>
         </div>
       </div>
     </div>
@@ -65,7 +69,7 @@ export default {
          margin-bottom:20px;
          box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
          width:23%;
-         height:200px;
+         height:160px;
          margin-right: 20px;
       }
   }
@@ -81,4 +85,13 @@ export default {
       font-size: 60px;
     }
   }
+    .right-font-style{
+      display:flex;
+      justify-content: space-around;
+      margin-top:10px
+    }
+    .bottom-font-style{
+      margin-left:6px;
+      margin-top:10px;
+    }
 </style>
