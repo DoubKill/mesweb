@@ -602,13 +602,13 @@ export default {
         return
       }
       if (row.is_plan_used) {
-        if (row.tank_level_status === '低') {
+        if (row.tank_level_status === '低位') {
           return 'danger-row'
-        } else if (row.tank_level_status === '中') {
+        } else if (row.tank_level_status === '中位') {
           return 'wait-row'
         }
       } else {
-        if (row.tank_level_status === '低' || row.tank_level_status === '中') {
+        if (row.tank_level_status === '低位' || row.tank_level_status === '中位') {
           return 'green-row'
         }
       }
