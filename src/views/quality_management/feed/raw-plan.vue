@@ -9,9 +9,9 @@
       border
     >
       <el-table-column
-        typ="id"
         label="序号"
         width="50"
+        type="index"
       />
       <el-table-column
         prop="date_now"
@@ -31,11 +31,16 @@
       <el-table-column
         prop="product_no"
         label="胶料编码"
-        min-width="20"
+        min-width="30"
       />
       <el-table-column
         prop="plan_trains"
         label="计划车数"
+        min-width="20"
+      />
+      <el-table-column
+        prop="status"
+        label="状态"
         min-width="20"
       />
     </el-table>
