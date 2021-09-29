@@ -64,17 +64,16 @@
               <el-table-column
                 v-for="(item,i) in row.table_head"
                 :key="i"
-                :label="i"
-                align="center"
+                :label="item.point"
               >
                 <el-table-column
-                  v-for="(itemChild,iChild) in item"
+                  v-for="(itemChild,iChild) in item.point_head"
                   :key="iChild"
-                  :label="itemChild"
+                  :label="itemChild.point"
                   min-width="20"
                 >
                   <template slot-scope="scopeChild">
-                    {{ scopeChild.row.test_data[i][itemChild] }}
+                    {{ scopeChild.row.test_data[item.point][itemChild.point] }}
                   </template>
                 </el-table-column>
               </el-table-column>
