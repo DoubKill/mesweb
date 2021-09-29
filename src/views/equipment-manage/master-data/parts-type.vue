@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 设备部件分 -->
+    <!-- 设备部件分类 -->
     <el-form :inline="true">
       <el-form-item label="分类编号">
         <el-input v-model="getParams.no" @input="changSelect" />
