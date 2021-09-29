@@ -2369,7 +2369,6 @@ export let asyncRoutes = [
     hidden: true
   }
 ]
-console.log(equipRoutes, 'equipRoutes')
 asyncRoutes = asyncRoutes.concat(equipRoutes)
 
 const createRouter = () => new Router({

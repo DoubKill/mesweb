@@ -79,6 +79,26 @@ export const equipRoutes = [
               title: '设备固定资产台账',
               permissionName: ''
             }
+          },
+          {
+            path: '/equipment/type',
+            component: () => import('@/views/equipment-manage/master-data/type'),
+            name: 'EquipmentMasterDataType',
+            meta: {
+              faName: 'EquipmentMasterData',
+              title: '设备种类',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/parts-type',
+            component: () => import('@/views/equipment-manage/master-data/parts-type'),
+            name: 'EquipmentMasterDataPartsType',
+            meta: {
+              faName: 'EquipmentMasterData',
+              title: '设备部件分类',
+              permissionName: ''
+            }
           }
         ]
       },
