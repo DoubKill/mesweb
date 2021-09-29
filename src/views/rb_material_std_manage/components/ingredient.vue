@@ -21,7 +21,7 @@
           <EquipCategorySelect
             v-model="formInline.dev_type"
             is-mini="mini"
-            :is-disabled="isView"
+            :is-disabled="true"
             @changeFun="changeDevType"
           />
         </el-form-item>

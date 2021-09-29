@@ -254,27 +254,18 @@ export const asyncRoutes = [
         }
       }
       ]
-    // },
-    // {
-    //   path: '/pinkSet',
-    //   component: () => import('@/views/pinkSet/index'),
-    //   name: 'PinkSet',
-    //   meta: {
-    //     title: '粉料罐-油料罐物料设定',
-    //     icon: 'dashboard',
-    //     permissionName: ''
-    //   }
     }
-    // {
-    //   path: '/powder-tank',
-    //   component: () => import('@/views/basic/powder-tank'),
-    //   name: 'PowderTank',
-    //   meta: {
-    //     title: '粉料罐-油料罐 物料设定',
-    //     icon: 'dashboard',
-    //     permissionName: ''
-    //   }
-    // }
+    /*,
+    {
+      path: '/pinkSet',
+      component: () => import('@/views/basic/pinkSet/index'),
+      name: 'PinkSet',
+      meta: {
+        title: '粉料罐-油料罐物料设定',
+        icon: 'dashboard',
+        permissionName: ''
+      }
+    }*/
     ]
   },
   {
@@ -417,7 +408,7 @@ export const asyncRoutes = [
         permissionName: 'materialdemanded'
       }
     },
-    {
+    /* {
       path: '/rubber-plan-release',
       name: 'RubberPlanRelease',
       component: () => import('@/views/recipe/rubber-plan-release'),
@@ -426,7 +417,7 @@ export const asyncRoutes = [
         icon: 'formula',
         permissionName: 'batching_plan'
       }
-    },
+    },*/
     // {
     //   path: '/actual-comparison',
     //   name: 'ActualComparison',
@@ -550,7 +541,7 @@ export const asyncRoutes = [
         permissionName: 'product_actual'
       }
     },
-    {
+    /* {
       path: '/plan/manage',
       component: () => import('@/views/banburying_plan/index'),
       name: 'BanburyingPlanManage',
@@ -559,7 +550,7 @@ export const asyncRoutes = [
         icon: 'production',
         permissionName: 'plan_reality'
       }
-    },
+    },*/
     {
       path: '/internal/mixer',
       component: () => import('@/views/internal_mixer_production/index'),
@@ -615,7 +606,7 @@ export const asyncRoutes = [
       component: () => import('@/views/production/drug-investment'),
       name: 'DrugInvestment',
       meta: {
-        title: '药品投入统计',
+        title: '称量投入履历',
         icon: 'production',
         permissionName: 'drug_analyze'
       }
@@ -975,7 +966,7 @@ export const asyncRoutes = [
               permissionName: 'material_yearly_summary'
             }
           },
-          {
+          /* {
             path: '/material',
             component: () => import('@/views/inventory/material-delivery-manage/material_repertory_manage/index'),
             name: 'MaterialRepertoryManage',
@@ -984,7 +975,7 @@ export const asyncRoutes = [
               title: '原材料库存',
               permissionName: 'material_inventory'
             }
-          },
+          },*/
           {
             path: '/delivery-inout-record',
             component: () => import('@/views/inventory/material-delivery-manage/material_inout_record.vue'),
@@ -1958,7 +1949,7 @@ export const asyncRoutes = [
             meta: {
               faName: 'Feed',
               title: '投料计划',
-              permissionName: ''
+              permissionName: 'carbon_feeding_prompt'
             }
           },
           {
@@ -1968,7 +1959,7 @@ export const asyncRoutes = [
             meta: {
               faName: 'Feed',
               title: '投料重量设定',
-              permissionName: ''
+              permissionName: 'carbon_tank_set'
             }
           },
           {
@@ -1978,7 +1969,7 @@ export const asyncRoutes = [
             meta: {
               faName: 'Feed',
               title: '投料操作履历查询',
-              permissionName: ''
+              permissionName: 'feed_check_operation'
             }
           }
         ]

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-loading="loading">
     <!-- 原材料条码追朔 -->
     条形码：
     <el-input
@@ -154,6 +154,7 @@ export default {
       value: '',
       barCodeSearch: '', // KTP001
       activities: [],
+      loading: false,
       options: [{ label: 'material_sample', value: '取样', _show: true },
         { label: 'material_in', value: '入库', _show: true },
         { label: 'material_out', value: '出库', _show: true },
@@ -165,7 +166,7 @@ export default {
     }
   },
   created() {
-    this.getList()
+    // this.getList()
   },
   methods: {
     async getList() {

@@ -40,10 +40,23 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item style="float:right">
+        <el-button
+          type="primary"
+          :loading="btnExportLoad"
+          @click="exportTable(1)"
+        >导出当前页面</el-button>
+        <el-button
+          type="primary"
+          :loading="btnExportLoad"
+          @click="exportTable(2)"
+        >导出全部</el-button>
+      </el-form-item>
     </el-form>
     <el-table
       v-loading="loading"
       :data="tableData"
+      :row-class-name="tableRowClassName"
       border
     >
       <el-table-column
@@ -114,7 +127,7 @@
 <script>
 import { debounce } from '@/utils'
 import page from '@/components/page'
-import { thInventory, thMaterialGroups, thTunnels } from '@/api/base_w_four'
+import { thInventory, thInventoryDown, thMaterialGroups, thTunnels } from '@/api/base_w_four'
 export default {
   name: 'DeliveryStock',
   components: { page },
@@ -128,7 +141,8 @@ export default {
       options: [],
       options1: [],
       tableData: [],
-      loading: false
+      loading: false,
+      btnExportLoad: false
     }
   },
   created() {
@@ -144,8 +158,22 @@ export default {
         this.tableData = data.results
         this.total = data.count
         this.loading = false
+        this.tableData.push({
+          name: '单页合计',
+          quantity: sum(this.tableData, 'quantity'),
+          weight: sum(this.tableData, 'weight')
+        }, {
+          name: '汇总',
+          quantity: data.total_quantity,
+          weight: data.total_weight
+        })
       } catch (e) {
         this.loading = false
+      }
+    },
+    tableRowClassName({ row, rowIndex }) {
+      if (row.name === '单页合计' || row.name === '汇总') {
+        return 'summary-cell-style'
       }
     },
     async getMaterialGroupList() {
@@ -176,8 +204,37 @@ export default {
       this.search.page = page
       this.search.page_size = page_size
       this.getList()
+    },
+    exportTable(val) {
+      this.btnExportLoad = true
+      const obj = Object.assign({ export: val }, this.search)
+      const _api = thInventoryDown
+      _api(obj)
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '炭黑库-库存统计.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
     }
   }
+}
+function sum(arr, params) {
+  var s = 0
+
+  arr.forEach(function(val, idx, arr) {
+    const a = val[params] ? Number(val[params]) : 0
+    s += a
+  }, 0)
+  s = Math.round(s * 1000) / 1000
+  return s
 }
 </script>
 

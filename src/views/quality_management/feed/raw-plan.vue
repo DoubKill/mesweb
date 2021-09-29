@@ -9,9 +9,9 @@
       border
     >
       <el-table-column
-        typ="id"
         label="序号"
         width="50"
+        type="index"
       />
       <el-table-column
         prop="date_now"
@@ -31,11 +31,16 @@
       <el-table-column
         prop="product_no"
         label="胶料编码"
-        min-width="20"
+        min-width="30"
       />
       <el-table-column
         prop="plan_trains"
         label="计划车数"
+        min-width="20"
+      />
+      <el-table-column
+        prop="status"
+        label="状态"
         min-width="20"
       />
     </el-table>
@@ -83,7 +88,7 @@
         >
           <div v-for="(tableItem1,key1) in tableItem" :key="key1" class="tableTop">
             <div>
-              <el-button style="float:right;margin:5px 10px" size="small" :disabled="loadingBtn" @click="saveFun(key,key1)">保存</el-button>
+              <el-button v-permission="['carbon_feeding_prompt', 'add']" style="float:right;margin:5px 10px" size="small" :disabled="loadingBtn" @click="saveFun(key,key1)">保存</el-button>
               {{ key1 }}
             </div>
             <el-table
@@ -137,9 +142,16 @@
                 {{ scope.row.status }}
               </template>
             </el-table-column> -->
-              <el-table-column label="补料设定值kg" min-width="20">
+              <el-table-column label="补料设定值kg" min-width="30">
                 <template slot-scope="scope">
-                  {{ scope.row.feedcapacity_weight_set }}
+                  <el-input-number
+                    v-model="scope.row.feedcapacity_weight_set"
+                    style="width:150px"
+                    controls-position="right"
+                    :min="0"
+                    :max="scope.row._feedcapacity_weight_set"
+                    @change="weightSetChange(tableItem1,scope.row)"
+                  />
                 </template>
               </el-table-column>
               <el-table-column label="投料口" width="170">
@@ -172,8 +184,8 @@
                     <el-option
                       v-for="(item,portI) in optionsMaterial"
                       :key="portI"
-                      :label="item.material_name"
-                      :value="item.material_name"
+                      :label="item.zc_material__material_name"
+                      :value="item.zc_material__material_name"
                     />
                   </el-select>
                 </template>
@@ -197,6 +209,7 @@
               >
                 <template slot-scope="scope">
                   <el-button
+                    v-permission="['carbon_feeding_prompt', 'begin']"
                     size="mini"
                     type="primary"
                     :disabled="loadingBtn"
@@ -204,6 +217,7 @@
                   >开始
                   </el-button>
                   <el-button
+                    v-permission="['carbon_feeding_prompt', 'end']"
                     size="mini"
                     type="primary"
                     :disabled="loadingBtn"
@@ -256,7 +270,7 @@
 
 <script>
 import { equipUrl } from '@/api/base_w'
-import { zcMaterials } from '@/api/base_w_two'
+import { zcMaterialsThoughMes } from '@/api/base_w_two'
 import { feedCapacityPlan, carbonFeedingPrompt, carOutCheck, carbonOutTask } from '@/api/base_w_four'
 export default {
   name: 'RawPlan',
@@ -307,7 +321,7 @@ export default {
     },
     async getOptionsMaterial(row) {
       try {
-        const DATA = await zcMaterials('get', null, { params: { material_name: row.tank_material_name, is_binding: 'Y', all: 1 }})
+        const DATA = await zcMaterialsThoughMes('get', null, { params: { material_name: row.tank_material_name }})
         this.optionsMaterial = DATA.results || []
       } catch (e) {
         //
@@ -326,7 +340,7 @@ export default {
             arr.push({ [key]: element })
           }
         }
-        console.log(arr, 'work_schedule')
+        // console.log(arr, 'work_schedule')
         this.addPlanArr = arr
       }
 
@@ -376,6 +390,7 @@ export default {
           if (Object.hasOwnProperty.call(data, key)) {
             data[key].forEach(d => {
               d.is_no_port_one = d.is_no_port_one ? d.is_no_port_one : false
+              this.$set(d, '_feedcapacity_weight_set', d.feedcapacity_weight_set)
             })
           }
         }
@@ -386,9 +401,9 @@ export default {
       }
     },
     MaterialChange(val, index, faIndex, zo, row) {
-      const arr = this.optionsMaterial.filter(d => d.material_name === val)
+      const arr = this.optionsMaterial.filter(d => d.zc_material__material_name === val)
       if (arr.length > 0) {
-        row.wlxxid = arr[0].wlxxid
+        row.wlxxid = arr[0].zc_material__wlxxid
       }
     },
     visibleChangeMaterial(bool, row) {
@@ -426,6 +441,8 @@ export default {
           this.addPlanArr[faindex][key1].splice(index + 1, 1)
           row.feed_change = 1
           _row.feed_change = 1
+          row.is_no_port_one = false
+          _row.is_no_port_one = false
         }
         return
       }
@@ -437,6 +454,13 @@ export default {
       // console.log(this.addPlanArr, 8888)
     },
     clickEquip() {},
+    weightSetChange(arr, row) {
+      arr.forEach(d => {
+        if (d.tank_no === row.tank_no) {
+          d.feedcapacity_weight_set = row.feedcapacity_weight_set
+        }
+      })
+    },
     handleGroupDelete(row) {
       this.$confirm(`是否确定结束?`, '提示', {
         confirmButtonText: '确定',
@@ -466,6 +490,7 @@ export default {
         const obj = JSON.parse(JSON.stringify(row))
         obj.equip_id = zo
         delete obj.is_plan_used
+        delete obj._feedcapacity_weight_set
         // delete obj.id
         this.loadingBtn = true
         const data = await carOutCheck('post', null, { data: obj })
@@ -543,9 +568,6 @@ export default {
           //   throw new Error('投料口或投入物料未选择!')
           // }
         })
-        // 记得删除
-        // arr = arr.filter(d => d.feed_material_name)
-        // console.log(arr)
         if (this.addPlanArr[faIndex][zo].length === 0) {
           this.$message.info('暂无数据保存')
           return
@@ -585,13 +607,13 @@ export default {
         return
       }
       if (row.is_plan_used) {
-        if (row.tank_level_status === '低') {
+        if (row.tank_level_status === '低位') {
           return 'danger-row'
-        } else if (row.tank_level_status === '中') {
+        } else if (row.tank_level_status === '中位') {
           return 'wait-row'
         }
       } else {
-        if (row.tank_level_status === '低' || row.tank_level_status === '中') {
+        if (row.tank_level_status === '低位' || row.tank_level_status === '中位') {
           return 'green-row'
         }
       }
