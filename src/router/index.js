@@ -723,7 +723,7 @@ export const asyncRoutes = [
         icon: 'production'
       },
       children: [
-        {
+        /** {
           path: '/report/produce-work',
           component: () => import('@/views/equipment-management/report/produce-work'),
           name: 'ProduceWork',
@@ -732,7 +732,7 @@ export const asyncRoutes = [
             title: '生产运行记录',
             permissionName: 'production_record'
           }
-        }
+        }**/
         // {
         //   path: '/report/material-requirement',
         //   component: () => import('@/views/equipment-management/report/material-requirement'),
@@ -1931,8 +1931,8 @@ export const asyncRoutes = [
             }
           }
         ]
-      }
-      /** {
+      },
+      {
         path: '/feed',
         redirect: '/feed/raw-plan',
         component: () => import('@/views/quality_management/feed/a-index'),
@@ -1973,7 +1973,7 @@ export const asyncRoutes = [
             }
           }
         ]
-      }**/
+      }
     ]
   },
   {
