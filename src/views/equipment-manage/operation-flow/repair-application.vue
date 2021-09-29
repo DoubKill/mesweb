@@ -21,7 +21,7 @@
         <el-input v-model="search.order_uid" @input="changeList" />
       </el-form-item>
       <el-form-item class="button-right">
-        <el-button v-permission="['equip_maintenance_order', 'add']" @click="add(false,'申请维修')">新建</el-button>
+        <el-button type="primary" @click="add(false,'申请维修')">新建</el-button>
       </el-form-item>
     </el-form>
 

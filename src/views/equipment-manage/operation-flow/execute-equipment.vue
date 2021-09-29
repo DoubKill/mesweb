@@ -266,6 +266,12 @@
         min-width="20"
       />
     </el-table>
+    <page
+      :old-page="false"
+      :total="total"
+      :current-page="search.page"
+      @currentChange="currentChange"
+    />
     <el-dialog
       title="处理维修工单"
       :visible.sync="dialogVisible"
@@ -353,7 +359,7 @@
           </el-radio-group>
           <span v-if="creatOrder.radio===1||creatOrder.radio===''" style="marginLeft:30px">未申请</span>
           <span v-if="creatOrder.radio===2" style="marginLeft:30px">已申请</span>
-          <el-button type="primary" :disabled="creatOrder.radio===2" style="marginLeft:30px">申请物料</el-button>
+          <el-button type="primary" :disabled="creatOrder.radio===2" style="marginLeft:30px" @click="dialog1">申请物料</el-button>
         </el-form-item>
         <el-form-item label="维修结论">
           <el-radio-group v-model="creatOrder.radio1" style="marginTop:15px">
@@ -371,12 +377,161 @@
         <el-button :loading="submit" type="primary" @click="generateFun">确 定</el-button>
       </span>
     </el-dialog>
-    <page
-      :old-page="false"
-      :total="total"
-      :current-page="search.page"
-      @currentChange="currentChange"
-    />
+    <el-dialog
+      title="维修物料申请"
+      :visible.sync="dialogVisible1"
+      width="70%"
+    >
+      <el-form :inline="true">
+        <el-form-item label="领料申请单号">
+          <el-input :disabled="true" />
+        </el-form-item>
+        <el-form-item label="单据状态">
+          <el-input :disabled="true" />
+        </el-form-item>
+        <el-form-item style="float:right">
+          <el-button type="primary" @click="dialogSelect">添加</el-button>
+        </el-form-item>
+      </el-form>
+      <el-table
+        v-loading="loadingView"
+        :data="tableDataView"
+        border
+      >
+        <el-table-column
+          prop="order_no"
+          label="物料编码"
+          min-width="20"
+        />
+        <el-table-column
+          prop="sub_no"
+          label="物料名称"
+          min-width="20"
+        />
+        <el-table-column
+          prop="date"
+          label="备件分类"
+          min-width="20"
+        />
+        <el-table-column
+          prop="date"
+          label="规格型号"
+          min-width="20"
+        />
+        <el-table-column
+          prop="date"
+          label="技术参数"
+          min-width="20"
+        />
+        <el-table-column
+          prop="date"
+          label="标准单位"
+          min-width="20"
+        />
+        <el-table-column
+          prop="date"
+          label="库存数量"
+          min-width="20"
+        />
+        <el-table-column
+          prop="date"
+          label="领料数量"
+          min-width="20"
+        />
+        <el-table-column
+          prop="date"
+          label="是否交旧"
+          min-width="20"
+        >
+          <template slot-scope="{row}">
+            <el-checkbox v-model="row.checked" />
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="操作"
+          width="85"
+        >
+          <template slot-scope="{row}">
+            <el-button type="danger" @click="deleteList(row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleClose1(false)">取 消</el-button>
+        <el-button :loading="submit" type="primary" @click="generateFun1">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
+      title="备品备件库物料选择"
+      :visible.sync="dialogVisibleSelect"
+      width="70%"
+    >
+      <el-form :inline="true">
+        <el-form-item label="物料编码">
+          <el-input />
+        </el-form-item>
+        <el-form-item label="物料名称">
+          <el-input />
+        </el-form-item>
+      </el-form>
+      <el-table
+        :data="tableDataView1"
+        row-key="id"
+        border
+        @selection-change="handleSelectionChange"
+      >
+        <el-table-column
+          type="selection"
+          width="40"
+          :reserve-selection="true"
+        />
+        <el-table-column
+          prop="order_no"
+          label="物料编码"
+          min-width="20"
+        />
+        <el-table-column
+          prop="sub_no"
+          label="物料名称"
+          min-width="20"
+        />
+        <el-table-column
+          prop="date"
+          label="备件分类"
+          min-width="20"
+        />
+        <el-table-column
+          prop="date"
+          label="规格型号"
+          min-width="20"
+        />
+        <el-table-column
+          prop="date"
+          label="技术参数"
+          min-width="20"
+        />
+        <el-table-column
+          prop="date"
+          label="标准单位"
+          min-width="20"
+        />
+        <el-table-column
+          prop="date"
+          label="库存数量"
+          min-width="20"
+        />
+      </el-table>
+      <page
+        :old-page="false"
+        :total="total"
+        :current-page="search.page"
+        @currentChange="currentChange"
+      />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleCloseSelect(false)">取 消</el-button>
+        <el-button :loading="submit" type="primary" @click="generateFunSelect">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -393,7 +548,7 @@ export default {
         page_size: 10
       },
       dateValue: [],
-      tableData: [],
+      tableData: [{ date: '1' }],
       total: 0,
       options1: ['巡检', '生产', '其他'],
       options2: ['已做成', '已接单', '等待物料', '等待外协维修', '已完成', '已关闭'],
@@ -401,22 +556,26 @@ export default {
       options4: ['高', '中', '低'],
       multipleSelection: [],
       dialogImageUrl: '',
+      loadingView: false,
+      tableDataView: [],
+      tableDataView1: [],
       dialogVisible: false,
+      dialogVisible1: false,
+      dialogVisibleSelect: false,
       submit: false,
       dialogVisibleImg: false,
       creatOrder: { radio: '' }
     }
   },
   methods: {
-    generateFun(obj) {
-      this.dialogVisible = true
-      console.log(obj, 'obj')
-    },
     changeDate() {
 
     },
     getList() {
 
+    },
+    deleteList(row) {
+      console.log(row)
     },
     changeSearch() {
       this.getList()
@@ -450,12 +609,45 @@ export default {
     dialog() {
       this.dialogVisible = true
     },
+    dialog1() {
+      this.dialogVisible1 = true
+    },
+    dialogSelect() {
+      this.dialogVisibleSelect = true
+    },
     handleClose(done) {
       this.dialogVisible = false
       if (done) {
         done()
       }
     },
+    handleClose1(done) {
+      this.dialogVisible1 = false
+      if (done) {
+        done()
+      }
+    },
+    handleCloseSelect(done) {
+      this.dialogVisibleSelect = false
+      if (done) {
+        done()
+      }
+    },
+    generateFun(obj) {
+      this.dialogVisible = false
+      console.log(obj, 'obj')
+    },
+    generateFun1(obj) {
+      this.dialogVisible1 = false
+    },
+    generateFunSelect(obj) {
+      this.dialogVisibleSelect = false
+      console.log(this.multipleSelection)
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+    },
+
     currentChange(page, page_size) {
       this.search.page = page
       this.search.page_size = page_size
