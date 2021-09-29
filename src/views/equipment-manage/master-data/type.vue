@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 设备种类 -->
+    <!-- 设备种类定义 -->
     <el-form :inline="true">
       <el-form-item label="机型名称">
         <el-input

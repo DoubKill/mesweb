@@ -26,7 +26,7 @@ export const equipRoutes = [
         component: () => import('@/views/equipment-manage/master-data/a-index'),
         name: 'EquipmentMasterData',
         meta: {
-          title: '主数据管理',
+          title: '基础数据管理',
           icon: 'quality'
         },
         children: [
@@ -86,7 +86,7 @@ export const equipRoutes = [
             name: 'EquipmentMasterDataType',
             meta: {
               faName: 'EquipmentMasterData',
-              title: '设备种类',
+              title: '设备种类定义',
               permissionName: ''
             }
           },
