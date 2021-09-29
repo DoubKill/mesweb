@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 指派设备维修工单 -->
+    <!-- 指派维修工单 -->
     <el-form :inline="true">
       <el-form-item label="计划/报修日期">
         <el-date-picker

@@ -21,8 +21,164 @@ export const equipRoutes = [
         }
       },
       {
+        path: '/equipment/maintenance',
+        redirect: '/equipment/maintenance',
+        component: () => import('@/views/equipment-manage/maintenance/a-index'),
+        name: 'MaintenanceFlow',
+        meta: {
+          title: '维护计划',
+          icon: 'quality'
+        },
+        children: [
+          {
+            path: '/equipment/maintenance',
+            component: () => import('@/views/equipment-manage/maintenance/maintenance'),
+            name: 'Maintenance',
+            meta: {
+              faName: 'MaintenanceFlow',
+              title: '设备维护计划',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/maintenance-query',
+            component: () => import('@/views/equipment-manage/maintenance/maintenance-query'),
+            name: 'MaintenanceQuery',
+            meta: {
+              faName: 'MaintenanceFlow',
+              title: '设备维护计划查询',
+              permissionName: ''
+            }
+          }
+        ]
+      },
+      {
+        path: '/equipment/operation-flow',
+        redirect: '/equipment/repair-application',
+        component: () => import('@/views/equipment-manage/operation-flow/a-index'),
+        name: 'EquipmentOperationFlow',
+        meta: {
+          title: '设备维修',
+          icon: 'quality'
+        },
+        children: [
+          {
+            path: '/equipment/repair-application',
+            component: () => import('@/views/equipment-manage/operation-flow/repair-application'),
+            name: 'EquipmentRepair',
+            meta: {
+              faName: 'EquipmentOperationFlow',
+              title: '报修申请',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/repair-application-process',
+            component: () => import('@/views/equipment-manage/operation-flow/repair-application-process'),
+            name: 'EquipmentRepairProcess',
+            meta: {
+              faName: 'EquipmentOperationFlow',
+              title: '报修申请处理',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/assign-equipment',
+            component: () => import('@/views/equipment-manage/operation-flow/assign-equipment'),
+            name: 'AssignEquipment',
+            meta: {
+              faName: 'EquipmentOperationFlow',
+              title: '指派维修工单',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/execute-equipment',
+            component: () => import('@/views/equipment-manage/operation-flow/execute-equipment'),
+            name: 'ExecuteEquipment',
+            meta: {
+              faName: 'EquipmentOperationFlow',
+              title: '执行维修工单',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/acceptance-equipment',
+            component: () => import('@/views/equipment-manage/operation-flow/acceptance-equipment'),
+            name: 'AcceptanceEquipment',
+            meta: {
+              faName: 'EquipmentOperationFlow',
+              title: '验收维修工单',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/equipment-query',
+            component: () => import('@/views/equipment-manage/operation-flow/equipment-query'),
+            name: 'EquipmentQuery',
+            meta: {
+              faName: 'EquipmentOperationFlow',
+              title: '维修工单查询',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/apare-parts',
+            component: () => import('@/views/equipment-manage/operation-flow/apare-parts'),
+            name: 'ApareParts',
+            meta: {
+              faName: 'EquipmentOperationFlow',
+              title: '备件领料申请处理',
+              permissionName: ''
+            }
+          }
+        ]
+      },
+      {
+        path: '/equipment/inspection',
+        redirect: '/equipment/assign-patrol',
+        component: () => import('@/views/equipment-manage/inspection/a-index'),
+        name: 'InspectionFlow',
+        meta: {
+          title: '设备巡检',
+          icon: 'quality'
+        },
+        children: [
+          {
+            path: '/equipment/assign-patrol',
+            component: () => import('@/views/equipment-manage/inspection/assign-patrol'),
+            name: 'AssignPatrol',
+            meta: {
+              faName: 'InspectionFlow',
+              title: '指派巡检工单',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/execute-patrol',
+            component: () => import('@/views/equipment-manage/inspection/execute-patrol'),
+            name: 'ExecutePatrol',
+            meta: {
+              faName: 'InspectionFlow',
+              title: '执行巡检工单',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/patrol-query',
+            component: () => import('@/views/equipment-manage/inspection/patrol-query'),
+            name: 'PatrolQuery',
+            meta: {
+              faName: 'InspectionFlow',
+              title: '巡检工单查询',
+              permissionName: ''
+            }
+          }
+        ]
+      },
+      {
         path: '/equipment/master-data',
-        redirect: '/spare-part/base/spare-location',
+        redirect: '/equipment/supplier',
         component: () => import('@/views/equipment-manage/master-data/a-index'),
         name: 'EquipmentMasterData',
         meta: {
@@ -111,99 +267,8 @@ export const equipRoutes = [
             }
           }
         ]
-      },
-      {
-        path: '/equipment/operation-flow',
-        redirect: '/spare-part/base/spare-location',
-        component: () => import('@/views/equipment-manage/operation-flow/a-index'),
-        name: 'EquipmentOperationFlow',
-        meta: {
-          title: '业务流程管理',
-          icon: 'quality'
-        },
-        children: [
-          {
-            path: '/equipment/maintenance',
-            component: () => import('@/views/equipment-manage/operation-flow/maintenance'),
-            name: 'Maintenance',
-            meta: {
-              faName: 'EquipmentOperationFlow',
-              title: '设备维护计划',
-              permissionName: ''
-            }
-          },
-          {
-            path: '/equipment/repair-application',
-            component: () => import('@/views/equipment-manage/operation-flow/repair-application'),
-            name: 'EquipmentRepair',
-            meta: {
-              faName: 'EquipmentOperationFlow',
-              title: '报修申请',
-              permissionName: ''
-            }
-          },
-          {
-            path: '/equipment/repair-application-process',
-            component: () => import('@/views/equipment-manage/operation-flow/repair-application-process'),
-            name: 'EquipmentRepairProcess',
-            meta: {
-              faName: 'EquipmentOperationFlow',
-              title: '报修申请处理',
-              permissionName: ''
-            }
-          },
-          {
-            path: '/equipment/assign-equipment',
-            component: () => import('@/views/equipment-manage/operation-flow/assign-equipment'),
-            name: 'AssignEquipment',
-            meta: {
-              faName: 'EquipmentOperationFlow',
-              title: '指派设备维修工单',
-              permissionName: ''
-            }
-          },
-          {
-            path: '/equipment/execute-equipment',
-            component: () => import('@/views/equipment-manage/operation-flow/execute-equipment'),
-            name: 'ExecuteEquipment',
-            meta: {
-              faName: 'EquipmentOperationFlow',
-              title: '执行设备维修工单',
-              permissionName: ''
-            }
-          },
-          {
-            path: '/equipment/acceptance-equipment',
-            component: () => import('@/views/equipment-manage/operation-flow/acceptance-equipment'),
-            name: 'AcceptanceEquipment',
-            meta: {
-              faName: 'EquipmentOperationFlow',
-              title: '验收设备维修工单',
-              permissionName: ''
-            }
-          },
-          {
-            path: '/equipment/equipment-query',
-            component: () => import('@/views/equipment-manage/operation-flow/equipment-query'),
-            name: 'EquipmentQuery',
-            meta: {
-              faName: 'EquipmentOperationFlow',
-              title: '设备维修工单查询',
-              permissionName: ''
-            }
-          },
-          {
-            path: '/equipment/apare-parts',
-            component: () => import('@/views/equipment-manage/operation-flow/apare-parts'),
-            name: 'ApareParts',
-            meta: {
-              faName: 'EquipmentOperationFlow',
-              title: '备件领料申请处理',
-              permissionName: ''
-            }
-          }
-        ]
       }
+
     ]
   }
 ]
