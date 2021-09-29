@@ -237,6 +237,16 @@ export const equipRoutes = [
             }
           },
           {
+            path: '/equipment/region',
+            component: () => import('@/views/equipment-manage/master-data/region'),
+            name: 'EquipmentMasterDataRegion',
+            meta: {
+              faName: 'EquipmentMasterData',
+              title: '设备部位定义',
+              permissionName: ''
+            }
+          },
+          {
             path: '/equipment/type',
             component: () => import('@/views/equipment-manage/master-data/type'),
             name: 'EquipmentMasterDataType',
@@ -265,10 +275,19 @@ export const equipRoutes = [
               title: 'ERP备件物料信息',
               permissionName: ''
             }
+          },
+          {
+            path: '/equipment/fault-classify',
+            component: () => import('@/views/equipment-manage/master-data/fault-classify'),
+            name: 'EquipmentMasterDataFaultClassify',
+            meta: {
+              faName: 'EquipmentMasterData',
+              title: '设备故障分类管理',
+              permissionName: ''
+            }
           }
         ]
       }
-
     ]
   }
 ]
