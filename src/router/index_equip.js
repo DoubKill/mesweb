@@ -99,6 +99,16 @@ export const equipRoutes = [
               title: '设备部件分类',
               permissionName: ''
             }
+          },
+          {
+            path: '/equipment/ERP-material',
+            component: () => import('@/views/equipment-manage/master-data/ERP-material'),
+            name: 'EquipmentMasterDataERPMaterial',
+            meta: {
+              faName: 'EquipmentMasterData',
+              title: 'ERP备件物料信息',
+              permissionName: ''
+            }
           }
         ]
       },
