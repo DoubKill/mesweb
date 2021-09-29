@@ -147,3 +147,13 @@ export function userStation(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+// 用户出库口库区
+export function runtimeDetail(method, id, data = {}) {
+  const obj = {
+    url: id ? API.RuntimeDetail + id + '/' : API.RuntimeDetail,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

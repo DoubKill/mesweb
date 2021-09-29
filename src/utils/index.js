@@ -198,34 +198,41 @@ import XLSXStyle from 'xlsx-style'
  *
  * @param {*文件名称} value
  */
+const tableTitleFont = {
+  font: {
+    italic: false,
+    underline: false
+  },
+  alignment: {
+    wrapText: 1,
+    horizontal: 'center',
+    vertical: 'center'
+  },
+  border: {
+    bottom: { style: 'thin' },
+    top: { style: 'thin' },
+    left: { style: 'thin' },
+    right: { style: 'thin' }
+  }
+}
+const setBorder = {
+  border: {
+    bottom: { style: 'thin' },
+    top: { style: 'thin' },
+    left: { style: 'thin' },
+    right: { style: 'thin' }
+  }
+}
 export function exportExcel(value = 'excel', val, _wpxArr = []) {
   /* 从表生成工作簿对象 */
   var wb = XLSX.utils.table_to_book(document.querySelector('#out-table'), { raw: true })
   const arr = Object.keys(wb.Sheets['Sheet1'])
   const obj = wb.Sheets['Sheet1']
-
   wb.Sheets['Sheet1']['!cols'] = _wpxArr
 
   if (val && val === 'disposal-list-components') {
-    const tableTitleFont = {
-      font: {
-        italic: false,
-        underline: false
-      },
-      alignment: {
-        horizontal: 'center',
-        vertical: 'center'
-      },
-      border: {
-        bottom: { style: 'thin' },
-        top: { style: 'thin' },
-        left: { style: 'thin' },
-        right: { style: 'thin' }
-      }
-    }
     const _wpx = []
-    // const _tableTitleFont = JSON.parse(JSON.stringify(tableTitleFont))
-    const _tableTitleFont1 = JSON.parse(JSON.stringify(tableTitleFont))
+
     // const _length = Object.keys(wb.Sheets['Sheet1']).length
     const arr1 = []
     let arr2 = []
@@ -254,6 +261,7 @@ export function exportExcel(value = 'excel', val, _wpxArr = []) {
         _wpx.push({ wpx: 70 })
       }
       arr2.forEach(d => {
+        const _tableTitleFont1 = JSON.parse(JSON.stringify(tableTitleFont))
         if (obj[d + D]) {
           if (obj[d + D].v && (obj[d + D].v.indexOf('处理意见') > -1 ||
         obj[d + D].v.indexOf('不合格品') > -1 || obj[d + D].v.indexOf('备注') > -1 ||
@@ -267,37 +275,66 @@ export function exportExcel(value = 'excel', val, _wpxArr = []) {
           } else {
             obj[d + D].s = tableTitleFont
           }
+          if (d === 'A' && D === 1) {
+            _tableTitleFont1.alignment = {
+              horizontal: 'center',
+              vertical: 'center'
+            }
+            _tableTitleFont1.font.sz = 20
+            _tableTitleFont1.font.name = '宋体'
+          }
         } else {
           obj[d + D] = {
-            s: { border: {
-              bottom: { style: 'thin' },
-              top: { style: 'thin' },
-              left: { style: 'thin' },
-              right: { style: 'thin' }
-            }}
+            s: setBorder
           }
         }
       })
     }
+    wb.Sheets['Sheet1']['!cols'] = _wpx
+  }
 
-    wb.Sheets['Sheet1']['A1'].s = {									// 为某个单元格设置单独样式
-      font: {
-        name: '宋体',
-        sz: 20,
-        italic: false,
-        underline: false
-      },
-      alignment: {
-        horizontal: 'center',
-        vertical: 'center'
-      },
-      border: {
-        bottom: { style: 'thin' },
-        top: { style: 'thin' },
-        left: { style: 'thin' },
-        right: { style: 'thin' }
+  if (val && val === 'disposal-list') {
+    const _wpx = []
+    const arr1 = []
+    let arr2 = []
+    arr.forEach(D => {
+      if (['!cols', '!fullref', '!merges', '!ref', '!rows'].includes(D)) {
+        return
       }
+      arr1.push(D.substr(1))
+      arr2.push(D.substr(0, 1))
+    })
+
+    arr2 = [...new Set(arr2)]
+    const number = Math.max(...arr1)
+    for (var i = 1; i <= number; i++) {
+      if (i === 2) {
+        _wpx.push({ wpx: 130 })
+      } else if (i === 6) {
+        _wpx.push({ wpx: 280 })
+      } else {
+        _wpx.push({ wpx: 70 })
+      }
+      arr2.forEach(d => {
+        const _tableTitleFont1 = JSON.parse(JSON.stringify(tableTitleFont))
+        if (obj[d + i]) {
+          if (d === 'A' && i === 1) {
+            _tableTitleFont1.font.sz = 20
+            _tableTitleFont1.font.name = '宋体'
+          }
+          if (d === 'A' && i === 2) {
+            _tableTitleFont1.font.sz = 12
+            _tableTitleFont1.font.name = '宋体'
+          }
+          obj[d + i].s = _tableTitleFont1
+        } else {
+          obj[d + i] = { s: setBorder }
+          obj['G' + i] = { s: setBorder }
+          obj['I' + i] = { s: setBorder }
+        }
+      })
     }
+    console.log(wb.Sheets['Sheet1'])
     wb.Sheets['Sheet1']['!cols'] = _wpx
   }
 

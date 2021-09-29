@@ -92,7 +92,7 @@
           label="结果(车)"
         />
       </el-table-column>
-      <el-table-column
+      <!-- <el-table-column
         align="center"
         prop="mr_material_requisition_classes"
         label="中班"
@@ -105,7 +105,7 @@
           prop="classes_data[1].actual_trains"
           label="结果(车)"
         />
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         align="center"
         prop="mr_material_requisition_classes"

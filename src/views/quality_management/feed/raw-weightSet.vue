@@ -24,7 +24,7 @@
         </el-select>
       </el-form-item> -->
       <el-form-item label="罐号">
-        <el-input v-model="searchForm.tank_no" clearable @input="changeSearch" />
+        <el-input v-model="searchForm.tank_no" type="number" clearable @input="changeSearch1" />
       </el-form-item>
     </el-form>
     <el-table
@@ -110,8 +110,10 @@
       >
         <template slot-scope="scope">
           <el-button
+            :loading="saveLoading"
             type="primary"
             size="mini"
+            :disabled="update"
             @click="save(scope)"
           >保存
           </el-button>
@@ -124,6 +126,8 @@
 <script>
 import selectEquip from '@/components/select_w/equip'
 import { rawWeight, saveRawWeight } from '@/api/jqy'
+import { debounce } from '@/utils'
+import { checkPermission } from '@/utils'
 export default {
   name: 'RawWeightSet',
   components: { selectEquip },
@@ -132,19 +136,25 @@ export default {
       searchForm: {},
       tableData: [],
       loading: false,
+      saveLoading: false,
       options: [{
         value: 1,
         label: '大'
       }, {
         value: 0,
         label: '小'
-      }]
+      }],
+      update: true
     }
   },
   created() {
     this.getList()
+    if (checkPermission(['carbon_tank_set', 'update'])) {
+      this.update = false
+    }
   },
   methods: {
+    checkPermission,
     async getList() {
       try {
         this.loading = true
@@ -157,12 +167,24 @@ export default {
       this.loading = true
       this.getList()
     },
+    changeSearch1() {
+      if (this.searchForm.tank_no > 0 || this.searchForm.tank_no === '') {
+        debounce(this, 'getList')
+      } else {
+        this.$message.info('请输入正确罐号')
+      }
+    },
     async save(scope) {
       try {
+        this.saveLoading = true
         const id = scope.row.id || null
         await saveRawWeight('put', id, { data: JSON.parse(JSON.stringify(scope.row)) })
         this.$message.success('操作成功')
-      } catch (e) { this.loading = false }
+        this.saveLoading = false
+      } catch (e) {
+        this.$message.info('修改失败')
+        this.saveLoading = false
+      }
     }
 
   }

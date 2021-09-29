@@ -310,6 +310,7 @@ export default {
   // mes与子系统物料信息映射
   MaterialSupplierCollect: '/api/v1/terminal/material-supplier-collect/',
   ZcMaterials: '/api/v1/recipe/zc-materials/',
+  ZcMaterialsThoughMes: '/api/v1/recipe/zc-materials-though-mes/',
   WeightingPackageLog: '/api/v1/terminal/weighting-package-log/',
   EquipEownType: '/api/v1/equipment/equip-down-type/',
   EquipDownReason: '/api/v1/equipment/equip-down-reason/',
@@ -469,7 +470,7 @@ export default {
   // 炭黑投料提示-计划显示
   FeedCapacityPlan: '/api/v1/terminal/feed-capacity-plan/',
   CarbonFeedingPrompt: '/api/v1/terminal/carbon-feeding-prompt/',
-  CarOutCheck: '/api/v1/terminal/car-out-check/',
+  CarOutCheck: '/api/v1/terminal/carbon-out-check/',
   // 炭黑投料-下出库任务
   CarbonOutTask: '/api/v1/terminal/carbon-out-task/',
   // 胶片库出库单列表
@@ -483,5 +484,7 @@ export default {
   // 班次别不合格率
   ClassesPass: '/api/v1/quality/class-test-statics/',
   // 用户出库口库区
-  UserStation: '/api/v1/inventory/outbound-history/'
+  UserStation: '/api/v1/inventory/outbound-history/',
+  // 生产运行记录修改
+  RuntimeDetail: '/api/v1/production/runtime-record-detail/'
 }
