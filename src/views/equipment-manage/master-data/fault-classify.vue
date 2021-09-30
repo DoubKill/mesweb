@@ -11,7 +11,7 @@
       <el-form-item label="故障名称">
         <el-input v-model="formInline.user" clearable placeholder="故障名称" />
       </el-form-item>
-      <el-form-item label="部位分类">
+      <el-form-item label="是否启用">
         <el-select v-model="formInline.region" clearable placeholder="是否启用">
           <el-option label="区域一" value="shanghai" />
           <el-option label="区域二" value="beijing" />
@@ -31,26 +31,31 @@
     >
       <el-table-column
         prop="date"
-        label="所属主设备种类"
+        label="故障大类代码"
         min-width="20"
       />
       <el-table-column
         prop="name"
-        label="部位分类"
+        label="故障大类名称"
         min-width="20"
       />
       <el-table-column
         prop="address"
-        label="部位代码"
+        label="分类代码"
         min-width="20"
       />
       <el-table-column
         prop="date"
-        label="部位名称"
+        label="分类名称"
         min-width="20"
       />
       <el-table-column
         prop="name"
+        label="是否启用"
+        min-width="20"
+      />
+      <el-table-column
+        prop="address"
         label="录入者"
         min-width="20"
       />
@@ -96,7 +101,7 @@
         :model="dialogForm"
       >
         <el-form-item
-          label="所属主设备种类"
+          label="故障大类代码"
           prop="type"
         >
           <el-select v-model="dialogForm.type" placeholder="请选择">
@@ -109,26 +114,19 @@
           </el-select>
         </el-form-item>
         <el-form-item
-          label="部位分类"
-          prop="type"
-        >
-          <el-select v-model="dialogForm.type" placeholder="请选择">
-            <el-option
-              v-for="item in ['浙江','大连']"
-              :key="item"
-              :label="item"
-              :value="item"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item
-          label="部位代码"
+          label="故障大类名称"
           prop="name"
         >
           <el-input v-model="dialogForm.name" :disabled="dialogForm.id?true:false" />
         </el-form-item>
         <el-form-item
-          label="部位名称"
+          label="故障分类代码"
+          prop="name"
+        >
+          <el-input v-model="dialogForm.name" :disabled="dialogForm.id?true:false" />
+        </el-form-item>
+        <el-form-item
+          label="故障分类名称"
           prop="name"
         >
           <el-input v-model="dialogForm.name" />

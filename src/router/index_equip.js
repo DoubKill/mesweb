@@ -285,6 +285,16 @@ export const equipRoutes = [
               title: '设备故障分类管理',
               permissionName: ''
             }
+          },
+          {
+            path: '/equipment/fault-classify',
+            component: () => import('@/views/equipment-manage/master-data/fault-classify'),
+            name: 'EquipmentMasterDataFaultClassify',
+            meta: {
+              faName: 'EquipmentMasterData',
+              title: '备件代码定义',
+              permissionName: ''
+            }
           }
         ]
       }
