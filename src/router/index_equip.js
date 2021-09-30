@@ -287,9 +287,9 @@ export const equipRoutes = [
             }
           },
           {
-            path: '/equipment/fault-classify',
-            component: () => import('@/views/equipment-manage/master-data/fault-classify'),
-            name: 'EquipmentMasterDataFaultClassify',
+            path: '/equipment/spare-parts-code',
+            component: () => import('@/views/equipment-manage/master-data/spare-parts-code'),
+            name: 'EquipmentMasterDataSparePartsCode',
             meta: {
               faName: 'EquipmentMasterData',
               title: '备件代码定义',
