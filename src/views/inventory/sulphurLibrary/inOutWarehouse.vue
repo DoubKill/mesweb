@@ -454,12 +454,12 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .liuh .el-input{
   width:209px;
 }
-.liuh .el-dialog__wrapper{
-  .el-input{
+.liuh {
+  .el-input-number .el-input{
     width:auto !important;
   }
 
