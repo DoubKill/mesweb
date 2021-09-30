@@ -2,190 +2,130 @@
   <div class="repair-manage-style">
     <!-- 报修申请 -->
     <el-form :inline="true">
-      <el-form-item label="日期:">
-        <el-date-picker
-          v-model="search.date"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="选择日期"
-          @change="changeList"
+      <el-form-item label="报修编号">
+        <el-input
+          v-model="search.equip_no"
+          style="width:200px"
+          @input="changeSearch"
         />
       </el-form-item>
-      <el-form-item label="设备编码:">
-        <el-input v-model="search.equip_no" @input="changeList" />
+      <el-form-item label="保修部门">
+        <el-select
+          v-model="search.jg"
+          style="width:150px"
+          placeholder="请选择"
+          clearable
+          @change="changeSearch"
+        >
+          <el-option
+            v-for="item in ['生产','工艺','设备']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
       </el-form-item>
-      <el-form-item label="设备名称:">
-        <el-input v-model="search.equip_name" @input="changeList" />
+      <el-form-item label="机台" prop="equip_no">
+        <equip-select
+          style="width:150px"
+          equip-type="密炼设备"
+          @equipSelected="equipSelected"
+        />
       </el-form-item>
-      <el-form-item label="单号:">
-        <el-input v-model="search.order_uid" @input="changeList" />
+      <el-form-item label="故障原因">
+        <el-input
+          v-model="search.equi"
+          style="width:200px"
+          @input="changeSearch"
+        />
       </el-form-item>
-      <el-form-item class="button-right">
-        <el-button type="primary" @click="add(false,'申请维修')">新建</el-button>
+      <el-form-item label="设备条件">
+        <el-select
+          v-model="search.jg1"
+          placeholder="请选择"
+          clearable
+          @change="changeSearch"
+        >
+          <el-option
+            v-for="item in ['停机','不停机']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="重要程度">
+        <el-select
+          v-model="search.jg2"
+          placeholder="请选择"
+          clearable
+          @change="changeSearch"
+        >
+          <el-option
+            v-for="item in ['高','中','低']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="dialog">新建</el-button>
       </el-form-item>
     </el-form>
-
     <el-table
-      v-loading="loading"
       :data="tableData"
-      border
-      element-loading-text="拼命加载中"
-      element-loading-spinner="el-icon-loading"
+      row-key="id"
+      borde
     >
       <el-table-column
-        type="index"
-        label="No"
-        width="40"
-      />
-      <el-table-column
-        prop="down_time"
-        label="故障时间"
+        prop="date"
+        label="报修编号"
         min-width="20"
       />
       <el-table-column
-        prop="order_uid"
-        label="单号"
+        prop="date"
+        label="报修部门"
         min-width="20"
       />
       <el-table-column
-        prop="equip_no"
-        label="设备编码"
+        prop="date"
+        label="机台"
         min-width="20"
       />
       <el-table-column
-        prop="equip_name"
-        label="设备名称"
+        prop="date"
+        label="部位名称"
         min-width="20"
       />
       <el-table-column
-        prop="part_name"
-        label="设备部位"
-        min-width="20"
-      />
-      <el-table-column
-        prop="first_down_reason"
-        label="初步诊断"
-        min-width="20"
-        show-overflow-tooltip
-      >
-        <template slot-scope="{row}">
-          <el-link type="primary" @click="add(row,'初步诊断')">{{ row.first_down_reason }}</el-link>
-        </template>
-      </el-table-column>
-      <el-table-column
+        prop="date"
         label="故障原因"
-        width="104px"
-      >
-        <template slot-scope="{row}">
-          <div v-if="checkPermission(['equip_maintenance_order','change'])">
-            <el-button v-if="!row.down_reason" size="mini" @click="add(row,'故障原因')">添加故障原因</el-button>
-            <el-link type="primary" @click="add(row,'故障原因')">{{ row.down_reason }}</el-link>
-          </div>
-          <span v-else>{{ row.down_reason }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="状态"
-        min-width="20"
-        :formatter="usedTypeFormatter"
-      />
-      <el-table-column
-        prop="maintenance_username"
-        label="维修人"
         min-width="20"
       />
       <el-table-column
-        prop="assign_username"
-        label="指派人"
+        prop="date"
+        label="故障描述"
         min-width="20"
       />
       <el-table-column
-        prop="created_username"
-        label="创建人"
+        prop="date"
+        label="设备条件"
         min-width="20"
       />
       <el-table-column
-        prop="address"
-        label="操作"
-        min-width="27"
-      >
-        <template
-          v-if="!([6,4,5].includes(scope.row.status))"
-          slot-scope="scope"
-        >
-          <el-popover
-            v-if="scope.row.status === 1&&checkPermission(['equip_maintenance_order','designate'])"
-            v-model="scope.row.visible"
-            placement="right"
-            width="160"
-          >
-            <userMangeSelect @changeSelect="changeSelectUser($event,scope.row)" />
-            <div style="text-align: right; margin-top: 5px">
-              <el-button size="mini" type="text" @click="scope.row.visible = false">取消</el-button>
-              <el-button type="primary" size="mini" @click="submitUser(scope.row)">确定</el-button>
-            </div>
-            <el-button
-              v-if="scope.row.status !== 3"
-              slot="reference"
-              style="margin-bottom:2px"
-              size="mini"
-              type="primary"
-            >指派
-            </el-button>
-          </el-popover>
-          <el-button-group>
-            <el-button
-              v-if="
-                ((scope.row.status===1&&scope.row.created_user===Number(userId))||([3,2].includes(scope.row.status)&&scope.row.maintenance_user===Number(userId)))
-                  &&checkPermission(['equip_maintenance_order','close'])"
-              style="margin-bottom:2px"
-              size="mini"
-              @click="claimFun(scope.row,'关闭',6)"
-            >关闭
-            </el-button>
-            <el-button
-              v-if="scope.row.status === 1&&checkPermission(['equip_maintenance_order','order'])"
-              style="margin-bottom:2px"
-              size="mini"
-              type="warning"
-              @click="claimFun(scope.row,'接单',2)"
-            >接单
-            </el-button>
-            <el-button
-              v-if="scope.row.assign_user === Number(userId)&&[3,2].includes(scope.row.status)
-                &&checkPermission(['equip_maintenance_order','chargeback'])"
-              style="margin-bottom:2px"
-              size="mini"
-              type="info"
-              @click="claimFun(scope.row,'退单',7)"
-            >退单
-            </el-button>
-          </el-button-group>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="affirm_username"
-        label="确认人"
+        prop="date"
+        label="重要程度"
         min-width="20"
       />
       <el-table-column
-        prop="begin_time"
-        label="维修开始时间"
+        prop="date"
+        label="报修人"
         min-width="20"
       />
       <el-table-column
-        prop="end_time"
-        label="维修结束时间"
-        min-width="20"
-      />
-      <el-table-column
-        prop="take_time"
-        label="维修时间"
-        min-width="20"
-      />
-      <el-table-column
-        prop="affirm_time"
-        label="确认时间"
+        prop="date"
+        label="报修时间"
         min-width="20"
       />
     </el-table>
@@ -197,7 +137,7 @@
     />
 
     <el-dialog
-      :title="operateType"
+      title="申请维修"
       :visible.sync="dialogVisible"
       width="600"
       :before-close="handleClose"
@@ -240,23 +180,19 @@
             type="datetime"
             placeholder="选择日期时间"
             value-format="yyyy-MM-dd HH:mm:ss"
-            :disabled="!!ruleForm.id"
           />
         </el-form-item>
         <el-form-item label="机台" prop="equip_no">
           <equip-select
             equip-type="密炼设备"
             :is-multiple="true"
-            :is-disabled="!!ruleForm.id"
             :default-val="ruleForm.equip_no"
             @equipSelected="equipSelected"
           />
         </el-form-item>
         <el-form-item label="设备部位" prop="equip_part">
-          <locationDefinitionDelect :is-disabled="!!ruleForm.id" :is-created="true" :equip-no="ruleForm.equip_no" :default-val="ruleForm.equip_part" @locationSelect="locationSelect" />
-          <el-link v-if="ruleForm.down_flag&&ruleForm.id" style="margin-left:10px" type="warning">已停机</el-link>
-          <el-link v-if="ruleForm.id&&!ruleForm.down_flag" style="margin-left:10px">未停机</el-link>
-          <el-checkbox v-if="!ruleForm.id" v-model="ruleForm.down_flag" style="margin-left:10px">已停机</el-checkbox>
+          <locationDefinitionDelect :is-created="true" :equip-no="ruleForm.equip_no" :default-val="ruleForm.equip_part" @locationSelect="locationSelect" />
+          <el-checkbox v-model="ruleForm.down_flag" style="margin-left:10px">已停机</el-checkbox>
         </el-form-item>
         <el-form-item label="停机原因">
           <el-input
@@ -270,18 +206,11 @@
           </el-input>
         </el-form-item>
         <el-form-item label="重要程度">
-          <el-select
-            v-model="ruleForm.feed"
-            placeholder="请选择"
-            clearable
-          >
-            <el-option
-              v-for="item in options1"
-              :key="item"
-              :label="item"
-              :value="item"
-            />
-          </el-select>
+          <el-radio-group v-model="ruleForm.feed">
+            <el-radio label="1">高</el-radio>
+            <el-radio label="2">中</el-radio>
+            <el-radio label="3">低</el-radio>
+          </el-radio-group>
         </el-form-item>
         <el-form-item label="故障描述" prop="note">
           <el-input
@@ -289,12 +218,10 @@
             type="textarea"
             :rows="3"
             placeholder="请输入内容"
-            :disabled="operateType!=='申请维修'&&(operateType==='初步诊断'||!(ruleForm.maintenance_user === Number(userId)&&[2,3].includes(ruleForm.status)))"
           />
         </el-form-item>
         <el-form-item label="上传图片">
           <el-upload
-            v-if="operateType==='申请维修'"
             ref="elUploadImg"
             action=""
             :auto-upload="false"
@@ -306,16 +233,6 @@
           >
             <i class="el-icon-plus" />
           </el-upload>
-          <el-image
-            v-else
-            style="width: 100px; height: 100px"
-            :src="ruleForm.image"
-            :preview-src-list="[ruleForm.image]"
-          >
-            <div slot="error" class="image-slot">
-              暂无图片
-            </div>
-          </el-image>
           <el-dialog :visible.sync="dialogVisibleImg" append-to-body>
             <img width="100%" :src="dialogImageUrl" alt="">
           </el-dialog>
@@ -323,7 +240,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose(false)">取 消</el-button>
-        <el-button v-if="!(operateType!=='申请维修'&&(operateType==='初步诊断'||!(ruleForm.maintenance_user === Number(userId)&&[2,3].includes(ruleForm.status))))" type="primary" @click="addSubmitFun">确 定</el-button>
+        <el-button type="primary" @click="addSubmitFun">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -331,18 +248,14 @@
 
 <script>
 import EquipSelect from '@/components/EquipSelect'
-// import shutdownMoldSelect from '../../equipment-management/components/shutdown-mold-select'
-import locationDefinitionDelect from '../../equipment-management/components/location-definition-select'
-// import shutdownReasonSelect from '../../equipment-management/components/shutdown-reason-select'
-// import { setDate } from '@/utils'
-import { equipMaintenanceOrder } from '@/api/base_w_two'
-import userMangeSelect from '@/components/select_w/userMangeSelect'
 import page from '@/components/page'
+import locationDefinitionDelect from '../../equipment-management/components/location-definition-select'
+import { equipMaintenanceOrder } from '@/api/base_w_two'
 import { mapGetters } from 'vuex'
 import { checkPermission } from '@/utils'
 export default {
   name: 'EquipmentRepair',
-  components: { page, userMangeSelect, EquipSelect, locationDefinitionDelect },
+  components: { EquipSelect, locationDefinitionDelect, page },
   data() {
     const validator = (rule, value, callback, _value, str) => {
       if (!_value && !value) {
@@ -353,7 +266,6 @@ export default {
     }
     return {
       options: ['巡检', '保养', '生产', '其他'],
-      options1: ['高', '中', '低'],
       search: {
         page: 1,
         page_size: 10
@@ -417,6 +329,9 @@ export default {
   },
   methods: {
     checkPermission,
+    changeSearch() {
+
+    },
     async getList() {
       try {
         this.loading = true
@@ -449,21 +364,16 @@ export default {
         done()
       }
     },
-    add(val, type) {
-      if (val) {
-        this.ruleForm = JSON.parse(JSON.stringify(val))
-      } else {
-        this.ruleForm = {
-          down_time: '',
-          first_down_type: '',
-          image: null,
-          first_down_reason: '',
-          equip_part: '',
-          equip_no: '',
-          down_flag: false
-        }
+    dialog() {
+      this.ruleForm = {
+        down_time: '',
+        first_down_type: '',
+        image: null,
+        first_down_reason: '',
+        equip_part: '',
+        equip_no: '',
+        down_flag: false
       }
-      this.operateType = type
       this.dialogVisible = true
     },
     locationSelect(obj) {
