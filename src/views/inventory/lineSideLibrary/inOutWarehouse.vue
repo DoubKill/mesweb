@@ -64,16 +64,17 @@
               <el-table-column
                 v-for="(item,i) in row.table_head"
                 :key="i"
-                :label="item.point"
+                :label="i"
+                align="center"
               >
                 <el-table-column
-                  v-for="(itemChild,iChild) in item.point_head"
+                  v-for="(itemChild,iChild) in item"
                   :key="iChild"
-                  :label="itemChild.point"
+                  :label="itemChild"
                   min-width="20"
                 >
                   <template slot-scope="scopeChild">
-                    {{ scopeChild.row.test_data[item.point][itemChild.point] }}
+                    {{ scopeChild.row.test_data[i][itemChild] }}
                   </template>
                 </el-table-column>
               </el-table-column>
@@ -201,7 +202,7 @@
                 v-for="item in row.get_depot_name?options1.filter(d=>d.depot === row.get_depot_name):[]"
                 :key="item.id"
                 :label="item.depot_site_name"
-                :value="item.depot_site_name"
+                :value="item.id"
               />
             </el-select>
           </template>
@@ -356,7 +357,7 @@ export default {
           data: {
             status: 2,
             id: row.id,
-            depot_site: row.depot_site_name
+            depot_site: row.depot_site_id
           }})
           .then(response => {
             this.$message({
