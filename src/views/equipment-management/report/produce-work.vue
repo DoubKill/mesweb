@@ -212,17 +212,17 @@
           </tr>
           <tr v-for="(itemVal,i) in dataList" :key="i" style="textAlign:center">
             <td v-if="spanArr[i]" :rowspan="spanArr[i]">{{ itemVal.equip_no }}</td>
-            <td style="width:150px">{{ itemVal.product_no }}</td>
-            <td>{{ itemVal.plan_trains }}</td>
-            <td>{{ itemVal.actual_trains }}</td>
-            <td>{{ itemVal.trains_sum[0] }}</td>
+            <td v-if="spanArr1[i]" :rowspan="spanArr1[i]" style="width:150px">{{ itemVal.product_no }}</td>
+            <td v-if="spanArr1[i]" :rowspan="spanArr1[i]" style="minHeight:30px">{{ itemVal.plan_trains }}</td>
+            <td v-if="spanArr1[i]" :rowspan="spanArr1[i]">{{ itemVal.actual_trains }}</td>
+            <td v-if="spanArr1[i]" :rowspan="spanArr1[i]">{{ itemVal.trains_sum[0] }}</td>
             <td v-if="spanArr[i]" :rowspan="spanArr[i] " colspan="2">
               <div>投料岗位：{{ itemVal.put_user }} </div>
               <div>挤出岗位：{{ itemVal.extrusion_user }}</div>
               <div>收皮岗位：{{ itemVal.collection_user }}</div>
             </td>
 
-            <td v-if="itemVal.aaa" style="width:200px" :rowspan="itemVal.aaa" colspan="3">
+            <td v-if="itemVal.aaa" style="width:200px;height:20px" :rowspan="itemVal.aaa" colspan="3">
               <span v-if="i===0" style="fontWeight:bolder">设备异常运行情况</span>
               <span v-if="i===1">{{ records.equip_error_record }}</span>
               <span v-if="i===Math.floor(dataList.length / 4)" style="fontWeight:bolder">工艺停机</span>
@@ -283,8 +283,16 @@ export default {
         this.shift_leader = data.shift_leader || null
         this.loading = false
         if (this.dataList.length === 0) return
+        const arr = JSON.parse(JSON.stringify(this.dataList))
+        if (this.dataList.length < 8) {
+          for (var a = 0; a < 8 - arr.length; a++) {
+            this.dataList.unshift(this.dataList[0])
+          }
+        }
         this.spanArr = []
         this.pos = null
+        this.spanArr1 = []
+        this.pos1 = null
         const aaa = Math.floor(this.dataList.length / 4)
         for (var i = 0; i < this.dataList.length; i++) {
           if (i === 0) {
@@ -306,7 +314,18 @@ export default {
             // 如果是第一条记录（即索引是0的时候），向数组中加入１
             this.spanArr.push(1)
             this.pos = 0
+            this.spanArr1.push(1)
+            this.pos1 = 0
           } else {
+            if (this.dataList[i] === this.dataList[i - 1]) {
+              // 如果a相等就累加，并且push 0  这里是根据一样的a匹配
+              this.spanArr1[this.pos] += 1
+              this.spanArr1.push(0)
+            } else {
+              // 不相等push 1
+              this.spanArr1.push(1)
+              this.pos1 = i
+            }
             if (this.dataList[i].equip_no === this.dataList[i - 1].equip_no) {
               // 如果a相等就累加，并且push 0  这里是根据一样的a匹配
               this.spanArr[this.pos] += 1
@@ -388,6 +407,14 @@ export default {
     objectSpanMethod({ row, column, rowIndex, columnIndex }) {
       if ([0, 1, 2, 3, 4, 5].includes(columnIndex) && this.spanArr) {
         const _row = this.spanArr[rowIndex]
+        const _col = _row > 0 ? 1 : 0
+        return {
+          rowspan: _row,
+          colspan: _col
+        }
+      }
+      if ([6, 7, 8, 9, 10].includes(columnIndex) && this.spanArr1) {
+        const _row = this.spanArr1[rowIndex]
         const _col = _row > 0 ? 1 : 0
         return {
           rowspan: _row,
