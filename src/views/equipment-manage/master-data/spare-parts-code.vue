@@ -1,26 +1,37 @@
 <template>
-  <div class="fault-classify">
-    <!-- 设备故障分类管理 -->
-    <el-form :inline="true">
-      <el-form-item label="故障大类名称">
-        <el-input v-model="formInline.user" clearable placeholder="故障大类名称" />
+  <div class="location-area-style">
+    <!-- 备件代码定义 -->
+    <el-form :inline="true" class="search-form-style">
+      <el-form-item label="备件分类">
+        <el-select v-model="formInline.region" clearable placeholder="备件分类">
+          <el-option
+            v-for="item in ['浙江','大连']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
       </el-form-item>
-      <el-form-item label="故障代码">
-        <el-input v-model="formInline.user" clearable placeholder="故障代码" />
+      <el-form-item label="备件名称">
+        <el-input v-model="formInline.user" clearable placeholder="备件名称" />
       </el-form-item>
-      <el-form-item label="故障名称">
-        <el-input v-model="formInline.user" clearable placeholder="故障名称" />
+      <el-form-item label="规格型号">
+        <el-input v-model="formInline.user" clearable placeholder="规格型号" />
       </el-form-item>
       <el-form-item label="是否启用">
         <el-select v-model="formInline.region" clearable placeholder="是否启用">
-          <el-option label="区域一" value="shanghai" />
-          <el-option label="区域二" value="beijing" />
+          <el-option
+            v-for="item in ['浙江','大连']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
         </el-select>
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button type="primary" @click="onSubmit">导出Excel</el-button>
-        <el-button type="primary" @click="onSubmit">导入Excel</el-button>
-        <el-button type="primary" @click="onSubmit">新建</el-button>
+        <el-button size="small" type="primary" @click="onSubmit">导出Excel</el-button>
+        <el-button size="small" type="primary" @click="onSubmit">导入Excel</el-button>
+        <el-button size="small" type="primary" @click="onSubmit">新建</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -31,32 +42,72 @@
     >
       <el-table-column
         prop="date"
-        label="故障大类代码"
+        label="备件代码"
         min-width="20"
       />
       <el-table-column
         prop="name"
-        label="故障大类名称"
+        label="备件名称"
         min-width="20"
       />
       <el-table-column
         prop="address"
-        label="分类代码"
+        label="备件分类"
         min-width="20"
       />
       <el-table-column
         prop="date"
-        label="分类名称"
+        label="规格型号"
         min-width="20"
       />
       <el-table-column
         prop="name"
+        label="技术参数"
+        min-width="20"
+      />
+      <el-table-column
+        prop="address"
+        label="标准单位"
+        min-width="20"
+      />
+      <el-table-column
+        prop="date"
+        label="关键部件"
+        min-width="20"
+      />
+      <el-table-column
+        prop="name"
+        label="库存下限"
+        min-width="20"
+      />
+      <el-table-column
+        prop="name"
+        label="库存上限"
+        min-width="20"
+      />
+      <el-table-column
+        prop="address"
+        label="计划价格"
+        min-width="20"
+      />
+      <el-table-column
+        prop="address"
+        label="材质"
+        min-width="20"
+      />
+      <el-table-column
+        prop="address"
+        label="有效期（天）"
+        min-width="20"
+      />
+      <el-table-column
+        prop="address"
         label="是否启用"
         min-width="20"
       />
       <el-table-column
         prop="address"
-        label="录入者"
+        label="录入人"
         min-width="20"
       />
       <el-table-column
@@ -64,7 +115,7 @@
         label="录入时间"
         min-width="20"
       />
-      <el-table-column label="操作" width="200px">
+      <el-table-column label="操作" width="140px">
         <template slot-scope="scope">
           <el-button-group>
             <el-button
@@ -89,19 +140,20 @@
       @currentChange="currentChange"
     />
     <el-dialog
-      :title="`${dialogForm.id?'编辑':'新建'}设备部位定义`"
+      :title="`${dialogForm.id?'编辑':'新建'}备件代码定义`"
       :visible.sync="dialogVisible"
-      width="500px"
+      width="900px"
       :before-close="handleClose"
     >
       <el-form
         ref="createForm"
         :rules="rules"
-        label-width="120px"
+        label-width="150px"
         :model="dialogForm"
+        :inline="true"
       >
         <el-form-item
-          label="故障大类代码"
+          label="备件分类"
           prop="type"
         >
           <el-select v-model="dialogForm.type" placeholder="请选择">
@@ -114,19 +166,76 @@
           </el-select>
         </el-form-item>
         <el-form-item
-          label="故障大类名称"
+          label="关键部件"
+          prop="type"
+        >
+          <el-select v-model="dialogForm.type" placeholder="请选择">
+            <el-option
+              v-for="item in ['浙江','大连']"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="备件代码"
           prop="name"
         >
           <el-input v-model="dialogForm.name" :disabled="dialogForm.id?true:false" />
         </el-form-item>
         <el-form-item
-          label="故障分类代码"
+          label="库存下限"
           prop="name"
         >
-          <el-input v-model="dialogForm.name" :disabled="dialogForm.id?true:false" />
+          <el-input-number v-model="dialogForm.num" controls-position="right" :min="1" :max="10" />
         </el-form-item>
         <el-form-item
-          label="故障分类名称"
+          label="备件名称"
+          prop="name"
+        >
+          <el-input v-model="dialogForm.input3" placeholder="请输入内容" disabled>
+            <el-button slot="append" icon="el-icon-search" @click="showERP" />
+          </el-input>
+        </el-form-item>
+        <el-form-item
+          label="库存上限"
+          prop="name"
+        >
+          <el-input-number v-model="dialogForm.num" controls-position="right" :min="1" :max="10" />
+        </el-form-item>
+        <el-form-item
+          label="规格型号"
+          prop="name"
+        >
+          <el-input v-model="dialogForm.name" />
+        </el-form-item>
+        <el-form-item
+          label="计划价格"
+          prop="name"
+        >
+          <el-input-number v-model="dialogForm.num" controls-position="right" :min="1" :max="10" />
+        </el-form-item>
+        <el-form-item
+          label="技术参数"
+          prop="name"
+        >
+          <el-input v-model="dialogForm.name" />
+        </el-form-item>
+        <el-form-item
+          label="有效期（天）"
+          prop="name"
+        >
+          <el-input-number v-model="dialogForm.num" controls-position="right" :min="1" :max="10" />
+        </el-form-item>
+        <el-form-item
+          label="标准单位"
+          prop="name"
+        >
+          <el-input v-model="dialogForm.name" />
+        </el-form-item>
+        <el-form-item
+          label="材质"
           prop="name"
         >
           <el-input v-model="dialogForm.name" />
@@ -143,7 +252,7 @@
 <script>
 import page from '@/components/page'
 export default {
-  name: 'EquipmentMasterDataFaultClassify',
+  name: 'EquipmentMasterDataSparePartsCode',
   components: { page },
   data() {
     return {
@@ -181,6 +290,9 @@ export default {
     },
     showEditDialog() {
       this.dialogVisible = true
+    },
+    showERP() {
+
     },
     handleDelete: function(row) {
       var str = row.used_flag ? '停用' : '启用'
@@ -230,12 +342,17 @@ export default {
 </script>
 
 <style lang="scss">
-.fault-classify{
-  .el-input{
-    width:160px;
+.location-area-style{
+  .search-form-style{
+    .el-input{
+      width:140px;
+    }
   }
-  .el-dialog .el-input{
-    width:250px;
+  .el-dialog__wrapper .el-input{
+    width:200px;
+  }
+  .el-input-number .el-input{
+    width:auto;
   }
 }
 </style>

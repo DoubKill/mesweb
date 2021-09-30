@@ -285,6 +285,16 @@ export const equipRoutes = [
               title: '设备故障分类管理',
               permissionName: ''
             }
+          },
+          {
+            path: '/equipment/spare-parts-code',
+            component: () => import('@/views/equipment-manage/master-data/spare-parts-code'),
+            name: 'EquipmentMasterDataSparePartsCode',
+            meta: {
+              faName: 'EquipmentMasterData',
+              title: '备件代码定义',
+              permissionName: ''
+            }
           }
         ]
       }
