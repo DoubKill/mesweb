@@ -136,7 +136,13 @@
         prop="date"
         label="巡检标准"
         min-width="20"
-      />
+      >
+        <template slot-scope="scope">
+          <el-link
+            type="primary"
+          >{{ scope.row.date }}</el-link>
+        </template>
+      </el-table-column>
       <el-table-column
         prop="date"
         label="计划巡检日期"

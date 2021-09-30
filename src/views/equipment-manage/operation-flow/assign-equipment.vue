@@ -140,7 +140,13 @@
         prop="date"
         label="维修标准/故障原因"
         min-width="20"
-      />
+      >
+        <template slot-scope="scope">
+          <el-link
+            type="primary"
+          >{{ scope.row.date }}</el-link>
+        </template>
+      </el-table-column>
       <el-table-column
         prop="date"
         label="计划维修日期"

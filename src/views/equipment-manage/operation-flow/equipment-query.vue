@@ -98,7 +98,7 @@
           @input="changeSearch"
         />
       </el-form-item>
-      <el-form-item label="验收人">
+      <el-form-item label="验收结果">
         <el-select
           v-model="search.jg"
           placeholder="请选择"
@@ -145,6 +145,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary">导出Excel</el-button>
+        <el-button type="primary">查询</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -165,7 +166,13 @@
         prop="date"
         label="工单编号"
         min-width="20"
-      />
+      >
+        <template slot-scope="scope">
+          <el-link
+            type="primary"
+          >{{ scope.row.date }}</el-link>
+        </template>
+      </el-table-column>
       <el-table-column
         prop="date"
         label="机台"
@@ -180,7 +187,13 @@
         prop="date"
         label="维修标准/故障原因"
         min-width="20"
-      />
+      >
+        <template slot-scope="scope">
+          <el-link
+            type="primary"
+          >{{ scope.row.date }}</el-link>
+        </template>
+      </el-table-column>
       <el-table-column
         prop="date"
         label="故障详情描述"
@@ -309,9 +322,8 @@ export default {
         page_size: 10
       },
       dateValue: [],
-      tableData: [],
+      tableData: [{ date: '1' }],
       total: 0,
-      options1: ['巡检', '生产', '其他'],
       options2: ['已做成', '已接单', '等待物料', '等待外协维修', '已完成', '已关闭'],
       options3: ['停机', '不停机'],
       options4: ['高', '中', '低']
