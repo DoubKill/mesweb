@@ -215,7 +215,7 @@
             <td v-if="spanArr1[i]" :rowspan="spanArr1[i]" style="width:150px">{{ itemVal.product_no }}</td>
             <td v-if="spanArr1[i]" :rowspan="spanArr1[i]" style="minHeight:30px">{{ itemVal.plan_trains }}</td>
             <td v-if="spanArr1[i]" :rowspan="spanArr1[i]">{{ itemVal.actual_trains }}</td>
-            <td v-if="spanArr1[i]" :rowspan="spanArr1[i]">{{ itemVal.trains_sum[0] }}</td>
+            <td v-if="spanArr2[i]" :rowspan="spanArr2[i]">{{ itemVal.trains_sum[0] }}</td>
             <td v-if="spanArr[i]" :rowspan="spanArr[i] " colspan="2">
               <div>投料岗位：{{ itemVal.put_user }} </div>
               <div>挤出岗位：{{ itemVal.extrusion_user }}</div>
@@ -293,6 +293,8 @@ export default {
         this.pos = null
         this.spanArr1 = []
         this.pos1 = null
+        this.spanArr2 = []
+        this.pos2 = null
         const aaa = Math.floor(this.dataList.length / 4)
         for (var i = 0; i < this.dataList.length; i++) {
           if (i === 0) {
@@ -316,16 +318,9 @@ export default {
             this.pos = 0
             this.spanArr1.push(1)
             this.pos1 = 0
+            this.spanArr2.push(1)
+            this.pos2 = 0
           } else {
-            if (this.dataList[i] === this.dataList[i - 1]) {
-              // 如果a相等就累加，并且push 0  这里是根据一样的a匹配
-              this.spanArr1[this.pos] += 1
-              this.spanArr1.push(0)
-            } else {
-              // 不相等push 1
-              this.spanArr1.push(1)
-              this.pos1 = i
-            }
             if (this.dataList[i].equip_no === this.dataList[i - 1].equip_no) {
               // 如果a相等就累加，并且push 0  这里是根据一样的a匹配
               this.spanArr[this.pos] += 1
@@ -334,6 +329,24 @@ export default {
               // 不相等push 1
               this.spanArr.push(1)
               this.pos = i
+            }
+            if (this.dataList[i] === this.dataList[i - 1]) {
+              // 如果a相等就累加，并且push 0  这里是根据一样的a匹配
+              this.spanArr1[this.pos1] += 1
+              this.spanArr1.push(0)
+            } else {
+              // 不相等push 1
+              this.spanArr1.push(1)
+              this.pos1 = i
+            }
+            if (this.dataList[i].equip_no === this.dataList[i - 1].equip_no && this.dataList[i].trains_sum[0] === this.dataList[i - 1].trains_sum[0]) {
+              // 如果a相等就累加，并且push 0  这里是根据一样的a匹配
+              this.spanArr2[this.pos2] += 1
+              this.spanArr2.push(0)
+            } else {
+              // 不相等push 1
+              this.spanArr2.push(1)
+              this.pos2 = i
             }
           }
         }
