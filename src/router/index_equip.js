@@ -72,7 +72,7 @@ export const equipRoutes = [
               permissionName: ''
             }
           },
-          {
+          /* {
             path: '/equipment/repair-application-process',
             component: () => import('@/views/equipment-manage/operation-flow/repair-application-process'),
             name: 'EquipmentRepairProcess',
@@ -81,7 +81,7 @@ export const equipRoutes = [
               title: '报修申请处理',
               permissionName: ''
             }
-          },
+          },*/
           {
             path: '/equipment/assign-equipment',
             component: () => import('@/views/equipment-manage/operation-flow/assign-equipment'),
@@ -121,7 +121,8 @@ export const equipRoutes = [
               title: '维修工单查询',
               permissionName: ''
             }
-          },
+          }
+          /*,
           {
             path: '/equipment/apare-parts',
             component: () => import('@/views/equipment-manage/operation-flow/apare-parts'),
@@ -131,7 +132,7 @@ export const equipRoutes = [
               title: '备件领料申请处理',
               permissionName: ''
             }
-          }
+          }*/
         ]
       },
       {
