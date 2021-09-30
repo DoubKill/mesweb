@@ -202,7 +202,7 @@
             @visible-change="visibleChange1"
           >
             <el-option
-              v-for="item in formObj.depot?options1.filter(d=>d.depot === formObj.depot):options1"
+              v-for="item in formObj.depot?options1.filter(d=>d.depot === formObj.depot):[]"
               :key="item.id"
               :label="item.depot_site_name"
               :value="item.id"
@@ -383,7 +383,7 @@ export default {
       }
     },
     changeDepot() {
-      this.$set(this.formObj, 'depot_site', null)
+      this.$set(this.formObj, 'depot_site', undefined)
     },
     submitFun() {
       this.$refs.formObj.validate(async(valid) => {
