@@ -215,7 +215,7 @@
           <span v-else>{{ formObj.weight }}</span>
         </el-form-item>
         <el-form-item label="数量（包）" prop="num">
-          <el-input v-model="formObj.num" />
+          <el-input-number v-model="formObj.num" controls-position="right" :min="0" :step="1" step-strictly />
         </el-form-item>
         <el-form-item label="总重（kg）" prop="ccc">
           <el-input v-model="formObj.ccc" disabled />
@@ -454,8 +454,14 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
 .liuh .el-input{
   width:209px;
+}
+.liuh .el-dialog__wrapper{
+  .el-input{
+    width:auto !important;
+  }
+
 }
 </style>
