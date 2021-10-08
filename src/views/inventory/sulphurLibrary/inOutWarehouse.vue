@@ -416,9 +416,9 @@ export default {
         }
         const data = await sulfurData('get', null, { params: obj })
         const _obj = data.results[0]
-        this.formObj.depot = _obj.depot
-        this.formObj.depot_site = _obj.depot_site
-        this.formObj.weight = _obj.weight
+        this.$set(this.formObj, 'depot', _obj.depot)
+        this.$set(this.formObj, 'depot_site', _obj.depot_site)
+        this.$set(this.formObj, 'weight', _obj.weight)
       } catch (e) {
         //
       }
@@ -454,12 +454,12 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .liuh .el-input{
   width:209px;
 }
-.liuh .el-dialog__wrapper{
-  .el-input{
+.liuh {
+  .el-input-number .el-input{
     width:auto !important;
   }
 
