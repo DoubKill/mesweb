@@ -178,6 +178,48 @@ export const equipRoutes = [
         ]
       },
       {
+        path: '/equipment/standard-definition',
+        redirect: '/equipment/project-definition',
+        component: () => import('@/views/equipment-manage/standard-definition/a-index'),
+        name: 'StandardDefinition',
+        meta: {
+          title: '标准定义',
+          icon: 'quality'
+        },
+        children: [
+          {
+            path: '/equipment/project-definition',
+            component: () => import('@/views/equipment-manage/standard-definition/project-definition'),
+            name: 'ProjectDefinition',
+            meta: {
+              faName: 'StandardDefinition',
+              title: '作业项目标准定义',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/maintain-definition',
+            component: () => import('@/views/equipment-manage/standard-definition/maintain-definition'),
+            name: 'MaintainDefinition',
+            meta: {
+              faName: 'StandardDefinition',
+              title: '维护作业标准定义',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/repair-definition',
+            component: () => import('@/views/equipment-manage/standard-definition/repair-definition'),
+            name: 'RepairDefinition',
+            meta: {
+              faName: 'StandardDefinition',
+              title: '维修作业标准定义',
+              permissionName: ''
+            }
+          }
+        ]
+      },
+      {
         path: '/equipment/spare-parts',
         redirect: '/equipment/location-management',
         component: () => import('@/views/equipment-manage/spare-parts/a-index'),
