@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 执行巡检工单 -->
+    <!-- 巡检工单查询 -->
     <el-form :inline="true">
       <el-form-item label="计划巡检时间">
         <el-date-picker

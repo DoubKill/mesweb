@@ -145,7 +145,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary">查询本人待处理工单</el-button>
-        <el-button type="primary" @click="dialog">验收</el-button>
+        <el-button type="primary" @click="dialog(false,'验收维修工单')">验收</el-button>
         <el-button type="primary">导出Excel</el-button>
       </el-form-item>
     </el-form>
@@ -160,6 +160,27 @@
         width="40"
         :reserve-selection="true"
       />
+      <el-table-column
+        label="操作"
+        width="220"
+      >
+        <template slot-scope="scope">
+          <el-button-group>
+            <el-button
+              type="primary"
+              size="mini"
+              @click="dialog(scope.row,'查看维修结果')"
+            >查看维修结果
+            </el-button>
+            <el-button
+              type="primary"
+              size="mini"
+              @click="dialog(scope.row,'查看验收结果')"
+            >查看验收结果
+            </el-button>
+          </el-button-group>
+        </template>
+      </el-table-column>
       <el-table-column
         prop="date"
         label="计划/报修编号"
@@ -303,7 +324,7 @@
       />
     </el-table>
     <el-dialog
-      title="验收维修工单"
+      :title="operateType"
       :visible.sync="dialogVisible"
       width="30%"
     >
@@ -311,6 +332,7 @@
         <el-form-item label="验收说明" prop="note1">
           <el-input
             v-model="creatOrder.note1"
+            :disabled="operateType!=='验收维修工单'"
             style="width:250px"
             type="textarea"
             :rows="3"
@@ -319,6 +341,7 @@
         </el-form-item>
         <el-form-item label="上传图片">
           <el-upload
+            v-if="operateType==='验收维修工单'"
             ref="elUploadImg"
             action=""
             :auto-upload="false"
@@ -330,12 +353,22 @@
           >
             <i class="el-icon-plus" />
           </el-upload>
+          <el-image
+            v-else
+            style="width: 100px; height: 100px"
+            :src="creatOrder.image"
+            :preview-src-list="[creatOrder.image]"
+          >
+            <div slot="error" class="image-slot">
+              暂无图片
+            </div>
+          </el-image>
           <el-dialog :visible.sync="dialogVisibleImg" append-to-body>
             <img width="100%" :src="dialogImageUrl" alt="">
           </el-dialog>
         </el-form-item>
         <el-form-item label="验收结论">
-          <el-radio-group v-model="creatOrder.radio1">
+          <el-radio-group v-model="creatOrder.radio1" :disabled="operateType!=='验收维修工单'">
             <el-radio label="1">合格</el-radio>
             <el-radio label="2">不合格</el-radio>
           </el-radio-group>
@@ -343,7 +376,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose(false)">取 消</el-button>
-        <el-button :loading="submit" type="primary" @click="generateFun">确 定</el-button>
+        <el-button v-if="operateType==='验收维修工单'" :loading="submit" type="primary" @click="generateFun">确 定</el-button>
       </span>
     </el-dialog>
     <page
@@ -368,7 +401,7 @@ export default {
         page_size: 10
       },
       dateValue: [],
-      tableData: [],
+      tableData: [{ date: '1' }],
       total: 0,
       options1: ['巡检', '生产', '其他'],
       options2: ['已做成', '已接单', '等待物料', '等待外协维修', '已完成', '已关闭'],
@@ -376,6 +409,7 @@ export default {
       options4: ['高', '中', '低'],
       multipleSelection: [],
       dialogImageUrl: '',
+      operateType: '',
       dialogVisible: false,
       submit: false,
       dialogVisibleImg: false,
@@ -422,7 +456,9 @@ export default {
       this.creatOrder.equip_no = obj || null
       console.log(this.creatOrder.equip_no)
     },
-    dialog() {
+    dialog(row, type) {
+      console.log(type)
+      this.operateType = type
       this.dialogVisible = true
     },
     handleClose(done) {

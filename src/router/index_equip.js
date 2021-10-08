@@ -178,6 +178,78 @@ export const equipRoutes = [
         ]
       },
       {
+        path: '/equipment/spare-parts',
+        redirect: '/equipment/location-management',
+        component: () => import('@/views/equipment-manage/spare-parts/a-index'),
+        name: 'SparePartsWarehouse',
+        meta: {
+          title: '备品备件库',
+          icon: 'quality'
+        },
+        children: [
+          {
+            path: '/equipment/location-management',
+            component: () => import('@/views/equipment-manage/spare-parts/location-management'),
+            name: 'LocationManagement',
+            meta: {
+              faName: 'SparePartsWarehouse',
+              title: '库区库位管理',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/warehousing-management',
+            component: () => import('@/views/equipment-manage/spare-parts/warehousing-management'),
+            name: 'WarehousingManagement',
+            meta: {
+              faName: 'SparePartsWarehouse',
+              title: '入库管理',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/outbounding-management',
+            component: () => import('@/views/equipment-manage/spare-parts/outbounding-management'),
+            name: 'OutboundingManagement',
+            meta: {
+              faName: 'SparePartsWarehouse',
+              title: '出库管理',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/inventory-query',
+            component: () => import('@/views/equipment-manage/spare-parts/inventory-query'),
+            name: 'InventoryQuery',
+            meta: {
+              faName: 'SparePartsWarehouse',
+              title: '库存查询',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/history-query',
+            component: () => import('@/views/equipment-manage/spare-parts/history-query'),
+            name: 'HistoryQuery',
+            meta: {
+              faName: 'SparePartsWarehouse',
+              title: '出入库履历查询',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/statistics',
+            component: () => import('@/views/equipment-manage/spare-parts/statistics'),
+            name: 'Statistics',
+            meta: {
+              faName: 'SparePartsWarehouse',
+              title: '出入库统计分析',
+              permissionName: ''
+            }
+          }
+        ]
+      },
+      {
         path: '/equipment/master-data',
         redirect: '/equipment/supplier',
         component: () => import('@/views/equipment-manage/master-data/a-index'),

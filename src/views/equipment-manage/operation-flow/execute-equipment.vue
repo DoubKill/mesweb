@@ -132,7 +132,7 @@
     >
       <el-table-column
         label="操作"
-        width="130"
+        width="230"
       >
         <template slot-scope="scope">
           <el-button-group>
@@ -144,8 +144,14 @@
             <el-button
               type="primary"
               size="mini"
-              @click="dialog(scope.row)"
+              @click="dialog(scope.row,'处理维修工单')"
             >处理
+            </el-button>
+            <el-button
+              type="primary"
+              size="mini"
+              @click="dialog(scope.row,'查看处理结果')"
+            >查看处理结果
             </el-button>
           </el-button-group>
         </template>
@@ -279,7 +285,7 @@
       @currentChange="currentChange"
     />
     <el-dialog
-      title="处理维修工单"
+      :title="operateType"
       :visible.sync="dialogVisible"
       width="30%"
     >
@@ -314,6 +320,7 @@
         <el-form-item label="故障详情描述" prop="note">
           <el-input
             v-model="creatOrder.note"
+            :disabled="operateType==='查看处理结果'"
             type="textarea"
             style="width:250px"
             :rows="3"
@@ -335,6 +342,7 @@
         <el-form-item label="维修记录" prop="note1">
           <el-input
             v-model="creatOrder.note1"
+            :disabled="operateType==='查看处理结果'"
             style="width:250px"
             type="textarea"
             :rows="3"
@@ -343,6 +351,7 @@
         </el-form-item>
         <el-form-item label="上传图片">
           <el-upload
+            v-if="operateType==='处理维修工单'"
             ref="elUploadImg"
             action=""
             :auto-upload="false"
@@ -354,6 +363,16 @@
           >
             <i class="el-icon-plus" />
           </el-upload>
+          <el-image
+            v-else
+            style="width: 100px; height: 100px"
+            :src="creatOrder.image"
+            :preview-src-list="[creatOrder.image]"
+          >
+            <div slot="error" class="image-slot">
+              暂无图片
+            </div>
+          </el-image>
           <el-dialog :visible.sync="dialogVisibleImg" append-to-body>
             <img width="100%" :src="dialogImageUrl" alt="">
           </el-dialog>
@@ -380,7 +399,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose(false)">取 消</el-button>
-        <el-button :loading="submit" type="primary" @click="generateFun">确 定</el-button>
+        <el-button v-if="operateType==='处理维修工单'" :loading="submit" type="primary" @click="generateFun">确 定</el-button>
       </span>
     </el-dialog>
     <el-dialog
@@ -563,6 +582,7 @@ export default {
       multipleSelection: [],
       dialogImageUrl: '',
       loadingView: false,
+      operateType: '',
       tableDataView: [],
       tableDataView1: [],
       dialogVisible: false,
@@ -612,7 +632,8 @@ export default {
       this.creatOrder.equip_no = obj || null
       console.log(this.creatOrder.equip_no)
     },
-    dialog() {
+    dialog(row, type) {
+      this.operateType = type
       this.dialogVisible = true
     },
     dialog1() {

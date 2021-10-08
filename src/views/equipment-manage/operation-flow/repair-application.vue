@@ -70,7 +70,7 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="dialog">新建</el-button>
+        <el-button type="primary" @click="dialog(false,'新建报修申请')">新建</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -82,7 +82,14 @@
         prop="date"
         label="报修编号"
         min-width="20"
-      />
+      >
+        <template slot-scope="scope">
+          <el-link
+            type="primary"
+            @click="dialog(scope.row,'报修申请详情')"
+          >{{ scope.row.date }}</el-link>
+        </template>
+      </el-table-column>
       <el-table-column
         prop="date"
         label="报修部门"
@@ -137,7 +144,7 @@
     />
 
     <el-dialog
-      title="申请维修"
+      :title="operateType"
       :visible.sync="dialogVisible"
       width="600"
       :before-close="handleClose"
@@ -151,18 +158,21 @@
         <el-form-item label="设备条码">
           <el-input
             v-model="ruleForm.material_name"
+            :disabled="operateType==='报修申请详情'"
             style="width:250px"
           />
         </el-form-item>
         <el-form-item label="设备名称">
           <el-input
             v-model="ruleForm.material_name"
+            :disabled="operateType==='报修申请详情'"
             style="width:250px"
           />
         </el-form-item>
         <el-form-item style="" label="报修部门" prop="warehouse">
           <el-select
             v-model="ruleForm.mater"
+            :disabled="operateType==='报修申请详情'"
             placeholder="请选择"
             clearable
           >
@@ -177,6 +187,7 @@
         <el-form-item label="故障发生时间" prop="down_time">
           <el-date-picker
             v-model="ruleForm.down_time"
+            :disabled="operateType==='报修申请详情'"
             type="datetime"
             placeholder="选择日期时间"
             value-format="yyyy-MM-dd HH:mm:ss"
@@ -185,18 +196,22 @@
         <el-form-item label="机台" prop="equip_no">
           <equip-select
             equip-type="密炼设备"
+            :is-disabled="operateType==='报修申请详情'"
             :is-multiple="true"
             :default-val="ruleForm.equip_no"
             @equipSelected="equipSelected"
           />
         </el-form-item>
         <el-form-item label="设备部位" prop="equip_part">
-          <locationDefinitionDelect :is-created="true" :equip-no="ruleForm.equip_no" :default-val="ruleForm.equip_part" @locationSelect="locationSelect" />
-          <el-checkbox v-model="ruleForm.down_flag" style="margin-left:10px">已停机</el-checkbox>
+          <locationDefinitionDelect :is-disabled="operateType==='报修申请详情'" :is-created="true" :equip-no="ruleForm.equip_no" :default-val="ruleForm.equip_part" @locationSelect="locationSelect" />
+          <el-link v-if="ruleForm.down_flag&&ruleForm.id" style="margin-left:10px" type="warning">已停机</el-link>
+          <el-link v-if="ruleForm.id&&!ruleForm.down_flag" style="margin-left:10px">未停机</el-link>
+          <el-checkbox v-if="!ruleForm.id" v-model="ruleForm.down_flag" :disabled="operateType==='报修申请详情'" style="margin-left:10px">已停机</el-checkbox>
         </el-form-item>
         <el-form-item label="停机原因">
           <el-input
             v-model="ruleForm.material_name"
+            :disabled="operateType==='报修申请详情'"
             style="width:250px"
           >
             <el-button
@@ -206,7 +221,7 @@
           </el-input>
         </el-form-item>
         <el-form-item label="重要程度">
-          <el-radio-group v-model="ruleForm.feed">
+          <el-radio-group v-model="ruleForm.feed" :disabled="operateType==='报修申请详情'">
             <el-radio label="1">高</el-radio>
             <el-radio label="2">中</el-radio>
             <el-radio label="3">低</el-radio>
@@ -215,6 +230,7 @@
         <el-form-item label="故障描述" prop="note">
           <el-input
             v-model="ruleForm.note"
+            :disabled="operateType==='报修申请详情'"
             type="textarea"
             :rows="3"
             placeholder="请输入内容"
@@ -222,6 +238,7 @@
         </el-form-item>
         <el-form-item label="上传图片">
           <el-upload
+            v-if="operateType!=='报修申请详情'"
             ref="elUploadImg"
             action=""
             :auto-upload="false"
@@ -233,6 +250,16 @@
           >
             <i class="el-icon-plus" />
           </el-upload>
+          <el-image
+            v-else
+            style="width: 100px; height: 100px"
+            :src="ruleForm.image"
+            :preview-src-list="[ruleForm.image]"
+          >
+            <div slot="error" class="image-slot">
+              暂无图片
+            </div>
+          </el-image>
           <el-dialog :visible.sync="dialogVisibleImg" append-to-body>
             <img width="100%" :src="dialogImageUrl" alt="">
           </el-dialog>
@@ -240,7 +267,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose(false)">取 消</el-button>
-        <el-button type="primary" @click="addSubmitFun">确 定</el-button>
+        <el-button v-if="operateType==='新建报修申请'" type="primary" @click="addSubmitFun">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -271,7 +298,7 @@ export default {
         page_size: 10
       },
       loading: true,
-      tableData: [],
+      tableData: [{ date: '1' }],
       dialogVisible: false,
       total: 0,
       ruleForm: {
@@ -325,7 +352,7 @@ export default {
     ])
   },
   created() {
-    this.getList()
+    // this.getList()
   },
   methods: {
     checkPermission,
@@ -364,7 +391,8 @@ export default {
         done()
       }
     },
-    dialog() {
+    dialog(row, type) {
+      this.operateType = type
       this.ruleForm = {
         down_time: '',
         first_down_type: '',
