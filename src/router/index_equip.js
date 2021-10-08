@@ -296,6 +296,26 @@ export const equipRoutes = [
               title: '备件代码定义',
               permissionName: ''
             }
+          },
+          {
+            path: '/equipment/equip-fault-signal',
+            component: () => import('@/views/equipment-manage/master-data/equip-fault-signal'),
+            name: 'EquipmentMasterDataFaultSignal',
+            meta: {
+              faName: 'EquipmentMasterData',
+              title: '设备故障信号定义',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/parts-define',
+            component: () => import('@/views/equipment-manage/master-data/parts-define'),
+            name: 'EquipmentMasterData-parts-define',
+            meta: {
+              faName: 'EquipmentMasterData',
+              title: '设备部件定义',
+              permissionName: ''
+            }
           }
         ]
       }
