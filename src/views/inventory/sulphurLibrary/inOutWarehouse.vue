@@ -392,7 +392,7 @@ export default {
             this.loadingBtn = true
             this.formObj.sulfur_status = this.formObj.id ? 2 : 1
             await sulfurData('post', null, { data: this.formObj })
-            this.$message.success('入库成功')
+            this.$message.success('操作成功')
             this.handleClose(false)
             this.getList()
             this.loadingBtn = false
