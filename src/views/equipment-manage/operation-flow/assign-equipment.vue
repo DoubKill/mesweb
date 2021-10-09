@@ -40,7 +40,7 @@
           clearable
         >
           <el-option
-            v-for="item in options3"
+            v-for="item in ['停机', '不停机']"
             :key="item"
             :label="item"
             :value="item"
@@ -55,7 +55,7 @@
           @change="changeSearch"
         >
           <el-option
-            v-for="item in options4"
+            v-for="item in ['高', '中', '低']"
             :key="item"
             :label="item"
             :value="item"
@@ -70,7 +70,7 @@
           @change="changeSearch"
         >
           <el-option
-            v-for="item in options2"
+            v-for="item in ['已做成', '已接单', '已完成', '已关闭']"
             :key="item"
             :label="item"
             :value="item"
@@ -198,6 +198,12 @@
         min-width="20"
       />
     </el-table>
+    <page
+      :old-page="false"
+      :total="total"
+      :current-page="search.page"
+      @currentChange="currentChange"
+    />
     <el-dialog
       title="指派工单"
       :visible.sync="dialogVisible"
@@ -218,12 +224,6 @@
         <el-button :loading="submit" type="primary" @click="generateFun">确 定</el-button>
       </span>
     </el-dialog>
-    <page
-      :old-page="false"
-      :total="total"
-      :current-page="search.page"
-      @currentChange="currentChange"
-    />
   </div>
 </template>
 
@@ -240,18 +240,17 @@ export default {
         page_size: 10
       },
       dateValue: [],
-      tableData: [],
+      tableData: [{ date: '1' }],
       total: 0,
       checkList: [],
-      options1: ['巡检', '生产', '其他'],
-      options2: ['已做成', '已接单', '已完成', '已关闭'],
-      options3: ['停机', '不停机'],
-      options4: ['高', '中', '低'],
       multipleSelection: [],
       dialogVisible: false,
       submit: false,
       creatOrder: {}
     }
+  },
+  created() {
+    this.getList()
   },
   methods: {
     generateFun(obj) {

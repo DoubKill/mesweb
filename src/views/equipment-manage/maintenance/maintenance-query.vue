@@ -94,7 +94,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary">导出Excel</el-button>
-        <el-button type="primary">查询</el-button>
+        <el-button type="primary" @click="changeSearch">查询</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -205,6 +205,9 @@ export default {
       submit: false,
       creatOrder: {}
     }
+  },
+  created() {
+    this.getList()
   },
   methods: {
     getList() {

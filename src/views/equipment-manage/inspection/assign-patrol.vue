@@ -41,7 +41,7 @@
           @change="changeSearch"
         >
           <el-option
-            v-for="item in options2"
+            v-for="item in ['已做成', '已接单', '已完成', '已关闭']"
             :key="item"
             :label="item"
             :value="item"
@@ -69,7 +69,7 @@
           clearable
         >
           <el-option
-            v-for="item in options3"
+            v-for="item in ['停机', '不停机']"
             :key="item"
             :label="item"
             :value="item"
@@ -84,7 +84,7 @@
           @change="changeSearch"
         >
           <el-option
-            v-for="item in options4"
+            v-for="item in ['高', '中', '低']"
             :key="item"
             :label="item"
             :value="item"
@@ -263,7 +263,7 @@
             clearable
           >
             <el-option
-              v-for="item in options3"
+              v-for="item in ['停机', '不停机']"
               :key="item"
               :label="item"
               :value="item"
@@ -278,7 +278,7 @@
             @change="changeSearch"
           >
             <el-option
-              v-for="item in options4"
+              v-for="item in ['高', '中', '低']"
               :key="item"
               :label="item"
               :value="item"
@@ -310,15 +310,15 @@ export default {
       tableData: [],
       total: 0,
       checkList: [],
-      options2: ['已做成', '已接单', '已完成', '已关闭'],
-      options3: ['停机', '不停机'],
-      options4: ['高', '中', '低'],
       multipleSelection: [],
       dialogVisible: false,
       dialogVisible1: false,
       submit: false,
       creatOrder: {}
     }
+  },
+  created() {
+    this.getList()
   },
   methods: {
     generateFun(obj) {

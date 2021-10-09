@@ -295,8 +295,8 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleClose1(false)">取 消</el-button>
-        <el-button :loading="submit" type="primary" @click="generateFun1">确 定</el-button>
+        <el-button @click="handleClose(false)">取 消</el-button>
+        <el-button :loading="submit" type="primary" @click="generateFun">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -325,12 +325,11 @@ export default {
       creatOrder: {}
     }
   },
+  created() {
+    this.getList()
+  },
   methods: {
     generateFun(obj) {
-      this.dialogVisible = true
-      console.log(obj, 'obj')
-    },
-    generateFun1(obj) {
       this.dialogVisible1 = true
       console.log(obj, 'obj')
     },
@@ -343,10 +342,6 @@ export default {
     changeSearch() {
       this.getList()
     },
-    equipSelected(obj) {
-      this.creatOrder.equip_no = obj || null
-      console.log(this.creatOrder.equip_no)
-    },
     dialog() {
       this.dialogVisible = true
     },
@@ -354,19 +349,10 @@ export default {
       this.dialogVisible1 = true
     },
     handleClose(done) {
-      this.dialogVisible = false
-      if (done) {
-        done()
-      }
-    },
-    handleClose1(done) {
       this.dialogVisible1 = false
       if (done) {
         done()
       }
-    },
-    handleSelectionChange(val) {
-      this.multipleSelection = val
     },
     currentChange(page, page_size) {
       this.search.page = page

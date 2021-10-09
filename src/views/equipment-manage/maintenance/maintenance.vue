@@ -302,6 +302,9 @@ export default {
       creatOrder: {}
     }
   },
+  created() {
+    this.getList()
+  },
   methods: {
     generateFun(obj) {
       this.dialogVisible = true

@@ -9,7 +9,7 @@
           @input="changeSearch"
         />
       </el-form-item>
-      <el-form-item label="保修部门">
+      <el-form-item label="报修部门">
         <el-select
           v-model="search.jg"
           style="width:150px"
@@ -340,10 +340,7 @@ export default {
       },
       dialogVisibleImg: false,
       dialogImageUrl: '',
-      operateType: '',
-      currentObj: {},
-      // 指派给谁
-      maintenance_user: ''
+      operateType: ''
     }
   },
   computed: {
@@ -357,7 +354,9 @@ export default {
   methods: {
     checkPermission,
     changeSearch() {
-
+      this.search.page = 1
+      this.tableData = []
+      this.getList()
     },
     async getList() {
       try {
@@ -369,11 +368,6 @@ export default {
       } catch (e) {
         this.loading = false
       }
-    },
-    changeList() {
-      this.search.page = 1
-      this.tableData = []
-      this.getList()
     },
     currentChange(page, page_size) {
       this.search.page = page
@@ -411,32 +405,6 @@ export default {
       this.$set(this.ruleForm, 'equip_no', obj ? obj.equip_no : '')
       this.$set(this.ruleForm, 'equip_part', '')
     },
-    shutdownMoldChange(obj) {
-      this.ruleForm.first_down_reason = ''
-      this.$set(this.ruleForm, 'first_down_type', obj ? obj.name : '')
-    },
-    shutdownReasonChange(obj) {
-      this.$set(this.ruleForm, 'first_down_reason', obj ? obj.desc : '')
-    },
-    changeSelectUser(obj, row) {
-      this.maintenance_user = obj ? obj.id : ''
-    },
-    submitUser(row) {
-      row.visible = false
-      if (!this.maintenance_user) {
-        return
-      }
-      equipMaintenanceOrder('put', row.id, { data: { maintenance_user: this.maintenance_user, status: 2 }})
-        .then(response => {
-          this.$message({
-            type: 'success',
-            message: '指派成功!'
-          })
-          this.changeList()
-        }).catch(e => {
-          this.$message.error('指派失败')
-        })
-    },
     onExceed() {
       this.$message.info('最多上传一张图片')
     },
@@ -454,27 +422,6 @@ export default {
         return
       }
       this.$set(this.ruleForm, 'image', file.raw)
-    },
-    sendFun() {
-
-    },
-    claimFun(row, str, status) {
-      this.$confirm('是否确定' + str + '?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        equipMaintenanceOrder('put', row.id, { data: { status: status }})
-          .then(response => {
-            this.$message({
-              type: 'success',
-              message: str + '成功!'
-            })
-            this.changeList()
-          }).catch(e => {
-            this.$message.error(str + '失败!')
-          })
-      })
     },
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url
@@ -512,24 +459,6 @@ export default {
         })
       } catch (e) {
         //
-      }
-    },
-    usedTypeFormatter(row) {
-      switch (row.status) {
-        case 1:
-          return '申请维修'
-        case 2:
-          return '就绪'
-        case 3:
-          return '开始维修'
-        case 4:
-          return '维修结束'
-        case 5:
-          return '确认完成'
-        case 6:
-          return '关闭'
-        case 7:
-          return '退回'
       }
     }
   }

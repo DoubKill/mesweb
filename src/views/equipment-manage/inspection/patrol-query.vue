@@ -41,7 +41,7 @@
           @change="changeSearch"
         >
           <el-option
-            v-for="item in options2"
+            v-for="item in ['已做成', '已接单', '等待物料', '等待外协维修', '已完成', '已关闭']"
             :key="item"
             :label="item"
             :value="item"
@@ -62,7 +62,7 @@
           clearable
         >
           <el-option
-            v-for="item in options3"
+            v-for="item in ['停机', '不停机']"
             :key="item"
             :label="item"
             :value="item"
@@ -77,7 +77,7 @@
           @change="changeSearch"
         >
           <el-option
-            v-for="item in options4"
+            v-for="item in ['高', '中', '低']"
             :key="item"
             :label="item"
             :value="item"
@@ -86,7 +86,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary">导出Excel</el-button>
-        <el-button type="primary">查询</el-button>
+        <el-button type="primary" @click="changeSearch">查询</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -219,11 +219,11 @@ export default {
       },
       dateValue: [],
       tableData: [{ date: '1' }],
-      total: 0,
-      options2: ['已做成', '已接单', '等待物料', '等待外协维修', '已完成', '已关闭'],
-      options3: ['停机', '不停机'],
-      options4: ['高', '中', '低']
+      total: 0
     }
+  },
+  created() {
+    this.getList()
   },
   methods: {
     changeDate() {
@@ -234,10 +234,6 @@ export default {
     },
     changeSearch() {
       this.getList()
-    },
-    handlePictureCardPreview(file) {
-      this.dialogImageUrl = file.url
-      this.dialogVisibleImg = true
     },
     equipSelected(obj) {
       this.creatOrder.equip_no = obj || null

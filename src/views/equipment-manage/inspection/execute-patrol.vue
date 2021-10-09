@@ -101,7 +101,7 @@
             <el-button
               type="primary"
               size="mini"
-              @click="showEditDialog(scope.row)"
+              @click="start(scope.row)"
             >开始</el-button>
             <el-button
               type="primary"
@@ -495,11 +495,17 @@ export default {
       creatOrder: { radio: '' }
     }
   },
+  created() {
+    this.getList()
+  },
   methods: {
     changeDate() {
 
     },
     getList() {
+
+    },
+    start() {
 
     },
     deleteList(row) {
@@ -576,7 +582,6 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val
     },
-
     currentChange(page, page_size) {
       this.search.page = page
       this.search.page_size = page_size

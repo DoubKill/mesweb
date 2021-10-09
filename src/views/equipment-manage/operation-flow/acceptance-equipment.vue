@@ -40,7 +40,7 @@
           clearable
         >
           <el-option
-            v-for="item in options3"
+            v-for="item in ['停机', '不停机']"
             :key="item"
             :label="item"
             :value="item"
@@ -55,7 +55,7 @@
           @change="changeSearch"
         >
           <el-option
-            v-for="item in options4"
+            v-for="item in ['高', '中', '低']"
             :key="item"
             :label="item"
             :value="item"
@@ -77,7 +77,7 @@
           @change="changeSearch"
         >
           <el-option
-            v-for="item in options2"
+            v-for="item in ['已做成', '已接单', '等待物料', '等待外协维修', '已完成', '已关闭']"
             :key="item"
             :label="item"
             :value="item"
@@ -323,6 +323,12 @@
         min-width="20"
       />
     </el-table>
+    <page
+      :old-page="false"
+      :total="total"
+      :current-page="search.page"
+      @currentChange="currentChange"
+    />
     <el-dialog
       :title="operateType"
       :visible.sync="dialogVisible"
@@ -379,12 +385,6 @@
         <el-button v-if="operateType==='验收维修工单'" :loading="submit" type="primary" @click="generateFun">确 定</el-button>
       </span>
     </el-dialog>
-    <page
-      :old-page="false"
-      :total="total"
-      :current-page="search.page"
-      @currentChange="currentChange"
-    />
   </div>
 </template>
 
@@ -403,10 +403,6 @@ export default {
       dateValue: [],
       tableData: [{ date: '1' }],
       total: 0,
-      options1: ['巡检', '生产', '其他'],
-      options2: ['已做成', '已接单', '等待物料', '等待外协维修', '已完成', '已关闭'],
-      options3: ['停机', '不停机'],
-      options4: ['高', '中', '低'],
       multipleSelection: [],
       dialogImageUrl: '',
       operateType: '',
@@ -415,6 +411,9 @@ export default {
       dialogVisibleImg: false,
       creatOrder: { radio: '' }
     }
+  },
+  created() {
+    this.getList()
   },
   methods: {
     generateFun(obj) {
