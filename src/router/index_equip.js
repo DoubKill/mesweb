@@ -424,10 +424,20 @@ export const equipRoutes = [
           {
             path: '/equipment/parts-define',
             component: () => import('@/views/equipment-manage/master-data/parts-define'),
-            name: 'EquipmentMasterData-parts-define',
+            name: 'EquipmentMasterDataPartsDefine',
             meta: {
               faName: 'EquipmentMasterData',
               title: '设备部件定义',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/shutdown-reason',
+            component: () => import('@/views/equipment-manage/master-data/shutdown-reason'),
+            name: 'EquipmentMasterDataShutdownReason',
+            meta: {
+              faName: 'EquipmentMasterData',
+              title: '设备停机原因定义',
               permissionName: ''
             }
           }

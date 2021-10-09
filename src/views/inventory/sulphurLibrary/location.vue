@@ -35,6 +35,7 @@
                 >编辑
                 </el-button>
                 <el-button
+                  v-permission="['sulfur_depot', 'delete']"
                   size="mini"
                   type="danger"
                   plain
@@ -87,6 +88,7 @@
                 >编辑
                 </el-button>
                 <el-button
+                  v-permission="['sulfur_depot', 'deleteSite']"
                   size="mini"
                   type="danger"
                   plain
