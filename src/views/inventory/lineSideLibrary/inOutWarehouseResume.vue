@@ -244,7 +244,7 @@ export default {
       let bool = false
       if (expanded.length > 0) {
         expanded.forEach(d => {
-          if (d.id === row.id) {
+          if (d.lot_no === row.lot_no) {
             bool = true
             return
           }
@@ -257,7 +257,7 @@ export default {
       }
       let _index = null
       this.tableData.forEach((d, i) => {
-        if (d.id === row.id) {
+        if (d.lot_no === row.lot_no) {
           _index = i
         }
       })
