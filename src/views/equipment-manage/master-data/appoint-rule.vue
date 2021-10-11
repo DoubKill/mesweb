@@ -3,12 +3,12 @@
     <!-- 工单指派规则定义 -->
     <el-form :inline="true" class="search-form-style">
       <el-form-item label="规则名称">
-        <el-input v-model="formInline.user" clearable placeholder="规则名称" />
+        <el-input v-model="formInline.rule_name" clearable placeholder="规则名称" @input="debounceFun" />
       </el-form-item>
       <el-form-item label="作业类型">
-        <el-select v-model="formInline.region" clearable placeholder="作业类型">
+        <el-select v-model="formInline.work_type" clearable placeholder="作业类型" @change="changeList">
           <el-option
-            v-for="item in ['浙江','大连']"
+            v-for="item in workTypeList"
             :key="item"
             :label="item"
             :value="item"
@@ -16,19 +16,12 @@
         </el-select>
       </el-form-item>
       <el-form-item label="设备类型">
-        <el-select v-model="formInline.region" clearable placeholder="设备类型">
-          <el-option
-            v-for="item in ['浙江','大连']"
-            :key="item"
-            :label="item"
-            :value="item"
-          />
-        </el-select>
+        <equipTypeSelect @equipTypeSelect="equipTypeSelect" />
       </el-form-item>
       <el-form-item label="设备条件">
-        <el-select v-model="formInline.region" clearable placeholder="设备条件">
+        <el-select v-model="formInline.equip_condition" clearable placeholder="设备条件" @change="changeList">
           <el-option
-            v-for="item in ['浙江','大连']"
+            v-for="item in ['停机','不停机']"
             :key="item"
             :label="item"
             :value="item"
@@ -36,12 +29,22 @@
         </el-select>
       </el-form-item>
       <el-form-item label="重要程度">
-        <el-select v-model="formInline.region" clearable placeholder="重要程度">
+        <el-select v-model="formInline.important_level" clearable placeholder="重要程度" @change="changeList">
           <el-option
-            v-for="item in ['浙江','大连']"
+            v-for="item in ['高','中','低']"
             :key="item"
             :label="item"
             :value="item"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="是否启用">
+        <el-select v-model="formInline.use_flag" clearable @change="changeList">
+          <el-option
+            v-for="(item,key) in [{label:true,name:'Y'},{label:false,name:'N'}]"
+            :key="key"
+            :label="item.name"
+            :value="item.label"
           />
         </el-select>
       </el-form-item>
@@ -58,77 +61,72 @@
       border
     >
       <el-table-column
-        prop="date"
+        prop="rule_code"
         label="规则编号"
         min-width="20"
       />
       <el-table-column
-        prop="name"
+        prop="rule_name"
         label="规则名称"
         min-width="20"
       />
       <el-table-column
-        prop="address"
+        prop="work_type"
         label="作业类型"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="equip_type_name"
         label="设备类型"
         min-width="20"
       />
       <el-table-column
-        prop="name"
+        prop="equip_condition"
         label="设备条件"
         min-width="20"
       />
       <el-table-column
-        prop="address"
+        prop="important_level"
         label="重要程度"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="receive_interval"
         label="接单间隔时间（分钟）"
         min-width="20"
       />
       <el-table-column
-        prop="name"
+        prop="receive_warning_times"
         label="接单重复提示次数"
         min-width="20"
       />
       <el-table-column
-        prop="name"
+        prop="start_interval"
         label="维修开始时间间隔（分钟）"
         min-width="20"
       />
       <el-table-column
-        prop="address"
+        prop="start_warning_times"
         label="开始重复提示次数"
         min-width="20"
       />
       <el-table-column
-        prop="address"
-        label="维修开始时间间隔（分钟）"
-        min-width="20"
-      />
-      <el-table-column
-        prop="address"
+        prop="accept_interval"
         label="验收间隔时间（分钟）"
         min-width="20"
       />
       <el-table-column
-        prop="address"
+        prop="accept_warning_times"
         label="验收重复提示次数"
         min-width="20"
       />
       <el-table-column
-        prop="address"
+        prop="created_username"
         label="录入人"
         min-width="20"
       />
       <el-table-column
-        prop="address"
+        prop="created_date"
         label="录入时间"
         min-width="20"
       />
@@ -144,7 +142,7 @@
               type="danger"
               plain
               @click="handleDelete(scope.row)"
-            >{{ scope.row.used_flag?'停用':'启用' }}
+            >{{ scope.row.use_flag?'停用':'启用' }}
             </el-button>
           </el-button-group>
         </template>
@@ -171,35 +169,35 @@
       >
         <el-form-item
           label="标准编号"
-          prop="name"
+          prop="rule_code"
         >
-          <el-input v-model="dialogForm.name" :disabled="dialogForm.id?true:false" />
+          <el-input v-model="dialogForm.rule_code" :disabled="dialogForm.id?true:false" />
         </el-form-item>
         <el-form-item
           label="接单间隔时间（分钟）"
-          prop="name"
+          prop="receive_interval"
         >
-          <el-input-number v-model="dialogForm.num" controls-position="right" :min="1" :max="10" />
+          <el-input-number v-model="dialogForm.receive_interval" controls-position="right" :min="1" />
         </el-form-item>
         <el-form-item
           label="标准名称"
-          prop="name"
+          prop="rule_name"
         >
-          <el-input v-model="dialogForm.name" />
+          <el-input v-model="dialogForm.rule_name" />
         </el-form-item>
         <el-form-item
           label="接单重复提醒次数"
-          prop="name"
+          prop="receive_warning_times"
         >
-          <el-input-number v-model="dialogForm.num" controls-position="right" :min="1" :max="10" />
+          <el-input-number v-model="dialogForm.receive_warning_times" controls-position="right" :min="1" />
         </el-form-item>
         <el-form-item
           label="作业类型"
-          prop="type"
+          prop="work_type"
         >
-          <el-select v-model="dialogForm.type" placeholder="请选择">
+          <el-select v-model="dialogForm.work_type" placeholder="请选择">
             <el-option
-              v-for="item in ['浙江','大连']"
+              v-for="item in workTypeList"
               :key="item"
               :label="item"
               :value="item"
@@ -208,36 +206,29 @@
         </el-form-item>
         <el-form-item
           label="维修开始间隔时间（分钟）"
-          prop="name"
+          prop="start_interval"
         >
-          <el-input-number v-model="dialogForm.num" controls-position="right" :min="1" :max="10" />
+          <el-input-number v-model="dialogForm.start_interval" controls-position="right" :min="1" />
         </el-form-item>
         <el-form-item
           label="设备类型"
-          prop="type"
+          prop="equip_type"
         >
-          <el-select v-model="dialogForm.type" placeholder="请选择">
-            <el-option
-              v-for="item in ['浙江','大连']"
-              :key="item"
-              :label="item"
-              :value="item"
-            />
-          </el-select>
+          <equipTypeSelect :default-val="dialogForm.equip_type" :is-created="true" @equipTypeSelect="equipTypeSelect1" />
         </el-form-item>
         <el-form-item
           label="开始重复提醒次数"
-          prop="name"
+          prop="start_warning_times"
         >
-          <el-input-number v-model="dialogForm.num" controls-position="right" :min="1" :max="10" />
+          <el-input-number v-model="dialogForm.start_warning_times" controls-position="right" :min="1" />
         </el-form-item>
         <el-form-item
           label="设备条件"
-          prop="type"
+          prop="equip_condition"
         >
-          <el-select v-model="dialogForm.type" placeholder="请选择">
+          <el-select v-model="dialogForm.equip_condition" placeholder="设备条件">
             <el-option
-              v-for="item in ['浙江','大连']"
+              v-for="item in ['停机','不停机']"
               :key="item"
               :label="item"
               :value="item"
@@ -246,17 +237,17 @@
         </el-form-item>
         <el-form-item
           label="验收间隔时间（分钟）"
-          prop="name"
+          prop="accept_interval"
         >
-          <el-input-number v-model="dialogForm.num" controls-position="right" :min="1" :max="10" />
+          <el-input-number v-model="dialogForm.accept_interval" controls-position="right" :min="1" />
         </el-form-item>
         <el-form-item
           label="重要程度"
-          prop="type"
+          prop="important_level"
         >
-          <el-select v-model="dialogForm.type" placeholder="请选择">
+          <el-select v-model="dialogForm.important_level" placeholder="请选择">
             <el-option
-              v-for="item in ['浙江','大连']"
+              v-for="item in ['高','中','低']"
               :key="item"
               :label="item"
               :value="item"
@@ -265,9 +256,9 @@
         </el-form-item>
         <el-form-item
           label="验收重复提醒次数"
-          prop="name"
+          prop="accept_warning_times"
         >
-          <el-input-number v-model="dialogForm.num" controls-position="right" :min="1" :max="10" />
+          <el-input-number v-model="dialogForm.accept_warning_times" controls-position="right" :min="1" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -280,65 +271,105 @@
 
 <script>
 import page from '@/components/page'
+import equipTypeSelect from '../components/equip-type-select'
+import commons from '@/utils/common'
+import { equipOrderAssignRule } from '@/api/base_w_four'
 export default {
   name: 'EquipmentMasterDataAppointRule',
-  components: { page },
+  components: { page, equipTypeSelect },
   data() {
     return {
       formInline: {},
+      workTypeList: commons.workTypeList,
       tableData: [{}],
       total: 0,
       loading: false,
       dialogVisible: false,
       rules: {
-        name: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        type: [{ required: true, message: '不能为空', trigger: 'change' }]
+        rule_code: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        rule_name: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        receive_interval: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        receive_warning_times: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        start_interval: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        accept_interval: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        start_warning_times: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        accept_warning_times: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        equip_condition: [{ required: true, message: '不能为空', trigger: 'change' }],
+        work_type: [{ required: true, message: '不能为空', trigger: 'change' }],
+        important_level: [{ required: true, message: '不能为空', trigger: 'change' }],
+        equip_type: [{ required: true, message: '不能为空', trigger: 'change', validator: (rule, value, callback) => {
+          if (this.dialogForm.equip_type === '' && !value) {
+            callback(new Error('请选择设备类型'))
+          } else {
+            callback()
+          }
+        } }]
       },
       dialogForm: {},
       btnLoading: false
     }
   },
+  created() {
+    this.getList()
+  },
   methods: {
     async getList() {
       try {
         this.loading = true
-        // const data = await testIndicators('get', null, { all: 1 })
-        // this.tableData = data || []
+        const data = await equipOrderAssignRule('get', null, { params: this.formInline })
+        this.tableData = data.results || []
+        this.total = data.count
         this.loading = false
       } catch (e) {
         this.loading = false
       }
+    },
+    equipTypeSelect1(row) {
+      this.dialogForm.equip_type = row ? row.id : ''
+    },
+    debounceFun() {
+      this.$debounce(this, 'changeList')
     },
     currentChange(page, pageSize) {
       this.formInline.page = page
       this.formInline.page_size = pageSize
       this.getList()
     },
+    changeList() {
+      this.formInline.page = 1
+      this.getList()
+    },
     onSubmit() {
       this.dialogVisible = true
     },
-    showEditDialog() {
+    showEditDialog(row) {
+      this.dialogForm = row
       this.dialogVisible = true
     },
+    equipTypeSelect(val) {
+      this.formInline.equip_type_id = val ? val.id : ''
+      this.changeList()
+    },
     handleDelete: function(row) {
-      var str = row.used_flag ? '停用' : '启用'
-      this.$confirm('此操作将' + str + row.name + ', 是否继续?', '提示', {
+      var str = row.use_flag ? '停用' : '启用'
+      this.$confirm('此操作将' + str + ', 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        // deleteLocation(row.id)
-        //   .then(response => {
-        //     this.$message({
-        //       type: 'success',
-        //       message: '操作成功!'
-        //     })
-        //     this.getList()
-        //   })
+        equipOrderAssignRule('delete', row.id)
+          .then(response => {
+            this.$message({
+              type: 'success',
+              message: '操作成功!'
+            })
+            this.getList()
+          })
       })
     },
     handleClose(done) {
       this.dialogVisible = false
+      this.dialogForm = {}
       this.$refs.createForm.resetFields()
       if (done) {
         done()
@@ -349,8 +380,8 @@ export default {
         if (valid) {
           try {
             this.btnLoading = true
-            // const _api = this.bindingForm.id ? 'put' : 'post'
-            // await equipPart(_api, this.bindingForm.id || null, { data: this.bindingForm })
+            const _api = this.dialogForm.id ? 'put' : 'post'
+            await equipOrderAssignRule(_api, this.dialogForm.id || null, { data: this.dialogForm })
             this.$message.success('操作成功')
             this.handleClose(null)
             this.getList()

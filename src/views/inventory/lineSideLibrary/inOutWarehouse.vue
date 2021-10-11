@@ -64,17 +64,16 @@
               <el-table-column
                 v-for="(item,i) in row.table_head"
                 :key="i"
-                :label="i"
-                align="center"
+                :label="item.point"
               >
                 <el-table-column
-                  v-for="(itemChild,iChild) in item"
+                  v-for="(itemChild,iChild) in item.point_head"
                   :key="iChild"
-                  :label="itemChild"
+                  :label="itemChild.point"
                   min-width="20"
                 >
                   <template slot-scope="scopeChild">
-                    {{ scopeChild.row.test_data[i][itemChild] }}
+                    {{ scopeChild.row.test_data[item.point][itemChild.point] }}
                   </template>
                 </el-table-column>
               </el-table-column>
@@ -320,7 +319,7 @@ export default {
       let bool = false
       if (expanded.length > 0) {
         expanded.forEach(d => {
-          if (d.id === row.id) {
+          if (d.lot_no === row.lot_no) {
             bool = true
             return
           }
@@ -333,7 +332,7 @@ export default {
       }
       let _index = null
       this.tableData.forEach((d, i) => {
-        if (d.id === row.id) {
+        if (d.lot_no === row.lot_no) {
           _index = i
         }
       })
@@ -357,7 +356,7 @@ export default {
           data: {
             status: 2,
             id: row.id,
-            depot_site: row.depot_site_id
+            depot_pallet_id: row.depot_pallet_id
           }})
           .then(response => {
             this.$message({

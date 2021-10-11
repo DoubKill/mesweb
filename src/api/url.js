@@ -486,5 +486,9 @@ export default {
   // 用户出库口库区
   UserStation: '/api/v1/inventory/outbound-history/',
   // 生产运行记录修改
-  RuntimeDetail: '/api/v1/production/runtime-record-detail/'
+  RuntimeDetail: '/api/v1/production/runtime-record-detail/',
+  EquipTargetMtbmttrSettings: '/api/v1/equipment/equip-target-mtbmttr-settings/', // MTBF/MTTR设定
+  EquipOrderAssignRule: '/api/v1/equipment/equip-order-assign-rule/',
+  EquipMachineHaltType: '/api/v1/equipment/equip-machine-halt-type/',
+  EquipMachineHaltReason: '/api/v1/equipment/equip-machine-halt-reason/'
 }

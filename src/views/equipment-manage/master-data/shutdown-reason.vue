@@ -7,17 +7,17 @@
           <el-form-item
             label="停机原因分类名称"
           >
-            <el-input v-model="dataForm.name" />
+            <el-input v-model="dataForm.machine_halt_type_name" @input="debounceFun" />
           </el-form-item>
           <el-form-item
             label="是否启用"
           >
-            <el-select v-model="dataForm.value" style="width:130px">
+            <el-select v-model="dataForm.use_flag" style="width:130px" clearable @change="getListType">
               <el-option
-                v-for="item in []"
-                :key="item"
-                :label="item"
-                :value="item"
+                v-for="(item,key) in [{label:true,name:'Y'},{label:false,name:'N'}]"
+                :key="key"
+                :label="item.name"
+                :value="item.label"
               />
             </el-select>
           </el-form-item>
@@ -42,16 +42,17 @@
             label="序号"
           />
           <el-table-column
-            prop="depot_name"
+            prop="machine_halt_type_code"
             label="停机原因分类编码"
           />
           <el-table-column
-            prop="description"
+            prop="machine_halt_type_name"
             label="停机原因分类名称"
           />
           <el-table-column
-            prop="description"
+            prop="use_flag"
             label="是否使用"
+            :formatter="(row)=>{return row.use_flag?'Y':'N'}"
           />
           <el-table-column
             label="操作"
@@ -80,17 +81,17 @@
           <el-form-item
             label="停机原因名称"
           >
-            <el-input v-model="dataForm1.name" />
+            <el-input v-model="dataForm1.machine_halt_reason_name" @input="debounceFun1" />
           </el-form-item>
           <el-form-item
             label="是否启用"
           >
-            <el-select v-model="dataForm1.value">
+            <el-select v-model="dataForm1.use_flag" style="width:130px" clearable @change="getListReason">
               <el-option
-                v-for="item in []"
-                :key="item"
-                :label="item"
-                :value="item"
+                v-for="(item,key) in [{label:true,name:'Y'},{label:false,name:'N'}]"
+                :key="key"
+                :label="item.name"
+                :value="item.label"
               />
             </el-select>
           </el-form-item>
@@ -112,24 +113,30 @@
             label="序号"
           />
           <el-table-column
-            prop="depot__depot_name"
+            prop="machine_halt_reason_code"
             label="停机原因代码"
           />
           <el-table-column
-            prop="depot_site_name"
+            prop="machine_halt_reason_name"
             label="停机原因名称"
           />
           <el-table-column
-            prop="description"
+            prop="equip_fault_types"
             label="停机故障"
+            :formatter="(row)=>{
+              let str = ''
+              row.equip_fault_types.forEach(d=>str+=d.fault_type_name+';')
+              return str
+            }"
           />
           <el-table-column
-            prop="depot_site_name"
+            prop="desc"
             label="备注"
           />
           <el-table-column
-            prop="description"
+            prop="use_flag"
             label="是否使用"
+            :formatter="(row)=>{return row.use_flag?'Y':'N'}"
           />
           <el-table-column
             label="操作"
@@ -157,7 +164,7 @@
     <el-dialog
       :title="(formObj.id?'编辑':'添加')+(isType?'停机原因分类':'停机原因')"
       :visible.sync="dialogVisible"
-      width="30%"
+      width="600px"
       :before-close="handleClose"
     >
       <el-form
@@ -209,6 +216,7 @@
 
 <script>
 import failureCause from '../components/failure-cause'
+import { equipMachineHaltType, equipMachineHaltReason } from '@/api/base_w_four'
 export default {
   name: 'EquipmentMasterDataShutdownReason',
   components: { failureCause },
@@ -226,6 +234,7 @@ export default {
       isType: false,
       dialogVisible1: false,
       loadingBtn1: false,
+      equip_machine_halt_type_id: null,
       rules: {
         depot_name: [
           { required: true, message: '请输入库区', trigger: 'blur' }
@@ -242,7 +251,42 @@ export default {
       }
     }
   },
+  created() {
+    this.getListType()
+  },
   methods: {
+    async getListType() {
+      try {
+        this.loading = true
+        const data = await equipMachineHaltType('get', null, { params: this.dataForm })
+        this.tableData = data || []
+        if (this.tableData.length > 0) {
+          this.$refs.currentRow.setCurrentRow(this.tableData[0])
+          this.equip_machine_halt_type_id = this.tableData[0].id
+          this.getListReason()
+        }
+        this.loading = false
+      } catch (e) {
+        this.loading = false
+      }
+    },
+    async getListReason() {
+      try {
+        this.loading1 = true
+        this.dataForm1.equip_machine_halt_type_id = this.equip_machine_halt_type_id
+        const data = await equipMachineHaltReason('get', null, { params: this.dataForm1 })
+        this.tableData1 = data || []
+        this.loading1 = false
+      } catch (e) {
+        this.loading1 = false
+      }
+    },
+    debounceFun() {
+      this.$debounce(this, 'getListType')
+    },
+    debounceFun1() {
+      this.$debounce(this, 'getListReason')
+    },
     handleCurrentChange(row) {
       this.depot = row.id
     },
@@ -292,18 +336,23 @@ export default {
       })
     },
     delArea(row, bool) {
-      var str = row.delete_flag ? '启用' : '停用'
-      this.$confirm('此操作将' + str + row.name + ', 是否继续?', '提示', {
+      var str = row.use_flag ? '停用' : '启用'
+      this.$confirm('此操作将' + str + ', 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         try {
-        //   departmentManage('delete', row.id, {
-        //   }).then(response => {
-        //     this.$message({ message: '操作成功', type: 'success' })
-        //     this.currentChange()
-        //   })
+          const _api = bool ? equipMachineHaltType : equipMachineHaltReason
+          _api('delete', row.id, {
+          }).then(response => {
+            this.$message({ message: '操作成功', type: 'success' })
+            if (bool) {
+              this.getListType()
+            } else {
+              this.getListReason()
+            }
+          })
         } catch (e) { e }
       }).catch(() => {
       })

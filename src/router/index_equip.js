@@ -444,10 +444,20 @@ export const equipRoutes = [
           {
             path: '/equipment/MTBF-MTTR',
             component: () => import('@/views/equipment-manage/master-data/MTBF-MTTR'),
-            name: 'EquipmentMasterData-MTBF-MTTR',
+            name: 'EquipmentMasterDataMTBFMTTR',
             meta: {
               faName: 'EquipmentMasterData',
               title: '目标MTBF/MTTR设定',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/BOM-manage',
+            component: () => import('@/views/equipment-manage/master-data/BOM-manage'),
+            name: 'EquipmentMasterDataBOMManage',
+            meta: {
+              faName: 'EquipmentMasterData',
+              title: '设备BOM管理',
               permissionName: ''
             }
           }
