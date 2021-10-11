@@ -440,6 +440,16 @@ export const equipRoutes = [
               title: '设备停机原因定义',
               permissionName: ''
             }
+          },
+          {
+            path: '/equipment/MTBF-MTTR',
+            component: () => import('@/views/equipment-manage/master-data/MTBF-MTTR'),
+            name: 'EquipmentMasterData-MTBF-MTTR',
+            meta: {
+              faName: 'EquipmentMasterData',
+              title: '目标MTBF/MTTR设定',
+              permissionName: ''
+            }
           }
         ]
       }
