@@ -490,5 +490,18 @@ export default {
   EquipTargetMtbmttrSettings: '/api/v1/equipment/equip-target-mtbmttr-settings/', // MTBF/MTTR设定
   EquipOrderAssignRule: '/api/v1/equipment/equip-order-assign-rule/',
   EquipMachineHaltType: '/api/v1/equipment/equip-machine-halt-type/',
-  EquipMachineHaltReason: '/api/v1/equipment/equip-machine-halt-reason/'
+  EquipMachineHaltReason: '/api/v1/equipment/equip-machine-halt-reason/',
+  // 供应商管理台账
+  EquipSupplier: 'api/v1/equipment/equip-supplier/',
+  // 设备类型
+  EquipsCategory: '/api/v1/basics/equips-category/',
+  // 设备固定资产台账
+  EquipProperty: '/api/v1/equipment/equip-property/',
+  // 设备位置区域定义
+  EquipAreaDefine: '/api/v1/equipment/equip-area-define/',
+  // 设备部位定义
+  EquipPartNew: '/api/v1/equipment/equip-part-new/',
+  // 设备部件分类
+  EquipComponentType: '/api/v1/equipment/equip-component-type/'
+
 }

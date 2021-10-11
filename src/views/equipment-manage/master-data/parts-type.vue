@@ -3,25 +3,27 @@
     <!-- 设备部件分类 -->
     <el-form :inline="true">
       <el-form-item label="分类编号">
-        <el-input v-model="getParams.no" @input="changSelect" />
+        <el-input v-model="getParams.component_type_code" @input="changSelect" />
       </el-form-item>
       <el-form-item label="分类名称">
-        <el-input v-model="getParams.name" @input="changSelect" />
+        <el-input v-model="getParams.component_type_name" @input="changSelect" />
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button style="margin-right:8px" @click="templateDownload">模板下载</el-button>
+        <el-button type="primary" @click="showCreateDialog">新建</el-button>
+      </el-form-item>
+      <el-form-item style="float: right">
         <el-upload
-          style="margin-right:8px;display:inline-block"
+          class="upload-demo"
           action="string"
           accept=".xls, .xlsx"
           :http-request="Upload"
           :show-file-list="false"
         >
-          <el-button>导入</el-button>
+          <el-button type="primary">导入Excel</el-button>
         </el-upload>
-        <el-button
-          @click="showCreateDialog"
-        >新建</el-button>
+      </el-form-item>
+      <el-form-item style="float: right">
+        <el-button type="primary" @click="templateDownload">导出Excel</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -36,19 +38,19 @@
         width="50"
       />
       <el-table-column
-        prop="no"
+        prop="component_type_code"
         label="类型编码"
       />
       <el-table-column
-        prop="name"
+        prop="component_type_name"
         label="类型名称"
       />
       <el-table-column
-        prop=""
+        prop="created_username"
         label="录入者"
       />
       <el-table-column
-        prop=""
+        prop="created_date"
         label="录入日期"
       />
       <el-table-column label="操作">
@@ -65,7 +67,7 @@
               type="danger"
               plain
               @click="handleDelete(scope.row)"
-            >{{ scope.row.delete_flag?'启用':'停用' }}
+            >{{ scope.row.use_flag?'停用':'启用' }}
             </el-button>
           </el-button-group>
         </template>
@@ -85,15 +87,15 @@
       <el-form ref="createForm" :rules="rules" :model="typeForm" label-width="100px">
         <el-form-item
           label="类型编码"
-          prop="no"
+          prop="component_type_code"
         >
-          <el-input v-model="typeForm.no" />
+          <el-input v-model="typeForm.component_type_code" />
         </el-form-item>
         <el-form-item
           label="类型名称"
-          prop="name"
+          prop="component_type_name"
         >
-          <el-input v-model="typeForm.name" />
+          <el-input v-model="typeForm.component_type_name" />
         </el-form-item>
       </el-form>
       <div
@@ -115,15 +117,15 @@
       <el-form ref="editForm" :rules="rules" :model="typeForm" label-width="100px">
         <el-form-item
           label="类型编码"
-          prop="no"
+          prop="component_type_code"
         >
-          <el-input v-model="typeForm.no" :disabled="true" />
+          <el-input v-model="typeForm.component_type_code" :disabled="true" />
         </el-form-item>
         <el-form-item
           label="类型名称"
-          prop="name"
+          prop="component_type_code"
         >
-          <el-input v-model="typeForm.name" />
+          <el-input v-model="typeForm.component_type_name" />
         </el-form-item>
       </el-form>
       <div
@@ -141,8 +143,8 @@
 </template>
 
 <script>
-import { getSpareType, putSpareType, postSpareType, deleteSpareType } from '@/api/spare-type'
 import page from '@/components/page'
+import { equipComponentType } from '@/api/jqy'
 // import { errorRepeat } from '@/utils'
 
 export default {
@@ -157,9 +159,10 @@ export default {
         no: '',
         name: ''
       },
+      loading: false,
       rules: {
-        name: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        no: [{ required: true, message: '不能为空', trigger: 'blur' }]
+        component_type_code: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        component_type_name: [{ required: true, message: '不能为空', trigger: 'blur' }]
       },
       getParams: {
         page: 1,
@@ -174,11 +177,15 @@ export default {
     this.getTableData()
   },
   methods: {
-    getTableData() {
-      getSpareType(this.getParams).then(response => {
-        this.tableData = response.results
-        this.total = response.count
-      })
+    async getTableData() {
+      try {
+        this.loading = true
+        const data = await equipComponentType('get', null, { params: this.getParams })
+        this.tableData = data.results || []
+        this.loading = false
+      } catch (e) {
+        this.loading = false
+      }
     },
     changSelect() {
       this.getParams.page = 1
@@ -186,20 +193,17 @@ export default {
     },
     showCreateDialog() {
       this.typeForm = {
-        no: '',
-        name: ''
+        component_type_code: '',
+        component_type_name: ''
       }
       this.dialogCreateVisible = true
-      this.$nextTick(() => {
-        this.$refs.createForm.clearValidate()
-      })
     },
     handleCreate() {
       this.$refs.createForm.validate((valid) => {
         if (valid) {
-          postSpareType(this.typeForm).then(response => {
+          equipComponentType('post', null, { data: this.typeForm }).then(response => {
             this.dialogCreateVisible = false
-            this.$message(this.typeForm.name + '创建成功')
+            this.$message.success('创建成功')
             this.getTableData()
           }).catch(e => {
             // errorRepeat(this, e)
@@ -217,10 +221,10 @@ export default {
     handleEdit: function() {
       this.$refs.editForm.validate((valid) => {
         if (valid) {
-          putSpareType(this.typeForm, this.typeForm.id)
+          equipComponentType('put', this.typeForm.id, { data: this.typeForm })
             .then(response => {
               this.dialogEditVisible = false
-              this.$message(this.typeForm.name + '修改成功')
+              this.$message.success('修改成功')
               this.getTableData()
               // this.currentChange(this.currentPage)
             })
@@ -228,13 +232,13 @@ export default {
       })
     },
     handleDelete: function(row) {
-      var str = row.delete_flag ? '启用' : '停用'
-      this.$confirm('此操作将' + str + row.name + ', 是否继续?', '提示', {
+      var str = row.use_flag ? '停用' : '启用'
+      this.$confirm('此操作将' + str + row.component_type_name + ', 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteSpareType(row.id)
+        equipComponentType('delete', row.id, {})
           .then(response => {
             this.$message({
               type: 'success',

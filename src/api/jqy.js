@@ -157,3 +157,73 @@ export function runtimeDetail(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+// 供应商管理台账
+export function equipSupplierList(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipSupplier + id + '/' : API.EquipSupplier,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+// 供应商类别列表
+export function getSupplierType(method, id, data = {}) {
+  const obj = {
+    url: id ? API.GlobalCodesUrl + id + '/' : API.GlobalCodesUrl,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+// 设备固定资产台账
+export function equipPropertyList(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipProperty + id + '/' : API.EquipProperty,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+// 设备部件分类
+export function equipComponentType(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipComponentType + id + '/' : API.EquipComponentType,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+// 设备位置区域定义
+export function equipAreaDefine(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipAreaDefine + id + '/' : API.EquipAreaDefine,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+// 设备部位定义
+export function equipPartNew(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipPartNew + id + '/' : API.EquipPartNew,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+// 设备类型
+export function equipsCategory(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipsCategory + id + '/' : API.EquipsCategory,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

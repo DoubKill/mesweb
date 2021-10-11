@@ -3,22 +3,30 @@
     <!-- 设备部位定义 -->
     <el-form :inline="true">
       <el-form-item label="所属主设备种类">
-        <el-select v-model="formInline.region" clearable placeholder="所属主设备种类">
-          <el-option label="区域一" value="shanghai" />
-          <el-option label="区域二" value="beijing" />
+        <el-select v-model="formInline.category_no" placeholder="请选择" clearable @change="changeSearch">
+          <el-option
+            v-for="item in options"
+            :key="item.category_name"
+            :label="item.category_name"
+            :value="item.category_name"
+          />
         </el-select>
       </el-form-item>
       <el-form-item label="部位分类">
-        <el-select v-model="formInline.region" clearable placeholder="是否启用">
-          <el-option label="区域一" value="shanghai" />
-          <el-option label="区域二" value="beijing" />
+        <el-select v-model="formInline.global_name" placeholder="请选择" clearable @change="changeSearch">
+          <el-option
+            v-for="item in GlobalList"
+            :key="item.global_name"
+            :label="item.global_name"
+            :value="item.global_name"
+          />
         </el-select>
       </el-form-item>
       <el-form-item label="部位编码">
-        <el-input v-model="formInline.user" clearable placeholder="部位编码" />
+        <el-input v-model="formInline.part_code" clearable placeholder="部位编码" @input="changeSearch" />
       </el-form-item>
       <el-form-item label="部位名称">
-        <el-input v-model="formInline.user" clearable placeholder="部位名称" />
+        <el-input v-model="formInline.part_name" clearable placeholder="部位名称" @input="changeSearch" />
       </el-form-item>
 
       <el-form-item style="float:right">
@@ -34,32 +42,32 @@
       border
     >
       <el-table-column
-        prop="date"
+        prop="category_no"
         label="所属主设备种类"
         min-width="20"
       />
       <el-table-column
-        prop="name"
+        prop="global_name"
         label="部位分类"
         min-width="20"
       />
       <el-table-column
-        prop="address"
+        prop="part_code"
         label="部位代码"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="part_name"
         label="部位名称"
         min-width="20"
       />
       <el-table-column
-        prop="name"
+        prop="created_username"
         label="录入者"
         min-width="20"
       />
       <el-table-column
-        prop="address"
+        prop="created_date"
         label="录入时间"
         min-width="20"
       />
@@ -75,7 +83,7 @@
               type="danger"
               plain
               @click="handleDelete(scope.row)"
-            >{{ scope.row.used_flag?'停用':'启用' }}
+            >{{ scope.row.use_flag?'停用':'启用' }}
             </el-button>
           </el-button-group>
         </template>
@@ -101,41 +109,41 @@
       >
         <el-form-item
           label="所属主设备种类"
-          prop="type"
+          prop="equip_type"
         >
-          <el-select v-model="dialogForm.type" placeholder="请选择">
+          <el-select v-model="dialogForm.equip_type" placeholder="请选择">
             <el-option
-              v-for="item in ['浙江','大连']"
-              :key="item"
-              :label="item"
-              :value="item"
+              v-for="item in options"
+              :key="item.category_name"
+              :label="item.category_name"
+              :value="item.id"
             />
           </el-select>
         </el-form-item>
         <el-form-item
           label="部位分类"
-          prop="type"
+          prop="global_part_type"
         >
-          <el-select v-model="dialogForm.type" placeholder="请选择">
+          <el-select v-model="dialogForm.global_part_type" placeholder="请选择">
             <el-option
-              v-for="item in ['浙江','大连']"
-              :key="item"
-              :label="item"
-              :value="item"
+              v-for="item in GlobalList"
+              :key="item.global_name"
+              :label="item.global_name"
+              :value="item.id"
             />
           </el-select>
         </el-form-item>
         <el-form-item
           label="部位代码"
-          prop="name"
+          prop="part_code"
         >
-          <el-input v-model="dialogForm.name" :disabled="dialogForm.id?true:false" />
+          <el-input v-model="dialogForm.part_code" :disabled="dialogForm.id?true:false" />
         </el-form-item>
         <el-form-item
           label="部位名称"
-          prop="name"
+          prop="part_name"
         >
-          <el-input v-model="dialogForm.name" />
+          <el-input v-model="dialogForm.part_name" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -148,34 +156,64 @@
 
 <script>
 import page from '@/components/page'
+import { equipPartNew, equipsCategory, getSupplierType } from '@/api/jqy'
 export default {
   name: 'EquipmentMasterDataRegion',
   components: { page },
   data() {
     return {
       formInline: {},
-      tableData: [{}],
+      tableData: [],
+      options: [],
+      GlobalList: [],
       total: 0,
       loading: false,
       dialogVisible: false,
       rules: {
-        name: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        type: [{ required: true, message: '不能为空', trigger: 'change' }]
+        part_code: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        part_name: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        equip_type: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        global_part_type: [{ required: true, message: '不能为空', trigger: 'blur' }]
       },
       dialogForm: {},
       btnLoading: false
     }
   },
+  created() {
+    this.getTypeNode()
+    this.getList()
+    this.getGlobal()
+  },
   methods: {
+    async getGlobal() {
+      try {
+        const data = await getSupplierType('get', null, { params: { all: 1, class_name: '部位' }})
+        this.GlobalList = data.results
+      } catch (error) {
+        this.GlobalList = []
+      }
+    },
+    async getTypeNode() {
+      try {
+        const data = await equipsCategory('get')
+        this.options = data.results || []
+      } catch (e) {
+        //
+      }
+    },
     async getList() {
       try {
         this.loading = true
-        // const data = await testIndicators('get', null, { all: 1 })
-        // this.tableData = data || []
+        const data = await equipPartNew('get', null, { params: this.formInline })
+        this.tableData = data.results || []
         this.loading = false
       } catch (e) {
         this.loading = false
       }
+    },
+    changeSearch() {
+      this.formInline.page = 1
+      this.getList()
     },
     currentChange(page, pageSize) {
       this.formInline.page = page
@@ -183,26 +221,28 @@ export default {
       this.getList()
     },
     onSubmit() {
+      this.dialogForm = {}
       this.dialogVisible = true
     },
-    showEditDialog() {
+    showEditDialog(row) {
+      this.dialogForm = JSON.parse(JSON.stringify(row))
       this.dialogVisible = true
     },
     handleDelete: function(row) {
-      var str = row.used_flag ? '停用' : '启用'
-      this.$confirm('此操作将' + str + row.name + ', 是否继续?', '提示', {
+      var str = row.use_flag ? '停用' : '启用'
+      this.$confirm('此操作将' + str + row.category_no + ', 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        // deleteLocation(row.id)
-        //   .then(response => {
-        //     this.$message({
-        //       type: 'success',
-        //       message: '操作成功!'
-        //     })
-        //     this.getList()
-        //   })
+        equipPartNew('delete', row.id, {})
+          .then(response => {
+            this.$message({
+              type: 'success',
+              message: '操作成功!'
+            })
+            this.getList()
+          })
       })
     },
     handleClose(done) {
@@ -217,8 +257,8 @@ export default {
         if (valid) {
           try {
             this.btnLoading = true
-            // const _api = this.bindingForm.id ? 'put' : 'post'
-            // await equipPart(_api, this.bindingForm.id || null, { data: this.bindingForm })
+            const _api = this.dialogForm.id ? 'put' : 'post'
+            await equipPartNew(_api, this.dialogForm.id || null, { data: this.dialogForm })
             this.$message.success('操作成功')
             this.handleClose(null)
             this.getList()

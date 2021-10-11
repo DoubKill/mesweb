@@ -8,32 +8,34 @@
       <el-form-item label="设备编码:">
         <el-input v-model="search.equip_no" placeholder="请输入内容" @input="changeList" />
       </el-form-item>
-      <el-form-item label="设备类型:">
-        <div @click="inputClick(false)">
-          <el-input
-            v-model="search.property_type"
-            style="width:195px"
-            placeholder="请选择内容"
-            :readonly="true"
-          >
-            <i slot="suffix" style="font-size:20px" class="el-input__icon el-icon-circle-close" @click.stop="nodeClickFun(null)" />
-          </el-input>
-        </div>
+      <el-form-item label="设备型号:">
+        <!-- <div @click="inputClick(false)"> -->
+        <el-input
+          v-model="search.equip_type_no"
+          style="width:195px"
+          placeholder="请选择内容"
+          @input="changeList"
+        />
+        <!-- <i slot="suffix" style="font-size:20px" class="el-input__icon el-icon-circle-close" @click.stop="nodeClickFun(null)" /> -->
+        <!-- </el-input> -->
+        <!-- </div> -->
       </el-form-item>
-      <el-form-item style="float:right;">
-        <div style="float:right;display:flex">
-          <el-button v-permission="['property', 'download']" style="margin-right:8px" @click="templateDownload">模板下载</el-button>
-          <el-upload
-            style="margin-right:8px"
-            action="string"
-            accept=".xls, .xlsx"
-            :http-request="Upload"
-            :show-file-list="false"
-          >
-            <el-button v-permission="['property', 'import']">导入</el-button>
-          </el-upload>
-          <el-button v-permission="['property', 'add']" style="margin-right:8px" @click="add">新增</el-button>
-        </div>
+      <el-form-item style="float:right">
+        <el-button type="primary" @click="add">新建</el-button>
+      </el-form-item>
+      <el-form-item style="float: right">
+        <el-upload
+          class="upload-demo"
+          action="string"
+          accept=".xls, .xlsx"
+          :http-request="Upload"
+          :show-file-list="false"
+        >
+          <el-button type="primary">导入Excel</el-button>
+        </el-upload>
+      </el-form-item>
+      <el-form-item style="float: right">
+        <el-button type="primary" @click="templateDownload">导出Excel</el-button>
       </el-form-item>
     </el-form>
 
@@ -52,12 +54,12 @@
       <el-table-column
         prop="property_no"
         label="固定资产"
-        min-width="8"
+        width="70"
       />
       <el-table-column
         prop="src_no"
         label="原编码"
-        min-width="8"
+        width="70"
       />
       <el-table-column
         prop="financial_no"
@@ -65,7 +67,7 @@
         min-width="8"
       />
       <el-table-column
-        prop="equip_type"
+        prop="equip_type_no"
         label="设备型号"
         min-width="8"
       />
@@ -95,12 +97,18 @@
         min-width="8"
       />
       <el-table-column
-        prop="status_name"
+        prop="status"
         label="状态"
         min-width="8"
-      />
+      >
+        <template slot-scope="scope">
+          <span v-if="scope.row.status===1">使用中</span>
+          <span v-if="scope.row.status===2">废弃</span>
+          <span v-if="scope.row.status===3">限制</span>
+        </template>
+      </el-table-column>
       <el-table-column
-        prop="property_type"
+        prop="equip_type_name"
         label="设备类型"
         min-width="8"
       />
@@ -120,14 +128,14 @@
         min-width="8"
       />
       <el-table-column
-        prop=""
+        prop="created_username"
         label="录入者"
         min-width="8"
       />
       <el-table-column
-        prop=""
+        prop="created_date"
         label="录入时间"
-        min-width="8"
+        width="180"
       />
       <el-table-column
         label="操作"
@@ -160,7 +168,7 @@
       @currentChange="currentChange"
     />
 
-    <el-dialog
+    <!-- <el-dialog
       title="设备类型"
       :visible.sync="dialogVisibleType"
       width="600"
@@ -211,8 +219,8 @@
         <el-button @click="dialogVisibleType = false">取 消</el-button>
         <el-button type="primary" @click="searchSubimtTree">确 定</el-button>
       </span>
-    </el-dialog>
-
+    </el-dialog> -->
+    <!--
     <el-dialog
       title="添加节点名"
       :visible.sync="dialogVisibleAdd"
@@ -227,7 +235,7 @@
         <el-button @click="handleClose(false)">取 消</el-button>
         <el-button type="primary" :loading="submitAddLoading" @click="submitAdd">确 定</el-button>
       </span>
-    </el-dialog>
+    </el-dialog> -->
 
     <el-dialog
       :title="formitem.id?'修改':'新增'"
@@ -245,9 +253,9 @@
         <el-form-item label="财务编码:" prop="financial_no">
           <el-input v-model="formitem.financial_no" placeholder="请输入内容" />
         </el-form-item>
-        <el-form-item label="设备型号:" prop="equip_type">
-          <el-input v-model="formitem.equip_type " placeholder="请输入内容" />
-        </el-form-item>
+        <!-- <el-form-item label="设备型号:" prop="equip_type_no">
+          <el-input v-model="formitem.equip_type_no " placeholder="请输入内容" />
+        </el-form-item> -->
         <el-form-item label="设备编码:" prop="equip_no">
           <el-input v-model="formitem.equip_no" placeholder="请输入内容" />
         </el-form-item>
@@ -273,7 +281,20 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="设备类型:" prop="property_type_node">
+        <el-form-item
+          label="设备型号:"
+          prop="equip_type"
+        >
+          <el-select v-model="formitem.equip_type" placeholder="请选择">
+            <el-option
+              v-for="item in options"
+              :key="item.category_name"
+              :label="item.category_name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <!-- <el-form-item label="设备类型:" prop="property_type_node">
           <div @click="inputClick(true)">
             <el-input
               v-model="formitem.property_type"
@@ -282,7 +303,7 @@
               :readonly="true"
             />
           </div>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="出厂编码:" prop="leave_factory_no">
           <el-input v-model="formitem.leave_factory_no" placeholder="请输入内容" />
         </el-form-item>
@@ -312,7 +333,8 @@
 </template>
 
 <script>
-import { propertyTypeNode, exportProperty, importProperty, equipmentProperty } from '@/api/base_w_two'
+import { exportProperty, importProperty } from '@/api/base_w_two'
+import { equipPropertyList, equipsCategory } from '@/api/jqy'
 import page from '@/components/page'
 export default {
   name: 'EquipmentMasterDataFixedAssets',
@@ -324,15 +346,6 @@ export default {
         page_size: 10
       },
       formitem: {
-        use_date: '',
-        status: null,
-        leave_factory_date: null,
-        property_no: '',
-        src_no: '',
-        financial_no: '',
-        equip_type: '',
-        equip_no: '',
-        equip_name: ''
       },
       tableData: [],
       loading: false,
@@ -387,15 +400,7 @@ export default {
         ],
         status: [
           { required: true, message: '请选择状态', trigger: 'change' }
-        ],
-        property_type_node: [{ required: true, message: '不能为空',
-          validator: (rule, value, callback) => {
-            if (!this.formitem.property_type_node && !value) {
-              callback(new Error('请选择设备类型'))
-            } else {
-              callback()
-            }
-          }, trigger: 'change' }]
+        ]
       },
       addBool: false
     }
@@ -407,8 +412,8 @@ export default {
   methods: {
     async getTypeNode() {
       try {
-        const data = await propertyTypeNode('get')
-        this.options = data || []
+        const data = await equipsCategory('get')
+        this.options = data.results || []
       } catch (e) {
         //
       }
@@ -416,7 +421,7 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const data = await equipmentProperty('get', null, { params: this.search })
+        const data = await equipPropertyList('get', null, { params: this.search })
         this.tableData = data.results || []
         this.total = data.count
         this.loading = false
@@ -444,22 +449,22 @@ export default {
         done()
       }
     },
-    async submitAdd() {
-      try {
-        if (!this.currentTreeObj.name) {
-          this.$message.info('请输入节点名称')
-          return
-        }
-        this.submitAddLoading = true
-        await propertyTypeNode('post', null, { data: this.currentTreeObj })
-        this.dialogVisibleAdd = false
-        this.handleClose(false)
-        this.getTypeNode()
-      } catch (e) {
-        //
-      }
-      this.submitAddLoading = false
-    },
+    // async submitAdd() {
+    //   try {
+    //     if (!this.currentTreeObj.name) {
+    //       this.$message.info('请输入节点名称')
+    //       return
+    //     }
+    //     this.submitAddLoading = true
+    //     await propertyTypeNode('post', null, { data: this.currentTreeObj })
+    //     this.dialogVisibleAdd = false
+    //     this.handleClose(false)
+    //     this.getTypeNode()
+    //   } catch (e) {
+    //     //
+    //   }
+    //   this.submitAddLoading = false
+    // },
     append(data) {
       this.dialogVisibleAdd = true
       if (data) {
@@ -472,27 +477,28 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        propertyTypeNode('delete', data.id)
+        equipPropertyList('delete', data.id)
           .then(response => {
             this.$message({
               type: 'success',
               message: '删除成功!'
             })
             this.handleClose(false)
+            this.getList()
             this.getTypeNode()
           }).catch(e => {
             this.$message.error('删除失败')
           })
       })
     },
-    nodeClickFun(data, node) {
-      // 单击树形图
-      this.currentTreeObjSearch = data
-      if (!data) {
-        this.$set(this.search, 'property_type', '')
-        this.changeList()
-      }
-    },
+    // nodeClickFun(data, node) {
+    //   // 单击树形图
+    //   this.currentTreeObjSearch = data
+    //   if (!data) {
+    //     this.$set(this.search, 'property_type', '')
+    //     this.changeList()
+    //   }
+    // },
     handleCloseList(done) {
       this.dialogVisibleList = false
       this.$refs['formitem'].resetFields()
@@ -515,6 +521,7 @@ export default {
       this.changeList()
     },
     add() {
+      this.formitem = {}
       this.dialogVisibleList = true
     },
     showEditUserDialog(row) {
@@ -526,9 +533,9 @@ export default {
         if (valid) {
           const _api = this.formitem.id ? 'patch' : 'post'
           this.submitListLoading = true
-          equipmentProperty(_api, this.formitem.id || null, { data: this.formitem }).then(response => {
+          equipPropertyList(_api, this.formitem.id || null, { data: this.formitem }).then(response => {
             this.dialogVisibleList = false
-            this.$message.success('创建成功')
+            this.$message.success(this.formitem.id ? '修改成功' : '创建成功')
             this.getList()
             this.submitListLoading = false
             this.handleCloseList(false)
@@ -546,7 +553,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        equipmentProperty('delete', row.id)
+        equipPropertyList('delete', row.id)
           .then(response => {
             this.$message({
               type: 'success',

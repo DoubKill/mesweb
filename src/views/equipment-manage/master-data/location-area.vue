@@ -1,69 +1,138 @@
 <template>
-  <div class="location-area-style">
+  <div class="supplier-style">
     <!-- 设备位置区域定义 -->
-    <el-container style="height:580px;">
-      <el-aside width="400px" class="border-style aside-style">
-        <h3>位置区域设定</h3>
-        <el-tree
-          ref="tree"
-          class="filter-tree"
-          :data="data"
-          :props="defaultProps"
-          default-expand-all
-          @node-contextmenu="nodeContextmenu"
-          @node-click="nodeClick"
-        />
-      </el-aside>
-      <el-main class="border-style">
-        <h3>位置区域节点 详细信息</h3>
-        <el-form v-loading="loading" :inline="true" label-width="100px">
-          <el-form-item label="节点编号">
-            <el-input v-model="formInline.user" disabled placeholder="规则名称" />
-          </el-form-item>
-          <el-form-item label="巡检路线名称">
-            <el-input v-model="formInline.user" clearable placeholder="规则名称" />
-          </el-form-item>
-          <el-form-item label="区域编号">
-            <el-input v-model="formInline.user" clearable placeholder="规则名称" />
-          </el-form-item>
-          <el-form-item label="区域名称">
-            <el-input v-model="formInline.user" clearable placeholder="规则名称" />
-          </el-form-item>
-          <el-form-item>
-            <el-button size="small" type="primary" @click="onSubmit">保存</el-button>
-          </el-form-item>
-          <br>
-          <el-form-item label="区域备注说明">
-            <el-input
-              v-model="formInline.textarea2"
-              type="textarea"
-              maxlength="30"
-              style="width:500px"
-              :autosize="{ minRows: 10}"
-              resize="none"
-              placeholder="请输入内容"
-            />
-          </el-form-item>
-        </el-form>
-      </el-main>
-    </el-container>
-    <ul v-show="visible" :style="{left:left+'px',top:top+'px'}" class="contextmenu">
-      <li @click="addNodeFun(1)">添加子节点</li>
-      <li @click="addNodeFun(2)">上方添加节点</li>
-      <li @click="addNodeFun(3)">下方添加节点</li>
-      <li @click="copyNodeFun">复制节点</li>
-      <li @click="pasteNodeFun">粘贴子节点</li>
-      <li @click="upperPasteNodeFun">上方粘贴节点</li>
-      <li @click="belowPasteNodeFun">下方粘贴节点</li>
-      <li @click="delNodeFun">删除节点</li>
-    </ul>
+    <el-form :inline="true">
+      <el-form-item label="位置区域名称">
+        <el-input v-model="formInline.area_name" placeholder="位置区域名称" @input="debounceList" />
+      </el-form-item>
+      <el-form-item label="是否启用">
+        <el-select v-model="formInline.use_flag" clearable placeholder="是否启用" @change="changeSearch">
+          <el-option
+            v-for="item in [{label:'Y',value:1},{label:'N',value:0}]"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item style="float:right">
+        <el-button type="primary" @click="onSubmit">导出Excel</el-button>
+        <el-button type="primary" @click="onSubmit">导入Excel</el-button>
+        <el-button type="primary" @click="onSubmit">新建</el-button>
+      </el-form-item>
+    </el-form>
+    <el-table
+      v-loading="loading"
+      :data="tableData"
+      style="width: 100%"
+      border
+    >
+      <el-table-column
+        prop="area_code"
+        label="位置区域编号"
+        min-width="20"
+      />
+      <el-table-column
+        prop="area_name"
+        label="位置区域名称"
+        min-width="20"
+      />
+      <el-table-column
+        prop="inspection_line_no"
+        label="巡检顺序编号"
+        min-width="20"
+      />
+      <el-table-column
+        prop="desc"
+        label="备注说明"
+        min-width="20"
+      />
+      <el-table-column
+        prop="use_flag"
+        label="是否启用"
+        min-width="20"
+      >
+        <template slot-scope="scope">
+          <span v-if="scope.row.use_flag===true">Y</span>
+          <span v-if="scope.row.use_flag===false">N</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="created_username"
+        label="录入者"
+        min-width="20"
+      />
+      <el-table-column
+        prop="created_date"
+        label="录入时间"
+        min-width="20"
+      />
+      <el-table-column label="操作" width="200px">
+        <template slot-scope="scope">
+          <el-button-group>
+            <el-button
+              size="mini"
+              @click="showEditDialog(scope.row)"
+            >编辑</el-button>
+            <el-button
+              size="mini"
+              type="danger"
+              plain
+              @click="handleDelete(scope.row)"
+            >{{ scope.row.use_flag?'停用':'启用' }}
+            </el-button>
+          </el-button-group>
+        </template>
+      </el-table-column>
+    </el-table>
+    <page
+      :old-page="false"
+      :total="total"
+      :current-page="formInline.page"
+      @currentChange="currentChange"
+    />
     <el-dialog
-      title="输入节点名"
+      :title="`${dialogForm.id?'编辑':'新建'}供应商`"
       :visible.sync="dialogVisible"
-      width="400px"
+      width="500px"
       :before-close="handleClose"
     >
-      <el-input v-model="dialogForm.input" placeholder="请输入内容" />
+      <el-form
+        ref="createForm"
+        :rules="rules"
+        label-width="150px"
+        :model="dialogForm"
+      >
+        <el-form-item
+          label="位置区域编号"
+          prop="area_code"
+        >
+          <el-input v-model="dialogForm.area_code" :disabled="dialogForm.id?true:false" />
+        </el-form-item>
+        <el-form-item
+          label="位置区域名称"
+          prop="area_name"
+        >
+          <el-input v-model="dialogForm.area_name" />
+        </el-form-item>
+        <el-form-item
+          label="巡检顺序编号"
+          prop="inspection_line_no"
+        >
+          <el-input v-model="dialogForm.inspection_line_no" />
+        </el-form-item>
+        <el-form-item
+          label="备注说明"
+          prop="desc"
+        >
+          <el-input
+            v-model="dialogForm.desc"
+            style="width:250px"
+            type="textarea"
+            :rows="4"
+          />
+        </el-form-item>
+      </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose(false)">取 消</el-button>
         <el-button type="primary" :loading="btnLoading" @click="submitFun">确 定</el-button>
@@ -73,166 +142,116 @@
 </template>
 
 <script>
+import page from '@/components/page'
+import { debounce } from '@/utils'
+import { equipAreaDefine } from '@/api/jqy'
 export default {
   name: 'EquipmentMasterDataLocation',
+  components: { page },
   data() {
     return {
-      data: [{
-        id: 1,
-        label: '炼胶分厂',
-        children: [{
-          id: 6,
-          label: '密炼车间',
-          children: [{
-            id: 2,
-            label: 'Z01密炼机',
-            children: [{
-              id: 4,
-              label: '密炼机上辅机'
-            }, {
-              id: 5,
-              label: '密炼主机'
-            }]
-          }, {
-            id: 10,
-            label: 'Z02密炼机'
-          }]
-        }]
-      }
-      ],
-      defaultProps: {
-        children: 'children',
-        label: 'label'
-      },
-      left: '',
-      top: '',
-      visible: false,
-      selectedTag: '',
       formInline: {},
+      tableData: [],
+      total: 0,
       loading: false,
       dialogVisible: false,
+      use_flag: '',
+      rules: {
+        area_name: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        area_code: [{ required: true, message: '不能为空', trigger: 'blur' }]
+      },
+      SupplierTypeList: [],
       dialogForm: {},
       btnLoading: false
     }
   },
-  watch: {
-    visible(value) {
-      if (value) {
-        document.body.addEventListener('click', this.closeMenu)
-      } else {
-        document.body.removeEventListener('click', this.closeMenu)
-      }
-    }
+  created() {
+    this.getList()
   },
   methods: {
-    nodeContextmenu(e, tag, node, event) {
-      // console.log(e, tag, node, event, 888)
-      const menuMinWidth = 105
-      const offsetLeft = this.$el.getBoundingClientRect().left // container margin left
-      const offsetWidth = this.$el.offsetWidth // container width
-      const maxLeft = offsetWidth - menuMinWidth // left boundary
-      const left = e.clientX - offsetLeft + 40 // 15: margin right
-
-      if (left > maxLeft) {
-        this.left = maxLeft
-      } else {
-        this.left = left
-      }
-
-      this.top = e.clientY - 200
-      this.visible = true
-      this.selectedTag = tag
-    },
-    closeMenu() {
-      this.visible = false
-    },
-    handleClose(done) {
-      this.dialogVisible = false
-      this.dialogForm.input = ''
-      if (done) {
-        done()
+    async getList() {
+      try {
+        this.loading = true
+        const data = await equipAreaDefine('get', null, { params: this.formInline })
+        this.tableData = data.results || []
+        this.total = data.count
+        this.loading = false
+      } catch (e) {
+        this.loading = false
       }
     },
-    submitFun() {},
-    nodeClick() {
-      this.closeMenu()
-      this.loading = true
-      this.loading = false
+    debounceList() {
+      this.formInline.page = 1
+      debounce(this, 'changeSearch')
     },
-    addNodeFun() {
+    currentChange(page, pageSize) {
+      this.formInline.page = page
+      this.formInline.page_size = pageSize
+      this.getList()
+    },
+    onSubmit() {
+      this.dialogForm = { area_code: 'WZQY00X' }
       this.dialogVisible = true
     },
-    upperAddNodeFun() {},
-    belowAddNodeFun() {},
-    copyNodeFun() {},
-    pasteNodeFun() {},
-    upperPasteNodeFun() {},
-    belowPasteNodeFun() {},
-    delNodeFun() {
-      this.$confirm('是否确定删除?', '提示', {
+    showEditDialog(row) {
+      this.dialogForm = JSON.parse(JSON.stringify(row))
+      this.dialogVisible = true
+    },
+    changeSearch() {
+      this.getList()
+    },
+    handleDelete: function(row) {
+      var str = row.use_flag ? '停用' : '启用'
+      this.$confirm('此操作将' + str + row.area_code + ', 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        // propertyTypeNode('delete', data.id)
-        //   .then(response => {
-        //     this.$message({
-        //       type: 'success',
-        //       message: '删除成功!'
-        //     })
-        //     this.handleClose(false)
-        //   }).catch(e => {
-        //     this.$message.error('删除失败')
-        //   })
+        equipAreaDefine('delete', row.id, {})
+          .then(response => {
+            this.$message({
+              type: 'success',
+              message: '操作成功!'
+            })
+            this.getList()
+          })
       })
     },
-    onSubmit() {}
+    handleClose(done) {
+      this.dialogVisible = false
+      // this.$refs.createForm.resetFields()
+      // if (done) {
+      //   done()
+      // }
+    },
+    submitFun() {
+      this.$refs.createForm.validate(async(valid) => {
+        if (valid) {
+          try {
+            this.btnLoading = true
+            const _api = this.dialogForm.id ? 'put' : 'post'
+            await equipAreaDefine(_api, this.dialogForm.id || null, { data: this.dialogForm })
+            this.$message.success('操作成功')
+            this.handleClose(null)
+            this.getList()
+            this.btnLoading = false
+          } catch (e) {
+            this.btnLoading = false
+          }
+        } else {
+          return false
+        }
+      })
+    }
   }
 }
 </script>
 
-<style lang="scss" scoped>
-.location-area-style{
-  ::-webkit-scrollbar {
-    width: 1px;
-  }
-  ::-webkit-scrollbar-thumb {
-      background: #eee
-  }
-  .el-main{
-    padding:0;
-  }
-  .border-style{
-    border:1px solid #eee;
-    padding-left:10px;
-  }
-  .aside-style{
-    // padding: 20px;
-    margin-right:10px;
-  }
+<style lang="scss">
+.supplier-style{
   .el-input{
     width:250px;
   }
-  .contextmenu {
-    margin: 0;
-    background: #fff;
-    z-index: 3000;
-    position: absolute;
-    list-style-type: none;
-    padding: 5px 0;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 400;
-    color: #333;
-    box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, .3);
-    li {
-      margin: 0;
-      padding: 7px 16px;
-      cursor: pointer;
-      &:hover {
-        background: #eee;
-      }
-    }
-  }
 }
 </style>
+
