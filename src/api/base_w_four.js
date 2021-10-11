@@ -378,9 +378,33 @@ export function carbonOutTask(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
-export function EquipTargetMtbmttrSettings(method, id, data = {}) {
+export function equipTargetMtbmttrSettings(method, id, data = {}) {
   const obj = {
     url: id ? API.EquipTargetMtbmttrSettings + id + '/' : API.EquipTargetMtbmttrSettings,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function equipOrderAssignRule(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipOrderAssignRule + id + '/' : API.EquipOrderAssignRule,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function equipMachineHaltType(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipMachineHaltType + id + '/' : API.EquipMachineHaltType,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function equipMachineHaltReason(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipMachineHaltReason + id + '/' : API.EquipMachineHaltReason,
     method: method
   }
   Object.assign(obj, data)

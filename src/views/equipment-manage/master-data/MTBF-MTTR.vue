@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import { EquipTargetMtbmttrSettings } from '@/api/base_w_four'
+import { equipTargetMtbmttrSettings } from '@/api/base_w_four'
 export default {
   name: 'EquipmentMasterDataMTBFMTTR',
   data() {
@@ -69,7 +69,7 @@ export default {
   methods: {
     async getList() {
       try {
-        const data = await EquipTargetMtbmttrSettings('get')
+        const data = await equipTargetMtbmttrSettings('get')
         this.tableData = data || []
       } catch (e) {
         //
@@ -78,7 +78,7 @@ export default {
     async submitFun() {
       try {
         this.btnLoading = true
-        await EquipTargetMtbmttrSettings('post', null, { data: this.tableData })
+        await equipTargetMtbmttrSettings('post', null, { data: this.tableData })
         this.$message.success('保存成功')
         this.btnLoading = false
       } catch (e) {
