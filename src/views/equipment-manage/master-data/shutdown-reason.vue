@@ -2,7 +2,7 @@
   <div class="shutdown-reason">
     <!-- 设备停机原因定义 -->
     <el-row class="search-form-style">
-      <el-col v-loading="loading" :span="10">
+      <el-col :span="10">
         <el-form inline>
           <el-form-item
             label="停机原因分类名称"
@@ -32,6 +32,7 @@
 
         <el-table
           ref="currentRow"
+          v-loading="loading"
           :data="tableData"
           border
           highlight-current-row
@@ -76,7 +77,7 @@
           </el-table-column>
         </el-table>
       </el-col>
-      <el-col v-loading="loading1" :span="14">
+      <el-col :span="14">
         <el-form inline style="float:right">
           <el-form-item
             label="停机原因名称"
@@ -105,41 +106,51 @@
           </el-form-item>
         </el-form>
         <el-table
+          v-loading="loading1"
           :data="tableData1"
           border
+          width="100%"
         >
           <el-table-column
             type="index"
             label="序号"
+            width="60px"
           />
           <el-table-column
             prop="machine_halt_reason_code"
             label="停机原因代码"
+            min-width="20"
           />
           <el-table-column
             prop="machine_halt_reason_name"
             label="停机原因名称"
+            min-width="20"
           />
           <el-table-column
             prop="equip_fault_types"
             label="停机故障"
-            :formatter="(row)=>{
-              let str = ''
-              row.equip_fault_types.forEach(d=>str+=d.fault_type_name+';')
-              return str
-            }"
-          />
+            min-width="20"
+          >
+            <template slot-scope="{row}">
+              <span v-for="(item,key) in row.equip_fault_types" :key="key">
+                {{ item.fault_type_name }};
+              </span>
+            </template>
+          </el-table-column>
           <el-table-column
             prop="desc"
             label="备注"
+            min-width="20"
           />
           <el-table-column
             prop="use_flag"
             label="是否使用"
+            min-width="20"
             :formatter="(row)=>{return row.use_flag?'Y':'N'}"
           />
           <el-table-column
             label="操作"
+            width="140px"
           >
             <template slot-scope="scope">
               <el-button-group>
@@ -173,25 +184,25 @@
         :rules="rules"
         label-width="150px"
       >
-        <el-form-item v-if="!isType" label="停机原因代码" prop="depot_name">
-          <el-input v-model="formObj.depot_name" />
+        <el-form-item v-if="!isType" label="停机原因代码" prop="machine_halt_reason_code">
+          <el-input v-model="formObj.machine_halt_reason_code" :disabled="formObj.id?true:false" />
         </el-form-item>
-        <el-form-item v-if="!isType" label="停机原因名称" prop="depot_name">
-          <el-input v-model="formObj.depot_name" />
+        <el-form-item v-if="!isType" label="停机原因名称" prop="machine_halt_reason_name">
+          <el-input :key="2" v-model="formObj.machine_halt_reason_name" />
         </el-form-item>
-        <el-form-item v-if="!isType" label="停机故障" prop="depot_name">
-          <el-input v-model="formObj.input3" disabled placeholder="请输入内容">
+        <el-form-item v-if="!isType" label="停机故障" prop="fault_type_names">
+          <el-input :key="1" v-model="formObj.fault_type_names" disabled placeholder="请输入内容">
             <el-button slot="append" icon="el-icon-search" @click="showFailureCause" />
           </el-input>
         </el-form-item>
-        <el-form-item v-if="!isType" label="备注" prop="depot_site_name">
-          <el-input v-model="formObj.depot_site_name" />
+        <el-form-item v-if="!isType" label="备注" prop="desc">
+          <el-input :key="3" v-model="formObj.desc" />
         </el-form-item>
-        <el-form-item v-if="isType" label="停机原因分类编码" prop="description">
-          <el-input v-model="formObj.description" />
+        <el-form-item v-if="isType" label="停机原因分类编码" prop="machine_halt_type_code">
+          <el-input v-model="formObj.machine_halt_type_code" :disabled="formObj.id?true:false" />
         </el-form-item>
-        <el-form-item v-if="isType" label="停机原因分类名称" prop="description">
-          <el-input v-model="formObj.description" />
+        <el-form-item v-if="isType" label="停机原因分类名称" prop="machine_halt_type_name">
+          <el-input v-model="formObj.machine_halt_type_name" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -222,8 +233,8 @@ export default {
   components: { failureCause },
   data() {
     return {
-      tableData: [{}],
-      tableData1: [{}],
+      tableData: [],
+      tableData1: [],
       dataForm: {},
       dataForm1: {},
       formObj: {},
@@ -236,15 +247,12 @@ export default {
       loadingBtn1: false,
       equip_machine_halt_type_id: null,
       rules: {
-        depot_name: [
-          { required: true, message: '请输入库区', trigger: 'blur' }
-        ],
-        depot_site_name: [
-          { required: true, message: '请输入库位', trigger: 'blur' }
-        ],
-        description: [
-          { required: true, message: '请输入描述', trigger: 'blur' }
-        ],
+        machine_halt_type_code: [{ required: true, message: '请输入', trigger: 'blur' }],
+        machine_halt_type_name: [{ required: true, message: '请输入', trigger: 'blur' }],
+        machine_halt_reason_code: [{ required: true, message: '请输入', trigger: 'blur' }],
+        machine_halt_reason_name: [{ required: true, message: '请输入', trigger: 'blur' }],
+        fault_type_names: [{ required: true, message: '请输入', trigger: 'blur' }],
+        desc: [{ required: true, message: '请输入', trigger: 'blur' }],
         depot: [
           { required: true, message: '请选择库区', trigger: 'change' }
         ]
@@ -290,12 +298,24 @@ export default {
     handleCurrentChange(row) {
       this.depot = row.id
     },
-    editArea(row, bool) {
+    addArea(bool) {
       this.dialogVisible = true
       this.isType = bool
     },
+    editArea(row, bool) {
+      this.dialogVisible = true
+      this.isType = bool
+      this.formObj = JSON.parse(JSON.stringify(row))
+      if (!bool) {
+        this.formObj.fault_type_names = ''
+        this.formObj.equip_fault_types.forEach(D => {
+          this.formObj.fault_type_names += D.fault_type_name + ' '
+        })
+      }
+    },
     handleClose(done) {
       this.dialogVisible = false
+      this.formObj = {}
       this.$refs.formObj.resetFields()
       if (done) {
         done()
@@ -316,16 +336,16 @@ export default {
         if (valid) {
           try {
             this.loadingBtn = true
-            // const _api = this.isArea ? sulfurDepot : sulfurDepotSite
-            // const _method = this.formObj.id ? 'put' : 'post'
-            // await _api(_method, this.formObj.id, { data: this.formObj })
-            // this.$message.success('操作成功')
-            // this.handleClose(false)
-            // if (this.isArea) {
-            //   this.getList()
-            // } else {
-            //   this.getList1()
-            // }
+            const _api = this.isType ? equipMachineHaltType : equipMachineHaltReason
+            const _method = this.formObj.id ? 'put' : 'post'
+            await _api(_method, this.formObj.id || null, { data: this.formObj })
+            this.$message.success('操作成功')
+            this.handleClose(false)
+            if (this.isType) {
+              this.getListType()
+            } else {
+              this.getListReason()
+            }
             this.loadingBtn = false
           } catch (e) {
             this.loadingBtn = false
@@ -365,7 +385,7 @@ export default {
 .shutdown-reason{
   .search-form-style{
     .el-input{
-      width:140px;
+      width:130px;
     }
   }
   .el-dialog__wrapper .el-input{
