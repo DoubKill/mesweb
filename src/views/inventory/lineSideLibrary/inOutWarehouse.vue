@@ -357,7 +357,7 @@ export default {
           data: {
             status: 2,
             id: row.id,
-            depot_site: row.depot_site_id
+            depot_pallet_id: row.depot_pallet_id
           }})
           .then(response => {
             this.$message({
