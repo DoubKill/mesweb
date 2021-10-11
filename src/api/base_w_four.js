@@ -378,3 +378,11 @@ export function carbonOutTask(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function EquipTargetMtbmttrSettings(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipTargetMtbmttrSettings + id + '/' : API.EquipTargetMtbmttrSettings,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

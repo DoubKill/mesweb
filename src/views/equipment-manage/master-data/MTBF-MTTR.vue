@@ -16,17 +16,17 @@
       element-loading-spinner="el-icon-loading"
     >
       <el-table-column
-        prop="property_no"
+        prop="equip__equip_no"
         label="机台编号"
         min-width="20"
       />
       <el-table-column
-        prop="property_no"
+        prop="equip__equip_name"
         label="机台名称"
         min-width="20"
       >
         <template slot-scope="{row}">
-          <el-input v-model="row.name" />
+          <el-input v-model="row.equip__equip_name" />
         </template>
       </el-table-column>
       <el-table-column
@@ -35,7 +35,7 @@
         min-width="20"
       >
         <template slot-scope="{row}">
-          <el-input-number v-model="row.need_weight" :precision="3" :min="0" />
+          <el-input-number v-model="row.target_mtb" :precision="3" :min="0" />
         </template>
       </el-table-column>
       <el-table-column
@@ -44,7 +44,7 @@
         min-width="20"
       >
         <template slot-scope="{row}">
-          <el-input-number v-model="row.need_weight" :precision="3" :min="0" />
+          <el-input-number v-model="row.target_mttr" :precision="3" :min="0" />
         </template>
       </el-table-column>
     </el-table>
@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import { equipUrl } from '@/api/base_w'
+import { EquipTargetMtbmttrSettings } from '@/api/base_w_four'
 export default {
   name: 'EquipmentMasterDataMTBFMTTR',
   data() {
@@ -69,14 +69,21 @@ export default {
   methods: {
     async getList() {
       try {
-        const data = await equipUrl('get', { params: { all: 1, category_name: '密炼设备' }})
-        this.options = data.results || []
+        const data = await EquipTargetMtbmttrSettings('get')
+        this.tableData = data || []
       } catch (e) {
         //
       }
     },
-    submitFun() {
-
+    async submitFun() {
+      try {
+        this.btnLoading = true
+        await EquipTargetMtbmttrSettings('post', null, { data: this.tableData })
+        this.$message.success('保存成功')
+        this.btnLoading = false
+      } catch (e) {
+        this.btnLoading = false
+      }
     }
   }
 }
