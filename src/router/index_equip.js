@@ -460,6 +460,16 @@ export const equipRoutes = [
               title: '设备BOM管理',
               permissionName: ''
             }
+          },
+          {
+            path: '/equipment/personnel-framework',
+            component: () => import('@/views/equipment-manage/master-data/personnel-framework'),
+            name: 'EquipmentMasterData-personnel-framework',
+            meta: {
+              faName: 'EquipmentMasterData',
+              title: '人员组织架构',
+              permissionName: ''
+            }
           }
         ]
       }

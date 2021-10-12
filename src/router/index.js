@@ -153,16 +153,16 @@ export let asyncRoutes = [
         permissionName: 'groupextension'
       }
     },
-    {
-      path: '/group/department',
-      name: 'DepartmenManage',
-      component: () => import('@/views/basic/department-manage/index'),
-      meta: {
-        title: '部门管理',
-        icon: 'dashboard',
-        permissionName: 'department'
-      }
-    },
+    // {
+    //   path: '/group/department',
+    //   name: 'DepartmenManage',
+    //   component: () => import('@/views/basic/department-manage/index'),
+    //   meta: {
+    //     title: '部门管理',
+    //     icon: 'dashboard',
+    //     permissionName: 'department'
+    //   }
+    // },
     {
       path: '/user/manage',
       name: 'UserManage',

@@ -258,7 +258,7 @@ export default {
   SpareInventory: '/api/v1/spareparts/spare-inventory/',
 
   // 部门管理
-  DepartmentManage: '/api/v1/system/section/',
+  // DepartmentManage: '/api/v1/system/section/',
 
   // 位置点
   Location: '/api/v1/basics/location/',
@@ -491,6 +491,9 @@ export default {
   EquipOrderAssignRule: '/api/v1/equipment/equip-order-assign-rule/',
   EquipMachineHaltType: '/api/v1/equipment/equip-machine-halt-type/',
   EquipMachineHaltReason: '/api/v1/equipment/equip-machine-halt-reason/',
+  SectionUserTree: '/api/v1/system/section/tree/', // 部门用户树结构
+  EquipMaintenanceAreaSettings: '/api/v1/equipment/equip-maintenance-area-settings/', // 维护包干设置
+  SectionTree: '/api/v1/system/section/',
   // 供应商管理台账
   EquipSupplier: 'api/v1/equipment/equip-supplier/',
   // 设备类型

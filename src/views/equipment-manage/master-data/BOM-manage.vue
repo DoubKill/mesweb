@@ -380,11 +380,6 @@ export default {
 
 <style lang="scss" scoped>
 .BOM-manage-style{
-  .search-form-style{
-    .el-input{
-      // width:140px;
-    }
-  }
   ::-webkit-scrollbar {
     width: 1px;
   }

@@ -410,3 +410,27 @@ export function equipMachineHaltReason(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function sectionUserTree(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SectionUserTree + id + '/' : API.SectionUserTree,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function equipMaintenanceAreaSettings(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipMaintenanceAreaSettings + id + '/' : API.EquipMaintenanceAreaSettings,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function sectionTree(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SectionTree + id + '/' : API.SectionTree,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

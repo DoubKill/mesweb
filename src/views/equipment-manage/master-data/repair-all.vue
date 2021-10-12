@@ -4,23 +4,23 @@
     <el-container style="height:580px;">
       <el-aside width="400px" class="border-style aside-style">
         <h3>人员组织架构</h3>
-        <el-tree :data="data" default-expand-all :props="defaultProps" @node-click="handleNodeClick" />
+        <el-tree :highlight-current="true" :data="data" default-expand-all :props="defaultProps" @node-click="handleNodeClick" />
       </el-aside>
       <el-main v-loading="loading" class="border-style">
         <h3>维修包干设置</h3>
         <el-form :inline="true" label-width="100px">
-          <el-form-item label="节点编号">
+          <!-- <el-form-item label="节点编号">
             <el-input v-model="formInline.user" disabled placeholder="规则名称" />
-          </el-form-item><br>
+          </el-form-item><br> -->
           <el-form-item label="姓名">
-            <el-input v-model="formInline.user" clearable placeholder="规则名称" />
+            <el-input v-model="formInline.label" disabled clearable />
           </el-form-item>
           <el-form-item label="职务">
-            <el-input v-model="formInline.user" clearable placeholder="规则名称" />
+            <el-input v-model="formInline.user" disabled clearable />
           </el-form-item>
-          <el-form-item>
+          <!-- <el-form-item>
             <el-button size="small" type="primary" @click="onSubmit">保存</el-button>
-          </el-form-item>
+          </el-form-item> -->
         </el-form>
         <h4>维修区域设定</h4>
         <el-button style="float:right;margin-right:20px" size="small" type="primary" @click="addFun">添加</el-button>
@@ -30,17 +30,17 @@
           border
         >
           <el-table-column
-            prop="date"
+            prop="equip_no"
             label="机台"
             min-width="20"
           />
           <el-table-column
-            prop="name"
+            prop="equip_part_name"
             label="部位名称"
             min-width="20"
           />
           <el-table-column
-            prop="address"
+            prop="equip_area_name"
             label="区域"
             min-width="20"
           />
@@ -52,6 +52,7 @@
               <el-button
                 size="mini"
                 type="danger"
+                :disabled="btnLoading"
                 @click="handleUserDelete(scope.row)"
               >
                 删除
@@ -68,11 +69,18 @@
       :before-close="handleClose"
     >
       <el-form ref="dialogForm" label-width="100px" :model="dialogForm" :rules="rules">
-        <el-form-item label="机台:" prop="property_no">
-          //
+        <el-form-item label="机台:" prop="equip">
+          <el-select v-model="dialogForm.equip" placeholder="请选择">
+            <el-option
+              v-for="item in equips"
+              :key="item.id"
+              :label="item.equip_no"
+              :value="item.equip_no"
+            />
+          </el-select>
         </el-form-item>
-        <el-form-item label="部位名称:" prop="type">
-          <el-select v-model="dialogForm.type" placeholder="请选择">
+        <el-form-item label="部位名称:" prop="equip_part">
+          <el-select v-model="dialogForm.equip_part" placeholder="请选择">
             <el-option
               v-for="item in ['浙江','大连']"
               :key="item"
@@ -81,15 +89,8 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="区域:" prop="type">
-          <el-select v-model="dialogForm.type" placeholder="请选择">
-            <el-option
-              v-for="item in ['浙江','大连']"
-              :key="item"
-              :label="item"
-              :value="item"
-            />
-          </el-select>
+        <el-form-item label="区域:" prop="equip_area">
+          <el-input v-model="dialogForm.equip_area" disabled clearable />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -101,6 +102,8 @@
 </template>
 
 <script>
+import { equipUrl } from '@/api/base_w'
+import { sectionUserTree, equipMaintenanceAreaSettings } from '@/api/base_w_four'
 export default {
   name: 'EquipmentMasterDataRepairAll',
   data() {
@@ -128,12 +131,49 @@ export default {
         type: [{ required: true, message: '不能为空', trigger: 'change' }]
       },
       dialogVisible: false,
-      btnLoading: false
+      btnLoading: false,
+      equips: []
     }
   },
+  created() {
+    this.getTree()
+    this.getEquipList()
+  },
   methods: {
-    handleNodeClick() {
-
+    async getTree() {
+      try {
+        this.loading = true
+        const data = await sectionUserTree('get')
+        this.data = data.results || []
+        this.loading = false
+      } catch (e) {
+        this.loading = false
+      }
+    },
+    async getEquipList() {
+      try {
+        const equipData = await equipUrl('get', { params: { all: 1 }})
+        this.equips = equipData.results
+      } catch (e) {
+        //
+      }
+    },
+    async handleNodeClick(val) {
+      this.formInline = val
+      if (val.user_id) {
+        this.getAreaSettings()
+      } else {
+        this.tableData = []
+      }
+    },
+    async getAreaSettings() {
+      try {
+        this.loading = true
+        const data = await equipMaintenanceAreaSettings('get', null, { params: { maintenance_user_id: this.formInline.user_id }})
+        this.tableData = data || []
+      } catch (e) {
+        this.loading = false
+      }
     },
     onSubmit() {},
     addFun() {
@@ -141,12 +181,18 @@ export default {
     },
     handleClose(done) {
       this.dialogVisible = false
+      this.dialogForm = {}
       this.$refs.dialogForm.resetFields()
       if (done) {
         done()
       }
     },
     submitFun() {
+      if (!this.formInline.user_id) {
+        this.$message.info('请选择用户')
+        return
+      }
+      this.dialogForm.maintenance_user = this.formInline.user_id
       this.$refs.dialogForm.validate(async(valid) => {
         if (valid) {
           try {
@@ -154,8 +200,7 @@ export default {
             // const _api = this.bindingForm.id ? 'put' : 'post'
             // await equipPart(_api, this.bindingForm.id || null, { data: this.bindingForm })
             this.$message.success('操作成功')
-            this.handleClose(null)
-            this.getList()
+            this.getAreaSettings()
             this.btnLoading = false
           } catch (e) {
             this.btnLoading = false
@@ -165,23 +210,25 @@ export default {
         }
       })
     },
-    handleUserDelete() {
+    handleUserDelete(row) {
       this.$confirm('是否确定删除?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        // propertyTypeNode('delete', data.id)
-        //   .then(response => {
-        //     this.$message({
-        //       type: 'success',
-        //       message: '删除成功!'
-        //     })
-        //     this.handleClose(false)
-        //     this.getTypeNode()
-        //   }).catch(e => {
-        //     this.$message.error('删除失败')
-        //   })
+        this.btnLoading = true
+        equipMaintenanceAreaSettings('delete', row.id)
+          .then(response => {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+            this.getAreaSettings()
+            this.btnLoading = false
+          }).catch(e => {
+            this.btnLoading = false
+            this.$message.error('删除失败')
+          })
       })
     }
   }
