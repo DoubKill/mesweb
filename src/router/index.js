@@ -723,7 +723,7 @@ export let asyncRoutes = [
         icon: 'production'
       },
       children: [
-        {
+        /** {
           path: '/report/produce-work',
           component: () => import('@/views/equipment-management/report/produce-work'),
           name: 'ProduceWork',
@@ -732,7 +732,7 @@ export let asyncRoutes = [
             title: '生产运行记录',
             permissionName: 'production_record'
           }
-        }
+        }**/
         // {
         //   path: '/report/material-requirement',
         //   component: () => import('@/views/equipment-management/report/material-requirement'),
@@ -1491,7 +1491,8 @@ export let asyncRoutes = [
           icon: 'quality'
         },
         children: [
-          { path: '/statistics/rubber-pass',
+          {
+            path: '/statistics/rubber-pass',
             component: () => import('@/views/quality_management/pass/rubberCompound.vue'),
             name: 'RubberCompound',
             meta: {
@@ -1518,8 +1519,7 @@ export let asyncRoutes = [
               permissionName: 'classes_quality_analyze'
             }
           }
-          /*,
-          {
+          /** {
             path: '/statistics/month-pass-detail',
             component: () => import('@/views/quality_management/month_pass_detail'),
             name: 'MonthPassDetail',
@@ -1548,7 +1548,7 @@ export let asyncRoutes = [
               title: '胶料日合格率统计',
               permissionName: 'product_daily_passing_rate'
             }
-          }*/
+          }**/
         ]
       },
       {

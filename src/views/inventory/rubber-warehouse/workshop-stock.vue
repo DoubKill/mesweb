@@ -5,6 +5,7 @@
       <el-form-item label="物料类型:">
         <stage-select
           v-model="search.material_type"
+          :is-allow-create="true"
           @change="stageChange"
         />
         <!-- <materielTypeSelect
