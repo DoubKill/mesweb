@@ -41,7 +41,7 @@
       <el-form-item style="float:right">
         <el-button
           type="primary"
-          @click="exportTable('胶料别合格率')"
+          @click="exportTable('机台别合格率统计')"
         >导出表格</el-button>
       </el-form-item>
     </el-form>

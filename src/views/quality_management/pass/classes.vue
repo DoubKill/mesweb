@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 胶料别合格率 -->
+    <!-- 班次别合格率统计 -->
     <el-form :inline="true">
       <el-form-item label="时间">
         <el-date-picker
@@ -41,7 +41,7 @@
       <el-form-item style="float:right">
         <el-button
           type="primary"
-          @click="exportTable('胶料别合格率')"
+          @click="exportTable('班次别合格率统计')"
         >导出表格</el-button>
       </el-form-item>
     </el-form>
