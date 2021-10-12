@@ -434,3 +434,20 @@ export function sectionTree(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function equipFaultTypes(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipFaultTypes + id + '/' : API.EquipFaultTypes,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipFaultCodes(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipFaultCodes + id + '/' : API.EquipFaultCodes,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

@@ -60,6 +60,12 @@
             </template>
           </el-table-column>
         </el-table>
+        <page
+          :old-page="false"
+          :total="total"
+          :current-page="formInline.page"
+          @currentChange="currentChange"
+        />
       </el-main>
     </el-container>
     <el-dialog
@@ -102,27 +108,20 @@
 </template>
 
 <script>
+import page from '@/components/page'
 import { equipUrl } from '@/api/base_w'
 import { sectionUserTree, equipMaintenanceAreaSettings } from '@/api/base_w_four'
 export default {
   name: 'EquipmentMasterDataRepairAll',
+  components: { page },
   data() {
     return {
-      data: [{
-        label: '一级 1',
-        children: [{
-          label: '二级 1-1',
-          children: [{
-            label: '三级 1-1-1'
-          }]
-        }]
-      }
-      ],
+      data: [],
       defaultProps: {
         children: 'children',
         label: 'label'
       },
-      tableData: [{}],
+      tableData: [],
       formInline: {},
       loading: false,
       dialogForm: {},
@@ -132,7 +131,8 @@ export default {
       },
       dialogVisible: false,
       btnLoading: false,
-      equips: []
+      equips: [],
+      total: 0
     }
   },
   created() {
@@ -158,6 +158,11 @@ export default {
         //
       }
     },
+    currentChange(page, pageSize) {
+      this.formInline.page = page
+      this.formInline.page_size = pageSize
+      this.getAreaSettings()
+    },
     async handleNodeClick(val) {
       this.formInline = val
       if (val.user_id) {
@@ -170,7 +175,9 @@ export default {
       try {
         this.loading = true
         const data = await equipMaintenanceAreaSettings('get', null, { params: { maintenance_user_id: this.formInline.user_id }})
-        this.tableData = data || []
+        this.tableData = data.results || []
+        this.total = data.count
+        this.loading = false
       } catch (e) {
         this.loading = false
       }

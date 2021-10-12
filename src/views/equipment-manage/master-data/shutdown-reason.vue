@@ -216,7 +216,7 @@
       width="80%"
       :before-close="handleClose1"
     >
-      <failureCause ref="refFailureCause" />
+      <failureCause ref="refFailureCause" :show="dialogVisible1" :list-current="formObj.equip_fault_type " />
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose1(false)">取 消</el-button>
         <el-button type="primary" :loading="loadingBtn1" @click="submitFun1">确 定</el-button>
@@ -245,6 +245,7 @@ export default {
       isType: false,
       dialogVisible1: false,
       loadingBtn1: false,
+      loadingBtn: false,
       equip_machine_halt_type_id: null,
       rules: {
         machine_halt_type_code: [{ required: true, message: '请输入', trigger: 'blur' }],
@@ -330,7 +331,19 @@ export default {
     showFailureCause() {
       this.dialogVisible1 = true
     },
-    submitFun1() {},
+    submitFun1() {
+      const list = this.$refs.refFailureCause.handleSelection
+      if (list.length === 0) {
+        this.$message.info('请选择故障原因')
+        return
+      }
+      this.dialogVisible1 = false
+      list.forEach(d => {
+        this.formObj.fault_type_names += d.fault_name + ' '
+        this.formObj.equip_fault.push(d.id)
+      })
+      console.log(list)
+    },
     submitFun() {
       this.$refs.formObj.validate(async(valid) => {
         if (valid) {

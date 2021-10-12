@@ -494,6 +494,8 @@ export default {
   SectionUserTree: '/api/v1/system/section/tree/', // 部门用户树结构
   EquipMaintenanceAreaSettings: '/api/v1/equipment/equip-maintenance-area-settings/', // 维护包干设置
   SectionTree: '/api/v1/system/section/',
+  EquipFaultTypes: '/api/v1/equipment/equip-fault-types/', // 设备故障分类 大分类
+  EquipFaultCodes: '/api/v1/equipment/equip-fault-codes/', // 设备故障分类 中分类
   // 供应商管理台账
   EquipSupplier: '/api/v1/equipment/equip-supplier/',
   // 设备类型
