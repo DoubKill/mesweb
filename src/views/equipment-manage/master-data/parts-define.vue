@@ -3,59 +3,59 @@
     <!-- 设备部件定义 -->
     <el-form :inline="true" class="search-form-style">
       <el-form-item label="所属主设备种类">
-        <el-select v-model="formInline.region" clearable placeholder="所属主设备种类">
+        <el-select v-model="formInline.equip_type" placeholder="请选择" clearable @change="changeSearch">
           <el-option
-            v-for="item in ['浙江','大连']"
-            :key="item"
-            :label="item"
-            :value="item"
+            v-for="item in options"
+            :key="item.category_name"
+            :label="item.category_name"
+            :value="item.category_name"
           />
         </el-select>
       </el-form-item>
       <el-form-item label="所属设备部位">
-        <el-select v-model="formInline.region" clearable placeholder="所属设备部位">
+        <el-select v-model="formInline.equip_part" placeholder="请选择" clearable @change="changeSearch">
           <el-option
-            v-for="item in ['浙江','大连']"
-            :key="item"
-            :label="item"
-            :value="item"
+            v-for="item in options1"
+            :key="item.part_name"
+            :label="item.part_name"
+            :value="item.part_name"
           />
         </el-select>
       </el-form-item>
       <el-form-item label="部件分类">
-        <el-select v-model="formInline.region" clearable placeholder="部件分类">
+        <el-select v-model="formInline.equip_component_type" clearable placeholder="部件分类" @change="changeSearch">
           <el-option
-            v-for="item in ['浙江','大连']"
-            :key="item"
-            :label="item"
-            :value="item"
+            v-for="item in options2"
+            :key="item.component_type_name"
+            :label="item.component_type_name"
+            :value="item.component_type_name"
           />
         </el-select>
       </el-form-item>
       <el-form-item label="部件名称">
-        <el-input v-model="formInline.user" clearable placeholder="部件名称" />
+        <el-input v-model="formInline.component_name" clearable placeholder="部件名称" @input="changeSearch" />
       </el-form-item>
       <el-form-item label="是否已绑定备件">
-        <el-select v-model="formInline.region" clearable>
+        <el-select v-model="formInline.is_binding" clearable placeholder="是否绑定" @change="changeSearch">
           <el-option
-            v-for="item in ['浙江','大连']"
-            :key="item"
-            :label="item"
-            :value="item"
+            v-for="item in [{label:'Y',value:1},{label:'N',value:0}]"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
           />
         </el-select>
       </el-form-item>
       <el-form-item label="是否启用">
-        <el-select v-model="formInline.region" clearable placeholder="是否启用">
+        <el-select v-model="formInline.use_flag" clearable placeholder="是否启用" @change="changeSearch">
           <el-option
-            v-for="item in ['浙江','大连']"
-            :key="item"
-            :label="item"
-            :value="item"
+            v-for="item in [{label:'Y',value:1},{label:'N',value:0}]"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
           />
         </el-select>
       </el-form-item>
-      <el-form-item style="float:right">
+      <el-form-item v-if="isMultiple===false" style="float:right">
         <el-button type="primary" @click="onSubmit">导出Excel</el-button>
         <el-button type="primary" @click="onSubmit">导入Excel</el-button>
         <el-button type="primary" @click="onSubmit">新建</el-button>
@@ -66,53 +66,65 @@
       :data="tableData"
       style="width: 100%"
       border
+      highlight-current-row
+      @current-change="handleSelectionChange1"
     >
       <el-table-column
-        prop="date"
+        prop="equip_type_name"
         label="所属主设备种类"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="equip_part_name"
         label="所属设备部位"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="equip_component_type_name"
         label="部件分类"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="component_code"
         label="部件代码"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="component_name"
         label="部件名称"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="is_binding"
         label="是否已绑定备件(Y/N)"
         min-width="20"
-      />
+      >
+        <template slot-scope="scope">
+          <span v-if="scope.row.is_binding===true">Y</span>
+          <span v-if="scope.row.is_binding===false">N</span>
+        </template>
+      </el-table-column>
       <el-table-column
-        prop="date"
+        prop="use_flag"
         label="是否启用"
         min-width="20"
-      />
+      >
+        <template slot-scope="scope">
+          <span v-if="scope.row.use_flag===true">Y</span>
+          <span v-if="scope.row.use_flag===false">N</span>
+        </template>
+      </el-table-column>
       <el-table-column
-        prop="date"
+        prop="created_username"
         label="录入者"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="created_date"
         label="录入时间"
         min-width="20"
       />
-      <el-table-column label="操作" width="250px">
+      <el-table-column v-if="isMultiple===false" label="操作" width="250px">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -127,7 +139,7 @@
             type="danger"
             plain
             @click="handleDelete(scope.row)"
-          >{{ scope.row.used_flag?'停用':'启用' }}
+          >{{ scope.row.use_flag?'停用':'启用' }}
           </el-button>
         </template>
       </el-table-column>
@@ -152,54 +164,54 @@
       >
         <el-form-item
           label="所属主设备种类"
-          prop="name"
+          prop="equip_type"
         >
-          <el-select v-model="dialogForm.value" placeholder="请选择">
+          <el-select v-model="dialogForm.equip_type" placeholder="请选择">
             <el-option
-              v-for="item in []"
-              :key="item"
-              :label="item"
-              :value="item"
+              v-for="item in options"
+              :key="item.category_name"
+              :label="item.category_name"
+              :value="item.id"
             />
           </el-select>
         </el-form-item>
         <el-form-item
           label="所属主设备部位"
-          prop="name"
+          prop="equip_part"
         >
-          <el-select v-model="dialogForm.value" placeholder="请选择">
+          <el-select v-model="dialogForm.equip_part" placeholder="请选择">
             <el-option
-              v-for="item in []"
-              :key="item"
-              :label="item"
-              :value="item"
+              v-for="item in options1"
+              :key="item.part_name"
+              :label="item.part_name"
+              :value="item.id"
             />
           </el-select>
         </el-form-item>
         <el-form-item
           label="部件分类"
-          prop="name"
+          prop="equip_component_type"
         >
-          <el-select v-model="dialogForm.value" placeholder="请选择">
+          <el-select v-model="dialogForm.equip_component_type" placeholder="请选择">
             <el-option
-              v-for="item in []"
-              :key="item"
-              :label="item"
-              :value="item"
+              v-for="item in options2"
+              :key="item.component_type_name"
+              :label="item.component_type_name"
+              :value="item.id"
             />
           </el-select>
         </el-form-item>
         <el-form-item
           label="部件代码"
-          prop="name"
+          prop="component_code"
         >
-          <el-input v-model="dialogForm.name" />
+          <el-input v-model="dialogForm.component_code" :disabled="dialogForm.id?true:false" />
         </el-form-item>
         <el-form-item
           label="部件名称"
-          prop="name"
+          prop="component_name"
         >
-          <el-input v-model="dialogForm.name" />
+          <el-input v-model="dialogForm.component_name" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -218,22 +230,22 @@
         <el-form-item
           label="所属设备部位"
         >
-          <el-input v-model="dialogForm1.name" disabled />
+          <el-input v-model="dialogForm1.equip_part_name" disabled />
         </el-form-item>
         <el-form-item
           label="部件分类"
         >
-          <el-input v-model="dialogForm1.name" disabled />
+          <el-input v-model="dialogForm1.equip_component_type_name" disabled />
         </el-form-item>
         <el-form-item
           label="部件代码"
         >
-          <el-input v-model="dialogForm1.name" disabled />
+          <el-input v-model="dialogForm1.component_code" disabled />
         </el-form-item>
         <el-form-item
           label="部件名称"
         >
-          <el-input v-model="dialogForm1.name" disabled />
+          <el-input v-model="dialogForm1.component_name" disabled />
         </el-form-item>
         <el-form-item>
           <el-button
@@ -249,30 +261,35 @@
         border
       >
         <el-table-column
-          prop="date"
+          prop="equip_component_type_name"
           label="备件分类"
           min-width="20"
         />
         <el-table-column
-          prop="date"
+          prop="spare_code"
           label="备件编码"
           min-width="20"
         />
         <el-table-column
-          prop="date"
+          prop="spare_name"
           label="备件名称"
           min-width="20"
         />
         <el-table-column
-          prop="date"
-          label="经销商名称"
+          prop="supplier_name"
+          label="供应商名称"
           min-width="20"
         />
         <el-table-column
-          prop="date"
+          prop="reuse_flag"
           label="是否全新"
           min-width="20"
-        />
+        >
+          <template slot-scope="scope">
+            <span v-if="scope.row.reuse_flag===true">是</span>
+            <span v-if="scope.row.reuse_flag===false">否</span>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="100px">
           <template slot-scope="scope">
             <el-button
@@ -299,22 +316,22 @@
         <el-form-item
           label="备件分类"
         >
-          <el-input v-model="dialogForm2.name" />
+          <el-input v-model="dialogForm2.equip_component_type" disabled />
         </el-form-item>
         <el-form-item
-          label="备件经销商"
+          label="备件供应商"
         >
-          <el-input v-model="dialogForm2.name" />
+          <el-input v-model="dialogForm2.supplier_name" @input="addDialogForm1" />
         </el-form-item>
         <el-form-item
           label="备件物料编码"
         >
-          <el-input v-model="dialogForm2.name" />
+          <el-input v-model="dialogForm2.spare_code" @input="addDialogForm1" />
         </el-form-item>
         <el-form-item
           label="备件物料名称"
         >
-          <el-input v-model="dialogForm2.name" />
+          <el-input v-model="dialogForm2.spare_name" @input="addDialogForm1" />
         </el-form-item>
       </el-form>
       <el-table
@@ -332,23 +349,23 @@
           :selectable="()=>{return true}"
         />
         <el-table-column
-          prop="date"
+          prop="equip_component_type_name"
           label="备件分类"
           min-width="20"
         />
         <el-table-column
-          prop="date"
+          prop="spare_code"
           label="物料编码"
           min-width="20"
         />
         <el-table-column
-          prop="date"
+          prop="spare_name"
           label="物料名称"
           min-width="20"
         />
         <el-table-column
-          prop="date"
-          label="经销商名称"
+          prop="supplier_name"
+          label="供应商名称"
           min-width="20"
         />
       </el-table>
@@ -368,15 +385,27 @@
 
 <script>
 import page from '@/components/page'
+import { equipComponent, equipsCategory, equipComponentType, equipPartNew, erpSpareComponentRelation, equipSpareErp } from '@/api/jqy'
 export default {
   name: 'EquipmentMasterDataPartsDefine',
   components: { page },
+  props: {
+    isMultiple: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       formInline: {},
       loading: false,
-      tableData: [{}],
+      tableData: [],
+      multipleSelection: [],
       dialogVisible: false,
+      id: '',
+      options: [],
+      options1: [],
+      options2: [],
       total: 0,
       dialogForm: {},
       btnLoading: false,
@@ -384,31 +413,66 @@ export default {
       dialogVisible1: false,
       loading1: false,
       btnLoading1: false,
-      tableData1: [{}],
+      tableData1: [],
       dialogVisible2: false,
       dialogForm2: {},
-      tableData2: [{}],
+      tableData2: [],
       total2: 0,
       btnLoading2: false,
       rules: {
-        name: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        type: [{ required: true, message: '不能为空', trigger: 'change' }]
+        equip_type: [{ required: true, message: '不能为空', trigger: 'change' }],
+        equip_part: [{ required: true, message: '不能为空', trigger: 'change' }],
+        equip_component_type: [{ required: true, message: '不能为空', trigger: 'change' }],
+        component_code: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        component_name: [{ required: true, message: '不能为空', trigger: 'blur' }]
       }
     }
   },
   created() {
-    // this.$debounce(this, 'getList')
+    this.getTypeNode()
+    this.getList()
+    this.getEquipComponentType()
+    this.getEquipPart()
   },
   methods: {
     async getList() {
       try {
         this.loading = true
-        // const data = await testIndicators('get', null, { all: 1 })
-        // this.tableData = data || []
+        const data = await equipComponent('get', null, { params: this.formInline })
+        this.tableData = data.results || []
+        this.total = data.count
         this.loading = false
       } catch (e) {
         this.loading = false
       }
+    },
+    async getEquipComponentType() {
+      try {
+        const data = await equipComponentType('get', null, { params: { all: 1 }})
+        this.options2 = data.result || []
+      } catch (error) {
+        this.options2 = []
+      }
+    },
+    async getTypeNode() {
+      try {
+        const data = await equipsCategory('get')
+        this.options = data.results || []
+      } catch (e) {
+        //
+      }
+    },
+    async getEquipPart() {
+      try {
+        const data = await equipPartNew('get', null, { params: { all: 1 }})
+        this.options1 = data.result || []
+      } catch (e) {
+        //
+      }
+    },
+    changeSearch() {
+      this.formInline.page = 1
+      this.getList()
     },
     currentChange(page, pageSize) {
       this.formInline.page = page
@@ -418,54 +482,121 @@ export default {
     currentChange2(page, pageSize) {
       this.dialogForm2.page = page
       this.dialogForm2.page_size = pageSize
+      this.addDialogForm1()
     },
     onSubmit() {
-
+      this.dialogForm = {}
+      this.dialogVisible = true
     },
-    showSpareDialog() {
-      this.dialogVisible1 = true
+    async showSpareDialog(row) {
+      try {
+        this.dialogForm1 = JSON.parse(JSON.stringify(row))
+        this.dialogVisible1 = true
+        const data = await erpSpareComponentRelation('get', null, { params: { equip_component_id: row.id }})
+        this.id = row.id
+        this.tableData1 = data.results || []
+      } catch (e) {
+        //
+      }
     },
-    addDialogForm1() {
+    async addDialogForm1() {
+      this.dialogForm2.equip_component_type = this.dialogForm1.equip_component_type_name
       this.dialogVisible2 = true
+      const data = await equipSpareErp('get', null, { params: this.dialogForm2 })
+      this.tableData2 = data.results || []
+      this.total2 = data.count
       // this.$refs.multipleTable.toggleRowSelection(row)
     },
-    submitFun1() {},
-    submitFun2() {},
-    handleSelectionChange() {},
+    async submitFun1() {
+      const obj = []
+      this.tableData1.forEach(item => {
+        if (!item.reuse_flag) {
+          obj.push({ equip_component: this.id, equip_spare_erp: item.id })
+        }
+      })
+      if (obj.length >= 1) {
+        try {
+          await erpSpareComponentRelation('post', null, { data: obj })
+          this.$message({
+            type: 'success',
+            message: '操作成功!'
+          })
+          this.dialogVisible1 = false
+          this.getList()
+        } catch (e) {
+        //
+        }
+      } else {
+        this.dialogVisible1 = false
+      }
+    },
+    submitFun2() {
+      for (let index = 0; index < this.multipleSelection.length; index++) {
+        if (this.tableData1.length >= 1) {
+          this.tableData1.forEach(item => {
+            if (this.multipleSelection[index].id !== (item.equip_spare_erp ? item.equip_spare_erp : item.id)) {
+              this.tableData1.push(this.multipleSelection[index])
+            } else {
+              this.$message.info('已有相同备件')
+            }
+          })
+        } else {
+          this.dialogVisible2 = false
+          this.tableData1.push(this.multipleSelection[index])
+        }
+      }
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+    },
+    handleSelectionChange1(val) {
+
+    },
     delSpareDialog(row) {
       this.$confirm('此操作将删除, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        // deleteLocation(row.id)
-        //   .then(response => {
-        //     this.$message({
-        //       type: 'success',
-        //       message: '操作成功!'
-        //     })
-        //     this.getList()
-        //   })
+        if (row.reuse_flag) {
+          erpSpareComponentRelation('delete', row.id, {})
+            .then(response => {
+              this.$message({
+                type: 'success',
+                message: '操作成功!'
+              })
+              const data = erpSpareComponentRelation('get', null, { params: { equip_component_id: this.id }})
+              this.tableData1 = data.results || []
+              this.getList()
+            })
+        } else {
+          this.tableData1.forEach((item, index) => {
+            if (row.id === item.id) {
+              this.tableData1.splice(index, 1)
+            }
+          })
+        }
       })
     },
-    showEditDialog() {
+    showEditDialog(row) {
+      this.dialogForm = JSON.parse(JSON.stringify(row))
       this.dialogVisible = true
     },
     handleDelete: function(row) {
       var str = row.used_flag ? '停用' : '启用'
-      this.$confirm('此操作将' + str + row.name + ', 是否继续?', '提示', {
+      this.$confirm('此操作将' + str + row.component_name + ', 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        // deleteLocation(row.id)
-        //   .then(response => {
-        //     this.$message({
-        //       type: 'success',
-        //       message: '操作成功!'
-        //     })
-        //     this.getList()
-        //   })
+        equipComponent('delete', row.id, {})
+          .then(response => {
+            this.$message({
+              type: 'success',
+              message: '操作成功!'
+            })
+            this.getList()
+          })
       })
     },
     handleClose(done) {
@@ -493,8 +624,8 @@ export default {
         if (valid) {
           try {
             this.btnLoading = true
-            // const _api = this.bindingForm.id ? 'put' : 'post'
-            // await equipPart(_api, this.bindingForm.id || null, { data: this.bindingForm })
+            const _api = this.dialogForm.id ? 'put' : 'post'
+            await equipComponent(_api, this.dialogForm.id || null, { data: this.dialogForm })
             this.$message.success('操作成功')
             this.handleClose(null)
             this.getList()

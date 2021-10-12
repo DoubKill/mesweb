@@ -227,3 +227,33 @@ export function equipsCategory(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+// 设备部件定义
+export function equipComponent(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipComponent + id + '/' : API.EquipComponent,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+// 部件与erp绑定关系
+export function erpSpareComponentRelation(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ErpSpareComponentRelation + id + '/' : API.ErpSpareComponentRelation,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+// erp备件物料信息
+export function equipSpareErp(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipSpareErp + id + '/' : API.EquipSpareErp,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

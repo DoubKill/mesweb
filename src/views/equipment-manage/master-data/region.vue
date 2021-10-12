@@ -29,7 +29,7 @@
         <el-input v-model="formInline.part_name" clearable placeholder="部位名称" @input="changeSearch" />
       </el-form-item>
 
-      <el-form-item style="float:right">
+      <el-form-item v-if="isMultiple===false" style="float:right">
         <el-button type="primary" @click="onSubmit">导出Excel</el-button>
         <el-button type="primary" @click="onSubmit">导入Excel</el-button>
         <el-button type="primary" @click="onSubmit">新建</el-button>
@@ -38,8 +38,10 @@
     <el-table
       v-loading="loading"
       :data="tableData"
+      highlight-current-row
       style="width: 100%"
       border
+      @current-change="handleSelectionChange"
     >
       <el-table-column
         prop="category_no"
@@ -71,7 +73,7 @@
         label="录入时间"
         min-width="20"
       />
-      <el-table-column label="操作" width="200px">
+      <el-table-column v-if="isMultiple===false" label="操作" width="200px">
         <template slot-scope="scope">
           <el-button-group>
             <el-button
@@ -160,9 +162,16 @@ import { equipPartNew, equipsCategory, getSupplierType } from '@/api/jqy'
 export default {
   name: 'EquipmentMasterDataRegion',
   components: { page },
+  props: {
+    isMultiple: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       formInline: {},
+      multipleSelection: [],
       tableData: [],
       options: [],
       GlobalList: [],
@@ -206,10 +215,14 @@ export default {
         this.loading = true
         const data = await equipPartNew('get', null, { params: this.formInline })
         this.tableData = data.results || []
+        this.total = data.count
         this.loading = false
       } catch (e) {
         this.loading = false
       }
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val
     },
     changeSearch() {
       this.formInline.page = 1

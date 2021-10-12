@@ -199,11 +199,7 @@ export default {
       use_flag: '',
       rules: {
         supplier_code: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        supplier_name: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        region: [{ required: true, message: '不能为空', trigger: 'change' }],
-        contact_name: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        contact_phone: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        supplier_type: [{ required: true, message: '不能为空', trigger: 'change' }]
+        supplier_name: [{ required: true, message: '不能为空', trigger: 'blur' }]
       },
       SupplierTypeList: [],
       dialogForm: { supplier_code: 'GYS00X' },

@@ -165,9 +165,7 @@ export default {
         component_type_name: [{ required: true, message: '不能为空', trigger: 'blur' }]
       },
       getParams: {
-        page: 1,
-        no: '',
-        name: ''
+        page: 1
       },
       currentPage: 1,
       total: 1
@@ -182,6 +180,7 @@ export default {
         this.loading = true
         const data = await equipComponentType('get', null, { params: this.getParams })
         this.tableData = data.results || []
+        this.total = data.count
         this.loading = false
       } catch (e) {
         this.loading = false
