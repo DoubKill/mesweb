@@ -495,7 +495,7 @@ export default {
   EquipMaintenanceAreaSettings: '/api/v1/equipment/equip-maintenance-area-settings/', // 维护包干设置
   SectionTree: '/api/v1/system/section/',
   // 供应商管理台账
-  EquipSupplier: 'api/v1/equipment/equip-supplier/',
+  EquipSupplier: '/api/v1/equipment/equip-supplier/',
   // 设备类型
   EquipsCategory: '/api/v1/basics/equips-category/',
   // 设备固定资产台账
@@ -505,6 +505,11 @@ export default {
   // 设备部位定义
   EquipPartNew: '/api/v1/equipment/equip-part-new/',
   // 设备部件分类
-  EquipComponentType: '/api/v1/equipment/equip-component-type/'
-
+  EquipComponentType: '/api/v1/equipment/equip-component-type/',
+  // 设备部件定义
+  EquipComponent: '/api/v1/equipment/equip-component/',
+  // 部件与erp绑定关系
+  ErpSpareComponentRelation: '/api/v1/equipment/erp-spare-component-relation/',
+  // erp备件物料信息
+  EquipSpareErp: '/api/v1/equipment/equip-spare-erp/'
 }
