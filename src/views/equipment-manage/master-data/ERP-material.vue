@@ -3,7 +3,7 @@
     <!-- ERP备件物料信息 -->
     <el-form :inline="true">
       <el-form-item label="备件分类:">
-        <el-select v-model="search.equip_component_type" clearable placeholder="备件分类">
+        <el-select v-model="search.equip_component_type" clearable placeholder="备件分类" @change="changeSearch">
           <el-option
             v-for="item in options"
             :key="item.equip_component_type__component_type_name"
@@ -162,7 +162,7 @@ export default {
     },
     async getList1() {
       try {
-        const data = await equipSpareErp('get', null, { params: { all: 1 }})
+        const data = await equipSpareErp('get', null, { params: { all: 0 }})
         this.options = data.result || []
       } catch (e) {
         //

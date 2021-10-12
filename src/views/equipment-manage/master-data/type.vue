@@ -79,13 +79,13 @@
       <el-table-column
         align="center"
         min-width="20"
-        prop=""
+        prop="created_username"
         label="录入者"
       />
       <el-table-column
         align="center"
         min-width="25"
-        prop=""
+        prop="created_date"
         label="录入日期"
       />
       <el-table-column
