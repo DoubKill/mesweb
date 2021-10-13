@@ -99,7 +99,7 @@
           <el-form-item>
             <el-button
               style="margin-bottom:10px;float:right"
-              :disabled="depot?false:true"
+              :disabled="equip_machine_halt_type_id?false:true"
               type="primary"
               @click="addArea(false)"
             >添加</el-button>
@@ -127,13 +127,12 @@
             min-width="20"
           />
           <el-table-column
-            prop="equip_fault_types"
             label="停机故障"
             min-width="20"
           >
             <template slot-scope="{row}">
-              <span v-for="(item,key) in row.equip_fault_types" :key="key">
-                {{ item.fault_type_name }};
+              <span v-for="(item,key) in row.equip_faults" :key="key">
+                {{ item.fault_name }};
               </span>
             </template>
           </el-table-column>
@@ -190,8 +189,8 @@
         <el-form-item v-if="!isType" label="停机原因名称" prop="machine_halt_reason_name">
           <el-input :key="2" v-model="formObj.machine_halt_reason_name" />
         </el-form-item>
-        <el-form-item v-if="!isType" label="停机故障" prop="fault_type_names">
-          <el-input :key="1" v-model="formObj.fault_type_names" disabled placeholder="请输入内容">
+        <el-form-item v-if="!isType" label="停机故障" prop="fault_names">
+          <el-input :key="1" v-model="formObj.fault_names" disabled placeholder="请输入内容">
             <el-button slot="append" icon="el-icon-search" @click="showFailureCause" />
           </el-input>
         </el-form-item>
@@ -216,7 +215,7 @@
       width="80%"
       :before-close="handleClose1"
     >
-      <failureCause ref="refFailureCause" :show="dialogVisible1" :list-current="formObj.equip_fault_type " />
+      <failureCause ref="refFailureCause" :show="dialogVisible1" :list-current="formObj.equip_fault " />
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose1(false)">取 消</el-button>
         <el-button type="primary" :loading="loadingBtn1" @click="submitFun1">确 定</el-button>
@@ -241,7 +240,6 @@ export default {
       dialogVisible: false,
       loading: false,
       loading1: false,
-      depot: null,
       isType: false,
       dialogVisible1: false,
       loadingBtn1: false,
@@ -252,11 +250,15 @@ export default {
         machine_halt_type_name: [{ required: true, message: '请输入', trigger: 'blur' }],
         machine_halt_reason_code: [{ required: true, message: '请输入', trigger: 'blur' }],
         machine_halt_reason_name: [{ required: true, message: '请输入', trigger: 'blur' }],
-        fault_type_names: [{ required: true, message: '请输入', trigger: 'blur' }],
-        desc: [{ required: true, message: '请输入', trigger: 'blur' }],
-        depot: [
-          { required: true, message: '请选择库区', trigger: 'change' }
-        ]
+        fault_names: [{ required: true, message: '请输入', trigger: 'blur',
+          validator: (rule, value, callback) => {
+            if (!this.formObj.fault_names && !value) {
+              callback(new Error('请输入'))
+            } else {
+              callback()
+            }
+          } }],
+        desc: [{ required: true, message: '请输入', trigger: 'blur' }]
       }
     }
   },
@@ -272,7 +274,6 @@ export default {
         if (this.tableData.length > 0) {
           this.$refs.currentRow.setCurrentRow(this.tableData[0])
           this.equip_machine_halt_type_id = this.tableData[0].id
-          this.getListReason()
         }
         this.loading = false
       } catch (e) {
@@ -297,7 +298,8 @@ export default {
       this.$debounce(this, 'getListReason')
     },
     handleCurrentChange(row) {
-      this.depot = row.id
+      this.equip_machine_halt_type_id = row.id
+      this.getListReason()
     },
     addArea(bool) {
       this.dialogVisible = true
@@ -308,9 +310,9 @@ export default {
       this.isType = bool
       this.formObj = JSON.parse(JSON.stringify(row))
       if (!bool) {
-        this.formObj.fault_type_names = ''
-        this.formObj.equip_fault_types.forEach(D => {
-          this.formObj.fault_type_names += D.fault_type_name + ' '
+        this.formObj.fault_names = ''
+        this.formObj.equip_faults.forEach(D => {
+          this.formObj.fault_names += D.fault_name + ' '
         })
       }
     },
@@ -338,11 +340,12 @@ export default {
         return
       }
       this.dialogVisible1 = false
+      this.formObj.fault_names = []
+      this.formObj.equip_fault = []
       list.forEach(d => {
-        this.formObj.fault_type_names += d.fault_name + ' '
+        this.formObj.fault_names += d.fault_name + ' '
         this.formObj.equip_fault.push(d.id)
       })
-      console.log(list)
     },
     submitFun() {
       this.$refs.formObj.validate(async(valid) => {

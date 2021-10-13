@@ -86,8 +86,7 @@ export default {
   watch: {
     show(val) {
       if (val) {
-        // this.$refs.multipleTable.toggleRowSelection(row)
-        this.getList()
+        this.getList(true)
       } else {
         this.dataForm = {}
         this.$refs.multipleTable.clearSelection()
@@ -95,15 +94,22 @@ export default {
     }
   },
   created() {
-    this.getList()
+    this.getList(true)
   },
   methods: {
-    async getList() {
+    async getList(bool) {
       try {
         this.loading = true
         const data = await equipFaultCodes('get', null, { params: this.dataForm })
         this.tableData = data || []
-        // this.total = data.count
+        // this.tableData = this.tableData.filter(d => d.use_flag)
+        if (bool) {
+          this.tableData.forEach(d => {
+            if (this.listCurrent.findIndex(D => D === d.id) > -1) {
+              this.$refs.multipleTable.toggleRowSelection(d)
+            }
+          })
+        }
         this.loading = false
       } catch (e) {
         this.loading = false
