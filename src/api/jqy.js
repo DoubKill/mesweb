@@ -168,6 +168,24 @@ export function equipSupplierList(method, id, data = {}) {
   return request(obj)
 }
 
+export function equipSupplierImport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipSupplierImport + id + '/' : API.EquipSupplierImport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipSupplierListDown(params) {
+  return request({
+    url: API.EquipSupplier,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
+
 // 供应商类别列表
 export function getSupplierType(method, id, data = {}) {
   const obj = {
@@ -188,6 +206,24 @@ export function equipPropertyList(method, id, data = {}) {
   return request(obj)
 }
 
+export function equipPropertyImport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipPropertyImport + id + '/' : API.EquipPropertyImport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipPropertyListDown(params) {
+  return request({
+    url: API.EquipProperty,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
+
 // 设备部件分类
 export function equipComponentType(method, id, data = {}) {
   const obj = {
@@ -196,6 +232,24 @@ export function equipComponentType(method, id, data = {}) {
   }
   Object.assign(obj, data)
   return request(obj)
+}
+
+export function equipComponentTypeImport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipComponentTypeImport + id + '/' : API.EquipComponentTypeImport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipComponentTypeDown(params) {
+  return request({
+    url: API.EquipComponentType,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
 }
 
 // 设备位置区域定义
@@ -208,6 +262,24 @@ export function equipAreaDefine(method, id, data = {}) {
   return request(obj)
 }
 
+export function equipAreaDefineImport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipAreaDefineImport + id + '/' : API.EquipAreaDefineImport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipAreaDefineDown(params) {
+  return request({
+    url: API.EquipAreaDefine,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
+
 // 设备部位定义
 export function equipPartNew(method, id, data = {}) {
   const obj = {
@@ -216,6 +288,24 @@ export function equipPartNew(method, id, data = {}) {
   }
   Object.assign(obj, data)
   return request(obj)
+}
+
+export function equipPartNewImport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipPartNewImport + id + '/' : API.EquipPartNewImport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipPartNewDown(params) {
+  return request({
+    url: API.EquipPartNew,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
 }
 
 // 设备类型
@@ -252,6 +342,16 @@ export function erpSpareComponentRelation(method, id, data = {}) {
 export function equipSpareErp(method, id, data = {}) {
   const obj = {
     url: id ? API.EquipSpareErp + id + '/' : API.EquipSpareErp,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+// 设备故障信号定义
+export function equipFaultSignal(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipFaultSignal + id + '/' : API.EquipFaultSignal,
     method: method
   }
   Object.assign(obj, data)

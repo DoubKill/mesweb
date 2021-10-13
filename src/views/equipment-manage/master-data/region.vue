@@ -28,11 +28,22 @@
       <el-form-item label="部位名称">
         <el-input v-model="formInline.part_name" clearable placeholder="部位名称" @input="changeSearch" />
       </el-form-item>
-
       <el-form-item v-if="isMultiple===false" style="float:right">
-        <el-button type="primary" @click="onSubmit">导出Excel</el-button>
-        <el-button type="primary" @click="onSubmit">导入Excel</el-button>
         <el-button type="primary" @click="onSubmit">新建</el-button>
+      </el-form-item>
+      <el-form-item v-if="isMultiple===false" style="float:right">
+        <el-upload
+          style="margin-right:8px"
+          action="string"
+          accept=".xls, .xlsx"
+          :http-request="Upload"
+          :show-file-list="false"
+        >
+          <el-button type="primary">导入Excel</el-button>
+        </el-upload>
+      </el-form-item>
+      <el-form-item v-if="isMultiple===false" style="float:right">
+        <el-button type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -158,7 +169,7 @@
 
 <script>
 import page from '@/components/page'
-import { equipPartNew, equipsCategory, getSupplierType } from '@/api/jqy'
+import { equipPartNew, equipsCategory, getSupplierType, equipPartNewDown, equipPartNewImport } from '@/api/jqy'
 export default {
   name: 'EquipmentMasterDataRegion',
   components: { page },
@@ -176,6 +187,7 @@ export default {
       options: [],
       GlobalList: [],
       total: 0,
+      btnExportLoad: false,
       loading: false,
       dialogVisible: false,
       rules: {
@@ -221,6 +233,37 @@ export default {
         this.loading = false
       }
     },
+    Upload(param) {
+      const formData = new FormData()
+      formData.append('file', param.file)
+      equipPartNewImport('post', null, { data: formData }).then(response => {
+        this.$message({
+          type: 'success',
+          message: '导入成功!'
+        })
+        this.formInline.page = 1
+        this.getList()
+      })
+    },
+    exportTable() {
+      this.btnExportLoad = true
+      const obj = Object.assign({ export: 1 }, this.formInline)
+      const _api = equipPartNewDown
+      _api(obj)
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '设备部位定义.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
+    },
     handleSelectionChange(val) {
       this.multipleSelection = val
     },
@@ -236,6 +279,9 @@ export default {
     onSubmit() {
       this.dialogForm = {}
       this.dialogVisible = true
+    },
+    getVal() {
+      return this.multipleSelection
     },
     showEditDialog(row) {
       this.dialogForm = JSON.parse(JSON.stringify(row))

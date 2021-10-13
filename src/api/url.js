@@ -498,20 +498,27 @@ export default {
   EquipFaultCodes: '/api/v1/equipment/equip-fault-codes/', // 设备故障分类 中分类
   // 供应商管理台账
   EquipSupplier: '/api/v1/equipment/equip-supplier/',
+  EquipSupplierImport: '/api/v1/equipment/equip-supplier/import_xlsx/',
   // 设备类型
   EquipsCategory: '/api/v1/basics/equips-category/',
   // 设备固定资产台账
   EquipProperty: '/api/v1/equipment/equip-property/',
+  EquipPropertyImport: '/api/v1/equipment/equip-property/import_xlsx/',
   // 设备位置区域定义
   EquipAreaDefine: '/api/v1/equipment/equip-area-define/',
+  EquipAreaDefineImport: '/api/v1/equipment/equip-area-define/import_xlsx/',
   // 设备部位定义
   EquipPartNew: '/api/v1/equipment/equip-part-new/',
+  EquipPartNewImport: '/api/v1/equipment/equip-part-new/import_xlsx/',
   // 设备部件分类
   EquipComponentType: '/api/v1/equipment/equip-component-type/',
+  EquipComponentTypeImport: '/api/v1/equipment/equip-component-type/import_xlsx/',
   // 设备部件定义
   EquipComponent: '/api/v1/equipment/equip-component/',
   // 部件与erp绑定关系
   ErpSpareComponentRelation: '/api/v1/equipment/erp-spare-component-relation/',
   // erp备件物料信息
-  EquipSpareErp: '/api/v1/equipment/equip-spare-erp/'
+  EquipSpareErp: '/api/v1/equipment/equip-spare-erp/',
+  // 设备故障信号定义
+  EquipFaultSignal: '/api/v1/equipment/equip-fault-signal/'
 }

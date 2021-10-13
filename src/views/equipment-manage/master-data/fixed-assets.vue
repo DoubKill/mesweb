@@ -35,7 +35,7 @@
         </el-upload>
       </el-form-item>
       <el-form-item style="float: right">
-        <el-button type="primary" @click="templateDownload">导出Excel</el-button>
+        <el-button type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
       </el-form-item>
     </el-form>
 
@@ -262,8 +262,15 @@
         <el-form-item label="设备名称:" prop="equip_name">
           <el-input v-model="formitem.equip_name" placeholder="请输入内容" />
         </el-form-item>
-        <el-form-item label="设备制造商:" prop="made_in">
-          <el-input v-model="formitem.made_in" placeholder="请输入内容" />
+        <el-form-item label="设备制造商:" prop="equip_supplier">
+          <el-select v-model="formitem.equip_supplier" placeholder="请选择">
+            <el-option
+              v-for="item in options1"
+              :key="item.supplier_name"
+              :label="item.supplier_name"
+              :value="item.id"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="产能:" prop="capacity">
           <el-input v-model="formitem.capacity" placeholder="请输入内容" />
@@ -333,8 +340,7 @@
 </template>
 
 <script>
-import { exportProperty, importProperty } from '@/api/base_w_two'
-import { equipPropertyList, equipsCategory } from '@/api/jqy'
+import { equipPropertyList, equipsCategory, equipPropertyListDown, equipSupplierList, equipPropertyImport } from '@/api/jqy'
 import page from '@/components/page'
 export default {
   name: 'EquipmentMasterDataFixedAssets',
@@ -353,8 +359,10 @@ export default {
       dialogVisibleType: false,
       bbbbb: '',
       options: [],
+      options1: [],
       visible: false,
       dialogVisibleAdd: false,
+      btnExportLoad: false,
       currentTreeObj: {},
       currentTreeObjSearch: {},
       submitAddLoading: false,
@@ -380,7 +388,7 @@ export default {
         equip_name: [
           { required: true, message: '请填写设备名称', trigger: 'blur' }
         ],
-        made_in: [
+        equip_supplier: [
           { required: true, message: '请填写设备制造商', trigger: 'blur' }
         ],
         capacity: [
@@ -408,12 +416,21 @@ export default {
   created() {
     this.getTypeNode()
     this.getList()
+    this.getSupplierType()
   },
   methods: {
     async getTypeNode() {
       try {
         const data = await equipsCategory('get')
         this.options = data.results || []
+      } catch (e) {
+        //
+      }
+    },
+    async getSupplierType() {
+      try {
+        const data = await equipSupplierList('get', null, { params: { all: 1 }})
+        this.options1 = data || []
       } catch (e) {
         //
       }
@@ -566,22 +583,29 @@ export default {
           })
       })
     },
-    templateDownload() {
-      exportProperty('get').then(response => {
-        const link = document.createElement('a')
-        const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
-        link.style.display = 'none'
-        link.href = URL.createObjectURL(blob)
-        link.download = '设备资产模板.xls' // 下载的文件名
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-      })
+    exportTable() {
+      this.btnExportLoad = true
+      const obj = Object.assign({ export: 1 }, this.search)
+      const _api = equipPropertyListDown
+      _api(obj)
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '设备固定资产台账.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
     },
     Upload(param) {
       const formData = new FormData()
       formData.append('file', param.file)
-      importProperty('post', null, { data: formData }).then(response => {
+      equipPropertyImport('post', null, { data: formData }).then(response => {
         this.$message({
           type: 'success',
           message: '导入成功!'

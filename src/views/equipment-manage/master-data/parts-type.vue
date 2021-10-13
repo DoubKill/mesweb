@@ -23,7 +23,7 @@
         </el-upload>
       </el-form-item>
       <el-form-item style="float: right">
-        <el-button type="primary" @click="templateDownload">导出Excel</el-button>
+        <el-button type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -144,7 +144,7 @@
 
 <script>
 import page from '@/components/page'
-import { equipComponentType } from '@/api/jqy'
+import { equipComponentType, equipComponentTypeDown, equipComponentTypeImport } from '@/api/jqy'
 // import { errorRepeat } from '@/utils'
 
 export default {
@@ -155,6 +155,7 @@ export default {
       tableData: [],
       dialogCreateVisible: false,
       dialogEditVisible: false,
+      btnExportLoad: false,
       typeForm: {
         no: '',
         name: ''
@@ -252,29 +253,36 @@ export default {
       this.getParams.page_size = pageSize
       this.getTableData()
     },
-    templateDownload() {
-    //   exportProperty('get').then(response => {
-    //     const link = document.createElement('a')
-    //     const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
-    //     link.style.display = 'none'
-    //     link.href = URL.createObjectURL(blob)
-    //     link.download = '设备资产模板.xls' // 下载的文件名
-    //     document.body.appendChild(link)
-    //     link.click()
-    //     document.body.removeChild(link)
-    //   })
+    exportTable() {
+      this.btnExportLoad = true
+      const obj = Object.assign({ export: 1 }, this.getParams)
+      const _api = equipComponentTypeDown
+      _api(obj)
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '设备部件分类.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
     },
     Upload(param) {
       const formData = new FormData()
       formData.append('file', param.file)
-    //   importProperty('post', null, { data: formData }).then(response => {
-    //     this.$message({
-    //       type: 'success',
-    //       message: '导入成功!'
-    //     })
-    //     this.search.page = 1
-    //     this.getList()
-    //   })
+      equipComponentTypeImport('post', null, { data: formData }).then(response => {
+        this.$message({
+          type: 'success',
+          message: '导入成功!'
+        })
+        this.getParams.page = 1
+        this.getTableData()
+      })
     }
   }
 }

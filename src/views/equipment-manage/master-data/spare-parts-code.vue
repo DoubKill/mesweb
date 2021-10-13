@@ -386,6 +386,7 @@ export default {
       btnLoading: false,
       btnLoading1: false,
       options: [],
+      options1: [],
       multipleSelection: []
     }
   },

@@ -26,9 +26,21 @@
         </el-select>
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button type="primary" @click="onSubmit">导出Excel</el-button>
-        <el-button type="primary" @click="onSubmit">导入Excel</el-button>
         <el-button type="primary" @click="onSubmit">新建</el-button>
+      </el-form-item>
+      <el-form-item style="float:right">
+        <el-upload
+          style="margin-right:8px"
+          action="string"
+          accept=".xls, .xlsx"
+          :http-request="Upload"
+          :show-file-list="false"
+        >
+          <el-button type="primary">导入Excel</el-button>
+        </el-upload>
+      </el-form-item>
+      <el-form-item style="float:right">
+        <el-button type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -185,7 +197,7 @@
 <script>
 import page from '@/components/page'
 import { debounce } from '@/utils'
-import { equipSupplierList, getSupplierType } from '@/api/jqy'
+import { equipSupplierList, getSupplierType, equipSupplierListDown, equipSupplierImport } from '@/api/jqy'
 export default {
   name: 'EquipmentMasterDataSupplier',
   components: { page },
@@ -197,6 +209,7 @@ export default {
       loading: false,
       dialogVisible: false,
       use_flag: '',
+      btnExportLoad: false,
       rules: {
         supplier_code: [{ required: true, message: '不能为空', trigger: 'blur' }],
         supplier_name: [{ required: true, message: '不能为空', trigger: 'blur' }]
@@ -269,6 +282,37 @@ export default {
             this.getList()
           })
       })
+    },
+    Upload(param) {
+      const formData = new FormData()
+      formData.append('file', param.file)
+      equipSupplierImport('post', null, { data: formData }).then(response => {
+        this.$message({
+          type: 'success',
+          message: '导入成功!'
+        })
+        this.formInline.page = 1
+        this.getList()
+      })
+    },
+    exportTable() {
+      this.btnExportLoad = true
+      const obj = Object.assign({ export: 1 }, this.formInline)
+      const _api = equipSupplierListDown
+      _api(obj)
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '供应商管理台账.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
     },
     handleClose(done) {
       this.dialogVisible = false

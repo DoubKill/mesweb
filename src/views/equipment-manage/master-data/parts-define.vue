@@ -13,7 +13,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="所属设备部位">
-        <el-select v-model="formInline.equip_part" placeholder="请选择" clearable @change="changeSearch">
+        <el-select v-model="formInline.equip_part" :disabled="isMultiple===true" placeholder="请选择" clearable @change="changeSearch">
           <el-option
             v-for="item in options1"
             :key="item.part_name"
@@ -56,9 +56,21 @@
         </el-select>
       </el-form-item>
       <el-form-item v-if="isMultiple===false" style="float:right">
-        <el-button type="primary" @click="onSubmit">导出Excel</el-button>
-        <el-button type="primary" @click="onSubmit">导入Excel</el-button>
         <el-button type="primary" @click="onSubmit">新建</el-button>
+      </el-form-item>
+      <el-form-item v-if="isMultiple===false" style="float:right">
+        <el-upload
+          style="margin-right:8px"
+          action="string"
+          accept=".xls, .xlsx"
+          :http-request="Upload"
+          :show-file-list="false"
+        >
+          <el-button type="primary">导入Excel</el-button>
+        </el-upload>
+      </el-form-item>
+      <el-form-item v-if="isMultiple===false" style="float:right">
+        <el-button type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -393,6 +405,10 @@ export default {
     isMultiple: {
       type: Boolean,
       default: false
+    },
+    equipType: {
+      type: String,
+      default: null
     }
   },
   data() {
@@ -401,6 +417,7 @@ export default {
       loading: false,
       tableData: [],
       multipleSelection: [],
+      multipleSelection1: [],
       dialogVisible: false,
       id: '',
       options: [],
@@ -429,6 +446,10 @@ export default {
     }
   },
   created() {
+    console.log(this.equipType)
+    if (this.equipType) {
+      this.formInline.equip_part = this.equipType
+    }
     this.getTypeNode()
     this.getList()
     this.getEquipComponentType()
@@ -550,7 +571,7 @@ export default {
       this.multipleSelection = val
     },
     handleSelectionChange1(val) {
-
+      this.multipleSelection1 = val
     },
     delSpareDialog(row) {
       this.$confirm('此操作将删除, 是否继续?', '提示', {
@@ -599,6 +620,37 @@ export default {
           })
       })
     },
+    Upload(param) {
+      // const formData = new FormData()
+      // formData.append('file', param.file)
+      // equipPartNewImport('post', null, { data: formData }).then(response => {
+      //   this.$message({
+      //     type: 'success',
+      //     message: '导入成功!'
+      //   })
+      //   this.formInline.page = 1
+      //   this.getList()
+      // })
+    },
+    exportTable() {
+      // this.btnExportLoad = true
+      // const obj = Object.assign({ export: 1 }, this.formInline)
+      // const _api = equipPartNewDown
+      // _api(obj)
+      //   .then(res => {
+      //     const link = document.createElement('a')
+      //     const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+      //     link.style.display = 'none'
+      //     link.href = URL.createObjectURL(blob)
+      //     link.download = '设备部位定义.xlsx' // 下载的文件名
+      //     document.body.appendChild(link)
+      //     link.click()
+      //     document.body.removeChild(link)
+      //     this.btnExportLoad = false
+      //   }).catch(e => {
+      //     this.btnExportLoad = false
+      //   })
+    },
     handleClose(done) {
       this.dialogVisible = false
       this.$refs.createForm.resetFields()
@@ -618,6 +670,9 @@ export default {
       if (done) {
         done()
       }
+    },
+    getVal() {
+      return this.multipleSelection1
     },
     submitFun() {
       this.$refs.createForm.validate(async(valid) => {

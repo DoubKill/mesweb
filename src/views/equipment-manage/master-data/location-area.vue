@@ -16,9 +16,21 @@
         </el-select>
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button type="primary" @click="onSubmit">导出Excel</el-button>
-        <el-button type="primary" @click="onSubmit">导入Excel</el-button>
         <el-button type="primary" @click="onSubmit">新建</el-button>
+      </el-form-item>
+      <el-form-item style="float:right">
+        <el-upload
+          style="margin-right:8px"
+          action="string"
+          accept=".xls, .xlsx"
+          :http-request="Upload"
+          :show-file-list="false"
+        >
+          <el-button type="primary">导入Excel</el-button>
+        </el-upload>
+      </el-form-item>
+      <el-form-item style="float:right">
+        <el-button type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -144,7 +156,7 @@
 <script>
 import page from '@/components/page'
 import { debounce } from '@/utils'
-import { equipAreaDefine } from '@/api/jqy'
+import { equipAreaDefine, equipAreaDefineDown, equipAreaDefineImport } from '@/api/jqy'
 export default {
   name: 'EquipmentMasterDataLocation',
   components: { page },
@@ -154,6 +166,7 @@ export default {
       tableData: [],
       total: 0,
       loading: false,
+      btnExportLoad: false,
       dialogVisible: false,
       use_flag: '',
       rules: {
@@ -192,6 +205,37 @@ export default {
     onSubmit() {
       this.dialogForm = { area_code: 'WZQY00X' }
       this.dialogVisible = true
+    },
+    Upload(param) {
+      const formData = new FormData()
+      formData.append('file', param.file)
+      equipAreaDefineImport('post', null, { data: formData }).then(response => {
+        this.$message({
+          type: 'success',
+          message: '导入成功!'
+        })
+        this.formInline.page = 1
+        this.getList()
+      })
+    },
+    exportTable() {
+      this.btnExportLoad = true
+      const obj = Object.assign({ export: 1 }, this.formInline)
+      const _api = equipAreaDefineDown
+      _api(obj)
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '设备区域位置定义.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
     },
     showEditDialog(row) {
       this.dialogForm = JSON.parse(JSON.stringify(row))
