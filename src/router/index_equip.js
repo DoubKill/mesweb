@@ -6,7 +6,7 @@ export const equipRoutes = [
     redirect: '/equipment-home',
     name: 'EquipmentManage',
     meta: {
-      title: 'new设备管理',
+      title: '设备管理',
       icon: 'quality'
     },
     children: [
