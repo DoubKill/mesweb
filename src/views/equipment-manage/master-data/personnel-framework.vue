@@ -172,6 +172,7 @@ export default {
           this.userList = data.results || []
         } else {
           this.tableData = data.results || []
+          this.tableData = this.tableData.filter(d => d.is_active)
           this.total = data.count
         }
         this.loading = false

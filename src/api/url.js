@@ -489,6 +489,7 @@ export default {
   RuntimeDetail: '/api/v1/production/runtime-record-detail/',
   EquipTargetMtbmttrSettings: '/api/v1/equipment/equip-target-mtbmttr-settings/', // MTBF/MTTR设定
   EquipOrderAssignRule: '/api/v1/equipment/equip-order-assign-rule/',
+  EquipOrderAssignRuleImportXlsx: '/api/v1/equipment/equip-order-assign-rule/import_xlsx/',
   EquipMachineHaltType: '/api/v1/equipment/equip-machine-halt-type/',
   EquipMachineHaltReason: '/api/v1/equipment/equip-machine-halt-reason/',
   SectionUserTree: '/api/v1/system/section/tree/', // 部门用户树结构
@@ -496,6 +497,7 @@ export default {
   SectionTree: '/api/v1/system/section/',
   EquipFaultTypes: '/api/v1/equipment/equip-fault-types/', // 设备故障分类 大分类
   EquipFaultCodes: '/api/v1/equipment/equip-fault-codes/', // 设备故障分类 中分类
+  EquipBom: '/api/v1/equipment/equip-bom/',
   // 供应商管理台账
   EquipSupplier: '/api/v1/equipment/equip-supplier/',
   EquipSupplierImport: '/api/v1/equipment/equip-supplier/import_xlsx/',
