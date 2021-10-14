@@ -16,7 +16,7 @@
         <el-select v-model="formInline.equip_part" :disabled="isMultiple===true" placeholder="请选择" clearable @change="changeSearch" @visible-change="getEquipPart">
           <el-option
             v-for="item in options1"
-            :key="item.part_name"
+            :key="item.global_name"
             :label="item.part_name"
             :value="item.part_name"
           />
@@ -26,9 +26,9 @@
         <el-select v-model="formInline.equip_component_type" clearable placeholder="部件分类" @change="changeSearch">
           <el-option
             v-for="item in options2"
-            :key="item.component_type_name"
-            :label="item.component_type_name"
-            :value="item.component_type_name"
+            :key="item.global_name"
+            :label="item.global_name"
+            :value="item.global_name"
           />
         </el-select>
       </el-form-item>
@@ -397,7 +397,7 @@
 
 <script>
 import page from '@/components/page'
-import { equipComponent, equipsCategory, equipComponentType, equipPartNew, erpSpareComponentRelation, equipSpareErp } from '@/api/jqy'
+import { equipComponent, equipsCategory, equipComponentType, equipPartNew, erpSpareComponentRelation, equipSpareErp, equipComponentImport, equipComponentDown } from '@/api/jqy'
 export default {
   name: 'EquipmentMasterDataPartsDefine',
   components: { page },
@@ -485,7 +485,7 @@ export default {
     },
     async getTypeNode() {
       try {
-        const data = await equipsCategory('get')
+        const data = await equipsCategory('get', null, { params: { all: 1 }})
         this.options = data.results || []
       } catch (e) {
         //
@@ -635,8 +635,14 @@ export default {
         }
       })
     },
-    showEditDialog(row) {
+    async showEditDialog(row) {
       this.dialogForm = JSON.parse(JSON.stringify(row))
+      try {
+        const data = await equipPartNew('get', null, { params: { all: 1 }})
+        this.options3 = data.results || []
+      } catch (e) {
+        //
+      }
       this.dialogVisible = true
     },
     handleDelete: function(row) {
@@ -657,35 +663,35 @@ export default {
       })
     },
     Upload(param) {
-      // const formData = new FormData()
-      // formData.append('file', param.file)
-      // equipPartNewImport('post', null, { data: formData }).then(response => {
-      //   this.$message({
-      //     type: 'success',
-      //     message: '导入成功!'
-      //   })
-      //   this.formInline.page = 1
-      //   this.getList()
-      // })
+      const formData = new FormData()
+      formData.append('file', param.file)
+      equipComponentImport('post', null, { data: formData }).then(response => {
+        this.$message({
+          type: 'success',
+          message: '导入成功!'
+        })
+        this.formInline.page = 1
+        this.getList()
+      })
     },
     exportTable() {
-      // this.btnExportLoad = true
-      // const obj = Object.assign({ export: 1 }, this.formInline)
-      // const _api = equipPartNewDown
-      // _api(obj)
-      //   .then(res => {
-      //     const link = document.createElement('a')
-      //     const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
-      //     link.style.display = 'none'
-      //     link.href = URL.createObjectURL(blob)
-      //     link.download = '设备部位定义.xlsx' // 下载的文件名
-      //     document.body.appendChild(link)
-      //     link.click()
-      //     document.body.removeChild(link)
-      //     this.btnExportLoad = false
-      //   }).catch(e => {
-      //     this.btnExportLoad = false
-      //   })
+      this.btnExportLoad = true
+      const obj = Object.assign({ export: 1 })
+      const _api = equipComponentDown
+      _api(obj)
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '设备部件定义.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
     },
     handleClose(done) {
       this.dialogVisible = false

@@ -43,10 +43,22 @@
           />
         </el-select>
       </el-form-item>
+      <br>
       <el-form-item style="float:right">
-        <el-button type="primary" @click="onSubmit">导出Excel</el-button>
-        <el-button type="primary" @click="onSubmit">导入Excel</el-button>
         <el-button type="primary" @click="onSubmit">新建</el-button>
+      </el-form-item>
+      <el-form-item style="float:right">
+        <el-upload
+          action="string"
+          accept=".xls, .xlsx"
+          :http-request="Upload"
+          :show-file-list="false"
+        >
+          <el-button type="primary">导入Excel</el-button>
+        </el-upload>
+      </el-form-item>
+      <el-form-item style="float:right">
+        <el-button type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -382,18 +394,19 @@ import EquipSelect from '@/components/EquipSelect/index'
 import region from './region'
 import partsDefine from './parts-define'
 import { getEquip } from '@/api/banburying-performance-manage'
-import { equipFaultSignal } from '@/api/jqy'
+import { equipFaultSignal, equipFaultSignalImport, equipFaultSignalDown } from '@/api/jqy'
 export default {
   name: 'EquipmentMasterDataFaultSignal',
   components: { page, EquipSelect, region, partsDefine },
   data() {
     return {
       formInline: {},
-      tableData: [{}],
+      tableData: [],
       total: 0,
       options: [],
       equipType: '',
       loading: false,
+      btnExportLoad: false,
       dialogVisible: false,
       dialogVisible1: false,
       dialogVisible2: false,
@@ -452,6 +465,37 @@ export default {
     onSubmit() {
       this.dialogForm = { signal_code: 'IO000X', fault_signal_down_flag: false, alarm_signal_down_flag: false }
       this.dialogVisible = true
+    },
+    Upload(param) {
+      const formData = new FormData()
+      formData.append('file', param.file)
+      equipFaultSignalImport('post', null, { data: formData }).then(response => {
+        this.$message({
+          type: 'success',
+          message: '导入成功!'
+        })
+        this.formInline.page = 1
+        this.getList()
+      })
+    },
+    exportTable() {
+      this.btnExportLoad = true
+      const obj = Object.assign({ export: 1 })
+      const _api = equipFaultSignalDown
+      _api(obj)
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '设备故障信号定义.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
     },
     showEditDialog(row) {
       this.dialogForm = JSON.parse(JSON.stringify(row))

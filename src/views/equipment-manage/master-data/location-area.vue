@@ -220,7 +220,7 @@ export default {
     },
     exportTable() {
       this.btnExportLoad = true
-      const obj = Object.assign({ export: 1 }, this.formInline)
+      const obj = Object.assign({ export: 1 })
       const _api = equipAreaDefineDown
       _api(obj)
         .then(res => {
@@ -274,6 +274,9 @@ export default {
           try {
             this.btnLoading = true
             const _api = this.dialogForm.id ? 'put' : 'post'
+            if (this.dialogForm.inspection_line_no === '') {
+              this.dialogForm.inspection_line_no = null
+            }
             await equipAreaDefine(_api, this.dialogForm.id || null, { data: this.dialogForm })
             this.$message.success('操作成功')
             this.handleClose(null)

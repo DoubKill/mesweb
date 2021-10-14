@@ -421,7 +421,7 @@ export default {
   methods: {
     async getTypeNode() {
       try {
-        const data = await equipsCategory('get')
+        const data = await equipsCategory('get', null, { params: { all: 1 }})
         this.options = data.results || []
       } catch (e) {
         //
@@ -585,7 +585,7 @@ export default {
     },
     exportTable() {
       this.btnExportLoad = true
-      const obj = Object.assign({ export: 1 }, this.search)
+      const obj = Object.assign({ export: 1 })
       const _api = equipPropertyListDown
       _api(obj)
         .then(res => {

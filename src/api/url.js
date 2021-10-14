@@ -517,10 +517,12 @@ export default {
   EquipComponentTypeImport: '/api/v1/equipment/equip-component-type/import_xlsx/',
   // 设备部件定义
   EquipComponent: '/api/v1/equipment/equip-component/',
+  EquipComponentImport: '/api/v1/equipment/equip-component/import_xlsx/',
   // 部件与erp绑定关系
   ErpSpareComponentRelation: '/api/v1/equipment/erp-spare-component-relation/',
   // erp备件物料信息
   EquipSpareErp: '/api/v1/equipment/equip-spare-erp/',
+  EquipSpareErpImport: '/api/v1/equipment/equip-spare-erp/import_xlsx/',
   // 设备故障信号定义
   EquipFaultSignal: '/api/v1/equipment/equip-fault-signal/',
   EquipFaultSignalImport: '/api/v1/equipment/equip-fault-signal/import_xlsx/'

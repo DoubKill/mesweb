@@ -328,6 +328,24 @@ export function equipComponent(method, id, data = {}) {
   return request(obj)
 }
 
+export function equipComponentImport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipComponentImport + id + '/' : API.EquipComponentImport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipComponentDown(params) {
+  return request({
+    url: API.EquipComponent,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
+
 // 部件与erp绑定关系
 export function erpSpareComponentRelation(method, id, data = {}) {
   const obj = {
@@ -346,6 +364,24 @@ export function equipSpareErp(method, id, data = {}) {
   }
   Object.assign(obj, data)
   return request(obj)
+}
+
+export function equipSpareErpImport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipSpareErpImport + id + '/' : API.EquipSpareErpImport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipSpareErpDown(params) {
+  return request({
+    url: API.EquipSpareErp,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
 }
 
 // 设备故障信号定义

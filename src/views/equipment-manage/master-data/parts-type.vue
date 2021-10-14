@@ -255,7 +255,7 @@ export default {
     },
     exportTable() {
       this.btnExportLoad = true
-      const obj = Object.assign({ export: 1 }, this.getParams)
+      const obj = Object.assign({ export: 1 })
       const _api = equipComponentTypeDown
       _api(obj)
         .then(res => {
