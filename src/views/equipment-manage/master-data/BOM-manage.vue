@@ -1,7 +1,7 @@
 <template>
   <div class="BOM-manage-style">
     <!-- 设备BOM管理 -->
-    <el-container style="height:75vh;">
+    <el-container style="min-height:75vh;">
       <el-aside width="400px" class="border-style aside-style">
         <h3>位置区域设定
           <el-button style="float:right;margin-right:10px" size="mini" type="primary" @click="showList">列表显示</el-button>
@@ -17,24 +17,112 @@
         />
       </el-aside>
       <el-main class="border-style">
-        <h3>设备BOM机台节点 详细信息</h3>
+        <h3>设备BOM机台节点 详细信息
+          <el-button style="float:right;margin-right:10px" type="primary" @click="onSubmit">保存</el-button>
+        </h3>
         <el-form v-loading="loading" :inline="true" label-width="100px">
-          <el-form-item label="节点编号">
-            <el-input v-model="formInline.user" disabled placeholder="规则名称" />
+          <el-form-item label="分厂">
+            <el-input v-model="formInline.user" disabled />
           </el-form-item>
-          <el-form-item label="巡检路线名称">
-            <el-input v-model="formInline.user" clearable placeholder="规则名称" />
+          <el-form-item label="设备类型">
+            <el-input v-model="formInline.user" disabled /><br>
+            <!-- <equipTypeSelect :default-val="formInline.equip_type" :is-created="true" @equipTypeSelect="equipTypeSelect" /> -->
+          </el-form-item><br>
+          <el-form-item label="设备机台编号">
+            <el-input v-model="formInline.user" disabled />
           </el-form-item>
+          <el-form-item label="设备机台名称">
+            <el-input v-model="formInline.user" disabled />
+          </el-form-item><br>
+          <el-form-item label="设备机台状态">
+            <el-input v-model="formInline.user" disabled />
+          </el-form-item>
+          <el-form-item label="设备机台规格">
+            <el-input v-model="formInline.user" disabled />
+          </el-form-item><br>
+
+          <el-form-item label="设备部位编号">
+            <el-input v-model="formInline.user" disabled />
+          </el-form-item>
+          <el-form-item label="设备部位名称">
+            <el-input v-model="formInline.user" disabled />
+          </el-form-item><br>
+
+          <el-form-item label="设备部件编号">
+            <el-input v-model="formInline.user" disabled />
+          </el-form-item>
+          <el-form-item label="设备部件名称">
+            <el-input v-model="formInline.user" disabled />
+          </el-form-item>
+          <el-form-item label="设备部件规格">
+            <el-input v-model="formInline.user" disabled />
+          </el-form-item>
+          <el-form-item label="设备部件状态">
+            <el-input v-model="formInline.user" disabled />
+            <el-button size="mini" style="margin-left:10px" type="primary" @click="showSpareDialog(scope.row)">绑定备件</el-button>
+          </el-form-item><br>
+
           <el-form-item label="区域编号">
-            <el-input v-model="formInline.user" clearable placeholder="规则名称" />
-          </el-form-item>
-          <el-form-item label="区域名称">
-            <el-input v-model="formInline.user" clearable placeholder="规则名称" />
-          </el-form-item>
-          <el-form-item>
-            <el-button size="small" type="primary" @click="onSubmit">保存</el-button>
+            <el-input v-model="formInline.user" style="width:150px" disabled />
+            <el-input v-model="formInline.user" disabled>
+              <el-button slot="append" icon="el-icon-search" />
+            </el-input>
           </el-form-item>
           <br>
+          <el-form-item label="">
+            <el-checkbox v-model="formInline.checked" style="margin-left:5px;width:120px">是否巡检</el-checkbox>
+          </el-form-item>
+          <el-form-item label="巡检标准">
+            <el-input v-model="formInline.user" disabled>
+              <el-button slot="append" icon="el-icon-search" />
+            </el-input><br>
+          </el-form-item>
+          <el-input
+            v-model="formInline.textarea2"
+            type="textarea"
+            maxlength="30"
+            style="width:500px;margin-bottom: 22px;"
+            :autosize="{ minRows: 5}"
+            resize="none"
+            placeholder="巡检描述"
+          />
+          <br>
+          <el-form-item label="">
+            <el-checkbox v-model="formInline.checked" style="margin-left:5px;width:120px">是否维修</el-checkbox>
+          </el-form-item>
+          <el-form-item label="维修标准">
+            <el-input v-model="formInline.user" disabled>
+              <el-button slot="append" icon="el-icon-search" />
+            </el-input>
+          </el-form-item>
+          <br>
+          <el-form-item label="">
+            <el-checkbox v-model="formInline.checked" style="margin-left:5px;width:120px">是否保养</el-checkbox>
+          </el-form-item>
+          <el-form-item label="保养标准">
+            <el-input v-model="formInline.user" disabled>
+              <el-button slot="append" icon="el-icon-search" />
+            </el-input>
+          </el-form-item>
+          <br>
+          <el-form-item label="">
+            <el-checkbox v-model="formInline.checked" style="margin-left:5px;width:120px">是否润滑</el-checkbox>
+          </el-form-item>
+          <el-form-item label="润滑标准">
+            <el-input v-model="formInline.user" disabled>
+              <el-button slot="append" icon="el-icon-search" />
+            </el-input>
+          </el-form-item>
+          <br>
+          <el-form-item label="">
+            <el-checkbox v-model="formInline.checked" style="margin-left:5px;width:120px">是否计量标定</el-checkbox>
+          </el-form-item>
+          <el-form-item label="标定标准">
+            <el-input v-model="formInline.user" disabled>
+              <el-button slot="append" icon="el-icon-search" />
+            </el-input>
+          </el-form-item>
+          <!-- <br>
           <el-form-item label="区域备注说明">
             <el-input
               v-model="formInline.textarea2"
@@ -45,7 +133,7 @@
               resize="none"
               placeholder="请输入内容"
             />
-          </el-form-item>
+          </el-form-item> -->
         </el-form>
       </el-main>
     </el-container>
@@ -233,12 +321,12 @@
     </div>
     <ul v-show="visible" :style="{left:left+'px',top:top+'px'}" class="contextmenu">
       <li @click="addNodeFun(1)">添加子节点</li>
-      <li @click="addNodeFun(2)">上方添加节点</li>
-      <li @click="addNodeFun(3)">下方添加节点</li>
+      <!-- <li @click="addNodeFun(2)">上方添加节点</li>
+      <li @click="addNodeFun(3)">下方添加节点</li> -->
       <li @click="copyNodeFun">复制节点</li>
       <li @click="pasteNodeFun">粘贴子节点</li>
-      <li @click="upperPasteNodeFun">上方粘贴节点</li>
-      <li @click="belowPasteNodeFun">下方粘贴节点</li>
+      <!-- <li @click="upperPasteNodeFun">上方粘贴节点</li>
+      <li @click="belowPasteNodeFun">下方粘贴节点</li> -->
       <li @click="delNodeFun">删除节点</li>
     </ul>
     <el-dialog
@@ -257,8 +345,11 @@
 </template>
 
 <script>
+// import equipTypeSelect from '../components/equip-type-select'
+import { equipPartNew } from '@/api/jqy'
 export default {
   name: 'EquipmentMasterDataBOMManage',
+  // components: { equipTypeSelect },
   data() {
     return {
       data: [{
@@ -297,7 +388,8 @@ export default {
       loading: false,
       dialogVisible: false,
       dialogForm: {},
-      btnLoading: false
+      btnLoading: false,
+      levelNum: null
     }
   },
   watch: {
@@ -310,6 +402,17 @@ export default {
     }
   },
   methods: {
+    async  getEquipPart() {
+      try {
+        this.loading = true
+        const data = await equipPartNew('get', null, { params: this.formInline })
+        this.tableData = data.results || []
+        this.total = data.count
+        this.loading = false
+      } catch (e) {
+        this.loading = false
+      }
+    },
     changeList() {},
     nodeContextmenu(e, tag, node, event) {
       // console.log(e, tag, node, event, 888)
@@ -332,6 +435,7 @@ export default {
     closeMenu() {
       this.visible = false
     },
+    equipTypeSelect(val) {},
     handleClose(done) {
       this.dialogVisible = false
       this.dialogForm.input = ''
