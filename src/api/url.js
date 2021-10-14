@@ -522,5 +522,6 @@ export default {
   // erp备件物料信息
   EquipSpareErp: '/api/v1/equipment/equip-spare-erp/',
   // 设备故障信号定义
-  EquipFaultSignal: '/api/v1/equipment/equip-fault-signal/'
+  EquipFaultSignal: '/api/v1/equipment/equip-fault-signal/',
+  EquipFaultSignalImport: '/api/v1/equipment/equip-fault-signal/import_xlsx/'
 }

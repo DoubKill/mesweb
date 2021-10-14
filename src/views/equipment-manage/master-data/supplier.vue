@@ -151,9 +151,9 @@
           label="地域"
           prop="region"
         >
-          <el-select v-model="dialogForm.region" placeholder="请选择">
+          <el-select v-model="dialogForm.region" placeholder="请选择" filterable>
             <el-option
-              v-for="item in ['浙江','大连']"
+              v-for="item in options"
               :key="item"
               :label="item"
               :value="item"
@@ -205,6 +205,12 @@ export default {
     return {
       formInline: {},
       tableData: [],
+      options: [
+        '浙江', '大连', '辽宁', '吉林', '黑龙江', '江苏', '河北',
+        '安徽', '福建', '江西', '山东', '河南', '湖北', '湖南',
+        '山西', '广东', '海南', '四川', '贵州', '云南', '陕西',
+        '甘肃', '青海', '台湾', '北京', '天津', '上海', '重庆',
+        '内蒙古', '广西', '宁夏', '新疆', '西藏', '香港', '澳门'],
       total: 0,
       loading: false,
       dialogVisible: false,
