@@ -38,9 +38,16 @@
       <el-form-item label="班次">
         <class-select @classSelected="classChanged" />
       </el-form-item>
+      <el-form-item style="float:right">
+        <el-button
+          type="primary"
+          @click="exportTable('机台别合格率统计')"
+        >导出表格</el-button>
+      </el-form-item>
     </el-form>
 
     <el-table
+      id="out-table"
       v-loading="loading"
       :data="tableData"
       :row-class-name="tableRowClassName"
@@ -132,8 +139,7 @@
 import ClassSelect from '@/components/ClassSelect'
 import { globalCodesUrl } from '@/api/base_w'
 import { machinePass } from '@/api/jqy'
-import { debounce } from '@/utils/index'
-import { setDate } from '@/utils'
+import { debounce, setDate, exportExcel } from '@/utils/index'
 export default {
   name: 'Machine',
   components: { ClassSelect },
@@ -255,6 +261,9 @@ export default {
     },
     changeSearch1() {
       this.getList()
+    },
+    exportTable(val) {
+      exportExcel(val)
     }
   }
 }

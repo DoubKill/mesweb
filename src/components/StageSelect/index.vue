@@ -1,20 +1,25 @@
 <template>
-  <el-select
-    :value="id"
-    clearable
-    placeholder="请选择"
-    :multiple="isMultiple"
-    :style="{'width':widthSelect}"
-    @change="$emit('change', $event)"
-    @visible-change="visibleChange"
-  >
-    <el-option
-      v-for="item in stageOptions"
-      :key="item.id"
-      :label="item.global_name"
-      :value="item.global_name"
-    />
-  </el-select>
+  <div>
+    <el-select
+      :value="id"
+      clearable
+      placeholder="请选择"
+      :multiple="isMultiple"
+      :style="{'width':widthSelect}"
+      :allow-create="isAllowCreate"
+      filterable
+      default-first-option
+      @change="$emit('change', $event)"
+      @visible-change="visibleChange"
+    >
+      <el-option
+        v-for="item in stageOptions"
+        :key="item.id"
+        :label="item.global_name"
+        :value="item.global_name"
+      />
+    </el-select>
+  </div>
 </template>
 
 <script>
@@ -41,6 +46,10 @@ export default {
     widthSelect: {
       type: String,
       default: ''
+    },
+    isAllowCreate: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

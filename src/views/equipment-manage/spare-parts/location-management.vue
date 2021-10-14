@@ -1,15 +1,14 @@
 <template>
   <div class="loaction-style">
-    <!--硫磺库 库区库位管理 -->
+    <!--库区库位管理 -->
     <el-row>
       <el-col v-loading="loading" :span="12">
         <el-button
-          v-permission="['sulfur_depot', 'add']"
-          style="margin-bottom:10px"
+          type="primary"
+          style="margin-bottom:10px;float:right"
           @click="addArea(true)"
         >添加库区</el-button>
         <el-table
-          ref="currentRow"
           :data="tableData"
           border
           highlight-current-row
@@ -24,18 +23,20 @@
             label="描述"
           />
           <el-table-column
+            prop="description"
+            label="备件分类"
+          />
+          <el-table-column
             label="操作"
           >
             <template slot-scope="scope">
               <el-button-group>
                 <el-button
-                  v-permission="['sulfur_depot', 'change']"
                   size="mini"
                   @click="editArea(scope.row,true)"
                 >编辑
                 </el-button>
                 <el-button
-                  v-permission="['sulfur_depot', 'delete']"
                   size="mini"
                   type="danger"
                   plain
@@ -46,16 +47,10 @@
             </template>
           </el-table-column>
         </el-table>
-        <page
-          :old-page="false"
-          :total="total"
-          :current-page="pageNo"
-          @currentChange="currentChange"
-        />
       </el-col>
       <el-col v-loading="loading1" :span="12">
         <el-button
-          v-permission="['sulfur_depot', 'addSite']"
+          type="primary"
           style="margin-bottom:10px;float:right"
           :disabled="depot?false:true"
           @click="addArea(false)"
@@ -65,12 +60,12 @@
           border
         >
           <el-table-column
-            prop="depot__depot_name"
-            label="库区"
-          />
-          <el-table-column
             prop="depot_site_name"
             label="库位名称"
+          />
+          <el-table-column
+            prop="depot__depot_name"
+            label="库区"
           />
           <el-table-column
             prop="description"
@@ -82,13 +77,11 @@
             <template slot-scope="scope">
               <el-button-group>
                 <el-button
-                  v-permission="['sulfur_depot', 'changeSite']"
                   size="mini"
                   @click="editArea(scope.row,false)"
                 >编辑
                 </el-button>
                 <el-button
-                  v-permission="['sulfur_depot', 'deleteSite']"
                   size="mini"
                   type="danger"
                   plain
@@ -99,12 +92,6 @@
             </template>
           </el-table-column>
         </el-table>
-        <!-- <page
-          :old-page="false"
-          :total="total1"
-          :current-page="pageNo1"
-          @currentChange="currentChange1"
-        /> -->
       </el-col>
     </el-row>
 
@@ -143,6 +130,19 @@
         <el-form-item label="描述" prop="description">
           <el-input v-model="formObj.description" />
         </el-form-item>
+        <el-form-item v-if="isArea" label="备件分类" prop="type">
+          <el-select
+            v-model="formObj.type"
+            placeholder="请选择"
+          >
+            <el-option
+              v-for="item in ['减速机','电机']"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose(false)">取 消</el-button>
@@ -153,11 +153,10 @@
 </template>
 
 <script>
-import { sulfurDepot, sulfurDepotSite } from '@/api/base_w_four'
-import page from '@/components/page'
+import { depot, depotSite } from '@/api/base_w_four'
+import { checkPermission } from '@/utils'
 export default {
-  name: 'SulphurLocation',
-  components: { page },
+  name: 'LocationManagement',
   data() {
     return {
       tableData: [],
@@ -197,15 +196,16 @@ export default {
     // this.getList1()
   },
   methods: {
+    checkPermission,
     async getList() {
       try {
         this.loading = true
-        const data = await sulfurDepot('get', null, { params: { page: this.pageNo, page_size: this.pageSize }})
+        const data = await depot('get', null, { params: { page: this.pageNo, page_size: this.pageSize }})
         this.tableData = data.results
         this.total = data.count
-        this.loading = false
         this.$refs.currentRow.setCurrentRow(this.tableData[0])
         this.depot = this.tableData[0].id
+        this.loading = false
       } catch (e) {
         this.loading = false
       }
@@ -217,7 +217,7 @@ export default {
     async getList1() {
       try {
         this.loading1 = true
-        const data = await sulfurDepotSite('get', null, { params: { all: 1, id: this.depot }})
+        const data = await depotSite('get', null, { params: { all: 1, id: this.depot }})
         this.tableData1 = data.results
         // this.total1 = data.count
         this.loading1 = false
@@ -251,7 +251,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        const _api = bool ? sulfurDepot : sulfurDepotSite
+        const _api = bool ? depot : depotSite
         _api('delete', row.id)
           .then(response => {
             this.$message({
@@ -283,7 +283,7 @@ export default {
         if (valid) {
           try {
             this.loadingBtn = true
-            const _api = this.isArea ? sulfurDepot : sulfurDepotSite
+            const _api = this.isArea ? depot : depotSite
             const _method = this.formObj.id ? 'put' : 'post'
             await _api(_method, this.formObj.id, { data: this.formObj })
             this.$message.success('操作成功')

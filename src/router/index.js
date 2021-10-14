@@ -5,6 +5,7 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
+import { equipRoutes } from './index_equip'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -100,10 +101,9 @@ export const constantRoutes = [
     }
   }
 ]
-
 // 存在权限的路由
 // meta.permissionName  权限
-export const asyncRoutes = [
+export let asyncRoutes = [
   {
     path: '/home',
     component: Layout,
@@ -153,16 +153,16 @@ export const asyncRoutes = [
         permissionName: 'groupextension'
       }
     },
-    {
-      path: '/group/department',
-      name: 'DepartmenManage',
-      component: () => import('@/views/basic/department-manage/index'),
-      meta: {
-        title: '部门管理',
-        icon: 'dashboard',
-        permissionName: 'department'
-      }
-    },
+    // {
+    //   path: '/group/department',
+    //   name: 'DepartmenManage',
+    //   component: () => import('@/views/basic/department-manage/index'),
+    //   meta: {
+    //     title: '部门管理',
+    //     icon: 'dashboard',
+    //     permissionName: 'department'
+    //   }
+    // },
     {
       path: '/user/manage',
       name: 'UserManage',
@@ -723,7 +723,7 @@ export const asyncRoutes = [
         icon: 'production'
       },
       children: [
-        {
+        /** {
           path: '/report/produce-work',
           component: () => import('@/views/equipment-management/report/produce-work'),
           name: 'ProduceWork',
@@ -732,7 +732,7 @@ export const asyncRoutes = [
             title: '生产运行记录',
             permissionName: 'production_record'
           }
-        }
+        }**/
         // {
         //   path: '/report/material-requirement',
         //   component: () => import('@/views/equipment-management/report/material-requirement'),
@@ -1491,7 +1491,8 @@ export const asyncRoutes = [
           icon: 'quality'
         },
         children: [
-          { path: '/statistics/rubber-pass',
+          {
+            path: '/statistics/rubber-pass',
             component: () => import('@/views/quality_management/pass/rubberCompound.vue'),
             name: 'RubberCompound',
             meta: {
@@ -1518,8 +1519,7 @@ export const asyncRoutes = [
               permissionName: 'classes_quality_analyze'
             }
           }
-          /*,
-          {
+          /** {
             path: '/statistics/month-pass-detail',
             component: () => import('@/views/quality_management/month_pass_detail'),
             name: 'MonthPassDetail',
@@ -1548,7 +1548,7 @@ export const asyncRoutes = [
               title: '胶料日合格率统计',
               permissionName: 'product_daily_passing_rate'
             }
-          }*/
+          }**/
         ]
       },
       {
@@ -2127,7 +2127,8 @@ export const asyncRoutes = [
                 }
               }
             ]
-          }, {
+          },
+          {
             path: '/record',
             redirect: '/warehousing-record',
             component: () => import('@/views/equipment-management/spare-part/a-spare-part-record-manage'),
@@ -2368,6 +2369,7 @@ export const asyncRoutes = [
     hidden: true
   }
 ]
+asyncRoutes = asyncRoutes.concat(equipRoutes)
 
 const createRouter = () => new Router({
   // mode: 'history', // require service support
