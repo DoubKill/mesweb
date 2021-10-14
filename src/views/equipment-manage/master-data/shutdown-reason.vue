@@ -354,6 +354,11 @@ export default {
             this.loadingBtn = true
             const _api = this.isType ? equipMachineHaltType : equipMachineHaltReason
             const _method = this.formObj.id ? 'put' : 'post'
+            if (!this.isType) {
+              this.formObj.equip_machine_halt_type = this.equip_machine_halt_type_id
+            } else {
+              delete this.formObj.equip_machine_halt_type
+            }
             await _api(_method, this.formObj.id || null, { data: this.formObj })
             this.$message.success('操作成功')
             this.handleClose(false)
