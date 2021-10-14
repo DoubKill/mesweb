@@ -59,7 +59,7 @@
       <el-table-column
         prop="spare_name"
         label="备件名称"
-        min-width="20"
+        width="100"
       />
       <el-table-column
         prop="equip_component_type_name"
@@ -113,7 +113,12 @@
       />
       <el-table-column
         prop="period_validity"
-        label="有效期（天）"
+        label="有效期(天)"
+        min-width="20"
+      />
+      <el-table-column
+        prop="supplier_name"
+        label="供应商名称"
         min-width="20"
       />
       <el-table-column

@@ -208,7 +208,7 @@ export default {
   methods: {
     async getGlobal() {
       try {
-        const data = await getSupplierType('get', null, { params: { all: 1, class_name: '部位' }})
+        const data = await getSupplierType('get', null, { params: { all: 1, class_name: '部位分类' }})
         this.GlobalList = data.results
       } catch (error) {
         this.GlobalList = []
