@@ -394,6 +394,14 @@ export function equipOrderAssignRule(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function equipOrderAssignRuleImportXlsx(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipOrderAssignRuleImportXlsx + id + '/' : API.EquipOrderAssignRuleImportXlsx,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 export function equipMachineHaltType(method, id, data = {}) {
   const obj = {
     url: id ? API.EquipMachineHaltType + id + '/' : API.EquipMachineHaltType,
@@ -446,6 +454,14 @@ export function equipFaultTypes(method, id, data = {}) {
 export function equipFaultCodes(method, id, data = {}) {
   const obj = {
     url: id ? API.EquipFaultCodes + id + '/' : API.EquipFaultCodes,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function equipBom(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipBom + id + '/' : API.EquipBom,
     method: method
   }
   Object.assign(obj, data)

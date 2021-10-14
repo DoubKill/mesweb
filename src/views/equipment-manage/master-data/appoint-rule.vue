@@ -49,8 +49,16 @@
         </el-select>
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button size="small" type="primary" @click="onSubmit">导出Excel</el-button>
-        <el-button size="small" type="primary" @click="onSubmit">导入Excel</el-button>
+        <el-button size="small" type="primary" @click="exportTable">导出Excel</el-button>
+        <el-upload
+          style="display:inline-block;margin:0 6px"
+          action="string"
+          accept=".xls, .xlsx"
+          :http-request="Upload"
+          :show-file-list="false"
+        >
+          <el-button size="small" type="primary">导入Excel</el-button>
+        </el-upload>
         <el-button size="small" type="primary" @click="onSubmit">新建</el-button>
       </el-form-item>
     </el-form>
@@ -273,7 +281,7 @@
 import page from '@/components/page'
 import equipTypeSelect from '../components/equip-type-select'
 import commons from '@/utils/common'
-import { equipOrderAssignRule } from '@/api/base_w_four'
+import { equipOrderAssignRule, equipOrderAssignRuleImportXlsx } from '@/api/base_w_four'
 export default {
   name: 'EquipmentMasterDataAppointRule',
   components: { page, equipTypeSelect },
@@ -349,6 +357,34 @@ export default {
     equipTypeSelect(val) {
       this.formInline.equip_type_id = val ? val.id : ''
       this.changeList()
+    },
+    exportTable() {
+      this.btnExportLoad = true
+      equipOrderAssignRule('get', null, { responseType: 'blob', params: { export: 1 }})
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '工单指派规则.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
+    },
+    Upload(param) {
+      const formData = new FormData()
+      formData.append('file', param.file)
+      equipOrderAssignRuleImportXlsx('post', null, { data: formData }).then(response => {
+        this.$message({
+          type: 'success',
+          message: '导入成功!'
+        })
+        this.changeList()
+      })
     },
     handleDelete: function(row) {
       var str = row.use_flag ? '停用' : '启用'
