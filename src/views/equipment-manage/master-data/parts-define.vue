@@ -3,17 +3,17 @@
     <!-- 设备部件定义 -->
     <el-form :inline="true" class="search-form-style">
       <el-form-item label="所属主设备种类">
-        <el-select v-model="formInline.equip_type" placeholder="请选择" clearable @change="changeSearch">
+        <el-select v-model="formInline.equip_type" placeholder="请选择" clearable @change="changeSearch1">
           <el-option
             v-for="item in options"
             :key="item.category_name"
             :label="item.category_name"
-            :value="item.category_name"
+            :value="item.id"
           />
         </el-select>
       </el-form-item>
       <el-form-item label="所属设备部位">
-        <el-select v-model="formInline.equip_part" :disabled="isMultiple===true" placeholder="请选择" clearable @change="changeSearch">
+        <el-select v-model="formInline.equip_part" :disabled="isMultiple===true" placeholder="请选择" clearable @change="changeSearch" @visible-change="getEquipPart">
           <el-option
             v-for="item in options1"
             :key="item.part_name"
@@ -178,7 +178,7 @@
           label="所属主设备种类"
           prop="equip_type"
         >
-          <el-select v-model="dialogForm.equip_type" placeholder="请选择">
+          <el-select v-model="dialogForm.equip_type" placeholder="请选择" @change="clear">
             <el-option
               v-for="item in options"
               :key="item.category_name"
@@ -191,9 +191,9 @@
           label="所属主设备部位"
           prop="equip_part"
         >
-          <el-select v-model="dialogForm.equip_part" placeholder="请选择">
+          <el-select v-model="dialogForm.equip_part" placeholder="请选择" @visible-change="getEquipPart1">
             <el-option
-              v-for="item in options1"
+              v-for="item in options3"
               :key="item.part_name"
               :label="item.part_name"
               :value="item.id"
@@ -423,8 +423,10 @@ export default {
       options: [],
       options1: [],
       options2: [],
+      options3: [],
       total: 0,
       dialogForm: {},
+      btnExportLoad: false,
       btnLoading: false,
       dialogForm1: {},
       dialogVisible1: false,
@@ -445,6 +447,13 @@ export default {
       }
     }
   },
+  watch: {
+    equipType(newName) {
+      this.formInline.equip_part = newName
+      this.getList()
+    }
+
+  },
   created() {
     console.log(this.equipType)
     if (this.equipType) {
@@ -452,8 +461,8 @@ export default {
     }
     this.getTypeNode()
     this.getList()
-    this.getEquipComponentType()
     this.getEquipPart()
+    this.getEquipComponentType()
   },
   methods: {
     async getList() {
@@ -470,7 +479,7 @@ export default {
     async getEquipComponentType() {
       try {
         const data = await equipComponentType('get', null, { params: { all: 1 }})
-        this.options2 = data.result || []
+        this.options2 = data.results || []
       } catch (error) {
         this.options2 = []
       }
@@ -483,12 +492,38 @@ export default {
         //
       }
     },
-    async getEquipPart() {
-      try {
-        const data = await equipPartNew('get', null, { params: { all: 1 }})
-        this.options1 = data.result || []
-      } catch (e) {
-        //
+    async getEquipPart(val) {
+      if (val) {
+        try {
+          const data = await equipPartNew('get', null, { params: this.formInline.equip_type ? { equip_type: this.formInline.equip_type } : { all: 1 }})
+          this.options1 = data.results || []
+        } catch (e) {
+          //
+        }
+      }
+    },
+    async getEquipPart1(val) {
+      if (val) {
+        if (this.dialogForm.equip_type) {
+          try {
+            const data = await equipPartNew('get', null, { params: { equip_type: this.dialogForm.equip_type }})
+            this.options3 = data.results || []
+          } catch (e) {
+            //
+          }
+        } else {
+          this.$message.info('请先选择主设备种类')
+        }
+      }
+    },
+    changeSearch1() {
+      this.formInline.equip_part = null
+      this.formInline.page = 1
+      this.getList()
+    },
+    clear() {
+      if (this.dialogForm.equip_part) {
+        this.dialogForm.equip_part = ''
       }
     },
     changeSearch() {

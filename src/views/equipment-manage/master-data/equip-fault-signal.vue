@@ -13,16 +13,6 @@
       <el-form-item label="信号名称">
         <el-input v-model="formInline.signal_name" clearable placeholder="信号名称" @input="changeSearch" />
       </el-form-item>
-      <el-form-item label="信号类别">
-        <el-select v-model="formInline.region" clearable placeholder="信号类别" @change="changeSearch">
-          <el-option
-            v-for="item in ['浙江','大连']"
-            :key="item"
-            :label="item"
-            :value="item"
-          />
-        </el-select>
-      </el-form-item>
       <el-form-item label="报警是否停机">
         <el-select v-model="formInline.alarm_signal_down_flag" clearable placeholder="是否停机" @change="changeSearch">
           <el-option
@@ -219,35 +209,16 @@
           <el-input v-model="dialogForm.signal_code" :disabled="dialogForm.id?true:false" />
         </el-form-item>
         <el-form-item
-          label="报警下限值"
-          prop="alarm_signal_minvalue"
+          label="报警持续时间(S)"
+          prop="alarm_signal_duration"
         >
-          <el-input-number v-model="dialogForm.alarm_signal_minvalue" controls-position="right" :min="0" />
+          <el-input-number v-model="dialogForm.alarm_signal_duration" controls-position="right" :min="0" />
         </el-form-item>
         <el-form-item
-          label="设备编号"
-          prop="equip"
+          label="信号名称"
+          prop="signal_name"
         >
-          <el-select v-model="dialogForm.equip" @change="editEquipName">
-            <el-option
-              v-for="item in options"
-              :key="item.equip_no"
-              :label="item.equip_no"
-              :value="item.id"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item
-          label="报警上限值"
-          prop="alarm_signal_maxvalue"
-        >
-          <el-input-number v-model="dialogForm.alarm_signal_maxvalue" controls-position="right" :min="0" />
-        </el-form-item>
-        <el-form-item
-          label="设备名称"
-          prop="equip_name"
-        >
-          <el-input v-model="dialogForm.equip_name" disabled />
+          <el-input v-model="dialogForm.signal_name" />
         </el-form-item>
         <el-form-item
           label="报警是否停机"
@@ -263,6 +234,38 @@
           </el-select>
         </el-form-item>
         <el-form-item
+          label="机台编号"
+          prop="equip"
+        >
+          <el-select v-model="dialogForm.equip" @change="editEquipName">
+            <el-option
+              v-for="item in options"
+              :key="item.equip_no"
+              :label="item.equip_no"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="报警停机描述"
+          prop="alarm_signal_desc"
+        >
+          <el-input v-model="dialogForm.alarm_signal_desc" />
+        </el-form-item>
+        <el-form-item
+          label="设备名称"
+          prop="equip_name"
+        >
+          <el-input v-model="dialogForm.equip_name" disabled />
+        </el-form-item>
+        <el-form-item
+          label="故障下限值"
+          prop="fault_signal_minvalue"
+        >
+          <el-input-number v-model="dialogForm.fault_signal_minvalue" controls-position="right" :min="0" />
+        </el-form-item>
+
+        <el-form-item
           label="设备部位"
           prop="equip_part_name"
         >
@@ -271,10 +274,10 @@
           </el-input>
         </el-form-item>
         <el-form-item
-          label="报警停机描述"
-          prop="alarm_signal_desc"
+          label="故障上限值"
+          prop="fault_signal_maxvalue"
         >
-          <el-input v-model="dialogForm.alarm_signal_desc" />
+          <el-input-number v-model="dialogForm.fault_signal_maxvalue" controls-position="right" :min="0" />
         </el-form-item>
         <el-form-item
           label="设备部件"
@@ -285,22 +288,10 @@
           </el-input>
         </el-form-item>
         <el-form-item
-          label="故障下限值"
-          prop="fault_signal_minvalue"
+          label="故障持续时间(S)"
+          prop="fault_signal_duration"
         >
-          <el-input-number v-model="dialogForm.fault_signal_minvalue" controls-position="right" :min="0" />
-        </el-form-item>
-        <el-form-item
-          label="信号名称"
-          prop="signal_name"
-        >
-          <el-input v-model="dialogForm.signal_name" />
-        </el-form-item>
-        <el-form-item
-          label="故障上限值"
-          prop="fault_signal_maxvalue"
-        >
-          <el-input-number v-model="dialogForm.fault_signal_maxvalue" controls-position="right" :min="0" />
+          <el-input-number v-model="dialogForm.fault_signal_duration" controls-position="right" :min="0" />
         </el-form-item>
         <el-form-item
           label="信号变量名"
@@ -332,6 +323,18 @@
           prop="fault_signal_desc"
         >
           <el-input v-model="dialogForm.fault_signal_desc" />
+        </el-form-item>
+        <el-form-item
+          label="报警下限值"
+          prop="alarm_signal_minvalue"
+        >
+          <el-input-number v-model="dialogForm.alarm_signal_minvalue" controls-position="right" :min="0" />
+        </el-form-item>
+        <el-form-item
+          label="报警上限值"
+          prop="alarm_signal_maxvalue"
+        >
+          <el-input-number v-model="dialogForm.alarm_signal_maxvalue" controls-position="right" :min="0" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -397,7 +400,10 @@ export default {
       rules: {
         signal_code: [{ required: true, message: '不能为空', trigger: 'blur' }],
         equip: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        equip_name: [{ required: true, message: '不能为空', trigger: 'blur' }]
+        equip_name: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        signal_name: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        signal_variable_name: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        signal_variable_type: [{ required: true, message: '不能为空', trigger: 'blur' }]
       },
       dialogForm: {},
       btnLoading: false
@@ -426,8 +432,9 @@ export default {
       })
     },
     editEquipName(val) {
-      console.log(val)
-      this.dialogForm.equip_name = val.equip_name
+      this.dialogForm.equip_name = this.options.filter(item => {
+        return item.id === val
+      })[0].equip_name
     },
     changeSearch() {
       this.formInline.page = 1
@@ -443,7 +450,7 @@ export default {
       this.getList()
     },
     onSubmit() {
-      this.dialogForm = {}
+      this.dialogForm = { signal_code: 'IO000X', fault_signal_down_flag: false, alarm_signal_down_flag: false }
       this.dialogVisible = true
     },
     showEditDialog(row) {
@@ -456,7 +463,6 @@ export default {
     dialog1() {
       if (this.dialogForm.equip_part_name) {
         this.equipType = this.dialogForm.equip_part_name
-        console.log(this.equipType)
         this.dialogVisible2 = true
       } else {
         this.$message.info('请先选择设备部位')
@@ -523,7 +529,6 @@ export default {
       this.handleClose1(null)
     },
     submitFun2() {
-      this.dialogForm.equip_part_name = this.$refs['List'].getVal().equip_part_name
       this.dialogForm.equip_component = this.$refs['List1'].getVal().id
       this.dialogForm.equip_component_name = this.$refs['List1'].getVal().component_name
       this.handleClose2(null)

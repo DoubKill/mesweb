@@ -410,7 +410,7 @@ export default {
     async getList1() {
       try {
         const data = await equipSpareErp('get', null, { params: { all: 0 }})
-        this.options = data.result || []
+        this.options = data.results || []
       } catch (e) {
         //
       }
@@ -427,7 +427,7 @@ export default {
     async getList3() {
       try {
         const data = await equipSpareErp('get', null, { params: { all: 1 }})
-        this.options1 = data.result || []
+        this.options1 = data.results || []
       } catch (e) {
         //
       }
