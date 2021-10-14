@@ -389,7 +389,7 @@
       />
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose2(false)">取 消</el-button>
-        <el-button type="primary" :loading="btnLoading2" @click="submitFun2">确 定</el-button>
+        <el-button type="primary" @click="submitFun2">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -437,7 +437,6 @@ export default {
       dialogForm2: {},
       tableData2: [],
       total2: 0,
-      btnLoading2: false,
       rules: {
         equip_type: [{ required: true, message: '不能为空', trigger: 'change' }],
         equip_part: [{ required: true, message: '不能为空', trigger: 'change' }],
@@ -572,15 +571,17 @@ export default {
       })
       if (obj.length >= 1) {
         try {
+          this.btnLoading1 = true
           await erpSpareComponentRelation('post', null, { data: obj })
           this.$message({
             type: 'success',
             message: '操作成功!'
           })
           this.dialogVisible1 = false
+          this.btnLoading1 = false
           this.getList()
         } catch (e) {
-        //
+          this.btnLoading1 = false
         }
       } else {
         this.dialogVisible1 = false
