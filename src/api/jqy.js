@@ -357,3 +357,21 @@ export function equipFaultSignal(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function equipFaultSignalImport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipFaultSignalImport + id + '/' : API.EquipFaultSignalImport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipFaultSignalDown(params) {
+  return request({
+    url: API.EquipFaultSignal,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
