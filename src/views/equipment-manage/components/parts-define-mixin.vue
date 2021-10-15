@@ -19,11 +19,11 @@ export default {
   },
   methods: {
     async showSpareDialog(row) {
+      this.dialogForm1 = JSON.parse(JSON.stringify(row))
+      this.id = row.id
       try {
-        this.dialogForm1 = JSON.parse(JSON.stringify(row))
         this.dialogVisible1 = true
-        const data = await erpSpareComponentRelation('get', null, { params: { equip_component_id: row.id }})
-        this.id = row.id
+        const data = await erpSpareComponentRelation('get', null, { params: { equip_component_id: this.id }})
         this.tableData1 = data.results || []
       } catch (e) {
         //
@@ -40,6 +40,16 @@ export default {
       this.dialogVisible2 = true
       const data = await equipSpareErp('get', null, { params: this.dialogForm2 })
       this.tableData2 = data.results || []
+      let data1 = []
+      for (const i in this.tableData1) {
+        data1 = data1.concat(this.tableData1[i].equip_spare_erp)
+      }
+      console.log(data1)
+      this.tableData2.forEach(row => {
+        if (data1.indexOf(row.id) >= 0) {
+          this.$refs.multipleTable.toggleRowSelection(row, true)
+        }
+      })
       this.total2 = data.count
     },
     delSpareDialog(row) {
@@ -53,10 +63,14 @@ export default {
             .then(response => {
               this.$message({
                 type: 'success',
-                message: '操作成功!'
+                message: '删除成功!'
               })
-              const data = erpSpareComponentRelation('get', null, { params: { equip_component_id: this.id }})
-              this.tableData1 = data.results || []
+              this.tableData1.forEach((item, index) => {
+                if (row.id === item.id) {
+                  this.tableData1.splice(index, 1)
+                }
+              })
+              // this.showSpareDialog(this.dialogForm1)
               if (this.getList) {
                 this.getList()
               }
@@ -103,6 +117,7 @@ export default {
       }
     },
     handleSelectionChange(val) {
+      console.log(this.tableData1)
       this.multipleSelection = val
     },
     currentChange2(page, pageSize) {
@@ -111,20 +126,17 @@ export default {
       this.addDialogForm1()
     },
     submitFun2() {
+      let data1 = []
+      for (const i in this.tableData1) {
+        data1 = data1.concat(this.tableData1[i].equip_spare_erp)
+      }
       for (let index = 0; index < this.multipleSelection.length; index++) {
-        if (this.tableData1.length >= 1) {
-          this.tableData1.forEach(item => {
-            if (this.multipleSelection[index].id !== (item.equip_spare_erp ? item.equip_spare_erp : item.id)) {
-              this.tableData1.push(this.multipleSelection[index])
-            } else {
-              this.$message.info('已有相同备件')
-            }
-          })
-        } else {
-          this.dialogVisible2 = false
+        if (data1.indexOf(this.multipleSelection[index].id) === -1) {
           this.tableData1.push(this.multipleSelection[index])
         }
       }
+      console.log(this.tableData1)
+      this.dialogVisible2 = false
     }
   }
 }
