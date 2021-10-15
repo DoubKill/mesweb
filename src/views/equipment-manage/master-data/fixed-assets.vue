@@ -395,7 +395,7 @@ export default {
           { required: true, message: '请填写产能', trigger: 'blur' }
         ],
         price: [
-          { required: true, message: '请填写价格', trigger: 'blur' }
+          { required: true, pattern: /^(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*))$/, message: '请填写正确价格', trigger: 'blur' }
         ],
         leave_factory_no: [
           { required: true, message: '请填写出厂编码', trigger: 'blur' }

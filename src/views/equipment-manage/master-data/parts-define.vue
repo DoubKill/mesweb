@@ -16,7 +16,7 @@
         <el-select v-model="formInline.equip_part" :disabled="isMultiple===true" placeholder="请选择" clearable @change="changeSearch" @visible-change="getEquipPart">
           <el-option
             v-for="item in options1"
-            :key="item.global_name"
+            :key="item.part_name"
             :label="item.part_name"
             :value="item.part_name"
           />
@@ -26,9 +26,9 @@
         <el-select v-model="formInline.equip_component_type" clearable placeholder="部件分类" @change="changeSearch">
           <el-option
             v-for="item in options2"
-            :key="item.global_name"
-            :label="item.global_name"
-            :value="item.global_name"
+            :key="item.component_type_name"
+            :label="item.component_type_name"
+            :value="item.component_type_name"
           />
         </el-select>
       </el-form-item>

@@ -42,9 +42,8 @@ export default {
       this.tableData2 = data.results || []
       let data1 = []
       for (const i in this.tableData1) {
-        data1 = data1.concat(this.tableData1[i].equip_spare_erp)
+        data1 = data1.concat(this.tableData1[i].equip_spare_erp ? this.tableData1[i].equip_spare_erp : this.tableData1[i].id)
       }
-      console.log(data1)
       this.tableData2.forEach(row => {
         if (data1.indexOf(row.id) >= 0) {
           this.$refs.multipleTable.toggleRowSelection(row, true)
@@ -117,7 +116,6 @@ export default {
       }
     },
     handleSelectionChange(val) {
-      console.log(this.tableData1)
       this.multipleSelection = val
     },
     currentChange2(page, pageSize) {
@@ -128,14 +126,13 @@ export default {
     submitFun2() {
       let data1 = []
       for (const i in this.tableData1) {
-        data1 = data1.concat(this.tableData1[i].equip_spare_erp)
+        data1 = data1.concat(this.tableData1[i].equip_spare_erp ? this.tableData1[i].equip_spare_erp : this.tableData1[i].id)
       }
       for (let index = 0; index < this.multipleSelection.length; index++) {
         if (data1.indexOf(this.multipleSelection[index].id) === -1) {
           this.tableData1.push(this.multipleSelection[index])
         }
       }
-      console.log(this.tableData1)
       this.dialogVisible2 = false
     }
   }

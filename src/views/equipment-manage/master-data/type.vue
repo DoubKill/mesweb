@@ -332,14 +332,14 @@ export default {
       add_equipcate_rules: {
         category_no: [{ required: true, message: '请输入机型编号', trigger: 'blur' }],
         category_name: [{ required: true, message: '请输入机型名称', trigger: 'blur' }],
-        volume: [{ required: true, message: '请输入容积', trigger: 'blur' }],
+        volume: [{ required: true, pattern: /^(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*))$/, message: '请输入正确容积', trigger: 'blur' }],
         equip_type: [{ required: true, message: '请选择设备类型', trigger: 'change' }],
         process: [{ required: true, message: '请选择工序', trigger: 'change' }]
       },
       modify_equipcate_rules: {
         category_no: [{ required: true, message: '请输入机型编号', trigger: 'blur' }],
         category_name: [{ required: true, message: '请输入机型名称', trigger: 'blur' }],
-        volume: [{ required: true, message: '请输入容积', trigger: 'blur' }],
+        volume: [{ required: true, pattern: /^(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*))$/, message: '请输入正确容积', trigger: 'blur' }],
         equip_type: [{ required: true, message: '请选择设备类型', trigger: 'change' }],
         process: [{ required: true, message: '请选择工序', trigger: 'change' }]
       },
