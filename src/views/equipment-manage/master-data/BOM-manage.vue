@@ -61,7 +61,13 @@
           </el-form-item>
           <el-form-item label="设备部件状态">
             <el-input v-model="formInline.user" disabled />
-            <el-button size="mini" style="margin-left:10px" type="primary" @click="showSpareDialog(formInline.component)">绑定备件</el-button>
+            <el-button
+              size="mini"
+              style="margin-left:10px"
+              type="primary"
+              @click="showSpareDialog({id:formInline.component,equip_part_name:formInline.part_name,
+                                       component_code:formInline.component_code,equip_component_type_name:formInline.component_type,component_name:formInline.component_name})"
+            >绑定备件</el-button>
           </el-form-item><br>
 
           <el-form-item label="区域编号">
@@ -525,11 +531,14 @@
 
 <script>
 // import equipTypeSelect from '../components/equip-type-select'
+
+import page from '@/components/page'
 import { equipPartNew } from '@/api/jqy'
 import { equipBom } from '@/api/base_w_four'
 import PartsDefineMixin from '../components/parts-define-mixin'
 export default {
   name: 'EquipmentMasterDataBOMManage',
+  components: { page },
   mixins: [PartsDefineMixin],
   // components: { equipTypeSelect },
   data() {
