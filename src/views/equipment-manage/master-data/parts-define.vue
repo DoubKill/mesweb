@@ -18,7 +18,7 @@
             v-for="item in options1"
             :key="item.part_name"
             :label="item.part_name"
-            :value="item.part_name"
+            :value="item.id"
           />
         </el-select>
       </el-form-item>
@@ -436,11 +436,13 @@ export default {
     }
   },
   watch: {
-    isMultiple() {
-      this.formInline = {}
-      this.formInline.equip_type = this.equipType.category_no
-      this.formInline.equip_part = this.equipType.equip_part_name
-      this.getList()
+    isMultiple(val) {
+      if (val) {
+        this.formInline = {}
+        this.formInline.equip_type = this.equipType.category_no
+        this.formInline.equip_part = this.equipType.equip_part_name
+        this.getList()
+      }
     }
   },
   created() {
@@ -450,7 +452,7 @@ export default {
     }
     this.getTypeNode()
     this.getList()
-    this.getEquipPart()
+    this.getEquipPart2()
     this.getEquipComponentType()
   },
   methods: {
@@ -477,6 +479,14 @@ export default {
       try {
         const data = await equipsCategory('get', null, { params: { all: 1 }})
         this.options = data.results || []
+      } catch (e) {
+        //
+      }
+    },
+    async getEquipPart2() {
+      try {
+        const data = await equipPartNew('get', null, { params: { all: 1 }})
+        this.options1 = data.results || []
       } catch (e) {
         //
       }

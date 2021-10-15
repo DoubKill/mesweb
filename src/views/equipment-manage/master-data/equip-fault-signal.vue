@@ -527,7 +527,7 @@ export default {
     },
     dialog() {
       if (this.dialogForm.category_no) {
-        this.equipType1 = this.dialogForm.category_no
+        this.equipType1 = this.dialogForm.category
         this.dialogVisible1 = true
       } else {
         this.$message.info('请先选择机台编号')
@@ -536,7 +536,7 @@ export default {
     dialog1() {
       if (this.dialogForm.equip_part_name) {
         this.equipType.category_no = this.dialogForm.category
-        this.equipType.equip_part_name = this.dialogForm.equip_part_name
+        this.equipType.equip_part_name = this.dialogForm.equip_part
         this.dialogVisible2 = true
         console.log(this.equipType)
       } else {

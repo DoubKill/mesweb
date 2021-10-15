@@ -8,7 +8,7 @@
             v-for="item in options"
             :key="item.category_name"
             :label="item.category_name"
-            :value="item.category_name"
+            :value="item.id"
           />
         </el-select>
       </el-form-item>
@@ -175,7 +175,7 @@ export default {
       default: false
     },
     equipType: {
-      type: String,
+      type: Number,
       default: null
     }
   },
@@ -201,10 +201,12 @@ export default {
     }
   },
   watch: {
-    isMultiple() {
-      this.formInline = {}
-      this.formInline.category_no = this.equipType
-      this.getList()
+    isMultiple(val) {
+      if (val) {
+        this.formInline = {}
+        this.formInline.category_no = this.equipType
+        this.getList()
+      }
     }
   },
   created() {
