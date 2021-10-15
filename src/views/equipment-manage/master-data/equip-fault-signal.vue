@@ -362,7 +362,8 @@
     >
       <region
         ref="List"
-        :is-multiple="true"
+        :equip-type="equipType1"
+        :is-multiple="dialogVisible1"
       />
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose1(false)">取 消</el-button>
@@ -378,7 +379,7 @@
       <partsDefine
         ref="List1"
         :equip-type="equipType"
-        :is-multiple="true"
+        :is-multiple="dialogVisible2"
       />
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose2(false)">取 消</el-button>
@@ -404,7 +405,8 @@ export default {
       tableData: [],
       total: 0,
       options: [],
-      equipType: '',
+      equipType: {},
+      equipType1: '',
       loading: false,
       btnExportLoad: false,
       dialogVisible: false,
@@ -445,6 +447,12 @@ export default {
       })
     },
     editEquipName(val) {
+      this.dialogForm.category = this.options.filter(item => {
+        return item.id === val
+      })[0].category
+      this.dialogForm.category_no = this.options.filter(item => {
+        return item.id === val
+      })[0].category__category_name
       this.dialogForm.equip_name = this.options.filter(item => {
         return item.id === val
       })[0].equip_name
@@ -499,15 +507,40 @@ export default {
     },
     showEditDialog(row) {
       this.dialogForm = JSON.parse(JSON.stringify(row))
+      if (this.dialogForm.fault_signal_duration === null) {
+        this.dialogForm.fault_signal_duration = undefined
+      }
+      if (this.dialogForm.fault_signal_minvalue === null) {
+        this.dialogForm.fault_signal_minvalue = undefined
+      }
+      if (this.dialogForm.fault_signal_maxvalue === null) {
+        this.dialogForm.fault_signal_maxvalue = undefined
+      }
+      if (this.dialogForm.alarm_signal_duration === null) {
+        this.dialogForm.alarm_signal_duration = undefined
+      }
+      if (this.dialogForm.alarm_signal_minvalue === null) {
+        this.dialogForm.alarm_signal_minvalue = undefined
+      }
+      if (this.dialogForm.alarm_signal_maxvalue === null) {
+        this.dialogForm.alarm_signal_maxvalue = undefined
+      }
       this.dialogVisible = true
     },
     dialog() {
-      this.dialogVisible1 = true
+      if (this.dialogForm.category_no) {
+        this.equipType1 = this.dialogForm.category_no
+        this.dialogVisible1 = true
+      } else {
+        this.$message.info('请先选择机台编号')
+      }
     },
     dialog1() {
       if (this.dialogForm.equip_part_name) {
-        this.equipType = this.dialogForm.equip_part_name
+        this.equipType.category_no = this.dialogForm.category
+        this.equipType.equip_part_name = this.dialogForm.equip_part_name
         this.dialogVisible2 = true
+        console.log(this.equipType)
       } else {
         this.$message.info('请先选择设备部位')
       }
@@ -531,7 +564,6 @@ export default {
     },
     handleClose(done) {
       this.dialogVisible = false
-      this.$refs.createForm.resetFields()
       if (done) {
         done()
       }

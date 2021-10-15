@@ -3,7 +3,7 @@
     <!-- 设备部位定义 -->
     <el-form :inline="true">
       <el-form-item label="所属主设备种类">
-        <el-select v-model="formInline.category_no" placeholder="请选择" clearable @change="changeSearch">
+        <el-select v-model="formInline.category_no" placeholder="请选择" :disabled="isMultiple===true" clearable @change="changeSearch">
           <el-option
             v-for="item in options"
             :key="item.category_name"
@@ -177,6 +177,10 @@ export default {
     isMultiple: {
       type: Boolean,
       default: false
+    },
+    equipType: {
+      type: String,
+      default: null
     }
   },
   data() {
@@ -200,7 +204,17 @@ export default {
       btnLoading: false
     }
   },
+  watch: {
+    isMultiple() {
+      this.formInline = {}
+      this.formInline.category_no = this.equipType
+      this.getList()
+    }
+  },
   created() {
+    if (this.equipType) {
+      this.formInline.category_no = this.equipType
+    }
     this.getTypeNode()
     this.getList()
     this.getGlobal()
