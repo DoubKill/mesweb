@@ -170,6 +170,7 @@ export default {
         const data = await personnelsUrl('get', null, { params: obj })
         if (bool) {
           this.userList = data.results || []
+          this.userList = this.userList.filter(d => d.is_active)
         } else {
           this.tableData = data.results || []
           this.tableData = this.tableData.filter(d => d.is_active)

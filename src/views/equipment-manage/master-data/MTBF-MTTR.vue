@@ -58,7 +58,7 @@ export default {
   data() {
     return {
       options: [],
-      tableData: [{}],
+      tableData: [],
       loading: false,
       btnLoading: false
     }
@@ -77,12 +77,20 @@ export default {
     },
     async submitFun() {
       try {
+        this.tableData.forEach(d => {
+          if (!d.equip__equip_name || !d.target_mtb || !d.target_mttr) {
+            throw new Error('每行数据必填')
+          }
+        })
         this.btnLoading = true
         await equipTargetMtbmttrSettings('post', null, { data: this.tableData })
         this.$message.success('保存成功')
         this.btnLoading = false
       } catch (e) {
         this.btnLoading = false
+        if (e.message) {
+          this.$message(e.message)
+        }
       }
     }
   }
