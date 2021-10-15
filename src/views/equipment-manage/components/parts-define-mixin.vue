@@ -11,7 +11,7 @@ export default {
       tableData1: [],
       btnLoading1: false,
       dialogVisible2: false,
-      dialogForm2: false,
+      dialogForm2: {},
       tableData2: [],
       total2: 0,
       id: null

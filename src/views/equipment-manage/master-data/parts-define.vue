@@ -397,10 +397,12 @@
 
 <script>
 import page from '@/components/page'
-import { equipComponent, equipsCategory, equipComponentType, equipPartNew, erpSpareComponentRelation, equipSpareErp, equipComponentImport, equipComponentDown } from '@/api/jqy'
+import { equipComponent, equipsCategory, equipComponentType, equipPartNew, equipComponentImport, equipComponentDown } from '@/api/jqy'
+import PartsDefineMixin from '../components/parts-define-mixin'
 export default {
   name: 'EquipmentMasterDataPartsDefine',
   components: { page },
+  mixins: [PartsDefineMixin],
   props: {
     isMultiple: {
       type: Boolean,
@@ -419,7 +421,6 @@ export default {
       multipleSelection: [],
       multipleSelection1: [],
       dialogVisible: false,
-      id: '',
       options: [],
       options1: [],
       options2: [],
@@ -428,15 +429,6 @@ export default {
       dialogForm: {},
       btnExportLoad: false,
       btnLoading: false,
-      dialogForm1: {},
-      dialogVisible1: false,
-      loading1: false,
-      btnLoading1: false,
-      tableData1: [],
-      dialogVisible2: false,
-      dialogForm2: {},
-      tableData2: [],
-      total2: 0,
       rules: {
         equip_type: [{ required: true, message: '不能为空', trigger: 'change' }],
         equip_part: [{ required: true, message: '不能为空', trigger: 'change' }],
@@ -454,7 +446,6 @@ export default {
 
   },
   created() {
-    console.log(this.equipType)
     if (this.equipType) {
       this.formInline.equip_part = this.equipType
     }
@@ -534,106 +525,12 @@ export default {
       this.formInline.page_size = pageSize
       this.getList()
     },
-    currentChange2(page, pageSize) {
-      this.dialogForm2.page = page
-      this.dialogForm2.page_size = pageSize
-      this.addDialogForm1()
-    },
     onSubmit() {
       this.dialogForm = {}
       this.dialogVisible = true
     },
-    async showSpareDialog(row) {
-      try {
-        this.dialogForm1 = JSON.parse(JSON.stringify(row))
-        this.dialogVisible1 = true
-        const data = await erpSpareComponentRelation('get', null, { params: { equip_component_id: row.id }})
-        this.id = row.id
-        this.tableData1 = data.results || []
-      } catch (e) {
-        //
-      }
-    },
-    async addDialogForm1() {
-      this.dialogForm2.equip_component_type = this.dialogForm1.equip_component_type_name
-      this.dialogVisible2 = true
-      const data = await equipSpareErp('get', null, { params: this.dialogForm2 })
-      this.tableData2 = data.results || []
-      this.total2 = data.count
-      // this.$refs.multipleTable.toggleRowSelection(row)
-    },
-    async submitFun1() {
-      const obj = []
-      this.tableData1.forEach(item => {
-        if (!item.reuse_flag) {
-          obj.push({ equip_component: this.id, equip_spare_erp: item.id })
-        }
-      })
-      if (obj.length >= 1) {
-        try {
-          this.btnLoading1 = true
-          await erpSpareComponentRelation('post', null, { data: obj })
-          this.$message({
-            type: 'success',
-            message: '操作成功!'
-          })
-          this.dialogVisible1 = false
-          this.btnLoading1 = false
-          this.getList()
-        } catch (e) {
-          this.btnLoading1 = false
-        }
-      } else {
-        this.dialogVisible1 = false
-      }
-    },
-    submitFun2() {
-      for (let index = 0; index < this.multipleSelection.length; index++) {
-        if (this.tableData1.length >= 1) {
-          this.tableData1.forEach(item => {
-            if (this.multipleSelection[index].id !== (item.equip_spare_erp ? item.equip_spare_erp : item.id)) {
-              this.tableData1.push(this.multipleSelection[index])
-            } else {
-              this.$message.info('已有相同备件')
-            }
-          })
-        } else {
-          this.dialogVisible2 = false
-          this.tableData1.push(this.multipleSelection[index])
-        }
-      }
-    },
-    handleSelectionChange(val) {
-      this.multipleSelection = val
-    },
     handleSelectionChange1(val) {
       this.multipleSelection1 = val
-    },
-    delSpareDialog(row) {
-      this.$confirm('此操作将删除, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        if (row.reuse_flag) {
-          erpSpareComponentRelation('delete', row.id, {})
-            .then(response => {
-              this.$message({
-                type: 'success',
-                message: '操作成功!'
-              })
-              const data = erpSpareComponentRelation('get', null, { params: { equip_component_id: this.id }})
-              this.tableData1 = data.results || []
-              this.getList()
-            })
-        } else {
-          this.tableData1.forEach((item, index) => {
-            if (row.id === item.id) {
-              this.tableData1.splice(index, 1)
-            }
-          })
-        }
-      })
     },
     async showEditDialog(row) {
       this.dialogForm = JSON.parse(JSON.stringify(row))
@@ -696,12 +593,6 @@ export default {
     handleClose(done) {
       this.dialogVisible = false
       this.$refs.createForm.resetFields()
-      if (done) {
-        done()
-      }
-    },
-    handleClose1(done) {
-      this.dialogVisible1 = false
       if (done) {
         done()
       }
