@@ -305,13 +305,14 @@ export default {
         equip_condition: [{ required: true, message: '不能为空', trigger: 'change' }],
         work_type: [{ required: true, message: '不能为空', trigger: 'change' }],
         important_level: [{ required: true, message: '不能为空', trigger: 'change' }],
-        equip_type: [{ required: true, message: '不能为空', trigger: 'change', validator: (rule, value, callback) => {
-          if (this.dialogForm.equip_type === '' && !value) {
-            callback(new Error('请选择设备类型'))
-          } else {
-            callback()
-          }
-        } }]
+        equip_type: [{ required: true, message: '不能为空', trigger: 'change',
+          validator: (rule, value, callback) => {
+            if (this.dialogForm.equip_type === '' && !value) {
+              callback(new Error('请选择设备类型'))
+            } else {
+              callback()
+            }
+          } }]
       },
       dialogForm: {},
       btnLoading: false
