@@ -3,7 +3,7 @@
     <!-- 设备部件定义 -->
     <el-form :inline="true" class="search-form-style">
       <el-form-item label="所属主设备种类">
-        <el-select v-model="formInline.equip_type" placeholder="请选择" clearable @change="changeSearch1">
+        <el-select v-model="formInline.equip_type" placeholder="请选择" :disabled="isMultiple===true" clearable @change="changeSearch1">
           <el-option
             v-for="item in options"
             :key="item.category_name"
@@ -409,7 +409,7 @@ export default {
       default: false
     },
     equipType: {
-      type: String,
+      type: [String, Object],
       default: null
     }
   },
@@ -439,15 +439,17 @@ export default {
     }
   },
   watch: {
-    equipType(newName) {
-      this.formInline.equip_part = newName
+    isMultiple() {
+      this.formInline = {}
+      this.formInline.equip_type = this.equipType.category_no
+      this.formInline.equip_part = this.equipType.equip_part_name
       this.getList()
     }
-
   },
   created() {
     if (this.equipType) {
-      this.formInline.equip_part = this.equipType
+      this.formInline.equip_type = this.equipType.category_no
+      this.formInline.equip_part = this.equipType.equip_part_name
     }
     this.getTypeNode()
     this.getList()
