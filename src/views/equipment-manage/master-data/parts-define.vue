@@ -36,7 +36,7 @@
         <el-input v-model="formInline.component_name" clearable placeholder="部件名称" @input="changeSearch" />
       </el-form-item>
       <el-form-item label="是否已绑定备件">
-        <el-select v-model="formInline.is_binding" clearable placeholder="是否绑定" @change="changeSearch">
+        <el-select v-model="formInline.is_binding" clearable placeholder="是否绑定" style="" @change="changeSearch">
           <el-option
             v-for="item in [{label:'Y',value:1},{label:'N',value:0}]"
             :key="item.value"
@@ -46,7 +46,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="是否启用">
-        <el-select v-model="formInline.use_flag" clearable placeholder="是否启用" @change="changeSearch">
+        <el-select v-model="formInline.use_flag" clearable placeholder="是否启用" style="" @change="changeSearch">
           <el-option
             v-for="item in [{label:'Y',value:1},{label:'N',value:0}]"
             :key="item.value"
@@ -55,12 +55,10 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item v-if="isMultiple===false" style="float:right">
-        <el-button type="primary" @click="onSubmit">新建</el-button>
-      </el-form-item>
-      <el-form-item v-if="isMultiple===false" style="float:right">
+      <el-form-item v-if="!equipType" style="float:right">
+        <el-button type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
         <el-upload
-          style="margin-right:8px"
+          style="margin:0 8px;display:inline-block"
           action="string"
           accept=".xls, .xlsx"
           :http-request="Upload"
@@ -68,10 +66,9 @@
         >
           <el-button type="primary">导入Excel</el-button>
         </el-upload>
+        <el-button type="primary" @click="onSubmit">新建</el-button>
       </el-form-item>
-      <el-form-item v-if="isMultiple===false" style="float:right">
-        <el-button type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
-      </el-form-item>
+
     </el-form>
     <el-table
       v-loading="loading"
@@ -636,7 +633,7 @@ export default {
 .parts-define{
   .search-form-style{
     .el-input{
-      width:140px;
+      width:120px;
     }
   }
   .el-dialog__wrapper .el-input{

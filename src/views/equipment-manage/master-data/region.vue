@@ -28,12 +28,10 @@
       <el-form-item label="部位名称">
         <el-input v-model="formInline.part_name" clearable placeholder="部位名称" @input="changeSearch" />
       </el-form-item>
-      <el-form-item v-if="isMultiple===false" style="float:right">
-        <el-button type="primary" @click="onSubmit">新建</el-button>
-      </el-form-item>
-      <el-form-item v-if="isMultiple===false" style="float:right">
+      <el-form-item v-if="!equipType" style="float:right">
+        <el-button type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
         <el-upload
-          style="margin-right:8px"
+          style="margin:0 8px;display:inline-block"
           action="string"
           accept=".xls, .xlsx"
           :http-request="Upload"
@@ -41,9 +39,7 @@
         >
           <el-button type="primary">导入Excel</el-button>
         </el-upload>
-      </el-form-item>
-      <el-form-item v-if="isMultiple===false" style="float:right">
-        <el-button type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
+        <el-button type="primary" @click="onSubmit">新建</el-button>
       </el-form-item>
     </el-form>
     <el-table

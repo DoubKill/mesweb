@@ -43,12 +43,10 @@
           />
         </el-select>
       </el-form-item>
-      <br>
       <el-form-item style="float:right">
-        <el-button type="primary" @click="onSubmit">新建</el-button>
-      </el-form-item>
-      <el-form-item style="float:right">
+        <el-button type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
         <el-upload
+          style="margin:0 8px;display:inline-block"
           action="string"
           accept=".xls, .xlsx"
           :http-request="Upload"
@@ -56,9 +54,8 @@
         >
           <el-button type="primary">导入Excel</el-button>
         </el-upload>
-      </el-form-item>
-      <el-form-item style="float:right">
-        <el-button type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
+        <el-button type="primary" @click="onSubmit">新建</el-button>
+
       </el-form-item>
     </el-form>
     <el-table
@@ -342,6 +339,7 @@
         >
           <el-input-number v-model="dialogForm.alarm_signal_minvalue" controls-position="right" :min="0" />
         </el-form-item>
+        <br>
         <el-form-item
           label="报警上限值"
           prop="alarm_signal_maxvalue"
@@ -617,7 +615,7 @@ export default {
 .equip-fault-signal{
   .search-form-style{
     .el-input{
-      width:140px;
+      width:120px;
     }
   }
   .el-dialog__wrapper .el-input{
