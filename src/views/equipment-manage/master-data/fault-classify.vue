@@ -185,7 +185,7 @@
         <el-form-item v-if="!isType" label="中分类故障名称" prop="fault_name">
           <el-input :key="2" v-model="formObj.fault_name" />
         </el-form-item>
-        <el-form-item v-if="!isType" label="备注" prop="desc">
+        <el-form-item v-if="!isType" label="备注" prop="">
           <el-input :key="3" v-model="formObj.desc" />
         </el-form-item>
         <el-form-item v-if="isType" label="大分类故障代码" prop="fault_type_code">
@@ -237,8 +237,8 @@ export default {
             } else {
               callback()
             }
-          } }],
-        desc: [{ required: true, message: '请输入', trigger: 'blur' }]
+          } }]
+        // desc: [{ required: true, message: '请输入', trigger: 'blur' }]
       }
     }
   },
@@ -339,7 +339,8 @@ export default {
             this.loadingBtn = true
             const _api = this.isType ? equipFaultTypes : equipFaultCodes
             const _method = this.formObj.id ? 'put' : 'post'
-            await _api(_method, this.formObj.id || null, { data: this.formObj })
+            const obj = Object.assign({ equip_fault_type: this.equip_machine_halt_type_id }, this.formObj)
+            await _api(_method, this.formObj.id || null, { data: obj })
             this.$message.success('操作成功')
             this.handleClose(false)
             if (this.isType) {
