@@ -31,7 +31,7 @@
         </el-upload>
         <el-button
           type="primary"
-          @click="showDialog(false,'新建作业项目标准')"
+          @click="onSubmit"
         >新建</el-button>
       </el-form-item>
     </el-form>
@@ -41,7 +41,7 @@
       style="width: 100%"
     >
       <el-table-column
-        prop="no"
+        prop="id"
         label="作业类型"
       />
       <el-table-column
@@ -70,7 +70,7 @@
             <el-button
               v-permission="['spare_type', 'change']"
               size="mini"
-              @click="showDialog(scope.row,'修改作业项目标准')"
+              @click="showDialog(scope.row)"
             >编辑</el-button>
             <el-button
               v-permission="['spare_type', 'delete']"
@@ -91,7 +91,7 @@
       @currentChange="currentChange"
     />
     <el-dialog
-      :title="typeName"
+      :title="`${typeForm.id?'修改':'新建'}作业项目标准`"
       width="30%"
       :visible.sync="dialogEditVisible"
       :close-on-click-modal="false"
@@ -111,13 +111,35 @@
           </el-select>
         </el-form-item>
         <el-form-item label="标准编号" prop="nae">
-          <el-input v-model="typeForm.nae" style="width:250px" :disabled="typeName==='修改作业项目标准'" />
+          <el-input v-model="typeForm.nae" style="width:250px" :disabled="typeForm.id" />
         </el-form-item>
         <el-form-item label="标准名称" prop="name">
           <el-input v-model="typeForm.name" style="width:250px" />
         </el-form-item>
         <el-form-item label="作业详情内容">
           <el-button>添加</el-button>
+          <el-table
+            :data="tableData"
+            border
+            style="width: 100%"
+          >
+            <el-table-column
+              label="序号"
+              type="index"
+            />
+            <el-table-column
+              prop="date"
+              label="作业内容"
+            />
+            <el-table-column
+              prop="date"
+              label="判断标准/步骤说明"
+            />
+            <el-table-column
+              prop="date"
+              label="类型"
+            />
+          </el-table>
         </el-form-item>
       </el-form>
       <div
@@ -144,7 +166,7 @@ export default {
   components: { page },
   data: function() {
     return {
-      tableData: [{ date: '1' }],
+      tableData: [{ id: '1' }],
       dialogEditVisible: false,
       typeName: '',
       typeForm: {
@@ -172,12 +194,15 @@ export default {
     getList() {
 
     },
+    onSubmit() {
+      this.dialogEditVisible = true
+    },
     changSelect() {
       this.getParams.page = 1
       this.getList()
     },
-    showDialog(row, type) {
-      this.typeName = type
+    showDialog(row) {
+      this.typeForm = JSON.parse(JSON.stringify(row))
       this.dialogEditVisible = true
     },
     handleEdit: function() {
