@@ -294,7 +294,7 @@ export default {
     return {
       formInline: {},
       workTypeList: commons.workTypeList,
-      tableData: [{}],
+      tableData: [],
       total: 0,
       loading: false,
       dialogVisible: false,
@@ -366,7 +366,8 @@ export default {
     },
     exportTable() {
       this.btnExportLoad = true
-      equipOrderAssignRule('get', null, { responseType: 'blob', params: { export: 1 }})
+      const obj = Object.assign({ export: 1 }, this.formInline)
+      equipOrderAssignRule('get', null, { responseType: 'blob', params: obj })
         .then(res => {
           const link = document.createElement('a')
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })

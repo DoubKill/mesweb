@@ -340,7 +340,7 @@
       <li @click="delNodeFun">删除节点</li>
     </ul>
     <el-dialog
-      title="加入节点信息"
+      title="加入子节点信息"
       :visible.sync="dialogVisible"
       width="400px"
       :before-close="handleClose"
@@ -350,7 +350,7 @@
           <el-input v-model="dialogFormAdd.factory_id" />
         </el-form-item>
         <el-form-item v-if="selectedTag.level===1" label="设备类型" prop="factory_id">
-          <equipTypeSelect ref="equipTypeSelect" @equipTypeSelect="equipTypeSelect" />
+          <equipTypeSelect ref="equipTypeSelect" :default-val="dialogFormAdd.equip_property_type_id" :is-created="true" @equipTypeSelect="equipTypeSelect" />
         </el-form-item>
         <el-form-item v-if="selectedTag.level===2" label="机台编号" prop="factory_id">
           <equipSelect :equip-type="selectedTag.factory_id" :equip_no_props.sync="equip_no" :is-obj="true" @changeSearch="equipChanged" />
@@ -580,7 +580,7 @@
 <script>
 import equipTypeSelect from '../components/equip-type-select'
 import page from '@/components/page'
-import { equipPartNew } from '@/api/jqy'
+import { equipPartNew, equipComponent } from '@/api/jqy'
 import { equipBom } from '@/api/base_w_four'
 import PartsDefineMixin from '../components/parts-define-mixin'
 import locationArea from './location-area.vue'
@@ -633,7 +633,9 @@ export default {
       dialogVisiblePart: false,
       btnLoadingPart: false,
       dialogVisiblePartsc: false,
-      btnLoadingPartsc: false
+      btnLoadingPartsc: false,
+      pasteData: null,
+      faData: ''
     }
   },
   watch: {
@@ -682,10 +684,12 @@ export default {
     },
     equipTypeSelect(row) {
       this.dialogFormAdd.factory_id = row ? row.global_name : ''
+      this.dialogFormAdd.curr_label_obj_id = row ? row.id : ''
     },
     equipChanged(obj) {
       this.dialogFormAdd.factory_id = obj ? obj.equip_name : ''
       this.dialogFormAdd.curr_label_obj_id = obj ? obj.id : ''
+      this.dialogFormAdd.equip_category_id = obj ? obj.category : ''
       this.equip_no = obj ? obj.equip_no : ''
     },
     showLocation() {
@@ -718,29 +722,28 @@ export default {
         }
         this.dialogVisiblePart = false
         const a = this.$refs.regionList.multipleSelection
-        console.log(a, 66666)
-        this.formInline.equip_area_define = a.id
-        this.formInline.equip_area_code = a.area_code
-        this.formInline.equip_area_name = a.area_name
+        this.dialogFormAdd.curr_label_obj_id = a.id
+        this.partNum = a.part_code
+        this.dialogFormAdd.factory_id = a.part_name
       }
     },
     submitFunPartsc() {
       if (this.$refs.partList) {
-        if (!this.$refs.partList.multipleSelection) {
+        if (!this.$refs.partList.multipleSelection1) {
           this.$message.info('请单击选择部件')
           return
         }
         this.dialogVisiblePartsc = false
-        const a = this.$refs.partList.multipleSelection
-        console.log(a, 66666)
-        this.formInline.equip_area_define = a.id
-        this.formInline.equip_area_code = a.area_code
-        this.formInline.equip_area_name = a.area_name
+        const a = this.$refs.partList.multipleSelection1
+        this.dialogFormAdd.curr_label_obj_id = a.id
+        this.partCNum = a.component_code
+        this.dialogFormAdd.factory_id = a.component_name
       }
     },
     changeList() {},
     nodeContextmenu(e, tag, node, event) {
-      // console.log(e, tag, node, event, 888)
+      // console.log(node, 888)
+      const a = document.documentElement.scrollTop || document.body.scrollTop
       const menuMinWidth = 105
       const offsetLeft = this.$el.getBoundingClientRect().left // container margin left
       const offsetWidth = this.$el.offsetWidth // container width
@@ -753,9 +756,10 @@ export default {
         this.left = left
       }
 
-      this.top = e.clientY - 200
+      this.top = e.clientY - 260 + a
       this.visible = true
       this.selectedTag = tag
+      this.faData = node.parent ? node.parent.data : ''
     },
     closeMenu() {
       this.visible = false
@@ -777,20 +781,35 @@ export default {
       this.$refs.dialogFormAdd.validate(async(valid) => {
         if (valid) {
           try {
-            // this.btnLoading = true
-            // const _api = this.dialogForm.id ? 'put' : 'post'
-            // await equipOrderAssignRule(_api, this.dialogForm.id || null, { data: this.dialogForm })
-            // this.$message.success('操作成功')
-            // this.handleClose(null)
-            // this.getList()
-            // this.btnLoading = false
+            if (this.dialogFormAdd.level === 3 && (this.pasteData.equip_category_id !== this.dialogFormAdd.equip_category_id)) {
+              this.$message('机台的机型不一致，不能粘贴')
+              return
+            }
+
+            this.dialogFormAdd.level = this.selectedTag.level + 1
+            this.dialogFormAdd.parent_flag = this.selectedTag.id
+            this.dialogFormAdd.handle = !!this.dialogFormAdd.id
+
+            this.treePost()
           } catch (e) {
-            // this.btnLoading = false
+            this.btnLoading = false
           }
         } else {
           return false
         }
       })
+    },
+    async treePost() {
+      try {
+        this.btnLoading = true
+        await equipBom('post', null, { data: this.dialogFormAdd })
+        this.btnLoading = false
+        this.$message.success('操作成功')
+        this.handleClose(null)
+        this.getTree()
+      } catch (e) {
+        this.btnLoading = false
+      }
     },
     nodeClick(row, node) {
       function a(node) {
@@ -806,13 +825,79 @@ export default {
       this.getInfo()
     },
     addNodeFun() {
-      this.dialogVisible = true
-      console.log(this.selectedTag, 'selectedTag')
+      if (this.selectedTag.level !== 5) {
+        this.dialogVisible = true
+      } else {
+        this.$message('不能再添加子节点')
+      }
     },
     upperAddNodeFun() {},
     belowAddNodeFun() {},
-    copyNodeFun() {},
-    pasteNodeFun() {},
+    copyNodeFun() {
+      this.$message.success('复制成功')
+      this.equip_no = this.selectedTag.equip_info_name
+      this.pasteData = {
+        factory_id: this.selectedTag.factory_id,
+        id: this.selectedTag.id,
+        level: this.selectedTag.level,
+        parent_flag: this.faData ? this.faData.id : '',
+        current_flag_id: this.selectedTag.id,
+        curr_label_obj_id: null,
+        children: this.selectedTag.children,
+        faName: this.faData.factory_id,
+        // 设备类型id
+        equip_property_type_id: this.selectedTag.equip_property_type_id,
+        // 机型id
+        equip_category_id: this.selectedTag.equip_category_id,
+        // 部位id
+        equip_part_id: this.selectedTag.equip_part_id,
+        equip_component_id: this.selectedTag.equip_component_id
+      }
+    },
+    async pasteNodeFun() {
+      if (!this.pasteData) {
+        this.$message('暂无可粘贴数据')
+        return
+      }
+      if (this.selectedTag.level + 1 !== this.pasteData.level) {
+        this.$message('只能同级粘贴')
+        return
+      }
+      this.dialogFormAdd = JSON.parse(JSON.stringify(this.pasteData))
+
+      if (this.dialogFormAdd.level === 2 && (this.selectedTag.factory_id === this.dialogFormAdd.faName)) {
+        this.$message('不能粘贴设备类型')
+        return
+      }
+      if (this.dialogFormAdd.level === 3) {
+        if (this.dialogFormAdd.equip_property_type_id !== this.selectedTag.equip_property_type_id) {
+          this.$message('该设备类型，没有此机台')
+          return
+        }
+      }
+      console.log(this.dialogFormAdd, 3333)
+      console.log(this.selectedTag, 4444)
+      if (this.dialogFormAdd.level === 4 && (this.selectedTag.equip_category_id !== this.dialogFormAdd.equip_category_id)) {
+        this.$message('机台的机型不一致，不能粘贴')
+        return
+      }
+      if (this.dialogFormAdd.level === 5) {
+        try {
+          const { results } = await equipComponent('get', null, { params: { all: 1, equip_part: this.selectedTag.equip_part_id }})
+          let arr1 = []
+          if (results.length > 0) {
+            arr1 = results.filter(d => d.id === this.dialogFormAdd.equip_component_id)
+          }
+          if (results.length === 0 || arr1.length === 0) {
+            this.$message('该部位没有此部件，不可复制')
+            return
+          }
+        } catch (e) {
+          return
+        }
+      }
+      this.dialogVisible = true
+    },
     upperPasteNodeFun() {},
     belowPasteNodeFun() {},
     delNodeFun() {
@@ -879,6 +964,9 @@ export default {
   }
   .el-input{
     width:250px;
+  }
+  .el-container{
+    // position: relative;
   }
   .contextmenu {
     margin: 0;
