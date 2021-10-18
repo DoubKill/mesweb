@@ -3,7 +3,7 @@
     <!-- 设备位置区域定义 -->
     <el-form :inline="true">
       <el-form-item label="位置区域名称">
-        <el-input v-model="formInline.area_name" placeholder="位置区域名称" @input="debounceList" />
+        <el-input v-model="formInline.area_name" clearable placeholder="位置区域名称" @input="debounceList" />
       </el-form-item>
       <el-form-item label="是否启用">
         <el-select v-model="formInline.use_flag" clearable placeholder="是否启用" @change="changeSearch">
@@ -15,12 +15,10 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item style="float:right">
+      <el-form-item v-if="!isDialog" style="float:right">
         <el-button type="primary" @click="onSubmit">新建</el-button>
-      </el-form-item>
-      <el-form-item style="float:right">
         <el-upload
-          style="margin-right:8px"
+          style="margin:0 8px;display:inline-block"
           action="string"
           accept=".xls, .xlsx"
           :http-request="Upload"
@@ -28,8 +26,6 @@
         >
           <el-button type="primary">导入Excel</el-button>
         </el-upload>
-      </el-form-item>
-      <el-form-item style="float:right">
         <el-button type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
       </el-form-item>
     </el-form>
@@ -38,6 +34,8 @@
       :data="tableData"
       style="width: 100%"
       border
+      highlight-current-row
+      @current-change="handleCurrentChange"
     >
       <el-table-column
         prop="area_code"
@@ -79,7 +77,7 @@
         label="录入时间"
         min-width="20"
       />
-      <el-table-column label="操作" width="200px">
+      <el-table-column v-if="!isDialog" label="操作" width="200px">
         <template slot-scope="scope">
           <el-button-group>
             <el-button
@@ -160,6 +158,16 @@ import { equipAreaDefine, equipAreaDefineDown, equipAreaDefineImport } from '@/a
 export default {
   name: 'EquipmentMasterDataLocation',
   components: { page },
+  props: {
+    isDialog: {
+      type: Boolean,
+      default: false
+    },
+    showDialog: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       formInline: {},
@@ -175,7 +183,18 @@ export default {
       },
       SupplierTypeList: [],
       dialogForm: {},
-      btnLoading: false
+      btnLoading: false,
+      handleData: null
+    }
+  },
+  watch: {
+    showDialog(bool) {
+      if (this.isDialog) {
+        if (bool) {
+          this.formInline = {}
+          this.getList()
+        }
+      }
     }
   },
   created() {
@@ -205,6 +224,9 @@ export default {
     onSubmit() {
       this.dialogForm = { area_code: 'WZQY00X' }
       this.dialogVisible = true
+    },
+    handleCurrentChange(val) {
+      this.handleData = val
     },
     Upload(param) {
       const formData = new FormData()
@@ -242,6 +264,7 @@ export default {
       this.dialogVisible = true
     },
     changeSearch() {
+      this.formInline.page = 1
       this.getList()
     },
     handleDelete: function(row) {

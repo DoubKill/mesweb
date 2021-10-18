@@ -8,6 +8,7 @@
         </h3>
         <el-tree
           ref="tree"
+          v-loading="loadingTree"
           class="filter-tree"
           :data="data"
           :props="defaultProps"
@@ -20,7 +21,7 @@
       </el-aside>
       <el-main class="border-style">
         <h3>设备BOM机台节点 详细信息
-          <el-button style="float:right;margin-right:10px" type="primary" @click="onSubmit">保存</el-button>
+          <el-button style="float:right;margin-right:10px" type="primary" :loading="infoBtnLoading" @click="onSubmit">保存</el-button>
         </h3>
         <el-form v-loading="loading" :inline="true" label-width="100px">
           <el-form-item label="分厂">
@@ -58,22 +59,23 @@
           </el-form-item>
           <el-form-item label="设备部件规格">
             <el-input v-model="formInline.component_type" disabled />
-          </el-form-item>
-          <el-form-item label="设备部件状态">
-            <el-input v-model="formInline.user" disabled />
             <el-button
               size="mini"
               style="margin-left:10px"
               type="primary"
+              :disabled="!formInline.component"
               @click="showSpareDialog({id:formInline.component,equip_part_name:formInline.part_name,
                                        component_code:formInline.component_code,equip_component_type_name:formInline.component_type,component_name:formInline.component_name})"
             >绑定备件</el-button>
           </el-form-item><br>
+          <!-- <el-form-item label="设备部件状态">
+            <el-input v-model="formInline.user" disabled />
+          </el-form-item><br> -->
 
           <el-form-item label="区域编号">
             <el-input v-model="formInline.equip_area_code" style="width:150px" disabled />
             <el-input v-model="formInline.equip_area_name" disabled>
-              <el-button slot="append" icon="el-icon-search" />
+              <el-button slot="append" :disabled="!formInline.equip_no" icon="el-icon-search" @click="showLocation" />
             </el-input>
           </el-form-item>
           <br>
@@ -338,27 +340,39 @@
       <li @click="delNodeFun">删除节点</li>
     </ul>
     <el-dialog
-      title="输入节点名信息"
+      title="加入节点信息"
       :visible.sync="dialogVisible"
       width="400px"
       :before-close="handleClose"
     >
       <el-form ref="dialogFormAdd" :model="dialogFormAdd" :inline="true" label-width="100px" :rules="rules">
-        <el-form-item label="部门编号" prop="section_id">
-          <el-input v-model="dialogFormAdd.section_id" :disabled="dialogFormAdd.id?true:false" />
+        <el-form-item v-if="!selectedTag.level" label="分厂名称" prop="factory_id">
+          <el-input v-model="dialogFormAdd.factory_id" />
         </el-form-item>
-        <el-form-item label="部门名称" prop="name">
-          <el-input v-model="dialogFormAdd.name" />
+        <el-form-item v-if="selectedTag.level===1" label="设备类型" prop="factory_id">
+          <equipTypeSelect ref="equipTypeSelect" @equipTypeSelect="equipTypeSelect" />
         </el-form-item>
-        <el-form-item label="负责人">
-          <!-- <el-select v-model="dialogFormAdd.in_charge_user" placeholder="请选择">
-            <el-option
-              v-for="item in userList"
-              :key="item.id"
-              :label="item.username"
-              :value="item.id"
-            />
-          </el-select> -->
+        <el-form-item v-if="selectedTag.level===2" label="机台编号" prop="factory_id">
+          <equipSelect :equip-type="selectedTag.factory_id" :equip_no_props.sync="equip_no" :is-obj="true" @changeSearch="equipChanged" />
+        </el-form-item>
+        <el-form-item v-if="selectedTag.level===2" label="机台名称">
+          <el-input v-model="dialogFormAdd.factory_id" disabled />
+        </el-form-item>
+        <el-form-item v-if="selectedTag.level===3" label="部位编号" prop="factory_id">
+          <el-input v-model="partNum" disabled>
+            <el-button slot="append" icon="el-icon-search" @click="dialogVisiblePart =true" />
+          </el-input>
+        </el-form-item>
+        <el-form-item v-if="selectedTag.level===3" label="部位名称">
+          <el-input v-model="dialogFormAdd.factory_id" disabled />
+        </el-form-item>
+        <el-form-item v-if="selectedTag.level===4" label="部件编号" prop="factory_id">
+          <el-input v-model="partCNum" disabled>
+            <el-button slot="append" icon="el-icon-search" @click="dialogVisiblePartsc =true" />
+          </el-input>
+        </el-form-item>
+        <el-form-item v-if="selectedTag.level===4" label="部件名称">
+          <el-input v-model="dialogFormAdd.factory_id" disabled />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -526,21 +540,57 @@
         <el-button type="primary" @click="submitFun2">确 定</el-button>
       </span>
     </el-dialog>
+    <el-dialog
+      :title="`区域编号选择`"
+      :visible.sync="dialogVisibleLocation"
+      width="90%"
+      :before-close="handleCloseLocation"
+    >
+      <locationArea ref="locationAreaRef" :is-dialog="true" :show-dialog="dialogVisibleLocation" />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleCloseLocation(false)">取 消</el-button>
+        <el-button type="primary" :loading="btnLoadingLocation" @click="submitFunLocation">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
+      :title="`设备BOM节点-部位选择`"
+      :visible.sync="dialogVisiblePart"
+      width="90%"
+    >
+      <regionList ref="regionList" :equip-type="selectedTag.equip_category_id" :is-multiple="dialogVisiblePart" />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisiblePart = false">取 消</el-button>
+        <el-button type="primary" :loading="btnLoadingPart" @click="submitFunPart">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
+      :title="`设备BOM节点-部件选择`"
+      :visible.sync="dialogVisiblePartsc"
+      width="90%"
+    >
+      <partsDefine ref="partList" :equip-type="{category_no:selectedTag.equip_category_id,equip_part_name:selectedTag.equip_part_id}" :is-multiple="dialogVisiblePartsc" />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisiblePartsc=false">取 消</el-button>
+        <el-button type="primary" :loading="btnLoadingPartsc" @click="submitFunPartsc">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-// import equipTypeSelect from '../components/equip-type-select'
-
+import equipTypeSelect from '../components/equip-type-select'
 import page from '@/components/page'
 import { equipPartNew } from '@/api/jqy'
 import { equipBom } from '@/api/base_w_four'
 import PartsDefineMixin from '../components/parts-define-mixin'
+import locationArea from './location-area.vue'
+import equipSelect from '@/components/select_w/equip.vue'
+import regionList from './region'
+import partsDefine from './parts-define'
 export default {
   name: 'EquipmentMasterDataBOMManage',
-  components: { page },
+  components: { page, locationArea, equipTypeSelect, equipSelect, regionList, partsDefine },
   mixins: [PartsDefineMixin],
-  // components: { equipTypeSelect },
   data() {
     return {
       data: [],
@@ -563,9 +613,27 @@ export default {
       nodeId: null,
       dialogFormAdd: {},
       rules: {
-        section_id: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        factory_id: [{ required: true, message: '不能为空', trigger: 'blur',
+          validator: (rule, value, callback) => {
+            if (!this.dialogFormAdd.factory_id && !value) {
+              callback(new Error('不能为空'))
+            } else {
+              callback()
+            }
+          } }],
         name: [{ required: true, message: '不能为空', trigger: 'blur' }]
-      }
+      },
+      dialogVisibleLocation: false,
+      btnLoadingLocation: false,
+      loadingTree: false,
+      infoBtnLoading: false,
+      equip_no: '',
+      partNum: '',
+      partCNum: '',
+      dialogVisiblePart: false,
+      btnLoadingPart: false,
+      dialogVisiblePartsc: false,
+      btnLoadingPartsc: false
     }
   },
   watch: {
@@ -591,11 +659,14 @@ export default {
     },
     async getInfo() {
       try {
+        this.loadingTree = true
         const data = await equipBom('get', this.nodeId)
         Object.assign(this.formInline, data || {})
         this.formInline = Object.assign({}, this.formInline)
+        this.loadingTree = false
       } catch (e) {
         this.formInline = {}
+        this.loadingTree = false
       }
     },
     async  getEquipPart() {
@@ -607,6 +678,64 @@ export default {
         this.loading = false
       } catch (e) {
         this.loading = false
+      }
+    },
+    equipTypeSelect(row) {
+      this.dialogFormAdd.factory_id = row ? row.global_name : ''
+    },
+    equipChanged(obj) {
+      this.dialogFormAdd.factory_id = obj ? obj.equip_name : ''
+      this.dialogFormAdd.curr_label_obj_id = obj ? obj.id : ''
+      this.equip_no = obj ? obj.equip_no : ''
+    },
+    showLocation() {
+      this.dialogVisibleLocation = true
+    },
+    handleCloseLocation(done) {
+      this.dialogVisibleLocation = false
+      if (done) {
+        done()
+      }
+    },
+    async submitFunLocation() {
+      if (this.$refs.locationAreaRef) {
+        if (!this.$refs.locationAreaRef.handleData) {
+          this.$message.info('请单击选择区域编号')
+          return
+        }
+        this.handleCloseLocation(false)
+        const a = this.$refs.locationAreaRef.handleData
+        this.formInline.equip_area_define = a.id
+        this.formInline.equip_area_code = a.area_code
+        this.formInline.equip_area_name = a.area_name
+      }
+    },
+    submitFunPart() {
+      if (this.$refs.regionList) {
+        if (!this.$refs.regionList.multipleSelection) {
+          this.$message.info('请单击选择部位')
+          return
+        }
+        this.dialogVisiblePart = false
+        const a = this.$refs.regionList.multipleSelection
+        console.log(a, 66666)
+        this.formInline.equip_area_define = a.id
+        this.formInline.equip_area_code = a.area_code
+        this.formInline.equip_area_name = a.area_name
+      }
+    },
+    submitFunPartsc() {
+      if (this.$refs.partList) {
+        if (!this.$refs.partList.multipleSelection) {
+          this.$message.info('请单击选择部件')
+          return
+        }
+        this.dialogVisiblePartsc = false
+        const a = this.$refs.partList.multipleSelection
+        console.log(a, 66666)
+        this.formInline.equip_area_define = a.id
+        this.formInline.equip_area_code = a.area_code
+        this.formInline.equip_area_name = a.area_name
       }
     },
     changeList() {},
@@ -631,15 +760,38 @@ export default {
     closeMenu() {
       this.visible = false
     },
-    equipTypeSelect(val) {},
     handleClose(done) {
       this.dialogVisible = false
-      this.dialogForm.input = ''
+      this.dialogFormAdd = {}
+      if (this.$refs.equipTypeSelect) {
+        this.$refs.equipTypeSelect.className = undefined
+      }
+      this.$refs.dialogFormAdd.clearValidate()
+      this.equip_no = ''
+      this.partNum = ''
       if (done) {
         done()
       }
     },
-    submitFun() {},
+    submitFun() {
+      this.$refs.dialogFormAdd.validate(async(valid) => {
+        if (valid) {
+          try {
+            // this.btnLoading = true
+            // const _api = this.dialogForm.id ? 'put' : 'post'
+            // await equipOrderAssignRule(_api, this.dialogForm.id || null, { data: this.dialogForm })
+            // this.$message.success('操作成功')
+            // this.handleClose(null)
+            // this.getList()
+            // this.btnLoading = false
+          } catch (e) {
+            // this.btnLoading = false
+          }
+        } else {
+          return false
+        }
+      })
+    },
     nodeClick(row, node) {
       function a(node) {
         if (node.data.level === 1) {
@@ -655,6 +807,7 @@ export default {
     },
     addNodeFun() {
       this.dialogVisible = true
+      console.log(this.selectedTag, 'selectedTag')
     },
     upperAddNodeFun() {},
     belowAddNodeFun() {},
@@ -663,24 +816,41 @@ export default {
     upperPasteNodeFun() {},
     belowPasteNodeFun() {},
     delNodeFun() {
+      if (this.selectedTag.id === 1) {
+        this.$message('公司不能删除')
+        return
+      }
       this.$confirm('是否确定删除?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        // propertyTypeNode('delete', data.id)
-        //   .then(response => {
-        //     this.$message({
-        //       type: 'success',
-        //       message: '删除成功!'
-        //     })
-        //     this.handleClose(false)
-        //   }).catch(e => {
-        //     this.$message.error('删除失败')
-        //   })
+        equipBom('delete', this.selectedTag.id)
+          .then(response => {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+            this.getTree()
+          }).catch(e => {
+            //
+          })
       })
     },
-    onSubmit() {},
+    async onSubmit() {
+      try {
+        if (!this.formInline.id) {
+          this.$message('暂无可保存内容')
+          return
+        }
+        this.infoBtnLoading = true
+        await equipBom('put', this.formInline.id, { data: this.formInline })
+        this.$message.success('保存成功')
+        this.infoBtnLoading = false
+      } catch (e) {
+        this.infoBtnLoading = false
+      }
+    },
     showList() {
       this.isShowList = !this.isShowList
     }
