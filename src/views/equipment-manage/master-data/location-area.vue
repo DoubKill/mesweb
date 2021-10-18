@@ -213,7 +213,6 @@ export default {
       }
     },
     debounceList() {
-      this.formInline.page = 1
       debounce(this, 'changeSearch')
     },
     currentChange(page, pageSize) {
@@ -242,7 +241,7 @@ export default {
     },
     exportTable() {
       this.btnExportLoad = true
-      const obj = Object.assign({ export: 1 })
+      const obj = Object.assign({ export: 1 }, this.formInline)
       const _api = equipAreaDefineDown
       _api(obj)
         .then(res => {

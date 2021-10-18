@@ -207,7 +207,7 @@ export default {
     },
     exportTable() {
       this.btnExportLoad = true
-      const obj = Object.assign({ export: 1 })
+      const obj = Object.assign({ export: 1 }, this.search)
       const _api = equipSpareErpDown
       _api(obj)
         .then(res => {

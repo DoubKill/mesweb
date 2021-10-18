@@ -166,7 +166,7 @@
       @currentChange="currentChange"
     />
     <el-dialog
-      :title="`${dialogForm.id?'编辑':'新建'}备件代码定义`"
+      :title="`${type!=='新建'?'编辑':'新建'}备件代码定义`"
       :visible.sync="dialogVisible"
       width="900px"
       :before-close="handleClose"
@@ -209,7 +209,7 @@
           label="库存下限"
           prop="lower_stock"
         >
-          <el-input-number v-model="dialogForm.lower_stock" controls-position="right" :min="1" :max="99999" />
+          <el-input-number v-model="dialogForm.lower_stock" controls-position="right" :min="1" />
         </el-form-item>
         <el-form-item
           label="备件名称"
@@ -221,7 +221,7 @@
           label="库存上限"
           prop="upper_stock"
         >
-          <el-input-number v-model="dialogForm.upper_stock" controls-position="right" :min="1" :max="99999" />
+          <el-input-number v-model="dialogForm.upper_stock" controls-position="right" :min="1" />
         </el-form-item>
         <el-form-item
           label="规格型号"
@@ -233,7 +233,7 @@
           label="计划价格"
           prop="cost"
         >
-          <el-input-number v-model="dialogForm.cost" controls-position="right" :min="1" :max="10" />
+          <el-input-number v-model="dialogForm.cost" controls-position="right" :min="1" />
         </el-form-item>
         <el-form-item
           label="技术参数"
@@ -245,7 +245,7 @@
           label="有效期（天）"
           prop="period_validity"
         >
-          <el-input-number v-model="dialogForm.period_validity" controls-position="right" :min="1" :max="99999" />
+          <el-input-number v-model="dialogForm.period_validity" controls-position="right" :min="1" />
         </el-form-item>
         <el-form-item
           label="标准单位"
@@ -398,7 +398,7 @@ export default {
         specification: '',
         technical_params: '',
         unit: '',
-        texture_material: '' },
+        texture_material: '', key_parts_flag: '' },
       dialogForm1: {},
       btnLoading: false,
       btnLoading1: false,
@@ -475,6 +475,16 @@ export default {
     onSubmit() {
       this.dialogVisible = true
       this.type = '新建'
+      this.dialogForm = {
+        equip_component_type: '',
+        supplier_name: '',
+        spare_code: '',
+        spare_name: '',
+        specification: '',
+        technical_params: '',
+        unit: '',
+        texture_material: '',
+        key_parts_flag: '' }
     },
     Upload(param) {
       const formData = new FormData()
@@ -490,7 +500,7 @@ export default {
     },
     exportTable() {
       this.btnExportLoad = true
-      const obj = Object.assign({ export: 1 })
+      const obj = Object.assign({ export: 1 }, this.formInline)
       const _api = equipSpareErpDown
       _api(obj)
         .then(res => {
@@ -510,6 +520,18 @@ export default {
     showEditDialog(row) {
       this.type = ''
       this.dialogForm = JSON.parse(JSON.stringify(row))
+      if (this.dialogForm.lower_stock === null) {
+        this.dialogForm.lower_stock = undefined
+      }
+      if (this.dialogForm.upper_stock === null) {
+        this.dialogForm.upper_stock = undefined
+      }
+      if (this.dialogForm.cost === null) {
+        this.dialogForm.cost = undefined
+      }
+      if (this.dialogForm.period_validity === null) {
+        this.dialogForm.period_validity = undefined
+      }
       this.dialogVisible = true
     },
     showERP() {
@@ -564,12 +586,25 @@ export default {
       this.dialogVisible1 = false
     },
     submitFun() {
+      const dialogForm1 = JSON.parse(JSON.stringify(this.dialogForm))
       this.$refs.createForm.validate(async(valid) => {
         if (valid) {
           try {
             this.btnLoading = true
             const _api = this.type === '新建' ? 'post' : 'put'
-            await equipSpareErp(_api, this.dialogForm.id || null, { data: this.dialogForm })
+            if (dialogForm1.lower_stock === undefined) {
+              dialogForm1.lower_stock = null
+            }
+            if (dialogForm1.upper_stock === undefined) {
+              dialogForm1.upper_stock = null
+            }
+            if (dialogForm1.cost === undefined) {
+              dialogForm1.cost = null
+            }
+            if (dialogForm1.period_validity === undefined) {
+              dialogForm1.period_validity = null
+            }
+            await equipSpareErp(_api, this.dialogForm.id || null, { data: dialogForm1 })
             this.$message.success('操作成功')
             this.handleClose(null)
             this.getList()
