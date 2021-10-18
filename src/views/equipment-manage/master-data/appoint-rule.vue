@@ -129,6 +129,11 @@
         min-width="20"
       />
       <el-table-column
+        prop="use_flag_name"
+        label="是否启用"
+        min-width="20"
+      />
+      <el-table-column
         prop="created_username"
         label="录入人"
         min-width="20"
