@@ -105,7 +105,7 @@
           <el-form-item>
             <el-button
               style="margin-bottom:10px;float:right"
-              :disabled="equip_machine_halt_type_id?false:true"
+              :disabled="equip_machine_halt_type_id&&isLeftStop?false:true"
               type="primary"
               @click="addArea(false)"
             >添加</el-button>
@@ -225,6 +225,7 @@ export default {
       loadingBtn: false,
       equip_machine_halt_type_id: null,
       total: 0,
+      isLeftStop: false,
       rules: {
         fault_type_code: [{ required: true, message: '请输入', trigger: 'blur' }],
         fault_type_name: [{ required: true, message: '请输入', trigger: 'blur' }],
@@ -290,6 +291,7 @@ export default {
     },
     handleCurrentChange(row) {
       this.equip_machine_halt_type_id = row.id
+      this.isLeftStop = row.use_flag
       this.getListReason()
     },
     addArea(bool) {
