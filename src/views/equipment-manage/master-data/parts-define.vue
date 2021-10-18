@@ -485,7 +485,7 @@ export default {
     },
     async getEquipPart2() {
       try {
-        const data = await equipPartNew('get', null, { params: { all: 1 }})
+        const data = await equipPartNew('get', null, { params: this.isMultiple ? { all: 1, all_part: 1 } : { all: 1 }})
         this.options1 = data.results || []
       } catch (e) {
         //
@@ -582,7 +582,7 @@ export default {
     },
     exportTable() {
       this.btnExportLoad = true
-      const obj = Object.assign({ export: 1 })
+      const obj = Object.assign({ export: 1 }, this.formInline)
       const _api = equipComponentDown
       _api(obj)
         .then(res => {

@@ -4,6 +4,8 @@
     <el-form :inline="true" class="search-form-style">
       <el-form-item label="设备编号">
         <equip-select
+          :is-created="true"
+          :equip_no_props.sync="formInline.equip_no"
           @equipSelected="equipSelected"
         />
       </el-form-item>
@@ -445,6 +447,10 @@ export default {
       })
     },
     editEquipName(val) {
+      this.dialogForm.equip_part = null
+      this.dialogForm.equip_part_name = null
+      this.dialogForm.equip_category_id = null
+      this.dialogForm.equip_component_name = null
       this.dialogForm.category = this.options.filter(item => {
         return item.id === val
       })[0].category
@@ -465,7 +471,8 @@ export default {
       this.getList()
     },
     equipSelected(obj) {
-      this.formInline.equip_no = obj || null
+      this.formInline.equip_no = obj ? obj.equip_no : null
+      this.formInline.page = 1
       this.getList()
     },
     onSubmit() {
@@ -486,7 +493,7 @@ export default {
     },
     exportTable() {
       this.btnExportLoad = true
-      const obj = Object.assign({ export: 1 })
+      const obj = Object.assign({ export: 1 }, this.formInline)
       const _api = equipFaultSignalDown
       _api(obj)
         .then(res => {
@@ -526,8 +533,8 @@ export default {
       this.dialogVisible = true
     },
     dialog() {
-      if (this.dialogForm.category_no) {
-        this.equipType1 = this.dialogForm.category
+      if (this.dialogForm.category_no || this.dialogForm.equip_category_id) {
+        this.equipType1 = this.dialogForm.category ? this.dialogForm.category : this.dialogForm.equip_category_id
         this.dialogVisible1 = true
       } else {
         this.$message.info('请先选择机台编号')
@@ -535,8 +542,8 @@ export default {
     },
     dialog1() {
       if (this.dialogForm.equip_part_name) {
-        this.equipType.category_no = this.dialogForm.category
-        this.equipType.equip_part_name = this.dialogForm.equip_part
+        this.equipType.category_no = this.dialogForm.category ? this.dialogForm.category : this.dialogForm.equip_category_id
+        this.equipType.equip_part_name = this.dialogForm.equip_part ? this.dialogForm.equip_part : this.dialogForm.equip_part
         this.dialogVisible2 = true
         console.log(this.equipType)
       } else {
@@ -579,12 +586,31 @@ export default {
       }
     },
     submitFun() {
+      const dialogForm1 = JSON.parse(JSON.stringify(this.dialogForm))
       this.$refs.createForm.validate(async(valid) => {
         if (valid) {
           try {
             this.btnLoading = true
             const _api = this.dialogForm.id ? 'put' : 'post'
-            await equipFaultSignal(_api, this.dialogForm.id || null, { data: this.dialogForm })
+            if (dialogForm1.fault_signal_duration === undefined) {
+              dialogForm1.fault_signal_duration = null
+            }
+            if (dialogForm1.fault_signal_minvalue === undefined) {
+              dialogForm1.fault_signal_minvalue = null
+            }
+            if (dialogForm1.fault_signal_maxvalue === undefined) {
+              dialogForm1.fault_signal_maxvalue = null
+            }
+            if (dialogForm1.alarm_signal_duration === undefined) {
+              dialogForm1.alarm_signal_duration = null
+            }
+            if (dialogForm1.alarm_signal_minvalue === undefined) {
+              dialogForm1.alarm_signal_minvalue = null
+            }
+            if (dialogForm1.alarm_signal_maxvalue === undefined) {
+              dialogForm1.alarm_signal_maxvalue = null
+            }
+            await equipFaultSignal(_api, this.dialogForm.id || null, { data: dialogForm1 })
             this.$message.success('操作成功')
             this.handleClose(null)
             this.getList()
@@ -598,13 +624,15 @@ export default {
       })
     },
     submitFun1() {
-      this.dialogForm.equip_part = this.$refs['List'].getVal().id
-      this.dialogForm.equip_part_name = this.$refs['List'].getVal().part_name
+      this.dialogForm.equip_component = null
+      this.dialogForm.equip_component_name = null
+      this.dialogForm.equip_part = this.$refs['List'].getVal() ? this.$refs['List'].getVal().id : null
+      this.dialogForm.equip_part_name = this.$refs['List'].getVal() ? this.$refs['List'].getVal().part_name : null
       this.handleClose1(null)
     },
     submitFun2() {
-      this.dialogForm.equip_component = this.$refs['List1'].getVal().id
-      this.dialogForm.equip_component_name = this.$refs['List1'].getVal().component_name
+      this.dialogForm.equip_component = this.$refs['List1'].getVal() ? this.$refs['List1'].getVal().id : null
+      this.dialogForm.equip_component_name = this.$refs['List1'].getVal() ? this.$refs['List1'].getVal().component_name : null
       this.handleClose2(null)
     }
   }
