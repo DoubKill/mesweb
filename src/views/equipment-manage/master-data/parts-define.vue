@@ -6,8 +6,8 @@
         <el-select v-model="formInline.equip_type" placeholder="请选择" :disabled="isMultiple===true" clearable @change="changeSearch1">
           <el-option
             v-for="item in options"
-            :key="item.category_name"
-            :label="item.category_name"
+            :key="item.category_no"
+            :label="item.category_no"
             :value="item.id"
           />
         </el-select>
@@ -178,8 +178,8 @@
           <el-select v-model="dialogForm.equip_type" placeholder="请选择" @change="clear">
             <el-option
               v-for="item in options"
-              :key="item.category_name"
-              :label="item.category_name"
+              :key="item.category_no"
+              :label="item.category_no"
               :value="item.id"
             />
           </el-select>

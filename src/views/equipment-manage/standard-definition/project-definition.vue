@@ -58,6 +58,14 @@
       />
       <el-table-column
         prop=""
+        label="判断标准"
+      />
+      <el-table-column
+        prop=""
+        label="类型"
+      />
+      <el-table-column
+        prop=""
         label="录入人"
       />
       <el-table-column
