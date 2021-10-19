@@ -4,7 +4,7 @@
     <el-container v-if="!isShowList" style="min-height:75vh;">
       <el-aside width="400px" class="border-style aside-style">
         <h3>位置区域设定
-          <el-button style="float:right;margin-right:10px" size="mini" type="primary" @click="showList">列表显示</el-button>
+          <!-- <el-button style="float:right;margin-right:10px" size="mini" type="primary" @click="showList">列表显示</el-button> -->
         </h3>
         <el-tree
           ref="tree"
@@ -75,7 +75,7 @@
           <el-form-item label="区域编号">
             <el-input v-model="formInline.equip_area_code" style="width:150px" disabled />
             <el-input v-model="formInline.equip_area_name" disabled>
-              <el-button slot="append" :disabled="!formInline.equip_no" icon="el-icon-search" @click="showLocation" />
+              <el-button slot="append" :disabled="!formInline.equip_no" icon="el-icon-search" @click="showLocation(false)" />
             </el-input>
           </el-form-item>
           <br>
@@ -161,14 +161,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="分厂">
-          <el-select v-model="search.factory_id" clearable placeholder="备件分类">
-            <el-option
-              v-for="item in ['浙江','大连']"
-              :key="item"
-              :label="item"
-              :value="item"
-            />
-          </el-select>
+          <el-input v-model="search.factory_id" clearable @input="getDebounceFactory" />
         </el-form-item>
         <el-form-item label="设备类型">
           <equipTypeSelect @equipTypeSelect="equipTypeSelectList" />
@@ -177,15 +170,15 @@
           <equipSelect :equip-type="''" :equip_no_props.sync="search.equip_no" :is-obj="true" @changeSearch="equipChangedList" />
         </el-form-item>
         <el-form-item label="设备部位:">
-          <el-input v-model="search.part_name" @input="getDebounceTreeList" />
+          <el-input v-model="search.part_name" clearable @input="getDebounceTreeList" />
         </el-form-item>
         <el-form-item label="设备部件:">
-          <el-input v-model="search.component_name" @input="getDebounceTreeList" />
+          <el-input v-model="search.component_name" clearable @input="getDebounceTreeList" />
         </el-form-item>
         <el-form-item style="float:right">
           <el-button type="primary" @click="showList">树状显示</el-button>
-          <el-button type="primary" @click="onSubmit">导入Excel</el-button>
-          <el-button type="primary" @click="onSubmit">导入Excel</el-button>
+          <!-- <el-button type="primary" @click="onSubmit">导入Excel</el-button>
+          <el-button type="primary" @click="onSubmit">导入Excel</el-button> -->
         </el-form-item>
       </el-form>
       <el-table
@@ -196,11 +189,6 @@
         <el-table-column
           prop="factory_id"
           label="分厂"
-          min-width="20"
-        />
-        <el-table-column
-          prop="equip_area_name"
-          label="区域"
           min-width="20"
         />
         <el-table-column
@@ -265,12 +253,16 @@
           min-width="20"
         />
         <el-table-column
-          prop="depot_name"
+          prop="equip_area_code"
           label="区域编号"
           min-width="20"
-        />
+        >
+          <template slot-scope="{row}">
+            <i style="font-size:20px" class="el-icon-zoom-in" @click="showLocation(true,row)" />
+          </template>
+        </el-table-column>
         <el-table-column
-          prop="depot_name"
+          prop="equip_area_name"
           label="区域名称"
           min-width="20"
         />
@@ -278,34 +270,54 @@
           prop="depot_name"
           label="保养标准"
           min-width="20"
-        />
+        >
+          <template slot-scope="{row}">
+            <i style="font-size:20px" class="el-icon-zoom-in" />
+          </template>
+        </el-table-column>
         <el-table-column
           prop="depot_name"
           label="维修标准"
           min-width="20"
-        />
+        >
+          <template slot-scope="{row}">
+            <i style="font-size:20px" class="el-icon-zoom-in" />
+          </template>
+        </el-table-column>
         <el-table-column
           prop="depot_name"
           label="点检标准"
           min-width="20"
-        />
+        >
+          <template slot-scope="{row}">
+            <i style="font-size:20px" class="el-icon-zoom-in" />
+          </template>
+        </el-table-column>
         <el-table-column
           prop="depot_name"
           label="润滑标准"
           min-width="20"
-        />
+        >
+          <template slot-scope="{row}">
+            <i style="font-size:20px" class="el-icon-zoom-in" />
+          </template>
+        </el-table-column>
         <el-table-column
           prop="depot_name"
           label="计量标定标准"
           min-width="20"
-        />
+        >
+          <template slot-scope="{row}">
+            <i style="font-size:20px" class="el-icon-zoom-in" />
+          </template>
+        </el-table-column>
         <el-table-column
-          prop="depot_name"
+          prop="created_username"
           label="录入者"
           min-width="20"
         />
         <el-table-column
-          prop="depot_name"
+          prop="created_date"
           label="录入时间"
           min-width="20"
         />
@@ -528,8 +540,8 @@
       width="90%"
       :before-close="handleCloseLocation"
     >
-      <locationArea ref="locationAreaRef" :is-dialog="true" :show-dialog="dialogVisibleLocation" />
-      <span slot="footer" class="dialog-footer">
+      <locationArea ref="locationAreaRef" :area-name="currentObj.equip_area_name" :area-code="currentObj.equip_area_code" :is-dialog-view="isDialogView" :is-dialog="true" :show-dialog="dialogVisibleLocation" />
+      <span v-if="!isDialogView" slot="footer" class="dialog-footer">
         <el-button @click="handleCloseLocation(false)">取 消</el-button>
         <el-button type="primary" :loading="btnLoadingLocation" @click="submitFunLocation">确 定</el-button>
       </span>
@@ -619,7 +631,9 @@ export default {
       btnLoadingPartsc: false,
       pasteData: null,
       faData: '',
-      companyName: '中策橡胶(安吉)有限公司'
+      companyName: '中策橡胶(安吉)有限公司',
+      isDialogView: false,
+      currentObj: {}
     }
   },
   watch: {
@@ -653,12 +667,18 @@ export default {
       }
     },
     equipTypeSelectList(obj) {
+      delete this.search.level
       this.search.property_type_node = obj ? obj.global_name : ''
       this.getTreeList()
     },
     equipChangedList(obj) {
+      delete this.search.level
       this.search.equip_name = obj ? obj.equip_name : ''
       this.getTreeList()
+    },
+    getDebounceFactory() {
+      this.search.level = 1
+      this.$debounce(this, 'getTreeList')
     },
     getDebounceTreeList() {
       this.$debounce(this, 'getTreeList')
@@ -696,7 +716,17 @@ export default {
       this.dialogFormAdd.equip_category_id = obj ? obj.category : ''
       this.equip_no = obj ? obj.equip_no : ''
     },
-    showLocation() {
+    showLocation(bool, row) {
+      if (bool) {
+        if (!row.equip_area_name) {
+          this.$message('暂无可查询区域')
+          return
+        }
+        this.currentObj = row
+        this.isDialogView = true
+      } else {
+        this.isDialogView = false
+      }
       this.dialogVisibleLocation = true
     },
     handleCloseLocation(done) {
@@ -958,6 +988,9 @@ export default {
 
 <style lang="scss" scoped>
 .BOM-manage-style{
+  .el-icon-zoom-in{
+    cursor: pointer;
+  }
   ::-webkit-scrollbar {
     width: 1px;
   }
