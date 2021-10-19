@@ -271,45 +271,45 @@
           label="保养标准"
           min-width="20"
         >
-          <template slot-scope="{row}">
+          <!-- <template slot-scope="{row}">
             <i style="font-size:20px" class="el-icon-zoom-in" />
-          </template>
+          </template> -->
         </el-table-column>
         <el-table-column
           prop="depot_name"
           label="维修标准"
           min-width="20"
         >
-          <template slot-scope="{row}">
+          <!-- <template slot-scope="{row}">
             <i style="font-size:20px" class="el-icon-zoom-in" />
-          </template>
+          </template> -->
         </el-table-column>
         <el-table-column
           prop="depot_name"
           label="点检标准"
           min-width="20"
         >
-          <template slot-scope="{row}">
+          <!-- <template slot-scope="{row}">
             <i style="font-size:20px" class="el-icon-zoom-in" />
-          </template>
+          </template> -->
         </el-table-column>
         <el-table-column
           prop="depot_name"
           label="润滑标准"
           min-width="20"
         >
-          <template slot-scope="{row}">
+          <!-- <template slot-scope="{row}">
             <i style="font-size:20px" class="el-icon-zoom-in" />
-          </template>
+          </template> -->
         </el-table-column>
         <el-table-column
           prop="depot_name"
           label="计量标定标准"
           min-width="20"
         >
-          <template slot-scope="{row}">
+          <!-- <template slot-scope="{row}">
             <i style="font-size:20px" class="el-icon-zoom-in" />
-          </template>
+          </template> -->
         </el-table-column>
         <el-table-column
           prop="created_username"

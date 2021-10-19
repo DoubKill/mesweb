@@ -312,36 +312,6 @@ export const equipRoutes = [
             }
           },
           {
-            path: '/equipment/location-area',
-            component: () => import('@/views/equipment-manage/master-data/location-area'),
-            name: 'EquipmentMasterDataLocation',
-            meta: {
-              faName: 'EquipmentMasterData',
-              title: '设备位置区域定义',
-              permissionName: ''
-            }
-          },
-          {
-            path: '/equipment/appoint-rule',
-            component: () => import('@/views/equipment-manage/master-data/appoint-rule'),
-            name: 'EquipmentMasterDataAppointRule',
-            meta: {
-              faName: 'EquipmentMasterData',
-              title: '工单指派规则定义',
-              permissionName: ''
-            }
-          },
-          {
-            path: '/equipment/repair-all',
-            component: () => import('@/views/equipment-manage/master-data/repair-all'),
-            name: 'EquipmentMasterDataRepairAll',
-            meta: {
-              faName: 'EquipmentMasterData',
-              title: '维修包干定义',
-              permissionName: ''
-            }
-          },
-          {
             path: '/equipment/fixed-assets',
             component: () => import('@/views/equipment-manage/master-data/fixed-assets'),
             name: 'EquipmentMasterDataFixedAssets',
@@ -352,12 +322,12 @@ export const equipRoutes = [
             }
           },
           {
-            path: '/equipment/region',
-            component: () => import('@/views/equipment-manage/master-data/region'),
-            name: 'EquipmentMasterDataRegion',
+            path: '/equipment/location-area',
+            component: () => import('@/views/equipment-manage/master-data/location-area'),
+            name: 'EquipmentMasterDataLocation',
             meta: {
               faName: 'EquipmentMasterData',
-              title: '设备部位定义',
+              title: '设备位置区域定义',
               permissionName: ''
             }
           },
@@ -372,52 +342,22 @@ export const equipRoutes = [
             }
           },
           {
+            path: '/equipment/region',
+            component: () => import('@/views/equipment-manage/master-data/region'),
+            name: 'EquipmentMasterDataRegion',
+            meta: {
+              faName: 'EquipmentMasterData',
+              title: '设备部位定义',
+              permissionName: ''
+            }
+          },
+          {
             path: '/equipment/parts-type',
             component: () => import('@/views/equipment-manage/master-data/parts-type'),
             name: 'EquipmentMasterDataPartsType',
             meta: {
               faName: 'EquipmentMasterData',
               title: '设备部件分类',
-              permissionName: ''
-            }
-          },
-          {
-            path: '/equipment/ERP-material',
-            component: () => import('@/views/equipment-manage/master-data/ERP-material'),
-            name: 'EquipmentMasterDataERPMaterial',
-            meta: {
-              faName: 'EquipmentMasterData',
-              title: 'ERP备件物料信息',
-              permissionName: ''
-            }
-          },
-          {
-            path: '/equipment/fault-classify',
-            component: () => import('@/views/equipment-manage/master-data/fault-classify'),
-            name: 'EquipmentMasterDataFaultClassify',
-            meta: {
-              faName: 'EquipmentMasterData',
-              title: '设备故障分类管理',
-              permissionName: ''
-            }
-          },
-          {
-            path: '/equipment/spare-parts-code',
-            component: () => import('@/views/equipment-manage/master-data/spare-parts-code'),
-            name: 'EquipmentMasterDataSparePartsCode',
-            meta: {
-              faName: 'EquipmentMasterData',
-              title: '备件代码定义',
-              permissionName: ''
-            }
-          },
-          {
-            path: '/equipment/equip-fault-signal',
-            component: () => import('@/views/equipment-manage/master-data/equip-fault-signal'),
-            name: 'EquipmentMasterDataFaultSignal',
-            meta: {
-              faName: 'EquipmentMasterData',
-              title: '设备故障信号定义',
               permissionName: ''
             }
           },
@@ -432,12 +372,82 @@ export const equipRoutes = [
             }
           },
           {
+            path: '/equipment/BOM-manage',
+            component: () => import('@/views/equipment-manage/master-data/BOM-manage'),
+            name: 'EquipmentMasterDataBOMManage',
+            meta: {
+              faName: 'EquipmentMasterData',
+              title: '设备BOM管理',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/ERP-material',
+            component: () => import('@/views/equipment-manage/master-data/ERP-material'),
+            name: 'EquipmentMasterDataERPMaterial',
+            meta: {
+              faName: 'EquipmentMasterData',
+              title: 'ERP备件物料信息',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/spare-parts-code',
+            component: () => import('@/views/equipment-manage/master-data/spare-parts-code'),
+            name: 'EquipmentMasterDataSparePartsCode',
+            meta: {
+              faName: 'EquipmentMasterData',
+              title: '备件代码定义',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/fault-classify',
+            component: () => import('@/views/equipment-manage/master-data/fault-classify'),
+            name: 'EquipmentMasterDataFaultClassify',
+            meta: {
+              faName: 'EquipmentMasterData',
+              title: '设备故障分类管理',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/equip-fault-signal',
+            component: () => import('@/views/equipment-manage/master-data/equip-fault-signal'),
+            name: 'EquipmentMasterDataFaultSignal',
+            meta: {
+              faName: 'EquipmentMasterData',
+              title: '设备故障信号定义',
+              permissionName: ''
+            }
+          },
+          {
             path: '/equipment/shutdown-reason',
             component: () => import('@/views/equipment-manage/master-data/shutdown-reason'),
             name: 'EquipmentMasterDataShutdownReason',
             meta: {
               faName: 'EquipmentMasterData',
               title: '设备停机原因定义',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/appoint-rule',
+            component: () => import('@/views/equipment-manage/master-data/appoint-rule'),
+            name: 'EquipmentMasterDataAppointRule',
+            meta: {
+              faName: 'EquipmentMasterData',
+              title: '工单指派规则定义',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/personnel-framework',
+            component: () => import('@/views/equipment-manage/master-data/personnel-framework'),
+            name: 'EquipmentMasterData-personnel-framework',
+            meta: {
+              faName: 'EquipmentMasterData',
+              title: '人员组织架构',
               permissionName: ''
             }
           },
@@ -452,22 +462,12 @@ export const equipRoutes = [
             }
           },
           {
-            path: '/equipment/BOM-manage',
-            component: () => import('@/views/equipment-manage/master-data/BOM-manage'),
-            name: 'EquipmentMasterDataBOMManage',
+            path: '/equipment/repair-all',
+            component: () => import('@/views/equipment-manage/master-data/repair-all'),
+            name: 'EquipmentMasterDataRepairAll',
             meta: {
               faName: 'EquipmentMasterData',
-              title: '设备BOM管理',
-              permissionName: ''
-            }
-          },
-          {
-            path: '/equipment/personnel-framework',
-            component: () => import('@/views/equipment-manage/master-data/personnel-framework'),
-            name: 'EquipmentMasterData-personnel-framework',
-            meta: {
-              faName: 'EquipmentMasterData',
-              title: '人员组织架构',
+              title: '维修包干定义',
               permissionName: ''
             }
           }
