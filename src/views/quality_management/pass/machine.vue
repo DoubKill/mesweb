@@ -212,6 +212,8 @@ export default {
           this.cp_all = 0
           this.tableData.forEach(D => {
             D.rate_lb = Number(D.rate_lb)
+            D.rate_1 = Number(D.rate_1)
+            D.rate = Number(D.rate)
             this.test_all += Number(D.test_all)
             this.test_right += Number(D.test_right)
             this.mn += Number(D.mn)
@@ -226,7 +228,7 @@ export default {
             this.cp_all += Number(D.cp_all)
           })
           if (this.tableData.length !== 0) {
-            this.tableData1.push({
+            this.tableData1 = [{
               equip: '合计',
               test_all: this.test_all,
               test_right: this.test_right,
@@ -242,7 +244,7 @@ export default {
               lb_all: this.lb_all,
               rate_lb: data.all.rate_lb,
               cp_all: this.cp_all,
-              rate: data.all.rate })
+              rate: data.all.rate }]
           }
         }
         this.loading = false
