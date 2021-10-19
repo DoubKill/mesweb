@@ -331,16 +331,16 @@ export const equipRoutes = [
               permissionName: ''
             }
           },
-          {
-            path: '/equipment/type',
-            component: () => import('@/views/equipment-manage/master-data/type'),
-            name: 'EquipmentMasterDataType',
-            meta: {
-              faName: 'EquipmentMasterData',
-              title: '设备种类定义',
-              permissionName: ''
-            }
-          },
+          // {
+          //   path: '/equipment/type',
+          //   component: () => import('@/views/equipment-manage/master-data/type'),
+          //   name: 'EquipmentMasterDataType',
+          //   meta: {
+          //     faName: 'EquipmentMasterData',
+          //     title: '设备种类定义',
+          //     permissionName: ''
+          //   }
+          // },
           {
             path: '/equipment/region',
             component: () => import('@/views/equipment-manage/master-data/region'),
