@@ -151,9 +151,9 @@
       <h3>设备BOM列表</h3>
       <el-form :inline="true" class="search-form-style">
         <el-form-item label="公司">
-          <el-select v-model="formInline.region" clearable placeholder="备件分类">
+          <el-select v-model="companyName" placeholder="备件分类" @change="getTreeList">
             <el-option
-              v-for="item in ['浙江','大连']"
+              v-for="item in ['中策橡胶(安吉)有限公司']"
               :key="item"
               :label="item"
               :value="item"
@@ -161,7 +161,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="分厂">
-          <el-select v-model="formInline.region" clearable placeholder="备件分类">
+          <el-select v-model="search.factory_id" clearable placeholder="备件分类">
             <el-option
               v-for="item in ['浙江','大连']"
               :key="item"
@@ -171,30 +171,16 @@
           </el-select>
         </el-form-item>
         <el-form-item label="设备类型">
-          <el-select v-model="formInline.region" clearable placeholder="备件分类">
-            <el-option
-              v-for="item in ['浙江','大连']"
-              :key="item"
-              :label="item"
-              :value="item"
-            />
-          </el-select>
+          <equipTypeSelect @equipTypeSelect="equipTypeSelectList" />
         </el-form-item>
         <el-form-item label="设备机台">
-          <el-select v-model="formInline.region" clearable placeholder="备件分类">
-            <el-option
-              v-for="item in ['浙江','大连']"
-              :key="item"
-              :label="item"
-              :value="item"
-            />
-          </el-select>
+          <equipSelect :equip-type="''" :equip_no_props.sync="search.equip_no" :is-obj="true" @changeSearch="equipChangedList" />
         </el-form-item>
         <el-form-item label="设备部位:">
-          <el-input v-model="formInline.property_no" @input="changeList" />
+          <el-input v-model="search.part_name" @input="getDebounceTreeList" />
         </el-form-item>
         <el-form-item label="设备部件:">
-          <el-input v-model="formInline.property_no" @input="changeList" />
+          <el-input v-model="search.component_name" @input="getDebounceTreeList" />
         </el-form-item>
         <el-form-item style="float:right">
           <el-button type="primary" @click="showList">树状显示</el-button>
@@ -208,75 +194,71 @@
         border
       >
         <el-table-column
-          prop="depot_name"
-          label="节点编号"
-          min-width="20"
-        />
-        <el-table-column
-          prop="depot_name"
+          prop="factory_id"
           label="分厂"
           min-width="20"
         />
         <el-table-column
-          prop="depot_name"
+          prop="equip_area_name"
           label="区域"
           min-width="20"
         />
         <el-table-column
-          prop="depot_name"
+          prop="property_type_node"
           label="设备类型"
           min-width="20"
         />
         <el-table-column
-          prop="depot_name"
+          prop="equip_no"
           label="设备机台编号"
           min-width="20"
         />
         <el-table-column
-          prop="depot_name"
+          prop="equip_name"
           label="设备机台名称"
           min-width="20"
         />
         <el-table-column
-          prop="depot_name"
+          prop="equip_type"
           label="设备机台规格"
           min-width="20"
         />
         <el-table-column
-          prop="depot_name"
+          prop="equip_status"
           label="设备机台状态"
           min-width="20"
         />
         <el-table-column
-          prop="depot_name"
+          prop="part_code"
           label="设备部位编号"
           min-width="20"
         />
         <el-table-column
-          prop="depot_name"
+          prop="part_name"
           label="设备部位"
           min-width="20"
         />
         <el-table-column
-          prop="depot_name"
+          prop="component_code"
           label="设备部件编号"
           min-width="20"
         />
         <el-table-column
-          prop="depot_name"
+          prop="component_name"
           label="设备部件"
           min-width="20"
         />
-        <el-table-column
+        <!-- <el-table-column
           prop="depot_name"
           label="设备备件规格"
           min-width="20"
-        />
+        /> -->
         <el-table-column
-          prop="depot_name"
+          prop="part_status"
           label="设备备件状态"
           min-width="20"
         />
+        <!-- ///// -->
         <el-table-column
           prop="depot_name"
           label="备件绑定信息"
@@ -612,6 +594,7 @@ export default {
       isShowList: false,
       nodeId: null,
       dialogFormAdd: {},
+      search: {},
       rules: {
         factory_id: [{ required: true, message: '不能为空', trigger: 'blur',
           validator: (rule, value, callback) => {
@@ -635,7 +618,8 @@ export default {
       dialogVisiblePartsc: false,
       btnLoadingPartsc: false,
       pasteData: null,
-      faData: ''
+      faData: '',
+      companyName: '中策橡胶(安吉)有限公司'
     }
   },
   watch: {
@@ -649,6 +633,7 @@ export default {
   },
   created() {
     this.getTree()
+    this.getTreeList()
   },
   methods: {
     async getTree() {
@@ -658,6 +643,25 @@ export default {
       } catch (e) {
         //
       }
+    },
+    async getTreeList() {
+      try {
+        const data = await equipBom('get', null, { params: this.search })
+        this.tableData = data || []
+      } catch (e) {
+        //
+      }
+    },
+    equipTypeSelectList(obj) {
+      this.search.property_type_node = obj ? obj.global_name : ''
+      this.getTreeList()
+    },
+    equipChangedList(obj) {
+      this.search.equip_name = obj ? obj.equip_name : ''
+      this.getTreeList()
+    },
+    getDebounceTreeList() {
+      this.$debounce(this, 'getTreeList')
     },
     async getInfo() {
       try {
@@ -771,8 +775,8 @@ export default {
         this.$refs.equipTypeSelect.className = undefined
       }
       this.$refs.dialogFormAdd.clearValidate()
-      this.equip_no = ''
-      this.partNum = ''
+      // this.equip_no = ''
+      // this.partNum = ''
       if (done) {
         done()
       }
@@ -826,6 +830,9 @@ export default {
     },
     addNodeFun() {
       if (this.selectedTag.level !== 5) {
+        this.equip_no = ''
+        this.partNum = ''
+        this.partCNum = ''
         this.dialogVisible = true
       } else {
         this.$message('不能再添加子节点')
@@ -836,13 +843,19 @@ export default {
     copyNodeFun() {
       this.$message.success('复制成功')
       this.equip_no = this.selectedTag.equip_info_name
+      this.partNum = this.selectedTag.equip_part_code
+      this.partCNum = this.selectedTag.equip_component_code
+      const a = this.selectedTag.level === 2 ? this.selectedTag.equip_property_type_id
+        : this.selectedTag.level === 3 ? this.selectedTag.equip_info_id
+          : this.selectedTag.level === 4 ? this.selectedTag.equip_part_id
+            : this.selectedTag.level === 5 ? this.selectedTag.equip_component_id : ''
       this.pasteData = {
         factory_id: this.selectedTag.factory_id,
         id: this.selectedTag.id,
         level: this.selectedTag.level,
         parent_flag: this.faData ? this.faData.id : '',
         current_flag_id: this.selectedTag.id,
-        curr_label_obj_id: null,
+        curr_label_obj_id: a,
         children: this.selectedTag.children,
         faName: this.faData.factory_id,
         // 设备类型id
