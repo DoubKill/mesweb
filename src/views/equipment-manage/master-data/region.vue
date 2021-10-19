@@ -6,8 +6,8 @@
         <el-select v-model="formInline.category_no" placeholder="请选择" :disabled="isMultiple===true" clearable @change="changeSearch">
           <el-option
             v-for="item in options"
-            :key="item.category_name"
-            :label="item.category_name"
+            :key="item.category_no"
+            :label="item.category_no"
             :value="item.id"
           />
         </el-select>

@@ -19,8 +19,8 @@
         <el-select v-model="getParams.category_no" placeholder="请选择" clearable @change="changeSearch">
           <el-option
             v-for="item in options"
-            :key="item.category_name"
-            :label="item.category_name"
+            :key="item.category_no"
+            :label="item.category_no"
             :value="item.id"
           />
         </el-select>
@@ -118,7 +118,7 @@
       />
       <el-table-column
         prop=""
-        label="重要程序"
+        label="重要程度"
       />
       <el-table-column
         prop=""
@@ -154,7 +154,7 @@
       />
       <el-table-column
         prop=""
-        label="物料所需名称"
+        label="所需物料名称"
       />
       <el-table-column
         prop=""
@@ -191,20 +191,20 @@
       @currentChange="currentChange"
     />
     <el-dialog
-      :title="`${typeForm.id?'修改':'新建'}作业项目标准`"
+      :title="`${typeForm.id?'修改':'新建'}维护作业标准`"
       width="70%"
       :visible.sync="dialogEditVisible"
       :close-on-click-modal="false"
     >
       <el-form
         ref="typeForm"
+        :inline="true"
         :rules="rules"
         :model="typeForm"
         label-width="150px"
       >
         <el-row>
           <el-col :span="8">
-
             <el-form-item label="作业类型" prop="type">
               <el-select
                 v-model="typeForm.type"
@@ -228,8 +228,8 @@
               <el-select v-model="typeForm.category_no" placeholder="请选择" clearable>
                 <el-option
                   v-for="item in options"
-                  :key="item.category_name"
-                  :label="item.category_name"
+                  :key="item.category_no"
+                  :label="item.category_no"
                   :value="item.id"
                 />
               </el-select>
@@ -240,7 +240,7 @@
             <el-form-item label="部件名称">
               <el-select v-model="typeForm.category_no1" placeholder="请选择" clearable>
                 <el-option
-                  v-for="item in [';',';;']"
+                  v-for="item in ['加热器','炭黑秤']"
                   :key="item"
                   :label="item"
                   :value="item"
@@ -277,7 +277,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="16">
+          <el-col :span="8">
             <el-form-item
               label="作业项目"
               prop="equip_component_name"
@@ -286,8 +286,26 @@
                 <el-button slot="append" icon="el-icon-search" />
               </el-input>
               <br>
+              <el-input
+                v-model="typeForm.equip_component_name"
+                style="marginTop:20px"
+                type="textarea"
+                :rows="4"
+                placeholder="请输入内容"
+              />
+            </el-form-item>
+            <el-form-item label="起始时间">
+              <el-date-picker
+                v-model="typeForm.dataValue"
+                value-format="yyyy-MM-dd"
+                :clearable="true"
+              />
+            </el-form-item>
+            <el-form-item label="维护周期">
               <el-input v-model="typeForm.equip_component_name" placeholder="请输入内容" />
             </el-form-item>
+          </el-col>
+          <el-col :span="8">
             <el-form-item label="周期单位" prop="nae">
               <el-select
                 v-model="typeForm.type"
@@ -301,33 +319,79 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="作业详情内容">
-              <el-button>添加</el-button>
-              <el-table
-                :data="tableData"
-                border
-                style="width: 100%"
+            <el-form-item label="周期数">
+              <el-input v-model="typeForm.equip_componen" placeholder="请输入内容" />
+            </el-form-item>
+            <el-form-item label="所需人数">
+              <el-input v-model="typeForm.equip_component_ne" placeholder="请输入内容" />
+            </el-form-item>
+            <el-form-item label="作业时间">
+              <el-input v-model="typeForm.equip_compnt_ne" placeholder="请输入内容" />
+            </el-form-item>
+            <el-form-item label="作业时间单位" prop="nae">
+              <el-select
+                v-model="typeForm.type1"
+                placeholder="请选择"
               >
-                <el-table-column
-                  label="序号"
-                  type="index"
+                <el-option
+                  v-for="item in ['日','小时','分钟','秒','车次']"
+                  :key="item"
+                  :label="item"
+                  :value="item"
                 />
-                <el-table-column
-                  prop="date"
-                  label="作业内容"
-                />
-                <el-table-column
-                  prop="date"
-                  label="判断标准/步骤说明"
-                />
-                <el-table-column
-                  prop="date"
-                  label="类型"
-                />
-              </el-table>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="钉钉提醒发送" prop="checkList">
+              <el-checkbox-group v-model="typeForm.checkList">
+                <el-checkbox label="包干人" />
+                <el-checkbox label="上级" />
+                <el-checkbox label="上上级" />
+              </el-checkbox-group>
             </el-form-item>
           </el-col>
-
+          <el-form-item label="所需物料">
+            <el-button>添加</el-button>
+            <el-table
+              :data="tableData"
+              border
+              style="width: 100%"
+            >
+              <el-table-column
+                prop="date"
+                label="物料编码"
+              />
+              <el-table-column
+                prop="date"
+                label="物料名称"
+              />
+              <el-table-column
+                prop="date"
+                label="规格"
+              />
+              <el-table-column
+                prop="date"
+                label="技术参数"
+              />
+              <el-table-column
+                prop="date"
+                label="数量"
+              />
+              <el-table-column
+                prop="date"
+                label="单位"
+              />
+              <el-table-column label="操作" width="130px">
+                <template slot-scope="scope">
+                  <el-button
+                    size="mini"
+                    type="danger"
+                    @click="handleDelete1(scope.row)"
+                  >删除
+                  </el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-form-item>
         </el-row>
       </el-form>
       <div
@@ -355,13 +419,14 @@ export default {
   components: { page },
   data: function() {
     return {
-      tableData: [{ id: '1' }],
+      tableData: [],
       dialogEditVisible: false,
       options: [],
       typeName: '',
       typeForm: {
         no: '',
-        name: ''
+        name: '',
+        checkList: []
       },
       rules: {
         type: [{ required: true, message: '不能为空', trigger: 'blur' }],
@@ -436,6 +501,9 @@ export default {
             this.getList()
           })
       })
+    },
+    handleDelete1(row) {
+
     },
     currentChange(page, pageSize) {
       this.getParams.page = page
