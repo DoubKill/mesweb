@@ -790,7 +790,7 @@ export default {
         this.left = left
       }
 
-      this.top = e.clientY - 260 + a
+      this.top = e.clientY + a - 150
       this.visible = true
       this.selectedTag = tag
       this.faData = node.parent ? node.parent.data : ''

@@ -190,7 +190,7 @@
           label="接单间隔时间（分钟）"
           prop=""
         >
-          <el-input-number v-model="dialogForm.receive_interval" controls-position="right" :min="1" />
+          <el-input-number v-model="dialogForm.receive_interval" controls-position="right" :min="0" />
         </el-form-item>
         <el-form-item
           label="标准名称"
@@ -202,7 +202,7 @@
           label="接单重复提醒次数"
           prop=""
         >
-          <el-input-number v-model="dialogForm.receive_warning_times" controls-position="right" :min="1" />
+          <el-input-number v-model="dialogForm.receive_warning_times" controls-position="right" :min="0" />
         </el-form-item>
         <el-form-item
           label="作业类型"
@@ -221,7 +221,7 @@
           label="维修开始间隔时间（分钟）"
           prop=""
         >
-          <el-input-number v-model="dialogForm.start_interval" controls-position="right" :min="1" />
+          <el-input-number v-model="dialogForm.start_interval" controls-position="right" :min="0" />
         </el-form-item>
         <el-form-item
           label="设备类型"
@@ -233,7 +233,7 @@
           label="开始重复提醒次数"
           prop=""
         >
-          <el-input-number v-model="dialogForm.start_warning_times" controls-position="right" :min="1" />
+          <el-input-number v-model="dialogForm.start_warning_times" controls-position="right" :min="0" />
         </el-form-item>
         <el-form-item
           label="设备条件"
@@ -252,7 +252,7 @@
           label="验收间隔时间（分钟）"
           prop=""
         >
-          <el-input-number v-model="dialogForm.accept_interval" controls-position="right" :min="1" />
+          <el-input-number v-model="dialogForm.accept_interval" controls-position="right" :min="0" />
         </el-form-item>
         <el-form-item
           label="重要程度"
@@ -271,7 +271,7 @@
           label="验收重复提醒次数"
           prop=""
         >
-          <el-input-number v-model="dialogForm.accept_warning_times" controls-position="right" :min="1" />
+          <el-input-number v-model="dialogForm.accept_warning_times" controls-position="right" :min="0" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -359,7 +359,14 @@ export default {
       this.dialogVisible = true
     },
     showEditDialog(row) {
-      this.dialogForm = row
+      this.dialogForm = JSON.parse(JSON.stringify(row))
+
+      this.dialogForm.receive_interval = this.dialogForm.receive_interval === null ? undefined : this.dialogForm.receive_interval
+      this.dialogForm.receive_warning_times = this.dialogForm.receive_warning_times === null ? undefined : this.dialogForm.receive_warning_times
+      this.dialogForm.start_interval = this.dialogForm.start_interval === null ? undefined : this.dialogForm.start_interval
+      this.dialogForm.start_warning_times = this.dialogForm.start_warning_times === null ? undefined : this.dialogForm.start_warning_times
+      this.dialogForm.accept_interval = this.dialogForm.accept_interval === null ? undefined : this.dialogForm.accept_interval
+      this.dialogForm.accept_warning_times = this.dialogForm.accept_warning_times === null ? undefined : this.dialogForm.accept_warning_times
       this.dialogVisible = true
     },
     equipTypeSelect(val) {

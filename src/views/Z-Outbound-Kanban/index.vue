@@ -175,24 +175,26 @@ export default {
       option: {
         color: common.echartColor,
         title: {
-          text: '1巷道',
+          text: '',
           left: 'center'
         },
-
         tooltip: {
           trigger: 'item',
           formatter: '{a} <br/>{b}: {c} ({d}%)'
         },
-        legend: {
-          top: 'bottom',
-          left: '8%',
-          textStyle: {
-            fontSize: '20'
-          }
-        },
+        legend: [
+          { top: 'bottom', x: 'center', data: [] },
+          { top: '80%', x: 'center', data: [] }
+        ],
+        // { top: 'bottom',
+        //   // left: '8%',
+        //   textStyle: {
+        //     fontSize: '20'
+        //   }
+        // }
         series: [
           {
-            name: '访问来源',
+            name: '信息',
             type: 'pie',
             radius: ['30%', '70%'],
             label: {
@@ -355,6 +357,22 @@ export default {
           var chartDom = document.getElementById(`tunnel${i}`)
           var myChart = echarts.init(chartDom)
           this.option.title.text = i === 0 ? '入库' : i === 1 ? '出库' : '入库率'
+          // 只限于 最多4个巷道 legend换行
+          const a = [
+            { top: 'bottom', textStyle: { fontSize: '20' }, x: 'center', data: [] },
+            { top: '80%', textStyle: { fontSize: '20' }, x: 'center', data: [] }
+          ]
+          d.forEach((D, index) => {
+            const iindex = index + 1
+            if (iindex <= 2) {
+              a[0].data.push(D.name)
+            } else {
+              if (d.length > 2) {
+                a[1].data.push(D.name)
+              }
+            }
+          })
+          this.option.legend = a
           this.option.series[0].data = d
           myChart.setOption(this.option, true)
         })
