@@ -221,7 +221,7 @@ export default {
               sum_s: this.sum_s,
               RATE_S_PASS: data.all.rate_lb,
               cp_all: this.cp_all,
-              rate: data.all.rate })
+              rate: (this.HG / this.JC * 100).toFixed(2) })
           }
           this.spanArr = []
           this.pos = null

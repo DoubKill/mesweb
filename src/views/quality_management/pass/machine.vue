@@ -244,7 +244,7 @@ export default {
               lb_all: this.lb_all,
               rate_lb: data.all.rate_lb,
               cp_all: this.cp_all,
-              rate: data.all.rate }]
+              rate: (this.test_right / this.test_all * 100).toFixed(2) }]
           }
         }
         this.loading = false
