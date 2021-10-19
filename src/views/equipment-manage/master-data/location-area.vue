@@ -3,9 +3,9 @@
     <!-- 设备位置区域定义 -->
     <el-form :inline="true">
       <el-form-item label="位置区域名称">
-        <el-input v-model="formInline.area_name" clearable placeholder="位置区域名称" @input="debounceList" />
+        <el-input v-model="formInline.area_name" :disabled="isDialogView" clearable placeholder="位置区域名称" @input="debounceList" />
       </el-form-item>
-      <el-form-item label="是否启用">
+      <el-form-item v-if="!isDialogView" label="是否启用">
         <el-select v-model="formInline.use_flag" clearable placeholder="是否启用" @change="changeSearch">
           <el-option
             v-for="item in [{label:'Y',value:1},{label:'N',value:0}]"
@@ -96,6 +96,7 @@
       </el-table-column>
     </el-table>
     <page
+      v-if="!isDialogView"
       :old-page="false"
       :total="total"
       :current-page="formInline.page"
@@ -166,6 +167,21 @@ export default {
     showDialog: {
       type: Boolean,
       default: false
+    },
+    // 弹框只能查看
+    isDialogView: {
+      type: Boolean,
+      default: false
+    },
+    // 区域名称
+    areaName: {
+      type: String,
+      default: ''
+    },
+    // 区域编号
+    areaCode: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -203,6 +219,10 @@ export default {
   methods: {
     async getList() {
       try {
+        if (this.isDialogView) {
+          this.formInline.area_name = this.areaName || ''
+          this.formInline.area_code = this.areaCode || ''
+        }
         this.loading = true
         const data = await equipAreaDefine('get', null, { params: this.formInline })
         this.tableData = data.results || []
