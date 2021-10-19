@@ -99,7 +99,7 @@
           <el-form-item>
             <el-button
               style="margin-bottom:10px;float:right"
-              :disabled="equip_machine_halt_type_id?false:true"
+              :disabled="equip_machine_halt_type_id&&isLeftStop?false:true"
               type="primary"
               @click="addArea(false)"
             >添加</el-button>
@@ -189,12 +189,12 @@
         <el-form-item v-if="!isType" label="停机原因名称" prop="machine_halt_reason_name">
           <el-input :key="2" v-model="formObj.machine_halt_reason_name" />
         </el-form-item>
-        <el-form-item v-if="!isType" label="停机故障" prop="fault_names">
+        <el-form-item v-if="!isType" label="停机故障" prop="">
           <el-input :key="1" v-model="formObj.fault_names" disabled placeholder="请输入内容">
             <el-button slot="append" icon="el-icon-search" @click="showFailureCause" />
           </el-input>
         </el-form-item>
-        <el-form-item v-if="!isType" label="备注" prop="desc">
+        <el-form-item v-if="!isType" label="备注" prop="">
           <el-input :key="3" v-model="formObj.desc" />
         </el-form-item>
         <el-form-item v-if="isType" label="停机原因分类编码" prop="machine_halt_type_code">
@@ -245,6 +245,7 @@ export default {
       loadingBtn1: false,
       loadingBtn: false,
       equip_machine_halt_type_id: null,
+      isLeftStop: false,
       rules: {
         machine_halt_type_code: [{ required: true, message: '请输入', trigger: 'blur' }],
         machine_halt_type_name: [{ required: true, message: '请输入', trigger: 'blur' }],
@@ -299,6 +300,7 @@ export default {
     },
     handleCurrentChange(row) {
       this.equip_machine_halt_type_id = row.id
+      this.isLeftStop = row.use_flag
       this.getListReason()
     },
     addArea(bool) {

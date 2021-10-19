@@ -188,7 +188,7 @@
         </el-form-item>
         <el-form-item
           label="接单间隔时间（分钟）"
-          prop="receive_interval"
+          prop=""
         >
           <el-input-number v-model="dialogForm.receive_interval" controls-position="right" :min="1" />
         </el-form-item>
@@ -200,7 +200,7 @@
         </el-form-item>
         <el-form-item
           label="接单重复提醒次数"
-          prop="receive_warning_times"
+          prop=""
         >
           <el-input-number v-model="dialogForm.receive_warning_times" controls-position="right" :min="1" />
         </el-form-item>
@@ -219,7 +219,7 @@
         </el-form-item>
         <el-form-item
           label="维修开始间隔时间（分钟）"
-          prop="start_interval"
+          prop=""
         >
           <el-input-number v-model="dialogForm.start_interval" controls-position="right" :min="1" />
         </el-form-item>
@@ -231,7 +231,7 @@
         </el-form-item>
         <el-form-item
           label="开始重复提醒次数"
-          prop="start_warning_times"
+          prop=""
         >
           <el-input-number v-model="dialogForm.start_warning_times" controls-position="right" :min="1" />
         </el-form-item>
@@ -250,7 +250,7 @@
         </el-form-item>
         <el-form-item
           label="验收间隔时间（分钟）"
-          prop="accept_interval"
+          prop=""
         >
           <el-input-number v-model="dialogForm.accept_interval" controls-position="right" :min="1" />
         </el-form-item>
@@ -269,7 +269,7 @@
         </el-form-item>
         <el-form-item
           label="验收重复提醒次数"
-          prop="accept_warning_times"
+          prop=""
         >
           <el-input-number v-model="dialogForm.accept_warning_times" controls-position="right" :min="1" />
         </el-form-item>
@@ -292,9 +292,9 @@ export default {
   components: { page, equipTypeSelect },
   data() {
     return {
-      formInline: {},
+      formInline: { },
       workTypeList: commons.workTypeList,
-      tableData: [{}],
+      tableData: [],
       total: 0,
       loading: false,
       dialogVisible: false,
@@ -312,7 +312,7 @@ export default {
         important_level: [{ required: true, message: '不能为空', trigger: 'change' }],
         equip_type: [{ required: true, message: '不能为空', trigger: 'change',
           validator: (rule, value, callback) => {
-            if (this.dialogForm.equip_type === '' && !value) {
+            if (!this.dialogForm.equip_type && !value) {
               callback(new Error('请选择设备类型'))
             } else {
               callback()
@@ -355,6 +355,9 @@ export default {
     },
     onSubmit() {
       this.dialogVisible = true
+      setTimeout(() => {
+        this.$refs.createForm.resetFields()
+      }, 300)
     },
     showEditDialog(row) {
       this.dialogForm = row
@@ -366,7 +369,8 @@ export default {
     },
     exportTable() {
       this.btnExportLoad = true
-      equipOrderAssignRule('get', null, { responseType: 'blob', params: { export: 1 }})
+      const obj = Object.assign({ export: 1 }, this.formInline)
+      equipOrderAssignRule('get', null, { responseType: 'blob', params: obj })
         .then(res => {
           const link = document.createElement('a')
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
@@ -412,6 +416,7 @@ export default {
     handleClose(done) {
       this.dialogVisible = false
       this.dialogForm = {}
+      this.dialogForm.equip_type = ''
       this.$refs.createForm.resetFields()
       if (done) {
         done()

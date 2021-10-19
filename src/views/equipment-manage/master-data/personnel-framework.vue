@@ -162,18 +162,16 @@ export default {
     },
     async getUserList(bool) {
       try {
-        let obj = { section_id: this.formInline.id }
+        let obj = { section_id: this.formInline.id, is_active: 1 }
         if (bool) {
-          obj = { all: 1 }
+          obj = { all: 1, is_active: 1 }
         }
         this.loading = true
         const data = await personnelsUrl('get', null, { params: obj })
         if (bool) {
           this.userList = data.results || []
-          this.userList = this.userList.filter(d => d.is_active)
         } else {
           this.tableData = data.results || []
-          this.tableData = this.tableData.filter(d => d.is_active)
           this.total = data.count
         }
         this.loading = false
