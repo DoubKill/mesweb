@@ -354,10 +354,9 @@ export default {
       this.getList()
     },
     onSubmit() {
+      this.dialogForm = {}
+      this.dialogForm.equip_type = ''
       this.dialogVisible = true
-      setTimeout(() => {
-        this.$refs.createForm.resetFields()
-      }, 300)
     },
     showEditDialog(row) {
       this.dialogForm = row

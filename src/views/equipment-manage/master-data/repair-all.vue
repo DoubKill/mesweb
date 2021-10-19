@@ -81,22 +81,22 @@
               v-for="item in equips"
               :key="item.id"
               :label="item.equip_no"
-              :value="item.equip_no"
+              :value="item.id"
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="部位名称:" prop="equip_part">
-          <el-select v-model="dialogForm.equip_part" placeholder="请选择">
+        <el-form-item label="部位名称:" prop="">
+          <el-select v-model="dialogForm.equip_part" placeholder="请选择" @visible-change="getVisibleChange" @change="clickArea">
             <el-option
-              v-for="item in ['浙江','大连']"
-              :key="item"
-              :label="item"
-              :value="item"
+              v-for="item in equipPartList"
+              :key="item.id"
+              :label="item.part_name"
+              :value="item.part"
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="区域:" prop="equip_area">
-          <el-input v-model="dialogForm.equip_area" disabled clearable />
+        <el-form-item label="区域:" prop="">
+          <el-input v-model="dialogForm.equip_area_name" disabled clearable />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -110,6 +110,7 @@
 <script>
 import page from '@/components/page'
 import { equipUrl } from '@/api/base_w'
+import { equipBom } from '@/api/base_w_four'
 import { sectionUserTree, equipMaintenanceAreaSettings } from '@/api/base_w_four'
 export default {
   name: 'EquipmentMasterDataRepairAll',
@@ -126,13 +127,14 @@ export default {
       loading: false,
       dialogForm: {},
       rules: {
-        name: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        type: [{ required: true, message: '不能为空', trigger: 'change' }]
+        equip: [{ required: true, message: '不能为空', trigger: 'change' }],
+        equip_part: [{ required: true, message: '不能为空', trigger: 'change' }]
       },
       dialogVisible: false,
       btnLoading: false,
       equips: [],
-      total: 0
+      total: 0,
+      equipPartList: []
     }
   },
   created() {
@@ -156,6 +158,30 @@ export default {
         this.equips = equipData.results
       } catch (e) {
         //
+      }
+    },
+    async getPartList() {
+      try {
+        const obj = {
+          level: 5,
+          equip_info: this.dialogForm.equip
+        }
+        const data = await equipBom('get', null, { params: obj })
+        this.equipPartList = data || []
+      } catch (e) {
+        this.equipPartList = []
+      }
+    },
+    clickArea(id) {
+      const arr = this.equipPartList.filter(d => d.part === id)
+      if (arr.length > 0) {
+        this.dialogForm.equip_area_name = arr[0].equip_area_name
+        this.dialogForm.equip_area = arr[0].equip_area_define
+      }
+    },
+    getVisibleChange(bool) {
+      if (bool) {
+        this.getPartList()
       }
     },
     currentChange(page, pageSize) {
@@ -184,6 +210,10 @@ export default {
     },
     onSubmit() {},
     addFun() {
+      if (!this.formInline.user_id) {
+        this.$message.info('请选择用户')
+        return
+      }
       this.dialogVisible = true
     },
     handleClose(done) {
@@ -195,19 +225,16 @@ export default {
       }
     },
     submitFun() {
-      if (!this.formInline.user_id) {
-        this.$message.info('请选择用户')
-        return
-      }
       this.dialogForm.maintenance_user = this.formInline.user_id
       this.$refs.dialogForm.validate(async(valid) => {
         if (valid) {
           try {
             this.btnLoading = true
-            // const _api = this.bindingForm.id ? 'put' : 'post'
-            // await equipPart(_api, this.bindingForm.id || null, { data: this.bindingForm })
+            const _api = this.dialogForm.id ? 'put' : 'post'
+            await equipMaintenanceAreaSettings(_api, this.dialogForm.id || null, { data: this.dialogForm })
             this.$message.success('操作成功')
             this.getAreaSettings()
+            this.handleClose(false)
             this.btnLoading = false
           } catch (e) {
             this.btnLoading = false
