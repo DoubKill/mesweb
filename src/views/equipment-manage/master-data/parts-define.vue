@@ -71,8 +71,10 @@
 
     </el-form>
     <el-table
+      ref="singleTable"
       v-loading="loading"
       :data="tableData"
+      row-key="id"
       style="width: 100%"
       border
       highlight-current-row
@@ -534,6 +536,7 @@ export default {
       this.formInline.page = page
       this.formInline.page_size = pageSize
       this.getList()
+      this.$refs.singleTable.setCurrentRow(this.multipleSelection1)
     },
     onSubmit() {
       this.dialogForm = {}

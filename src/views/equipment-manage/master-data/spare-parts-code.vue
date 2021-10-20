@@ -432,6 +432,7 @@ export default {
   watch: {
     isSearch(val) {
       if (val) {
+        this.formInline = { page: 1 }
         this.getList()
       }
     }
