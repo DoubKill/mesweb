@@ -475,3 +475,11 @@ export function equipJobItemStandard(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function equipJobItemStandardImport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipJobItemStandardImport + id + '/' : API.EquipJobItemStandardImport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

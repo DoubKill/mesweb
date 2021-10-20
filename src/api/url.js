@@ -499,6 +499,7 @@ export default {
   EquipFaultCodes: '/api/v1/equipment/equip-fault-codes/', // 设备故障分类 中分类
   EquipBom: '/api/v1/equipment/equip-bom/',
   EquipJobItemStandard: '/api/v1/equipment/equip-job-item-standard/', // 设备作业项目标准定义
+  EquipJobItemStandardImport: '/api/v1/equipment/equip-job-item-standard/import_xlsx/', // 设备作业项目标准定义 导入
   // 供应商管理台账
   EquipSupplier: '/api/v1/equipment/equip-supplier/',
   EquipSupplierImport: '/api/v1/equipment/equip-supplier/import_xlsx/',
