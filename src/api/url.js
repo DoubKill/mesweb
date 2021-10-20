@@ -527,5 +527,11 @@ export default {
   EquipSpareErpImport: '/api/v1/equipment/equip-spare-erp/import_xlsx/',
   // 设备故障信号定义
   EquipFaultSignal: '/api/v1/equipment/equip-fault-signal/',
-  EquipFaultSignalImport: '/api/v1/equipment/equip-fault-signal/import_xlsx/'
+  EquipFaultSignalImport: '/api/v1/equipment/equip-fault-signal/import_xlsx/',
+  // 设备维护作业标准定义
+  EquipMaintenanceStandard: '/api/v1/equipment/equip_maintenance_standard/',
+  EquipMaintenanceStandardImport: '/api/v1/equipment/equip_maintenance_standard/import_xlsx/',
+  // 设备维修作业标准定义
+  EquipRepairStandard: '/api/v1/equipment/equip-repair-standard/',
+  EquipRepairStandardImport: '/api/v1/equipment/equip-repair-standard/import_xlsx/'
 }

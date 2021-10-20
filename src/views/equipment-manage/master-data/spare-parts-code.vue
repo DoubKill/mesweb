@@ -28,11 +28,10 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item style="float:right">
-        <el-button type="primary" @click="onSubmit">新建</el-button>
-      </el-form-item>
-      <el-form-item style="float:right">
+      <el-form-item v-if="!isMultiple" style="float:right">
+        <el-button type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
         <el-upload
+          style="margin:0 8px;display:inline-block"
           action="string"
           accept=".xls, .xlsx"
           :http-request="Upload"
@@ -40,17 +39,25 @@
         >
           <el-button type="primary">导入Excel</el-button>
         </el-upload>
-      </el-form-item>
-      <el-form-item style="float:right">
-        <el-button type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
+        <el-button type="primary" @click="onSubmit">新建</el-button>
       </el-form-item>
     </el-form>
     <el-table
+      ref="multipleTable1"
       v-loading="loading"
       :data="tableData"
       style="width: 100%"
+      row-key="id"
       border
+      @selection-change="handleSelectionChange1"
     >
+      <el-table-column
+        v-if="isMultiple"
+        type="selection"
+        width="55"
+        :reserve-selection="true"
+        :selectable="()=>{return true}"
+      />
       <el-table-column
         prop="spare_code"
         label="备件代码"
@@ -141,7 +148,7 @@
         label="录入时间"
         width="180"
       />
-      <el-table-column label="操作" width="140px">
+      <el-table-column v-if="!isSearch" label="操作" width="140px">
         <template slot-scope="scope">
           <el-button-group>
             <el-button
@@ -209,7 +216,7 @@
           label="库存下限"
           prop="lower_stock"
         >
-          <el-input-number v-model="dialogForm.lower_stock" controls-position="right" :min="1" />
+          <el-input-number v-model="dialogForm.lower_stock" controls-position="right" :min="0" :max="dialogForm.upper_stock" />
         </el-form-item>
         <el-form-item
           label="备件名称"
@@ -221,7 +228,7 @@
           label="库存上限"
           prop="upper_stock"
         >
-          <el-input-number v-model="dialogForm.upper_stock" controls-position="right" :min="1" />
+          <el-input-number v-model="dialogForm.upper_stock" controls-position="right" :min="dialogForm.lower_stock" />
         </el-form-item>
         <el-form-item
           label="规格型号"
@@ -373,6 +380,21 @@ import { debounce } from '@/utils'
 export default {
   name: 'EquipmentMasterDataSparePartsCode',
   components: { page },
+  props: {
+    isMultiple: {
+      type: Boolean,
+      default: false
+    },
+    isSearch: {
+      type: Boolean,
+      default: false
+    },
+    list: {
+      type: Array,
+      default() {
+        return []
+      } }
+  },
   data() {
     return {
       formInline: {},
@@ -407,6 +429,13 @@ export default {
       multipleSelection: []
     }
   },
+  watch: {
+    isSearch(val) {
+      if (val) {
+        this.getList()
+      }
+    }
+  },
   created() {
     this.getList()
     this.getList1()
@@ -419,6 +448,21 @@ export default {
         const data = await equipSpareErp('get', null, { params: this.formInline })
         this.tableData = data.results || []
         this.total = data.count
+        console.log(this.list)
+        if (this.list.length > 0) {
+          this.$refs.multipleTable1.clearSelection()
+          let data1 = []
+          for (const i in this.list) {
+            data1 = data1.concat(this.list[i].equip_spare_erp__id)
+          }
+          this.tableData.forEach(row => {
+            if (data1.indexOf(row.id) >= 0) {
+              this.$refs.multipleTable1.toggleRowSelection(row, true)
+            }
+          })
+        } else {
+          this.$refs.multipleTable1.clearSelection()
+        }
         this.loading = false
       } catch (e) {
         this.loading = false
@@ -457,6 +501,9 @@ export default {
     },
     handleCurrentChange(val) {
       this.multipleSelection = val
+    },
+    handleSelectionChange1(val) {
+      this.multipleSelection1 = val
     },
     changeSearch() {
       this.formInline.page = 1
@@ -562,6 +609,9 @@ export default {
         done()
       }
     },
+    getVal() {
+      return this.multipleSelection1
+    },
     handleClose1(done) {
       this.dialogVisible1 = false
       // this.$refs.createForm.resetFields()
@@ -590,7 +640,6 @@ export default {
       this.$refs.createForm.validate(async(valid) => {
         if (valid) {
           try {
-            this.btnLoading = true
             const _api = this.type === '新建' ? 'post' : 'put'
             if (dialogForm1.lower_stock === undefined) {
               dialogForm1.lower_stock = null
@@ -604,11 +653,25 @@ export default {
             if (dialogForm1.period_validity === undefined) {
               dialogForm1.period_validity = null
             }
-            await equipSpareErp(_api, this.dialogForm.id || null, { data: dialogForm1 })
-            this.$message.success('操作成功')
-            this.handleClose(null)
-            this.getList()
-            this.btnLoading = false
+            if (dialogForm1.upper_stock) {
+              if (dialogForm1.upper_stock > 0) {
+                this.btnLoading = true
+                await equipSpareErp(_api, this.dialogForm.id || null, { data: dialogForm1 })
+                this.$message.success('操作成功')
+                this.handleClose(null)
+                this.getList()
+                this.btnLoading = false
+              } else {
+                this.$message.info('库存上限需大于0')
+              }
+            } else {
+              this.btnLoading = true
+              await equipSpareErp(_api, this.dialogForm.id || null, { data: dialogForm1 })
+              this.$message.success('操作成功')
+              this.handleClose(null)
+              this.getList()
+              this.btnLoading = false
+            }
           } catch (e) {
             this.btnLoading = false
           }

@@ -411,3 +411,59 @@ export function equipFaultSignalDown(params) {
     responseType: 'blob'
   })
 }
+
+// 设备维护作业标准定义
+export function equipMaintenanceStandard(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipMaintenanceStandard + id + '/' : API.EquipMaintenanceStandard,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipMaintenanceStandardImport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipMaintenanceStandardImport + id + '/' : API.EquipMaintenanceStandardImport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipMaintenanceStandardDown(params) {
+  return request({
+    url: API.EquipMaintenanceStandard,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
+
+// 设备维修作业标准定义
+export function equipRepairStandard(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipRepairStandard + id + '/' : API.EquipRepairStandard,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipRepairStandardImport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipRepairStandardImport + id + '/' : API.EquipRepairStandardImport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipRepairStandardDown(params) {
+  return request({
+    url: API.EquipRepairStandard,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}

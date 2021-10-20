@@ -3,7 +3,7 @@
     <!-- 维修作业标准定义 -->
     <el-form :inline="true" class="search-form-style">
       <el-form-item label="设备种类">
-        <el-select v-model="getParams.category_no" placeholder="请选择" clearable @change="changeSearch">
+        <el-select v-model="getParams.equip_type" placeholder="请选择" clearable filterable :disabled="isDialog" @change="changSelect">
           <el-option
             v-for="item in options"
             :key="item.category_no"
@@ -13,17 +13,17 @@
         </el-select>
       </el-form-item>
       <el-form-item label="部位名称">
-        <el-input v-model="getParams.name" @input="changSelect" />
+        <el-input v-model="getParams.equip_part" clearable :disabled="isDialog" @input="changeDebounce" />
       </el-form-item>
       <el-form-item label="部件名称">
-        <el-input v-model="getParams.name" @input="changSelect" />
+        <el-input v-model="getParams.equip_component" clearable :disabled="isDialog" @input="changeDebounce" />
       </el-form-item>
       <el-form-item label="重要程度">
         <el-select
-          v-model="getParams.feed"
+          v-model="getParams.important_level"
           placeholder="请选择"
           clearable
-          @change="changeSearch"
+          @change="changSelect"
         >
           <el-option
             v-for="item in ['高', '中', '低']"
@@ -35,9 +35,10 @@
       </el-form-item>
       <el-form-item label="设备条件">
         <el-select
-          v-model="getParams.feedi"
+          v-model="getParams.equip_condition"
           placeholder="请选择"
           clearable
+          @change="changSelect"
         >
           <el-option
             v-for="item in ['停机', '不停机']"
@@ -48,13 +49,10 @@
         </el-select>
       </el-form-item>
       <el-form-item label="所需物料名称">
-        <el-input v-model="getParams.name" @input="changSelect" />
+        <el-input v-model="getParams.spare_name" clearable @input="changeDebounce" />
       </el-form-item>
-      <el-form-item label="所需物料名称">
-        <el-input v-model="getParams.name" @input="changSelect" />
-      </el-form-item>
-      <el-form-item style="float:right">
-        <el-button type="primary" style="margin-right:8px" @click="templateDownload">导出Excel</el-button>
+      <el-form-item v-if="!isDialog" style="float:right">
+        <el-button type="primary" style="margin-right:8px" :loading="btnExportLoad" @click="templateDownload">导出Excel</el-button>
         <el-upload
           style="margin-right:8px;display:inline-block"
           action="string"
@@ -71,71 +69,90 @@
       </el-form-item>
     </el-form>
     <el-table
+      ref="singleTable"
+      v-loading="loading"
+      highlight-current-row
+      row-key="id"
+      :reserve-selection="true"
       :data="tableData"
       border
       style="width: 100%"
+      @current-change="handleCurrentChange"
     >
       <el-table-column
-        prop="name"
+        prop="standard_code"
         label="标准编号"
       />
       <el-table-column
-        prop="date"
+        prop="standard_name"
         label="标准名称"
       />
       <el-table-column
-        prop=""
+        prop="equip_type_name"
         label="设备种类"
+        width="50px"
       />
       <el-table-column
-        prop=""
+        prop="equip_part_name"
         label="部位名称"
       />
       <el-table-column
-        prop=""
+        prop="equip_component_name"
         label="部件名称"
       />
       <el-table-column
-        prop=""
+        prop="equip_condition"
         label="设备条件"
       />
       <el-table-column
-        prop=""
+        prop="important_level"
         label="重要程度"
       />
       <el-table-column
-        prop=""
-        label="故障中分类"
+        prop="equip_fault_name"
+        label="故障分类"
       />
       <el-table-column
-        prop=""
+        prop="equip_job_item_standard_name"
         label="作业项目"
-      />
+      >
+        <template slot-scope="scope">
+          <el-link
+            type="primary"
+          >{{ scope.row.equip_job_item_standard_name }}</el-link>
+        </template>
+      </el-table-column>
       <el-table-column
-        prop=""
+        prop="cycle_person_num"
         label="所需人数"
       />
       <el-table-column
-        prop=""
+        prop="operation_time"
         label="作业时间"
       />
       <el-table-column
-        prop=""
+        prop="operation_time_unit"
         label="作业时间单位"
       />
       <el-table-column
-        prop=""
+        prop="spare_list_str"
         label="所需物料名称"
-      />
+      >
+        <template slot-scope="scope">
+          <el-link
+            type="primary"
+          >{{ scope.row.spare_list_str }}</el-link>
+        </template>
+      </el-table-column>
       <el-table-column
-        prop=""
+        prop="created_username"
         label="录入人"
       />
       <el-table-column
-        prop=""
+        prop="created_date"
         label="录入时间"
       />
-      <el-table-column label="操作" width="130px">
+      <el-table-column v-if="!isDialog" label="操作" width="130px">
         <template slot-scope="scope">
           <el-button-group>
             <el-button
@@ -149,7 +166,7 @@
               type="danger"
               plain
               @click="handleDelete(scope.row)"
-            >{{ scope.row.delete_flag?'启用':'停用' }}
+            >{{ scope.row.use_flag?'停用':'启用' }}
             </el-button>
           </el-button-group>
         </template>
@@ -168,7 +185,7 @@
       :close-on-click-modal="false"
     >
       <el-form
-        ref="typeForm"
+        ref="createForm"
         :inline="true"
         :rules="rules"
         :model="typeForm"
@@ -176,14 +193,14 @@
       >
         <el-row>
           <el-col :span="8">
-            <el-form-item label="标准编号" prop="nae">
-              <el-input v-model="typeForm.nae" :disabled="typeForm.id" />
+            <el-form-item label="标准编号" prop="standard_code">
+              <el-input v-model="typeForm.standard_code" :disabled="typeForm.id?true:false" />
             </el-form-item>
-            <el-form-item label="标准名称" prop="name">
-              <el-input v-model="typeForm.name" />
+            <el-form-item label="标准名称" prop="standard_name">
+              <el-input v-model="typeForm.standard_name" />
             </el-form-item>
-            <el-form-item label="设备种类">
-              <el-select v-model="typeForm.category_no" placeholder="请选择" clearable>
+            <el-form-item label="设备种类" prop="equip_type">
+              <el-select v-model="typeForm.equip_type" placeholder="请选择" clearable filterable @change="clear">
                 <el-option
                   v-for="item in options"
                   :key="item.category_no"
@@ -192,22 +209,35 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="部位名称" prop="name">
-              <el-input v-model="typeForm.name" />
-            </el-form-item>
-            <el-form-item label="部件名称">
-              <el-select v-model="typeForm.category_no1" placeholder="请选择" clearable>
+            <el-form-item
+              label="部位名称"
+              prop="equip_part"
+            >
+              <el-select v-model="typeForm.equip_part" placeholder="请选择" @visible-change="getEquipPart">
                 <el-option
-                  v-for="item in ['加热器','炭黑秤']"
-                  :key="item"
-                  :label="item"
-                  :value="item"
+                  v-for="item in options1"
+                  :key="item.part_name"
+                  :label="item.part_name"
+                  :value="item.id"
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="设备条件">
+            <el-form-item
+              label="部件名称"
+              prop="equip_component"
+            >
+              <el-select v-model="typeForm.equip_component" placeholder="请选择">
+                <el-option
+                  v-for="item in options2"
+                  :key="item.component_name"
+                  :label="item.component_name"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="设备条件" prop="equip_condition">
               <el-select
-                v-model="getParams.feedi"
+                v-model="typeForm.equip_condition"
                 placeholder="请选择"
                 clearable
               >
@@ -219,12 +249,11 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="重要程度">
+            <el-form-item label="重要程度" prop="important_level">
               <el-select
-                v-model="getParams.feed"
+                v-model="typeForm.important_level"
                 placeholder="请选择"
                 clearable
-                @change="changeSearch"
               >
                 <el-option
                   v-for="item in ['高', '中', '低']"
@@ -238,23 +267,24 @@
           <el-col :span="8">
             <el-form-item
               label="故障原因"
-              prop="equip_component_name"
+              prop="equip_fault_name"
             >
-              <el-input v-model="typeForm.equip_component_name" placeholder="请输入内容" disabled>
-                <el-button slot="append" icon="el-icon-search" />
+              <el-input v-model="typeForm.equip_fault_name" placeholder="请输入内容" disabled>
+                <el-button slot="append" icon="el-icon-search" @click="Add2" />
               </el-input>
             </el-form-item>
             <el-form-item
               label="作业项目"
-              prop="equip_component_name"
+              prop="equip_job_item_standard_name"
             >
-              <el-input v-model="typeForm.equip_component_name" placeholder="请输入内容" disabled>
-                <el-button slot="append" icon="el-icon-search" />
+              <el-input v-model="typeForm.equip_job_item_standard_name" placeholder="请输入内容" disabled>
+                <el-button slot="append" icon="el-icon-search" @click="Add1" />
               </el-input>
             </el-form-item>
             <el-form-item label="维修详细信息">
               <el-input
-                v-model="typeForm.equip_component_name"
+                v-model="typeForm.equip_job_item_standard_detail"
+                disabled
                 style="width:230px"
                 type="textarea"
                 :rows="4"
@@ -263,15 +293,15 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="所需人数">
-              <el-input v-model="typeForm.equip_component_ne" placeholder="请输入内容" />
+            <el-form-item label="所需人数" prop="cycle_person_num">
+              <el-input-number v-model="typeForm.cycle_person_num" placeholder="请输入内容" controls-position="right" :min="0" />
             </el-form-item>
-            <el-form-item label="作业时间">
-              <el-input v-model="typeForm.equip_compnt_ne" placeholder="请输入内容" />
+            <el-form-item label="作业时间" prop="operation_time">
+              <el-input-number v-model="typeForm.operation_time" placeholder="请输入内容" controls-position="right" :min="0" />
             </el-form-item>
-            <el-form-item label="作业时间单位" prop="nae">
+            <el-form-item label="作业时间单位" prop="operation_time_unit">
               <el-select
-                v-model="typeForm.type1"
+                v-model="typeForm.operation_time_unit"
                 placeholder="请选择"
               >
                 <el-option
@@ -282,43 +312,50 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="钉钉提醒发送" prop="checkList">
-              <el-checkbox-group v-model="typeForm.checkList">
-                <el-checkbox label="包干人" />
-                <el-checkbox label="上级" />
-                <el-checkbox label="上上级" />
-              </el-checkbox-group>
+            <el-form-item label="钉钉提醒发送" prop="remind_flag">
+              <el-checkbox v-model="typeForm.remind_flag1" label="包干人" />
+              <el-checkbox v-model="typeForm.remind_flag2" label="上级" />
+              <el-checkbox v-model="typeForm.remind_flag3" label="上上级" />
             </el-form-item>
           </el-col>
           <el-form-item label="所需物料">
-            <el-button>添加</el-button>
+            <el-button type="primary" @click="Add">添加</el-button>
             <el-table
-              :data="tableData"
+              :data="typeForm.spare_list"
               border
               style="width: 100%"
             >
               <el-table-column
-                prop="date"
+                prop="equip_spare_erp__spare_code"
                 label="物料编码"
               />
               <el-table-column
-                prop="date"
+                prop="equip_spare_erp__spare_name"
                 label="物料名称"
               />
               <el-table-column
-                prop="date"
+                prop="equip_spare_erp__specification"
                 label="规格"
               />
               <el-table-column
-                prop="date"
+                prop="equip_spare_erp__technical_params"
                 label="技术参数"
               />
               <el-table-column
-                prop="date"
+                prop="quantity"
                 label="数量"
-              />
+                width="140px"
+              >
+                <template slot-scope="{row}">
+                  <el-input-number
+                    v-model="row.quantity"
+                    size="small"
+                    :min="1"
+                  />
+                </template>
+              </el-table-column>
               <el-table-column
-                prop="date"
+                prop="equip_spare_erp__unit"
                 label="单位"
               />
               <el-table-column label="操作" width="130px">
@@ -339,40 +376,120 @@
         slot="footer"
         class="dialog-footer"
       >
-        <el-button @click="dialogEditVisible = false">取 消</el-button>
+        <el-button @click="handleClose(false)">取 消</el-button>
         <el-button
+          :loading="btnLoading"
           type="primary"
           @click="handleEdit"
         >确 定</el-button>
       </div>
     </el-dialog>
+    <el-dialog
+      :title="`物料列表`"
+      :visible.sync="dialogVisible"
+      width="80%"
+      :before-close="handleClose1"
+    >
+      <spare-parts-code
+        ref="List"
+        :is-multiple="true"
+        :is-search="dialogVisible"
+        :list="typeForm.spare_list"
+      />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleClose1(false)">取 消</el-button>
+        <el-button type="primary" @click="submitFun">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
+      :title="`作业项目`"
+      :visible.sync="dialogVisible1"
+      width="80%"
+      :before-close="handleClose2"
+    >
+      <project-definition
+        ref="List1"
+        :is-dialog="true"
+        :show="dialogVisible1"
+        :work-type="work_type"
+      />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleClose2(false)">取 消</el-button>
+        <el-button type="primary" @click="submitFun1">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
+      :title="`故障原因`"
+      :visible.sync="dialogVisible2"
+      width="80%"
+      :before-close="handleClose3"
+    >
+      <fault-classify
+        ref="List2"
+        :is-dialog="true"
+        :show="dialogVisible2"
+      />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleClose3(false)">取 消</el-button>
+        <el-button type="primary" @click="submitFun2">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { putSpareType, deleteSpareType } from '@/api/spare-type'
-import { equipsCategory } from '@/api/jqy'
+import { debounce } from '@/utils'
+import SparePartsCode from '../master-data/spare-parts-code'
+import FaultClassify from '../master-data/fault-classify'
+import ProjectDefinition from './project-definition'
+import { equipsCategory, equipRepairStandard, equipPartNew, equipComponent, equipRepairStandardImport, equipRepairStandardDown } from '@/api/jqy'
 import page from '@/components/page'
-// import { errorRepeat } from '@/utils'
 
 export default {
   name: 'RepairDefinition',
-  components: { page },
+  components: { page, SparePartsCode, ProjectDefinition, FaultClassify },
+  props: {
+    isDialog: {
+      type: Boolean,
+      default: false
+    },
+    show: {
+      type: Boolean,
+      default: false
+    },
+    params: {
+      type: Object,
+      default() {
+        return {}
+      }
+    }
+  },
   data: function() {
     return {
+      dialogVisible: false,
       tableData: [],
+      loading: false,
+      btnLoading: false,
+      work_type: '维修',
+      btnExportLoad: false,
+      dialogVisible1: false,
+      dialogVisible2: false,
       dialogEditVisible: false,
       options: [],
+      options1: [],
+      options2: [],
       typeName: '',
-      typeForm: {
-        no: '',
-        name: '',
-        checkList: []
-      },
+      typeForm: {},
+      currentObj: {},
       rules: {
-        type: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        nae: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        name: [{ required: true, message: '不能为空', trigger: 'blur' }]
+        standard_code: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        standard_name: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        equip_type: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        equip_part: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        equip_condition: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        important_level: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        equip_fault_name: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        equip_job_item_standard_name: [{ required: true, message: '不能为空', trigger: 'blur' }]
       },
       getParams: {
         page: 1,
@@ -383,9 +500,25 @@ export default {
       total: 1
     }
   },
+  watch: {
+    show(bool) {
+      if (bool) {
+        this.getParams.equip_type = this.params.equip_type
+        this.getParams.equip_part = this.params.equip_part
+        this.getParams.equip_component = this.params.equip_component
+        this.getList()
+      }
+    }
+  },
   created() {
+    if (this.isDialog) {
+      this.getParams.equip_type = this.params.equip_type
+      this.getParams.equip_part = this.params.equip_part
+      this.getParams.equip_component = this.params.equip_component
+    }
     this.getList()
     this.getTypeNode()
+    this.getEquipComponentType()
   },
   methods: {
     async getTypeNode() {
@@ -396,44 +529,205 @@ export default {
         //
       }
     },
-    changeSearch() {
-
+    async getEquipComponentType() {
+      try {
+        const data = await equipComponent('get', null, { params: { all: 1 }})
+        this.options2 = data.results || []
+      } catch (error) {
+        this.options2 = []
+      }
     },
-    getList() {
-
+    async getEquipPart(val) {
+      if (val) {
+        if (this.typeForm.equip_type) {
+          try {
+            const data = await equipPartNew('get', null, { params: { equip_type: this.typeForm.equip_type, all: 1 }})
+            this.options1 = data.results || []
+          } catch (e) {
+            //
+          }
+        } else {
+          this.options1 = []
+          this.$message.info('请先选择主设备种类')
+        }
+      }
+    },
+    Add() {
+      this.dialogVisible = true
+    },
+    Add1() {
+      this.dialogVisible1 = true
+    },
+    Add2() {
+      this.dialogVisible2 = true
+    },
+    handleCurrentChange(obj) {
+      this.currentObj = obj
+    },
+    submitFun() {
+      let data = []
+      for (const i in this.typeForm.spare_list) {
+        data = data.concat(this.typeForm.spare_list[i].equip_spare_erp__id)
+      }
+      for (let index = 0; index < this.$refs['List'].multipleSelection1.length; index++) {
+        if (data.indexOf(this.$refs['List'].multipleSelection1[index].id) === -1) {
+          console.log(this.typeForm.spare_list)
+          if (this.typeForm.spare_list === undefined) {
+            this.typeForm.spare_list = []
+          }
+          this.typeForm.spare_list.push({
+            // this.$refs['List'].multipleSelection1[index]
+            equip_spare_erp__id: this.$refs['List'].multipleSelection1[index].id,
+            equip_spare_erp__spare_code: this.$refs['List'].multipleSelection1[index].spare_code,
+            equip_spare_erp__spare_name: this.$refs['List'].multipleSelection1[index].spare_name,
+            equip_spare_erp__specification: this.$refs['List'].multipleSelection1[index].specification,
+            equip_spare_erp__technical_params: this.$refs['List'].multipleSelection1[index].technical_params,
+            equip_spare_erp__unit: this.$refs['List'].multipleSelection1[index].unit,
+            quantity: 1
+          })
+        }
+      }
+      this.dialogVisible = false
+    },
+    submitFun1() {
+      if (this.$refs['List1'].currentObj.standard_name) {
+        this.typeForm.equip_job_item_standard = this.$refs['List1'].currentObj.id
+        this.typeForm.equip_job_item_standard_name = this.$refs['List1'].currentObj.standard_name
+        this.typeForm.equip_job_item_standard_detail = this.$refs['List1'].currentObj.work_details_column
+        this.dialogVisible1 = false
+      } else {
+        this.$message.info('请选择一种标准')
+      }
+    },
+    submitFun2() {
+      if (this.$refs['List2'].currentObj === null) {
+        this.$refs['List2'].currentObj = {}
+      }
+      if (this.$refs['List2'].currentObj.fault_name) {
+        this.typeForm.equip_fault_name = this.$refs['List2'].currentObj.fault_name
+        this.typeForm.equip_fault = this.$refs['List2'].currentObj.id
+        this.dialogVisible2 = false
+      } else {
+        this.$message.info('请选择一种原因')
+      }
+    },
+    handleClose(done) {
+      this.dialogEditVisible = false
+      this.$refs.createForm.resetFields()
+      if (done) {
+        done()
+      }
+    },
+    handleClose1(done) {
+      this.dialogVisible = false
+      if (done) {
+        done()
+      }
+    },
+    handleClose2(done) {
+      this.dialogVisible1 = false
+      if (done) {
+        done()
+      }
+    },
+    handleClose3(done) {
+      this.dialogVisible2 = false
+      if (done) {
+        done()
+      }
+    },
+    handleDelete1(row) {
+      this.typeForm.spare_list.forEach((item, index) => {
+        if (row.equip_spare_erp__id === item.equip_spare_erp__id) {
+          this.typeForm.spare_list.splice(index, 1)
+        }
+      })
+    },
+    clear() {
+      if (this.typeForm.equip_part) {
+        this.typeForm.equip_part = null
+      }
+    },
+    async  getList() {
+      try {
+        this.loading = true
+        const data = await equipRepairStandard('get', null, { params: this.getParams })
+        this.tableData = data.results || []
+        this.total = data.count
+        this.loading = false
+      } catch (e) {
+        this.loading = false
+      }
     },
     onSubmit() {
+      this.typeForm = {
+        standard_code: 'WXBZ00X',
+        remind_flag1: true,
+        remind_flag2: true,
+        remind_flag3: false,
+        equip_condition: '停机',
+        important_level: '高'
+      }
       this.dialogEditVisible = true
+    },
+    changeDebounce() {
+      this.getParams.page = 1
+      debounce(this, 'getList')
     },
     changSelect() {
       this.getParams.page = 1
       this.getList()
     },
-    showDialog(row) {
+    async showDialog(row) {
       this.typeForm = JSON.parse(JSON.stringify(row))
+      if (this.typeForm.cycle_person_num === null) {
+        this.typeForm.cycle_person_num = undefined
+      }
+      if (this.typeForm.operation_time === null) {
+        this.typeForm.operation_time = undefined
+      }
+      try {
+        const data = await equipPartNew('get', null, { params: { all: 1 }})
+        this.options1 = data.results || []
+      } catch (e) {
+        //
+      }
       this.dialogEditVisible = true
     },
-    handleEdit: function() {
-      this.$refs.editForm.validate((valid) => {
+    handleEdit() {
+      const typeForm1 = JSON.parse(JSON.stringify(this.typeForm))
+      this.$refs.createForm.validate(async(valid) => {
         if (valid) {
-          putSpareType(this.typeForm, this.typeForm.id)
-            .then(response => {
-              this.dialogEditVisible = false
-              this.$message(this.typeForm.name + '修改成功')
-              this.getList()
-              // this.currentChange(this.currentPage)
-            })
+          try {
+            this.btnLoading = true
+            const _api = this.typeForm.id ? 'put' : 'post'
+            if (typeForm1.cycle_person_num === undefined) {
+              typeForm1.cycle_person_num = null
+            }
+            if (typeForm1.operation_time === undefined) {
+              typeForm1.operation_time = null
+            }
+            await equipRepairStandard(_api, typeForm1.id || null, { data: typeForm1 })
+            this.$message.success('操作成功')
+            this.handleClose(null)
+            this.getList()
+            this.btnLoading = false
+          } catch (e) {
+            this.btnLoading = false
+          }
+        } else {
+          return false
         }
       })
     },
     handleDelete: function(row) {
-      var str = row.delete_flag ? '启用' : '停用'
-      this.$confirm('此操作将' + str + row.name + ', 是否继续?', '提示', {
+      var str = row.use_flag ? '停用' : '启用'
+      this.$confirm('此操作将' + str + row.standard_name + ', 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteSpareType(row.id)
+        equipRepairStandard('delete', row.id, {})
           .then(response => {
             this.$message({
               type: 'success',
@@ -447,30 +741,38 @@ export default {
       this.getParams.page = page
       this.getParams.page_size = pageSize
       this.getList()
+      this.$refs.singleTable.setCurrentRow(this.currentObj)
     },
     templateDownload() {
-    //   exportProperty('get').then(response => {
-    //     const link = document.createElement('a')
-    //     const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
-    //     link.style.display = 'none'
-    //     link.href = URL.createObjectURL(blob)
-    //     link.download = '设备资产模板.xls' // 下载的文件名
-    //     document.body.appendChild(link)
-    //     link.click()
-    //     document.body.removeChild(link)
-    //   })
+      this.btnExportLoad = true
+      const obj = Object.assign({ export: 1 }, this.getParams)
+      const _api = equipRepairStandardDown
+      _api(obj)
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '设备维修标准定义.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
     },
     Upload(param) {
       const formData = new FormData()
       formData.append('file', param.file)
-    //   importProperty('post', null, { data: formData }).then(response => {
-    //     this.$message({
-    //       type: 'success',
-    //       message: '导入成功!'
-    //     })
-    //     this.search.page = 1
-    //     this.getList()
-    //   })
+      equipRepairStandardImport('post', null, { data: formData }).then(response => {
+        this.$message({
+          type: 'success',
+          message: '导入成功!'
+        })
+        this.getParams.page = 1
+        this.getList()
+      })
     }
   }
 }

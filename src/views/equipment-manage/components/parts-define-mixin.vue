@@ -133,6 +133,10 @@ export default {
           this.tableData1.push(this.multipleSelection[index])
         }
       }
+      this.dialogForm2 = {
+        supplier_name: '',
+        spare_code: '',
+        spare_name: '' }
       this.dialogVisible2 = false
     }
   }
