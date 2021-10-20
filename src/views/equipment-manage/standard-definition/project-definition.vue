@@ -341,19 +341,19 @@ export default {
     },
     standardType(row) {
       if (row.check_standard_type === '有无') {
-        row.check_standard_desc = '无'
+        this.$set(row, 'check_standard_desc', '无')
       }
       if (row.check_standard_type === '数值范围') {
-        row.check_standard_desc = ''
+        this.$set(row, 'check_standard_desc', '')
       }
       if (row.check_standard_type === '正常异常') {
-        row.check_standard_desc = '异常'
+        this.$set(row, 'check_standard_desc', '异常')
       }
       if (row.check_standard_type === '完成未完成') {
-        row.check_standard_desc = '未完成'
+        this.$set(row, 'check_standard_desc', '未完成')
       }
       if (row.check_standard_type === '合格不合格') {
-        row.check_standard_desc = '不合格'
+        this.$set(row, 'check_standard_desc', '不合格')
       }
     },
     showDialog(row) {
