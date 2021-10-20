@@ -77,7 +77,11 @@
               :key="item.id"
               :label="item.username"
               :value="item.id"
-            />
+              :disabled="!item.is_active"
+            >
+              <span style="float: left">{{ item.username }}</span>
+              <span v-if="!item.is_active" style="float: right;">{{ item.is_active?'':'已停用' }}</span>
+            </el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -164,7 +168,7 @@ export default {
       try {
         let obj = { section_id: this.formInline.id, is_active: 1 }
         if (bool) {
-          obj = { all: 1, is_active: 1 }
+          obj = { all: 1 }
         }
         this.loading = true
         const data = await personnelsUrl('get', null, { params: obj })

@@ -454,7 +454,7 @@ export default {
     async getOptionsSection() {
       try {
         const data = await sectionTree('get')
-        if (data.results[0].children.length > 0) {
+        if (data.results && data.results[0].children.length > 0) {
           this.optionsSection = data.results[0].children
           this.optionsSection = filterMy(this.optionsSection)
         } else {
@@ -554,7 +554,7 @@ export default {
             delete app.userForm.num
           }
           const obj = JSON.parse(JSON.stringify(app.userForm))
-          if (obj.section.length > 0) {
+          if (obj.section && obj.section.length > 0) {
             obj.section = obj.section.slice(-1)[0]
           } else {
             obj.section = ''
