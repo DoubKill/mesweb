@@ -608,6 +608,10 @@ export default {
       }
     },
     handleClose2(done) {
+      this.dialogForm2 = {
+        supplier_name: '',
+        spare_code: '',
+        spare_name: '' }
       this.dialogVisible2 = false
       this.$refs.multipleTable.clearSelection()
       if (done) {

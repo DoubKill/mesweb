@@ -21,7 +21,7 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item>
+          <el-form-item v-if="!isDialog">
             <el-button
               type="primary"
               style="margin-bottom:10px"
@@ -56,6 +56,7 @@
             :formatter="(row)=>{return row.use_flag?'Y':'N'}"
           />
           <el-table-column
+            v-if="!isDialog"
             label="操作"
           >
             <template slot-scope="scope">
@@ -84,7 +85,7 @@
         />
       </el-col>
       <el-col :span="14">
-        <el-form inline style="float:right">
+        <el-form inline>
           <el-form-item
             label="中分类故障名称"
           >
@@ -102,7 +103,7 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item>
+          <el-form-item v-if="!isDialog">
             <el-button
               style="margin-bottom:10px;float:right"
               :disabled="equip_machine_halt_type_id&&isLeftStop?false:true"
@@ -113,9 +114,11 @@
         </el-form>
         <el-table
           v-loading="loading1"
+          highlight-current-row
           :data="tableData1"
           border
           width="100%"
+          @current-change="handleCurrentChange1"
         >
           <el-table-column
             type="index"
@@ -144,6 +147,7 @@
             :formatter="(row)=>{return row.use_flag?'Y':'N'}"
           />
           <el-table-column
+            v-if="!isDialog"
             label="操作"
             width="140px"
           >
@@ -209,11 +213,22 @@ import { equipFaultTypes, equipFaultCodes } from '@/api/base_w_four'
 export default {
   name: 'EquipmentMasterDataFaultClassify',
   components: { page },
+  props: {
+    isDialog: {
+      type: Boolean,
+      default: false
+    },
+    show: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       tableData: [],
       tableData1: [],
       dataForm: {},
+      currentObj: {},
       dataForm1: {},
       formObj: {},
       dialogVisible: false,
@@ -240,6 +255,13 @@ export default {
             }
           } }]
         // desc: [{ required: true, message: '请输入', trigger: 'blur' }]
+      }
+    }
+  },
+  watch: {
+    show(bool) {
+      if (bool) {
+        this.getListType()
       }
     }
   },
@@ -293,6 +315,9 @@ export default {
       this.equip_machine_halt_type_id = row.id
       this.isLeftStop = row.use_flag
       this.getListReason()
+    },
+    handleCurrentChange1(obj) {
+      this.currentObj = obj
     },
     addArea(bool) {
       this.dialogVisible = true
