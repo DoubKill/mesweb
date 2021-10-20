@@ -11,7 +11,7 @@
           @change="changSelect"
         >
           <el-option
-            v-for="item in ['巡检','保养','润滑','标定']"
+            v-for="item in ['巡检','保养','润滑','标定','维修']"
             :key="item"
             :label="item"
             :value="item"
@@ -29,10 +29,10 @@
         </el-select>
       </el-form-item>
       <el-form-item label="部位名称">
-        <el-input v-model="getParams.equip_part" clearable @input="changeDebounce" />
+        <el-input v-model="getParams.equip_part" :disabled="isDialog&&params.equip_part?true:false" clearable @input="changeDebounce" />
       </el-form-item>
       <el-form-item label="部件名称">
-        <el-input v-model="getParams.equip_component" clearable @input="changeDebounce" />
+        <el-input v-model="getParams.equip_component" :disabled="isDialog&&params.equip_component?true:false" clearable @input="changeDebounce" />
       </el-form-item>
       <el-form-item label="重要程度">
         <el-select
@@ -231,7 +231,7 @@
                 @change="changeCode"
               >
                 <el-option
-                  v-for="item in ['巡检','保养','润滑','标定']"
+                  v-for="item in ['巡检','保养','润滑','标定','维修']"
                   :key="item"
                   :label="item"
                   :value="item"
@@ -258,7 +258,7 @@
               label="部位名称"
               prop="equip_part"
             >
-              <el-select v-model="typeForm.equip_part" placeholder="请选择" @visible-change="getEquipPart">
+              <el-select v-model="typeForm.equip_part" placeholder="请选择" @visible-change="getEquipPart" @change="clear1">
                 <el-option
                   v-for="item in options1"
                   :key="item.part_name"
@@ -271,7 +271,7 @@
               label="部件名称"
               prop="equip_component"
             >
-              <el-select v-model="typeForm.equip_component" placeholder="请选择">
+              <el-select v-model="typeForm.equip_component" placeholder="请选择" clearable @visible-change="getEquipComponent">
                 <el-option
                   v-for="item in options2"
                   :key="item.component_name"
@@ -342,6 +342,7 @@
             <el-form-item label="周期单位" prop="cycle_unit">
               <el-select
                 v-model="typeForm.cycle_unit"
+                clearable
                 placeholder="请选择"
               >
                 <el-option
@@ -364,6 +365,7 @@
             <el-form-item label="作业时间单位" prop="operation_time_unit">
               <el-select
                 v-model="typeForm.operation_time_unit"
+                clearable
                 placeholder="请选择"
               >
                 <el-option
@@ -585,6 +587,21 @@ export default {
         }
       }
     },
+    async getEquipComponent(val) {
+      if (val) {
+        if (this.typeForm.equip_part) {
+          try {
+            const data = await equipComponent('get', null, { params: { component_id: this.typeForm.equip_part }})
+            this.options2 = data.results || []
+          } catch (error) {
+            this.options2 = []
+          }
+        } else {
+          this.options2 = []
+          this.$message.info('请先选择设备部位')
+        }
+      }
+    },
     changeCode() {
       if (this.typeForm.work_type === '巡检') {
         this.typeForm.standard_code = 'XJBZ00X'
@@ -602,6 +619,8 @@ export default {
         this.typeForm.standard_code = 'BDBZ00X'
         this.typeForm.equip_condition = '停机'
         this.typeForm.important_level = '中'
+      } else if (this.typeForm.work_type === '维修') {
+        this.typeForm.standard_code = 'WXBZ00X'
       }
     },
     changeDebounce() {
@@ -656,6 +675,14 @@ export default {
     clear() {
       if (this.typeForm.equip_part) {
         this.typeForm.equip_part = null
+      }
+      if (this.typeForm.equip_component) {
+        this.typeForm.equip_component = null
+      }
+    },
+    clear1() {
+      if (this.typeForm.equip_component) {
+        this.typeForm.equip_component = null
       }
     },
     Add() {
