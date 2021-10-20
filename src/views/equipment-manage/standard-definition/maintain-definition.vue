@@ -29,7 +29,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="部位名称">
-        <el-input v-model="getParams.equip_part" clearable :disabled="isDialog" @input="changeDebounce" />
+        <el-input v-model="getParams.equip_part" clearable @input="changeDebounce" />
       </el-form-item>
       <el-form-item label="部件名称">
         <el-input v-model="getParams.equip_component" clearable @input="changeDebounce" />
