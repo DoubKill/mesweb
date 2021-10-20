@@ -7,6 +7,7 @@
           v-model="getParams.work_type"
           placeholder="请选择"
           clearable
+          :disabled="isDialog"
           @change="changSelect"
         >
           <el-option
@@ -20,8 +21,8 @@
       <el-form-item label="作业项目">
         <el-input v-model="getParams.standard_name" clearable @input="changDebounce" />
       </el-form-item>
-      <el-form-item style="float:right">
-        <el-button type="primary" style="margin-right:8px" @click="templateDownload">导出Excel</el-button>
+      <el-form-item v-if="!isDialog" style="float:right">
+        <el-button :loading="btnExportLoad" type="primary" style="margin-right:8px" @click="templateDownload">导出Excel</el-button>
         <el-upload
           style="margin-right:8px;display:inline-block"
           action="string"
@@ -38,10 +39,15 @@
       </el-form-item>
     </el-form>
     <el-table
+      ref="singleTable"
       v-loading="loading"
       :data="tableData"
       border
       style="width: 100%"
+      highlight-current-row
+      row-key="id"
+      :reserve-selection="true"
+      @current-change="handleCurrentChange"
     >
       <el-table-column
         prop="work_type"
@@ -75,7 +81,7 @@
         prop="created_date"
         label="录入时间"
       />
-      <el-table-column label="操作">
+      <el-table-column v-if="!isDialog" label="操作">
         <template slot-scope="scope">
           <el-button-group>
             <el-button
@@ -96,6 +102,7 @@
       </el-table-column>
     </el-table>
     <page
+      v-if="!loading"
       :old-page="false"
       :total="total"
       :current-page="getParams.page"
@@ -144,15 +151,7 @@
               label="作业内容"
             >
               <template slot-scope="{row}">
-                <el-input v-model="row.content" />
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="date"
-              label="判断标准/步骤说明"
-            >
-              <template slot-scope="{row}">
-                <el-input v-model="row.check_standard_desc" />
+                <el-input v-model="row.content" :disabled="row.id?true:false" />
               </template>
             </el-table-column>
             <el-table-column
@@ -160,14 +159,62 @@
               label="类型"
             >
               <template slot-scope="{row}">
-                <el-select v-model="row.check_standard_type" placeholder="请选择">
+                <el-select v-model="row.check_standard_type" placeholder="请选择" :disabled="row.id?true:false" @change="standardType(row)">
                   <el-option
-                    v-for="item in ['有无','数值','正常异常','完成未完成']"
+                    v-for="item in ['有无','数值范围','正常异常','完成未完成','合格不合格']"
                     :key="item"
                     :label="item"
                     :value="item"
                   />
                 </el-select>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="date"
+              label="判断标准/步骤说明"
+            >
+              <template slot-scope="{row}">
+                <div v-if="row.check_standard_type==='有无'">
+                  <el-switch
+                    v-model="row.check_standard_desc"
+                    active-value="有"
+                    inactive-value="无"
+                    active-text="有"
+                    inactive-text="无"
+                    :disabled="row.id?true:false"
+                  />
+                </div>
+                <div v-if="row.check_standard_type==='正常异常'">
+                  <el-switch
+                    v-model="row.check_standard_desc"
+                    active-value="正常"
+                    inactive-value="异常"
+                    active-text="正常"
+                    inactive-text="异常"
+                    :disabled="row.id?true:false"
+                  />
+                </div>
+                <div v-if="row.check_standard_type==='完成未完成'">
+                  <el-switch
+                    v-model="row.check_standard_desc"
+                    active-value="完成"
+                    inactive-value="未完成"
+                    active-text="完成"
+                    inactive-text="未完成"
+                    :disabled="row.id?true:false"
+                  />
+                </div>
+                <div v-if="row.check_standard_type==='合格不合格'">
+                  <el-switch
+                    v-model="row.check_standard_desc"
+                    active-value="合格"
+                    inactive-value="不合格"
+                    active-text="合格"
+                    inactive-text="不合格"
+                    :disabled="row.id?true:false"
+                  />
+                </div>
+                <el-input v-if="row.check_standard_type==='数值范围'" v-model="row.check_standard_desc" :disabled="row.id?true:false" />
               </template>
             </el-table-column>
             <el-table-column label="操作">
@@ -199,12 +246,26 @@
 
 <script>
 import page from '@/components/page'
-import { equipJobItemStandard } from '@/api/base_w_four'
+import { equipJobItemStandard, equipJobItemStandardImport } from '@/api/base_w_four'
 // import { errorRepeat } from '@/utils'
 
 export default {
   name: 'ProjectDefinition',
   components: { page },
+  props: {
+    isDialog: {
+      type: Boolean,
+      default: false
+    },
+    show: {
+      type: Boolean,
+      default: false
+    },
+    workType: {
+      type: String,
+      default: ''
+    }
+  },
   data: function() {
     return {
       tableData: [],
@@ -225,10 +286,23 @@ export default {
       currentPage: 1,
       total: 1,
       loading: 0,
-      btnLoading: false
+      btnLoading: false,
+      btnExportLoad: false,
+      currentObj: {}
+    }
+  },
+  watch: {
+    show(bool) {
+      if (bool) {
+        this.getParams.work_type = this.workType
+        this.getList()
+      }
     }
   },
   created() {
+    if (this.isDialog) {
+      this.getParams.work_type = this.workType
+    }
     this.getList()
   },
   methods: {
@@ -265,16 +339,35 @@ export default {
     changDebounce() {
       this.$debounce(this, 'changSelect')
     },
+    standardType(row) {
+      if (row.check_standard_type === '有无') {
+        row.check_standard_desc = '无'
+      }
+      if (row.check_standard_type === '数值范围') {
+        row.check_standard_desc = ''
+      }
+      if (row.check_standard_type === '正常异常') {
+        row.check_standard_desc = '异常'
+      }
+      if (row.check_standard_type === '完成未完成') {
+        row.check_standard_desc = '未完成'
+      }
+      if (row.check_standard_type === '合格不合格') {
+        row.check_standard_desc = '不合格'
+      }
+    },
     showDialog(row) {
       this.typeForm = JSON.parse(JSON.stringify(row))
       this.tableData1 = this.typeForm.work_details
       this.dialogEditVisible = true
     },
+    handleCurrentChange(obj) {
+      this.currentObj = obj
+    },
     handleEdit: function() {
       this.$refs.typeForm.validate(async(valid) => {
         if (valid) {
           try {
-            console.log(this.typeForm, 3333)
             if (this.tableData1.length === 0) {
               throw new Error('作业详情内容未添加')
             }
@@ -323,6 +416,7 @@ export default {
       this.getParams.page = page
       this.getParams.page_size = pageSize
       this.getList()
+      this.$refs.singleTable.setCurrentRow(this.currentObj)
     },
     addList() {
       this.tableData1.push({ sequence: this.tableData1.length + 1 })
@@ -331,28 +425,33 @@ export default {
       this.tableData1.splice(index, 1)
     },
     templateDownload() {
-    //   exportProperty('get').then(response => {
-    //     const link = document.createElement('a')
-    //     const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
-    //     link.style.display = 'none'
-    //     link.href = URL.createObjectURL(blob)
-    //     link.download = '设备资产模板.xls' // 下载的文件名
-    //     document.body.appendChild(link)
-    //     link.click()
-    //     document.body.removeChild(link)
-    //   })
+      this.btnExportLoad = true
+      const obj = Object.assign({ export: 1 }, this.getParams)
+      equipJobItemStandard('get', null, { responseType: 'blob', params: obj }).then(response => {
+        const link = document.createElement('a')
+        const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
+        link.style.display = 'none'
+        link.href = URL.createObjectURL(blob)
+        link.download = '作业项目标准定义.xls' // 下载的文件名
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        this.btnExportLoad = false
+      }).catch(e => {
+        this.btnExportLoad = false
+      })
     },
     Upload(param) {
       const formData = new FormData()
       formData.append('file', param.file)
-    //   importProperty('post', null, { data: formData }).then(response => {
-    //     this.$message({
-    //       type: 'success',
-    //       message: '导入成功!'
-    //     })
-    //     this.search.page = 1
-    //     this.getList()
-    //   })
+      equipJobItemStandardImport('post', null, { data: formData }).then(response => {
+        this.$message({
+          type: 'success',
+          message: '导入成功!'
+        })
+        this.getParams.page = 1
+        this.getList()
+      })
     }
   }
 }
