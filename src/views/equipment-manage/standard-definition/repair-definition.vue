@@ -583,29 +583,36 @@ export default {
       this.currentObj = obj
     },
     submitFun() {
-      let data = []
-      for (const i in this.typeForm.spare_list) {
-        data = data.concat(this.typeForm.spare_list[i].equip_spare_erp__id)
+      if (this.$refs['List'].multipleSelection1 === undefined) {
+        this.$refs['List'].multipleSelection1 = []
       }
-      for (let index = 0; index < this.$refs['List'].multipleSelection1.length; index++) {
-        if (data.indexOf(this.$refs['List'].multipleSelection1[index].id) === -1) {
-          if (this.typeForm.spare_list === undefined) {
-            this.typeForm.spare_list = []
-          }
-          this.typeForm.spare_list.push({
-            // this.$refs['List'].multipleSelection1[index]
-            equip_spare_erp__id: this.$refs['List'].multipleSelection1[index].id,
-            equip_spare_erp__spare_code: this.$refs['List'].multipleSelection1[index].spare_code,
-            equip_spare_erp__spare_name: this.$refs['List'].multipleSelection1[index].spare_name,
-            equip_spare_erp__specification: this.$refs['List'].multipleSelection1[index].specification,
-            equip_spare_erp__technical_params: this.$refs['List'].multipleSelection1[index].technical_params,
-            equip_spare_erp__unit: this.$refs['List'].multipleSelection1[index].unit,
-            quantity: 1
-          })
+      if (this.$refs['List'].multipleSelection1.length > 0) {
+        let data = []
+        for (const i in this.typeForm.spare_list) {
+          data = data.concat(this.typeForm.spare_list[i].equip_spare_erp__id)
         }
+        for (let index = 0; index < this.$refs['List'].multipleSelection1.length; index++) {
+          if (data.indexOf(this.$refs['List'].multipleSelection1[index].id) === -1) {
+            if (this.typeForm.spare_list === undefined) {
+              this.typeForm.spare_list = []
+            }
+            this.typeForm.spare_list.push({
+            // this.$refs['List'].multipleSelection1[index]
+              equip_spare_erp__id: this.$refs['List'].multipleSelection1[index].id,
+              equip_spare_erp__spare_code: this.$refs['List'].multipleSelection1[index].spare_code,
+              equip_spare_erp__spare_name: this.$refs['List'].multipleSelection1[index].spare_name,
+              equip_spare_erp__specification: this.$refs['List'].multipleSelection1[index].specification,
+              equip_spare_erp__technical_params: this.$refs['List'].multipleSelection1[index].technical_params,
+              equip_spare_erp__unit: this.$refs['List'].multipleSelection1[index].unit,
+              quantity: 1
+            })
+          }
+        }
+        this.dialogVisible = false
+      } else {
+        this.$message.info('请选择其中一种物料')
       }
       this.$refs['List'].$refs.multipleTable1.clearSelection()
-      this.dialogVisible = false
     },
     submitFun1() {
       if (this.$refs['List1'].currentObj.standard_name) {
