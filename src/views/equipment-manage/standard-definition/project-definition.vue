@@ -211,6 +211,8 @@
                   />
                 </div>
                 <div v-if="row.check_standard_type==='数值范围'">
+                  {{ row.check_standard_desc_a }}
+                  {{ row.check_standard_desc_b }}
                   <el-input-number v-model="row.check_standard_desc_a" style="width:120px" controls-position="right" :min="0" :max="row.check_standard_desc_b" />
                   -
                   <el-input-number v-model="row.check_standard_desc_b" style="width:120px" controls-position="right" :min="row.check_standard_desc_a" />
@@ -348,8 +350,10 @@ export default {
       this.$debounce(this, 'changSelect')
     },
     standardType(row) {
-      row.check_standard_desc_a = undefined
-      row.check_standard_desc_b = undefined
+      if (row.check_standard_type !== '数值范围') {
+        delete row.check_standard_desc_a
+        delete row.check_standard_desc_b
+      }
       if (row.check_standard_type === '有无') {
         this.$set(row, 'check_standard_desc', '无')
       }
@@ -381,7 +385,6 @@ export default {
             if (this.tableData1.length === 0) {
               throw new Error('作业详情内容未添加')
             }
-
             if (!this.typeForm.id) {
               this.typeForm.work_details = this.tableData1
             }
