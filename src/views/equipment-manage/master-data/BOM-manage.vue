@@ -1082,9 +1082,6 @@ export default {
   .el-input{
     width:250px;
   }
-  .el-container{
-    // position: relative;
-  }
   .contextmenu {
     margin: 0;
     background: #fff;
