@@ -210,7 +210,11 @@
                     inactive-text="不合格"
                   />
                 </div>
-                <el-input v-if="row.check_standard_type==='数值范围'" v-model="row.check_standard_desc" />
+                <div v-if="row.check_standard_type==='数值范围'">
+                  <el-input-number v-model="row.check_standard_desc_a" style="width:120px" controls-position="right" :min="0" :max="row.check_standard_desc_b" />
+                  -
+                  <el-input-number v-model="row.check_standard_desc_b" style="width:120px" controls-position="right" :min="row.check_standard_desc_a" />
+                </div>
               </template>
             </el-table-column>
             <el-table-column label="操作">
@@ -307,6 +311,14 @@ export default {
         this.loading = true
         const data = await equipJobItemStandard('get', null, { params: this.getParams })
         this.tableData = data.results || []
+        this.tableData.forEach((d, i) => {
+          d.work_details.forEach(D => {
+            if (D.check_standard_type === '数值范围') {
+              D.check_standard_desc_a = D.check_standard_desc.split('-')[0]
+              D.check_standard_desc_b = D.check_standard_desc.split('-')[1]
+            }
+          })
+        })
         this.total = data.count || 0
         this.loading = false
       } catch (error) {
@@ -336,6 +348,8 @@ export default {
       this.$debounce(this, 'changSelect')
     },
     standardType(row) {
+      row.check_standard_desc_a = undefined
+      row.check_standard_desc_b = undefined
       if (row.check_standard_type === '有无') {
         this.$set(row, 'check_standard_desc', '无')
       }
@@ -367,11 +381,7 @@ export default {
             if (this.tableData1.length === 0) {
               throw new Error('作业详情内容未添加')
             }
-            this.tableData1.forEach(d => {
-              if (!d.content || !d.check_standard_desc || !d.check_standard_type) {
-                throw new Error('每行数据必填')
-              }
-            })
+
             if (!this.typeForm.id) {
               this.typeForm.work_details = this.tableData1
             }
@@ -379,8 +389,19 @@ export default {
             if (this.typeForm.work_details.length > 0) {
               this.typeForm.work_details.forEach((d, i) => {
                 d.sequence = i + 1
+                if (d.check_standard_type === '数值范围') {
+                  if ((!d.check_standard_desc_a && d.check_standard_desc_a !== 0) || !d.check_standard_desc_b) {
+                    throw new Error('数值范围请填写完毕')
+                  }
+                  d.check_standard_desc = d.check_standard_desc_a + '-' + d.check_standard_desc_b
+                }
               })
             }
+            this.tableData1.forEach(d => {
+              if (!d.content || !d.check_standard_desc || !d.check_standard_type) {
+                throw new Error('每行数据必填')
+              }
+            })
             this.btnLoading = true
             await equipJobItemStandard(_api, this.typeForm.id || null, { data: this.typeForm })
             this.btnLoading = false
