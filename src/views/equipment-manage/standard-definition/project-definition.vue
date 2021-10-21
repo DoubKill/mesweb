@@ -211,7 +211,7 @@
                   />
                 </div>
                 <div v-if="row.check_standard_type==='数值范围'">
-                  <el-input-number v-model="row.check_standard_desc_a" style="width:120px" controls-position="right" :min="0" :max="row.check_standard_desc_b" />
+                  <el-input-number v-model="row.check_standard_desc_a" style="width:120px" controls-position="right" :max="row.check_standard_desc_b" />
                   -
                   <el-input-number v-model="row.check_standard_desc_b" style="width:120px" controls-position="right" :min="row.check_standard_desc_a" />
                 </div>
