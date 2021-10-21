@@ -542,7 +542,7 @@ export default {
       if (val) {
         if (this.typeForm.equip_type) {
           try {
-            const data = await equipPartNew('get', null, { params: { equip_type: this.typeForm.equip_type, all: 1 }})
+            const data = await equipPartNew('get', null, { params: { equip_type: this.typeForm.equip_type }})
             this.options1 = data.results || []
           } catch (e) {
             //
@@ -716,6 +716,7 @@ export default {
       } catch (e) {
         //
       }
+      this.getEquipComponentType()
       this.dialogEditVisible = true
     },
     handleEdit() {

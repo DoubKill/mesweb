@@ -496,7 +496,7 @@ export default {
     async getEquipPart(val) {
       if (val) {
         try {
-          const data = await equipPartNew('get', null, { params: this.formInline.equip_type ? { equip_type: this.formInline.equip_type, all: 1 } : { all: 1 }})
+          const data = await equipPartNew('get', null, { params: this.formInline.equip_type ? { equip_type: this.formInline.equip_type } : { all: 1 }})
           this.options1 = data.results || []
         } catch (e) {
           //
@@ -507,7 +507,7 @@ export default {
       if (val) {
         if (this.dialogForm.equip_type) {
           try {
-            const data = await equipPartNew('get', null, { params: { equip_type: this.dialogForm.equip_type, all: 1 }})
+            const data = await equipPartNew('get', null, { params: { equip_type: this.dialogForm.equip_type }})
             this.options3 = data.results || []
           } catch (e) {
             //
