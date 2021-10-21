@@ -151,7 +151,7 @@
               label="作业内容"
             >
               <template slot-scope="{row}">
-                <el-input v-model="row.content" :disabled="row.id?true:false" />
+                <el-input v-model="row.content" />
               </template>
             </el-table-column>
             <el-table-column
@@ -159,7 +159,7 @@
               label="类型"
             >
               <template slot-scope="{row}">
-                <el-select v-model="row.check_standard_type" placeholder="请选择" :disabled="row.id?true:false" @change="standardType(row)">
+                <el-select v-model="row.check_standard_type" placeholder="请选择" @change="standardType(row)">
                   <el-option
                     v-for="item in ['有无','数值范围','正常异常','完成未完成','合格不合格']"
                     :key="item"
@@ -181,7 +181,6 @@
                     inactive-value="有"
                     active-text="无"
                     inactive-text="有"
-                    :disabled="row.id?true:false"
                   />
                 </div>
                 <div v-if="row.check_standard_type==='正常异常'">
@@ -191,7 +190,6 @@
                     inactive-value="异常"
                     active-text="正常"
                     inactive-text="异常"
-                    :disabled="row.id?true:false"
                   />
                 </div>
                 <div v-if="row.check_standard_type==='完成未完成'">
@@ -201,7 +199,6 @@
                     inactive-value="未完成"
                     active-text="完成"
                     inactive-text="未完成"
-                    :disabled="row.id?true:false"
                   />
                 </div>
                 <div v-if="row.check_standard_type==='合格不合格'">
@@ -211,10 +208,9 @@
                     inactive-value="不合格"
                     active-text="合格"
                     inactive-text="不合格"
-                    :disabled="row.id?true:false"
                   />
                 </div>
-                <el-input v-if="row.check_standard_type==='数值范围'" v-model="row.check_standard_desc" :disabled="row.id?true:false" />
+                <el-input v-if="row.check_standard_type==='数值范围'" v-model="row.check_standard_desc" />
               </template>
             </el-table-column>
             <el-table-column label="操作">
