@@ -177,10 +177,10 @@
                 <div v-if="row.check_standard_type==='有无'">
                   <el-switch
                     v-model="row.check_standard_desc"
-                    active-value="有"
-                    inactive-value="无"
-                    active-text="有"
-                    inactive-text="无"
+                    active-value="无"
+                    inactive-value="有"
+                    active-text="无"
+                    inactive-text="有"
                     :disabled="row.id?true:false"
                   />
                 </div>
@@ -347,13 +347,13 @@ export default {
         this.$set(row, 'check_standard_desc', '')
       }
       if (row.check_standard_type === '正常异常') {
-        this.$set(row, 'check_standard_desc', '异常')
+        this.$set(row, 'check_standard_desc', '正常')
       }
       if (row.check_standard_type === '完成未完成') {
-        this.$set(row, 'check_standard_desc', '未完成')
+        this.$set(row, 'check_standard_desc', '完成')
       }
       if (row.check_standard_type === '合格不合格') {
-        this.$set(row, 'check_standard_desc', '不合格')
+        this.$set(row, 'check_standard_desc', '合格')
       }
     },
     showDialog(row) {

@@ -78,6 +78,7 @@
               :label="item.username"
               :value="item.id"
               :disabled="!item.is_active"
+              filterable
             >
               <span style="float: left">{{ item.username }}</span>
               <span v-if="!item.is_active" style="float: right;">{{ item.is_active?'':'已停用' }}</span>

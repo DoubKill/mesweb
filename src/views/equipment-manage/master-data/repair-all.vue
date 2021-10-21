@@ -76,7 +76,7 @@
     >
       <el-form ref="dialogForm" label-width="100px" :model="dialogForm" :rules="rules">
         <el-form-item label="机台:" prop="equip">
-          <el-select v-model="dialogForm.equip" placeholder="请选择">
+          <el-select v-model="dialogForm.equip" placeholder="请选择" @change="changeEquip">
             <el-option
               v-for="item in equips"
               :key="item.id"
@@ -163,8 +163,11 @@ export default {
     async getPartList() {
       try {
         const obj = {
-          level: 5,
+          level: 4,
           equip_info: this.dialogForm.equip
+        }
+        if (!this.dialogForm.equip) {
+          return
         }
         const data = await equipBom('get', null, { params: obj })
         this.equipPartList = data || []
@@ -178,6 +181,11 @@ export default {
         this.dialogForm.equip_area_name = arr[0].equip_area_name
         this.dialogForm.equip_area = arr[0].equip_area_define
       }
+    },
+    changeEquip() {
+      this.$set(this.dialogForm, 'equip_part', '')
+      this.$set(this.dialogForm, 'equip_area_name', '')
+      this.$set(this.dialogForm, 'equip_area', '')
     },
     getVisibleChange(bool) {
       if (bool) {

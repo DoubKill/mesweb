@@ -79,57 +79,48 @@
             </el-input>
           </el-form-item>
           <br>
-          <el-form-item label="">
-            <el-checkbox v-model="formInline.checked" style="margin-left:5px;width:120px">是否巡检</el-checkbox>
+          <el-form-item v-if="!!formInline.equip_type_nid" label="">
+            <el-checkbox v-model="formInline.maintenance_xunjian_flag" style="margin-left:5px;width:120px">是否巡检</el-checkbox>
           </el-form-item>
-          <el-form-item label="巡检标准">
-            <el-input v-model="formInline.user" disabled>
-              <el-button slot="append" icon="el-icon-search" />
-            </el-input><br>
-          </el-form-item>
-          <el-input
-            v-model="formInline.textarea2"
-            type="textarea"
-            maxlength="30"
-            style="width:500px;margin-bottom: 22px;"
-            :autosize="{ minRows: 5}"
-            resize="none"
-            placeholder="巡检描述"
-          />
-          <br>
-          <el-form-item label="">
-            <el-checkbox v-model="formInline.checked" style="margin-left:5px;width:120px">是否维修</el-checkbox>
-          </el-form-item>
-          <el-form-item label="维修标准">
-            <el-input v-model="formInline.user" disabled>
-              <el-button slot="append" icon="el-icon-search" />
+          <el-form-item v-if="!!formInline.equip_type_nid&&formInline.maintenance_xunjian_flag" label="巡检标准">
+            <el-input v-model="formInline.xunjian_standard_name" disabled>
+              <el-button slot="append" icon="el-icon-search" @click="showStandard(formInline.work_type='巡检')" />
             </el-input>
           </el-form-item>
           <br>
-          <el-form-item label="">
-            <el-checkbox v-model="formInline.checked" style="margin-left:5px;width:120px">是否保养</el-checkbox>
+          <el-form-item v-if="formInline.level===5" label="">
+            <el-checkbox v-model="formInline.equip_repair_standard_flag" style="margin-left:5px;width:120px">是否维修</el-checkbox>
           </el-form-item>
-          <el-form-item label="保养标准">
-            <el-input v-model="formInline.user" disabled>
-              <el-button slot="append" icon="el-icon-search" />
+          <el-form-item v-if="formInline.level===5&&formInline.equip_repair_standard_flag" label="维修标准">
+            <el-input v-model="formInline.repair_standard_name" disabled>
+              <el-button slot="append" icon="el-icon-search" @click="showStandard(formInline.work_type='维修')" />
             </el-input>
           </el-form-item>
           <br>
-          <el-form-item label="">
-            <el-checkbox v-model="formInline.checked" style="margin-left:5px;width:120px">是否润滑</el-checkbox>
+          <el-form-item v-if="formInline.level===5" label="">
+            <el-checkbox v-model="formInline.maintenance_baoyang_flag" style="margin-left:5px;width:120px">是否保养</el-checkbox>
           </el-form-item>
-          <el-form-item label="润滑标准">
-            <el-input v-model="formInline.user" disabled>
-              <el-button slot="append" icon="el-icon-search" />
+          <el-form-item v-if="formInline.level===5&&formInline.maintenance_baoyang_flag" label="保养标准">
+            <el-input v-model="formInline.baoyang_standard_name" disabled>
+              <el-button slot="append" icon="el-icon-search" @click="showStandard(formInline.work_type='保养')" />
             </el-input>
           </el-form-item>
           <br>
-          <el-form-item label="">
-            <el-checkbox v-model="formInline.checked" style="margin-left:5px;width:120px">是否计量标定</el-checkbox>
+          <el-form-item v-if="formInline.level===5" label="">
+            <el-checkbox v-model="formInline.maintenance_runhua_flag" style="margin-left:5px;width:120px">是否润滑</el-checkbox>
           </el-form-item>
-          <el-form-item label="标定标准">
-            <el-input v-model="formInline.user" disabled>
-              <el-button slot="append" icon="el-icon-search" />
+          <el-form-item v-if="formInline.level===5&&formInline.maintenance_runhua_flag" label="润滑标准">
+            <el-input v-model="formInline.runhua_standard_name" disabled>
+              <el-button slot="append" icon="el-icon-search" @click="showStandard(formInline.work_type='润滑')" />
+            </el-input>
+          </el-form-item>
+          <br>
+          <el-form-item v-if="formInline.level===5" label="">
+            <el-checkbox v-model="formInline.maintenance_biaoding_flag" style="margin-left:5px;width:120px">是否计量标定</el-checkbox>
+          </el-form-item>
+          <el-form-item v-if="formInline.level===5&&formInline.maintenance_biaoding_flag" label="标定标准">
+            <el-input v-model="formInline.biaoding_standard_name" disabled>
+              <el-button slot="append" icon="el-icon-search" @click="showStandard(formInline.work_type='标定')" />
             </el-input>
           </el-form-item>
           <!-- <br>
@@ -568,6 +559,30 @@
         <el-button type="primary" :loading="btnLoadingPartsc" @click="submitFunPartsc">确 定</el-button>
       </span>
     </el-dialog>
+    <el-dialog
+      :title="`${formInline.work_type}选择`"
+      :visible.sync="dialogVisibleStandard"
+      width="95%"
+    >
+      <repairDefinition
+        v-if="formInline.work_type==='维修'"
+        ref="standardList"
+        :is-dialog="true"
+        :params="{work_type:formInline.work_type,equip_type:formInline.equip_type_nid,equip_part:formInline.part_name,equip_component:formInline.component_name}"
+        :show="dialogVisibleStandard"
+      />
+      <maintainDefinition
+        v-else
+        ref="standardList"
+        :is-dialog="true"
+        :params="{work_type:formInline.work_type,equip_type:formInline.equip_type_nid,equip_part:formInline.part_name,equip_component:formInline.component_name}"
+        :show="dialogVisibleStandard"
+      />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleStandard=false">取 消</el-button>
+        <el-button type="primary" :loading="btnLoadingStandard" @click="submitFunStandard">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -581,9 +596,11 @@ import locationArea from './location-area.vue'
 import equipSelect from '@/components/select_w/equip.vue'
 import regionList from './region'
 import partsDefine from './parts-define'
+import maintainDefinition from '../standard-definition/maintain-definition'
+import repairDefinition from '../standard-definition/repair-definition'
 export default {
   name: 'EquipmentMasterDataBOMManage',
-  components: { page, locationArea, equipTypeSelect, equipSelect, regionList, partsDefine },
+  components: { page, locationArea, equipTypeSelect, equipSelect, regionList, partsDefine, maintainDefinition, repairDefinition },
   mixins: [PartsDefineMixin],
   data() {
     return {
@@ -633,7 +650,9 @@ export default {
       faData: '',
       companyName: '中策橡胶(安吉)有限公司',
       isDialogView: false,
-      currentObj: {}
+      currentObj: {},
+      dialogVisibleStandard: false,
+      btnLoadingStandard: false
     }
   },
   watch: {
@@ -652,10 +671,12 @@ export default {
   methods: {
     async getTree() {
       try {
+        this.loadingTree = true
         const data = await equipBom('get', null, { params: { tree: 1 }})
         this.data = data.results || []
+        this.loadingTree = false
       } catch (e) {
-        //
+        this.loadingTree = false
       }
     },
     async getTreeList() {
@@ -868,6 +889,40 @@ export default {
         this.$message('不能再添加子节点')
       }
     },
+    showStandard() {
+      this.dialogVisibleStandard = true
+    },
+    showRepair() {
+      this.dialogVisibleRepair = true
+    },
+    submitFunStandard() {
+      if (!this.$refs.standardList.currentObj) {
+        this.$message('列表点击选择数据')
+        return
+      }
+      this.dialogVisibleStandard = false
+      const a = this.$refs.standardList.currentObj
+      if (a.work_type === '巡检') {
+        this.formInline.xunjian_standard_name = a.standard_name
+        this.formInline.maintenance_xunjian = a.id
+      }
+      if (a.work_type === '保养') {
+        this.formInline.baoyang_standard_name = a.standard_name
+        this.formInline.maintenance_baoyang = a.id
+      }
+      if (a.work_type === '润滑') {
+        this.formInline.runhua_standard_name = a.standard_name
+        this.formInline.maintenance_runhua = a.id
+      }
+      if (a.work_type === '标定') {
+        this.formInline.biaoding_standard_name = a.standard_name
+        this.formInline.maintenance_biaoding = a.id
+      }
+      if (this.formInline.work_type === '维修') {
+        this.formInline.repair_standard_name = a.standard_name
+        this.formInline.equip_repair_standard = a.id
+      }
+    },
     upperAddNodeFun() {},
     belowAddNodeFun() {},
     copyNodeFun() {
@@ -918,8 +973,6 @@ export default {
           return
         }
       }
-      console.log(this.dialogFormAdd, 3333)
-      console.log(this.selectedTag, 4444)
       if (this.dialogFormAdd.level === 4 && (this.selectedTag.equip_category_id !== this.dialogFormAdd.equip_category_id)) {
         this.$message('机台的机型不一致，不能粘贴')
         return
@@ -971,12 +1024,30 @@ export default {
           this.$message('暂无可保存内容')
           return
         }
+        this.infoUser('equip_repair_standard_flag', 'equip_repair_standard', 'repair_standard_name', '请选择维修标准')
+        this.infoUser('maintenance_xunjian_flag', 'maintenance_xunjian', 'xunjian_standard_name', '请选择巡检标准')
+        this.infoUser('maintenance_baoyang_flag', 'maintenance_baoyang', 'baoyang_standard_name', '请选择保养标准')
+        this.infoUser('maintenance_runhua_flag', 'maintenance_runhua', 'runhua_standard_name', '请选择润滑标准')
+        this.infoUser('maintenance_biaoding_flag', 'maintenance_biaoding', 'biaoding_standard_name', '请选择润滑标准')
         this.infoBtnLoading = true
         await equipBom('put', this.formInline.id, { data: this.formInline })
         this.$message.success('保存成功')
         this.infoBtnLoading = false
       } catch (e) {
+        if (e.message) {
+          this.$message.info(e.message)
+        }
         this.infoBtnLoading = false
+      }
+    },
+    infoUser(flag, id, str, error) {
+      if (!this.formInline[flag]) {
+        this.formInline[id] = ''
+        this.formInline[str] = ''
+        return
+      }
+      if (this.formInline[flag] && !this.formInline[id]) {
+        throw new Error(error)
       }
     },
     showList() {
