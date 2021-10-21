@@ -144,7 +144,7 @@
           >
             <el-table-column
               label="序号"
-              prop="sequence"
+              type="index"
             />
             <el-table-column
               prop="date"
@@ -285,7 +285,7 @@ export default {
       },
       currentPage: 1,
       total: 1,
-      loading: 0,
+      loading: false,
       btnLoading: false,
       btnExportLoad: false,
       currentObj: {}
@@ -310,8 +310,8 @@ export default {
       try {
         this.loading = true
         const data = await equipJobItemStandard('get', null, { params: this.getParams })
-        this.tableData = data.results
-        this.total = data.count
+        this.tableData = data.results || []
+        this.total = data.count || 0
         this.loading = false
       } catch (error) {
         this.loading = false
@@ -379,15 +379,21 @@ export default {
             if (!this.typeForm.id) {
               this.typeForm.work_details = this.tableData1
             }
-            this.btnLoading = true
             const _api = this.typeForm.id ? 'put' : 'post'
+            if (this.typeForm.work_details.length > 0) {
+              this.typeForm.work_details.forEach((d, i) => {
+                d.sequence = i + 1
+              })
+            }
+            this.btnLoading = true
             await equipJobItemStandard(_api, this.typeForm.id || null, { data: this.typeForm })
+            this.btnLoading = false
             this.handleClose(false)
             this.$message.success('添加成功')
             this.getList()
-            this.btnLoading = false
           } catch (e) {
             this.btnLoading = false
+            this.loading = false
             if (e.message) {
               this.$message(e.message)
             }
