@@ -697,6 +697,9 @@ export default {
       }
     },
     submitFun() {
+      if (this.$refs['List'].multipleSelection1 === undefined) {
+        this.$refs['List'].multipleSelection1 = []
+      }
       if (this.$refs['List'].multipleSelection1.length > 0) {
         let data = []
         for (const i in this.typeForm.spare_list) {
