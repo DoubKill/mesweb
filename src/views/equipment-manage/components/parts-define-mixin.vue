@@ -37,6 +37,7 @@ export default {
     },
     async addDialogForm1() {
       this.dialogForm2.equip_component_type = this.dialogForm1.equip_component_type_name
+      this.dialogForm2.use_flag = true
       this.dialogVisible2 = true
       const data = await equipSpareErp('get', null, { params: this.dialogForm2 })
       this.tableData2 = data.results || []
@@ -44,6 +45,7 @@ export default {
       for (const i in this.tableData1) {
         data1 = data1.concat(this.tableData1[i].equip_spare_erp ? this.tableData1[i].equip_spare_erp : this.tableData1[i].id)
       }
+      console.log(data1)
       this.tableData2.forEach(row => {
         if (data1.indexOf(row.id) >= 0) {
           this.$refs.multipleTable.toggleRowSelection(row, true)
@@ -133,6 +135,7 @@ export default {
           this.tableData1.push(this.multipleSelection[index])
         }
       }
+      this.$refs.multipleTable.clearSelection()
       this.dialogForm2 = {
         supplier_name: '',
         spare_code: '',

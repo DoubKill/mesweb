@@ -11,7 +11,7 @@
           @change="changSelect"
         >
           <el-option
-            v-for="item in ['巡检','保养','润滑','标定','维修']"
+            v-for="item in ['巡检','保养','润滑','标定']"
             :key="item"
             :label="item"
             :value="item"
@@ -231,7 +231,7 @@
                 @change="changeCode"
               >
                 <el-option
-                  v-for="item in ['巡检','保养','润滑','标定','维修']"
+                  v-for="item in ['巡检','保养','润滑','标定']"
                   :key="item"
                   :label="item"
                   :value="item"
@@ -548,6 +548,7 @@ export default {
         this.getParams.equip_type = this.params.equip_type
         this.getParams.equip_part = this.params.equip_part
         this.getParams.equip_component = this.params.equip_component
+        this.getParams.use_flag = true
         this.getList()
       }
     }
@@ -558,6 +559,7 @@ export default {
       this.getParams.equip_type = this.params.equip_type
       this.getParams.equip_part = this.params.equip_part
       this.getParams.equip_component = this.params.equip_component
+      this.getParams.use_flag = true
     }
     this.getList()
     this.getTypeNode()
@@ -619,8 +621,6 @@ export default {
         this.typeForm.standard_code = 'BDBZ00X'
         this.typeForm.equip_condition = '停机'
         this.typeForm.important_level = '中'
-      } else if (this.typeForm.work_type === '维修') {
-        this.typeForm.standard_code = 'WXBZ00X'
       }
     },
     changeDebounce() {
@@ -665,6 +665,7 @@ export default {
       if (done) {
         done()
       }
+      this.$refs['List'].$refs.multipleTable1.clearSelection()
     },
     handleClose2(done) {
       this.dialogVisible1 = false
@@ -703,7 +704,6 @@ export default {
         }
         for (let index = 0; index < this.$refs['List'].multipleSelection1.length; index++) {
           if (data.indexOf(this.$refs['List'].multipleSelection1[index].id) === -1) {
-            console.log(this.typeForm.spare_list)
             if (this.typeForm.spare_list === undefined) {
               this.typeForm.spare_list = []
             }
@@ -722,6 +722,7 @@ export default {
       } else {
         this.$message.info('请选择其中一种物料')
       }
+      this.$refs['List'].$refs.multipleTable1.clearSelection()
     },
     submitFun1() {
       if (this.$refs['List1'].currentObj.standard_name) {

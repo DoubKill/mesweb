@@ -207,6 +207,7 @@ export default {
       if (val) {
         this.formInline = {}
         this.formInline.category_no = this.equipType
+        this.formInline.use_flag = true
         this.getList()
       }
     }
@@ -214,6 +215,7 @@ export default {
   created() {
     if (this.equipType) {
       this.formInline.category_no = this.equipType
+      this.formInline.use_flag = true
     }
     this.getTypeNode()
     this.getList()

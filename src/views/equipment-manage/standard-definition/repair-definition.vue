@@ -507,6 +507,7 @@ export default {
         this.getParams.equip_type = this.params.equip_type
         this.getParams.equip_part = this.params.equip_part
         this.getParams.equip_component = this.params.equip_component
+        this.getParams.use_flag = true
         this.getList()
       }
     }
@@ -516,6 +517,7 @@ export default {
       this.getParams.equip_type = this.params.equip_type
       this.getParams.equip_part = this.params.equip_part
       this.getParams.equip_component = this.params.equip_component
+      this.getParams.use_flag = true
     }
     this.getList()
     this.getTypeNode()
@@ -587,7 +589,6 @@ export default {
       }
       for (let index = 0; index < this.$refs['List'].multipleSelection1.length; index++) {
         if (data.indexOf(this.$refs['List'].multipleSelection1[index].id) === -1) {
-          console.log(this.typeForm.spare_list)
           if (this.typeForm.spare_list === undefined) {
             this.typeForm.spare_list = []
           }
@@ -603,6 +604,7 @@ export default {
           })
         }
       }
+      this.$refs['List'].$refs.multipleTable1.clearSelection()
       this.dialogVisible = false
     },
     submitFun1() {
@@ -639,6 +641,7 @@ export default {
       if (done) {
         done()
       }
+      this.$refs['List'].$refs.multipleTable1.clearSelection()
     },
     handleClose2(done) {
       this.dialogVisible1 = false

@@ -19,9 +19,9 @@
         <el-input v-model="formInline.specification" clearable placeholder="规格型号" @input="debounceList" />
       </el-form-item>
       <el-form-item label="是否启用">
-        <el-select v-model="formInline.use_flag" clearable placeholder="是否启用" @change="changeSearch">
+        <el-select v-model="formInline.use_flag" clearable placeholder="是否启用" :disabled="isSearch" @change="changeSearch">
           <el-option
-            v-for="item in [{label:'Y',value:1},{label:'N',value:0}]"
+            v-for="item in [{label:'Y',value:true},{label:'N',value:false}]"
             :key="item.value"
             :label="item.label"
             :value="item.value"
@@ -432,12 +432,15 @@ export default {
   watch: {
     isSearch(val) {
       if (val) {
-        this.formInline = { page: 1 }
+        this.formInline = { page: 1, use_flag: true }
         this.getList()
       }
     }
   },
   created() {
+    if (this.isSearch) {
+      this.formInline.use_flag = true
+    }
     this.getList()
     this.getList1()
     this.getList3()
@@ -449,9 +452,7 @@ export default {
         const data = await equipSpareErp('get', null, { params: this.formInline })
         this.tableData = data.results || []
         this.total = data.count
-        console.log(this.list)
         if (this.list.length > 0) {
-          this.$refs.multipleTable1.clearSelection()
           let data1 = []
           for (const i in this.list) {
             data1 = data1.concat(this.list[i].equip_spare_erp__id)
@@ -461,8 +462,6 @@ export default {
               this.$refs.multipleTable1.toggleRowSelection(row, true)
             }
           })
-        } else {
-          this.$refs.multipleTable1.clearSelection()
         }
         this.loading = false
       } catch (e) {
