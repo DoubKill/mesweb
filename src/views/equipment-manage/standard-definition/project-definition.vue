@@ -211,8 +211,6 @@
                   />
                 </div>
                 <div v-if="row.check_standard_type==='数值范围'">
-                  {{ row.check_standard_desc_a }}
-                  {{ row.check_standard_desc_b }}
                   <el-input-number v-model="row.check_standard_desc_a" style="width:120px" controls-position="right" :min="0" :max="row.check_standard_desc_b" />
                   -
                   <el-input-number v-model="row.check_standard_desc_b" style="width:120px" controls-position="right" :min="row.check_standard_desc_a" />
@@ -316,8 +314,8 @@ export default {
         this.tableData.forEach((d, i) => {
           d.work_details.forEach(D => {
             if (D.check_standard_type === '数值范围') {
-              D.check_standard_desc_a = D.check_standard_desc.split('-')[0]
-              D.check_standard_desc_b = D.check_standard_desc.split('-')[1]
+              D.check_standard_desc_a = Number(D.check_standard_desc.split('-')[0])
+              D.check_standard_desc_b = Number(D.check_standard_desc.split('-')[1])
             }
           })
         })
