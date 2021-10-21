@@ -38,7 +38,7 @@
       <el-form-item label="是否已绑定备件">
         <el-select v-model="formInline.is_binding" clearable placeholder="是否绑定" style="" @change="changeSearch">
           <el-option
-            v-for="item in [{label:'Y',value:1},{label:'N',value:0}]"
+            v-for="item in [{label:'Y',value:true},{label:'N',value:false}]"
             :key="item.value"
             :label="item.label"
             :value="item.value"
@@ -46,7 +46,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="是否启用">
-        <el-select v-model="formInline.use_flag" clearable placeholder="是否启用" style="" @change="changeSearch">
+        <el-select v-model="formInline.use_flag" clearable placeholder="是否启用" style="" :disabled="isMultiple===true" @change="changeSearch">
           <el-option
             v-for="item in [{label:'Y',value:1},{label:'N',value:0}]"
             :key="item.value"
@@ -443,6 +443,7 @@ export default {
         this.formInline = {}
         this.formInline.equip_type = this.equipType.category_no
         this.formInline.equip_part = this.equipType.equip_part_name
+        this.formInline.use_flag = 1
         this.getList()
       }
     }
@@ -451,6 +452,7 @@ export default {
     if (this.equipType) {
       this.formInline.equip_type = this.equipType.category_no
       this.formInline.equip_part = this.equipType.equip_part_name
+      this.formInline.use_flag = 1
     }
     this.getTypeNode()
     this.getList()
