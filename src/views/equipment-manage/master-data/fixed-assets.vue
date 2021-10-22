@@ -21,11 +21,10 @@
         <!-- </div> -->
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button type="primary" @click="add">新建</el-button>
-      </el-form-item>
-      <el-form-item style="float: right">
+        <el-button v-permission="['equip_property', 'export']" type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
         <el-upload
-          class="upload-demo"
+          v-permission="['equip_property', 'import']"
+          style="margin:0 8px;display:inline-block"
           action="string"
           accept=".xls, .xlsx"
           :http-request="Upload"
@@ -33,9 +32,7 @@
         >
           <el-button type="primary">导入Excel</el-button>
         </el-upload>
-      </el-form-item>
-      <el-form-item style="float: right">
-        <el-button type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
+        <el-button v-permission="['equip_property', 'add']" type="primary" @click="add">新建</el-button>
       </el-form-item>
     </el-form>
 
@@ -144,13 +141,13 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
-              v-permission="['property', 'change']"
+              v-permission="['equip_property', 'change']"
               size="mini"
               @click="showEditUserDialog(scope.row)"
             >编辑
             </el-button>
             <el-button
-              v-permission="['property', 'delete']"
+              v-permission="['equip_property', 'delete']"
               size="mini"
               type="danger"
               @click="handleUserDelete(scope.row)"
@@ -295,8 +292,8 @@
           <el-select v-model="formitem.equip_type" placeholder="请选择">
             <el-option
               v-for="item in options"
-              :key="item.category_name"
-              :label="item.category_name"
+              :key="item.category_no"
+              :label="item.category_no"
               :value="item.id"
             />
           </el-select>

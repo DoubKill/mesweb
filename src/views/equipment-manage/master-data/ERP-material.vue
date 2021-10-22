@@ -3,7 +3,7 @@
     <!-- ERP备件物料信息 -->
     <el-form :inline="true">
       <el-form-item label="备件分类:">
-        <el-select v-model="search.equip_component_type" clearable placeholder="备件分类" @change="changeSearch">
+        <el-select v-model="search.equip_component_type" clearable placeholder="备件分类" style="width:150px" @change="changeSearch">
           <el-option
             v-for="item in options"
             :key="item.equip_component_type__component_type_name"
@@ -19,7 +19,7 @@
         <el-input v-model="search.specification" placeholder="请输入内容" @input="debounceList" />
       </el-form-item>
       <el-form-item label="是否启用">
-        <el-select v-model="search.use_flag" clearable placeholder="是否启用" @change="changeSearch">
+        <el-select v-model="search.use_flag" clearable placeholder="是否启用" style="width:120px" @change="changeSearch">
           <el-option
             v-for="item in [{label:'Y',value:1},{label:'N',value:0}]"
             :key="item.value"
@@ -31,12 +31,11 @@
       <el-form-item label="供应商名称:">
         <el-input v-model="search.supplier_name" placeholder="请输入内容" @input="debounceList" />
       </el-form-item>
-      <br>
       <el-form-item style="float:right">
-        <el-button type="primary" @click="onSubmit">同步ERP</el-button>
-      </el-form-item>
-      <el-form-item style="float:right">
+        <el-button v-permission="['equip_spare_erp', 'export']" type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
         <el-upload
+          v-permission="['equip_spare_erp', 'import']"
+          style="margin:0 8px;display:inline-block"
           action="string"
           accept=".xls, .xlsx"
           :http-request="Upload"
@@ -44,9 +43,7 @@
         >
           <el-button type="primary">导入Excel</el-button>
         </el-upload>
-      </el-form-item>
-      <el-form-item style="float:right">
-        <el-button type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
+        <el-button v-permission="['equip_spare_erp', 'sync']" type="primary" @click="onSubmit">同步ERP</el-button>
       </el-form-item>
     </el-form>
     <el-table

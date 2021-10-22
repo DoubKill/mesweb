@@ -29,8 +29,9 @@
         <el-input v-model="formInline.part_name" clearable placeholder="部位名称" @input="changeSearch" />
       </el-form-item>
       <el-form-item v-if="!equipType" style="float:right">
-        <el-button type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
+        <el-button v-permission="['equip_part', 'export']" type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
         <el-upload
+          v-permission="['equip_part', 'import']"
           style="margin:0 8px;display:inline-block"
           action="string"
           accept=".xls, .xlsx"
@@ -39,7 +40,7 @@
         >
           <el-button type="primary">导入Excel</el-button>
         </el-upload>
-        <el-button type="primary" @click="onSubmit">新建</el-button>
+        <el-button v-permission="['equip_part', 'add']" type="primary" @click="onSubmit">新建</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -86,10 +87,12 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
+              v-permission="['equip_part', 'change']"
               size="mini"
               @click="showEditDialog(scope.row)"
             >编辑</el-button>
             <el-button
+              v-permission="['equip_part', 'delete']"
               size="mini"
               type="danger"
               plain
