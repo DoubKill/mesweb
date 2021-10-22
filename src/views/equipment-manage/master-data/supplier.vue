@@ -196,7 +196,7 @@
 <script>
 import page from '@/components/page'
 import { debounce } from '@/utils'
-import { equipSupplierList, getSupplierType, equipSupplierListDown, equipSupplierImport } from '@/api/jqy'
+import { equipSupplierList, getSupplierType, equipSupplierListDown, equipSupplierImport, equipSupplierGetName } from '@/api/jqy'
 export default {
   name: 'EquipmentMasterDataSupplier',
   components: { page },
@@ -220,7 +220,7 @@ export default {
         supplier_name: [{ required: true, message: '不能为空', trigger: 'blur' }]
       },
       SupplierTypeList: [],
-      dialogForm: { supplier_code: 'GYS00X' },
+      dialogForm: {},
       btnLoading: false
     }
   },
@@ -258,9 +258,15 @@ export default {
       this.formInline.page_size = pageSize
       this.getList()
     },
-    onSubmit() {
-      this.dialogForm = { supplier_code: 'GYS00X' }
+    async onSubmit() {
+      this.dialogForm = { supplier_code: '' }
       this.dialogVisible = true
+      try {
+        const data = await equipSupplierGetName('get', null, { params: {}})
+        this.dialogForm.supplier_code = data.results
+      } catch (e) {
+        this.$message.info('获取编号失败')
+      }
     },
     showEditDialog(row) {
       this.dialogForm = JSON.parse(JSON.stringify(row))

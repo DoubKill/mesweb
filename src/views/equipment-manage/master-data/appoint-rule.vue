@@ -290,6 +290,7 @@ import page from '@/components/page'
 import equipTypeSelect from '../components/equip-type-select'
 import commons from '@/utils/common'
 import { equipOrderAssignRule, equipOrderAssignRuleImportXlsx } from '@/api/base_w_four'
+import { equipOrderAssignRuleGetName } from '@/api/jqy'
 export default {
   name: 'EquipmentMasterDataAppointRule',
   components: { page, equipTypeSelect },
@@ -356,10 +357,16 @@ export default {
       this.formInline.page = 1
       this.getList()
     },
-    onSubmit() {
-      this.dialogForm = {}
+    async onSubmit() {
+      this.dialogForm = { rule_code: '' }
       this.dialogForm.equip_type = ''
       this.dialogVisible = true
+      try {
+        const data = await equipOrderAssignRuleGetName('get', null, { params: {}})
+        this.dialogForm.rule_code = data.results
+      } catch (e) {
+        this.$message.info('获取编号失败')
+      }
     },
     showEditDialog(row) {
       this.dialogForm = JSON.parse(JSON.stringify(row))

@@ -170,7 +170,7 @@
 
 <script>
 import page from '@/components/page'
-import { equipPartNew, equipsCategory, getSupplierType, equipPartNewDown, equipPartNewImport } from '@/api/jqy'
+import { equipPartNew, equipsCategory, getSupplierType, equipPartNewDown, equipPartNewImport, getDefaultCode } from '@/api/jqy'
 export default {
   name: 'EquipmentMasterDataRegion',
   components: { page },
@@ -296,9 +296,15 @@ export default {
       this.getList()
       this.$refs.singleTable.setCurrentRow(this.multipleSelection)
     },
-    onSubmit() {
-      this.dialogForm = {}
+    async onSubmit() {
+      this.dialogForm = { part_code: '' }
       this.dialogVisible = true
+      try {
+        const data = await getDefaultCode('get', null, { params: { work_type: '部位' }})
+        this.dialogForm.part_code = data
+      } catch (e) {
+        this.$message.info('获取编号失败')
+      }
     },
     getVal() {
       return this.multipleSelection

@@ -493,7 +493,7 @@
 import { debounce } from '@/utils'
 import SparePartsCode from '../master-data/spare-parts-code'
 import ProjectDefinition from './project-definition'
-import { equipsCategory, equipMaintenanceStandard, equipPartNew, equipComponent, equipMaintenanceStandardImport, equipMaintenanceStandardDown } from '@/api/jqy'
+import { equipsCategory, equipMaintenanceStandard, equipPartNew, equipComponent, equipMaintenanceStandardImport, equipMaintenanceStandardDown, equipMaintenanceStandardGetName } from '@/api/jqy'
 import page from '@/components/page'
 
 export default {
@@ -608,7 +608,7 @@ export default {
         }
       }
     },
-    changeCode() {
+    async changeCode() {
       if (this.typeForm.equip_job_item_standard_name) {
         this.typeForm.equip_job_item_standard_name = null
       }
@@ -631,6 +631,13 @@ export default {
         this.typeForm.standard_code = 'BDBZ00X'
         this.typeForm.equip_condition = '停机'
         this.typeForm.important_level = '中'
+      }
+      this.typeForm.standard_code = ''
+      try {
+        const data = await equipMaintenanceStandardGetName('get', null, { params: { rule_code: this.typeForm.work_type }})
+        this.typeForm.standard_code = data.results
+      } catch (e) {
+        this.$message.info('获取编号失败')
       }
     },
     changeDebounce() {

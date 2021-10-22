@@ -186,6 +186,15 @@ export function equipSupplierListDown(params) {
   })
 }
 
+export function equipSupplierGetName(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipSupplierGetName + id + '/' : API.EquipSupplierGetName,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 // 供应商类别列表
 export function getSupplierType(method, id, data = {}) {
   const obj = {
@@ -278,6 +287,15 @@ export function equipAreaDefineDown(params) {
     params,
     responseType: 'blob'
   })
+}
+
+export function equipAreaDefineGetName(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipAreaDefineGetName + id + '/' : API.EquipAreaDefineGetName,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
 }
 
 // 设备部位定义
@@ -412,6 +430,15 @@ export function equipFaultSignalDown(params) {
   })
 }
 
+export function equipFaultSignalGetName(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipFaultSignalGetName + id + '/' : API.EquipFaultSignalGetName,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 // 设备维护作业标准定义
 export function equipMaintenanceStandard(method, id, data = {}) {
   const obj = {
@@ -440,6 +467,15 @@ export function equipMaintenanceStandardDown(params) {
   })
 }
 
+export function equipMaintenanceStandardGetName(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipMaintenanceStandardGetName + id + '/' : API.EquipMaintenanceStandardGetName,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 // 设备维修作业标准定义
 export function equipRepairStandard(method, id, data = {}) {
   const obj = {
@@ -466,4 +502,31 @@ export function equipRepairStandardDown(params) {
     params,
     responseType: 'blob'
   })
+}
+
+export function equipRepairStandardGetName(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipRepairStandardGetName + id + '/' : API.EquipRepairStandardGetName,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipOrderAssignRuleGetName(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipOrderAssignRuleGetName + id + '/' : API.EquipOrderAssignRuleGetName,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function getDefaultCode(method, id, data = {}) {
+  const obj = {
+    url: id ? API.GetDefaultCode + id + '/' : API.GetDefaultCode,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
 }

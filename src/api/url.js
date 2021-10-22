@@ -490,6 +490,7 @@ export default {
   EquipTargetMtbmttrSettings: '/api/v1/equipment/equip-target-mtbmttr-settings/', // MTBF/MTTR设定
   EquipOrderAssignRule: '/api/v1/equipment/equip-order-assign-rule/',
   EquipOrderAssignRuleImportXlsx: '/api/v1/equipment/equip-order-assign-rule/import_xlsx/',
+  EquipOrderAssignRuleGetName: '/api/v1/equipment/equip-order-assign-rule/get_name/',
   EquipMachineHaltType: '/api/v1/equipment/equip-machine-halt-type/',
   EquipMachineHaltReason: '/api/v1/equipment/equip-machine-halt-reason/',
   SectionUserTree: '/api/v1/system/section/tree/', // 部门用户树结构
@@ -503,6 +504,7 @@ export default {
   // 供应商管理台账
   EquipSupplier: '/api/v1/equipment/equip-supplier/',
   EquipSupplierImport: '/api/v1/equipment/equip-supplier/import_xlsx/',
+  EquipSupplierGetName: '/api/v1/equipment/equip-supplier/get_name/',
   // 设备类型
   EquipsCategory: '/api/v1/basics/equips-category/',
   // 设备固定资产台账
@@ -511,6 +513,7 @@ export default {
   // 设备位置区域定义
   EquipAreaDefine: '/api/v1/equipment/equip-area-define/',
   EquipAreaDefineImport: '/api/v1/equipment/equip-area-define/import_xlsx/',
+  EquipAreaDefineGetName: '/api/v1/equipment/equip-area-define/get_name/',
   // 设备部位定义
   EquipPartNew: '/api/v1/equipment/equip-part-new/',
   EquipPartNewImport: '/api/v1/equipment/equip-part-new/import_xlsx/',
@@ -528,10 +531,14 @@ export default {
   // 设备故障信号定义
   EquipFaultSignal: '/api/v1/equipment/equip-fault-signal/',
   EquipFaultSignalImport: '/api/v1/equipment/equip-fault-signal/import_xlsx/',
+  EquipFaultSignalGetName: '/api/v1/equipment/equip-fault-signal/get_name/',
   // 设备维护作业标准定义
   EquipMaintenanceStandard: '/api/v1/equipment/equip_maintenance_standard/',
   EquipMaintenanceStandardImport: '/api/v1/equipment/equip_maintenance_standard/import_xlsx/',
+  EquipMaintenanceStandardGetName: '/api/v1/equipment/equip_maintenance_standard/get_name/',
   // 设备维修作业标准定义
   EquipRepairStandard: '/api/v1/equipment/equip-repair-standard/',
-  EquipRepairStandardImport: '/api/v1/equipment/equip-repair-standard/import_xlsx/'
+  EquipRepairStandardImport: '/api/v1/equipment/equip-repair-standard/import_xlsx/',
+  EquipRepairStandardGetName: '/api/v1/equipment/equip-repair-standard/get_name/',
+  GetDefaultCode: '/api/v1/equipment/get-default-code/'
 }
