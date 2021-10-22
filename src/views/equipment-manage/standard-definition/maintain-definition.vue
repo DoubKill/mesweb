@@ -609,6 +609,12 @@ export default {
       }
     },
     changeCode() {
+      if (this.typeForm.equip_job_item_standard_name) {
+        this.typeForm.equip_job_item_standard_name = null
+      }
+      if (this.typeForm.equip_job_item_standard_detail) {
+        this.typeForm.equip_job_item_standard_detail = null
+      }
       if (this.typeForm.work_type === '巡检') {
         this.typeForm.standard_code = 'XJBZ00X'
         this.typeForm.equip_condition = '不停机'
