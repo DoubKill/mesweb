@@ -192,7 +192,7 @@
           label="备件分类"
           prop="equip_component_type"
         >
-          <el-select v-model="dialogForm.equip_component_type" placeholder="请选择">
+          <el-select v-model="dialogForm.equip_component_type" :disabled="type!=='新建'" placeholder="请选择">
             <el-option
               v-for="item in options1"
               :key="item.component_type_name"
