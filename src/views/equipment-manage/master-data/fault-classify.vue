@@ -23,6 +23,7 @@
           </el-form-item>
           <el-form-item v-if="!isDialog">
             <el-button
+              v-permission="['equip_fault_type', 'add']"
               type="primary"
               style="margin-bottom:10px"
               @click="addArea(true)"
@@ -62,11 +63,13 @@
             <template slot-scope="scope">
               <el-button-group>
                 <el-button
+                  v-permission="['equip_fault_type', 'change']"
                   size="mini"
                   @click.stop="editArea(scope.row,true)"
                 >编辑
                 </el-button>
                 <el-button
+                  v-permission="['equip_fault_type', 'delete']"
                   size="mini"
                   type="danger"
                   plain
@@ -105,6 +108,7 @@
           </el-form-item>
           <el-form-item v-if="!isDialog">
             <el-button
+              v-permission="['equip_fault_type', 'add']"
               style="margin-bottom:10px;float:right"
               :disabled="equip_machine_halt_type_id&&isLeftStop?false:true"
               type="primary"
@@ -154,11 +158,13 @@
             <template slot-scope="scope">
               <el-button-group>
                 <el-button
+                  v-permission="['equip_fault_type', 'change']"
                   size="mini"
                   @click.stop="editArea(scope.row,false)"
                 >编辑
                 </el-button>
                 <el-button
+                  v-permission="['equip_fault_type', 'delete']"
                   size="mini"
                   type="danger"
                   plain

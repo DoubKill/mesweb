@@ -194,7 +194,7 @@ export const equipRoutes = [
             meta: {
               faName: 'StandardDefinition',
               title: '作业项目标准定义',
-              permissionName: ''
+              permissionName: 'equip_job_standard'
             }
           },
           {
@@ -204,7 +204,7 @@ export const equipRoutes = [
             meta: {
               faName: 'StandardDefinition',
               title: '维护作业标准定义',
-              permissionName: ''
+              permissionName: 'equip_maintenance_standard'
             }
           },
           {
@@ -214,7 +214,7 @@ export const equipRoutes = [
             meta: {
               faName: 'StandardDefinition',
               title: '维修作业标准定义',
-              permissionName: ''
+              permissionName: 'equip_repair_standard'
             }
           }
         ]
@@ -308,7 +308,7 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentMasterData',
               title: '供应商管理台账',
-              permissionName: ''
+              permissionName: 'equip_supplier'
             }
           },
           {
@@ -318,7 +318,7 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentMasterData',
               title: '设备固定资产台账',
-              permissionName: ''
+              permissionName: 'equip_property'
             }
           },
           {
@@ -328,7 +328,7 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentMasterData',
               title: '设备位置区域定义',
-              permissionName: ''
+              permissionName: 'equip_area'
             }
           },
           // {
@@ -348,7 +348,7 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentMasterData',
               title: '设备部位定义',
-              permissionName: ''
+              permissionName: 'equip_part'
             }
           },
           {
@@ -358,7 +358,7 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentMasterData',
               title: '设备部件分类',
-              permissionName: ''
+              permissionName: 'equip_component_type'
             }
           },
           {
@@ -368,7 +368,7 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentMasterData',
               title: '设备部件定义',
-              permissionName: ''
+              permissionName: 'equip_component'
             }
           },
           {
@@ -378,7 +378,7 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentMasterData',
               title: '设备BOM管理',
-              permissionName: ''
+              permissionName: 'equip_bom'
             }
           },
           {
@@ -388,7 +388,7 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentMasterData',
               title: 'ERP备件物料信息',
-              permissionName: ''
+              permissionName: 'equip_spare_erp'
             }
           },
           {
@@ -398,7 +398,7 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentMasterData',
               title: '备件代码定义',
-              permissionName: ''
+              permissionName: 'equip_spare'
             }
           },
           {
@@ -408,7 +408,7 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentMasterData',
               title: '设备故障分类管理',
-              permissionName: ''
+              permissionName: 'equip_fault_type'
             }
           },
           {
@@ -418,7 +418,7 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentMasterData',
               title: '设备故障信号定义',
-              permissionName: ''
+              permissionName: 'equip_fault_signal'
             }
           },
           {
@@ -428,7 +428,7 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentMasterData',
               title: '设备停机原因定义',
-              permissionName: ''
+              permissionName: 'equip_halt_reason'
             }
           },
           {
@@ -438,7 +438,7 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentMasterData',
               title: '工单指派规则定义',
-              permissionName: ''
+              permissionName: 'equip_assign_rule'
             }
           },
           {
@@ -448,7 +448,7 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentMasterData',
               title: '人员组织架构',
-              permissionName: ''
+              permissionName: 'department'
             }
           },
           {
@@ -458,7 +458,7 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentMasterData',
               title: '目标MTBF/MTTR设定',
-              permissionName: ''
+              permissionName: 'equip_mtbf_mttr_setting'
             }
           },
           {
@@ -468,7 +468,7 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentMasterData',
               title: '维修包干定义',
-              permissionName: ''
+              permissionName: 'equip_maintenance_setting'
             }
           }
         ]

@@ -23,7 +23,7 @@
           </el-form-item> -->
         </el-form>
         <h4>维修区域设定</h4>
-        <el-button style="float:right;margin-right:20px" size="small" type="primary" @click="addFun">添加</el-button>
+        <el-button v-permission="['equip_maintenance_setting', 'add']" style="float:right;margin-right:20px" size="small" type="primary" @click="addFun">添加</el-button>
         <el-table
           :data="tableData"
           style="width: 90%"
@@ -50,6 +50,7 @@
           >
             <template slot-scope="scope">
               <el-button
+                v-permission="['equip_maintenance_setting', 'delete']"
                 size="mini"
                 type="danger"
                 :disabled="btnLoading"

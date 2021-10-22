@@ -2,6 +2,7 @@
   <div class="MTBF-MTTR">
     <!-- 目标MTBF/MTTR设定 -->
     <el-button
+      v-permission="['equip_mtbf_mttr_setting', 'change']"
       type="primary"
       style="margin-bottom:10px;float:right"
       :loading="btnLoading"

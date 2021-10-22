@@ -21,7 +21,7 @@
       </el-aside>
       <el-main class="border-style">
         <h3>设备BOM机台节点 详细信息
-          <el-button style="float:right;margin-right:10px" type="primary" :loading="infoBtnLoading" @click="onSubmit">保存</el-button>
+          <el-button v-permission="['equip_bom', 'change']" style="float:right;margin-right:10px" type="primary" :loading="infoBtnLoading" @click="onSubmit">保存</el-button>
         </h3>
         <el-form v-loading="loading" :inline="true" label-width="100px">
           <el-form-item label="分厂">
@@ -315,14 +315,14 @@
       </el-table>
     </div>
     <ul v-show="visible" :style="{left:left+'px',top:top+'px'}" class="contextmenu">
-      <li @click="addNodeFun(1)">添加子节点</li>
+      <li v-permission="['equip_bom', 'add']" @click="addNodeFun(1)">添加子节点</li>
       <!-- <li @click="addNodeFun(2)">上方添加节点</li>
       <li @click="addNodeFun(3)">下方添加节点</li> -->
-      <li @click="copyNodeFun">复制节点</li>
-      <li @click="pasteNodeFun">粘贴子节点</li>
+      <li v-permission="['equip_bom', 'add']" @click="copyNodeFun">复制节点</li>
+      <li v-permission="['equip_bom', 'add']" @click="pasteNodeFun">粘贴子节点</li>
       <!-- <li @click="upperPasteNodeFun">上方粘贴节点</li>
       <li @click="belowPasteNodeFun">下方粘贴节点</li> -->
-      <li @click="delNodeFun">删除节点</li>
+      <li v-permission="['equip_bom', 'delete']" @click="delNodeFun">删除节点</li>
     </ul>
     <el-dialog
       title="加入子节点信息"

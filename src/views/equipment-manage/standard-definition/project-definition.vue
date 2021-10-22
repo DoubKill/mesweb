@@ -22,8 +22,9 @@
         <el-input v-model="getParams.standard_name" clearable @input="changDebounce" />
       </el-form-item>
       <el-form-item v-if="!isDialog" style="float:right">
-        <el-button :loading="btnExportLoad" type="primary" style="margin-right:8px" @click="templateDownload">导出Excel</el-button>
+        <el-button v-permission="['equip_job_standard', 'export']" :loading="btnExportLoad" type="primary" style="margin-right:8px" @click="templateDownload">导出Excel</el-button>
         <el-upload
+          v-permission="['equip_job_standard', 'import']"
           style="margin-right:8px;display:inline-block"
           action="string"
           accept=".xls, .xlsx"
@@ -33,6 +34,7 @@
           <el-button type="primary">导入Excel</el-button>
         </el-upload>
         <el-button
+          v-permission="['equip_job_standard', 'add']"
           type="primary"
           @click="onSubmit"
         >新建</el-button>
@@ -85,12 +87,12 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
-              v-permission="['spare_type', 'change']"
+              v-permission="['equip_job_standard', 'change']"
               size="mini"
               @click="showDialog(scope.row)"
             >编辑</el-button>
             <el-button
-              v-permission="['spare_type', 'delete']"
+              v-permission="['equip_job_standard', 'delete']"
               size="mini"
               type="danger"
               plain
