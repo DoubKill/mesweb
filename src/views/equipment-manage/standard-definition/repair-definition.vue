@@ -544,7 +544,7 @@ export default {
       if (val) {
         if (this.typeForm.equip_type) {
           try {
-            const data = await equipPartNew('get', null, { params: { equip_type: this.typeForm.equip_type }})
+            const data = await equipPartNew('get', null, { params: { equip_type: this.typeForm.equip_type, use_flag: true }})
             this.options1 = data.results || []
           } catch (e) {
             //
@@ -559,7 +559,7 @@ export default {
       if (val) {
         if (this.typeForm.equip_part) {
           try {
-            const data = await equipComponent('get', null, { params: { component_id: this.typeForm.equip_part }})
+            const data = await equipComponent('get', null, { params: { equip_part: this.typeForm.equip_part, use_flag: 1 }})
             this.options2 = data.results || []
           } catch (error) {
             this.options2 = []
