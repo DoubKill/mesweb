@@ -23,41 +23,46 @@
         <h3>设备BOM机台节点 详细信息
           <el-button v-permission="['equip_bom', 'change']" style="float:right;margin-right:10px" type="primary" :loading="infoBtnLoading" @click="onSubmit">保存</el-button>
         </h3>
+        <h2 v-if="!formInline.level">中策橡胶(安吉)有限公司</h2>
         <el-form v-loading="loading" :inline="true" label-width="100px">
-          <el-form-item label="分厂">
+          <el-form-item v-if="formInline.level" label="分厂">
             <el-input v-model="formInline.factoryName" disabled />
           </el-form-item>
-          <el-form-item label="设备类型">
-            <el-input v-model="formInline.property_type_node" disabled /><br>
+          <el-form-item v-if="formInline.level>1" label="设备类型">
+            <el-input v-model="formInline.property_type_node" disabled />
             <!-- <equipTypeSelect :default-val="formInline.equip_type" :is-created="true" @equipTypeSelect="equipTypeSelect" /> -->
-          </el-form-item><br>
-          <el-form-item label="设备机台编号">
+            <br>
+          </el-form-item>
+          <el-form-item v-if="formInline.level>2" label="设备机台编号">
             <el-input v-model="formInline.equip_no" disabled />
           </el-form-item>
-          <el-form-item label="设备机台名称">
+          <el-form-item v-if="formInline.level>2" label="设备机台名称">
             <el-input v-model="formInline.equip_name" disabled />
-          </el-form-item><br>
-          <el-form-item label="设备机台状态">
+            <br>
+          </el-form-item>
+          <el-form-item v-if="formInline.level>2" label="设备机台状态">
             <el-input v-model="formInline.equip_status" disabled />
           </el-form-item>
-          <el-form-item label="设备机台规格">
+          <el-form-item v-if="formInline.level>2" label="设备机台规格">
             <el-input v-model="formInline.equip_type" disabled />
-          </el-form-item><br>
+            <br>
+          </el-form-item>
 
-          <el-form-item label="设备部位编号">
+          <el-form-item v-if="formInline.level>3" label="设备部位编号">
             <el-input v-model="formInline.part_code" disabled />
           </el-form-item>
-          <el-form-item label="设备部位名称">
+          <el-form-item v-if="formInline.level>3" label="设备部位名称">
             <el-input v-model="formInline.part_name" disabled />
-          </el-form-item><br>
+            <br>
+          </el-form-item>
 
-          <el-form-item label="设备部件编号">
+          <el-form-item v-if="formInline.level>4" label="设备部件编号">
             <el-input v-model="formInline.component_code" disabled />
           </el-form-item>
-          <el-form-item label="设备部件名称">
+          <el-form-item v-if="formInline.level>4" label="设备部件名称">
             <el-input v-model="formInline.component_name" disabled />
           </el-form-item>
-          <el-form-item label="设备部件规格">
+          <el-form-item v-if="formInline.level>4" label="设备部件规格">
             <el-input v-model="formInline.component_type" disabled />
             <el-button
               size="mini"
@@ -67,18 +72,19 @@
               @click="showSpareDialog({id:formInline.component,equip_part_name:formInline.part_name,
                                        component_code:formInline.component_code,equip_component_type_name:formInline.component_type,component_name:formInline.component_name})"
             >绑定备件</el-button>
-          </el-form-item><br>
+            <br>
+          </el-form-item>
           <!-- <el-form-item label="设备部件状态">
             <el-input v-model="formInline.user" disabled />
           </el-form-item><br> -->
 
-          <el-form-item label="区域编号">
+          <el-form-item v-if="formInline.level>2" label="区域编号">
             <el-input v-model="formInline.equip_area_code" style="width:150px" disabled />
             <el-input v-model="formInline.equip_area_name" disabled>
               <el-button slot="append" :disabled="!formInline.equip_no" icon="el-icon-search" @click="showLocation(false)" />
             </el-input>
+            <br>
           </el-form-item>
-          <br>
           <el-form-item v-if="!!formInline.equip_type_nid" label="">
             <el-checkbox v-model="formInline.maintenance_xunjian_flag" style="margin-left:5px;width:120px">是否巡检</el-checkbox>
           </el-form-item>
@@ -708,6 +714,7 @@ export default {
       try {
         this.loadingTree = true
         const data = await equipBom('get', this.nodeId)
+        console.log(data, 565656)
         Object.assign(this.formInline, data || {})
         this.formInline = Object.assign({}, this.formInline)
         this.loadingTree = false
@@ -868,8 +875,11 @@ export default {
     },
     nodeClick(row, node) {
       function a(node) {
-        if (node.data.level === 1) {
+        if (node && node.data && node.data.level === 1) {
           return node.data.factory_id
+        }
+        if (!node.parent) {
+          return
         }
         return a(node.parent)
       }
