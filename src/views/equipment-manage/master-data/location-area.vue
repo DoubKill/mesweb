@@ -16,8 +16,9 @@
         </el-select>
       </el-form-item>
       <el-form-item v-if="!isDialog" style="float:right">
-        <el-button type="primary" @click="onSubmit">新建</el-button>
+        <el-button v-permission="['equip_area', 'export']" type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
         <el-upload
+          v-permission="['equip_area', 'import']"
           style="margin:0 8px;display:inline-block"
           action="string"
           accept=".xls, .xlsx"
@@ -26,7 +27,7 @@
         >
           <el-button type="primary">导入Excel</el-button>
         </el-upload>
-        <el-button type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
+        <el-button v-permission="['equip_area', 'add']" type="primary" @click="onSubmit">新建</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -81,10 +82,12 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
+              v-permission="['equip_area', 'change']"
               size="mini"
               @click="showEditDialog(scope.row)"
             >编辑</el-button>
             <el-button
+              v-permission="['equip_area', 'delete']"
               size="mini"
               type="danger"
               plain

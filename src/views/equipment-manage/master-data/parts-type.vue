@@ -9,11 +9,10 @@
         <el-input v-model="getParams.component_type_name" @input="changSelect" />
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button type="primary" @click="showCreateDialog">新建</el-button>
-      </el-form-item>
-      <el-form-item style="float: right">
+        <el-button v-permission="['equip_component_type', 'export']" type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
         <el-upload
-          class="upload-demo"
+          v-permission="['equip_component_type', 'import']"
+          style="margin:0 8px;display:inline-block"
           action="string"
           accept=".xls, .xlsx"
           :http-request="Upload"
@@ -21,9 +20,7 @@
         >
           <el-button type="primary">导入Excel</el-button>
         </el-upload>
-      </el-form-item>
-      <el-form-item style="float: right">
-        <el-button type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
+        <el-button v-permission="['equip_component_type', 'add']" type="primary" @click="showCreateDialog">新建</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -57,12 +54,12 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
-              v-permission="['spare_type', 'change']"
+              v-permission="['equip_component_type', 'change']"
               size="mini"
               @click="showEditDialog(scope.row)"
             >编辑</el-button>
             <el-button
-              v-permission="['spare_type', 'delete']"
+              v-permission="['equip_component_type', 'delete']"
               size="mini"
               type="danger"
               plain

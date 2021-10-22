@@ -26,11 +26,10 @@
         </el-select>
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button type="primary" @click="onSubmit">新建</el-button>
-      </el-form-item>
-      <el-form-item style="float:right">
+        <el-button v-permission="['equip_supplier', 'export']" type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
         <el-upload
-          style="margin-right:8px"
+          v-permission="['equip_supplier', 'import']"
+          style="margin:0 8px;display:inline-block"
           action="string"
           accept=".xls, .xlsx"
           :http-request="Upload"
@@ -38,9 +37,7 @@
         >
           <el-button type="primary">导入Excel</el-button>
         </el-upload>
-      </el-form-item>
-      <el-form-item style="float:right">
-        <el-button type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
+        <el-button v-permission="['equip_supplier', 'add']" type="primary" @click="onSubmit">新建</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -103,10 +100,12 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
+              v-permission="['equip_supplier', 'change']"
               size="mini"
               @click="showEditDialog(scope.row)"
             >编辑</el-button>
             <el-button
+              v-permission="['equip_supplier', 'delete']"
               size="mini"
               type="danger"
               plain

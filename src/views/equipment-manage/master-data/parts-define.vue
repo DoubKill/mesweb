@@ -56,8 +56,9 @@
         </el-select>
       </el-form-item>
       <el-form-item v-if="!equipType" style="float:right">
-        <el-button type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
+        <el-button v-permission="['equip_component', 'export']" type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
         <el-upload
+          v-permission="['equip_component', 'import']"
           style="margin:0 8px;display:inline-block"
           action="string"
           accept=".xls, .xlsx"
@@ -66,7 +67,7 @@
         >
           <el-button type="primary">导入Excel</el-button>
         </el-upload>
-        <el-button type="primary" @click="onSubmit">新建</el-button>
+        <el-button v-permission="['equip_component', 'add']" type="primary" @click="onSubmit">新建</el-button>
       </el-form-item>
 
     </el-form>
@@ -138,14 +139,17 @@
       <el-table-column v-if="isMultiple===false" label="操作" width="250px">
         <template slot-scope="scope">
           <el-button
+            v-permission="['equip_component', 'change']"
             size="mini"
             @click="showSpareDialog(scope.row)"
           >绑定备件</el-button>
           <el-button
+            v-permission="['equip_component', 'change']"
             size="mini"
             @click="showEditDialog(scope.row)"
           >编辑</el-button>
           <el-button
+            v-permission="['equip_component', 'delete']"
             size="mini"
             type="danger"
             plain
