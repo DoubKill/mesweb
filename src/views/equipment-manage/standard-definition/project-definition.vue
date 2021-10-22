@@ -295,12 +295,14 @@ export default {
     show(bool) {
       if (bool) {
         this.getParams.work_type = this.workType
+        this.getParams.use_flag = true
         this.getList()
       }
     }
   },
   created() {
     if (this.isDialog) {
+      this.getParams.use_flag = true
       this.getParams.work_type = this.workType
     }
     this.getList()
