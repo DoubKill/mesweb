@@ -400,7 +400,7 @@
 
 <script>
 import page from '@/components/page'
-import { equipComponent, equipsCategory, equipComponentType, equipPartNew, equipComponentImport, equipComponentDown } from '@/api/jqy'
+import { equipComponent, equipsCategory, equipComponentType, equipPartNew, equipComponentImport, equipComponentDown, getDefaultCode } from '@/api/jqy'
 import PartsDefineMixin from '../components/parts-define-mixin'
 export default {
   name: 'EquipmentMasterDataPartsDefine',
@@ -544,9 +544,15 @@ export default {
       this.getList()
       this.$refs.singleTable.setCurrentRow(this.multipleSelection1)
     },
-    onSubmit() {
-      this.dialogForm = {}
+    async onSubmit() {
+      this.dialogForm = { component_code: '' }
       this.dialogVisible = true
+      try {
+        const data = await getDefaultCode('get', null, { params: { work_type: '部件' }})
+        this.dialogForm.component_code = data
+      } catch (e) {
+        this.$message.info('获取编号失败')
+      }
     },
     handleSelectionChange1(val) {
       this.multipleSelection1 = val

@@ -445,7 +445,7 @@ import { debounce } from '@/utils'
 import SparePartsCode from '../master-data/spare-parts-code'
 import FaultClassify from '../master-data/fault-classify'
 import ProjectDefinition from './project-definition'
-import { equipsCategory, equipRepairStandard, equipPartNew, equipComponent, equipRepairStandardImport, equipRepairStandardDown } from '@/api/jqy'
+import { equipsCategory, equipRepairStandard, equipPartNew, equipComponent, equipRepairStandardImport, equipRepairStandardDown, equipRepairStandardGetName } from '@/api/jqy'
 import page from '@/components/page'
 
 export default {
@@ -693,16 +693,22 @@ export default {
         this.loading = false
       }
     },
-    onSubmit() {
+    async onSubmit() {
+      this.dialogEditVisible = true
       this.typeForm = {
-        standard_code: 'WXBZ00X',
+        standard_code: '',
         remind_flag1: true,
         remind_flag2: true,
         remind_flag3: false,
         equip_condition: '停机',
         important_level: '高'
       }
-      this.dialogEditVisible = true
+      try {
+        const data = await equipRepairStandardGetName('get', null, { params: {}})
+        this.typeForm.standard_code = data.results
+      } catch (e) {
+        this.$message.info('获取编号失败')
+      }
     },
     changeDebounce() {
       this.getParams.page = 1

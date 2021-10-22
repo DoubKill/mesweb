@@ -119,7 +119,7 @@
       />
       <el-table-column
         prop="alarm_signal_duration"
-        label="报警持续时间（秒）"
+        label="报警持续时间(秒)"
         min-width="20"
       />
       <el-table-column
@@ -149,7 +149,7 @@
       />
       <el-table-column
         prop="fault_signal_duration"
-        label="故障持续时间（秒）"
+        label="故障持续时间(秒)"
         min-width="20"
       />
       <el-table-column
@@ -398,7 +398,7 @@ import EquipSelect from '@/components/EquipSelect/index'
 import region from './region'
 import partsDefine from './parts-define'
 import { getEquip } from '@/api/banburying-performance-manage'
-import { equipFaultSignal, equipFaultSignalImport, equipFaultSignalDown } from '@/api/jqy'
+import { equipFaultSignal, equipFaultSignalImport, equipFaultSignalDown, equipFaultSignalGetName } from '@/api/jqy'
 export default {
   name: 'EquipmentMasterDataFaultSignal',
   components: { page, EquipSelect, region, partsDefine },
@@ -478,9 +478,15 @@ export default {
       this.formInline.page = 1
       this.getList()
     },
-    onSubmit() {
-      this.dialogForm = { signal_code: 'IO000X', fault_signal_down_flag: false, alarm_signal_down_flag: false }
+    async onSubmit() {
+      this.dialogForm = { signal_code: '', fault_signal_down_flag: false, alarm_signal_down_flag: false }
       this.dialogVisible = true
+      try {
+        const data = await equipFaultSignalGetName('get', null, { params: {}})
+        this.dialogForm.signal_code = data.results
+      } catch (e) {
+        this.$message.info('获取编号失败')
+      }
     },
     Upload(param) {
       const formData = new FormData()

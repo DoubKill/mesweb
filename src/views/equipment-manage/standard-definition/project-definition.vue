@@ -122,6 +122,7 @@
           <el-select
             v-model="typeForm.work_type"
             placeholder="请选择"
+            @change="change"
           >
             <el-option
               v-for="item in ['巡检','保养','维修','润滑','标定']"
@@ -249,6 +250,8 @@
 <script>
 import page from '@/components/page'
 import { equipJobItemStandard, equipJobItemStandardImport } from '@/api/base_w_four'
+import { getDefaultCode } from '@/api/jqy'
+
 // import { errorRepeat } from '@/utils'
 
 export default {
@@ -343,6 +346,15 @@ export default {
     },
     onSubmit() {
       this.dialogEditVisible = true
+      this.typeForm = { standard_code: '' }
+    },
+    async change() {
+      try {
+        const data = await getDefaultCode('get', null, { params: { work_type: this.typeForm.work_type }})
+        this.typeForm.standard_code = data
+      } catch (e) {
+        this.$message.info('获取编号失败')
+      }
     },
     changSelect() {
       this.getParams.page = 1

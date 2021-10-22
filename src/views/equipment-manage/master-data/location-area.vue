@@ -158,7 +158,7 @@
 <script>
 import page from '@/components/page'
 import { debounce } from '@/utils'
-import { equipAreaDefine, equipAreaDefineDown, equipAreaDefineImport } from '@/api/jqy'
+import { equipAreaDefine, equipAreaDefineDown, equipAreaDefineImport, equipAreaDefineGetName } from '@/api/jqy'
 export default {
   name: 'EquipmentMasterDataLocation',
   components: { page },
@@ -243,9 +243,15 @@ export default {
       this.formInline.page_size = pageSize
       this.getList()
     },
-    onSubmit() {
-      this.dialogForm = { area_code: 'WZQY00X' }
+    async onSubmit() {
+      this.dialogForm = { area_code: '' }
       this.dialogVisible = true
+      try {
+        const data = await equipAreaDefineGetName('get', null, { params: {}})
+        this.dialogForm.area_code = data.results
+      } catch (e) {
+        this.$message.info('获取编号失败')
+      }
     },
     handleCurrentChange(val) {
       this.handleData = val
