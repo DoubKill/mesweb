@@ -27,7 +27,7 @@
         min-width="20"
       >
         <template slot-scope="{row}">
-          <el-input v-model="row.equip__equip_name" />
+          {{ row.equip__equip_name }}
         </template>
       </el-table-column>
       <el-table-column
