@@ -513,7 +513,7 @@ export default {
       if (val) {
         if (this.dialogForm.equip_type) {
           try {
-            const data = await equipPartNew('get', null, { params: { equip_type: this.dialogForm.equip_type }})
+            const data = await equipPartNew('get', null, { params: { equip_type: this.dialogForm.equip_type, use_flag: true }})
             this.options3 = data.results || []
           } catch (e) {
             //
