@@ -23,6 +23,7 @@
           </el-form-item>
           <el-form-item>
             <el-button
+              v-permission="['equip_halt_reason', 'add']"
               type="primary"
               style="margin-bottom:10px"
               @click="addArea(true)"
@@ -61,11 +62,13 @@
             <template slot-scope="scope">
               <el-button-group>
                 <el-button
+                  v-permission="['equip_halt_reason', 'change']"
                   size="mini"
                   @click="editArea(scope.row,true)"
                 >编辑
                 </el-button>
                 <el-button
+                  v-permission="['equip_halt_reason', 'delete']"
                   size="mini"
                   type="danger"
                   plain
@@ -98,6 +101,7 @@
           </el-form-item>
           <el-form-item>
             <el-button
+              v-permission="['equip_halt_reason', 'add']"
               style="margin-bottom:10px;float:right"
               :disabled="equip_machine_halt_type_id&&isLeftStop?false:true"
               type="primary"
@@ -154,11 +158,13 @@
             <template slot-scope="scope">
               <el-button-group>
                 <el-button
+                  v-permission="['equip_halt_reason', 'change']"
                   size="mini"
                   @click="editArea(scope.row,false)"
                 >编辑
                 </el-button>
                 <el-button
+                  v-permission="['equip_halt_reason', 'delete']"
                   size="mini"
                   type="danger"
                   plain

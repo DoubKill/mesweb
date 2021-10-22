@@ -49,8 +49,9 @@
         </el-select>
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button size="small" type="primary" @click="exportTable">导出Excel</el-button>
+        <el-button v-permission="['equip_assign_rule', 'import']" size="small" type="primary" @click="exportTable">导出Excel</el-button>
         <el-upload
+          v-permission="['equip_assign_rule', 'export']"
           style="display:inline-block;margin:0 6px"
           action="string"
           accept=".xls, .xlsx"
@@ -59,7 +60,7 @@
         >
           <el-button size="small" type="primary">导入Excel</el-button>
         </el-upload>
-        <el-button size="small" type="primary" @click="onSubmit">新建</el-button>
+        <el-button v-permission="['equip_assign_rule', 'add']" size="small" type="primary" @click="onSubmit">新建</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -147,10 +148,12 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
+              v-permission="['equip_assign_rule', 'change']"
               size="mini"
               @click="showEditDialog(scope.row)"
             >编辑</el-button>
             <el-button
+              v-permission="['equip_assign_rule', 'delete']"
               size="mini"
               type="danger"
               plain
