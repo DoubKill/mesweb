@@ -605,7 +605,7 @@ export default {
       equipPropertyImport('post', null, { data: formData }).then(response => {
         this.$message({
           type: 'success',
-          message: '导入成功!'
+          message: response
         })
         this.search.page = 1
         this.getList()

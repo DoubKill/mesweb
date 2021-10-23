@@ -265,7 +265,7 @@ export default {
       equipAreaDefineImport('post', null, { data: formData }).then(response => {
         this.$message({
           type: 'success',
-          message: '导入成功!'
+          message: response
         })
         this.formInline.page = 1
         this.getList()
