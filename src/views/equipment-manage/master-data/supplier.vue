@@ -265,7 +265,7 @@ export default {
         const data = await equipSupplierGetName('get', null, { params: {}})
         this.dialogForm.supplier_code = data.results
       } catch (e) {
-        this.$message.info('获取编号失败')
+        // this.$message.info('获取编号失败')
       }
     },
     showEditDialog(row) {

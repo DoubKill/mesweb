@@ -637,7 +637,7 @@ export default {
         const data = await equipMaintenanceStandardGetName('get', null, { params: { rule_code: this.typeForm.work_type }})
         this.typeForm.standard_code = data.results
       } catch (e) {
-        this.$message.info('获取编号失败')
+        // this.$message.info('获取编号失败')
       }
     },
     changeDebounce() {

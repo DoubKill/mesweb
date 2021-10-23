@@ -353,7 +353,7 @@ export default {
         const data = await getDefaultCode('get', null, { params: { work_type: this.typeForm.work_type }})
         this.typeForm.standard_code = data
       } catch (e) {
-        this.$message.info('获取编号失败')
+        // this.$message.info('获取编号失败')
       }
     },
     changSelect() {

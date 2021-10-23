@@ -303,7 +303,7 @@ export default {
         const data = await getDefaultCode('get', null, { params: { work_type: '部位' }})
         this.dialogForm.part_code = data
       } catch (e) {
-        this.$message.info('获取编号失败')
+        // this.$message.info('获取编号失败')
       }
     },
     getVal() {
