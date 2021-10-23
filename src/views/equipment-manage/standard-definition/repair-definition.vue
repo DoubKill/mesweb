@@ -51,8 +51,8 @@
       <el-form-item label="所需物料名称">
         <el-input v-model="getParams.spare_name" clearable @input="changeDebounce" />
       </el-form-item>
-      <el-form-item v-if="!isDialog" v-permission="['equip_repair_standard', 'export']" style="float:right">
-        <el-button type="primary" style="margin-right:8px" :loading="btnExportLoad" @click="templateDownload">导出Excel</el-button>
+      <el-form-item v-if="!isDialog" style="float:right">
+        <el-button v-permission="['equip_repair_standard', 'export']" type="primary" style="margin-right:8px" :loading="btnExportLoad" @click="templateDownload">导出Excel</el-button>
         <el-upload
           v-permission="['equip_repair_standard', 'import']"
           style="margin-right:8px;display:inline-block"
