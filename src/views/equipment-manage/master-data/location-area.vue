@@ -6,7 +6,7 @@
         <el-input v-model="formInline.area_name" :disabled="isDialogView" clearable placeholder="位置区域名称" @input="debounceList" />
       </el-form-item>
       <el-form-item v-if="!isDialogView" label="是否启用">
-        <el-select v-model="formInline.use_flag" clearable placeholder="是否启用" @change="changeSearch">
+        <el-select v-model="formInline.use_flag" clearable placeholder="是否启用" :disabled="isDialog" @change="changeSearch">
           <el-option
             v-for="item in [{label:'Y',value:1},{label:'N',value:0}]"
             :key="item.value"
@@ -210,13 +210,16 @@ export default {
     showDialog(bool) {
       if (this.isDialog) {
         if (bool) {
-          this.formInline = {}
+          this.formInline = { use_flag: 1 }
           this.getList()
         }
       }
     }
   },
   created() {
+    if (this.isDialog) {
+      this.formInline = { use_flag: 1 }
+    }
     this.getList()
   },
   methods: {
