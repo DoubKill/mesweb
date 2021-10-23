@@ -407,7 +407,7 @@ export default {
       equipOrderAssignRuleImportXlsx('post', null, { data: formData }).then(response => {
         this.$message({
           type: 'success',
-          message: '导入成功!'
+          message: response
         })
         this.changeList()
       })

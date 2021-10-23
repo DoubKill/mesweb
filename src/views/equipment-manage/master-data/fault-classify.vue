@@ -12,7 +12,7 @@
           <el-form-item
             label="是否启用"
           >
-            <el-select v-model="dataForm.use_flag" style="width:130px" clearable @change="getListTypeChange">
+            <el-select v-model="dataForm.use_flag" style="width:130px" clearable :disabled="isDialog" @change="getListTypeChange">
               <el-option
                 v-for="(item,key) in [{label:1,name:'Y'},{label:0,name:'N'}]"
                 :key="key"
@@ -97,7 +97,7 @@
           <el-form-item
             label="是否启用"
           >
-            <el-select v-model="dataForm1.use_flag" style="width:130px" clearable @change="getListReason">
+            <el-select v-model="dataForm1.use_flag" style="width:130px" clearable :disabled="isDialog" @change="getListReason">
               <el-option
                 v-for="(item,key) in [{label:1,name:'Y'},{label:0,name:'N'}]"
                 :key="key"
@@ -269,11 +269,17 @@ export default {
   watch: {
     show(bool) {
       if (bool) {
+        this.dataForm.use_flag = 1
+        this.dataForm1.use_flag = 1
         this.getListType()
       }
     }
   },
   created() {
+    if (this.isDialog) {
+      this.dataForm.use_flag = 1
+      this.dataForm1.use_flag = 1
+    }
     this.getListType()
   },
   methods: {
