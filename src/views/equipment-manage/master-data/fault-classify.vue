@@ -336,7 +336,7 @@ export default {
           const data = await getDefaultCode('get', null, { params: { work_type: '故障', equip_fault_type: this.work_type }})
           this.formObj.fault_code = data
         } catch (e) {
-          this.$message.info('获取编号失败')
+          // this.$message.info('获取编号失败')
         }
       }
       this.isType = bool

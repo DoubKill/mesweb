@@ -707,7 +707,7 @@ export default {
         const data = await equipRepairStandardGetName('get', null, { params: {}})
         this.typeForm.standard_code = data.results
       } catch (e) {
-        this.$message.info('获取编号失败')
+        // this.$message.info('获取编号失败')
       }
     },
     changeDebounce() {

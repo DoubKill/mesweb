@@ -365,7 +365,7 @@ export default {
         const data = await equipOrderAssignRuleGetName('get', null, { params: {}})
         this.dialogForm.rule_code = data.results
       } catch (e) {
-        this.$message.info('获取编号失败')
+        // this.$message.info('获取编号失败')
       }
     },
     showEditDialog(row) {

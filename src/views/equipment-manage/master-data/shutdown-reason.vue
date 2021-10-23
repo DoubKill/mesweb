@@ -320,7 +320,7 @@ export default {
           const data = await getDefaultCode('get', null, { params: { work_type: '停机', equip_machine_halt_type: this.work_type }})
           this.formObj.machine_halt_reason_code = data
         } catch (e) {
-          this.$message.info('获取编号失败')
+          // this.$message.info('获取编号失败')
         }
       }
       this.isType = bool

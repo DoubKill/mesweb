@@ -330,7 +330,14 @@
           label="信号数据类型"
           prop="signal_variable_type"
         >
-          <el-input v-model="dialogForm.signal_variable_type" />
+          <el-select v-model="dialogForm.signal_variable_type" placeholder="请选择">
+            <el-option
+              v-for="item in ['Float','Int','String','Boolean']"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item
           label="故障停机描述"
@@ -485,7 +492,7 @@ export default {
         const data = await equipFaultSignalGetName('get', null, { params: {}})
         this.dialogForm.signal_code = data.results
       } catch (e) {
-        this.$message.info('获取编号失败')
+        // this.$message.info('获取编号失败')
       }
     },
     Upload(param) {
