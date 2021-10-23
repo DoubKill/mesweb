@@ -165,7 +165,8 @@ export default {
       try {
         const obj = {
           level: 4,
-          equip_info: this.dialogForm.equip
+          equip_info: this.dialogForm.equip,
+          part__use_flag: true
         }
         if (!this.dialogForm.equip) {
           return
