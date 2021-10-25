@@ -258,7 +258,7 @@ export default {
   SpareInventory: '/api/v1/spareparts/spare-inventory/',
 
   // 部门管理
-  DepartmentManage: '/api/v1/system/section/',
+  // DepartmentManage: '/api/v1/system/section/',
 
   // 位置点
   Location: '/api/v1/basics/location/',
@@ -486,5 +486,59 @@ export default {
   // 用户出库口库区
   UserStation: '/api/v1/inventory/outbound-history/',
   // 生产运行记录修改
-  RuntimeDetail: '/api/v1/production/runtime-record-detail/'
+  RuntimeDetail: '/api/v1/production/runtime-record-detail/',
+  EquipTargetMtbmttrSettings: '/api/v1/equipment/equip-target-mtbmttr-settings/', // MTBF/MTTR设定
+  EquipOrderAssignRule: '/api/v1/equipment/equip-order-assign-rule/',
+  EquipOrderAssignRuleImportXlsx: '/api/v1/equipment/equip-order-assign-rule/import_xlsx/',
+  EquipOrderAssignRuleGetName: '/api/v1/equipment/equip-order-assign-rule/get_name/',
+  EquipMachineHaltType: '/api/v1/equipment/equip-machine-halt-type/',
+  EquipMachineHaltReason: '/api/v1/equipment/equip-machine-halt-reason/',
+  SectionUserTree: '/api/v1/system/section/tree/', // 部门用户树结构
+  EquipMaintenanceAreaSettings: '/api/v1/equipment/equip-maintenance-area-settings/', // 维护包干设置
+  SectionTree: '/api/v1/system/section/',
+  EquipFaultTypes: '/api/v1/equipment/equip-fault-types/', // 设备故障分类 大分类
+  EquipFaultCodes: '/api/v1/equipment/equip-fault-codes/', // 设备故障分类 中分类
+  EquipBom: '/api/v1/equipment/equip-bom/',
+  EquipJobItemStandard: '/api/v1/equipment/equip-job-item-standard/', // 设备作业项目标准定义
+  EquipJobItemStandardImport: '/api/v1/equipment/equip-job-item-standard/import_xlsx/', // 设备作业项目标准定义 导入
+  // 供应商管理台账
+  EquipSupplier: '/api/v1/equipment/equip-supplier/',
+  EquipSupplierImport: '/api/v1/equipment/equip-supplier/import_xlsx/',
+  EquipSupplierGetName: '/api/v1/equipment/equip-supplier/get_name/',
+  // 设备类型
+  EquipsCategory: '/api/v1/basics/equips-category/',
+  // 设备固定资产台账
+  EquipProperty: '/api/v1/equipment/equip-property/',
+  EquipPropertyImport: '/api/v1/equipment/equip-property/import_xlsx/',
+  // 设备位置区域定义
+  EquipAreaDefine: '/api/v1/equipment/equip-area-define/',
+  EquipAreaDefineImport: '/api/v1/equipment/equip-area-define/import_xlsx/',
+  EquipAreaDefineGetName: '/api/v1/equipment/equip-area-define/get_name/',
+  // 设备部位定义
+  EquipPartNew: '/api/v1/equipment/equip-part-new/',
+  EquipPartNewImport: '/api/v1/equipment/equip-part-new/import_xlsx/',
+  // 设备部件分类
+  EquipComponentType: '/api/v1/equipment/equip-component-type/',
+  EquipComponentTypeImport: '/api/v1/equipment/equip-component-type/import_xlsx/',
+  // 设备部件定义
+  EquipComponent: '/api/v1/equipment/equip-component/',
+  EquipComponentImport: '/api/v1/equipment/equip-component/import_xlsx/',
+  // 部件与erp绑定关系
+  ErpSpareComponentRelation: '/api/v1/equipment/erp-spare-component-relation/',
+  // erp备件物料信息
+  EquipSpareErp: '/api/v1/equipment/equip-spare-erp/',
+  EquipSpareErpImport: '/api/v1/equipment/equip-spare-erp/import_xlsx/',
+  // 设备故障信号定义
+  EquipFaultSignal: '/api/v1/equipment/equip-fault-signal/',
+  EquipFaultSignalImport: '/api/v1/equipment/equip-fault-signal/import_xlsx/',
+  EquipFaultSignalGetName: '/api/v1/equipment/equip-fault-signal/get_name/',
+  // 设备维护作业标准定义
+  EquipMaintenanceStandard: '/api/v1/equipment/equip_maintenance_standard/',
+  EquipMaintenanceStandardImport: '/api/v1/equipment/equip_maintenance_standard/import_xlsx/',
+  EquipMaintenanceStandardGetName: '/api/v1/equipment/equip_maintenance_standard/get_name/',
+  // 设备维修作业标准定义
+  EquipRepairStandard: '/api/v1/equipment/equip-repair-standard/',
+  EquipRepairStandardImport: '/api/v1/equipment/equip-repair-standard/import_xlsx/',
+  EquipRepairStandardGetName: '/api/v1/equipment/equip-repair-standard/get_name/',
+  GetDefaultCode: '/api/v1/equipment/get-default-code/'
 }

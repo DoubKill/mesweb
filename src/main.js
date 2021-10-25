@@ -30,6 +30,7 @@ import '@/icons' // icon
 import '@/permission' // permission control
 
 import 'default-passive-events'
+import { debounce } from '@/utils'
 
 /**
  * If you don't want to use mock-server
@@ -50,6 +51,8 @@ import 'default-passive-events'
 Vue.use(ElementUI)
 
 Vue.config.productionTip = false
+
+Vue.prototype.$debounce = debounce
 
 new Vue({
   el: '#app',

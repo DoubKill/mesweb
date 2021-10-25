@@ -54,7 +54,7 @@
       </el-table-column>
       <el-table-column
         label="操作"
-        width="200px"
+        width="280px"
       >
         <template slot-scope="scope">
           <el-button
@@ -68,6 +68,12 @@
             size="small"
             @click="pointClick(scope.row)"
           >编辑</el-button>
+          <el-button
+            v-permission="['evaluating','change']"
+            size="small"
+            type="danger"
+            @click="clickDelete(scope.$index,scope.row)"
+          >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -302,20 +308,21 @@ export default {
       this.getList()
     },
     clickDelete(index, row) {
-      this.$confirm(
-        '是否删除?',
-        '提示',
-        {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }
-      ).then(async() => {
-        await matTestMethods('delete', row.id)
-        this.$message.success('删除成功')
-        this.tableData.splice(index, 1)
-      }).catch(() => {
-        //
+      this.$confirm('是否确定删除?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        matTestMethods('delete', row.id)
+          .then(response => {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+            this.tableData.splice(index, 1)
+          }).catch(e => {
+            this.$message.error('删除失败')
+          })
       })
     },
     sureAdd() {

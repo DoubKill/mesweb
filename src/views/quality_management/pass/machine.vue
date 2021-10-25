@@ -38,93 +38,125 @@
       <el-form-item label="班次">
         <class-select @classSelected="classChanged" />
       </el-form-item>
+      <el-form-item style="float:right">
+        <el-button
+          type="primary"
+          @click="exportTable('机台别合格率统计')"
+        >导出表格</el-button>
+      </el-form-item>
     </el-form>
 
-    <el-table
-      v-loading="loading"
-      :data="tableData"
-      :row-class-name="tableRowClassName"
-      border
-      tooltip-effect="dark"
-      style="width: 100%"
-    >
-      <el-table-column
-        prop="equip"
-        label="机台号"
-        width="60"
-      />
-      <el-table-column
-        prop="test_all"
-        label="检查数"
-        width="70"
-      />
-      <el-table-column
-        prop="test_right"
-        label="合格量"
-        width="70"
-      />
-      <el-table-column
-        prop="mn"
-        label="门尼不合格"
-        width="100"
-      />
-      <el-table-column
-        prop="yd"
-        label="硬度不合格"
-        width="100"
-      />
-      <el-table-column
-        prop="bz"
-        label="比重不合格"
-        width="100"
-      />
-      <el-table-column
-        prop="rate_1"
-        label="一次合格率"
-        width="100"
-      />
-      <el-table-column label="硫变不合格" align="center">
+    <div v-for="(item,key) in [tableData,tableData1]" :key="key">
+      <el-table
+        v-if="key===1?tableData.length>0?true:false:true"
+        id="out-table"
+        v-loading="loading"
+        :data="item"
+        :row-class-name="tableRowClassName"
+        border
+        tooltip-effect="dark"
+        style="width: 100%"
+        :show-header="key===1?false:true"
+      >
         <el-table-column
-          prop="MH"
-          label="MH"
+          prop="equip"
+          label="机台号"
+          min-width="20"
         />
         <el-table-column
-          prop="ML"
-          label="ML"
+          prop="test_all"
+          label="检查数"
+          min-width="15"
+          sortable
         />
         <el-table-column
-          prop="TC10"
-          label="TC10"
+          prop="test_right"
+          label="合格量"
+          min-width="15"
+          sortable
         />
         <el-table-column
-          prop="TC50"
-          label="TC50"
+          prop="mn"
+          label="门尼不合格"
+          min-width="15"
+          sortable
         />
         <el-table-column
-          prop="TC90"
-          label="TC90"
+          prop="yd"
+          label="硬度不合格"
+          min-width="15"
+          sortable
         />
         <el-table-column
-          prop="lb_all"
-          label="硫变合计"
+          prop="bz"
+          label="比重不合格"
+          min-width="15"
+          sortable
         />
-      </el-table-column>
-      <el-table-column
-        prop="rate_lb"
-        label="硫变合格率"
-        width="100"
-      />
-      <el-table-column
-        prop="cp_all"
-        label="次品合计"
-        width="100"
-      />
-      <el-table-column
-        prop="rate"
-        label="合格率"
-        width="80"
-      />
-    </el-table>
+        <el-table-column
+          prop="rate_1"
+          label="一次合格率"
+          min-width="15"
+          sortable
+        />
+        <el-table-column label="硫变不合格" align="center">
+          <el-table-column
+            prop="MH"
+            label="MH"
+            min-width="20"
+            sortable
+          />
+          <el-table-column
+            prop="ML"
+            label="ML"
+            min-width="20"
+            sortable
+          />
+          <el-table-column
+            prop="TC10"
+            label="TC10"
+            min-width="20"
+            sortable
+          />
+          <el-table-column
+            prop="TC50"
+            label="TC50"
+            min-width="20"
+            sortable
+          />
+          <el-table-column
+            prop="TC90"
+            label="TC90"
+            min-width="20"
+            sortable
+          />
+          <el-table-column
+            prop="lb_all"
+            label="硫变合计"
+            min-width="20"
+            sortable
+          />
+        </el-table-column>
+        <el-table-column
+          prop="rate_lb"
+          label="硫变合格率"
+          min-width="20"
+          sortable
+        />
+        <el-table-column
+          prop="cp_all"
+          label="次品合计"
+          min-width="20"
+          sortable
+        />
+        <el-table-column
+          prop="rate"
+          label="合格率"
+          min-width="20"
+          sortable
+        />
+      </el-table>
+    </div>
   </div>
 </template>
 
@@ -132,14 +164,14 @@
 import ClassSelect from '@/components/ClassSelect'
 import { globalCodesUrl } from '@/api/base_w'
 import { machinePass } from '@/api/jqy'
-import { debounce } from '@/utils/index'
-import { setDate } from '@/utils'
+import { debounce, setDate, exportExcel } from '@/utils/index'
 export default {
   name: 'Machine',
   components: { ClassSelect },
   data() {
     return {
       tableData: [],
+      tableData1: [],
       formHeadData: [],
       search: {
       },
@@ -179,6 +211,9 @@ export default {
           this.lb_all = 0
           this.cp_all = 0
           this.tableData.forEach(D => {
+            D.rate_lb = Number(D.rate_lb)
+            D.rate_1 = Number(D.rate_1)
+            D.rate = Number(D.rate)
             this.test_all += Number(D.test_all)
             this.test_right += Number(D.test_right)
             this.mn += Number(D.mn)
@@ -192,23 +227,25 @@ export default {
             this.lb_all += Number(D.lb_all)
             this.cp_all += Number(D.cp_all)
           })
-          this.tableData.push({
-            equip: '合计',
-            test_all: this.test_all,
-            test_right: this.test_right,
-            mn: this.mn,
-            yd: this.yd,
-            bz: this.bz,
-            rate_1: data.all.rate_1,
-            MH: this.MH,
-            ML: this.ML,
-            TC10: this.TC10,
-            TC50: this.TC50,
-            TC90: this.TC90,
-            lb_all: this.lb_all,
-            rate_lb: data.all.rate_lb,
-            cp_all: this.cp_all,
-            rate: data.all.rate })
+          if (this.tableData.length !== 0) {
+            this.tableData1 = [{
+              equip: '合计',
+              test_all: this.test_all,
+              test_right: this.test_right,
+              mn: this.mn,
+              yd: this.yd,
+              bz: this.bz,
+              rate_1: data.all.rate_1,
+              MH: this.MH,
+              ML: this.ML,
+              TC10: this.TC10,
+              TC50: this.TC50,
+              TC90: this.TC90,
+              lb_all: this.lb_all,
+              rate_lb: data.all.rate_lb,
+              cp_all: this.cp_all,
+              rate: data.all.rate }]
+          }
         }
         this.loading = false
       } catch (e) {
@@ -255,6 +292,9 @@ export default {
     },
     changeSearch1() {
       this.getList()
+    },
+    exportTable(val) {
+      exportExcel(val)
     }
   }
 }

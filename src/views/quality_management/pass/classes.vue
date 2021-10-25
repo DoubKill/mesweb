@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 胶料别合格率 -->
+    <!-- 班次别合格率统计 -->
     <el-form :inline="true">
       <el-form-item label="时间">
         <el-date-picker
@@ -38,9 +38,16 @@
       <el-form-item label="班次">
         <class-select @classSelected="classChanged" />
       </el-form-item>
+      <el-form-item style="float:right">
+        <el-button
+          type="primary"
+          @click="exportTable('班次别合格率统计')"
+        >导出表格</el-button>
+      </el-form-item>
     </el-form>
 
     <el-table
+      id="out-table"
       v-loading="loading"
       :span-method="objectSpanMethod"
       :data="tableData"
@@ -138,8 +145,7 @@
 import ClassSelect from '@/components/ClassSelect'
 import { globalCodesUrl } from '@/api/base_w'
 import { classesPass } from '@/api/jqy'
-import { debounce } from '@/utils/index'
-import { setDate } from '@/utils'
+import { debounce, setDate, exportExcel } from '@/utils/index'
 export default {
   name: 'Classes',
   components: { ClassSelect },
@@ -171,7 +177,6 @@ export default {
         this.tableData = []
         const data = await classesPass('get', null, { params: this.search })
         this.tableData = data.result || []
-        console.log(this.tableData)
         if (this.tableData.length > 0) {
           this.JC = 0
           this.HG = 0
@@ -293,6 +298,9 @@ export default {
     },
     changeSearch1() {
       this.getList()
+    },
+    exportTable(val) {
+      exportExcel(val)
     }
   }
 }

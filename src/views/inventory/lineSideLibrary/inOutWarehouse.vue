@@ -201,7 +201,7 @@
                 v-for="item in row.get_depot_name?options1.filter(d=>d.depot === row.get_depot_name):[]"
                 :key="item.id"
                 :label="item.depot_site_name"
-                :value="item.depot_site_name"
+                :value="item.id"
               />
             </el-select>
           </template>
@@ -319,7 +319,7 @@ export default {
       let bool = false
       if (expanded.length > 0) {
         expanded.forEach(d => {
-          if (d.id === row.id) {
+          if (d.lot_no === row.lot_no) {
             bool = true
             return
           }
@@ -332,7 +332,7 @@ export default {
       }
       let _index = null
       this.tableData.forEach((d, i) => {
-        if (d.id === row.id) {
+        if (d.lot_no === row.lot_no) {
           _index = i
         }
       })
@@ -356,7 +356,7 @@ export default {
           data: {
             status: 2,
             id: row.id,
-            depot_site: row.depot_site_name
+            depot_pallet_id: row.depot_pallet_id
           }})
           .then(response => {
             this.$message({

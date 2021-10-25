@@ -30,7 +30,7 @@
           <span :style="{'color':color[1]}">日入库量(车/吨)</span><br>
           <div class="volumeBoxChild" :style="{'color':color[0]}">
             <span v-if="overviewObj.inbound_data">
-              {{ overviewObj.inbound_data.total_weight||'-' }}/{{ overviewObj.inbound_data.total_weight||'-' }}
+              {{ overviewObj.inbound_data.total_trains||'-' }}/{{ overviewObj.inbound_data.total_weight||'-' }}
             </span>
             <span v-else>-</span>
           </div>
@@ -41,7 +41,7 @@
           <span :style="{'color':color[1]}">日出库量(车/吨)</span><br>
           <div class="volumeBoxChild" :style="{'color':color[0]}">
             <span v-if="overviewObj.outbound_data">
-              {{ overviewObj.outbound_data.total_weight||'-' }}/{{ overviewObj.outbound_data.total_weight||'-' }}
+              {{ overviewObj.outbound_data.total_trains||'-' }}/{{ overviewObj.outbound_data.total_weight||'-' }}
             </span>
             <span v-else>-</span>
           </div>

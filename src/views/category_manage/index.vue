@@ -73,6 +73,16 @@
       />
       <el-table-column
         align="center"
+        prop="created_username"
+        label="录入者"
+      />
+      <el-table-column
+        align="center"
+        prop="created_date"
+        label="录入日期"
+      />
+      <el-table-column
+        align="center"
         width="150"
         label="操作"
       >
