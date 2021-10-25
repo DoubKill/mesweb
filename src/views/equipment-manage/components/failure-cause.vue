@@ -99,6 +99,7 @@ export default {
   methods: {
     async getList(bool) {
       try {
+        this.dataForm.use_flag = true
         this.loading = true
         const data = await equipFaultCodes('get', null, { params: this.dataForm })
         this.tableData = data || []
