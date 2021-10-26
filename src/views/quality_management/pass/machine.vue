@@ -30,10 +30,21 @@
         </el-select>
       </el-form-item>
       <el-form-item label="胶料规格">
-        <el-input v-model="search.product_type" size="" clearable placeholder="请输入胶料规格" @input="changeSearch" />
+        <el-input
+          v-model="search.product_type"
+          size=""
+          clearable
+          placeholder="请输入胶料规格"
+          @input="changeSearch"
+        />
       </el-form-item>
       <el-form-item label="生产机台">
-        <el-input v-model="search.equip_no" clearable placeholder="请输入生产机台" @input="changeSearch" />
+        <el-input
+          v-model="search.equip_no"
+          clearable
+          placeholder="请输入生产机台"
+          @input="changeSearch"
+        />
       </el-form-item>
       <el-form-item label="班次">
         <class-select @classSelected="classChanged" />
@@ -46,116 +57,123 @@
       </el-form-item>
     </el-form>
 
-    <div v-for="(item,key) in [tableData,tableData1]" :key="key">
-      <el-table
-        v-if="key===1?tableData.length>0?true:false:true"
-        id="out-table"
-        v-loading="loading"
-        :data="item"
-        :row-class-name="tableRowClassName"
-        border
-        tooltip-effect="dark"
-        style="width: 100%"
-        :show-header="key===1?false:true"
+    <div id="out-table">
+      <div
+        v-for="(item,key) in [tableData,tableData1]"
+        :key="key"
       >
-        <el-table-column
-          prop="equip"
-          label="机台号"
-          min-width="20"
-        />
-        <el-table-column
-          prop="test_all"
-          label="检查数"
-          min-width="15"
-          sortable
-        />
-        <el-table-column
-          prop="test_right"
-          label="合格量"
-          min-width="15"
-          sortable
-        />
-        <el-table-column
-          prop="mn"
-          label="门尼不合格"
-          min-width="15"
-          sortable
-        />
-        <el-table-column
-          prop="yd"
-          label="硬度不合格"
-          min-width="15"
-          sortable
-        />
-        <el-table-column
-          prop="bz"
-          label="比重不合格"
-          min-width="15"
-          sortable
-        />
-        <el-table-column
-          prop="rate_1"
-          label="一次合格率"
-          min-width="15"
-          sortable
-        />
-        <el-table-column label="硫变不合格" align="center">
+        <el-table
+          v-if="key===1?tableData.length>0?true:false:true"
+          v-loading="loading"
+          :data="item"
+          :row-class-name="tableRowClassName"
+          border
+          tooltip-effect="dark"
+          style="width: 100%"
+          :show-header="key===1?false:true"
+        >
           <el-table-column
-            prop="MH"
-            label="MH"
+            prop="equip"
+            label="机台号"
+            min-width="20"
+          />
+          <el-table-column
+            prop="test_all"
+            label="检查数"
+            min-width="15"
+            sortable
+          />
+          <el-table-column
+            prop="test_right"
+            label="合格量"
+            min-width="15"
+            sortable
+          />
+          <el-table-column
+            prop="mn"
+            label="门尼不合格"
+            min-width="15"
+            sortable
+          />
+          <el-table-column
+            prop="yd"
+            label="硬度不合格"
+            min-width="15"
+            sortable
+          />
+          <el-table-column
+            prop="bz"
+            label="比重不合格"
+            min-width="15"
+            sortable
+          />
+          <el-table-column
+            prop="rate_1"
+            label="一次合格率"
+            min-width="15"
+            sortable
+          />
+          <el-table-column
+            label="硫变不合格"
+            align="center"
+          >
+            <el-table-column
+              prop="MH"
+              label="MH"
+              min-width="20"
+              sortable
+            />
+            <el-table-column
+              prop="ML"
+              label="ML"
+              min-width="20"
+              sortable
+            />
+            <el-table-column
+              prop="TC10"
+              label="TC10"
+              min-width="20"
+              sortable
+            />
+            <el-table-column
+              prop="TC50"
+              label="TC50"
+              min-width="20"
+              sortable
+            />
+            <el-table-column
+              prop="TC90"
+              label="TC90"
+              min-width="20"
+              sortable
+            />
+            <el-table-column
+              prop="lb_all"
+              label="硫变合计"
+              min-width="20"
+              sortable
+            />
+          </el-table-column>
+          <el-table-column
+            prop="rate_lb"
+            label="硫变合格率"
             min-width="20"
             sortable
           />
           <el-table-column
-            prop="ML"
-            label="ML"
+            prop="cp_all"
+            label="次品合计"
             min-width="20"
             sortable
           />
           <el-table-column
-            prop="TC10"
-            label="TC10"
+            prop="rate"
+            label="合格率"
             min-width="20"
             sortable
           />
-          <el-table-column
-            prop="TC50"
-            label="TC50"
-            min-width="20"
-            sortable
-          />
-          <el-table-column
-            prop="TC90"
-            label="TC90"
-            min-width="20"
-            sortable
-          />
-          <el-table-column
-            prop="lb_all"
-            label="硫变合计"
-            min-width="20"
-            sortable
-          />
-        </el-table-column>
-        <el-table-column
-          prop="rate_lb"
-          label="硫变合格率"
-          min-width="20"
-          sortable
-        />
-        <el-table-column
-          prop="cp_all"
-          label="次品合计"
-          min-width="20"
-          sortable
-        />
-        <el-table-column
-          prop="rate"
-          label="合格率"
-          min-width="20"
-          sortable
-        />
-      </el-table>
+        </el-table>
+      </div>
     </div>
   </div>
 </template>
@@ -244,7 +262,8 @@ export default {
               lb_all: this.lb_all,
               rate_lb: data.all.rate_lb,
               cp_all: this.cp_all,
-              rate: data.all.rate }]
+              rate: (this.test_right / this.test_all * 100).toFixed(2)
+            }]
           }
         }
         this.loading = false

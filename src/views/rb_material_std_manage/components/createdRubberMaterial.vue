@@ -21,6 +21,7 @@
           <EquipCategorySelect
             v-model="rubberMaterialForm.dev_type"
             is-mini="mini"
+            @changeFun="changeDevType"
           />
         </el-form-item>
         <el-form-item
@@ -323,6 +324,9 @@ export default {
         this.btnLoading = false
         return
       }
+    },
+    changeDevType(obj) {
+      this.rubberMaterialForm.dev_type_name = obj ? obj.category_name : ''
     },
     async directBatching(id, _post) {
       try {

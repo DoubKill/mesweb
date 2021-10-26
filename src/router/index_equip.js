@@ -10,7 +10,7 @@ export const equipRoutes = [
       icon: 'quality'
     },
     children: [
-      {
+      /** {
         path: '/equipment-home',
         component: () => import('@/views/equipment-manage/operation-status'),
         name: 'EquipmentHome',
@@ -72,16 +72,16 @@ export const equipRoutes = [
               permissionName: ''
             }
           },
-          /* {
-            path: '/equipment/repair-application-process',
-            component: () => import('@/views/equipment-manage/operation-flow/repair-application-process'),
-            name: 'EquipmentRepairProcess',
-            meta: {
-              faName: 'EquipmentOperationFlow',
-              title: '报修申请处理',
-              permissionName: ''
-            }
-          },*/
+          // {
+          //   path: '/equipment/repair-application-process',
+          //   component: () => import('@/views/equipment-manage/operation-flow/repair-application-process'),
+          //   name: 'EquipmentRepairProcess',
+          //   meta: {
+          //     faName: 'EquipmentOperationFlow',
+          //     title: '报修申请处理',
+          //     permissionName: ''
+          //   }
+          // },
           {
             path: '/equipment/assign-equipment',
             component: () => import('@/views/equipment-manage/operation-flow/assign-equipment'),
@@ -122,17 +122,17 @@ export const equipRoutes = [
               permissionName: ''
             }
           }
-          /*,
-          {
-            path: '/equipment/apare-parts',
-            component: () => import('@/views/equipment-manage/operation-flow/apare-parts'),
-            name: 'ApareParts',
-            meta: {
-              faName: 'EquipmentOperationFlow',
-              title: '备件领料申请处理',
-              permissionName: ''
-            }
-          }*/
+          ,
+          // {
+          //   path: '/equipment/apare-parts',
+          //   component: () => import('@/views/equipment-manage/operation-flow/apare-parts'),
+          //   name: 'ApareParts',
+          //   meta: {
+          //     faName: 'EquipmentOperationFlow',
+          //     title: '备件领料申请处理',
+          //     permissionName: ''
+          //   }
+          // }
         ]
       },
       {
@@ -176,7 +176,7 @@ export const equipRoutes = [
             }
           }
         ]
-      },
+      },**/
       {
         path: '/equipment/standard-definition',
         redirect: '/equipment/project-definition',
@@ -219,7 +219,7 @@ export const equipRoutes = [
           }
         ]
       },
-      {
+      /** {
         path: '/equipment/spare-parts',
         redirect: '/equipment/location-management',
         component: () => import('@/views/equipment-manage/spare-parts/a-index'),
@@ -290,7 +290,7 @@ export const equipRoutes = [
             }
           }
         ]
-      },
+      },**/
       {
         path: '/equipment/master-data',
         redirect: '/equipment/supplier',
