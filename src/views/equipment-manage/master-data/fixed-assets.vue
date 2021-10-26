@@ -259,7 +259,7 @@
         <el-form-item label="设备名称:" prop="equip_name">
           <el-input v-model="formitem.equip_name" placeholder="请输入内容" />
         </el-form-item>
-        <el-form-item label="设备制造商:" prop="equip_supplier">
+        <el-form-item label="设备制造商:" prop="">
           <el-select v-model="formitem.equip_supplier" placeholder="请选择">
             <el-option
               v-for="item in options1"
@@ -275,6 +275,7 @@
         <el-form-item label="价格:" prop="price">
           <el-input v-model="formitem.price" placeholder="请输入内容" />
         </el-form-item>
+        <span style="display: inline-block;line-height: 40px;">万</span>
         <el-form-item label="状态:" prop="status">
           <el-select v-model="formitem.status" placeholder="请选择">
             <el-option
