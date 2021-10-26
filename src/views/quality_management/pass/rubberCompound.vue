@@ -30,10 +30,21 @@
         </el-select>
       </el-form-item>
       <el-form-item label="胶料规格">
-        <el-input v-model="search.product_type" size="" clearable placeholder="请输入胶料规格" @input="changeSearch" />
+        <el-input
+          v-model="search.product_type"
+          size=""
+          clearable
+          placeholder="请输入胶料规格"
+          @input="changeSearch"
+        />
       </el-form-item>
       <el-form-item label="生产机台">
-        <el-input v-model="search.equip_no" clearable placeholder="请输入生产机台" @input="changeSearch" />
+        <el-input
+          v-model="search.equip_no"
+          clearable
+          placeholder="请输入生产机台"
+          @input="changeSearch"
+        />
       </el-form-item>
       <el-form-item label="班次">
         <class-select @classSelected="classChanged" />
@@ -45,116 +56,123 @@
         >导出表格</el-button>
       </el-form-item>
     </el-form>
-    <div v-for="(item,key) in [tableData,tableData1]" :key="key">
-      <el-table
-        v-if="key===1?tableData.length>0?true:false:true"
-        id="out-table"
-        v-loading="loading"
-        :data="item"
-        :row-class-name="tableRowClassName"
-        border
-        tooltip-effect="dark"
-        style="width: 100%"
-        :show-header="key===1?false:true"
+    <div id="out-table">
+      <div
+        v-for="(item,key) in [tableData,tableData1]"
+        :key="key"
       >
-        <el-table-column
-          prop="product_type"
-          label="胶料"
-          min-width="20"
-        />
-        <el-table-column
-          prop="JC"
-          label="检查数"
-          min-width="15"
-          sortable
-        />
-        <el-table-column
-          prop="HG"
-          label="合格量"
-          min-width="15"
-          sortable
-        />
-        <el-table-column
-          prop="MN"
-          label="门尼不合格"
-          min-width="15"
-          sortable
-        />
-        <el-table-column
-          prop="YD"
-          label="硬度不合格"
-          min-width="15"
-          sortable
-        />
-        <el-table-column
-          prop="BZ"
-          label="比重不合格"
-          min-width="15"
-          sortable
-        />
-        <el-table-column
-          prop="RATE_1_PASS"
-          label="一次合格率"
-          min-width="25"
-          sortable
-        />
-        <el-table-column label="硫变不合格" align="center">
+        <el-table
+          v-if="key===1?tableData.length>0?true:false:true"
+          v-loading="loading"
+          :data="item"
+          :row-class-name="tableRowClassName"
+          border
+          tooltip-effect="dark"
+          style="width: 100%"
+          :show-header="key===1?false:true"
+        >
           <el-table-column
-            prop="MH"
-            label="MH"
+            prop="product_type"
+            label="胶料"
             min-width="20"
+          />
+          <el-table-column
+            prop="JC"
+            label="检查数"
+            min-width="15"
             sortable
           />
           <el-table-column
-            prop="ML"
-            label="ML"
-            min-width="20"
+            prop="HG"
+            label="合格量"
+            min-width="15"
             sortable
           />
           <el-table-column
-            prop="TC10"
-            label="TC10"
-            min-width="20"
+            prop="MN"
+            label="门尼不合格"
+            min-width="15"
             sortable
           />
           <el-table-column
-            prop="TC50"
-            label="TC50"
-            min-width="20"
+            prop="YD"
+            label="硬度不合格"
+            min-width="15"
             sortable
           />
           <el-table-column
-            prop="TC90"
-            label="TC90"
-            min-width="20"
+            prop="BZ"
+            label="比重不合格"
+            min-width="15"
             sortable
           />
           <el-table-column
-            prop="sum_s"
-            label="硫变合计"
-            min-width="20"
+            prop="RATE_1_PASS"
+            label="一次合格率"
+            min-width="25"
             sortable
           />
-        </el-table-column>
-        <el-table-column
-          prop="RATE_S_PASS"
-          label="硫变合格率"
-          sortable
-          min-width="25"
-        />
-        <el-table-column
-          prop="cp_all"
-          label="次品合计"
-          min-width="25"
-          sortable
-        />
-        <el-table-column
-          prop="rate"
-          label="合格率"
-          min-width="25"
-          sortable
-        />
-      </el-table>
+          <el-table-column
+            label="硫变不合格"
+            align="center"
+          >
+            <el-table-column
+              prop="MH"
+              label="MH"
+              min-width="20"
+              sortable
+            />
+            <el-table-column
+              prop="ML"
+              label="ML"
+              min-width="20"
+              sortable
+            />
+            <el-table-column
+              prop="TC10"
+              label="TC10"
+              min-width="20"
+              sortable
+            />
+            <el-table-column
+              prop="TC50"
+              label="TC50"
+              min-width="20"
+              sortable
+            />
+            <el-table-column
+              prop="TC90"
+              label="TC90"
+              min-width="20"
+              sortable
+            />
+            <el-table-column
+              prop="sum_s"
+              label="硫变合计"
+              min-width="20"
+              sortable
+            />
+          </el-table-column>
+          <el-table-column
+            prop="RATE_S_PASS"
+            label="硫变合格率"
+            sortable
+            min-width="25"
+          />
+          <el-table-column
+            prop="cp_all"
+            label="次品合计"
+            min-width="25"
+            sortable
+          />
+          <el-table-column
+            prop="rate"
+            label="合格率"
+            min-width="25"
+            sortable
+          />
+        </el-table>
+      </div>
     </div>
   </div>
 </template>
@@ -243,7 +261,8 @@ export default {
               sum_s: this.sum_s,
               RATE_S_PASS: data.all.rate_lb,
               cp_all: this.cp_all,
-              rate: (this.HG / this.JC * 100).toFixed(2) }]
+              rate: (this.HG / this.JC * 100).toFixed(2)
+            }]
           }
         }
         this.loading = false
