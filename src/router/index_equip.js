@@ -10,7 +10,7 @@ export const equipRoutes = [
       icon: 'quality'
     },
     children: [
-      /** {
+      {
         path: '/equipment-home',
         component: () => import('@/views/equipment-manage/operation-status'),
         name: 'EquipmentHome',
@@ -122,7 +122,6 @@ export const equipRoutes = [
               permissionName: ''
             }
           }
-          ,
           // {
           //   path: '/equipment/apare-parts',
           //   component: () => import('@/views/equipment-manage/operation-flow/apare-parts'),
@@ -176,7 +175,7 @@ export const equipRoutes = [
             }
           }
         ]
-      },**/
+      },
       {
         path: '/equipment/standard-definition',
         redirect: '/equipment/project-definition',
@@ -219,7 +218,7 @@ export const equipRoutes = [
           }
         ]
       },
-      /** {
+      {
         path: '/equipment/spare-parts',
         redirect: '/equipment/location-management',
         component: () => import('@/views/equipment-manage/spare-parts/a-index'),
@@ -290,7 +289,7 @@ export const equipRoutes = [
             }
           }
         ]
-      },**/
+      },
       {
         path: '/equipment/master-data',
         redirect: '/equipment/supplier',
