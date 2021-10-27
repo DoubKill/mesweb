@@ -25,6 +25,11 @@
         </h3>
         <h2 v-if="!formInline.level">中策橡胶(安吉)有限公司</h2>
         <el-form v-loading="loading" :inline="true" label-width="100px">
+          <!-- <el-form-item v-if="formInline.level>2" label="节点编号">
+            <el-input v-model="formInline.node_id" disabled />
+            <el-button style="margin-left:10px" type="primary" @click="printLabel">打印标签</el-button>
+          </el-form-item> -->
+          <!-- <br> -->
           <el-form-item v-if="formInline.level" label="分厂">
             <el-input v-model="formInline.factoryName" disabled />
           </el-form-item>
@@ -83,8 +88,8 @@
             <el-input v-model="formInline.equip_area_name" disabled>
               <el-button slot="append" :disabled="!formInline.equip_no" icon="el-icon-search" @click="showLocation(false)" />
             </el-input>
-            <br>
           </el-form-item>
+          <br>
           <el-form-item v-if="!!formInline.equip_type_nid" label="">
             <el-checkbox v-model="formInline.maintenance_xunjian_flag" style="margin-left:5px;width:120px">是否巡检</el-checkbox>
           </el-form-item>
@@ -1062,6 +1067,9 @@ export default {
     },
     showList() {
       this.isShowList = !this.isShowList
+    },
+    printLabel() {
+
     }
   }
 }
