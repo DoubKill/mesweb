@@ -24,7 +24,14 @@
             label="料包编码"
           >
             <template slot-scope="{row}">
-              {{ row.name }}/{{ row.package_cnt }}包
+              {{ row.name }}/<el-input-number
+                v-model="row.package_cnt"
+                controls-position="right"
+                :min="1"
+                style="width:120px"
+                @blur="changeNum(row,_i)"
+              />包
+              <!-- {{ row.package_cnt }} -->
             </template>
           </el-table-column>
           <el-table-column
@@ -55,7 +62,7 @@
                 :min="0"
                 controls-position="right"
                 :disabled="isView"
-                @input="changeNum(row)"
+                @input="changeNum(row,_i)"
               />
             </template>
           </el-table-column>
@@ -176,7 +183,8 @@ export default {
     },
     updateRow() {},
     changeNum(row) {
-      row.single_weight = (Number(row.standard_weight) / Number(row.package_cnt)).toFixed(2)
+      const a = (Number(row.standard_weight) / Number(row.package_cnt)).toFixed(2)
+      this.$set(row, 'single_weight', a)
     },
     pop_up_raw_material(faIndex, index) {
       this.currentFaIndex = faIndex

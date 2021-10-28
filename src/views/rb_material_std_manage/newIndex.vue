@@ -30,6 +30,12 @@
           @change="changeSearch"
         />
       </el-form-item>
+      <el-form-item label="生产机型">
+        <equip-category-select
+          v-model="search.dev_type"
+          @change="changeSearch"
+        />
+      </el-form-item>
       <el-form-item label="胶料编码">
         <el-input
           v-model="search.stage_product_batch_no"
@@ -37,12 +43,12 @@
           @input="changeSearch"
         />
       </el-form-item>
-      <el-form-item style="float: right">
+      <!-- <el-form-item style="float: right">
         <el-button
           v-if="checkPermission(['productbatching','add'])"
           @click="newRubberClicked"
         >新建</el-button>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item style="float: right">
         <el-button
           v-if="checkPermission(['productbatching','change'])"
@@ -239,10 +245,11 @@ import StageIdSelect from '@/components/StageSelect/StageIdSelect'
 import SITESelect from './components/SITESelect'
 import createdRubberMaterial from './components/createdRubberMaterial'
 import page from '@/components/page'
+import EquipCategorySelect from '@/components/EquipCategorySelect'
 
 export default {
   name: 'RbMaterialStdManage',
-  components: { page, StageIdSelect, createdRubberMaterial, SITESelect },
+  components: { page, StageIdSelect, createdRubberMaterial, SITESelect, EquipCategorySelect },
   data() {
     return {
       loading: false,

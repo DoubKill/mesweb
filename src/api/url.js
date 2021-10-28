@@ -29,6 +29,7 @@ export default {
   WorkSchedulesUrl: BasicsUrl + 'work_schedules/',
   GroupAddUserUrl: SystemUrl + 'group_add_user/',
   MaterialsUrl: '/api/v1/recipe/materials/',
+  MaterialInfoIssue: '/api/v1/terminal/material-info-issue/', // 原材料下发至称量系统接口
   ProductInfosUrl: '/api/v1/recipe/product-infos/',
   ValidateVersionsUrl: '/api/v1/recipe/validate-versions/',
   CopyProductInfosUrl: '/api/v1/recipe/copy-product-infos/',
