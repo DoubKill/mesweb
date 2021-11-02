@@ -530,3 +530,78 @@ export function getDefaultCode(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+// 报修申请
+export function equipApplyRepair(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipApplyRepair + id + '/' : API.EquipApplyRepair,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+// 维修工单
+export function equipApplyOrder(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipApplyOrder + id + '/' : API.EquipApplyOrder,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function getStaff(method, id, data = {}) {
+  const obj = {
+    url: id ? API.GetStaff + id + '/' : API.GetStaff,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipApplyOrderdDown(params) {
+  return request({
+    url: API.EquipApplyOrder,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
+
+export function multiUpdate(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MultiUpdate + id + '/' : API.MultiUpdate,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function materialReq(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MaterialReq + id + '/' : API.MaterialReq,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+// 上传图片
+export function uploadImages(method, id, data = {}) {
+  const obj = {
+    url: id ? API.UploadImages + id + '/' : API.UploadImages,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipWarehouseInventory(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipWarehouseInventory + id + '/' : API.EquipWarehouseInventory,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
