@@ -93,6 +93,16 @@ export const equipRoutes = [
             }
           },
           {
+            path: '/equipment/order-equipment',
+            component: () => import('@/views/equipment-manage/operation-flow/order-equipment'),
+            name: 'OrderEquipment',
+            meta: {
+              faName: 'EquipmentOperationFlow',
+              title: '接单维修工单',
+              permissionName: ''
+            }
+          },
+          {
             path: '/equipment/execute-equipment',
             component: () => import('@/views/equipment-manage/operation-flow/execute-equipment'),
             name: 'ExecuteEquipment',

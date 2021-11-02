@@ -4,44 +4,43 @@
     <el-form :inline="true">
       <el-form-item label="报修编号">
         <el-input
-          v-model="search.equip_no"
+          v-model="search.plan_id"
           style="width:200px"
           @input="changeSearch"
         />
       </el-form-item>
       <el-form-item label="报修部门">
         <el-select
-          v-model="search.jg"
+          v-model="search.plan_department"
           style="width:150px"
           placeholder="请选择"
           clearable
           @change="changeSearch"
         >
           <el-option
-            v-for="item in ['生产','工艺','设备']"
-            :key="item"
-            :label="item"
-            :value="item"
+            v-for="item in options1"
+            :key="item.id"
+            :label="item.name"
+            :value="item.name"
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="机台" prop="equip_no">
+      <el-form-item label="机台">
         <equip-select
           style="width:150px"
-          equip-type="密炼设备"
           @equipSelected="equipSelected"
         />
       </el-form-item>
       <el-form-item label="故障原因">
         <el-input
-          v-model="search.equi"
+          v-model="search.result_fault_cause"
           style="width:200px"
           @input="changeSearch"
         />
       </el-form-item>
       <el-form-item label="设备条件">
         <el-select
-          v-model="search.jg1"
+          v-model="search.equip_condition"
           placeholder="请选择"
           clearable
           @change="changeSearch"
@@ -56,7 +55,7 @@
       </el-form-item>
       <el-form-item label="重要程度">
         <el-select
-          v-model="search.jg2"
+          v-model="search.importance_level"
           placeholder="请选择"
           clearable
           @change="changeSearch"
@@ -74,12 +73,13 @@
       </el-form-item>
     </el-form>
     <el-table
+      v-loading="loading"
       :data="tableData"
       row-key="id"
-      borde
+      border
     >
       <el-table-column
-        prop="date"
+        prop="plan_id"
         label="报修编号"
         min-width="20"
       >
@@ -87,53 +87,63 @@
           <el-link
             type="primary"
             @click="dialog(scope.row,'报修申请详情')"
-          >{{ scope.row.date }}</el-link>
+          >{{ scope.row.plan_id }}</el-link>
         </template>
       </el-table-column>
       <el-table-column
-        prop="date"
+        prop="plan_department"
         label="报修部门"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="equip_no"
         label="机台"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="part_name"
         label="部位名称"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="result_fault_cause_name"
         label="故障原因"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="result_fault_desc"
         label="故障描述"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="equip_condition"
         label="设备条件"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="importance_level"
         label="重要程度"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="plan_source"
+        label="来源"
+        min-width="20"
+      />
+      <el-table-column
+        prop="status"
+        label="状态"
+        min-width="20"
+      />
+      <el-table-column
+        prop="created_username"
         label="报修人"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="created_date"
         label="报修时间"
-        min-width="20"
+        width="160"
       />
     </el-table>
     <page
@@ -155,38 +165,46 @@
         :rules="rules"
         label-width="120px"
       >
-        <el-form-item label="设备条码">
+        <el-form-item label="设备条码" prop="equip_barcode">
           <el-input
-            v-model="ruleForm.material_name"
+            v-model="ruleForm.equip_barcode"
             :disabled="operateType==='报修申请详情'"
+            style="width:250px"
+            @input="searchBom"
+          >
+            <el-button
+              slot="append"
+              :disabled="operateType==='报修申请详情'"
+              icon="el-icon-search"
+              @click="Add1"
+            />
+          </el-input>
+        </el-form-item>
+        <el-form-item label="设备名称" prop="factory_name">
+          <el-input
+            v-model="ruleForm.factory_name"
+            :disabled="true"
             style="width:250px"
           />
         </el-form-item>
-        <el-form-item label="设备名称">
-          <el-input
-            v-model="ruleForm.material_name"
-            :disabled="operateType==='报修申请详情'"
-            style="width:250px"
-          />
-        </el-form-item>
-        <el-form-item style="" label="报修部门" prop="warehouse">
+        <el-form-item label="报修部门" prop="plan_department">
           <el-select
-            v-model="ruleForm.mater"
+            v-model="ruleForm.plan_department"
             :disabled="operateType==='报修申请详情'"
             placeholder="请选择"
             clearable
           >
             <el-option
-              v-for="item in options"
-              :key="item"
-              :label="item"
-              :value="item"
+              v-for="item in options1"
+              :key="item.id"
+              :label="item.name"
+              :value="item.name"
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="故障发生时间" prop="down_time">
+        <el-form-item label="故障发生时间" prop="fault_datetime">
           <el-date-picker
-            v-model="ruleForm.down_time"
+            v-model="ruleForm.fault_datetime"
             :disabled="operateType==='报修申请详情'"
             type="datetime"
             placeholder="选择日期时间"
@@ -195,45 +213,58 @@
         </el-form-item>
         <el-form-item label="机台" prop="equip_no">
           <equip-select
-            equip-type="密炼设备"
-            :is-disabled="operateType==='报修申请详情'"
-            :is-multiple="true"
+            :is-create="true"
             :default-val="ruleForm.equip_no"
-            @equipSelected="equipSelected"
+            style="width:200px"
+            :is-disabled="operateType==='报修申请详情'||disable"
+            @equipSelected="equipSelected1"
           />
         </el-form-item>
-        <el-form-item label="设备部位" prop="equip_part">
-          <locationDefinitionDelect :is-disabled="operateType==='报修申请详情'" :is-created="true" :equip-no="ruleForm.equip_no" :default-val="ruleForm.equip_part" @locationSelect="locationSelect" />
-          <el-link v-if="ruleForm.down_flag&&ruleForm.id" style="margin-left:10px" type="warning">已停机</el-link>
-          <el-link v-if="ruleForm.id&&!ruleForm.down_flag" style="margin-left:10px">未停机</el-link>
-          <el-checkbox v-if="!ruleForm.id" v-model="ruleForm.down_flag" :disabled="operateType==='报修申请详情'" style="margin-left:10px">已停机</el-checkbox>
+        <el-form-item label="设备部位" prop="equip_part_new">
+          <el-select v-model="ruleForm.equip_part_new" :disabled="operateType==='报修申请详情'||disable" placeholder="请选择" clearable @visible-change="getEquipPart">
+            <el-option
+              v-for="item in options2"
+              :key="item.id"
+              :label="item.part_name"
+              :value="item.part"
+            />
+          </el-select>
+          <!-- <el-input
+            v-model="ruleForm.part_name"
+            :disabled="true"
+            style="width:200px"
+          /> -->
+          <el-link v-if="ruleForm.equip_condition==='停机'&&ruleForm.id" style="margin-left:10px" type="warning">已停机</el-link>
+          <el-link v-if="ruleForm.id&&ruleForm.equip_condition==='不停机'" style="margin-left:10px">不停机</el-link>
+          <el-checkbox v-if="!ruleForm.id" v-model="ruleForm.equip_condition" :disabled="operateType==='报修申请详情'" style="margin-left:10px">已停机</el-checkbox>
         </el-form-item>
-        <el-form-item label="停机原因">
+        <el-form-item label="故障原因" prop="result_fault_cause_name">
           <el-input
-            v-model="ruleForm.material_name"
-            :disabled="operateType==='报修申请详情'"
+            v-model="ruleForm.result_fault_cause_name"
+            :disabled="true"
             style="width:250px"
           >
             <el-button
               slot="append"
+              :disabled="operateType==='报修申请详情'"
               icon="el-icon-search"
+              @click="Add"
             />
           </el-input>
         </el-form-item>
         <el-form-item label="重要程度">
-          <el-radio-group v-model="ruleForm.feed" :disabled="operateType==='报修申请详情'">
-            <el-radio label="1">高</el-radio>
-            <el-radio label="2">中</el-radio>
-            <el-radio label="3">低</el-radio>
+          <el-radio-group v-model="ruleForm.importance_level" :disabled="operateType==='报修申请详情'">
+            <el-radio label="高">高</el-radio>
+            <el-radio label="中">中</el-radio>
+            <el-radio label="低">低</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="故障描述" prop="note">
+        <el-form-item label="故障描述" prop="result_fault_desc">
           <el-input
-            v-model="ruleForm.note"
+            v-model="ruleForm.result_fault_desc"
             :disabled="operateType==='报修申请详情'"
             type="textarea"
             :rows="3"
-            placeholder="请输入内容"
           />
         </el-form-item>
         <el-form-item label="上传图片">
@@ -246,28 +277,123 @@
             :on-preview="handlePictureCardPreview"
             :on-change="onChangeImg"
             :on-exceed="onExceed"
-            :limit="1"
+            :limit="5"
           >
             <i class="el-icon-plus" />
           </el-upload>
-          <el-image
-            v-else
-            style="width: 100px; height: 100px"
-            :src="ruleForm.image"
-            :preview-src-list="[ruleForm.image]"
-          >
-            <div slot="error" class="image-slot">
-              暂无图片
-            </div>
-          </el-image>
-          <el-dialog :visible.sync="dialogVisibleImg" append-to-body>
-            <img width="100%" :src="dialogImageUrl" alt="">
-          </el-dialog>
+          <template v-for="(item, index) in ruleForm.apply_repair_graph_url">
+            <el-image
+              v-if="operateType==='报修申请详情'&&ruleForm.apply_repair_graph_url.length>0"
+              :key="index"
+              style="width: 100px; height: 100px"
+              :src="item"
+              :preview-src-list="[item]"
+            />
+          </template>
+          <div v-if="operateType==='报修申请详情'&&ruleForm.apply_repair_graph_url.length===0">
+            暂无图片
+          </div>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose(false)">取 消</el-button>
-        <el-button v-if="operateType==='新建报修申请'" type="primary" @click="addSubmitFun">确 定</el-button>
+        <el-button v-if="operateType==='新建报修申请'" :loading="btnLoading" type="primary" @click="addSubmitFun">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
+      :title="`故障原因`"
+      :visible.sync="dialogVisible1"
+      width="80%"
+      :before-close="handleClose1"
+    >
+      <fault-classify
+        ref="List"
+        :is-dialog="true"
+        :show="dialogVisible1"
+      />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleClose1(false)">取 消</el-button>
+        <el-button type="primary" @click="submitFun">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
+      :title="`设备部位选择`"
+      :visible.sync="dialogVisible2"
+      width="80%"
+      :before-close="handleClose2"
+    >
+      <el-form :inline="true">
+        <el-form-item label="所属主设备种类">
+          <el-select v-model="formInline.equip_type" placeholder="请选择" clearable @change="changeSearch1">
+            <el-option
+              v-for="item in options"
+              :key="item.category_no"
+              :label="item.category_no"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="部位分类">
+          <el-select v-model="formInline.part_type" placeholder="请选择" clearable @change="changeSearch1">
+            <el-option
+              v-for="item in GlobalList"
+              :key="item.global_name"
+              :label="item.global_name"
+              :value="item.global_name"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="部位编码">
+          <el-input v-model="formInline.part_code" clearable placeholder="部位编码" @input="changeSearch1" />
+        </el-form-item>
+        <el-form-item label="部位名称">
+          <el-input v-model="formInline.part_name" clearable placeholder="部位名称" @input="changeSearch1" />
+        </el-form-item>
+      </el-form>
+      <el-table
+        ref="singleTable"
+        v-loading="loading1"
+        :data="tableData1"
+        highlight-current-row
+        row-key="id"
+        style="width: 100%"
+        border
+        @current-change="handleSelectionChange"
+      >
+        <el-table-column
+          prop="equip_type"
+          label="所属主设备种类"
+          min-width="20"
+        />
+        <el-table-column
+          prop="part_type"
+          label="部位分类"
+          min-width="20"
+        />
+        <el-table-column
+          prop="equip_no"
+          label="机台编号"
+          min-width="20"
+        />
+        <el-table-column
+          prop="node_id"
+          label="部位条码"
+          min-width="20"
+        />
+        <el-table-column
+          prop="part_code"
+          label="部位代码"
+          min-width="20"
+        />
+        <el-table-column
+          prop="part_name"
+          label="部位名称"
+          min-width="20"
+        />
+      </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleClose2(false)">取 消</el-button>
+        <el-button type="primary" @click="submitFun1">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -275,68 +401,50 @@
 
 <script>
 import EquipSelect from '@/components/EquipSelect'
+import FaultClassify from '../master-data/fault-classify'
+import { sectionTree } from '@/api/base_w_four'
 import page from '@/components/page'
-import locationDefinitionDelect from '../../equipment-management/components/location-definition-select'
-import { equipMaintenanceOrder } from '@/api/base_w_two'
+import { equipBom } from '@/api/base_w_four'
+import { debounce } from '@/utils'
+import { equipApplyRepair, equipsCategory, getSupplierType, uploadImages } from '@/api/jqy'
 import { mapGetters } from 'vuex'
 import { checkPermission } from '@/utils'
 export default {
   name: 'EquipmentRepair',
-  components: { EquipSelect, locationDefinitionDelect, page },
+  components: { EquipSelect, page, FaultClassify },
   data() {
-    const validator = (rule, value, callback, _value, str) => {
-      if (!_value && !value) {
-        callback(new Error(str))
-      } else {
-        callback()
-      }
-    }
     return {
-      options: ['巡检', '保养', '生产', '其他'],
-      search: {
-        page: 1,
-        page_size: 10
-      },
+      options: [],
+      options1: [],
+      options2: [],
+      disable: false,
+      btnLoading: false,
+      GlobalList: [],
+      search: {},
+      formInline: { level: 4 },
       loading: true,
-      tableData: [{ date: '1' }],
+      loading1: true,
+      tableData: [],
+      tableData1: [],
       dialogVisible: false,
+      dialogVisible1: false,
+      dialogVisible2: false,
       total: 0,
-      ruleForm: {
-        down_time: '',
-        first_down_type: '',
-        image: null,
-        first_down_reason: '',
-        equip_part: '',
-        equip_no: '',
-        down_flag: false
-      },
+      multipleSelection: [],
+      ruleForm: {},
       rules: {
-        down_time: [
-          { required: true, message: '请选择故障时间', trigger: 'blur' }
+        plan_department: [
+          { required: true, message: '不能为空', trigger: 'blur' }
+        ],
+        fault_datetime: [
+          { required: true, message: '不能为空', trigger: 'blur' }
         ],
         equip_no: [
-          { required: true, trigger: 'blur', validator: (rule, value, callback) => {
-            validator(rule, value, callback,
-              this.ruleForm.equip_no, '请选择设备')
-          }
-          }
+          { required: true, message: '不能为空', trigger: 'blur' }
         ],
-        equip_part: [
-          { required: true, trigger: 'blur', validator: (rule, value, callback) => {
-            validator(rule, value, callback,
-              this.ruleForm.equip_part, '请选择设备部位')
-          } }
-        ],
-        first_down_type: [
-          { required: true, trigger: 'blur', validator: (rule, value, callback) => {
-            validator(rule, value, callback,
-              this.ruleForm.first_down_type, '请选择停机类型')
-          } }
-        ],
-        first_down_reason: [{ required: true, trigger: 'blur', validator: (rule, value, callback) => {
-          validator(rule, value, callback,
-            this.ruleForm.first_down_reason, '请选择原因')
-        } }]
+        result_fault_cause_name: [
+          { required: true, message: '不能为空', trigger: 'blur' }
+        ]
       },
       dialogVisibleImg: false,
       dialogImageUrl: '',
@@ -349,24 +457,111 @@ export default {
     ])
   },
   created() {
-    // this.getList()
+    this.getList()
+    this.getSection()
   },
   methods: {
     checkPermission,
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+    },
+    async getSection() {
+      try {
+        const data = await sectionTree('get', null, { params: { all: 1 }})
+        this.options1 = data.results || []
+      } catch (e) {
+        //
+      }
+    },
+    async getEquipPart(val) {
+      if (val) {
+        if (this.ruleForm.equip_no) {
+          try {
+            const data = await equipBom('get', null, { params: { evel: 4, equip_info: this.ruleForm.equip_id, part__use_flag: true }})
+            this.options2 = data || []
+          } catch (e) {
+            //
+          }
+        } else {
+          this.options2 = []
+          this.$message.info('请先选择机台')
+        }
+      }
+    },
+    searchBom() {
+      debounce(this, 'searchBom1')
+    },
+    async searchBom1() {
+      try {
+        const data = await equipBom('get', null, { params: { level: 4, node_id: this.ruleForm.equip_barcode }})
+        if (data.length > 0) {
+          const data1 = await equipBom('get', null, { })
+          this.options2 = data1 || []
+          this.ruleForm.equip_no = data[0].equip_no
+          this.ruleForm.factory_name = data[0].factory_id
+          this.ruleForm.equip_part_new = data[0].part
+          this.ruleForm.part_name = data[0].part_name
+          this.disable = true
+        } else {
+          this.ruleForm.equip_barcode = ''
+          this.ruleForm.equip_no = ''
+          this.ruleForm.factory_name = ''
+          if (this.ruleForm.equip_part_new) {
+            this.ruleForm.equip_part_new = ''
+          }
+          this.ruleForm.part_name = ''
+          this.disable = false
+        }
+      } catch (e) {
+        //
+      }
+    },
+    async getTypeNode() {
+      try {
+        const data = await equipsCategory('get', null, { params: { all: 1 }})
+        this.options = data.results || []
+      } catch (e) {
+        //
+      }
+    },
+    async getGlobal() {
+      try {
+        const data = await getSupplierType('get', null, { params: { all: 1, class_name: '部位分类' }})
+        this.GlobalList = data.results
+      } catch (error) {
+        this.GlobalList = []
+      }
+    },
+    debounceList() {
+      debounce(this, 'changeSearch')
+    },
     changeSearch() {
       this.search.page = 1
       this.tableData = []
       this.getList()
     },
+    changeSearch1() {
+      this.getList1()
+    },
     async getList() {
       try {
         this.loading = true
-        const data = await equipMaintenanceOrder('get', null, { params: this.search })
+        const data = await equipApplyRepair('get', null, { params: this.search })
         this.tableData = data.results || []
         this.total = data.count
         this.loading = false
       } catch (e) {
         this.loading = false
+      }
+    },
+    async getList1() {
+      try {
+        this.loading1 = true
+        const data = await equipBom('get', null, { params: this.formInline })
+        this.tableData1 = data || []
+        this.loading1 = false
+      } catch (e) {
+        this.loading1 = false
       }
     },
     currentChange(page, page_size) {
@@ -378,37 +573,100 @@ export default {
       if (this.$refs.elUploadImg) {
         this.$refs.elUploadImg.clearFiles()
       }
-      // this.$refs.ruleFormHandle.resetFields()
       this.$refs.ruleFormHandle.clearValidate()
       this.dialogVisible = false
+      this.disable = false
       if (done) {
         done()
       }
     },
-    dialog(row, type) {
-      this.operateType = type
-      this.ruleForm = {
-        down_time: '',
-        first_down_type: '',
-        image: null,
-        first_down_reason: '',
-        equip_part: '',
-        equip_no: '',
-        down_flag: false
+    handleClose1(done) {
+      this.dialogVisible1 = false
+      if (done) {
+        done()
+      }
+    },
+    handleClose2(done) {
+      this.dialogVisible2 = false
+      if (done) {
+        done()
+      }
+    },
+    Add() {
+      this.dialogVisible1 = true
+    },
+    Add1() {
+      this.dialogVisible2 = true
+      this.getTypeNode()
+      this.getGlobal()
+      this.getList1()
+    },
+    submitFun() {
+      if (this.$refs['List'].currentObj === null) {
+        this.$refs['List'].currentObj = {}
+      }
+      if (this.$refs['List'].currentObj.fault_name) {
+        this.ruleForm.result_fault_cause_name = this.$refs['List'].currentObj.fault_name
+        this.ruleForm.result_fault_cause = this.$refs['List'].currentObj.id
+        this.dialogVisible1 = false
+      } else {
+        this.$message.info('请选择一种原因')
+      }
+    },
+    async submitFun1() {
+      if (this.multipleSelection.length === 0) {
+        this.$message.info('请选择一条数据')
+      } else {
+        const data = await equipBom('get', null, { })
+        this.options2 = data || []
+        this.ruleForm.equip_barcode = this.multipleSelection.node_id
+        this.ruleForm.equip_no = this.multipleSelection.equip_no
+        this.ruleForm.factory_name = this.multipleSelection.factory_id
+        this.ruleForm.equip_part_new = this.multipleSelection.part
+        this.ruleForm.part_name = this.multipleSelection.part_name
+        this.disable = true
+        this.dialogVisible2 = false
+      }
+    },
+    async dialog(row, type) {
+      if (row === false) {
+        let dateTime = ''
+        const yy = new Date().getFullYear()
+        const mm = new Date().getMonth() + 1
+        const dd = new Date().getDate()
+        const hh = new Date().getHours()
+        const mf = new Date().getMinutes() < 10 ? '0' + new Date().getMinutes() : new Date().getMinutes()
+        const ss = new Date().getSeconds() < 10 ? '0' + new Date().getSeconds() : new Date().getSeconds()
+        dateTime = yy + '-' + mm + '-' + dd + ' ' + hh + ':' + mf + ':' + ss
+        this.operateType = type
+        this.ruleForm = {
+          fault_datetime: dateTime,
+          image_url_list: [],
+          importance_level: '高'
+        }
+      } else {
+        const data = await equipBom('get', null, { })
+        this.options2 = data || []
+        this.operateType = type
+        this.ruleForm = JSON.parse(JSON.stringify(row))
       }
       this.dialogVisible = true
     },
-    locationSelect(obj) {
-      this.ruleForm.equip_part = obj ? obj.id : ''
-    },
     equipSelected(obj) {
+      this.$set(this.search, 'equip_no', obj ? obj.equip_no : '')
+      this.changeSearch()
+    },
+    equipSelected1(obj) {
       this.$set(this.ruleForm, 'equip_no', obj ? obj.equip_no : '')
-      this.$set(this.ruleForm, 'equip_part', '')
+      this.$set(this.ruleForm, 'equip_id', obj ? obj.id : '')
+      if (this.ruleForm.equip_part_new) {
+        this.ruleForm.equip_part_new = ''
+      }
     },
     onExceed() {
-      this.$message.info('最多上传一张图片')
+      this.$message.info('最多上传五张图片')
     },
-    onChangeImg(file, fileList) {
+    async onChangeImg(file, fileList) {
       const isJPG = ['image/jpeg', 'image/jpg', 'image/png'].includes(file.raw.type)
       const isLt2M = file.size / 1024 / 1024 < 2
       if (!isJPG) {
@@ -421,45 +679,40 @@ export default {
         fileList.pop()
         return
       }
-      this.$set(this.ruleForm, 'image', file.raw)
+      const picture = new FormData()
+      picture.append('image_file_name', file.raw)
+      picture.append('source_type', '维修')
+      const data = await uploadImages('post', null, { data: picture })
+      this.ruleForm.image_url_list.push(data.image_file_name)
     },
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url
-      this.dialogVisibleImg = true
     },
     async addSubmitFun() {
-      try {
-        const formData = new FormData()
-        let _api = ''
-        if (this.operateType === '申请维修') {
-          formData.append('image', this.ruleForm.image || '')
-          _api = 'post'
-        } else {
-          _api = 'put'
-        }
-        if (this.operateType === '故障原因') {
-          formData.append('down_reason', this.ruleForm.down_reason || '')
-        }
-        this.$refs['ruleFormHandle'].validate(async(valid) => {
-          if (valid) {
-            formData.append('down_time', this.ruleForm.down_time)
-            formData.append('equip_no', this.ruleForm.equip_no)
-            formData.append('equip_part', this.ruleForm.equip_part)
-            formData.append('first_down_reason', this.ruleForm.first_down_reason)
-            formData.append('first_down_type', this.ruleForm.first_down_type)
-            formData.append('down_flag', this.ruleForm.down_flag || '')
-            formData.append('note', this.ruleForm.note || '')
-            await equipMaintenanceOrder(_api, this.ruleForm.id || null, { data: formData })
-            this.$message.success('操作成功')
-            this.handleClose(false)
-            this.getList()
-          } else {
-            return false
-          }
-        })
-      } catch (e) {
-        //
+      delete this.ruleForm.apply_repair_graph_url
+      if (this.ruleForm.equip_condition === true) {
+        this.ruleForm.equip_condition = '停机'
+      } else {
+        this.ruleForm.equip_condition = '不停机'
       }
+      this.$refs.ruleFormHandle.validate(async(valid) => {
+        if (valid) {
+          try {
+            this.btnLoading = true
+            await equipApplyRepair('post', null, { data: this.ruleForm })
+            this.$message.success('操作成功')
+            this.handleClose(null)
+            this.getList()
+            this.btnLoading = false
+            this.disable = false
+          } catch (e) {
+            this.btnLoading = false
+            this.disable = false
+          }
+        } else {
+          return false
+        }
+      })
     }
   }
 }
