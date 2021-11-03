@@ -6,9 +6,17 @@
       width="90%"
       :before-close="handleClose"
     >
-      <el-form :inline="true" :model="formInline">
+      <el-form
+        :inline="true"
+        :model="formInline"
+      >
         <el-form-item label="胶料编码">
-          <el-input v-model="formInline.stage_product_batch_no" size="mini" :disabled="true" placeholder="胶料编码" />
+          <el-input
+            v-model="formInline.stage_product_batch_no"
+            size="mini"
+            :disabled="true"
+            placeholder="胶料编码"
+          />
         </el-form-item>
         <el-form-item label="胶料名称">
           <el-input
@@ -18,12 +26,13 @@
           />
         </el-form-item>
         <el-form-item label="炼胶机类型">
-          <EquipCategorySelect
+          <!-- <EquipCategorySelect
             v-model="formInline.dev_type"
             is-mini="mini"
-            :is-disabled="isView"
+            :is-disabled="true"
             @changeFun="changeDevType"
-          />
+          /> -->
+          {{ formInline.dev_type_name }}
         </el-form-item>
         <el-form-item label="炼胶时间">
           <el-input-number
@@ -36,88 +45,119 @@
             controls-position="right"
           />
         </el-form-item>
-        <el-form-item v-if="!isView" style="float:right;">
+        <el-form-item
+          v-if="!isView"
+          style="float:right;"
+        >
           <el-button @click="putNewsaveMaterialClicked">保存</el-button>
           <el-button @click="addMaterial">新建料包</el-button>
         </el-form-item>
         <div style="clear:both" />
       </el-form>
 
-      <el-table
-        :data="tableData"
-        border
-        show-summary
+      <div
+        v-for="(itemFa,i) in tableDataAll"
+        :key="i"
       >
-        <el-table-column
-          label="No"
-          type="index"
-          width="60"
-        />
-        <el-table-column
-          prop="material_type"
-          label="类别"
-          width="80"
-          column-key="material_type"
-        />
-        <el-table-column
-          label="原材料"
+        <h3>{{ i===0?'胶料':i===1?'炭黑':'油料' }}</h3>
+        <el-table
+          :data="itemFa.tableData"
+          border
+          show-summary
         >
-          <template slot-scope="{row,$index}">
-            <el-input
-              v-model="row.material_name"
-              size="mini"
-              :disabled="true"
-            >
-              <el-button
-                slot="append"
-                icon="el-icon-search"
-                @click="pop_up_raw_material($index)"
+          <el-table-column
+            label="No"
+            type="index"
+            width="60"
+          />
+          <el-table-column
+            prop="material_type"
+            label="类别"
+            width="80"
+            column-key="material_type"
+          />
+          <el-table-column label="原材料">
+            <template slot-scope="{row,$index}">
+              <el-input
+                v-model="row.material_name"
+                size="mini"
+                :disabled="true"
+              >
+                <el-button
+                  slot="append"
+                  icon="el-icon-search"
+                  @click="pop_up_raw_material($index,i)"
+                />
+              </el-input>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="实际重量/kg"
+            prop="actual_weight"
+          >
+            <template slot-scope="{row}">
+              <el-input-number
+                v-model.number="row.actual_weight"
+                size="mini"
+                :min="0"
+                controls-position="right"
+                :disabled="isView"
               />
-            </el-input>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="实际重量/kg"
-          prop="actual_weight"
-        >
-          <template slot-scope="{row}">
-            <el-input-number
-              v-model.number="row.actual_weight"
-              size="mini"
-              :min="0"
-              controls-position="right"
-              :disabled="isView"
-            />
-            <!-- @change="PutNewPracticalWeightChanged(row)" -->
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="误差"
-          prop="standard_error"
-        >
-          <template slot-scope="{row}">
-            <el-input-number
-              v-model.number="row.standard_error"
-              size="mini"
-              controls-position="right"
-              :disabled="isView"
-            />
-          </template>
-        </el-table-column>
-        <el-table-column
+              <!-- @change="PutNewPracticalWeightChanged(row)" -->
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="误差"
+            prop="standard_error"
+          >
+            <template slot-scope="{row}">
+              <el-input-number
+                v-model.number="row.standard_error"
+                size="mini"
+                controls-position="right"
+                :disabled="isView"
+              />
+            </template>
+          </el-table-column>
+          <el-table-column label="投料方式">
+            <template slot-scope="{row}">
+              <el-select
+                v-model="row.type"
+                clearable
+                placeholder="请选择"
+                :disabled="true"
+              >
+                <!-- isView -->
+                <el-option
+                  v-for="item in [{name:'密炼机投料口',id:1},{name:'炭黑粉料罐',id:2},{name:'油料罐',id:3}]"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column
+            v-if="!isView"
+            label="操作"
+          >
+            <template slot-scope="{$index}">
+              <el-button
+                size="mini"
+                @click="del_raw_material_row($index,i)"
+              >删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div
           v-if="!isView"
-          label="操作"
+          style="text-align: center"
         >
-          <template slot-scope="{$index}">
-            <el-button
-              size="mini"
-              @click="del_raw_material_row($index)"
-            >删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div v-if="!isView" style="text-align: center">
-        <el-button size="mini" @click="insert_NewPracticalWeightChanged">插入一行</el-button>
+          <el-button
+            size="mini"
+            @click="insert_NewPracticalWeightChanged(i)"
+          >插入一行</el-button>
+        </div>
       </div>
       <ingredientStandard
         ref="ingredientStandardRef"
@@ -137,19 +177,45 @@
       :before-close="handleCloseAdd"
       append-to-body
     >
-      <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px">
-        <el-form-item label="料包编码" prop="oldName">
+      <el-form
+        ref="ruleForm"
+        :model="ruleForm"
+        :rules="rules"
+        label-width="100px"
+      >
+        <el-form-item
+          label="料包编码"
+          prop="oldName"
+        >
           {{ formInline.stage_product_batch_no }}-{{ formInline.dev_type_name }}-
-          <el-input v-model="ruleForm.oldName" style="width:80px;margin-left:6px" />
+          <el-select
+            v-model="ruleForm.oldName"
+            placeholder="请选择"
+            style="width:100px;margin-left:6px"
+            @change="changeOldName"
+          >
+            <el-option
+              v-for="item in [{name:'硫磺包',id:1},{name:'细料包',id:2}]"
+              :key="item.id"
+              :label="item.name"
+              :value="item.name"
+            />
+          </el-select>
         </el-form-item>
-        <el-form-item label="分包数量" prop="package_cnt">
+        <el-form-item
+          label="分包数量"
+          prop="package_cnt"
+        >
           <el-input-number
             v-model="ruleForm.package_cnt"
             controls-position="right"
             :min="1"
           />
         </el-form-item>
-        <el-form-item label="配料方式" prop="package_type">
+        <el-form-item
+          label="配料方式"
+          prop="package_type"
+        >
           <el-select
             v-model="ruleForm.package_type"
             placeholder="请选择"
@@ -163,9 +229,15 @@
           </el-select>
         </el-form-item>
       </el-form>
-      <span slot="footer" class="dialog-footer">
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="handleCloseAdd(false)">取 消</el-button>
-        <el-button type="primary" @click="submitAdd">确 定</el-button>
+        <el-button
+          type="primary"
+          @click="submitAdd"
+        >确 定</el-button>
       </span>
     </el-dialog>
     <materialSelection
@@ -178,12 +250,12 @@
 </template>
 
 <script>
-import EquipCategorySelect from '@/components/EquipCategorySelect'
+// import EquipCategorySelect from '@/components/EquipCategorySelect'
 import materialSelection from './materialSelection'
 import ingredientStandard from './ingredient-standard'
 import { rubber_material_url } from '@/api/rubber_recipe_fun'
 export default {
-  components: { ingredientStandard, EquipCategorySelect, materialSelection },
+  components: { ingredientStandard, materialSelection },
   props: {
     formObj: {
       type: Object,
@@ -238,7 +310,14 @@ export default {
         package_type: [
           { required: true, message: '请选择', trigger: 'change' }
         ]
-      }
+      },
+      listType: '',
+      tableDataAll: [
+        { tableData: [] },
+        { tableData: [] },
+        { tableData: [] }
+      ],
+      faI: null
     }
   },
   computed: {
@@ -248,7 +327,14 @@ export default {
       this.dialogVisible = val
       if (val) {
         this.formInline = this.formObj
-        this.tableData = this.batchingList.batching_details || []
+        const arr = this.batchingList.batching_details || []
+        const a1 = arr.filter(d => d.type === 1)
+        this.tableDataAll[0].tableData = a1
+        const a2 = arr.filter(d => d.type === 2)
+        this.tableDataAll[1].tableData = a2
+        const a3 = arr.filter(d => d.type === 3)
+        this.tableDataAll[2].tableData = a3
+
         this.$nextTick(() => {
           this.addTableData = this.batchingList.weight_cnt_types || []
         })
@@ -259,7 +345,9 @@ export default {
   },
   methods: {
     handleClose(done) {
-      this.tableData = []
+      this.tableDataAll.forEach(D => {
+        D.tableData = []
+      })
       this.addTableData = []
       this.ruleForm = {
         oldName: '',
@@ -296,11 +384,12 @@ export default {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           const _name = this.formInline.stage_product_batch_no + '-' +
-      (this.formInline.dev_type_name || '') + '-' + obj.oldName
+            (this.formInline.dev_type_name || '') + '-' + obj.oldName
           this.addTableData.push([{
             name: _name,
             package_cnt: obj.package_cnt,
-            package_type: obj.package_type
+            package_type: obj.package_type,
+            weigh_type: obj.weigh_type
           }])
 
           this.handleCloseAdd(false)
@@ -309,9 +398,9 @@ export default {
         }
       })
     },
-    del_raw_material_row(index) {
+    del_raw_material_row(index, faI) {
       this.isIngredientObj = {}
-      const a = this.tableData.splice(index, 1)
+      const a = this.tableDataAll[faI].tableData.splice(index, 1)
       if (a[0].id) {
         this.batching_details_delete.push(a[0].id)
       }
@@ -324,8 +413,15 @@ export default {
       this.weight_cnt_types_delete = val
       this.isIngredientObj = {}
     },
-    insert_NewPracticalWeightChanged() {
-      this.tableData.push({})
+    insert_NewPracticalWeightChanged(i) {
+      this.tableDataAll[i].tableData.push({
+        type: i === 0 ? 1 : i === 1 ? 2 : 3
+      })
+    },
+    changeOldName(val) {
+      const arr = [{ name: '硫磺包', id: 1 }, { name: '细料包', id: 2 }]
+      const obj = arr.find(d => d.name === val)
+      this.ruleForm.weigh_type = obj.id
     },
     setCurrentMaterialList() {
       if (this.$refs.ingredientStandardRef) {
@@ -341,20 +437,26 @@ export default {
           }
         })
       })
-      this.tableData.forEach(D => {
-        if (D.material) {
-          arr1.push(D.material)
-        }
+      this.tableDataAll.forEach(dd => {
+        dd.tableData.forEach(D => {
+          if (D.material) {
+            arr1.push(D.material)
+          }
+        })
       })
+
       this.currentMaterialList = arr1
     },
-    pop_up_raw_material(index) {
+    pop_up_raw_material(index, faI) {
+      // isIngredient true=> 细料选原材料
       if (index || index === 0) {
         this.currentMaterialIndex = index
+        this.faI = faI
         this.isIngredient = false
       } else {
         this.isIngredient = true
       }
+      this.listType = faI === 1 ? '炭黑' : faI === 2 ? '油料' : '胶料'
       this.setCurrentMaterialList()
 
       this.dialogRawMaterialSync = true
@@ -363,6 +465,15 @@ export default {
       this.dialogRawMaterialSync = false
     },
     handleMaterialSelect(row) {
+      if ((this.listType === '炭黑' && row.material_type_name !== '炭黑') ||
+      (this.listType === '油料' && row.material_type_name !== '油料') ||
+      (this.listType === '胶料' && (row.material_type_name === '油料' || row.material_type_name === '炭黑'))) {
+        this.$message.info({
+          message: '选择类别相同的原料',
+          type: 'error'
+        })
+        return
+      }
       const arr = this.currentMaterialList.filter(D => D === row.id)
       if (arr.length > 0) {
         this.$message.info({
@@ -372,10 +483,20 @@ export default {
         return
       }
       if (!this.isIngredient) {
-        this.$set(this.tableData[this.currentMaterialIndex], 'material_name', row.material_name)
-        this.$set(this.tableData[this.currentMaterialIndex], 'material', row.id)
-        this.$set(this.tableData[this.currentMaterialIndex], 'sn', 0)
-        this.$set(this.tableData[this.currentMaterialIndex], 'material_type', row.material_type_name)
+        const a = this.tableDataAll[this.faI].tableData[this.currentMaterialIndex]
+        this.$set(a, 'material_name', row.material_name)
+        this.$set(a, 'material', row.id)
+        // this.$set(a, 'sn', this.currentMaterialIndex + 1)
+        this.$set(a, 'material_type', row.material_type_name)
+        if (!a.type) {
+          if (row.material_type_name.indexOf('炭黑') > -1) {
+            this.$set(a, 'type', 2)
+          } else if (row.material_type_name.indexOf('油料') > -1) {
+            this.$set(a, 'type', 3)
+          } else {
+            this.$set(a, 'type', 1)
+          }
+        }
       } else {
         this.isIngredientObj = row
       }
@@ -398,15 +519,22 @@ export default {
         })
         return
       }
-      if (this.tableData.length > 0) {
+      const arr = []
+      this.tableDataAll.forEach(d => {
+        d.tableData.forEach((dd, i) => {
+          this.$set(dd, 'sn', i + 1)
+          arr.push(dd)
+        })
+      })
+      if (arr.length > 0) {
         try {
-          this.tableData.forEach(D => {
-            if (!D.material || !D.actual_weight) {
+          arr.forEach(D => {
+            if (!D.material || !D.actual_weight || !D.type) {
               throw Error()
             }
           })
         } catch (e) {
-          this.$message.info('原材料与实际重量不能为空')
+          this.$message.info('原材料、实际重量、投料方式不能为空')
           return
         }
       }
@@ -431,11 +559,12 @@ export default {
       const parameter = {}
       const ingredientListParams = []
       Object.assign(parameter, this.formInline)
-      parameter.batching_details = this.tableData
+      parameter.batching_details = arr
       ingredientList.forEach(D => {
         ingredientListParams.push({
           name: D[0].name,
           package_cnt: D[0].package_cnt,
+          weigh_type: D[0].weigh_type,
           package_type: D[0].package_type,
           weight_details: D,
           id: D[0].weight_cnt_types_id || null

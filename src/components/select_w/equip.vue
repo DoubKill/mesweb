@@ -5,6 +5,7 @@
       v-model="_equip_no"
       :clearable="!isCreated"
       placeholder="请选择机台"
+      :multiple="isMultiple"
       @change="changeSearch"
       @visible-change="visibleChange"
     >
@@ -24,8 +25,16 @@ export default {
   props: {
     // eslint-disable-next-line vue/prop-name-casing
     equip_no_props: {
-      type: String,
+      type: [String, Array],
       default: null
+    },
+    isObj: {
+      type: Boolean,
+      default: false
+    },
+    isMultiple: {
+      type: Boolean,
+      default: false
     },
     // 在created里面加载，并默认选中第一个
     isCreated: {
@@ -71,10 +80,15 @@ export default {
         .catch(function() { })
     },
     changeSearch(id) {
+      if (this.isObj) {
+        const obj = this.machineList.find(d => d.equip_no === id)
+        this.$emit('changeSearch', obj)
+        return
+      }
       this.$emit('changeSearch', id)
     },
     visibleChange(bool) {
-      if (bool && this.machineList.length === 0 && !this.isCreated) {
+      if (bool && !this.isCreated) {
         this.getMachineList()
       }
     }

@@ -29,6 +29,7 @@ export default {
   WorkSchedulesUrl: BasicsUrl + 'work_schedules/',
   GroupAddUserUrl: SystemUrl + 'group_add_user/',
   MaterialsUrl: '/api/v1/recipe/materials/',
+  MaterialInfoIssue: '/api/v1/terminal/material-info-issue/', // 原材料下发至称量系统接口
   ProductInfosUrl: '/api/v1/recipe/product-infos/',
   ValidateVersionsUrl: '/api/v1/recipe/validate-versions/',
   CopyProductInfosUrl: '/api/v1/recipe/copy-product-infos/',
@@ -75,6 +76,7 @@ export default {
   MaterialRepertoryUrl: '/api/v1/inventory/material-inventory-view/',
   // 库存管理---胶料库存
   RubberRepertoryUrl: '/api/v1/inventory/product-inventory/',
+  InLibraryInventory: '/api/v1/inventory/In-library_inventory/',
   // 生成计划管理---原材料需求量
   MaterialQuantityDemandedUrl: '/api/v1/plan/materia-quantity-demande/',
 
@@ -149,11 +151,18 @@ export default {
 
   // 北自混炼胶库存列表
   BzMixinInventory: '/api/v1/inventory/bz-mixin-inventory/',
-  // 终练出库弹框列表
+  // 终练出库弹框列表(帘布库存明细)
   BzFinalInventory: 'api/v1/inventory/bz-final-inventory/',
+  // 原材料库存明细
+  WmsStorage: '/api/v1/inventory/wms-storage/',
+  // 炭黑库存明细
+  ThStorage: '/api/v1/inventory/th-storage/',
   // 混炼胶库计划管理
   PutPlanManagement: '/api/v1/inventory/put-plan-management/',
   MixinRubberyOutboundOrder: 'api/v1/inventory/mixin-rubbery-outbound-order/',
+  OutboundDeliveryOrders: '/api/v1/inventory/outbound-delivery-orders/',
+  OutboundDeliveryOrderDetails: '/api/v1/inventory/outbound-delivery-order-details/',
+  OutboundDeliveryOrdersExport: '/api/v1/inventory/outbound-delivery-orders/export/',
 
   //  终炼胶库计划管理
   FinalPlanManagement: '/api/v1/inventory/final-plan-management/',
@@ -197,6 +206,10 @@ export default {
   // 批量打印
   LabelPrint: '/api/v1/quality/label-print/',
   ShowQualifiedRange: '/api/v1/quality/show-qualified-range/',
+  // 出库口补打印卡片- 详情
+  AdditionalPrintDetail: '/api/v1/inventory/additional-print-detail/',
+  // 出库口补打印卡片- 打印
+  AdditionalPrint: '/api/v1/inventory/additional-print/',
   // 修改车次
   TrainsFix: '/api/v1/production/trains-fix/',
   PalletTrainBatchFix: '/api/v1/production/pallet-train-batch-fix/',
@@ -246,7 +259,7 @@ export default {
   SpareInventory: '/api/v1/spareparts/spare-inventory/',
 
   // 部门管理
-  DepartmentManage: '/api/v1/system/section/',
+  // DepartmentManage: '/api/v1/system/section/',
 
   // 位置点
   Location: '/api/v1/basics/location/',
@@ -298,6 +311,7 @@ export default {
   // mes与子系统物料信息映射
   MaterialSupplierCollect: '/api/v1/terminal/material-supplier-collect/',
   ZcMaterials: '/api/v1/recipe/zc-materials/',
+  ZcMaterialsThoughMes: '/api/v1/recipe/zc-materials-though-mes/',
   WeightingPackageLog: '/api/v1/terminal/weighting-package-log/',
   EquipEownType: '/api/v1/equipment/equip-down-type/',
   EquipDownReason: '/api/v1/equipment/equip-down-reason/',
@@ -441,5 +455,91 @@ export default {
   RubberMaxStretchTestResult: '/api/v1/quality/rubber-max-stretch-test-result/',
   // 看板
   OutBoundTasks: '/api/v1/inventory/out-bound-tasks/',
-  InoutBoundSummary: '/api/v1/inventory/inout-bound-summary/'
+  InoutBoundSummary: '/api/v1/inventory/inout-bound-summary/',
+  // 投料重量设定
+  RawWeight: '/api/v1/terminal/carbon-tank-set/',
+  // 投料履历查询
+  RawQuery: '/api/v1/terminal/feed-check-operation/',
+  // 油料罐物料设定
+  OliSet: '/api/v1/terminal/oli-tank-setting/',
+  // 粉料罐物料设定
+  PinkSet: '/api/v1/terminal/powder-tank-setting/',
+  // 不合格车次列表查询
+  DisposalList: '/api/v1/quality/unqialified-pallet-list/',
+  // 不合格项
+  DataPoint: '/api/v1/quality/data-point-list/',
+  // 炭黑投料提示-计划显示
+  FeedCapacityPlan: '/api/v1/terminal/feed-capacity-plan/',
+  CarbonFeedingPrompt: '/api/v1/terminal/carbon-feeding-prompt/',
+  CarOutCheck: '/api/v1/terminal/carbon-out-check/',
+  // 炭黑投料-下出库任务
+  CarbonOutTask: '/api/v1/terminal/carbon-out-task/',
+  // 胶片库出库单列表
+  CompoundManage: '/api/v1/inventory/outbound-delivery-orders/',
+  // 出库
+  Outbound: '/api/v1/inventory/outbound-delivery-order-details/',
+  // 机台别不合格率
+  MachinePass: '/api/v1/quality/unqialified-equip/',
+  // 胶料别不合格率
+  RubberPass: '/api/v1/quality/product-test-statics/',
+  // 班次别不合格率
+  ClassesPass: '/api/v1/quality/class-test-statics/',
+  // 用户出库口库区
+  UserStation: '/api/v1/inventory/outbound-history/',
+  // 生产运行记录修改
+  RuntimeDetail: '/api/v1/production/runtime-record-detail/',
+  EquipTargetMtbmttrSettings: '/api/v1/equipment/equip-target-mtbmttr-settings/', // MTBF/MTTR设定
+  EquipOrderAssignRule: '/api/v1/equipment/equip-order-assign-rule/',
+  EquipOrderAssignRuleImportXlsx: '/api/v1/equipment/equip-order-assign-rule/import_xlsx/',
+  EquipOrderAssignRuleGetName: '/api/v1/equipment/equip-order-assign-rule/get_name/',
+  EquipMachineHaltType: '/api/v1/equipment/equip-machine-halt-type/',
+  EquipMachineHaltReason: '/api/v1/equipment/equip-machine-halt-reason/',
+  SectionUserTree: '/api/v1/system/section/tree/', // 部门用户树结构
+  EquipMaintenanceAreaSettings: '/api/v1/equipment/equip-maintenance-area-settings/', // 维护包干设置
+  SectionTree: '/api/v1/system/section/',
+  EquipFaultTypes: '/api/v1/equipment/equip-fault-types/', // 设备故障分类 大分类
+  EquipFaultCodes: '/api/v1/equipment/equip-fault-codes/', // 设备故障分类 中分类
+  EquipBom: '/api/v1/equipment/equip-bom/',
+  EquipJobItemStandard: '/api/v1/equipment/equip-job-item-standard/', // 设备作业项目标准定义
+  EquipJobItemStandardImport: '/api/v1/equipment/equip-job-item-standard/import_xlsx/', // 设备作业项目标准定义 导入
+  // 供应商管理台账
+  EquipSupplier: '/api/v1/equipment/equip-supplier/',
+  EquipSupplierImport: '/api/v1/equipment/equip-supplier/import_xlsx/',
+  EquipSupplierGetName: '/api/v1/equipment/equip-supplier/get_name/',
+  // 设备类型
+  EquipsCategory: '/api/v1/basics/equips-category/',
+  // 设备固定资产台账
+  EquipProperty: '/api/v1/equipment/equip-property/',
+  EquipPropertyImport: '/api/v1/equipment/equip-property/import_xlsx/',
+  // 设备位置区域定义
+  EquipAreaDefine: '/api/v1/equipment/equip-area-define/',
+  EquipAreaDefineImport: '/api/v1/equipment/equip-area-define/import_xlsx/',
+  EquipAreaDefineGetName: '/api/v1/equipment/equip-area-define/get_name/',
+  // 设备部位定义
+  EquipPartNew: '/api/v1/equipment/equip-part-new/',
+  EquipPartNewImport: '/api/v1/equipment/equip-part-new/import_xlsx/',
+  // 设备部件分类
+  EquipComponentType: '/api/v1/equipment/equip-component-type/',
+  EquipComponentTypeImport: '/api/v1/equipment/equip-component-type/import_xlsx/',
+  // 设备部件定义
+  EquipComponent: '/api/v1/equipment/equip-component/',
+  EquipComponentImport: '/api/v1/equipment/equip-component/import_xlsx/',
+  // 部件与erp绑定关系
+  ErpSpareComponentRelation: '/api/v1/equipment/erp-spare-component-relation/',
+  // erp备件物料信息
+  EquipSpareErp: '/api/v1/equipment/equip-spare-erp/',
+  EquipSpareErpImport: '/api/v1/equipment/equip-spare-erp/import_xlsx/',
+  // 设备故障信号定义
+  EquipFaultSignal: '/api/v1/equipment/equip-fault-signal/',
+  EquipFaultSignalImport: '/api/v1/equipment/equip-fault-signal/import_xlsx/',
+  EquipFaultSignalGetName: '/api/v1/equipment/equip-fault-signal/get_name/',
+  // 设备维护作业标准定义
+  EquipMaintenanceStandard: '/api/v1/equipment/equip_maintenance_standard/',
+  EquipMaintenanceStandardImport: '/api/v1/equipment/equip_maintenance_standard/import_xlsx/',
+  EquipMaintenanceStandardGetName: '/api/v1/equipment/equip_maintenance_standard/get_name/',
+  // 设备维修作业标准定义
+  EquipRepairStandard: '/api/v1/equipment/equip-repair-standard/',
+  EquipRepairStandardImport: '/api/v1/equipment/equip-repair-standard/import_xlsx/',
+  EquipRepairStandardGetName: '/api/v1/equipment/equip-repair-standard/get_name/',
+  GetDefaultCode: '/api/v1/equipment/get-default-code/'
 }

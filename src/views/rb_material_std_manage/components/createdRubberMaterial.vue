@@ -17,6 +17,13 @@
           <el-radio v-model="normalReceipe" :label="true" :disabled="rubberMaterialForm.id?true:false" @change="receipeTypeChange">常规配方</el-radio>
           <el-radio v-model="normalReceipe" :label="false" :disabled="rubberMaterialForm.id?true:false" @change="receipeTypeChange">特殊配方</el-radio>
         </el-form-item>
+        <el-form-item label="炼胶机类型" prop="dev_type">
+          <EquipCategorySelect
+            v-model="rubberMaterialForm.dev_type"
+            is-mini="mini"
+            @changeFun="changeDevType"
+          />
+        </el-form-item>
         <el-form-item
           label="工厂"
           prop="factory"
@@ -140,9 +147,10 @@ import { site_url, product_info_url, validate_versions_url, rubber_material_url 
 import StageIdSelect from '@/components/StageSelect/StageIdSelect'
 import SITESelect from './SITESelect'
 import ingredient from './ingredient'
+import EquipCategorySelect from '@/components/EquipCategorySelect'
 
 export default {
-  components: { StageIdSelect, SITESelect, ingredient },
+  components: { EquipCategorySelect, StageIdSelect, SITESelect, ingredient },
   props: {
     materialForm: {
       type: Object,
@@ -173,6 +181,7 @@ export default {
         product_info: '',
         versions: '',
         precept: '',
+        dev_type: '',
         stage_product_batch_no: ''
       },
       rules: {
@@ -181,7 +190,8 @@ export default {
         product_info: [{ required: true, message: '请选择胶料编码', trigger: 'blur' }],
         stage: [{ required: true, message: '请选择段次', trigger: 'blur' }],
         versions: [{ required: true, message: '请选择版本', trigger: 'blur' }],
-        stage_product_batch_no: [{ required: true, message: '该字段不能为空', trigger: 'blur' }]
+        stage_product_batch_no: [{ required: true, message: '该字段不能为空', trigger: 'blur' }],
+        dev_type: [{ required: true, message: '请输入炼胶机类型', trigger: 'blur' }]
       },
       normalReceipe: true,
       factoryList: [],
@@ -250,11 +260,16 @@ export default {
     NewAddMaterial(formName, bool) {
       // bool true 为配料
       if (!this.normalReceipe) {
-        this.$refs[formName].validateField('stage_product_batch_no', error => {
-          if (!error) {
-            this.showChoiceMaterialsDialog(bool)
-          }
-        })
+        try {
+          this.$refs[formName].validateField(['stage_product_batch_no', 'dev_type'], error => {
+            if (error) {
+              throw new Error('')
+            }
+          })
+          this.showChoiceMaterialsDialog(bool)
+        } catch (e) {
+          //
+        }
         return
       }
       this.$refs[formName].validate(async(valid) => {
@@ -274,9 +289,11 @@ export default {
             site: this.rubberMaterialForm.site,
             product_info: this.rubberMaterialForm.product_info,
             versions: this.rubberMaterialForm.versions,
+            dev_type: this.rubberMaterialForm.dev_type,
             stage: this.rubberMaterialForm.stage }
         } else {
-          a = { stage_product_batch_no: objParames.stage_product_batch_no }
+          a = { stage_product_batch_no: objParames.stage_product_batch_no,
+            dev_type: this.rubberMaterialForm.dev_type }
         }
 
         // 点击生成之前进行版本验证
@@ -307,6 +324,9 @@ export default {
         this.btnLoading = false
         return
       }
+    },
+    changeDevType(obj) {
+      this.rubberMaterialForm.dev_type_name = obj ? obj.category_name : ''
     },
     async directBatching(id, _post) {
       try {

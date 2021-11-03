@@ -54,6 +54,12 @@ export default {
         return {}
       }
     },
+    paramsObjMust: {
+      type: Boolean,
+      default() {
+        return true
+      }
+    },
     defaultVal: {
       type: [String, Number],
       default: null
@@ -87,6 +93,10 @@ export default {
   },
   methods: {
     productBatchingChanged() {
+      if (this.isCreated) {
+        this.$emit('productBatchingChanged', this.productBatchingById[this.productBatchingId] ? this.productBatchingById[this.productBatchingId] : this.productBatchingId)
+        return
+      }
       this.$emit('productBatchingChanged', this.productBatchingById[this.productBatchingId])
     },
     visibleChange(bool) {
@@ -95,38 +105,55 @@ export default {
       }
     },
     getProductBatchings() {
-      this.loading = true
       // eslint-disable-next-line object-curly-spacing
       const obj = Object.assign({ all: 1, type: this.typeParms }, this.paramsObj)
-      if (JSON.stringify(this.paramsObj) === '{}') {
-        obj.all = 1
-      } else {
-        delete obj.all
-      }
-      batchingMaterials('get', null, { params: obj }).then(response => {
-        let productBatchings = response
-        productBatchings.forEach(productBatching => {
-          this.productBatchingById[productBatching.id] = productBatching
-        })
-        if (this.makeUseBatch) {
-          let arr = []
-          arr = productBatchings.filter(D => D.used_type === 4 || D.used_type === 6)
-          productBatchings = arr
+      try {
+        if (JSON.stringify(this.paramsObj) === '{}') {
+          obj.all = 1
+        } else {
+          delete obj.all
+          if (this.paramsObjMust) {
+            this.titleInfo(obj.classes, '请输入班次')
+            this.titleInfo(obj.equip_no, '请输入胶料')
+            this.titleInfo(obj.factory_date, '请输入时间')
+          }
         }
-        if (this.isStageProductbatchNoRemove) {
+        this.loading = true
+        batchingMaterials('get', null, { params: obj }).then(response => {
+          let productBatchings = response
+          productBatchings.forEach(productBatching => {
+            this.productBatchingById[productBatching.id] = productBatching
+          })
+          if (this.makeUseBatch) {
+            let arr = []
+            arr = productBatchings.filter(D => D.used_type === 4 || D.used_type === 6)
+            productBatchings = arr
+          }
+          if (this.isStageProductbatchNoRemove) {
           // 根据stage_product_batch_no去重
-          var obj = {}
-          var newArr = productBatchings.reduce((item, next) => {
-            obj[next.stage_product_batch_no]
-              ? ' '
-              : (obj[next.stage_product_batch_no] = true && item.push(next))
-            return item
-          }, [])
-          productBatchings = newArr || []
+            var obj = {}
+            var newArr = productBatchings.reduce((item, next) => {
+              obj[next.stage_product_batch_no]
+                ? ' '
+                : (obj[next.stage_product_batch_no] = true && item.push(next))
+              return item
+            }, [])
+            productBatchings = newArr || []
+          }
+          this.loading = false
+          this.productBatchings = productBatchings
+        })
+      } catch (e) {
+        if (e.message) {
+          this.$message.info(e.message)
         }
-        this.loading = false
-        this.productBatchings = productBatchings
-      })
+        this.productBatchings = []
+      }
+    },
+    titleInfo(val, error) {
+      if (!val && val !== 0) {
+        throw new Error(error)
+      }
     }
   }
   // USE_TYPE_CHOICE = (

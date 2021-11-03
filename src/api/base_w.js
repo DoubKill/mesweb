@@ -43,6 +43,14 @@ export function materialsUrl(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function materialInfoIssue(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MaterialInfoIssue + id + '/' : API.MaterialInfoIssue,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 export function productInfosUrl(method, id, data = {}) {
   const obj = {
     url: id ? API.ProductInfosUrl + id + '/' : API.ProductInfosUrl,
@@ -383,6 +391,32 @@ export function mixinRubberyOutboundOrder(method, id, data = {}) {
   return request(obj)
 }
 
+export function outboundDeliveryOrdersExport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.OutboundDeliveryOrdersExport + id + '/' : API.OutboundDeliveryOrdersExport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function outboundDeliveryOrders(method, id, data = {}) {
+  const obj = {
+    url: id ? API.OutboundDeliveryOrders + id + '/' : API.OutboundDeliveryOrders,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function outboundDeliveryOrderDetails(method, id, data = {}) {
+  const obj = {
+    url: id ? API.OutboundDeliveryOrderDetails + id + '/' : API.OutboundDeliveryOrderDetails,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function finalPlanManagement(method, id, data = {}) {
   const obj = {
     url: id ? API.FinalPlanManagement + id + '/' : API.FinalPlanManagement,
@@ -460,6 +494,22 @@ export function labelPrint(method, id, data = {}) {
 export function showQualifiedRange(method, id, data = {}) {
   const obj = {
     url: id ? API.ShowQualifiedRange + id + '/' : API.ShowQualifiedRange,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function additionalPrintDetail(method, id, data = {}) {
+  const obj = {
+    url: id ? API.AdditionalPrintDetail + id + '/' : API.AdditionalPrintDetail,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function additionalPrint(method, id, data = {}) {
+  const obj = {
+    url: id ? API.AdditionalPrint + id + '/' : API.AdditionalPrint,
     method: method
   }
   Object.assign(obj, data)

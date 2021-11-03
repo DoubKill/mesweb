@@ -92,6 +92,7 @@
 
         <el-table
           ref="multipleTable"
+          v-loading="loading"
           :data="tableData"
           style="width: 100%"
           border
@@ -165,7 +166,7 @@
                 v-for="group in groups"
                 :key="group.id"
                 :label="group.global_name"
-                :value="group.id"
+                :value="group.global_name"
               />
             </el-select>
           </el-form-item>
@@ -180,10 +181,11 @@
                 :key="group.id"
                 :label="group.name"
                 :value="group.name"
+                :disabled="!group.allowed"
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="试验次数" prop="test_times">
+          <!-- <el-form-item label="试验次数" prop="test_times">
             <el-select
               v-model="ruleForm.test_times"
               placeholder="请选择"
@@ -195,9 +197,22 @@
                 :value="group"
               />
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label="胶料规格">
             {{ ruleForm.product_no }}
+          </el-form-item>
+          <el-form-item v-if="search.test_indicator_name==='钢拔'" label="检测次数" prop="count">
+            <el-select
+              v-model="ruleForm.count"
+              placeholder="请选择"
+            >
+              <el-option
+                v-for="group in [5,4]"
+                :key="group"
+                :label="group"
+                :value="group"
+              />
+            </el-select>
           </el-form-item>
           <el-form-item label="检测间隔" prop="test_interval">
             <el-select
@@ -243,6 +258,7 @@
           <el-input
             v-model="ruleForm.plan_uid"
             :disabled="true"
+            style="width:250px !important"
           />
         </div>
         <el-table
@@ -283,15 +299,19 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="values"
+            prop="value"
             label="检测值"
-            min-width="20"
-          />
+            min-width="40"
+          >
+            <template v-if="row.value" slot-scope="{row}">
+              {{ row.value.replace(/{|}|'/g,"") }}
+            </template>
+          </el-table-column>
           <el-table-column
             label="状态"
             min-width="18"
             :formatter="(row)=>{
-              return row.values?'已检测':'待检测'
+              return row.value?'已检测':'待检测'
             }"
           />
           <el-table-column
@@ -382,7 +402,6 @@
           </template>
         </el-table-column>
         <el-table-column
-          prop="date"
           label="检测时间"
           min-width="20"
         >
@@ -537,7 +556,7 @@
           width="160px"
         >
           <template slot-scope="{row,$index}">
-            <el-button v-if="tableDataValue.length!==$index" type="primary" @click="modifyFun(row)">{{ row.edit?'保存':'修改' }}</el-button>
+            <el-button v-if="tableDataValue.length-1!==$index" type="primary" @click="modifyFun(row)">{{ row.edit?'保存':'修改' }}</el-button>
             <el-upload
               v-if="false"
               style="display:inline-block;margin-left:5px"
@@ -591,8 +610,9 @@ export default {
         test_time: { required: true, message: '请选择检测日期', trigger: 'change' },
         test_group: { required: true, message: '请选择检测班组', trigger: 'change' },
         test_method_name: { required: true, message: '请选择试验方法', trigger: 'change' },
-        test_times: { required: true, message: '请选择试验次数', trigger: 'change' },
+        // test_times: { required: true, message: '请选择试验次数', trigger: 'change' },
         test_interval: { required: true, message: '请选择检测间隔', trigger: 'change' },
+        count: { required: true, message: '请选择检测次数', trigger: 'change' },
         test_classes: [
           { required: true, trigger: 'change', validator: (rule, value, callback) => {
             validator(rule, value, callback,
@@ -603,14 +623,12 @@ export default {
       rulesLeft: {},
       groups: [],
       ruleForm: {
-        test_interval: 1
+        test_interval: 1,
+        test_method_name: '',
+        count: 5
       },
       btnLoading: false,
       testEquipList: [],
-      // { name: '门尼', id: 1 },
-      // { name: '流变', id: 2 },
-      // { name: '物性', id: 3 },
-      // { name: '钢拔', id: 4 }
       testIndicatorsList: [],
       endBtnLoading: false,
       stageList: [],
@@ -726,6 +744,7 @@ export default {
     },
     changeTestEquip() {
       this.tableDataRight = []
+      this.tableData = []
       this.btnLoading = false
       this.ruleForm.plan_uid = ''
       this.ruleForm.product_no = ''
@@ -751,15 +770,13 @@ export default {
         }
         const data = await productTestPlan('get', null, { params: obj })
         if (data.results.length === 0) {
+          this.btnLoading = false
+          this.tableDataRight = []
+          this.btnLoading = false
+          this.ruleForm.plan_uid = ''
+          this.testMethodList = []
           return
         }
-        // const _test_indicator_name = data.results[0].test_indicator_name
-        // if (this.search.test_indicator_name !== _test_indicator_name) {
-        //   this.btnLoading = false
-        //   this.ruleForm.plan_uid = ''
-        //   this.tableDataRight = []
-        //   return
-        // }
         if (!data.msg) {
           this.btnLoading = true
           this.ruleForm = data.results[0]
@@ -781,7 +798,7 @@ export default {
       }
     },
     changeTestIndicators() {
-      // this.getWaitPlan()
+      this.ruleForm.test_method_name = ''
     },
     classChanged(val) {
       this.search.classes = val
@@ -792,6 +809,7 @@ export default {
     },
     searchList() {
       this.search.product_no = ''
+      this.ruleForm.product_no = ''
       this.getList()
     },
     equipSearch(val) {
@@ -866,26 +884,28 @@ export default {
     async endTestFun() {
       try {
         if (!this.ruleForm.plan_uid) {
+          this.$message.info('没有可结束计划,如果存在请刷新页面查看')
           return
         }
         await productTestPlan('get', null, { params: { close: 1, plan_uid: this.ruleForm.plan_uid }})
         this.btnLoading = false
         this.$message.success('已全部结束检测')
-        // this.ruleForm = {}
         this.ruleForm.plan_uid = ''
         this.tableDataRight = []
+        this.ruleForm.product_no = ''
         // this.$nextTick(() => {
         // this.$refs.ruleForm.clearValidate()
         // })
       } catch (e) {
-        // this.btnLoading = false
+        //
       }
     },
     refreshFun() {
       if (!this.ruleForm.plan_uid) {
-        return
+        this.changeTestEquip()
+      } else {
+        this.getWaitPlan(true)
       }
-      this.getWaitPlan(true)
     },
     showTestData(row) {
       this.dialogVisible = true
@@ -919,28 +939,30 @@ export default {
         break_strength: row.break_strength,
         break_length: row.break_length
       }
-      let bool = false
+      // let bool = false
       if (this.search.test_indicator_name === '钢拔') {
         obj = {
           max_strength: row.max_strength,
           end_strength: row.end_strength
         }
-        if (row.max_strength && row.end_strength) {
-          bool = true
-        }
-      } else if (this.search.test_indicator_name === '物性') {
-        if (row.thickness && row.ds1 && !row.ds2 && !row.break_strength && !row.break_length) {
-          bool = true
-        }
+        // if (row.max_strength && row.end_strength) {
+        //   bool = true
+        // }
       }
-      if (!bool && !row.edit) {
-        this.$set(row, 'edit', !row.edit)
-        return
-      } else if (row.edit) {
-        this.$set(row, 'edit', !row.edit)
-      } else {
-        return
-      }
+      // else if (this.search.test_indicator_name === '物性') {
+      //   if (row.thickness && row.ds1 && !row.ds2 && !row.break_strength && !row.break_length) {
+      //     bool = true
+      //   }
+      // }
+      // if (!bool && !row.edit) {
+      //   this.$set(row, 'edit', !row.edit)
+      //   return
+      // } else if (row.edit) {
+      //   this.$set(row, 'edit', !row.edit)
+      // } else {
+      //   return
+      // }
+      this.$set(row, 'edit', !row.edit)
       if (!row.edit) {
         try {
           await rubberMaxStretchTestResult('put', row.id, { data: obj })
@@ -956,13 +978,14 @@ export default {
         this.$message.info('请选择胶料规格')
         return
       }
-      const obj = {
+      let obj = {
         classes: this.search.classes,
         equip_no: this.search.equip_no,
         factory_date: this.search.factory_date,
         product_no: this.search.product_no,
         add: 1
       }
+      obj = JSON.parse(JSON.stringify(obj))
       this.tableDataRight.push(obj)
     },
     moveRight() {
@@ -1043,10 +1066,12 @@ export default {
         this.tableDataValue = []
         const data = await rubberMaxStretchTestResult('get', null, { params: { product_test_plan_detail_id: this.TableDataValueId }})
         this.tableDataValue = data.results || []
+
         if (this.tableDataValue.length > 0) {
           this.tableDataValue.push({
             ordering: this.search.test_indicator_name === '物性' ? '平均值' : 'Mid',
             product_no: this.tableDataValue[0].product_no,
+            // Math.round(data.avg_value['厚度'] * num) / num,
             thickness: data.avg_value['厚度'],
             ds1: data.avg_value['百分之百'],
             ds2: data.avg_value['百分之三百'],

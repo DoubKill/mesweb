@@ -239,15 +239,13 @@
           label="部门"
           :error="userFormError.section"
         >
-          <el-select v-model="userForm.section" placeholder="请选择" clearable>
-            <el-option
-              v-for="item in optionsSection"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-              :disabled="item.delete_flag"
-            />
-          </el-select>
+          <el-cascader
+            v-model="userForm.section"
+            :options="optionsSection"
+            :props="{ checkStrictly: true,value:'id' }"
+            clearable
+            @change="changeSection"
+          />
         </el-form-item>
         <br>
         <el-form-item
@@ -291,7 +289,7 @@
 
 <script>
 import { personnelsUrl } from '@/api/user'
-import { departmentManage } from '@/api/department-manage'
+import { sectionTree } from '@/api/base_w_four'
 // import { permissions } from '@/api/permission'
 import { roles } from '@/api/roles-manage'
 import page from '@/components/page'
@@ -455,11 +453,19 @@ export default {
     },
     async getOptionsSection() {
       try {
-        const data = await departmentManage('get', null, { params: { all: 1 }})
-        this.optionsSection = data.results || []
+        const data = await sectionTree('get')
+        if (data.results && data.results[0].children.length > 0) {
+          this.optionsSection = data.results[0].children
+          this.optionsSection = filterMy(this.optionsSection)
+        } else {
+          this.optionsSection = []
+        }
       } catch (error) {
         //
       }
+    },
+    changeSection(val) {
+      // this.userForm.section = val.slice(-1)[0]
     },
     currentChange() {
       const app = this
@@ -547,13 +553,14 @@ export default {
           if (this.userForm.num === '') {
             delete app.userForm.num
           }
-          // app.userForm.group_extensions = app.userForm.groups
-          // if (app.userForm.group_extensions.length === 0) {
-          //   app.$message.info('请选择角色')
-          //   return
-          // }
+          const obj = JSON.parse(JSON.stringify(app.userForm))
+          if (obj.section && obj.section.length > 0) {
+            obj.section = obj.section.slice(-1)[0]
+          } else {
+            obj.section = ''
+          }
           this.btnloading = true
-          personnelsUrl(type, paramsId, { data: app.userForm })
+          personnelsUrl(type, paramsId, { data: obj })
             .then((response) => {
               app.dialogCreateUserVisible = false
               app.$message.success(app.userForm.username + '操作成功')
@@ -584,6 +591,22 @@ export default {
     //   this.$set(this.userForm, 'user_permissions', val)
     // }
   }
+}
+// 去掉最后一个空children
+function filterMy(data) {
+  const res = []
+  data.forEach(D => {
+    const tmp = {
+      ...D
+    }
+    if (tmp.children.length > 0) {
+      tmp.children = filterMy(tmp.children)
+    } else {
+      delete tmp.children
+    }
+    res.push(tmp)
+  })
+  return res
 }
 </script>
 

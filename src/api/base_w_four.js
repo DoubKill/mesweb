@@ -64,6 +64,15 @@ export function wmsInventory(method, id, data = {}) {
   return request(obj)
 }
 
+export function wmsInventoryDown(params) {
+  return request({
+    url: API.WmsInventory,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
+
 export function wmsMaterialGroups(method, id, data = {}) {
   const obj = {
     url: id ? API.WmsMaterialGroups + id + '/' : API.WmsMaterialGroups,
@@ -89,6 +98,15 @@ export function thInventory(method, id, data = {}) {
   }
   Object.assign(obj, data)
   return request(obj)
+}
+
+export function thInventoryDown(params) {
+  return request({
+    url: API.ThInventory,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
 }
 
 export function thMaterialGroups(method, id, data = {}) {
@@ -307,18 +325,159 @@ export function rubberMaxStretchTestResult(method, id, data = {}) {
   return request(obj)
 }
 
-export function outBoundTasks(method, id, data = {}) {
+export function outBoundTasks(method, id, data = {}, cancelToken) {
   const obj = {
     url: id ? API.OutBoundTasks + id + '/' : API.OutBoundTasks,
+    method: method,
+    cancelToken: cancelToken
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function inoutBoundSummary(method, id, data = {}, cancelToken) {
+  const obj = {
+    url: id ? API.InoutBoundSummary + id + '/' : API.InoutBoundSummary,
+    method: method,
+    cancelToken: cancelToken
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function feedCapacityPlan(method, id, data = {}) {
+  const obj = {
+    url: id ? API.FeedCapacityPlan + id + '/' : API.FeedCapacityPlan,
     method: method
   }
   Object.assign(obj, data)
   return request(obj)
 }
 
-export function inoutBoundSummary(method, id, data = {}) {
+export function carbonFeedingPrompt(method, id, data = {}) {
   const obj = {
-    url: id ? API.InoutBoundSummary + id + '/' : API.InoutBoundSummary,
+    url: id ? API.CarbonFeedingPrompt + id + '/' : API.CarbonFeedingPrompt,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function carOutCheck(method, id, data = {}) {
+  const obj = {
+    url: id ? API.CarOutCheck + id + '/' : API.CarOutCheck,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function carbonOutTask(method, id, data = {}) {
+  const obj = {
+    url: id ? API.CarbonOutTask + id + '/' : API.CarbonOutTask,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function equipTargetMtbmttrSettings(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipTargetMtbmttrSettings + id + '/' : API.EquipTargetMtbmttrSettings,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function equipOrderAssignRule(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipOrderAssignRule + id + '/' : API.EquipOrderAssignRule,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function equipOrderAssignRuleImportXlsx(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipOrderAssignRuleImportXlsx + id + '/' : API.EquipOrderAssignRuleImportXlsx,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function equipMachineHaltType(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipMachineHaltType + id + '/' : API.EquipMachineHaltType,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function equipMachineHaltReason(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipMachineHaltReason + id + '/' : API.EquipMachineHaltReason,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function sectionUserTree(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SectionUserTree + id + '/' : API.SectionUserTree,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function equipMaintenanceAreaSettings(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipMaintenanceAreaSettings + id + '/' : API.EquipMaintenanceAreaSettings,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function sectionTree(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SectionTree + id + '/' : API.SectionTree,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function equipFaultTypes(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipFaultTypes + id + '/' : API.EquipFaultTypes,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipFaultCodes(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipFaultCodes + id + '/' : API.EquipFaultCodes,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function equipBom(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipBom + id + '/' : API.EquipBom,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function equipJobItemStandard(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipJobItemStandard + id + '/' : API.EquipJobItemStandard,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function equipJobItemStandardImport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipJobItemStandardImport + id + '/' : API.EquipJobItemStandardImport,
     method: method
   }
   Object.assign(obj, data)

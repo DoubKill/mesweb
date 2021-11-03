@@ -299,6 +299,11 @@
           min-width="20"
         />
         <el-table-column
+          prop="actual_weight"
+          label="重量"
+          min-width="10"
+        />
+        <el-table-column
           prop="address"
           label="收皮车次"
           min-width="10"
@@ -458,12 +463,17 @@ export default {
     },
     async getCardInfo(id) {
       try {
+        if (this.$refs['testCard']) {
+          this.$refs['testCard'].loading = true
+        }
         const data = await qualityPalletFeedTest(id)
         this.$nextTick(() => {
           this.$refs['testCard'].setTestData(data)
         })
       } catch (e) {
-        //
+        if (this.$refs['testCard']) {
+          this.$refs['testCard'].loading = false
+        }
       }
     },
     print(row) {

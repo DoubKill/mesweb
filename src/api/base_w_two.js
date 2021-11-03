@@ -162,6 +162,14 @@ export function zcMaterials(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function zcMaterialsThoughMes(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ZcMaterialsThoughMes + id + '/' : API.ZcMaterialsThoughMes,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 
 export function weightingPackageLog(method, id, data = {}, aaa) {
   const obj = {

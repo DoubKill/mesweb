@@ -5,6 +5,6 @@
 </template>
 <script>
 export default {
-  name: 'QuickCheck'
+  name: 'QuickCheckGather'
 }
 </script>
