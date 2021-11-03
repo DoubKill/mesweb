@@ -77,7 +77,7 @@
       @currentChange="currentChange"
     />
     <el-dialog
-      title="添加备品备件类型"
+      title="部件及备件分类"
       :visible.sync="dialogCreateVisible"
       :close-on-click-modal="false"
     >

@@ -85,12 +85,12 @@
       />
       <el-table-column
         prop="capacity"
-        label="产能"
+        label="产能(t/天)"
         min-width="8"
       />
       <el-table-column
         prop="price"
-        label="价格"
+        label="价格(元)"
         min-width="8"
       />
       <el-table-column
@@ -241,7 +241,7 @@
       :before-close="handleCloseList"
     >
       <el-form ref="formitem" :model="formitem" :inline="true" label-width="120px" :rules="rules">
-        <el-form-item label="固定资产:" prop="property_no">
+        <el-form-item label="固定资产编号:" prop="property_no">
           <el-input v-model="formitem.property_no" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="原编码:" prop="src_no">
@@ -272,6 +272,7 @@
         <el-form-item label="产能:" prop="capacity">
           <el-input v-model="formitem.capacity" placeholder="请输入内容" />
         </el-form-item>
+        <span style="display: inline-block;line-height: 40px;">t/天</span>
         <el-form-item label="价格:" prop="price">
           <el-input v-model="formitem.price" placeholder="请输入内容" />
         </el-form-item>
@@ -368,15 +369,6 @@ export default {
       dialogVisibleList: false,
       submitListLoading: false,
       rules: {
-        property_no: [
-          { required: true, message: '请填写固定资产', trigger: 'blur' }
-        ],
-        src_no: [
-          { required: true, message: '请填写原编码', trigger: 'blur' }
-        ],
-        financial_no: [
-          { required: true, message: '请填写财务编码', trigger: 'blur' }
-        ],
         equip_type: [
           { required: true, message: '请填写设备型号', trigger: 'blur' }
         ],
@@ -389,11 +381,8 @@ export default {
         equip_supplier: [
           { required: true, message: '请填写设备制造商', trigger: 'blur' }
         ],
-        capacity: [
-          { required: true, message: '请填写产能', trigger: 'blur' }
-        ],
         price: [
-          { required: true, pattern: /^(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*))$/, message: '请填写正确价格', trigger: 'blur' }
+          { pattern: /^(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*))$/, message: '请填写正确价格', trigger: 'blur' }
         ],
         leave_factory_no: [
           { required: true, message: '请填写出厂编码', trigger: 'blur' }
