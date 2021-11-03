@@ -281,8 +281,10 @@ export default {
     debounceList() {
       debounce(this, 'changeSearch')
     },
-    changeDate() {
-
+    changeDate(date) {
+      this.search.planned_repair_date_after = date ? date[0] : ''
+      this.search.planned_repair_date_before = date ? date[1] : ''
+      this.changeSearch()
     },
     order() {
       if (this.multipleSelection.length > 0) {
