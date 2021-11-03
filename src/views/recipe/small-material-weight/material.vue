@@ -22,9 +22,9 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item>
+        <!-- <el-form-item>
           <el-button v-permission="['xl_material', 'add']" type="primary" @click="showAdd(item,index)">新增</el-button>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <el-table
         :data="item.tableList"
@@ -32,7 +32,7 @@
         max-height="300px"
       >
         <el-table-column
-          prop="id"
+          type="index"
           label="序号"
         />
         <el-table-column
@@ -55,6 +55,16 @@
               return '未使用'
             }
             return '已使用'
+          }"
+        />
+        <el-table-column
+          prop="remark"
+          label="来源"
+          :formatter="(row)=>{
+            if(row.remark==='MES'){
+              return 'MES'
+            }
+            return '本地'
           }"
         />
         <!-- <el-table-column

@@ -180,7 +180,13 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column prop="all_qty" label="总库存数(车)" align="center" min-width="20" />
+      <el-table-column prop="all_qty" label="总库存数(车)" align="center" min-width="20">
+        <template slot-scope="{row}">
+          <el-link v-if="row['all_qty']" :type="row.all?'':'primary'" :underline="false" @click="clickVehicle(row,'')">
+            {{ row.all_qty }}
+          </el-link>
+        </template>
+      </el-table-column>
       <el-table-column prop="total_weight" label="总重量(kg)" align="center" min-width="20" />
       <el-table-column label="封存库存数(车)" align="center" min-width="20">
         <template slot-scope="{row}">
