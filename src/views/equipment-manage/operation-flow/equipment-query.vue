@@ -440,8 +440,8 @@ export default {
       debounce(this, 'changeSearch')
     },
     changeDate(date) {
-      this.search.planned_repair_date_before = date ? date[0] : ''
-      this.search.planned_repair_date_after = date ? date[1] : ''
+      this.search.planned_repair_date_after = date ? date[0] : ''
+      this.search.planned_repair_date_before = date ? date[1] : ''
       this.changeSearch()
     },
     async repairDialog(row) {

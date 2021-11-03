@@ -548,7 +548,7 @@ export default {
   // 维修工单
   EquipApplyOrder: '/api/v1/equipment/equip-apply-order/',
   MultiUpdate: '/api/v1/equipment/equip-apply-order/multi_update/',
-  MaterialReq: '/api/v1/equip-repair-material-req',
+  MaterialReq: '/api/v1/equipment/equip-repair-material-req/',
   EquipWarehouseInventory: '/api/v1/equipment/equip-warehouse-inventory/'
 
 }

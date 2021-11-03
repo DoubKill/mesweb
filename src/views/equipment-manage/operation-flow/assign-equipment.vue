@@ -301,8 +301,10 @@ export default {
         this.$message.info('请选择指派人员')
       }
     },
-    changeDate() {
-
+    changeDate(date) {
+      this.search.planned_repair_date_after = date ? date[0] : ''
+      this.search.planned_repair_date_before = date ? date[1] : ''
+      this.changeSearch()
     },
     async repairDialog(row) {
       if (row.equip_repair_standard_name) {
