@@ -43,6 +43,14 @@ export function materialsUrl(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function materialInfoIssue(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MaterialInfoIssue + id + '/' : API.MaterialInfoIssue,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 export function productInfosUrl(method, id, data = {}) {
   const obj = {
     url: id ? API.ProductInfosUrl + id + '/' : API.ProductInfosUrl,
