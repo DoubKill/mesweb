@@ -541,5 +541,15 @@ export default {
   EquipRepairStandard: '/api/v1/equipment/equip-repair-standard/',
   EquipRepairStandardImport: '/api/v1/equipment/equip-repair-standard/import_xlsx/',
   EquipRepairStandardGetName: '/api/v1/equipment/equip-repair-standard/get_name/',
-  GetDefaultCode: '/api/v1/equipment/get-default-code/'
+  GetDefaultCode: '/api/v1/equipment/get-default-code/',
+  // 报修申请
+  EquipApplyRepair: '/api/v1/equipment/equip-apply-repair/',
+  UploadImages: '/api/v1/equipment/upload-images/',
+  GetStaff: '/api/v1/equipment/get-staff/',
+  // 维修工单
+  EquipApplyOrder: '/api/v1/equipment/equip-apply-order/',
+  MultiUpdate: '/api/v1/equipment/equip-apply-order/multi_update/',
+  MaterialReq: '/api/v1/equipment/equip-repair-material-req/',
+  EquipWarehouseInventory: '/api/v1/equipment/equip-warehouse-inventory/'
+
 }
