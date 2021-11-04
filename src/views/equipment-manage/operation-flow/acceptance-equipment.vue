@@ -452,13 +452,19 @@
         </el-form-item>
         <el-form-item label="维修标准/故障原因">
           <el-input
-            v-if="creatOrder1.equip_repair_standard_name"
-            v-model="creatOrder.equip_repair_standard_name"
+            v-if="creatOrder1.equip_maintenance_standard"
+            v-model="creatOrder1.equip_maintenance_standard_name"
             :disabled="true"
             style="width:250px"
           />
           <el-input
-            v-else
+            v-if="creatOrder1.equip_repair_standard"
+            v-model="creatOrder1.equip_repair_standard_name"
+            :disabled="true"
+            style="width:250px"
+          />
+          <el-input
+            v-if="creatOrder1.result_fault_cause"
             v-model="creatOrder1.result_fault_cause_name"
             :disabled="true"
             style="width:250px"
@@ -473,12 +479,20 @@
             :rows="3"
           />
         </el-form-item>
-        <el-form-item label="实际维修标准" prop="result_repair_standard_name">
+        <el-form-item label="实际维修标准">
           <el-input
-            v-model="creatOrder.result_repair_standard_name"
+            v-if="creatOrder1.work_type==='维修'"
+            v-model="creatOrder1.result_repair_standard_name"
             style="width:250px"
             :disabled="true"
           />
+          <el-input
+            v-if="creatOrder1.work_type!=='维修'"
+            v-model="creatOrder1.result_maintenance_standard_name"
+            style="width:250px"
+            :disabled="true"
+          />
+
           <el-table
             :data="creatOrder1.work_content"
             border
