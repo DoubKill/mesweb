@@ -15,15 +15,15 @@
           @current-change="handleCurrentChange"
         >
           <el-table-column
-            prop="depot_name"
+            prop="area_name"
             label="库区名称"
           />
           <el-table-column
-            prop="description"
+            prop="desc"
             label="描述"
           />
           <el-table-column
-            prop="description"
+            prop="equip_component_type_name"
             label="备件分类"
           />
           <el-table-column
@@ -43,6 +43,11 @@
                   @click.stop="delArea(scope.row,true)"
                 > 删除
                 </el-button>
+                <el-button
+                  size="mini"
+                  plain
+                > 打印条码
+                </el-button>
               </el-button-group>
             </template>
           </el-table-column>
@@ -60,15 +65,15 @@
           border
         >
           <el-table-column
-            prop="depot_site_name"
+            prop="location_name"
             label="库位名称"
           />
           <el-table-column
-            prop="depot__depot_name"
+            prop="area_name"
             label="库区"
           />
           <el-table-column
-            prop="description"
+            prop="desc"
             label="描述"
           />
           <el-table-column
@@ -87,6 +92,11 @@
                   plain
                   @click="delArea(scope.row,false)"
                 > 删除
+                </el-button>
+                <el-button
+                  size="mini"
+                  plain
+                > 打印条码
                 </el-button>
               </el-button-group>
             </template>
@@ -107,39 +117,39 @@
         :rules="rules"
         label-width="100px"
       >
-        <el-form-item v-if="!isArea" label="库区" prop="depot">
+        <el-form-item v-if="!isArea" label="库区" prop="equip_warehouse_area">
           <el-select
-            v-model="formObj.depot"
+            v-model="formObj.equip_warehouse_area"
             placeholder="请选择"
-            :disabled="formObj.depot?true:false"
+            :disabled="formObj.equip_warehouse_area?true:false"
           >
             <el-option
               v-for="item in tableData"
               :key="item.id"
-              :label="item.depot_name"
+              :label="item.area_name"
               :value="item.id"
             />
           </el-select>
         </el-form-item>
-        <el-form-item v-if="isArea" label="库区名称" prop="depot_name">
-          <el-input v-model="formObj.depot_name" />
+        <el-form-item v-if="isArea" label="库区名称" prop="area_name">
+          <el-input v-model="formObj.area_name" />
         </el-form-item>
-        <el-form-item v-if="!isArea" label="库位名称" prop="depot_site_name">
-          <el-input v-model="formObj.depot_site_name" />
+        <el-form-item v-if="!isArea" label="库位名称" prop="location_name">
+          <el-input v-model="formObj.location_name" />
         </el-form-item>
-        <el-form-item label="描述" prop="description">
-          <el-input v-model="formObj.description" />
+        <el-form-item label="描述" prop="desc">
+          <el-input v-model="formObj.desc" />
         </el-form-item>
-        <el-form-item v-if="isArea" label="备件分类" prop="type">
+        <el-form-item v-if="isArea" label="备件分类" prop="equip_component_type">
           <el-select
-            v-model="formObj.type"
+            v-model="formObj.equip_component_type"
             placeholder="请选择"
           >
             <el-option
-              v-for="item in ['减速机','电机']"
-              :key="item"
-              :label="item"
-              :value="item"
+              v-for="item in options"
+              :key="item.id"
+              :label="item.component_type_name"
+              :value="item.id"
             />
           </el-select>
         </el-form-item>
@@ -153,7 +163,8 @@
 </template>
 
 <script>
-import { depot, depotSite } from '@/api/base_w_four'
+import { equipWarehouseArea, equipWarehouseLocation, equipSpareErp } from '@/api/jqy'
+// import { depot, depotSite } from '@/api/base_w_four'
 import { checkPermission } from '@/utils'
 export default {
   name: 'LocationManagement',
@@ -165,17 +176,11 @@ export default {
       formObj: {},
       dialogVisible: false,
       rules: {
-        depot_name: [
+        area_name: [
           { required: true, message: '请输入库区', trigger: 'blur' }
         ],
-        depot_site_name: [
+        location_name: [
           { required: true, message: '请输入库位', trigger: 'blur' }
-        ],
-        description: [
-          { required: true, message: '请输入描述', trigger: 'blur' }
-        ],
-        depot: [
-          { required: true, message: '请选择库区', trigger: 'change' }
         ]
       },
       options: [],
@@ -194,13 +199,14 @@ export default {
   created() {
     this.getList()
     // this.getList1()
+    this.getList2()
   },
   methods: {
     checkPermission,
     async getList() {
       try {
         this.loading = true
-        const data = await depot('get', null, { params: { page: this.pageNo, page_size: this.pageSize }})
+        const data = await equipWarehouseArea('get', null, { params: {}})
         this.tableData = data.results
         this.total = data.count
         this.$refs.currentRow.setCurrentRow(this.tableData[0])
@@ -210,6 +216,14 @@ export default {
         this.loading = false
       }
     },
+    async getList2() {
+      try {
+        const data = await equipSpareErp('get', null, { params: { all: 1 }})
+        this.options = data.results || []
+      } catch (e) {
+        //
+      }
+    },
     handleCurrentChange(row) {
       this.depot = row.id
       this.getList1()
@@ -217,7 +231,7 @@ export default {
     async getList1() {
       try {
         this.loading1 = true
-        const data = await depotSite('get', null, { params: { all: 1, id: this.depot }})
+        const data = await equipWarehouseLocation('get', null, { params: { equip_warehouse_area_id: this.depot }})
         this.tableData1 = data.results
         // this.total1 = data.count
         this.loading1 = false
@@ -225,18 +239,8 @@ export default {
         this.loading1 = false
       }
     },
-    currentChange(page, page_size) {
-      this.pageNo = page
-      this.pageSize = page_size
-      this.getList()
-    },
-    currentChange1(page, page_size) {
-      this.pageNo1 = page
-      this.pageSize1 = page_size
-      this.getList1()
-    },
     addArea(bool) {
-      this.formObj.depot = this.depot
+      this.formObj.equip_warehouse_area = this.depot
       this.isArea = bool
       this.dialogVisible = true
     },
@@ -251,7 +255,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        const _api = bool ? depot : depotSite
+        const _api = bool ? equipWarehouseArea : equipWarehouseLocation
         _api('delete', row.id)
           .then(response => {
             this.$message({
@@ -259,7 +263,6 @@ export default {
               message: '删除成功!'
             })
             if (bool) {
-              this.pageNo = 1
               this.getList()
             } else {
               this.getList1()
@@ -283,7 +286,7 @@ export default {
         if (valid) {
           try {
             this.loadingBtn = true
-            const _api = this.isArea ? depot : depotSite
+            const _api = this.isArea ? equipWarehouseArea : equipWarehouseLocation
             const _method = this.formObj.id ? 'put' : 'post'
             await _api(_method, this.formObj.id, { data: this.formObj })
             this.$message.success('操作成功')

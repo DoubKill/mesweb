@@ -605,3 +605,42 @@ export function equipWarehouseInventory(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+// 获取出库单据条码
+export function getOrderId(method, id, data = {}) {
+  const obj = {
+    url: id ? API.GetOrderId + id + '/' : API.GetOrderId,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+// 获取出库单据条码
+export function equipWarehouseOrder(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipWarehouseOrder + id + '/' : API.EquipWarehouseOrder,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+// 新建库区
+export function equipWarehouseArea(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipWarehouseArea + id + '/' : API.EquipWarehouseArea,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipWarehouseLocation(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipWarehouseLocation + id + '/' : API.EquipWarehouseLocation,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

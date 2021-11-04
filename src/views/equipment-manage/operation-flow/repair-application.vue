@@ -343,8 +343,8 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="部位编码">
-          <el-input v-model="formInline.part_code" clearable placeholder="部位编码" @input="changeSearch1" />
+        <el-form-item label="部位代码">
+          <el-input v-model="formInline.part_code" clearable placeholder="部位代码" @input="changeSearch1" />
         </el-form-item>
         <el-form-item label="部位名称">
           <el-input v-model="formInline.part_name" clearable placeholder="部位名称" @input="changeSearch1" />
