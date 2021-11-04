@@ -478,7 +478,7 @@
           >
             <i class="el-icon-plus" />
           </el-upload>
-          <template v-for="(item, index) in creatOrder.result_repair_graph_url">
+          <!-- <template v-for="(item, index) in creatOrder.result_repair_graph_url">
             <el-image
               v-if="operateType==='处理维修工单'&&creatOrder.result_repair_graph_url.length>0"
               :key="index"
@@ -486,7 +486,7 @@
               :src="item"
               :preview-src-list="[item]"
             />
-          </template>
+          </template> -->
           <template v-for="(item, index) in creatOrder.result_repair_graph_url">
             <el-image
               v-if="operateType==='查看处理结果'&&creatOrder.result_repair_graph_url.length>0"
@@ -515,7 +515,7 @@
           </el-input>
         </el-form-item>
         <el-form-item label="物料申请">
-          <el-radio-group v-model="creatOrder.result_material_requisition" :disabled="operateType==='查看处理结果'">
+          <el-radio-group v-model="creatOrder.result_material_requisition" :disabled="operateType==='查看处理结果'||creatOrder.is_applyed" @change="change">
             <el-radio :label="false">否</el-radio>
             <el-radio :label="true">是</el-radio>
           </el-radio-group>
@@ -526,7 +526,7 @@
           <el-checkbox v-model="creatOrder.wait_material" :disabled="operateType==='查看处理结果'||!creatOrder.result_material_requisition" @change="change">等待物料</el-checkbox>
         </el-form-item>
         <el-form-item label="是否需要外协">
-          <el-radio-group v-model="creatOrder.result_need_outsourcing" :disabled="operateType==='查看处理结果'">
+          <el-radio-group v-model="creatOrder.result_need_outsourcing" :disabled="operateType==='查看处理结果'" @change="change">
             <el-radio :label="false">否</el-radio>
             <el-radio :label="true">是</el-radio>
           </el-radio-group>
@@ -810,7 +810,8 @@ import { mapGetters } from 'vuex'
 import RepairDefinition from '../standard-definition/repair-definition'
 import MaintainDefinition from '../standard-definition/maintain-definition'
 import FaultClassify from '../master-data/fault-classify'
-import { equipApplyOrder, uploadImages, multiUpdate, equipWarehouseInventory, materialReq, equipApplyRepair, equipRepairStandard, equipMaintenanceStandard } from '@/api/jqy'
+import { equipApplyOrder, uploadImages, multiUpdate, equipWarehouseInventory, materialReq,
+  equipApplyRepair, equipRepairStandard, equipMaintenanceStandard, getOrderId, equipWarehouseOrder } from '@/api/jqy'
 import { debounce } from '@/utils'
 import definition from '../components/definition-dialog'
 import maintain from '../components/definition-dialog1'
@@ -982,7 +983,7 @@ export default {
 
     deleteList(row) {
       this.tableDataView.forEach((item, index) => {
-        if (row.spare__code === item.spare__code) {
+        if (row.spare_code1 === item.spare_code1) {
           this.tableDataView.splice(index, 1)
         }
       })
@@ -1024,10 +1025,23 @@ export default {
       this.dialogVisibleMaintain = false
     },
     change() {
+      console.log(this.creatOrder.result_need_outsourcing)
       if (this.creatOrder.wait_material === true || this.creatOrder.wait_outsourcing === true) {
         this.creatOrder.result_repair_final_result = '等待'
       } else if (this.creatOrder.wait_material === false && this.creatOrder.wait_outsourcing === false) {
         this.creatOrder.result_repair_final_result = '完成'
+      }
+      if (this.creatOrder.result_material_requisition === false) {
+        this.creatOrder.wait_material = false
+        if (this.creatOrder.wait_outsourcing === false) {
+          this.creatOrder.result_repair_final_result = '完成'
+        }
+      }
+      if (this.creatOrder.result_need_outsourcing === false) {
+        this.creatOrder.wait_outsourcing = false
+        if (this.creatOrder.wait_material === false) {
+          this.creatOrder.result_repair_final_result = '完成'
+        }
       }
     },
     changeSearch() {
@@ -1072,6 +1086,7 @@ export default {
         if (row.status === '已开始') {
           this.operateType = type
           this.creatOrder = JSON.parse(JSON.stringify(row))
+          this.tableDataView = []
           this.creatOrder.image_url_list = this.creatOrder.result_repair_graph_url
           if (this.creatOrder.result_repair_final_result !== '等待') {
             this.creatOrder.result_need_outsourcing = false
@@ -1124,9 +1139,11 @@ export default {
       //     obj.push({ equip_component: this.id, equip_spare_erp: item.id })
       //   }
       // })
-      const data = await materialReq('get', null, { params: { warehouse_out_no: this.creatOrder.warehouse_out_no }})
-      this.tableDataView = data.results
-      this.creatOrder.out_record_status = this.tableDataView.length > 0 ? this.tableDataView[0].out_record_status : null
+      if (this.creatOrder.is_applyed) {
+        const data = await materialReq('get', null, { params: { warehouse_out_no: this.creatOrder.warehouse_out_no }})
+        this.tableDataView = data || []
+        this.creatOrder.out_record_status = this.tableDataView.length > 0 ? this.tableDataView[0].out_record_status : null
+      }
       this.dialogVisible1 = true
     },
     dialog2() {
@@ -1143,10 +1160,10 @@ export default {
         this.tableDataView1 = data.results || []
         let data1 = []
         for (const i in this.tableDataView) {
-          data1 = data1.concat(this.tableDataView[i].spare_code)
+          data1 = data1.concat(this.tableDataView[i].spare_code1)
         }
         this.tableDataView1.forEach(row => {
-          if (data1.indexOf(row.spare__code) >= 0) {
+          if (data1.indexOf(row.spare_code) >= 0) {
             this.$refs.multipleTable.toggleRowSelection(row, true)
           }
         })
@@ -1180,17 +1197,36 @@ export default {
       this.search1.page = 1
       debounce(this, 'dialogSelect')
     },
-    generateFun() {
+    async generateFun() {
+      if (!this.creatOrder.is_applyed) {
+        const orderId = await getOrderId('get', null, { params: { status: '出库' }})
+        const orderData = {}
+        orderData.order_id = orderId
+        orderData.submission_department = '维修部'
+        orderData.status = 4
+        orderData.equip_spare = this.tableDataView.map(item => ({ id: item.id, quantity: item.apply }))
+        var warehouse_out_no = await equipWarehouseOrder('post', null, { data: orderData })
+      }
       const data = {}
       data.work_order_no = this.creatOrder.work_order_no
       data.work_type = this.creatOrder.work_type
       data.pks = [this.creatOrder.id]
       data.opera_type = '处理'
       data.result_fault_desc = this.creatOrder.result_fault_desc
-      if (this.creatOrder.type_work === '维修') {
+      if (!this.creatOrder.is_applyed) {
+        data.apply_material_list = this.tableDataView.map(item => ({
+          work_order_no: this.creatOrder.work_order_no,
+          warehouse_out_no: warehouse_out_no.order_id,
+          equip_spare_id: item.id,
+          inventory_quantity: item.inventory_quantity,
+          apply: item.apply,
+          work_type: this.creatOrder.work_type,
+          submit_old_flag: item.submit_old_flag }))
+      }
+      if (this.creatOrder.work_type === '维修') {
         data.result_repair_standard = this.creatOrder.result_repair_standard
       }
-      if (this.creatOrder.type_work !== '维修') {
+      if (this.creatOrder.work_type !== '维修') {
         data.result_maintenance_standard = this.creatOrder.result_maintenance_standard
       }
       data.work_content = this.creatOrder.work_content
@@ -1231,19 +1267,22 @@ export default {
     generateFunSelect() {
       let data = []
       for (const i in this.tableDataView) {
-        data = data.concat(this.tableDataView[i].spare_code)
+        data = data.concat(this.tableDataView[i].spare_code1)
       }
       for (let index = 0; index < this.multipleSelection.length; index++) {
-        if (data.indexOf(this.multipleSelection[index].spare__code) === -1) {
+        if (data.indexOf(this.multipleSelection[index].spare_code) === -1) {
           this.tableDataView.push({
             spare_code: this.multipleSelection[index].spare__code,
+            spare_code1: this.multipleSelection[index].spare_code,
             spare_name: this.multipleSelection[index].spare_name,
             equip_component_type_name: this.multipleSelection[index].component_type_name,
             specification: this.multipleSelection[index].specification,
             technical_params: this.multipleSelection[index].technical_params,
             unit: this.multipleSelection[index].unit,
             inventory_quantity: this.multipleSelection[index].quantity.all_qty,
-            apply: 1
+            id: this.multipleSelection[index].equip_spare,
+            apply: 1,
+            submit_old_flag: true
           })
         }
       }
