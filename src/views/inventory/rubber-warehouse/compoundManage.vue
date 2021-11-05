@@ -1,6 +1,6 @@
 <template>
   <div class="app-container outbound_manage">
-    <!-- 混炼胶出库计划 -->
+    <!-- 胶片库出库计划 -->
     <el-form :inline="true">
       <el-form-item label="单据号">
         <el-input v-model="search.order_no" size="" clearable placeholder="请输入单据号" @input="changeList" />
@@ -292,7 +292,7 @@
     <el-dialog
       title="出库单据"
       :visible.sync="dialogVisibleView"
-      width="80%"
+      width="90%"
       :before-close="handleCloseView"
     >
       <el-form :inline="true">
@@ -331,6 +331,23 @@
             placeholder="请输入内容"
             @input="getDebounceView"
           />
+        </el-form-item>
+        <el-form-item label="状态">
+          <el-select
+            v-model="searchView.status"
+            style="width:300px"
+            placeholder="请选择状态"
+            clearable
+            multiple
+            @change="searchStatus"
+          >
+            <el-option
+              v-for="item in optionsState1"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
         </el-form-item>
       </el-form>
       <el-table
