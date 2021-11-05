@@ -719,7 +719,6 @@ export default {
       try {
         this.loadingTree = true
         const data = await equipBom('get', this.nodeId)
-        console.log(data, 565656)
         Object.assign(this.formInline, data || {})
         this.formInline = Object.assign({}, this.formInline)
         this.loadingTree = false

@@ -1,37 +1,41 @@
 <template>
   <div>
-    <!-- 出入库统计分析 -->
+    <!-- 备件库 入出库分析统计 -->
     <el-form :inline="true">
-      <el-form-item label="起止日期">
+      <el-form-item label="起止时间">
         <el-date-picker
           v-model="dateValue"
           type="daterange"
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
-          value-format="yyyy-MM-dd"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          :default-time="['00:00:00', '23:59:59']"
           @change="changeDate"
         />
       </el-form-item>
       <el-form-item label="物料分类">
         <el-input
-          v-model="search.equip_no"
+          v-model="search.equip_component_type"
           style="width:200px"
-          @input="changeSearch"
+          clearable
+          @input="debounceSearch"
         />
       </el-form-item>
       <el-form-item label="物料编码">
         <el-input
-          v-model="search.equip_no"
+          v-model="search.spare__code"
           style="width:200px"
-          @input="changeSearch"
+          clearable
+          @input="debounceSearch"
         />
       </el-form-item>
       <el-form-item label="物料名称">
         <el-input
-          v-model="search.equip_no"
+          v-model="search.spare_name"
           style="width:200px"
-          @input="changeSearch"
+          clearable
+          @input="debounceSearch"
         />
       </el-form-item>
       <el-form-item style="float:right">
@@ -49,51 +53,51 @@
         label="序号"
       />
       <el-table-column
-        prop="date"
+        prop="spare__code"
         label="物料编码"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="spare_name"
         label="物料名称"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="component_type_name"
         label="备件分类"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="specification"
         label="规格型号"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="in_qty"
         label="入库数量"
         min-width="20"
       >
         <template slot-scope="scope">
           <el-link
             type="primary"
-            @click="dialog(scope.row)"
-          >{{ scope.row.date }}</el-link>
+            @click="dialogView(scope.row,1)"
+          >{{ scope.row.in_qty }}</el-link>
         </template>
       </el-table-column>
       <el-table-column
-        prop="date"
+        prop="out_qty"
         label="出库数量"
         min-width="20"
       >
         <template slot-scope="scope">
           <el-link
             type="primary"
-            @click="dialog(scope.row)"
-          >{{ scope.row.date }}</el-link>
+            @click="dialogView(scope.row,2)"
+          >{{ scope.row.out_qty }}</el-link>
         </template>
       </el-table-column>
       <el-table-column
-        prop="date"
+        prop="unit"
         label="数量单位"
         min-width="20"
       />
@@ -110,13 +114,13 @@
     >
       <el-form :inline="true">
         <el-form-item label="备件分类">
-          <el-input :disabled="true" />
+          <el-input v-model="currentObj.component_type_name" :disabled="true" />
         </el-form-item>
         <el-form-item label="备件名称">
-          <el-input :disabled="true" />
+          <el-input v-model="currentObj.spare_name" :disabled="true" />
         </el-form-item>
         <el-form-item label="规格型号">
-          <el-input :disabled="true" />
+          <el-input v-model="currentObj.specification" :disabled="true" />
         </el-form-item>
       </el-form>
       <el-table
@@ -125,43 +129,33 @@
         border
       >
         <el-table-column
-          prop="order_no"
+          prop="spare_code"
           label="备件条码"
           min-width="20"
         />
         <el-table-column
-          prop="sub_no"
+          prop="area_name"
           label="库区"
           min-width="20"
         />
         <el-table-column
-          prop="date"
+          prop="location_name"
           label="库位"
           min-width="20"
         />
         <el-table-column
-          prop="date"
+          prop="quantity"
           label="数量"
           min-width="20"
         />
         <el-table-column
-          prop="date"
-          label="入库人"
+          prop="created_username"
+          :label="currentObj.status===1?'入库人':'出库人'"
           min-width="20"
         />
         <el-table-column
-          prop="date"
-          label="入库时间"
-          min-width="20"
-        />
-        <el-table-column
-          prop="date"
-          label="出库人"
-          min-width="20"
-        />
-        <el-table-column
-          prop="date"
-          label="出库时间"
+          prop="created_date"
+          :label="currentObj.status===1?'入库时间':'出库时间'"
           min-width="20"
         />
       </el-table>
@@ -174,6 +168,7 @@
 
 <script>
 import page from '@/components/page'
+import { equipWarehouseStatistical } from '@/api/base_w_five'
 export default {
   name: 'Statistics',
   components: { page },
@@ -184,28 +179,59 @@ export default {
         page_size: 10
       },
       dateValue: [],
-      tableData: [{ date: '1' }],
-      tableDataView: [{ date: '1' }],
+      tableData: [],
+      tableDataView: [],
       total: 0,
       loadingView: false,
+      currentObj: {},
       dialogVisible: false
     }
   },
+  created() {
+    this.getList()
+  },
   methods: {
-    created() {
+    async getList() {
+      try {
+        this.loading = true
+        const obj = {}
+        Object.assign(obj, this.search)
+        const data = await equipWarehouseStatistical('get', null, { params: obj })
+        this.tableData = data.results || []
+        this.total = data.count
+        this.loading = false
+      } catch (e) {
+        this.loading = false
+      }
+    },
+    changeDate(arr) {
+      this.search.s_time = arr ? arr[0] : ''
+      this.search.e_time = arr ? arr[1] : ''
+      this.search.page = 1
       this.getList()
     },
-    changeDate() {
-
-    },
-    getList() {
-
+    debounceSearch() {
+      this.$debounce(this, 'changeSearch')
     },
     changeSearch() {
+      this.search.page = 1
       this.getList()
     },
-    dialog() {
+    dialogView(row, status) {
+      this.currentObj = JSON.parse(JSON.stringify(row))
+      this.currentObj.status = status
       this.dialogVisible = true
+      this.getViewList(status)
+    },
+    async getViewList(status) {
+      try {
+        this.loadingView = true
+        const data = await equipWarehouseStatistical('get', null, { params: { status, equip_spare: this.currentObj.equip_spare }})
+        this.tableDataView = data || []
+        this.loadingView = false
+      } catch (e) {
+        this.loadingView = false
+      }
     },
     currentChange(page, page_size) {
       this.search.page = page

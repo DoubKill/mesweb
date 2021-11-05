@@ -550,12 +550,14 @@ export default {
   EquipApplyOrder: '/api/v1/equipment/equip-apply-order/',
   MultiUpdate: '/api/v1/equipment/equip-apply-order/multi_update/',
   MaterialReq: '/api/v1/equipment/equip-repair-material-req/',
-  EquipWarehouseInventory: '/api/v1/equipment/equip-warehouse-inventory/',
+  EquipWarehouseInventory: '/api/v1/equipment/equip-warehouse-inventory/', // 备件库存查询
   // 新建库区库位
   EquipWarehouseArea: '/api/v1/equipment/equip-warehouse-area/',
   EquipWarehouseLocation: '/api/v1/equipment/equip-warehouse-location/',
   // 获取出库单据条码
   GetOrderId: '/api/v1/equipment/equip-warehouse-order/get_order_id/',
   // 新建出库单据
-  EquipWarehouseOrder: '/api/v1/equipment/equip-warehouse-order/'
+  EquipWarehouseOrder: '/api/v1/equipment/equip-warehouse-order/',
+  EquipWarehouseRecord: '/api/v1/equipment/equip-warehouse-record/', // 备件出入库履历
+  EquipWarehouseStatistical: '/api/v1/equipment/equip-warehouse-statistical/' // 备件入出库统计分析
 }
