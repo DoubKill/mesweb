@@ -69,21 +69,6 @@
           @input="changeSearch"
         />
       </el-form-item>
-      <el-form-item label="状态">
-        <el-select
-          v-model="search.status"
-          placeholder="请选择"
-          clearable
-          @change="changeSearch"
-        >
-          <el-option
-            v-for="item in ['已生成', '已指派', '已接单', '已开始', '已完成','已验收', '已关闭']"
-            :key="item"
-            :label="item"
-            :value="item"
-          />
-        </el-select>
-      </el-form-item>
       <el-form-item label="维修人">
         <el-input
           v-model="search.repair_user"
@@ -631,6 +616,7 @@
 
 <script>
 import page from '@/components/page'
+import { mapGetters } from 'vuex'
 import { equipApplyOrder, uploadImages, multiUpdate, equipApplyRepair, equipRepairStandard, equipMaintenanceStandard } from '@/api/jqy'
 import { debounce } from '@/utils'
 import definition from '../components/definition-dialog'
@@ -642,7 +628,7 @@ export default {
   components: { EquipSelect, page, repair, definition, maintain },
   data() {
     return {
-      search: {},
+      search: { status: '已完成' },
       loading: false,
       btnExportLoad: false,
       dialogVisibleRepair: false,
@@ -673,7 +659,13 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters([
+      'name'
+    ])
+  },
   created() {
+    this.search.assign_user = this.name
     this.getList()
   },
   methods: {

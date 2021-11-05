@@ -244,7 +244,7 @@ export default {
   components: { EquipSelect, page, repair, definition, maintain },
   data() {
     return {
-      search: {},
+      search: { status: '已生成' },
       bz: '',
       loading: false,
       btnExportLoad: false,

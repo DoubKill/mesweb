@@ -250,7 +250,7 @@ export default {
   components: { EquipSelect, page, repair, definition, maintain },
   data() {
     return {
-      search: {},
+      search: { status: '已指派' },
       loading: false,
       btnExportLoad: false,
       dialogVisibleRepair: false,
@@ -317,7 +317,7 @@ export default {
     },
     back() {
       if (this.multipleSelection.length > 0) {
-        if (this.multipleSelection.every(d => d.status === '已接单')) {
+        if (this.multipleSelection.every(d => d.status === '已指派')) {
           const obj = []
           this.multipleSelection.forEach(d => {
             obj.push(d.id)
