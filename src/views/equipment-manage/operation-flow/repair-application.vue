@@ -434,7 +434,7 @@ export default {
       ruleForm: {},
       rules: {
         plan_department: [
-          { required: true, message: '不能为空', trigger: 'blur' }
+          { required: true, message: '不能为空', trigger: 'change' }
         ],
         fault_datetime: [
           { required: true, message: '不能为空', trigger: 'blur' }
@@ -443,7 +443,7 @@ export default {
           { required: true, message: '不能为空', trigger: 'blur' }
         ],
         result_fault_cause_name: [
-          { required: true, message: '不能为空', trigger: 'blur' }
+          { required: true, message: '不能为空', trigger: 'change' }
         ]
       },
       dialogVisibleImg: false,

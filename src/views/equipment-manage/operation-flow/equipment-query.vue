@@ -481,23 +481,18 @@ export default {
       this.dialogVisibleMaintain = false
     },
     tableRowClassName({ row, rowIndex }) {
-      // const time = new Date(row.in_storage_time)
-      // var nowTime = new Date()
-      // var timeDifference = nowTime.getTime() - time.getTime()
-      // var days = timeDifference / (24 * 3600 * 1000)
-      // if (this.period_of_validity >= 0 && this.period_of_validity !== null) {
-      //   if (days >= (0.5 * this.period_of_validity) && days < this.period_of_validity) {
-      //     return 'warning-row'
-      //   } else if (days >= this.period_of_validity) {
-      //     return 'maxwarning-row'
-      //   } else { return 'summary-cell-style' }
-      // } else {
-      //   if (days) {
-      //     return 'warn-row'
-      //   } else {
-      //     return 'summary-cell-style'
-      //   }
-      // }
+      console.log(row.timeout_color)
+      if (row.timeout_color === '粉红色') {
+        return 'pink-row'
+      } else if (row.timeout_color === '红色') {
+        return 'red-row'
+      } else if (row.timeout_color === '酱红色') {
+        return 'bigred-row'
+      } else if (row.timeout_color === '橙色') {
+        return 'orange-row'
+      } else {
+        return 'white-style'
+      }
     },
     async getList() {
       try {
@@ -547,16 +542,25 @@ export default {
 </script>
 
 <style  lang="scss">
-.assOutbound{
-  .el-table .warn-row {
-    background: #F5F7FA;
+.equipmentQuery{
+  .el-table.white-style{
+    background:#FFFFFF;
   }
-  .el-table .warning-row {
-    background: #e6a23c;
+  .el-table .pink-row {
+    background: pink;
+    color:black;
   }
-  .el-table .maxwarning-row {
+  .el-table .red-row {
     background: red;
-    color:white;
+    color:black;
+  }
+  .el-table .bigred-row {
+    background: #761F28;
+    color:black;
+  }
+  .el-table .orange-row {
+    background: #F59A23;
+   color:black;
   }
   .el-table__row:hover > td {
     background-color: transparent !important;

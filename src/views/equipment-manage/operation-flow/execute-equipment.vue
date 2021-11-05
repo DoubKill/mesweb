@@ -822,7 +822,7 @@ export default {
   components: { EquipSelect, page, RepairDefinition, MaintainDefinition, FaultClassify, repair, definition, maintain },
   data() {
     return {
-      search: {},
+      search: { excuted: 1 },
       search1: {},
       loading: false,
       btnExportLoad: false,
@@ -863,7 +863,7 @@ export default {
     ])
   },
   created() {
-    this.search.assign_to_user = this.name
+    this.search.receiving_user = this.name
     this.getList()
   },
   methods: {
