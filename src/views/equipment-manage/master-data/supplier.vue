@@ -150,14 +150,7 @@
           label="地域"
           prop="region"
         >
-          <el-select v-model="dialogForm.region" placeholder="请选择" filterable>
-            <el-option
-              v-for="item in options"
-              :key="item"
-              :label="item"
-              :value="item"
-            />
-          </el-select>
+          <el-input v-model="dialogForm.region" />
         </el-form-item>
         <el-form-item
           label="联系人姓名"

@@ -51,12 +51,12 @@
             <el-table-column
               prop="name"
               label="配方名称"
-              min-width="20"
+              min-width="40"
             />
             <el-table-column
               prop="ver"
               label="版本"
-              min-width="20"
+              min-width="15"
             />
             <el-table-column
               prop="weight"
@@ -89,6 +89,16 @@
                 return '已使用'
               }"
             />
+            <el-table-column label="上传到MES" min-width="20">
+              <template slot-scope="scope">
+                <el-button
+                  size="mini"
+                  type="primary"
+                  @click="uploadMes(scope.row,index)"
+                >上传
+                </el-button>
+              </template>
+            </el-table-column>
           </el-table>
           <page
             :old-page="false"
@@ -235,6 +245,14 @@ export default {
       try {
         const data = await xlRecipeMaterial('get', null, { params: { equip_no: item.equip_no, recipe_name: val.name }})
         this.allTable[index].tableList1 = data || []
+      } catch (e) {
+        //
+      }
+    },
+    async uploadMes(row, faI) {
+      try {
+        await xlRecipe('post', null, { data: { equip_no: this.allTable[faI].equip_no, recipe_name: row.name, total_standard_error: row.error }})
+        this.$message.success('上传成功')
       } catch (e) {
         //
       }

@@ -244,7 +244,7 @@ export const equipRoutes = [
             name: 'LocationManagement',
             meta: {
               faName: 'SparePartsWarehouse',
-              title: '库区库位管理',
+              title: '备件库区库位管理',
               permissionName: ''
             }
           },
@@ -254,7 +254,7 @@ export const equipRoutes = [
             name: 'WarehousingManagement',
             meta: {
               faName: 'SparePartsWarehouse',
-              title: '入库管理',
+              title: '备件入库管理',
               permissionName: ''
             }
           },
@@ -264,7 +264,7 @@ export const equipRoutes = [
             name: 'OutboundingManagement',
             meta: {
               faName: 'SparePartsWarehouse',
-              title: '出库管理',
+              title: '备件出库管理',
               permissionName: ''
             }
           },
@@ -274,7 +274,7 @@ export const equipRoutes = [
             name: 'InventoryQuery',
             meta: {
               faName: 'SparePartsWarehouse',
-              title: '库存查询',
+              title: '备件库存查询',
               permissionName: ''
             }
           },
@@ -284,7 +284,7 @@ export const equipRoutes = [
             name: 'HistoryQuery',
             meta: {
               faName: 'SparePartsWarehouse',
-              title: '出入库履历查询',
+              title: '备件出入库履历查询',
               permissionName: ''
             }
           },
@@ -294,7 +294,7 @@ export const equipRoutes = [
             name: 'Statistics',
             meta: {
               faName: 'SparePartsWarehouse',
-              title: '出入库统计分析',
+              title: '备件出入库统计分析',
               permissionName: ''
             }
           }

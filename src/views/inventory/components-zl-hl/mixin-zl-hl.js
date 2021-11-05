@@ -7,7 +7,7 @@ export default {
       dialogVisibleView: false,
       tableDataView: [],
       totalView: 0,
-      searchView: { sub_no: '', pallet_no: '', lot_no: '' },
+      searchView: { status: [1, 2, 5], sub_no: '', pallet_no: '', lot_no: '' },
       loadingView: false,
       outbound_order: '',
       rowObj: {}
@@ -21,7 +21,9 @@ export default {
         this.loadingView = true
         const _api = outboundDeliveryOrderDetails
         this.searchView.outbound_delivery_order_id = this.outbound_order
-        const data = await _api('get', null, { params: this.searchView })
+        const obj = JSON.parse(JSON.stringify(this.searchView))
+        obj.status = obj.status.join(',')
+        const data = await _api('get', null, { params: obj })
         this.totalView = data.count
         this.tableDataView = data.results
         this.loadingView = false
@@ -32,6 +34,10 @@ export default {
     getDebounceView() {
       this.searchView.page = 1
       debounce(this, 'getListView')
+    },
+    searchStatus() {
+      this.searchView.page = 1
+      this.getListView()
     },
     showEditDialog(row) {
       // 查看

@@ -5,6 +5,7 @@
       v-model="_equip_no"
       :clearable="!isCreated"
       placeholder="请选择机台"
+      :multiple="isMultiple"
       @change="changeSearch"
       @visible-change="visibleChange"
     >
@@ -24,10 +25,14 @@ export default {
   props: {
     // eslint-disable-next-line vue/prop-name-casing
     equip_no_props: {
-      type: String,
+      type: [String, Array],
       default: null
     },
     isObj: {
+      type: Boolean,
+      default: false
+    },
+    isMultiple: {
       type: Boolean,
       default: false
     },

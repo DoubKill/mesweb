@@ -3,7 +3,7 @@
     <!-- 设备BOM管理 -->
     <el-container v-if="!isShowList" style="min-height:75vh;">
       <el-aside width="400px" class="border-style aside-style">
-        <h3>位置区域设定
+        <h3>设备BOM管理
           <!-- <el-button style="float:right;margin-right:10px" size="mini" type="primary" @click="showList">列表显示</el-button> -->
         </h3>
         <el-tree
@@ -719,7 +719,6 @@ export default {
       try {
         this.loadingTree = true
         const data = await equipBom('get', this.nodeId)
-        console.log(data, 565656)
         Object.assign(this.formInline, data || {})
         this.formInline = Object.assign({}, this.formInline)
         this.loadingTree = false
