@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="history-query">
     <!-- 备件出入库履历查询 -->
     <el-form :inline="true">
       <el-form-item label="起止时间">
@@ -78,7 +78,11 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary">导出Excel</el-button>
+        <el-button
+          type="primary"
+          :loading="btnExportLoad"
+          @click="exportTable"
+        >导出Excel</el-button>
         <el-button type="primary" @click="changeSearch">查询</el-button>
       </el-form-item>
     </el-form>
@@ -100,6 +104,18 @@
         label="出入库单号"
         min-width="20"
       />
+      <el-table-column
+        prop="work_order_no"
+        label="工单编号"
+        min-width="20"
+      >
+        <template slot-scope="scope">
+          <el-link
+            type="primary"
+            @click="dialogShow(scope.row)"
+          >{{ scope.row.work_order_no }}</el-link>
+        </template>
+      </el-table-column>
       <el-table-column
         prop="spare__code"
         label="备件条码"
@@ -157,6 +173,39 @@
       :current-page="search.page"
       @currentChange="currentChange"
     />
+    <el-dialog
+      :visible.sync="dialogVisible"
+      width="500px"
+      title="处理维修工单"
+      class="dialogStyle"
+    >
+      <el-form v-loading="loadingView" label-width="150px">
+        <el-form-item label="计划/报销名称">
+          <el-input v-model="currentObj.plan_name" :disabled="true" />
+        </el-form-item>
+        <el-form-item label="工单编号">
+          <el-input v-model="currentObj.work_order_no" :disabled="true" />
+        </el-form-item>
+        <el-form-item label="机台">
+          <el-input v-model="currentObj.equip_no" :disabled="true" />
+        </el-form-item>
+        <el-form-item label="维修标准/故障原因">
+          <el-input v-model="currentObj.fault_name" :disabled="true" />
+        </el-form-item>
+        <el-form-item label="故障详情描述">
+          <el-input
+            v-model="currentObj.result_fault_desc"
+            :disabled="true"
+            type="textarea"
+            style="width:200px"
+            :rows="3"
+          />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogVisible=false">返回</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -175,7 +224,12 @@ export default {
       dateValue: [],
       tableData: [],
       total: 0,
-      loading: false
+      loading: false,
+      btnExportLoad: false,
+      dialogVisible: false,
+      loadingView: false,
+      tableDataView: [],
+      currentObj: {}
     }
   },
   created() {
@@ -212,11 +266,45 @@ export default {
       this.search.page = page
       this.search.page_size = page_size
       this.getList()
+    },
+    async dialogShow(row) {
+      this.dialogVisible = true
+      try {
+        const data = await equipWarehouseRecord('get', null, { params: { work_order_no: row.work_order_no }})
+        this.currentObj = data
+        this.loadingView = false
+      } catch (e) {
+        this.loadingView = false
+      }
+    },
+    exportTable() {
+      this.btnExportLoad = true
+      const obj = Object.assign({ export: 1 }, this.search)
+      const _api = equipWarehouseRecord
+      _api('get', null, { params: obj, responseType: 'blob' })
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '备件出入库履历.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
     }
   }
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+.history-query{
+.dialogStyle .el-input{
+  width:200px;
+}
+}
 
 </style>

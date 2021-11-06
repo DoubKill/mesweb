@@ -39,7 +39,7 @@
         />
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button type="primary">导出Excel</el-button>
+        <el-button :loading="btnExportLoad" type="primary" @click="exportTable">导出Excel</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -184,7 +184,8 @@ export default {
       total: 0,
       loadingView: false,
       currentObj: {},
-      dialogVisible: false
+      dialogVisible: false,
+      btnExportLoad: false
     }
   },
   created() {
@@ -237,6 +238,25 @@ export default {
       this.search.page = page
       this.search.page_size = page_size
       this.getList()
+    },
+    exportTable() {
+      this.btnExportLoad = true
+      const obj = Object.assign({ export: 1 }, this.search)
+      const _api = equipWarehouseStatistical
+      _api('get', null, { params: obj, responseType: 'blob' })
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '配件入出库分析统计.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
     }
   }
 }
