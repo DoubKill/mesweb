@@ -498,7 +498,7 @@ export default {
           const data1 = await equipBom('get', null, { })
           this.options2 = data1 || []
           this.ruleForm.equip_no = data[0].equip_no
-          this.ruleForm.factory_name = data[0].factory_id
+          this.ruleForm.factory_name = data[0].equip_name
           this.ruleForm.equip_part_new = data[0].part
           this.ruleForm.part_name = data[0].part_name
           this.disable = true
@@ -621,7 +621,7 @@ export default {
         this.options2 = data || []
         this.ruleForm.equip_barcode = this.multipleSelection.node_id
         this.ruleForm.equip_no = this.multipleSelection.equip_no
-        this.ruleForm.factory_name = this.multipleSelection.factory_id
+        this.ruleForm.factory_name = this.multipleSelection.equip_name
         this.ruleForm.equip_part_new = this.multipleSelection.part
         this.ruleForm.part_name = this.multipleSelection.part_name
         this.disable = true
