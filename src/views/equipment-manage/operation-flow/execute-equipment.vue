@@ -822,7 +822,7 @@ export default {
   components: { EquipSelect, page, RepairDefinition, MaintainDefinition, FaultClassify, repair, definition, maintain },
   data() {
     return {
-      search: { my_order: 1, searched: 1 },
+      search: { my_order: 1 },
       search1: {},
       loading: false,
       btnExportLoad: false,
