@@ -131,7 +131,7 @@
       <el-form-item>
         <el-button type="primary" @click="changeSearch">查询</el-button>
         <el-button type="primary" @click="dialog(false,'验收维修工单')">验收</el-button>
-        <el-button type="primary">导出Excel</el-button>
+        <!-- <el-button type="primary">导出Excel</el-button> -->
       </el-form-item>
     </el-form>
     <el-table
@@ -665,7 +665,7 @@ export default {
     ])
   },
   created() {
-    this.search.assign_user = this.name
+    this.search.created_user = this.name
     this.getList()
   },
   methods: {

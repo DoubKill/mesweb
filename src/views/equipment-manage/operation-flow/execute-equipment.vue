@@ -115,7 +115,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="changeSearch">查询</el-button>
-        <el-button type="primary">导出Excel</el-button>
+        <!-- <el-button type="primary">导出Excel</el-button> -->
       </el-form-item>
     </el-form>
     <el-table
@@ -863,7 +863,6 @@ export default {
     ])
   },
   created() {
-    this.search.receiving_user = this.name
     this.getList()
   },
   methods: {
@@ -1133,12 +1132,6 @@ export default {
       }
     },
     async dialog1() {
-      // const obj = []
-      // this.tableData1.forEach(item => {
-      //   if (!item.reuse_flag) {
-      //     obj.push({ equip_component: this.id, equip_spare_erp: item.id })
-      //   }
-      // })
       if (this.creatOrder.is_applyed) {
         const data = await materialReq('get', null, { params: { warehouse_out_no: this.creatOrder.warehouse_out_no }})
         this.tableDataView = data || []
@@ -1212,6 +1205,7 @@ export default {
       data.work_type = this.creatOrder.work_type
       data.pks = [this.creatOrder.id]
       data.opera_type = '处理'
+      data.assign_user = this.creatOrder.assign_user
       data.result_fault_desc = this.creatOrder.result_fault_desc
       if (!this.creatOrder.is_applyed) {
         data.apply_material_list = this.tableDataView.map(item => ({

@@ -72,7 +72,7 @@
 
       <el-form-item>
         <el-button type="primary" @click="dialog">指派</el-button>
-        <el-button type="primary">导出Excel</el-button>
+        <!-- <el-button type="primary">导出Excel</el-button> -->
       </el-form-item>
     </el-form>
     <el-table

@@ -260,8 +260,8 @@
         min-width="20"
       >
         <template slot-scope="scope">
-          <span v-if="scope.row.result_material_requisition===true">Y</span>
-          <span v-if="scope.row.result_material_requisition===false">N</span>
+          <el-link v-if="scope.row.result_material_requisition===true" type="primary" @click="dialogMaterial(scope.row)">Y</el-link>
+          <el-link v-if="scope.row.result_material_requisition===false" type="primary">N</el-link>
         </template>
       </el-table-column>
       <el-table-column
@@ -401,12 +401,84 @@
         <el-button @click="handleCloseMaintain">取 消</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      title="维修物料申请"
+      :visible.sync="dialogVisibleMaterial"
+      width="70%"
+    >
+      <el-form :inline="true">
+        <el-form-item label="领料申请单号">
+          <el-input v-model="creatOrder.warehouse_out_no" :disabled="true" />
+        </el-form-item>
+        <el-form-item label="单据状态">
+          <el-input v-model="creatOrder.out_record_status" :disabled="true" />
+        </el-form-item>
+      </el-form>
+      <el-table
+        :data="tableDataView"
+        border
+      >
+        <el-table-column
+          prop="spare_code"
+          label="物料编码"
+          min-width="20"
+        />
+        <el-table-column
+          prop="spare_name"
+          label="物料名称"
+          min-width="20"
+        />
+        <el-table-column
+          prop="equip_component_type_name"
+          label="备件分类"
+          min-width="20"
+        />
+        <el-table-column
+          prop="specification"
+          label="规格型号"
+          min-width="20"
+        />
+        <el-table-column
+          prop="technical_params"
+          label="技术参数"
+          min-width="20"
+        />
+        <el-table-column
+          prop="unit"
+          label="标准单位"
+          min-width="20"
+        />
+        <el-table-column
+          prop="inventory_quantity"
+          label="库存数量"
+          min-width="20"
+        />
+        <el-table-column
+          prop="apply"
+          label="领料数量"
+          min-width="20"
+        />
+        <el-table-column
+          prop="submit_old_flag"
+          label="是否交旧"
+          min-width="20"
+        >
+          <template slot-scope="{row}">
+            <el-checkbox v-model="row.submit_old_flag" disabled />
+          </template>
+        </el-table-column>
+      </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleMaterial=false">取 消</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import page from '@/components/page'
-import { equipApplyOrder, equipApplyOrderdDown, equipApplyRepair, equipRepairStandard, equipMaintenanceStandard } from '@/api/jqy'
+import { equipApplyOrder, equipApplyOrderdDown, equipApplyRepair, equipRepairStandard, equipMaintenanceStandard, materialReq } from '@/api/jqy'
 import EquipSelect from '@/components/EquipSelect/index'
 import definition from '../components/definition-dialog'
 import maintain from '../components/definition-dialog1'
@@ -422,6 +494,9 @@ export default {
       dialogVisibleRepair: false,
       dialogVisibleDefinition: false,
       dialogVisibleMaintain: false,
+      dialogVisibleMaterial: false,
+      tableDataView: [],
+      creatOrder: {},
       search: {},
       dateValue: [],
       tableData: [],
@@ -493,6 +568,13 @@ export default {
       } else {
         return 'white-style'
       }
+    },
+    async dialogMaterial(row) {
+      this.creatOrder.warehouse_out_no = row.warehouse_out_no
+      const data = await materialReq('get', null, { params: { warehouse_out_no: row.warehouse_out_no }})
+      this.tableDataView = data || []
+      this.creatOrder.out_record_status = this.tableDataView.length > 0 ? this.tableDataView[0].out_record_status : null
+      this.dialogVisibleMaterial = true
     },
     async getList() {
       try {
