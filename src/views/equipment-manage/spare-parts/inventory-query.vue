@@ -35,7 +35,11 @@
         />
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button type="primary">导出Excel</el-button>
+        <el-button
+          type="primary"
+          :loading="btnExportLoad"
+          @click="exportTable"
+        >导出Excel</el-button>
         <el-button
           type="primary"
           @click="changeSearch"
@@ -411,7 +415,8 @@ export default {
       creatOrder: {},
       currentInfo: {},
       num: '',
-      loadingBtn: false
+      loadingBtn: false,
+      btnExportLoad: false
     }
   },
   created() {
@@ -455,6 +460,25 @@ export default {
     },
     debounceSearch() {
       this.$debounce(this, 'changeSearch')
+    },
+    exportTable() {
+      this.btnExportLoad = true
+      const obj = Object.assign({ export: 1 }, this.search)
+      const _api = equipWarehouseInventory
+      _api('get', null, { params: obj, responseType: 'blob' })
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '备件库存.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
     },
     async dialogShow(row, num) {
       this.num = num
