@@ -822,7 +822,7 @@ export default {
   components: { EquipSelect, page, RepairDefinition, MaintainDefinition, FaultClassify, repair, definition, maintain },
   data() {
     return {
-      search: { excuted: 1 },
+      search: { my_order: 1, searched: 1 },
       search1: {},
       loading: false,
       btnExportLoad: false,
@@ -850,6 +850,9 @@ export default {
       typeForm1: {},
       submit: false,
       rules: {
+        result_repair_standard_name: [
+          { required: true, message: '不能为空', trigger: 'change' }
+        ],
         result_repair_final_result: [
           { required: true, message: '不能为空', trigger: 'blur' }
         ]
@@ -1191,56 +1194,56 @@ export default {
       debounce(this, 'dialogSelect')
     },
     async generateFun() {
-      if (!this.creatOrder.is_applyed) {
-        const orderId = await getOrderId('get', null, { params: { status: '出库' }})
-        const orderData = {}
-        orderData.order_id = orderId
-        orderData.submission_department = '维修部'
-        orderData.status = 4
-        orderData.equip_spare = this.tableDataView.map(item => ({ id: item.id, quantity: item.apply }))
-        var warehouse_out_no = await equipWarehouseOrder('post', null, { data: orderData })
-      }
-      const data = {}
-      data.work_order_no = this.creatOrder.work_order_no
-      data.work_type = this.creatOrder.work_type
-      data.pks = [this.creatOrder.id]
-      data.opera_type = '处理'
-      data.assign_user = this.creatOrder.assign_user
-      data.result_fault_desc = this.creatOrder.result_fault_desc
-      if (!this.creatOrder.is_applyed) {
-        data.apply_material_list = this.tableDataView.map(item => ({
-          work_order_no: this.creatOrder.work_order_no,
-          warehouse_out_no: warehouse_out_no.order_id,
-          equip_spare_id: item.id,
-          inventory_quantity: item.inventory_quantity,
-          apply: item.apply,
-          work_type: this.creatOrder.work_type,
-          submit_old_flag: item.submit_old_flag }))
-      }
-      if (this.creatOrder.work_type === '维修') {
-        data.result_repair_standard = this.creatOrder.result_repair_standard
-      }
-      if (this.creatOrder.work_type !== '维修') {
-        data.result_maintenance_standard = this.creatOrder.result_maintenance_standard
-      }
-      data.work_content = this.creatOrder.work_content
-      data.result_repair_desc = this.creatOrder.result_repair_desc
-      data.image_url_list = this.creatOrder.image_url_list
-      data.result_final_fault_cause = this.creatOrder.result_final_fault_cause
-      data.result_material_requisition = this.creatOrder.result_material_requisition
-      data.wait_material = this.creatOrder.wait_material
-      data.result_need_outsourcing = this.creatOrder.result_need_outsourcing
-      data.wait_outsourcing = this.creatOrder.wait_outsourcing
-      data.result_repair_final_result = this.creatOrder.result_repair_final_result
-      // delete this.creatOrder.apply_repair_graph_url
-      // this.creatOrder1 = JSON.parse(JSON.stringify(this.creatOrder))
-      // delete this.creatOrder1.result_repair_standard_name
-      // delete this.creatOrder1.result_fault_cause_name
-      // delete this.creatOrder1.is_applyed
-      // delete this.creatOrder1.equip_type
-      // delete this.creatOrder1.equip_maintenance_standard_name
       this.$refs.ruleFormHandle.validate(async(valid) => {
         if (valid) {
+          if (this.creatOrder.result_material_requisition) {
+            const orderId = await getOrderId('get', null, { params: { status: '出库' }})
+            const orderData = {}
+            orderData.order_id = orderId
+            orderData.submission_department = '维修部'
+            orderData.status = 4
+            orderData.equip_spare = this.tableDataView.map(item => ({ id: item.id, quantity: item.apply }))
+            var warehouse_out_no = await equipWarehouseOrder('post', null, { data: orderData })
+          }
+          const data = {}
+          data.work_order_no = this.creatOrder.work_order_no
+          data.work_type = this.creatOrder.work_type
+          data.pks = [this.creatOrder.id]
+          data.opera_type = '处理'
+          data.assign_user = this.creatOrder.assign_user
+          data.result_fault_desc = this.creatOrder.result_fault_desc
+          if (this.creatOrder.result_material_requisition) {
+            data.apply_material_list = this.tableDataView.map(item => ({
+              work_order_no: this.creatOrder.work_order_no,
+              warehouse_out_no: warehouse_out_no.order_id,
+              equip_spare_id: item.id,
+              inventory_quantity: item.inventory_quantity,
+              apply: item.apply,
+              work_type: this.creatOrder.work_type,
+              submit_old_flag: item.submit_old_flag }))
+          }
+          if (this.creatOrder.work_type === '维修') {
+            data.result_repair_standard = this.creatOrder.result_repair_standard
+          }
+          if (this.creatOrder.work_type !== '维修') {
+            data.result_maintenance_standard = this.creatOrder.result_maintenance_standard
+          }
+          data.work_content = this.creatOrder.work_content
+          data.result_repair_desc = this.creatOrder.result_repair_desc
+          data.image_url_list = this.creatOrder.image_url_list
+          data.result_final_fault_cause = this.creatOrder.result_final_fault_cause
+          data.result_material_requisition = this.creatOrder.result_material_requisition
+          data.wait_material = this.creatOrder.wait_material
+          data.result_need_outsourcing = this.creatOrder.result_need_outsourcing
+          data.wait_outsourcing = this.creatOrder.wait_outsourcing
+          data.result_repair_final_result = this.creatOrder.result_repair_final_result
+          // delete this.creatOrder.apply_repair_graph_url
+          // this.creatOrder1 = JSON.parse(JSON.stringify(this.creatOrder))
+          // delete this.creatOrder1.result_repair_standard_name
+          // delete this.creatOrder1.result_fault_cause_name
+          // delete this.creatOrder1.is_applyed
+          // delete this.creatOrder1.equip_type
+          // delete this.creatOrder1.equip_maintenance_standard_name
           try {
             await multiUpdate('post', null, { data: data })
             this.$message.success('操作成功')
