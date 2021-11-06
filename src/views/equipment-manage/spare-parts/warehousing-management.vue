@@ -45,17 +45,6 @@
         </el-select>
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button v-permission="['equip_job_standard', 'export']" :loading="btnExportLoad" type="primary" style="margin-right:8px" @click="templateDownload">导出Excel</el-button>
-        <el-upload
-          v-permission="['equip_job_standard', 'import']"
-          style="margin-right:8px;display:inline-block"
-          action="string"
-          accept=".xls, .xlsx"
-          :http-request="Upload"
-          :show-file-list="false"
-        >
-          <el-button type="primary">导入Excel</el-button>
-        </el-upload>
         <el-button
           v-permission="['equip_job_standard', 'add']"
           type="primary"
@@ -460,18 +449,6 @@
         <el-form-item label="关键部件">
           <el-input v-model="SpareForm.key_parts_flag" disabled style="width:300px" />
         </el-form-item>
-        <el-form-item label="出厂编号">
-          <el-input v-model="SpareForm.order_id" disabled style="width:300px" />
-        </el-form-item>
-        <el-form-item label="出厂日期">
-          <el-input v-model="SpareForm.order_id" disabled style="width:300px" />
-        </el-form-item>
-        <el-form-item label="供应商">
-          <el-input v-model="SpareForm.order_id" disabled style="width:300px" />
-        </el-form-item>
-        <el-form-item label="制造商">
-          <el-input v-model="SpareForm.order_id" disabled style="width:300px" />
-        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisibleSpare=false">取 消</el-button>
@@ -607,7 +584,6 @@ export default {
       dialogForm: { submission_department: '', equip_spare: [] },
       printForm: {},
       dateValue: [],
-      btnExportLoad: false,
       SpareForm: {},
       dialogVisibleSpare: false,
       tableData: [],
@@ -898,37 +874,6 @@ export default {
       this.search.page = page
       this.search.page_size = page_size
       this.getList()
-    },
-    templateDownload() {
-      // this.btnExportLoad = true
-      // const obj = Object.assign({ export: 1 }, this.getParams)
-      // const _api = equipRepairStandardDown
-      // _api(obj)
-      //   .then(res => {
-      //     const link = document.createElement('a')
-      //     const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
-      //     link.style.display = 'none'
-      //     link.href = URL.createObjectURL(blob)
-      //     link.download = '设备维修标准定义.xlsx' // 下载的文件名
-      //     document.body.appendChild(link)
-      //     link.click()
-      //     document.body.removeChild(link)
-      //     this.btnExportLoad = false
-      //   }).catch(e => {
-      //     this.btnExportLoad = false
-      //   })
-    },
-    Upload(param) {
-    //   const formData = new FormData()
-    //   formData.append('file', param.file)
-    //   equipRepairStandardImport('post', null, { data: formData }).then(response => {
-    //     this.$message({
-    //       type: 'success',
-    //       message: response
-    //     })
-    //     this.getParams.page = 1
-    //     this.getList()
-    //   })
     }
   }
 }

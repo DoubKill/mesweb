@@ -45,17 +45,6 @@
         </el-select>
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button v-permission="['equip_job_standard', 'export']" :loading="btnExportLoad" type="primary" style="margin-right:8px" @click="templateDownload">导出Excel</el-button>
-        <el-upload
-          v-permission="['equip_job_standard', 'import']"
-          style="margin-right:8px;display:inline-block"
-          action="string"
-          accept=".xls, .xlsx"
-          :http-request="Upload"
-          :show-file-list="false"
-        >
-          <el-button type="primary">导入Excel</el-button>
-        </el-upload>
         <el-button
           v-permission="['equip_job_standard', 'add']"
           type="primary"
@@ -331,6 +320,11 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item label="工单编号" prop="work_order_no">
+          <el-input v-model="dialogForm.work_order_no" disabled style="width:300px">
+            <el-button slot="append" icon="el-icon-search" @click="Add1" />
+          </el-input>
+        </el-form-item>
         <el-form-item label="出库物料详情列表" prop="equip_spare">
           <el-button type="primary" @click="Add">添加</el-button>
           <el-table
@@ -437,18 +431,6 @@
         <el-form-item label="关键部件">
           <el-input v-model="SpareForm.key_parts_flag" disabled style="width:300px" />
         </el-form-item>
-        <el-form-item label="出厂编号">
-          <el-input v-model="SpareForm.order_id" disabled style="width:300px" />
-        </el-form-item>
-        <el-form-item label="出厂日期">
-          <el-input v-model="SpareForm.order_id" disabled style="width:300px" />
-        </el-form-item>
-        <el-form-item label="供应商">
-          <el-input v-model="SpareForm.order_id" disabled style="width:300px" />
-        </el-form-item>
-        <el-form-item label="制造商">
-          <el-input v-model="SpareForm.order_id" disabled style="width:300px" />
-        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisibleSpare=false">取 消</el-button>
@@ -517,6 +499,40 @@
         <el-button @click="dialogVisibleQuantity=false">取 消</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      :title="`工单编号选择`"
+      :visible.sync="dialogVisibleWork"
+      width="80%"
+    >
+      <el-table
+        ref="singleTable"
+        highlight-current-row
+        row-key="id"
+        :reserve-selection="true"
+        :data="tableDataWork"
+        border
+        style="width: 100%"
+        @current-change="handleCurrentChange"
+      >
+        <el-table-column
+          prop="work_order_no"
+          label="工单编号"
+        />
+        <el-table-column
+          prop="plan_name"
+          label="报修名称"
+        />
+        <el-table-column
+          prop="created_date"
+          label="报修时间"
+        />
+      </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleWork=false">取 消</el-button>
+        <el-button type="primary" @click="submitFunwork">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -535,18 +551,20 @@ export default {
       btnLoading: false,
       dialogForm: { submission_department: '', equip_spare: [] },
       dateValue: [],
-      btnExportLoad: false,
       SpareForm: {},
       dialogVisibleSpare: false,
+      dialogVisibleWork: false,
       tableData: [],
       quantityForm: {},
       tableDataView: [],
       warehouseAreaList: [],
       warehouseLocationList: [],
+      tableDataWork: [],
       total: 0,
       status: null,
       selectionList: [],
       checkList: [],
+      work_order_noList: {},
       loading: false,
       loadingView: false,
       dialogVisibleAdd: false,
@@ -592,6 +610,22 @@ export default {
     },
     Add() {
       this.dialogVisibleAdd1 = true
+    },
+    handleCurrentChange(val) {
+      this.work_order_noList = val
+    },
+    submitFunwork() {
+      this.dialogForm.work_order_no = this.work_order_noList.work_order_no
+      this.dialogVisibleWork = false
+    },
+    async Add1() {
+      try {
+        const data = await equipWarehouseOrder('get', null, { params: { work_order_no: 1 }})
+        this.tableDataWork = data || []
+        this.dialogVisibleWork = true
+      } catch {
+        this.dialogVisibleWork = false
+      }
     },
     changeDate(date) {
       this.search.s_time = date ? date[0] : ''
@@ -773,37 +807,6 @@ export default {
       this.search.page = page
       this.search.page_size = page_size
       this.getList()
-    },
-    templateDownload() {
-      // this.btnExportLoad = true
-      // const obj = Object.assign({ export: 1 }, this.getParams)
-      // const _api = equipRepairStandardDown
-      // _api(obj)
-      //   .then(res => {
-      //     const link = document.createElement('a')
-      //     const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
-      //     link.style.display = 'none'
-      //     link.href = URL.createObjectURL(blob)
-      //     link.download = '设备维修标准定义.xlsx' // 下载的文件名
-      //     document.body.appendChild(link)
-      //     link.click()
-      //     document.body.removeChild(link)
-      //     this.btnExportLoad = false
-      //   }).catch(e => {
-      //     this.btnExportLoad = false
-      //   })
-    },
-    Upload(param) {
-    //   const formData = new FormData()
-    //   formData.append('file', param.file)
-    //   equipRepairStandardImport('post', null, { data: formData }).then(response => {
-    //     this.$message({
-    //       type: 'success',
-    //       message: response
-    //     })
-    //     this.getParams.page = 1
-    //     this.getList()
-    //   })
     }
   }
 }
