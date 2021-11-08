@@ -16,6 +16,7 @@
       <el-form-item label="计划/报修名称">
         <el-input
           v-model="search.plan_name"
+          clearable
           style="width:200px"
           @input="debounceList"
         />
@@ -25,13 +26,14 @@
           @equipSelected="equipSelected"
         />
       </el-form-item>
-      <el-form-item label="维修标准">
+      <!-- <el-form-item label="维修标准">
         <el-input
           v-model="search.equip_repair_standard"
+          clearable
           style="width:200px"
           @input="debounceList"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="设备条件">
         <el-select
           v-model="search.equip_condition"
@@ -64,7 +66,8 @@
       </el-form-item>
       <el-form-item label="报修人">
         <el-input
-          v-model="search.created_username"
+          v-model="search.created_user"
+          clearable
           style="width:200px"
           @input="debounceList"
         />
@@ -72,6 +75,7 @@
 
       <el-form-item>
         <el-button type="primary" @click="dialog">指派</el-button>
+        <el-button type="primary" @click="close">关闭</el-button>
         <!-- <el-button type="primary">导出Excel</el-button> -->
       </el-form-item>
     </el-form>
@@ -301,6 +305,35 @@ export default {
         this.$message.info('请选择指派人员')
       }
     },
+    async close() {
+      if (this.multipleSelection.length > 0) {
+        if (this.multipleSelection.every(d => d.status === '已生成')) {
+          const obj = []
+          this.multipleSelection.forEach(d => {
+            obj.push(d.id)
+          })
+          this.$confirm('此操作将关闭工单是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            multiUpdate('post', null, { data: { pks: obj, status: '已关闭', opera_type: '关闭' }})
+              .then(response => {
+                this.$message({
+                  type: 'success',
+                  message: '关闭成功'
+                })
+                this.$refs.multipleTable.clearSelection()
+                this.getList()
+              })
+          })
+        } else {
+          this.$message.info('请勾选已生成状态列表')
+        }
+      } else {
+        this.$message.info('请先勾选工单列表')
+      }
+    },
     changeDate(date) {
       this.search.planned_repair_date_after = date ? date[0] : ''
       this.search.planned_repair_date_before = date ? date[1] : ''
@@ -308,29 +341,29 @@ export default {
     },
     async repairDialog(row) {
       if (row.equip_repair_standard_name) {
-        this.dialogVisibleDefinition = true
         try {
           const data = await equipRepairStandard('get', null, { params: { id: row.equip_repair_standard }})
           this.typeForm = data.results[0]
         } catch (e) {
           // this.dialogVisible = true
         }
+        this.dialogVisibleDefinition = true
       } else if (row.equip_maintenance_standard_name) {
-        this.dialogVisibleMaintain = true
         try {
           const data = await equipMaintenanceStandard('get', null, { params: { id: row.equip_maintenance_standard }})
           this.typeForm1 = data.results[0]
         } catch (e) {
           // this.dialogVisible = true
         }
+        this.dialogVisibleMaintain = true
       } else if (row.result_fault_cause_name) {
-        this.dialogVisibleRepair = true
         try {
           const data = await equipApplyRepair('get', null, { params: { plan_id: row.plan_id }})
           this.ruleForm = data.results[0]
         } catch (e) {
         // this.dialogVisible = true
         }
+        this.dialogVisibleRepair = true
       }
     },
     handleCloseRepair() {
