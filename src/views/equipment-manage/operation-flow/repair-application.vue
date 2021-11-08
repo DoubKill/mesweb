@@ -443,7 +443,7 @@ export default {
           { required: true, message: '不能为空', trigger: 'blur' }
         ],
         result_fault_cause_name: [
-          { required: true, message: '不能为空', trigger: 'change' }
+          { required: true, message: '不能为空', trigger: 'blur' }
         ]
       },
       dialogVisibleImg: false,
@@ -494,7 +494,7 @@ export default {
     async searchBom1() {
       try {
         const data = await equipBom('get', null, { params: { level: 4, node_id: this.ruleForm.equip_barcode }})
-        if (data.length > 0) {
+        if (data.length === 1) {
           const data1 = await equipBom('get', null, { })
           this.options2 = data1 || []
           this.ruleForm.equip_no = data[0].equip_no
@@ -640,6 +640,7 @@ export default {
         dateTime = yy + '-' + mm + '-' + dd + ' ' + hh + ':' + mf + ':' + ss
         this.operateType = type
         this.ruleForm = {
+          equip_barcode: '',
           fault_datetime: dateTime,
           image_url_list: [],
           importance_level: '高'
@@ -689,15 +690,15 @@ export default {
       this.dialogImageUrl = file.url
     },
     async addSubmitFun() {
-      delete this.ruleForm.apply_repair_graph_url
-      if (this.ruleForm.equip_condition === true) {
-        this.ruleForm.equip_condition = '停机'
-      } else {
-        this.ruleForm.equip_condition = '不停机'
-      }
       this.$refs.ruleFormHandle.validate(async(valid) => {
         if (valid) {
           try {
+            delete this.ruleForm.apply_repair_graph_url
+            if (this.ruleForm.equip_condition === true) {
+              this.ruleForm.equip_condition = '停机'
+            } else {
+              this.ruleForm.equip_condition = '不停机'
+            }
             this.btnLoading = true
             await equipApplyRepair('post', null, { data: this.ruleForm })
             this.$message.success('操作成功')
