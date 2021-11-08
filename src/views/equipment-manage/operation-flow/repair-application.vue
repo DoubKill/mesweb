@@ -573,7 +573,7 @@ export default {
       if (this.$refs.elUploadImg) {
         this.$refs.elUploadImg.clearFiles()
       }
-      this.$refs.ruleFormHandle.clearValidate()
+      this.$refs.ruleFormHandle.resetFields()
       this.dialogVisible = false
       this.disable = false
       if (done) {

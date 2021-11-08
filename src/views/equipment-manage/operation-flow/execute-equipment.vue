@@ -109,14 +109,14 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="最终故障原因">
+      <!-- <el-form-item label="最终故障原因">
         <el-input
           v-model="search.result_final_fault_cause"
           clearable
           style="width:200px"
           @input="debounceList"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
         <el-button type="primary" @click="changeSearch">查询</el-button>
         <!-- <el-button type="primary">导出Excel</el-button> -->
