@@ -443,7 +443,7 @@ export default {
           { required: true, message: '不能为空', trigger: 'blur' }
         ],
         result_fault_cause_name: [
-          { required: true, message: '不能为空', trigger: 'blur' }
+          { required: true, message: '不能为空', trigger: 'change' }
         ]
       },
       dialogVisibleImg: false,
@@ -606,8 +606,10 @@ export default {
         this.$refs['List'].currentObj = {}
       }
       if (this.$refs['List'].currentObj.fault_name) {
-        this.ruleForm.result_fault_cause_name = this.$refs['List'].currentObj.fault_name
-        this.ruleForm.result_fault_cause = this.$refs['List'].currentObj.id
+        this.$set(this.ruleForm, 'result_fault_cause_name', this.$refs['List'].currentObj.fault_name)
+        this.$set(this.ruleForm, 'result_fault_cause', this.$refs['List'].currentObj.id)
+        // this.ruleForm.result_fault_cause_name = this.$refs['List'].currentObj.fault_name
+        // this.ruleForm.result_fault_cause = this.$refs['List'].currentObj.id
         this.dialogVisible1 = false
       } else {
         this.$message.info('请选择一种原因')
