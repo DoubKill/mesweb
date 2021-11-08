@@ -628,8 +628,8 @@ export default {
       }
     },
     changeDate(date) {
-      this.search.s_time = date ? date[0] : ''
-      this.search.e_time = date ? date[1] : ''
+      this.search.s_time = date ? date[0] + ' 00:00:00' : ''
+      this.search.e_time = date ? date[1] + ' 23:59:59' : ''
       this.changeSearch1()
     },
     async onSubmit() {
@@ -728,6 +728,7 @@ export default {
         this.creatOrder.out_quantity = 1
         this.creatOrder.order_id = row.order_id
         this.creatOrder.status = 2
+        this.creatOrder.unit = row.unit
         this.creatOrder.equip_spare = row.equip_spare
         this.dialogVisible1 = true
       }

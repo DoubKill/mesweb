@@ -88,7 +88,7 @@
           @input="debounceList"
         />
       </el-form-item>
-      <el-form-item label="验收结果">
+      <!-- <el-form-item label="验收结果">
         <el-select
           v-model="search.result_accept_result"
           placeholder="请选择"
@@ -102,7 +102,7 @@
             :value="item"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="是否需要外协">
         <el-select
           v-model="search.result_need_outsourcing"
