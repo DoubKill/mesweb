@@ -165,6 +165,16 @@ export const equipRoutes = [
             }
           },
           {
+            path: '/equipment/order-patrol',
+            component: () => import('@/views/equipment-manage/inspection/order-patrol'),
+            name: 'OrderPatrol',
+            meta: {
+              faName: 'InspectionFlow',
+              title: '接单巡检工单',
+              permissionName: ''
+            }
+          },
+          {
             path: '/equipment/execute-patrol',
             component: () => import('@/views/equipment-manage/inspection/execute-patrol'),
             name: 'ExecutePatrol',
