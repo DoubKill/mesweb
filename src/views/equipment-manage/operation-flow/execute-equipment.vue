@@ -852,7 +852,7 @@ export default {
   data() {
     return {
       search: { my_order: 1 },
-      search1: {},
+      search1: { use: 1 },
       loading: false,
       btnExportLoad: false,
       dateValue: [],

@@ -134,6 +134,7 @@ export default {
       }
     } else {
       this.search = {
+        use: 1,
         page: 1,
         page_size: 10
       }
