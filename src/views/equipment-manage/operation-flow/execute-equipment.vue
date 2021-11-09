@@ -726,7 +726,7 @@
           min-width="20"
         />
         <el-table-column
-          prop="quantity.all_qty"
+          prop="qty"
           label="库存数量"
           min-width="20"
         />
@@ -1252,7 +1252,7 @@ export default {
             specification: this.multipleSelection[index].specification,
             technical_params: this.multipleSelection[index].technical_params,
             unit: this.multipleSelection[index].unit,
-            inventory_quantity: this.multipleSelection[index].quantity.all_qty,
+            inventory_quantity: this.multipleSelection[index].qty,
             id: this.multipleSelection[index].equip_spare,
             apply: 1,
             submit_old_flag: true
