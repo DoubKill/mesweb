@@ -368,6 +368,7 @@
                   v-model="row.quantity"
                   size="small"
                   :min="1"
+                  :max="999"
                 />
               </template>
             </el-table-column>
@@ -381,6 +382,7 @@
                   v-model="row.one_piece"
                   size="small"
                   :min="1"
+                  :max="99999"
                 />
               </template>
             </el-table-column>
