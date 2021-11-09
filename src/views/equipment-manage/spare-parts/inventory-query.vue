@@ -205,7 +205,7 @@
         />
         <el-table-column
           prop="one_piece"
-          label="单价数量"
+          label="单件"
           min-width="20"
         />
         <el-table-column
