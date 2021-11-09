@@ -671,3 +671,12 @@ export function equipWarehouseRecord(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function equipCodePrint(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipCodePrint + id + '/' : API.EquipCodePrint,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

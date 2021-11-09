@@ -763,6 +763,11 @@ export default {
     },
     submitFun() {
       this.dialogForm.status = 4
+      this.dialogForm.equip_spare.forEach(d => {
+        if (d.quantity === undefined) {
+          d.quantity = 1
+        }
+      })
       this.$refs.createForm.validate(async(valid) => {
         if (valid) {
           try {

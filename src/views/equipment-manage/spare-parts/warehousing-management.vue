@@ -501,7 +501,7 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisiblePrint=flase">取 消</el-button>
+        <el-button @click="dialogVisiblePrint=false">取 消</el-button>
         <el-button type="primary" :loading="btnLoading" @click="submitFunPrint">确 定</el-button>
       </span>
     </el-dialog>
@@ -573,7 +573,7 @@
 
 <script>
 import material from '../components/material-dialog'
-import { getOrderId, equipWarehouseOrder, equipWarehouseOrderDetail, getCode, equipWarehouseArea, equipWarehouseLocation, equipWarehouseRecord } from '@/api/jqy'
+import { getOrderId, equipWarehouseOrder, equipWarehouseOrderDetail, getCode, equipWarehouseArea, equipWarehouseLocation, equipWarehouseRecord, equipCodePrint } from '@/api/jqy'
 import page from '@/components/page'
 import { debounce } from '@/utils'
 export default {
@@ -654,8 +654,14 @@ export default {
     Add() {
       this.dialogVisibleAdd1 = true
     },
-    submitFunPrint() {
-
+    async submitFunPrint() {
+      try {
+        this.btnLoading = true
+        await equipCodePrint('post', null, { data: { status: 2, spare_list: this.selectionList }})
+        this.btnLoading = false
+      } catch (e) {
+        this.btnLoading = false
+      }
     },
     handleSelectionChange(val) {
       this.selectionList = val
@@ -832,7 +838,16 @@ export default {
     },
     submitFun() {
       this.dialogForm.status = 1
-      console.log(this.dialogForm)
+      this.dialogForm.equip_spare.forEach(d => {
+        if (d.quantity === undefined) {
+          d.quantity = 1
+        }
+      })
+      this.dialogForm.equip_spare.forEach(d => {
+        if (d.one_piece === undefined) {
+          d.one_piece = 1
+        }
+      })
       this.$refs.createForm.validate(async(valid) => {
         if (valid) {
           try {

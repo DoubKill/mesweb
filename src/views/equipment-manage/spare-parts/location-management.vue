@@ -46,6 +46,8 @@
                 <el-button
                   size="mini"
                   plain
+                  :loading="btnLoading"
+                  @click="printingFun(scope.row)"
                 > 打印条码
                 </el-button>
               </el-button-group>
@@ -95,7 +97,9 @@
                 </el-button>
                 <el-button
                   size="mini"
+                  :loading="btnLoading"
                   plain
+                  @click="printingFun1(scope.row)"
                 > 打印条码
                 </el-button>
               </el-button-group>
@@ -163,13 +167,14 @@
 </template>
 
 <script>
-import { equipWarehouseArea, equipWarehouseLocation, equipSpareErp } from '@/api/jqy'
+import { equipWarehouseArea, equipWarehouseLocation, equipSpareErp, equipCodePrint } from '@/api/jqy'
 // import { depot, depotSite } from '@/api/base_w_four'
 import { checkPermission } from '@/utils'
 export default {
   name: 'LocationManagement',
   data() {
     return {
+      btnLoading: false,
       tableData: [],
       tableData1: [],
       isArea: null,
@@ -214,6 +219,24 @@ export default {
         this.loading = false
       } catch (e) {
         this.loading = false
+      }
+    },
+    async printingFun(row) {
+      try {
+        this.btnLoading = true
+        await equipCodePrint('post', null, { data: { status: 1, code: row.area_barcode, print_type: 1, name: row.area_name }})
+        this.btnLoading = false
+      } catch (e) {
+        this.btnLoading = false
+      }
+    },
+    async printingFun1(row) {
+      try {
+        this.btnLoading = true
+        await equipCodePrint('post', null, { data: { status: 1, code: row.location_barcode, print_type: 2, name: row.location_name }})
+        this.btnLoading = false
+      } catch (e) {
+        this.btnLoading = false
       }
     },
     async getList2() {
