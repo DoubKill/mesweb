@@ -280,7 +280,7 @@ export default {
     async getStaff() {
       try {
         this.loading = true
-        const data = await getStaff('get', null, { params: { section_name: '维修部' }})
+        const data = await getStaff('get', null, { params: { }})
         this.staffList = data.results || []
       } catch (e) {
         //

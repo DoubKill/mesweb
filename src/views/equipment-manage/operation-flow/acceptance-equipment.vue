@@ -497,32 +497,17 @@
               prop="job_item_content"
               label="作业明细"
               width="200"
-            >
-              <template slot-scope="{row}">
-                <el-input v-model="row.job_item_content" :disabled="true" />
-              </template>
-            </el-table-column>
+            />
             <el-table-column
               prop="job_item_check_standard"
               label="说明"
               width="200"
-            >
-              <template slot-scope="{row}">
-                <el-input v-model="row.job_item_check_standard" :disabled="true" />
-              </template>
-            </el-table-column>
+            />
             <el-table-column
               prop="operation_result"
               label="处理结果"
               width="200"
-            >
-              <template slot-scope="{row}">
-                <el-radio-group v-model="row.operation_result" :disabled="true">
-                  <el-radio label="完成">完成</el-radio>
-                  <el-radio label="未完成">未完成</el-radio>
-                </el-radio-group>
-              </template>
-            </el-table-column>
+            />
           </el-table>
         </el-form-item>
         <el-form-item label="维修备注">
@@ -683,9 +668,15 @@ export default {
       this.multipleSelection.forEach(d => {
         obj.push(d.id)
       })
-      this.creatOrder.pks = obj
-      this.creatOrder.status = '已验收'
-      this.creatOrder.opera_type = '验收'
+      if (this.creatOrder.result_accept_result === '合格') {
+        this.creatOrder.pks = obj
+        this.creatOrder.status = '已验收'
+        this.creatOrder.opera_type = '验收'
+      } else {
+        this.creatOrder.pks = obj
+        this.creatOrder.status = '已开始'
+        this.creatOrder.opera_type = '验收'
+      }
       try {
         await multiUpdate('post', null, { data: this.creatOrder })
         this.$message.success('验收成功')
