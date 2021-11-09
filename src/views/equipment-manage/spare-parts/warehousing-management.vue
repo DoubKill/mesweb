@@ -243,6 +243,7 @@
         <el-form-item label="批号">
           <el-input
             v-model="creatOrder.lot_no"
+            disabled
             style="width:250px"
           />
         </el-form-item>
