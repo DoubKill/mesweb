@@ -321,7 +321,7 @@
               <el-checkbox v-model="typeForm.remind_flag3" label="上上级" />
             </el-form-item>
           </el-col>
-          <el-form-item label="所需物料">
+          <!-- <el-form-item label="所需物料">
             <el-button type="primary" @click="Add">添加</el-button>
             <el-table
               :data="typeForm.spare_list"
@@ -372,7 +372,7 @@
                 </template>
               </el-table-column>
             </el-table>
-          </el-form-item>
+          </el-form-item> -->
         </el-row>
       </el-form>
       <div

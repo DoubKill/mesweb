@@ -98,7 +98,7 @@
             <el-checkbox v-model="typeForm.remind_flag3" label="上上级" disabled />
           </el-form-item>
         </el-col>
-        <el-form-item label="所需物料">
+        <!-- <el-form-item label="所需物料">
           <el-table
             :data="typeForm.spare_list"
             border
@@ -130,7 +130,7 @@
               label="单位"
             />
           </el-table>
-        </el-form-item>
+        </el-form-item> -->
       </el-row>
     </el-form>
   </div>
