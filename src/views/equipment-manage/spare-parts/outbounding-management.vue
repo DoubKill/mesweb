@@ -798,7 +798,7 @@ export default {
               id: this.$refs['List'].multipleSelection[index].equip_spare,
               spare_name: this.$refs['List'].multipleSelection[index].spare_name,
               specification: this.$refs['List'].multipleSelection[index].specification,
-              all_qty: this.$refs['List'].multipleSelection[index].quantity.all_qty,
+              all_qty: this.$refs['List'].multipleSelection[index].qty,
               quantity: 1
             })
           }
