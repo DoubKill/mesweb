@@ -561,5 +561,6 @@ export default {
   EquipWarehouseRecord: '/api/v1/equipment/equip-warehouse-record/', // 备件出入库履历
   EquipWarehouseStatistical: '/api/v1/equipment/equip-warehouse-statistical/', // 备件入出库统计分析
   EquipWarehouseOrderDetail: '/api/v1/equipment/equip-warehouse-order-detail/',
-  GetCode: '/api/v1/equipment/equip-warehouse-order/get_code/'
+  GetCode: '/api/v1/equipment/equip-warehouse-order/get_code/',
+  EquipCodePrint: '/api/v1/equipment/equip-code-print/'
 }
