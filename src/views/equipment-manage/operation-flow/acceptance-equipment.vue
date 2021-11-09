@@ -500,7 +500,7 @@
             />
             <el-table-column
               prop="job_item_check_standard"
-              label="说明"
+              label="判断标准"
               width="200"
             />
             <el-table-column
@@ -546,6 +546,7 @@
             <el-radio :label="true">是</el-radio>
           </el-radio-group>
           <el-checkbox v-model="creatOrder1.wait_material" :disabled="true" style="margin-left:30px">等待物料</el-checkbox>
+          <el-button v-if="creatOrder1.is_applyed" type="primary" style="marginLeft:30px" @click="dialogMaterial">查看物料列表</el-button>
         </el-form-item>
         <el-form-item label="是否需要外协">
           <el-radio-group v-model="creatOrder1.result_need_outsourcing" :disabled="true">
@@ -601,13 +602,95 @@
         <el-button @click="handleCloseMaintain">取 消</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      title="维修物料申请"
+      :visible.sync="dialogVisibleMaterial"
+      width="70%"
+    >
+      <el-form :inline="true">
+        <el-form-item label="领料申请单号">
+          <el-input v-model="creatOrder1.warehouse_out_no" disabled />
+        </el-form-item>
+        <el-form-item label="单据状态">
+          <el-input v-model="creatOrder1.out_record_status" disabled />
+        </el-form-item>
+      </el-form>
+      <el-table
+        :data="tableDataView"
+        border
+      >
+        <el-table-column
+          prop="spare_code"
+          label="物料编码"
+          min-width="20"
+        />
+        <el-table-column
+          prop="spare_name"
+          label="物料名称"
+          min-width="20"
+        />
+        <el-table-column
+          prop="equip_component_type_name"
+          label="备件分类"
+          min-width="20"
+        />
+        <el-table-column
+          prop="specification"
+          label="规格型号"
+          min-width="20"
+        />
+        <el-table-column
+          prop="technical_params"
+          label="技术参数"
+          min-width="20"
+        />
+        <el-table-column
+          prop="unit"
+          label="标准单位"
+          min-width="20"
+        />
+        <el-table-column
+          prop="inventory_quantity"
+          label="库存数量"
+          min-width="20"
+        />
+        <el-table-column
+          prop="apply"
+          label="领料数量"
+          min-width="20"
+        >
+          <template slot-scope="{row}">
+            <el-input-number
+              v-model="row.apply"
+              disabled
+              size="small"
+              :min="1"
+              :max="row.inventory_quantity"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="submit_old_flag"
+          label="是否交旧"
+          min-width="20"
+        >
+          <template slot-scope="{row}">
+            <el-checkbox v-model="row.submit_old_flag" disabled />
+          </template>
+        </el-table-column>
+      </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleMaterial=false">取 消</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import page from '@/components/page'
 import { mapGetters } from 'vuex'
-import { equipApplyOrder, uploadImages, multiUpdate, equipApplyRepair, equipRepairStandard, equipMaintenanceStandard } from '@/api/jqy'
+import { equipApplyOrder, uploadImages, multiUpdate, equipApplyRepair, equipRepairStandard, equipMaintenanceStandard, materialReq } from '@/api/jqy'
 import { debounce } from '@/utils'
 import definition from '../components/definition-dialog'
 import maintain from '../components/definition-dialog1'
@@ -624,8 +707,10 @@ export default {
       dialogVisibleRepair: false,
       dialogVisibleDefinition: false,
       dialogVisibleMaintain: false,
+      dialogVisibleMaterial: false,
       dateValue: [],
       tableData: [],
+      tableDataView: [],
       total: 0,
       multipleSelection: [],
       dialogImageUrl: '',
@@ -661,6 +746,14 @@ export default {
   methods: {
     debounceList() {
       debounce(this, 'changeSearch')
+    },
+    async dialogMaterial() {
+      if (this.creatOrder1.is_applyed) {
+        const data = await materialReq('get', null, { params: { warehouse_out_no: this.creatOrder1.warehouse_out_no }})
+        this.tableDataView = data || []
+        this.creatOrder1.out_record_status = this.tableDataView.length > 0 ? this.tableDataView[0].out_record_status : null
+        this.dialogVisibleMaterial = true
+      }
     },
     async generateFun() {
       delete this.creatOrder.apply_repair_graph_url
