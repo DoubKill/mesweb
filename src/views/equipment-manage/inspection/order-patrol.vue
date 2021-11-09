@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 接单维修工单 -->
+    <!-- 接单巡检工单 -->
     <el-form :inline="true">
       <el-form-item label="计划/报修日期">
         <el-date-picker
@@ -249,7 +249,7 @@ import maintain from '../components/definition-dialog1'
 import repair from '../components/repair-dialog'
 import EquipSelect from '@/components/EquipSelect/index'
 export default {
-  name: 'OrderEquipment',
+  name: 'OrderPatrol',
   components: { EquipSelect, page, repair, definition, maintain },
   data() {
     return {

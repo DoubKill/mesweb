@@ -434,7 +434,7 @@ export default {
       ruleForm: {},
       rules: {
         plan_department: [
-          { required: true, message: '不能为空', trigger: 'blur' }
+          { required: true, message: '不能为空', trigger: 'change' }
         ],
         fault_datetime: [
           { required: true, message: '不能为空', trigger: 'blur' }
@@ -443,7 +443,7 @@ export default {
           { required: true, message: '不能为空', trigger: 'blur' }
         ],
         result_fault_cause_name: [
-          { required: true, message: '不能为空', trigger: 'blur' }
+          { required: true, message: '不能为空', trigger: 'change' }
         ]
       },
       dialogVisibleImg: false,
@@ -494,11 +494,11 @@ export default {
     async searchBom1() {
       try {
         const data = await equipBom('get', null, { params: { level: 4, node_id: this.ruleForm.equip_barcode }})
-        if (data.length > 0) {
+        if (data.length === 1) {
           const data1 = await equipBom('get', null, { })
           this.options2 = data1 || []
           this.ruleForm.equip_no = data[0].equip_no
-          this.ruleForm.factory_name = data[0].factory_id
+          this.ruleForm.factory_name = data[0].equip_name
           this.ruleForm.equip_part_new = data[0].part
           this.ruleForm.part_name = data[0].part_name
           this.disable = true
@@ -573,7 +573,7 @@ export default {
       if (this.$refs.elUploadImg) {
         this.$refs.elUploadImg.clearFiles()
       }
-      this.$refs.ruleFormHandle.clearValidate()
+      this.$refs.ruleFormHandle.resetFields()
       this.dialogVisible = false
       this.disable = false
       if (done) {
@@ -606,8 +606,10 @@ export default {
         this.$refs['List'].currentObj = {}
       }
       if (this.$refs['List'].currentObj.fault_name) {
-        this.ruleForm.result_fault_cause_name = this.$refs['List'].currentObj.fault_name
-        this.ruleForm.result_fault_cause = this.$refs['List'].currentObj.id
+        this.$set(this.ruleForm, 'result_fault_cause_name', this.$refs['List'].currentObj.fault_name)
+        this.$set(this.ruleForm, 'result_fault_cause', this.$refs['List'].currentObj.id)
+        // this.ruleForm.result_fault_cause_name = this.$refs['List'].currentObj.fault_name
+        // this.ruleForm.result_fault_cause = this.$refs['List'].currentObj.id
         this.dialogVisible1 = false
       } else {
         this.$message.info('请选择一种原因')
@@ -621,7 +623,7 @@ export default {
         this.options2 = data || []
         this.ruleForm.equip_barcode = this.multipleSelection.node_id
         this.ruleForm.equip_no = this.multipleSelection.equip_no
-        this.ruleForm.factory_name = this.multipleSelection.factory_id
+        this.ruleForm.factory_name = this.multipleSelection.equip_name
         this.ruleForm.equip_part_new = this.multipleSelection.part
         this.ruleForm.part_name = this.multipleSelection.part_name
         this.disable = true
@@ -640,6 +642,7 @@ export default {
         dateTime = yy + '-' + mm + '-' + dd + ' ' + hh + ':' + mf + ':' + ss
         this.operateType = type
         this.ruleForm = {
+          equip_barcode: '',
           fault_datetime: dateTime,
           image_url_list: [],
           importance_level: '高'
@@ -689,15 +692,15 @@ export default {
       this.dialogImageUrl = file.url
     },
     async addSubmitFun() {
-      delete this.ruleForm.apply_repair_graph_url
-      if (this.ruleForm.equip_condition === true) {
-        this.ruleForm.equip_condition = '停机'
-      } else {
-        this.ruleForm.equip_condition = '不停机'
-      }
       this.$refs.ruleFormHandle.validate(async(valid) => {
         if (valid) {
           try {
+            delete this.ruleForm.apply_repair_graph_url
+            if (this.ruleForm.equip_condition === true) {
+              this.ruleForm.equip_condition = '停机'
+            } else {
+              this.ruleForm.equip_condition = '不停机'
+            }
             this.btnLoading = true
             await equipApplyRepair('post', null, { data: this.ruleForm })
             this.$message.success('操作成功')

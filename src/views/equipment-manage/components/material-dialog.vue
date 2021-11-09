@@ -1,13 +1,13 @@
 
 <template>
   <div>
-    <!-- 维修标准弹框 -->
+    <!-- 入库出库物料弹框 -->
     <el-form :inline="true">
       <el-form-item label="物料编码">
-        <el-input v-model="search.spare_code" @input="changeSearch" />
+        <el-input v-model="search.spare_code" clearable @input="changeSearch" />
       </el-form-item>
       <el-form-item label="物料名称">
-        <el-input v-model="search.spare_name" @input="changeSearch" />
+        <el-input v-model="search.spare_name" clearable @input="changeSearch" />
       </el-form-item>
     </el-form>
     <el-table
@@ -115,6 +115,11 @@ export default {
             page_size: 10,
             status: '入库'
           }
+        } else {
+          this.search = {
+            page: 1,
+            page_size: 10
+          }
         }
         this.dialogSelect()
       }
@@ -122,11 +127,15 @@ export default {
   },
   created() {
     if (this.type === '入库') {
-      console.log(this.type)
       this.search = {
         page: 1,
         page_size: 10,
         status: '入库'
+      }
+    } else {
+      this.search = {
+        page: 1,
+        page_size: 10
       }
     }
     this.dialogSelect()
@@ -139,12 +148,11 @@ export default {
         this.total = data.count
         this.tableDataView = data.results || []
         let data1 = []
-        console.log(this.list)
         for (const i in this.list) {
           data1 = data1.concat(this.list[i].id)
         }
         this.tableDataView.forEach(row => {
-          if (data1.indexOf(row.id) >= 0) {
+          if (data1.indexOf(this.type === '入库' ? row.id : row.equip_spare) >= 0) {
             this.$refs.multipleTable.toggleRowSelection(row, true)
           }
         })

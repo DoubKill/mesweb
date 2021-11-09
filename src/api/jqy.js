@@ -616,10 +616,28 @@ export function getOrderId(method, id, data = {}) {
   return request(obj)
 }
 
+export function getCode(method, id, data = {}) {
+  const obj = {
+    url: id ? API.GetCode + id + '/' : API.GetCode,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 // 获取出库单据条码
 export function equipWarehouseOrder(method, id, data = {}) {
   const obj = {
     url: id ? API.EquipWarehouseOrder + id + '/' : API.EquipWarehouseOrder,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipWarehouseOrderDetail(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipWarehouseOrderDetail + id + '/' : API.EquipWarehouseOrderDetail,
     method: method
   }
   Object.assign(obj, data)
@@ -639,6 +657,15 @@ export function equipWarehouseArea(method, id, data = {}) {
 export function equipWarehouseLocation(method, id, data = {}) {
   const obj = {
     url: id ? API.EquipWarehouseLocation + id + '/' : API.EquipWarehouseLocation,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipWarehouseRecord(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipWarehouseRecord + id + '/' : API.EquipWarehouseRecord,
     method: method
   }
   Object.assign(obj, data)

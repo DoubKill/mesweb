@@ -16,6 +16,7 @@
       <el-form-item label="计划名称">
         <el-input
           v-model="search.plan_name"
+          clearable
           style="width:200px"
           @input="debounceList"
         />
@@ -28,6 +29,7 @@
       <el-form-item label="工单编号">
         <el-input
           v-model="search.work_order_no"
+          clearable
           style="width:200px"
           @input="debounceList"
         />
@@ -62,31 +64,18 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="维修标准">
+      <!-- <el-form-item label="维修标准">
         <el-input
           v-model="search.equip_repair_standard"
+          clearable
           style="width:200px"
           @input="changeSearch"
         />
-      </el-form-item>
-      <el-form-item label="状态">
-        <el-select
-          v-model="search.status"
-          placeholder="请选择"
-          clearable
-          @change="changeSearch"
-        >
-          <el-option
-            v-for="item in ['已生成', '已指派', '已接单', '已开始', '已完成','已验收', '已关闭']"
-            :key="item"
-            :label="item"
-            :value="item"
-          />
-        </el-select>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="维修人">
         <el-input
           v-model="search.repair_user"
+          clearable
           style="width:200px"
           @input="debounceList"
         />
@@ -94,11 +83,12 @@
       <el-form-item label="验收人">
         <el-input
           v-model="search.accept_user"
+          clearable
           style="width:200px"
           @input="debounceList"
         />
       </el-form-item>
-      <el-form-item label="验收结果">
+      <!-- <el-form-item label="验收结果">
         <el-select
           v-model="search.result_accept_result"
           placeholder="请选择"
@@ -112,7 +102,7 @@
             :value="item"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="是否需要外协">
         <el-select
           v-model="search.result_need_outsourcing"
@@ -146,7 +136,7 @@
       <el-form-item>
         <el-button type="primary" @click="changeSearch">查询</el-button>
         <el-button type="primary" @click="dialog(false,'验收维修工单')">验收</el-button>
-        <el-button type="primary">导出Excel</el-button>
+        <!-- <el-button type="primary">导出Excel</el-button> -->
       </el-form-item>
     </el-form>
     <el-table
@@ -238,7 +228,7 @@
       />
       <el-table-column
         prop="result_repair_desc"
-        label="维修记录"
+        label="维修备注"
         min-width="20"
       />
       <el-table-column
@@ -631,6 +621,7 @@
 
 <script>
 import page from '@/components/page'
+import { mapGetters } from 'vuex'
 import { equipApplyOrder, uploadImages, multiUpdate, equipApplyRepair, equipRepairStandard, equipMaintenanceStandard } from '@/api/jqy'
 import { debounce } from '@/utils'
 import definition from '../components/definition-dialog'
@@ -642,7 +633,7 @@ export default {
   components: { EquipSelect, page, repair, definition, maintain },
   data() {
     return {
-      search: {},
+      search: { status: '已完成' },
       loading: false,
       btnExportLoad: false,
       dialogVisibleRepair: false,
@@ -673,7 +664,13 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters([
+      'name'
+    ])
+  },
   created() {
+    this.search.created_user = this.name
     this.getList()
   },
   methods: {
@@ -706,29 +703,29 @@ export default {
     },
     async repairDialog(row) {
       if (row.equip_repair_standard_name) {
-        this.dialogVisibleDefinition = true
         try {
           const data = await equipRepairStandard('get', null, { params: { id: row.equip_repair_standard }})
           this.typeForm = data.results[0]
         } catch (e) {
           // this.dialogVisible = true
         }
+        this.dialogVisibleDefinition = true
       } else if (row.equip_maintenance_standard_name) {
-        this.dialogVisibleMaintain = true
         try {
           const data = await equipMaintenanceStandard('get', null, { params: { id: row.equip_maintenance_standard }})
           this.typeForm1 = data.results[0]
         } catch (e) {
           // this.dialogVisible = true
         }
+        this.dialogVisibleMaintain = true
       } else if (row.result_fault_cause_name) {
-        this.dialogVisibleRepair = true
         try {
           const data = await equipApplyRepair('get', null, { params: { plan_id: row.plan_id }})
           this.ruleForm = data.results[0]
         } catch (e) {
         // this.dialogVisible = true
         }
+        this.dialogVisibleRepair = true
       }
     },
     handleCloseRepair() {

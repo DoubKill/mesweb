@@ -6,13 +6,15 @@
         <el-input
           v-model="search.order_id"
           style="width:200px"
+          clearable
           @input="changeSearch"
         />
       </el-form-item>
       <el-form-item label="提交人">
         <el-input
-          v-model="search.created_username"
+          v-model="search.created_user"
           style="width:200px"
+          clearable
           @input="changeSearch"
         />
       </el-form-item>
@@ -32,28 +34,17 @@
           v-model="search.status"
           placeholder="请选择"
           clearable
-          @change="changeSearch"
+          @change="changeSearch1"
         >
           <el-option
             v-for="item in [{label:'未入库',value:1},{label:'入库中',value:2},{label:'已入库',value:3}]"
-            :key="item"
-            :label="item"
-            :value="item"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
           />
         </el-select>
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button v-permission="['equip_job_standard', 'export']" :loading="btnExportLoad" type="primary" style="margin-right:8px" @click="templateDownload">导出Excel</el-button>
-        <el-upload
-          v-permission="['equip_job_standard', 'import']"
-          style="margin-right:8px;display:inline-block"
-          action="string"
-          accept=".xls, .xlsx"
-          :http-request="Upload"
-          :show-file-list="false"
-        >
-          <el-button type="primary">导入Excel</el-button>
-        </el-upload>
         <el-button
           v-permission="['equip_job_standard', 'add']"
           type="primary"
@@ -117,10 +108,10 @@
     >
       <el-form :inline="true">
         <el-form-item label="单据条码">
-          <el-input :disabled="true" />
+          <el-input v-model="search1.order_id" disabled />
         </el-form-item>
         <el-form-item label="状态">
-          <el-input :disabled="true" />
+          <el-input v-model="status" disabled />
         </el-form-item>
       </el-form>
       <el-table
@@ -142,95 +133,87 @@
           </template>
         </el-table-column>
         <el-table-column
-          prop="order_no"
-          label="备件条码"
-          min-width="20"
-        />
-        <el-table-column
-          prop="sub_no"
+          prop="spare__code"
           label="备件代码"
           min-width="20"
-        />
+        >
+          <template slot-scope="scope">
+            <el-link
+              type="primary"
+              @click="spareDialog(scope.row)"
+            >{{ scope.row.spare__code }}</el-link>
+          </template>
+        </el-table-column>
         <el-table-column
-          prop="date"
+          prop="spare_name"
           label="备件名称"
           min-width="20"
         />
         <el-table-column
-          prop="date"
+          prop="component_type_name"
+          label="备件分类"
+          min-width="20"
+        />
+        <el-table-column
+          prop="specification"
           label="规格型号"
           min-width="20"
         />
         <el-table-column
-          prop="date"
+          prop="technical_params"
           label="技术参数"
           min-width="20"
         />
         <el-table-column
-          prop="date"
+          prop="order_quantity"
           label="总数量"
           min-width="20"
         />
         <el-table-column
-          prop="date"
+          prop="in_quantity"
           label="已入库数量"
           min-width="20"
-        />
+        >
+          <template slot-scope="scope">
+            <el-link
+              type="primary"
+              @click="inQuantityDialog(scope.row)"
+            >{{ scope.row.in_quantity }}</el-link>
+          </template>
+        </el-table-column>
         <el-table-column
-          prop="date"
+          prop="unit"
           label="标准单位"
           min-width="20"
         />
         <el-table-column
-          prop="date"
-          label="库区"
-          min-width="20"
-        />
-        <el-table-column
-          prop="date"
-          label="库位"
-          min-width="20"
-        />
-        <el-table-column
-          prop="date"
-          label="关键部件"
-          min-width="20"
-        />
-        <el-table-column
-          prop="date"
-          label="出厂编码"
-          min-width="20"
-        />
-        <el-table-column
-          prop="date"
-          label="出厂日期"
-          min-width="20"
-        />
-        <el-table-column
-          prop="date"
-          label="供应商"
-          min-width="20"
-        />
-        <el-table-column
-          prop="date"
-          label="制造商"
-          min-width="20"
-        />
-        <el-table-column
-          prop="date"
+          prop="created_username"
           label="入库人"
           min-width="20"
         />
         <el-table-column
-          prop="date"
+          prop="created_date"
           label="入库时间"
-          min-width="20"
+          width="160"
         />
         <el-table-column
-          prop="date"
+          prop="status_name"
           label="状态"
           min-width="20"
         />
+        <el-table-column
+          label="操作"
+          width="120"
+        >
+          <template slot-scope="scope">
+            <el-button
+              type="primary"
+              size="mini"
+              @click="print(scope.row)"
+            >打印标签
+            </el-button>
+          </template>
+        </el-table-column>
       </el-table>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="dialogVisible=false">关闭</el-button>
@@ -239,67 +222,79 @@
     <el-dialog
       title="备件人工入库"
       :visible.sync="dialogVisible1"
+      :before-close="handleClose"
       width="30%"
     >
-      <el-form :inline="true" label-width="150px">
-        <el-form-item label="备件名称" style="" prop="checkList">
+      <el-form ref="creatOrder" :inline="true" label-width="150px" :rules="rules1" :model="creatOrder">
+        <el-form-item label="备件名称">
           <el-input
-            v-model="creatOrder.equip_no"
+            v-model="creatOrder.spare_name"
             :disabled="true"
             style="width:250px"
           />
         </el-form-item>
-        <el-form-item label="备件条码" style="" prop="checkList">
+        <el-form-item label="备件条码">
           <el-input
-            v-model="creatOrder.equip_no"
+            v-model="creatOrder.spare_code"
             :disabled="true"
             style="width:250px"
           />
         </el-form-item>
-        <el-form-item label="批号" style="" prop="checkList">
+        <el-form-item label="批号">
           <el-input
-            v-model="creatOrder.equip_no"
+            v-model="creatOrder.lot_no"
             style="width:250px"
           />
         </el-form-item>
-        <el-form-item label="库区">
+        <el-form-item label="库区" prop="equip_warehouse_area">
           <el-select
-            v-model="creatOrder.feedi"
+            v-model="creatOrder.equip_warehouse_area"
             placeholder="请选择"
             clearable
+            @change="clear"
           >
             <el-option
-              v-for="item in ['库区1']"
-              :key="item"
-              :label="item"
-              :value="item"
+              v-for="item in warehouseAreaList"
+              :key="item.id"
+              :label="item.area_name"
+              :value="item.id"
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="库位">
+        <el-form-item label="库位" prop="equip_warehouse_location">
           <el-select
-            v-model="creatOrder.fei"
+            v-model="creatOrder.equip_warehouse_location"
             placeholder="请选择"
             clearable
+            @visible-change="getWarehouseLocation"
           >
             <el-option
-              v-for="item in ['库位1']"
-              :key="item"
-              :label="item"
-              :value="item"
+              v-for="item in warehouseLocationList"
+              :key="item.id"
+              :label="item.location_name"
+              :value="item.id"
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="数量" style="" prop="checkList">
+        <el-form-item label="数量">
           <el-input
-            v-model="creatOrder.equp_no"
+            v-model="creatOrder.in_quantity"
+            disabled
             style="width:250px"
           />
         </el-form-item>
         <el-form-item label="单位" style="" prop="checkList">
           <el-input
-            v-model="creatOrder.eq"
-            :disabled="true"
+            v-model="creatOrder.unit"
+            disabled
+            style="width:250px"
+          />
+        </el-form-item>
+        <el-form-item label="单件个数">
+          <el-input-number
+            v-model="creatOrder.one_piece"
+            disabled
+            :min="1"
             style="width:250px"
           />
         </el-form-item>
@@ -317,7 +312,8 @@
     >
       <el-form
         ref="createForm"
-        label-width="100px"
+        :rules="rules"
+        label-width="150px"
         :model="dialogForm"
       >
         <el-form-item
@@ -326,22 +322,20 @@
         >
           <el-input v-model="dialogForm.order_id" disabled style="width:300px" />
         </el-form-item>
-        <el-form-item label="提交部门">
+        <el-form-item label="提交部门" prop="submission_department">
           <el-select
             v-model="dialogForm.submission_department"
             placeholder="请选择"
-            clearable
-            @change="changeSearch"
           >
             <el-option
-              v-for="item in ['设备部','设备部2','设备部3']"
+              v-for="item in ['设备部']"
               :key="item"
               :label="item"
               :value="item"
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="入库物料详情列表">
+        <el-form-item label="入库物料详情列表" prop="equip_spare">
           <el-button type="primary" @click="Add">添加</el-button>
           <el-table
             :data="dialogForm.equip_spare"
@@ -372,6 +366,19 @@
               <template slot-scope="{row}">
                 <el-input-number
                   v-model="row.quantity"
+                  size="small"
+                  :min="1"
+                />
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="one_piece"
+              label="单件个数"
+              width="140px"
+            >
+              <template slot-scope="{row}">
+                <el-input-number
+                  v-model="row.one_piece"
                   size="small"
                   :min="1"
                 />
@@ -412,12 +419,158 @@
         <el-button type="primary" @click="submitFun1">确 定</el-button>
       </span>
     </el-dialog>
+    <el-dialog
+      :title="`备件详情`"
+      :visible.sync="dialogVisibleSpare"
+      width="50%"
+    >
+      <el-form
+        label-width="100px"
+        :model="SpareForm"
+      >
+        <el-form-item label="备件代码">
+          <el-input v-model="SpareForm.spare__code" disabled style="width:300px" />
+        </el-form-item>
+        <el-form-item label="备件名称">
+          <el-input v-model="SpareForm.spare_name" disabled style="width:300px" />
+        </el-form-item>
+        <el-form-item label="备件分类">
+          <el-input v-model="SpareForm.component_type_name" disabled style="width:300px" />
+        </el-form-item>
+        <el-form-item label="规格型号">
+          <el-input v-model="SpareForm.specification" disabled style="width:300px" />
+        </el-form-item>
+        <el-form-item label="技术参数">
+          <el-input v-model="SpareForm.technical_params" disabled style="width:300px" />
+        </el-form-item>
+        <el-form-item label="标准单位">
+          <el-input v-model="SpareForm.unit" disabled style="width:300px" />
+        </el-form-item>
+        <el-form-item label="关键部件">
+          <el-input v-model="SpareForm.key_parts_flag" disabled style="width:300px" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleSpare=false">取 消</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
+      :title="`备件条码打印`"
+      :visible.sync="dialogVisiblePrint"
+      width="30%"
+    >
+      <el-form
+        label-width="150px"
+        :model="printForm"
+      >
+        <el-form-item
+          label="备件编号"
+          prop="spare_name"
+        >
+          <el-input v-model="printForm.spare_code" disabled style="width:200px" />
+        </el-form-item>
+        <el-form-item
+          label="备件名称"
+          prop="spare_name"
+        >
+          <el-input v-model="printForm.spare_name" disabled style="width:200px" />
+        </el-form-item>
+        <el-form-item label="备件条码列表">
+          <el-table
+            :data="printForm.spare_codeList"
+            border
+            style="width: 100%"
+            @selection-change="handleSelectionChange"
+          >
+            <el-table-column
+              label="选择"
+              type="selection"
+            />
+            <el-table-column
+              prop="spare_code"
+              label="备件条码"
+            />
+            <el-table-column
+              prop="one_piece"
+              label="单件个数"
+            />
+          </el-table>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisiblePrint=flase">取 消</el-button>
+        <el-button type="primary" :loading="btnLoading" @click="submitFunPrint">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
+      :title="`入库单据明细`"
+      :visible.sync="dialogVisibleQuantity"
+      width="50%"
+    >
+      <el-form
+        label-width="150px"
+        :model="quantityForm"
+      >
+        <el-form-item label="单据条码">
+          <el-input v-model="quantityForm.order_id" disabled style="width:300px" />
+        </el-form-item>
+        <el-form-item label="提交部门">
+          <el-input v-model="quantityForm.submission_department" disabled style="width:300px" />
+        </el-form-item>
+        <el-form-item label="备件编号">
+          <el-input v-model="quantityForm.spare_code" disabled style="width:300px" />
+        </el-form-item>
+        <el-form-item label="备件名称">
+          <el-input v-model="quantityForm.spare_name" disabled style="width:300px" />
+        </el-form-item>
+        <el-form-item label="入库物料详情列表">
+          <el-table
+            :data="quantityForm.spare_codeList"
+            border
+            style="width: 100%"
+          >
+            <el-table-column
+              label="次序"
+              type="index"
+            />
+            <el-table-column
+              prop="spare_code"
+              label="备件条码"
+            />
+            <el-table-column
+              prop="area_name"
+              label="库区"
+            />
+            <el-table-column
+              prop="location_name"
+              label="库位"
+            />
+            <el-table-column
+              prop="quantity"
+              label="数量"
+            />
+            <el-table-column
+              prop="status"
+              label="状态"
+            >
+              <template slot-scope="scope">
+                <span v-if="scope.row.status===1">已入库</span>
+                <span v-if="scope.row.status===2">已出库</span>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleQuantity=false">取 消</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import material from '../components/material-dialog'
-import { getOrderId, equipWarehouseOrder } from '@/api/jqy'
+import { getOrderId, equipWarehouseOrder, equipWarehouseOrderDetail, getCode, equipWarehouseArea, equipWarehouseLocation, equipWarehouseRecord } from '@/api/jqy'
 import page from '@/components/page'
 import { debounce } from '@/utils'
 export default {
@@ -425,47 +578,142 @@ export default {
   components: { page, material },
   data() {
     return {
-      search: {},
+      search: { order: 'in' },
+      search1: {},
       btnLoading: false,
-      dialogForm: {},
+      dialogForm: { submission_department: '', equip_spare: [] },
+      printForm: {},
       dateValue: [],
-      btnExportLoad: false,
-      tableData: [{ date: '1' }],
-      tableDataView: [{ date: '1' }],
+      SpareForm: {},
+      dialogVisibleSpare: false,
+      tableData: [],
+      quantityForm: {},
+      tableDataView: [],
+      warehouseAreaList: [],
+      warehouseLocationList: [],
       total: 0,
+      status: null,
+      selectionList: [],
       checkList: [],
       loading: false,
       loadingView: false,
       dialogVisibleAdd: false,
+      dialogVisiblePrint: false,
       dialogVisibleAdd1: false,
+      dialogVisibleQuantity: false,
       dialogVisible: false,
       dialogVisible1: false,
       submit: false,
-      creatOrder: {}
+      rules: {
+        submission_department: [
+          { required: true, message: '不能为空', trigger: 'change' }
+        ],
+        equip_spare: [
+          { type: 'array', required: true, message: '不能为空', trigger: 'change' }
+        ]
+      },
+      rules1: {
+        equip_warehouse_area: [
+          { required: true, message: '不能为空', trigger: 'change' }
+        ],
+        equip_warehouse_location: [
+          { required: true, message: '不能为空', trigger: 'change' }
+        ]
+      },
+      creatOrder: { one_piece: '', equip_warehouse_area: '',
+        equip_warehouse_location: '' }
     }
   },
   created() {
     this.getList()
+    this.getWarehouseArea()
   },
   methods: {
-    generateFun(obj) {
-      this.dialogVisible1 = true
-      console.log(obj, 'obj')
+    generateFun() {
+      this.$refs.creatOrder.validate(async(valid) => {
+        if (valid) {
+          try {
+            await equipWarehouseOrderDetail('post', null, { data: this.creatOrder })
+            this.$message.success('操作成功')
+            const data = await equipWarehouseOrderDetail('get', null, { params: this.search1 })
+            this.tableDataView = data || []
+            this.handleClose(null)
+            this.getList()
+            this.dialogVisible1 = false
+          } catch (e) {
+            this.dialogVisible1 = true
+          }
+        } else {
+          return false
+        }
+      })
     },
     Add() {
       this.dialogVisibleAdd1 = true
     },
-    changeDate() {
+    submitFunPrint() {
 
+    },
+    handleSelectionChange(val) {
+      this.selectionList = val
+    },
+    changeDate(date) {
+      this.search.s_time = date ? date[0] + ' 00:00:00' : ''
+      this.search.e_time = date ? date[1] + ' 23:59:59' : ''
+      this.changeSearch1()
     },
     async onSubmit() {
       try {
         const orderId = await getOrderId('get', null, { params: { status: '入库' }})
         this.dialogForm.order_id = orderId
         this.dialogForm.equip_spare = []
+        this.dialogForm.submission_department = '设备部'
         this.dialogVisibleAdd = true
       } catch {
         this.dialogVisibleAdd = false
+      }
+    },
+    async getWarehouseArea() {
+      try {
+        const data = await equipWarehouseArea('get', null, { params: {}})
+        this.warehouseAreaList = data.results
+      } catch (e) {
+        // this.loading = false
+      }
+    },
+    clear() {
+      if (this.creatOrder.equip_warehouse_location) {
+        this.creatOrder.equip_warehouse_location = null
+      }
+    },
+    async getWarehouseLocation(val) {
+      if (val) {
+        if (this.creatOrder.equip_warehouse_area) {
+          try {
+            const data = await equipWarehouseLocation('get', null, { params: { equip_warehouse_area_id: this.creatOrder.equip_warehouse_area }})
+            this.warehouseLocationList = data.results
+          } catch (e) {
+            this.warehouseLocationList = []
+          }
+        } else {
+          this.$message.info('请先选择库位')
+          this.warehouseLocationList = []
+        }
+      }
+    },
+    async inQuantityDialog(row) {
+      if (row.in_quantity > 0) {
+        try {
+          const data = await equipWarehouseRecord('get', null, { params: { equip_warehouse_order_detail: row.id, all: 1 }})
+          this.quantityForm.order_id = data.data.order_id
+          this.quantityForm.spare_name = data.data.spare_name
+          this.quantityForm.submission_department = data.data.submission_department
+          this.quantityForm.spare_code = data.data.spare_code
+          this.quantityForm.spare_codeList = data.results
+          this.dialogVisibleQuantity = true
+        } catch {
+          // this.dialogVisibleAdd = false
+        }
       }
     },
     async getList() {
@@ -487,11 +735,69 @@ export default {
       this.search.page = 1
       this.getList()
     },
-    dialog() {
+    async dialog(row) {
+      this.search1.order_id = row.order_id
+      this.status = row._status
+      try {
+        const data = await equipWarehouseOrderDetail('get', null, { params: this.search1 })
+        this.tableDataView = data || []
+      } catch (e) {
+        // this.loading = false
+      }
       this.dialogVisible = true
     },
-    dialog1() {
-      this.dialogVisible1 = true
+    async print(row) {
+      this.order = row.id
+      try {
+        const data = await getCode('get', null, { params: { order: this.order, all: 1 }})
+        this.printForm.spare_code = data.spare_code
+        this.printForm.spare_name = data.spare_name
+        this.printForm.spare_codeList = data.results
+      } catch (e) {
+        // this.loading = false
+      }
+      this.dialogVisiblePrint = true
+    },
+    spareDialog(row) {
+      this.dialogVisibleSpare = true
+      this.SpareForm = JSON.parse(JSON.stringify(row))
+      if (this.SpareForm.key_parts_flag === false) {
+        this.SpareForm.key_parts_flag = '否'
+      } else if (this.SpareForm.key_parts_flag === true) {
+        this.SpareForm.key_parts_flag = '是'
+      }
+    },
+    async dialog1(row) {
+      if (row.order_quantity === row.in_quantity) {
+        this.$message('已经全部入库')
+      } else {
+        this.order = row.id
+        try {
+          const data = await getCode('get', null, { params: { order: this.order }})
+          this.creatOrder.spare_code = data.spare_code
+          this.creatOrder.one_piece = data.one_piece
+        } catch (e) {
+        // this.loading = false
+        }
+        this.creatOrder.spare_name = row.spare_name
+        var date = new Date()
+        var y = date.getFullYear()
+        var m = date.getMonth() + 1
+        var d = date.getDate()
+        if (m < 10) {
+          m = '0' + m
+        }
+        if (d < 10) {
+          d = '0' + d
+        }
+        this.creatOrder.lot_no = 'LOT' + y + m + d
+        this.creatOrder.in_quantity = 1
+        this.creatOrder.order_id = row.order_id
+        this.creatOrder.unit = row.unit
+        this.creatOrder.status = 1
+        this.dialogVisible1 = true
+        this.creatOrder.equip_spare = row.equip_spare
+      }
     },
     handleDelete(row) {
       this.dialogForm.equip_spare.forEach((item, index) => {
@@ -501,6 +807,7 @@ export default {
       })
     },
     handleClose(done) {
+      this.$refs.creatOrder.resetFields()
       this.dialogVisible1 = false
       if (done) {
         done()
@@ -508,6 +815,7 @@ export default {
     },
     handleCloseAdd(done) {
       this.dialogVisibleAdd = false
+      this.$refs.createForm.resetFields()
       if (done) {
         done()
       }
@@ -521,12 +829,13 @@ export default {
     },
     submitFun() {
       this.dialogForm.status = 1
+      console.log(this.dialogForm)
       this.$refs.createForm.validate(async(valid) => {
         if (valid) {
           try {
             await equipWarehouseOrder('post', null, { data: this.dialogForm })
             this.$message.success('操作成功')
-            this.handleClose(null)
+            this.handleCloseAdd(null)
             this.getList()
             this.dialogVisibleAdd = false
           } catch (e) {
@@ -538,59 +847,34 @@ export default {
       })
     },
     submitFun1() {
+      this.$refs.createForm.clearValidate()
       let data = []
       for (const i in this.dialogForm.equip_spare) {
         data = data.concat(this.dialogForm.equip_spare[i].id)
       }
-      for (let index = 0; index < this.$refs['List'].multipleSelection.length; index++) {
-        if (data.indexOf(this.$refs['List'].multipleSelection[index].id) === -1) {
-          this.dialogForm.equip_spare.push({
-            spare_code: this.$refs['List'].multipleSelection[index].spare__code,
-            id: this.$refs['List'].multipleSelection[index].id,
-            spare_name: this.$refs['List'].multipleSelection[index].spare_name,
-            specification: this.$refs['List'].multipleSelection[index].specification,
-            quantity: 1
-          })
+      if (this.$refs['List'].multipleSelection.length > 0) {
+        for (let index = 0; index < this.$refs['List'].multipleSelection.length; index++) {
+          if (data.indexOf(this.$refs['List'].multipleSelection[index].id) === -1) {
+            this.dialogForm.equip_spare.push({
+              spare_code: this.$refs['List'].multipleSelection[index].spare__code,
+              id: this.$refs['List'].multipleSelection[index].id,
+              spare_name: this.$refs['List'].multipleSelection[index].spare_name,
+              specification: this.$refs['List'].multipleSelection[index].specification,
+              quantity: 1,
+              one_piece: 1
+            })
+          }
         }
+        this.$refs['List'].$refs.multipleTable.clearSelection()
+        this.dialogVisibleAdd1 = false
+      } else {
+        this.$message.info('请选择一种物料')
       }
-      this.$refs['List'].$refs.multipleTable.clearSelection()
-      this.dialogVisibleAdd1 = false
     },
     currentChange(page, page_size) {
       this.search.page = page
       this.search.page_size = page_size
       this.getList()
-    },
-    templateDownload() {
-      // this.btnExportLoad = true
-      // const obj = Object.assign({ export: 1 }, this.getParams)
-      // const _api = equipRepairStandardDown
-      // _api(obj)
-      //   .then(res => {
-      //     const link = document.createElement('a')
-      //     const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
-      //     link.style.display = 'none'
-      //     link.href = URL.createObjectURL(blob)
-      //     link.download = '设备维修标准定义.xlsx' // 下载的文件名
-      //     document.body.appendChild(link)
-      //     link.click()
-      //     document.body.removeChild(link)
-      //     this.btnExportLoad = false
-      //   }).catch(e => {
-      //     this.btnExportLoad = false
-      //   })
-    },
-    Upload(param) {
-    //   const formData = new FormData()
-    //   formData.append('file', param.file)
-    //   equipRepairStandardImport('post', null, { data: formData }).then(response => {
-    //     this.$message({
-    //       type: 'success',
-    //       message: response
-    //     })
-    //     this.getParams.page = 1
-    //     this.getList()
-    //   })
     }
   }
 }

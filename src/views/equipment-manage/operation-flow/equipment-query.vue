@@ -16,6 +16,7 @@
       <el-form-item label="计划名称">
         <el-input
           v-model="search.plan_name"
+          clearable
           style="width:200px"
           @input="debounceList"
         />
@@ -28,6 +29,7 @@
       <el-form-item label="工单编号">
         <el-input
           v-model="search.work_order_no"
+          clearable
           style="width:200px"
           @input="debounceList"
         />
@@ -62,13 +64,14 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="维修标准">
+      <!-- <el-form-item label="维修标准">
         <el-input
           v-model="search.equip_repair_standard"
+          clearable
           style="width:200px"
           @input="debounceList"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="状态">
         <el-select
           v-model="search.status"
@@ -87,6 +90,7 @@
       <el-form-item label="维修人">
         <el-input
           v-model="search.repair_user"
+          clearable
           style="width:200px"
           @input="debounceList"
         />
@@ -94,6 +98,7 @@
       <el-form-item label="验收人">
         <el-input
           v-model="search.accept_user"
+          clearable
           style="width:200px"
           @input="debounceList"
         />
@@ -216,7 +221,7 @@
       />
       <el-table-column
         prop="result_repair_desc"
-        label="维修记录"
+        label="维修备注"
         min-width="20"
       />
       <el-table-column
@@ -260,8 +265,8 @@
         min-width="20"
       >
         <template slot-scope="scope">
-          <span v-if="scope.row.result_material_requisition===true">Y</span>
-          <span v-if="scope.row.result_material_requisition===false">N</span>
+          <el-link v-if="scope.row.result_material_requisition===true" type="primary" @click="dialogMaterial(scope.row)">Y</el-link>
+          <el-link v-if="scope.row.result_material_requisition===false" type="primary">N</el-link>
         </template>
       </el-table-column>
       <el-table-column
@@ -401,12 +406,84 @@
         <el-button @click="handleCloseMaintain">取 消</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      title="维修物料申请"
+      :visible.sync="dialogVisibleMaterial"
+      width="70%"
+    >
+      <el-form :inline="true">
+        <el-form-item label="领料申请单号">
+          <el-input v-model="creatOrder.warehouse_out_no" :disabled="true" />
+        </el-form-item>
+        <el-form-item label="单据状态">
+          <el-input v-model="creatOrder.out_record_status" :disabled="true" />
+        </el-form-item>
+      </el-form>
+      <el-table
+        :data="tableDataView"
+        border
+      >
+        <el-table-column
+          prop="spare_code"
+          label="物料编码"
+          min-width="20"
+        />
+        <el-table-column
+          prop="spare_name"
+          label="物料名称"
+          min-width="20"
+        />
+        <el-table-column
+          prop="equip_component_type_name"
+          label="备件分类"
+          min-width="20"
+        />
+        <el-table-column
+          prop="specification"
+          label="规格型号"
+          min-width="20"
+        />
+        <el-table-column
+          prop="technical_params"
+          label="技术参数"
+          min-width="20"
+        />
+        <el-table-column
+          prop="unit"
+          label="标准单位"
+          min-width="20"
+        />
+        <el-table-column
+          prop="inventory_quantity"
+          label="库存数量"
+          min-width="20"
+        />
+        <el-table-column
+          prop="apply"
+          label="领料数量"
+          min-width="20"
+        />
+        <el-table-column
+          prop="submit_old_flag"
+          label="是否交旧"
+          min-width="20"
+        >
+          <template slot-scope="{row}">
+            <el-checkbox v-model="row.submit_old_flag" disabled />
+          </template>
+        </el-table-column>
+      </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleMaterial=false">取 消</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import page from '@/components/page'
-import { equipApplyOrder, equipApplyOrderdDown, equipApplyRepair, equipRepairStandard, equipMaintenanceStandard } from '@/api/jqy'
+import { equipApplyOrder, equipApplyOrderdDown, equipApplyRepair, equipRepairStandard, equipMaintenanceStandard, materialReq } from '@/api/jqy'
 import EquipSelect from '@/components/EquipSelect/index'
 import definition from '../components/definition-dialog'
 import maintain from '../components/definition-dialog1'
@@ -422,6 +499,9 @@ export default {
       dialogVisibleRepair: false,
       dialogVisibleDefinition: false,
       dialogVisibleMaintain: false,
+      dialogVisibleMaterial: false,
+      tableDataView: [],
+      creatOrder: {},
       search: {},
       dateValue: [],
       tableData: [],
@@ -446,29 +526,29 @@ export default {
     },
     async repairDialog(row) {
       if (row.equip_repair_standard_name) {
-        this.dialogVisibleDefinition = true
         try {
           const data = await equipRepairStandard('get', null, { params: { id: row.equip_repair_standard }})
           this.typeForm = data.results[0]
         } catch (e) {
           // this.dialogVisible = true
         }
+        this.dialogVisibleDefinition = true
       } else if (row.equip_maintenance_standard_name) {
-        this.dialogVisibleMaintain = true
         try {
           const data = await equipMaintenanceStandard('get', null, { params: { id: row.equip_maintenance_standard }})
           this.typeForm1 = data.results[0]
         } catch (e) {
           // this.dialogVisible = true
         }
+        this.dialogVisibleMaintain = true
       } else if (row.result_fault_cause_name) {
-        this.dialogVisibleRepair = true
         try {
           const data = await equipApplyRepair('get', null, { params: { plan_id: row.plan_id }})
           this.ruleForm = data.results[0]
         } catch (e) {
         // this.dialogVisible = true
         }
+        this.dialogVisibleRepair = true
       }
     },
     handleCloseRepair() {
@@ -481,23 +561,24 @@ export default {
       this.dialogVisibleMaintain = false
     },
     tableRowClassName({ row, rowIndex }) {
-      // const time = new Date(row.in_storage_time)
-      // var nowTime = new Date()
-      // var timeDifference = nowTime.getTime() - time.getTime()
-      // var days = timeDifference / (24 * 3600 * 1000)
-      // if (this.period_of_validity >= 0 && this.period_of_validity !== null) {
-      //   if (days >= (0.5 * this.period_of_validity) && days < this.period_of_validity) {
-      //     return 'warning-row'
-      //   } else if (days >= this.period_of_validity) {
-      //     return 'maxwarning-row'
-      //   } else { return 'summary-cell-style' }
-      // } else {
-      //   if (days) {
-      //     return 'warn-row'
-      //   } else {
-      //     return 'summary-cell-style'
-      //   }
-      // }
+      if (row.timeout_color === '粉红色') {
+        return 'pink-row'
+      } else if (row.timeout_color === '红色') {
+        return 'red-row'
+      } else if (row.timeout_color === '酱红色') {
+        return 'bigred-row'
+      } else if (row.timeout_color === '橙色') {
+        return 'orange-row'
+      } else {
+        return 'white-style'
+      }
+    },
+    async dialogMaterial(row) {
+      this.creatOrder.warehouse_out_no = row.warehouse_out_no
+      const data = await materialReq('get', null, { params: { warehouse_out_no: row.warehouse_out_no }})
+      this.tableDataView = data || []
+      this.creatOrder.out_record_status = this.tableDataView.length > 0 ? this.tableDataView[0].out_record_status : null
+      this.dialogVisibleMaterial = true
     },
     async getList() {
       try {
@@ -547,16 +628,25 @@ export default {
 </script>
 
 <style  lang="scss">
-.assOutbound{
-  .el-table .warn-row {
-    background: #F5F7FA;
+.equipmentQuery{
+  .el-table.white-style{
+    background:#FFFFFF;
   }
-  .el-table .warning-row {
-    background: #e6a23c;
+  .el-table .pink-row {
+    background: pink;
+    color:black;
   }
-  .el-table .maxwarning-row {
+  .el-table .red-row {
     background: red;
-    color:white;
+    color:black;
+  }
+  .el-table .bigred-row {
+    background: #761F28;
+    color:black;
+  }
+  .el-table .orange-row {
+    background: #F59A23;
+   color:black;
   }
   .el-table__row:hover > td {
     background-color: transparent !important;
