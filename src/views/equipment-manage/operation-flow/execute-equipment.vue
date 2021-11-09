@@ -437,7 +437,7 @@
             />
             <el-table-column
               prop="job_item_check_standard"
-              label="说明"
+              label="判断标准"
               width="200"
             />
             <el-table-column
