@@ -435,26 +435,60 @@
               label="作业明细"
               width="200"
             />
-
             <el-table-column
               prop="job_item_check_standard"
-              label="说明"
+              label="判断标准"
               width="200"
-            >
-              <template slot-scope="{row}">
-                <el-input v-model="row.job_item_check_standard" :disabled="operateType==='查看处理结果'" />
-              </template>
-            </el-table-column>
+            />
             <el-table-column
               prop="operation_result"
               label="处理结果"
               width="200"
             >
               <template slot-scope="{row}">
-                <el-radio-group v-model="row.operation_result" :disabled="operateType==='查看处理结果'">
-                  <el-radio label="完成">完成</el-radio>
-                  <el-radio label="未完成">未完成</el-radio>
-                </el-radio-group>
+                <div v-if="row.job_item_check_type==='有无'">
+                  <el-switch
+                    v-model="row.operation_result"
+                    :disabled="operateType==='查看处理结果'"
+                    active-value="无"
+                    inactive-value="有"
+                    active-text="无"
+                    inactive-text="有"
+                  />
+                </div>
+                <div v-if="row.job_item_check_type==='正常异常'">
+                  <el-switch
+                    v-model="row.operation_result"
+                    :disabled="operateType==='查看处理结果'"
+                    active-value="正常"
+                    inactive-value="异常"
+                    active-text="正常"
+                    inactive-text="异常"
+                  />
+                </div>
+                <div v-if="row.job_item_check_type==='完成未完成'">
+                  <el-switch
+                    v-model="row.operation_result"
+                    :disabled="operateType==='查看处理结果'"
+                    active-value="完成"
+                    inactive-value="未完成"
+                    active-text="完成"
+                    inactive-text="未完成"
+                  />
+                </div>
+                <div v-if="row.job_item_check_type==='合格不合格'">
+                  <el-switch
+                    v-model="row.operation_result"
+                    :disabled="operateType==='查看处理结果'"
+                    active-value="合格"
+                    inactive-value="不合格"
+                    active-text="合格"
+                    inactive-text="不合格"
+                  />
+                </div>
+                <div v-if="row.job_item_check_type==='数值范围'">
+                  <el-input-number v-model="row.operation_result" :disabled="operateType==='查看处理结果'" style="width:120px" controls-position="right" :min="1" :max="99999" />
+                </div>
               </template>
             </el-table-column>
           </el-table>
@@ -482,15 +516,6 @@
           >
             <i class="el-icon-plus" />
           </el-upload>
-          <!-- <template v-for="(item, index) in creatOrder.result_repair_graph_url">
-            <el-image
-              v-if="operateType==='处理维修工单'&&creatOrder.result_repair_graph_url.length>0"
-              :key="index"
-              style="width: 100px; height: 100px"
-              :src="item"
-              :preview-src-list="[item]"
-            />
-          </template> -->
           <template v-for="(item, index) in creatOrder.result_repair_graph_url">
             <el-image
               v-if="operateType==='查看处理结果'&&creatOrder.result_repair_graph_url.length>0"
@@ -701,7 +726,7 @@
           min-width="20"
         />
         <el-table-column
-          prop="quantity.all_qty"
+          prop="qty"
           label="库存数量"
           min-width="20"
         />
@@ -827,7 +852,7 @@ export default {
   data() {
     return {
       search: { my_order: 1 },
-      search1: {},
+      search1: { use: 1 },
       loading: false,
       btnExportLoad: false,
       dateValue: [],
@@ -854,9 +879,6 @@ export default {
       typeForm1: {},
       submit: false,
       rules: {
-        result_repair_standard_name: [
-          { required: true, message: '不能为空', trigger: 'change' }
-        ],
         result_repair_final_result: [
           { required: true, message: '不能为空', trigger: 'blur' }
         ]
@@ -934,15 +956,18 @@ export default {
     submitFun1() {
       this.creatOrder.work_content = []
       if (this.$refs['List1'].currentObj.standard_name) {
-        this.creatOrder.result_repair_standard_name = this.$refs['List1'].currentObj.standard_name
-        this.creatOrder.result_repair_standard = this.$refs['List1'].currentObj.id
+        this.$set(this.creatOrder, 'result_repair_standard_name', this.$refs['List1'].currentObj.standard_name)
+        this.$set(this.creatOrder, 'result_repair_standard', this.$refs['List1'].currentObj.id)
+        // this.creatOrder.result_repair_standard_name = this.$refs['List1'].currentObj.standard_name
+        // this.creatOrder.result_repair_standard = this.$refs['List1'].currentObj.id
         for (let index = 0; index < this.$refs['List1'].currentObj.detail_list.length; index++) {
           this.creatOrder.work_content.push({
-            job_item_sequence: this.$refs['List1'].currentObj.detail_list[index].job_item_sequence,
-            job_item_content: this.$refs['List1'].currentObj.detail_list[index].job_item_content,
-            job_item_check_standard: '',
-            operation_result: '完成'
-
+            job_item_sequence: this.$refs['List1'].currentObj.detail_list[index].sequence,
+            job_item_content: this.$refs['List1'].currentObj.detail_list[index].content,
+            job_item_check_standard: this.$refs['List1'].currentObj.detail_list[index].check_standard_desc,
+            job_item_check_type: this.$refs['List1'].currentObj.detail_list[index].check_standard_type,
+            equip_jobitem_standard_id: this.$refs['List1'].currentObj.detail_list[index].equip_standard,
+            operation_result: this.$refs['List1'].currentObj.detail_list[index].check_standard_desc
           })
         }
         this.dialogVisible2 = false
@@ -1031,7 +1056,6 @@ export default {
       this.dialogVisibleMaintain = false
     },
     change() {
-      console.log(this.creatOrder.result_need_outsourcing)
       if (this.creatOrder.wait_material === true || this.creatOrder.wait_outsourcing === true) {
         this.creatOrder.result_repair_final_result = '等待'
       } else if (this.creatOrder.wait_material === false && this.creatOrder.wait_outsourcing === false) {
@@ -1085,16 +1109,16 @@ export default {
     },
     dialog(row, type) {
       if (type === '查看处理结果') {
+        this.operateType = type
         this.dialogVisible = true
         this.creatOrder = JSON.parse(JSON.stringify(row))
-        this.operateType = type
       } else {
         if (row.status === '已开始') {
           this.operateType = type
           this.creatOrder = JSON.parse(JSON.stringify(row))
           this.tableDataView = []
           this.creatOrder.image_url_list = this.creatOrder.result_repair_graph_url
-          if (this.creatOrder.result_repair_final_result !== '等待') {
+          if (this.creatOrder.result_repair_final_result !== '等待' && this.creatOrder.result_accept_result !== '不合格') {
             this.creatOrder.result_need_outsourcing = false
             this.creatOrder.result_need_outsourcing = false
             this.creatOrder.result_material_requisition = false
@@ -1103,28 +1127,6 @@ export default {
             this.creatOrder.wait_material = false
             this.creatOrder.wait_outsourcing = false
           }
-          // this.creatOrder = {
-          //   image_url_list: [],
-          //   result_need_outsourcing: false,
-          //   result_material_requisition: false,
-          //   result_repair_final_result: '完成',
-          //   work_content: [],
-          //   wait_material: false,
-          //   wait_outsourcing: false
-          // }
-          // this.creatOrder.id = row.id
-          // this.creatOrder.is_applyed = row.is_applyed
-          // this.creatOrder.equip_type = row.equip_type
-          // this.creatOrder.work_type = row.work_type
-          // this.creatOrder.plan_name = row.plan_name
-          // this.creatOrder.work_order_no = row.work_order_no
-          // this.creatOrder.equip_no = row.equip_no
-          // this.creatOrder.equip_maintenance_standard = row.equip_maintenance_standard
-          // this.creatOrder.equip_repair_standard = row.equip_repair_standard
-          // this.creatOrder.result_fault_cause = row.result_fault_cause
-          // this.creatOrder.equip_maintenance_standard_name = row.equip_maintenance_standard_name
-          // this.creatOrder.equip_repair_standard_name = row.equip_repair_standard_name
-          // this.creatOrder.result_fault_cause_name = row.result_fault_cause_name
           if (row.result_final_fault_cause) {
             this.creatOrder.result_final_fault_cause = row.result_final_fault_cause
           } else if (row.result_fault_cause_name) {
@@ -1200,56 +1202,26 @@ export default {
     async generateFun() {
       this.$refs.ruleFormHandle.validate(async(valid) => {
         if (valid) {
-          if (this.creatOrder.result_material_requisition) {
+          if (this.creatOrder.result_material_requisition && this.creatOrder.result_accept_result !== '不合格' && !this.creatOrder.is_applyed) {
+            console.log(this.creatOrder.result_material_requisition)
             const orderId = await getOrderId('get', null, { params: { status: '出库' }})
             const orderData = {}
             orderData.order_id = orderId
             orderData.submission_department = '维修部'
             orderData.status = 4
             orderData.equip_spare = this.tableDataView.map(item => ({ id: item.id, quantity: item.apply }))
-            var warehouse_out_no = await equipWarehouseOrder('post', null, { data: orderData })
-          }
-          const data = {}
-          data.work_order_no = this.creatOrder.work_order_no
-          data.work_type = this.creatOrder.work_type
-          data.pks = [this.creatOrder.id]
-          data.opera_type = '处理'
-          data.assign_user = this.creatOrder.assign_user
-          data.result_fault_desc = this.creatOrder.result_fault_desc
-          if (this.creatOrder.result_material_requisition) {
-            data.apply_material_list = this.tableDataView.map(item => ({
+            const warehouse_out_no = await equipWarehouseOrder('post', null, { data: orderData })
+            this.creatOrder.apply_material_list = this.tableDataView.map(item => ({
               work_order_no: this.creatOrder.work_order_no,
               warehouse_out_no: warehouse_out_no.order_id,
-              equip_spare_id: item.id,
+              equip_spare: item.id,
               inventory_quantity: item.inventory_quantity,
               apply: item.apply,
               work_type: this.creatOrder.work_type,
               submit_old_flag: item.submit_old_flag }))
           }
-          if (this.creatOrder.work_type === '维修') {
-            data.result_repair_standard = this.creatOrder.result_repair_standard
-          }
-          if (this.creatOrder.work_type !== '维修') {
-            data.result_maintenance_standard = this.creatOrder.result_maintenance_standard
-          }
-          data.work_content = this.creatOrder.work_content
-          data.result_repair_desc = this.creatOrder.result_repair_desc
-          data.image_url_list = this.creatOrder.image_url_list
-          data.result_final_fault_cause = this.creatOrder.result_final_fault_cause
-          data.result_material_requisition = this.creatOrder.result_material_requisition
-          data.wait_material = this.creatOrder.wait_material
-          data.result_need_outsourcing = this.creatOrder.result_need_outsourcing
-          data.wait_outsourcing = this.creatOrder.wait_outsourcing
-          data.result_repair_final_result = this.creatOrder.result_repair_final_result
-          // delete this.creatOrder.apply_repair_graph_url
-          // this.creatOrder1 = JSON.parse(JSON.stringify(this.creatOrder))
-          // delete this.creatOrder1.result_repair_standard_name
-          // delete this.creatOrder1.result_fault_cause_name
-          // delete this.creatOrder1.is_applyed
-          // delete this.creatOrder1.equip_type
-          // delete this.creatOrder1.equip_maintenance_standard_name
           try {
-            await multiUpdate('post', null, { data: data })
+            await equipApplyOrder('put', this.creatOrder.id, { data: this.creatOrder })
             this.$message.success('操作成功')
             this.handleClose(null)
             this.getList()
@@ -1280,7 +1252,7 @@ export default {
             specification: this.multipleSelection[index].specification,
             technical_params: this.multipleSelection[index].technical_params,
             unit: this.multipleSelection[index].unit,
-            inventory_quantity: this.multipleSelection[index].quantity.all_qty,
+            inventory_quantity: this.multipleSelection[index].qty,
             id: this.multipleSelection[index].equip_spare,
             apply: 1,
             submit_old_flag: true

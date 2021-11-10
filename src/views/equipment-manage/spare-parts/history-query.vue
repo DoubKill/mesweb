@@ -241,8 +241,8 @@ export default {
   },
   methods: {
     changeDate(arr) {
-      this.search.s_time = arr ? arr[0] + ' 00:00:00' : ''
-      this.search.e_time = arr ? arr[1] + ' 23:59:59' : ''
+      this.search.s_time = arr ? arr[0] : ''
+      this.search.e_time = arr ? arr[1] : ''
       this.search.page = 1
       this.getList()
     },

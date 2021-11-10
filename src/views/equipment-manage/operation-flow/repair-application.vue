@@ -477,7 +477,7 @@ export default {
       if (val) {
         if (this.ruleForm.equip_no) {
           try {
-            const data = await equipBom('get', null, { params: { evel: 4, equip_info: this.ruleForm.equip_id, part__use_flag: true }})
+            const data = await equipBom('get', null, { params: { level: 4, equip_info: this.ruleForm.equip_id, part__use_flag: true }})
             this.options2 = data || []
           } catch (e) {
             //

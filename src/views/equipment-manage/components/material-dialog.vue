@@ -55,7 +55,7 @@
       />
       <el-table-column
         v-if="type==='出库'"
-        prop="quantity.all_qty"
+        prop="qty"
         label="库存数量"
         min-width="20"
       />
@@ -117,6 +117,7 @@ export default {
           }
         } else {
           this.search = {
+            use: 1,
             page: 1,
             page_size: 10
           }
@@ -134,6 +135,7 @@ export default {
       }
     } else {
       this.search = {
+        use: 1,
         page: 1,
         page_size: 10
       }
