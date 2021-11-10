@@ -402,7 +402,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleCloseAdd(false)">取 消</el-button>
-        <el-button type="primary" :loading="btnLoading" @click="submitFun">确 定</el-button>
+        <el-button type="primary" :loading="btnLoad" @click="submitFun">确 定</el-button>
       </span>
     </el-dialog>
     <el-dialog
@@ -583,6 +583,7 @@ export default {
     return {
       search: { order: 'in' },
       search1: {},
+      btnLoad: false,
       btnLoading: false,
       dialogForm: { submission_department: '', equip_spare: [] },
       printForm: {},
@@ -667,8 +668,8 @@ export default {
       this.selectionList = val
     },
     changeDate(date) {
-      this.search.s_time = date ? date[0] + ' 00:00:00' : ''
-      this.search.e_time = date ? date[1] + ' 23:59:59' : ''
+      this.search.s_time = date ? date[0] : ''
+      this.search.e_time = date ? date[1] : ''
       this.changeSearch1()
     },
     async onSubmit() {
@@ -851,12 +852,15 @@ export default {
       this.$refs.createForm.validate(async(valid) => {
         if (valid) {
           try {
+            this.btnLoad = true
             await equipWarehouseOrder('post', null, { data: this.dialogForm })
             this.$message.success('操作成功')
             this.handleCloseAdd(null)
             this.getList()
+            this.btnLoad = false
             this.dialogVisibleAdd = false
           } catch (e) {
+            this.btnLoad = false
             this.dialogVisibleAdd = true
           }
         } else {
