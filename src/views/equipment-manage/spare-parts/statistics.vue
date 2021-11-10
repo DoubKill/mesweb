@@ -9,8 +9,7 @@
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
-          value-format="yyyy-MM-dd HH:mm:ss"
-          :default-time="['00:00:00', '23:59:59']"
+          value-format="yyyy-MM-dd"
           @change="changeDate"
         />
       </el-form-item>
@@ -24,7 +23,7 @@
       </el-form-item>
       <el-form-item label="物料编码">
         <el-input
-          v-model="search.spare__code"
+          v-model="search.spare_code"
           style="width:200px"
           clearable
           @input="debounceSearch"
