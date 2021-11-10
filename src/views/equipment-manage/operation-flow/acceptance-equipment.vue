@@ -155,7 +155,7 @@
       />
       <el-table-column
         label="操作"
-        width="220"
+        width="120"
       >
         <template slot-scope="scope">
           <el-button-group>
@@ -165,12 +165,12 @@
               @click="dialog1(scope.row,'查看处理结果')"
             >查看维修结果
             </el-button>
-            <el-button
+            <!-- <el-button
               type="primary"
               size="mini"
               @click="dialog(scope.row,'查看验收结果')"
             >查看验收结果
-            </el-button>
+            </el-button> -->
           </el-button-group>
         </template>
       </el-table-column>
