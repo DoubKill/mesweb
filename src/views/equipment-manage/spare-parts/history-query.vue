@@ -9,8 +9,7 @@
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
-          value-format="yyyy-MM-dd HH:mm:ss"
-          :default-time="['00:00:00', '23:59:59']"
+          value-format="yyyy-MM-dd"
           @change="changeDate"
         />
       </el-form-item>
@@ -119,6 +118,11 @@
       <el-table-column
         prop="spare__code"
         label="备件条码"
+        min-width="20"
+      />
+      <el-table-column
+        prop="spare_code"
+        label="备件代码"
         min-width="20"
       />
       <el-table-column
