@@ -85,7 +85,7 @@
         min-width="20"
       />
       <el-table-column
-        prop="quantity.all_qty"
+        prop="all_qty"
         label="总数量"
         min-width="20"
       >
@@ -93,11 +93,11 @@
           <el-link
             type="primary"
             @click="dialogShow(scope.row,1)"
-          >{{ scope.row.quantity.all_qty }}</el-link>
+          >{{ scope.row.all_qty }}</el-link>
         </template>
       </el-table-column>
       <el-table-column
-        prop="quantity.use_qty"
+        prop="use_qty"
         label="可用数量"
         min-width="20"
       >
@@ -105,11 +105,11 @@
           <el-link
             type="primary"
             @click="dialogShow(scope.row,2)"
-          >{{ scope.row.quantity.use_qty }}</el-link>
+          >{{ scope.row.use_qty }}</el-link>
         </template>
       </el-table-column>
       <el-table-column
-        prop="quantity.lock_qty"
+        prop="lock_qty"
         label="锁定数量"
         min-width="20"
       >
@@ -117,7 +117,7 @@
           <el-link
             type="primary"
             @click="dialogShow(scope.row,3)"
-          >{{ scope.row.quantity.lock_qty }}</el-link>
+          >{{ scope.row.lock_qty }}</el-link>
         </template>
       </el-table-column>
       <el-table-column
@@ -448,7 +448,7 @@ export default {
     },
     tableRowClassName({ row, rowIndex }) {
       if (row.upper_stock !== null && row.lower_stock !== null) {
-        if (row.quantity.all_qty < row.lower_stock || row.quantity.all_qty > row.upper_stock) {
+        if (row.all_qty < row.lower_stock || row.all_qty > row.upper_stock) {
           return 'warning-row'
         }
       }
