@@ -64,14 +64,6 @@
           />
         </el-select>
       </el-form-item>
-      <!-- <el-form-item label="维修标准">
-        <el-input
-          v-model="search.equip_repair_standard"
-          clearable
-          style="width:200px"
-          @input="debounceList"
-        />
-      </el-form-item> -->
       <el-form-item label="状态">
         <el-select
           v-model="search.status"
@@ -178,7 +170,7 @@
         <template slot-scope="scope">
           <el-link
             type="primary"
-            @click="dialog(scope.row)"
+            @click="dialogWorkNo(scope.row)"
           >{{ scope.row.work_order_no }}</el-link>
         </template>
       </el-table-column>
@@ -353,7 +345,14 @@
         prop="result_accept_desc"
         label="验收记录"
         min-width="20"
-      />
+      >
+        <template slot-scope="scope">
+          <el-link
+            type="primary"
+            @click="dialogResult(scope.row)"
+          >{{ scope.row.result_accept_desc }}</el-link>
+        </template>
+      </el-table-column>
     </el-table>
     <page
       :old-page="false"
@@ -478,6 +477,51 @@
         <el-button @click="dialogVisibleMaterial=false">取 消</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      title="验收结果"
+      :visible.sync="dialogVisibleResult"
+      width="30%"
+    >
+      <el-form
+        :model="resultForm"
+        label-width="150px"
+      >
+        <el-form-item label="验收说明">
+          <el-input
+            v-model="resultForm.result_accept_desc"
+            disabled
+            style="width:250px"
+            type="textarea"
+            :rows="3"
+            placeholder="请输入内容"
+          />
+        </el-form-item>
+        <el-form-item label="上传图片">
+          <template v-for="(item, index) in resultForm.result_accept_graph_url">
+            <el-image
+              v-if="resultForm.result_accept_graph_url.length>0"
+              :key="index"
+              style="width: 100px; height: 100px"
+              :src="item"
+              :preview-src-list="[item]"
+            />
+          </template>
+          <div v-if="resultForm.result_accept_graph_url.length===0">
+            暂无图片
+          </div>
+        </el-form-item>
+        <el-form-item label="验收结论" prop="result_accept_result">
+          <el-radio-group v-model="resultForm.result_accept_result" disabled>
+            <el-radio label="合格">合格</el-radio>
+            <el-radio label="不合格">不合格</el-radio>
+          </el-radio-group>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleResult=false">取 消</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -500,9 +544,11 @@ export default {
       dialogVisibleDefinition: false,
       dialogVisibleMaintain: false,
       dialogVisibleMaterial: false,
+      dialogVisibleResult: false,
       tableDataView: [],
       creatOrder: {},
       search: {},
+      resultForm: { result_accept_graph_url: [] },
       dateValue: [],
       tableData: [],
       ruleForm: {},
@@ -559,6 +605,10 @@ export default {
     },
     handleCloseMaintain() {
       this.dialogVisibleMaintain = false
+    },
+    dialogResult(row) {
+      this.resultForm = JSON.parse(JSON.stringify(row))
+      this.dialogVisibleResult = true
     },
     tableRowClassName({ row, rowIndex }) {
       if (row.timeout_color === '粉红色') {
@@ -617,6 +667,9 @@ export default {
     equipSelected(obj) {
       this.$set(this.search, 'equip_no', obj ? obj.equip_no : '')
       this.changeSearch()
+    },
+    dialogWorkNo(row) {
+
     },
     currentChange(page, page_size) {
       this.search.page = page
