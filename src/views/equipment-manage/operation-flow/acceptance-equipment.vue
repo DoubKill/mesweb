@@ -135,7 +135,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="changeSearch">查询</el-button>
-        <el-button type="primary" @click="dialog(false,'验收维修工单')">验收</el-button>
+        <el-button v-permission="['equip_apply_order', 'accept']" type="primary" @click="dialog(false,'验收维修工单')">验收</el-button>
         <!-- <el-button type="primary">导出Excel</el-button> -->
       </el-form-item>
     </el-form>

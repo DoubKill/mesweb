@@ -69,7 +69,7 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="dialog(false,'新建报修申请')">新建</el-button>
+        <el-button v-permission="['equip_apply_repair', 'add']" type="primary" @click="dialog(false,'新建报修申请')">新建</el-button>
       </el-form-item>
     </el-form>
     <el-table
