@@ -1209,7 +1209,7 @@ export default {
             const orderId = await getOrderId('get', null, { params: { status: '出库' }})
             const orderData = {}
             orderData.order_id = orderId
-            orderData.submission_department = '维修部'
+            orderData.submission_department = this.creatOrder.product_name
             orderData.status = 4
             orderData.equip_spare = this.tableDataView.map(item => ({ id: item.id, quantity: item.apply }))
             const warehouse_out_no = await equipWarehouseOrder('post', null, { data: orderData })

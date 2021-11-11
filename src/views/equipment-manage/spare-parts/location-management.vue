@@ -233,6 +233,7 @@ export default {
       try {
         this.btnLoading = true
         await equipCodePrint('post', null, { data: { status: 1, code: row.area_barcode, print_type: 1, name: row.area_name }})
+        this.$message.success('打印任务已连接')
         this.btnLoading = false
       } catch (e) {
         this.btnLoading = false
@@ -242,6 +243,7 @@ export default {
       try {
         this.btnLoading = true
         await equipCodePrint('post', null, { data: { status: 1, code: row.location_barcode, print_type: 2, name: row.location_name }})
+        this.$message.success('打印任务已连接')
         this.btnLoading = false
       } catch (e) {
         this.btnLoading = false

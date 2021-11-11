@@ -660,6 +660,7 @@ export default {
       try {
         this.btnLoading = true
         await equipCodePrint('post', null, { data: { status: 2, spare_list: this.selectionList }})
+        this.$message.success('打印任务已连接')
         this.btnLoading = false
       } catch (e) {
         this.btnLoading = false
