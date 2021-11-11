@@ -135,11 +135,13 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
+              v-permission="['equip_apply_order', 'begin']"
               type="primary"
               size="mini"
               @click="start(scope.row)"
             >开始</el-button>
             <el-button
+              v-permission="['equip_apply_order', 'handle']"
               type="primary"
               size="mini"
               @click="dialog(scope.row,'处理维修工单')"

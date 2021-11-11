@@ -36,6 +36,7 @@
       </el-form-item>
       <el-form-item style="float:right">
         <el-button
+          v-permission="['equip_warehouse_inventory', 'export']"
           type="primary"
           :loading="btnExportLoad"
           @click="exportTable"

@@ -4,6 +4,7 @@
     <el-row>
       <el-col v-loading="loading" :span="12">
         <el-button
+          v-permission="['equip_warehouse', 'addArea']"
           type="primary"
           style="margin-bottom:10px;float:right"
           @click="addArea(true)"
@@ -32,11 +33,13 @@
             <template slot-scope="scope">
               <el-button-group>
                 <el-button
+                  v-permission="['equip_warehouse', 'changeArea']"
                   size="mini"
                   @click="editArea(scope.row,true)"
                 >编辑
                 </el-button>
                 <el-button
+                  v-permission="['equip_warehouse', 'deleteArea']"
                   size="mini"
                   type="danger"
                   plain
@@ -44,6 +47,7 @@
                 > 删除
                 </el-button>
                 <el-button
+                  v-permission="['equip_warehouse', 'printArea']"
                   size="mini"
                   plain
                   :loading="btnLoading"
@@ -57,6 +61,7 @@
       </el-col>
       <el-col v-loading="loading1" :span="12">
         <el-button
+          v-permission="['equip_warehouse', 'addLocation']"
           type="primary"
           style="margin-bottom:10px;float:right"
           :disabled="depot?false:true"
@@ -84,11 +89,13 @@
             <template slot-scope="scope">
               <el-button-group>
                 <el-button
+                  v-permission="['equip_warehouse', 'changeLocation']"
                   size="mini"
                   @click="editArea(scope.row,false)"
                 >编辑
                 </el-button>
                 <el-button
+                  v-permission="['equip_warehouse', 'deleteLocation']"
                   size="mini"
                   type="danger"
                   plain
@@ -96,6 +103,7 @@
                 > 删除
                 </el-button>
                 <el-button
+                  v-permission="['equip_warehouse', 'printLocation']"
                   size="mini"
                   :loading="btnLoading"
                   plain

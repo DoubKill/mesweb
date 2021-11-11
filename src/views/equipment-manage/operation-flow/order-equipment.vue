@@ -81,9 +81,9 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary" @click="order">接单</el-button>
-        <el-button type="primary" @click="back">退单</el-button>
-        <el-button type="primary" @click="close">关闭</el-button>
+        <el-button v-permission="['equip_apply_order', 'receive']" type="primary" @click="order">接单</el-button>
+        <el-button v-permission="['equip_apply_order', 'charge']" type="primary" @click="back">退单</el-button>
+        <el-button v-permission="['equip_apply_order', 'close']" type="primary" @click="close">关闭</el-button>
         <!-- <el-button type="primary">导出Excel</el-button> -->
       </el-form-item>
     </el-form>

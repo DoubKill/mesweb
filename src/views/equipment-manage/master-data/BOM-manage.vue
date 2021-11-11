@@ -25,10 +25,10 @@
         </h3>
         <h2 v-if="!formInline.level">中策橡胶(安吉)有限公司</h2>
         <el-form v-loading="loading" :inline="true" label-width="100px">
-          <!-- <el-form-item v-if="formInline.level>2" label="节点编号">
+          <el-form-item v-if="formInline.level>2" label="节点编号">
             <el-input v-model="formInline.node_id" disabled />
-            <el-button style="margin-left:10px" type="primary" @click="printLabel">打印标签</el-button>
-          </el-form-item> -->
+            <el-button style="margin-left:10px" type="primary" :loading="btnLoad" @click="printLabel">打印标签</el-button>
+          </el-form-item>
           <!-- <br> -->
           <el-form-item v-if="formInline.level" label="分厂">
             <el-input v-model="formInline.factoryName" disabled />
@@ -600,7 +600,7 @@
 <script>
 import equipTypeSelect from '../components/equip-type-select'
 import page from '@/components/page'
-import { equipPartNew, equipComponent } from '@/api/jqy'
+import { equipPartNew, equipComponent, equipCodePrint } from '@/api/jqy'
 import { equipBom } from '@/api/base_w_four'
 import PartsDefineMixin from '../components/parts-define-mixin'
 import locationArea from './location-area.vue'
@@ -647,6 +647,7 @@ export default {
         name: [{ required: true, message: '不能为空', trigger: 'blur' }]
       },
       dialogVisibleLocation: false,
+      btnLoad: false,
       btnLoadingLocation: false,
       loadingTree: false,
       infoBtnLoading: false,
@@ -1067,8 +1068,16 @@ export default {
     showList() {
       this.isShowList = !this.isShowList
     },
-    printLabel() {
-
+    async printLabel() {
+      try {
+        this.btnLoad = true
+        await equipCodePrint('post', null, { data: { status: 3, lot_no: this.formInline.node_id }})
+        this.$message.success('打印任务已连接')
+        this.btnLoad = false
+      } catch (e) {
+        this.btnLoad = false
+      }
+      console.log(this.formInline)
     }
   }
 }
