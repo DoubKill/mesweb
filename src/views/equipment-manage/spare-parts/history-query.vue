@@ -78,6 +78,7 @@
       </el-form-item>
       <el-form-item>
         <el-button
+          v-permission="['equip_warehouse_record', 'export']"
           type="primary"
           :loading="btnExportLoad"
           @click="exportTable"

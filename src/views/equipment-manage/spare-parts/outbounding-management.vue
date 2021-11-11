@@ -46,7 +46,7 @@
       </el-form-item>
       <el-form-item style="float:right">
         <el-button
-          v-permission="['equip_job_standard', 'add']"
+          v-permission="['equip_out_warehouse', 'add']"
           type="primary"
           @click="onSubmit"
         >新建</el-button>
@@ -63,6 +63,7 @@
       >
         <template slot-scope="scope">
           <el-button
+            v-permission="['equip_out_warehouse', 'outer']"
             type="primary"
             size="mini"
             @click="dialog(scope.row)"

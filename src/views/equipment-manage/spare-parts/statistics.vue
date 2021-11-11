@@ -38,7 +38,7 @@
         />
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button :loading="btnExportLoad" type="primary" @click="exportTable">导出Excel</el-button>
+        <el-button v-permission="['equip_warehouse_statistical', 'export']" :loading="btnExportLoad" type="primary" @click="exportTable">导出Excel</el-button>
       </el-form-item>
     </el-form>
     <el-table
