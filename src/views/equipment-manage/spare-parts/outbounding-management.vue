@@ -314,10 +314,10 @@
             clearable
           >
             <el-option
-              v-for="item in ['设备部']"
-              :key="item"
-              :label="item"
-              :value="item"
+              v-for="item in options"
+              :key="item.id"
+              :label="item.name"
+              :value="item.name"
             />
           </el-select>
         </el-form-item>
@@ -539,6 +539,7 @@
 
 <script>
 import material from '../components/material-dialog'
+import { sectionTree } from '@/api/base_w_four'
 import { getOrderId, equipWarehouseOrder, equipWarehouseOrderDetail, getCode, equipWarehouseArea, equipWarehouseRecord } from '@/api/jqy'
 import page from '@/components/page'
 import { debounce } from '@/utils'
@@ -556,6 +557,7 @@ export default {
       dialogVisibleSpare: false,
       dialogVisibleWork: false,
       tableData: [],
+      options: [],
       quantityForm: {},
       tableDataView: [],
       warehouseAreaList: [],
@@ -588,6 +590,7 @@ export default {
   created() {
     this.getList()
     this.getWarehouseArea()
+    this.getSection()
   },
   methods: {
     generateFun() {
@@ -685,6 +688,14 @@ export default {
     changeSearch1() {
       this.search.page = 1
       this.getList()
+    },
+    async getSection() {
+      try {
+        const data = await sectionTree('get', null, { params: { all: 1 }})
+        this.options = data.results || []
+      } catch (e) {
+        //
+      }
     },
     async dialog(row) {
       this.search1.order_id = row.order_id
