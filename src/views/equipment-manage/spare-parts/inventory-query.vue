@@ -414,7 +414,7 @@ export default {
       submit: false,
       creatOrder: {},
       currentInfo: {},
-      num: '',
+      num: null,
       loadingBtn: false,
       btnExportLoad: false
     }
@@ -485,7 +485,9 @@ export default {
       this.currentInfo = row
       this.dialogVisible = true
       this.multipleSelection = []
-      this.$refs.multipleTable.clearSelection()
+      if (this.$refs.multipleTable) {
+        this.$refs.multipleTable.clearSelection()
+      }
       this.getInventoryList()
     },
     async getInventoryList() {
@@ -530,7 +532,9 @@ export default {
         this.getList()
         this.loadingBtn = false
         this.multipleSelection = []
-        this.$refs.multipleTable.clearSelection()
+        if (this.$refs.multipleTable) {
+          this.$refs.multipleTable.clearSelection()
+        }
       } catch (e) {
         this.loadingBtn = false
       }
