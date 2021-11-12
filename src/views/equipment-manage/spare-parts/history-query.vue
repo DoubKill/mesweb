@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <!-- 出入库履历查询 -->
+  <div class="history-query">
+    <!-- 备件出入库履历查询 -->
     <el-form :inline="true">
       <el-form-item label="起止时间">
         <el-date-picker
@@ -15,74 +15,79 @@
       </el-form-item>
       <el-form-item label="出库/入库">
         <el-select
-          v-model="search.feeding"
+          v-model="search.status"
           placeholder="请选择"
           clearable
           @change="changeSearch"
         >
           <el-option
-            v-for="item in ['出库','入库']"
-            :key="item"
-            :label="item"
-            :value="item"
+            v-for="item in [{name:'出库',id:2},{name:'入库',id:1}]"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
           />
         </el-select>
       </el-form-item>
       <el-form-item label="出入库单号">
         <el-input
-          v-model="search.equip_no"
+          v-model="search.order_id"
           style="width:200px"
-          @input="changeSearch"
+          clearable
+          @input="debounceSearch"
         />
       </el-form-item>
       <el-form-item label="备件条码">
         <el-input
-          v-model="search.equip1"
+          v-model="search.spare__code"
           style="width:200px"
-          @input="changeSearch"
+          clearable
+          @input="debounceSearch"
         />
       </el-form-item>
       <el-form-item label="备件代码">
-        <el-select
-          v-model="search.feedi"
-          placeholder="请选择"
+        <el-input
+          v-model="search.spare_code"
+          style="width:200px"
           clearable
-        >
-          <el-option
-            v-for="item in ['减速机','电机']"
-            :key="item"
-            :label="item"
-            :value="item"
-          />
-        </el-select>
+          @input="debounceSearch"
+        />
       </el-form-item>
       <el-form-item label="备件分类">
         <el-input
-          v-model="search.equip1"
+          v-model="search.equip_component_type"
           style="width:200px"
-          @input="changeSearch"
+          clearable
+          @input="debounceSearch"
         />
       </el-form-item>
       <el-form-item label="备件名称">
         <el-input
-          v-model="search.equip1"
+          v-model="search.spare_name"
           style="width:200px"
-          @input="changeSearch"
+          clearable
+          @input="debounceSearch"
         />
       </el-form-item>
       <el-form-item label="规格型号">
         <el-input
-          v-model="search.equip1"
+          v-model="search.specification"
           style="width:200px"
-          @input="changeSearch"
+          clearable
+          @input="debounceSearch"
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary">导出Excel</el-button>
-        <el-button type="primary">查询</el-button>
+        <el-button
+          v-permission="['equip_warehouse_record', 'export']"
+          type="primary"
+          :loading="btnExportLoad"
+          @click="exportTable"
+        >导出Excel</el-button>
+        <el-button type="primary" @click="changeSearch">查询</el-button>
       </el-form-item>
     </el-form>
     <el-table
+      v-loading="loading"
       :data="tableData"
       border
     >
@@ -90,59 +95,79 @@
         prop="date"
         label="出库/入库"
         min-width="20"
+        :formatter="(row)=>{
+          return row.status===1?'入库':'出库'
+        }"
       />
       <el-table-column
-        prop="date"
+        prop="order_id"
         label="出入库单号"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="work_order_no"
+        label="工单编号"
+        min-width="20"
+      >
+        <template slot-scope="scope">
+          <el-link
+            type="primary"
+            @click="dialogShow(scope.row)"
+          >{{ scope.row.work_order_no }}</el-link>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="spare__code"
         label="备件条码"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="spare_code"
+        label="备件代码"
+        min-width="20"
+      />
+      <el-table-column
+        prop="spare_name"
         label="备件名称"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="component_type_name"
         label="备件分类"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="specification"
         label="规格型号"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="quantity"
         label="数量"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="unit"
         label="单位"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="area_name"
         label="库区"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="location_name"
         label="库位"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="created_username"
         label="操作人"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="created_date"
         label="操作时间"
         min-width="20"
       />
@@ -153,11 +178,45 @@
       :current-page="search.page"
       @currentChange="currentChange"
     />
+    <el-dialog
+      :visible.sync="dialogVisible"
+      width="500px"
+      title="处理维修工单"
+      class="dialogStyle"
+    >
+      <el-form v-loading="loadingView" label-width="150px">
+        <el-form-item label="计划/报销名称">
+          <el-input v-model="currentObj.plan_name" :disabled="true" />
+        </el-form-item>
+        <el-form-item label="工单编号">
+          <el-input v-model="currentObj.work_order_no" :disabled="true" />
+        </el-form-item>
+        <el-form-item label="机台">
+          <el-input v-model="currentObj.equip_no" :disabled="true" />
+        </el-form-item>
+        <el-form-item label="维修标准/故障原因">
+          <el-input v-model="currentObj.fault_name" :disabled="true" />
+        </el-form-item>
+        <el-form-item label="故障详情描述">
+          <el-input
+            v-model="currentObj.result_fault_desc"
+            :disabled="true"
+            type="textarea"
+            style="width:200px"
+            :rows="3"
+          />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogVisible=false">返回</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import page from '@/components/page'
+import { equipWarehouseRecord } from '@/api/base_w_five'
 export default {
   name: 'HistoryQuery',
   components: { page },
@@ -168,32 +227,89 @@ export default {
         page_size: 10
       },
       dateValue: [],
-      tableData: [{ date: '1' }],
-      total: 0
+      tableData: [],
+      total: 0,
+      loading: false,
+      btnExportLoad: false,
+      dialogVisible: false,
+      loadingView: false,
+      tableDataView: [],
+      currentObj: {}
     }
   },
   created() {
     this.getList()
   },
   methods: {
-    changeDate() {
-
-    },
-    getList() {
-
+    changeDate(arr) {
+      this.search.s_time = arr ? arr[0] : ''
+      this.search.e_time = arr ? arr[1] : ''
+      this.search.page = 1
+      this.getList()
     },
     changeSearch() {
+      this.search.page = 1
       this.getList()
+    },
+    debounceSearch() {
+      this.$debounce(this, 'changeSearch')
+    },
+    async getList() {
+      try {
+        this.loading = true
+        const obj = {}
+        Object.assign(obj, this.search)
+        const data = await equipWarehouseRecord('get', null, { params: obj })
+        this.tableData = data.results || []
+        this.total = data.count
+        this.loading = false
+      } catch (e) {
+        this.loading = false
+      }
     },
     currentChange(page, page_size) {
       this.search.page = page
       this.search.page_size = page_size
       this.getList()
+    },
+    async dialogShow(row) {
+      this.dialogVisible = true
+      try {
+        const data = await equipWarehouseRecord('get', null, { params: { work_order_no: row.work_order_no }})
+        this.currentObj = data
+        this.loadingView = false
+      } catch (e) {
+        this.loadingView = false
+      }
+    },
+    exportTable() {
+      this.btnExportLoad = true
+      const obj = Object.assign({ export: 1 }, this.search)
+      const _api = equipWarehouseRecord
+      _api('get', null, { params: obj, responseType: 'blob' })
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '备件出入库履历.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
     }
   }
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+.history-query{
+.dialogStyle .el-input{
+  width:200px;
+}
+}
 
 </style>

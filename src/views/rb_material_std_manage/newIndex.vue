@@ -161,7 +161,7 @@
               v-if="checkPermission(['productbatching','abandon'])&&
                 [5,4].includes(scope.row.used_type)"
               size="mini"
-              @click="status_recipe_fun(scope.row.id,false)"
+              @click="status_recipe_fun(scope.row.id,false,'废弃')"
             >废弃</el-button>
           </el-button-group>
         </template>
@@ -334,7 +334,21 @@ export default {
     handleCurrentChange(val) {
       this.currentRow = val
     },
-    async status_recipe_fun(id, bool) {
+    async status_recipe_fun(id, bool, val) {
+      if (val) {
+        this.$confirm('确定' + val + '?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(async() => {
+          try {
+            await rubber_material_url('patch', id, { data: { pass_flag: bool }})
+            this.$message.success('状态切换成功')
+            this.rubber_material_list()
+          } catch (e) { throw new Error(e) }
+        })
+        return
+      }
       try {
         await rubber_material_url('patch', id, { data: { pass_flag: bool }})
         this.$message.success('状态切换成功')

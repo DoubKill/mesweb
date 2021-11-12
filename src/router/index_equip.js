@@ -10,7 +10,7 @@ export const equipRoutes = [
       icon: 'quality'
     },
     children: [
-      /** {
+      {
         path: '/equipment-home',
         component: () => import('@/views/equipment-manage/operation-status'),
         name: 'EquipmentHome',
@@ -69,7 +69,7 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentOperationFlow',
               title: '报修申请',
-              permissionName: ''
+              permissionName: 'equip_apply_repair'
             }
           },
           // {
@@ -89,7 +89,17 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentOperationFlow',
               title: '指派维修工单',
-              permissionName: ''
+              permissionName: 'equip_apply_order'
+            }
+          },
+          {
+            path: '/equipment/order-equipment',
+            component: () => import('@/views/equipment-manage/operation-flow/order-equipment'),
+            name: 'OrderEquipment',
+            meta: {
+              faName: 'EquipmentOperationFlow',
+              title: '接单维修工单',
+              permissionName: 'equip_apply_order'
             }
           },
           {
@@ -99,7 +109,7 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentOperationFlow',
               title: '执行维修工单',
-              permissionName: ''
+              permissionName: 'equip_apply_order'
             }
           },
           {
@@ -109,7 +119,7 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentOperationFlow',
               title: '验收维修工单',
-              permissionName: ''
+              permissionName: 'equip_apply_order'
             }
           },
           {
@@ -119,10 +129,9 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentOperationFlow',
               title: '维修工单查询',
-              permissionName: ''
+              permissionName: 'equip_apply_order'
             }
           }
-          ,
           // {
           //   path: '/equipment/apare-parts',
           //   component: () => import('@/views/equipment-manage/operation-flow/apare-parts'),
@@ -156,6 +165,16 @@ export const equipRoutes = [
             }
           },
           {
+            path: '/equipment/order-patrol',
+            component: () => import('@/views/equipment-manage/inspection/order-patrol'),
+            name: 'OrderPatrol',
+            meta: {
+              faName: 'InspectionFlow',
+              title: '接单巡检工单',
+              permissionName: ''
+            }
+          },
+          {
             path: '/equipment/execute-patrol',
             component: () => import('@/views/equipment-manage/inspection/execute-patrol'),
             name: 'ExecutePatrol',
@@ -176,7 +195,7 @@ export const equipRoutes = [
             }
           }
         ]
-      },**/
+      },
       {
         path: '/equipment/standard-definition',
         redirect: '/equipment/project-definition',
@@ -219,7 +238,7 @@ export const equipRoutes = [
           }
         ]
       },
-      /** {
+      {
         path: '/equipment/spare-parts',
         redirect: '/equipment/location-management',
         component: () => import('@/views/equipment-manage/spare-parts/a-index'),
@@ -235,8 +254,8 @@ export const equipRoutes = [
             name: 'LocationManagement',
             meta: {
               faName: 'SparePartsWarehouse',
-              title: '库区库位管理',
-              permissionName: ''
+              title: '备件库区库位管理',
+              permissionName: 'equip_warehouse'
             }
           },
           {
@@ -245,8 +264,8 @@ export const equipRoutes = [
             name: 'WarehousingManagement',
             meta: {
               faName: 'SparePartsWarehouse',
-              title: '入库管理',
-              permissionName: ''
+              title: '备件入库管理',
+              permissionName: 'equip_in_warehouse'
             }
           },
           {
@@ -255,8 +274,8 @@ export const equipRoutes = [
             name: 'OutboundingManagement',
             meta: {
               faName: 'SparePartsWarehouse',
-              title: '出库管理',
-              permissionName: ''
+              title: '备件出库管理',
+              permissionName: 'equip_out_warehouse'
             }
           },
           {
@@ -265,8 +284,8 @@ export const equipRoutes = [
             name: 'InventoryQuery',
             meta: {
               faName: 'SparePartsWarehouse',
-              title: '库存查询',
-              permissionName: ''
+              title: '备件库存查询',
+              permissionName: 'equip_warehouse_inventory'
             }
           },
           {
@@ -275,8 +294,8 @@ export const equipRoutes = [
             name: 'HistoryQuery',
             meta: {
               faName: 'SparePartsWarehouse',
-              title: '出入库履历查询',
-              permissionName: ''
+              title: '备件出入库履历查询',
+              permissionName: 'equip_warehouse_record'
             }
           },
           {
@@ -285,12 +304,12 @@ export const equipRoutes = [
             name: 'Statistics',
             meta: {
               faName: 'SparePartsWarehouse',
-              title: '出入库统计分析',
-              permissionName: ''
+              title: '备件出入库统计分析',
+              permissionName: 'equip_warehouse_statistical'
             }
           }
         ]
-      },**/
+      },
       {
         path: '/equipment/master-data',
         redirect: '/equipment/supplier',
