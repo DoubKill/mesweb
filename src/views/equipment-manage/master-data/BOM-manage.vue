@@ -25,11 +25,14 @@
         </h3>
         <h2 v-if="!formInline.level">中策橡胶(安吉)有限公司</h2>
         <el-form v-loading="loading" :inline="true" label-width="100px">
-          <el-form-item v-if="formInline.level>2" label="节点编号">
+          <!-- <el-form-item v-if="formInline.level" label="节点编号">
+            <el-input v-model="formInline.location" disabled />
+          </el-form-item> -->
+          <el-form-item v-if="formInline.level>2" label="条码">
             <el-input v-model="formInline.node_id" disabled />
             <el-button style="margin-left:10px" type="primary" :loading="btnLoad" @click="printLabel">打印标签</el-button>
           </el-form-item>
-          <!-- <br> -->
+          <br>
           <el-form-item v-if="formInline.level" label="分厂">
             <el-input v-model="formInline.factoryName" disabled />
           </el-form-item>
@@ -334,6 +337,8 @@
       <!-- <li @click="upperPasteNodeFun">上方粘贴节点</li>
       <li @click="belowPasteNodeFun">下方粘贴节点</li> -->
       <li v-permission="['equip_bom', 'delete']" @click="delNodeFun">删除节点</li>
+      <li v-permission="['equip_bom', 'delete']" @click="moveFun(true)">上移</li>
+      <li v-permission="['equip_bom', 'delete']" @click="moveFun(false)">下移</li>
     </ul>
     <el-dialog
       title="加入子节点信息"
@@ -601,7 +606,7 @@
 import equipTypeSelect from '../components/equip-type-select'
 import page from '@/components/page'
 import { equipPartNew, equipComponent, equipCodePrint } from '@/api/jqy'
-import { equipBom } from '@/api/base_w_four'
+import { equipBom, exchangeLocation } from '@/api/base_w_four'
 import PartsDefineMixin from '../components/parts-define-mixin'
 import locationArea from './location-area.vue'
 import equipSelect from '@/components/select_w/equip.vue'
@@ -809,7 +814,6 @@ export default {
     },
     changeList() {},
     nodeContextmenu(e, tag, node, event) {
-      // console.log(node, 888)
       const a = document.documentElement.scrollTop || document.body.scrollTop
       const menuMinWidth = 105
       const offsetLeft = this.$el.getBoundingClientRect().left // container margin left
@@ -1011,6 +1015,29 @@ export default {
     },
     upperPasteNodeFun() {},
     belowPasteNodeFun() {},
+    async moveFun(bool) {
+      // bool=>true 上移
+      if (this.faData.children.length === 1) {
+        this.$message('暂无可移动的位置')
+        return
+      }
+      const index = this.faData.children.findIndex(d => d.id === this.selectedTag.id)
+      if ((bool && index - 1 < 0) || (!bool && (index + 1) >= this.faData.children.length)) {
+        this.$message('只能同级移动')
+        return
+      }
+      const a = this.selectedTag.id
+      const b = bool ? this.faData.children[index - 1].id : this.faData.children[index + 1].id
+      try {
+        this.loadingTree = true
+        await exchangeLocation('post', null, { data: { choice_location: a, other_location: b }})
+        this.btnLoading = false
+        this.$message.success('操作成功')
+        this.getTree()
+      } catch (e) {
+        this.loadingTree = false
+      }
+    },
     delNodeFun() {
       if (this.selectedTag.id === 1) {
         this.$message('公司不能删除')
