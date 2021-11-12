@@ -737,7 +737,7 @@ export default {
             this.creatOrder.one_piece1 = data.one_piece
             this.creatOrder.lot_no = data.equip_warehouse_order_detail__lot_no
           } else {
-            this.$message(data)
+            this.$message.info(data)
           }
         } catch (e) {
         // this.loading = false
