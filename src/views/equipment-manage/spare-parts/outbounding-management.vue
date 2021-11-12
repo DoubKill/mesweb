@@ -641,7 +641,7 @@ export default {
         const orderId = await getOrderId('get', null, { params: { status: '出库' }})
         this.dialogForm.order_id = orderId
         this.dialogForm.equip_spare = []
-        this.dialogForm.submission_department = '设备部'
+        this.dialogForm.submission_department = '设备科'
         this.dialogVisibleAdd = true
       } catch {
         this.dialogVisibleAdd = false

@@ -330,10 +330,10 @@
             placeholder="请选择"
           >
             <el-option
-              v-for="item in ['设备部']"
-              :key="item"
-              :label="item"
-              :value="item"
+              v-for="item in options"
+              :key="item.id"
+              :label="item.name"
+              :value="item.name"
             />
           </el-select>
         </el-form-item>
@@ -574,6 +574,7 @@
 
 <script>
 import material from '../components/material-dialog'
+import { sectionTree } from '@/api/base_w_four'
 import { getOrderId, equipWarehouseOrder, equipWarehouseOrderDetail, getCode, equipWarehouseArea, equipWarehouseLocation, equipWarehouseRecord, equipCodePrint } from '@/api/jqy'
 import page from '@/components/page'
 import { debounce } from '@/utils'
@@ -589,6 +590,7 @@ export default {
       dialogForm: { submission_department: '', equip_spare: [] },
       printForm: {},
       dateValue: [],
+      options: [],
       SpareForm: {},
       dialogVisibleSpare: false,
       tableData: [],
@@ -632,6 +634,7 @@ export default {
   created() {
     this.getList()
     this.getWarehouseArea()
+    this.getSection()
   },
   methods: {
     generateFun() {
@@ -656,6 +659,14 @@ export default {
     Add() {
       this.dialogVisibleAdd1 = true
     },
+    async getSection() {
+      try {
+        const data = await sectionTree('get', null, { params: { all: 1 }})
+        this.options = data.results || []
+      } catch (e) {
+        //
+      }
+    },
     async submitFunPrint() {
       try {
         this.btnLoading = true
@@ -679,7 +690,7 @@ export default {
         const orderId = await getOrderId('get', null, { params: { status: '入库' }})
         this.dialogForm.order_id = orderId
         this.dialogForm.equip_spare = []
-        this.dialogForm.submission_department = '设备部'
+        this.dialogForm.submission_department = '设备科'
         this.dialogVisibleAdd = true
       } catch {
         this.dialogVisibleAdd = false
