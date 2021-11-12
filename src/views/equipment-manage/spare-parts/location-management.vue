@@ -29,6 +29,7 @@
           />
           <el-table-column
             label="操作"
+            width="220"
           >
             <template slot-scope="scope">
               <el-button-group>
@@ -85,6 +86,7 @@
           />
           <el-table-column
             label="操作"
+            width="220"
           >
             <template slot-scope="scope">
               <el-button-group>
