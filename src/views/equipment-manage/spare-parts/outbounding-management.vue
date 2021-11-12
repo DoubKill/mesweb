@@ -286,7 +286,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose(false)">取 消</el-button>
-        <el-button :loading="submit" type="primary" @click="generateFun">确 定</el-button>
+        <el-button :disabled="!creatOrder.spare_code" :loading="submit" type="primary" @click="generateFun">确 定</el-button>
       </span>
     </el-dialog>
     <el-dialog
@@ -727,14 +727,18 @@ export default {
         this.order = row.equip_spare
         try {
           const data = await getCode('get', null, { params: { order: this.order, stage: 1 }})
-          this.creatOrder.spare_code = data.spare_code
-          this.creatOrder.equip_warehouse_area = data.equip_warehouse_area
-          this.creatOrder.equip_warehouse_location = data.equip_warehouse_location
-          this.creatOrder.equip_warehouse_area__area_name = data.equip_warehouse_area__area_name
-          this.creatOrder.equip_warehouse_location__location_name = data.equip_warehouse_location__location_name
-          this.creatOrder.one_piece = data.one_piece
-          this.creatOrder.one_piece1 = data.one_piece
-          this.creatOrder.lot_no = data.equip_warehouse_order_detail__lot_no
+          if (data.spare_code) {
+            this.creatOrder.spare_code = data.spare_code
+            this.creatOrder.equip_warehouse_area = data.equip_warehouse_area
+            this.creatOrder.equip_warehouse_location = data.equip_warehouse_location
+            this.creatOrder.equip_warehouse_area__area_name = data.equip_warehouse_area__area_name
+            this.creatOrder.equip_warehouse_location__location_name = data.equip_warehouse_location__location_name
+            this.creatOrder.one_piece = data.one_piece
+            this.creatOrder.one_piece1 = data.one_piece
+            this.creatOrder.lot_no = data.equip_warehouse_order_detail__lot_no
+          } else {
+            this.$message(data)
+          }
         } catch (e) {
         // this.loading = false
         }
