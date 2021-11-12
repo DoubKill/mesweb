@@ -80,6 +80,11 @@
       />
       <el-table-column
         min-width="10"
+        prop="repair_group"
+        label="班组"
+      />
+      <el-table-column
+        min-width="10"
         prop="technology"
         label="技术资格"
       />
@@ -227,6 +232,18 @@
           />
         </el-form-item>
         <el-form-item
+          label="班组"
+        >
+          <el-select v-model="userForm.repair_group" clearable placeholder="请选择">
+            <el-option
+              v-for="group in teamList"
+              :key="group.id"
+              :label="group.global_name"
+              :value="group.global_name"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item
           label="技术资格"
         >
           <el-input
@@ -252,13 +269,11 @@
           label="角色"
           size="medium"
         >
-          <div>
-            <transferRoles
-              :default-groups="userForm.group_extensions"
-              :groups="group_extensions"
-              @changeTransferGroup="changeTransferGroup"
-            />
-          </div>
+          <transferRoles
+            :default-groups="userForm.group_extensions"
+            :groups="group_extensions"
+            @changeTransferGroup="changeTransferGroup"
+          />
         </el-form-item>
         <!-- <el-form-item
           label="权限"
@@ -290,6 +305,7 @@
 <script>
 import { personnelsUrl } from '@/api/user'
 import { sectionTree } from '@/api/base_w_four'
+import { globalCodesUrl } from '@/api/base_w'
 // import { permissions } from '@/api/permission'
 import { roles } from '@/api/roles-manage'
 import page from '@/components/page'
@@ -400,7 +416,8 @@ export default {
           label: 'N'
         }
       ],
-      optionsSection: []
+      optionsSection: [],
+      teamList: []
     }
   },
   computed: {
@@ -436,6 +453,7 @@ export default {
     }
     this.currentChange()
     this.getOptionsSection()
+    this.getTeamList()
   },
   methods: {
     changeUsername(e) {
@@ -460,6 +478,18 @@ export default {
         } else {
           this.optionsSection = []
         }
+      } catch (error) {
+        //
+      }
+    },
+    async getTeamList() {
+      try {
+        const data = await globalCodesUrl('get', {
+          params: {
+            class_name: '班组'
+          }
+        })
+        this.teamList = data.results || []
       } catch (error) {
         //
       }

@@ -87,7 +87,7 @@
       <el-table-column
         prop="package_unit_name"
         label="包装单位"
-        width="60px"
+        width="70px"
       />
       <el-table-column
         width="50"

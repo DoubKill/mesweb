@@ -541,5 +541,26 @@ export default {
   EquipRepairStandard: '/api/v1/equipment/equip-repair-standard/',
   EquipRepairStandardImport: '/api/v1/equipment/equip-repair-standard/import_xlsx/',
   EquipRepairStandardGetName: '/api/v1/equipment/equip-repair-standard/get_name/',
-  GetDefaultCode: '/api/v1/equipment/get-default-code/'
+  GetDefaultCode: '/api/v1/equipment/get-default-code/',
+  // 报修申请
+  EquipApplyRepair: '/api/v1/equipment/equip-apply-repair/',
+  UploadImages: '/api/v1/equipment/upload-images/',
+  GetStaff: '/api/v1/equipment/get-staff/',
+  // 维修工单
+  EquipApplyOrder: '/api/v1/equipment/equip-apply-order/',
+  MultiUpdate: '/api/v1/equipment/equip-apply-order/multi_update/',
+  MaterialReq: '/api/v1/equipment/equip-repair-material-req/',
+  EquipWarehouseInventory: '/api/v1/equipment/equip-warehouse-inventory/', // 备件库存查询
+  // 新建库区库位
+  EquipWarehouseArea: '/api/v1/equipment/equip-warehouse-area/',
+  EquipWarehouseLocation: '/api/v1/equipment/equip-warehouse-location/',
+  // 获取出库单据条码
+  GetOrderId: '/api/v1/equipment/equip-warehouse-order/get_order_id/',
+  // 新建出库单据
+  EquipWarehouseOrder: '/api/v1/equipment/equip-warehouse-order/',
+  EquipWarehouseRecord: '/api/v1/equipment/equip-warehouse-record/', // 备件出入库履历
+  EquipWarehouseStatistical: '/api/v1/equipment/equip-warehouse-statistical/', // 备件入出库统计分析
+  EquipWarehouseOrderDetail: '/api/v1/equipment/equip-warehouse-order-detail/',
+  GetCode: '/api/v1/equipment/equip-warehouse-order/get_code/',
+  EquipCodePrint: '/api/v1/equipment/equip-code-print/'
 }
