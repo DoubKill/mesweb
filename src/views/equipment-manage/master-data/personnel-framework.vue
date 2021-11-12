@@ -71,14 +71,13 @@
           <el-input v-model="dialogForm.name" />
         </el-form-item>
         <el-form-item label="负责人">
-          <el-select v-model="dialogForm.in_charge_user" placeholder="请选择">
+          <el-select v-model="dialogForm.in_charge_user" filterable placeholder="请选择">
             <el-option
               v-for="item in userList"
               :key="item.id"
               :label="item.username"
               :value="item.id"
               :disabled="!item.is_active"
-              filterable
             >
               <span style="float: left">{{ item.username }}</span>
               <span v-if="!item.is_active" style="float: right;">{{ item.is_active?'':'已停用' }}</span>

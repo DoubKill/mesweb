@@ -467,6 +467,14 @@ export function equipBom(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function exchangeLocation(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ExchangeLocation + id + '/' : API.ExchangeLocation,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 export function equipJobItemStandard(method, id, data = {}) {
   const obj = {
     url: id ? API.EquipJobItemStandard + id + '/' : API.EquipJobItemStandard,
