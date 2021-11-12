@@ -500,6 +500,7 @@ export default {
   EquipFaultTypes: '/api/v1/equipment/equip-fault-types/', // 设备故障分类 大分类
   EquipFaultCodes: '/api/v1/equipment/equip-fault-codes/', // 设备故障分类 中分类
   EquipBom: '/api/v1/equipment/equip-bom/',
+  ExchangeLocation: '/api/v1/equipment/equip-bom/exchange_location/', // bom同级上下移动
   EquipJobItemStandard: '/api/v1/equipment/equip-job-item-standard/', // 设备作业项目标准定义
   EquipJobItemStandardImport: '/api/v1/equipment/equip-job-item-standard/import_xlsx/', // 设备作业项目标准定义 导入
   // 供应商管理台账
