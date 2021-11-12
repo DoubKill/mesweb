@@ -10,7 +10,7 @@ export const equipRoutes = [
       icon: 'quality'
     },
     children: [
-      /* {
+      {
         path: '/equipment-home',
         component: () => import('@/views/equipment-manage/operation-status'),
         name: 'EquipmentHome',
@@ -51,7 +51,7 @@ export const equipRoutes = [
             }
           }
         ]
-      },*/
+      },
       {
         path: '/equipment/operation-flow',
         redirect: '/equipment/repair-application',
@@ -144,7 +144,7 @@ export const equipRoutes = [
           // }
         ]
       },
-      /* {
+      {
         path: '/equipment/inspection',
         redirect: '/equipment/assign-patrol',
         component: () => import('@/views/equipment-manage/inspection/a-index'),
@@ -195,7 +195,7 @@ export const equipRoutes = [
             }
           }
         ]
-      },*/
+      },
       {
         path: '/equipment/standard-definition',
         redirect: '/equipment/project-definition',
