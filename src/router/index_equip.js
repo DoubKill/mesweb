@@ -491,7 +491,70 @@ export const equipRoutes = [
             }
           }
         ]
+      },
+      {
+        path: '/equipment/report-form',
+        redirect: '/equipment/supplier',
+        component: () => import('@/views/equipment-manage/report-form/a-index'),
+        name: 'EquipmentReportForm',
+        meta: {
+          title: '统计报表',
+          icon: 'quality'
+        },
+        children: [
+          {
+            path: '/equipment/OEE',
+            component: () => import('@/views/equipment-manage/report-form/OEE'),
+            name: 'EquipmentReportFormOEE',
+            meta: {
+              faName: 'EquipmentReportForm',
+              title: '密炼机 设备OEE分析',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/MTBF-MTTR',
+            component: () => import('@/views/equipment-manage/report-form/MTBF-MTTR'),
+            name: 'EquipmentReportFormMTBFMTTR',
+            meta: {
+              faName: 'EquipmentReportForm',
+              title: 'MTBF/MTTR分析报表',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/detailed',
+            component: () => import('@/views/equipment-manage/report-form/detailed'),
+            name: 'EquipmentReportFormDetailed',
+            meta: {
+              faName: 'EquipmentReportForm',
+              title: '订单明细报表',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/standing-book',
+            component: () => import('@/views/equipment-manage/report-form/standing-book'),
+            name: 'EquipmentReportFormStandingBook',
+            meta: {
+              faName: 'EquipmentReportForm',
+              title: '设备台账报表',
+              permissionName: ''
+            }
+          }
+        ]
       }
     ]
   }
+  // {
+  //   path: '/auto-schedule',
+  //   component: Layout,
+  //   redirect: '/schedule-home',
+  //   name: 'AutoSchedule',
+  //   meta: {
+  //     title: '自动排程',
+  //     icon: 'quality'
+  //   },
+  //   children: []
+  // }
 ]
