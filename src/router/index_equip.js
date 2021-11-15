@@ -541,6 +541,86 @@ export const equipRoutes = [
               title: '设备台账报表',
               permissionName: ''
             }
+          },
+          {
+            path: '/equipment/picking',
+            component: () => import('@/views/equipment-manage/report-form/picking'),
+            name: 'EquipmentReportFormPicking',
+            meta: {
+              faName: 'EquipmentReportForm',
+              title: '领料分析报表',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/order-receiving',
+            component: () => import('@/views/equipment-manage/report-form/order-receiving'),
+            name: 'EquipmentReportFormOrderReceiving',
+            meta: {
+              faName: 'EquipmentReportForm',
+              title: '接单响应时间报表',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/acceptance-time',
+            component: () => import('@/views/equipment-manage/report-form/acceptance-time'),
+            name: 'EquipmentReportFormAcceptance',
+            meta: {
+              faName: 'EquipmentReportForm',
+              title: '验收时间报表',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/order-completed',
+            component: () => import('@/views/equipment-manage/report-form/order-completed'),
+            name: 'EquipmentReportFormOrderCompleted',
+            meta: {
+              faName: 'EquipmentReportForm',
+              title: '订单按时完成率报表',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/obsolescence-rate',
+            component: () => import('@/views/equipment-manage/report-form/obsolescence-rate'),
+            name: 'EquipmentReportFormObsolescenceRate',
+            meta: {
+              faName: 'EquipmentReportForm',
+              title: '交旧率报表',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/fault-cause',
+            component: () => import('@/views/equipment-manage/report-form/fault-cause'),
+            name: 'EquipmentReportFormFaultCause',
+            meta: {
+              faName: 'EquipmentReportForm',
+              title: '故障原因分析报表',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/order-processing',
+            component: () => import('@/views/equipment-manage/report-form/order-processing'),
+            name: 'EquipmentReportFormOrderProcessing',
+            meta: {
+              faName: 'EquipmentReportForm',
+              title: '工单处理时间分析报表',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/energy-consumption',
+            component: () => import('@/views/equipment-manage/report-form/energy-consumption'),
+            name: 'EquipmentReportFormEnergyConsumption',
+            meta: {
+              faName: 'EquipmentReportForm',
+              title: '能耗（电）统计报表',
+              permissionName: ''
+            }
           }
         ]
       }
