@@ -28,7 +28,7 @@ export function send_auxiliary_url(method, data = {}) {
 // SITE(配方)接口函数
 export function SITE_global_url(method, data = {}) {
   const obj = {
-    url: API.SITEGlobalUrl,
+    url: API.SITEGlobalUrl + '?all=1&class_name=SITE',
     method: method
   }
   Object.assign(obj, data)
@@ -37,7 +37,7 @@ export function SITE_global_url(method, data = {}) {
 // 胶料段次接口函数
 export function stage_global_url(method, data = {}) {
   const obj = {
-    url: API.StageGlobalUrl,
+    url: API.StageGlobalUrl + '?all=1&class_name=胶料段次',
     method: method
   }
   Object.assign(obj, data)
@@ -46,7 +46,7 @@ export function stage_global_url(method, data = {}) {
 // 工厂、产地接口函数
 export function site_url(method, data = {}) {
   const obj = {
-    url: API.SiteGlobalUrl,
+    url: API.SiteGlobalUrl + '?all=1&class_name=产地',
     method: method
   }
   Object.assign(obj, data)
@@ -91,7 +91,7 @@ export function materials_url(method, data = {}) {
 // 原材料类型接口函数
 export function materials_type_url(method, data = {}) {
   const obj = {
-    url: API.MaterialTypelUrl,
+    url: API.MaterialTypelUrl + '?all=1&class_name=原材料类别',
     method: method
   }
   Object.assign(obj, data)
