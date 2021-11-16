@@ -564,5 +564,7 @@ export default {
   EquipWarehouseStatistical: '/api/v1/equipment/equip-warehouse-statistical/', // 备件入出库统计分析
   EquipWarehouseOrderDetail: '/api/v1/equipment/equip-warehouse-order-detail/',
   GetCode: '/api/v1/equipment/equip-warehouse-order/get_code/',
-  EquipCodePrint: '/api/v1/equipment/equip-code-print/'
+  EquipCodePrint: '/api/v1/equipment/equip-code-print/',
+  EquipPlan: '/api/v1/equipment/equip-plan/', // 维护计划
+  EquipClosePlan: 'api/v1/equipment/equip-plan/close-plan/'
 }

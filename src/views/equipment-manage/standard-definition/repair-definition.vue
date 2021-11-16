@@ -3,7 +3,7 @@
     <!-- 维修作业标准定义 -->
     <el-form :inline="true" class="search-form-style">
       <el-form-item label="设备种类">
-        <el-select v-model="getParams.equip_type" placeholder="请选择" clearable filterable :disabled="isDialog" @change="changSelect">
+        <el-select v-model="getParams.equip_type" placeholder="请选择" clearable filterable :disabled="isDialog&&params.equip_type?true:false" @change="changSelect">
           <el-option
             v-for="item in options"
             :key="item.category_no"
@@ -682,7 +682,7 @@ export default {
         this.typeForm.equip_component = null
       }
     },
-    async  getList() {
+    async getList() {
       try {
         this.loading = true
         const data = await equipRepairStandard('get', null, { params: this.getParams })
