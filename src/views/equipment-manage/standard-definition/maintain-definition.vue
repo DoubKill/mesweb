@@ -19,7 +19,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="设备种类">
-        <el-select v-model="getParams.equip_type" placeholder="请选择" clearable filterable :disabled="isDialog" @change="changSelect">
+        <el-select v-model="getParams.equip_type" placeholder="请选择" clearable filterable :disabled="isDialog&&params.equip_type?true:false" @change="changSelect">
           <el-option
             v-for="item in options"
             :key="item.category_no"

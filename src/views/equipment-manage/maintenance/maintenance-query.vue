@@ -4,7 +4,7 @@
     <el-form :inline="true">
       <el-form-item label="维护类别">
         <el-select
-          v-model="search.feeding_tye"
+          v-model="search.work_type"
           placeholder="请选择"
           clearable
           @change="changeSearch"
@@ -19,14 +19,15 @@
       </el-form-item>
       <el-form-item label="计划名称">
         <el-input
-          v-model="search.equip_no"
+          v-model="search.plan_name"
+          clearable
           style="width:250px"
-          @input="changeSearch"
+          @input="changeDebounce"
         />
       </el-form-item>
       <el-form-item label="计划日期">
         <el-date-picker
-          v-model="search.dateValue"
+          v-model="search.planned_maintenance_date"
           type="date"
           value-format="yyyy-MM-dd"
           @change="changeSearch"
@@ -34,7 +35,7 @@
       </el-form-item>
       <el-form-item label="来源">
         <el-select
-          v-model="search.feeding_ty"
+          v-model="search.plan_source"
           placeholder="请选择"
           clearable
           @change="changeSearch"
@@ -49,7 +50,7 @@
       </el-form-item>
       <el-form-item label="状态">
         <el-select
-          v-model="search.feeding_type"
+          v-model="search.status"
           placeholder="请选择"
           clearable
           @change="changeSearch"
@@ -64,7 +65,7 @@
       </el-form-item>
       <el-form-item label="设备条件">
         <el-select
-          v-model="search.feeding"
+          v-model="search.equip_condition"
           placeholder="请选择"
           clearable
           @change="changeSearch"
@@ -79,7 +80,7 @@
       </el-form-item>
       <el-form-item label="重要程度">
         <el-select
-          v-model="search.feed"
+          v-model="search.importance_level"
           placeholder="请选择"
           clearable
           @change="changeSearch"
@@ -93,83 +94,89 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary">导出Excel</el-button>
+        <el-button type="primary" :loading="btnExportLoad" @click="templateDownload">导出Excel</el-button>
         <el-button type="primary" @click="changeSearch">查询</el-button>
       </el-form-item>
     </el-form>
     <el-table
+      ref="multipleTable"
+      v-loading="loading"
       :data="tableData"
       row-key="id"
       border
-      @selection-change="handleSelectionChange"
     >
       <el-table-column
-        type="selection"
-        width="40"
-        :reserve-selection="true"
-      />
-      <el-table-column
-        prop="date"
+        prop="work_type"
         label="维护类别"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="plan_id"
         label="计划编号"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="plan_name"
         label="计划名称"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="equip_name"
         label="机台"
         min-width="20"
       />
       <el-table-column
-        prop="date"
         label="维护标准"
         min-width="20"
-      />
+      >
+        <template slot-scope="scope">
+          <el-link
+            v-if="scope.row.repair_standard_name"
+            type="primary"
+          >{{ scope.row.repair_standard_name }}</el-link>
+          <el-link
+            v-if="scope.row.standard_name"
+            type="primary"
+          >{{ scope.row.standard_name }}</el-link>
+        </template>
+      </el-table-column>
       <el-table-column
-        prop="date"
+        prop="equip_condition"
         label="设备条件"
         min-width="20"
       />
       <el-table-column
-        prop="date"
-        label="重要条件"
+        prop="importance_level"
+        label="重要程度"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="plan_source"
         label="来源"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="status"
         label="状态"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="planned_maintenance_date"
         label="计划维护日期"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="next_maintenance_date"
         label="下次维护日期"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="created_username"
         label="创建人"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="created_date"
         label="创建时间"
         min-width="20"
       />
@@ -184,7 +191,9 @@
 </template>
 
 <script>
+import { debounce } from '@/utils'
 import page from '@/components/page'
+import { equipPlan, equipPlanDown } from '@/api/jqy'
 export default {
   name: 'MaintenanceQuery',
   components: { page },
@@ -196,6 +205,8 @@ export default {
       },
       tableData: [],
       total: 0,
+      loading: false,
+      btnExportLoad: false,
       options: ['巡检', '保养', '润滑', '标定'],
       options1: ['自动生成', '人工创建', '故障报修'],
       options2: ['未生成工单', '已生成工单', '计划执行中', '计划已完成'],
@@ -210,23 +221,48 @@ export default {
     this.getList()
   },
   methods: {
-    getList() {
-
+    async getList() {
+      try {
+        this.loading = true
+        const data = await equipPlan('get', null, { params: this.search })
+        this.tableData = data.results || []
+        this.total = data.count
+        this.loading = false
+      } catch (e) {
+        this.loading = false
+      }
+    },
+    changeDebounce() {
+      this.search.page = 1
+      debounce(this, 'getList')
     },
     changeSearch() {
+      this.search.page = 1
       this.getList()
-    },
-    equipSelected(obj) {
-      this.creatOrder.equip_no = obj || null
-      console.log(this.creatOrder.equip_no)
-    },
-    handleSelectionChange(val) {
-      this.multipleSelection = val
     },
     currentChange(page, page_size) {
       this.search.page = page
       this.search.page_size = page_size
       this.getList()
+    },
+    templateDownload() {
+      this.btnExportLoad = true
+      const obj = Object.assign({ export: 1 }, this.search)
+      const _api = equipPlanDown
+      _api(obj)
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '设备维护计划.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
     }
   }
 }

@@ -680,3 +680,30 @@ export function equipCodePrint(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function equipPlan(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipPlan + id + '/' : API.EquipPlan,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipClosePlan(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipClosePlan + id + '/' : API.EquipClosePlan,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipPlanDown(params) {
+  return request({
+    url: API.EquipPlan,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
