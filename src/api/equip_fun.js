@@ -19,7 +19,7 @@ export function category_manage_url(method, id = null, data = {}) {
 // 设备类型接口函数
 export function equip_type_url(method, data = {}) {
   const obj = {
-    url: API.EquipTypeGlobalUrl,
+    url: API.EquipTypeGlobalUrl + '?all=1&class_name=设备类型',
     method: method
   }
   Object.assign(obj, data)
@@ -28,7 +28,7 @@ export function equip_type_url(method, data = {}) {
 // 工序接口函数
 export function process_global_url(method, data = {}) {
   const obj = {
-    url: API.EquipProcessGlobalUrl,
+    url: API.EquipProcessGlobalUrl + '?all=1&class_name=工序',
     method: method
   }
   Object.assign(obj, data)
@@ -53,7 +53,7 @@ export function equip_manage_url(method, id = null, data = {}) {
 // 设备层级(产地)接口函数
 export function equip_level_url(method, data = {}) {
   const obj = {
-    url: API.EquipLevelGlobalUrl,
+    url: API.EquipLevelGlobalUrl + '?all=1&class_name=产地',
     method: method
   }
   Object.assign(obj, data)

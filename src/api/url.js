@@ -9,16 +9,16 @@ export default {
 
   EquipCategoryUrl: BasicsUrl + 'equips-category/',
   // const EquipCategoryUrl : BasicsUrl + "equips-category-list/",
-  EquipTypeGlobalUrl: BasicsUrl + 'global-codes/?all=1&class_name=设备类型',
-  EquipProcessGlobalUrl: BasicsUrl + 'global-codes/?all=1&class_name=工序',
-  EquipLevelGlobalUrl: BasicsUrl + 'global-codes/?all=1&class_name=产地',
-  StateGlobalUrl: BasicsUrl + 'global-codes/?all=1&class_name=胶料状态',
-  SiteGlobalUrl: BasicsUrl + 'global-codes/?all=1&class_name=产地',
-  SITEGlobalUrl: BasicsUrl + 'global-codes/?all=1&class_name=SITE',
-  StageGlobalUrl: BasicsUrl + 'global-codes/?all=1&class_name=胶料段次',
-  DevTypeGlobalUrl: BasicsUrl + 'global-codes/?all=1&class_name=炼胶机类型',
-  MaterialTypelUrl: BasicsUrl + 'global-codes/?all=1&class_name=原材料类别',
-  ClassArrangelUrl: BasicsUrl + 'global-codes/?all=1&class_name=班次',
+  EquipTypeGlobalUrl: BasicsUrl + 'global-codes/',
+  EquipProcessGlobalUrl: BasicsUrl + 'global-codes/',
+  EquipLevelGlobalUrl: BasicsUrl + 'global-codes/',
+  // StateGlobalUrl: BasicsUrl + 'global-codes/?all=1&class_name=胶料状态',
+  SiteGlobalUrl: BasicsUrl + 'global-codes/',
+  SITEGlobalUrl: BasicsUrl + 'global-codes/',
+  StageGlobalUrl: BasicsUrl + 'global-codes/',
+  // DevTypeGlobalUrl: BasicsUrl + 'global-codes/?all=1&class_name=炼胶机类型',
+  MaterialTypelUrl: BasicsUrl + 'global-codes/',
+  ClassArrangelUrl: BasicsUrl + 'global-codes/',
 
   EquipUrl: BasicsUrl + 'equips/',
 
@@ -198,11 +198,11 @@ export default {
 
   StationInfoUrl: '/api/v1/inventory/station-info/',
 
-  StationTypesUrl: BasicsUrl + 'global-codes/?all=1&class_name=站点类型',
+  StationTypesUrl: BasicsUrl + 'global-codes/',
 
   WarehouseMaterialTypeUrl: '/api/v1/inventory/warehouse-material-type/',
 
-  MaterialTypesUrl: BasicsUrl + 'global-codes/?all=1&class_name=原材料类别',
+  MaterialTypesUrl: BasicsUrl + 'global-codes/',
 
   // 批量打印
   LabelPrint: '/api/v1/quality/label-print/',
