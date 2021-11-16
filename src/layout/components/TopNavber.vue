@@ -56,6 +56,12 @@
           </router-link>
           <el-dropdown-item
             divided
+            @click.native="changePassword"
+          >
+            <span style="display:block;">修改密码</span>
+          </el-dropdown-item>
+          <el-dropdown-item
+            divided
             @click.native="logout"
           >
             <span style="display:block;">退 出</span>
@@ -63,6 +69,59 @@
         </el-dropdown-menu>
       </el-dropdown>
     </div>
+
+    <el-dialog
+      title="提示"
+      :visible.sync="dialogVisible"
+      width="500px"
+      :before-close="handleClose"
+    >
+      <el-form
+        ref="loginForm"
+        :model="loginForm"
+        :rules="rules"
+        label-width="120px"
+      >
+        <el-form-item prop="old_password" label="原密码">
+          <el-input
+            v-model="loginForm.old_password"
+            placeholder="原密码"
+            type="password"
+            auto-complete="on"
+            style="width:250px"
+          />
+        </el-form-item>
+        <el-form-item
+          label="新密码"
+          prop="new_password"
+        >
+          <el-input
+            v-model="loginForm.new_password"
+            type="password"
+            placeholder="新密码"
+            style="width:250px"
+            autocomplete="off"
+          />
+        </el-form-item>
+        <el-form-item
+          label="确认密码"
+          prop="checkPass"
+          :rules="{required: true, validator: validatePass2, trigger: 'blur'}"
+        >
+          <el-input
+            v-model="loginForm.checkPass"
+            style="width:250px"
+            placeholder="确认密码"
+            type="password"
+            autocomplete="off"
+          />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleClose(false)">取 消</el-button>
+        <el-button type="primary" :loading="btnLoading" @click="submitChangePassword">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -72,14 +131,46 @@ import { mapGetters } from 'vuex'
 import Hamburger from '@/components/Hamburger'
 import { isExternal } from '@/utils/validate'
 import AppLink from './Sidebar/Link'
+import { changePassword } from '@/api/base_w'
 export default {
   components: {
     Hamburger,
     AppLink
   },
   data() {
+    var validatePass = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('请输入密码'))
+      } else if (this.loginForm.old_password === this.loginForm.new_password) {
+        callback(new Error('新密码和原密码相同!'))
+      } else if (value && (value.length < 3 || value.length > 16)) {
+        callback(new Error('请输入3~16位长度的密码'))
+      } else {
+        callback()
+      }
+    }
+    this.validatePass2 = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('请确认密码'))
+      } else if (value !== this.loginForm.new_password) {
+        callback(new Error('两次输入密码不一致!'))
+      } else {
+        callback()
+      }
+    }
     return {
-      basePath: ''
+      basePath: '',
+      dialogVisible: false,
+      loginForm: {},
+      btnLoading: false,
+      rules: {
+        old_password: [
+          { required: true, validator: validatePass, trigger: 'blur' }
+        ],
+        new_password: [
+          { required: true, validator: validatePass, trigger: 'blur' }
+        ]
+      }
     }
   },
   computed: {
@@ -115,6 +206,37 @@ export default {
     async logout() {
       await this.$store.dispatch('user/logout')
       this.$router.push(`/login`)
+    },
+    changePassword() {
+      this.dialogVisible = true
+    },
+    handleClose(done) {
+      this.loginForm = {}
+      this.$refs.loginForm.clearValidate()
+      this.dialogVisible = false
+      if (done) {
+        done()
+      }
+    },
+    submitChangePassword() {
+      this.$refs.loginForm.validate(async(valid) => {
+        if (valid) {
+          try {
+            this.btnLoading = true
+            await changePassword('post', { data: this.loginForm })
+            this.btnLoading = false
+            this.$message.success('修改成功,请重新登录')
+            setTimeout(async d => {
+              await this.$store.dispatch('user/logout')
+              this.$router.push(`/login`)
+            }, 2000)
+          } catch (e) {
+            this.btnLoading = false
+          }
+        } else {
+          return false
+        }
+      })
     },
     handleSelect(val) {
       this.activeMenu = val
