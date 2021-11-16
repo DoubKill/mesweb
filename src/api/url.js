@@ -28,6 +28,7 @@ export default {
   UsersByGroupUrl: SystemUrl + 'personnels_groups/',
   WorkSchedulesUrl: BasicsUrl + 'work_schedules/',
   GroupAddUserUrl: SystemUrl + 'group_add_user/',
+  ResetPassword: '/api/v1/system/reset-password/',
   MaterialsUrl: '/api/v1/recipe/materials/',
   MaterialInfoIssue: '/api/v1/terminal/material-info-issue/', // 原材料下发至称量系统接口
   ProductInfosUrl: '/api/v1/recipe/product-infos/',

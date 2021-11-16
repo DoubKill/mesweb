@@ -77,6 +77,7 @@ export default {
         text-align: left;
         display: inline-block;
          margin-bottom:15px;
+         border-radius: 15px;
          box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
          width:24%;
          height:180px;
@@ -99,7 +100,7 @@ export default {
     .right-font-style{
       display:flex;
       justify-content: space-around;
-      margin-top:10px
+      margin-top:10px;
     }
     .bottom-font-style{
       margin-left:6px;

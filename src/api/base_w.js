@@ -9,6 +9,14 @@ export function globalCodesUrl(method, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function changePassword(method, data = {}) {
+  const obj = {
+    url: API.ResetPassword,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 export function workSchedulesUrl(method, id, data = {}) {
   const obj = {
     url: id ? API.WorkSchedulesUrl + id + '/' : API.WorkSchedulesUrl,
