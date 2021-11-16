@@ -71,7 +71,7 @@
     </div>
 
     <el-dialog
-      title="提示"
+      title="修改密码"
       :visible.sync="dialogVisible"
       width="500px"
       :before-close="handleClose"
