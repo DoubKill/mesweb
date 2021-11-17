@@ -29,6 +29,7 @@
           />
           <el-table-column
             label="操作"
+            width="220"
           >
             <template slot-scope="scope">
               <el-button-group>
@@ -85,6 +86,7 @@
           />
           <el-table-column
             label="操作"
+            width="220"
           >
             <template slot-scope="scope">
               <el-button-group>
@@ -155,6 +157,8 @@
         <el-form-item v-if="isArea" label="备件分类" prop="equip_component_type">
           <el-select
             v-model="formObj.equip_component_type"
+            clearable
+            multiple
             placeholder="请选择"
           >
             <el-option
@@ -258,8 +262,10 @@ export default {
       }
     },
     handleCurrentChange(row) {
-      this.depot = row.id
-      this.getList1()
+      if (row !== null) {
+        this.depot = row.id
+        this.getList1()
+      }
     },
     async getList1() {
       try {
@@ -273,6 +279,7 @@ export default {
       }
     },
     addArea(bool) {
+      this.formObj = {}
       this.formObj.equip_warehouse_area = this.depot
       this.isArea = bool
       this.dialogVisible = true
@@ -281,6 +288,7 @@ export default {
       this.isArea = bool
       this.dialogVisible = true
       this.formObj = JSON.parse(JSON.stringify(row))
+      this.$set(this.formObj, 'equip_component_type', row.equip_component_type_id)
     },
     delArea(row, bool) {
       this.$confirm('是否确定删除?', '提示', {
