@@ -29,7 +29,7 @@
           />
           <el-table-column
             label="操作"
-            width="220"
+            width="240"
           >
             <template slot-scope="scope">
               <el-button-group>
@@ -51,7 +51,8 @@
                   v-permission="['equip_warehouse', 'printArea']"
                   size="mini"
                   plain
-                  :loading="btnLoading"
+                  :loading="btnLoading&&index===scope.row.id"
+                  :disabled="btnLoading"
                   @click="printingFun(scope.row)"
                 > 打印条码
                 </el-button>
@@ -86,7 +87,7 @@
           />
           <el-table-column
             label="操作"
-            width="220"
+            width="240"
           >
             <template slot-scope="scope">
               <el-button-group>
@@ -107,7 +108,8 @@
                 <el-button
                   v-permission="['equip_warehouse', 'printLocation']"
                   size="mini"
-                  :loading="btnLoading"
+                  :loading="btnLoading&&index===scope.row.id"
+                  :disabled="btnLoading"
                   plain
                   @click="printingFun1(scope.row)"
                 > 打印条码
@@ -200,6 +202,7 @@ export default {
           { required: true, message: '请输入库位', trigger: 'blur' }
         ]
       },
+      index: '',
       options: [],
       loading: false,
       loading1: false,
@@ -234,6 +237,7 @@ export default {
       }
     },
     async printingFun(row) {
+      this.index = row.id
       try {
         this.btnLoading = true
         await equipCodePrint('post', null, { data: { status: 1, code: row.area_barcode, print_type: 1, name: row.area_name }})
@@ -244,6 +248,7 @@ export default {
       }
     },
     async printingFun1(row) {
+      this.index = row.id
       try {
         this.btnLoading = true
         await equipCodePrint('post', null, { data: { status: 1, code: row.location_barcode, print_type: 2, name: row.location_name }})
