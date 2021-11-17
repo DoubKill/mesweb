@@ -566,5 +566,6 @@ export default {
   GetCode: '/api/v1/equipment/equip-warehouse-order/get_code/',
   EquipCodePrint: '/api/v1/equipment/equip-code-print/',
   EquipPlan: '/api/v1/equipment/equip-plan/', // 维护计划
+  EquipGenerateOrder: '/api/v1/equipment/equip-plan/generate-order/',
   EquipClosePlan: 'api/v1/equipment/equip-plan/close-plan/'
 }
