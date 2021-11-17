@@ -5,6 +5,7 @@
       <el-form-item label="维护类别">
         <el-select
           v-model="search.work_type"
+          style="width:150px"
           placeholder="请选择"
           clearable
           @change="changeSearch"
@@ -28,6 +29,7 @@
       <el-form-item label="计划日期">
         <el-date-picker
           v-model="search.planned_maintenance_date"
+          style="width:200px"
           type="date"
           value-format="yyyy-MM-dd"
           @change="changeSearch"
