@@ -690,6 +690,15 @@ export function equipPlan(method, id, data = {}) {
   return request(obj)
 }
 
+export function equipGenerateOrder(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipGenerateOrder + id + '/' : API.EquipGenerateOrder,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function equipClosePlan(method, id, data = {}) {
   const obj = {
     url: id ? API.EquipClosePlan + id + '/' : API.EquipClosePlan,

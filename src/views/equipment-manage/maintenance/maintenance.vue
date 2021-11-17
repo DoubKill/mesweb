@@ -381,7 +381,7 @@
 <script>
 import { debounce } from '@/utils'
 import page from '@/components/page'
-import { equipPlan, getStaff, equipApplyOrder, multiUpdate, equipClosePlan } from '@/api/jqy'
+import { equipPlan, getStaff, multiUpdate, equipClosePlan, equipGenerateOrder } from '@/api/jqy'
 import { getEquip } from '@/api/banburying-performance-manage'
 import RepairDefinition from '../standard-definition/repair-definition'
 import MaintainDefinition from '../standard-definition/maintain-definition'
@@ -472,7 +472,7 @@ export default {
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            equipApplyOrder('post', null, { data: { ids: obj }})
+            equipGenerateOrder('post', null, { data: { ids: obj }})
               .then(response => {
                 this.$message({
                   type: 'success',
@@ -555,7 +555,7 @@ export default {
       if (obj.length > 0) {
         try {
           this.submitAssign = true
-          const pks = await equipApplyOrder('post', null, { data: { ids: obj }})
+          const pks = await equipGenerateOrder('post', null, { data: { ids: obj }})
           await multiUpdate('post', null, { data: { pks: pks, assign_to_user: this.checkList, status: '已指派', opera_type: '指派' }})
           this.$message.success('指派成功')
           this.submitAssign = false
