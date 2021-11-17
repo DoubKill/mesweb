@@ -6,6 +6,7 @@
         <el-select
           v-model="search.work_type"
           placeholder="请选择"
+          style="width:150px"
           clearable
           @change="changeSearch"
         >
@@ -28,6 +29,7 @@
       <el-form-item label="计划日期">
         <el-date-picker
           v-model="search.planned_maintenance_date"
+          style="width:200px"
           type="date"
           value-format="yyyy-MM-dd"
           @change="changeSearch"
@@ -227,6 +229,7 @@
         <el-form-item label="维护计划名称" prop="plan_name">
           <el-input
             v-model="creatOrder.plan_name"
+            style="width:250px"
             placeholder="请输入维护计划名称"
           />
         </el-form-item>
@@ -446,7 +449,15 @@ export default {
     this.getStaff()
   },
   methods: {
-    clear() {
+    async clear() {
+      this.creatOrder.plan_name = ''
+      try {
+        const data = await equipPlan('get', null, { params: { work_type: this.creatOrder.work_type }})
+        console.log(data.plan_name)
+        this.creatOrder.plan_name = data.plan_name
+      } catch (e) {
+        // this.$message.info('获取编号失败')
+      }
       if (this.creatOrder.repair_standard_name) {
         this.creatOrder.repair_standard_name = null
       }
@@ -652,7 +663,7 @@ export default {
       }
     },
     dialog() {
-      this.creatOrder = {}
+      this.creatOrder = { plan_name: '' }
       this.dialogVisible = true
     },
     handleClose(done) {
