@@ -363,7 +363,7 @@
 <script>
 import { debounce } from '@/utils'
 import page from '@/components/page'
-import { equipPlan, equipClosePlan, equipGenerateOrder } from '@/api/jqy'
+import { equipPlan, equipClosePlan, equipGenerateOrder, equipPlanGetName } from '@/api/jqy'
 import { getEquip } from '@/api/banburying-performance-manage'
 import RepairDefinition from '../standard-definition/repair-definition'
 import MaintainDefinition from '../standard-definition/maintain-definition'
@@ -430,8 +430,7 @@ export default {
     async clear() {
       this.creatOrder.plan_name = ''
       try {
-        const data = await equipPlan('get', null, { params: { work_type: this.creatOrder.work_type }})
-        console.log(data.plan_name)
+        const data = await equipPlanGetName('get', null, { params: { work_type: this.creatOrder.work_type }})
         this.creatOrder.plan_name = data.plan_name
       } catch (e) {
         // this.$message.info('获取编号失败')
