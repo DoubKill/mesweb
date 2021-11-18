@@ -60,6 +60,12 @@
             </template>
           </el-table-column>
         </el-table>
+        <page
+          :old-page="false"
+          :total="total"
+          :current-page="getSearch.page"
+          @currentChange="currentChange"
+        />
       </el-col>
       <el-col v-loading="loading1" :span="12">
         <el-button
@@ -118,6 +124,12 @@
             </template>
           </el-table-column>
         </el-table>
+        <page
+          :old-page="false"
+          :total="total1"
+          :current-page="search.page"
+          @currentChange="currentChange1"
+        />
       </el-col>
     </el-row>
 
@@ -182,10 +194,12 @@
 
 <script>
 import { equipWarehouseArea, equipWarehouseLocation, equipSpareErp, equipCodePrint } from '@/api/jqy'
+import page from '@/components/page'
 // import { depot, depotSite } from '@/api/base_w_four'
 import { checkPermission } from '@/utils'
 export default {
   name: 'LocationManagement',
+  components: { page },
   data() {
     return {
       btnLoading: false,
@@ -194,6 +208,7 @@ export default {
       isArea: null,
       formObj: {},
       dialogVisible: false,
+      getSearch: {},
       rules: {
         area_name: [
           { required: true, message: '请输入库区', trigger: 'blur' }
@@ -203,16 +218,13 @@ export default {
         ]
       },
       index: '',
+      search: {},
       options: [],
       loading: false,
       loading1: false,
       loadingBtn: false,
       total: 0,
       total1: 0,
-      pageNo: 1,
-      pageNo1: 1,
-      pageSize: 10,
-      pageSize1: 10,
       depot: null
     }
   },
@@ -226,11 +238,9 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const data = await equipWarehouseArea('get', null, { params: {}})
+        const data = await equipWarehouseArea('get', null, { params: this.getSearch })
         this.tableData = data.results
         this.total = data.count
-        this.$refs.currentRow.setCurrentRow(this.tableData[0])
-        this.depot = this.tableData[0].id
         this.loading = false
       } catch (e) {
         this.loading = false
@@ -269,15 +279,28 @@ export default {
     handleCurrentChange(row) {
       if (row !== null) {
         this.depot = row.id
+        this.search.page = 1
+        this.search.page_size = 10
         this.getList1()
       }
+    },
+    currentChange(page, page_size) {
+      this.getSearch.page = page
+      this.getSearch.page_size = page_size
+      this.getList()
+    },
+    currentChange1(page, page_size) {
+      this.search.page = page
+      this.search.page_size = page_size
+      this.getList1()
     },
     async getList1() {
       try {
         this.loading1 = true
-        const data = await equipWarehouseLocation('get', null, { params: { equip_warehouse_area_id: this.depot }})
+        this.search.equip_warehouse_area_id = this.depot
+        const data = await equipWarehouseLocation('get', null, { params: this.search })
         this.tableData1 = data.results
-        // this.total1 = data.count
+        this.total1 = data.count
         this.loading1 = false
       } catch (e) {
         this.loading1 = false
