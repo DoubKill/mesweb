@@ -584,9 +584,9 @@ export default {
             delete app.userForm.num
           }
           const obj = JSON.parse(JSON.stringify(app.userForm))
-          if (obj.section && obj.section.length > 0) {
+          if (obj.section && obj.section.length > 0 && obj.section instanceof Array) {
             obj.section = obj.section.slice(-1)[0]
-          } else {
+          } else if (!obj.section || obj.section.length === 0) {
             obj.section = ''
           }
           this.btnloading = true
