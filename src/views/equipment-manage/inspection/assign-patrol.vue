@@ -15,58 +15,29 @@
       </el-form-item>
       <el-form-item label="计划名称">
         <el-input
-          v-model="search.equip_no"
+          v-model="search.plan_name"
           style="width:200px"
-          @input="changeSearch"
+          @input="changeDebounce"
         />
       </el-form-item>
       <el-form-item label="机台">
         <equip-select
-          equip-type="密炼设备"
           @equipSelected="equipSelected"
         />
       </el-form-item>
       <el-form-item label="巡检标准">
         <el-input
-          v-model="search.equip"
-          style="width:200px"
-          @input="changeSearch"
-        />
-      </el-form-item>
-      <el-form-item label="状态">
-        <el-select
-          v-model="search.feeding"
-          placeholder="请选择"
-          clearable
-          @change="changeSearch"
-        >
-          <el-option
-            v-for="item in ['已做成', '已接单', '已完成', '已关闭']"
-            :key="item"
-            :label="item"
-            :value="item"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="接单人">
-        <el-input
-          v-model="search.person"
-          style="width:200px"
-          @input="changeSearch"
-        />
-      </el-form-item>
-      <el-form-item label="报修人">
-        <el-input
-          v-model="search.person1"
+          v-model="search.equip_repair_standard_name"
           style="width:200px"
           @input="changeSearch"
         />
       </el-form-item>
       <el-form-item label="设备条件">
         <el-select
-          v-model="search.feedi"
+          v-model="search.equip_condition"
           placeholder="请选择"
           clearable
+          @change="changeSearch"
         >
           <el-option
             v-for="item in ['停机', '不停机']"
@@ -78,7 +49,7 @@
       </el-form-item>
       <el-form-item label="重要程度">
         <el-select
-          v-model="search.feed"
+          v-model="search.importance_level"
           placeholder="请选择"
           clearable
           @change="changeSearch"
@@ -93,15 +64,13 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary" @click="dialog">指派</el-button>
-        <el-button type="primary">接单</el-button>
-        <el-button type="primary">退单</el-button>
-        <el-button type="primary">关闭</el-button>
-        <el-button type="primary">导出Excel</el-button>
-        <el-button type="primary" @click="dialog1">新建</el-button>
+        <el-button type="primary" @click="dialogAssign">指派</el-button>
+        <el-button type="primary" @click="close">关闭</el-button>
       </el-form-item>
     </el-form>
     <el-table
+      ref="multipleTable"
+      v-loading="loading"
       :data="tableData"
       row-key="id"
       border
@@ -113,83 +82,58 @@
         :reserve-selection="true"
       />
       <el-table-column
-        prop="date"
+        prop="plan_id"
         label="计划编号"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="plan_name"
         label="计划名称"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="work_order_no"
         label="工单编号"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="equip_no"
         label="机台"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="equip_repair_standard_name"
         label="巡检标准"
         min-width="20"
       >
         <template slot-scope="scope">
           <el-link
             type="primary"
-          >{{ scope.row.date }}</el-link>
+          >{{ scope.row.equip_repair_standard_name }}</el-link>
         </template>
       </el-table-column>
       <el-table-column
-        prop="date"
+        prop="planned_repair_date"
         label="计划巡检日期"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="equip_condition"
         label="设备条件"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="importance_level"
         label="重要程度"
         min-width="20"
       />
       <el-table-column
-        prop="date"
-        label="指派人"
-        min-width="20"
-      />
-      <el-table-column
-        prop="date"
-        label="指派时间"
-        min-width="20"
-      />
-      <el-table-column
-        prop="date"
-        label="接单人"
-        min-width="20"
-      />
-      <el-table-column
-        prop="date"
-        label="接单时间"
-        min-width="20"
-      />
-      <el-table-column
-        prop="date"
-        label="状态"
-        min-width="20"
-      />
-      <el-table-column
-        prop="date"
+        prop="created_username"
         label="录入人"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="created_date"
         label="录入时间"
         min-width="20"
       />
@@ -207,11 +151,11 @@
     >
       <el-form :inline="true" label-width="120px">
         <el-form-item style="" prop="checkList">
+          <span v-if="bz">作业标准人数：{{ bz }}</span>
           <el-checkbox-group v-model="checkList">
-            <el-checkbox label="张三" />
-            <el-checkbox label="李四" />
-            <el-checkbox label="王五" />
-            <el-checkbox label="赵六" />
+            <template v-for="(item, index) in staffList">
+              <el-checkbox :key="index" :label="item.username" :disabled="!item.optional" />
+            </template>
           </el-checkbox-group>
         </el-form-item>
       </el-form>
@@ -220,82 +164,14 @@
         <el-button :loading="submit" type="primary" @click="generateFun">确 定</el-button>
       </span>
     </el-dialog>
-    <el-dialog
-      title="新建巡检工单"
-      :visible.sync="dialogVisible1"
-      width="30%"
-    >
-      <el-form :inline="true" label-width="150px">
-        <el-form-item label="巡检计划名称" style="" prop="checkList">
-          <el-input
-            v-model="creatOrder.equip_no"
-            style="width:250px"
-          />
-        </el-form-item>
-        <el-form-item label="机台">
-          <equip-select
-            equip-type="密炼设备"
-            @equipSelected="equipSelected"
-          />
-        </el-form-item>
-        <el-form-item label="适用维修标准">
-          <el-input
-            v-model="creatOrder.material_name"
-            style="width:250px"
-          >
-            <el-button
-              slot="append"
-              icon="el-icon-search"
-            />
-          </el-input>
-        </el-form-item>
-        <el-form-item label="巡检日期">
-          <el-date-picker
-            v-model="creatOrder.dateValue"
-            type="date"
-            value-format="yyyy-MM-dd"
-          />
-        </el-form-item>
-        <el-form-item label="设备条件">
-          <el-select
-            v-model="creatOrder.feedi"
-            placeholder="请选择"
-            clearable
-          >
-            <el-option
-              v-for="item in ['停机', '不停机']"
-              :key="item"
-              :label="item"
-              :value="item"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="重要程度">
-          <el-select
-            v-model="creatOrder.feed"
-            placeholder="请选择"
-            clearable
-            @change="changeSearch"
-          >
-            <el-option
-              v-for="item in ['高', '中', '低']"
-              :key="item"
-              :label="item"
-              :value="item"
-            />
-          </el-select>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="handleClose1(false)">取 消</el-button>
-        <el-button :loading="submit" type="primary" @click="generateFun1">确 定</el-button>
-      </span>
-    </el-dialog>
+
   </div>
 </template>
 
 <script>
+import { debounce } from '@/utils'
 import page from '@/components/page'
+import { equipInspectionOrder, multiUpdateInspection, getStaff } from '@/api/jqy'
 import EquipSelect from '@/components/EquipSelect/index'
 export default {
   name: 'AssignPatrol',
@@ -307,46 +183,116 @@ export default {
         page_size: 10
       },
       dateValue: [],
+      bz: '',
+      rules: {
+        plan_name: [
+          { required: true, message: '不能为空', trigger: 'blur' }
+        ],
+        equip_no: [
+          { required: true, message: '不能为空', trigger: 'change' }
+        ],
+        planned_repair_date: [
+          { required: true, message: '不能为空', trigger: 'change' }
+        ],
+        equip_repair_standard_name: [
+          { required: true, message: '不能为空', trigger: 'change' }
+        ],
+        importance_level: [
+          { required: true, message: '不能为空', trigger: 'change' }
+        ],
+        equip_condition: [
+          { required: true, message: '不能为空', trigger: 'change' }
+        ]
+      },
       tableData: [],
+      staffList: [],
       total: 0,
+      loading: false,
       checkList: [],
       multipleSelection: [],
       dialogVisible: false,
-      dialogVisible1: false,
       submit: false,
       creatOrder: {}
     }
   },
   created() {
     this.getList()
+    this.getStaff()
   },
   methods: {
     generateFun(obj) {
       this.dialogVisible = true
       console.log(obj, 'obj')
     },
-    generateFun1(obj) {
-      this.dialogVisible1 = true
-      console.log(obj, 'obj')
+    async close() {
+      if (this.multipleSelection.length > 0) {
+        if (this.multipleSelection.every(d => d.status === '已生成')) {
+          const obj = []
+          this.multipleSelection.forEach(d => {
+            obj.push(d.id)
+          })
+          this.$confirm('此操作将关闭工单是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            multiUpdateInspection('post', null, { data: { pks: obj, status: '已关闭', opera_type: '关闭' }})
+              .then(response => {
+                this.$message({
+                  type: 'success',
+                  message: '关闭成功'
+                })
+                this.$refs.multipleTable.clearSelection()
+                this.getList()
+              })
+          })
+        } else {
+          this.$message.info('请勾选已生成状态列表')
+        }
+      } else {
+        this.$message.info('请先勾选工单列表')
+      }
+    },
+    async getStaff() {
+      try {
+        const data = await getStaff('get', null, { params: {}})
+        this.staffList = data.results || []
+      } catch (e) {
+        //
+      }
+    },
+    changeDebounce() {
+      this.search.page = 1
+      debounce(this, 'getList')
     },
     changeDate() {
 
     },
-    getList() {
-
+    async getList() {
+      try {
+        this.loading = true
+        const data = await equipInspectionOrder('get', null, { params: this.search })
+        this.tableData = data.results || []
+        this.total = data.count
+        this.loading = false
+      } catch (e) {
+        this.loading = false
+      }
     },
     changeSearch() {
+      this.search.page = 1
       this.getList()
     },
     equipSelected(obj) {
-      this.creatOrder.equip_no = obj || null
-      console.log(this.creatOrder.equip_no)
+      this.search.equip_no = obj ? obj.equip_no : null
+      this.changeSearch()
     },
-    dialog() {
+    dialogAssign() {
       this.dialogVisible = true
     },
-    dialog1() {
-      this.dialogVisible1 = true
+    dialogAdd() {
+      this.creatOrder = { equip_condition: '不停机', importance_level: '中' }
+      this.dialogVisibleAdd = true
     },
     handleClose(done) {
       this.dialogVisible = false
@@ -354,8 +300,9 @@ export default {
         done()
       }
     },
-    handleClose1(done) {
-      this.dialogVisible1 = false
+    handleCloseAdd(done) {
+      this.$refs.ruleFormHandle.resetFields()
+      this.dialogVisibleAdd = false
       if (done) {
         done()
       }

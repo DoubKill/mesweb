@@ -567,5 +567,7 @@ export default {
   EquipCodePrint: '/api/v1/equipment/equip-code-print/',
   EquipPlan: '/api/v1/equipment/equip-plan/', // 维护计划
   EquipGenerateOrder: '/api/v1/equipment/equip-plan/generate-order/',
-  EquipClosePlan: 'api/v1/equipment/equip-plan/close-plan/'
+  EquipClosePlan: '/api/v1/equipment/equip-plan/close-plan/',
+  EquipInspectionOrder: '/api/v1/equipment/equip-inspection-order/', // 巡检工单
+  MultiUpdateInspection: '/api/v1/equipment/equip-inspection-order/multi_update/'
 }

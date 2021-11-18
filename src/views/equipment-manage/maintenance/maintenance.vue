@@ -96,7 +96,6 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="dialogAssign">指派计划</el-button>
         <el-button type="primary" @click="close">关闭计划</el-button>
         <el-button type="primary" @click="generate">生成工单</el-button>
         <el-button type="primary" @click="dialog">新建</el-button>
@@ -249,7 +248,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item v-if="creatOrder.work_type !=='计划维修'" label="维护标准" prop="standard_name">
+        <el-form-item v-if="creatOrder.work_type !=='维修'" label="维护标准" prop="standard_name">
           <el-input
             v-model="creatOrder.standard_name"
             style="width:250px"
@@ -262,7 +261,7 @@
             />
           </el-input>
         </el-form-item>
-        <el-form-item v-if="creatOrder.work_type ==='计划维修'" label="维护标准" prop="repair_standard_name">
+        <el-form-item v-if="creatOrder.work_type ==='维修'" label="维护标准" prop="repair_standard_name">
           <el-input
             v-model="creatOrder.repair_standard_name"
             style="width:250px"
@@ -358,33 +357,13 @@
         <el-button type="primary" @click="submitFunwork">确 定</el-button>
       </span>
     </el-dialog>
-
-    <el-dialog
-      title="指派工单"
-      :visible.sync="dialogVisibleAssign"
-      width="30%"
-    >
-      <el-form :inline="true" label-width="120px">
-        <el-form-item style="" prop="checkList">
-          <el-checkbox-group v-model="checkList">
-            <template v-for="(item, index) in staffList">
-              <el-checkbox :key="index" :label="item.username" :disabled="!item.optional" />
-            </template>
-          </el-checkbox-group>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisibleAssign = false">取 消</el-button>
-        <el-button :loading="submitAssign" type="primary" @click="generateAssign">确 定</el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 
 <script>
 import { debounce } from '@/utils'
 import page from '@/components/page'
-import { equipPlan, getStaff, multiUpdate, equipClosePlan, equipGenerateOrder } from '@/api/jqy'
+import { equipPlan, equipClosePlan, equipGenerateOrder } from '@/api/jqy'
 import { getEquip } from '@/api/banburying-performance-manage'
 import RepairDefinition from '../standard-definition/repair-definition'
 import MaintainDefinition from '../standard-definition/maintain-definition'
@@ -400,7 +379,7 @@ export default {
       tableData: [],
       checkList: [],
       total: 0,
-      options: ['巡检', '保养', '润滑', '标定', '计划维修'],
+      options: ['巡检', '保养', '润滑', '标定', '维修'],
       options1: ['自动生成', '人工创建', '故障报修'],
       options2: ['未生成工单', '已生成工单', '计划执行中', '计划已完成'],
       options3: ['停机', '不停机'],
@@ -446,7 +425,6 @@ export default {
   },
   created() {
     this.getList()
-    this.getStaff()
   },
   methods: {
     async clear() {
@@ -529,56 +507,12 @@ export default {
         this.$message.info('请先勾选计划列表')
       }
     },
-    async getStaff() {
-      try {
-        this.loading = true
-        const data = await getStaff('get', null, { params: { }})
-        this.staffList = data.results || []
-      } catch (e) {
-        //
-      }
-    },
     visibleChange(visible) {
       if (visible && this.equipOptions.length === 0) {
         const obj = { all: 1 }
         getEquip(obj).then(response => {
           this.equipOptions = response.results
         })
-      }
-    },
-    dialogAssign() {
-      if (this.multipleSelection.length > 0) {
-        if (this.multipleSelection.every(d => d.status === '未生成工单')) {
-          this.checkList = []
-          this.dialogVisibleAssign = true
-        } else {
-          this.$message.info('请先未生成工单计划列表')
-        }
-      } else {
-        this.$message.info('请先勾选计划列表')
-      }
-    },
-    async generateAssign() {
-      const obj = []
-      this.multipleSelection.forEach(d => {
-        obj.push(d.id)
-      })
-      if (obj.length > 0) {
-        try {
-          this.submitAssign = true
-          const pks = await equipGenerateOrder('post', null, { data: { ids: obj }})
-          await multiUpdate('post', null, { data: { pks: pks, assign_to_user: this.checkList, status: '已指派', opera_type: '指派' }})
-          this.$message.success('指派成功')
-          this.submitAssign = false
-          this.dialogVisibleAssign = false
-          this.$refs.multipleTable.clearSelection()
-          this.getList()
-        } catch (e) {
-          this.submitAssign = false
-          this.dialogVisibleAssign = true
-        }
-      } else {
-        this.$message.info('请选择指派人员')
       }
     },
     changeDebounce() {
@@ -622,7 +556,7 @@ export default {
     AddDefinition() {
       if (!this.creatOrder.work_type) {
         this.$message.info('请先选择维护类别')
-      } else if (this.creatOrder.work_type === '计划维修') {
+      } else if (this.creatOrder.work_type === '维修') {
         this.dialogVisibleRepair = true
       } else {
         this.dialogVisibleWork = true
