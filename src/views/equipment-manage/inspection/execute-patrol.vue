@@ -2,7 +2,7 @@
   <div>
     <!-- 执行巡检工单 -->
     <el-form :inline="true">
-      <el-form-item label="计划巡检时间">
+      <el-form-item label="计划巡检日期">
         <el-date-picker
           v-model="dateValue"
           type="daterange"
@@ -15,54 +15,36 @@
       </el-form-item>
       <el-form-item label="计划名称">
         <el-input
-          v-model="search.equip_no"
+          v-model="search.plan_name"
           style="width:200px"
-          @input="changeSearch"
+          clearable
+          @input="changeDebounce"
         />
       </el-form-item>
       <el-form-item label="机台">
         <equip-select
-          equip-type="密炼设备"
+          style="width:100px"
           @equipSelected="equipSelected"
         />
       </el-form-item>
       <el-form-item label="巡检标准">
         <el-input
-          v-model="search.equip1"
+          v-model="search.equip_repair_standard"
           style="width:200px"
-          @input="changeSearch"
-        />
-      </el-form-item>
-      <el-form-item label="状态">
-        <el-select
-          v-model="search.feeding"
-          placeholder="请选择"
           clearable
-          @change="changeSearch"
-        >
-          <el-option
-            v-for="item in options2"
-            :key="item"
-            :label="item"
-            :value="item"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="接单人">
-        <el-input
-          v-model="search.person"
-          style="width:200px"
-          @input="changeSearch"
+          @input="changeDebounce"
         />
       </el-form-item>
       <el-form-item label="设备条件">
         <el-select
-          v-model="search.feedi"
+          v-model="search.equip_condition"
           placeholder="请选择"
+          style="width:150px"
           clearable
+          @change="changeSearch"
         >
           <el-option
-            v-for="item in options3"
+            v-for="item in ['停机', '不停机']"
             :key="item"
             :label="item"
             :value="item"
@@ -71,30 +53,30 @@
       </el-form-item>
       <el-form-item label="重要程度">
         <el-select
-          v-model="search.feed"
+          v-model="search.importance_level"
           placeholder="请选择"
+          style="width:100px"
           clearable
           @change="changeSearch"
         >
           <el-option
-            v-for="item in options4"
+            v-for="item in ['高', '中', '低']"
             :key="item"
             :label="item"
             :value="item"
           />
         </el-select>
       </el-form-item>
-      <el-form-item>
-        <el-button type="primary">导出Excel</el-button>
-      </el-form-item>
     </el-form>
     <el-table
+      v-loading="loading"
+      size="mini"
       :data="tableData"
       border
     >
       <el-table-column
         label="操作"
-        width="230"
+        width="140"
       >
         <template slot-scope="scope">
           <el-button-group>
@@ -109,107 +91,112 @@
               @click="dialog(scope.row,'处理巡检工单')"
             >处理
             </el-button>
-            <el-button
-              type="primary"
-              size="mini"
-              @click="dialog(scope.row,'查看处理结果')"
-            >查看处理结果
-            </el-button></el-button-group>
+          </el-button-group>
         </template>
       </el-table-column>
       <el-table-column
-        prop="date"
+        prop="plan_id"
         label="计划编号"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="plan_name"
         label="计划名称"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="work_order_no"
         label="工单编号"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="equip_no"
         label="机台"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="equip_repair_standard_name"
         label="巡检标准"
         min-width="20"
       >
         <template slot-scope="scope">
           <el-link
             type="primary"
-          >{{ scope.row.date }}</el-link>
+          >{{ scope.row.equip_repair_standard_name }}</el-link>
         </template>
       </el-table-column>
       <el-table-column
-        prop="date"
+        prop="planned_repair_date"
         label="计划巡检日期"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="equip_condition"
         label="设备条件"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="importance_level"
         label="重要程度"
         min-width="20"
       />
       <el-table-column
-        prop="date"
-        label="指派人"
-        min-width="20"
-      />
-      <el-table-column
-        prop="date"
-        label="指派时间"
-        min-width="20"
-      />
-      <el-table-column
-        prop="date"
-        label="接单人"
-        min-width="20"
-      />
-      <el-table-column
-        prop="date"
-        label="接单时间"
-        min-width="20"
-      />
-      <el-table-column
-        prop="date"
-        label="巡检人"
-        min-width="20"
-      />
-      <el-table-column
-        prop="date"
-        label="巡检开始时间"
-        min-width="20"
-      />
-      <el-table-column
-        prop="date"
-        label="巡检结束时间"
-        min-width="20"
-      />
-      <el-table-column
-        prop="date"
+        prop="status"
         label="状态"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="assign_user"
+        label="指派人"
+        min-width="20"
+      />
+      <el-table-column
+        prop="assign_datetime"
+        label="指派时间"
+        min-width="20"
+      />
+      <el-table-column
+        prop="assign_to_user"
+        label="被指派人"
+        min-width="20"
+      />
+      <el-table-column
+        prop="receiving_user"
+        label="接单人"
+        min-width="20"
+      />
+      <el-table-column
+        prop="receiving_datetime"
+        label="接单时间"
+        min-width="20"
+      />
+      <el-table-column
+        prop="repair_user"
+        label="巡检人"
+        min-width="20"
+      />
+      <el-table-column
+        prop="repair_start_datetime"
+        label="巡检开始时间"
+        min-width="20"
+      />
+      <el-table-column
+        prop="repair_end_datetime"
+        label="巡检结束时间"
+        min-width="20"
+      />
+      <el-table-column
+        prop="status"
+        label="状态"
+        min-width="20"
+      />
+      <el-table-column
+        prop="created_username"
         label="录入人"
         min-width="20"
       />
       <el-table-column
-        prop="date"
+        prop="created_date"
         label="录入时间"
         min-width="20"
       />
@@ -221,42 +208,118 @@
       @currentChange="currentChange"
     />
     <el-dialog
+      :before-close="handleClose"
       :title="operateType"
       :visible.sync="dialogVisible"
-      width="30%"
+      width="50%"
     >
-      <el-form :inline="true" label-width="150px">
-        <el-form-item label="巡检计划名称" style="" prop="checkList">
+      <el-form
+        ref="ruleFormHandle"
+        :model="creatOrder"
+        :rules="rules"
+        label-width="150px"
+      >
+        <el-form-item label="巡检计划名称">
           <el-input
-            v-model="creatOrder.equip_no"
+            v-model="creatOrder.plan_name"
             style="width:250px"
-            :disabled="true"
+            disabled
           />
         </el-form-item>
-        <el-form-item label="工单编号" style="" prop="checkList">
+        <el-form-item label="工单编号">
           <el-input
-            v-model="creatOrder.equip_no"
-            :disabled="true"
-            style="width:250px"
-          />
-        </el-form-item>
-        <el-form-item label="机台" style="" prop="checkList">
-          <el-input
-            v-model="creatOrder.equip_no"
-            :disabled="true"
+            v-model="creatOrder.work_order_no"
+            disabled
             style="width:250px"
           />
         </el-form-item>
-        <el-form-item label="巡检标准" style="" prop="checkList">
+        <el-form-item label="机台">
           <el-input
             v-model="creatOrder.equip_no"
-            :disabled="true"
+            disabled
+            style="width:250px"
           />
         </el-form-item>
-        <el-form-item label="巡检备注" prop="note">
+        <el-form-item label="巡检标准">
           <el-input
-            v-model="creatOrder.note"
-            :disabled="operateType==='查看处理结果'"
+            v-model="creatOrder.equip_repair_standard_name"
+            style="width:250px"
+            disabled
+          />
+        </el-form-item>
+        <el-form-item>
+          <el-table
+            :data="creatOrder.work_content"
+            border
+            style="width: 651px"
+          >
+            <el-table-column
+              label="序号"
+              prop="job_item_sequence"
+              width="50"
+            />
+            <el-table-column
+              prop="job_item_content"
+              label="作业明细"
+              width="200"
+            />
+            <el-table-column
+              prop="job_item_check_standard"
+              label="判断标准"
+              width="200"
+            />
+            <el-table-column
+              prop="operation_result"
+              label="处理结果"
+              width="200"
+            >
+              <template slot-scope="{row}">
+                <div v-if="row.job_item_check_type==='有无'">
+                  <el-switch
+                    v-model="row.operation_result"
+                    active-value="无"
+                    inactive-value="有"
+                    active-text="无"
+                    inactive-text="有"
+                  />
+                </div>
+                <div v-if="row.job_item_check_type==='正常异常'">
+                  <el-switch
+                    v-model="row.operation_result"
+                    active-value="正常"
+                    inactive-value="异常"
+                    active-text="正常"
+                    inactive-text="异常"
+                  />
+                </div>
+                <div v-if="row.job_item_check_type==='完成未完成'">
+                  <el-switch
+                    v-model="row.operation_result"
+                    active-value="完成"
+                    inactive-value="未完成"
+                    active-text="完成"
+                    inactive-text="未完成"
+                  />
+                </div>
+                <div v-if="row.job_item_check_type==='合格不合格'">
+                  <el-switch
+                    v-model="row.operation_result"
+                    active-value="合格"
+                    inactive-value="不合格"
+                    active-text="合格"
+                    inactive-text="不合格"
+                  />
+                </div>
+                <div v-if="row.job_item_check_type==='数值范围'">
+                  <el-input-number v-model="row.operation_result" style="width:120px" controls-position="right" :min="1" :max="99999" />
+                </div>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-form-item>
+        <el-form-item label="巡检备注" prop="result_repair_desc">
+          <el-input
+            v-model="creatOrder.result_repair_desc"
             type="textarea"
             style="width:250px"
             :rows="3"
@@ -265,7 +328,6 @@
         </el-form-item>
         <el-form-item label="上传图片">
           <el-upload
-            v-if="operateType==='处理巡检工单'"
             ref="elUploadImg"
             action=""
             :auto-upload="false"
@@ -273,240 +335,130 @@
             :on-preview="handlePictureCardPreview"
             :on-change="onChangeImg"
             :on-exceed="onExceed"
-            :limit="1"
+            :limit="5"
           >
             <i class="el-icon-plus" />
           </el-upload>
-          <el-image
-            v-else
-            style="width: 100px; height: 100px"
-            :src="creatOrder.image"
-            :preview-src-list="[creatOrder.image]"
-          >
-            <div slot="error" class="image-slot">
-              暂无图片
-            </div>
-          </el-image>
-          <el-dialog :visible.sync="dialogVisibleImg" append-to-body>
-            <img width="100%" :src="dialogImageUrl" alt="">
-          </el-dialog>
         </el-form-item>
-        <el-form-item label="巡检结论">
-          <el-radio-group v-model="creatOrder.radio1" :disabled="operateType==='查看处理结果'">
-            <el-radio label="1">正常</el-radio>
-            <el-radio label="2">不正常</el-radio>
+        <el-form-item label="巡检结论" prop="result_repair_final_result">
+          <el-radio-group v-model="creatOrder.result_repair_final_result">
+            <el-radio label="正常">正常</el-radio>
+            <el-radio label="不正常">不正常</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button v-if="operateType==='处理巡检工单'" type="primary">报修申请</el-button>
+        <el-button type="primary" @click="dialogApplication">报修申请</el-button>
         <el-button type="primary" @click="handleClose(false)">取 消</el-button>
-        <el-button v-if="operateType==='处理巡检工单'" :loading="submit" type="primary" @click="generateFun">确 定</el-button>
+        <el-button :loading="submit" type="primary" @click="generateFun">确 定</el-button>
       </span>
     </el-dialog>
+
     <el-dialog
-      title="维修物料申请"
-      :visible.sync="dialogVisible1"
-      width="70%"
+      :before-close="handleCloseApplication"
+      title="报修申请"
+      :visible.sync="dialogVisibleApplication"
     >
-      <el-form :inline="true">
-        <el-form-item label="领料申请单号">
-          <el-input :disabled="true" />
-        </el-form-item>
-        <el-form-item label="单据状态">
-          <el-input :disabled="true" />
-        </el-form-item>
-        <el-form-item style="float:right">
-          <el-button type="primary" @click="dialogSelect">添加</el-button>
-        </el-form-item>
-      </el-form>
-      <el-table
-        v-loading="loadingView"
-        :data="tableDataView"
-        border
-      >
-        <el-table-column
-          prop="order_no"
-          label="物料编码"
-          min-width="20"
-        />
-        <el-table-column
-          prop="sub_no"
-          label="物料名称"
-          min-width="20"
-        />
-        <el-table-column
-          prop="date"
-          label="备件分类"
-          min-width="20"
-        />
-        <el-table-column
-          prop="date"
-          label="规格型号"
-          min-width="20"
-        />
-        <el-table-column
-          prop="date"
-          label="技术参数"
-          min-width="20"
-        />
-        <el-table-column
-          prop="date"
-          label="标准单位"
-          min-width="20"
-        />
-        <el-table-column
-          prop="date"
-          label="库存数量"
-          min-width="20"
-        />
-        <el-table-column
-          prop="date"
-          label="领料数量"
-          min-width="20"
-        />
-        <el-table-column
-          prop="date"
-          label="是否交旧"
-          min-width="20"
-        >
-          <template slot-scope="{row}">
-            <el-checkbox v-model="row.checked" />
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="操作"
-          width="85"
-        >
-          <template slot-scope="{row}">
-            <el-button type="danger" @click="deleteList(row)">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="handleClose1(false)">取 消</el-button>
-        <el-button :loading="submit" type="primary" @click="generateFun1">确 定</el-button>
-      </span>
-    </el-dialog>
-    <el-dialog
-      title="备品备件库物料选择"
-      :visible.sync="dialogVisibleSelect"
-      width="70%"
-    >
-      <el-form :inline="true">
-        <el-form-item label="物料编码">
-          <el-input />
-        </el-form-item>
-        <el-form-item label="物料名称">
-          <el-input />
-        </el-form-item>
-      </el-form>
-      <el-table
-        :data="tableDataView1"
-        row-key="id"
-        border
-        @selection-change="handleSelectionChange"
-      >
-        <el-table-column
-          type="selection"
-          width="40"
-          :reserve-selection="true"
-        />
-        <el-table-column
-          prop="order_no"
-          label="物料编码"
-          min-width="20"
-        />
-        <el-table-column
-          prop="sub_no"
-          label="物料名称"
-          min-width="20"
-        />
-        <el-table-column
-          prop="date"
-          label="备件分类"
-          min-width="20"
-        />
-        <el-table-column
-          prop="date"
-          label="规格型号"
-          min-width="20"
-        />
-        <el-table-column
-          prop="date"
-          label="技术参数"
-          min-width="20"
-        />
-        <el-table-column
-          prop="date"
-          label="标准单位"
-          min-width="20"
-        />
-        <el-table-column
-          prop="date"
-          label="库存数量"
-          min-width="20"
-        />
-      </el-table>
-      <page
-        :old-page="false"
-        :total="total"
-        :current-page="search.page"
-        @currentChange="currentChange"
+      <application
+        ref="List"
+        :show="dialogVisibleApplication"
       />
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleCloseSelect(false)">取 消</el-button>
-        <el-button :loading="submit" type="primary" @click="generateFunSelect">确 定</el-button>
+        <el-button type="primary" @click="handleCloseApplication(false)">取 消</el-button>
+        <el-button :loading="btnLoading" type="primary" @click="generateFunApplication">确 定</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import { debounce } from '@/utils'
 import page from '@/components/page'
+import { mapGetters } from 'vuex'
+import application from '../components/application-dialog'
+import { equipInspectionOrder, multiUpdateInspection, uploadImages, equipApplyRepair } from '@/api/jqy'
 import EquipSelect from '@/components/EquipSelect/index'
 export default {
   name: 'ExecutePatrol',
-  components: { EquipSelect, page },
+  components: { EquipSelect, page, application },
   data() {
     return {
       search: {
+        my_order: 1,
         page: 1,
         page_size: 10
       },
       dateValue: [],
-      tableData: [{ date: '1' }],
+      tableData: [],
+      loading: false,
+      dialogVisibleApplication: false,
       total: 0,
-      options1: ['巡检', '生产', '其他'],
-      options2: ['已做成', '已接单', '等待物料', '等待外协维修', '已完成', '已关闭'],
-      options3: ['停机', '不停机'],
-      options4: ['高', '中', '低'],
+      rules: {
+        result_repair_final_result: [
+          { required: true, message: '不能为空', trigger: 'blur' }
+        ]
+      },
       multipleSelection: [],
       dialogImageUrl: '',
-      loadingView: false,
-      tableDataView: [],
-      tableDataView1: [],
       operateType: '',
+      btnLoading: false,
       dialogVisible: false,
-      dialogVisible1: false,
-      dialogVisibleSelect: false,
       submit: false,
-      dialogVisibleImg: false,
-      creatOrder: { radio: '' }
+      creatOrder: {}
     }
+  },
+  computed: {
+    ...mapGetters([
+      'name'
+    ])
   },
   created() {
     this.getList()
   },
   methods: {
-    changeDate() {
-
+    changeDebounce() {
+      debounce(this, 'changeSearch')
     },
-    getList() {
-
+    changeDate(date) {
+      this.search.planned_repair_date_after = date ? date[0] : ''
+      this.search.planned_repair_date_before = date ? date[1] : ''
+      this.changeSearch()
     },
-    start() {
-
+    async getList() {
+      try {
+        this.loading = true
+        const data = await equipInspectionOrder('get', null, { params: this.search })
+        this.tableData = data.results || []
+        this.total = data.count
+        this.loading = false
+      } catch (e) {
+        this.loading = false
+      }
+    },
+    start(row) {
+      const obj = []
+      obj.push(row.id)
+      if (row.status === '已接单') {
+        this.$confirm('此操作将开始巡检此工单是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          multiUpdateInspection('post', null, { data: { pks: obj, status: '已开始', opera_type: '开始' }})
+            .then(response => {
+              this.$message({
+                type: 'success',
+                message: '开始工单成功'
+              })
+              this.getList()
+            })
+        })
+      } else {
+        this.$message({
+          type: 'info',
+          message: '只能开始已接单工单'
+        })
+      }
     },
     deleteList(row) {
       console.log(row)
@@ -515,9 +467,9 @@ export default {
       this.getList()
     },
     onExceed() {
-      this.$message.info('最多上传一张图片')
+      this.$message.info('最多上传五张图片')
     },
-    onChangeImg(file, fileList) {
+    async onChangeImg(file, fileList) {
       const isJPG = ['image/jpeg', 'image/jpg', 'image/png'].includes(file.raw.type)
       const isLt2M = file.size / 1024 / 1024 < 2
       if (!isJPG) {
@@ -530,54 +482,106 @@ export default {
         fileList.pop()
         return
       }
-      this.$set(this.creatOrder, 'image', file.raw)
+      const picture = new FormData()
+      picture.append('image_file_name', file.raw)
+      picture.append('source_type', '巡检')
+      const data = await uploadImages('post', null, { data: picture })
+      this.creatOrder.image_url_list.push(data.image_file_name)
     },
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url
-      this.dialogVisibleImg = true
     },
     equipSelected(obj) {
-      this.creatOrder.equip_no = obj || null
-      console.log(this.creatOrder.equip_no)
+      this.$set(this.search, 'equip_no', obj ? obj.equip_no : '')
+      this.changeSearch()
+    },
+    dialogApplication() {
+      this.dialogVisibleApplication = true
+    },
+    handleCloseApplication() {
+      if (this.$refs['List'].$refs.elUploadImg) {
+        this.$refs['List'].$refs.elUploadImg.clearFiles()
+      }
+      this.$refs['List'].$refs.ruleFormHandle.resetFields()
+      this.dialogVisibleApplication = false
+      this.$refs['List'].disable = false
+    },
+    generateFunApplication() {
+      this.$refs['List'].$refs.ruleFormHandle.validate(async(valid) => {
+        if (valid) {
+          try {
+            delete this.$refs['List'].ruleForm.apply_repair_graph_url
+            if (this.$refs['List'].ruleForm.equip_condition === true) {
+              this.ruleForm.equip_condition = '停机'
+            } else {
+              this.$refs['List'].ruleForm.equip_condition = '不停机'
+            }
+            this.btnLoading = true
+            await equipApplyRepair('post', null, { data: this.$refs['List'].ruleForm })
+            this.$message.success('操作成功')
+            this.handleCloseApplication(null)
+            this.btnLoading = false
+            this.$refs['List'].disable = false
+          } catch (e) {
+            this.btnLoading = false
+            this.$refs['List'].disable = false
+          }
+        } else {
+          return false
+        }
+      })
+      this.dialogVisibleApplication = true
+      // this.$refs['List'].$refs.addSubmitFun()
     },
     dialog(row, type) {
-      this.operateType = type
-      this.dialogVisible = true
-    },
-    dialog1() {
-      this.dialogVisible1 = true
-    },
-    dialogSelect() {
-      this.dialogVisibleSelect = true
+      if (row.status === '已开始') {
+        this.operateType = type
+        this.creatOrder = JSON.parse(JSON.stringify(row))
+        this.creatOrder.image_url_list = []
+        this.dialogVisible = true
+      } else {
+        this.$message.info('请处理已开始工单')
+      }
     },
     handleClose(done) {
+      if (this.$refs.elUploadImg) {
+        this.$refs.elUploadImg.clearFiles()
+      }
+      this.$refs.ruleFormHandle.resetFields()
       this.dialogVisible = false
       if (done) {
         done()
       }
     },
-    handleClose1(done) {
-      this.dialogVisible1 = false
-      if (done) {
-        done()
-      }
-    },
-    handleCloseSelect(done) {
-      this.dialogVisibleSelect = false
-      if (done) {
-        done()
-      }
-    },
-    generateFun(obj) {
-      this.dialogVisible = false
-      console.log(obj, 'obj')
-    },
-    generateFun1(obj) {
-      this.dialogVisible1 = false
-    },
-    generateFunSelect(obj) {
-      this.dialogVisibleSelect = false
-      console.log(this.multipleSelection)
+    async generateFun() {
+      this.$refs.ruleFormHandle.validate(async(valid) => {
+        const form = {}
+        form.result_repair_desc = this.creatOrder.result_repair_desc
+        form.image_url_list = this.creatOrder.image_url_list
+        form.result_repair_final_result = this.creatOrder.result_repair_final_result
+        form.pks = [this.creatOrder.id]
+        form.status = '已完成'
+        form.opera_type = '处理'
+        form.work_content = this.creatOrder.work_content
+        form.work_order_no = this.creatOrder.work_order_no
+        form.equip_repair_standard = this.creatOrder.equip_repair_standard
+        if (valid) {
+          try {
+            this.submit = true
+            await multiUpdateInspection('post', null, { data: form })
+            this.$message.success('操作成功')
+            this.handleClose(null)
+            this.getList()
+            this.submit = false
+            this.dialogVisible = false
+          } catch (e) {
+            this.submit = false
+            this.dialogVisible = true
+          }
+        } else {
+          return false
+        }
+      })
     },
     handleSelectionChange(val) {
       this.multipleSelection = val

@@ -17,6 +17,7 @@
         <el-input
           v-model="search.plan_name"
           style="width:200px"
+          clearable
           @input="changeDebounce"
         />
       </el-form-item>
@@ -27,9 +28,10 @@
       </el-form-item>
       <el-form-item label="巡检标准">
         <el-input
-          v-model="search.equip_repair_standard_name"
+          v-model="search.equip_repair_standard"
           style="width:200px"
-          @input="changeSearch"
+          clearable
+          @input="changeDebounce"
         />
       </el-form-item>
       <el-form-item label="设备条件">
@@ -179,31 +181,12 @@ export default {
   data() {
     return {
       search: {
+        status: '已生成',
         page: 1,
         page_size: 10
       },
       dateValue: [],
       bz: '',
-      rules: {
-        plan_name: [
-          { required: true, message: '不能为空', trigger: 'blur' }
-        ],
-        equip_no: [
-          { required: true, message: '不能为空', trigger: 'change' }
-        ],
-        planned_repair_date: [
-          { required: true, message: '不能为空', trigger: 'change' }
-        ],
-        equip_repair_standard_name: [
-          { required: true, message: '不能为空', trigger: 'change' }
-        ],
-        importance_level: [
-          { required: true, message: '不能为空', trigger: 'change' }
-        ],
-        equip_condition: [
-          { required: true, message: '不能为空', trigger: 'change' }
-        ]
-      },
       tableData: [],
       staffList: [],
       total: 0,
@@ -220,9 +203,27 @@ export default {
     this.getStaff()
   },
   methods: {
-    generateFun(obj) {
-      this.dialogVisible = true
-      console.log(obj, 'obj')
+    async generateFun() {
+      const obj = []
+      this.multipleSelection.forEach(d => {
+        obj.push(d.id)
+      })
+      if (obj.length > 0) {
+        try {
+          this.submit = true
+          await multiUpdateInspection('post', null, { data: { pks: obj, assign_to_user: this.checkList, status: '已指派', opera_type: '指派' }})
+          this.$message.success('指派成功')
+          this.submit = false
+          this.dialogVisible = false
+          this.$refs.multipleTable.clearSelection()
+          this.getList()
+        } catch (e) {
+          this.submit = false
+          this.dialogVisible = true
+        }
+      } else {
+        this.$message.info('请选择指派人员')
+      }
     },
     async close() {
       if (this.multipleSelection.length > 0) {
@@ -262,11 +263,12 @@ export default {
       }
     },
     changeDebounce() {
-      this.search.page = 1
-      debounce(this, 'getList')
+      debounce(this, 'changeSearch')
     },
-    changeDate() {
-
+    changeDate(date) {
+      this.search.planned_repair_date_after = date ? date[0] : ''
+      this.search.planned_repair_date_before = date ? date[1] : ''
+      this.changeSearch()
     },
     async getList() {
       try {
@@ -284,11 +286,24 @@ export default {
       this.getList()
     },
     equipSelected(obj) {
-      this.search.equip_no = obj ? obj.equip_no : null
+      this.$set(this.search, 'equip_no', obj ? obj.equip_no : '')
       this.changeSearch()
     },
     dialogAssign() {
-      this.dialogVisible = true
+      this.bz = null
+      if (this.multipleSelection.length > 0) {
+        if (this.multipleSelection.length === 1) {
+          this.bz = this.multipleSelection[0].work_persons
+        }
+        if (this.multipleSelection.every(d => d.status === '已生成')) {
+          this.checkList = []
+          this.dialogVisible = true
+        } else {
+          this.$message.info('请勾选已生成状态列表')
+        }
+      } else {
+        this.$message.info('请先勾选工单列表')
+      }
     },
     dialogAdd() {
       this.creatOrder = { equip_condition: '不停机', importance_level: '中' }
