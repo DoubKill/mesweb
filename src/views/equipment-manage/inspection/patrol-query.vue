@@ -85,7 +85,7 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary">导出Excel</el-button>
+        <el-button type="primary" :loading="btnExportLoad" @click="templateDownload">导出Excel</el-button>
         <el-button type="primary" @click="changeSearch">查询</el-button>
       </el-form-item>
     </el-form>
@@ -206,6 +206,8 @@
 </template>
 
 <script>
+import { debounce } from '@/utils'
+import { equipInspectionOrder, equipInspectionOrderDown } from '@/api/jqy'
 import page from '@/components/page'
 import EquipSelect from '@/components/EquipSelect/index'
 export default {
@@ -217,8 +219,9 @@ export default {
         page: 1,
         page_size: 10
       },
+      btnExportLoad: false,
       dateValue: [],
-      tableData: [{ date: '1' }],
+      tableData: [],
       total: 0
     }
   },
@@ -229,8 +232,20 @@ export default {
     changeDate() {
 
     },
-    getList() {
-
+    async getList() {
+      try {
+        this.loading = true
+        const data = await equipInspectionOrder('get', null, { params: this.search })
+        this.tableData = data.results || []
+        this.total = data.count
+        this.loading = false
+      } catch (e) {
+        this.loading = false
+      }
+    },
+    changeDebounce() {
+      this.search.page = 1
+      debounce(this, 'getList')
     },
     changeSearch() {
       this.getList()
@@ -243,6 +258,25 @@ export default {
       this.search.page = page
       this.search.page_size = page_size
       this.getList()
+    },
+    templateDownload() {
+      this.btnExportLoad = true
+      const obj = Object.assign({ export: 1 }, this.search)
+      const _api = equipInspectionOrderDown
+      _api(obj)
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '设备巡检工单.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
     }
   }
 }

@@ -716,3 +716,30 @@ export function equipPlanDown(params) {
     responseType: 'blob'
   })
 }
+
+export function equipInspectionOrder(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipInspectionOrder + id + '/' : API.EquipInspectionOrder,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipInspectionOrderDown(params) {
+  return request({
+    url: API.EquipInspectionOrder,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
+
+export function multiUpdateInspection(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MultiUpdateInspection + id + '/' : API.MultiUpdateInspection,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
