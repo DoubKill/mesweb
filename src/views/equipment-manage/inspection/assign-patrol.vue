@@ -67,7 +67,7 @@
 
       <el-form-item>
         <el-button type="primary" @click="dialogAssign">指派</el-button>
-        <el-button type="primary" @click="close">关闭</el-button>
+        <el-button type="primary" :loading="submit1" @click="close">关闭</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -195,6 +195,7 @@ export default {
       multipleSelection: [],
       dialogVisible: false,
       submit: false,
+      submit1: false,
       creatOrder: {}
     }
   },
@@ -237,14 +238,19 @@ export default {
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
+            this.submit1 = true
             multiUpdateInspection('post', null, { data: { pks: obj, status: '已关闭', opera_type: '关闭' }})
               .then(response => {
                 this.$message({
                   type: 'success',
                   message: '关闭成功'
                 })
+                this.submit1 = false
                 this.$refs.multipleTable.clearSelection()
                 this.getList()
+              })
+              .catch(response => {
+                this.submit1 = false
               })
           })
         } else {
