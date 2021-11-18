@@ -66,9 +66,9 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button v-permission="['equip_apply_order', 'receive']" type="primary" @click="order">接单</el-button>
-        <el-button v-permission="['equip_apply_order', 'charge']" type="primary" @click="back">退单</el-button>
-        <el-button v-permission="['equip_apply_order', 'close']" type="primary" @click="close">关闭</el-button>
+        <el-button v-permission="['equip_apply_order', 'receive']" :loading="submit1" type="primary" @click="order">接单</el-button>
+        <el-button v-permission="['equip_apply_order', 'charge']" :loading="submit2" type="primary" @click="back">退单</el-button>
+        <el-button v-permission="['equip_apply_order', 'close']" :loading="submit3" type="primary" @click="close">关闭</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -193,6 +193,9 @@ export default {
       checkList: [],
       multipleSelection: [],
       submit: false,
+      submit1: false,
+      submit2: false,
+      submit3: false,
       ruleForm: {},
       typeForm: {},
       typeForm1: {},
@@ -229,14 +232,19 @@ export default {
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
+            this.submit1 = true
             multiUpdateInspection('post', null, { data: { pks: obj, status: '已接单', opera_type: '接单' }})
               .then(response => {
                 this.$message({
                   type: 'success',
                   message: '接单成功'
                 })
+                this.submit1 = false
                 this.$refs.multipleTable.clearSelection()
                 this.getList()
+              })
+              .catch(response => {
+                this.submit1 = false
               })
           })
         } else {
@@ -258,14 +266,19 @@ export default {
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
+            this.submit2 = true
             multiUpdateInspection('post', null, { data: { pks: obj, status: '已生成', opera_type: '退单' }})
               .then(response => {
                 this.$message({
                   type: 'success',
                   message: '退单成功'
                 })
+                this.submit2 = false
                 this.$refs.multipleTable.clearSelection()
                 this.getList()
+              })
+              .catch(response => {
+                this.submit2 = false
               })
           })
         } else {
@@ -287,14 +300,19 @@ export default {
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
+            this.submit3 = true
             multiUpdateInspection('post', null, { data: { pks: obj, status: '已关闭', opera_type: '关闭' }})
               .then(response => {
                 this.$message({
                   type: 'success',
                   message: '关闭成功'
                 })
+                this.submit3 = false
                 this.$refs.multipleTable.clearSelection()
                 this.getList()
+              })
+              .catch(response => {
+                this.submit3 = false
               })
           })
         } else {

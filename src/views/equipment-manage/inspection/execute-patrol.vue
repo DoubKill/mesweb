@@ -76,13 +76,15 @@
     >
       <el-table-column
         label="操作"
-        width="140"
+        width="150"
       >
         <template slot-scope="scope">
           <el-button-group>
             <el-button
               type="primary"
               size="mini"
+              :loading="submit1&&scope.row.id===loadId"
+              :disabled="submit1"
               @click="start(scope.row)"
             >开始</el-button>
             <el-button
@@ -403,7 +405,9 @@ export default {
       operateType: '',
       btnLoading: false,
       dialogVisible: false,
+      loadId: '',
       submit: false,
+      submit1: false,
       creatOrder: {}
     }
   },
@@ -438,19 +442,25 @@ export default {
     start(row) {
       const obj = []
       obj.push(row.id)
+      this.loadId = row.id
       if (row.status === '已接单') {
         this.$confirm('此操作将开始巡检此工单是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
+          this.submit1 = true
           multiUpdateInspection('post', null, { data: { pks: obj, status: '已开始', opera_type: '开始' }})
             .then(response => {
               this.$message({
                 type: 'success',
                 message: '开始工单成功'
               })
+              this.submit1 = false
               this.getList()
+            })
+            .catch(response => {
+              this.submit1 = false
             })
         })
       } else {

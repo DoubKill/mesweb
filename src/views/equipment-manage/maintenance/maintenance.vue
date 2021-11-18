@@ -96,8 +96,8 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="close">关闭计划</el-button>
-        <el-button type="primary" @click="generate">生成工单</el-button>
+        <el-button type="primary" :loading="submit1" @click="close">关闭计划</el-button>
+        <el-button type="primary" :loading="submit2" @click="generate">生成工单</el-button>
         <el-button type="primary" @click="dialog">新建</el-button>
       </el-form-item>
     </el-form>
@@ -419,6 +419,8 @@ export default {
       dialogVisibleWork: false,
       dialogVisibleRepair: false,
       submit: false,
+      submit1: false,
+      submit2: false,
       submitAssign: false,
       creatOrder: {}
     }
@@ -460,14 +462,19 @@ export default {
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
+            this.submit2 = true
             equipGenerateOrder('post', null, { data: { ids: obj }})
               .then(response => {
                 this.$message({
                   type: 'success',
                   message: '生成成功'
                 })
+                this.submit2 = false
                 this.$refs.multipleTable.clearSelection()
                 this.getList()
+              })
+              .catch(response => {
+                this.submit2 = false
               })
           })
         } else {
@@ -489,14 +496,19 @@ export default {
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
+            this.submit1 = true
             equipClosePlan('post', null, { data: { plan_ids: obj }})
               .then(response => {
                 this.$message({
                   type: 'success',
                   message: '关闭成功'
                 })
+                this.submit1 = false
                 this.$refs.multipleTable.clearSelection()
                 this.getList()
+              })
+              .catch(response => {
+                this.submit1 = false
               })
           })
         } else {
