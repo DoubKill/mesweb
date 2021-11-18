@@ -166,7 +166,9 @@ export default {
     },
     async getUserList(bool) {
       try {
-        let obj = { section_id: this.formInline.id, is_active: 1 }
+        let obj = { section_id: this.formInline.id, is_active: 1,
+          page: this.formInline.page,
+          page_size: this.formInline.page_size }
         if (bool) {
           obj = { all: 1 }
         }
