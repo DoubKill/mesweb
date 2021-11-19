@@ -39,7 +39,7 @@
         <el-select
           v-model="search.equip_condition"
           placeholder="请选择"
-          style="width:150px"
+          style="width:100px"
           clearable
           @change="changeSearch"
         >

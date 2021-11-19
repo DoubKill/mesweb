@@ -23,13 +23,14 @@
       </el-form-item>
       <el-form-item label="机台">
         <equip-select
+          style="width:100px"
           @equipSelected="equipSelected"
         />
       </el-form-item>
       <el-form-item label="巡检标准">
         <el-input
           v-model="search.equip_repair_standard"
-          style="width:200px"
+          style="width:150px"
           clearable
           @input="changeDebounce"
         />
@@ -38,6 +39,7 @@
         <el-select
           v-model="search.equip_condition"
           placeholder="请选择"
+          style="width:100px"
           clearable
           @change="changeSearch"
         >
@@ -53,6 +55,7 @@
         <el-select
           v-model="search.importance_level"
           placeholder="请选择"
+          style="width:100px"
           clearable
           @change="changeSearch"
         >

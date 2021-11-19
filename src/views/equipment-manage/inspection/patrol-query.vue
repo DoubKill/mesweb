@@ -319,7 +319,7 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="handleClose(false)">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible=false">取 消</el-button>
       </span>
     </el-dialog>
   </div>
