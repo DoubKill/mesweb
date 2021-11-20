@@ -54,12 +54,12 @@
       :row-class-name="tableRowClassName"
     >
       <el-table-column
-        prop="component_type_name"
+        prop="equip_spare__equip_component_type__component_type_name"
         label="备件分类"
         min-width="20"
       />
       <el-table-column
-        prop="spare__code"
+        prop="equip_spare__spare_code"
         label="备件代码"
         min-width="20"
       >
@@ -67,21 +67,21 @@
           <el-link
             type="primary"
             @click="dialog1(scope.row)"
-          >{{ scope.row.spare__code }}</el-link>
+          >{{ scope.row.equip_spare__spare_code }}</el-link>
         </template>
       </el-table-column>
       <el-table-column
-        prop="spare_name"
+        prop="equip_spare__spare_name"
         label="备件名称"
         min-width="20"
       />
       <el-table-column
-        prop="specification"
+        prop="equip_spare__specification"
         label="规格型号"
         min-width="20"
       />
       <el-table-column
-        prop="technical_params"
+        prop="equip_spare__technical_params"
         label="技术参数"
         min-width="20"
       />
@@ -118,21 +118,21 @@
           <el-link
             type="primary"
             @click="dialogShow(scope.row,3)"
-          >{{ scope.row.lock_qty }}</el-link>
+          >{{ scope.row.lock_qty===null?0:scope.row.lock_qty }}</el-link>
         </template>
       </el-table-column>
       <el-table-column
-        prop="unit"
+        prop="equip_spare__unit"
         label="标准单位"
         min-width="20"
       />
       <el-table-column
-        prop="lower_stock"
+        prop="equip_spare__lower_stock"
         label="库存下限"
         min-width="20"
       />
       <el-table-column
-        prop="upper_stock"
+        prop="equip_spare__upper_stock"
         label="库存上限"
         min-width="20"
       />
@@ -439,7 +439,7 @@ export default {
     },
     async getErpInfo() {
       try {
-        const data = await equipSpareErp('get', null, { params: { spare_code: this.currentInfo.spare__code }})
+        const data = await equipSpareErp('get', null, { params: { spare_code: this.currentInfo.equip_spare__spare_code }})
         if (data.results.length > 0) {
           this.creatOrder = data.results[0]
         }

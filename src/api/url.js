@@ -570,5 +570,7 @@ export default {
   EquipGenerateOrder: '/api/v1/equipment/equip-plan/generate-order/',
   EquipClosePlan: '/api/v1/equipment/equip-plan/close-plan/',
   EquipInspectionOrder: '/api/v1/equipment/equip-inspection-order/', // 巡检工单
-  MultiUpdateInspection: '/api/v1/equipment/equip-inspection-order/multi_update/'
+  MultiUpdateInspection: '/api/v1/equipment/equip-inspection-order/multi_update/',
+  WmsStorageSummary: '/api/v1/inventory/wms-storage-summary/',
+  WmsRelease: '/api/v1/inventory/wms-release/'
 }
