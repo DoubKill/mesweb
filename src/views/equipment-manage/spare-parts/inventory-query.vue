@@ -94,7 +94,7 @@
           <el-link
             type="primary"
             @click="dialogShow(scope.row,1)"
-          >{{ scope.row.all_qty }}</el-link>
+          >{{ scope.row.all_qty===null?0:scope.row.all_qty }}</el-link>
         </template>
       </el-table-column>
       <el-table-column
@@ -106,7 +106,7 @@
           <el-link
             type="primary"
             @click="dialogShow(scope.row,2)"
-          >{{ scope.row.use_qty }}</el-link>
+          >{{ scope.row.use_qty===null?0:scope.row.use_qty }}</el-link>
         </template>
       </el-table-column>
       <el-table-column
