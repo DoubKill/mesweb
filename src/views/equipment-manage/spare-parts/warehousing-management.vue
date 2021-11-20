@@ -109,7 +109,7 @@
     >
       <el-form :inline="true">
         <el-form-item label="单据条码">
-          <el-input v-model="search1.order_id" disabled />
+          <el-input v-model="order_id" disabled />
         </el-form-item>
         <el-form-item label="状态">
           <el-input v-model="status" disabled />
@@ -600,6 +600,7 @@ export default {
       warehouseLocationList: [],
       total: 0,
       status: null,
+      order_id: null,
       selectionList: [],
       checkList: [],
       loading: false,
@@ -759,7 +760,8 @@ export default {
       this.getList()
     },
     async dialog(row) {
-      this.search1.order_id = row.order_id
+      this.order_id = row.order_id
+      this.search1.equip_warehouse_order = row.id
       this.status = row._status
       try {
         const data = await equipWarehouseOrderDetail('get', null, { params: this.search1 })

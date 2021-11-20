@@ -204,7 +204,6 @@ export default {
   },
   created() {
     this.getList()
-    this.getStaff()
   },
   methods: {
     async generateFun() {
@@ -212,7 +211,7 @@ export default {
       this.multipleSelection.forEach(d => {
         obj.push(d.id)
       })
-      if (obj.length > 0) {
+      if (this.checkList.length > 0) {
         try {
           this.submit = true
           await multiUpdateInspection('post', null, { data: { pks: obj, assign_to_user: this.checkList, status: '已指派', opera_type: '指派' }})
@@ -298,20 +297,26 @@ export default {
       this.$set(this.search, 'equip_no', obj ? obj.equip_no : '')
       this.changeSearch()
     },
-    dialogAssign() {
+    async dialogAssign() {
       this.bz = null
-      if (this.multipleSelection.length > 0) {
-        if (this.multipleSelection.length === 1) {
-          this.bz = this.multipleSelection[0].work_persons
-        }
-        if (this.multipleSelection.every(d => d.status === '已生成')) {
-          this.checkList = []
-          this.dialogVisible = true
+      try {
+        if (this.multipleSelection.length > 0) {
+          if (this.multipleSelection.length === 1) {
+            this.bz = this.multipleSelection[0].work_persons
+          }
+          if (this.multipleSelection.every(d => d.equip_no === this.multipleSelection[0].equip_no)) {
+            const data = await getStaff('get', null, { params: { equip_no: this.multipleSelection[0].equip_no }})
+            this.staffList = data.results || []
+            this.checkList = []
+            this.dialogVisible = true
+          } else {
+            this.$message.info('批量指派工单需相同机台')
+          }
         } else {
-          this.$message.info('请勾选已生成状态列表')
+          this.$message.info('请先勾选工单列表')
         }
-      } else {
-        this.$message.info('请先勾选工单列表')
+      } catch (e) {
+        //
       }
     },
     dialogAdd() {

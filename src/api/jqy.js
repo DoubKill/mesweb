@@ -752,3 +752,30 @@ export function multiUpdateInspection(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function wmsStorageSummary(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WmsStorageSummary + id + '/' : API.WmsStorageSummary,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function wmsStorage(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WmsStorage + id + '/' : API.WmsStorage,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function wmsRelease(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WmsRelease + id + '/' : API.WmsRelease,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
