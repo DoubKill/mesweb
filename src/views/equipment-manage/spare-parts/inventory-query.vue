@@ -54,12 +54,12 @@
       :row-class-name="tableRowClassName"
     >
       <el-table-column
-        prop="equip_spare__equip_component_type__component_type_name"
+        prop="component_type_name"
         label="备件分类"
         min-width="20"
       />
       <el-table-column
-        prop="equip_spare__spare_code"
+        prop="spare__code"
         label="备件代码"
         min-width="20"
       >
@@ -67,21 +67,21 @@
           <el-link
             type="primary"
             @click="dialog1(scope.row)"
-          >{{ scope.row.equip_spare__spare_code }}</el-link>
+          >{{ scope.row.spare__code }}</el-link>
         </template>
       </el-table-column>
       <el-table-column
-        prop="equip_spare__spare_name"
+        prop="spare_name"
         label="备件名称"
         min-width="20"
       />
       <el-table-column
-        prop="equip_spare__specification"
+        prop="specification"
         label="规格型号"
         min-width="20"
       />
       <el-table-column
-        prop="equip_spare__technical_params"
+        prop="technical_params"
         label="技术参数"
         min-width="20"
       />
@@ -94,7 +94,7 @@
           <el-link
             type="primary"
             @click="dialogShow(scope.row,1)"
-          >{{ scope.row.all_qty===null?0:scope.row.all_qty }}</el-link>
+          >{{ scope.row.all_qty }}</el-link>
         </template>
       </el-table-column>
       <el-table-column
@@ -106,7 +106,7 @@
           <el-link
             type="primary"
             @click="dialogShow(scope.row,2)"
-          >{{ scope.row.use_qty===null?0:scope.row.use_qty }}</el-link>
+          >{{ scope.row.use_qty }}</el-link>
         </template>
       </el-table-column>
       <el-table-column
@@ -118,21 +118,21 @@
           <el-link
             type="primary"
             @click="dialogShow(scope.row,3)"
-          >{{ scope.row.lock_qty===null?0:scope.row.lock_qty }}</el-link>
+          >{{ scope.row.lock_qty }}</el-link>
         </template>
       </el-table-column>
       <el-table-column
-        prop="equip_spare__unit"
+        prop="unit"
         label="标准单位"
         min-width="20"
       />
       <el-table-column
-        prop="equip_spare__lower_stock"
+        prop="lower_stock"
         label="库存下限"
         min-width="20"
       />
       <el-table-column
-        prop="equip_spare__upper_stock"
+        prop="upper_stock"
         label="库存上限"
         min-width="20"
       />
@@ -439,7 +439,7 @@ export default {
     },
     async getErpInfo() {
       try {
-        const data = await equipSpareErp('get', null, { params: { spare_code: this.currentInfo.equip_spare__spare_code }})
+        const data = await equipSpareErp('get', null, { params: { spare_code: this.currentInfo.spare__code }})
         if (data.results.length > 0) {
           this.creatOrder = data.results[0]
         }
