@@ -363,17 +363,28 @@
             min-width="20"
           />
           <el-table-column
-            label="出库重量/kg"
+            prop="quantity"
+            label="库存总数量/托"
+            min-width="20"
+          />
+          <el-table-column
+            label="出库数量/托"
             min-width="20"
           >
             <template slot-scope="{row}">
               <el-input-number
-                v-model="row.WeightOfActualUnit"
+                v-model="row.Unit"
                 controls-position="right"
-                :max="row.WeightOfActual"
+                :max="row.quantity"
+                @change="changeUnit(row)"
               />
             </template>
           </el-table-column>
+          <el-table-column
+            label="出库重量/kg"
+            min-width="20"
+            prop="WeightOfActualUnit"
+          />
         </el-table>
       </div>
       <span v-if="!loading2" slot="footer" class="dialog-footer">
@@ -523,6 +534,12 @@ export default {
       }).catch((e) => {
         this.loading = false
       })
+    },
+    changeUnit(row) {
+      row.WeightOfActualUnit = Math.round(row.Unit * row.avg_weight)
+      if (row.WeightOfActualUnit > row.WeightOfActual) {
+        row.WeightOfActualUnit = row.WeightOfActual
+      }
     },
     getDebounce() {
       this.search.pageNo = 1
