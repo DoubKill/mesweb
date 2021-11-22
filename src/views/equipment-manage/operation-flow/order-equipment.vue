@@ -81,9 +81,9 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button v-permission="['equip_apply_order', 'receive']" type="primary" @click="order">接单</el-button>
-        <el-button v-permission="['equip_apply_order', 'charge']" type="primary" @click="back">退单</el-button>
-        <el-button v-permission="['equip_apply_order', 'close']" type="primary" @click="close">关闭</el-button>
+        <el-button v-permission="['equip_apply_order', 'receive']" type="primary" :loading="orderLoad" @click="order">接单</el-button>
+        <el-button v-permission="['equip_apply_order', 'charge']" type="primary" :loading="backLoad" @click="back">退单</el-button>
+        <el-button v-permission="['equip_apply_order', 'close']" type="primary" :loading="closeLoad" @click="close">关闭</el-button>
         <!-- <el-button type="primary">导出Excel</el-button> -->
       </el-form-item>
     </el-form>
@@ -256,6 +256,9 @@ export default {
       search: { status: '已指派' },
       loading: false,
       btnExportLoad: false,
+      closeLoad: false,
+      orderLoad: false,
+      backLoad: false,
       dialogVisibleRepair: false,
       dialogVisibleDefinition: false,
       dialogVisibleMaintain: false,
@@ -301,14 +304,19 @@ export default {
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
+            this.orderLoad = true
             multiUpdate('post', null, { data: { pks: obj, status: '已接单', opera_type: '接单' }})
               .then(response => {
                 this.$message({
                   type: 'success',
                   message: '接单成功'
                 })
+                this.orderLoad = false
                 this.$refs.multipleTable.clearSelection()
                 this.getList()
+              })
+              .catch(response => {
+                this.orderLoad = false
               })
           })
         } else {
@@ -330,14 +338,19 @@ export default {
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
+            this.backLoad = true
             multiUpdate('post', null, { data: { pks: obj, status: '已生成', opera_type: '退单' }})
               .then(response => {
                 this.$message({
                   type: 'success',
                   message: '退单成功'
                 })
+                this.backLoad = false
                 this.$refs.multipleTable.clearSelection()
                 this.getList()
+              })
+              .catch(response => {
+                this.backLoad = false
               })
           })
         } else {
@@ -359,14 +372,19 @@ export default {
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
+            this.closeLoad = true
             multiUpdate('post', null, { data: { pks: obj, status: '已关闭', opera_type: '关闭' }})
               .then(response => {
                 this.$message({
                   type: 'success',
                   message: '关闭成功'
                 })
+                this.closeLoad = false
                 this.$refs.multipleTable.clearSelection()
                 this.getList()
+              })
+              .catch(response => {
+                this.closeLoad = false
               })
           })
         } else {

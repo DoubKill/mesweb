@@ -228,13 +228,17 @@ export default {
     show: {
       type: Boolean,
       default: false
+    },
+    params: {
+      type: String,
+      default: null
     }
   },
   data() {
     return {
       tableData: [],
       tableData1: [],
-      dataForm: {},
+      dataForm: { fault_type_name: '' },
       currentObj: {},
       dataForm1: {},
       formObj: {},
@@ -271,6 +275,7 @@ export default {
       if (bool) {
         this.dataForm.use_flag = 1
         this.dataForm1.use_flag = 1
+        this.dataForm.fault_type_name = this.params
         this.getListType()
       }
     }
@@ -279,6 +284,7 @@ export default {
     if (this.isDialog) {
       this.dataForm.use_flag = 1
       this.dataForm1.use_flag = 1
+      this.dataForm.fault_type_name = this.params
     }
     this.getListType()
   },
