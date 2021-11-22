@@ -572,5 +572,7 @@ export default {
   EquipInspectionOrder: '/api/v1/equipment/equip-inspection-order/', // 巡检工单
   MultiUpdateInspection: '/api/v1/equipment/equip-inspection-order/multi_update/',
   WmsStorageSummary: '/api/v1/inventory/wms-storage-summary/',
-  WmsRelease: '/api/v1/inventory/wms-release/'
+  WmsRelease: '/api/v1/inventory/wms-release/',
+  ThStorageSummary: '/api/v1/inventory/th-storage-summary/',
+  ThRelease: '/api/v1/inventory/th-release/'
 }

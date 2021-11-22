@@ -771,12 +771,15 @@ export default {
         this.creatOrder.opera_type = '验收'
       }
       try {
+        this.submit = true
         await multiUpdate('post', null, { data: this.creatOrder })
         this.$message.success('验收成功')
+        this.submit = false
         this.dialogVisible = false
         this.$refs.multipleTable.clearSelection()
         this.getList()
       } catch (e) {
+        this.submit = false
         this.dialogVisible = true
       }
     },

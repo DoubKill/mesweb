@@ -75,7 +75,7 @@
 
       <el-form-item>
         <el-button v-permission="['equip_apply_order', 'assign']" type="primary" @click="dialog">指派</el-button>
-        <el-button v-permission="['equip_apply_order', 'close']" type="primary" @click="close">关闭</el-button>
+        <el-button v-permission="['equip_apply_order', 'close']" type="primary" :loading="closeLoad" @click="close">关闭</el-button>
         <!-- <el-button type="primary">导出Excel</el-button> -->
       </el-form-item>
     </el-form>
@@ -252,6 +252,7 @@ export default {
       bz: '',
       loading: false,
       btnExportLoad: false,
+      closeLoad: false,
       dialogVisibleRepair: false,
       dialogVisibleDefinition: false,
       dialogVisibleMaintain: false,
@@ -291,14 +292,17 @@ export default {
       this.multipleSelection.forEach(d => {
         obj.push(d.id)
       })
-      if (obj.length > 0) {
+      if (this.checkList.length > 0) {
         try {
+          this.submit = true
           await multiUpdate('post', null, { data: { pks: obj, assign_to_user: this.checkList, status: '已指派', opera_type: '指派' }})
           this.$message.success('指派成功')
+          this.submit = false
           this.dialogVisible = false
           this.$refs.multipleTable.clearSelection()
           this.getList()
         } catch (e) {
+          this.submit = false
           this.dialogVisible = true
         }
       } else {
@@ -317,14 +321,19 @@ export default {
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
+            this.closeLoad = true
             multiUpdate('post', null, { data: { pks: obj, status: '已关闭', opera_type: '关闭' }})
               .then(response => {
                 this.$message({
                   type: 'success',
                   message: '关闭成功'
                 })
+                this.closeLoad = false
                 this.$refs.multipleTable.clearSelection()
                 this.getList()
+              })
+              .catch(response => {
+                this.closeLoad = false
               })
           })
         } else {

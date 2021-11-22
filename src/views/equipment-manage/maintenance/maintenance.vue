@@ -232,6 +232,16 @@
             placeholder="请输入维护计划名称"
           />
         </el-form-item>
+        <el-form-item label="设备种类" prop="equip_type">
+          <el-select v-model="creatOrder.equip_type" placeholder="请选择" clearable filterable @change="clear1">
+            <el-option
+              v-for="item in options"
+              :key="item.category_no"
+              :label="item.category_no"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item label="生产机台" prop="equip_no">
           <el-select
             v-model="creatOrder.equip_no"
@@ -363,7 +373,7 @@
 <script>
 import { debounce } from '@/utils'
 import page from '@/components/page'
-import { equipPlan, equipClosePlan, equipGenerateOrder, equipPlanGetName } from '@/api/jqy'
+import { equipPlan, equipClosePlan, equipGenerateOrder, equipPlanGetName, equipsCategory } from '@/api/jqy'
 import { getEquip } from '@/api/banburying-performance-manage'
 import RepairDefinition from '../standard-definition/repair-definition'
 import MaintainDefinition from '../standard-definition/maintain-definition'
@@ -384,6 +394,7 @@ export default {
       options2: ['未生成工单', '已生成工单', '计划执行中', '计划已完成'],
       options3: ['停机', '不停机'],
       options4: ['高', '中', '低'],
+      options5: [],
       multipleSelection: [],
       rules: {
         work_type: [
@@ -427,8 +438,17 @@ export default {
   },
   created() {
     this.getList()
+    this.getTypeNode()
   },
   methods: {
+    async getTypeNode() {
+      try {
+        const data = await equipsCategory('get', null, { params: { all: 1 }})
+        this.options5 = data.results || []
+      } catch (e) {
+        //
+      }
+    },
     async clear() {
       this.creatOrder.plan_name = ''
       try {
@@ -558,6 +578,11 @@ export default {
         this.loading = false
       } catch (e) {
         this.loading = false
+      }
+    },
+    clear1() {
+      if (this.creatOrder.equip_no) {
+        this.typeForm.equip_no = []
       }
     },
     changeSearch() {
