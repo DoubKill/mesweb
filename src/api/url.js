@@ -564,5 +564,9 @@ export default {
   EquipWarehouseStatistical: '/api/v1/equipment/equip-warehouse-statistical/', // 备件入出库统计分析
   EquipWarehouseOrderDetail: '/api/v1/equipment/equip-warehouse-order-detail/',
   GetCode: '/api/v1/equipment/equip-warehouse-order/get_code/',
-  EquipCodePrint: '/api/v1/equipment/equip-code-print/'
+  EquipCodePrint: '/api/v1/equipment/equip-code-print/',
+  WmsStorageSummary: '/api/v1/inventory/wms-storage-summary/',
+  WmsRelease: '/api/v1/inventory/wms-release/',
+  ThStorageSummary: '/api/v1/inventory/th-storage-summary/',
+  ThRelease: '/api/v1/inventory/th-release/'
 }
