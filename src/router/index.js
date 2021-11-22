@@ -1901,6 +1901,26 @@ export let asyncRoutes = [
         ]
       },
       {
+        path: '/internal/quality-inspection-release',
+        component: () => import('@/views/inspection_release/quality_inspection_release'),
+        name: 'QualityInspectionRelease',
+        meta: {
+          title: '原材料库 质检信息设定',
+          icon: 'quality',
+          permissionName: ''
+        }
+      },
+      {
+        path: '/internal/carbon-inspection-release',
+        component: () => import('@/views/inspection_release/carbon_inspection_release'),
+        name: 'CarbonInspectionRelease',
+        meta: {
+          title: '炭黑库 质检信息设定',
+          icon: 'quality',
+          permissionName: ''
+        }
+      },
+      {
         path: '/quickCheck',
         redirect: '/inspection-result-management/menni-equip',
         component: () => import('@/views/quality_management/quickCheck/a-index'),
