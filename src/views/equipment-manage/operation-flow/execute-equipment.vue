@@ -130,7 +130,7 @@
     >
       <el-table-column
         label="操作"
-        width="230"
+        width="250"
       >
         <template slot-scope="scope">
           <el-button-group>
@@ -138,6 +138,8 @@
               v-permission="['equip_apply_order', 'begin']"
               type="primary"
               size="mini"
+              :loading="submit1&&scope.row.id===loadId"
+              :disabled="submit1"
               @click="start(scope.row)"
             >开始</el-button>
             <el-button
@@ -667,7 +669,7 @@
       </el-table>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose1(false)">取 消</el-button>
-        <el-button :loading="submit" type="primary" @click="generateFun1">确 定</el-button>
+        <el-button type="primary" @click="generateFun1">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -741,7 +743,7 @@
       />
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleCloseSelect(false)">取 消</el-button>
-        <el-button :loading="submit" type="primary" @click="generateFunSelect">确 定</el-button>
+        <el-button type="primary" @click="generateFunSelect">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -859,6 +861,8 @@ export default {
       btnExportLoad: false,
       dateValue: [],
       tableData: [],
+      loadId: null,
+      submit1: false,
       total: 0,
       total1: 0,
       multipleSelection: [],
@@ -919,19 +923,25 @@ export default {
     start(row) {
       const obj = []
       obj.push(row.id)
+      this.loadId = row.id
       if (row.status === '已接单') {
         this.$confirm('此操作将开始维修此工单是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
+          this.submit1 = true
           multiUpdate('post', null, { data: { pks: obj, status: '已开始', opera_type: '开始' }})
             .then(response => {
               this.$message({
                 type: 'success',
                 message: '开始工单成功'
               })
+              this.submit1 = false
               this.getList()
+            })
+            .catch(response => {
+              this.submit1 = false
             })
         })
       } else {
@@ -1204,6 +1214,7 @@ export default {
     async generateFun() {
       this.$refs.ruleFormHandle.validate(async(valid) => {
         if (valid) {
+          this.submit = true
           if (this.creatOrder.result_material_requisition && this.creatOrder.result_accept_result !== '不合格' && !this.creatOrder.is_applyed) {
             console.log(this.creatOrder.result_material_requisition)
             const orderId = await getOrderId('get', null, { params: { status: '出库' }})
@@ -1227,8 +1238,10 @@ export default {
             this.$message.success('操作成功')
             this.handleClose(null)
             this.getList()
+            this.submit = false
             this.dialogVisible = false
           } catch (e) {
+            this.submit = false
             this.dialogVisible = true
           }
         } else {

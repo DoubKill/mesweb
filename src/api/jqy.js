@@ -779,3 +779,30 @@ export function wmsRelease(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function thStorageSummary(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ThStorageSummary + id + '/' : API.ThStorageSummary,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function thStorage(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ThStorage + id + '/' : API.ThStorage,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function thRelease(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ThRelease + id + '/' : API.ThRelease,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

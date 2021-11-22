@@ -309,6 +309,7 @@
       <fault-classify
         ref="List"
         :is-dialog="true"
+        :params="ruleForm.part_name"
         :show="dialogVisible1"
       />
       <span slot="footer" class="dialog-footer">
@@ -323,7 +324,13 @@
       :before-close="handleClose2"
     >
       <el-form :inline="true">
-        <el-form-item label="所属主设备种类">
+        <el-form-item label="机台">
+          <equip-select
+            style="width:150px"
+            @equipSelected="equipSelected2"
+          />
+        </el-form-item>
+        <!-- <el-form-item label="所属主设备种类">
           <el-select v-model="formInline.equip_type" placeholder="请选择" clearable @change="changeSearch1">
             <el-option
               v-for="item in options"
@@ -332,7 +339,7 @@
               :value="item.id"
             />
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="部位分类">
           <el-select v-model="formInline.part_type" placeholder="请选择" clearable @change="changeSearch1">
             <el-option
@@ -343,9 +350,9 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="部位代码">
+        <!-- <el-form-item label="部位代码">
           <el-input v-model="formInline.part_code" clearable placeholder="部位代码" @input="changeSearch1" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="部位名称">
           <el-input v-model="formInline.part_name" clearable placeholder="部位名称" @input="changeSearch1" />
         </el-form-item>
@@ -665,6 +672,10 @@ export default {
       if (this.ruleForm.equip_part_new) {
         this.ruleForm.equip_part_new = ''
       }
+    },
+    equipSelected2(obj) {
+      this.$set(this.formInline, 'equip_no', obj ? obj.equip_no : '')
+      this.changeSearch1()
     },
     onExceed() {
       this.$message.info('最多上传五张图片')
