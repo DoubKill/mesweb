@@ -159,7 +159,7 @@
     <el-dialog
       title="准备分厂（细料/硫磺）质量追踪卡打印"
       :visible.sync="dialogVisible"
-      width="600px"
+      width="750px"
       :before-close="handleClose"
     >
       <el-form ref="ruleForm" :rules="rules" :model="ruleForm">
@@ -204,28 +204,79 @@
         <tr>
           <td>名称</td>
           <td>{{ ruleForm.product_no }}</td>
-        </tr>
-        <tr>
           <td>机型</td>
           <td>{{ ruleForm.dev_type }}</td>
         </tr>
         <tr>
-          <td>单重</td>
-          <td>{{ ruleForm.plan_weight }}</td>
+          <td>配料日期</td>
+          <td>{{ ruleForm.batch_time }}</td>
+          <td>班组班次</td>
+          <td>{{ ruleForm.batch_group }}/{{ ruleForm.batch_classes }}</td>
         </tr>
         <tr>
+          <td>配料类型</td>
+          <td>{{ }}</td>
           <td>配置机台</td>
           <td>{{ ruleForm.equip_no }}</td>
         </tr>
         <tr>
-          <td>配料日期</td>
-          <td>{{ ruleForm.batch_time }}</td>
+          <td>标准重量</td>
+          <td>{{ }}</td>
+          <td>配料车次</td>
+          <td>{{ }}</td>
         </tr>
         <tr>
-          <td>班组班次</td>
-          <td>{{ ruleForm.batch_group }}/{{ ruleForm.batch_classes }}</td>
+          <td>配料员</td>
+          <td>{{ }}</td>
+          <td>有效期（天）</td>
+          <td>{{ }}</td>
+        </tr>
+        <tr>
+          <td>配料时间</td>
+          <td colspan="3">{{}}</td>
+        </tr>
+        <tr>
+          <td>打印时间</td>
+          <td colspan="3">{{}}</td>
+        </tr>
+        <tr>
+          <td>有效时间</td>
+          <td colspan="3">{{}}</td>
         </tr>
       </table>
+      <div style="border:1px solid #eee;margin:10px 0" />
+      <el-form>
+        <el-form-item label="合包配料包条码">
+          <el-input v-model="barCode" style="width:300px" />
+        </el-form-item>
+      </el-form>
+      <h3 style="text-align:center">合包配料信息</h3>
+      <table
+        border="1"
+        bordercolor="black"
+        class="info-table"
+      >
+        <tr>
+          <td>名称</td>
+          <td>{{ ruleForm.product_no }}</td>
+          <td>机型</td>
+          <td>{{ ruleForm.dev_type }}</td>
+        </tr>
+        <tr>
+          <td>打印日期</td>
+          <td>{{ ruleForm.product_no }}</td>
+          <td>班组班次</td>
+          <td>{{ ruleForm.dev_type }}</td>
+        </tr>
+        <tr>
+          <td>单配总重</td>
+          <td>{{ ruleForm.product_no }}</td>
+          <td>单配件数</td>
+          <td>{{ ruleForm.dev_type }}</td>
+        </tr>
+      </table>
+      <h3 style="text-align:center">合包配料物料信息</h3>
+
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose(false)">取 消</el-button>
         <el-button type="primary" :loading="btnLoading" @click="submitFun">确 定</el-button>
@@ -267,7 +318,8 @@ export default {
       },
       ruleForm: {},
       option: [],
-      btnLoading: false
+      btnLoading: false,
+      barCode: ''
     }
   },
   created() {
@@ -387,7 +439,7 @@ export default {
    .info-table {
      border-collapse: collapse;
       td {
-        min-width: 200px;
+        min-width: 170px;
         padding-top: 10px;
         padding-bottom: 10px;
         text-align: center;
