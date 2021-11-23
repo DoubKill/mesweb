@@ -1907,7 +1907,7 @@ export let asyncRoutes = [
         meta: {
           title: '原材料库 质检信息设定',
           icon: 'quality',
-          permissionName: ''
+          permissionName: 'material_quality_setting'
         }
       },
       {
@@ -1917,7 +1917,7 @@ export let asyncRoutes = [
         meta: {
           title: '炭黑库 质检信息设定',
           icon: 'quality',
-          permissionName: ''
+          permissionName: 'th_quality_setting'
         }
       },
       {
