@@ -19,28 +19,8 @@
       <el-form-item label="配方编号">
         <el-input v-model="search.material_no" style="width:150px" clearable @input="debounceFun" />
       </el-form-item>
-      <el-form-item label="物料名称">
+      <el-form-item label="卡片条码">
         <el-input v-model="search.material_name" style="width:150px" clearable @input="debounceFun" />
-      </el-form-item>
-      <el-form-item label="物料条码">
-        <el-input v-model="search.batch_no" style="width:150px" clearable @input="debounceFun" />
-      </el-form-item>
-      <el-form-item label="使用机型">
-        <el-select
-          v-model="search.quality_status"
-          style="width:150px"
-          clearable
-          placeholder="请选择"
-          filterable
-          @change="changeList"
-        >
-          <el-option
-            v-for="item in [{label:'未处理',value:1},{label:'已处理',value:3}]"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="dialog(false,'设置')">新建</el-button>

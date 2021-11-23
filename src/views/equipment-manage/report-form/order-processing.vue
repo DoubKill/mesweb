@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 工单处理时间分析报表 -->
+    <!-- 处理时间分析报表 -->
     <el-form :inline="true">
       <el-form-item label="起止日期">
         <el-date-picker

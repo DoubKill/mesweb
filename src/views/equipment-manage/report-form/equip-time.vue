@@ -1,12 +1,12 @@
 <template>
   <div>
-    <!-- 设备台账报表 -->
+    <!-- 机台别处理时间报表 -->
   </div>
 </template>
 
 <script>
 export default {
-  name: 'EquipmentReportFormStandingBook'
+  name: 'EquipmentReportFormEquip'
 }
 </script>
 

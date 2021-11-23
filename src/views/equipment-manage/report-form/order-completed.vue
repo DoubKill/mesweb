@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 订单按时完成率报表 -->
+    <!-- 工单按时完成率报表 -->
     <el-form :inline="true">
       <el-form-item label="起止日期">
         <el-date-picker

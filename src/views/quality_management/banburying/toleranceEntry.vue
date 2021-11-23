@@ -150,22 +150,82 @@
       </div>
     </el-dialog>
     <el-dialog
-      title="编辑备品备件类型"
+      title="编辑规则"
       :visible.sync="dialogEditVisible"
       :close-on-click-modal="false"
+      width="30%"
     >
       <el-form ref="editForm" :rules="rules" :model="dialogForm" label-width="100px">
         <el-form-item
-          label="类型编码"
+          label="规则编号"
           prop="component_type_code"
         >
-          <el-input v-model="dialogForm.component_type_code" :disabled="true" />
+          <el-input v-model="dialogForm.component_type_code" style="width:250px" disabled />
         </el-form-item>
         <el-form-item
-          label="类型名称"
-          prop="component_type_code"
+          label="规则名称"
+          prop="component_type_name"
         >
-          <el-input v-model="dialogForm.component_type_name" />
+          <el-input v-model="dialogForm.component_type_name" style="width:250px" />
+        </el-form-item>
+        <el-form-item label="区分" prop="submission_department">
+          <el-select
+            v-model="dialogForm.submission_department"
+            placeholder="请选择"
+          >
+            <el-option
+              v-for="item in ['炭黑','天然胶']"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="项目" prop="submission_department">
+          <el-select
+            v-model="dialogForm.submission_department"
+            placeholder="请选择"
+          >
+            <el-option
+              v-for="item in ['炭黑','天然胶']"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="容差许" prop="submission_department">
+          <el-select
+            v-model="dialogForm.submission_department"
+            style="width:100px"
+            placeholder="请选择"
+          >
+            <el-option
+              v-for="item in ['炭黑','天然胶']"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
+          <el-input style="width:100px" />
+          <el-select
+            v-model="dialogForm.submission_department"
+            style="width:100px"
+            placeholder="请选择"
+          >
+            <el-option
+              v-for="item in ['炭黑','天然胶']"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="备注"
+          prop="component_type_name"
+        >
+          <el-input v-model="dialogForm.component_type_name" style="width:250px" />
         </el-form-item>
       </el-form>
       <div
