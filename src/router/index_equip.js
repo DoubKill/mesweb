@@ -513,7 +513,7 @@ export const equipRoutes = [
             }
           },
           {
-            path: '/equipment/MTBF-MTTR',
+            path: '/equipment/reportForm/MTBF-MTTR',
             component: () => import('@/views/equipment-manage/report-form/MTBF-MTTR'),
             name: 'EquipmentReportFormMTBFMTTR',
             meta: {
