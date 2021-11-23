@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 故障原因分析报表 -->
+    <!-- 设备故障分析报表 -->
     <el-form :inline="true">
       <el-form-item label="起止日期">
         <el-date-picker

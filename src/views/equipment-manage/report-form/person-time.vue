@@ -1,12 +1,12 @@
 <template>
   <div>
-    <!-- 订单明细报表 -->
+    <!-- 人员别处理时间报表 -->
   </div>
 </template>
 
 <script>
 export default {
-  name: 'EquipmentReportFormDetailed'
+  name: 'EquipmentReportFormPerson'
 }
 </script>
 

@@ -1,12 +1,12 @@
 <template>
   <div>
-    <!-- 领料分析报表 -->
+    <!-- 工单别处理时间报表 -->
   </div>
 </template>
 
 <script>
 export default {
-  name: 'EquipmentReportFormPicking'
+  name: 'EquipmentReportFormOrder'
 }
 </script>
 

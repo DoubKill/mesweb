@@ -523,52 +523,42 @@ export const equipRoutes = [
             }
           },
           {
-            path: '/equipment/detailed',
-            component: () => import('@/views/equipment-manage/report-form/detailed'),
-            name: 'EquipmentReportFormDetailed',
+            path: '/equipment/order-time',
+            component: () => import('@/views/equipment-manage/report-form/order-time'),
+            name: 'EquipmentReportFormOrder',
             meta: {
               faName: 'EquipmentReportForm',
-              title: '订单明细报表',
+              title: '工单别处理时间报表',
               permissionName: ''
             }
           },
           {
-            path: '/equipment/standing-book',
-            component: () => import('@/views/equipment-manage/report-form/standing-book'),
-            name: 'EquipmentReportFormStandingBook',
+            path: '/equipment/equip-time',
+            component: () => import('@/views/equipment-manage/report-form/equip-time'),
+            name: 'EquipmentReportFormEquip',
             meta: {
               faName: 'EquipmentReportForm',
-              title: '设备台账报表',
+              title: '机台别处理时间报表',
               permissionName: ''
             }
           },
           {
-            path: '/equipment/picking',
-            component: () => import('@/views/equipment-manage/report-form/picking'),
-            name: 'EquipmentReportFormPicking',
+            path: '/equipment/person-time',
+            component: () => import('@/views/equipment-manage/report-form/person-time'),
+            name: 'EquipmentReportFormPerson',
             meta: {
               faName: 'EquipmentReportForm',
-              title: '领料分析报表',
+              title: '人员别处理时间报表',
               permissionName: ''
             }
           },
           {
-            path: '/equipment/order-receiving',
-            component: () => import('@/views/equipment-manage/report-form/order-receiving'),
-            name: 'EquipmentReportFormOrderReceiving',
+            path: '/equipment/order-processing',
+            component: () => import('@/views/equipment-manage/report-form/order-processing'),
+            name: 'EquipmentReportFormOrderProcessing',
             meta: {
               faName: 'EquipmentReportForm',
-              title: '接单响应时间报表',
-              permissionName: ''
-            }
-          },
-          {
-            path: '/equipment/acceptance-time',
-            component: () => import('@/views/equipment-manage/report-form/acceptance-time'),
-            name: 'EquipmentReportFormAcceptance',
-            meta: {
-              faName: 'EquipmentReportForm',
-              title: '验收时间报表',
+              title: '处理时间分析报表',
               permissionName: ''
             }
           },
@@ -578,7 +568,7 @@ export const equipRoutes = [
             name: 'EquipmentReportFormOrderCompleted',
             meta: {
               faName: 'EquipmentReportForm',
-              title: '订单按时完成率报表',
+              title: '工单按时完成率报表',
               permissionName: ''
             }
           },
@@ -593,22 +583,22 @@ export const equipRoutes = [
             }
           },
           {
+            path: '/equipment/order-receiving',
+            component: () => import('@/views/equipment-manage/report-form/order-receiving'),
+            name: 'EquipmentReportFormOrderReceiving',
+            meta: {
+              faName: 'EquipmentReportForm',
+              title: '设备故障统计列表',
+              permissionName: ''
+            }
+          },
+          {
             path: '/equipment/fault-cause',
             component: () => import('@/views/equipment-manage/report-form/fault-cause'),
             name: 'EquipmentReportFormFaultCause',
             meta: {
               faName: 'EquipmentReportForm',
-              title: '故障原因分析报表',
-              permissionName: ''
-            }
-          },
-          {
-            path: '/equipment/order-processing',
-            component: () => import('@/views/equipment-manage/report-form/order-processing'),
-            name: 'EquipmentReportFormOrderProcessing',
-            meta: {
-              faName: 'EquipmentReportForm',
-              title: '工单处理时间分析报表',
+              title: '设备故障分析报表',
               permissionName: ''
             }
           },
