@@ -235,7 +235,7 @@
         <el-form-item label="设备种类" prop="equip_type">
           <el-select v-model="creatOrder.equip_type" placeholder="请选择" clearable filterable @change="clear1">
             <el-option
-              v-for="item in options"
+              v-for="item in options5"
               :key="item.category_no"
               :label="item.category_no"
               :value="item.id"
@@ -403,6 +403,9 @@ export default {
         plan_name: [
           { required: true, message: '不能为空', trigger: 'blur' }
         ],
+        equip_type: [
+          { required: true, message: '不能为空', trigger: 'change' }
+        ],
         equip_no: [
           { required: true, message: '不能为空', trigger: 'change' }
         ],
@@ -539,11 +542,13 @@ export default {
       }
     },
     visibleChange(visible) {
-      if (visible && this.equipOptions.length === 0) {
-        const obj = { all: 1 }
+      if (visible && this.creatOrder.equip_type) {
+        const obj = { category: this.creatOrder.equip_type, all: 1 }
         getEquip(obj).then(response => {
           this.equipOptions = response.results
         })
+      } else if (visible && !this.creatOrder.equip_type) {
+        this.$message('请先选择设备种类')
       }
     },
     changeDebounce() {
@@ -582,7 +587,19 @@ export default {
     },
     clear1() {
       if (this.creatOrder.equip_no) {
-        this.typeForm.equip_no = []
+        this.creatOrder.equip_no = null
+      }
+      if (this.creatOrder.repair_standard_name) {
+        this.creatOrder.repair_standard_name = null
+      }
+      if (this.creatOrder.standard_name) {
+        this.creatOrder.standard_name = null
+      }
+      if (this.creatOrder.equip_manintenance_standard) {
+        this.creatOrder.equip_manintenance_standard = null
+      }
+      if (this.creatOrder.equip_repair_standard) {
+        this.creatOrder.equip_repair_standard = null
       }
     },
     changeSearch() {

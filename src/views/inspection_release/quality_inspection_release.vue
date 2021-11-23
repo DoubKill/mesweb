@@ -56,6 +56,7 @@
       >
         <template slot-scope="scope">
           <el-button
+            v-permission="['material_quality_setting','release']"
             size="mini"
             type="primary"
             :loading="submitQualified&&scope.row.id===loadId"
@@ -63,6 +64,7 @@
             @click="qualified(scope.row,'合格')"
           >合格</el-button>
           <el-button
+            v-permission="['material_quality_setting','release']"
             size="mini"
             type="primary"
             :loading="submitPass&&scope.row.id===loadId"
@@ -163,8 +165,8 @@
           />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :loading="submit" @click="qualifiedList('合格')">合格</el-button>
-          <el-button type="primary" :loading="submit1" @click="qualifiedList('放行')">放行</el-button>
+          <el-button v-permission="['material_quality_setting','release']" type="primary" :loading="submit" @click="qualifiedList('合格')">合格</el-button>
+          <el-button v-permission="['material_quality_setting','release']" type="primary" :loading="submit1" @click="qualifiedList('放行')">放行</el-button>
           <el-button type="primary" @click="handleClose">返回</el-button>
         </el-form-item>
       </el-form>
@@ -262,6 +264,8 @@ export default {
     }
   },
   created() {
+    this.search.st = this.datetimerange[0]
+    this.search.et = this.datetimerange[1]
     this.getList()
   },
   methods: {
@@ -421,9 +425,9 @@ function time() {
   var hour = d.getHours()// 得到小时数
   var minute = d.getMinutes()// 得到分钟数
   var second = d.getSeconds()// 得到秒数
-  const h = hour < 10 ? 0 + hour : hour
-  const m = minute < 10 ? 0 + minute : minute
-  const s = second < 10 ? 0 + second : second
+  const h = hour < 10 ? '0' + hour : hour
+  const m = minute < 10 ? '0' + minute : minute
+  const s = second < 10 ? '0' + second : second
   return h + ':' + m + ':' + s
 }
 </script>
