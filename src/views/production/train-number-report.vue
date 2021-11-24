@@ -127,7 +127,7 @@
       />
       <el-table-column
         :prop="editionNo === 'v1'?'production_details.排胶温度':'evacuation_temperature'"
-        label="排胶温度(c°)"
+        label="排胶温度(°c)"
       />
       <el-table-column
         :prop="editionNo === 'v1'?'production_details.排胶能量':'evacuation_energy'"
@@ -236,7 +236,7 @@
                 v-if="editionNo === 'v1'"
                 class="train-one-tr-banburying"
               >
-                <td>排胶温度(c°)</td>
+                <td>排胶温度(°c)</td>
                 <td>{{ rowInfo.production_details.排胶温度 ||'--' }}</td>
                 <td>排胶能量(J)</td>
                 <td>{{ rowInfo.production_details.排胶能量 ||'--' }}</td>
@@ -249,7 +249,7 @@
                 v-if="editionNo === 'v2'"
                 class="train-one-tr-banburying"
               >
-                <td>排胶温度(c°)</td>
+                <td>排胶温度(°c)</td>
                 <td>{{ rowInfo.evacuation_temperature ||'--' }}</td>
                 <td>排胶能量(J)</td>
                 <td>{{ rowInfo.evacuation_energy ||'--' }}</td>
@@ -340,7 +340,7 @@
                   <td>No</td>
                   <td>条件名称</td>
                   <td>时间(s)</td>
-                  <td>温度(c°)</td>
+                  <td>温度(°c)</td>
                   <td>功率(W)</td>
                   <td>能量(J)</td>
                   <td>动作名称</td>
@@ -442,7 +442,7 @@
               <span>设定: {{ rowInfo.plan_trains ||'--' }}</span>
               <span>时间(s): {{ rowInfo.begin_time || '--' }} 至 {{ rowInfo.end_time|| '--' }}</span>
               <br>
-              <span>排胶温度(c°): {{ rowInfo.production_details.排胶温度||'--' }}</span>
+              <span>排胶温度(°c): {{ rowInfo.production_details.排胶温度||'--' }}</span>
               <span>完成: {{ rowInfo.actual_trains || '--' }}</span>
               <span>排胶时间(s): {{ rowInfo.production_details.排胶时间||'--' }}</span>
               <span>名称: {{ rowInfo.product_no ||'--' }}</span>
@@ -456,7 +456,7 @@
               <span>设定: {{ rowInfo.plan_trains ||'--' }}</span>
               <span>时间(s): {{ rowInfo.begin_time || '--' }} 至 {{ rowInfo.end_time|| '--' }}</span>
               <br>
-              <span>排胶温度(c°): {{ rowInfo.evacuation_temperature||'--' }}</span>
+              <span>排胶温度(°c): {{ rowInfo.evacuation_temperature||'--' }}</span>
               <span>完成: {{ rowInfo.actual_trains || '--' }}</span>
               <span>排胶时间(s): {{ rowInfo.evacuation_time||'--' }}</span>
               <span>名称: {{ rowInfo.product_no ||'--' }}</span>
