@@ -37,7 +37,7 @@ export const equipRoutes = [
             meta: {
               faName: 'MaintenanceFlow',
               title: '设备维护计划',
-              permissionName: ''
+              permissionName: 'equip_plan'
             }
           },
           {
@@ -47,7 +47,7 @@ export const equipRoutes = [
             meta: {
               faName: 'MaintenanceFlow',
               title: '设备维护计划查询',
-              permissionName: ''
+              permissionName: 'equip_plan'
             }
           }
         ]
@@ -161,7 +161,7 @@ export const equipRoutes = [
             meta: {
               faName: 'InspectionFlow',
               title: '指派巡检工单',
-              permissionName: ''
+              permissionName: 'equip_inspection_order'
             }
           },
           {
@@ -171,7 +171,7 @@ export const equipRoutes = [
             meta: {
               faName: 'InspectionFlow',
               title: '接单巡检工单',
-              permissionName: ''
+              permissionName: 'equip_inspection_order'
             }
           },
           {
@@ -181,7 +181,7 @@ export const equipRoutes = [
             meta: {
               faName: 'InspectionFlow',
               title: '执行巡检工单',
-              permissionName: ''
+              permissionName: 'equip_inspection_order'
             }
           },
           {
@@ -191,7 +191,7 @@ export const equipRoutes = [
             meta: {
               faName: 'InspectionFlow',
               title: '巡检工单查询',
-              permissionName: ''
+              permissionName: 'equip_inspection_order'
             }
           }
         ]

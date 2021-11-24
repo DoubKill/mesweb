@@ -9,31 +9,30 @@
         />
       </el-form-item>
       <el-form-item label="计划编号">
-        <el-input v-model="search.material_name" style="width:150px" clearable @input="debounceFun" />
+        <el-input v-model="search.plan_classes_uid" style="width:150px" clearable @input="debounceFun" />
       </el-form-item>
       <el-form-item label="配方编号">
-        <el-input v-model="search.material_no" style="width:150px" clearable @input="debounceFun" />
+        <el-input v-model="search.product_no" style="width:150px" clearable @input="debounceFun" />
       </el-form-item>
       <el-form-item label="物料名称">
-        <el-input v-model="search.material_name" style="width:150px" clearable @input="debounceFun" />
+        <el-input v-model="search.real_material" style="width:150px" clearable @input="debounceFun" />
       </el-form-item>
       <el-form-item label="物料条码">
-        <el-input v-model="search.batch_no" style="width:150px" clearable @input="debounceFun" />
+        <el-input v-model="search.bra_code" style="width:150px" clearable @input="debounceFun" />
       </el-form-item>
       <el-form-item label="状态">
         <el-select
-          v-model="search.quality_status"
+          v-model="search.status"
           style="width:150px"
           clearable
           placeholder="请选择"
-          filterable
           @change="changeList"
         >
           <el-option
-            v-for="item in [{label:'未处理',value:1},{label:'已处理',value:3}]"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+            v-for="item in ['未处理','已处理']"
+            :key="item"
+            :label="item"
+            :value="item"
           />
         </el-select>
       </el-form-item>
@@ -58,128 +57,164 @@
       />
 
       <el-table-column
-        prop="material_no"
+        prop="equip_no"
         label="机台"
         min-width="20"
       />
       <el-table-column
-        prop="zc_material_code"
+        prop="plan_classes_uid"
         label="计划编号"
         min-width="20"
       />
       <el-table-column
-        prop="batch_no"
+        prop="product_no"
         label="配方编号"
         min-width="20"
       />
       <el-table-column
-        prop="quality_status"
-        label="配方可投入标准"
-        min-width="20"
-      />
+        prop="recipe_material_no"
+        label="配方投入标准"
+        width="170"
+      >
+        <template slot-scope="scope">
+          <span v-if="scope.row.status==='已处理'">{{ scope.row.recipe_material_no }}</span>
+          <el-select
+            v-else
+            v-model="scope.row.recipe_material_no"
+            style="width:150px"
+            clearable
+            placeholder="请选择"
+            @visible-change="getMaterial($event,scope.row)"
+            @change="changeMaterial(scope.row)"
+          >
+            <el-option
+              v-for="item in options"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
+        </template>
+      </el-table-column>
       <el-table-column
-        prop="pdm_no"
+        prop="recipe_material"
         label="配方投入物料名称"
         min-width="20"
       />
       <el-table-column
-        prop="unit"
+        prop="real_material_no"
         label="实际投入物料"
         min-width="20"
       />
       <el-table-column
-        prop="quantity"
+        prop="real_material"
         label="实际投入物料名称"
         min-width="20"
       />
       <el-table-column
-        prop="weight"
+        prop="bra_code"
         label="实际投入物料条码"
         min-width="20"
       />
       <el-table-column
-        prop="weight"
+        prop="status"
         label="状态"
         min-width="20"
       />
       <el-table-column
-        prop="weight"
+        prop="created_username"
         label="处理人"
         min-width="20"
       />
       <el-table-column
-        prop="weight"
+        prop="created_date"
         label="处理时间"
         min-width="20"
       />
     </el-table>
-    <page
-      :old-page="false"
-      :total="total"
-      :current-page="search.page"
-      @currentChange="currentChange"
-    />
   </div>
 </template>
 
 <script>
 import EquipSelect from '@/components/EquipSelect'
 import { debounce } from '@/utils'
-import page from '@/components/page'
-import { wmsStorageSummary } from '@/api/jqy'
+import { replaceMaterial, materialMultiUpdate } from '@/api/jqy'
 export default {
   name: 'BanburyingSubstitutes',
-  components: { page, EquipSelect },
+  components: { EquipSelect },
   data() {
     return {
-      search: {
-        page: 1,
-        page_size: 10
-      },
-      total: 0,
+      search: {},
       submit: false,
       submitNo: false,
       multipleSelection: [],
+      options: [],
       tableData: [],
       loading: false
     }
   },
   created() {
-    // this.getList()
+    this.getList()
   },
   methods: {
     async getList() {
       try {
         this.loading = true
-        const data = await wmsStorageSummary('get', null, { params: this.search })
-        this.tableData = data.results
-        this.total = data.count
+        const data = await replaceMaterial('get', null, { params: this.search })
+        this.tableData = data
         this.loading = false
       } catch (e) {
         this.loading = false
       }
     },
-    feed(val) {
-
+    async getMaterial(val, row) {
+      if (val) {
+        try {
+          const data = await replaceMaterial('get', null, { params: { id: row.id }})
+          this.options = data.results
+        } catch (e) {
+          this.options = []
+        }
+      }
+    },
+    changeMaterial(row) {
+      row.recipe_material = row.recipe_material_no
+    },
+    async feed(val) {
+      const obj = []
+      this.multipleSelection.forEach(d => {
+        obj.push({ id: d.id, recipe_material: d.recipe_material, recipe_material_no: d.recipe_material_no })
+      })
+      if (this.multipleSelection.length > 0) {
+        if (this.multipleSelection.every(d => d.status === '未处理')) {
+          try {
+            val === '可投料' ? this.submit = true : this.submitNo = true
+            await materialMultiUpdate('post', null, { data: { update_material_list: obj, opera_type: val }})
+            this.$message.success('操作成功')
+            val === '可投料' ? this.submit = false : this.submitNo = false
+            this.$refs.multipleTable.clearSelection()
+            this.getList()
+          } catch (e) {
+            val === '可投料' ? this.submit = false : this.submitNo = false
+          }
+        } else {
+          this.$message('已处理状态不能重复处理')
+        }
+      } else {
+        this.$message.info('请选择数据')
+      }
     },
     equipSelected(obj) {
       this.$set(this.search, 'equip_no', obj ? obj.equip_no : '')
-      this.changeSearch()
+      this.changeList()
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
     },
     debounceFun() {
-      this.search.page = 1
       debounce(this, 'getList')
     },
     changeList() {
-      this.search.page = 1
-      this.getList()
-    },
-    currentChange(page, page_size) {
-      this.search.page = page
-      this.search.page_size = page_size
       this.getList()
     }
   }

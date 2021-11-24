@@ -2,25 +2,26 @@
   <div>
     <!--胶皮补打卡片 -->
     <el-form :inline="true">
-      <el-form-item label="类别" prop="submission_department">
+      <el-form-item label="类别">
         <el-select
-          v-model="dialogForm.submission_department"
+          v-model="search.print_type"
           placeholder="请选择"
+          clearable
+          @change="changeList"
         >
           <el-option
             v-for="item in ['加硫','无硫']"
             :key="item"
-            :disabled="val==='预览'"
             :label="item"
             :value="item"
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="配方编号">
-        <el-input v-model="search.material_no" style="width:150px" clearable @input="debounceFun" />
+      <el-form-item label="配方名称">
+        <el-input v-model="search.product_no" style="width:250px" clearable @input="debounceFun" />
       </el-form-item>
       <el-form-item label="卡片条码">
-        <el-input v-model="search.material_name" style="width:150px" clearable @input="debounceFun" />
+        <el-input v-model="search.bra_code" style="width:250px" clearable @input="debounceFun" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="dialog(false,'设置')">新建</el-button>
@@ -32,69 +33,76 @@
       border
     >
       <el-table-column
-        prop="material_no"
+        prop="bra_code"
         label="卡片条码"
-        min-width="20"
+        width="170"
       />
       <el-table-column
-        prop="zc_material_code"
+        prop="created_date"
         label="工厂日期"
-        min-width="20"
+        width="150"
       />
       <el-table-column
         prop="batch_no"
         label="班次/班组"
         min-width="20"
-      />
+      >
+        <template slot-scope="scope">
+          <span> {{ scope.row.batch_class + '/' + scope.row.batch_group }}</span>
+        </template>
+      </el-table-column>
       <el-table-column
-        prop="quality_status"
+        prop="print_type"
         label="类别"
         min-width="20"
       />
       <el-table-column
-        prop="pdm_no"
+        prop="product_no"
         label="配方名称"
-        min-width="20"
+        width="150"
       />
       <el-table-column
-        prop="unit"
         label="车次"
         min-width="20"
-      />
+      >
+        <template slot-scope="scope">
+          <span> {{ scope.row.begin_trains+ '-' + scope.row.end_trains }}</span>
+        </template>
+      </el-table-column>
       <el-table-column
-        prop="quantity"
+        prop="desc"
         label="异常描述"
         min-width="20"
       />
       <el-table-column
-        prop="weight"
+        prop="msg"
         label="处理意见"
         min-width="20"
       />
       <el-table-column
-        prop="weight"
+        prop="last_updated_date"
         label="打印时间"
-        min-width="20"
+        width="150"
       />
       <el-table-column
-        prop="weight"
+        prop="recipe_user"
         label="工艺员"
         min-width="20"
       />
       <el-table-column
-        prop="weight"
+        prop="print_username"
         label="打印员"
         min-width="20"
       />
       <el-table-column
-        prop="weight"
+        prop="created_username"
         label="录入人"
         min-width="20"
       />
       <el-table-column
-        prop="weight"
+        prop="created_date"
         label="录入时间"
-        min-width="20"
+        width="150"
       />
       <el-table-column
         label="操作"
@@ -110,12 +118,6 @@
         </template>
       </el-table-column>
     </el-table>
-    <page
-      :old-page="false"
-      :total="total"
-      :current-page="search.page"
-      @currentChange="currentChange"
-    />
 
     <el-dialog
       :title="`准备分厂机台单配（配方）化工流转卡`+val"
@@ -129,9 +131,9 @@
         label-width="150px"
         :model="dialogForm"
       >
-        <el-form-item label="胶料类别" prop="submission_department">
+        <el-form-item label="胶料类别" prop="print_type">
           <el-select
-            v-model="dialogForm.submission_department"
+            v-model="dialogForm.print_type"
             :disabled="val==='预览'"
             placeholder="请选择"
           >
@@ -145,21 +147,34 @@
         </el-form-item>
         <el-form-item
           label="配方名称"
-          prop="order_id"
+          prop="product_no"
         >
-          <el-input v-model="dialogForm.order_id" :disabled="val==='预览'" style="width:300px" />
+          <el-input v-model="dialogForm.product_no" clearable :disabled="val==='预览'" style="width:300px" />
         </el-form-item>
         <el-form-item
           label="车次"
-          prop="order_id"
+          prop="trains"
         >
-          <el-input v-model="dialogForm.order_id" :disabled="val==='预览'" style="width:100px" />
+          <el-input-number
+            v-model="dialogForm.begin_trains"
+            style="width:150px"
+            :disabled="val==='预览'"
+            controls-position="right"
+            :min="1"
+            :max="dialogForm.end_trains"
+          />
           -
-          <el-input v-model="dialogForm.order_id" :disabled="val==='预览'" style="width:100px" />
+          <el-input-number
+            v-model="dialogForm.end_trains"
+            style="width:150px"
+            :disabled="val==='预览'"
+            controls-position="right"
+            :min="dialogForm.begin_trains"
+          />
         </el-form-item>
         <el-form-item label="异常描述" prop="note">
           <el-input
-            v-model="dialogForm.result_fault_desc"
+            v-model="dialogForm.desc"
             :disabled="val==='预览'"
             type="textarea"
             style="width:250px"
@@ -168,30 +183,31 @@
         </el-form-item>
         <el-form-item label="处理意见" prop="note">
           <el-input
-            v-model="dialogForm.result_fault_desc"
+            v-model="dialogForm.msg"
             :disabled="val==='预览'"
             type="textarea"
             style="width:250px"
             :rows="3"
           />
         </el-form-item>
-        <el-form-item label="工艺员" prop="submission_department">
+        <el-form-item label="工艺员" prop="recipe_user">
           <el-select
-            v-model="dialogForm.submission_department"
+            v-model="dialogForm.recipe_user"
             :disabled="val==='预览'"
             placeholder="请选择"
+            @visible-change="grtPersonnels"
           >
             <el-option
-              v-for="item in ['122']"
-              :key="item"
-              :label="item"
-              :value="item"
+              v-for="item in options"
+              :key="item.id"
+              :label="item.username"
+              :value="item.username"
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="打印张数" prop="submission_department">
+        <el-form-item label="打印张数" prop="print_count">
           <el-input-number
-            v-model="dialogForm.su"
+            v-model="dialogForm.print_count"
             controls-position="right"
             :min="1"
           />
@@ -207,52 +223,79 @@
 
 <script>
 import { debounce } from '@/utils'
-import page from '@/components/page'
-import { wmsStorageSummary } from '@/api/jqy'
+import { returnRubber, personnels } from '@/api/jqy'
 export default {
   name: 'BanburyingMakeUp',
-  components: { page },
+  components: {},
   data() {
+    var validatePass = (rule, value, callback) => {
+      if (this.dialogForm.begin_trains === undefined || this.dialogForm.begin_trains === '') {
+        callback(new Error('请输入起始车次'))
+      } else if (this.dialogForm.end_trains === undefined || this.dialogForm.end_trains === '') {
+        callback(new Error('请输入结束车次'))
+      } else {
+        callback()
+      }
+    }
     return {
-      search: {
-        page: 1,
-        page_size: 10
-      },
+      search: {},
       val: null,
       dialogForm: {},
-      total: 0,
       dialogVisibleAdd: false,
       submit: false,
-      tableData: [{}],
+      options: [],
+      tableData: [],
       rules: {
-        submission_department: [
+        print_type: [
           { required: true, message: '不能为空', trigger: 'change' }
         ],
-        equip_spare: [
-          { type: 'array', required: true, message: '不能为空', trigger: 'change' }
+        product_no: [
+          { required: true, message: '不能为空', trigger: 'blur' }
+        ],
+        trains: [
+          { required: true, validator: validatePass, trigger: 'blur' }
+        ],
+        recipe_user: [
+          { required: true, message: '不能为空', trigger: 'change' }
+        ],
+        print_count: [
+          { required: true, message: '不能为空', trigger: 'change' }
         ]
       },
       loading: false
     }
   },
   created() {
-    // this.getList()
+    this.getList()
   },
   methods: {
     async getList() {
       try {
         this.loading = true
-        const data = await wmsStorageSummary('get', null, { params: this.search })
-        this.tableData = data.results
-        this.total = data.count
+        const data = await returnRubber('get', null, { params: this.search })
+        this.tableData = data
         this.loading = false
       } catch (e) {
         this.loading = false
       }
     },
+    async grtPersonnels(val) {
+      if (val) {
+        try {
+          const data = await personnels('get', null, { params: { all: 1, section_name: '品质技术科' }})
+          this.options = data.results
+        } catch (e) {
+          this.options = []
+        }
+      }
+    },
+
     async dialog(row, val) {
       this.val = val
       if (val === '设置') {
+        if (this.$refs.createForm) {
+          this.$refs.createForm.resetFields()
+        }
         this.dialogForm = {}
         this.dialogVisibleAdd = true
       } else {
@@ -262,7 +305,9 @@ export default {
     },
     handleCloseAdd(done) {
       this.dialogVisibleAdd = false
-      this.$refs.createForm.resetFields()
+      if (this.$refs.createForm) {
+        this.$refs.createForm.resetFields()
+      }
       if (done) {
         done()
       }
@@ -271,8 +316,9 @@ export default {
       this.$refs.createForm.validate(async(valid) => {
         if (valid) {
           try {
+            const _api = this.dialogForm.id ? 'put' : 'post'
             this.submit = true
-            await wmsStorageSummary('post', null, { data: this.dialogForm })
+            await returnRubber(_api, this.dialogForm.id || null, { data: this.dialogForm })
             this.$message.success('操作成功')
             this.handleCloseAdd(null)
             this.getList()
@@ -292,16 +338,9 @@ export default {
       this.changeSearch()
     },
     debounceFun() {
-      this.search.page = 1
       debounce(this, 'getList')
     },
     changeList() {
-      this.search.page = 1
-      this.getList()
-    },
-    currentChange(page, page_size) {
-      this.search.page = page
-      this.search.page_size = page_size
       this.getList()
     }
   }

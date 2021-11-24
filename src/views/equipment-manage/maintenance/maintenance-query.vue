@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="maintenanceQuery">
     <!-- 设备维护计划查询 -->
     <el-form :inline="true">
       <el-form-item label="维护类别">
@@ -96,13 +96,14 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" :loading="btnExportLoad" @click="templateDownload">导出Excel</el-button>
+        <el-button v-permission="['equip_plan','export']" type="primary" :loading="btnExportLoad" @click="templateDownload">导出Excel</el-button>
         <el-button type="primary" @click="changeSearch">查询</el-button>
       </el-form-item>
     </el-form>
     <el-table
       ref="multipleTable"
       v-loading="loading"
+      :row-class-name="tableRowClassName"
       :data="tableData"
       row-key="id"
       border
@@ -247,6 +248,13 @@ export default {
       this.search.page_size = page_size
       this.getList()
     },
+    tableRowClassName({ row, rowIndex }) {
+      if (row.timeout_color === '红色') {
+        return 'red-row'
+      } else {
+        return 'white-style'
+      }
+    },
     templateDownload() {
       this.btnExportLoad = true
       const obj = Object.assign({ export: 1 }, this.search)
@@ -270,6 +278,20 @@ export default {
 }
 </script>
 
-<style>
+<style  lang="scss">
+.maintenanceQuery{
+  .el-table.white-style{
+    background:#FFFFFF;
+  }
 
+  .el-table .red-row {
+    background: red;
+    color:black;
+  }
+  .el-table__row:hover > td {
+    background-color: transparent !important;
+  }
+  .el-table__row--striped:hover > td {
+    background-color: transparent !important;
+  }}
 </style>

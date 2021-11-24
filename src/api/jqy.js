@@ -806,3 +806,39 @@ export function thRelease(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function returnRubber(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ReturnRubber + id + '/' : API.ReturnRubber,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function personnels(method, id, data = {}) {
+  const obj = {
+    url: id ? API.Personnels + id + '/' : API.Personnels,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function replaceMaterial(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ReplaceMaterial + id + '/' : API.ReplaceMaterial,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function materialMultiUpdate(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MaterialMultiUpdate + id + '/' : API.MaterialMultiUpdate,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

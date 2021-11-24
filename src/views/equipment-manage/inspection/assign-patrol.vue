@@ -69,8 +69,8 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary" @click="dialogAssign">指派</el-button>
-        <el-button type="primary" :loading="submit1" @click="close">关闭</el-button>
+        <el-button v-permission="['equip_inspection_order','assign']" type="primary" @click="dialogAssign">指派</el-button>
+        <el-button v-permission="['equip_inspection_order','close']" type="primary" :loading="submit1" @click="close">关闭</el-button>
       </el-form-item>
     </el-form>
     <el-table

@@ -96,9 +96,9 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" :loading="submit1" @click="close">关闭计划</el-button>
-        <el-button type="primary" :loading="submit2" @click="generate">生成工单</el-button>
-        <el-button type="primary" @click="dialog">新建</el-button>
+        <el-button v-permission="['equip_plan','close']" type="primary" :loading="submit1" @click="close">关闭计划</el-button>
+        <el-button v-permission="['equip_plan','build']" type="primary" :loading="submit2" @click="generate">生成工单</el-button>
+        <el-button v-permission="['equip_plan','add']" type="primary" @click="dialog">新建</el-button>
       </el-form-item>
     </el-form>
     <el-table

@@ -14,7 +14,14 @@
       <el-table-column
         prop="component_type_code"
         label="规则编号"
-      />
+      >
+        <template slot-scope="scope">
+          <el-link
+            type="primary"
+            @click="dialogPatrol(scope.row)"
+          >{{ scope.row.component_type_code }}</el-link>
+        </template>
+      </el-table-column>
       <el-table-column
         prop="component_type_name"
         label="规则名称"
@@ -53,12 +60,6 @@
         </template>
       </el-table-column>
     </el-table>
-    <page
-      :old-page="false"
-      :total="total"
-      :current-page="search.page"
-      @currentChange="currentChange"
-    />
     <el-dialog
       title="新建规则"
       width="30%"
@@ -243,13 +244,10 @@
 </template>
 
 <script>
-import page from '@/components/page'
 import { equipComponentType } from '@/api/jqy'
-// import { errorRepeat } from '@/utils'
 
 export default {
   name: 'BanburyingCurrency',
-  components: { page },
   data: function() {
     return {
       tableData: [],
@@ -264,12 +262,7 @@ export default {
       rules: {
         component_type_code: [{ required: true, message: '不能为空', trigger: 'blur' }],
         component_type_name: [{ required: true, message: '不能为空', trigger: 'blur' }]
-      },
-      search: {
-        page: 1
-      },
-      currentPage: 1,
-      total: 1
+      }
     }
   },
   created() {
@@ -279,9 +272,8 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const data = await equipComponentType('get', null, { params: this.search })
+        const data = await equipComponentType('get', null, { params: {}})
         this.tableData = data.results || []
-        this.total = data.count
         this.loading = false
       } catch (e) {
         this.loading = false
@@ -347,11 +339,6 @@ export default {
             this.getList()
           })
       })
-    },
-    currentChange(page, pageSize) {
-      this.search.page = page
-      this.search.page_size = pageSize
-      this.getList()
     }
   }
 }
