@@ -81,6 +81,7 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
+              v-permission="['equip_inspection_order','begin']"
               type="primary"
               size="mini"
               :loading="submit1&&scope.row.id===loadId"
@@ -88,6 +89,7 @@
               @click="start(scope.row)"
             >开始</el-button>
             <el-button
+              v-permission="['equip_inspection_order','handle']"
               type="primary"
               size="mini"
               @click="dialog(scope.row,'处理巡检工单')"

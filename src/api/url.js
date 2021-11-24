@@ -574,5 +574,9 @@ export default {
   WmsStorageSummary: '/api/v1/inventory/wms-storage-summary/',
   WmsRelease: '/api/v1/inventory/wms-release/',
   ThStorageSummary: '/api/v1/inventory/th-storage-summary/',
-  ThRelease: '/api/v1/inventory/th-release/'
+  ThRelease: '/api/v1/inventory/th-release/',
+  ReturnRubber: '/api/v1/terminal/return-rubber/', // 补打印列表
+  Personnels: '/api/v1/system/personnels/', // 获取工艺员
+  ReplaceMaterial: '/api/v1/terminal/replace-material/',
+  MaterialMultiUpdate: '/api/v1/terminal/replace-material/multi_update/'
 }

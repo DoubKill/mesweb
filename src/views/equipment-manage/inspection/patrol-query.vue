@@ -88,7 +88,7 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" :loading="btnExportLoad" @click="templateDownload">导出Excel</el-button>
+        <el-button v-permission="['equip_inspection_order','export']" type="primary" :loading="btnExportLoad" @click="templateDownload">导出Excel</el-button>
         <el-button type="primary" @click="changeSearch">查询</el-button>
       </el-form-item>
     </el-form>

@@ -66,9 +66,9 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button v-permission="['equip_apply_order', 'receive']" :loading="submit1" type="primary" @click="order">接单</el-button>
-        <el-button v-permission="['equip_apply_order', 'charge']" :loading="submit2" type="primary" @click="back">退单</el-button>
-        <el-button v-permission="['equip_apply_order', 'close']" :loading="submit3" type="primary" @click="close">关闭</el-button>
+        <el-button v-permission="['equip_inspection_order','receive']" :loading="submit1" type="primary" @click="order">接单</el-button>
+        <el-button v-permission="['equip_inspection_order','charge']" :loading="submit2" type="primary" @click="back">退单</el-button>
+        <el-button v-permission="['equip_inspection_order','close']" :loading="submit3" type="primary" @click="close">关闭</el-button>
       </el-form-item>
     </el-form>
     <el-table
