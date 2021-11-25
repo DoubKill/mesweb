@@ -476,6 +476,7 @@ export default {
       console.log(row)
     },
     changeSearch() {
+      this.search.page = 1
       this.getList()
     },
     onExceed() {

@@ -384,6 +384,7 @@ export default {
 
     },
     changeSearch() {
+      this.search.page = 1
       this.getList()
     },
     equipSelected(obj) {
