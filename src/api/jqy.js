@@ -842,3 +842,21 @@ export function materialMultiUpdate(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function toleranceKeyword(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ToleranceKeyword + id + '/' : API.ToleranceKeyword,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function toleranceRule(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ToleranceRule + id + '/' : API.ToleranceRule,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

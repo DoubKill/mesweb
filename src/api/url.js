@@ -578,5 +578,7 @@ export default {
   ReturnRubber: '/api/v1/terminal/return-rubber/', // 补打印列表
   Personnels: '/api/v1/system/personnels/', // 获取工艺员
   ReplaceMaterial: '/api/v1/terminal/replace-material/',
-  MaterialMultiUpdate: '/api/v1/terminal/replace-material/multi_update/'
+  MaterialMultiUpdate: '/api/v1/terminal/replace-material/multi_update/',
+  ToleranceKeyword: '/api/v1/terminal/tolerance-keyword/',
+  ToleranceRule: '/api/v1/terminal/tolerance-rule/'
 }

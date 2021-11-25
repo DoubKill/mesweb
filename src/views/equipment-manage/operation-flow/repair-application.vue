@@ -221,7 +221,7 @@
           />
         </el-form-item>
         <el-form-item label="设备部位" prop="equip_part_new">
-          <el-select v-model="ruleForm.equip_part_new" :disabled="operateType==='报修申请详情'||disable" placeholder="请选择" clearable @visible-change="getEquipPart">
+          <el-select v-model="ruleForm.equip_part_new" :disabled="operateType==='报修申请详情'||disable" placeholder="请选择" clearable @visible-change="getEquipPart" @change="changePartName">
             <el-option
               v-for="item in options2"
               :key="item.id"
@@ -539,6 +539,12 @@ export default {
         this.GlobalList = []
       }
     },
+    changePartName() {
+      if (this.ruleForm.equip_part_new) {
+        console.log(this.options2.filter(d => d.part === this.ruleForm.equip_part_new))
+        this.ruleForm.part_name = this.options2.filter(d => d.part === this.ruleForm.equip_part_new)[0].part_name
+      }
+    },
     debounceList() {
       debounce(this, 'changeSearch')
     },
@@ -639,6 +645,7 @@ export default {
     },
     async dialog(row, type) {
       if (row === false) {
+        const data = await sectionTree('get', null, { params: { section_users: 1 }})
         let dateTime = ''
         const yy = new Date().getFullYear()
         const mm = new Date().getMonth() + 1
@@ -649,6 +656,7 @@ export default {
         dateTime = yy + '-' + mm + '-' + dd + ' ' + hh + ':' + mf + ':' + ss
         this.operateType = type
         this.ruleForm = {
+          plan_department: data.section,
           equip_barcode: '',
           fault_datetime: dateTime,
           image_url_list: [],
