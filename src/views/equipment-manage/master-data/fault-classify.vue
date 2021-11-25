@@ -332,10 +332,14 @@ export default {
       this.$debounce(this, 'getListReason')
     },
     handleCurrentChange(row) {
-      this.equip_machine_halt_type_id = row.id
-      this.isLeftStop = row.use_flag
-      this.work_type = row.fault_type_code
-      this.getListReason()
+      if (row) {
+        this.equip_machine_halt_type_id = row.id
+        this.isLeftStop = row.use_flag
+        this.work_type = row.fault_type_code
+        this.getListReason()
+      } else {
+        this.tableData1 = []
+      }
     },
     handleCurrentChange1(obj) {
       this.currentObj = obj

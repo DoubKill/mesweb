@@ -7,24 +7,25 @@
       </el-form-item>
     </el-form>
     <el-table
+      v-loading="loading"
       :data="tableData"
       border
       style="width: 100%"
     >
       <el-table-column
-        prop="component_type_code"
+        prop="keyword_code"
         label="区分关键字编号"
       />
       <el-table-column
-        prop="component_type_name"
+        prop="keyword_name"
         label="区分关键字名称"
       />
       <el-table-column
-        prop="created_username"
+        prop="re_str"
         label="匹配字符"
       />
       <el-table-column
-        prop="created_date"
+        prop="desc"
         label="备注"
       />
       <el-table-column label="操作" width="80">
@@ -48,24 +49,24 @@
       <el-form ref="createForm" :rules="rules" :model="dialogForm" label-width="150px">
         <el-form-item
           label="区分关键字编号"
-          prop="component_type_code"
+          prop="keyword_code"
         >
-          <el-input v-model="dialogForm.component_type_code" style="width:250px" disabled />
+          <el-input v-model="dialogForm.keyword_code" style="width:250px" disabled />
         </el-form-item>
         <el-form-item
           label="区分关键字名称"
-          prop="component_type_name"
+          prop="keyword_name"
         >
-          <el-input v-model="dialogForm.component_type_name" style="width:250px" />
+          <el-input v-model="dialogForm.keyword_name" style="width:250px" />
         </el-form-item>
-        <el-form-item label="匹配字符" prop="submission_department">
-          <el-input v-model="dialogForm.component_type_name" style="width:250px" />
+        <el-form-item label="匹配字符" prop="re_str">
+          <el-input v-model="dialogForm.re_str" style="width:250px" />
         </el-form-item>
         <el-form-item
           label="备注"
-          prop="component_type_name"
+          prop="desc"
         >
-          <el-input v-model="dialogForm.component_type_name" style="width:250px" />
+          <el-input v-model="dialogForm.desc" style="width:250px" />
         </el-form-item>
       </el-form>
       <div
@@ -83,7 +84,7 @@
 </template>
 
 <script>
-import { equipComponentType } from '@/api/jqy'
+import { toleranceKeyword, getDefaultCode } from '@/api/jqy'
 
 export default {
   name: 'BanburyingStandardDistinction',
@@ -91,16 +92,10 @@ export default {
     return {
       tableData: [],
       dialogCreateVisible: false,
-      dialogEditVisible: false,
-      btnExportLoad: false,
-      dialogForm: {
-        no: '',
-        name: ''
-      },
+      dialogForm: {},
       loading: false,
       rules: {
-        component_type_code: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        component_type_name: [{ required: true, message: '不能为空', trigger: 'blur' }]
+        keyword_name: [{ required: true, message: '不能为空', trigger: 'blur' }]
       }
     }
   },
@@ -111,7 +106,7 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const data = await equipComponentType('get', null, { params: {}})
+        const data = await toleranceKeyword('get', null, { params: { work_type: '区分' }})
         this.tableData = data.results || []
         this.loading = false
       } catch (e) {
@@ -121,17 +116,20 @@ export default {
     changSelect() {
       this.getList()
     },
-    showCreateDialog() {
-      this.dialogForm = {
-        component_type_code: '',
-        component_type_name: ''
+    async showCreateDialog() {
+      if (this.$refs.createForm) {
+        this.$refs.createForm.resetFields()
       }
+      this.dialogForm = {}
+      const data = await getDefaultCode('get', null, { params: { work_type: '区分' }})
+      this.dialogForm.keyword_code = data
       this.dialogCreateVisible = true
     },
     handleCreate() {
+      this.dialogForm.work_type = '区分'
       this.$refs.createForm.validate((valid) => {
         if (valid) {
-          equipComponentType('post', null, { data: this.dialogForm }).then(response => {
+          toleranceKeyword('post', null, { data: this.dialogForm }).then(response => {
             this.dialogCreateVisible = false
             this.$message.success('创建成功')
             this.getList()
@@ -142,12 +140,12 @@ export default {
       })
     },
     handleDelete: function(row) {
-      this.$confirm('此操作将删除' + row.component_type_name + ', 是否继续?', '提示', {
+      this.$confirm('此操作将删除' + row.keyword_name + ', 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        equipComponentType('delete', row.id, {})
+        toleranceKeyword('delete', null, { data: { id: row.id, work_type: '区分' }})
           .then(response => {
             this.$message({
               type: 'success',
