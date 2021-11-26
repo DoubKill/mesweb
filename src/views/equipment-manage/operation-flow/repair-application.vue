@@ -221,7 +221,7 @@
           />
         </el-form-item>
         <el-form-item label="设备部位" prop="equip_part_new">
-          <el-select v-model="ruleForm.equip_part_new" :disabled="operateType==='报修申请详情'||disable" placeholder="请选择" clearable @visible-change="getEquipPart">
+          <el-select v-model="ruleForm.equip_part_new" :disabled="operateType==='报修申请详情'||disable" placeholder="请选择" clearable @visible-change="getEquipPart" @change="changePartName">
             <el-option
               v-for="item in options2"
               :key="item.id"
@@ -309,6 +309,7 @@
       <fault-classify
         ref="List"
         :is-dialog="true"
+        :params="ruleForm.part_name"
         :show="dialogVisible1"
       />
       <span slot="footer" class="dialog-footer">
@@ -323,7 +324,13 @@
       :before-close="handleClose2"
     >
       <el-form :inline="true">
-        <el-form-item label="所属主设备种类">
+        <el-form-item label="机台">
+          <equip-select
+            style="width:150px"
+            @equipSelected="equipSelected2"
+          />
+        </el-form-item>
+        <!-- <el-form-item label="所属主设备种类">
           <el-select v-model="formInline.equip_type" placeholder="请选择" clearable @change="changeSearch1">
             <el-option
               v-for="item in options"
@@ -332,7 +339,7 @@
               :value="item.id"
             />
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="部位分类">
           <el-select v-model="formInline.part_type" placeholder="请选择" clearable @change="changeSearch1">
             <el-option
@@ -343,9 +350,9 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="部位代码">
+        <!-- <el-form-item label="部位代码">
           <el-input v-model="formInline.part_code" clearable placeholder="部位代码" @input="changeSearch1" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="部位名称">
           <el-input v-model="formInline.part_name" clearable placeholder="部位名称" @input="changeSearch1" />
         </el-form-item>
@@ -532,6 +539,12 @@ export default {
         this.GlobalList = []
       }
     },
+    changePartName() {
+      if (this.ruleForm.equip_part_new) {
+        console.log(this.options2.filter(d => d.part === this.ruleForm.equip_part_new))
+        this.ruleForm.part_name = this.options2.filter(d => d.part === this.ruleForm.equip_part_new)[0].part_name
+      }
+    },
     debounceList() {
       debounce(this, 'changeSearch')
     },
@@ -632,6 +645,7 @@ export default {
     },
     async dialog(row, type) {
       if (row === false) {
+        const data = await sectionTree('get', null, { params: { section_users: 1 }})
         let dateTime = ''
         const yy = new Date().getFullYear()
         const mm = new Date().getMonth() + 1
@@ -642,6 +656,7 @@ export default {
         dateTime = yy + '-' + mm + '-' + dd + ' ' + hh + ':' + mf + ':' + ss
         this.operateType = type
         this.ruleForm = {
+          plan_department: data.section,
           equip_barcode: '',
           fault_datetime: dateTime,
           image_url_list: [],
@@ -665,6 +680,10 @@ export default {
       if (this.ruleForm.equip_part_new) {
         this.ruleForm.equip_part_new = ''
       }
+    },
+    equipSelected2(obj) {
+      this.$set(this.formInline, 'equip_no', obj ? obj.equip_no : '')
+      this.changeSearch1()
     },
     onExceed() {
       this.$message.info('最多上传五张图片')

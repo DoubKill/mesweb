@@ -130,7 +130,7 @@
     >
       <el-table-column
         label="操作"
-        width="230"
+        width="340"
       >
         <template slot-scope="scope">
           <el-button-group>
@@ -138,14 +138,25 @@
               v-permission="['equip_apply_order', 'begin']"
               type="primary"
               size="mini"
+              :loading="submit1&&scope.row.id===loadId"
+              :disabled="submit1||name!==scope.row.receiving_user"
               @click="start(scope.row)"
             >开始</el-button>
             <el-button
               v-permission="['equip_apply_order', 'handle']"
               type="primary"
+              :disabled="name!==scope.row.receiving_user"
               size="mini"
               @click="dialog(scope.row,'处理维修工单')"
             >处理
+            </el-button>
+            <el-button
+              v-permission="['equip_apply_order', 'regulation']"
+              type="primary"
+              size="mini"
+              :disabled="name!==scope.row.receiving_user"
+              @click="personChange(scope.row)"
+            >增减人员
             </el-button>
             <el-button
               type="primary"
@@ -667,7 +678,7 @@
       </el-table>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose1(false)">取 消</el-button>
-        <el-button :loading="submit" type="primary" @click="generateFun1">确 定</el-button>
+        <el-button type="primary" @click="generateFun1">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -741,7 +752,7 @@
       />
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleCloseSelect(false)">取 消</el-button>
-        <el-button :loading="submit" type="primary" @click="generateFunSelect">确 定</el-button>
+        <el-button type="primary" @click="generateFunSelect">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -832,6 +843,27 @@
         <el-button @click="handleCloseMaintain">取 消</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      title="增减人员"
+      :visible.sync="dialogVisiblePerson"
+      width="30%"
+    >
+      <el-form :inline="true" label-width="120px">
+        <el-form-item style="" prop="checkList">
+          <span v-if="bz">作业标准人数：{{ bz }}</span>
+          <el-checkbox-group v-model="checkList">
+            <template v-for="(item, index) in staffList">
+              <el-checkbox :key="index" :label="item.username" :disabled="!item.optional||item.username===receiving_user" />
+            </template>
+          </el-checkbox-group>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisiblePerson=false">取 消</el-button>
+        <el-button :loading="submitPerson" type="primary" @click="generateFunPerson">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -842,7 +874,7 @@ import RepairDefinition from '../standard-definition/repair-definition'
 import MaintainDefinition from '../standard-definition/maintain-definition'
 import FaultClassify from '../master-data/fault-classify'
 import { equipApplyOrder, uploadImages, multiUpdate, equipWarehouseInventory, materialReq,
-  equipApplyRepair, equipRepairStandard, equipMaintenanceStandard, getOrderId, equipWarehouseOrder } from '@/api/jqy'
+  equipApplyRepair, equipRepairStandard, equipMaintenanceStandard, getOrderId, equipWarehouseOrder, getStaff } from '@/api/jqy'
 import { debounce } from '@/utils'
 import definition from '../components/definition-dialog'
 import maintain from '../components/definition-dialog1'
@@ -859,11 +891,20 @@ export default {
       btnExportLoad: false,
       dateValue: [],
       tableData: [],
+      loadId: null,
+      order_id: null,
+      submit1: false,
+      submitPerson: false,
+      dialogVisiblePerson: false,
+      bz: null,
       total: 0,
       total1: 0,
       multipleSelection: [],
       dialogImageUrl: '',
+      staffList: [],
+      checkList: [],
       loadingView: false,
+      receiving_user: '',
       operateType: '',
       tableDataView: [],
       tableDataView1: [],
@@ -916,22 +957,54 @@ export default {
         this.loading = false
       }
     },
+    async personChange(row) {
+      try {
+        const data = await getStaff('get', null, { params: {}})
+        this.staffList = data.results || []
+        this.bz = row.work_persons ? row.work_persons : null
+        this.receiving_user = row.receiving_user
+        this.order_id = row.id
+        this.checkList = row.repair_users
+        this.dialogVisiblePerson = true
+      } catch (e) {
+        this.dialogVisiblePerson = false
+      }
+    },
+    async generateFunPerson() {
+      try {
+        this.submitPerson = true
+        await equipApplyOrder('post', null, { data: { order_id: this.order_id, users: this.checkList }})
+        this.$message.success('修改成功')
+        this.submitPerson = false
+        this.dialogVisiblePerson = false
+        this.getList()
+      } catch (e) {
+        this.submitPerson = false
+        this.dialogVisiblePerson = true
+      }
+    },
     start(row) {
       const obj = []
       obj.push(row.id)
+      this.loadId = row.id
       if (row.status === '已接单') {
         this.$confirm('此操作将开始维修此工单是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
+          this.submit1 = true
           multiUpdate('post', null, { data: { pks: obj, status: '已开始', opera_type: '开始' }})
             .then(response => {
               this.$message({
                 type: 'success',
                 message: '开始工单成功'
               })
+              this.submit1 = false
               this.getList()
+            })
+            .catch(response => {
+              this.submit1 = false
             })
         })
       } else {
@@ -1204,6 +1277,7 @@ export default {
     async generateFun() {
       this.$refs.ruleFormHandle.validate(async(valid) => {
         if (valid) {
+          this.submit = true
           if (this.creatOrder.result_material_requisition && this.creatOrder.result_accept_result !== '不合格' && !this.creatOrder.is_applyed) {
             console.log(this.creatOrder.result_material_requisition)
             const orderId = await getOrderId('get', null, { params: { status: '出库' }})
@@ -1227,8 +1301,10 @@ export default {
             this.$message.success('操作成功')
             this.handleClose(null)
             this.getList()
+            this.submit = false
             this.dialogVisible = false
           } catch (e) {
+            this.submit = false
             this.dialogVisible = true
           }
         } else {

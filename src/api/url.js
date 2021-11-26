@@ -9,16 +9,16 @@ export default {
 
   EquipCategoryUrl: BasicsUrl + 'equips-category/',
   // const EquipCategoryUrl : BasicsUrl + "equips-category-list/",
-  EquipTypeGlobalUrl: BasicsUrl + 'global-codes/?all=1&class_name=设备类型',
-  EquipProcessGlobalUrl: BasicsUrl + 'global-codes/?all=1&class_name=工序',
-  EquipLevelGlobalUrl: BasicsUrl + 'global-codes/?all=1&class_name=产地',
-  StateGlobalUrl: BasicsUrl + 'global-codes/?all=1&class_name=胶料状态',
-  SiteGlobalUrl: BasicsUrl + 'global-codes/?all=1&class_name=产地',
-  SITEGlobalUrl: BasicsUrl + 'global-codes/?all=1&class_name=SITE',
-  StageGlobalUrl: BasicsUrl + 'global-codes/?all=1&class_name=胶料段次',
-  DevTypeGlobalUrl: BasicsUrl + 'global-codes/?all=1&class_name=炼胶机类型',
-  MaterialTypelUrl: BasicsUrl + 'global-codes/?all=1&class_name=原材料类别',
-  ClassArrangelUrl: BasicsUrl + 'global-codes/?all=1&class_name=班次',
+  EquipTypeGlobalUrl: BasicsUrl + 'global-codes/',
+  EquipProcessGlobalUrl: BasicsUrl + 'global-codes/',
+  EquipLevelGlobalUrl: BasicsUrl + 'global-codes/',
+  // StateGlobalUrl: BasicsUrl + 'global-codes/?all=1&class_name=胶料状态',
+  SiteGlobalUrl: BasicsUrl + 'global-codes/',
+  SITEGlobalUrl: BasicsUrl + 'global-codes/',
+  StageGlobalUrl: BasicsUrl + 'global-codes/',
+  // DevTypeGlobalUrl: BasicsUrl + 'global-codes/?all=1&class_name=炼胶机类型',
+  MaterialTypelUrl: BasicsUrl + 'global-codes/',
+  ClassArrangelUrl: BasicsUrl + 'global-codes/',
 
   EquipUrl: BasicsUrl + 'equips/',
 
@@ -198,11 +198,11 @@ export default {
 
   StationInfoUrl: '/api/v1/inventory/station-info/',
 
-  StationTypesUrl: BasicsUrl + 'global-codes/?all=1&class_name=站点类型',
+  StationTypesUrl: BasicsUrl + 'global-codes/',
 
   WarehouseMaterialTypeUrl: '/api/v1/inventory/warehouse-material-type/',
 
-  MaterialTypesUrl: BasicsUrl + 'global-codes/?all=1&class_name=原材料类别',
+  MaterialTypesUrl: BasicsUrl + 'global-codes/',
 
   // 批量打印
   LabelPrint: '/api/v1/quality/label-print/',
@@ -565,8 +565,20 @@ export default {
   EquipWarehouseOrderDetail: '/api/v1/equipment/equip-warehouse-order-detail/',
   GetCode: '/api/v1/equipment/equip-warehouse-order/get_code/',
   EquipCodePrint: '/api/v1/equipment/equip-code-print/',
+  EquipPlan: '/api/v1/equipment/equip-plan/', // 维护计划
+  EquipPlanGetName: '/api/v1/equipment/equip-plan/get-plan-name/', // 维护计划
+  EquipGenerateOrder: '/api/v1/equipment/equip-plan/generate-order/',
+  EquipClosePlan: '/api/v1/equipment/equip-plan/close-plan/',
+  EquipInspectionOrder: '/api/v1/equipment/equip-inspection-order/', // 巡检工单
+  MultiUpdateInspection: '/api/v1/equipment/equip-inspection-order/multi_update/',
   WmsStorageSummary: '/api/v1/inventory/wms-storage-summary/',
   WmsRelease: '/api/v1/inventory/wms-release/',
   ThStorageSummary: '/api/v1/inventory/th-storage-summary/',
-  ThRelease: '/api/v1/inventory/th-release/'
+  ThRelease: '/api/v1/inventory/th-release/',
+  ReturnRubber: '/api/v1/terminal/return-rubber/', // 补打印列表
+  Personnels: '/api/v1/system/personnels/', // 获取工艺员
+  ReplaceMaterial: '/api/v1/terminal/replace-material/',
+  MaterialMultiUpdate: '/api/v1/terminal/replace-material/multi_update/',
+  ToleranceKeyword: '/api/v1/terminal/tolerance-keyword/',
+  ToleranceRule: '/api/v1/terminal/tolerance-rule/'
 }

@@ -681,6 +681,78 @@ export function equipCodePrint(method, id, data = {}) {
   return request(obj)
 }
 
+export function equipPlan(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipPlan + id + '/' : API.EquipPlan,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipPlanGetName(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipPlanGetName + id + '/' : API.EquipPlanGetName,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipGenerateOrder(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipGenerateOrder + id + '/' : API.EquipGenerateOrder,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipClosePlan(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipClosePlan + id + '/' : API.EquipClosePlan,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipPlanDown(params) {
+  return request({
+    url: API.EquipPlan,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
+
+export function equipInspectionOrder(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipInspectionOrder + id + '/' : API.EquipInspectionOrder,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipInspectionOrderDown(params) {
+  return request({
+    url: API.EquipInspectionOrder,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
+
+export function multiUpdateInspection(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MultiUpdateInspection + id + '/' : API.MultiUpdateInspection,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function wmsStorageSummary(method, id, data = {}) {
   const obj = {
     url: id ? API.WmsStorageSummary + id + '/' : API.WmsStorageSummary,
@@ -729,6 +801,60 @@ export function thStorage(method, id, data = {}) {
 export function thRelease(method, id, data = {}) {
   const obj = {
     url: id ? API.ThRelease + id + '/' : API.ThRelease,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function returnRubber(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ReturnRubber + id + '/' : API.ReturnRubber,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function personnels(method, id, data = {}) {
+  const obj = {
+    url: id ? API.Personnels + id + '/' : API.Personnels,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function replaceMaterial(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ReplaceMaterial + id + '/' : API.ReplaceMaterial,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function materialMultiUpdate(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MaterialMultiUpdate + id + '/' : API.MaterialMultiUpdate,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function toleranceKeyword(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ToleranceKeyword + id + '/' : API.ToleranceKeyword,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function toleranceRule(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ToleranceRule + id + '/' : API.ToleranceRule,
     method: method
   }
   Object.assign(obj, data)

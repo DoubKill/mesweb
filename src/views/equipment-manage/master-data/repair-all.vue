@@ -23,7 +23,9 @@
           </el-form-item> -->
         </el-form>
         <h4>维修区域设定</h4>
-        <el-button v-permission="['equip_maintenance_setting', 'add']" style="float:right;margin-right:20px" size="small" type="primary" @click="addFun">添加</el-button>
+        <div style="width:100%;overflow: hidden;margin-bottom:5px;">
+          <el-button v-permission="['equip_maintenance_setting', 'add']" style="float:right;margin-right:20px" size="small" type="primary" @click="addFun">添加</el-button>
+        </div>
         <el-table
           :data="tableData"
           style="width: 90%"
@@ -210,7 +212,8 @@ export default {
     async getAreaSettings() {
       try {
         this.loading = true
-        const data = await equipMaintenanceAreaSettings('get', null, { params: { maintenance_user_id: this.formInline.user_id }})
+        const data = await equipMaintenanceAreaSettings('get', null, { params: { maintenance_user_id: this.formInline.user_id, page: this.formInline.page,
+          page_size: this.formInline.page_size }})
         this.tableData = data.results || []
         this.total = data.count
         this.loading = false

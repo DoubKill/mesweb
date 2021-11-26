@@ -19,7 +19,7 @@ export const equipRoutes = [
           icon: 'quality',
           permissionName: ''
         }
-      },
+      },*/
       {
         path: '/equipment/maintenance',
         redirect: '/equipment/maintenance',
@@ -37,7 +37,7 @@ export const equipRoutes = [
             meta: {
               faName: 'MaintenanceFlow',
               title: '设备维护计划',
-              permissionName: ''
+              permissionName: 'equip_plan'
             }
           },
           {
@@ -47,11 +47,11 @@ export const equipRoutes = [
             meta: {
               faName: 'MaintenanceFlow',
               title: '设备维护计划查询',
-              permissionName: ''
+              permissionName: 'equip_plan'
             }
           }
         ]
-      },*/
+      },
       {
         path: '/equipment/operation-flow',
         redirect: '/equipment/repair-application',
@@ -144,7 +144,7 @@ export const equipRoutes = [
           // }
         ]
       },
-      /* {
+      {
         path: '/equipment/inspection',
         redirect: '/equipment/assign-patrol',
         component: () => import('@/views/equipment-manage/inspection/a-index'),
@@ -161,7 +161,7 @@ export const equipRoutes = [
             meta: {
               faName: 'InspectionFlow',
               title: '指派巡检工单',
-              permissionName: ''
+              permissionName: 'equip_inspection_order'
             }
           },
           {
@@ -171,7 +171,7 @@ export const equipRoutes = [
             meta: {
               faName: 'InspectionFlow',
               title: '接单巡检工单',
-              permissionName: ''
+              permissionName: 'equip_inspection_order'
             }
           },
           {
@@ -181,7 +181,7 @@ export const equipRoutes = [
             meta: {
               faName: 'InspectionFlow',
               title: '执行巡检工单',
-              permissionName: ''
+              permissionName: 'equip_inspection_order'
             }
           },
           {
@@ -191,11 +191,11 @@ export const equipRoutes = [
             meta: {
               faName: 'InspectionFlow',
               title: '巡检工单查询',
-              permissionName: ''
+              permissionName: 'equip_inspection_order'
             }
           }
         ]
-      },*/
+      },
       {
         path: '/equipment/standard-definition',
         redirect: '/equipment/project-definition',
@@ -492,6 +492,139 @@ export const equipRoutes = [
           }
         ]
       }
+      /*, {
+        path: '/equipment/report-form',
+        redirect: '/equipment/supplier',
+        component: () => import('@/views/equipment-manage/report-form/a-index'),
+        name: 'EquipmentReportForm',
+        meta: {
+          title: '统计报表',
+          icon: 'quality'
+        },
+        children: [
+          {
+            path: '/equipment/OEE',
+            component: () => import('@/views/equipment-manage/report-form/OEE'),
+            name: 'EquipmentReportFormOEE',
+            meta: {
+              faName: 'EquipmentReportForm',
+              title: '密炼机 设备OEE分析',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/reportForm/MTBF-MTTR',
+            component: () => import('@/views/equipment-manage/report-form/MTBF-MTTR'),
+            name: 'EquipmentReportFormMTBFMTTR',
+            meta: {
+              faName: 'EquipmentReportForm',
+              title: 'MTBF/MTTR分析报表',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/order-time',
+            component: () => import('@/views/equipment-manage/report-form/order-time'),
+            name: 'EquipmentReportFormOrder',
+            meta: {
+              faName: 'EquipmentReportForm',
+              title: '工单别处理时间报表',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/equip-time',
+            component: () => import('@/views/equipment-manage/report-form/equip-time'),
+            name: 'EquipmentReportFormEquip',
+            meta: {
+              faName: 'EquipmentReportForm',
+              title: '机台别处理时间报表',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/person-time',
+            component: () => import('@/views/equipment-manage/report-form/person-time'),
+            name: 'EquipmentReportFormPerson',
+            meta: {
+              faName: 'EquipmentReportForm',
+              title: '人员别处理时间报表',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/order-processing',
+            component: () => import('@/views/equipment-manage/report-form/order-processing'),
+            name: 'EquipmentReportFormOrderProcessing',
+            meta: {
+              faName: 'EquipmentReportForm',
+              title: '处理时间分析报表',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/order-completed',
+            component: () => import('@/views/equipment-manage/report-form/order-completed'),
+            name: 'EquipmentReportFormOrderCompleted',
+            meta: {
+              faName: 'EquipmentReportForm',
+              title: '工单按时完成率报表',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/obsolescence-rate',
+            component: () => import('@/views/equipment-manage/report-form/obsolescence-rate'),
+            name: 'EquipmentReportFormObsolescenceRate',
+            meta: {
+              faName: 'EquipmentReportForm',
+              title: '交旧率报表',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/order-receiving',
+            component: () => import('@/views/equipment-manage/report-form/order-receiving'),
+            name: 'EquipmentReportFormOrderReceiving',
+            meta: {
+              faName: 'EquipmentReportForm',
+              title: '设备故障统计列表',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/fault-cause',
+            component: () => import('@/views/equipment-manage/report-form/fault-cause'),
+            name: 'EquipmentReportFormFaultCause',
+            meta: {
+              faName: 'EquipmentReportForm',
+              title: '设备故障分析报表',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/equipment/energy-consumption',
+            component: () => import('@/views/equipment-manage/report-form/energy-consumption'),
+            name: 'EquipmentReportFormEnergyConsumption',
+            meta: {
+              faName: 'EquipmentReportForm',
+              title: '能耗（电）统计报表',
+              permissionName: ''
+            }
+          }
+        ]
+      }*/
     ]
   }
+  // {
+  //   path: '/auto-schedule',
+  //   component: Layout,
+  //   redirect: '/schedule-home',
+  //   name: 'AutoSchedule',
+  //   meta: {
+  //     title: '自动排程',
+  //     icon: 'quality'
+  //   },
+  //   children: []
+  // }
 ]

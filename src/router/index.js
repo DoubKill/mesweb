@@ -508,6 +508,26 @@ export let asyncRoutes = [
             permissionName: 'xl_weight_card'
           }
         },
+        /* {
+          path: '/small-material-weight/hebao',
+          component: () => import('@/views/recipe/small-material-weight/hebao'),
+          name: 'SmallMaterialWeightHebao',
+          meta: {
+            faName: 'SmallMaterialWeight',
+            title: '单配(合包)化工流转卡',
+            permissionName: ''
+          }
+        },
+        {
+          path: '/small-material-weight/currency',
+          component: () => import('@/views/recipe/small-material-weight/currency'),
+          name: 'SmallMaterialWeightCurrency',
+          meta: {
+            faName: 'SmallMaterialWeight',
+            title: '单配(配方/通用)化工流转卡',
+            permissionName: ''
+          }
+        },*/
         {
           path: '/small-material-weight/valid',
           component: () => import('@/views/recipe/small-material-weight/valid'),
@@ -1994,6 +2014,78 @@ export let asyncRoutes = [
           }
         ]
       }
+      /*, {
+        path: '/banburying',
+        redirect: '/banburying/substitutes',
+        component: () => import('@/views/quality_management/banburying/a-index'),
+        name: 'Banburying',
+        meta: {
+          title: '密炼投料防错',
+          icon: 'quality'
+        },
+        children: [
+          {
+            path: '/banburying/substitutes',
+            component: () => import('@/views/quality_management/banburying/substitutes'),
+            name: 'BanburyingSubstitutes',
+            meta: {
+              faName: 'Banburying',
+              title: '细料胶块放行处理',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/banburying/makeUp',
+            component: () => import('@/views/quality_management/banburying/makeUp'),
+            name: 'BanburyingMakeUp',
+            meta: {
+              faName: 'Banburying',
+              title: '胶皮补打卡片',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/banburying/toleranceEntry',
+            component: () => import('@/views/quality_management/banburying/toleranceEntry'),
+            name: 'BanburyingToleranceEntry',
+            meta: {
+              faName: 'Banburying',
+              title: '配方公差标准录入',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/banburying/standardDistinction',
+            component: () => import('@/views/quality_management/banburying/standardDistinction'),
+            name: 'BanburyingStandardDistinction',
+            meta: {
+              faName: 'Banburying',
+              title: '公差标准区分关键字',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/banburying/standardProject',
+            component: () => import('@/views/quality_management/banburying/standardProject'),
+            name: 'BanburyingStandardProject',
+            meta: {
+              faName: 'Banburying',
+              title: '公差标准项目关键字',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/banburying/standardTreatment',
+            component: () => import('@/views/quality_management/banburying/standardTreatment'),
+            name: 'BanburyingStandardTreatment',
+            meta: {
+              faName: 'Banburying',
+              title: '公差标准处理关键字',
+              permissionName: ''
+            }
+          }
+        ]
+      }*/
     ]
   },
   // {

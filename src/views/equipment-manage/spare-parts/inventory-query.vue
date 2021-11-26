@@ -206,7 +206,7 @@
         />
         <el-table-column
           prop="one_piece"
-          label="单件"
+          label="单件个数"
           min-width="20"
         />
         <el-table-column
@@ -223,16 +223,25 @@
         class="dialog-footer"
       >
         <el-button
+          v-permission="['equip_warehouse_inventory','change']"
+          type="primary"
+          :disabled="loadingBtn"
+          @click="generateFunOne"
+        >编辑</el-button>
+        <el-button
+          v-permission="['equip_warehouse_inventory','change']"
           type="primary"
           :disabled="loadingBtn"
           @click="generateFun('del')"
         >删除</el-button>
         <el-button
+          v-permission="['equip_warehouse_inventory','change']"
           type="primary"
           :disabled="loadingBtn"
           @click="generateFun('lock')"
         >锁定</el-button>
         <el-button
+          v-permission="['equip_warehouse_inventory','change']"
           type="primary"
           :disabled="loadingBtn"
           @click="generateFun('unlock')"
@@ -389,6 +398,38 @@
         >返回</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      title="修改单件个数"
+      :visible.sync="dialogEdit"
+      width="20%"
+    >
+      <el-form>
+        <el-form-item
+          label="单件个数"
+        >
+          <el-input-number
+            v-model="EditForm.one_piece"
+            :min="1"
+            style="width:250px"
+          />
+        </el-form-item>
+      </el-form>
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button
+          type="primary"
+          :loading="loadingBtn"
+          @click="EditOne"
+        >确定</el-button>
+        <el-button
+          type="primary"
+          @click="dialogEdit=false"
+        >返回</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -409,6 +450,8 @@ export default {
       tableDataView: [],
       total: 0,
       checkList: [],
+      EditForm: { one_piece: 1 },
+      dialogEdit: false,
       loadingView: false,
       dialogVisible: false,
       dialogVisible1: false,
@@ -514,6 +557,39 @@ export default {
         this.tableDataView = data || []
       } catch (e) {
         //
+      }
+    },
+    async generateFunOne() {
+      if (this.multipleSelection.length === 0) {
+        this.$message('请选择备件')
+        return
+      }
+      if (this.multipleSelection.length > 1) {
+        this.$message('编辑只能选择一个')
+        return
+      }
+      this.EditForm.one_piece = this.multipleSelection[0].one_piece
+      this.dialogEdit = true
+    },
+    async EditOne() {
+      const id = this.multipleSelection[0].id
+      if (this.EditForm.one_piece === undefined) {
+        this.EditForm.one_piece = 1
+      }
+      try {
+        this.loadingBtn = true
+        await equipWarehouseInventory('put', id, { data: { one_piece: this.EditForm.one_piece }})
+        this.$message.success('操作成功')
+        this.getInventoryList()
+        this.getList()
+        this.loadingBtn = false
+        this.dialogEdit = false
+        this.multipleSelection = []
+        if (this.$refs.multipleTable) {
+          this.$refs.multipleTable.clearSelection()
+        }
+      } catch (e) {
+        this.loadingBtn = false
       }
     },
     async generateFun(status) {

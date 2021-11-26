@@ -13,7 +13,7 @@ export function material_quantity_url(method, data = {}) {
 // 班次 接口函数
 export function class_arrange_url(method, data = {}) {
   const obj = {
-    url: API.ClassArrangelUrl,
+    url: API.ClassArrangelUrl + '?all=1&class_name=班次',
     method: method
   }
   Object.assign(obj, data)
@@ -40,7 +40,7 @@ export function material_repertory_url(method, data = {}) {
 // 原材料类型接口函数
 export function materials_type_url(method, data = {}) {
   const obj = {
-    url: API.MaterialTypelUrl,
+    url: API.MaterialTypelUrl + '?all=1&class_name=原材料类别',
     method: method
   }
   Object.assign(obj, data)
@@ -66,7 +66,7 @@ export function inLibraryInventory(method, id, data = {}) {
 // 胶料段次接口函数
 export function stage_global_url(method, data = {}) {
   const obj = {
-    url: API.StageGlobalUrl,
+    url: API.StageGlobalUrl + '?all=1&class_name=胶料段次',
     method: method
   }
   Object.assign(obj, data)
