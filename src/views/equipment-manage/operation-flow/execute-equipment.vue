@@ -849,7 +849,7 @@
       :visible.sync="dialogVisiblePerson"
       width="30%"
     >
-      <el-form :inline="true" label-width="120px">
+      <el-form v-loading="loadPerson" :inline="true" label-width="120px">
         <el-form-item style="" prop="checkList">
           <span v-if="bz">作业标准人数：{{ bz }}</span>
           <el-checkbox-group v-model="checkList">
@@ -893,6 +893,7 @@ export default {
       tableData: [],
       loadId: null,
       order_id: null,
+      loadPerson: false,
       submit1: false,
       submitPerson: false,
       dialogVisiblePerson: false,
@@ -959,15 +960,17 @@ export default {
     },
     async personChange(row) {
       try {
-        const data = await getStaff('get', null, { params: {}})
+        this.dialogVisiblePerson = true
+        this.loadPerson = true
+        const data = await getStaff('get', null, { params: { have_classes: 1 }})
         this.staffList = data.results || []
         this.bz = row.work_persons ? row.work_persons : null
         this.receiving_user = row.receiving_user
         this.order_id = row.id
         this.checkList = row.repair_users
-        this.dialogVisiblePerson = true
+        this.loadPerson = false
       } catch (e) {
-        this.dialogVisiblePerson = false
+        this.loadPerson = false
       }
     },
     async generateFunPerson() {

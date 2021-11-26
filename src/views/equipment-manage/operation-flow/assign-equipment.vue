@@ -181,7 +181,7 @@
       :visible.sync="dialogVisible"
       width="30%"
     >
-      <el-form :inline="true" label-width="120px">
+      <el-form v-loading="loadPerson" :inline="true" label-width="120px">
         <el-form-item style="" prop="checkList">
           <span v-if="bz">作业标准人数：{{ bz }}</span>
           <el-checkbox-group v-model="checkList">
@@ -257,6 +257,7 @@ export default {
       dialogVisibleDefinition: false,
       dialogVisibleMaintain: false,
       dateValue: [],
+      loadPerson: false,
       tableData: [],
       total: 0,
       staffList: [],
@@ -272,21 +273,20 @@ export default {
   },
   created() {
     this.getList()
-    this.getStaff()
+    // this.getStaff()
   },
   methods: {
     debounceList() {
       debounce(this, 'changeSearch')
     },
-    async getStaff() {
-      try {
-        this.loading = true
-        const data = await getStaff('get', null, { params: { }})
-        this.staffList = data.results || []
-      } catch (e) {
-        //
-      }
-    },
+    // async getStaff() {
+    //   try {
+    //     const data = await getStaff('get', null, { params: {}})
+    //     this.staffList = data.results || []
+    //   } catch (e) {
+    //     //
+    //   }
+    // },
     async generateFun() {
       const obj = []
       this.multipleSelection.forEach(d => {
@@ -403,15 +403,19 @@ export default {
       this.$set(this.search, 'equip_no', obj ? obj.equip_no : '')
       this.changeSearch()
     },
-    dialog() {
+    async dialog() {
       this.bz = null
       if (this.multipleSelection.length > 0) {
         if (this.multipleSelection.length === 1) {
           this.bz = this.multipleSelection[0].work_persons
         }
         if (this.multipleSelection.every(d => d.status === '已生成')) {
-          this.checkList = []
           this.dialogVisible = true
+          this.loadPerson = true
+          const data = await getStaff('get', null, { params: {}})
+          this.staffList = data.results || []
+          this.checkList = []
+          this.loadPerson = false
         } else {
           this.$message.info('请勾选已生成状态列表')
         }
