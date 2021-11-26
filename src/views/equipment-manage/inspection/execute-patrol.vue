@@ -85,11 +85,12 @@
               type="primary"
               size="mini"
               :loading="submit1&&scope.row.id===loadId"
-              :disabled="submit1"
+              :disabled="submit1||name!==scope.row.receiving_user"
               @click="start(scope.row)"
             >开始</el-button>
             <el-button
               v-permission="['equip_inspection_order', 'regulation']"
+              :disabled="name!==scope.row.receiving_user"
               type="primary"
               size="mini"
               @click="personChange(scope.row)"
@@ -97,6 +98,7 @@
             </el-button>
             <el-button
               v-permission="['equip_inspection_order','handle']"
+              :disabled="name!==scope.row.receiving_user"
               type="primary"
               size="mini"
               @click="dialog(scope.row,'处理巡检工单')"
