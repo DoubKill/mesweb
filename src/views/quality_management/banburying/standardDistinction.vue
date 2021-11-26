@@ -60,7 +60,21 @@
           <el-input v-model="dialogForm.keyword_name" style="width:250px" />
         </el-form-item>
         <el-form-item label="匹配字符" prop="re_str">
-          <el-input v-model="dialogForm.re_str" style="width:250px" />
+          <el-select
+            v-model="dialogForm.re_str"
+            style="width:250px"
+            placeholder="请选择"
+            clearable
+            multiple
+            @visible-change="visibleChange"
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.id"
+              :label="item.global_name"
+              :value="item.global_name"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item
           label="备注"
@@ -85,6 +99,7 @@
 
 <script>
 import { toleranceKeyword, getDefaultCode } from '@/api/jqy'
+import { globalCodesUrl } from '@/api/base_w'
 
 export default {
   name: 'BanburyingStandardDistinction',
@@ -96,7 +111,8 @@ export default {
       loading: false,
       rules: {
         keyword_name: [{ required: true, message: '不能为空', trigger: 'blur' }]
-      }
+      },
+      options: []
     }
   },
   created() {
@@ -111,6 +127,16 @@ export default {
         this.loading = false
       } catch (e) {
         this.loading = false
+      }
+    },
+    async visibleChange(val) {
+      if (val) {
+        try {
+          const data = await globalCodesUrl('get', { params: { all: 1, class_name: '原材料类别' }})
+          this.options = data.results || []
+        } catch (e) {
+          this.options = []
+        }
       }
     },
     changSelect() {
