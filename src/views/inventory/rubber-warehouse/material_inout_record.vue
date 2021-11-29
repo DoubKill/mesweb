@@ -32,7 +32,6 @@
         <el-select
           v-model="search.order_type"
           placeholder="请选择"
-          clearable
           @change="changeList"
         >
           <el-option
@@ -49,7 +48,6 @@
           v-else
           v-model="search.warehouse_name"
           placeholder="请选择"
-          clearable
           @change="warehouseSelectFun"
         >
           <el-option
@@ -62,16 +60,16 @@
         <!-- <warehouseSelect :created-is="true" @changSelect="warehouseSelectFun" /> -->
       </el-form-item>
       <el-form-item label="物料编码">
-        <el-input v-model="search.material_no" @input="debounceList" />
+        <el-input v-model="search.material_no" clearable @input="debounceList" />
       </el-form-item>
       <el-form-item label="出入库单号">
-        <el-input v-model="search.order_no" @input="debounceList" />
+        <el-input v-model="search.order_no" clearable @input="debounceList" />
       </el-form-item>
       <el-form-item label="托盘号">
-        <el-input v-model="search.pallet_no" @input="debounceList" />
+        <el-input v-model="search.pallet_no" clearable @input="debounceList" />
       </el-form-item>
       <el-form-item label="质检条码">
-        <el-input v-model="search.lot_no" @input="debounceList" />
+        <el-input v-model="search.lot_no" clearable @input="debounceList" />
       </el-form-item>
       <el-form-item style="float:right">
         <el-button
@@ -119,6 +117,7 @@
       <!-- <el-table-column label="出入库类型" align="center" prop="inout_num_type" /> -->
       <el-table-column label="出入库数" align="center" prop="qty" width="50" />
       <el-table-column label="单位" align="center" prop="unit" width="40" />
+      <el-table-column label="车次" align="center" prop="product_info.memo" width="80" />
       <el-table-column label="重量" align="center" prop="weight" width="80" />
       <el-table-column label="发起人" align="center" prop="initiator" width="80" />
       <el-table-column label="发起时间" align="center" prop="start_time" />
@@ -154,7 +153,7 @@ export default {
       search: {
         page: 1,
         order_type: '出库',
-        warehouse_name: ''
+        warehouse_name: '混炼胶库'
       },
       searchDate: [],
       total: 0,
