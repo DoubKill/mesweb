@@ -76,7 +76,7 @@
     >
       <el-table-column
         label="操作"
-        width="150"
+        width="220"
       >
         <template slot-scope="scope">
           <el-button-group>
@@ -85,11 +85,20 @@
               type="primary"
               size="mini"
               :loading="submit1&&scope.row.id===loadId"
-              :disabled="submit1"
+              :disabled="submit1||name!==scope.row.receiving_user"
               @click="start(scope.row)"
             >开始</el-button>
             <el-button
+              v-permission="['equip_inspection_order', 'regulation']"
+              :disabled="name!==scope.row.receiving_user"
+              type="primary"
+              size="mini"
+              @click="personChange(scope.row)"
+            >增减人员
+            </el-button>
+            <el-button
               v-permission="['equip_inspection_order','handle']"
+              :disabled="name!==scope.row.receiving_user"
               type="primary"
               size="mini"
               @click="dialog(scope.row,'处理巡检工单')"
@@ -372,6 +381,27 @@
         <el-button :loading="btnLoading" type="primary" @click="generateFunApplication">确 定</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      title="增减人员"
+      :visible.sync="dialogVisiblePerson"
+      width="30%"
+    >
+      <el-form v-loading="loadPerson" :inline="true" label-width="120px">
+        <el-form-item style="" prop="checkList">
+          <span v-if="bz">作业标准人数：{{ bz }}</span>
+          <el-checkbox-group v-model="checkList">
+            <template v-for="(item, index) in staffList">
+              <el-checkbox :key="index" :label="item.username" :disabled="!item.optional||item.username===receiving_user" />
+            </template>
+          </el-checkbox-group>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisiblePerson=false">取 消</el-button>
+        <el-button :loading="submitPerson" type="primary" @click="generateFunPerson">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -380,7 +410,7 @@ import { debounce } from '@/utils'
 import page from '@/components/page'
 import { mapGetters } from 'vuex'
 import application from '../components/application-dialog'
-import { equipInspectionOrder, multiUpdateInspection, uploadImages, equipApplyRepair } from '@/api/jqy'
+import { equipInspectionOrder, multiUpdateInspection, uploadImages, equipApplyRepair, getStaff } from '@/api/jqy'
 import EquipSelect from '@/components/EquipSelect/index'
 export default {
   name: 'ExecutePatrol',
@@ -394,7 +424,15 @@ export default {
       },
       dateValue: [],
       tableData: [],
+      bz: null,
+      order_id: null,
+      loadPerson: false,
+      checkList: [],
       loading: false,
+      submitPerson: false,
+      staffList: [],
+      receiving_user: '',
+      dialogVisiblePerson: false,
       dialogVisibleApplication: false,
       total: 0,
       rules: {
@@ -441,6 +479,34 @@ export default {
         this.loading = false
       }
     },
+    async personChange(row) {
+      try {
+        this.dialogVisiblePerson = true
+        this.loadPerson = true
+        const data = await getStaff('get', null, { params: { equip_no: row.equip_no, have_classes: 1 }})
+        this.staffList = data.results || []
+        this.bz = row.work_persons ? row.work_persons : null
+        this.receiving_user = row.receiving_user
+        this.order_id = row.id
+        this.checkList = row.repair_users
+        this.loadPerson = false
+      } catch (e) {
+        this.loadPerson = false
+      }
+    },
+    async generateFunPerson() {
+      try {
+        this.submitPerson = true
+        await equipInspectionOrder('post', null, { data: { order_id: this.order_id, users: this.checkList }})
+        this.$message.success('修改成功')
+        this.submitPerson = false
+        this.dialogVisiblePerson = false
+        this.getList()
+      } catch (e) {
+        this.submitPerson = false
+        this.dialogVisiblePerson = true
+      }
+    },
     start(row) {
       const obj = []
       obj.push(row.id)
@@ -476,6 +542,7 @@ export default {
       console.log(row)
     },
     changeSearch() {
+      this.search.page = 1
       this.getList()
     },
     onExceed() {

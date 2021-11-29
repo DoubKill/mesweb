@@ -384,6 +384,7 @@ export default {
 
     },
     changeSearch() {
+      this.search.page = 1
       this.getList()
     },
     equipSelected(obj) {
@@ -445,7 +446,7 @@ export default {
     color:black;
   }
   .el-table .bigred-row {
-    background: #761F28;
+    background: #B8741A;
     color:black;
   }
   .el-table .orange-row {

@@ -582,5 +582,7 @@ export default {
   ReplaceMaterial: '/api/v1/terminal/replace-material/',
   MaterialMultiUpdate: '/api/v1/terminal/replace-material/multi_update/',
   WmsExpireList: '/api/v1/inventory/wms-expire-list/', // 原材料即将超期物料查询
-  ThExpireList: '/api/v1/inventory/th-expire-list/' // 炭黑即将超期物料查询
+  ThExpireList: '/api/v1/inventory/th-expire-list/', // 炭黑即将超期物料查询
+  ToleranceKeyword: '/api/v1/terminal/tolerance-keyword/',
+  ToleranceRule: '/api/v1/terminal/tolerance-rule/'
 }
