@@ -176,6 +176,16 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item v-if="!isLocation" label="品质状态">
+          <el-select v-model="formSearch.quality_status" placeholder="请选择" @change="getWeight">
+            <el-option
+              v-for="(item,i) in [{name:'合格',id:1},{name:'不合格',id:3}]"
+              :key="i"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item v-if="isLocation" label="伸位">
           <el-select v-model="formSearch.position" clearable placeholder="请选择" @change="getDialog">
             <el-option
@@ -385,6 +395,13 @@
             min-width="20"
             prop="WeightOfActualUnit"
           />
+          <el-table-column
+            label="品质状态"
+            min-width="20"
+            :formatter="d=>{
+              return d.quality_status===1?'合格':d.quality_status===3?'不合格':''
+            }"
+          />
         </el-table>
       </div>
       <span v-if="!loading2" slot="footer" class="dialog-footer">
@@ -481,7 +498,9 @@ export default {
       loading1: false,
       tableData1: [],
       dialogVisible1: false,
-      formSearch: {},
+      formSearch: {
+        quality_status: 1
+      },
       tableData2: [],
       tableData3: [],
       tableData4: [],
@@ -613,6 +632,7 @@ export default {
       this.formSearch = {}
       this.formSearch.entrance_name = this.optionsEntrance[0].name
       this.formSearch.code = this.optionsEntrance[0].code
+      this.formSearch.quality_status = 1
       this.EntranceCode = ''
       if (done) {
         done()
