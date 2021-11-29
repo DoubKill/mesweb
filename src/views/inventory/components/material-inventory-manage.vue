@@ -213,8 +213,8 @@ export default {
           material_code: this.materialCode, // 物料编号
           container_no: this.containerNo, // 托盘号
           quality_status: this.qualityStatus,
+          warehouse_name: this.warehouseNameProps
           // lot_no: this.lotNo,
-          warehouse_name: '混炼胶库' // 仓库名称
         }
         this.getTableData()
       }
