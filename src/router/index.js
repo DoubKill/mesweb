@@ -954,6 +954,17 @@ export let asyncRoutes = [
             }
           },
           {
+            path: '/delivery-overdueQuery',
+            component: () => import('@/views/inventory/material-delivery-manage/overdueQuery.vue'),
+            name: 'DeliveryOverdueQuery',
+            meta: {
+              faName: 'MaterialDelivery',
+              faShowName: '原材料库',
+              title: '即将超期查询',
+              permissionName: 'material_expire_query'
+            }
+          },
+          {
             path: '/material-delivery-manage/daily',
             component: () => import('@/views/inventory/material-delivery-manage/daily.vue'),
             name: 'DeliveryDaily',
@@ -1060,6 +1071,17 @@ export let asyncRoutes = [
               faShowName: '炭黑库',
               title: '库存明细',
               permissionName: 'th_stock_detail'
+            }
+          },
+          {
+            path: '/carbon-overdueQuery',
+            component: () => import('@/views/inventory/carbon-delivery-manage/overdueQuery.vue'),
+            name: 'CarbonDeliveryOverdueQuery',
+            meta: {
+              faName: 'CarbonDelivery',
+              faShowName: '炭黑库',
+              title: '即将超期查询',
+              permissionName: 'th_expire_query'
             }
           },
           {
@@ -2013,8 +2035,8 @@ export let asyncRoutes = [
             }
           }
         ]
-      },
-      {
+      }
+      /*, {
         path: '/banburying',
         redirect: '/banburying/substitutes',
         component: () => import('@/views/quality_management/banburying/a-index'),
@@ -2085,7 +2107,7 @@ export let asyncRoutes = [
             }
           }
         ]
-      }
+      }*/
     ]
   },
   // {

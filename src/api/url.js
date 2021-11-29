@@ -158,6 +158,8 @@ export default {
   WmsStorage: '/api/v1/inventory/wms-storage/',
   // 炭黑库存明细
   ThStorage: '/api/v1/inventory/th-storage/',
+  WmsExpireDetails: '/api/v1/inventory/wms-expire-details/',
+  ThExpireDetails: '/api/v1/inventory/th-expire-details/',
   // 混炼胶库计划管理
   PutPlanManagement: '/api/v1/inventory/put-plan-management/',
   MixinRubberyOutboundOrder: 'api/v1/inventory/mixin-rubbery-outbound-order/',
@@ -579,6 +581,8 @@ export default {
   Personnels: '/api/v1/system/personnels/', // 获取工艺员
   ReplaceMaterial: '/api/v1/terminal/replace-material/',
   MaterialMultiUpdate: '/api/v1/terminal/replace-material/multi_update/',
+  WmsExpireList: '/api/v1/inventory/wms-expire-list/', // 原材料即将超期物料查询
+  ThExpireList: '/api/v1/inventory/th-expire-list/', // 炭黑即将超期物料查询
   ToleranceKeyword: '/api/v1/terminal/tolerance-keyword/',
   ToleranceRule: '/api/v1/terminal/tolerance-rule/'
 }

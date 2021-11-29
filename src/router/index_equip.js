@@ -10,7 +10,7 @@ export const equipRoutes = [
       icon: 'quality'
     },
     children: [
-      {
+      /* {
         path: '/equipment-home',
         component: () => import('@/views/equipment-manage/operation-status'),
         name: 'EquipmentHome',
@@ -19,7 +19,7 @@ export const equipRoutes = [
           icon: 'quality',
           permissionName: ''
         }
-      },
+      },*/
       {
         path: '/equipment/maintenance',
         redirect: '/equipment/maintenance',
@@ -491,8 +491,7 @@ export const equipRoutes = [
             }
           }
         ]
-      },
-      {
+      }, {
         path: '/equipment/report-form',
         redirect: '/equipment/supplier',
         component: () => import('@/views/equipment-manage/report-form/a-index'),

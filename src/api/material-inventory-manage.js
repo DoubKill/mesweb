@@ -36,6 +36,36 @@ export function thStorage(params) {
     params
   })
 }
+export function wmsExpireDetails(params) {
+  return request({
+    url: API.WmsExpireDetails,
+    method: 'get',
+    params
+  })
+}
+export function thExpireDetails(params) {
+  return request({
+    url: API.ThExpireDetails,
+    method: 'get',
+    params
+  })
+}
+export function wmsExpireDetailsDown(params) {
+  return request({
+    url: API.WmsExpireDetails,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
+export function thExpireDetailsDown(params) {
+  return request({
+    url: API.ThExpireDetails,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
 
 export function bzMixinInventoryDown(params) {
   return request({
