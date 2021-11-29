@@ -508,7 +508,7 @@ export let asyncRoutes = [
             permissionName: 'xl_weight_card'
           }
         },
-        /* {
+        {
           path: '/small-material-weight/hebao',
           component: () => import('@/views/recipe/small-material-weight/hebao'),
           name: 'SmallMaterialWeightHebao',
@@ -527,7 +527,7 @@ export let asyncRoutes = [
             title: '单配(配方/通用)化工流转卡',
             permissionName: ''
           }
-        },*/
+        },
         {
           path: '/small-material-weight/valid',
           component: () => import('@/views/recipe/small-material-weight/valid'),
