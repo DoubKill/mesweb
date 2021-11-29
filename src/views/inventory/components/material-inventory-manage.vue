@@ -162,6 +162,10 @@ export default {
       type: String,
       default: ''
     },
+    expireDays: {
+      type: [String, Number],
+      default: ''
+    },
     qualityStatus: {
       type: [String, Number],
       default: null
@@ -188,6 +192,7 @@ export default {
         material_code: this.materialCode, // 物料编号
         container_no: this.containerNo, // 托盘号
         quality_status: this.qualityStatus,
+        expire_days: this.expireDays,
         // lot_no: this.lotNo,
         warehouse_name: '混炼胶库' // 仓库名称
       },
@@ -213,7 +218,8 @@ export default {
           material_code: this.materialCode, // 物料编号
           container_no: this.containerNo, // 托盘号
           quality_status: this.qualityStatus,
-          warehouse_name: this.warehouseNameProps
+          warehouse_name: this.warehouseNameProps,
+          expire_days: this.expireDays
           // lot_no: this.lotNo,
         }
         this.getTableData()
