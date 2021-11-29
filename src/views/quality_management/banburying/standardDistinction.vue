@@ -108,6 +108,7 @@ export default {
       tableData: [],
       dialogCreateVisible: false,
       dialogForm: {},
+      dialogForm1: {},
       loading: false,
       rules: {
         keyword_name: [{ required: true, message: '不能为空', trigger: 'blur' }]
@@ -153,9 +154,18 @@ export default {
     },
     handleCreate() {
       this.dialogForm.work_type = '区分'
+      this.dialogForm1 = JSON.parse(JSON.stringify(this.dialogForm))
+      if (this.dialogForm1.re_str) {
+        var str = ''
+        this.dialogForm1.re_str.forEach(d => {
+          str += d + ','
+        })
+        str = str.substr(0, str.length - 1)
+        this.dialogForm1.re_str = str
+      }
       this.$refs.createForm.validate((valid) => {
         if (valid) {
-          toleranceKeyword('post', null, { data: this.dialogForm }).then(response => {
+          toleranceKeyword('post', null, { data: this.dialogForm1 }).then(response => {
             this.dialogCreateVisible = false
             this.$message.success('创建成功')
             this.getList()
