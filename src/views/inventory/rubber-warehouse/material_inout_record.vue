@@ -117,7 +117,13 @@
       <!-- <el-table-column label="出入库类型" align="center" prop="inout_num_type" /> -->
       <el-table-column label="出入库数" align="center" prop="qty" width="50" />
       <!-- <el-table-column label="单位" align="center" prop="unit" width="40" /> -->
-      <el-table-column label="车次" align="center" prop="product_info.memo" width="80" />
+      <el-table-column
+        v-if="!warehouseNameProps"
+        label="车次"
+        align="center"
+        prop="product_info.memo"
+        width="80"
+      />
       <el-table-column label="重量(kg)" align="center" prop="weight" width="80" />
       <el-table-column label="发起人" align="center" prop="initiator" width="80" />
       <el-table-column label="发起时间" align="center" prop="start_time" />
