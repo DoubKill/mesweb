@@ -188,6 +188,7 @@ export default {
       tableData: [],
       getParams: {
         page: 1,
+        page_size: 10,
         // material_type: '', // 物料类型
         material_code: this.materialCode, // 物料编号
         container_no: this.containerNo, // 托盘号
@@ -214,6 +215,7 @@ export default {
       if (bool) {
         this.getParams = {
           page: 1,
+          page_size: 10,
           // material_type: '', // 物料类型
           material_code: this.materialCode, // 物料编号
           container_no: this.containerNo, // 托盘号
