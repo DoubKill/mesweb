@@ -82,6 +82,11 @@
             size="mini"
             @click="showEditDialog(row)"
           >查看</el-button>
+          <!-- <el-button
+            type="warning"
+            size="mini"
+            @click="cancelFun(row)"
+          >取消</el-button> -->
         </template>
       </el-table-column>
     </el-table>
@@ -168,6 +173,16 @@
         </el-form-item>
         <el-form-item v-if="isLocation" label="品质状态">
           <el-select v-model="formSearch.quality_status" clearable placeholder="请选择" @change="getDialog">
+            <el-option
+              v-for="(item,i) in [{name:'合格',id:1},{name:'不合格',id:3}]"
+              :key="i"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="!isLocation" label="品质状态">
+          <el-select v-model="formSearch.quality_status" placeholder="请选择" @change="getWeight">
             <el-option
               v-for="(item,i) in [{name:'合格',id:1},{name:'不合格',id:3}]"
               :key="i"
@@ -386,6 +401,13 @@
             min-width="20"
             prop="WeightOfActualUnit"
           />
+          <el-table-column
+            label="品质状态"
+            min-width="20"
+            :formatter="d=>{
+              return d.quality_status===1?'合格':d.quality_status===3?'不合格':''
+            }"
+          />
         </el-table>
       </div>
       <span v-if="!loading2" slot="footer" class="dialog-footer">
@@ -482,13 +504,15 @@ export default {
       loading1: false,
       tableData1: [],
       dialogVisible1: false,
-      formSearch: {},
+      formSearch: {
+        quality_status: 1
+      },
       tableData2: [],
       tableData3: [],
       tableData4: [],
       EntranceCode: '',
       isLocation: '',
-      tableData5: [{}],
+      tableData5: [],
       loading2: false,
       total1: 0,
       optionsEntrance: [],
@@ -572,6 +596,24 @@ export default {
     showEditDialog(row) {
       this.dialogVisible = true
       this.getDialogList(row.id)
+    },
+    cancelFun() {
+      this.$confirm('是否确定取消?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // equipPropertyList('delete', data.id)
+        //   .then(response => {
+        //     this.$message({
+        //       type: 'success',
+        //       message: '取消成功!'
+        //     })
+        //     this.getList()
+        //   }).catch(e => {
+        //     //
+        //   })
+      })
     },
     getDialogList(id) {
       this.loading1 = true
