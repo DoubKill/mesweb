@@ -743,7 +743,7 @@ export let asyncRoutes = [
         icon: 'production'
       },
       children: [
-        /** {
+        {
           path: '/report/produce-work',
           component: () => import('@/views/equipment-management/report/produce-work'),
           name: 'ProduceWork',
@@ -752,7 +752,7 @@ export let asyncRoutes = [
             title: '生产运行记录',
             permissionName: 'production_record'
           }
-        }**/
+        }
         // {
         //   path: '/report/material-requirement',
         //   component: () => import('@/views/equipment-management/report/material-requirement'),
