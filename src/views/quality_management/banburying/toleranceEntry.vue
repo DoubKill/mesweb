@@ -112,7 +112,7 @@
           <el-select
             v-model="dialogForm.small_handle"
             placeholder=""
-            style="width:120px"
+            style="width:80px"
           >
             <el-option
               v-for="item in options3"
@@ -407,7 +407,7 @@ export default {
       const data = await toleranceKeyword('get', null, { params: { work_type: '区分', all: 1 }})
       const data1 = await toleranceKeyword('get', null, { params: { work_type: '项目', all: 1 }})
       const data2 = await toleranceKeyword('get', null, { params: { work_type: '处理', all: 1 }})
-      const data3 = await toleranceKeyword('get', null, { params: { work_type: '处理', all: 1, single: 1 }})
+      const data3 = await toleranceKeyword('get', null, { params: { work_type: '处理', single: 1 }})
       this.options = data.results
       this.options1 = data1.results
       this.options2 = data2.results
