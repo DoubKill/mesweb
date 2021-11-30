@@ -154,7 +154,7 @@
               v-permission="['equip_apply_order', 'regulation']"
               type="primary"
               size="mini"
-              :disabled="name!==scope.row.receiving_user"
+              :disabled="!(name===scope.row.receiving_user||name===sectionTop)"
               @click="personChange(scope.row)"
             >增减人员
             </el-button>
@@ -870,6 +870,7 @@
 <script>
 import page from '@/components/page'
 import { mapGetters } from 'vuex'
+import { sectionTree } from '@/api/base_w_four'
 import RepairDefinition from '../standard-definition/repair-definition'
 import MaintainDefinition from '../standard-definition/maintain-definition'
 import FaultClassify from '../master-data/fault-classify'
@@ -918,6 +919,7 @@ export default {
       dialogVisibleRepair: false,
       dialogVisibleDefinition: false,
       dialogVisibleMaintain: false,
+      sectionTop: null,
       ruleForm: {},
       typeForm: {},
       typeForm1: {},
@@ -937,10 +939,19 @@ export default {
   },
   created() {
     this.getList()
+    this.getSectionTop()
   },
   methods: {
     debounceList() {
       debounce(this, 'changeSearch')
+    },
+    async getSectionTop() {
+      try {
+        const data = await sectionTree('get', null, { params: { section_name: '设备科' }})
+        this.sectionTop = data.in_charge_user
+      } catch (e) {
+        //
+      }
     },
     changeDate(date) {
       this.search.planned_repair_date_after = date ? date[0] : ''
