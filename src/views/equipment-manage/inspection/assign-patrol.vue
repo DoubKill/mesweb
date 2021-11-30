@@ -154,7 +154,7 @@
       :visible.sync="dialogVisible"
       width="30%"
     >
-      <el-form :inline="true" label-width="120px">
+      <el-form v-loading="loadPerson" :inline="true" label-width="120px">
         <el-form-item style="" prop="checkList">
           <span v-if="bz">作业标准人数：{{ bz }}</span>
           <el-checkbox-group v-model="checkList">
@@ -189,6 +189,7 @@ export default {
         page_size: 10
       },
       dateValue: [],
+      loadPerson: false,
       bz: '',
       tableData: [],
       staffList: [],
@@ -305,10 +306,12 @@ export default {
             this.bz = this.multipleSelection[0].work_persons
           }
           if (this.multipleSelection.every(d => d.equip_no === this.multipleSelection[0].equip_no)) {
+            this.dialogVisible = true
+            this.loadPerson = true
             const data = await getStaff('get', null, { params: { equip_no: this.multipleSelection[0].equip_no }})
             this.staffList = data.results || []
             this.checkList = []
-            this.dialogVisible = true
+            this.loadPerson = false
           } else {
             this.$message.info('批量指派工单需相同机台')
           }
