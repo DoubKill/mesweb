@@ -6,6 +6,7 @@
     placeholder="请选择"
     :size="isMini"
     :disabled="isDisabled"
+    filterable
     @change="changeFun"
   >
     <el-option

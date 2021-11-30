@@ -34,7 +34,7 @@ export default {
   ProductInfosUrl: '/api/v1/recipe/product-infos/',
   ValidateVersionsUrl: '/api/v1/recipe/validate-versions/',
   CopyProductInfosUrl: '/api/v1/recipe/copy-product-infos/',
-  // 胶料配料标准管理接口
+  // 胶料配料标准管理接口 所有配方接口
   RubberMaterialUrl: '/api/v1/recipe/product-batching/',
   // 配方数据发送至上辅机接口
   SendAuxiliaryUrl: '/api/v1/recipe/recipe-notice/',
@@ -583,6 +583,11 @@ export default {
   MaterialMultiUpdate: '/api/v1/terminal/replace-material/multi_update/',
   WmsExpireList: '/api/v1/inventory/wms-expire-list/', // 原材料即将超期物料查询
   ThExpireList: '/api/v1/inventory/th-expire-list/', // 炭黑即将超期物料查询
+  WeightingPackageSingle: 'api/v1/terminal/weighting-package-single/',
+  GetManualInfo: '/api/v1/terminal/get-manual-info/', // 获取物料
+  WeightingPackageManua: '/api/v1/terminal/weighting-package-manual/', // 合包
+  GetMaterialTolerance: '/api/v1/terminal/get-material-tolerance/', // 物料查公差
+
   ToleranceKeyword: '/api/v1/terminal/tolerance-keyword/',
   ToleranceRule: '/api/v1/terminal/tolerance-rule/'
 }

@@ -32,3 +32,35 @@ export function thExpireList(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function weightingPackageSingle(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WeightingPackageSingle + id + '/' : API.WeightingPackageSingle,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function getManualInfo(method, id, data = {}) {
+  const obj = {
+    url: id ? API.GetManualInfo + id + '/' : API.GetManualInfo,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function weightingPackageManua(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WeightingPackageManua + id + '/' : API.WeightingPackageManua,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function getMaterialTolerance(method, id, data = {}) {
+  const obj = {
+    url: id ? API.GetMaterialTolerance + id + '/' : API.GetMaterialTolerance,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
