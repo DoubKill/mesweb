@@ -5,6 +5,7 @@
       <el-form-item label="报修编号">
         <el-input
           v-model="search.plan_id"
+          clearable
           style="width:200px"
           @input="changeSearch"
         />
@@ -34,6 +35,7 @@
       <el-form-item label="故障原因">
         <el-input
           v-model="search.result_fault_cause"
+          clearable
           style="width:200px"
           @input="changeSearch"
         />
@@ -106,7 +108,7 @@
         min-width="20"
       />
       <el-table-column
-        prop="result_fault_cause_name"
+        prop="result_fault_cause"
         label="故障原因"
         min-width="20"
       />
@@ -238,10 +240,10 @@
           <el-link v-if="ruleForm.id&&ruleForm.equip_condition==='不停机'" style="margin-left:10px">不停机</el-link>
           <el-checkbox v-if="!ruleForm.id" v-model="ruleForm.equip_condition" :disabled="operateType==='报修申请详情'" style="margin-left:10px">已停机</el-checkbox>
         </el-form-item>
-        <el-form-item label="故障原因" prop="result_fault_cause_name">
+        <el-form-item label="故障原因" prop="result_fault_cause">
           <el-input
-            v-model="ruleForm.result_fault_cause_name"
-            :disabled="true"
+            v-model="ruleForm.result_fault_cause"
+            :disabled="operateType==='报修申请详情'"
             style="width:250px"
           >
             <el-button
@@ -447,9 +449,9 @@ export default {
           { required: true, message: '不能为空', trigger: 'blur' }
         ],
         equip_no: [
-          { required: true, message: '不能为空', trigger: 'blur' }
+          { required: true, message: '不能为空', trigger: 'change' }
         ],
-        result_fault_cause_name: [
+        result_fault_cause: [
           { required: true, message: '不能为空', trigger: 'change' }
         ]
       },
@@ -619,8 +621,8 @@ export default {
         this.$refs['List'].currentObj = {}
       }
       if (this.$refs['List'].currentObj.fault_name) {
-        this.$set(this.ruleForm, 'result_fault_cause_name', this.$refs['List'].currentObj.fault_name)
-        this.$set(this.ruleForm, 'result_fault_cause', this.$refs['List'].currentObj.id)
+        // this.$set(this.ruleForm, 'result_fault_cause_name', this.$refs['List'].currentObj.fault_name)
+        this.$set(this.ruleForm, 'result_fault_cause', this.$refs['List'].currentObj.fault_name)
         // this.ruleForm.result_fault_cause_name = this.$refs['List'].currentObj.fault_name
         // this.ruleForm.result_fault_cause = this.$refs['List'].currentObj.id
         this.dialogVisible1 = false
