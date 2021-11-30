@@ -1,12 +1,83 @@
 <template>
   <div>
     <!-- 胶料配料标准 -->
-    <div v-if="tableData.length>0">
-      <div
-        v-for="(tableItem,_i) in tableData"
-        :key="_i"
+    <h3>{{ formObj.stage_name==='FM'?'硫磺':'细料' }}</h3>
+    <!-- <div v-if="tableData.length>0"> -->
+    <div
+      v-for="(tableItem,_i) in tableData"
+      :key="_i"
+    >
+      <el-table
+        :data="tableItem"
+        border
+        show-summary
       >
-        <el-table
+        <el-table-column
+          label="No"
+          type="index"
+          width="60"
+        />
+        <el-table-column
+          prop="material_type"
+          label="类别"
+          width="80"
+          column-key="material_type"
+        />
+        <el-table-column label="原材料">
+          <template slot-scope="{row,$index}">
+            <el-input
+              v-model="row.material_name"
+              size="mini"
+              :disabled="true"
+            >
+              <el-button
+                slot="append"
+                icon="el-icon-search"
+                @click="pop_up_raw_material(_i,$index)"
+              />
+            </el-input>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="实际重量/kg"
+          prop="standard_weight"
+        >
+          <template slot-scope="{row}">
+            <el-input-number
+              v-model.number="row.standard_weight"
+              size="mini"
+              :min="0"
+              controls-position="right"
+              :disabled="isView"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="误差"
+          prop="standard_error"
+        >
+          <template slot-scope="{row}">
+            <el-input-number
+              v-model.number="row.standard_error"
+              size="mini"
+              controls-position="right"
+              :disabled="isView"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column
+          v-if="!isView"
+          label="操作"
+        >
+          <template slot-scope="{$index}">
+            <el-button
+              size="mini"
+              @click="deleteRow($index,_i)"
+            >删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <!-- <el-table
           :data="tableItem"
           border
           show-summary
@@ -31,7 +102,6 @@
                 style="width:120px"
                 @blur="changeNum(row,_i)"
               />包
-              <!-- {{ row.package_cnt }} -->
             </template>
           </el-table-column>
           <el-table-column
@@ -96,12 +166,11 @@
               <el-button size="mini" @click="deleteRow($index,_i)">删除</el-button>
             </template>
           </el-table-column>
-        </el-table>
-        <div v-if="!isView" style="text-align: center;">
-          <el-button size="mini" @click="insertOneRow(_i)">插入一行</el-button>
-          <!-- <el-button size="mini" @click="deleteOneRow(_i)">删除</el-button> -->
-        </div>
-      </div>
+        </el-table> -->
+    </div>
+    <!-- </div> -->
+    <div v-if="!isView" style="text-align: center;">
+      <el-button size="mini" @click="insertOneRow(0)">插入一行</el-button>
     </div>
   </div>
 </template>
@@ -112,6 +181,12 @@ import { productBatchingDetail } from '@/api/small-material-recipe'
 export default {
   props: {
     isIngredientObj: {
+      type: Object,
+      default() {
+        return {}
+      }
+    },
+    formObj: {
       type: Object,
       default() {
         return {}
@@ -160,6 +235,8 @@ export default {
     this.weight_cnt_types_delete = []
     this.equip_category_list()
     this.getProductBatching()
+  },
+  updated() {
   },
   methods: {
     NewsaveMaterialClicked() {},
@@ -229,11 +306,13 @@ export default {
       this.$emit('deleteOneRow', this.weight_cnt_types_delete)
     },
     insertOneRow(index) {
-      const _value = this.tableData[index][0]
+      if (!this.tableData.length) {
+        this.$set(this.tableData, index, [])
+      }
       this.tableData[index].push({
-        name: _value.name,
-        package_cnt: _value.package_cnt,
-        package_type: _value.package_type
+        name: '',
+        package_cnt: '',
+        package_type: ''
       })
     }
   }
