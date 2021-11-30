@@ -90,7 +90,7 @@
             >开始</el-button>
             <el-button
               v-permission="['equip_inspection_order', 'regulation']"
-              :disabled="name!==scope.row.receiving_user"
+              :disabled="!(name===scope.row.receiving_user||name===sectionTop)"
               type="primary"
               size="mini"
               @click="personChange(scope.row)"
@@ -408,6 +408,7 @@
 <script>
 import { debounce } from '@/utils'
 import page from '@/components/page'
+import { sectionTree } from '@/api/base_w_four'
 import { mapGetters } from 'vuex'
 import application from '../components/application-dialog'
 import { equipInspectionOrder, multiUpdateInspection, uploadImages, equipApplyRepair, getStaff } from '@/api/jqy'
@@ -431,6 +432,7 @@ export default {
       loading: false,
       submitPerson: false,
       staffList: [],
+      sectionTop: null,
       receiving_user: '',
       dialogVisiblePerson: false,
       dialogVisibleApplication: false,
@@ -458,10 +460,19 @@ export default {
   },
   created() {
     this.getList()
+    this.getSectionTop()
   },
   methods: {
     changeDebounce() {
       debounce(this, 'changeSearch')
+    },
+    async getSectionTop() {
+      try {
+        const data = await sectionTree('get', null, { params: { section_name: '设备科' }})
+        this.sectionTop = data.in_charge_user
+      } catch (e) {
+        //
+      }
     },
     changeDate(date) {
       this.search.planned_repair_date_after = date ? date[0] : ''
