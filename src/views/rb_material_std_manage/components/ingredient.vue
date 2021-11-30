@@ -50,7 +50,7 @@
           style="float:right;"
         >
           <el-button @click="putNewsaveMaterialClicked">保存</el-button>
-          <el-button @click="addMaterial">新建料包</el-button>
+          <!-- <el-button @click="addMaterial">新建料包</el-button> -->
         </el-form-item>
         <div style="clear:both" />
       </el-form>
@@ -163,6 +163,7 @@
         ref="ingredientStandardRef"
         :add-table-data="addTableData"
         :is-ingredient-obj="isIngredientObj"
+        :form-obj="formObj"
         :is-view="isView"
         @pop_up_raw_material="pop_up_raw_material"
         @deleteRow="deleteRow"
@@ -342,6 +343,7 @@ export default {
     }
   },
   updated() {
+    // console.log(this.batchingList, 'batchingList')
   },
   methods: {
     handleClose(done) {
@@ -545,6 +547,9 @@ export default {
           try {
             ingredientList.forEach(D => {
               D.forEach(d => {
+                if (!d.standard_error) {
+                  d.standard_error = ''
+                }
                 if (!d.material || !d.standard_weight) {
                   throw Error()
                 }
