@@ -63,9 +63,9 @@ const actions = {
         // 登录中策
         Cookies.set('zc-url', response.wms_url)
         Cookies.set('zc-th-url', response.th_url)
-        const loginId = process.env.NODE_ENV === 'production'
-          ? window.location.host === '10.10.120.40:9009' ? 'guozi' : 'mes' : 'guozi'
-        // const loginId = 'mes'
+        // const loginId = process.env.NODE_ENV === 'production'
+        //   ? window.location.host === '10.10.120.40:9009' ? 'guozi' : 'mes' : 'guozi'
+        const loginId = 'mes'
         request({
           url: '/user/Login',
           method: 'POST',
@@ -80,8 +80,8 @@ const actions = {
         requestTH({
           url: '/user/Login',
           method: 'POST',
-          data: { loginId: 'admin',
-            password: '123456' }}
+          data: { loginId: '18507021015',
+            password: 'mes123456' }}
         ).then(data => {
           const userId = data.datas.userId
           Cookies.set('zc-th-userId', userId)
