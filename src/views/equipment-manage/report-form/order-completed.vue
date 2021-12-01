@@ -26,6 +26,7 @@
       v-loading="loading"
       :data="tableData"
       border
+      show-summary
     >
       <el-table-column
         prop="order_id"
@@ -34,27 +35,32 @@
       />
       <el-table-column
         prop="order_id"
-        label="巡检"
+        label="总工单数"
         min-width="20"
       />
       <el-table-column
         prop="order_id"
-        label="保养"
+        label="按时完成工单数"
         min-width="20"
       />
       <el-table-column
         prop="order_id"
-        label="润滑"
+        label="超期完成工单数"
         min-width="20"
       />
       <el-table-column
         prop="order_id"
-        label="标定"
+        label="未完成工单数"
         min-width="20"
       />
       <el-table-column
         prop="order_id"
-        label="维修"
+        label="工单完成率"
+        min-width="20"
+      />
+      <el-table-column
+        prop="order_id"
+        label="工单按时完成率"
         min-width="20"
       />
     </el-table>

@@ -39,37 +39,17 @@
       />
       <el-table-column
         prop="order_id"
+        label="领用数量"
+        min-width="20"
+      />
+      <el-table-column
+        prop="order_id"
+        label="交旧数量"
+        min-width="20"
+      />
+      <el-table-column
+        prop="order_id"
         label="交旧率"
-        min-width="20"
-      />
-      <el-table-column
-        prop="order_id"
-        label="作业类别"
-        min-width="20"
-      />
-      <el-table-column
-        prop="order_id"
-        label="派单时间（分钟）"
-        min-width="20"
-      />
-      <el-table-column
-        prop="order_id"
-        label="接单时间（分钟）"
-        min-width="20"
-      />
-      <el-table-column
-        prop="order_id"
-        label="维修时间（分钟）"
-        min-width="20"
-      />
-      <el-table-column
-        prop="order_id"
-        label="验收时间（分钟）"
-        min-width="20"
-      />
-      <el-table-column
-        prop="order_id"
-        label="开机时间（分钟）"
         min-width="20"
       />
     </el-table>
