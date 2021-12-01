@@ -29,18 +29,12 @@
         />
       </el-form-item>
       <el-form-item label="品质状态">
-        <el-select
-          v-model="search.quality_status"
-          clearable
-          placeholder="请选择"
-          filterable
-          @change="changeList"
-        >
+        <el-select v-model="search.quality_status" clearable placeholder="请选择" @change="changeList">
           <el-option
-            v-for="item in [{label:'合格',value:1},{label:'不合格',value:3}]"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+            v-for="(item,i) in qualityStatus"
+            :key="i"
+            :label="item.name"
+            :value="item.id"
           />
         </el-select>
       </el-form-item>
@@ -104,12 +98,11 @@
         prop="quality_status"
         label="品质状态"
         min-width="20"
-      >
-        <template slot-scope="scope">
-          <span v-if="scope.row.quality_status===1">合格</span>
-          <span v-if="scope.row.quality_status===3">不合格</span>
-        </template>
-      </el-table-column>
+        :formatter="(row)=>{
+          let obj = qualityStatus.find(d=>d.id === row.quality_status)
+          return obj.name
+        }"
+      />
       <el-table-column
         prop="pdm_no"
         label="PDM"
@@ -260,7 +253,14 @@ export default {
       loadingView: false,
       multipleSelection: [],
       tableData: [],
-      loading: false
+      loading: false,
+      qualityStatus: [
+        { id: 1, name: '合格' },
+        { id: 2, name: '抽检中' },
+        { id: 3, name: '不合格' },
+        { id: 4, name: '过期' },
+        { id: 5, name: '待检品' }
+      ]
     }
   },
   created() {

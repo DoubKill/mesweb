@@ -82,6 +82,11 @@
             size="mini"
             @click="showEditDialog(row)"
           >查看</el-button>
+          <el-button
+            type="warning"
+            size="mini"
+            @click="cancelFun(row)"
+          >取消</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -169,7 +174,7 @@
         <el-form-item v-if="isLocation" label="品质状态">
           <el-select v-model="formSearch.quality_status" clearable placeholder="请选择" @change="getDialog">
             <el-option
-              v-for="(item,i) in [{name:'合格',id:1},{name:'不合格',id:3}]"
+              v-for="(item,i) in qualityStatus"
               :key="i"
               :label="item.name"
               :value="item.id"
@@ -179,7 +184,7 @@
         <el-form-item v-if="!isLocation" label="品质状态">
           <el-select v-model="formSearch.quality_status" placeholder="请选择" @change="getWeight">
             <el-option
-              v-for="(item,i) in [{name:'合格',id:1},{name:'不合格',id:3}]"
+              v-for="(item,i) in qualityStatus"
               :key="i"
               :label="item.name"
               :value="item.id"
@@ -225,7 +230,7 @@
             label="品质状态"
             min-width="15"
             :formatter="(row)=>{
-              let obj = [{name:'合格',id:1},{name:'不合格',id:3}].find(d=>d.id === row.StockDetailState)
+              let obj = qualityStatus.find(d=>d.id === row.StockDetailState)
               return obj.name
             }"
           />
@@ -306,7 +311,7 @@
             label="品质状态"
             min-width="20"
             :formatter="(row)=>{
-              let obj = [{name:'合格',id:1},{name:'不合格',id:3}].find(d=>d.id === row.StockDetailState)
+              let obj = qualityStatus.find(d=>d.id === row.StockDetailState)
               return obj.name
             }"
           />
@@ -398,8 +403,9 @@
           <el-table-column
             label="品质状态"
             min-width="20"
-            :formatter="d=>{
-              return d.quality_status===1?'合格':d.quality_status===3?'不合格':''
+            :formatter="(row)=>{
+              let obj = qualityStatus.find(d=>d.id === row.quality_status)
+              return obj?obj.name:''
             }"
           />
         </el-table>
@@ -511,6 +517,13 @@ export default {
       total1: 0,
       optionsEntrance: [],
       btnLoading: false,
+      qualityStatus: [
+        { id: 1, name: '合格' },
+        { id: 2, name: '抽检中' },
+        { id: 3, name: '不合格' },
+        { id: 4, name: '过期' },
+        { id: 5, name: '待检品' }
+      ],
       taskStateList: {
         1: '待处理',
         2: '处理中',
@@ -590,6 +603,23 @@ export default {
     showEditDialog(row) {
       this.dialogVisible = true
       this.getDialogList(row.id)
+    },
+    cancelFun(row) {
+      this.$confirm('是否确定取消?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        request({
+          url: '/api/v1/inventory/material_out_cancel/',
+          method: 'post',
+          data: [{ TaskNumber: row.taskNumber }]
+        }).then(data => {
+          this.$message.success('操作成功')
+        }).catch((e) => {
+          //
+        })
+      })
     },
     getDialogList(id) {
       this.loading1 = true
@@ -806,6 +836,7 @@ export default {
           if (Number(d.WeightOfActualUnit) > 0) {
             const aaa = JSON.parse(JSON.stringify(d))
             aaa.WeightOfActual = aaa.WeightOfActualUnit
+            aaa.StockDetailState = aaa.quality_status
             arr.push(aaa)
           }
         })
