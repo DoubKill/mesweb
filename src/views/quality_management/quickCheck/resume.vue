@@ -207,10 +207,11 @@
         min-width="20"
       />
       <el-table-column
+        v-if="['物性','钢拔'].includes(search.test_indicator_name)"
         label="查看绑定"
         width="70"
       >
-        <template v-if="['物性','钢拔'].includes(row.test_indicator_name)" slot-scope="{row}">
+        <template slot-scope="{row}">
           <el-button size="mini" type="primary" @click="showTestData(row)">查看</el-button>
         </template>
       </el-table-column>

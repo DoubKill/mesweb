@@ -344,6 +344,7 @@ export default {
             precept: data.precept,
             stage_product_batch_no: data.stage_product_batch_no,
             id: data.id,
+            stage_name: data.stage_name,
             dev_type: data.dev_type || '',
             dev_type_name: data.dev_type_name || '',
             production_time_interval: data.production_time_interval || ''
