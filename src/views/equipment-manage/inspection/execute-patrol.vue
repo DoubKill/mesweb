@@ -224,7 +224,7 @@
       :before-close="handleClose"
       :title="operateType"
       :visible.sync="dialogVisible"
-      width="55%"
+      width="60%"
     >
       <el-form
         ref="ruleFormHandle"
@@ -265,7 +265,7 @@
           <el-table
             :data="creatOrder.work_content"
             border
-            style="width: 801px"
+            style="width: 921px"
           >
             <el-table-column
               label="序号"
@@ -285,10 +285,50 @@
             <el-table-column
               prop="job_item_check_standard"
               label="判断标准"
-              width="150"
+              width="270"
             >
               <template slot-scope="{row}">
-                <el-input v-model="row.job_item_check_standard" />
+                <div v-if="row.job_item_check_type==='有无'">
+                  <el-switch
+                    v-model="row.job_item_check_standard"
+                    active-value="无"
+                    inactive-value="有"
+                    active-text="无"
+                    inactive-text="有"
+                  />
+                </div>
+                <div v-if="row.job_item_check_type==='正常异常'">
+                  <el-switch
+                    v-model="row.job_item_check_standard"
+                    active-value="正常"
+                    inactive-value="异常"
+                    active-text="正常"
+                    inactive-text="异常"
+                  />
+                </div>
+                <div v-if="row.job_item_check_type==='完成未完成'">
+                  <el-switch
+                    v-model="row.job_item_check_standard"
+                    active-value="完成"
+                    inactive-value="未完成"
+                    active-text="完成"
+                    inactive-text="未完成"
+                  />
+                </div>
+                <div v-if="row.job_item_check_type==='合格不合格'">
+                  <el-switch
+                    v-model="row.job_item_check_standard"
+                    active-value="合格"
+                    inactive-value="不合格"
+                    active-text="合格"
+                    inactive-text="不合格"
+                  />
+                </div>
+                <div v-if="row.job_item_check_type==='数值范围'">
+                  <el-input-number v-model="row.job_item_check_standard_a" style="width:120px" controls-position="right" :min="0" :max="row.job_item_check_standard_b" />
+                  -
+                  <el-input-number v-model="row.job_item_check_standard_b" style="width:120px" controls-position="right" :min="row.job_item_check_standard_a" />
+                </div>
               </template>
             </el-table-column>
             <el-table-column
@@ -526,20 +566,29 @@ export default {
       }
     },
     standardType(row) {
+      delete row.job_item_check_standard_a
+      delete row.job_item_check_standard_b
       if (row.job_item_check_type === '有无') {
         this.$set(row, 'operation_result', '无')
+        this.$set(row, 'job_item_check_standard', '无')
       }
       if (row.job_item_check_type === '数值范围') {
+        delete row.job_item_check_standard
         this.$set(row, 'operation_result', '')
+        this.$set(row, 'job_item_check_standard_a', 0)
+        this.$set(row, 'job_item_check_standard_b', 1)
       }
       if (row.job_item_check_type === '正常异常') {
         this.$set(row, 'operation_result', '正常')
+        this.$set(row, 'job_item_check_standard', '正常')
       }
       if (row.job_item_check_type === '完成未完成') {
         this.$set(row, 'operation_result', '完成')
+        this.$set(row, 'job_item_check_standard', '完成')
       }
       if (row.job_item_check_type === '合格不合格') {
         this.$set(row, 'operation_result', '合格')
+        this.$set(row, 'job_item_check_standard', '合格')
       }
     },
     delDialogFun(index) {
@@ -694,7 +743,29 @@ export default {
         if (row.work_content.length > 0) {
           const arr = []
           this.equip_jobitem_standard_id = row.work_content[0].equip_jobitem_standard_id
+          // row.work_content.forEach(d => {
+          //   d.job_item_check_standard_a = 0
+          //   d.job_item_check_standard_b = 1
+          //   if (d.job_item_check_type === '数值范围') {
+          //     d.job_item_check_standard_a = d.job_item_check_standard.split('-')[0]
+          //     d.job_item_check_standard_b = d.job_item_check_standard.split('-')[1]
+          //     console.log(d.job_item_check_standard_a)
+          //     console.log(d.job_item_check_standard_b)
+          //   } else {
+          //     delete d.job_item_check_standard_a
+          //     delete d.job_item_check_standard_b
+          //   }
+          // })
           this.creatOrder.work_content.map((item, index) => {
+            if (item.job_item_check_type === '数值范围') {
+              item.job_item_check_standard_a = Number(item.job_item_check_standard.split('-')[0])
+              item.job_item_check_standard_b = Number(item.job_item_check_standard.split('-')[1])
+              console.log(item.job_item_check_standard_a)
+              console.log(item.job_item_check_standard_b)
+            } else {
+              delete item.job_item_check_standard_a
+              delete item.job_item_check_standard_b
+            }
             arr.push(Object.assign({}, item, { operation_result: '' }))
           })
           arr.forEach(d => {
@@ -705,6 +776,7 @@ export default {
             }
           })
           this.creatOrder.work_content = arr
+          console.log(this.creatOrder.work_content)
         }
         this.dialogVisible = true
       } else {
@@ -722,11 +794,24 @@ export default {
       }
     },
     async generateFun() {
+      this.creatOrder.work_content.forEach(d => {
+        if (d.job_item_check_type === '数值范围') {
+          if (!d.job_item_check_standard_a || !d.job_item_check_standard_b) {
+            return
+          } else {
+            d.job_item_check_standard = d.job_item_check_standard_a + '-' + d.job_item_check_standard_b
+          }
+        }
+      })
       if (this.creatOrder.work_content.every(d => d.job_item_content) &&
       this.creatOrder.work_content.every(d => d.job_item_check_standard)) {
         this.$refs.ruleFormHandle.validate(async(valid) => {
           if (this.creatOrder.work_content.length > 0) {
             this.creatOrder.work_content.forEach((d, i) => {
+              if (d.job_item_check_type === '数值范围') {
+                delete d.job_item_check_standard_a
+                delete d.job_item_check_standard_b
+              }
               d.job_item_sequence = i + 1
             })
           }

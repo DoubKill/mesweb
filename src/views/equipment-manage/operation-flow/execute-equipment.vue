@@ -346,7 +346,7 @@
     <el-dialog
       :title="operateType"
       :visible.sync="dialogVisible"
-      width="55%"
+      width="60%"
     >
       <el-form
         ref="ruleFormHandle"
@@ -437,7 +437,7 @@
           <el-table
             :data="creatOrder.work_content"
             border
-            style="width: 801px"
+            style="width: 921px"
           >
             <el-table-column
               label="序号"
@@ -457,10 +457,54 @@
             <el-table-column
               prop="job_item_check_standard"
               label="判断标准"
-              width="150"
+              width="270"
             >
               <template slot-scope="{row}">
-                <el-input v-model="row.job_item_check_standard" :disabled="operateType==='查看处理结果'" />
+                <div v-if="row.job_item_check_type==='有无'">
+                  <el-switch
+                    v-model="row.job_item_check_standard"
+                    :disabled="operateType==='查看处理结果'"
+                    active-value="无"
+                    inactive-value="有"
+                    active-text="无"
+                    inactive-text="有"
+                  />
+                </div>
+                <div v-if="row.job_item_check_type==='正常异常'">
+                  <el-switch
+                    v-model="row.job_item_check_standard"
+                    :disabled="operateType==='查看处理结果'"
+                    active-value="正常"
+                    inactive-value="异常"
+                    active-text="正常"
+                    inactive-text="异常"
+                  />
+                </div>
+                <div v-if="row.job_item_check_type==='完成未完成'">
+                  <el-switch
+                    v-model="row.job_item_check_standard"
+                    :disabled="operateType==='查看处理结果'"
+                    active-value="完成"
+                    inactive-value="未完成"
+                    active-text="完成"
+                    inactive-text="未完成"
+                  />
+                </div>
+                <div v-if="row.job_item_check_type==='合格不合格'">
+                  <el-switch
+                    v-model="row.job_item_check_standard"
+                    :disabled="operateType==='查看处理结果'"
+                    active-value="合格"
+                    inactive-value="不合格"
+                    active-text="合格"
+                    inactive-text="不合格"
+                  />
+                </div>
+                <div v-if="row.job_item_check_type==='数值范围'">
+                  <el-input-number v-model="row.job_item_check_standard_a" style="width:120px" controls-position="right" :min="0" :max="row.job_item_check_standard_b" :disabled="operateType==='查看处理结果'" />
+                  -
+                  <el-input-number v-model="row.job_item_check_standard_b" style="width:120px" controls-position="right" :min="row.job_item_check_standard_a" :disabled="operateType==='查看处理结果'" />
+                </div>
               </template>
             </el-table-column>
             <el-table-column
@@ -1035,29 +1079,45 @@ export default {
     },
     delDialogFun(index) {
       this.creatOrder.work_content.splice(index, 1)
+      if (this.creatOrder.work_content.length === 0) {
+        delete this.creatOrder.result_repair_standard_name
+        delete this.creatOrder.result_repair_standard
+        delete this.creatOrder.result_maintenance_standard_name
+        delete this.creatOrder.result_maintenance_standard
+      }
     },
     addList() {
       this.creatOrder.work_content.push({
         equip_jobitem_standard_id: this.equip_jobitem_standard_id,
         job_item_sequence: this.creatOrder.work_content.length + 1,
+        job_item_check_standard: '完成',
         job_item_check_type: '完成未完成',
         operation_result: '完成' })
     },
     standardType(row) {
+      delete row.job_item_check_standard_a
+      delete row.job_item_check_standard_b
       if (row.job_item_check_type === '有无') {
         this.$set(row, 'operation_result', '无')
+        this.$set(row, 'job_item_check_standard', '无')
       }
       if (row.job_item_check_type === '数值范围') {
+        delete row.job_item_check_standard
         this.$set(row, 'operation_result', '')
+        this.$set(row, 'job_item_check_standard_a', 0)
+        this.$set(row, 'job_item_check_standard_b', 1)
       }
       if (row.job_item_check_type === '正常异常') {
         this.$set(row, 'operation_result', '正常')
+        this.$set(row, 'job_item_check_standard', '正常')
       }
       if (row.job_item_check_type === '完成未完成') {
         this.$set(row, 'operation_result', '完成')
+        this.$set(row, 'job_item_check_standard', '完成')
       }
       if (row.job_item_check_type === '合格不合格') {
         this.$set(row, 'operation_result', '合格')
+        this.$set(row, 'job_item_check_standard', '合格')
       }
     },
     start(row) {
@@ -1266,11 +1326,33 @@ export default {
         this.operateType = type
         this.dialogVisible = true
         this.creatOrder = JSON.parse(JSON.stringify(row))
+        row.work_content.forEach(d => {
+          d.job_item_check_standard_a = 0
+          d.job_item_check_standard_b = 1
+          if (d.job_item_check_type === '数值范围') {
+            d.job_item_check_standard_a = Number(d.job_item_check_standard.split('-')[0])
+            d.job_item_check_standard_b = Number(d.job_item_check_standard.split('-')[1])
+          } else {
+            delete d.job_item_check_standard_a
+            delete d.job_item_check_standard_b
+          }
+        })
       } else {
         if (row.status === '已开始') {
           this.operateType = type
           if (row.work_content.length > 0) {
             this.equip_jobitem_standard_id = row.work_content[0].equip_jobitem_standard_id
+            row.work_content.forEach(d => {
+              d.job_item_check_standard_a = 0
+              d.job_item_check_standard_b = 1
+              if (d.job_item_check_type === '数值范围') {
+                d.job_item_check_standard_a = d.job_item_check_standard.split('-')[0]
+                d.job_item_check_standard_b = d.job_item_check_standard.split('-')[1]
+              } else {
+                delete d.job_item_check_standard_a
+                delete d.job_item_check_standard_b
+              }
+            })
           }
           this.creatOrder = JSON.parse(JSON.stringify(row))
           this.tableDataView = []
@@ -1357,12 +1439,25 @@ export default {
       debounce(this, 'dialogSelect')
     },
     async generateFun() {
+      this.creatOrder.work_content.forEach(d => {
+        if (d.job_item_check_type === '数值范围') {
+          if (!d.job_item_check_standard_a || !d.job_item_check_standard_b) {
+            return
+          } else {
+            d.job_item_check_standard = d.job_item_check_standard_a + '-' + d.job_item_check_standard_b
+          }
+        }
+      })
       if (this.creatOrder.work_content.every(d => d.job_item_content) &&
       this.creatOrder.work_content.every(d => d.job_item_check_standard)) {
         this.$refs.ruleFormHandle.validate(async(valid) => {
           if (valid) {
             if (this.creatOrder.work_content.length > 0) {
               this.creatOrder.work_content.forEach((d, i) => {
+                if (d.job_item_check_type === '数值范围') {
+                  delete d.job_item_check_standard_a
+                  delete d.job_item_check_standard_b
+                }
                 d.job_item_sequence = i + 1
               })
             }
