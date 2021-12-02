@@ -449,7 +449,7 @@ export default {
           { required: true, message: '不能为空', trigger: 'blur' }
         ],
         equip_no: [
-          { required: true, message: '不能为空', trigger: 'change' }
+          { required: true, message: '不能为空', trigger: 'blur' }
         ],
         result_fault_cause: [
           { required: true, message: '不能为空', trigger: 'change' }

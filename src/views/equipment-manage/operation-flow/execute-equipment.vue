@@ -346,7 +346,7 @@
     <el-dialog
       :title="operateType"
       :visible.sync="dialogVisible"
-      width="50%"
+      width="55%"
     >
       <el-form
         ref="ruleFormHandle"
@@ -431,28 +431,53 @@
               @click="dialog2"
             />
           </el-input>
+          <el-button v-if="creatOrder.result_repair_standard_name||creatOrder.result_maintenance_standard_name" :disabled="operateType==='查看处理结果'" type="primary" style="float:right;margin-bottom:6px" @click="addList">添加</el-button>
         </el-form-item>
         <el-form-item>
           <el-table
             :data="creatOrder.work_content"
             border
-            style="width: 651px"
+            style="width: 801px"
           >
             <el-table-column
               label="序号"
+              type="index"
               prop="job_item_sequence"
               width="50"
             />
             <el-table-column
               prop="job_item_content"
               label="作业明细"
-              width="200"
-            />
+              width="150"
+            >
+              <template slot-scope="{row}">
+                <el-input v-model="row.job_item_content" :disabled="operateType==='查看处理结果'" />
+              </template>
+            </el-table-column>
             <el-table-column
               prop="job_item_check_standard"
               label="判断标准"
-              width="200"
-            />
+              width="150"
+            >
+              <template slot-scope="{row}">
+                <el-input v-model="row.job_item_check_standard" :disabled="operateType==='查看处理结果'" />
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="类型"
+              width="180"
+            >
+              <template slot-scope="{row}">
+                <el-select v-model="row.job_item_check_type" :disabled="operateType==='查看处理结果'" placeholder="请选择" @change="standardType(row)">
+                  <el-option
+                    v-for="item in ['有无','数值范围','正常异常','完成未完成','合格不合格']"
+                    :key="item"
+                    :label="item"
+                    :value="item"
+                  />
+                </el-select>
+              </template>
+            </el-table-column>
             <el-table-column
               prop="operation_result"
               label="处理结果"
@@ -502,6 +527,16 @@
                 <div v-if="row.job_item_check_type==='数值范围'">
                   <el-input-number v-model="row.operation_result" :disabled="operateType==='查看处理结果'" style="width:120px" controls-position="right" :min="1" :max="99999" />
                 </div>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="70">
+              <template slot-scope="scope">
+                <el-button
+                  :disabled="operateType==='查看处理结果'"
+                  size="mini"
+                  type="danger"
+                  @click="delDialogFun(scope.$index)"
+                >删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -890,6 +925,7 @@ export default {
       search1: { use: 1 },
       loading: false,
       btnExportLoad: false,
+      equip_jobitem_standard_id: null,
       dateValue: [],
       tableData: [],
       loadId: null,
@@ -997,6 +1033,33 @@ export default {
         this.dialogVisiblePerson = true
       }
     },
+    delDialogFun(index) {
+      this.creatOrder.work_content.splice(index, 1)
+    },
+    addList() {
+      this.creatOrder.work_content.push({
+        equip_jobitem_standard_id: this.equip_jobitem_standard_id,
+        job_item_sequence: this.creatOrder.work_content.length + 1,
+        job_item_check_type: '完成未完成',
+        operation_result: '完成' })
+    },
+    standardType(row) {
+      if (row.job_item_check_type === '有无') {
+        this.$set(row, 'operation_result', '无')
+      }
+      if (row.job_item_check_type === '数值范围') {
+        this.$set(row, 'operation_result', '')
+      }
+      if (row.job_item_check_type === '正常异常') {
+        this.$set(row, 'operation_result', '正常')
+      }
+      if (row.job_item_check_type === '完成未完成') {
+        this.$set(row, 'operation_result', '完成')
+      }
+      if (row.job_item_check_type === '合格不合格') {
+        this.$set(row, 'operation_result', '合格')
+      }
+    },
     start(row) {
       const obj = []
       obj.push(row.id)
@@ -1047,8 +1110,7 @@ export default {
       if (this.$refs['List1'].currentObj.standard_name) {
         this.$set(this.creatOrder, 'result_repair_standard_name', this.$refs['List1'].currentObj.standard_name)
         this.$set(this.creatOrder, 'result_repair_standard', this.$refs['List1'].currentObj.id)
-        // this.creatOrder.result_repair_standard_name = this.$refs['List1'].currentObj.standard_name
-        // this.creatOrder.result_repair_standard = this.$refs['List1'].currentObj.id
+        this.equip_jobitem_standard_id = this.$refs['List1'].currentObj.equip_job_item_standard
         for (let index = 0; index < this.$refs['List1'].currentObj.detail_list.length; index++) {
           this.creatOrder.work_content.push({
             job_item_sequence: this.$refs['List1'].currentObj.detail_list[index].sequence,
@@ -1067,14 +1129,17 @@ export default {
     submitFunwork() {
       this.creatOrder.work_content = []
       if (this.$refs['List2'].currentObj.standard_name) {
-        this.creatOrder.result_maintenance_standard_name = this.$refs['List2'].currentObj.standard_name
-        this.creatOrder.result_maintenance_standard = this.$refs['List2'].currentObj.id
+        this.$set(this.creatOrder, 'result_maintenance_standard_name', this.$refs['List2'].currentObj.standard_name)
+        this.$set(this.creatOrder, 'result_maintenance_standard', this.$refs['List2'].currentObj.id)
+        this.equip_jobitem_standard_id = this.$refs['List2'].currentObj.equip_job_item_standard
         for (let index = 0; index < this.$refs['List2'].currentObj.detail_list.length; index++) {
           this.creatOrder.work_content.push({
-            job_item_sequence: this.$refs['List2'].currentObj.detail_list[index].job_item_sequence,
-            job_item_content: this.$refs['List2'].currentObj.detail_list[index].job_item_content,
-            job_item_check_standard: '',
-            operation_result: '完成'
+            job_item_sequence: this.$refs['List2'].currentObj.detail_list[index].sequence,
+            job_item_content: this.$refs['List2'].currentObj.detail_list[index].content,
+            job_item_check_standard: this.$refs['List2'].currentObj.detail_list[index].check_standard_desc,
+            job_item_check_type: this.$refs['List2'].currentObj.detail_list[index].check_standard_type,
+            equip_jobitem_standard_id: this.$refs['List2'].currentObj.detail_list[index].equip_standard,
+            operation_result: this.$refs['List2'].currentObj.detail_list[index].check_standard_desc
           })
         }
         this.dialogVisibleWork = false
@@ -1100,7 +1165,6 @@ export default {
         done()
       }
     },
-
     deleteList(row) {
       this.tableDataView.forEach((item, index) => {
         if (row.spare_code1 === item.spare_code1) {
@@ -1197,6 +1261,7 @@ export default {
       this.changeSearch()
     },
     dialog(row, type) {
+      this.equip_jobitem_standard_id = null
       if (type === '查看处理结果') {
         this.operateType = type
         this.dialogVisible = true
@@ -1204,6 +1269,9 @@ export default {
       } else {
         if (row.status === '已开始') {
           this.operateType = type
+          if (row.work_content.length > 0) {
+            this.equip_jobitem_standard_id = row.work_content[0].equip_jobitem_standard_id
+          }
           this.creatOrder = JSON.parse(JSON.stringify(row))
           this.tableDataView = []
           this.creatOrder.image_url_list = this.creatOrder.result_repair_graph_url
@@ -1289,42 +1357,52 @@ export default {
       debounce(this, 'dialogSelect')
     },
     async generateFun() {
-      this.$refs.ruleFormHandle.validate(async(valid) => {
-        if (valid) {
-          this.submit = true
-          if (this.creatOrder.result_material_requisition && this.creatOrder.result_accept_result !== '不合格' && !this.creatOrder.is_applyed) {
-            console.log(this.creatOrder.result_material_requisition)
-            const orderId = await getOrderId('get', null, { params: { status: '出库' }})
-            const orderData = {}
-            orderData.order_id = orderId
-            orderData.submission_department = this.creatOrder.product_name
-            orderData.status = 4
-            orderData.equip_spare = this.tableDataView.map(item => ({ id: item.id, quantity: item.apply }))
-            const warehouse_out_no = await equipWarehouseOrder('post', null, { data: orderData })
-            this.creatOrder.apply_material_list = this.tableDataView.map(item => ({
-              work_order_no: this.creatOrder.work_order_no,
-              warehouse_out_no: warehouse_out_no.order_id,
-              equip_spare: item.id,
-              inventory_quantity: item.inventory_quantity,
-              apply: item.apply,
-              work_type: this.creatOrder.work_type,
-              submit_old_flag: item.submit_old_flag }))
+      if (this.creatOrder.work_content.every(d => d.job_item_content) &&
+      this.creatOrder.work_content.every(d => d.job_item_check_standard)) {
+        this.$refs.ruleFormHandle.validate(async(valid) => {
+          if (valid) {
+            if (this.creatOrder.work_content.length > 0) {
+              this.creatOrder.work_content.forEach((d, i) => {
+                d.job_item_sequence = i + 1
+              })
+            }
+            this.submit = true
+            if (this.creatOrder.result_material_requisition && this.creatOrder.result_accept_result !== '不合格' && !this.creatOrder.is_applyed) {
+              console.log(this.creatOrder.result_material_requisition)
+              const orderId = await getOrderId('get', null, { params: { status: '出库' }})
+              const orderData = {}
+              orderData.order_id = orderId
+              orderData.submission_department = this.creatOrder.product_name
+              orderData.status = 4
+              orderData.equip_spare = this.tableDataView.map(item => ({ id: item.id, quantity: item.apply }))
+              const warehouse_out_no = await equipWarehouseOrder('post', null, { data: orderData })
+              this.creatOrder.apply_material_list = this.tableDataView.map(item => ({
+                work_order_no: this.creatOrder.work_order_no,
+                warehouse_out_no: warehouse_out_no.order_id,
+                equip_spare: item.id,
+                inventory_quantity: item.inventory_quantity,
+                apply: item.apply,
+                work_type: this.creatOrder.work_type,
+                submit_old_flag: item.submit_old_flag }))
+            }
+            try {
+              await equipApplyOrder('put', this.creatOrder.id, { data: this.creatOrder })
+              this.$message.success('操作成功')
+              this.handleClose(null)
+              this.getList()
+              this.submit = false
+              this.dialogVisible = false
+            } catch (e) {
+              this.submit = false
+              this.dialogVisible = true
+            }
+          } else {
+            return false
           }
-          try {
-            await equipApplyOrder('put', this.creatOrder.id, { data: this.creatOrder })
-            this.$message.success('操作成功')
-            this.handleClose(null)
-            this.getList()
-            this.submit = false
-            this.dialogVisible = false
-          } catch (e) {
-            this.submit = false
-            this.dialogVisible = true
-          }
-        } else {
-          return false
-        }
-      })
+        })
+      } else {
+        this.$message('请输入实际维护/维修标准作业明细或判断标准')
+      }
     },
     async generateFun1() {
       this.dialogVisible1 = false

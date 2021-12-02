@@ -224,7 +224,7 @@
       :before-close="handleClose"
       :title="operateType"
       :visible.sync="dialogVisible"
-      width="50%"
+      width="55%"
     >
       <el-form
         ref="ruleFormHandle"
@@ -259,28 +259,53 @@
             style="width:250px"
             disabled
           />
+          <el-button type="primary" style="float:right;margin-bottom:6px" @click="addList">添加</el-button>
         </el-form-item>
         <el-form-item>
           <el-table
             :data="creatOrder.work_content"
             border
-            style="width: 651px"
+            style="width: 801px"
           >
             <el-table-column
               label="序号"
+              type="index"
               prop="job_item_sequence"
               width="50"
             />
             <el-table-column
               prop="job_item_content"
               label="作业明细"
-              width="200"
-            />
+              width="150"
+            >
+              <template slot-scope="{row}">
+                <el-input v-model="row.job_item_content" />
+              </template>
+            </el-table-column>
             <el-table-column
               prop="job_item_check_standard"
               label="判断标准"
-              width="200"
-            />
+              width="150"
+            >
+              <template slot-scope="{row}">
+                <el-input v-model="row.job_item_check_standard" />
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="类型"
+              width="180"
+            >
+              <template slot-scope="{row}">
+                <el-select v-model="row.job_item_check_type" placeholder="请选择" @change="standardType(row)">
+                  <el-option
+                    v-for="item in ['有无','数值范围','正常异常','完成未完成','合格不合格']"
+                    :key="item"
+                    :label="item"
+                    :value="item"
+                  />
+                </el-select>
+              </template>
+            </el-table-column>
             <el-table-column
               prop="operation_result"
               label="处理结果"
@@ -326,6 +351,15 @@
                 <div v-if="row.job_item_check_type==='数值范围'">
                   <el-input-number v-model="row.operation_result" style="width:120px" controls-position="right" :min="1" :max="99999" />
                 </div>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="70">
+              <template slot-scope="scope">
+                <el-button
+                  size="mini"
+                  type="danger"
+                  @click="delDialogFun(scope.$index)"
+                >删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -434,6 +468,7 @@ export default {
       staffList: [],
       sectionTop: null,
       receiving_user: '',
+      equip_jobitem_standard_id: null,
       dialogVisiblePerson: false,
       dialogVisibleApplication: false,
       total: 0,
@@ -489,6 +524,33 @@ export default {
       } catch (e) {
         this.loading = false
       }
+    },
+    standardType(row) {
+      if (row.job_item_check_type === '有无') {
+        this.$set(row, 'operation_result', '无')
+      }
+      if (row.job_item_check_type === '数值范围') {
+        this.$set(row, 'operation_result', '')
+      }
+      if (row.job_item_check_type === '正常异常') {
+        this.$set(row, 'operation_result', '正常')
+      }
+      if (row.job_item_check_type === '完成未完成') {
+        this.$set(row, 'operation_result', '完成')
+      }
+      if (row.job_item_check_type === '合格不合格') {
+        this.$set(row, 'operation_result', '合格')
+      }
+    },
+    delDialogFun(index) {
+      this.creatOrder.work_content.splice(index, 1)
+    },
+    addList() {
+      this.creatOrder.work_content.push({
+        equip_jobitem_standard_id: this.equip_jobitem_standard_id,
+        job_item_sequence: this.creatOrder.work_content.length + 1,
+        job_item_check_type: '完成未完成',
+        operation_result: '完成' })
     },
     async personChange(row) {
       try {
@@ -624,10 +686,26 @@ export default {
       // this.$refs['List'].$refs.addSubmitFun()
     },
     dialog(row, type) {
+      this.equip_jobitem_standard_id = null
       if (row.status === '已开始') {
         this.operateType = type
         this.creatOrder = JSON.parse(JSON.stringify(row))
         this.creatOrder.image_url_list = []
+        if (row.work_content.length > 0) {
+          const arr = []
+          this.equip_jobitem_standard_id = row.work_content[0].equip_jobitem_standard_id
+          this.creatOrder.work_content.map((item, index) => {
+            arr.push(Object.assign({}, item, { operation_result: '' }))
+          })
+          arr.forEach(d => {
+            if (d.job_item_check_type === '数值范围') {
+              d.operation_result = 1
+            } else {
+              d.operation_result = d.job_item_check_standard
+            }
+          })
+          this.creatOrder.work_content = arr
+        }
         this.dialogVisible = true
       } else {
         this.$message.info('请处理已开始工单')
@@ -644,34 +722,44 @@ export default {
       }
     },
     async generateFun() {
-      this.$refs.ruleFormHandle.validate(async(valid) => {
-        const form = {}
-        form.result_repair_desc = this.creatOrder.result_repair_desc
-        form.image_url_list = this.creatOrder.image_url_list
-        form.result_repair_final_result = this.creatOrder.result_repair_final_result
-        form.pks = [this.creatOrder.id]
-        form.status = '已完成'
-        form.opera_type = '处理'
-        form.work_content = this.creatOrder.work_content
-        form.work_order_no = this.creatOrder.work_order_no
-        form.equip_repair_standard = this.creatOrder.equip_repair_standard
-        if (valid) {
-          try {
-            this.submit = true
-            await multiUpdateInspection('post', null, { data: form })
-            this.$message.success('操作成功')
-            this.handleClose(null)
-            this.getList()
-            this.submit = false
-            this.dialogVisible = false
-          } catch (e) {
-            this.submit = false
-            this.dialogVisible = true
+      if (this.creatOrder.work_content.every(d => d.job_item_content) &&
+      this.creatOrder.work_content.every(d => d.job_item_check_standard)) {
+        this.$refs.ruleFormHandle.validate(async(valid) => {
+          if (this.creatOrder.work_content.length > 0) {
+            this.creatOrder.work_content.forEach((d, i) => {
+              d.job_item_sequence = i + 1
+            })
           }
-        } else {
-          return false
-        }
-      })
+          const form = {}
+          form.result_repair_desc = this.creatOrder.result_repair_desc
+          form.image_url_list = this.creatOrder.image_url_list
+          form.result_repair_final_result = this.creatOrder.result_repair_final_result
+          form.pks = [this.creatOrder.id]
+          form.status = '已完成'
+          form.opera_type = '处理'
+          form.work_content = this.creatOrder.work_content
+          form.work_order_no = this.creatOrder.work_order_no
+          form.equip_repair_standard = this.creatOrder.equip_repair_standard
+          if (valid) {
+            try {
+              this.submit = true
+              await multiUpdateInspection('post', null, { data: form })
+              this.$message.success('操作成功')
+              this.handleClose(null)
+              this.getList()
+              this.submit = false
+              this.dialogVisible = false
+            } catch (e) {
+              this.submit = false
+              this.dialogVisible = true
+            }
+          } else {
+            return false
+          }
+        })
+      } else {
+        this.$message('请输入巡检标准作业明细或判断标准')
+      }
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
