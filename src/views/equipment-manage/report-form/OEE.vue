@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="OEE">
     <!-- 密炼机 设备OEE分析 -->
     <el-form :inline="true">
       <el-form-item label="起止日期">
@@ -19,7 +19,7 @@
           :loading="btnExportLoad"
           @click="exportTable"
         >导出Excel</el-button>
-        <el-button type="primary" @click="getList">查询</el-button>
+        <el-button type="primary" @click="dialogVisible = true">统计</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -73,10 +73,22 @@
         min-width="20"
       />
     </el-table>
+    <el-dialog
+      :visible.sync="dialogVisible"
+      width="70%"
+      @open="open()"
+    >
+      <div
+        id="OEELine"
+        class="volumeBox"
+        style="width: 100%;height:500px;flex:1;border-radius: 0"
+      />
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import * as echarts from 'echarts'
 export default {
   name: 'EquipmentReportFormOEE',
   data() {
@@ -85,11 +97,84 @@ export default {
       btnExportLoad: false,
       search: {},
       loading: false,
-      tableData: []
+      dialogVisible: false,
+      tableData: [],
+      optionOEELine: {
+        title: {
+          left: 'center',
+          text: '设备OEE分析'
+        },
+        tooltip: {
+          trigger: 'axis'
+        },
+        legend: {
+          x: 'center',
+          y: 'bottom',
+          data: ['设备综合效率', '时间开动率', '性能开动率', '合格品率']
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '10%',
+          containLabel: true
+        },
+        toolbox: {
+          feature: {
+            saveAsImage: {}
+          }
+        },
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+        },
+        yAxis: {
+          min: 0,
+          max: 1,
+          splitNumber: 10,
+          axisLabel: {
+            formatter: function(value, index) {
+              return value.toFixed(2)
+            }
+          },
+          type: 'value'
+        },
+        series: [
+          {
+            name: '设备综合效率',
+            symbol: 'diamond',
+            type: 'line',
+            stack: 'Total',
+            data: [0.25, 0.52, 0.22, 0.82, 0.90, 0.35, 0.45]
+          },
+          {
+            name: '时间开动率',
+            symbol: 'rect',
+            type: 'line',
+            data: [0.52, 0.42, 0.82, 0.99, 0.90, 0.85, 0.75]
+          },
+          {
+            name: '性能开动率',
+            symbol: 'triangle',
+            type: 'line',
+            data: [0.55, 0.77, 0.82, 0.92, 0.95, 0.55, 0.32]
+          },
+          {
+            name: '合格品率',
+            symbol: 'circle',
+            type: 'line',
+            data: [0.66, 0.78, 0.88, 0.73, 0.51, 0.91, 0.88]
+          }
+        ]
+      }
     }
   },
   created() {
     this.getList()
+  },
+  mounted() {
+    // this.myChartPassRateLine = echarts.init(document.getElementById('OEELine'))
+    // this.myChartPassRateLine.setOption(this.optionOEELine)
   },
   methods: {
     async getList() {
@@ -104,6 +189,13 @@ export default {
       } catch (e) {
         this.loading = false
       }
+    },
+    open() {
+      this.$nextTick(() => {
+        //  执行echarts方法
+        this.myChartPassRateLine = echarts.init(document.getElementById('OEELine'))
+        this.myChartPassRateLine.setOption(this.optionOEELine, true)
+      })
     },
     changeDate(arr) {
       this.search.s_time = arr ? arr[0] : ''
@@ -133,7 +225,15 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+// .OEE {
+//  .volumeBox{
+//     background: #fff;
+//     // padding:10px;
+//     border-radius: 20px;
+//     margin-bottom:10px;
+//   }
+// }
 
 </style>
 
