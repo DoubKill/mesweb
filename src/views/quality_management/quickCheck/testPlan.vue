@@ -16,7 +16,7 @@
                 v-for="(group,groupI) in testEquipList"
                 :key="groupI"
                 :label="group&&group.no"
-                :value="group&&group.no"
+                :value="group&&group.id"
               />
             </el-select>
           </el-form-item>
@@ -675,7 +675,7 @@ export default {
         const data = await productReportEquip('get', null, { params: { all: 1 }})
         this.testEquipList = data || []
         if (bool) {
-          this.search.test_equip = data && data[0].no
+          this.search.test_equip = data && data[0].id
           this.getWaitPlan()
           this.getTestIndicatorsList()
         }
@@ -754,7 +754,7 @@ export default {
     },
     getTestIndicatorsList() {
       this.search.test_indicator_name = ''
-      const obj = this.testEquipList.find(d => d.no === this.search.test_equip)
+      const obj = this.testEquipList.find(d => d.id === this.search.test_equip)
       this.testIndicatorsList = obj.test_indicator_name || []
       if (!this.ruleForm.plan_uid) {
         this.search.test_indicator_name = this.testIndicatorsList[0].test_indicator__name
@@ -762,11 +762,10 @@ export default {
     },
     async getWaitPlan(bool) {
       try {
-        const obj = { test_equip: this.search.test_equip, test_indicator_name: this.search.test_indicator_name }
+        let obj = { status: 1, test_equip: this.search.test_equip, test_indicator_name: this.search.test_indicator_name }
         delete obj.plan_uid
         if (bool) {
-          obj.plan_uid = this.ruleForm.plan_uid
-          delete obj.test_equip
+          obj = { id: this.ruleForm.id }
         }
         const data = await productTestPlan('get', null, { params: obj })
         if (data.results.length === 0) {
@@ -777,7 +776,7 @@ export default {
           this.testMethodList = []
           return
         }
-        if (!data.msg) {
+        if (data.results[0].status === 1) {
           this.btnLoading = true
           this.ruleForm = data.results[0]
           this.tableDataRight = data.results[0].product_test_plan_detail
@@ -785,7 +784,7 @@ export default {
           this.search.test_indicator_name = data.results[0].test_indicator_name
           this.ruleForm.product_no = data.results[0].product_test_plan_detail[0].product_no
         } else {
-          this.$message.info('全部检测完毕')
+          this.$message.success('全部检测完毕')
           this.tableDataRight = []
           this.btnLoading = false
           this.ruleForm.plan_uid = ''
@@ -848,6 +847,7 @@ export default {
               if (!d.actual_trains) {
                 throw new Error('有检测数据车次未填写，请添加')
               }
+              d.production_classes = d.classes
             })
             this.btnLoading = true
             // this.ruleForm.test_method_name = '222'
@@ -887,7 +887,7 @@ export default {
           this.$message.info('没有可结束计划,如果存在请刷新页面查看')
           return
         }
-        await productTestPlan('get', null, { params: { close: 1, plan_uid: this.ruleForm.plan_uid }})
+        await productTestPlan('delete', this.ruleForm.id, { params: { }})
         this.btnLoading = false
         this.$message.success('已全部结束检测')
         this.ruleForm.plan_uid = ''
