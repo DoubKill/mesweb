@@ -316,6 +316,7 @@ export default {
   ZcMaterials: '/api/v1/recipe/zc-materials/',
   ZcMaterialsThoughMes: '/api/v1/recipe/zc-materials-though-mes/',
   WeightingPackageLog: '/api/v1/terminal/weighting-package-log/',
+  ManualPost: '/api/v1/terminal/weighting-package-log/manual_post/', // 扫码合包接口
   EquipEownType: '/api/v1/equipment/equip-down-type/',
   EquipDownReason: '/api/v1/equipment/equip-down-reason/',
   EquipCurrentStatusList: '/api/v1/equipment/equip-current-status-list/',

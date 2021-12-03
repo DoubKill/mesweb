@@ -180,6 +180,14 @@ export function weightingPackageLog(method, id, data = {}, aaa) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function manualPost(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ManualPost + id + '/' : API.ManualPost,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 
 export function equipEownType(method, id, data = {}) {
   const obj = {
