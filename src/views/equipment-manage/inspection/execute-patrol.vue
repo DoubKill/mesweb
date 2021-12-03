@@ -743,25 +743,10 @@ export default {
         if (row.work_content.length > 0) {
           const arr = []
           this.equip_jobitem_standard_id = row.work_content[0].equip_jobitem_standard_id
-          // row.work_content.forEach(d => {
-          //   d.job_item_check_standard_a = 0
-          //   d.job_item_check_standard_b = 1
-          //   if (d.job_item_check_type === '数值范围') {
-          //     d.job_item_check_standard_a = d.job_item_check_standard.split('-')[0]
-          //     d.job_item_check_standard_b = d.job_item_check_standard.split('-')[1]
-          //     console.log(d.job_item_check_standard_a)
-          //     console.log(d.job_item_check_standard_b)
-          //   } else {
-          //     delete d.job_item_check_standard_a
-          //     delete d.job_item_check_standard_b
-          //   }
-          // })
           this.creatOrder.work_content.map((item, index) => {
             if (item.job_item_check_type === '数值范围') {
               item.job_item_check_standard_a = Number(item.job_item_check_standard.split('-')[0])
               item.job_item_check_standard_b = Number(item.job_item_check_standard.split('-')[1])
-              console.log(item.job_item_check_standard_a)
-              console.log(item.job_item_check_standard_b)
             } else {
               delete item.job_item_check_standard_a
               delete item.job_item_check_standard_b
@@ -776,7 +761,6 @@ export default {
             }
           })
           this.creatOrder.work_content = arr
-          console.log(this.creatOrder.work_content)
         }
         this.dialogVisible = true
       } else {
