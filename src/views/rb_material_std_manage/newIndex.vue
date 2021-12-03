@@ -56,13 +56,13 @@
           @click="showPutRubberMaterialDialog"
         >配料</el-button>
       </el-form-item>
-      <el-form-item style="float: right">
+      <!-- <el-form-item style="float: right">
         <el-button
           v-if="checkPermission(['productbatching','add'])"
           :disabled="!currentRow.id"
           @click="copyClicked"
         >复制</el-button>
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
     <el-table
       highlight-current-row
