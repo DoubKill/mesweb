@@ -861,7 +861,7 @@ export default {
             this.ruleForm.plan_uid = plan_uid
             this.$message.success('已开始检测')
 
-            this.getWaitPlan(true)
+            this.getWaitPlan()
           } catch (e) {
             if (e.message) {
               this.$message.info(e.message)
