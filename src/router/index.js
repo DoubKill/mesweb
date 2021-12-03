@@ -2035,8 +2035,7 @@ export let asyncRoutes = [
             }
           }
         ]
-      }
-      /*, {
+      }, {
         path: '/banburying',
         redirect: '/banburying/substitutes',
         component: () => import('@/views/quality_management/banburying/a-index'),
@@ -2107,7 +2106,7 @@ export let asyncRoutes = [
             }
           }
         ]
-      }*/
+      }
     ]
   },
   // {
