@@ -3,21 +3,18 @@
     <!-- 单配(合包)化工流转卡 -->
     <el-form :inline="true">
       <el-form-item label="细料名称">
-        <el-input v-model="search.name" clearable placeholder="细料名称" @input="debounceList" />
+        <el-input v-model="search.product_no" clearable placeholder="细料名称" @input="debounceList" />
       </el-form-item>
-      <el-form-item label="物料名称">
-        <el-input v-model="search.name" clearable placeholder="物料名称" @input="debounceList" />
-      </el-form-item>
+      <!-- <el-form-item label="物料名称">
+        <el-input v-model="search.material_name" clearable placeholder="物料名称" @input="debounceList" />
+      </el-form-item> -->
       <el-form-item label="物料条码">
-        <el-input v-model="search.name" clearable placeholder="物料条码" @input="debounceList" />
+        <el-input v-model="search.bra_code" clearable placeholder="物料条码" @input="debounceList" />
       </el-form-item>
       <el-form-item label="机配机台">
-        //
+        <equipSelect equip-type="称量设备" :equip_no_props.sync="search.batching_equip" @changeSearch="changeSearch" />
       </el-form-item>
-      <el-form-item label="计划编号">
-        <el-input v-model="search.name" clearable placeholder="计划编号" @input="debounceList" />
-      </el-form-item>
-      <el-form-item label="">
+      <el-form-item>
         <el-button
           type="primary"
           @click="showPrintDialog(false)"
@@ -30,72 +27,76 @@
       border
     >
       <el-table-column
-        prop="plan_id"
+        prop="bra_code"
         label="卡片条码"
         min-width="20"
       />
       <el-table-column
-        prop="plan_id"
+        prop="product_no"
         label="细料名称"
         min-width="20"
       />
       <el-table-column
-        prop="plan_id"
+        prop="dev_type_name"
         label="机型"
         min-width="20"
       />
       <el-table-column
-        prop="plan_id"
+        prop="created_date"
         label="配料日期"
         min-width="20"
       />
       <el-table-column
-        prop="plan_id"
         label="班次/班组"
         min-width="20"
+        :formatter="d=>{
+          return d.batch_class + '/'+ d.batch_group
+        }"
       />
       <el-table-column
-        prop="plan_id"
+        prop="single_weight"
         label="单配总重"
         min-width="20"
       />
       <el-table-column
-        prop="plan_id"
+        prop="created_username"
         label="配料员"
         min-width="20"
       />
       <el-table-column
-        prop="plan_id"
+        prop="print_datetime"
         label="打印时间"
         min-width="20"
       />
       <el-table-column
-        prop="plan_id"
         label="配料车次"
         min-width="20"
+        :formatter="d=>{
+          return d.begin_trains+'-'+d.end_trains
+        }"
       />
       <el-table-column
-        prop="plan_id"
+        prop="batching_equip"
         label="机配机台"
         min-width="20"
       />
       <el-table-column
-        prop="plan_id"
+        prop="split_num"
         label="分包数"
         min-width="20"
       />
       <el-table-column
-        prop="plan_id"
+        prop="print_count"
         label="打印张数"
         min-width="20"
       />
       <el-table-column
-        prop="plan_id"
+        prop="created_username"
         label="录入人"
         min-width="20"
       />
       <el-table-column
-        prop="plan_id"
+        prop="created_date"
         label="录入时间"
         min-width="20"
       />
@@ -124,46 +125,58 @@
       :before-close="handleClose"
     >
       <el-form ref="formRef" :model="formData" :rules="rules" label-width="120px">
-        <el-form-item prop="aa" label="细料名称">
-          <el-input v-model="formData.aa" :disabled="formData.id?true:false" placeholder="细料名称" />
+        <el-form-item prop="product_no" label="细料名称">
+          <el-select v-model="formData.product_no" :disabled="formData.id?true:false" filterable placeholder="请选择" @change="changeProduct">
+            <el-option
+              v-for="item in productList"
+              :key="item.id"
+              :label="item.stage_product_batch_no"
+              :value="item.stage_product_batch_no"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item prop="dev_type" label="机型">
-          <equip-category-select v-if="!formData.id" v-model="formData.dev_type" @change="changeDevType" />
-          <span v-else>{{ formData.dev_type }}</span>
+          <equip-category-select v-if="!formData.id" v-model="formData.dev_type" @change="changeProduct" />
+          <span v-else>{{ formData.dev_type_name }}</span>
         </el-form-item>
-        <el-form-item prop="bb" label="起始车次">
-          <el-input v-model="formData.bb" placeholder="起始车次" :disabled="formData.id?true:false" />
+        <el-form-item prop="begin_trains" label="起始车次">
+          <el-input-number v-model="formData.begin_trains" controls-position="right" :min="1" :disabled="formData.id?true:false" />
         </el-form-item>
-        <el-form-item prop="cc" label="机配机台">
-          <!-- <el-input v-model="formData.cc" placeholder="机配机台" /> -->
+        <el-form-item prop="package_count" label="配置数量">
+          <el-input-number v-model="formData.package_count" controls-position="right" :min="1" :disabled="formData.id?true:false" />
         </el-form-item>
-        <el-form-item prop="num" label="分包数">
-          <el-input-number v-model="formData.num" controls-position="right" :min="1" :disabled="formData.id?true:false" />
+        <el-form-item prop="batching_equip" label="机配机台">
+          <equipSelect v-if="!formData.id" equip-type="称量设备" :equip_no_props.sync="formData.batching_equip" @changeSearch="changeProduct" />
+          <span v-else>{{ formData.batching_equip }}</span>
         </el-form-item>
-        <el-form-item prop="num" label="打印张数">
-          <el-input-number v-model="formData.num" controls-position="right" :min="1" />
+        <el-form-item prop="split_num" label="分包数">
+          <el-input-number v-model="formData.split_num" controls-position="right" :min="1" :disabled="formData.id?true:false" @change="changeSplitNum" />
+        </el-form-item>
+        <el-form-item prop="print_count" label="打印张数">
+          <el-input-number v-model="formData.print_count" controls-position="right" :min="1" />
         </el-form-item>
         <el-table
-          :data="tableData1"
+          :data="tableData1New"
           border
         >
           <el-table-column
-            prop="plan_id"
+            prop="material_name"
             label="物料名称"
             min-width="20"
           />
           <el-table-column
-            prop="plan_id"
+            prop="standard_weight"
             label="重量（kg）"
             min-width="20"
           />
           <el-table-column
-            prop="plan_id"
+            v-if="!formData.id"
+            prop=""
             label="卡片条码"
             min-width="20"
           />
           <el-table-column
-            prop="plan_id"
+            prop="tolerance"
             label="公差（kg）"
             min-width="20"
           />
@@ -173,13 +186,13 @@
             label="配料方式"
             width="210px"
           >
-            <template slot-scope="scope">
-              <el-select v-model="scope.value" placeholder="请选择">
+            <template slot-scope="{row}">
+              <el-select v-model="row.batch_type" placeholder="请选择">
                 <el-option
                   v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+                  :key="item.id"
+                  :label="item.equip_no"
+                  :value="item.equip_no"
                 />
               </el-select>
             </template>
@@ -192,14 +205,14 @@
             <template slot-scope="scope">
               <el-button
                 type="danger"
-                @click="delFun(scope.row)"
+                @click="delFun(scope.row,scope.$index)"
               >删除</el-button>
             </template>
           </el-table-column>
         </el-table>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="info" @click="resetFun">重 置</el-button>
+        <el-button v-if="!formData.id" type="info" @click="resetFun">重 置</el-button>
         <el-button @click="handleClose(false)">取 消</el-button>
         <el-button type="primary" :loading="loadingBtn" @click="submitFun">确 定</el-button>
       </span>
@@ -210,24 +223,29 @@
 <script>
 import page from '@/components/page'
 import EquipCategorySelect from '@/components/EquipCategorySelect'
+import { weightingPackageManua, getManualInfo, getMaterialTolerance } from '@/api/base_w_five'
+import { rubberMaterialUrl, equipUrl } from '@/api/base_w'
+import equipSelect from '@/components/select_w/equip'
 export default {
   name: 'SmallMaterialWeightHebao',
-  components: { page, EquipCategorySelect },
+  components: { page, EquipCategorySelect, equipSelect },
   data() {
     return {
       search: {},
-      tableData: [{}],
+      tableData: [],
       total: 0,
       loading: false,
       dialogVisible: false,
       formData: {
-        num: 1
+        split_num: 1,
+        print_count: 1
       },
       rules: {
-        aa: [{ required: true, message: '请输入', trigger: 'blur' }],
-        bb: [{ required: true, message: '请输入', trigger: 'blur' }],
+        product_no: [{ required: true, message: '请输入', trigger: 'change' }],
+        begin_trains: [{ required: true, message: '请输入', trigger: 'blur' }],
         cc: [{ required: true, message: '请输入', trigger: 'change' }],
-        num: [{ required: true, message: '请输入', trigger: 'blur' }],
+        package_count: [{ required: true, message: '请输入', trigger: 'blur' }],
+        split_num: [{ required: true, message: '请输入', trigger: 'blur' }],
         dev_type: [{ required: true, message: '请输入', trigger: 'change',
           validator: (rule, value, callback) => {
             if (!this.formData.dev_type && !value) {
@@ -235,25 +253,102 @@ export default {
             } else {
               callback()
             }
+          } }],
+        batching_equip: [{ required: true, message: '请输入', trigger: 'change',
+          validator: (rule, value, callback) => {
+            if (!this.formData.batching_equip && !value) {
+              callback(new Error('请输入'))
+            } else {
+              callback()
+            }
           } }]
       },
       loadingBtn: false,
-      tableData1: [{}],
-      options: []
+      tableData1: [],
+      tableData1New: [],
+      options: [],
+      productList: []
     }
   },
   created() {
+    this.getList()
+    this.getProductList()
+    this.getMachineList()
   },
   methods: {
     async getList() {
       try {
         this.loading = true
-        // const data = await equipInspectionOrder('get', null, { params: this.search })
-        // this.tableData = data.results || []
-        // this.total = data.count
+        const data = await weightingPackageManua('get', null, { params: this.search })
+        this.tableData = data.results || []
+        this.total = data.count
         this.loading = false
       } catch (e) {
         this.loading = false
+      }
+    },
+    getMachineList() {
+      var _this = this
+      equipUrl('get', { params: { all: 1, category_name: '称量设备' }})
+        .then(function(response) {
+          _this.options = response.results || []
+          _this.options.unshift({ id: 9999, equip_no: '人工配' })
+        })
+        .catch(function() { })
+    },
+    async getProductList() {
+      try {
+        const data = await rubberMaterialUrl('get', null, { params: { used_type: 4, all: 1 }})
+        this.productList = data.results || []
+      } catch (e) {
+        //
+      }
+    },
+    async getManual() {
+      try {
+        if (!this.formData.product_no || !this.formData.dev_type || !this.formData.batching_equip) {
+          return
+        }
+        const data = await getManualInfo('get', null, { params: { product_no: this.formData.product_no, dev_type: this.formData.dev_type, batching_equip: this.formData.batching_equip }})
+        this.tableData1New = data.results || []
+        this.tableData1 = JSON.parse(JSON.stringify(data.results || []))
+
+        this.tableData1New.forEach(d => {
+          this.$set(d, 'batch_type', '人工配')
+          d.standard_weight_old = d.standard_weight
+        })
+        this.tableData1.forEach(d => {
+          this.$set(d, 'batch_type', '人工配')
+          d.standard_weight_old = d.standard_weight
+        })
+        if (!this.tableData1New.length) {
+          return
+        }
+        this.changeSplitNum()
+      } catch (e) {
+        //
+      }
+    },
+    changeProduct() {
+      this.tableData1 = []
+      this.tableData1New = []
+      this.getManual()
+    },
+    async changeSplitNum() {
+      if (!this.tableData1New.length) {
+        return
+      }
+      for (let index = 0; index < this.tableData1New.length; index++) {
+        const d = this.tableData1New[index]
+        d.standard_weight = Math.round(d.standard_weight_old / this.formData.split_num * 1000) / 1000
+        try {
+          const data = await getMaterialTolerance('get', null, { params: {
+            batching_equip: this.formData.batching_equip,
+            material_name: this.formData.product_no, standard_weight: d.standard_weight }})
+          d.tolerance = data
+        } catch (e) {
+          //
+        }
       }
     },
     changeSearch() {
@@ -272,30 +367,56 @@ export default {
       // 机型的id
       this.formData.dev_type = e
     },
-    delFun() {},
-    resetFun() {},
+    delFun(row, index) {
+      this.tableData1New.splice(index, 1)
+    },
+    resetFun() {
+      this.formData.split_num = 1
+      this.tableData1New = JSON.parse(JSON.stringify(this.tableData1 || []))
+      this.changeSplitNum()
+    },
     showPrintDialog(row) {
       if (row) {
         this.formData = JSON.parse(JSON.stringify(row))
+        this.tableData1New = this.formData.manual_details
+        this.tableData1 = this.formData.manual_details
       }
       this.dialogVisible = true
+      setTimeout(d => {
+        if (this.$refs.formRef) {
+          this.$refs.formRef.clearValidate()
+        }
+      })
     },
     handleClose(done) {
-      this.formData = {
-        num: 1
-      }
-      this.$refs.formRef.clearValidate()
+      setTimeout(() => {
+        this.formData = {
+          split_num: 1,
+          print_count: 1
+        }
+        this.tableData1New = []
+        this.tableData1 = []
+        this.$refs.formRef.clearValidate()
+      }, 200)
       this.dialogVisible = false
       if (done) {
         done()
       }
     },
     submitFun() {
+      if (!this.formData.manual_details) {
+        this.formData.manual_details = this.tableData1New
+      }
+      if (!this.formData.manual_details.length) {
+        this.$message.info('没有物料')
+        return
+      }
       this.$refs.formRef.validate(async(valid) => {
         if (valid) {
           try {
             this.loadingBtn = true
-            // await _api(_method, this.formObj.id || null, { data: obj })
+            const _method = this.formData.id ? 'put' : 'post'
+            await weightingPackageManua(_method, this.formData.id || null, { data: this.formData })
             this.$message.success('操作成功')
             this.handleClose(false)
             this.getList()
