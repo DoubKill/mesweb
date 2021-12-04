@@ -144,7 +144,8 @@
             v-permission="['xl_expire_data', 'save']"
             type="primary"
             @click="reprintFun(scope.row)"
-          >{{ scope.row.status === 'N'?'打印':'重新打印' }}
+          >
+            {{ !scope.row.bra_code?'打印':'重新打印' }}
           </el-button>
         </template>
       </el-table-column>
@@ -159,7 +160,7 @@
     <el-dialog
       title="准备分厂（细料/硫磺）质量追踪卡打印"
       :visible.sync="dialogVisible"
-      width="750px"
+      width="800px"
       :before-close="handleClose"
     >
       <el-form ref="ruleForm" :rules="rules" :model="ruleForm">
@@ -171,6 +172,7 @@
             :max="ruleForm.package_fufil"
             :step="1"
             step-strictly
+            :disabled="ruleForm.bra_code?true:false"
             @change="ruleForm.package_count=1"
           />
         </el-form-item>
@@ -182,6 +184,7 @@
             :max="ruleForm.package_fufil+1-ruleForm.print_begin_trains"
             :step="1"
             step-strictly
+            :disabled="ruleForm.bra_code?true:false"
             @change="ruleForm.print_count=1"
           />
         </el-form-item>
@@ -202,7 +205,7 @@
         class="info-table"
       >
         <tr>
-          <td>名称</td>
+          <td>细料名称</td>
           <td>{{ ruleForm.product_no }}</td>
           <td>机型</td>
           <td>{{ ruleForm.dev_type }}</td>
@@ -215,68 +218,98 @@
         </tr>
         <tr>
           <td>配料类型</td>
-          <td>{{ }}</td>
+          <td>{{ ruleForm.batching_type }}</td>
           <td>配置机台</td>
           <td>{{ ruleForm.equip_no }}</td>
         </tr>
         <tr>
           <td>标准重量</td>
-          <td>{{ }}</td>
+          <td>
+            {{ ruleForm.machine_manual_weight }}{{ ruleForm.machine_manual_tolerance }}
+            /包
+            <br>
+            ({{ ruleForm.machine_weight }}*{{ ruleForm.split_count }}+{{ ruleForm.manual_weight }})
+          </td>
           <td>配料车次</td>
-          <td>{{ }}</td>
+          <td>{{ ruleForm.begin_trains+'-'+ruleForm.end_trains }}</td>
         </tr>
         <tr>
           <td>配料员</td>
-          <td>{{ }}</td>
+          <td>{{ ruleForm.batch_user }}</td>
           <td>有效期（天）</td>
-          <td>{{ }}</td>
+          <td>{{ ruleForm.expire_days }}</td>
         </tr>
-        <tr>
+        <!-- <tr>
           <td>配料时间</td>
           <td colspan="3">{{}}</td>
-        </tr>
+        </tr> -->
         <tr>
           <td>打印时间</td>
-          <td colspan="3">{{}}</td>
+          <td colspan="3">{{ ruleForm.print_datetime }}</td>
         </tr>
         <tr>
           <td>有效时间</td>
-          <td colspan="3">{{}}</td>
+          <td colspan="3">{{ ruleForm.expire_datetime }}</td>
         </tr>
       </table>
       <div style="border:1px solid #eee;margin:10px 0" />
-      <el-form>
+      <el-form v-if="!ruleForm.bra_code&&ruleForm.merge_flag">
         <el-form-item label="合包配料包条码">
-          <el-input v-model="barCode" style="width:300px" />
+          <el-input v-model="barCode" style="width:300px" @input="changeBarCode" />
         </el-form-item>
       </el-form>
-      <h3 style="text-align:center">合包配料信息</h3>
+      <h3 v-if="ruleForm['manual_headers']&&JSON.stringify(ruleForm['manual_headers']) !== '{}'" style="text-align:center">合包配料信息</h3>
       <table
+        v-if="ruleForm['manual_headers']&&JSON.stringify(ruleForm['manual_headers']) !== '{}'"
         border="1"
         bordercolor="black"
         class="info-table"
       >
         <tr>
-          <td>名称</td>
-          <td>{{ ruleForm.product_no }}</td>
+          <td>细料名称</td>
+          <td>{{ ruleForm['manual_headers'].product_no }}</td>
           <td>机型</td>
-          <td>{{ ruleForm.dev_type }}</td>
+          <td>{{ ruleForm['manual_headers'].dev_type }}</td>
         </tr>
         <tr>
           <td>打印日期</td>
-          <td>{{ ruleForm.product_no }}</td>
+          <td>{{ ruleForm['manual_headers'].print_datetime }}</td>
           <td>班组班次</td>
-          <td>{{ ruleForm.dev_type }}</td>
+          <td>{{ ruleForm['manual_headers'].class_group }}</td>
         </tr>
         <tr>
           <td>单配总重</td>
-          <td>{{ ruleForm.product_no }}</td>
+          <td>
+            {{ ruleForm['manual_headers'].manual_weight }}{{ ruleForm['manual_headers'].manual_tolerance }}
+            <br>
+            ({{ ruleForm['manual_headers'].detail_manual }}+{{ ruleForm['manual_headers'].detail_machine }})
+          </td>
           <td>单配件数</td>
-          <td>{{ ruleForm.dev_type }}</td>
+          <td>{{ ruleForm['manual_headers'].total_nums }}</td>
         </tr>
       </table>
-      <h3 style="text-align:center">合包配料物料信息</h3>
-
+      <h3 v-if="ruleForm['manual_body']&&ruleForm['manual_body'].length" style="text-align:center">合包配料物料信息</h3>
+      <table
+        v-if="ruleForm['manual_body']&&ruleForm['manual_body'].length"
+        border="1"
+        bordercolor="black"
+        class="info-table info-table-three"
+      >
+        <tr>
+          <td>名称</td>
+          <td>重量（kg）</td>
+          <td>配料日期</td>
+          <td>配料机台</td>
+          <td>配料员</td>
+        </tr>
+        <tr v-for="(tdItem,i) in ruleForm['manual_body']" :key="i">
+          <td>{{ tdItem.material_name }}</td>
+          <td>{{ tdItem.single_weight }}</td>
+          <td>{{ tdItem.batch_time }}</td>
+          <td>{{ tdItem.batching_type }}</td>
+          <td>{{ tdItem.batch_user }}</td>
+        </tr>
+      </table>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose(false)">取 消</el-button>
         <el-button type="primary" :loading="btnLoading" @click="submitFun">确 定</el-button>
@@ -289,7 +322,8 @@
 import SelectBatchingEquip from '../components/select-batching-equip'
 import page from '@/components/page'
 import { xlPlan } from '@/api/base_w_three'
-import { weightingPackageLog } from '@/api/base_w_two'
+import { getMaterialTolerance } from '@/api/base_w_five'
+import { weightingPackageLog, manualPost } from '@/api/base_w_two'
 import { setDate } from '@/utils'
 // import axios from 'axios'
 
@@ -392,6 +426,114 @@ export default {
       this.formInline.page = 1
       this.getList()
     },
+    async changeBarCode(val) {
+      try {
+        if (!val) {
+          return
+        }
+        const obj = {
+          merge_flag: this.ruleForm.merge_flag,
+          product_no: this.ruleForm.product_no,
+          dev_type: this.ruleForm.dev_type,
+          scan_bra_code: val
+        }
+        const data = await manualPost('post', null, { data: obj })
+        const _details = data.results.details
+        if (!this.ruleForm.manual_headers) {
+          const _obj = {
+            product_no: this.ruleForm.product_no,
+            dev_type: this.ruleForm.dev_type,
+            print_datetime: _details.created_date,
+            class_group: _details.batch_group + '/' + _details.batch_class,
+            total_nums: 0
+          }
+          this.$set(this.ruleForm, 'manual_headers', _obj)
+          this.$set(this.ruleForm, 'manual_body', [])
+          this.$set(this.ruleForm, 'manual_infos', [])
+        }
+        if (_details.manual_details && _details.manual_details.length) {
+          // 有详情的情况
+          _details.manual_details.forEach(D => {
+            const arr2 = this.ruleForm.manual_body.filter(d => d.material_name === D.material_name)
+            if (arr2.length) {
+              throw new Error('扫码失败,有重复物料')
+            }
+            D.single_weight = D.standard_weight
+            D.batching_type = D.batch_type
+            D.batch_group = _details.batch_group
+            D.batch_class = _details.batch_class
+          })
+          this.ruleForm.manual_body = this.ruleForm.manual_body.concat(_details.manual_details)
+          this.ruleForm.manual_headers.total_nums++
+          this.ruleForm.manual_infos.push({
+            manual_type: data.results.manual_type,
+            manual_id: data.results.manual_id
+          })
+        } else {
+          const arr1 = this.ruleForm.manual_body.filter(d => d.material_name === _details.material_name)
+          if (!arr1.length) {
+            this.ruleForm.manual_body.push({
+              material_name: _details.material_name,
+              single_weight: _details.single_weight,
+              batch_time: _details.created_date,
+              batching_type: _details.batch_type,
+              batch_user: _details.created_username,
+              batch_group: _details.batch_group,
+              batch_class: _details.batch_class
+            })
+            this.ruleForm.manual_infos.push({
+              manual_type: data.results.manual_type,
+              manual_id: data.results.manual_id
+            })
+          } else {
+            throw new Error('扫码失败,有重复物料')
+          }
+          this.ruleForm.manual_headers.total_nums++
+        }
+
+        let b = 0 // 手工总重
+        let c = 0 // 机配总重
+        let minTime = 0
+        let currentClass = ''
+        this.ruleForm.manual_body.forEach(d => {
+          if (!minTime) {
+            minTime = (new Date(d.batch_time)).getTime()
+            currentClass = d.batch_group + '/' + d.batch_class
+          }
+          if (minTime > (new Date(d.batch_time)).getTime()) {
+            minTime = (new Date(d.batch_time)).getTime()
+            currentClass = d.batch_group + '/' + d.batch_class
+          }
+          if (d.batching_type === '人工配') {
+            b += Math.round(Number(d.single_weight) * 1000) / 1000
+          } else {
+            c += Math.round(Number(d.single_weight) * 1000) / 1000
+          }
+        })
+        this.ruleForm.manual_headers.print_datetime = setDate(minTime, true)
+        this.ruleForm.manual_headers.class_group = currentClass
+        this.ruleForm.manual_headers.detail_machine = c
+        this.ruleForm.manual_headers.detail_manual = b
+        this.ruleForm.manual_headers.manual_weight = Math.round((c + b) * 1000) / 1000
+        const d = this.ruleForm._machine_manual_weight
+        const e = this.ruleForm.manual_headers.manual_weight
+        this.ruleForm.machine_manual_weight = Math.round((d + e) * 1000) / 1000
+        this.ruleForm.manual_weight = e
+
+        const tolerance = await getMaterialTolerance('get', null,
+          { params: { batching_equip: this.ruleForm.equip_no, project_name: 'all',
+            standard_weight: this.ruleForm.manual_headers.manual_weight }})
+        const toleranceAll = await getMaterialTolerance('get', null,
+          { params: { batching_equip: this.ruleForm.equip_no, project_name: 'all',
+            standard_weight: this.ruleForm.machine_manual_weight }})
+        this.$set(this.ruleForm.manual_headers, 'manual_tolerance', tolerance || '')
+        this.$set(this.ruleForm, 'machine_manual_tolerance', toleranceAll || '')
+      } catch (e) {
+        if (e.message) {
+          this.$message(e.message)
+        }
+      }
+    },
     changeEquipList(val) {
       this.formInline.equip_no = val ? val.equip_no : ''
       this.changeList()
@@ -403,6 +545,7 @@ export default {
     },
     handleClose(done) {
       this.dialogVisible = false
+      this.barCode = ''
       if (done) {
         done()
       }
@@ -411,13 +554,20 @@ export default {
       this.dialogVisible = true
       this.ruleForm = JSON.parse(JSON.stringify(row))
       this.$set(this.ruleForm, 'print_count', 1)
+      this.$set(this.ruleForm, '_machine_manual_weight', this.ruleForm.machine_manual_weight)
     },
     submitFun() {
       this.$refs.ruleForm.validate(async(valid) => {
         if (valid) {
           try {
+            console.log(this.ruleForm, 'this.ruleForm')
+            const _api = this.ruleForm.bra_code ? 'put' : 'post'
+            let _obj = JSON.parse(JSON.stringify(this.ruleForm))
+            if (this.ruleForm.bra_code) {
+              _obj = { print_count: this.ruleForm.print_count }
+            }
             this.btnLoading = true
-            await weightingPackageLog('post', null, { data: this.ruleForm })
+            await weightingPackageLog(_api, this.ruleForm.bra_code ? this.ruleForm.id : '', { data: _obj })
             this.$message.success('已下发打印')
             this.btnLoading = false
             this.dialogVisible = false
@@ -439,10 +589,15 @@ export default {
    .info-table {
      border-collapse: collapse;
       td {
-        min-width: 170px;
+        min-width: 180px;
         padding-top: 10px;
         padding-bottom: 10px;
         text-align: center;
+      }
+    }
+    .info-table-three{
+      td {
+        min-width: 150px;
       }
     }
 </style>
