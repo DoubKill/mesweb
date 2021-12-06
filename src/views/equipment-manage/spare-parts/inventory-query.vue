@@ -82,7 +82,7 @@
       />
       <el-table-column
         prop="technical_params"
-        label="技术参数"
+        label="用途"
         min-width="20"
       />
       <el-table-column
@@ -346,7 +346,7 @@
           />
         </el-form-item>
         <el-form-item
-          label="技术参数"
+          label="用途"
           style=""
           prop="checkList"
         >

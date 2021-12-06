@@ -162,7 +162,7 @@
         />
         <el-table-column
           prop="technical_params"
-          label="技术参数"
+          label="用途"
           min-width="20"
         />
         <el-table-column
@@ -423,7 +423,7 @@
         <el-form-item label="规格型号">
           <el-input v-model="SpareForm.specification" disabled style="width:300px" />
         </el-form-item>
-        <el-form-item label="技术参数">
+        <el-form-item label="用途">
           <el-input v-model="SpareForm.technical_params" disabled style="width:300px" />
         </el-form-item>
         <el-form-item label="标准单位">
