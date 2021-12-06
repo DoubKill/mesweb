@@ -78,10 +78,9 @@
         <el-link v-if="ruleForm.id&&ruleForm.equip_condition==='不停机'" style="margin-left:10px">不停机</el-link>
         <el-checkbox v-if="!ruleForm.id" v-model="ruleForm.equip_condition" style="margin-left:10px">已停机</el-checkbox>
       </el-form-item>
-      <el-form-item label="故障原因" prop="result_fault_cause_name">
+      <el-form-item label="故障原因" prop="result_fault_cause">
         <el-input
-          v-model="ruleForm.result_fault_cause_name"
-          :disabled="true"
+          v-model="ruleForm.result_fault_cause"
           style="width:250px"
         >
           <el-button
@@ -131,6 +130,7 @@
       <fault-classify
         ref="List"
         :is-dialog="true"
+        :params="ruleForm.part_name"
         :show="dialogVisible1"
       />
       <span slot="footer" class="dialog-footer">
@@ -270,7 +270,7 @@ export default {
         equip_no: [
           { required: true, message: '不能为空', trigger: 'blur' }
         ],
-        result_fault_cause_name: [
+        result_fault_cause: [
           { required: true, message: '不能为空', trigger: 'change' }
         ]
       },
@@ -287,45 +287,37 @@ export default {
   watch: {
     show(val) {
       if (val) {
-        let dateTime = ''
-        const yy = new Date().getFullYear()
-        const mm = new Date().getMonth() + 1
-        const dd = new Date().getDate()
-        const hh = new Date().getHours()
-        const mf = new Date().getMinutes() < 10 ? '0' + new Date().getMinutes() : new Date().getMinutes()
-        const ss = new Date().getSeconds() < 10 ? '0' + new Date().getSeconds() : new Date().getSeconds()
-        dateTime = yy + '-' + mm + '-' + dd + ' ' + hh + ':' + mf + ':' + ss
-        this.ruleForm = {
-          equip_barcode: '',
-          fault_datetime: dateTime,
-          image_url_list: [],
-          importance_level: '高'
-        }
+        this.getSectionUsers()
         this.getSection()
       }
     }
   },
   created() {
-    let dateTime = ''
-    const yy = new Date().getFullYear()
-    const mm = new Date().getMonth() + 1
-    const dd = new Date().getDate()
-    const hh = new Date().getHours()
-    const mf = new Date().getMinutes() < 10 ? '0' + new Date().getMinutes() : new Date().getMinutes()
-    const ss = new Date().getSeconds() < 10 ? '0' + new Date().getSeconds() : new Date().getSeconds()
-    dateTime = yy + '-' + mm + '-' + dd + ' ' + hh + ':' + mf + ':' + ss
-    this.ruleForm = {
-      equip_barcode: '',
-      fault_datetime: dateTime,
-      image_url_list: [],
-      importance_level: '高'
-    }
+    this.getSectionUsers()
     this.getSection()
   },
   methods: {
     checkPermission,
     handleSelectionChange(val) {
       this.multipleSelection = val
+    },
+    async getSectionUsers() {
+      const data = await sectionTree('get', null, { params: { section_users: 1 }})
+      let dateTime = ''
+      const yy = new Date().getFullYear()
+      const mm = new Date().getMonth() + 1
+      const dd = new Date().getDate()
+      const hh = new Date().getHours()
+      const mf = new Date().getMinutes() < 10 ? '0' + new Date().getMinutes() : new Date().getMinutes()
+      const ss = new Date().getSeconds() < 10 ? '0' + new Date().getSeconds() : new Date().getSeconds()
+      dateTime = yy + '-' + mm + '-' + dd + ' ' + hh + ':' + mf + ':' + ss
+      this.ruleForm = {
+        plan_department: data.section,
+        equip_barcode: '',
+        fault_datetime: dateTime,
+        image_url_list: [],
+        importance_level: '高'
+      }
     },
     async getSection() {
       try {
@@ -444,8 +436,8 @@ export default {
         this.$refs['List'].currentObj = {}
       }
       if (this.$refs['List'].currentObj.fault_name) {
-        this.$set(this.ruleForm, 'result_fault_cause_name', this.$refs['List'].currentObj.fault_name)
-        this.$set(this.ruleForm, 'result_fault_cause', this.$refs['List'].currentObj.id)
+        this.$set(this.ruleForm, 'result_fault_cause', this.$refs['List'].currentObj.fault_name)
+        // this.$set(this.ruleForm, 'result_fault_cause', this.$refs['List'].currentObj.id)
         // this.ruleForm.result_fault_cause_name = this.$refs['List'].currentObj.fault_name
         // this.ruleForm.result_fault_cause = this.$refs['List'].currentObj.id
         this.dialogVisible1 = false
