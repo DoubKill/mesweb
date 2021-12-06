@@ -331,6 +331,14 @@ export function xlRecipe(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function updateFlagCount(method, id, data = {}) {
+  const obj = {
+    url: id ? API.UpdateFlagCount + id + '/' : API.UpdateFlagCount,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 export function xlRecipeMaterial(method, id, data = {}) {
   const obj = {
     url: id ? API.XlRecipeMaterial + id + '/' : API.XlRecipeMaterial,
