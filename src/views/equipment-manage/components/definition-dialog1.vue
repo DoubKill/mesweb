@@ -155,7 +155,7 @@
             />
             <el-table-column
               prop="equip_spare_erp__technical_params"
-              label="技术参数"
+              label="用途"
             />
             <el-table-column
               prop="quantity"

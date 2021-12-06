@@ -47,7 +47,7 @@
                   @click.stop="delArea(scope.row,true)"
                 > 删除
                 </el-button>
-                <el-button
+                <!-- <el-button
                   v-permission="['equip_warehouse', 'printArea']"
                   size="mini"
                   plain
@@ -55,7 +55,7 @@
                   :disabled="btnLoading"
                   @click="printingFun(scope.row)"
                 > 打印条码
-                </el-button>
+                </el-button> -->
               </el-button-group>
             </template>
           </el-table-column>
