@@ -590,5 +590,9 @@ export default {
   GetMaterialTolerance: '/api/v1/terminal/get-material-tolerance/', // 物料查公差
 
   ToleranceKeyword: '/api/v1/terminal/tolerance-keyword/',
-  ToleranceRule: '/api/v1/terminal/tolerance-rule/'
+  ToleranceRule: '/api/v1/terminal/tolerance-rule/',
+  EquipMtbfmttpStatement: '/api/v1/equipment/equip-mtbfmttp-statement/', // MTBF/MTTF
+  EquipWorkorderStatement: '/api/v1/equipment/equip-workorder-statement/', // 工单别处理时间
+  EquipStatement: '/api/v1/equipment/equip-statement/', // 机台别处理时间
+  EquipUserStatement: '/api/v1/equipment/equip-user-statement/' // 人员别处理时间
 }

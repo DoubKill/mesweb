@@ -14,11 +14,11 @@
         />
       </el-form-item>
       <el-form-item label="人员">
-        <el-input v-model="search.no" clearable @input="debounceList" />
+        <el-input v-model="search.username" clearable @input="debounceList" />
       </el-form-item>
       <el-form-item label="作业类型">
         <el-select
-          v-model="search.equip_condition"
+          v-model="search.work_type"
           placeholder="请选择"
           clearable
           @change="getList"
@@ -41,43 +41,44 @@
       </el-form-item>
     </el-form>
     <el-table
+      id="out-table"
       v-loading="loading"
       :data="tableData"
       :row-class-name="tableRowClassName"
       border
     >
       <el-table-column
-        prop="person"
+        prop="receiving_user"
         label="人员"
         min-width="20"
       />
       <el-table-column
-        prop="order_id"
+        prop="work_type"
         label="作业类别"
         min-width="20"
       />
       <el-table-column
-        prop="order_id"
+        prop="派单时间"
         label="派单时间(分钟)"
         min-width="20"
       />
       <el-table-column
-        prop="order_id"
+        prop="接单时间"
         label="接单时间(分钟)"
         min-width="20"
       />
       <el-table-column
-        prop="order_id"
+        prop="维修时间"
         label="维修时间(分钟)"
         min-width="20"
       />
       <el-table-column
-        prop="order_id"
+        prop="验收时间"
         label="验收时间(分钟)"
         min-width="20"
       />
       <el-table-column
-        prop="order_id"
+        prop="开机时间"
         label="开机时间(分钟)"
         min-width="20"
       />
@@ -86,6 +87,9 @@
 </template>
 
 <script>
+import { equipUserStatement } from '@/api/jqy'
+import { exportExcel } from '@/utils/index'
+import { debounce } from '@/utils'
 export default {
   name: 'EquipmentReportFormPerson',
   data() {
@@ -104,20 +108,28 @@ export default {
     async getList() {
       try {
         this.loading = true
-        // const data = await equipWarehouseRecord('get', null, { params: this.search })
-        // this.tableData = data.results || []
-        this.tableData.push({
-          person: '合计',
-          quantity: sum(this.tableData, 'quantity'),
-          weight: sum(this.tableData, 'weight')
-        })
+        const data = await equipUserStatement('get', null, { params: this.search })
+        this.tableData = data
+        if (this.tableData.length > 0) {
+          this.tableData.push({
+            receiving_user: '合计',
+            派单时间: sum(this.tableData, '派单时间'),
+            接单时间: sum(this.tableData, '接单时间'),
+            维修时间: sum(this.tableData, '维修时间'),
+            验收时间: sum(this.tableData, '验收时间'),
+            开机时间: sum(this.tableData, '开机时间')
+          })
+        }
         this.loading = false
       } catch (e) {
         this.loading = false
       }
     },
+    debounceList() {
+      debounce(this, 'getList')
+    },
     tableRowClassName({ row, rowIndex }) {
-      if (row.person === '合计') {
+      if (row.receiving_user === '合计') {
         return 'summary-cell-style'
       }
     },
@@ -127,7 +139,8 @@ export default {
       this.getList()
     },
     exportTable() {
-      this.btnExportLoad = true
+      exportExcel('人员别处理时间报表')
+      // this.btnExportLoad = true
       // const obj = Object.assign({ export: 1 }, this.search)
       // const _api = equipWarehouseRecord
       // _api('get', null, { params: obj, responseType: 'blob' })
@@ -153,7 +166,7 @@ function sum(arr, params) {
     const a = val[params] ? Number(val[params]) : 0
     s += a
   }, 0)
-  s = Math.round(s * 1000) / 1000
+  s = Math.round(s * 100) / 100
   return s
 }
 </script>

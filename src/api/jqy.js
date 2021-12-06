@@ -860,3 +860,39 @@ export function toleranceRule(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function equipMtbfmttpStatement(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipMtbfmttpStatement + id + '/' : API.EquipMtbfmttpStatement,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipWorkorderStatement(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipWorkorderStatement + id + '/' : API.EquipWorkorderStatement,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipStatement(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipStatement + id + '/' : API.EquipStatement,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipUserStatement(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipUserStatement + id + '/' : API.EquipUserStatement,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
