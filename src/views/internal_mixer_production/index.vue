@@ -145,7 +145,7 @@
     <el-dialog
       title="胶料产出反馈"
       :visible.sync="dialogVisibleRubber"
-      width="900px"
+      width="90%"
     >
       <el-form :inline="true">
         <el-form-item label="胶料区分: ">{{ palletFeedObj.hasOwnProperty("stage")?palletFeedObj.stage:'--' }}</el-form-item>
@@ -207,7 +207,7 @@
     <el-dialog
       title="BAT查询"
       :visible.sync="dialogVisibleBAT"
-      width="900px"
+      width="90%"
     >
       <div style="position: relative">
         <el-form

@@ -95,6 +95,16 @@
             label="状态"
             min-width="20"
           />
+          <el-table-column label="是否合包" width="110px">
+            <template slot-scope="{row}">
+              <el-switch
+                v-model="row.merge_flag"
+                active-text="是"
+                inactive-text="否"
+                @change="changeSwitch(row,index)"
+              />
+            </template>
+          </el-table-column>
         </el-table>
         <page
           :old-page="false"
@@ -156,7 +166,7 @@ import { debounce, setDate } from '@/utils'
 import selectBatchingEquip from '../components/select-batching-equip'
 import classSelect from '@/components/ClassSelect'
 import recipeSelect from '../components/recipe-select'
-import { xlPlan } from '@/api/base_w_three'
+import { xlPlan, updateFlagCount } from '@/api/base_w_three'
 import page from '@/components/page'
 
 export default {
@@ -278,8 +288,8 @@ export default {
                 {
                   equip_no: d.equip_no,
                   search: { date_time: setDate() },
-                  tableList: a.data,
-                  total: a.total,
+                  tableList: a ? a.data : [],
+                  total: a ? a.total : 0,
                   currentRow: {}
                 }
               )
@@ -341,6 +351,17 @@ export default {
     editFun() {},
     refreshFun() {},
     stopFun() {},
+    async changeSwitch(row, faI) {
+      try {
+        await updateFlagCount('post', null, { data: {
+          equip_no: this.allTable[faI].equip_no,
+          id: row.id, oper_type: '计划', merge_flag: row.merge_flag
+        }})
+        this.$message.success('操作成功')
+      } catch (e) {
+        //
+      }
+    },
     handleClose(done) {
       this.dialogVisible = false
       this.$refs.ruleForm.resetFields()

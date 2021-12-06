@@ -391,6 +391,7 @@ export default {
   XlBin: '/api/v1/terminal/xl-bin/',
   SaveBin: '/api/v1/terminal/xl-bin/save_bin/',
   XlRecipe: '/api/v1/terminal/xl-recipe/',
+  UpdateFlagCount: '/api/v1/terminal/update-flag-count/',
   XlRecipeMaterial: '/api/v1/terminal/xl-recipe-material/',
   XlReportBasic: '/api/v1/terminal/xl-report-basic/',
   XlReportWeight: '/api/v1/terminal/xl-report-weight/',
