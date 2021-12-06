@@ -74,7 +74,7 @@
       />
       <el-table-column
         prop="technical_params"
-        label="技术参数"
+        label="用途"
         min-width="20"
       />
       <el-table-column

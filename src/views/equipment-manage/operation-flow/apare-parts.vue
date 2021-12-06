@@ -169,7 +169,7 @@
         />
         <el-table-column
           prop="date"
-          label="技术参数"
+          label="用途"
           min-width="20"
         />
         <el-table-column
@@ -240,7 +240,7 @@
         />
         <el-table-column
           prop="date"
-          label="技术参数"
+          label="用途"
           min-width="20"
         />
         <el-table-column
@@ -327,7 +327,7 @@
         />
         <el-table-column
           prop="date"
-          label="技术参数"
+          label="用途"
           min-width="20"
         />
         <el-table-column

@@ -81,7 +81,7 @@
       />
       <el-table-column
         prop="technical_params"
-        label="技术参数"
+        label="用途"
         min-width="20"
       />
       <el-table-column
@@ -246,7 +246,7 @@
           <el-input-number v-model="dialogForm.cost" controls-position="right" :min="1" />
         </el-form-item>
         <el-form-item
-          label="技术参数"
+          label="用途"
           prop="technical_params"
         >
           <el-input v-model="dialogForm.technical_params" />
@@ -333,7 +333,7 @@
         />
         <el-table-column
           prop="technical_params"
-          label="技术参数"
+          label="用途"
           min-width="20"
         />
         <el-table-column
