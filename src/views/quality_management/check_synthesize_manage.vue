@@ -117,6 +117,11 @@
         <el-table-column label="处理时间" align="center" prop="deal_time" width="80" />
       </el-table-column>
       <el-table-column label="车次" prop="trains" width="60" />
+      <el-table-column label="打印次数" align="center" width="60">
+        <template slot-scope="{row}">
+          <el-link type="primary" @click="showList(row)">{{ row.print_times }}</el-link>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" width="120">
         <template slot-scope="{row}">
           <!-- <el-button size="mini" @click="handleEdit(row)">编辑</el-button> -->
@@ -348,6 +353,22 @@
         <el-button type="primary" :loading="btnLoadingNew" @click="submitTrainNew">确 定</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      title=""
+      :visible.sync="dialogList"
+      width="70%"
+    >
+      <el-table
+        :data="listData"
+        border
+      >
+        <el-table-column label="序号" type="index" min-width="20" />
+        <el-table-column label="打印场所" prop="location" min-width="20" />
+        <el-table-column label="打印人" prop="created_user" min-width="20" />
+        <el-table-column label="打印时间" prop="created_date" min-width="20" />
+      </el-table>
+    </el-dialog>
   </div>
 </template>
 
@@ -360,7 +381,7 @@ import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import DealSuggestionSelect from '@/components/DealSuggestionSelect'
 import TestCard from '@/components/TestCard'
 import { palletFeedTest, changelValidTime, qualityPalletFeedTest } from '@/api/quick-check-detail'
-import { labelPrint, showQualifiedRange, trainsFix, palletTrainBatchFix } from '@/api/base_w'
+import { labelPrint, showQualifiedRange, trainsFix, palletTrainBatchFix, labelPrintLogs } from '@/api/base_w'
 import { debounce, setDate } from '@/utils'
 export default {
   name: 'CheckSynthesizeManage',
@@ -443,7 +464,9 @@ export default {
       btnLoading: false,
       dialogVisibleTrainNew: false,
       btnLoadingNew: false,
-      tableData1: []
+      tableData1: [],
+      dialogList: false,
+      listData: []
     }
   },
   watch: {
@@ -552,8 +575,19 @@ export default {
         this.labelPrintList.forEach(D => {
           arr.push(D.lot_no)
         })
+
+        // 调接口 查是否有重复
+        // 再弹弹框
+        // this.$confirm('L-FM-J467-12   1-2车  卡片已打印1次，是否继续打印?', '提示', {
+        //   confirmButtonText: '确定',
+        //   cancelButtonText: '取消',
+        //   type: 'warning'
+        // }).then(async() => {
         await labelPrint('post', null, { data: { lot_no: arr }})
         this.$message.success('打印任务已连接')
+        // }).catch(() => {
+        //   //
+        // })
       } catch (e) {
         //
       }
@@ -774,6 +808,15 @@ export default {
           return false
         }
       })
+    },
+    async showList(row) {
+      this.dialogList = true
+      try {
+        const data = await labelPrintLogs('get', null, { params: { id: row.id }})
+        this.listData = data || []
+      } catch (e) {
+        //
+      }
     }
   }
 }
