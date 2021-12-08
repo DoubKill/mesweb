@@ -812,7 +812,7 @@ export default {
     async showList(row) {
       this.dialogList = true
       try {
-        const data = await labelPrintLogs('get', null, { params: { id: row.id }})
+        const data = await labelPrintLogs('get', null, { params: { result_id: row.id }})
         this.listData = data || []
       } catch (e) {
         //
