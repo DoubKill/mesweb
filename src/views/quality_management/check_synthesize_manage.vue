@@ -1,6 +1,6 @@
 <template>
   <!-- 快检信息综合管理 -->
-  <div class="app-container">
+  <div class="check_synthesize_manage">
     <el-form :inline="true">
       <el-form-item label="日期">
         <el-date-picker
@@ -572,22 +572,25 @@ export default {
       try {
         if (this.labelPrintList.length === 0) return
         const arr = []
+        let str = ''
+
         this.labelPrintList.forEach(D => {
           arr.push(D.lot_no)
+          if (D.print_times > 1) {
+            str += D.product_no + ' ' + D.trains + '车  ' + '卡片已打印' + D.print_times + '次' + '<br>'
+          }
         })
-
-        // 调接口 查是否有重复
-        // 再弹弹框
-        // this.$confirm('L-FM-J467-12   1-2车  卡片已打印1次，是否继续打印?', '提示', {
-        //   confirmButtonText: '确定',
-        //   cancelButtonText: '取消',
-        //   type: 'warning'
-        // }).then(async() => {
-        await labelPrint('post', null, { data: { lot_no: arr }})
-        this.$message.success('打印任务已连接')
-        // }).catch(() => {
-        //   //
-        // })
+        this.$confirm(str + '是否继续打印?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+          dangerouslyUseHTMLString: true
+        }).then(async() => {
+          await labelPrint('post', null, { data: { lot_no: arr }})
+          this.$message.success('打印任务已连接')
+        }).catch(() => {
+          //
+        })
       } catch (e) {
         //
       }
@@ -825,6 +828,8 @@ export default {
   // .el-input {
   //   width: auto;
   // }
+  .check_synthesize_manage{
+    white-space:"pre";
     .dialogStyle{
       .el-input,.el-select{
         width:150px !important;
@@ -840,4 +845,5 @@ export default {
         width:auto !important;
       }
     }
+  }
 </style>
