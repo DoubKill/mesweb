@@ -5,7 +5,8 @@
       <el-form-item label="机台">
         <selectEquip
           :equip_no_props.sync="search.equip_no"
-          @changeSearch="getList"
+          :is-created="true"
+          @changeSearch="equipChange"
         />
       </el-form-item>
       <el-form-item label="工厂日期">
@@ -117,7 +118,6 @@ export default {
   },
   async created() {
     await this.getClasses()
-    await this.getList()
   },
   methods: {
     async getList() {
@@ -151,6 +151,10 @@ export default {
       }).then(response => {
         this.classOptions = response.results
       })
+    },
+    equipChange(val) {
+      this.search.equip_no = val
+      this.getList()
     },
     arraySpanMethod({ row, column, rowIndex, columnIndex }) {
       if (columnIndex === 0) {
