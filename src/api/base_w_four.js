@@ -491,3 +491,11 @@ export function equipJobItemStandardImport(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function productClassesPlanReal(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ProductClassesPlanReal + id + '/' : API.ProductClassesPlanReal,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

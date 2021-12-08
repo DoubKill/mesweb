@@ -216,6 +216,7 @@ export default {
   // 修改车次
   TrainsFix: '/api/v1/production/trains-fix/',
   PalletTrainBatchFix: '/api/v1/production/pallet-train-batch-fix/',
+  LabelPrintLogs: '/api/v1/quality/label-print-logs/',
   // 月快检合格率
   BatchMonthStatistics: '/api/v1/quality/batch-month-statistics/',
   // 日快检合格率
@@ -595,5 +596,6 @@ export default {
   EquipMtbfmttpStatement: '/api/v1/equipment/equip-mtbfmttp-statement/', // MTBF/MTTF
   EquipWorkorderStatement: '/api/v1/equipment/equip-workorder-statement/', // 工单别处理时间
   EquipStatement: '/api/v1/equipment/equip-statement/', // 机台别处理时间
-  EquipUserStatement: '/api/v1/equipment/equip-user-statement/' // 人员别处理时间
+  EquipUserStatement: '/api/v1/equipment/equip-user-statement/', // 人员别处理时间
+  ProductClassesPlanReal: '/api/v1/production/product-classes-plan-real/' // 生产记录表
 }
