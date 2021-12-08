@@ -216,6 +216,7 @@ export default {
   // 修改车次
   TrainsFix: '/api/v1/production/trains-fix/',
   PalletTrainBatchFix: '/api/v1/production/pallet-train-batch-fix/',
+  LabelPrintLogs: '/api/v1/quality/label-print-logs/',
   // 月快检合格率
   BatchMonthStatistics: '/api/v1/quality/batch-month-statistics/',
   // 日快检合格率
@@ -391,6 +392,7 @@ export default {
   XlBin: '/api/v1/terminal/xl-bin/',
   SaveBin: '/api/v1/terminal/xl-bin/save_bin/',
   XlRecipe: '/api/v1/terminal/xl-recipe/',
+  UpdateFlagCount: '/api/v1/terminal/update-flag-count/',
   XlRecipeMaterial: '/api/v1/terminal/xl-recipe-material/',
   XlReportBasic: '/api/v1/terminal/xl-report-basic/',
   XlReportWeight: '/api/v1/terminal/xl-report-weight/',
@@ -590,5 +592,11 @@ export default {
   GetMaterialTolerance: '/api/v1/terminal/get-material-tolerance/', // 物料查公差
 
   ToleranceKeyword: '/api/v1/terminal/tolerance-keyword/',
-  ToleranceRule: '/api/v1/terminal/tolerance-rule/'
+  ToleranceRule: '/api/v1/terminal/tolerance-rule/',
+  EquipMtbfmttpStatement: '/api/v1/equipment/equip-mtbfmttp-statement/', // MTBF/MTTF
+  EquipWorkorderStatement: '/api/v1/equipment/equip-workorder-statement/', // 工单别处理时间
+  EquipStatement: '/api/v1/equipment/equip-statement/', // 机台别处理时间
+  EquipUserStatement: '/api/v1/equipment/equip-user-statement/', // 人员别处理时间
+
+  ProductClassesPlanReal: '/api/v1/production/product-classes-plan-real/' // 生产记录表
 }

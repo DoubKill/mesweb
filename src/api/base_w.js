@@ -539,6 +539,14 @@ export function palletTrainBatchFix(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function labelPrintLogs(method, id, data = {}) {
+  const obj = {
+    url: id ? API.LabelPrintLogs + id + '/' : API.LabelPrintLogs,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 export function unqualifiedTrains(method, id, data = {}) {
   const obj = {
     url: id ? API.UnqualifiedTrains + id + '/' : API.UnqualifiedTrains,
