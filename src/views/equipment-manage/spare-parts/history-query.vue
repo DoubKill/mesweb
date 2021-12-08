@@ -21,10 +21,10 @@
           @change="changeSearch"
         >
           <el-option
-            v-for="item in [{name:'出库',id:2},{name:'入库',id:1}]"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id"
+            v-for="item in ['出库','入库']"
+            :key="item"
+            :label="item"
+            :value="item"
           />
         </el-select>
       </el-form-item>
@@ -36,13 +36,28 @@
           @input="debounceSearch"
         />
       </el-form-item>
-      <el-form-item label="备件条码">
+      <el-form-item label="操作人">
         <el-input
-          v-model="search.spare__code"
+          v-model="search.created_username"
           style="width:200px"
           clearable
           @input="debounceSearch"
         />
+      </el-form-item>
+      <el-form-item label="是否撤销">
+        <el-select
+          v-model="search.revocation"
+          placeholder="请选择"
+          clearable
+          @change="changeSearch"
+        >
+          <el-option
+            v-for="item in [{label:'Y',value:true},{label:'N',value:false}]"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="备件代码">
         <el-input
@@ -92,12 +107,9 @@
       border
     >
       <el-table-column
-        prop="date"
+        prop="status"
         label="出库/入库"
         min-width="20"
-        :formatter="(row)=>{
-          return row.status===1?'入库':'出库'
-        }"
       />
       <el-table-column
         prop="order_id"
@@ -116,11 +128,11 @@
           >{{ scope.row.work_order_no }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column
+      <!-- <el-table-column
         prop="spare__code"
         label="备件条码"
         min-width="20"
-      />
+      /> -->
       <el-table-column
         prop="spare_code"
         label="备件代码"
@@ -142,6 +154,16 @@
         min-width="20"
       />
       <el-table-column
+        prop="technical_params"
+        label="用途"
+        min-width="20"
+      />
+      <el-table-column
+        prop="cost"
+        label="单价"
+        min-width="20"
+      />
+      <el-table-column
         prop="quantity"
         label="数量"
         min-width="20"
@@ -149,6 +171,11 @@
       <el-table-column
         prop="unit"
         label="单位"
+        min-width="20"
+      />
+      <el-table-column
+        prop="money"
+        label="金额"
         min-width="20"
       />
       <el-table-column
@@ -171,6 +198,30 @@
         label="操作时间"
         min-width="20"
       />
+      <el-table-column
+        prop="revocation"
+        label="是否撤销"
+        min-width="20"
+      />
+      <el-table-column
+        prop="revocation_desc"
+        label="撤销备注"
+        min-width="20"
+      />
+      <el-table-column
+        label="操作"
+        width="80"
+      >
+        <template slot-scope="scope">
+          <el-button
+            v-permission="['equip_out_warehouse', 'outer']"
+            type="primary"
+            size="mini"
+            @click="dialogRevoke(scope.row)"
+          >撤销
+          </el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <page
       :old-page="false"
@@ -211,11 +262,46 @@
         <el-button type="primary" @click="dialogVisible=false">返回</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      :visible.sync="dialogVisibleRevoke"
+      width="500px"
+      title="入出库撤销操作 备注说明"
+      class="dialogStyle"
+    >
+      <el-form label-width="150px" :model="currentRevoke">
+        <el-form-item label="出库/入库">
+          <el-input
+            v-model="currentRevoke.status"
+            :disabled="true"
+          />
+        </el-form-item>
+        <el-form-item label="单据号">
+          <el-input v-model="currentRevoke.order_id" :disabled="true" />
+        </el-form-item>
+        <el-form-item label="备件代码">
+          <el-input v-model="currentRevoke.spare_code" :disabled="true" />
+        </el-form-item>
+        <el-form-item label="备注说明">
+          <el-input
+            v-model="currentRevoke.revocation_desc"
+            type="textarea"
+            style="width:200px"
+            :rows="3"
+          />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogVisibleRevoke=false">返回</el-button>
+        <el-button :loading="submit" type="primary" @click="generateFun">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import page from '@/components/page'
+import { mapGetters } from 'vuex'
 import { equipWarehouseRecord } from '@/api/base_w_five'
 export default {
   name: 'HistoryQuery',
@@ -229,13 +315,21 @@ export default {
       dateValue: [],
       tableData: [],
       total: 0,
+      submit: false,
       loading: false,
+      dialogVisibleRevoke: false,
       btnExportLoad: false,
       dialogVisible: false,
       loadingView: false,
       tableDataView: [],
-      currentObj: {}
+      currentObj: {},
+      currentRevoke: {}
     }
+  },
+  computed: {
+    ...mapGetters([
+      'name'
+    ])
   },
   created() {
     this.getList()
@@ -253,6 +347,31 @@ export default {
     },
     debounceSearch() {
       this.$debounce(this, 'changeSearch')
+    },
+    async generateFun() {
+      try {
+        this.submit = true
+        await equipWarehouseRecord('put', this.currentRevoke.id, { data: { revocation_desc: this.currentRevoke.revocation_desc, handle: 1 }})
+        this.$message.success('撤销成功')
+        this.submit = false
+        this.dialogVisibleRevoke = false
+        this.getList()
+      } catch (e) {
+        this.submit = false
+        this.dialogVisibleRevoke = true
+      }
+    },
+    dialogRevoke(row) {
+      if (row.revocation === 'N') {
+        if (row.created_username === this.name) {
+          this.currentRevoke = JSON.parse(JSON.stringify(row))
+          this.dialogVisibleRevoke = true
+        } else {
+          this.$message('只能撤销本人的单子')
+        }
+      } else {
+        this.$message('撤销过的单子不能再次撤销')
+      }
     },
     async getList() {
       try {
