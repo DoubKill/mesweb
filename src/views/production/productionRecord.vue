@@ -14,6 +14,7 @@
           type="date"
           value-format="yyyy-MM-dd"
           placeholder="选择日期"
+          :clearable="false"
           @change="getList"
         />
       </el-form-item>
@@ -194,7 +195,7 @@ export default {
         transform:rotate(20deg);
             width: 130px;
         position: absolute;
-        top:0;
+        top:-8px;
         left:-6px;
     }
     .three-line{
@@ -202,7 +203,7 @@ export default {
         transform:rotate(48deg);
         width:100px;
         position: absolute;
-        top:0;
+        top:-8px;
         left:-6px;
     }
 }

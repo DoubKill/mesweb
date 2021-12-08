@@ -569,7 +569,7 @@ export let asyncRoutes = [
         meta: {
           title: '生产记录表',
           icon: 'production',
-          permissionName: ''
+          permissionName: 'plan_reality'
         }
       },
       {
