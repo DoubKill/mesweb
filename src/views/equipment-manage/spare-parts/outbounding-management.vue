@@ -905,6 +905,9 @@ export default {
           d.quantity = d.out_quantity > 0 ? d.out_quantity : 1
         }
       })
+      if (this.dialogForm.desc === undefined) {
+        this.dialogForm.desc = ''
+      }
       this.$refs.createForm.validate(async(valid) => {
         if (valid) {
           try {
@@ -930,6 +933,9 @@ export default {
           d.quantity = 1
         }
       })
+      if (this.dialogForm.desc === undefined) {
+        this.dialogForm.desc = ''
+      }
       this.$refs.createForm.validate(async(valid) => {
         if (valid) {
           try {
