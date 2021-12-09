@@ -590,7 +590,7 @@ export default {
       if (val) {
         try {
           const data = await equipWarehouseArea('get', null, { params: { equip_spare: this.MoveForm.equip_spare }})
-          this.warehouseAreaList = data.data
+          this.warehouseAreaList = data.data.results
         } catch (e) {
         // this.loading = false
         }
@@ -671,6 +671,9 @@ export default {
       if (this.MoveForm.quantity === undefined) {
         this.MoveForm.quantity = 1
       }
+      if (this.MoveForm.desc === undefined) {
+        this.MoveForm.desc = ''
+      }
       this.MoveForm.handle = '移库'
       this.$refs.MoveForm.validate(async(valid) => {
         if (valid) {
@@ -693,6 +696,9 @@ export default {
       if (this.EditForm.quantity === undefined) {
         this.EditForm.quantity = 1
       }
+      if (this.EditForm.desc === undefined) {
+        this.EditForm.desc = ''
+      }
       this.EditForm.handle = '盘库'
       this.$refs.EditForm.validate(async(valid) => {
         if (valid) {
@@ -712,6 +718,9 @@ export default {
       })
     },
     async generateDelete() {
+      if (this.EditForm.desc === undefined) {
+        this.EditForm.desc = ''
+      }
       try {
         this.EditForm.handle = '删除'
         this.loadingBtn1 = true

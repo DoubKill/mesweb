@@ -14,7 +14,7 @@
       ref="multipleTable"
       v-loading="loadingView"
       :data="tableDataView"
-      :row-key="type==='入库'?id:equip_spare"
+      :row-key="getRowKeys"
       border
       @selection-change="handleSelectionChange"
     >
@@ -163,6 +163,13 @@ export default {
         this.loadingView = false
       }
       this.dialogVisibleSelect = true
+    },
+    getRowKeys(row) {
+      if (this.type === '入库') {
+        return row.id
+      } else {
+        return row.equip_spare
+      }
     },
     handleSelectionChange(val) {
       this.multipleSelection = val

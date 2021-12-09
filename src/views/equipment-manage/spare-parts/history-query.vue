@@ -128,11 +128,6 @@
           >{{ scope.row.work_order_no }}</el-link>
         </template>
       </el-table-column>
-      <!-- <el-table-column
-        prop="spare__code"
-        label="备件条码"
-        min-width="20"
-      /> -->
       <el-table-column
         prop="spare_code"
         label="备件代码"
@@ -349,9 +344,12 @@ export default {
       this.$debounce(this, 'changeSearch')
     },
     async generateFun() {
+      if (this.currentRevoke.revocation_desc === undefined) {
+        this.currentRevoke.revocation_desc = ''
+      }
       try {
         this.submit = true
-        await equipWarehouseRecord('put', this.currentRevoke.id, { data: { revocation_desc: this.currentRevoke.revocation_desc, handle: 1 }})
+        await equipWarehouseRecord('put', this.currentRevoke.id, { data: { revocation_desc: this.currentRevoke.revocation_desc }})
         this.$message.success('撤销成功')
         this.submit = false
         this.dialogVisibleRevoke = false

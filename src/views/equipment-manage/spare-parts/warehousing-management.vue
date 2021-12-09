@@ -822,6 +822,9 @@ export default {
           d.quantity = d.in_quantity > 0 ? d.in_quantity : 1
         }
       })
+      if (this.dialogForm.desc === undefined) {
+        this.dialogForm.desc = ''
+      }
       this.$refs.createForm.validate(async(valid) => {
         if (valid) {
           try {
@@ -847,6 +850,9 @@ export default {
           d.quantity = 1
         }
       })
+      if (this.dialogForm.desc === undefined) {
+        this.dialogForm.desc = ''
+      }
       // this.dialogForm.equip_spare.forEach(d => {
       //   if (d.one_piece === undefined) {
       //     d.one_piece = 1
