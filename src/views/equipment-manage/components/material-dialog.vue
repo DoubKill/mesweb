@@ -14,7 +14,7 @@
       ref="multipleTable"
       v-loading="loadingView"
       :data="tableDataView"
-      row-key="id"
+      :row-key="type==='入库'?id:equip_spare"
       border
       @selection-change="handleSelectionChange"
     >
