@@ -750,9 +750,6 @@ export default {
           equip_spare: [],
           submission_department: '设备科'
         }
-        // this.dialogForm.order_id = orderId
-        // this.dialogForm.equip_spare = []
-        // this.dialogForm.submission_department = '设备科'
         this.dialogVisibleAdd = true
       } catch {
         this.dialogVisibleAdd = false
@@ -764,10 +761,8 @@ export default {
           const data = await equipWarehouseInventory('get', null, { params: { equip_spare: this.creatOrder.equip_spare }})
           this.warehouseAreaList = data.area
           this.$set(this.creatOrder, 'equip_warehouse_area', data.first.equip_warehouse_area__area_id)
-          // this.creatOrder.equip_warehouse_area = data.first.equip_warehouse_area__area_id
           this.warehouseLocationList = data.location.filter(d => d.equip_warehouse_area__id === this.creatOrder.equip_warehouse_area)
           this.$set(this.creatOrder, 'equip_warehouse_location', data.first.equip_warehouse_area__location_id)
-          // this.creatOrder.equip_warehouse_location = data.first.equip_warehouse_area__location_id
           this.location = data.location
         } catch (e) {
         // this.loading = false

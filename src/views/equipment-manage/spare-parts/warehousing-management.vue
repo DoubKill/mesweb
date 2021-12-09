@@ -757,13 +757,6 @@ export default {
       } else {
         this.order = row.id
         this.quantity = row.plan_in_quantity - row.in_quantity
-        // try {
-        //   const data = await getCode('get', null, { params: { order: this.order }})
-        //   this.creatOrder.spare_code = data.spare_code
-        //   // this.creatOrder.one_piece = data.one_piece
-        // } catch (e) {
-        // // this.loading = false
-        // }
         this.creatOrder.spare_code = row.spare_code
         this.creatOrder.spare_name = row.spare_name
         this.creatOrder.in_quantity = row.plan_in_quantity - row.in_quantity
