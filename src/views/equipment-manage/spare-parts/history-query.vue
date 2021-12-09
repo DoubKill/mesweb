@@ -345,7 +345,7 @@ export default {
     },
     async generateFun() {
       if (this.currentRevoke.revocation_desc === undefined) {
-        this.currentRevoke.revocation_desc = ''
+        this.currentRevoke.revocation_desc = null
       }
       try {
         this.submit = true

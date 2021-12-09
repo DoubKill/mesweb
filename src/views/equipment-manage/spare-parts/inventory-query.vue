@@ -672,7 +672,7 @@ export default {
         this.MoveForm.quantity = 1
       }
       if (this.MoveForm.desc === undefined) {
-        this.MoveForm.desc = ''
+        this.MoveForm.desc = null
       }
       this.MoveForm.handle = '移库'
       this.$refs.MoveForm.validate(async(valid) => {
@@ -697,7 +697,7 @@ export default {
         this.EditForm.quantity = 1
       }
       if (this.EditForm.desc === undefined) {
-        this.EditForm.desc = ''
+        this.EditForm.desc = null
       }
       this.EditForm.handle = '盘库'
       this.$refs.EditForm.validate(async(valid) => {
@@ -719,7 +719,7 @@ export default {
     },
     async generateDelete() {
       if (this.EditForm.desc === undefined) {
-        this.EditForm.desc = ''
+        this.EditForm.desc = null
       }
       try {
         this.EditForm.handle = '删除'
