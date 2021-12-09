@@ -823,7 +823,7 @@ export default {
         }
       })
       if (this.dialogForm.desc === undefined) {
-        this.dialogForm.desc = ''
+        this.dialogForm.desc = null
       }
       this.$refs.createForm.validate(async(valid) => {
         if (valid) {
@@ -851,7 +851,7 @@ export default {
         }
       })
       if (this.dialogForm.desc === undefined) {
-        this.dialogForm.desc = ''
+        this.dialogForm.desc = null
       }
       // this.dialogForm.equip_spare.forEach(d => {
       //   if (d.one_piece === undefined) {
