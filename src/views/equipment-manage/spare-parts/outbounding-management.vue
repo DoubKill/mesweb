@@ -669,14 +669,19 @@ export default {
         if (valid) {
           try {
             this.submit = true
-            await equipWarehouseOrderDetail('post', null, { data: this.creatOrder })
-            this.$message.success('操作成功')
-            this.submit = false
-            const data = await equipWarehouseOrderDetail('get', null, { params: this.search1 })
-            this.tableDataView = data || []
-            this.handleClose(null)
-            this.getList()
-            this.dialogVisible1 = false
+            const data1 = await equipWarehouseOrderDetail('post', null, { data: this.creatOrder })
+            if (data1.success === false) {
+              this.submit = false
+              this.$message.error(data1.message)
+            } else {
+              this.$message.success('操作成功')
+              this.submit = false
+              const data = await equipWarehouseOrderDetail('get', null, { params: this.search1 })
+              this.tableDataView = data || []
+              this.handleClose(null)
+              this.getList()
+              this.dialogVisible1 = false
+            }
           } catch (e) {
             this.submit = false
             this.dialogVisible1 = true
@@ -904,6 +909,7 @@ export default {
         if (d.quantity === undefined || d.quantity === 0) {
           d.quantity = d.out_quantity > 0 ? d.out_quantity : 1
         }
+        console.log(d.quantity)
       })
       if (this.dialogForm.desc === undefined) {
         this.dialogForm.desc = null

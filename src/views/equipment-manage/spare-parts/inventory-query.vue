@@ -165,7 +165,7 @@
       @currentChange="currentChange"
     />
     <el-dialog
-      title="入出库详细履历"
+      title="库存变更 详细履历"
       :visible.sync="dialogVisible"
       width="90%"
     >
@@ -199,13 +199,13 @@
         border
       >
         <el-table-column
-          prop="order_id"
-          label="入出库单据号"
+          prop="now_quantity"
+          label="当前库存数量"
           min-width="20"
         />
         <el-table-column
-          prop="work_order_no"
-          label="工单编号"
+          prop="status"
+          label="变更类别"
           min-width="20"
         />
         <el-table-column
@@ -215,17 +215,27 @@
         />
         <el-table-column
           prop="created_username"
-          label="入库人/撤销人"
+          label="操作人"
           min-width="20"
         />
         <el-table-column
           prop="created_date"
-          label="入库时间/撤销时间"
+          label="操作时间"
           min-width="20"
         />
         <el-table-column
           prop="revocation_desc"
-          label="撤销备注"
+          label="操作备注"
+          min-width="20"
+        />
+        <el-table-column
+          prop="order_id"
+          label="入出库单据号"
+          min-width="20"
+        />
+        <el-table-column
+          prop="work_order_no"
+          label="工单编号"
           min-width="20"
         />
       </el-table>
@@ -506,7 +516,7 @@
 <script>
 import page from '@/components/page'
 import { exportExcel } from '@/utils/index'
-import { equipWarehouseStatistical } from '@/api/base_w_five'
+// import { equipWarehouseStatistical } from '@/api/base_w_five'
 import { equipWarehouseInventory, equipSpareErp, equipWarehouseLocation, equipWarehouseArea } from '@/api/jqy'
 export default {
   name: 'InventoryQuery',
@@ -661,8 +671,14 @@ export default {
     async getInventoryList() {
       const row = this.currentInfo
       try {
-        const data = await equipWarehouseStatistical('get', null, { params: { detail: 1, equip_spare: row.equip_spare }})
+        const data = await equipWarehouseInventory('get', null, { params: { detail: 1, equip_spare: row.equip_spare, equip_warehouse_location: row.equip_warehouse_location__id }})
         this.tableDataView = data.results || []
+        // if (this.tableDataView.length > 0) {
+        //   this.tableDataView.push({
+        //     plan_id: '合计库存数',
+        //     quantity: this.tableDataView
+        //   })
+        // }
       } catch (e) {
         //
       }
