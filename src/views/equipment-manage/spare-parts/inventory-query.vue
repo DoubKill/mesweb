@@ -466,6 +466,7 @@
             placeholder="请选择"
             clearable
             @visible-change="getWarehouseLocation"
+            @change="clear1"
           >
             <el-option
               v-for="item in warehouseLocationList"
@@ -599,7 +600,14 @@ export default {
     clear() {
       if (this.MoveForm.move_equip_warehouse_location__id) {
         this.MoveForm.move_equip_warehouse_location__id = null
+        this.MoveForm.move_equip_warehouse_location__location_name = null
       }
+      this.MoveForm.move_equip_warehouse_area__area_name = this.warehouseAreaList.filter(d => d.id === this.MoveForm.move_equip_warehouse_area__id)[0].area_name
+      console.log(this.MoveForm.move_equip_warehouse_area__area_name)
+    },
+    clear1() {
+      this.MoveForm.move_equip_warehouse_location__location_name = this.warehouseLocationList.filter(d => d.id === this.MoveForm.move_equip_warehouse_location__id)[0].location_name
+      console.log(this.MoveForm.move_equip_warehouse_location__location_name)
     },
     async getWarehouseLocation(val) {
       if (val) {
