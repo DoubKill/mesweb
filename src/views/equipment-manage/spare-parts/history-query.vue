@@ -38,7 +38,7 @@
       </el-form-item>
       <el-form-item label="操作人">
         <el-input
-          v-model="search.created_username"
+          v-model="search.created_user"
           style="width:200px"
           clearable
           @input="debounceSearch"
@@ -52,10 +52,10 @@
           @change="changeSearch"
         >
           <el-option
-            v-for="item in [{label:'Y',value:true},{label:'N',value:false}]"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+            v-for="item in ['Y','N']"
+            :key="item"
+            :label="item"
+            :value="item"
           />
         </el-select>
       </el-form-item>
