@@ -63,6 +63,22 @@ export function wmsInventory(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function wmsStockSummsry(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WmsStockSummsry + id + '/' : API.WmsStockSummsry,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function thStockSummsry(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ThStockSummsry + id + '/' : API.ThStockSummsry,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 
 export function wmsInventoryDown(params) {
   return request({

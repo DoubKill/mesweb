@@ -287,16 +287,26 @@ export let asyncRoutes = [
         permissionName: 'material'
       }
     },
-    // {
-    //   path: '/material/base/inventory-warning',
-    //   name: 'MaterialBaseInventoryWarning',
-    //   component: () => import('@/views/material_base_info_manage/inventory-warning'),
-    //   meta: {
-    //     title: '原材料-预警参数设定',
-    //     icon: 'formula',
-    //     permissionName: ''
-    //   }
-    // },
+    {
+      path: '/material/base/inventory-warning',
+      name: 'MaterialBaseInventoryWarning',
+      component: () => import('@/views/material_base_info_manage/inventory-warning'),
+      meta: {
+        title: '原材料-预警参数设定',
+        icon: 'formula',
+        permissionName: 'material_warning_setting'
+      }
+    },
+    {
+      path: '/base/carbon-warning',
+      name: 'CarbonBaseInventoryWarning',
+      component: () => import('@/views/material_base_info_manage/carbon-warning'),
+      meta: {
+        title: '炭黑库-预警参数设定',
+        icon: 'formula',
+        permissionName: 'th_warning_setting'
+      }
+    },
     // {
     //   path: '/material-info-mapping',
     //   component: () => import('@/views/quality_management/material-info-mapping/material-info-mapping'),
@@ -975,13 +985,24 @@ export let asyncRoutes = [
             }
           },
           {
+            path: '/delivery-lowWarning',
+            component: () => import('@/views/inventory/material-delivery-manage/lowWarning.vue'),
+            name: 'DeliveryLowWarning',
+            meta: {
+              faName: 'MaterialDelivery',
+              faShowName: '原材料库',
+              title: '低库存预警',
+              permissionName: 'material_inventory_summary'
+            }
+          },
+          {
             path: '/delivery-overdueQuery',
             component: () => import('@/views/inventory/material-delivery-manage/overdueQuery.vue'),
             name: 'DeliveryOverdueQuery',
             meta: {
               faName: 'MaterialDelivery',
               faShowName: '原材料库',
-              title: '即将超期查询',
+              title: '即将超期预警',
               permissionName: 'material_expire_query'
             }
           },
@@ -1095,13 +1116,24 @@ export let asyncRoutes = [
             }
           },
           {
+            path: '/carbon-lowWarning',
+            component: () => import('@/views/inventory/carbon-delivery-manage/lowWarning.vue'),
+            name: 'CarbonLowWarning',
+            meta: {
+              faName: 'CarbonDelivery',
+              faShowName: '炭黑库',
+              title: '低库存预警',
+              permissionName: 'th_inventory_summary'
+            }
+          },
+          {
             path: '/carbon-overdueQuery',
             component: () => import('@/views/inventory/carbon-delivery-manage/overdueQuery.vue'),
             name: 'CarbonDeliveryOverdueQuery',
             meta: {
               faName: 'CarbonDelivery',
               faShowName: '炭黑库',
-              title: '即将超期查询',
+              title: '即将超期预警',
               permissionName: 'th_expire_query'
             }
           },
