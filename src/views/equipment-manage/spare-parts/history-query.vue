@@ -209,7 +209,7 @@
       >
         <template slot-scope="scope">
           <el-button
-            v-permission="['equip_out_warehouse', 'outer']"
+            v-permission="['equip_warehouse_record', 'revocation']"
             type="primary"
             size="mini"
             @click="dialogRevoke(scope.row)"
