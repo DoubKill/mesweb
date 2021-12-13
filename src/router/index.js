@@ -589,6 +589,98 @@ export let asyncRoutes = [
                 title: '各分厂胶料计划申报',
                 permissionName: ''
               }
+            },
+            {
+              path: '/schedule/safety-declare',
+              component: () => import('@/views/plan/schedule/factory-declare/safety-declare'),
+              name: 'ScheduleSafetyDeclare',
+              meta: {
+                faName: 'ScheduleFactoryDeclare',
+                title: '安全库存及安全系数申报',
+                permissionName: ''
+              }
+            }
+          ]
+        },
+        {
+          path: '/schedule/dispose',
+          component: () => import('@/views/plan/schedule/dispose/a-index'),
+          name: 'ScheduleDispose',
+          redirect: '/schedule/plan-declare',
+          meta: {
+            faName: 'AutoSchedule',
+            title: '排程处理'
+          },
+          children: [
+            {
+              path: '/schedule/dispose-inventory-summary',
+              component: () => import('@/views/plan/schedule/dispose/inventory-summary'),
+              name: 'ScheduleInventorySummary',
+              meta: {
+                faName: 'ScheduleDispose',
+                title: '胶料计划库存汇总',
+                permissionName: ''
+              }
+            },
+            {
+              path: '/schedule/machine-production-all',
+              component: () => import('@/views/plan/schedule/dispose/machine-production-all'),
+              name: 'ScheduleMachineProduction',
+              meta: {
+                faName: 'ScheduleDispose',
+                title: '机台生产计划-整体列表',
+                permissionName: ''
+              }
+            },
+            {
+              path: '/schedule/machine',
+              component: () => import('@/views/plan/schedule/dispose/machine'),
+              name: 'ScheduleMachine',
+              meta: {
+                faName: 'ScheduleDispose',
+                title: '机台生产计划-机台列表',
+                permissionName: ''
+              }
+            },
+            {
+              path: '/schedule/daily-plan',
+              component: () => import('@/views/plan/schedule/dispose/daily-plan'),
+              name: 'ScheduleDailyPlan',
+              meta: {
+                faName: 'ScheduleDispose',
+                title: '确定排产胶料日计划',
+                permissionName: ''
+              }
+            },
+            {
+              path: '/schedule/material-requirement',
+              component: () => import('@/views/plan/schedule/dispose/material-requirement'),
+              name: 'ScheduleMaterialRequirement',
+              meta: {
+                faName: 'ScheduleDispose',
+                title: '物料需求量统计',
+                permissionName: ''
+              }
+            },
+            {
+              path: '/schedule/weighing-system-plan',
+              component: () => import('@/views/plan/schedule/dispose/weighing-system-plan'),
+              name: 'ScheduleWeighingSystemPlan',
+              meta: {
+                faName: 'ScheduleDispose',
+                title: '称量系统计划',
+                permissionName: ''
+              }
+            },
+            {
+              path: '/schedule/equipment-shutdown-plan',
+              component: () => import('@/views/plan/schedule/dispose/equipment-shutdown-plan'),
+              name: 'ScheduleEquipmentShutdownPlan',
+              meta: {
+                faName: 'ScheduleDispose',
+                title: '机台设备停机计划设置',
+                permissionName: ''
+              }
             }
           ]
         }
