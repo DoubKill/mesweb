@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <!-- 原材料 库存统计 -->
+  <div class="lowWarning-style">
+    <!-- 原材料 低库存预警 -->
     <el-form :inline="true">
       <el-form-item label="物料编码">
         <el-input v-model="search.material_no" clearable @input="debounceFun" />
@@ -8,7 +8,10 @@
       <el-form-item label="物料名称">
         <el-input v-model="search.material_name" clearable @input="debounceFun" />
       </el-form-item>
-      <el-form-item label="物料组名称">
+      <el-form-item label="">
+        <el-checkbox v-model="search.lower_only_flag_" @change="changeFlag">只显示低库存预警</el-checkbox>
+      </el-form-item>
+      <!-- <el-form-item label="物料组名称">
         <el-select
           v-model="search.material_group_name"
           clearable
@@ -23,8 +26,8 @@
             :value="item.name"
           />
         </el-select>
-      </el-form-item>
-      <el-form-item label="巷道名称">
+      </el-form-item> -->
+      <!-- <el-form-item label="巷道名称">
         <el-select
           v-model="search.tunnel_name"
           filterable
@@ -39,16 +42,16 @@
             :value="item.name"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item style="float:right">
         <el-button
           type="primary"
-          :loading="btnExportLoad"
+          :disabled="btnExportLoad"
           @click="exportTable(1)"
         >导出当前页面</el-button>
         <el-button
           type="primary"
-          :loading="btnExportLoad"
+          :disabled="btnExportLoad"
           @click="exportTable(2)"
         >导出全部</el-button>
       </el-form-item>
@@ -79,11 +82,11 @@
         label="中策物料编码"
         min-width="20"
       />
-      <el-table-column
+      <!-- <el-table-column
         prop="batch_no"
         label="批次号"
         min-width="20"
-      />
+      /> -->
       <el-table-column
         prop="unit"
         label="单位"
@@ -99,11 +102,11 @@
         label="物料组"
         min-width="20"
       />
-      <el-table-column
+      <!-- <el-table-column
         prop="tunnel_name"
         label="巷道"
         min-width="20"
-      />
+      /> -->
       <el-table-column
         prop="quantity"
         label="可用数量"
@@ -127,7 +130,7 @@
 <script>
 import { debounce } from '@/utils'
 import page from '@/components/page'
-import { wmsInventory, wmsInventoryDown, wmsMaterialGroups, wmsTunnels } from '@/api/base_w_four'
+import { wmsStockSummsry, wmsMaterialGroups, wmsTunnels } from '@/api/base_w_four'
 export default {
   name: 'DeliveryStock',
   components: { page },
@@ -154,7 +157,7 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const data = await wmsInventory('get', null, { params: this.search })
+        const data = await wmsStockSummsry('get', null, { params: this.search })
         this.tableData = data.results
         this.total = data.count
         this.loading = false
@@ -174,6 +177,8 @@ export default {
     tableRowClassName({ row, rowIndex }) {
       if (row.name === '单页合计' || row.name === '汇总') {
         return 'summary-cell-style'
+      } else if (row.flag === 'L') {
+        return 'yellow-style'
       }
     },
     async getMaterialGroupList() {
@@ -196,6 +201,11 @@ export default {
       this.search.page = 1
       debounce(this, 'getList')
     },
+    changeFlag() {
+      this.search.page = 1
+      this.search.lower_only_flag = this.search.lower_only_flag_ ? 1 : ''
+      this.getList()
+    },
     changeList() {
       this.search.page = 1
       this.getList()
@@ -208,14 +218,13 @@ export default {
     exportTable(val) {
       this.btnExportLoad = true
       const obj = Object.assign({ export: val }, this.search)
-      const _api = wmsInventoryDown
-      _api(obj)
+      wmsStockSummsry('get', null, { params: obj, responseType: 'blob' })
         .then(res => {
           const link = document.createElement('a')
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = '原材料库-库存统计.xlsx' // 下载的文件名
+          link.download = '原材料库-低库存预警.xlsx' // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)
@@ -238,6 +247,11 @@ function sum(arr, params) {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+.lowWarning-style{
+    .yellow-style{
+        background: rgb(218, 200, 100) !important;;
+    }
+}
 
 </style>

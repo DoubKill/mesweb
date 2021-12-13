@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!--炭黑 即将超期查询 -->
+    <!--炭黑 即将超期预警 -->
     超期天数（天）<el-input-number
       v-model="expire_days"
       controls-position="right"

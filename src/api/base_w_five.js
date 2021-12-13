@@ -64,3 +64,19 @@ export function getMaterialTolerance(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function wmsSafetySettings(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WmsSafetySettings + id + '/' : API.WmsSafetySettings,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function thSafetySettings(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ThSafetySettings + id + '/' : API.ThSafetySettings,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
