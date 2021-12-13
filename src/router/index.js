@@ -683,6 +683,150 @@ export let asyncRoutes = [
               }
             }
           ]
+        },
+        {
+          path: '/schedule/statistical-report',
+          component: () => import('@/views/plan/schedule/statistical-report/a-index'),
+          name: 'ScheduleStatisticalReport',
+          redirect: '/schedule/effective-time',
+          meta: {
+            faName: 'AutoSchedule',
+            title: '统计报表'
+          },
+          children: [
+            {
+              path: '/schedule/effective-time',
+              component: () => import('@/views/plan/schedule/statistical-report/effective-time'),
+              name: 'ScheduleEffectiveTime',
+              meta: {
+                faName: 'ScheduleStatisticalReport',
+                title: '产量有效时间统计',
+                permissionName: ''
+              }
+            },
+            {
+              path: '/schedule/site-inventory',
+              component: () => import('@/views/plan/schedule/statistical-report/site-inventory'),
+              name: 'ScheduleSiteInventory',
+              meta: {
+                faName: 'ScheduleStatisticalReport',
+                title: '炼胶8点现场库存',
+                permissionName: ''
+              }
+            },
+            {
+              path: '/schedule/real-inventory',
+              component: () => import('@/views/plan/schedule/statistical-report/real-inventory'),
+              name: 'ScheduleRealInventory',
+              meta: {
+                faName: 'ScheduleStatisticalReport',
+                title: '炼胶实时库存及预警',
+                permissionName: ''
+              }
+            },
+            {
+              path: '/schedule/production-scheduling',
+              component: () => import('@/views/plan/schedule/statistical-report/production-scheduling'),
+              name: 'ScheduleProductionScheduling',
+              meta: {
+                faName: 'ScheduleStatisticalReport',
+                title: '胶料排产报表',
+                permissionName: ''
+              }
+            },
+            {
+              path: '/schedule/machine-release',
+              component: () => import('@/views/plan/schedule/statistical-report/machine-release'),
+              name: 'ScheduleMachineRelease',
+              meta: {
+                faName: ' ScheduleStatisticalReport',
+                title: '机台下达计划报表',
+                permissionName: ''
+              }
+            },
+            {
+              path: '/schedule/delivery-comparison',
+              component: () => import('@/views/plan/schedule/statistical-report/delivery-comparison'),
+              name: 'ScheduleDeliveryComparison',
+              meta: {
+                faName: 'ScheduleStatisticalReport',
+                title: '胶料计划及发货对比',
+                permissionName: ''
+              }
+            }
+          ]
+        },
+        {
+          path: '/schedule/basic-data',
+          component: () => import('@/views/plan/schedule/basic-data/a-index'),
+          name: 'ScheduleBasicData',
+          redirect: '/schedule/parameter-setting',
+          meta: {
+            faName: 'AutoSchedule',
+            title: '基础数据'
+          },
+          children: [
+            {
+              path: '/schedule/parameter-setting',
+              component: () => import('@/views/plan/schedule/basic-data/parameter-setting'),
+              name: 'ScheduleParameterSetting',
+              meta: {
+                faName: 'ScheduleBasicData',
+                title: '排程参数设定',
+                permissionName: ''
+              }
+            },
+            {
+              path: '/schedule/machine-table',
+              component: () => import('@/views/plan/schedule/basic-data/machine-table'),
+              name: 'ScheduleMachineTable',
+              meta: {
+                faName: 'ScheduleBasicData',
+                title: '定机表(段次及主副机台)',
+                permissionName: ''
+              }
+            },
+            {
+              path: '/schedule/weight-statistics',
+              component: () => import('@/views/plan/schedule/basic-data/weight-statistics'),
+              name: 'ScheduleWeightStatistics',
+              meta: {
+                faName: 'ScheduleBasicData',
+                title: '胶料机台配方物料统计',
+                permissionName: ''
+              }
+            },
+            {
+              path: '/schedule/material-specification',
+              component: () => import('@/views/plan/schedule/basic-data/material-specification'),
+              name: 'ScheduleMaterialSpecification',
+              meta: {
+                faName: 'ScheduleBasicData',
+                title: '炭黑粉料罐物料规格汇总',
+                permissionName: ''
+              }
+            },
+            {
+              path: '/schedule/production-capacity',
+              component: () => import('@/views/plan/schedule/basic-data/production-capacity'),
+              name: 'ScheduleProductionCapacity',
+              meta: {
+                faName: 'ScheduleBasicData',
+                title: '机台设备生产能力',
+                permissionName: ''
+              }
+            },
+            {
+              path: '/schedule/washing-rules',
+              component: () => import('@/views/plan/schedule/basic-data/washing-rules'),
+              name: 'ScheduleWashingRules',
+              meta: {
+                faName: 'ScheduleBasicData',
+                title: '洗车规则及放置规则',
+                permissionName: ''
+              }
+            }
+          ]
         }
       ]
     }
