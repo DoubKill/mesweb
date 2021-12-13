@@ -421,6 +421,8 @@ export default {
   WmsInventory: '/api/v1/inventory/wms-inventory/',
   WmsMaterialGroups: '/api/v1/inventory/wms-material-groups/',
   WmsTunnels: '/api/v1/inventory/wms-tunnels/',
+  WmsStockSummsry: '/api/v1/inventory/wms-stock-summsry/',
+  ThStockSummsry: '/api/v1/inventory/th-stock-summsry/',
   // 原材料 获取内伸位货物信息
   WmsInstock: '/api/v1/inventory/wms-instock/',
   // 炭黑库库存
@@ -597,5 +599,8 @@ export default {
   EquipWorkorderStatement: '/api/v1/equipment/equip-workorder-statement/', // 工单别处理时间
   EquipStatement: '/api/v1/equipment/equip-statement/', // 机台别处理时间
   EquipUserStatement: '/api/v1/equipment/equip-user-statement/', // 人员别处理时间
-  ProductClassesPlanReal: '/api/v1/production/product-classes-plan-real/' // 生产记录表
+
+  ProductClassesPlanReal: '/api/v1/production/product-classes-plan-real/', // 生产记录表
+  WmsSafetySettings: '/api/v1/inventory/wms-safety-settings/',
+  ThSafetySettings: '/api/v1/inventory/th-safety-settings/'
 }

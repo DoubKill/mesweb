@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 原材料-预警参数设定 -->
+    <!-- 炭黑-预警参数设定 -->
     <el-form :inline="true">
       <!-- <el-form-item label="原材料类别">
         <MaterialTypeSelect
@@ -24,8 +24,8 @@
         />
       </el-form-item>
       <el-form-item style="float: right;">
-        <el-button v-permission="['material_warning_setting', 'set']" type="primary" @click="averageDailyDosage(false)">日均用量设定</el-button>
-        <el-button v-permission="['material_warning_setting', 'set']" type="primary" @click="averageDailyDosage(true)">预警天数设定</el-button>
+        <el-button v-permission="['th_warning_setting', 'set']" type="primary" @click="averageDailyDosage(false)">日均用量设定</el-button>
+        <el-button v-permission="['th_warning_setting', 'set']" type="primary" @click="averageDailyDosage(true)">预警天数设定</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -139,7 +139,7 @@
 
 <script>
 // import MaterialTypeSelect from '@/components/MaterialTypeSelect'
-import { wmsSafetySettings } from '@/api/base_w_five'
+import { thSafetySettings } from '@/api/base_w_five'
 import page from '@/components/page'
 export default {
   name: 'MaterialBaseInventoryWarning',
@@ -168,7 +168,7 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const response = await wmsSafetySettings('get', null, { params: this.getParams })
+        const response = await thSafetySettings('get', null, { params: this.getParams })
         this.tableData = response.results || []
         this.total = response.count
         this.loading = false
@@ -210,7 +210,7 @@ export default {
     async submitFun() {
       try {
         if (!this.multipleSelection.length) {
-          this.$message.info('请选择原材料')
+          this.$message.info('请选择炭黑')
           return
         }
         const _arr = []
@@ -226,7 +226,7 @@ export default {
           }
         }
         this.btnLoading = true
-        await wmsSafetySettings('post', null, { data: _obj })
+        await thSafetySettings('post', null, { data: _obj })
         this.$message.success('修改成功')
         this.getList()
         this.handleClose(false)
