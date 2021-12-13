@@ -144,12 +144,14 @@
       >
         <template slot-scope="scope">
           <el-button
+            v-permission="['equip_warehouse_inventory', 'change']"
             type="primary"
             size="mini"
             @click="generateFunEdit(scope.row)"
           >盘库
           </el-button>
           <el-button
+            v-permission="['equip_warehouse_inventory', 'move']"
             type="primary"
             size="mini"
             @click="generateFunMove(scope.row)"
