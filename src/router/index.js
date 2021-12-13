@@ -559,6 +559,40 @@ export let asyncRoutes = [
           }
         }
       ]
+    },
+    {
+      path: '/auto-schedule',
+      redirect: '/schedule/factory-declare',
+      name: 'AutoSchedule',
+      component: () => import('@/views/plan/schedule/a-index'),
+      meta: {
+        title: '自动排程',
+        icon: 'formula'
+      },
+      children: [
+        {
+          path: '/schedule/factory-declare',
+          component: () => import('@/views/plan/schedule/factory-declare/a-index'),
+          name: 'ScheduleFactoryDeclare',
+          redirect: '/schedule/plan-declare',
+          meta: {
+            faName: 'AutoSchedule',
+            title: '分厂申报'
+          },
+          children: [
+            {
+              path: '/schedule/plan-declare',
+              component: () => import('@/views/plan/schedule/factory-declare/plan-declare'),
+              name: 'SchedulePlanDeclare',
+              meta: {
+                faName: 'ScheduleFactoryDeclare',
+                title: '各分厂胶料计划申报',
+                permissionName: ''
+              }
+            }
+          ]
+        }
+      ]
     }
     ]
   },

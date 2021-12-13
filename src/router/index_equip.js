@@ -615,15 +615,4 @@ export const equipRoutes = [
       }
     ]
   }
-  // {
-  //   path: '/auto-schedule',
-  //   component: Layout,
-  //   redirect: '/schedule-home',
-  //   name: 'AutoSchedule',
-  //   meta: {
-  //     title: '自动排程',
-  //     icon: 'quality'
-  //   },
-  //   children: []
-  // }
 ]
