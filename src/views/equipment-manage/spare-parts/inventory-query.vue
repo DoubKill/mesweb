@@ -492,6 +492,7 @@
           <el-input-number
             v-model="MoveForm.quantity"
             :min="1"
+            :max="quantity"
             style="width:250px"
           />
         </el-form-item>
@@ -540,6 +541,7 @@ export default {
       dialogEdit: false,
       dialogMove: false,
       loadingView: false,
+      quantity: null,
       dialogVisible: false,
       dialogVisible1: false,
       submit: false,
@@ -691,6 +693,7 @@ export default {
     },
     async generateFunMove(row) {
       this.MoveForm = JSON.parse(JSON.stringify(row))
+      this.quantity = this.MoveForm.quantity
       this.dialogMove = true
     },
     async MoveOne() {
