@@ -138,7 +138,7 @@
 <script>
 import EquipSelect from '@/components/EquipSelect'
 import { debounce } from '@/utils'
-import { replaceMaterial, materialMultiUpdate } from '@/api/jqy'
+import { replaceMaterial, materialMultiUpdate, materialDetailsAux } from '@/api/jqy'
 export default {
   name: 'BanburyingSubstitutes',
   components: { EquipSelect },
@@ -170,8 +170,8 @@ export default {
     async getMaterial(val, row) {
       if (val) {
         try {
-          const data = await replaceMaterial('get', null, { params: { id: row.id }})
-          this.options = data.results
+          const data = await materialDetailsAux('get', null, { params: { plan_classes_uid: row.plan_classes_uid, from_mes: 1 }})
+          this.options = data
         } catch (e) {
           this.options = []
         }
