@@ -189,7 +189,7 @@
         min-width="20"
       />
       <el-table-column
-        prop="created_date"
+        prop="last_updated_date"
         label="操作时间"
         min-width="20"
       />
