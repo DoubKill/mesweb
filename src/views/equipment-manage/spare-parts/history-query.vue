@@ -349,7 +349,11 @@ export default {
       }
       try {
         this.submit = true
-        await equipWarehouseRecord('put', this.currentRevoke.id, { data: { revocation_desc: this.currentRevoke.revocation_desc }})
+        await equipWarehouseRecord('put', this.currentRevoke.id, { data:
+        { revocation_desc: this.currentRevoke.revocation_desc,
+          equip_spare: this.currentRevoke.equip_spare,
+          equip_warehouse_location: this.currentRevoke.equip_warehouse_location
+        }})
         this.$message.success('撤销成功')
         this.submit = false
         this.dialogVisibleRevoke = false
