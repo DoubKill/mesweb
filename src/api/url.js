@@ -602,5 +602,6 @@ export default {
 
   ProductClassesPlanReal: '/api/v1/production/product-classes-plan-real/', // 生产记录表
   WmsSafetySettings: '/api/v1/inventory/wms-safety-settings/',
-  ThSafetySettings: '/api/v1/inventory/th-safety-settings/'
+  ThSafetySettings: '/api/v1/inventory/th-safety-settings/',
+  MaterialDetailsAux: '/api/v1/terminal/material-details-aux/'
 }

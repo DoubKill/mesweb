@@ -896,3 +896,12 @@ export function equipUserStatement(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function materialDetailsAux(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MaterialDetailsAux + id + '/' : API.MaterialDetailsAux,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
