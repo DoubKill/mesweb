@@ -171,18 +171,14 @@
         <el-form-item label="物料编码">
           <el-input v-model="formSearch.material_no" clearable placeholder="请输入内容" @input="getDialogDebounce" />
         </el-form-item>
-        <el-form-item v-if="isLocation" label="品质状态">
-          <el-select v-model="formSearch.quality_status" clearable placeholder="请选择" @change="getDialog">
-            <el-option
-              v-for="(item,i) in qualityStatus"
-              :key="i"
-              :label="item.name"
-              :value="item.id"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item v-if="!isLocation" label="品质状态">
-          <el-select v-model="formSearch.quality_status" placeholder="请选择" @change="getWeight">
+        <el-form-item label="品质状态">
+          <el-select
+            v-model="formSearch.quality_status"
+            :disabled="checkPermission(['material_outbound_record','unqualified'])?false:true"
+            clearable
+            placeholder="请选择"
+            @change="getDialog"
+          >
             <el-option
               v-for="(item,i) in qualityStatus"
               :key="i"
@@ -472,7 +468,7 @@
 <script>
 import request from '@/utils/request-zc'
 import page from '@/components/page'
-import { debounce } from '@/utils'
+import { debounce, checkPermission } from '@/utils'
 import { wmsStock, wmsWeightStock, wmsEntrance, wmsInstock } from '@/api/base_w_three'
 export default {
   name: 'DeliveryBill',
@@ -552,6 +548,7 @@ export default {
     this.getList()
   },
   methods: {
+    checkPermission,
     getList() {
       this.loading = true
       this.tableData = []

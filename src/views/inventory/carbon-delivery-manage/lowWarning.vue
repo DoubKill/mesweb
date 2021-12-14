@@ -114,7 +114,7 @@
       />
       <el-table-column
         prop="weight"
-        label="重量"
+        label="重量(kg)"
         min-width="15"
       />
     </el-table>
