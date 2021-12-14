@@ -617,11 +617,9 @@ export default {
         this.MoveForm.move_equip_warehouse_location__location_name = null
       }
       this.MoveForm.move_equip_warehouse_area__area_name = this.warehouseAreaList.filter(d => d.id === this.MoveForm.move_equip_warehouse_area__id)[0].area_name
-      console.log(this.MoveForm.move_equip_warehouse_area__area_name)
     },
     clear1() {
       this.MoveForm.move_equip_warehouse_location__location_name = this.warehouseLocationList.filter(d => d.id === this.MoveForm.move_equip_warehouse_location__id)[0].location_name
-      console.log(this.MoveForm.move_equip_warehouse_location__location_name)
     },
     async getWarehouseLocation(val) {
       if (val) {
@@ -704,22 +702,26 @@ export default {
         this.MoveForm.desc = null
       }
       this.MoveForm.handle = '移库'
-      this.$refs.MoveForm.validate(async(valid) => {
-        if (valid) {
-          try {
-            this.loadingBtn = true
-            await equipWarehouseInventory('POST', null, { data: this.MoveForm })
-            this.loadingBtn = false
-            this.dialogMove = false
-            this.$message.success('操作成功')
-            this.getList()
-          } catch (e) {
-            this.loadingBtn = false
+      if (this.MoveForm.move_equip_warehouse_location__location_name === this.MoveForm.equip_warehouse_location__location_name) {
+        this.$message('不能移到相同库位')
+      } else {
+        this.$refs.MoveForm.validate(async(valid) => {
+          if (valid) {
+            try {
+              this.loadingBtn = true
+              await equipWarehouseInventory('POST', null, { data: this.MoveForm })
+              this.loadingBtn = false
+              this.dialogMove = false
+              this.$message.success('操作成功')
+              this.getList()
+            } catch (e) {
+              this.loadingBtn = false
+            }
+          } else {
+            return false
           }
-        } else {
-          return false
-        }
-      })
+        })
+      }
     },
     async EditOne() {
       if (this.EditForm.quantity === undefined) {
