@@ -559,8 +559,8 @@ export let asyncRoutes = [
           }
         }
       ]
-    },
-    {
+    }
+    /*, {
       path: '/auto-schedule',
       redirect: '/schedule/factory-declare',
       name: 'AutoSchedule',
@@ -829,7 +829,7 @@ export let asyncRoutes = [
           ]
         }
       ]
-    }
+    }*/
     ]
   },
   {
@@ -2358,7 +2358,8 @@ export let asyncRoutes = [
             }
           }
         ]
-      }, {
+      }
+      /*, {
         path: '/banburying',
         redirect: '/banburying/substitutes',
         component: () => import('@/views/quality_management/banburying/a-index'),
@@ -2429,7 +2430,7 @@ export let asyncRoutes = [
             }
           }
         ]
-      }
+      }*/
     ]
   },
   // {
