@@ -14,7 +14,7 @@
       ref="multipleTable"
       v-loading="loadingView"
       :data="tableDataView"
-      row-key="id"
+      :row-key="getRowKeys"
       border
       @selection-change="handleSelectionChange"
     >
@@ -45,7 +45,7 @@
       />
       <el-table-column
         prop="technical_params"
-        label="技术参数"
+        label="用途"
         min-width="20"
       />
       <el-table-column
@@ -163,6 +163,13 @@ export default {
         this.loadingView = false
       }
       this.dialogVisibleSelect = true
+    },
+    getRowKeys(row) {
+      if (this.type === '入库') {
+        return row.id
+      } else {
+        return row.equip_spare
+      }
     },
     handleSelectionChange(val) {
       this.multipleSelection = val

@@ -89,7 +89,29 @@
                 return '已使用'
               }"
             />
-            <el-table-column label="上传到MES" min-width="20">
+            <el-table-column label="是否合包" width="110px">
+              <template slot-scope="{row}">
+                <el-switch
+                  v-model="row.merge_flag"
+                  active-text="是"
+                  inactive-text="否"
+                  @change="changeSwitch(row,index)"
+                />
+              </template>
+            </el-table-column>
+            <el-table-column label="分包数" width="120px">
+              <template slot-scope="{row}">
+                <el-input-number
+                  v-model="row.split_count"
+                  style="width:100px"
+                  controls-position="right"
+                  :min="1"
+                  :max="9999"
+                  @change="changeSwitch(row, index)"
+                />
+              </template>
+            </el-table-column>
+            <el-table-column label="上传到MES" width="80px">
               <template slot-scope="scope">
                 <el-button
                   size="mini"
@@ -144,7 +166,7 @@
 <script>
 import { debounce } from '@/utils'
 import selectBatchingEquip from '../components/select-batching-equip'
-import { xlRecipe, xlRecipeMaterial } from '@/api/base_w_three'
+import { xlRecipe, xlRecipeMaterial, updateFlagCount } from '@/api/base_w_three'
 import page from '@/components/page'
 export default {
   name: 'SmallMaterialWeightFormula',
@@ -171,7 +193,7 @@ export default {
         }
         this.loading = false
 
-        return { data: data.results || [], total: data.count || 0 }
+        return { data: data.results, total: data.count }
       } catch (e) {
         this.loading = false
       }
@@ -229,8 +251,8 @@ export default {
                 {
                   equip_no: d.equip_no,
                   search: {},
-                  tableList: a.data,
-                  total: a.total,
+                  tableList: a ? a.data : [],
+                  total: a ? a.total : 0,
                   tableList1: []
                 }
               )
@@ -253,6 +275,17 @@ export default {
       try {
         await xlRecipe('post', null, { data: { equip_no: this.allTable[faI].equip_no, recipe_name: row.name, total_standard_error: row.error }})
         this.$message.success('上传成功')
+      } catch (e) {
+        //
+      }
+    },
+    async changeSwitch(row, faI) {
+      try {
+        await updateFlagCount('post', null, { data: {
+          equip_no: this.allTable[faI].equip_no,
+          id: row.id, oper_type: '配方', merge_flag: row.merge_flag, split_count: row.split_count
+        }})
+        this.$message.success('操作成功')
       } catch (e) {
         //
       }

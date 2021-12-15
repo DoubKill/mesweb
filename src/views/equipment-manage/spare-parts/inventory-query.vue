@@ -2,10 +2,26 @@
   <div class="inventory-query">
     <!-- 备件库存查询 -->
     <el-form :inline="true">
+      <el-form-item label="库区">
+        <el-input
+          v-model="search.warehouse_area"
+          style="width:150px"
+          clearable
+          @input="debounceSearch"
+        />
+      </el-form-item>
+      <el-form-item label="库位">
+        <el-input
+          v-model="search.warehouse_location"
+          style="width:150px"
+          clearable
+          @input="debounceSearch"
+        />
+      </el-form-item>
       <el-form-item label="备件分类">
         <el-input
           v-model="search.equip_component_type"
-          style="width:200px"
+          style="width:150px"
           clearable
           @input="debounceSearch"
         />
@@ -13,7 +29,7 @@
       <el-form-item label="备件代码">
         <el-input
           v-model="search.spare_code"
-          style="width:200px"
+          style="width:150px"
           clearable
           @input="debounceSearch"
         />
@@ -21,7 +37,7 @@
       <el-form-item label="备件名称">
         <el-input
           v-model="search.spare_name"
-          style="width:200px"
+          style="width:150px"
           clearable
           @input="debounceSearch"
         />
@@ -29,7 +45,7 @@
       <el-form-item label="规格型号">
         <el-input
           v-model="search.specification"
-          style="width:200px"
+          style="width:150px"
           clearable
           @input="debounceSearch"
         />
@@ -53,6 +69,16 @@
       border
       :row-class-name="tableRowClassName"
     >
+      <el-table-column
+        prop="equip_warehouse_area__area_name"
+        label="库区"
+        min-width="20"
+      />
+      <el-table-column
+        prop="equip_warehouse_location__location_name"
+        label="库位"
+        min-width="20"
+      />
       <el-table-column
         prop="component_type_name"
         label="备件分类"
@@ -82,43 +108,19 @@
       />
       <el-table-column
         prop="technical_params"
-        label="技术参数"
+        label="用途"
         min-width="20"
       />
       <el-table-column
-        prop="all_qty"
-        label="总数量"
+        prop="quantity"
+        label="在库数量"
         min-width="20"
       >
         <template slot-scope="scope">
           <el-link
             type="primary"
-            @click="dialogShow(scope.row,1)"
-          >{{ scope.row.all_qty }}</el-link>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="use_qty"
-        label="可用数量"
-        min-width="20"
-      >
-        <template slot-scope="scope">
-          <el-link
-            type="primary"
-            @click="dialogShow(scope.row,2)"
-          >{{ scope.row.use_qty }}</el-link>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="lock_qty"
-        label="锁定数量"
-        min-width="20"
-      >
-        <template slot-scope="scope">
-          <el-link
-            type="primary"
-            @click="dialogShow(scope.row,3)"
-          >{{ scope.row.lock_qty }}</el-link>
+            @click="dialogShow(scope.row)"
+          >{{ scope.row.quantity }}</el-link>
         </template>
       </el-table-column>
       <el-table-column
@@ -136,24 +138,27 @@
         label="库存上限"
         min-width="20"
       />
-      <!-- <el-table-column
+      <el-table-column
         label="操作"
         width="150"
       >
         <template slot-scope="scope">
           <el-button
+            v-permission="['equip_warehouse_inventory', 'change']"
             type="primary"
             size="mini"
-            @click="dialog(scope.row)"
-          >编辑
+            @click="generateFunEdit(scope.row)"
+          >盘库
           </el-button>
           <el-button
-            type="danger"
+            v-permission="['equip_warehouse_inventory', 'move']"
+            type="primary"
             size="mini"
-          >删除
+            @click="generateFunMove(scope.row)"
+          >移库
           </el-button>
         </template>
-      </el-table-column> -->
+      </el-table-column>
     </el-table>
     <page
       :old-page="false"
@@ -162,60 +167,78 @@
       @currentChange="currentChange"
     />
     <el-dialog
+      title="库存变更 详细履历"
       :visible.sync="dialogVisible"
       width="90%"
     >
       <el-form :inline="true">
+        <el-form-item label="库区">
+          <el-input v-model="currentInfo.equip_warehouse_area__area_name" :disabled="true" />
+        </el-form-item>
+        <el-form-item label="库位">
+          <el-input v-model="currentInfo.equip_warehouse_location__location_name" :disabled="true" />
+        </el-form-item>
         <el-form-item label="备件分类">
           <el-input v-model="currentInfo.component_type_name" :disabled="true" />
         </el-form-item>
-        <el-form-item label="备件名称">
-          <el-input v-model="currentInfo.spare_name" :disabled="true" />
+        <el-form-item label="备件代码">
+          <el-input v-model="currentInfo.spare__code" :disabled="true" />
         </el-form-item>
-        <el-form-item label="规格型号">
-          <el-input v-model="currentInfo.specification" :disabled="true" />
+        <el-form-item label="备件名称">
+          <el-input v-model="currentInfo.spare_name" :disabled="true" style="width:300px" />
+        </el-form-item>
+        <el-form-item style="float:right">
+          <el-button
+            type="primary"
+            @click="exportOutTable"
+          >导出明细Excel</el-button>
         </el-form-item>
       </el-form>
       <el-table
-        ref="multipleTable"
+        id="out-table"
         v-loading="loadingView"
         :data="tableDataView"
         border
-        row-key="id"
-        @selection-change="handleSelectionChange"
       >
         <el-table-column
-          type="selection"
-          width="40"
-          :reserve-selection="true"
-        />
-        <el-table-column
-          prop="spare_code"
-          label="备件条码"
+          prop="now_quantity"
+          label="当前库存数量"
           min-width="20"
         />
         <el-table-column
-          prop="equip_warehouse_area__area_name"
-          label="库区"
+          prop="status"
+          label="变更类别"
           min-width="20"
         />
         <el-table-column
-          prop="equip_warehouse_location__location_name"
-          label="库位"
+          prop="quantity"
+          label="数量"
           min-width="20"
         />
         <el-table-column
-          prop="one_piece"
-          label="单件个数"
+          prop="created_username"
+          label="操作人"
           min-width="20"
         />
         <el-table-column
-          prop="lock"
-          label="状态"
+          prop="created_date"
+          label="操作时间"
           min-width="20"
-          :formatter="D=>{
-            return D.lock?'已锁定':'未锁定'
-          }"
+        />
+        <el-table-column
+          prop="revocation_desc"
+          label="操作备注"
+          min-width="20"
+        />
+        <el-table-column
+          prop="order_id"
+          label="入出库单据号"
+          min-width="20"
+        />
+        <el-table-column
+          prop="work_order_no"
+          label="工单编号"
+          min-width="20"
         />
       </el-table>
       <span
@@ -223,32 +246,7 @@
         class="dialog-footer"
       >
         <el-button
-          v-permission="['equip_warehouse_inventory','change']"
           type="primary"
-          :disabled="loadingBtn"
-          @click="generateFunOne"
-        >编辑</el-button>
-        <el-button
-          v-permission="['equip_warehouse_inventory','change']"
-          type="primary"
-          :disabled="loadingBtn"
-          @click="generateFun('del')"
-        >删除</el-button>
-        <el-button
-          v-permission="['equip_warehouse_inventory','change']"
-          type="primary"
-          :disabled="loadingBtn"
-          @click="generateFun('lock')"
-        >锁定</el-button>
-        <el-button
-          v-permission="['equip_warehouse_inventory','change']"
-          type="primary"
-          :disabled="loadingBtn"
-          @click="generateFun('unlock')"
-        >解锁</el-button>
-        <el-button
-          type="primary"
-          :disabled="loadingBtn"
           @click="dialogVisible=false"
         >返回</el-button>
       </span>
@@ -346,7 +344,7 @@
           />
         </el-form-item>
         <el-form-item
-          label="技术参数"
+          label="用途"
           style=""
           prop="checkList"
         >
@@ -400,34 +398,119 @@
     </el-dialog>
 
     <el-dialog
-      title="修改单件个数"
+      title="备件盘库操作"
       :visible.sync="dialogEdit"
-      width="20%"
+      width="30%"
     >
-      <el-form>
-        <el-form-item
-          label="单件个数"
-        >
+      <el-form ref="EditForm" :rules="rules1" label-width="150px" :model="EditForm">
+        <el-form-item label="备件代码">
+          <el-input v-model="EditForm.spare__code" :disabled="true" style="width:250px" />
+        </el-form-item>
+        <el-form-item label="备件名称">
+          <el-input v-model="EditForm.spare_name" :disabled="true" style="width:250px" />
+        </el-form-item>
+        <el-form-item label="库区">
+          <el-input v-model="EditForm.equip_warehouse_area__area_name" :disabled="true" style="width:250px" />
+        </el-form-item>
+        <el-form-item label="库位">
+          <el-input v-model="EditForm.equip_warehouse_location__location_name" :disabled="true" style="width:250px" />
+        </el-form-item>
+        <el-form-item label="数量" prop="quantity">
           <el-input-number
-            v-model="EditForm.one_piece"
+            v-model="EditForm.quantity"
             :min="1"
             style="width:250px"
           />
         </el-form-item>
+        <el-form-item label="备注说明">
+          <el-input
+            v-model="EditForm.desc"
+            type="textarea"
+            style="width:250px"
+            :rows="3"
+          />
+        </el-form-item>
       </el-form>
-      <span
-        slot="footer"
-        class="dialog-footer"
-      >
-        <el-button
-          type="primary"
-          :loading="loadingBtn"
-          @click="EditOne"
-        >确定</el-button>
-        <el-button
-          type="primary"
-          @click="dialogEdit=false"
-        >返回</el-button>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogEdit=false">取消</el-button>
+        <el-button type="primary" :loading="loadingBtn1" :disabled="loadingBtn" @click="generateDelete">确定删除</el-button>
+        <el-button type="primary" :loading="loadingBtn" :disabled="loadingBtn1" @click="EditOne">确定修改</el-button>
+      </span>
+    </el-dialog>
+
+    <el-dialog
+      title="备件移库操作"
+      :visible.sync="dialogMove"
+      width="30%"
+    >
+      <el-form ref="MoveForm" :rules="rules" :model="MoveForm" label-width="150px">
+        <el-form-item label="备件代码">
+          <el-input v-model="MoveForm.spare__code" :disabled="true" style="width:250px" />
+        </el-form-item>
+        <el-form-item label="备件名称">
+          <el-input v-model="MoveForm.spare_name" :disabled="true" style="width:250px" />
+        </el-form-item>
+        <el-form-item label="当前库区">
+          <el-input v-model="MoveForm.equip_warehouse_area__area_name" :disabled="true" style="width:250px" />
+        </el-form-item>
+        <el-form-item label="当前库位">
+          <el-input v-model="MoveForm.equip_warehouse_location__location_name" :disabled="true" style="width:250px" />
+        </el-form-item>
+        <el-form-item label="目标库区" prop="move_equip_warehouse_area__id">
+          <el-select
+            v-model="MoveForm.move_equip_warehouse_area__id"
+            placeholder="请选择"
+            clearable
+            @visible-change="getWarehouseArea"
+            @change="clear"
+          >
+            <el-option
+              v-for="item in warehouseAreaList"
+              :key="item.id"
+              :label="item.area_name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="目标库位" prop="move_equip_warehouse_location__id">
+          <el-select
+            v-model="MoveForm.move_equip_warehouse_location__id"
+            placeholder="请选择"
+            clearable
+            @visible-change="getWarehouseLocation"
+            @change="clear1"
+          >
+            <el-option
+              v-for="item in warehouseLocationList"
+              :key="item.id"
+              :label="item.location_name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="数量" prop="quantity">
+          <el-input-number
+            v-model="MoveForm.quantity"
+            :min="1"
+            :max="quantity"
+            style="width:250px"
+          />
+        </el-form-item>
+        <el-form-item label="单位">
+          <el-input v-model="MoveForm.unit" :disabled="true" style="width:250px" />
+        </el-form-item>
+        <el-form-item label="备注说明">
+          <el-input
+            v-model="MoveForm.desc"
+            type="textarea"
+            style="width:250px"
+            :rows="3"
+          />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogMove=false">取消</el-button>
+        <el-button type="primary" :loading="loadingBtn" @click="MoveOne">确定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -435,7 +518,9 @@
 
 <script>
 import page from '@/components/page'
-import { equipWarehouseInventory, equipSpareErp } from '@/api/jqy'
+import { exportExcel } from '@/utils/index'
+// import { equipWarehouseStatistical } from '@/api/base_w_five'
+import { equipWarehouseInventory, equipSpareErp, equipWarehouseLocation, equipWarehouseArea } from '@/api/jqy'
 export default {
   name: 'InventoryQuery',
   components: { page },
@@ -445,22 +530,42 @@ export default {
         page: 1,
         page_size: 10
       },
-      multipleSelection: [],
       tableData: [],
       tableDataView: [],
       total: 0,
       checkList: [],
-      EditForm: { one_piece: 1 },
+      warehouseAreaList: [],
+      warehouseLocationList: [],
+      EditForm: {},
+      MoveForm: {},
       dialogEdit: false,
+      dialogMove: false,
       loadingView: false,
+      quantity: null,
       dialogVisible: false,
       dialogVisible1: false,
       submit: false,
       creatOrder: {},
       currentInfo: {},
-      num: null,
       loadingBtn: false,
-      btnExportLoad: false
+      loadingBtn1: false,
+      btnExportLoad: false,
+      rules: {
+        move_equip_warehouse_area__id: [
+          { required: true, message: '不能为空', trigger: 'change' }
+        ],
+        move_equip_warehouse_location__id: [
+          { required: true, message: '不能为空', trigger: 'change' }
+        ],
+        quantity: [
+          { required: true, message: '不能为空', trigger: 'change' }
+        ]
+      },
+      rules1: {
+        quantity: [
+          { required: true, message: '不能为空', trigger: 'change' }
+        ]
+      }
     }
   },
   created() {
@@ -491,12 +596,45 @@ export default {
       }
     },
     tableRowClassName({ row, rowIndex }) {
-      if (row.upper_stock !== null && row.lower_stock !== null) {
-        if (row.all_qty < row.lower_stock || row.all_qty > row.upper_stock) {
-          return 'warning-row'
-        }
+      if (row.quantity < row.lower_stock || row.quantity > row.upper_stock) {
+        return 'warning-row'
       }
       return ''
+    },
+    async getWarehouseArea(val) {
+      if (val) {
+        try {
+          const data = await equipWarehouseArea('get', null, { params: { equip_spare: this.MoveForm.equip_spare }})
+          this.warehouseAreaList = data.data.results
+        } catch (e) {
+        // this.loading = false
+        }
+      }
+    },
+    clear() {
+      if (this.MoveForm.move_equip_warehouse_location__id) {
+        this.MoveForm.move_equip_warehouse_location__id = null
+        this.MoveForm.move_equip_warehouse_location__location_name = null
+      }
+      this.MoveForm.move_equip_warehouse_area__area_name = this.warehouseAreaList.filter(d => d.id === this.MoveForm.move_equip_warehouse_area__id)[0].area_name
+    },
+    clear1() {
+      this.MoveForm.move_equip_warehouse_location__location_name = this.warehouseLocationList.filter(d => d.id === this.MoveForm.move_equip_warehouse_location__id)[0].location_name
+    },
+    async getWarehouseLocation(val) {
+      if (val) {
+        if (this.MoveForm.move_equip_warehouse_area__id) {
+          try {
+            const data = await equipWarehouseLocation('get', null, { params: { equip_warehouse_area_id: this.MoveForm.move_equip_warehouse_area__id, all: 1 }})
+            this.warehouseLocationList = data
+          } catch (e) {
+            this.warehouseLocationList = []
+          }
+        } else {
+          this.$message.info('请先选择库区')
+          this.warehouseLocationList = []
+        }
+      }
     },
     changeSearch() {
       this.search.page = 1
@@ -524,105 +662,112 @@ export default {
           this.btnExportLoad = false
         })
     },
-    async dialogShow(row, num) {
-      this.num = num
+    exportOutTable() {
+      exportExcel('入出库履历明细')
+    },
+    async dialogShow(row) {
       this.currentInfo = row
       this.dialogVisible = true
-      this.multipleSelection = []
-      if (this.$refs.multipleTable) {
-        this.$refs.multipleTable.clearSelection()
-      }
       this.getInventoryList()
     },
     async getInventoryList() {
       const row = this.currentInfo
       try {
-        let obj = {
-          all_qty: 1,
-          equip_spare: row.equip_spare
-        }
-        if (this.num === 2) {
-          obj = {
-            equip_spare: row.equip_spare,
-            use_qty: 1
-          }
-        } else if (this.num === 3) {
-          obj = {
-            equip_spare: row.equip_spare,
-            lock_qty: 1
-          }
-        }
-
-        const data = await equipWarehouseInventory('get', null, { params: obj })
-        this.tableDataView = data || []
+        const data = await equipWarehouseInventory('get', null, { params: { detail: 1, equip_spare: row.equip_spare, equip_warehouse_location: row.equip_warehouse_location__id }})
+        this.tableDataView = data.results || []
+        // if (this.tableDataView.length > 0) {
+        //   this.tableDataView.push({
+        //     plan_id: '合计库存数',
+        //     quantity: this.tableDataView
+        //   })
+        // }
       } catch (e) {
         //
       }
     },
-    async generateFunOne() {
-      if (this.multipleSelection.length === 0) {
-        this.$message('请选择备件')
-        return
-      }
-      if (this.multipleSelection.length > 1) {
-        this.$message('编辑只能选择一个')
-        return
-      }
-      this.EditForm.one_piece = this.multipleSelection[0].one_piece
+    async generateFunEdit(row) {
+      this.EditForm = JSON.parse(JSON.stringify(row))
       this.dialogEdit = true
     },
-    async EditOne() {
-      const id = this.multipleSelection[0].id
-      if (this.EditForm.one_piece === undefined) {
-        this.EditForm.one_piece = 1
+    async generateFunMove(row) {
+      this.MoveForm = JSON.parse(JSON.stringify(row))
+      this.quantity = this.MoveForm.quantity
+      this.dialogMove = true
+    },
+    async MoveOne() {
+      if (this.MoveForm.quantity === undefined) {
+        this.MoveForm.quantity = 1
       }
-      try {
-        this.loadingBtn = true
-        await equipWarehouseInventory('put', id, { data: { one_piece: this.EditForm.one_piece }})
-        this.$message.success('操作成功')
-        this.getInventoryList()
-        this.getList()
-        this.loadingBtn = false
-        this.dialogEdit = false
-        this.multipleSelection = []
-        if (this.$refs.multipleTable) {
-          this.$refs.multipleTable.clearSelection()
-        }
-      } catch (e) {
-        this.loadingBtn = false
+      if (this.MoveForm.desc === undefined) {
+        this.MoveForm.desc = null
+      }
+      this.MoveForm.handle = '移库'
+      if (this.MoveForm.move_equip_warehouse_location__location_name === this.MoveForm.equip_warehouse_location__location_name) {
+        this.$message('不能移到相同库位')
+      } else {
+        this.$refs.MoveForm.validate(async(valid) => {
+          if (valid) {
+            try {
+              this.loadingBtn = true
+              await equipWarehouseInventory('POST', null, { data: this.MoveForm })
+              this.loadingBtn = false
+              this.dialogMove = false
+              this.$message.success('操作成功')
+              this.getList()
+            } catch (e) {
+              this.loadingBtn = false
+            }
+          } else {
+            return false
+          }
+        })
       }
     },
-    async generateFun(status) {
-      if (this.multipleSelection.length === 0) {
-        this.$message('请选择备件')
-        return
+    async EditOne() {
+      if (this.EditForm.quantity === undefined) {
+        this.EditForm.quantity = 1
       }
-      const arr = []
-      this.multipleSelection.forEach(d => {
-        arr.push(d.id)
-      })
-      try {
-        this.loadingBtn = true
-        await equipWarehouseInventory('post', null, { data: { status: status, id: arr }})
-        this.$message.success('操作成功')
-        this.getInventoryList()
-        this.getList()
-        this.loadingBtn = false
-        this.multipleSelection = []
-        if (this.$refs.multipleTable) {
-          this.$refs.multipleTable.clearSelection()
+      if (this.EditForm.desc === undefined) {
+        this.EditForm.desc = null
+      }
+      this.EditForm.handle = '盘库'
+      this.$refs.EditForm.validate(async(valid) => {
+        if (valid) {
+          try {
+            this.loadingBtn = true
+            await equipWarehouseInventory('POST', null, { data: this.EditForm })
+            this.loadingBtn = false
+            this.dialogEdit = false
+            this.$message.success('操作成功')
+            this.getList()
+          } catch (e) {
+            this.loadingBtn = false
+          }
+        } else {
+          return false
         }
+      })
+    },
+    async generateDelete() {
+      if (this.EditForm.desc === undefined) {
+        this.EditForm.desc = null
+      }
+      try {
+        this.EditForm.handle = '删除'
+        this.loadingBtn1 = true
+        await equipWarehouseInventory('post', null, { data: this.EditForm })
+        this.loadingBtn1 = false
+        this.dialogEdit = false
+        this.$message.success('操作成功')
+        this.getList()
       } catch (e) {
-        this.loadingBtn = false
+        this.loadingBtn1 = false
       }
     },
     dialog1(row) {
       this.currentInfo = row
       this.dialogVisible1 = true
       this.getErpInfo()
-    },
-    handleSelectionChange(val) {
-      this.multipleSelection = val
     },
     currentChange(page, page_size) {
       this.search.page = page
