@@ -1,6 +1,6 @@
 <template>
   <div v-loading="loading">
-    <!-- 立库库存明细 -->
+    <!-- 库存统计弹框 -->
     <el-form :inline="true">
       <el-form-item label="仓库名称">
         <span v-if="warehouseNameProps">{{ warehouseNameProps }}</span>
@@ -30,16 +30,10 @@
           @changSelect="materialCodeFun"
         />
       </el-form-item>
-      <el-form-item label="托盘号">
-        <span v-if="containerNo">{{ containerNo }}</span>
-        <el-input v-else v-model="getParams.container_no" clearable @input="getDebounce" />
-      </el-form-item>
-      <el-form-item label="物料名称">
-        <el-input v-model="getParams.material_name" clearable @input="getDebounce" />
-      </el-form-item>
       <el-form-item label="品质状态">
         <el-select
           v-model="getParams.quality_status"
+          disabled
           clearable
           placeholder="请选择"
           @change="getTableData"
@@ -171,6 +165,10 @@ export default {
       type: String,
       default: ''
     },
+    qualityStatus: {
+      type: [String, Number],
+      default: null
+    },
     show: {
       type: Boolean,
       default: false
@@ -182,9 +180,8 @@ export default {
       getParams: {
         page: 1,
         material_type: '', // 物料类型
-        material_no: this.materialNo, // 物料编号
-        container_no: this.containerNo, // 托盘号
-        lot_no: this.lotNo,
+        e_material_no: this.materialNo, // 物料编号
+        quality_status: this.qualityStatus,
         warehouse_name: '混炼胶库' // 仓库名称
       },
       currentPage: 1,
@@ -194,7 +191,6 @@ export default {
       equipNo: '',
       productNo: '',
       classesNo: '',
-      qualityStatus: '',
       btnExportLoad: false
     }
   },
@@ -207,8 +203,8 @@ export default {
         this.getParams = {
           page: 1,
           material_type: '', // 物料类型
-          material_no: this.materialNo, // 物料编号
-          container_no: this.containerNo, // 托盘号
+          e_material_no: this.materialNo, // 物料编号
+          quality_status: this.qualityStatus,
           lot_no: this.lotNo,
           warehouse_name: this.warehouseNameProps // 仓库名称
         }
