@@ -312,10 +312,10 @@
         </tr>
       </table>
       <div v-if="otherNum" style="font-weight:700;margin-top:10px;">备注：有其他料包(
-        {{ Math.round((Number(ruleForm.machine_manual_weight) - Number(ruleForm.machine_weight)) * 1000) / 1000 }}kg/车)</div>
+        {{ otherNum }}kg/车)</div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose(false)">取 消</el-button>
-        <el-button type="primary" :disabled="otherNum===0?false:true" :loading="btnLoading" @click="submitFun">确 定</el-button>
+        <el-button type="primary" :loading="btnLoading" @click="submitFun">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -336,8 +336,8 @@ export default {
   data() {
     return {
       formInline: {
-        batch_time: setDate()
-        // batch_time: '2021-12-02'
+        // batch_time: setDate(),
+        batch_time: '2021-12-02'
       },
       tableData: [],
       total: 0,
@@ -440,7 +440,9 @@ export default {
           merge_flag: this.ruleForm.merge_flag,
           product_no: this.ruleForm.product_no,
           dev_type: this.ruleForm.dev_type,
-          scan_bra_code: val
+          scan_bra_code: val,
+          package_count: this.ruleForm.package_count,
+          split_count: this.ruleForm.split_count
         }
         const data = await manualPost('post', null, { data: obj })
         const _details = data.results.details
@@ -519,21 +521,21 @@ export default {
         this.ruleForm.manual_headers.class_group = currentClass
         this.ruleForm.manual_headers.detail_machine = c
         this.ruleForm.manual_headers.detail_manual = b
-        this.ruleForm.manual_headers.manual_weight = Math.round(((c + b) / this.ruleForm.split_count) * 1000) / 1000
+        this.ruleForm.manual_headers.manual_weight = Math.round((c + b) * 1000) / 1000
         // const d = this.ruleForm._machine_manual_weight
         const e = Math.round((c + b) * 1000) / 1000
         // this.ruleForm.machine_manual_weight = Math.round((d + e) * 1000) / 1000
         this.ruleForm.manual_weight = e
-        this.otherNum = Math.round((this.otherNum - _details.detail_manual) * 1000) / 1000
+        this.otherNum = Math.round((this.otherNum - (_details.detail_manual + _details.detail_machine) * Number(this.ruleForm.split_count)) * 1000) / 1000
 
         const tolerance = await getMaterialTolerance('get', null,
           { params: { batching_equip: this.ruleForm.equip_no, project_name: 'all',
             standard_weight: e }})
-        const toleranceAll = await getMaterialTolerance('get', null,
-          { params: { batching_equip: this.ruleForm.equip_no, project_name: 'all',
-            standard_weight: this.ruleForm.machine_manual_weight }})
+        // const toleranceAll = await getMaterialTolerance('get', null,
+        //   { params: { batching_equip: this.ruleForm.equip_no, project_name: 'all',
+        //     standard_weight: this.ruleForm.machine_manual_weight }})
         this.$set(this.ruleForm.manual_headers, 'manual_tolerance', tolerance || '')
-        this.$set(this.ruleForm, 'machine_manual_tolerance', toleranceAll || '')
+        // this.$set(this.ruleForm, 'machine_manual_tolerance', toleranceAll || '')
       } catch (e) {
         if (e.message) {
           this.$message(e.message)
@@ -561,7 +563,9 @@ export default {
       this.ruleForm = JSON.parse(JSON.stringify(row))
       this.$set(this.ruleForm, 'print_count', 1)
       this.$set(this.ruleForm, '_machine_manual_weight', this.ruleForm.machine_manual_weight)
-      this.otherNum = Math.round((Number(this.ruleForm.machine_manual_weight) - Number(this.ruleForm.machine_weight)) * 1000) / 1000
+      if (!this.ruleForm.bra_code && this.ruleForm.merge_flag) {
+        this.otherNum = Math.round((Number(this.ruleForm.machine_manual_weight) - Number(this.ruleForm.machine_weight) * Number(this.ruleForm.split_count)) * 1000) / 1000
+      }
       if (!this.ruleForm.package_count) {
         this.ruleForm.package_count = this.ruleForm.package_fufil || 0
       }
@@ -570,7 +574,27 @@ export default {
       this.$refs.ruleForm.validate(async(valid) => {
         if (valid) {
           try {
-            console.log(this.ruleForm, 'this.ruleForm')
+            // 计算公差
+            const _tolerance = this.ruleForm.machine_manual_tolerance
+            let otherNum_tolerance
+            if (_tolerance) {
+              const lastStr = _tolerance.slice(_tolerance.length - 1)
+              let _toleranceA = null
+              if (lastStr === '%') {
+                _toleranceA = Number(_tolerance.slice(1, _tolerance.length - 1))
+                const a = _toleranceA / 100
+                const b = Number(this.ruleForm.machine_manual_weight) * a
+                otherNum_tolerance = Math.round(b * 1000) / 1000
+              } else {
+                _toleranceA = Number(_tolerance.slice(1, _tolerance.length - 2))
+                otherNum_tolerance = _toleranceA
+              }
+            }
+
+            if (-otherNum_tolerance > this.otherNum || otherNum_tolerance < this.otherNum) {
+              this.$message.info('其他料包总数有偏差')
+              return
+            }
             const _api = this.ruleForm.bra_code ? 'put' : 'post'
             let _obj = JSON.parse(JSON.stringify(this.ruleForm))
             if (this.ruleForm.bra_code) {
