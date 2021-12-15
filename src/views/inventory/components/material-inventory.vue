@@ -180,7 +180,7 @@ export default {
       getParams: {
         page: 1,
         material_type: '', // 物料类型
-        material_no: this.materialNo, // 物料编号
+        e_material_no: this.materialNo, // 物料编号
         quality_status: this.qualityStatus,
         warehouse_name: '混炼胶库' // 仓库名称
       },
@@ -203,7 +203,7 @@ export default {
         this.getParams = {
           page: 1,
           material_type: '', // 物料类型
-          material_no: this.materialNo, // 物料编号
+          e_material_no: this.materialNo, // 物料编号
           quality_status: this.qualityStatus,
           lot_no: this.lotNo,
           warehouse_name: this.warehouseNameProps // 仓库名称
