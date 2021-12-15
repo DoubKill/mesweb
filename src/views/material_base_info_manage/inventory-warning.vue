@@ -213,6 +213,14 @@ export default {
           this.$message.info('请选择原材料')
           return
         }
+        if (!this.formData.num) {
+          this.$message.info('请输入日均用量')
+          return
+        }
+        if (!this.formData.warning_days) {
+          this.$message.info('请输入预警天数')
+          return
+        }
         const _arr = []
         this.multipleSelection.forEach(D => {
           _arr.push(D.material_no)

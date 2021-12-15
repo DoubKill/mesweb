@@ -467,15 +467,15 @@ export default {
       this.dialogRawMaterialSync = false
     },
     handleMaterialSelect(row) {
-      if ((this.listType === '炭黑' && row.material_type_name !== '炭黑') ||
-      (this.listType === '油料' && row.material_type_name !== '油料')) {
-        //  ||(this.listType === '胶料' && (row.material_type_name === '油料' || row.material_type_name === '炭黑'))
-        this.$message.info({
-          message: '选择类别相同的原料',
-          type: 'error'
-        })
-        return
-      }
+      // if ((this.listType === '炭黑' && row.material_type_name !== '炭黑') ||
+      // (this.listType === '油料' && row.material_type_name !== '油料')) {
+      //   //  ||(this.listType === '胶料' && (row.material_type_name === '油料' || row.material_type_name === '炭黑'))
+      //   this.$message.info({
+      //     message: '选择类别相同的原料',
+      //     type: 'error'
+      //   })
+      //   return
+      // }
       const arr = this.currentMaterialList.filter(D => D === row.id)
       if (arr.length > 0) {
         this.$message.info({
