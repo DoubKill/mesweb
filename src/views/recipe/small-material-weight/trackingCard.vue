@@ -177,11 +177,12 @@
           />
         </el-form-item>
         <el-form-item label="配置数量" prop="package_count">
+          <!-- +1-ruleForm.print_begin_trains -->
           <el-input-number
             v-model="ruleForm.package_count"
             controls-position="right"
             :min="1"
-            :max="ruleForm.package_fufil+1-ruleForm.print_begin_trains"
+            :max="ruleForm.package_fufil"
             :step="1"
             step-strictly
             :disabled="ruleForm.bra_code?true:false"
@@ -561,6 +562,9 @@ export default {
       this.$set(this.ruleForm, 'print_count', 1)
       this.$set(this.ruleForm, '_machine_manual_weight', this.ruleForm.machine_manual_weight)
       this.otherNum = Math.round((Number(this.ruleForm.machine_manual_weight) - Number(this.ruleForm.machine_weight)) * 1000) / 1000
+      if (!this.ruleForm.package_count) {
+        this.ruleForm.package_count = this.ruleForm.package_fufil || 0
+      }
     },
     submitFun() {
       this.$refs.ruleForm.validate(async(valid) => {
