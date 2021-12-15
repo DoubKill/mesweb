@@ -110,17 +110,17 @@
       <el-table-column
         prop="quantity"
         label="有效库存数量"
-        min-width="15"
+        width="100"
       />
       <el-table-column
         prop="weight"
         label="有效库存重量(kg)"
-        min-width="15"
+        width="130"
       />
       <el-table-column
         prop="quantity_1"
         label="合格品数量"
-        min-width="20"
+        width="100"
       >
         <template slot-scope="scope">
           <el-link
@@ -133,13 +133,13 @@
       </el-table-column>
       <el-table-column
         prop="weight_1"
-        label="合格品重量"
-        min-width="20"
+        label="合格品重量(kg)"
+        width="120"
       />
       <el-table-column
         prop="quantity_5"
         label="待检品数量"
-        min-width="20"
+        width="100"
       >
         <template slot-scope="scope">
           <el-link
@@ -152,13 +152,13 @@
       </el-table-column>
       <el-table-column
         prop="weight_5"
-        label="待检品重量"
-        min-width="20"
+        label="待检品重量(kg)"
+        width="120"
       />
       <el-table-column
         prop="quantity_3"
         label="不合格数量"
-        min-width="20"
+        width="100"
       >
         <template slot-scope="scope">
           <el-link
@@ -171,8 +171,8 @@
       </el-table-column>
       <el-table-column
         prop="weight_3"
-        label="不合格重量"
-        min-width="20"
+        label="不合格重量(kg)"
+        width="120"
       />
       <el-table-column
         prop="total_quantity"
@@ -181,7 +181,7 @@
       />
       <el-table-column
         prop="total_weight"
-        label="总重量"
+        label="总重量(kg)"
         min-width="20"
       />
     </el-table>
@@ -243,14 +243,34 @@ export default {
         this.tableData = data.results
         this.total = data.count
         this.loading = false
+        this.tableData.forEach(d => {
+          d.quantity = d.quantity_1 + d.quantity_5
+          d.weight = d.weight_1 + d.weight_5
+        })
         this.tableData.push({
           name: '单页合计',
           quantity: sum(this.tableData, 'quantity'),
-          weight: sum(this.tableData, 'weight')
+          weight: sum(this.tableData, 'weight'),
+          quantity_1: sum(this.tableData, 'quantity_1'),
+          weight_1: sum(this.tableData, 'weight_1'),
+          quantity_3: sum(this.tableData, 'quantity_3'),
+          weight_3: sum(this.tableData, 'weight_3'),
+          quantity_5: sum(this.tableData, 'quantity_5'),
+          weight_5: sum(this.tableData, 'weight_5'),
+          total_quantity: sum(this.tableData, 'total_quantity'),
+          total_weight: sum(this.tableData, 'total_weight')
         }, {
           name: '汇总',
-          quantity: data.total_quantity,
-          weight: data.total_weight
+          quantity: data.total_quantity1 + data.total_quantity5,
+          weight: data.total_weight1 + data.total_weight5,
+          total_quantity: data.total_quantity,
+          total_weight: data.total_weight,
+          quantity_1: data.total_quantity1,
+          weight_1: data.total_weight1,
+          quantity_3: data.total_quantity3,
+          weight_3: data.total_weight3,
+          quantity_5: data.total_quantity5,
+          weight_5: data.total_weight5
         })
       } catch (e) {
         this.loading = false
