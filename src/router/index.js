@@ -528,7 +528,7 @@ export let asyncRoutes = [
             permissionName: 'xl_weight_card'
           }
         },
-        {
+        /* {
           path: '/small-material-weight/hebao',
           component: () => import('@/views/recipe/small-material-weight/hebao'),
           name: 'SmallMaterialWeightHebao',
@@ -547,7 +547,7 @@ export let asyncRoutes = [
             title: '单配(配方/通用)化工流转卡',
             permissionName: ''
           }
-        },
+        },*/
         {
           path: '/small-material-weight/valid',
           component: () => import('@/views/recipe/small-material-weight/valid'),
@@ -559,8 +559,8 @@ export let asyncRoutes = [
           }
         }
       ]
-    },
-    {
+    }
+    /*, {
       path: '/auto-schedule',
       redirect: '/schedule/factory-declare',
       name: 'AutoSchedule',
@@ -829,7 +829,7 @@ export let asyncRoutes = [
           ]
         }
       ]
-    }
+    }*/
     ]
   },
   {
@@ -1239,7 +1239,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'MaterialDelivery',
               faShowName: '原材料库',
-              title: '库存统计',
+              title: '巷道别批次库存统计',
               permissionName: 'material_inventory_summary'
             }
           },
@@ -1261,7 +1261,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'MaterialDelivery',
               faShowName: '原材料库',
-              title: '低库存预警',
+              title: '库存统计',
               permissionName: 'material_inventory_summary'
             }
           },
@@ -1370,7 +1370,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'CarbonDelivery',
               faShowName: '炭黑库',
-              title: '库存统计',
+              title: '巷道别批次库存统计',
               permissionName: 'th_inventory_summary'
             }
           },
@@ -1392,7 +1392,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'CarbonDelivery',
               faShowName: '炭黑库',
-              title: '低库存预警',
+              title: '库存统计',
               permissionName: 'th_inventory_summary'
             }
           },
@@ -2358,7 +2358,8 @@ export let asyncRoutes = [
             }
           }
         ]
-      }, {
+      }
+      /*, {
         path: '/banburying',
         redirect: '/banburying/substitutes',
         component: () => import('@/views/quality_management/banburying/a-index'),
@@ -2429,7 +2430,7 @@ export let asyncRoutes = [
             }
           }
         ]
-      }
+      }*/
     ]
   },
   // {

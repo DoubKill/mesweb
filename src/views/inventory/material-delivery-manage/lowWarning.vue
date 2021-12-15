@@ -109,13 +109,80 @@
       /> -->
       <el-table-column
         prop="quantity"
-        label="可用数量"
+        label="有效库存数量"
         min-width="15"
       />
       <el-table-column
         prop="weight"
-        label="重量(kg)"
+        label="有效库存重量(kg)"
         min-width="15"
+      />
+      <el-table-column
+        prop="quantity_1"
+        label="合格品数量"
+        min-width="20"
+      >
+        <template slot-scope="scope">
+          <el-link
+            v-if="scope.row.name!=='汇总'&&scope.row.name!=='单页合计'"
+            type="primary"
+            @click="dialogShow(scope.row,1)"
+          >{{ scope.row.quantity_1 }}</el-link>
+          <span v-else>{{ scope.row.quantity_1 }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="weight_1"
+        label="合格品重量"
+        min-width="20"
+      />
+      <el-table-column
+        prop="quantity_5"
+        label="待检品数量"
+        min-width="20"
+      >
+        <template slot-scope="scope">
+          <el-link
+            v-if="scope.row.name!=='汇总'&&scope.row.name!=='单页合计'"
+            type="primary"
+            @click="dialogShow(scope.row,5)"
+          >{{ scope.row.quantity_5 }}</el-link>
+          <span v-else>{{ scope.row.quantity_5 }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="weight_5"
+        label="待检品重量"
+        min-width="20"
+      />
+      <el-table-column
+        prop="quantity_3"
+        label="不合格数量"
+        min-width="20"
+      >
+        <template slot-scope="scope">
+          <el-link
+            v-if="scope.row.name!=='汇总'&&scope.row.name!=='单页合计'"
+            type="primary"
+            @click="dialogShow(scope.row,3)"
+          >{{ scope.row.quantity_3 }}</el-link>
+          <span v-else>{{ scope.row.quantity_3 }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="weight_3"
+        label="不合格重量"
+        min-width="20"
+      />
+      <el-table-column
+        prop="total_quantity"
+        label="总数量"
+        min-width="20"
+      />
+      <el-table-column
+        prop="total_weight"
+        label="总重量"
+        min-width="20"
       />
     </el-table>
     <page
@@ -124,16 +191,29 @@
       :current-page="search.page"
       @currentChange="currentChange"
     />
+    <el-dialog
+      :visible.sync="dialogVisible"
+      width="90%"
+    >
+      <materialInventoryManage :quality-status="currentObj.quality_status" :material-no="currentObj.MaterialCode" :show="dialogVisible" :warehouse-name-props="'原材料库'" />
+      <span slot="footer" class="dialog-footer">
+        <el-button
+          type="primary"
+          @click="dialogVisible=false"
+        >返回</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import materialInventoryManage from '../components/material-inventory.vue'
 import { debounce } from '@/utils'
 import page from '@/components/page'
 import { wmsStockSummsry, wmsMaterialGroups, wmsTunnels } from '@/api/base_w_four'
 export default {
   name: 'DeliveryStock',
-  components: { page },
+  components: { materialInventoryManage, page },
   data() {
     return {
       search: {
@@ -141,6 +221,8 @@ export default {
         page_size: 10
       },
       total: 0,
+      currentObj: {},
+      dialogVisible: false,
       options: [],
       options1: [],
       tableData: [],
@@ -173,6 +255,11 @@ export default {
       } catch (e) {
         this.loading = false
       }
+    },
+    dialogShow(row, val) {
+      this.currentObj.quality_status = val
+      this.currentObj.MaterialCode = row.code
+      this.dialogVisible = true
     },
     tableRowClassName({ row, rowIndex }) {
       if (row.name === '单页合计' || row.name === '汇总') {
