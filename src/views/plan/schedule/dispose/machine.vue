@@ -63,7 +63,7 @@
 
         <div style="color:red;display:inline-block">
           <div style="text-align:right">
-            <el-button style="margin-right:5px">
+            <el-button type="primary" style="margin-right:5px">
               确定全部机台计划
             </el-button>
             <el-button v-permission="['equip_plan','export']" type="primary" :loading="btnExportLoad" @click="templateDownload">
@@ -83,29 +83,23 @@
           :key="index"
           class="addPlanArrBox"
         >
+
           <div class="tableTop">
-            <el-row :gutter="20">
-              <el-col :span="12">
-                <div class="tableTopLeft">
-                  {{ item[0][0]?item[0][0].equipNo:'--' }}
-                  --
-                  机型{{ item[0][0]?item[0][0].category__category_name:'--' }}
-                </div>
-              </el-col>
-              <el-col :span="5">
-                <el-input label="生产车数" />
-              </el-col>
-              <el-col :span="5">
-                <el-input label="生产车数" />
-              </el-col>
-              <el-col :span="2">
-                <el-button
-                  v-if="permissionArr.indexOf('add')>-1"
-                  class="tableTopright"
-                  @click="singleSavePlan(index,item)"
-                >保 存</el-button>
-              </el-col>
-            </el-row>
+
+            <div class="tableTopLeft">
+              {{ item[0][0]?item[0][0].equipNo:'--' }}
+              --
+              机型{{ item[0][0]?item[0][0].category__category_name:'--' }}
+            </div>
+            生产车数:
+            <el-input style="width:80px" />
+            生产时间(h):
+            <el-input style="width:80px" />
+            <el-button
+              v-if="permissionArr.indexOf('add')>-1"
+              class="tableTopright"
+              @click="singleSavePlan(index,item)"
+            >确定</el-button>
           </div>
           <div
             v-for="(tableItem,i) in item"
@@ -125,7 +119,7 @@
                 <template slot-scope="scope">
                   <div style="font-weight:700;color:#000 !important">
                     {{ scope.row.classes_name }}
-                    <!-- {{ scope.row.start_time }} -- {{ scope.row.end_time }} -->
+                  <!-- {{ scope.row.start_time }} -- {{ scope.row.end_time }} -->
                   </div>
                 </template>
               </el-table-column>
@@ -231,7 +225,7 @@
                   >删除
                   </el-button>
                   <br>
-                  <!-- <el-button
+                <!-- <el-button
                     style="margin-top:5px"
                     size="mini"
                     type="primary"
@@ -239,7 +233,7 @@
                     @click="moveUp(scope.$index,scope.row,tableItem)"
                   >上移
                   </el-button> -->
-                  <!-- <el-button
+                <!-- <el-button
                     style="margin-top:5px"
                     size="mini"
                     :disabled="setDisabledFun(scope.$index,scope.row,tableItem,false)"
