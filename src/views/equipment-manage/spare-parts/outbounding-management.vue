@@ -102,14 +102,14 @@
       >
         <template slot-scope="scope">
           <el-button
-            v-permission="['equip_in_warehouse', 'enter']"
+            v-permission="['equip_out_warehouse', 'change']"
             type="primary"
             size="mini"
             @click="editOrder(scope.row)"
           >编辑
           </el-button>
           <el-button
-            v-permission="['equip_in_warehouse', 'enter']"
+            v-permission="['equip_out_warehouse', 'delete']"
             type="primary"
             size="mini"
             @click="deleteOrder(scope.row)"

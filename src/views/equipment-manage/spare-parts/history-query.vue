@@ -189,7 +189,7 @@
         min-width="20"
       />
       <el-table-column
-        prop="created_date"
+        prop="last_updated_date"
         label="操作时间"
         min-width="20"
       />
@@ -209,7 +209,7 @@
       >
         <template slot-scope="scope">
           <el-button
-            v-permission="['equip_out_warehouse', 'outer']"
+            v-permission="['equip_warehouse_record', 'revocation']"
             type="primary"
             size="mini"
             @click="dialogRevoke(scope.row)"
@@ -349,7 +349,11 @@ export default {
       }
       try {
         this.submit = true
-        await equipWarehouseRecord('put', this.currentRevoke.id, { data: { revocation_desc: this.currentRevoke.revocation_desc }})
+        await equipWarehouseRecord('put', this.currentRevoke.id, { data:
+        { revocation_desc: this.currentRevoke.revocation_desc,
+          equip_spare: this.currentRevoke.equip_spare,
+          equip_warehouse_location: this.currentRevoke.equip_warehouse_location
+        }})
         this.$message.success('撤销成功')
         this.submit = false
         this.dialogVisibleRevoke = false

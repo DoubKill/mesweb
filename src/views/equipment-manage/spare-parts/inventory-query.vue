@@ -144,12 +144,14 @@
       >
         <template slot-scope="scope">
           <el-button
+            v-permission="['equip_warehouse_inventory', 'change']"
             type="primary"
             size="mini"
             @click="generateFunEdit(scope.row)"
           >盘库
           </el-button>
           <el-button
+            v-permission="['equip_warehouse_inventory', 'move']"
             type="primary"
             size="mini"
             @click="generateFunMove(scope.row)"
@@ -490,6 +492,7 @@
           <el-input-number
             v-model="MoveForm.quantity"
             :min="1"
+            :max="quantity"
             style="width:250px"
           />
         </el-form-item>
@@ -538,6 +541,7 @@ export default {
       dialogEdit: false,
       dialogMove: false,
       loadingView: false,
+      quantity: null,
       dialogVisible: false,
       dialogVisible1: false,
       submit: false,
@@ -613,11 +617,9 @@ export default {
         this.MoveForm.move_equip_warehouse_location__location_name = null
       }
       this.MoveForm.move_equip_warehouse_area__area_name = this.warehouseAreaList.filter(d => d.id === this.MoveForm.move_equip_warehouse_area__id)[0].area_name
-      console.log(this.MoveForm.move_equip_warehouse_area__area_name)
     },
     clear1() {
       this.MoveForm.move_equip_warehouse_location__location_name = this.warehouseLocationList.filter(d => d.id === this.MoveForm.move_equip_warehouse_location__id)[0].location_name
-      console.log(this.MoveForm.move_equip_warehouse_location__location_name)
     },
     async getWarehouseLocation(val) {
       if (val) {
@@ -689,6 +691,7 @@ export default {
     },
     async generateFunMove(row) {
       this.MoveForm = JSON.parse(JSON.stringify(row))
+      this.quantity = this.MoveForm.quantity
       this.dialogMove = true
     },
     async MoveOne() {
@@ -699,22 +702,26 @@ export default {
         this.MoveForm.desc = null
       }
       this.MoveForm.handle = '移库'
-      this.$refs.MoveForm.validate(async(valid) => {
-        if (valid) {
-          try {
-            this.loadingBtn = true
-            await equipWarehouseInventory('POST', null, { data: this.MoveForm })
-            this.loadingBtn = false
-            this.dialogMove = false
-            this.$message.success('操作成功')
-            this.getList()
-          } catch (e) {
-            this.loadingBtn = false
+      if (this.MoveForm.move_equip_warehouse_location__location_name === this.MoveForm.equip_warehouse_location__location_name) {
+        this.$message('不能移到相同库位')
+      } else {
+        this.$refs.MoveForm.validate(async(valid) => {
+          if (valid) {
+            try {
+              this.loadingBtn = true
+              await equipWarehouseInventory('POST', null, { data: this.MoveForm })
+              this.loadingBtn = false
+              this.dialogMove = false
+              this.$message.success('操作成功')
+              this.getList()
+            } catch (e) {
+              this.loadingBtn = false
+            }
+          } else {
+            return false
           }
-        } else {
-          return false
-        }
-      })
+        })
+      }
     },
     async EditOne() {
       if (this.EditForm.quantity === undefined) {
