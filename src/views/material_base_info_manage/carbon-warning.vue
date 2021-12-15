@@ -213,6 +213,14 @@ export default {
           this.$message.info('请选择炭黑')
           return
         }
+        if (!this.formData.num) {
+          this.$message.info('请输入日均用量')
+          return
+        }
+        if (!this.formData.warning_days) {
+          this.$message.info('请输入预警天数')
+          return
+        }
         const _arr = []
         this.multipleSelection.forEach(D => {
           _arr.push(D.material_no)
@@ -225,6 +233,7 @@ export default {
             _obj = { 'material_nos': _arr, avg_setting_weight: this.formData.num }
           }
         }
+
         this.btnLoading = true
         await thSafetySettings('post', null, { data: _obj })
         this.$message.success('修改成功')

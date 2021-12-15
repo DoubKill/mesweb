@@ -336,7 +336,8 @@ export default {
     },
     async status_recipe_fun(id, bool, val) {
       if (val) {
-        this.$confirm('确定' + val + '?', '提示', {
+        const str = val === '废弃' ? '废弃的配方将无法再启用,是否确定废弃?' : '此操作将' + val + '该配方,是否继续?'
+        this.$confirm(str, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -359,7 +360,8 @@ export default {
       try {
         this.loading = true
         const data = await rubber_material_url('get', null, { params: this.search })
-        this.tableData = data.results
+        // const arr = data.results.filter(d => d.used_type !== 6)
+        this.tableData = data.results || []
         this.total = data.count
         this.loading = false
         this.currentRow.used_type = -1
