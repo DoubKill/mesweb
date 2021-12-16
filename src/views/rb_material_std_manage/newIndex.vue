@@ -230,7 +230,7 @@
       :is-view="isView"
       :is-copy="isCopy"
       @handleCloseMaterial="handleCloseMaterial"
-      @refreshList="changeSearch"
+      @refreshList="refreshList"
     />
   </div>
 </template>
@@ -276,6 +276,9 @@ export default {
   },
   methods: {
     checkPermission,
+    refreshList() {
+      this.rubber_material_list()
+    },
     changeSearch() {
       this.search.page = 1
       this.rubber_material_list()
@@ -359,8 +362,8 @@ export default {
     async rubber_material_list() {
       try {
         this.loading = true
+        this.search.exclude_used_type = 6
         const data = await rubber_material_url('get', null, { params: this.search })
-        // const arr = data.results.filter(d => d.used_type !== 6)
         this.tableData = data.results || []
         this.total = data.count
         this.loading = false

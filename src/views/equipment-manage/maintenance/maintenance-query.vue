@@ -116,17 +116,17 @@
       <el-table-column
         prop="plan_id"
         label="计划编号"
-        min-width="20"
+        width="130"
       />
       <el-table-column
         prop="plan_name"
         label="计划名称"
-        min-width="20"
+        width="160"
       />
       <el-table-column
         prop="equip_name"
         label="机台"
-        min-width="20"
+        width="130"
       />
       <el-table-column
         label="维护标准"
@@ -136,10 +136,12 @@
           <el-link
             v-if="scope.row.repair_standard_name"
             type="primary"
+            @click="repairDialog(scope.row)"
           >{{ scope.row.repair_standard_name }}</el-link>
           <el-link
             v-if="scope.row.standard_name"
             type="primary"
+            @click="repairDialog(scope.row)"
           >{{ scope.row.standard_name }}</el-link>
         </template>
       </el-table-column>
@@ -166,12 +168,12 @@
       <el-table-column
         prop="planned_maintenance_date"
         label="计划维护日期"
-        min-width="20"
+        width="150"
       />
       <el-table-column
         prop="next_maintenance_date"
         label="下次维护日期"
-        min-width="20"
+        width="150"
       />
       <el-table-column
         prop="created_username"
@@ -181,7 +183,7 @@
       <el-table-column
         prop="created_date"
         label="创建时间"
-        min-width="20"
+        width="150"
       />
     </el-table>
     <page
@@ -190,16 +192,46 @@
       :current-page="search.page"
       @currentChange="currentChange"
     />
+
+    <el-dialog
+      title="维修作业标准详情"
+      :visible.sync="dialogVisibleDefinition"
+      width="80%"
+    >
+      <definition
+        :show="dialogVisibleDefinition"
+        :type-form="typeForm"
+      />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleDefinition=false">取 消</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
+      title="维护作业标准详情"
+      :visible.sync="dialogVisibleMaintain"
+      width="80%"
+    >
+      <maintain
+        :show="dialogVisibleMaintain"
+        :type-form="typeForm1"
+      />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleMaintain=false">取 消</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
 import { debounce } from '@/utils'
 import page from '@/components/page'
-import { equipPlan, equipPlanDown } from '@/api/jqy'
+import definition from '../components/definition-dialog'
+import maintain from '../components/definition-dialog1'
+import { equipPlan, equipPlanDown, equipRepairStandard, equipMaintenanceStandard } from '@/api/jqy'
 export default {
   name: 'MaintenanceQuery',
-  components: { page },
+  components: { page, definition, maintain },
   data() {
     return {
       search: {
@@ -209,6 +241,8 @@ export default {
       tableData: [],
       total: 0,
       loading: false,
+      dialogVisibleDefinition: false,
+      dialogVisibleMaintain: false,
       btnExportLoad: false,
       options: ['巡检', '保养', '润滑', '标定'],
       options1: ['自动生成', '人工创建', '故障报修'],
@@ -217,6 +251,8 @@ export default {
       options4: ['高', '中', '低'],
       multipleSelection: [],
       submit: false,
+      typeForm: {},
+      typeForm1: {},
       creatOrder: {}
     }
   },
@@ -233,6 +269,25 @@ export default {
         this.loading = false
       } catch (e) {
         this.loading = false
+      }
+    },
+    async repairDialog(row) {
+      if (row.repair_standard_name) {
+        try {
+          const data = await equipRepairStandard('get', null, { params: { id: row.equip_repair_standard }})
+          this.typeForm = data.results[0]
+        } catch (e) {
+          // this.dialogVisible = true
+        }
+        this.dialogVisibleDefinition = true
+      } else if (row.standard_name) {
+        try {
+          const data = await equipMaintenanceStandard('get', null, { params: { id: row.equip_manintenance_standard }})
+          this.typeForm1 = data.results[0]
+        } catch (e) {
+          // this.dialogVisible = true
+        }
+        this.dialogVisibleMaintain = true
       }
     },
     changeDebounce() {

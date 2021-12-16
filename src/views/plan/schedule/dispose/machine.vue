@@ -116,9 +116,9 @@
             >
               >
               <el-table-column min-width="10px">
-                <template slot-scope="scope">
+                <template>
                   <div style="font-weight:700;color:#000 !important">
-                    {{ scope.row.classes_name }}
+                    当日
                   <!-- {{ scope.row.start_time }} -- {{ scope.row.end_time }} -->
                   </div>
                 </template>
@@ -133,7 +133,7 @@
               </el-table-column> -->
               <el-table-column
                 min-width="40px"
-                label="胶料编码"
+                label="规格"
               >
                 <template slot-scope="scope">
                   <span v-if="Number(scope.row.batching_type) === _batching_type_one">{{ scope.row.product_no }}</span>
@@ -162,7 +162,7 @@
                 </template>
               </el-table-column>
               <el-table-column
-                label="车次"
+                label="车数"
                 min-width="15px"
               >
                 <template slot-scope="scope">
@@ -178,6 +178,10 @@
                 </template>
               </el-table-column>
               <el-table-column
+                label="耗时"
+                min-width="15px"
+              />
+              <el-table-column
                 label="备注"
                 min-width="20"
               >
@@ -187,7 +191,6 @@
                     :disabled="setStatus(scope.row.status,scope.row,false)"
                     placeholder="请输入内容"
                   />
-
                 </template>
               </el-table-column>
               <el-table-column
@@ -198,18 +201,9 @@
                   {{ scope.row.status }}
                 </template>
               </el-table-column>
-              <el-table-column label="炼胶时间" min-width="18">
-                <template slot-scope="scope">
-                  {{ Number(scope.row.time) || '0' }}
-                </template>
-              </el-table-column>
-              <el-table-column label="创建时间" min-width="20">
-                <template slot-scope="scope">
-                  {{ scope.row.created_date }}
-                </template>
-              </el-table-column>
+
               <el-table-column
-                width="70px"
+                width="200px"
                 label="操作"
                 fixed="right"
               >
@@ -217,29 +211,35 @@
                   v-if="scope.$index!==tableItem.length-1"
                   slot-scope="scope"
                 >
-                  <el-button
-                    size="mini"
-                    type="danger"
-                    :disabled="setStatus(scope.row.status,scope.row,true)"
-                    @click="handleGroupDelete(scope.$index,tableItem,scope.row)"
-                  >删除
-                  </el-button>
-                  <br>
-                <!-- <el-button
-                    style="margin-top:5px"
-                    size="mini"
-                    type="primary"
-                    :disabled="setDisabledFun(scope.$index,scope.row,tableItem,true)"
-                    @click="moveUp(scope.$index,scope.row,tableItem)"
-                  >上移
-                  </el-button> -->
-                <!-- <el-button
-                    style="margin-top:5px"
-                    size="mini"
-                    :disabled="setDisabledFun(scope.$index,scope.row,tableItem,false)"
-                    @click="moveDown(scope.$index,scope.row,tableItem)"
-                  >下移
-                  </el-button> -->
+                  <el-button-group>
+                    <el-button
+                      icon="el-icon-caret-top"
+                      size="mini"
+                      type="primary"
+                      :disabled="setDisabledFun(scope.$index,scope.row,tableItem,true)"
+                      @click="moveUp(scope.$index,scope.row,tableItem)"
+                    />
+                    <el-button
+                      icon="el-icon-caret-bottom"
+                      size="mini"
+                      type="primary"
+                      :disabled="setDisabledFun(scope.$index,scope.row,tableItem,false)"
+                      @click="moveDown(scope.$index,scope.row,tableItem)"
+                    />
+                    <el-button
+                      icon="el-icon-edit"
+                      size="mini"
+                      type="primary"
+                      @click="moveDown(scope.$index,scope.row,tableItem)"
+                    />
+                    <el-button
+                      icon="el-icon-delete"
+                      size="mini"
+                      type="danger"
+                      :disabled="setStatus(scope.row.status,scope.row,true)"
+                      @click="handleGroupDelete(scope.$index,tableItem,scope.row)"
+                    />
+                  </el-button-group>
                 </template>
               </el-table-column>
             </el-table>

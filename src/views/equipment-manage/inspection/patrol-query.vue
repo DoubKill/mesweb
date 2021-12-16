@@ -141,6 +141,7 @@
         <template slot-scope="scope">
           <el-link
             type="primary"
+            @click="repairDialog(scope.row)"
           >{{ scope.row.equip_repair_standard_name }}</el-link>
         </template>
       </el-table-column>
@@ -322,17 +323,33 @@
         <el-button type="primary" @click="dialogVisible=false">取 消</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      title="维护作业标准详情"
+      :visible.sync="dialogVisibleMaintain"
+      width="80%"
+    >
+      <maintain
+        :show="dialogVisibleMaintain"
+        :type-form="typeForm1"
+      />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleMaintain=false">取 消</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
 import { debounce } from '@/utils'
-import { equipInspectionOrder, equipInspectionOrderDown } from '@/api/jqy'
+import maintain from '../components/definition-dialog1'
+import { equipInspectionOrder, equipInspectionOrderDown, equipMaintenanceStandard } from '@/api/jqy'
 import page from '@/components/page'
 import EquipSelect from '@/components/EquipSelect/index'
 export default {
   name: 'PatrolQuery',
-  components: { EquipSelect, page },
+  components: { EquipSelect, page, maintain },
   data() {
     return {
       search: {
@@ -340,11 +357,13 @@ export default {
         page_size: 10
       },
       loading: false,
+      dialogVisibleMaintain: false,
       creatOrder: { result_repair_graph_url: [] },
       dialogVisible: false,
       btnExportLoad: false,
       dateValue: [],
       tableData: [],
+      typeForm1: {},
       total: 0
     }
   },
@@ -356,6 +375,15 @@ export default {
       this.search.planned_repair_date_after = date ? date[0] : ''
       this.search.planned_repair_date_before = date ? date[1] : ''
       this.changeSearch()
+    },
+    async repairDialog(row) {
+      try {
+        const data = await equipMaintenanceStandard('get', null, { params: { id: row.equip_repair_standard }})
+        this.typeForm1 = data.results[0]
+        this.dialogVisibleMaintain = true
+      } catch (e) {
+        // this.dialogVisible = true
+      }
     },
     async getList() {
       try {
@@ -373,12 +401,8 @@ export default {
       debounce(this, 'getList')
     },
     dialogPatrol(row) {
-      if (row.status === '已完成') {
-        this.creatOrder = JSON.parse(JSON.stringify(row))
-        this.dialogVisible = true
-      } else {
-        this.$message('只有已完成状态可以查看巡检详情')
-      }
+      this.creatOrder = JSON.parse(JSON.stringify(row))
+      this.dialogVisible = true
     },
     dialogWorkNo(row) {
 

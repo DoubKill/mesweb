@@ -137,6 +137,7 @@
         <template slot-scope="scope">
           <el-link
             type="primary"
+            @click="repairDialog(scope.row)"
           >{{ scope.row.equip_job_item_standard_name }}</el-link>
         </template>
       </el-table-column>
@@ -243,10 +244,10 @@
               </el-select>
             </el-form-item>
             <el-form-item label="标准编号" prop="standard_code">
-              <el-input v-model="typeForm.standard_code" :disabled="typeForm.id?true:false" />
+              <el-input v-model="typeForm.standard_code" :disabled="typeForm.id?true:false" style="width:200px" />
             </el-form-item>
             <el-form-item label="标准名称" prop="standard_name">
-              <el-input v-model="typeForm.standard_name" />
+              <el-input v-model="typeForm.standard_name" style="width:200px" />
             </el-form-item>
             <el-form-item label="设备种类" prop="equip_type">
               <el-select v-model="typeForm.equip_type" placeholder="请选择" clearable filterable @change="clear">
@@ -318,7 +319,7 @@
               label="作业项目"
               prop="equip_job_item_standard_name"
             >
-              <el-input v-model="typeForm.equip_job_item_standard_name" placeholder="请输入内容" disabled>
+              <el-input v-model="typeForm.equip_job_item_standard_name" disabled>
                 <el-button slot="append" icon="el-icon-search" @click="Add1" />
               </el-input>
               <br>
@@ -327,7 +328,6 @@
                 style="marginTop:20px"
                 type="textarea"
                 :rows="4"
-                placeholder="请输入内容"
                 disabled
               />
             </el-form-item>
@@ -487,19 +487,35 @@
         <el-button type="primary" @click="submitFun1">确 定</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      :title="`作业标准`"
+      :visible.sync="dialogVisibleProject"
+      width="80%"
+    >
+      <project
+        :show="dialogVisibleProject"
+        :type-form="typeForm1"
+      />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleProject=false">取 消</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { debounce } from '@/utils'
+import project from '../components/project-dialog'
 import SparePartsCode from '../master-data/spare-parts-code'
 import ProjectDefinition from './project-definition'
+import { equipJobItemStandard } from '@/api/base_w_four'
 import { equipsCategory, equipMaintenanceStandard, equipPartNew, equipComponent, equipMaintenanceStandardImport, equipMaintenanceStandardDown, equipMaintenanceStandardGetName } from '@/api/jqy'
 import page from '@/components/page'
 
 export default {
   name: 'MaintainDefinition',
-  components: { page, SparePartsCode, ProjectDefinition },
+  components: { page, SparePartsCode, ProjectDefinition, project },
   props: {
     isDialog: {
       type: Boolean,
@@ -525,11 +541,13 @@ export default {
       dialogEditVisible: false,
       dialogVisible: false,
       dialogVisible1: false,
+      dialogVisibleProject: false,
       options: [],
       options1: [],
       options2: [],
       typeName: '',
       typeForm: {},
+      typeForm1: {},
       rules: {
         work_type: [{ required: true, message: '不能为空', trigger: 'blur' }],
         standard_code: [{ required: true, message: '不能为空', trigger: 'blur' }],
@@ -576,6 +594,15 @@ export default {
         this.options = data.results || []
       } catch (e) {
         //
+      }
+    },
+    async repairDialog(row) {
+      try {
+        const data = await equipJobItemStandard('get', null, { params: { id: row.equip_job_item_standard }})
+        this.typeForm1 = data.results[0]
+        this.dialogVisibleProject = true
+      } catch (e) {
+        // this.dialogVisible = true
       }
     },
     async getEquipPart(val) {
@@ -889,12 +916,9 @@ export default {
 .maintain-definition{
   .search-form-style{
     .el-input{
-      width:120px;
+      width:100px;
     }
   }
-  // .el-dialog__wrapper .el-input{
-  //   // width:200px;
-  // }
   .el-input-number .el-input{
     width:auto;
   }

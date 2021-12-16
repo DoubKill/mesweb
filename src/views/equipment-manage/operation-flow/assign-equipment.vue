@@ -75,7 +75,7 @@
 
       <el-form-item>
         <el-button v-permission="['equip_apply_order', 'assign']" type="primary" @click="dialog">指派</el-button>
-        <el-button v-permission="['equip_apply_order', 'close']" type="primary" :loading="closeLoad" @click="close">关闭</el-button>
+        <el-button v-permission="['equip_apply_order', 'close']" type="primary" @click="closeDialog">关闭</el-button>
         <!-- <el-button type="primary">导出Excel</el-button> -->
       </el-form-item>
     </el-form>
@@ -211,7 +211,7 @@
     <el-dialog
       title="维修作业标准详情"
       :visible.sync="dialogVisibleDefinition"
-      width="70%"
+      width="80%"
     >
       <definition
         :type-form="typeForm"
@@ -223,13 +223,34 @@
     <el-dialog
       title="维护作业标准详情"
       :visible.sync="dialogVisibleMaintain"
-      width="70%"
+      width="80%"
     >
       <maintain
         :type-form="typeForm1"
       />
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleCloseMaintain">取 消</el-button>
+      </span>
+    </el-dialog>
+
+    <el-dialog
+      title="关闭工单原因填写"
+      :visible.sync="dialogVisibleClose"
+      width="30%"
+    >
+      <el-form :inline="true" label-width="120px">
+        <el-form-item label="关闭工单原因:">
+          <el-input
+            v-model="desc"
+            style="width:300px"
+            type="textarea"
+            :rows="4"
+          />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleClose=false">取 消</el-button>
+        <el-button :loading="closeLoad" type="primary" @click="close">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -256,6 +277,8 @@ export default {
       dialogVisibleRepair: false,
       dialogVisibleDefinition: false,
       dialogVisibleMaintain: false,
+      dialogVisibleClose: false,
+      desc: null,
       dateValue: [],
       loadPerson: false,
       tableData: [],
@@ -278,6 +301,14 @@ export default {
   methods: {
     debounceList() {
       debounce(this, 'changeSearch')
+    },
+    closeDialog() {
+      if (this.multipleSelection.length > 0) {
+        this.desc = null
+        this.dialogVisibleClose = true
+      } else {
+        this.$message('请先勾选工单')
+      }
     },
     // async getStaff() {
     //   try {
@@ -322,13 +353,14 @@ export default {
             type: 'warning'
           }).then(() => {
             this.closeLoad = true
-            multiUpdate('post', null, { data: { pks: obj, status: '已关闭', opera_type: '关闭' }})
+            multiUpdate('post', null, { data: { close_reason: this.desc, pks: obj, status: '已关闭', opera_type: '关闭' }})
               .then(response => {
                 this.$message({
                   type: 'success',
                   message: '关闭成功'
                 })
                 this.closeLoad = false
+                this.dialogVisibleClose = false
                 this.$refs.multipleTable.clearSelection()
                 this.getList()
               })
