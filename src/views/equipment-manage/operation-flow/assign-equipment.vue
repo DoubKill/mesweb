@@ -211,7 +211,7 @@
     <el-dialog
       title="维修作业标准详情"
       :visible.sync="dialogVisibleDefinition"
-      width="70%"
+      width="80%"
     >
       <definition
         :type-form="typeForm"
@@ -223,7 +223,7 @@
     <el-dialog
       title="维护作业标准详情"
       :visible.sync="dialogVisibleMaintain"
-      width="70%"
+      width="80%"
     >
       <maintain
         :type-form="typeForm1"

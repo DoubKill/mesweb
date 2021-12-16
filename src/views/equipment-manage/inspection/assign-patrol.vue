@@ -114,6 +114,7 @@
         <template slot-scope="scope">
           <el-link
             type="primary"
+            @click="repairDialog(scope.row)"
           >{{ scope.row.equip_repair_standard_name }}</el-link>
         </template>
       </el-table-column>
@@ -190,17 +191,33 @@
         <el-button :loading="submit1" type="primary" @click="close">确 定</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      title="维护作业标准详情"
+      :visible.sync="dialogVisibleMaintain"
+      width="80%"
+    >
+      <maintain
+        :show="dialogVisibleMaintain"
+        :type-form="typeForm1"
+      />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleMaintain=false">取 消</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
 import { debounce } from '@/utils'
 import page from '@/components/page'
-import { equipInspectionOrder, multiUpdateInspection, getStaff } from '@/api/jqy'
+import maintain from '../components/definition-dialog1'
+import { equipInspectionOrder, multiUpdateInspection, getStaff, equipMaintenanceStandard } from '@/api/jqy'
 import EquipSelect from '@/components/EquipSelect/index'
 export default {
   name: 'AssignPatrol',
-  components: { EquipSelect, page },
+  components: { EquipSelect, page, maintain },
   data() {
     return {
       search: {
@@ -209,8 +226,10 @@ export default {
         page_size: 10
       },
       dateValue: [],
+      dialogVisibleMaintain: false,
       loadPerson: false,
       bz: '',
+      typeForm1: {},
       tableData: [],
       staffList: [],
       total: 0,
@@ -235,6 +254,15 @@ export default {
         this.dialogVisibleClose = true
       } else {
         this.$message('请先勾选工单')
+      }
+    },
+    async repairDialog(row) {
+      try {
+        const data = await equipMaintenanceStandard('get', null, { params: { id: row.equip_repair_standard }})
+        this.typeForm1 = data.results[0]
+        this.dialogVisibleMaintain = true
+      } catch (e) {
+        // this.dialogVisible = true
       }
     },
     async generateFun() {

@@ -121,6 +121,7 @@
         <template slot-scope="scope">
           <el-link
             type="primary"
+            @click="repairDialog(scope.row)"
           >{{ scope.row.equip_job_item_standard_name }}</el-link>
         </template>
       </el-table-column>
@@ -436,20 +437,36 @@
         <el-button type="primary" @click="submitFun2">确 定</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      :title="`作业标准`"
+      :visible.sync="dialogVisibleProject"
+      width="80%"
+    >
+      <project
+        :show="dialogVisibleProject"
+        :type-form="typeForm1"
+      />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleProject=false">取 消</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { debounce } from '@/utils'
+import project from '../components/project-dialog'
 import SparePartsCode from '../master-data/spare-parts-code'
 import FaultClassify from '../master-data/fault-classify'
 import ProjectDefinition from './project-definition'
+import { equipJobItemStandard } from '@/api/base_w_four'
 import { equipsCategory, equipRepairStandard, equipPartNew, equipComponent, equipRepairStandardImport, equipRepairStandardDown, equipRepairStandardGetName } from '@/api/jqy'
 import page from '@/components/page'
 
 export default {
   name: 'RepairDefinition',
-  components: { page, SparePartsCode, ProjectDefinition, FaultClassify },
+  components: { page, SparePartsCode, ProjectDefinition, FaultClassify, project },
   props: {
     isDialog: {
       type: Boolean,
@@ -477,11 +494,13 @@ export default {
       dialogVisible1: false,
       dialogVisible2: false,
       dialogEditVisible: false,
+      dialogVisibleProject: false,
       options: [],
       options1: [],
       options2: [],
       typeName: '',
       typeForm: {},
+      typeForm1: {},
       currentObj: {},
       rules: {
         standard_code: [{ required: true, message: '不能为空', trigger: 'blur' }],
@@ -528,6 +547,15 @@ export default {
         this.options = data.results || []
       } catch (e) {
         //
+      }
+    },
+    async repairDialog(row) {
+      try {
+        const data = await equipJobItemStandard('get', null, { params: { id: row.equip_job_item_standard }})
+        this.typeForm1 = data.results[0]
+        this.dialogVisibleProject = true
+      } catch (e) {
+        // this.dialogVisible = true
       }
     },
     async getEquipComponentType() {

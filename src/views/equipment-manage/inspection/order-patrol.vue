@@ -111,6 +111,7 @@
         <template slot-scope="scope">
           <el-link
             type="primary"
+            @click="repairDialog(scope.row)"
           >{{ scope.row.equip_repair_standard_name }}</el-link>
         </template>
       </el-table-column>
@@ -208,29 +209,47 @@
         <el-button :loading="submit3" type="primary" @click="close">确 定</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      title="维护作业标准详情"
+      :visible.sync="dialogVisibleMaintain"
+      width="80%"
+    >
+      <maintain
+        :show="dialogVisibleMaintain"
+        :type-form="typeForm1"
+      />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleMaintain=false">取 消</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
 import page from '@/components/page'
 import { mapGetters } from 'vuex'
-import { equipInspectionOrder, multiUpdateInspection } from '@/api/jqy'
+import maintain from '../components/definition-dialog1'
+import { equipInspectionOrder, multiUpdateInspection, equipMaintenanceStandard } from '@/api/jqy'
 import { debounce } from '@/utils'
 import EquipSelect from '@/components/EquipSelect/index'
 export default {
   name: 'OrderPatrol',
-  components: { EquipSelect, page },
+  components: { EquipSelect, page, maintain },
   data() {
     return {
       search: { status: '已指派' },
       loading: false,
       dateValue: [],
       tableData: [],
+      dialogVisibleMaintain: false,
       dialogVisibleBack: false,
       dialogVisibleClose: false,
       desc: null,
       total: 0,
       multipleSelection: [],
+      typeForm1: {},
       submit: false,
       submit1: false,
       submit2: false,
@@ -253,6 +272,15 @@ export default {
         this.dialogVisibleBack = true
       } else {
         this.$message('请先勾选工单')
+      }
+    },
+    async repairDialog(row) {
+      try {
+        const data = await equipMaintenanceStandard('get', null, { params: { id: row.equip_repair_standard }})
+        this.typeForm1 = data.results[0]
+        this.dialogVisibleMaintain = true
+      } catch (e) {
+        // this.dialogVisible = true
       }
     },
     closeDialog() {

@@ -142,10 +142,12 @@
           <el-link
             v-if="scope.row.repair_standard_name"
             type="primary"
+            @click="repairDialog(scope.row)"
           >{{ scope.row.repair_standard_name }}</el-link>
           <el-link
             v-if="scope.row.standard_name"
             type="primary"
+            @click="repairDialog(scope.row)"
           >{{ scope.row.standard_name }}</el-link>
         </template>
       </el-table-column>
@@ -340,6 +342,34 @@
         <el-button type="primary" @click="submitFunRepair">确 定</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      title="维修作业标准详情"
+      :visible.sync="dialogVisibleDefinition"
+      width="80%"
+    >
+      <definition
+        :show="dialogVisibleDefinition"
+        :type-form="typeForm"
+      />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleDefinition=false">取 消</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
+      title="维护作业标准详情"
+      :visible.sync="dialogVisibleMaintain"
+      width="80%"
+    >
+      <maintain
+        :show="dialogVisibleMaintain"
+        :type-form="typeForm1"
+      />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleMaintain=false">取 消</el-button>
+      </span>
+    </el-dialog>
+
     <el-dialog
       :title="`维护作业项目`"
       :visible.sync="dialogVisibleWork"
@@ -363,13 +393,15 @@
 <script>
 import { debounce } from '@/utils'
 import page from '@/components/page'
-import { equipPlan, equipClosePlan, equipGenerateOrder, equipPlanGetName } from '@/api/jqy'
+import { equipPlan, equipClosePlan, equipGenerateOrder, equipPlanGetName, equipRepairStandard, equipMaintenanceStandard } from '@/api/jqy'
 import { getEquip } from '@/api/banburying-performance-manage'
+import definition from '../components/definition-dialog'
+import maintain from '../components/definition-dialog1'
 import RepairDefinition from '../standard-definition/repair-definition'
 import MaintainDefinition from '../standard-definition/maintain-definition'
 export default {
   name: 'Maintenance',
-  components: { page, RepairDefinition, MaintainDefinition },
+  components: { page, RepairDefinition, MaintainDefinition, definition, maintain },
   data() {
     return {
       search: {
@@ -385,6 +417,8 @@ export default {
       options3: ['停机', '不停机'],
       options4: ['高', '中', '低'],
       multipleSelection: [],
+      dialogVisibleDefinition: false,
+      dialogVisibleMaintain: false,
       rules: {
         work_type: [
           { required: true, message: '不能为空', trigger: 'change' }
@@ -422,6 +456,8 @@ export default {
       submit1: false,
       submit2: false,
       submitAssign: false,
+      typeForm: {},
+      typeForm1: {},
       creatOrder: {}
     }
   },
@@ -448,6 +484,25 @@ export default {
       }
       if (this.creatOrder.equip_repair_standard) {
         this.creatOrder.equip_repair_standard = null
+      }
+    },
+    async repairDialog(row) {
+      if (row.repair_standard_name) {
+        try {
+          const data = await equipRepairStandard('get', null, { params: { id: row.equip_repair_standard }})
+          this.typeForm = data.results[0]
+        } catch (e) {
+          // this.dialogVisible = true
+        }
+        this.dialogVisibleDefinition = true
+      } else if (row.standard_name) {
+        try {
+          const data = await equipMaintenanceStandard('get', null, { params: { id: row.equip_manintenance_standard }})
+          this.typeForm1 = data.results[0]
+        } catch (e) {
+          // this.dialogVisible = true
+        }
+        this.dialogVisibleMaintain = true
       }
     },
     changeEquip() {

@@ -73,24 +73,26 @@
           </el-form-item></el-col>
         <el-col :span="8">
           <el-form-item label="所需人数">
-            <el-input-number v-model="typeForm.cycle_person_num" placeholder="请输入内容" controls-position="right" disabled />
+            <el-input-number v-model="typeForm.cycle_person_num" controls-position="right" disabled />
           </el-form-item>
           <el-form-item label="作业时间">
-            <el-input-number v-model="typeForm.operation_time" placeholder="请输入内容" controls-position="right" disabled />
-          </el-form-item>
-          <el-form-item label="作业时间单位">
-            <el-select
-              v-model="typeForm.operation_time_unit"
-              disabled
-              clearable
-            >
-              <el-option
-                v-for="item in ['日','小时','分钟','秒','车次']"
-                :key="item"
-                :label="item"
-                :value="item"
-              />
-            </el-select>
+            <el-input-number v-model="typeForm.operation_time" controls-position="right" disabled />
+            <el-form-item>
+              <el-select
+                v-model="typeForm.operation_time_unit"
+                placeholder=""
+                style="width:100px"
+                disabled
+                clearable
+              >
+                <el-option
+                  v-for="item in ['日','小时','分钟','秒','车次']"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                />
+              </el-select>
+            </el-form-item>
           </el-form-item>
           <el-form-item label="钉钉提醒发送">
             <el-checkbox v-model="typeForm.remind_flag1" label="包干人" disabled />
@@ -144,6 +146,32 @@ export default {
       default() {
         return {}
       }
+    },
+    show: {
+      type: Boolean,
+      default() {
+        return false
+      }
+    }
+  },
+  watch: {
+    show(val) {
+      if (val) {
+        if (this.typeForm.cycle_person_num === null) {
+          this.typeForm.cycle_person_num = undefined
+        }
+        if (this.typeForm.operation_time === null) {
+          this.typeForm.operation_time = undefined
+        }
+      }
+    }
+  },
+  created() {
+    if (this.typeForm.cycle_person_num === null) {
+      this.typeForm.cycle_person_num = undefined
+    }
+    if (this.typeForm.operation_time === null) {
+      this.typeForm.operation_time = undefined
     }
   }
 }
