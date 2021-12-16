@@ -149,7 +149,7 @@
         <template slot-scope="{row}">
           <span v-if="row.is_qualified===true">合格</span>
           <span v-if="row.is_qualified===false">不合格</span>
-          <span v-if="row.is_qualified===null">未检测</span>
+          <span v-if="row.is_qualified===null">待检</span>
         </template>
       </el-table-column>
       <el-table-column label="发起时间" align="center" prop="start_time" />
