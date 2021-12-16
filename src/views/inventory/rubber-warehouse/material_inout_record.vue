@@ -62,6 +62,9 @@
       <el-form-item label="物料编码">
         <el-input v-model="search.material_no" clearable @input="debounceList" />
       </el-form-item>
+      <el-form-item label="物料名称">
+        <el-input v-model="search.material_name" clearable @input="debounceList" />
+      </el-form-item>
       <el-form-item label="出入库单号">
         <el-input v-model="search.order_no" clearable @input="debounceList" />
       </el-form-item>
@@ -70,6 +73,21 @@
       </el-form-item>
       <el-form-item label="质检条码">
         <el-input v-model="search.lot_no" clearable @input="debounceList" />
+      </el-form-item>
+      <el-form-item label="品质状态">
+        <el-select
+          v-model="search.quality_status"
+          clearable
+          placeholder="请选择"
+          @change="changeList"
+        >
+          <el-option
+            v-for="item in [{value:1,label:'合格'},{value:3,label:'不合格'},{value:5,label:'待检'}]"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item style="float:right">
         <el-button
@@ -113,6 +131,7 @@
         </template>
       </el-table-column> -->
       <el-table-column label="物料编码" align="center" prop="material_no" />
+      <el-table-column label="物料名称" align="center" prop="material_name" />
       <!-- <el-table-column label="出入库原因" align="center" prop="inout_reason" /> -->
       <!-- <el-table-column label="出入库类型" align="center" prop="inout_num_type" /> -->
       <el-table-column label="出入库数" align="center" prop="qty" width="50" />
@@ -126,6 +145,13 @@
       />
       <el-table-column label="重量(kg)" align="center" prop="weight" width="80" />
       <el-table-column label="发起人" align="center" prop="initiator" width="80" />
+      <el-table-column label="品质状态" align="center" prop="initiator" width="80">
+        <template slot-scope="{row}">
+          <span v-if="row.is_qualified===true">合格</span>
+          <span v-if="row.is_qualified===false">不合格</span>
+          <span v-if="row.is_qualified===null">未检测</span>
+        </template>
+      </el-table-column>
       <el-table-column label="发起时间" align="center" prop="start_time" />
       <el-table-column
         label="完成时间"
