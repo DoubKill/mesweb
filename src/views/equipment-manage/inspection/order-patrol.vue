@@ -64,11 +64,10 @@
           />
         </el-select>
       </el-form-item>
-
       <el-form-item>
         <el-button v-permission="['equip_inspection_order','receive']" :loading="submit1" type="primary" @click="order">接单</el-button>
-        <el-button v-permission="['equip_inspection_order','charge']" :loading="submit2" type="primary" @click="back">退单</el-button>
-        <el-button v-permission="['equip_inspection_order','close']" :loading="submit3" type="primary" @click="close">关闭</el-button>
+        <el-button v-permission="['equip_inspection_order','charge']" :loading="submit2" type="primary" @click="backDialog">退单</el-button>
+        <el-button v-permission="['equip_inspection_order','close']" type="primary" @click="closeDialog">关闭</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -167,6 +166,48 @@
       :current-page="search.page"
       @currentChange="currentChange"
     />
+
+    <el-dialog
+      title="退单原因填写"
+      :visible.sync="dialogVisibleBack"
+      width="30%"
+    >
+      <el-form label-width="120px">
+        <el-form-item label="退单原因:">
+          <el-input
+            v-model="desc"
+            style="width:300px"
+            type="textarea"
+            :rows="4"
+          />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleBack=false">取 消</el-button>
+        <el-button :loading="submit2" type="primary" @click="back">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <el-dialog
+      title="关闭工单原因填写"
+      :visible.sync="dialogVisibleClose"
+      width="30%"
+    >
+      <el-form :inline="true" label-width="120px">
+        <el-form-item label="关闭工单原因:">
+          <el-input
+            v-model="desc"
+            style="width:300px"
+            type="textarea"
+            :rows="4"
+          />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleClose=false">取 消</el-button>
+        <el-button :loading="submit3" type="primary" @click="close">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -183,23 +224,17 @@ export default {
     return {
       search: { status: '已指派' },
       loading: false,
-      btnExportLoad: false,
-      dialogVisibleRepair: false,
-      dialogVisibleDefinition: false,
-      dialogVisibleMaintain: false,
       dateValue: [],
       tableData: [],
+      dialogVisibleBack: false,
+      dialogVisibleClose: false,
+      desc: null,
       total: 0,
-      checkList: [],
       multipleSelection: [],
       submit: false,
       submit1: false,
       submit2: false,
-      submit3: false,
-      ruleForm: {},
-      typeForm: {},
-      typeForm1: {},
-      creatOrder: {}
+      submit3: false
     }
   },
   computed: {
@@ -212,6 +247,22 @@ export default {
     this.getList()
   },
   methods: {
+    backDialog() {
+      if (this.multipleSelection.length > 0) {
+        this.desc = null
+        this.dialogVisibleBack = true
+      } else {
+        this.$message('请先勾选工单')
+      }
+    },
+    closeDialog() {
+      if (this.multipleSelection.length > 0) {
+        this.desc = null
+        this.dialogVisibleClose = true
+      } else {
+        this.$message('请先勾选工单')
+      }
+    },
     changeDebounce() {
       debounce(this, 'changeSearch')
     },
@@ -267,13 +318,14 @@ export default {
             type: 'warning'
           }).then(() => {
             this.submit2 = true
-            multiUpdateInspection('post', null, { data: { pks: obj, status: '已生成', opera_type: '退单' }})
+            multiUpdateInspection('post', null, { data: { back_reason: this.desc, pks: obj, status: '已生成', opera_type: '退单' }})
               .then(response => {
                 this.$message({
                   type: 'success',
                   message: '退单成功'
                 })
                 this.submit2 = false
+                this.dialogVisibleBack = false
                 this.$refs.multipleTable.clearSelection()
                 this.getList()
               })
@@ -301,13 +353,14 @@ export default {
             type: 'warning'
           }).then(() => {
             this.submit3 = true
-            multiUpdateInspection('post', null, { data: { pks: obj, status: '已关闭', opera_type: '关闭' }})
+            multiUpdateInspection('post', null, { data: { close_reason: this.desc, pks: obj, status: '已关闭', opera_type: '关闭' }})
               .then(response => {
                 this.$message({
                   type: 'success',
                   message: '关闭成功'
                 })
                 this.submit3 = false
+                this.dialogVisibleClose = false
                 this.$refs.multipleTable.clearSelection()
                 this.getList()
               })

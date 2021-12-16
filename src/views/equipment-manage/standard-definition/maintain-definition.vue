@@ -243,10 +243,10 @@
               </el-select>
             </el-form-item>
             <el-form-item label="标准编号" prop="standard_code">
-              <el-input v-model="typeForm.standard_code" :disabled="typeForm.id?true:false" />
+              <el-input v-model="typeForm.standard_code" :disabled="typeForm.id?true:false" style="width:200px" />
             </el-form-item>
             <el-form-item label="标准名称" prop="standard_name">
-              <el-input v-model="typeForm.standard_name" />
+              <el-input v-model="typeForm.standard_name" style="width:200px" />
             </el-form-item>
             <el-form-item label="设备种类" prop="equip_type">
               <el-select v-model="typeForm.equip_type" placeholder="请选择" clearable filterable @change="clear">
@@ -318,7 +318,7 @@
               label="作业项目"
               prop="equip_job_item_standard_name"
             >
-              <el-input v-model="typeForm.equip_job_item_standard_name" placeholder="请输入内容" disabled>
+              <el-input v-model="typeForm.equip_job_item_standard_name" disabled>
                 <el-button slot="append" icon="el-icon-search" @click="Add1" />
               </el-input>
               <br>
@@ -327,7 +327,6 @@
                 style="marginTop:20px"
                 type="textarea"
                 :rows="4"
-                placeholder="请输入内容"
                 disabled
               />
             </el-form-item>
@@ -889,12 +888,9 @@ export default {
 .maintain-definition{
   .search-form-style{
     .el-input{
-      width:120px;
+      width:100px;
     }
   }
-  // .el-dialog__wrapper .el-input{
-  //   // width:200px;
-  // }
   .el-input-number .el-input{
     width:auto;
   }

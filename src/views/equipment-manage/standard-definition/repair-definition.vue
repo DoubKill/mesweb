@@ -182,7 +182,7 @@
     />
     <el-dialog
       :title="`${typeForm.id?'修改':'新建'}维修作业标准`"
-      width="70%"
+      width="80%"
       :visible.sync="dialogEditVisible"
       :close-on-click-modal="false"
     >
@@ -196,10 +196,10 @@
         <el-row>
           <el-col :span="8">
             <el-form-item label="标准编号" prop="standard_code">
-              <el-input v-model="typeForm.standard_code" :disabled="typeForm.id?true:false" />
+              <el-input v-model="typeForm.standard_code" :disabled="typeForm.id?true:false" style="width:200px" />
             </el-form-item>
             <el-form-item label="标准名称" prop="standard_name">
-              <el-input v-model="typeForm.standard_name" />
+              <el-input v-model="typeForm.standard_name" style="width:200px" />
             </el-form-item>
             <el-form-item label="设备种类" prop="equip_type">
               <el-select v-model="typeForm.equip_type" placeholder="请选择" clearable filterable @change="clear">
@@ -271,7 +271,7 @@
               label="故障原因"
               prop="equip_fault_name"
             >
-              <el-input v-model="typeForm.equip_fault_name" placeholder="请输入内容" disabled>
+              <el-input v-model="typeForm.equip_fault_name" disabled>
                 <el-button slot="append" icon="el-icon-search" @click="Add2" />
               </el-input>
             </el-form-item>
@@ -279,7 +279,7 @@
               label="作业项目"
               prop="equip_job_item_standard_name"
             >
-              <el-input v-model="typeForm.equip_job_item_standard_name" placeholder="请输入内容" disabled>
+              <el-input v-model="typeForm.equip_job_item_standard_name" disabled>
                 <el-button slot="append" icon="el-icon-search" @click="Add1" />
               </el-input>
             </el-form-item>
@@ -290,7 +290,6 @@
                 style="width:230px"
                 type="textarea"
                 :rows="4"
-                placeholder="请输入内容"
               />
             </el-form-item>
           </el-col>
@@ -300,20 +299,20 @@
             </el-form-item>
             <el-form-item label="作业时间" prop="operation_time">
               <el-input-number v-model="typeForm.operation_time" placeholder="请输入内容" controls-position="right" :min="0" />
-            </el-form-item>
-            <el-form-item label="作业时间单位" prop="operation_time_unit">
-              <el-select
-                v-model="typeForm.operation_time_unit"
-                clearable
-                placeholder="请选择"
-              >
-                <el-option
-                  v-for="item in ['日','小时','分钟','秒','车次']"
-                  :key="item"
-                  :label="item"
-                  :value="item"
-                />
-              </el-select>
+              <el-form-item prop="operation_time_unit" style="width:100px">
+                <el-select
+                  v-model="typeForm.operation_time_unit"
+                  clearable
+                  placeholder="请选择"
+                >
+                  <el-option
+                    v-for="item in ['日','小时','分钟','秒','车次']"
+                    :key="item"
+                    :label="item"
+                    :value="item"
+                  />
+                </el-select>
+              </el-form-item>
             </el-form-item>
             <el-form-item label="钉钉提醒发送" prop="remind_flag">
               <el-checkbox v-model="typeForm.remind_flag1" label="包干人" />
@@ -486,7 +485,6 @@ export default {
       currentObj: {},
       rules: {
         standard_code: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        standard_name: [{ required: true, message: '不能为空', trigger: 'blur' }],
         equip_type: [{ required: true, message: '不能为空', trigger: 'blur' }],
         equip_part: [{ required: true, message: '不能为空', trigger: 'blur' }],
         equip_condition: [{ required: true, message: '不能为空', trigger: 'blur' }],
@@ -824,9 +822,6 @@ export default {
     .el-input{
       width:120px;
     }
-  }
-  .el-dialog__wrapper .el-input{
-    width:200px;
   }
   .el-input-number .el-input{
     width:auto;

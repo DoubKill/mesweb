@@ -70,7 +70,7 @@
 
       <el-form-item>
         <el-button v-permission="['equip_inspection_order','assign']" type="primary" @click="dialogAssign">指派</el-button>
-        <el-button v-permission="['equip_inspection_order','close']" type="primary" :loading="submit1" @click="close">关闭</el-button>
+        <el-button v-permission="['equip_inspection_order','close']" type="primary" @click="closeDialog">关闭</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -170,6 +170,26 @@
       </span>
     </el-dialog>
 
+    <el-dialog
+      title="关闭工单原因填写"
+      :visible.sync="dialogVisibleClose"
+      width="30%"
+    >
+      <el-form :inline="true" label-width="120px">
+        <el-form-item label="关闭工单原因:">
+          <el-input
+            v-model="desc"
+            style="width:300px"
+            type="textarea"
+            :rows="4"
+          />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleClose=false">取 消</el-button>
+        <el-button :loading="submit1" type="primary" @click="close">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -198,6 +218,8 @@ export default {
       checkList: [],
       multipleSelection: [],
       dialogVisible: false,
+      dialogVisibleClose: false,
+      desc: null,
       submit: false,
       submit1: false,
       creatOrder: {}
@@ -207,6 +229,14 @@ export default {
     this.getList()
   },
   methods: {
+    closeDialog() {
+      if (this.multipleSelection.length > 0) {
+        this.desc = null
+        this.dialogVisibleClose = true
+      } else {
+        this.$message('请先勾选工单')
+      }
+    },
     async generateFun() {
       const obj = []
       this.multipleSelection.forEach(d => {
@@ -242,13 +272,14 @@ export default {
             type: 'warning'
           }).then(() => {
             this.submit1 = true
-            multiUpdateInspection('post', null, { data: { pks: obj, status: '已关闭', opera_type: '关闭' }})
+            multiUpdateInspection('post', null, { data: { close_reason: this.desc, pks: obj, status: '已关闭', opera_type: '关闭' }})
               .then(response => {
                 this.$message({
                   type: 'success',
                   message: '关闭成功'
                 })
                 this.submit1 = false
+                this.dialogVisibleClose = false
                 this.$refs.multipleTable.clearSelection()
                 this.getList()
               })

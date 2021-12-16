@@ -82,8 +82,8 @@
 
       <el-form-item>
         <el-button v-permission="['equip_apply_order', 'receive']" type="primary" :loading="orderLoad" @click="order">接单</el-button>
-        <el-button v-permission="['equip_apply_order', 'charge']" type="primary" :loading="backLoad" @click="back">退单</el-button>
-        <el-button v-permission="['equip_apply_order', 'close']" type="primary" :loading="closeLoad" @click="close">关闭</el-button>
+        <el-button v-permission="['equip_apply_order', 'charge']" type="primary" @click="backDialog">退单</el-button>
+        <el-button v-permission="['equip_apply_order', 'close']" type="primary" @click="closeDialog">关闭</el-button>
         <!-- <el-button type="primary">导出Excel</el-button> -->
       </el-form-item>
     </el-form>
@@ -236,6 +236,48 @@
         <el-button @click="handleCloseMaintain">取 消</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      title="退单原因填写"
+      :visible.sync="dialogVisibleBack"
+      width="30%"
+    >
+      <el-form label-width="120px">
+        <el-form-item label="退单原因:">
+          <el-input
+            v-model="desc"
+            style="width:300px"
+            type="textarea"
+            :rows="4"
+          />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleBack=false">取 消</el-button>
+        <el-button :loading="backLoad" type="primary" @click="back">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <el-dialog
+      title="关闭工单原因填写"
+      :visible.sync="dialogVisibleClose"
+      width="30%"
+    >
+      <el-form :inline="true" label-width="120px">
+        <el-form-item label="关闭工单原因:">
+          <el-input
+            v-model="desc"
+            style="width:300px"
+            type="textarea"
+            :rows="4"
+          />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleClose=false">取 消</el-button>
+        <el-button :loading="closeLoad" type="primary" @click="close">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -262,6 +304,9 @@ export default {
       dialogVisibleRepair: false,
       dialogVisibleDefinition: false,
       dialogVisibleMaintain: false,
+      dialogVisibleBack: false,
+      dialogVisibleClose: false,
+      desc: null,
       dateValue: [],
       tableData: [],
       total: 0,
@@ -286,6 +331,22 @@ export default {
   methods: {
     debounceList() {
       debounce(this, 'changeSearch')
+    },
+    backDialog() {
+      if (this.multipleSelection.length > 0) {
+        this.desc = null
+        this.dialogVisibleBack = true
+      } else {
+        this.$message('请先勾选工单')
+      }
+    },
+    closeDialog() {
+      if (this.multipleSelection.length > 0) {
+        this.desc = null
+        this.dialogVisibleClose = true
+      } else {
+        this.$message('请先勾选工单')
+      }
     },
     changeDate(date) {
       this.search.planned_repair_date_after = date ? date[0] : ''
@@ -339,13 +400,14 @@ export default {
             type: 'warning'
           }).then(() => {
             this.backLoad = true
-            multiUpdate('post', null, { data: { pks: obj, status: '已生成', opera_type: '退单' }})
+            multiUpdate('post', null, { data: { back_reason: this.desc, pks: obj, status: '已生成', opera_type: '退单' }})
               .then(response => {
                 this.$message({
                   type: 'success',
                   message: '退单成功'
                 })
                 this.backLoad = false
+                this.dialogVisibleBack = false
                 this.$refs.multipleTable.clearSelection()
                 this.getList()
               })
@@ -373,13 +435,14 @@ export default {
             type: 'warning'
           }).then(() => {
             this.closeLoad = true
-            multiUpdate('post', null, { data: { pks: obj, status: '已关闭', opera_type: '关闭' }})
+            multiUpdate('post', null, { data: { close_reason: this.desc, pks: obj, status: '已关闭', opera_type: '关闭' }})
               .then(response => {
                 this.$message({
                   type: 'success',
                   message: '关闭成功'
                 })
                 this.closeLoad = false
+                this.dialogVisibleClose = false
                 this.$refs.multipleTable.clearSelection()
                 this.getList()
               })
