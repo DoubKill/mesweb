@@ -120,14 +120,14 @@
         prop="work_order_no"
         label="工单编号"
         min-width="20"
-      >
-        <template slot-scope="scope">
+      />
+      <!-- <template slot-scope="scope">
           <el-link
             type="primary"
             @click="dialogWorkNo(scope.row)"
           >{{ scope.row.work_order_no }}</el-link>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         prop="equip_no"
         label="机台"
