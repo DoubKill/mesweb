@@ -64,9 +64,9 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="所需物料名称">
+      <!-- <el-form-item label="所需物料名称">
         <el-input v-model="getParams.spare_name" clearable @input="changeDebounce" />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item v-if="!isDialog" style="float:right">
         <el-button v-permission="['equip_maintenance_standard', 'export']" type="primary" style="margin-right:8px" :loading="btnExportLoad" @click="templateDownload">导出Excel</el-button>
         <el-upload
@@ -169,7 +169,7 @@
         prop="operation_time_unit"
         label="作业时间单位"
       />
-      <el-table-column
+      <!-- <el-table-column
         prop="spare_list_str"
         label="所需物料名称"
       >
@@ -178,7 +178,7 @@
             type="primary"
           >{{ scope.row.spare_list_str }}</el-link>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         prop="created_username"
         label="录入人"
