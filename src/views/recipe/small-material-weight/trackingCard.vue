@@ -646,7 +646,7 @@ export default {
               this.$message.info('其他料包总数有偏差')
               return
             }
-            const _api = this.ruleForm.bra_code ? 'put' : 'post'
+            const _api = this.againPrint ? 'put' : 'post'
             let _obj = JSON.parse(JSON.stringify(this.ruleForm))
             if (this.ruleForm.bra_code) {
               _obj = { print_count: this.ruleForm.print_count }
