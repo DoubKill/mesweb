@@ -648,13 +648,13 @@ export default {
             }
             const _api = this.againPrint ? 'put' : 'post'
             let _obj = JSON.parse(JSON.stringify(this.ruleForm))
-            if (this.ruleForm.bra_code) {
+            if (this.againPrint) {
               _obj = { print_count: this.ruleForm.print_count }
             }
             // console.log(_obj, 6666)
             // return
             this.btnLoading = true
-            await weightingPackageLog(_api, this.ruleForm.bra_code ? this.ruleForm.id : '', { data: _obj })
+            await weightingPackageLog(_api, this.againPrint ? this.ruleForm.id : '', { data: _obj })
             this.$message.success('已下发打印')
             this.btnLoading = false
             this.dialogVisible = false
