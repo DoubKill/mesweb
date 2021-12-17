@@ -70,17 +70,17 @@
       <el-table-column
         prop="name"
         label="物料名称"
-        min-width="20"
+        width="120"
       />
       <el-table-column
         prop="code"
         label="物料编码"
-        min-width="20"
+        width="170"
       />
       <el-table-column
         prop="zc_material_code"
         label="中策物料编码"
-        min-width="20"
+        width="100"
       />
       <!-- <el-table-column
         prop="batch_no"
@@ -90,17 +90,17 @@
       <el-table-column
         prop="unit"
         label="单位"
-        min-width="10"
+        width="60"
       />
       <el-table-column
         prop="pdm"
         label="PDM"
-        min-width="15"
+        width="60"
       />
       <el-table-column
         prop="group_name"
         label="物料组"
-        min-width="20"
+        width="90"
       />
       <!-- <el-table-column
         prop="tunnel_name"
@@ -120,7 +120,7 @@
       <el-table-column
         prop="quantity_1"
         label="合格品数量"
-        width="100"
+        width="90"
       >
         <template slot-scope="scope">
           <el-link
@@ -134,12 +134,12 @@
       <el-table-column
         prop="weight_1"
         label="合格品重量(kg)"
-        width="120"
+        width="110"
       />
       <el-table-column
         prop="quantity_5"
         label="待检品数量"
-        width="100"
+        width="90"
       >
         <template slot-scope="scope">
           <el-link
@@ -153,7 +153,7 @@
       <el-table-column
         prop="weight_5"
         label="待检品重量(kg)"
-        width="120"
+        width="110"
       />
       <el-table-column
         prop="quantity_3"
@@ -172,17 +172,17 @@
       <el-table-column
         prop="weight_3"
         label="不合格重量(kg)"
-        width="120"
+        width="110"
       />
       <el-table-column
         prop="total_quantity"
         label="总数量"
-        min-width="20"
+        width="60"
       />
       <el-table-column
         prop="total_weight"
         label="总重量(kg)"
-        min-width="20"
+        min-width="70"
       />
     </el-table>
     <page
@@ -190,6 +190,12 @@
       :total="total"
       :current-page="search.page"
       @currentChange="currentChange"
+    />
+    <el-alert
+      :closable="false"
+      style="color:#5200FF"
+      title="有效库存重量=合格品重量+待检品重量，作为低库存预警的判断条件，与低库存基准值做比较。"
+      type="success"
     />
     <el-dialog
       :visible.sync="dialogVisible"
