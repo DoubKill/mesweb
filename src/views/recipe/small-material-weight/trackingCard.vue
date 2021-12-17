@@ -60,7 +60,7 @@
       <el-table-column
         prop="product_no"
         label="配方号"
-        min-width="20"
+        min-width="25"
       />
       <el-table-column
         prop="dev_type"
@@ -75,7 +75,7 @@
       <el-table-column
         prop="equip_no"
         label="配料机台"
-        min-width="20"
+        min-width="15"
       />
       <el-table-column
         prop="batch_time"
@@ -137,16 +137,25 @@
       />
       <el-table-column
         label="操作"
-        width="120"
+        width="200"
       >
         <template slot-scope="scope">
           <el-button
             v-permission="['xl_expire_data', 'save']"
             type="primary"
-            @click="reprintFun(scope.row)"
+            @click="reprintFun(scope.row,false)"
           >
-            {{ !scope.row.bra_code?'打印':'重新打印' }}
+            打印
           </el-button>
+          <div v-if="scope.row.bra_code" style="display:inline-block;margin-left:10px">
+            <el-button
+              v-permission="['xl_expire_data', 'save']"
+              type="primary"
+              @click="reprintFun(scope.row,true)"
+            >
+              重新打印
+            </el-button>
+          </div>
         </template>
       </el-table-column>
     </el-table>
@@ -172,22 +181,33 @@
             :max="ruleForm.package_fufil"
             :step="1"
             step-strictly
-            :disabled="ruleForm.bra_code?true:false"
-            @change="ruleForm.package_count=1"
+            :disabled="againPrint"
           />
         </el-form-item>
         <el-form-item label="配置数量" prop="package_count">
           <!-- +1-ruleForm.print_begin_trains -->
           <el-input-number
+            v-if="!againPrint"
             v-model="ruleForm.package_count"
             controls-position="right"
             :min="1"
-            :max="ruleForm.package_fufil"
+            :max="ruleForm.noprint_count"
             :step="1"
             step-strictly
-            :disabled="ruleForm.bra_code?true:false"
-            @change="ruleForm.print_count=1"
+            :disabled="againPrint"
+            @change="changePackageCount"
           />
+          <el-input-number
+            v-else
+            v-model="ruleForm.package_count"
+            controls-position="right"
+            :min="1"
+            :step="1"
+            step-strictly
+            :disabled="againPrint"
+            @change="changePackageCount"
+          />
+          <!-- ruleForm.print_count=1 -->
         </el-form-item>
         <el-form-item label="打印张数" prop="print_count">
           <el-input-number
@@ -254,7 +274,7 @@
         </tr>
       </table>
       <div style="border:1px solid #eee;margin:10px 0" />
-      <el-form v-if="!ruleForm.bra_code&&ruleForm.merge_flag">
+      <el-form v-if="!againPrint&&ruleForm.merge_flag">
         <el-form-item label="合包配料包条码">
           <el-input v-model="barCode" style="width:300px" @input="changeBarCode" />
         </el-form-item>
@@ -358,7 +378,8 @@ export default {
       option: [],
       btnLoading: false,
       barCode: '',
-      otherNum: 0
+      otherNum: 0,
+      againPrint: null
     }
   },
   created() {
@@ -436,15 +457,19 @@ export default {
         if (!val) {
           return
         }
+        // console.log(this.ruleForm, 'this.ruleForm')
         const obj = {
           merge_flag: this.ruleForm.merge_flag,
           product_no: this.ruleForm.product_no,
           dev_type: this.ruleForm.dev_type,
           scan_bra_code: val,
           package_count: this.ruleForm.package_count,
-          split_count: this.ruleForm.split_count
+          split_count: this.ruleForm.split_count,
+          manual_infos: this.ruleForm.manual_infos,
+          batching_equip: this.ruleForm.equip_no
         }
         const data = await manualPost('post', null, { data: obj })
+        let _bool = false
         const _details = data.results.details
         if (!this.ruleForm.manual_headers) {
           const _obj = {
@@ -460,22 +485,28 @@ export default {
         }
         if (_details.manual_details && _details.manual_details.length) {
           // 有详情的情况
+          const names = []
           _details.manual_details.forEach(D => {
+            names.push(D.material_name)
             const arr2 = this.ruleForm.manual_body.filter(d => d.material_name === D.material_name)
             if (arr2.length) {
-              throw new Error('扫码失败,有重复物料')
+              _bool = true
             }
             D.single_weight = D.standard_weight
             D.batching_type = D.batch_type
             D.batch_group = _details.batch_group
             D.batch_class = _details.batch_class
           })
-          this.ruleForm.manual_body = this.ruleForm.manual_body.concat(_details.manual_details)
           this.ruleForm.manual_headers.total_nums++
           this.ruleForm.manual_infos.push({
             manual_type: data.results.manual_type,
-            manual_id: data.results.manual_id
+            manual_id: data.results.manual_id,
+            package_count: data.results.details.package_count,
+            names: names
           })
+          if (!_bool) {
+            this.ruleForm.manual_body = this.ruleForm.manual_body.concat(_details.manual_details)
+          }
         } else {
           const arr1 = this.ruleForm.manual_body.filter(d => d.material_name === _details.material_name)
           if (!arr1.length) {
@@ -526,7 +557,9 @@ export default {
         const e = Math.round((c + b) * 1000) / 1000
         // this.ruleForm.machine_manual_weight = Math.round((d + e) * 1000) / 1000
         this.ruleForm.manual_weight = e
-        this.otherNum = Math.round((this.otherNum - (_details.detail_manual + _details.detail_machine) * Number(this.ruleForm.split_count)) * 1000) / 1000
+        if (!_bool) {
+          this.otherNum = Math.round((this.otherNum - (_details.detail_manual + _details.detail_machine) * Number(this.ruleForm.split_count)) * 1000) / 1000
+        }
 
         const tolerance = await getMaterialTolerance('get', null,
           { params: { batching_equip: this.ruleForm.equip_no, project_name: 'all',
@@ -551,6 +584,8 @@ export default {
       this.formInline.page_size = page_size
       this.getList()
     },
+    changePackageCount() {
+    },
     handleClose(done) {
       this.dialogVisible = false
       this.barCode = ''
@@ -558,16 +593,31 @@ export default {
         done()
       }
     },
-    reprintFun(row) {
+    reprintFun(row, bool) {
       this.dialogVisible = true
+      this.againPrint = bool
       this.ruleForm = JSON.parse(JSON.stringify(row))
+      if (!bool) {
+        // 打印
+        this.ruleForm.print_begin_trains = this.ruleForm.next_print_begin_trains
+          ? this.ruleForm.next_print_begin_trains : 1
+
+        this.ruleForm.package_count = this.ruleForm.next_package_count
+          ? this.ruleForm.next_package_count : 20
+
+        this.ruleForm.package_count = this.ruleForm.package_count > this.ruleForm.noprint_count
+          ? this.ruleForm.noprint_count : this.ruleForm.package_count
+
+        this.$set(this.ruleForm, 'manual_headers', {})
+        this.$set(this.ruleForm, 'manual_body', [])
+        this.$set(this.ruleForm, 'manual_infos', [])
+        this.ruleForm.manual_weight = 0
+      }
+
       this.$set(this.ruleForm, 'print_count', 1)
       this.$set(this.ruleForm, '_machine_manual_weight', this.ruleForm.machine_manual_weight)
       if (!this.ruleForm.bra_code && this.ruleForm.merge_flag) {
         this.otherNum = Math.round((Number(this.ruleForm.machine_manual_weight) - Number(this.ruleForm.machine_weight) * Number(this.ruleForm.split_count)) * 1000) / 1000
-      }
-      if (!this.ruleForm.package_count) {
-        this.ruleForm.package_count = this.ruleForm.package_fufil || 0
       }
     },
     submitFun() {
@@ -600,6 +650,8 @@ export default {
             if (this.ruleForm.bra_code) {
               _obj = { print_count: this.ruleForm.print_count }
             }
+            // console.log(_obj, 6666)
+            // return
             this.btnLoading = true
             await weightingPackageLog(_api, this.ruleForm.bra_code ? this.ruleForm.id : '', { data: _obj })
             this.$message.success('已下发打印')
