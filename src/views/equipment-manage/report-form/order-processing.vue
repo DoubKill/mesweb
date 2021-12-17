@@ -2,15 +2,62 @@
   <div>
     <!-- 处理时间分析报表 -->
     <el-form :inline="true">
-      <el-form-item label="起止日期">
+      <el-form-item>
+        <el-radio v-model="radio" label="1" @change="clearTime">日报</el-radio>
+        <el-radio v-model="radio" label="2" @change="clearTime">周报</el-radio>
+        <el-radio v-model="radio" label="3" @change="clearTime">月报</el-radio>
+        <el-radio v-model="radio" label="4" @change="clearTime">年报</el-radio>
+      </el-form-item>
+      <br>
+      <el-form-item label="作业类型">
+        <el-select
+          v-model="search.work_type"
+          placeholder="请选择"
+          clearable
+          @change="getList"
+        >
+          <el-option
+            v-for="item in ['巡检','保养','维修','润滑','标定']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="日/周/月/年">
         <el-date-picker
-          v-model="dateValue"
-          type="daterange"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
+          v-show="radio==='1'"
+          v-model="search.day_time"
+          type="date"
           value-format="yyyy-MM-dd"
-          @change="changeDate"
+          placeholder="选择日期"
+          @change="getList"
+        />
+        <el-date-picker
+          v-show="radio==='2'"
+          v-model="search.day_time"
+          type="week"
+          format="yyyy 第 WW 周"
+          :picker-options="{firstDayOfWeek:1}"
+          value-format="yyyy-MM-dd"
+          placeholder="选择周"
+          @change="getList"
+        />
+        <el-date-picker
+          v-show="radio==='3'"
+          v-model="search.day_time"
+          type="month"
+          value-format="yyyy-MM"
+          placeholder="选择月"
+          @change="getList"
+        />
+        <el-date-picker
+          v-show="radio==='4'"
+          v-model="search.day_time"
+          type="year"
+          value-format="yyyy"
+          placeholder="选择年"
+          @change="getList"
         />
       </el-form-item>
       <el-form-item>
@@ -29,12 +76,12 @@
     >
       <el-table-column
         prop="order_id"
-        label="计划编号"
+        label="时间"
         min-width="20"
       />
       <el-table-column
         prop="order_id"
-        label="计划名称"
+        label="作业类别"
         min-width="20"
       />
       <el-table-column
@@ -77,6 +124,7 @@
 </template>
 
 <script>
+import dayjs from 'dayjs'
 export default {
   name: 'EquipmentReportFormOrderProcessing',
   data() {
@@ -85,7 +133,8 @@ export default {
       btnExportLoad: false,
       search: {},
       loading: false,
-      tableData: []
+      tableData: [],
+      radio: '1'
     }
   },
   created() {
@@ -95,20 +144,23 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const obj = {}
-        Object.assign(obj, this.search)
-        // const data = await equipWarehouseRecord('get', null, { params: obj })
+        // const data = await equipWarehouseRecord('get', null, { params: this.search })
         // this.tableData = data.results || []
         // this.total = data.count
+        console.log(this.search)
         this.loading = false
       } catch (e) {
         this.loading = false
       }
     },
-    changeDate(arr) {
-      this.search.s_time = arr ? arr[0] : ''
-      this.search.e_time = arr ? arr[1] : ''
-      this.getList()
+    clearTime() {
+      if (this.radio === '3') {
+        this.search.day_time = dayjs().endOf('month').format('YYYY-MM')
+      } else if (this.radio === '4') {
+        this.search.day_time = dayjs().endOf('year').format('YYYY')
+      } else {
+        this.search.day_time = ''
+      }
     },
     exportTable() {
       this.btnExportLoad = true

@@ -23,6 +23,7 @@
       </el-form-item>
       <el-form-item label="机台">
         <equip-select
+          equip-type="密炼设备"
           @equipSelected="equipSelected"
         />
       </el-form-item>
