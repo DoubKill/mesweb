@@ -29,6 +29,12 @@
           @click="exportTable"
         >导出Excel</el-button>
       </el-form-item>
+      <el-form-item style="margin-left:20px;" label="计划总车数">
+        {{ planTrainAll }}
+      </el-form-item>
+      <el-form-item style="margin-left:20px" label="完成总车数">
+        {{ completeTrainAll }}
+      </el-form-item>
     </el-form>
     <el-table
       id="out-table"
@@ -36,6 +42,8 @@
       :data="tableData"
       border
       :span-method="arraySpanMethod"
+      show-summary
+      :summary-method="getSummaries"
     >
       <el-table-column width="120px">
         <template
@@ -64,11 +72,13 @@
         min-width="20"
         :label="item.global_name"
         align="center"
+        :prop="item.global_name"
       >
         <el-table-column
           label="规格"
           min-width="30"
           align="center"
+          :prop="`product_no,${item.global_name}`"
         >
           <template v-if="row[item.global_name]" slot-scope="{row}">
             {{ row[item.global_name].product_no }}
@@ -78,6 +88,7 @@
           label="计划（车）"
           min-width="20"
           align="center"
+          :prop="`plan_trains,${item.global_name}`"
         >
           <template v-if="row[item.global_name]" slot-scope="{row}">
             {{ row[item.global_name].plan_trains }}
@@ -87,6 +98,7 @@
           label="完成（车）"
           min-width="20"
           align="center"
+          :prop="`actual_trains,${item.global_name}`"
         >
           <template v-if="row[item.global_name]" slot-scope="{row}">
             {{ row[item.global_name].actual_trains }}
@@ -113,7 +125,9 @@ export default {
       loading: false,
       classOptions: [],
       tableData: [],
-      exportTableShow: false
+      exportTableShow: false,
+      planTrainAll: 0,
+      completeTrainAll: 0
     }
   },
   async created() {
@@ -125,10 +139,14 @@ export default {
         this.loading = true
         const data = await productClassesPlanReal('get', null, { params: this.search })
         const arr = []
+        this.planTrainAll = 0
+        this.completeTrainAll = 0
         for (const key in data) {
           if (Object.hasOwnProperty.call(data, key)) {
             const element = data[key]
             element.forEach((d, i) => {
+              this.planTrainAll += Number(d.plan_trains)
+              this.completeTrainAll += Number(d.actual_trains)
               if (!arr[i]) {
                 arr[i] = {
                   [key]: d || {}
@@ -171,6 +189,35 @@ export default {
         }
       }
     },
+    getSummaries(param) {
+      const { columns, data } = param
+      const sums = []
+
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = '合计'
+          return
+        }
+        const _property = column.property.split(',')[0]
+        const _column = column.property.split(',')[1]
+        const values = data.map(item => item[_column] && Number(item[_column][_property]))
+        if (!values.every(value => isNaN(value))) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0)
+          sums[index]
+        } else {
+          sums[index] = ''
+        }
+      })
+
+      return sums
+    },
     async exportTable() {
       await this.$set(this, 'exportTableShow', true)
       await exportExcel('生产记录表')
@@ -180,6 +227,7 @@ export default {
     }
   }
 }
+
 </script>
 
 <style lang="scss">
