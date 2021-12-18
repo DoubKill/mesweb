@@ -23,6 +23,9 @@
           @input="getParam"
         />
       </el-form-item>
+      <el-form-item label="">
+        <el-checkbox v-model="getParams.unset_flag_" @change="changeFlag">只显示未设定参数的物料</el-checkbox>
+      </el-form-item>
       <el-form-item style="float: right;">
         <el-button v-permission="['th_warning_setting', 'set']" type="primary" @click="averageDailyDosage(false)">日均用量设定</el-button>
         <el-button v-permission="['th_warning_setting', 'set']" type="primary" @click="averageDailyDosage(true)">预警天数设定</el-button>
@@ -179,6 +182,11 @@ export default {
     currentChange(page, pageSize) {
       this.getParams.page = page
       this.getParams.page_size = pageSize
+      this.getList()
+    },
+    changeFlag() {
+      this.getParams.page = 1
+      this.getParams.unset_flag = this.getParams.unset_flag_ ? 1 : ''
       this.getList()
     },
     changeList() {
