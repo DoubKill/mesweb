@@ -331,7 +331,7 @@
           <td>{{ tdItem.batch_user }}</td>
         </tr>
       </table>
-      <div v-if="otherNum" style="font-weight:700;margin-top:10px;">备注：有其他料包(
+      <div v-if="otherNum&&otherNum>0" style="font-weight:700;margin-top:10px;">备注：有其他料包(
         {{ otherNum }}kg/车)</div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose(false)">取 消</el-button>
@@ -471,18 +471,18 @@ export default {
         const data = await manualPost('post', null, { data: obj })
         let _bool = false
         const _details = data.results.details
-        // if (!this.ruleForm.manual_headers) {
-        const _obj = {
-          product_no: this.ruleForm.product_no,
-          dev_type: this.ruleForm.dev_type,
-          print_datetime: _details.created_date,
-          class_group: _details.batch_group + '/' + _details.batch_class,
-          total_nums: 0
+        if (!this.ruleForm.manual_body.length) {
+          const _obj = {
+            product_no: this.ruleForm.product_no,
+            dev_type: this.ruleForm.dev_type,
+            print_datetime: _details.created_date,
+            class_group: _details.batch_group + '/' + _details.batch_class,
+            total_nums: 0
+          }
+          this.$set(this.ruleForm, 'manual_headers', _obj)
+          this.$set(this.ruleForm, 'manual_body', [])
+          this.$set(this.ruleForm, 'manual_infos', [])
         }
-        this.$set(this.ruleForm, 'manual_headers', _obj)
-        this.$set(this.ruleForm, 'manual_body', [])
-        this.$set(this.ruleForm, 'manual_infos', [])
-        // }
         if (_details.manual_details && _details.manual_details.length) {
           // 有详情的情况
           const names = []
@@ -585,6 +585,14 @@ export default {
       this.getList()
     },
     changePackageCount() {
+      this.$set(this.ruleForm, 'manual_headers', {})
+      this.$set(this.ruleForm, 'manual_body', [])
+      this.$set(this.ruleForm, 'manual_infos', [])
+      this.ruleForm.manual_weight = 0
+      this.barCode = ''
+      if (!this.againPrint && this.ruleForm.merge_flag) {
+        this.otherNum = Math.round((Number(this.ruleForm.machine_manual_weight) - Number(this.ruleForm.machine_weight) * Number(this.ruleForm.split_count)) * 1000) / 1000
+      }
     },
     handleClose(done) {
       this.dialogVisible = false
@@ -617,7 +625,7 @@ export default {
 
       this.$set(this.ruleForm, 'print_count', 1)
       this.$set(this.ruleForm, '_machine_manual_weight', this.ruleForm.machine_manual_weight)
-      if (!bool && this.ruleForm.merge_flag) {
+      if (!this.againPrint && this.ruleForm.merge_flag) {
         this.otherNum = Math.round((Number(this.ruleForm.machine_manual_weight) - Number(this.ruleForm.machine_weight) * Number(this.ruleForm.split_count)) * 1000) / 1000
       }
     },
