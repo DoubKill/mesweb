@@ -62,7 +62,7 @@
       <el-form-item label="物料编码">
         <el-input v-model="search.material_no" clearable @input="debounceList" />
       </el-form-item>
-      <el-form-item label="物料名称">
+      <el-form-item v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="物料名称">
         <el-input v-model="search.material_name" clearable @input="debounceList" />
       </el-form-item>
       <el-form-item label="出入库单号">
@@ -74,7 +74,7 @@
       <el-form-item label="质检条码">
         <el-input v-model="search.lot_no" clearable @input="debounceList" />
       </el-form-item>
-      <el-form-item label="品质状态">
+      <el-form-item v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="品质状态">
         <el-select
           v-model="search.quality_status"
           clearable
@@ -131,7 +131,7 @@
         </template>
       </el-table-column> -->
       <el-table-column label="物料编码" align="center" prop="material_no" />
-      <el-table-column label="物料名称" align="center" prop="material_name" />
+      <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="物料名称" align="center" prop="material_name" />
       <!-- <el-table-column label="出入库原因" align="center" prop="inout_reason" /> -->
       <!-- <el-table-column label="出入库类型" align="center" prop="inout_num_type" /> -->
       <el-table-column label="出入库数" align="center" prop="qty" width="50" />
@@ -145,7 +145,7 @@
       />
       <el-table-column label="重量(kg)" align="center" prop="weight" width="80" />
       <el-table-column label="发起人" align="center" prop="initiator" width="80" />
-      <el-table-column label="品质状态" align="center" prop="initiator" width="80">
+      <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="品质状态" align="center" prop="initiator" width="80">
         <template slot-scope="{row}">
           <span v-if="row.is_qualified===true">合格</span>
           <span v-if="row.is_qualified===false">不合格</span>

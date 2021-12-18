@@ -66,7 +66,7 @@
             <el-button type="primary" style="margin-right:5px">
               确定全部机台计划
             </el-button>
-            <el-button v-permission="['equip_plan','export']" type="primary" :loading="btnExportLoad" @click="templateDownload">
+            <el-button v-permission="['equip_plan','export']" type="primary" :loading="btnExportLoad" @click="exportTable">
               导出Excel
             </el-button>
           </div>
@@ -83,9 +83,7 @@
           :key="index"
           class="addPlanArrBox"
         >
-
           <div class="tableTop">
-
             <div class="tableTopLeft">
               {{ item[0][0]?item[0][0].equipNo:'--' }}
               --
@@ -97,6 +95,7 @@
             <el-input style="width:80px" />
             <el-button
               v-if="permissionArr.indexOf('add')>-1"
+              type="primary"
               class="tableTopright"
               @click="singleSavePlan(index,item)"
             >确定</el-button>
@@ -294,6 +293,7 @@ export default {
       rubberMateriaObj: {},
       loadingSelect: true,
       baseDefaultData: {},
+      btnExportLoad: false,
       loading: false,
       addPlanArrLoading: false,
       checkAll: false
@@ -758,6 +758,25 @@ export default {
         baseData.plan_classes_uid = setPlanClassesUid(currentIndex + 2, planForAdd.equipNo)
         tableItem.push(baseData)
       }
+    },
+    exportTable() {
+      // this.btnExportLoad = true
+      // const obj = Object.assign({ export: 1 }, this.search)
+      // const _api = equipComponentDown
+      // _api(obj)
+      //   .then(res => {
+      //     const link = document.createElement('a')
+      //     const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+      //     link.style.display = 'none'
+      //     link.href = URL.createObjectURL(blob)
+      //     link.download = '设备部件定义.xlsx' // 下载的文件名
+      //     document.body.appendChild(link)
+      //     link.click()
+      //     document.body.removeChild(link)
+      //     this.btnExportLoad = false
+      //   }).catch(e => {
+      //     this.btnExportLoad = false
+      //   })
     },
     async addOnePlan() {
       // 获取排班
