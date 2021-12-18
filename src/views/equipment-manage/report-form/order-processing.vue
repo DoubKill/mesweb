@@ -1,12 +1,14 @@
 <template>
   <div>
-    <!-- 处理时间分析报表 -->
+    <!-- 期间别处理时间分析报表 -->
     <el-form :inline="true">
       <el-form-item>
-        <el-radio v-model="radio" label="1" @change="clearTime">日报</el-radio>
-        <el-radio v-model="radio" label="2" @change="clearTime">周报</el-radio>
-        <el-radio v-model="radio" label="3" @change="clearTime">月报</el-radio>
-        <el-radio v-model="radio" label="4" @change="clearTime">年报</el-radio>
+        <el-radio-group v-model="radio" @change="resetTime">
+          <el-radio :label="1">日报</el-radio>
+          <el-radio :label="2">周报</el-radio>
+          <el-radio :label="3">月报</el-radio>
+          <el-radio :label="4">年报</el-radio>
+        </el-radio-group>
       </el-form-item>
       <br>
       <el-form-item label="作业类型">
@@ -26,8 +28,9 @@
       </el-form-item>
       <el-form-item label="日/周/月/年">
         <el-date-picker
-          v-show="radio==='1'"
-          v-model="search.day_time1"
+          v-if="type===1"
+          key="1"
+          v-model="search.day_time"
           type="date"
           format="yyyy-MM-dd"
           value-format="yyyy-MM-dd"
@@ -35,30 +38,33 @@
           @change="changeList"
         />
         <el-date-picker
-          v-show="radio==='2'"
-          v-model="search.day_time2"
+          v-if="type===2"
+          key="2"
+          v-model="search.day_time"
           type="week"
-          format="yyyy 第 WW 周"
           :picker-options="{firstDayOfWeek:1}"
+          format="yyyy第WW周"
           value-format="yyyy-MM-dd"
           placeholder="选择周"
           @change="changeList"
         />
         <el-date-picker
-          v-show="radio==='3'"
-          v-model="search.day_time3"
+          v-if="type===3"
+          key="3"
+          v-model="search.day_time"
           type="month"
           format="yyyy-MM"
-          value-format="yyyy-MM"
+          value-format="yyyy-MM-dd"
           placeholder="选择月"
           @change="changeList"
         />
         <el-date-picker
-          v-show="radio==='4'"
-          v-model="search.day_time4"
+          v-if="type===4"
+          key="4"
+          v-model="search.day_time"
           type="year"
           format="yyyy"
-          value-format="yyyy"
+          value-format="yyyy-MM-dd"
           placeholder="选择年"
           @change="changeList"
         />
@@ -127,16 +133,17 @@
 </template>
 
 <script>
+import { setDate } from '@/utils'
 export default {
   name: 'EquipmentReportFormOrderProcessing',
   data() {
     return {
-      dateValue: [],
       btnExportLoad: false,
-      search: {},
+      search: { day_time: setDate() },
       loading: false,
       tableData: [],
-      radio: '1'
+      radio: 1,
+      type: 1
     }
   },
   created() {
@@ -148,29 +155,24 @@ export default {
         this.loading = true
         // const data = await equipWarehouseRecord('get', null, { params: this.search })
         // this.tableData = data.results || []
-        // this.total = data.count
         this.loading = false
       } catch (e) {
         this.loading = false
       }
     },
     changeList() {
-      console.log(this.search.day_time1)
-      console.log(this.search.day_time2)
-      console.log(this.search.day_time3)
-      console.log(this.search.day_time4)
-      // console.log(this.search.day_time)
-      // if (this.radio === '3') {
-      //   this.search.day_time3 = this.search.day_time3.split('-')[0] + '-' + this.search.day_time3.split('-')[1]
-      // } else if (this.radio === '4') {
-      //   this.search.day_time4 = this.search.day_time4.split('-')[0]
+      // if (this.type === 2) {
+      //   this.search.day_time = getNextDate(this.search.day_time, -1)
       // }
+      this.getList()
     },
-    clearTime() {
-      // if (this.search.day_time) {
-      this.search.day_time3 = ''
+    resetTime() {
+      // if (this.radio === 2) {
+      //   this.search.day_time = getMonday(new Date())
       // }
-      // console.log(this.search)
+      this.search.day_time = setDate()
+      this.type = this.radio
+      this.getList()
     },
     exportTable() {
       this.btnExportLoad = true
@@ -193,6 +195,41 @@ export default {
     }
   }
 }
+// function getNextDate(date, day) {
+//   var dd = new Date(date)
+//   dd.setDate(dd.getDate() + day)
+//   var y = dd.getFullYear()
+//   var m = dd.getMonth() + 1 < 10 ? '0' + (dd.getMonth() + 1) : dd.getMonth() + 1
+//   var d = dd.getDate() < 10 ? '0' + dd.getDate() : dd.getDate()
+//   return y + '-' + m + '-' + d
+// }
+// function getNextMon(date, day) {
+//   var dd = new Date(date)
+//   dd.setDate(dd.getDate() + day)
+//   var y = dd.getFullYear()
+//   var m = dd.getMonth() + 1 < 10 ? '0' + (dd.getMonth() + 1) : dd.getMonth() + 1
+//   return y + '-' + m
+// }
+// function getNextYear(date, day) {
+//   var dd = new Date(date)
+//   dd.setDate(dd.getDate() + day)
+//   var y = dd.getFullYear()
+//   return y
+// }
+// function getMonday(date) {
+//   var day = date.getDay()
+//   var deltaDay
+//   if (day === 0) {
+//     deltaDay = 6
+//   } else {
+//     deltaDay = day - 1
+//   }
+//   var monday = new Date(date.getTime() - deltaDay * 24 * 60 * 60 * 1000)
+//   monday.setHours(0)
+//   monday.setMinutes(0)
+//   monday.setSeconds(0)
+//   return getNextDate(monday, 0) // 返回本周的周一的0时0分0秒
+// }
 </script>
 
 <style>

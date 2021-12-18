@@ -2,6 +2,15 @@
   <div>
     <!-- 胶料计划及发货对比 -->
     <el-form :inline="true">
+      <el-form-item>
+        <el-radio-group v-model="radio" @change="resetTime">
+          <el-radio :label="1">日报</el-radio>
+          <el-radio :label="2">周报</el-radio>
+          <el-radio :label="3">月报</el-radio>
+          <el-radio :label="4">年报</el-radio>
+        </el-radio-group>
+      </el-form-item>
+      <br>
       <el-form-item label="分厂">
         <el-select
           v-model="search.product_no"
@@ -23,17 +32,49 @@
           @input="changeSearch"
         />
       </el-form-item>
-      <!-- <el-form-item label="日/周/月/年">
+      <el-form-item label="日/周/月/年">
         <el-date-picker
-          v-model="dateValue"
-          type="daterange"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
+          v-if="type===1"
+          key="1"
+          v-model="search.day_time"
+          type="date"
+          format="yyyy-MM-dd"
           value-format="yyyy-MM-dd"
-          @change="changeDate"
+          placeholder="选择日期"
+          @change="changeList"
         />
-      </el-form-item> -->
+        <el-date-picker
+          v-if="type===2"
+          key="2"
+          v-model="search.day_time"
+          type="week"
+          :picker-options="{firstDayOfWeek:1}"
+          format="yyyy第WW周"
+          value-format="yyyy-MM-dd"
+          placeholder="选择周"
+          @change="changeList"
+        />
+        <el-date-picker
+          v-if="type===3"
+          key="3"
+          v-model="search.day_time"
+          type="month"
+          format="yyyy-MM"
+          value-format="yyyy-MM-dd"
+          placeholder="选择月"
+          @change="changeList"
+        />
+        <el-date-picker
+          v-if="type===4"
+          key="4"
+          v-model="search.day_time"
+          type="year"
+          format="yyyy"
+          value-format="yyyy-MM-dd"
+          placeholder="选择年"
+          @change="changeList"
+        />
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="getList">查询</el-button>
         <el-button
@@ -83,15 +124,17 @@
 </template>
 
 <script>
+import { setDate } from '@/utils'
 export default {
   name: 'ScheduleDeliveryComparison',
   data() {
     return {
-      dateValue: [],
       btnExportLoad: false,
-      search: {},
+      search: { day_time: setDate() },
       loading: false,
-      tableData: []
+      tableData: [],
+      radio: 1,
+      type: 1
     }
   },
   created() {
@@ -113,12 +156,15 @@ export default {
         this.loading = false
       }
     },
+    changeList() {
+      this.getList()
+    },
     changeSearch() {
       this.$debounce(this, 'getList')
     },
-    changeDate(arr) {
-      this.search.s_time = arr ? arr[0] : ''
-      this.search.e_time = arr ? arr[1] : ''
+    resetTime() {
+      this.search.day_time = setDate()
+      this.type = this.radio
       this.getList()
     },
     exportTable() {
