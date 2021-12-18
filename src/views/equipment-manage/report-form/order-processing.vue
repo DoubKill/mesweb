@@ -27,37 +27,40 @@
       <el-form-item label="日/周/月/年">
         <el-date-picker
           v-show="radio==='1'"
-          v-model="search.day_time"
+          v-model="search.day_time1"
           type="date"
+          format="yyyy-MM-dd"
           value-format="yyyy-MM-dd"
           placeholder="选择日期"
-          @change="getList"
+          @change="changeList"
         />
         <el-date-picker
           v-show="radio==='2'"
-          v-model="search.day_time"
+          v-model="search.day_time2"
           type="week"
           format="yyyy 第 WW 周"
           :picker-options="{firstDayOfWeek:1}"
           value-format="yyyy-MM-dd"
           placeholder="选择周"
-          @change="getList"
+          @change="changeList"
         />
         <el-date-picker
           v-show="radio==='3'"
-          v-model="search.day_time"
+          v-model="search.day_time3"
           type="month"
+          format="yyyy-MM"
           value-format="yyyy-MM"
           placeholder="选择月"
-          @change="getList"
+          @change="changeList"
         />
         <el-date-picker
           v-show="radio==='4'"
-          v-model="search.day_time"
+          v-model="search.day_time4"
           type="year"
+          format="yyyy"
           value-format="yyyy"
           placeholder="选择年"
-          @change="getList"
+          @change="changeList"
         />
       </el-form-item>
       <el-form-item>
@@ -124,7 +127,6 @@
 </template>
 
 <script>
-import dayjs from 'dayjs'
 export default {
   name: 'EquipmentReportFormOrderProcessing',
   data() {
@@ -147,20 +149,28 @@ export default {
         // const data = await equipWarehouseRecord('get', null, { params: this.search })
         // this.tableData = data.results || []
         // this.total = data.count
-        console.log(this.search)
         this.loading = false
       } catch (e) {
         this.loading = false
       }
     },
+    changeList() {
+      console.log(this.search.day_time1)
+      console.log(this.search.day_time2)
+      console.log(this.search.day_time3)
+      console.log(this.search.day_time4)
+      // console.log(this.search.day_time)
+      // if (this.radio === '3') {
+      //   this.search.day_time3 = this.search.day_time3.split('-')[0] + '-' + this.search.day_time3.split('-')[1]
+      // } else if (this.radio === '4') {
+      //   this.search.day_time4 = this.search.day_time4.split('-')[0]
+      // }
+    },
     clearTime() {
-      if (this.radio === '3') {
-        this.search.day_time = dayjs().endOf('month').format('YYYY-MM')
-      } else if (this.radio === '4') {
-        this.search.day_time = dayjs().endOf('year').format('YYYY')
-      } else {
-        this.search.day_time = ''
-      }
+      // if (this.search.day_time) {
+      this.search.day_time3 = ''
+      // }
+      // console.log(this.search)
     },
     exportTable() {
       this.btnExportLoad = true
