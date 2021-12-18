@@ -113,11 +113,11 @@ export default {
         if (this.tableData.length > 0) {
           this.tableData.push({
             receiving_user: '合计',
-            派单时间: sum(this.tableData, '派单时间'),
-            接单时间: sum(this.tableData, '接单时间'),
-            维修时间: sum(this.tableData, '维修时间'),
-            验收时间: sum(this.tableData, '验收时间'),
-            开机时间: sum(this.tableData, '开机时间')
+            派单时间: sum(this.tableData, '派单时间') / this.tableData.length,
+            接单时间: sum(this.tableData, '接单时间') / this.tableData.length,
+            维修时间: sum(this.tableData, '维修时间') / this.tableData.length,
+            验收时间: sum(this.tableData, '验收时间') / this.tableData.length,
+            开机时间: sum(this.tableData, '开机时间') / this.tableData.length
           })
         }
         this.loading = false

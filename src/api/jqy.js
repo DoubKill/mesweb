@@ -905,3 +905,13 @@ export function materialDetailsAux(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function equipPeriodStatement(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipPeriodStatement + id + '/' : API.EquipPeriodStatement,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+

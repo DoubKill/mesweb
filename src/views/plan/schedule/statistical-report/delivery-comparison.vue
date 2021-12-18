@@ -3,11 +3,11 @@
     <!-- 胶料计划及发货对比 -->
     <el-form :inline="true">
       <el-form-item>
-        <el-radio-group v-model="radio" @change="resetTime">
-          <el-radio :label="1">日报</el-radio>
-          <el-radio :label="2">周报</el-radio>
-          <el-radio :label="3">月报</el-radio>
-          <el-radio :label="4">年报</el-radio>
+        <el-radio-group v-model="search.type" @change="resetTime">
+          <el-radio label="day">日报</el-radio>
+          <el-radio label="week">周报</el-radio>
+          <el-radio label="month">月报</el-radio>
+          <el-radio label="year">年报</el-radio>
         </el-radio-group>
       </el-form-item>
       <br>
@@ -34,7 +34,7 @@
       </el-form-item>
       <el-form-item label="日/周/月/年">
         <el-date-picker
-          v-if="type===1"
+          v-if="type==='day'"
           key="1"
           v-model="search.day_time"
           type="date"
@@ -44,7 +44,7 @@
           @change="changeList"
         />
         <el-date-picker
-          v-if="type===2"
+          v-if="type==='week'"
           key="2"
           v-model="search.day_time"
           type="week"
@@ -55,7 +55,7 @@
           @change="changeList"
         />
         <el-date-picker
-          v-if="type===3"
+          v-if="type==='month'"
           key="3"
           v-model="search.day_time"
           type="month"
@@ -65,7 +65,7 @@
           @change="changeList"
         />
         <el-date-picker
-          v-if="type===4"
+          v-if="type==='year'"
           key="4"
           v-model="search.day_time"
           type="year"
@@ -130,11 +130,10 @@ export default {
   data() {
     return {
       btnExportLoad: false,
-      search: { day_time: setDate() },
+      search: { day_time: setDate(), type: 'day' },
       loading: false,
       tableData: [],
-      radio: 1,
-      type: 1
+      type: 'day'
     }
   },
   created() {
@@ -164,7 +163,7 @@ export default {
     },
     resetTime() {
       this.search.day_time = setDate()
-      this.type = this.radio
+      this.type = this.search.type
       this.getList()
     },
     exportTable() {

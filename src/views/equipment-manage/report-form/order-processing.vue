@@ -3,11 +3,11 @@
     <!-- 期间别处理时间分析报表 -->
     <el-form :inline="true">
       <el-form-item>
-        <el-radio-group v-model="radio" @change="resetTime">
-          <el-radio :label="1">日报</el-radio>
-          <el-radio :label="2">周报</el-radio>
-          <el-radio :label="3">月报</el-radio>
-          <el-radio :label="4">年报</el-radio>
+        <el-radio-group v-model="search.type" @change="resetTime">
+          <el-radio label="day">日报</el-radio>
+          <el-radio label="week">周报</el-radio>
+          <el-radio label="month">月报</el-radio>
+          <el-radio label="year">年报</el-radio>
         </el-radio-group>
       </el-form-item>
       <br>
@@ -28,9 +28,9 @@
       </el-form-item>
       <el-form-item label="日/周/月/年">
         <el-date-picker
-          v-if="type===1"
+          v-if="type==='day'"
           key="1"
-          v-model="search.day_time"
+          v-model="search.time"
           type="date"
           format="yyyy-MM-dd"
           value-format="yyyy-MM-dd"
@@ -38,9 +38,9 @@
           @change="changeList"
         />
         <el-date-picker
-          v-if="type===2"
+          v-if="type==='week'"
           key="2"
-          v-model="search.day_time"
+          v-model="search.time"
           type="week"
           :picker-options="{firstDayOfWeek:1}"
           format="yyyy第WW周"
@@ -49,9 +49,9 @@
           @change="changeList"
         />
         <el-date-picker
-          v-if="type===3"
+          v-if="type==='month'"
           key="3"
-          v-model="search.day_time"
+          v-model="search.time"
           type="month"
           format="yyyy-MM"
           value-format="yyyy-MM-dd"
@@ -59,9 +59,9 @@
           @change="changeList"
         />
         <el-date-picker
-          v-if="type===4"
+          v-if="type==='year'"
           key="4"
-          v-model="search.day_time"
+          v-model="search.time"
           type="year"
           format="yyyy"
           value-format="yyyy-MM-dd"
@@ -79,52 +79,43 @@
       </el-form-item>
     </el-form>
     <el-table
+      id="out-table"
       v-loading="loading"
       :data="tableData"
       border
     >
       <el-table-column
-        prop="order_id"
+        prop="time"
         label="时间"
         min-width="20"
       />
       <el-table-column
-        prop="order_id"
+        prop="work_type"
         label="作业类别"
         min-width="20"
       />
       <el-table-column
-        prop="order_id"
-        label="工单编号"
-        min-width="20"
-      />
-      <el-table-column
-        prop="order_id"
-        label="作业类别"
-        min-width="20"
-      />
-      <el-table-column
-        prop="order_id"
+        prop="派单时间"
         label="派单时间（分钟）"
         min-width="20"
       />
       <el-table-column
-        prop="order_id"
+        prop="接单时间"
         label="接单时间（分钟）"
         min-width="20"
       />
       <el-table-column
-        prop="order_id"
+        prop="维修时间"
         label="维修时间（分钟）"
         min-width="20"
       />
       <el-table-column
-        prop="order_id"
+        prop="验收时间"
         label="验收时间（分钟）"
         min-width="20"
       />
       <el-table-column
-        prop="order_id"
+        prop="开机时间"
         label="开机时间（分钟）"
         min-width="20"
       />
@@ -133,17 +124,18 @@
 </template>
 
 <script>
+import { equipPeriodStatement } from '@/api/jqy'
+import { exportExcel } from '@/utils/index'
 import { setDate } from '@/utils'
 export default {
   name: 'EquipmentReportFormOrderProcessing',
   data() {
     return {
       btnExportLoad: false,
-      search: { day_time: setDate() },
+      search: { time: setDate(), type: 'day' },
       loading: false,
       tableData: [],
-      radio: 1,
-      type: 1
+      type: 'day'
     }
   },
   created() {
@@ -153,29 +145,34 @@ export default {
     async getList() {
       try {
         this.loading = true
-        // const data = await equipWarehouseRecord('get', null, { params: this.search })
-        // this.tableData = data.results || []
+        const data = await equipPeriodStatement('get', null, { params: this.search })
+        this.tableData = data.results || []
+        if (this.tableData.length > 0) {
+          this.tableData.push({
+            time: '合计',
+            派单时间: sum(this.tableData, '派单时间') / this.tableData.length,
+            接单时间: sum(this.tableData, '接单时间') / this.tableData.length,
+            维修时间: sum(this.tableData, '维修时间') / this.tableData.length,
+            验收时间: sum(this.tableData, '验收时间') / this.tableData.length,
+            开机时间: sum(this.tableData, '开机时间') / this.tableData.length
+          })
+        }
         this.loading = false
       } catch (e) {
         this.loading = false
       }
     },
     changeList() {
-      // if (this.type === 2) {
-      //   this.search.day_time = getNextDate(this.search.day_time, -1)
-      // }
       this.getList()
     },
     resetTime() {
-      // if (this.radio === 2) {
-      //   this.search.day_time = getMonday(new Date())
-      // }
-      this.search.day_time = setDate()
-      this.type = this.radio
+      this.search.time = setDate()
+      this.type = this.search.type
       this.getList()
     },
     exportTable() {
-      this.btnExportLoad = true
+      exportExcel('期间别处理时间报表')
+      // this.btnExportLoad = true
       // const obj = Object.assign({ export: 1 }, this.search)
       // const _api = equipWarehouseRecord
       // _api('get', null, { params: obj, responseType: 'blob' })
@@ -195,41 +192,15 @@ export default {
     }
   }
 }
-// function getNextDate(date, day) {
-//   var dd = new Date(date)
-//   dd.setDate(dd.getDate() + day)
-//   var y = dd.getFullYear()
-//   var m = dd.getMonth() + 1 < 10 ? '0' + (dd.getMonth() + 1) : dd.getMonth() + 1
-//   var d = dd.getDate() < 10 ? '0' + dd.getDate() : dd.getDate()
-//   return y + '-' + m + '-' + d
-// }
-// function getNextMon(date, day) {
-//   var dd = new Date(date)
-//   dd.setDate(dd.getDate() + day)
-//   var y = dd.getFullYear()
-//   var m = dd.getMonth() + 1 < 10 ? '0' + (dd.getMonth() + 1) : dd.getMonth() + 1
-//   return y + '-' + m
-// }
-// function getNextYear(date, day) {
-//   var dd = new Date(date)
-//   dd.setDate(dd.getDate() + day)
-//   var y = dd.getFullYear()
-//   return y
-// }
-// function getMonday(date) {
-//   var day = date.getDay()
-//   var deltaDay
-//   if (day === 0) {
-//     deltaDay = 6
-//   } else {
-//     deltaDay = day - 1
-//   }
-//   var monday = new Date(date.getTime() - deltaDay * 24 * 60 * 60 * 1000)
-//   monday.setHours(0)
-//   monday.setMinutes(0)
-//   monday.setSeconds(0)
-//   return getNextDate(monday, 0) // 返回本周的周一的0时0分0秒
-// }
+function sum(arr, params) {
+  var s = 0
+  arr.forEach(function(val, idx, arr) {
+    const a = val[params] ? Number(val[params]) : 0
+    s += a
+  }, 0)
+  s = Math.round(s * 100) / 100
+  return s
+}
 </script>
 
 <style>
