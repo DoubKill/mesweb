@@ -457,7 +457,6 @@ export default {
         if (!val) {
           return
         }
-        // console.log(this.ruleForm, 'this.ruleForm')
         const obj = {
           merge_flag: this.ruleForm.merge_flag,
           product_no: this.ruleForm.product_no,
@@ -483,6 +482,7 @@ export default {
           this.$set(this.ruleForm, 'manual_body', [])
           this.$set(this.ruleForm, 'manual_infos', [])
         }
+
         if (_details.manual_details && _details.manual_details.length) {
           // 有详情的情况
           const names = []
@@ -501,13 +501,14 @@ export default {
           this.ruleForm.manual_infos.push({
             manual_type: data.results.manual_type,
             manual_id: data.results.manual_id,
-            package_count: data.results.details.package_count,
+            package_count: data.results.details.package_count || 0,
             names: names
           })
           if (!_bool) {
             this.ruleForm.manual_body = this.ruleForm.manual_body.concat(_details.manual_details)
           }
         } else {
+          const names = []
           const arr1 = this.ruleForm.manual_body.filter(d => d.material_name === _details.material_name)
           if (!arr1.length) {
             this.ruleForm.manual_body.push({
@@ -519,13 +520,14 @@ export default {
               batch_group: _details.batch_group,
               batch_class: _details.batch_class
             })
-            this.ruleForm.manual_infos.push({
-              manual_type: data.results.manual_type,
-              manual_id: data.results.manual_id
-            })
-          } else {
-            throw new Error('扫码失败,有重复物料')
           }
+          names.push(_details.material_name)
+          this.ruleForm.manual_infos.push({
+            manual_type: data.results.manual_type,
+            manual_id: data.results.manual_id,
+            package_count: data.results.details.package_count || 0,
+            names: names
+          })
           this.ruleForm.manual_headers.total_nums++
         }
 
