@@ -216,7 +216,6 @@
           <el-select
             v-model="creatOrder.work_type"
             placeholder="请选择"
-            clearable
             @change="clear"
           >
             <el-option
@@ -644,8 +643,8 @@ export default {
       }
     },
     submitFunRepair() {
-      if (this.$refs['List1'].currentObj.standard_name) {
-        this.$set(this.creatOrder, 'repair_standard_name', this.$refs['List1'].currentObj.standard_name)
+      if (this.$refs['List1'].currentObj.standard_code) {
+        this.$set(this.creatOrder, 'repair_standard_name', this.$refs['List1'].currentObj.standard_code)
         this.$set(this.creatOrder, 'equip_repair_standard', this.$refs['List1'].currentObj.id)
         this.$set(this.creatOrder, 'equip_condition', this.$refs['List1'].currentObj.equip_condition)
         this.$set(this.creatOrder, 'importance_level', this.$refs['List1'].currentObj.important_level)
@@ -655,8 +654,8 @@ export default {
       }
     },
     submitFunwork() {
-      if (this.$refs['List2'].currentObj.standard_name) {
-        this.$set(this.creatOrder, 'standard_name', this.$refs['List2'].currentObj.standard_name)
+      if (this.$refs['List2'].currentObj.standard_code) {
+        this.$set(this.creatOrder, 'standard_name', this.$refs['List2'].currentObj.standard_code)
         this.$set(this.creatOrder, 'equip_manintenance_standard', this.$refs['List2'].currentObj.id)
         this.$set(this.creatOrder, 'equip_condition', this.$refs['List2'].currentObj.equip_condition)
         this.$set(this.creatOrder, 'importance_level', this.$refs['List2'].currentObj.important_level)

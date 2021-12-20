@@ -43,7 +43,6 @@
         >
           <el-button type="primary">导入Excel</el-button>
         </el-upload>
-        <el-button v-permission="['equip_spare_erp', 'sync']" type="primary" @click="onSubmit">同步ERP</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -94,7 +93,7 @@
       </el-table-column>
       <el-table-column
         prop="cost"
-        label="计划价格"
+        label="计划价格(元)"
         min-width="20"
       />
       <el-table-column
@@ -220,8 +219,7 @@ export default {
         }).catch(e => {
           this.btnExportLoad = false
         })
-    },
-    onSubmit() {}
+    }
   }
 }
 </script>
