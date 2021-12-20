@@ -149,7 +149,9 @@ export default {
       try {
         this.loading = true
         const data = await sectionUserTree('get')
-        this.data = data.results || []
+        const arr = data.results
+        const arr1 = aaa(arr)
+        this.data = arr1 || []
         this.loading = false
       } catch (e) {
         this.loading = false
@@ -277,6 +279,21 @@ export default {
             this.$message.error('删除失败')
           })
       })
+    }
+  }
+}
+function aaa(arr) {
+  const arr2 = arr.filter(d => d.label === '设备科')
+  if (arr2.length > 0) {
+    return arr2
+  } else {
+    for (let index = 0; index < arr.length; index++) {
+      const element = arr[index]
+      if (aaa(element.children).length) {
+        return aaa(element.children)
+      } else {
+        aaa(element.children)
+      }
     }
   }
 }
