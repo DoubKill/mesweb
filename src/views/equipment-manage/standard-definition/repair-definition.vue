@@ -48,9 +48,9 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="所需物料名称">
+      <!-- <el-form-item label="所需物料名称">
         <el-input v-model="getParams.spare_name" clearable @input="changeDebounce" />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item v-if="!isDialog" style="float:right">
         <el-button v-permission="['equip_repair_standard', 'export']" type="primary" style="margin-right:8px" :loading="btnExportLoad" @click="templateDownload">导出Excel</el-button>
         <el-upload
@@ -121,6 +121,7 @@
         <template slot-scope="scope">
           <el-link
             type="primary"
+            @click="repairDialog(scope.row)"
           >{{ scope.row.equip_job_item_standard_name }}</el-link>
         </template>
       </el-table-column>
@@ -136,7 +137,7 @@
         prop="operation_time_unit"
         label="作业时间单位"
       />
-      <el-table-column
+      <!-- <el-table-column
         prop="spare_list_str"
         label="所需物料名称"
       >
@@ -145,7 +146,7 @@
             type="primary"
           >{{ scope.row.spare_list_str }}</el-link>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         prop="created_username"
         label="录入人"
@@ -182,7 +183,7 @@
     />
     <el-dialog
       :title="`${typeForm.id?'修改':'新建'}维修作业标准`"
-      width="70%"
+      width="80%"
       :visible.sync="dialogEditVisible"
       :close-on-click-modal="false"
     >
@@ -196,10 +197,10 @@
         <el-row>
           <el-col :span="8">
             <el-form-item label="标准编号" prop="standard_code">
-              <el-input v-model="typeForm.standard_code" :disabled="typeForm.id?true:false" />
+              <el-input v-model="typeForm.standard_code" :disabled="typeForm.id?true:false" style="width:200px" />
             </el-form-item>
             <el-form-item label="标准名称" prop="standard_name">
-              <el-input v-model="typeForm.standard_name" />
+              <el-input v-model="typeForm.standard_name" style="width:200px" />
             </el-form-item>
             <el-form-item label="设备种类" prop="equip_type">
               <el-select v-model="typeForm.equip_type" placeholder="请选择" clearable filterable @change="clear">
@@ -271,7 +272,7 @@
               label="故障原因"
               prop="equip_fault_name"
             >
-              <el-input v-model="typeForm.equip_fault_name" placeholder="请输入内容" disabled>
+              <el-input v-model="typeForm.equip_fault_name" disabled>
                 <el-button slot="append" icon="el-icon-search" @click="Add2" />
               </el-input>
             </el-form-item>
@@ -279,7 +280,7 @@
               label="作业项目"
               prop="equip_job_item_standard_name"
             >
-              <el-input v-model="typeForm.equip_job_item_standard_name" placeholder="请输入内容" disabled>
+              <el-input v-model="typeForm.equip_job_item_standard_name" disabled>
                 <el-button slot="append" icon="el-icon-search" @click="Add1" />
               </el-input>
             </el-form-item>
@@ -290,7 +291,6 @@
                 style="width:230px"
                 type="textarea"
                 :rows="4"
-                placeholder="请输入内容"
               />
             </el-form-item>
           </el-col>
@@ -300,20 +300,20 @@
             </el-form-item>
             <el-form-item label="作业时间" prop="operation_time">
               <el-input-number v-model="typeForm.operation_time" placeholder="请输入内容" controls-position="right" :min="0" />
-            </el-form-item>
-            <el-form-item label="作业时间单位" prop="operation_time_unit">
-              <el-select
-                v-model="typeForm.operation_time_unit"
-                clearable
-                placeholder="请选择"
-              >
-                <el-option
-                  v-for="item in ['日','小时','分钟','秒','车次']"
-                  :key="item"
-                  :label="item"
-                  :value="item"
-                />
-              </el-select>
+              <el-form-item prop="operation_time_unit" style="width:100px">
+                <el-select
+                  v-model="typeForm.operation_time_unit"
+                  clearable
+                  placeholder="请选择"
+                >
+                  <el-option
+                    v-for="item in ['日','小时','分钟','秒','车次']"
+                    :key="item"
+                    :label="item"
+                    :value="item"
+                  />
+                </el-select>
+              </el-form-item>
             </el-form-item>
             <el-form-item label="钉钉提醒发送" prop="remind_flag">
               <el-checkbox v-model="typeForm.remind_flag1" label="包干人" />
@@ -437,20 +437,36 @@
         <el-button type="primary" @click="submitFun2">确 定</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      :title="`作业标准`"
+      :visible.sync="dialogVisibleProject"
+      width="80%"
+    >
+      <project
+        :show="dialogVisibleProject"
+        :type-form="typeForm1"
+      />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleProject=false">取 消</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { debounce } from '@/utils'
+import project from '../components/project-dialog'
 import SparePartsCode from '../master-data/spare-parts-code'
 import FaultClassify from '../master-data/fault-classify'
 import ProjectDefinition from './project-definition'
+import { equipJobItemStandard } from '@/api/base_w_four'
 import { equipsCategory, equipRepairStandard, equipPartNew, equipComponent, equipRepairStandardImport, equipRepairStandardDown, equipRepairStandardGetName } from '@/api/jqy'
 import page from '@/components/page'
 
 export default {
   name: 'RepairDefinition',
-  components: { page, SparePartsCode, ProjectDefinition, FaultClassify },
+  components: { page, SparePartsCode, ProjectDefinition, FaultClassify, project },
   props: {
     isDialog: {
       type: Boolean,
@@ -478,15 +494,16 @@ export default {
       dialogVisible1: false,
       dialogVisible2: false,
       dialogEditVisible: false,
+      dialogVisibleProject: false,
       options: [],
       options1: [],
       options2: [],
       typeName: '',
       typeForm: {},
+      typeForm1: {},
       currentObj: {},
       rules: {
         standard_code: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        standard_name: [{ required: true, message: '不能为空', trigger: 'blur' }],
         equip_type: [{ required: true, message: '不能为空', trigger: 'blur' }],
         equip_part: [{ required: true, message: '不能为空', trigger: 'blur' }],
         equip_condition: [{ required: true, message: '不能为空', trigger: 'blur' }],
@@ -530,6 +547,15 @@ export default {
         this.options = data.results || []
       } catch (e) {
         //
+      }
+    },
+    async repairDialog(row) {
+      try {
+        const data = await equipJobItemStandard('get', null, { params: { id: row.equip_job_item_standard }})
+        this.typeForm1 = data.results[0]
+        this.dialogVisibleProject = true
+      } catch (e) {
+        // this.dialogVisible = true
       }
     },
     async getEquipComponentType() {
@@ -824,9 +850,6 @@ export default {
     .el-input{
       width:120px;
     }
-  }
-  .el-dialog__wrapper .el-input{
-    width:200px;
   }
   .el-input-number .el-input{
     width:auto;

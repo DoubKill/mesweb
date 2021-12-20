@@ -63,10 +63,10 @@
 
         <div style="color:red;display:inline-block">
           <div style="text-align:right">
-            <el-button style="margin-right:5px">
+            <el-button type="primary" style="margin-right:5px">
               确定全部机台计划
             </el-button>
-            <el-button v-permission="['equip_plan','export']" type="primary" :loading="btnExportLoad" @click="templateDownload">
+            <el-button v-permission="['equip_plan','export']" type="primary" :loading="btnExportLoad" @click="exportTable">
               导出Excel
             </el-button>
           </div>
@@ -84,28 +84,21 @@
           class="addPlanArrBox"
         >
           <div class="tableTop">
-            <el-row :gutter="20">
-              <el-col :span="12">
-                <div class="tableTopLeft">
-                  {{ item[0][0]?item[0][0].equipNo:'--' }}
-                  --
-                  机型{{ item[0][0]?item[0][0].category__category_name:'--' }}
-                </div>
-              </el-col>
-              <el-col :span="5">
-                <el-input label="生产车数" />
-              </el-col>
-              <el-col :span="5">
-                <el-input label="生产车数" />
-              </el-col>
-              <el-col :span="2">
-                <el-button
-                  v-if="permissionArr.indexOf('add')>-1"
-                  class="tableTopright"
-                  @click="singleSavePlan(index,item)"
-                >保 存</el-button>
-              </el-col>
-            </el-row>
+            <div class="tableTopLeft">
+              {{ item[0][0]?item[0][0].equipNo:'--' }}
+              --
+              机型{{ item[0][0]?item[0][0].category__category_name:'--' }}
+            </div>
+            生产车数:
+            <el-input style="width:80px" />
+            生产时间(h):
+            <el-input style="width:80px" />
+            <el-button
+              v-if="permissionArr.indexOf('add')>-1"
+              type="primary"
+              class="tableTopright"
+              @click="singleSavePlan(index,item)"
+            >确定</el-button>
           </div>
           <div
             v-for="(tableItem,i) in item"
@@ -122,10 +115,10 @@
             >
               >
               <el-table-column min-width="10px">
-                <template slot-scope="scope">
+                <template>
                   <div style="font-weight:700;color:#000 !important">
-                    {{ scope.row.classes_name }}
-                    <!-- {{ scope.row.start_time }} -- {{ scope.row.end_time }} -->
+                    当日
+                  <!-- {{ scope.row.start_time }} -- {{ scope.row.end_time }} -->
                   </div>
                 </template>
               </el-table-column>
@@ -139,7 +132,7 @@
               </el-table-column> -->
               <el-table-column
                 min-width="40px"
-                label="胶料编码"
+                label="规格"
               >
                 <template slot-scope="scope">
                   <span v-if="Number(scope.row.batching_type) === _batching_type_one">{{ scope.row.product_no }}</span>
@@ -168,7 +161,7 @@
                 </template>
               </el-table-column>
               <el-table-column
-                label="车次"
+                label="车数"
                 min-width="15px"
               >
                 <template slot-scope="scope">
@@ -184,6 +177,10 @@
                 </template>
               </el-table-column>
               <el-table-column
+                label="耗时"
+                min-width="15px"
+              />
+              <el-table-column
                 label="备注"
                 min-width="20"
               >
@@ -193,7 +190,6 @@
                     :disabled="setStatus(scope.row.status,scope.row,false)"
                     placeholder="请输入内容"
                   />
-
                 </template>
               </el-table-column>
               <el-table-column
@@ -204,18 +200,9 @@
                   {{ scope.row.status }}
                 </template>
               </el-table-column>
-              <el-table-column label="炼胶时间" min-width="18">
-                <template slot-scope="scope">
-                  {{ Number(scope.row.time) || '0' }}
-                </template>
-              </el-table-column>
-              <el-table-column label="创建时间" min-width="20">
-                <template slot-scope="scope">
-                  {{ scope.row.created_date }}
-                </template>
-              </el-table-column>
+
               <el-table-column
-                width="70px"
+                width="200px"
                 label="操作"
                 fixed="right"
               >
@@ -223,29 +210,35 @@
                   v-if="scope.$index!==tableItem.length-1"
                   slot-scope="scope"
                 >
-                  <el-button
-                    size="mini"
-                    type="danger"
-                    :disabled="setStatus(scope.row.status,scope.row,true)"
-                    @click="handleGroupDelete(scope.$index,tableItem,scope.row)"
-                  >删除
-                  </el-button>
-                  <br>
-                  <!-- <el-button
-                    style="margin-top:5px"
-                    size="mini"
-                    type="primary"
-                    :disabled="setDisabledFun(scope.$index,scope.row,tableItem,true)"
-                    @click="moveUp(scope.$index,scope.row,tableItem)"
-                  >上移
-                  </el-button> -->
-                  <!-- <el-button
-                    style="margin-top:5px"
-                    size="mini"
-                    :disabled="setDisabledFun(scope.$index,scope.row,tableItem,false)"
-                    @click="moveDown(scope.$index,scope.row,tableItem)"
-                  >下移
-                  </el-button> -->
+                  <el-button-group>
+                    <el-button
+                      icon="el-icon-caret-top"
+                      size="mini"
+                      type="primary"
+                      :disabled="setDisabledFun(scope.$index,scope.row,tableItem,true)"
+                      @click="moveUp(scope.$index,scope.row,tableItem)"
+                    />
+                    <el-button
+                      icon="el-icon-caret-bottom"
+                      size="mini"
+                      type="primary"
+                      :disabled="setDisabledFun(scope.$index,scope.row,tableItem,false)"
+                      @click="moveDown(scope.$index,scope.row,tableItem)"
+                    />
+                    <el-button
+                      icon="el-icon-edit"
+                      size="mini"
+                      type="primary"
+                      @click="moveDown(scope.$index,scope.row,tableItem)"
+                    />
+                    <el-button
+                      icon="el-icon-delete"
+                      size="mini"
+                      type="danger"
+                      :disabled="setStatus(scope.row.status,scope.row,true)"
+                      @click="handleGroupDelete(scope.$index,tableItem,scope.row)"
+                    />
+                  </el-button-group>
                 </template>
               </el-table-column>
             </el-table>
@@ -300,6 +293,7 @@ export default {
       rubberMateriaObj: {},
       loadingSelect: true,
       baseDefaultData: {},
+      btnExportLoad: false,
       loading: false,
       addPlanArrLoading: false,
       checkAll: false
@@ -764,6 +758,25 @@ export default {
         baseData.plan_classes_uid = setPlanClassesUid(currentIndex + 2, planForAdd.equipNo)
         tableItem.push(baseData)
       }
+    },
+    exportTable() {
+      // this.btnExportLoad = true
+      // const obj = Object.assign({ export: 1 }, this.search)
+      // const _api = equipComponentDown
+      // _api(obj)
+      //   .then(res => {
+      //     const link = document.createElement('a')
+      //     const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+      //     link.style.display = 'none'
+      //     link.href = URL.createObjectURL(blob)
+      //     link.download = '设备部件定义.xlsx' // 下载的文件名
+      //     document.body.appendChild(link)
+      //     link.click()
+      //     document.body.removeChild(link)
+      //     this.btnExportLoad = false
+      //   }).catch(e => {
+      //     this.btnExportLoad = false
+      //   })
     },
     async addOnePlan() {
       // 获取排班
