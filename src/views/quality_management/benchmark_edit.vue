@@ -48,7 +48,19 @@
           <el-switch
             v-model="row.is_judged"
             active-color="#13ce66"
-            @change="judgedFun($event,row,$index)"
+            @change="judgedFun($event,row,$index,true)"
+          />
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="test_method_name"
+        label="是否打印项目"
+      >
+        <template slot-scope="{row,$index}">
+          <el-switch
+            v-model="row.is_print"
+            active-color="#13ce66"
+            @change="judgedFun($event,row,$index,false)"
           />
         </template>
       </el-table-column>
@@ -356,12 +368,17 @@ export default {
       this.addForm = JSON.parse(JSON.stringify(row))
       this.addForm.b = this.addForm.test_type
     },
-    async judgedFun(bool, row, index) {
+    async judgedFun(bool, row, index, isJudged) {
       try {
-        await matTestMethods('patch', row.id, { data: { is_judged: bool }})
+        const obj = { is_print: bool }
+        if (isJudged) {
+          row.is_print = bool
+          obj.is_judged = bool
+        }
+        await matTestMethods('patch', row.id, { data: obj })
         this.$message.success('修改成功')
       } catch (e) {
-        this.tableData[index].is_judged = !this.tableData[index].is_judged
+        this.getList()
       }
     }
   }
