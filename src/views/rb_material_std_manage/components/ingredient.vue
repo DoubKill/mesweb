@@ -59,8 +59,9 @@
         v-for="(itemFa,i) in tableDataAll"
         :key="i"
       >
-        <h3>{{ i===0?'胶料':i===1?'炭黑':'油料' }}</h3>
+        <h3 v-if="i!==0&&['FM','RE','RFM'].includes(formInline.stage_name)?false:true">{{ i===0?'胶料':i===1?'炭黑':'油料' }}</h3>
         <el-table
+          v-if="i!==0&&['FM','RE','RFM'].includes(formInline.stage_name)?false:true"
           :data="itemFa.tableData"
           border
           show-summary
@@ -150,7 +151,7 @@
           </el-table-column>
         </el-table>
         <div
-          v-if="!isView"
+          v-if="!isView||i!==0&&['FM','RE','RFM'].includes(formInline.stage_name)?false:true"
           style="text-align: center"
         >
           <el-button
@@ -566,14 +567,16 @@ export default {
       Object.assign(parameter, this.formInline)
       parameter.batching_details = arr
       ingredientList.forEach(D => {
-        ingredientListParams.push({
-          name: D[0].name,
-          package_cnt: D[0].package_cnt,
-          weigh_type: D[0].weigh_type,
-          package_type: D[0].package_type,
-          weight_details: D,
-          id: D[0].weight_cnt_types_id || null
-        })
+        if (D.length) {
+          ingredientListParams.push({
+            name: D[0].name,
+            package_cnt: D[0].package_cnt,
+            weigh_type: D[0].weigh_type,
+            package_type: D[0].package_type,
+            weight_details: D,
+            id: D[0].weight_cnt_types_id || null
+          })
+        }
       })
       parameter.weight_cnt_types = ingredientListParams
       if (parameter.stage) {
