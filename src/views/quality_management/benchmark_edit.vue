@@ -53,7 +53,6 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="test_method_name"
         label="是否打印项目"
       >
         <template slot-scope="{row,$index}">
@@ -153,6 +152,13 @@
           <el-switch
             v-model="addForm.is_judged"
             active-color="#13ce66"
+            @change="changeJudged"
+          />
+        </el-form-item>
+        <el-form-item label="是否打印项目">
+          <el-switch
+            v-model="addForm.is_print"
+            active-color="#13ce66"
           />
         </el-form-item>
       </el-form>
@@ -204,7 +210,8 @@ export default {
         b: null,
         test_method: null,
         data_point: null,
-        is_judged: true
+        is_judged: true,
+        is_print: true
       },
       optionsRubber: [],
       editShow: false,
@@ -301,7 +308,8 @@ export default {
         this.$refs.addForm.resetFields()
       }
       this.addForm = {
-        is_judged: true
+        is_judged: true,
+        is_print: true
       }
 
       if (this.$refs.testTypeSelect) {
@@ -380,6 +388,9 @@ export default {
       } catch (e) {
         this.getList()
       }
+    },
+    changeJudged(val) {
+      this.addForm.is_print = val
     }
   }
 }
