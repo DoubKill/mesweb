@@ -492,6 +492,7 @@
       :title="`作业标准`"
       :visible.sync="dialogVisibleProject"
       width="80%"
+      append-to-body
     >
       <project
         :show="dialogVisibleProject"

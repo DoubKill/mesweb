@@ -37,7 +37,6 @@
       <el-form-item>
         <el-button
           type="primary"
-          :loading="btnExportLoad"
           @click="exportTable"
         >导出Excel</el-button>
         <el-button type="primary" @click="getList">查询</el-button>
@@ -108,7 +107,6 @@ export default {
   data() {
     return {
       dateValue: [],
-      btnExportLoad: false,
       search: {},
       loading: false,
       tableData: []
@@ -153,23 +151,6 @@ export default {
     },
     exportTable() {
       exportExcel('工单别处理时间报表')
-      // this.btnExportLoad = true
-      // const obj = Object.assign({ export: 1 }, this.search)
-      // const _api = equipWarehouseRecord
-      // _api('get', null, { params: obj, responseType: 'blob' })
-      //   .then(res => {
-      //     const link = document.createElement('a')
-      //     const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
-      //     link.style.display = 'none'
-      //     link.href = URL.createObjectURL(blob)
-      //     link.download = '备件出入库履历.xlsx' // 下载的文件名
-      //     document.body.appendChild(link)
-      //     link.click()
-      //     document.body.removeChild(link)
-      //     this.btnExportLoad = false
-      //   }).catch(e => {
-      //     this.btnExportLoad = false
-      //   })
     }
   }
 }
