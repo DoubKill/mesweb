@@ -528,7 +528,7 @@ export let asyncRoutes = [
             permissionName: 'xl_weight_card'
           }
         },
-        {
+        /* {
           path: '/small-material-weight/hebao',
           component: () => import('@/views/recipe/small-material-weight/hebao'),
           name: 'SmallMaterialWeightHebao',
@@ -547,7 +547,7 @@ export let asyncRoutes = [
             title: '单配(配方/通用)化工流转卡',
             permissionName: ''
           }
-        },
+        },*/
         {
           path: '/small-material-weight/valid',
           component: () => import('@/views/recipe/small-material-weight/valid'),
@@ -559,8 +559,8 @@ export let asyncRoutes = [
           }
         }
       ]
-    },
-    {
+    }
+    /*, {
       path: '/auto-schedule',
       redirect: '/schedule/factory-declare',
       name: 'AutoSchedule',
@@ -829,7 +829,7 @@ export let asyncRoutes = [
           ]
         }
       ]
-    }
+    }*/
     ]
   },
   {
@@ -2358,8 +2358,8 @@ export let asyncRoutes = [
             }
           }
         ]
-      },
-      {
+      }
+      /*, {
         path: '/banburying',
         redirect: '/banburying/substitutes',
         component: () => import('@/views/quality_management/banburying/a-index'),
@@ -2430,7 +2430,7 @@ export let asyncRoutes = [
             }
           }
         ]
-      }
+      }*/
     ]
   },
   // {
