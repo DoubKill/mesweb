@@ -48,7 +48,18 @@
           <el-switch
             v-model="row.is_judged"
             active-color="#13ce66"
-            @change="judgedFun($event,row,$index)"
+            @change="judgedFun($event,row,$index,true)"
+          />
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="是否打印项目"
+      >
+        <template slot-scope="{row,$index}">
+          <el-switch
+            v-model="row.is_print"
+            active-color="#13ce66"
+            @change="judgedFun($event,row,$index,false)"
           />
         </template>
       </el-table-column>
@@ -141,6 +152,13 @@
           <el-switch
             v-model="addForm.is_judged"
             active-color="#13ce66"
+            @change="changeJudged"
+          />
+        </el-form-item>
+        <el-form-item label="是否打印项目">
+          <el-switch
+            v-model="addForm.is_print"
+            active-color="#13ce66"
           />
         </el-form-item>
       </el-form>
@@ -192,7 +210,8 @@ export default {
         b: null,
         test_method: null,
         data_point: null,
-        is_judged: true
+        is_judged: true,
+        is_print: true
       },
       optionsRubber: [],
       editShow: false,
@@ -289,7 +308,8 @@ export default {
         this.$refs.addForm.resetFields()
       }
       this.addForm = {
-        is_judged: true
+        is_judged: true,
+        is_print: true
       }
 
       if (this.$refs.testTypeSelect) {
@@ -356,13 +376,21 @@ export default {
       this.addForm = JSON.parse(JSON.stringify(row))
       this.addForm.b = this.addForm.test_type
     },
-    async judgedFun(bool, row, index) {
+    async judgedFun(bool, row, index, isJudged) {
       try {
-        await matTestMethods('patch', row.id, { data: { is_judged: bool }})
+        const obj = { is_print: bool }
+        if (isJudged) {
+          row.is_print = bool
+          obj.is_judged = bool
+        }
+        await matTestMethods('patch', row.id, { data: obj })
         this.$message.success('修改成功')
       } catch (e) {
-        this.tableData[index].is_judged = !this.tableData[index].is_judged
+        this.getList()
       }
+    },
+    changeJudged(val) {
+      this.addForm.is_print = val
     }
   }
 }
