@@ -435,7 +435,7 @@ export default {
       this.testOrders = []
       this.testOrdersAll = []
       this.allPage = 0
-      this.definePafeSize = 0
+      this.definePafeSize = 10
       this.getMaterialTestOrders()
     },
     dayChange(val) {
@@ -515,6 +515,9 @@ export default {
       }
     },
     infiniteScroll() {
+      if (this.allPage <= this.definePafeSize) {
+        return
+      }
       if (Number(this.allPage - this.getParams.page * this.definePafeSize) <= 0) {
         return
       }
