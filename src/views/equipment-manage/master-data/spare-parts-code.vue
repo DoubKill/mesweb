@@ -62,12 +62,12 @@
       <el-table-column
         prop="spare_code"
         label="备件代码"
-        min-width="20"
+        width="120"
       />
       <el-table-column
         prop="spare_name"
         label="备件名称"
-        width="100"
+        width="120"
       />
       <el-table-column
         prop="equip_component_type_name"
@@ -111,8 +111,8 @@
       />
       <el-table-column
         prop="cost"
-        label="计划价格"
-        min-width="20"
+        label="计划价格(元)"
+        width="100"
       />
       <el-table-column
         prop="texture_material"
@@ -147,7 +147,7 @@
       <el-table-column
         prop="created_date"
         label="录入时间"
-        width="180"
+        width="160"
       />
       <el-table-column v-if="!isSearch" label="操作" width="140px">
         <template slot-scope="scope">
@@ -240,7 +240,7 @@
           <el-input v-model="dialogForm.specification" />
         </el-form-item>
         <el-form-item
-          label="计划价格"
+          label="计划价格(元)"
           prop="cost"
         >
           <el-input-number v-model="dialogForm.cost" controls-position="right" :min="1" />
@@ -401,7 +401,7 @@ export default {
   data() {
     return {
       formInline: {},
-      tableData: [{}],
+      tableData: [],
       tableData1: [],
       total: 0,
       total1: 0,

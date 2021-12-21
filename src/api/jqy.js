@@ -915,3 +915,20 @@ export function equipPeriodStatement(method, id, data = {}) {
   return request(obj)
 }
 
+export function equipFinishingRate(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipFinishingRate + id + '/' : API.EquipFinishingRate,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipOldRate(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipOldRate + id + '/' : API.EquipOldRate,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
