@@ -167,7 +167,8 @@
     />
 
     <el-dialog
-      title="准备分厂（细料/硫磺）质量追踪卡打印"
+      :title="`准备分厂（${ruleForm.equip_no?ruleForm.equip_no.slice(0,1)==='S'?'硫磺':'细料':''
+      }）质量追踪卡打印`"
       :visible.sync="dialogVisible"
       width="800px"
       :before-close="handleClose"
