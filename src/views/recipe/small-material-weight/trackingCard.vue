@@ -60,7 +60,7 @@
       <el-table-column
         prop="product_no"
         label="配方号"
-        min-width="20"
+        min-width="25"
       />
       <el-table-column
         prop="dev_type"
@@ -75,7 +75,7 @@
       <el-table-column
         prop="equip_no"
         label="配料机台"
-        min-width="20"
+        min-width="15"
       />
       <el-table-column
         prop="batch_time"
@@ -137,16 +137,25 @@
       />
       <el-table-column
         label="操作"
-        width="120"
+        width="200"
       >
         <template slot-scope="scope">
           <el-button
             v-permission="['xl_expire_data', 'save']"
             type="primary"
-            @click="reprintFun(scope.row)"
+            @click="reprintFun(scope.row,false)"
           >
-            {{ !scope.row.bra_code?'打印':'重新打印' }}
+            打印
           </el-button>
+          <div v-if="scope.row.bra_code" style="display:inline-block;margin-left:10px">
+            <el-button
+              v-permission="['xl_expire_data', 'save']"
+              type="primary"
+              @click="reprintFun(scope.row,true)"
+            >
+              重新打印
+            </el-button>
+          </div>
         </template>
       </el-table-column>
     </el-table>
@@ -158,7 +167,8 @@
     />
 
     <el-dialog
-      title="准备分厂（细料/硫磺）质量追踪卡打印"
+      :title="`准备分厂（${ruleForm.equip_no?ruleForm.equip_no.slice(0,1)==='S'?'硫磺':'细料':''
+      }）质量追踪卡打印`"
       :visible.sync="dialogVisible"
       width="800px"
       :before-close="handleClose"
@@ -172,22 +182,33 @@
             :max="ruleForm.package_fufil"
             :step="1"
             step-strictly
-            :disabled="ruleForm.bra_code?true:false"
-            @change="ruleForm.package_count=1"
+            :disabled="againPrint"
           />
         </el-form-item>
         <el-form-item label="配置数量" prop="package_count">
           <!-- +1-ruleForm.print_begin_trains -->
           <el-input-number
+            v-if="!againPrint"
             v-model="ruleForm.package_count"
             controls-position="right"
             :min="1"
-            :max="ruleForm.package_fufil"
+            :max="ruleForm.noprint_count"
             :step="1"
             step-strictly
-            :disabled="ruleForm.bra_code?true:false"
-            @change="ruleForm.print_count=1"
+            :disabled="againPrint"
+            @change="changePackageCount"
           />
+          <el-input-number
+            v-else
+            v-model="ruleForm.package_count"
+            controls-position="right"
+            :min="1"
+            :step="1"
+            step-strictly
+            :disabled="againPrint"
+            @change="changePackageCount"
+          />
+          <!-- ruleForm.print_count=1 -->
         </el-form-item>
         <el-form-item label="打印张数" prop="print_count">
           <el-input-number
@@ -254,7 +275,7 @@
         </tr>
       </table>
       <div style="border:1px solid #eee;margin:10px 0" />
-      <el-form v-if="!ruleForm.bra_code&&ruleForm.merge_flag">
+      <el-form v-if="!againPrint&&ruleForm.merge_flag">
         <el-form-item label="合包配料包条码">
           <el-input v-model="barCode" style="width:300px" @input="changeBarCode" />
         </el-form-item>
@@ -311,11 +332,11 @@
           <td>{{ tdItem.batch_user }}</td>
         </tr>
       </table>
-      <div v-if="otherNum" style="font-weight:700;margin-top:10px;">备注：有其他料包(
-        {{ Math.round((Number(ruleForm.machine_manual_weight) - Number(ruleForm.machine_weight)) * 1000) / 1000 }}kg/车)</div>
+      <div v-if="otherNum&&otherNum>0" style="font-weight:700;margin-top:10px;">备注：有其他料包(
+        {{ otherNum }}kg/车)</div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose(false)">取 消</el-button>
-        <el-button type="primary" :disabled="otherNum===0?false:true" :loading="btnLoading" @click="submitFun">确 定</el-button>
+        <el-button type="primary" :loading="btnLoading" @click="submitFun">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -336,8 +357,8 @@ export default {
   data() {
     return {
       formInline: {
-        batch_time: setDate()
-        // batch_time: '2021-12-02'
+        // batch_time: setDate(),
+        batch_time: '2021-12-02'
       },
       tableData: [],
       total: 0,
@@ -358,7 +379,8 @@ export default {
       option: [],
       btnLoading: false,
       barCode: '',
-      otherNum: 0
+      otherNum: 0,
+      againPrint: null
     }
   },
   created() {
@@ -440,11 +462,16 @@ export default {
           merge_flag: this.ruleForm.merge_flag,
           product_no: this.ruleForm.product_no,
           dev_type: this.ruleForm.dev_type,
-          scan_bra_code: val
+          scan_bra_code: val,
+          package_count: this.ruleForm.package_count,
+          split_count: this.ruleForm.split_count,
+          manual_infos: this.ruleForm.manual_infos,
+          batching_equip: this.ruleForm.equip_no
         }
         const data = await manualPost('post', null, { data: obj })
+        let _bool = false
         const _details = data.results.details
-        if (!this.ruleForm.manual_headers) {
+        if (!this.ruleForm.manual_body.length) {
           const _obj = {
             product_no: this.ruleForm.product_no,
             dev_type: this.ruleForm.dev_type,
@@ -456,25 +483,33 @@ export default {
           this.$set(this.ruleForm, 'manual_body', [])
           this.$set(this.ruleForm, 'manual_infos', [])
         }
+
         if (_details.manual_details && _details.manual_details.length) {
           // 有详情的情况
+          const names = []
           _details.manual_details.forEach(D => {
+            names.push(D.material_name)
             const arr2 = this.ruleForm.manual_body.filter(d => d.material_name === D.material_name)
             if (arr2.length) {
-              throw new Error('扫码失败,有重复物料')
+              _bool = true
             }
             D.single_weight = D.standard_weight
             D.batching_type = D.batch_type
             D.batch_group = _details.batch_group
             D.batch_class = _details.batch_class
           })
-          this.ruleForm.manual_body = this.ruleForm.manual_body.concat(_details.manual_details)
           this.ruleForm.manual_headers.total_nums++
           this.ruleForm.manual_infos.push({
             manual_type: data.results.manual_type,
-            manual_id: data.results.manual_id
+            manual_id: data.results.manual_id,
+            package_count: data.results.details.package_count || 0,
+            names: names
           })
+          if (!_bool) {
+            this.ruleForm.manual_body = this.ruleForm.manual_body.concat(_details.manual_details)
+          }
         } else {
+          const names = []
           const arr1 = this.ruleForm.manual_body.filter(d => d.material_name === _details.material_name)
           if (!arr1.length) {
             this.ruleForm.manual_body.push({
@@ -486,13 +521,14 @@ export default {
               batch_group: _details.batch_group,
               batch_class: _details.batch_class
             })
-            this.ruleForm.manual_infos.push({
-              manual_type: data.results.manual_type,
-              manual_id: data.results.manual_id
-            })
-          } else {
-            throw new Error('扫码失败,有重复物料')
           }
+          names.push(_details.material_name)
+          this.ruleForm.manual_infos.push({
+            manual_type: data.results.manual_type,
+            manual_id: data.results.manual_id,
+            package_count: data.results.details.package_count || 0,
+            names: names
+          })
           this.ruleForm.manual_headers.total_nums++
         }
 
@@ -519,21 +555,23 @@ export default {
         this.ruleForm.manual_headers.class_group = currentClass
         this.ruleForm.manual_headers.detail_machine = c
         this.ruleForm.manual_headers.detail_manual = b
-        this.ruleForm.manual_headers.manual_weight = Math.round(((c + b) / this.ruleForm.split_count) * 1000) / 1000
+        this.ruleForm.manual_headers.manual_weight = Math.round((c + b) * 1000) / 1000
         // const d = this.ruleForm._machine_manual_weight
         const e = Math.round((c + b) * 1000) / 1000
         // this.ruleForm.machine_manual_weight = Math.round((d + e) * 1000) / 1000
         this.ruleForm.manual_weight = e
-        this.otherNum = Math.round((this.otherNum - _details.detail_manual) * 1000) / 1000
+        if (!_bool) {
+          this.otherNum = Math.round((this.otherNum - (_details.detail_manual + _details.detail_machine) * Number(this.ruleForm.split_count)) * 1000) / 1000
+        }
 
         const tolerance = await getMaterialTolerance('get', null,
           { params: { batching_equip: this.ruleForm.equip_no, project_name: 'all',
             standard_weight: e }})
-        const toleranceAll = await getMaterialTolerance('get', null,
-          { params: { batching_equip: this.ruleForm.equip_no, project_name: 'all',
-            standard_weight: this.ruleForm.machine_manual_weight }})
+        // const toleranceAll = await getMaterialTolerance('get', null,
+        //   { params: { batching_equip: this.ruleForm.equip_no, project_name: 'all',
+        //     standard_weight: this.ruleForm.machine_manual_weight }})
         this.$set(this.ruleForm.manual_headers, 'manual_tolerance', tolerance || '')
-        this.$set(this.ruleForm, 'machine_manual_tolerance', toleranceAll || '')
+        // this.$set(this.ruleForm, 'machine_manual_tolerance', toleranceAll || '')
       } catch (e) {
         if (e.message) {
           this.$message(e.message)
@@ -549,35 +587,85 @@ export default {
       this.formInline.page_size = page_size
       this.getList()
     },
+    changePackageCount() {
+      this.$set(this.ruleForm, 'manual_headers', {})
+      this.$set(this.ruleForm, 'manual_body', [])
+      this.$set(this.ruleForm, 'manual_infos', [])
+      this.ruleForm.manual_weight = 0
+      this.barCode = ''
+      if (!this.againPrint && this.ruleForm.merge_flag) {
+        this.otherNum = Math.round((Number(this.ruleForm.machine_manual_weight) - Number(this.ruleForm.machine_weight) * Number(this.ruleForm.split_count)) * 1000) / 1000
+      }
+    },
     handleClose(done) {
       this.dialogVisible = false
       this.barCode = ''
+      this.otherNum = 0
       if (done) {
         done()
       }
     },
-    reprintFun(row) {
+    reprintFun(row, bool) {
       this.dialogVisible = true
+      this.againPrint = bool
       this.ruleForm = JSON.parse(JSON.stringify(row))
+      if (!bool) {
+        // 打印
+        this.ruleForm.print_begin_trains = this.ruleForm.next_print_begin_trains
+          ? this.ruleForm.next_print_begin_trains : 1
+
+        this.ruleForm.package_count = this.ruleForm.next_package_count
+          ? this.ruleForm.next_package_count : 20
+
+        this.ruleForm.package_count = this.ruleForm.package_count > this.ruleForm.noprint_count
+          ? this.ruleForm.noprint_count : this.ruleForm.package_count
+
+        this.$set(this.ruleForm, 'manual_headers', {})
+        this.$set(this.ruleForm, 'manual_body', [])
+        this.$set(this.ruleForm, 'manual_infos', [])
+        this.ruleForm.manual_weight = 0
+      }
+
       this.$set(this.ruleForm, 'print_count', 1)
       this.$set(this.ruleForm, '_machine_manual_weight', this.ruleForm.machine_manual_weight)
-      this.otherNum = Math.round((Number(this.ruleForm.machine_manual_weight) - Number(this.ruleForm.machine_weight)) * 1000) / 1000
-      if (!this.ruleForm.package_count) {
-        this.ruleForm.package_count = this.ruleForm.package_fufil || 0
+      if (!this.againPrint && this.ruleForm.merge_flag) {
+        this.otherNum = Math.round((Number(this.ruleForm.machine_manual_weight) - Number(this.ruleForm.machine_weight) * Number(this.ruleForm.split_count)) * 1000) / 1000
       }
     },
     submitFun() {
       this.$refs.ruleForm.validate(async(valid) => {
         if (valid) {
           try {
-            console.log(this.ruleForm, 'this.ruleForm')
-            const _api = this.ruleForm.bra_code ? 'put' : 'post'
+            // 计算公差
+            const _tolerance = this.ruleForm.machine_manual_tolerance
+            let otherNum_tolerance
+            if (_tolerance) {
+              const lastStr = _tolerance.slice(_tolerance.length - 1)
+              let _toleranceA = null
+              if (lastStr === '%') {
+                _toleranceA = Number(_tolerance.slice(1, _tolerance.length - 1))
+                const a = _toleranceA / 100
+                const b = Number(this.ruleForm.machine_manual_weight) * a
+                otherNum_tolerance = Math.round(b * 1000) / 1000
+              } else {
+                _toleranceA = Number(_tolerance.slice(1, _tolerance.length - 2))
+                otherNum_tolerance = _toleranceA
+              }
+            }
+
+            if (-otherNum_tolerance > this.otherNum || otherNum_tolerance < this.otherNum) {
+              this.$message.info('其他料包总数有偏差')
+              return
+            }
+            const _api = this.againPrint ? 'put' : 'post'
             let _obj = JSON.parse(JSON.stringify(this.ruleForm))
-            if (this.ruleForm.bra_code) {
+            if (this.againPrint) {
               _obj = { print_count: this.ruleForm.print_count }
             }
+            // console.log(_obj, 6666)
+            // return
             this.btnLoading = true
-            await weightingPackageLog(_api, this.ruleForm.bra_code ? this.ruleForm.id : '', { data: _obj })
+            await weightingPackageLog(_api, this.againPrint ? this.ruleForm.id : '', { data: _obj })
             this.$message.success('已下发打印')
             this.btnLoading = false
             this.dialogVisible = false

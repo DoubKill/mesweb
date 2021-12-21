@@ -24,6 +24,7 @@
       <el-form-item label="机台">
         <equip-select
           style="width:100px"
+          equip-type="密炼设备"
           @equipSelected="equipSelected"
         />
       </el-form-item>
@@ -135,6 +136,7 @@
         <template slot-scope="scope">
           <el-link
             type="primary"
+            @click="repairDialog(scope.row)"
           >{{ scope.row.equip_repair_standard_name }}</el-link>
         </template>
       </el-table-column>
@@ -476,20 +478,36 @@
         <el-button :loading="submitPerson" type="primary" @click="generateFunPerson">确 定</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      title="维护作业标准详情"
+      :visible.sync="dialogVisibleMaintain"
+      width="80%"
+    >
+      <maintain
+        :show="dialogVisibleMaintain"
+        :type-form="typeForm1"
+      />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleMaintain=false">取 消</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
 import { debounce } from '@/utils'
 import page from '@/components/page'
+import maintain from '../components/definition-dialog1'
 import { sectionTree } from '@/api/base_w_four'
 import { mapGetters } from 'vuex'
 import application from '../components/application-dialog'
-import { equipInspectionOrder, multiUpdateInspection, uploadImages, equipApplyRepair, getStaff } from '@/api/jqy'
+import { equipInspectionOrder, multiUpdateInspection, uploadImages, equipApplyRepair, getStaff, equipMaintenanceStandard } from '@/api/jqy'
 import EquipSelect from '@/components/EquipSelect/index'
 export default {
   name: 'ExecutePatrol',
-  components: { EquipSelect, page, application },
+  components: { EquipSelect, page, application, maintain },
   data() {
     return {
       search: {
@@ -499,8 +517,10 @@ export default {
       },
       dateValue: [],
       tableData: [],
+      typeForm1: {},
       bz: null,
       order_id: null,
+      dialogVisibleMaintain: false,
       loadPerson: false,
       checkList: [],
       loading: false,
@@ -540,6 +560,15 @@ export default {
   methods: {
     changeDebounce() {
       debounce(this, 'changeSearch')
+    },
+    async repairDialog(row) {
+      try {
+        const data = await equipMaintenanceStandard('get', null, { params: { id: row.equip_repair_standard }})
+        this.typeForm1 = data.results[0]
+        this.dialogVisibleMaintain = true
+      } catch (e) {
+        // this.dialogVisible = true
+      }
     },
     async getSectionTop() {
       try {

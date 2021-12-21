@@ -166,14 +166,14 @@
         prop="work_order_no"
         label="工单编号"
         min-width="20"
-      >
-        <template slot-scope="scope">
+      />
+      <!-- <template slot-scope="scope">
           <el-link
             type="primary"
             @click="dialogWorkNo(scope.row)"
           >{{ scope.row.work_order_no }}</el-link>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         prop="equip_no"
         label="机台"
@@ -258,7 +258,7 @@
       >
         <template slot-scope="scope">
           <el-link v-if="scope.row.result_material_requisition===true" type="primary" @click="dialogMaterial(scope.row)">Y</el-link>
-          <el-link v-if="scope.row.result_material_requisition===false" type="primary">N</el-link>
+          <span v-if="scope.row.result_material_requisition===false" type="primary">N</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -384,7 +384,7 @@
     <el-dialog
       title="维修作业标准详情"
       :visible.sync="dialogVisibleDefinition"
-      width="70%"
+      width="80%"
     >
       <definition
         :type-form="typeForm"
@@ -396,7 +396,7 @@
     <el-dialog
       title="维护作业标准详情"
       :visible.sync="dialogVisibleMaintain"
-      width="70%"
+      width="80%"
     >
       <maintain
         :type-form="typeForm1"

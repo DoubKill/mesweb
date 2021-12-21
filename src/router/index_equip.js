@@ -558,7 +558,7 @@ export const equipRoutes = [
             name: 'EquipmentReportFormOrderProcessing',
             meta: {
               faName: 'EquipmentReportForm',
-              title: '处理时间分析报表',
+              title: '期间别处理时间报表',
               permissionName: ''
             }
           },

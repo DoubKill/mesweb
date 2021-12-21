@@ -334,7 +334,7 @@
           />
         </el-form-item>
         <el-form-item
-          label="计划价格"
+          label="计划价格(元)"
           prop="checkList"
         >
           <el-input

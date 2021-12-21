@@ -1261,7 +1261,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'MaterialDelivery',
               faShowName: '原材料库',
-              title: '库存统计',
+              title: '库存统计及低库存报警',
               permissionName: 'material_inventory_summary'
             }
           },
@@ -1392,7 +1392,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'CarbonDelivery',
               faShowName: '炭黑库',
-              title: '库存统计',
+              title: '库存统计及低库存报警',
               permissionName: 'th_inventory_summary'
             }
           },

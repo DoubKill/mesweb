@@ -122,17 +122,17 @@
       <el-table-column
         prop="plan_id"
         label="计划编号"
-        min-width="20"
+        width="130"
       />
       <el-table-column
         prop="plan_name"
         label="计划名称"
-        min-width="20"
+        width="160"
       />
       <el-table-column
         prop="equip_name"
         label="机台"
-        min-width="20"
+        width="130"
       />
       <el-table-column
         label="维护标准"
@@ -142,10 +142,12 @@
           <el-link
             v-if="scope.row.repair_standard_name"
             type="primary"
+            @click="repairDialog(scope.row)"
           >{{ scope.row.repair_standard_name }}</el-link>
           <el-link
             v-if="scope.row.standard_name"
             type="primary"
+            @click="repairDialog(scope.row)"
           >{{ scope.row.standard_name }}</el-link>
         </template>
       </el-table-column>
@@ -172,12 +174,12 @@
       <el-table-column
         prop="planned_maintenance_date"
         label="计划维护日期"
-        min-width="20"
+        width="150"
       />
       <el-table-column
         prop="next_maintenance_date"
         label="下次维护日期"
-        min-width="20"
+        width="150"
       />
       <el-table-column
         prop="created_username"
@@ -187,7 +189,7 @@
       <el-table-column
         prop="created_date"
         label="创建时间"
-        min-width="20"
+        width="150"
       />
     </el-table>
     <page
@@ -214,7 +216,6 @@
           <el-select
             v-model="creatOrder.work_type"
             placeholder="请选择"
-            clearable
             @change="clear"
           >
             <el-option
@@ -232,22 +233,12 @@
             placeholder="请输入维护计划名称"
           />
         </el-form-item>
-        <el-form-item label="设备种类" prop="equip_type">
-          <el-select v-model="creatOrder.equip_type" placeholder="请选择" clearable filterable @change="clear1">
-            <el-option
-              v-for="item in options5"
-              :key="item.category_no"
-              :label="item.category_no"
-              :value="item.id"
-            />
-          </el-select>
-        </el-form-item>
         <el-form-item label="生产机台" prop="equip_no">
           <el-select
             v-model="creatOrder.equip_no"
             placeholder="请选择"
             clearable
-            multiple
+            @change="changeEquip"
             @visible-change="visibleChange"
           >
             <el-option
@@ -350,6 +341,34 @@
         <el-button type="primary" @click="submitFunRepair">确 定</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      title="维修作业标准详情"
+      :visible.sync="dialogVisibleDefinition"
+      width="80%"
+    >
+      <definition
+        :show="dialogVisibleDefinition"
+        :type-form="typeForm"
+      />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleDefinition=false">取 消</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
+      title="维护作业标准详情"
+      :visible.sync="dialogVisibleMaintain"
+      width="80%"
+    >
+      <maintain
+        :show="dialogVisibleMaintain"
+        :type-form="typeForm1"
+      />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleMaintain=false">取 消</el-button>
+      </span>
+    </el-dialog>
+
     <el-dialog
       :title="`维护作业项目`"
       :visible.sync="dialogVisibleWork"
@@ -373,13 +392,15 @@
 <script>
 import { debounce } from '@/utils'
 import page from '@/components/page'
-import { equipPlan, equipClosePlan, equipGenerateOrder, equipPlanGetName, equipsCategory } from '@/api/jqy'
+import { equipPlan, equipClosePlan, equipGenerateOrder, equipPlanGetName, equipRepairStandard, equipMaintenanceStandard } from '@/api/jqy'
 import { getEquip } from '@/api/banburying-performance-manage'
+import definition from '../components/definition-dialog'
+import maintain from '../components/definition-dialog1'
 import RepairDefinition from '../standard-definition/repair-definition'
 import MaintainDefinition from '../standard-definition/maintain-definition'
 export default {
   name: 'Maintenance',
-  components: { page, RepairDefinition, MaintainDefinition },
+  components: { page, RepairDefinition, MaintainDefinition, definition, maintain },
   data() {
     return {
       search: {
@@ -394,17 +415,15 @@ export default {
       options2: ['未生成工单', '已生成工单', '计划执行中', '计划已完成'],
       options3: ['停机', '不停机'],
       options4: ['高', '中', '低'],
-      options5: [],
       multipleSelection: [],
+      dialogVisibleDefinition: false,
+      dialogVisibleMaintain: false,
       rules: {
         work_type: [
           { required: true, message: '不能为空', trigger: 'change' }
         ],
         plan_name: [
           { required: true, message: '不能为空', trigger: 'blur' }
-        ],
-        equip_type: [
-          { required: true, message: '不能为空', trigger: 'change' }
         ],
         equip_no: [
           { required: true, message: '不能为空', trigger: 'change' }
@@ -436,22 +455,15 @@ export default {
       submit1: false,
       submit2: false,
       submitAssign: false,
+      typeForm: {},
+      typeForm1: {},
       creatOrder: {}
     }
   },
   created() {
     this.getList()
-    this.getTypeNode()
   },
   methods: {
-    async getTypeNode() {
-      try {
-        const data = await equipsCategory('get', null, { params: { all: 1 }})
-        this.options5 = data.results || []
-      } catch (e) {
-        //
-      }
-    },
     async clear() {
       this.creatOrder.plan_name = ''
       try {
@@ -472,6 +484,28 @@ export default {
       if (this.creatOrder.equip_repair_standard) {
         this.creatOrder.equip_repair_standard = null
       }
+    },
+    async repairDialog(row) {
+      if (row.repair_standard_name) {
+        try {
+          const data = await equipRepairStandard('get', null, { params: { id: row.equip_repair_standard }})
+          this.typeForm = data.results[0]
+        } catch (e) {
+          // this.dialogVisible = true
+        }
+        this.dialogVisibleDefinition = true
+      } else if (row.standard_name) {
+        try {
+          const data = await equipMaintenanceStandard('get', null, { params: { id: row.equip_manintenance_standard }})
+          this.typeForm1 = data.results[0]
+        } catch (e) {
+          // this.dialogVisible = true
+        }
+        this.dialogVisibleMaintain = true
+      }
+    },
+    changeEquip() {
+      this.$set(this.creatOrder, 'equip_type', this.equipOptions.filter(d => d.equip_no === this.creatOrder.equip_no)[0].category)
     },
     async generate() {
       if (this.multipleSelection.length > 0) {
@@ -542,13 +576,11 @@ export default {
       }
     },
     visibleChange(visible) {
-      if (visible && this.creatOrder.equip_type) {
-        const obj = { category: this.creatOrder.equip_type, all: 1 }
+      if (visible) {
+        const obj = { all: 1, category_name: '密炼设备' }
         getEquip(obj).then(response => {
           this.equipOptions = response.results
         })
-      } else if (visible && !this.creatOrder.equip_type) {
-        this.$message('请先选择设备种类')
       }
     },
     changeDebounce() {
@@ -556,7 +588,7 @@ export default {
       debounce(this, 'getList')
     },
     generateFun() {
-      console.log(this.creatOrder)
+      this.creatOrder.equip_no = [this.creatOrder.equip_no]
       this.$refs.ruleFormHandle.validate(async(valid) => {
         if (valid) {
           try {
@@ -585,23 +617,6 @@ export default {
         this.loading = false
       }
     },
-    clear1() {
-      if (this.creatOrder.equip_no) {
-        this.creatOrder.equip_no = null
-      }
-      if (this.creatOrder.repair_standard_name) {
-        this.creatOrder.repair_standard_name = null
-      }
-      if (this.creatOrder.standard_name) {
-        this.creatOrder.standard_name = null
-      }
-      if (this.creatOrder.equip_manintenance_standard) {
-        this.creatOrder.equip_manintenance_standard = null
-      }
-      if (this.creatOrder.equip_repair_standard) {
-        this.creatOrder.equip_repair_standard = null
-      }
-    },
     changeSearch() {
       this.search.page = 1
       this.getList()
@@ -628,8 +643,8 @@ export default {
       }
     },
     submitFunRepair() {
-      if (this.$refs['List1'].currentObj.standard_name) {
-        this.$set(this.creatOrder, 'repair_standard_name', this.$refs['List1'].currentObj.standard_name)
+      if (this.$refs['List1'].currentObj.standard_code) {
+        this.$set(this.creatOrder, 'repair_standard_name', this.$refs['List1'].currentObj.standard_code)
         this.$set(this.creatOrder, 'equip_repair_standard', this.$refs['List1'].currentObj.id)
         this.$set(this.creatOrder, 'equip_condition', this.$refs['List1'].currentObj.equip_condition)
         this.$set(this.creatOrder, 'importance_level', this.$refs['List1'].currentObj.important_level)
@@ -639,8 +654,8 @@ export default {
       }
     },
     submitFunwork() {
-      if (this.$refs['List2'].currentObj.standard_name) {
-        this.$set(this.creatOrder, 'standard_name', this.$refs['List2'].currentObj.standard_name)
+      if (this.$refs['List2'].currentObj.standard_code) {
+        this.$set(this.creatOrder, 'standard_name', this.$refs['List2'].currentObj.standard_code)
         this.$set(this.creatOrder, 'equip_manintenance_standard', this.$refs['List2'].currentObj.id)
         this.$set(this.creatOrder, 'equip_condition', this.$refs['List2'].currentObj.equip_condition)
         this.$set(this.creatOrder, 'importance_level', this.$refs['List2'].currentObj.important_level)

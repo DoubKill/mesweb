@@ -901,7 +901,7 @@
     <el-dialog
       title="维修作业标准详情"
       :visible.sync="dialogVisibleDefinition"
-      width="70%"
+      width="80%"
     >
       <definition
         :type-form="typeForm"
@@ -913,7 +913,7 @@
     <el-dialog
       title="维护作业标准详情"
       :visible.sync="dialogVisibleMaintain"
-      width="70%"
+      width="80%"
     >
       <maintain
         :type-form="typeForm1"
@@ -1167,8 +1167,8 @@ export default {
     },
     submitFun1() {
       this.creatOrder.work_content = []
-      if (this.$refs['List1'].currentObj.standard_name) {
-        this.$set(this.creatOrder, 'result_repair_standard_name', this.$refs['List1'].currentObj.standard_name)
+      if (this.$refs['List1'].currentObj.standard_code) {
+        this.$set(this.creatOrder, 'result_repair_standard_name', this.$refs['List1'].currentObj.standard_code)
         this.$set(this.creatOrder, 'result_repair_standard', this.$refs['List1'].currentObj.id)
         this.equip_jobitem_standard_id = this.$refs['List1'].currentObj.equip_job_item_standard
         for (let index = 0; index < this.$refs['List1'].currentObj.detail_list.length; index++) {
@@ -1181,6 +1181,12 @@ export default {
             operation_result: this.$refs['List1'].currentObj.detail_list[index].check_standard_desc
           })
         }
+        this.creatOrder.work_content.map((item, index) => {
+          if (item.job_item_check_type === '数值范围') {
+            item.job_item_check_standard_a = Number(item.job_item_check_standard.split('-')[0])
+            item.job_item_check_standard_b = Number(item.job_item_check_standard.split('-')[1])
+          }
+        })
         this.dialogVisible2 = false
       } else {
         this.$message.info('请选择一种标准')
@@ -1188,8 +1194,8 @@ export default {
     },
     submitFunwork() {
       this.creatOrder.work_content = []
-      if (this.$refs['List2'].currentObj.standard_name) {
-        this.$set(this.creatOrder, 'result_maintenance_standard_name', this.$refs['List2'].currentObj.standard_name)
+      if (this.$refs['List2'].currentObj.standard_code) {
+        this.$set(this.creatOrder, 'result_maintenance_standard_name', this.$refs['List2'].currentObj.standard_code)
         this.$set(this.creatOrder, 'result_maintenance_standard', this.$refs['List2'].currentObj.id)
         this.equip_jobitem_standard_id = this.$refs['List2'].currentObj.equip_job_item_standard
         for (let index = 0; index < this.$refs['List2'].currentObj.detail_list.length; index++) {
@@ -1202,6 +1208,12 @@ export default {
             operation_result: this.$refs['List2'].currentObj.detail_list[index].check_standard_desc
           })
         }
+        this.creatOrder.work_content.map((item, index) => {
+          if (item.job_item_check_type === '数值范围') {
+            item.job_item_check_standard_a = Number(item.job_item_check_standard.split('-')[0])
+            item.job_item_check_standard_b = Number(item.job_item_check_standard.split('-')[1])
+          }
+        })
         this.dialogVisibleWork = false
       } else {
         this.$message.info('请选择一种标准')
@@ -1227,7 +1239,7 @@ export default {
     },
     deleteList(row) {
       this.tableDataView.forEach((item, index) => {
-        if (row.spare_code1 === item.spare_code1) {
+        if (row.id === item.id) {
           this.tableDataView.splice(index, 1)
         }
       })
@@ -1401,10 +1413,10 @@ export default {
         this.tableDataView1 = data.results || []
         let data1 = []
         for (const i in this.tableDataView) {
-          data1 = data1.concat(this.tableDataView[i].spare_code1)
+          data1 = data1.concat(this.tableDataView[i].id)
         }
         this.tableDataView1.forEach(row => {
-          if (data1.indexOf(row.spare_code) >= 0) {
+          if (data1.indexOf(row.equip_spare) >= 0) {
             this.$refs.multipleTable.toggleRowSelection(row, true)
           }
         })
@@ -1505,13 +1517,13 @@ export default {
     generateFunSelect() {
       let data = []
       for (const i in this.tableDataView) {
-        data = data.concat(this.tableDataView[i].spare_code1)
+        data = data.concat(this.tableDataView[i].id)
       }
       for (let index = 0; index < this.multipleSelection.length; index++) {
-        if (data.indexOf(this.multipleSelection[index].spare_code) === -1) {
+        if (data.indexOf(this.multipleSelection[index].equip_spare) === -1) {
           this.tableDataView.push({
             spare_code: this.multipleSelection[index].spare__code,
-            spare_code1: this.multipleSelection[index].spare_code,
+            // id: this.multipleSelection[index].spare_code,
             spare_name: this.multipleSelection[index].spare_name,
             equip_component_type_name: this.multipleSelection[index].component_type_name,
             specification: this.multipleSelection[index].specification,

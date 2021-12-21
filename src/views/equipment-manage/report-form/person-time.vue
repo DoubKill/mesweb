@@ -34,7 +34,6 @@
       <el-form-item>
         <el-button
           type="primary"
-          :loading="btnExportLoad"
           @click="exportTable"
         >导出Excel</el-button>
         <el-button type="primary" @click="getList">查询</el-button>
@@ -59,27 +58,27 @@
       />
       <el-table-column
         prop="派单时间"
-        label="派单时间(分钟)"
+        label="派单平均时间(分钟)"
         min-width="20"
       />
       <el-table-column
         prop="接单时间"
-        label="接单时间(分钟)"
+        label="接单平均时间(分钟)"
         min-width="20"
       />
       <el-table-column
         prop="维修时间"
-        label="维修时间(分钟)"
+        label="维修平均时间(分钟)"
         min-width="20"
       />
       <el-table-column
         prop="验收时间"
-        label="验收时间(分钟)"
+        label="验收平均时间(分钟)"
         min-width="20"
       />
       <el-table-column
         prop="开机时间"
-        label="开机时间(分钟)"
+        label="开机平均时间(分钟)"
         min-width="20"
       />
     </el-table>
@@ -95,7 +94,6 @@ export default {
   data() {
     return {
       dateValue: [],
-      btnExportLoad: false,
       search: {},
       loading: false,
       tableData: []
@@ -113,11 +111,11 @@ export default {
         if (this.tableData.length > 0) {
           this.tableData.push({
             receiving_user: '合计',
-            派单时间: sum(this.tableData, '派单时间'),
-            接单时间: sum(this.tableData, '接单时间'),
-            维修时间: sum(this.tableData, '维修时间'),
-            验收时间: sum(this.tableData, '验收时间'),
-            开机时间: sum(this.tableData, '开机时间')
+            派单时间: handleDecimalPoint(sum(this.tableData, '派单时间') / this.tableData.length),
+            接单时间: handleDecimalPoint(sum(this.tableData, '接单时间') / this.tableData.length),
+            维修时间: handleDecimalPoint(sum(this.tableData, '维修时间') / this.tableData.length),
+            验收时间: handleDecimalPoint(sum(this.tableData, '验收时间') / this.tableData.length),
+            开机时间: handleDecimalPoint(sum(this.tableData, '开机时间') / this.tableData.length)
           })
         }
         this.loading = false
@@ -140,23 +138,6 @@ export default {
     },
     exportTable() {
       exportExcel('人员别处理时间报表')
-      // this.btnExportLoad = true
-      // const obj = Object.assign({ export: 1 }, this.search)
-      // const _api = equipWarehouseRecord
-      // _api('get', null, { params: obj, responseType: 'blob' })
-      //   .then(res => {
-      //     const link = document.createElement('a')
-      //     const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
-      //     link.style.display = 'none'
-      //     link.href = URL.createObjectURL(blob)
-      //     link.download = '备件出入库履历.xlsx' // 下载的文件名
-      //     document.body.appendChild(link)
-      //     link.click()
-      //     document.body.removeChild(link)
-      //     this.btnExportLoad = false
-      //   }).catch(e => {
-      //     this.btnExportLoad = false
-      //   })
     }
   }
 }
@@ -168,6 +149,14 @@ function sum(arr, params) {
   }, 0)
   s = Math.round(s * 100) / 100
   return s
+}
+function handleDecimalPoint(value) {
+  value = +value
+  if (!value) return 0
+  if (!Number.isInteger(value)) {
+    value = +value.toFixed(2)
+  }
+  return value
 }
 </script>
 

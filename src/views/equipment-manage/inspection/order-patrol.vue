@@ -23,6 +23,7 @@
       </el-form-item>
       <el-form-item label="机台">
         <equip-select
+          equip-type="密炼设备"
           @equipSelected="equipSelected"
         />
       </el-form-item>
@@ -64,11 +65,10 @@
           />
         </el-select>
       </el-form-item>
-
       <el-form-item>
         <el-button v-permission="['equip_inspection_order','receive']" :loading="submit1" type="primary" @click="order">接单</el-button>
-        <el-button v-permission="['equip_inspection_order','charge']" :loading="submit2" type="primary" @click="back">退单</el-button>
-        <el-button v-permission="['equip_inspection_order','close']" :loading="submit3" type="primary" @click="close">关闭</el-button>
+        <el-button v-permission="['equip_inspection_order','charge']" :loading="submit2" type="primary" @click="backDialog">退单</el-button>
+        <el-button v-permission="['equip_inspection_order','close']" type="primary" @click="closeDialog">关闭</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -112,6 +112,7 @@
         <template slot-scope="scope">
           <el-link
             type="primary"
+            @click="repairDialog(scope.row)"
           >{{ scope.row.equip_repair_standard_name }}</el-link>
         </template>
       </el-table-column>
@@ -167,39 +168,93 @@
       :current-page="search.page"
       @currentChange="currentChange"
     />
+
+    <el-dialog
+      title="退单原因填写"
+      :visible.sync="dialogVisibleBack"
+      width="30%"
+    >
+      <el-form label-width="120px">
+        <el-form-item label="退单原因:">
+          <el-input
+            v-model="desc"
+            style="width:300px"
+            type="textarea"
+            :rows="4"
+          />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleBack=false">取 消</el-button>
+        <el-button :loading="submit2" type="primary" @click="back">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <el-dialog
+      title="关闭工单原因填写"
+      :visible.sync="dialogVisibleClose"
+      width="30%"
+    >
+      <el-form :inline="true" label-width="120px">
+        <el-form-item label="关闭工单原因:">
+          <el-input
+            v-model="desc"
+            style="width:300px"
+            type="textarea"
+            :rows="4"
+          />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleClose=false">取 消</el-button>
+        <el-button :loading="submit3" type="primary" @click="close">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <el-dialog
+      title="维护作业标准详情"
+      :visible.sync="dialogVisibleMaintain"
+      width="80%"
+    >
+      <maintain
+        :show="dialogVisibleMaintain"
+        :type-form="typeForm1"
+      />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleMaintain=false">取 消</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
 import page from '@/components/page'
 import { mapGetters } from 'vuex'
-import { equipInspectionOrder, multiUpdateInspection } from '@/api/jqy'
+import maintain from '../components/definition-dialog1'
+import { equipInspectionOrder, multiUpdateInspection, equipMaintenanceStandard } from '@/api/jqy'
 import { debounce } from '@/utils'
 import EquipSelect from '@/components/EquipSelect/index'
 export default {
   name: 'OrderPatrol',
-  components: { EquipSelect, page },
+  components: { EquipSelect, page, maintain },
   data() {
     return {
       search: { status: '已指派' },
       loading: false,
-      btnExportLoad: false,
-      dialogVisibleRepair: false,
-      dialogVisibleDefinition: false,
-      dialogVisibleMaintain: false,
       dateValue: [],
       tableData: [],
+      dialogVisibleMaintain: false,
+      dialogVisibleBack: false,
+      dialogVisibleClose: false,
+      desc: null,
       total: 0,
-      checkList: [],
       multipleSelection: [],
+      typeForm1: {},
       submit: false,
       submit1: false,
       submit2: false,
-      submit3: false,
-      ruleForm: {},
-      typeForm: {},
-      typeForm1: {},
-      creatOrder: {}
+      submit3: false
     }
   },
   computed: {
@@ -212,6 +267,31 @@ export default {
     this.getList()
   },
   methods: {
+    backDialog() {
+      if (this.multipleSelection.length > 0) {
+        this.desc = null
+        this.dialogVisibleBack = true
+      } else {
+        this.$message('请先勾选工单')
+      }
+    },
+    async repairDialog(row) {
+      try {
+        const data = await equipMaintenanceStandard('get', null, { params: { id: row.equip_repair_standard }})
+        this.typeForm1 = data.results[0]
+        this.dialogVisibleMaintain = true
+      } catch (e) {
+        // this.dialogVisible = true
+      }
+    },
+    closeDialog() {
+      if (this.multipleSelection.length > 0) {
+        this.desc = null
+        this.dialogVisibleClose = true
+      } else {
+        this.$message('请先勾选工单')
+      }
+    },
     changeDebounce() {
       debounce(this, 'changeSearch')
     },
@@ -267,13 +347,14 @@ export default {
             type: 'warning'
           }).then(() => {
             this.submit2 = true
-            multiUpdateInspection('post', null, { data: { pks: obj, status: '已生成', opera_type: '退单' }})
+            multiUpdateInspection('post', null, { data: { back_reason: this.desc, pks: obj, status: '已生成', opera_type: '退单' }})
               .then(response => {
                 this.$message({
                   type: 'success',
                   message: '退单成功'
                 })
                 this.submit2 = false
+                this.dialogVisibleBack = false
                 this.$refs.multipleTable.clearSelection()
                 this.getList()
               })
@@ -301,13 +382,14 @@ export default {
             type: 'warning'
           }).then(() => {
             this.submit3 = true
-            multiUpdateInspection('post', null, { data: { pks: obj, status: '已关闭', opera_type: '关闭' }})
+            multiUpdateInspection('post', null, { data: { close_reason: this.desc, pks: obj, status: '已关闭', opera_type: '关闭' }})
               .then(response => {
                 this.$message({
                   type: 'success',
                   message: '关闭成功'
                 })
                 this.submit3 = false
+                this.dialogVisibleClose = false
                 this.$refs.multipleTable.clearSelection()
                 this.getList()
               })
