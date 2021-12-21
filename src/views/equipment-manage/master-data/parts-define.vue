@@ -2,7 +2,7 @@
   <div class="parts-define">
     <!-- 设备部件定义 -->
     <el-form :inline="true" class="search-form-style">
-      <el-form-item label="所属主设备种类">
+      <!-- <el-form-item label="所属主设备种类">
         <el-select v-model="formInline.equip_type" placeholder="请选择" :disabled="isMultiple===true" clearable @change="changeSearch1">
           <el-option
             v-for="item in options"
@@ -11,7 +11,7 @@
             :value="item.id"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="所属设备部位">
         <el-select v-model="formInline.equip_part" :disabled="isMultiple===true" placeholder="请选择" clearable @change="changeSearch" @visible-change="getEquipPart">
           <el-option
@@ -81,11 +81,11 @@
       highlight-current-row
       @current-change="handleSelectionChange1"
     >
-      <el-table-column
+      <!-- <el-table-column
         prop="equip_type_name"
         label="所属主设备种类"
         min-width="20"
-      />
+      /> -->
       <el-table-column
         prop="equip_part_name"
         label="所属设备部位"
@@ -177,7 +177,7 @@
         label-width="150px"
         :model="dialogForm"
       >
-        <el-form-item
+        <!-- <el-form-item
           label="所属主设备种类"
           prop="equip_type"
         >
@@ -189,7 +189,7 @@
               :value="item.id"
             />
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item
           label="所属主设备部位"
           prop="equip_part"
@@ -445,7 +445,7 @@ export default {
     isMultiple(val) {
       if (val) {
         this.formInline = {}
-        this.formInline.equip_type = this.equipType.category_no
+        // this.formInline.equip_type = this.equipType.category_no
         this.formInline.equip_part = this.equipType.equip_part_name
         this.formInline.use_flag = 1
         this.getList()
@@ -454,7 +454,7 @@ export default {
   },
   created() {
     if (this.equipType) {
-      this.formInline.equip_type = this.equipType.category_no
+      // this.formInline.equip_type = this.equipType.category_no
       this.formInline.equip_part = this.equipType.equip_part_name
       this.formInline.use_flag = 1
     }
@@ -511,18 +511,19 @@ export default {
     },
     async getEquipPart1(val) {
       if (val) {
-        if (this.dialogForm.equip_type) {
-          try {
-            const data = await equipPartNew('get', null, { params: { equip_type: this.dialogForm.equip_type, use_flag: true, all: 1 }})
-            this.options3 = data.results || []
-          } catch (e) {
-            //
-          }
-        } else {
-          this.options3 = []
-          this.$message.info('请先选择主设备种类')
+        // if (this.dialogForm.equip_type) {
+        try {
+          const data = await equipPartNew('get', null, { params: { equip_type: this.dialogForm.equip_type, use_flag: true, all: 1 }})
+          this.options3 = data.results || []
+        } catch (e) {
+          //
         }
       }
+      //  else {
+      //   this.options3 = []
+      //   this.$message.info('请先选择主设备种类')
+      // }
+      // }
     },
     changeSearch1() {
       this.formInline.equip_part = null

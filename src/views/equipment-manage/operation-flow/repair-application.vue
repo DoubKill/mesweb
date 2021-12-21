@@ -369,11 +369,11 @@
         border
         @current-change="handleSelectionChange"
       >
-        <el-table-column
+        <!-- <el-table-column
           prop="equip_type"
           label="所属主设备种类"
           min-width="20"
-        />
+        /> -->
         <el-table-column
           prop="part_type"
           label="部位分类"

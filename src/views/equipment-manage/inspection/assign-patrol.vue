@@ -24,7 +24,6 @@
       <el-form-item label="机台">
         <equip-select
           style="width:100px"
-          equip-type="密炼设备"
           @equipSelected="equipSelected"
         />
       </el-form-item>

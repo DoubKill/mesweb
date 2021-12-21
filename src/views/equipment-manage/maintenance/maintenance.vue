@@ -237,6 +237,7 @@
           <el-select
             v-model="creatOrder.equip_no"
             placeholder="请选择"
+            multiple
             clearable
             @change="changeEquip"
             @visible-change="visibleChange"
@@ -505,7 +506,7 @@ export default {
       }
     },
     changeEquip() {
-      this.$set(this.creatOrder, 'equip_type', this.equipOptions.filter(d => d.equip_no === this.creatOrder.equip_no)[0].category)
+      // this.$set(this.creatOrder, 'equip_type', this.equipOptions.filter(d => d.equip_no === this.creatOrder.equip_no)[0].category)
     },
     async generate() {
       if (this.multipleSelection.length > 0) {
@@ -665,7 +666,7 @@ export default {
       }
     },
     dialog() {
-      this.creatOrder = { plan_name: '' }
+      this.creatOrder = { plan_name: '', equip_no: [] }
       this.dialogVisible = true
     },
     handleClose(done) {

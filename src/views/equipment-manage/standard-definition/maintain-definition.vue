@@ -18,16 +18,6 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="设备种类">
-        <el-select v-model="getParams.equip_type" placeholder="请选择" clearable filterable :disabled="isDialog&&params.equip_type?true:false" @change="changSelect">
-          <el-option
-            v-for="item in options"
-            :key="item.category_no"
-            :label="item.category_no"
-            :value="item.id"
-          />
-        </el-select>
-      </el-form-item>
       <el-form-item label="部位名称">
         <el-input v-model="getParams.equip_part" :disabled="isDialog&&params.equip_part?true:false" clearable @input="changeDebounce" />
       </el-form-item>
@@ -82,8 +72,13 @@
         <el-button
           v-permission="['equip_maintenance_standard', 'add']"
           type="primary"
+          @click="onSubmitXJ"
+        >新建巡检标准</el-button>
+        <el-button
+          v-permission="['equip_maintenance_standard', 'add']"
+          type="primary"
           @click="onSubmit"
-        >新建</el-button>
+        >新建其他标准</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -110,9 +105,8 @@
         label="标准名称"
       />
       <el-table-column
-        prop="equip_type_name"
-        label="设备种类"
-        width="50px"
+        prop="equip"
+        label="机台"
       />
       <el-table-column
         prop="equip_part_name"
@@ -236,7 +230,7 @@
                 @change="changeCode"
               >
                 <el-option
-                  v-for="item in ['巡检','保养','润滑','标定']"
+                  v-for="item in ['保养','润滑','标定']"
                   :key="item"
                   :label="item"
                   :value="item"
@@ -249,13 +243,18 @@
             <el-form-item label="标准名称" prop="standard_name">
               <el-input v-model="typeForm.standard_name" style="width:200px" />
             </el-form-item>
-            <el-form-item label="设备种类" prop="equip_type">
-              <el-select v-model="typeForm.equip_type" placeholder="请选择" clearable filterable @change="clear">
+            <el-form-item label="机台" prop="equip_no">
+              <el-select
+                v-model="typeForm.equip_no"
+                placeholder="请选择"
+                clearable
+                multiple
+              >
                 <el-option
                   v-for="item in options"
-                  :key="item.category_no"
-                  :label="item.category_no"
-                  :value="item.id"
+                  :key="item.id"
+                  :label="item.equip_no"
+                  :value="item.equip_no"
                 />
               </el-select>
             </el-form-item>
@@ -453,6 +452,256 @@
         >确 定</el-button>
       </div>
     </el-dialog>
+
+    <el-dialog
+      :title="`${typeForm.id?'修改':'新建'}巡检作业标准`"
+      width="80%"
+      :visible.sync="dialogEditVisibleXJ"
+      :before-close="handleClose"
+    >
+      <el-form
+        ref="createForm"
+        :inline="true"
+        :rules="rules1"
+        :model="typeForm"
+        label-width="150px"
+      >
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="作业类型" prop="work_type">
+              <el-input v-model="typeForm.work_type" disabled style="width:200px" />
+            </el-form-item>
+            <el-form-item label="标准编号" prop="standard_code">
+              <el-input v-model="typeForm.standard_code" :disabled="typeForm.id?true:false" style="width:200px" />
+            </el-form-item>
+            <el-form-item label="标准名称" prop="standard_name">
+              <el-input v-model="typeForm.standard_name" style="width:200px" />
+            </el-form-item>
+            <el-form-item label="类别" prop="type">
+              <el-select
+                v-model="typeForm.type"
+                placeholder="请选择"
+                clearable
+              >
+                <el-option
+                  v-for="item in ['机械', '电器','通用']"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="设备条件" prop="equip_condition">
+              <el-select
+                v-model="typeForm.equip_condition"
+                placeholder="请选择"
+                clearable
+              >
+                <el-option
+                  v-for="item in ['停机', '不停机']"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="重要程度" prop="important_level">
+              <el-select
+                v-model="typeForm.important_level"
+                placeholder="请选择"
+                clearable
+              >
+                <el-option
+                  v-for="item in ['高', '中', '低']"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="机台" prop="equip_no">
+              <el-select
+                v-model="typeForm.equip_no"
+                placeholder="请选择"
+                clearable
+                multiple
+              >
+                <el-option
+                  v-for="item in options"
+                  :key="item.id"
+                  :label="item.equip_no"
+                  :value="item.equip_no"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="维护周期" prop="maintenance_cycle">
+              <el-input-number v-model="typeForm.maintenance_cycle" placeholder="请输入内容" controls-position="right" :min="0" />
+              <el-form-item style="width:100px">
+                <el-select
+                  v-model="typeForm.cycle_unit"
+                  clearable
+                  placeholder="请选择"
+                >
+                  <el-option
+                    v-for="item in ['4小时','班次','日','周','月','季度','年','车数']"
+                    :key="item"
+                    :label="item"
+                    :value="item"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-form-item>
+            <el-form-item label="周期数" prop="cycle_num">
+              <el-input-number v-model="typeForm.cycle_num" placeholder="请输入内容" controls-position="right" :min="0" />
+            </el-form-item>
+            <el-form-item label="所需人数" prop="cycle_person_num">
+              <el-input-number v-model="typeForm.cycle_person_num" placeholder="请输入内容" controls-position="right" :min="0" />
+            </el-form-item>
+            <el-form-item label="作业时间" prop="operation_time">
+              <el-input-number v-model="typeForm.operation_time" placeholder="请输入内容" controls-position="right" :min="0" />
+              <el-form-item prop="operation_time_unit" style="width:100px">
+                <el-select
+                  v-model="typeForm.operation_time_unit"
+                  clearable
+                  placeholder="请选择"
+                >
+                  <el-option
+                    v-for="item in ['日','小时','分钟','秒','车次']"
+                    :key="item"
+                    :label="item"
+                    :value="item"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-form-item>
+            <el-form-item label="钉钉提醒发送" prop="remind_flag">
+              <el-checkbox v-model="typeForm.remind_flag1" label="包干人" />
+              <el-checkbox v-model="typeForm.remind_flag2" label="上级" />
+              <el-checkbox v-model="typeForm.remind_flag3" label="上上级" />
+            </el-form-item>
+          </el-col>
+          <el-form-item
+            label="作业内容"
+            prop="work_list"
+          >
+            <el-button type="primary" @click="AddWork">添加</el-button>
+            <span style="color:red;marginLeft:30px">注：作业内容中区域编号、区域名称、部位名称、作业项目、作业项目详情为必填项</span>
+            <el-table
+              :data="typeForm.work_list"
+              border
+              style="width: 100%"
+            >
+              <el-table-column
+                type="index"
+                label="次序"
+              />
+              <el-table-column
+                label="区域编号"
+                width="180"
+              >
+                <template slot-scope="{row,$index}">
+                  <el-input v-model="row.equip_area_define__area_code" disabled>
+                    <el-button slot="append" disable icon="el-icon-search" @click="showLocation(row,$index)" />
+                  </el-input>
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="区域名称"
+                width="150"
+              >
+                <template slot-scope="{row}">
+                  <el-input
+                    v-model="row.equip_area_define__area_name"
+                    disabled
+                  />
+                </template>
+              </el-table-column>
+              <el-table-column
+                width="150"
+                label="部位名称"
+              >
+                <template slot-scope="{row}">
+                  <el-select v-model="row.equip_part__part_id" placeholder="请选择" @visible-change="getEquipPart1" @change="clear(row)">
+                    <el-option
+                      v-for="item in options1"
+                      :key="item.part_name"
+                      :label="item.part_name"
+                      :value="item.id"
+                    />
+                  </el-select>
+                </template>
+              </el-table-column>
+              <el-table-column
+                width="150"
+                label="部件名称"
+              >
+                <template slot-scope="{row}">
+                  <el-select v-model="row.equip_component__id" placeholder="请选择" clearable @visible-change="getEquipComponent1($event,row)">
+                    <el-option
+                      v-for="item in options2"
+                      :key="item.component_name"
+                      :label="item.component_name"
+                      :value="item.id"
+                    />
+                  </el-select>
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="作业项目"
+                width="200px"
+              >
+                <template slot-scope="{row,$index}">
+                  <el-input v-model="row.equip_job_item_standard__standard_name" disabled>
+                    <el-button slot="append" icon="el-icon-search" @click="Add1(row,$index)" />
+                  </el-input>
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="作业项目详情"
+                width="200px"
+              >
+                <template slot-scope="{row}">
+                  <el-input
+                    v-model="row.work_details_column"
+                    disabled
+                  />
+                </template>
+              </el-table-column>
+              <el-table-column label="操作" width="220">
+                <template slot-scope="scope">
+                  <el-button
+                    size="mini"
+                    type="danger"
+                    @click="handleDeleteWork(scope.$index)"
+                  >删除
+                  </el-button>
+                  <el-button
+                    size="mini"
+                    type="primary"
+                    @click="handleDeleteWork(scope.row)"
+                  >打印标签
+                  </el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-form-item>
+        </el-row>
+      </el-form>
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button @click="dialogEditVisibleXJ=false">取 消</el-button>
+        <el-button
+          :loading="btnLoading"
+          type="primary"
+          @click="handleEdit"
+        >确 定</el-button>
+      </div>
+    </el-dialog>
+
     <el-dialog
       :title="`物料列表`"
       :visible.sync="dialogVisible"
@@ -502,21 +751,39 @@
         <el-button @click="dialogVisibleProject=false">取 消</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      :title="`区域编号选择`"
+      :visible.sync="dialogVisibleLocation"
+      width="90%"
+    >
+      <locationArea
+        ref="locationAreaRef"
+        :is-dialog="true"
+        :show-dialog="dialogVisibleLocation"
+      />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleLocation=false">取 消</el-button>
+        <el-button type="primary" @click="submitFunLocation">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { debounce } from '@/utils'
+import locationArea from '../master-data/location-area.vue'
+import { getEquip } from '@/api/banburying-performance-manage'
 import project from '../components/project-dialog'
 import SparePartsCode from '../master-data/spare-parts-code'
 import ProjectDefinition from './project-definition'
 import { equipJobItemStandard } from '@/api/base_w_four'
-import { equipsCategory, equipMaintenanceStandard, equipPartNew, equipComponent, equipMaintenanceStandardImport, equipMaintenanceStandardDown, equipMaintenanceStandardGetName } from '@/api/jqy'
+import { equipMaintenanceStandard, equipPartNew, equipComponent, equipMaintenanceStandardImport, equipMaintenanceStandardDown, equipMaintenanceStandardGetName } from '@/api/jqy'
 import page from '@/components/page'
 
 export default {
   name: 'MaintainDefinition',
-  components: { page, SparePartsCode, ProjectDefinition, project },
+  components: { locationArea, page, SparePartsCode, ProjectDefinition, project },
   props: {
     isDialog: {
       type: Boolean,
@@ -540,6 +807,8 @@ export default {
       btnExportLoad: false,
       tableData: [],
       dialogEditVisible: false,
+      dialogVisibleLocation: false,
+      dialogEditVisibleXJ: false,
       dialogVisible: false,
       dialogVisible1: false,
       dialogVisibleProject: false,
@@ -550,13 +819,23 @@ export default {
       typeForm: {},
       typeForm1: {},
       rules: {
-        work_type: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        work_type: [{ required: true, message: '不能为空', trigger: 'change' }],
         standard_code: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        equip_type: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        equip_part: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        equip_condition: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        important_level: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        equip_job_item_standard_name: [{ required: true, message: '不能为空', trigger: 'blur' }]
+        equip_no: [{ required: true, message: '不能为空', trigger: 'change' }],
+        equip_part: [{ required: true, message: '不能为空', trigger: 'change' }],
+        equip_condition: [{ required: true, message: '不能为空', trigger: 'change' }],
+        important_level: [{ required: true, message: '不能为空', trigger: 'change' }],
+        equip_job_item_standard_name: [{ required: true, message: '不能为空', trigger: 'change' }]
+      },
+      rules1: {
+        work_type: [{ required: true, message: '不能为空', trigger: 'change' }],
+        type: [{ required: true, message: '不能为空', trigger: 'change' }],
+        standard_code: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        equip_no: [{ required: true, message: '不能为空', trigger: 'change' }],
+        equip_condition: [{ required: true, message: '不能为空', trigger: 'change' }],
+        important_level: [{ required: true, message: '不能为空', trigger: 'change' }],
+        equip_job_item_standard_name: [{ required: true, message: '不能为空', trigger: 'change' }],
+        work_list: [{ required: true, message: '不能为空', trigger: 'change' }]
       },
       currentObj: {},
       getParams: {},
@@ -568,7 +847,6 @@ export default {
     show(bool) {
       if (bool) {
         this.getParams.work_type = this.params.work_type
-        this.getParams.equip_type = this.params.equip_type
         this.getParams.equip_part = this.params.equip_part
         this.getParams.equip_component = this.params.equip_component
         this.getParams.use_flag = true
@@ -579,22 +857,36 @@ export default {
   created() {
     if (this.isDialog) {
       this.getParams.work_type = this.params.work_type
-      this.getParams.equip_type = this.params.equip_type
       this.getParams.equip_part = this.params.equip_part
       this.getParams.equip_component = this.params.equip_component
       this.getParams.use_flag = true
     }
     this.getList()
-    this.getTypeNode()
+    this.visibleChange()
     this.getEquipComponentType()
   },
   methods: {
-    async getTypeNode() {
-      try {
-        const data = await equipsCategory('get', null, { params: { all: 1 }})
-        this.options = data.results || []
-      } catch (e) {
-        //
+    visibleChange() {
+      const obj = { all: 1 }
+      getEquip(obj).then(response => {
+        this.options = response.results
+      })
+    },
+    showLocation(row, index) {
+      this.workIndex = index
+      this.dialogVisibleLocation = true
+    },
+    async submitFunLocation() {
+      if (this.$refs.locationAreaRef) {
+        if (!this.$refs.locationAreaRef.handleData) {
+          this.$message.info('请单击选择区域编号')
+          return
+        }
+        this.dialogVisibleLocation = false
+        const a = this.$refs.locationAreaRef.handleData
+        this.$set(this.typeForm.work_list[this.workIndex], 'equip_area_define__id', a.id)
+        this.$set(this.typeForm.work_list[this.workIndex], 'equip_area_define__area_code', a.area_code)
+        this.$set(this.typeForm.work_list[this.workIndex], 'equip_area_define__area_name', a.area_name)
       }
     },
     async repairDialog(row) {
@@ -608,16 +900,11 @@ export default {
     },
     async getEquipPart(val) {
       if (val) {
-        if (this.typeForm.equip_type) {
-          try {
-            const data = await equipPartNew('get', null, { params: { equip_type: this.typeForm.equip_type, use_flag: true }})
-            this.options1 = data.results || []
-          } catch (e) {
-            //
-          }
-        } else {
-          this.options1 = []
-          this.$message.info('请先选择主设备种类')
+        try {
+          const data = await equipPartNew('get', null, { params: { use_flag: true }})
+          this.options1 = data.results || []
+        } catch (e) {
+          //
         }
       }
     },
@@ -636,6 +923,32 @@ export default {
         }
       }
     },
+    async getEquipPart1(val) {
+      if (val) {
+        try {
+          const data = await equipPartNew('get', null, { params: { use_flag: true }})
+          this.options1 = data.results || []
+        } catch (e) {
+          //
+        }
+      }
+    },
+    async getEquipComponent1(val, row) {
+      if (val) {
+        console.log(row)
+        if (row.equip_part) {
+          try {
+            const data = await equipComponent('get', null, { params: { equip_part: row.equip_part, use_flag: 1 }})
+            this.options2 = data.results || []
+          } catch (error) {
+            this.options2 = []
+          }
+        } else {
+          this.options2 = []
+          this.$message.info('请先选择设备部位')
+        }
+      }
+    },
     async changeCode() {
       if (this.typeForm.equip_job_item_standard_name) {
         this.typeForm.equip_job_item_standard_name = null
@@ -643,11 +956,7 @@ export default {
       if (this.typeForm.equip_job_item_standard_detail) {
         this.typeForm.equip_job_item_standard_detail = null
       }
-      if (this.typeForm.work_type === '巡检') {
-        this.typeForm.standard_code = 'XJBZ00X'
-        this.typeForm.equip_condition = '不停机'
-        this.typeForm.important_level = '中'
-      } else if (this.typeForm.work_type === '保养') {
+      if (this.typeForm.work_type === '保养') {
         this.typeForm.standard_code = 'BYBZ00X'
         this.typeForm.equip_condition = '停机'
         this.typeForm.important_level = '中'
@@ -695,16 +1004,40 @@ export default {
       }
     },
     onSubmit() {
+      this.workIndex = null
       this.typeForm = {
         standard_code: '',
         equip_condition: '',
         important_level: '',
         cycle_num: 0,
+        equip_no: [],
         remind_flag1: true,
         remind_flag2: true,
         remind_flag3: false
       }
       this.dialogEditVisible = true
+    },
+    async onSubmitXJ() {
+      this.workIndex = null
+      this.typeForm = {
+        work_type: '巡检',
+        standard_code: '',
+        equip_no: [],
+        equip_condition: '不停机',
+        important_level: '中',
+        cycle_num: 0,
+        remind_flag1: true,
+        remind_flag2: true,
+        remind_flag3: false,
+        work_list: []
+      }
+      try {
+        const data = await equipMaintenanceStandardGetName('get', null, { params: { rule_code: '巡检' }})
+        this.typeForm.standard_code = data.results
+      } catch (e) {
+        // this.$message.info('获取编号失败')
+      }
+      this.dialogEditVisibleXJ = true
     },
     handleClose1(done) {
       this.dialogVisible = false
@@ -719,12 +1052,9 @@ export default {
         done()
       }
     },
-    clear() {
-      if (this.typeForm.equip_part) {
-        this.typeForm.equip_part = null
-      }
-      if (this.typeForm.equip_component) {
-        this.typeForm.equip_component = null
+    clear(row) {
+      if (row.equip_component) {
+        row.equip_component = null
       }
     },
     clear1() {
@@ -732,13 +1062,21 @@ export default {
         this.typeForm.equip_component = null
       }
     },
+    AddWork() {
+      this.typeForm.work_list.push({ })
+    },
     Add() {
       this.dialogVisible = true
     },
-    Add1() {
+    Add1(row, index) {
       if (!this.typeForm.work_type) {
         this.$message.info('请先选择作业类型')
       } else {
+        if (row) {
+          this.workIndex = index
+        } else {
+          this.workIndex = null
+        }
         this.dialogVisible1 = true
       }
     },
@@ -775,9 +1113,15 @@ export default {
     },
     submitFun1() {
       if (this.$refs['List1'].currentObj.standard_name) {
-        this.typeForm.equip_job_item_standard = this.$refs['List1'].currentObj.id
-        this.typeForm.equip_job_item_standard_name = this.$refs['List1'].currentObj.standard_name
-        this.typeForm.equip_job_item_standard_detail = this.$refs['List1'].currentObj.work_details_column
+        if (this.typeForm.work_type === '巡检') {
+          this.$set(this.typeForm.work_list[this.workIndex], 'equip_job_item_standard__id', this.$refs['List1'].currentObj.id)
+          this.$set(this.typeForm.work_list[this.workIndex], 'equip_job_item_standard__standard_name', this.$refs['List1'].currentObj.standard_name)
+          this.$set(this.typeForm.work_list[this.workIndex], 'work_details_column', this.$refs['List1'].currentObj.work_details_column)
+        } else {
+          this.$set(this.typeForm, 'equip_job_item_standard', this.$refs['List1'].currentObj.id)
+          this.$set(this.typeForm, 'equip_job_item_standard_name', this.$refs['List1'].currentObj.standard_name)
+          this.$set(this.typeForm, 'equip_job_item_standard_detail', this.$refs['List1'].currentObj.work_details_column)
+        }
         this.dialogVisible1 = false
       } else {
         this.$message.info('请选择一种标准')
@@ -808,7 +1152,11 @@ export default {
         //
       }
       this.getEquipComponentType()
-      this.dialogEditVisible = true
+      if (this.typeForm.work_type === '巡检') {
+        this.dialogEditVisibleXJ = true
+      } else {
+        this.dialogEditVisible = true
+      }
     },
     handleClose(done) {
       this.dialogEditVisible = false
@@ -821,6 +1169,18 @@ export default {
       const typeForm1 = JSON.parse(JSON.stringify(this.typeForm))
       this.$refs.createForm.validate(async(valid) => {
         if (valid) {
+          if (typeForm1.work_list.some(d => !d.equip_area_define__area_code)) {
+            this.$message('请选择区域编号')
+            return
+          }
+          if (typeForm1.work_list.some(d => !d.equip_part__part_id)) {
+            this.$message('请选择设备部位')
+            return
+          }
+          if (typeForm1.work_list.some(d => !d.equip_job_item_standard__standard_name)) {
+            this.$message('请选择作业项目')
+            return
+          }
           try {
             this.btnLoading = true
             const _api = this.typeForm.id ? 'put' : 'post'
@@ -872,6 +1232,9 @@ export default {
           this.typeForm.spare_list.splice(index, 1)
         }
       })
+    },
+    handleDeleteWork(index) {
+      this.typeForm.work_list.splice(index, 1)
     },
     currentChange(page, pageSize) {
       this.getParams.page = page
