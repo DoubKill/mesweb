@@ -72,12 +72,12 @@
       />
       <el-table-column
         prop="avg_consuming_weight"
-        label="日均用量计算值(吨)"
+        label="日均用量计算值(kg)"
         min-width="15"
       />
       <el-table-column
         prop="avg_setting_weight"
-        label="日均用量设定值(吨)"
+        label="日均用量设定值(kg)"
         min-width="15"
       />
       <el-table-column
@@ -87,7 +87,7 @@
       />
       <el-table-column
         prop="warning_weight"
-        label="预警重量(吨)"
+        label="预警重量(kg)"
         min-width="15"
       />
       <el-table-column
@@ -116,13 +116,13 @@
       <el-radio v-if="!isAlertDays" v-model="formData.radio" label="1">使用计算值</el-radio>
       <el-radio v-if="!isAlertDays" v-model="formData.radio" label="2">使用设定值</el-radio>
       <div style="margin:20px 0" />
-      <label v-if="!isAlertDays">日均用量（吨）</label>
+      <label v-if="!isAlertDays">日均用量（kg）</label>
       <el-input-number
         v-if="!isAlertDays"
         v-model="formData.num"
         controls-position="right"
         :min="1"
-        :max="9999"
+        :max="9999999"
       />
       <label v-if="isAlertDays" style="margin-right:10px">预警天数</label>
       <el-input-number
@@ -130,7 +130,7 @@
         v-model="formData.warning_days"
         controls-position="right"
         :min="1"
-        :max="9999"
+        :max="9999999"
       />
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose(false)">取 消</el-button>

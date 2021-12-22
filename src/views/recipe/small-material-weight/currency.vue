@@ -168,7 +168,7 @@
           <span>{{ formData.dev_type_name }}</span>
         </el-form-item>
         <el-form-item v-if="formData.batching_type==='配方'" prop="split_num" label="分包数">
-          <el-input-number v-model="formData.split_num" controls-position="right" :min="1" :disabled="formData.id?true:false" />
+          <el-input-number v-model="formData.split_num" controls-position="right" :min="1" :disabled="formData.id?true:false" @change="splitNumChange" />
         </el-form-item>
         <el-form-item prop="material_name" label="物料名称">
           <el-select v-model="formData.material_name" filterable placeholder="请选择" :disabled="formData.id?true:false" @change="changeMaterial">
@@ -180,7 +180,10 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item prop="single_weight" label="配料重量">
+        <el-form-item v-if="formData.batching_type==='配方'" prop="_single_weight" label="配料重量">
+          <el-input v-model="formData._single_weight" placeholder="配料重量" :disabled="(formData.id||formData.batching_type==='配方')?true:false" />
+        </el-form-item>
+        <el-form-item v-else prop="single_weight" label="配料重量">
           <el-input v-model="formData.single_weight" placeholder="配料重量" :disabled="(formData.id||formData.batching_type==='配方')?true:false" />
         </el-form-item>
         <el-form-item prop="begin_trains" label="起始车次">
@@ -229,6 +232,7 @@ export default {
         product_no_id: [{ required: true, message: '请输入', trigger: 'change' }],
         split_num: [{ required: true, message: '请输入', trigger: 'blur' }],
         material_name: [{ required: true, message: '请输入', trigger: 'change' }],
+        _single_weight: [{ required: true, message: '请输入', trigger: 'blur' }],
         single_weight: [{ required: true, message: '请输入', trigger: 'blur' }],
         begin_trains: [{ required: true, message: '请输入', trigger: 'blur' }],
         expire_day: [{ required: true, message: '请输入', trigger: 'blur' }],
@@ -297,8 +301,30 @@ export default {
       if (val) {
         const obj = this.materialList.find(d => d.material_name === val)
         this.formData.single_weight = obj.actual_weight
+        if (this.formData.split_num) {
+          const a = this.formData.single_weight / this.formData.split_num
+          const b = Math.round(a * 1000) / 1000
+          this.formData._single_weight = b
+        }
+        this.getWeight()
       } else {
         this.formData.single_weight = ''
+        this.formData._single_weight = ''
+      }
+    },
+    async getWeight() {
+      try {
+        const data = await weightingPackageSingle('get', null, { params: { material_name: this.formData.material_name }})
+        this.formData.single_weight = data || null
+      } catch (e) {
+        //
+      }
+    },
+    splitNumChange() {
+      if (this.formData.single_weight && this.formData.split_num) {
+        const a = this.formData.single_weight / this.formData.split_num
+        const b = Math.round(a * 1000) / 1000
+        this.formData._single_weight = b
       }
     },
     radioChange() {
@@ -350,6 +376,7 @@ export default {
       this.getManualList()
       if (row) {
         this.formData = JSON.parse(JSON.stringify(row))
+        this.formData._single_weight = this.formData.single_weight
       }
       this.dialogVisible = true
       setTimeout(d => {
