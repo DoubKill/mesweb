@@ -1,7 +1,7 @@
 <template>
   <div>
     <label style="margin-right:10px;">配料设备</label>
-    <selectBatchingEquip v-model="equipValue" :created-is="true" :is-default="true" :multiple-is="true" @changeFun="selectBatchEquip" />
+    <selectBatchingEquip v-model="equipValue" :read-is="readIs" :created-is="true" :is-default="true" :multiple-is="true" @changeFun="selectBatchEquip" />
     <!-- 计划管理 -->
     <div v-for="(item,index) in allTable" :key="index" class="cardBoxMy">
       <h3 style="margin-left:10px">{{ item.equip_no }}计划管理</h3>
@@ -202,7 +202,8 @@ export default {
       },
       dialogAdd: false,
       loading: false,
-      btnLoading: false
+      btnLoading: false,
+      readIs: false
     }
   },
   created() {
@@ -218,11 +219,14 @@ export default {
         //   })
         // }
         this.loading = true
+        this.readIs = true
         const data = await xlPlan('get', null, { params: this.currentSearch })
+        this.readIs = false
         this.loading = false
         return { data: data.results || [], total: data.count || 0 }
       } catch (e) {
         this.loading = false
+        this.readIs = false
       }
     },
     classChanged(val, row, index) {
