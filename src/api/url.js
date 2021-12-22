@@ -387,6 +387,7 @@ export default {
   MaterialUnqualifiedTypes: '/api/v1/quality/material-unqualified-types/',
   MaterialUnqualifiedProcess: '/api/v1/quality/material-unqualified-process/',
   MaterialExamineResultCurve: '/api/v1/quality/material-examine-result-curve/',
+  Disqualification: '/api/v1/quality/examine-material/disqualification/',
   // 小料原材料列表
   XlMaterial: '/api/v1/terminal/xl-material/',
   XlBin: '/api/v1/terminal/xl-bin/',
