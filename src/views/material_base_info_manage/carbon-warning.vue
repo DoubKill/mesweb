@@ -122,7 +122,7 @@
         v-model="formData.num"
         controls-position="right"
         :min="1"
-        :max="9999"
+        :max="9999999"
       />
       <label v-if="isAlertDays" style="margin-right:10px">预警天数</label>
       <el-input-number
@@ -130,7 +130,7 @@
         v-model="formData.warning_days"
         controls-position="right"
         :min="1"
-        :max="9999"
+        :max="9999999"
       />
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose(false)">取 消</el-button>
