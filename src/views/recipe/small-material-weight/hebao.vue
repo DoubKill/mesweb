@@ -125,7 +125,7 @@
       :before-close="handleClose"
     >
       <el-form ref="formRef" :model="formData" :rules="rules" label-width="120px">
-        <el-form-item prop="product_no_id" label="细料名称">
+        <el-form-item v-if="!formData.id" prop="product_no_id" label="细料名称">
           <!-- <el-select v-model="formData.product_no" :disabled="formData.id?true:false" filterable placeholder="请选择" @change="changeProduct">
             <el-option
               v-for="item in productList"
@@ -147,7 +147,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="formData.id" label="配方名称">
+        <el-form-item v-else label="细料名称">
           {{ formData.product_no }}
         </el-form-item>
         <!-- <el-form-item prop="dev_type" label="机型">
@@ -227,7 +227,7 @@
       <span slot="footer" class="dialog-footer">
         <el-button v-if="!formData.id" type="info" @click="resetFun">重 置</el-button>
         <el-button @click="handleClose(false)">取 消</el-button>
-        <el-button type="primary" :loading="loadingBtn" @click="submitFun">确 定</el-button>
+        <el-button type="primary" :disabled="loadingBtn" @click="submitFun">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -367,6 +367,8 @@ export default {
       if (!this.tableData1New.length) {
         return
       }
+      this.loadingBtn = true
+      let i = this.tableData1New.length
       for (let index = 0; index < this.tableData1New.length; index++) {
         const d = this.tableData1New[index]
         d.standard_weight = Math.round(d.standard_weight_old / this.formData.split_num * 1000) / 1000
@@ -375,9 +377,13 @@ export default {
             batching_equip: this.formData.batching_equip,
             material_name: this.formData.product_no, standard_weight: d.standard_weight }})
           this.$set(d, 'tolerance', data)
+          i--
         } catch (e) {
           //
         }
+      }
+      if (i === 0) {
+        this.loadingBtn = false
       }
     },
     changeSearch() {
