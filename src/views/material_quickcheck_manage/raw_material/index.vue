@@ -321,7 +321,7 @@
           {{ unqualifiedObj.material_data.supplier }}
         </el-form-item>
         <el-form-item label="抽检人">
-          {{ unqualifiedObj.material_data.supplier }}
+          {{ unqualifiedObj.material_data.sampling_username }}
         </el-form-item>
         <el-form-item label="检测日期">
           {{ unqualifiedObj.material_data.examine_date }}
