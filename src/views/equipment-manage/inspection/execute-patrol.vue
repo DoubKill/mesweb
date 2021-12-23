@@ -118,6 +118,16 @@
         min-width="20"
       />
       <el-table-column
+        prop="inspection_line_no"
+        label="序号"
+        min-width="20"
+      />
+      <el-table-column
+        prop="area_name"
+        label="区域"
+        min-width="20"
+      />
+      <el-table-column
         prop="work_order_no"
         label="工单编号"
         min-width="20"
@@ -479,7 +489,7 @@
     </el-dialog>
 
     <el-dialog
-      title="维护作业标准详情"
+      title="巡检作业标准详情"
       :visible.sync="dialogVisibleMaintain"
       width="80%"
     >
@@ -498,7 +508,7 @@
 <script>
 import { debounce } from '@/utils'
 import page from '@/components/page'
-import maintain from '../components/definition-dialog1'
+import maintain from '../components/definition-dialog2'
 import { sectionTree } from '@/api/base_w_four'
 import { mapGetters } from 'vuex'
 import application from '../components/application-dialog'
@@ -687,9 +697,6 @@ export default {
           message: '只能开始已接单工单'
         })
       }
-    },
-    deleteList(row) {
-      console.log(row)
     },
     changeSearch() {
       this.search.page = 1

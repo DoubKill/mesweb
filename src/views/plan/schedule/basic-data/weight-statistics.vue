@@ -82,8 +82,8 @@ export default {
       }
     },
     equipSelected(obj) {
-      this.search.equip_no = obj.equip_no
-      this.category_name = obj.category__category_name
+      this.search.equip_no = obj ? obj.equip_no : null
+      this.category_name = obj ? obj.category__category_name : null
       this.getList()
     },
     changeSearch() {

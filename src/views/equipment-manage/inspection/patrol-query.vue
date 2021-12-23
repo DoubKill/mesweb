@@ -117,6 +117,16 @@
         </template>
       </el-table-column>
       <el-table-column
+        prop="inspection_line_no"
+        label="序号"
+        min-width="20"
+      />
+      <el-table-column
+        prop="area_name"
+        label="区域"
+        min-width="20"
+      />
+      <el-table-column
         prop="work_order_no"
         label="工单编号"
         min-width="20"
@@ -325,7 +335,7 @@
     </el-dialog>
 
     <el-dialog
-      title="维护作业标准详情"
+      title="巡检作业标准详情"
       :visible.sync="dialogVisibleMaintain"
       width="80%"
     >
@@ -343,7 +353,7 @@
 
 <script>
 import { debounce } from '@/utils'
-import maintain from '../components/definition-dialog1'
+import maintain from '../components/definition-dialog2'
 import { equipInspectionOrder, equipInspectionOrderDown, equipMaintenanceStandard } from '@/api/jqy'
 import page from '@/components/page'
 import EquipSelect from '@/components/EquipSelect/index'

@@ -43,6 +43,7 @@
         >
           <el-button type="primary">导入Excel</el-button>
         </el-upload>
+        <el-button v-permission="['equip_spare_erp', 'sync']" type="primary" :loading="btnExportLoad1" @click="onSubmit">同步ERP</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -138,7 +139,7 @@
 
 <script>
 import page from '@/components/page'
-import { equipSpareErp, equipSpareErpDown, equipSpareErpImport } from '@/api/jqy'
+import { equipSpareErp, equipSpareErpDown, equipSpareErpImport, getSpare } from '@/api/jqy'
 import { debounce } from '@/utils'
 export default {
   name: 'EquipmentMasterDataERPMaterial',
@@ -149,6 +150,7 @@ export default {
       loading: false,
       tableData: [],
       btnExportLoad: false,
+      btnExportLoad1: false,
       total: 0,
       options: []
     }
@@ -219,6 +221,27 @@ export default {
         }).catch(e => {
           this.btnExportLoad = false
         })
+    },
+    onSubmit() {
+      this.$confirm('此操作将同步ERP物料是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.btnExportLoad1 = true
+        getSpare('get', null, {})
+          .then(response => {
+            this.btnExportLoad1 = false
+            this.$message({
+              type: 'success',
+              message: '操作成功!'
+            })
+            this.getList()
+          })
+          .catch(response => {
+            this.btnExportLoad1 = false
+          })
+      })
     }
   }
 }

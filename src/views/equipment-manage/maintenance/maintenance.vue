@@ -239,7 +239,6 @@
             placeholder="请选择"
             multiple
             clearable
-            @change="changeEquip"
             @visible-change="visibleChange"
           >
             <el-option
@@ -371,9 +370,23 @@
     </el-dialog>
 
     <el-dialog
+      title="巡检作业标准详情"
+      :visible.sync="dialogVisibleXJ"
+      width="80%"
+    >
+      <maintainxj
+        :show="dialogVisibleXJ"
+        :type-form="typeForm1"
+      />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleXJ=false">取 消</el-button>
+      </span>
+    </el-dialog>
+
+    <el-dialog
       :title="`维护作业项目`"
       :visible.sync="dialogVisibleWork"
-      width="80%"
+      width="85%"
       :before-close="handleClosework"
     >
       <maintain-definition
@@ -397,11 +410,12 @@ import { equipPlan, equipClosePlan, equipGenerateOrder, equipPlanGetName, equipR
 import { getEquip } from '@/api/banburying-performance-manage'
 import definition from '../components/definition-dialog'
 import maintain from '../components/definition-dialog1'
+import maintainxj from '../components/definition-dialog2'
 import RepairDefinition from '../standard-definition/repair-definition'
 import MaintainDefinition from '../standard-definition/maintain-definition'
 export default {
   name: 'Maintenance',
-  components: { page, RepairDefinition, MaintainDefinition, definition, maintain },
+  components: { page, RepairDefinition, MaintainDefinition, definition, maintain, maintainxj },
   data() {
     return {
       search: {
@@ -418,6 +432,7 @@ export default {
       options4: ['高', '中', '低'],
       multipleSelection: [],
       dialogVisibleDefinition: false,
+      dialogVisibleXJ: false,
       dialogVisibleMaintain: false,
       rules: {
         work_type: [
@@ -502,11 +517,12 @@ export default {
         } catch (e) {
           // this.dialogVisible = true
         }
-        this.dialogVisibleMaintain = true
+        if (row.work_type === '巡检') {
+          this.dialogVisibleXJ = true
+        } else {
+          this.dialogVisibleMaintain = true
+        }
       }
-    },
-    changeEquip() {
-      // this.$set(this.creatOrder, 'equip_type', this.equipOptions.filter(d => d.equip_no === this.creatOrder.equip_no)[0].category)
     },
     async generate() {
       if (this.multipleSelection.length > 0) {
@@ -578,7 +594,7 @@ export default {
     },
     visibleChange(visible) {
       if (visible) {
-        const obj = { all: 1, category_name: '密炼设备' }
+        const obj = { all: 1 }
         getEquip(obj).then(response => {
           this.equipOptions = response.results
         })
@@ -589,7 +605,7 @@ export default {
       debounce(this, 'getList')
     },
     generateFun() {
-      this.creatOrder.equip_no = [this.creatOrder.equip_no]
+      // this.creatOrder.equip_no = [this.creatOrder.equip_no]
       this.$refs.ruleFormHandle.validate(async(valid) => {
         if (valid) {
           try {

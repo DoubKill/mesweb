@@ -105,6 +105,11 @@
         label="标准名称"
       />
       <el-table-column
+        prop="type"
+        label="类别"
+        width="60"
+      />
+      <el-table-column
         prop="equip"
         label="机台"
       />
@@ -457,10 +462,10 @@
       :title="`${typeForm.id?'修改':'新建'}巡检作业标准`"
       width="80%"
       :visible.sync="dialogEditVisibleXJ"
-      :before-close="handleClose"
+      :before-close="handleCloseXJ"
     >
       <el-form
-        ref="createForm"
+        ref="createForm1"
         :inline="true"
         :rules="rules1"
         :model="typeForm"
@@ -484,7 +489,7 @@
                 clearable
               >
                 <el-option
-                  v-for="item in ['机械', '电器','通用']"
+                  v-for="item in ['机械', '电气','通用']"
                   :key="item"
                   :label="item"
                   :value="item"
@@ -536,6 +541,14 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
+            <el-form-item label="起始时间" prop="start_time">
+              <el-date-picker
+                v-model="typeForm.start_time"
+                style="width:180px"
+                value-format="yyyy-MM-dd"
+                :clearable="true"
+              />
+            </el-form-item>
             <el-form-item label="维护周期" prop="maintenance_cycle">
               <el-input-number v-model="typeForm.maintenance_cycle" placeholder="请输入内容" controls-position="right" :min="0" />
               <el-form-item style="width:100px">
@@ -623,7 +636,7 @@
                 label="部位名称"
               >
                 <template slot-scope="{row}">
-                  <el-select v-model="row.equip_part__part_id" placeholder="请选择" @visible-change="getEquipPart1" @change="clear(row)">
+                  <el-select v-model="row.equip_part__id" placeholder="请选择" @visible-change="getEquipPart1" @change="clear(row)">
                     <el-option
                       v-for="item in options1"
                       :key="item.part_name"
@@ -693,11 +706,11 @@
         slot="footer"
         class="dialog-footer"
       >
-        <el-button @click="dialogEditVisibleXJ=false">取 消</el-button>
+        <el-button @click="handleCloseXJ(false)">取 消</el-button>
         <el-button
           :loading="btnLoading"
           type="primary"
-          @click="handleEdit"
+          @click="handleEditXJ"
         >确 定</el-button>
       </div>
     </el-dialog>
@@ -834,7 +847,7 @@ export default {
         equip_no: [{ required: true, message: '不能为空', trigger: 'change' }],
         equip_condition: [{ required: true, message: '不能为空', trigger: 'change' }],
         important_level: [{ required: true, message: '不能为空', trigger: 'change' }],
-        equip_job_item_standard_name: [{ required: true, message: '不能为空', trigger: 'change' }],
+        equip_job_item_standard_name: [{ type: Array, required: true, message: '不能为空', trigger: 'change' }],
         work_list: [{ required: true, message: '不能为空', trigger: 'change' }]
       },
       currentObj: {},
@@ -936,9 +949,9 @@ export default {
     async getEquipComponent1(val, row) {
       if (val) {
         console.log(row)
-        if (row.equip_part) {
+        if (row.equip_part__id) {
           try {
-            const data = await equipComponent('get', null, { params: { equip_part: row.equip_part, use_flag: 1 }})
+            const data = await equipComponent('get', null, { params: { equip_part: row.equip_part__id, use_flag: 1 }})
             this.options2 = data.results || []
           } catch (error) {
             this.options2 = []
@@ -1005,6 +1018,9 @@ export default {
     },
     onSubmit() {
       this.workIndex = null
+      // if (this.$refs.createForm) {
+      //   this.$refs.createForm.resetFields()
+      // }
       this.typeForm = {
         standard_code: '',
         equip_condition: '',
@@ -1019,6 +1035,9 @@ export default {
     },
     async onSubmitXJ() {
       this.workIndex = null
+      if (this.$refs.createForm1) {
+        this.$refs.createForm1.resetFields()
+      }
       this.typeForm = {
         work_type: '巡检',
         standard_code: '',
@@ -1159,8 +1178,15 @@ export default {
       }
     },
     handleClose(done) {
-      this.dialogEditVisible = false
       this.$refs.createForm.resetFields()
+      this.dialogEditVisible = false
+      if (done) {
+        done()
+      }
+    },
+    handleCloseXJ(done) {
+      this.$refs.createForm1.resetFields()
+      this.dialogEditVisibleXJ = false
       if (done) {
         done()
       }
@@ -1169,11 +1195,43 @@ export default {
       const typeForm1 = JSON.parse(JSON.stringify(this.typeForm))
       this.$refs.createForm.validate(async(valid) => {
         if (valid) {
+          try {
+            this.btnLoading = true
+            const _api = this.typeForm.id ? 'put' : 'post'
+            if (typeForm1.maintenance_cycle === undefined) {
+              typeForm1.maintenance_cycle = null
+            }
+            if (typeForm1.cycle_num === undefined) {
+              typeForm1.cycle_num = null
+            }
+            if (typeForm1.cycle_person_num === undefined) {
+              typeForm1.cycle_person_num = null
+            }
+            if (typeForm1.operation_time === undefined) {
+              typeForm1.operation_time = null
+            }
+            await equipMaintenanceStandard(_api, typeForm1.id || null, { data: typeForm1 })
+            this.$message.success('操作成功')
+            this.handleClose(null)
+            this.getList()
+            this.btnLoading = false
+          } catch (e) {
+            this.btnLoading = false
+          }
+        } else {
+          return false
+        }
+      })
+    },
+    handleEditXJ() {
+      const typeForm1 = JSON.parse(JSON.stringify(this.typeForm))
+      this.$refs.createForm1.validate(async(valid) => {
+        if (valid) {
           if (typeForm1.work_list.some(d => !d.equip_area_define__area_code)) {
             this.$message('请选择区域编号')
             return
           }
-          if (typeForm1.work_list.some(d => !d.equip_part__part_id)) {
+          if (typeForm1.work_list.some(d => !d.equip_part__id)) {
             this.$message('请选择设备部位')
             return
           }
@@ -1198,7 +1256,7 @@ export default {
             }
             await equipMaintenanceStandard(_api, typeForm1.id || null, { data: typeForm1 })
             this.$message.success('操作成功')
-            this.handleClose(null)
+            this.handleCloseXJ(null)
             this.getList()
             this.btnLoading = false
           } catch (e) {
