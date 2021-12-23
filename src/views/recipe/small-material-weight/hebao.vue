@@ -211,6 +211,15 @@
             </template>
           </el-table-column>
           <el-table-column
+            v-else
+            label="配料方式"
+            width="210px"
+          >
+            <template slot-scope="{row}">
+              {{ row.batch_type }}
+            </template>
+          </el-table-column>
+          <el-table-column
             v-if="formData.id?false:true"
             label="操作"
             width="100px"
