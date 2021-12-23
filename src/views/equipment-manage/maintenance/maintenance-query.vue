@@ -2,7 +2,7 @@
   <div class="maintenanceQuery">
     <!-- 设备维护计划查询 -->
     <el-form :inline="true">
-      <el-form-item label="维护类别">
+      <el-form-item label="作业类型">
         <el-select
           v-model="search.work_type"
           style="width:150px"
@@ -22,9 +22,25 @@
         <el-input
           v-model="search.plan_name"
           clearable
-          style="width:250px"
+          style="width:150px"
           @input="changeDebounce"
         />
+      </el-form-item>
+      <el-form-item label="类别">
+        <el-select
+          v-model="search.type"
+          style="width:100px"
+          placeholder="请选择"
+          clearable
+          @change="changeSearch"
+        >
+          <el-option
+            v-for="item in ['机械', '电气','通用']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="计划日期">
         <el-date-picker
@@ -38,6 +54,7 @@
       <el-form-item label="来源">
         <el-select
           v-model="search.plan_source"
+          style="width:150px"
           placeholder="请选择"
           clearable
           @change="changeSearch"
@@ -53,6 +70,7 @@
       <el-form-item label="状态">
         <el-select
           v-model="search.status"
+          style="width:150px"
           placeholder="请选择"
           clearable
           @change="changeSearch"
@@ -68,6 +86,7 @@
       <el-form-item label="设备条件">
         <el-select
           v-model="search.equip_condition"
+          style="width:150px"
           placeholder="请选择"
           clearable
           @change="changeSearch"
@@ -83,6 +102,7 @@
       <el-form-item label="重要程度">
         <el-select
           v-model="search.importance_level"
+          style="width:150px"
           placeholder="请选择"
           clearable
           @change="changeSearch"
@@ -110,7 +130,7 @@
     >
       <el-table-column
         prop="work_type"
-        label="维护类别"
+        label="作业类型"
         min-width="20"
       />
       <el-table-column
@@ -122,6 +142,11 @@
         prop="plan_name"
         label="计划名称"
         width="160"
+      />
+      <el-table-column
+        prop="type"
+        label="类别"
+        min-width="20"
       />
       <el-table-column
         prop="equip_name"

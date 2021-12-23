@@ -13,6 +13,22 @@
           @change="changeDate"
         />
       </el-form-item>
+      <el-form-item label="类别">
+        <el-select
+          v-model="search.type"
+          style="width:100px"
+          placeholder="请选择"
+          clearable
+          @change="changeSearch"
+        >
+          <el-option
+            v-for="item in ['机械', '电气','通用']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="计划名称">
         <el-input
           v-model="search.plan_name"
@@ -30,7 +46,7 @@
       <el-form-item label="巡检标准">
         <el-input
           v-model="search.equip_repair_standard"
-          style="width:200px"
+          style="width:150px"
           clearable
           @input="changeDebounce"
         />
@@ -125,6 +141,11 @@
       <el-table-column
         prop="area_name"
         label="区域"
+        min-width="20"
+      />
+      <el-table-column
+        prop="type"
+        label="类别"
         min-width="20"
       />
       <el-table-column
