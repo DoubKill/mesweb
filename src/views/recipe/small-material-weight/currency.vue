@@ -306,10 +306,9 @@ export default {
           const b = Math.round(a * 1000) / 1000
           this.formData._single_weight = b
         }
-        this.getWeight()
-      } else {
-        this.formData.single_weight = ''
-        this.formData._single_weight = ''
+        if (this.formData.batching_type !== '配方') {
+          this.getWeight()
+        }
       }
     },
     async getWeight() {
