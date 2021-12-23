@@ -134,7 +134,7 @@
       @currentChange="currentChange"
     />
     <el-dialog
-      :title="`准备分厂机台单配（配方）化工流转卡${formData.id?'预览':'设置'}`"
+      :title="`准备分厂机台单配  化工流转卡${formData.id?'预览':'设置'}`"
       :visible.sync="dialogVisible"
       width="600px"
       :before-close="handleClose"
@@ -147,25 +147,31 @@
             <el-radio label="通用">通用</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item v-if="formData.batching_type==='配方'" prop="product_no" label="配方名称">
-          <el-select v-model="formData.product_no" :disabled="formData.id?true:false" filterable placeholder="请选择" @change="changeProduct">
+        <el-form-item v-if="formData.batching_type==='配方'&&!formData.id" prop="product_no_id" label="配方名称">
+          <el-select v-model="formData.product_no_id" :disabled="formData.id?true:false" filterable placeholder="请选择" @change="changeProduct">
             <el-option
               v-for="item in productList"
               :key="item.id"
               :label="item.stage_product_batch_no"
-              :value="item.stage_product_batch_no"
-            />
+              :value="item.id"
+            >
+              <span style="float: left">{{ item.stage_product_batch_no }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.dev_type__category_name }}</span>
+            </el-option>
           </el-select>
         </el-form-item>
+        <el-form-item v-if="formData.batching_type==='配方'&&formData.id" label="配方名称">
+          {{ formData.product_no }}
+        </el-form-item>
         <el-form-item v-if="formData.batching_type==='配方'" prop="dev_type" label="使用机型">
-          <equip-category-select v-if="!formData.id" v-model="formData.dev_type" @change="changeDevTypeDialog" />
-          <span v-else>{{ formData.dev_type_name }}</span>
+          <!-- <equip-category-select v-if="!formData.id" v-model="formData.dev_type" @change="changeDevTypeDialog" /> -->
+          <span>{{ formData.dev_type_name }}</span>
         </el-form-item>
         <el-form-item v-if="formData.batching_type==='配方'" prop="split_num" label="分包数">
-          <el-input-number v-model="formData.split_num" controls-position="right" :min="1" :disabled="formData.id?true:false" />
+          <el-input-number v-model="formData.split_num" controls-position="right" :min="1" :disabled="formData.id?true:false" @change="splitNumChange" />
         </el-form-item>
         <el-form-item prop="material_name" label="物料名称">
-          <el-select v-model="formData.material_name" filterable placeholder="请选择" :disabled="formData.id?true:false">
+          <el-select v-model="formData.material_name" filterable placeholder="请选择" :disabled="formData.id?true:false" @change="changeMaterial">
             <el-option
               v-for="item in materialList"
               :key="item.id"
@@ -174,8 +180,11 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item prop="single_weight" label="配料重量">
-          <el-input v-model="formData.single_weight" placeholder="配料重量" :disabled="formData.id?true:false" />
+        <el-form-item v-if="formData.batching_type==='配方'" prop="_single_weight" label="配料重量">
+          <el-input v-model="formData._single_weight" placeholder="配料重量" :disabled="(formData.id||formData.batching_type==='配方')?true:false" />
+        </el-form-item>
+        <el-form-item v-else prop="single_weight" label="配料重量">
+          <el-input v-model="formData.single_weight" placeholder="配料重量" :disabled="(formData.id||formData.batching_type==='配方')?true:false" />
         </el-form-item>
         <el-form-item prop="begin_trains" label="起始车次">
           <el-input-number v-model="formData.begin_trains" controls-position="right" :min="1" :disabled="formData.id?true:false" />
@@ -203,6 +212,7 @@ import page from '@/components/page'
 import EquipCategorySelect from '@/components/EquipCategorySelect'
 import { weightingPackageSingle } from '@/api/base_w_five'
 import { rubberMaterialUrl, materialsUrl } from '@/api/base_w'
+import { productBatchingDetail } from '@/api/small-material-recipe'
 export default {
   name: 'SmallMaterialWeightCurrency',
   components: { page, EquipCategorySelect },
@@ -219,9 +229,10 @@ export default {
         print_count: 1
       },
       rules: {
-        product_no: [{ required: true, message: '请输入', trigger: 'change' }],
+        product_no_id: [{ required: true, message: '请输入', trigger: 'change' }],
         split_num: [{ required: true, message: '请输入', trigger: 'blur' }],
         material_name: [{ required: true, message: '请输入', trigger: 'change' }],
+        _single_weight: [{ required: true, message: '请输入', trigger: 'blur' }],
         single_weight: [{ required: true, message: '请输入', trigger: 'blur' }],
         begin_trains: [{ required: true, message: '请输入', trigger: 'blur' }],
         expire_day: [{ required: true, message: '请输入', trigger: 'blur' }],
@@ -270,23 +281,74 @@ export default {
     async getManualList() {
       try {
         let data = []
-        // this.$set(this.formData, 'material_name', null)
-        // if (this.formData.batching_type === '配方') {
-        //   if (this.formData.product_no) {
-        //     data = await getManualInfo('get', null, { params: { product_no: this.formData.product_no, dev_type: this.formData.dev_type }})
-        //   }
-        // } else {
-        data = await materialsUrl('get', null, { params: { all: 1 }})
-        // }
-        this.materialList = data.results || []
+        this.$set(this.formData, 'material_name', null)
+        this.$set(this.formData, 'single_weight', null)
+        this.materialList = []
+        if (this.formData.batching_type === '配方') {
+          if (this.formData.product_no) {
+            data = await productBatchingDetail(this.product_batching)
+          }
+        } else {
+          const { results } = await materialsUrl('get', null, { params: { all: 1 }})
+          data = results
+        }
+        this.materialList = data || []
       } catch (e) {
         //
       }
     },
+    changeMaterial(val) {
+      if (val) {
+        const obj = this.materialList.find(d => d.material_name === val)
+        this.formData.single_weight = obj.actual_weight
+        if (this.formData.split_num) {
+          const a = this.formData.single_weight / this.formData.split_num
+          const b = Math.round(a * 1000) / 1000
+          this.formData._single_weight = b
+        }
+        this.getWeight()
+      } else {
+        this.formData.single_weight = ''
+        this.formData._single_weight = ''
+      }
+    },
+    async getWeight() {
+      try {
+        const data = await weightingPackageSingle('get', null, { params: { material_name: this.formData.material_name }})
+        this.formData.single_weight = data || null
+      } catch (e) {
+        //
+      }
+    },
+    splitNumChange() {
+      if (this.formData.single_weight && this.formData.split_num) {
+        const a = this.formData.single_weight / this.formData.split_num
+        const b = Math.round(a * 1000) / 1000
+        this.formData._single_weight = b
+      }
+    },
     radioChange() {
+      this.formData.dev_type = null
+      this.formData.dev_type_name = null
+      this.formData.split_num = null
+      this.formData.product_no = null
+      this.formData.material_name = null
+      this.formData.product_no_id = null
+
       this.getManualList()
     },
-    changeProduct() {
+    changeProduct(id) {
+      if (id) {
+        const obj = this.productList.find(D => D.id === id)
+        this.formData.dev_type_name = obj.dev_type__category_name
+        this.formData.product_no = obj.stage_product_batch_no
+        this.formData.dev_type = obj.dev_type
+        this.product_batching = obj.id
+      } else {
+        this.formData.dev_type = ''
+        this.formData.dev_type_name = ''
+        this.formData.product_no = ''
+      }
       this.getManualList()
     },
     changeSearch() {
@@ -314,6 +376,7 @@ export default {
       this.getManualList()
       if (row) {
         this.formData = JSON.parse(JSON.stringify(row))
+        this.formData._single_weight = this.formData.single_weight
       }
       this.dialogVisible = true
       setTimeout(d => {

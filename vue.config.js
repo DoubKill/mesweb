@@ -43,6 +43,7 @@ module.exports = {
         // target: 'http://10.10.120.40:15008',
         // target: 'http://10.10.120.40:9009/', //  测试环境
         // target: 'http://10.20.181.104:8000', //  博文
+        // target: 'http://liubowen.vaiwan.com', //  博文
         // target: 'http://10.4.14.179:8000', //  博文外
         // target: 'http://10.20.180.40:8000/', // 龙霄
         // target: 'http://10.20.180.172:8000/', // 葛龙外
