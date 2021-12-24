@@ -245,6 +245,19 @@
       </span>
     </el-dialog>
 
+    <el-dialog
+      title="巡检作业标准详情"
+      :visible.sync="dialogVisibleXJ"
+      width="80%"
+    >
+      <maintainxj
+        :show="dialogVisibleXJ"
+        :type-form="typeForm1"
+      />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleXJ=false">取 消</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -253,10 +266,11 @@ import { debounce } from '@/utils'
 import page from '@/components/page'
 import definition from '../components/definition-dialog'
 import maintain from '../components/definition-dialog1'
+import maintainxj from '../components/definition-dialog2'
 import { equipPlan, equipPlanDown, equipRepairStandard, equipMaintenanceStandard } from '@/api/jqy'
 export default {
   name: 'MaintenanceQuery',
-  components: { page, definition, maintain },
+  components: { page, definition, maintain, maintainxj },
   data() {
     return {
       search: {
@@ -268,6 +282,7 @@ export default {
       loading: false,
       dialogVisibleDefinition: false,
       dialogVisibleMaintain: false,
+      dialogVisibleXJ: false,
       btnExportLoad: false,
       options: ['巡检', '保养', '润滑', '标定'],
       options1: ['自动生成', '人工创建', '故障报修'],
@@ -312,7 +327,11 @@ export default {
         } catch (e) {
           // this.dialogVisible = true
         }
-        this.dialogVisibleMaintain = true
+        if (row.work_type === '巡检') {
+          this.dialogVisibleXJ = true
+        } else {
+          this.dialogVisibleMaintain = true
+        }
       }
     },
     changeDebounce() {
