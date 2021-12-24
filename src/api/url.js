@@ -606,5 +606,10 @@ export default {
   MaterialDetailsAux: '/api/v1/terminal/material-details-aux/',
   EquipPeriodStatement: '/api/v1/equipment/equip-period-statement/', // 期间别处理时间
   EquipFinishingRate: '/api/v1/equipment/equip-finishing-rate/', // 工单按时完成率报表
-  EquipOldRate: '/api/v1/equipment/equip-old-rate/' // 交旧率报表
+  EquipOldRate: '/api/v1/equipment/equip-old-rate/', // 交旧率报表
+  GetSpare: '/api/v1/equipment/get-spare/', // 同步ERP
+  GetSpareOrder: '/api/v1/equipment/get-spare-order/', // 同步领料单入库单据
+  SchedulingParamsSetting: '/api/v1/plan/scheduling-params-setting/', // 排程参数设定
+  SchedulingRecipeMachineSetting: '/api/v1/plan/scheduling-recipe-machine-setting/', // 定机表
+  SchedulingRecipeMachineImport: '/api/v1/plan/scheduling-recipe-machine-setting/import_xlsx/'
 }

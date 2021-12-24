@@ -651,7 +651,7 @@
                 label="部件名称"
               >
                 <template slot-scope="{row}">
-                  <el-select v-model="row.equip_component__id" placeholder="请选择" clearable @visible-change="getEquipComponent1($event,row)">
+                  <el-select v-model="row.equip_component__id" placeholder="请选择" clearable @visible-change="getEquipComponent1($event,row)" @change="changeComponent(row)">
                     <el-option
                       v-for="item in options2"
                       :key="item.component_name"
@@ -693,7 +693,9 @@
                   <el-button
                     size="mini"
                     type="primary"
-                    @click="handleDeleteWork(scope.row)"
+                    :loading="btnLoad&&index===scope.row.id"
+                    :disabled="btnLoad"
+                    @click="printingFun(scope.row)"
                   >打印标签
                   </el-button>
                 </template>
@@ -791,7 +793,7 @@ import project from '../components/project-dialog'
 import SparePartsCode from '../master-data/spare-parts-code'
 import ProjectDefinition from './project-definition'
 import { equipJobItemStandard } from '@/api/base_w_four'
-import { equipMaintenanceStandard, equipPartNew, equipComponent, equipMaintenanceStandardImport, equipMaintenanceStandardDown, equipMaintenanceStandardGetName } from '@/api/jqy'
+import { equipMaintenanceStandard, equipPartNew, equipComponent, equipMaintenanceStandardImport, equipMaintenanceStandardDown, equipMaintenanceStandardGetName, equipCodePrint } from '@/api/jqy'
 import page from '@/components/page'
 
 export default {
@@ -815,7 +817,9 @@ export default {
   },
   data: function() {
     return {
+      index: '',
       loading: false,
+      btnLoad: false,
       btnLoading: false,
       btnExportLoad: false,
       tableData: [],
@@ -1072,9 +1076,15 @@ export default {
       }
     },
     clear(row) {
+      row.equip_part__part_name = this.options1.filter(d => d.id === row.equip_part__id)[0].part_name
+      console.log(row.equip_part__part_name)
       if (row.equip_component) {
         row.equip_component = null
       }
+    },
+    changeComponent(row) {
+      row.equip_component__component_name = this.options2.filter(d => d.id === row.equip_component__id)[0].component_name
+      console.log(row.equip_component__component_name)
     },
     clear1() {
       if (this.typeForm.equip_component) {
@@ -1189,6 +1199,25 @@ export default {
       this.dialogEditVisibleXJ = false
       if (done) {
         done()
+      }
+    },
+    async printingFun(row) {
+      if (this.typeForm.standard_code && row.equip_area_define__area_code && row.equip_area_define__area_name && row.equip_part__part_name) {
+        this.index = row.id
+        try {
+          this.btnLoad = true
+          await equipCodePrint('post', null, { data: { status: 4, area_code: row.equip_area_define__area_code,
+            area_name: row.equip_area_define__area_name,
+            part_name: row.equip_part__part_name,
+            component_name: row.equip_component__component_name,
+            lot_no: this.typeForm.standard_code + row.equip_area_define__area_code }})
+          this.$message.success('打印任务已连接')
+          this.btnLoad = false
+        } catch (e) {
+          this.btnLoad = false
+        }
+      } else {
+        this.$message('打印标签时巡检编号、区域编号、区域名称及部位名称不能为空')
       }
     },
     handleEdit() {
