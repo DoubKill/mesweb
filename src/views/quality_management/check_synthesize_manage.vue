@@ -65,6 +65,7 @@
     <div style="width:100%;text-align:right;margin-top:-10px">
       <el-switch
         v-model="is_showed"
+        v-permission="['deal_result','range']"
         active-text="打印时显示区间"
         @change="showedChange"
       />
