@@ -852,10 +852,8 @@ export default {
               if (!d.actual_trains) {
                 throw new Error('有检测数据车次未填写，请添加')
               }
-              d.production_classes = d.classes
             })
             this.btnLoading = true
-            // this.ruleForm.test_method_name = '222'
             const obj = {
               ...this.ruleForm,
               test_indicator_name: this.search.test_indicator_name,
@@ -1041,6 +1039,7 @@ export default {
         this.$message.info('请选择胶料规格')
         return
       }
+
       let obj = {
         production_classes: this.search.classes,
         equip_no: this.search.equip_no,
@@ -1056,6 +1055,7 @@ export default {
           product_no: _objRight.product_no
         }
       }
+
       let bool = false
       let _val = this.ruleForm.num
       for (let index = this.ruleForm.num; index < this.ruleForm.num1 + 1; index++) {
@@ -1066,7 +1066,7 @@ export default {
           if (_val <= this.ruleForm.num1) {
             obj.actual_trains = _val
           } else {
-            return
+            break
           }
         }
         const _obj = JSON.parse(JSON.stringify(obj))
