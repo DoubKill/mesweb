@@ -2,7 +2,7 @@
   <div class="region-style">
     <!-- 设备部位定义 -->
     <el-form :inline="true">
-      <el-form-item label="所属主设备种类">
+      <!-- <el-form-item label="所属主设备种类">
         <el-select v-model="formInline.category_no" placeholder="请选择" :disabled="isMultiple===true" clearable @change="changeSearch">
           <el-option
             v-for="item in options"
@@ -11,7 +11,7 @@
             :value="item.id"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="部位分类">
         <el-select v-model="formInline.global_name" placeholder="请选择" clearable @change="changeSearch">
           <el-option
@@ -53,11 +53,11 @@
       border
       @current-change="handleSelectionChange"
     >
-      <el-table-column
+      <!-- <el-table-column
         prop="category_no"
         label="所属主设备种类"
         min-width="20"
-      />
+      /> -->
       <el-table-column
         prop="global_name"
         label="部位分类"
@@ -121,7 +121,7 @@
         label-width="120px"
         :model="dialogForm"
       >
-        <el-form-item
+        <!-- <el-form-item
           label="所属主设备种类"
           prop="equip_type"
         >
@@ -133,7 +133,7 @@
               :value="item.id"
             />
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item
           label="部位分类"
           prop="global_part_type"
@@ -209,7 +209,7 @@ export default {
     isMultiple(val) {
       if (val) {
         this.formInline = {}
-        this.formInline.category_no = this.equipType
+        // this.formInline.category_no = this.equipType
         this.formInline.use_flag = true
         this.getList()
       }
@@ -217,7 +217,7 @@ export default {
   },
   created() {
     if (this.equipType) {
-      this.formInline.category_no = this.equipType
+      // this.formInline.category_no = this.equipType
       this.formInline.use_flag = true
     }
     this.getTypeNode()

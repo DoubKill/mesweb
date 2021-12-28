@@ -13,6 +13,22 @@
           @change="changeDate"
         />
       </el-form-item>
+      <el-form-item label="类别">
+        <el-select
+          v-model="search.type"
+          style="width:100px"
+          placeholder="请选择"
+          clearable
+          @change="changeSearch"
+        >
+          <el-option
+            v-for="item in ['机械', '电气','通用']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="计划名称">
         <el-input
           v-model="search.plan_name"
@@ -23,14 +39,14 @@
       </el-form-item>
       <el-form-item label="机台">
         <equip-select
-          equip-type="密炼设备"
+          style="width:100px"
           @equipSelected="equipSelected"
         />
       </el-form-item>
       <el-form-item label="巡检标准">
         <el-input
           v-model="search.equip_repair_standard"
-          style="width:200px"
+          style="width:150px"
           clearable
           @input="changeDebounce"
         />
@@ -38,6 +54,7 @@
       <el-form-item label="状态">
         <el-select
           v-model="search.status"
+          style="width:100px"
           placeholder="请选择"
           clearable
           @change="changeSearch"
@@ -53,7 +70,7 @@
       <el-form-item label="接单人">
         <el-input
           v-model="search.receiving_user"
-          style="width:200px"
+          style="width:120px"
           clearable
           @input="changeDebounce"
         />
@@ -61,6 +78,7 @@
       <el-form-item label="设备条件">
         <el-select
           v-model="search.equip_condition"
+          style="width:100px"
           placeholder="请选择"
           clearable
           @change="changeSearch"
@@ -76,6 +94,7 @@
       <el-form-item label="重要程度">
         <el-select
           v-model="search.importance_level"
+          style="width:100px"
           placeholder="请选择"
           clearable
           @change="changeSearch"
@@ -117,6 +136,21 @@
           >{{ scope.row.plan_name }}</el-link>
         </template>
       </el-table-column>
+      <el-table-column
+        prop="inspection_line_no"
+        label="序号"
+        min-width="20"
+      />
+      <el-table-column
+        prop="area_name"
+        label="区域"
+        min-width="20"
+      />
+      <el-table-column
+        prop="type"
+        label="类别"
+        min-width="20"
+      />
       <el-table-column
         prop="work_order_no"
         label="工单编号"
@@ -326,7 +360,7 @@
     </el-dialog>
 
     <el-dialog
-      title="维护作业标准详情"
+      title="巡检作业标准详情"
       :visible.sync="dialogVisibleMaintain"
       width="80%"
     >
@@ -344,7 +378,7 @@
 
 <script>
 import { debounce } from '@/utils'
-import maintain from '../components/definition-dialog1'
+import maintain from '../components/definition-dialog2'
 import { equipInspectionOrder, equipInspectionOrderDown, equipMaintenanceStandard } from '@/api/jqy'
 import page from '@/components/page'
 import EquipSelect from '@/components/EquipSelect/index'

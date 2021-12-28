@@ -110,7 +110,7 @@
           </el-button>
           <el-button
             v-permission="['equip_out_warehouse', 'delete']"
-            type="primary"
+            type="danger"
             size="mini"
             @click="deleteOrder(scope.row)"
           >删除
