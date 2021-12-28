@@ -695,7 +695,7 @@ export default {
       submit: false,
       submit1: false,
       creatOrder: {},
-      projectForm: { abnormal_operation_result: null }
+      projectForm: { abnormal_operation_desc: null, abnormal_operation_result: null }
     }
   },
   computed: {
