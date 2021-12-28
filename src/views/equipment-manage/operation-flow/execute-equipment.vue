@@ -610,7 +610,7 @@
           </el-upload>
           <template v-for="(item, index) in creatOrder.result_repair_graph_url">
             <el-image
-              v-if="operateType==='查看处理结果'&&creatOrder.result_repair_graph_url.length>0"
+              v-if="creatOrder.result_repair_graph_url.length>0"
               :key="index"
               style="width: 100px; height: 100px"
               :src="item"
