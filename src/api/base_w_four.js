@@ -340,6 +340,22 @@ export function rubberMaxStretchTestResult(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function productTestPlanDetail(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ProductTestPlanDetail + id + '/' : API.ProductTestPlanDetail,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function bulkCreate(method, id, data = {}) {
+  const obj = {
+    url: id ? API.BulkCreate + id + '/' : API.BulkCreate,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 
 export function outBoundTasks(method, id, data = {}, cancelToken) {
   const obj = {

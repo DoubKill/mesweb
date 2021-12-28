@@ -80,3 +80,43 @@ export function thSafetySettings(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function matTankStatus(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MatTankStatus + id + '/' : API.MatTankStatus,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function schedulingWashRules(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SchedulingWashRules + id + '/' : API.SchedulingWashRules,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function schedulingPlaceKeyword(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SchedulingPlaceKeyword + id + '/' : API.SchedulingPlaceKeyword,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function operaKeyword(method, id, data = {}) {
+  const obj = {
+    url: id ? API.OperaKeyword + id + '/' : API.OperaKeyword,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function schedulingEquipCapacity(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SchedulingEquipCapacity + id + '/' : API.SchedulingEquipCapacity,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

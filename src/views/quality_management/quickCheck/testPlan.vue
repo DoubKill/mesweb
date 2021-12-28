@@ -247,7 +247,8 @@
             />
           </el-form-item>
           <el-form-item>
-            <el-button v-permission="['examine_test_plan', 'begin']" size="mini" style="margin-left:10px" type="primary" :disabled="btnLoading" @click="addSpace">添加</el-button>
+            <el-button v-permission="['examine_test_plan', 'begin']" size="mini" style="margin-left:10px" type="primary" @click="addSpace">添加</el-button>
+            <el-tag v-if="btnLoading" style="margin-left:60px;color:#000;padding:0 60px" color="rgba(149, 242, 4)" type="success" effect="dark">检测进行中</el-tag>
           </el-form-item>
         </el-form>
         <el-button v-permission="['examine_test_plan', 'begin']" type="primary" :disabled="btnLoading" @click="startTestFun">开始检测</el-button>
@@ -272,7 +273,7 @@
             min-width="24"
           />
           <el-table-column
-            prop="classes"
+            prop="production_classes"
             label="生产班次"
             min-width="15"
           />
@@ -323,8 +324,8 @@
             label="操作"
             width="70"
           >
-            <template slot-scope="{$index}">
-              <el-button size="mini" type="primary" :disabled="btnLoading" @click="delRow($index)">删除</el-button>
+            <template slot-scope="{row,$index}">
+              <el-button size="mini" type="primary" :disabled="row.value?true:false" @click="delRow($index,row)">删除</el-button>
             </template>
           </el-table-column>
           <el-table-column
@@ -581,7 +582,7 @@
 import classSelect from '@/components/ClassSelect'
 import equipSelect from '@/components/select_w/equip'
 import { globalCodesUrl, testIndicators, palletTrainsFeedbacks, matTestIndicatorMethods } from '@/api/base_w'
-import { productReportEquip, productTestPlan, rubberMaxStretchTestResult } from '@/api/base_w_four'
+import { productReportEquip, productTestPlan, rubberMaxStretchTestResult, productTestPlanDetail, bulkCreate } from '@/api/base_w_four'
 import allProductNoSelect from '@/components/select_w/allProductNoSelect.vue'
 
 export default {
@@ -638,7 +639,8 @@ export default {
       dialogVisible: false,
       searchValue: {},
       tableDataValue: [],
-      TableDataValueId: ''
+      TableDataValueId: '',
+      isDelRow: false
     }
   },
   watch: {
@@ -780,7 +782,9 @@ export default {
           this.btnLoading = true
           this.ruleForm = data.results[0]
           this.tableDataRight = data.results[0].product_test_plan_detail
-          this.$message.info('正在检测中')
+          if (!this.isDelRow) {
+            this.$message.info('正在检测中')
+          }
           this.search.test_indicator_name = data.results[0].test_indicator_name
           this.ruleForm.product_no = data.results[0].product_test_plan_detail[0].product_no
         } else {
@@ -792,6 +796,7 @@ export default {
           // this.ruleForm = {}
           // this.$refs.ruleForm.clearValidate()
         }
+        this.isDelRow = false
       } catch (e) {
         //
       }
@@ -881,24 +886,30 @@ export default {
         this.tableDataRight[index].actual_trains = undefined
       }
     },
-    async endTestFun() {
-      try {
-        if (!this.ruleForm.plan_uid) {
-          this.$message.info('没有可结束计划,如果存在请刷新页面查看')
-          return
-        }
-        await productTestPlan('delete', this.ruleForm.id, { params: { }})
-        this.btnLoading = false
-        this.$message.success('已全部结束检测')
-        this.ruleForm.plan_uid = ''
-        this.tableDataRight = []
-        this.ruleForm.product_no = ''
-        // this.$nextTick(() => {
-        // this.$refs.ruleForm.clearValidate()
-        // })
-      } catch (e) {
-        //
+    endTestFun() {
+      if (!this.ruleForm.plan_uid) {
+        this.$message.info('没有可结束计划,如果存在请刷新页面查看')
+        return
       }
+      this.$confirm('此操作将结束检测, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        try {
+          await productTestPlan('delete', this.ruleForm.id, { params: { }})
+          this.btnLoading = false
+          this.$message.success('已全部结束检测')
+          this.ruleForm.plan_uid = ''
+          this.tableDataRight = []
+          this.ruleForm.product_no = ''
+          // this.$nextTick(() => {
+          // this.$refs.ruleForm.clearValidate()
+          // })
+        } catch (e) {
+          //
+        }
+      })
     },
     refreshFun() {
       if (!this.ruleForm.plan_uid) {
@@ -979,7 +990,7 @@ export default {
         return
       }
       let obj = {
-        classes: this.search.classes,
+        production_classes: this.search.classes,
         equip_no: this.search.equip_no,
         factory_date: this.search.factory_date,
         product_no: this.search.product_no,
@@ -998,6 +1009,7 @@ export default {
           bool = true
           return
         }
+        d.production_classes = d.classes
         this.tableDataRight.push(d)
       })
       if (bool) {
@@ -1008,7 +1020,7 @@ export default {
     },
     removeFun(d) {
       const arr = this.tableDataRight.filter(D => d.factory_date === D.factory_date &&
-        d.classes === D.classes && d.equip_no === D.equip_no &&
+        d.production_classes === D.production_classes && d.equip_no === D.equip_no &&
         d.product_no === D.product_no && d.actual_trains === D.actual_trains)
       if (arr.length > 0) {
         return true
@@ -1016,7 +1028,7 @@ export default {
         return false
       }
     },
-    addSpace() {
+    async addSpace() {
       if (!this.ruleForm.test_interval) {
         this.$message.info('请选择检测间隔')
         return
@@ -1029,11 +1041,20 @@ export default {
         this.$message.info('请选择胶料规格')
         return
       }
-      const obj = {
-        classes: this.search.classes,
+      let obj = {
+        production_classes: this.search.classes,
         equip_no: this.search.equip_no,
         factory_date: this.search.factory_date,
         product_no: this.search.product_no
+      }
+      if (this.btnLoading) {
+        const _objRight = this.tableDataRight[0]
+        obj = {
+          production_classes: _objRight.production_classes,
+          equip_no: _objRight.equip_no,
+          factory_date: _objRight.factory_date,
+          product_no: _objRight.product_no
+        }
       }
       let bool = false
       let _val = this.ruleForm.num
@@ -1055,10 +1076,28 @@ export default {
           bool = true
         }
       }
-      if (bool) {
-        this.$message.success('已去掉相同记录，请确认')
-      } else {
-        this.$message.success('已添加到右侧检测列表')
+      if (!this.btnLoading) {
+        if (bool) {
+          this.$message.success('已去掉相同记录，请确认')
+        } else {
+          this.$message.success('已添加到右侧检测列表')
+        }
+      }
+
+      if (this.btnLoading) {
+        try {
+          const _tableDataRight = this.tableDataRight.filter(d => !d.id)
+          await bulkCreate('post', null, { data: {
+            'product_test_plan_detail': _tableDataRight,
+            'test_plan': this.ruleForm.id
+          }})
+          this.$message.success('添加成功')
+          this.isDelRow = true
+          this.refreshFun()
+        } catch (e) {
+          const _tableDataRight1 = this.tableDataRight.filter(d => d.id)
+          this.tableDataRight = _tableDataRight1
+        }
       }
     },
     async getTableDataValue() {
@@ -1085,8 +1124,23 @@ export default {
         this.tableDataValue = []
       }
     },
-    delRow(index) {
-      this.tableDataRight.splice(index, 1)
+    async delRow(index, row) {
+      if (!row.id) {
+        this.tableDataRight.splice(index, 1)
+        return
+      }
+      if (this.tableDataRight.length === 1) {
+        this.$message.info('最少保留一列数据')
+        return
+      }
+      try {
+        await productTestPlanDetail('delete', row.id)
+        this.$message.success('操作成功')
+        this.isDelRow = true
+        this.refreshFun()
+      } catch (e) {
+        //
+      }
     },
     cellStyle(row, column, rowIndex, columnIndex) {
       if (row.row.is_tested === 'Y') {
