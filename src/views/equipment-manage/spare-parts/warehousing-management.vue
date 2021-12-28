@@ -2,10 +2,18 @@
   <div>
     <!-- 入库管理 -->
     <el-form :inline="true">
-      <el-form-item label="单据条码">
+      <el-form-item label="入库单据号">
         <el-input
           v-model="search.order_id"
-          style="width:200px"
+          style="width:150px"
+          clearable
+          @input="changeSearch"
+        />
+      </el-form-item>
+      <el-form-item label="领料单号">
+        <el-input
+          v-model="search.barcode"
+          style="width:150px"
           clearable
           @input="changeSearch"
         />
@@ -13,7 +21,7 @@
       <el-form-item label="提交人">
         <el-input
           v-model="search.created_user"
-          style="width:200px"
+          style="width:150px"
           clearable
           @input="changeSearch"
         />
@@ -32,6 +40,7 @@
       <el-form-item label="状态">
         <el-select
           v-model="search.status"
+          style="width:150px"
           placeholder="请选择"
           clearable
           @change="changeSearch1"
@@ -50,6 +59,12 @@
           type="primary"
           @click="onSubmit"
         >新建</el-button>
+        <el-button
+          v-permission="['equip_in_warehouse', 'add']"
+          type="primary"
+          :loading="btnLoad"
+          @click="onSubmit1"
+        >获取ERP领料单</el-button>
       </el-form-item></el-form>
     <el-table
       v-loading="loading"
@@ -73,7 +88,12 @@
       </el-table-column>
       <el-table-column
         prop="order_id"
-        label="单据条码"
+        label="入库单据号"
+        min-width="20"
+      />
+      <el-table-column
+        prop="barcode"
+        label="领料单号"
         min-width="20"
       />
       <el-table-column
@@ -110,7 +130,7 @@
           </el-button>
           <el-button
             v-permission="['equip_in_warehouse', 'delete']"
-            type="primary"
+            type="danger"
             size="mini"
             @click="deleteOrder(scope.row)"
           >删除
@@ -543,7 +563,7 @@
 <script>
 import material from '../components/material-dialog'
 import { sectionTree } from '@/api/base_w_four'
-import { getOrderId, equipWarehouseOrder, equipWarehouseOrderDetail, equipWarehouseArea, equipWarehouseLocation } from '@/api/jqy'
+import { getOrderId, equipWarehouseOrder, equipWarehouseOrderDetail, equipWarehouseArea, equipWarehouseLocation, getSpareOrder } from '@/api/jqy'
 import page from '@/components/page'
 import { debounce } from '@/utils'
 export default {
@@ -556,6 +576,7 @@ export default {
       btnLoad: false,
       dialogForm: { submission_department: '', equip_spare: [] },
       dateValue: [],
+      order: null,
       options: [],
       SpareForm: {},
       dialogVisibleSpare: false,
@@ -651,6 +672,27 @@ export default {
       } catch {
         this.dialogVisibleAdd = false
       }
+    },
+    onSubmit1() {
+      this.$confirm('此操作将同步ERP领料单是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.btnLoad = true
+        getSpareOrder('get', null, {})
+          .then(response => {
+            this.btnLoad = false
+            this.$message({
+              type: 'success',
+              message: '操作成功!'
+            })
+            this.getList()
+          })
+          .catch(response => {
+            this.btnLoad = false
+          })
+      })
     },
     // async getWarehouseArea(val) {
     //   if (val) {

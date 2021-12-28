@@ -15,8 +15,8 @@
           <el-form-item label="标准名称">
             <el-input v-model="typeForm.standard_name" disabled />
           </el-form-item>
-          <el-form-item label="设备种类">
-            <el-input v-model="typeForm.equip_type_name" disabled />
+          <el-form-item label="机台">
+            <el-input v-model="typeForm.equip" disabled />
           </el-form-item>
           <el-form-item label="部位名称">
             <el-input v-model="typeForm.equip_part_name" disabled />

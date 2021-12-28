@@ -13,6 +13,22 @@
           @change="changeDate"
         />
       </el-form-item>
+      <el-form-item label="类别">
+        <el-select
+          v-model="search.type"
+          style="width:100px"
+          placeholder="请选择"
+          clearable
+          @change="changeSearch"
+        >
+          <el-option
+            v-for="item in ['机械', '电气','通用']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="计划名称">
         <el-input
           v-model="search.plan_name"
@@ -24,7 +40,6 @@
       <el-form-item label="机台">
         <equip-select
           style="width:100px"
-          equip-type="密炼设备"
           @equipSelected="equipSelected"
         />
       </el-form-item>
@@ -68,7 +83,6 @@
           />
         </el-select>
       </el-form-item>
-
       <el-form-item>
         <el-button v-permission="['equip_inspection_order','assign']" type="primary" @click="dialogAssign">指派</el-button>
         <el-button v-permission="['equip_inspection_order','close']" type="primary" @click="closeDialog">关闭</el-button>
@@ -95,6 +109,21 @@
       <el-table-column
         prop="plan_name"
         label="计划名称"
+        min-width="20"
+      />
+      <el-table-column
+        prop="inspection_line_no"
+        label="序号"
+        min-width="20"
+      />
+      <el-table-column
+        prop="area_name"
+        label="区域"
+        min-width="20"
+      />
+      <el-table-column
+        prop="type"
+        label="类别"
         min-width="20"
       />
       <el-table-column
@@ -194,7 +223,7 @@
     </el-dialog>
 
     <el-dialog
-      title="维护作业标准详情"
+      title="巡检作业标准详情"
       :visible.sync="dialogVisibleMaintain"
       width="80%"
     >
@@ -213,7 +242,7 @@
 <script>
 import { debounce } from '@/utils'
 import page from '@/components/page'
-import maintain from '../components/definition-dialog1'
+import maintain from '../components/definition-dialog2'
 import { equipInspectionOrder, multiUpdateInspection, getStaff, equipMaintenanceStandard } from '@/api/jqy'
 import EquipSelect from '@/components/EquipSelect/index'
 export default {
@@ -365,15 +394,15 @@ export default {
           if (this.multipleSelection.length === 1) {
             this.bz = this.multipleSelection[0].work_persons
           }
-          if (this.multipleSelection.every(d => d.equip_no === this.multipleSelection[0].equip_no)) {
+          if (this.multipleSelection.every(d => d.equip_no === this.multipleSelection[0].equip_no && d.type === this.multipleSelection[0].type)) {
             this.dialogVisible = true
             this.loadPerson = true
-            const data = await getStaff('get', null, { params: { equip_no: this.multipleSelection[0].equip_no }})
+            const data = await getStaff('get', null, { params: { equip_no: this.multipleSelection[0].equip_no, maintenance_type: this.multipleSelection[0].type }})
             this.staffList = data.results || []
             this.checkList = []
             this.loadPerson = false
           } else {
-            this.$message.info('批量指派工单需相同机台')
+            this.$message.info('批量指派工单需相同机台,相同类别')
           }
         } else {
           this.$message.info('请先勾选工单列表')

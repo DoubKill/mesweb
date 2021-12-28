@@ -149,7 +149,7 @@
         label="录入时间"
         width="160"
       />
-      <el-table-column v-if="!isSearch" label="操作" width="140px">
+      <el-table-column v-if="!isSearch" label="操作" width="240">
         <template slot-scope="scope">
           <el-button-group>
             <el-button
@@ -164,6 +164,15 @@
               plain
               @click="handleDelete(scope.row)"
             >{{ scope.row.use_flag?'停用':'启用' }}
+            </el-button>
+            <el-button
+              v-permission="['equip_spare', 'add']"
+              size="mini"
+              :loading="btnLoading&&index===scope.row.id"
+              :disabled="btnLoading"
+              plain
+              @click="printingFun(scope.row)"
+            > 打印标签
             </el-button>
           </el-button-group>
         </template>
@@ -378,7 +387,7 @@
 
 <script>
 import page from '@/components/page'
-import { equipSpareErp, equipSpareErpDown, equipSpareErpImport } from '@/api/jqy'
+import { equipSpareErp, equipSpareErpDown, equipSpareErpImport, equipCodePrint } from '@/api/jqy'
 import { debounce } from '@/utils'
 export default {
   name: 'EquipmentMasterDataSparePartsCode',
@@ -400,6 +409,7 @@ export default {
   },
   data() {
     return {
+      index: '',
       formInline: {},
       tableData: [],
       tableData1: [],
@@ -494,6 +504,19 @@ export default {
         this.options1 = data.results || []
       } catch (e) {
         //
+      }
+    },
+    async printingFun(row) {
+      this.index = row.id
+      try {
+        this.btnLoading = true
+        await equipCodePrint('post', null, { data: { status: 2, spare_code: row.spare_code,
+          spare_name: row.spare_name,
+          technical_params: row.technical_params }})
+        this.$message.success('打印任务已连接')
+        this.btnLoading = false
+      } catch (e) {
+        this.btnLoading = false
       }
     },
     debounceList() {
