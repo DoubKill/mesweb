@@ -238,6 +238,10 @@ export default {
     show: {
       type: Boolean,
       default: false
+    },
+    equip: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -314,6 +318,7 @@ export default {
       this.ruleForm = {
         plan_department: data.section,
         equip_barcode: '',
+        equip_no: this.equip,
         fault_datetime: dateTime,
         image_url_list: [],
         importance_level: '高'

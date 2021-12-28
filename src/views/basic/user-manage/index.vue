@@ -76,7 +76,7 @@
       <el-table-column
         min-width="10"
         prop="workshop"
-        label="车间"
+        label="职务"
       />
       <el-table-column
         min-width="10"
@@ -223,11 +223,11 @@
           />
         </el-form-item>
         <el-form-item
-          label="车间"
+          label="职务"
         >
           <el-input
             v-model="userForm.workshop"
-            placeholder="车间"
+            placeholder="职务"
             :error="userFormError.workshop"
           />
         </el-form-item>

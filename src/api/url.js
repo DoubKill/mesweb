@@ -613,9 +613,11 @@ export default {
   SchedulingParamsSetting: '/api/v1/plan/scheduling-params-setting/', // 排程参数设定
   SchedulingRecipeMachineSetting: '/api/v1/plan/scheduling-recipe-machine-setting/', // 定机表
   SchedulingRecipeMachineImport: '/api/v1/plan/scheduling-recipe-machine-setting/import_xlsx/',
+  RecipeMachineWeight: '/api/v1/plan/recipe-machine-weight/',
   MatTankStatus: '/api/v1/plan/mat-tank-status/',
   SchedulingWashRules: '/api/v1/plan/scheduling-wash-rules/',
   SchedulingPlaceKeyword: '/api/v1/plan/scheduling-place-keyword/',
   OperaKeyword: '/api/v1/plan/scheduling-place--opera-keyword/',
   SchedulingEquipCapacity: '/api/v1/plan/scheduling-equip-capacity/'
+
 }

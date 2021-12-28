@@ -16,7 +16,7 @@
             <el-input v-model="formInline.label" disabled clearable />
           </el-form-item>
           <el-form-item label="职务">
-            <el-input v-model="formInline.user" disabled clearable />
+            <el-input v-model="formInline.type" disabled clearable />
           </el-form-item>
           <!-- <el-form-item>
             <el-button size="small" type="primary" @click="onSubmit">保存</el-button>

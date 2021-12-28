@@ -977,3 +977,12 @@ export function schedulingRecipeMachineImport(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function recipeMachineWeight(method, id, data = {}) {
+  const obj = {
+    url: id ? API.RecipeMachineWeight + id + '/' : API.RecipeMachineWeight,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
