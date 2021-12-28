@@ -462,6 +462,8 @@ export default {
   ProductTestResume: '/api/v1/quality/product-test-resume/',
   ProductTestPlan: '/api/v1/quality/product-test-plan/',
   RubberMaxStretchTestResult: '/api/v1/quality/rubber-max-stretch-test-result/',
+  ProductTestPlanDetail: '/api/v1/quality/product-test-plan-detail/',
+  BulkCreate: '/api/v1/quality/product-test-plan-detail/bulk_create/',
   // 看板
   OutBoundTasks: '/api/v1/inventory/out-bound-tasks/',
   InoutBoundSummary: '/api/v1/inventory/inout-bound-summary/',
