@@ -151,7 +151,7 @@
           </el-table-column>
         </el-table>
         <div
-          v-if="!isView||i!==0&&['FM','RE','RFM'].includes(formInline.stage_name)?false:true"
+          v-if="!isView&&(i!==0&&['FM','RE','RFM'].includes(formInline.stage_name)?false:true)"
           style="text-align: center"
         >
           <el-button
