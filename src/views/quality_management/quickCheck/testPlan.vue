@@ -1041,6 +1041,7 @@ export default {
         this.$message.info('请选择胶料规格')
         return
       }
+
       let obj = {
         production_classes: this.search.classes,
         equip_no: this.search.equip_no,
@@ -1056,6 +1057,7 @@ export default {
           product_no: _objRight.product_no
         }
       }
+
       let bool = false
       let _val = this.ruleForm.num
       for (let index = this.ruleForm.num; index < this.ruleForm.num1 + 1; index++) {
@@ -1066,7 +1068,7 @@ export default {
           if (_val <= this.ruleForm.num1) {
             obj.actual_trains = _val
           } else {
-            return
+            break
           }
         }
         const _obj = JSON.parse(JSON.stringify(obj))
