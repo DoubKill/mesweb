@@ -982,15 +982,17 @@ export default {
               delete item.job_item_check_standard_a
               delete item.job_item_check_standard_b
             }
-            arr.push(Object.assign({}, item, { operation_result: '' }))
+            arr.push(Object.assign({}, item))
           })
           arr.forEach(d => {
             if (d.job_item_check_type === '数值范围') {
-              if (d.operation_result !== '') {
+              if (!d.operation_result || d.operation_result === '') {
                 d.operation_result = 1
+              } else {
+                d.operation_result = Number(d.operation_result)
               }
             } else {
-              if (d.operation_result !== '') {
+              if (!d.operation_result || d.operation_result === '') {
                 d.operation_result = d.job_item_check_standard
               }
             }
