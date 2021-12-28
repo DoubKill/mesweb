@@ -387,6 +387,7 @@ export default {
   MaterialUnqualifiedTypes: '/api/v1/quality/material-unqualified-types/',
   MaterialUnqualifiedProcess: '/api/v1/quality/material-unqualified-process/',
   MaterialExamineResultCurve: '/api/v1/quality/material-examine-result-curve/',
+  Disqualification: '/api/v1/quality/examine-material/disqualification/',
   // 小料原材料列表
   XlMaterial: '/api/v1/terminal/xl-material/',
   XlBin: '/api/v1/terminal/xl-bin/',
@@ -606,5 +607,11 @@ export default {
   MaterialDetailsAux: '/api/v1/terminal/material-details-aux/',
   EquipPeriodStatement: '/api/v1/equipment/equip-period-statement/', // 期间别处理时间
   EquipFinishingRate: '/api/v1/equipment/equip-finishing-rate/', // 工单按时完成率报表
-  EquipOldRate: '/api/v1/equipment/equip-old-rate/' // 交旧率报表
+  EquipOldRate: '/api/v1/equipment/equip-old-rate/', // 交旧率报表
+
+  MatTankStatus: '/api/v1/plan/mat-tank-status/',
+  SchedulingWashRules: '/api/v1/plan/scheduling-wash-rules/',
+  SchedulingPlaceKeyword: '/api/v1/plan/scheduling-place-keyword/',
+  OperaKeyword: '/api/v1/plan/scheduling-place--opera-keyword/',
+  SchedulingEquipCapacity: '/api/v1/plan/scheduling-equip-capacity/'
 }

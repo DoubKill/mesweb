@@ -608,7 +608,7 @@ export default {
         type: 'warning'
       }).then(() => {
         request({
-          url: '/api/v1/inventory/material_out_cancel/',
+          url: '/MESApi/CancelTask',
           method: 'post',
           data: [{ TaskNumber: row.taskNumber }]
         }).then(data => {
