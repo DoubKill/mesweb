@@ -47,6 +47,7 @@
         <template slot-scope="{row,$index}">
           <el-switch
             v-model="row.is_judged"
+            :disabled="!checkPermission(['evaluating','change'])"
             active-color="#13ce66"
             @change="judgedFun($event,row,$index,true)"
           />
@@ -58,6 +59,7 @@
         <template slot-scope="{row,$index}">
           <el-switch
             v-model="row.is_print"
+            :disabled="!checkPermission(['evaluating','change'])"
             active-color="#13ce66"
             @change="judgedFun($event,row,$index,false)"
           />
@@ -186,6 +188,7 @@ import { batchingMaterials, matTestMethods } from '@/api/base_w'
 import page from '@/components/page'
 import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import editDialog from './benchmark_edit_dialog/benchmark_edit_dialog'
+import { checkPermission } from '@/utils/'
 export default {
   name: 'BenchmarkEdit',
   components: { editDialog, page, testTypeDotSelect, allProductNoSelect, testTypeSelect, testMethodSelect, detectionIndex },
@@ -247,6 +250,7 @@ export default {
     this.getRubber()
   },
   methods: {
+    checkPermission,
     async getList() {
       this.loading = true
       try {

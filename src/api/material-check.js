@@ -31,6 +31,14 @@ export function materialUnqualifiedProcess(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function disqualification(method, id, data = {}) {
+  const obj = {
+    url: id ? API.Disqualification + id + '/' : API.Disqualification,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 export function materialExamineResultCurve(method, id, data = {}) {
   const obj = {
     url: id ? API.MaterialExamineResultCurve + id + '/' : API.MaterialExamineResultCurve,
