@@ -612,5 +612,10 @@ export default {
   GetSpareOrder: '/api/v1/equipment/get-spare-order/', // 同步领料单入库单据
   SchedulingParamsSetting: '/api/v1/plan/scheduling-params-setting/', // 排程参数设定
   SchedulingRecipeMachineSetting: '/api/v1/plan/scheduling-recipe-machine-setting/', // 定机表
-  SchedulingRecipeMachineImport: '/api/v1/plan/scheduling-recipe-machine-setting/import_xlsx/'
+  SchedulingRecipeMachineImport: '/api/v1/plan/scheduling-recipe-machine-setting/import_xlsx/',
+  MatTankStatus: '/api/v1/plan/mat-tank-status/',
+  SchedulingWashRules: '/api/v1/plan/scheduling-wash-rules/',
+  SchedulingPlaceKeyword: '/api/v1/plan/scheduling-place-keyword/',
+  OperaKeyword: '/api/v1/plan/scheduling-place--opera-keyword/',
+  SchedulingEquipCapacity: '/api/v1/plan/scheduling-equip-capacity/'
 }
