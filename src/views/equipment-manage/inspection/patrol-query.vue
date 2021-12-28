@@ -345,7 +345,7 @@
             type="textarea"
             style="width:250px"
             :rows="3"
-            placeholder="请输入内容"
+            placeholder=""
           />
         </el-form-item>
         <el-form-item label="上传图片">
@@ -401,7 +401,7 @@
             type="textarea"
             style="width:250px"
             :rows="3"
-            placeholder="请输入内容"
+            placeholder=""
           />
         </el-form-item>
         <el-form-item label="上传图片">
