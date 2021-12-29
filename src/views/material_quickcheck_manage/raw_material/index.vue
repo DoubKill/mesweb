@@ -343,14 +343,15 @@
           <div style="width:100%;height:0.5px;background:#DCDFE6;margin-bottom:25px" />
         </div>
         <el-form-item label="处理结果">
-          <el-radio v-model="unqualifiedObj.material_data.deal_result" label="放行">放行</el-radio>
-          <el-radio v-model="unqualifiedObj.material_data.deal_result" label="不放行">不放行</el-radio>
+          <el-radio v-model="unqualifiedObj.material_data.deal_result" :disabled="!unqualifiedObj.boolOperate" label="放行">放行</el-radio>
+          <el-radio v-model="unqualifiedObj.material_data.deal_result" :disabled="!unqualifiedObj.boolOperate" label="不放行">不放行</el-radio>
         </el-form-item>
         <el-form-item label="处理说明">
           <el-input
             v-model="unqualifiedObj.material_data.desc"
             type="textarea"
             :rows="3"
+            :disabled="!unqualifiedObj.boolOperate"
             placeholder="请输入内容"
           />
         </el-form-item>
@@ -524,7 +525,6 @@ export default {
       }).catch(() => { this.listLoading = false })
     },
     getExamineValueByName(results, type) {
-      console.log(results, 'results')
       if (!results) {
         return ''
       }
@@ -560,6 +560,9 @@ export default {
         this.unqualifiedObj = data
         this.unqualifiedObj.boolOperate = bool
         this.unqualifiedLoading = false
+        if (bool && !this.unqualifiedObj.material_data.deal_result) {
+          this.unqualifiedObj.material_data.deal_result = '不放行'
+        }
       } catch (e) { this.unqualifiedLoading = false }
     },
     downloadFun() {},
