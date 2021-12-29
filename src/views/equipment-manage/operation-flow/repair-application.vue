@@ -193,7 +193,7 @@
           <el-select
             v-model="ruleForm.plan_department"
             :disabled="operateType==='报修申请详情'"
-            placeholder="请选择"
+            placeholder=""
             clearable
           >
             <el-option
@@ -223,7 +223,7 @@
           />
         </el-form-item>
         <el-form-item label="设备部位" prop="equip_part_new">
-          <el-select v-model="ruleForm.equip_part_new" :disabled="operateType==='报修申请详情'||disable" placeholder="请选择" clearable @visible-change="getEquipPart" @change="changePartName">
+          <el-select v-model="ruleForm.equip_part_new" :disabled="operateType==='报修申请详情'||disable" placeholder="" clearable @visible-change="getEquipPart" @change="changePartName">
             <el-option
               v-for="item in options2"
               :key="item.id"

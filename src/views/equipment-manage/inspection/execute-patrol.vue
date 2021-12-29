@@ -517,6 +517,7 @@
     >
       <application
         ref="List"
+        :work-id="creatOrder.id"
         :equip="creatOrder.equip_no"
         :show="dialogVisibleApplication"
       />
@@ -851,11 +852,10 @@ export default {
       this.projectForm.job_item_check_type = row.job_item_check_type
       this.projectForm.abnormal_operation_desc = row.abnormal_operation_desc || ''
       this.projectForm.abnormal_operation_url = row.abnormal_operation_url || []
-      this.projectForm.abnormal_operation_result = row.abnormal_operation_result || ''
       if (this.projectForm.job_item_check_type === '数值范围') {
-        this.projectForm.abnormal_operation_result = 1
+        this.projectForm.abnormal_operation_result = row.abnormal_operation_result ? row.abnormal_operation_result : 1
       } else {
-        this.projectForm.abnormal_operation_result = row.job_item_check_standard
+        this.projectForm.abnormal_operation_result = row.abnormal_operation_result ? row.abnormal_operation_result : row.job_item_check_standard
       }
       this.dialogVisibleProject = true
     },
