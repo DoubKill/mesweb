@@ -24,7 +24,7 @@
         <el-input v-model="search.bra_code" style="width:250px" clearable @input="debounceFun" />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="dialog(false,'设置')">新建</el-button>
+        <el-button v-permission="['return_rubber', 'add']" type="primary" @click="dialog(false,'设置')">新建</el-button>
       </el-form-item>
     </el-form>
     <el-table
