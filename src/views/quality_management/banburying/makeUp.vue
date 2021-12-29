@@ -110,6 +110,7 @@
       >
         <template slot-scope="scope">
           <el-button
+            v-permission="['return_rubber', 'print']"
             type="primary"
             size="mini"
             @click="dialog(scope.row,'预览')"
@@ -122,7 +123,7 @@
     <el-dialog
       :title="`准备分厂机台单配（配方）化工流转卡`+val"
       :visible.sync="dialogVisibleAdd"
-      width="30%"
+      width="35%"
       :before-close="handleCloseAdd"
     >
       <el-form
