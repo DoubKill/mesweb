@@ -1,7 +1,7 @@
 <template>
   <div class="repair-all-style">
     <!-- 维修包干定义 -->
-    <el-container style="height:580px;">
+    <el-container>
       <el-aside width="400px" class="border-style aside-style">
         <h3>人员组织架构</h3>
         <el-tree :highlight-current="true" :data="data" default-expand-all :props="defaultProps" @node-click="handleNodeClick" />
@@ -23,12 +23,12 @@
           </el-form-item> -->
         </el-form>
         <h4>维修区域设定</h4>
-        <div style="width:100%;overflow: hidden;margin-bottom:5px;">
+        <div style="width:100%;margin-bottom:10px;overflow: hidden;">
           <el-button v-permission="['equip_maintenance_setting', 'add']" style="float:right;margin-right:20px" size="small" type="primary" @click="addFun">添加</el-button>
         </div>
         <el-table
           :data="tableData"
-          style="width: 90%"
+          style="width: 100%"
           border
         >
           <el-table-column

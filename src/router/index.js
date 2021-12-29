@@ -287,26 +287,6 @@ export let asyncRoutes = [
         permissionName: 'material'
       }
     },
-    {
-      path: '/material/base/inventory-warning',
-      name: 'MaterialBaseInventoryWarning',
-      component: () => import('@/views/material_base_info_manage/inventory-warning'),
-      meta: {
-        title: '原材料-预警参数设定',
-        icon: 'formula',
-        permissionName: 'material_warning_setting'
-      }
-    },
-    {
-      path: '/base/carbon-warning',
-      name: 'CarbonBaseInventoryWarning',
-      component: () => import('@/views/material_base_info_manage/carbon-warning'),
-      meta: {
-        title: '炭黑库-预警参数设定',
-        icon: 'formula',
-        permissionName: 'th_warning_setting'
-      }
-    },
     // {
     //   path: '/material-info-mapping',
     //   component: () => import('@/views/quality_management/material-info-mapping/material-info-mapping'),
@@ -1065,6 +1045,26 @@ export let asyncRoutes = [
           // },
 
         ]
+      },
+      {
+        path: '/material/base/inventory-warning',
+        name: 'MaterialBaseInventoryWarning',
+        component: () => import('@/views/material_base_info_manage/inventory-warning'),
+        meta: {
+          title: '原材料-预警参数设定',
+          icon: 'production',
+          permissionName: 'material_warning_setting'
+        }
+      },
+      {
+        path: '/base/carbon-warning',
+        name: 'CarbonBaseInventoryWarning',
+        component: () => import('@/views/material_base_info_manage/carbon-warning'),
+        meta: {
+          title: '炭黑库-预警参数设定',
+          icon: 'production',
+          permissionName: 'th_warning_setting'
+        }
       }
 
       // {

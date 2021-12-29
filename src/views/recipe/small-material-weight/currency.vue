@@ -332,7 +332,7 @@ export default {
       this.formData.split_num = null
       this.formData.product_no = null
       this.formData.material_name = null
-      this.formData.product_no_id = null
+      this.formData.product_no_id = ''
 
       this.getManualList()
     },
