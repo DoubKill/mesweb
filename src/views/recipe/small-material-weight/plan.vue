@@ -99,6 +99,7 @@
             <template slot-scope="{row}">
               <el-switch
                 v-model="row.merge_flag"
+                :disabled="!checkPermission(['xl_plan','merge'])"
                 active-text="是"
                 inactive-text="否"
                 @change="changeSwitch(row,index)"
@@ -162,7 +163,7 @@
 </template>
 
 <script>
-import { debounce, setDate } from '@/utils'
+import { debounce, setDate, checkPermission } from '@/utils'
 import selectBatchingEquip from '../components/select-batching-equip'
 import classSelect from '@/components/ClassSelect'
 import recipeSelect from '../components/recipe-select'
@@ -210,6 +211,7 @@ export default {
 
   },
   methods: {
+    checkPermission,
     async getList() {
       try {
         // if (this.$refs['singleTable']) {

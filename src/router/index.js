@@ -515,7 +515,7 @@ export let asyncRoutes = [
           meta: {
             faName: 'SmallMaterialWeight',
             title: '单配(合包)化工流转卡',
-            permissionName: ''
+            permissionName: 'weighting_package_manual'
           }
         },
         {
@@ -525,7 +525,7 @@ export let asyncRoutes = [
           meta: {
             faName: 'SmallMaterialWeight',
             title: '单配(配方/通用)化工流转卡',
-            permissionName: ''
+            permissionName: 'weighting_package_manual'
           }
         },
         {
