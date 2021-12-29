@@ -237,6 +237,15 @@
         min-width="20"
       />
       <el-table-column
+        prop="status"
+        label="关闭或退单原因"
+        min-width="20"
+      >
+        <template slot-scope="{row}">
+          <span>{{ row.close_reason?row.close_reason:row.back_reason }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
         prop="repair_user"
         label="维修人"
         min-width="20"

@@ -242,6 +242,10 @@ export default {
     equip: {
       type: String,
       default: ''
+    },
+    workId: {
+      type: Number,
+      default: 0
     }
   },
   data() {
@@ -321,6 +325,7 @@ export default {
         equip_no: this.equip,
         fault_datetime: dateTime,
         image_url_list: [],
+        inspection_order: this.workId,
         importance_level: '高'
       }
     },
