@@ -93,6 +93,7 @@
               <template slot-scope="{row}">
                 <el-switch
                   v-model="row.merge_flag"
+                  :disabled="!checkPermission(['xl_recipe','merge'])"
                   active-text="是"
                   inactive-text="否"
                   @change="changeSwitch(row,index)"
@@ -103,6 +104,7 @@
               <template slot-scope="{row}">
                 <el-input-number
                   v-model="row.split_count"
+                  :disabled="!checkPermission(['xl_recipe','merge'])"
                   style="width:100px"
                   controls-position="right"
                   :min="1"
@@ -164,7 +166,7 @@
 </template>
 
 <script>
-import { debounce } from '@/utils'
+import { debounce, checkPermission } from '@/utils'
 import selectBatchingEquip from '../components/select-batching-equip'
 import { xlRecipe, xlRecipeMaterial, updateFlagCount } from '@/api/base_w_three'
 import page from '@/components/page'
@@ -182,6 +184,7 @@ export default {
     }
   },
   methods: {
+    checkPermission,
     async getList() {
       try {
         this.loading = true

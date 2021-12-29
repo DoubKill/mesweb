@@ -26,6 +26,7 @@
       </el-form-item>
       <el-form-item label="">
         <el-button
+          v-permission="['weighting_package_single', 'add']"
           type="primary"
           @click="showPrintDialog(false)"
         >新建</el-button>
@@ -121,6 +122,7 @@
       >
         <template slot-scope="scope">
           <el-button
+            v-permission="['weighting_package_single', 'print']"
             type="primary"
             @click="showPrintDialog(scope.row)"
           >打印</el-button>
