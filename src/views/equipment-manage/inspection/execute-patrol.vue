@@ -311,7 +311,7 @@
               width="150"
             >
               <template slot-scope="{row}">
-                <el-input v-model="row.job_item_content" />
+                <el-input v-model="row.job_item_content" @input="changeDesc" />
               </template>
             </el-table-column>
             <el-table-column
@@ -476,9 +476,11 @@
         <el-form-item label="上传图片">
           <el-upload
             ref="elUploadImg"
-            action=""
+            :on-remove="handleRemove"
             :auto-upload="false"
+            action=""
             list-type="picture-card"
+            :file-list="objList"
             :on-preview="handlePictureCardPreview"
             :on-change="onChangeImg"
             :on-exceed="onExceed"
@@ -486,7 +488,10 @@
           >
             <i class="el-icon-plus" />
           </el-upload>
-          <template v-for="(item, index) in creatOrder.result_repair_graph_url">
+          <el-dialog :visible.sync="dialogVisibleImg" :modal-append-to-body="false" :append-to-body="true">
+            <img width="100%" :src="dialogImageUrl" alt>
+          </el-dialog>
+          <!-- <template v-for="(item, index) in creatOrder.result_repair_graph_url">
             <el-image
               v-if="creatOrder.result_repair_graph_url.length>0"
               :key="index"
@@ -494,7 +499,7 @@
               :src="item"
               :preview-src-list="[item]"
             />
-          </template>
+          </template> -->
         </el-form-item>
         <el-form-item label="巡检结论" prop="abnormal_operation_result">
           <el-radio-group v-model="creatOrder.result_repair_final_result" disabled>
@@ -504,7 +509,7 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogApplication">报修申请</el-button>
+        <el-button v-if="creatOrder.result_repair_final_result==='不正常'" type="primary" @click="dialogApplication">报修申请</el-button>
         <el-button type="primary" @click="handleClose(false)">取 消</el-button>
         <el-button :loading="submit" type="primary" @click="generateFun">确 定</el-button>
       </span>
@@ -517,8 +522,8 @@
     >
       <application
         ref="List"
-        :work-id="creatOrder.id"
-        :equip="creatOrder.equip_no"
+        :desc="desc"
+        :form="creatOrder"
         :show="dialogVisibleApplication"
       />
       <span slot="footer" class="dialog-footer">
@@ -565,9 +570,9 @@
     <el-dialog
       title="异常项目处理"
       :visible.sync="dialogVisibleProject"
-      width="30%"
+      width="50%"
     >
-      <el-form :model="projectForm" :rules="projectRules" :inline="true" label-width="150px">
+      <el-form :model="projectForm" :rules="projectRules" label-width="150px">
         <el-form-item label="异常项目备注" prop="abnormal_operation_desc">
           <el-input
             v-model="projectForm.abnormal_operation_desc"
@@ -581,6 +586,8 @@
           <el-upload
             ref="elUploadImg"
             action=""
+            :on-remove="handleRemove1"
+            :file-list="objList1"
             :auto-upload="false"
             list-type="picture-card"
             :on-preview="handlePictureCardPreview"
@@ -590,7 +597,10 @@
           >
             <i class="el-icon-plus" />
           </el-upload>
-          <template v-for="(item, index) in projectForm.abnormal_operation_url">
+          <el-dialog :visible.sync="dialogVisibleImg" :modal-append-to-body="false" :append-to-body="true">
+            <img width="100%" :src="dialogImageUrl" alt>
+          </el-dialog>
+          <!-- <template v-for="(item, index) in projectForm.abnormal_operation_url">
             <el-image
               v-if="projectForm.abnormal_operation_url.length>0"
               :key="index"
@@ -598,7 +608,7 @@
               :src="item"
               :preview-src-list="[item]"
             />
-          </template>
+          </template> -->
         </el-form-item>
         <br>
         <el-form-item label="异常处理结果" prop="abnormal_operation_result">
@@ -661,9 +671,12 @@ export default {
       dateValue: [],
       tableData: [],
       typeForm1: {},
+      objList: [],
+      objList1: [],
       bz: null,
       lengthIndex: null,
       order_id: null,
+      dialogVisibleImg: false,
       dialogVisibleMaintain: false,
       dialogVisibleProject: false,
       loadPerson: false,
@@ -693,6 +706,7 @@ export default {
       btnLoading: false,
       dialogVisible: false,
       loadId: '',
+      desc: '',
       submit: false,
       submit1: false,
       creatOrder: {},
@@ -791,7 +805,7 @@ export default {
       try {
         this.dialogVisiblePerson = true
         this.loadPerson = true
-        const data = await getStaff('get', null, { params: { equip_no: row.equip_no, have_classes: 1 }})
+        const data = await getStaff('get', null, { params: { equip_no: row.equip_no, have_classes: 1, maintenance_type: row.type }})
         this.staffList = data.results || []
         this.bz = row.work_persons ? row.work_persons : null
         this.receiving_user = row.receiving_user
@@ -847,11 +861,21 @@ export default {
       }
     },
     dialogProject(row, index) {
-      // this.projectForm = JSON.parse(JSON.stringify(row))
       this.lengthIndex = index
       this.projectForm.job_item_check_type = row.job_item_check_type
       this.projectForm.abnormal_operation_desc = row.abnormal_operation_desc || ''
-      this.projectForm.abnormal_operation_url = row.abnormal_operation_url || []
+      this.objList1 = []
+      if (row.abnormal_operation_url) {
+        if (row.abnormal_operation_url.length > 0) {
+          row.abnormal_operation_url.forEach(d =>
+            this.objList1.push({ url: d })
+          )
+        } else {
+          this.objList1 = []
+        }
+      } else {
+        this.objList1 = []
+      }
       if (this.projectForm.job_item_check_type === '数值范围') {
         this.projectForm.abnormal_operation_result = row.abnormal_operation_result ? row.abnormal_operation_result : 1
       } else {
@@ -860,9 +884,11 @@ export default {
       this.dialogVisibleProject = true
     },
     generateFunProject() {
+      const url = []
+      this.objList1.forEach(d => url.push(d.url))
       this.$set(this.creatOrder.work_content[this.lengthIndex], 'abnormal_operation_desc', this.projectForm.abnormal_operation_desc)
       this.$set(this.creatOrder.work_content[this.lengthIndex], 'abnormal_operation_result', this.projectForm.abnormal_operation_result)
-      this.$set(this.creatOrder.work_content[this.lengthIndex], 'abnormal_operation_url', this.projectForm.abnormal_operation_url)
+      this.$set(this.creatOrder.work_content[this.lengthIndex], 'abnormal_operation_url', url)
       if (this.creatOrder.work_content.every(d =>
         (d.job_item_check_type === '数值范围' && d.job_item_check_standard_a <= d.operation_result && d.job_item_check_standard_b >= d.operation_result) ||
         (d.job_item_check_type !== '数值范围' && d.job_item_check_standard === d.operation_result) ||
@@ -873,11 +899,32 @@ export default {
       } else {
         this.creatOrder.result_repair_final_result = '不正常'
       }
+      this.changeDesc()
       this.dialogVisibleProject = false
+    },
+    changeDesc() {
+      this.desc = []
+      this.creatOrder.work_content.forEach(d => {
+        if ((d.job_item_check_type === '数值范围' && d.job_item_check_standard_a <= d.operation_result && d.job_item_check_standard_b >= d.operation_result) ||
+        (d.job_item_check_type !== '数值范围' && d.job_item_check_standard === d.operation_result) ||
+        (d.job_item_check_type === '数值范围' && d.job_item_check_standard_a <= d.abnormal_operation_result && d.job_item_check_standard_b >= d.abnormal_operation_result) ||
+        (d.job_item_check_type !== '数值范围' && d.job_item_check_standard === d.abnormal_operation_result)) {
+          return false
+        } else {
+          this.desc.push(d.job_item_content)
+        }
+      })
+      this.desc = this.desc.join(';')
     },
     changeSearch() {
       this.search.page = 1
       this.getList()
+    },
+    handleRemove(file, fileList) {
+      this.objList = fileList
+    },
+    handleRemove1(file, fileList) {
+      this.objList1 = fileList
     },
     onExceed() {
       this.$message.info('最多上传五张图片')
@@ -898,8 +945,12 @@ export default {
       const picture = new FormData()
       picture.append('image_file_name', file.raw)
       picture.append('source_type', '巡检')
-      const data = await uploadImages('post', null, { data: picture })
-      this.creatOrder.image_url_list.push(data.image_file_name)
+      try {
+        const data = await uploadImages('post', null, { data: picture })
+        this.objList.push({ url: data.image_file_name })
+      } catch (e) {
+        this.$set(this, 'objList', this.objList)
+      }
     },
     async onChangeImg1(file, fileList) {
       const isJPG = ['image/jpeg', 'image/jpg', 'image/png'].includes(file.raw.type)
@@ -917,11 +968,16 @@ export default {
       const picture = new FormData()
       picture.append('image_file_name', file.raw)
       picture.append('source_type', '巡检')
-      const data = await uploadImages('post', null, { data: picture })
-      this.projectForm.abnormal_operation_url.push(data.image_file_name)
+      try {
+        const data = await uploadImages('post', null, { data: picture })
+        this.objList1.push({ url: data.image_file_name })
+      } catch (e) {
+        this.$set(this, 'objList1', this.objList1)
+      }
     },
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url
+      this.dialogVisibleImg = true
     },
     equipSelected(obj) {
       this.$set(this.search, 'equip_no', obj ? obj.equip_no : '')
@@ -942,6 +998,11 @@ export default {
       this.$refs['List'].$refs.ruleFormHandle.validate(async(valid) => {
         if (valid) {
           try {
+            const url = []
+            this.$refs['List'].objList.forEach(d => {
+              url.push(d.url)
+            })
+            this.$refs['List'].ruleForm.image_url_list = url
             delete this.$refs['List'].ruleForm.apply_repair_graph_url
             if (this.$refs['List'].ruleForm.equip_condition === true) {
               this.ruleForm.equip_condition = '停机'
@@ -966,11 +1027,19 @@ export default {
       // this.$refs['List'].$refs.addSubmitFun()
     },
     dialog(row, type) {
+      this.objList = []
       this.equip_jobitem_standard_id = null
       if (row.status === '已开始') {
         this.operateType = type
         this.creatOrder = JSON.parse(JSON.stringify(row))
-        this.creatOrder.image_url_list = this.creatOrder.result_repair_graph_url || []
+        if (this.creatOrder.result_repair_graph_url.length > 0) {
+          this.creatOrder.result_repair_graph_url.forEach(d =>
+            this.objList.push({ url: d })
+          )
+        } else {
+          this.objList = []
+        }
+        // this.creatOrder.image_url_list = this.creatOrder.result_repair_graph_url || []
         if (row.work_content.length > 0) {
           const arr = []
           this.equip_jobitem_standard_id = row.work_content[0].equip_jobitem_standard_id
@@ -1009,6 +1078,7 @@ export default {
         } else {
           this.creatOrder.result_repair_final_result = '不正常'
         }
+        this.changeDesc()
         this.dialogVisible = true
       } else {
         this.$message.info('请处理已开始工单')
@@ -1033,6 +1103,7 @@ export default {
           delete d.abnormal_operation_url
         }
       })
+      this.changeDesc()
     },
     handleClose(done) {
       if (this.$refs.elUploadImg) {
@@ -1045,6 +1116,8 @@ export default {
       }
     },
     async generateFun() {
+      const url = []
+      this.objList.forEach(d => url.push(d.url))
       this.creatOrder.work_content.forEach(d => {
         if (d.job_item_check_type === '数值范围') {
           if (!d.job_item_check_standard_a || !d.job_item_check_standard_b) {
@@ -1068,7 +1141,7 @@ export default {
           }
           const form = {}
           form.result_repair_desc = this.creatOrder.result_repair_desc
-          form.image_url_list = this.creatOrder.image_url_list
+          form.image_url_list = url
           form.result_repair_final_result = this.creatOrder.result_repair_final_result
           form.pks = [this.creatOrder.id]
           form.status = '已完成'
