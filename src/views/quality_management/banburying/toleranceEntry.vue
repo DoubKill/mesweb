@@ -3,7 +3,7 @@
     <!-- 配方公差标准录入 -->
     <el-form :inline="true">
       <el-form-item style="float:right">
-        <el-button type="primary" @click="showCreateDialog">新建</el-button>
+        <el-button v-permission="['tolerance_rule', 'add']" type="primary" @click="showCreateDialog">新建</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -47,10 +47,12 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
+              v-permission="['tolerance_rule', 'change']"
               size="mini"
               @click="showEditDialog(scope.row)"
             >编辑</el-button>
             <el-button
+              v-permission="['tolerance_rule', 'delete']"
               size="mini"
               type="danger"
               plain

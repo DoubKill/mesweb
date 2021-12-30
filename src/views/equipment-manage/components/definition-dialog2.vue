@@ -1,44 +1,39 @@
 <template>
   <div>
-    <!-- 维护标准弹框 -->
+    <!-- 巡检标准弹框 -->
     <el-form
-      ref="createForm"
+      ref="createForm1"
       :inline="true"
       :model="typeForm"
       label-width="150px"
     >
       <el-row>
         <el-col :span="8">
-          <el-form-item label="作业类型">
+          <el-form-item label="作业类型" prop="work_type">
+            <el-input v-model="typeForm.work_type" disabled style="width:200px" />
+          </el-form-item>
+          <el-form-item label="标准编号" prop="standard_code">
+            <el-input v-model="typeForm.standard_code" disabled style="width:200px" />
+          </el-form-item>
+          <el-form-item label="标准名称" prop="standard_name">
+            <el-input v-model="typeForm.standard_name" style="width:200px" disabled />
+          </el-form-item>
+          <el-form-item label="类别" prop="type">
             <el-select
-              v-model="typeForm.work_type"
+              v-model="typeForm.type"
               disabled
               placeholder="请选择"
+              clearable
             >
               <el-option
-                v-for="item in ['巡检','保养','润滑','标定']"
+                v-for="item in ['机械', '电气','通用']"
                 :key="item"
                 :label="item"
                 :value="item"
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="标准编号">
-            <el-input v-model="typeForm.standard_code" disabled />
-          </el-form-item>
-          <el-form-item label="标准名称">
-            <el-input v-model="typeForm.standard_name" disabled />
-          </el-form-item>
-          <el-form-item label="机台">
-            <el-input v-model="typeForm.equip" disabled />
-          </el-form-item>
-          <el-form-item label="部位名称">
-            <el-input v-model="typeForm.equip_part_name" disabled />
-          </el-form-item>
-          <el-form-item label="部件名称">
-            <el-input v-model="typeForm.equip_component_name" disabled />
-          </el-form-item>
-          <el-form-item label="设备条件">
+          <el-form-item label="设备条件" prop="equip_condition">
             <el-select
               v-model="typeForm.equip_condition"
               disabled
@@ -53,7 +48,7 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="重要程度">
+          <el-form-item label="重要程度" prop="important_level">
             <el-select
               v-model="typeForm.important_level"
               disabled
@@ -67,40 +62,32 @@
                 :value="item"
               />
             </el-select>
-          </el-form-item></el-col>
-        <el-col :span="8">
-          <el-form-item
-            label="作业项目"
-            prop="equip_job_item_standard_name"
-          >
-            <el-input v-model="typeForm.equip_job_item_standard_name" disabled />
-            <br>
-            <el-input
-              v-model="typeForm.equip_job_item_standard_detail"
-              style="marginTop:20px"
-              type="textarea"
-              :rows="4"
-              disabled
-            />
           </el-form-item>
-          <el-form-item label="起始时间">
-            <el-input v-model="typeForm.start_time" disabled />
+          <el-form-item label="机台">
+            <el-input v-model="typeForm.equip" disabled />
           </el-form-item>
-
         </el-col>
         <el-col :span="8">
-          <el-form-item label="维护周期">
-            <el-input-number v-model="typeForm.maintenance_cycle" controls-position="right" disabled />
-            <el-form-item>
+          <el-form-item label="起始时间" prop="start_time">
+            <el-date-picker
+              v-model="typeForm.start_time"
+              disabled
+              style="width:180px"
+              value-format="yyyy-MM-dd"
+              :clearable="true"
+            />
+          </el-form-item>
+          <el-form-item label="维护周期" prop="maintenance_cycle">
+            <el-input-number v-model="typeForm.maintenance_cycle" disabled placeholder="" controls-position="right" :min="0" />
+            <el-form-item style="width:100px">
               <el-select
                 v-model="typeForm.cycle_unit"
-                placeholder=""
-                style="width:100px"
                 disabled
                 clearable
+                placeholder=""
               >
                 <el-option
-                  v-for="item in ['日','小时','分钟','秒','车次']"
+                  v-for="item in ['4小时','班次','日','周','月','季度','年','车数']"
                   :key="item"
                   :label="item"
                   :value="item"
@@ -108,21 +95,20 @@
               </el-select>
             </el-form-item>
           </el-form-item>
-          <el-form-item label="周期数">
-            <el-input-number v-model="typeForm.cycle_num" controls-position="right" disabled />
+          <el-form-item label="周期数" prop="cycle_num">
+            <el-input-number v-model="typeForm.cycle_num" disabled placeholder="" controls-position="right" :min="0" />
           </el-form-item>
-          <el-form-item label="所需人数">
-            <el-input-number v-model="typeForm.cycle_person_num" controls-position="right" disabled />
+          <el-form-item label="所需人数" prop="cycle_person_num">
+            <el-input-number v-model="typeForm.cycle_person_num" disabled placeholder="" controls-position="right" :min="0" />
           </el-form-item>
-          <el-form-item label="作业时间">
-            <el-input-number v-model="typeForm.operation_time" controls-position="right" disabled />
-            <el-form-item>
+          <el-form-item label="作业时间" prop="operation_time">
+            <el-input-number v-model="typeForm.operation_time" disabled placeholder="" controls-position="right" :min="0" />
+            <el-form-item prop="operation_time_unit" style="width:100px">
               <el-select
                 v-model="typeForm.operation_time_unit"
-                placeholder=""
-                style="width:100px"
-                clearable
                 disabled
+                clearable
+                placeholder=""
               >
                 <el-option
                   v-for="item in ['日','小时','分钟','秒','车次']"
@@ -133,45 +119,57 @@
               </el-select>
             </el-form-item>
           </el-form-item>
-          <el-form-item label="钉钉提醒发送">
+          <el-form-item label="钉钉提醒发送" prop="remind_flag">
             <el-checkbox v-model="typeForm.remind_flag1" label="包干人" disabled />
             <el-checkbox v-model="typeForm.remind_flag2" label="上级" disabled />
             <el-checkbox v-model="typeForm.remind_flag3" label="上上级" disabled />
           </el-form-item>
         </el-col>
-        <!-- <el-form-item label="所需物料">
+        <el-form-item
+          label="作业内容"
+          prop="work_list"
+        >
           <el-table
-            :data="typeForm.spare_list"
+            :data="typeForm.work_list"
             border
             style="width: 100%"
           >
             <el-table-column
-              prop="equip_spare_erp__spare_code"
-              label="物料编码"
+              type="index"
+              label="次序"
             />
             <el-table-column
-              prop="equip_spare_erp__spare_name"
-              label="物料名称"
+              label="区域编号"
+              width="180"
+              prop="equip_area_define__area_code"
             />
             <el-table-column
-              prop="equip_spare_erp__specification"
-              label="规格"
+              label="区域名称"
+              width="150"
+              prop="equip_area_define__area_name"
             />
             <el-table-column
-              prop="equip_spare_erp__technical_params"
-              label="用途"
+              width="150"
+              label="部位名称"
+              prop="equip_part__part_name"
             />
             <el-table-column
-              prop="quantity"
-              label="数量"
-              width="140px"
+              width="150"
+              label="部件名称"
+              prop="equip_component__component_name"
             />
             <el-table-column
-              prop="equip_spare_erp__unit"
-              label="单位"
+              label="作业项目"
+              width="200px"
+              prop="equip_job_item_standard__standard_name"
+            />
+            <el-table-column
+              label="作业项目详情"
+              width="200px"
+              prop="work_details_column"
             />
           </el-table>
-        </el-form-item> -->
+        </el-form-item>
       </el-row>
     </el-form>
   </div>

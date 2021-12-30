@@ -3,7 +3,7 @@
     <!-- 公差标准项目关键字 -->
     <el-form :inline="true">
       <el-form-item style="float:right">
-        <el-button type="primary" @click="showCreateDialog">新建</el-button>
+        <el-button v-permission="['tolerance_keyword', 'add']" type="primary" @click="showCreateDialog">新建</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -31,6 +31,7 @@
       <el-table-column label="操作" width="80">
         <template slot-scope="scope">
           <el-button
+            v-permission="['tolerance_keyword', 'delete']"
             size="mini"
             type="danger"
             plain

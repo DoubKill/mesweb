@@ -2,6 +2,22 @@
   <div>
     <!--细料胶块放行处理 -->
     <el-form :inline="true">
+      <el-form-item label="原因类别">
+        <el-select
+          v-model="search.reason_type"
+          style="width:150px"
+          clearable
+          placeholder="请选择"
+          @change="changeList"
+        >
+          <el-option
+            v-for="item in ['物料名不一致','重量不匹配','超过有效期','未到放置期']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="机台">
         <equip-select
           style="width:150px"
@@ -37,8 +53,8 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" :loading="submit" @click="feed('可投料')">可投料</el-button>
-        <el-button type="primary" :loading="submitNo" @click="feed('不可投料')">不可投料</el-button>
+        <el-button v-permission="['replace_material', 'opera']" type="primary" :loading="submit" @click="feed('可投料')">可投料</el-button>
+        <el-button v-permission="['replace_material', 'opera']" type="primary" :loading="submitNo" @click="feed('不可投料')">不可投料</el-button>
         <!-- <el-button type="primary">导出Excel</el-button> -->
       </el-form-item>
     </el-form>
@@ -55,7 +71,11 @@
         width="40"
         :reserve-selection="true"
       />
-
+      <el-table-column
+        prop="reason_type"
+        label="原因类别"
+        min-width="20"
+      />
       <el-table-column
         prop="equip_no"
         label="机台"
@@ -69,6 +89,11 @@
       <el-table-column
         prop="product_no"
         label="配方编号"
+        min-width="20"
+      />
+      <el-table-column
+        prop="expire_datetime"
+        label="有效期/放置期"
         min-width="20"
       />
       <el-table-column

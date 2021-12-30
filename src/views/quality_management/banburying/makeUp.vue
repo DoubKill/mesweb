@@ -24,7 +24,7 @@
         <el-input v-model="search.bra_code" style="width:250px" clearable @input="debounceFun" />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="dialog(false,'设置')">新建</el-button>
+        <el-button v-permission="['return_rubber', 'add']" type="primary" @click="dialog(false,'设置')">新建</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -110,6 +110,7 @@
       >
         <template slot-scope="scope">
           <el-button
+            v-permission="['return_rubber', 'print']"
             type="primary"
             size="mini"
             @click="dialog(scope.row,'预览')"
@@ -122,7 +123,7 @@
     <el-dialog
       :title="`准备分厂机台单配（配方）化工流转卡`+val"
       :visible.sync="dialogVisibleAdd"
-      width="30%"
+      width="35%"
       :before-close="handleCloseAdd"
     >
       <el-form

@@ -16,6 +16,7 @@
       </el-form-item>
       <el-form-item>
         <el-button
+          v-permission="['weighting_package_manual', 'add']"
           type="primary"
           @click="showPrintDialog(false)"
         >新建</el-button>
@@ -106,6 +107,7 @@
       >
         <template slot-scope="scope">
           <el-button
+            v-permission="['weighting_package_manual', 'print']"
             type="primary"
             @click="showPrintDialog(scope.row)"
           >打印</el-button>
@@ -125,19 +127,38 @@
       :before-close="handleClose"
     >
       <el-form ref="formRef" :model="formData" :rules="rules" label-width="120px">
-        <el-form-item prop="product_no" label="细料名称">
-          <el-select v-model="formData.product_no" :disabled="formData.id?true:false" filterable placeholder="请选择" @change="changeProduct">
+        <el-form-item v-if="!formData.id" prop="product_no_id" label="细料名称">
+          <!-- <el-select v-model="formData.product_no" :disabled="formData.id?true:false" filterable placeholder="请选择" @change="changeProduct">
             <el-option
               v-for="item in productList"
               :key="item.id"
               :label="item.stage_product_batch_no"
               :value="item.stage_product_batch_no"
             />
+          </el-select> -->
+
+          <el-select v-model="formData.product_no_id" :disabled="formData.id?true:false" filterable placeholder="请选择" @change="changeProductNo">
+            <el-option
+              v-for="item in productList"
+              :key="item.id"
+              :label="item.stage_product_batch_no"
+              :value="item.id"
+            >
+              <span style="float: left">{{ item.stage_product_batch_no }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.dev_type__category_name }}</span>
+            </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item prop="dev_type" label="机型">
+        <el-form-item v-else label="细料名称">
+          {{ formData.product_no }}
+        </el-form-item>
+        <!-- <el-form-item prop="dev_type" label="机型">
           <equip-category-select v-if="!formData.id" v-model="formData.dev_type" @change="changeProduct" />
           <span v-else>{{ formData.dev_type_name }}</span>
+        </el-form-item> -->
+        <el-form-item prop="" label="使用机型">
+          <!-- <equip-category-select v-if="!formData.id" v-model="formData.dev_type" @change="changeDevTypeDialog" /> -->
+          <span>{{ formData.dev_type_name }}</span>
         </el-form-item>
         <el-form-item prop="begin_trains" label="起始车次">
           <el-input-number v-model="formData.begin_trains" controls-position="right" :min="1" :disabled="formData.id?true:false" />
@@ -170,12 +191,6 @@
             min-width="20"
           />
           <el-table-column
-            v-if="!formData.id"
-            prop=""
-            label="卡片条码"
-            min-width="20"
-          />
-          <el-table-column
             prop="tolerance"
             label="公差（kg）"
             min-width="20"
@@ -198,6 +213,15 @@
             </template>
           </el-table-column>
           <el-table-column
+            v-else
+            label="配料方式"
+            width="210px"
+          >
+            <template slot-scope="{row}">
+              {{ row.batch_type }}
+            </template>
+          </el-table-column>
+          <el-table-column
             v-if="formData.id?false:true"
             label="操作"
             width="100px"
@@ -214,7 +238,7 @@
       <span slot="footer" class="dialog-footer">
         <el-button v-if="!formData.id" type="info" @click="resetFun">重 置</el-button>
         <el-button @click="handleClose(false)">取 消</el-button>
-        <el-button type="primary" :loading="loadingBtn" @click="submitFun">确 定</el-button>
+        <el-button type="primary" :disabled="loadingBtn" @click="submitFun">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -222,13 +246,13 @@
 
 <script>
 import page from '@/components/page'
-import EquipCategorySelect from '@/components/EquipCategorySelect'
+// import EquipCategorySelect from '@/components/EquipCategorySelect'
 import { weightingPackageManua, getManualInfo, getMaterialTolerance } from '@/api/base_w_five'
 import { rubberMaterialUrl, equipUrl } from '@/api/base_w'
 import equipSelect from '@/components/select_w/equip'
 export default {
   name: 'SmallMaterialWeightHebao',
-  components: { page, EquipCategorySelect, equipSelect },
+  components: { page, equipSelect },
   data() {
     return {
       search: {},
@@ -241,7 +265,7 @@ export default {
         print_count: 1
       },
       rules: {
-        product_no: [{ required: true, message: '请输入', trigger: 'change' }],
+        product_no_id: [{ required: true, message: '请输入', trigger: 'change' }],
         begin_trains: [{ required: true, message: '请输入', trigger: 'blur' }],
         cc: [{ required: true, message: '请输入', trigger: 'change' }],
         package_count: [{ required: true, message: '请输入', trigger: 'blur' }],
@@ -334,10 +358,28 @@ export default {
       this.tableData1New = []
       this.getManual()
     },
+    changeProductNo(id) {
+      if (id) {
+        const obj = this.productList.find(D => D.id === id)
+        this.formData.dev_type_name = obj.dev_type__category_name
+        this.formData.product_no = obj.stage_product_batch_no
+        this.formData.dev_type = obj.dev_type
+        // this.product_batching = obj.id
+      } else {
+        this.formData.dev_type = ''
+        this.formData.dev_type_name = ''
+        this.formData.product_no = ''
+      }
+      this.tableData1 = []
+      this.tableData1New = []
+      this.getManual()
+    },
     async changeSplitNum() {
       if (!this.tableData1New.length) {
         return
       }
+      this.loadingBtn = true
+      let i = this.tableData1New.length
       for (let index = 0; index < this.tableData1New.length; index++) {
         const d = this.tableData1New[index]
         d.standard_weight = Math.round(d.standard_weight_old / this.formData.split_num * 1000) / 1000
@@ -345,10 +387,14 @@ export default {
           const data = await getMaterialTolerance('get', null, { params: {
             batching_equip: this.formData.batching_equip,
             material_name: this.formData.product_no, standard_weight: d.standard_weight }})
-          d.tolerance = data
+          this.$set(d, 'tolerance', data)
+          i--
         } catch (e) {
           //
         }
+      }
+      if (i === 0) {
+        this.loadingBtn = false
       }
     },
     changeSearch() {

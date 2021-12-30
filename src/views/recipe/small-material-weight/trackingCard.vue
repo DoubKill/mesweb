@@ -357,8 +357,8 @@ export default {
   data() {
     return {
       formInline: {
-        // batch_time: setDate(),
-        batch_time: '2021-12-02'
+        batch_time: setDate()
+        // batch_time: '2021-12-02'
       },
       tableData: [],
       total: 0,
@@ -624,6 +624,7 @@ export default {
         this.$set(this.ruleForm, 'manual_body', [])
         this.$set(this.ruleForm, 'manual_infos', [])
         this.ruleForm.manual_weight = 0
+        this.ruleForm.status = 'N'
       }
 
       this.$set(this.ruleForm, 'print_count', 1)
@@ -651,11 +652,16 @@ export default {
                 _toleranceA = Number(_tolerance.slice(1, _tolerance.length - 2))
                 otherNum_tolerance = _toleranceA
               }
-            }
 
-            if (-otherNum_tolerance > this.otherNum || otherNum_tolerance < this.otherNum) {
-              this.$message.info('其他料包总数有偏差')
-              return
+              if (-otherNum_tolerance > this.otherNum || otherNum_tolerance < this.otherNum) {
+                this.$message.info('其他料包总数有偏差')
+                return
+              }
+            } else {
+              if (this.otherNum !== 0) {
+                this.$message.info('其他料包总数有偏差')
+                return
+              }
             }
             const _api = this.againPrint ? 'put' : 'post'
             let _obj = JSON.parse(JSON.stringify(this.ruleForm))

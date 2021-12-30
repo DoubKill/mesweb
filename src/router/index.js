@@ -508,14 +508,14 @@ export let asyncRoutes = [
             permissionName: 'xl_weight_card'
           }
         },
-        /* {
+        {
           path: '/small-material-weight/hebao',
           component: () => import('@/views/recipe/small-material-weight/hebao'),
           name: 'SmallMaterialWeightHebao',
           meta: {
             faName: 'SmallMaterialWeight',
             title: '单配(合包)化工流转卡',
-            permissionName: ''
+            permissionName: 'weighting_package_manual'
           }
         },
         {
@@ -525,9 +525,9 @@ export let asyncRoutes = [
           meta: {
             faName: 'SmallMaterialWeight',
             title: '单配(配方/通用)化工流转卡',
-            permissionName: ''
+            permissionName: 'weighting_package_manual'
           }
-        },*/
+        },
         {
           path: '/small-material-weight/valid',
           component: () => import('@/views/recipe/small-material-weight/valid'),
@@ -539,8 +539,8 @@ export let asyncRoutes = [
           }
         }
       ]
-    }
-    /*, {
+    },
+    {
       path: '/auto-schedule',
       redirect: '/schedule/factory-declare',
       name: 'AutoSchedule',
@@ -809,7 +809,7 @@ export let asyncRoutes = [
           ]
         }
       ]
-    }*/
+    }
     ]
   },
   {
@@ -2358,8 +2358,8 @@ export let asyncRoutes = [
             }
           }
         ]
-      }
-      /*, {
+      },
+      {
         path: '/banburying',
         redirect: '/banburying/substitutes',
         component: () => import('@/views/quality_management/banburying/a-index'),
@@ -2376,7 +2376,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'Banburying',
               title: '细料胶块放行处理',
-              permissionName: ''
+              permissionName: 'replace_material'
             }
           },
           {
@@ -2386,7 +2386,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'Banburying',
               title: '胶皮补打卡片',
-              permissionName: ''
+              permissionName: 'return_rubber'
             }
           },
           {
@@ -2396,7 +2396,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'Banburying',
               title: '配方公差标准录入',
-              permissionName: ''
+              permissionName: 'tolerance_rule'
             }
           },
           {
@@ -2406,7 +2406,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'Banburying',
               title: '公差标准区分关键字',
-              permissionName: ''
+              permissionName: 'tolerance_keyword'
             }
           },
           {
@@ -2416,7 +2416,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'Banburying',
               title: '公差标准项目关键字',
-              permissionName: ''
+              permissionName: 'tolerance_keyword'
             }
           },
           {
@@ -2426,11 +2426,11 @@ export let asyncRoutes = [
             meta: {
               faName: 'Banburying',
               title: '公差标准处理关键字',
-              permissionName: ''
+              permissionName: 'tolerance_keyword'
             }
           }
         ]
-      }*/
+      }
     ]
   },
   // {

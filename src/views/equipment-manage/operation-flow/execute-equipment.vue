@@ -139,13 +139,13 @@
               type="primary"
               size="mini"
               :loading="submit1&&scope.row.id===loadId"
-              :disabled="submit1||name!==scope.row.receiving_user"
+              :disabled="submit1||(name!==scope.row.receiving_user&&name!==scope.row.entrust_to_user)"
               @click="start(scope.row)"
             >开始</el-button>
             <el-button
               v-permission="['equip_apply_order', 'handle']"
               type="primary"
-              :disabled="name!==scope.row.receiving_user"
+              :disabled="name!==scope.row.receiving_user&&name!==scope.row.entrust_to_user"
               size="mini"
               @click="dialog(scope.row,'处理维修工单')"
             >处理
@@ -610,7 +610,7 @@
           </el-upload>
           <template v-for="(item, index) in creatOrder.result_repair_graph_url">
             <el-image
-              v-if="operateType==='查看处理结果'&&creatOrder.result_repair_graph_url.length>0"
+              v-if="creatOrder.result_repair_graph_url.length>0"
               :key="index"
               style="width: 100px; height: 100px"
               :src="item"
@@ -1337,7 +1337,6 @@ export default {
       if (type === '查看处理结果') {
         this.operateType = type
         this.dialogVisible = true
-        this.creatOrder = JSON.parse(JSON.stringify(row))
         row.work_content.forEach(d => {
           d.job_item_check_standard_a = 0
           d.job_item_check_standard_b = 1
@@ -1349,6 +1348,7 @@ export default {
             delete d.job_item_check_standard_b
           }
         })
+        this.creatOrder = JSON.parse(JSON.stringify(row))
       } else {
         if (row.status === '已开始') {
           this.operateType = type
@@ -1464,18 +1464,11 @@ export default {
       this.creatOrder.work_content.every(d => d.job_item_check_standard)) {
         this.$refs.ruleFormHandle.validate(async(valid) => {
           if (valid) {
-            if (this.creatOrder.work_content.length > 0) {
-              this.creatOrder.work_content.forEach((d, i) => {
-                if (d.job_item_check_type === '数值范围') {
-                  delete d.job_item_check_standard_a
-                  delete d.job_item_check_standard_b
-                }
-                d.job_item_sequence = i + 1
-              })
-            }
-            this.submit = true
             if (this.creatOrder.result_material_requisition && this.creatOrder.result_accept_result !== '不合格' && !this.creatOrder.is_applyed) {
-              console.log(this.creatOrder.result_material_requisition)
+              if (this.tableDataView.length === 0) {
+                this.$message('物料列表为空')
+                return
+              }
               const orderId = await getOrderId('get', null, { params: { status: '出库' }})
               const orderData = {}
               orderData.order_id = orderId
@@ -1492,7 +1485,17 @@ export default {
                 work_type: this.creatOrder.work_type,
                 submit_old_flag: item.submit_old_flag }))
             }
+            if (this.creatOrder.work_content.length > 0) {
+              this.creatOrder.work_content.forEach((d, i) => {
+                if (d.job_item_check_type === '数值范围') {
+                  delete d.job_item_check_standard_a
+                  delete d.job_item_check_standard_b
+                }
+                d.job_item_sequence = i + 1
+              })
+            }
             try {
+              this.submit = true
               await equipApplyOrder('put', this.creatOrder.id, { data: this.creatOrder })
               this.$message.success('操作成功')
               this.handleClose(null)

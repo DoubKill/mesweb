@@ -13,6 +13,22 @@
           @change="changeDate"
         />
       </el-form-item>
+      <el-form-item label="类别">
+        <el-select
+          v-model="search.type"
+          style="width:100px"
+          placeholder="请选择"
+          clearable
+          @change="changeSearch"
+        >
+          <el-option
+            v-for="item in ['机械', '电气','通用']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="计划名称">
         <el-input
           v-model="search.plan_name"
@@ -24,14 +40,13 @@
       <el-form-item label="机台">
         <equip-select
           style="width:100px"
-          equip-type="密炼设备"
           @equipSelected="equipSelected"
         />
       </el-form-item>
       <el-form-item label="巡检标准">
         <el-input
           v-model="search.equip_repair_standard"
-          style="width:200px"
+          style="width:150px"
           clearable
           @input="changeDebounce"
         />
@@ -116,6 +131,21 @@
       <el-table-column
         prop="plan_name"
         label="计划名称"
+        min-width="20"
+      />
+      <el-table-column
+        prop="inspection_line_no"
+        label="序号"
+        min-width="20"
+      />
+      <el-table-column
+        prop="area_name"
+        label="区域"
+        min-width="20"
+      />
+      <el-table-column
+        prop="type"
+        label="类别"
         min-width="20"
       />
       <el-table-column
@@ -226,7 +256,7 @@
       :before-close="handleClose"
       :title="operateType"
       :visible.sync="dialogVisible"
-      width="60%"
+      width="70%"
     >
       <el-form
         ref="ruleFormHandle"
@@ -267,7 +297,7 @@
           <el-table
             :data="creatOrder.work_content"
             border
-            style="width: 921px"
+            style="width: 1091px"
           >
             <el-table-column
               label="序号"
@@ -297,6 +327,7 @@
                     inactive-value="有"
                     active-text="无"
                     inactive-text="有"
+                    @change="changeRusult"
                   />
                 </div>
                 <div v-if="row.job_item_check_type==='正常异常'">
@@ -306,6 +337,7 @@
                     inactive-value="异常"
                     active-text="正常"
                     inactive-text="异常"
+                    @change="changeRusult"
                   />
                 </div>
                 <div v-if="row.job_item_check_type==='完成未完成'">
@@ -315,6 +347,7 @@
                     inactive-value="未完成"
                     active-text="完成"
                     inactive-text="未完成"
+                    @change="changeRusult"
                   />
                 </div>
                 <div v-if="row.job_item_check_type==='合格不合格'">
@@ -324,12 +357,13 @@
                     inactive-value="不合格"
                     active-text="合格"
                     inactive-text="不合格"
+                    @change="changeRusult"
                   />
                 </div>
                 <div v-if="row.job_item_check_type==='数值范围'">
-                  <el-input-number v-model="row.job_item_check_standard_a" style="width:120px" controls-position="right" :min="0" :max="row.job_item_check_standard_b" />
+                  <el-input-number v-model="row.job_item_check_standard_a" style="width:120px" controls-position="right" :min="0" :max="row.job_item_check_standard_b" @change="changeRusult" />
                   -
-                  <el-input-number v-model="row.job_item_check_standard_b" style="width:120px" controls-position="right" :min="row.job_item_check_standard_a" />
+                  <el-input-number v-model="row.job_item_check_standard_b" style="width:120px" controls-position="right" :min="row.job_item_check_standard_a" @change="changeRusult" />
                 </div>
               </template>
             </el-table-column>
@@ -351,7 +385,7 @@
             <el-table-column
               prop="operation_result"
               label="处理结果"
-              width="200"
+              width="150"
             >
               <template slot-scope="{row}">
                 <div v-if="row.job_item_check_type==='有无'">
@@ -361,6 +395,7 @@
                     inactive-value="有"
                     active-text="无"
                     inactive-text="有"
+                    @change="changeRusult"
                   />
                 </div>
                 <div v-if="row.job_item_check_type==='正常异常'">
@@ -370,6 +405,7 @@
                     inactive-value="异常"
                     active-text="正常"
                     inactive-text="异常"
+                    @change="changeRusult"
                   />
                 </div>
                 <div v-if="row.job_item_check_type==='完成未完成'">
@@ -379,6 +415,7 @@
                     inactive-value="未完成"
                     active-text="完成"
                     inactive-text="未完成"
+                    @change="changeRusult"
                   />
                 </div>
                 <div v-if="row.job_item_check_type==='合格不合格'">
@@ -388,20 +425,41 @@
                     inactive-value="不合格"
                     active-text="合格"
                     inactive-text="不合格"
+                    @change="changeRusult"
                   />
                 </div>
                 <div v-if="row.job_item_check_type==='数值范围'">
-                  <el-input-number v-model="row.operation_result" style="width:120px" controls-position="right" :min="1" :max="99999" />
+                  <el-input-number v-model="row.operation_result" style="width:120px" controls-position="right" :min="1" :max="99999" @change="changeRusult" />
                 </div>
               </template>
             </el-table-column>
-            <el-table-column label="操作" width="70">
+            <el-table-column
+              label="异常处理结果"
+              prop="abnormal_operation_result"
+              width="120"
+            />
+            <el-table-column label="操作" width="170">
               <template slot-scope="scope">
                 <el-button
                   size="mini"
                   type="danger"
                   @click="delDialogFun(scope.$index)"
                 >删除</el-button>
+                <el-button
+                  v-if="!((scope.row.job_item_check_type === '数值范围' && scope.row.job_item_check_standard_a <= scope.row.operation_result && scope.row.job_item_check_standard_b >= scope.row.operation_result) ||
+                    (scope.row.job_item_check_type !== '数值范围' && scope.row.job_item_check_standard === scope.row.operation_result))"
+                  size="mini"
+                  type="danger"
+                  @click="dialogProject(scope.row,scope.$index)"
+                >处理异常</el-button>
+                <!-- <el-button
+                  v-if="scope.row.job_item_check_standard&&
+                    ((scope.row.job_item_check_type === '数值范围' && scope.row.job_item_check_standard_a <= scope.row.abnormal_operation_result && scope.row.job_item_check_standard_b >= scope.row.abnormal_operation_result)||
+                      (scope.row.job_item_check_type !== '数值范围' && scope.row.job_item_check_standard === scope.row.abnormal_operation_result))"
+                  size="mini"
+                  type="danger"
+                  @click="dialogProject(scope.row,scope.$index)"
+                >查看处理详情</el-button> -->
               </template>
             </el-table-column>
           </el-table>
@@ -428,9 +486,18 @@
           >
             <i class="el-icon-plus" />
           </el-upload>
+          <template v-for="(item, index) in creatOrder.result_repair_graph_url">
+            <el-image
+              v-if="creatOrder.result_repair_graph_url.length>0"
+              :key="index"
+              style="width: 100px; height: 100px"
+              :src="item"
+              :preview-src-list="[item]"
+            />
+          </template>
         </el-form-item>
-        <el-form-item label="巡检结论" prop="result_repair_final_result">
-          <el-radio-group v-model="creatOrder.result_repair_final_result">
+        <el-form-item label="巡检结论" prop="abnormal_operation_result">
+          <el-radio-group v-model="creatOrder.result_repair_final_result" disabled>
             <el-radio label="正常">正常</el-radio>
             <el-radio label="不正常">不正常</el-radio>
           </el-radio-group>
@@ -450,6 +517,8 @@
     >
       <application
         ref="List"
+        :work-id="creatOrder.id"
+        :equip="creatOrder.equip_no"
         :show="dialogVisibleApplication"
       />
       <span slot="footer" class="dialog-footer">
@@ -480,7 +549,7 @@
     </el-dialog>
 
     <el-dialog
-      title="维护作业标准详情"
+      title="巡检作业标准详情"
       :visible.sync="dialogVisibleMaintain"
       width="80%"
     >
@@ -493,13 +562,87 @@
       </span>
     </el-dialog>
 
+    <el-dialog
+      title="异常项目处理"
+      :visible.sync="dialogVisibleProject"
+      width="30%"
+    >
+      <el-form :model="projectForm" :rules="projectRules" :inline="true" label-width="150px">
+        <el-form-item label="异常项目备注" prop="abnormal_operation_desc">
+          <el-input
+            v-model="projectForm.abnormal_operation_desc"
+            type="textarea"
+            style="width:250px"
+            :rows="3"
+            placeholder="请输入内容"
+          />
+        </el-form-item>
+        <el-form-item label="上传图片">
+          <el-upload
+            ref="elUploadImg"
+            action=""
+            :auto-upload="false"
+            list-type="picture-card"
+            :on-preview="handlePictureCardPreview"
+            :on-change="onChangeImg1"
+            :on-exceed="onExceed"
+            :limit="5"
+          >
+            <i class="el-icon-plus" />
+          </el-upload>
+          <template v-for="(item, index) in projectForm.abnormal_operation_url">
+            <el-image
+              v-if="projectForm.abnormal_operation_url.length>0"
+              :key="index"
+              style="width: 100px; height: 100px"
+              :src="item"
+              :preview-src-list="[item]"
+            />
+          </template>
+        </el-form-item>
+        <br>
+        <el-form-item label="异常处理结果" prop="abnormal_operation_result">
+          <div v-if="projectForm.job_item_check_type==='有无'">
+            <el-radio-group v-model="projectForm.abnormal_operation_result">
+              <el-radio label="有">有</el-radio>
+              <el-radio label="无">无</el-radio>
+            </el-radio-group>
+          </div>
+          <div v-if="projectForm.job_item_check_type==='正常异常'">
+            <el-radio-group v-model="projectForm.abnormal_operation_result">
+              <el-radio label="正常">正常</el-radio>
+              <el-radio label="异常">异常</el-radio>
+            </el-radio-group>
+          </div>
+          <div v-if="projectForm.job_item_check_type==='完成未完成'">
+            <el-radio-group v-model="projectForm.abnormal_operation_result">
+              <el-radio label="完成">完成</el-radio>
+              <el-radio label="未完成">未完成</el-radio>
+            </el-radio-group>
+          </div>
+          <div v-if="projectForm.job_item_check_type==='合格不合格'">
+            <el-radio-group v-model="projectForm.abnormal_operation_result">
+              <el-radio label="合格">合格</el-radio>
+              <el-radio label="不合格">不合格</el-radio>
+            </el-radio-group>
+          </div>
+          <div v-if="projectForm.job_item_check_type==='数值范围'">
+            <el-input-number v-model="projectForm.abnormal_operation_result" style="width:120px" controls-position="right" :min="1" />
+          </div>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleProject=false">取 消</el-button>
+        <el-button :loading="submitPerson" type="primary" @click="generateFunProject">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { debounce } from '@/utils'
 import page from '@/components/page'
-import maintain from '../components/definition-dialog1'
+import maintain from '../components/definition-dialog2'
 import { sectionTree } from '@/api/base_w_four'
 import { mapGetters } from 'vuex'
 import application from '../components/application-dialog'
@@ -519,8 +662,10 @@ export default {
       tableData: [],
       typeForm1: {},
       bz: null,
+      lengthIndex: null,
       order_id: null,
       dialogVisibleMaintain: false,
+      dialogVisibleProject: false,
       loadPerson: false,
       checkList: [],
       loading: false,
@@ -537,6 +682,11 @@ export default {
           { required: true, message: '不能为空', trigger: 'blur' }
         ]
       },
+      projectRules: {
+        abnormal_operation_result: [
+          { required: true, message: '不能为空', trigger: 'change' }
+        ]
+      },
       multipleSelection: [],
       dialogImageUrl: '',
       operateType: '',
@@ -545,7 +695,8 @@ export default {
       loadId: '',
       submit: false,
       submit1: false,
-      creatOrder: {}
+      creatOrder: {},
+      projectForm: { abnormal_operation_desc: null, abnormal_operation_result: null }
     }
   },
   computed: {
@@ -621,12 +772,18 @@ export default {
       }
     },
     delDialogFun(index) {
+      if (this.creatOrder.work_content.length === 1) {
+        this.$message('只剩一条作业内容时不能删除')
+        return
+      }
       this.creatOrder.work_content.splice(index, 1)
+      this.changeRusult()
     },
     addList() {
       this.creatOrder.work_content.push({
         equip_jobitem_standard_id: this.equip_jobitem_standard_id,
         job_item_sequence: this.creatOrder.work_content.length + 1,
+        job_item_check_standard: '完成',
         job_item_check_type: '完成未完成',
         operation_result: '完成' })
     },
@@ -689,8 +846,34 @@ export default {
         })
       }
     },
-    deleteList(row) {
-      console.log(row)
+    dialogProject(row, index) {
+      // this.projectForm = JSON.parse(JSON.stringify(row))
+      this.lengthIndex = index
+      this.projectForm.job_item_check_type = row.job_item_check_type
+      this.projectForm.abnormal_operation_desc = row.abnormal_operation_desc || ''
+      this.projectForm.abnormal_operation_url = row.abnormal_operation_url || []
+      if (this.projectForm.job_item_check_type === '数值范围') {
+        this.projectForm.abnormal_operation_result = row.abnormal_operation_result ? row.abnormal_operation_result : 1
+      } else {
+        this.projectForm.abnormal_operation_result = row.abnormal_operation_result ? row.abnormal_operation_result : row.job_item_check_standard
+      }
+      this.dialogVisibleProject = true
+    },
+    generateFunProject() {
+      this.$set(this.creatOrder.work_content[this.lengthIndex], 'abnormal_operation_desc', this.projectForm.abnormal_operation_desc)
+      this.$set(this.creatOrder.work_content[this.lengthIndex], 'abnormal_operation_result', this.projectForm.abnormal_operation_result)
+      this.$set(this.creatOrder.work_content[this.lengthIndex], 'abnormal_operation_url', this.projectForm.abnormal_operation_url)
+      if (this.creatOrder.work_content.every(d =>
+        (d.job_item_check_type === '数值范围' && d.job_item_check_standard_a <= d.operation_result && d.job_item_check_standard_b >= d.operation_result) ||
+        (d.job_item_check_type !== '数值范围' && d.job_item_check_standard === d.operation_result) ||
+        (d.job_item_check_type === '数值范围' && d.job_item_check_standard_a <= d.abnormal_operation_result && d.job_item_check_standard_b >= d.abnormal_operation_result) ||
+        (d.job_item_check_type !== '数值范围' && d.job_item_check_standard === d.abnormal_operation_result)
+      )) {
+        this.creatOrder.result_repair_final_result = '正常'
+      } else {
+        this.creatOrder.result_repair_final_result = '不正常'
+      }
+      this.dialogVisibleProject = false
     },
     changeSearch() {
       this.search.page = 1
@@ -717,6 +900,25 @@ export default {
       picture.append('source_type', '巡检')
       const data = await uploadImages('post', null, { data: picture })
       this.creatOrder.image_url_list.push(data.image_file_name)
+    },
+    async onChangeImg1(file, fileList) {
+      const isJPG = ['image/jpeg', 'image/jpg', 'image/png'].includes(file.raw.type)
+      const isLt2M = file.size / 1024 / 1024 < 2
+      if (!isJPG) {
+        this.$message.error('上传头像图片只能是 jpeg、jpg 、png格式!')
+        fileList.pop()
+        return
+      }
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!')
+        fileList.pop()
+        return
+      }
+      const picture = new FormData()
+      picture.append('image_file_name', file.raw)
+      picture.append('source_type', '巡检')
+      const data = await uploadImages('post', null, { data: picture })
+      this.projectForm.abnormal_operation_url.push(data.image_file_name)
     },
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url
@@ -768,7 +970,7 @@ export default {
       if (row.status === '已开始') {
         this.operateType = type
         this.creatOrder = JSON.parse(JSON.stringify(row))
-        this.creatOrder.image_url_list = []
+        this.creatOrder.image_url_list = this.creatOrder.result_repair_graph_url || []
         if (row.work_content.length > 0) {
           const arr = []
           this.equip_jobitem_standard_id = row.work_content[0].equip_jobitem_standard_id
@@ -780,21 +982,57 @@ export default {
               delete item.job_item_check_standard_a
               delete item.job_item_check_standard_b
             }
-            arr.push(Object.assign({}, item, { operation_result: '' }))
+            arr.push(Object.assign({}, item))
           })
           arr.forEach(d => {
             if (d.job_item_check_type === '数值范围') {
-              d.operation_result = 1
+              if (!d.operation_result || d.operation_result === '') {
+                d.operation_result = 1
+              } else {
+                d.operation_result = Number(d.operation_result)
+              }
             } else {
-              d.operation_result = d.job_item_check_standard
+              if (!d.operation_result || d.operation_result === '') {
+                d.operation_result = d.job_item_check_standard
+              }
             }
           })
           this.creatOrder.work_content = arr
+        }
+        if (this.creatOrder.work_content.every(d =>
+          (d.job_item_check_type === '数值范围' && d.job_item_check_standard_a <= d.operation_result && d.job_item_check_standard_b >= d.operation_result) ||
+          (d.job_item_check_type !== '数值范围' && d.job_item_check_standard === d.operation_result) ||
+          (d.job_item_check_type === '数值范围' && d.job_item_check_standard_a <= d.abnormal_operation_result && d.job_item_check_standard_b >= d.abnormal_operation_result) ||
+          (d.job_item_check_type !== '数值范围' && d.job_item_check_standard === d.abnormal_operation_result)
+        )) {
+          this.creatOrder.result_repair_final_result = '正常'
+        } else {
+          this.creatOrder.result_repair_final_result = '不正常'
         }
         this.dialogVisible = true
       } else {
         this.$message.info('请处理已开始工单')
       }
+    },
+    changeRusult() {
+      if (this.creatOrder.work_content.every(d =>
+        (d.job_item_check_type === '数值范围' && d.job_item_check_standard_a <= d.operation_result && d.job_item_check_standard_b >= d.operation_result) ||
+        (d.job_item_check_type !== '数值范围' && d.job_item_check_standard === d.operation_result) ||
+        (d.job_item_check_type === '数值范围' && d.job_item_check_standard_a <= d.abnormal_operation_result && d.job_item_check_standard_b >= d.abnormal_operation_result) ||
+        (d.job_item_check_type !== '数值范围' && d.job_item_check_standard === d.abnormal_operation_result)
+      )) {
+        this.creatOrder.result_repair_final_result = '正常'
+      } else {
+        this.creatOrder.result_repair_final_result = '不正常'
+      }
+      this.creatOrder.work_content.forEach(d => {
+        if ((d.job_item_check_type === '数值范围' && d.job_item_check_standard_a <= d.operation_result && d.job_item_check_standard_b >= d.operation_result) ||
+        (d.job_item_check_type !== '数值范围' && d.job_item_check_standard === d.operation_result)) {
+          delete d.abnormal_operation_desc
+          delete d.abnormal_operation_result
+          delete d.abnormal_operation_url
+        }
+      })
     },
     handleClose(done) {
       if (this.$refs.elUploadImg) {

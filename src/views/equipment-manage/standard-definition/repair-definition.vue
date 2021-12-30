@@ -2,16 +2,6 @@
   <div class="repair-definition">
     <!-- 维修作业标准定义 -->
     <el-form :inline="true" class="search-form-style">
-      <el-form-item label="设备种类">
-        <el-select v-model="getParams.equip_type" placeholder="请选择" clearable filterable :disabled="isDialog&&params.equip_type?true:false" @change="changSelect">
-          <el-option
-            v-for="item in options"
-            :key="item.category_no"
-            :label="item.category_no"
-            :value="item.id"
-          />
-        </el-select>
-      </el-form-item>
       <el-form-item label="部位名称">
         <el-input v-model="getParams.equip_part" :disabled="isDialog&&params.equip_part?true:false" clearable @input="changeDebounce" />
       </el-form-item>
@@ -90,9 +80,8 @@
         label="标准名称"
       />
       <el-table-column
-        prop="equip_type_name"
-        label="设备种类"
-        width="50px"
+        prop="equip"
+        label="机台"
       />
       <el-table-column
         prop="equip_part_name"
@@ -184,6 +173,7 @@
     <el-dialog
       :title="`${typeForm.id?'修改':'新建'}维修作业标准`"
       width="80%"
+      :before-close="handleClose"
       :visible.sync="dialogEditVisible"
       :close-on-click-modal="false"
     >
@@ -202,13 +192,18 @@
             <el-form-item label="标准名称" prop="standard_name">
               <el-input v-model="typeForm.standard_name" style="width:200px" />
             </el-form-item>
-            <el-form-item label="设备种类" prop="equip_type">
-              <el-select v-model="typeForm.equip_type" placeholder="请选择" clearable filterable @change="clear">
+            <el-form-item label="机台" prop="equip_no">
+              <el-select
+                v-model="typeForm.equip_no"
+                placeholder="请选择"
+                clearable
+                multiple
+              >
                 <el-option
                   v-for="item in options"
-                  :key="item.category_no"
-                  :label="item.category_no"
-                  :value="item.id"
+                  :key="item.id"
+                  :label="item.equip_no"
+                  :value="item.equip_no"
                 />
               </el-select>
             </el-form-item>
@@ -458,11 +453,12 @@
 <script>
 import { debounce } from '@/utils'
 import project from '../components/project-dialog'
+import { getEquip } from '@/api/banburying-performance-manage'
 import SparePartsCode from '../master-data/spare-parts-code'
 import FaultClassify from '../master-data/fault-classify'
 import ProjectDefinition from './project-definition'
 import { equipJobItemStandard } from '@/api/base_w_four'
-import { equipsCategory, equipRepairStandard, equipPartNew, equipComponent, equipRepairStandardImport, equipRepairStandardDown, equipRepairStandardGetName } from '@/api/jqy'
+import { equipRepairStandard, equipPartNew, equipComponent, equipRepairStandardImport, equipRepairStandardDown, equipRepairStandardGetName } from '@/api/jqy'
 import page from '@/components/page'
 
 export default {
@@ -505,12 +501,12 @@ export default {
       currentObj: {},
       rules: {
         standard_code: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        equip_type: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        equip_part: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        equip_condition: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        important_level: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        equip_fault_name: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        equip_job_item_standard_name: [{ required: true, message: '不能为空', trigger: 'blur' }]
+        equip_no: [{ required: true, message: '不能为空', trigger: 'change' }],
+        equip_part: [{ required: true, message: '不能为空', trigger: 'change' }],
+        equip_condition: [{ required: true, message: '不能为空', trigger: 'change' }],
+        important_level: [{ required: true, message: '不能为空', trigger: 'change' }],
+        equip_fault_name: [{ required: true, message: '不能为空', trigger: 'change' }],
+        equip_job_item_standard_name: [{ required: true, message: '不能为空', trigger: 'change' }]
       },
       getParams: {
         page: 1
@@ -522,7 +518,6 @@ export default {
   watch: {
     show(bool) {
       if (bool) {
-        this.getParams.equip_type = this.params.equip_type
         this.getParams.equip_part = this.params.equip_part
         this.getParams.equip_component = this.params.equip_component
         this.getParams.use_flag = true
@@ -532,23 +527,20 @@ export default {
   },
   created() {
     if (this.isDialog) {
-      this.getParams.equip_type = this.params.equip_type
       this.getParams.equip_part = this.params.equip_part
       this.getParams.equip_component = this.params.equip_component
       this.getParams.use_flag = true
     }
     this.getList()
-    this.getTypeNode()
+    this.visibleChange()
     this.getEquipComponentType()
   },
   methods: {
-    async getTypeNode() {
-      try {
-        const data = await equipsCategory('get', null, { params: { all: 1 }})
-        this.options = data.results || []
-      } catch (e) {
-        //
-      }
+    visibleChange() {
+      const obj = { all: 1 }
+      getEquip(obj).then(response => {
+        this.options = response.results
+      })
     },
     async repairDialog(row) {
       try {
@@ -569,16 +561,11 @@ export default {
     },
     async getEquipPart(val) {
       if (val) {
-        if (this.typeForm.equip_type) {
-          try {
-            const data = await equipPartNew('get', null, { params: { equip_type: this.typeForm.equip_type, use_flag: true }})
-            this.options1 = data.results || []
-          } catch (e) {
-            //
-          }
-        } else {
-          this.options1 = []
-          this.$message.info('请先选择主设备种类')
+        try {
+          const data = await equipPartNew('get', null, { params: { use_flag: true }})
+          this.options1 = data.results || []
+        } catch (e) {
+          //
         }
       }
     },
@@ -643,9 +630,9 @@ export default {
     },
     submitFun1() {
       if (this.$refs['List1'].currentObj.standard_name) {
-        this.typeForm.equip_job_item_standard = this.$refs['List1'].currentObj.id
-        this.typeForm.equip_job_item_standard_name = this.$refs['List1'].currentObj.standard_name
-        this.typeForm.equip_job_item_standard_detail = this.$refs['List1'].currentObj.work_details_column
+        this.$set(this.typeForm, 'equip_job_item_standard', this.$refs['List1'].currentObj.id)
+        this.$set(this.typeForm, 'equip_job_item_standard_name', this.$refs['List1'].currentObj.standard_name)
+        this.$set(this.typeForm, 'equip_job_item_standard_detail', this.$refs['List1'].currentObj.work_details_column)
         this.dialogVisible1 = false
       } else {
         this.$message.info('请选择一种标准')
@@ -656,8 +643,8 @@ export default {
         this.$refs['List2'].currentObj = {}
       }
       if (this.$refs['List2'].currentObj.fault_name) {
-        this.typeForm.equip_fault_name = this.$refs['List2'].currentObj.fault_name
-        this.typeForm.equip_fault = this.$refs['List2'].currentObj.id
+        this.$set(this.typeForm, 'equip_fault_name', this.$refs['List2'].currentObj.fault_name)
+        this.$set(this.typeForm, 'equip_fault', this.$refs['List2'].currentObj.id)
         this.dialogVisible2 = false
       } else {
         this.$message.info('请选择一种原因')
@@ -696,14 +683,6 @@ export default {
         }
       })
     },
-    clear() {
-      if (this.typeForm.equip_part) {
-        this.typeForm.equip_part = null
-      }
-      if (this.typeForm.equip_component) {
-        this.typeForm.equip_component = null
-      }
-    },
     clear1() {
       if (this.typeForm.equip_component) {
         this.typeForm.equip_component = null
@@ -724,6 +703,7 @@ export default {
       this.dialogEditVisible = true
       this.typeForm = {
         standard_code: '',
+        equip_no: [],
         remind_flag1: true,
         remind_flag2: true,
         remind_flag3: false,
@@ -736,6 +716,9 @@ export default {
       } catch (e) {
         // this.$message.info('获取编号失败')
       }
+    },
+    equipSelected(val) {
+      console.log(val)
     },
     changeDebounce() {
       this.getParams.page = 1

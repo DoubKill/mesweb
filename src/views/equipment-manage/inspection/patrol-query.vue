@@ -13,6 +13,22 @@
           @change="changeDate"
         />
       </el-form-item>
+      <el-form-item label="类别">
+        <el-select
+          v-model="search.type"
+          style="width:100px"
+          placeholder="请选择"
+          clearable
+          @change="changeSearch"
+        >
+          <el-option
+            v-for="item in ['机械', '电气','通用']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="计划名称">
         <el-input
           v-model="search.plan_name"
@@ -23,14 +39,14 @@
       </el-form-item>
       <el-form-item label="机台">
         <equip-select
-          equip-type="密炼设备"
+          style="width:100px"
           @equipSelected="equipSelected"
         />
       </el-form-item>
       <el-form-item label="巡检标准">
         <el-input
           v-model="search.equip_repair_standard"
-          style="width:200px"
+          style="width:150px"
           clearable
           @input="changeDebounce"
         />
@@ -38,6 +54,7 @@
       <el-form-item label="状态">
         <el-select
           v-model="search.status"
+          style="width:100px"
           placeholder="请选择"
           clearable
           @change="changeSearch"
@@ -53,7 +70,7 @@
       <el-form-item label="接单人">
         <el-input
           v-model="search.receiving_user"
-          style="width:200px"
+          style="width:120px"
           clearable
           @input="changeDebounce"
         />
@@ -61,6 +78,7 @@
       <el-form-item label="设备条件">
         <el-select
           v-model="search.equip_condition"
+          style="width:100px"
           placeholder="请选择"
           clearable
           @change="changeSearch"
@@ -76,6 +94,7 @@
       <el-form-item label="重要程度">
         <el-select
           v-model="search.importance_level"
+          style="width:100px"
           placeholder="请选择"
           clearable
           @change="changeSearch"
@@ -117,6 +136,21 @@
           >{{ scope.row.plan_name }}</el-link>
         </template>
       </el-table-column>
+      <el-table-column
+        prop="inspection_line_no"
+        label="序号"
+        min-width="20"
+      />
+      <el-table-column
+        prop="area_name"
+        label="区域"
+        min-width="20"
+      />
+      <el-table-column
+        prop="type"
+        label="类别"
+        min-width="20"
+      />
       <el-table-column
         prop="work_order_no"
         label="工单编号"
@@ -166,6 +200,15 @@
         label="状态"
         min-width="20"
       />
+      <el-table-column
+        prop="status"
+        label="关闭或退单原因"
+        min-width="20"
+      >
+        <template slot-scope="{row}">
+          <span>{{ row.close_reason?row.close_reason:row.back_reason }}</span>
+        </template>
+      </el-table-column>
       <el-table-column
         prop="assign_user"
         label="指派人"
@@ -227,7 +270,7 @@
     <el-dialog
       title="巡检详情"
       :visible.sync="dialogVisible"
-      width="50%"
+      width="60%"
     >
       <el-form
         :model="creatOrder"
@@ -265,7 +308,7 @@
           <el-table
             :data="creatOrder.work_content"
             border
-            style="width: 651px"
+            style="width: 841px"
           >
             <el-table-column
               label="序号"
@@ -285,8 +328,23 @@
             <el-table-column
               prop="operation_result"
               label="处理结果"
-              width="200"
+              width="150"
             />
+            <el-table-column
+              label="异常处理结果"
+              prop="abnormal_operation_result"
+              width="120"
+            />
+            <el-table-column label="操作" width="120">
+              <template slot-scope="scope">
+                <el-button
+                  v-if="scope.row.abnormal_operation_result"
+                  size="mini"
+                  type="danger"
+                  @click="dialogProject(scope.row,scope.$index)"
+                >查看处理详情</el-button>
+              </template>
+            </el-table-column>
           </el-table>
         </el-form-item>
         <el-form-item label="巡检备注">
@@ -296,7 +354,7 @@
             type="textarea"
             style="width:250px"
             :rows="3"
-            placeholder="请输入内容"
+            placeholder=""
           />
         </el-form-item>
         <el-form-item label="上传图片">
@@ -326,7 +384,7 @@
     </el-dialog>
 
     <el-dialog
-      title="维护作业标准详情"
+      title="巡检作业标准详情"
       :visible.sync="dialogVisibleMaintain"
       width="80%"
     >
@@ -339,12 +397,78 @@
       </span>
     </el-dialog>
 
+    <el-dialog
+      title="异常项目处理"
+      :visible.sync="dialogVisibleProject"
+      width="30%"
+    >
+      <el-form :model="projectForm" :inline="true" label-width="150px">
+        <el-form-item label="异常项目备注" prop="abnormal_operation_desc">
+          <el-input
+            v-model="projectForm.abnormal_operation_desc"
+            disabled
+            type="textarea"
+            style="width:250px"
+            :rows="3"
+            placeholder=""
+          />
+        </el-form-item>
+        <el-form-item label="上传图片">
+          <template v-for="(item, index) in projectForm.abnormal_operation_url">
+            <el-image
+              v-if="projectForm.abnormal_operation_url.length>0"
+              :key="index"
+              style="width: 100px; height: 100px"
+              :src="item"
+              :preview-src-list="[item]"
+            />
+          </template>
+          <div v-if="projectForm.abnormal_operation_url.length===0">
+            暂无图片
+          </div>
+        </el-form-item>
+        <br>
+        <el-form-item label="异常处理结果" prop="abnormal_operation_result">
+          <div v-if="projectForm.job_item_check_type==='有无'">
+            <el-radio-group v-model="projectForm.abnormal_operation_result" disabled>
+              <el-radio label="有">有</el-radio>
+              <el-radio label="无">无</el-radio>
+            </el-radio-group>
+          </div>
+          <div v-if="projectForm.job_item_check_type==='正常异常'">
+            <el-radio-group v-model="projectForm.abnormal_operation_result" disabled>
+              <el-radio label="正常">正常</el-radio>
+              <el-radio label="异常">异常</el-radio>
+            </el-radio-group>
+          </div>
+          <div v-if="projectForm.job_item_check_type==='完成未完成'">
+            <el-radio-group v-model="projectForm.abnormal_operation_result" disabled>
+              <el-radio label="完成">完成</el-radio>
+              <el-radio label="未完成">未完成</el-radio>
+            </el-radio-group>
+          </div>
+          <div v-if="projectForm.job_item_check_type==='合格不合格'">
+            <el-radio-group v-model="projectForm.abnormal_operation_result" disabled>
+              <el-radio label="合格">合格</el-radio>
+              <el-radio label="不合格">不合格</el-radio>
+            </el-radio-group>
+          </div>
+          <div v-if="projectForm.job_item_check_type==='数值范围'">
+            <el-input-number v-model="projectForm.abnormal_operation_result" style="width:120px" controls-position="right" :min="1" disabled />
+          </div>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleProject=false">取 消</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
 import { debounce } from '@/utils'
-import maintain from '../components/definition-dialog1'
+import maintain from '../components/definition-dialog2'
 import { equipInspectionOrder, equipInspectionOrderDown, equipMaintenanceStandard } from '@/api/jqy'
 import page from '@/components/page'
 import EquipSelect from '@/components/EquipSelect/index'
@@ -358,7 +482,9 @@ export default {
         page_size: 10
       },
       loading: false,
+      dialogVisibleProject: false,
       dialogVisibleMaintain: false,
+      projectForm: { abnormal_operation_url: [] },
       creatOrder: { result_repair_graph_url: [] },
       dialogVisible: false,
       btnExportLoad: false,
@@ -401,8 +527,31 @@ export default {
       this.search.page = 1
       debounce(this, 'getList')
     },
+    dialogProject(row, index) {
+      this.lengthIndex = index
+      this.projectForm.job_item_check_type = row.job_item_check_type
+      this.projectForm.abnormal_operation_desc = row.abnormal_operation_desc
+      this.projectForm.abnormal_operation_url = row.abnormal_operation_url || []
+      if (this.projectForm.job_item_check_type === '数值范围') {
+        this.projectForm.abnormal_operation_result = row.abnormal_operation_result ? row.abnormal_operation_result : 1
+      } else {
+        this.projectForm.abnormal_operation_result = row.abnormal_operation_result ? row.abnormal_operation_result : row.job_item_check_standard
+      }
+      this.dialogVisibleProject = true
+    },
     dialogPatrol(row) {
       this.creatOrder = JSON.parse(JSON.stringify(row))
+      if (row.work_content.length > 0) {
+        this.creatOrder.work_content.map((item, index) => {
+          if (item.job_item_check_type === '数值范围') {
+            item.job_item_check_standard_a = Number(item.job_item_check_standard.split('-')[0])
+            item.job_item_check_standard_b = Number(item.job_item_check_standard.split('-')[1])
+          } else {
+            delete item.job_item_check_standard_a
+            delete item.job_item_check_standard_b
+          }
+        })
+      }
       this.dialogVisible = true
     },
     dialogWorkNo(row) {

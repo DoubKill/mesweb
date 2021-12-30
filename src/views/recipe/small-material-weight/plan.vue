@@ -1,7 +1,7 @@
 <template>
   <div>
     <label style="margin-right:10px;">配料设备</label>
-    <selectBatchingEquip v-model="equipValue" :created-is="true" :is-default="true" :multiple-is="true" @changeFun="selectBatchEquip" />
+    <selectBatchingEquip v-model="equipValue" :read-is="readIs" :created-is="true" :is-default="true" :multiple-is="true" @changeFun="selectBatchEquip" />
     <!-- 计划管理 -->
     <div v-for="(item,index) in allTable" :key="index" class="cardBoxMy">
       <h3 style="margin-left:10px">{{ item.equip_no }}计划管理</h3>
@@ -99,6 +99,7 @@
             <template slot-scope="{row}">
               <el-switch
                 v-model="row.merge_flag"
+                :disabled="!checkPermission(['xl_plan','merge'])"
                 active-text="是"
                 inactive-text="否"
                 @change="changeSwitch(row,index)"
@@ -162,7 +163,7 @@
 </template>
 
 <script>
-import { debounce, setDate } from '@/utils'
+import { debounce, setDate, checkPermission } from '@/utils'
 import selectBatchingEquip from '../components/select-batching-equip'
 import classSelect from '@/components/ClassSelect'
 import recipeSelect from '../components/recipe-select'
@@ -202,13 +203,15 @@ export default {
       },
       dialogAdd: false,
       loading: false,
-      btnLoading: false
+      btnLoading: false,
+      readIs: false
     }
   },
   created() {
 
   },
   methods: {
+    checkPermission,
     async getList() {
       try {
         // if (this.$refs['singleTable']) {
@@ -218,11 +221,14 @@ export default {
         //   })
         // }
         this.loading = true
+        this.readIs = true
         const data = await xlPlan('get', null, { params: this.currentSearch })
+        this.readIs = false
         this.loading = false
         return { data: data.results || [], total: data.count || 0 }
       } catch (e) {
         this.loading = false
+        this.readIs = false
       }
     },
     classChanged(val, row, index) {

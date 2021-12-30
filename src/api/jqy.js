@@ -932,3 +932,57 @@ export function equipOldRate(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function getSpare(method, id, data = {}) {
+  const obj = {
+    url: id ? API.GetSpare + id + '/' : API.GetSpare,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function getSpareOrder(method, id, data = {}) {
+  const obj = {
+    url: id ? API.GetSpareOrder + id + '/' : API.GetSpareOrder,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function schedulingParamsSetting(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SchedulingParamsSetting + id + '/' : API.SchedulingParamsSetting,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function schedulingRecipeMachineSetting(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SchedulingRecipeMachineSetting + id + '/' : API.SchedulingRecipeMachineSetting,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function schedulingRecipeMachineImport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SchedulingRecipeMachineImport + id + '/' : API.SchedulingRecipeMachineImport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function recipeMachineWeight(method, id, data = {}) {
+  const obj = {
+    url: id ? API.RecipeMachineWeight + id + '/' : API.RecipeMachineWeight,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
