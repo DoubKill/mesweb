@@ -274,6 +274,8 @@
             v-if="operateType!=='报修申请详情'"
             ref="elUploadImg"
             action=""
+            :on-remove="handleRemove"
+            :file-list="objList"
             :auto-upload="false"
             list-type="picture-card"
             :on-preview="handlePictureCardPreview"
@@ -283,6 +285,9 @@
           >
             <i class="el-icon-plus" />
           </el-upload>
+          <el-dialog :visible.sync="dialogVisibleImg" :modal-append-to-body="false" :append-to-body="true">
+            <img width="100%" :src="dialogImageUrl" alt>
+          </el-dialog>
           <template v-for="(item, index) in ruleForm.apply_repair_graph_url">
             <el-image
               v-if="operateType==='报修申请详情'&&ruleForm.apply_repair_graph_url.length>0"
@@ -426,6 +431,8 @@ export default {
       options: [],
       options1: [],
       options2: [],
+      objList: [],
+      dialogVisibleImg: false,
       disable: false,
       btnLoading: false,
       GlobalList: [],
@@ -455,7 +462,6 @@ export default {
           { required: true, message: '不能为空', trigger: 'change' }
         ]
       },
-      dialogVisibleImg: false,
       dialogImageUrl: '',
       operateType: ''
     }
@@ -657,11 +663,11 @@ export default {
         const ss = new Date().getSeconds() < 10 ? '0' + new Date().getSeconds() : new Date().getSeconds()
         dateTime = yy + '-' + mm + '-' + dd + ' ' + hh + ':' + mf + ':' + ss
         this.operateType = type
+        this.objList = []
         this.ruleForm = {
           plan_department: data.section,
           equip_barcode: '',
           fault_datetime: dateTime,
-          image_url_list: [],
           importance_level: '高'
         }
       } else {
@@ -706,16 +712,27 @@ export default {
       const picture = new FormData()
       picture.append('image_file_name', file.raw)
       picture.append('source_type', '维修')
-      const data = await uploadImages('post', null, { data: picture })
-      this.ruleForm.image_url_list.push(data.image_file_name)
+      try {
+        const data = await uploadImages('post', null, { data: picture })
+        this.objList.push({ url: data.image_file_name })
+      } catch (e) {
+        this.$set(this, 'objList', this.objList)
+      }
+    },
+    handleRemove(file, fileList) {
+      this.objList = fileList
     },
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url
+      this.dialogVisibleImg = true
     },
     async addSubmitFun() {
       this.$refs.ruleFormHandle.validate(async(valid) => {
         if (valid) {
           try {
+            const url = []
+            this.objList.forEach(d => url.push(d.url))
+            this.ruleForm.image_url_list = url
             delete this.ruleForm.apply_repair_graph_url
             if (this.ruleForm.equip_condition === true) {
               this.ruleForm.equip_condition = '停机'

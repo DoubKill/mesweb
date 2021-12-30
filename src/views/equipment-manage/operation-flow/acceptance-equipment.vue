@@ -373,6 +373,8 @@
           <el-upload
             v-if="operateType==='验收维修工单'"
             ref="elUploadImg"
+            :on-remove="handleRemove"
+            :file-list="objList"
             action=""
             :auto-upload="false"
             list-type="picture-card"
@@ -383,6 +385,9 @@
           >
             <i class="el-icon-plus" />
           </el-upload>
+          <el-dialog :visible.sync="dialogVisibleImg" :modal-append-to-body="false" :append-to-body="true">
+            <img width="100%" :src="dialogImageUrl" alt>
+          </el-dialog>
           <template v-for="(item, index) in creatOrder.result_accept_graph_url">
             <el-image
               v-if="operateType==='查看验收结果'&&creatOrder.result_accept_graph_url.length>0"
@@ -713,6 +718,7 @@ export default {
       tableDataView: [],
       total: 0,
       multipleSelection: [],
+      objList: [],
       dialogImageUrl: '',
       operateType: '',
       dialogVisible: false,
@@ -757,6 +763,9 @@ export default {
     },
     async generateFun() {
       delete this.creatOrder.apply_repair_graph_url
+      const url = []
+      this.objList.forEach(d => url.push(d.url))
+      this.creatOrder.image_url_list = url
       const obj = []
       this.multipleSelection.forEach(d => {
         obj.push(d.id)
@@ -857,8 +866,15 @@ export default {
       const picture = new FormData()
       picture.append('image_file_name', file.raw)
       picture.append('source_type', '维修')
-      const data = await uploadImages('post', null, { data: picture })
-      this.creatOrder.image_url_list.push(data.image_file_name)
+      try {
+        const data = await uploadImages('post', null, { data: picture })
+        this.objList.push({ url: data.image_file_name })
+      } catch (e) {
+        this.$set(this, 'objList', this.objList)
+      }
+    },
+    handleRemove(file, fileList) {
+      this.objList = fileList
     },
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url
@@ -878,12 +894,12 @@ export default {
         this.operateType = type
         if (this.multipleSelection.length > 0) {
           if (this.multipleSelection.every(d => d.status === '已完成')) {
-            this.dialogVisible = true
+            this.objList = []
             this.creatOrder = {
               result_accept_desc: '验收完成',
-              image_url_list: [],
               result_accept_result: '合格'
             }
+            this.dialogVisible = true
           } else {
             this.$message.info('请勾选已完成状态列表')
           }
@@ -891,9 +907,9 @@ export default {
           this.$message.info('请先勾选工单列表')
         }
       } else {
-        this.dialogVisible = true
         this.operateType = type
         this.creatOrder = JSON.parse(JSON.stringify(row))
+        this.dialogVisible = true
       }
     },
     handleClose(done) {

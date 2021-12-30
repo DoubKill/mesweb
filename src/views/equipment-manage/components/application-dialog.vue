@@ -1,7 +1,6 @@
 <template>
   <div class="repair-manage-style">
     <!-- 报修申请弹框 -->
-
     <el-form
       ref="ruleFormHandle"
       :model="ruleForm"
@@ -11,15 +10,10 @@
       <el-form-item label="设备条码" prop="equip_barcode">
         <el-input
           v-model="ruleForm.equip_barcode"
+          disabled
           style="width:250px"
           @input="searchBom"
-        >
-          <el-button
-            slot="append"
-            icon="el-icon-search"
-            @click="Add1"
-          />
-        </el-input>
+        />
       </el-form-item>
       <el-form-item label="设备名称" prop="factory_name">
         <el-input
@@ -31,8 +25,8 @@
       <el-form-item label="报修部门" prop="plan_department">
         <el-select
           v-model="ruleForm.plan_department"
-          :disabled="operateType==='报修申请详情'"
-          placeholder="请选择"
+          disabled
+          placeholder=""
           clearable
         >
           <el-option
@@ -52,19 +46,26 @@
         />
       </el-form-item>
       <el-form-item label="机台" prop="equip_no">
-        <equip-select
+        <el-input
+          v-model="ruleForm.equip_no"
+          style="width:250px"
+          disabled
+        />
+        <!-- <equip-select
+          disabled
           :is-create="true"
           :default-val="ruleForm.equip_no"
           style="width:200px"
           :is-disabled="disable"
           @equipSelected="equipSelected1"
-        />
+        /> -->
       </el-form-item>
       <el-form-item label="设备部位" prop="equip_part_new">
-        <el-select v-model="ruleForm.equip_part_new" :disabled="disable" placeholder="请选择" clearable @visible-change="getEquipPart">
+        <el-select v-model="ruleForm.equip_part_new" disabled placeholder="请选择" clearable @visible-change="getEquipPart">
           <el-option
             v-for="item in options2"
             :key="item.id"
+            disabled
             :label="item.part_name"
             :value="item.part"
           />
@@ -108,6 +109,8 @@
         <el-upload
           ref="elUploadImg"
           action=""
+          :on-remove="handleRemove"
+          :file-list="objList"
           :auto-upload="false"
           list-type="picture-card"
           :on-preview="handlePictureCardPreview"
@@ -117,6 +120,9 @@
         >
           <i class="el-icon-plus" />
         </el-upload>
+        <el-dialog :visible.sync="dialogVisibleImg" :modal-append-to-body="false" :append-to-body="true">
+          <img width="100%" :src="dialogImageUrl" alt>
+        </el-dialog>
       </el-form-item>
     </el-form>
 
@@ -146,7 +152,13 @@
       :before-close="handleClose2"
     >
       <el-form :inline="true">
-        <el-form-item label="所属主设备种类">
+        <el-form-item label="机台">
+          <equip-select
+            style="width:150px"
+            @equipSelected="equipSelected2"
+          />
+        </el-form-item>
+        <!-- <el-form-item label="所属主设备种类">
           <el-select v-model="formInline.equip_type" placeholder="请选择" clearable @change="changeSearch1">
             <el-option
               v-for="item in options"
@@ -155,7 +167,7 @@
               :value="item.id"
             />
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="部位分类">
           <el-select v-model="formInline.part_type" placeholder="请选择" clearable @change="changeSearch1">
             <el-option
@@ -166,9 +178,9 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="部位代码">
+        <!-- <el-form-item label="部位代码">
           <el-input v-model="formInline.part_code" clearable placeholder="部位代码" @input="changeSearch1" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="部位名称">
           <el-input v-model="formInline.part_name" clearable placeholder="部位名称" @input="changeSearch1" />
         </el-form-item>
@@ -183,11 +195,11 @@
         border
         @current-change="handleSelectionChange"
       >
-        <el-table-column
+        <!-- <el-table-column
           prop="equip_type"
           label="所属主设备种类"
           min-width="20"
-        />
+        /> -->
         <el-table-column
           prop="part_type"
           label="部位分类"
@@ -228,7 +240,7 @@ import FaultClassify from '../master-data/fault-classify'
 import { sectionTree } from '@/api/base_w_four'
 import { equipBom } from '@/api/base_w_four'
 import { debounce } from '@/utils'
-import { equipsCategory, getSupplierType, uploadImages } from '@/api/jqy'
+import { equipsCategory, getSupplierType, uploadImages, equipPartNew } from '@/api/jqy'
 import { mapGetters } from 'vuex'
 import { checkPermission } from '@/utils'
 export default {
@@ -239,13 +251,17 @@ export default {
       type: Boolean,
       default: false
     },
-    equip: {
-      type: String,
-      default: ''
+    form: {
+      type: Object,
+      default() {
+        return {}
+      }
     },
-    workId: {
-      type: Number,
-      default: 0
+    desc: {
+      type: String,
+      default() {
+        return ''
+      }
     }
   },
   data() {
@@ -267,6 +283,7 @@ export default {
       dialogVisible2: false,
       total: 0,
       multipleSelection: [],
+      objList: [],
       ruleForm: {},
       rules: {
         plan_department: [
@@ -296,12 +313,14 @@ export default {
     show(val) {
       if (val) {
         this.getSectionUsers()
+        this.getPart()
         this.getSection()
       }
     }
   },
   created() {
     this.getSectionUsers()
+    this.getPart()
     this.getSection()
   },
   methods: {
@@ -309,7 +328,11 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val
     },
+    handleRemove(file, fileList) {
+      this.objList = fileList
+    },
     async getSectionUsers() {
+      this.objList = []
       const data = await sectionTree('get', null, { params: { section_users: 1 }})
       let dateTime = ''
       const yy = new Date().getFullYear()
@@ -319,20 +342,32 @@ export default {
       const mf = new Date().getMinutes() < 10 ? '0' + new Date().getMinutes() : new Date().getMinutes()
       const ss = new Date().getSeconds() < 10 ? '0' + new Date().getSeconds() : new Date().getSeconds()
       dateTime = yy + '-' + mm + '-' + dd + ' ' + hh + ':' + mf + ':' + ss
+      const part = this.form.part_name ? '_' + this.form.part_name : ''
+      const component = this.form.component_name ? '_' + this.form.component_name : ''
       this.ruleForm = {
+        factory_name: this.form.area_name + part + component,
+        part_name: this.form.part_name_id,
+        equip_barcode: this.form.lot_no,
         plan_department: data.section,
-        equip_barcode: '',
-        equip_no: this.equip,
+        equip_no: this.form.equip_no,
         fault_datetime: dateTime,
-        image_url_list: [],
-        inspection_order: this.workId,
-        importance_level: '高'
+        inspection_order: this.form.id,
+        result_fault_desc: this.desc,
+        importance_level: '中'
       }
     },
     async getSection() {
       try {
         const data = await sectionTree('get', null, { params: { all: 1 }})
         this.options1 = data.results || []
+      } catch (e) {
+        //
+      }
+    },
+    async getPart() {
+      try {
+        const data = await equipPartNew('get', null, { params: { use_flag: true, all: 1 }})
+        this.options2 = data.results || []
       } catch (e) {
         //
       }
@@ -477,6 +512,10 @@ export default {
         this.ruleForm.equip_part_new = ''
       }
     },
+    equipSelected2(obj) {
+      this.$set(this.formInline, 'equip_no', obj ? obj.equip_no : '')
+      this.changeSearch1()
+    },
     onExceed() {
       this.$message.info('最多上传五张图片')
     },
@@ -496,11 +535,16 @@ export default {
       const picture = new FormData()
       picture.append('image_file_name', file.raw)
       picture.append('source_type', '维修')
-      const data = await uploadImages('post', null, { data: picture })
-      this.ruleForm.image_url_list.push(data.image_file_name)
+      try {
+        const data = await uploadImages('post', null, { data: picture })
+        this.objList.push({ url: data.image_file_name })
+      } catch (e) {
+        this.$set(this, 'objList', this.objList)
+      }
     },
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url
+      this.dialogVisibleImg = true
     }
   }
 }

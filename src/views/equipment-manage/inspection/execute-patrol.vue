@@ -509,7 +509,7 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogApplication">报修申请</el-button>
+        <el-button v-if="creatOrder.result_repair_final_result==='不正常'" type="primary" @click="dialogApplication">报修申请</el-button>
         <el-button type="primary" @click="handleClose(false)">取 消</el-button>
         <el-button :loading="submit" type="primary" @click="generateFun">确 定</el-button>
       </span>
@@ -572,7 +572,7 @@
       :visible.sync="dialogVisibleProject"
       width="50%"
     >
-      <el-form :model="projectForm" :rules="projectRules"  label-width="150px">
+      <el-form :model="projectForm" :rules="projectRules" label-width="150px">
         <el-form-item label="异常项目备注" prop="abnormal_operation_desc">
           <el-input
             v-model="projectForm.abnormal_operation_desc"
@@ -805,7 +805,7 @@ export default {
       try {
         this.dialogVisiblePerson = true
         this.loadPerson = true
-        const data = await getStaff('get', null, { params: { equip_no: row.equip_no, have_classes: 1 }})
+        const data = await getStaff('get', null, { params: { equip_no: row.equip_no, have_classes: 1, maintenance_type: row.type }})
         this.staffList = data.results || []
         this.bz = row.work_persons ? row.work_persons : null
         this.receiving_user = row.receiving_user
@@ -861,8 +861,6 @@ export default {
       }
     },
     dialogProject(row, index) {
-      // this.projectForm = JSON.parse(JSON.stringify(row))
-      console.log(row)
       this.lengthIndex = index
       this.projectForm.job_item_check_type = row.job_item_check_type
       this.projectForm.abnormal_operation_desc = row.abnormal_operation_desc || ''
@@ -1000,6 +998,11 @@ export default {
       this.$refs['List'].$refs.ruleFormHandle.validate(async(valid) => {
         if (valid) {
           try {
+            const url = []
+            this.$refs['List'].objList.forEach(d => {
+              url.push(d.url)
+            })
+            this.$refs['List'].ruleForm.image_url_list = url
             delete this.$refs['List'].ruleForm.apply_repair_graph_url
             if (this.$refs['List'].ruleForm.equip_condition === true) {
               this.ruleForm.equip_condition = '停机'
