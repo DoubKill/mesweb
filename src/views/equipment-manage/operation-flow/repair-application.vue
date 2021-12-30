@@ -223,7 +223,8 @@
           />
         </el-form-item>
         <el-form-item label="设备部位" prop="equip_part_new">
-          <el-select v-model="ruleForm.equip_part_new" :disabled="operateType==='报修申请详情'||disable" placeholder="" clearable @visible-change="getEquipPart" @change="changePartName">
+          <el-input v-if="operateType==='报修申请详情'" v-model="ruleForm.part_name" style="width:200px" disabled placeholder="" />
+          <el-select v-else v-model="ruleForm.equip_part_new" :disabled="operateType==='报修申请详情'||disable" placeholder="" clearable @visible-change="getEquipPart" @change="changePartName">
             <el-option
               v-for="item in options2"
               :key="item.id"
