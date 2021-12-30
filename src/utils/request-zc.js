@@ -42,11 +42,12 @@ service.interceptors.response.use(
   response => {
     if (response.status < 300) {
       if (response.data.state === 0) {
-        Message({
-          message: response.data.datas,
-          type: 'error',
-          duration: 3 * 1000
-        })
+        // Message({
+        //   message: response.data.datas,
+        //   type: 'error',
+        //   duration: 3 * 1000
+        // })
+
         // if (response.data.msg === `对象名 't_stock_out_task' 无效。`) {
         //   store.dispatch('user/logout')
         //   router.push('/login')
@@ -58,11 +59,11 @@ service.interceptors.response.use(
         return Promise.resolve(res)
       }
     } else {
-      Message({
-        message: '请求失败' + response.status,
-        type: 'error',
-        duration: 3 * 1000
-      })
+      // Message({
+      //   message: '请求失败' + response.status,
+      //   type: 'error',
+      //   duration: 3 * 1000
+      // })
       return Promise.reject(response)
     }
   },
