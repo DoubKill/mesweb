@@ -67,7 +67,7 @@
             :key="item.id"
             disabled
             :label="item.part_name"
-            :value="item.part"
+            :value="item.id"
           />
         </el-select>
         <!-- <el-input
@@ -346,7 +346,7 @@ export default {
       const component = this.form.component_name ? '_' + this.form.component_name : ''
       this.ruleForm = {
         factory_name: this.form.area_name + part + component,
-        part_name: this.form.part_name_id,
+        equip_part_new: this.form.part_name_id,
         equip_barcode: this.form.lot_no,
         plan_department: data.section,
         equip_no: this.form.equip_no,
