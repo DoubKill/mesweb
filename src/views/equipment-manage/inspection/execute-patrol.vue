@@ -311,7 +311,7 @@
               width="150"
             >
               <template slot-scope="{row}">
-                <el-input v-model="row.job_item_content" />
+                <el-input v-model="row.job_item_content" @input="changeDesc" />
               </template>
             </el-table-column>
             <el-table-column
@@ -476,9 +476,11 @@
         <el-form-item label="上传图片">
           <el-upload
             ref="elUploadImg"
-            action=""
+            :on-remove="handleRemove"
             :auto-upload="false"
+            action=""
             list-type="picture-card"
+            :file-list="objList"
             :on-preview="handlePictureCardPreview"
             :on-change="onChangeImg"
             :on-exceed="onExceed"
@@ -486,7 +488,10 @@
           >
             <i class="el-icon-plus" />
           </el-upload>
-          <template v-for="(item, index) in creatOrder.result_repair_graph_url">
+          <el-dialog :visible.sync="dialogVisibleImg" :modal-append-to-body="false" :append-to-body="true">
+            <img width="100%" :src="dialogImageUrl" alt>
+          </el-dialog>
+          <!-- <template v-for="(item, index) in creatOrder.result_repair_graph_url">
             <el-image
               v-if="creatOrder.result_repair_graph_url.length>0"
               :key="index"
@@ -494,7 +499,7 @@
               :src="item"
               :preview-src-list="[item]"
             />
-          </template>
+          </template> -->
         </el-form-item>
         <el-form-item label="巡检结论" prop="abnormal_operation_result">
           <el-radio-group v-model="creatOrder.result_repair_final_result" disabled>
@@ -517,8 +522,8 @@
     >
       <application
         ref="List"
-        :work-id="creatOrder.id"
-        :equip="creatOrder.equip_no"
+        :desc="desc"
+        :form="creatOrder"
         :show="dialogVisibleApplication"
       />
       <span slot="footer" class="dialog-footer">
@@ -661,9 +666,11 @@ export default {
       dateValue: [],
       tableData: [],
       typeForm1: {},
+      objList: [],
       bz: null,
       lengthIndex: null,
       order_id: null,
+      dialogVisibleImg: false,
       dialogVisibleMaintain: false,
       dialogVisibleProject: false,
       loadPerson: false,
@@ -693,6 +700,7 @@ export default {
       btnLoading: false,
       dialogVisible: false,
       loadId: '',
+      desc: '',
       submit: false,
       submit1: false,
       creatOrder: {},
@@ -873,11 +881,32 @@ export default {
       } else {
         this.creatOrder.result_repair_final_result = '不正常'
       }
+      this.changeDesc()
       this.dialogVisibleProject = false
+    },
+    changeDesc() {
+      this.desc = []
+      this.creatOrder.work_content.forEach(d => {
+        if ((d.job_item_check_type === '数值范围' && d.job_item_check_standard_a <= d.operation_result && d.job_item_check_standard_b >= d.operation_result) ||
+        (d.job_item_check_type !== '数值范围' && d.job_item_check_standard === d.operation_result) ||
+        (d.job_item_check_type === '数值范围' && d.job_item_check_standard_a <= d.abnormal_operation_result && d.job_item_check_standard_b >= d.abnormal_operation_result) ||
+        (d.job_item_check_type !== '数值范围' && d.job_item_check_standard === d.abnormal_operation_result)) {
+          return false
+        } else {
+          this.desc.push(d.job_item_content)
+        }
+      })
+      this.desc = this.desc.join(';')
     },
     changeSearch() {
       this.search.page = 1
       this.getList()
+    },
+    handleRemove(file, fileList) {
+      console.log(file)
+      console.log(fileList, 111)
+      this.objList = fileList
+      console.log(this.objList)
     },
     onExceed() {
       this.$message.info('最多上传五张图片')
@@ -898,8 +927,12 @@ export default {
       const picture = new FormData()
       picture.append('image_file_name', file.raw)
       picture.append('source_type', '巡检')
-      const data = await uploadImages('post', null, { data: picture })
-      this.creatOrder.image_url_list.push(data.image_file_name)
+      try {
+        const data = await uploadImages('post', null, { data: picture })
+        this.objList.push({ url: data.image_file_name })
+      } catch (e) {
+        this.$set(this, 'objList', this.objList)
+      }
     },
     async onChangeImg1(file, fileList) {
       const isJPG = ['image/jpeg', 'image/jpg', 'image/png'].includes(file.raw.type)
@@ -922,6 +955,7 @@ export default {
     },
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url
+      this.dialogVisibleImg = true
     },
     equipSelected(obj) {
       this.$set(this.search, 'equip_no', obj ? obj.equip_no : '')
@@ -966,11 +1000,19 @@ export default {
       // this.$refs['List'].$refs.addSubmitFun()
     },
     dialog(row, type) {
+      this.objList = []
       this.equip_jobitem_standard_id = null
       if (row.status === '已开始') {
         this.operateType = type
         this.creatOrder = JSON.parse(JSON.stringify(row))
-        this.creatOrder.image_url_list = this.creatOrder.result_repair_graph_url || []
+        if (this.creatOrder.result_repair_graph_url.length > 0) {
+          this.creatOrder.result_repair_graph_url.forEach(d =>
+            this.objList.push({ url: d })
+          )
+        } else {
+          this.objList = []
+        }
+        // this.creatOrder.image_url_list = this.creatOrder.result_repair_graph_url || []
         if (row.work_content.length > 0) {
           const arr = []
           this.equip_jobitem_standard_id = row.work_content[0].equip_jobitem_standard_id
@@ -1009,6 +1051,7 @@ export default {
         } else {
           this.creatOrder.result_repair_final_result = '不正常'
         }
+        this.changeDesc()
         this.dialogVisible = true
       } else {
         this.$message.info('请处理已开始工单')
@@ -1033,6 +1076,7 @@ export default {
           delete d.abnormal_operation_url
         }
       })
+      this.changeDesc()
     },
     handleClose(done) {
       if (this.$refs.elUploadImg) {
@@ -1045,6 +1089,8 @@ export default {
       }
     },
     async generateFun() {
+      const url = []
+      this.objList.forEach(d => url.push(d.url))
       this.creatOrder.work_content.forEach(d => {
         if (d.job_item_check_type === '数值范围') {
           if (!d.job_item_check_standard_a || !d.job_item_check_standard_b) {
@@ -1068,7 +1114,7 @@ export default {
           }
           const form = {}
           form.result_repair_desc = this.creatOrder.result_repair_desc
-          form.image_url_list = this.creatOrder.image_url_list
+          form.image_url_list = url
           form.result_repair_final_result = this.creatOrder.result_repair_final_result
           form.pks = [this.creatOrder.id]
           form.status = '已完成'
