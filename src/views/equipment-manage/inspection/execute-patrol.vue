@@ -570,9 +570,9 @@
     <el-dialog
       title="异常项目处理"
       :visible.sync="dialogVisibleProject"
-      width="30%"
+      width="50%"
     >
-      <el-form :model="projectForm" :rules="projectRules" :inline="true" label-width="150px">
+      <el-form :model="projectForm" :rules="projectRules"  label-width="150px">
         <el-form-item label="异常项目备注" prop="abnormal_operation_desc">
           <el-input
             v-model="projectForm.abnormal_operation_desc"
@@ -586,6 +586,8 @@
           <el-upload
             ref="elUploadImg"
             action=""
+            :on-remove="handleRemove1"
+            :file-list="objList1"
             :auto-upload="false"
             list-type="picture-card"
             :on-preview="handlePictureCardPreview"
@@ -595,7 +597,10 @@
           >
             <i class="el-icon-plus" />
           </el-upload>
-          <template v-for="(item, index) in projectForm.abnormal_operation_url">
+          <el-dialog :visible.sync="dialogVisibleImg" :modal-append-to-body="false" :append-to-body="true">
+            <img width="100%" :src="dialogImageUrl" alt>
+          </el-dialog>
+          <!-- <template v-for="(item, index) in projectForm.abnormal_operation_url">
             <el-image
               v-if="projectForm.abnormal_operation_url.length>0"
               :key="index"
@@ -603,7 +608,7 @@
               :src="item"
               :preview-src-list="[item]"
             />
-          </template>
+          </template> -->
         </el-form-item>
         <br>
         <el-form-item label="异常处理结果" prop="abnormal_operation_result">
@@ -667,6 +672,7 @@ export default {
       tableData: [],
       typeForm1: {},
       objList: [],
+      objList1: [],
       bz: null,
       lengthIndex: null,
       order_id: null,
@@ -856,10 +862,22 @@ export default {
     },
     dialogProject(row, index) {
       // this.projectForm = JSON.parse(JSON.stringify(row))
+      console.log(row)
       this.lengthIndex = index
       this.projectForm.job_item_check_type = row.job_item_check_type
       this.projectForm.abnormal_operation_desc = row.abnormal_operation_desc || ''
-      this.projectForm.abnormal_operation_url = row.abnormal_operation_url || []
+      this.objList1 = []
+      if (row.abnormal_operation_url) {
+        if (row.abnormal_operation_url.length > 0) {
+          row.abnormal_operation_url.forEach(d =>
+            this.objList1.push({ url: d })
+          )
+        } else {
+          this.objList1 = []
+        }
+      } else {
+        this.objList1 = []
+      }
       if (this.projectForm.job_item_check_type === '数值范围') {
         this.projectForm.abnormal_operation_result = row.abnormal_operation_result ? row.abnormal_operation_result : 1
       } else {
@@ -868,9 +886,11 @@ export default {
       this.dialogVisibleProject = true
     },
     generateFunProject() {
+      const url = []
+      this.objList1.forEach(d => url.push(d.url))
       this.$set(this.creatOrder.work_content[this.lengthIndex], 'abnormal_operation_desc', this.projectForm.abnormal_operation_desc)
       this.$set(this.creatOrder.work_content[this.lengthIndex], 'abnormal_operation_result', this.projectForm.abnormal_operation_result)
-      this.$set(this.creatOrder.work_content[this.lengthIndex], 'abnormal_operation_url', this.projectForm.abnormal_operation_url)
+      this.$set(this.creatOrder.work_content[this.lengthIndex], 'abnormal_operation_url', url)
       if (this.creatOrder.work_content.every(d =>
         (d.job_item_check_type === '数值范围' && d.job_item_check_standard_a <= d.operation_result && d.job_item_check_standard_b >= d.operation_result) ||
         (d.job_item_check_type !== '数值范围' && d.job_item_check_standard === d.operation_result) ||
@@ -903,10 +923,10 @@ export default {
       this.getList()
     },
     handleRemove(file, fileList) {
-      console.log(file)
-      console.log(fileList, 111)
       this.objList = fileList
-      console.log(this.objList)
+    },
+    handleRemove1(file, fileList) {
+      this.objList1 = fileList
     },
     onExceed() {
       this.$message.info('最多上传五张图片')
@@ -950,8 +970,12 @@ export default {
       const picture = new FormData()
       picture.append('image_file_name', file.raw)
       picture.append('source_type', '巡检')
-      const data = await uploadImages('post', null, { data: picture })
-      this.projectForm.abnormal_operation_url.push(data.image_file_name)
+      try {
+        const data = await uploadImages('post', null, { data: picture })
+        this.objList1.push({ url: data.image_file_name })
+      } catch (e) {
+        this.$set(this, 'objList1', this.objList1)
+      }
     },
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url
