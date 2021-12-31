@@ -986,3 +986,12 @@ export function recipeMachineWeight(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function duratePutinReson(method, id, data = {}) {
+  const obj = {
+    url: id ? API.DuratePutinReson + id + '/' : API.DuratePutinReson,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
