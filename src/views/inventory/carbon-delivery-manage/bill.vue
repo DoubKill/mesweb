@@ -804,14 +804,21 @@ export default {
       } else {
         this.getWeight()
       }
+      setCookie('entrance_nameth', this.formSearch.entrance_name, 9999)
+      setCookie('codeth', this.formSearch.code, 9999)
     },
     async getEntrance() {
       try {
         this.loading2 = true
         const data = await thEntrance('get')
         this.optionsEntrance = data
-        this.formSearch.entrance_name = data ? this.optionsEntrance[0].name : ''
-        this.formSearch.code = data ? this.optionsEntrance[0].code : ''
+        if (getCookie('entrance_nameth')) {
+          this.formSearch.entrance_name = getCookie('entrance_nameth')
+          this.formSearch.code = getCookie('codeth')
+        } else {
+          this.formSearch.entrance_name = data ? this.optionsEntrance[0].name : ''
+          this.formSearch.code = data ? this.optionsEntrance[0].code : ''
+        }
         if (this.isLocation) {
           this.getDialogGoods()
         } else {
@@ -864,6 +871,25 @@ export default {
       })
     }
   }
+}
+function getCookie(cName) {
+  if (document.cookie.length > 0) {
+    var cStart = document.cookie.indexOf(cName + '=')
+    if (cStart !== -1) {
+      cStart = cStart + cName.length + 1
+      var cEnd = document.cookie.indexOf(';', cStart)
+      if (cEnd === -1) cEnd = document.cookie.length
+      return document.cookie.substring(cStart, cEnd)
+    }
+  }
+  return ''
+}
+
+// 设置cookie
+function setCookie(cName, value, expiredays) {
+  var exdate = new Date()
+  exdate.setDate(exdate.getDate() + expiredays)
+  document.cookie = cName + '=' + value + ((expiredays == null) ? '' : ';expires=' + exdate.toGMTString())
 }
 </script>
 
