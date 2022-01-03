@@ -39,22 +39,22 @@ service.interceptors.response.use(
   response => {
     if (response.status < 300) {
       if (response.data.state === 0) {
-        Message({
-          message: response.data.datas,
-          type: 'error',
-          duration: 3 * 1000
-        })
+        // Message({
+        //   message: response.data.datas,
+        //   type: 'error',
+        //   duration: 3 * 1000
+        // })
         return Promise.reject(response)
       } else {
         const res = response.data
         return Promise.resolve(res)
       }
     } else {
-      Message({
-        message: '请求失败' + response.status,
-        type: 'error',
-        duration: 3 * 1000
-      })
+      // Message({
+      //   message: '请求失败' + response.status,
+      //   type: 'error',
+      //   duration: 3 * 1000
+      // })
       return Promise.reject(response)
     }
   },
