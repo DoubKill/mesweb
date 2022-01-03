@@ -2,7 +2,7 @@
   <div>
     <!-- 不入库原因统计 -->
     <el-form :inline="true">
-      <h3>期间别不入库原因统计</h3>
+      <h3>不入库原因统计</h3>
       <el-form-item label="起止日期">
         <el-date-picker
           v-model="dateValue"
@@ -355,6 +355,7 @@ function getDaysBetween(dateString1, dateString2) {
   var days = (endDate - startDate) / (1 * 24 * 60 * 60 * 1000)
   return days
 }
+
 </script>
 
 <style  lang="scss">
