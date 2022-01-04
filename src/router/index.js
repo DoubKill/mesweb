@@ -1033,6 +1033,16 @@ export let asyncRoutes = [
               title: '生产运行记录',
               permissionName: 'production_record'
             }
+          },
+          {
+            path: '/report/warehousing-reasons',
+            component: () => import('@/views/equipment-management/report/warehousing-reasons'),
+            name: 'WarehousingReasons',
+            meta: {
+              faName: 'StatisticalReport',
+              title: '不入库原因统计',
+              permissionName: 'durate_putin_reason'
+            }
           }
           // {
           //   path: '/report/material-requirement',

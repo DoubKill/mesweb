@@ -1116,6 +1116,10 @@ export default {
       }
     },
     async generateFun() {
+      if (this.objList.length === 0) {
+        this.$message('执行巡检工单时图片必须上传')
+        return
+      }
       const url = []
       this.objList.forEach(d => url.push(d.url))
       this.creatOrder.work_content.forEach(d => {
