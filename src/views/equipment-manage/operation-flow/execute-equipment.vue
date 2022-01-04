@@ -154,7 +154,7 @@
               v-permission="['equip_apply_order', 'regulation']"
               type="primary"
               size="mini"
-              :disabled="!(name===scope.row.receiving_user||name===sectionTop)"
+              :disabled="!(name===scope.row.receiving_user||name===sectionTop||name===scope.row.entrust_to_user)"
               @click="personChange(scope.row)"
             >增减人员
             </el-button>
