@@ -621,6 +621,8 @@ export default {
   SchedulingPlaceKeyword: '/api/v1/plan/scheduling-place-keyword/',
   OperaKeyword: '/api/v1/plan/scheduling-place--opera-keyword/',
   SchedulingEquipCapacity: '/api/v1/plan/scheduling-equip-capacity/',
-  DuratePutinReson: '/api/v1/production/durate-putin-reson/' // 期间别不入库原因统计
+  DuratePutinReson: '/api/v1/production/durate-putin-reson/', // 期间别不入库原因统计
 
+  SchedulingProductDemandedDeclare: '/api/v1/plan/scheduling-product-demanded-declare/', // 各分厂胶料计划申报
+  SchedulingProductSafetyParams: '/api/v1/plan/scheduling-product-safety-params/'
 }

@@ -3,7 +3,12 @@
     <!-- 单配(配方/通用)化工流转卡 -->
     <el-form :inline="true">
       <el-form-item label="类别">
-        <el-select v-model="search.batching_type" clearable placeholder="请选择" @change="getList">
+        <el-select
+          v-model="search.batching_type"
+          clearable
+          placeholder="请选择"
+          @change="getList"
+        >
           <el-option
             v-for="item in [{name:'配方'},{name:'通用'}]"
             :key="item.name"
@@ -13,16 +18,34 @@
         </el-select>
       </el-form-item>
       <el-form-item label="配方名称">
-        <el-input v-model="search.product_no" clearable placeholder="配方名称" @input="debounceList" />
+        <el-input
+          v-model="search.product_no"
+          clearable
+          placeholder="配方名称"
+          @input="debounceList"
+        />
       </el-form-item>
       <el-form-item label="物料名称">
-        <el-input v-model="search.material_name" clearable placeholder="物料名称" @input="debounceList" />
+        <el-input
+          v-model="search.material_name"
+          clearable
+          placeholder="物料名称"
+          @input="debounceList"
+        />
       </el-form-item>
       <el-form-item label="物料条码">
-        <el-input v-model="search.bra_code" clearable placeholder="物料条码" @input="debounceList" />
+        <el-input
+          v-model="search.bra_code"
+          clearable
+          placeholder="物料条码"
+          @input="debounceList"
+        />
       </el-form-item>
       <el-form-item label="使用机型">
-        <equip-category-select v-model="search.dev_type" @change="changeDevType" />
+        <equip-category-select
+          v-model="search.dev_type"
+          @change="changeDevType"
+        />
       </el-form-item>
       <el-form-item label="">
         <el-button
@@ -142,15 +165,34 @@
       :before-close="handleClose"
       class="dialog-style"
     >
-      <el-form ref="formRef" :model="formData" :rules="rules" label-width="120px">
+      <el-form
+        ref="formRef"
+        :model="formData"
+        :rules="rules"
+        label-width="120px"
+      >
         <el-form-item label="类别">
-          <el-radio-group v-model="formData.batching_type" :disabled="formData.id?true:false" @change="radioChange">
+          <el-radio-group
+            v-model="formData.batching_type"
+            :disabled="formData.id?true:false"
+            @change="radioChange"
+          >
             <el-radio label="配方">配方</el-radio>
             <el-radio label="通用">通用</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item v-if="formData.batching_type==='配方'&&!formData.id" prop="product_no_id" label="配方名称">
-          <el-select v-model="formData.product_no_id" :disabled="formData.id?true:false" filterable placeholder="请选择" @change="changeProduct">
+        <el-form-item
+          v-if="formData.batching_type==='配方'&&!formData.id"
+          prop="product_no_id"
+          label="配方名称"
+        >
+          <el-select
+            v-model="formData.product_no_id"
+            :disabled="formData.id?true:false"
+            filterable
+            placeholder="请选择"
+            @change="changeProduct"
+          >
             <el-option
               v-for="item in productList"
               :key="item.id"
@@ -162,18 +204,44 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="formData.batching_type==='配方'&&formData.id" label="配方名称">
+        <el-form-item
+          v-if="formData.batching_type==='配方'&&formData.id"
+          label="配方名称"
+        >
           {{ formData.product_no }}
         </el-form-item>
-        <el-form-item v-if="formData.batching_type==='配方'" prop="dev_type" label="使用机型">
+        <el-form-item
+          v-if="formData.batching_type==='配方'"
+          prop="dev_type"
+          label="使用机型"
+        >
           <!-- <equip-category-select v-if="!formData.id" v-model="formData.dev_type" @change="changeDevTypeDialog" /> -->
           <span>{{ formData.dev_type_name }}</span>
         </el-form-item>
-        <el-form-item v-if="formData.batching_type==='配方'" prop="split_num" label="分包数">
-          <el-input-number v-model="formData.split_num" controls-position="right" :min="1" :disabled="formData.id?true:false" @change="splitNumChange" />
+        <el-form-item
+          v-if="formData.batching_type==='配方'"
+          prop="split_num"
+          label="分包数"
+        >
+          <el-input-number
+            v-model="formData.split_num"
+            controls-position="right"
+            :min="1"
+            :disabled="formData.id?true:false"
+            @change="splitNumChange"
+          />
         </el-form-item>
-        <el-form-item prop="material_name" label="物料名称">
-          <el-select v-model="formData.material_name" filterable placeholder="请选择" :disabled="formData.id?true:false" @change="changeMaterial">
+        <el-form-item
+          prop="material_name"
+          label="物料名称"
+        >
+          <el-select
+            v-model="formData.material_name"
+            filterable
+            placeholder="请选择"
+            :disabled="formData.id?true:false"
+            @change="changeMaterial"
+          >
             <el-option
               v-for="item in materialList"
               :key="item.id"
@@ -182,28 +250,86 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item v-if="formData.batching_type==='配方'" prop="_single_weight" label="配料重量">
-          <el-input v-model="formData._single_weight" placeholder="配料重量" :disabled="(formData.id||formData.batching_type==='配方')?true:false" />
+        <el-form-item
+          v-if="formData.batching_type==='配方'"
+          prop="_single_weight"
+          label="配料重量"
+        >
+          <el-input
+            v-model="formData._single_weight"
+            placeholder="配料重量"
+            :disabled="(formData.id||formData.batching_type==='配方')?true:false"
+          />
         </el-form-item>
-        <el-form-item v-else prop="single_weight" label="配料重量">
-          <el-input v-model="formData.single_weight" placeholder="配料重量" :disabled="(formData.id||formData.batching_type==='配方')?true:false" />
+        <el-form-item
+          v-else
+          prop="single_weight"
+          label="配料重量"
+        >
+          <el-input
+            v-model="formData.single_weight"
+            placeholder="配料重量"
+            :disabled="(formData.id||formData.batching_type==='配方')?true:false"
+          />
         </el-form-item>
-        <el-form-item prop="begin_trains" label="起始车次">
-          <el-input-number v-model="formData.begin_trains" controls-position="right" :min="1" :disabled="formData.id?true:false" />
+        <el-form-item
+          prop="begin_trains"
+          label="起始车次"
+        >
+          <el-input-number
+            v-model="formData.begin_trains"
+            controls-position="right"
+            :min="1"
+            :disabled="formData.id?true:false"
+          />
         </el-form-item>
-        <el-form-item prop="package_count" label="配置数量">
-          <el-input-number v-model="formData.package_count" controls-position="right" :min="1" :disabled="formData.id?true:false" />
+        <el-form-item
+          prop="package_count"
+          label="配置数量"
+        >
+          <el-input-number
+            v-model="formData.package_count"
+            controls-position="right"
+            :min="1"
+            :disabled="formData.id?true:false"
+          />
         </el-form-item>
-        <el-form-item prop="expire_day" label="有效期（天）">
-          <el-input-number v-model="formData.expire_day" :step="1" step-strictl controls-position="right" :min="1" :disabled="formData.id?true:false" />
+        <el-form-item
+          prop="expire_day"
+          label="有效期（天）"
+        >
+          <el-input-number
+            v-model="formData.expire_day"
+            :step="1"
+            step-strictl
+            controls-position="right"
+            :min="1"
+            :disabled="formData.id?true:false"
+          />
         </el-form-item>
-        <el-form-item prop="print_count" label="打印张数">
-          <el-input-number v-model="formData.print_count" :step="1" step-strictl controls-position="right" :min="1" />
+        <el-form-item
+          prop="print_count"
+          label="打印张数"
+        >
+          <el-input-number
+            v-model="formData.print_count"
+            :step="1"
+            step-strictl
+            controls-position="right"
+            :min="1"
+          />
         </el-form-item>
       </el-form>
-      <span slot="footer" class="dialog-footer">
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="handleClose(false)">取 消</el-button>
-        <el-button type="primary" :loading="loadingBtn" @click="submitFun">确 定</el-button>
+        <el-button
+          type="primary"
+          :loading="loadingBtn"
+          @click="submitFun"
+        >确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -240,17 +366,19 @@ export default {
         expire_day: [{ required: true, message: '请输入', trigger: 'blur' }],
         print_count: [{ required: true, message: '请输入', trigger: 'blur' }],
         package_count: [{ required: true, message: '请输入', trigger: 'blur' }],
-        dev_type: [{ required: true, message: '请输入', trigger: 'change',
+        dev_type: [{
+          required: true, message: '请输入', trigger: 'change',
           validator: (rule, value, callback) => {
             if (!this.formData.dev_type && !value) {
               callback(new Error('请输入'))
             } else {
               callback()
             }
-          } }]
+          }
+        }]
       },
       loadingBtn: false,
-      tableData1: [{}],
+      tableData1: [],
       options: [],
       productList: [],
       materialList: []
@@ -334,7 +462,7 @@ export default {
       this.formData.split_num = null
       this.formData.product_no = null
       this.formData.material_name = null
-      this.formData.product_no_id = ''
+      this.$set(this.formData, 'product_no_id', '')
 
       this.getManualList()
     },

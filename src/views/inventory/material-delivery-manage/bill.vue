@@ -3,10 +3,20 @@
     <!-- 原材料 出库单据 -->
     <el-form :inline="true">
       <el-form-item label="出库单据号">
-        <el-input v-model="search.TaskNumber" clearable placeholder="请输入内容" @input="getDebounce" />
+        <el-input
+          v-model="search.TaskNumber"
+          clearable
+          placeholder="请输入内容"
+          @input="getDebounce"
+        />
       </el-form-item>
       <el-form-item label="状态">
-        <el-select v-model="search.State" clearable placeholder="请选择" @change="changeDate">
+        <el-select
+          v-model="search.State"
+          clearable
+          placeholder="请选择"
+          @change="changeDate"
+        >
           <el-option
             v-for="item in options"
             :key="item.id"
@@ -25,7 +35,10 @@
         type="primary"
         @click="showWeightDialog"
       >指定重量出库</el-button>
-      <el-button type="primary" @click="getList">刷新</el-button>
+      <el-button
+        type="primary"
+        @click="getList"
+      >刷新</el-button>
     </el-form>
 
     <el-table
@@ -154,9 +167,16 @@
       width="80%"
       :before-close="handleClose1"
     >
-      <el-form v-if="!loading2" :inline="true">
+      <el-form
+        v-if="!loading2"
+        :inline="true"
+      >
         <el-form-item label="出库口(必选)">
-          <el-select v-model="formSearch.entrance_name" placeholder="请选择" @change="changeEntrance">
+          <el-select
+            v-model="formSearch.entrance_name"
+            placeholder="请选择"
+            @change="changeEntrance"
+          >
             <el-option
               v-for="item in optionsEntrance"
               :key="item.code"
@@ -166,16 +186,24 @@
           </el-select>
         </el-form-item>
         <el-form-item label="物料名称">
-          <el-input v-model="formSearch.material_name" clearable placeholder="请输入内容" @input="getDialogDebounce" />
+          <el-input
+            v-model="formSearch.material_name"
+            clearable
+            placeholder="请输入内容"
+            @input="getDialogDebounce"
+          />
         </el-form-item>
         <el-form-item label="物料编码">
-          <el-input v-model="formSearch.material_no" clearable placeholder="请输入内容" @input="getDialogDebounce" />
+          <el-input
+            v-model="formSearch.material_no"
+            clearable
+            placeholder="请输入内容"
+            @input="getDialogDebounce"
+          />
         </el-form-item>
         <el-form-item label="品质状态">
           <el-select
             v-model="formSearch.quality_status"
-            :disabled="checkPermission(['material_outbound_record','unqualified'])?false:true"
-            clearable
             placeholder="请选择"
             @change="getDialog"
           >
@@ -187,8 +215,16 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item v-if="isLocation" label="伸位">
-          <el-select v-model="formSearch.position" clearable placeholder="请选择" @change="getDialog">
+        <el-form-item
+          v-if="isLocation"
+          label="伸位"
+        >
+          <el-select
+            v-model="formSearch.position"
+            clearable
+            placeholder="请选择"
+            @change="getDialog"
+          >
             <el-option
               v-for="(item,i) in [{name:'外伸位',id:'外'},{name:'内伸位',id:'内'}]"
               :key="i"
@@ -198,7 +234,11 @@
           </el-select>
         </el-form-item>
       </el-form>
-      <div v-if="isLocation" :key="1" v-loading="loading2">
+      <div
+        v-if="isLocation"
+        :key="1"
+        v-loading="loading2"
+      >
         <h3>库位货物列表</h3>
         <el-table
           :data="tableData2"
@@ -343,14 +383,16 @@
             width="100"
           >
             <template slot-scope="{row}">
-              <el-button
-                @click="cancelDialog(row)"
-              >取消</el-button>
+              <el-button @click="cancelDialog(row)">取消</el-button>
             </template>
           </el-table-column>
         </el-table>
       </div>
-      <div v-else :key="2" v-loading="loading2">
+      <div
+        v-else
+        :key="2"
+        v-loading="loading2"
+      >
         <h3>可添加物料明细</h3>
         <el-table
           :data="tableData5"
@@ -406,9 +448,17 @@
           />
         </el-table>
       </div>
-      <span v-if="!loading2" slot="footer" class="dialog-footer">
+      <span
+        v-if="!loading2"
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="handleClose1(false)">取 消</el-button>
-        <el-button type="primary" :loading="btnLoading" @click="submitForm">确 定</el-button>
+        <el-button
+          type="primary"
+          :loading="btnLoading"
+          @click="submitForm"
+        >确 定</el-button>
       </span>
     </el-dialog>
 
@@ -438,7 +488,10 @@
           label="选择"
         >
           <template slot-scope="{row}">
-            <el-checkbox v-model="row.checked" :disabled="row.position==='外'" />
+            <el-checkbox
+              v-model="row.checked"
+              :disabled="row.position==='外'"
+            />
           </template>
         </el-table-column>
         <el-table-column
@@ -457,9 +510,15 @@
           min-width="20"
         />
       </el-table>
-      <span slot="footer" class="dialog-footer">
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="handleClose2(false)">取 消</el-button>
-        <el-button type="primary" @click="submitLocation">确 定</el-button>
+        <el-button
+          type="primary"
+          @click="submitLocation"
+        >确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -546,6 +605,17 @@ export default {
   },
   created() {
     this.getList()
+  },
+  mounted() {
+    const a = checkPermission(['material_outbound_record', 'unqualified'])
+    const b = checkPermission(['material_outbound_record', 'untested'])
+
+    if (!a) {
+      this.qualityStatus = [{ id: 1, name: '合格' }]
+      if (b) {
+        this.qualityStatus.push({ id: 5, name: '待检品' })
+      }
+    }
   },
   methods: {
     checkPermission,
@@ -695,10 +765,12 @@ export default {
     async setWmsInstock(row, index) {
       try {
         this.btnDisabled = true
-        const data = await wmsInstock('get', null, { params: {
-          material_no: row.MaterialCode, entrance_name: this.formSearch.entrance_name,
-          space_id: row.SpaceId
-        }})
+        const data = await wmsInstock('get', null, {
+          params: {
+            material_no: row.MaterialCode, entrance_name: this.formSearch.entrance_name,
+            space_id: row.SpaceId
+          }
+        })
         this.btnDisabled = false
         if (data.length > 0) {
           // 内伸位有货 弹弹框
