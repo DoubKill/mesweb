@@ -38,7 +38,7 @@
         min-width="20"
       />
       <el-table-column
-        prop="dev_type_name"
+        prop="dev_type"
         label="机型"
         min-width="20"
       />
@@ -127,7 +127,7 @@
       :before-close="handleClose"
     >
       <el-form ref="formRef" :model="formData" :rules="rules" label-width="120px">
-        <el-form-item v-if="!formData.id" prop="product_no_id" label="细料名称">
+        <el-form-item v-if="!formData.id" prop="product_no" label="细料名称">
           <!-- <el-select v-model="formData.product_no" :disabled="formData.id?true:false" filterable placeholder="请选择" @change="changeProduct">
             <el-option
               v-for="item in productList"
@@ -136,16 +136,15 @@
               :value="item.stage_product_batch_no"
             />
           </el-select> -->
-
-          <el-select v-model="formData.product_no_id" :disabled="formData.id?true:false" filterable placeholder="请选择" @change="changeProductNo">
+          <el-select v-model="formData.product_no" :disabled="formData.id?true:false" filterable placeholder="请选择" @change="changeProductNo">
             <el-option
-              v-for="item in productList"
-              :key="item.id"
-              :label="item.stage_product_batch_no"
-              :value="item.id"
+              v-for="(item,_index) in productList"
+              :key="_index"
+              :label="item.product_no"
+              :value="item.product_no"
             >
-              <span style="float: left">{{ item.stage_product_batch_no }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.dev_type__category_name }}</span>
+              <span style="float: left">{{ item.product_no }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.dev_type }}</span>
             </el-option>
           </el-select>
         </el-form-item>
@@ -158,7 +157,7 @@
         </el-form-item> -->
         <el-form-item prop="" label="使用机型">
           <!-- <equip-category-select v-if="!formData.id" v-model="formData.dev_type" @change="changeDevTypeDialog" /> -->
-          <span>{{ formData.dev_type_name }}</span>
+          <span>{{ formData.dev_type }}</span>
         </el-form-item>
         <el-form-item prop="begin_trains" label="起始车次">
           <el-input-number v-model="formData.begin_trains" controls-position="right" :min="1" :disabled="formData.id?true:false" />
@@ -167,7 +166,15 @@
           <el-input-number v-model="formData.package_count" controls-position="right" :min="1" :disabled="formData.id?true:false" />
         </el-form-item>
         <el-form-item prop="batching_equip" label="机配机台">
-          <equipSelect v-if="!formData.id" equip-type="称量设备" :equip_no_props.sync="formData.batching_equip" @changeSearch="changeProduct" />
+          <el-select v-if="!formData.id" v-model="formData.batching_equip" filterable placeholder="请选择" @change="changeProduct">
+            <el-option
+              v-for="item in equipList"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
+          <!-- <equipSelect v-if="!formData.id" equip-type="称量设备" :equip_no_props.sync="formData.batching_equip" @changeSearch="changeProduct" /> -->
           <span v-else>{{ formData.batching_equip }}</span>
         </el-form-item>
         <el-form-item prop="split_num" label="分包数">
@@ -247,8 +254,8 @@
 <script>
 import page from '@/components/page'
 // import EquipCategorySelect from '@/components/EquipCategorySelect'
-import { weightingPackageManua, getManualInfo, getMaterialTolerance } from '@/api/base_w_five'
-import { rubberMaterialUrl, equipUrl } from '@/api/base_w'
+import { weightingPackageManua, getManualInfo, getMaterialTolerance, xlRecipesInfo } from '@/api/base_w_five'
+import { equipUrl } from '@/api/base_w'
 import equipSelect from '@/components/select_w/equip'
 export default {
   name: 'SmallMaterialWeightHebao',
@@ -265,7 +272,7 @@ export default {
         print_count: 1
       },
       rules: {
-        product_no_id: [{ required: true, message: '请输入', trigger: 'change' }],
+        product_no: [{ required: true, message: '请输入', trigger: 'change' }],
         begin_trains: [{ required: true, message: '请输入', trigger: 'blur' }],
         cc: [{ required: true, message: '请输入', trigger: 'change' }],
         package_count: [{ required: true, message: '请输入', trigger: 'blur' }],
@@ -322,7 +329,7 @@ export default {
     },
     async getProductList() {
       try {
-        const data = await rubberMaterialUrl('get', null, { params: { used_type: 4, all: 1 }})
+        const data = await xlRecipesInfo('get', null, {})
         this.productList = data.results || []
       } catch (e) {
         //
@@ -358,18 +365,17 @@ export default {
       this.tableData1New = []
       this.getManual()
     },
-    changeProductNo(id) {
-      if (id) {
-        const obj = this.productList.find(D => D.id === id)
-        this.formData.dev_type_name = obj.dev_type__category_name
-        this.formData.product_no = obj.stage_product_batch_no
+    changeProductNo(no) {
+      if (no) {
+        const obj = this.productList.find(D => D.product_no === no)
         this.formData.dev_type = obj.dev_type
-        // this.product_batching = obj.id
+        this.equipList = obj.batching_equip || []
       } else {
         this.formData.dev_type = ''
-        this.formData.dev_type_name = ''
         this.formData.product_no = ''
       }
+
+      this.formData.batching_equip = ''
       this.tableData1 = []
       this.tableData1New = []
       this.getManual()
@@ -451,6 +457,9 @@ export default {
     },
     submitFun() {
       if (!this.formData.manual_details) {
+        // this.tableData1New.forEach(d => {
+        //   d.material_name = d.material__material_name
+        // })
         this.formData.manual_details = this.tableData1New
       }
       if (!this.formData.manual_details.length) {
