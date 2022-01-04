@@ -139,13 +139,13 @@
               type="primary"
               size="mini"
               :loading="submit1&&scope.row.id===loadId"
-              :disabled="submit1||(name!==scope.row.receiving_user&&name!==scope.row.entrust_to_user)"
+              :disabled="submit1||(scope.row.entrust_to_user?name!==scope.row.entrust_to_user:name!==scope.row.receiving_user)"
               @click="start(scope.row)"
             >开始</el-button>
             <el-button
               v-permission="['equip_apply_order', 'handle']"
               type="primary"
-              :disabled="name!==scope.row.receiving_user&&name!==scope.row.entrust_to_user"
+              :disabled="scope.row.entrust_to_user?name!==scope.row.entrust_to_user:name!==scope.row.receiving_user"
               size="mini"
               @click="dialog(scope.row,'处理维修工单')"
             >处理
@@ -154,7 +154,7 @@
               v-permission="['equip_apply_order', 'regulation']"
               type="primary"
               size="mini"
-              :disabled="!(name===scope.row.receiving_user||name===sectionTop||name===scope.row.entrust_to_user)"
+              :disabled="scope.row.entrust_to_user?!(name===sectionTop||name===scope.row.entrust_to_user):!(name===scope.row.receiving_user||name===sectionTop)"
               @click="personChange(scope.row)"
             >增减人员
             </el-button>
