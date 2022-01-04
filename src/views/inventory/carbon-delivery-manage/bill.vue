@@ -174,8 +174,6 @@
         <el-form-item label="品质状态">
           <el-select
             v-model="formSearch.quality_status"
-            :disabled="checkPermission(['th_outbound_record','unqualified'])?false:true"
-            clearable
             placeholder="请选择"
             @change="getDialog"
           >
@@ -547,6 +545,17 @@ export default {
   },
   created() {
     this.getList()
+  },
+  mounted() {
+    const a = checkPermission(['th_outbound_record', 'unqualified'])
+    const b = checkPermission(['th_outbound_record', 'untested'])
+
+    if (!a) {
+      this.qualityStatus = [{ id: 1, name: '合格' }]
+      if (b) {
+        this.qualityStatus.push({ id: 5, name: '待检品' })
+      }
+    }
   },
   methods: {
     checkPermission,
