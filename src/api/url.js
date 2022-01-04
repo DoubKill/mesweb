@@ -595,6 +595,7 @@ export default {
   GetManualInfo: '/api/v1/terminal/get-manual-info/', // 获取物料
   WeightingPackageManua: '/api/v1/terminal/weighting-package-manual/', // 合包
   GetMaterialTolerance: '/api/v1/terminal/get-material-tolerance/', // 物料查公差
+  XlRecipesInfo: '/api/v1/terminal/xl-recipes-info/',
 
   ToleranceKeyword: '/api/v1/terminal/tolerance-keyword/',
   ToleranceRule: '/api/v1/terminal/tolerance-rule/',
