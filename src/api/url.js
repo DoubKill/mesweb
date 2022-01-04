@@ -623,7 +623,10 @@ export default {
   OperaKeyword: '/api/v1/plan/scheduling-place--opera-keyword/',
   SchedulingEquipCapacity: '/api/v1/plan/scheduling-equip-capacity/',
   DuratePutinReson: '/api/v1/production/durate-putin-reson/', // 期间别不入库原因统计
-
   SchedulingProductDemandedDeclare: '/api/v1/plan/scheduling-product-demanded-declare/', // 各分厂胶料计划申报
-  SchedulingProductSafetyParams: '/api/v1/plan/scheduling-product-safety-params/'
+  SchedulingProductSafetyParams: '/api/v1/plan/scheduling-product-safety-params/',
+  SchedulingProductDeclareSummary: '/api/v1/plan/scheduling-product-declare-summary/', // 胶料计划库存汇总
+  UpSequence: '/api/v1/plan/scheduling-product-declare-summary/up-sequence/', // 上调计划
+  DownSequence: '/api/v1/plan/scheduling-product-declare-summary/down-sequence/', // 下调计划
+  SchedulingEquipShutdownPlan: '/api/v1/plan/scheduling-equip-shutdown-plan/' // 机台设备停机计划设置
 }
