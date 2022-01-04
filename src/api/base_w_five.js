@@ -120,3 +120,19 @@ export function schedulingEquipCapacity(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function schedulingProductDemandedDeclare(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SchedulingProductDemandedDeclare + id + '/' : API.SchedulingProductDemandedDeclare,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function schedulingProductSafetyParams(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SchedulingProductSafetyParams + id + '/' : API.SchedulingProductSafetyParams,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
