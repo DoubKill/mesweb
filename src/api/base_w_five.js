@@ -56,6 +56,14 @@ export function weightingPackageManua(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function xlRecipesInfo(method, id, data = {}) {
+  const obj = {
+    url: id ? API.XlRecipesInfo + id + '/' : API.XlRecipesInfo,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 export function getMaterialTolerance(method, id, data = {}) {
   const obj = {
     url: id ? API.GetMaterialTolerance + id + '/' : API.GetMaterialTolerance,
