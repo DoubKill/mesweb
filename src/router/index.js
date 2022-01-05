@@ -539,8 +539,8 @@ export let asyncRoutes = [
           }
         }
       ]
-    },
-    {
+    }
+    /*, {
       path: '/auto-schedule',
       redirect: '/schedule/factory-declare',
       name: 'AutoSchedule',
@@ -809,7 +809,7 @@ export let asyncRoutes = [
           ]
         }
       ]
-    }
+    }*/
     ]
   },
   {
