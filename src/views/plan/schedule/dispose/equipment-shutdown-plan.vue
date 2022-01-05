@@ -4,9 +4,8 @@
     <el-form :inline="true">
       <el-form-item label="工厂日期">
         <el-date-picker
-          v-model="day_time"
+          v-model="factory_date"
           type="date"
-          :clearable="false"
           value-format="yyyy-MM-dd"
           placeholder="选择日期"
           @change="getList"
@@ -15,9 +14,8 @@
       <el-form-item style="float:right">
         <el-button
           type="primary"
-          :loading="saveLoading"
-          @click="save()"
-        >保存</el-button>
+          @click="onSubmit()"
+        >新建</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -26,161 +24,233 @@
       border
     >
       <el-table-column
-        prop="equip"
+        prop="created_date"
+        label="计划创建时间"
+        min-width="20"
+      />
+      <el-table-column
+        prop="equip_no"
         label="机台"
         min-width="20"
-      >
-        <template slot-scope="scope">
-          <equip-select :is-created="scope.row.equip?true:false" :default-val="scope.row.equip" equip-type="密炼设备" @equipSelected="equipChanged($event,scope.$index)" />
-        </template>
-      </el-table-column>
+      />
       <el-table-column
-        prop="type"
+        prop="down_type"
         label="停机类型"
         min-width="20"
-      >
-        <template slot-scope="scope">
-          <el-select
-            v-model="scope.row.type"
-            placeholder="请选择"
-          >
-            <el-option
-              v-for="item in ['1','2']"
-              :key="item"
-              :label="item"
-              :value="item"
-            />
-          </el-select>
-        </template>
-      </el-table-column>
+      />
       <el-table-column
-        prop="time"
+        prop="begin_time"
         label="停机开始时间"
         min-width="20"
-      >
-        <template slot-scope="scope">
-          <el-date-picker
-            v-model="scope.row.time"
-            type="datetime"
-            value-format="yyyy-MM-dd HH:mm:ss"
-            placeholder="选择停机开始时间"
-          />
-        </template>
-      </el-table-column>
+      />
       <el-table-column
-        prop="times"
+        prop="duration"
         label="停机时长(小时)"
         min-width="20"
-      >
-        <template slot-scope="scope">
-          <el-input-number
-            v-model="scope.row.times"
-            :precision="1"
-            :min="0"
-          />
-        </template>
-      </el-table-column>
+      />
       <el-table-column
         prop="desc"
         label="备注"
         min-width="20"
-      >
-        <template slot-scope="scope">
-          <el-input
-            v-model="scope.row.desc"
-            placeholder="请输入内容"
-          />
-        </template>
-      </el-table-column>
+      />
       <el-table-column
-        width="70px"
+        width="200px"
         label="操作"
         fixed="right"
       >
-        <template
-          v-if="scope.$index!==tableData.length-1"
-          slot-scope="scope"
-        >
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="primary"
+            @click="edit(scope.row)"
+          >编辑
+          </el-button>
           <el-button
             size="mini"
             type="danger"
-            @click="handleDelete(scope.$index,scope.row)"
+            @click="handleDelete(scope.row)"
           >删除
           </el-button>
         </template>
       </el-table-column>
     </el-table>
+
+    <el-dialog
+      :title="`${formData.id?'编辑':'新建'}机台设备停机计划`"
+      :visible.sync="dialogVisible"
+      width="500px"
+      :before-close="handleClose"
+      class="dialog-style"
+    >
+      <el-form ref="formRef" :model="formData" :rules="rules" label-width="120px">
+        <el-form-item label="机台" prop="equip_no">
+          <el-select
+            v-model="formData.equip_no"
+            placeholder="请选择"
+            clearable
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.id"
+              :label="item.equip_no"
+              :value="item.equip_no"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="停机类型" prop="down_type">
+          <el-select
+            v-model="formData.down_type"
+            allow-create
+            filterable
+            placeholder="请选择或输入"
+          >
+            <el-option
+              v-for="item in options1"
+              :key="item.id"
+              :label="item.machine_halt_reason_name"
+              :value="item.machine_halt_reason_name"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="停机开始时间" prop="begin_time">
+          <el-date-picker
+            v-model="formData.begin_time"
+            type="datetime"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            placeholder="选择停机开始时间"
+          />
+        </el-form-item>
+        <el-form-item label="停机时长" prop="duration">
+          <el-input-number
+            v-model="formData.duration"
+            :precision="1"
+            :min="0"
+          />
+        </el-form-item>
+        <el-form-item label="备注" prop="desc">
+          <el-input
+            v-model="formData.desc"
+            style="width:250px"
+            type="textarea"
+            :rows="4"
+          />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleClose(false)">取 消</el-button>
+        <el-button type="primary" :loading="loadingBtn" @click="submitFun">确 定</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
-import { setDate } from '@/utils'
-import EquipSelect from '@/components/EquipSelect'
-import { globalCodesUrl } from '@/api/base_w'
+import { equipMachineHaltReason } from '@/api/base_w_four'
+import { getEquip } from '@/api/banburying-performance-manage'
+import { schedulingEquipShutdownPlan } from '@/api/jqy'
 export default {
   name: 'ScheduleEquipmentShutdownPlan',
-  components: { EquipSelect },
+  components: { },
   data() {
     return {
-      day_time: setDate(),
+      factory_date: '',
       loading: false,
+      dialogVisible: false,
+      formData: {},
       options: [],
+      options1: [],
       tableData: [],
-      saveLoading: false
+      loadingBtn: false,
+      rules: {
+        equip_no: [{ required: true, message: '不能为空', trigger: 'change' }],
+        begin_time: [{ required: true, message: '不能为空', trigger: 'change' }],
+        duration: [{ required: true, message: '不能为空', trigger: 'change' }]
+      }
     }
   },
   created() {
+    this.getEquipList()
     this.getShutdownType()
     this.getList()
   },
   methods: {
+    getEquipList() {
+      const obj = { all: 1 }
+      getEquip(obj).then(response => {
+        this.options = response.results
+      })
+    },
     async getShutdownType() {
       try {
-        const data = await globalCodesUrl('get', { params: { all: 1, class_name: '停机类型' }})
-        this.options = data.results || []
+        const data = await equipMachineHaltReason('get', null, { params: {}})
+        this.options1 = data || []
       } catch (e) {
-        this.options = []
+        this.options1 = []
       }
     },
     async getList() {
       try {
         this.loading = true
-        // const data = await equipWarehouseRecord('get', null, { params: day_time })
-        this.tableData = []
-        this.tableData.push({
-          equip: ''
-        })
+        const data = await schedulingEquipShutdownPlan('get', null, { params: { factory_date: this.factory_date, page_size: 1000000 }})
+        this.tableData = data.results || []
         this.loading = false
       } catch (e) {
         this.loading = false
       }
     },
-    equipChanged(arr, index) {
-      this.$set(this.tableData[index], 'equip', arr.id)
-      if (this.tableData.length - 1 === index) {
-        // 处于最后一行
-        const baseData = {}
-        this.tableData.push(baseData)
+    handleClose(done) {
+      this.formData = {}
+      this.$refs.formRef.clearValidate()
+      this.dialogVisible = false
+      if (done) {
+        done()
       }
     },
-    save() {
-
-    },
-    handleDelete(index, row) {
-      if (this.tableData.length === 1) {
-        this.$message.warning('最少保留一行')
-        return
-      }
-      this.$confirm(
-        '是否删除?',
-        '提示',
-        {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
+    submitFun() {
+      this.$refs.formRef.validate(async(valid) => {
+        if (valid) {
+          try {
+            this.loadingBtn = true
+            const _mothod = this.formData.id ? 'put' : 'post'
+            await schedulingEquipShutdownPlan(_mothod, this.formData.id || null, { data: this.formData })
+            this.$message.success('操作成功')
+            this.handleClose(false)
+            this.getList()
+            this.loadingBtn = false
+          } catch (e) {
+            this.loadingBtn = false
+          }
+        } else {
+          return false
         }
-      ).then(() => {
-        this.tableData.splice(index, 1)
+      })
+    },
+    onSubmit() {
+      if (this.$refs.formRef) {
+        this.$refs.formRef.clearValidate()
+      }
+      this.formData = {}
+      this.dialogVisible = true
+    },
+    edit(row) {
+      this.formData = JSON.parse(JSON.stringify(row))
+      this.dialogVisible = true
+    },
+    handleDelete(row) {
+      this.$confirm('此操作将删除此机台设备停机计划是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        schedulingEquipShutdownPlan('delete', row.id, {})
+          .then(response => {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+            this.getList()
+          })
       })
     }
   }

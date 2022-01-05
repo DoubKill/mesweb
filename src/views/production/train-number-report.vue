@@ -49,7 +49,8 @@
           @classSelected="classChanged"
         />
       </el-form-item>
-      <el-form-item>
+      <el-form-item style="float:right">
+        <el-button v-permission="['equip_property', 'export']" type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
         <!-- <el-button @click="showRowTable = true">展示详情</el-button> -->
 
         <!-- <el-button @click="selectRubber">导出批记录</el-button>
@@ -515,6 +516,7 @@ import {
   curveInformationUrl,
   alarmLogList
 } from '@/api/base_w'
+import { trainsFeedbacksApiviewDown } from '@/api/jqy'
 import { personnelsUrl } from '@/api/user'
 import page from '@/components/page'
 import selectEquip from '@/components/select_w/equip'
@@ -554,6 +556,7 @@ export default {
       tableData: [],
       loading: false,
       loadingTable: false,
+      btnExportLoad: false,
       loaddingExal: true,
       total: 0,
       showRowTable: false,
@@ -600,6 +603,25 @@ export default {
     this.search_date = [this.getParams.begin_time, this.getParams.end_time]
   },
   methods: {
+    exportTable() {
+      this.btnExportLoad = true
+      const obj = Object.assign({ export: 1 }, this.getParams)
+      const _api = trainsFeedbacksApiviewDown
+      _api(obj)
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '车次报表.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
+    },
     async getList() {
       try {
         this.loading = true
