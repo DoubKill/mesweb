@@ -593,8 +593,12 @@ export default {
       }
     },
     getDialog() {
-      this.formSearch.page = 1
-      this.getDialogGoods()
+      if (this.isLocation) {
+        this.formSearch.page = 1
+        this.getDialogGoods()
+      } else {
+        this.getWeight()
+      }
     },
     changeDate() {
       if (!this.search.State) {
