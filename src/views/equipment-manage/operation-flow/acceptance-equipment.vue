@@ -252,11 +252,6 @@
         min-width="20"
       />
       <el-table-column
-        prop="entrust_to_user"
-        label="委托人"
-        min-width="20"
-      />
-      <el-table-column
         prop="repair_user"
         label="维修人"
         min-width="20"
