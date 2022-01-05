@@ -373,6 +373,8 @@
           <el-upload
             v-if="operateType==='验收维修工单'"
             ref="elUploadImg"
+            :on-remove="handleRemove"
+            :file-list="objList"
             action=""
             :auto-upload="false"
             list-type="picture-card"
@@ -383,6 +385,9 @@
           >
             <i class="el-icon-plus" />
           </el-upload>
+          <el-dialog :visible.sync="dialogVisibleImg" :modal-append-to-body="false" :append-to-body="true">
+            <img width="100%" :src="dialogImageUrl" alt>
+          </el-dialog>
           <template v-for="(item, index) in creatOrder.result_accept_graph_url">
             <el-image
               v-if="operateType==='查看验收结果'&&creatOrder.result_accept_graph_url.length>0"
@@ -701,7 +706,7 @@ export default {
   components: { EquipSelect, page, repair, definition, maintain },
   data() {
     return {
-      search: { status: '已完成' },
+      search: { status: '已完成', my_order: 1 },
       loading: false,
       btnExportLoad: false,
       dialogVisibleRepair: false,
@@ -713,6 +718,7 @@ export default {
       tableDataView: [],
       total: 0,
       multipleSelection: [],
+      objList: [],
       dialogImageUrl: '',
       operateType: '',
       dialogVisible: false,
@@ -740,7 +746,7 @@ export default {
     ])
   },
   created() {
-    this.search.created_user = this.name
+    // this.search.created_user = this.name
     this.getList()
   },
   methods: {
@@ -757,6 +763,9 @@ export default {
     },
     async generateFun() {
       delete this.creatOrder.apply_repair_graph_url
+      const url = []
+      this.objList.forEach(d => url.push(d.url))
+      this.creatOrder.image_url_list = url
       const obj = []
       this.multipleSelection.forEach(d => {
         obj.push(d.id)
@@ -857,8 +866,15 @@ export default {
       const picture = new FormData()
       picture.append('image_file_name', file.raw)
       picture.append('source_type', '维修')
-      const data = await uploadImages('post', null, { data: picture })
-      this.creatOrder.image_url_list.push(data.image_file_name)
+      try {
+        const data = await uploadImages('post', null, { data: picture })
+        this.objList.push({ url: data.image_file_name })
+      } catch (e) {
+        this.$set(this, 'objList', this.objList)
+      }
+    },
+    handleRemove(file, fileList) {
+      this.objList = fileList
     },
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url
@@ -877,23 +893,23 @@ export default {
       if (row === false) {
         this.operateType = type
         if (this.multipleSelection.length > 0) {
-          if (this.multipleSelection.every(d => d.status === '已完成')) {
-            this.dialogVisible = true
+          if (this.multipleSelection.every(d => d.accept_user === this.name)) {
+            this.objList = []
             this.creatOrder = {
               result_accept_desc: '验收完成',
-              image_url_list: [],
               result_accept_result: '合格'
             }
+            this.dialogVisible = true
           } else {
-            this.$message.info('请勾选已完成状态列表')
+            this.$message.info('请勾选验收人是本人的状态列表')
           }
         } else {
           this.$message.info('请先勾选工单列表')
         }
       } else {
-        this.dialogVisible = true
         this.operateType = type
         this.creatOrder = JSON.parse(JSON.stringify(row))
+        this.dialogVisible = true
       }
     },
     handleClose(done) {

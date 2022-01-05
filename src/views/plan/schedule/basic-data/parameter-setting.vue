@@ -153,8 +153,12 @@ export default {
       try {
         this.loading = true
         const data = await schedulingParamsSetting('get', null, {})
-        this.typeForm = data[0]
-        this.loading = false
+        if (data.length > 0) {
+          this.typeForm = data[0]
+          this.loading = false
+        } else {
+          this.loading = false
+        }
       } catch (e) {
         this.loading = false
       }

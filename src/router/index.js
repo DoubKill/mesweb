@@ -398,16 +398,16 @@ export let asyncRoutes = [
         permissionName: 'productdayplan'
       }
     },
-    {
-      path: '/material/quantity/demanded',
-      name: 'MaterialQuantityDemanded',
-      component: () => import('@/views/material_quantity_demanded/index'),
-      meta: {
-        title: '物料需求量',
-        icon: 'productionPlanManagement',
-        permissionName: 'materialdemanded'
-      }
-    },
+    // {
+    //   path: '/material/quantity/demanded',
+    //   name: 'MaterialQuantityDemanded',
+    //   component: () => import('@/views/material_quantity_demanded/index'),
+    //   meta: {
+    //     title: '物料需求量',
+    //     icon: 'productionPlanManagement',
+    //     permissionName: 'materialdemanded'
+    //   }
+    // },
     /* {
       path: '/rubber-plan-release',
       name: 'RubberPlanRelease',
@@ -540,7 +540,7 @@ export let asyncRoutes = [
         }
       ]
     }
-    /** {
+    /*, {
       path: '/auto-schedule',
       redirect: '/schedule/factory-declare',
       name: 'AutoSchedule',
@@ -628,7 +628,7 @@ export let asyncRoutes = [
               name: 'ScheduleDailyPlan',
               meta: {
                 faName: 'ScheduleDispose',
-                title: '确定排产胶料日计划',
+                title: '排产胶料日计划下达',
                 permissionName: ''
               }
             },
@@ -809,7 +809,7 @@ export let asyncRoutes = [
           ]
         }
       ]
-    }**/
+    }*/
     ]
   },
   {
@@ -1032,6 +1032,16 @@ export let asyncRoutes = [
               faName: 'StatisticalReport',
               title: '生产运行记录',
               permissionName: 'production_record'
+            }
+          },
+          {
+            path: '/report/warehousing-reasons',
+            component: () => import('@/views/equipment-management/report/warehousing-reasons'),
+            name: 'WarehousingReasons',
+            meta: {
+              faName: 'StatisticalReport',
+              title: '不入库原因统计',
+              permissionName: 'durate_putin_reason'
             }
           }
           // {

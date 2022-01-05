@@ -943,7 +943,7 @@ export default {
     async getEquipPart1(val) {
       if (val) {
         try {
-          const data = await equipPartNew('get', null, { params: { use_flag: true }})
+          const data = await equipPartNew('get', null, { params: { use_flag: true, all: 1 }})
           this.options1 = data.results || []
         } catch (e) {
           //
@@ -955,7 +955,7 @@ export default {
         console.log(row)
         if (row.equip_part__id) {
           try {
-            const data = await equipComponent('get', null, { params: { equip_part: row.equip_part__id, use_flag: 1 }})
+            const data = await equipComponent('get', null, { params: { equip_part: row.equip_part__id, use_flag: 1, all: 1 }})
             this.options2 = data.results || []
           } catch (error) {
             this.options2 = []
@@ -1077,7 +1077,6 @@ export default {
     },
     clear(row) {
       row.equip_part__part_name = this.options1.filter(d => d.id === row.equip_part__id)[0].part_name
-      console.log(row.equip_part__part_name)
       if (row.equip_component) {
         row.equip_component = null
       }

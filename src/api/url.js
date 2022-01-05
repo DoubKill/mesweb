@@ -245,6 +245,7 @@ export default {
   IntervalOutputStatistics: '/api/v1/production/interval-output-statistics/',
   // 报表-车次列表
   TrainsFeedbacksApiview: '/api/v1/production/trains-feedbacks-apiview/',
+  TrainsFeedbacksApiviewDown: '/api/v1/production/trains-feedbacks-apiview/',
   // 报表-车次记录-称量信息{id}
   WeighInformationUrl: '/api/v1/production/weigh-information-list/',
   // 报表-车次记录-密炼信息{id}
@@ -595,6 +596,7 @@ export default {
   GetManualInfo: '/api/v1/terminal/get-manual-info/', // 获取物料
   WeightingPackageManua: '/api/v1/terminal/weighting-package-manual/', // 合包
   GetMaterialTolerance: '/api/v1/terminal/get-material-tolerance/', // 物料查公差
+  XlRecipesInfo: '/api/v1/terminal/xl-recipes-info/',
 
   ToleranceKeyword: '/api/v1/terminal/tolerance-keyword/',
   ToleranceRule: '/api/v1/terminal/tolerance-rule/',
@@ -620,6 +622,12 @@ export default {
   SchedulingWashRules: '/api/v1/plan/scheduling-wash-rules/',
   SchedulingPlaceKeyword: '/api/v1/plan/scheduling-place-keyword/',
   OperaKeyword: '/api/v1/plan/scheduling-place--opera-keyword/',
-  SchedulingEquipCapacity: '/api/v1/plan/scheduling-equip-capacity/'
-
+  SchedulingEquipCapacity: '/api/v1/plan/scheduling-equip-capacity/',
+  DuratePutinReson: '/api/v1/production/durate-putin-reson/', // 期间别不入库原因统计
+  SchedulingProductDemandedDeclare: '/api/v1/plan/scheduling-product-demanded-declare/', // 各分厂胶料计划申报
+  SchedulingProductSafetyParams: '/api/v1/plan/scheduling-product-safety-params/',
+  SchedulingProductDeclareSummary: '/api/v1/plan/scheduling-product-declare-summary/', // 胶料计划库存汇总
+  UpSequence: '/api/v1/plan/scheduling-product-declare-summary/up-sequence/', // 上调计划
+  DownSequence: '/api/v1/plan/scheduling-product-declare-summary/down-sequence/', // 下调计划
+  SchedulingEquipShutdownPlan: '/api/v1/plan/scheduling-equip-shutdown-plan/' // 机台设备停机计划设置
 }

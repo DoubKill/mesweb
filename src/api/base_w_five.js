@@ -56,6 +56,14 @@ export function weightingPackageManua(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function xlRecipesInfo(method, id, data = {}) {
+  const obj = {
+    url: id ? API.XlRecipesInfo + id + '/' : API.XlRecipesInfo,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 export function getMaterialTolerance(method, id, data = {}) {
   const obj = {
     url: id ? API.GetMaterialTolerance + id + '/' : API.GetMaterialTolerance,
@@ -115,6 +123,22 @@ export function operaKeyword(method, id, data = {}) {
 export function schedulingEquipCapacity(method, id, data = {}) {
   const obj = {
     url: id ? API.SchedulingEquipCapacity + id + '/' : API.SchedulingEquipCapacity,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function schedulingProductDemandedDeclare(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SchedulingProductDemandedDeclare + id + '/' : API.SchedulingProductDemandedDeclare,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function schedulingProductSafetyParams(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SchedulingProductSafetyParams + id + '/' : API.SchedulingProductSafetyParams,
     method: method
   }
   Object.assign(obj, data)

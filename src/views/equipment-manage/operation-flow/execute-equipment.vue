@@ -139,13 +139,13 @@
               type="primary"
               size="mini"
               :loading="submit1&&scope.row.id===loadId"
-              :disabled="submit1||(name!==scope.row.receiving_user&&name!==scope.row.entrust_to_user)"
+              :disabled="submit1||(scope.row.entrust_to_user?name!==scope.row.entrust_to_user:name!==scope.row.receiving_user)"
               @click="start(scope.row)"
             >开始</el-button>
             <el-button
               v-permission="['equip_apply_order', 'handle']"
               type="primary"
-              :disabled="name!==scope.row.receiving_user&&name!==scope.row.entrust_to_user"
+              :disabled="scope.row.entrust_to_user?name!==scope.row.entrust_to_user:name!==scope.row.receiving_user"
               size="mini"
               @click="dialog(scope.row,'处理维修工单')"
             >处理
@@ -154,7 +154,7 @@
               v-permission="['equip_apply_order', 'regulation']"
               type="primary"
               size="mini"
-              :disabled="!(name===scope.row.receiving_user||name===sectionTop)"
+              :disabled="scope.row.entrust_to_user?!(name===sectionTop||name===scope.row.entrust_to_user):!(name===scope.row.receiving_user||name===sectionTop)"
               @click="personChange(scope.row)"
             >增减人员
             </el-button>
@@ -243,6 +243,11 @@
       <el-table-column
         prop="status"
         label="状态"
+        min-width="20"
+      />
+      <el-table-column
+        prop="entrust_to_user"
+        label="委托人"
         min-width="20"
       />
       <el-table-column
@@ -598,6 +603,8 @@
           <el-upload
             v-if="operateType==='处理维修工单'"
             ref="elUploadImg"
+            :on-remove="handleRemove"
+            :file-list="objList"
             action=""
             :auto-upload="false"
             list-type="picture-card"
@@ -608,9 +615,12 @@
           >
             <i class="el-icon-plus" />
           </el-upload>
+          <el-dialog :visible.sync="dialogVisibleImg" :modal-append-to-body="false" :append-to-body="true">
+            <img width="100%" :src="dialogImageUrl" alt>
+          </el-dialog>
           <template v-for="(item, index) in creatOrder.result_repair_graph_url">
             <el-image
-              v-if="creatOrder.result_repair_graph_url.length>0"
+              v-if="operateType==='查看处理结果'&&creatOrder.result_repair_graph_url.length>0"
               :key="index"
               style="width: 100px; height: 100px"
               :src="item"
@@ -969,8 +979,10 @@ export default {
       search1: { use: 1 },
       loading: false,
       btnExportLoad: false,
+      dialogVisibleImg: false,
       equip_jobitem_standard_id: null,
       dateValue: [],
+      objList: [],
       tableData: [],
       loadId: null,
       order_id: null,
@@ -1322,11 +1334,19 @@ export default {
       const picture = new FormData()
       picture.append('image_file_name', file.raw)
       picture.append('source_type', '维修')
-      const data = await uploadImages('post', null, { data: picture })
-      this.creatOrder.image_url_list.push(data.image_file_name)
+      try {
+        const data = await uploadImages('post', null, { data: picture })
+        this.objList.push({ url: data.image_file_name })
+      } catch (e) {
+        this.$set(this, 'objList', this.objList)
+      }
+    },
+    handleRemove(file, fileList) {
+      this.objList = fileList
     },
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url
+      this.dialogVisibleImg = true
     },
     equipSelected(obj) {
       this.$set(this.search, 'equip_no', obj ? obj.equip_no : '')
@@ -1367,8 +1387,15 @@ export default {
             })
           }
           this.creatOrder = JSON.parse(JSON.stringify(row))
+          this.objList = []
           this.tableDataView = []
-          this.creatOrder.image_url_list = this.creatOrder.result_repair_graph_url
+          if (this.creatOrder.result_repair_graph_url.length > 0) {
+            this.creatOrder.result_repair_graph_url.forEach(d =>
+              this.objList.push({ url: d })
+            )
+          } else {
+            this.objList = []
+          }
           if (this.creatOrder.result_repair_final_result !== '等待' && this.creatOrder.result_accept_result !== '不合格') {
             this.creatOrder.result_need_outsourcing = false
             this.creatOrder.result_need_outsourcing = false
@@ -1451,6 +1478,9 @@ export default {
       debounce(this, 'dialogSelect')
     },
     async generateFun() {
+      const url = []
+      this.objList.forEach(d => url.push(d.url))
+      this.creatOrder.image_url_list = url
       this.creatOrder.work_content.forEach(d => {
         if (d.job_item_check_type === '数值范围') {
           if (!d.job_item_check_standard_a || !d.job_item_check_standard_b) {
