@@ -50,7 +50,7 @@
         />
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button v-permission="['equip_property', 'export']" type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
+        <el-button v-permission="['trains_report', 'export']" type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
         <!-- <el-button @click="showRowTable = true">展示详情</el-button> -->
 
         <!-- <el-button @click="selectRubber">导出批记录</el-button>
