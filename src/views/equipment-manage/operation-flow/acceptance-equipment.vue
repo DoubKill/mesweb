@@ -711,7 +711,7 @@ export default {
   components: { EquipSelect, page, repair, definition, maintain },
   data() {
     return {
-      search: { status: '已完成' },
+      search: { status: '已完成', my_order: 1 },
       loading: false,
       btnExportLoad: false,
       dialogVisibleRepair: false,
@@ -751,7 +751,7 @@ export default {
     ])
   },
   created() {
-    this.search.created_user = this.name
+    // this.search.created_user = this.name
     this.getList()
   },
   methods: {
@@ -898,7 +898,7 @@ export default {
       if (row === false) {
         this.operateType = type
         if (this.multipleSelection.length > 0) {
-          if (this.multipleSelection.every(d => d.status === '已完成')) {
+          if (this.multipleSelection.every(d => d.accept_user === this.name)) {
             this.objList = []
             this.creatOrder = {
               result_accept_desc: '验收完成',
@@ -906,7 +906,7 @@ export default {
             }
             this.dialogVisible = true
           } else {
-            this.$message.info('请勾选已完成状态列表')
+            this.$message.info('请勾选验收人是本人的状态列表')
           }
         } else {
           this.$message.info('请先勾选工单列表')
