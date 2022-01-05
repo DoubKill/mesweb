@@ -995,3 +995,39 @@ export function duratePutinReson(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function schedulingProductDeclareSummary(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SchedulingProductDeclareSummary + id + '/' : API.SchedulingProductDeclareSummary,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function upSequence(method, id, data = {}) {
+  const obj = {
+    url: id ? API.UpSequence + id + '/' : API.UpSequence,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function downSequence(method, id, data = {}) {
+  const obj = {
+    url: id ? API.DownSequence + id + '/' : API.DownSequence,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function schedulingEquipShutdownPlan(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SchedulingEquipShutdownPlan + id + '/' : API.SchedulingEquipShutdownPlan,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
