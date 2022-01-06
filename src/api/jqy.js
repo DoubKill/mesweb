@@ -1031,3 +1031,12 @@ export function schedulingEquipShutdownPlan(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function trainsFeedbacksApiviewDown(params) {
+  return request({
+    url: API.TrainsFeedbacksApiview,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
