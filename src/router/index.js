@@ -144,6 +144,16 @@ export let asyncRoutes = [
       }
     },
     {
+      path: '/equipment/personnel-framework',
+      component: () => import('@/views/equipment-manage/master-data/personnel-framework'),
+      name: 'EquipmentMasterData-personnel-framework',
+      meta: {
+        title: '人员组织架构',
+        icon: 'dashboard',
+        permissionName: 'department'
+      }
+    },
+    {
       path: '/group/manage',
       name: 'GroupManage',
       component: () => import('@/views/basic/group-manage/index'),
