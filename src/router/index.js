@@ -144,6 +144,16 @@ export let asyncRoutes = [
       }
     },
     {
+      path: '/equipment/personnel-framework',
+      component: () => import('@/views/equipment-manage/master-data/personnel-framework'),
+      name: 'EquipmentMasterData-personnel-framework',
+      meta: {
+        title: '人员组织架构',
+        icon: 'dashboard',
+        permissionName: 'department'
+      }
+    },
+    {
       path: '/group/manage',
       name: 'GroupManage',
       component: () => import('@/views/basic/group-manage/index'),
@@ -539,8 +549,8 @@ export let asyncRoutes = [
           }
         }
       ]
-    },
-    {
+    }
+    /*, {
       path: '/auto-schedule',
       redirect: '/schedule/factory-declare',
       name: 'AutoSchedule',
@@ -805,11 +815,31 @@ export let asyncRoutes = [
                 title: '洗车规则及放置规则',
                 permissionName: ''
               }
+            },
+            {
+              path: '/schedule/compound-unit',
+              component: () => import('@/views/plan/schedule/basic-data/compound-unit'),
+              name: 'ScheduleCompoundUnit',
+              meta: {
+                faName: 'ScheduleBasicData',
+                title: '胶料/单位关键字定义',
+                permissionName: ''
+              }
+            },
+            {
+              path: '/schedule/processing-keywords',
+              component: () => import('@/views/plan/schedule/basic-data/processing-keywords'),
+              name: 'ScheduleProcessingKeywords',
+              meta: {
+                faName: 'ScheduleBasicData',
+                title: '处理关键字定义',
+                permissionName: ''
+              }
             }
           ]
         }
       ]
-    }
+    }*/
     ]
   },
   {

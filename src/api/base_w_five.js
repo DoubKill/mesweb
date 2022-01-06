@@ -144,3 +144,11 @@ export function schedulingProductSafetyParams(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function schedulingResult(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SchedulingResult + id + '/' : API.SchedulingResult,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

@@ -32,14 +32,6 @@
         </el-table-column>
       </el-table-column>
     </el-table>
-    <el-alert :closable="false" type="success" style="color:#5200FF">
-      <template slot="title">
-        <div class="iconSize">备注:白炭黑175FFG/175GR/955/FS-3/335MP通用；
-          <span style="color:red;">其中175GR只能通过3楼粉料罐加入。</span></div>
-        <div class="iconSize">N990可用半补强炭黑代替</div>
-        <div class="iconSize">环保炭黑N550可用卡波特环保炭黑SPHERON SLOP或宁波德泰环保炭黑N550</div>
-      </template>
-    </el-alert>
   </div>
 </template>
 
@@ -71,7 +63,7 @@ export default {
       }
     },
     arraySpanMethod({ row, column, rowIndex, columnIndex }) {
-      const _spanArr = [6, 0, 0, 0, 0, 0, 3, 0, 0]
+      const _spanArr = [6, 0, 0, 0, 0, 0, 3, 0, 0, 1]
       if ([0].includes(columnIndex) && _spanArr) {
         const _row = _spanArr[rowIndex]
         const _col = _row > 0 ? 1 : 0
