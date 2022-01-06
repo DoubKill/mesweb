@@ -620,7 +620,8 @@ export default {
   MatTankStatus: '/api/v1/plan/mat-tank-status/',
   SchedulingWashRules: '/api/v1/plan/scheduling-wash-rules/',
   SchedulingPlaceKeyword: '/api/v1/plan/scheduling-place-keyword/',
-  OperaKeyword: '/api/v1/plan/scheduling-place--opera-keyword/',
+
+  OperaKeyword: '/api/v1/plan/scheduling-place-opera-keyword/',
   SchedulingEquipCapacity: '/api/v1/plan/scheduling-equip-capacity/',
   DuratePutinReson: '/api/v1/production/durate-putin-reson/', // 期间别不入库原因统计
   SchedulingProductDemandedDeclare: '/api/v1/plan/scheduling-product-demanded-declare/', // 各分厂胶料计划申报
