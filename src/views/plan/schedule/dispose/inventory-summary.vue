@@ -46,14 +46,9 @@
       style="width: 100%"
     >
       <el-table-column
-        prop="total"
+        prop="sn"
         label="序号"
-      >
-        <template slot-scope="scope">
-          <span v-if="scope.row.sn!=='合计'">{{ scope.row.sn }}</span>
-          <span v-else>{{ scope.row.sn }}</span>
-        </template>
-      </el-table-column>
+      />
       <el-table-column
         prop="product_no"
         label="规格"
@@ -96,9 +91,11 @@
       >
         <template slot-scope="scope">
           <el-link
+            v-if="scope.row.sn!=='合计'"
             type="primary"
             @click="dialogProduction(scope.row)"
           >{{ scope.row.demanded_weight }}</el-link>
+          <span v-else>{{ scope.row.demanded_weight }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -169,7 +166,20 @@
           <el-input-number
             v-model="formData.plan_weight"
             style="width:250px"
-            :precision="1"
+            :min="0"
+          />
+        </el-form-item>
+        <el-form-item label="车间库存(吨)" prop="workshop_weight">
+          <el-input-number
+            v-model="formData.workshop_weight"
+            style="width:250px"
+            :min="0"
+          />
+        </el-form-item>
+        <el-form-item label="目标总库存量(吨)" prop="target_stock">
+          <el-input-number
+            v-model="formData.target_stock"
+            style="width:250px"
             :min="0"
           />
         </el-form-item>
@@ -435,12 +445,7 @@ export default {
       if (this.$refs.formRef) {
         this.$refs.formRef.clearValidate()
       }
-      this.formData = {
-        id: row.id,
-        product_no: row.product_no,
-        plan_demand: row.plan_demand,
-        desc: row.desc
-      }
+      this.formData = JSON.parse(JSON.stringify(row))
       this.dialogVisible = true
     },
     handleClose(done) {
@@ -452,23 +457,23 @@ export default {
       }
     },
     submitFun() {
-      // this.$refs.formRef.validate(async(valid) => {
-      //   if (valid) {
-      //     try {
-      //       this.loadingBtn = true
-      //       const _mothod = this.formData.id ? 'put' : 'post'
-      //       await weightingPackageSingle(_mothod, this.formData.id || null, { data: this.formData })
-      //       this.$message.success('操作成功')
-      //       this.handleClose(false)
-      //       this.getList()
-      //       this.loadingBtn = false
-      //     } catch (e) {
-      //       this.loadingBtn = false
-      //     }
-      //   } else {
-      //     return false
-      //   }
-      // })
+      this.$refs.formRef.validate(async(valid) => {
+        if (valid) {
+          try {
+            this.loadingBtn = true
+            const _mothod = this.formData.id ? 'put' : 'post'
+            await schedulingProductDeclareSummary(_mothod, this.formData.id || null, { data: this.formData })
+            this.$message.success('操作成功')
+            this.handleClose(false)
+            this.getList()
+            this.loadingBtn = false
+          } catch (e) {
+            this.loadingBtn = false
+          }
+        } else {
+          return false
+        }
+      })
     },
     async moveUp(index, row, tableData) {
       if (index === 0) {
