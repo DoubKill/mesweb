@@ -7,6 +7,7 @@
       <el-form-item label="日期">
         <el-date-picker
           v-model="search.factory_date"
+          :clearable="false"
           type="date"
           value-format="yyyy-MM-dd"
           placeholder="选择日期"
@@ -21,7 +22,7 @@
         />
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button v-permission="['equip_fault_signal', 'add']" type="primary">自动排程</el-button>
+        <el-button v-permission="['equip_fault_signal', 'add']" :loading="submit" type="primary" @click="scheduling">自动排程</el-button>
         <el-button v-permission="['equip_fault_signal', 'add']" type="primary" @click="getList">查询</el-button>
         <el-button v-permission="['equip_fault_signal', 'export']" type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
         <el-upload
@@ -298,7 +299,7 @@
 <script>
 import { productInfosUrl } from '@/api/base_w'
 import { schedulingProductDemandedDeclare } from '@/api/base_w_five'
-import { schedulingProductDeclareSummary, upSequence, downSequence } from '@/api/jqy'
+import { schedulingProductDeclareSummary, upSequence, downSequence, schedulingProcedures } from '@/api/jqy'
 import { setDate, exportExcel } from '@/utils'
 export default {
   name: 'ScheduleInventorySummary',
@@ -312,6 +313,7 @@ export default {
       dialogVisible2: false,
       exportTableShow: false,
       loadingBtn: false,
+      submit: false,
       loading: false,
       loading1: false,
       loading2: false,
@@ -351,6 +353,26 @@ export default {
       } catch (e) {
         this.loading = false
       }
+    },
+    scheduling() {
+      this.$confirm('此操作将进行自动排程处理?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.submit = true
+        schedulingProcedures('post', null, { data: { factory_date: this.search.factory_date }})
+          .then(response => {
+            this.$message({
+              type: 'success',
+              message: '操作成功'
+            })
+            this.submit = false
+          })
+          .catch(response => {
+            this.submit = false
+          })
+      })
     },
     async visibleChange(val) {
       if (val) {

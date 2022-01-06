@@ -1040,3 +1040,12 @@ export function trainsFeedbacksApiviewDown(params) {
     responseType: 'blob'
   })
 }
+
+export function schedulingProcedures(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SchedulingProcedures + id + '/' : API.SchedulingProcedures,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
