@@ -12,9 +12,9 @@
         <el-select v-model="search.product_no" clearable filterable placeholder="请选择" @change="changeList">
           <el-option
             v-for="item in options"
-            :key="item.product_no"
-            :label="item.product_no"
-            :value="item.product_no"
+            :key="item.material_no"
+            :label="item.material_no"
+            :value="item.material_no"
           />
         </el-select>
       </el-form-item>
@@ -116,9 +116,9 @@
           <el-select v-model="formData.product_no" filterable placeholder="请选择">
             <el-option
               v-for="item in options"
-              :key="item.product_no"
-              :label="item.product_no"
-              :value="item.product_no"
+              :key="item.material_no"
+              :label="item.material_no"
+              :value="item.material_no"
             />
           </el-select>
         </el-form-item>
@@ -143,7 +143,7 @@
 <script>
 import selectEquip from '@/components/select_w/equip'
 import page from '@/components/page'
-import { productInfosUrl } from '@/api/base_w'
+import { batchingMaterials } from '@/api/base_w'
 import { schedulingEquipCapacity } from '@/api/base_w_five'
 export default {
   name: 'ScheduleProductionCapacity',
@@ -152,7 +152,7 @@ export default {
     return {
       search: {},
       optionsBranch: [],
-      tableData: [{}],
+      tableData: [],
       formData: {},
       loading: false,
       dateValue: [],
@@ -160,7 +160,7 @@ export default {
       btnExportLoad: false,
       total: 0,
       dialogVisible: false,
-      tableData1: [{}],
+      tableData1: [],
       btnLoading: false,
       rules: {
         product_no: [
@@ -201,8 +201,8 @@ export default {
     },
     async getProductList() {
       try {
-        const data = await productInfosUrl('get', null, { params: { all: 1 }})
-        this.options = data.results || []
+        const data = await batchingMaterials('get', null, { params: { all: 1 }})
+        this.options = data || []
       } catch (e) {
         //
       }
