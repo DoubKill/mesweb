@@ -461,16 +461,6 @@ export const equipRoutes = [
             }
           },
           {
-            path: '/equipment/personnel-framework',
-            component: () => import('@/views/equipment-manage/master-data/personnel-framework'),
-            name: 'EquipmentMasterData-personnel-framework',
-            meta: {
-              faName: 'EquipmentMasterData',
-              title: '人员组织架构',
-              permissionName: 'department'
-            }
-          },
-          {
             path: '/equipment/MTBF-MTTR',
             component: () => import('@/views/equipment-manage/master-data/MTBF-MTTR'),
             name: 'EquipmentMasterDataMTBFMTTR',
@@ -491,8 +481,8 @@ export const equipRoutes = [
             }
           }
         ]
-      },
-      {
+      }
+      /*, {
         path: '/equipment/report-form',
         redirect: '/equipment/supplier',
         component: () => import('@/views/equipment-manage/report-form/a-index'),
@@ -613,7 +603,7 @@ export const equipRoutes = [
             }
           }
         ]
-      }
+      }*/
     ]
   }
 ]
