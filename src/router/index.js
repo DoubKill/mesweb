@@ -805,6 +805,26 @@ export let asyncRoutes = [
                 title: '洗车规则及放置规则',
                 permissionName: ''
               }
+            },
+            {
+              path: '/schedule/compound-unit',
+              component: () => import('@/views/plan/schedule/basic-data/compound-unit'),
+              name: 'ScheduleCompoundUnit',
+              meta: {
+                faName: 'ScheduleBasicData',
+                title: '胶料/单位关键字定义',
+                permissionName: ''
+              }
+            },
+            {
+              path: '/schedule/processing-keywords',
+              component: () => import('@/views/plan/schedule/basic-data/processing-keywords'),
+              name: 'ScheduleProcessingKeywords',
+              meta: {
+                faName: 'ScheduleBasicData',
+                title: '处理关键字定义',
+                permissionName: ''
+              }
             }
           ]
         }
