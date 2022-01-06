@@ -481,8 +481,8 @@ export const equipRoutes = [
             }
           }
         ]
-      }
-      /*, {
+      },
+      {
         path: '/equipment/report-form',
         redirect: '/equipment/supplier',
         component: () => import('@/views/equipment-manage/report-form/a-index'),
@@ -603,7 +603,7 @@ export const equipRoutes = [
             }
           }
         ]
-      }*/
+      }
     ]
   }
 ]
