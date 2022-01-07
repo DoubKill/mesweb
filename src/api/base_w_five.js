@@ -152,3 +152,11 @@ export function schedulingResult(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function scheduleNos(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ScheduleNos + id + '/' : API.ScheduleNos,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
