@@ -774,16 +774,16 @@ export default {
       // 车次重复提示
       try {
         let valBegin = ''
-        let valEnd = ''
+        // let valEnd = ''
         this.tableData1.forEach((D, i) => {
           valBegin = D.begin_trains
-          valEnd = D.end_trains
+          // valEnd = D.end_trains
           for (let index = 0; index < this.tableData1.length; index++) {
             const element = this.tableData1[index]
             const a = element && element.end_trains
-            const aa = element && element.begin_trains
+            // const aa = element && element.begin_trains
             if (i === index) return
-            if ((valBegin <= a && a <= valEnd) || (valBegin <= aa && aa <= valEnd)) {
+            if ((valBegin < a)) {
               throw new Error(index + 1 + '行车次重复')
             }
           }
