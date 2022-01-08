@@ -783,7 +783,7 @@ export default {
             const a = element && element.end_trains
             const aa = element && element.begin_trains
             if (i === index) return
-            if ((valBegin <= a && a <= valEnd) || (valBegin <= aa && aa <= valEnd)) {
+            if ((valBegin < a && a <= valEnd) || (valBegin <= aa && aa < valEnd)) {
               throw new Error(index + 1 + '行车次重复')
             }
           }
