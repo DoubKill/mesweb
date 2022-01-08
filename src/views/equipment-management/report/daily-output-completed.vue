@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 日产量完成 -->
+    <!-- 月产量完成 -->
     <el-form :inline="true">
       <el-form-item label="月份">
         <el-date-picker

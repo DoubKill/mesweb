@@ -1065,6 +1065,16 @@ export let asyncRoutes = [
             }
           },
           {
+            path: '/report/machine-value-setting',
+            component: () => import('@/views/equipment-management/report/machine-value-setting'),
+            name: 'machineValueSetting',
+            meta: {
+              faName: 'StatisticalReport',
+              title: '机台目标值设定',
+              permissionName: 'production_record'
+            }
+          },
+          {
             path: '/report/output-statistics-summary',
             component: () => import('@/views/equipment-management/report/output-statistics-summary'),
             name: 'OutputStatisticsSummary',
@@ -1090,7 +1100,7 @@ export let asyncRoutes = [
             name: 'DailyOutputCompleted',
             meta: {
               faName: 'StatisticalReport',
-              title: '日产量完成',
+              title: '月产量完成',
               permissionName: 'durate_putin_reason'
             }
           },
