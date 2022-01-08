@@ -343,6 +343,9 @@ export default {
       this.$refs.ruleForm.validate(async(valid) => {
         if (valid) {
           try {
+            if (!this.formData.rule_details || !this.formData.rule_details.length) {
+              throw new Error('请添加处理规则')
+            }
             this.formData.rule_details.forEach(d => {
               if (!d.process || !d.spec_params) {
                 throw new Error('处理、处理参数（规格/单位）必填')
