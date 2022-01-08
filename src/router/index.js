@@ -1065,6 +1065,36 @@ export let asyncRoutes = [
             }
           },
           {
+            path: '/report/output-statistics-summary',
+            component: () => import('@/views/equipment-management/report/output-statistics-summary'),
+            name: 'OutputStatisticsSummary',
+            meta: {
+              faName: 'StatisticalReport',
+              title: '月产量统计汇总',
+              permissionName: 'durate_putin_reason'
+            }
+          },
+          {
+            path: '/report/output-statistics-details',
+            component: () => import('@/views/equipment-management/report/output-statistics-details'),
+            name: 'OutputStatisticsDetails',
+            meta: {
+              faName: 'StatisticalReport',
+              title: '月产量统计明细及绩效',
+              permissionName: 'durate_putin_reason'
+            }
+          },
+          {
+            path: '/report/daily-output-completed',
+            component: () => import('@/views/equipment-management/report/daily-output-completed'),
+            name: 'DailyOutputCompleted',
+            meta: {
+              faName: 'StatisticalReport',
+              title: '日产量完成',
+              permissionName: 'durate_putin_reason'
+            }
+          },
+          {
             path: '/report/warehousing-reasons',
             component: () => import('@/views/equipment-management/report/warehousing-reasons'),
             name: 'WarehousingReasons',
