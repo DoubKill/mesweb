@@ -445,8 +445,8 @@ export default {
     },
     async getALLData() {
       try {
-        if (getDaysBetween(this.getParams.st, this.getParams.et) > 9) {
-          this.$message('导出Excel日期间隔不得大于10天')
+        if (getDaysBetween(this.getParams.st, this.getParams.et) > 1) {
+          this.$message('导出Excel日期间隔不得大于2天')
           return
         }
         this.btnLoading = true
@@ -457,7 +457,7 @@ export default {
           this.exportExcel()
         })
       } catch (e) {
-        //
+        this.btnLoading = false
       }
     },
     async getMaterialTestOrders(bool = false) {

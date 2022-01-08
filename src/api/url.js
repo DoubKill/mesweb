@@ -23,6 +23,7 @@ export default {
   EquipUrl: BasicsUrl + 'equips/',
 
   PersonnelsUrl: SystemUrl + 'personnels/',
+  DelUser: SystemUrl + 'del-user/',
   PermissionUrl: SystemUrl + 'group-permissions/',
   GroupUrl: SystemUrl + 'group_extension/',
   UsersByGroupUrl: SystemUrl + 'personnels_groups/',
