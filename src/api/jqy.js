@@ -1049,3 +1049,13 @@ export function schedulingProcedures(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function delUser(method, id, data = {}) {
+  const obj = {
+    url: id ? API.DelUser + id + '/' : API.DelUser,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+

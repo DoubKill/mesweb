@@ -117,7 +117,7 @@
       </el-table-column>
       <el-table-column
         label="操作"
-        width="150"
+        width="220"
       >
         <template slot-scope="scope">
           <el-button-group>
@@ -135,6 +135,15 @@
               @click="handleUserDelete(scope.row)"
             >
               {{ scope.row.is_active?'停用':'启用' }}
+            </el-button>
+            <el-button
+              v-if="permissionObj.user.indexOf('delete')>-1"
+              size="mini"
+              type="danger"
+              plain
+              @click="userDelete(scope.row)"
+            >
+              删除
             </el-button>
           </el-button-group>
         </template>
@@ -304,6 +313,7 @@
 
 <script>
 import { personnelsUrl } from '@/api/user'
+import { delUser } from '@/api/jqy'
 import { sectionTree } from '@/api/base_w_four'
 import { globalCodesUrl } from '@/api/base_w'
 // import { permissions } from '@/api/permission'
@@ -547,6 +557,26 @@ export default {
       }).then(() => {
         // eslint-disable-next-line no-undef
         personnelsUrl('delete', row.id)
+          .then((response) => {
+            app.$message({
+              type: 'success',
+              message: '操作成功!'
+            })
+            app.currentChange()
+          }).catch(() => {
+          })
+      }).catch(() => {
+      })
+    },
+    userDelete(row) {
+      var app = this
+      this.$confirm('确定删除' + row.username + ', 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // eslint-disable-next-line no-undef
+        delUser('delete', row.id)
           .then((response) => {
             app.$message({
               type: 'success',
