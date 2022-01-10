@@ -137,7 +137,7 @@
               {{ scope.row.is_active?'停用':'启用' }}
             </el-button>
             <el-button
-              v-if="permissionObj.user.indexOf('delete')>-1"
+              v-if="permissionObj.user.indexOf('del')>-1"
               size="mini"
               type="danger"
               plain

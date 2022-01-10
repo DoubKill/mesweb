@@ -53,11 +53,11 @@
         >
           <span v-if="false">{{ row }}</span>
           <div v-if="!exportTableShow" class="header-style">
-            <div style="width:100%;text-align:right;margin:8px 0 20px 0">班次</div>
-            <span>项目</span>
+            <div style="width:100%;text-align:right;margin:8px 0 20px 0">时间</div>
+            <span>段数/项目</span>
             <div class="header-style-line three-line" />
           </div>
-          <div v-else>信息</div>
+          <div v-else>段数/项目</div>
         </template>
         <template
           slot-scope="{row}"
@@ -206,8 +206,8 @@ function getCurrentMonthLastDay(d) {
     }
     .three-line{
         transform-origin:left center;
-        transform:rotate(32deg);
-        width:138px;
+        transform:rotate(31.5deg);
+        width:140px;
         position: absolute;
         top:-8px;
         left:-6px;

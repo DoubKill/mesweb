@@ -14,6 +14,7 @@
       <el-form-item>
         <el-button type="primary" @click="getHeadSearch">查询</el-button>
         <el-button
+          v-permission="['equip_mtbfmttp_statement','export']"
           type="primary"
           :loading="btnExportLoad"
           @click="exportTable"
