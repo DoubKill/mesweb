@@ -35,23 +35,9 @@
     </div>
     <div class="rightContent">
       <div>
-        排程单号：<el-select
-          v-model="planScheduleId"
-          filterable
-          placeholder="倒班规则"
-          @change="addOnePlan"
-          @focus="focusDatePicker"
-        >
-          <el-option
-            v-for="planSchedule in planSchedules"
-            :key="planSchedule.id"
-            :label="planSchedule.work_schedule__schedule_name"
-            :value="planSchedule.id"
-          />
-        </el-select>
         排程日时：
         <el-date-picker
-          v-model="day_time"
+          v-model="search.factory_date"
           style="margin-right: 10px"
           type="date"
           value-format="yyyy-MM-dd"
@@ -60,8 +46,21 @@
           @change="getPlanSchedules"
           @focus="focusDatePicker"
         />
+        排程单号：<el-select
+          v-model="search.schedule_no"
+          filterable
+          @change="addOnePlan"
+          @focus="focusDatePicker"
+        >
+          <el-option
+            v-for="item in scheduleNoList"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
 
-        <div style="color:red;display:inline-block">
+        <div style="color:red;display:inline-block;margin-left:20px">
           <div style="text-align:right">
             <el-button type="primary" style="margin-right:5px">
               确定全部机台计划
@@ -261,6 +260,7 @@ import {
   productClassesPlanPanycreateUrl,
   planImport
 } from '@/api/base_w'
+import { scheduleNos } from '@/api/base_w_five'
 // import { textData } from './textData'
 import { setDate } from '@/utils'
 import { mapGetters } from 'vuex'
@@ -277,6 +277,8 @@ export default {
     return {
       equipIdForAdd: null,
       equips: [],
+      search: {},
+      scheduleNoList: [],
       // equipById: {},
       day_time: setDate(),
       planScheduleId: null,
@@ -307,10 +309,24 @@ export default {
     this.getPlanSchedules()
     this.getEquipList()
     this.getWorkSchedules()
-
+    this.getScheduleNoList(true)
     this.templateFileUrl = process.env.BASE_URL
   },
   methods: {
+    async getScheduleNoList(bool) {
+      try {
+        const data = await scheduleNos('get', null, { params: { factory_date: this.search.factory_date }})
+        this.scheduleNoList = data
+        if (bool) {
+          if (this.scheduleNoList.length) {
+            this.getParams.schedule_no = this.scheduleNoList[0]
+            this.getList()
+          }
+        }
+      } catch (e) {
+        this.scheduleNoList = []
+      }
+    },
     setStatus(status, row, bool) {
       // 控制结束的班次不可下达
       const a = new Date(row.end_time).getTime()
@@ -510,6 +526,7 @@ export default {
           if (this.planScheduleId) {
             this.addOnePlan()
           }
+          this.getScheduleNoList(false)
         }
         // eslint-disable-next-line no-empty
       } catch (e) { }
