@@ -22,8 +22,8 @@
           />
         </el-select>
       </el-form-item>
-      <!-- <el-form-item style="float:right">
-        <el-button type="primary" :disabled="btnExportLoad" @click="templateDownload">导出Excel</el-button>
+      <el-form-item style="float:right">
+        <!-- <el-button type="primary" :disabled="btnExportLoad" @click="templateDownload">导出Excel</el-button>
         <el-upload
           style="display:inline-block;margin:0 6px"
           action="string"
@@ -32,9 +32,9 @@
           :show-file-list="false"
         >
           <el-button type="primary">导入Excel</el-button>
-        </el-upload>
+        </el-upload> -->
         <el-button type="primary" @click="addList">新建</el-button>
-      </el-form-item> -->
+      </el-form-item>
     </el-form>
     <el-table
       v-loading="loading"
