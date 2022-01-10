@@ -163,8 +163,8 @@ function getCurrentMonthLastDay(d) {
     }
     .three-line{
         transform-origin:left center;
-        transform:rotate(32deg);
-        width:138px;
+        transform:rotate(31.5deg);
+        width:140px;
         position: absolute;
         top:-8px;
         left:-6px;
