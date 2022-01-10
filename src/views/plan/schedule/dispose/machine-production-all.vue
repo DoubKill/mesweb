@@ -96,16 +96,16 @@ export default {
         filters: true,
         manualRowMove: true,
         manualColumnResize: true,
-        cells: function(row, col, prop) {
-          // if (row === 0 && col === 0) {
-          //   return { type: { renderer: customRenderer }}
+        cells: (row, col, prop) => {
+          // if (prop === 'plan_trains-Z01' && row === 1 && col === 1) {
+          return { renderer: customRenderer }
           // }
         },
         colWidths(index) {
           if ((index % 4) === 0 || ((index + 1) % 4) === 0) {
-            return 80
+            return 98
           } else {
-            return 60
+            return 45
           }
         },
         afterChange: (change, source) => {
@@ -126,12 +126,10 @@ export default {
               if (Number(_index) >= 11) {
                 __index = 2
               }
-              console.log(__index, _index, '__index')
               const _arr = this.data[__index].slice(2, this.data[__index].length - 1)
               this.data[__index][this.data[__index].length - 1][key] = sum(_arr, key)
             }
           })
-
           this.data.forEach((d, i) => {
             this['hot' + i].loadData(d)
           })
@@ -264,7 +262,7 @@ export default {
       //   })
       // })
     },
-    submitFun() {
+    async submitFun() {
       const arr = []
       this.data.forEach((d, i) => {
         d.forEach((D, i) => {
@@ -282,10 +280,10 @@ export default {
       for (let index = 0; index < arr.length; index++) {
         const ele = arr[index]
         this.machineList.forEach(d => {
-          if ((ele['desc-' + d] === '' || ele['desc-' + d]) ||
-          (ele['plan_trains-' + d] === '' || ele['plan_trains-' + d]) ||
-          (ele['recipe_name-' + d] === '' || ele['recipe_name-' + d]) ||
-          (ele['time_consume-' + d] === '' || ele['time_consume-' + d])) {
+          if ((ele['desc-' + d]) ||
+          (ele['plan_trains-' + d]) ||
+          (ele['recipe_name-' + d]) ||
+          (ele['time_consume-' + d])) {
             obj[d].push({
               desc: ele['desc-' + d],
               plan_trains: ele['plan_trains-' + d],
@@ -296,7 +294,14 @@ export default {
         })
       }
 
-      console.log(obj, 'obj')
+      try {
+        await schedulingResult('post', null, { data: { schedule_no: this.getParams.schedule_no,
+          plan_data: obj }})
+        this.$message.success('提交成功')
+      } catch (e) {
+        //
+      }
+      // console.log(obj, 'obj')
     }
   }
 }
@@ -309,10 +314,10 @@ function sum(arr, params) {
   s = Math.round(s * 100) / 100
   return s
 }
-// function customRenderer(instance, td) {
-//   Handsontable.renderers.TextRenderer.apply(this, arguments)
-//   td.style.backgroundColor = 'yellow'
-// }
+function customRenderer(instance, td) {
+  Handsontable.renderers.NumericRenderer.apply(this, arguments)
+  // td.style.backgroundColor = 'yellow'
+}
 </script>
 
 <style src="../../../../../node_modules/handsontable/dist/handsontable.full.css"></style>
