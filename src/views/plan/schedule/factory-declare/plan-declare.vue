@@ -387,7 +387,7 @@ export default {
       this.formData = {
         id: row.id,
         factory: row.factory,
-        order_no: 88
+        order_no: row.order_no
       }
       this.tableData1 = [row]
     },
@@ -429,8 +429,9 @@ export default {
     //     })
     },
     addList() {
+      const timestamp = new Date().getTime()
       this.formData = {
-        order_no: 99
+        order_no: timestamp
       }
       this.dialogVisible = true
     },
