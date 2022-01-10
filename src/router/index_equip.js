@@ -509,7 +509,7 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentReportForm',
               title: 'MTBF/MTTR分析报表',
-              permissionName: ''
+              permissionName: 'equip_mtbfmttp_statement'
             }
           },
           {
@@ -519,7 +519,7 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentReportForm',
               title: '工单别处理时间报表',
-              permissionName: ''
+              permissionName: 'equip_workorder_statement'
             }
           },
           {
@@ -529,7 +529,7 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentReportForm',
               title: '机台别处理时间报表',
-              permissionName: ''
+              permissionName: 'equip_statement'
             }
           },
           {
@@ -539,7 +539,7 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentReportForm',
               title: '人员别处理时间报表',
-              permissionName: ''
+              permissionName: 'equip_user_statement'
             }
           },
           {
@@ -549,7 +549,7 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentReportForm',
               title: '期间别处理时间报表',
-              permissionName: ''
+              permissionName: 'equip_period_statement'
             }
           },
           {
@@ -559,7 +559,7 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentReportForm',
               title: '工单按时完成率报表',
-              permissionName: ''
+              permissionName: 'equip_finishing_rate'
             }
           },
           {
@@ -569,7 +569,7 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentReportForm',
               title: '交旧率报表',
-              permissionName: ''
+              permissionName: 'equip_old_rate'
             }
           },
           {
