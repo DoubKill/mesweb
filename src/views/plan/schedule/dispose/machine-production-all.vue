@@ -1,7 +1,6 @@
 <template>
   <div class="machine-production-all">
     <!-- 机台生产计划-整体列表 -->
-    77777777
     <el-form :inline="true">
       <el-form-item label="排程日时">
         <el-date-picker
