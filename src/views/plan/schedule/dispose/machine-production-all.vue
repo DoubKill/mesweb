@@ -51,12 +51,15 @@
 </template>
 
 <script>
-import Handsontable from 'handsontable'
+import Handsontable from 'handsontable/base'
+import { registerLanguageDictionary, zhCN } from 'handsontable/i18n'
+// import Handsontable from 'handsontable'
 import 'handsontable/dist/handsontable.full.css'
 import 'handsontable/dist/languages/zh-CN.js'
 import { exportExcel, setDate } from '@/utils/index'
 import { schedulingResult, scheduleNos } from '@/api/base_w_five'
 
+registerLanguageDictionary(zhCN)
 export default {
   name: 'ScheduleMachineProduction',
   components: {
@@ -83,7 +86,7 @@ export default {
       const a = document.getElementById('example' + index)
       this['hot' + index] = new Handsontable(a, {
         data: [],
-        language: 'zh-CN',
+        language: zhCN.languageCode,
         colHeaders: false,
         height: 'auto',
         width: 'auto',
