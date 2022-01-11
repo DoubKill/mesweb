@@ -1,4 +1,5 @@
 <template>
+  <!-- 机台目标值设定 -->
   <div>
     <div style="float:right">
       <el-button type="primary" @click="exportTable">导出Excel</el-button>
@@ -12,8 +13,6 @@
       </el-button>
     </div>
     <div class="machineValueSetting">
-      <!-- 机台目标值设定 -->
-
       <el-table
         id="out-table"
         v-loading="loading"
@@ -34,7 +33,7 @@
           min-width="20"
         >
           <template slot-scope="{row}">
-            <el-input-number v-model="row.property_no" :precision="3" :min="0" />
+            <el-input-number v-model="row.property_no" :min="0" />
           </template>
         </el-table-column>
       </el-table>

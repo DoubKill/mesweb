@@ -19,7 +19,7 @@
       style="paddingLeft:200px;paddingRight:200px"
       :inline="true"
       :model="typeForm"
-      label-width="200px"
+      label-width="220px"
     >
       <el-row>
         <el-col :span="12">
@@ -27,7 +27,6 @@
             <el-select
               v-model="typeForm.scheduling_type"
               placeholder="请选择"
-              clearable
             >
               <el-option
                 v-for="item in ['传统方式', '优化算法']"
@@ -75,6 +74,9 @@
         </el-col>
 
         <el-col :span="12">
+          <el-form-item label="混炼各段之间放置期时间(小时)">
+            <el-input-number v-model="typeForm.mixing_place_interval_time" :min="0" />
+          </el-form-item>
           <el-form-item label="无S打加S放置期时间(小时)">
             <el-input-number v-model="typeForm.standing_time" :min="0" />
           </el-form-item>
@@ -85,17 +87,16 @@
             <el-input-number v-model="typeForm.validity" :min="0" />
           </el-form-item>
           <el-form-item label="密炼时间统计范围(秒)">
-            <el-input-number v-model="typeForm.mixing_summary_st_time" style="width:150px" :min="0" />
+            <el-input-number v-model="typeForm.mixing_summary_st_time" style="width:150px" :min="0" :max="typeForm.mixing_summary_et_time" />
             ~
             <el-input-number v-model="typeForm.mixing_summary_et_time" style="width:150px" :min="typeForm.mixing_summary_st_time" />
           </el-form-item>
           <el-form-item label="密炼间隔时间统计范围(秒)">
-            <el-input-number v-model="typeForm.mixing_interval_st_time" style="width:150px" :min="0" />
+            <el-input-number v-model="typeForm.mixing_interval_st_time" style="width:150px" :min="0" :max="typeForm.mixing_interval_et_time" />
             ~
             <el-input-number v-model="typeForm.mixing_interval_et_time" style="width:150px" :min="typeForm.mixing_interval_st_time" />
           </el-form-item>
           <br>
-
         </el-col>
       </el-row>
     </el-form>
