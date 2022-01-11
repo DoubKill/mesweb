@@ -51,11 +51,11 @@
 </template>
 
 <script>
-import Handsontable from 'handsontable/base'
+import Handsontable from 'handsontable'
 import { registerLanguageDictionary, zhCN } from 'handsontable/i18n'
 // import Handsontable from 'handsontable'
 import 'handsontable/dist/handsontable.full.css'
-import 'handsontable/dist/languages/zh-CN.js'
+// import 'handsontable/dist/languages/zh-CN.js'
 import { exportExcel, setDate } from '@/utils/index'
 import { schedulingResult, scheduleNos } from '@/api/base_w_five'
 
