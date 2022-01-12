@@ -160,3 +160,11 @@ export function scheduleNos(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function monthlyOutputStatisticsReport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MonthlyOutputStatisticsReport + id + '/' : API.MonthlyOutputStatisticsReport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
