@@ -53,7 +53,6 @@
 <script>
 import Handsontable from 'handsontable'
 import { registerLanguageDictionary, zhCN } from 'handsontable/i18n'
-// import Handsontable from 'handsontable'
 import 'handsontable/dist/handsontable.full.css'
 // import 'handsontable/dist/languages/zh-CN.js'
 import { exportExcel, setDate } from '@/utils/index'

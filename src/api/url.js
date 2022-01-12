@@ -634,5 +634,7 @@ export default {
   SchedulingProcedures: '/api/v1/plan/scheduling-procedures/', // 自动排程
   UpSequence: '/api/v1/plan/scheduling-product-declare-summary/up-sequence/', // 上调计划
   DownSequence: '/api/v1/plan/scheduling-product-declare-summary/down-sequence/', // 下调计划
-  SchedulingEquipShutdownPlan: '/api/v1/plan/scheduling-equip-shutdown-plan/' // 机台设备停机计划设置
+  SchedulingEquipShutdownPlan: '/api/v1/plan/scheduling-equip-shutdown-plan/', // 机台设备停机计划设置
+
+  MonthlyOutputStatisticsReport: '/api/v1/production/monthly-output-statistics-report/'
 }

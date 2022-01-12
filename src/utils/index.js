@@ -224,6 +224,7 @@ const setBorder = {
   }
 }
 export function exportExcel(value = 'excel', val, _wpxArr = []) {
+  value = value + ' ' + setDate()
   /* 从表生成工作簿对象 */
   var wb = XLSX.utils.table_to_book(document.querySelector('#out-table'), { raw: true })
   const arr = Object.keys(wb.Sheets['Sheet1'])
