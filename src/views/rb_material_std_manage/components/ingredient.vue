@@ -479,11 +479,11 @@ export default {
       // }
       const arr = this.currentMaterialList.filter(D => D === row.id)
       if (arr.length > 0) {
-        this.$message.info({
-          message: '不能选择相同的原料',
-          type: 'error'
-        })
-        return
+        // this.$message.info({
+        //   message: '不能选择相同的原料',
+        //   type: 'error'
+        // })
+        // return
       }
       if (!this.isIngredient) {
         const a = this.tableDataAll[this.faI].tableData[this.currentMaterialIndex]

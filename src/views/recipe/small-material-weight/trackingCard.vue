@@ -546,11 +546,13 @@ export default {
             currentClass = d.batch_group + '/' + d.batch_class
           }
           if (d.batching_type === '人工配') {
-            b += Math.round(Number(d.single_weight) * 1000) / 1000
+            b += Number(d.single_weight)
           } else {
-            c += Math.round(Number(d.single_weight) * 1000) / 1000
+            c += Number(d.single_weight)
           }
         })
+        b = Math.round(b * 1000) / 1000
+        c = Math.round(c * 1000) / 1000
         this.ruleForm.manual_headers.print_datetime = setDate(minTime, true)
         this.ruleForm.manual_headers.class_group = currentClass
         this.ruleForm.manual_headers.detail_machine = c
