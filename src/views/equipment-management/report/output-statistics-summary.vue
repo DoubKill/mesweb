@@ -58,7 +58,7 @@
       >
         <template slot-scope="{row}">
           <el-link
-            v-if="row.name.indexOf('合计')===-1"
+            v-if="row.name&&row.name.indexOf('合计')===-1"
             type="primary"
             @click="repairDialog(row)"
           >{{ row.name }}</el-link>
