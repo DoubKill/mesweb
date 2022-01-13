@@ -559,5 +559,12 @@ function sum(arr, params) {
   }
   .el-table .max-warning-row {
     background: #D9001B;
+    color:white;
+  }
+  .el-table__row:hover > td {
+    background-color: transparent !important;
+  }
+  .el-table__row--striped:hover > td {
+    background-color: transparent !important;
   }
 </style>
