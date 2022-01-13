@@ -426,8 +426,7 @@ export default {
           this.tableData1.push({
             factory: '合计',
             today_demanded: sum(this.tableData1, 'today_demanded'),
-            current_stock: sum(this.tableData1, 'current_stock'),
-            safety_stock: sum(this.tableData1, 'safety_stock')
+            current_stock: sum(this.tableData1, 'current_stock')
           })
         }
         this.loading1 = false
