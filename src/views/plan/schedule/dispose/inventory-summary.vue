@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="scheduleInventorySummary">
     <!-- 胶料计划库存汇总 -->
     <el-form
       :inline="true"
@@ -203,7 +203,6 @@
       title="各分厂计划及库存明细"
       width="90%"
       :visible.sync="dialogVisible1"
-      :append-to-body="true"
     >
       <el-table
         v-loading="loading1"
@@ -241,7 +240,6 @@
       title=""
       width="90%"
       :visible.sync="dialogVisible2"
-      :append-to-body="true"
     >
       <el-form
         :inline="true"
@@ -553,12 +551,13 @@ function sum(arr, params) {
 }
 </script>
 
-<style scope>
-  .el-table .warning-row {
+<style lang="scss">
+.scheduleInventorySummary{
+  .warning-row {
     background: #FFFF80;
   }
-  .el-table .max-warning-row {
-    background: #D9001B;
+  .max-warning-row {
+    background: #D9001B !important;
     color:white;
   }
   .el-table__row:hover > td {
@@ -567,4 +566,5 @@ function sum(arr, params) {
   .el-table__row--striped:hover > td {
     background-color: transparent !important;
   }
+}
 </style>
