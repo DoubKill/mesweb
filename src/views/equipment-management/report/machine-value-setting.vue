@@ -13,8 +13,9 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="exportTable">导出Excel</el-button>
+        <el-button v-permission="['machine_target_value','export']" type="primary" @click="exportTable">导出Excel</el-button>
         <el-button
+          v-permission="['machine_target_value','save']"
           type="primary"
           style="margin-bottom:10px;float:right"
           :loading="btnLoading"

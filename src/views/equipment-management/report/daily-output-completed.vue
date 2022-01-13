@@ -9,11 +9,13 @@
           format="yyyy-MM"
           value-format="yyyy-MM"
           placeholder="选择月"
+          :clearable="false"
           @change="changeList"
         />
       </el-form-item>
       <el-form-item>
         <el-button
+          v-permission="['daily_production_completion_report','export']"
           type="primary"
           @click="exportTable"
         >导出Excel</el-button>

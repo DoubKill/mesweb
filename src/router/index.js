@@ -1091,7 +1091,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'StatisticalReport',
               title: '机台目标值设定',
-              permissionName: 'production_record'
+              permissionName: 'machine_target_value'
             }
           },
           {
@@ -1101,7 +1101,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'StatisticalReport',
               title: '月产量统计汇总',
-              permissionName: 'durate_putin_reason'
+              permissionName: 'monthly_output_statistics_report'
             }
           },
           {
@@ -1111,7 +1111,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'StatisticalReport',
               title: '月产量统计明细及绩效',
-              permissionName: 'durate_putin_reason'
+              permissionName: 'monthly_output_statistics_and_performance'
             }
           },
           {
@@ -1121,7 +1121,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'StatisticalReport',
               title: '月产量完成',
-              permissionName: 'durate_putin_reason'
+              permissionName: 'daily_production_completion_report'
             }
           },
           {
