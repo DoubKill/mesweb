@@ -1,11 +1,12 @@
 <template>
-  <div>
+  <div class="outputStatisticsDetails">
     <!-- 月产量统计明细及绩效 -->
     <el-form :inline="true">
       <el-form-item label="月份">
         <el-date-picker
-          v-model="search.day_time"
+          v-model="search.date"
           type="month"
+          :clearable="false"
           format="yyyy-MM"
           value-format="yyyy-MM"
           placeholder="选择月"
@@ -13,14 +14,17 @@
         />
       </el-form-item>
       <el-form-item label="机台">
-        <selectEquip
-          :equip_no_props.sync="search.equip_no"
-          :is-created="true"
-          @changeSearch="equipChange"
-        />
+        <el-select v-model="search.equip" placeholder="请选择" @change="getList">
+          <el-option
+            v-for="item in machineList"
+            :key="item.equip_no"
+            :label="item.equip_no"
+            :value="item.equip_no"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="单位">
-        <el-select v-model="search.type" placeholder="请选择" @change="getList">
+        <el-select v-model="search.unit" placeholder="请选择" @change="getList">
           <el-option
             v-for="item in ['车','吨']"
             :key="item"
@@ -43,6 +47,7 @@
     <el-table
       id="out-table"
       v-loading="loading"
+      :row-class-name="tableRowClassName"
       :data="tableData"
       border
     >
@@ -62,54 +67,54 @@
         <template
           slot-scope="{row}"
         >
-          <span>{{ row.sn }}</span>
+          <span>{{ row.state }}</span>
         </template>
       </el-table-column>
-      <template v-for="(d,index) in tableHead">
+      <el-table-column
+        v-for="(d,index) in tableHead"
+        :key="Date.now()+index"
+        align="center"
+        :label="d.label"
+        width="120"
+      >
         <el-table-column
-          :key="index"
+          v-for="(item,i) in tableHead1[index]"
+          :key="i"
           align="center"
-          :label="d.label"
-          min-width="20"
+          :label="item"
+          width="60"
         >
-          <el-table-column
-            align="center"
-            label="A"
-            width="40"
-          >
-            <template slot-scope="{row}">
-              {{ row[d.prop+'A'] }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
-            label="C"
-            width="40"
-          >
-            <template slot-scope="{row}">
-              {{ row[d.prop+'C'] }}
-            </template>
-          </el-table-column>
+          <template slot-scope="{row}">
+            <span v-if="row.state==='无硫小计'||row.state==='加硫小计'||row.state==='无硫/加硫合计'" style="color:#4F9AFF"> {{ row[d.prop+item] }}</span>
+            <span v-else> {{ row[d.prop+item] }}</span>
+          </template>
         </el-table-column>
-      </template>
+      </el-table-column>
+      <el-table-column
+        prop="count"
+        label="日累计完成1日为起点"
+        width="90"
+      />
     </el-table>
   </div>
 </template>
 
 <script>
-import selectEquip from '@/components/select_w/equip'
-import { productClassesPlanReal } from '@/api/base_w_four'
+import { equipUrl } from '@/api/base_w'
+import { monthlyOutputStatistics } from '@/api/jqy'
 import { exportExcel } from '@/utils/index'
 import { setDate } from '@/utils'
 export default {
   name: 'OutputStatisticsDetails',
-  components: { selectEquip },
   data() {
     return {
       search: {
-        day_time: setDate(null, null, 'month'),
-        type: '车'
+        date: setDate(null, null, 'month'),
+        equip: 'Z01',
+        unit: '车'
       },
+      machineList: [],
+      tableHead1: [],
       loading: false,
       tableHead: [],
       tableData: [],
@@ -117,27 +122,46 @@ export default {
     }
   },
   created() {
-    this.tableHead = getDiffDate(this.search.day_time + '-01', getCurrentMonthLastDay(setDate()))
-    // this.getList()
+    this.tableHead = getDiffDate(this.search.date + '-01', getCurrentMonthLastDay(setDate()))
+    this.getMachineList()
+    this.getList()
   },
   methods: {
     async getList() {
       try {
         this.loading = true
-        const data = await productClassesPlanReal('get', null, { params: this.search })
-        this.tableData = data || []
+        const data = await monthlyOutputStatistics('get', null, { params: this.search })
+        this.tableHead1 = data.group_list || []
+        this.tableData = data.wl.concat(data.jl).concat(data.hj)
         this.loading = false
       } catch (e) {
         this.loading = false
       }
     },
+    async getMachineList() {
+      try {
+        const data = await equipUrl('get', { params: { all: 1, category_name: '密炼设备' }})
+        this.machineList = data.results || []
+        this.machineList.push({
+          equip_no: '190E'
+        })
+      } catch (e) { throw new Error(e) }
+    },
     changeList() {
-      this.tableHead = getDiffDate(this.search.day_time + '-01', getCurrentMonthLastDay(this.search.day_time))
+      this.tableHead = getDiffDate(this.search.date + '-01', getCurrentMonthLastDay(this.search.date))
       this.getList()
     },
     equipChange(val) {
-      this.search.equip_no = val
-    //   this.getList()
+      this.search.equip = val
+      this.getList()
+    },
+    tableRowClassName({ row, rowIndex }) {
+      if (row.state === '无硫小计' || row.state === '加硫小计') {
+        return 'wl-row'
+      }
+      if (row.state === '无硫/加硫合计') {
+        return 'summary-cell-style'
+      }
     },
     async exportTable() {
       await this.$set(this, 'exportTableShow', true)
@@ -153,11 +177,8 @@ function getDiffDate(start, end) {
   var endTime = getDate(end)
   var dateArr = []
   while ((endTime.getTime() - startTime.getTime()) >= 0) {
-    var year = startTime.getFullYear()
     var d = startTime.getDate()
-    var month = startTime.getMonth().toString().length === 1 ? '0' + (parseInt(startTime.getMonth().toString(), 10) + 1) : (startTime.getMonth() + 1)
-    var day = startTime.getDate().toString().length === 1 ? '0' + startTime.getDate() : startTime.getDate()
-    dateArr.push({ label: d + '日', prop: year + '年' + month + '月' + day + '日' })
+    dateArr.push({ label: d + '日', prop: d })
     startTime.setDate(startTime.getDate() + 1)
   }
   return dateArr
@@ -193,8 +214,9 @@ function getCurrentMonthLastDay(d) {
 }
 </script>
 
-<style scope>
-.el-table th{
+<style lang="scss">
+.outputStatisticsDetails{
+    .el-table th{
         padding:0;
     }
     .header-style{
@@ -212,4 +234,8 @@ function getCurrentMonthLastDay(d) {
         top:-8px;
         left:-6px;
     }
+    .el-table .wl-row{
+        background: #F6ECFF;
+    }
+}
 </style>

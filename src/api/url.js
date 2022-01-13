@@ -635,6 +635,8 @@ export default {
   UpSequence: '/api/v1/plan/scheduling-product-declare-summary/up-sequence/', // 上调计划
   DownSequence: '/api/v1/plan/scheduling-product-declare-summary/down-sequence/', // 下调计划
   SchedulingEquipShutdownPlan: '/api/v1/plan/scheduling-equip-shutdown-plan/', // 机台设备停机计划设置
-
+  MachineTargetValue: '/api/v1/production/machine-target-value/', // 机台目标值设定
+  MonthlyOutputStatistics: '/api/v1/production/monthly-output-statistics-and-performance/', // 月产量统计明细及绩效
+  DailyProductionCompletionReport: '/api/v1/production/daily-production-completion-report/', // 月产量完成
   MonthlyOutputStatisticsReport: '/api/v1/production/monthly-output-statistics-report/'
 }
