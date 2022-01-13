@@ -15,7 +15,7 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
+        <el-button v-permission="['monthly_output_statistics_report','export']" type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
       </el-form-item>
     </el-form>
 
@@ -102,7 +102,7 @@
           />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
+          <el-button v-permission="['monthly_output_statistics_report','export']" type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
         </el-form-item>
       </el-form>
       <el-table
