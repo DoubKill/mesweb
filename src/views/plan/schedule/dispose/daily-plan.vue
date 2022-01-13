@@ -51,6 +51,11 @@
             :value="planSchedule.id"
           />
         </el-select>
+        <el-button
+          type="primary"
+          style="margin-left:20px"
+          @click="releasePlanAll"
+        >下达全部机台计划</el-button>
       </div>
 
       <div
@@ -397,9 +402,15 @@ export default {
         this.$message.info('请先选择时间和倒班规则')
       }
     },
+    releasePlanAll() {
+      this.addPlanArr.forEach((d, i) => {
+        d.forEach((D, index) => {
+          this.releasePlan(0, D, i, index)
+        })
+      })
+    },
     async releasePlan(index, tableItem, oneIndex, towIndex) {
       const newTableItem = this.addPlanArr[oneIndex][towIndex]
-
       // 控制结束的班次不可下达
       const a = new Date(newTableItem[0].end_time).getTime()
       const b = new Date().getTime()
@@ -410,11 +421,12 @@ export default {
       }
 
       const bool = newTableItem.some(D => (D.status === '已保存' || D.status === '等待'))
-      if (!bool) {
-        this.$message.info('暂无可下达的计划！')
-        return
-      }
+
       try {
+        if (!bool) {
+          this.$message.info('暂无可下达的计划！')
+          return
+        }
         this.releaseDisabled = true
         const data = await productDayPlanNotice('post', null, {
           data: {

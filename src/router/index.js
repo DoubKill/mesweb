@@ -685,12 +685,32 @@ export let asyncRoutes = [
           },
           children: [
             {
-              path: '/schedule/effective-time',
-              component: () => import('@/views/plan/schedule/statistical-report/effective-time'),
-              name: 'ScheduleEffectiveTime',
+              path: '/schedule/machine-type',
+              component: () => import('@/views/plan/schedule/statistical-report/machine-type'),
+              name: 'ScheduleMachineType',
               meta: {
                 faName: 'ScheduleStatisticalReport',
-                title: '产量有效时间统计',
+                title: '机台别-生产量汇总',
+                permissionName: ''
+              }
+            },
+            {
+              path: '/schedule/shift-type',
+              component: () => import('@/views/plan/schedule/statistical-report/shift-type'),
+              name: 'ScheduleShiftType',
+              meta: {
+                faName: 'ScheduleStatisticalReport',
+                title: '班次别-生产量汇总',
+                permissionName: ''
+              }
+            },
+            {
+              path: '/schedule/period-type',
+              component: () => import('@/views/plan/schedule/statistical-report/period-type'),
+              name: 'SchedulePeriodType',
+              meta: {
+                faName: 'ScheduleStatisticalReport',
+                title: '期间别-生产量汇总',
                 permissionName: ''
               }
             },
