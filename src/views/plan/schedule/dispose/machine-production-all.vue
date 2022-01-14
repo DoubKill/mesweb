@@ -278,7 +278,6 @@ export default {
       this.machineList.forEach(d => {
         obj[d] = []
       })
-      console.log(arr, 'arr')
       for (let index = 0; index < arr.length; index++) {
         const ele = arr[index]
         this.machineList.forEach(d => {
@@ -287,10 +286,10 @@ export default {
           (ele['recipe_name-' + d]) ||
           (ele['time_consume-' + d])) {
             obj[d].push({
-              desc: ele['desc-' + d],
-              plan_trains: ele['plan_trains-' + d],
-              recipe_name: ele['recipe_name-' + d],
-              time_consume: ele['time_consume-' + d]
+              desc: ele['desc-' + d] || '',
+              plan_trains: ele['plan_trains-' + d] || '',
+              recipe_name: ele['recipe_name-' + d] || '',
+              time_consume: ele['time_consume-' + d] || ''
             })
           }
         })

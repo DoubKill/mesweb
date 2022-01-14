@@ -577,7 +577,7 @@ export let asyncRoutes = [
               meta: {
                 faName: 'ScheduleFactoryDeclare',
                 title: '各分厂胶料计划申报',
-                permissionName: ''
+                permissionName: 'aps_demanded_declare'
               }
             },
             {
@@ -587,7 +587,7 @@ export let asyncRoutes = [
               meta: {
                 faName: 'ScheduleFactoryDeclare',
                 title: '安全库存及安全系数申报',
-                permissionName: ''
+                permissionName: 'aps_safety_params_declare'
               }
             }
           ]
@@ -609,7 +609,7 @@ export let asyncRoutes = [
               meta: {
                 faName: 'ScheduleDispose',
                 title: '胶料计划库存汇总',
-                permissionName: ''
+                permissionName: 'aps_plan_summary'
               }
             },
             {
@@ -619,7 +619,7 @@ export let asyncRoutes = [
               meta: {
                 faName: 'ScheduleDispose',
                 title: '机台生产计划-整体列表',
-                permissionName: ''
+                permissionName: 'aps_result'
               }
             },
             {
@@ -639,7 +639,7 @@ export let asyncRoutes = [
               meta: {
                 faName: 'ScheduleDispose',
                 title: '排产胶料日计划下达',
-                permissionName: ''
+                permissionName: 'productdayplan'
               }
             },
             {
@@ -649,7 +649,7 @@ export let asyncRoutes = [
               meta: {
                 faName: 'ScheduleDispose',
                 title: '物料需求量统计',
-                permissionName: ''
+                permissionName: 'materialdemanded'
               }
             },
             {
@@ -669,7 +669,7 @@ export let asyncRoutes = [
               meta: {
                 faName: 'ScheduleDispose',
                 title: '机台设备停机计划设置',
-                permissionName: ''
+                permissionName: 'aps_halt_plan'
               }
             }
           ]
@@ -783,7 +783,7 @@ export let asyncRoutes = [
               meta: {
                 faName: 'ScheduleBasicData',
                 title: '排程参数设定',
-                permissionName: ''
+                permissionName: 'aps_params_setting'
               }
             },
             {
@@ -793,7 +793,7 @@ export let asyncRoutes = [
               meta: {
                 faName: 'ScheduleBasicData',
                 title: '定机表(段次及主副机台)',
-                permissionName: ''
+                permissionName: 'aps_machine_setting'
               }
             },
             {
@@ -803,7 +803,7 @@ export let asyncRoutes = [
               meta: {
                 faName: 'ScheduleBasicData',
                 title: '胶料机台配方物料统计',
-                permissionName: ''
+                permissionName: 'aps_machine_recipe'
               }
             },
             {
@@ -813,7 +813,7 @@ export let asyncRoutes = [
               meta: {
                 faName: 'ScheduleBasicData',
                 title: '炭黑粉料罐物料规格汇总',
-                permissionName: ''
+                permissionName: 'aps_tank_status'
               }
             },
             {
@@ -823,7 +823,7 @@ export let asyncRoutes = [
               meta: {
                 faName: 'ScheduleBasicData',
                 title: '机台设备生产能力',
-                permissionName: ''
+                permissionName: 'aps_equip_capacity'
               }
             },
             {
@@ -833,7 +833,7 @@ export let asyncRoutes = [
               meta: {
                 faName: 'ScheduleBasicData',
                 title: '洗车规则及放置规则',
-                permissionName: ''
+                permissionName: 'aps_wash_rules'
               }
             },
             {
@@ -843,7 +843,7 @@ export let asyncRoutes = [
               meta: {
                 faName: 'ScheduleBasicData',
                 title: '胶料/单位关键字定义',
-                permissionName: ''
+                permissionName: 'aps_product_keyword'
               }
             },
             {
@@ -853,7 +853,7 @@ export let asyncRoutes = [
               meta: {
                 faName: 'ScheduleBasicData',
                 title: '处理关键字定义',
-                permissionName: ''
+                permissionName: 'aps_opera_keyword'
               }
             }
           ]
