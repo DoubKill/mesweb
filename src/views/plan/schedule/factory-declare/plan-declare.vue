@@ -25,7 +25,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="计划日期">
+      <el-form-item label="申报日期">
         <el-date-picker
           v-model="dateValue"
           type="daterange"
@@ -359,6 +359,8 @@ export default {
       this.getList()
     },
     changeDate(arr) {
+      this.search.st = arr ? arr[0] : ''
+      this.search.et = arr ? arr[1] : ''
       this.changeList()
     },
     debounceInput() {
@@ -455,6 +457,10 @@ export default {
             d.order_no = this.formData.order_no
           })
           params = this.tableData1
+          if (!params.length) {
+            this.$message.info('请添加申报')
+            return
+          }
         } else {
           params = this.tableData1[0]
         }
