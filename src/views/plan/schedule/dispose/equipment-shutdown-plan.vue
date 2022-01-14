@@ -166,6 +166,7 @@ export default {
       tableData: [],
       loadingBtn: false,
       rules: {
+        down_type: [{ required: true, message: '不能为空', trigger: 'change' }],
         equip_no: [{ required: true, message: '不能为空', trigger: 'change' }],
         begin_time: [{ required: true, message: '不能为空', trigger: 'change' }],
         duration: [{ required: true, message: '不能为空', trigger: 'change' }]
