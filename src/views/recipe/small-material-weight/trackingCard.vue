@@ -453,7 +453,10 @@ export default {
       this.formInline.page = 1
       this.getList()
     },
-    async changeBarCode(val) {
+    changeBarCode() {
+      this.$debounce(this, '_changeBarCode')
+    },
+    async _changeBarCode(val) {
       try {
         if (!val) {
           return
