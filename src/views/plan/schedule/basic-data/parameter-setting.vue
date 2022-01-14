@@ -8,7 +8,7 @@
         </span>
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button type="primary" :loading="submit" @click="save">
+        <el-button v-permission="['aps_params_setting','change']" type="primary" :loading="submit" @click="save">
           保存
         </el-button>
       </el-form-item>

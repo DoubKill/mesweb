@@ -22,11 +22,11 @@
         />
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button v-permission="['equip_fault_signal', 'add']" :loading="submit" type="primary" @click="scheduling">自动排程</el-button>
-        <el-button v-permission="['equip_fault_signal', 'add']" type="primary" @click="getList">查询</el-button>
-        <el-button v-permission="['equip_fault_signal', 'export']" type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
+        <el-button v-permission="['inventory-summary','procedures']" :loading="submit" type="primary" @click="scheduling">自动排程</el-button>
+        <el-button type="primary" @click="getList">查询</el-button>
+        <el-button v-permission="['inventory-summary','export']" type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
         <el-upload
-          v-permission="['equip_fault_signal', 'import']"
+          v-permission="['inventory-summary','import']"
           style="margin:0 8px;display:inline-block"
           action="string"
           accept=".xls, .xlsx"
@@ -35,7 +35,7 @@
         >
           <el-button type="primary">导入Excel</el-button>
         </el-upload>
-        <el-button v-permission="['equip_fault_signal', 'add']" type="primary" @click="onSubmit">新建</el-button>
+        <el-button v-permission="['inventory-summary','add']" type="primary" @click="onSubmit">新建</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -123,12 +123,14 @@
               @click="moveDown(scope.$index,scope.row,tableData)"
             />
             <el-button
+              v-permission="['inventory-summary','change']"
               icon="el-icon-edit"
               size="mini"
               type="primary"
               @click="editOrder(scope.row)"
             />
             <el-button
+              v-permission="['inventory-summary','delete']"
               icon="el-icon-delete"
               size="mini"
               type="danger"

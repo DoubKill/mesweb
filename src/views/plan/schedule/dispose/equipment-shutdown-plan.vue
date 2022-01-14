@@ -13,6 +13,7 @@
       </el-form-item>
       <el-form-item style="float:right">
         <el-button
+          v-permission="['aps_halt_plan','add']"
           type="primary"
           @click="onSubmit()"
         >新建</el-button>
@@ -60,12 +61,14 @@
       >
         <template slot-scope="scope">
           <el-button
+            v-permission="['aps_halt_plan','change']"
             size="mini"
             type="primary"
             @click="edit(scope.row)"
           >编辑
           </el-button>
           <el-button
+            v-permission="['aps_halt_plan','delete']"
             size="mini"
             type="danger"
             @click="handleDelete(scope.row)"
