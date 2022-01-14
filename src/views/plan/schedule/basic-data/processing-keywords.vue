@@ -42,6 +42,7 @@
       >
         <template slot-scope="scope">
           <el-button
+            v-permission="['aps_opera_keyword','delete']"
             size="mini"
             :disabled="(scope.row.isEdit&&scope.row.id)?true:false"
             type="danger"
@@ -49,14 +50,16 @@
           >
             删除
           </el-button>
-          <el-button
-            v-if="!scope.row.isEdit&&scope.row.id"
-            size="mini"
-            type="primary"
-            @click="handleDisposeEdit(scope.row)"
-          >
-            编辑
-          </el-button>
+          <div v-permission="['aps_opera_keyword','change']" style="display:inline-block">
+            <el-button
+              v-if="!scope.row.isEdit&&scope.row.id"
+              size="mini"
+              type="primary"
+              @click="handleDisposeEdit(scope.row)"
+            >
+              编辑
+            </el-button>
+          </div>
           <el-button
             v-if="scope.row.isEdit"
             size="mini"
@@ -70,6 +73,7 @@
     </el-table>
     <div style="width:100%;text-align:center;margin-top:15px">
       <el-button
+        v-permission="['aps_opera_keyword','add']"
         size="small"
         @click="addCellDispose"
       >插入一行</el-button>

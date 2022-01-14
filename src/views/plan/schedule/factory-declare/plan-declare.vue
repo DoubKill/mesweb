@@ -48,7 +48,7 @@
       </el-form-item>
       <el-form-item style="float:right">
         <!-- <el-button type="primary" :loading="btnExportLoad" @click="templateDownload">导出Excel</el-button> -->
-        <el-button type="primary" @click="addList">新建</el-button>
+        <el-button v-permission="['aps_demanded_declare','add']" type="primary" @click="addList">新建</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -120,16 +120,19 @@
         <template slot-scope="scope">
           <el-button-group v-if="!['单页合计','汇总'].includes(scope.row.factory)">
             <el-button
+              v-permission="['aps_demanded_declare','change']"
               size="mini"
               @click="showEditEquipCateDialog(scope.row)"
             >编辑
             </el-button>
-            <el-button
-              v-if="scope.row.status!=='关闭'"
-              size="mini"
-              type="danger"
-              @click="handleEquipCateDelete(scope.row)"
-            >关闭</el-button>
+            <div v-permission="['aps_demanded_declare','change']" style="display:inline-block">
+              <el-button
+                v-if="scope.row.status!=='关闭'"
+                size="mini"
+                type="danger"
+                @click="handleEquipCateDelete(scope.row)"
+              >关闭</el-button>
+            </div>
           </el-button-group>
         </template>
       </el-table-column>

@@ -4,6 +4,7 @@
     <h3 style="margin:3px 0 0 0;">洗车规则及放置规则</h3>
     <div style="width:100%;text-align:right;margin-bottom:15px;">
       <el-button
+        v-permission="['aps_wash_rules','add']"
         type="primary"
         @click="showCreateDialog"
       >新建</el-button>
@@ -46,10 +47,12 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
+              v-permission="['aps_wash_rules','change']"
               size="mini"
               @click="showEditDialog(scope.row)"
             >编辑</el-button>
             <el-button
+              v-permission="['aps_wash_rules','delete']"
               size="mini"
               type="danger"
               plain
