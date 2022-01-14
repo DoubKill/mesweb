@@ -33,7 +33,7 @@
         >
           <el-button type="primary">导入Excel</el-button>
         </el-upload> -->
-        <el-button type="primary" @click="addList">新建</el-button>
+        <el-button v-permission="['aps_safety_params_declare','add']" type="primary" @click="addList">新建</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -81,10 +81,12 @@
         <template slot-scope="scope">
           <el-button-group v-if="!['单页合计','汇总'].includes(scope.row.factory)">
             <el-button
+              v-permission="['aps_safety_params_declare','change']"
               size="mini"
               @click="showEditDialog(scope.row)"
             >编辑</el-button>
             <el-button
+              v-permission="['aps_safety_params_declare','delete']"
               size="mini"
               type="danger"
               plain

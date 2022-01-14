@@ -28,8 +28,8 @@
       </el-form-item>
     </el-form>
     <div v-if="data.length" style="margin-bottom:20px;text-align:right">
-      <el-button type="primary" @click="submitFun">确定全部机台计划</el-button>
-      <el-button type="primary" @click="exportTable">导出Excel</el-button>
+      <el-button v-permission="['aps_result','confirm']" type="primary" @click="submitFun">确定全部机台计划</el-button>
+      <el-button v-permission="['aps_result','export']" type="primary" @click="exportTable">导出Excel</el-button>
       <!-- <el-upload
         style="display:inline-block;margin:0 6px"
         action="string"

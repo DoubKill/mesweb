@@ -19,9 +19,9 @@
         </el-select>
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button type="primary" @click="batchSet">批量设置</el-button>
-        <el-button type="primary" :disabled="btnExportLoad" @click="templateDownload">导出Excel</el-button>
-        <el-button type="primary" @click="addList">新建</el-button>
+        <el-button v-permission="['aps_equip_capacity','change']" type="primary" @click="batchSet">批量设置</el-button>
+        <el-button v-permission="['aps_equip_capacity','export']" type="primary" :disabled="btnExportLoad" @click="templateDownload">导出Excel</el-button>
+        <el-button v-permission="['aps_equip_capacity','add']" type="primary" @click="addList">新建</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -79,10 +79,12 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
+              v-permission="['aps_equip_capacity','change']"
               size="mini"
               @click="showEditDialog(scope.row)"
             >编辑</el-button>
             <el-button
+              v-permission="['aps_equip_capacity','delete']"
               size="mini"
               type="danger"
               plain
