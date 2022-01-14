@@ -26,18 +26,17 @@
         />
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button v-permission="['equip_fault_signal', 'export']" type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel模板</el-button>
+        <el-button v-permission="['aps_machine_setting','export']" type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel模板</el-button>
         <el-upload
-          v-permission="['equip_fault_signal', 'import']"
           style="margin:0 8px;display:inline-block"
           action="string"
           accept=".xls, .xlsx"
           :http-request="Upload"
           :show-file-list="false"
         >
-          <el-button type="primary">导入Excel</el-button>
+          <el-button v-permission="['aps_machine_setting','import']" type="primary">导入Excel</el-button>
         </el-upload>
-        <el-button v-permission="['equip_fault_signal', 'add']" type="primary" @click="onSubmit">新建</el-button>
+        <el-button v-permission="['aps_machine_setting','add']" type="primary" @click="onSubmit">新建</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -111,14 +110,14 @@
       >
         <template slot-scope="scope">
           <el-button
-            v-permission="['equip_in_warehouse', 'change']"
+            v-permission="['aps_machine_setting','change']"
             type="primary"
             size="mini"
             @click="editOrder(scope.row)"
           >编辑
           </el-button>
           <el-button
-            v-permission="['equip_in_warehouse', 'delete']"
+            v-permission="['aps_machine_setting','delete']"
             type="danger"
             size="mini"
             @click="deleteOrder(scope.row)"
