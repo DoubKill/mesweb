@@ -622,7 +622,7 @@ export let asyncRoutes = [
                 permissionName: 'aps_result'
               }
             },
-            {
+            /* {
               path: '/schedule/machine',
               component: () => import('@/views/plan/schedule/dispose/machine'),
               name: 'ScheduleMachine',
@@ -641,7 +641,7 @@ export let asyncRoutes = [
                 title: '排产胶料日计划下达',
                 permissionName: 'productdayplan'
               }
-            },
+            },*/
             {
               path: '/schedule/material-requirement',
               component: () => import('@/views/plan/schedule/dispose/material-requirement'),
@@ -652,7 +652,7 @@ export let asyncRoutes = [
                 permissionName: 'materialdemanded'
               }
             },
-            {
+            /* {
               path: '/schedule/weighing-system-plan',
               component: () => import('@/views/plan/schedule/dispose/weighing-system-plan'),
               name: 'ScheduleWeighingSystemPlan',
@@ -661,7 +661,7 @@ export let asyncRoutes = [
                 title: '称量系统计划',
                 permissionName: ''
               }
-            },
+            },*/
             {
               path: '/schedule/equipment-shutdown-plan',
               component: () => import('@/views/plan/schedule/dispose/equipment-shutdown-plan'),
@@ -674,7 +674,7 @@ export let asyncRoutes = [
             }
           ]
         },
-        {
+        /* {
           path: '/schedule/statistical-report',
           component: () => import('@/views/plan/schedule/statistical-report/a-index'),
           name: 'ScheduleStatisticalReport',
@@ -765,7 +765,7 @@ export let asyncRoutes = [
               }
             }
           ]
-        },
+        },*/
         {
           path: '/schedule/basic-data',
           component: () => import('@/views/plan/schedule/basic-data/a-index'),
