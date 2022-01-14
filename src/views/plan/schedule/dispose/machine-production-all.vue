@@ -181,16 +181,16 @@ export default {
             element.data.forEach((d, _i) => {
               if (!arrContent[_i]) {
                 arrContent[_i] = {
-                  ['recipe_name-' + key]: d.recipe_name || '',
-                  ['plan_trains-' + key]: d.plan_trains || '',
-                  ['time_consume-' + key]: d.time_consume || '',
-                  ['desc-' + key]: d.desc || ''
+                  ['recipe_name-' + key]: d.recipe_name,
+                  ['plan_trains-' + key]: d.plan_trains,
+                  ['time_consume-' + key]: d.time_consume,
+                  ['desc-' + key]: d.desc
                 }
               } else {
-                arrContent[_i]['recipe_name-' + key] = d.recipe_name || ''
-                arrContent[_i]['plan_trains-' + key] = d.plan_trains || ''
-                arrContent[_i]['time_consume-' + key] = d.time_consume || ''
-                arrContent[_i]['desc-' + key] = d.desc || ''
+                arrContent[_i]['recipe_name-' + key] = d.recipe_name
+                arrContent[_i]['plan_trains-' + key] = d.plan_trains
+                arrContent[_i]['time_consume-' + key] = d.time_consume
+                arrContent[_i]['desc-' + key] = d.desc
               }
             })
             if (i % 5 === 0) {
@@ -249,6 +249,7 @@ export default {
       this.getScheduleNoList(false)
     },
     changeList() {
+      this.machineList = []
       this.getList()
     },
     exportTable() {
@@ -286,10 +287,10 @@ export default {
           (ele['recipe_name-' + d]) ||
           (ele['time_consume-' + d])) {
             obj[d].push({
-              desc: ele['desc-' + d] || '',
-              plan_trains: ele['plan_trains-' + d] || '',
-              recipe_name: ele['recipe_name-' + d] || '',
-              time_consume: ele['time_consume-' + d] || ''
+              desc: ele['desc-' + d] || null,
+              plan_trains: ele['plan_trains-' + d] || null,
+              recipe_name: ele['recipe_name-' + d] || null,
+              time_consume: ele['time_consume-' + d] || null
             })
           }
         })
