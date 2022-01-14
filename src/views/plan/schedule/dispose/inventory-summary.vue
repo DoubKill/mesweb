@@ -391,12 +391,9 @@ export default {
     tableRowClassName1({ row, rowIndex }) {
       if (row.factory === '合计') {
         return 'summary-cell-style'
-      } else {
-        if (row.current_stock > row.safety_stock) {
-          return 'warning-row'
-        } else if (row.current_stock < row.safety_stock) {
-          return 'max-warning-row'
-        }
+      }
+      if (row.current_stock < row.safety_stock) {
+        return 'max-warning-row'
       }
     },
     changeSearch() {
