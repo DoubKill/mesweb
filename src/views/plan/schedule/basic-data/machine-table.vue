@@ -28,14 +28,13 @@
       <el-form-item style="float:right">
         <el-button v-permission="['aps_machine_setting','export']" type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel模板</el-button>
         <el-upload
-          v-permission="['aps_machine_setting','import']"
           style="margin:0 8px;display:inline-block"
           action="string"
           accept=".xls, .xlsx"
           :http-request="Upload"
           :show-file-list="false"
         >
-          <el-button type="primary">导入Excel</el-button>
+          <el-button v-permission="['aps_machine_setting','import']" type="primary">导入Excel</el-button>
         </el-upload>
         <el-button v-permission="['aps_machine_setting','add']" type="primary" @click="onSubmit">新建</el-button>
       </el-form-item>
