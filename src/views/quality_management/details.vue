@@ -61,7 +61,7 @@
           :loading="btnLoading"
           @click="getALLData"
         >
-          导出
+          导出Excel
         </el-button>
       </el-form-item>
     </el-form>
@@ -445,6 +445,10 @@ export default {
     },
     async getALLData() {
       try {
+        if (getDaysBetween(this.getParams.st, this.getParams.et) > 1) {
+          this.$message('导出Excel日期间隔不得大于2天')
+          return
+        }
         this.btnLoading = true
         const arr = await this.getMaterialTestOrders(true)
         this.ALLData = arr || []
@@ -453,7 +457,7 @@ export default {
           this.exportExcel()
         })
       } catch (e) {
-        //
+        this.btnLoading = false
       }
     },
     async getMaterialTestOrders(bool = false) {
@@ -646,6 +650,18 @@ export default {
       return wbout
     }
   }
+}
+function getDaysBetween(dateString1, dateString2) {
+  var startDate = Date.parse(dateString1)
+  var endDate = Date.parse(dateString2)
+  if (startDate > endDate) {
+    return 0
+  }
+  if (startDate === endDate) {
+    return 1
+  }
+  var days = (endDate - startDate) / (1 * 24 * 60 * 60 * 1000)
+  return days
 }
 </script>
 

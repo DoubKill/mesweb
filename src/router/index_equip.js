@@ -481,8 +481,8 @@ export const equipRoutes = [
             }
           }
         ]
-      }
-      /*, {
+      },
+      {
         path: '/equipment/report-form',
         redirect: '/equipment/supplier',
         component: () => import('@/views/equipment-manage/report-form/a-index'),
@@ -492,7 +492,7 @@ export const equipRoutes = [
           icon: 'quality'
         },
         children: [
-          {
+          /* {
             path: '/equipment/OEE',
             component: () => import('@/views/equipment-manage/report-form/OEE'),
             name: 'EquipmentReportFormOEE',
@@ -501,7 +501,7 @@ export const equipRoutes = [
               title: '密炼机 设备OEE分析',
               permissionName: ''
             }
-          },
+          },*/
           {
             path: '/equipment/reportForm/MTBF-MTTR',
             component: () => import('@/views/equipment-manage/report-form/MTBF-MTTR'),
@@ -509,7 +509,7 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentReportForm',
               title: 'MTBF/MTTR分析报表',
-              permissionName: ''
+              permissionName: 'equip_mtbfmttp_statement'
             }
           },
           {
@@ -519,7 +519,7 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentReportForm',
               title: '工单别处理时间报表',
-              permissionName: ''
+              permissionName: 'equip_workorder_statement'
             }
           },
           {
@@ -529,7 +529,7 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentReportForm',
               title: '机台别处理时间报表',
-              permissionName: ''
+              permissionName: 'equip_statement'
             }
           },
           {
@@ -539,7 +539,7 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentReportForm',
               title: '人员别处理时间报表',
-              permissionName: ''
+              permissionName: 'equip_user_statement'
             }
           },
           {
@@ -549,7 +549,7 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentReportForm',
               title: '期间别处理时间报表',
-              permissionName: ''
+              permissionName: 'equip_period_statement'
             }
           },
           {
@@ -559,7 +559,7 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentReportForm',
               title: '工单按时完成率报表',
-              permissionName: ''
+              permissionName: 'equip_finishing_rate'
             }
           },
           {
@@ -569,10 +569,10 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentReportForm',
               title: '交旧率报表',
-              permissionName: ''
+              permissionName: 'equip_old_rate'
             }
-          },
-          {
+          }
+          /* {
             path: '/equipment/order-receiving',
             component: () => import('@/views/equipment-manage/report-form/order-receiving'),
             name: 'EquipmentReportFormOrderReceiving',
@@ -601,9 +601,9 @@ export const equipRoutes = [
               title: '能耗（电）统计报表',
               permissionName: ''
             }
-          }
+          }*/
         ]
-      }*/
+      }
     ]
   }
 ]

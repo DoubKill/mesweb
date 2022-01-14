@@ -144,3 +144,27 @@ export function schedulingProductSafetyParams(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function schedulingResult(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SchedulingResult + id + '/' : API.SchedulingResult,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function scheduleNos(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ScheduleNos + id + '/' : API.ScheduleNos,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function monthlyOutputStatisticsReport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MonthlyOutputStatisticsReport + id + '/' : API.MonthlyOutputStatisticsReport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

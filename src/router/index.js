@@ -549,8 +549,8 @@ export let asyncRoutes = [
           }
         }
       ]
-    }
-    /*, {
+    },
+    {
       path: '/auto-schedule',
       redirect: '/schedule/factory-declare',
       name: 'AutoSchedule',
@@ -577,7 +577,7 @@ export let asyncRoutes = [
               meta: {
                 faName: 'ScheduleFactoryDeclare',
                 title: '各分厂胶料计划申报',
-                permissionName: ''
+                permissionName: 'aps_demanded_declare'
               }
             },
             {
@@ -587,7 +587,7 @@ export let asyncRoutes = [
               meta: {
                 faName: 'ScheduleFactoryDeclare',
                 title: '安全库存及安全系数申报',
-                permissionName: ''
+                permissionName: 'aps_safety_params_declare'
               }
             }
           ]
@@ -609,7 +609,7 @@ export let asyncRoutes = [
               meta: {
                 faName: 'ScheduleDispose',
                 title: '胶料计划库存汇总',
-                permissionName: ''
+                permissionName: 'aps_plan_summary'
               }
             },
             {
@@ -619,10 +619,10 @@ export let asyncRoutes = [
               meta: {
                 faName: 'ScheduleDispose',
                 title: '机台生产计划-整体列表',
-                permissionName: ''
+                permissionName: 'aps_result'
               }
             },
-            {
+            /* {
               path: '/schedule/machine',
               component: () => import('@/views/plan/schedule/dispose/machine'),
               name: 'ScheduleMachine',
@@ -639,9 +639,9 @@ export let asyncRoutes = [
               meta: {
                 faName: 'ScheduleDispose',
                 title: '排产胶料日计划下达',
-                permissionName: ''
+                permissionName: 'productdayplan'
               }
-            },
+            },*/
             {
               path: '/schedule/material-requirement',
               component: () => import('@/views/plan/schedule/dispose/material-requirement'),
@@ -649,10 +649,10 @@ export let asyncRoutes = [
               meta: {
                 faName: 'ScheduleDispose',
                 title: '物料需求量统计',
-                permissionName: ''
+                permissionName: 'materialdemanded'
               }
             },
-            {
+            /* {
               path: '/schedule/weighing-system-plan',
               component: () => import('@/views/plan/schedule/dispose/weighing-system-plan'),
               name: 'ScheduleWeighingSystemPlan',
@@ -661,7 +661,7 @@ export let asyncRoutes = [
                 title: '称量系统计划',
                 permissionName: ''
               }
-            },
+            },*/
             {
               path: '/schedule/equipment-shutdown-plan',
               component: () => import('@/views/plan/schedule/dispose/equipment-shutdown-plan'),
@@ -669,12 +669,12 @@ export let asyncRoutes = [
               meta: {
                 faName: 'ScheduleDispose',
                 title: '机台设备停机计划设置',
-                permissionName: ''
+                permissionName: 'aps_halt_plan'
               }
             }
           ]
         },
-        {
+        /* {
           path: '/schedule/statistical-report',
           component: () => import('@/views/plan/schedule/statistical-report/a-index'),
           name: 'ScheduleStatisticalReport',
@@ -685,12 +685,32 @@ export let asyncRoutes = [
           },
           children: [
             {
-              path: '/schedule/effective-time',
-              component: () => import('@/views/plan/schedule/statistical-report/effective-time'),
-              name: 'ScheduleEffectiveTime',
+              path: '/schedule/machine-type',
+              component: () => import('@/views/plan/schedule/statistical-report/machine-type'),
+              name: 'ScheduleMachineType',
               meta: {
                 faName: 'ScheduleStatisticalReport',
-                title: '产量有效时间统计',
+                title: '机台别-生产量汇总',
+                permissionName: ''
+              }
+            },
+            {
+              path: '/schedule/shift-type',
+              component: () => import('@/views/plan/schedule/statistical-report/shift-type'),
+              name: 'ScheduleShiftType',
+              meta: {
+                faName: 'ScheduleStatisticalReport',
+                title: '班次别-生产量汇总',
+                permissionName: ''
+              }
+            },
+            {
+              path: '/schedule/period-type',
+              component: () => import('@/views/plan/schedule/statistical-report/period-type'),
+              name: 'SchedulePeriodType',
+              meta: {
+                faName: 'ScheduleStatisticalReport',
+                title: '期间别-生产量汇总',
                 permissionName: ''
               }
             },
@@ -745,7 +765,7 @@ export let asyncRoutes = [
               }
             }
           ]
-        },
+        },*/
         {
           path: '/schedule/basic-data',
           component: () => import('@/views/plan/schedule/basic-data/a-index'),
@@ -763,7 +783,7 @@ export let asyncRoutes = [
               meta: {
                 faName: 'ScheduleBasicData',
                 title: '排程参数设定',
-                permissionName: ''
+                permissionName: 'aps_params_setting'
               }
             },
             {
@@ -773,7 +793,7 @@ export let asyncRoutes = [
               meta: {
                 faName: 'ScheduleBasicData',
                 title: '定机表(段次及主副机台)',
-                permissionName: ''
+                permissionName: 'aps_machine_setting'
               }
             },
             {
@@ -783,7 +803,7 @@ export let asyncRoutes = [
               meta: {
                 faName: 'ScheduleBasicData',
                 title: '胶料机台配方物料统计',
-                permissionName: ''
+                permissionName: 'aps_machine_recipe'
               }
             },
             {
@@ -793,7 +813,7 @@ export let asyncRoutes = [
               meta: {
                 faName: 'ScheduleBasicData',
                 title: '炭黑粉料罐物料规格汇总',
-                permissionName: ''
+                permissionName: 'aps_tank_status'
               }
             },
             {
@@ -803,7 +823,7 @@ export let asyncRoutes = [
               meta: {
                 faName: 'ScheduleBasicData',
                 title: '机台设备生产能力',
-                permissionName: ''
+                permissionName: 'aps_equip_capacity'
               }
             },
             {
@@ -813,13 +833,33 @@ export let asyncRoutes = [
               meta: {
                 faName: 'ScheduleBasicData',
                 title: '洗车规则及放置规则',
-                permissionName: ''
+                permissionName: 'aps_wash_rules'
+              }
+            },
+            {
+              path: '/schedule/compound-unit',
+              component: () => import('@/views/plan/schedule/basic-data/compound-unit'),
+              name: 'ScheduleCompoundUnit',
+              meta: {
+                faName: 'ScheduleBasicData',
+                title: '胶料/单位关键字定义',
+                permissionName: 'aps_product_keyword'
+              }
+            },
+            {
+              path: '/schedule/processing-keywords',
+              component: () => import('@/views/plan/schedule/basic-data/processing-keywords'),
+              name: 'ScheduleProcessingKeywords',
+              meta: {
+                faName: 'ScheduleBasicData',
+                title: '处理关键字定义',
+                permissionName: 'aps_opera_keyword'
               }
             }
           ]
         }
       ]
-    }*/
+    }
     ]
   },
   {
@@ -1042,6 +1082,46 @@ export let asyncRoutes = [
               faName: 'StatisticalReport',
               title: '生产运行记录',
               permissionName: 'production_record'
+            }
+          },
+          {
+            path: '/report/machine-value-setting',
+            component: () => import('@/views/equipment-management/report/machine-value-setting'),
+            name: 'machineValueSetting',
+            meta: {
+              faName: 'StatisticalReport',
+              title: '机台目标值设定',
+              permissionName: 'machine_target_value'
+            }
+          },
+          {
+            path: '/report/output-statistics-summary',
+            component: () => import('@/views/equipment-management/report/output-statistics-summary'),
+            name: 'OutputStatisticsSummary',
+            meta: {
+              faName: 'StatisticalReport',
+              title: '月产量统计汇总',
+              permissionName: 'monthly_output_statistics_report'
+            }
+          },
+          {
+            path: '/report/output-statistics-details',
+            component: () => import('@/views/equipment-management/report/output-statistics-details'),
+            name: 'OutputStatisticsDetails',
+            meta: {
+              faName: 'StatisticalReport',
+              title: '月产量统计明细及绩效',
+              permissionName: 'monthly_output_statistics_and_performance'
+            }
+          },
+          {
+            path: '/report/daily-output-completed',
+            component: () => import('@/views/equipment-management/report/daily-output-completed'),
+            name: 'DailyOutputCompleted',
+            meta: {
+              faName: 'StatisticalReport',
+              title: '月产量完成',
+              permissionName: 'daily_production_completion_report'
             }
           },
           {

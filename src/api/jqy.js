@@ -1040,3 +1040,48 @@ export function trainsFeedbacksApiviewDown(params) {
     responseType: 'blob'
   })
 }
+
+export function schedulingProcedures(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SchedulingProcedures + id + '/' : API.SchedulingProcedures,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function delUser(method, id, data = {}) {
+  const obj = {
+    url: id ? API.DelUser + id + '/' : API.DelUser,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function machineTargetValue(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MachineTargetValue + id + '/' : API.MachineTargetValue,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function monthlyOutputStatistics(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MonthlyOutputStatistics + id + '/' : API.MonthlyOutputStatistics,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function dailyProductionCompletionReport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.DailyProductionCompletionReport + id + '/' : API.DailyProductionCompletionReport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
