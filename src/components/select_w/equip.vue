@@ -6,6 +6,8 @@
       :clearable="!isCreated"
       placeholder="请选择机台"
       :multiple="isMultiple"
+      :disabled="disabled"
+      :multiple-limit="multipleLimit"
       @change="changeSearch"
       @visible-change="visibleChange"
     >
@@ -41,10 +43,18 @@ export default {
       type: Boolean,
       default: false
     },
+    disabled: {
+      type: Boolean,
+      default: false
+    },
     // 设备类型
     equipType: {
       type: String,
       default: '密炼设备'
+    },
+    multipleLimit: {
+      type: Number,
+      default: 0
     }
   },
   data() {
