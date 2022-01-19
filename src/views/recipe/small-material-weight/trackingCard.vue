@@ -6,12 +6,22 @@
         <select-batching-equip v-model="formInline.equip" :is-default="true" :created-is="true" @changeFun="changeEquipList" />
       </el-form-item>
       <el-form-item label="配料日期">
-        <el-date-picker
+        <!-- <el-date-picker
           v-model="formInline.batch_time"
           type="date"
           placeholder="选择日期"
           value-format="yyyy-MM-dd"
           :clearable="false"
+          @change="changeList"
+        /> -->
+        <el-date-picker
+          v-model="dateValue"
+          type="daterange"
+          :clearable="false"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          value-format="yyyy-MM-dd"
           @change="changeList"
         />
       </el-form-item>
@@ -356,10 +366,7 @@ export default {
   components: { SelectBatchingEquip, page },
   data() {
     return {
-      formInline: {
-        batch_time: setDate()
-        // batch_time: '2021-12-02'
-      },
+      formInline: {},
       tableData: [],
       total: 0,
       loading: false,
@@ -380,7 +387,8 @@ export default {
       btnLoading: false,
       barCode: '',
       otherNum: 0,
-      againPrint: null
+      againPrint: null,
+      dateValue: [getNextDate(setDate(), -20), setDate()]
     }
   },
   created() {
@@ -426,11 +434,11 @@ export default {
         }
         const data = await xlPlan('get', null, { params: {
           equip_no: this.formInline.equip_no,
-          batch_time: this.formInline.batch_time,
+          s_time: this.formInline.s_time,
+          e_time: this.formInline.e_time,
           state: '完成,运行中',
           all: 1
         }})
-        // date_time: '2021-05-27'
         this.option = data
       } catch (e) {
         //
@@ -442,11 +450,13 @@ export default {
       }
     },
     changeList() {
-      // this.cancel()
-      if (!this.formInline.batch_time) {
-        this.$message.info('请选择配料日期')
+      this.formInline.s_time = this.dateValue[0]
+      this.formInline.e_time = this.dateValue[1]
+      if (getDaysBetween(this.formInline.s_time, this.formInline.e_time) > 20) {
+        this.$message('查询日期间隔不得超过20天')
         return
       }
+      // this.cancel()
       if (!this.formInline.status) {
         delete this.formInline.status
       }
@@ -690,6 +700,27 @@ export default {
       })
     }
   }
+}
+
+function getDaysBetween(dateString1, dateString2) {
+  var startDate = Date.parse(dateString1)
+  var endDate = Date.parse(dateString2)
+  if (startDate > endDate) {
+    return 0
+  }
+  if (startDate === endDate) {
+    return 1
+  }
+  var days = (endDate - startDate) / (1 * 24 * 60 * 60 * 1000)
+  return days
+}
+function getNextDate(date, day) {
+  var dd = new Date(date)
+  dd.setDate(dd.getDate() + day)
+  var y = dd.getFullYear()
+  var m = dd.getMonth() + 1 < 10 ? '0' + (dd.getMonth() + 1) : dd.getMonth() + 1
+  var d = dd.getDate() < 10 ? '0' + dd.getDate() : dd.getDate()
+  return y + '-' + m + '-' + d
 }
 </script>
 
