@@ -466,16 +466,16 @@ export default {
     changeBarCode() {
       this.$debounce(this, '_changeBarCode')
     },
-    async _changeBarCode(val) {
+    async _changeBarCode() {
       try {
-        if (!val) {
+        if (!this.barCode) {
           return
         }
         const obj = {
           merge_flag: this.ruleForm.merge_flag,
           product_no: this.ruleForm.product_no,
           dev_type: this.ruleForm.dev_type,
-          scan_bra_code: val,
+          scan_bra_code: this.barCode,
           package_count: this.ruleForm.package_count,
           split_count: this.ruleForm.split_count,
           manual_infos: this.ruleForm.manual_infos,

@@ -298,7 +298,8 @@ export default {
       tableData1: [],
       tableData1New: [],
       options: [],
-      productList: []
+      productList: [],
+      equipList: []
     }
   },
   created() {
