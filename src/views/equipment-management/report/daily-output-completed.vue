@@ -52,7 +52,7 @@
           align="center"
           :label="d"
           :prop="d"
-          width="70"
+          width="80"
         />
       </template>
       <el-table-column

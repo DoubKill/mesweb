@@ -211,7 +211,7 @@ export default {
         const data = await equipUrl('get', { params: { all: 1, category_name: '密炼设备' }})
         this.machineList = data.results || []
         this.machineList.push({
-          equip_no: 'E190'
+          equip_no: '190E'
         })
       } catch (e) { throw new Error(e) }
     },
@@ -242,6 +242,9 @@ export default {
               return prev
             }
           }, 0)
+          if (index === 1 || index === 6) {
+            sums[index] = sums[index].toFixed(2)
+          }
         } else {
           sums[index] = ''
         }

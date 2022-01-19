@@ -28,7 +28,6 @@
       <el-table
         id="out-table"
         v-loading="loading"
-        width="80%"
         :data="tableData"
         :row-class-name="tableRowClassName"
         border
@@ -160,7 +159,6 @@ function truncate(arr) {
 <style lang="scss" scoped>
   .machineValueSetting{
     width: 50%;
-    margin-left: 25%;
    .el-input{
       width:200px;
     }
