@@ -671,6 +671,16 @@ export let asyncRoutes = [
                 title: '机台设备停机计划设置',
                 permissionName: 'aps_halt_plan'
               }
+            },
+            {
+              path: '/schedule/scheduled-inventory',
+              component: () => import('@/views/plan/schedule/dispose/scheduled-inventory'),
+              name: 'ScheduledInventory',
+              meta: {
+                faName: 'ScheduleDispose',
+                title: '排程无硫库存单',
+                permissionName: 'aps_stock_summary'
+              }
             }
           ]
         },
