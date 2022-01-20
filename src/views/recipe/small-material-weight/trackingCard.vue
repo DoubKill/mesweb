@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="trackingCard">
     <!-- 料包产出-质量追踪卡管理 -->
     <el-form :inline="true">
       <el-form-item label="配料机台">
@@ -524,6 +524,8 @@ export default {
               batch_group: _details.batch_group,
               batch_class: _details.batch_class
             })
+          } else {
+            _bool = true
           }
           names.push(_details.material_name)
           this.ruleForm.manual_infos.push({
@@ -693,14 +695,21 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+.trackingCard{
+  .el-dialog{
+    margin-top:2vh !important;
+    .el-form-item{
+      margin-bottom:5px;
+    }
+  }
 
    .info-table {
      border-collapse: collapse;
       td {
         min-width: 180px;
-        padding-top: 10px;
-        padding-bottom: 10px;
+        padding-top: 6px;
+        padding-bottom: 6px;
         text-align: center;
       }
     }
@@ -709,4 +718,6 @@ export default {
         min-width: 150px;
       }
     }
+}
+
 </style>
