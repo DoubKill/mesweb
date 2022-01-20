@@ -185,7 +185,7 @@
           <el-input v-model="currentInfo.spare__code" :disabled="true" />
         </el-form-item>
         <el-form-item label="备件名称">
-          <el-input v-model="currentInfo.spare_name" :disabled="true" style="width:300px" />
+          <el-input v-model="currentInfo.spare_name" :disabled="true" style="width:400px" />
         </el-form-item>
         <el-form-item style="float:right">
           <el-button
