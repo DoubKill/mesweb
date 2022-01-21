@@ -444,7 +444,7 @@ export default {
         if (this.multipleSelection.every(d => d.status === '已生成')) {
           this.dialogVisible = true
           this.loadPerson = true
-          const data = await getStaff('get', null, { params: {}})
+          const data = await getStaff('get', null, { params: { have_classes: 1 }})
           this.staffList = data.results || []
           this.checkList = []
           this.loadPerson = false
