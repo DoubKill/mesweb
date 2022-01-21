@@ -639,5 +639,8 @@ export default {
   MachineTargetValue: '/api/v1/production/machine-target-value/', // 机台目标值设定
   MonthlyOutputStatistics: '/api/v1/production/monthly-output-statistics-and-performance/', // 月产量统计明细及绩效
   DailyProductionCompletionReport: '/api/v1/production/daily-production-completion-report/', // 月产量完成
-  MonthlyOutputStatisticsReport: '/api/v1/production/monthly-output-statistics-report/'
+  MonthlyOutputStatisticsReport: '/api/v1/production/monthly-output-statistics-report/',
+  SchedulingStockSummary: '/api/v1/plan/scheduling-stock-summary/',
+  Sb: '/api/v1/production/nishisb/',
+  MaterialTestPlan: '/api/v1/quality/material-test-plan/'
 }

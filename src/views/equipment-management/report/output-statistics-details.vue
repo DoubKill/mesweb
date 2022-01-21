@@ -14,7 +14,7 @@
         />
       </el-form-item>
       <el-form-item label="机台">
-        <el-select v-model="search.equip" placeholder="请选择" @change="getList">
+        <el-select v-model="search.equip" clearable placeholder="请选择" @change="getList">
           <el-option
             v-for="item in machineList"
             :key="item.equip_no"
@@ -111,7 +111,6 @@ export default {
     return {
       search: {
         date: setDate(null, null, 'month'),
-        equip: 'Z01',
         unit: '车'
       },
       machineList: [],

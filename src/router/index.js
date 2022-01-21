@@ -671,6 +671,16 @@ export let asyncRoutes = [
                 title: '机台设备停机计划设置',
                 permissionName: 'aps_halt_plan'
               }
+            },
+            {
+              path: '/schedule/scheduled-inventory',
+              component: () => import('@/views/plan/schedule/dispose/scheduled-inventory'),
+              name: 'ScheduledInventory',
+              meta: {
+                faName: 'ScheduleDispose',
+                title: '排程无硫库存单',
+                permissionName: 'aps_stock_summary'
+              }
             }
           ]
         },
@@ -2343,6 +2353,16 @@ export let asyncRoutes = [
               permissionName: 'material_report_value'
             }
           }
+          /*, {
+            path: '/material-quickcheck/quality-inspection-plan',
+            component: () => import('@/views/material_quickcheck_manage/quality-inspection-plan'),
+            name: 'QualityInspectionPlan',
+            meta: {
+              faName: 'MaterialQuickcheck',
+              title: '原材料 质量检测计划',
+              permissionName: ''
+            }
+          }*/
         ]
       },
       {

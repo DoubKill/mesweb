@@ -1085,3 +1085,39 @@ export function dailyProductionCompletionReport(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function schedulingStockSummary(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SchedulingStockSummary + id + '/' : API.SchedulingStockSummary,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function glsb(method, id, data = {}) {
+  const obj = {
+    url: id ? API.Sb + id + '/' : API.Sb,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function materialTestPlan(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MaterialTestPlan + id + '/' : API.MaterialTestPlan,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function materialReportEquip(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MaterialReportEquip + id + '/' : API.MaterialReportEquip,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

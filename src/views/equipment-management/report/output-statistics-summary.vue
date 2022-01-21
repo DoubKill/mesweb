@@ -58,7 +58,7 @@
       >
         <template slot-scope="{row}">
           <el-link
-            v-if="row.name&&row.name.indexOf('合计')===-1"
+            v-if="row.name&&row.name.indexOf('合计')===-1&&row.name.indexOf('总计')===-1"
             type="primary"
             @click="repairDialog(row)"
           >{{ row.name }}</el-link>
@@ -181,7 +181,7 @@ export default {
         const jl = data.jl || []
         const wl = data.wl || []
         const state = wl.concat(jl)
-
+        state.push({ name: '总计', value: (sum(state, 'value') / 2).toFixed(2) })
         state.forEach((d, i) => {
           if (d.name === 'jl') {
             d.name = '加硫合计'
@@ -211,7 +211,7 @@ export default {
         const data = await equipUrl('get', { params: { all: 1, category_name: '密炼设备' }})
         this.machineList = data.results || []
         this.machineList.push({
-          equip_no: 'E190'
+          equip_no: '190E'
         })
       } catch (e) { throw new Error(e) }
     },
@@ -242,6 +242,12 @@ export default {
               return prev
             }
           }, 0)
+          if (index === 1 || index === 6) {
+            sums[index] = sums[index].toFixed(2)
+          }
+          if (index === 6) {
+            sums[index] = ''
+          }
         } else {
           sums[index] = ''
         }
@@ -267,6 +273,15 @@ export default {
       debounce(this, 'getDialogList')
     }
   }
+}
+function sum(arr, params) {
+  var s = 0
+  arr.forEach(function(val, idx, arr) {
+    const a = val[params] ? Number(val[params]) : 0
+    s += a
+  }, 0)
+  s = Math.round(s * 100) / 100
+  return s
 }
 </script>
 

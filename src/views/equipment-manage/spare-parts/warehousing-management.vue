@@ -795,7 +795,7 @@ export default {
       }
     },
     async dialog1(row) {
-      if (row.plan_in_quantity === row.in_quantity) {
+      if (row.plan_in_quantity <= row.in_quantity) {
         this.$message('已经全部入库')
       } else {
         this.order = row.id
