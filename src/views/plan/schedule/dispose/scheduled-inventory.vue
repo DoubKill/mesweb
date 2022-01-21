@@ -35,31 +35,31 @@
         <el-table-column
           align="center"
           prop="HMB"
-          label="HMB"
+          label="HMB（kg）"
           min-width="20"
         />
         <el-table-column
           align="center"
           prop="CMB"
-          label="CMB"
+          label="CMB（kg）"
           min-width="20"
         />
         <el-table-column
           align="center"
           prop="1MB"
-          label="1MB"
+          label="1MB（kg）"
           min-width="20"
         />
         <el-table-column
           align="center"
           prop="2MB"
-          label="2MB"
+          label="2MB（kg）"
           min-width="20"
         />
         <el-table-column
           align="center"
           prop="3MB"
-          label="3MB"
+          label="3MB（kg）"
           min-width="20"
         />
       </el-table>
