@@ -113,7 +113,7 @@
                 />
               </template>
             </el-table-column>
-            <el-table-column label="上传到MES" width="80px">
+            <el-table-column v-if="checkPermission(['xl_recipe','upload'])" label="上传到MES" width="80px">
               <template slot-scope="scope">
                 <el-button
                   size="mini"
