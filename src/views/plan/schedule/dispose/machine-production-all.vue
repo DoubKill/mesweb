@@ -26,20 +26,23 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item>
+        <div v-if="data.length" style="display:inline-block">
+          <el-button v-permission="['aps_result','confirm']" type="primary" @click="submitFun">确定全部机台计划</el-button>
+          <el-button v-permission="['aps_result','export']" type="primary" @click="exportTable">导出Excel</el-button>
+        </div>
+        <el-upload
+          v-permission="['aps_result','import']"
+          style="display:inline-block;margin:0 6px"
+          action="string"
+          accept=".xls, .xlsx"
+          :http-request="Upload"
+          :show-file-list="false"
+        >
+          <el-button type="primary">导入Excel</el-button>
+        </el-upload>
+      </el-form-item>
     </el-form>
-    <div v-if="data.length" style="margin-bottom:20px;text-align:right">
-      <el-button v-permission="['aps_result','confirm']" type="primary" @click="submitFun">确定全部机台计划</el-button>
-      <el-button v-permission="['aps_result','export']" type="primary" @click="exportTable">导出Excel</el-button>
-      <!-- <el-upload
-        style="display:inline-block;margin:0 6px"
-        action="string"
-        accept=".xls, .xlsx"
-        :http-request="Upload"
-        :show-file-list="false"
-      >
-        <el-button type="primary">导入Excel</el-button>
-      </el-upload> -->
-    </div>
     <div id="out-table">
       <div id="example0" style="" />
       <div id="example1" style="" />
@@ -56,7 +59,7 @@ import { registerLanguageDictionary, zhCN } from 'handsontable/i18n'
 import 'handsontable/dist/handsontable.full.css'
 // import 'handsontable/dist/languages/zh-CN.js'
 import { exportExcel, setDate } from '@/utils/index'
-import { schedulingResult, scheduleNos } from '@/api/base_w_five'
+import { schedulingResult, scheduleNos, ImportXlx } from '@/api/base_w_five'
 
 registerLanguageDictionary(zhCN)
 export default {
@@ -100,12 +103,16 @@ export default {
         manualColumnResize: true,
         cells: (row, col, prop) => {
           // if (prop === 'plan_trains-Z01' && row === 1 && col === 1) {
-          return { renderer: customRenderer }
           // }
+          if (row === 1 || row === 0) {
+            return { renderer: topHeardCustomRenderer }
+          } else {
+            return { renderer: customRenderer }
+          }
         },
         colWidths(index) {
           if ((index % 4) === 0 || ((index + 1) % 4) === 0) {
-            return 98
+            return 115
           } else {
             return 45
           }
@@ -256,14 +263,20 @@ export default {
       exportExcel('机台生产计划')
     },
     Upload(param) {
+      if (!this.getParams.factory_date) {
+        this.$message('请选择日期')
+        return
+      }
       const formData = new FormData()
       formData.append('file', param.file)
-      // equipOrderAssignRuleImportXlsx('post', null, { data: formData }).then(response => {
-      //   this.$message({
-      //     type: 'success',
-      //     message: response
-      //   })
-      // })
+      formData.append('factory_date', this.getParams.factory_date)
+      ImportXlx('post', null, { data: formData }).then(response => {
+        this.$message({
+          type: 'success',
+          message: response
+        })
+        this.getScheduleNoList()
+      })
     },
     async submitFun() {
       const arr = []
@@ -319,6 +332,10 @@ function sum(arr, params) {
 function customRenderer(instance, td) {
   Handsontable.renderers.NumericRenderer.apply(this, arguments)
   // td.style.backgroundColor = 'yellow'
+}
+function topHeardCustomRenderer(instance, td) {
+  Handsontable.renderers.NumericRenderer.apply(this, arguments)
+  td.style.backgroundColor = '#f5f7fa'
 }
 </script>
 
