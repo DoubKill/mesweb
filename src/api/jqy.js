@@ -1085,3 +1085,12 @@ export function dailyProductionCompletionReport(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function schedulingStockSummary(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SchedulingStockSummary + id + '/' : API.SchedulingStockSummary,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
