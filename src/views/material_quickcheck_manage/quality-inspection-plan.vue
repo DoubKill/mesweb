@@ -4,28 +4,27 @@
     <el-form :inline="true">
       <el-form-item label="检测机号">
         <el-select
-          v-model="search.test_equip"
-          :disabled="startBtnLoading"
-          clearable
+          v-model="search.material_report_equip"
+          :clearable="false"
           placeholder="请选择"
-          @visible-change="changeVisibleTestEquip"
+          @visible-change="getTestEquipList"
           @change="changeTestEquip"
         >
           <el-option
-            v-for="(group,groupI) in testEquipList"
-            :key="groupI"
-            :label="group&&group.no"
-            :value="group&&group.id"
+            v-for="d in testEquipList"
+            :key="d.id"
+            :label="d.no"
+            :value="d.id"
           />
         </el-select>
       </el-form-item>
       <el-form-item label="实验区分">
         <el-select
-          v-model="search.test_indicator_name"
+          v-model="search.test_method_name"
           :disabled="startBtnLoading"
+          :clearable="false"
           placeholder="请选择"
-          @visible-change="changeVisibleTestIndicators"
-          @change="changeTestIndicators"
+          @visible-change="getTestIndicators"
         >
           <el-option
             v-for="(group,_i) in testIndicatorsList"
@@ -35,26 +34,28 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="工厂日期">
+      <el-form-item label="检测日期">
         <el-date-picker
-          v-model="search.factory_date"
+          v-model="search.test_time"
+          :clearable="false"
           :disabled="startBtnLoading"
           type="date"
           value-format="yyyy-MM-dd"
           placeholder="选择日期"
-          clearable
-          @change="searchList"
         />
       </el-form-item>
-      <el-form-item label="生产班次">
+      <el-form-item label="检测班次">
         <class-select
+          :value-default="search.test_classes"
+          :is-clearable="false"
           :is-disabled="startBtnLoading"
           @classSelected="classChanged"
         />
       </el-form-item>
-      <el-form-item label="检测班组" prop="test_group">
+      <el-form-item label="检测班组">
         <el-select
           v-model="search.test_group"
+          :clearable="false"
           :disabled="startBtnLoading"
           placeholder="请选择"
           @visible-change="getClassGroup"
@@ -67,9 +68,11 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="试验方法" prop="test_method_name">
+      <el-form-item label="试验方法">
         <el-select
-          v-model="search.test_method_name"
+          v-model="search.test_type"
+          style="width:200px"
+          :clearable="false"
           :disabled="startBtnLoading"
           placeholder="请选择"
           @visible-change="changeTestMethod"
@@ -78,14 +81,13 @@
             v-for="group in testMethodList"
             :key="group.id"
             :label="group.name"
-            :value="group.name"
-            :disabled="!group.allowed"
+            :value="group.id"
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="样品条码" prop="test_method_name">
+      <el-form-item label="样品条码">
         <el-input
-          v-model="search.test_method_name"
+          v-model="material_tmh"
           style="width:400px"
         />
       </el-form-item>
@@ -95,7 +97,7 @@
       <el-form-item>
         <el-button v-permission="['examine_test_plan', 'begin']" type="primary" :disabled="startBtnLoading" @click="startTestFun">开始检测</el-button>
         <el-button v-permission="['examine_test_plan', 'end']" type="primary" @click="endTestFun">结束检测</el-button>
-        <el-button type="primary" @click="getList">刷新</el-button>
+        <el-button type="primary" @click="getWaitPlan">刷新</el-button>
       </el-form-item>
       <el-form-item label="检测计划单据号">
         <el-input
@@ -111,17 +113,22 @@
       border
     >
       <el-table-column
-        prop="equip_no"
+        prop="material_tmh"
         label="样品条码"
         min-width="20"
       />
       <el-table-column
-        prop="equip_no"
-        label="物料规格"
+        prop="material_name"
+        label="原材料名称"
         min-width="20"
       />
       <el-table-column
         prop="equip_no"
+        label="是否合格"
+        min-width="20"
+      />
+      <el-table-column
+        prop="material_batch"
         label="批次号"
         min-width="20"
       />
@@ -131,7 +138,7 @@
         min-width="20"
       />
       <el-table-column
-        prop="equip_no"
+        prop="status"
         label="状态"
         min-width="20"
       />
@@ -151,124 +158,159 @@
 
 <script>
 import classSelect from '@/components/ClassSelect'
-import { exportExcel } from '@/utils/index'
-import { globalCodesUrl, testIndicators, matTestIndicatorMethods } from '@/api/base_w'
-import { productReportEquip } from '@/api/base_w_four'
+import { globalCodesUrl, testIndicators } from '@/api/base_w'
+import { materialExamineType } from '@/api/base_w_three'
+import { glsb, materialTestPlan } from '@/api/jqy'
+import { materialReportEquip } from '@/api/base_w_four'
 export default {
   name: 'QualityInspectionPlan',
   components: { classSelect },
   data() {
     return {
       testEquipList: [],
+      material_tmh: 'BHZ12105311651140001',
       testMethodList: [],
+      plan_uid: null,
       startBtnLoading: false,
       testIndicatorsList: [],
       groups: [],
-      search: {},
+      search: {
+        material_report_equip: null,
+        test_method_name: null,
+        test_time: null,
+        test_classes: null,
+        test_group: null,
+        test_type: null
+      },
       btnExportLoad: false,
       loading: false,
       tableData: []
     }
   },
   methods: {
-    async getList() {
+    async addTestFun() {
+      if (this.tableData.some(d => d.material_tmh === this.material_tmh)) {
+        this.$message('已有此样品条码相关信息')
+        return
+      }
+      const data = await glsb('get', null, { params: { sb: this.material_tmh }})
+      if (!data) {
+        this.$message('无此样品条码相关信息')
+        return
+      }
+      const obj = {
+        material_tmh: data.res.TMH,
+        material_name: data.res.WLMC,
+        material_batch: data.res.SCRQ
+      }
+      if (this.startBtnLoading === true) {
+        try {
+          await materialTestPlan('post', null, { data: { material_list: [obj] }})
+          this.tableData.push(obj)
+        } catch {
+          //
+        }
+      } else {
+        this.tableData.push(obj)
+      }
+    },
+    async startTestFun() {
+      if (this.tableData.length === 0) {
+        this.$message.info('没有可检测数据，请添加')
+        return
+      }
+      if (!this.search.material_report_equip) {
+        this.$message.info('请选择检测机号')
+        return
+      }
+      if (!this.search.test_method_name) {
+        this.$message.info('请选择实验区分')
+        return
+      }
+      if (!this.search.test_time) {
+        this.$message.info('请选择工厂日期')
+        return
+      }
+      if (!this.search.test_classes) {
+        this.$message.info('请选择班次')
+        return
+      }
+      if (!this.search.test_group) {
+        this.$message.info('请选择班组')
+        return
+      }
+      if (!this.search.test_type) {
+        this.$message.info('请选择试验方法')
+        return
+      }
       try {
-        this.loading = true
-        // const data = await equipStatement('get', null, { params: this.search })
-        // this.tableData = data
-        // this.loading = false
+        this.$set(this.search, 'material_list', this.tableData)
+        await materialTestPlan('post', null, { data: this.search })
+        this.$message.success('开始检测')
+        this.startBtnLoading = true
       } catch (e) {
-        this.loading = false
+        this.startBtnLoading = false
       }
-    },
-    changeVisibleTestEquip(bool) {
-      if (bool) {
-        this.getTestEquipList(false)
-      }
-    },
-    changeVisibleTestIndicators(bool) {
-      if (bool) {
-        this.getTestIndicators()
-      }
-    },
-    addTestFun() {
-      this.tableData.push({ name: 1 })
-    },
-    startTestFun() {
-      // if (this.tableData.length === 0) {
-      //   this.$message.info('没有可检测数据，请添加')
-      //   return
-      // }
-      this.startBtnLoading = true
     },
     endTestFun() {
-      this.startBtnLoading = false
-      // if (!this.ruleForm.plan_uid) {
-      //   this.$message.info('没有可结束计划,如果存在请刷新页面查看')
-      //   return
-      // }
-      // this.$confirm('此操作将结束检测, 是否继续?', '提示', {
-      //   confirmButtonText: '确定',
-      //   cancelButtonText: '取消',
-      //   type: 'warning'
-      // }).then(async() => {
-      //   try {
-      //     await productTestPlan('delete', this.ruleForm.id, { params: { }})
-      //     this.btnLoading = false
-      //     this.$message.success('已全部结束检测')
-      //     this.ruleForm.plan_uid = ''
-      //     this.tableDataRight = []
-      //     this.ruleForm.product_no = ''
-      //     // this.$nextTick(() => {
-      //     // this.$refs.ruleForm.clearValidate()
-      //     // })
-      //   } catch (e) {
-      //     //
-      //   }
-      // })
-    },
-    changeTestIndicators() {
-      this.ruleForm.test_method_name = ''
+      if (!this.plan_uid) {
+        this.$message.info('没有可结束计划,如果存在请刷新页面查看')
+        return
+      }
+      this.$confirm('此操作将结束检测, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        try {
+          await materialTestPlan('delete', this.plan_uid, { params: { }})
+          this.startBtnLoading = false
+          this.$message.success('已全部结束检测')
+          this.tableData = []
+          this.plan_uid = null
+          this.search.material_report_equip = null
+          this.search.test_method_name = null
+          this.search.test_time = null
+          this.search.test_classes = null
+          this.search.test_group = null
+          this.search.test_type = null
+        } catch (e) {
+          //
+        }
+      })
     },
     async getTestEquipList(bool) {
-      try {
-        const data = await productReportEquip('get', null, { params: { all: 1 }})
-        this.testEquipList = data || []
-        if (bool) {
-          this.search.test_equip = data && data[0].id
-          this.getWaitPlan()
-          this.getTestIndicatorsList()
+      if (bool) {
+        try {
+          const data = await materialReportEquip('get', null, { params: { all: 1 }})
+          this.testEquipList = data.results || []
+        } catch (e) {
+          this.testEquipList = []
         }
-      } catch (e) {
-        //
       }
     },
     async delRow(index, row) {
-    //   if (!row.id) {
-    //     this.tableDataRight.splice(index, 1)
-    //     return
-    //   }
-    //   if (this.tableDataRight.length === 1) {
-    //     this.$message.info('最少保留一列数据')
-    //     return
-    //   }
-    //   try {
-    //     await productTestPlanDetail('delete', row.id)
-    //     this.$message.success('操作成功')
-    //     this.isDelRow = true
-    //     this.refreshFun()
-    //   } catch (e) {
-    //     //
-    //   }
+      if (!row.id) {
+        this.tableData.splice(index, 1)
+        return
+      }
+      if (this.tableData.length === 1) {
+        this.$message.info('最少保留一列数据')
+        return
+      }
+      // try {
+      //   await productTestPlanDetail('delete', row.id)
+      //   this.$message.success('操作成功')
+      //   this.getWaitPlan()
+      // } catch (e) {
+      //   //
+      // }
     },
     async changeTestMethod(bool) {
-      console.log(bool)
       if (bool) {
         try {
-          const data = await matTestIndicatorMethods('get', null, { params: { material_no: this.ruleForm.product_no }})
-          let arr = []
-          arr = data.filter(d => d.test_indicator === this.search.test_indicator_name)
-          this.testMethodList = arr[0].methods
+          const data = await materialExamineType('get', null, { params: { all: 1 }})
+          this.testMethodList = data.results
         } catch (e) {
           this.testMethodList = []
         }
@@ -287,50 +329,60 @@ export default {
       }
     },
     async getTestIndicators(bool) {
-      try {
-        const data = await testIndicators('get', null, { params: { all: 1 }})
-        this.testIndicatorsList = data
-        if (bool) {
-          this.search.test_indicator_name = data[0].name
-        }
-      } catch (e) {
+      if (bool) {
+        try {
+          const data = await testIndicators('get', null, { params: { all: 1 }})
+          this.testIndicatorsList = data
+        } catch (e) {
         //
+        }
       }
     },
-    getTestIndicatorsList() {
-      this.search.test_indicator_name = ''
-      const obj = this.testEquipList.find(d => d.id === this.search.test_equip)
-      this.testIndicatorsList = obj.test_indicator_name || []
-    //   if (!this.ruleForm.plan_uid) {
-    //     this.search.test_indicator_name = this.testIndicatorsList[0].test_indicator__name
-    //   }
-    },
     changeTestEquip() {
-      this.tableDataRight = []
       this.tableData = []
-      this.btnLoading = false
-      this.ruleForm.plan_uid = ''
-      this.ruleForm.product_no = ''
-      this.search.product_no = ''
-      this.getTestIndicatorsList()
+      this.search.test_method_name = null
+      this.search.test_time = null
+      this.search.test_classes = null
+      this.search.test_group = null
+      this.search.test_type = null
+      this.startBtnLoading = false
       this.getWaitPlan()
     },
+    async getWaitPlan() {
+      try {
+        const data = await materialTestPlan('get', null, { params: { material_report_equip: this.search.material_report_equip }})
+        this.changeTestMethod(true)
+        if (data.length === 0) {
+          this.btnLoading = false
+          this.tableData = []
+          this.btnLoading = false
+          this.plan_uid = null
+          return
+        }
+        if (data[0].status === 1) {
+          this.startBtnLoading = true
+          this.plan_uid = data[0].id
+          this.search.test_method_name = data[0].test_method_name
+          this.search.test_time = data[0].test_time
+          this.search.test_classes = data[0].test_classes
+          this.search.test_group = data[0].test_group
+          this.search.test_type = data[0].test_type
+          this.tableData = data[0].material_test_plan_detail
+          this.$message('正在检测中')
+        } else {
+          this.$message.success('全部检测完毕')
+          this.tableData = []
+          this.btnLoading = false
+          this.plan_uid = null
+        }
+      } catch (e) {
+        this.startBtnLoading = false
+        this.tableData = []
+        this.plan_uid = null
+      }
+    },
     classChanged(val) {
-      this.search.classes = val
-      this.searchList()
-    },
-    searchList() {
-      this.search.product_no = ''
-      this.ruleForm.product_no = ''
-      this.getList()
-    },
-    changeDate(arr) {
-      this.search.s_time = arr ? arr[0] : ''
-      this.search.e_time = arr ? arr[1] : ''
-      this.getList()
-    },
-    exportExcel() {
-      exportExcel('机台别-生产量汇总')
+      this.search.test_classes = val
     }
   }
 }

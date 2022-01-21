@@ -2,8 +2,8 @@
   <div class="hebao-style">
     <!-- 单配(合包)化工流转卡 -->
     <el-form :inline="true">
-      <el-form-item label="细料名称">
-        <el-input v-model="search.product_no" clearable placeholder="细料名称" @input="debounceList" />
+      <el-form-item label="配方名称">
+        <el-input v-model="search.product_no" clearable placeholder="配方名称" @input="debounceList" />
       </el-form-item>
       <!-- <el-form-item label="物料名称">
         <el-input v-model="search.material_name" clearable placeholder="物料名称" @input="debounceList" />
@@ -34,7 +34,7 @@
       />
       <el-table-column
         prop="product_no"
-        label="细料名称"
+        label="配方名称"
         min-width="20"
       />
       <el-table-column
@@ -127,7 +127,7 @@
       :before-close="handleClose"
     >
       <el-form ref="formRef" :model="formData" :rules="rules" label-width="120px">
-        <el-form-item v-if="!formData.id" prop="product_no" label="细料名称">
+        <el-form-item v-if="!formData.id" prop="product_no" label="配方名称">
           <!-- <el-select v-model="formData.product_no" :disabled="formData.id?true:false" filterable placeholder="请选择" @change="changeProduct">
             <el-option
               v-for="item in productList"
@@ -148,7 +148,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-else label="细料名称">
+        <el-form-item v-else label="配方名称">
           {{ formData.product_no }}
         </el-form-item>
         <!-- <el-form-item prop="dev_type" label="机型">
@@ -298,7 +298,8 @@ export default {
       tableData1: [],
       tableData1New: [],
       options: [],
-      productList: []
+      productList: [],
+      equipList: []
     }
   },
   created() {

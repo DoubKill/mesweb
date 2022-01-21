@@ -629,6 +629,7 @@ export default {
   SchedulingProductDemandedDeclare: '/api/v1/plan/scheduling-product-demanded-declare/', // 各分厂胶料计划申报
   SchedulingProductSafetyParams: '/api/v1/plan/scheduling-product-safety-params/',
   SchedulingResult: '/api/v1/plan/scheduling-result/', // 机台生产计划-整体列表
+  ImportXlx: '/api/v1/plan/scheduling-result/import_xlx/',
   ScheduleNos: '/api/v1/plan/scheduling-result/schedule_nos/',
   SchedulingProductDeclareSummary: '/api/v1/plan/scheduling-product-declare-summary/', // 胶料计划库存汇总
   SchedulingProcedures: '/api/v1/plan/scheduling-procedures/', // 自动排程
@@ -639,5 +640,7 @@ export default {
   MonthlyOutputStatistics: '/api/v1/production/monthly-output-statistics-and-performance/', // 月产量统计明细及绩效
   DailyProductionCompletionReport: '/api/v1/production/daily-production-completion-report/', // 月产量完成
   MonthlyOutputStatisticsReport: '/api/v1/production/monthly-output-statistics-report/',
-  SchedulingStockSummary: '/api/v1/plan/scheduling-stock-summary/'
+  SchedulingStockSummary: '/api/v1/plan/scheduling-stock-summary/',
+  Sb: '/api/v1/production/nishisb/',
+  MaterialTestPlan: '/api/v1/quality/material-test-plan/'
 }
