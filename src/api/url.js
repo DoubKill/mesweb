@@ -642,5 +642,6 @@ export default {
   MonthlyOutputStatisticsReport: '/api/v1/production/monthly-output-statistics-report/',
   SchedulingStockSummary: '/api/v1/plan/scheduling-stock-summary/',
   Sb: '/api/v1/production/nishisb/',
-  MaterialTestPlan: '/api/v1/quality/material-test-plan/'
+  MaterialTestPlan: '/api/v1/quality/material-test-plan/',
+  MaterialTestPlanDetail: '/api/v1/quality/material-test-plan-detail/'
 }

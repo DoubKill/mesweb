@@ -2352,8 +2352,7 @@ export let asyncRoutes = [
               title: '原材料门尼数据上报',
               permissionName: 'material_report_value'
             }
-          }
-          /*, {
+          }, {
             path: '/material-quickcheck/quality-inspection-plan',
             component: () => import('@/views/material_quickcheck_manage/quality-inspection-plan'),
             name: 'QualityInspectionPlan',
@@ -2362,7 +2361,7 @@ export let asyncRoutes = [
               title: '原材料 质量检测计划',
               permissionName: ''
             }
-          }*/
+          }
         ]
       },
       {

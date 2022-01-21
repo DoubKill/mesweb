@@ -1113,6 +1113,15 @@ export function materialTestPlan(method, id, data = {}) {
   return request(obj)
 }
 
+export function materialTestPlanDetail(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MaterialTestPlanDetail + id + '/' : API.MaterialTestPlanDetail,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function materialReportEquip(method, id, data = {}) {
   const obj = {
     url: id ? API.MaterialReportEquip + id + '/' : API.MaterialReportEquip,
