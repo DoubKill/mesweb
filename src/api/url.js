@@ -629,6 +629,7 @@ export default {
   SchedulingProductDemandedDeclare: '/api/v1/plan/scheduling-product-demanded-declare/', // 各分厂胶料计划申报
   SchedulingProductSafetyParams: '/api/v1/plan/scheduling-product-safety-params/',
   SchedulingResult: '/api/v1/plan/scheduling-result/', // 机台生产计划-整体列表
+  ImportXlx: '/api/v1/plan/scheduling-result/import_xlx/',
   ScheduleNos: '/api/v1/plan/scheduling-result/schedule_nos/',
   SchedulingProductDeclareSummary: '/api/v1/plan/scheduling-product-declare-summary/', // 胶料计划库存汇总
   SchedulingProcedures: '/api/v1/plan/scheduling-procedures/', // 自动排程

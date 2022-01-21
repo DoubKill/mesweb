@@ -140,7 +140,6 @@
               v-if="permissionObj.user.indexOf('del')>-1"
               size="mini"
               type="danger"
-              plain
               @click="userDelete(scope.row)"
             >
               删除
