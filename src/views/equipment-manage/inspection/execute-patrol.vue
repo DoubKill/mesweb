@@ -291,7 +291,7 @@
             style="width:250px"
             disabled
           />
-          <el-button type="primary" style="float:right;margin-bottom:6px" @click="addList">添加</el-button>
+          <!-- <el-button type="primary" style="float:right;margin-bottom:6px" @click="addList">添加</el-button> -->
         </el-form-item>
         <el-form-item>
           <el-table
@@ -311,7 +311,7 @@
               width="150"
             >
               <template slot-scope="{row}">
-                <el-input v-model="row.job_item_content" @input="changeDesc" />
+                <el-input v-model="row.job_item_content" disabled @input="changeDesc" />
               </template>
             </el-table-column>
             <el-table-column
@@ -323,6 +323,7 @@
                 <div v-if="row.job_item_check_type==='有无'">
                   <el-switch
                     v-model="row.job_item_check_standard"
+                    disabled
                     active-value="无"
                     inactive-value="有"
                     active-text="无"
@@ -333,6 +334,7 @@
                 <div v-if="row.job_item_check_type==='正常异常'">
                   <el-switch
                     v-model="row.job_item_check_standard"
+                    disabled
                     active-value="正常"
                     inactive-value="异常"
                     active-text="正常"
@@ -343,6 +345,7 @@
                 <div v-if="row.job_item_check_type==='完成未完成'">
                   <el-switch
                     v-model="row.job_item_check_standard"
+                    disabled
                     active-value="完成"
                     inactive-value="未完成"
                     active-text="完成"
@@ -353,6 +356,7 @@
                 <div v-if="row.job_item_check_type==='合格不合格'">
                   <el-switch
                     v-model="row.job_item_check_standard"
+                    disabled
                     active-value="合格"
                     inactive-value="不合格"
                     active-text="合格"
@@ -361,9 +365,9 @@
                   />
                 </div>
                 <div v-if="row.job_item_check_type==='数值范围'">
-                  <el-input-number v-model="row.job_item_check_standard_a" style="width:120px" controls-position="right" :min="0" :max="row.job_item_check_standard_b" @change="changeRusult" />
+                  <el-input-number v-model="row.job_item_check_standard_a" disabled style="width:120px" controls-position="right" :min="0" :max="row.job_item_check_standard_b" @change="changeRusult" />
                   -
-                  <el-input-number v-model="row.job_item_check_standard_b" style="width:120px" controls-position="right" :min="row.job_item_check_standard_a" @change="changeRusult" />
+                  <el-input-number v-model="row.job_item_check_standard_b" disabled style="width:120px" controls-position="right" :min="row.job_item_check_standard_a" @change="changeRusult" />
                 </div>
               </template>
             </el-table-column>
@@ -372,7 +376,7 @@
               width="180"
             >
               <template slot-scope="{row}">
-                <el-select v-model="row.job_item_check_type" placeholder="请选择" @change="standardType(row)">
+                <el-select v-model="row.job_item_check_type" disabled placeholder="请选择" @change="standardType(row)">
                   <el-option
                     v-for="item in ['有无','数值范围','正常异常','完成未完成','合格不合格']"
                     :key="item"
@@ -440,11 +444,11 @@
             />
             <el-table-column label="操作" width="170">
               <template slot-scope="scope">
-                <el-button
+                <!-- <el-button
                   size="mini"
                   type="danger"
                   @click="delDialogFun(scope.$index)"
-                >删除</el-button>
+                >删除</el-button> -->
                 <el-button
                   v-if="!((scope.row.job_item_check_type === '数值范围' && scope.row.job_item_check_standard_a <= scope.row.operation_result && scope.row.job_item_check_standard_b >= scope.row.operation_result) ||
                     (scope.row.job_item_check_type !== '数值范围' && scope.row.job_item_check_standard === scope.row.operation_result))"

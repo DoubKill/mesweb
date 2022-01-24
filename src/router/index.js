@@ -1145,6 +1145,36 @@ export let asyncRoutes = [
             }
           },
           {
+            path: '/report/attendance',
+            component: () => import('@/views/equipment-management/report/attendance'),
+            name: 'StatisticalReportAttendance',
+            meta: {
+              faName: 'StatisticalReport',
+              title: '员工出勤记录表',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/report/mixing',
+            component: () => import('@/views/equipment-management/report/mixing'),
+            name: 'StatisticalReportMixing',
+            meta: {
+              faName: 'StatisticalReport',
+              title: '密炼机台产量汇总表',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/report/weighing',
+            component: () => import('@/views/equipment-management/report/weighing'),
+            name: 'StatisticalReportWeighing',
+            meta: {
+              faName: 'StatisticalReport',
+              title: '称量机台产量汇总表',
+              permissionName: ''
+            }
+          },
+          {
             path: '/report/output-statistics-details',
             component: () => import('@/views/equipment-management/report/output-statistics-details'),
             name: 'OutputStatisticsDetails',
