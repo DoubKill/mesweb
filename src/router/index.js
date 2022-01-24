@@ -622,7 +622,7 @@ export let asyncRoutes = [
                 permissionName: 'aps_result'
               }
             },
-            /* {
+            {
               path: '/schedule/machine',
               component: () => import('@/views/plan/schedule/dispose/machine'),
               name: 'ScheduleMachine',
@@ -641,7 +641,7 @@ export let asyncRoutes = [
                 title: '排产胶料日计划下达',
                 permissionName: 'productdayplan'
               }
-            },*/
+            },
             {
               path: '/schedule/material-requirement',
               component: () => import('@/views/plan/schedule/dispose/material-requirement'),
@@ -652,7 +652,7 @@ export let asyncRoutes = [
                 permissionName: 'materialdemanded'
               }
             },
-            /* {
+            {
               path: '/schedule/weighing-system-plan',
               component: () => import('@/views/plan/schedule/dispose/weighing-system-plan'),
               name: 'ScheduleWeighingSystemPlan',
@@ -661,7 +661,7 @@ export let asyncRoutes = [
                 title: '称量系统计划',
                 permissionName: ''
               }
-            },*/
+            },
             {
               path: '/schedule/equipment-shutdown-plan',
               component: () => import('@/views/plan/schedule/dispose/equipment-shutdown-plan'),
@@ -684,7 +684,7 @@ export let asyncRoutes = [
             }
           ]
         },
-        /* {
+        {
           path: '/schedule/statistical-report',
           component: () => import('@/views/plan/schedule/statistical-report/a-index'),
           name: 'ScheduleStatisticalReport',
@@ -775,7 +775,7 @@ export let asyncRoutes = [
               }
             }
           ]
-        },*/
+        },
         {
           path: '/schedule/basic-data',
           component: () => import('@/views/plan/schedule/basic-data/a-index'),
@@ -1112,6 +1112,36 @@ export let asyncRoutes = [
               faName: 'StatisticalReport',
               title: '月产量统计汇总',
               permissionName: 'monthly_output_statistics_report'
+            }
+          },
+          {
+            path: '/report/achievement',
+            component: () => import('@/views/equipment-management/report/achievement'),
+            name: 'StatisticalReportAchievement',
+            meta: {
+              faName: 'StatisticalReport',
+              title: '员工绩效汇总表',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/report/postTable',
+            component: () => import('@/views/equipment-management/report/postTable'),
+            name: 'StatisticalReportPost',
+            meta: {
+              faName: 'StatisticalReport',
+              title: '岗位阶梯表',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/report/unit-price-list',
+            component: () => import('@/views/equipment-management/report/unit-price-list'),
+            name: 'StatisticalReportPrice',
+            meta: {
+              faName: 'StatisticalReport',
+              title: '绩效计算 单价表',
+              permissionName: ''
             }
           },
           {
