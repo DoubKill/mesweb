@@ -1115,6 +1115,36 @@ export let asyncRoutes = [
             }
           },
           {
+            path: '/report/achievement',
+            component: () => import('@/views/equipment-management/report/achievement'),
+            name: 'StatisticalReportAchievement',
+            meta: {
+              faName: 'StatisticalReport',
+              title: '员工绩效汇总表',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/report/postTable',
+            component: () => import('@/views/equipment-management/report/postTable'),
+            name: 'StatisticalReportPost',
+            meta: {
+              faName: 'StatisticalReport',
+              title: '岗位阶梯表',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/report/unit-price-list',
+            component: () => import('@/views/equipment-management/report/unit-price-list'),
+            name: 'StatisticalReportPrice',
+            meta: {
+              faName: 'StatisticalReport',
+              title: '绩效计算 单价表',
+              permissionName: ''
+            }
+          },
+          {
             path: '/report/output-statistics-details',
             component: () => import('@/views/equipment-management/report/output-statistics-details'),
             name: 'OutputStatisticsDetails',
