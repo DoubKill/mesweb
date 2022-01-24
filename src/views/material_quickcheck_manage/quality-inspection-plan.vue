@@ -94,6 +94,7 @@
         <el-input
           v-model="material_tmh"
           style="width:400px"
+          @keyup.enter.native="addTestFun"
         />
       </el-form-item>
       <el-form-item>
@@ -106,7 +107,7 @@
       </el-form-item>
       <el-form-item label="检测计划单据号">
         <el-input
-          v-model="search.plan_uid"
+          v-model="plan_uid"
           :disabled="true"
           style="width:250px"
         />
@@ -184,9 +185,10 @@ export default {
   data() {
     return {
       testEquipList: [],
-      material_tmh: 'BHZ12105311651140001',
+      material_tmh: '',
       testMethodList: [],
       plan_uid: null,
+      id: null,
       startBtnLoading: false,
       testIndicatorsList: [],
       groups: [],
@@ -212,11 +214,13 @@ export default {
       }
       if (this.tableData.some(d => d.material_tmh === this.material_tmh)) {
         this.$message('已有此样品条码相关信息')
+        this.material_tmh = ''
         return
       }
       const data = await glsb('get', null, { params: { sb: this.material_tmh }})
-      if (!data) {
+      if (!data.res) {
         this.$message('无此样品条码相关信息')
+        this.material_tmh = ''
         return
       }
       const obj = {
@@ -227,13 +231,15 @@ export default {
       if (this.startBtnLoading === true) {
         try {
           // this.$set(this.search, 'material_list', [obj])
-          await materialTestPlan('put', this.plan_uid, { data: obj })
+          await materialTestPlan('put', this.id, { data: obj })
           this.getWaitPlan()
+          this.material_tmh = ''
         } catch {
           //
         }
       } else {
         this.tableData.push(obj)
+        this.material_tmh = ''
       }
     },
     async startTestFun() {
@@ -275,7 +281,7 @@ export default {
       }
     },
     endTestFun() {
-      if (!this.plan_uid) {
+      if (!this.id) {
         this.$message.info('没有可结束计划,如果存在请刷新页面查看')
         return
       }
@@ -285,11 +291,12 @@ export default {
         type: 'warning'
       }).then(async() => {
         try {
-          await materialTestPlan('delete', this.plan_uid, { params: { }})
+          await materialTestPlan('delete', this.id, { params: { }})
           this.startBtnLoading = false
           this.$message.success('已全部结束检测')
           this.tableData = []
           this.plan_uid = null
+          this.id = null
           this.search.material_report_equip = null
           // this.search.test_method_name = null
           this.search.test_time = null
@@ -380,11 +387,13 @@ export default {
           this.tableData = []
           this.btnLoading = false
           this.plan_uid = null
+          this.id = null
           return
         }
         if (data[0].status === 1) {
           this.startBtnLoading = true
-          this.plan_uid = data[0].id
+          this.id = data[0].id
+          this.plan_uid = data[0].plan_uid
           // this.search.test_method_name = data[0].test_method_name
           this.search.test_time = data[0].test_time
           // this.search.test_classes = data[0].test_classes
@@ -396,11 +405,13 @@ export default {
           this.$message.success('全部检测完毕')
           this.tableData = []
           this.btnLoading = false
+          this.id = null
           this.plan_uid = null
         }
       } catch (e) {
         this.startBtnLoading = false
         this.tableData = []
+        this.id = null
         this.plan_uid = null
       }
     },
