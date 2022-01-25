@@ -241,16 +241,24 @@ export default {
     }
   },
   created() {
-    this.search.StartTime = setDate() + ' 00:00:00'
     if (this.currentRouter === 'DeliveryDaily') {
       this.search.EndTime = setDate(null, true)
+      this.search.StartTime = setDate() + ' 00:00:00'
       this.datetimerange = [this.search.StartTime, this.search.EndTime]
     } else if (this.currentRouter === 'DeliveryMonthly') {
-      this.search.EndTime = ''
-      this.datetimerangeMonth = this.search.StartTime
+      const a = new Date()
+      const _year = a.getFullYear()
+      const _month = a.getMonth()
+      const firstDay = new Date(_year, _month, 1)
+      delete this.search.EndTime
+      this.search.StartTime = setDate(firstDay) + ' 00:00:00'
+      this.datetimerangeMonth = setDate(firstDay) + ' 00:00:00'
     } else {
-      this.search.EndTime = ''
-      this.datetimerangeYear = this.search.StartTime
+      const a = new Date()
+      const _year = a.getFullYear()
+      delete this.search.EndTime
+      this.search.StartTime = _year + '-01-01' + ' 00:00:00'
+      this.datetimerangeYear = _year + '-01-01' + ' 00:00:00'
     }
     this.getDownTaskCountByTodayCount()
     this.getMaterialList()
