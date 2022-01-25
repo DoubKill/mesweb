@@ -8,7 +8,7 @@
       <el-form-item label="状态">
         <el-select
           v-model="search.used_type"
-          style="width: 150px"
+          style="width: 120px"
           clearable
           placeholder="请选择"
           @change="changeSearch"
@@ -43,13 +43,11 @@
           @input="changeSearch"
         />
       </el-form-item>
-      <!-- <el-form-item style="float: right">
+      <el-form-item style="float: right">
         <el-button
           v-if="checkPermission(['productbatching','add'])"
           @click="newRubberClicked"
         >新建</el-button>
-      </el-form-item> -->
-      <el-form-item style="float: right">
         <el-button
           v-if="checkPermission(['productbatching','change'])"
           :disabled="![1,4].includes(currentRow.used_type)"
@@ -182,6 +180,22 @@
         </template>
       </el-table-column>
       <el-table-column
+        align="center"
+        width="70px"
+        label="发送到称量系统"
+      >
+        <template slot-scope="scope">
+          <el-button-group>
+            <el-button
+              v-if="scope.row.used_type === 4"
+              type="primary"
+              size="mini"
+              @click="send_weighing(scope.row)"
+            >发送</el-button>
+          </el-button-group>
+        </template>
+      </el-table-column>
+      <el-table-column
         min-width="10"
         prop="created_username"
         label="创建者"
@@ -232,6 +246,21 @@
       @handleCloseMaterial="handleCloseMaterial"
       @refreshList="refreshList"
     />
+
+    <el-dialog
+      :title="`称量配方发送  MES->称量系统`"
+      :visible.sync="dialogVisible"
+      width="30%"
+      :before-close="handleClose"
+    >
+      <el-checkbox-group v-model="checkList">
+        <el-checkbox v-for="(item,key) in dialogList" :key="key" :label="item.no">{{ item.name }}</el-checkbox>
+      </el-checkbox-group>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleClose(false)">取 消</el-button>
+        <el-button type="primary" @click="submitSendWeight">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -253,7 +282,7 @@ export default {
   data() {
     return {
       loading: false,
-      search: {},
+      search: { used_type: 4 },
       currentRow: {},
       rubberStateOptions: commonVal.rubberStateList,
       tableData: [],
@@ -264,7 +293,12 @@ export default {
       // 是否是查看
       isView: false,
       // 是否是复制
-      isCopy: false
+      isCopy: false,
+      dialogVisible: false,
+      checkList: [],
+      dialogList: [{ name: 'F1#细料', no: 'F01' }, { name: 'F2#细料', no: 'F02' }, { name: 'F3#细料', no: 'F03' },
+        { name: 'S1#硫磺', no: 'S01' }, { name: 'S2#硫磺', no: 'S02' }],
+      currentObj: {}
     }
   },
   computed: {
@@ -397,6 +431,20 @@ export default {
       } catch (e) {
         //
       }
+    },
+    send_weighing(row) {
+      this.currentObj = JSON.parse(JSON.stringify(row))
+      this.dialogVisible = true
+    },
+    handleClose(done) {
+      this.dialogVisible = false
+      this.checkList = []
+      if (done) {
+        done()
+      }
+    },
+    submitSendWeight() {
+
     },
     handleCloseMaterial() {
       this.dialogAddRubberMaterial = false
