@@ -382,12 +382,12 @@ export default {
     },
     check_(row) {
       this.dialogSearch = {
-        e_material_no: row.materialCode
+        e_material_no: row.materialCode,
+        batch_no: row.batchNo || ''
       }
       if (this.currentRouter === 'CarbonDeliveryDaily') {
         this.dialogSearch.start_time = this.search.StartTime || ''
         this.dialogSearch.end_time = this.search.EndTime || ''
-        this.dialogSearch.batch_no = row.batchNo || ''
       } else if (this.currentRouter === 'CarbonDeliveryMonthly') {
         const a = new Date(this.datetimerangeMonth)
         const _year = a.getFullYear()
@@ -397,13 +397,11 @@ export default {
 
         this.dialogSearch.start_time = setDate(firstDay) + ' 00:00:00'
         this.dialogSearch.end_time = setDate(lastDay) + ' 23:59:59'
-        delete this.dialogSearch.batch_no
       } else {
         const a = new Date(this.datetimerangeYear)
         const _year = a.getFullYear()
         this.dialogSearch.start_time = _year + '-01-01' + ' 00:00:00'
         this.dialogSearch.end_time = _year + '-12-31' + ' 23:59:59'
-        delete this.dialogSearch.batch_no
       }
       this.dialogVisible = true
     },
