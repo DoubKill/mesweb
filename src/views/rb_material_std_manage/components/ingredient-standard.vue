@@ -1,8 +1,7 @@
 <template>
   <div>
     <!-- 胶料配料标准 -->
-    <h3>{{ formObj.stage_name==='FM'?'硫磺':'细料' }}</h3>
-    <!-- <div v-if="tableData.length>0"> -->
+    <h3 v-if="isView&&!tableData.length?false:true">{{ formObj.stage_name==='FM'?'硫磺':'细料' }}</h3>
     <div
       v-for="(tableItem,_i) in tableData"
       :key="_i"
@@ -31,6 +30,7 @@
               :disabled="true"
             >
               <el-button
+                v-if="!isView"
                 slot="append"
                 icon="el-icon-search"
                 @click="pop_up_raw_material(_i,$index)"
@@ -63,6 +63,22 @@
               controls-position="right"
               :disabled="isView"
             />
+          </template>
+        </el-table-column>
+        <el-table-column v-for="(item) in formObj.enable_equip" :key="item" :label="item">
+          <template slot-scope="{row}">
+            <el-select
+              v-model="row.master[item]"
+              clearable
+              placeholder="请选择"
+            >
+              <el-option
+                v-for="item1 in ['S','F','C']"
+                :key="item1"
+                :label="item1"
+                :value="item1"
+              />
+            </el-select>
           </template>
         </el-table-column>
         <el-table-column
@@ -168,7 +184,6 @@
           </el-table-column>
         </el-table> -->
     </div>
-    <!-- </div> -->
     <div v-if="!isView" style="text-align: center;">
       <el-button size="mini" @click="insertOneRow(0)">插入一行</el-button>
     </div>
@@ -219,6 +234,23 @@ export default {
   },
   watch: {
     addTableData(val) {
+      val.forEach(d => {
+        d.forEach(D => {
+          if (!D.master) {
+            this.$set(D, 'master', {})
+          }
+          // 去掉-H
+          for (const key in D.master) {
+            if (Object.hasOwnProperty.call(D.master, key)) {
+              const element = D.master[key]
+              if (element.indexOf('-H') > -1) {
+                D.master[key] = ''
+              }
+            }
+          }
+        })
+      })
+
       this.tableData = val
     },
     isIngredientObj(row) {
@@ -229,6 +261,17 @@ export default {
       this.$set(this.tableData[this.currentFaIndex][this.currentIndex], 'material', row.id)
       this.$set(this.tableData[this.currentFaIndex][this.currentIndex], 'sn', 0)
       this.$set(this.tableData[this.currentFaIndex][this.currentIndex], 'material_type', row.material_type_name)
+    },
+    'formObj.enable_equip'(arr) {
+      this.tableData.forEach(d => {
+        d.forEach(D => {
+          const arr1 = {}
+          arr.forEach(dd => {
+            arr1[dd] = D.master[dd]
+          })
+          D.master = arr1
+        })
+      })
     }
   },
   mounted() {
@@ -309,10 +352,17 @@ export default {
       if (!this.tableData.length) {
         this.$set(this.tableData, index, [])
       }
+      const obj = {}
+      if (this.tableData[index].length === 0) {
+        this.formObj.enable_equip.forEach(d => {
+          obj[d] = 'S'
+        })
+      }
       this.tableData[index].push({
         name: '',
         package_cnt: '',
-        package_type: ''
+        package_type: '',
+        master: obj
       })
     }
   }

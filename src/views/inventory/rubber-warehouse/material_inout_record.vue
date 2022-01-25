@@ -5,6 +5,7 @@
       <el-form-item label="时间">
         <el-date-picker
           v-model="searchDate"
+          :disabled="isDialog"
           type="datetimerange"
           range-separator="至"
           start-placeholder="开始日期"
@@ -59,10 +60,10 @@
         </el-select>
         <!-- <warehouseSelect :created-is="true" @changSelect="warehouseSelectFun" /> -->
       </el-form-item>
-      <el-form-item label="物料编码">
+      <el-form-item v-if="!isDialog" label="物料编码">
         <el-input v-model="search.material_no" clearable @input="debounceList" />
       </el-form-item>
-      <el-form-item v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="物料名称">
+      <el-form-item v-if="(warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库')&&!isDialog" label="物料名称">
         <el-input v-model="search.material_name" clearable @input="debounceList" />
       </el-form-item>
       <el-form-item label="出入库单号">
@@ -178,6 +179,20 @@ export default {
     warehouseNameProps: {
       type: String,
       default: ''
+    },
+    isDialog: {
+      type: Boolean,
+      default: false
+    },
+    dialogSearch: {
+      type: Object,
+      default() {
+        return {}
+      }
+    },
+    show: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -196,13 +211,33 @@ export default {
       btnExportLoad: false
     }
   },
+  watch: {
+    show(bool) {
+      if (bool) {
+        this.search = {
+          page: 1,
+          order_type: '出库'
+        }
+        Object.assign(this.search, this.dialogSearch)
+
+        if (this.warehouseNameProps) {
+          this.search.warehouse_name = this.warehouseNameProps
+        }
+        this.searchDate = [this.search.start_time, this.search.end_time]
+        this.getList()
+      }
+    }
+  },
   created() {
+    this.search.start_time = setDate() + ' 00:00:00'
+    this.search.end_time = setDate(null, true)
+
+    if (this.isDialog) {
+      Object.assign(this.search, this.dialogSearch)
+    }
     if (this.warehouseNameProps) {
       this.search.warehouse_name = this.warehouseNameProps
     }
-
-    this.search.start_time = setDate() + ' 00:00:00'
-    this.search.end_time = setDate(null, true)
     this.searchDate = [this.search.start_time, this.search.end_time]
     this.getList()
   },

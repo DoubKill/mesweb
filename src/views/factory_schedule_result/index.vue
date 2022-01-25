@@ -6,11 +6,12 @@
         label="日期"
       >
         <el-date-picker
-          v-model="getParams.day_time"
-          style="width: 100%"
-          type="date"
+          v-model="dateValue"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
           value-format="yyyy-MM-dd"
-          placeholder="选择日期"
           @change="getParamsChanged"
         />
       </el-form-item>
@@ -92,11 +93,13 @@ export default {
       getParams: {
         page: 1,
         work_schedule__schedule_name: '',
-        day_time: setDate()
+        st: setDate(),
+        et: setDate()
       },
       total: 0,
       loading: true,
-      heardClasses: []
+      heardClasses: [],
+      dateValue: []
     }
   },
   created() {
@@ -138,6 +141,8 @@ export default {
       })
     },
     getParamsChanged() {
+      this.getParams.st = this.dateValue ? this.dateValue[0] : ''
+      this.getParams.et = this.dateValue ? this.dateValue[1] : ''
       this.getParams.page = 1
       this.getList()
     },
