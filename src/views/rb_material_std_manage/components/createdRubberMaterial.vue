@@ -347,6 +347,7 @@ export default {
             stage_name: data.stage_name,
             dev_type: data.dev_type || '',
             dev_type_name: data.dev_type_name || '',
+            enable_equip: data.enable_equip || [],
             production_time_interval: data.production_time_interval || ''
           }
         }
