@@ -280,11 +280,16 @@ export default {
           this.MN = 0
           this.YD = 0
           this.BZ = 0
-          this.MH = 0
-          this.ML = 0
-          this.TC10 = 0
-          this.TC50 = 0
-          this.TC90 = 0
+          this.MH_upper = 0
+          this.ML_upper = 0
+          this.TC10_upper = 0
+          this.TC50_upper = 0
+          this.TC90_upper = 0
+          this.MH_lower = 0
+          this.ML_lower = 0
+          this.TC10_lower = 0
+          this.TC50_lower = 0
+          this.TC90_lower = 0
           this.sum_s = 0
           this.cp_all = 0
           this.tableData.forEach(D => {
@@ -296,11 +301,16 @@ export default {
             this.MN += Number(D.MN)
             this.YD += Number(D.YD)
             this.BZ += Number(D.BZ)
-            this.MH += Number(D.MH)
-            this.ML += Number(D.ML)
-            this.TC10 += Number(D.TC10)
-            this.TC50 += Number(D.TC50)
-            this.TC90 += Number(D.TC90)
+            this.MH_upper += Number(D.MH_upper)
+            this.ML_upper += Number(D.ML_upper)
+            this.TC10_upper += Number(D.TC10_upper)
+            this.TC50_upper += Number(D.TC50_upper)
+            this.TC90_upper += Number(D.TC90_upper)
+            this.MH_lower += Number(D.MH_lower)
+            this.ML_lower += Number(D.ML_lower)
+            this.TC10_lower += Number(D.TC10_lower)
+            this.TC50_lower += Number(D.TC50_lower)
+            this.TC90_lower += Number(D.TC90_lower)
             this.sum_s += Number(D.sum_s)
             this.cp_all += Number(D.cp_all)
           })
@@ -313,11 +323,16 @@ export default {
               YD: this.YD,
               BZ: this.BZ,
               RATE_1_PASS: data.all.rate_1,
-              MH: this.MH,
-              ML: this.ML,
-              TC10: this.TC10,
-              TC50: this.TC50,
-              TC90: this.TC90,
+              MH_upper: this.MH_upper,
+              ML_upper: this.ML_upper,
+              TC10_upper: this.TC10_upper,
+              TC50_upper: this.TC50_upper,
+              TC90_upper: this.TC90_upper,
+              MH_lower: this.MH_lower,
+              ML_lower: this.ML_lower,
+              TC10_lower: this.TC10_lower,
+              TC50_lower: this.TC50_lower,
+              TC90_lower: this.TC90_lower,
               sum_s: this.sum_s,
               RATE_S_PASS: data.all.rate_lb,
               cp_all: this.cp_all,
