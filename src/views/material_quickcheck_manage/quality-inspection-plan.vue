@@ -202,7 +202,19 @@ export default {
       tableData: []
     }
   },
+  created() {
+    this.getTestEquipList(true)
+    this.getSaveEquip()
+  },
   methods: {
+    async getSaveEquip() {
+      // const data = await materialReportEquip('get', null, { params: { all: 1 }})
+      // this.testEquipList = data.results || []
+      // this.search.material_report_equip = getCookie('material_report_equip')
+      if (this.search.material_report_equip) {
+        this.changeTestEquip()
+      }
+    },
     async addTestFun() {
       if (!this.search.material_report_equip) {
         this.$message('请先选择检测机号')
@@ -376,6 +388,7 @@ export default {
       this.search.test_type = null
       this.material_tmh = null
       this.startBtnLoading = false
+      // setCookie('material_report_equip', this.search.material_report_equip, 9999)
       this.getWaitPlan()
     },
     async getWaitPlan() {
@@ -420,6 +433,25 @@ export default {
     }
   }
 }
+// function getCookie(cName) {
+//   if (document.cookie.length > 0) {
+//     var cStart = document.cookie.indexOf(cName + '=')
+//     if (cStart !== -1) {
+//       cStart = cStart + cName.length + 1
+//       var cEnd = document.cookie.indexOf(';', cStart)
+//       if (cEnd === -1) cEnd = document.cookie.length
+//       return document.cookie.substring(cStart, cEnd)
+//     }
+//   }
+//   return ''
+// }
+
+// // 设置cookie
+// function setCookie(cName, value, expiredays) {
+//   var exdate = new Date()
+//   exdate.setDate(exdate.getDate() + expiredays)
+//   document.cookie = cName + '=' + value + ((expiredays == null) ? '' : ';expires=' + exdate.toGMTString())
+// }
 </script>
 
 <style lang="scss">

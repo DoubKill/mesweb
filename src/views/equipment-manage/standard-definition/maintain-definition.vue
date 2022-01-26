@@ -646,7 +646,7 @@
                   </el-select>
                 </template>
               </el-table-column>
-              <el-table-column
+              <!-- <el-table-column
                 width="150"
                 label="部件名称"
               >
@@ -660,7 +660,7 @@
                     />
                   </el-select>
                 </template>
-              </el-table-column>
+              </el-table-column> -->
               <el-table-column
                 label="作业项目"
                 width="200px"
