@@ -357,7 +357,7 @@ export default {
       this.dialogVisible = val
       if (val) {
         this.formInline = this.formObj
-        this.formInline._enable_equip = this.formObj.enable_equip
+
         const arr = this.batchingList.batching_details || []
         const a1 = arr.filter(d => d.type === 1)
         a1.forEach(d => {
@@ -400,6 +400,7 @@ export default {
           this.addTableData = this.batchingList.weight_cnt_types || []
         })
 
+        this.$set(this.formInline, '_enable_equip', this.formInline.enable_equip)
         this.getOptionsEquip()
       }
     },
@@ -432,9 +433,9 @@ export default {
         this.optionsEquip.forEach(D => {
           arr.push(D.equip_no)
         })
-        if (!this.formInline.enable_equip || !this.formInline.enable_equip.length) {
-          this.$set(this.formInline, 'enable_equip', arr || [])
-        }
+        // if (!this.formInline.enable_equip || !this.formInline.enable_equip.length) {
+        //   this.$set(this.formInline, 'enable_equip', arr || [])
+        // }
       } catch (e) {
         //
       }
@@ -738,7 +739,6 @@ export default {
         parameter.add_batching_equip = addIdArr || []
       }
 
-      console.log(parameter, 'parameter')
       try {
         const _api = parameter._add ? 'post' : 'put'
         const _id = parameter._add ? null : parameter.id

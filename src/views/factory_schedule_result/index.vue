@@ -103,6 +103,15 @@ export default {
     }
   },
   created() {
+    const a = new Date()
+    const _year = a.getFullYear()
+    const _month = a.getMonth()
+    const firstDay = new Date(_year, _month, 1)
+    const lastDay = new Date(_year, _month + 1, 0)
+    this.getParams.st = setDate(firstDay)
+    this.getParams.et = setDate(lastDay)
+    this.dateValue = [setDate(firstDay), setDate(lastDay)]
+
     globalCodesUrl('get', {
       params: {
         class_name: '班次'
