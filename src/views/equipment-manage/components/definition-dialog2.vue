@@ -153,11 +153,11 @@
               label="部位名称"
               prop="equip_part__part_name"
             />
-            <el-table-column
+            <!-- <el-table-column
               width="150"
               label="部件名称"
               prop="equip_component__component_name"
-            />
+            /> -->
             <el-table-column
               label="作业项目"
               width="200px"
@@ -165,7 +165,7 @@
             />
             <el-table-column
               label="作业项目详情"
-              width="200px"
+              width="450px"
               prop="work_details_column"
             />
           </el-table>

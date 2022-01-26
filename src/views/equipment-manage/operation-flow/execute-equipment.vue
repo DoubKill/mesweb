@@ -574,7 +574,7 @@
                   />
                 </div>
                 <div v-if="row.job_item_check_type==='数值范围'">
-                  <el-input-number v-model="row.operation_result" :disabled="operateType==='查看处理结果'" style="width:120px" controls-position="right" :min="1" :max="99999" />
+                  <el-input-number v-model="row.operation_result" :disabled="operateType==='查看处理结果'" style="width:120px" controls-position="right" :min="0" />
                 </div>
               </template>
             </el-table-column>

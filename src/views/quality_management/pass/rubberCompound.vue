@@ -74,42 +74,36 @@
           <el-table-column
             prop="product_type"
             label="胶料"
-            min-width="20"
+            width="70"
           />
           <el-table-column
             prop="JC"
             label="检查数"
-            min-width="15"
+            width="80"
             sortable
           />
           <el-table-column
             prop="HG"
             label="合格量"
-            min-width="15"
+            width="80"
             sortable
           />
           <el-table-column
             prop="MN"
             label="门尼不合格"
-            min-width="15"
+            width="110"
             sortable
           />
           <el-table-column
             prop="YD"
             label="硬度不合格"
-            min-width="15"
+            width="110"
             sortable
           />
           <el-table-column
             prop="BZ"
             label="比重不合格"
-            min-width="15"
-            sortable
-          />
-          <el-table-column
-            prop="RATE_1_PASS"
-            label="一次合格率"
-            min-width="25"
+            width="110"
             sortable
           />
           <el-table-column
@@ -120,55 +114,121 @@
               prop="MH"
               label="MH"
               min-width="20"
-              sortable
-            />
+            >
+              <el-table-column
+                prop="MH_upper"
+                label="+"
+                min-width="20"
+                sortable
+              />
+              <el-table-column
+                prop="MH_lower"
+                label="-"
+                min-width="20"
+                sortable
+              />
+            </el-table-column>
             <el-table-column
               prop="ML"
               label="ML"
               min-width="20"
-              sortable
-            />
+            >
+              <el-table-column
+                prop="ML_upper"
+                label="+"
+                min-width="20"
+                sortable
+              />
+              <el-table-column
+                prop="ML_lower"
+                label="-"
+                min-width="20"
+                sortable
+              />
+            </el-table-column>
             <el-table-column
               prop="TC10"
               label="TC10"
               min-width="20"
-              sortable
-            />
+            >
+              <el-table-column
+                prop="TC10_upper"
+                label="+"
+                min-width="20"
+                sortable
+              />
+              <el-table-column
+                prop="TC10_lower"
+                label="-"
+                min-width="20"
+                sortable
+              />
+            </el-table-column>
             <el-table-column
               prop="TC50"
               label="TC50"
               min-width="20"
-              sortable
-            />
+            >
+              <el-table-column
+                prop="TC50_upper"
+                label="+"
+                min-width="20"
+                sortable
+              />
+              <el-table-column
+                prop="TC50_lower"
+                label="-"
+                min-width="20"
+                sortable
+              />
+            </el-table-column>
             <el-table-column
               prop="TC90"
               label="TC90"
               min-width="20"
-              sortable
-            />
+            >
+              <el-table-column
+                prop="TC90_upper"
+                label="+"
+                min-width="20"
+                sortable
+              />
+              <el-table-column
+                prop="TC90_lower"
+                label="-"
+                min-width="20"
+                sortable
+              />
+            </el-table-column>
             <el-table-column
               prop="sum_s"
               label="硫变合计"
-              min-width="20"
+              min-width="15"
               sortable
             />
           </el-table-column>
           <el-table-column
+            prop="RATE_1_PASS"
+            label="一次合格率"
+            min-width="35"
+            sortable
+          />
+          <el-table-column
             prop="RATE_S_PASS"
             label="硫变合格率"
             sortable
-            min-width="25"
+            min-width="35"
           />
           <el-table-column
             prop="cp_all"
             label="次品合计"
-            min-width="25"
+            min-width="35"
             sortable
           />
           <el-table-column
             prop="rate"
             label="合格率"
-            min-width="25"
+            min-width="30"
             sortable
           />
         </el-table>

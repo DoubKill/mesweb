@@ -91,37 +91,93 @@
         label="比重不合格"
         width="100"
       />
+      <el-table-column label="硫变不合格" align="center">
+        <el-table-column
+          prop="MH"
+          label="MH"
+        >
+          <el-table-column
+            prop="MH_upper"
+            label="+"
+            min-width="25"
+          />
+          <el-table-column
+            prop="MH_lower"
+            label="-"
+            min-width="25"
+          />
+        </el-table-column>
+        <el-table-column
+          prop="ML"
+          label="ML"
+        >
+          <el-table-column
+            prop="ML_upper"
+            label="+"
+            min-width="25"
+          />
+          <el-table-column
+            prop="ML_lower"
+            label="-"
+            min-width="25"
+          />
+        </el-table-column>
+        <el-table-column
+          prop="TC10"
+          label="TC10"
+        >
+          <el-table-column
+            prop="TC10_upper"
+            label="+"
+            min-width="25"
+          />
+          <el-table-column
+            prop="TC10_lower"
+            label="-"
+            min-width="25"
+          />
+        </el-table-column>
+        <el-table-column
+          prop="TC50"
+          label="TC50"
+        >
+          <el-table-column
+            prop="TC50_upper"
+            label="+"
+            min-width="25"
+          />
+          <el-table-column
+            prop="TC50_lower"
+            label="-"
+            min-width="25"
+          />
+        </el-table-column>
+        <el-table-column
+          prop="TC90"
+          label="TC90"
+        >
+          <el-table-column
+            prop="TC90_upper"
+            label="+"
+            min-width="25"
+          />
+          <el-table-column
+            prop="TC90_lower"
+            label="-"
+            min-width="25"
+          />
+        </el-table-column>
+        <el-table-column
+          prop="sum_s"
+          label="硫变合计"
+          min-width="20"
+        />
+      </el-table-column>
       <el-table-column
         prop="RATE_1_PASS"
         label="一次合格率"
         width="100"
       />
-      <el-table-column label="硫变不合格" align="center">
-        <el-table-column
-          prop="MH"
-          label="MH"
-        />
-        <el-table-column
-          prop="ML"
-          label="ML"
-        />
-        <el-table-column
-          prop="TC10"
-          label="TC10"
-        />
-        <el-table-column
-          prop="TC50"
-          label="TC50"
-        />
-        <el-table-column
-          prop="TC90"
-          label="TC90"
-        />
-        <el-table-column
-          prop="sum_s"
-          label="硫变合计"
-        />
-      </el-table-column>
       <el-table-column
         prop="RATE_S_PASS"
         label="硫变合格率"
