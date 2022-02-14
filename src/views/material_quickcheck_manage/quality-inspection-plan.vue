@@ -212,7 +212,9 @@ export default {
     async getTestEquip() {
       const data = await materialReportEquip('get', null, { params: { all: 1 }})
       this.testEquipList = await data.results || []
-      this.search.material_report_equip = Number(getCookie('material_report_equip'))
+      if (getCookie('material_report_equip')) {
+        this.search.material_report_equip = Number(getCookie('material_report_equip'))
+      }
       if (this.search.material_report_equip) {
         this.changeTestEquip()
       }
