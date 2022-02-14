@@ -47,7 +47,7 @@
           placeholder="选择日期"
         />
       </el-form-item>
-      <!-- <el-form-item label="检测班次">
+      <el-form-item label="检测班次">
         <class-select
           style="width:180px"
           :value-default="search.test_classes"
@@ -55,8 +55,8 @@
           :is-disabled="startBtnLoading"
           @classSelected="classChanged"
         />
-      </el-form-item> -->
-      <!-- <el-form-item label="检测班组">
+      </el-form-item>
+      <el-form-item label="检测班组">
         <el-select
           v-model="search.test_group"
           style="width:180px"
@@ -72,14 +72,14 @@
             :value="group.global_name"
           />
         </el-select>
-      </el-form-item> -->
-      <el-form-item label="试验方法">
+      </el-form-item>
+      <el-form-item label="试验类型">
         <el-select
-          v-model="search.test_type"
+          v-model="search.test_method"
           style="width:300px"
           :clearable="false"
-          :disabled="startBtnLoading"
-          placeholder="请选择"
+          :disabled="true"
+          placeholder=""
           @visible-change="changeTestMethod"
         >
           <el-option
@@ -129,14 +129,13 @@
         min-width="20"
       />
       <el-table-column
-        prop="qualified"
+        prop="flat"
         label="是否合格"
         min-width="20"
       >
         <template slot-scope="{row}">
-          <span v-if="row.qualified===true">合格</span>
-          <span v-if="row.qualified===false">不合格</span>
-          <span v-if="row.qualified===null">待检</span>
+          <span v-if="row.flat===true">合格</span>
+          <span v-if="row.flat===false">不合格</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -145,7 +144,7 @@
         min-width="20"
       />
       <el-table-column
-        prop="test_value"
+        prop="value"
         label="检测值"
         min-width="20"
       />
@@ -157,7 +156,7 @@
         <template slot-scope="{row}">
           <span v-if="row.status===1">待检测</span>
           <span v-if="row.status===2">完成</span>
-          <span v-if="row.status===4">强制结束</span>
+          <span v-if="row.status===4">结束检测</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" min-width="20">
@@ -175,13 +174,14 @@
 </template>
 
 <script>
+import classSelect from '@/components/ClassSelect'
 import { globalCodesUrl, testIndicators } from '@/api/base_w'
-import { materialExamineType } from '@/api/base_w_three'
-import { glsb, materialTestPlan, materialTestPlanDetail } from '@/api/jqy'
+import { materialExamineType, wmsMaterialSearch } from '@/api/base_w_three'
+import { materialTestPlan, materialTestPlanDetail } from '@/api/jqy'
 import { materialReportEquip } from '@/api/base_w_four'
 export default {
   name: 'QualityInspectionPlan',
-  components: { },
+  components: { classSelect },
   data() {
     return {
       testEquipList: [],
@@ -195,38 +195,89 @@ export default {
       search: {
         material_report_equip: null,
         test_time: null,
-        test_type: null
+        test_classes: null,
+        test_group: null,
+        test_method: null
       },
       btnExportLoad: false,
       loading: false,
       tableData: []
     }
   },
+  created() {
+    this.getTestEquip()
+    this.changeTestMethod(true)
+  },
   methods: {
+    async getTestEquip() {
+      const data = await materialReportEquip('get', null, { params: { all: 1 }})
+      this.testEquipList = await data.results || []
+      if (getCookie('material_report_equip')) {
+        this.search.material_report_equip = Number(getCookie('material_report_equip'))
+      }
+      if (this.search.material_report_equip) {
+        this.changeTestEquip()
+      }
+    },
     async addTestFun() {
       if (!this.search.material_report_equip) {
         this.$message('请先选择检测机号')
         return
       }
-      if (!this.material_tmh) {
-        this.$message('请先输入样品条码')
-        return
+      // if (!this.material_tmh) {
+      //   this.$message('请先输入样品条码')
+      //   return
+      // }
+      // if (this.tableData.some(d => d.material_tmh === this.material_tmh)) {
+      //   this.$message('已有此样品条码相关信息')
+      //   this.material_tmh = ''
+      //   return
+      // }
+      // const data = await wmsMaterialSearch('get', null, { params: { tmh: this.material_tmh }})
+      // if (!data.res) {
+      //   this.$message('无此样品条码相关信息')
+      //   this.material_tmh = ''
+      //   return
+      // }
+      // const arr = data[0]
+      // const obj = {
+      //   material_tmh: arr.material_tmh,
+      //   material_name: arr.material_name,
+      //   material_sample_name: arr.material_sample_name,
+      //   material_supplier: arr.material_supplier,
+      //   material_wlxxid: arr.material_wlxxid,
+      //   material_batch: arr.material_batch
+      // }
+      var obj = {}
+      if (this.material_tmh === '111') {
+        obj = {
+          material_tmh: 'AAJ1Z052021032631532',
+          material_name: '分散剂AT-C(宜兴1)',
+          material_sample_name: '分散剂AT-C(宜兴1)',
+          material_supplier: '宜兴化工',
+          material_wlxxid: 'YL01010218',
+          material_batch: '202111070866'
+        }
       }
-      if (this.tableData.some(d => d.material_tmh === this.material_tmh)) {
-        this.$message('已有此样品条码相关信息')
-        this.material_tmh = ''
-        return
+      if (this.material_tmh === '222') {
+        obj = {
+          material_tmh: 'AAJ1Z052021032631533',
+          material_name: '分散剂AT-C(宜兴2)',
+          material_sample_name: '分散剂AT-C(宜兴2)',
+          material_supplier: '宜兴化工',
+          material_wlxxid: 'YL010102019',
+          material_batch: '202111070867'
+        }
       }
-      const data = await glsb('get', null, { params: { sb: this.material_tmh }})
-      if (!data.res) {
-        this.$message('无此样品条码相关信息')
-        this.material_tmh = ''
-        return
-      }
-      const obj = {
-        material_tmh: data.res.TMH,
-        material_name: data.res.WLMC,
-        material_batch: data.res.SCRQ
+      if (this.material_tmh === '333') {
+        obj = {
+          material_tmh: 'AAJ1Z052021032631534',
+          material_name: '分散剂AT-C(宜兴3)',
+          material_sample_name: '分散剂AT-C(宜兴3)',
+          material_supplier: '宜兴化工',
+          material_wlxxid: 'YL010102020',
+          material_batch: '202111070868'
+        }
       }
       if (this.startBtnLoading === true) {
         try {
@@ -241,6 +292,7 @@ export default {
         this.tableData.push(obj)
         this.material_tmh = ''
       }
+      console.log(this.tableData)
     },
     async startTestFun() {
       if (this.tableData.length === 0) {
@@ -259,16 +311,16 @@ export default {
         this.$message.info('请选择工厂日期')
         return
       }
-      // if (!this.search.test_classes) {
-      //   this.$message.info('请选择班次')
-      //   return
-      // }
-      // if (!this.search.test_group) {
-      //   this.$message.info('请选择班组')
-      //   return
-      // }
-      if (!this.search.test_type) {
-        this.$message.info('请选择试验方法')
+      if (!this.search.test_classes) {
+        this.$message.info('请选择班次')
+        return
+      }
+      if (!this.search.test_group) {
+        this.$message.info('请选择班组')
+        return
+      }
+      if (!this.search.test_method) {
+        this.$message.info('请选择试验类型')
         return
       }
       try {
@@ -300,9 +352,9 @@ export default {
           this.search.material_report_equip = null
           // this.search.test_method_name = null
           this.search.test_time = null
-          // this.search.test_classes = null
-          // this.search.test_group = null
-          this.search.test_type = null
+          this.search.test_classes = null
+          this.search.test_group = null
+          this.search.test_method = null
         } catch (e) {
           //
         }
@@ -371,18 +423,22 @@ export default {
       this.tableData = []
       // this.search.test_method_name = null
       this.search.test_time = null
-      // this.search.test_classes = null
-      // this.search.test_group = null
-      this.search.test_type = null
+      this.search.test_classes = null
+      this.search.test_group = null
+      this.search.test_method = this.testEquipList.filter(d => d.id === this.search.material_report_equip)[0].type
       this.material_tmh = null
       this.startBtnLoading = false
+      setCookie('material_report_equip', this.search.material_report_equip, 9999)
       this.getWaitPlan()
     },
     async getWaitPlan() {
+      if (!this.search.material_report_equip) {
+        this.$message('请先选择检测机台,然后再刷新')
+        return
+      }
       try {
         const data = await materialTestPlan('get', null, { params: { material_report_equip: this.search.material_report_equip }})
-        this.changeTestMethod(true)
-        if (data.length === 0) {
+        if (data.results.length === 0) {
           this.btnLoading = false
           this.tableData = []
           this.btnLoading = false
@@ -390,16 +446,16 @@ export default {
           this.id = null
           return
         }
-        if (data[0].status === 1) {
+        if (data.results[0].status === 1) {
           this.startBtnLoading = true
-          this.id = data[0].id
-          this.plan_uid = data[0].plan_uid
+          this.id = data.results[0].id
+          this.plan_uid = data.results[0].plan_uid
           // this.search.test_method_name = data[0].test_method_name
-          this.search.test_time = data[0].test_time
-          // this.search.test_classes = data[0].test_classes
-          // this.search.test_group = data[0].test_group
-          this.search.test_type = data[0].test_type
-          this.tableData = data[0].material_test_plan_detail
+          this.search.test_time = data.results[0].test_time
+          this.search.test_classes = data.results[0].test_classes
+          this.search.test_group = data.results[0].test_group
+          this.search.test_method = data.results[0].test_method
+          this.tableData = data.results[0].material_list
           this.$message('正在检测中')
         } else {
           this.$message.success('全部检测完毕')
@@ -419,6 +475,25 @@ export default {
       this.search.test_classes = val
     }
   }
+}
+function getCookie(cName) {
+  if (document.cookie.length > 0) {
+    var cStart = document.cookie.indexOf(cName + '=')
+    if (cStart !== -1) {
+      cStart = cStart + cName.length + 1
+      var cEnd = document.cookie.indexOf(';', cStart)
+      if (cEnd === -1) cEnd = document.cookie.length
+      return document.cookie.substring(cStart, cEnd)
+    }
+  }
+  return ''
+}
+
+// 设置cookie
+function setCookie(cName, value, expiredays) {
+  var exdate = new Date()
+  exdate.setDate(exdate.getDate() + expiredays)
+  document.cookie = cName + '=' + value + ((expiredays == null) ? '' : ';expires=' + exdate.toGMTString())
 }
 </script>
 

@@ -74,42 +74,36 @@
           <el-table-column
             prop="product_type"
             label="胶料"
-            min-width="20"
+            width="70"
           />
           <el-table-column
             prop="JC"
             label="检查数"
-            min-width="15"
+            width="80"
             sortable
           />
           <el-table-column
             prop="HG"
             label="合格量"
-            min-width="15"
+            width="80"
             sortable
           />
           <el-table-column
             prop="MN"
             label="门尼不合格"
-            min-width="15"
+            width="110"
             sortable
           />
           <el-table-column
             prop="YD"
             label="硬度不合格"
-            min-width="15"
+            width="110"
             sortable
           />
           <el-table-column
             prop="BZ"
             label="比重不合格"
-            min-width="15"
-            sortable
-          />
-          <el-table-column
-            prop="RATE_1_PASS"
-            label="一次合格率"
-            min-width="25"
+            width="110"
             sortable
           />
           <el-table-column
@@ -120,55 +114,121 @@
               prop="MH"
               label="MH"
               min-width="20"
-              sortable
-            />
+            >
+              <el-table-column
+                prop="MH_upper"
+                label="+"
+                min-width="20"
+                sortable
+              />
+              <el-table-column
+                prop="MH_lower"
+                label="-"
+                min-width="20"
+                sortable
+              />
+            </el-table-column>
             <el-table-column
               prop="ML"
               label="ML"
               min-width="20"
-              sortable
-            />
+            >
+              <el-table-column
+                prop="ML_upper"
+                label="+"
+                min-width="20"
+                sortable
+              />
+              <el-table-column
+                prop="ML_lower"
+                label="-"
+                min-width="20"
+                sortable
+              />
+            </el-table-column>
             <el-table-column
               prop="TC10"
               label="TC10"
               min-width="20"
-              sortable
-            />
+            >
+              <el-table-column
+                prop="TC10_upper"
+                label="+"
+                min-width="20"
+                sortable
+              />
+              <el-table-column
+                prop="TC10_lower"
+                label="-"
+                min-width="20"
+                sortable
+              />
+            </el-table-column>
             <el-table-column
               prop="TC50"
               label="TC50"
               min-width="20"
-              sortable
-            />
+            >
+              <el-table-column
+                prop="TC50_upper"
+                label="+"
+                min-width="20"
+                sortable
+              />
+              <el-table-column
+                prop="TC50_lower"
+                label="-"
+                min-width="20"
+                sortable
+              />
+            </el-table-column>
             <el-table-column
               prop="TC90"
               label="TC90"
               min-width="20"
-              sortable
-            />
+            >
+              <el-table-column
+                prop="TC90_upper"
+                label="+"
+                min-width="20"
+                sortable
+              />
+              <el-table-column
+                prop="TC90_lower"
+                label="-"
+                min-width="20"
+                sortable
+              />
+            </el-table-column>
             <el-table-column
               prop="sum_s"
               label="硫变合计"
-              min-width="20"
+              min-width="15"
               sortable
             />
           </el-table-column>
           <el-table-column
+            prop="RATE_1_PASS"
+            label="一次合格率"
+            min-width="35"
+            sortable
+          />
+          <el-table-column
             prop="RATE_S_PASS"
             label="硫变合格率"
             sortable
-            min-width="25"
+            min-width="35"
           />
           <el-table-column
             prop="cp_all"
             label="次品合计"
-            min-width="25"
+            min-width="35"
             sortable
           />
           <el-table-column
             prop="rate"
             label="合格率"
-            min-width="25"
+            min-width="30"
             sortable
           />
         </el-table>
@@ -220,11 +280,16 @@ export default {
           this.MN = 0
           this.YD = 0
           this.BZ = 0
-          this.MH = 0
-          this.ML = 0
-          this.TC10 = 0
-          this.TC50 = 0
-          this.TC90 = 0
+          this.MH_upper = 0
+          this.ML_upper = 0
+          this.TC10_upper = 0
+          this.TC50_upper = 0
+          this.TC90_upper = 0
+          this.MH_lower = 0
+          this.ML_lower = 0
+          this.TC10_lower = 0
+          this.TC50_lower = 0
+          this.TC90_lower = 0
           this.sum_s = 0
           this.cp_all = 0
           this.tableData.forEach(D => {
@@ -236,11 +301,16 @@ export default {
             this.MN += Number(D.MN)
             this.YD += Number(D.YD)
             this.BZ += Number(D.BZ)
-            this.MH += Number(D.MH)
-            this.ML += Number(D.ML)
-            this.TC10 += Number(D.TC10)
-            this.TC50 += Number(D.TC50)
-            this.TC90 += Number(D.TC90)
+            this.MH_upper += Number(D.MH_upper)
+            this.ML_upper += Number(D.ML_upper)
+            this.TC10_upper += Number(D.TC10_upper)
+            this.TC50_upper += Number(D.TC50_upper)
+            this.TC90_upper += Number(D.TC90_upper)
+            this.MH_lower += Number(D.MH_lower)
+            this.ML_lower += Number(D.ML_lower)
+            this.TC10_lower += Number(D.TC10_lower)
+            this.TC50_lower += Number(D.TC50_lower)
+            this.TC90_lower += Number(D.TC90_lower)
             this.sum_s += Number(D.sum_s)
             this.cp_all += Number(D.cp_all)
           })
@@ -253,11 +323,16 @@ export default {
               YD: this.YD,
               BZ: this.BZ,
               RATE_1_PASS: data.all.rate_1,
-              MH: this.MH,
-              ML: this.ML,
-              TC10: this.TC10,
-              TC50: this.TC50,
-              TC90: this.TC90,
+              MH_upper: this.MH_upper,
+              ML_upper: this.ML_upper,
+              TC10_upper: this.TC10_upper,
+              TC50_upper: this.TC50_upper,
+              TC90_upper: this.TC90_upper,
+              MH_lower: this.MH_lower,
+              ML_lower: this.ML_lower,
+              TC10_lower: this.TC10_lower,
+              TC50_lower: this.TC50_lower,
+              TC90_lower: this.TC90_lower,
               sum_s: this.sum_s,
               RATE_S_PASS: data.all.rate_lb,
               cp_all: this.cp_all,

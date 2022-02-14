@@ -327,7 +327,7 @@
             />
             <el-table-column
               prop="operation_result"
-              label="处理结果"
+              label="巡检结果"
               width="150"
             />
             <el-table-column

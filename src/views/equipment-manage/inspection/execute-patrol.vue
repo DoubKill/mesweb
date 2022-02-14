@@ -388,7 +388,7 @@
             </el-table-column>
             <el-table-column
               prop="operation_result"
-              label="处理结果"
+              label="巡检结果"
               width="150"
             >
               <template slot-scope="{row}">
@@ -433,7 +433,7 @@
                   />
                 </div>
                 <div v-if="row.job_item_check_type==='数值范围'">
-                  <el-input-number v-model="row.operation_result" style="width:120px" controls-position="right" :min="1" :max="99999" @change="changeRusult" />
+                  <el-input-number v-model="row.operation_result" style="width:120px" controls-position="right" :min="0" @change="changeRusult" />
                 </div>
               </template>
             </el-table-column>
@@ -641,7 +641,7 @@
             </el-radio-group>
           </div>
           <div v-if="projectForm.job_item_check_type==='数值范围'">
-            <el-input-number v-model="projectForm.abnormal_operation_result" style="width:120px" controls-position="right" :min="1" />
+            <el-input-number v-model="projectForm.abnormal_operation_result" style="width:120px" controls-position="right" :min="0" />
           </div>
         </el-form-item>
       </el-form>
