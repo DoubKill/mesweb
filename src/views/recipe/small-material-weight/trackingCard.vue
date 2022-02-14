@@ -5,8 +5,8 @@
       <el-form-item label="配料机台">
         <select-batching-equip v-model="formInline.equip" :is-default="true" :created-is="true" @changeFun="changeEquipList" />
       </el-form-item>
-      <el-form-item label="配料日期">
-        <!-- <el-date-picker
+      <!-- <el-form-item label="配料日期"> -->
+      <!-- <el-date-picker
           v-model="formInline.batch_time"
           type="date"
           placeholder="选择日期"
@@ -14,7 +14,7 @@
           :clearable="false"
           @change="changeList"
         /> -->
-        <el-date-picker
+      <!-- <el-date-picker
           v-model="dateValue"
           type="daterange"
           :clearable="false"
@@ -23,8 +23,8 @@
           end-placeholder="结束日期"
           value-format="yyyy-MM-dd"
           @change="changeList"
-        />
-      </el-form-item>
+        /> -->
+      <!-- </el-form-item> -->
       <el-form-item label="配方号">
         <el-select
           v-model="formInline.product_no"
@@ -54,6 +54,9 @@
             :value="item.label"
           />
         </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" class="button-right" @click="getList">刷新</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -147,25 +150,35 @@
       />
       <el-table-column
         label="操作"
-        width="200"
+        width="250"
       >
         <template slot-scope="scope">
           <el-button
             v-permission="['xl_expire_data', 'save']"
             type="primary"
-            @click="reprintFun(scope.row,false)"
+            size="mini"
+            @click="reprintFun(scope.row,false,true)"
           >
             打印
           </el-button>
-          <div v-if="scope.row.bra_code" style="display:inline-block;margin-left:10px">
+          <div v-if="scope.row.bra_code" style="display:inline-block;margin:0 10px">
             <el-button
               v-permission="['xl_expire_data', 'save']"
               type="primary"
+              size="mini"
               @click="reprintFun(scope.row,true)"
             >
               重新打印
             </el-button>
           </div>
+          <el-button
+            v-permission="['xl_expire_data', 'save']"
+            type="primary"
+            size="mini"
+            @click="reprintFun(scope.row,false)"
+          >
+            补打卡片
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -192,7 +205,7 @@
             :max="ruleForm.package_fufil"
             :step="1"
             step-strictly
-            :disabled="againPrint"
+            :disabled="againPrint||(isfirst&&!!ruleForm.bra_code)"
           />
         </el-form-item>
         <el-form-item label="配置数量" prop="package_count">
@@ -359,7 +372,7 @@ import { xlPlan } from '@/api/base_w_three'
 import { getMaterialTolerance } from '@/api/base_w_five'
 import { weightingPackageLog, manualPost } from '@/api/base_w_two'
 import { setDate } from '@/utils'
-// import axios from 'axios'
+import axios from 'axios'
 
 export default {
   name: 'SmallMaterialWeightTrackingCard',
@@ -388,36 +401,41 @@ export default {
       barCode: '',
       otherNum: 0,
       againPrint: null,
+      isfirst: false,
+      created: false,
       dateValue: [getNextDate(setDate(), -20), setDate()]
     }
   },
   created() {
+    this.created = true
     this.getList()
-    // this._setInterval = setInterval(() => {
-    //   this.getList()
-    // }, 3000)
+    this._setInterval = setInterval(() => {
+      this.getList()
+    }, 5000)
   },
-  // destroyed() {
-  //   clearInterval(this._setInterval)
-  // },
-  // deactivated() {
-  //   clearInterval(this._setInterval)
-  // },
-  // activated() {
-  //   this._setInterval = setInterval(() => {
-  //     this.getList()
-  //   }, 3000)
-  // },
+  destroyed() {
+    this.created = false
+    clearInterval(this._setInterval)
+  },
+  deactivated() {
+    this.created = false
+    clearInterval(this._setInterval)
+  },
+  activated() {
+    if (!this.created) {
+      this._setInterval = setInterval(() => {
+        this.getList()
+      }, 5000)
+    }
+  },
   methods: {
     async getList() {
       try {
-        // const self = this
-        this.loading = true
-        const data = await weightingPackageLog('get', null, { params: this.formInline }
-          // new axios.CancelToken(function executor(c) {
-          //   self.cancel = c
-          //   console.log(c)
-          // })
+        const self = this
+        const data = await weightingPackageLog('get', null, { params: this.formInline },
+          new axios.CancelToken(function executor(c) {
+            self.cancel = c
+          })
         )
         this.total = data.count
         this.tableData = data.results || []
@@ -434,8 +452,9 @@ export default {
         }
         const data = await xlPlan('get', null, { params: {
           equip_no: this.formInline.equip_no,
-          s_time: this.formInline.s_time,
-          e_time: this.formInline.e_time,
+          // s_time: this.formInline.s_time,
+          // e_time: this.formInline.e_time,
+          // batch_time: this.formInline.batch_time,
           state: '完成,运行中',
           all: 1
         }})
@@ -450,13 +469,13 @@ export default {
       }
     },
     changeList() {
-      this.formInline.s_time = this.dateValue[0]
-      this.formInline.e_time = this.dateValue[1]
-      if (getDaysBetween(this.formInline.s_time, this.formInline.e_time) > 20) {
-        this.$message('查询日期间隔不得超过20天')
-        return
-      }
-      // this.cancel()
+      // this.formInline.s_time = this.dateValue[0]
+      // this.formInline.e_time = this.dateValue[1]
+      // if (getDaysBetween(this.formInline.s_time, this.formInline.e_time) > 20) {
+      //   this.$message('查询日期间隔不得超过20天')
+      //   return
+      // }
+      this.cancel()
       if (!this.formInline.status) {
         delete this.formInline.status
       }
@@ -622,9 +641,10 @@ export default {
         done()
       }
     },
-    reprintFun(row, bool) {
+    reprintFun(row, bool, isfirst) {
       this.dialogVisible = true
       this.againPrint = bool
+      this.isfirst = isfirst || false
       this.ruleForm = JSON.parse(JSON.stringify(row))
       if (!bool) {
         // 打印
@@ -704,18 +724,18 @@ export default {
   }
 }
 
-function getDaysBetween(dateString1, dateString2) {
-  var startDate = Date.parse(dateString1)
-  var endDate = Date.parse(dateString2)
-  if (startDate > endDate) {
-    return 0
-  }
-  if (startDate === endDate) {
-    return 1
-  }
-  var days = (endDate - startDate) / (1 * 24 * 60 * 60 * 1000)
-  return days
-}
+// function getDaysBetween(dateString1, dateString2) {
+//   var startDate = Date.parse(dateString1)
+//   var endDate = Date.parse(dateString2)
+//   if (startDate > endDate) {
+//     return 0
+//   }
+//   if (startDate === endDate) {
+//     return 1
+//   }
+//   var days = (endDate - startDate) / (1 * 24 * 60 * 60 * 1000)
+//   return days
+// }
 function getNextDate(date, day) {
   var dd = new Date(date)
   dd.setDate(dd.getDate() + day)
