@@ -42,13 +42,14 @@
           label="实际重量/kg"
           prop="standard_weight"
         >
-          <template slot-scope="{row}">
+          <template slot-scope="{row,$index}">
             <el-input-number
               v-model.number="row.standard_weight"
               size="mini"
               :min="0"
               controls-position="right"
               :disabled="isView"
+              @change="checkTolerance(row,$index,_i)"
             />
           </template>
         </el-table-column>
@@ -193,6 +194,7 @@
 <script>
 import { equip_category_url } from '@/api/rubber_recipe_fun'
 import { productBatchingDetail } from '@/api/small-material-recipe'
+import { getMaterialTolerance } from '@/api/base_w_five'
 export default {
   props: {
     isIngredientObj: {
@@ -302,6 +304,19 @@ export default {
       return val === 1 ? '自动' : '手动'
     },
     updateRow() {},
+    async checkTolerance(row, index, faI) {
+      try {
+        const data = await getMaterialTolerance('get', null, { params: {
+          material_name: row.material_name,
+          standard_weight: row.actual_weight,
+          only_num: true }})
+        if (data) {
+          this.tableData[faI][index].standard_error = data
+        }
+      } catch (e) {
+        //
+      }
+    },
     changeNum(row) {
       const a = (Number(row.standard_weight) / Number(row.package_cnt)).toFixed(2)
       this.$set(row, 'single_weight', a)

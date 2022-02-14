@@ -96,7 +96,7 @@
                   :disabled="!checkPermission(['xl_recipe','merge'])"
                   active-text="是"
                   inactive-text="否"
-                  @change="changeSwitch(row,index)"
+                  @change="changeSwitch(row,index,false)"
                 />
               </template>
             </el-table-column>
@@ -104,12 +104,12 @@
               <template slot-scope="{row}">
                 <el-input-number
                   v-model="row.split_count"
-                  :disabled="!checkPermission(['xl_recipe','merge'])"
+                  :disabled="!checkPermission(['xl_recipe','merge'])||loading"
                   style="width:100px"
                   controls-position="right"
                   :min="1"
                   :max="9999"
-                  @change="changeSwitch(row, index)"
+                  @change="changeSwitch(row, index,true)"
                 />
               </template>
             </el-table-column>
@@ -282,15 +282,24 @@ export default {
         //
       }
     },
-    async changeSwitch(row, faI) {
+    async changeSwitch(row, faI, bool) {
       try {
+        this.loading = true
         await updateFlagCount('post', null, { data: {
           equip_no: this.allTable[faI].equip_no,
           id: row.id, oper_type: '配方', merge_flag: row.merge_flag, split_count: row.split_count
         }})
         this.$message.success('操作成功')
+        if (bool) {
+          const data = await this.getList()
+          this.allTable[this.currentIndex].tableList = data.data
+          this.allTable[this.currentIndex].total = data.total
+          this.allTable[this.currentIndex].tableList1 = []
+        } else {
+          this.loading = false
+        }
       } catch (e) {
-        //
+        this.loading = false
       }
     }
   }

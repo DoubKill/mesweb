@@ -269,7 +269,7 @@ import { mapGetters } from 'vuex'
 import { checkPermission } from '@/utils'
 import commonVal from '@/utils/common'
 import { getToken } from '@/utils/auth'
-import { rubber_material_url, send_auxiliary_url } from '@/api/rubber_recipe_fun'
+import { rubber_material_url, send_auxiliary_url, xlRecipeNotice } from '@/api/rubber_recipe_fun'
 import StageIdSelect from '@/components/StageSelect/StageIdSelect'
 import SITESelect from './components/SITESelect'
 import createdRubberMaterial from './components/createdRubberMaterial'
@@ -416,18 +416,47 @@ export default {
     },
     async send_auxiliary(row) {
       try {
-        const data = await send_auxiliary_url('post', {
-          params: {
-            'product_batching_id': row.id,
-            'product_no': row.stage_product_batch_no
-          }
-        })
-        this.$message.success('发送至上辅机成功')
-        this.rubber_material_list()
-        const url = data.auxiliary_url + '#/recipe/list'
+        this.$confirm('是否将该配方下传给群控系统？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(async() => {
+          let data = await send_auxiliary_url('post', {
+            params: {
+              'product_batching_id': row.id,
+              'product_no': row.stage_product_batch_no
+            }
+          })
+          if (data.notice_flag) {
+            this.$confirm('群控系统已有同名配方，继续下传会覆盖群控系统的同名配方，是否继续下传？', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(async() => {
+              data = await send_auxiliary_url('post', {
+                params: {
+                  'product_batching_id': row.id,
+                  'product_no': row.stage_product_batch_no,
+                  notice_flag: true
+                }
+              })
+              this.$message.success('发送至上辅机成功')
+              this.rubber_material_list()
+              const url = data.auxiliary_url + '#/recipe/list'
 
-        window.open(url + '?AAA=' + getToken() +
+              window.open(url + '?AAA=' + getToken() +
         '&batch_no=' + row.stage_product_batch_no)
+            })
+            return
+          }
+
+          this.$message.success('发送至上辅机成功')
+          this.rubber_material_list()
+          const url = data.auxiliary_url + '#/recipe/list'
+
+          window.open(url + '?AAA=' + getToken() +
+        '&batch_no=' + row.stage_product_batch_no)
+        })
       } catch (e) {
         //
       }
@@ -444,7 +473,34 @@ export default {
       }
     },
     submitSendWeight() {
-
+      try {
+        let _i = 0
+        this.checkList.forEach(async d => {
+          const data = await xlRecipeNotice('post', { params: { product_batching_id: this.currentRow.id, product_no: this.currentRow.stage_product_batch_no, xl_equip: d }})
+          if (data && data.notice_flag) {
+            this.$confirm(`${d}:${data.msg}料罐中不存在，是否下传配方？`, '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(async() => {
+              const data1 = await xlRecipeNotice('post', { params: { product_batching_id: this.currentRow.id, product_no: this.currentRow.stage_product_batch_no, xl_equip: d, notice_flag: true }})
+              _i++
+              this.$message.success(data1)
+              if (_i === this.checkList.length) {
+                this.handleClose(false)
+              }
+            })
+          } else {
+            this.$message.success(data)
+            _i++
+            if (_i === this.checkList.length) {
+              this.handleClose(false)
+            }
+          }
+        })
+      } catch (e) {
+        throw new Error(e)
+      }
     },
     handleCloseMaterial() {
       this.dialogAddRubberMaterial = false

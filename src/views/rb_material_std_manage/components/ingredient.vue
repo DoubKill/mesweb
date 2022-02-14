@@ -107,13 +107,14 @@
             label="实际重量/kg"
             prop="actual_weight"
           >
-            <template slot-scope="{row}">
+            <template slot-scope="{row,$index}">
               <el-input-number
                 v-model.number="row.actual_weight"
                 size="mini"
                 :min="0"
                 controls-position="right"
                 :disabled="isView"
+                @change="checkTolerance(row,$index,i)"
               />
               <!-- @change="PutNewPracticalWeightChanged(row)" -->
             </template>
@@ -131,7 +132,7 @@
               />
             </template>
           </el-table-column>
-          <el-table-column label="投料方式">
+          <!-- <el-table-column label="投料方式">
             <template slot-scope="{row}">
               <el-select
                 v-model="row.type"
@@ -147,7 +148,7 @@
                 />
               </el-select>
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column v-for="(item) in formInline.enable_equip" :key="item" width="120" :label="item">
             <template slot-scope="{row}">
               <el-select
@@ -283,6 +284,7 @@ import materialSelection from './materialSelection'
 import ingredientStandard from './ingredient-standard'
 import { rubber_material_url } from '@/api/rubber_recipe_fun'
 import { equipUrl } from '@/api/base_w'
+import { getMaterialTolerance } from '@/api/base_w_five'
 export default {
   components: { ingredientStandard, materialSelection },
   props: {
@@ -472,6 +474,19 @@ export default {
         done()
       }
     },
+    async checkTolerance(row, index, faI) {
+      try {
+        const data = await getMaterialTolerance('get', null, { params: {
+          material_name: row.material_name,
+          standard_weight: row.actual_weight,
+          only_num: true }})
+        if (data) {
+          this.tableDataAll[faI].tableData[index].standard_error = data
+        }
+      } catch (e) {
+        //
+      }
+    },
     changeDevType(val) {
       this.formInline.dev_type_name = val ? val.category_name : ''
     },
@@ -656,12 +671,13 @@ export default {
       if (arr.length > 0) {
         try {
           arr.forEach(D => {
-            if (!D.material || !D.actual_weight || !D.type) {
+            if (!D.material || !D.actual_weight) {
+              // || !D.type
               throw Error()
             }
           })
         } catch (e) {
-          this.$message.info('原材料、实际重量、投料方式不能为空')
+          this.$message.info('原材料、实际重量')
           return
         }
       }
@@ -740,7 +756,23 @@ export default {
       }
 
       try {
-        const _api = parameter._add ? 'post' : 'put'
+        let _api
+        if (parameter._add) {
+          _api = 'post'
+        } else {
+          if (!parameter.batching_details.length && !parameter.weight_cnt_types[0].weight_details.length) {
+            _api = 'put'
+          } else {
+            if (parameter.new_recipe_id) {
+              parameter.id = parameter.new_recipe_id
+              _api = 'put'
+            } else {
+              parameter.id = null
+              parameter.create_new = true
+              _api = 'post'
+            }
+          }
+        }
         const _id = parameter._add ? null : parameter.id
         await rubber_material_url(_api, _id, { data: parameter })
         this.dialogVisible = false
