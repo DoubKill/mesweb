@@ -10,11 +10,13 @@
           ref="tree"
           v-loading="loadingTree"
           class="filter-tree"
+          node-key="id"
           :data="data"
           :props="defaultProps"
-          default-expand-all
           :highlight-current="true"
           :expand-on-click-node="false"
+          :default-expand-all="false"
+          :default-expanded-keys="expandedKeys"
           @node-contextmenu="nodeContextmenu"
           @node-click="nodeClick"
         />
@@ -669,7 +671,8 @@ export default {
       isDialogView: false,
       currentObj: {},
       dialogVisibleStandard: false,
-      btnLoadingStandard: false
+      btnLoadingStandard: false,
+      expandedKeys: []
     }
   },
   watch: {
@@ -691,6 +694,7 @@ export default {
         this.loadingTree = true
         const data = await equipBom('get', null, { params: { tree: 1 }})
         this.data = data.results || []
+        this.expandedKeys = aaa(this.data)
         this.loadingTree = false
       } catch (e) {
         this.loadingTree = false
@@ -1108,6 +1112,19 @@ export default {
     }
   }
 }
+const arr = []
+function aaa(_arr) {
+  _arr.forEach(d => {
+    if (d.level < 4) {
+      arr.push(d.id)
+    }
+    if (d.children.length) {
+      aaa(d.children)
+    }
+  })
+  return [...arr]
+}
+
 </script>
 
 <style lang="scss" scoped>
