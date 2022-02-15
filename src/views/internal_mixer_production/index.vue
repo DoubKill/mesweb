@@ -427,15 +427,13 @@ export default {
     ...mapGetters(['permission'])
   },
   created() {
-    this.getList()
     // this.getClassesList() // 获取班次列表
-
     var _setDateCurrent = setDate()
     this.getParams.st = _setDateCurrent + ' 00:00:00'
     this.getParams.et = _setDateCurrent + ' 23:59:59'
-    // this.getParams.st = "2020-06-01" + " 00:00:00";
-    // this.getParams.et = '2020-06-01' + ' 23:59:59'
     this.search_date = [this.getParams.st, this.getParams.et]
+
+    this.getList()
   },
   methods: {
     getList() {
