@@ -12,8 +12,8 @@
     <el-table
       v-loading="loading"
       :data="tableData"
+      style="width: 100%"
       border
-      element-loading-spinner="el-icon-loading"
     >
       <el-table-column
         align="center"
@@ -161,26 +161,26 @@
 </template>
 
 <script>
-import { equipTargetMtbmttrSettings } from '@/api/base_w_four'
+import { performanceUnitPrice } from '@/api/jqy'
 export default {
   name: 'StatisticalReportPrice',
   data() {
     return {
       options: [],
-      tableData: [{ E580_pt: 1 }],
+      tableData: [],
       loading: false,
       btnLoading: false
     }
   },
   created() {
-    // this.getList()
+    this.getList()
   },
   methods: {
     async getList() {
       try {
         this.loading = true
-        const data = await equipTargetMtbmttrSettings('get')
-        this.tableData = data || []
+        const data = await performanceUnitPrice('get')
+        this.tableData = data.result || []
         this.loading = false
       } catch (e) {
         this.loading = false
@@ -190,14 +190,11 @@ export default {
       try {
         console.log(this.tableData)
         this.btnLoading = true
-        await equipTargetMtbmttrSettings('post', null, { data: this.tableData })
+        await performanceUnitPrice('post', null, { data: this.tableData })
         this.$message.success('保存成功')
         this.btnLoading = false
       } catch (e) {
         this.btnLoading = false
-        if (e.message) {
-          this.$message(e.message)
-        }
       }
     }
   }

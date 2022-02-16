@@ -5,7 +5,7 @@
       <el-form-item label="工厂日期">
         <el-date-picker
           v-model="search.date"
-          type="day"
+          type="date"
           :clearable="false"
           format="yyyy-MM-dd"
           value-format="yyyy-MM-dd"
@@ -28,7 +28,7 @@
     <el-table
       id="out-table"
       v-loading="loading"
-      :row-class-name="tableRowClassName"
+      style="width: 100%"
       :data="tableData"
       border
     >
@@ -48,31 +48,33 @@
         <template
           slot-scope="{row}"
         >
-          <span>{{ row.state }}</span>
+          <span>{{ row.equip_no }}</span>
         </template>
       </el-table-column>
       <el-table-column
-        prop="count"
+        prop="type"
         align="center"
-        label="岗位"
+        label=""
         width="90"
       />
       <el-table-column
         v-for="(d,index) in tableHead"
         :key="Date.now()+index"
         align="center"
-        :label="d.label"
-        width="120"
+        :label="d"
+        min-width="40"
       >
         <el-table-column
           align="center"
+          :prop="d+'-早'"
           label="早"
-          width="60"
+          min-width="20"
         />
         <el-table-column
           align="center"
+          :prop="d+'-晚'"
           label="晚"
-          width="60"
+          min-width="20"
         />
       </el-table-column>
       <el-table-column
@@ -86,7 +88,7 @@
 </template>
 
 <script>
-import { monthlyOutputStatistics } from '@/api/jqy'
+import { summaryOfMillOutput } from '@/api/jqy'
 import { exportExcel } from '@/utils/index'
 import { setDate } from '@/utils'
 export default {
@@ -97,7 +99,6 @@ export default {
         date: setDate()
       },
       machineList: [],
-      tableHead1: [],
       loading: false,
       tableHead: [],
       tableData: [],
@@ -105,81 +106,31 @@ export default {
     }
   },
   created() {
-    this.tableHead = getDiffDate(this.search.date + '-01', getCurrentMonthLastDay(setDate()))
     this.getList()
   },
   methods: {
     async getList() {
       try {
         this.loading = true
-        const data = await monthlyOutputStatistics('get', null, { params: this.search })
-        this.tableHead1 = data.group_list || []
-        this.tableData = data.wl.concat(data.jl).concat(data.hj)
+        const data = await summaryOfMillOutput('get', null, { params: this.search })
+        this.tableHead = data.state_list || []
+        this.tableData = data.results.concat(data.count)
         this.loading = false
       } catch (e) {
         this.loading = false
       }
     },
     changeList() {
-      this.tableHead = getDiffDate(this.search.date + '-01', getCurrentMonthLastDay(this.search.date))
       this.getList()
-    },
-    tableRowClassName({ row, rowIndex }) {
-      if (row.state === '无硫小计' || row.state === '加硫小计') {
-        return 'wl-row'
-      }
-      if (row.state === '无硫/加硫合计') {
-        return 'summary-cell-style'
-      }
     },
     async exportTable() {
       await this.$set(this, 'exportTableShow', true)
-      await exportExcel('月产量统计明细及绩效报表')
+      await exportExcel('密炼机台产量汇总表')
       setTimeout(() => {
         this.exportTableShow = false
       }, 300)
     }
   }
-}
-function getDiffDate(start, end) {
-  var startTime = getDate(start)
-  var endTime = getDate(end)
-  var dateArr = []
-  while ((endTime.getTime() - startTime.getTime()) >= 0) {
-    var d = startTime.getDate()
-    dateArr.push({ label: d + '日', prop: d })
-    startTime.setDate(startTime.getDate() + 1)
-  }
-  return dateArr
-}
-function getDate(datestr) {
-  var temp = datestr.split('-')
-  if (temp[1] === '01') {
-    temp[0] = parseInt(temp[0], 10) - 1
-    temp[1] = '12'
-  } else {
-    temp[1] = parseInt(temp[1], 10) - 1
-  }
-  // new Date()的月份入参实际都是当前值-1
-  var date = new Date(temp[0], temp[1], temp[2])
-  return date
-}
-function getCurrentMonthLastDay(d) {
-  const date = new Date(d)
-  let currentMonth = date.getMonth()
-  const nextMonth = ++currentMonth
-  const nextMonthFirstDay = new Date(date.getFullYear(), nextMonth, 1)
-  const oneDay = 1000 * 60 * 60 * 24
-  const lastTime = new Date(nextMonthFirstDay - oneDay)
-  let month = parseInt(lastTime.getMonth() + 1)
-  let day = lastTime.getDate()
-  if (month < 10) {
-    month = '0' + month
-  }
-  if (day < 10) {
-    day = '0' + day
-  }
-  return date.getFullYear() + '-' + month + '-' + day
 }
 </script>
 

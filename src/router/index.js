@@ -328,6 +328,16 @@ export let asyncRoutes = [
       }
     },
     {
+      path: '/equipment-management/report/specification_setting',
+      name: 'SpecificationSetting',
+      component: () => import('@/views/equipment-management/report/specification_setting'),
+      meta: {
+        title: '丁基胶 规格设定',
+        icon: 'formula',
+        permissionName: 'productinfo'
+      }
+    },
+    {
       path: '/rb/material/std/manage',
       name: 'RbMaterialStdManage',
       component: () => import('@/views/rb_material_std_manage/newIndex'),
@@ -1174,16 +1184,16 @@ export let asyncRoutes = [
               permissionName: ''
             }
           },
-          {
-            path: '/report/output-statistics-details',
-            component: () => import('@/views/equipment-management/report/output-statistics-details'),
-            name: 'OutputStatisticsDetails',
-            meta: {
-              faName: 'StatisticalReport',
-              title: '月产量统计明细及绩效',
-              permissionName: 'monthly_output_statistics_and_performance'
-            }
-          },
+          // {
+          //   path: '/report/output-statistics-details',
+          //   component: () => import('@/views/equipment-management/report/output-statistics-details'),
+          //   name: 'OutputStatisticsDetails',
+          //   meta: {
+          //     faName: 'StatisticalReport',
+          //     title: '月产量统计明细及绩效',
+          //     permissionName: 'monthly_output_statistics_and_performance'
+          //   }
+          // },
           {
             path: '/report/daily-output-completed',
             component: () => import('@/views/equipment-management/report/daily-output-completed'),

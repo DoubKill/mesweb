@@ -270,7 +270,7 @@
     <el-dialog
       title="巡检详情"
       :visible.sync="dialogVisible"
-      width="60%"
+      width="65%"
     >
       <el-form
         :model="creatOrder"
@@ -308,7 +308,7 @@
           <el-table
             :data="creatOrder.work_content"
             border
-            style="width: 841px"
+            style="width: 961px"
           >
             <el-table-column
               label="序号"
@@ -324,6 +324,11 @@
               prop="job_item_check_standard"
               label="判断标准"
               width="200"
+            />
+            <el-table-column
+              prop="unit"
+              label="单位"
+              width="120"
             />
             <el-table-column
               prop="operation_result"
@@ -454,7 +459,7 @@
             </el-radio-group>
           </div>
           <div v-if="projectForm.job_item_check_type==='数值范围'">
-            <el-input-number v-model="projectForm.abnormal_operation_result" style="width:120px" controls-position="right" :min="1" disabled />
+            <el-input v-model="projectForm.abnormal_operation_result" style="width:120px" disabled />
           </div>
         </el-form-item>
       </el-form>
@@ -544,8 +549,8 @@ export default {
       if (row.work_content.length > 0) {
         this.creatOrder.work_content.map((item, index) => {
           if (item.job_item_check_type === '数值范围') {
-            item.job_item_check_standard_a = Number(item.job_item_check_standard.split('-')[0])
-            item.job_item_check_standard_b = Number(item.job_item_check_standard.split('-')[1])
+            item.job_item_check_standard_a = item.job_item_check_standard.split('-')[0]
+            item.job_item_check_standard_b = item.job_item_check_standard.split('-')[1]
           } else {
             delete item.job_item_check_standard_a
             delete item.job_item_check_standard_b
