@@ -21,7 +21,7 @@
           v-permission="['monthly_output_statistics_and_performance','export']"
           type="primary"
           @click="exportTable"
-        >导出Excel</el-button>
+        >导出Excel模板</el-button>
         <el-upload
           v-permission="[]"
           style="margin:0 8px;display:inline-block"
@@ -35,33 +35,29 @@
       </el-form-item>
     </el-form>
     <el-table
-      id="out-table"
       v-loading="loading"
-      :row-class-name="tableRowClassName"
       :data="tableData"
+      :span-method="objectSpanMethod"
       border
     >
       <el-table-column width="120px">
         <template
           slot="header"
-          slot-scope="{row}"
         >
-          <span v-if="false">{{ row }}</span>
-          <div v-if="!exportTableShow" class="header-style">
+          <div class="header-style">
             <div style="width:100%;text-align:right;margin:8px 0 20px 0">时间</div>
             <span>机台</span>
             <div class="header-style-line three-line" />
           </div>
-          <div v-else>机台</div>
         </template>
         <template
           slot-scope="{row}"
         >
-          <span>{{ row.state }}</span>
+          <span>{{ row.equip }}</span>
         </template>
       </el-table-column>
       <el-table-column
-        prop="count"
+        prop="section"
         align="center"
         label="岗位"
         width="90"
@@ -76,6 +72,7 @@
         <el-table-column
           v-for="(item,i) in tableHead1[index]"
           :key="i"
+          :prop="d.prop+item"
           align="center"
           :label="item"
           width="60"
@@ -86,8 +83,7 @@
 </template>
 
 <script>
-import { monthlyOutputStatistics } from '@/api/jqy'
-import { exportExcel } from '@/utils/index'
+import { employeeattendancerecords, employeeattendancerecordsexport } from '@/api/jqy'
 import { setDate } from '@/utils'
 export default {
   name: 'StatisticalReportAttendance',
@@ -101,6 +97,7 @@ export default {
       loading: false,
       tableHead: [],
       tableData: [],
+      btnExportLoad: false,
       exportTableShow: false
     }
   },
@@ -112,9 +109,28 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const data = await monthlyOutputStatistics('get', null, { params: this.search })
+        const data = await employeeattendancerecords('get', null, { params: this.search })
         this.tableHead1 = data.group_list || []
-        this.tableData = data.wl.concat(data.jl).concat(data.hj)
+        this.tableData = data.results || []
+        this.spanArr = []
+        this.pos = null
+        for (var i = 0; i < this.tableData.length; i++) {
+          if (i === 0) {
+            // 如果是第一条记录（即索引是0的时候），向数组中加入１
+            this.spanArr.push(1)
+            this.pos = 0
+          } else {
+            if (this.tableData[i].equip === this.tableData[i - 1].equip) {
+              // 如果a相等就累加，并且push 0  这里是根据一样的a匹配
+              this.spanArr[this.pos] += 1
+              this.spanArr.push(0)
+            } else {
+              // 不相等push 1
+              this.spanArr.push(1)
+              this.pos = i
+            }
+          }
+        }
         this.loading = false
       } catch (e) {
         this.loading = false
@@ -124,35 +140,50 @@ export default {
       this.tableHead = getDiffDate(this.search.date + '-01', getCurrentMonthLastDay(this.search.date))
       this.getList()
     },
-    tableRowClassName({ row, rowIndex }) {
-      if (row.state === '无硫小计' || row.state === '加硫小计') {
-        return 'wl-row'
-      }
-      if (row.state === '无硫/加硫合计') {
-        return 'summary-cell-style'
-      }
-    },
     debounceList() {
       this.$debounce(this, 'getList')
     },
     Upload(param) {
-      // const formData = new FormData()
-      // formData.append('file', param.file)
-      // equipFaultSignalImport('post', null, { data: formData }).then(response => {
-      //   this.$message({
-      //     type: 'success',
-      //     message: response
-      //   })
-      //   this.formInline.page = 1
-      //   this.getList()
-      // })
+      const formData = new FormData()
+      formData.append('file', param.file)
+      formData.append('date', this.search.date)
+      employeeattendancerecords('post', null, { data: formData }).then(response => {
+        this.$message({
+          type: 'success',
+          message: response
+        })
+        this.getList()
+      })
     },
-    async exportTable() {
-      await this.$set(this, 'exportTableShow', true)
-      await exportExcel('月产量统计明细及绩效报表')
-      setTimeout(() => {
-        this.exportTableShow = false
-      }, 300)
+    objectSpanMethod({ row, column, rowIndex, columnIndex }) {
+      if ([0].includes(columnIndex) && this.spanArr) {
+        const _row = this.spanArr[rowIndex]
+        const _col = _row > 0 ? 1 : 0
+        return {
+          rowspan: _row,
+          colspan: _col
+        }
+      }
+    },
+    exportTable() {
+      this.btnExportLoad = true
+      const obj = {
+        date: this.search.date
+      }
+      employeeattendancerecordsexport(obj).then(response => {
+        const link = document.createElement('a')
+        const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
+        link.style.display = 'none'
+        link.href = URL.createObjectURL(blob)
+        link.download = '员工出勤记录表' + setDate() + '.xlsx'// 下载的文件名
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        this.btnExportLoad = false
+      })
+        .catch(e => {
+          this.btnExportLoad = false
+        })
     }
   }
 }

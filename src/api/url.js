@@ -643,5 +643,11 @@ export default {
   MonthlyOutputStatisticsReport: '/api/v1/production/monthly-output-statistics-report/',
   SchedulingStockSummary: '/api/v1/plan/scheduling-stock-summary/',
   MaterialTestPlan: '/api/v1/quality/material-test-plan/',
-  MaterialTestPlanDetail: '/api/v1/quality/material-test-plan-detail/'
+  MaterialTestPlanDetail: '/api/v1/quality/material-test-plan-detail/',
+  PerformanceJobLadder: '/api/v1/production/performance-job-ladder/', // 绩效计算 岗位阶梯表
+  ProductInfoDj: '/api/v1/production/product-info-dj/', // 丁基胶规格设定
+  PerformanceUnitPrice: '/api/v1/production/performance-unit-price/', // 绩效计算 单价表
+  Employeeattendancerecords: '/api/v1/production/employee_attendance_records/', // 员工出勤记录表
+  Employeeattendancerecordsexport: '/api/v1/production/employee_attendance_records_export/', // 员工出勤记录表导出模板
+  SummaryOfMillOutput: '/api/v1/production/summary_of_mill_output/' // 密炼机台产量汇总表
 }

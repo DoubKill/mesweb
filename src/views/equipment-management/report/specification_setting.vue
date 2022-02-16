@@ -1,12 +1,15 @@
 <template>
-  <div class="statisticalReportPost">
-    <!-- 岗位阶梯表 -->
+  <div class="specificationSetting">
+    <!-- 丁基胶 规格设定 -->
     <el-form :inline="true">
-      <el-form-item label="岗位名称">
-        <el-input v-model="search.name" clearable placeholder="岗位名称" @input="changeSearch" />
+      <el-form-item label="胶料名称">
+        <el-input v-model="search.product_name" clearable placeholder="胶料名称" @input="changeSearch" />
+      </el-form-item>
+      <el-form-item label="胶料编码">
+        <el-input v-model="search.product_no" clearable placeholder="胶料编码" @input="changeSearch" />
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button v-permission="['equip_part', 'add']" type="primary" @click="onSubmit">新建</el-button>
+        <el-button v-permission="['equip_part', 'add']" type="primary" @click="onSubmit">添加</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -16,18 +19,23 @@
       border
     >
       <el-table-column
-        prop="code"
-        label="岗位编号"
+        prop="product_name"
+        label="胶料名称"
         min-width="20"
       />
       <el-table-column
-        prop="name"
-        label="岗位名称"
+        prop="product_no"
+        label="胶料编码"
         min-width="20"
       />
       <el-table-column
-        prop="coefficient"
-        label="绩效系数%"
+        prop="created_username"
+        label="创建人员"
+        min-width="20"
+      />
+      <el-table-column
+        prop="created_date"
+        label="创建时间"
         min-width="20"
       />
       <el-table-column label="操作" width="200px">
@@ -57,7 +65,7 @@
       @currentChange="currentChange"
     />
     <el-dialog
-      :title="`${dialogForm.id?'编辑':'新建'}岗位阶梯表信息`"
+      :title="`${dialogForm.id?'编辑':'新建'}丁基胶 详情`"
       :visible.sync="dialogVisible"
       width="500px"
       :before-close="handleClose"
@@ -69,16 +77,16 @@
         :model="dialogForm"
       >
         <el-form-item
-          label="岗位名称"
-          prop="name"
+          label="胶料名称"
+          prop="product_name"
         >
-          <el-input v-model="dialogForm.name" style="width:250px" />
+          <el-input v-model="dialogForm.product_name" />
         </el-form-item>
         <el-form-item
-          label="绩效系数%"
-          prop="coefficient"
+          label="胶料编码"
+          prop="product_no"
         >
-          <el-input-number v-model="dialogForm.coefficient" :min="0" style="width:250px" />
+          <el-input v-model="dialogForm.product_no" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -91,9 +99,9 @@
 
 <script>
 import page from '@/components/page'
-import { performanceJobLadder } from '@/api/jqy'
+import { productInfoDj } from '@/api/jqy'
 export default {
-  name: 'StatisticalReportPost',
+  name: 'SpecificationSetting',
   components: { page },
   data() {
     return {
@@ -103,8 +111,8 @@ export default {
       loading: false,
       dialogVisible: false,
       rules: {
-        name: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        coefficient: [{ required: true, message: '不能为空', trigger: 'blur' }]
+        product_no: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        product_name: [{ required: true, message: '不能为空', trigger: 'blur' }]
       },
       dialogForm: {},
       btnLoading: false
@@ -117,7 +125,7 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const data = await performanceJobLadder('get', null, { params: this.search })
+        const data = await productInfoDj('get', null, { params: this.search })
         this.tableData = data.results || []
         this.total = data.count
         this.loading = false
@@ -134,8 +142,8 @@ export default {
       this.search.page_size = pageSize
       this.getList()
     },
-    async onSubmit() {
-      this.dialogForm = { coefficient: null }
+    onSubmit() {
+      this.dialogForm = {}
       this.dialogVisible = true
     },
     showEditDialog(row) {
@@ -143,12 +151,12 @@ export default {
       this.dialogVisible = true
     },
     handleDelete: function(row) {
-      this.$confirm('此操作将删除' + row.name + ', 是否继续?', '提示', {
+      this.$confirm('此操作将删除' + row.product_name + ', 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        performanceJobLadder('delete', row.id, {})
+        productInfoDj('delete', row.id, {})
           .then(response => {
             this.$message({
               type: 'success',
@@ -171,7 +179,7 @@ export default {
           try {
             this.btnLoading = true
             const _api = this.dialogForm.id ? 'put' : 'post'
-            await performanceJobLadder(_api, this.dialogForm.id || null, { data: this.dialogForm })
+            await productInfoDj(_api, this.dialogForm.id || null, { data: this.dialogForm })
             this.$message.success('操作成功')
             this.handleClose(null)
             this.getList()
@@ -189,4 +197,12 @@ export default {
 </script>
 
 <style lang="scss">
+.specificationSetting{
+  .el-input{
+    width:160px;
+  }
+  .el-dialog .el-input{
+    width:250px;
+  }
+}
 </style>
