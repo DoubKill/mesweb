@@ -33,6 +33,7 @@
         <el-select
           v-model="search.order_type"
           placeholder="请选择"
+          :disabled="isDialog"
           @change="changeList"
         >
           <el-option

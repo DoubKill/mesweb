@@ -287,7 +287,7 @@ export default {
   data() {
     return {
       loading: false,
-      search: { used_type: 4 },
+      search: {},
       currentRow: {},
       rubberStateOptions: commonVal.rubberStateList,
       tableData: [],
@@ -402,6 +402,9 @@ export default {
       try {
         this.loading = true
         this.search.exclude_used_type = 6
+        if (this.search.used_type === 6) {
+          delete this.search.exclude_used_type
+        }
         const data = await rubber_material_url('get', null, { params: this.search })
         this.tableData = data.results || []
         this.total = data.count

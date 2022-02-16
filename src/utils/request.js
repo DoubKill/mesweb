@@ -82,7 +82,9 @@ service.interceptors.response.use(
           }
         }
       }
-
+      // if (obj.detail && obj.detail === '无效页面。') {
+      //   return Promise.resolve({ results: [] })
+      // }
       Message({
         message: str,
         type: 'error',
