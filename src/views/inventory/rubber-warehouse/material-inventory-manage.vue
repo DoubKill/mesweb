@@ -106,6 +106,7 @@
       <el-table-column label="单位重量" align="center" prop="unit_weight" min-width="16" />
       <el-table-column label="总重量" align="center" prop="total_weight" min-width="16" />
       <el-table-column label="品质状态" align="center" prop="quality_status" min-width="15" />
+      <el-table-column v-if="['炭黑库', '原材料库'].includes(warehouseNameProps)" label="入库时间" align="center" prop="in_storage_time" min-width="15" />
       <!-- <el-table-column label="操作" align="center" min-width="20">
         <template slot-scope="scope">
           <el-button
