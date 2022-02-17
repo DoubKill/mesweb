@@ -164,7 +164,7 @@
             >驳回</el-button>
             <el-button
               v-if="checkPermission(['productbatching','abandon'])&&
-                [5,4].includes(scope.row.used_type)"
+                [5,4,7].includes(scope.row.used_type)"
               size="mini"
               @click="status_recipe_fun(scope.row.id,false,'废弃')"
             >废弃</el-button>
