@@ -760,12 +760,16 @@ export default {
         if (parameter._add) {
           _api = 'post'
         } else {
-          if (!parameter.batching_details.length && !parameter.weight_cnt_types[0].weight_details.length) {
+          if (!parameter.batching_details.length && (!parameter.weight_cnt_types[0] || !parameter.weight_cnt_types[0].weight_details.length)) {
             _api = 'put'
           } else {
             if (parameter.new_recipe_id) {
-              parameter.id = parameter.new_recipe_id
-              _api = 'put'
+              if (parameter.id !== parameter.new_recipe_id) {
+                parameter.id = null
+                _api = 'post'
+              } else {
+                _api = 'put'
+              }
             } else {
               parameter.id = null
               parameter.create_new = true
@@ -779,6 +783,7 @@ export default {
         this.handleClose(false)
         this.$emit('changeList')
       } catch (e) { //
+        console.log(e, 8788)
       }
     }
   }

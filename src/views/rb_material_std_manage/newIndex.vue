@@ -22,7 +22,10 @@
         </el-select>
       </el-form-item>
       <el-form-item label="SITE">
-        <SITESelect v-model="search.site" @returnBack="changeSearch" />
+        <SITESelect
+          v-model="search.site"
+          @returnBack="changeSearch"
+        />
       </el-form-item>
       <el-form-item label="段次">
         <StageIdSelect
@@ -81,7 +84,11 @@
         label="胶料配方编码"
       >
         <template slot-scope="scope">
-          <el-link type="primary" :underline="false" @click="showGridTable(scope.row.id)">{{ scope.row.stage_product_batch_no }}</el-link>
+          <el-link
+            type="primary"
+            :underline="false"
+            @click="showGridTable(scope.row.id)"
+          >{{ scope.row.stage_product_batch_no }}</el-link>
         </template>
       </el-table-column>
       <el-table-column
@@ -145,7 +152,7 @@
               @click="status_recipe_fun(scope.row.id,true)"
             >校对</el-button>
             <el-button
-              v-if="scope.row.used_type === 3 && checkPermission(['productbatching','use'])"
+              v-if="[3,7].includes(scope.row.used_type) && checkPermission(['productbatching','use'])"
               size="mini"
               @click="status_recipe_fun(scope.row.id,true)"
             >启用</el-button>
@@ -161,6 +168,12 @@
               size="mini"
               @click="status_recipe_fun(scope.row.id,false,'废弃')"
             >废弃</el-button>
+            <el-button
+              v-if="checkPermission(['productbatching','abandon'])&&
+                [4].includes(scope.row.used_type)"
+              size="mini"
+              @click="status_recipe_fun(scope.row.id,false,'停用')"
+            >停用</el-button>
           </el-button-group>
         </template>
       </el-table-column>
@@ -173,7 +186,9 @@
           <el-button-group>
             <el-button
               v-if="scope.row.used_type === 4 && checkPermission(['productbatching','send'])"
+              :disabled="!scope.row.enable_equip.length"
               size="mini"
+              title="请配置可用机台"
               @click="send_auxiliary(scope.row)"
             >发送</el-button>
           </el-button-group>
@@ -188,8 +203,10 @@
           <el-button-group>
             <el-button
               v-if="scope.row.used_type === 4"
+              title="请配置可用机台"
               type="primary"
               size="mini"
+              :disabled="!scope.row.enable_equip.length"
               @click="send_weighing(scope.row)"
             >发送</el-button>
           </el-button-group>
@@ -259,11 +276,21 @@
       :before-close="handleClose"
     >
       <el-checkbox-group v-model="checkList">
-        <el-checkbox v-for="(item,key) in dialogList" :key="key" :label="item.no">{{ item.name }}</el-checkbox>
+        <el-checkbox
+          v-for="(item,key) in dialogList"
+          :key="key"
+          :label="item.no"
+        >{{ item.name }}</el-checkbox>
       </el-checkbox-group>
-      <span slot="footer" class="dialog-footer">
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="handleClose(false)">取 消</el-button>
-        <el-button type="primary" @click="submitSendWeight">确 定</el-button>
+        <el-button
+          type="primary"
+          @click="submitSendWeight"
+        >确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -385,7 +412,7 @@ export default {
           type: 'warning'
         }).then(async() => {
           try {
-            await rubber_material_url('patch', id, { data: { pass_flag: bool }})
+            await rubber_material_url('patch', id, { data: { pass_flag: bool, used_or_abandon: val === '停用' ? 1 : 0 }})
             this.$message.success('状态切换成功')
             this.rubber_material_list()
           } catch (e) { throw new Error(e) }
@@ -453,7 +480,7 @@ export default {
               const url = data.auxiliary_url + '#/recipe/list'
 
               window.open(url + '?AAA=' + getToken() +
-        '&batch_no=' + row.stage_product_batch_no)
+                '&batch_no=' + row.stage_product_batch_no)
             })
             return
           }
@@ -463,7 +490,7 @@ export default {
           const url = data.auxiliary_url + '#/recipe/list'
 
           window.open(url + '?AAA=' + getToken() +
-        '&batch_no=' + row.stage_product_batch_no)
+            '&batch_no=' + row.stage_product_batch_no)
         })
       } catch (e) {
         //
@@ -532,6 +559,8 @@ export default {
           return '驳回'
         case 6:
           return '废弃'
+        case 7:
+          return '停用'
       }
     }
   }
