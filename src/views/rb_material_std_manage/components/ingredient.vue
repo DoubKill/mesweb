@@ -349,7 +349,8 @@ export default {
         { tableData: [] }
       ],
       faI: null,
-      optionsEquip: []
+      optionsEquip: [],
+      postOwn: false // 标记第一次进来是不是没有配料过
     }
   },
   computed: {
@@ -397,7 +398,11 @@ export default {
           }
         })
         this.tableDataAll[2].tableData = a3
-
+        if (!this.batchingList.weight_cnt_types.length && !this.batchingList.batching_details.length) {
+          this.postOwn = true
+        } else {
+          this.postOwn = false
+        }
         this.$nextTick(() => {
           this.addTableData = this.batchingList.weight_cnt_types || []
         })
@@ -762,7 +767,7 @@ export default {
         } else {
           if (!parameter.batching_details.length && (!parameter.weight_cnt_types[0] || !parameter.weight_cnt_types[0].weight_details.length)) {
             _api = 'put'
-          } else if (parameter.new_recipe_id === parameter.id) {
+          } else if (this.postOwn || parameter.new_recipe_id === parameter.id) {
             _api = 'put'
           } else {
             parameter.id = null
