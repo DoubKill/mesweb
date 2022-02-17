@@ -1,15 +1,24 @@
 <template>
   <div class="statisticalReportPrice">
     <!-- 绩效计算 单价表 -->
-    <el-button
-      v-permission="['equip_mtbf_mttr_setting', 'change']"
-      type="primary"
-      style="margin-bottom:10px;float:right"
-      :loading="btnLoading"
-      @click="submitFun"
-    >保存
-    </el-button>
+    <el-form :inline="true">
+      <el-form-item style="float:right">
+        <el-button
+          v-permission="['equip_part','export']"
+          type="primary"
+          @click="exportTable"
+        >导出Excel</el-button>
+        <el-button
+          v-permission="['equip_mtbf_mttr_setting', 'change']"
+          type="primary"
+          :loading="btnLoading"
+          @click="submitFun"
+        >保存
+        </el-button>
+      </el-form-item>
+    </el-form>
     <el-table
+      id="out-table"
       v-loading="loading"
       :data="tableData"
       style="width: 100%"
@@ -161,6 +170,7 @@
 </template>
 
 <script>
+import { exportExcel } from '@/utils/index'
 import { performanceUnitPrice } from '@/api/jqy'
 export default {
   name: 'StatisticalReportPrice',
@@ -185,6 +195,9 @@ export default {
       } catch (e) {
         this.loading = false
       }
+    },
+    exportTable() {
+      exportExcel('绩效计算 单价表')
     },
     async submitFun() {
       try {

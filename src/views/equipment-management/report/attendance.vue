@@ -16,7 +16,7 @@
       <el-form-item label="姓名">
         <el-input v-model="search.name" clearable placeholder="请输入" @change="debounceList" />
       </el-form-item>
-      <el-form-item>
+      <el-form-item style="float:right">
         <el-button
           v-permission="['monthly_output_statistics_and_performance','export']"
           type="primary"

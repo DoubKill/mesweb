@@ -52,7 +52,7 @@ export default {
   methods: {
     async getList() {
       try {
-        const { results } = await personnelsUrl('get', null, { params: { all: 1 }})
+        const { results } = await personnelsUrl('get', null, { params: { all: 1, section_name: '品质技术部' }})
         this.options = results || []
       } catch (e) {
         //
