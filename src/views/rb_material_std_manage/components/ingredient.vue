@@ -762,19 +762,12 @@ export default {
         } else {
           if (!parameter.batching_details.length && (!parameter.weight_cnt_types[0] || !parameter.weight_cnt_types[0].weight_details.length)) {
             _api = 'put'
+          } else if (parameter.new_recipe_id === parameter.id) {
+            _api = 'put'
           } else {
-            if (parameter.new_recipe_id) {
-              if (parameter.id !== parameter.new_recipe_id) {
-                parameter.id = null
-                _api = 'post'
-              } else {
-                _api = 'put'
-              }
-            } else {
-              parameter.id = null
-              parameter.create_new = true
-              _api = 'post'
-            }
+            parameter.id = null
+            parameter.create_new = true
+            _api = 'post'
           }
         }
         const _id = parameter._add ? null : parameter.id
