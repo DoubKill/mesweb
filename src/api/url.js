@@ -642,5 +642,6 @@ export default {
   MonthlyOutputStatisticsReport: '/api/v1/production/monthly-output-statistics-report/',
   SchedulingStockSummary: '/api/v1/plan/scheduling-stock-summary/',
   Sb: '/api/v1/production/nishisb/',
+  WmsNucleinManagement: '/api/v1/inventory/wms-nuclein-management/',
   MaterialTestPlan: '/api/v1/quality/material-test-plan/'
 }
