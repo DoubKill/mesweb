@@ -2366,6 +2366,16 @@ export let asyncRoutes = [
         ]
       },
       {
+        path: '/internal/quality-nucleic',
+        component: () => import('@/views/inspection_release/quality_nucleic'),
+        name: 'QualityNucleic',
+        meta: {
+          title: '原材料库 核酸检测管控',
+          icon: 'quality',
+          permissionName: 'wms_hs_management'
+        }
+      },
+      {
         path: '/internal/quality-inspection-release',
         component: () => import('@/views/inspection_release/quality_inspection_release'),
         name: 'QualityInspectionRelease',
