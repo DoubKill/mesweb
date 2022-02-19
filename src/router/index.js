@@ -328,16 +328,6 @@ export let asyncRoutes = [
       }
     },
     {
-      path: '/equipment-management/report/specification_setting',
-      name: 'SpecificationSetting',
-      component: () => import('@/views/equipment-management/report/specification_setting'),
-      meta: {
-        title: '丁基胶 规格设定',
-        icon: 'formula',
-        permissionName: 'productinfo'
-      }
-    },
-    {
       path: '/rb/material/std/manage',
       name: 'RbMaterialStdManage',
       component: () => import('@/views/rb_material_std_manage/newIndex'),
@@ -874,6 +864,16 @@ export let asyncRoutes = [
                 faName: 'ScheduleBasicData',
                 title: '处理关键字定义',
                 permissionName: 'aps_opera_keyword'
+              }
+            },
+            {
+              path: '/equipment-management/report/specification_setting',
+              name: 'SpecificationSetting',
+              component: () => import('@/views/equipment-management/report/specification_setting'),
+              meta: {
+                faName: 'ScheduleBasicData',
+                title: '丁基胶 规格设定',
+                permissionName: 'productinfo'
               }
             }
           ]
@@ -2433,6 +2433,16 @@ export let asyncRoutes = [
             }
           }
         ]
+      },
+      {
+        path: '/internal/quality-nucleic',
+        component: () => import('@/views/inspection_release/quality_nucleic'),
+        name: 'QualityNucleic',
+        meta: {
+          title: '原材料库 核酸检测管控',
+          icon: 'quality',
+          permissionName: 'wms_hs_management'
+        }
       },
       {
         path: '/internal/quality-inspection-release',

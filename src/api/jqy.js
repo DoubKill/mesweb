@@ -1113,6 +1113,15 @@ export function materialTestPlanDetail(method, id, data = {}) {
   return request(obj)
 }
 
+export function wmsNucleinManagement(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WmsNucleinManagement + id + '/' : API.WmsNucleinManagement,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function materialReportEquip(method, id, data = {}) {
   const obj = {
     url: id ? API.MaterialReportEquip + id + '/' : API.MaterialReportEquip,
@@ -1170,6 +1179,15 @@ export function employeeattendancerecordsexport(params) {
 export function summaryOfMillOutput(method, id, data = {}) {
   const obj = {
     url: id ? API.SummaryOfMillOutput + id + '/' : API.SummaryOfMillOutput,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function wmsExceptHandle(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WmsExceptHandle + id + '/' : API.WmsExceptHandle,
     method: method
   }
   Object.assign(obj, data)

@@ -6,10 +6,16 @@
         <el-input v-model="search.name" clearable placeholder="岗位名称" @input="changeSearch" />
       </el-form-item>
       <el-form-item style="float:right">
+        <el-button
+          v-permission="['equip_part','export']"
+          type="primary"
+          @click="exportTable"
+        >导出Excel</el-button>
         <el-button v-permission="['equip_part', 'add']" type="primary" @click="onSubmit">新建</el-button>
       </el-form-item>
     </el-form>
     <el-table
+      id="out-table"
       v-loading="loading"
       :data="tableData"
       style="width: 100%"
@@ -18,6 +24,11 @@
       <el-table-column
         prop="code"
         label="岗位编号"
+        min-width="20"
+      />
+      <el-table-column
+        prop="lb"
+        label="类别"
         min-width="20"
       />
       <el-table-column
@@ -30,7 +41,17 @@
         label="绩效系数%"
         min-width="20"
       />
-      <el-table-column label="操作" width="200px">
+      <el-table-column
+        prop="hbjz"
+        label="多岗位合并基准"
+        min-width="20"
+      />
+      <el-table-column
+        prop="hbxs"
+        label="多岗位合并系数%"
+        min-width="20"
+      />
+      <el-table-column v-if="!exportTableShow" label="操作" width="200px">
         <template slot-scope="scope">
           <el-button-group>
             <el-button
@@ -68,6 +89,16 @@
         label-width="120px"
         :model="dialogForm"
       >
+        <el-form-item label="类别" prop="lb">
+          <el-select v-model="dialogForm.lb" placeholder="请选择" style="width:250px">
+            <el-option
+              v-for="item in options"
+              :key="item.id"
+              :label="item.global_name"
+              :value="item.global_name"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item
           label="岗位名称"
           prop="name"
@@ -80,6 +111,22 @@
         >
           <el-input-number v-model="dialogForm.coefficient" :min="0" style="width:250px" />
         </el-form-item>
+        <el-form-item label="合并基准" prop="hbjz">
+          <el-select v-model="dialogForm.hbjz" placeholder="请选择" style="width:250px">
+            <el-option
+              v-for="(item,i) in ['平均值','最大值']"
+              :key="i"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="合并系数%"
+          prop="hbxs"
+        >
+          <el-input-number v-model="dialogForm.hbxs" :min="0" style="width:250px" />
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose(false)">取 消</el-button>
@@ -91,6 +138,8 @@
 
 <script>
 import page from '@/components/page'
+import { classesListUrl } from '@/api/base_w'
+import { exportExcel } from '@/utils/index'
 import { performanceJobLadder } from '@/api/jqy'
 export default {
   name: 'StatisticalReportPost',
@@ -101,10 +150,15 @@ export default {
       tableData: [],
       total: 0,
       loading: false,
+      options: [],
       dialogVisible: false,
+      exportTableShow: false,
       rules: {
         name: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        coefficient: [{ required: true, message: '不能为空', trigger: 'blur' }]
+        coefficient: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        lb: [{ required: true, message: '不能为空', trigger: 'change' }],
+        hbjz: [{ required: true, message: '不能为空', trigger: 'change' }],
+        hbxs: [{ required: true, message: '不能为空', trigger: 'blur' }]
       },
       dialogForm: {},
       btnLoading: false
@@ -112,6 +166,7 @@ export default {
   },
   created() {
     this.getList()
+    this.getTypeList()
   },
   methods: {
     async getList() {
@@ -125,6 +180,11 @@ export default {
         this.loading = false
       }
     },
+    async getTypeList() {
+      const obj = { all: 1, class_name: '绩效计算岗位类别' }
+      const data = await classesListUrl('get', null, { params: obj })
+      this.options = data.results
+    },
     changeSearch() {
       this.search.page = 1
       this.$debounce(this, 'getList')
@@ -135,7 +195,7 @@ export default {
       this.getList()
     },
     async onSubmit() {
-      this.dialogForm = { coefficient: null }
+      this.dialogForm = { coefficient: null, hbjz: '最大值', hbxs: 100 }
       this.dialogVisible = true
     },
     showEditDialog(row) {
@@ -164,6 +224,13 @@ export default {
       if (done) {
         done()
       }
+    },
+    async exportTable() {
+      await this.$set(this, 'exportTableShow', true)
+      await exportExcel('岗位阶梯表')
+      setTimeout(() => {
+        this.exportTableShow = false
+      }, 300)
     },
     submitFun() {
       this.$refs.createForm.validate(async(valid) => {

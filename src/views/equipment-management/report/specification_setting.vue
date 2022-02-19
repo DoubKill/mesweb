@@ -38,6 +38,11 @@
         label="创建时间"
         min-width="20"
       />
+      <el-table-column
+        prop="created_date"
+        label="绩效计算"
+        min-width="20"
+      />
       <el-table-column label="操作" width="200px">
         <template slot-scope="scope">
           <el-button-group>
@@ -88,6 +93,13 @@
         >
           <el-input v-model="dialogForm.product_no" />
         </el-form-item>
+        <el-form-item
+          label="绩效计算"
+          prop="product_no"
+        >
+          <el-checkbox v-model="dialogForm.checked">适用丁基胶标准</el-checkbox>
+        </el-form-item>
+
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose(false)">取 消</el-button>
