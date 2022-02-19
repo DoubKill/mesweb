@@ -132,7 +132,7 @@
         min-width="15"
       />
       <el-table-column
-        prop="weight"
+        prop="creater_time"
         label="入库日期"
         min-width="15"
       />
@@ -249,21 +249,21 @@
       width="25%"
     >
       <el-form :model="abnormalForm" :rules="rules" label-width="150px">
-        <el-form-item label="品质状态" prop="abnormal_operation_result">
-          <el-radio-group v-model="abnormalForm.abnormal_operation_result">
+        <el-form-item label="品质状态" prop="quality_status">
+          <el-radio-group v-model="abnormalForm.quality_status">
             <el-radio label="不合格">不合格</el-radio>
             <el-radio label="待检品">待检品</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="处理结果" prop="abnormal_operation_result">
-          <el-radio-group v-model="abnormalForm.abnormal_operation_result">
+        <el-form-item label="处理结果" prop="result">
+          <el-radio-group v-model="abnormalForm.result">
             <el-radio label="放行">放行</el-radio>
             <el-radio label="不放行">不放行</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="处理说明" prop="abnormal_operation_result">
+        <el-form-item label="处理说明" prop="except_reason">
           <el-input
-            v-model="abnormalForm.revocation_desc"
+            v-model="abnormalForm.except_reason"
             type="textarea"
             style="width:200px"
             :rows="3"
@@ -281,7 +281,7 @@
 <script>
 import { debounce } from '@/utils'
 import page from '@/components/page'
-import { wmsStorageSummary, wmsStorage, wmsRelease } from '@/api/jqy'
+import { wmsStorageSummary, wmsStorage, wmsRelease, wmsExceptHandle } from '@/api/jqy'
 export default {
   name: 'QualityInspectionRelease',
   components: { page },
@@ -310,8 +310,8 @@ export default {
       tableData: [],
       loading: false,
       rules: {
-        name: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        type: [{ required: true, message: '不能为空', trigger: 'change' }]
+        quality_status: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        result: [{ required: true, message: '不能为空', trigger: 'change' }]
       },
       qualityStatus: [
         { id: 1, name: '合格' },
@@ -368,7 +368,6 @@ export default {
       this.multipleSelection = val
     },
     async qualified(row, val) {
-      console.log(row)
       try {
         if (row.quality_status !== 1) {
           this.loadId = row.batch_no
@@ -410,7 +409,11 @@ export default {
             })
           } else {
             this.dialogVisibleAbnormal = true
-            this.abnormalForm = {}
+            this.abnormalForm = {
+              quality_status: '不合格',
+              result: '不放行',
+              except_reason: ''
+            }
           }
         } else {
           this.$message('合格品不能处理')
@@ -420,20 +423,18 @@ export default {
       }
     },
     async generateFunAbnormal() {
-      if (this.abnormalForm.abnormal_operation_result === '放行') {
-        try {
-          this.submitPass = true
-          await wmsRelease('post', null, { data: { tracking_nums: this.trackingList, operation_type: '放行' }})
-          this.$message.success('操作成功')
-          this.submitPass = false
-          this.dialogVisibleAbnormal = false
-          this.getList()
-        } catch {
-          this.submitPass = false
-        }
-      } else {
+      this.abnormalForm.material_code = this.searchView.e_material_no
+      this.abnormalForm.lot_no = this.searchView.batch_no
+      try {
+        this.submitPass = true
+        await wmsRelease('post', null, { data: { tracking_nums: this.trackingList, operation_type: this.abnormalForm.result }})
+        await wmsExceptHandle('post', null, { data: this.abnormalForm })
         this.$message.success('操作成功')
+        this.submitPass = false
         this.dialogVisibleAbnormal = false
+        this.getList()
+      } catch {
+        this.submitPass = false
       }
     },
     async qualifiedList(val) {

@@ -19,6 +19,23 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="检测类型">
+        <el-select
+          v-model="search.test_method"
+          style="width:300px"
+          :clearable="false"
+          :disabled="true"
+          placeholder=""
+          @visible-change="changeTestMethod"
+        >
+          <el-option
+            v-for="group in testMethodList"
+            :key="group.id"
+            :label="group.name"
+            :value="group.id"
+          />
+        </el-select>
+      </el-form-item>
       <!-- <el-form-item label="实验区分">
         <el-select
           v-model="search.test_method_name"
@@ -73,23 +90,6 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="试验类型">
-        <el-select
-          v-model="search.test_method"
-          style="width:300px"
-          :clearable="false"
-          :disabled="true"
-          placeholder=""
-          @visible-change="changeTestMethod"
-        >
-          <el-option
-            v-for="group in testMethodList"
-            :key="group.id"
-            :label="group.name"
-            :value="group.id"
-          />
-        </el-select>
-      </el-form-item>
       <el-form-item label="样品条码">
         <el-input
           v-model="material_tmh"
@@ -98,7 +98,7 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="addTestFun">添加</el-button>
+        <el-button :loading="addLoading" type="primary" @click="addTestFun">添加</el-button>
       </el-form-item>
       <el-form-item>
         <el-button v-permission="['examine_test_plan', 'begin']" type="primary" :disabled="startBtnLoading" @click="startTestFun">开始检测</el-button>
@@ -190,6 +190,7 @@ export default {
       plan_uid: null,
       id: null,
       startBtnLoading: false,
+      addLoading: false,
       testIndicatorsList: [],
       groups: [],
       search: {
@@ -220,79 +221,45 @@ export default {
       }
     },
     async addTestFun() {
-      if (!this.search.material_report_equip) {
-        this.$message('请先选择检测机号')
-        return
-      }
-      // if (!this.material_tmh) {
-      //   this.$message('请先输入样品条码')
-      //   return
-      // }
-      // if (this.tableData.some(d => d.material_tmh === this.material_tmh)) {
-      //   this.$message('已有此样品条码相关信息')
-      //   this.material_tmh = ''
-      //   return
-      // }
-      // const data = await wmsMaterialSearch('get', null, { params: { tmh: this.material_tmh }})
-      // if (!data.res) {
-      //   this.$message('无此样品条码相关信息')
-      //   this.material_tmh = ''
-      //   return
-      // }
-      // const arr = data[0]
-      // const obj = {
-      //   material_tmh: arr.material_tmh,
-      //   material_name: arr.material_name,
-      //   material_sample_name: arr.material_sample_name,
-      //   material_supplier: arr.material_supplier,
-      //   material_wlxxid: arr.material_wlxxid,
-      //   material_batch: arr.material_batch
-      // }
-      var obj = {}
-      if (this.material_tmh === '111') {
-        obj = {
-          material_tmh: 'AAJ1Z052021032631532',
-          material_name: '分散剂AT-C(宜兴1)',
-          material_sample_name: '分散剂AT-C(宜兴1)',
-          material_supplier: '宜兴化工',
-          material_wlxxid: 'YL01010218',
-          material_batch: '202111070866'
+      try {
+        if (!this.search.material_report_equip) {
+          this.$message('请先选择检测机号')
+          return
         }
-      }
-      if (this.material_tmh === '222') {
-        obj = {
-          material_tmh: 'AAJ1Z052021032631533',
-          material_name: '分散剂AT-C(宜兴2)',
-          material_sample_name: '分散剂AT-C(宜兴2)',
-          material_supplier: '宜兴化工',
-          material_wlxxid: 'YL010102019',
-          material_batch: '202111070867'
+        if (!this.material_tmh) {
+          this.$message('请先输入样品条码')
+          return
         }
-      }
-      if (this.material_tmh === '333') {
-        obj = {
-          material_tmh: 'AAJ1Z052021032631534',
-          material_name: '分散剂AT-C(宜兴3)',
-          material_sample_name: '分散剂AT-C(宜兴3)',
-          material_supplier: '宜兴化工',
-          material_wlxxid: 'YL010102020',
-          material_batch: '202111070868'
+        if (this.tableData.some(d => d.material_tmh === this.material_tmh)) {
+          this.$message('已有此样品条码相关信息')
+          this.material_tmh = ''
+          return
         }
-      }
-      if (this.startBtnLoading === true) {
-        try {
-          // this.$set(this.search, 'material_list', [obj])
+        this.addLoading = true
+        const data = await wmsMaterialSearch('get', null, { params: { tmh: this.material_tmh }})
+        this.addLoading = false
+        const arr = data[0]
+        const obj = {
+          material_tmh: arr.TMH,
+          material_name: arr.WLMC,
+          material_sample_name: arr.WLMC,
+          material_supplier: arr.CD,
+          material_wlxxid: arr.WLXXID,
+          material_batch: arr.PH
+        }
+        if (this.startBtnLoading === true) {
           await materialTestPlan('put', this.id, { data: obj })
           this.getWaitPlan()
           this.material_tmh = ''
-        } catch {
-          //
+        } else {
+          this.tableData.push(obj)
+          this.material_tmh = ''
         }
-      } else {
-        this.tableData.push(obj)
+      } catch {
+        this.addLoading = false
         this.material_tmh = ''
+        //
       }
-      console.log(this.tableData)
     },
     async startTestFun() {
       if (this.tableData.length === 0) {
@@ -303,10 +270,6 @@ export default {
         this.$message.info('请选择检测机号')
         return
       }
-      // if (!this.search.test_method_name) {
-      //   this.$message.info('请选择实验区分')
-      //   return
-      // }
       if (!this.search.test_time) {
         this.$message.info('请选择工厂日期')
         return
@@ -320,14 +283,13 @@ export default {
         return
       }
       if (!this.search.test_method) {
-        this.$message.info('请选择试验类型')
+        this.$message.info('请选择检测类型')
         return
       }
       try {
         this.$set(this.search, 'material_list', this.tableData)
         await materialTestPlan('post', null, { data: this.search })
-        this.$message.success('开始检测')
-        this.startBtnLoading = true
+        this.getWaitPlan()
       } catch (e) {
         this.startBtnLoading = false
       }
@@ -350,7 +312,6 @@ export default {
           this.plan_uid = null
           this.id = null
           this.search.material_report_equip = null
-          // this.search.test_method_name = null
           this.search.test_time = null
           this.search.test_classes = null
           this.search.test_group = null
@@ -421,7 +382,6 @@ export default {
     },
     changeTestEquip() {
       this.tableData = []
-      // this.search.test_method_name = null
       this.search.test_time = null
       this.search.test_classes = null
       this.search.test_group = null
@@ -450,7 +410,6 @@ export default {
           this.startBtnLoading = true
           this.id = data.results[0].id
           this.plan_uid = data.results[0].plan_uid
-          // this.search.test_method_name = data[0].test_method_name
           this.search.test_time = data.results[0].test_time
           this.search.test_classes = data.results[0].test_classes
           this.search.test_group = data.results[0].test_group

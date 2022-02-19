@@ -1184,3 +1184,12 @@ export function summaryOfMillOutput(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function wmsExceptHandle(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WmsExceptHandle + id + '/' : API.WmsExceptHandle,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

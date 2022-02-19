@@ -315,7 +315,7 @@ export default {
     },
     handleDelete: function(row) {
       var str = row.use_flag ? '停用' : '启用'
-      this.$confirm('此操作将' + str + row.category_no + ', 是否继续?', '提示', {
+      this.$confirm('此操作将' + str + row.part_name + ', 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
