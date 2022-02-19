@@ -266,9 +266,12 @@ export default {
     },
     'formObj.enable_equip'(arr) {
       this.tableData.forEach(d => {
-        d.forEach(D => {
+        d.forEach((D, i) => {
           const arr1 = {}
           arr.forEach(dd => {
+            if (i === 0) {
+              D.master[dd] = 'F'
+            }
             arr1[dd] = D.master[dd]
           })
           D.master = arr1
@@ -370,7 +373,7 @@ export default {
       const obj = {}
       if (this.tableData[index].length === 0) {
         this.formObj.enable_equip.forEach(d => {
-          obj[d] = 'S'
+          obj[d] = 'F'
         })
       }
       this.tableData[index].push({

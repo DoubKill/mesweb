@@ -35,7 +35,12 @@
           {{ formInline.dev_type_name }}
         </el-form-item>
         <el-form-item label="可用机台">
-          <el-select v-model="formInline.enable_equip" multiple placeholder="请选择" @change="equipChanged">
+          <el-select
+            v-model="formInline.enable_equip"
+            multiple
+            placeholder="请选择"
+            @change="equipChanged"
+          >
             <el-option
               v-for="item in optionsEquip"
               :key="item.equip_no"
@@ -149,7 +154,12 @@
               </el-select>
             </template>
           </el-table-column> -->
-          <el-table-column v-for="(item) in formInline.enable_equip" :key="item" width="120" :label="item">
+          <el-table-column
+            v-for="(item) in formInline.enable_equip"
+            :key="item"
+            width="120"
+            :label="item"
+          >
             <template slot-scope="{row}">
               <el-select
                 v-model="row.master[item]"
@@ -412,25 +422,38 @@ export default {
       }
     },
     'formInline.enable_equip'(arr) {
-      if (arr && arr.length) {
-        this.tableDataAll.forEach(d => {
-          d.tableData.forEach(D => {
+      // if (arr && arr.length) {
+      this.tableDataAll.forEach((d, i) => {
+        d.tableData.forEach((D) => {
+          if (!arr || !arr.length) {
+            D.master = {}
+          } else {
             const arr1 = {}
             arr.forEach(dd => {
+              if (i === 0 && !D.master[dd]) {
+                D.master[dd] = 'P'
+              }
+              if (i === 1 && !D.master[dd]) {
+                D.master[dd] = 'C'
+              }
+              if (i === 2 && !D.master[dd]) {
+                D.master[dd] = 'O'
+              }
               arr1[dd] = D.master ? D.master[dd] : ''
             })
             D.master = arr1
-          })
+          }
         })
-      }
+      })
+      // }
     }
   },
   updated() {
     // console.log(this.batchingList, 'batchingList')
   },
   methods: {
-    equipChanged(e) {
-
+    equipChanged() {
+      // console.log(this.tableDataAll, 'this.tableDataAll')
     },
     async getOptionsEquip() {
       try {
@@ -481,10 +504,13 @@ export default {
     },
     async checkTolerance(row, index, faI) {
       try {
-        const data = await getMaterialTolerance('get', null, { params: {
-          material_name: row.material_name,
-          standard_weight: row.actual_weight,
-          only_num: true }})
+        const data = await getMaterialTolerance('get', null, {
+          params: {
+            material_name: row.material_name,
+            standard_weight: row.actual_weight,
+            only_num: true
+          }
+        })
         if (data) {
           this.tableDataAll[faI].tableData[index].standard_error = data
         }
@@ -533,7 +559,13 @@ export default {
       const obj = {}
       if (this.tableDataAll[i].tableData.length === 0) {
         this.formInline.enable_equip.forEach(d => {
-          obj[d] = 'P'
+          if (i === 0) {
+            obj[d] = 'P'
+          } else if (i === 1) {
+            obj[d] = 'C'
+          } else if (i === 2) {
+            obj[d] = 'O'
+          }
         })
       }
       this.tableDataAll[i].tableData.push({
@@ -670,6 +702,7 @@ export default {
           })
         })
       } catch (e) {
+        console.log(e, 66666)
         this.$message.info('可用机台的投料方式未填')
         return
       }
