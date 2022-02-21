@@ -67,12 +67,12 @@
         label="名字"
         min-width="20"
       >
-        <template slot-scope="{row}">
+        <!-- <template slot-scope="{row}">
           <el-link
             type="primary"
             @click="subsidyFilling(row)"
           >{{ row.aa }}</el-link>
-        </template>
+        </template> -->
       </el-table-column>
       <el-table-column
         prop="date"
@@ -272,16 +272,26 @@
         <el-form-item label="机台最高值">
           <el-input v-model="currentInfo.input" disabled />
         </el-form-item><br>
+        <el-form-item label="其他奖惩">
+          <el-input v-model="currentInfo.input" />
+        </el-form-item>
+        <el-form-item label="奖惩说明">
+          <el-input v-model="currentInfo.input" style="width:350px;" />
+        </el-form-item><br>
         <el-form-item label="生产补贴">
-          <el-input v-model="currentInfo.input" disabled />
+          <el-input v-model="currentInfo.input" />
         </el-form-item>
         <el-form-item label="补贴说明">
-          <el-input v-model="currentInfo.input" style="width:350px;" disabled />
+          <el-input v-model="currentInfo.input" style="width:350px;" />
         </el-form-item><br>
         <el-form-item label="工资总计">
           <el-input v-model="currentInfo.input" disabled />
         </el-form-item>
       </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible2 = false">取 消</el-button>
+        <el-button type="primary" @click="handleSubmit">确 定</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>

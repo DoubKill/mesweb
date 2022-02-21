@@ -112,7 +112,7 @@ export default {
         },
         colWidths(index) {
           if ((index % 4) === 0 || ((index + 1) % 4) === 0) {
-            return 115
+            return 110
           } else {
             return 45
           }
