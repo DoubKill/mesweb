@@ -39,10 +39,15 @@
         min-width="20"
       />
       <el-table-column
-        prop="created_date"
+        prop="is_use"
         label="绩效计算"
         min-width="20"
-      />
+      >
+        <template slot-scope="{row}">
+          <span v-if="row.is_use===ture">适用丁基胶标准</span>
+          <span v-else>不适用丁基胶标准</span>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" width="200px">
         <template slot-scope="scope">
           <el-button-group>
@@ -95,9 +100,9 @@
         </el-form-item>
         <el-form-item
           label="绩效计算"
-          prop="product_no"
+          prop="is_use"
         >
-          <el-checkbox v-model="dialogForm.checked">适用丁基胶标准</el-checkbox>
+          <el-checkbox v-model="dialogForm.is_use">适用丁基胶标准</el-checkbox>
         </el-form-item>
 
       </el-form>
@@ -124,7 +129,8 @@ export default {
       dialogVisible: false,
       rules: {
         product_no: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        product_name: [{ required: true, message: '不能为空', trigger: 'blur' }]
+        product_name: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        is_use: [{ required: true, message: '不能为空', trigger: 'change' }]
       },
       dialogForm: {},
       btnLoading: false
@@ -155,7 +161,7 @@ export default {
       this.getList()
     },
     onSubmit() {
-      this.dialogForm = {}
+      this.dialogForm = { is_use: true }
       this.dialogVisible = true
     },
     showEditDialog(row) {
