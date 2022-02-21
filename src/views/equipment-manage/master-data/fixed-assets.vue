@@ -533,6 +533,9 @@ export default {
       this.dialogVisibleList = true
     },
     submitAddList() {
+      if (this.formitem.price === '') {
+        this.formitem.price = null
+      }
       this.$refs.formitem.validate((valid) => {
         if (valid) {
           const _api = this.formitem.id ? 'patch' : 'post'
