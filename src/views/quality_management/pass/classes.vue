@@ -77,24 +77,58 @@
         width="70"
       />
       <el-table-column
-        prop="MN"
         label="门尼不合格"
         width="100"
-      />
+        align="center"
+      >
+        <el-table-column
+          prop="mn_upper"
+          label="+"
+          width="50"
+        />
+        <el-table-column
+          prop="mn_lower"
+          label="-"
+          width="50"
+        />
+      </el-table-column>
       <el-table-column
-        prop="YD"
         label="硬度不合格"
         width="100"
-      />
+        align="center"
+      >
+        <el-table-column
+          prop="yd_upper"
+          label="+"
+          width="50"
+        />
+        <el-table-column
+          prop="yd_lower"
+          label="-"
+          width="50"
+        />
+      </el-table-column>
       <el-table-column
-        prop="BZ"
         label="比重不合格"
         width="100"
-      />
+        align="center"
+      >
+        <el-table-column
+          prop="bz_upper"
+          label="+"
+          width="50"
+        />
+        <el-table-column
+          prop="bz_lower"
+          label="-"
+          width="50"
+        />
+      </el-table-column>
       <el-table-column label="硫变不合格" align="center">
         <el-table-column
           prop="MH"
           label="MH"
+          align="center"
         >
           <el-table-column
             prop="MH_upper"
@@ -110,6 +144,7 @@
         <el-table-column
           prop="ML"
           label="ML"
+          align="center"
         >
           <el-table-column
             prop="ML_upper"
@@ -125,6 +160,7 @@
         <el-table-column
           prop="TC10"
           label="TC10"
+          align="center"
         >
           <el-table-column
             prop="TC10_upper"
@@ -140,6 +176,7 @@
         <el-table-column
           prop="TC50"
           label="TC50"
+          align="center"
         >
           <el-table-column
             prop="TC50_upper"
@@ -155,6 +192,7 @@
         <el-table-column
           prop="TC90"
           label="TC90"
+          align="center"
         >
           <el-table-column
             prop="TC90_upper"
@@ -236,14 +274,17 @@ export default {
         if (this.tableData.length > 0) {
           this.JC = 0
           this.HG = 0
-          this.MN = 0
-          this.YD = 0
-          this.BZ = 0
+          this.mn_upper = 0
+          this.yd_upper = 0
+          this.bz_upper = 0
           this.MH_upper = 0
           this.ML_upper = 0
           this.TC10_upper = 0
           this.TC50_upper = 0
           this.TC90_upper = 0
+          this.mn_lower = 0
+          this.yd_lower = 0
+          this.bz_lower = 0
           this.MH_lower = 0
           this.ML_lower = 0
           this.TC10_lower = 0
@@ -254,14 +295,17 @@ export default {
           this.tableData.forEach(D => {
             this.JC += Number(D.JC)
             this.HG += Number(D.HG)
-            this.MN += Number(D.MN)
-            this.YD += Number(D.YD)
-            this.BZ += Number(D.BZ)
+            this.mn_upper += Number(D.mn_upper)
+            this.yd_upper += Number(D.yd_upper)
+            this.bz_upper += Number(D.bz_upper)
             this.MH_upper += Number(D.MH_upper)
             this.ML_upper += Number(D.ML_upper)
             this.TC10_upper += Number(D.TC10_upper)
             this.TC50_upper += Number(D.TC50_upper)
             this.TC90_upper += Number(D.TC90_upper)
+            this.mn_lower += Number(D.mn_lower)
+            this.yd_lower += Number(D.yd_lower)
+            this.bz_lower += Number(D.bz_lower)
             this.MH_lower += Number(D.MH_lower)
             this.ML_lower += Number(D.ML_lower)
             this.TC10_lower += Number(D.TC10_lower)
@@ -275,15 +319,18 @@ export default {
               class: '合计',
               JC: this.JC,
               HG: this.HG,
-              MN: this.MN,
-              YD: this.YD,
-              BZ: this.BZ,
+              mn_upper: this.mn_upper,
+              yd_upper: this.yd_upper,
+              bz_upper: this.bz_upper,
               RATE_1_PASS: data.all.rate_1,
               MH_upper: this.MH_upper,
               ML_upper: this.ML_upper,
               TC10_upper: this.TC10_upper,
               TC50_upper: this.TC50_upper,
               TC90_upper: this.TC90_upper,
+              mn_lower: this.mn_lower,
+              yd_lower: this.yd_lower,
+              bz_lower: this.bz_lower,
               MH_lower: this.MH_lower,
               ML_lower: this.ML_lower,
               TC10_lower: this.TC10_lower,

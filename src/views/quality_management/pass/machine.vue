@@ -90,23 +90,59 @@
             sortable
           />
           <el-table-column
-            prop="mn"
             label="门尼不合格"
             width="110"
-            sortable
-          />
+            align="center"
+          >
+            <el-table-column
+              prop="mn_upper"
+              label="+"
+              width="55"
+              sortable
+            />
+            <el-table-column
+              prop="mn_lower"
+              label="-"
+              width="55"
+              sortable
+            />
+          </el-table-column>
           <el-table-column
-            prop="yd"
             label="硬度不合格"
             width="110"
-            sortable
-          />
+            align="center"
+          >
+            <el-table-column
+              prop="yd_upper"
+              label="+"
+              width="55"
+              sortable
+            />
+            <el-table-column
+              prop="yd_lower"
+              label="-"
+              width="55"
+              sortable
+            />
+          </el-table-column>
           <el-table-column
-            prop="bz"
             label="比重不合格"
             width="110"
-            sortable
-          />
+            align="center"
+          >
+            <el-table-column
+              prop="bz_upper"
+              label="+"
+              width="55"
+              sortable
+            />
+            <el-table-column
+              prop="bz_lower"
+              label="-"
+              width="55"
+              sortable
+            />
+          </el-table-column>
           <el-table-column
             label="硫变不合格"
             align="center"
@@ -115,6 +151,7 @@
               prop="MH"
               label="MH"
               min-width="20"
+              align="center"
             >
               <el-table-column
                 prop="MH_upper"
@@ -133,6 +170,7 @@
               prop="ML"
               label="ML"
               min-width="20"
+              align="center"
             >
               <el-table-column
                 prop="ML_upper"
@@ -151,6 +189,7 @@
               prop="TC10"
               label="TC10"
               min-width="20"
+              align="center"
             >
               <el-table-column
                 prop="TC10_upper"
@@ -169,6 +208,7 @@
               prop="TC50"
               label="TC50"
               min-width="20"
+              align="center"
             >
               <el-table-column
                 prop="TC50_upper"
@@ -187,6 +227,7 @@
               prop="TC90"
               label="TC90"
               min-width="20"
+              align="center"
             >
               <el-table-column
                 prop="TC90_upper"
@@ -278,14 +319,17 @@ export default {
         if (this.tableData.length > 0) {
           this.test_all = 0
           this.test_right = 0
-          this.mn = 0
-          this.yd = 0
-          this.bz = 0
+          this.mn_upper = 0
+          this.yd_upper = 0
+          this.bz_upper = 0
           this.MH_upper = 0
           this.ML_upper = 0
           this.TC10_upper = 0
           this.TC50_upper = 0
           this.TC90_upper = 0
+          this.mn_lower = 0
+          this.yd_lower = 0
+          this.bz_lower = 0
           this.MH_lower = 0
           this.ML_lower = 0
           this.TC10_lower = 0
@@ -299,14 +343,17 @@ export default {
             D.rate = Number(D.rate)
             this.test_all += Number(D.test_all)
             this.test_right += Number(D.test_right)
-            this.mn += Number(D.mn)
-            this.yd += Number(D.yd)
-            this.bz += Number(D.bz)
+            this.mn_upper += Number(D.mn_upper)
+            this.yd_upper += Number(D.yd_upper)
+            this.bz_upper += Number(D.bz_upper)
             this.MH_upper += Number(D.MH_upper)
             this.ML_upper += Number(D.ML_upper)
             this.TC10_upper += Number(D.TC10_upper)
             this.TC50_upper += Number(D.TC50_upper)
             this.TC90_upper += Number(D.TC90_upper)
+            this.mn_lower += Number(D.mn_lower)
+            this.yd_lower += Number(D.yd_lower)
+            this.bz_lower += Number(D.bz_lower)
             this.MH_lower += Number(D.MH_lower)
             this.ML_lower += Number(D.ML_lower)
             this.TC10_lower += Number(D.TC10_lower)
@@ -320,15 +367,18 @@ export default {
               equip: '合计',
               test_all: this.test_all,
               test_right: this.test_right,
-              mn: this.mn,
-              yd: this.yd,
-              bz: this.bz,
+              mn_upper: this.mn_upper,
+              yd_upper: this.yd_upper,
+              bz_upper: this.bz_upper,
               rate_1: data.all.rate_1,
               MH_upper: this.MH_upper,
               ML_upper: this.ML_upper,
               TC10_upper: this.TC10_upper,
               TC50_upper: this.TC50_upper,
               TC90_upper: this.TC90_upper,
+              mn_lower: this.mn_lower,
+              yd_lower: this.yd_lower,
+              bz_lower: this.bz_lower,
               MH_lower: this.MH_lower,
               ML_lower: this.ML_lower,
               TC10_lower: this.TC10_lower,
