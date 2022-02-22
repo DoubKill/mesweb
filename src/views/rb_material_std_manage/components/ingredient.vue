@@ -167,7 +167,7 @@
                 placeholder="请选择"
               >
                 <el-option
-                  v-for="item1 in i===0||i==1?['P','C']:['P','O']"
+                  v-for="item1 in i===0?['P']:i==1?['P','C']:['P','O']"
                   :key="item1"
                   :label="item1"
                   :value="item1"
