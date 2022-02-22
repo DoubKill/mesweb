@@ -74,7 +74,7 @@
               placeholder="请选择"
             >
               <el-option
-                v-for="item1 in ['S','F','C']"
+                v-for="item1 in formObj.stage_name==='FM'?['S','F']:['S','F','C']"
                 :key="item1"
                 :label="item1"
                 :value="item1"
