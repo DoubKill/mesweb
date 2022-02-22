@@ -29,6 +29,7 @@
       id="out-table"
       v-loading="loading"
       style="width: 100%"
+      :span-method="objectSpanMethod"
       :data="tableData"
       border
     >
@@ -115,6 +116,25 @@ export default {
         const data = await summaryOfMillOutput('get', null, { params: this.search })
         this.tableHead = data.state_list || []
         this.tableData = data.results.concat(data.count)
+        this.spanArr = []
+        this.pos = null
+        for (var i = 0; i < this.tableData.length; i++) {
+          if (i === 0) {
+            // 如果是第一条记录（即索引是0的时候），向数组中加入１
+            this.spanArr.push(1)
+            this.pos = 0
+          } else {
+            if (this.tableData[i].equip_no === this.tableData[i - 1].equip_no) {
+              // 如果a相等就累加，并且push 0  这里是根据一样的a匹配
+              this.spanArr[this.pos] += 1
+              this.spanArr.push(0)
+            } else {
+              // 不相等push 1
+              this.spanArr.push(1)
+              this.pos = i
+            }
+          }
+        }
         this.loading = false
       } catch (e) {
         this.loading = false
@@ -122,6 +142,16 @@ export default {
     },
     changeList() {
       this.getList()
+    },
+    objectSpanMethod({ row, column, rowIndex, columnIndex }) {
+      if ([0].includes(columnIndex) && this.spanArr) {
+        const _row = this.spanArr[rowIndex]
+        const _col = _row > 0 ? 1 : 0
+        return {
+          rowspan: _row,
+          colspan: _col
+        }
+      }
     },
     async exportTable() {
       await this.$set(this, 'exportTableShow', true)
