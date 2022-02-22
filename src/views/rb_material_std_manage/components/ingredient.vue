@@ -203,6 +203,7 @@
         :is-ingredient-obj="isIngredientObj"
         :form-obj="formObj"
         :is-view="isView"
+        :dialog-visible="dialogVisible"
         @pop_up_raw_material="pop_up_raw_material"
         @deleteRow="deleteRow"
         @deleteOneRow="deleteOneRow"
@@ -373,6 +374,7 @@ export default {
 
         const arr = this.batchingList.batching_details || []
         const a1 = arr.filter(d => d.type === 1)
+
         a1.forEach(d => {
           for (const key in d.master) {
             if (Object.hasOwnProperty.call(d.master, key)) {
@@ -424,24 +426,21 @@ export default {
     'formInline.enable_equip'(arr) {
       // if (arr && arr.length) {
       this.tableDataAll.forEach((d, i) => {
-        d.tableData.forEach((D) => {
+        d.tableData.forEach((D, _index) => {
           if (!arr || !arr.length) {
             D.master = {}
           } else {
-            const arr1 = {}
-            arr.forEach(dd => {
-              if (i === 0 && !D.master[dd]) {
+            arr.forEach((dd) => {
+              if (i === 0 && _index === 0 && !D.master[dd]) {
                 D.master[dd] = 'P'
               }
-              if (i === 1 && !D.master[dd]) {
+              if (i === 1 && _index === 0 && !D.master[dd]) {
                 D.master[dd] = 'C'
               }
-              if (i === 2 && !D.master[dd]) {
+              if (i === 2 && _index === 0 && !D.master[dd]) {
                 D.master[dd] = 'O'
               }
-              arr1[dd] = D.master ? D.master[dd] : ''
             })
-            D.master = arr1
           }
         })
       })
@@ -810,8 +809,8 @@ export default {
         }
         const _id = parameter._add ? null : parameter.id
         await rubber_material_url(_api, _id, { data: parameter })
-        this.dialogVisible = false
         this.handleClose(false)
+        this.dialogVisible = false
         this.$emit('changeList')
       } catch (e) { //
         console.log(e, 8788)
