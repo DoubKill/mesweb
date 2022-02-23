@@ -275,6 +275,7 @@ export default {
     'formObj.enable_equip'(arr) {
       this.tableData.forEach(d => {
         d.forEach((D, i) => {
+          const arr1 = {}
           arr.forEach(dd => {
             if (i === 0 && !D.master[dd]) {
               if (this.formObj.stage_name === 'FM') {
@@ -283,7 +284,9 @@ export default {
                 D.master[dd] = 'F'
               }
             }
+            arr1[dd] = D.master ? D.master[dd] : ''
           })
+          D.master = arr1
         })
       })
     }
