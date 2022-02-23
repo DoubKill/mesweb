@@ -430,6 +430,7 @@ export default {
           if (!arr || !arr.length) {
             D.master = {}
           } else {
+            const arr1 = {}
             arr.forEach((dd) => {
               if (i === 0 && _index === 0 && !D.master[dd]) {
                 D.master[dd] = 'P'
@@ -440,7 +441,9 @@ export default {
               if (i === 2 && _index === 0 && !D.master[dd]) {
                 D.master[dd] = 'O'
               }
+              arr1[dd] = D.master ? D.master[dd] : ''
             })
+            D.master = arr1
           }
         })
       })
