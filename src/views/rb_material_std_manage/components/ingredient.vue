@@ -410,7 +410,7 @@ export default {
           }
         })
         this.tableDataAll[2].tableData = a3
-        if (!this.batchingList.weight_cnt_types.length && !this.batchingList.batching_details.length) {
+        if ((!this.batchingList.weight_cnt_types || !this.batchingList.weight_cnt_types.length) && (!this.batchingList.batching_details || !this.batchingList.batching_details.length)) {
           this.postOwn = true
         } else {
           this.postOwn = false
