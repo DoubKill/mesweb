@@ -44,7 +44,7 @@
         min-width="20"
       >
         <template slot-scope="{row}">
-          <span v-if="row.is_use===ture">适用丁基胶标准</span>
+          <span v-if="row.is_use===true">适用丁基胶标准</span>
           <span v-else>不适用丁基胶标准</span>
         </template>
       </el-table-column>

@@ -1193,3 +1193,12 @@ export function wmsExceptHandle(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function schedulingProductImport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SchedulingProductImport + id + '/' : API.SchedulingProductImport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

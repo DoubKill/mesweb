@@ -1,15 +1,248 @@
 <template>
   <div>
     <!-- 称量机台产量汇总表 -->
+    <el-form :inline="true">
+      <el-form-item label="月份">
+        <el-date-picker
+          v-model="search.date"
+          type="month"
+          :clearable="false"
+          format="yyyy-MM"
+          value-format="yyyy-MM"
+          placeholder="选择月"
+          @change="changeList"
+        />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="getList">查询</el-button>
+        <el-button
+          v-permission="['monthly_output_statistics_and_performance','export']"
+          type="primary"
+          @click="exportTable"
+        >导出Excel</el-button>
+      </el-form-item>
+      <el-form-item style="float:right">
+        <el-button type="primary" @click="getList">保存单价</el-button>
+      </el-form-item>
+      <el-form-item style="float:right">
+        <el-table
+          :data="tableDataPrice"
+          style="width:400px"
+          border
+        >
+          <el-table-column
+            prop="xl"
+            align="center"
+            label="细料单价"
+          >
+            <template slot-scope="{row}">
+              <el-input-number v-model="row.xl" controls-position="right" :min="0" :precision="2" />
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="lh"
+            align="center"
+            label="硫磺单价"
+          >
+            <template slot-scope="{row}">
+              <el-input-number v-model="row.lh" controls-position="right" :min="0" :precision="2" />
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-form-item>
+    </el-form>
+    <h3>称量机台产量汇总表（包数）</h3>
+    <el-table
+      v-loading="loading"
+      :data="tableData"
+      border
+    >
+      <el-table-column
+        prop="section"
+        align="center"
+        label="机台"
+        width="90"
+      />
+      <el-table-column
+        v-for="(d,index) in tableHead"
+        :key="Date.now()+index"
+        align="center"
+        :label="d.label"
+        width="120"
+      >
+        <el-table-column
+          :prop="d.prop+'早'"
+          align="center"
+          label="早"
+          width="60"
+        />
+        <el-table-column
+          :prop="d.prop+'晚'"
+          align="center"
+          label="晚"
+          width="60"
+        />
+      </el-table-column>
+      <el-table-column
+        prop="section"
+        align="center"
+        label="合计"
+        width="90"
+      />
+    </el-table>
+    <br>
+    <h3>称量机台员工绩效计算</h3>
+    <el-table
+      v-loading="loading"
+      :data="tableData"
+      border
+    >
+      <el-table-column
+        prop="section"
+        align="center"
+        label="姓名"
+        width="90"
+      />
+      <el-table-column
+        v-for="(d,index) in tableHead"
+        :key="Date.now()+index"
+        align="center"
+        :label="d.label"
+        width="120"
+      >
+        <el-table-column
+          :prop="d.prop+'早'"
+          align="center"
+          label="早"
+          width="60"
+        />
+        <el-table-column
+          :prop="d.prop+'晚'"
+          align="center"
+          label="晚"
+          width="60"
+        />
+      </el-table-column>
+      <el-table-column
+        prop="section"
+        align="center"
+        label="细料合计"
+        width="90"
+      />
+      <el-table-column
+        prop="section"
+        align="center"
+        label="硫磺合计"
+        width="90"
+      />
+    </el-table>
   </div>
 </template>
 
 <script>
+import { employeeattendancerecords, employeeattendancerecordsexport } from '@/api/jqy'
+import { setDate } from '@/utils'
 export default {
-  name: 'StatisticalReportWeighing'
+  name: 'StatisticalReportWeighing',
+  data() {
+    return {
+      search: {
+        date: setDate(null, null, 'month')
+      },
+      machineList: [],
+      loading: false,
+      tableHead: [],
+      tableDataPrice: [{ lh: 0, xl: 0 }],
+      tableData: [],
+      btnExportLoad: false,
+      exportTableShow: false
+    }
+  },
+  created() {
+    this.tableHead = getDiffDate(this.search.date + '-01', getCurrentMonthLastDay(setDate()))
+    this.getList()
+  },
+  methods: {
+    async getList() {
+      try {
+        this.loading = true
+        const data = await employeeattendancerecords('get', null, { params: this.search })
+        this.tableData = data.results || []
+        this.loading = false
+      } catch (e) {
+        this.loading = false
+      }
+    },
+    changeList() {
+      this.tableHead = getDiffDate(this.search.date + '-01', getCurrentMonthLastDay(this.search.date))
+      this.getList()
+    },
+    debounceList() {
+      this.$debounce(this, 'getList')
+    },
+    exportTable() {
+      this.btnExportLoad = true
+      const obj = {
+        date: this.search.date
+      }
+      employeeattendancerecordsexport(obj).then(response => {
+        const link = document.createElement('a')
+        const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
+        link.style.display = 'none'
+        link.href = URL.createObjectURL(blob)
+        link.download = '员工出勤记录表' + setDate() + '.xlsx'// 下载的文件名
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        this.btnExportLoad = false
+      })
+        .catch(e => {
+          this.btnExportLoad = false
+        })
+    }
+  }
+}
+function getDiffDate(start, end) {
+  var startTime = getDate(start)
+  var endTime = getDate(end)
+  var dateArr = []
+  while ((endTime.getTime() - startTime.getTime()) >= 0) {
+    var d = startTime.getDate()
+    dateArr.push({ label: d + '日', prop: d })
+    startTime.setDate(startTime.getDate() + 1)
+  }
+  return dateArr
+}
+function getDate(datestr) {
+  var temp = datestr.split('-')
+  if (temp[1] === '01') {
+    temp[0] = parseInt(temp[0], 10) - 1
+    temp[1] = '12'
+  } else {
+    temp[1] = parseInt(temp[1], 10) - 1
+  }
+  // new Date()的月份入参实际都是当前值-1
+  var date = new Date(temp[0], temp[1], temp[2])
+  return date
+}
+function getCurrentMonthLastDay(d) {
+  const date = new Date(d)
+  let currentMonth = date.getMonth()
+  const nextMonth = ++currentMonth
+  const nextMonthFirstDay = new Date(date.getFullYear(), nextMonth, 1)
+  const oneDay = 1000 * 60 * 60 * 24
+  const lastTime = new Date(nextMonthFirstDay - oneDay)
+  let month = parseInt(lastTime.getMonth() + 1)
+  let day = lastTime.getDate()
+  if (month < 10) {
+    month = '0' + month
+  }
+  if (day < 10) {
+    day = '0' + day
+  }
+  return date.getFullYear() + '-' + month + '-' + day
 }
 </script>
 
-<style>
-
+<style lang="scss">
 </style>
