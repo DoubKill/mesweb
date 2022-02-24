@@ -233,6 +233,24 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item
+          v-if="isLocation"
+          label="是否进烘房"
+        >
+          <el-select
+            v-model="formSearch.is_entering"
+            clearable
+            placeholder="请选择"
+            @change="getDialog"
+          >
+            <el-option
+              v-for="(item,i) in [{name:'Y'},{name:'N'}]"
+              :key="i"
+              :label="item.name"
+              :value="item.name"
+            />
+          </el-select>
+        </el-form-item>
       </el-form>
       <div
         v-if="isLocation"
@@ -260,6 +278,23 @@
             prop="BatchNo"
             label="批次号"
             min-width="20"
+          />
+          <el-table-column
+            prop="RFID"
+            label="托盘RFID"
+            min-width="20"
+          />
+          <el-table-column
+            prop="is_entering"
+            label="是否进烘培房"
+            min-width="20"
+            :formatter="(row)=>{
+              if(row.RFID){
+                let obj = row.RFID.split('')[0]
+                return Number(obj) === 5?'Y':'N'
+              }
+              return ''
+            }"
           />
           <el-table-column
             prop="StockDetailState"
@@ -560,7 +595,8 @@ export default {
       tableData1: [],
       dialogVisible1: false,
       formSearch: {
-        quality_status: 1
+        quality_status: 1,
+        is_entering: 'N'
       },
       tableData2: [],
       tableData3: [],
@@ -734,6 +770,7 @@ export default {
       this.formSearch.entrance_name = this.optionsEntrance[0].name
       this.formSearch.code = this.optionsEntrance[0].code
       this.formSearch.quality_status = 1
+      this.formSearch.is_entering = 'N'
       this.EntranceCode = ''
       if (done) {
         done()
@@ -872,6 +909,12 @@ export default {
       if (val) {
         obj = this.optionsEntrance.find(d => d.name && d.name === val)
       }
+      if (obj.name === '烘房站台') {
+        this.formSearch.is_entering = 'Y'
+      } else {
+        this.formSearch.is_entering = 'N'
+      }
+      console.log(obj, 'obj')
       this.formSearch.code = obj.code || ''
       if (this.isLocation) {
         this.tableData4 = []
@@ -894,6 +937,11 @@ export default {
         } else {
           this.formSearch.entrance_name = data ? this.optionsEntrance[0].name : ''
           this.formSearch.code = data ? this.optionsEntrance[0].code : ''
+        }
+        if (this.formSearch.entrance_name === '烘房站台') {
+          this.formSearch.is_entering = 'Y'
+        } else {
+          this.formSearch.is_entering = 'N'
         }
         if (this.isLocation) {
           this.getDialogGoods()
