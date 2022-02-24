@@ -589,10 +589,13 @@ export default {
     background-color: transparent !important;
   }
   .el-table__body tr.current-row{
-     background-color: #ecf5ff !important;
+     background-color: #e3e7ec !important;
+  }
+  .el-table__body tr.current-row>td{
+    background-color: #e3e7ec !important;
   }
   .warning-row{
-    background: #98d6f0  !important;
+    background: #b1ddf0  !important;
   }
  }
 
