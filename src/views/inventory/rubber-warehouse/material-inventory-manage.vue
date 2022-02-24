@@ -42,13 +42,49 @@
           v-model="getParams.quality_status"
           clearable
           placeholder="请选择"
-          @change="getTableData"
+          @change="changeList"
         >
           <el-option
             v-for="item in [{value:1,label:'合格'},{value:2,label:'抽检中'},{value:3,label:'不合格'},{value:4,label:'过期'},{value:5,label:'待检'}]"
             :key="item.value"
             :label="item.label"
             :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="是否进烘房">
+        <el-select
+          v-model="getParams.is_entering"
+          clearable
+          placeholder="请选择"
+          @change="changeList"
+        >
+          <el-option
+            v-for="item in ['Y','N']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="批次号">
+        <el-input v-model="getParams.l_batch_no" clearable @input="getDebounce" />
+      </el-form-item>
+      <el-form-item v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="供应商">
+        <el-input v-model="getParams.supplier_name" clearable @input="getDebounce" />
+      </el-form-item>
+      <el-form-item v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="核酸管控">
+        <el-select
+          v-model="getParams.in_charged_tag"
+          clearable
+          placeholder="请选择"
+          @change="changeList"
+        >
+          <el-option
+            v-for="item in ['未管控','已锁定','已解锁']"
+            :key="item"
+            :label="item"
+            :value="item"
           />
         </el-select>
       </el-form-item>
@@ -83,6 +119,7 @@
       <el-table-column label="物料名称" align="center" prop="material_name" min-width="35" />
       <el-table-column label="物料编码" align="center" prop="material_no" min-width="35" />
       <el-table-column label="质检条码" align="center" prop="lot_no" min-width="35" />
+      <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="批次号" align="center" prop="batch_no" min-width="16" />
       <el-table-column v-if="getParams.warehouse_name === '帘布库'" label="货位状态" align="center" prop="location_status" min-width="16" />
       <!-- <el-table-column label="机台号" align="center" min-width="12">
         <template v-if="row.product_info" slot-scope="{row}">
@@ -100,11 +137,14 @@
         </template>
       </el-table-column> -->
       <el-table-column label="托盘号" align="center" prop="container_no" min-width="18" />
+      <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="是否进烘房" align="center" prop="is_entering" min-width="16" />
+      <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="供应商" align="center" prop="supplier_name" min-width="16" />
       <el-table-column label="库存位" align="center" prop="location" min-width="18" />
       <el-table-column label="库存数" align="center" prop="qty" min-width="16" />
       <el-table-column label="单位" align="center" prop="unit" min-width="20" />
       <el-table-column label="单位重量" align="center" prop="unit_weight" min-width="16" />
       <el-table-column label="总重量" align="center" prop="total_weight" min-width="16" />
+      <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="核酸管控" align="center" prop="in_charged_tag" min-width="16" />
       <el-table-column label="品质状态" align="center" prop="quality_status" min-width="15" />
       <el-table-column v-if="['炭黑库', '原材料库'].includes(warehouseNameProps)" label="入库时间" align="center" prop="in_storage_time" min-width="15" />
       <!-- <el-table-column label="操作" align="center" min-width="20">
@@ -225,6 +265,10 @@ export default {
     this.getTableData()
   },
   methods: {
+    changeList() {
+      this.getParams.page = 1
+      this.getTableData()
+    },
     getTableData() {
       this.loading = true
       this.tableData = []

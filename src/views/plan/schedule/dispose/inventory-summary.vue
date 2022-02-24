@@ -24,7 +24,12 @@
       <el-form-item style="float:right">
         <el-button v-permission="['aps_plan_summary','procedures']" :loading="submit" type="primary" @click="scheduling">自动排程</el-button>
         <el-button type="primary" @click="getList">查询</el-button>
-        <el-button v-permission="['aps_plan_summary','export']" type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
+        <el-button v-permission="['aps_plan_summary','export']" type="primary" @click="exportTable">导出Excel</el-button>
+        <el-button v-permission="['aps_plan_summary','export']" type="primary">
+          <a
+            :href="`${templateFileUrl}stock.xlsx`"
+            download="胶料计划库存汇总模板.xlsx"
+          >导出Excel模板</a></el-button>
         <el-upload
           style="margin:0 8px;display:inline-block"
           action="string"
@@ -88,8 +93,8 @@
       <el-table-column
         prop="demanded_weight"
         label="需生产量(吨)"
-      >
-        <template slot-scope="scope">
+      />
+      <!-- <template slot-scope="scope">
           <el-link
             v-if="scope.row.sn!=='合计'"
             type="primary"
@@ -97,7 +102,7 @@
           >{{ scope.row.demanded_weight }}</el-link>
           <span v-else>{{ scope.row.demanded_weight }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         v-if="!exportTableShow"
         width="200"
@@ -169,6 +174,7 @@
             v-model="formData.plan_weight"
             style="width:250px"
             :min="0"
+            @change="changeStock"
           />
         </el-form-item>
         <el-form-item label="车间库存(吨)" prop="workshop_weight">
@@ -176,11 +182,28 @@
             v-model="formData.workshop_weight"
             style="width:250px"
             :min="0"
+            @change="changeDemanded"
+          />
+        </el-form-item>
+        <el-form-item label="属地库存(吨)" prop="current_stock">
+          <el-input-number
+            v-model="formData.current_stock"
+            style="width:250px"
+            :min="0"
+            @change="changeDemanded"
           />
         </el-form-item>
         <el-form-item label="目标总库存量(吨)" prop="target_stock">
           <el-input-number
             v-model="formData.target_stock"
+            style="width:250px"
+            :min="0"
+            @change="changeDemanded"
+          />
+        </el-form-item>
+        <el-form-item label="需生产量(吨)" prop="demanded_weight">
+          <el-input-number
+            v-model="formData.demanded_weight"
             style="width:250px"
             :min="0"
           />
@@ -298,7 +321,7 @@
 <script>
 import { productInfosUrl } from '@/api/base_w'
 import { schedulingProductDemandedDeclare } from '@/api/base_w_five'
-import { schedulingProductDeclareSummary, upSequence, downSequence, schedulingProcedures } from '@/api/jqy'
+import { schedulingProductDeclareSummary, upSequence, downSequence, schedulingProcedures, schedulingProductImport } from '@/api/jqy'
 import { setDate, exportExcel } from '@/utils'
 export default {
   name: 'ScheduleInventorySummary',
@@ -306,7 +329,6 @@ export default {
   data() {
     return {
       search: { factory_date: setDate() },
-      btnExportLoad: false,
       dialogVisible: false,
       dialogVisible1: false,
       dialogVisible2: false,
@@ -323,13 +345,15 @@ export default {
       options: [],
       rules: {
         product_no: [{ required: true, message: '不能为空', trigger: 'change' }],
-        plan_weight: [{ required: true, message: '不能为空', trigger: 'change' }]
+        plan_weight: [{ required: true, message: '不能为空', trigger: 'change' }],
+        demanded_weight: [{ required: true, message: '不能为空', trigger: 'change' }]
       }
     }
   },
 
   created() {
     this.getList()
+    this.templateFileUrl = process.env.BASE_URL
   },
   methods: {
     async getList() {
@@ -395,6 +419,20 @@ export default {
       if (row.current_stock < row.safety_stock) {
         return 'max-warning-row'
       }
+    },
+    changeStock() {
+      if (this.formData.plan_weight) {
+        this.formData.target_stock = this.formData.plan_weight * 1.5
+      }
+    },
+    changeDemanded() {
+      if (!this.formData.workshop_weight) {
+        this.formData.workshop_weight = 0
+      }
+      if (!this.formData.current_stock) {
+        this.formData.current_stock = 0
+      }
+      this.formData.demanded_weight = this.formData.target_stock - (this.formData.workshop_weight + this.formData.current_stock)
     },
     changeSearch() {
       this.$debounce(this, 'getList')
@@ -523,16 +561,15 @@ export default {
       }, 1000)
     },
     Upload(param) {
-      // const formData = new FormData()
-      // formData.append('file', param.file)
-      // equipFaultSignalImport('post', null, { data: formData }).then(response => {
-      //   this.$message({
-      //     type: 'success',
-      //     message: response
-      //   })
-      //   this.search.page = 1
-      //   this.getList()
-      // })
+      const formData = new FormData()
+      formData.append('file', param.file)
+      schedulingProductImport('post', null, { data: formData }).then(response => {
+        this.$message({
+          type: 'success',
+          message: response
+        })
+        this.getList()
+      })
     }
   }
 

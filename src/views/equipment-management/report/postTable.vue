@@ -27,7 +27,7 @@
         min-width="20"
       />
       <el-table-column
-        prop="lb"
+        prop="type"
         label="类别"
         min-width="20"
       />
@@ -42,12 +42,12 @@
         min-width="20"
       />
       <el-table-column
-        prop="hbjz"
+        prop="post_standard_name"
         label="多岗位合并基准"
         min-width="20"
       />
       <el-table-column
-        prop="hbxs"
+        prop="post_coefficient"
         label="多岗位合并系数%"
         min-width="20"
       />
@@ -89,8 +89,8 @@
         label-width="120px"
         :model="dialogForm"
       >
-        <el-form-item label="类别" prop="lb">
-          <el-select v-model="dialogForm.lb" placeholder="请选择" style="width:250px">
+        <el-form-item label="类别" prop="type">
+          <el-select v-model="dialogForm.type" placeholder="请选择" style="width:250px">
             <el-option
               v-for="item in options"
               :key="item.id"
@@ -111,21 +111,21 @@
         >
           <el-input-number v-model="dialogForm.coefficient" :min="0" style="width:250px" />
         </el-form-item>
-        <el-form-item label="合并基准" prop="hbjz">
-          <el-select v-model="dialogForm.hbjz" placeholder="请选择" style="width:250px">
+        <el-form-item label="合并基准" prop="post_standard">
+          <el-select v-model="dialogForm.post_standard" placeholder="请选择" style="width:250px">
             <el-option
-              v-for="(item,i) in ['平均值','最大值']"
+              v-for="(item,i) in [{value:1,label:'最大值'},{value:2,label:'平均值'}]"
               :key="i"
-              :label="item"
-              :value="item"
+              :label="item.label"
+              :value="item.value"
             />
           </el-select>
         </el-form-item>
         <el-form-item
           label="合并系数%"
-          prop="hbxs"
+          prop="post_coefficient"
         >
-          <el-input-number v-model="dialogForm.hbxs" :min="0" style="width:250px" />
+          <el-input-number v-model="dialogForm.post_coefficient" :min="0" style="width:250px" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -156,9 +156,9 @@ export default {
       rules: {
         name: [{ required: true, message: '不能为空', trigger: 'blur' }],
         coefficient: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        lb: [{ required: true, message: '不能为空', trigger: 'change' }],
-        hbjz: [{ required: true, message: '不能为空', trigger: 'change' }],
-        hbxs: [{ required: true, message: '不能为空', trigger: 'blur' }]
+        type: [{ required: true, message: '不能为空', trigger: 'change' }],
+        post_standard: [{ required: true, message: '不能为空', trigger: 'change' }],
+        post_coefficient: [{ required: true, message: '不能为空', trigger: 'blur' }]
       },
       dialogForm: {},
       btnLoading: false
@@ -195,7 +195,7 @@ export default {
       this.getList()
     },
     async onSubmit() {
-      this.dialogForm = { coefficient: null, hbjz: '最大值', hbxs: 100 }
+      this.dialogForm = { coefficient: null, post_standard: 1, post_coefficient: 100 }
       this.dialogVisible = true
     },
     showEditDialog(row) {
