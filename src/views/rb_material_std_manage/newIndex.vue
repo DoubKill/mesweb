@@ -1,6 +1,7 @@
 <template>
   <div
     v-loading="loading"
+    class="newIndex"
     element-loading-text="加载中..."
   >
     <!-- 胶料配方标准管理 -->
@@ -70,6 +71,7 @@
       :data="tableData"
       border
       size="mini"
+      :row-class-name="tableRowClassName"
       @row-click="handleCurrentChange"
     >
       <el-table-column
@@ -289,6 +291,7 @@
         <el-button @click="handleClose(false)">取 消</el-button>
         <el-button
           type="primary"
+          :loading="loadingSendWeight"
           @click="submitSendWeight"
         >确 定</el-button>
       </span>
@@ -330,7 +333,8 @@ export default {
       checkList: [],
       dialogList: [{ name: 'F1#细料', no: 'F01' }, { name: 'F2#细料', no: 'F02' }, { name: 'F3#细料', no: 'F03' },
         { name: 'S1#硫磺', no: 'S01' }, { name: 'S2#硫磺', no: 'S02' }],
-      currentObj: {}
+      currentObj: {},
+      loadingSendWeight: false
     }
   },
   computed: {
@@ -475,7 +479,7 @@ export default {
                   notice_flag: true
                 }
               })
-              this.$message.success('发送至上辅机成功')
+              this.$message.success(data.send_recipe_msg)
               this.rubber_material_list()
               const url = data.auxiliary_url + '#/recipe/list'
 
@@ -485,7 +489,7 @@ export default {
             return
           }
 
-          this.$message.success('发送至上辅机成功')
+          this.$message.success(data.send_recipe_msg)
           this.rubber_material_list()
           const url = data.auxiliary_url + '#/recipe/list'
 
@@ -510,6 +514,7 @@ export default {
     submitSendWeight() {
       try {
         let _i = 0
+        this.loadingSendWeight = true
         this.checkList.forEach(async d => {
           const data = await xlRecipeNotice('post', { params: { product_batching_id: this.currentRow.id, product_no: this.currentRow.stage_product_batch_no, xl_equip: d }})
           if (data && data.notice_flag) {
@@ -523,6 +528,8 @@ export default {
               this.$message.success(data1)
               if (_i === this.checkList.length) {
                 this.handleClose(false)
+
+                this.loadingSendWeight = false
               }
             })
           } else {
@@ -530,10 +537,12 @@ export default {
             _i++
             if (_i === this.checkList.length) {
               this.handleClose(false)
+              this.loadingSendWeight = false
             }
           }
         })
       } catch (e) {
+        this.loadingSendWeight = false
         throw new Error(e)
       }
     },
@@ -562,11 +571,19 @@ export default {
         case 7:
           return '停用'
       }
+    },
+    tableRowClassName({ row, rowIndex }) {
+      if (row.used_type === 4 && (row.send_success_equip.length !== row.enable_equip.length)) {
+        return 'warning-row'
+      }
+      return ''
     }
   }
 }
 </script>
 
 <style>
-
+  .newIndex .warning-row{
+    background: #c6e2ee  !important;
+  }
 </style>
