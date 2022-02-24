@@ -91,6 +91,24 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="是否进烘房">
+        <el-select
+          v-model="search.is_entering"
+          clearable
+          placeholder="请选择"
+          @change="changeList"
+        >
+          <el-option
+            v-for="item in ['Y','N']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="批次号">
+        <el-input v-model="search.l_batch_no" clearable @input="debounceList" />
+      </el-form-item>
       <el-form-item style="float:right">
         <el-button
           type="primary"
@@ -114,9 +132,12 @@
       <el-table-column label="类型" align="center" prop="order_type" width="50" />
       <el-table-column label="出入库单号" align="center" prop="order_no" />
       <el-table-column label="质检条码" align="center" prop="lot_no" />
+      <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="批次号" align="center" prop="batch_no" />
       <!-- <el-table-column label="仓库类型" align="center" prop="warehouse_type" /> -->
       <!-- <el-table-column  label="仓库名称" align="center" prop="warehouse_name" /> -->
       <el-table-column label="托盘号" align="center" prop="pallet_no" />
+      <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="是否进烘房" align="center" prop="is_entering" />
+      <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="供应商" align="center" />
       <!-- <el-table-column label="机台" align="center">
         <template v-if="row.product_info" slot-scope="{row}">
           {{ row.product_info.equip_no }}
