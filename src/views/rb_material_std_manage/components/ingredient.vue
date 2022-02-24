@@ -80,6 +80,7 @@
           :data="itemFa.tableData"
           border
           show-summary
+          :header-cell-style="i===0?cellStyleFun:cellStyleFun1"
         >
           <el-table-column
             label="No"
@@ -160,6 +161,9 @@
             width="120"
             :label="item"
           >
+            <template slot="header">
+              <span>{{ item }}</span>
+            </template>
             <template slot-scope="{row}">
               <el-select
                 v-model="row.master[item]"
@@ -668,6 +672,14 @@ export default {
         return
       }
       this.dialogVisibleAdd = true
+    },
+    cellStyleFun1({ row, column, rowIndex, columnIndex }) {
+      return ''
+    },
+    cellStyleFun({ row, column, rowIndex, columnIndex }) {
+      if (rowIndex === 0 && this.formInline.send_success_equip.includes(column.label)) {
+        return 'background: #36a1cf;color:#fff'
+      }
     },
     async putNewsaveMaterialClicked() {
       if (!this.formInline.dev_type) {

@@ -349,7 +349,8 @@ export default {
             dev_type_name: data.dev_type_name || '',
             enable_equip: data.enable_equip || [],
             new_recipe_id: data.new_recipe_id || 0,
-            production_time_interval: data.production_time_interval || ''
+            production_time_interval: data.production_time_interval || '',
+            send_success_equip: data.send_success_equip || []
           }
         }
         this.objParames._add = _post

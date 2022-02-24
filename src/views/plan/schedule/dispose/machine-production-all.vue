@@ -43,13 +43,12 @@
         </el-upload>
       </el-form-item>
     </el-form>
-    <div id="out-table">
+    <div id="out-table" v-loading="loading">
       <div id="example0" style="" />
       <div id="example1" style="" />
       <div id="example2" style="" />
     </div>
     <div v-if="!data.length" class="noneData">暂无数据</div>
-    <!-- <div id="load">8888888</div> -->
   </div>
 </template>
 
@@ -57,7 +56,6 @@
 import Handsontable from 'handsontable'
 import { registerLanguageDictionary, zhCN } from 'handsontable/i18n'
 import 'handsontable/dist/handsontable.full.css'
-// import 'handsontable/dist/languages/zh-CN.js'
 import { exportExcel, setDate } from '@/utils/index'
 import { schedulingResult, scheduleNos, ImportXlx } from '@/api/base_w_five'
 
@@ -77,7 +75,8 @@ export default {
         factory_date: setDate(),
         schedule_no: ''
       },
-      scheduleNoList: []
+      scheduleNoList: [],
+      loading: false
     }
   },
   created() {
@@ -90,6 +89,7 @@ export default {
         data: [],
         language: zhCN.languageCode,
         colHeaders: false,
+        stretchH: 'all',
         height: 'auto',
         width: 'auto',
         licenseKey: 'non-commercial-and-evaluation',
@@ -158,7 +158,9 @@ export default {
           this.$message.info('请选择日期')
           return
         }
+        this.loading = true
         const data = await schedulingResult('get', null, { params: this.getParams })
+        this.loading = false
         const arr = []
         let arrContent = []
         let obj = {}
@@ -223,6 +225,7 @@ export default {
 
         this.data = arr
       } catch (e) {
+        this.loading = false
         for (let index = 0; index < 3; index++) {
           if (this['hot' + index]) {
             this['hot' + index].loadData([])
@@ -342,6 +345,8 @@ function topHeardCustomRenderer(instance, td) {
 <style src="../../../../../node_modules/handsontable/dist/handsontable.full.css"></style>
 <style lang="scss">
 .machine-production-all{
+  min-width: 1000px;
+    overflow: auto;
   #out-table{
   font-size: 10px;
   }

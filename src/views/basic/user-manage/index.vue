@@ -354,13 +354,14 @@ export default {
       }
     }
     var validatePass3 = (rule, value, callback) => {
-      if (!value) {
+      const _value = value.trim()
+      if (!_value) {
         callback(new Error('请输入用户名!'))
-      } else if (!/^[a-zA-Z0-9\u4e00-\u9fa5]+$/g.test(value)) {
-        callback(new Error('用户名格式错误，请输入字母和数字组合'))
-      } else if (value.length > 64) {
+      } else if (!/^[a-zA-Z0-9\u4e00-\u9fa5]+$/g.test(_value)) {
+        callback(new Error('用户名格式错误，请输入字母或数字'))
+      } else if (_value.length > 64) {
         callback(new Error('长度小于64个字符!'))
-      } else if (value.length < 2) {
+      } else if (_value.length < 2) {
         callback(new Error('请输入最少两个字符!'))
       } else {
         callback()
@@ -698,6 +699,9 @@ function filterMy(data) {
     }
      .show-enter-to,.show-leave-to{
         margin-top: 1px;
+   }
+   .el-form-item__error{
+     width: 150%;
    }
 }
 </style>
