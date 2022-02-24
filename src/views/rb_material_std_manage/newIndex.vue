@@ -584,6 +584,6 @@ export default {
 
 <style>
   .newIndex .warning-row{
-    background: #c6e2ee  !important;
+    background: #98d6f0  !important;
   }
 </style>
