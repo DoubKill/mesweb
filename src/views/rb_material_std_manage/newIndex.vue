@@ -582,8 +582,18 @@ export default {
 }
 </script>
 
-<style>
-  .newIndex .warning-row{
+<style lang="scss">
+ .newIndex{
+
+  .el-table__row:hover > td {
+    background-color: transparent !important;
+  }
+  .el-table__body tr.current-row{
+     background-color: #ecf5ff !important;
+  }
+  .warning-row{
     background: #98d6f0  !important;
   }
+ }
+
 </style>
