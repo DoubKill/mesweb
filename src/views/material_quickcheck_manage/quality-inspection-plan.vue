@@ -98,11 +98,9 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button :loading="addLoading" type="primary" @click="addTestFun">添加</el-button>
-      </el-form-item>
-      <el-form-item>
-        <el-button v-permission="['examine_test_plan', 'begin']" type="primary" :disabled="startBtnLoading" @click="startTestFun">开始检测</el-button>
-        <el-button v-permission="['examine_test_plan', 'end']" type="primary" @click="endTestFun">结束检测</el-button>
+        <el-button v-permission="['material_test_plan', 'add']" :loading="addLoading" type="primary" @click="addTestFun">添加</el-button>
+        <el-button v-permission="['material_test_plan', 'begin']" type="primary" :disabled="startBtnLoading" @click="startTestFun">开始检测</el-button>
+        <el-button v-permission="['material_test_plan', 'end']" type="primary" @click="endTestFun">结束检测</el-button>
         <el-button type="primary" @click="getWaitPlan">刷新</el-button>
       </el-form-item>
       <el-form-item label="检测计划单据号">

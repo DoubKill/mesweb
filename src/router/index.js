@@ -2439,7 +2439,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'MaterialQuickcheck',
               title: '原材料 质量检测计划',
-              permissionName: ''
+              permissionName: 'material_test_plan'
             }
           }
         ]
