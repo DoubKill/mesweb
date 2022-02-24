@@ -39,14 +39,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="厂家">
-        <el-select v-model="search.factory" clearable placeholder="请选择" @change="changeList">
-          <el-option
-            v-for="(item,i) in factoryList"
-            :key="i"
-            :label="item"
-            :value="item"
-          />
-        </el-select>
+        <el-input v-model="search.factory" clearable @input="debounceFun" />
       </el-form-item>
     </el-form>
     <el-table
@@ -306,7 +299,6 @@ export default {
       trackingList: [],
       loadingView: false,
       multipleSelection: [],
-      factoryList: [],
       tableData: [],
       loading: false,
       rules: {
@@ -333,7 +325,6 @@ export default {
         this.loading = true
         const data = await thStorageSummary('get', null, { params: this.search })
         this.tableData = data.results
-        this.factoryList = data.factory_list
         this.total = data.count
         this.loading = false
       } catch (e) {
