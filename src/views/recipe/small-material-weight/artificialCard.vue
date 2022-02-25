@@ -3,7 +3,13 @@
     <!-- 人工补打机配卡片 -->
     <el-form :inline="true">
       <el-form-item label="时间">
-        <el-input v-model="search.spare_name" placeholder="请输入内容" @input="debounceList" />
+        <el-date-picker
+          v-model="search.search_time"
+          type="date"
+          value-format="yyyy-MM-dd"
+          placeholder="选择日期"
+          @change="changeSearch"
+        />
       </el-form-item>
       <el-form-item label="细料名称">
         <el-input v-model="search.spare_name" placeholder="请输入内容" @input="debounceList" />
@@ -16,6 +22,7 @@
       </el-form-item>
       <el-form-item style="float: right">
         <el-button
+          type="primary"
           @click="showCreateDialog"
         >新建</el-button>
       </el-form-item>
@@ -104,7 +111,7 @@
           <el-input v-model="dialogForm.rule_code" :disabled="true" />
         </el-form-item>
         <el-form-item label="细料名称" prop="rule_code">
-          <el-input v-model="dialogForm.rule_code" :disabled="true" />
+          <el-input v-model="dialogForm.rule_code" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">

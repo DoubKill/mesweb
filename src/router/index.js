@@ -518,16 +518,16 @@ export let asyncRoutes = [
             permissionName: 'xl_weight_card'
           }
         },
-        // {
-        //   path: '/small-material-weight/artificialCard',
-        //   component: () => import('@/views/recipe/small-material-weight/artificialCard'),
-        //   name: 'SmallMaterialWeightArtificialCard',
-        //   meta: {
-        //     faName: 'SmallMaterialWeight',
-        //     title: '人工补打机配卡片',
-        //     permissionName: ''
-        //   }
-        // },
+        {
+          path: '/small-material-weight/artificialCard',
+          component: () => import('@/views/recipe/small-material-weight/artificialCard'),
+          name: 'SmallMaterialWeightArtificialCard',
+          meta: {
+            faName: 'SmallMaterialWeight',
+            title: '人工补打机配卡片',
+            permissionName: ''
+          }
+        },
         {
           path: '/small-material-weight/hebao',
           component: () => import('@/views/recipe/small-material-weight/hebao'),
