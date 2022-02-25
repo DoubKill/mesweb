@@ -518,16 +518,16 @@ export let asyncRoutes = [
             permissionName: 'xl_weight_card'
           }
         },
-        {
-          path: '/small-material-weight/artificialCard',
-          component: () => import('@/views/recipe/small-material-weight/artificialCard'),
-          name: 'SmallMaterialWeightArtificialCard',
-          meta: {
-            faName: 'SmallMaterialWeight',
-            title: '人工补打机配卡片',
-            permissionName: ''
-          }
-        },
+        // {
+        //   path: '/small-material-weight/artificialCard',
+        //   component: () => import('@/views/recipe/small-material-weight/artificialCard'),
+        //   name: 'SmallMaterialWeightArtificialCard',
+        //   meta: {
+        //     faName: 'SmallMaterialWeight',
+        //     title: '人工补打机配卡片',
+        //     permissionName: ''
+        //   }
+        // },
         {
           path: '/small-material-weight/hebao',
           component: () => import('@/views/recipe/small-material-weight/hebao'),
@@ -694,7 +694,7 @@ export let asyncRoutes = [
             }
           ]
         },
-        {
+        /** {
           path: '/schedule/statistical-report',
           component: () => import('@/views/plan/schedule/statistical-report/a-index'),
           name: 'ScheduleStatisticalReport',
@@ -785,7 +785,7 @@ export let asyncRoutes = [
               }
             }
           ]
-        },
+        },**/
         {
           path: '/schedule/basic-data',
           component: () => import('@/views/plan/schedule/basic-data/a-index'),
@@ -1134,7 +1134,7 @@ export let asyncRoutes = [
               permissionName: 'monthly_output_statistics_report'
             }
           },
-          {
+          /** {
             path: '/report/achievement',
             component: () => import('@/views/equipment-management/report/achievement'),
             name: 'StatisticalReportAchievement',
@@ -1193,7 +1193,7 @@ export let asyncRoutes = [
               title: '称量机台产量汇总表',
               permissionName: ''
             }
-          },
+          },**/
           // {
           //   path: '/report/output-statistics-details',
           //   component: () => import('@/views/equipment-management/report/output-statistics-details'),
