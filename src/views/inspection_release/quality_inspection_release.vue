@@ -239,7 +239,7 @@
     <el-dialog
       title="原材料 异常处理"
       :visible.sync="dialogVisibleAbnormal"
-      width="25%"
+      width="30%"
     >
       <el-form :model="abnormalForm" :rules="rules" label-width="150px">
         <el-form-item label="品质状态" prop="quality_status">
@@ -418,7 +418,9 @@ export default {
       this.abnormalForm.lot_no = this.searchView.batch_no
       try {
         this.submitPass = true
-        await wmsRelease('post', null, { data: { tracking_nums: this.trackingList, operation_type: this.abnormalForm.result }})
+        if (this.abnormalForm.result === '放行') {
+          await wmsRelease('post', null, { data: { status: this.abnormalForm.quality_status, tracking_nums: this.trackingList, operation_type: this.abnormalForm.result }})
+        }
         await wmsExceptHandle('post', null, { data: this.abnormalForm })
         this.$message.success('操作成功')
         this.submitPass = false
