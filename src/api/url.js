@@ -653,5 +653,5 @@ export default {
   Employeeattendancerecordsexport: '/api/v1/production/employee_attendance_records_export/', // 员工出勤记录表导出模板
   SummaryOfMillOutput: '/api/v1/production/summary_of_mill_output/', // 密炼机台产量汇总表
   Sb: '/api/v1/production/nishisb/',
-  WmsExceptHandle: '/api/v1/inventory/wms-except_handle/'
+  WmsExceptHandle: '/api/v1/inventory/wms-except-handle/'
 }
