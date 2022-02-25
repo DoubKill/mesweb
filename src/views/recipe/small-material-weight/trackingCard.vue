@@ -172,7 +172,7 @@
             </el-button>
           </div>
           <el-button
-            v-permission="['xl_expire_data', 'save']"
+            v-permission="['xl_expire_data', 'another']"
             type="primary"
             size="mini"
             @click="reprintFun(scope.row,false)"
