@@ -393,7 +393,7 @@ export default {
         try {
           const data = await getMaterialTolerance('get', null, { params: {
             batching_equip: this.formData.batching_equip,
-            material_name: this.formData.product_no, standard_weight: d.standard_weight }})
+            material_name: d.material_name, standard_weight: d.standard_weight }})
           this.$set(d, 'tolerance', data)
           i--
         } catch (e) {
