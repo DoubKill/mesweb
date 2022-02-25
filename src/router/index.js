@@ -632,16 +632,16 @@ export let asyncRoutes = [
                 permissionName: 'aps_result'
               }
             },
-            {
-              path: '/schedule/machine',
-              component: () => import('@/views/plan/schedule/dispose/machine'),
-              name: 'ScheduleMachine',
-              meta: {
-                faName: 'ScheduleDispose',
-                title: '机台生产计划-机台列表',
-                permissionName: ''
-              }
-            },
+            // {
+            //   path: '/schedule/machine',
+            //   component: () => import('@/views/plan/schedule/dispose/machine'),
+            //   name: 'ScheduleMachine',
+            //   meta: {
+            //     faName: 'ScheduleDispose',
+            //     title: '机台生产计划-机台列表',
+            //     permissionName: ''
+            //   }
+            // },
             {
               path: '/schedule/daily-plan',
               component: () => import('@/views/plan/schedule/dispose/daily-plan'),
@@ -662,16 +662,16 @@ export let asyncRoutes = [
                 permissionName: 'materialdemanded'
               }
             },
-            {
-              path: '/schedule/weighing-system-plan',
-              component: () => import('@/views/plan/schedule/dispose/weighing-system-plan'),
-              name: 'ScheduleWeighingSystemPlan',
-              meta: {
-                faName: 'ScheduleDispose',
-                title: '称量系统计划',
-                permissionName: ''
-              }
-            },
+            // {
+            //   path: '/schedule/weighing-system-plan',
+            //   component: () => import('@/views/plan/schedule/dispose/weighing-system-plan'),
+            //   name: 'ScheduleWeighingSystemPlan',
+            //   meta: {
+            //     faName: 'ScheduleDispose',
+            //     title: '称量系统计划',
+            //     permissionName: ''
+            //   }
+            // },
             {
               path: '/schedule/equipment-shutdown-plan',
               component: () => import('@/views/plan/schedule/dispose/equipment-shutdown-plan'),
