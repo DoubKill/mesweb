@@ -171,7 +171,7 @@
               @click="status_recipe_fun(scope.row.id,false,'废弃')"
             >废弃</el-button>
             <el-button
-              v-if="checkPermission(['productbatching','abandon'])&&
+              v-if="checkPermission(['productbatching','stop'])&&
                 [4].includes(scope.row.used_type)"
               size="mini"
               @click="status_recipe_fun(scope.row.id,false,'停用')"
@@ -204,7 +204,7 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
-              v-if="scope.row.used_type === 4"
+              v-if="scope.row.used_type === 4 && checkPermission(['productbatching','sendXl'])"
               title="请配置可用机台"
               type="primary"
               size="mini"
