@@ -593,7 +593,7 @@ export default {
       }
     },
     tableRowClassName({ row, rowIndex }) {
-      if (row.used_type === 4 && row.send_success_equip.length && (row.send_success_equip.length !== row.enable_equip.length)) {
+      if (row.used_type === 4 && (row.send_success_equip.length !== row.enable_equip.length)) {
         return 'warning-row'
       }
       return ''
