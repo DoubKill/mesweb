@@ -47,6 +47,22 @@
           @input="changeSearch"
         />
       </el-form-item>
+      <el-form-item label="发送上辅机情况">
+        <el-select
+          v-model="search.filter_type"
+          style="width: 120px"
+          clearable
+          placeholder="请选择"
+          @change="changeSearch"
+        >
+          <el-option
+            v-for="item in [{name:'部分发送',label:1},{name:'未设定机台',label:2}]"
+            :key="item.name"
+            :label="item.name"
+            :value="item.label"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item style="float: right">
         <el-button
           v-if="checkPermission(['productbatching','add'])"
