@@ -323,7 +323,7 @@ export default {
       try {
         const data = await getMaterialTolerance('get', null, { params: {
           material_name: row.material_name,
-          standard_weight: row.actual_weight,
+          standard_weight: row.actual_weight || row.standard_weight,
           only_num: true }})
         if (data) {
           this.tableData[faI][index].standard_error = data
