@@ -156,8 +156,8 @@
             </template>
           </el-table-column> -->
           <el-table-column
-            v-for="(item) in formInline.enable_equip"
-            :key="item"
+            v-for="(item,_i) in formInline.enable_equip"
+            :key="item+_i"
             width="120"
           >
             <template slot="header" slot-scope="{row}">
