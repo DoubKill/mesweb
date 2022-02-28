@@ -159,6 +159,7 @@
             v-for="(item,_i) in formInline.enable_equip"
             :key="item+_i"
             width="120"
+            :label="item"
           >
             <template slot="header" slot-scope="{row}">
               <span>{{ item }}</span>
