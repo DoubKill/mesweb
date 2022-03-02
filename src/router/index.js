@@ -875,8 +875,8 @@ export let asyncRoutes = [
                 title: '处理关键字定义',
                 permissionName: 'aps_opera_keyword'
               }
-            }
-            /** {
+            },
+            {
               path: '/equipment-management/report/specification_setting',
               name: 'SpecificationSetting',
               component: () => import('@/views/equipment-management/report/specification_setting'),
@@ -885,7 +885,7 @@ export let asyncRoutes = [
                 title: '丁基胶 规格设定',
                 permissionName: ''
               }
-            }**/
+            }
           ]
         }
       ]
