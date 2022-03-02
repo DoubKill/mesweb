@@ -883,7 +883,7 @@ export let asyncRoutes = [
               meta: {
                 faName: 'ScheduleBasicData',
                 title: '丁基胶 规格设定',
-                permissionName: 'productinfo'
+                permissionName: ''
               }
             }
           ]
