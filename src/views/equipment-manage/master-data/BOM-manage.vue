@@ -832,6 +832,9 @@ export default {
       }
 
       this.top = e.clientY + a - 150
+      if (this.top > 450) {
+        this.top = this.top - 120
+      }
       this.visible = true
       this.selectedTag = tag
       this.faData = node.parent ? node.parent.data : ''
