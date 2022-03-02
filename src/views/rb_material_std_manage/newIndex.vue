@@ -47,6 +47,22 @@
           @input="changeSearch"
         />
       </el-form-item>
+      <el-form-item label="发送上辅机情况">
+        <el-select
+          v-model="search.filter_type"
+          style="width: 120px"
+          clearable
+          placeholder="请选择"
+          @change="changeSearch"
+        >
+          <el-option
+            v-for="item in [{name:'部分发送',label:1},{name:'未设定机台',label:2}]"
+            :key="item.name"
+            :label="item.name"
+            :value="item.label"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item style="float: right">
         <el-button
           v-if="checkPermission(['productbatching','add'])"
@@ -516,29 +532,33 @@ export default {
         let _i = 0
         this.loadingSendWeight = true
         this.checkList.forEach(async d => {
-          const data = await xlRecipeNotice('post', { params: { product_batching_id: this.currentRow.id, product_no: this.currentRow.stage_product_batch_no, xl_equip: d }})
-          if (data && data.notice_flag) {
-            this.$confirm(`${d}:${data.msg}料罐中不存在，是否下传配方？`, '提示', {
-              confirmButtonText: '确定',
-              cancelButtonText: '取消',
-              type: 'warning'
-            }).then(async() => {
-              const data1 = await xlRecipeNotice('post', { params: { product_batching_id: this.currentRow.id, product_no: this.currentRow.stage_product_batch_no, xl_equip: d, notice_flag: true }})
+          try {
+            const data = await xlRecipeNotice('post', { params: { product_batching_id: this.currentRow.id, product_no: this.currentRow.stage_product_batch_no, xl_equip: d }})
+            if (data && data.notice_flag) {
+              this.$confirm(`${d}:${data.msg}料罐中不存在，是否下传配方？`, '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+              }).then(async() => {
+                const data1 = await xlRecipeNotice('post', { params: { product_batching_id: this.currentRow.id, product_no: this.currentRow.stage_product_batch_no, xl_equip: d, notice_flag: true }})
+                _i++
+                this.$message.success(data1)
+                if (_i === this.checkList.length) {
+                  this.handleClose(false)
+                  this.loadingSendWeight = false
+                }
+              })
+            } else {
+              this.$message.success(data)
               _i++
-              this.$message.success(data1)
               if (_i === this.checkList.length) {
                 this.handleClose(false)
-
                 this.loadingSendWeight = false
               }
-            })
-          } else {
-            this.$message.success(data)
-            _i++
-            if (_i === this.checkList.length) {
-              this.handleClose(false)
-              this.loadingSendWeight = false
             }
+          } catch (e) {
+            this.loadingSendWeight = false
+            throw new Error(e)
           }
         })
       } catch (e) {

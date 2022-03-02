@@ -156,13 +156,14 @@
             </template>
           </el-table-column> -->
           <el-table-column
-            v-for="(item) in formInline.enable_equip"
-            :key="item"
+            v-for="(item,_i) in formInline.enable_equip"
+            :key="item+_i"
             width="120"
             :label="item"
           >
-            <template slot="header">
+            <template slot="header" slot-scope="{row}">
               <span>{{ item }}</span>
+              <span v-if="false">{{ row }}</span>
             </template>
             <template slot-scope="{row}">
               <el-select
