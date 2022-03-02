@@ -883,7 +883,7 @@ export let asyncRoutes = [
               meta: {
                 faName: 'ScheduleBasicData',
                 title: '丁基胶 规格设定',
-                permissionName: 'productinfo'
+                permissionName: ''
               }
             }**/
           ]
@@ -2439,7 +2439,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'MaterialQuickcheck',
               title: '原材料 质量检测计划',
-              permissionName: ''
+              permissionName: 'material_test_plan'
             }
           }
         ]
