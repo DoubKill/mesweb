@@ -401,6 +401,8 @@ export default {
   XlReportBasic: '/api/v1/terminal/xl-report-basic/',
   XlReportWeight: '/api/v1/terminal/xl-report-weight/',
   XlPlan: '/api/v1/terminal/xl-plan/',
+  UpDownMove: '/api/v1/terminal/xl-plan/up_down_move/',
+  CurrentFactoryDate: '/api/v1/basics/current-factory-date/',
   WmsStock: '/api/v1/inventory/wms-stock/',
   WmsWeightStock: '/api/v1/inventory/wms-weight-stock/',
   WmsEntrance: '/api/v1/inventory/wms-entrance/',
