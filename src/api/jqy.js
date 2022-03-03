@@ -1202,3 +1202,21 @@ export function schedulingProductImport(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function setThePrice(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SetThePrice + id + '/' : API.SetThePrice,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function summaryOfWeighingOutput(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SummaryOfWeighingOutput + id + '/' : API.SummaryOfWeighingOutput,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
