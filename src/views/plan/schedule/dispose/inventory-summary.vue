@@ -51,7 +51,7 @@
       style="width: 100%"
     >
       <el-table-column
-        prop="sn"
+        type="index"
         label="序号"
       />
       <el-table-column

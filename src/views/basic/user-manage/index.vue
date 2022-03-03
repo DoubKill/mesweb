@@ -33,16 +33,16 @@
       </el-form-item>
       <el-form-item label="部门">
         <el-select
-          v-model="getParams.is_active"
+          v-model="getParams.section_id"
           clearable
           placeholder="请选择部门"
           @change="numChanged"
         >
           <el-option
-            v-for="item in optionsUser"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+            v-for="item in sectionPick"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
           />
         </el-select>
       </el-form-item>
@@ -54,12 +54,15 @@
       </el-form-item>
       <el-form-item style="float:right">
         <el-button
-          v-permission="[]"
-          :loading="btnExportLoad"
-          @click="exportTable"
-        >导出Excel模板</el-button>
+          v-permission="['user','import']"
+        >
+          <a
+            :href="`${templateFileUrl}user.xlsx`"
+            download="用户管理导入模板.xlsx"
+          >导出Excel模板</a>
+        </el-button>
         <el-upload
-          v-permission="[]"
+          v-permission="['user','import']"
           style="margin-left:8px;display:inline-block"
           action="string"
           accept=".xls, .xlsx"
@@ -97,7 +100,7 @@
       />
       <el-table-column
         min-width="10"
-        prop="username"
+        prop="id_card_num"
         label="身份证"
       />
       <el-table-column
@@ -214,6 +217,16 @@
             v-model="userForm.username"
             :disabled="userForm.id ? true:false"
           />
+        </el-form-item>
+        <el-form-item
+          label="身份证"
+          prop="id_card_num"
+        >
+          <el-input
+            v-model="userForm.id_card_num"
+            :disabled="!card_num"
+          />
+          <el-button v-permission="['user','cid']" style="margin-left:20px" @click="card_num=true">修改身份证</el-button>
         </el-form-item>
         <el-form-item
           v-if="userForm.id"
@@ -349,7 +362,7 @@
 
 <script>
 import { personnelsUrl } from '@/api/user'
-import { delUser } from '@/api/jqy'
+import { delUser, userImport } from '@/api/jqy'
 import { sectionTree } from '@/api/base_w_four'
 import { globalCodesUrl } from '@/api/base_w'
 // import { permissions } from '@/api/permission'
@@ -453,6 +466,7 @@ export default {
       // permissionsArr: [],
       group_extensions: [],
       loading: true,
+      card_num: false,
       btnExportLoad: false,
       loadingTable: false,
       userFormError: {},
@@ -467,6 +481,7 @@ export default {
         }
       ],
       optionsSection: [],
+      sectionPick: [],
       teamList: []
     }
   },
@@ -504,6 +519,7 @@ export default {
     this.currentChange()
     this.getOptionsSection()
     this.getTeamList()
+    this.templateFileUrl = process.env.BASE_URL
   },
   methods: {
     changeUsername(e) {
@@ -528,6 +544,8 @@ export default {
         } else {
           this.optionsSection = []
         }
+        const data1 = await sectionTree('get', null, { params: { all: 1 }})
+        this.sectionPick = data1.results
       } catch (error) {
         //
       }
@@ -675,33 +693,16 @@ export default {
         }
       })
     },
-    exportTable() {
-      // this.btnExportLoad = true
-      // employeeattendancerecordsexport().then(response => {
-      //   const link = document.createElement('a')
-      //   const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
-      //   link.style.display = 'none'
-      //   link.href = URL.createObjectURL(blob)
-      //   link.download = '员工出勤记录表' + setDate() + '.xlsx'// 下载的文件名
-      //   document.body.appendChild(link)
-      //   link.click()
-      //   document.body.removeChild(link)
-      //   this.btnExportLoad = false
-      // })
-      //   .catch(e => {
-      //     this.btnExportLoad = false
-      //   })
-    },
     Upload(param) {
-      // const formData = new FormData()
-      // formData.append('file', param.file)
-      // employeeattendancerecords('post', null, { data: formData }).then(response => {
-      //   this.$message({
-      //     type: 'success',
-      //     message: response
-      //   })
-      //   this.currentChange()
-      // })
+      const formData = new FormData()
+      formData.append('file', param.file)
+      userImport('post', null, { data: formData }).then(response => {
+        this.$message({
+          type: 'success',
+          message: response
+        })
+        this.currentChange()
+      })
     },
     handleClose(done) {
       this.$refs['userForm'].resetFields()
