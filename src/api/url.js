@@ -652,6 +652,8 @@ export default {
   Employeeattendancerecords: '/api/v1/production/employee-attendance-records/', // 员工出勤记录表
   Employeeattendancerecordsexport: '/api/v1/production/employee-attendance-records-export/', // 员工出勤记录表导出模板
   SummaryOfMillOutput: '/api/v1/production/summary-of-mill-output/', // 密炼机台产量汇总表
+  SetThePrice: '/api/v1/production/set-the-price/', // 称量机台产量汇总表单价设定
+  SummaryOfWeighingOutput: '/api/v1/production/summary-of-weighing-output/', // 称量机台产量汇总表
   Sb: '/api/v1/production/nishisb/',
   WmsExceptHandle: '/api/v1/inventory/wms-except-handle/'
 }

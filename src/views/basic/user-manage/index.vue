@@ -31,11 +31,43 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="部门">
+        <el-select
+          v-model="getParams.is_active"
+          clearable
+          placeholder="请选择部门"
+          @change="numChanged"
+        >
+          <el-option
+            v-for="item in optionsUser"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item
         v-if="permissionObj.user.indexOf('add')>-1"
         style="float: right"
       >
         <el-button @click="showCreateUserDialog">新建</el-button>
+      </el-form-item>
+      <el-form-item style="float:right">
+        <el-button
+          v-permission="[]"
+          :loading="btnExportLoad"
+          @click="exportTable"
+        >导出Excel模板</el-button>
+        <el-upload
+          v-permission="[]"
+          style="margin-left:8px;display:inline-block"
+          action="string"
+          accept=".xls, .xlsx"
+          :http-request="Upload"
+          :show-file-list="false"
+        >
+          <el-button>导入Excel</el-button>
+        </el-upload>
       </el-form-item>
     </el-form>
 
@@ -62,6 +94,11 @@
         min-width="10"
         prop="username"
         label="用户名"
+      />
+      <el-table-column
+        min-width="10"
+        prop="username"
+        label="身份证"
       />
       <el-table-column
         min-width="10"
@@ -326,10 +363,11 @@ export default {
   components: { page, transferRoles },
   data() {
     var validatePass = (rule, value, callback) => {
+      var reg = /(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[\W_]).{8,}/
       if (!value) {
         callback(new Error('请输入密码'))
-      } else if (value && (value.length < 3 || value.length > 16)) {
-        callback(new Error('请输入3~16位长度的密码'))
+      } else if (value && !reg.test(value)) {
+        callback(new Error('密码必须同时包含大写英文,小写英文,数字,符号,且不少于8位'))
       } else {
         if (this.userForm.checkPass !== '') {
           this.$refs.userForm.validateField('checkPass')
@@ -368,8 +406,9 @@ export default {
       }
     }
     var validatePass4 = (rule, value, callback) => {
-      if (value && (value.length < 3 || value.length > 16)) {
-        callback(new Error('请输入3~16位长度的密码'))
+      var reg = /(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[\W_]).{8,}/
+      if (value && (!reg.test(value))) {
+        callback(new Error('密码必须同时包含大写英文,小写英文,数字,符号,且不少于8位'))
       } else {
         callback()
       }
@@ -414,6 +453,7 @@ export default {
       // permissionsArr: [],
       group_extensions: [],
       loading: true,
+      btnExportLoad: false,
       loadingTable: false,
       userFormError: {},
       optionsUser: [
@@ -634,6 +674,34 @@ export default {
           return false
         }
       })
+    },
+    exportTable() {
+      // this.btnExportLoad = true
+      // employeeattendancerecordsexport().then(response => {
+      //   const link = document.createElement('a')
+      //   const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
+      //   link.style.display = 'none'
+      //   link.href = URL.createObjectURL(blob)
+      //   link.download = '员工出勤记录表' + setDate() + '.xlsx'// 下载的文件名
+      //   document.body.appendChild(link)
+      //   link.click()
+      //   document.body.removeChild(link)
+      //   this.btnExportLoad = false
+      // })
+      //   .catch(e => {
+      //     this.btnExportLoad = false
+      //   })
+    },
+    Upload(param) {
+      // const formData = new FormData()
+      // formData.append('file', param.file)
+      // employeeattendancerecords('post', null, { data: formData }).then(response => {
+      //   this.$message({
+      //     type: 'success',
+      //     message: response
+      //   })
+      //   this.currentChange()
+      // })
     },
     handleClose(done) {
       this.$refs['userForm'].resetFields()
