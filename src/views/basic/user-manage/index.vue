@@ -224,9 +224,9 @@
         >
           <el-input
             v-model="userForm.id_card_num"
-            :disabled="!card_num"
+            :disabled="userForm.id&&!card_num"
           />
-          <el-button v-permission="['user','cid']" style="margin-left:20px" @click="card_num=true">修改身份证</el-button>
+          <el-button v-if="userForm.id" v-permission="['user','cid']" style="margin-left:20px" @click="card_num=true">修改身份证</el-button>
         </el-form-item>
         <el-form-item
           v-if="userForm.id"
