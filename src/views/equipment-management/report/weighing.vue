@@ -19,12 +19,7 @@
           v-permission="['monthly_output_statistics_and_performance','export']"
           type="primary"
           @click="exportTable('产量')"
-        >导出产量汇总</el-button>
-        <el-button
-          v-permission="['monthly_output_statistics_and_performance','export']"
-          type="primary"
-          @click="exportTable('绩效')"
-        >导出员工绩效</el-button>
+        >导出产量汇总Excel</el-button>
       </el-form-item>
 
       <el-form-item style="float:right">
@@ -57,7 +52,7 @@
         <el-button :loading="btnLoading" type="primary" @click="savePrice">保存单价</el-button>
       </el-form-item>
     </el-form>
-    <h3>称量机台产量汇总表（包数）</h3>
+    <h3 style="font-size:17px;font-weight:bold">称量机台产量汇总表（包数）</h3>
     <el-table
       :id="exportTableShow?'out-table':'false'"
       v-loading="loading"
@@ -80,33 +75,43 @@
         <el-table-column
           :prop="d.prop+'早班'"
           align="center"
-          label="早"
+          label="早班"
           width="60"
         />
         <el-table-column
           :prop="d.prop+'夜班'"
           align="center"
-          label="晚"
+          label="夜班"
           width="60"
         />
       </el-table-column>
       <el-table-column
-        prop="section"
+        prop="hj"
         align="center"
         label="合计"
         width="90"
       />
     </el-table>
     <br>
-    <h3>称量机台员工绩效计算</h3>
+    <el-form>
+      <el-form-item>
+        <span style="font-size:17px;font-weight:bold">称量机台员工绩效计算</span>
+        <el-button
+          v-permission="['monthly_output_statistics_and_performance','export']"
+          style="margin-left:20px"
+          type="primary"
+          @click="exportTable('绩效')"
+        >导出员工绩效Excel</el-button>
+      </el-form-item>
+    </el-form>
     <el-table
       :id="exportTableShow?'false':'out-table'"
       v-loading="loading"
-      :data="tableData"
+      :data="tableDataUser"
       border
     >
       <el-table-column
-        prop="section"
+        prop="name"
         align="center"
         label="姓名"
         width="90"
@@ -121,24 +126,24 @@
         <el-table-column
           :prop="d.prop+'早班'"
           align="center"
-          label="早"
+          label="早班"
           width="60"
         />
         <el-table-column
           :prop="d.prop+'夜班'"
           align="center"
-          label="晚"
+          label="夜班"
           width="60"
         />
       </el-table-column>
       <el-table-column
-        prop="section"
+        prop="xl"
         align="center"
         label="细料合计"
         width="90"
       />
       <el-table-column
-        prop="section"
+        prop="lh"
         align="center"
         label="硫磺合计"
         width="90"
@@ -164,6 +169,7 @@ export default {
       btnLoading: false,
       tableDataPrice: [{ lh: 0, xl: 0 }],
       tableData: [],
+      tableDataUser: [],
       exportTableShow: false
     }
   },
@@ -177,7 +183,8 @@ export default {
         this.loading = true
         const data = await summaryOfWeighingOutput('get', null, { params: this.search })
         const data1 = await setThePrice('get', null, {})
-        this.tableData = data.result || []
+        this.tableData = data.results || []
+        this.tableDataUser = data.users || []
         this.tableDataPrice = data1.results || []
         this.loading = false
       } catch (e) {
@@ -205,7 +212,7 @@ export default {
       }
     },
     changeList() {
-      this.tableHead = getDiffDate(this.search.factory_date + '-01', getCurrentMonthLastDay(this.search.date))
+      this.tableHead = getDiffDate(this.search.factory_date + '-01', getCurrentMonthLastDay(this.search.factory_date))
       this.getList()
     },
     debounceList() {

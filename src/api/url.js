@@ -654,6 +654,7 @@ export default {
   SummaryOfMillOutput: '/api/v1/production/summary-of-mill-output/', // 密炼机台产量汇总表
   SetThePrice: '/api/v1/production/set-the-price/', // 称量机台产量汇总表单价设定
   SummaryOfWeighingOutput: '/api/v1/production/summary-of-weighing-output/', // 称量机台产量汇总表
+  UserImport: '/api/v1/system/personnels/import_xlsx/',
   Sb: '/api/v1/production/nishisb/',
   WmsExceptHandle: '/api/v1/inventory/wms-except-handle/'
 }
