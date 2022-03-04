@@ -31,6 +31,11 @@
           <el-button v-permission="['aps_result','confirm']" type="primary" @click="submitFun">确定全部机台计划</el-button>
           <el-button v-permission="['aps_result','export']" type="primary" @click="exportTable">导出Excel</el-button>
         </div>
+        <el-button v-permission="['aps_result','import']" type="primary">
+          <a
+            :href="`${templateFileUrl}schedule.xlsx`"
+            download="排程计划导入模板.xlsx"
+          >导出Excel模板</a></el-button>
         <el-upload
           v-permission="['aps_result','import']"
           style="display:inline-block;margin:0 6px"
@@ -81,6 +86,7 @@ export default {
   },
   created() {
     this.getScheduleNoList(true)
+    this.templateFileUrl = process.env.BASE_URL
   },
   mounted() {
     for (let index = 0; index < 3; index++) {
