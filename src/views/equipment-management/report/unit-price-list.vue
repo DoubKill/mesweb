@@ -44,7 +44,7 @@
         >
           <template slot-scope="{row}">
             <span v-if="loading">{{ row.E580_pt }}</span>
-            <el-input-number v-else v-model="row.E580_pt" controls-position="right" :min="0" :precision="2" />
+            <el-input-number v-else v-model="row.E580_pt" controls-position="right" :min="0" :max="99.99" :precision="2" />
           </template>
         </el-table-column>
         <el-table-column
@@ -55,7 +55,7 @@
         >
           <template slot-scope="{row}">
             <span v-if="loading">{{ row.E580_dj }}</span>
-            <el-input-number v-else v-model="row.E580_dj" controls-position="right" :min="0" :precision="2" />
+            <el-input-number v-else v-model="row.E580_dj" controls-position="right" :min="0" :max="99.99" :precision="2" />
           </template>
         </el-table-column>
       </el-table-column>
@@ -73,7 +73,7 @@
         >
           <template slot-scope="{row}">
             <span v-if="loading">{{ row.F370_pt }}</span>
-            <el-input-number v-else v-model="row.F370_pt" controls-position="right" :min="0" :precision="2" />
+            <el-input-number v-else v-model="row.F370_pt" controls-position="right" :min="0" :max="99.99" :precision="2" />
           </template>
         </el-table-column>
         <el-table-column
@@ -84,7 +84,7 @@
         >
           <template slot-scope="{row}">
             <span v-if="loading">{{ row.F370_dj }}</span>
-            <el-input-number v-else v-model="row.F370_dj" controls-position="right" :min="0" :precision="2" />
+            <el-input-number v-else v-model="row.F370_dj" controls-position="right" :min="0" :max="99.99" :precision="2" />
           </template>
         </el-table-column>
       </el-table-column>
@@ -102,7 +102,7 @@
         >
           <template slot-scope="{row}">
             <span v-if="loading">{{ row.GK320_pt }}</span>
-            <el-input-number v-else v-model="row.GK320_pt" controls-position="right" :min="0" :precision="2" />
+            <el-input-number v-else v-model="row.GK320_pt" controls-position="right" :min="0" :max="99.99" :precision="2" />
           </template>
         </el-table-column>
         <el-table-column
@@ -113,7 +113,7 @@
         >
           <template slot-scope="{row}">
             <span v-if="loading">{{ row.GK320_dj }}</span>
-            <el-input-number v-else v-model="row.GK320_dj" controls-position="right" :min="0" :precision="2" />
+            <el-input-number v-else v-model="row.GK320_dj" controls-position="right" :min="0" :max="99.99" :precision="2" />
           </template>
         </el-table-column>
       </el-table-column>
@@ -131,7 +131,7 @@
         >
           <template slot-scope="{row}">
             <span v-if="loading">{{ row.GK255_pt }}</span>
-            <el-input-number v-else v-model="row.GK255_pt" controls-position="right" :min="0" :precision="2" />
+            <el-input-number v-else v-model="row.GK255_pt" controls-position="right" :min="0" :max="99.99" :precision="2" />
           </template>
         </el-table-column>
         <el-table-column
@@ -142,7 +142,7 @@
         >
           <template slot-scope="{row}">
             <span v-if="loading">{{ row.GK255_dj }}</span>
-            <el-input-number v-else v-model="row.GK255_dj" controls-position="right" :min="0" :precision="2" />
+            <el-input-number v-else v-model="row.GK255_dj" controls-position="right" :min="0" :max="99.99" :precision="2" />
           </template>
         </el-table-column>
       </el-table-column>
@@ -160,7 +160,7 @@
         >
           <template slot-scope="{row}">
             <span v-if="loading">{{ row.GK400_pt }}</span>
-            <el-input-number v-else v-model="row.GK400_pt" controls-position="right" :min="0" :precision="2" />
+            <el-input-number v-else v-model="row.GK400_pt" controls-position="right" :min="0" :max="99.99" :precision="2" />
           </template>
         </el-table-column>
         <el-table-column
@@ -171,7 +171,7 @@
         >
           <template slot-scope="{row}">
             <span v-if="loading">{{ row.GK400_dj }}</span>
-            <el-input-number v-else v-model="row.GK400_dj" controls-position="right" :min="0" :precision="2" />
+            <el-input-number v-else v-model="row.GK400_dj" controls-position="right" :min="0" :max="99.99" :precision="2" />
           </template>
         </el-table-column>
       </el-table-column>
