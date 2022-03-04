@@ -401,6 +401,7 @@ export default {
   XlReportBasic: '/api/v1/terminal/xl-report-basic/',
   XlReportWeight: '/api/v1/terminal/xl-report-weight/',
   XlPlan: '/api/v1/terminal/xl-plan/',
+  RotateClasses: '/api/v1/terminal/xl-plan/rotate_classes/',
   UpDownMove: '/api/v1/terminal/xl-plan/up_down_move/',
   CurrentFactoryDate: '/api/v1/basics/current-factory-date/',
   WmsStock: '/api/v1/inventory/wms-stock/',
@@ -655,5 +656,9 @@ export default {
   Employeeattendancerecordsexport: '/api/v1/production/employee_attendance_records_export/', // 员工出勤记录表导出模板
   SummaryOfMillOutput: '/api/v1/production/summary_of_mill_output/', // 密炼机台产量汇总表
   Sb: '/api/v1/production/nishisb/',
-  WmsExceptHandle: '/api/v1/inventory/wms-except-handle/'
+  WmsExceptHandle: '/api/v1/inventory/wms-except-handle/',
+
+  PerformanceSummary: '/api/v1/production/performance-summary/', // 薪资汇总表
+  PerformanceSubsidy: '/api/v1/production/performance-subsidy/',
+  IndependentPostTemplate: '/api/v1/production/independent-post-template/'
 }

@@ -36,6 +36,8 @@
           <el-input v-model="item.search.setno" clearable placeholder="设定车次" @input="debounceListChange(item,index)" />
         </el-form-item> -->
           <el-form-item>
+            <el-button v-permission="['xl_plan', 'add']" type="primary" @click="classDialog(item,index)">班次切换</el-button>
+
             <el-button v-permission="['xl_plan', 'add']" type="primary" @click="addFun(item,index,true)">新增计划</el-button>
             <el-button v-permission="['xl_plan', 'delete']" type="primary" :disabled="item.currentRow&&item.currentRow.state!=='等待'" @click="delFun(item,index,'删除')">删除计划</el-button>
             <el-button v-permission="['xl_plan', 'issue']" type="primary" :disabled="item.currentRow&&item.currentRow.state!=='等待'" @click="delFun(item,index,'下达',1)">下达计划</el-button>
@@ -43,8 +45,8 @@
             <el-button v-permission="['xl_plan', 'change']" type="primary" :disabled="item.currentRow&&item.currentRow.state!=='运行中'" @click="addFun(item,index,false)">修改车次</el-button>
             <el-button v-permission="['xl_plan', 'stop']" type="primary" :disabled="item.currentRow&&item.currentRow.state!=='运行中'" @click="delFun(item,index,'停止',4)">计划停止</el-button>
 
-            <el-button v-permission="['xl_plan', 'stop']" type="primary" :disabled="item.currentRow&&item.currentRow.state!=='等待'" @click="delFun(item,index,'上移',null)">上移</el-button>
-            <el-button v-permission="['xl_plan', 'stop']" type="primary" :disabled="item.currentRow&&item.currentRow.state!=='等待'" @click="delFun(item,index,'下移',null)">下移</el-button>
+            <el-button v-permission="['xl_plan', 'add']" type="primary" :disabled="item.currentRow&&item.currentRow.state!=='等待'" @click="delFun(item,index,'上移',null)">上移</el-button>
+            <el-button v-permission="['xl_plan', 'add']" type="primary" :disabled="item.currentRow&&item.currentRow.state!=='等待'" @click="delFun(item,index,'下移',null)">下移</el-button>
             <el-button type="primary" @click="debounceList(item,index)">刷新</el-button>
           </el-form-item>
         </el-form>
@@ -54,6 +56,7 @@
           style="width: 100%"
           highlight-current-row
           border
+          height="300"
           @current-change="handleCurrentChange($event,index)"
         >
           <el-table-column
@@ -165,6 +168,26 @@
         <el-button type="primary" :loading="btnLoading" @click="submitForm">确 定</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      title="班次切换"
+      :visible.sync="dialogVisible1"
+      width="400px"
+    >
+      <el-form label-width="100px">
+        <el-form-item label="班次切换">
+          <class-select
+            :is-clearable="false"
+            :value-default="next_classes"
+            @classSelected="dialogNextClassChanged"
+          />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible1 = false">取 消</el-button>
+        <el-button type="primary" :loading="btnLoading1" @click="submitForm1">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -174,7 +197,7 @@ import { debounce, checkPermission } from '@/utils'
 import selectBatchingEquip from '../components/select-batching-equip'
 import classSelect from '@/components/ClassSelect'
 import recipeSelect from '../components/recipe-select'
-import { xlPlan, upDownMove, updateFlagCount, currentFactoryDate } from '@/api/base_w_three'
+import { xlPlan, upDownMove, updateFlagCount, currentFactoryDate, rotateClasses } from '@/api/base_w_three'
 // import page from '@/components/page'
 
 export default {
@@ -186,6 +209,7 @@ export default {
       options: [],
       currentIndex: null,
       currentSearch: {},
+      currentQuip: '',
       allTable: [],
       dialogVisible: false,
       ruleForm: {
@@ -212,7 +236,10 @@ export default {
       loading: false,
       btnLoading: false,
       readIs: false,
-      getFactoryDate: {}
+      getFactoryDate: {},
+      next_classes: '',
+      btnLoading1: false,
+      dialogVisible1: false
     }
   },
   created() {
@@ -288,6 +315,7 @@ export default {
         this.getFactoryDate = data
         this.ruleForm.date_time = data.factory_date
         this.ruleForm.grouptime = data.classes
+        this.next_classes = this.getFactoryDate.classes
       } catch (e) {
         //
       }
@@ -444,6 +472,26 @@ export default {
           return false
         }
       })
+    },
+    dialogNextClassChanged(val) {
+      this.next_classes = val
+    },
+    classDialog(item) {
+      this.currentQuip = item.equip_no
+      this.dialogVisible1 = true
+      this.next_classes = this.getFactoryDate.classes
+    },
+    async submitForm1() {
+      try {
+        this.btnLoading1 = true
+        await rotateClasses('post', null, { data: { equip_no: this.currentQuip, next_classes: this.next_classes }})
+        this.$message.success('切换成功')
+        this.dialogVisible1 = false
+        this.debounceList()
+      } catch (e) {
+        //
+      }
+      this.btnLoading1 = false
     }
   }
 }
