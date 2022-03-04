@@ -321,7 +321,7 @@
 <script>
 import { productInfosUrl } from '@/api/base_w'
 import { schedulingProductDemandedDeclare } from '@/api/base_w_five'
-import { schedulingProductDeclareSummary, upSequence, downSequence, schedulingProcedures, schedulingProductImport } from '@/api/jqy'
+import { schedulingProductDeclareSummary, upSequence, downSequence, schedulingProcedures, schedulingProductImport, schedulingParamsSetting } from '@/api/jqy'
 import { setDate, exportExcel } from '@/utils'
 export default {
   name: 'ScheduleInventorySummary',
@@ -420,9 +420,11 @@ export default {
         return 'max-warning-row'
       }
     },
-    changeStock() {
+    async changeStock() {
+      const data = await schedulingParamsSetting('get')
+      const min_stock_trains = await data[0].min_stock_trains
       if (this.formData.plan_weight) {
-        this.formData.target_stock = this.formData.plan_weight * 1.5
+        this.formData.target_stock = this.formData.plan_weight * min_stock_trains
       }
     },
     changeDemanded() {
