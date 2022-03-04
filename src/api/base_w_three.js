@@ -371,6 +371,14 @@ export function xlPlan(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function rotateClasses(method, id, data = {}) {
+  const obj = {
+    url: id ? API.RotateClasses + id + '/' : API.RotateClasses,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 export function upDownMove(method, id, data = {}) {
   const obj = {
     url: id ? API.UpDownMove + id + '/' : API.UpDownMove,
