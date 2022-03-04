@@ -4,7 +4,7 @@
     <el-form :inline="true">
       <el-form-item label="月份">
         <el-date-picker
-          v-model="search.date"
+          v-model="search.factory_date"
           type="month"
           :clearable="false"
           format="yyyy-MM"
@@ -18,12 +18,10 @@
         <el-button
           v-permission="['monthly_output_statistics_and_performance','export']"
           type="primary"
-          @click="exportTable"
-        >导出Excel</el-button>
+          @click="exportTable('产量')"
+        >导出产量汇总Excel</el-button>
       </el-form-item>
-      <el-form-item style="float:right">
-        <el-button type="primary" @click="getList">保存单价</el-button>
-      </el-form-item>
+
       <el-form-item style="float:right">
         <el-table
           :data="tableDataPrice"
@@ -50,15 +48,19 @@
           </el-table-column>
         </el-table>
       </el-form-item>
+      <el-form-item style="float:right">
+        <el-button :loading="btnLoading" type="primary" @click="savePrice">保存单价</el-button>
+      </el-form-item>
     </el-form>
-    <h3>称量机台产量汇总表（包数）</h3>
+    <h3 style="font-size:17px;font-weight:bold">称量机台产量汇总表（包数）</h3>
     <el-table
+      :id="exportTableShow?'out-table':'false'"
       v-loading="loading"
       :data="tableData"
       border
     >
       <el-table-column
-        prop="section"
+        prop="equip_no"
         align="center"
         label="机台"
         width="90"
@@ -71,34 +73,45 @@
         width="120"
       >
         <el-table-column
-          :prop="d.prop+'早'"
+          :prop="d.prop+'早班'"
           align="center"
-          label="早"
+          label="早班"
           width="60"
         />
         <el-table-column
-          :prop="d.prop+'晚'"
+          :prop="d.prop+'夜班'"
           align="center"
-          label="晚"
+          label="夜班"
           width="60"
         />
       </el-table-column>
       <el-table-column
-        prop="section"
+        prop="hj"
         align="center"
         label="合计"
         width="90"
       />
     </el-table>
     <br>
-    <h3>称量机台员工绩效计算</h3>
+    <el-form>
+      <el-form-item>
+        <span style="font-size:17px;font-weight:bold">称量机台员工绩效计算</span>
+        <el-button
+          v-permission="['monthly_output_statistics_and_performance','export']"
+          style="margin-left:20px"
+          type="primary"
+          @click="exportTable('绩效')"
+        >导出员工绩效Excel</el-button>
+      </el-form-item>
+    </el-form>
     <el-table
+      :id="exportTableShow?'false':'out-table'"
       v-loading="loading"
-      :data="tableData"
+      :data="tableDataUser"
       border
     >
       <el-table-column
-        prop="section"
+        prop="name"
         align="center"
         label="姓名"
         width="90"
@@ -111,26 +124,26 @@
         width="120"
       >
         <el-table-column
-          :prop="d.prop+'早'"
+          :prop="d.prop+'早班'"
           align="center"
-          label="早"
+          label="早班"
           width="60"
         />
         <el-table-column
-          :prop="d.prop+'晚'"
+          :prop="d.prop+'夜班'"
           align="center"
-          label="晚"
+          label="夜班"
           width="60"
         />
       </el-table-column>
       <el-table-column
-        prop="section"
+        prop="xl"
         align="center"
         label="细料合计"
         width="90"
       />
       <el-table-column
-        prop="section"
+        prop="lh"
         align="center"
         label="硫磺合计"
         width="90"
@@ -140,65 +153,97 @@
 </template>
 
 <script>
-import { employeeattendancerecords, employeeattendancerecordsexport } from '@/api/jqy'
+import { summaryOfWeighingOutput, setThePrice } from '@/api/jqy'
+import { exportExcel } from '@/utils/index'
 import { setDate } from '@/utils'
 export default {
   name: 'StatisticalReportWeighing',
   data() {
     return {
       search: {
-        date: setDate(null, null, 'month')
+        factory_date: setDate(null, null, 'month')
       },
       machineList: [],
       loading: false,
       tableHead: [],
+      btnLoading: false,
       tableDataPrice: [{ lh: 0, xl: 0 }],
       tableData: [],
-      btnExportLoad: false,
+      tableDataUser: [],
       exportTableShow: false
     }
   },
   created() {
-    this.tableHead = getDiffDate(this.search.date + '-01', getCurrentMonthLastDay(setDate()))
+    this.tableHead = getDiffDate(this.search.factory_date + '-01', getCurrentMonthLastDay(setDate()))
     this.getList()
   },
   methods: {
     async getList() {
       try {
         this.loading = true
-        const data = await employeeattendancerecords('get', null, { params: this.search })
+        const data = await summaryOfWeighingOutput('get', null, { params: this.search })
+        const data1 = await setThePrice('get', null, {})
         this.tableData = data.results || []
+        this.tableDataUser = data.users || []
+        this.tableDataPrice = data1.results || []
         this.loading = false
       } catch (e) {
         this.loading = false
       }
     },
+    async savePrice() {
+      try {
+        this.tableDataPrice.forEach(d => {
+          if (!d.xl || !d.xl) {
+            throw new Error('单价数据必填')
+          }
+        })
+        this.btnLoading = true
+        const obj = { lh: this.tableDataPrice[0].lh, xl: this.tableDataPrice[0].xl }
+        await setThePrice('post', null, { data: obj })
+        this.$message.success('保存成功')
+        this.getList()
+        this.btnLoading = false
+      } catch (e) {
+        this.btnLoading = false
+        if (e.message) {
+          this.$message(e.message)
+        }
+      }
+    },
     changeList() {
-      this.tableHead = getDiffDate(this.search.date + '-01', getCurrentMonthLastDay(this.search.date))
+      this.tableHead = getDiffDate(this.search.factory_date + '-01', getCurrentMonthLastDay(this.search.factory_date))
       this.getList()
     },
     debounceList() {
       this.$debounce(this, 'getList')
     },
-    exportTable() {
-      this.btnExportLoad = true
-      const obj = {
-        date: this.search.date
+    async exportTable(val) {
+      if (val === '产量') {
+        this.exportTableShow = true
+        exportExcel('称量机台产量汇总表(包数)')
+      } else {
+        this.exportTableShow = false
+        exportExcel('称量机台员工绩效计算')
       }
-      employeeattendancerecordsexport(obj).then(response => {
-        const link = document.createElement('a')
-        const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
-        link.style.display = 'none'
-        link.href = URL.createObjectURL(blob)
-        link.download = '员工出勤记录表' + setDate() + '.xlsx'// 下载的文件名
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-        this.btnExportLoad = false
-      })
-        .catch(e => {
-          this.btnExportLoad = false
-        })
+    //   this.btnExportLoad = true
+    //   const obj = {
+    //     date: this.search.date
+    //   }
+    //   summaryOfWeighingOutput(obj).then(response => {
+    //     const link = document.createElement('a')
+    //     const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
+    //     link.style.display = 'none'
+    //     link.href = URL.createObjectURL(blob)
+    //     link.download = '员工出勤记录表' + setDate() + '.xlsx'// 下载的文件名
+    //     document.body.appendChild(link)
+    //     link.click()
+    //     document.body.removeChild(link)
+    //     this.btnExportLoad = false
+    //   })
+    //     .catch(e => {
+    //       this.btnExportLoad = false
+    //     })
     }
   }
 }

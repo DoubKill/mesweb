@@ -419,7 +419,7 @@ export default {
             data = await productBatchingDetail(this.product_batching)
           }
         } else {
-          const { results } = await materialsUrl('get', null, { params: { all: 1 }})
+          const { results } = await materialsUrl('get', null, { params: { all: 1, mc_code: 1 }})
           data = results
         }
         this.materialList = data || []

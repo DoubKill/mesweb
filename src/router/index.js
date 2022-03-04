@@ -876,16 +876,16 @@ export let asyncRoutes = [
                 permissionName: 'aps_opera_keyword'
               }
             }
-            /** {
-              path: '/equipment-management/report/specification_setting',
-              name: 'SpecificationSetting',
-              component: () => import('@/views/equipment-management/report/specification_setting'),
-              meta: {
-                faName: 'ScheduleBasicData',
-                title: '丁基胶 规格设定',
-                permissionName: 'productinfo'
-              }
-            }**/
+            // ,{
+            //   path: '/equipment-management/report/specification_setting',
+            //   name: 'SpecificationSetting',
+            //   component: () => import('@/views/equipment-management/report/specification_setting'),
+            //   meta: {
+            //     faName: 'ScheduleBasicData',
+            //     title: '丁基胶 规格设定',
+            //     permissionName: ''
+            //   }
+            // }
           ]
         }
       ]

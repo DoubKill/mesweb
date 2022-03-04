@@ -101,16 +101,28 @@
       @currentChange="currentChange"
     />
     <el-dialog
-      :title="`新建人工补打机配卡片 详情`"
+      :title="`${dialogForm.id?'编辑':'新建'}人工补打机配卡片 详情`"
       :visible.sync="dialogVisible"
       width="600px"
       :before-close="handleClose"
     >
-      <el-form ref="createForm" :rules="rules" label-width="200px" :model="dialogForm">
-        <el-form-item label="条码" prop="rule_code">
+      <el-form ref="createForm" :rules="rules" label-width="100px" :model="dialogForm">
+        <el-form-item v-if="dialogForm.id" label="条码">
           <el-input v-model="dialogForm.rule_code" :disabled="true" />
         </el-form-item>
         <el-form-item label="细料名称" prop="rule_code">
+          <el-input v-model="dialogForm.rule_code" />
+        </el-form-item>
+        <el-form-item label="机型" prop="rule_code">
+          <el-input v-model="dialogForm.rule_code" />
+        </el-form-item>
+        <el-form-item label="班次" prop="rule_code">
+          <el-input v-model="dialogForm.rule_code" />
+        </el-form-item>
+        <el-form-item label="班组" prop="rule_code">
+          <el-input v-model="dialogForm.rule_code" />
+        </el-form-item>
+        <el-form-item label="配料车次" prop="rule_code">
           <el-input v-model="dialogForm.rule_code" />
         </el-form-item>
       </el-form>
@@ -169,18 +181,30 @@ export default {
 
     },
     showEditDialog(row) {
-
+      this.dialogVisible = true
     },
     showCreateDialog() {
-
+      this.dialogVisible = true
     },
     handleClose(done) {
       this.dialogVisible = false
+      this.$refs.createForm.clearValidate()
       if (done) {
         done()
       }
     },
-    submitFun() {},
+    submitFun() {
+      this.$refs.createForm.validate(async(valid) => {
+        if (valid) {
+          try {
+            //
+            this.handleClose(null)
+          } catch (e) {
+            //
+          }
+        }
+      })
+    },
     handleDelete() {
       this.$confirm('是否确定删除?', '提示', {
         confirmButtonText: '确定',
@@ -209,5 +233,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+.el-input{
+  width:250px;
+}
 </style>

@@ -295,7 +295,7 @@ export default {
   components: { EquipSelect, page, repair, definition, maintain },
   data() {
     return {
-      search: { status: '已指派' },
+      search: { status: '已指派', my_order: 1 },
       loading: false,
       btnExportLoad: false,
       closeLoad: false,
@@ -325,7 +325,7 @@ export default {
     ])
   },
   created() {
-    this.search.assign_to_user = this.name
+    // this.search.assign_to_user = this.name
     this.getList()
   },
   methods: {

@@ -176,3 +176,20 @@ export function monthlyOutputStatisticsReport(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function performanceSummary(method, id, data = {}) {
+  const obj = {
+    url: id ? API.PerformanceSummary + id + '/' : API.PerformanceSummary,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function independentPostTemplate(method, id, data = {}) {
+  const obj = {
+    url: id ? API.IndependentPostTemplate + id + '/' : API.IndependentPostTemplate,
+    method: method,
+    responseType: 'blob'
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

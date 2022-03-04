@@ -572,7 +572,7 @@ export const equipRoutes = [
               permissionName: 'equip_old_rate'
             }
           }
-          /** {
+          /** ,{
             path: '/equipment/order-receiving',
             component: () => import('@/views/equipment-manage/report-form/order-receiving'),
             name: 'EquipmentReportFormOrderReceiving',

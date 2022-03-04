@@ -149,6 +149,18 @@ export default {
         callback()
       }
     }
+    var validatePass1 = (rule, value, callback) => {
+      var reg = /(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[\W_]).{8,}/
+      if (!value) {
+        callback(new Error('请输入密码'))
+      } else if (this.loginForm.old_password === this.loginForm.new_password) {
+        callback(new Error('新密码和原密码相同!'))
+      } else if (value && !reg.test(value)) {
+        callback(new Error('密码必须同时包含大写英文,小写英文,数字,符号,且不少于8位'))
+      } else {
+        callback()
+      }
+    }
     this.validatePass2 = (rule, value, callback) => {
       if (!value) {
         callback(new Error('请确认密码'))
@@ -168,7 +180,7 @@ export default {
           { required: true, validator: validatePass, trigger: 'blur' }
         ],
         new_password: [
-          { required: true, validator: validatePass, trigger: 'blur' }
+          { required: true, validator: validatePass1, trigger: 'blur' }
         ]
       }
     }
@@ -199,6 +211,15 @@ export default {
     $route(to, from) {
     }
   },
+  created() {
+    var reg = /(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[\W_]).{8,}/
+    if (this.$route.query.password && !reg.test(this.$route.query.password)) {
+      this.$message('密码强度低，请修改密码后再重新登录')
+      this.dialogVisible = true
+    } else {
+      this.dialogVisible = false
+    }
+  },
   methods: {
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
@@ -211,11 +232,16 @@ export default {
       this.dialogVisible = true
     },
     handleClose(done) {
-      this.loginForm = {}
-      this.$refs.loginForm.clearValidate()
-      this.dialogVisible = false
-      if (done) {
-        done()
+      var reg = /(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[\W_]).{8,}/
+      if (this.$route.query.password && !reg.test(this.$route.query.password)) {
+        this.logout()
+      } else {
+        this.loginForm = {}
+        this.$refs.loginForm.clearValidate()
+        this.dialogVisible = false
+        if (done) {
+          done()
+        }
       }
     },
     submitChangePassword() {
