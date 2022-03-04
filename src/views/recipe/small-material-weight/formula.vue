@@ -96,20 +96,29 @@
                   :disabled="!checkPermission(['xl_recipe','merge'])"
                   active-text="是"
                   inactive-text="否"
-                  @change="changeSwitch(row,index)"
+                  @change="changeSwitch(row,index,false)"
                 />
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="80px">
+              <template slot-scope="{row}">
+                <el-button
+                  size="mini"
+                  type="danger"
+                  @click.stop="handleGlobalCodeTypeDelete(row,index)"
+                >{{ row.use_not ? '启用' : '停用' }}</el-button>
               </template>
             </el-table-column>
             <el-table-column label="分包数" width="120px">
               <template slot-scope="{row}">
                 <el-input-number
                   v-model="row.split_count"
-                  :disabled="!checkPermission(['xl_recipe','merge'])"
+                  :disabled="!checkPermission(['xl_recipe','merge'])||loading"
                   style="width:100px"
                   controls-position="right"
                   :min="1"
                   :max="9999"
-                  @change="changeSwitch(row, index)"
+                  @change="changeSwitch(row, index,true)"
                 />
               </template>
             </el-table-column>
@@ -282,16 +291,53 @@ export default {
         //
       }
     },
-    async changeSwitch(row, faI) {
+    async changeSwitch(row, faI, bool) {
       try {
+        this.loading = true
         await updateFlagCount('post', null, { data: {
           equip_no: this.allTable[faI].equip_no,
           id: row.id, oper_type: '配方', merge_flag: row.merge_flag, split_count: row.split_count
         }})
         this.$message.success('操作成功')
+        if (bool) {
+          const data = await this.getList()
+          this.allTable[this.currentIndex].tableList = data.data
+          this.allTable[this.currentIndex].total = data.total
+          this.allTable[this.currentIndex].tableList1 = []
+        } else {
+          this.loading = false
+        }
       } catch (e) {
-        //
+        this.loading = false
       }
+    },
+    handleGlobalCodeTypeDelete: function(row, faI) {
+      var str = row.use_not ? '启用' : '停用'
+      const use_not = row.use_not ? 0 : 1
+      this.$confirm('此操作将' + str + ', 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        updateFlagCount('post', null, { data: {
+          equip_no: this.allTable[faI].equip_no,
+          id: row.id, use_not: use_not
+        }})
+          .then(async() => {
+            this.$message({
+              type: 'success',
+              message: '操作成功!'
+            })
+            const data = await this.getList()
+            this.allTable[faI].tableList = data.data
+            this.allTable[faI].total = data.total
+            this.allTable[faI].tableList1 = []
+          }).catch(() => {
+            //
+          })
+      }).catch(function() {
+
+      })
     }
   }
 }

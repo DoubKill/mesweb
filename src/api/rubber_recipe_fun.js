@@ -88,6 +88,14 @@ export function materials_url(method, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function xlRecipeNotice(method, data = {}) {
+  const obj = {
+    url: API.XlRecipeNotice,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 // 原材料类型接口函数
 export function materials_type_url(method, data = {}) {
   const obj = {

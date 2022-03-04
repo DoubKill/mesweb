@@ -34,6 +34,21 @@
           /> -->
           {{ formInline.dev_type_name }}
         </el-form-item>
+        <el-form-item label="可用机台">
+          <el-select
+            v-model="formInline.enable_equip"
+            multiple
+            placeholder="请选择"
+            @change="equipChanged"
+          >
+            <el-option
+              v-for="item in optionsEquip"
+              :key="item.equip_no"
+              :label="item.equip_no"
+              :value="item.equip_no"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item label="炼胶时间">
           <el-input-number
             v-model.number="formInline.production_time_interval"
@@ -65,6 +80,7 @@
           :data="itemFa.tableData"
           border
           show-summary
+          :header-cell-style="i===0?cellStyleFun:cellStyleFun1"
         >
           <el-table-column
             label="No"
@@ -85,6 +101,7 @@
                 :disabled="true"
               >
                 <el-button
+                  v-if="!isView"
                   slot="append"
                   icon="el-icon-search"
                   @click="pop_up_raw_material($index,i)"
@@ -96,13 +113,14 @@
             label="实际重量/kg"
             prop="actual_weight"
           >
-            <template slot-scope="{row}">
+            <template slot-scope="{row,$index}">
               <el-input-number
                 v-model.number="row.actual_weight"
                 size="mini"
                 :min="0"
                 controls-position="right"
                 :disabled="isView"
+                @change="checkTolerance(row,$index,i)"
               />
               <!-- @change="PutNewPracticalWeightChanged(row)" -->
             </template>
@@ -120,7 +138,7 @@
               />
             </template>
           </el-table-column>
-          <el-table-column label="投料方式">
+          <!-- <el-table-column label="投料方式">
             <template slot-scope="{row}">
               <el-select
                 v-model="row.type"
@@ -128,12 +146,36 @@
                 placeholder="请选择"
                 :disabled="true"
               >
-                <!-- isView -->
                 <el-option
                   v-for="item in [{name:'密炼机投料口',id:1},{name:'炭黑粉料罐',id:2},{name:'油料罐',id:3}]"
                   :key="item.id"
                   :label="item.name"
                   :value="item.id"
+                />
+              </el-select>
+            </template>
+          </el-table-column> -->
+          <el-table-column
+            v-for="(item,_i) in formInline.enable_equip"
+            :key="item+_i"
+            width="120"
+            :label="item"
+          >
+            <template slot="header" slot-scope="{row}">
+              <span>{{ item }}</span>
+              <span v-if="false">{{ row }}</span>
+            </template>
+            <template slot-scope="{row}">
+              <el-select
+                v-model="row.master[item]"
+                clearable
+                placeholder="请选择"
+              >
+                <el-option
+                  v-for="item1 in i===0?['P']:i==1?['P','C']:['P','O']"
+                  :key="item1"
+                  :label="item1"
+                  :value="item1"
                 />
               </el-select>
             </template>
@@ -166,6 +208,7 @@
         :is-ingredient-obj="isIngredientObj"
         :form-obj="formObj"
         :is-view="isView"
+        :dialog-visible="dialogVisible"
         @pop_up_raw_material="pop_up_raw_material"
         @deleteRow="deleteRow"
         @deleteOneRow="deleteOneRow"
@@ -256,6 +299,8 @@
 import materialSelection from './materialSelection'
 import ingredientStandard from './ingredient-standard'
 import { rubber_material_url } from '@/api/rubber_recipe_fun'
+import { equipUrl } from '@/api/base_w'
+import { getMaterialTolerance } from '@/api/base_w_five'
 export default {
   components: { ingredientStandard, materialSelection },
   props: {
@@ -319,7 +364,9 @@ export default {
         { tableData: [] },
         { tableData: [] }
       ],
-      faI: null
+      faI: null,
+      optionsEquip: [],
+      postOwn: false // 标记第一次进来是不是没有配料过
     }
   },
   computed: {
@@ -329,24 +376,107 @@ export default {
       this.dialogVisible = val
       if (val) {
         this.formInline = this.formObj
+
         const arr = this.batchingList.batching_details || []
         const a1 = arr.filter(d => d.type === 1)
+
+        a1.forEach(d => {
+          for (const key in d.master) {
+            if (Object.hasOwnProperty.call(d.master, key)) {
+              const element = d.master[key]
+              if (element.indexOf('-H') > -1) {
+                d.master[key] = ''
+              }
+            }
+          }
+        })
         this.tableDataAll[0].tableData = a1
         const a2 = arr.filter(d => d.type === 2)
+        a2.forEach(d => {
+          for (const key in d.master) {
+            if (Object.hasOwnProperty.call(d.master, key)) {
+              const element = d.master[key]
+              if (element.indexOf('-H') > -1) {
+                d.master[key] = ''
+              }
+            }
+          }
+        })
         this.tableDataAll[1].tableData = a2
         const a3 = arr.filter(d => d.type === 3)
+        a3.forEach(d => {
+          for (const key in d.master) {
+            if (Object.hasOwnProperty.call(d.master, key)) {
+              const element = d.master[key]
+              if (element.indexOf('-H') > -1) {
+                d.master[key] = ''
+              }
+            }
+          }
+        })
         this.tableDataAll[2].tableData = a3
-
+        if ((!this.batchingList.weight_cnt_types || !this.batchingList.weight_cnt_types.length) && (!this.batchingList.batching_details || !this.batchingList.batching_details.length)) {
+          this.postOwn = true
+        } else {
+          this.postOwn = false
+        }
         this.$nextTick(() => {
           this.addTableData = this.batchingList.weight_cnt_types || []
         })
+
+        this.$set(this.formInline, '_enable_equip', this.formInline.enable_equip)
+        this.getOptionsEquip()
       }
+    },
+    'formInline.enable_equip'(arr) {
+      // if (arr && arr.length) {
+      this.tableDataAll.forEach((d, i) => {
+        d.tableData.forEach((D, _index) => {
+          if (!arr || !arr.length) {
+            D.master = {}
+          } else {
+            const arr1 = {}
+            arr.forEach((dd) => {
+              if (i === 0 && _index === 0 && !D.master[dd]) {
+                D.master[dd] = 'P'
+              }
+              if (i === 1 && _index === 0 && !D.master[dd]) {
+                D.master[dd] = 'C'
+              }
+              if (i === 2 && _index === 0 && !D.master[dd]) {
+                D.master[dd] = 'O'
+              }
+              arr1[dd] = D.master ? D.master[dd] : ''
+            })
+            D.master = arr1
+          }
+        })
+      })
+      // }
     }
   },
   updated() {
     // console.log(this.batchingList, 'batchingList')
   },
   methods: {
+    equipChanged() {
+      // console.log(this.tableDataAll, 'this.tableDataAll')
+    },
+    async getOptionsEquip() {
+      try {
+        const data = await equipUrl('get', { params: { all: 1, category: this.formInline.dev_type }})
+        this.optionsEquip = data.results || []
+        const arr = []
+        this.optionsEquip.forEach(D => {
+          arr.push(D.equip_no)
+        })
+        // if (!this.formInline.enable_equip || !this.formInline.enable_equip.length) {
+        //   this.$set(this.formInline, 'enable_equip', arr || [])
+        // }
+      } catch (e) {
+        //
+      }
+    },
     handleClose(done) {
       this.tableDataAll.forEach(D => {
         D.tableData = []
@@ -377,6 +507,22 @@ export default {
       this.dialogVisibleAdd = false
       if (done) {
         done()
+      }
+    },
+    async checkTolerance(row, index, faI) {
+      try {
+        const data = await getMaterialTolerance('get', null, {
+          params: {
+            material_name: row.material_name,
+            standard_weight: row.actual_weight,
+            only_num: true
+          }
+        })
+        if (data) {
+          this.tableDataAll[faI].tableData[index].standard_error = data
+        }
+      } catch (e) {
+        //
       }
     },
     changeDevType(val) {
@@ -417,8 +563,21 @@ export default {
       this.isIngredientObj = {}
     },
     insert_NewPracticalWeightChanged(i) {
+      const obj = {}
+      if (this.tableDataAll[i].tableData.length === 0) {
+        this.formInline.enable_equip.forEach(d => {
+          if (i === 0) {
+            obj[d] = 'P'
+          } else if (i === 1) {
+            obj[d] = 'C'
+          } else if (i === 2) {
+            obj[d] = 'O'
+          }
+        })
+      }
       this.tableDataAll[i].tableData.push({
-        type: i === 0 ? 1 : i === 1 ? 2 : 3
+        type: i === 0 ? 1 : i === 1 ? 2 : 3,
+        master: obj
       })
     },
     changeOldName(val) {
@@ -515,6 +674,14 @@ export default {
       }
       this.dialogVisibleAdd = true
     },
+    cellStyleFun1({ row, column, rowIndex, columnIndex }) {
+      return ''
+    },
+    cellStyleFun({ row, column, rowIndex, columnIndex }) {
+      if (rowIndex === 0 && this.formInline.send_success_equip.includes(column.label)) {
+        return 'background: #36a1cf;color:#fff'
+      }
+    },
     async putNewsaveMaterialClicked() {
       if (!this.formInline.dev_type) {
         this.$message.info({
@@ -522,46 +689,88 @@ export default {
         })
         return
       }
-      const arr = []
-      this.tableDataAll.forEach(d => {
-        d.tableData.forEach((dd, i) => {
-          this.$set(dd, 'sn', i + 1)
-          arr.push(dd)
+      if (!this.formInline.enable_equip) {
+        this.$message.info({
+          message: '请选择可用机台'
         })
-      })
+        return
+      }
+
+      const _tableDataAll = JSON.parse(JSON.stringify(this.tableDataAll))
+      const arr = []
+      try {
+        _tableDataAll.forEach(d => {
+          d.tableData.forEach((dd, i) => {
+            this.formInline.enable_equip.forEach(equip => {
+              if (!dd.master[equip] && i === 0) {
+                throw Error()
+              } else if (i > 0 && !dd.master[equip]) {
+                if (d.tableData[i - 1].master[equip].indexOf('-H') > -1) {
+                  dd.master[equip] = d.tableData[i - 1].master[equip]
+                } else {
+                  dd.master[equip] = d.tableData[i - 1].master[equip] + '-H'
+                }
+              }
+            })
+            this.$set(dd, 'sn', i + 1)
+            arr.push(dd)
+          })
+        })
+      } catch (e) {
+        console.log(e, 66666)
+        this.$message.info('可用机台的投料方式未填')
+        return
+      }
       if (arr.length > 0) {
         try {
           arr.forEach(D => {
-            if (!D.material || !D.actual_weight || !D.type) {
+            if (!D.material || !D.actual_weight) {
+              // || !D.type
               throw Error()
             }
           })
         } catch (e) {
-          this.$message.info('原材料、实际重量、投料方式不能为空')
+          this.$message.info('原材料、实际重量')
           return
         }
       }
+
       let ingredientList = []
       if (this.$refs.ingredientStandardRef) {
         ingredientList = this.$refs.ingredientStandardRef.tableData
         if (ingredientList.length > 0) {
           try {
             ingredientList.forEach(D => {
-              D.forEach(d => {
+              D.forEach((d, i) => {
                 if (!d.standard_error) {
                   d.standard_error = ''
                 }
                 if (!d.material || !d.standard_weight) {
+                  this.$message.info('原材料与实际重量不能为空')
                   throw Error()
                 }
+
+                this.formInline.enable_equip.forEach(equip => {
+                  if (!d.master[equip] && i === 0) {
+                    this.$message.info('细料可用机台的投料方式未填')
+                    throw Error()
+                  } else if (i > 0 && !d.master[equip]) {
+                    if (D[i - 1].master[equip].indexOf('-H') > -1) {
+                      d.master[equip] = D[i - 1].master[equip]
+                    } else {
+                      d.master[equip] = D[i - 1].master[equip] + '-H'
+                    }
+                  }
+                })
               })
             })
           } catch (e) {
-            this.$message.info('原材料与实际重量不能为空')
+            console.log(e, 5555555555)
             return
           }
         }
       }
+
       const parameter = {}
       const ingredientListParams = []
       Object.assign(parameter, this.formInline)
@@ -585,14 +794,42 @@ export default {
       parameter.batching_detail_ids = this.batching_details_delete || []
       parameter.weight_detail_ids = this.weight_material_delete || []
       parameter.cnt_type_ids = this.weight_cnt_types_delete || []
+
+      if (!parameter._add) {
+        parameter.enable_equip = parameter.enable_equip ? parameter.enable_equip : []
+        parameter._enable_equip = parameter._enable_equip ? parameter._enable_equip : []
+        const addIdArr = parameter.enable_equip.filter((i) => {
+          return parameter._enable_equip.indexOf(i) === -1
+        }) // 最后添加的数据
+        const delIdArr = parameter._enable_equip.filter((i) => {
+          return parameter.enable_equip.indexOf(i) === -1
+        }) // 最后删除的数据
+        parameter.del_batching_equip = delIdArr || []
+        parameter.add_batching_equip = addIdArr || []
+      }
+
       try {
-        const _api = parameter._add ? 'post' : 'put'
+        let _api
+        if (parameter._add) {
+          _api = 'post'
+        } else {
+          if (!parameter.batching_details.length && (!parameter.weight_cnt_types[0] || !parameter.weight_cnt_types[0].weight_details.length)) {
+            _api = 'put'
+          } else if (this.postOwn || parameter.new_recipe_id === parameter.id) {
+            _api = 'put'
+          } else {
+            parameter.id = null
+            parameter.create_new = true
+            _api = 'post'
+          }
+        }
         const _id = parameter._add ? null : parameter.id
         await rubber_material_url(_api, _id, { data: parameter })
-        this.dialogVisible = false
         this.handleClose(false)
+        this.dialogVisible = false
         this.$emit('changeList')
       } catch (e) { //
+        console.log(e, 8788)
       }
     }
   }

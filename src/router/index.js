@@ -518,6 +518,16 @@ export let asyncRoutes = [
             permissionName: 'xl_weight_card'
           }
         },
+        // {
+        //   path: '/small-material-weight/artificialCard',
+        //   component: () => import('@/views/recipe/small-material-weight/artificialCard'),
+        //   name: 'SmallMaterialWeightArtificialCard',
+        //   meta: {
+        //     faName: 'SmallMaterialWeight',
+        //     title: '人工补打机配卡片',
+        //     permissionName: ''
+        //   }
+        // },
         {
           path: '/small-material-weight/hebao',
           component: () => import('@/views/recipe/small-material-weight/hebao'),
@@ -622,16 +632,16 @@ export let asyncRoutes = [
                 permissionName: 'aps_result'
               }
             },
-            /* {
-              path: '/schedule/machine',
-              component: () => import('@/views/plan/schedule/dispose/machine'),
-              name: 'ScheduleMachine',
-              meta: {
-                faName: 'ScheduleDispose',
-                title: '机台生产计划-机台列表',
-                permissionName: ''
-              }
-            },
+            // {
+            //   path: '/schedule/machine',
+            //   component: () => import('@/views/plan/schedule/dispose/machine'),
+            //   name: 'ScheduleMachine',
+            //   meta: {
+            //     faName: 'ScheduleDispose',
+            //     title: '机台生产计划-机台列表',
+            //     permissionName: ''
+            //   }
+            // },
             {
               path: '/schedule/daily-plan',
               component: () => import('@/views/plan/schedule/dispose/daily-plan'),
@@ -641,7 +651,7 @@ export let asyncRoutes = [
                 title: '排产胶料日计划下达',
                 permissionName: 'productdayplan'
               }
-            },*/
+            },
             {
               path: '/schedule/material-requirement',
               component: () => import('@/views/plan/schedule/dispose/material-requirement'),
@@ -652,16 +662,16 @@ export let asyncRoutes = [
                 permissionName: 'materialdemanded'
               }
             },
-            /* {
-              path: '/schedule/weighing-system-plan',
-              component: () => import('@/views/plan/schedule/dispose/weighing-system-plan'),
-              name: 'ScheduleWeighingSystemPlan',
-              meta: {
-                faName: 'ScheduleDispose',
-                title: '称量系统计划',
-                permissionName: ''
-              }
-            },*/
+            // {
+            //   path: '/schedule/weighing-system-plan',
+            //   component: () => import('@/views/plan/schedule/dispose/weighing-system-plan'),
+            //   name: 'ScheduleWeighingSystemPlan',
+            //   meta: {
+            //     faName: 'ScheduleDispose',
+            //     title: '称量系统计划',
+            //     permissionName: ''
+            //   }
+            // },
             {
               path: '/schedule/equipment-shutdown-plan',
               component: () => import('@/views/plan/schedule/dispose/equipment-shutdown-plan'),
@@ -684,7 +694,7 @@ export let asyncRoutes = [
             }
           ]
         },
-        /* {
+        /** {
           path: '/schedule/statistical-report',
           component: () => import('@/views/plan/schedule/statistical-report/a-index'),
           name: 'ScheduleStatisticalReport',
@@ -775,7 +785,7 @@ export let asyncRoutes = [
               }
             }
           ]
-        },*/
+        },**/
         {
           path: '/schedule/basic-data',
           component: () => import('@/views/plan/schedule/basic-data/a-index'),
@@ -866,6 +876,16 @@ export let asyncRoutes = [
                 permissionName: 'aps_opera_keyword'
               }
             }
+            /** {
+              path: '/equipment-management/report/specification_setting',
+              name: 'SpecificationSetting',
+              component: () => import('@/views/equipment-management/report/specification_setting'),
+              meta: {
+                faName: 'ScheduleBasicData',
+                title: '丁基胶 规格设定',
+                permissionName: 'productinfo'
+              }
+            }**/
           ]
         }
       ]
@@ -1114,16 +1134,76 @@ export let asyncRoutes = [
               permissionName: 'monthly_output_statistics_report'
             }
           },
-          {
-            path: '/report/output-statistics-details',
-            component: () => import('@/views/equipment-management/report/output-statistics-details'),
-            name: 'OutputStatisticsDetails',
+          /** {
+            path: '/report/achievement',
+            component: () => import('@/views/equipment-management/report/achievement'),
+            name: 'StatisticalReportAchievement',
             meta: {
               faName: 'StatisticalReport',
-              title: '月产量统计明细及绩效',
-              permissionName: 'monthly_output_statistics_and_performance'
+              title: '员工绩效汇总表',
+              permissionName: ''
             }
           },
+          {
+            path: '/report/postTable',
+            component: () => import('@/views/equipment-management/report/postTable'),
+            name: 'StatisticalReportPost',
+            meta: {
+              faName: 'StatisticalReport',
+              title: '岗位阶梯表',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/report/unit-price-list',
+            component: () => import('@/views/equipment-management/report/unit-price-list'),
+            name: 'StatisticalReportPrice',
+            meta: {
+              faName: 'StatisticalReport',
+              title: '绩效计算 单价表',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/report/attendance',
+            component: () => import('@/views/equipment-management/report/attendance'),
+            name: 'StatisticalReportAttendance',
+            meta: {
+              faName: 'StatisticalReport',
+              title: '员工出勤记录表',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/report/mixing',
+            component: () => import('@/views/equipment-management/report/mixing'),
+            name: 'StatisticalReportMixing',
+            meta: {
+              faName: 'StatisticalReport',
+              title: '密炼机台产量汇总表',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/report/weighing',
+            component: () => import('@/views/equipment-management/report/weighing'),
+            name: 'StatisticalReportWeighing',
+            meta: {
+              faName: 'StatisticalReport',
+              title: '称量机台产量汇总表',
+              permissionName: ''
+            }
+          },**/
+          // {
+          //   path: '/report/output-statistics-details',
+          //   component: () => import('@/views/equipment-management/report/output-statistics-details'),
+          //   name: 'OutputStatisticsDetails',
+          //   meta: {
+          //     faName: 'StatisticalReport',
+          //     title: '月产量统计明细及绩效',
+          //     permissionName: 'monthly_output_statistics_and_performance'
+          //   }
+          // },
           {
             path: '/report/daily-output-completed',
             component: () => import('@/views/equipment-management/report/daily-output-completed'),
@@ -2352,17 +2432,16 @@ export let asyncRoutes = [
               title: '原材料门尼数据上报',
               permissionName: 'material_report_value'
             }
-          }
-          /*, {
+          }, {
             path: '/material-quickcheck/quality-inspection-plan',
             component: () => import('@/views/material_quickcheck_manage/quality-inspection-plan'),
             name: 'QualityInspectionPlan',
             meta: {
               faName: 'MaterialQuickcheck',
               title: '原材料 质量检测计划',
-              permissionName: ''
+              permissionName: 'material_test_plan'
             }
-          }*/
+          }
         ]
       },
       {

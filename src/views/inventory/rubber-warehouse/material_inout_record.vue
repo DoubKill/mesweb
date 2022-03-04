@@ -5,6 +5,7 @@
       <el-form-item label="时间">
         <el-date-picker
           v-model="searchDate"
+          :disabled="isDialog"
           type="datetimerange"
           range-separator="至"
           start-placeholder="开始日期"
@@ -32,6 +33,7 @@
         <el-select
           v-model="search.order_type"
           placeholder="请选择"
+          :disabled="isDialog"
           @change="changeList"
         >
           <el-option
@@ -59,10 +61,10 @@
         </el-select>
         <!-- <warehouseSelect :created-is="true" @changSelect="warehouseSelectFun" /> -->
       </el-form-item>
-      <el-form-item label="物料编码">
+      <el-form-item v-if="!isDialog" label="物料编码">
         <el-input v-model="search.material_no" clearable @input="debounceList" />
       </el-form-item>
-      <el-form-item v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="物料名称">
+      <el-form-item v-if="(warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库')&&!isDialog" label="物料名称">
         <el-input v-model="search.material_name" clearable @input="debounceList" />
       </el-form-item>
       <el-form-item label="出入库单号">
@@ -89,6 +91,24 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="是否进烘房">
+        <el-select
+          v-model="search.is_entering"
+          clearable
+          placeholder="请选择"
+          @change="changeList"
+        >
+          <el-option
+            v-for="item in ['Y','N']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="批次号">
+        <el-input v-model="search.l_batch_no" clearable @input="debounceList" />
+      </el-form-item>
       <el-form-item style="float:right">
         <el-button
           type="primary"
@@ -112,9 +132,12 @@
       <el-table-column label="类型" align="center" prop="order_type" width="50" />
       <el-table-column label="出入库单号" align="center" prop="order_no" />
       <el-table-column label="质检条码" align="center" prop="lot_no" />
+      <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="批次号" align="center" prop="batch_no" />
       <!-- <el-table-column label="仓库类型" align="center" prop="warehouse_type" /> -->
       <!-- <el-table-column  label="仓库名称" align="center" prop="warehouse_name" /> -->
       <el-table-column label="托盘号" align="center" prop="pallet_no" />
+      <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="是否进烘房" align="center" prop="is_entering" />
+      <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="供应商" align="center" />
       <!-- <el-table-column label="机台" align="center">
         <template v-if="row.product_info" slot-scope="{row}">
           {{ row.product_info.equip_no }}
@@ -178,6 +201,20 @@ export default {
     warehouseNameProps: {
       type: String,
       default: ''
+    },
+    isDialog: {
+      type: Boolean,
+      default: false
+    },
+    dialogSearch: {
+      type: Object,
+      default() {
+        return {}
+      }
+    },
+    show: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -196,13 +233,33 @@ export default {
       btnExportLoad: false
     }
   },
+  watch: {
+    show(bool) {
+      if (bool) {
+        this.search = {
+          page: 1,
+          order_type: '出库'
+        }
+        Object.assign(this.search, this.dialogSearch)
+
+        if (this.warehouseNameProps) {
+          this.search.warehouse_name = this.warehouseNameProps
+        }
+        this.searchDate = [this.search.start_time, this.search.end_time]
+        this.getList()
+      }
+    }
+  },
   created() {
+    this.search.start_time = setDate() + ' 00:00:00'
+    this.search.end_time = setDate(null, true)
+
+    if (this.isDialog) {
+      Object.assign(this.search, this.dialogSearch)
+    }
     if (this.warehouseNameProps) {
       this.search.warehouse_name = this.warehouseNameProps
     }
-
-    this.search.start_time = setDate() + ' 00:00:00'
-    this.search.end_time = setDate(null, true)
     this.searchDate = [this.search.start_time, this.search.end_time]
     this.getList()
   },

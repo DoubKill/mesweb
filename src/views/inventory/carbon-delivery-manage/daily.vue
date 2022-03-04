@@ -112,7 +112,11 @@
         prop="quantity"
         label="数量"
         min-width="8"
-      />
+      >
+        <template slot-scope="{row}">
+          <el-link type="primary" @click.prevent="check_(row)">{{ row.quantity }}</el-link>
+        </template>
+      </el-table-column>
       <el-table-column
         prop="batchNo"
         label="批次号"
@@ -130,17 +134,27 @@
       :current-page="search.pageNo"
       @currentChange="currentChange"
     />
+    <el-dialog
+      title="出入库履历信息"
+      :visible.sync="dialogVisible"
+      width="90%"
+      :before-close="handleClose"
+    >
+      <materialInoutRecord :warehouse-name-props="'炭黑库'" :dialog-search="dialogSearch" :is-dialog="true" :show="dialogVisible" />
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import request from '@/utils/request-zc-th'
 import page from '@/components/page'
-import { debounce } from '@/utils'
+import { debounce, setDate } from '@/utils'
 import * as echarts from 'echarts'
+import materialInoutRecord from '@/views/inventory/rubber-warehouse/material_inout_record.vue'
+
 export default {
   name: 'CarbonDeliveryDaily',
-  components: { page },
+  components: { page, materialInoutRecord },
   data() {
     return {
       tableData: [],
@@ -220,10 +234,31 @@ export default {
           type: 'line',
           smooth: true
         }]
-      }
+      },
+      dialogVisible: false,
+      dialogSearch: {}
     }
   },
   created() {
+    if (this.currentRouter === 'CarbonDeliveryDaily') {
+      this.search.EndTime = setDate(null, true)
+      this.search.StartTime = setDate() + ' 00:00:00'
+      this.datetimerange = [this.search.StartTime, this.search.EndTime]
+    } else if (this.currentRouter === 'CarbonDeliveryMonthly') {
+      const a = new Date()
+      const _year = a.getFullYear()
+      const _month = a.getMonth()
+      const firstDay = new Date(_year, _month, 1)
+      delete this.search.EndTime
+      this.search.StartTime = setDate(firstDay) + ' 00:00:00'
+      this.datetimerangeMonth = setDate(firstDay) + ' 00:00:00'
+    } else {
+      const a = new Date()
+      const _year = a.getFullYear()
+      delete this.search.EndTime
+      this.search.StartTime = _year + '-01-01' + ' 00:00:00'
+      this.datetimerangeYear = _year + '-01-01' + ' 00:00:00'
+    }
     this.getDownTaskCountByTodayCount()
     this.getMaterialList()
     this.getTunnelNameList()
@@ -352,6 +387,36 @@ export default {
     currentChange(page) {
       this.search.pageNo = page
       this.getList()
+    },
+    check_(row) {
+      this.dialogSearch = {
+        e_material_no: row.materialCode,
+        batch_no: row.batchNo || ''
+      }
+      if (this.currentRouter === 'CarbonDeliveryDaily') {
+        this.dialogSearch.start_time = this.search.StartTime || ''
+        this.dialogSearch.end_time = this.search.EndTime || ''
+      } else if (this.currentRouter === 'CarbonDeliveryMonthly') {
+        const a = new Date(this.datetimerangeMonth)
+        const _year = a.getFullYear()
+        const _month = a.getMonth()
+        const firstDay = new Date(_year, _month, 1)
+        const lastDay = new Date(_year, _month + 1, 0)
+
+        this.dialogSearch.start_time = setDate(firstDay) + ' 00:00:00'
+        this.dialogSearch.end_time = setDate(lastDay) + ' 23:59:59'
+      } else {
+        const a = new Date(this.datetimerangeYear)
+        const _year = a.getFullYear()
+        this.dialogSearch.start_time = _year + '-01-01' + ' 00:00:00'
+        this.dialogSearch.end_time = _year + '-12-31' + ' 23:59:59'
+      }
+      this.dialogVisible = true
+    },
+    handleClose(done) {
+      if (done) {
+        done()
+      }
     }
   }
 }

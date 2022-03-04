@@ -1095,18 +1095,18 @@ export function schedulingStockSummary(method, id, data = {}) {
   return request(obj)
 }
 
-export function glsb(method, id, data = {}) {
+export function materialTestPlan(method, id, data = {}) {
   const obj = {
-    url: id ? API.Sb + id + '/' : API.Sb,
+    url: id ? API.MaterialTestPlan + id + '/' : API.MaterialTestPlan,
     method: method
   }
   Object.assign(obj, data)
   return request(obj)
 }
 
-export function materialTestPlan(method, id, data = {}) {
+export function materialTestPlanDetail(method, id, data = {}) {
   const obj = {
-    url: id ? API.MaterialTestPlan + id + '/' : API.MaterialTestPlan,
+    url: id ? API.MaterialTestPlanDetail + id + '/' : API.MaterialTestPlanDetail,
     method: method
   }
   Object.assign(obj, data)
@@ -1125,6 +1125,78 @@ export function wmsNucleinManagement(method, id, data = {}) {
 export function materialReportEquip(method, id, data = {}) {
   const obj = {
     url: id ? API.MaterialReportEquip + id + '/' : API.MaterialReportEquip,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function performanceJobLadder(method, id, data = {}) {
+  const obj = {
+    url: id ? API.PerformanceJobLadder + id + '/' : API.PerformanceJobLadder,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function productInfoDj(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ProductInfoDj + id + '/' : API.ProductInfoDj,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function performanceUnitPrice(method, id, data = {}) {
+  const obj = {
+    url: id ? API.PerformanceUnitPrice + id + '/' : API.PerformanceUnitPrice,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function employeeattendancerecords(method, id, data = {}) {
+  const obj = {
+    url: id ? API.Employeeattendancerecords + id + '/' : API.Employeeattendancerecords,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function employeeattendancerecordsexport(params) {
+  return request({
+    url: API.Employeeattendancerecordsexport,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
+
+export function summaryOfMillOutput(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SummaryOfMillOutput + id + '/' : API.SummaryOfMillOutput,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function wmsExceptHandle(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WmsExceptHandle + id + '/' : API.WmsExceptHandle,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function schedulingProductImport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SchedulingProductImport + id + '/' : API.SchedulingProductImport,
     method: method
   }
   Object.assign(obj, data)

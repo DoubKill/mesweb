@@ -18,10 +18,71 @@
         <el-button v-permission="['monthly_output_statistics_report','export']" type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
       </el-form-item>
     </el-form>
+    <el-row :gutter="20">
+      <el-col :span="16">
+        <el-table
+          :data="tableData"
+          style="width: 100%"
+          border
+          :summary-method="getSummaries"
+          show-summary
+        >
+          <el-table-column
+            prop="equip_no"
+            label="机台"
+            min-width="20"
+          />
+          <el-table-column
+            prop="weight"
+            label="吨数"
+            min-width="20"
+          />
+          <el-table-column
+            prop="value"
+            label="车数"
+            min-width="20"
+          />
+          <el-table-column
+            prop="settings_value"
+            label="机台目标值"
+            min-width="20"
+          />
+          <el-table-column
+            prop="max_value"
+            label="机台最高值"
+            min-width="20"
+          />
+        </el-table>
+      </el-col>
+      <el-col :span="8">
+        <el-table
+          :data="tableData2"
+          border
+        >
+          <el-table-column
+            label="段数"
+          >
+            <template slot-scope="{row}">
+              <el-link
+                v-if="row.name&&row.name.indexOf('合计')===-1&&row.name.indexOf('总计')===-1"
+                type="primary"
+                @click="repairDialog(row)"
+              >{{ row.name }}</el-link>
+              <span v-else>{{ row.name }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="value"
+            label="吨数"
+          />
+        </el-table>
+      </el-col>
+    </el-row>
 
     <el-table
+      v-show="false"
       :id="outTable?'out-table':'false'"
-      :data="tableData"
+      :data="tableData3"
       style="width: 100%"
       border
       :summary-method="getSummaries"
@@ -55,16 +116,8 @@
       <el-table-column
         label="段数"
         min-width="20"
-      >
-        <template slot-scope="{row}">
-          <el-link
-            v-if="row.name&&row.name.indexOf('合计')===-1&&row.name.indexOf('总计')===-1"
-            type="primary"
-            @click="repairDialog(row)"
-          >{{ row.name }}</el-link>
-          <span v-else>{{ row.name }}</span>
-        </template>
-      </el-table-column>
+        prop="name"
+      />
       <el-table-column
         prop="stateValue"
         label="吨数"
@@ -122,11 +175,14 @@
           label="机台"
           min-width="20"
         />
-        <!-- <el-table-column
-          prop="date"
+        <el-table-column
           label="日期"
           min-width="20"
-        /> -->
+        >
+          <template slot-scope="{row}">
+            {{ row.time }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="value"
           label="车数"
@@ -138,10 +194,13 @@
           min-width="20"
         />
         <el-table-column
-          prop="date"
-          label="占比"
+          label="占比%"
           min-width="20"
-        />
+        >
+          <template slot-scope="{row}">
+            {{ row.ratio }}
+          </template>
+        </el-table-column>
       </el-table>
     </el-dialog>
   </div>
@@ -163,7 +222,9 @@ export default {
       btnExportLoad: false,
       dialogVisible: false,
       machineList: [],
-      outTable: true
+      outTable: true,
+      tableData2: [],
+      tableData3: []
     }
   },
   created() {
@@ -178,22 +239,23 @@ export default {
       try {
         const data = await monthlyOutputStatisticsReport('get', null, { params: this.getParams })
         this.tableData = data.result || []
+        this.tableData3 = JSON.parse(JSON.stringify(this.tableData)) || []
         const jl = data.jl || []
         const wl = data.wl || []
-        const state = wl.concat(jl)
-        state.push({ name: '总计', value: (sum(state, 'value') / 2).toFixed(2) })
-        state.forEach((d, i) => {
+        this.tableData2 = [...wl, ...jl]
+        this.tableData2.push({ name: '总计', value: (sum(this.tableData2, 'value') / 2).toFixed(2) })
+        this.tableData2.forEach((d, i) => {
           if (d.name === 'jl') {
             d.name = '加硫合计'
           }
           if (d.name === 'wl') {
             d.name = '无硫合计'
           }
-          if (this.tableData[i]) {
-            this.tableData[i].name = d.name
-            this.tableData[i].stateValue = d.value
+          if (this.tableData3[i]) {
+            this.tableData3[i].name = d.name
+            this.tableData3[i].stateValue = d.value
           } else {
-            this.tableData[i] = { name: d.name, stateValue: d.value }
+            this.tableData3[i] = { name: d.name, stateValue: d.value }
           }
         })
       } catch (e) { throw new Error(e) }

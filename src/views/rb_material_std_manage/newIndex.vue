@@ -1,6 +1,7 @@
 <template>
   <div
     v-loading="loading"
+    class="newIndex"
     element-loading-text="加载中..."
   >
     <!-- 胶料配方标准管理 -->
@@ -8,7 +9,7 @@
       <el-form-item label="状态">
         <el-select
           v-model="search.used_type"
-          style="width: 150px"
+          style="width: 120px"
           clearable
           placeholder="请选择"
           @change="changeSearch"
@@ -22,7 +23,10 @@
         </el-select>
       </el-form-item>
       <el-form-item label="SITE">
-        <SITESelect v-model="search.site" @returnBack="changeSearch" />
+        <SITESelect
+          v-model="search.site"
+          @returnBack="changeSearch"
+        />
       </el-form-item>
       <el-form-item label="段次">
         <StageIdSelect
@@ -43,13 +47,27 @@
           @input="changeSearch"
         />
       </el-form-item>
-      <!-- <el-form-item style="float: right">
+      <el-form-item label="发送上辅机情况">
+        <el-select
+          v-model="search.filter_type"
+          style="width: 120px"
+          clearable
+          placeholder="请选择"
+          @change="changeSearch"
+        >
+          <el-option
+            v-for="item in [{name:'部分发送',label:1},{name:'未设定机台',label:2}]"
+            :key="item.name"
+            :label="item.name"
+            :value="item.label"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item style="float: right">
         <el-button
           v-if="checkPermission(['productbatching','add'])"
           @click="newRubberClicked"
         >新建</el-button>
-      </el-form-item> -->
-      <el-form-item style="float: right">
         <el-button
           v-if="checkPermission(['productbatching','change'])"
           :disabled="![1,4].includes(currentRow.used_type)"
@@ -69,6 +87,7 @@
       :data="tableData"
       border
       size="mini"
+      :row-class-name="tableRowClassName"
       @row-click="handleCurrentChange"
     >
       <el-table-column
@@ -83,7 +102,11 @@
         label="胶料配方编码"
       >
         <template slot-scope="scope">
-          <el-link type="primary" :underline="false" @click="showGridTable(scope.row.id)">{{ scope.row.stage_product_batch_no }}</el-link>
+          <el-link
+            type="primary"
+            :underline="false"
+            @click="showGridTable(scope.row.id)"
+          >{{ scope.row.stage_product_batch_no }}</el-link>
         </template>
       </el-table-column>
       <el-table-column
@@ -147,7 +170,7 @@
               @click="status_recipe_fun(scope.row.id,true)"
             >校对</el-button>
             <el-button
-              v-if="scope.row.used_type === 3 && checkPermission(['productbatching','use'])"
+              v-if="[3,7].includes(scope.row.used_type) && checkPermission(['productbatching','use'])"
               size="mini"
               @click="status_recipe_fun(scope.row.id,true)"
             >启用</el-button>
@@ -159,10 +182,16 @@
             >驳回</el-button>
             <el-button
               v-if="checkPermission(['productbatching','abandon'])&&
-                [5,4].includes(scope.row.used_type)"
+                [5,4,7].includes(scope.row.used_type)"
               size="mini"
               @click="status_recipe_fun(scope.row.id,false,'废弃')"
             >废弃</el-button>
+            <el-button
+              v-if="checkPermission(['productbatching','stop'])&&
+                [4].includes(scope.row.used_type)"
+              size="mini"
+              @click="status_recipe_fun(scope.row.id,false,'停用')"
+            >停用</el-button>
           </el-button-group>
         </template>
       </el-table-column>
@@ -175,8 +204,28 @@
           <el-button-group>
             <el-button
               v-if="scope.row.used_type === 4 && checkPermission(['productbatching','send'])"
+              :disabled="!scope.row.enable_equip.length"
               size="mini"
+              title="请配置可用机台"
               @click="send_auxiliary(scope.row)"
+            >发送</el-button>
+          </el-button-group>
+        </template>
+      </el-table-column>
+      <el-table-column
+        align="center"
+        width="70px"
+        label="发送到称量系统"
+      >
+        <template slot-scope="scope">
+          <el-button-group>
+            <el-button
+              v-if="scope.row.used_type === 4 && checkPermission(['productbatching','sendXl'])"
+              title="请配置可用机台"
+              type="primary"
+              size="mini"
+              :disabled="!scope.row.enable_equip.length"
+              @click="send_weighing(scope.row)"
             >发送</el-button>
           </el-button-group>
         </template>
@@ -216,6 +265,11 @@
         prop="created_date"
         label="创建时间"
       />
+      <el-table-column
+        min-width="10"
+        prop="last_updated_date"
+        label="修改时间"
+      />
     </el-table>
     <page
       :total="total"
@@ -232,6 +286,32 @@
       @handleCloseMaterial="handleCloseMaterial"
       @refreshList="refreshList"
     />
+
+    <el-dialog
+      :title="`称量配方发送  MES->称量系统`"
+      :visible.sync="dialogVisible"
+      width="30%"
+      :before-close="handleClose"
+    >
+      <el-checkbox-group v-model="checkList">
+        <el-checkbox
+          v-for="(item,key) in dialogList"
+          :key="key"
+          :label="item.no"
+        >{{ item.name }}</el-checkbox>
+      </el-checkbox-group>
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button @click="handleClose(false)">取 消</el-button>
+        <el-button
+          type="primary"
+          :loading="loadingSendWeight"
+          @click="submitSendWeight"
+        >确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -240,7 +320,7 @@ import { mapGetters } from 'vuex'
 import { checkPermission } from '@/utils'
 import commonVal from '@/utils/common'
 import { getToken } from '@/utils/auth'
-import { rubber_material_url, send_auxiliary_url } from '@/api/rubber_recipe_fun'
+import { rubber_material_url, send_auxiliary_url, xlRecipeNotice } from '@/api/rubber_recipe_fun'
 import StageIdSelect from '@/components/StageSelect/StageIdSelect'
 import SITESelect from './components/SITESelect'
 import createdRubberMaterial from './components/createdRubberMaterial'
@@ -264,7 +344,13 @@ export default {
       // 是否是查看
       isView: false,
       // 是否是复制
-      isCopy: false
+      isCopy: false,
+      dialogVisible: false,
+      checkList: [],
+      dialogList: [{ name: 'F1#细料', no: 'F01' }, { name: 'F2#细料', no: 'F02' }, { name: 'F3#细料', no: 'F03' },
+        { name: 'S1#硫磺', no: 'S01' }, { name: 'S2#硫磺', no: 'S02' }],
+      currentObj: {},
+      loadingSendWeight: false
     }
   },
   computed: {
@@ -346,7 +432,7 @@ export default {
           type: 'warning'
         }).then(async() => {
           try {
-            await rubber_material_url('patch', id, { data: { pass_flag: bool }})
+            await rubber_material_url('patch', id, { data: { pass_flag: bool, used_or_abandon: val === '停用' ? 1 : 0 }})
             this.$message.success('状态切换成功')
             this.rubber_material_list()
           } catch (e) { throw new Error(e) }
@@ -363,6 +449,9 @@ export default {
       try {
         this.loading = true
         this.search.exclude_used_type = 6
+        if (this.search.used_type === 6) {
+          delete this.search.exclude_used_type
+        }
         const data = await rubber_material_url('get', null, { params: this.search })
         this.tableData = data.results || []
         this.total = data.count
@@ -382,20 +471,99 @@ export default {
     },
     async send_auxiliary(row) {
       try {
-        const data = await send_auxiliary_url('post', {
-          params: {
-            'product_batching_id': row.id,
-            'product_no': row.stage_product_batch_no
-          }
-        })
-        this.$message.success('发送至上辅机成功')
-        this.rubber_material_list()
-        const url = data.auxiliary_url + '#/recipe/list'
+        this.$confirm('是否将该配方下传给群控系统？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(async() => {
+          let data = await send_auxiliary_url('post', {
+            params: {
+              'product_batching_id': row.id,
+              'product_no': row.stage_product_batch_no
+            }
+          })
+          if (data.notice_flag) {
+            this.$confirm('群控系统已有同名配方，继续下传会覆盖群控系统的同名配方，是否继续下传？', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(async() => {
+              data = await send_auxiliary_url('post', {
+                params: {
+                  'product_batching_id': row.id,
+                  'product_no': row.stage_product_batch_no,
+                  notice_flag: true
+                }
+              })
+              this.$message.success(data.send_recipe_msg)
+              this.rubber_material_list()
+              const url = data.auxiliary_url + '#/recipe/list'
 
-        window.open(url + '?AAA=' + getToken() +
-        '&batch_no=' + row.stage_product_batch_no)
+              window.open(url + '?AAA=' + getToken() +
+                '&batch_no=' + row.stage_product_batch_no)
+            })
+            return
+          }
+
+          this.$message.success(data.send_recipe_msg)
+          this.rubber_material_list()
+          const url = data.auxiliary_url + '#/recipe/list'
+
+          window.open(url + '?AAA=' + getToken() +
+            '&batch_no=' + row.stage_product_batch_no)
+        })
       } catch (e) {
         //
+      }
+    },
+    send_weighing(row) {
+      this.currentObj = JSON.parse(JSON.stringify(row))
+      this.dialogVisible = true
+    },
+    handleClose(done) {
+      this.dialogVisible = false
+      this.checkList = []
+      if (done) {
+        done()
+      }
+    },
+    submitSendWeight() {
+      try {
+        let _i = 0
+        this.loadingSendWeight = true
+        this.checkList.forEach(async d => {
+          try {
+            const data = await xlRecipeNotice('post', { params: { product_batching_id: this.currentRow.id, product_no: this.currentRow.stage_product_batch_no, xl_equip: d }})
+            if (data && data.notice_flag) {
+              this.$confirm(`${d}:${data.msg}料罐中不存在，是否下传配方？`, '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+              }).then(async() => {
+                const data1 = await xlRecipeNotice('post', { params: { product_batching_id: this.currentRow.id, product_no: this.currentRow.stage_product_batch_no, xl_equip: d, notice_flag: true }})
+                _i++
+                this.$message.success(data1)
+                if (_i === this.checkList.length) {
+                  this.handleClose(false)
+                  this.loadingSendWeight = false
+                }
+              })
+            } else {
+              this.$message.success(data)
+              _i++
+              if (_i === this.checkList.length) {
+                this.handleClose(false)
+                this.loadingSendWeight = false
+              }
+            }
+          } catch (e) {
+            this.loadingSendWeight = false
+            throw new Error(e)
+          }
+        })
+      } catch (e) {
+        this.loadingSendWeight = false
+        throw new Error(e)
       }
     },
     handleCloseMaterial() {
@@ -420,12 +588,35 @@ export default {
           return '驳回'
         case 6:
           return '废弃'
+        case 7:
+          return '停用'
       }
+    },
+    tableRowClassName({ row, rowIndex }) {
+      if (row.used_type === 4 && (row.send_success_equip.length !== row.enable_equip.length)) {
+        return 'warning-row'
+      }
+      return ''
     }
   }
 }
 </script>
 
-<style>
+<style lang="scss">
+ .newIndex{
+
+  .el-table__row:hover > td {
+    background-color: transparent !important;
+  }
+  .el-table__body tr.current-row{
+     background-color: #e3e7ec !important;
+  }
+  .el-table__body tr.current-row>td{
+    background-color: #e3e7ec !important;
+  }
+  .warning-row{
+    background: #b1ddf0  !important;
+  }
+ }
 
 </style>

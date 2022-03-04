@@ -214,10 +214,25 @@
                   />
                 </div>
                 <div v-if="row.check_standard_type==='数值范围'">
-                  <el-input-number v-model="row.check_standard_desc_a" style="width:120px" controls-position="right" :min="0" :max="row.check_standard_desc_b" />
+                  <el-input v-model="row.check_standard_desc_a" style="width:120px" controls-position="right" />
                   -
-                  <el-input-number v-model="row.check_standard_desc_b" style="width:120px" controls-position="right" :min="row.check_standard_desc_a" />
+                  <el-input v-model="row.check_standard_desc_b" style="width:120px" controls-position="right" />
                 </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="date"
+              label="单位"
+            >
+              <template slot-scope="{row}">
+                <el-select v-model="row.unit" clearable placeholder="请选择">
+                  <el-option
+                    v-for="item in options"
+                    :key="item.id"
+                    :label="item.global_name"
+                    :value="item.global_name"
+                  />
+                </el-select>
               </template>
             </el-table-column>
             <el-table-column label="操作">
@@ -249,6 +264,7 @@
 
 <script>
 import page from '@/components/page'
+import { classesListUrl } from '@/api/base_w'
 import { equipJobItemStandard, equipJobItemStandardImport } from '@/api/base_w_four'
 import { getDefaultCode } from '@/api/jqy'
 
@@ -291,6 +307,7 @@ export default {
       currentPage: 1,
       total: 1,
       loading: false,
+      options: [],
       btnLoading: false,
       btnExportLoad: false,
       currentObj: {}
@@ -302,6 +319,7 @@ export default {
         this.getParams.work_type = this.workType
         this.getParams.use_flag = true
         this.getList()
+        this.getUnitList()
       }
     }
   },
@@ -311,6 +329,7 @@ export default {
       this.getParams.work_type = this.workType
     }
     this.getList()
+    this.getUnitList()
   },
   methods: {
     async getList() {
@@ -321,8 +340,8 @@ export default {
         this.tableData.forEach((d, i) => {
           d.work_details.forEach(D => {
             if (D.check_standard_type === '数值范围') {
-              D.check_standard_desc_a = Number(D.check_standard_desc.split('-')[0])
-              D.check_standard_desc_b = Number(D.check_standard_desc.split('-')[1])
+              D.check_standard_desc_a = D.check_standard_desc.split('-')[0]
+              D.check_standard_desc_b = D.check_standard_desc.split('-')[1]
             }
           })
         })
@@ -347,6 +366,11 @@ export default {
     onSubmit() {
       this.dialogEditVisible = true
       this.typeForm = { standard_code: '' }
+    },
+    async getUnitList() {
+      const obj = { all: 1, class_name: '设备作业标准单位' }
+      const data = await classesListUrl('get', null, { params: obj })
+      this.options = data.results
     },
     async change() {
       try {
@@ -407,8 +431,16 @@ export default {
               this.typeForm.work_details.forEach((d, i) => {
                 d.sequence = i + 1
                 if (d.check_standard_type === '数值范围') {
-                  if ((!d.check_standard_desc_a && d.check_standard_desc_a !== 0) || !d.check_standard_desc_b) {
-                    throw new Error('数值范围请填写完毕')
+                  var reg = /^(\d+(\.\d+)?)(\/\d+(\.\d+)?)?$/
+                  if (reg.test(d.check_standard_desc_a) && reg.test(d.check_standard_desc_b)) {
+                    if ((!d.check_standard_desc_a && d.check_standard_desc_a !== 0) || !d.check_standard_desc_b) {
+                      throw new Error('数值范围请填写完毕')
+                    }
+                    if (changeNum(d.check_standard_desc_a) >= changeNum(d.check_standard_desc_b)) {
+                      throw new Error('数值范围前者必须小于后者')
+                    }
+                  } else {
+                    throw new Error('填写数值范围只能为整数小数分数')
                   }
                   d.check_standard_desc = d.check_standard_desc_a + '-' + d.check_standard_desc_b
                 }
@@ -416,7 +448,7 @@ export default {
             }
             this.tableData1.forEach(d => {
               if (!d.content || !d.check_standard_desc || !d.check_standard_type) {
-                throw new Error('每行数据必填')
+                throw new Error('除单位外每行数据必填')
               }
             })
             this.btnLoading = true
@@ -493,6 +525,14 @@ export default {
         this.getList()
       })
     }
+  }
+}
+
+function changeNum(a) {
+  if (a.indexOf('/') !== -1) {
+    return Number(a.split('/')[0] / a.split('/')[1])
+  } else {
+    return Number(a)
   }
 }
 </script>

@@ -256,7 +256,7 @@
       :before-close="handleClose"
       :title="operateType"
       :visible.sync="dialogVisible"
-      width="70%"
+      width="80%"
     >
       <el-form
         ref="ruleFormHandle"
@@ -291,13 +291,13 @@
             style="width:250px"
             disabled
           />
-          <el-button type="primary" style="float:right;margin-bottom:6px" @click="addList">添加</el-button>
+          <!-- <el-button type="primary" style="float:right;margin-bottom:6px" @click="addList">添加</el-button> -->
         </el-form-item>
         <el-form-item>
           <el-table
             :data="creatOrder.work_content"
             border
-            style="width: 1091px"
+            style="width: 1241px"
           >
             <el-table-column
               label="序号"
@@ -311,7 +311,7 @@
               width="150"
             >
               <template slot-scope="{row}">
-                <el-input v-model="row.job_item_content" @input="changeDesc" />
+                <el-input v-model="row.job_item_content" disabled @input="changeDesc" />
               </template>
             </el-table-column>
             <el-table-column
@@ -323,6 +323,7 @@
                 <div v-if="row.job_item_check_type==='有无'">
                   <el-switch
                     v-model="row.job_item_check_standard"
+                    disabled
                     active-value="无"
                     inactive-value="有"
                     active-text="无"
@@ -333,6 +334,7 @@
                 <div v-if="row.job_item_check_type==='正常异常'">
                   <el-switch
                     v-model="row.job_item_check_standard"
+                    disabled
                     active-value="正常"
                     inactive-value="异常"
                     active-text="正常"
@@ -343,6 +345,7 @@
                 <div v-if="row.job_item_check_type==='完成未完成'">
                   <el-switch
                     v-model="row.job_item_check_standard"
+                    disabled
                     active-value="完成"
                     inactive-value="未完成"
                     active-text="完成"
@@ -353,6 +356,7 @@
                 <div v-if="row.job_item_check_type==='合格不合格'">
                   <el-switch
                     v-model="row.job_item_check_standard"
+                    disabled
                     active-value="合格"
                     inactive-value="不合格"
                     active-text="合格"
@@ -361,10 +365,25 @@
                   />
                 </div>
                 <div v-if="row.job_item_check_type==='数值范围'">
-                  <el-input-number v-model="row.job_item_check_standard_a" style="width:120px" controls-position="right" :min="0" :max="row.job_item_check_standard_b" @change="changeRusult" />
+                  <el-input v-model="row.job_item_check_standard_a" disabled style="width:120px" @change="changeRusult" />
                   -
-                  <el-input-number v-model="row.job_item_check_standard_b" style="width:120px" controls-position="right" :min="row.job_item_check_standard_a" @change="changeRusult" />
+                  <el-input v-model="row.job_item_check_standard_b" disabled style="width:120px" @change="changeRusult" />
                 </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="单位"
+              width="150"
+            >
+              <template slot-scope="{row}">
+                <el-select v-model="row.unit" disabled placeholder="">
+                  <el-option
+                    v-for="item in []"
+                    :key="item"
+                    :label="item"
+                    :value="item"
+                  />
+                </el-select>
               </template>
             </el-table-column>
             <el-table-column
@@ -372,7 +391,7 @@
               width="180"
             >
               <template slot-scope="{row}">
-                <el-select v-model="row.job_item_check_type" placeholder="请选择" @change="standardType(row)">
+                <el-select v-model="row.job_item_check_type" disabled placeholder="请选择" @change="standardType(row)">
                   <el-option
                     v-for="item in ['有无','数值范围','正常异常','完成未完成','合格不合格']"
                     :key="item"
@@ -384,7 +403,7 @@
             </el-table-column>
             <el-table-column
               prop="operation_result"
-              label="处理结果"
+              label="巡检结果"
               width="150"
             >
               <template slot-scope="{row}">
@@ -429,7 +448,7 @@
                   />
                 </div>
                 <div v-if="row.job_item_check_type==='数值范围'">
-                  <el-input-number v-model="row.operation_result" style="width:120px" controls-position="right" :min="1" :max="99999" @change="changeRusult" />
+                  <el-input v-model="row.operation_result" style="width:120px" @input="changeRusult" />
                 </div>
               </template>
             </el-table-column>
@@ -440,13 +459,13 @@
             />
             <el-table-column label="操作" width="170">
               <template slot-scope="scope">
-                <el-button
+                <!-- <el-button
                   size="mini"
                   type="danger"
                   @click="delDialogFun(scope.$index)"
-                >删除</el-button>
+                >删除</el-button> -->
                 <el-button
-                  v-if="!((scope.row.job_item_check_type === '数值范围' && scope.row.job_item_check_standard_a <= scope.row.operation_result && scope.row.job_item_check_standard_b >= scope.row.operation_result) ||
+                  v-if="!((scope.row.job_item_check_type === '数值范围' && changeNum(scope.row.job_item_check_standard_a) <= changeNum(scope.row.operation_result) && changeNum(scope.row.job_item_check_standard_b) >= changeNum(scope.row.operation_result)) ||
                     (scope.row.job_item_check_type !== '数值范围' && scope.row.job_item_check_standard === scope.row.operation_result))"
                   size="mini"
                   type="danger"
@@ -637,7 +656,7 @@
             </el-radio-group>
           </div>
           <div v-if="projectForm.job_item_check_type==='数值范围'">
-            <el-input-number v-model="projectForm.abnormal_operation_result" style="width:120px" controls-position="right" :min="1" />
+            <el-input v-model="projectForm.abnormal_operation_result" style="width:120px" />
           </div>
         </el-form-item>
       </el-form>
@@ -884,15 +903,20 @@ export default {
       this.dialogVisibleProject = true
     },
     generateFunProject() {
+      var reg = /^(\d+(\.\d+)?)(\/\d+(\.\d+)?)?$/
+      if (this.projectForm.job_item_check_type === '数值范围' && !reg.test(this.projectForm.abnormal_operation_result)) {
+        this.$message('异常处理结果只能为整数小数分数')
+        return
+      }
       const url = []
       this.objList1.forEach(d => url.push(d.url))
       this.$set(this.creatOrder.work_content[this.lengthIndex], 'abnormal_operation_desc', this.projectForm.abnormal_operation_desc)
       this.$set(this.creatOrder.work_content[this.lengthIndex], 'abnormal_operation_result', this.projectForm.abnormal_operation_result)
       this.$set(this.creatOrder.work_content[this.lengthIndex], 'abnormal_operation_url', url)
       if (this.creatOrder.work_content.every(d =>
-        (d.job_item_check_type === '数值范围' && d.job_item_check_standard_a <= d.operation_result && d.job_item_check_standard_b >= d.operation_result) ||
+        (d.job_item_check_type === '数值范围' && changeNum(d.job_item_check_standard_a) <= changeNum(d.operation_result) && changeNum(d.job_item_check_standard_b) >= changeNum(d.operation_result)) ||
         (d.job_item_check_type !== '数值范围' && d.job_item_check_standard === d.operation_result) ||
-        (d.job_item_check_type === '数值范围' && d.job_item_check_standard_a <= d.abnormal_operation_result && d.job_item_check_standard_b >= d.abnormal_operation_result) ||
+        (d.job_item_check_type === '数值范围' && changeNum(d.job_item_check_standard_a) <= changeNum(d.abnormal_operation_result) && changeNum(d.job_item_check_standard_b) >= changeNum(d.abnormal_operation_result)) ||
         (d.job_item_check_type !== '数值范围' && d.job_item_check_standard === d.abnormal_operation_result)
       )) {
         this.creatOrder.result_repair_final_result = '正常'
@@ -905,9 +929,9 @@ export default {
     changeDesc() {
       this.desc = []
       this.creatOrder.work_content.forEach(d => {
-        if ((d.job_item_check_type === '数值范围' && d.job_item_check_standard_a <= d.operation_result && d.job_item_check_standard_b >= d.operation_result) ||
+        if ((d.job_item_check_type === '数值范围' && changeNum(d.job_item_check_standard_a) <= changeNum(d.operation_result) && changeNum(d.job_item_check_standard_b) >= changeNum(d.operation_result)) ||
         (d.job_item_check_type !== '数值范围' && d.job_item_check_standard === d.operation_result) ||
-        (d.job_item_check_type === '数值范围' && d.job_item_check_standard_a <= d.abnormal_operation_result && d.job_item_check_standard_b >= d.abnormal_operation_result) ||
+        (d.job_item_check_type === '数值范围' && changeNum(d.job_item_check_standard_a) <= changeNum(d.abnormal_operation_result) && changeNum(d.job_item_check_standard_b) >= changeNum(d.abnormal_operation_result)) ||
         (d.job_item_check_type !== '数值范围' && d.job_item_check_standard === d.abnormal_operation_result)) {
           return false
         } else {
@@ -1045,8 +1069,8 @@ export default {
           this.equip_jobitem_standard_id = row.work_content[0].equip_jobitem_standard_id
           this.creatOrder.work_content.map((item, index) => {
             if (item.job_item_check_type === '数值范围') {
-              item.job_item_check_standard_a = Number(item.job_item_check_standard.split('-')[0])
-              item.job_item_check_standard_b = Number(item.job_item_check_standard.split('-')[1])
+              item.job_item_check_standard_a = item.job_item_check_standard.split('-')[0]
+              item.job_item_check_standard_b = item.job_item_check_standard.split('-')[1]
             } else {
               delete item.job_item_check_standard_a
               delete item.job_item_check_standard_b
@@ -1057,8 +1081,6 @@ export default {
             if (d.job_item_check_type === '数值范围') {
               if (!d.operation_result || d.operation_result === '') {
                 d.operation_result = 1
-              } else {
-                d.operation_result = Number(d.operation_result)
               }
             } else {
               if (!d.operation_result || d.operation_result === '') {
@@ -1069,9 +1091,9 @@ export default {
           this.creatOrder.work_content = arr
         }
         if (this.creatOrder.work_content.every(d =>
-          (d.job_item_check_type === '数值范围' && d.job_item_check_standard_a <= d.operation_result && d.job_item_check_standard_b >= d.operation_result) ||
+          (d.job_item_check_type === '数值范围' && changeNum(d.job_item_check_standard_a) <= changeNum(d.operation_result) && changeNum(d.job_item_check_standard_b) >= changeNum(d.operation_result)) ||
           (d.job_item_check_type !== '数值范围' && d.job_item_check_standard === d.operation_result) ||
-          (d.job_item_check_type === '数值范围' && d.job_item_check_standard_a <= d.abnormal_operation_result && d.job_item_check_standard_b >= d.abnormal_operation_result) ||
+          (d.job_item_check_type === '数值范围' && changeNum(d.job_item_check_standard_a) <= changeNum(d.abnormal_operation_result) && changeNum(d.job_item_check_standard_b) >= changeNum(d.abnormal_operation_result)) ||
           (d.job_item_check_type !== '数值范围' && d.job_item_check_standard === d.abnormal_operation_result)
         )) {
           this.creatOrder.result_repair_final_result = '正常'
@@ -1086,9 +1108,9 @@ export default {
     },
     changeRusult() {
       if (this.creatOrder.work_content.every(d =>
-        (d.job_item_check_type === '数值范围' && d.job_item_check_standard_a <= d.operation_result && d.job_item_check_standard_b >= d.operation_result) ||
+        (d.job_item_check_type === '数值范围' && changeNum(d.job_item_check_standard_a) <= changeNum(d.operation_result) && changeNum(d.job_item_check_standard_b) >= changeNum(d.operation_result)) ||
         (d.job_item_check_type !== '数值范围' && d.job_item_check_standard === d.operation_result) ||
-        (d.job_item_check_type === '数值范围' && d.job_item_check_standard_a <= d.abnormal_operation_result && d.job_item_check_standard_b >= d.abnormal_operation_result) ||
+        (d.job_item_check_type === '数值范围' && changeNum(d.job_item_check_standard_a) <= changeNum(d.abnormal_operation_result) && changeNum(d.job_item_check_standard_b) >= changeNum(d.abnormal_operation_result)) ||
         (d.job_item_check_type !== '数值范围' && d.job_item_check_standard === d.abnormal_operation_result)
       )) {
         this.creatOrder.result_repair_final_result = '正常'
@@ -1096,7 +1118,7 @@ export default {
         this.creatOrder.result_repair_final_result = '不正常'
       }
       this.creatOrder.work_content.forEach(d => {
-        if ((d.job_item_check_type === '数值范围' && d.job_item_check_standard_a <= d.operation_result && d.job_item_check_standard_b >= d.operation_result) ||
+        if ((d.job_item_check_type === '数值范围' && changeNum(d.job_item_check_standard_a) <= changeNum(d.operation_result) && changeNum(d.job_item_check_standard_b) >= changeNum(d.operation_result)) ||
         (d.job_item_check_type !== '数值范围' && d.job_item_check_standard === d.operation_result)) {
           delete d.abnormal_operation_desc
           delete d.abnormal_operation_result
@@ -1104,6 +1126,14 @@ export default {
         }
       })
       this.changeDesc()
+    },
+    changeNum: function(a) {
+      const b = String(a)
+      if (b.indexOf('/') !== -1) {
+        return Number(b.split('/')[0] / b.split('/')[1])
+      } else {
+        return Number(b)
+      }
     },
     handleClose(done) {
       if (this.$refs.elUploadImg) {
@@ -1116,8 +1146,13 @@ export default {
       }
     },
     async generateFun() {
+      var reg = /^(\d+(\.\d+)?)(\/\d+(\.\d+)?)?$/
       if (this.objList.length === 0) {
         this.$message('执行巡检工单时图片必须上传')
+        return
+      }
+      if (this.creatOrder.work_content.some(d => (d.job_item_check_type === '数值范围' && !reg.test(d.operation_result)))) {
+        this.$message('数值范围时巡检结果只能为整数小数分数')
         return
       }
       const url = []
@@ -1182,6 +1217,14 @@ export default {
       this.search.page_size = page_size
       this.getList()
     }
+  }
+}
+function changeNum(a) {
+  const b = String(a)
+  if (b.indexOf('/') !== -1) {
+    return Number(b.split('/')[0] / b.split('/')[1])
+  } else {
+    return Number(b)
   }
 }
 </script>

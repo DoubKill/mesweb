@@ -31,6 +31,7 @@ export default {
   GroupAddUserUrl: SystemUrl + 'group_add_user/',
   ResetPassword: '/api/v1/system/reset-password/',
   MaterialsUrl: '/api/v1/recipe/materials/',
+  XlRecipeNotice: '/api/v1/terminal/xl-recipe-notice/',
   MaterialInfoIssue: '/api/v1/terminal/material-info-issue/', // 原材料下发至称量系统接口
   ProductInfosUrl: '/api/v1/recipe/product-infos/',
   ValidateVersionsUrl: '/api/v1/recipe/validate-versions/',
@@ -632,6 +633,7 @@ export default {
   ImportXlx: '/api/v1/plan/scheduling-result/import_xlx/',
   ScheduleNos: '/api/v1/plan/scheduling-result/schedule_nos/',
   SchedulingProductDeclareSummary: '/api/v1/plan/scheduling-product-declare-summary/', // 胶料计划库存汇总
+  SchedulingProductImport: '/api/v1/plan/scheduling-product-declare-summary/import_xlsx/',
   SchedulingProcedures: '/api/v1/plan/scheduling-procedures/', // 自动排程
   UpSequence: '/api/v1/plan/scheduling-product-declare-summary/up-sequence/', // 上调计划
   DownSequence: '/api/v1/plan/scheduling-product-declare-summary/down-sequence/', // 下调计划
@@ -641,7 +643,15 @@ export default {
   DailyProductionCompletionReport: '/api/v1/production/daily-production-completion-report/', // 月产量完成
   MonthlyOutputStatisticsReport: '/api/v1/production/monthly-output-statistics-report/',
   SchedulingStockSummary: '/api/v1/plan/scheduling-stock-summary/',
-  Sb: '/api/v1/production/nishisb/',
   WmsNucleinManagement: '/api/v1/inventory/wms-nuclein-management/',
-  MaterialTestPlan: '/api/v1/quality/material-test-plan/'
+  MaterialTestPlan: '/api/v1/quality/material-test-plan/',
+  MaterialTestPlanDetail: '/api/v1/quality/material-test-plan-detail/',
+  PerformanceJobLadder: '/api/v1/production/performance-job-ladder/', // 绩效计算 岗位阶梯表
+  ProductInfoDj: '/api/v1/production/product-info-dj/', // 丁基胶规格设定
+  PerformanceUnitPrice: '/api/v1/production/performance-unit-price/', // 绩效计算 单价表
+  Employeeattendancerecords: '/api/v1/production/employee_attendance_records/', // 员工出勤记录表
+  Employeeattendancerecordsexport: '/api/v1/production/employee_attendance_records_export/', // 员工出勤记录表导出模板
+  SummaryOfMillOutput: '/api/v1/production/summary_of_mill_output/', // 密炼机台产量汇总表
+  Sb: '/api/v1/production/nishisb/',
+  WmsExceptHandle: '/api/v1/inventory/wms-except-handle/'
 }
