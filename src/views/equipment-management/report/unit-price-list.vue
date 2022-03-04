@@ -43,7 +43,8 @@
           min-width="20"
         >
           <template slot-scope="{row}">
-            <el-input-number v-model="row.E580_pt" controls-position="right" :min="0" :precision="2" />
+            <span v-if="loading">{{ row.E580_pt }}</span>
+            <el-input-number v-else v-model="row.E580_pt" controls-position="right" :min="0" :max="99.99" :precision="2" />
           </template>
         </el-table-column>
         <el-table-column
@@ -53,7 +54,8 @@
           min-width="20"
         >
           <template slot-scope="{row}">
-            <el-input-number v-model="row.E580_dj" controls-position="right" :min="0" :precision="2" />
+            <span v-if="loading">{{ row.E580_dj }}</span>
+            <el-input-number v-else v-model="row.E580_dj" controls-position="right" :min="0" :max="99.99" :precision="2" />
           </template>
         </el-table-column>
       </el-table-column>
@@ -70,7 +72,8 @@
           min-width="20"
         >
           <template slot-scope="{row}">
-            <el-input-number v-model="row.F370_pt" controls-position="right" :min="0" :precision="2" />
+            <span v-if="loading">{{ row.F370_pt }}</span>
+            <el-input-number v-else v-model="row.F370_pt" controls-position="right" :min="0" :max="99.99" :precision="2" />
           </template>
         </el-table-column>
         <el-table-column
@@ -80,7 +83,8 @@
           min-width="20"
         >
           <template slot-scope="{row}">
-            <el-input-number v-model="row.F370_dj" controls-position="right" :min="0" :precision="2" />
+            <span v-if="loading">{{ row.F370_dj }}</span>
+            <el-input-number v-else v-model="row.F370_dj" controls-position="right" :min="0" :max="99.99" :precision="2" />
           </template>
         </el-table-column>
       </el-table-column>
@@ -97,7 +101,8 @@
           min-width="20"
         >
           <template slot-scope="{row}">
-            <el-input-number v-model="row.GK320_pt" controls-position="right" :min="0" :precision="2" />
+            <span v-if="loading">{{ row.GK320_pt }}</span>
+            <el-input-number v-else v-model="row.GK320_pt" controls-position="right" :min="0" :max="99.99" :precision="2" />
           </template>
         </el-table-column>
         <el-table-column
@@ -107,7 +112,8 @@
           min-width="20"
         >
           <template slot-scope="{row}">
-            <el-input-number v-model="row.GK320_dj" controls-position="right" :min="0" :precision="2" />
+            <span v-if="loading">{{ row.GK320_dj }}</span>
+            <el-input-number v-else v-model="row.GK320_dj" controls-position="right" :min="0" :max="99.99" :precision="2" />
           </template>
         </el-table-column>
       </el-table-column>
@@ -124,7 +130,8 @@
           min-width="20"
         >
           <template slot-scope="{row}">
-            <el-input-number v-model="row.GK255_pt" controls-position="right" :min="0" :precision="2" />
+            <span v-if="loading">{{ row.GK255_pt }}</span>
+            <el-input-number v-else v-model="row.GK255_pt" controls-position="right" :min="0" :max="99.99" :precision="2" />
           </template>
         </el-table-column>
         <el-table-column
@@ -134,7 +141,8 @@
           min-width="20"
         >
           <template slot-scope="{row}">
-            <el-input-number v-model="row.GK255_dj" controls-position="right" :min="0" :precision="2" />
+            <span v-if="loading">{{ row.GK255_dj }}</span>
+            <el-input-number v-else v-model="row.GK255_dj" controls-position="right" :min="0" :max="99.99" :precision="2" />
           </template>
         </el-table-column>
       </el-table-column>
@@ -151,7 +159,8 @@
           min-width="20"
         >
           <template slot-scope="{row}">
-            <el-input-number v-model="row.GK400_pt" controls-position="right" :min="0" :precision="2" />
+            <span v-if="loading">{{ row.GK400_pt }}</span>
+            <el-input-number v-else v-model="row.GK400_pt" controls-position="right" :min="0" :max="99.99" :precision="2" />
           </template>
         </el-table-column>
         <el-table-column
@@ -161,7 +170,8 @@
           min-width="20"
         >
           <template slot-scope="{row}">
-            <el-input-number v-model="row.GK400_dj" controls-position="right" :min="0" :precision="2" />
+            <span v-if="loading">{{ row.GK400_dj }}</span>
+            <el-input-number v-else v-model="row.GK400_dj" controls-position="right" :min="0" :max="99.99" :precision="2" />
           </template>
         </el-table-column>
       </el-table-column>
@@ -196,12 +206,15 @@ export default {
         this.loading = false
       }
     },
-    exportTable() {
-      exportExcel('绩效计算 单价表')
+    async exportTable() {
+      await this.$set(this, 'loading', true)
+      await exportExcel('绩效计算 单价表')
+      setTimeout(() => {
+        this.loading = false
+      }, 1000)
     },
     async submitFun() {
       try {
-        console.log(this.tableData)
         this.btnLoading = true
         await performanceUnitPrice('post', null, { data: this.tableData })
         this.$message.success('保存成功')

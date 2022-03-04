@@ -4,7 +4,7 @@
     <el-form :inline="true">
       <el-form-item label="工厂日期">
         <el-date-picker
-          v-model="search.date"
+          v-model="search.factory_date"
           type="date"
           :clearable="false"
           format="yyyy-MM-dd"
@@ -97,7 +97,7 @@ export default {
   data() {
     return {
       search: {
-        date: setDate()
+        factory_date: setDate()
       },
       machineList: [],
       loading: false,

@@ -31,11 +31,46 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="部门">
+        <el-select
+          v-model="getParams.section_id"
+          clearable
+          placeholder="请选择部门"
+          @change="numChanged"
+        >
+          <el-option
+            v-for="item in sectionPick"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item
         v-if="permissionObj.user.indexOf('add')>-1"
         style="float: right"
       >
         <el-button @click="showCreateUserDialog">新建</el-button>
+      </el-form-item>
+      <el-form-item style="float:right">
+        <el-button
+          v-permission="['user','import']"
+        >
+          <a
+            :href="`${templateFileUrl}user.xlsx`"
+            download="用户管理导入模板.xlsx"
+          >导出Excel模板</a>
+        </el-button>
+        <el-upload
+          v-permission="['user','import']"
+          style="margin-left:8px;display:inline-block"
+          action="string"
+          accept=".xls, .xlsx"
+          :http-request="Upload"
+          :show-file-list="false"
+        >
+          <el-button>导入Excel</el-button>
+        </el-upload>
       </el-form-item>
     </el-form>
 
@@ -62,6 +97,11 @@
         min-width="10"
         prop="username"
         label="用户名"
+      />
+      <el-table-column
+        min-width="10"
+        prop="id_card_num"
+        label="身份证"
       />
       <el-table-column
         min-width="10"
@@ -177,6 +217,16 @@
             v-model="userForm.username"
             :disabled="userForm.id ? true:false"
           />
+        </el-form-item>
+        <el-form-item
+          label="身份证"
+          prop="id_card_num"
+        >
+          <el-input
+            v-model="userForm.id_card_num"
+            :disabled="userForm.id&&!card_num"
+          />
+          <el-button v-if="userForm.id" v-permission="['user','cid']" style="margin-left:20px" @click="card_num=true">修改身份证</el-button>
         </el-form-item>
         <el-form-item
           v-if="userForm.id"
@@ -312,7 +362,7 @@
 
 <script>
 import { personnelsUrl } from '@/api/user'
-import { delUser } from '@/api/jqy'
+import { delUser, userImport } from '@/api/jqy'
 import { sectionTree } from '@/api/base_w_four'
 import { globalCodesUrl } from '@/api/base_w'
 // import { permissions } from '@/api/permission'
@@ -326,10 +376,11 @@ export default {
   components: { page, transferRoles },
   data() {
     var validatePass = (rule, value, callback) => {
+      var reg = /(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[\W_]).{8,}/
       if (!value) {
         callback(new Error('请输入密码'))
-      } else if (value && (value.length < 3 || value.length > 16)) {
-        callback(new Error('请输入3~16位长度的密码'))
+      } else if (value && !reg.test(value)) {
+        callback(new Error('密码必须同时包含大写英文,小写英文,数字,符号,且不少于8位'))
       } else {
         if (this.userForm.checkPass !== '') {
           this.$refs.userForm.validateField('checkPass')
@@ -368,8 +419,9 @@ export default {
       }
     }
     var validatePass4 = (rule, value, callback) => {
-      if (value && (value.length < 3 || value.length > 16)) {
-        callback(new Error('请输入3~16位长度的密码'))
+      var reg = /(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[\W_]).{8,}/
+      if (value && (!reg.test(value))) {
+        callback(new Error('密码必须同时包含大写英文,小写英文,数字,符号,且不少于8位'))
       } else {
         callback()
       }
@@ -414,6 +466,8 @@ export default {
       // permissionsArr: [],
       group_extensions: [],
       loading: true,
+      card_num: false,
+      btnExportLoad: false,
       loadingTable: false,
       userFormError: {},
       optionsUser: [
@@ -427,6 +481,7 @@ export default {
         }
       ],
       optionsSection: [],
+      sectionPick: [],
       teamList: []
     }
   },
@@ -464,6 +519,7 @@ export default {
     this.currentChange()
     this.getOptionsSection()
     this.getTeamList()
+    this.templateFileUrl = process.env.BASE_URL
   },
   methods: {
     changeUsername(e) {
@@ -488,6 +544,8 @@ export default {
         } else {
           this.optionsSection = []
         }
+        const data1 = await sectionTree('get', null, { params: { all: 1 }})
+        this.sectionPick = data1.results
       } catch (error) {
         //
       }
@@ -633,6 +691,17 @@ export default {
         } else {
           return false
         }
+      })
+    },
+    Upload(param) {
+      const formData = new FormData()
+      formData.append('file', param.file)
+      userImport('post', null, { data: formData }).then(response => {
+        this.$message({
+          type: 'success',
+          message: response
+        })
+        this.currentChange()
       })
     },
     handleClose(done) {

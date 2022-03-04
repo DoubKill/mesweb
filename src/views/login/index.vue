@@ -128,7 +128,11 @@ export default {
         if (valid) {
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm).then(() => {
-            this.$router.push({ path: '/' })
+            this.$router.push({
+              path: '/',
+              query: {
+                password: this.loginForm.password
+              }})
             this.loading = false
           }).catch(() => {
             this.loading = false

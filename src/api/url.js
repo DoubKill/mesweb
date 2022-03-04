@@ -401,6 +401,9 @@ export default {
   XlReportBasic: '/api/v1/terminal/xl-report-basic/',
   XlReportWeight: '/api/v1/terminal/xl-report-weight/',
   XlPlan: '/api/v1/terminal/xl-plan/',
+  RotateClasses: '/api/v1/terminal/xl-plan/rotate_classes/',
+  UpDownMove: '/api/v1/terminal/xl-plan/up_down_move/',
+  CurrentFactoryDate: '/api/v1/basics/current-factory-date/',
   WmsStock: '/api/v1/inventory/wms-stock/',
   WmsWeightStock: '/api/v1/inventory/wms-weight-stock/',
   WmsEntrance: '/api/v1/inventory/wms-entrance/',
@@ -649,9 +652,16 @@ export default {
   PerformanceJobLadder: '/api/v1/production/performance-job-ladder/', // 绩效计算 岗位阶梯表
   ProductInfoDj: '/api/v1/production/product-info-dj/', // 丁基胶规格设定
   PerformanceUnitPrice: '/api/v1/production/performance-unit-price/', // 绩效计算 单价表
-  Employeeattendancerecords: '/api/v1/production/employee_attendance_records/', // 员工出勤记录表
-  Employeeattendancerecordsexport: '/api/v1/production/employee_attendance_records_export/', // 员工出勤记录表导出模板
-  SummaryOfMillOutput: '/api/v1/production/summary_of_mill_output/', // 密炼机台产量汇总表
+  Employeeattendancerecords: '/api/v1/production/employee-attendance-records/', // 员工出勤记录表
+  Employeeattendancerecordsexport: '/api/v1/production/employee-attendance-records-export/', // 员工出勤记录表导出模板
+  SummaryOfMillOutput: '/api/v1/production/summary-of-mill-output/', // 密炼机台产量汇总表
+  SetThePrice: '/api/v1/production/set-the-price/', // 称量机台产量汇总表单价设定
+  SummaryOfWeighingOutput: '/api/v1/production/summary-of-weighing-output/', // 称量机台产量汇总表
+  UserImport: '/api/v1/system/personnels/import_xlsx/',
   Sb: '/api/v1/production/nishisb/',
-  WmsExceptHandle: '/api/v1/inventory/wms-except-handle/'
+  WmsExceptHandle: '/api/v1/inventory/wms-except-handle/',
+
+  PerformanceSummary: '/api/v1/production/performance-summary/', // 薪资汇总表
+  PerformanceSubsidy: '/api/v1/production/performance-subsidy/',
+  IndependentPostTemplate: '/api/v1/production/independent-post-template/'
 }

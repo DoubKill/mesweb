@@ -20,6 +20,7 @@
         <el-button
           v-permission="['monthly_output_statistics_and_performance','export']"
           type="primary"
+          :loading="btnExportLoad"
           @click="exportTable"
         >导出Excel模板</el-button>
         <el-upload
