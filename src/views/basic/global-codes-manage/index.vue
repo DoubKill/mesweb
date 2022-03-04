@@ -59,7 +59,7 @@
                   type="danger"
                   plain
                   @click="handleGlobalCodeTypeDelete(scope.row)"
-                >{{ scope.row.use_flag ? '停用' : '启用' }}</el-button>
+                >{{ scope.row.use_flag ? '启用' : '停用' }}</el-button>
               </el-button-group>
             </template>
           </el-table-column>

@@ -13,11 +13,14 @@
               type="date"
               placeholder="选择日期"
               value-format="yyyy-MM-dd"
+              :clearable="false"
               @change="changeList(item,index)"
             />
           </el-form-item>
           <el-form-item label="班次">
             <class-select
+              :is-clearable="false"
+              :value-default="item.search.grouptime"
               @classSelected="classChanged($event,item,index)"
             />
           </el-form-item>
@@ -39,6 +42,9 @@
             <el-button v-permission="['xl_plan', 'reload']" type="primary" :disabled="item.currentRow&&item.currentRow.state!=='运行中'" @click="delFun(item,index,'重传',2)">计划重传</el-button>
             <el-button v-permission="['xl_plan', 'change']" type="primary" :disabled="item.currentRow&&item.currentRow.state!=='运行中'" @click="addFun(item,index,false)">修改车次</el-button>
             <el-button v-permission="['xl_plan', 'stop']" type="primary" :disabled="item.currentRow&&item.currentRow.state!=='运行中'" @click="delFun(item,index,'停止',4)">计划停止</el-button>
+
+            <el-button v-permission="['xl_plan', 'stop']" type="primary" :disabled="item.currentRow&&item.currentRow.state!=='等待'" @click="delFun(item,index,'上移',null)">上移</el-button>
+            <el-button v-permission="['xl_plan', 'stop']" type="primary" :disabled="item.currentRow&&item.currentRow.state!=='等待'" @click="delFun(item,index,'下移',null)">下移</el-button>
             <el-button type="primary" @click="debounceList(item,index)">刷新</el-button>
           </el-form-item>
         </el-form>
@@ -51,9 +57,9 @@
           @current-change="handleCurrentChange($event,index)"
         >
           <el-table-column
-            prop="id"
+            type="index"
             label="序号"
-            min-width="20"
+            width="50"
           />
           <el-table-column
             prop="planid"
@@ -107,12 +113,12 @@
             </template>
           </el-table-column>
         </el-table>
-        <page
+        <!-- <page
           :old-page="false"
           :total="item.total"
           :current-page="item.search.page"
           @currentChange="currentChange(arguments,item,index)"
-        />
+        /> -->
       </div>
     </div>
 
@@ -163,16 +169,17 @@
 </template>
 
 <script>
-import { debounce, setDate, checkPermission } from '@/utils'
+// setDate
+import { debounce, checkPermission } from '@/utils'
 import selectBatchingEquip from '../components/select-batching-equip'
 import classSelect from '@/components/ClassSelect'
 import recipeSelect from '../components/recipe-select'
-import { xlPlan, updateFlagCount } from '@/api/base_w_three'
-import page from '@/components/page'
+import { xlPlan, upDownMove, updateFlagCount, currentFactoryDate } from '@/api/base_w_three'
+// import page from '@/components/page'
 
 export default {
   name: 'SmallMaterialWeightPlan',
-  components: { selectBatchingEquip, classSelect, recipeSelect, page },
+  components: { selectBatchingEquip, classSelect, recipeSelect },
   data() {
     return {
       equipValue: [],
@@ -204,7 +211,8 @@ export default {
       dialogAdd: false,
       loading: false,
       btnLoading: false,
-      readIs: false
+      readIs: false,
+      getFactoryDate: {}
     }
   },
   created() {
@@ -225,7 +233,8 @@ export default {
         const data = await xlPlan('get', null, { params: this.currentSearch })
         this.readIs = false
         this.loading = false
-        return { data: data.results || [], total: data.count || 0 }
+        return { data: data || [] }
+        // total: data.count || 0 }
       } catch (e) {
         this.loading = false
         this.readIs = false
@@ -273,14 +282,26 @@ export default {
         //
       }
     },
-    selectBatchEquip(val) {
+    async getSurrentFactoryDate() {
+      try {
+        const data = await currentFactoryDate('get')
+        this.getFactoryDate = data
+        this.ruleForm.date_time = data.factory_date
+        this.ruleForm.grouptime = data.classes
+      } catch (e) {
+        //
+      }
+    },
+    async selectBatchEquip(val) {
+      await this.getSurrentFactoryDate()
       const record = this.allTable
       if (val) {
         this.allTable = []
         val.forEach(async d => {
           this.currentSearch = {
             equip_no: d.equip_no,
-            date_time: setDate()
+            date_time: this.getFactoryDate.factory_date,
+            grouptime: this.getFactoryDate.classes
           }
           const b = this.allTable.filter(D => D.equip_no === d.equip_no)
           if (b.length === 0) {
@@ -289,11 +310,11 @@ export default {
               this.allTable.push(...c)
             } else {
               const a = await this.getList()
-
               this.allTable.push(
                 {
                   equip_no: d.equip_no,
-                  search: { date_time: setDate() },
+                  search: { date_time: this.getFactoryDate.factory_date,
+                    grouptime: this.getFactoryDate.classes },
                   tableList: a ? a.data : [],
                   total: a ? a.total : 0,
                   currentRow: {}
@@ -338,8 +359,34 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        const _api = val === '删除' ? 'delete' : 'patch'
-        xlPlan(_api, this.allTable[index].currentRow.id, { data: { equip_no: row.equip_no, action: action }})
+        let _api = val === '删除' ? 'delete' : 'patch'
+        let id = this.allTable[index].currentRow.id
+        let _xlPlan = xlPlan
+        const date_time = this.allTable[index].search.date_time
+
+        let n_id = null
+        if (['上移', '下移'].includes(val)) {
+          const _index = this.allTable[index].tableList.indexOf(this.allTable[index].tableList.filter(d => d.id === id)[0])
+          if (val === '上移') {
+            if (_index === 0) {
+              this.$message('不可移动')
+              return
+            }
+            n_id = this.allTable[index].tableList[_index - 1].id
+          } else if (val === '下移') {
+            if (_index === this.allTable[index].tableList.length - 1) {
+              this.$message('不可移动')
+              return
+            }
+            n_id = this.allTable[index].tableList[_index + 1].id
+            console.log(n_id, '_index')
+          }
+          _api = 'post'
+          id = null
+          _xlPlan = upDownMove
+        }
+        _xlPlan(_api, id, { data: { equip_no: row.equip_no, c_id: this.allTable[index].currentRow.id,
+          n_id: n_id, action: action, date_time: date_time }})
           .then(response => {
             this.$message({
               type: 'success',

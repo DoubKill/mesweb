@@ -100,6 +100,16 @@
                 />
               </template>
             </el-table-column>
+            <el-table-column label="操作" width="80px">
+              <template slot-scope="{row}">
+                <el-button
+                  v-if="!checkPermission(['xl_recipe','merge'])"
+                  size="mini"
+                  type="danger"
+                  @click.stop="handleGlobalCodeTypeDelete(row,index)"
+                >{{ row.use_not ? '启用' : '停用' }}</el-button>
+              </template>
+            </el-table-column>
             <el-table-column label="分包数" width="120px">
               <template slot-scope="{row}">
                 <el-input-number
@@ -301,6 +311,34 @@ export default {
       } catch (e) {
         this.loading = false
       }
+    },
+    handleGlobalCodeTypeDelete: function(row, faI) {
+      var str = row.use_not ? '启用' : '停用'
+      const use_not = row.use_not ? 0 : 1
+      this.$confirm('此操作将' + str + ', 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        updateFlagCount('post', null, { data: {
+          equip_no: this.allTable[faI].equip_no,
+          id: row.id, use_not: use_not
+        }})
+          .then(async() => {
+            this.$message({
+              type: 'success',
+              message: '操作成功!'
+            })
+            const data = await this.getList()
+            this.allTable[faI].tableList = data.data
+            this.allTable[faI].total = data.total
+            this.allTable[faI].tableList1 = []
+          }).catch(() => {
+            //
+          })
+      }).catch(function() {
+
+      })
     }
   }
 }
