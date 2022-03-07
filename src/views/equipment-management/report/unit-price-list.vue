@@ -4,12 +4,12 @@
     <el-form :inline="true">
       <el-form-item style="float:right">
         <el-button
-          v-permission="['equip_part','export']"
+          v-permission="['performance_unit_price','export']"
           type="primary"
           @click="exportTable"
         >导出Excel</el-button>
         <el-button
-          v-permission="['equip_mtbf_mttr_setting', 'change']"
+          v-permission="['performance_unit_price', 'save']"
           type="primary"
           :loading="btnLoading"
           @click="submitFun"

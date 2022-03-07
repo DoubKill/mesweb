@@ -18,7 +18,7 @@
       </el-form-item>
       <el-form-item style="float:right">
         <el-button
-          v-permission="['monthly_output_statistics_and_performance','export']"
+          v-permission="['employee_attendance_records','export']"
           type="primary"
           :loading="btnExportLoad"
           @click="exportTable"
@@ -31,7 +31,7 @@
           :http-request="Upload"
           :show-file-list="false"
         >
-          <el-button type="primary">导入Excel</el-button>
+          <el-button v-permission="['employee_attendance_records','import']" type="primary">导入Excel</el-button>
         </el-upload>
       </el-form-item>
     </el-form>

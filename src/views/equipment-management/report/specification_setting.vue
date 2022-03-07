@@ -9,7 +9,7 @@
         <el-input v-model="search.product_no" clearable placeholder="胶料编码" @input="changeSearch" />
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button v-permission="['equip_part', 'add']" type="primary" @click="onSubmit">添加</el-button>
+        <el-button v-permission="['product_info_dj', 'add']" type="primary" @click="onSubmit">添加</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -52,12 +52,12 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
-              v-permission="['equip_part', 'change']"
+              v-permission="['product_info_dj', 'change']"
               size="mini"
               @click="showEditDialog(scope.row)"
             >编辑</el-button>
             <el-button
-              v-permission="['equip_part', 'delete']"
+              v-permission="['product_info_dj', 'delete']"
               size="mini"
               type="danger"
               plain

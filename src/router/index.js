@@ -883,7 +883,7 @@ export let asyncRoutes = [
               meta: {
                 faName: 'ScheduleBasicData',
                 title: '丁基胶 规格设定',
-                permissionName: ''
+                permissionName: 'product_info_dj'
               }
             }
           ]
@@ -1141,7 +1141,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'StatisticalReport',
               title: '员工绩效汇总表',
-              permissionName: ''
+              permissionName: 'performance_summary'
             }
           },
           {
@@ -1151,7 +1151,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'StatisticalReport',
               title: '岗位阶梯表',
-              permissionName: ''
+              permissionName: 'performance_job_ladder'
             }
           },
           {
@@ -1161,7 +1161,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'StatisticalReport',
               title: '绩效计算 单价表',
-              permissionName: ''
+              permissionName: 'performance_unit_price'
             }
           },
           {
@@ -1171,7 +1171,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'StatisticalReport',
               title: '员工出勤记录表',
-              permissionName: ''
+              permissionName: 'employee_attendance_records'
             }
           },
           {
@@ -1181,7 +1181,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'StatisticalReport',
               title: '密炼机台产量汇总表',
-              permissionName: ''
+              permissionName: 'summary_of_mill_output'
             }
           },
           {
@@ -1191,7 +1191,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'StatisticalReport',
               title: '称量机台产量汇总表',
-              permissionName: ''
+              permissionName: 'summary_of_weighing_output'
             }
           },
           // {
