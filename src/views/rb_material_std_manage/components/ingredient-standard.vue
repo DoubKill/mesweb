@@ -66,7 +66,7 @@
             />
           </template>
         </el-table-column>
-        <el-table-column v-for="(item) in formObj.enable_equip" :key="item" :label="item">
+        <el-table-column v-for="(item) in formObj.enable_equip" :key="item" :label="item" width="120">
           <template slot-scope="{row}">
             <el-select
               v-model="row.master[item]"
