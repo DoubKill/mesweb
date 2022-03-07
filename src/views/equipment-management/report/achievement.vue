@@ -14,27 +14,8 @@
         />
       </el-form-item>
       <el-form-item label="姓名">
-        <el-input v-model="search.input" clearable @input="debounceFun" />
+        <el-input v-model="search.name_d" clearable @input="debounceFun" />
       </el-form-item>
-      <el-form-item label="多岗位合并基准">
-        <el-select
-          v-model="search.aaaaa"
-          clearable
-          placeholder="请选择"
-          filterable
-          @change="changeList"
-        >
-          <el-option
-            v-for="item in ['最大值']"
-            :key="item"
-            :label="item"
-            :value="item"
-          />
-        </el-select>
-      </el-form-item>
-      <!-- <el-form-item label="多岗位合并系数">
-        <el-input v-model="search.input" clearable @input="debounceFun" />
-      </el-form-item> -->
       <el-form-item style="float:right">
         <el-button
           type="primary"
@@ -58,38 +39,36 @@
       </el-form-item>
     </el-form>
     <el-table
+      :id="!dialogVisible1&&!dialogVisible&&!dialogVisible2?'out-table':''"
+      v-loading="loading"
       :data="tableData"
       style="width: 100%"
       border
     >
       <el-table-column
-        prop="date"
+        prop="name"
         label="名字"
         min-width="20"
-      >
-        <!-- <template slot-scope="{row}">
-          <el-link
-            type="primary"
-            @click="subsidyFilling(row)"
-          >{{ row.aa }}</el-link>
-        </template> -->
-      </el-table-column>
+      />
       <el-table-column
-        prop="date"
+        prop="是否定岗"
         label="是否独立上岗"
         min-width="20"
-      />
-      <el-table-column v-for="item in month" :key="item" :label="item+'日'">
+      >
+        <template slot-scope="{row}">
+          {{ row.是否定岗?'是':'否' }}
+        </template>
+      </el-table-column>
+      <el-table-column v-for="item in day" :key="item" :label="item+'日'">
         <el-table-column
-          prop="name"
           label="A"
           min-width="20"
         >
           <template slot-scope="{row}">
             <el-link
               type="primary"
-              @click="subsidyInfo(row)"
-            >{{ row.aa }}</el-link>
+              @click="subsidyInfo(row,'a班',item)"
+            >{{ row[item+'_a班'] }}</el-link>
           </template>
         </el-table-column>
         <el-table-column
@@ -100,42 +79,54 @@
           <template slot-scope="{row}">
             <el-link
               type="primary"
-              @click="subsidyInfo(row)"
-            >{{ row.aa }}</el-link>
+              @click="subsidyInfo(row,'c班',item)"
+            >{{ row[item+'_c班'] }}</el-link>
           </template>
         </el-table-column>
       </el-table-column>
       <el-table-column
-        prop="date"
+        prop="hj"
         label="产量工资合计"
         min-width="20"
       />
       <el-table-column
-        prop="date"
-        label="补贴合计"
-        min-width="20"
-      >
-        <template slot-scope="{row}">
-          <el-link
-            type="primary"
-            @click="subsidyList(row,true)"
-          >{{ row.aa }}</el-link>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="date"
+        prop="超产奖励"
         label="超产奖励"
         min-width="20"
       >
         <template slot-scope="{row}">
           <el-link
             type="primary"
-            @click="subsidyList(row,false)"
-          >{{ row.aa }}</el-link>
+            @click="subsidyList(row,3)"
+          >{{ row.超产奖励 }}</el-link>
         </template>
       </el-table-column>
       <el-table-column
-        prop="date"
+        prop="其他奖惩"
+        label="其他奖惩"
+        min-width="20"
+      >
+        <template slot-scope="{row}">
+          <el-link
+            type="primary"
+            @click="subsidyList(row,1)"
+          >{{ row.其他奖惩 }}</el-link>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="生产补贴"
+        label="生产补贴"
+        min-width="20"
+      >
+        <template slot-scope="{row}">
+          <el-link
+            type="primary"
+            @click="subsidyList(row,2)"
+          >{{ row.生产补贴 }}</el-link>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="all"
         label="工资总计"
         min-width="20"
       />
@@ -188,39 +179,42 @@
     </el-dialog>
 
     <el-dialog
-      :title="subsidyIs?'补贴列表':'超产奖列表'"
+      :title="subsidyIs===1?'其他奖惩列表':subsidyIs===2?'补贴列表':'超产奖列表'"
       :visible.sync="dialogVisible1"
       width="800px"
     >
       <el-form :inline="true">
         <el-form-item label="姓名">
-          <el-input v-model="currentInfo.input" disabled />
+          <el-input v-model="currentInfo.name" disabled />
         </el-form-item>
         <el-form-item style="float:right">
-          <el-button type="primary" @click="exportSubsidy(true)">导出Excel</el-button>
+          <el-button type="primary" @click="exportSubsidy(false)">导出Excel</el-button>
         </el-form-item>
       </el-form>
       <el-table
+        :id="dialogVisible1?'out-table':''"
         :data="tableData1"
         style="width: 100%"
         show-summary
         border
       >
         <el-table-column
-          prop="amount1"
+          prop="date"
           label="日期"
         />
         <el-table-column
-          prop="amount1"
+          v-if="subsidyIs!==3"
+          prop="group"
           label="班次"
         />
         <el-table-column
-          prop="amount1"
-          :label="subsidyIs?'补贴金额（元）':'超产奖金额（元）'"
+          prop="price"
+          :label="subsidyIs===2?'补贴金额（元）':'超产奖金额（元）'"
         />
         <el-table-column
-          prop="amount1"
-          :label="subsidyIs?'补贴说明':'超产奖说明'"
+          v-if="subsidyIs!==3"
+          prop="desc"
+          :label="subsidyIs===2?'补贴说明':'超产奖说明'"
         />
       </el-table>
       <div slot="footer" class="dialog-footer">
@@ -232,73 +226,87 @@
       :visible.sync="dialogVisible2"
       width="80%"
     >
-      <el-form :inline="true">
-        <el-form-item label="姓名">
-          <el-input v-model="currentInfo.input" disabled />
-        </el-form-item>
-        <el-form-item label="是否定岗">
-          <el-input v-model="currentInfo.input" disabled />
-        </el-form-item>
-        <el-form-item label="工厂日期">
-          <el-input v-model="currentInfo.input" disabled />
-        </el-form-item>
-        <el-form-item label="班组">
-          <el-input v-model="currentInfo.input" disabled />
-        </el-form-item>
-        <el-form-item style="float:right">
-          <el-button type="primary" @click="exportSubsidy(false)">导出Excel</el-button>
-        </el-form-item>
-      </el-form>
-      <el-table
-        :data="tableData2"
-        style="width: 100%"
-        border
-      >
-        <el-table-column
-          prop="amount1"
-          label="段数/项目"
-        />
-      </el-table>
-      <el-form :inline="true" style="margin-top:20px;" label-width="100px">
-        <el-form-item label="产量工资总计">
-          <el-input v-model="currentInfo.input" disabled />
-        </el-form-item><br>
-        <el-form-item label="超产奖励">
-          <el-input v-model="currentInfo.input" disabled />
-        </el-form-item>
-        <el-form-item label="机台目标值">
-          <el-input v-model="currentInfo.input" disabled />
-        </el-form-item>
-        <el-form-item label="机台最高值">
-          <el-input v-model="currentInfo.input" disabled />
-        </el-form-item><br>
-        <el-form-item label="其他奖惩">
-          <el-input v-model="currentInfo.input" />
-        </el-form-item>
-        <el-form-item label="奖惩说明">
-          <el-input v-model="currentInfo.input" style="width:350px;" />
-        </el-form-item><br>
-        <el-form-item label="生产补贴">
-          <el-input v-model="currentInfo.input" />
-        </el-form-item>
-        <el-form-item label="补贴说明">
-          <el-input v-model="currentInfo.input" style="width:350px;" />
-        </el-form-item><br>
-        <el-form-item label="工资总计">
-          <el-input v-model="currentInfo.input" disabled />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible2 = false">取 消</el-button>
-        <el-button type="primary" @click="handleSubmit">确 定</el-button>
+      <div v-loading="loading1">
+        <el-form :inline="true">
+          <el-form-item label="姓名">
+            <el-input v-model="currentInfo.name" disabled />
+          </el-form-item>
+          <el-form-item label="是否定岗">
+            <el-input v-model="currentInfo.是否定岗" disabled />
+          </el-form-item>
+          <el-form-item label="工厂日期">
+            <el-input v-model="currentInfo.factoryDate" disabled />
+          </el-form-item>
+          <el-form-item label="班组">
+            <el-input v-model="currentInfo._class" disabled />
+          </el-form-item>
+          <el-form-item style="float:right">
+            <el-button type="primary" @click="exportSubsidy(true)">导出Excel</el-button>
+          </el-form-item>
+        </el-form>
+        <el-table
+          :id="dialogVisible2?'out-table':''"
+          :data="tableData2"
+          style="width: 100%"
+          border
+          :row-class-name="tableRowClassName"
+        >
+          <el-table-column
+            prop="name"
+            label="段数/项目"
+          />
+          <el-table-column
+            v-for="item in sectionList"
+            :key="item.id"
+            :label="item.global_name"
+          >
+            <template slot-scope="{row}">
+              {{ row[item.global_name] }}
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-form :inline="true" style="margin-top:20px;" label-width="100px">
+          <el-form-item label="产量工资总计">
+            <el-input v-model="currentInfo.all_price" disabled />
+          </el-form-item><br>
+          <el-form-item label="超产奖励">
+            <el-input v-model="currentInfo.超产奖励" disabled />
+          </el-form-item>
+          <el-form-item label="机台目标值">
+            <el-input v-model="currentInfo.input" disabled />
+          </el-form-item>
+          <el-form-item label="机台最高值">
+            <el-input v-model="currentInfo.input" disabled />
+          </el-form-item><br>
+          <el-form-item label="其他奖惩">
+            <el-input v-model="currentInfo.其他奖惩1" />
+          </el-form-item>
+          <el-form-item label="奖惩说明">
+            <el-input v-model="currentInfo.奖惩说明1" style="width:350px;" />
+          </el-form-item><br>
+          <el-form-item label="生产补贴">
+            <el-input v-model="currentInfo.生产补贴1" />
+          </el-form-item>
+          <el-form-item label="补贴说明">
+            <el-input v-model="currentInfo.补贴说明1" style="width:350px;" />
+          </el-form-item><br>
+          <el-form-item label="工资总计">
+            <el-input v-model="currentInfo.工资总计" disabled />
+          </el-form-item>
+        </el-form>
+        <div slot="footer" style="text-align:right">
+          <el-button @click="dialogVisible2 = false">取 消</el-button>
+          <el-button type="primary" :loading="btnLoading" @click="handleSubmit">确 定</el-button>
+        </div>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { debounce } from '@/utils'
-import { setDate } from '@/utils'
+import { debounce, setDate, exportExcel } from '@/utils'
+import { globalCodesUrl } from '@/api/base_w'
+import { performanceSummary, performanceSubsidy, independentPostTemplate, independentPostTemplatePOST } from '@/api/base_w_five'
 export default {
   name: 'StatisticalReportAchievement',
   data() {
@@ -309,8 +317,10 @@ export default {
       value2: '',
       btnExportTemplateLoad: false,
       btnExportLoad: false,
-      tableData: [{ aa: 1 }],
+      tableData: [],
       month: '',
+      year: '',
+      day: '',
       dialogVisible: false,
       formData: {},
       rules: {
@@ -323,20 +333,46 @@ export default {
       tableData1: [],
       subsidyIs: false,
       dialogVisible2: false,
-      tableData2: []
+      tableData2: [],
+      loading: true,
+      loading1: false,
+      allArr: [],
+      btnLoading: false,
+      sectionList: []
     }
   },
   created() {
     this.getList()
+    this.getGlobalCodes()
   },
   methods: {
     async getList() {
       try {
+        if (!this.search.date) {
+          this.$message('请选择月份')
+          return
+        }
         const a = new Date(this.search.date)
         const y = a.getFullYear()
         const m = a.getMonth() + 1
-        this.month = new Date(y, m, 0).getDate()
-        // const data = await thStockSummsry('get', null, { params: this.search })
+        this.day = new Date(y, m, 0).getDate()
+        this.month = m
+        this.year = y
+        this.loading = true
+        const data = await performanceSummary('get', null, { params: this.search })
+        this.tableData = data.results
+      } catch (e) {
+        //
+      }
+      this.loading = false
+    },
+    async getGlobalCodes() {
+      try {
+        const data = await globalCodesUrl('get', { params: {
+          class_name: '胶料段次',
+          all: 1
+        }})
+        this.sectionList = data.results
       } catch (e) {
         //
       }
@@ -351,12 +387,51 @@ export default {
     subsidyFilling(row) {
       this.dialogVisible = true
     },
-    subsidyList(row, bool) {
-      this.subsidyIs = bool
+    async subsidyList(row, type) {
+      this.subsidyIs = type
       this.dialogVisible1 = true
+      this.currentInfo = row
+      try {
+        if (type === 3) {
+          const data = await performanceSummary('get', null, { params: { name_d: row.name, date: this.search.date, ccjl: 1 }})
+          this.tableData1 = data.results || []
+          return
+        }
+        const data = await performanceSubsidy('get', null, { params: { type: type, year: this.year, month: this.month, name: row.name }})
+        this.tableData1 = data
+      } catch (e) {
+        //
+      }
     },
-    subsidyInfo(row) {
+    async subsidyInfo(row, group, day) {
+      this.currentInfo = JSON.parse(JSON.stringify(row))
       this.dialogVisible2 = true
+      this.currentInfo.是否定岗 = this.currentInfo.是否定岗 ? '是' : '否'
+      this.currentInfo._class = group
+      this.currentInfo.factoryDate = this.year + '-' + this.month + '-' + day
+      try {
+        this.loading1 = true
+        const data = await performanceSummary('get', null, { params: { date: this.search.date, group_d: group, day_d: day, name_d: row.name }})
+        const data1 = await performanceSubsidy('get', null, { params: { date: this.year + '-' + this.month + '-' + day, name: row.name }})
+        this.allArr = data1 || []
+        this.currentInfo.all_price = Number(data.all_price ? data.all_price : 0)
+        this.currentInfo.超产奖励 = Number(data.超产奖励 ? data.超产奖励 : 0)
+        this.tableData2 = data.results
+        this.tableData2.push(data.hj)
+        if (data1.length) {
+          this.$set(this.currentInfo, '其他奖惩1', data1[0].price)
+          this.$set(this.currentInfo, '奖惩说明1', data1[0].desc)
+          this.$set(this.currentInfo, '生产补贴1', data1[1].price)
+          this.$set(this.currentInfo, '补贴说明1', data1[1].desc)
+        }
+        const a = this.currentInfo.其他奖惩1 ? this.currentInfo.其他奖惩1 : 0
+        const b = this.currentInfo.生产补贴1 ? this.currentInfo.生产补贴1 : 0
+        this.currentInfo.工资总计 = this.currentInfo.all_price + this.currentInfo.超产奖励 + a + b
+        this.currentInfo.工资总计 = Math.round(this.currentInfo.工资总计 * 100) / 100
+      } catch (e) {
+        //
+      }
+      this.loading1 = false
     },
     handleClose(done) {
       this.dialogVisible = false
@@ -366,41 +441,73 @@ export default {
     },
     classChanged(val) {
     },
-    handleSubmit() {},
+    async handleSubmit() {
+      try {
+        if (!this.allArr.length) {
+          this.allArr = [{ type: 1, date: this.currentInfo.factoryDate, group: this.currentInfo._class, name: this.currentInfo.name },
+            { type: 2, date: this.currentInfo.factoryDate, group: this.currentInfo._class, name: this.currentInfo.name }]
+        }
+        this.allArr[0].price = this.currentInfo.其他奖惩1
+        this.allArr[0].desc = this.currentInfo.奖惩说明1
+        this.allArr[1].price = this.currentInfo.生产补贴1
+        this.allArr[1].desc = this.currentInfo.补贴说明1
+        this.btnLoading = true
+
+        await performanceSubsidy('post', null, { data: this.allArr })
+        this.$message.success('补贴、奖惩修改成功')
+        this.dialogVisible2 = false
+        this.currentInfo = {}
+        this.getList()
+      } catch (e) {
+        //
+      }
+      this.btnLoading = false
+    },
     Upload(param) {
       const formData = new FormData()
       formData.append('file', param.file)
-      // equipSupplierImport('post', null, { data: formData }).then(response => {
-      //   this.$message({
-      //     type: 'success',
-      //     message: response
-      //   })
-      //   this.search.page = 1
-      //   this.getList()
-      // })
+      formData.append('date', this.search.date)
+      independentPostTemplatePOST('post', null, { data: formData }).then(response => {
+        this.$message({
+          type: 'success',
+          message: response
+        })
+        this.getList()
+      })
     },
-    exportTemplate() {},
+    exportTemplate() {
+      this.btnExportTemplateLoad = true
+      const obj = { date: this.search.date, export: 1 }
+      const _api = independentPostTemplate
+      _api('get', null, { params: obj })
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '否独立上岗模版.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportTemplateLoad = false
+        }).catch(e => {
+          this.btnExportTemplateLoad = false
+        })
+    },
     exportTable() {
-      // this.btnExportLoad = true
-      // const obj = Object.assign({ export: 1 }, this.search)
-      // const _api = equipSupplierListDown
-      // _api(obj)
-      //   .then(res => {
-      //     const link = document.createElement('a')
-      //     const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
-      //     link.style.display = 'none'
-      //     link.href = URL.createObjectURL(blob)
-      //     link.download = '员工绩效汇总表.xlsx' // 下载的文件名
-      //     document.body.appendChild(link)
-      //     link.click()
-      //     document.body.removeChild(link)
-      //     this.btnExportLoad = false
-      //   }).catch(e => {
-      //     this.btnExportLoad = false
-      //   })
+      exportExcel('员工绩效汇总表')
     },
     exportSubsidy(bool) {
-
+      let str = this.subsidyIs === 1 ? '其他奖惩列表' : this.subsidyIs === 2 ? '补贴列表' : '超产奖列表'
+      if (bool) {
+        str = '单日绩效计算详情'
+      }
+      exportExcel(str)
+    },
+    tableRowClassName({ row, rowIndex }) {
+      if (row.name === '产量工资合计') {
+        return 'summary-cell-style'
+      }
     }
   }
 }
