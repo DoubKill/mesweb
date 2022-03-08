@@ -16,7 +16,7 @@
       <el-form-item>
         <el-button type="primary" @click="getList">查询</el-button>
         <el-button
-          v-permission="['monthly_output_statistics_and_performance','export']"
+          v-permission="['summary_of_weighing_output','export']"
           type="primary"
           @click="exportTable('产量')"
         >导出产量汇总Excel</el-button>

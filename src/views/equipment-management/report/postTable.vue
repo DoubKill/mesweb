@@ -7,11 +7,11 @@
       </el-form-item>
       <el-form-item style="float:right">
         <el-button
-          v-permission="['equip_part','export']"
+          v-permission="['performance_job_ladder','export']"
           type="primary"
           @click="exportTable"
         >导出Excel</el-button>
-        <el-button v-permission="['equip_part', 'add']" type="primary" @click="onSubmit">新建</el-button>
+        <el-button v-permission="['performance_job_ladder', 'add']" type="primary" @click="onSubmit">新建</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -55,12 +55,12 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
-              v-permission="['equip_part', 'change']"
+              v-permission="['performance_job_ladder', 'change']"
               size="mini"
               @click="showEditDialog(scope.row)"
             >编辑</el-button>
             <el-button
-              v-permission="['equip_part', 'delete']"
+              v-permission="['performance_job_ladder', 'delete']"
               size="mini"
               type="danger"
               plain

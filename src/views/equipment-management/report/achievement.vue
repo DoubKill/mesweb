@@ -18,6 +18,7 @@
       </el-form-item>
       <el-form-item style="float:right">
         <el-button
+          v-permission="['performance_summary', 'export']"
           type="primary"
           :disabled="btnExportTemplateLoad"
           @click="exportTemplate"
@@ -29,9 +30,10 @@
           :http-request="Upload"
           :show-file-list="false"
         >
-          <el-button type="primary">导入是否独立上岗</el-button>
+          <el-button v-permission="['performance_summary', 'import']" type="primary">导入是否独立上岗</el-button>
         </el-upload>
         <el-button
+          v-permission="['performance_summary', 'export']"
           type="primary"
           :disabled="btnExportLoad"
           @click="exportTable"
