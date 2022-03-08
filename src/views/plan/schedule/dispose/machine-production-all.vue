@@ -76,7 +76,8 @@ export default {
         schedule_no: ''
       },
       scheduleNoList: [],
-      loading: false
+      loading: false,
+      currentColor: []
     }
   },
   created() {
@@ -101,11 +102,14 @@ export default {
         filters: true,
         manualRowMove: true,
         manualColumnResize: true,
+        className: 'htLeft',
         cells: (row, col, prop) => {
           // if (prop === 'plan_trains-Z01' && row === 1 && col === 1) {
           // }
           if (row === 1 || row === 0) {
-            return { renderer: topHeardCustomRenderer }
+            return { renderer: topHeardCustomRenderer, readOnly: true }
+          } else if (this.currentColor.includes(prop + '' + row)) {
+            return { renderer: customRenderer1 }
           } else {
             return { renderer: customRenderer }
           }
@@ -121,8 +125,10 @@ export default {
           if (source === 'loadData') {
             return
           }
-
-          change.forEach(DD => {
+          change.forEach((DD, _i) => {
+            if (DD[3]) {
+              this.currentColor.push(DD[1] + '' + DD[0])
+            }
             const key = DD[1]
             const _machine = DD[1].split('-')[1]
             const key1 = DD[1].split('-')[0]
@@ -159,6 +165,7 @@ export default {
           return
         }
         this.loading = true
+        this.currentColor = []
         const data = await schedulingResult('get', null, { params: this.getParams })
         this.loading = false
         const arr = []
@@ -316,6 +323,7 @@ export default {
         await schedulingResult('post', null, { data: { schedule_no: this.getParams.schedule_no,
           plan_data: obj }})
         this.$message.success('提交成功')
+        this.changeList()
       } catch (e) {
         //
       }
@@ -335,6 +343,10 @@ function sum(arr, params) {
 function customRenderer(instance, td) {
   Handsontable.renderers.NumericRenderer.apply(this, arguments)
   // td.style.backgroundColor = 'yellow'
+}
+function customRenderer1(instance, td) {
+  Handsontable.renderers.NumericRenderer.apply(this, arguments)
+  td.style.backgroundColor = 'yellow'
 }
 function topHeardCustomRenderer(instance, td) {
   Handsontable.renderers.NumericRenderer.apply(this, arguments)

@@ -429,6 +429,9 @@ export default {
       }
     },
     'formInline.enable_equip'(arr) {
+      if (!arr) {
+        arr = []
+      }
       // if (arr && arr.length) {
       this.tableDataAll.forEach((d, i) => {
         d.tableData.forEach((D, _index) => {
@@ -487,6 +490,8 @@ export default {
         package_cnt: undefined,
         package_type: 1
       }
+      this.formInline.enable_equip = []
+      this.formInline.send_success_equip = []
       this.batching_details_delete = []
       this.weight_material_delete = []
       this.weight_cnt_types_delete = []
@@ -678,7 +683,7 @@ export default {
       return ''
     },
     cellStyleFun({ row, column, rowIndex, columnIndex }) {
-      if (rowIndex === 0 && this.formInline.send_success_equip.includes(column.label)) {
+      if (rowIndex === 0 && this.formInline.send_success_equip && this.formInline.send_success_equip.includes(column.label)) {
         return 'background: #36a1cf;color:#fff'
       }
     },

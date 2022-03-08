@@ -251,6 +251,14 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item v-if="isLocation" label="批次号">
+          <el-input
+            v-model="formSearch.batch_no"
+            clearable
+            placeholder="请输入内容"
+            @input="getDialogDebounce"
+          />
+        </el-form-item>
       </el-form>
       <div
         v-if="isLocation"
@@ -985,6 +993,11 @@ export default {
         method: 'post',
         data: obj
       }).then(data => {
+        if (data.state === 0) {
+          this.$message.error(data.msg)
+          this.btnLoading = false
+          return
+        }
         this.$message.success('添加成功')
         this.handleClose1(false)
         this.search.pageNo = 1
