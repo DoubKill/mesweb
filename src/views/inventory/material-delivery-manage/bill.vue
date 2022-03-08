@@ -973,6 +973,9 @@ export default {
             const aaa = JSON.parse(JSON.stringify(d))
             aaa.WeightOfActual = aaa.WeightOfActualUnit
             aaa.StockDetailState = aaa.quality_status
+            delete aaa.avg_weight
+            delete aaa.quality_status
+            delete aaa.quantity
             arr.push(aaa)
           }
         })

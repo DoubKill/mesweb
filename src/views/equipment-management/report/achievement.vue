@@ -274,12 +274,12 @@
           <el-form-item label="超产奖励">
             <el-input v-model="currentInfo.超产奖励" disabled />
           </el-form-item>
-          <el-form-item label="机台目标值">
+          <!-- <el-form-item label="机台目标值">
             <el-input v-model="currentInfo.input" disabled />
           </el-form-item>
           <el-form-item label="机台最高值">
             <el-input v-model="currentInfo.input" disabled />
-          </el-form-item><br>
+          </el-form-item><br> -->
           <el-form-item label="其他奖惩">
             <el-input v-model="currentInfo.其他奖惩1" />
           </el-form-item>
