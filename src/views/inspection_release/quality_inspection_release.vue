@@ -242,14 +242,11 @@
       width="30%"
     >
       <el-form :model="abnormalForm" :rules="rules" label-width="150px">
-        <el-form-item label="品质状态" prop="quality_status">
-          <el-radio-group v-model="abnormalForm.quality_status">
-            <el-radio label="不合格">不合格</el-radio>
-            <el-radio label="待检品">待检品</el-radio>
-          </el-radio-group>
+        <el-form-item label="品质状态">
+          {{ abnormalForm.quality_status }}
         </el-form-item>
         <el-form-item label="处理结果" prop="result">
-          <el-radio-group v-model="abnormalForm.result">
+          <el-radio-group v-model="abnormalForm.result" @change="changeQuality">
             <el-radio label="放行">放行</el-radio>
             <el-radio label="不放行">不放行</el-radio>
           </el-radio-group>
@@ -302,7 +299,6 @@ export default {
       tableData: [],
       loading: false,
       rules: {
-        quality_status: [{ required: true, message: '不能为空', trigger: 'blur' }],
         result: [{ required: true, message: '不能为空', trigger: 'change' }]
       },
       qualityStatus: [
@@ -329,6 +325,13 @@ export default {
         this.loading = false
       } catch (e) {
         this.loading = false
+      }
+    },
+    changeQuality() {
+      if (this.abnormalForm.result === '放行') {
+        this.abnormalForm.quality_status = '合格'
+      } else {
+        this.abnormalForm.quality_status = '不合格'
       }
     },
     async DetailedList(row) {
@@ -360,25 +363,25 @@ export default {
     },
     async qualified(row, val) {
       try {
-        if (row.quality_status !== 1) {
-          this.loadId = row.batch_no
-          this.searchView.material_name = row.material_name
-          this.searchView.e_material_no = row.material_no
-          this.searchView.zc_material_code = row.zc_material_code
-          this.searchView.unit = row.unit
-          this.searchView.batch_no = row.batch_no
-          this.searchView.quality_status = row.quality_status
-          this.searchView.st = this.search.st
-          this.searchView.et = this.search.et
-          this.searchView.page_size = 1000000
-          const data = await wmsStorage('get', null, { params: this.searchView })
-          this.tableDataView = data.results
-          const obj = []
-          this.tableDataView.forEach(d => {
-            obj.push(d.lot_no)
-          })
-          this.trackingList = obj
-          if (val === '合格') {
+        this.loadId = row.batch_no
+        this.searchView.material_name = row.material_name
+        this.searchView.e_material_no = row.material_no
+        this.searchView.zc_material_code = row.zc_material_code
+        this.searchView.unit = row.unit
+        this.searchView.batch_no = row.batch_no
+        this.searchView.quality_status = row.quality_status
+        this.searchView.st = this.search.st
+        this.searchView.et = this.search.et
+        this.searchView.page_size = 1000000
+        const data = await wmsStorage('get', null, { params: this.searchView })
+        this.tableDataView = data.results
+        const obj = []
+        this.tableDataView.forEach(d => {
+          obj.push(d.lot_no)
+        })
+        this.trackingList = obj
+        if (val === '合格') {
+          if (row.quality_status === 5) {
             this.$confirm('此操作将该物料的品质状态改成' + val + '是否继续?', '提示', {
               confirmButtonText: '确定',
               cancelButtonText: '取消',
@@ -399,15 +402,15 @@ export default {
                 })
             })
           } else {
-            this.dialogVisibleAbnormal = true
-            this.abnormalForm = {
-              quality_status: '不合格',
-              result: '不放行',
-              except_reason: ''
-            }
+            this.$message('只有待检品能做设定合格处理')
           }
         } else {
-          this.$message('合格品不能处理')
+          this.dialogVisibleAbnormal = true
+          this.abnormalForm = {
+            quality_status: '不合格',
+            result: '不放行',
+            except_reason: ''
+          }
         }
       } catch (e) {
         //
@@ -418,9 +421,7 @@ export default {
       this.abnormalForm.lot_no = this.searchView.batch_no
       try {
         this.submitPass = true
-        if (this.abnormalForm.result === '放行') {
-          await wmsRelease('post', null, { data: { status: this.abnormalForm.quality_status, tracking_nums: this.trackingList, operation_type: this.abnormalForm.result }})
-        }
+        await wmsRelease('post', null, { data: { tracking_nums: this.trackingList, operation_type: this.abnormalForm.result }})
         await wmsExceptHandle('post', null, { data: this.abnormalForm })
         this.$message.success('操作成功')
         this.submitPass = false
@@ -436,7 +437,7 @@ export default {
         obj.push(d.lot_no)
       })
       const type = val
-      if (obj.length > 0 && this.multipleSelection.every(d => d.quality_status !== '合格品')) {
+      if ((obj.length > 0 && val === '合格' && this.multipleSelection.every(d => d.quality_status === '待检')) || (obj.length > 0 && val === '放行')) {
         try {
           val === '合格' ? this.submit = true : this.submit1 = true
           await wmsRelease('post', null, { data: { tracking_nums: obj, operation_type: type }})
@@ -454,7 +455,7 @@ export default {
       } else if (obj.length === 0) {
         this.$message.info('请选择库存')
       } else {
-        this.$message.info('合格品不能处理')
+        this.$message.info('只有待检品能做设定合格处理')
       }
     },
     changeDate(date) {
