@@ -61,28 +61,18 @@
           {{ row.是否定岗?'是':'否' }}
         </template>
       </el-table-column>
-      <el-table-column v-for="item in day" :key="item" :label="item+'日'">
+      <el-table-column v-for="(item,_index) in day" :key="item" :label="item+'日'">
         <el-table-column
-          label="A"
+          v-for="_item in group_list[_index]"
+          :key="_item"
+          :label="_item"
           min-width="20"
         >
           <template slot-scope="{row}">
             <el-link
               type="primary"
-              @click="subsidyInfo(row,'a班',item)"
-            >{{ row[item+'_a班'] }}</el-link>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="name"
-          label="C"
-          min-width="20"
-        >
-          <template slot-scope="{row}">
-            <el-link
-              type="primary"
-              @click="subsidyInfo(row,'c班',item)"
-            >{{ row[item+'_c班'] }}</el-link>
+              @click="subsidyInfo(row,_item,item)"
+            >{{ row[item+'_'+_item] }}</el-link>
           </template>
         </el-table-column>
       </el-table-column>
@@ -340,7 +330,8 @@ export default {
       loading1: false,
       allArr: [],
       btnLoading: false,
-      sectionList: []
+      sectionList: [],
+      group_list: []
     }
   },
   created() {
@@ -363,6 +354,7 @@ export default {
         this.loading = true
         const data = await performanceSummary('get', null, { params: this.search })
         this.tableData = data.results
+        this.group_list = data.group_list
       } catch (e) {
         //
       }
