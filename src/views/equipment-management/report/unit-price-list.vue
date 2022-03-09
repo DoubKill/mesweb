@@ -215,12 +215,21 @@ export default {
     },
     async submitFun() {
       try {
+        this.tableData.forEach(d => {
+          if (!d.E580_pt || !d.E580_dj || !d.F370_pt || !d.F370_dj || !d.GK320_pt ||
+          !d.GK320_dj || !d.GK255_pt || !d.GK255_dj || d.GK400_pt || d.GK400_dj) {
+            throw new Error('单价数据必填')
+          }
+        })
         this.btnLoading = true
         await performanceUnitPrice('post', null, { data: this.tableData })
         this.$message.success('保存成功')
         this.btnLoading = false
       } catch (e) {
         this.btnLoading = false
+        if (e.message) {
+          this.$message(e.message)
+        }
       }
     }
   }
