@@ -210,3 +210,27 @@ export function independentPostTemplatePOST(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function wmsOutTaskDetails(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WmsOutTaskDetails + id + '/' : API.WmsOutTaskDetails,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function wmsOutTasks(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WmsOutTasks + id + '/' : API.WmsOutTasks,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function wmsCancelTask(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WmsCancelTask + id + '/' : API.WmsCancelTask,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
