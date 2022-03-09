@@ -69,13 +69,13 @@
         label="打印时间"
         min-width="20"
       />
-      <el-table-column
+      <!-- <el-table-column
         label="配料车次"
         min-width="20"
         :formatter="d=>{
           return d.begin_trains+'-'+d.end_trains
         }"
-      />
+      /> -->
       <el-table-column
         prop="batching_equip"
         label="机配机台"
@@ -159,9 +159,9 @@
           <!-- <equip-category-select v-if="!formData.id" v-model="formData.dev_type" @change="changeDevTypeDialog" /> -->
           <span>{{ formData.dev_type }}</span>
         </el-form-item>
-        <el-form-item prop="begin_trains" label="起始车次">
+        <!-- <el-form-item prop="begin_trains" label="起始车次">
           <el-input-number v-model="formData.begin_trains" controls-position="right" :min="1" :disabled="formData.id?true:false" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item prop="package_count" label="配置数量">
           <el-input-number v-model="formData.package_count" controls-position="right" :min="1" :disabled="formData.id?true:false" />
         </el-form-item>
@@ -269,7 +269,8 @@ export default {
       dialogVisible: false,
       formData: {
         split_num: 1,
-        print_count: 1
+        print_count: 1,
+        begin_trains: 1
       },
       rules: {
         product_no: [{ required: true, message: '请输入', trigger: 'change' }],
@@ -445,7 +446,8 @@ export default {
       setTimeout(() => {
         this.formData = {
           split_num: 1,
-          print_count: 1
+          print_count: 1,
+          begin_trains: 1
         }
         this.tableData1New = []
         this.tableData1 = []

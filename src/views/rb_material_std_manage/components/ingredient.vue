@@ -93,6 +93,15 @@
             width="80"
             column-key="material_type"
           />
+          <el-table-column
+            v-if="i===0"
+            label="单配"
+            width="80"
+          >
+            <template slot-scope="{row}">
+              <el-switch v-model="row.is_manual" />
+            </template>
+          </el-table-column>
           <el-table-column label="原材料">
             <template slot-scope="{row,$index}">
               <el-input
@@ -172,7 +181,7 @@
                 placeholder="请选择"
               >
                 <el-option
-                  v-for="item1 in i===0?['P']:i==1?['P','C']:['P','O']"
+                  v-for="item1 in i===0?['P']:i==1?['P','C','R']:['P','O','R']"
                   :key="item1"
                   :label="item1"
                   :value="item1"

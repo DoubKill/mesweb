@@ -282,6 +282,7 @@ export default {
   WeighBatchingUrl: '/api/v1/recipe/weigh-batching/',
   ProductBatchingDetailUrl: '/api/v1/recipe/product-batching-detail/',
   WeighCntTypeUrl: '/api/v1/recipe/weigh-cnt-type/',
+  GetRecipeManual: '/api/v1/terminal/weighting-package-single/get_recipe_manual/',
 
   // 备品备件基本信息导入导出
   SpareImportExport: '/api/v1/spareparts/spare-import-export/',
@@ -663,5 +664,8 @@ export default {
 
   PerformanceSummary: '/api/v1/production/performance-summary/', // 薪资汇总表
   PerformanceSubsidy: '/api/v1/production/performance-subsidy/',
-  IndependentPostTemplate: '/api/v1/production/independent-post-template/'
+  IndependentPostTemplate: '/api/v1/production/independent-post-template/',
+  WmsOutTaskDetails: '/api/v1/inventory/wms-out-task-details/',
+  WmsOutTasks: '/api/v1/inventory/wms-out-tasks/',
+  WmsCancelTask: '/api/v1/inventory/wms-cancel-task/'
 }
