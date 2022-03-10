@@ -4,7 +4,7 @@
     <el-form :inline="true">
       <el-form-item label="出库单据号">
         <el-input
-          v-model="search.TaskNumber"
+          v-model="search.order_no"
           clearable
           placeholder="请输入内容"
           @input="getDebounce"
@@ -12,7 +12,8 @@
       </el-form-item>
       <el-form-item label="状态">
         <el-select
-          v-model="search.State"
+          v-model="search.task_status"
+          style="width:120px"
           clearable
           placeholder="请选择"
           @change="changeDate"
@@ -24,6 +25,22 @@
             :value="item.id"
           />
         </el-select>
+      </el-form-item>
+      <el-form-item label="物料名称">
+        <el-input
+          v-model="search.material_name"
+          clearable
+          placeholder="请输入内容"
+          @input="getDebounce"
+        />
+      </el-form-item>
+      <el-form-item label="物料编码">
+        <el-input
+          v-model="search.material_no"
+          clearable
+          placeholder="请输入内容"
+          @input="getDebounce"
+        />
       </el-form-item>
       <el-button
         v-permission="['material_outbound_record', 'space']"
@@ -48,41 +65,40 @@
       border
     >
       <el-table-column
-        prop="id"
         label="序号"
         type="index"
         min-width="20"
       />
       <el-table-column
-        prop="taskNumber"
+        prop="order_no"
         label="出库单据号"
         min-width="20"
       />
       <el-table-column
-        prop="stockOutTaskType"
+        prop="task_type"
         label="单据类型"
         min-width="20"
         :formatter="(row)=>{
-          let obj = optionsType.find(d=>d.id === row.stockOutTaskType)
+          let obj = optionsType.find(d=>d.id === row.task_type)
           return obj.name
         }"
       />
       <el-table-column
-        prop="createrTime"
+        prop="start_time"
         label="创建时间"
         min-width="20"
       />
       <el-table-column
-        prop="stockOutTaskState"
+        prop="task_status"
         label="状态"
         min-width="20"
         :formatter="(row)=>{
-          let obj = options.find(d=>d.id === row.stockOutTaskState)
+          let obj = options.find(d=>d.id === row.task_status)
           return obj.name
         }"
       />
       <el-table-column
-        prop="createUserId"
+        prop="initiator"
         label="创建人"
         min-width="20"
       />
@@ -106,7 +122,7 @@
     <page
       v-if="!loading"
       :total="total"
-      :current-page="search.pageNo"
+      :current-page="search.page"
       @currentChange="currentChange"
     />
 
@@ -127,27 +143,27 @@
           width="50"
         />
         <el-table-column
-          prop="materialCode"
+          prop="material_no"
           label="物料编码"
           min-width="20"
         />
         <el-table-column
-          prop="materialName"
+          prop="material_name"
           label="物料名称"
           min-width="16"
         />
         <el-table-column
-          prop="quantity"
+          prop="qty"
           label="数量"
           min-width="6"
         />
         <el-table-column
-          prop="entranceCode"
+          prop="entrance"
           label="站台编码"
           min-width="12"
         />
         <el-table-column
-          prop="entranceName"
+          prop="entrance_name"
           label="站台名称"
           min-width="10"
         />
@@ -155,7 +171,7 @@
           label="状态"
           min-width="8"
           :formatter="(row)=>{
-            return taskStateList[row.taskState]
+            return taskStateList[row.task_status]
           }"
         />
       </el-table>
@@ -560,7 +576,8 @@
 </template>
 
 <script>
-import request from '@/utils/request-zc'
+import { wmsOutTasks, wmsOutTaskDetails, wmsCancelTask, wmsOutboundOrder } from '@/api/base_w_five'
+// import request from '@/utils/request-zc'
 import page from '@/components/page'
 import { debounce, checkPermission } from '@/utils'
 import { wmsStock, wmsWeightStock, wmsEntrance, wmsInstock } from '@/api/base_w_three'
@@ -571,8 +588,8 @@ export default {
     return {
       loading: false,
       search: {
-        pageSize: 10,
-        pageNo: 1
+        page_size: 10,
+        page: 1
       },
       tableData: [],
       total: 0,
@@ -655,20 +672,16 @@ export default {
   },
   methods: {
     checkPermission,
-    getList() {
+    async getList() {
       this.loading = true
       this.tableData = []
-      request({
-        url: '/stockOutTask/FindAllByPaging',
-        method: 'get',
-        params: this.search
-      }).then(data => {
-        this.loading = false
-        this.tableData = data.datas
-        this.total = data.totalRecord
-      }).catch((e) => {
-        this.loading = false
-      })
+      try {
+        const data = await wmsOutTasks('get', null, { params: this.search })
+        this.tableData = data.results || []
+        this.total = data.count
+      } catch (e) {
+        //
+      } this.loading = false
     },
     changeUnit(row) {
       row.WeightOfActualUnit = Math.round(row.Unit * row.avg_weight)
@@ -677,7 +690,7 @@ export default {
       }
     },
     getDebounce() {
-      this.search.pageNo = 1
+      this.search.page = 1
       debounce(this, 'getList')
     },
     getDialogDebounce() {
@@ -700,11 +713,11 @@ export default {
       if (!this.search.State) {
         delete this.search.State
       }
-      this.search.pageNo = 1
+      this.search.page = 1
       this.getList()
     },
     currentChange(page) {
-      this.search.pageNo = page
+      this.search.page = page
       this.getList()
     },
     showEditDialog(row) {
@@ -716,30 +729,23 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(() => {
-        request({
-          url: '/MESApi/CancelTask',
-          method: 'post',
-          data: [{ TaskNumber: row.taskNumber }]
-        }).then(data => {
+      }).then(async() => {
+        try {
+          await wmsCancelTask('post', null, { params: { 'task_num': row.order_no }})
           this.$message.success('操作成功')
-        }).catch((e) => {
-          //
-        })
+        } catch (e) {
+        //
+        }
       })
     },
-    getDialogList(id) {
+    async getDialogList(id) {
       this.loading1 = true
-      request({
-        url: '/stockOutTask/Find',
-        method: 'get',
-        params: { id: id }
-      }).then(data => {
-        this.loading1 = false
-        this.tableData1 = data.datas
-      }).catch((e) => {
-        this.loading1 = false
-      })
+      try {
+        const data = await wmsOutTaskDetails('get', null, { params: { page_size: 99999, task: id }})
+        this.tableData1 = data.results || []
+      } catch (e) {
+        this.tableData1 = []
+      } this.loading1 = false
     },
     async getDialogGoods() {
       try {
@@ -952,13 +958,14 @@ export default {
         //
       }
     },
-    submitForm() {
-      let obj = {
-        TaskNumber: 'Mes' + new Date().getTime(),
-        EntranceCode: this.formSearch.code,
-        AllocationInventoryDetails: this.tableData4
+    async submitForm() {
+      const obj = {
+        entrance_code: this.formSearch.code,
+        outbound_data: JSON.parse(JSON.stringify(this.tableData4)),
+        outbound_type: 1
       }
       if (!this.isLocation) {
+        obj.outbound_type = 2
         const arr = []
         this.tableData5.forEach(d => {
           if (Number(d.WeightOfActualUnit) > 0) {
@@ -971,31 +978,22 @@ export default {
             arr.push(aaa)
           }
         })
-        obj = {
-          TaskNumber: 'Mes' + new Date().getTime(),
-          EntranceCode: this.formSearch.code,
-          AllocationInventoryDetails: arr
-        }
+        obj.outbound_data = arr
       }
-      if (obj.AllocationInventoryDetails.length === 0) {
+      if (obj.outbound_data.length === 0) {
         this.$message.info('未添加物料')
         return
       }
-      const _api = this.isLocation ? '/MESApi/AllocateSpaceDelivery' : '/MESApi/AllocateWeightDelivery'
       this.btnLoading = true
-      request({
-        url: _api,
-        method: 'post',
-        data: obj
-      }).then(data => {
+      try {
+        await wmsOutboundOrder('post', null, { data: obj })
         this.$message.success('添加成功')
         this.handleClose1(false)
-        this.search.pageNo = 1
-        this.btnLoading = false
+        this.search.page = 1
         this.getList()
-      }).catch((e) => {
-        this.btnLoading = false
-      })
+      } catch (error) {
+        //
+      } this.btnLoading = false
     }
   }
 }

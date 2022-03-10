@@ -663,5 +663,14 @@ export default {
 
   PerformanceSummary: '/api/v1/production/performance-summary/', // 薪资汇总表
   PerformanceSubsidy: '/api/v1/production/performance-subsidy/',
-  IndependentPostTemplate: '/api/v1/production/independent-post-template/'
+
+  IndependentPostTemplate: '/api/v1/production/independent-post-template/',
+  WmsOutTaskDetails: '/api/v1/inventory/wms-out-task-details/',
+  WmsOutTasks: '/api/v1/inventory/wms-out-tasks/',
+  WmsCancelTask: '/api/v1/inventory/wms-cancel-task/',
+  WmsOutboundOrder: '/api/v1/inventory/wms-outbound-order/',
+  ThOutTaskDetails: '/api/v1/inventory/th-out-task-details/',
+  ThOutTasks: '/api/v1/inventory/th-out-tasks/',
+  ThCancelTask: '/api/v1/inventory/th-cancel-task/',
+  ThOutboundOrder: '/api/v1/inventory/th-outbound-order/'
 }

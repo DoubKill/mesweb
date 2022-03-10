@@ -193,3 +193,76 @@ export function independentPostTemplate(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function independentPostTemplatePOST(method, id, data = {}) {
+  const obj = {
+    url: id ? API.IndependentPostTemplate + id + '/' : API.IndependentPostTemplate,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function wmsOutTaskDetails(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WmsOutTaskDetails + id + '/' : API.WmsOutTaskDetails,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function wmsOutTasks(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WmsOutTasks + id + '/' : API.WmsOutTasks,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function wmsCancelTask(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WmsCancelTask + id + '/' : API.WmsCancelTask,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function wmsOutboundOrder(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WmsOutboundOrder + id + '/' : API.WmsOutboundOrder,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function thOutTaskDetails(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ThOutTaskDetails + id + '/' : API.ThOutTaskDetails,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function thOutTasks(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ThOutTasks + id + '/' : API.ThOutTasks,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function thCancelTask(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ThCancelTask + id + '/' : API.ThCancelTask,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function thOutboundOrder(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ThOutboundOrder + id + '/' : API.ThOutboundOrder,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

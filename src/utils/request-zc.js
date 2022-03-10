@@ -23,7 +23,7 @@ service.interceptors.request.use(
   config => {
     if (Cookies.get('zc-userId')) {
       config.headers['TenantNumber'] = 1
-      config.headers['UserId'] = Cookies.get('zc-userId')
+      // config.headers['UserId'] = Cookies.get('zc-userId')
     }
     if (Cookies.get('zc-url')) {
       config.baseURL = Cookies.get('zc-url') || ''
