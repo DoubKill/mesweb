@@ -49,10 +49,12 @@
         min-width="20"
       >
         <template slot-scope="scope">
-          <el-link
+          <!-- <el-link
+            v-if="scope.row.material_name!=='合计'"
             type="primary"
             @click="DetailedList(scope.row)"
-          >{{ scope.row.material_name }}</el-link>
+          >{{ scope.row.stock_qty }}</el-link> -->
+          <span>{{ scope.row.stock_qty }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -62,84 +64,89 @@
       >
         <template slot-scope="scope">
           <el-link
+            v-if="scope.row.material_name!=='合计'"
             type="primary"
             @click="DetailedList(scope.row)"
-          >{{ scope.row.material_name }}</el-link>
+          >{{ }}</el-link>
+          <span v-else>{{ }}</span>
         </template>
       </el-table-column>
       <el-table-column
-        prop="pdm_no"
+        prop="underway_qty"
         label="输送途中物料(托)"
         min-width="15"
       >
         <template slot-scope="scope">
           <el-link
+            v-if="scope.row.material_name!=='合计'"
             type="primary"
-            @click="DetailedList(scope.row)"
-          >{{ scope.row.material_name }}</el-link>
+            @click="DetailedList(scope.row,'3')"
+          >{{ scope.row.underway_qty }}</el-link>
+          <span v-else>{{ scope.row.underway_qty }}</span>
         </template>
       </el-table-column>
       <el-table-column
-        prop="unit"
+        prop="baking_qty"
         label="正在烘(托)"
         min-width="10"
       >
         <template slot-scope="scope">
           <el-link
+            v-if="scope.row.material_name!=='合计'"
             type="primary"
-            @click="DetailedList(scope.row)"
-          >{{ scope.row.material_name }}</el-link>
+            @click="DetailedList(scope.row,'4')"
+          >{{ scope.row.baking_qty }}</el-link>
+          <span v-else>{{ scope.row.baking_qty }}</span>
         </template>
       </el-table-column>
       <el-table-column
-        prop="quantity"
+        prop="finished_qty"
         label="已烘完(托)"
         min-width="15"
       >
         <template slot-scope="scope">
           <el-link
+            v-if="scope.row.material_name!=='合计'"
             type="primary"
-            @click="DetailedList(scope.row)"
-          >{{ scope.row.material_name }}</el-link>
+            @click="DetailedList(scope.row,'5')"
+          >{{ scope.row.finished_qty }}</el-link>
+          <span v-else>{{ scope.row.finished_qty }}</span>
         </template>
       </el-table-column>
       <el-table-column
-        prop="weight"
+        prop="indoor_qty"
         label="烘房内小计(托)"
         min-width="15"
       >
         <template slot-scope="scope">
           <el-link
+            v-if="scope.row.material_name!=='合计'"
             type="primary"
-            @click="DetailedList(scope.row)"
-          >{{ scope.row.material_name }}</el-link>
+            @click="DetailedList(scope.row,'6')"
+          >{{ scope.row.indoor_qty }}</el-link>
+          <span v-else>{{ scope.row.indoor_qty }}</span>
         </template>
       </el-table-column>
       <el-table-column
-        prop="creater_time"
+        prop="outbound_qty"
         label="已出烘房到二楼线体(托)"
         min-width="15"
       >
         <template slot-scope="scope">
           <el-link
+            v-if="scope.row.material_name!=='合计'"
             type="primary"
-            @click="DetailedList(scope.row)"
-          >{{ scope.row.material_name }}</el-link>
+            @click="DetailedList(scope.row,'7')"
+          >{{ scope.row.outbound_qty }}</el-link>
+          <span v-else>{{ scope.row.outbound_qty }}</span>
         </template>
       </el-table-column>
     </el-table>
-    <page
-      :old-page="false"
-      :total="total"
-      :current-page="search.page"
-      @currentChange="currentChange"
-    />
 
     <el-dialog
       title="烘房胶料信息详细列表"
       :visible.sync="dialogVisible"
       width="90%"
-      :before-close="handleClose"
     >
       <el-table
         v-loading="loadingView"
@@ -148,60 +155,64 @@
         border
       >
         <el-table-column
-          prop="batch_no"
+          prop="oven_no"
           label="烘箱编号"
-          min-width="20"
+          width="80"
         />
         <el-table-column
-          prop="quality_status"
+          prop="status"
           label="状态"
-          min-width="20"
+          width="80"
+          :formatter="(row)=>{
+            let obj = status.find(d=>d.id === row.status)
+            return obj.name
+          }"
         />
         <el-table-column
-          prop="lot_no"
+          prop="material_name"
           label="物料名称"
           min-width="20"
         />
         <el-table-column
-          prop="container_no"
+          prop="material_no"
           label="物料编码"
           min-width="20"
         />
-        <el-table-column
-          prop="location"
+        <!-- <el-table-column
+          prop="batch_no"
           label="批次号"
           min-width="20"
-        />
+        /> -->
         <el-table-column
-          prop="in_storage_time"
+          prop="pallet_no"
           label="托盘号RFID"
           min-width="20"
         />
-        <el-table-column
-          prop="unit"
+        <!-- <el-table-column
+          prop="inbound_time"
           label="入库时间"
           min-width="20"
         />
         <el-table-column
-          prop="qty"
+          prop="outbound_time"
           label="出库时间"
           min-width="20"
-        />
+        /> -->
         <el-table-column
-          prop="total_weight"
+          prop="baking_start_time"
           label="入烘房时间"
           min-width="20"
         />
         <el-table-column
-          prop="total_weight"
+          prop="baking_end_time"
           label="出烘房时间"
           min-width="20"
         />
-        <el-table-column
-          prop="total_weight"
+        <!-- <el-table-column
+          prop="confirm_time"
           label="二楼确认时间"
           min-width="20"
-        />
+        /> -->
       </el-table>
     </el-dialog>
 
@@ -211,24 +222,28 @@
 <script>
 import { debounce } from '@/utils'
 import { exportExcel } from '@/utils/index'
-import page from '@/components/page'
-import { wmsStorageSummary } from '@/api/jqy'
+// import page from '@/components/page'
+import { hfStock, hfStockDetail } from '@/api/jqy'
 export default {
   name: 'DryingRoomStatistics',
-  components: { page },
+  components: { },
   data() {
     return {
-      search: {
-        page: 1,
-        page_size: 10
-      },
+      search: {},
       searchView: {},
-      total: 0,
+      status: [
+        { id: 1, name: '入库中' },
+        { id: 2, name: '烘烤运行中' },
+        { id: 3, name: '出库中' },
+        { id: 4, name: '等待烘烤' },
+        { id: 5, name: '等待出库' },
+        { id: 6, name: '已出库' }
+      ],
       dialogVisible: false,
       datetimerange: [getDay(-1) + ' ' + time(), getDay(0) + ' ' + time()],
       tableDataView: [],
       loadingView: false,
-      tableData: [{ material_name: 1 }],
+      tableData: [],
       loading: false
     }
   },
@@ -241,31 +256,33 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const data = await wmsStorageSummary('get', null, { params: this.search })
-        this.tableData = data.results
+        const data = await hfStock('get', null, { params: this.search })
+        this.tableData = data
         if (this.tableData.length > 0) {
           this.tableData.push({
             material_name: '合计',
-            today_demanded: sum(this.tableData1, 'today_demanded'),
-            current_stock: sum(this.tableData1, 'current_stock')
+            underway_qty: sum(this.tableData, 'underway_qty'),
+            baking_qty: sum(this.tableData, 'baking_qty'),
+            finished_qty: sum(this.tableData, 'finished_qty'),
+            indoor_qty: sum(this.tableData, 'indoor_qty'),
+            outbound_qty: sum(this.tableData, 'outbound_qty')
           })
         }
-        this.total = data.count
         this.loading = false
       } catch (e) {
         this.loading = false
       }
     },
-    async DetailedList(row) {
+    async DetailedList(row, val) {
       try {
-        this.searchView.material_name = row.material_name
-        this.searchView.e_material_no = row.material_no
-        this.searchView.zc_material_code = row.zc_material_code
-        this.searchView.page_size = 1000000
+        this.searchView.material_no = row.material_no
+        this.searchView.st = this.search.st
+        this.searchView.et = this.search.et
+        this.searchView.data_type = val
         this.dialogVisible = true
         this.loadingView = true
-        const data = await wmsStorageSummary('get', null, { params: this.searchView })
-        this.tableDataView = data.results
+        const data = await hfStockDetail('get', null, { params: this.searchView })
+        this.tableDataView = data
         this.loadingView = false
       } catch (e) {
         this.loadingView = false
@@ -280,16 +297,9 @@ export default {
       exportExcel('烘房胶料信息统计列表')
     },
     debounceFun() {
-      this.search.page = 1
       debounce(this, 'getList')
     },
     changeList() {
-      this.search.page = 1
-      this.getList()
-    },
-    currentChange(page, page_size) {
-      this.search.page = page
-      this.search.page_size = page_size
       this.getList()
     }
   }
