@@ -220,10 +220,10 @@ export default {
     },
     async exportTable(val) {
       if (val === '产量') {
-        this.exportTableShow = true
+        await this.$set(this, 'exportTableShow', true)
         exportExcel('称量机台产量汇总表(包数)')
       } else {
-        this.exportTableShow = false
+        await this.$set(this, 'exportTableShow', false)
         exportExcel('称量机台员工绩效计算')
       }
     //   this.btnExportLoad = true
