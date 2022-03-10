@@ -882,7 +882,7 @@ export let asyncRoutes = [
               component: () => import('@/views/equipment-management/report/specification_setting'),
               meta: {
                 faName: 'ScheduleBasicData',
-                title: '丁基胶 规格设定',
+                title: '丁基胶规格设定',
                 permissionName: 'product_info_dj'
               }
             }
@@ -1175,6 +1175,16 @@ export let asyncRoutes = [
             }
           },
           {
+            path: '/report/set-attendance',
+            component: () => import('@/views/equipment-management/report/set-attendance'),
+            name: 'SetAttendance',
+            meta: {
+              faName: 'StatisticalReport',
+              title: '考勤组设置',
+              permissionName: 'employee_attendance_records'
+            }
+          },
+          {
             path: '/report/mixing',
             component: () => import('@/views/equipment-management/report/mixing'),
             name: 'StatisticalReportMixing',
@@ -1453,6 +1463,28 @@ export let asyncRoutes = [
               faShowName: '原材料库',
               title: '库存统计及低库存报警',
               permissionName: 'material_inventory_summary'
+            }
+          },
+          {
+            path: '/internal/drying-room-statistics',
+            component: () => import('@/views/inspection_release/drying_room_statistics'),
+            name: 'DryingRoomStatistics',
+            meta: {
+              faName: 'MaterialDelivery',
+              faShowName: '原材料库',
+              title: '烘房信息统计查询',
+              permissionName: ''
+            }
+          },
+          {
+            path: '/internal/drying-room-status',
+            component: () => import('@/views/inspection_release/drying_room_status'),
+            name: 'DryingRoomStatus',
+            meta: {
+              faName: 'MaterialDelivery',
+              faShowName: '原材料库',
+              title: '烘房状态实时显示',
+              permissionName: ''
             }
           },
           {
