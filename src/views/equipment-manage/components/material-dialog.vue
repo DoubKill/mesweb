@@ -9,6 +9,9 @@
       <el-form-item label="物料名称">
         <el-input v-model="search.spare_name" clearable @input="changeSearch" />
       </el-form-item>
+      <el-form-item v-if="type==='入库'" label="ERP物料信息id:">
+        <el-input v-model="search.unique_id" clearable @input="changeSearch" />
+      </el-form-item>
     </el-form>
     <el-table
       ref="multipleTable"
@@ -31,6 +34,12 @@
       <el-table-column
         prop="spare_name"
         label="物料名称"
+        min-width="20"
+      />
+      <el-table-column
+        v-if="type==='入库'"
+        prop="unique_id"
+        label="ERP物料信息id"
         min-width="20"
       />
       <el-table-column
