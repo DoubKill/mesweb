@@ -21,7 +21,7 @@
       </el-form-item>
       <el-form-item>
         <el-button
-          v-permission="['','']"
+          v-permission="['material_hf_summary','export']"
           type="primary"
           @click="exportTable"
         >导出Excel</el-button>

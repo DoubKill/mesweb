@@ -1465,7 +1465,7 @@ export let asyncRoutes = [
               permissionName: 'material_inventory_summary'
             }
           },
-          /** {
+          {
             path: '/internal/drying-room-statistics',
             component: () => import('@/views/inspection_release/drying_room_statistics'),
             name: 'DryingRoomStatistics',
@@ -1473,20 +1473,20 @@ export let asyncRoutes = [
               faName: 'MaterialDelivery',
               faShowName: '原材料库',
               title: '烘房信息统计查询',
-              permissionName: ''
+              permissionName: 'material_hf_summary'
             }
           },
-          {
-            path: '/internal/drying-room-status',
-            component: () => import('@/views/inspection_release/drying_room_status'),
-            name: 'DryingRoomStatus',
-            meta: {
-              faName: 'MaterialDelivery',
-              faShowName: '原材料库',
-              title: '烘房状态实时显示',
-              permissionName: ''
-            }
-          },**/
+          // {
+          //   path: '/internal/drying-room-status',
+          //   component: () => import('@/views/inspection_release/drying_room_status'),
+          //   name: 'DryingRoomStatus',
+          //   meta: {
+          //     faName: 'MaterialDelivery',
+          //     faShowName: '原材料库',
+          //     title: '烘房状态实时显示',
+          //     permissionName: ''
+          //   }
+          // },
           {
             path: '/delivery-overdueQuery',
             component: () => import('@/views/inventory/material-delivery-manage/overdueQuery.vue'),
