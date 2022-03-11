@@ -243,7 +243,7 @@
     >
       <el-form :model="abnormalForm" :rules="rules" label-width="150px">
         <el-form-item label="品质状态">
-          {{ abnormalForm.quality_status }}
+          {{ quality_status }}
         </el-form-item>
         <el-form-item label="处理结果" prop="abnormal_operation_result">
           <el-radio-group v-model="abnormalForm.result" @change="changeQuality">
@@ -293,6 +293,7 @@ export default {
       dialogVisible: false,
       datetimerange: [getDay(-3) + ' ' + time(), getDay(0) + ' ' + time()],
       tableDataView: [],
+      quality_status: '',
       trackingList: [],
       loadingView: false,
       multipleSelection: [],
@@ -405,6 +406,7 @@ export default {
             this.$message('只有待检品能做设定合格处理')
           }
         } else {
+          this.quality_status = this.qualityStatus.find(d => d.id === row.quality_status).name
           this.dialogVisibleAbnormal = true
           this.abnormalForm = {
             quality_status: '不合格',
