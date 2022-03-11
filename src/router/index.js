@@ -518,16 +518,16 @@ export let asyncRoutes = [
             permissionName: 'xl_weight_card'
           }
         },
-        // {
-        //   path: '/small-material-weight/artificialCard',
-        //   component: () => import('@/views/recipe/small-material-weight/artificialCard'),
-        //   name: 'SmallMaterialWeightArtificialCard',
-        //   meta: {
-        //     faName: 'SmallMaterialWeight',
-        //     title: '人工补打机配卡片',
-        //     permissionName: ''
-        //   }
-        // },
+        {
+          path: '/small-material-weight/artificialCard',
+          component: () => import('@/views/recipe/small-material-weight/artificialCard'),
+          name: 'SmallMaterialWeightArtificialCard',
+          meta: {
+            faName: 'SmallMaterialWeight',
+            title: '人工补打机配卡片',
+            permissionName: ''
+          }
+        },
         {
           path: '/small-material-weight/hebao',
           component: () => import('@/views/recipe/small-material-weight/hebao'),
@@ -632,16 +632,16 @@ export let asyncRoutes = [
                 permissionName: 'aps_result'
               }
             },
-            // {
-            //   path: '/schedule/machine',
-            //   component: () => import('@/views/plan/schedule/dispose/machine'),
-            //   name: 'ScheduleMachine',
-            //   meta: {
-            //     faName: 'ScheduleDispose',
-            //     title: '机台生产计划-机台列表',
-            //     permissionName: ''
-            //   }
-            // },
+            {
+              path: '/schedule/machine',
+              component: () => import('@/views/plan/schedule/dispose/machine'),
+              name: 'ScheduleMachine',
+              meta: {
+                faName: 'ScheduleDispose',
+                title: '机台生产计划-机台列表',
+                permissionName: ''
+              }
+            },
             {
               path: '/schedule/daily-plan',
               component: () => import('@/views/plan/schedule/dispose/daily-plan'),
@@ -662,16 +662,16 @@ export let asyncRoutes = [
                 permissionName: 'materialdemanded'
               }
             },
-            // {
-            //   path: '/schedule/weighing-system-plan',
-            //   component: () => import('@/views/plan/schedule/dispose/weighing-system-plan'),
-            //   name: 'ScheduleWeighingSystemPlan',
-            //   meta: {
-            //     faName: 'ScheduleDispose',
-            //     title: '称量系统计划',
-            //     permissionName: ''
-            //   }
-            // },
+            {
+              path: '/schedule/weighing-system-plan',
+              component: () => import('@/views/plan/schedule/dispose/weighing-system-plan'),
+              name: 'ScheduleWeighingSystemPlan',
+              meta: {
+                faName: 'ScheduleDispose',
+                title: '称量系统计划',
+                permissionName: ''
+              }
+            },
             {
               path: '/schedule/equipment-shutdown-plan',
               component: () => import('@/views/plan/schedule/dispose/equipment-shutdown-plan'),
@@ -694,7 +694,7 @@ export let asyncRoutes = [
             }
           ]
         },
-        /** {
+        {
           path: '/schedule/statistical-report',
           component: () => import('@/views/plan/schedule/statistical-report/a-index'),
           name: 'ScheduleStatisticalReport',
@@ -785,7 +785,7 @@ export let asyncRoutes = [
               }
             }
           ]
-        },**/
+        },
         {
           path: '/schedule/basic-data',
           component: () => import('@/views/plan/schedule/basic-data/a-index'),
@@ -1174,16 +1174,16 @@ export let asyncRoutes = [
               permissionName: 'employee_attendance_records'
             }
           },
-          // {
-          //   path: '/report/set-attendance',
-          //   component: () => import('@/views/equipment-management/report/set-attendance'),
-          //   name: 'SetAttendance',
-          //   meta: {
-          //     faName: 'StatisticalReport',
-          //     title: '考勤组设置',
-          //     permissionName: 'employee_attendance_records'
-          //   }
-          // },
+          {
+            path: '/report/set-attendance',
+            component: () => import('@/views/equipment-management/report/set-attendance'),
+            name: 'SetAttendance',
+            meta: {
+              faName: 'StatisticalReport',
+              title: '考勤组设置',
+              permissionName: 'employee_attendance_records'
+            }
+          },
           {
             path: '/report/mixing',
             component: () => import('@/views/equipment-management/report/mixing'),
@@ -1465,7 +1465,7 @@ export let asyncRoutes = [
               permissionName: 'material_inventory_summary'
             }
           },
-          /** {
+          {
             path: '/internal/drying-room-statistics',
             component: () => import('@/views/inspection_release/drying_room_statistics'),
             name: 'DryingRoomStatistics',
@@ -1486,7 +1486,7 @@ export let asyncRoutes = [
               title: '烘房状态实时显示',
               permissionName: ''
             }
-          },**/
+          },
           {
             path: '/delivery-overdueQuery',
             component: () => import('@/views/inventory/material-delivery-manage/overdueQuery.vue'),
