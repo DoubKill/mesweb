@@ -102,13 +102,13 @@
           return d.batch_class + '/'+ d.batch_group
         }"
       />
-      <!-- <el-table-column
+      <el-table-column
         label="配料车次"
         min-width="20"
         :formatter="d=>{
           return d.begin_trains+'-'+d.end_trains
         }"
-      /> -->
+      />
       <el-table-column
         prop="created_username"
         label="配料员"
@@ -272,7 +272,7 @@
             :disabled="(formData.id||formData.batching_type==='配方')?true:false"
           />
         </el-form-item>
-        <!-- <el-form-item
+        <el-form-item
           prop="begin_trains"
           label="起始车次"
         >
@@ -282,7 +282,7 @@
             :min="1"
             :disabled="formData.id?true:false"
           />
-        </el-form-item> -->
+        </el-form-item>
         <el-form-item
           prop="package_count"
           label="配置数量"
@@ -340,7 +340,7 @@ import page from '@/components/page'
 import EquipCategorySelect from '@/components/EquipCategorySelect'
 import { weightingPackageSingle } from '@/api/base_w_five'
 import { rubberMaterialUrl, materialsUrl } from '@/api/base_w'
-import { getRecipeManual } from '@/api/small-material-recipe'
+import { productBatchingDetail } from '@/api/small-material-recipe'
 export default {
   name: 'SmallMaterialWeightCurrency',
   components: { page, EquipCategorySelect },
@@ -354,8 +354,7 @@ export default {
       formData: {
         split_num: 1,
         batching_type: '配方',
-        print_count: 1,
-        begin_trains: 1
+        print_count: 1
       },
       rules: {
         product_no_id: [{ required: true, message: '请输入', trigger: 'change' }],
@@ -417,7 +416,7 @@ export default {
         this.materialList = []
         if (this.formData.batching_type === '配方') {
           if (this.formData.product_no) {
-            data = await getRecipeManual(this.product_batching)
+            data = await productBatchingDetail(this.product_batching)
           }
         } else {
           const { results } = await materialsUrl('get', null, { params: { all: 1, mc_code: 1 }})
@@ -436,9 +435,6 @@ export default {
           const a = this.formData.single_weight / this.formData.split_num
           const b = Math.round(a * 1000) / 1000
           this.formData._single_weight = b
-        }
-        if (this.formData.batching_type === '配方') {
-          this.formData.feeding_mode = obj.feeding_mode
         }
         if (this.formData.batching_type !== '配方') {
           this.getWeight()
@@ -523,8 +519,7 @@ export default {
         this.formData = {
           split_num: 1,
           print_count: 1,
-          batching_type: '配方',
-          begin_trains: 1
+          batching_type: '配方'
         }
         this.$refs.formRef.clearValidate()
       }, 300)
@@ -537,15 +532,9 @@ export default {
       this.$refs.formRef.validate(async(valid) => {
         if (valid) {
           try {
-            let obj = {}
-            if (this.formData.id) {
-              obj = { print_count: this.formData.print_count }
-            } else {
-              obj = Object.assign(obj, this.formData)
-            }
             this.loadingBtn = true
-            const _mothod = this.formData.id ? 'patch' : 'post'
-            await weightingPackageSingle(_mothod, this.formData.id || null, { data: obj })
+            const _mothod = this.formData.id ? 'put' : 'post'
+            await weightingPackageSingle(_mothod, this.formData.id || null, { data: this.formData })
             this.$message.success('操作成功')
             this.handleClose(false)
             this.getList()

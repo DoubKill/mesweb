@@ -93,7 +93,7 @@
             width="80"
             column-key="material_type"
           />
-          <el-table-column
+          <!-- <el-table-column
             v-if="i===0"
             label="单配"
             width="80"
@@ -101,7 +101,7 @@
             <template slot-scope="{row}">
               <el-switch v-model="row.is_manual" />
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column label="原材料">
             <template slot-scope="{row,$index}">
               <el-input
