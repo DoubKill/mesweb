@@ -271,13 +271,19 @@
             <el-input v-model="currentInfo.input" disabled />
           </el-form-item><br> -->
           <el-form-item label="其他奖惩">
-            <el-input v-model="currentInfo.其他奖惩1" />
+            <el-input-number
+              v-model="currentInfo.其他奖惩1"
+              controls-position="right"
+            />
           </el-form-item>
           <el-form-item label="奖惩说明">
             <el-input v-model="currentInfo.奖惩说明1" style="width:350px;" />
           </el-form-item><br>
           <el-form-item label="生产补贴">
-            <el-input v-model="currentInfo.生产补贴1" />
+            <el-input-number
+              v-model="currentInfo.生产补贴1"
+              controls-position="right"
+            />
           </el-form-item>
           <el-form-item label="补贴说明">
             <el-input v-model="currentInfo.补贴说明1" style="width:350px;" />
