@@ -49,7 +49,7 @@
         </el-table>
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button :loading="btnLoading" type="primary" @click="savePrice">保存单价</el-button>
+        <el-button v-permission="['summary_of_weighing_output','save']" :loading="btnLoading" type="primary" @click="savePrice">保存单价</el-button>
       </el-form-item>
     </el-form>
     <h3 style="font-size:17px;font-weight:bold">称量机台产量汇总表（包数）</h3>
@@ -97,7 +97,7 @@
       <el-form-item>
         <span style="font-size:17px;font-weight:bold">称量机台员工绩效计算</span>
         <el-button
-          v-permission="['monthly_output_statistics_and_performance','export']"
+          v-permission="['summary_of_weighing_output','export']"
           style="margin-left:20px"
           type="primary"
           @click="exportTable('绩效')"
