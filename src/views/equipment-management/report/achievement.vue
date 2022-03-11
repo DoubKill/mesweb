@@ -18,7 +18,7 @@
       </el-form-item>
       <el-form-item style="float:right">
         <el-button
-          v-permission="['performance_summary', 'export']"
+          v-permission="['performance_summary','export']"
           type="primary"
           :disabled="btnExportTemplateLoad"
           @click="exportTemplate"
@@ -30,7 +30,7 @@
           :http-request="Upload"
           :show-file-list="false"
         >
-          <el-button v-permission="['performance_summary', 'import']" type="primary">导入是否独立上岗</el-button>
+          <el-button v-permission="['performance_summary','import']" type="primary">导入是否独立上岗</el-button>
         </el-upload>
         <el-button
           v-permission="['performance_summary', 'export']"
@@ -180,7 +180,7 @@
           <el-input v-model="currentInfo.name" disabled />
         </el-form-item>
         <el-form-item style="float:right">
-          <el-button type="primary" @click="exportSubsidy(false)">导出Excel</el-button>
+          <el-button v-permission="['performance_summary','export']" type="primary" @click="exportSubsidy(false)">导出Excel</el-button>
         </el-form-item>
       </el-form>
       <el-table
@@ -233,7 +233,7 @@
             <el-input v-model="currentInfo._class" disabled />
           </el-form-item>
           <el-form-item style="float:right">
-            <el-button type="primary" @click="exportSubsidy(true)">导出Excel</el-button>
+            <el-button v-permission="['performance_summary','change']" type="primary" @click="exportSubsidy(true)">导出Excel</el-button>
           </el-form-item>
         </el-form>
         <el-table
@@ -294,7 +294,7 @@
         </el-form>
         <div slot="footer" style="text-align:right">
           <el-button @click="dialogVisible2 = false">取 消</el-button>
-          <el-button type="primary" :loading="btnLoading" @click="handleSubmit">确 定</el-button>
+          <el-button v-permission="['performance_summary','change']" type="primary" :loading="btnLoading" @click="handleSubmit">确 定</el-button>
         </div>
       </div>
     </el-dialog>
