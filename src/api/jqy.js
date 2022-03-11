@@ -1247,3 +1247,12 @@ export function hfStockDetail(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function attendanceGroupSetup(method, id, data = {}) {
+  const obj = {
+    url: id ? API.AttendanceGroupSetup + id + '/' : API.AttendanceGroupSetup,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

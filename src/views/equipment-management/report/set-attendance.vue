@@ -3,10 +3,10 @@
     <!-- 设置考勤组 -->
     <el-form :inline="true">
       <el-form-item label="考勤组名称">
-        <el-input v-model="search.name" clearable placeholder="考勤组名称" @input="changeSearch" />
+        <el-input v-model="search.attendance_group" clearable placeholder="考勤组名称" @input="changeSearch" />
       </el-form-item>
       <el-form-item label="考勤负责人">
-        <el-input v-model="search.name" clearable placeholder="考勤负责人" @input="changeSearch" />
+        <el-input v-model="search.principal" clearable placeholder="考勤负责人" @input="changeSearch" />
       </el-form-item>
       <el-form-item style="float:right">
         <el-button v-permission="['performance_job_ladder', 'add']" type="primary" @click="onSubmit">新建</el-button>
@@ -20,37 +20,44 @@
       border
     >
       <el-table-column
-        prop="code"
+        prop="attendance_group"
         label="考勤组名称"
         min-width="20"
       />
       <el-table-column
-        prop="type"
+        prop="attendance_users"
         label="参与考勤人员"
         min-width="20"
       />
       <el-table-column
-        prop="name"
+        prop="attendance_type"
         label="考勤类型"
         min-width="20"
+        :formatter="(row)=>{
+          let obj = options.find(d=>d.id === row.attendance_type)
+          return obj.label
+        }"
       />
       <el-table-column
-        prop="coefficient"
         label="考勤时间"
         min-width="20"
-      />
+      >
+        <template slot-scope="{row}">
+          <span> {{ row.attendance_st }}-{{ row.attendance_et }}</span>
+        </template>
+      </el-table-column>
       <el-table-column
-        prop="post_standard_name"
+        prop="principal"
         label="考勤组负责人"
         min-width="20"
       />
       <el-table-column
-        prop="post_coefficient"
+        prop="range_time"
         label="上班打卡多久后可打下班卡(分钟)"
         width="220"
       />
       <el-table-column
-        prop="post_coefficient"
+        prop="lead_time"
         label="提前多久可打上班卡(分钟)"
         min-width="20"
       />
@@ -92,12 +99,12 @@
         label-width="240px"
         :model="dialogForm"
       >
-        <el-form-item label="考勤组名称" prop="name">
-          <el-input v-model="dialogForm.name" style="width:250px" />
+        <el-form-item label="考勤组名称" prop="attendance_group">
+          <el-input v-model="dialogForm.attendance_group" style="width:250px" :disabled="dialogForm.id?true:false" />
         </el-form-item>
-        <el-form-item label="考勤参与人员" prop="repair_standard_name">
+        <el-form-item label="考勤参与人员" prop="attendance_users">
           <el-input
-            v-model="dialogForm.repair_standard_name"
+            v-model="dialogForm.attendance_users"
             style="width:250px"
             disabled
           >
@@ -108,36 +115,40 @@
             />
           </el-input>
         </el-form-item>
-        <el-form-item label="考勤类型" prop="type">
-          <el-select v-model="dialogForm.type" placeholder="请选择" style="width:250px">
+        <el-form-item label="考勤类型" prop="attendance_type">
+          <el-select v-model="dialogForm.attendance_type" placeholder="请选择" style="width:250px">
             <el-option
               v-for="item in options"
-              :key="item"
-              :label="item"
-              :value="item"
+              :key="item.id"
+              :label="item.label"
+              :value="item.id"
             />
           </el-select>
         </el-form-item>
         <el-form-item label="考勤时间" prop="time">
           <el-time-picker
-            v-model="dialogForm.value"
+            v-model="dialogForm.attendance_st"
             :picker-options="{
               selectableRange: '00:00:00 - 23:59:59'
             }"
+            value-format="HH:mm:ss"
+            format="HH:mm:ss"
             placeholder="任意时间点"
           />
           -
           <el-time-picker
-            v-model="dialogForm.value1"
+            v-model="dialogForm.attendance_et"
             :picker-options="{
               selectableRange: '00:00:00 - 23:59:59'
             }"
+            value-format="HH:mm:ss"
+            format="HH:mm:ss"
             placeholder="任意时间点"
           />
         </el-form-item>
-        <el-form-item label="考勤负责人" prop="repair_standard_name">
+        <el-form-item label="考勤负责人" prop="principal">
           <el-input
-            v-model="dialogForm.repair_standard_name"
+            v-model="dialogForm.principal"
             style="width:250px"
             disabled
           >
@@ -148,11 +159,11 @@
             />
           </el-input>
         </el-form-item>
-        <el-form-item label="上班打卡多久后可打下班卡(分钟)" prop="post_coefficient">
-          <el-input-number v-model="dialogForm.post_coefficient" :min="0" style="width:250px" />
+        <el-form-item label="上班打卡多久后可打下班卡(分钟)" prop="range_time">
+          <el-input-number v-model="dialogForm.range_time" :min="0" style="width:250px" />
         </el-form-item>
-        <el-form-item label="提前多久可打上班卡(分钟)" prop="post_coefficient">
-          <el-input-number v-model="dialogForm.post_coefficient" :min="0" style="width:250px" />
+        <el-form-item label="提前多久可打上班卡(分钟)" prop="lead_time">
+          <el-input-number v-model="dialogForm.lead_time" :min="0" style="width:250px" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -162,18 +173,18 @@
     </el-dialog>
 
     <el-dialog
-      title="添加考勤参与人员"
+      :title="pickType==='参与'?'添加考勤参与人员':'添加考勤负责人'"
       :visible.sync="dialogVisiblePerson"
       width="30%"
     >
       <el-form :inline="true" label-width="120px">
         <el-form-item label="部门" prop="type">
-          <el-select v-model="department" placeholder="请选择" style="width:250px">
+          <el-select v-model="department" placeholder="请选择" style="width:250px" @change="getGroupList">
             <el-option
-              v-for="item in options"
-              :key="item"
-              :label="item"
-              :value="item"
+              v-for="item in sectionList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.name"
             />
           </el-select>
         </el-form-item>
@@ -181,7 +192,7 @@
         <el-form-item label="选择人员" style="" prop="checkList">
           <el-checkbox-group v-model="checkList" v-loading="loadPerson" style="width:400px">
             <template v-for="(item, index) in staffList">
-              <el-checkbox :key="index" :label="item" />
+              <el-checkbox :key="index" :label="item.username" />
             </template>
           </el-checkbox-group>
         </el-form-item>
@@ -196,16 +207,16 @@
 
 <script>
 import page from '@/components/page'
-// import { classesListUrl } from '@/api/base_w'
-import { performanceJobLadder } from '@/api/jqy'
+import { sectionTree } from '@/api/base_w_four'
+import { attendanceGroupSetup, personnels } from '@/api/jqy'
 export default {
   name: 'SetAttendance',
   components: { page },
   data() {
     var validatePass = (rule, value, callback) => {
-      if (!this.dialogForm.value) {
+      if (!this.dialogForm.attendance_st) {
         callback(new Error('请选择考勤开始时间'))
-      } else if (!this.dialogForm.value1) {
+      } else if (!this.dialogForm.attendance_et) {
         callback(new Error('请选择考勤结束时间'))
       } else {
         callback()
@@ -218,37 +229,70 @@ export default {
       loading: false,
       loadPerson: false,
       department: '',
-      options: ['固定时间上下班', '按排班时间上下班', '不固定时间上下班'],
+      pickType: '',
+      sectionList: [],
+      options: [{ id: 1, label: '不固定时间上下班' }, { id: 2, label: '按排班时间上下班' }, { id: 3, label: '固定时间上下班' }],
       dialogVisible: false,
       dialogVisiblePerson: false,
       rules: {
-        name: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        attendance_group: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        attendance_users: [{ required: true, message: '不能为空', trigger: 'blur' }],
         time: [{ required: true, validator: validatePass, trigger: 'change' }],
-        type: [{ required: true, message: '不能为空', trigger: 'change' }],
-        post_coefficient: [{ required: true, message: '不能为空', trigger: 'blur' }]
+        attendance_type: [{ required: true, message: '不能为空', trigger: 'change' }],
+        principal: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        range_time: [{ required: true, message: '不能为空', trigger: 'change' }],
+        lead_time: [{ required: true, message: '不能为空', trigger: 'change' }]
       },
       checkList: [],
-      staffList: ['张三', '李四', '张三'],
-      dialogForm: { coefficient: ['Wed Mar 09 2022 16:09:05 GMT+0800 (中国标准时间)', 'Wed Mar 09 2022 17:09:05 GMT+0800 (中国标准时间)'] },
+      staffList: [],
+      dialogForm: {},
       btnLoading: false
     }
   },
   created() {
-    console.log(PersonDisplay(['张三', '李四', '王五']))
     this.getList()
-    // this.getTypeList()
+    this.getSection()
   },
   methods: {
-    con() {
-      console.log(time(this.dialogForm.coefficient[0]))
-    },
-    pickPerson() {
+    pickPerson(val) {
+      this.pickType = val
+      if (this.pickType === '参与') {
+        this.checkList = PickDisplay(this.dialogForm.attendance_users)
+      } else {
+        this.checkList = PickDisplay(this.dialogForm.principal)
+      }
       this.dialogVisiblePerson = true
+    },
+    generatePerson() {
+      if (this.pickType === '参与') {
+        if (this.checkList.length === 0) {
+          this.$message('请选择考勤人员')
+          return
+        } else {
+          this.$set(this.dialogForm, 'attendance_users', PersonDisplay(this.checkList))
+          this.dialogVisiblePerson = false
+        }
+      } else {
+        if (this.checkList.length === 0) {
+          this.$message('请选择考勤负责人')
+          return
+        } else if (this.checkList.length > 1) {
+          this.$message('考勤组负责人只能选择一位')
+          return
+        } else {
+          this.$set(this.dialogForm, 'principal', PersonDisplay(this.checkList))
+          this.dialogVisiblePerson = false
+        }
+      }
+    },
+    async getGroupList() {
+      const data = await personnels('get', null, { params: { section_name: this.department }})
+      this.staffList = data.results
     },
     async getList() {
       try {
         this.loading = true
-        const data = await performanceJobLadder('get', null, { params: this.search })
+        const data = await attendanceGroupSetup('get', null, { params: this.search })
         this.tableData = data.results || []
         this.total = data.count
         this.loading = false
@@ -256,11 +300,10 @@ export default {
         this.loading = false
       }
     },
-    // async getTypeList() {
-    //   const obj = { all: 1, class_name: '绩效计算岗位类别' }
-    //   const data = await classesListUrl('get', null, { params: obj })
-    //   this.options = data.results
-    // },
+    async getSection() {
+      const data = await sectionTree('get', null, { params: { all: 1 }})
+      this.sectionList = data.results
+    },
     changeSearch() {
       this.search.page = 1
       this.$debounce(this, 'getList')
@@ -271,6 +314,7 @@ export default {
       this.getList()
     },
     async onSubmit() {
+      this.dialogForm = {}
       this.dialogVisible = true
     },
     showEditDialog(row) {
@@ -278,12 +322,12 @@ export default {
       this.dialogVisible = true
     },
     handleDelete: function(row) {
-      this.$confirm('此操作将删除' + row.name + ', 是否继续?', '提示', {
+      this.$confirm('此操作将删除' + row.attendance_group + ', 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        performanceJobLadder('delete', row.id, {})
+        attendanceGroupSetup('delete', row.id, {})
           .then(response => {
             this.$message({
               type: 'success',
@@ -300,16 +344,13 @@ export default {
         done()
       }
     },
-    generatePerson() {
-      this.dialogVisiblePerson = false
-    },
     submitFun() {
       this.$refs.createForm.validate(async(valid) => {
         if (valid) {
           try {
             this.btnLoading = true
             const _api = this.dialogForm.id ? 'put' : 'post'
-            await performanceJobLadder(_api, this.dialogForm.id || null, { data: this.dialogForm })
+            await attendanceGroupSetup(_api, this.dialogForm.id || null, { data: this.dialogForm })
             this.$message.success('操作成功')
             this.handleClose(null)
             this.getList()
@@ -335,11 +376,12 @@ function PersonDisplay(arr) {
     return a.substr(0, a.length - 1)
   }
 }
-function time(obj) {
-  var h = obj.getHours() < 10 ? '0' + obj.getHours() : obj.getHours()
-  var m = obj.getMinutes() < 10 ? '0' + obj.getMinutes() : obj.getMinutes()
-  var s = obj.getSeconds() < 10 ? '0' + obj.getSeconds() : obj.getSeconds()
-  return h + ':' + m + ':' + s
+function PickDisplay(string) {
+  if (!string) {
+    return []
+  } else {
+    return string.split(',')
+  }
 }
 </script>
 
