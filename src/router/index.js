@@ -1473,7 +1473,7 @@ export let asyncRoutes = [
               faName: 'MaterialDelivery',
               faShowName: '原材料库',
               title: '烘房信息统计查询',
-              permissionName: ''
+              permissionName: 'material_hf_summary'
             }
           },
           {
