@@ -731,7 +731,7 @@ export default {
         type: 'warning'
       }).then(async() => {
         try {
-          await wmsCancelTask('post', null, { params: { 'task_num': row.order_no }})
+          await wmsCancelTask('post', null, { data: { 'task_num': row.order_no }})
           this.$message.success('操作成功')
         } catch (e) {
         //

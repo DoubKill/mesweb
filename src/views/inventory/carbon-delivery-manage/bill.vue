@@ -634,7 +634,7 @@ export default {
         type: 'warning'
       }).then(async() => {
         try {
-          await thCancelTask('post', null, { params: { 'task_num': row.order_no }})
+          await thCancelTask('post', null, { data: { 'task_num': row.order_no }})
           this.$message.success('操作成功')
         } catch (e) {
         //
