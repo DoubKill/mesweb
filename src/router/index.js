@@ -99,6 +99,16 @@ export const constantRoutes = [
       // 是否是单独页面
       isPhone: true
     }
+  },
+  {
+    path: '/alone/banburying/substitutes/',
+    component: () => import('@/views/quality_management/banburying/substitutes'),
+    hidden: true,
+    meta: {
+      isPhone: true,
+      title: '细料胶块放行处理',
+      permissionName: 'replace_material'
+    }
   }
 ]
 // 存在权限的路由

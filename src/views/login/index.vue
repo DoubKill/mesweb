@@ -131,7 +131,7 @@ export default {
             this.$router.push({
               path: '/',
               query: {
-                password: this.loginForm.password
+                // password: this.loginForm.password
               }})
             this.loading = false
           }).catch(() => {
