@@ -61,7 +61,7 @@ export function filterAsyncRoutesMy(routes, permission) {
 }
 
 function hasPermissionMy(permission, route) {
-  if (route.meta && route.meta.permissionName) {
+  if (route.meta && route.meta.permissionName && permission) {
     const val = permission[route.meta.permissionName]
     let boolIndex = null
     // if (Object.prototype.toString.call(val) === '[object Object]') {

@@ -17,13 +17,19 @@ router.beforeEach(async(to, from, next) => {
 
   // set page title 设置头部title
   document.title = getPageTitle(to.meta.title)
-
+  let hasPermission = null
   if (to.path === '/alone/banburying/substitutes/') {
+    // c# 跳转进来 处理
     setToken(to.query.key)
+    hasPermission = {
+      [to.query.name]: to.query.arr.split(',')
+    }
+    store.state.user.permission = hasPermission
+    localStorage.setItem('permission', hasPermission)
+  } else {
+    hasPermission = store.getters.permission && JSON.stringify(store.getters.permission) !== '{}'
   }
-  // determine whether the user has logged in
   const hasToken = getToken()
-  const hasPermission = store.getters.permission && JSON.stringify(store.getters.permission) !== '{}'
 
   if (hasToken) {
     // 有登录
@@ -39,7 +45,7 @@ router.beforeEach(async(to, from, next) => {
         next(`/login?redirect=${to.path}`)
         NProgress.done()
       } else {
-        const addRoutes = store.getters.addRoutes.length !== 0
+        const addRoutes = store.getters.addRoutes && store.getters.addRoutes.length !== 0
         if (addRoutes) {
           next()
         } else {
