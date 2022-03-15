@@ -913,129 +913,133 @@ export let asyncRoutes = [
     },
     children: [
       {
-        path: '/performance/productionRecord',
-        component: () => import('@/views/production/productionRecord'),
-        name: 'BanburyingProductionRecord',
+        path: '/production_result',
+        redirect: '/performance/productionRecord',
+        component: () => import('@/views/production/production_result/a-index.vue'),
+        name: 'ProductionResult',
         meta: {
-          title: '生产记录表',
-          icon: 'production',
-          permissionName: 'plan_reality'
-        }
-      },
-      {
-        path: '/performance/manage',
-        component: () => import('@/views/production/banburying-performance-manage/index'),
-        name: 'BanburyingPerformanceManage',
-        meta: {
-          title: '密炼实绩',
-          icon: 'production',
-          permissionName: 'product_actual'
-        }
-      },
-      /* {
-      path: '/plan/manage',
-      component: () => import('@/views/banburying_plan/index'),
-      name: 'BanburyingPlanManage',
-      meta: {
-        title: '密炼机台别计划对比',
-        icon: 'production',
-        permissionName: 'plan_reality'
-      }
-    },*/
-      {
-        path: '/internal/mixer',
-        component: () => import('@/views/internal_mixer_production/index'),
-        name: 'InternalMixerProduction',
-        meta: {
-          title: '密炼生产履历',
-          icon: 'production',
-          permissionName: 'product_record'
-        }
-      },
-      {
-        path: '/train-number-report',
-        component: () => import('@/views/production/train-number-report.vue'),
-        name: 'TrainNumberReport',
-        meta: {
-          title: '车次报表',
-          icon: 'production',
-          permissionName: 'trains_report'
-        }
-      },
-      {
-        path: '/product-plan-reality-analyse',
-        component: () => import('@/views/production/product-plan-reality-analyse.vue'),
-        name: 'ProductPlanRealityAnalyse',
-        meta: {
-          title: '产量计划实际分析（车数）',
-          icon: 'production',
-          permissionName: 'production_analyze'
-        }
-      },
-      {
-        path: '/interval-production-statistics',
-        component: () => import('@/views/production/interval-production-statistics.vue'),
-        name: 'IntervalProductionStatistics',
-        meta: {
-          title: '区间产量统计（车数）',
-          icon: 'production',
-          permissionName: 'section_production'
-        }
-      },
-      {
-        path: '/internal/investment',
-        component: () => import('@/views/production/investment'),
-        name: 'InternalInvestment',
-        meta: {
-          title: '密炼投入履历',
-          icon: 'production',
-          permissionName: 'batch_log'
-        }
-      },
-      {
-        path: '/drug-investment',
-        component: () => import('@/views/production/drug-investment'),
-        name: 'DrugInvestment',
-        meta: {
-          title: '称量投入履历',
-          icon: 'production',
-          permissionName: 'drug_analyze'
-        }
-      },
-      // {
-      //   path: '/zl-warehouse-out-kanban',
-      //   component: () => import('@/views/production/warehouse-out-kanban.vue'),
-      //   name: 'ZlWarehouseOutKanban',
-      //   meta: {
-      //     title: '终炼胶出库看板', icon: 'production',
-      //     permissionName: 'zl_dashboard'
-      //   }
-      // },
-      // {
-      //   path: '/hl-warehouse-out-kanban',
-      //   component: () => import('@/views/production/hl-warehouseOutKanban.vue'),
-      //   name: 'HlWarehouseOutKanban',
-      //   meta: {
-      //     title: '混炼胶出库看板', icon: 'production',
-      //     permissionName: 'hl_dashboard'
-      //   }
-      // },
-      {
-        path: '/summary-statistics',
-        redirect: '/equipment/classes-banburying-summary',
-        component: () => import('@/views/equipment-management/summary-statistics-fa'),
-        name: 'SummaryStatistics',
-        meta: {
-          title: '生产信息汇总',
+          title: '生产结果数据查询',
           icon: 'production'
         },
         children: [
+          {
+            path: '/performance/productionRecord',
+            component: () => import('@/views/production/production_result/productionRecord'),
+            name: 'BanburyingProductionRecord',
+            meta: {
+              faName: 'ProductionResult',
+              title: '生产记录表',
+              permissionName: 'plan_reality'
+            }
+          },
+          {
+            path: '/performance/manage',
+            component: () => import('@/views/production/production_result/banburying-performance-manage/index'),
+            name: 'BanburyingPerformanceManage',
+            meta: {
+              faName: 'ProductionResult',
+              title: '密炼实绩',
+              permissionName: 'product_actual'
+            }
+          },
+          {
+            path: '/internal/mixer',
+            component: () => import('@/views/production/production_result/internal_mixer_production/index'),
+            name: 'InternalMixerProduction',
+            meta: {
+              faName: 'ProductionResult',
+              title: '密炼生产履历',
+              permissionName: 'product_record'
+            }
+          },
+          {
+            path: '/train-number-report',
+            component: () => import('@/views/production/train-number-report.vue'),
+            name: 'TrainNumberReport',
+            meta: {
+              faName: 'ProductionResult',
+              title: '车次报表',
+              permissionName: 'trains_report'
+            }
+          },
+          {
+            path: '/report/produce-work',
+            component: () => import('@/views/equipment-management/report/produce-work'),
+            name: 'ProduceWork',
+            meta: {
+              faName: 'ProductionResult',
+              title: '生产运行记录',
+              permissionName: 'production_record'
+            }
+          }
+        ]
+      },
+      {
+        path: '/result_analysis',
+        redirect: '/performance/productionRecord',
+        component: () => import('@/views/production/result_analysis/a-index.vue'),
+        name: 'ResultAnalysis',
+        meta: {
+          title: '生产结果分析统计',
+          icon: 'production'
+        },
+        children: [
+          {
+            path: '/report/output-statistics-summary',
+            component: () => import('@/views/equipment-management/report/output-statistics-summary'),
+            name: 'OutputStatisticsSummary',
+            meta: {
+              faName: 'ResultAnalysis',
+              title: '月产量统计汇总',
+              permissionName: 'monthly_output_statistics_report'
+            }
+          },
+          {
+            path: '/report/daily-output-completed',
+            component: () => import('@/views/equipment-management/report/daily-output-completed'),
+            name: 'DailyOutputCompleted',
+            meta: {
+              faName: 'ResultAnalysis',
+              title: '月产量完成',
+              permissionName: 'daily_production_completion_report'
+            }
+          },
+          {
+            path: '/report/warehousing-reasons',
+            component: () => import('@/views/equipment-management/report/warehousing-reasons'),
+            name: 'WarehousingReasons',
+            meta: {
+              faName: 'ResultAnalysis',
+              title: '不入库原因统计',
+              permissionName: 'durate_putin_reason'
+            }
+          },
+          {
+            path: '/product-plan-reality-analyse',
+            component: () => import('@/views/production/product-plan-reality-analyse.vue'),
+            name: 'ProductPlanRealityAnalyse',
+            meta: {
+              faName: 'ResultAnalysis',
+              title: '产量计划实际分析（车数）',
+              permissionName: 'production_analyze'
+            }
+          },
+          {
+            path: '/interval-production-statistics',
+            component: () => import('@/views/production/interval-production-statistics.vue'),
+            name: 'IntervalProductionStatistics',
+            meta: {
+              faName: 'ResultAnalysis',
+              title: '区间产量统计（车数）',
+              permissionName: 'section_production'
+            }
+          },
           {
             path: '/equipment/classes-banburying-summary',
             component: () => import('@/views/equipment-management/classes-banburying-summary'),
             name: 'ClassesBanburyingSummary',
             meta: {
-              faName: 'SummaryStatistics',
+              faName: 'ResultAnalysis',
               title: '班次密炼时间汇总',
               permissionName: 'class_production_summary'
             }
@@ -1045,7 +1049,7 @@ export let asyncRoutes = [
             component: () => import('@/views/equipment-management/banburying-ratio-summary'),
             name: 'BanburyingRatioSummary',
             meta: {
-              faName: 'SummaryStatistics',
+              faName: 'ResultAnalysis',
               title: '密炼时间占比汇总',
               permissionName: 'production_time_summary'
             }
@@ -1055,7 +1059,7 @@ export let asyncRoutes = [
             component: () => import('@/views/equipment-management/rubber-acar-summary'),
             name: 'RubberAcarSummary',
             meta: {
-              faName: 'SummaryStatistics',
+              faName: 'ResultAnalysis',
               title: '胶料单车次时间汇总',
               permissionName: 'single_trains_time_consume'
             }
@@ -1068,6 +1072,38 @@ export let asyncRoutes = [
               faName: 'SummaryStatistics',
               title: '规格切换时间汇总',
               permissionName: 'product_exchange_consume'
+            }
+          }
+        ]
+      },
+      {
+        path: '/resume',
+        redirect: '/internal/investment',
+        component: () => import('@/views/production/resume-fa'),
+        name: 'Resume',
+        meta: {
+          title: '投料履历查询',
+          icon: 'production'
+        },
+        children: [
+          {
+            path: '/internal/investment',
+            component: () => import('@/views/production/investment'),
+            name: 'InternalInvestment',
+            meta: {
+              faName: 'Resume',
+              title: '密炼投入履历',
+              permissionName: 'batch_log'
+            }
+          },
+          {
+            path: '/drug-investment',
+            component: () => import('@/views/production/drug-investment'),
+            name: 'DrugInvestment',
+            meta: {
+              faName: 'Resume',
+              title: '称量投入履历',
+              permissionName: 'drug_analyze'
             }
           }
         ]
@@ -1088,7 +1124,7 @@ export let asyncRoutes = [
             component: () => import('@/views/production/track/track-raw-material'),
             meta: {
               faName: 'Track',
-              title: '原材料条码追朔',
+              title: '原材料到胶片 条码追朔',
               permissionName: 'material_retrospect'
             }
           },
@@ -1098,110 +1134,30 @@ export let asyncRoutes = [
             component: () => import('@/views/production/track/track-raw-rubber'),
             meta: {
               faName: 'Track',
-              title: '胶片条码追朔',
+              title: '胶片到原材料 条码追朔',
               permissionName: 'product_retrospect'
             }
           }
         ]
       },
       {
-        path: '/statistical-report',
-        redirect: '/report/produce-work',
-        component: () => import('@/views/equipment-management/report/report-fa'),
-        name: 'StatisticalReport',
+        path: '/achievements',
+        redirect: '/report/achievement',
+        component: () => import('@/views/equipment-management/report/achievements-fa'),
+        name: 'Achievements',
         meta: {
-          title: '统计报表',
+          title: '绩效计算',
           icon: 'production'
         },
         children: [
-          {
-            path: '/report/produce-work',
-            component: () => import('@/views/equipment-management/report/produce-work'),
-            name: 'ProduceWork',
-            meta: {
-              faName: 'StatisticalReport',
-              title: '生产运行记录',
-              permissionName: 'production_record'
-            }
-          },
-          {
-            path: '/report/machine-value-setting',
-            component: () => import('@/views/equipment-management/report/machine-value-setting'),
-            name: 'machineValueSetting',
-            meta: {
-              faName: 'StatisticalReport',
-              title: '机台目标值设定',
-              permissionName: 'machine_target_value'
-            }
-          },
-          {
-            path: '/report/output-statistics-summary',
-            component: () => import('@/views/equipment-management/report/output-statistics-summary'),
-            name: 'OutputStatisticsSummary',
-            meta: {
-              faName: 'StatisticalReport',
-              title: '月产量统计汇总',
-              permissionName: 'monthly_output_statistics_report'
-            }
-          },
           {
             path: '/report/achievement',
             component: () => import('@/views/equipment-management/report/achievement'),
             name: 'StatisticalReportAchievement',
             meta: {
-              faName: 'StatisticalReport',
-              title: '员工绩效汇总表',
+              faName: 'Achievements',
+              title: '密炼员工绩效汇总表',
               permissionName: 'performance_summary'
-            }
-          },
-          {
-            path: '/report/postTable',
-            component: () => import('@/views/equipment-management/report/postTable'),
-            name: 'StatisticalReportPost',
-            meta: {
-              faName: 'StatisticalReport',
-              title: '岗位阶梯表',
-              permissionName: 'performance_job_ladder'
-            }
-          },
-          {
-            path: '/report/unit-price-list',
-            component: () => import('@/views/equipment-management/report/unit-price-list'),
-            name: 'StatisticalReportPrice',
-            meta: {
-              faName: 'StatisticalReport',
-              title: '绩效计算 单价表',
-              permissionName: 'performance_unit_price'
-            }
-          },
-          {
-            path: '/report/attendance',
-            component: () => import('@/views/equipment-management/report/attendance'),
-            name: 'StatisticalReportAttendance',
-            meta: {
-              faName: 'StatisticalReport',
-              title: '员工出勤记录表',
-              permissionName: 'employee_attendance_records'
-            }
-          },
-          {
-            path: '/report/set-attendance',
-            component: () => import('@/views/equipment-management/report/set-attendance'),
-            name: 'SetAttendance',
-            meta: {
-              faName: 'StatisticalReport',
-              title: '考勤组设置',
-              permissionName: 'employee_attendance_records'
-            }
-          },
-          {
-            path: '/report/mixing',
-            component: () => import('@/views/equipment-management/report/mixing'),
-            name: 'StatisticalReportMixing',
-            meta: {
-              faName: 'StatisticalReport',
-              title: '密炼机台产量汇总表',
-              permissionName: 'summary_of_mill_output'
             }
           },
           {
@@ -1209,53 +1165,101 @@ export let asyncRoutes = [
             component: () => import('@/views/equipment-management/report/weighing'),
             name: 'StatisticalReportWeighing',
             meta: {
-              faName: 'StatisticalReport',
-              title: '称量机台产量汇总表',
+              faName: 'Achievements',
+              title: '称量员工绩效汇总表',
               permissionName: 'summary_of_weighing_output'
             }
           },
-          // {
-          //   path: '/report/output-statistics-details',
-          //   component: () => import('@/views/equipment-management/report/output-statistics-details'),
-          //   name: 'OutputStatisticsDetails',
-          //   meta: {
-          //     faName: 'StatisticalReport',
-          //     title: '月产量统计明细及绩效',
-          //     permissionName: 'monthly_output_statistics_and_performance'
-          //   }
-          // },
           {
-            path: '/report/daily-output-completed',
-            component: () => import('@/views/equipment-management/report/daily-output-completed'),
-            name: 'DailyOutputCompleted',
+            path: '/report/attendance',
+            component: () => import('@/views/equipment-management/report/attendance'),
+            name: 'StatisticalReportAttendance',
             meta: {
-              faName: 'StatisticalReport',
-              title: '月产量完成',
-              permissionName: 'daily_production_completion_report'
+              faName: 'Achievements',
+              title: '员工出勤记录表',
+              permissionName: 'employee_attendance_records'
             }
           },
           {
-            path: '/report/warehousing-reasons',
-            component: () => import('@/views/equipment-management/report/warehousing-reasons'),
-            name: 'WarehousingReasons',
+            path: '/report/postTable',
+            component: () => import('@/views/equipment-management/report/postTable'),
+            name: 'StatisticalReportPost',
             meta: {
-              faName: 'StatisticalReport',
-              title: '不入库原因统计',
-              permissionName: 'durate_putin_reason'
+              faName: 'Achievements',
+              title: '岗位阶梯表',
+              permissionName: 'performance_job_ladder'
+            }
+          },
+          {
+            path: '/report/machine-value-setting',
+            component: () => import('@/views/equipment-management/report/machine-value-setting'),
+            name: 'machineValueSetting',
+            meta: {
+              faName: 'Achievements',
+              title: '机台目标值设定',
+              permissionName: 'machine_target_value'
+            }
+          },
+          {
+            path: '/report/unit-price-list',
+            component: () => import('@/views/equipment-management/report/unit-price-list'),
+            name: 'StatisticalReportPrice',
+            meta: {
+              faName: 'Achievements',
+              title: '绩效计算 单价表',
+              permissionName: 'performance_unit_price'
+            }
+          },
+          {
+            path: '/report/mixing',
+            component: () => import('@/views/equipment-management/report/mixing'),
+            name: 'StatisticalReportMixing',
+            meta: {
+              faName: 'Achievements',
+              title: '密炼机台产量汇总表',
+              permissionName: 'summary_of_mill_output'
+            }
+          },
+          {
+            path: '/report/set-attendance',
+            component: () => import('@/views/equipment-management/report/set-attendance'),
+            name: 'SetAttendance',
+            meta: {
+              faName: 'Achievements',
+              title: '考勤组设置',
+              permissionName: ''
             }
           }
-          // {
-          //   path: '/report/material-requirement',
-          //   component: () => import('@/views/equipment-management/report/material-requirement'),
-          //   name: 'material-requirement',
-          //   meta: {
-          //     title: '物料需求汇总',
-          //     permissionName: ''
-          //   }
-          // },
-
         ]
       },
+      /* {
+      path: '/plan/manage',
+      component: () => import('@/views/banburying_plan/index'),
+      name: 'BanburyingPlanManage',
+      meta: {
+        title: '密炼机台别计划对比',
+        icon: 'production',
+        permissionName: 'plan_reality'
+      }
+    },*/
+      // {
+      //   path: '/zl-warehouse-out-kanban',
+      //   component: () => import('@/views/production/warehouse-out-kanban.vue'),
+      //   name: 'ZlWarehouseOutKanban',
+      //   meta: {
+      //     title: '终炼胶出库看板', icon: 'production',
+      //     permissionName: 'zl_dashboard'
+      //   }
+      // },
+      // {
+      //   path: '/hl-warehouse-out-kanban',
+      //   component: () => import('@/views/production/hl-warehouseOutKanban.vue'),
+      //   name: 'HlWarehouseOutKanban',
+      //   meta: {
+      //     title: '混炼胶出库看板', icon: 'production',
+      //     permissionName: 'hl_dashboard'
+      //   }
+      // },
       {
         path: '/material/base/inventory-warning',
         name: 'MaterialBaseInventoryWarning',
