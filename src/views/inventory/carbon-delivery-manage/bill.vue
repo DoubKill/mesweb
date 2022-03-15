@@ -210,7 +210,14 @@
             />
           </el-select>
         </el-form-item>
-
+        <el-form-item v-if="isLocation" label="批次号">
+          <el-input
+            v-model="formSearch.batch_no"
+            clearable
+            placeholder="请输入内容"
+            @input="getDialogDebounce"
+          />
+        </el-form-item>
       </el-form>
       <div v-if="isLocation" :key="1" v-loading="loading2">
         <h3>库位货物列表</h3>

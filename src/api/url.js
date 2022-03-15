@@ -282,6 +282,7 @@ export default {
   WeighBatchingUrl: '/api/v1/recipe/weigh-batching/',
   ProductBatchingDetailUrl: '/api/v1/recipe/product-batching-detail/',
   WeighCntTypeUrl: '/api/v1/recipe/weigh-cnt-type/',
+  GetRecipeManual: '/api/v1/terminal/weighting-package-single/get_recipe_manual/',
 
   // 备品备件基本信息导入导出
   SpareImportExport: '/api/v1/spareparts/spare-import-export/',
@@ -660,6 +661,9 @@ export default {
   UserImport: '/api/v1/system/personnels/import_xlsx/',
   Sb: '/api/v1/production/nishisb/',
   WmsExceptHandle: '/api/v1/inventory/wms-except-handle/',
+  HfStock: '/api/v1/inventory/hf-stock/', // 烘房胶料信息统计列表
+  HfStockDetail: '/api/v1/inventory/hf-stock-detail/',
+  AttendanceGroupSetup: '/api/v1/production/attendance-group-setup/',
 
   PerformanceSummary: '/api/v1/production/performance-summary/', // 薪资汇总表
   PerformanceSubsidy: '/api/v1/production/performance-subsidy/',

@@ -66,7 +66,7 @@
             />
           </template>
         </el-table-column>
-        <el-table-column v-for="(item) in formObj.enable_equip" :key="item" :label="item">
+        <el-table-column v-for="(item) in formObj.enable_equip" :key="item" :label="item" width="120">
           <template slot-scope="{row}">
             <el-select
               v-model="row.master[item]"
@@ -74,7 +74,7 @@
               placeholder="请选择"
             >
               <el-option
-                v-for="item1 in formObj.stage_name==='FM'?['S','F']:['S','F','C']"
+                v-for="item1 in formObj.stage_name==='FM'?['S','F','R']:['S','F','C','R']"
                 :key="item1"
                 :label="item1"
                 :value="item1"

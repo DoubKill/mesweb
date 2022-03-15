@@ -1229,3 +1229,30 @@ export function userImport(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function hfStock(method, id, data = {}) {
+  const obj = {
+    url: id ? API.HfStock + id + '/' : API.HfStock,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function hfStockDetail(method, id, data = {}) {
+  const obj = {
+    url: id ? API.HfStockDetail + id + '/' : API.HfStockDetail,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function attendanceGroupSetup(method, id, data = {}) {
+  const obj = {
+    url: id ? API.AttendanceGroupSetup + id + '/' : API.AttendanceGroupSetup,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

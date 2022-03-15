@@ -875,17 +875,17 @@ export let asyncRoutes = [
                 title: '处理关键字定义',
                 permissionName: 'aps_opera_keyword'
               }
+            },
+            {
+              path: '/equipment-management/report/specification_setting',
+              name: 'SpecificationSetting',
+              component: () => import('@/views/equipment-management/report/specification_setting'),
+              meta: {
+                faName: 'ScheduleBasicData',
+                title: '丁基胶规格设定',
+                permissionName: 'product_info_dj'
+              }
             }
-            // ,{
-            //   path: '/equipment-management/report/specification_setting',
-            //   name: 'SpecificationSetting',
-            //   component: () => import('@/views/equipment-management/report/specification_setting'),
-            //   meta: {
-            //     faName: 'ScheduleBasicData',
-            //     title: '丁基胶 规格设定',
-            //     permissionName: ''
-            //   }
-            // }
           ]
         }
       ]
@@ -1134,14 +1134,14 @@ export let asyncRoutes = [
               permissionName: 'monthly_output_statistics_report'
             }
           },
-          /** {
+          {
             path: '/report/achievement',
             component: () => import('@/views/equipment-management/report/achievement'),
             name: 'StatisticalReportAchievement',
             meta: {
               faName: 'StatisticalReport',
               title: '员工绩效汇总表',
-              permissionName: ''
+              permissionName: 'performance_summary'
             }
           },
           {
@@ -1151,7 +1151,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'StatisticalReport',
               title: '岗位阶梯表',
-              permissionName: ''
+              permissionName: 'performance_job_ladder'
             }
           },
           {
@@ -1161,7 +1161,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'StatisticalReport',
               title: '绩效计算 单价表',
-              permissionName: ''
+              permissionName: 'performance_unit_price'
             }
           },
           {
@@ -1171,9 +1171,19 @@ export let asyncRoutes = [
             meta: {
               faName: 'StatisticalReport',
               title: '员工出勤记录表',
-              permissionName: ''
+              permissionName: 'employee_attendance_records'
             }
           },
+          // {
+          //   path: '/report/set-attendance',
+          //   component: () => import('@/views/equipment-management/report/set-attendance'),
+          //   name: 'SetAttendance',
+          //   meta: {
+          //     faName: 'StatisticalReport',
+          //     title: '考勤组设置',
+          //     permissionName: 'employee_attendance_records'
+          //   }
+          // },
           {
             path: '/report/mixing',
             component: () => import('@/views/equipment-management/report/mixing'),
@@ -1181,7 +1191,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'StatisticalReport',
               title: '密炼机台产量汇总表',
-              permissionName: ''
+              permissionName: 'summary_of_mill_output'
             }
           },
           {
@@ -1191,9 +1201,9 @@ export let asyncRoutes = [
             meta: {
               faName: 'StatisticalReport',
               title: '称量机台产量汇总表',
-              permissionName: ''
+              permissionName: 'summary_of_weighing_output'
             }
-          },**/
+          },
           // {
           //   path: '/report/output-statistics-details',
           //   component: () => import('@/views/equipment-management/report/output-statistics-details'),
@@ -1455,6 +1465,28 @@ export let asyncRoutes = [
               permissionName: 'material_inventory_summary'
             }
           },
+          {
+            path: '/internal/drying-room-statistics',
+            component: () => import('@/views/inspection_release/drying_room_statistics'),
+            name: 'DryingRoomStatistics',
+            meta: {
+              faName: 'MaterialDelivery',
+              faShowName: '原材料库',
+              title: '烘房信息统计查询',
+              permissionName: 'material_hf_summary'
+            }
+          },
+          // {
+          //   path: '/internal/drying-room-status',
+          //   component: () => import('@/views/inspection_release/drying_room_status'),
+          //   name: 'DryingRoomStatus',
+          //   meta: {
+          //     faName: 'MaterialDelivery',
+          //     faShowName: '原材料库',
+          //     title: '烘房状态实时显示',
+          //     permissionName: ''
+          //   }
+          // },
           {
             path: '/delivery-overdueQuery',
             component: () => import('@/views/inventory/material-delivery-manage/overdueQuery.vue'),

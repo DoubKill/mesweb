@@ -93,6 +93,15 @@
             width="80"
             column-key="material_type"
           />
+          <!-- <el-table-column
+            v-if="i===0"
+            label="单配"
+            width="80"
+          >
+            <template slot-scope="{row}">
+              <el-switch v-model="row.is_manual" />
+            </template>
+          </el-table-column> -->
           <el-table-column label="原材料">
             <template slot-scope="{row,$index}">
               <el-input
@@ -172,7 +181,7 @@
                 placeholder="请选择"
               >
                 <el-option
-                  v-for="item1 in i===0?['P']:i==1?['P','C']:['P','O']"
+                  v-for="item1 in i===0?['P']:i==1?['P','C','R']:['P','O','R']"
                   :key="item1"
                   :label="item1"
                   :value="item1"
@@ -429,6 +438,9 @@ export default {
       }
     },
     'formInline.enable_equip'(arr) {
+      if (!arr) {
+        arr = []
+      }
       // if (arr && arr.length) {
       this.tableDataAll.forEach((d, i) => {
         d.tableData.forEach((D, _index) => {
@@ -487,6 +499,8 @@ export default {
         package_cnt: undefined,
         package_type: 1
       }
+      this.formInline.enable_equip = []
+      this.formInline.send_success_equip = []
       this.batching_details_delete = []
       this.weight_material_delete = []
       this.weight_cnt_types_delete = []
@@ -678,7 +692,7 @@ export default {
       return ''
     },
     cellStyleFun({ row, column, rowIndex, columnIndex }) {
-      if (rowIndex === 0 && this.formInline.send_success_equip.includes(column.label)) {
+      if (rowIndex === 0 && this.formInline.send_success_equip && this.formInline.send_success_equip.includes(column.label)) {
         return 'background: #36a1cf;color:#fff'
       }
     },

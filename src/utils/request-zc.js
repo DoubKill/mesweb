@@ -53,7 +53,8 @@ service.interceptors.response.use(
         //   router.push('/login')
         //   return Promise.reject()
         // }
-        return Promise.reject(response)
+        const res = response.data
+        return Promise.resolve(res)
       } else {
         const res = response.data
         return Promise.resolve(res)

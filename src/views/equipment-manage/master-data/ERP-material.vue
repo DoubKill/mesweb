@@ -15,6 +15,9 @@
       <el-form-item label="备件名称:">
         <el-input v-model="search.spare_name" placeholder="请输入内容" @input="debounceList" />
       </el-form-item>
+      <el-form-item label="ERP物料信息id:">
+        <el-input v-model="search.unique_id" clearable placeholder="请输入内容" @input="debounceList" />
+      </el-form-item>
       <el-form-item label="规格型号:">
         <el-input v-model="search.specification" placeholder="请输入内容" @input="debounceList" />
       </el-form-item>
@@ -31,7 +34,7 @@
       <el-form-item label="供应商名称:">
         <el-input v-model="search.supplier_name" placeholder="请输入内容" @input="debounceList" />
       </el-form-item>
-      <el-form-item style="float:right">
+      <el-form-item style="">
         <el-button v-permission="['equip_spare_erp', 'export']" type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
         <el-upload
           v-permission="['equip_spare_erp', 'import']"
@@ -60,6 +63,11 @@
       <el-table-column
         prop="spare_name"
         label="备件名称"
+        min-width="20"
+      />
+      <el-table-column
+        prop="unique_id"
+        label="ERP物料信息id"
         min-width="20"
       />
       <el-table-column

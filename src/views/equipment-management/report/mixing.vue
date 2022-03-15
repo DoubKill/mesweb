@@ -19,7 +19,7 @@
           @click="getList"
         >查询</el-button>
         <el-button
-          v-permission="['monthly_output_statistics_and_performance','export']"
+          v-permission="['summary_of_mill_output','export']"
           type="primary"
           @click="exportTable"
         >导出Excel</el-button>

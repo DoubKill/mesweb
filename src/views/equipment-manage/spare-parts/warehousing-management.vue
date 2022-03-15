@@ -375,10 +375,10 @@
               prop="spare_name"
               label="备件名称"
             />
-            <!-- <el-table-column
-              prop="specification"
-              label="规格"
-            /> -->
+            <el-table-column
+              prop="unique_id"
+              label="ERP物料信息id"
+            />
             <el-table-column
               prop="quantity"
               label="数量"
@@ -470,6 +470,10 @@
             <el-table-column
               prop="spare_name"
               label="备件名称"
+            />
+            <el-table-column
+              prop="unique_id"
+              label="ERP物料信息id"
             />
             <el-table-column
               prop="quantity"
@@ -731,6 +735,7 @@ export default {
         this.dialogForm.equip_spare.push({
           id: d.equip_spare,
           in_quantity: d.in_quantity,
+          unique_id: d.unique_id,
           quantity: d.plan_in_quantity,
           spare_code: d.spare_code,
           spare_name: d.spare_name,
@@ -931,7 +936,7 @@ export default {
               spare_code: this.$refs['List'].multipleSelection[index].spare_code,
               id: this.$refs['List'].multipleSelection[index].id,
               spare_name: this.$refs['List'].multipleSelection[index].spare_name,
-              // specification: this.$refs['List'].multipleSelection[index].specification,
+              unique_id: this.$refs['List'].multipleSelection[index].unique_id,
               quantity: 1
               // one_piece: 1
             })

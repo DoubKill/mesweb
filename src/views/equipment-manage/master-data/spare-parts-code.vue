@@ -15,6 +15,9 @@
       <el-form-item label="备件名称">
         <el-input v-model="formInline.spare_name" clearable placeholder="备件名称" @input="debounceList" />
       </el-form-item>
+      <el-form-item label="ERP物料信息id:">
+        <el-input v-model="formInline.unique_id" clearable placeholder="请输入内容" @input="debounceList" />
+      </el-form-item>
       <el-form-item label="规格型号">
         <el-input v-model="formInline.specification" clearable placeholder="规格型号" @input="debounceList" />
       </el-form-item>
@@ -68,6 +71,11 @@
         prop="spare_name"
         label="备件名称"
         width="120"
+      />
+      <el-table-column
+        prop="unique_id"
+        label="ERP物料信息id"
+        min-width="20"
       />
       <el-table-column
         prop="equip_component_type_name"

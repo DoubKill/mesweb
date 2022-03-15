@@ -52,6 +52,15 @@ export function productBatchingDetail(product_batching) {
     }
   })
 }
+export function getRecipeManual(product_batching) {
+  return request({
+    url: API.GetRecipeManual,
+    method: 'get',
+    params: {
+      product_batching
+    }
+  })
+}
 
 export function updateWeighCntType(id, data) {
   return request({
