@@ -8,6 +8,7 @@ import {
   getToken
 } from '@/utils/auth'
 
+let currentUrl = ''
 // create an axios instance
 const service = axios.create({
   baseURL: process.env.NODE_ENV === 'production' ? '/' : '/api', // url = base url + request url
@@ -21,6 +22,7 @@ service.interceptors.request.use(
     if (store.getters.token) {
       config.headers['Authorization'] = 'JWT ' + getToken()
     }
+    currentUrl = config.responseType || false
     return config
   },
   error => {
@@ -135,6 +137,14 @@ service.interceptors.response.use(
       })
       return Promise.reject(error.response.data)
     } else if (typeof error.message === 'string') {
+      if (currentUrl) {
+        Message({
+          message: '导出数据的日期跨度不得超过一个月！',
+          type: 'error',
+          duration: 3 * 1000
+        })
+        return Promise.reject(error)
+      }
       Message({
         message: error.message,
         type: 'error',
