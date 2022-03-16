@@ -578,6 +578,9 @@ export default {
     },
     insert_NewPracticalWeightChanged(i) {
       const obj = {}
+      if (!this.formInline.enable_equip) {
+        this.formInline.enable_equip = []
+      }
       if (this.tableDataAll[i].tableData.length === 0) {
         this.formInline.enable_equip.forEach(d => {
           if (i === 0) {

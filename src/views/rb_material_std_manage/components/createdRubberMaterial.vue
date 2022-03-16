@@ -370,7 +370,7 @@ export default {
         })
         this.batchingList = {
           batching_details: data.batching_details,
-          weight_cnt_types: this.isCopy ? [] : arr
+          weight_cnt_types: arr
         }
         this.showIngredient = true
       } catch (e) { throw new Error(e) }
