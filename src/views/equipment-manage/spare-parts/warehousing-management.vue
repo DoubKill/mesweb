@@ -175,6 +175,11 @@
           </template>
         </el-table-column>
         <el-table-column
+          prop="unique_id"
+          label="ERP物料信息id"
+          min-width="20"
+        />
+        <el-table-column
           prop="spare_code"
           label="备件代码"
           min-width="20"

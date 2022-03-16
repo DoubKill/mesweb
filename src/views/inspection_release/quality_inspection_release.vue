@@ -292,7 +292,7 @@
           <el-input v-model="currentInfo.material_code" disabled />
         </el-form-item>
         <el-form-item label="批次号">
-          <el-input v-model="currentInfo.lot_no" disabled />
+          <el-input v-model="currentInfo.batch_no" disabled />
         </el-form-item>
       </el-form>
       <el-table
@@ -416,7 +416,7 @@ export default {
         this.currentInfo = {
           material_name: row.material_name,
           material_code: row.material_no,
-          lot_no: row.batch_no
+          batch_no: row.batch_no
         }
         this.loadingCheck = true
         const data = await wmsExceptHandle('get', null, { params: this.currentInfo })
@@ -475,12 +475,13 @@ export default {
         if (val === '合格') {
           if (row.quality_status === 5) {
             this.abnormalForm = {
+              batch_no: this.searchView.batch_no,
               status: '设定合格',
               quality_status: '待检品',
               result: '放行',
               except_reason: '',
               material_code: this.searchView.e_material_no,
-              lot_no: this.searchView.batch_no
+              lot_no: this.trackingList
             }
             this.$confirm('此操作将该物料的品质状态改成' + val + '是否继续?', '提示', {
               confirmButtonText: '确定',
@@ -513,6 +514,7 @@ export default {
           this.quality_status = this.qualityStatus.find(d => d.id === row.quality_status).name
           this.dialogVisibleAbnormal = true
           this.abnormalForm = {
+            batch_no: this.searchView.batch_no,
             status: '异常处理',
             quality_status: this.quality_status,
             result: '不放行',
@@ -525,7 +527,7 @@ export default {
     },
     async generateFunAbnormal() {
       this.abnormalForm.material_code = this.searchView.e_material_no
-      this.abnormalForm.lot_no = this.searchView.batch_no
+      this.abnormalForm.lot_no = this.trackingList
       try {
         this.submitPass = true
         await wmsRelease('post', null, { data: { tracking_nums: this.trackingList, operation_type: this.abnormalForm.result }})
