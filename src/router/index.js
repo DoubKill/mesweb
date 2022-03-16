@@ -1077,6 +1077,38 @@ export let asyncRoutes = [
         ]
       },
       {
+        path: '/make_up',
+        redirect: '/material-print-card',
+        component: () => import('@/views/production/resume-fa'),
+        name: 'Resume1',
+        meta: {
+          title: '质量追踪卡补打',
+          icon: 'production'
+        },
+        children: [
+          {
+            path: '/material-print-card1',
+            component: () => import('@/views/inventory/rubber-warehouse/material-print-card.vue'),
+            name: 'MaterialPrintCard1',
+            meta: {
+              faName: 'Resume1',
+              title: '胶片流转卡补打', // 出库口补打印卡片
+              permissionName: 'addrubber_print'
+            }
+          },
+          {
+            path: '/small-material-weight/currency1',
+            component: () => import('@/views/recipe/small-material-weight/currency'),
+            name: 'SmallMaterialWeightCurrency1',
+            meta: {
+              faName: 'Resume1',
+              title: '通用及原材料卡片补打', // 单配(配方/通用)化工流转卡
+              permissionName: 'material_add_print'
+            }
+          }
+        ]
+      },
+      {
         path: '/resume',
         redirect: '/internal/investment',
         component: () => import('@/views/production/resume-fa'),

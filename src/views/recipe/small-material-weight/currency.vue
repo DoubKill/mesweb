@@ -47,9 +47,16 @@
           @change="changeDevType"
         />
       </el-form-item>
-      <el-form-item label="">
+      <el-form-item v-if="!isProduction">
         <el-button
           v-permission="['weighting_package_single', 'add']"
+          type="primary"
+          @click="showPrintDialog(false)"
+        >新建</el-button>
+      </el-form-item>
+      <el-form-item v-else>
+        <el-button
+          v-permission="['material_add_print', 'add']"
           type="primary"
           @click="showPrintDialog(false)"
         >新建</el-button>
@@ -144,11 +151,20 @@
         width="100px"
       >
         <template slot-scope="scope">
-          <el-button
-            v-permission="['weighting_package_single', 'print']"
-            type="primary"
-            @click="showPrintDialog(scope.row)"
-          >打印</el-button>
+          <div v-if="!isProduction">
+            <el-button
+              v-permission="['weighting_package_single', 'print']"
+              type="primary"
+              @click="showPrintDialog(scope.row)"
+            >打印</el-button>
+          </div>
+          <div v-else>
+            <el-button
+              v-permission="['material_add_print', 'print']"
+              type="primary"
+              @click="showPrintDialog(scope.row)"
+            >打印</el-button>
+          </div>
         </template>
       </el-table-column>
     </el-table>
@@ -381,10 +397,12 @@ export default {
       tableData1: [],
       options: [],
       productList: [],
-      materialList: []
+      materialList: [],
+      isProduction: null // 是否是生产页面点进来的
     }
   },
   created() {
+    this.isProduction = this.$route.path === '/small-material-weight/currency1'
     this.getList()
     this.getProductList()
   },
