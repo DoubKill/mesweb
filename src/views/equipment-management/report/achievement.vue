@@ -1,6 +1,6 @@
 <template>
   <div class="achievement">
-    <!-- 员工绩效汇总表 -->
+    <!-- 密炼员工绩效汇总表 -->
     <el-form :inline="true">
       <el-form-item label="月份">
         <el-date-picker
@@ -50,12 +50,12 @@
       <el-table-column
         prop="name"
         label="名字"
-        min-width="20"
+        width="60"
       />
       <el-table-column
         prop="是否定岗"
         label="是否独立上岗"
-        min-width="20"
+        width="40"
       >
         <template slot-scope="{row}">
           {{ row.是否定岗?'是':'否' }}
@@ -66,7 +66,7 @@
           v-for="_item in group_list[_index]"
           :key="_item"
           :label="_item"
-          min-width="20"
+          width="65"
         >
           <template slot-scope="{row}">
             <el-link
@@ -79,12 +79,14 @@
       <el-table-column
         prop="hj"
         label="产量工资合计"
-        min-width="20"
+        width="65"
+        fixed="right"
       />
       <el-table-column
         prop="超产奖励"
         label="超产奖励"
-        min-width="20"
+        width="65"
+        fixed="right"
       >
         <template slot-scope="{row}">
           <el-link
@@ -96,7 +98,8 @@
       <el-table-column
         prop="其他奖惩"
         label="其他奖惩"
-        min-width="20"
+        width="65"
+        fixed="right"
       >
         <template slot-scope="{row}">
           <el-link
@@ -108,7 +111,8 @@
       <el-table-column
         prop="生产补贴"
         label="生产补贴"
-        min-width="20"
+        width="65"
+        fixed="right"
       >
         <template slot-scope="{row}">
           <el-link
@@ -120,7 +124,8 @@
       <el-table-column
         prop="all"
         label="工资总计"
-        min-width="20"
+        width="90"
+        fixed="right"
       />
     </el-table>
 
