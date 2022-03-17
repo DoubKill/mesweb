@@ -11,35 +11,35 @@
     </el-form>
     <div class="conter-style">
       <div
-        v-for="item in 8"
-        :key="item"
+        v-for="(item,index) in boxList"
+        :key="index"
         class="conter-style-box"
       >
         <div style="flex:1;margin:10px;font-size:18px">
-          <span class="topText">1#烘箱</span>
+          <span class="topText">{{ item.OastNo }}#烘箱</span>
           <span class="topText" :style="{background:color}">运行中</span>
-          <span class="topText">80℃</span>
-          <span class="topText">开烘时间：2022-03-02 10:20:30</span>
-          <span class="topText">已烘时长： 120分钟</span>
+          <span class="topText">{{ item.OastTemperature }}℃</span>
+          <span class="topText">开烘时间：{{ item.OastStartTime }}</span>
+          <span class="topText">已烘时长：{{ item.OastServiceTime }}分钟</span>
         </div>
         <div style="display: flex;margin-left:2%;margin-top:2%">
           <div :style="{background:color}" class="bottomDiv">
-            <div class="bottomText">越南SVR3L-X越南SVR3L-X越南SVR3L-X越南SVR3L-X越南SVR3L-X</div>
+            <div class="bottomText">{{ item.OastMatiles[1].ProductName }}</div>
           </div>
           <div class="bottomDiv">
-            <div class="bottomText">越南SVR3L-X越南SVR3L-X越南SVR3L-X</div>
+            <div class="bottomText">{{ item.OastMatiles[1].ProductName }}</div>
           </div>
           <div class="bottomDiv">
-            <div class="bottomText"> 越南SVR3L-X</div>
+            <div class="bottomText">{{ item.OastMatiles[1].ProductName }}</div>
           </div>
           <div class="bottomDiv">
-            <div class="bottomText"> 越南SVR3L-X</div>
+            <div class="bottomText">{{ item.OastMatiles[1].ProductName }}</div>
           </div>
           <div class="bottomDiv">
-            <div class="bottomText">越南SVR3L-X</div>
+            <div class="bottomText">{{ item.OastMatiles[1].ProductName }}</div>
           </div>
           <div class="bottomDiv">
-            <div class="bottomText"> 越南SVR3L-X</div>
+            <div class="bottomText"> {{ item.OastMatiles[1].ProductName }}</div>
           </div>
         </div>
       </div>
@@ -80,46 +80,49 @@
       <el-table
         v-loading="loading"
         :data="tableData"
-        max-height="500"
         border
       >
         <el-table-column
           prop="quality_status"
           label="状态"
           min-width="20"
+          :formatter="(row)=>{
+            let obj = workStatus.find(d=>d.id === row.TaskState)
+            return obj.name
+          }"
         />
         <el-table-column
-          prop="lot_no"
+          prop="ProductName"
           label="物料名称"
           min-width="20"
         />
         <el-table-column
-          prop="in_storage_time"
+          prop="RFID"
           label="RFID"
           min-width="20"
         />
         <el-table-column
-          prop="unit"
+          prop="TaskStartTime"
           label="开始时间"
           min-width="20"
         />
         <el-table-column
-          prop="qty"
+          prop="TaskEntTime"
           label="出库时间"
           min-width="20"
         />
         <el-table-column
-          prop="total_weight"
+          prop="OastInTime"
           label="入烘箱时间"
           min-width="20"
         />
         <el-table-column
-          prop="total_weight"
+          prop="OastOutTime"
           label="出烘箱时间"
           min-width="20"
         />
         <el-table-column
-          prop="total_weight"
+          prop="Runtime"
           label="时长"
           min-width="20"
         />
@@ -129,22 +132,23 @@
           min-width="20"
         />
         <el-table-column
-          prop="total_weight"
+          prop="RoadWay"
           label="巷道号"
           min-width="20"
         />
         <el-table-column
-          prop="total_weight"
+          prop="OastNo"
           label="烘箱号"
           min-width="20"
         />
-        <page
-          :old-page="false"
-          :total="total"
-          :current-page="search.page"
-          @currentChange="currentChange"
-        />
+
       </el-table>
+      <page
+        :old-page="false"
+        :total="total"
+        :current-page="search.page"
+        @currentChange="currentChange"
+      />
     </el-dialog>
 
     <el-dialog
@@ -191,6 +195,7 @@
 
 <script>
 import { setDate } from '@/utils'
+import { hfRealStatus } from '@/api/jqy'
 import page from '@/components/page'
 export default {
   name: 'MaterialDelivery',
@@ -200,14 +205,24 @@ export default {
       options: ['1号烘箱', '2号烘箱', '3号烘箱', '4号烘箱', '5号烘箱', '6号烘箱', '7号烘箱', '8号烘箱'],
       color: 'red',
       submit: false,
-      search: {},
+      search: { type: 1 },
       dialogVisible: false,
       dialogVisibleWork: false,
       dialogVisibleList: false,
       ruleForm: {},
       total: 0,
       total1: 0,
+      workStatus: [
+        { id: 1, name: '入库中' },
+        { id: 2, name: '烘烤运行' },
+        { id: 3, name: '出库中' },
+        { id: 4, name: '等待烘烤' },
+        { id: 5, name: '等待出库' },
+        { id: 6, name: '已出库' },
+        { id: 7, name: '取消' }
+      ],
       loading: false,
+      boxList: [],
       tableData: [],
       tableData1: [],
       rules: {
@@ -220,9 +235,9 @@ export default {
     this.getList()
   },
   mounted() {
-    this.timer = setInterval(d => {
-      this.getList()
-    }, 300000)
+    // this.timer = setInterval(d => {
+    //   this.getList()
+    // }, 300000)
   },
   beforeDestroy() {
     clearInterval(this.timer)
@@ -230,15 +245,23 @@ export default {
   methods: {
     async getList() {
       try {
-        // this.loading = true
-        // const data = await equipPlan('get', null, { params: this.search })
-        // this.tableData = data.results || []
+        const data = await hfRealStatus('get', null, { params: { type: 0 }})
+        this.boxList = data.results || []
       } catch (e) {
         //
       }
     },
-    getWorkList() {
+    async getWorkList() {
       this.dialogVisibleWork = true
+      try {
+        this.loading = true
+        const data = await hfRealStatus('get', null, { params: this.search })
+        this.tableData = data.results || []
+        this.total = data.total_data
+        this.loading = false
+      } catch (e) {
+        this.loading = false
+      }
     },
     getBoxList() {
       this.dialogVisibleList = true
@@ -246,7 +269,7 @@ export default {
     currentChange(page, page_size) {
       this.search.page = page
       this.search.page_size = page_size
-    //   this.getList()
+      this.getWorkList()
     },
     currentChange1(page, page_size) {
       this.search.page = page
@@ -258,7 +281,7 @@ export default {
         if (valid) {
           try {
             this.submit = true
-            // await equipPlan('post', null, { data: this.creatOrder })
+            // await hfRealStatus('post', null, { data: this.creatOrder })
             this.$message.success('操作成功')
             this.getList()
             this.submit = false
