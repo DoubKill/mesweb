@@ -26,19 +26,19 @@
           <div class="bottomDiv" :style="{background:item.color}">
             <div class="bottomText">{{ (item.OastMatiles?item.OastMatiles[0]:null)?item.OastMatiles[0].ProductName:null }}</div>
           </div>
-          <div class="bottomDiv">
+          <div class="bottomDiv" :style="{background:item.color}">
             <div class="bottomText">{{ (item.OastMatiles?item.OastMatiles[1]:null)?item.OastMatiles[1].ProductName:null }}</div>
           </div>
-          <div class="bottomDiv">
+          <div class="bottomDiv" :style="{background:item.color}">
             <div class="bottomText">{{ (item.OastMatiles?item.OastMatiles[2]:null)?item.OastMatiles[2].ProductName:null }}</div>
           </div>
-          <div class="bottomDiv">
+          <div class="bottomDiv" :style="{background:item.color}">
             <div class="bottomText">{{ (item.OastMatiles?item.OastMatiles[3]:null)?item.OastMatiles[3].ProductName:null }}</div>
           </div>
-          <div class="bottomDiv">
+          <div class="bottomDiv" :style="{background:item.color}">
             <div class="bottomText">{{ (item.OastMatiles?item.OastMatiles[4]:null)?item.OastMatiles[4].ProductName:null }}</div>
           </div>
-          <div class="bottomDiv">
+          <div class="bottomDiv" :style="{background:item.color}">
             <div class="bottomText"> {{ (item.OastMatiles?item.OastMatiles[5]:null)?item.OastMatiles[5].ProductName:null }}</div>
           </div>
         </div>
@@ -263,6 +263,15 @@ export default {
         this.boxLoading = true
         const data = await hfRealStatus('get', null, { params: { type: 0 }})
         this.boxList = data.results || []
+        this.boxList.forEach((d, index) => {
+          if (d.OastState === 2) {
+            this.boxList[index].color = '#FFFF80'
+          } else if (d.OastState === 3) {
+            this.boxList[index].color = '#95F204'
+          } else if (d.OastState === 5) {
+            this.boxList[index].color = '#D9001B'
+          }
+        })
         this.boxLoading = false
       } catch (e) {
         this.boxLoading = false
@@ -275,16 +284,6 @@ export default {
         this.loading = true
         const data = await hfRealStatus('get', null, { params: this.search })
         this.tableData = data.results || []
-        this.tableData.forEach((d, index) => {
-          if (d.OastState === 2) {
-            this.tableData[index].color = '#FFFF80'
-          } else if (d.OastState === 3) {
-            this.tableData[index].color = '#95F204'
-          } else if (d.OastState === 5) {
-            this.tableData[index].color = '#D9001B'
-          }
-        })
-        console.log(this.tableData)
         this.total = data.total_data
         this.loading = false
       } catch (e) {
