@@ -306,7 +306,7 @@ export default {
     async getTypeList() {
       const obj = { all: 1, class_name: '绩效计算岗位类别' }
       const data = await classesListUrl('get', null, { params: obj })
-      this.options = data.results
+      this.optionsType = data.results
     },
     async getGroupList() {
       const data = await personnels('get', null, { params: { section_name: this.department }})
