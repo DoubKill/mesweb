@@ -9,37 +9,37 @@
         <el-button v-permission="['','']" type="primary" @click="getList">刷新</el-button>
       </el-form-item>
     </el-form>
-    <div class="conter-style">
+    <div v-loading="boxLoading" class="conter-style">
       <div
-        v-for="item in 8"
-        :key="item"
+        v-for="(item,index) in boxList"
+        :key="index"
         class="conter-style-box"
       >
         <div style="flex:1;margin:10px;font-size:18px">
-          <span class="topText">1#烘箱</span>
-          <span class="topText" :style="{background:color}">运行中</span>
-          <span class="topText">80℃</span>
-          <span class="topText">开烘时间：2022-03-02 10:20:30</span>
-          <span class="topText">已烘时长： 120分钟</span>
+          <span class="topText">{{ item.OastNo }}#烘箱</span>
+          <span class="topText" :style="{background:item.OastState===5?'#D9001B':'#95F204'}">{{ boxStatus.find(d=>d.id === item.OastState)?boxStatus.find(d=>d.id === item.OastState).name:null }}</span>
+          <span class="topText">{{ item.OastTemperature }}℃</span>
+          <span class="topText">开烘时间：{{ item.OastStartTime }}</span>
+          <span class="topText">已烘时长：{{ item.OastServiceTime }}分钟</span>
         </div>
         <div style="display: flex;margin-left:2%;margin-top:2%">
-          <div :style="{background:color}" class="bottomDiv">
-            <div class="bottomText">越南SVR3L-X越南SVR3L-X越南SVR3L-X越南SVR3L-X越南SVR3L-X</div>
+          <div class="bottomDiv" :style="{background:item.color}">
+            <div class="bottomText">{{ (item.OastMatiles?item.OastMatiles[0]:null)?item.OastMatiles[0].ProductName:null }}</div>
           </div>
           <div class="bottomDiv">
-            <div class="bottomText">越南SVR3L-X越南SVR3L-X越南SVR3L-X</div>
+            <div class="bottomText">{{ (item.OastMatiles?item.OastMatiles[1]:null)?item.OastMatiles[1].ProductName:null }}</div>
           </div>
           <div class="bottomDiv">
-            <div class="bottomText"> 越南SVR3L-X</div>
+            <div class="bottomText">{{ (item.OastMatiles?item.OastMatiles[2]:null)?item.OastMatiles[2].ProductName:null }}</div>
           </div>
           <div class="bottomDiv">
-            <div class="bottomText"> 越南SVR3L-X</div>
+            <div class="bottomText">{{ (item.OastMatiles?item.OastMatiles[3]:null)?item.OastMatiles[3].ProductName:null }}</div>
           </div>
           <div class="bottomDiv">
-            <div class="bottomText">越南SVR3L-X</div>
+            <div class="bottomText">{{ (item.OastMatiles?item.OastMatiles[4]:null)?item.OastMatiles[4].ProductName:null }}</div>
           </div>
           <div class="bottomDiv">
-            <div class="bottomText"> 越南SVR3L-X</div>
+            <div class="bottomText"> {{ (item.OastMatiles?item.OastMatiles[5]:null)?item.OastMatiles[5].ProductName:null }}</div>
           </div>
         </div>
       </div>
@@ -50,18 +50,18 @@
       :visible.sync="dialogVisible"
       width="30%"
     >
-      <el-form :model="ruleForm" :rules="rules" label-width="150px">
-        <el-form-item label="选择烘箱" prop="suggestion_desc">
+      <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="150px">
+        <el-form-item label="选择烘箱" prop="hf_equip">
           <el-select
-            v-model="ruleForm.suggestion_desc"
+            v-model="ruleForm.hf_equip"
             clearable
             placeholder="请选择"
           >
             <el-option
               v-for="(item, index) in options"
               :key="index"
-              :label="item"
-              :value="item"
+              :label="item.label"
+              :value="item.id"
             />
           </el-select>
         </el-form-item>
@@ -80,46 +80,49 @@
       <el-table
         v-loading="loading"
         :data="tableData"
-        max-height="500"
         border
       >
         <el-table-column
           prop="quality_status"
           label="状态"
           min-width="20"
+          :formatter="(row)=>{
+            let obj = workStatus.find(d=>d.id === row.TaskState)
+            return obj.name
+          }"
         />
         <el-table-column
-          prop="lot_no"
+          prop="ProductName"
           label="物料名称"
           min-width="20"
         />
         <el-table-column
-          prop="in_storage_time"
+          prop="RFID"
           label="RFID"
           min-width="20"
         />
         <el-table-column
-          prop="unit"
+          prop="TaskStartTime"
           label="开始时间"
           min-width="20"
         />
         <el-table-column
-          prop="qty"
+          prop="TaskEntTime"
           label="出库时间"
           min-width="20"
         />
         <el-table-column
-          prop="total_weight"
+          prop="OastInTime"
           label="入烘箱时间"
           min-width="20"
         />
         <el-table-column
-          prop="total_weight"
+          prop="OastOutTime"
           label="出烘箱时间"
           min-width="20"
         />
         <el-table-column
-          prop="total_weight"
+          prop="Runtime"
           label="时长"
           min-width="20"
         />
@@ -129,22 +132,23 @@
           min-width="20"
         />
         <el-table-column
-          prop="total_weight"
+          prop="RoadWay"
           label="巷道号"
           min-width="20"
         />
         <el-table-column
-          prop="total_weight"
+          prop="OastNo"
           label="烘箱号"
           min-width="20"
         />
-        <page
-          :old-page="false"
-          :total="total"
-          :current-page="search.page"
-          @currentChange="currentChange"
-        />
+
       </el-table>
+      <page
+        :old-page="false"
+        :total="total"
+        :current-page="search.page"
+        @currentChange="currentChange"
+      />
     </el-dialog>
 
     <el-dialog
@@ -159,61 +163,87 @@
         border
       >
         <el-table-column
-          prop="lot_no"
+          prop="ProductName"
           label="物料名称"
           min-width="20"
         />
         <el-table-column
-          prop="in_storage_time"
+          prop="RFID"
           label="RFID"
           min-width="20"
         />
         <el-table-column
-          prop="unit"
+          prop="TaskStartTime"
           label="开始时间"
           min-width="20"
         />
         <el-table-column
-          prop="total_weight"
+          prop="RoadWay"
           label="巷道号"
           min-width="20"
         />
-        <page
-          :old-page="false"
-          :total="total1"
-          :current-page="search.page"
-          @currentChange="currentChange1"
-        />
       </el-table>
+      <page
+        :old-page="false"
+        :total="total1"
+        :current-page="search1.page"
+        @currentChange="currentChange1"
+      />
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { setDate } from '@/utils'
+import { hfRealStatus } from '@/api/jqy'
 import page from '@/components/page'
 export default {
   name: 'MaterialDelivery',
   components: { page },
   data() {
     return {
-      options: ['1号烘箱', '2号烘箱', '3号烘箱', '4号烘箱', '5号烘箱', '6号烘箱', '7号烘箱', '8号烘箱'],
-      color: 'red',
+      options: [
+        { id: '1', label: '1号烘箱' },
+        { id: '2', label: '2号烘箱' },
+        { id: '3', label: '3号烘箱' },
+        { id: '4', label: '4号烘箱' },
+        { id: '5', label: '5号烘箱' },
+        { id: '6', label: '6号烘箱' },
+        { id: '7', label: '7号烘箱' },
+        { id: '8', label: '8号烘箱' }],
       submit: false,
-      search: {},
+      boxLoading: false,
+      search: { type: 1 },
+      search1: { type: 2 },
       dialogVisible: false,
       dialogVisibleWork: false,
       dialogVisibleList: false,
       ruleForm: {},
       total: 0,
       total1: 0,
+      boxStatus: [
+        { id: 0, name: '空闲' },
+        { id: 1, name: '入箱中' },
+        { id: 2, name: '烘烤中' },
+        { id: 3, name: '等待出箱' },
+        { id: 4, name: '出箱中' },
+        { id: 5, name: '异常中断' }
+      ],
+      workStatus: [
+        { id: 1, name: '入库中' },
+        { id: 2, name: '烘烤运行' },
+        { id: 3, name: '出库中' },
+        { id: 4, name: '等待烘烤' },
+        { id: 5, name: '等待出库' },
+        { id: 6, name: '已出库' },
+        { id: 7, name: '取消' }
+      ],
       loading: false,
+      boxList: [],
       tableData: [],
       tableData1: [],
       rules: {
-        suggestion_desc: [{ required: true, message: '不能为空', trigger: 'change' }]
-      },
-      currentTime: setDate(null, true)
+        hf_equip: [{ required: true, message: '不能为空', trigger: 'change' }]
+      }
     }
   },
   created() {
@@ -230,37 +260,66 @@ export default {
   methods: {
     async getList() {
       try {
-        // this.loading = true
-        // const data = await equipPlan('get', null, { params: this.search })
-        // this.tableData = data.results || []
+        this.boxLoading = true
+        const data = await hfRealStatus('get', null, { params: { type: 0 }})
+        this.boxList = data.results || []
+        this.boxLoading = false
       } catch (e) {
+        this.boxLoading = false
         //
       }
     },
-    getWorkList() {
+    async getWorkList() {
       this.dialogVisibleWork = true
+      try {
+        this.loading = true
+        const data = await hfRealStatus('get', null, { params: this.search })
+        this.tableData = data.results || []
+        this.tableData.forEach((d, index) => {
+          if (d.OastState === 2) {
+            this.tableData[index].color = '#FFFF80'
+          } else if (d.OastState === 3) {
+            this.tableData[index].color = '#95F204'
+          } else if (d.OastState === 5) {
+            this.tableData[index].color = '#D9001B'
+          }
+        })
+        console.log(this.tableData)
+        this.total = data.total_data
+        this.loading = false
+      } catch (e) {
+        this.loading = false
+      }
     },
-    getBoxList() {
+    async getBoxList() {
       this.dialogVisibleList = true
+      try {
+        this.loading = true
+        const data = await hfRealStatus('get', null, { params: this.search1 })
+        this.tableData1 = data.results || []
+        this.total1 = data.total_data
+        this.loading = false
+      } catch (e) {
+        this.loading = false
+      }
     },
     currentChange(page, page_size) {
       this.search.page = page
       this.search.page_size = page_size
-    //   this.getList()
+      this.getWorkList()
     },
     currentChange1(page, page_size) {
-      this.search.page = page
-      this.search.page_size = page_size
-    //   this.getList()
+      this.search1.page = page
+      this.search1.page_size = page_size
+      this.getBoxList()
     },
     generateFun() {
       this.$refs.ruleForm.validate(async(valid) => {
         if (valid) {
           try {
             this.submit = true
-            // await equipPlan('post', null, { data: this.creatOrder })
+            await hfRealStatus('post', null, { data: this.ruleForm })
             this.$message.success('操作成功')
-            this.getList()
             this.submit = false
           } catch (e) {
             this.submit = false
