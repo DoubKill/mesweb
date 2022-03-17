@@ -53,6 +53,22 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="物料编码">
+        <el-input
+          v-model="search.spare_code"
+          style="width:150px"
+          clearable
+          @input="changeSearch"
+        />
+      </el-form-item>
+      <el-form-item label="物料名称">
+        <el-input
+          v-model="search.spare_name"
+          style="width:150px"
+          clearable
+          @input="changeSearch"
+        />
+      </el-form-item>
       <el-form-item style="float:right">
         <el-button
           v-permission="['equip_in_warehouse', 'add']"
