@@ -138,11 +138,16 @@ service.interceptors.response.use(
       return Promise.reject(error.response.data)
     } else if (typeof error.message === 'string') {
       if (currentUrl) {
-        Message({
-          message: '导出数据的日期跨度不得超过一个月！',
-          type: 'error',
-          duration: 3 * 1000
-        })
+        const resData = error.response.data
+        const fileReader = new FileReader()
+        fileReader.onloadend = () => {
+          Message({
+            message: JSON.parse(fileReader.result)[0],
+            type: 'error',
+            duration: 3 * 1000
+          })
+        }
+        fileReader.readAsText(resData)
         return Promise.reject(error)
       }
       Message({
