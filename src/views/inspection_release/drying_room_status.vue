@@ -17,13 +17,13 @@
       >
         <div style="flex:1;margin:10px;font-size:18px">
           <span class="topText">{{ item.OastNo }}#烘箱</span>
-          <span class="topText" :style="{background:item.OastState===0||item.OastState===5?'red':'#95F204'}">{{ boxStatus.find(d=>d.id === item.OastState)?boxStatus.find(d=>d.id === item.OastState).name:null }}</span>
+          <span class="topText" :style="{background:item.OastState===5?'#D9001B':'#95F204'}">{{ boxStatus.find(d=>d.id === item.OastState)?boxStatus.find(d=>d.id === item.OastState).name:null }}</span>
           <span class="topText">{{ item.OastTemperature }}℃</span>
           <span class="topText">开烘时间：{{ item.OastStartTime }}</span>
           <span class="topText">已烘时长：{{ item.OastServiceTime }}分钟</span>
         </div>
         <div style="display: flex;margin-left:2%;margin-top:2%">
-          <div class="bottomDiv">
+          <div class="bottomDiv" :style="{background:item.color}">
             <div class="bottomText">{{ (item.OastMatiles?item.OastMatiles[0]:null)?item.OastMatiles[0].ProductName:null }}</div>
           </div>
           <div class="bottomDiv">
@@ -221,11 +221,11 @@ export default {
       total: 0,
       total1: 0,
       boxStatus: [
-        { id: 0, name: '未运行' },
-        { id: 1, name: '运行中' },
-        { id: 2, name: '运行中' },
-        { id: 3, name: '运行中' },
-        { id: 4, name: '运行中' },
+        { id: 0, name: '空闲' },
+        { id: 1, name: '入箱中' },
+        { id: 2, name: '烘烤中' },
+        { id: 3, name: '等待出箱' },
+        { id: 4, name: '出箱中' },
         { id: 5, name: '异常中断' }
       ],
       workStatus: [
@@ -275,6 +275,16 @@ export default {
         this.loading = true
         const data = await hfRealStatus('get', null, { params: this.search })
         this.tableData = data.results || []
+        this.tableData.forEach((d, index) => {
+          if (d.OastState === 2) {
+            this.tableData[index].color = '#FFFF80'
+          } else if (d.OastState === 3) {
+            this.tableData[index].color = '#95F204'
+          } else if (d.OastState === 5) {
+            this.tableData[index].color = '#D9001B'
+          }
+        })
+        console.log(this.tableData)
         this.total = data.total_data
         this.loading = false
       } catch (e) {
