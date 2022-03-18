@@ -184,7 +184,7 @@
         label="总重量(kg)"
         min-width="70"
       />
-      <el-table-column
+      <!-- <el-table-column
         prop="total_sl"
         label="总件数"
         min-width="70"
@@ -193,7 +193,7 @@
         prop="total_zl"
         label="总唛头重量"
         min-width="70"
-      />
+      /> -->
     </el-table>
     <page
       :old-page="false"
