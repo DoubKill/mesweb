@@ -3,10 +3,10 @@
     <!-- 原材料库 烘房状态实时显示 -->
     <el-form :inline="true">
       <el-form-item>
-        <el-button v-permission="['','']" type="primary" @click="dialogVisible=true">手动出库</el-button>
-        <el-button v-permission="['','']" type="primary" @click="getWorkList">任务列表</el-button>
-        <el-button v-permission="['','']" type="primary" @click="getBoxList">待入箱列表</el-button>
-        <el-button v-permission="['','']" type="primary" @click="getList">刷新</el-button>
+        <el-button v-permission="['material_hf_real_data','outbound']" type="primary" @click="dialogVisible=true">手动出库</el-button>
+        <el-button type="primary" @click="getWorkList">任务列表</el-button>
+        <el-button type="primary" @click="getBoxList">待入箱列表</el-button>
+        <el-button type="primary" @click="getList">刷新</el-button>
       </el-form-item>
     </el-form>
     <div v-loading="boxLoading" class="conter-style">

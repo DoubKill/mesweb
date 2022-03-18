@@ -1535,7 +1535,7 @@ export let asyncRoutes = [
               faName: 'MaterialDelivery',
               faShowName: '原材料库',
               title: '烘房状态实时显示',
-              permissionName: ''
+              permissionName: 'material_hf_real_data'
             }
           },
           {
