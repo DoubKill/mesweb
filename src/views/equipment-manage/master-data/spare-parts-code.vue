@@ -209,7 +209,7 @@
           label="备件分类"
           prop="equip_component_type"
         >
-          <el-select v-model="dialogForm.equip_component_type" :disabled="type!=='新建'" placeholder="请选择">
+          <el-select v-model="dialogForm.equip_component_type" placeholder="请选择">
             <el-option
               v-for="item in options1"
               :key="item.component_type_name"
@@ -228,8 +228,8 @@
           label="备件代码"
           prop="spare_code"
         >
-          <el-input v-model="dialogForm.spare_code" :disabled="type!=='新建'">
-            <el-button slot="append" :disabled="type!=='新建'" icon="el-icon-search" @click="showERP" />
+          <el-input v-model="dialogForm.spare_code">
+            <el-button slot="append" icon="el-icon-search" @click="showERP" />
           </el-input>
         </el-form-item>
         <el-form-item
