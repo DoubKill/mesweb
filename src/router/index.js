@@ -677,16 +677,16 @@ export let asyncRoutes = [
                 permissionName: 'materialdemanded'
               }
             },
-            {
-              path: '/schedule/weighing-system-plan',
-              component: () => import('@/views/plan/schedule/dispose/weighing-system-plan'),
-              name: 'ScheduleWeighingSystemPlan',
-              meta: {
-                faName: 'ScheduleDispose',
-                title: '称量系统计划',
-                permissionName: ''
-              }
-            },
+            // {
+            //   path: '/schedule/weighing-system-plan',
+            //   component: () => import('@/views/plan/schedule/dispose/weighing-system-plan'),
+            //   name: 'ScheduleWeighingSystemPlan',
+            //   meta: {
+            //     faName: 'ScheduleDispose',
+            //     title: '称量系统计划',
+            //     permissionName: ''
+            //   }
+            // },
             {
               path: '/schedule/equipment-shutdown-plan',
               component: () => import('@/views/plan/schedule/dispose/equipment-shutdown-plan'),
