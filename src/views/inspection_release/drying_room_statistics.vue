@@ -269,7 +269,7 @@ export default {
     return {
       search: {},
       searchView: {},
-      getParams: {},
+      getParams: { is_entering: 'Y' },
       status: [
         { id: 1, name: '入库中' },
         { id: 2, name: '烘烤运行中' },
