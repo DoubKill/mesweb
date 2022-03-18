@@ -177,7 +177,7 @@
         <el-table-column
           prop="status"
           label="状态"
-          width="80"
+          width="100"
           :formatter="(row)=>{
             let obj = status.find(d=>d.id === row.status)
             return obj.name
@@ -229,6 +229,13 @@
           min-width="20"
         /> -->
       </el-table>
+      <page
+        v-if="pageIf"
+        :old-page="false"
+        :total="total1"
+        :current-page="searchView.page"
+        @currentChange="currentChange1"
+      />
     </el-dialog>
 
     <el-dialog
@@ -294,10 +301,12 @@ export default {
       ],
       dialogVisible: false,
       total: 0,
+      total1: 0,
       dialogVisibleList: false,
       datetimerange: [getDay(-1) + ' ' + '08:00:00', getDay(0) + ' ' + '08:00:00'],
       tableDataView: [],
       tableDataList: [],
+      pageIf: false,
       loadingView: false,
       tableData: [],
       loading: false
@@ -334,11 +343,23 @@ export default {
     async currentChange(page) {
       this.getParams.page = page
       try {
-        this.dialogVisibleList = true
         this.loadingView = true
         const data = await wmsStorage('get', null, { params: this.getParams })
         this.tableDataList = data.results
         this.total = data.count
+        this.loadingView = false
+      } catch (e) {
+        this.loadingView = false
+      }
+    },
+    async currentChange1(page, page_size) {
+      this.searchView.page = page
+      this.searchView.page_size = page_size
+      try {
+        this.loadingView = true
+        const data = await hfStockDetail('get', null, { params: this.searchView })
+        this.total1 = data.count
+        this.tableDataView = data.result
         this.loadingView = false
       } catch (e) {
         this.loadingView = false
@@ -359,6 +380,15 @@ export default {
     },
     async DetailedList(row, val) {
       try {
+        if (val === '7') {
+          this.pageIf = true
+          this.searchView.page = 1
+          this.searchView.page_size = 10
+        } else {
+          this.pageIf = false
+          this.searchView.page = 1
+          this.searchView.page_size = 10000000
+        }
         this.searchView.material_no = row.material_no
         this.searchView.st = this.search.st
         this.searchView.et = this.search.et
@@ -366,7 +396,8 @@ export default {
         this.dialogVisible = true
         this.loadingView = true
         const data = await hfStockDetail('get', null, { params: this.searchView })
-        this.tableDataView = data
+        this.total1 = data.count
+        this.tableDataView = data.result
         this.loadingView = false
       } catch (e) {
         this.loadingView = false
