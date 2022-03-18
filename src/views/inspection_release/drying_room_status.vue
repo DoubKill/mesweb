@@ -20,7 +20,7 @@
           <span class="topText" :style="{background:item.OastState===5?'#D9001B':'#95F204'}">{{ boxStatus.find(d=>d.id === item.OastState)?boxStatus.find(d=>d.id === item.OastState).name:null }}</span>
           <span class="topText">{{ item.OastTemperature }}℃</span>
           <span class="topText">开烘时间：{{ item.OastStartTime }}</span>
-          <span class="topText">已烘时长：{{ item.OastServiceTime }}分钟</span>
+          <span class="topText">已烘时长：{{ item.OastServiceTime }}</span>
         </div>
         <div style="display: flex;margin-left:2%;margin-top:2%">
           <div class="bottomDiv" :style="{background:item.color}">
@@ -51,9 +51,9 @@
       width="30%"
     >
       <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="150px">
-        <el-form-item label="选择烘箱" prop="hf_equip">
+        <el-form-item label="选择烘箱" prop="OastNo">
           <el-select
-            v-model="ruleForm.hf_equip"
+            v-model="ruleForm.OastNo"
             clearable
             placeholder="请选择"
           >
@@ -242,7 +242,7 @@ export default {
       tableData: [],
       tableData1: [],
       rules: {
-        hf_equip: [{ required: true, message: '不能为空', trigger: 'change' }]
+        OastNo: [{ required: true, message: '不能为空', trigger: 'change' }]
       }
     }
   },
