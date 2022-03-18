@@ -9,6 +9,7 @@
           range-separator="至"
           start-placeholder="开始时间"
           end-placeholder="结束时间"
+          :default-time="['08:00:00', '08:00:00']"
           value-format="yyyy-MM-dd HH:mm:ss"
           @change="changeDate"
         />
@@ -36,25 +37,25 @@
       <el-table-column
         prop="material_name"
         label="物料名称"
-        min-width="20"
+        width="220"
       />
       <el-table-column
         prop="material_no"
         label="物料编码"
-        min-width="20"
+        width="350"
       />
       <el-table-column
-        prop="zc_material_code"
+        prop="stock_qty"
         label="立库内未烘库存(托)"
         min-width="20"
       >
         <template slot-scope="scope">
-          <!-- <el-link
+          <el-link
             v-if="scope.row.material_name!=='合计'"
             type="primary"
-            @click="DetailedList(scope.row)"
-          >{{ scope.row.stock_qty }}</el-link> -->
-          <span>{{ scope.row.stock_qty }}</span>
+            @click="stockList(scope.row)"
+          >{{ scope.row.stock_qty }}</el-link>
+          <span v-else>{{ scope.row.stock_qty }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -130,7 +131,7 @@
       <el-table-column
         prop="outbound_qty"
         label="已出烘房到二楼线体(托)"
-        min-width="15"
+        width="170"
       >
         <template slot-scope="scope">
           <el-link
@@ -176,7 +177,7 @@
         <el-table-column
           prop="material_no"
           label="物料编码"
-          min-width="20"
+          width="380"
         />
         <!-- <el-table-column
           prop="batch_no"
@@ -186,7 +187,7 @@
         <el-table-column
           prop="pallet_no"
           label="托盘号RFID"
-          min-width="20"
+          width="120"
         />
         <!-- <el-table-column
           prop="inbound_time"
@@ -216,21 +217,59 @@
       </el-table>
     </el-dialog>
 
+    <el-dialog
+      title="库存明细"
+      :visible.sync="dialogVisibleList"
+      width="90%"
+    >
+      <el-table
+        v-loading="loadingView"
+        :data="tableDataList"
+        border
+      >
+        <el-table-column label="No" type="index" align="center" width="40" />
+        <el-table-column label="物料名称" align="center" prop="material_name" min-width="35" />
+        <el-table-column label="物料编码" align="center" prop="material_no" min-width="35" />
+        <el-table-column label="质检条码" align="center" prop="lot_no" min-width="35" />
+        <el-table-column label="批次号" align="center" prop="batch_no" min-width="16" />
+        <el-table-column label="货位状态" align="center" prop="location_status" min-width="16" />
+        <el-table-column label="托盘号" align="center" prop="container_no" min-width="18" />
+        <el-table-column label="是否进烘房" align="center" prop="is_entering" min-width="16" />
+        <el-table-column label="供应商" align="center" prop="supplier_name" min-width="16" />
+        <el-table-column label="库存位" align="center" prop="location" min-width="18" />
+        <el-table-column label="库存数" align="center" prop="qty" min-width="16" />
+        <el-table-column label="单位" align="center" prop="unit" min-width="20" />
+        <el-table-column label="单位重量" align="center" prop="unit_weight" min-width="16" />
+        <el-table-column label="总重量" align="center" prop="total_weight" min-width="16" />
+        <el-table-columnlabel="核酸管控" align="center" prop="in_charged_tag" min-width="16" />
+        <el-table-column label="品质状态" align="center" prop="quality_status" min-width="15" />
+        <el-table-column label="入库时间" align="center" prop="in_storage_time" min-width="15" />
+        <el-table-column label="件数" align="center" prop="sl" min-width="15" />
+        <el-table-columnlabel="唛头重量" align="center" prop="zl" min-width="15" />
+      </el-table>
+      <page
+        :total="total"
+        :current-page="getParams.page"
+        @currentChange="currentChange"
+      />
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
 import { debounce } from '@/utils'
 import { exportExcel } from '@/utils/index'
-// import page from '@/components/page'
-import { hfStock, hfStockDetail } from '@/api/jqy'
+import page from '@/components/page'
+import { hfStock, hfStockDetail, wmsStorage } from '@/api/jqy'
 export default {
   name: 'DryingRoomStatistics',
-  components: { },
+  components: { page },
   data() {
     return {
       search: {},
       searchView: {},
+      getParams: {},
       status: [
         { id: 1, name: '入库中' },
         { id: 2, name: '烘烤运行中' },
@@ -240,8 +279,11 @@ export default {
         { id: 6, name: '已出库' }
       ],
       dialogVisible: false,
-      datetimerange: [getDay(-1) + ' ' + time(), getDay(0) + ' ' + time()],
+      total: 0,
+      dialogVisibleList: false,
+      datetimerange: [getDay(-1) + ' ' + '08:00:00', getDay(0) + ' ' + '08:00:00'],
       tableDataView: [],
+      tableDataList: [],
       loadingView: false,
       tableData: [],
       loading: false
@@ -261,6 +303,7 @@ export default {
         if (this.tableData.length > 0) {
           this.tableData.push({
             material_name: '合计',
+            stock_qty: sum(this.tableData, 'stock_qty'),
             underway_qty: sum(this.tableData, 'underway_qty'),
             baking_qty: sum(this.tableData, 'baking_qty'),
             finished_qty: sum(this.tableData, 'finished_qty'),
@@ -271,6 +314,32 @@ export default {
         this.loading = false
       } catch (e) {
         this.loading = false
+      }
+    },
+    async currentChange(page) {
+      this.getParams.page = page
+      try {
+        this.dialogVisibleList = true
+        this.loadingView = true
+        const data = await wmsStorage('get', null, { params: this.getParams })
+        this.tableDataList = data.results
+        this.total = data.count
+        this.loadingView = false
+      } catch (e) {
+        this.loadingView = false
+      }
+    },
+    async stockList(row) {
+      try {
+        this.getParams.e_material_no = row.material_no
+        this.dialogVisibleList = true
+        this.loadingView = true
+        const data = await wmsStorage('get', null, { params: this.getParams })
+        this.tableDataList = data.results
+        this.total = data.count
+        this.loadingView = false
+      } catch (e) {
+        this.loadingView = false
       }
     },
     async DetailedList(row, val) {
@@ -322,16 +391,16 @@ function doHandleMonth(month) {
   }
   return m
 }
-function time() {
-  var d = new Date()
-  var hour = d.getHours()// 得到小时数
-  var minute = d.getMinutes()// 得到分钟数
-  var second = d.getSeconds()// 得到秒数
-  const h = hour < 10 ? '0' + hour : hour
-  const m = minute < 10 ? '0' + minute : minute
-  const s = second < 10 ? '0' + second : second
-  return h + ':' + m + ':' + s
-}
+// function time() {
+//   var d = new Date()
+//   var hour = d.getHours()// 得到小时数
+//   var minute = d.getMinutes()// 得到分钟数
+//   var second = d.getSeconds()// 得到秒数
+//   const h = hour < 10 ? '0' + hour : hour
+//   const m = minute < 10 ? '0' + minute : minute
+//   const s = second < 10 ? '0' + second : second
+//   return h + ':' + m + ':' + s
+// }
 function sum(arr, params) {
   var s = 0
   arr.forEach(function(val, idx, arr) {
