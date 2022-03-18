@@ -25,6 +25,11 @@
         min-width="20"
       />
       <el-table-column
+        prop="type"
+        label="类别"
+        min-width="20"
+      />
+      <el-table-column
         prop="attendance_users"
         label="参与考勤人员"
         min-width="20"
@@ -101,6 +106,16 @@
       >
         <el-form-item label="考勤组名称" prop="attendance_group">
           <el-input v-model="dialogForm.attendance_group" style="width:250px" :disabled="dialogForm.id?true:false" />
+        </el-form-item>
+        <el-form-item label="类别" prop="type">
+          <el-select v-model="dialogForm.type" placeholder="请选择" style="width:250px">
+            <el-option
+              v-for="item in optionsType"
+              :key="item.id"
+              :label="item.global_name"
+              :value="item.global_name"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="考勤参与人员" prop="attendance_users">
           <el-input
@@ -207,6 +222,7 @@
 
 <script>
 import page from '@/components/page'
+import { classesListUrl } from '@/api/base_w'
 import { sectionTree } from '@/api/base_w_four'
 import { attendanceGroupSetup, personnels } from '@/api/jqy'
 export default {
@@ -231,6 +247,7 @@ export default {
       department: '',
       pickType: '',
       sectionList: [],
+      optionsType: [],
       options: [{ id: 1, label: '不固定时间上下班' }, { id: 2, label: '按排班时间上下班' }, { id: 3, label: '固定时间上下班' }],
       dialogVisible: false,
       dialogVisiblePerson: false,
@@ -252,6 +269,7 @@ export default {
   created() {
     this.getList()
     this.getSection()
+    this.getTypeList()
   },
   methods: {
     pickPerson(val) {
@@ -284,6 +302,11 @@ export default {
           this.dialogVisiblePerson = false
         }
       }
+    },
+    async getTypeList() {
+      const obj = { all: 1, class_name: '绩效计算岗位类别' }
+      const data = await classesListUrl('get', null, { params: obj })
+      this.optionsType = data.results
     },
     async getGroupList() {
       const data = await personnels('get', null, { params: { section_name: this.department }})

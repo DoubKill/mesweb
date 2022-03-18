@@ -74,13 +74,13 @@
           @click="showPutRubberMaterialDialog"
         >配料</el-button>
       </el-form-item>
-      <!-- <el-form-item style="float: right">
+      <el-form-item style="float: right">
         <el-button
           v-if="checkPermission(['productbatching','add'])"
           :disabled="!currentRow.id"
           @click="copyClicked"
         >复制</el-button>
-      </el-form-item> -->
+      </el-form-item>
     </el-form>
     <el-table
       highlight-current-row
@@ -387,22 +387,26 @@ export default {
       this.dialogAddRubberMaterial = true
     },
     copyClicked() {
-      this.materialForm = {
-        factory: this.currentRow.factory,
-        site: this.currentRow.site,
-        SITE_name: this.currentRow.site_name,
-        stage_name: this.currentRow.stage_name,
-        stage: this.currentRow.stage,
-        product_info: this.currentRow.product_info,
-        product_name: this.currentRow.product_name,
-        versions: this.currentRow.versions,
-        precept: this.currentRow.precept,
-        stage_product_batch_no: this.currentRow.stage_product_batch_no,
-        id: this.currentRow.id,
-        dev_type: this.currentRow.dev_type,
-        dev_type_name: this.currentRow.dev_type_name,
-        production_time_interval: this.currentRow.production_time_interval || ''
-      }
+      // this.materialForm = {
+      //   factory: this.currentRow.factory,
+      //   site: this.currentRow.site,
+      //   SITE_name: this.currentRow.site_name,
+      //   stage_name: this.currentRow.stage_name,
+      //   stage: this.currentRow.stage,
+      //   product_info: this.currentRow.product_info,
+      //   product_name: this.currentRow.product_name,
+      //   versions: this.currentRow.versions,
+      //   precept: this.currentRow.precept,
+      //   stage_product_batch_no: this.currentRow.stage_product_batch_no,
+      //   id: this.currentRow.id,
+      //   dev_type: this.currentRow.dev_type,
+      //   dev_type_name: this.currentRow.dev_type_name,
+      //   production_time_interval: this.currentRow.production_time_interval || '',
+      //   enable_equip: this.currentRow.enable_equip || [],
+      //   new_recipe_id: this.currentRow.new_recipe_id || 0,
+      //   send_success_equip: this.currentRow.send_success_equip || []
+      // }
+      this.materialForm = JSON.parse(JSON.stringify(this.currentRow))
       this.dialogAddRubberMaterial = true
       this.isCopy = true
     },

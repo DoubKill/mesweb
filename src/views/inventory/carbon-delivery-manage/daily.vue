@@ -66,6 +66,7 @@
           />
         </el-select>
       </el-form-item>
+      <el-button :loading="btnExportLoad" @click="Excel">导出Excel</el-button>
     </el-form>
     <el-row>
       <el-col :span="12">
@@ -127,6 +128,16 @@
         label="总重量（kg）"
         min-width="20"
       />
+      <el-table-column
+        prop="sl"
+        label="件数"
+        min-width="20"
+      />
+      <el-table-column
+        prop="zl"
+        label="麦头重量"
+        min-width="20"
+      />
     </el-table>
     <page
       v-if="!loading"
@@ -162,6 +173,8 @@ export default {
         pageSize: 10,
         pageNo: 1
       },
+      search1: {},
+      btnExportLoad: false,
       datetimerange: [],
       datetimerangeMonth: '',
       datetimerangeYear: '',
@@ -266,6 +279,30 @@ export default {
     this.getList()
   },
   methods: {
+    Excel() {
+      this.btnExportLoad = true
+      this.search1 = JSON.parse(JSON.stringify(this.search))
+      this.search1.pageSize = 999999999
+      const _api = this.currentRouter === 'CarbonDeliveryDaily'
+        ? '/stockOutTask/FindDownTaskReportByDay'
+        : this.currentRouter === 'CarbonDeliveryMonthly' ? '/stockOutTask/FindDownTaskReportByMonth'
+          : '/stockOutTask/FindDownTaskReportByYear'
+      request({
+        url: _api,
+        method: 'get',
+        params: this.search1
+      }).then(data => {
+        const a = data.datas
+        this.btnExportLoad = false
+        this.$router.push({
+          path: '/excel',
+          query: {
+            table: a
+          }})
+      }).catch((e) => {
+        this.btnExportLoad = false
+      })
+    },
     getList() {
       this.loading = true
       this.tableData = []

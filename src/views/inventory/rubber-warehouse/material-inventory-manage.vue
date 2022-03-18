@@ -147,6 +147,8 @@
       <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="核酸管控" align="center" prop="in_charged_tag" min-width="16" />
       <el-table-column label="品质状态" align="center" prop="quality_status" min-width="15" />
       <el-table-column v-if="['炭黑库', '原材料库'].includes(warehouseNameProps)" label="入库时间" align="center" prop="in_storage_time" min-width="15" />
+      <!-- <el-table-column v-if="['炭黑库', '原材料库'].includes(warehouseNameProps)" label="件数" align="center" prop="sl" min-width="15" />
+      <el-table-column v-if="['炭黑库', '原材料库'].includes(warehouseNameProps)" label="唛头重量" align="center" prop="zl" min-width="15" /> -->
       <!-- <el-table-column label="操作" align="center" min-width="20">
         <template slot-scope="scope">
           <el-button

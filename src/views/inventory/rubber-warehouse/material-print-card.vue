@@ -67,19 +67,31 @@
           @changSelect="changSelectStation"
         />
       </el-form-item>
-      <el-form-item style="float:right">
-        <el-switch
-          v-model="is_showed"
-          style="display:block;"
-          active-text="打印时显示区间"
-          @change="showedChange"
-        />
+      <el-form-item v-if="!isProduction" style="float:right">
         <el-button
           v-permission="['additional_print', 'print']"
-          style="float:right;margin:10px 0;"
+          style="float:right;margin:0 10px;"
+          type="primary"
           :loading="loadingBtn"
           @click="printingFun"
         >打印</el-button>
+      </el-form-item>
+      <el-form-item v-else style="float:right">
+        <el-button
+          v-permission="['addrubber_print', 'print']"
+          style="float:right;margin:0 10px;"
+          type="primary"
+          :loading="loadingBtn"
+          @click="printingFun"
+        >打印</el-button>
+      </el-form-item>
+      <el-form-item style="float:right">
+        <el-switch
+          v-model="is_showed"
+          style="vertical-align: middle;"
+          active-text="打印时显示区间"
+          @change="showedChange"
+        />
       </el-form-item>
     </el-form>
 
@@ -182,10 +194,12 @@ export default {
       is_showed: false,
       labelPrintList: [],
       testCardDialogVisible: false,
-      loadingBtn: false
+      loadingBtn: false,
+      isProduction: null
     }
   },
   created() {
+    this.isProduction = this.$route.path === '/material-print-card1'
     if (this.warehouseNameProps) {
       this.search.warehouse_name = this.warehouseNameProps
     }

@@ -181,17 +181,96 @@
         align="center"
         prop="fin_time"
       />
+      <el-table-column
+        v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'"
+        label="查看处理履历"
+        width="100"
+      >
+        <template slot-scope="scope">
+          <el-button
+            v-if="scope.row.order_type==='出库'"
+            size="mini"
+            type="primary"
+            @click="checkList(scope.row)"
+          >查看</el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <page
       :total="total"
       :current-page="search.page"
       @currentChange="currentChange"
     />
+
+    <el-dialog
+      title="处理履历"
+      :visible.sync="dialogVisibleList"
+      width="90%"
+    >
+      <el-form :inline="true">
+        <el-form-item label="物料名称">
+          <el-input v-model="currentInfo.material_name" disabled />
+        </el-form-item>
+        <el-form-item label="物料编码">
+          <el-input v-model="currentInfo.material_code" disabled />
+        </el-form-item>
+        <el-form-item label="批次号">
+          <el-input v-model="currentInfo.lot_no" disabled />
+        </el-form-item>
+      </el-form>
+      <el-table
+        id="out-table"
+        v-loading="loadingCheck"
+        :data="tableDataCheck"
+        border
+      >
+        <el-table-column
+          prop="status"
+          label="处理内容"
+          min-width="20"
+        />
+        <el-table-column
+          prop="quality_status"
+          label="品质状态"
+          min-width="20"
+        />
+        <el-table-column
+          prop="result"
+          label="处理结果"
+          min-width="20"
+        />
+        <el-table-column
+          prop="except_reason"
+          label="处理说明"
+          min-width="20"
+        />
+        <el-table-column
+          prop="created_username"
+          label="处理人"
+          min-width="20"
+        />
+        <el-table-column
+          prop="created_date"
+          label="处理时间"
+          min-width="20"
+        />
+      </el-table>
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button
+          type="primary"
+          @click="dialogVisibleList=false"
+        >返回</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
 import { inventoryLog } from '@/api/base_w'
 import page from '@/components/page'
+import { wmsExceptHandle } from '@/api/jqy'
 // import warehouseSelect from '@/components/select_w/warehouseSelect'
 import { setDate, debounce, exportExcel } from '@/utils'
 export default {
@@ -225,6 +304,10 @@ export default {
         warehouse_name: '混炼胶库'
       },
       searchDate: [],
+      currentInfo: {},
+      tableDataCheck: [],
+      dialogVisibleList: false,
+      loadingCheck: false,
       total: 0,
       loading: false,
       options1: ['指定出库', '正常出库'],
@@ -285,6 +368,22 @@ export default {
       this.search.end_time = val ? val[1] : ''
       this.search.page = 1
       this.getList()
+    },
+    async checkList(row) {
+      try {
+        this.dialogVisibleList = true
+        this.currentInfo = {
+          material_name: row.material_name,
+          material_code: row.material_no,
+          lot_no: row.lot_no
+        }
+        this.loadingCheck = true
+        const data = await wmsExceptHandle('get', null, { params: this.currentInfo })
+        this.tableDataCheck = data.results
+        this.loadingCheck = false
+      } catch (e) {
+        this.loadingCheck = false
+      }
     },
     warehouseSelectFun() {
       this.search.page = 1

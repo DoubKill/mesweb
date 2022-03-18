@@ -3,7 +3,7 @@ import store from './store'
 // import { Message } from 'element-ui'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
-import { getToken } from '@/utils/auth' // get token from cookie
+import { getToken, setToken } from '@/utils/auth' // get token from cookie
 import getPageTitle from '@/utils/get-page-title'
 // import Cookies from 'js-cookie'
 
@@ -17,10 +17,20 @@ router.beforeEach(async(to, from, next) => {
 
   // set page title 设置头部title
   document.title = getPageTitle(to.meta.title)
-
-  // determine whether the user has logged in
+  let hasPermission = null
+  if (to.path === '/alone/banburying/substitutes/') {
+    // c# 跳转进来 处理
+    hasPermission = {
+      [to.query.name]: to.query.arr.split(',')
+    }
+    localStorage.setItem('permission', hasPermission)
+    setToken(to.query.key)
+    store.state.user.token = to.query.key
+    store.state.user.permission = hasPermission
+  } else {
+    hasPermission = store.getters.permission && JSON.stringify(store.getters.permission) !== '{}'
+  }
   const hasToken = getToken()
-  const hasPermission = store.getters.permission && JSON.stringify(store.getters.permission) !== '{}'
 
   if (hasToken) {
     // 有登录
@@ -36,7 +46,7 @@ router.beforeEach(async(to, from, next) => {
         next(`/login?redirect=${to.path}`)
         NProgress.done()
       } else {
-        const addRoutes = store.getters.addRoutes.length !== 0
+        const addRoutes = store.getters.addRoutes && store.getters.addRoutes.length !== 0
         if (addRoutes) {
           next()
         } else {

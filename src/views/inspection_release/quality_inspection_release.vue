@@ -134,6 +134,19 @@
         label="厂家"
         min-width="15"
       />
+      <el-table-column
+        label="查看处理履历"
+        width="100"
+      >
+        <template slot-scope="scope">
+          <el-button
+            v-permission="['material_quality_setting','release']"
+            size="mini"
+            type="primary"
+            @click="checkList(scope.row)"
+          >查看</el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <page
       :old-page="false"
@@ -246,7 +259,7 @@
           {{ quality_status }}
         </el-form-item>
         <el-form-item label="处理结果" prop="result">
-          <el-radio-group v-model="abnormalForm.result" @change="changeQuality">
+          <el-radio-group v-model="abnormalForm.result">
             <el-radio label="放行">放行</el-radio>
             <el-radio label="不放行">不放行</el-radio>
           </el-radio-group>
@@ -265,6 +278,71 @@
         <el-button :loading="submitPass" type="primary" @click="generateFunAbnormal">确 定</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      title="处理履历"
+      :visible.sync="dialogVisibleList"
+      width="90%"
+    >
+      <el-form :inline="true">
+        <el-form-item label="物料名称">
+          <el-input v-model="currentInfo.material_name" disabled />
+        </el-form-item>
+        <el-form-item label="物料编码">
+          <el-input v-model="currentInfo.material_code" disabled />
+        </el-form-item>
+        <el-form-item label="批次号">
+          <el-input v-model="currentInfo.batch_no" disabled />
+        </el-form-item>
+      </el-form>
+      <el-table
+        id="out-table"
+        v-loading="loadingCheck"
+        :data="tableDataCheck"
+        border
+      >
+        <el-table-column
+          prop="status"
+          label="处理内容"
+          min-width="20"
+        />
+        <el-table-column
+          prop="quality_status"
+          label="品质状态"
+          min-width="20"
+        />
+        <el-table-column
+          prop="result"
+          label="处理结果"
+          min-width="20"
+        />
+        <el-table-column
+          prop="except_reason"
+          label="处理说明"
+          min-width="20"
+        />
+        <el-table-column
+          prop="created_username"
+          label="处理人"
+          min-width="20"
+        />
+        <el-table-column
+          prop="created_date"
+          label="处理时间"
+          min-width="20"
+        />
+      </el-table>
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button
+          type="primary"
+          @click="dialogVisibleList=false"
+        >返回</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -290,12 +368,16 @@ export default {
       submit1: false,
       abnormalForm: {},
       dialogVisible: false,
+      dialogVisibleList: false,
       dialogVisibleAbnormal: false,
       datetimerange: [getDay(-3) + ' ' + time(), getDay(0) + ' ' + time()],
       tableDataView: [],
+      tableDataCheck: [],
       quality_status: '',
+      currentInfo: {},
       trackingList: [],
       loadingView: false,
+      loadingCheck: false,
       multipleSelection: [],
       tableData: [],
       loading: false,
@@ -328,11 +410,20 @@ export default {
         this.loading = false
       }
     },
-    changeQuality() {
-      if (this.abnormalForm.result === '放行') {
-        this.abnormalForm.quality_status = '合格'
-      } else {
-        this.abnormalForm.quality_status = '不合格'
+    async checkList(row) {
+      try {
+        this.dialogVisibleList = true
+        this.currentInfo = {
+          material_name: row.material_name,
+          material_code: row.material_no,
+          batch_no: row.batch_no
+        }
+        this.loadingCheck = true
+        const data = await wmsExceptHandle('get', null, { params: this.currentInfo })
+        this.tableDataCheck = data.results
+        this.loadingCheck = false
+      } catch (e) {
+        this.loadingCheck = false
       }
     },
     async DetailedList(row) {
@@ -383,6 +474,15 @@ export default {
         this.trackingList = obj
         if (val === '合格') {
           if (row.quality_status === 5) {
+            this.abnormalForm = {
+              batch_no: this.searchView.batch_no,
+              status: '设定合格',
+              quality_status: '待检品',
+              result: '放行',
+              except_reason: '',
+              material_code: this.searchView.e_material_no,
+              lot_no: this.trackingList
+            }
             this.$confirm('此操作将该物料的品质状态改成' + val + '是否继续?', '提示', {
               confirmButtonText: '确定',
               cancelButtonText: '取消',
@@ -390,15 +490,20 @@ export default {
             }).then(() => {
               this.submitQualified = true
               wmsRelease('post', null, { data: { tracking_nums: obj, operation_type: val }})
-                .then(response => {
-                  this.$message({
-                    type: 'success',
-                    message: '操作成功'
-                  })
-                  this.submitQualified = false
-                  this.getList()
-                })
-                .catch(response => {
+                .then(e => {
+                  wmsExceptHandle('post', null, { data: this.abnormalForm })
+                    .then(response => {
+                      this.$message({
+                        type: 'success',
+                        message: '操作成功'
+                      })
+                      this.submitQualified = false
+                      this.getList()
+                    })
+                    .catch(response => {
+                      this.submitQualified = false
+                    })
+                }).catch(e => {
                   this.submitQualified = false
                 })
             })
@@ -409,7 +514,9 @@ export default {
           this.quality_status = this.qualityStatus.find(d => d.id === row.quality_status).name
           this.dialogVisibleAbnormal = true
           this.abnormalForm = {
-            quality_status: '不合格',
+            batch_no: this.searchView.batch_no,
+            status: '异常处理',
+            quality_status: this.quality_status,
             result: '不放行',
             except_reason: ''
           }
@@ -420,7 +527,7 @@ export default {
     },
     async generateFunAbnormal() {
       this.abnormalForm.material_code = this.searchView.e_material_no
-      this.abnormalForm.lot_no = this.searchView.batch_no
+      this.abnormalForm.lot_no = this.trackingList
       try {
         this.submitPass = true
         await wmsRelease('post', null, { data: { tracking_nums: this.trackingList, operation_type: this.abnormalForm.result }})

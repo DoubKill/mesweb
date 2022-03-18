@@ -21,6 +21,8 @@
       <el-form-item label="机台">
         <equip-select
           style="width:150px"
+          :is-created="true"
+          :default-val="search.equip_no"
           @equipSelected="equipSelected"
         />
       </el-form-item>
@@ -179,6 +181,7 @@ export default {
     }
   },
   created() {
+    this.search.equip_no = this.$route.query.equip
     this.getList()
   },
   methods: {

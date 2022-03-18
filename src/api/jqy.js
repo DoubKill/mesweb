@@ -1256,3 +1256,12 @@ export function attendanceGroupSetup(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function hfRealStatus(method, id, data = {}) {
+  const obj = {
+    url: id ? API.HfRealStatus + id + '/' : API.HfRealStatus,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

@@ -676,5 +676,6 @@ export default {
   ThOutTaskDetails: '/api/v1/inventory/th-out-task-details/',
   ThOutTasks: '/api/v1/inventory/th-out-tasks/',
   ThCancelTask: '/api/v1/inventory/th-cancel-task/',
-  ThOutboundOrder: '/api/v1/inventory/th-outbound-order/'
+  ThOutboundOrder: '/api/v1/inventory/th-outbound-order/',
+  HfRealStatus: '/api/v1/inventory/hf-real-status/'
 }
