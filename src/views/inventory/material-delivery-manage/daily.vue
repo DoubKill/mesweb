@@ -284,9 +284,9 @@ export default {
       this.btnExportLoad = true
       this.search1 = JSON.parse(JSON.stringify(this.search))
       this.search1.pageSize = 999999999
-      const _api = this.currentRouter === 'CarbonDeliveryDaily'
+      const _api = this.currentRouter === 'DeliveryDaily'
         ? '/stockOutTask/FindDownTaskReportByDay'
-        : this.currentRouter === 'CarbonDeliveryMonthly' ? '/stockOutTask/FindDownTaskReportByMonth'
+        : this.currentRouter === 'DeliveryMonthly' ? '/stockOutTask/FindDownTaskReportByMonth'
           : '/stockOutTask/FindDownTaskReportByYear'
       request({
         url: _api,
