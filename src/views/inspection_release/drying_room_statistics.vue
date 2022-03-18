@@ -87,6 +87,20 @@
         </template>
       </el-table-column>
       <el-table-column
+        prop="underway_qty"
+        label="等待烘烤(托)"
+        min-width="15"
+      >
+        <template slot-scope="scope">
+          <el-link
+            v-if="scope.row.material_name!=='合计'"
+            type="primary"
+            @click="DetailedList(scope.row,'8')"
+          >{{ scope.row.waiting_qty }}</el-link>
+          <span v-else>{{ scope.row.waiting_qty }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
         prop="baking_qty"
         label="正在烘(托)"
         min-width="10"
@@ -305,6 +319,7 @@ export default {
             material_name: '合计',
             stock_qty: sum(this.tableData, 'stock_qty'),
             underway_qty: sum(this.tableData, 'underway_qty'),
+            waiting_qty: sum(this.tableData, 'waiting_qty'),
             baking_qty: sum(this.tableData, 'baking_qty'),
             finished_qty: sum(this.tableData, 'finished_qty'),
             indoor_qty: sum(this.tableData, 'indoor_qty'),
