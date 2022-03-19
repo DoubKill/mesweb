@@ -3,10 +3,37 @@
     <!-- 丁基胶 规格设定 -->
     <el-form :inline="true">
       <el-form-item label="胶料名称">
-        <el-input v-model="search.product_name" clearable placeholder="胶料名称" @input="changeSearch" />
+        <el-select
+          v-model="search.product_name"
+          placeholder="请选择胶料名称"
+          filterable
+          clearable
+          @change="changeSearch"
+        >
+          <el-option
+            v-for="item in optionsProduct"
+            :key="item.id"
+            :label="item.stage_product_batch_no"
+            :value="item.stage_product_batch_no"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="胶料编码">
-        <el-input v-model="search.product_no" clearable placeholder="胶料编码" @input="changeSearch" />
+        <el-select
+          v-model="search.product_no"
+          style="width:250px"
+          placeholder="请选择胶料编码"
+          filterable
+          clearable
+          @change="changeSearch"
+        >
+          <el-option
+            v-for="item in optionsProduct"
+            :key="item.id"
+            :label="item.stage_product_batch_no"
+            :value="item.stage_product_batch_no"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item style="float:right">
         <el-button v-permission="['product_info_dj', 'add']" type="primary" @click="onSubmit">添加</el-button>
@@ -90,14 +117,27 @@
           label="胶料名称"
           prop="product_name"
         >
-          <el-input v-model="dialogForm.product_name" />
+          <el-select
+            v-model="dialogForm.product_name"
+            placeholder="请选择胶料名称"
+            filterable
+            allow-create
+            @change="changeProduct"
+          >
+            <el-option
+              v-for="item in optionsProduct"
+              :key="item.id"
+              :label="item.stage_product_batch_no"
+              :value="item.stage_product_batch_no"
+            />
+          </el-select>
         </el-form-item>
-        <el-form-item
+        <!-- <el-form-item
           label="胶料编码"
           prop="product_no"
         >
           <el-input v-model="dialogForm.product_no" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item
           label="绩效计算"
           prop="is_use"
@@ -116,6 +156,7 @@
 
 <script>
 import page from '@/components/page'
+import { rubberMaterialUrl } from '@/api/base_w'
 import { productInfoDj } from '@/api/jqy'
 export default {
   name: 'SpecificationSetting',
@@ -124,6 +165,7 @@ export default {
     return {
       search: {},
       tableData: [],
+      optionsProduct: [],
       total: 0,
       loading: false,
       dialogVisible: false,
@@ -138,8 +180,17 @@ export default {
   },
   created() {
     this.getList()
+    this.getProduct()
   },
   methods: {
+    async getProduct() {
+      try {
+        const data = await rubberMaterialUrl('get', null, { params: { used_type: 4, all: 1 }})
+        this.optionsProduct = data.results || []
+      } catch (e) {
+        //
+      }
+    },
     async getList() {
       try {
         this.loading = true
@@ -151,9 +202,12 @@ export default {
         this.loading = false
       }
     },
+    changeProduct() {
+      this.$set(this.dialogForm, 'product_no', this.dialogForm.product_name)
+    },
     changeSearch() {
       this.search.page = 1
-      this.$debounce(this, 'getList')
+      this.getList()
     },
     currentChange(page, pageSize) {
       this.search.page = page
@@ -217,7 +271,7 @@ export default {
 <style lang="scss">
 .specificationSetting{
   .el-input{
-    width:160px;
+    width:250px;
   }
   .el-dialog .el-input{
     width:250px;

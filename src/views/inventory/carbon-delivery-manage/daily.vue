@@ -289,6 +289,16 @@ export default {
         ? '/stockOutTask/FindDownTaskReportByDay'
         : this.currentRouter === 'CarbonDeliveryMonthly' ? '/stockOutTask/FindDownTaskReportByMonth'
           : '/stockOutTask/FindDownTaskReportByYear'
+      const excelName = this.currentRouter === 'CarbonDeliveryDaily' ? '炭黑库出库日报'
+        : this.currentRouter === 'CarbonDeliveryMonthly' ? '炭黑库出库月报' : '炭黑库出库年报'
+      var time = ''
+      if (this.datetimerange || this.datetimerangeMonth || this.datetimerangeYear) {
+        time = this.currentRouter === 'CarbonDeliveryDaily' ? this.datetimerange[0].split(' ')[0] + '-' + this.datetimerange[1].split(' ')[0]
+          : this.currentRouter === 'CarbonDeliveryMonthly' ? this.datetimerangeMonth.split('-')[0] + '-' + this.datetimerangeMonth.split('-')[1]
+            : this.datetimerangeYear.split('-')[0]
+      } else {
+        time = ''
+      }
       request({
         url: _api,
         method: 'get',
@@ -299,7 +309,8 @@ export default {
         this.$router.push({
           path: '/excel',
           query: {
-            table: a
+            table: a,
+            name: excelName + ' ' + time
           }})
       }).catch((e) => {
         this.btnExportLoad = false
