@@ -209,6 +209,7 @@ export default {
       if (val) {
         if (JSON.stringify(this.materialForm) !== '{}') {
           this.rubberMaterialForm = this.materialForm
+          this.rubberMaterialForm.SITE_name = this.rubberMaterialForm.site_name ? this.rubberMaterialForm.site_name : ''
           if (this.materialForm.id) {
             this.normalReceipe = !!this.materialForm.stage
           } else {
