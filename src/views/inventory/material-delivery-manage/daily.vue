@@ -51,8 +51,8 @@
           <el-option
             v-for="item in TunnelNameList"
             :key="item.id"
-            :label="item.tunnelName"
-            :value="item.tunnelName"
+            :label="item.name"
+            :value="item.name"
           />
         </el-select>
       </el-form-item>
@@ -163,7 +163,8 @@ import page from '@/components/page'
 import { debounce, setDate } from '@/utils'
 import * as echarts from 'echarts'
 import materialInoutRecord from '@/views/inventory/rubber-warehouse/material_inout_record.vue'
-
+import { wmsMaterialGroups, wmsTunnels } from '@/api/base_w_four'
+import { wmsEntrance } from '@/api/base_w_three'
 export default {
   name: 'DeliveryDaily',
   components: { page, materialInoutRecord },
@@ -323,35 +324,57 @@ export default {
         this.loading = false
       })
     },
-    getMaterialList() {
-      request({
-        url: '/materialGroup/FindAll',
-        method: 'get'
-      }).then(data => {
-        this.MaterialList = data.datas
-      }).catch((e) => {
-      })
+    async getMaterialList() {
+      try {
+        const data = await wmsMaterialGroups('get')
+        this.MaterialList = data
+      } catch (e) {
+        //
+      }
     },
-    getTunnelNameList() {
-      request({
-        url: '/tunnel/FindAll',
-        method: 'get'
-      }).then(data => {
-        this.TunnelNameList = data.datas || []
-      }).catch((e) => {
-        console.log(e, 'zc获取失败')
-      })
+    async getTunnelNameList() {
+      try {
+        const data = await wmsTunnels('get')
+        this.TunnelNameList = data
+      } catch (e) {
+        //
+      }
     },
-    getEntranceList() {
-      request({
-        url: '/entrance/FindAll',
-        method: 'get'
-      }).then(data => {
-        const arr = data.datas.filter(d => d.type === 2)
-        this.EntranceList = arr || []
-      }).catch((e) => {
-        console.log(e, 'zc获取失败')
-      })
+    // getMaterialList() {
+    //   request({
+    //     url: '/materialGroup/FindAll',
+    //     method: 'get'
+    //   }).then(data => {
+    //     this.MaterialList = data.datas
+    //   }).catch((e) => {
+    //   })
+    // },
+    // getTunnelNameList() {
+    //   request({
+    //     url: '/tunnel/FindAll',
+    //     method: 'get'
+    //   }).then(data => {
+    //     this.TunnelNameList = data.datas || []
+    //   }).catch((e) => {
+    //     console.log(e, 'zc获取失败')
+    //   })
+    // },
+    async getEntranceList() {
+      try {
+        const data = await wmsEntrance('get')
+        this.EntranceList = data
+      } catch (e) {
+        //
+      }
+      // request({
+      //   url: '/entrance/FindAll',
+      //   method: 'get'
+      // }).then(data => {
+      //   const arr = data.datas.filter(d => d.type === 2)
+      //   this.EntranceList = arr || []
+      // }).catch((e) => {
+      //   console.log(e, 'zc获取失败')
+      // })
     },
     getDownTaskCountByTodayCount() {
       const _api = this.currentRouter === 'DeliveryDaily'
@@ -404,11 +427,11 @@ export default {
       this.search.StartTime = this.datetimerange ? this.datetimerange[0] : ''
       this.search.EndTime = this.datetimerange ? this.datetimerange[1] : ''
       this.search.tunnelCode = this.datetimerange ? this.datetimerange[1] : ''
-      const obj = this.TunnelNameList.find(d => d.tunnelName === this.search.TunnelName)
+      const obj = this.TunnelNameList.find(d => d.name === this.search.TunnelName)
       const obj1 = this.EntranceList.find(d => d.name === this.search.EntranceName)
       this.search.pageNo = 1
-      this.search.tunnelCode = obj ? obj.tunnelCode : ''
-      this.search.EntranceCode = obj1 ? obj1.entranceCode : ''
+      this.search.tunnelCode = obj ? obj.code : ''
+      this.search.EntranceCode = obj1 ? obj1.code : ''
 
       if (this.currentRouter === 'DeliveryMonthly') {
         this.search.StartTime = this.datetimerangeMonth
