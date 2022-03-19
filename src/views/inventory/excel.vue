@@ -67,11 +67,13 @@ export default {
   data() {
     return {
       tableData: [],
-      total: 0
+      total: 0,
+      excelName: null
     }
   },
   created() {
     this.tableData = this.$route.query.table
+    this.excelName = this.$route.query.name
   },
   mounted() {
     setTimeout(() => {
@@ -80,7 +82,7 @@ export default {
   },
   methods: {
     Excel() {
-      exportExcel('报表')
+      exportExcel(this.excelName, 'excel')
       const visitedViews = this.$store.state.tagsView.visitedViews
       this.$store.state.tagsView.visitedViews = visitedViews.filter(v => {
         return v.path !== this.$route.path
