@@ -103,9 +103,9 @@
             <el-table-column label="操作" width="80px">
               <template slot-scope="{row}">
                 <el-button
-                  v-if="!checkPermission(['xl_recipe','merge'])"
                   size="mini"
                   type="danger"
+                  :disabled="!checkPermission(['xl_recipe','merge'])"
                   @click.stop="handleGlobalCodeTypeDelete(row,index)"
                 >{{ row.use_not ? '启用' : '停用' }}</el-button>
               </template>
@@ -123,16 +123,23 @@
                 />
               </template>
             </el-table-column>
-            <el-table-column v-if="checkPermission(['xl_recipe','upload'])" label="上传到MES" width="80px">
-              <template slot-scope="scope">
-                <el-button
+            <!-- <el-table-column label="是否停用" width="80px">
+              <template slot-scope="{row}"> -->
+            <!-- <el-button
                   size="mini"
                   type="primary"
                   @click="uploadMes(scope.row,index)"
                 >上传
-                </el-button>
-              </template>
-            </el-table-column>
+                </el-button> -->
+            <!-- <el-switch
+                  v-model="row.use_not"
+                  :disabled="!checkPermission(['xl_recipe','merge'])"
+                  active-text="是"
+                  inactive-text="否"
+                  @change.self="changeStopSwitch(row,index)"
+                /> -->
+            <!-- </template>
+            </el-table-column> -->
           </el-table>
           <page
             :old-page="false"
@@ -288,6 +295,16 @@ export default {
       try {
         await xlRecipe('post', null, { data: { equip_no: this.allTable[faI].equip_no, recipe_name: row.name, total_standard_error: row.error }})
         this.$message.success('上传成功')
+      } catch (e) {
+        //
+      }
+    },
+    async changeStopSwitch(row, faI) {
+      try {
+        await updateFlagCount('post', null, { data: {
+          equip_no: this.allTable[faI].equip_no,
+          id: row.id, use_not: row.use_not
+        }})
       } catch (e) {
         //
       }
