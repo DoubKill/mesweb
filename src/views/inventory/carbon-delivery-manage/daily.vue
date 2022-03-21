@@ -66,7 +66,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-button :loading="btnExportLoad" @click="Excel">导出Excel</el-button>
+      <el-button type="primary" :loading="btnExportLoad" @click="Excel">导出Excel</el-button>
     </el-form>
     <el-row>
       <el-col :span="12">

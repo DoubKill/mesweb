@@ -61,6 +61,31 @@
         </el-select>
         <!-- <warehouseSelect :created-is="true" @changSelect="warehouseSelectFun" /> -->
       </el-form-item>
+      <el-form-item v-if="(warehouseNameProps!=='原材料库'&&warehouseNameProps!=='炭黑库')&&!isDialog" label="巷道">
+        <el-select
+          v-model="search.tunnel"
+          clearable
+          placeholder="请选择"
+          @change="changeList"
+        >
+          <el-option
+            v-for="item in ['1','2','3','4']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="巷道">
+        <el-select v-model="search.tunnel" filterable clearable placeholder="请选择" @change="changeList">
+          <el-option
+            v-for="item in TunnelNameList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.code"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item v-if="!isDialog" label="物料编码">
         <el-input v-model="search.material_no" clearable @input="debounceList" />
       </el-form-item>
@@ -132,6 +157,16 @@
       <el-table-column label="类型" align="center" prop="order_type" width="50" />
       <el-table-column label="出入库单号" align="center" prop="order_no" />
       <el-table-column label="质检条码" align="center" prop="lot_no" />
+      <el-table-column v-if="(warehouseNameProps!=='原材料库'&&warehouseNameProps!=='炭黑库')&&!isDialog" label="巷道" align="center" prop="location">
+        <template slot-scope="{row}">
+          {{ row.location?row.location.split('-')[0]:'' }}
+        </template>
+      </el-table-column>
+      <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="巷道" align="center">
+        <template slot-scope="{row}">
+          {{ row.location?row.location.split('-')[1]:'' }}
+        </template>
+      </el-table-column>
       <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="批次号" align="center" prop="batch_no" />
       <!-- <el-table-column label="仓库类型" align="center" prop="warehouse_type" /> -->
       <!-- <el-table-column  label="仓库名称" align="center" prop="warehouse_name" /> -->
@@ -270,6 +305,7 @@
 <script>
 import { inventoryLog } from '@/api/base_w'
 import page from '@/components/page'
+import { wmsTunnels } from '@/api/base_w_four'
 import { wmsExceptHandle } from '@/api/jqy'
 // import warehouseSelect from '@/components/select_w/warehouseSelect'
 import { setDate, debounce, exportExcel } from '@/utils'
@@ -305,6 +341,7 @@ export default {
       },
       searchDate: [],
       currentInfo: {},
+      TunnelNameList: [],
       tableDataCheck: [],
       dialogVisibleList: false,
       loadingCheck: false,
@@ -344,10 +381,19 @@ export default {
       this.search.warehouse_name = this.warehouseNameProps
     }
     this.searchDate = [this.search.start_time, this.search.end_time]
+    this.getTunnelNameList()
     this.getList()
   },
   methods: {
     setDate,
+    async getTunnelNameList() {
+      try {
+        const data = await wmsTunnels('get')
+        this.TunnelNameList = data || []
+      } catch (e) {
+        //
+      }
+    },
     async getList() {
       try {
         this.loading = true
