@@ -549,7 +549,7 @@ export let asyncRoutes = [
           name: 'SmallMaterialWeightHebao',
           meta: {
             faName: 'SmallMaterialWeight',
-            title: '单配(合包/配方)化工流转卡',
+            title: '单配(合包)化工流转卡',
             permissionName: 'weighting_package_manual'
           }
         },
@@ -559,7 +559,7 @@ export let asyncRoutes = [
           name: 'SmallMaterialWeightCurrency',
           meta: {
             faName: 'SmallMaterialWeight',
-            title: '单配(通用)化工流转卡',
+            title: '单配(配方/通用)化工流转卡',
             permissionName: 'weighting_package_manual'
           }
         },
