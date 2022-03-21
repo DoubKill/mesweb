@@ -48,7 +48,7 @@
           @change="changeList"
         >
           <el-option
-            v-for="(item, index) in [{label:'Y', name:'已打印'}, {label:'N', name:'未打印'}]"
+            v-for="(item, index) in [{label:'Y', name:'已打印'}, {label:'N', name:'未打印'},{label:'Y_E', name:'已失效'}]"
             :key="index"
             :label="item.name"
             :value="item.label"
@@ -117,7 +117,7 @@
         label="配置数量"
         min-width="20"
       />
-      <el-table-column
+      <!-- <el-table-column
         prop="date"
         label="打印车次"
         min-width="20"
@@ -127,12 +127,12 @@
           }
           return ''
         }"
-      />
-      <el-table-column
+      /> -->
+      <!-- <el-table-column
         prop="print_begin_trains"
         label="打印起始车次"
         min-width="20"
-      />
+      /> -->
       <el-table-column
         prop="noprint_count"
         label="未打印数量"
@@ -197,7 +197,7 @@
       :before-close="handleClose"
     >
       <el-form ref="ruleForm" :rules="rules" :model="ruleForm">
-        <el-form-item label="起始车次" prop="print_begin_trains">
+        <!-- <el-form-item label="起始车次" prop="print_begin_trains">
           <el-input-number
             v-model="ruleForm.print_begin_trains"
             controls-position="right"
@@ -207,7 +207,7 @@
             step-strictly
             :disabled="againPrint||(isfirst&&!!ruleForm.bra_code)"
           />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="配置数量" prop="package_count">
           <!-- +1-ruleForm.print_begin_trains -->
           <el-input-number
@@ -269,14 +269,14 @@
         </tr>
         <tr>
           <td>标准重量</td>
-          <td>
+          <td colspan="3">
             {{ ruleForm.machine_manual_weight }}{{ ruleForm.machine_manual_tolerance }}
             /包
             <br>
             ({{ ruleForm.machine_weight }}*{{ ruleForm.split_count }}+{{ ruleForm.manual_weight }}*{{ ruleForm.split_count }})
           </td>
-          <td>配料车次</td>
-          <td>{{ ruleForm.begin_trains+'-'+ruleForm.end_trains }}</td>
+          <!-- <td>配料车次</td>
+          <td>{{ ruleForm.begin_trains+'-'+ruleForm.end_trains }}</td> -->
         </tr>
         <tr>
           <td>配料员</td>
@@ -333,6 +333,26 @@
           <td>{{ ruleForm['manual_headers'].total_nums }}</td>
         </tr>
       </table>
+      <h3 v-if="ruleForm['display_manual_info']&&Array.isArray(ruleForm['display_manual_info'])&&ruleForm['display_manual_info'].length" style="text-align:center">其余待投入物料</h3>
+      <table
+        v-if="ruleForm['display_manual_info']&&Array.isArray(ruleForm['display_manual_info'])&&ruleForm['display_manual_info'].length"
+        border="1"
+        bordercolor="black"
+        class="info-table"
+      >
+        <tr>
+          <td>类别</td>
+          <td>物料名称</td>
+          <td>重量kg</td>
+          <td>误差kg</td>
+        </tr>
+        <tr v-for="(tdItem,i) in ruleForm['display_manual_info']" :key="i">
+          <td>{{ tdItem.material_type }}</td>
+          <td>{{ tdItem.handle_material_name }}</td>
+          <td>{{ tdItem.weight }}</td>
+          <td>{{ tdItem.error }}</td>
+        </tr>
+      </table>
       <h3 v-if="ruleForm['manual_body']&&ruleForm['manual_body'].length" style="text-align:center">合包配料物料信息</h3>
       <table
         v-if="ruleForm['manual_body']&&ruleForm['manual_body'].length"
@@ -359,7 +379,7 @@
         {{ otherNum }}kg/车)</div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose(false)">取 消</el-button>
-        <el-button type="primary" :loading="btnLoading" @click="submitFun">确 定</el-button>
+        <el-button type="primary" :loading="btnLoading" @click="submitFun">打 印</el-button>
       </span>
     </el-dialog>
   </div>
@@ -395,7 +415,9 @@ export default {
           { required: true, message: '请填写', trigger: 'blur' }
         ]
       },
-      ruleForm: {},
+      ruleForm: {
+        print_begin_trains: 1
+      },
       option: [],
       btnLoading: false,
       barCode: '',
@@ -409,9 +431,9 @@ export default {
   created() {
     this.created = true
     this.getList()
-    this._setInterval = setInterval(() => {
-      this.getList()
-    }, 5000)
+    // this._setInterval = setInterval(() => {
+    //   this.getList()
+    // }, 5000)
   },
   destroyed() {
     this.created = false
@@ -423,9 +445,9 @@ export default {
   },
   activated() {
     if (!this.created) {
-      this._setInterval = setInterval(() => {
-        this.getList()
-      }, 5000)
+      // this._setInterval = setInterval(() => {
+      //   this.getList()
+      // }, 5000)
     }
   },
   methods: {
@@ -637,6 +659,7 @@ export default {
       this.dialogVisible = false
       this.barCode = ''
       this.otherNum = 0
+      this.ruleForm.print_begin_trains = 1
       if (done) {
         done()
       }

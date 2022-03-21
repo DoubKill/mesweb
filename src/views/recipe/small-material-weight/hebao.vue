@@ -14,6 +14,22 @@
       <el-form-item label="机配机台">
         <equipSelect equip-type="称量设备" :equip_no_props.sync="search.batching_equip" @changeSearch="changeSearch" />
       </el-form-item>
+      <el-form-item label="卡片状态">
+        <el-select
+          v-model="search.print_flag"
+          clearable
+          filterable
+          @change="changeSearch"
+        >
+          <el-option
+            v-for="(item) in [{name:'未打印',id:0},{name:'已打印',id:1},
+                              {name:'已失效',id:2},{name:'过期',id:3}]"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item>
         <el-button
           v-permission="['weighting_package_manual', 'add']"
@@ -69,13 +85,13 @@
         label="打印时间"
         min-width="20"
       />
-      <el-table-column
+      <!-- <el-table-column
         label="配料车次"
         min-width="20"
         :formatter="d=>{
           return d.begin_trains+'-'+d.end_trains
         }"
-      />
+      /> -->
       <el-table-column
         prop="batching_equip"
         label="机配机台"
@@ -159,9 +175,9 @@
           <!-- <equip-category-select v-if="!formData.id" v-model="formData.dev_type" @change="changeDevTypeDialog" /> -->
           <span>{{ formData.dev_type }}</span>
         </el-form-item>
-        <el-form-item prop="begin_trains" label="起始车次">
+        <!-- <el-form-item prop="begin_trains" label="起始车次">
           <el-input-number v-model="formData.begin_trains" controls-position="right" :min="1" :disabled="formData.id?true:false" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item prop="package_count" label="配置数量">
           <el-input-number v-model="formData.package_count" controls-position="right" :min="1" :disabled="formData.id?true:false" />
         </el-form-item>
@@ -245,7 +261,7 @@
       <span slot="footer" class="dialog-footer">
         <el-button v-if="!formData.id" type="info" @click="resetFun">重 置</el-button>
         <el-button @click="handleClose(false)">取 消</el-button>
-        <el-button type="primary" :disabled="loadingBtn" @click="submitFun">确 定</el-button>
+        <el-button type="primary" :disabled="loadingBtn" @click="submitFun">打 印</el-button>
       </span>
     </el-dialog>
   </div>
@@ -269,7 +285,8 @@ export default {
       dialogVisible: false,
       formData: {
         split_num: 1,
-        print_count: 1
+        print_count: 1,
+        begin_trains: 1
       },
       rules: {
         product_no: [{ required: true, message: '请输入', trigger: 'change' }],
@@ -375,7 +392,7 @@ export default {
         this.formData.dev_type = ''
         this.formData.product_no = ''
       }
-
+      this.getHistory()
       this.formData.batching_equip = ''
       this.tableData1 = []
       this.tableData1New = []
@@ -445,7 +462,8 @@ export default {
       setTimeout(() => {
         this.formData = {
           split_num: 1,
-          print_count: 1
+          print_count: 1,
+          begin_trains: 1
         }
         this.tableData1New = []
         this.tableData1 = []
@@ -454,6 +472,15 @@ export default {
       this.dialogVisible = false
       if (done) {
         done()
+      }
+    },
+    async getHistory() {
+      try {
+        const data = await weightingPackageManua('get', null, { params: { history: 1, product_no: this.formData.product_no }})
+        Object.assign(this.formData, data)
+        this.changeProduct()
+      } catch (e) {
+        //
       }
     },
     submitFun() {

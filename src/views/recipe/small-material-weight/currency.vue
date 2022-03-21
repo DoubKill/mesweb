@@ -2,7 +2,7 @@
   <div class="currency-style">
     <!-- 单配(配方/通用)化工流转卡 -->
     <el-form :inline="true">
-      <el-form-item label="类别">
+      <el-form-item v-if="!isProduction" label="类别">
         <el-select
           v-model="search.batching_type"
           clearable
@@ -47,6 +47,22 @@
           @change="changeDevType"
         />
       </el-form-item>
+      <el-form-item label="卡片状态">
+        <el-select
+          v-model="search.print_flag"
+          clearable
+          filterable
+          @change="changeSearch"
+        >
+          <el-option
+            v-for="(item) in [{name:'未打印',id:0},{name:'已打印',id:1},
+                              {name:'已失效',id:2},{name:'过期',id:3}]"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item v-if="!isProduction">
         <el-button
           v-permission="['weighting_package_single', 'add']"
@@ -73,16 +89,19 @@
         min-width="20"
       />
       <el-table-column
+        v-if="!isProduction"
         prop="batching_type"
         label="类别"
         min-width="20"
       />
       <el-table-column
+        v-if="!isProduction"
         prop="product_no"
         label="配方名称"
         min-width="20"
       />
       <el-table-column
+        v-if="!isProduction"
         prop="dev_type_name"
         label="使用机型"
         min-width="20"
@@ -109,13 +128,13 @@
           return d.batch_class + '/'+ d.batch_group
         }"
       />
-      <el-table-column
+      <!-- <el-table-column
         label="配料车次"
         min-width="20"
         :formatter="d=>{
           return d.begin_trains+'-'+d.end_trains
         }"
-      />
+      /> -->
       <el-table-column
         prop="created_username"
         label="配料员"
@@ -187,7 +206,7 @@
         :rules="rules"
         label-width="120px"
       >
-        <el-form-item label="类别">
+        <el-form-item v-if="!isProduction" label="类别">
           <el-radio-group
             v-model="formData.batching_type"
             :disabled="formData.id?true:false"
@@ -288,7 +307,7 @@
             :disabled="(formData.id||formData.batching_type==='配方')?true:false"
           />
         </el-form-item>
-        <el-form-item
+        <!-- <el-form-item
           prop="begin_trains"
           label="起始车次"
         >
@@ -298,7 +317,7 @@
             :min="1"
             :disabled="formData.id?true:false"
           />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item
           prop="package_count"
           label="配置数量"
@@ -345,7 +364,7 @@
           type="primary"
           :loading="loadingBtn"
           @click="submitFun"
-        >确 定</el-button>
+        >打 印</el-button>
       </span>
     </el-dialog>
   </div>
@@ -356,7 +375,7 @@ import page from '@/components/page'
 import EquipCategorySelect from '@/components/EquipCategorySelect'
 import { weightingPackageSingle } from '@/api/base_w_five'
 import { rubberMaterialUrl, materialsUrl } from '@/api/base_w'
-import { productBatchingDetail } from '@/api/small-material-recipe'
+import { getRecipeManual } from '@/api/small-material-recipe'
 export default {
   name: 'SmallMaterialWeightCurrency',
   components: { page, EquipCategorySelect },
@@ -370,7 +389,8 @@ export default {
       formData: {
         split_num: 1,
         batching_type: '配方',
-        print_count: 1
+        print_count: 1,
+        begin_trains: 1
       },
       rules: {
         product_no_id: [{ required: true, message: '请输入', trigger: 'change' }],
@@ -402,9 +422,16 @@ export default {
     }
   },
   created() {
+    // 只有通用
     this.isProduction = this.$route.path === '/small-material-weight/currency1'
     this.getList()
     this.getProductList()
+  },
+  mounted() {
+    if (this.isProduction) {
+      this.search.batching_type = '通用'
+      this.formData.batching_type = '通用'
+    }
   },
   methods: {
     async getList() {
@@ -434,7 +461,7 @@ export default {
         this.materialList = []
         if (this.formData.batching_type === '配方') {
           if (this.formData.product_no) {
-            data = await productBatchingDetail(this.product_batching)
+            data = await getRecipeManual(this.product_batching)
           }
         } else {
           const { results } = await materialsUrl('get', null, { params: { all: 1, mc_code: 1 }})
@@ -449,6 +476,7 @@ export default {
       if (val) {
         const obj = this.materialList.find(d => d.material_name === val)
         this.formData.single_weight = obj.actual_weight
+        this.formData.feeding_mode = obj.feeding_mode
         if (this.formData.split_num) {
           const a = this.formData.single_weight / this.formData.split_num
           const b = Math.round(a * 1000) / 1000
@@ -496,7 +524,17 @@ export default {
         this.formData.dev_type_name = ''
         this.formData.product_no = ''
       }
+      this.getHistory()
       this.getManualList()
+    },
+    async getHistory() {
+      try {
+        const data = await weightingPackageSingle('get', null, { params: { history: 1, product_no: this.formData.product_no, product_batching: this.product_batching }})
+        data._single_weight = data.single_weight
+        Object.assign(this.formData, data)
+      } catch (e) {
+        //
+      }
     },
     changeSearch() {
       this.search.page = 1
@@ -537,7 +575,11 @@ export default {
         this.formData = {
           split_num: 1,
           print_count: 1,
-          batching_type: '配方'
+          batching_type: '配方',
+          begin_trains: 1
+        }
+        if (this.isProduction) {
+          this.formData.batching_type = '通用'
         }
         this.$refs.formRef.clearValidate()
       }, 300)
