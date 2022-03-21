@@ -208,7 +208,7 @@
             :disabled="againPrint||(isfirst&&!!ruleForm.bra_code)"
           />
         </el-form-item> -->
-        <el-form-item label="配置数量" prop="package_count">
+        <el-form-item label="包数" prop="package_count">
           <!-- +1-ruleForm.print_begin_trains -->
           <el-input-number
             v-if="!againPrint"
