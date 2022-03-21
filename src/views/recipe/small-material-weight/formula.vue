@@ -100,7 +100,7 @@
                 />
               </template>
             </el-table-column>
-            <el-table-column label="操作" width="80px">
+            <el-table-column label="是否停用" width="80px">
               <template slot-scope="{row}">
                 <el-button
                   size="mini"

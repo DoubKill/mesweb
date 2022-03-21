@@ -60,6 +60,36 @@
             controls-position="right"
           />
         </el-form-item>
+        <el-form-item v-if="formInline.mixed_ratio" label="对搭比例">
+          <el-select
+            v-model="formInline.mixed_ratio.stage.f_feed"
+            clearable
+            placeholder="请选择"
+            style="width:100px"
+          >
+            <el-option
+              v-for="item in stageOptions"
+              :key="item.id"
+              :label="item.global_name"
+              :value="item.global_name"
+            />
+          </el-select>&nbsp;:&nbsp;
+          <el-select
+            v-model="formInline.mixed_ratio.stage.s_feed"
+            clearable
+            placeholder="请选择"
+            style="width:100px"
+          >
+            <el-option
+              v-for="item in stageOptions"
+              :key="item.id"
+              :label="item.global_name"
+              :value="item.global_name"
+            />
+          </el-select>&nbsp;=&nbsp;
+          <el-input-number v-model="formInline.mixed_ratio.ratio.f_ratio" controls-position="right" style="width:100px" />&nbsp;:&nbsp;
+          <el-input-number v-model="formInline.mixed_ratio.ratio.s_ratio" controls-position="right" style="width:100px" />
+        </el-form-item>
         <el-form-item
           v-if="!isView"
           style="float:right;"
@@ -93,7 +123,7 @@
             width="80"
             column-key="material_type"
           />
-          <!-- <el-table-column
+          <el-table-column
             v-if="i===0"
             label="单配"
             width="80"
@@ -101,7 +131,7 @@
             <template slot-scope="{row}">
               <el-switch v-model="row.is_manual" />
             </template>
-          </el-table-column> -->
+          </el-table-column>
           <el-table-column label="原材料">
             <template slot-scope="{row,$index}">
               <el-input
@@ -310,6 +340,7 @@ import ingredientStandard from './ingredient-standard'
 import { rubber_material_url } from '@/api/rubber_recipe_fun'
 import { equipUrl } from '@/api/base_w'
 import { getMaterialTolerance } from '@/api/base_w_five'
+import { stage_global_url } from '@/api/display_static_fun'
 export default {
   components: { ingredientStandard, materialSelection },
   props: {
@@ -375,6 +406,7 @@ export default {
       ],
       faI: null,
       optionsEquip: [],
+      stageOptions: [],
       postOwn: false // 标记第一次进来是不是没有配料过
     }
   },
@@ -385,7 +417,12 @@ export default {
       this.dialogVisible = val
       if (val) {
         this.formInline = this.formObj
-
+        if (JSON.stringify(this.formInline.mixed_ratio) === '{}') {
+          this.formInline.mixed_ratio = {
+            stage: { f_feed: '', s_feed: '' },
+            ratio: { f_ratio: undefined, s_ratio: undefined }
+          }
+        }
         const arr = this.batchingList.batching_details || []
         const a1 = arr.filter(d => d.type === 1)
 
@@ -467,10 +504,17 @@ export default {
       // }
     }
   },
+  created() {
+    this.getStageOptions()
+  },
   updated() {
     // console.log(this.batchingList, 'batchingList')
   },
   methods: {
+    async getStageOptions() {
+      const response = await stage_global_url('get')
+      this.stageOptions = response.results
+    },
     equipChanged() {
       // console.log(this.tableDataAll, 'this.tableDataAll')
     },
@@ -700,9 +744,22 @@ export default {
       }
     },
     async putNewsaveMaterialClicked() {
+      const arr1 = [this.formInline.mixed_ratio.stage.f_feed, this.formInline.mixed_ratio.stage.s_feed, this.formInline.mixed_ratio.ratio.f_ratio, this.formInline.mixed_ratio.ratio.s_ratio]
+      if (!arr1.every(d => d) && !arr1.every(d => !d)) {
+        this.$message.info({
+          message: '对搭比例配置不完整'
+        })
+        return
+      }
       if (!this.formInline.dev_type) {
         this.$message.info({
           message: '炼胶机类型不能为空'
+        })
+        return
+      }
+      if (!this.formInline.enable_equip) {
+        this.$message.info({
+          message: '请选择可用机台'
         })
         return
       }
