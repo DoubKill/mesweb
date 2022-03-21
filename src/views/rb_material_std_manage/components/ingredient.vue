@@ -417,11 +417,11 @@ export default {
       this.dialogVisible = val
       if (val) {
         this.formInline = this.formObj
-        if (JSON.stringify(this.formInline.mixed_ratio) === '{}') {
-          this.formInline.mixed_ratio = {
+        if (JSON.stringify(this.formInline.mixed_ratio) === '{}' || !this.formInline.mixed_ratio) {
+          this.$set(this.formInline, 'mixed_ratio', {
             stage: { f_feed: '', s_feed: '' },
             ratio: { f_ratio: undefined, s_ratio: undefined }
-          }
+          })
         }
         const arr = this.batchingList.batching_details || []
         const a1 = arr.filter(d => d.type === 1)
@@ -848,6 +848,9 @@ export default {
       const parameter = {}
       const ingredientListParams = []
       Object.assign(parameter, this.formInline)
+      if (arr1.every(d => !d)) {
+        parameter.mixed_ratio = {}
+      }
       parameter.batching_details = arr
       ingredientList.forEach(D => {
         if (D.length) {
