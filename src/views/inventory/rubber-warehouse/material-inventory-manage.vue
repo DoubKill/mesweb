@@ -30,12 +30,22 @@
           @changSelect="materialCodeFun"
         />
       </el-form-item>
-      <el-form-item label="托盘号">
-        <span v-if="containerNo">{{ containerNo }}</span>
-        <el-input v-else v-model="getParams.container_no" clearable @input="getDebounce" />
-      </el-form-item>
       <el-form-item label="物料名称">
-        <el-input v-model="getParams.material_name" clearable @input="getDebounce" />
+        <el-select
+          v-model="getParams.material_name"
+          style="width:250px"
+          placeholder="请选择物料名称"
+          filterable
+          clearable
+          @change="changeList"
+        >
+          <el-option
+            v-for="(item,i) in options"
+            :key="i"
+            :label="item.material_name"
+            :value="item.material_name"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="品质状态">
         <el-select
@@ -87,6 +97,10 @@
             :value="item"
           />
         </el-select>
+      </el-form-item>
+      <el-form-item label="托盘号">
+        <span v-if="containerNo">{{ containerNo }}</span>
+        <el-input v-else v-model="getParams.container_no" clearable @input="getDebounce" />
       </el-form-item>
       <!-- <el-form-item label="质检条码">
         <span v-if="lotNo">{{ lotNo }}</span>
@@ -191,6 +205,7 @@ import { bzFinalInventory, wmsStorage, thStorage,
 // import warehouseSelect from '@/components/select_w/warehouseSelect'
 import page from '@/components/page'
 import { mapGetters } from 'vuex'
+import { materialCount } from '@/api/base_w'
 import { debounce } from '@/utils/index'
 import materialCodeSelect from '@/components/select_w/materialCodeSelect'
 // import detailsDialog from '@/views/quality_management/details.vue'
@@ -232,6 +247,7 @@ export default {
       },
       currentPage: 1,
       total: 0,
+      options: [],
       loading: false,
       dialogVisible: false,
       equipNo: '',
@@ -264,9 +280,18 @@ export default {
     if (this.warehouseNameProps) {
       this.getParams.warehouse_name = this.warehouseNameProps
     }
+    this.getProduct()
     this.getTableData()
   },
   methods: {
+    async getProduct() {
+      try {
+        const data = await materialCount('get', null, { params: { store_name: this.warehouseNameProps }})
+        this.options = data || []
+      } catch (e) {
+        //
+      }
+    },
     changeList() {
       this.getParams.page = 1
       this.getTableData()
