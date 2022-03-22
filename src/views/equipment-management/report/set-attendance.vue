@@ -337,7 +337,7 @@ export default {
       this.getList()
     },
     async onSubmit() {
-      this.dialogForm = {}
+      this.dialogForm = { range_time: 60, lead_time: 60 }
       this.dialogVisible = true
     },
     showEditDialog(row) {
