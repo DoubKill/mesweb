@@ -143,6 +143,8 @@ export function setDate(_data, bool, type) {
       formatObj.h + formatObj.i + formatObj.s
   } else if (type && type === 'month') {
     return formatObj.y + '-' + formatObj.m
+  } else if (type && type === 'hour') {
+    return formatObj.h + ':' + formatObj.i
   } else {
     return formatObj.y + '-' + formatObj.m + '-' + formatObj.d
   }
