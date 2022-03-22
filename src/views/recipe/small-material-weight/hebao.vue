@@ -85,13 +85,13 @@
         label="打印时间"
         min-width="20"
       />
-      <!-- <el-table-column
-        label="配料车次"
+      <el-table-column
+        label="包数"
         min-width="20"
         :formatter="d=>{
-          return d.begin_trains+'-'+d.end_trains
+          return d.package_count
         }"
-      /> -->
+      />
       <el-table-column
         prop="batching_equip"
         label="机配机台"
@@ -178,7 +178,7 @@
         <!-- <el-form-item prop="begin_trains" label="起始车次">
           <el-input-number v-model="formData.begin_trains" controls-position="right" :min="1" :disabled="formData.id?true:false" />
         </el-form-item> -->
-        <el-form-item prop="package_count" label="配置数量">
+        <el-form-item prop="package_count" label="包数">
           <el-input-number v-model="formData.package_count" controls-position="right" :min="1" :disabled="formData.id?true:false" />
         </el-form-item>
         <el-form-item prop="batching_equip" label="机配机台">

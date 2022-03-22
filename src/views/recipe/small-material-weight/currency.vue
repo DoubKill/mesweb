@@ -128,13 +128,13 @@
           return d.batch_class + '/'+ d.batch_group
         }"
       />
-      <!-- <el-table-column
+      <el-table-column
         label="配料车次"
         min-width="20"
         :formatter="d=>{
-          return d.begin_trains+'-'+d.end_trains
+          return d.package_count
         }"
-      /> -->
+      />
       <el-table-column
         prop="created_username"
         label="配料员"
@@ -320,7 +320,7 @@
         </el-form-item> -->
         <el-form-item
           prop="package_count"
-          label="配置数量"
+          label="包数"
         >
           <el-input-number
             v-model="formData.package_count"

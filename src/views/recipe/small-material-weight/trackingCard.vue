@@ -269,14 +269,14 @@
         </tr>
         <tr>
           <td>标准重量</td>
-          <td colspan="3">
+          <td>
             {{ ruleForm.machine_manual_weight }}{{ ruleForm.machine_manual_tolerance }}
             /包
             <br>
             ({{ ruleForm.machine_weight }}*{{ ruleForm.split_count }}+{{ ruleForm.manual_weight }}*{{ ruleForm.split_count }})
           </td>
-          <!-- <td>配料车次</td>
-          <td>{{ ruleForm.begin_trains+'-'+ruleForm.end_trains }}</td> -->
+          <td>包数</td>
+          <td>{{ ruleForm.package_count }}</td>
         </tr>
         <tr>
           <td>配料员</td>
