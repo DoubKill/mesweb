@@ -192,8 +192,7 @@
 </template>
 
 <script>
-// setDate
-import { debounce, checkPermission } from '@/utils'
+import { debounce, checkPermission, setDate } from '@/utils'
 import selectBatchingEquip from '../components/select-batching-equip'
 import classSelect from '@/components/ClassSelect'
 import recipeSelect from '../components/recipe-select'
@@ -315,7 +314,18 @@ export default {
         this.getFactoryDate = data
         this.ruleForm.date_time = data.factory_date
         this.ruleForm.grouptime = data.classes
-        this.next_classes = this.getFactoryDate.classes
+
+        const current = setDate(false, false, 'hour').toString()
+        if ((current < '08:15' && current > '07:45')) {
+          this.next_classes = '早班'
+        } else if (current < '16:15' && current > '15:45') {
+          this.next_classes = '中班'
+        } else if ((current < '20:15' && current > '19:45') ||
+        (current < '24:00' && current > '23:45')) {
+          this.next_classes = '晚班'
+        } else {
+          this.next_classes = this.getFactoryDate.classes
+        }
       } catch (e) {
         //
       }
@@ -479,7 +489,7 @@ export default {
     classDialog(item) {
       this.currentQuip = item.equip_no
       this.dialogVisible1 = true
-      this.next_classes = this.getFactoryDate.classes
+      // this.next_classes = this.getFactoryDate.classes
     },
     async submitForm1() {
       try {
