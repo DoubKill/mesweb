@@ -11,13 +11,33 @@
           @change="changeList"
         />
       </el-form-item>
-      <el-form-item label="生产机台">
+      <el-form-item label="班次">
+        <class-select
+          @classSelected="classChanged"
+        />
+      </el-form-item>
+      <el-form-item label="机台">
         <equip-select
           :equip_no_props="getParams.equip_no"
           @changeSearch="equipSelected"
         />
       </el-form-item>
-      <el-form-item label="混炼/终炼">
+      <el-form-item label="计划编号">
+        <el-input v-model="getParams.plan_classes_uid" clearable @input="changeInput" />
+      </el-form-item>
+      <el-form-item label="车次">
+        <el-input v-model="getParams.trains" clearable @input="changeInput" />
+      </el-form-item>
+      <el-form-item label="投入物料">
+        <el-input v-model="getParams.material_no" clearable @input="changeInput" />
+      </el-form-item>
+      <el-form-item label="条码">
+        <el-input v-model="getParams.bra_code" clearable @input="changeInput" />
+      </el-form-item>
+      <el-form-item label="操作人">
+        <el-input v-model="getParams.created_username" clearable @input="changeInput" />
+      </el-form-item>
+      <!-- <el-form-item label="混炼/终炼">
         <el-select
           v-model="getParams.mixing_finished"
           clearable
@@ -31,15 +51,7 @@
             :value="item"
           />
         </el-select>
-      </el-form-item>
-      <el-form-item label="班次:">
-        <class-select
-          @classSelected="classChanged"
-        />
-      </el-form-item>
-      <el-form-item label="投入编码:">
-        <el-input v-model="getParams.material_no" @input="changeInput" />
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
 
     <el-table
@@ -51,10 +63,7 @@
         width="40"
         label="No"
       />
-      <el-table-column
-        prop="bra_code"
-        label="条码"
-      />
+
       <el-table-column
         prop="production_factory_date"
         label="工厂日期"
@@ -64,29 +73,42 @@
         label="班次"
       />
       <el-table-column
-        prop="mixing_finished"
-        label="混炼/终练"
-      />
-      <el-table-column
-        label="胶料编码"
-      >
-        <template slot-scope="{row}">
-          <el-link type="primary" @click="clickTrack(row)">{{ row.product_no }}</el-link>
-        </template>
-      </el-table-column>
-      <el-table-column
         prop="equip_no"
         label="生产机台"
         width="80px"
       />
+      <el-table-column
+        prop="plan_classes_uid"
+        label="计划编号"
+      />
+      <el-table-column
+        prop="mixing_finished"
+        label="混炼/终练"
+      />
+      <el-table-column
+        prop="product_no"
+        label="胶料编码"
+      />
+      <!-- <template slot-scope="{row}">
+          <el-link type="primary" @click="clickTrack(row)">{{ row.product_no }}</el-link>
+        </template>
+      </el-table-column> -->
       <el-table-column
         prop="trains"
         label="车次"
         width="80px"
       />
       <el-table-column
-        label="投入编码"
+        label="投入物料"
         prop="material_no"
+      >
+        <template slot-scope="{row}">
+          <el-link type="primary" @click="clickMaterial(row)">{{ row.material_no }}</el-link>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="bra_code"
+        label="条码"
       />
       <el-table-column
         prop="created_date"
@@ -211,6 +233,7 @@ export default {
       total: 0,
       totalTrack: 0,
       loading: false,
+      dialogVisibleDetail: false,
       dialogVisible: false,
       pageTrack: 1,
       page_sizeTrack: 10,
@@ -277,6 +300,10 @@ export default {
       this.currentObj = row
       this.dialogVisible = true
       this.getTrackList()
+    },
+    clickMaterial(row) {
+      this.currentObj = row
+      this.dialogVisibleDetail = true
     },
     clickLotNo(row) {
       this.lot_no_obj = row

@@ -12,7 +12,10 @@
           @change="changeList"
         />
       </el-form-item>
-      <el-form-item label="称量设备:">
+      <el-form-item label="班次">
+        <class-select @classSelected="classChanged" />
+      </el-form-item>
+      <el-form-item label="称量机台">
         <el-select
           v-model="getParams.equip_no"
           clearable
@@ -44,8 +47,14 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="班次">
-        <class-select @classSelected="classChanged" />
+      <el-form-item label="投入物料">
+        <el-input v-model="getParams.material_name" clearable @input="changeInput" />
+      </el-form-item>
+      <el-form-item label="条码">
+        <el-input v-model="getParams.bra_code" clearable @input="changeInput" />
+      </el-form-item>
+      <el-form-item label="操作人">
+        <el-input v-model="getParams.created_username" clearable @input="changeInput" />
       </el-form-item>
     </el-form>
 
@@ -147,6 +156,10 @@ export default {
       this.getParams.page_size = page_size
       this.getList()
     },
+    changeInput() {
+      // 防抖
+      debounce(this)
+    },
     changeList() {
       if (!this.getParams.batch_time) {
         this.$message.info('请选择工厂日期')
@@ -156,6 +169,13 @@ export default {
       this.getList()
     }
   }
+}
+var timer
+function debounce(_this) {
+  clearTimeout(timer)
+  timer = setTimeout(() => {
+    _this.changeList()
+  }, 600)
 }
 </script>
 
