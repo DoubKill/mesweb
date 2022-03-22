@@ -287,9 +287,7 @@
           <el-select
             v-model="creatOrder.equip_warehouse_area"
             filterable
-            disabled
             placeholder="请选择"
-            clearable
             @change="clear"
           >
             <el-option
