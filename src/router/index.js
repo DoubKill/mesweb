@@ -114,6 +114,16 @@ export const constantRoutes = [
       title: '细料胶块放行处理',
       permissionName: 'replace_material'
     }
+  },
+  {
+    path: '/alone/material_base_info_manage/',
+    component: () => import('@/views/material_base_info_manage/productionFeeding'),
+    hidden: true,
+    meta: {
+      isPhone: true,
+      title: '生产投料配方查询',
+      permissionName: ''
+    }
   }
 ]
 // 存在权限的路由
@@ -904,6 +914,16 @@ export let asyncRoutes = [
           ]
         }
       ]
+    },
+    {
+      path: '/material_base_info_manage/',
+      component: () => import('@/views/material_base_info_manage/productionFeeding'),
+      name: 'ProductionFeeding',
+      meta: {
+        title: '生产投料配方查询',
+        icon: 'formula',
+        permissionName: ''
+      }
     }
     ]
   },

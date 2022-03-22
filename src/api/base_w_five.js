@@ -274,3 +274,12 @@ export function thOutboundOrder(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function formulaPreparation(method, id, data = {}) {
+  const obj = {
+    url: id ? API.FormulaPreparation + id + '/' : API.FormulaPreparation,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
