@@ -709,7 +709,6 @@ export let asyncRoutes = [
             }
           ]
         },
-        
         /** {
           path: '/schedule/statistical-report',
           component: () => import('@/views/plan/schedule/statistical-report/a-index'),
