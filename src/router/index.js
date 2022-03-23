@@ -698,6 +698,16 @@ export let asyncRoutes = [
               }
             },
             {
+              path: '/schedule/material-demand',
+              component: () => import('@/views/plan/schedule/dispose/material-demand'),
+              name: 'MaterialDemand',
+              meta: {
+                faName: 'ScheduleDispose',
+                title: '原材料需求量 汇总表',
+                permissionName: 'aps_stock_summary'
+              }
+            },
+            {
               path: '/schedule/scheduled-inventory',
               component: () => import('@/views/plan/schedule/dispose/scheduled-inventory'),
               name: 'ScheduledInventory',

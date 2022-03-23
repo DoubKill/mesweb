@@ -13,8 +13,14 @@
           @change="changeList"
         />
       </el-form-item>
-      <el-form-item label="姓名">
+      <!-- <el-form-item label="姓名">
         <el-input v-model="search.name" clearable placeholder="请输入" @change="debounceList" />
+      </el-form-item> -->
+      <el-form-item label="审批人">
+        <el-input v-model="search.name" disabled />
+      </el-form-item>
+      <el-form-item label="审核人">
+        <el-input v-model="search.name" disabled />
       </el-form-item>
       <el-form-item style="float:right">
         <el-button
@@ -33,6 +39,16 @@
         >
           <el-button v-permission="['employee_attendance_records','import']" type="primary">导入Excel</el-button>
         </el-upload>
+        <el-button
+          v-permission="['employee_attendance_records','export']"
+          type="primary"
+          @click="approve('审批')"
+        >审批</el-button>
+        <el-button
+          v-permission="['employee_attendance_records','export']"
+          type="primary"
+          @click="approve('审核')"
+        >审核</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -68,18 +84,290 @@
         :key="Date.now()+index"
         align="center"
         :label="d.label"
-        width="120"
+        min-width="50"
       >
         <el-table-column
           v-for="(item,i) in tableHead1[index]"
           :key="i"
-          :prop="d.prop+item"
           align="center"
           :label="item"
-          width="60"
-        />
+          width="70"
+        >
+          <template slot-scope="scope">
+            <el-link
+              type="primary"
+              @click="attendanceList(scope.row[d.prop+item])"
+            >{{ scope.row[d.prop+item] }}</el-link>
+          </template>
+        </el-table-column>
       </el-table-column>
     </el-table>
+
+    <el-dialog
+      title="绩效计算 员工出勤工时统计"
+      :visible.sync="dialogVisibleList"
+      width="90%"
+    >
+      <el-form :inline="true">
+        <el-form-item label="月份">
+          <el-date-picker
+            v-model="getParams.date"
+            type="month"
+            :clearable="false"
+            format="yyyy-MM"
+            value-format="yyyy-MM"
+            placeholder="选择月"
+            @change="changeAttendance"
+          />
+        </el-form-item>
+        <el-form-item label="姓名">
+          <el-input v-model="currentInfo.material_name" disabled />
+        </el-form-item>
+        <el-form-item label="身份证号">
+          <el-input v-model="currentInfo.material_code" disabled />
+        </el-form-item>
+        <el-form-item label="部门">
+          <el-input v-model="currentInfo.batch_no" disabled />
+        </el-form-item>
+        <el-form-item label="经办人">
+          <el-input v-model="currentInfo.batch_no" disabled />
+        </el-form-item>
+      </el-form>
+      <el-table
+        id="out-table"
+        v-loading="loadingAttendance"
+        :data="tableDataAttendance"
+        border
+      >
+        <el-table-column
+          prop=""
+          label="日期"
+          min-width="20"
+        >
+          <template slot-scope="scope">
+            <el-link
+              type="primary"
+              @click="recordList(scope.row)"
+            >{{ scope.row.date }}</el-link>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="quality_status"
+          label="机台"
+          min-width="20"
+        />
+        <el-table-column
+          prop=""
+          label="班次/班组"
+          min-width="20"
+        />
+        <el-table-column
+          prop="except_reason"
+          label="岗位名称"
+          min-width="20"
+        />
+        <el-table-column
+          prop="created_username"
+          label="上岗时间"
+          min-width="20"
+        />
+        <el-table-column
+          prop="created_date"
+          label="离岗时间"
+          min-width="20"
+        />
+        <el-table-column
+          prop="created_date"
+          label="计算作业时间(小时)"
+          min-width="20"
+        />
+        <el-table-column
+          prop="created_date"
+          label="承认作业时间(小时)"
+          min-width="20"
+        />
+        <el-table-column
+          prop="created_date"
+          label="状态"
+          min-width="20"
+        />
+      </el-table>
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button
+          type="primary"
+          @click="dialogVisibleList=false"
+        >添加</el-button>
+        <el-button
+          type="primary"
+          @click="dialogVisibleList=false"
+        >废弃</el-button>
+        <el-button
+          type="primary"
+          @click="dialogVisibleList=false"
+        >取消</el-button>
+        <el-button
+          type="primary"
+          @click="dialogVisibleList=false"
+        >确认</el-button>
+      </span>
+    </el-dialog>
+
+    <el-dialog
+      title="绩效计算 员工出勤打卡 记录明细"
+      :visible.sync="loadingRecord"
+      width="90%"
+    >
+      <el-table
+        id="out-table"
+        v-loading="loadingRecord"
+        :data="tableDataRecord"
+        border
+      >
+        <el-table-column
+          prop="quality_status"
+          label="打卡日期"
+          min-width="20"
+        />
+        <el-table-column
+          prop=""
+          label="打卡时间"
+          min-width="20"
+        />
+        <el-table-column
+          prop="created_username"
+          label="机台"
+          min-width="20"
+        />
+        <el-table-column
+          prop="created_date"
+          label="班次/班组"
+          min-width="20"
+        />
+        <el-table-column
+          prop="except_reason"
+          label="岗位名称"
+          min-width="20"
+        />
+        <el-table-column
+          prop="created_date"
+          label="打卡类别"
+          min-width="20"
+        />
+      </el-table>
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button
+          type="primary"
+          @click="dialogVisibleRocord=false"
+        >返回</el-button>
+      </span>
+    </el-dialog>
+
+    <el-dialog
+      :title="'考勤结果处理 --'+type"
+      :visible.sync="dialogVisibleResult"
+      width="30%"
+    >
+      <el-form
+        :model="resultForm"
+        label-width="150px"
+      >
+        <el-form-item label="处理结果" prop="result_accept_result">
+          <el-radio-group v-model="resultForm.result_accept_result">
+            <el-radio label="同意">同意</el-radio>
+            <el-radio label="驳回">驳回</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="处理说明">
+          <el-input
+            v-model="resultForm.result_accept_desc"
+            style="width:250px"
+            type="textarea"
+            :rows="3"
+            placeholder="请输入内容"
+          />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleResult=false">取 消</el-button>
+        <el-button :loading="submit" type="primary" @click="generateFun">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <el-dialog
+      title="绩效计算 添加员工出勤工时"
+      :visible.sync="dialogVisibleAdd"
+      width="500px"
+    >
+      <el-form ref="createForm" :rules="rules" label-width="150px" :model="dialogForm">
+        <el-form-item label="姓名" prop="supplier_code">
+          <el-input v-model="dialogForm.supplier_code" disabled style="width:200px" />
+        </el-form-item>
+        <el-form-item label="身份证" prop="supplier_name">
+          <el-input v-model="dialogForm.supplier_name" disabled style="width:200px" />
+        </el-form-item>
+        <el-form-item label="日期" prop="region">
+          <el-date-picker
+            v-model="dialogForm.date"
+            style="width:200px"
+            type="date"
+            value-format="yyyy-MM-dd"
+          />
+        </el-form-item>
+        <el-form-item label="机台" prop="supplier_type">
+          <el-select v-model="dialogForm.supplier_type" placeholder="请选择">
+            <el-option
+              v-for="item in options"
+              :key="item.global_name"
+              :label="item.global_name"
+              :value="item.global_name"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="班组" prop="supplier_type">
+          <el-select v-model="dialogForm.supplier_type" placeholder="请选择">
+            <el-option
+              v-for="item in options"
+              :key="item.global_name"
+              :label="item.global_name"
+              :value="item.global_name"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="班次" prop="supplier_type">
+          <el-select v-model="dialogForm.supplier_type" placeholder="请选择">
+            <el-option
+              v-for="item in options"
+              :key="item.global_name"
+              :label="item.global_name"
+              :value="item.global_name"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="岗位" prop="supplier_type">
+          <el-select v-model="dialogForm.supplier_type" placeholder="请选择">
+            <el-option
+              v-for="item in options"
+              :key="item.global_name"
+              :label="item.global_name"
+              :value="item.global_name"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="作业时间(小时)" prop="supplier_name">
+          <el-input-number v-model="dialogForm.supplier_name" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleAdd=false">取 消</el-button>
+        <el-button type="primary" :loading="submit" @click="submitFun">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -93,9 +381,25 @@ export default {
       search: {
         date: setDate(null, null, 'month')
       },
+      getParams: {},
+      type: '',
+      options: [],
+      dialogForm: {},
+      currentInfo: {},
+      resultForm: {},
+      tableDataAttendance: [],
+      dialogVisibleResult: false,
+      tableDataRecord: [],
+      dialogVisibleAdd: true,
+      loadingRecord: false,
+      loadingAttendance: false,
+      dialogVisibleList: false,
+      dialogVisibleRocord: false,
       machineList: [],
       tableHead1: [],
+      rules: {},
       loading: false,
+      submit: false,
       tableHead: [],
       tableData: [],
       btnExportLoad: false,
@@ -136,6 +440,47 @@ export default {
       } catch (e) {
         this.loading = false
       }
+    },
+    approve(val) {
+      this.resultForm = { result_accept_result: '同意' }
+      this.type = val
+      this.dialogVisibleResult = true
+    },
+    submitFun() {
+
+    },
+    async generateFun() {
+      try {
+        this.submit = true
+        // await multiUpdate('post', null, { data: this.creatOrder })
+        this.$message.success('操作成功')
+        this.submit = false
+        this.dialogVisibleResult = false
+        this.getList()
+      } catch (e) {
+        this.submit = false
+        this.dialogVisibleResult = true
+      }
+    },
+    async attendanceList(val) {
+      console.log(val)
+      // this.currentInfo = JSON.parse(JSON.stringify(row))
+      try {
+        this.loading = true
+        // const data = await productInfoDj('get', null, { params: this.search })
+        // this.tableData = data.results || []
+        this.dialogVisibleList = true
+        // this.total = data.count
+        this.loading = false
+      } catch (e) {
+        this.loading = false
+      }
+    },
+    recordList() {
+      this.dialogVisibleRecord = true
+    },
+    changeAttendance() {
+
     },
     changeList() {
       this.tableHead = getDiffDate(this.search.date + '-01', getCurrentMonthLastDay(this.search.date))

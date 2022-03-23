@@ -341,6 +341,9 @@ export default {
       formData: {},
       tableData: [],
       tableData1: [],
+      small_ton_stock_days: null,
+      big_ton_stock_days: null,
+      middle_ton_stock_days: null,
       tableData2: [],
       options: [],
       rules: {
@@ -353,6 +356,7 @@ export default {
 
   created() {
     this.getList()
+    this.getParams()
     this.templateFileUrl = process.env.BASE_URL
   },
   methods: {
@@ -420,11 +424,23 @@ export default {
         return 'max-warning-row'
       }
     },
+    async getParams() {
+      try {
+        const data = await schedulingParamsSetting('get')
+        this.small_ton_stock_days = await data[0].small_ton_stock_days
+        this.middle_ton_stock_days = await data[0].middle_ton_stock_days
+        this.big_ton_stock_days = await data[0].big_ton_stock_days
+      } catch (e) {
+        //
+      }
+    },
     async changeStock() {
-      const data = await schedulingParamsSetting('get')
-      const min_stock_trains = await data[0].min_stock_trains
-      if (this.formData.plan_weight) {
-        this.formData.target_stock = this.formData.plan_weight * min_stock_trains
+      if (this.formData.plan_weight < 5) {
+        this.formData.target_stock = this.formData.plan_weight * this.small_ton_stock_days
+      } else if (this.formData.plan_weight >= 5 && this.formData.plan_weight <= 10) {
+        this.formData.target_stock = this.formData.plan_weight * this.middle_ton_stock_days
+      } else {
+        this.formData.target_stock = this.formData.plan_weight * this.big_ton_stock_days
       }
     },
     changeDemanded() {

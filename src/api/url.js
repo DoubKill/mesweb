@@ -647,6 +647,8 @@ export default {
   DailyProductionCompletionReport: '/api/v1/production/daily-production-completion-report/', // 月产量完成
   MonthlyOutputStatisticsReport: '/api/v1/production/monthly-output-statistics-report/',
   SchedulingStockSummary: '/api/v1/plan/scheduling-stock-summary/',
+  SchedulingStockConfirm: '/api/v1/plan/scheduling-stock-summary/confirm/',
+  SchedulingMaterialDemanded: '/api/v1/plan/scheduling-material-demanded/', // 原材料需求量
   WmsNucleinManagement: '/api/v1/inventory/wms-nuclein-management/',
   MaterialTestPlan: '/api/v1/quality/material-test-plan/',
   MaterialTestPlanDetail: '/api/v1/quality/material-test-plan-detail/',
