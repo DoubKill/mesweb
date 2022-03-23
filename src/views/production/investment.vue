@@ -11,13 +11,33 @@
           @change="changeList"
         />
       </el-form-item>
-      <el-form-item label="生产机台">
+      <el-form-item label="班次">
+        <class-select
+          @classSelected="classChanged"
+        />
+      </el-form-item>
+      <el-form-item label="机台">
         <equip-select
           :equip_no_props="getParams.equip_no"
           @changeSearch="equipSelected"
         />
       </el-form-item>
-      <el-form-item label="混炼/终炼">
+      <el-form-item label="计划编号">
+        <el-input v-model="getParams.plan_classes_uid" clearable @input="changeInput" />
+      </el-form-item>
+      <el-form-item label="车次">
+        <el-input v-model="getParams.trains" clearable @input="changeInput" />
+      </el-form-item>
+      <el-form-item label="投入物料">
+        <el-input v-model="getParams.material_no" clearable @input="changeInput" />
+      </el-form-item>
+      <el-form-item label="条码">
+        <el-input v-model="getParams.bra_code" clearable @input="changeInput" />
+      </el-form-item>
+      <el-form-item label="操作人">
+        <el-input v-model="getParams.created_username" clearable @input="changeInput" />
+      </el-form-item>
+      <!-- <el-form-item label="混炼/终炼">
         <el-select
           v-model="getParams.mixing_finished"
           clearable
@@ -31,15 +51,7 @@
             :value="item"
           />
         </el-select>
-      </el-form-item>
-      <el-form-item label="班次:">
-        <class-select
-          @classSelected="classChanged"
-        />
-      </el-form-item>
-      <el-form-item label="投入编码:">
-        <el-input v-model="getParams.material_no" @input="changeInput" />
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
 
     <el-table
@@ -51,10 +63,7 @@
         width="40"
         label="No"
       />
-      <el-table-column
-        prop="bra_code"
-        label="条码"
-      />
+
       <el-table-column
         prop="production_factory_date"
         label="工厂日期"
@@ -64,29 +73,41 @@
         label="班次"
       />
       <el-table-column
-        prop="mixing_finished"
-        label="混炼/终练"
-      />
-      <el-table-column
-        label="胶料编码"
-      >
-        <template slot-scope="{row}">
-          <el-link type="primary" @click="clickTrack(row)">{{ row.product_no }}</el-link>
-        </template>
-      </el-table-column>
-      <el-table-column
         prop="equip_no"
         label="生产机台"
         width="80px"
       />
+      <el-table-column
+        prop="plan_classes_uid"
+        label="计划编号"
+      />
+      <el-table-column
+        prop="mixing_finished"
+        label="混炼/终练"
+      />
+      <el-table-column
+        prop="product_no"
+        label="胶料编码"
+      />
+      <!-- <template slot-scope="{row}">
+          <el-link type="primary" @click="clickTrack(row)">{{ row.product_no }}</el-link>
+        </template>
+      </el-table-column> -->
       <el-table-column
         prop="trains"
         label="车次"
         width="80px"
       />
       <el-table-column
-        label="投入编码"
-        prop="material_no"
+        label="投入物料"
+      >
+        <template slot-scope="{row}">
+          <el-link type="primary" @click="checkList(row)">{{ row.display_name }}</el-link>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="bra_code"
+        label="条码"
       />
       <el-table-column
         prop="created_date"
@@ -185,6 +206,111 @@
         @currentChange="currentChangeMaterial"
       />
     </el-dialog>
+
+    <el-dialog
+      title="密炼投入物料信息"
+      :visible.sync="dialogVisibleList"
+      width="90%"
+    >
+      <el-form :inline="true">
+        <el-form-item label="日期">
+          <el-input v-model="currentInfo.production_factory_date" disabled />
+        </el-form-item>
+        <el-form-item label="班次">
+          <el-input v-model="currentInfo.production_classes" disabled />
+        </el-form-item>
+        <el-form-item label="车次">
+          <el-input v-model="currentInfo.trains" disabled />
+        </el-form-item>
+        <el-form-item label="机台">
+          <el-input v-model="currentInfo.equip_no" disabled />
+        </el-form-item>
+        <el-form-item label="胶料编码">
+          <el-input v-model="currentInfo.product_no" disabled />
+        </el-form-item>
+      </el-form>
+      <el-table
+        v-loading="loadingCheck"
+        :data="tableDataCheck"
+        border
+      >
+        <el-table-column
+          prop="status"
+          label="物料名称"
+          min-width="20"
+        >
+          <template slot-scope="{row}">
+            <el-link type="primary" @click="clickName(row)">{{ row.material_name }}</el-link>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="product_no"
+          label="物料编码"
+          min-width="20"
+        />
+        <el-table-column
+          prop="bra_code"
+          label="物料条码"
+          min-width="20"
+        />
+        <el-table-column
+          prop="standard_weight"
+          label="单包重量kg"
+          min-width="20"
+        />
+        <el-table-column
+          prop="standard_error"
+          label="单包误差kg"
+          min-width="20"
+        />
+        <el-table-column
+          prop="split_count"
+          label="分包数"
+          min-width="20"
+        />
+      </el-table>
+    </el-dialog>
+
+    <el-dialog
+      title="原材料基础信息"
+      :visible.sync="dialogVisibleDetail"
+      width="50%"
+    >
+      <el-form :inline="true" label-width="150px">
+        <el-form-item label="代码">
+          <el-input v-model="detailForm.TOFAC" disabled style="width:250px" />
+        </el-form-item>
+        <el-form-item label="品名">
+          <el-input v-model="detailForm.WLMC" disabled style="width:250px" />
+        </el-form-item>
+        <el-form-item label="批号">
+          <el-input v-model="detailForm.PH" disabled style="width:250px" />
+        </el-form-item>
+        <el-form-item label="数量">
+          <el-input v-model="detailForm.SL" disabled style="width:100px" />
+          <el-input v-model="detailForm.SLDW" disabled style="width:150px" />
+        </el-form-item>
+        <el-form-item label="重量">
+          <el-input v-model="detailForm.ZL" disabled style="width:100px" />
+          <el-input v-model="detailForm.ZLDW" disabled style="width:150px" />
+        </el-form-item>
+        <el-form-item label="产地">
+          <el-input v-model="detailForm.CD" disabled style="width:250px" />
+        </el-form-item>
+        <el-form-item label="供货商">
+          <el-input v-model="detailForm.WLDWMC" disabled style="width:250px" />
+        </el-form-item>
+        <el-form-item label="生产日期">
+          <el-input v-model="detailForm.SCRQ" disabled style="width:250px" />
+        </el-form-item>
+        <el-form-item label="使用期限">
+          <el-input v-model="detailForm.SYQX" disabled style="width:250px" />
+        </el-form-item>
+        <el-form-item label="订单编号">
+          <el-input v-model="detailForm.DDH" disabled style="width:250px" />
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
@@ -206,11 +332,17 @@ export default {
         page_size: 10,
         production_factory_date: setDate()
       },
+      detailForm: {},
+      currentInfo: {},
       tableData: [],
+      dialogVisibleList: false,
+      tableDataCheck: [],
+      loadingCheck: [],
       tableDataList: [],
       total: 0,
       totalTrack: 0,
       loading: false,
+      dialogVisibleDetail: false,
       dialogVisible: false,
       pageTrack: 1,
       page_sizeTrack: 10,
@@ -227,8 +359,41 @@ export default {
     this.getList()
   },
   methods: {
+    async checkList(row) {
+      try {
+        this.dialogVisibleList = true
+        this.currentInfo = JSON.parse(JSON.stringify(row))
+        const obj = {}
+        obj.plan_classes_uid = row.plan_classes_uid
+        obj.opera_type = 1
+        obj.bra_code = row.bra_code
+        obj.trains = row.trains
+        this.loadingCheck = true
+        const data = await batchChargeLogList('get', null, { params: obj })
+        this.tableDataCheck = data
+        this.loadingCheck = false
+      } catch (e) {
+        this.loadingCheck = false
+      }
+    },
+    async clickName(row) {
+      try {
+        const obj = {}
+        obj.opera_type = 2
+        obj.bra_code = row.bra_code
+        const data = await batchChargeLogList('get', null, { params: obj })
+        if (data.length > 0) {
+          this.detailForm = data[0]
+          this.dialogVisibleDetail = true
+        } else {
+          this.$message('未查到原材料信息')
+          this.detailForm = {}
+        }
+      } catch (e) {
+        this.dialogVisibleDetail = true
+      }
+    },
     async getList() {
-      this.loading = false
       try {
         this.loading = true
         const data = await batchChargeLogList('get', null, { params: this.getParams })
