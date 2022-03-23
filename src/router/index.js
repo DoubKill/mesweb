@@ -565,7 +565,7 @@ export let asyncRoutes = [
         //   name: 'SmallMaterialWeightArtificialCard',
         //   meta: {
         //     faName: 'SmallMaterialWeight',
-        //     title: '人工补打机配卡片',
+        //     title: '机配料包卡片补打',
         //     permissionName: ''
         //   }
         // },
