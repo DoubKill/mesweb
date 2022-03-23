@@ -30,12 +30,23 @@
           @changSelect="materialCodeFun"
         />
       </el-form-item>
-      <el-form-item label="托盘号">
-        <span v-if="containerNo">{{ containerNo }}</span>
-        <el-input v-else v-model="getParams.container_no" clearable @input="getDebounce" />
-      </el-form-item>
       <el-form-item label="物料名称">
-        <el-input v-model="getParams.material_name" clearable @input="getDebounce" />
+        <el-select
+          v-model="getParams.e_material_name"
+          style="width:250px"
+          placeholder="请选择物料名称"
+          filterable
+          clearable
+          @visible-change="getProduct"
+          @change="changeList"
+        >
+          <el-option
+            v-for="(item,i) in options"
+            :key="i"
+            :label="item.material_name"
+            :value="item.material_name"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="品质状态">
         <el-select
@@ -87,6 +98,10 @@
             :value="item"
           />
         </el-select>
+      </el-form-item>
+      <el-form-item label="托盘号">
+        <span v-if="containerNo">{{ containerNo }}</span>
+        <el-input v-else v-model="getParams.container_no" clearable @input="getDebounce" />
       </el-form-item>
       <!-- <el-form-item label="质检条码">
         <span v-if="lotNo">{{ lotNo }}</span>
@@ -147,8 +162,8 @@
       <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="核酸管控" align="center" prop="in_charged_tag" min-width="16" />
       <el-table-column label="品质状态" align="center" prop="quality_status" min-width="15" />
       <el-table-column v-if="['炭黑库', '原材料库'].includes(warehouseNameProps)" label="入库时间" align="center" prop="in_storage_time" min-width="15" />
-      <!-- <el-table-column v-if="['炭黑库', '原材料库'].includes(warehouseNameProps)" label="件数" align="center" prop="sl" min-width="15" />
-      <el-table-column v-if="['炭黑库', '原材料库'].includes(warehouseNameProps)" label="唛头重量" align="center" prop="zl" min-width="15" /> -->
+      <el-table-column v-if="['炭黑库', '原材料库'].includes(warehouseNameProps)" label="件数" align="center" prop="sl" min-width="15" />
+      <el-table-column v-if="['炭黑库', '原材料库'].includes(warehouseNameProps)" label="唛头重量" align="center" prop="zl" min-width="15" />
       <!-- <el-table-column label="操作" align="center" min-width="20">
         <template slot-scope="scope">
           <el-button
@@ -191,6 +206,7 @@ import { bzFinalInventory, wmsStorage, thStorage,
 // import warehouseSelect from '@/components/select_w/warehouseSelect'
 import page from '@/components/page'
 import { mapGetters } from 'vuex'
+import { materialCount } from '@/api/base_w'
 import { debounce } from '@/utils/index'
 import materialCodeSelect from '@/components/select_w/materialCodeSelect'
 // import detailsDialog from '@/views/quality_management/details.vue'
@@ -232,6 +248,7 @@ export default {
       },
       currentPage: 1,
       total: 0,
+      options: [],
       loading: false,
       dialogVisible: false,
       equipNo: '',
@@ -267,6 +284,16 @@ export default {
     this.getTableData()
   },
   methods: {
+    async getProduct(val) {
+      if (val) {
+        try {
+          const data = await materialCount('get', null, { params: { store_name: this.warehouseNameProps }})
+          this.options = data || []
+        } catch (e) {
+        //
+        }
+      }
+    },
     changeList() {
       this.getParams.page = 1
       this.getTableData()
