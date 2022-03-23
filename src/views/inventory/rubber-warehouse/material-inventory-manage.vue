@@ -32,11 +32,12 @@
       </el-form-item>
       <el-form-item label="物料名称">
         <el-select
-          v-model="getParams.material_name"
+          v-model="getParams.e_material_name"
           style="width:250px"
           placeholder="请选择物料名称"
           filterable
           clearable
+          @visible-change="getProduct"
           @change="changeList"
         >
           <el-option
@@ -280,16 +281,17 @@ export default {
     if (this.warehouseNameProps) {
       this.getParams.warehouse_name = this.warehouseNameProps
     }
-    this.getProduct()
     this.getTableData()
   },
   methods: {
-    async getProduct() {
-      try {
-        const data = await materialCount('get', null, { params: { store_name: this.warehouseNameProps }})
-        this.options = data || []
-      } catch (e) {
+    async getProduct(val) {
+      if (val) {
+        try {
+          const data = await materialCount('get', null, { params: { store_name: this.warehouseNameProps }})
+          this.options = data || []
+        } catch (e) {
         //
+        }
       }
     },
     changeList() {

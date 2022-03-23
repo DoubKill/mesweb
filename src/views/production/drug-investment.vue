@@ -78,11 +78,23 @@
       <el-table-column
         prop="scan_material"
         label="投入原材料"
-      />
+      >
+        <template slot-scope="{row}">
+          <el-link type="primary" @click="clickName(row,1)">{{ row.scan_material }}</el-link>
+        </template>
+      </el-table-column>
       <el-table-column
         prop="bra_code"
         label="原材料条码"
       />
+      <el-table-column
+        prop="scan_material"
+        label="投入包数"
+      >
+        <template slot-scope="{row}">
+          <el-link type="primary" @click="clickName(row,2)">{{ row.total_num }}</el-link>
+        </template>
+      </el-table-column>
       <el-table-column
         prop="batch_group"
         label="投入班组"
@@ -106,6 +118,75 @@
       :current-page="getParams.page"
       @currentChange="currentChange"
     />
+
+    <el-dialog
+      title="投料明细"
+      :visible.sync="dialogVisibleList"
+      width="50%"
+    >
+      <el-table
+        v-loading="loadingList"
+        :data="tableDataList"
+        border
+      >
+        <el-table-column
+          prop="bra_code"
+          label="条码"
+          min-width="20"
+        />
+        <el-table-column
+          prop="batch_time"
+          label="投入时间"
+          min-width="20"
+        />
+        <el-table-column
+          prop="created_username"
+          label="投入人"
+          min-width="20"
+        />
+      </el-table>
+    </el-dialog>
+
+    <el-dialog
+      title="原材料基础信息"
+      :visible.sync="dialogVisibleDetail"
+      width="50%"
+    >
+      <el-form :inline="true" label-width="150px">
+        <el-form-item label="代码">
+          <el-input v-model="detailForm.TOFAC" disabled style="width:250px" />
+        </el-form-item>
+        <el-form-item label="品名">
+          <el-input v-model="detailForm.WLMC" disabled style="width:250px" />
+        </el-form-item>
+        <el-form-item label="批号">
+          <el-input v-model="detailForm.PH" disabled style="width:250px" />
+        </el-form-item>
+        <el-form-item label="数量">
+          <el-input v-model="detailForm.SL" disabled style="width:100px" />
+          <el-input v-model="detailForm.SLDW" disabled style="width:150px" />
+        </el-form-item>
+        <el-form-item label="重量">
+          <el-input v-model="detailForm.ZL" disabled style="width:100px" />
+          <el-input v-model="detailForm.ZLDW" disabled style="width:150px" />
+        </el-form-item>
+        <el-form-item label="产地">
+          <el-input v-model="detailForm.CD" disabled style="width:250px" />
+        </el-form-item>
+        <el-form-item label="供货商">
+          <el-input v-model="detailForm.WLDWMC" disabled style="width:250px" />
+        </el-form-item>
+        <el-form-item label="生产日期">
+          <el-input v-model="detailForm.SCRQ" disabled style="width:250px" />
+        </el-form-item>
+        <el-form-item label="使用期限">
+          <el-input v-model="detailForm.SYQX" disabled style="width:250px" />
+        </el-form-item>
+        <el-form-item label="订单编号">
+          <el-input v-model="detailForm.DDH" disabled style="width:250px" />
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
@@ -126,6 +207,11 @@ export default {
         page_size: 10,
         batch_time: setDate()
       },
+      detailForm: {},
+      dialogVisibleList: false,
+      tableDataList: [],
+      loadingList: false,
+      dialogVisibleDetail: false,
       options: ['1A', '2A', '3A', '4A', '5A', '6A', '7A', '8A', '9A', '10A', '11A',
         '1B', '2B', '3B', '4B', '5B', '6B', '7B', '8B', '9B', '10B', '11B'],
       options1: ['F01', 'F02', 'F03', 'S01', 'S02'],
@@ -138,6 +224,29 @@ export default {
     this.getList()
   },
   methods: {
+    async clickName(row, val) {
+      try {
+        val === 1 ? this.dialogVisibleDetail = true : this.dialogVisibleList = true
+        const obj = {}
+        obj.batch_time = this.getParams.batch_time
+        obj.bra_code = row.bra_code
+        obj.opera_type = val
+        this.loadingList = true
+        const data = await weightBatchingLogList('get', null, { params: obj })
+        if (val === 1) {
+          if (data.length > 0) {
+            this.detailForm = data[0]
+          } else {
+            this.detailForm = {}
+          }
+        } else {
+          this.tableDataList = data || []
+        }
+        this.loadingList = false
+      } catch (e) {
+        this.loadingList = false
+      }
+    },
     async getList() {
       try {
         const data = await weightBatchingLogList('get', null, { params: this.getParams })
