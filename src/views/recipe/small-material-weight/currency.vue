@@ -1,8 +1,9 @@
 <template>
   <div class="currency-style">
-    <!-- 单配(配方/通用)化工流转卡 -->
+    <!-- 其他物料单配(配方)流转卡 -->
+    <!-- 其他物料单配(通用)流转卡 -->
     <el-form :inline="true">
-      <el-form-item v-if="!isProduction" label="类别">
+      <!-- <el-form-item v-if="!isProduction" label="类别">
         <el-select
           v-model="search.batching_type"
           clearable
@@ -16,7 +17,7 @@
             :value="item.name"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="配方名称">
         <el-input
           v-model="search.product_no"
@@ -41,7 +42,7 @@
           @input="debounceList"
         />
       </el-form-item>
-      <el-form-item label="使用机型">
+      <el-form-item label="机型">
         <equip-category-select
           v-model="search.dev_type"
           @change="changeDevType"
@@ -88,12 +89,12 @@
         label="卡片条码"
         min-width="20"
       />
-      <el-table-column
+      <!-- <el-table-column
         v-if="!isProduction"
         prop="batching_type"
         label="类别"
         min-width="20"
-      />
+      /> -->
       <el-table-column
         v-if="!isProduction"
         prop="product_no"
@@ -103,7 +104,7 @@
       <el-table-column
         v-if="!isProduction"
         prop="dev_type_name"
-        label="使用机型"
+        label="机型"
         min-width="20"
       />
       <el-table-column
@@ -206,7 +207,7 @@
         :rules="rules"
         label-width="120px"
       >
-        <el-form-item v-if="!isProduction" label="类别">
+        <!-- <el-form-item v-if="!isProduction" label="类别">
           <el-radio-group
             v-model="formData.batching_type"
             :disabled="formData.id?true:false"
@@ -215,7 +216,7 @@
             <el-radio label="配方">配方</el-radio>
             <el-radio label="通用">通用</el-radio>
           </el-radio-group>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item
           v-if="formData.batching_type==='配方'&&!formData.id"
           prop="product_no_id"
@@ -238,33 +239,16 @@
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.dev_type__category_name }}</span>
             </el-option>
           </el-select>
+          <span style="margin-left:20px">机型：</span>
+          <span>{{ formData.dev_type_name }}</span>
         </el-form-item>
         <el-form-item
           v-if="formData.batching_type==='配方'&&formData.id"
           label="配方名称"
         >
           {{ formData.product_no }}
-        </el-form-item>
-        <el-form-item
-          v-if="formData.batching_type==='配方'"
-          prop="dev_type"
-          label="使用机型"
-        >
-          <!-- <equip-category-select v-if="!formData.id" v-model="formData.dev_type" @change="changeDevTypeDialog" /> -->
+          <span style="margin-left:20px">机型：</span>
           <span>{{ formData.dev_type_name }}</span>
-        </el-form-item>
-        <el-form-item
-          v-if="formData.batching_type==='配方'"
-          prop="split_num"
-          label="分包数"
-        >
-          <el-input-number
-            v-model="formData.split_num"
-            controls-position="right"
-            :min="1"
-            :disabled="formData.id?true:false"
-            @change="splitNumChange"
-          />
         </el-form-item>
         <el-form-item
           prop="material_name"
@@ -318,6 +302,19 @@
             :disabled="formData.id?true:false"
           />
         </el-form-item> -->
+        <el-form-item
+          v-if="formData.batching_type==='配方'"
+          prop="split_num"
+          label="分包数"
+        >
+          <el-input-number
+            v-model="formData.split_num"
+            controls-position="right"
+            :min="1"
+            :disabled="formData.id?true:false"
+            @change="splitNumChange"
+          />
+        </el-form-item>
         <el-form-item
           prop="package_count"
           label="包数"
@@ -381,7 +378,9 @@ export default {
   components: { page, EquipCategorySelect },
   data() {
     return {
-      search: {},
+      search: {
+        batching_type: '配方'
+      },
       tableData: [],
       total: 0,
       loading: false,
@@ -425,7 +424,7 @@ export default {
   },
   created() {
     // 只有通用
-    this.isProduction = this.$route.path === '/small-material-weight/currency1'
+    this.isProduction = (this.$route.path === '/small-material-weight/currency1') || (this.$route.path === '/small-material-weight/currency/')
     this.getList()
     this.getProductList()
   },
@@ -638,6 +637,9 @@ export default {
     .el-input,.el-select{
       width:250px !important;
     }
+  }
+  .el-dialog__body .el-form-item{
+    margin-bottom:16px;
   }
 }
 </style>

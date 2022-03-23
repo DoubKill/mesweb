@@ -163,24 +163,21 @@
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.dev_type }}</span>
             </el-option>
           </el-select>
+          <span style="margin-left:20px">机型：</span>
+          <span>{{ formData.dev_type }}</span>
         </el-form-item>
         <el-form-item v-else label="配方名称">
           {{ formData.product_no }}
+          <span style="margin-left:20px">机型：</span>
+          <span>{{ formData.dev_type }}</span>
         </el-form-item>
         <!-- <el-form-item prop="dev_type" label="机型">
           <equip-category-select v-if="!formData.id" v-model="formData.dev_type" @change="changeProduct" />
           <span v-else>{{ formData.dev_type_name }}</span>
         </el-form-item> -->
-        <el-form-item prop="" label="使用机型">
-          <!-- <equip-category-select v-if="!formData.id" v-model="formData.dev_type" @change="changeDevTypeDialog" /> -->
-          <span>{{ formData.dev_type }}</span>
-        </el-form-item>
         <!-- <el-form-item prop="begin_trains" label="起始车次">
           <el-input-number v-model="formData.begin_trains" controls-position="right" :min="1" :disabled="formData.id?true:false" />
         </el-form-item> -->
-        <el-form-item prop="package_count" label="包数">
-          <el-input-number v-model="formData.package_count" controls-position="right" :min="1" :disabled="formData.id?true:false" />
-        </el-form-item>
         <el-form-item prop="batching_equip" label="机配机台">
           <el-select v-if="!formData.id" v-model="formData.batching_equip" filterable placeholder="请选择" @change="changeProduct">
             <el-option
@@ -195,6 +192,9 @@
         </el-form-item>
         <el-form-item prop="split_num" label="分包数">
           <el-input-number v-model="formData.split_num" controls-position="right" :min="1" :disabled="formData.id?true:false" @change="changeSplitNum" />
+        </el-form-item>
+        <el-form-item prop="package_count" label="包数">
+          <el-input-number v-model="formData.package_count" controls-position="right" :min="1" :disabled="formData.id?true:false" />
         </el-form-item>
         <el-form-item prop="print_count" label="打印张数">
           <el-input-number v-model="formData.print_count" controls-position="right" :min="1" />
@@ -520,6 +520,9 @@ export default {
 .hebao-style{
   .el-input,.el-select{
     width:190px !important;
+  }
+  .el-dialog__body .el-form-item{
+    margin-bottom:16px;
   }
 }
 </style>

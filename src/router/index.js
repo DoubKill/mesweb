@@ -555,37 +555,47 @@ export let asyncRoutes = [
           name: 'SmallMaterialWeightTrackingCard',
           meta: {
             faName: 'SmallMaterialWeight',
-            title: '料包产出-质量追踪卡管理',
+            title: '机配料包产出流转卡',
             permissionName: 'xl_weight_card'
           }
         },
-        {
-          path: '/small-material-weight/artificialCard',
-          component: () => import('@/views/recipe/small-material-weight/artificialCard'),
-          name: 'SmallMaterialWeightArtificialCard',
-          meta: {
-            faName: 'SmallMaterialWeight',
-            title: '人工补打机配卡片',
-            permissionName: ''
-          }
-        },
+        // {
+        //   path: '/small-material-weight/artificialCard',
+        //   component: () => import('@/views/recipe/small-material-weight/artificialCard'),
+        //   name: 'SmallMaterialWeightArtificialCard',
+        //   meta: {
+        //     faName: 'SmallMaterialWeight',
+        //     title: '人工补打机配卡片',
+        //     permissionName: ''
+        //   }
+        // },
         {
           path: '/small-material-weight/hebao',
           component: () => import('@/views/recipe/small-material-weight/hebao'),
           name: 'SmallMaterialWeightHebao',
           meta: {
             faName: 'SmallMaterialWeight',
-            title: '单配(合包)化工流转卡',
+            title: '细料硫磺单配(合包)流转卡',
             permissionName: 'weighting_package_manual'
           }
         },
         {
-          path: '/small-material-weight/currency',
+          path: '/small-material-weight/currency/formula/',
+          component: () => import('@/views/recipe/small-material-weight/currency'),
+          name: 'SmallMaterialWeightCurrencyFormula',
+          meta: {
+            faName: 'SmallMaterialWeight',
+            title: '其他物料单配(配方)流转卡',
+            permissionName: 'weighting_package_manual'
+          }
+        },
+        {
+          path: '/small-material-weight/currency/',
           component: () => import('@/views/recipe/small-material-weight/currency'),
           name: 'SmallMaterialWeightCurrency',
           meta: {
             faName: 'SmallMaterialWeight',
-            title: '单配(配方/通用)化工流转卡',
+            title: '其他物料单配(通用)流转卡',
             permissionName: 'weighting_package_manual'
           }
         },
@@ -1143,7 +1153,7 @@ export let asyncRoutes = [
             name: 'SmallMaterialWeightCurrency1',
             meta: {
               faName: 'Resume1',
-              title: '通用及原材料卡片补打', // 单配(配方/通用)化工流转卡
+              title: '其他物料单配(通用)流转卡',
               permissionName: 'material_add_print'
             }
           }
