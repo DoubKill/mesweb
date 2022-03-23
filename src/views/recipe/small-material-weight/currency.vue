@@ -390,7 +390,9 @@ export default {
         split_num: 1,
         batching_type: '配方',
         print_count: 1,
-        begin_trains: 1
+        begin_trains: 1,
+        package_count: 1,
+        expire_day: 5
       },
       rules: {
         product_no_id: [{ required: true, message: '请输入', trigger: 'change' }],
@@ -473,6 +475,11 @@ export default {
       }
     },
     changeMaterial(val) {
+      this.formData.split_num = 1
+      this.formData.print_count = 1
+      this.formData.begin_trains = 1
+      this.formData.package_count = 1
+      this.formData.expire_day = 5
       if (val) {
         const obj = this.materialList.find(d => d.material_name === val)
         this.formData.single_weight = obj.actual_weight
@@ -513,6 +520,15 @@ export default {
       this.getManualList()
     },
     changeProduct(id) {
+      this.formData = {
+        split_num: 1,
+        batching_type: '配方',
+        print_count: 1,
+        begin_trains: 1,
+        package_count: 1,
+        expire_day: 5,
+        product_no_id: id
+      }
       if (id) {
         const obj = this.productList.find(D => D.id === id)
         this.formData.dev_type_name = obj.dev_type__category_name
@@ -574,9 +590,11 @@ export default {
       setTimeout(() => {
         this.formData = {
           split_num: 1,
-          print_count: 1,
           batching_type: '配方',
-          begin_trains: 1
+          print_count: 1,
+          begin_trains: 1,
+          package_count: 1,
+          expire_day: 5
         }
         if (this.isProduction) {
           this.formData.batching_type = '通用'

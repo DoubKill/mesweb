@@ -18,13 +18,17 @@ router.beforeEach(async(to, from, next) => {
   // set page title 设置头部title
   document.title = getPageTitle(to.meta.title)
   let hasPermission = null
-  if (to.path === '/alone/banburying/substitutes/') {
+  if (to.path === '/alone/banburying/substitutes/' ||
+  to.path === '/alone/material_base_info_manage/' ||
+  to.path === '/alone/performance/productionRecord/'
+  ) {
     // c# 跳转进来 处理
     hasPermission = {
       [to.query.name]: to.query.arr.split(',')
     }
-    localStorage.setItem('permission', hasPermission)
+    localStorage.setItem('permission', JSON.stringify(hasPermission))
     setToken(to.query.key)
+
     store.state.user.token = to.query.key
     store.state.user.permission = hasPermission
   } else {

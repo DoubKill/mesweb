@@ -697,6 +697,10 @@ export default {
       this.$refs.ruleForm.validate(async(valid) => {
         if (valid) {
           try {
+            if (!this.ruleForm.dev_type) {
+              this.$message.info('暂无机型')
+              return
+            }
             // 计算公差
             const _tolerance = this.ruleForm.machine_manual_tolerance
             let otherNum_tolerance

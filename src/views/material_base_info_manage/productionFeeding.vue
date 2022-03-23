@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :style="{padding:this.$route.query.equip?'20px':''}">
     <!-- 生产投料配方查询 -->
     <el-form :inline="true">
       <el-form-item label="机台">

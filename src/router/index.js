@@ -105,6 +105,8 @@ export const constantRoutes = [
       isPhone: true
     }
   },
+  // http://localhost:9000/#/alone/banburying/
+  // substitutes/?name=replace_material&arr=view,opera&equip=S01&key=
   {
     path: '/alone/banburying/substitutes/',
     component: () => import('@/views/quality_management/banburying/substitutes'),
@@ -115,6 +117,20 @@ export const constantRoutes = [
       permissionName: 'replace_material'
     }
   },
+  // http://localhost:9000/#/alone/performance/productionRecord/
+  // ?name=plan_reality&arr=view&equip=S01&day_time=2022-03-23&key=
+  {
+    path: '/alone/performance/productionRecord/',
+    component: () => import('@/views/production/production_result/productionRecord'),
+    hidden: true,
+    meta: {
+      isPhone: true,
+      title: '生产记录表',
+      permissionName: 'plan_reality'
+    }
+  },
+  // http://localhost:9000/#/alone/material_base_info_manage/
+  // ?name=formula_preparation&arr=view&equip=Z05&key=
   {
     path: '/alone/material_base_info_manage/',
     component: () => import('@/views/material_base_info_manage/productionFeeding'),
@@ -122,7 +138,7 @@ export const constantRoutes = [
     meta: {
       isPhone: true,
       title: '生产投料配方查询',
-      permissionName: ''
+      permissionName: 'formula_preparation'
     }
   }
 ]
@@ -922,7 +938,7 @@ export let asyncRoutes = [
       meta: {
         title: '生产投料配方查询',
         icon: 'formula',
-        permissionName: ''
+        permissionName: 'formula_preparation'
       }
     }
     ]
@@ -930,7 +946,7 @@ export let asyncRoutes = [
   {
     path: '/produce',
     component: Layout,
-    redirect: '/performance/productionRecord',
+    redirect: '/performance/productionRecord/',
     name: 'ProduceManage',
     meta: {
       title: '生产管理',
@@ -939,7 +955,7 @@ export let asyncRoutes = [
     children: [
       {
         path: '/production_result',
-        redirect: '/performance/productionRecord',
+        redirect: '/performance/productionRecord/',
         component: () => import('@/views/production/production_result/a-index.vue'),
         name: 'ProductionResult',
         meta: {
@@ -948,7 +964,7 @@ export let asyncRoutes = [
         },
         children: [
           {
-            path: '/performance/productionRecord',
+            path: '/performance/productionRecord/',
             component: () => import('@/views/production/production_result/productionRecord'),
             name: 'BanburyingProductionRecord',
             meta: {

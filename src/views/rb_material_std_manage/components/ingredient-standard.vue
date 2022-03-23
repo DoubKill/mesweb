@@ -273,6 +273,9 @@ export default {
       this.$set(this.tableData[this.currentFaIndex][this.currentIndex], 'material_type', row.material_type_name)
     },
     'formObj.enable_equip'(arr) {
+      if (!arr) {
+        arr = []
+      }
       this.tableData.forEach(d => {
         d.forEach((D, i) => {
           const arr1 = {}
