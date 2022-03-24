@@ -1284,3 +1284,11 @@ export function schedulingMaterialDemanded(method, id, data = {}) {
   return request(obj)
 }
 
+export function schedulingRecipeStages(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SchedulingRecipeStages + id + '/' : API.SchedulingRecipeStages,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

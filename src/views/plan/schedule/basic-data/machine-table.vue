@@ -44,6 +44,7 @@
       id="out-table"
       v-loading="loading"
       border
+      height="700"
       :data="tableData"
       style="width: 100%"
     >
@@ -52,7 +53,6 @@
         prop="rubber_type"
         label="胶料类别"
       />
-
       <el-table-column
         header-align="center"
         prop="product_no"
@@ -210,7 +210,6 @@
             :disabled="typeForm.id?true:false"
             filterable
             placeholder="请选择"
-            clearable
           >
             <el-option
               v-for="item in options2"
@@ -229,7 +228,7 @@
             multiple
             :disabled="typeForm.id?true:false"
             placeholder="请选择"
-            clearable
+            @visible-change="visibleChange"
           >
             <el-option
               v-for="item in options1"
@@ -239,7 +238,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="HMB主机台" prop="main_machine_HMB">
+        <el-form-item v-if="typeForm.stages.findIndex(d=>d==='HMB')!==-1" label="HMB主机台" prop="main_machine_HMB">
           <el-select
             v-model="typeForm.main_machine_HMB"
             placeholder="请选择"
@@ -253,7 +252,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="HMB辅机台" prop="vice_machine_HMB">
+        <el-form-item v-if="typeForm.stages.findIndex(d=>d==='HMB')!==-1" label="HMB辅机台" prop="vice_machine_HMB">
           <el-select
             v-model="typeForm.vice_machine_HMB"
             placeholder="请选择"
@@ -268,7 +267,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="CMB主机台" prop="main_machine_CMB">
+        <el-form-item v-if="typeForm.stages.findIndex(d=>d==='CMB')!==-1" label="CMB主机台" prop="main_machine_CMB">
           <el-select
             v-model="typeForm.main_machine_CMB"
             placeholder="请选择"
@@ -282,7 +281,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="CMB辅机台" prop="vice_machine_CMB">
+        <el-form-item v-if="typeForm.stages.findIndex(d=>d==='CMB')!==-1" label="CMB辅机台" prop="vice_machine_CMB">
           <el-select
             v-model="typeForm.vice_machine_CMB"
             placeholder="请选择"
@@ -297,7 +296,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="1MB主机台" prop="main_machine_1MB">
+        <el-form-item v-if="typeForm.stages.findIndex(d=>d==='1MB')!==-1" label="1MB主机台" prop="main_machine_1MB">
           <el-select
             v-model="typeForm.main_machine_1MB"
             placeholder="请选择"
@@ -311,7 +310,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="1MB辅机台" prop="vice_machine_1MB">
+        <el-form-item v-if="typeForm.stages.findIndex(d=>d==='1MB')!==-1" label="1MB辅机台" prop="vice_machine_1MB">
           <el-select
             v-model="typeForm.vice_machine_1MB"
             placeholder="请选择"
@@ -326,7 +325,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="2MB主机台" prop="main_machine_2MB">
+        <el-form-item v-if="typeForm.stages.findIndex(d=>d==='2MB')!==-1" label="2MB主机台" prop="main_machine_2MB">
           <el-select
             v-model="typeForm.main_machine_2MB"
             placeholder="请选择"
@@ -340,7 +339,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="2MB辅机台" prop="vice_machine_2MB">
+        <el-form-item v-if="typeForm.stages.findIndex(d=>d==='2MB')!==-1" label="2MB辅机台" prop="vice_machine_2MB">
           <el-select
             v-model="typeForm.vice_machine_2MB"
             placeholder="请选择"
@@ -355,7 +354,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="3MB主机台" prop="main_machine_3MB">
+        <el-form-item v-if="typeForm.stages.findIndex(d=>d==='3MB')!==-1" label="3MB主机台" prop="main_machine_3MB">
           <el-select
             v-model="typeForm.main_machine_3MB"
             placeholder="请选择"
@@ -369,7 +368,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="3MB辅机台" prop="vice_machine_3MB">
+        <el-form-item v-if="typeForm.stages.findIndex(d=>d==='3MB')!==-1" label="3MB辅机台" prop="vice_machine_3MB">
           <el-select
             v-model="typeForm.vice_machine_3MB"
             placeholder="请选择"
@@ -384,7 +383,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="FM主机台" prop="main_machine_FM">
+        <el-form-item v-if="typeForm.stages.findIndex(d=>d==='FM')!==-1" label="FM主机台" prop="main_machine_FM">
           <el-select
             v-model="typeForm.main_machine_FM"
             placeholder="请选择"
@@ -398,7 +397,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="FM辅机台" prop="vice_machine_FM">
+        <el-form-item v-if="typeForm.stages.findIndex(d=>d==='FM')!==-1" label="FM辅机台" prop="vice_machine_FM">
           <el-select
             v-model="typeForm.vice_machine_FM"
             placeholder="请选择"
@@ -426,7 +425,7 @@
 import { classesListUrl, productInfosUrl } from '@/api/base_w'
 // import { getEquip } from '@/api/banburying-performance-manage'
 import { exportExcel } from '@/utils/index'
-import { schedulingRecipeMachineSetting, schedulingRecipeMachineImport } from '@/api/jqy'
+import { schedulingRecipeMachineSetting, schedulingRecipeMachineImport, schedulingRecipeStages } from '@/api/jqy'
 export default {
   name: 'ScheduleMachineTable',
   components: {},
@@ -461,7 +460,7 @@ export default {
       exportTableShow: false,
       loading: false,
       tableData: [],
-      typeForm: {},
+      typeForm: { stages: [] },
       rules: {
         rubber_type: [
           { required: true, message: '不能为空', trigger: 'change' }
@@ -535,6 +534,22 @@ export default {
       const data = await classesListUrl('get', null, { params: obj })
       this.options1 = data.results
     },
+    async visibleChange(val) {
+      if (val) {
+        if (this.typeForm.product_no && this.typeForm.version) {
+          const obj = { product_no: this.typeForm.product_no, version: this.typeForm.version }
+          const data = await schedulingRecipeStages('get', null, { params: obj })
+          if (data.length > 0) {
+            this.typeForm.stages = data
+          } else {
+            this.$message('获取不到所需段数,请自行选择')
+          }
+          // this.options1 = data.results
+        } else {
+          this.$message('请先填写配方名称和尾号')
+        }
+      }
+    },
     async productChange() {
       const obj = { all: 1 }
       const data = await productInfosUrl('get', null, { params: obj })
@@ -570,7 +585,7 @@ export default {
     },
     handleClose(done) {
       this.$refs.createForm.clearValidate()
-      this.typeForm = {}
+      this.typeForm = { stages: [] }
       this.dialogVisible = false
       if (done) {
         done()
