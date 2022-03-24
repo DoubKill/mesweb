@@ -29,7 +29,7 @@
         <el-input v-model="getParams.trains" clearable @input="changeInput" />
       </el-form-item>
       <el-form-item label="投入物料">
-        <el-input v-model="getParams.material_no" clearable @input="changeInput" />
+        <el-input v-model="getParams.display_name" clearable @input="changeInput" />
       </el-form-item>
       <el-form-item label="条码">
         <el-input v-model="getParams.bra_code" clearable @input="changeInput" />
