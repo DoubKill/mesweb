@@ -1,6 +1,6 @@
 <template>
   <div class="hebao-style">
-    <!-- 单配(合包)化工流转卡 -->
+    <!-- 细料硫磺单配流转卡 -->
     <el-form :inline="true">
       <el-form-item label="配方名称">
         <el-input v-model="search.product_no" clearable placeholder="配方名称" @input="debounceList" />
@@ -13,6 +13,22 @@
       </el-form-item>
       <el-form-item label="机配机台">
         <equipSelect equip-type="称量设备" :equip_no_props.sync="search.batching_equip" @changeSearch="changeSearch" />
+      </el-form-item>
+      <el-form-item label="卡片状态">
+        <el-select
+          v-model="search.print_flag"
+          clearable
+          filterable
+          @change="changeSearch"
+        >
+          <el-option
+            v-for="(item) in [{name:'未打印',id:0},{name:'已打印',id:1},
+                              {name:'已失效',id:2},{name:'过期',id:3}]"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button
@@ -70,10 +86,10 @@
         min-width="20"
       />
       <el-table-column
-        label="配料车次"
+        label="包数"
         min-width="20"
         :formatter="d=>{
-          return d.begin_trains+'-'+d.end_trains
+          return d.package_count
         }"
       />
       <el-table-column
@@ -136,7 +152,7 @@
               :value="item.stage_product_batch_no"
             />
           </el-select> -->
-          <el-select v-model="formData.product_no" :disabled="formData.id?true:false" filterable placeholder="请选择" @change="changeProductNo">
+          <el-select v-model="formData.product_no" style="width:300px !important" :disabled="formData.id?true:false" filterable placeholder="请选择" @change="changeProductNo">
             <el-option
               v-for="(item,_index) in productList"
               :key="_index"
@@ -147,24 +163,21 @@
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.dev_type }}</span>
             </el-option>
           </el-select>
+          <span style="margin-left:20px">机型：</span>
+          <span>{{ formData.dev_type }}</span>
         </el-form-item>
         <el-form-item v-else label="配方名称">
           {{ formData.product_no }}
+          <span style="margin-left:20px">机型：</span>
+          <span>{{ formData.dev_type }}</span>
         </el-form-item>
         <!-- <el-form-item prop="dev_type" label="机型">
           <equip-category-select v-if="!formData.id" v-model="formData.dev_type" @change="changeProduct" />
           <span v-else>{{ formData.dev_type_name }}</span>
         </el-form-item> -->
-        <el-form-item prop="" label="使用机型">
-          <!-- <equip-category-select v-if="!formData.id" v-model="formData.dev_type" @change="changeDevTypeDialog" /> -->
-          <span>{{ formData.dev_type }}</span>
-        </el-form-item>
-        <el-form-item prop="begin_trains" label="起始车次">
+        <!-- <el-form-item prop="begin_trains" label="起始车次">
           <el-input-number v-model="formData.begin_trains" controls-position="right" :min="1" :disabled="formData.id?true:false" />
-        </el-form-item>
-        <el-form-item prop="package_count" label="配置数量">
-          <el-input-number v-model="formData.package_count" controls-position="right" :min="1" :disabled="formData.id?true:false" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item prop="batching_equip" label="机配机台">
           <el-select v-if="!formData.id" v-model="formData.batching_equip" filterable placeholder="请选择" @change="changeProduct">
             <el-option
@@ -179,6 +192,9 @@
         </el-form-item>
         <el-form-item prop="split_num" label="分包数">
           <el-input-number v-model="formData.split_num" controls-position="right" :min="1" :disabled="formData.id?true:false" @change="changeSplitNum" />
+        </el-form-item>
+        <el-form-item prop="package_count" label="包数">
+          <el-input-number v-model="formData.package_count" controls-position="right" :min="1" :disabled="formData.id?true:false" />
         </el-form-item>
         <el-form-item prop="print_count" label="打印张数">
           <el-input-number v-model="formData.print_count" controls-position="right" :min="1" />
@@ -245,7 +261,7 @@
       <span slot="footer" class="dialog-footer">
         <el-button v-if="!formData.id" type="info" @click="resetFun">重 置</el-button>
         <el-button @click="handleClose(false)">取 消</el-button>
-        <el-button type="primary" :disabled="loadingBtn" @click="submitFun">确 定</el-button>
+        <el-button type="primary" :disabled="loadingBtn" @click="submitFun">打 印</el-button>
       </span>
     </el-dialog>
   </div>
@@ -269,7 +285,8 @@ export default {
       dialogVisible: false,
       formData: {
         split_num: 1,
-        print_count: 1
+        print_count: 1,
+        begin_trains: 1
       },
       rules: {
         product_no: [{ required: true, message: '请输入', trigger: 'change' }],
@@ -375,7 +392,7 @@ export default {
         this.formData.dev_type = ''
         this.formData.product_no = ''
       }
-
+      this.getHistory()
       this.formData.batching_equip = ''
       this.tableData1 = []
       this.tableData1New = []
@@ -445,7 +462,8 @@ export default {
       setTimeout(() => {
         this.formData = {
           split_num: 1,
-          print_count: 1
+          print_count: 1,
+          begin_trains: 1
         }
         this.tableData1New = []
         this.tableData1 = []
@@ -454,6 +472,15 @@ export default {
       this.dialogVisible = false
       if (done) {
         done()
+      }
+    },
+    async getHistory() {
+      try {
+        const data = await weightingPackageManua('get', null, { params: { history: 1, product_no: this.formData.product_no }})
+        Object.assign(this.formData, data)
+        this.changeProduct()
+      } catch (e) {
+        //
       }
     },
     submitFun() {
@@ -493,6 +520,9 @@ export default {
 .hebao-style{
   .el-input,.el-select{
     width:190px !important;
+  }
+  .el-dialog__body .el-form-item{
+    margin-bottom:16px;
   }
 }
 </style>

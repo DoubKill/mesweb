@@ -74,7 +74,7 @@
               placeholder="请选择"
             >
               <el-option
-                v-for="item1 in formObj.stage_name==='FM'?['S','F','R']:['S','F','C','R']"
+                v-for="item1 in formObj.stage_name==='FM'?['S','F','P','R']:['S','F','C','P','R']"
                 :key="item1"
                 :label="item1"
                 :value="item1"
@@ -273,6 +273,9 @@ export default {
       this.$set(this.tableData[this.currentFaIndex][this.currentIndex], 'material_type', row.material_type_name)
     },
     'formObj.enable_equip'(arr) {
+      if (!arr) {
+        arr = []
+      }
       this.tableData.forEach(d => {
         d.forEach((D, i) => {
           const arr1 = {}

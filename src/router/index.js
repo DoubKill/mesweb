@@ -105,6 +105,8 @@ export const constantRoutes = [
       isPhone: true
     }
   },
+  // http://localhost:9000/#/alone/banburying/
+  // substitutes/?name=replace_material&arr=view,opera&equip=S01&key=
   {
     path: '/alone/banburying/substitutes/',
     component: () => import('@/views/quality_management/banburying/substitutes'),
@@ -113,6 +115,30 @@ export const constantRoutes = [
       isPhone: true,
       title: '细料胶块放行处理',
       permissionName: 'replace_material'
+    }
+  },
+  // http://localhost:9000/#/alone/performance/productionRecord/
+  // ?name=plan_reality&arr=view&equip=S01&day_time=2022-03-23&key=
+  {
+    path: '/alone/performance/productionRecord/',
+    component: () => import('@/views/production/production_result/productionRecord'),
+    hidden: true,
+    meta: {
+      isPhone: true,
+      title: '生产记录表',
+      permissionName: 'plan_reality'
+    }
+  },
+  // http://localhost:9000/#/alone/material_base_info_manage/
+  // ?name=formula_preparation&arr=view&equip=Z05&key=
+  {
+    path: '/alone/material_base_info_manage/',
+    component: () => import('@/views/material_base_info_manage/productionFeeding'),
+    hidden: true,
+    meta: {
+      isPhone: true,
+      title: '生产投料配方查询',
+      permissionName: 'formula_preparation'
     }
   }
 ]
@@ -529,7 +555,7 @@ export let asyncRoutes = [
           name: 'SmallMaterialWeightTrackingCard',
           meta: {
             faName: 'SmallMaterialWeight',
-            title: '料包产出-质量追踪卡管理',
+            title: '细料硫磺机配流转卡',
             permissionName: 'xl_weight_card'
           }
         },
@@ -539,7 +565,7 @@ export let asyncRoutes = [
         //   name: 'SmallMaterialWeightArtificialCard',
         //   meta: {
         //     faName: 'SmallMaterialWeight',
-        //     title: '人工补打机配卡片',
+        //     title: '机配料包卡片补打',
         //     permissionName: ''
         //   }
         // },
@@ -549,17 +575,27 @@ export let asyncRoutes = [
           name: 'SmallMaterialWeightHebao',
           meta: {
             faName: 'SmallMaterialWeight',
-            title: '单配(合包)化工流转卡',
+            title: '细料硫磺单配流转卡',
             permissionName: 'weighting_package_manual'
           }
         },
         {
-          path: '/small-material-weight/currency',
+          path: '/small-material-weight/currency/formula/',
+          component: () => import('@/views/recipe/small-material-weight/currency'),
+          name: 'SmallMaterialWeightCurrencyFormula',
+          meta: {
+            faName: 'SmallMaterialWeight',
+            title: '配方用原材料流转卡',
+            permissionName: 'weighting_package_manual'
+          }
+        },
+        {
+          path: '/small-material-weight/currency/',
           component: () => import('@/views/recipe/small-material-weight/currency'),
           name: 'SmallMaterialWeightCurrency',
           meta: {
             faName: 'SmallMaterialWeight',
-            title: '单配(配方/通用)化工流转卡',
+            title: '通用化工流转卡',
             permissionName: 'weighting_package_manual'
           }
         },
@@ -904,13 +940,23 @@ export let asyncRoutes = [
           ]
         }
       ]
+    },
+    {
+      path: '/material_base_info_manage/',
+      component: () => import('@/views/material_base_info_manage/productionFeeding'),
+      name: 'ProductionFeeding',
+      meta: {
+        title: '生产投料配方查询',
+        icon: 'formula',
+        permissionName: 'formula_preparation'
+      }
     }
     ]
   },
   {
     path: '/produce',
     component: Layout,
-    redirect: '/performance/productionRecord',
+    redirect: '/performance/productionRecord/',
     name: 'ProduceManage',
     meta: {
       title: '生产管理',
@@ -919,7 +965,7 @@ export let asyncRoutes = [
     children: [
       {
         path: '/production_result',
-        redirect: '/performance/productionRecord',
+        redirect: '/performance/productionRecord/',
         component: () => import('@/views/production/production_result/a-index.vue'),
         name: 'ProductionResult',
         meta: {
@@ -928,7 +974,7 @@ export let asyncRoutes = [
         },
         children: [
           {
-            path: '/performance/productionRecord',
+            path: '/performance/productionRecord/',
             component: () => import('@/views/production/production_result/productionRecord'),
             name: 'BanburyingProductionRecord',
             meta: {
@@ -1107,7 +1153,7 @@ export let asyncRoutes = [
             name: 'SmallMaterialWeightCurrency1',
             meta: {
               faName: 'Resume1',
-              title: '通用及原材料卡片补打', // 单配(配方/通用)化工流转卡
+              title: '通用化工流转卡',
               permissionName: 'material_add_print'
             }
           }
