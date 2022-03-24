@@ -152,7 +152,7 @@
               :value="item.stage_product_batch_no"
             />
           </el-select> -->
-          <el-select v-model="formData.product_no" :disabled="formData.id?true:false" filterable placeholder="请选择" @change="changeProductNo">
+          <el-select v-model="formData.product_no" style="width:300px !important" :disabled="formData.id?true:false" filterable placeholder="请选择" @change="changeProductNo">
             <el-option
               v-for="(item,_index) in productList"
               :key="_index"
