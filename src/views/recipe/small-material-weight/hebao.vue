@@ -1,6 +1,6 @@
 <template>
   <div class="hebao-style">
-    <!-- 单配(合包)化工流转卡 -->
+    <!-- 细料硫磺单配流转卡 -->
     <el-form :inline="true">
       <el-form-item label="配方名称">
         <el-input v-model="search.product_no" clearable placeholder="配方名称" @input="debounceList" />

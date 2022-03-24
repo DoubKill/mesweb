@@ -1,7 +1,7 @@
 <template>
   <div class="currency-style">
-    <!-- 其他物料单配(配方)流转卡 -->
-    <!-- 其他物料单配(通用)流转卡 -->
+    <!-- 配方用原材料流转卡 -->
+    <!-- 通用化工流转卡 -->
     <el-form :inline="true">
       <!-- <el-form-item v-if="!isProduction" label="类别">
         <el-select

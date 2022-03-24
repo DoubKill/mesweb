@@ -1,6 +1,6 @@
 <template>
   <div class="trackingCard">
-    <!-- 机配料包产出 流转卡 -->
+    <!-- 细料硫磺机配流转卡 -->
     <el-form :inline="true">
       <el-form-item label="配料机台">
         <select-batching-equip v-model="formInline.equip" :is-default="true" :created-is="true" @changeFun="changeEquipList" />

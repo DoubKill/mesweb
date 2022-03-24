@@ -555,7 +555,7 @@ export let asyncRoutes = [
           name: 'SmallMaterialWeightTrackingCard',
           meta: {
             faName: 'SmallMaterialWeight',
-            title: '机配料包产出流转卡',
+            title: '细料硫磺机配流转卡',
             permissionName: 'xl_weight_card'
           }
         },
@@ -575,7 +575,7 @@ export let asyncRoutes = [
           name: 'SmallMaterialWeightHebao',
           meta: {
             faName: 'SmallMaterialWeight',
-            title: '细料硫磺单配(合包)流转卡',
+            title: '细料硫磺单配流转卡',
             permissionName: 'weighting_package_manual'
           }
         },
@@ -585,7 +585,7 @@ export let asyncRoutes = [
           name: 'SmallMaterialWeightCurrencyFormula',
           meta: {
             faName: 'SmallMaterialWeight',
-            title: '其他物料单配(配方)流转卡',
+            title: '配方用原材料流转卡',
             permissionName: 'weighting_package_manual'
           }
         },
@@ -595,7 +595,7 @@ export let asyncRoutes = [
           name: 'SmallMaterialWeightCurrency',
           meta: {
             faName: 'SmallMaterialWeight',
-            title: '其他物料单配(通用)流转卡',
+            title: '通用化工流转卡',
             permissionName: 'weighting_package_manual'
           }
         },
@@ -1153,7 +1153,7 @@ export let asyncRoutes = [
             name: 'SmallMaterialWeightCurrency1',
             meta: {
               faName: 'Resume1',
-              title: '其他物料单配(通用)流转卡',
+              title: '通用化工流转卡',
               permissionName: 'material_add_print'
             }
           }
