@@ -29,13 +29,13 @@
       <el-form-item>
         <div v-if="data.length" style="display:inline-block">
           <el-button v-permission="['aps_result','confirm']" type="primary" @click="submitFun">确定全部机台计划</el-button>
-          <el-button v-permission="['aps_result','export']" type="primary" @click="exportTable">导出Excel</el-button>
+          <!-- <el-button v-permission="['aps_result','export']" type="primary" @click="exportTable">导出Excel</el-button> -->
         </div>
-        <el-button v-permission="['aps_result','import']" type="primary">
+        <!-- <el-button v-permission="['aps_result','import']" type="primary">
           <a
             :href="`${templateFileUrl}schedule.xlsx`"
             download="排程计划导入模板.xlsx"
-          >导出Excel模板</a></el-button>
+          >导出Excel模板</a></el-button> -->
         <el-upload
           v-permission="['aps_result','import']"
           style="display:inline-block;margin:0 6px"
@@ -44,7 +44,7 @@
           :http-request="Upload"
           :show-file-list="false"
         >
-          <el-button type="primary">导入Excel</el-button>
+          <el-button type="primary">导入人工排程结果</el-button>
         </el-upload>
       </el-form-item>
     </el-form>

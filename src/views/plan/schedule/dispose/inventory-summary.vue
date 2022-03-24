@@ -25,11 +25,11 @@
         <el-button v-permission="['aps_plan_summary','procedures']" :loading="submit" type="primary" @click="scheduling">自动排程</el-button>
         <el-button type="primary" @click="getList">查询</el-button>
         <el-button v-permission="['aps_plan_summary','export']" type="primary" @click="exportTable">导出Excel</el-button>
-        <el-button v-permission="['aps_plan_summary','export']" type="primary">
+        <!-- <el-button v-permission="['aps_plan_summary','export']" type="primary">
           <a
             :href="`${templateFileUrl}stock.xlsx`"
             download="胶料计划库存汇总模板.xlsx"
-          >导出Excel模板</a></el-button>
+          >导出Excel模板</a></el-button> -->
         <el-upload
           style="margin:0 8px;display:inline-block"
           action="string"
@@ -37,7 +37,16 @@
           :http-request="Upload"
           :show-file-list="false"
         >
-          <el-button v-permission="['aps_plan_summary','import']" type="primary">导入Excel</el-button>
+          <el-button v-permission="['aps_plan_summary','import']" type="primary">导入丁基胶日库存</el-button>
+        </el-upload>
+        <el-upload
+          style="margin-right:8px;display:inline-block"
+          action="string"
+          accept=".xls, .xlsx"
+          :http-request="Upload"
+          :show-file-list="false"
+        >
+          <el-button v-permission="['aps_plan_summary','import']" type="primary">导入胶料日库存</el-button>
         </el-upload>
         <el-button v-permission="['aps_plan_summary','add']" type="primary" @click="onSubmit">新建</el-button>
       </el-form-item>
