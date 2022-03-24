@@ -10,16 +10,16 @@ export const equipRoutes = [
       icon: 'quality'
     },
     children: [
-      {
-        path: '/equipment-home',
-        component: () => import('@/views/equipment-manage/operation-status'),
-        name: 'EquipmentHome',
-        meta: {
-          title: '设备运行现况',
-          icon: 'quality',
-          permissionName: ''
-        }
-      },
+      // {
+      //   path: '/equipment-home',
+      //   component: () => import('@/views/equipment-manage/operation-status'),
+      //   name: 'EquipmentHome',
+      //   meta: {
+      //     title: '设备运行现况',
+      //     icon: 'quality',
+      //     permissionName: ''
+      //   }
+      // },
       {
         path: '/equipment/maintenance',
         redirect: '/equipment/maintenance',
@@ -492,16 +492,16 @@ export const equipRoutes = [
           icon: 'quality'
         },
         children: [
-          {
-            path: '/equipment/OEE',
-            component: () => import('@/views/equipment-manage/report-form/OEE'),
-            name: 'EquipmentReportFormOEE',
-            meta: {
-              faName: 'EquipmentReportForm',
-              title: '密炼机 设备OEE分析',
-              permissionName: ''
-            }
-          },
+          // {
+          //   path: '/equipment/OEE',
+          //   component: () => import('@/views/equipment-manage/report-form/OEE'),
+          //   name: 'EquipmentReportFormOEE',
+          //   meta: {
+          //     faName: 'EquipmentReportForm',
+          //     title: '密炼机 设备OEE分析',
+          //     permissionName: ''
+          //   }
+          // },
           {
             path: '/equipment/reportForm/MTBF-MTTR',
             component: () => import('@/views/equipment-manage/report-form/MTBF-MTTR'),
@@ -571,8 +571,8 @@ export const equipRoutes = [
               title: '交旧率报表',
               permissionName: 'equip_old_rate'
             }
-          },
-          {
+          }
+          /** ,{
             path: '/equipment/order-receiving',
             component: () => import('@/views/equipment-manage/report-form/order-receiving'),
             name: 'EquipmentReportFormOrderReceiving',
@@ -601,7 +601,7 @@ export const equipRoutes = [
               title: '能耗（电）统计报表',
               permissionName: ''
             }
-          }
+          }**/
         ]
       }
     ]

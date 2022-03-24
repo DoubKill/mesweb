@@ -683,16 +683,16 @@ export let asyncRoutes = [
                 permissionName: 'aps_result'
               }
             },
-            {
-              path: '/schedule/machine',
-              component: () => import('@/views/plan/schedule/dispose/machine'),
-              name: 'ScheduleMachine',
-              meta: {
-                faName: 'ScheduleDispose',
-                title: '机台生产计划-机台列表',
-                permissionName: ''
-              }
-            },
+            // {
+            //   path: '/schedule/machine',
+            //   component: () => import('@/views/plan/schedule/dispose/machine'),
+            //   name: 'ScheduleMachine',
+            //   meta: {
+            //     faName: 'ScheduleDispose',
+            //     title: '机台生产计划-机台列表',
+            //     permissionName: ''
+            //   }
+            // },
             {
               path: '/schedule/daily-plan',
               component: () => import('@/views/plan/schedule/dispose/daily-plan'),
@@ -713,16 +713,16 @@ export let asyncRoutes = [
                 permissionName: 'materialdemanded'
               }
             },
-            {
-              path: '/schedule/weighing-system-plan',
-              component: () => import('@/views/plan/schedule/dispose/weighing-system-plan'),
-              name: 'ScheduleWeighingSystemPlan',
-              meta: {
-                faName: 'ScheduleDispose',
-                title: '称量系统计划',
-                permissionName: ''
-              }
-            },
+            // {
+            //   path: '/schedule/weighing-system-plan',
+            //   component: () => import('@/views/plan/schedule/dispose/weighing-system-plan'),
+            //   name: 'ScheduleWeighingSystemPlan',
+            //   meta: {
+            //     faName: 'ScheduleDispose',
+            //     title: '称量系统计划',
+            //     permissionName: ''
+            //   }
+            // },
             {
               path: '/schedule/equipment-shutdown-plan',
               component: () => import('@/views/plan/schedule/dispose/equipment-shutdown-plan'),
@@ -745,7 +745,7 @@ export let asyncRoutes = [
             }
           ]
         },
-        {
+        /* {
           path: '/schedule/statistical-report',
           component: () => import('@/views/plan/schedule/statistical-report/a-index'),
           name: 'ScheduleStatisticalReport',
@@ -836,7 +836,7 @@ export let asyncRoutes = [
               }
             }
           ]
-        },
+        },*/
         {
           path: '/schedule/basic-data',
           component: () => import('@/views/plan/schedule/basic-data/a-index'),
@@ -1302,17 +1302,17 @@ export let asyncRoutes = [
               title: '密炼机台产量汇总表',
               permissionName: 'summary_of_mill_output'
             }
-          },
-          {
-            path: '/report/set-attendance',
-            component: () => import('@/views/equipment-management/report/set-attendance'),
-            name: 'SetAttendance',
-            meta: {
-              faName: 'Achievements',
-              title: '考勤组设置',
-              permissionName: ''
-            }
           }
+          // {
+          //   path: '/report/set-attendance',
+          //   component: () => import('@/views/equipment-management/report/set-attendance'),
+          //   name: 'SetAttendance',
+          //   meta: {
+          //     faName: 'Achievements',
+          //     title: '考勤组设置',
+          //     permissionName: ''
+          //   }
+          // }
         ]
       },
       /* {
