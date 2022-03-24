@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 人工补打机配卡片 -->
+    <!-- 机配料包卡片补打 -->
     <el-form :inline="true">
       <el-form-item label="时间">
         <el-date-picker
@@ -101,7 +101,7 @@
       @currentChange="currentChange"
     />
     <el-dialog
-      :title="`${dialogForm.id?'编辑':'新建'}人工补打机配卡片 详情`"
+      :title="`${dialogForm.id?'编辑':'新建'}机配料包卡片补打 详情`"
       :visible.sync="dialogVisible"
       width="600px"
       :before-close="handleClose"

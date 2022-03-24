@@ -1,5 +1,5 @@
 <template>
-  <div class="productionRecord-style">
+  <div class="productionRecord-style" :style="{padding:this.$route.query.equip?'20px':''}">
     <!-- 生产记录表 -->
     <el-form :inline="true">
       <el-form-item label="机台">
@@ -131,6 +131,8 @@ export default {
     }
   },
   async created() {
+    this.search.equip_no = this.$route.query.equip
+    this.search.day_time = this.$route.query.day_time
     await this.getClasses()
   },
   methods: {
