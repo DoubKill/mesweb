@@ -745,7 +745,7 @@ export let asyncRoutes = [
             }
           ]
         },
-        /* {
+        /** {
           path: '/schedule/statistical-report',
           component: () => import('@/views/plan/schedule/statistical-report/a-index'),
           name: 'ScheduleStatisticalReport',
@@ -836,7 +836,7 @@ export let asyncRoutes = [
               }
             }
           ]
-        },*/
+        },**/
         {
           path: '/schedule/basic-data',
           component: () => import('@/views/plan/schedule/basic-data/a-index'),
