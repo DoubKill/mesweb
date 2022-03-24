@@ -84,6 +84,10 @@ export default {
         .then(function(response) {
           _this.machineList = response.results || []
           if (_this.isCreated) {
+            if (_this.$route.path === '/alone/material_base_info_manage/') {
+              _this.changeSearch(_this.$route.query.equip)
+              return
+            }
             _this.changeSearch(_this.machineList[0].equip_no)
           }
         })

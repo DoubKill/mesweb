@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :style="{padding:this.$route.query.equip?'20px':''}">
     <!--细料胶块放行处理 -->
     <el-form :inline="true">
       <el-form-item label="原因类别">
