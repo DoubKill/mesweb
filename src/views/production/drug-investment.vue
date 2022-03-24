@@ -95,10 +95,10 @@
           <el-link type="primary" @click="clickName(row,2)">{{ row.total_num }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column
+      <!-- <el-table-column
         prop="batch_group"
         label="投入班组"
-      />
+      /> -->
       <el-table-column
         prop="batch_classes"
         label="投入班次"
