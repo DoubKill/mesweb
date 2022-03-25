@@ -52,7 +52,7 @@
         <template slot-scope="scope">
           <el-link
             type="primary"
-            @click="DetailedList(scope.row,'1')"
+            @click="DetailedList(scope.row,'1',scope.row.in_qty)"
           >{{ scope.row.in_qty }}</el-link>
         </template>
       </el-table-column>
