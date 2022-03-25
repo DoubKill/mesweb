@@ -42,11 +42,12 @@
       <el-table-column
         prop="material_no"
         label="物料编码"
-        width="350"
+        width="330"
       />
       <el-table-column
+        align="center"
         label="入箱托数"
-        min-width="20"
+        min-width="15"
       >
         <template slot-scope="scope">
           <el-link
@@ -56,17 +57,19 @@
         </template>
       </el-table-column>
       <el-table-column
+        align="center"
         label="出箱托数"
-        min-width="20"
+        min-width="15"
       >
         <template slot-scope="scope">
           <el-link
             type="primary"
-            @click="DetailedList(scope.row,'2')"
+            @click="DetailedList(scope.row,'2',scope.row.out_qty)"
           >{{ scope.row.out_qty }}</el-link>
         </template>
       </el-table-column>
       <el-table-column
+        align="center"
         prop="stock_qty"
         label="立库内未烘库存(托)"
         min-width="20"
@@ -79,6 +82,7 @@
         </template>
       </el-table-column>
       <el-table-column
+        align="center"
         prop="batch_no"
         label="立库内烘完库存(托)"
         min-width="20"
@@ -91,6 +95,7 @@
         </template>
       </el-table-column>
       <el-table-column
+        align="center"
         prop="underway_qty"
         label="输送途中物料(托)"
         min-width="15"
@@ -98,11 +103,12 @@
         <template slot-scope="scope">
           <el-link
             type="primary"
-            @click="DetailedList(scope.row,'3')"
+            @click="DetailedList(scope.row,'3',scope.row.underway_qty)"
           >{{ scope.row.underway_qty }}</el-link>
         </template>
       </el-table-column>
       <el-table-column
+        align="center"
         prop="underway_qty"
         label="等待烘烤(托)"
         min-width="15"
@@ -110,11 +116,12 @@
         <template slot-scope="scope">
           <el-link
             type="primary"
-            @click="DetailedList(scope.row,'8')"
+            @click="DetailedList(scope.row,'8',scope.row.waiting_qty)"
           >{{ scope.row.waiting_qty }}</el-link>
         </template>
       </el-table-column>
       <el-table-column
+        align="center"
         prop="baking_qty"
         label="正在烘(托)"
         min-width="10"
@@ -122,11 +129,12 @@
         <template slot-scope="scope">
           <el-link
             type="primary"
-            @click="DetailedList(scope.row,'4')"
+            @click="DetailedList(scope.row,'4',scope.row.baking_qty)"
           >{{ scope.row.baking_qty }}</el-link>
         </template>
       </el-table-column>
       <el-table-column
+        align="center"
         prop="finished_qty"
         label="已烘完(托)"
         min-width="15"
@@ -134,11 +142,12 @@
         <template slot-scope="scope">
           <el-link
             type="primary"
-            @click="DetailedList(scope.row,'5')"
+            @click="DetailedList(scope.row,'5',scope.row.finished_qty)"
           >{{ scope.row.finished_qty }}</el-link>
         </template>
       </el-table-column>
       <el-table-column
+        align="center"
         prop="indoor_qty"
         label="烘房内小计(托)"
         min-width="15"
@@ -146,11 +155,12 @@
         <template slot-scope="scope">
           <el-link
             type="primary"
-            @click="DetailedList(scope.row,'6')"
+            @click="DetailedList(scope.row,'6',scope.row.indoor_qty)"
           >{{ scope.row.indoor_qty }}</el-link>
         </template>
       </el-table-column>
       <el-table-column
+        align="center"
         prop="outbound_qty"
         label="已出烘房到二楼线体(托)"
         width="170"
@@ -158,7 +168,7 @@
         <template slot-scope="scope">
           <el-link
             type="primary"
-            @click="DetailedList(scope.row,'7')"
+            @click="DetailedList(scope.row,'7',scope.row.outbound_qty)"
           >{{ scope.row.outbound_qty }}</el-link>
         </template>
       </el-table-column>
@@ -405,7 +415,10 @@ export default {
         this.loadingView = false
       }
     },
-    async DetailedList(row, val) {
+    async DetailedList(row, val, num) {
+      if (num === 0) {
+        return
+      }
       try {
         if (row.material_name === '合计') {
           this.searchView.material_no = ''
