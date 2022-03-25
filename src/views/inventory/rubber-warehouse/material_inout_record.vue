@@ -76,7 +76,17 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="巷道">
+      <el-form-item v-if="warehouseNameProps==='原材料库'" label="巷道">
+        <el-select v-model="search.tunnel" filterable clearable placeholder="请选择" @change="changeList">
+          <el-option
+            v-for="item in TunnelNameList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.code"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item v-if="warehouseNameProps==='炭黑库'" label="巷道">
         <el-select v-model="search.tunnel" filterable clearable placeholder="请选择" @change="changeList">
           <el-option
             v-for="item in TunnelNameList"
@@ -305,7 +315,7 @@
 <script>
 import { inventoryLog } from '@/api/base_w'
 import page from '@/components/page'
-import { wmsTunnels } from '@/api/base_w_four'
+import { wmsTunnels, thTunnels } from '@/api/base_w_four'
 import { wmsExceptHandle } from '@/api/jqy'
 // import warehouseSelect from '@/components/select_w/warehouseSelect'
 import { setDate, debounce, exportExcel } from '@/utils'
@@ -388,8 +398,15 @@ export default {
     setDate,
     async getTunnelNameList() {
       try {
-        const data = await wmsTunnels('get')
-        this.TunnelNameList = data || []
+        if (this.warehouseNameProps === '原材料库') {
+          const data = await wmsTunnels('get')
+          this.TunnelNameList = data || []
+        } else if (this.warehouseNameProps === '炭黑库') {
+          const data = await thTunnels('get')
+          this.TunnelNameList = data || []
+        } else {
+          return
+        }
       } catch (e) {
         //
       }

@@ -374,13 +374,27 @@ export default {
       }
     },
     async stockList(row) {
+      var arr = JSON.parse(JSON.stringify(this.tableData))
+      arr.length = this.tableData.length - 1
       try {
+        this.getParams.material_nos = ''
         if (row.material_name === '合计') {
-          this.getParams.e_material_no = ''
+          if (row.stock_qty === 0) {
+            return
+          }
+          delete this.getParams.e_material_no
+          arr.forEach(d => {
+            if (d.stock_qty) {
+              this.getParams.material_nos += d.material_no + ','
+            } else {
+              return
+            }
+          })
+          this.getParams.material_nos = this.getParams.material_nos.substr(0, this.getParams.material_nos.length - 1)
         } else {
+          delete this.getParams.material_nos
           this.getParams.e_material_no = row.material_no
         }
-        // this.getParams.e_material_no = row.material_no
         this.dialogVisibleList = true
         this.loadingView = true
         const data = await wmsStorage('get', null, { params: this.getParams })
