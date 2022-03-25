@@ -64,14 +64,14 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item v-if="!isProduction">
+      <el-form-item v-if="!isProduction&&!isDialog">
         <el-button
           v-permission="['weighting_package_single', 'add']"
           type="primary"
           @click="showPrintDialog(false)"
         >新建</el-button>
       </el-form-item>
-      <el-form-item v-else>
+      <el-form-item v-else-if="isProduction&&!isDialog">
         <el-button
           v-permission="['material_add_print', 'add']"
           type="primary"
@@ -96,13 +96,13 @@
         min-width="20"
       /> -->
       <el-table-column
-        v-if="!isProduction"
+        v-if="!isProduction&&type !== 3"
         prop="product_no"
         label="配方名称"
         min-width="20"
       />
       <el-table-column
-        v-if="!isProduction"
+        v-if="!isProduction&&type !== 3"
         prop="dev_type_name"
         label="机型"
         min-width="20"
@@ -352,16 +352,9 @@
           />
         </el-form-item>
       </el-form>
-      <span
-        slot="footer"
-        class="dialog-footer"
-      >
+      <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose(false)">取 消</el-button>
-        <el-button
-          type="primary"
-          :loading="loadingBtn"
-          @click="submitFun"
-        >打 印</el-button>
+        <el-button type="primary" :disabled="loadingBtn" @click="submitFun">打 印</el-button>
       </span>
     </el-dialog>
   </div>
@@ -376,6 +369,16 @@ import { getRecipeManual } from '@/api/small-material-recipe'
 export default {
   name: 'SmallMaterialWeightCurrency',
   components: { page, EquipCategorySelect },
+  props: {
+    isDialog: {
+      type: Boolean,
+      default: false
+    },
+    type: {
+      type: Number,
+      default: null
+    }
+  },
   data() {
     return {
       search: {
@@ -425,14 +428,23 @@ export default {
   created() {
     // 只有通用
     this.isProduction = (this.$route.path === '/small-material-weight/currency1') || (this.$route.path === '/small-material-weight/currency/')
-    this.getList()
-    this.getProductList()
+    if (this.isDialog) {
+      if (this.type === 2) {
+        this.search.batching_type = '配方'
+        this.formData.batching_type = '配方'
+      } else {
+        this.search.batching_type = '通用'
+        this.formData.batching_type = '通用'
+      }
+    }
   },
   mounted() {
     if (this.isProduction) {
       this.search.batching_type = '通用'
       this.formData.batching_type = '通用'
     }
+    this.getList()
+    this.getProductList()
   },
   methods: {
     async getList() {

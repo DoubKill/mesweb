@@ -559,6 +559,16 @@ export let asyncRoutes = [
             permissionName: 'xl_weight_card'
           }
         },
+        {
+          path: '/small-material-weight/singleCard',
+          component: () => import('@/views/recipe/small-material-weight/singleCard'),
+          name: 'SmallMaterialWeightSingleCard',
+          meta: {
+            faName: 'SmallMaterialWeight',
+            title: '人工单配卡片打印',
+            permissionName: 'weighting_package_manual'
+          }
+        },
         // {
         //   path: '/small-material-weight/artificialCard',
         //   component: () => import('@/views/recipe/small-material-weight/artificialCard'),
@@ -569,7 +579,7 @@ export let asyncRoutes = [
         //     permissionName: ''
         //   }
         // },
-        {
+        /** {
           path: '/small-material-weight/hebao',
           component: () => import('@/views/recipe/small-material-weight/hebao'),
           name: 'SmallMaterialWeightHebao',
@@ -598,7 +608,7 @@ export let asyncRoutes = [
             title: '通用化工流转卡',
             permissionName: 'weighting_package_manual'
           }
-        },
+        },**/
         {
           path: '/small-material-weight/valid',
           component: () => import('@/views/recipe/small-material-weight/valid'),
