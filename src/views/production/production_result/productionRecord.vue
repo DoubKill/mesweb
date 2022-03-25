@@ -16,7 +16,7 @@
           value-format="yyyy-MM-dd"
           placeholder="选择日期"
           :clearable="false"
-          @change="getList"
+          @change="getListDay"
         />
       </el-form-item>
       <el-form-item>
@@ -143,10 +143,6 @@ export default {
   methods: {
     async getList() {
       try {
-        if (!this.search.day_time) {
-          this.$message.info('请选择工厂日期')
-          return
-        }
         this.loading = true
         const data = await productClassesPlanReal('get', null, { params: this.search })
         const arr = []
@@ -191,6 +187,13 @@ export default {
     },
     equipChange(val) {
       this.search.equip_no = val
+      this.getList()
+    },
+    getListDay() {
+      if (!this.search.day_time) {
+        this.$message.info('请选择工厂日期')
+        return
+      }
       this.getList()
     },
     arraySpanMethod({ row, column, rowIndex, columnIndex }) {

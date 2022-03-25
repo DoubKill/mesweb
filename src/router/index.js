@@ -956,7 +956,7 @@ export let asyncRoutes = [
   {
     path: '/produce',
     component: Layout,
-    redirect: '/performance/productionRecord/',
+    redirect: '/production_result',
     name: 'ProduceManage',
     meta: {
       title: '生产管理',
