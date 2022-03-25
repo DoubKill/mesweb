@@ -16,7 +16,7 @@
           value-format="yyyy-MM-dd"
           placeholder="选择日期"
           :clearable="false"
-          @change="getList"
+          @change="getListDay"
         />
       </el-form-item>
       <el-form-item>
@@ -112,15 +112,16 @@
 <script>
 import selectEquip from '@/components/select_w/equip'
 import { class_arrange_url } from '@/api/display_static_fun'
-import { setDate, exportExcel } from '@/utils'
+import { exportExcel } from '@/utils'
 import { productClassesPlanReal } from '@/api/base_w_four'
+import { currentFactoryDate } from '@/api/base_w_three'
 export default {
   name: 'BanburyingProductionRecord',
   components: { selectEquip },
   data() {
     return {
       search: {
-        day_time: setDate()
+        day_time: ''
       },
       loading: false,
       classOptions: [],
@@ -133,6 +134,10 @@ export default {
   async created() {
     this.search.equip_no = this.$route.query.equip
     this.search.day_time = this.$route.query.day_time
+
+    if (!this.search.day_time) {
+      this.getFactoryDate()
+    }
     await this.getClasses()
   },
   methods: {
@@ -172,8 +177,23 @@ export default {
         this.classOptions = response.results
       })
     },
+    async getFactoryDate() {
+      try {
+        const data = await currentFactoryDate('get', null, { params: {}})
+        this.search.day_time = data.factory_date
+      } catch (e) {
+        //
+      }
+    },
     equipChange(val) {
       this.search.equip_no = val
+      this.getList()
+    },
+    getListDay() {
+      if (!this.search.day_time) {
+        this.$message.info('请选择工厂日期')
+        return
+      }
       this.getList()
     },
     arraySpanMethod({ row, column, rowIndex, columnIndex }) {

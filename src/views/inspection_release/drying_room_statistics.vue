@@ -42,118 +42,134 @@
       <el-table-column
         prop="material_no"
         label="物料编码"
-        width="350"
+        width="330"
       />
       <el-table-column
+        align="center"
+        label="入箱托数"
+        min-width="15"
+      >
+        <template slot-scope="scope">
+          <el-link
+            type="primary"
+            @click="DetailedList(scope.row,'1',scope.row.in_qty)"
+          >{{ scope.row.in_qty }}</el-link>
+        </template>
+      </el-table-column>
+      <el-table-column
+        align="center"
+        label="出箱托数"
+        min-width="15"
+      >
+        <template slot-scope="scope">
+          <el-link
+            type="primary"
+            @click="DetailedList(scope.row,'2',scope.row.out_qty)"
+          >{{ scope.row.out_qty }}</el-link>
+        </template>
+      </el-table-column>
+      <el-table-column
+        align="center"
         prop="stock_qty"
         label="立库内未烘库存(托)"
         min-width="20"
       >
         <template slot-scope="scope">
           <el-link
-            v-if="scope.row.material_name!=='合计'"
             type="primary"
             @click="stockList(scope.row)"
           >{{ scope.row.stock_qty }}</el-link>
-          <span v-else>{{ scope.row.stock_qty }}</span>
         </template>
       </el-table-column>
       <el-table-column
+        align="center"
         prop="batch_no"
         label="立库内烘完库存(托)"
         min-width="20"
       >
         <template slot-scope="scope">
           <el-link
-            v-if="scope.row.material_name!=='合计'"
             type="primary"
             @click="DetailedList(scope.row)"
           >{{ }}</el-link>
-          <span v-else>{{ }}</span>
         </template>
       </el-table-column>
       <el-table-column
+        align="center"
         prop="underway_qty"
         label="输送途中物料(托)"
         min-width="15"
       >
         <template slot-scope="scope">
           <el-link
-            v-if="scope.row.material_name!=='合计'"
             type="primary"
-            @click="DetailedList(scope.row,'3')"
+            @click="DetailedList(scope.row,'3',scope.row.underway_qty)"
           >{{ scope.row.underway_qty }}</el-link>
-          <span v-else>{{ scope.row.underway_qty }}</span>
         </template>
       </el-table-column>
       <el-table-column
+        align="center"
         prop="underway_qty"
         label="等待烘烤(托)"
         min-width="15"
       >
         <template slot-scope="scope">
           <el-link
-            v-if="scope.row.material_name!=='合计'"
             type="primary"
-            @click="DetailedList(scope.row,'8')"
+            @click="DetailedList(scope.row,'8',scope.row.waiting_qty)"
           >{{ scope.row.waiting_qty }}</el-link>
-          <span v-else>{{ scope.row.waiting_qty }}</span>
         </template>
       </el-table-column>
       <el-table-column
+        align="center"
         prop="baking_qty"
         label="正在烘(托)"
         min-width="10"
       >
         <template slot-scope="scope">
           <el-link
-            v-if="scope.row.material_name!=='合计'"
             type="primary"
-            @click="DetailedList(scope.row,'4')"
+            @click="DetailedList(scope.row,'4',scope.row.baking_qty)"
           >{{ scope.row.baking_qty }}</el-link>
-          <span v-else>{{ scope.row.baking_qty }}</span>
         </template>
       </el-table-column>
       <el-table-column
+        align="center"
         prop="finished_qty"
         label="已烘完(托)"
         min-width="15"
       >
         <template slot-scope="scope">
           <el-link
-            v-if="scope.row.material_name!=='合计'"
             type="primary"
-            @click="DetailedList(scope.row,'5')"
+            @click="DetailedList(scope.row,'5',scope.row.finished_qty)"
           >{{ scope.row.finished_qty }}</el-link>
-          <span v-else>{{ scope.row.finished_qty }}</span>
         </template>
       </el-table-column>
       <el-table-column
+        align="center"
         prop="indoor_qty"
         label="烘房内小计(托)"
         min-width="15"
       >
         <template slot-scope="scope">
           <el-link
-            v-if="scope.row.material_name!=='合计'"
             type="primary"
-            @click="DetailedList(scope.row,'6')"
+            @click="DetailedList(scope.row,'6',scope.row.indoor_qty)"
           >{{ scope.row.indoor_qty }}</el-link>
-          <span v-else>{{ scope.row.indoor_qty }}</span>
         </template>
       </el-table-column>
       <el-table-column
+        align="center"
         prop="outbound_qty"
         label="已出烘房到二楼线体(托)"
         width="170"
       >
         <template slot-scope="scope">
           <el-link
-            v-if="scope.row.material_name!=='合计'"
             type="primary"
-            @click="DetailedList(scope.row,'7')"
+            @click="DetailedList(scope.row,'7',scope.row.outbound_qty)"
           >{{ scope.row.outbound_qty }}</el-link>
-          <span v-else>{{ scope.row.outbound_qty }}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -326,6 +342,8 @@ export default {
         if (this.tableData.length > 0) {
           this.tableData.push({
             material_name: '合计',
+            in_qty: sum(this.tableData, 'in_qty'),
+            out_qty: sum(this.tableData, 'out_qty'),
             stock_qty: sum(this.tableData, 'stock_qty'),
             underway_qty: sum(this.tableData, 'underway_qty'),
             waiting_qty: sum(this.tableData, 'waiting_qty'),
@@ -366,8 +384,27 @@ export default {
       }
     },
     async stockList(row) {
+      var arr = JSON.parse(JSON.stringify(this.tableData))
+      arr.length = this.tableData.length - 1
       try {
-        this.getParams.e_material_no = row.material_no
+        this.getParams.material_nos = ''
+        if (row.material_name === '合计') {
+          if (row.stock_qty === 0) {
+            return
+          }
+          delete this.getParams.e_material_no
+          arr.forEach(d => {
+            if (d.stock_qty) {
+              this.getParams.material_nos += d.material_no + ','
+            } else {
+              return
+            }
+          })
+          this.getParams.material_nos = this.getParams.material_nos.substr(0, this.getParams.material_nos.length - 1)
+        } else {
+          delete this.getParams.material_nos
+          this.getParams.e_material_no = row.material_no
+        }
         this.dialogVisibleList = true
         this.loadingView = true
         const data = await wmsStorage('get', null, { params: this.getParams })
@@ -378,9 +415,17 @@ export default {
         this.loadingView = false
       }
     },
-    async DetailedList(row, val) {
+    async DetailedList(row, val, num) {
+      if (num === 0) {
+        return
+      }
       try {
-        if (val === '7') {
+        if (row.material_name === '合计') {
+          this.searchView.material_no = ''
+        } else {
+          this.searchView.material_no = row.material_no
+        }
+        if (val === '1' || val === '2' || val === '7') {
           this.pageIf = true
           this.searchView.page = 1
           this.searchView.page_size = 10
@@ -389,7 +434,7 @@ export default {
           this.searchView.page = 1
           this.searchView.page_size = 10000000
         }
-        this.searchView.material_no = row.material_no
+
         this.searchView.st = this.search.st
         this.searchView.et = this.search.et
         this.searchView.data_type = val

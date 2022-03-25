@@ -119,6 +119,10 @@
         label="手/自动"
       />
       <el-table-column
+        prop="ai_value"
+        label="AI值"
+      />
+      <el-table-column
         :prop="editionNo === 'v1'?'production_details.总重量':'actual_weight'"
         label="总重量(kg)"
       />
@@ -342,7 +346,7 @@
                   <td>条件名称</td>
                   <td>时间(s)</td>
                   <td>温度(°c)</td>
-                  <td>功率(W)</td>
+                  <td>AI值</td>
                   <td>能量(J)</td>
                   <td>动作名称</td>
                   <td>速度(r/min)</td>
