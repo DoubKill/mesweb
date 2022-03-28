@@ -30,8 +30,16 @@
           @change="changeDate"
         />
       </el-form-item>
-      <el-form-item label="物资名称">
-        <el-input v-model="search.MaterialName" clearable placeholder="请输入内容" @input="getDebounce" />
+      <el-form-item label="物料名称">
+        <el-select v-model="search.MaterialName" allow-create filterable placeholder="请选择" clearable @visible-change="getMaterialsList" @change="changeDate">
+          <el-option
+            v-for="item in options"
+            :key="item.name"
+            :label="item.name"
+            :value="item.name"
+          />
+        </el-select>
+        <!-- <el-input v-model="search.MaterialName" clearable placeholder="请输入内容" @input="getDebounce" /> -->
       </el-form-item>
       <el-form-item label="物资组">
         <el-select v-model="search.MaterialGroupName" filterable clearable placeholder="请选择" @change="changeDate">
@@ -159,6 +167,7 @@
 <script>
 import request from '@/utils/request-zc-th'
 import page from '@/components/page'
+import { thMaterials } from '@/api/jqy'
 import { debounce, setDate } from '@/utils'
 import * as echarts from 'echarts'
 import materialInoutRecord from '@/views/inventory/rubber-warehouse/material_inout_record.vue'
@@ -182,6 +191,7 @@ export default {
       datetimerangeYear: '',
       loading: false,
       total: 0,
+      options: [],
       MaterialList: [],
       TunnelNameList: [],
       EntranceList: [],
@@ -281,6 +291,16 @@ export default {
     this.getList()
   },
   methods: {
+    async getMaterialsList(val) {
+      if (val) {
+        try {
+          const data = await thMaterials('get', null, { params: { all: 1 }})
+          this.options = data || []
+        } catch (e) {
+        //
+        }
+      }
+    },
     Excel() {
       this.btnExportLoad = true
       this.search1 = JSON.parse(JSON.stringify(this.search))
