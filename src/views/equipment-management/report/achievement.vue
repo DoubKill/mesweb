@@ -190,6 +190,7 @@
       </el-form>
       <el-table
         :id="dialogVisible1?'out-table':''"
+        v-loading="loading1"
         :data="tableData1"
         style="width: 100%"
         show-summary
@@ -398,13 +399,18 @@ export default {
       this.currentInfo = row
       try {
         if (type === 3) {
+          this.loading1 = true
           const data = await performanceSummary('get', null, { params: { name_d: row.name, date: this.search.date, ccjl: 1 }})
           this.tableData1 = data.results || []
+          this.loading1 = false
           return
         }
+        this.loading1 = true
         const data = await performanceSubsidy('get', null, { params: { type: type, year: this.year, month: this.month, name: row.name }})
         this.tableData1 = data
+        this.loading1 = false
       } catch (e) {
+        this.loading1 = false
         //
       }
     },
