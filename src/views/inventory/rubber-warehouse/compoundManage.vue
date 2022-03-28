@@ -6,7 +6,14 @@
         <el-input v-model="search.order_no" size="" clearable placeholder="请输入单据号" @input="changeList" />
       </el-form-item>
       <el-form-item label="物料编码">
-        <el-input v-model="search.product_no" clearable placeholder="请输入物料编码" @input="changeList" />
+        <el-select v-model="search.product_no" allow-create filterable placeholder="请选择" clearable @visible-change="getProductList" @change="changeList2">
+          <el-option
+            v-for="item in options1"
+            :key="item.material_no"
+            :label="item.material_no"
+            :value="item.material_no"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="建单起止时间">
         <el-date-picker
@@ -41,7 +48,7 @@
           placeholder="请选择出库口"
           clearable
           @visible-change="getStation"
-          @change="changeList"
+          @change="changeList2"
         >
           <el-option
             v-for="item in stationList"
@@ -435,6 +442,7 @@ import GenerateAssignOutbound from '../components-film/generate_assign_outbound'
 import GenerateNormalOutbound from '../components-film/generate_normal_outbound'
 import { bzMixinInventorySummary, bzFinalInventorySummary } from '@/api/base_w_four'
 import { compoundManage, userStation } from '@/api/jqy'
+import { batchingMaterials } from '@/api/base_w'
 import { mapGetters } from 'vuex'
 import myMixin from '../components-zl-hl/mixin-zl-hl'
 import { stationInfo } from '@/api/warehouse'
@@ -483,6 +491,7 @@ export default {
       // 仓库id
       warehouseInfo: null,
       handleSelection: [],
+      options1: [],
       optionsState1: [
         { name: '新建', id: 1 },
         { name: '执行中', id: 2 },
@@ -532,6 +541,16 @@ export default {
   },
   methods: {
     checkPermission,
+    async getProductList(val) {
+      if (val) {
+        try {
+          const data = await batchingMaterials('get', null, { params: { all: 1 }})
+          this.options1 = data || []
+        } catch (e) {
+        //
+        }
+      }
+    },
     dialog() {
       this.creatOrder.product_no = ''
       this.creatOrder.order_qty = ''
@@ -686,7 +705,11 @@ export default {
     changeList1() {
       this.search.station = ''
       this.search.page = 1
-      debounce(this, 'getList')
+      this.getList()
+    },
+    changeList2() {
+      this.search.page = 1
+      this.getList()
     },
     searchDate(arr) {
       this.search.st = arr ? arr[0] : ''

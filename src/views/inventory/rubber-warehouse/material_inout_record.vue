@@ -96,11 +96,38 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item v-if="!isDialog" label="物料编码">
-        <el-input v-model="search.material_no" clearable @input="debounceList" />
+      <el-form-item v-if="(warehouseNameProps!=='原材料库'&&warehouseNameProps!=='炭黑库')&&!isDialog" label="物料编码">
+        <el-select v-model="search.material_no" allow-create filterable placeholder="请选择" clearable @visible-change="getProductList" @change="changeList">
+          <el-option
+            v-for="item in options"
+            :key="item.material_no"
+            :label="item.material_no"
+            :value="item.material_no"
+          />
+        </el-select>
+        <!-- <el-input v-model="search.material_no" clearable @input="debounceList" /> -->
       </el-form-item>
-      <el-form-item v-if="(warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库')&&!isDialog" label="物料名称">
-        <el-input v-model="search.material_name" clearable @input="debounceList" />
+      <el-form-item v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="物料编码">
+        <el-select v-model="search.material_no" allow-create filterable placeholder="请选择" clearable @visible-change="getMaterialsList" @change="changeList">
+          <el-option
+            v-for="item in options3"
+            :key="item.code"
+            :label="item.code"
+            :value="item.code"
+          />
+        </el-select>
+        <!-- <el-input v-model="search.material_no" clearable @input="debounceList" /> -->
+      </el-form-item>
+      <el-form-item v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="物料名称">
+        <el-select v-model="search.material_no" allow-create filterable placeholder="请选择" clearable @visible-change="getMaterialsList" @change="changeList">
+          <el-option
+            v-for="item in options3"
+            :key="item.name"
+            :label="item.name"
+            :value="item.name"
+          />
+        </el-select>
+        <!-- <el-input v-model="search.material_name" clearable @input="debounceList" /> -->
       </el-form-item>
       <el-form-item label="出入库单号">
         <el-input v-model="search.order_no" clearable @input="debounceList" />
@@ -316,7 +343,8 @@
 import { inventoryLog } from '@/api/base_w'
 import page from '@/components/page'
 import { wmsTunnels, thTunnels } from '@/api/base_w_four'
-import { wmsExceptHandle } from '@/api/jqy'
+import { batchingMaterials } from '@/api/base_w'
+import { wmsExceptHandle, wmsMaterials, thMaterials } from '@/api/jqy'
 // import warehouseSelect from '@/components/select_w/warehouseSelect'
 import { setDate, debounce, exportExcel } from '@/utils'
 export default {
@@ -357,8 +385,10 @@ export default {
       loadingCheck: false,
       total: 0,
       loading: false,
+      options: [],
       options1: ['指定出库', '正常出库'],
       options2: [],
+      options3: [],
       tableData: [],
       btnExportLoad: false
     }
@@ -396,6 +426,27 @@ export default {
   },
   methods: {
     setDate,
+    async getMaterialsList(val) {
+      if (val) {
+        try {
+          const api = this.warehouseNameProps === '原材料库' ? wmsMaterials : thMaterials
+          const data = await api('get', null, { params: { all: 1 }})
+          this.options3 = data || []
+        } catch (e) {
+        //
+        }
+      }
+    },
+    async getProductList(val) {
+      if (val) {
+        try {
+          const data = await batchingMaterials('get', null, { params: { all: 1 }})
+          this.options = data || []
+        } catch (e) {
+        //
+        }
+      }
+    },
     async getTunnelNameList() {
       try {
         if (this.warehouseNameProps === '原材料库') {

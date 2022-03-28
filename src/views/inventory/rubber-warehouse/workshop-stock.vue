@@ -15,7 +15,15 @@
         /> -->
       </el-form-item>
       <el-form-item label="物料编码:">
-        <el-input v-model="search.material_no" @input="changeMaterialCode" />
+        <!-- <el-input v-model="search.material_no" @input="changeMaterialCode" /> -->
+        <el-select v-model="search.material_no" allow-create filterable placeholder="请选择" clearable @visible-change="getProductList" @change="stageChange">
+          <el-option
+            v-for="item in options"
+            :key="item.material_no"
+            :label="item.material_no"
+            :value="item.material_no"
+          />
+        </el-select>
         <!-- <materialCodeSelect
           :is-all-obj="true"
           :is-clearable="true"
@@ -110,6 +118,7 @@
 // import materielTypeSelect from '@/components/select_w/materielTypeSelect'
 // import materialCodeSelect from '@/components/select_w/materialCodeSelect'
 import StageSelect from '@/components/StageSelect'
+import { batchingMaterials } from '@/api/base_w'
 import { productDetails } from '@/api/base_w_three'
 import { debounce } from '@/utils'
 
@@ -121,6 +130,7 @@ export default {
       search: {},
       switchDetails: 1,
       tableData: [],
+      options: [],
       loading: true
     }
   },
@@ -128,6 +138,16 @@ export default {
     this.getList()
   },
   methods: {
+    async getProductList(val) {
+      if (val) {
+        try {
+          const data = await batchingMaterials('get', null, { params: { all: 1 }})
+          this.options = data || []
+        } catch (e) {
+        //
+        }
+      }
+    },
     async getList() {
       try {
         this.tableData = []

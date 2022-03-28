@@ -30,8 +30,16 @@
           @change="changeDate"
         />
       </el-form-item>
-      <el-form-item label="物资名称">
-        <el-input v-model="search.MaterialName" clearable placeholder="请输入内容" @input="getDebounce" />
+      <el-form-item label="物料名称">
+        <el-select v-model="search.MaterialName" allow-create filterable placeholder="请选择" clearable @visible-change="getMaterialsList" @change="changeDate">
+          <el-option
+            v-for="item in options"
+            :key="item.name"
+            :label="item.name"
+            :value="item.name"
+          />
+        </el-select>
+        <!-- <el-input v-model="search.MaterialName" clearable placeholder="请输入内容" @input="getDebounce" /> -->
       </el-form-item>
       <el-form-item label="物资组">
         <el-select v-model="search.MaterialGroupName" filterable clearable placeholder="请选择" @change="changeDate">
@@ -161,6 +169,7 @@
 import request from '@/utils/request-zc'
 import page from '@/components/page'
 import { debounce, setDate } from '@/utils'
+import { wmsMaterials } from '@/api/jqy'
 import * as echarts from 'echarts'
 import materialInoutRecord from '@/views/inventory/rubber-warehouse/material_inout_record.vue'
 import { wmsMaterialGroups, wmsTunnels } from '@/api/base_w_four'
@@ -176,6 +185,7 @@ export default {
         pageNo: 1
       },
       search1: {},
+      options: [],
       btnExportLoad: false,
       datetimerange: [],
       datetimerangeMonth: '',
@@ -281,6 +291,16 @@ export default {
     this.getList()
   },
   methods: {
+    async getMaterialsList(val) {
+      if (val) {
+        try {
+          const data = await wmsMaterials('get', null, { params: { all: 1 }})
+          this.options = data || []
+        } catch (e) {
+        //
+        }
+      }
+    },
     Excel() {
       this.btnExportLoad = true
       this.search1 = JSON.parse(JSON.stringify(this.search))
