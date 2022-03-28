@@ -15,10 +15,26 @@
         />
       </el-form-item>
       <el-form-item label="物料名称">
-        <el-input v-model="search.material_name" clearable @input="debounceFun" />
+        <el-select v-model="search.material_name" allow-create filterable placeholder="请选择" clearable @visible-change="getMaterialsList" @change="changeList">
+          <el-option
+            v-for="item in options"
+            :key="item.name"
+            :label="item.name"
+            :value="item.name"
+          />
+        </el-select>
+        <!-- <el-input v-model="search.material_name" clearable @input="debounceFun" /> -->
       </el-form-item>
       <el-form-item label="物料编码">
-        <el-input v-model="search.material_no" clearable @input="debounceFun" />
+        <el-select v-model="search.material_no" allow-create filterable placeholder="请选择" clearable @visible-change="getMaterialsList" @change="changeList">
+          <el-option
+            v-for="item in options"
+            :key="item.code"
+            :label="item.code"
+            :value="item.code"
+          />
+        </el-select>
+        <!-- <el-input v-model="search.material_no" clearable @input="debounceFun" /> -->
       </el-form-item>
       <el-form-item>
         <el-button
@@ -296,6 +312,7 @@
 
 <script>
 import { debounce } from '@/utils'
+import { wmsMaterials } from '@/api/jqy'
 import { exportExcel } from '@/utils/index'
 import page from '@/components/page'
 import { hfStock, hfStockDetail, wmsStorage } from '@/api/jqy'
@@ -321,6 +338,7 @@ export default {
       dialogVisibleList: false,
       datetimerange: [getDay(-1) + ' ' + '08:00:00', getDay(0) + ' ' + '08:00:00'],
       tableDataView: [],
+      options: [],
       tableDataList: [],
       pageIf: false,
       loadingView: false,
@@ -334,6 +352,16 @@ export default {
     this.getList()
   },
   methods: {
+    async getMaterialsList(val) {
+      if (val) {
+        try {
+          const data = await wmsMaterials('get', null, { params: { all: 1 }})
+          this.options = data || []
+        } catch (e) {
+        //
+        }
+      }
+    },
     async getList() {
       try {
         this.loading = true

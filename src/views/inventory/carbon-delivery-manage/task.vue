@@ -19,7 +19,15 @@
         <el-input v-model="search.lot_no" clearable placeholder="请输入内容" @input="getDebounce" />
       </el-form-item>
       <el-form-item label="物料编码">
-        <el-input v-model="search.material_no" clearable placeholder="请输入内容" @input="getDebounce" />
+        <el-select v-model="search.material_no" allow-create filterable placeholder="请选择" clearable @visible-change="getMaterialsList" @change="changeDate">
+          <el-option
+            v-for="item in options1"
+            :key="item.code"
+            :label="item.code"
+            :value="item.code"
+          />
+        </el-select>
+        <!-- <el-input v-model="search.material_no" clearable placeholder="请输入内容" @input="getDebounce" /> -->
       </el-form-item>
       <el-form-item label="巷道">
         <el-select v-model="search.tunnel" filterable clearable placeholder="请选择" @change="changeDate">
@@ -169,6 +177,7 @@
 
 <script>
 import { thOutTaskDetails } from '@/api/base_w_five'
+import { thMaterials } from '@/api/jqy'
 import { thTunnels } from '@/api/base_w_four'
 import { thEntrance } from '@/api/base_w_three'
 // import request from '@/utils/request-zc-th'
@@ -193,6 +202,7 @@ export default {
         { name: '异常', id: 6 },
         { name: '强制完成', id: 12 }
       ],
+      options1: [],
       TunnelNameList: [],
       entranceList: [],
       datetimerange: [],
@@ -207,6 +217,16 @@ export default {
     this.getList()
   },
   methods: {
+    async getMaterialsList(val) {
+      if (val) {
+        try {
+          const data = await thMaterials('get', null, { params: { all: 1 }})
+          this.options1 = data || []
+        } catch (e) {
+        //
+        }
+      }
+    },
     async getList() {
       this.loading = true
       this.tableData = []

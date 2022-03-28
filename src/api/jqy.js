@@ -1265,3 +1265,21 @@ export function hfRealStatus(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function wmsMaterials(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WmsMaterials + id + '/' : API.WmsMaterials,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function thMaterials(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ThMaterials + id + '/' : API.ThMaterials,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
