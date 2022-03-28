@@ -447,6 +447,9 @@ export default {
       try {
         const data = await weightingPackageManua('get', null, { params: { history: 1, product_no: this.formData.product_no }})
         Object.assign(this.formData, data)
+        this.formData.split_num = data.split_num ? data.split_num : 1
+        this.formData.package_count = data.package_count ? data.package_count : 1
+        this.formData.print_count = data.print_count ? data.print_count : 1
         this.changeProduct()
       } catch (e) {
         //
