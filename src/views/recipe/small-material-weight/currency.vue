@@ -18,7 +18,7 @@
           />
         </el-select>
       </el-form-item> -->
-      <el-form-item label="配方名称">
+      <el-form-item v-if="!isProduction&&type !== 3" label="配方名称">
         <el-input
           v-model="search.product_no"
           clearable
@@ -42,7 +42,7 @@
           @input="debounceList"
         />
       </el-form-item>
-      <el-form-item label="机型">
+      <el-form-item v-if="!isProduction&&type !== 3" label="机型">
         <equip-category-select
           v-model="search.dev_type"
           @change="changeDevType"
@@ -130,7 +130,7 @@
         }"
       />
       <el-table-column
-        label="配料车次"
+        label="包数"
         min-width="20"
         :formatter="d=>{
           return d.package_count
@@ -200,6 +200,7 @@
       width="600px"
       :before-close="handleClose"
       class="dialog-style"
+      append-to-body
     >
       <el-form
         ref="formRef"
@@ -276,6 +277,7 @@
         >
           <el-input
             v-model="formData._single_weight"
+            style="width:100px"
             placeholder="配料重量"
             :disabled="(formData.id||formData.batching_type==='配方')?true:false"
           />
@@ -287,6 +289,7 @@
         >
           <el-input
             v-model="formData.single_weight"
+            style="width:100px"
             placeholder="配料重量"
             :disabled="(formData.id||formData.batching_type==='配方')?true:false"
           />
