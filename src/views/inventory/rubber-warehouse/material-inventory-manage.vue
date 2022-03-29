@@ -63,6 +63,16 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="巷道">
+        <el-select v-model="getParams.tunnel" filterable clearable placeholder="请选择" @visible-change="getTunnelNameList" @change="changeList">
+          <el-option
+            v-for="item in TunnelNameList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.code"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="是否进烘房">
         <el-select
           v-model="getParams.is_entering"
@@ -205,6 +215,7 @@ import { bzFinalInventory, wmsStorage, thStorage,
 // import materielTypeSelect from '@/components/select_w/materielTypeSelect'
 // import warehouseSelect from '@/components/select_w/warehouseSelect'
 import page from '@/components/page'
+import { wmsTunnels, thTunnels } from '@/api/base_w_four'
 import { mapGetters } from 'vuex'
 import { materialCount } from '@/api/base_w'
 import { debounce } from '@/utils/index'
@@ -238,6 +249,7 @@ export default {
   data() {
     return {
       tableData: [],
+      TunnelNameList: [],
       getParams: {
         page: 1,
         material_type: '', // 物料类型
@@ -284,6 +296,23 @@ export default {
     this.getTableData()
   },
   methods: {
+    async getTunnelNameList(val) {
+      if (val) {
+        try {
+          if (this.warehouseNameProps === '原材料库') {
+            const data = await wmsTunnels('get')
+            this.TunnelNameList = data || []
+          } else if (this.warehouseNameProps === '炭黑库') {
+            const data = await thTunnels('get')
+            this.TunnelNameList = data || []
+          } else {
+            return
+          }
+        } catch (e) {
+        //
+        }
+      }
+    },
     async getProduct(val) {
       if (val) {
         try {
