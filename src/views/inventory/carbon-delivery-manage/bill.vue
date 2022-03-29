@@ -16,20 +16,36 @@
         </el-select>
       </el-form-item>
       <el-form-item label="物料名称">
-        <el-input
+        <el-select v-model="search.material_name" allow-create filterable placeholder="请选择" clearable @visible-change="getMaterialsList" @change="changeDate">
+          <el-option
+            v-for="item in options1"
+            :key="item.name"
+            :label="item.name"
+            :value="item.name"
+          />
+        </el-select>
+        <!-- <el-input
           v-model="search.material_name"
           clearable
           placeholder="请输入内容"
           @input="getDebounce"
-        />
+        /> -->
       </el-form-item>
       <el-form-item label="物料编码">
-        <el-input
+        <el-select v-model="search.material_no" allow-create filterable placeholder="请选择" clearable @visible-change="getMaterialsList" @change="changeDate">
+          <el-option
+            v-for="item in options1"
+            :key="item.code"
+            :label="item.code"
+            :value="item.code"
+          />
+        </el-select>
+        <!-- <el-input
           v-model="search.material_no"
           clearable
           placeholder="请输入内容"
           @input="getDebounce"
-        />
+        /> -->
       </el-form-item>
       <el-button
         v-permission="['th_outbound_record', 'space']"
@@ -181,10 +197,26 @@
           </el-select>
         </el-form-item>
         <el-form-item label="物料名称">
-          <el-input v-model="formSearch.material_name" clearable placeholder="请输入内容" @input="getDialogDebounce" />
+          <el-select v-model="formSearch.material_name" allow-create filterable placeholder="请选择" clearable @visible-change="getProduct" @change="getDialog">
+            <el-option
+              v-for="item in options2"
+              :key="item.material_name"
+              :label="item.material_name"
+              :value="item.material_name"
+            />
+          </el-select>
+          <!-- <el-input v-model="formSearch.material_name" clearable placeholder="请输入内容" @input="getDialogDebounce" /> -->
         </el-form-item>
         <el-form-item label="物料编码">
-          <el-input v-model="formSearch.material_no" clearable placeholder="请输入内容" @input="getDialogDebounce" />
+          <el-select v-model="formSearch.material_no" allow-create filterable placeholder="请选择" clearable @visible-change="getProduct" @change="getDialog">
+            <el-option
+              v-for="item in options2"
+              :key="item.material_no"
+              :label="item.material_no"
+              :value="item.material_no"
+            />
+          </el-select>
+          <!-- <el-input v-model="formSearch.material_no" clearable placeholder="请输入内容" @input="getDialogDebounce" /> -->
         </el-form-item>
         <el-form-item label="品质状态">
           <el-select
@@ -489,6 +521,8 @@
 <script>
 import { thOutTasks, thOutTaskDetails, thCancelTask, thOutboundOrder } from '@/api/base_w_five'
 // import request from '@/utils/request-zc-th'
+import { thMaterials } from '@/api/jqy'
+import { materialCount } from '@/api/base_w'
 import page from '@/components/page'
 import { debounce, checkPermission } from '@/utils'
 import { thStock, thWeightStock, thEntrance, thInstock } from '@/api/base_w_three'
@@ -512,6 +546,8 @@ export default {
         { name: '异常出库', id: 5 },
         { name: '取消', id: 6 }
       ],
+      options1: [],
+      options2: [],
       optionsType: [
         { name: '生产正常出库', id: 1 },
         { name: 'mes指定库位出库', id: 2 },
@@ -582,6 +618,26 @@ export default {
   },
   methods: {
     checkPermission,
+    async getProduct(val) {
+      if (val) {
+        try {
+          const data = await materialCount('get', null, { params: { store_name: '炭黑库' }})
+          this.options2 = data || []
+        } catch (e) {
+        //
+        }
+      }
+    },
+    async getMaterialsList(val) {
+      if (val) {
+        try {
+          const data = await thMaterials('get', null, { params: { all: 1 }})
+          this.options1 = data || []
+        } catch (e) {
+        //
+        }
+      }
+    },
     async getList() {
       this.loading = true
       this.tableData = []

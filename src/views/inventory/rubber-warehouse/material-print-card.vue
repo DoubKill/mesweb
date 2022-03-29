@@ -47,7 +47,15 @@
         <!-- <warehouseSelect :created-is="true" @changSelect="warehouseSelectFun" /> -->
       </el-form-item>
       <el-form-item label="物料编码">
-        <el-input v-model="search.material_no" clearable @input="debounceList" />
+        <el-select v-model="search.material_no" allow-create filterable placeholder="请选择" clearable @visible-change="getProductList" @change="changeList">
+          <el-option
+            v-for="item in options"
+            :key="item.material_no"
+            :label="item.material_no"
+            :value="item.material_no"
+          />
+        </el-select>
+        <!-- <el-input v-model="search.material_no" clearable @input="debounceList" /> -->
       </el-form-item>
       <el-form-item label="出入库单号">
         <el-input v-model="search.order_no" clearable @input="debounceList" />
@@ -163,6 +171,7 @@
 </template>
 <script>
 import { inventoryLog, showQualifiedRange, additionalPrintDetail, additionalPrint } from '@/api/base_w'
+import { batchingMaterials } from '@/api/base_w'
 import stationInfoWarehouse from '@/components/select_w/warehouseSelectPosition'
 import page from '@/components/page'
 // import warehouseSelect from '@/components/select_w/warehouseSelect'
@@ -187,6 +196,7 @@ export default {
       searchDate: [],
       total: 0,
       loading: false,
+      options: [],
       options1: ['指定出库', '正常出库'],
       options2: [],
       tableData: [],
@@ -211,6 +221,16 @@ export default {
   },
   methods: {
     setDate,
+    async getProductList(val) {
+      if (val) {
+        try {
+          const data = await batchingMaterials('get', null, { params: { all: 1 }})
+          this.options = data || []
+        } catch (e) {
+        //
+        }
+      }
+    },
     async getList() {
       try {
         this.loading = true

@@ -3,10 +3,26 @@
     <!-- 炭黑 低库存预警 -->
     <el-form :inline="true">
       <el-form-item label="物料编码">
-        <el-input v-model="search.material_no" clearable @input="debounceFun" />
+        <el-select v-model="search.material_no" allow-create filterable placeholder="请选择" clearable @visible-change="getMaterialsList" @change="changeList">
+          <el-option
+            v-for="item in options2"
+            :key="item.material_no"
+            :label="item.material_no"
+            :value="item.material_no"
+          />
+        </el-select>
+        <!-- <el-input v-model="search.material_no" clearable @input="debounceFun" /> -->
       </el-form-item>
       <el-form-item label="物料名称">
-        <el-input v-model="search.material_name" clearable @input="debounceFun" />
+        <el-select v-model="search.material_name" allow-create filterable placeholder="请选择" clearable @visible-change="getMaterialsList" @change="changeList">
+          <el-option
+            v-for="item in options2"
+            :key="item.material_name"
+            :label="item.material_name"
+            :value="item.material_name"
+          />
+        </el-select>
+        <!-- <el-input v-model="search.material_name" clearable @input="debounceFun" /> -->
       </el-form-item>
       <el-form-item label="">
         <el-checkbox v-model="search.lower_only_flag_" @change="changeFlag">只显示低库存预警</el-checkbox>
@@ -225,6 +241,7 @@
 <script>
 import materialInventoryManage from '../components/material-inventory.vue'
 import { debounce } from '@/utils'
+import { materialCount } from '@/api/base_w'
 import page from '@/components/page'
 import { thStockSummsry, wmsMaterialGroups, wmsTunnels } from '@/api/base_w_four'
 export default {
@@ -241,6 +258,7 @@ export default {
       total: 0,
       options: [],
       options1: [],
+      options2: [],
       tableData: [],
       loading: false,
       btnExportLoad: false
@@ -252,6 +270,16 @@ export default {
     this.getList()
   },
   methods: {
+    async getMaterialsList(val) {
+      if (val) {
+        try {
+          const data = await materialCount('get', null, { params: { store_name: '炭黑库' }})
+          this.options2 = data || []
+        } catch (e) {
+        //
+        }
+      }
+    },
     async getList() {
       try {
         this.loading = true
