@@ -632,7 +632,7 @@ export default {
       try {
         const data = await weightingPackageSingle('get', null, { params: { history: 1, product_no: this.formData1.product_no, product_batching: this.product_batching }})
         data._single_weight = data.single_weight
-        Object.assign(this.formData, data)
+        Object.assign(this.formData1, data)
       } catch (e) {
         //
       }
