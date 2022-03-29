@@ -630,7 +630,7 @@ export default {
     },
     async getHistory1() {
       try {
-        const data = await weightingPackageSingle('get', null, { params: { history: 1, product_no: this.formData.product_no, product_batching: this.product_batching }})
+        const data = await weightingPackageSingle('get', null, { params: { history: 1, product_no: this.formData1.product_no, product_batching: this.product_batching }})
         data._single_weight = data.single_weight
         Object.assign(this.formData, data)
       } catch (e) {
@@ -724,24 +724,34 @@ export default {
         }
         this.getWeight()
       }
+      this.getHistory2()
     },
     async getWeight() {
       try {
-        const data = await weightingPackageSingle('get', null, { params: { material_name: this.formData2.material_name }})
+        const data = await weightingPackageSingle('get', null, { params: { material_name: this.formData2.material_name, weight: 1 }})
         this.formData2.single_weight = data || null
       } catch (e) {
         //
       }
     },
+    async getHistory2() {
+      try {
+        const data = await weightingPackageSingle('get', null, { params: { history: 1, material_name: this.formData2.material_name }})
+        Object.assign(this.formData2, data)
+      } catch (e) {
+        //
+      }
+    },
     handleClose2() {
-      this.formData2 = {}
-      this.formData2.split_num = 1
-      this.formData2.batching_type = '通用'
-      this.formData2.print_count = 1
-      this.formData2.begin_trains = 1
-      this.formData2.package_count = 1
-      this.formData2.expire_day = 1
-      this.formData2.single_weight = ''
+      this.formData2 = {
+        split_num: 1,
+        batching_type: '通用',
+        print_count: 1,
+        begin_trains: 1,
+        package_count: 1,
+        expire_day: 1,
+        single_weight: ''
+      }
       setTimeout(() => {
         this.$refs.formRef2.clearValidate()
       }, 200)
