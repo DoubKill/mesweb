@@ -137,7 +137,7 @@
       @currentChange="currentChange"
     />
     <el-dialog
-      :title="`准备分厂机台单配（合包）化工流转卡${formData.id?'预览':'设置'}`"
+      :title="`细料硫磺单配 流转卡${formData.id?'预览':'设置'}`"
       :visible.sync="dialogVisible"
       width="900px"
       append-to-body

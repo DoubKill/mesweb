@@ -195,7 +195,7 @@
       @currentChange="currentChange"
     />
     <el-dialog
-      :title="`准备分厂机台单配  化工流转卡${formData.id?'预览':'设置'}`"
+      :title="`${type === 3?'通用化工流转卡':'配方用原材料流转卡'}${formData.id?'预览':'设置'}`"
       :visible.sync="dialogVisible"
       width="600px"
       :before-close="handleClose"

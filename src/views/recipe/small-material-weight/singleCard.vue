@@ -397,7 +397,7 @@ export default {
         expire_day: 5
       },
       dialogVisible: false,
-      type: null
+      type: null // 2配方 3通用
     }
   },
   watch: {
