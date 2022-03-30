@@ -152,7 +152,7 @@
         min-width="20"
       />
       <el-table-column
-        prop="expire_day"
+        prop="expire_datetime"
         label="有效时间"
         min-width="20"
       />
