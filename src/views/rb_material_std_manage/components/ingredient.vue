@@ -417,6 +417,10 @@ export default {
       this.dialogVisible = val
       if (val) {
         this.formInline = this.formObj
+        if (this.formObj._clone) {
+          this.formInline.enable_equip = []
+          this.formInline.send_success_equip = []
+        }
         if (JSON.stringify(this.formInline.mixed_ratio) === '{}' || !this.formInline.mixed_ratio) {
           this.$set(this.formInline, 'mixed_ratio', {
             stage: { f_feed: '', s_feed: '' },
