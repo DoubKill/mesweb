@@ -414,6 +414,7 @@ export default {
       if (this.$refs.createdRubberMaterialRef) {
         this.isView = false
         this.isCopy = false
+        this.$refs.createdRubberMaterialRef.objParames._clone = false
         this.$refs.createdRubberMaterialRef.directBatching(this.currentRow.id, false)
       }
     },

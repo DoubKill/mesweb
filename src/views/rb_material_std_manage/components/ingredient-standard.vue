@@ -246,7 +246,10 @@ export default {
     addTableData(val) {
       val.forEach(d => {
         d.forEach(D => {
-          if (!D.master || !this.formObj.enable_equip || !this.formObj.length) {
+          if (!D.master) {
+            this.$set(D, 'master', {})
+          }
+          if (this.formObj._clone && (!this.formObj.enable_equip || !this.formObj.length)) {
             this.$set(D, 'master', {})
           }
           // 去掉-H
