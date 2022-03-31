@@ -249,6 +249,9 @@ export default {
           if (!D.master) {
             this.$set(D, 'master', {})
           }
+          if (this.formObj._clone && (!this.formObj.enable_equip || !this.formObj.length)) {
+            this.$set(D, 'master', {})
+          }
           // 去掉-H
           for (const key in D.master) {
             if (Object.hasOwnProperty.call(D.master, key)) {
@@ -278,18 +281,22 @@ export default {
       }
       this.tableData.forEach(d => {
         d.forEach((D, i) => {
-          const arr1 = {}
-          arr.forEach(dd => {
-            if (i === 0 && !D.master[dd]) {
-              if (this.formObj.stage_name === 'FM') {
-                D.master[dd] = 'S'
-              } else {
-                D.master[dd] = 'F'
+          if (!arr || !arr.length) {
+            D.master = {}
+          } else {
+            const arr1 = {}
+            arr.forEach(dd => {
+              if (i === 0 && !D.master[dd]) {
+                if (this.formObj.stage_name === 'FM') {
+                  D.master[dd] = 'S'
+                } else {
+                  D.master[dd] = 'F'
+                }
               }
-            }
-            arr1[dd] = D.master ? D.master[dd] : ''
-          })
-          D.master = arr1
+              arr1[dd] = D.master ? D.master[dd] : ''
+            })
+            D.master = arr1
+          }
         })
       })
     }
