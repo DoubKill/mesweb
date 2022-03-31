@@ -723,6 +723,16 @@ export let asyncRoutes = [
                 permissionName: 'materialdemanded'
               }
             },
+            {
+              path: '/schedule/material-demand',
+              component: () => import('@/views/plan/schedule/dispose/material-demand'),
+              name: 'MaterialDemand',
+              meta: {
+                faName: 'ScheduleDispose',
+                title: '原材料需求量 汇总表',
+                permissionName: 'materialdemanded'
+              }
+            },
             // {
             //   path: '/schedule/weighing-system-plan',
             //   component: () => import('@/views/plan/schedule/dispose/weighing-system-plan'),
@@ -741,16 +751,6 @@ export let asyncRoutes = [
                 faName: 'ScheduleDispose',
                 title: '机台设备停机计划设置',
                 permissionName: 'aps_halt_plan'
-              }
-            },
-            {
-              path: '/schedule/material-demand',
-              component: () => import('@/views/plan/schedule/dispose/material-demand'),
-              name: 'MaterialDemand',
-              meta: {
-                faName: 'ScheduleDispose',
-                title: '原材料需求量 汇总表',
-                permissionName: 'aps_stock_summary'
               }
             },
             {

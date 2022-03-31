@@ -19,11 +19,11 @@
         <el-input v-model="search.material_name" @change="changeList" />
       </el-form-item>
       <el-form-item>
-        <el-button v-permission="['aps_stock_summary','export']" :type="search.interval_type===1?'warning':'primary'" @click="getList(1)">0-4小时需求量</el-button>
-        <el-button v-permission="['aps_stock_summary','export']" :type="search.interval_type===2?'warning':'primary'" @click="getList(2)">4-8小时需求量</el-button>
-        <el-button v-permission="['aps_stock_summary','export']" :type="search.interval_type===3?'warning':'primary'" @click="getList(3)">8-12小时需求量</el-button>
-        <el-button v-permission="['aps_stock_summary','export']" type="primary" @click="getList(search.interval_type)">刷新</el-button>
-        <el-button v-permission="['aps_stock_summary','export']" type="primary" @click="exportTable">导出Excel</el-button>
+        <el-button :type="search.interval_type===1?'warning':'primary'" @click="getList(1)">0-4小时需求量</el-button>
+        <el-button :type="search.interval_type===2?'warning':'primary'" @click="getList(2)">4-8小时需求量</el-button>
+        <el-button :type="search.interval_type===3?'warning':'primary'" @click="getList(3)">8-12小时需求量</el-button>
+        <el-button type="primary" @click="getList(search.interval_type)">刷新</el-button>
+        <el-button type="primary" @click="exportTable">导出Excel</el-button>
 
       </el-form-item>
     </el-form>
