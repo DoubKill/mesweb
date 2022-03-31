@@ -66,7 +66,7 @@
       </el-form-item>
       <el-form-item v-if="!isProduction&&!isDialog">
         <el-button
-          v-permission="['weighting_package_single', 'add']"
+          v-permission="['weighting_package_manual', 'add2']"
           type="primary"
           @click="showPrintDialog(false)"
         >新建</el-button>
@@ -173,7 +173,7 @@
         <template slot-scope="scope">
           <div v-if="!isProduction">
             <el-button
-              v-permission="['weighting_package_single', 'print']"
+              v-permission="['weighting_package_manual', 'print2']"
               type="primary"
               @click="showPrintDialog(scope.row)"
             >打印</el-button>

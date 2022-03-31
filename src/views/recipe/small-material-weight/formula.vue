@@ -124,7 +124,7 @@
                 <el-button
                   size="mini"
                   type="danger"
-                  :disabled="!checkPermission(['xl_recipe','merge'])"
+                  :disabled="!checkPermission(['xl_recipe','del'])"
                   @click.stop="remove(row,index)"
                 >删除</el-button>
               </template>

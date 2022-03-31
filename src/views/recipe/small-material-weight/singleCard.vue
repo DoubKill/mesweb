@@ -91,7 +91,7 @@
           <span class="dialog-footer">
             <el-button type="primary" @click="viewFun(1)">打印履历查看</el-button>
             <el-button type="info" @click="resetFun">重 置</el-button>
-            <el-button type="primary" :disabled="loadingBtn" @click="submitFun">打 印</el-button>
+            <el-button v-permission="['weighting_package_manual', 'add']" type="primary" :disabled="loadingBtn" @click="submitFun">打 印</el-button>
           </span>
         </div>
       </el-col>
@@ -215,7 +215,7 @@
           <span slot="footer" class="dialog-footer">
             <!-- <el-button @click="handleClose(false)">清 空</el-button> -->
             <el-button type="primary" @click="viewFun(2)">打印履历查看</el-button>
-            <el-button type="primary" :disabled="loadingBtn" @click="submitFun1">打 印</el-button>
+            <el-button v-permission="['weighting_package_manual', 'add2']" type="primary" :disabled="loadingBtn" @click="submitFun1">打 印</el-button>
           </span>
         </div>
       </el-col>
@@ -290,7 +290,7 @@
           <span slot="footer" class="dialog-footer btn-style">
             <!-- <el-button @click="handleClose(false)">取 消</el-button> -->
             <el-button type="primary" @click="viewFun(3)">打印履历查看</el-button>
-            <el-button type="primary" :disabled="loadingBtn" @click="submitFun2">打 印</el-button>
+            <el-button v-permission="['weighting_package_manual', 'add2']" type="primary" :disabled="loadingBtn" @click="submitFun2">打 印</el-button>
           </span>
         </div>
       </el-col>
