@@ -18,7 +18,7 @@
           />
         </el-select>
       </el-form-item> -->
-      <el-form-item label="配方名称">
+      <el-form-item v-if="!isProduction&&type !== 3" label="配方名称">
         <el-input
           v-model="search.product_no"
           clearable
@@ -42,7 +42,7 @@
           @input="debounceList"
         />
       </el-form-item>
-      <el-form-item label="机型">
+      <el-form-item v-if="!isProduction&&type !== 3" label="机型">
         <equip-category-select
           v-model="search.dev_type"
           @change="changeDevType"
@@ -64,14 +64,14 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item v-if="!isProduction">
+      <el-form-item v-if="!isProduction&&!isDialog">
         <el-button
-          v-permission="['weighting_package_single', 'add']"
+          v-permission="['weighting_package_manual', 'add2']"
           type="primary"
           @click="showPrintDialog(false)"
         >新建</el-button>
       </el-form-item>
-      <el-form-item v-else>
+      <el-form-item v-else-if="isProduction&&!isDialog">
         <el-button
           v-permission="['material_add_print', 'add']"
           type="primary"
@@ -96,13 +96,13 @@
         min-width="20"
       /> -->
       <el-table-column
-        v-if="!isProduction"
+        v-if="!isProduction&&type !== 3"
         prop="product_no"
         label="配方名称"
         min-width="20"
       />
       <el-table-column
-        v-if="!isProduction"
+        v-if="!isProduction&&type !== 3"
         prop="dev_type_name"
         label="机型"
         min-width="20"
@@ -130,7 +130,7 @@
         }"
       />
       <el-table-column
-        label="配料车次"
+        label="包数"
         min-width="20"
         :formatter="d=>{
           return d.package_count
@@ -152,7 +152,7 @@
         min-width="20"
       />
       <el-table-column
-        prop="expire_day"
+        prop="expire_datetime"
         label="有效时间"
         min-width="20"
       />
@@ -173,7 +173,7 @@
         <template slot-scope="scope">
           <div v-if="!isProduction">
             <el-button
-              v-permission="['weighting_package_single', 'print']"
+              v-permission="['weighting_package_manual', 'print2']"
               type="primary"
               @click="showPrintDialog(scope.row)"
             >打印</el-button>
@@ -195,11 +195,12 @@
       @currentChange="currentChange"
     />
     <el-dialog
-      :title="`准备分厂机台单配  化工流转卡${formData.id?'预览':'设置'}`"
+      :title="`${type === 3?'通用化工流转卡':'配方用原材料流转卡'}${formData.id?'预览':'设置'}`"
       :visible.sync="dialogVisible"
       width="600px"
       :before-close="handleClose"
       class="dialog-style"
+      append-to-body
     >
       <el-form
         ref="formRef"
@@ -276,6 +277,7 @@
         >
           <el-input
             v-model="formData._single_weight"
+            style="width:100px"
             placeholder="配料重量"
             :disabled="(formData.id||formData.batching_type==='配方')?true:false"
           />
@@ -287,6 +289,7 @@
         >
           <el-input
             v-model="formData.single_weight"
+            style="width:100px"
             placeholder="配料重量"
             :disabled="(formData.id||formData.batching_type==='配方')?true:false"
           />
@@ -352,16 +355,9 @@
           />
         </el-form-item>
       </el-form>
-      <span
-        slot="footer"
-        class="dialog-footer"
-      >
+      <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose(false)">取 消</el-button>
-        <el-button
-          type="primary"
-          :loading="loadingBtn"
-          @click="submitFun"
-        >打 印</el-button>
+        <el-button type="primary" :disabled="loadingBtn" @click="submitFun">打 印</el-button>
       </span>
     </el-dialog>
   </div>
@@ -376,6 +372,16 @@ import { getRecipeManual } from '@/api/small-material-recipe'
 export default {
   name: 'SmallMaterialWeightCurrency',
   components: { page, EquipCategorySelect },
+  props: {
+    isDialog: {
+      type: Boolean,
+      default: false
+    },
+    type: {
+      type: Number,
+      default: null
+    }
+  },
   data() {
     return {
       search: {
@@ -425,14 +431,23 @@ export default {
   created() {
     // 只有通用
     this.isProduction = (this.$route.path === '/small-material-weight/currency1') || (this.$route.path === '/small-material-weight/currency/')
-    this.getList()
-    this.getProductList()
+    if (this.isDialog) {
+      if (this.type === 2) {
+        this.search.batching_type = '配方'
+        this.formData.batching_type = '配方'
+      } else {
+        this.search.batching_type = '通用'
+        this.formData.batching_type = '通用'
+      }
+    }
   },
   mounted() {
     if (this.isProduction) {
       this.search.batching_type = '通用'
       this.formData.batching_type = '通用'
     }
+    this.getList()
+    this.getProductList()
   },
   methods: {
     async getList() {

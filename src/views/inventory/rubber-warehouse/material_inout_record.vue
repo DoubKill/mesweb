@@ -109,7 +109,7 @@
         <!-- <el-input v-model="search.material_no" clearable @input="debounceList" /> -->
       </el-form-item>
       <el-form-item v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="物料名称">
-        <el-select v-model="search.material_no" allow-create filterable placeholder="请选择" clearable @visible-change="getMaterialsList" @change="changeList">
+        <el-select v-model="search.material_name" allow-create filterable placeholder="请选择" clearable @visible-change="getMaterialsList" @change="changeList">
           <el-option
             v-for="item in options3"
             :key="item.name"

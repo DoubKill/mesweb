@@ -16,7 +16,7 @@
       <el-form-item label="姓名">
         <el-input v-model="search.name_d" clearable @input="debounceFun" />
       </el-form-item>
-      <el-form-item style="float:right">
+      <el-form-item style="float:right;">
         <el-button
           v-permission="['performance_summary','export']"
           type="primary"
@@ -40,19 +40,24 @@
         >导出Excel</el-button>
       </el-form-item>
     </el-form>
-    <el-table
-      :id="!dialogVisible1&&!dialogVisible&&!dialogVisible2?'out-table':''"
+    <div style="clear:both" />
+    <u-table
+      v-if="!isExport"
       v-loading="loading"
       :data="tableData"
+      use-virtual
+      show-body-overflow="title"
+      show-header-overflow="title"
+      :max-height="600"
       style="width: 100%"
       border
     >
-      <el-table-column
+      <u-table-column
         prop="name"
         label="名字"
         width="60"
       />
-      <el-table-column
+      <u-table-column
         prop="是否定岗"
         label="是否独立上岗"
         width="40"
@@ -60,9 +65,9 @@
         <template slot-scope="{row}">
           {{ row.是否定岗?'是':'否' }}
         </template>
-      </el-table-column>
-      <el-table-column v-for="(item,_index) in day" :key="item" :label="item+'日'">
-        <el-table-column
+      </u-table-column>
+      <u-table-column v-for="(item,_index) in day" :key="item" :label="item+'日'">
+        <u-table-column
           v-for="_item in group_list[_index]"
           :key="_item"
           :label="_item"
@@ -74,15 +79,15 @@
               @click="subsidyInfo(row,_item,item)"
             >{{ row[item+'_'+_item] }}</el-link>
           </template>
-        </el-table-column>
-      </el-table-column>
-      <el-table-column
+        </u-table-column>
+      </u-table-column>
+      <u-table-column
         prop="hj"
         label="产量工资合计"
         width="65"
         fixed="right"
       />
-      <el-table-column
+      <u-table-column
         prop="超产奖励"
         label="超产奖励"
         width="65"
@@ -94,8 +99,8 @@
             @click="subsidyList(row,3)"
           >{{ row.超产奖励 }}</el-link>
         </template>
-      </el-table-column>
-      <el-table-column
+      </u-table-column>
+      <u-table-column
         prop="其他奖惩"
         label="其他奖惩"
         width="65"
@@ -107,8 +112,8 @@
             @click="subsidyList(row,1)"
           >{{ row.其他奖惩 }}</el-link>
         </template>
-      </el-table-column>
-      <el-table-column
+      </u-table-column>
+      <u-table-column
         prop="生产补贴"
         label="生产补贴"
         width="65"
@@ -120,14 +125,21 @@
             @click="subsidyList(row,2)"
           >{{ row.生产补贴 }}</el-link>
         </template>
-      </el-table-column>
-      <el-table-column
+      </u-table-column>
+      <u-table-column
         prop="all"
         label="工资总计"
         width="90"
         fixed="right"
       />
-    </el-table>
+    </u-table>
+    <achievementC
+      v-if="isExport"
+      :id="!dialogVisible1&&!dialogVisible&&!dialogVisible2?'out-table':''"
+      :table-data="tableData"
+      :day="day"
+      :group-list="group_list"
+    />
 
     <el-dialog
       title="补贴填写"
@@ -309,9 +321,11 @@
 <script>
 import { debounce, setDate, exportExcel } from '@/utils'
 import { globalCodesUrl } from '@/api/base_w'
+import achievementC from '../components/achievement-c'
 import { performanceSummary, performanceSubsidy, independentPostTemplate, independentPostTemplatePOST } from '@/api/base_w_five'
 export default {
   name: 'StatisticalReportAchievement',
+  components: { achievementC },
   data() {
     return {
       search: {
@@ -342,7 +356,8 @@ export default {
       allArr: [],
       btnLoading: false,
       sectionList: [],
-      group_list: []
+      group_list: [],
+      isExport: false
     }
   },
   created() {
@@ -499,8 +514,19 @@ export default {
           this.btnExportTemplateLoad = false
         })
     },
-    exportTable() {
-      exportExcel('员工绩效汇总表')
+    async exportTable() {
+      this.loading = true
+      this.btnExportLoad = true
+
+      setTimeout(d => {
+        this.isExport = true
+        setTimeout(d => {
+          exportExcel('员工绩效汇总表')
+          this.isExport = false
+          this.btnExportLoad = false
+          this.loading = false
+        }, 1000)
+      }, 100)
     },
     exportSubsidy(bool) {
       let str = this.subsidyIs === 1 ? '其他奖惩列表' : this.subsidyIs === 2 ? '补贴列表' : '超产奖列表'

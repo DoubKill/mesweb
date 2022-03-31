@@ -311,6 +311,7 @@ export default {
         } else {
           // // 配料
           this.objParames = objParames
+          this.objParames._clone = !!this.rubberMaterialForm.id
           if (objParames.id) {
             // 获取详情 复制
             this.directBatching(objParames.id, true)
@@ -345,6 +346,7 @@ export default {
             precept: data.precept,
             stage_product_batch_no: data.stage_product_batch_no,
             id: data.id,
+            _clone: this.objParames._clone,
             stage_name: data.stage_name,
             dev_type: data.dev_type || '',
             dev_type_name: data.dev_type_name || '',
