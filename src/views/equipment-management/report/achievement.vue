@@ -251,7 +251,7 @@
             <el-input v-model="currentInfo._class" disabled />
           </el-form-item>
           <el-form-item style="float:right">
-            <el-button v-permission="['performance_summary','change']" type="primary" @click="exportSubsidy(true)">导出Excel</el-button>
+            <el-button v-permission="['performance_summary','export']" type="primary" @click="exportSubsidy(true)">导出Excel</el-button>
           </el-form-item>
         </el-form>
         <el-table
