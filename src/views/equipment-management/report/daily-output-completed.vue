@@ -95,6 +95,7 @@
         </el-form-item>
         <el-form-item label="班次">
           <class-select
+            :is-clearable="false"
             @classSelected="classChanged"
           />
         </el-form-item>
@@ -169,7 +170,6 @@
         >
           <template slot-scope="scope">
             <el-button
-              v-permission="['aps_opera_keyword','delete']"
               size="mini"
               type="danger"
               @click="handleDisposeDelete(scope)"
@@ -181,7 +181,6 @@
       </el-table>
       <div style="text-align:center;margin-top:15px">
         <el-button
-          v-permission="[]"
           size="small"
           @click="addCellDispose"
         >插入一行</el-button>
@@ -195,7 +194,6 @@
 </template>
 
 <script>
-// import { classesListUrl, productInfosUrl } from '@/api/base_w'
 import { dailyProductionCompletionReport, equip190e } from '@/api/jqy'
 import classSelect from '@/components/ClassSelect'
 import { exportExcel } from '@/utils/index'
