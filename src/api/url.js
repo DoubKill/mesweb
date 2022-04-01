@@ -405,6 +405,7 @@ export default {
   RotateClasses: '/api/v1/terminal/xl-plan/rotate_classes/',
   UpDownMove: '/api/v1/terminal/xl-plan/up_down_move/',
   CurrentFactoryDate: '/api/v1/basics/current-factory-date/',
+  AutoMan: '/api/v1/terminal/xl-plan/auto_man/',
   WmsStock: '/api/v1/inventory/wms-stock/',
   WmsWeightStock: '/api/v1/inventory/wms-weight-stock/',
   WmsEntrance: '/api/v1/inventory/wms-entrance/',
