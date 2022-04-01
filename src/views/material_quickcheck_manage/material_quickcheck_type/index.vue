@@ -197,6 +197,7 @@
             filterable
             allow-create
             default-first-option
+            clearable
           >
             <el-option
               v-for="item in optionsUnit"
@@ -229,7 +230,6 @@
               <el-input-number
                 v-model="item.lower_limiting_value"
                 controls-position="right"
-                :max="item.upper_limit_value!==''?keepTwo(item.upper_limit_value-0.01):Infinity"
               />
             </el-form-item>
             <el-form-item
@@ -242,7 +242,6 @@
               <el-input-number
                 v-model="item.upper_limit_value"
                 controls-position="right"
-                :min="item.lower_limiting_value?keepTwo(item.lower_limiting_value +0.01):-Infinity"
               />
             </el-form-item>
             <i v-if="formData.standards.length!==1" title="删除评级标准" class="el-icon-remove-outline dialogIconDEL" @click="delGrade(index)" />
@@ -339,6 +338,14 @@ export default {
     validatorFun(value, callback, index, standards) {
       if (standards[index].lower_limiting_value === 0 && standards[index].upper_limit_value === 0) {
         callback(new Error('上下限不能都为0'))
+        return
+      }
+      if (standards[index].lower_limiting_value > standards[index].upper_limit_value) {
+        callback(new Error('下限不能大于上限'))
+        return
+      }
+      if (standards[index].lower_limiting_value === standards[index].upper_limit_value) {
+        callback(new Error('下限不能等于上限'))
         return
       }
       if (value === '') {

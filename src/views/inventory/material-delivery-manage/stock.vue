@@ -1,12 +1,28 @@
 <template>
   <div>
-    <!-- 原材料  库存管理 -->
+    <!-- 原材料 库存统计 -->
     <el-form :inline="true">
       <el-form-item label="物料编码">
-        <el-input v-model="search.material_no" clearable @input="debounceFun" />
+        <el-select v-model="search.material_no" allow-create filterable placeholder="请选择" clearable @visible-change="getMaterialsList" @change="changeList">
+          <el-option
+            v-for="item in options2"
+            :key="item.material_no"
+            :label="item.material_no"
+            :value="item.material_no"
+          />
+        </el-select>
+        <!-- <el-input v-model="search.material_no" clearable @input="debounceFun" /> -->
       </el-form-item>
       <el-form-item label="物料名称">
-        <el-input v-model="search.material_name" clearable @input="debounceFun" />
+        <el-select v-model="search.material_name" allow-create filterable placeholder="请选择" clearable @visible-change="getMaterialsList" @change="changeList">
+          <el-option
+            v-for="item in options2"
+            :key="item.material_name"
+            :label="item.material_name"
+            :value="item.material_name"
+          />
+        </el-select>
+        <!-- <el-input v-model="search.material_name" clearable @input="debounceFun" /> -->
       </el-form-item>
       <el-form-item label="物料组名称">
         <el-select
@@ -40,10 +56,23 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item style="float:right">
+        <el-button
+          type="primary"
+          :loading="btnExportLoad"
+          @click="exportTable(1)"
+        >导出当前页面</el-button>
+        <el-button
+          type="primary"
+          :loading="btnExportLoad"
+          @click="exportTable(2)"
+        >导出全部</el-button>
+      </el-form-item>
     </el-form>
     <el-table
       v-loading="loading"
       :data="tableData"
+      :row-class-name="tableRowClassName"
       border
     >
       <el-table-column
@@ -113,8 +142,9 @@
 
 <script>
 import { debounce } from '@/utils'
+import { materialCount } from '@/api/base_w'
 import page from '@/components/page'
-import { wmsInventory, wmsMaterialGroups, wmsTunnels } from '@/api/base_w_four'
+import { wmsInventory, wmsInventoryDown, wmsMaterialGroups, wmsTunnels } from '@/api/base_w_four'
 export default {
   name: 'DeliveryStock',
   components: { page },
@@ -127,8 +157,10 @@ export default {
       total: 0,
       options: [],
       options1: [],
+      options2: [],
       tableData: [],
-      loading: false
+      loading: false,
+      btnExportLoad: false
     }
   },
   created() {
@@ -137,6 +169,16 @@ export default {
     this.getList()
   },
   methods: {
+    async getMaterialsList(val) {
+      if (val) {
+        try {
+          const data = await materialCount('get', null, { params: { store_name: '原材料库' }})
+          this.options2 = data || []
+        } catch (e) {
+        //
+        }
+      }
+    },
     async getList() {
       try {
         this.loading = true
@@ -144,8 +186,22 @@ export default {
         this.tableData = data.results
         this.total = data.count
         this.loading = false
+        this.tableData.push({
+          name: '单页合计',
+          quantity: sum(this.tableData, 'quantity'),
+          weight: sum(this.tableData, 'weight')
+        }, {
+          name: '汇总',
+          quantity: data.total_quantity,
+          weight: data.total_weight
+        })
       } catch (e) {
         this.loading = false
+      }
+    },
+    tableRowClassName({ row, rowIndex }) {
+      if (row.name === '单页合计' || row.name === '汇总') {
+        return 'summary-cell-style'
       }
     },
     async getMaterialGroupList() {
@@ -176,8 +232,37 @@ export default {
       this.search.page = page
       this.search.page_size = page_size
       this.getList()
+    },
+    exportTable(val) {
+      this.btnExportLoad = true
+      const obj = Object.assign({ export: val }, this.search)
+      const _api = wmsInventoryDown
+      _api(obj)
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '原材料库-库存统计.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
     }
   }
+}
+function sum(arr, params) {
+  var s = 0
+
+  arr.forEach(function(val, idx, arr) {
+    const a = val[params] ? Number(val[params]) : 0
+    s += a
+  }, 0)
+  s = Math.round(s * 1000) / 1000
+  return s
 }
 </script>
 

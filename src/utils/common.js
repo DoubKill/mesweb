@@ -22,6 +22,10 @@ export default {
       value: 5, label: '驳回'
     }, {
       value: 6, label: '废弃'
+    }, {
+      value: 7, label: '停用'
     }
-  ]
+  ],
+  echartColor: ['#FC7213', '#73c0de', '#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de'],
+  workTypeList: ['巡检', '保养', '润滑', '标定', '维修']
 }

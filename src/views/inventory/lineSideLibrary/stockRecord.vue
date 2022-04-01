@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!--线边库 库存查询 -->
+    <!--线边库 库存统计 -->
     <el-form :inline="true">
       <el-form-item label="胶料编码:">
         <el-select v-model="search.product_no" clearable filterable placeholder="请选择" @change="changeList">
@@ -40,6 +40,7 @@
           ref="singleTable"
           :data="tableData"
           border
+          show-summary
           highlight-current-row
           @current-change="handleCurrentChange"
         >
@@ -57,7 +58,7 @@
           />
           <el-table-column
             prop="actual_weight"
-            label="重量"
+            label="重量(kg)"
           />
         </el-table>
       </el-col>
@@ -127,6 +128,9 @@ export default {
         this.loading = true
         const data = await depotPallet('get', null, { params: this.search })
         this.tableData = data.results
+        this.tableData.forEach(d => {
+          d.actual_weight = Math.round(d.actual_weight * 1000) / 1000
+        })
         if (this.tableData.length > 0) {
           this.$refs.singleTable.setCurrentRow(this.tableData[0])
         }

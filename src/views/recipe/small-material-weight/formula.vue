@@ -51,12 +51,12 @@
             <el-table-column
               prop="name"
               label="配方名称"
-              min-width="20"
+              min-width="40"
             />
             <el-table-column
               prop="ver"
               label="版本"
-              min-width="20"
+              min-width="15"
             />
             <el-table-column
               prop="weight"
@@ -89,6 +89,57 @@
                 return '已使用'
               }"
             />
+            <el-table-column label="是否合包" width="110px">
+              <template slot-scope="{row}">
+                <el-switch
+                  v-model="row.merge_flag"
+                  :disabled="!checkPermission(['xl_recipe','merge'])"
+                  active-text="是"
+                  inactive-text="否"
+                  @change="changeSwitch(row,index,false)"
+                />
+              </template>
+            </el-table-column>
+            <el-table-column label="是否停用" width="80px">
+              <template slot-scope="{row}">
+                <el-button
+                  size="mini"
+                  type="danger"
+                  :disabled="!checkPermission(['xl_recipe','merge'])"
+                  @click.stop="handleGlobalCodeTypeDelete(row,index)"
+                >{{ row.use_not ? '启用' : '停用' }}</el-button>
+              </template>
+            </el-table-column>
+            <el-table-column label="分包数" width="120px">
+              <template slot-scope="{row}">
+                <el-input-number
+                  v-model="row.split_count"
+                  :disabled="!checkPermission(['xl_recipe','merge'])||loading"
+                  style="width:100px"
+                  controls-position="right"
+                  :min="1"
+                  :max="9999"
+                  @change="changeSwitch(row, index,true)"
+                />
+              </template>
+            </el-table-column>
+            <!-- <el-table-column label="是否停用" width="80px">
+              <template slot-scope="{row}"> -->
+            <!-- <el-button
+                  size="mini"
+                  type="primary"
+                  @click="uploadMes(scope.row,index)"
+                >上传
+                </el-button> -->
+            <!-- <el-switch
+                  v-model="row.use_not"
+                  :disabled="!checkPermission(['xl_recipe','merge'])"
+                  active-text="是"
+                  inactive-text="否"
+                  @change.self="changeStopSwitch(row,index)"
+                /> -->
+            <!-- </template>
+            </el-table-column> -->
           </el-table>
           <page
             :old-page="false"
@@ -132,9 +183,9 @@
 </template>
 
 <script>
-import { debounce } from '@/utils'
+import { debounce, checkPermission } from '@/utils'
 import selectBatchingEquip from '../components/select-batching-equip'
-import { xlRecipe, xlRecipeMaterial } from '@/api/base_w_three'
+import { xlRecipe, xlRecipeMaterial, updateFlagCount } from '@/api/base_w_three'
 import page from '@/components/page'
 export default {
   name: 'SmallMaterialWeightFormula',
@@ -150,6 +201,7 @@ export default {
     }
   },
   methods: {
+    checkPermission,
     async getList() {
       try {
         this.loading = true
@@ -161,7 +213,7 @@ export default {
         }
         this.loading = false
 
-        return { data: data.results || [], total: data.count || 0 }
+        return { data: data.results, total: data.count }
       } catch (e) {
         this.loading = false
       }
@@ -219,8 +271,8 @@ export default {
                 {
                   equip_no: d.equip_no,
                   search: {},
-                  tableList: a.data,
-                  total: a.total,
+                  tableList: a ? a.data : [],
+                  total: a ? a.total : 0,
                   tableList1: []
                 }
               )
@@ -238,6 +290,72 @@ export default {
       } catch (e) {
         //
       }
+    },
+    async uploadMes(row, faI) {
+      try {
+        await xlRecipe('post', null, { data: { equip_no: this.allTable[faI].equip_no, recipe_name: row.name, total_standard_error: row.error }})
+        this.$message.success('上传成功')
+      } catch (e) {
+        //
+      }
+    },
+    async changeStopSwitch(row, faI) {
+      try {
+        await updateFlagCount('post', null, { data: {
+          equip_no: this.allTable[faI].equip_no,
+          id: row.id, use_not: row.use_not
+        }})
+      } catch (e) {
+        //
+      }
+    },
+    async changeSwitch(row, faI, bool) {
+      try {
+        this.loading = true
+        await updateFlagCount('post', null, { data: {
+          equip_no: this.allTable[faI].equip_no,
+          id: row.id, oper_type: '配方', merge_flag: row.merge_flag, split_count: row.split_count
+        }})
+        this.$message.success('操作成功')
+        if (bool) {
+          const data = await this.getList()
+          this.allTable[this.currentIndex].tableList = data.data
+          this.allTable[this.currentIndex].total = data.total
+          this.allTable[this.currentIndex].tableList1 = []
+        } else {
+          this.loading = false
+        }
+      } catch (e) {
+        this.loading = false
+      }
+    },
+    handleGlobalCodeTypeDelete: function(row, faI) {
+      var str = row.use_not ? '启用' : '停用'
+      const use_not = row.use_not ? 0 : 1
+      this.$confirm('此操作将' + str + ', 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        updateFlagCount('post', null, { data: {
+          equip_no: this.allTable[faI].equip_no,
+          id: row.id, use_not: use_not
+        }})
+          .then(async() => {
+            this.$message({
+              type: 'success',
+              message: '操作成功!'
+            })
+            const data = await this.getList()
+            this.allTable[faI].tableList = data.data
+            this.allTable[faI].total = data.total
+            this.allTable[faI].tableList1 = []
+          }).catch(() => {
+            //
+          })
+      }).catch(function() {
+
+      })
     }
   }
 }

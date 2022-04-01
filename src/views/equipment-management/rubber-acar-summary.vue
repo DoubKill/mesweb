@@ -182,8 +182,8 @@ export default {
     },
     classChanged(val) {
       this.search.classes = val
-      this.getList()
       this.search.page = 1
+      this.getList()
     }
   }
 }

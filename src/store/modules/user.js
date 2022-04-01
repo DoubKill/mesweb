@@ -2,8 +2,8 @@ import { login } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 import Cookies from 'js-cookie'
-import request from '@/utils/request-zc'
-import requestTH from '@/utils/request-zc-th'
+// import request from '@/utils/request-zc'
+// import requestTH from '@/utils/request-zc-th'
 
 const getDefaultState = () => {
   return {
@@ -63,31 +63,29 @@ const actions = {
         // 登录中策
         Cookies.set('zc-url', response.wms_url)
         Cookies.set('zc-th-url', response.th_url)
-        const loginId = process.env.NODE_ENV === 'production'
-          ? window.location.host === '10.10.120.40:9009' ? 'guozi' : 'mes' : 'guozi'
         // const loginId = 'mes'
-        request({
-          url: '/user/Login',
-          method: 'POST',
-          data: { loginId: loginId,
-            password: '123456' }}
-        ).then(data => {
-          const userId = data.datas.userId
-          Cookies.set('zc-userId', userId)
-        }).catch((e) => {
-          console.log(e, 'zc登录失败')
-        })
-        requestTH({
-          url: '/user/Login',
-          method: 'POST',
-          data: { loginId: 'admin',
-            password: '123456' }}
-        ).then(data => {
-          const userId = data.datas.userId
-          Cookies.set('zc-th-userId', userId)
-        }).catch((e) => {
-          console.log(e, 'zc登录失败')
-        })
+        // request({
+        //   url: '/user/Login',
+        //   method: 'POST',
+        //   data: { loginId: loginId,
+        //     password: '123456' }}
+        // ).then(data => {
+        //   const userId = data.datas.userId
+        //   Cookies.set('zc-userId', userId)
+        // }).catch((e) => {
+        //   console.log(e, 'zc登录失败')
+        // })
+        // requestTH({
+        //   url: '/user/Login',
+        //   method: 'POST',
+        //   data: { loginId: '18507021015',
+        //     password: 'mes123456' }}
+        // ).then(data => {
+        //   const userId = data.datas.userId
+        //   Cookies.set('zc-th-userId', userId)
+        // }).catch((e) => {
+        //   console.log(e, 'zc登录失败')
+        // })
         commit('SET_TOKEN', response.token)
         commit('SET_NAME', response.username)
         commit('SET_USER_ID', response.id)
@@ -143,7 +141,7 @@ const actions = {
       commit('SET_NAME', '')
       localStorage.clear()
 
-      Cookies.remove('zc-userId')
+      // Cookies.remove('zc-userId')
       Cookies.remove('editionNo')
       Cookies.remove('userId')
       Cookies.remove('name')

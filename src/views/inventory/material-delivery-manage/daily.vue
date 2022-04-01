@@ -30,8 +30,16 @@
           @change="changeDate"
         />
       </el-form-item>
-      <el-form-item label="物资名称">
-        <el-input v-model="search.MaterialName" clearable placeholder="请输入内容" @input="getDebounce" />
+      <el-form-item label="物料名称">
+        <el-select v-model="search.MaterialName" allow-create filterable placeholder="请选择" clearable @visible-change="getMaterialsList" @change="changeDate">
+          <el-option
+            v-for="item in options"
+            :key="item.name"
+            :label="item.name"
+            :value="item.name"
+          />
+        </el-select>
+        <!-- <el-input v-model="search.MaterialName" clearable placeholder="请输入内容" @input="getDebounce" /> -->
       </el-form-item>
       <el-form-item label="物资组">
         <el-select v-model="search.MaterialGroupName" filterable clearable placeholder="请选择" @change="changeDate">
@@ -51,8 +59,8 @@
           <el-option
             v-for="item in TunnelNameList"
             :key="item.id"
-            :label="item.tunnelName"
-            :value="item.tunnelName"
+            :label="item.name"
+            :value="item.name"
           />
         </el-select>
       </el-form-item>
@@ -66,6 +74,7 @@
           />
         </el-select>
       </el-form-item>
+      <el-button type="primary" :loading="btnExportLoad" @click="Excel">导出Excel</el-button>
     </el-form>
     <el-row>
       <el-col :span="12">
@@ -112,7 +121,11 @@
         prop="quantity"
         label="数量"
         min-width="8"
-      />
+      >
+        <template slot-scope="{row}">
+          <el-link type="primary" @click.prevent="check_(row)">{{ row.quantity }}</el-link>
+        </template>
+      </el-table-column>
       <el-table-column
         v-if="currentRouter==='DeliveryDaily'"
         prop="batchNo"
@@ -124,6 +137,16 @@
         label="总重量（kg）"
         min-width="20"
       />
+      <el-table-column
+        prop="sl"
+        label="件数"
+        min-width="20"
+      />
+      <el-table-column
+        prop="zl"
+        label="麦头重量"
+        min-width="20"
+      />
     </el-table>
     <page
       v-if="!loading"
@@ -131,17 +154,29 @@
       :current-page="search.pageNo"
       @currentChange="currentChange"
     />
+    <el-dialog
+      title="出入库履历信息"
+      :visible.sync="dialogVisible"
+      width="90%"
+      :before-close="handleClose"
+    >
+      <materialInoutRecord :dialog-search="dialogSearch" :is-dialog="true" :warehouse-name-props="'原材料库'" :show="dialogVisible" />
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import request from '@/utils/request-zc'
 import page from '@/components/page'
-import { debounce } from '@/utils'
+import { debounce, setDate } from '@/utils'
+import { wmsMaterials } from '@/api/jqy'
 import * as echarts from 'echarts'
+import materialInoutRecord from '@/views/inventory/rubber-warehouse/material_inout_record.vue'
+import { wmsMaterialGroups, wmsTunnels } from '@/api/base_w_four'
+import { wmsEntrance } from '@/api/base_w_three'
 export default {
   name: 'DeliveryDaily',
-  components: { page },
+  components: { page, materialInoutRecord },
   data() {
     return {
       tableData: [],
@@ -149,6 +184,9 @@ export default {
         pageSize: 10,
         pageNo: 1
       },
+      search1: {},
+      options: [],
+      btnExportLoad: false,
       datetimerange: [],
       datetimerangeMonth: '',
       datetimerangeYear: '',
@@ -221,10 +259,31 @@ export default {
           type: 'line',
           smooth: true
         }]
-      }
+      },
+      dialogVisible: false,
+      dialogSearch: {}
     }
   },
   created() {
+    if (this.currentRouter === 'DeliveryDaily') {
+      this.search.EndTime = setDate(null, true)
+      this.search.StartTime = setDate() + ' 00:00:00'
+      this.datetimerange = [this.search.StartTime, this.search.EndTime]
+    } else if (this.currentRouter === 'DeliveryMonthly') {
+      const a = new Date()
+      const _year = a.getFullYear()
+      const _month = a.getMonth()
+      const firstDay = new Date(_year, _month, 1)
+      delete this.search.EndTime
+      this.search.StartTime = setDate(firstDay) + ' 00:00:00'
+      this.datetimerangeMonth = setDate(firstDay) + ' 00:00:00'
+    } else {
+      const a = new Date()
+      const _year = a.getFullYear()
+      delete this.search.EndTime
+      this.search.StartTime = _year + '-01-01' + ' 00:00:00'
+      this.datetimerangeYear = _year + '-01-01' + ' 00:00:00'
+    }
     this.getDownTaskCountByTodayCount()
     this.getMaterialList()
     this.getTunnelNameList()
@@ -232,6 +291,52 @@ export default {
     this.getList()
   },
   methods: {
+    async getMaterialsList(val) {
+      if (val) {
+        try {
+          const data = await wmsMaterials('get', null, { params: { all: 1 }})
+          this.options = data || []
+        } catch (e) {
+        //
+        }
+      }
+    },
+    Excel() {
+      this.btnExportLoad = true
+      this.search1 = JSON.parse(JSON.stringify(this.search))
+      this.search1.pageSize = 999999999
+      const _api = this.currentRouter === 'DeliveryDaily'
+        ? '/stockOutTask/FindDownTaskReportByDay'
+        : this.currentRouter === 'DeliveryMonthly' ? '/stockOutTask/FindDownTaskReportByMonth'
+          : '/stockOutTask/FindDownTaskReportByYear'
+      const excelName = this.currentRouter === 'DeliveryDaily' ? '原材料库出库日报'
+        : this.currentRouter === 'DeliveryMonthly' ? '原材料库出库月报' : '原材料库出库年报'
+      console.log(this.datetimerange)
+      var time = ''
+      if (this.datetimerange || this.datetimerangeMonth || this.datetimerangeYear) {
+        time = this.currentRouter === 'DeliveryDaily' ? this.datetimerange[0].split(' ')[0] + '-' + this.datetimerange[1].split(' ')[0]
+          : this.currentRouter === 'DeliveryMonthly' ? this.datetimerangeMonth.split('-')[0] + '-' + this.datetimerangeMonth.split('-')[1]
+            : this.datetimerangeYear.split('-')[0]
+      } else {
+        time = ''
+      }
+      request({
+        url: _api,
+        method: 'get',
+        params: this.search1
+      }).then(data => {
+        const a = data.datas
+        this.btnExportLoad = false
+        this.$router.push({
+          path: '/excel',
+          query: {
+            table: a,
+            name: excelName + ' ' + time
+          }})
+      }).catch((e) => {
+        this.btnExportLoad = false
+      })
+    },
     getList() {
       this.loading = true
       this.tableData = []
@@ -251,35 +356,57 @@ export default {
         this.loading = false
       })
     },
-    getMaterialList() {
-      request({
-        url: '/materialGroup/FindAll',
-        method: 'get'
-      }).then(data => {
-        this.MaterialList = data.datas
-      }).catch((e) => {
-      })
+    async getMaterialList() {
+      try {
+        const data = await wmsMaterialGroups('get')
+        this.MaterialList = data
+      } catch (e) {
+        //
+      }
     },
-    getTunnelNameList() {
-      request({
-        url: '/tunnel/FindAll',
-        method: 'get'
-      }).then(data => {
-        this.TunnelNameList = data.datas || []
-      }).catch((e) => {
-        console.log(e, 'zc获取失败')
-      })
+    async getTunnelNameList() {
+      try {
+        const data = await wmsTunnels('get')
+        this.TunnelNameList = data
+      } catch (e) {
+        //
+      }
     },
-    getEntranceList() {
-      request({
-        url: '/entrance/FindAll',
-        method: 'get'
-      }).then(data => {
-        const arr = data.datas.filter(d => d.type === 2)
-        this.EntranceList = arr || []
-      }).catch((e) => {
-        console.log(e, 'zc获取失败')
-      })
+    // getMaterialList() {
+    //   request({
+    //     url: '/materialGroup/FindAll',
+    //     method: 'get'
+    //   }).then(data => {
+    //     this.MaterialList = data.datas
+    //   }).catch((e) => {
+    //   })
+    // },
+    // getTunnelNameList() {
+    //   request({
+    //     url: '/tunnel/FindAll',
+    //     method: 'get'
+    //   }).then(data => {
+    //     this.TunnelNameList = data.datas || []
+    //   }).catch((e) => {
+    //     console.log(e, 'zc获取失败')
+    //   })
+    // },
+    async getEntranceList() {
+      try {
+        const data = await wmsEntrance('get')
+        this.EntranceList = data
+      } catch (e) {
+        //
+      }
+      // request({
+      //   url: '/entrance/FindAll',
+      //   method: 'get'
+      // }).then(data => {
+      //   const arr = data.datas.filter(d => d.type === 2)
+      //   this.EntranceList = arr || []
+      // }).catch((e) => {
+      //   console.log(e, 'zc获取失败')
+      // })
     },
     getDownTaskCountByTodayCount() {
       const _api = this.currentRouter === 'DeliveryDaily'
@@ -332,11 +459,11 @@ export default {
       this.search.StartTime = this.datetimerange ? this.datetimerange[0] : ''
       this.search.EndTime = this.datetimerange ? this.datetimerange[1] : ''
       this.search.tunnelCode = this.datetimerange ? this.datetimerange[1] : ''
-      const obj = this.TunnelNameList.find(d => d.tunnelName === this.search.TunnelName)
+      const obj = this.TunnelNameList.find(d => d.name === this.search.TunnelName)
       const obj1 = this.EntranceList.find(d => d.name === this.search.EntranceName)
       this.search.pageNo = 1
-      this.search.tunnelCode = obj ? obj.tunnelCode : ''
-      this.search.EntranceCode = obj1 ? obj1.entranceCode : ''
+      this.search.tunnelCode = obj ? obj.code : ''
+      this.search.EntranceCode = obj1 ? obj1.code : ''
 
       if (this.currentRouter === 'DeliveryMonthly') {
         this.search.StartTime = this.datetimerangeMonth
@@ -353,9 +480,40 @@ export default {
     currentChange(page) {
       this.search.pageNo = page
       this.getList()
+    },
+    check_(row) {
+      this.dialogSearch = {
+        e_material_no: row.materialCode,
+        batch_no: row.batchNo || ''
+      }
+      if (this.currentRouter === 'DeliveryDaily') {
+        this.dialogSearch.start_time = this.search.StartTime || ''
+        this.dialogSearch.end_time = this.search.EndTime || ''
+      } else if (this.currentRouter === 'DeliveryMonthly') {
+        const a = new Date(this.datetimerangeMonth)
+        const _year = a.getFullYear()
+        const _month = a.getMonth()
+        const firstDay = new Date(_year, _month, 1)
+        const lastDay = new Date(_year, _month + 1, 0)
+
+        this.dialogSearch.start_time = setDate(firstDay) + ' 00:00:00'
+        this.dialogSearch.end_time = setDate(lastDay) + ' 23:59:59'
+      } else {
+        const a = new Date(this.datetimerangeYear)
+        const _year = a.getFullYear()
+        this.dialogSearch.start_time = _year + '-01-01' + ' 00:00:00'
+        this.dialogSearch.end_time = _year + '-12-31' + ' 23:59:59'
+      }
+      this.dialogVisible = true
+    },
+    handleClose(done) {
+      if (done) {
+        done()
+      }
     }
   }
 }
+
 </script>
 
 <style>

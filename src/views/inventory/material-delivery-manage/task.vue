@@ -3,10 +3,10 @@
     <!-- 出库任务 -->
     <el-form :inline="true">
       <el-form-item label="出库单据号">
-        <el-input v-model="search.TaskNumber" clearable placeholder="请输入内容" @input="getDebounce" />
+        <el-input v-model="search.task_order_no" clearable placeholder="请输入内容" @input="getDebounce" />
       </el-form-item>
       <el-form-item label="状态">
-        <el-select v-model="search.State" clearable placeholder="请选择" @change="changeDate">
+        <el-select v-model="search.task_status" clearable placeholder="请选择" @change="changeDate">
           <el-option
             v-for="item in options"
             :key="item.id"
@@ -16,26 +16,44 @@
         </el-select>
       </el-form-item>
       <el-form-item label="追踪码">
-        <el-input v-model="search.TrackingNumber" clearable placeholder="请输入内容" @input="getDebounce" />
+        <el-input v-model="search.lot_no" clearable placeholder="请输入内容" @input="getDebounce" />
       </el-form-item>
       <el-form-item label="物料编码">
-        <el-input v-model="search.MaterialCode" clearable placeholder="请输入内容" @input="getDebounce" />
+        <el-select v-model="search.material_no" allow-create filterable placeholder="请选择" clearable @visible-change="getMaterialsList" @change="changeDate">
+          <el-option
+            v-for="item in options1"
+            :key="item.code"
+            :label="item.code"
+            :value="item.code"
+          />
+        </el-select>
+        <!-- <el-input v-model="search.material_no" clearable placeholder="请输入内容" @input="getDebounce" /> -->
       </el-form-item>
       <el-form-item label="巷道">
-        <el-select v-model="search.TunnelName" filterable clearable placeholder="请选择" @change="changeDate">
+        <el-select v-model="search.tunnel" filterable clearable placeholder="请选择" @change="changeDate">
           <el-option
             v-for="item in TunnelNameList"
             :key="item.id"
-            :label="item.tunnelName"
-            :value="item.tunnelName"
+            :label="item.name"
+            :value="item.code"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="出库站台">
+        <el-select v-model="search.entrance_name" filterable clearable placeholder="请选择" @change="changeDate">
+          <el-option
+            v-for="item in entranceList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.name"
           />
         </el-select>
       </el-form-item>
       <el-form-item label="库位码">
-        <el-input v-model="search.spaceId" clearable placeholder="请输入内容" @input="getDebounce" />
+        <el-input v-model="search.location" clearable placeholder="请输入内容" @input="getDebounce" />
       </el-form-item>
       <el-form-item label="识别卡ID">
-        <el-input v-model="search.ladenToolNumber" clearable placeholder="请输入内容" @input="getDebounce" />
+        <el-input v-model="search.pallet_no" clearable placeholder="请输入内容" @input="getDebounce" />
       </el-form-item>
       <el-form-item label="时间">
         <el-date-picker
@@ -45,11 +63,13 @@
           start-placeholder="开始时间"
           end-placeholder="结束时间"
           value-format="yyyy-MM-dd HH:mm:ss"
+          :default-time="['08:00:00', '08:00:00']"
           @change="changeDate"
         />
       </el-form-item>
-      <el-form-item label="">
+      <el-form-item>
         <el-button type="primary" @click="getList">刷新</el-button>
+        <el-button type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -59,97 +79,108 @@
       border
     >
       <el-table-column
-        prop="id"
         label="序号"
         type="index"
         width="50"
       />
       <el-table-column
-        prop="taskNumber"
+        prop="task_order_no"
         label="出库单据号"
         min-width="20"
       />
       <el-table-column
-        prop="taskId"
+        prop="order_no"
         label="下架任务号"
         min-width="20"
       />
       <el-table-column
-        prop="tunnelId"
         label="巷道编码"
         min-width="10"
-      />
+      >
+        <template slot-scope="{row}">
+          {{ row.location?row.location.split('-')[1]:'' }}
+        </template>
+      </el-table-column>
       <el-table-column
-        prop="trackingNumber"
+        prop="lot_no"
         label="追踪码"
         min-width="20"
       />
       <el-table-column
-        prop="ladenToolNumber"
+        prop="pallet_no"
         label="识别卡ID"
         min-width="20"
       />
       <el-table-column
-        prop="spaceId"
+        prop="location"
         label="库位码"
         min-width="20"
       />
       <el-table-column
-        prop="materialName"
+        prop="material_name"
         label="物料名称"
         min-width="20"
       />
       <el-table-column
-        prop="materialCode"
+        prop="material_no"
         label="物料编码"
         min-width="20"
       />
       <el-table-column
-        prop="batchNo"
+        prop="batch_no"
         label="批次号"
         min-width="20"
       />
       <el-table-column
-        prop="createrTime"
+        prop="created_time"
         label="创建时间"
         min-width="20"
       />
       <el-table-column
-        prop="taskState"
+        prop="task_status"
         label="状态"
         min-width="20"
         :formatter="(row)=>{
-          let obj = options.find(d=>d.id === row.taskState)
+          let obj = options.find(d=>d.id === row.task_status)
           return obj.name
         }"
       />
       <el-table-column
-        prop="createUserId"
+        prop="initiator"
         label="创建人"
         min-width="20"
       />
       <el-table-column
-        prop="quantity"
+        prop="qty"
         label="数量"
         min-width="10"
       />
       <el-table-column
-        prop="weightOfActual"
+        prop="weight"
         label="重量"
+        min-width="20"
+      />
+      <el-table-column
+        prop="entrance_name"
+        label="出库站台"
         min-width="20"
       />
     </el-table>
     <page
       v-if="!loading"
       :total="total"
-      :current-page="search.pageNo"
+      :current-page="search.page"
       @currentChange="currentChange"
     />
   </div>
 </template>
 
 <script>
-import request from '@/utils/request-zc'
+// import request from '@/utils/request-zc'
+import { wmsMaterials } from '@/api/jqy'
+import { wmsOutTaskDetails } from '@/api/base_w_five'
+import { wmsTunnels } from '@/api/base_w_four'
+import { wmsEntrance } from '@/api/base_w_three'
 import page from '@/components/page'
 import { debounce } from '@/utils'
 export default {
@@ -159,8 +190,8 @@ export default {
     return {
       tableData: [],
       search: {
-        pageSize: 10,
-        pageNo: 1
+        page_size: 10,
+        page: 1
       },
       options: [
         { name: '待处理', id: 1 },
@@ -171,58 +202,97 @@ export default {
         { name: '异常', id: 6 },
         { name: '强制完成', id: 12 }
       ],
+      options1: [],
       TunnelNameList: [],
+      entranceList: [],
       datetimerange: [],
       loading: false,
-      total: 0
+      total: 0,
+      btnExportLoad: false
     }
   },
   created() {
     this.getTunnelNameList()
+    this.getEntranceList()
     this.getList()
   },
   methods: {
-    getList() {
+    async getMaterialsList(val) {
+      if (val) {
+        try {
+          const data = await wmsMaterials('get', null, { params: { all: 1 }})
+          this.options1 = data || []
+        } catch (e) {
+        //
+        }
+      }
+    },
+    async getList() {
       this.loading = true
       this.tableData = []
-      request({
-        url: '/stockOutTask/FindAllDownTaskByPaging',
-        method: 'get',
-        params: this.search
-      }).then(data => {
+      try {
+        const data = await wmsOutTaskDetails('get', null, { params: this.search })
         this.loading = false
-        this.tableData = data.datas
-        this.total = data.totalRecord
-      }).catch((e) => {
-        this.loading = false
-      })
+        this.tableData = data.results || []
+        this.total = data.count
+      } catch (e) {
+        //
+      }
     },
     currentChange(page) {
-      this.search.pageNo = page
+      this.search.page = page
       this.getList()
     },
     changeDate() {
-      if (!this.search.State) {
-        delete this.search.State
+      if (!this.search.task_status) {
+        delete this.search.task_status
       }
-      this.search.StartTime = this.datetimerange ? this.datetimerange[0] : ''
-      this.search.EndTime = this.datetimerange ? this.datetimerange[1] : ''
-      this.search.pageNo = 1
+      this.search.st = this.datetimerange ? this.datetimerange[0] : ''
+      this.search.et = this.datetimerange ? this.datetimerange[1] : ''
+      this.search.page = 1
       this.getList()
     },
     getDebounce() {
-      this.search.pageNo = 1
+      this.search.page = 1
       debounce(this, 'getList')
     },
-    getTunnelNameList() {
-      request({
-        url: '/tunnel/FindAll',
-        method: 'get'
-      }).then(data => {
-        this.TunnelNameList = data.datas || []
-      }).catch((e) => {
-        console.log(e, 'zc获取失败')
-      })
+    async getTunnelNameList() {
+      try {
+        const data = await wmsTunnels('get')
+        this.TunnelNameList = data || []
+      } catch (e) {
+        //
+      }
+    },
+    async getEntranceList() {
+      try {
+        const data = await wmsEntrance('get')
+        this.entranceList = data || []
+      } catch (e) {
+        //
+      }
+    },
+    exportTable() {
+      if (!this.datetimerange || !this.datetimerange.length) {
+        this.$message('请选择日期')
+        return
+      }
+      this.btnExportLoad = true
+      const obj = Object.assign({ export: 1 }, this.search)
+      wmsOutTaskDetails('get', null, { responseType: 'blob', params: obj })
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '原材料库-出库任务.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
     }
   }
 }

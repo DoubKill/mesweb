@@ -1,6 +1,6 @@
 <template>
   <!-- 快检信息综合管理 -->
-  <div class="app-container">
+  <div class="check_synthesize_manage">
     <el-form :inline="true">
       <el-form-item label="日期">
         <el-date-picker
@@ -65,6 +65,7 @@
     <div style="width:100%;text-align:right;margin-top:-10px">
       <el-switch
         v-model="is_showed"
+        v-permission="['deal_result','range']"
         active-text="打印时显示区间"
         @change="showedChange"
       />
@@ -117,6 +118,11 @@
         <el-table-column label="处理时间" align="center" prop="deal_time" width="80" />
       </el-table-column>
       <el-table-column label="车次" prop="trains" width="60" />
+      <el-table-column label="打印次数" align="center" width="60">
+        <template slot-scope="{row}">
+          <el-link type="primary" @click="showList(row)">{{ row.print_times }}</el-link>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" width="120">
         <template slot-scope="{row}">
           <!-- <el-button size="mini" @click="handleEdit(row)">编辑</el-button> -->
@@ -299,6 +305,11 @@
           min-width="20"
         />
         <el-table-column
+          prop="actual_weight"
+          label="重量"
+          min-width="10"
+        />
+        <el-table-column
           prop="address"
           label="收皮车次"
           min-width="10"
@@ -343,6 +354,22 @@
         <el-button type="primary" :loading="btnLoadingNew" @click="submitTrainNew">确 定</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      title=""
+      :visible.sync="dialogList"
+      width="70%"
+    >
+      <el-table
+        :data="listData"
+        border
+      >
+        <el-table-column label="序号" type="index" min-width="20" />
+        <el-table-column label="打印场所" prop="location" min-width="20" />
+        <el-table-column label="打印人" prop="created_user" min-width="20" />
+        <el-table-column label="打印时间" prop="created_date" min-width="20" />
+      </el-table>
+    </el-dialog>
   </div>
 </template>
 
@@ -355,7 +382,7 @@ import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import DealSuggestionSelect from '@/components/DealSuggestionSelect'
 import TestCard from '@/components/TestCard'
 import { palletFeedTest, changelValidTime, qualityPalletFeedTest } from '@/api/quick-check-detail'
-import { labelPrint, showQualifiedRange, trainsFix, palletTrainBatchFix } from '@/api/base_w'
+import { labelPrint, showQualifiedRange, trainsFix, palletTrainBatchFix, labelPrintLogs } from '@/api/base_w'
 import { debounce, setDate } from '@/utils'
 export default {
   name: 'CheckSynthesizeManage',
@@ -438,7 +465,9 @@ export default {
       btnLoading: false,
       dialogVisibleTrainNew: false,
       btnLoadingNew: false,
-      tableData1: []
+      tableData1: [],
+      dialogList: false,
+      listData: []
     }
   },
   watch: {
@@ -458,12 +487,17 @@ export default {
     },
     async getCardInfo(id) {
       try {
+        if (this.$refs['testCard']) {
+          this.$refs['testCard'].loading = true
+        }
         const data = await qualityPalletFeedTest(id)
         this.$nextTick(() => {
           this.$refs['testCard'].setTestData(data)
         })
       } catch (e) {
-        //
+        if (this.$refs['testCard']) {
+          this.$refs['testCard'].loading = false
+        }
       }
     },
     print(row) {
@@ -539,11 +573,25 @@ export default {
       try {
         if (this.labelPrintList.length === 0) return
         const arr = []
+        let str = ''
+
         this.labelPrintList.forEach(D => {
           arr.push(D.lot_no)
+          if (D.print_times > 1) {
+            str += D.product_no + ' ' + D.trains + '车  ' + '卡片已打印' + D.print_times + '次' + '<br>'
+          }
         })
-        await labelPrint('post', null, { data: { lot_no: arr }})
-        this.$message.success('打印任务已连接')
+        this.$confirm(str + '是否继续打印?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+          dangerouslyUseHTMLString: true
+        }).then(async() => {
+          await labelPrint('post', null, { data: { lot_no: arr }})
+          this.$message.success('打印任务已连接')
+        }).catch(() => {
+          //
+        })
       } catch (e) {
         //
       }
@@ -735,7 +783,7 @@ export default {
             const a = element && element.end_trains
             const aa = element && element.begin_trains
             if (i === index) return
-            if ((valBegin <= a && a <= valEnd) || (valBegin <= aa && aa <= valEnd)) {
+            if ((valBegin < a && a <= valEnd) || (valBegin <= aa && aa < valEnd)) {
               throw new Error(index + 1 + '行车次重复')
             }
           }
@@ -764,6 +812,15 @@ export default {
           return false
         }
       })
+    },
+    async showList(row) {
+      this.dialogList = true
+      try {
+        const data = await labelPrintLogs('get', null, { params: { result_id: row.id }})
+        this.listData = data || []
+      } catch (e) {
+        //
+      }
     }
   }
 }
@@ -772,6 +829,8 @@ export default {
   // .el-input {
   //   width: auto;
   // }
+  .check_synthesize_manage{
+    white-space:"pre";
     .dialogStyle{
       .el-input,.el-select{
         width:150px !important;
@@ -787,4 +846,5 @@ export default {
         width:auto !important;
       }
     }
+  }
 </style>

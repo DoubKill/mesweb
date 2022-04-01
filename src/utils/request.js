@@ -8,11 +8,12 @@ import {
   getToken
 } from '@/utils/auth'
 
+let currentUrl = ''
 // create an axios instance
 const service = axios.create({
   baseURL: process.env.NODE_ENV === 'production' ? '/' : '/api', // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 50000 // request timeout
+  timeout: 10000000000 // request timeout
 })
 
 // request interceptor
@@ -21,6 +22,7 @@ service.interceptors.request.use(
     if (store.getters.token) {
       config.headers['Authorization'] = 'JWT ' + getToken()
     }
+    currentUrl = config.responseType || false
     return config
   },
   error => {
@@ -82,7 +84,9 @@ service.interceptors.response.use(
           }
         }
       }
-
+      // if (obj.detail && obj.detail === '无效页面。') {
+      //   return Promise.resolve({ results: [] })
+      // }
       Message({
         message: str,
         type: 'error',
@@ -133,6 +137,19 @@ service.interceptors.response.use(
       })
       return Promise.reject(error.response.data)
     } else if (typeof error.message === 'string') {
+      if (currentUrl) {
+        const resData = error.response.data
+        const fileReader = new FileReader()
+        fileReader.onloadend = () => {
+          Message({
+            message: JSON.parse(fileReader.result)[0],
+            type: 'error',
+            duration: 3 * 1000
+          })
+        }
+        fileReader.readAsText(resData)
+        return Promise.reject(error)
+      }
       Message({
         message: error.message,
         type: 'error',

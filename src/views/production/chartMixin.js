@@ -17,8 +17,8 @@ export default {
     this.chartSettings = {
       labelMap: {
         'created_date_date': '时间(s)',
-        'temperature': '温度(c°)',
-        'power': '功率(W)',
+        'temperature': '温度(°c)',
+        'power': 'AI值',
         'energy': '能量(J)',
         'rpm': '转速(r/min)',
         'pressure': '压力(bar)'

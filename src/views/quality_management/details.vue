@@ -2,7 +2,7 @@
   <div
     class="app-container details_style"
   >
-    <el-form :inline="true">
+    <el-form v-if="!isProps" :inline="true">
       <el-form-item label="日期">
         <el-date-picker
           v-model="day_time"
@@ -61,7 +61,7 @@
           :loading="btnLoading"
           @click="getALLData"
         >
-          导出
+          导出Excel
         </el-button>
       </el-form-item>
     </el-form>
@@ -181,6 +181,7 @@
       title="快检值历史曲线"
       :visible.sync="historyDialogVisible"
       width="80%"
+      append-to-body
     >
       <el-date-picker
         v-model="historyDate"
@@ -228,6 +229,36 @@ export default {
     'el-table-infinite-scroll': elTableInfiniteScroll
   },
   components: { EquipSelect, DetailsUTable, allProductNoSelect, ClassSelect, StageSelect },
+  props: {
+    isProps: {
+      type: Boolean,
+      default: false
+    },
+    lotNo: {
+      type: String,
+      default: ''
+    },
+    equipNo: {
+      type: String,
+      default: ''
+    },
+    productNo: {
+      type: String,
+      default: ''
+    },
+    classesNo: {
+      type: String,
+      default: ''
+    },
+    isQualified: {
+      type: String,
+      default: ''
+    },
+    show: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       count: 0,
@@ -293,7 +324,26 @@ export default {
       }
     }
   },
+  watch: {
+    show(bool) {
+      if (bool) {
+        this.testOrders = []
+        this.testOrdersAll = []
+        this.day_time = ''
+        this.getParams.st = ''
+        this.getParams.et = ''
+        this.getParams.lot_no = this.lotNo
+        this.getMaterialTestOrders()
+      }
+    }
+  },
   created() {
+    if (this.isProps) {
+      this.day_time = ''
+      this.getParams.st = ''
+      this.getParams.et = ''
+      this.getParams.lot_no = this.lotNo
+    }
     this.getTestTypes()
     this.testOrders = []
     this.testOrdersAll = []
@@ -384,6 +434,8 @@ export default {
       this.getParams.page = 1
       this.testOrders = []
       this.testOrdersAll = []
+      this.allPage = 0
+      this.definePafeSize = 10
       this.getMaterialTestOrders()
     },
     dayChange(val) {
@@ -393,13 +445,19 @@ export default {
     },
     async getALLData() {
       try {
+        if (getDaysBetween(this.getParams.st, this.getParams.et) > 1) {
+          this.$message('导出Excel日期间隔不得大于2天')
+          return
+        }
         this.btnLoading = true
         const arr = await this.getMaterialTestOrders(true)
         this.ALLData = arr || []
         this.btnLoading = false
-        this.exportExcel()
+        this.$nextTick(() => {
+          this.exportExcel()
+        })
       } catch (e) {
-        //
+        this.btnLoading = false
       }
     },
     async getMaterialTestOrders(bool = false) {
@@ -407,9 +465,9 @@ export default {
       try {
         const paramsObj = JSON.parse(JSON.stringify(this.getParams))
         paramsObj.page_size = bool ? 99999999 : 10
+        paramsObj.page = bool ? 1 : this.getParams.page
         const data = await materialTestOrders(paramsObj)
         let arr = data.results // 加分页
-        // let arr = data
         arr = arr.map(row => {
           row.level = 0
           row.mes_result = '未检测'
@@ -448,11 +506,10 @@ export default {
         // for (let i = 1; i < 8; i++) {
         //   arr = arr.concat(arr)
         // }
-
+        this.listLoading = false
         if (bool) {
           return arr
         }
-        this.listLoading = false
         this.allPage = data.count
 
         this.testOrdersAll.push(...arr)
@@ -462,7 +519,13 @@ export default {
       }
     },
     infiniteScroll() {
+      if (this.allPage <= this.definePafeSize) {
+        return
+      }
       if (Number(this.allPage - this.getParams.page * this.definePafeSize) <= 0) {
+        return
+      }
+      if (this.listLoading) {
         return
       }
       this.getParams.page = this.getParams.page + 1
@@ -587,6 +650,18 @@ export default {
       return wbout
     }
   }
+}
+function getDaysBetween(dateString1, dateString2) {
+  var startDate = Date.parse(dateString1)
+  var endDate = Date.parse(dateString2)
+  if (startDate > endDate) {
+    return 0
+  }
+  if (startDate === endDate) {
+    return 1
+  }
+  var days = (endDate - startDate) / (1 * 24 * 60 * 60 * 1000)
+  return days
 }
 </script>
 

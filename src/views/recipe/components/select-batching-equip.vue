@@ -12,6 +12,7 @@
     <el-option
       v-for="item in equipOptions"
       :key="item.id"
+      :disabled="readIs"
       :label="item.equip_no"
       :value="item.id"
     />

@@ -1,6 +1,6 @@
 <template>
   <div class="kanban-style">
-    <!-- 出库看板 大屏 -->
+    <!-- 出库看板 大屏 /Outbound-Kanban/:id-->
     <h2 class="head-style">{{ obj.warehouse_name }}-运行综合看板</h2>
     <div class="top-center">
       {{ obj.warehouse_name }}
@@ -16,7 +16,7 @@
       <span class="top-right-style">
         <span>总入库数：{{ obj1.total_inbound_count }}</span>
         <span>总出库数：{{ obj1.total_outbound_count }}</span>
-        <span>{{ dataTime }}</span>
+        <span>{{ realTime }}</span>
       </span>
     </div>
     <div class="center-style">
@@ -30,17 +30,17 @@
             <el-table-column
               prop="finish_time"
               label="出库时间"
-              min-width="20"
+              min-width="32"
               align="center"
             />
             <el-table-column
-              prop=""
+              prop="created_user"
               label="出库员"
-              min-width="20"
+              min-width="18"
               align="center"
             />
             <el-table-column
-              prop="production_info.production_info"
+              prop="production_info.factory_date"
               label="生产日期"
               min-width="20"
               align="center"
@@ -48,25 +48,30 @@
             <el-table-column
               prop="production_info.classes"
               label="班次"
-              min-width="20"
+              min-width="16"
               align="center"
             />
             <el-table-column
               prop="production_info.equip_no"
               label="机台"
-              min-width="20"
+              min-width="16"
               align="center"
             />
             <el-table-column
-              prop="memo"
               label="车次"
-              min-width="20"
+              min-width="18"
               align="center"
+              :formatter="row=>{
+                if(!row.memo){
+                  return
+                }
+                return row.memo.replace(',','-')
+              }"
             />
             <el-table-column
               prop="material_no"
               label="胶料编码"
-              min-width="20"
+              min-width="22"
               align="center"
             />
             <el-table-column
@@ -78,7 +83,7 @@
             <el-table-column
               prop="inventory_reason"
               label="品质"
-              min-width="20"
+              min-width="18"
               align="center"
             />
             <el-table-column
@@ -86,6 +91,9 @@
               label="出库类型"
               align="center"
               min-width="20"
+              :formatter="()=>{
+                return '快检出库'
+              }"
             />
             <el-table-column
               prop="destination"
@@ -104,7 +112,7 @@
             style="width: 100%;"
             :span-method="objectSpanMethod"
           >
-            <el-table-column label="出库履历信息" align="center">
+            <el-table-column :label="`${dataTime.split(' ')[0]}（24小时）入出库统计信息`" align="center">
               <el-table-column
                 prop="tunnel"
                 label="巷道"
@@ -133,7 +141,7 @@
           </el-table>
         </el-col>
         <el-col :span="11">
-          <div style="width:100%;height:34vh;display:flex">
+          <div style="width:100%;height:30vh;display:flex">
             <div v-for="(item,i) in listPie" :id="'tunnel'+i" :key="i" style="width:100%;height:100%" />
           </div>
         </el-col>
@@ -150,6 +158,8 @@ import echarts from 'echarts'
 import { stationInfo } from '@/api/warehouse'
 import { outBoundTasks, inoutBoundSummary } from '@/api/base_w_four'
 import { setDate } from '@/utils'
+import common from '@/utils/common'
+import axios from 'axios'
 export default {
   data() {
     return {
@@ -161,22 +171,30 @@ export default {
       listPie: [{}, {}, {}],
       optionsStation: [],
       dataTime: setDate(null, true),
+      realTime: '',
       option: {
+        color: common.echartColor,
         title: {
-          text: '1巷道',
+          text: '',
           left: 'center'
         },
         tooltip: {
           trigger: 'item',
           formatter: '{a} <br/>{b}: {c} ({d}%)'
         },
-        legend: {
-          top: 'bottom',
-          left: '2%'
-        },
+        legend: [
+          { top: 'bottom', x: 'center', data: [] },
+          { top: '80%', x: 'center', data: [] }
+        ],
+        // { top: 'bottom',
+        //   // left: '8%',
+        //   textStyle: {
+        //     fontSize: '20'
+        //   }
+        // }
         series: [
           {
-            name: '访问来源',
+            name: '信息',
             type: 'pie',
             radius: ['30%', '70%'],
             label: {
@@ -185,14 +203,24 @@ export default {
                 position: 'inside'
               }
             },
-            center: ['50%', '40%'],
+            center: ['50%', '45%'],
             labelLine: {
               show: false
             },
-            data: []
+            data: [],
+            itemStyle: {
+              normal: {
+                label: {
+                  textStyle: {
+                    fontSize: '80%'
+                  }
+                }
+              }
+            }
           }
         ]
       },
+      // 未使用
       option1: {
         title: {
           text: '入库率',
@@ -232,9 +260,13 @@ export default {
     }, 10000)
   },
   mounted() {
+    this._setIntervalRealTime = setInterval(() => {
+      this.realTime = setDate(null, true)
+    }, 1000)
   },
   destroyed() {
     clearInterval(this._setInterval)
+    clearInterval(this._setIntervalRealTime)
   },
   methods: {
     async getStation(bool) {
@@ -254,14 +286,23 @@ export default {
         // this.getStation(true)
       }
     },
-    changeStation() {
-      this.getOutBoundTasks()
-      this.getInoutBoundSummary()
+    async changeStation() {
+      // 阻止请求 this.cancel()
+      await this.cancel()
+      await this.cancel1()
+      await this.getOutBoundTasks()
+      await this.getInoutBoundSummary()
     },
     async getOutBoundTasks() {
       try {
+      // 阻止请求 this.cancel()
         this.obj.page_size = 50
-        const data = await outBoundTasks('get', null, { params: this.obj })
+        const self = this
+        const data = await outBoundTasks('get', null, { params: this.obj },
+          new axios.CancelToken(function executor(c) {
+            self.cancel = c
+          })
+        )
         this.tableData = data.results || []
       } catch (e) {
         //
@@ -269,7 +310,13 @@ export default {
     },
     async getInoutBoundSummary() {
       try {
-        const data = await inoutBoundSummary('get', null, { params: this.obj })
+        const self = this
+        const data = await inoutBoundSummary('get', null, { params: this.obj },
+          new axios.CancelToken(function executor(c) {
+            self.cancel1 = c
+          })
+        )
+
         const a = data
         let b = 0
         if (a.production_count && a.total_inbound_count) {
@@ -279,7 +326,10 @@ export default {
 
         this.obj1 = JSON.parse(JSON.stringify(data))
 
-        this.obj1.data[0].all = all
+        if (this.obj1.data.length > 0) {
+          this.obj1.data[0].all = all
+        }
+
         this.obj1.data.push({ tunnel: '合计(24小时)', in_bound_count: data.total_inbound_count,
           out_bound_count: data.total_outbound_count })
 
@@ -307,6 +357,22 @@ export default {
           var chartDom = document.getElementById(`tunnel${i}`)
           var myChart = echarts.init(chartDom)
           this.option.title.text = i === 0 ? '入库' : i === 1 ? '出库' : '入库率'
+          // 只限于 最多4个巷道 legend换行
+          const a = [
+            { top: 'bottom', textStyle: { fontSize: '20' }, x: 'center', data: [] },
+            { top: '80%', textStyle: { fontSize: '20' }, x: 'center', data: [] }
+          ]
+          d.forEach((D, index) => {
+            const iindex = index + 1
+            if (iindex <= 2) {
+              a[0].data.push(D.name)
+            } else {
+              if (d.length > 2) {
+                a[1].data.push(D.name)
+              }
+            }
+          })
+          this.option.legend = a
           this.option.series[0].data = d
           myChart.setOption(this.option, true)
         })
@@ -363,7 +429,7 @@ export default {
     .center-style{
         padding:0 1.5em;
         .tableData-style{
-           height: 50vh;
+           height: 53vh;
             overflow: hidden;
         }
         .bar-right-style{

@@ -16,14 +16,15 @@
       <table
         border="1"
         bordercolor="black"
-        class="info-table out-table"
+        style="width:100%;border-collapse: collapse;"
+        class="info-table"
       >
-        <!-- <thead> -->
-        <!-- </thead> -->
         <tr>
           <th :colspan="5+headDataLength">
             <div style="position:relative">
-              <div class="logo-style">
+              <div
+                style="width:100px;height:45px;position: absolute;left: 10px;"
+              >
                 <img style="width:100%;height:100%" src="@/assets/logo.png" alt="">
               </div>
               <div style="flex:1;text-align:center;font-size: 1.5em;line-height:45px">中策(安吉)不合格品处置单</div>
@@ -107,7 +108,7 @@
                 :value="item"
               />
             </el-select>
-            <!-- <el-input
+          <!-- <el-input
               v-else
               v-model="formObj.department"
               style="width:70%"
@@ -115,13 +116,6 @@
             /> -->
           </td>
         </tr>
-        <!-- </table>
-      <table
-        border="1"
-        bordercolor="black"
-        class="info-table"
-        style="border-top-color: #fff;"
-      > -->
         <tbody>
           <tr>
             <th rowspan="2">序号</th>
@@ -159,6 +153,7 @@
               </div>
             </td>
           </tr>
+
           <tr style="text-align:right">
             <td :colspan="5+headDataLength">
               经办人：
@@ -169,21 +164,10 @@
           <tr style="text-align:left;">
             <td :colspan="5+headDataLength" style="padding-left:25px">
               <div>不合格品情况(包括产品生产过程、原因及程度)：</div>
-              <!-- <el-input
-                v-if="!orderNum||editType === 1"
-                v-model="formObj.reason"
-                type="textarea"
-                :rows="5"
-                resize="none"
-                style="margin-top:10px;width:97%"
-                placeholder="请输入内容"
-                @change="editOne($event,'deal_user','deal_date')"
-              />
-              <div v-else class="deal_suggestion" v-html="formObj.reason" /> -->
             </td>
           </tr>
           <tr style="text-align:left;">
-            <td :colspan="5+headDataLength" style="padding-left:25px">
+            <td rowspan="2" :colspan="5+headDataLength" style="padding-left:25px">
               <el-input
                 v-if="!orderNum||editType === 1"
                 v-model="formObj.reason"
@@ -197,6 +181,7 @@
               <div v-else class="deal_suggestion" v-html="formObj.reason" />
             </td>
           </tr>
+          <tr />
           <tr style="text-align:right">
             <td :colspan="5+headDataLength">
               经办人：{{ formObj.deal_user }}
@@ -206,21 +191,10 @@
           <tr style="text-align:left;">
             <td :colspan="5+headDataLength" style="padding-left:25px">
               <div>处理意见(品质技术部工艺技术科)：</div>
-              <!-- <el-input
-                v-if="!orderNum||editType === 2"
-                v-model="formObj.t_deal_suggestion"
-                type="textarea"
-                :rows="5"
-                resize="none"
-                style="margin-top:10px;width:97%"
-                placeholder="请输入内容"
-                @change="editOne($event,'t_deal_user','t_deal_date')"
-              />
-              <div v-else class="deal_suggestion" v-html="formObj.t_deal_suggestion" /> -->
             </td>
           </tr>
           <tr style="text-align:left;">
-            <td :colspan="5+headDataLength" style="padding-left:25px">
+            <td rowspan="2" :colspan="5+headDataLength" style="padding-left:25px">
               <el-input
                 v-if="!orderNum||editType === 2"
                 v-model="formObj.t_deal_suggestion"
@@ -234,6 +208,7 @@
               <div v-else class="deal_suggestion" v-html="formObj.t_deal_suggestion" />
             </td>
           </tr>
+          <tr />
           <tr style="text-align:right">
             <td :colspan="5+headDataLength">
               经办人：{{ formObj.t_deal_user }}
@@ -243,21 +218,10 @@
           <tr style="text-align:left;">
             <td :colspan="5+headDataLength" style="padding-left:25px">
               <div>处理意见(品质技术部工艺检查科)：</div>
-              <!-- <el-input
-                v-if="!orderNum||editType === 3"
-                v-model="formObj.c_deal_suggestion"
-                type="textarea"
-                :rows="5"
-                resize="none"
-                style="margin-top:10px;width:97%"
-                placeholder="请输入内容"
-                @change="editOne($event,'c_deal_user','c_deal_date')"
-              />
-              <div v-else class="deal_suggestion" v-html="formObj.c_deal_suggestion" /> -->
             </td>
           </tr>
           <tr style="text-align:left;">
-            <td :colspan="5+headDataLength" style="padding-left:25px">
+            <td rowspan="2" :colspan="5+headDataLength" style="padding-left:25px">
               <el-input
                 v-if="!orderNum||editType === 3"
                 v-model="formObj.c_deal_suggestion"
@@ -268,9 +232,13 @@
                 placeholder="请输入内容"
                 @change="editOne($event,'c_deal_user','c_deal_date')"
               />
-              <div v-else class="deal_suggestion" v-html="formObj.c_deal_suggestion" />
+              <div v-else>
+                <div v-if="!formObj.c_deal_suggestion" style="height:80px" />
+                <div v-else class="deal_suggestion" v-html="formObj.c_deal_suggestion" />
+              </div>
             </td>
           </tr>
+          <tr />
           <tr style="text-align:right">
             <td :colspan="5+headDataLength">
               经办人：{{ formObj.c_deal_user }}
@@ -280,6 +248,10 @@
           <tr style="text-align:left;">
             <td :colspan="5+headDataLength" style="padding-left:25px">
               <div>备注：</div>
+            </td>
+          </tr>
+          <tr style="text-align:left;">
+            <td rowspan="2" :colspan="5+headDataLength" style="padding-left:25px">
               <el-input
                 v-if="!orderNum"
                 v-model="formObj.desc"
@@ -289,10 +261,13 @@
                 style="margin-top:10px;width:97%"
                 placeholder="请输入内容"
               />
-              <div v-else class="deal_suggestion" v-html="formObj.desc" />
-              <div style="margin-top:10px" />
+              <div v-else>
+                <div v-if="!formObj.desc" style="height:80px" />
+                <div v-else class="deal_suggestion" v-html="formObj.desc" />
+              </div>
             </td>
           </tr>
+          <tr />
         <!-- <tr style="text-align:left;">
           <td :colspan="5+headData.length" style="padding-left:25px">
             <div style="text-align:left;margin-top:4px">
@@ -491,35 +466,69 @@ export default {
       }
     },
     async exportPDF() {
-      this.$refs.PDFBtn.style.display = 'none'
-      document.getElementsByClassName('el-dialog__headerbtn')[0].style.display = 'none'
-      window.print()
-      this.$refs.PDFBtn.style.display = 'block'
-      document.getElementsByClassName('el-dialog__headerbtn')[0].style.display = 'block'
+      var iframe = ''
+      if (!iframe) {
+        var el = document.getElementById('out-table')
+        iframe = document.createElement('IFRAME')
+        var doc = null
+        iframe.setAttribute('id', 'print-iframe')
+        iframe.setAttribute('style', 'position:absolute;width:0px;height:0px;left:-500px;top:-500px;')
+        document.body.appendChild(iframe)
+        doc = iframe.contentWindow.document
+        doc.write('<style media="print">@page {size: auto;margin: 20px;} table{font-size:14px}' + '</style>') // 解决出现页眉页脚和路径的问题
+
+        doc.write('<div style="width:100%">' + el.innerHTML + '</div>')
+        doc.close()
+        iframe.contentWindow.focus()
+      }
+      setTimeout(function() { iframe.contentWindow.print() }, 50) // 解决第一次样式不生效的问题
+      if (navigator.userAgent.indexOf('MSIE') > 0) {
+        document.body.removeChild(iframe)
+      }
+      // this.$refs.PDFBtn.style.display = 'none'
+      // document.getElementsByClassName('el-dialog__headerbtn')[0].style.display = 'none'
+      // window.print()
+      // this.$refs.PDFBtn.style.display = 'block'
+      // document.getElementsByClassName('el-dialog__headerbtn')[0].style.display = 'block'
     },
     exportExcel() {
-      exportExcel('不合格品处置单', 'disposal-list-components')
+      var myDate = new Date()
+      var year = myDate.getFullYear() // 获取当前年
+      var mon = myDate.getMonth() + 1 // 获取当前月
+      if (mon < 10) {
+        mon = '0' + mon
+      }
+      var date = myDate.getDate() // 获取当前日
+      if (date < 10) {
+        date = '0' + date
+      }
+      var hours = myDate.getHours() // 获取当前小时
+      if (hours < 10) {
+        hours = '0' + hours
+      }
+      var minutes = myDate.getMinutes() // 获取当前分钟
+      if (minutes < 10) {
+        minutes = '0' + minutes
+      }
+      var seconds = myDate.getSeconds() // 获取当前秒
+      if (seconds < 10) {
+        seconds = '0' + seconds
+      }
+      var now = year + '' + mon + '' + date + '' + hours + '' + minutes + '' + seconds
+      const xlsxName = '不合格品处置单_' + now
+      exportExcel(xlsxName, 'disposal-list-components')
     }
   }
 }
 </script>
 
 <style lang="scss">
+
  .unqualified-card-container {
     width: 600px;
     margin: 0 auto;
     text-align: center;
     font-size: 14px;
-    table {
-      width: 100%;
-      border-collapse: collapse
-    }
-    .logo-style{
-      width:100px;
-      height:45px;
-      position: absolute;
-      left: 10px;
-    }
     .deal_department{
       .el-radio{
              margin-right: 0px;
@@ -533,7 +542,7 @@ export default {
       }
     }
     .deal_suggestion{
-      margin:15px 0;
+      padding:15px 0;
     }
   }
 </style>

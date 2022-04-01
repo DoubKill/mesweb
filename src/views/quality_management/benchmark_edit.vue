@@ -47,14 +47,27 @@
         <template slot-scope="{row,$index}">
           <el-switch
             v-model="row.is_judged"
+            :disabled="!checkPermission(['evaluating','change'])"
             active-color="#13ce66"
-            @change="judgedFun($event,row,$index)"
+            @change="judgedFun($event,row,$index,true)"
+          />
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="是否打印项目"
+      >
+        <template slot-scope="{row,$index}">
+          <el-switch
+            v-model="row.is_print"
+            :disabled="!checkPermission(['evaluating','change'])"
+            active-color="#13ce66"
+            @change="judgedFun($event,row,$index,false)"
           />
         </template>
       </el-table-column>
       <el-table-column
         label="操作"
-        width="200px"
+        width="280px"
       >
         <template slot-scope="scope">
           <el-button
@@ -68,6 +81,12 @@
             size="small"
             @click="pointClick(scope.row)"
           >编辑</el-button>
+          <el-button
+            v-permission="['evaluating','change']"
+            size="small"
+            type="danger"
+            @click="clickDelete(scope.$index,scope.row)"
+          >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -135,6 +154,13 @@
           <el-switch
             v-model="addForm.is_judged"
             active-color="#13ce66"
+            @change="changeJudged"
+          />
+        </el-form-item>
+        <el-form-item label="是否打印项目">
+          <el-switch
+            v-model="addForm.is_print"
+            active-color="#13ce66"
           />
         </el-form-item>
       </el-form>
@@ -162,6 +188,7 @@ import { batchingMaterials, matTestMethods } from '@/api/base_w'
 import page from '@/components/page'
 import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import editDialog from './benchmark_edit_dialog/benchmark_edit_dialog'
+import { checkPermission } from '@/utils/'
 export default {
   name: 'BenchmarkEdit',
   components: { editDialog, page, testTypeDotSelect, allProductNoSelect, testTypeSelect, testMethodSelect, detectionIndex },
@@ -186,7 +213,8 @@ export default {
         b: null,
         test_method: null,
         data_point: null,
-        is_judged: true
+        is_judged: true,
+        is_print: true
       },
       optionsRubber: [],
       editShow: false,
@@ -222,6 +250,7 @@ export default {
     this.getRubber()
   },
   methods: {
+    checkPermission,
     async getList() {
       this.loading = true
       try {
@@ -283,7 +312,8 @@ export default {
         this.$refs.addForm.resetFields()
       }
       this.addForm = {
-        is_judged: true
+        is_judged: true,
+        is_print: true
       }
 
       if (this.$refs.testTypeSelect) {
@@ -302,20 +332,21 @@ export default {
       this.getList()
     },
     clickDelete(index, row) {
-      this.$confirm(
-        '是否删除?',
-        '提示',
-        {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }
-      ).then(async() => {
-        await matTestMethods('delete', row.id)
-        this.$message.success('删除成功')
-        this.tableData.splice(index, 1)
-      }).catch(() => {
-        //
+      this.$confirm('是否确定删除?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        matTestMethods('delete', row.id)
+          .then(response => {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+            this.tableData.splice(index, 1)
+          }).catch(e => {
+            this.$message.error('删除失败')
+          })
       })
     },
     sureAdd() {
@@ -349,13 +380,21 @@ export default {
       this.addForm = JSON.parse(JSON.stringify(row))
       this.addForm.b = this.addForm.test_type
     },
-    async judgedFun(bool, row, index) {
+    async judgedFun(bool, row, index, isJudged) {
       try {
-        await matTestMethods('patch', row.id, { data: { is_judged: bool }})
+        const obj = { is_print: bool }
+        if (isJudged) {
+          row.is_print = bool
+          obj.is_judged = bool
+        }
+        await matTestMethods('patch', row.id, { data: obj })
         this.$message.success('修改成功')
       } catch (e) {
-        this.tableData[index].is_judged = !this.tableData[index].is_judged
+        this.getList()
       }
+    },
+    changeJudged(val) {
+      this.addForm.is_print = val
     }
   }
 }

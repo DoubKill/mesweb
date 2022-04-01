@@ -331,6 +331,14 @@ export function xlRecipe(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function updateFlagCount(method, id, data = {}) {
+  const obj = {
+    url: id ? API.UpdateFlagCount + id + '/' : API.UpdateFlagCount,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 export function xlRecipeMaterial(method, id, data = {}) {
   const obj = {
     url: id ? API.XlRecipeMaterial + id + '/' : API.XlRecipeMaterial,
@@ -358,6 +366,30 @@ export function xlReportWeight(method, id, data = {}) {
 export function xlPlan(method, id, data = {}) {
   const obj = {
     url: id ? API.XlPlan + id + '/' : API.XlPlan,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function rotateClasses(method, id, data = {}) {
+  const obj = {
+    url: id ? API.RotateClasses + id + '/' : API.RotateClasses,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function upDownMove(method, id, data = {}) {
+  const obj = {
+    url: id ? API.UpDownMove + id + '/' : API.UpDownMove,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function currentFactoryDate(method, id, data = {}) {
+  const obj = {
+    url: id ? API.CurrentFactoryDate + id + '/' : API.CurrentFactoryDate,
     method: method
   }
   Object.assign(obj, data)

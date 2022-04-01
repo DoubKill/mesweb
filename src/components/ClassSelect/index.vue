@@ -1,6 +1,7 @@
 <template>
   <el-select
     v-model="className"
+    :disabled="isDisabled"
     :clearable="isClearable"
     placeholder="请选择"
     @visible-change="visibleChange"
@@ -22,6 +23,10 @@ export default {
     isClearable: {
       type: Boolean,
       default: true
+    },
+    isDisabled: {
+      type: Boolean,
+      default: false
     },
     valueDefault: {
       type: String,

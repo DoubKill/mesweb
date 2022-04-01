@@ -31,11 +31,46 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="部门">
+        <el-select
+          v-model="getParams.section_id"
+          clearable
+          placeholder="请选择部门"
+          @change="numChanged"
+        >
+          <el-option
+            v-for="item in sectionPick"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item
         v-if="permissionObj.user.indexOf('add')>-1"
         style="float: right"
       >
         <el-button @click="showCreateUserDialog">新建</el-button>
+      </el-form-item>
+      <el-form-item style="float:right">
+        <el-button
+          v-permission="['user','import']"
+        >
+          <a
+            :href="`${templateFileUrl}user.xlsx`"
+            download="用户管理导入模板.xlsx"
+          >导出Excel模板</a>
+        </el-button>
+        <el-upload
+          v-permission="['user','import']"
+          style="margin-left:8px;display:inline-block"
+          action="string"
+          accept=".xls, .xlsx"
+          :http-request="Upload"
+          :show-file-list="false"
+        >
+          <el-button>导入Excel</el-button>
+        </el-upload>
       </el-form-item>
     </el-form>
 
@@ -65,6 +100,11 @@
       />
       <el-table-column
         min-width="10"
+        prop="id_card_num"
+        label="身份证"
+      />
+      <el-table-column
+        min-width="10"
         prop="phone_number"
         label="手机号"
       />
@@ -76,7 +116,12 @@
       <el-table-column
         min-width="10"
         prop="workshop"
-        label="车间"
+        label="职务"
+      />
+      <el-table-column
+        min-width="10"
+        prop="repair_group"
+        label="班组"
       />
       <el-table-column
         min-width="10"
@@ -112,7 +157,7 @@
       </el-table-column>
       <el-table-column
         label="操作"
-        width="150"
+        width="220"
       >
         <template slot-scope="scope">
           <el-button-group>
@@ -130,6 +175,14 @@
               @click="handleUserDelete(scope.row)"
             >
               {{ scope.row.is_active?'停用':'启用' }}
+            </el-button>
+            <el-button
+              v-if="permissionObj.user.indexOf('del')>-1"
+              size="mini"
+              type="danger"
+              @click="userDelete(scope.row)"
+            >
+              删除
             </el-button>
           </el-button-group>
         </template>
@@ -164,6 +217,16 @@
             v-model="userForm.username"
             :disabled="userForm.id ? true:false"
           />
+        </el-form-item>
+        <el-form-item
+          label="身份证"
+          prop="id_card_num"
+        >
+          <el-input
+            v-model="userForm.id_card_num"
+            :disabled="userForm.id&&!card_num"
+          />
+          <el-button v-if="userForm.id" v-permission="['user','cid']" style="margin-left:20px" @click="card_num=true">修改身份证</el-button>
         </el-form-item>
         <el-form-item
           v-if="userForm.id"
@@ -218,13 +281,25 @@
           />
         </el-form-item>
         <el-form-item
-          label="车间"
+          label="职务"
         >
           <el-input
             v-model="userForm.workshop"
-            placeholder="车间"
+            placeholder="职务"
             :error="userFormError.workshop"
           />
+        </el-form-item>
+        <el-form-item
+          label="班组"
+        >
+          <el-select v-model="userForm.repair_group" clearable placeholder="请选择">
+            <el-option
+              v-for="group in teamList"
+              :key="group.id"
+              :label="group.global_name"
+              :value="group.global_name"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item
           label="技术资格"
@@ -239,28 +314,24 @@
           label="部门"
           :error="userFormError.section"
         >
-          <el-select v-model="userForm.section" placeholder="请选择" clearable>
-            <el-option
-              v-for="item in optionsSection"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-              :disabled="item.delete_flag"
-            />
-          </el-select>
+          <el-cascader
+            v-model="userForm.section"
+            :options="optionsSection"
+            :props="{ checkStrictly: true,value:'id' }"
+            clearable
+            @change="changeSection"
+          />
         </el-form-item>
         <br>
         <el-form-item
           label="角色"
           size="medium"
         >
-          <div>
-            <transferRoles
-              :default-groups="userForm.group_extensions"
-              :groups="group_extensions"
-              @changeTransferGroup="changeTransferGroup"
-            />
-          </div>
+          <transferRoles
+            :default-groups="userForm.group_extensions"
+            :groups="group_extensions"
+            @changeTransferGroup="changeTransferGroup"
+          />
         </el-form-item>
         <!-- <el-form-item
           label="权限"
@@ -291,7 +362,9 @@
 
 <script>
 import { personnelsUrl } from '@/api/user'
-import { departmentManage } from '@/api/department-manage'
+import { delUser, userImport } from '@/api/jqy'
+import { sectionTree } from '@/api/base_w_four'
+import { globalCodesUrl } from '@/api/base_w'
 // import { permissions } from '@/api/permission'
 import { roles } from '@/api/roles-manage'
 import page from '@/components/page'
@@ -303,10 +376,11 @@ export default {
   components: { page, transferRoles },
   data() {
     var validatePass = (rule, value, callback) => {
+      var reg = /(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[\W_]).{8,}/
       if (!value) {
         callback(new Error('请输入密码'))
-      } else if (value && (value.length < 3 || value.length > 16)) {
-        callback(new Error('请输入3~16位长度的密码'))
+      } else if (value && !reg.test(value)) {
+        callback(new Error('密码必须同时包含大写英文,小写英文,数字,符号,且不少于8位'))
       } else {
         if (this.userForm.checkPass !== '') {
           this.$refs.userForm.validateField('checkPass')
@@ -331,21 +405,23 @@ export default {
       }
     }
     var validatePass3 = (rule, value, callback) => {
-      if (!value) {
+      const _value = value.trim()
+      if (!_value) {
         callback(new Error('请输入用户名!'))
-      } else if (!/^[a-zA-Z0-9\u4e00-\u9fa5]+$/g.test(value)) {
-        callback(new Error('用户名格式错误，请输入字母和数字组合'))
-      } else if (value.length > 64) {
+      } else if (!/^[a-zA-Z0-9\u4e00-\u9fa5]+$/g.test(_value)) {
+        callback(new Error('用户名格式错误，请输入字母或数字'))
+      } else if (_value.length > 64) {
         callback(new Error('长度小于64个字符!'))
-      } else if (value.length < 2) {
+      } else if (_value.length < 2) {
         callback(new Error('请输入最少两个字符!'))
       } else {
         callback()
       }
     }
     var validatePass4 = (rule, value, callback) => {
-      if (value && (value.length < 3 || value.length > 16)) {
-        callback(new Error('请输入3~16位长度的密码'))
+      var reg = /(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[\W_]).{8,}/
+      if (value && (!reg.test(value))) {
+        callback(new Error('密码必须同时包含大写英文,小写英文,数字,符号,且不少于8位'))
       } else {
         callback()
       }
@@ -390,6 +466,8 @@ export default {
       // permissionsArr: [],
       group_extensions: [],
       loading: true,
+      card_num: false,
+      btnExportLoad: false,
       loadingTable: false,
       userFormError: {},
       optionsUser: [
@@ -402,7 +480,9 @@ export default {
           label: 'N'
         }
       ],
-      optionsSection: []
+      optionsSection: [],
+      sectionPick: [],
+      teamList: []
     }
   },
   computed: {
@@ -438,6 +518,8 @@ export default {
     }
     this.currentChange()
     this.getOptionsSection()
+    this.getTeamList()
+    this.templateFileUrl = process.env.BASE_URL
   },
   methods: {
     changeUsername(e) {
@@ -455,11 +537,33 @@ export default {
     },
     async getOptionsSection() {
       try {
-        const data = await departmentManage('get', null, { params: { all: 1 }})
-        this.optionsSection = data.results || []
+        const data = await sectionTree('get')
+        if (data.results && data.results[0].children.length > 0) {
+          this.optionsSection = data.results[0].children
+          this.optionsSection = filterMy(this.optionsSection)
+        } else {
+          this.optionsSection = []
+        }
+        const data1 = await sectionTree('get', null, { params: { all: 1 }})
+        this.sectionPick = data1.results
       } catch (error) {
         //
       }
+    },
+    async getTeamList() {
+      try {
+        const data = await globalCodesUrl('get', {
+          params: {
+            class_name: '班组'
+          }
+        })
+        this.teamList = data.results || []
+      } catch (error) {
+        //
+      }
+    },
+    changeSection(val) {
+      // this.userForm.section = val.slice(-1)[0]
     },
     currentChange() {
       const app = this
@@ -522,6 +626,26 @@ export default {
       }).catch(() => {
       })
     },
+    userDelete(row) {
+      var app = this
+      this.$confirm('确定删除' + row.username + ', 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // eslint-disable-next-line no-undef
+        delUser('delete', row.id)
+          .then((response) => {
+            app.$message({
+              type: 'success',
+              message: '操作成功!'
+            })
+            app.currentChange()
+          }).catch(() => {
+          })
+      }).catch(() => {
+      })
+    },
     changePage(page) {
       this.getParams['page'] = page
       this.currentChange()
@@ -547,13 +671,14 @@ export default {
           if (this.userForm.num === '') {
             delete app.userForm.num
           }
-          // app.userForm.group_extensions = app.userForm.groups
-          // if (app.userForm.group_extensions.length === 0) {
-          //   app.$message.info('请选择角色')
-          //   return
-          // }
+          const obj = JSON.parse(JSON.stringify(app.userForm))
+          if (obj.section && obj.section.length > 0 && obj.section instanceof Array) {
+            obj.section = obj.section.slice(-1)[0]
+          } else if (!obj.section || obj.section.length === 0) {
+            obj.section = ''
+          }
           this.btnloading = true
-          personnelsUrl(type, paramsId, { data: app.userForm })
+          personnelsUrl(type, paramsId, { data: obj })
             .then((response) => {
               app.dialogCreateUserVisible = false
               app.$message.success(app.userForm.username + '操作成功')
@@ -566,6 +691,17 @@ export default {
         } else {
           return false
         }
+      })
+    },
+    Upload(param) {
+      const formData = new FormData()
+      formData.append('file', param.file)
+      userImport('post', null, { data: formData }).then(response => {
+        this.$message({
+          type: 'success',
+          message: response
+        })
+        this.currentChange()
       })
     },
     handleClose(done) {
@@ -584,6 +720,22 @@ export default {
     //   this.$set(this.userForm, 'user_permissions', val)
     // }
   }
+}
+// 去掉最后一个空children
+function filterMy(data) {
+  const res = []
+  data.forEach(D => {
+    const tmp = {
+      ...D
+    }
+    if (tmp.children.length > 0) {
+      tmp.children = filterMy(tmp.children)
+    } else {
+      delete tmp.children
+    }
+    res.push(tmp)
+  })
+  return res
 }
 </script>
 
@@ -616,6 +768,9 @@ export default {
     }
      .show-enter-to,.show-leave-to{
         margin-top: 1px;
+   }
+   .el-form-item__error{
+     width: 150%;
    }
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!--硫磺库 库存查询 -->
+    <!--硫磺库 库存统计 -->
     <el-form :inline="true">
       <el-form-item label="名称:">
         <el-input v-model="search.name" clearable @input="changeDebounce" />
@@ -19,6 +19,8 @@
           :data="tableData"
           border
           highlight-current-row
+          :summary-method="getSummaries"
+          show-summary
           @current-change="handleCurrentChange"
         >
           <el-table-column
@@ -122,6 +124,35 @@ export default {
     productBatchingChanged(val) {
       this.search.product_no = val ? val.material_no : ''
       this.getList()
+    },
+    getSummaries(param) {
+      const { columns, data } = param
+      const sums = []
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = '合计'
+          return
+        }
+        if (index < 4) {
+          return
+        }
+        const values = data.map(item => Number(item[column.property]))
+        if (!values.every(value => isNaN(value))) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0)
+          sums[index]
+        } else {
+          sums[index] = ''
+        }
+      })
+
+      return sums
     }
   }
 }

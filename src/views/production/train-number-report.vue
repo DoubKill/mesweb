@@ -44,7 +44,13 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item>
+      <el-form-item label="班次">
+        <class-select
+          @classSelected="classChanged"
+        />
+      </el-form-item>
+      <el-form-item style="float:right">
+        <el-button v-permission="['trains_report', 'export']" type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
         <!-- <el-button @click="showRowTable = true">展示详情</el-button> -->
 
         <!-- <el-button @click="selectRubber">导出批记录</el-button>
@@ -67,10 +73,6 @@
         type="index"
         label="No"
       />
-      <!-- <el-table-column
-        type="selection"
-        width="55"
-      /> -->
       <el-table-column
         prop="equip_no"
         label="机台"
@@ -78,6 +80,10 @@
       <el-table-column
         prop="product_no"
         label="配方编号"
+      />
+      <el-table-column
+        prop="classes"
+        label="班次"
       />
       <el-table-column
         prop="plan_classes_uid"
@@ -113,6 +119,10 @@
         label="手/自动"
       />
       <el-table-column
+        prop="ai_value"
+        label="AI值"
+      />
+      <el-table-column
         :prop="editionNo === 'v1'?'production_details.总重量':'actual_weight'"
         label="总重量(kg)"
       />
@@ -122,11 +132,11 @@
       />
       <el-table-column
         :prop="editionNo === 'v1'?'production_details.排胶温度':'evacuation_temperature'"
-        label="排胶温度(c°)"
+        label="排胶温度(°c)"
       />
       <el-table-column
         :prop="editionNo === 'v1'?'production_details.排胶能量':'evacuation_energy'"
-        label="排胶能量(J)"
+        label="排胶能量(kW·h)"
       />
       <el-table-column
         :prop="editionNo === 'v1'?'production_details.员工代号':'operation_user'"
@@ -231,9 +241,9 @@
                 v-if="editionNo === 'v1'"
                 class="train-one-tr-banburying"
               >
-                <td>排胶温度(c°)</td>
+                <td>排胶温度(°c)</td>
                 <td>{{ rowInfo.production_details.排胶温度 ||'--' }}</td>
-                <td>排胶能量(J)</td>
+                <td>排胶能量(kW·h)</td>
                 <td>{{ rowInfo.production_details.排胶能量 ||'--' }}</td>
                 <td class="begin_time_width">时间(s)</td>
                 <td>{{ rowInfo.production_details.排胶时间 ||'--' }}</td>
@@ -244,9 +254,9 @@
                 v-if="editionNo === 'v2'"
                 class="train-one-tr-banburying"
               >
-                <td>排胶温度(c°)</td>
+                <td>排胶温度(°c)</td>
                 <td>{{ rowInfo.evacuation_temperature ||'--' }}</td>
-                <td>排胶能量(J)</td>
+                <td>排胶能量(kW·h)</td>
                 <td>{{ rowInfo.evacuation_energy ||'--' }}</td>
                 <td class="begin_time_width">时间(s)</td>
                 <td>{{ rowInfo.evacuation_time ||'--' }}</td>
@@ -335,8 +345,8 @@
                   <td>No</td>
                   <td>条件名称</td>
                   <td>时间(s)</td>
-                  <td>温度(c°)</td>
-                  <td>功率(W)</td>
+                  <td>温度(°c)</td>
+                  <td>AI值</td>
                   <td>能量(J)</td>
                   <td>动作名称</td>
                   <td>速度(r/min)</td>
@@ -433,11 +443,11 @@
               v-if="editionNo === 'v1'"
               class="police-record"
             >
-              <span>排胶能量(J): {{ rowInfo.production_details.排胶能量 ||'--' }}</span>
+              <span>排胶能量(kW·h): {{ rowInfo.production_details.排胶能量 ||'--' }}</span>
               <span>设定: {{ rowInfo.plan_trains ||'--' }}</span>
               <span>时间(s): {{ rowInfo.begin_time || '--' }} 至 {{ rowInfo.end_time|| '--' }}</span>
               <br>
-              <span>排胶温度(c°): {{ rowInfo.production_details.排胶温度||'--' }}</span>
+              <span>排胶温度(°c): {{ rowInfo.production_details.排胶温度||'--' }}</span>
               <span>完成: {{ rowInfo.actual_trains || '--' }}</span>
               <span>排胶时间(s): {{ rowInfo.production_details.排胶时间||'--' }}</span>
               <span>名称: {{ rowInfo.product_no ||'--' }}</span>
@@ -447,11 +457,11 @@
               v-if="editionNo === 'v2'"
               class="police-record"
             >
-              <span>排胶能量(J): {{ rowInfo.evacuation_energy ||'--' }}</span>
+              <span>排胶能量(kW·h): {{ rowInfo.evacuation_energy ||'--' }}</span>
               <span>设定: {{ rowInfo.plan_trains ||'--' }}</span>
               <span>时间(s): {{ rowInfo.begin_time || '--' }} 至 {{ rowInfo.end_time|| '--' }}</span>
               <br>
-              <span>排胶温度(c°): {{ rowInfo.evacuation_temperature||'--' }}</span>
+              <span>排胶温度(°c): {{ rowInfo.evacuation_temperature||'--' }}</span>
               <span>完成: {{ rowInfo.actual_trains || '--' }}</span>
               <span>排胶时间(s): {{ rowInfo.evacuation_time||'--' }}</span>
               <span>名称: {{ rowInfo.product_no ||'--' }}</span>
@@ -510,6 +520,7 @@ import {
   curveInformationUrl,
   alarmLogList
 } from '@/api/base_w'
+import { trainsFeedbacksApiviewDown } from '@/api/jqy'
 import { personnelsUrl } from '@/api/user'
 import page from '@/components/page'
 import selectEquip from '@/components/select_w/equip'
@@ -517,10 +528,10 @@ import selectEquip from '@/components/select_w/equip'
 import chartMixin from './chartMixin'
 import { mapGetters } from 'vuex'
 import allProductNoSelect from '@/components/select_w/allProductNoSelect'
-
+import classSelect from '@/components/ClassSelect'
 export default {
   name: 'TrainNumberReport',
-  components: { page, selectEquip, allProductNoSelect },
+  components: { page, selectEquip, allProductNoSelect, classSelect },
   mixins: [chartMixin],
   props: {
     isComponents: {
@@ -549,6 +560,7 @@ export default {
       tableData: [],
       loading: false,
       loadingTable: false,
+      btnExportLoad: false,
       loaddingExal: true,
       total: 0,
       showRowTable: false,
@@ -595,6 +607,25 @@ export default {
     this.search_date = [this.getParams.begin_time, this.getParams.end_time]
   },
   methods: {
+    exportTable() {
+      this.btnExportLoad = true
+      const obj = Object.assign({ export: 1 }, this.getParams)
+      const _api = trainsFeedbacksApiviewDown
+      _api(obj)
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '车次报表.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
+    },
     async getList() {
       try {
         this.loading = true
@@ -704,6 +735,11 @@ export default {
       this.getParams.page = 1
       this.getList()
     },
+    classChanged(val) {
+      this.getParams.classes = val
+      this.getParams.page = 1
+      this.getList()
+    },
     handleSelectionChange() { },
     selectRubber() { },
     clickChartData() {
@@ -734,12 +770,12 @@ export default {
         // return test
         this.totalWeighing = data.count
         return data.results || []
-        // eslint-disable-next-line no-empty
-      } catch (e) { }
+      } catch (e) {
+        //
+      }
     },
     async getMixerInformation(id, page) {
       try {
-        // eslint-disable-next-line object-curly-spacing
         const data = await mixerInformationUrl('get', null, { params: { feed_back_id: id,
           page: page, equip_no: this.getParams.equip_no }})
         // const test = [
@@ -758,8 +794,9 @@ export default {
         // return test
         this.totalMixer = data.count
         return data.results || []
-        // eslint-disable-next-line no-empty
-      } catch (e) { }
+      } catch (e) {
+        //
+      }
     },
     async getAlarmRecordList(id, page) {
       try {
@@ -773,8 +810,7 @@ export default {
     },
     async getCurveInformation(id) {
       try {
-        // eslint-disable-next-line object-curly-spacing
-        const data = await curveInformationUrl('get', null, { params: { feed_back_id: id } })
+        const data = await curveInformationUrl('get', null, { params: { feed_back_id: id }})
         // const test = [
         //   {
         //     id: 3,
@@ -872,8 +908,6 @@ export default {
 
 function createImage(_this) {
   const canvas = document.getElementsByTagName('canvas')[0]
-  // eslint-disable-next-line no-unused-vars
-  const newcanvas = JSON.parse(JSON.stringify(canvas))
   if (!canvas.toDataURL) {
     _this.$message.info('请更新浏览器')
     return

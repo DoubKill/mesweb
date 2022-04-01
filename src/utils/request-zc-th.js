@@ -21,7 +21,7 @@ service.interceptors.request.use(
   config => {
     if (Cookies.get('zc-userId')) {
       config.headers['TenantNumber'] = 1
-      config.headers['UserId'] = Cookies.get('zc-th-userId')
+      // config.headers['UserId'] = Cookies.get('zc-th-userId')
     }
     if (Cookies.get('zc-th-url')) {
       config.baseURL = Cookies.get('zc-th-url') || ''
@@ -39,22 +39,22 @@ service.interceptors.response.use(
   response => {
     if (response.status < 300) {
       if (response.data.state === 0) {
-        Message({
-          message: response.data.datas,
-          type: 'error',
-          duration: 3 * 1000
-        })
+        // Message({
+        //   message: response.data.datas,
+        //   type: 'error',
+        //   duration: 3 * 1000
+        // })
         return Promise.reject(response)
       } else {
         const res = response.data
         return Promise.resolve(res)
       }
     } else {
-      Message({
-        message: '请求失败' + response.status,
-        type: 'error',
-        duration: 3 * 1000
-      })
+      // Message({
+      //   message: '请求失败' + response.status,
+      //   type: 'error',
+      //   duration: 3 * 1000
+      // })
       return Promise.reject(response)
     }
   },

@@ -3,10 +3,10 @@
     <!--炭黑 出库单据 -->
     <el-form :inline="true">
       <el-form-item label="出库单据号">
-        <el-input v-model="search.TaskNumber" clearable placeholder="请输入内容" @input="getDebounce" />
+        <el-input v-model="search.order_no" clearable placeholder="请输入内容" @input="getDebounce" />
       </el-form-item>
       <el-form-item label="状态">
-        <el-select v-model="search.State" clearable placeholder="请选择" @change="changeDate">
+        <el-select v-model="search.task_status" clearable style="width:120px" placeholder="请选择" @change="changeDate">
           <el-option
             v-for="item in options"
             :key="item.id"
@@ -14,6 +14,38 @@
             :value="item.id"
           />
         </el-select>
+      </el-form-item>
+      <el-form-item label="物料名称">
+        <el-select v-model="search.material_name" allow-create filterable placeholder="请选择" clearable @visible-change="getMaterialsList" @change="changeDate">
+          <el-option
+            v-for="item in options1"
+            :key="item.name"
+            :label="item.name"
+            :value="item.name"
+          />
+        </el-select>
+        <!-- <el-input
+          v-model="search.material_name"
+          clearable
+          placeholder="请输入内容"
+          @input="getDebounce"
+        /> -->
+      </el-form-item>
+      <el-form-item label="物料编码">
+        <el-select v-model="search.material_no" allow-create filterable placeholder="请选择" clearable @visible-change="getMaterialsList" @change="changeDate">
+          <el-option
+            v-for="item in options1"
+            :key="item.code"
+            :label="item.code"
+            :value="item.code"
+          />
+        </el-select>
+        <!-- <el-input
+          v-model="search.material_no"
+          clearable
+          placeholder="请输入内容"
+          @input="getDebounce"
+        /> -->
       </el-form-item>
       <el-button
         v-permission="['th_outbound_record', 'space']"
@@ -35,41 +67,40 @@
       border
     >
       <el-table-column
-        prop="id"
         label="序号"
         type="index"
         min-width="20"
       />
       <el-table-column
-        prop="taskNumber"
+        prop="order_no"
         label="出库单据号"
         min-width="20"
       />
       <el-table-column
-        prop="stockOutTaskType"
+        prop="task_type"
         label="单据类型"
         min-width="20"
         :formatter="(row)=>{
-          let obj = optionsType.find(d=>d.id === row.stockOutTaskType)
+          let obj = optionsType.find(d=>d.id === row.task_type)
           return obj.name
         }"
       />
       <el-table-column
-        prop="createrTime"
+        prop="start_time"
         label="创建时间"
         min-width="20"
       />
       <el-table-column
-        prop="stockOutTaskState"
+        prop="task_status"
         label="状态"
         min-width="20"
         :formatter="(row)=>{
-          let obj = options.find(d=>d.id === row.stockOutTaskState)
+          let obj = options.find(d=>d.id === row.task_status)
           return obj.name
         }"
       />
       <el-table-column
-        prop="createUserId"
+        prop="initiator"
         label="创建人"
         min-width="20"
       />
@@ -82,13 +113,18 @@
             size="mini"
             @click="showEditDialog(row)"
           >查看</el-button>
+          <el-button
+            type="warning"
+            size="mini"
+            @click="cancelFun(row)"
+          >取消</el-button>
         </template>
       </el-table-column>
     </el-table>
     <page
       v-if="!loading"
       :total="total"
-      :current-page="search.pageNo"
+      :current-page="search.page"
       @currentChange="currentChange"
     />
 
@@ -109,27 +145,27 @@
           width="50"
         />
         <el-table-column
-          prop="materialCode"
+          prop="material_no"
           label="物料编码"
           min-width="20"
         />
         <el-table-column
-          prop="materialName"
+          prop="material_name"
           label="物料名称"
           min-width="16"
         />
         <el-table-column
-          prop="quantity"
+          prop="qty"
           label="数量"
           min-width="6"
         />
         <el-table-column
-          prop="entranceCode"
+          prop="entrance"
           label="站台编码"
           min-width="12"
         />
         <el-table-column
-          prop="entranceName"
+          prop="entrance_name"
           label="站台名称"
           min-width="10"
         />
@@ -137,7 +173,7 @@
           label="状态"
           min-width="8"
           :formatter="(row)=>{
-            return taskStateList[row.taskState]
+            return taskStateList[row.task_status]
           }"
         />
       </el-table>
@@ -161,15 +197,35 @@
           </el-select>
         </el-form-item>
         <el-form-item label="物料名称">
-          <el-input v-model="formSearch.material_name" clearable placeholder="请输入内容" @input="getDialogDebounce" />
+          <el-select v-model="formSearch.material_name" allow-create filterable placeholder="请选择" clearable @visible-change="getProduct" @change="getDialog">
+            <el-option
+              v-for="item in options2"
+              :key="item.material_name"
+              :label="item.material_name"
+              :value="item.material_name"
+            />
+          </el-select>
+          <!-- <el-input v-model="formSearch.material_name" clearable placeholder="请输入内容" @input="getDialogDebounce" /> -->
         </el-form-item>
         <el-form-item label="物料编码">
-          <el-input v-model="formSearch.material_no" clearable placeholder="请输入内容" @input="getDialogDebounce" />
-        </el-form-item>
-        <el-form-item v-if="isLocation" label="品质状态">
-          <el-select v-model="formSearch.quality_status" clearable placeholder="请选择" @change="getDialog">
+          <el-select v-model="formSearch.material_no" allow-create filterable placeholder="请选择" clearable @visible-change="getProduct" @change="getDialog">
             <el-option
-              v-for="(item,i) in [{name:'合格',id:1},{name:'不合格',id:3}]"
+              v-for="item in options2"
+              :key="item.material_no"
+              :label="item.material_no"
+              :value="item.material_no"
+            />
+          </el-select>
+          <!-- <el-input v-model="formSearch.material_no" clearable placeholder="请输入内容" @input="getDialogDebounce" /> -->
+        </el-form-item>
+        <el-form-item label="品质状态">
+          <el-select
+            v-model="formSearch.quality_status"
+            placeholder="请选择"
+            @change="getDialog"
+          >
+            <el-option
+              v-for="(item,i) in qualityStatus"
               :key="i"
               :label="item.name"
               :value="item.id"
@@ -186,7 +242,14 @@
             />
           </el-select>
         </el-form-item>
-
+        <el-form-item v-if="isLocation" label="批次号">
+          <el-input
+            v-model="formSearch.batch_no"
+            clearable
+            placeholder="请输入内容"
+            @input="getDialogDebounce"
+          />
+        </el-form-item>
       </el-form>
       <div v-if="isLocation" :key="1" v-loading="loading2">
         <h3>库位货物列表</h3>
@@ -216,7 +279,7 @@
             label="品质状态"
             min-width="15"
             :formatter="(row)=>{
-              let obj = [{name:'合格',id:1},{name:'不合格',id:3}].find(d=>d.id === row.StockDetailState)
+              let obj = qualityStatus.find(d=>d.id === row.StockDetailState)
               return obj.name
             }"
           />
@@ -297,7 +360,7 @@
             label="品质状态"
             min-width="20"
             :formatter="(row)=>{
-              let obj = [{name:'合格',id:1},{name:'不合格',id:3}].find(d=>d.id === row.StockDetailState)
+              let obj = qualityStatus.find(d=>d.id === row.StockDetailState)
               return obj.name
             }"
           />
@@ -364,17 +427,36 @@
             min-width="20"
           />
           <el-table-column
-            label="出库重量/kg"
+            prop="quantity"
+            label="库存总数量/托"
+            min-width="20"
+          />
+          <el-table-column
+            label="出库数量/托"
             min-width="20"
           >
             <template slot-scope="{row}">
               <el-input-number
-                v-model="row.WeightOfActualUnit"
+                v-model="row.Unit"
                 controls-position="right"
-                :max="row.WeightOfActual"
+                :max="row.quantity"
+                @change="changeUnit(row)"
               />
             </template>
           </el-table-column>
+          <el-table-column
+            label="出库重量/kg"
+            min-width="20"
+            prop="WeightOfActualUnit"
+          />
+          <el-table-column
+            label="品质状态"
+            min-width="20"
+            :formatter="(row)=>{
+              let obj = qualityStatus.find(d=>d.id === row.quality_status)
+              return obj.name
+            }"
+          />
         </el-table>
       </div>
       <span v-if="!loading2" slot="footer" class="dialog-footer">
@@ -437,9 +519,12 @@
 </template>
 
 <script>
-import request from '@/utils/request-zc-th'
+import { thOutTasks, thOutTaskDetails, thCancelTask, thOutboundOrder } from '@/api/base_w_five'
+// import request from '@/utils/request-zc-th'
+import { thMaterials } from '@/api/jqy'
+import { materialCount } from '@/api/base_w'
 import page from '@/components/page'
-import { debounce } from '@/utils'
+import { debounce, checkPermission } from '@/utils'
 import { thStock, thWeightStock, thEntrance, thInstock } from '@/api/base_w_three'
 export default {
   name: 'CarbonDeliveryBill',
@@ -448,8 +533,8 @@ export default {
     return {
       loading: false,
       search: {
-        pageSize: 10,
-        pageNo: 1
+        page_size: 10,
+        page: 1
       },
       tableData: [],
       total: 0,
@@ -461,6 +546,8 @@ export default {
         { name: '异常出库', id: 5 },
         { name: '取消', id: 6 }
       ],
+      options1: [],
+      options2: [],
       optionsType: [
         { name: '生产正常出库', id: 1 },
         { name: 'mes指定库位出库', id: 2 },
@@ -471,17 +558,26 @@ export default {
       loading1: false,
       tableData1: [],
       dialogVisible1: false,
-      formSearch: {},
+      formSearch: {
+        quality_status: 1
+      },
       tableData2: [],
       tableData3: [],
       tableData4: [],
       EntranceCode: '',
       isLocation: '',
-      tableData5: [{}],
+      tableData5: [],
       loading2: false,
       total1: 0,
       optionsEntrance: [],
       btnLoading: false,
+      qualityStatus: [
+        { id: 1, name: '合格' },
+        { id: 2, name: '抽检中' },
+        { id: 3, name: '不合格' },
+        { id: 4, name: '过期' },
+        { id: 5, name: '待检品' }
+      ],
       taskStateList: {
         1: '待处理',
         2: '处理中',
@@ -509,24 +605,58 @@ export default {
   created() {
     this.getList()
   },
+  mounted() {
+    const a = checkPermission(['th_outbound_record', 'unqualified'])
+    const b = checkPermission(['th_outbound_record', 'untested'])
+
+    if (!a) {
+      this.qualityStatus = [{ id: 1, name: '合格' }]
+      if (b) {
+        this.qualityStatus.push({ id: 5, name: '待检品' })
+      }
+    }
+  },
   methods: {
-    getList() {
+    checkPermission,
+    async getProduct(val) {
+      if (val) {
+        try {
+          const data = await materialCount('get', null, { params: { store_name: '炭黑库' }})
+          this.options2 = data || []
+        } catch (e) {
+        //
+        }
+      }
+    },
+    async getMaterialsList(val) {
+      if (val) {
+        try {
+          const data = await thMaterials('get', null, { params: { all: 1 }})
+          this.options1 = data || []
+        } catch (e) {
+        //
+        }
+      }
+    },
+    async getList() {
       this.loading = true
       this.tableData = []
-      request({
-        url: '/stockOutTask/FindAllByPaging',
-        method: 'get',
-        params: this.search
-      }).then(data => {
-        this.loading = false
-        this.tableData = data.datas
-        this.total = data.totalRecord
-      }).catch((e) => {
-        this.loading = false
-      })
+      try {
+        const data = await thOutTasks('get', null, { params: this.search })
+        this.tableData = data.results || []
+        this.total = data.count
+      } catch (e) {
+        //
+      } this.loading = false
+    },
+    changeUnit(row) {
+      row.WeightOfActualUnit = Math.round(row.Unit * row.avg_weight)
+      if (row.WeightOfActualUnit > row.WeightOfActual) {
+        row.WeightOfActualUnit = row.WeightOfActual
+      }
     },
     getDebounce() {
-      this.search.pageNo = 1
+      this.search.page = 1
       debounce(this, 'getList')
     },
     getDialogDebounce() {
@@ -538,36 +668,50 @@ export default {
       }
     },
     getDialog() {
-      this.formSearch.page = 1
-      this.getDialogGoods()
+      if (this.isLocation) {
+        this.formSearch.page = 1
+        this.getDialogGoods()
+      } else {
+        this.getWeight()
+      }
     },
     changeDate() {
       if (!this.search.State) {
         delete this.search.State
       }
-      this.search.pageNo = 1
+      this.search.page = 1
       this.getList()
     },
     currentChange(page) {
-      this.search.pageNo = page
+      this.search.page = page
       this.getList()
     },
     showEditDialog(row) {
       this.dialogVisible = true
       this.getDialogList(row.id)
     },
-    getDialogList(id) {
-      this.loading1 = true
-      request({
-        url: '/stockOutTask/Find',
-        method: 'get',
-        params: { id: id }
-      }).then(data => {
-        this.loading1 = false
-        this.tableData1 = data.datas
-      }).catch((e) => {
-        this.loading1 = false
+    cancelFun(row) {
+      this.$confirm('是否确定取消?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        try {
+          await thCancelTask('post', null, { data: { 'task_num': row.order_no }})
+          this.$message.success('操作成功')
+        } catch (e) {
+        //
+        }
       })
+    },
+    async getDialogList(id) {
+      this.loading1 = true
+      try {
+        const data = await thOutTaskDetails('get', null, { params: { page_size: 99999, task: id }})
+        this.tableData1 = data.results || []
+      } catch (e) {
+        this.tableData1 = []
+      } this.loading1 = false
     },
     async getDialogGoods() {
       try {
@@ -741,14 +885,21 @@ export default {
       } else {
         this.getWeight()
       }
+      setCookie('entrance_nameth', this.formSearch.entrance_name, 9999)
+      setCookie('codeth', this.formSearch.code, 9999)
     },
     async getEntrance() {
       try {
         this.loading2 = true
         const data = await thEntrance('get')
         this.optionsEntrance = data
-        this.formSearch.entrance_name = data ? this.optionsEntrance[0].name : ''
-        this.formSearch.code = data ? this.optionsEntrance[0].code : ''
+        if (getCookie('entrance_nameth')) {
+          this.formSearch.entrance_name = getCookie('entrance_nameth')
+          this.formSearch.code = getCookie('codeth')
+        } else {
+          this.formSearch.entrance_name = data ? this.optionsEntrance[0].name : ''
+          this.formSearch.code = data ? this.optionsEntrance[0].code : ''
+        }
         if (this.isLocation) {
           this.getDialogGoods()
         } else {
@@ -758,48 +909,63 @@ export default {
         this.loading2 = false
       }
     },
-    submitForm() {
-      let obj = {
-        TaskNumber: 'Mes' + new Date().getTime(),
-        EntranceCode: this.formSearch.code,
-        AllocationInventoryDetails: this.tableData4
+    async submitForm() {
+      const obj = {
+        entrance_code: this.formSearch.code,
+        outbound_data: JSON.parse(JSON.stringify(this.tableData4)),
+        outbound_type: 1
       }
       if (!this.isLocation) {
+        obj.outbound_type = 2
         const arr = []
         this.tableData5.forEach(d => {
           if (Number(d.WeightOfActualUnit) > 0) {
             const aaa = JSON.parse(JSON.stringify(d))
             aaa.WeightOfActual = aaa.WeightOfActualUnit
+            aaa.StockDetailState = aaa.quality_status
+            delete aaa.avg_weight
+            delete aaa.quality_status
+            delete aaa.quantity
             arr.push(aaa)
           }
         })
-        obj = {
-          TaskNumber: 'Mes' + new Date().getTime(),
-          EntranceCode: this.formSearch.code,
-          AllocationInventoryDetails: arr
-        }
+        obj.outbound_data = arr
       }
-      if (obj.AllocationInventoryDetails.length === 0) {
+      if (obj.outbound_data.length === 0) {
         this.$message.info('未添加物料')
         return
       }
-      const _api = this.isLocation ? '/MESApi/AllocateSpaceDelivery' : '/MESApi/AllocateWeightDelivery'
       this.btnLoading = true
-      request({
-        url: _api,
-        method: 'post',
-        data: obj
-      }).then(data => {
+      try {
+        await thOutboundOrder('post', null, { data: obj })
         this.$message.success('添加成功')
         this.handleClose1(false)
-        this.search.pageNo = 1
-        this.btnLoading = false
+        this.search.page = 1
         this.getList()
-      }).catch((e) => {
-        this.btnLoading = false
-      })
+      } catch (error) {
+        //
+      } this.btnLoading = false
     }
   }
+}
+function getCookie(cName) {
+  if (document.cookie.length > 0) {
+    var cStart = document.cookie.indexOf(cName + '=')
+    if (cStart !== -1) {
+      cStart = cStart + cName.length + 1
+      var cEnd = document.cookie.indexOf(';', cStart)
+      if (cEnd === -1) cEnd = document.cookie.length
+      return document.cookie.substring(cStart, cEnd)
+    }
+  }
+  return ''
+}
+
+// 设置cookie
+function setCookie(cName, value, expiredays) {
+  var exdate = new Date()
+  exdate.setDate(exdate.getDate() + expiredays)
+  document.cookie = cName + '=' + value + ((expiredays == null) ? '' : ';expires=' + exdate.toGMTString())
 }
 </script>
 

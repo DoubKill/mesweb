@@ -143,6 +143,8 @@ export function setDate(_data, bool, type) {
       formatObj.h + formatObj.i + formatObj.s
   } else if (type && type === 'month') {
     return formatObj.y + '-' + formatObj.m
+  } else if (type && type === 'hour') {
+    return formatObj.h + ':' + formatObj.i
   } else {
     return formatObj.y + '-' + formatObj.m + '-' + formatObj.d
   }
@@ -198,37 +200,43 @@ import XLSXStyle from 'xlsx-style'
  *
  * @param {*文件名称} value
  */
-export function exportExcel(value = 'excel', val) {
+const tableTitleFont = {
+  font: {
+    italic: false,
+    underline: false
+  },
+  alignment: {
+    wrapText: 1,
+    horizontal: 'center',
+    vertical: 'center'
+  },
+  border: {
+    bottom: { style: 'thin' },
+    top: { style: 'thin' },
+    left: { style: 'thin' },
+    right: { style: 'thin' }
+  }
+}
+const setBorder = {
+  border: {
+    bottom: { style: 'thin' },
+    top: { style: 'thin' },
+    left: { style: 'thin' },
+    right: { style: 'thin' }
+  }
+}
+export function exportExcel(value = 'excel', val, _wpxArr = []) {
+  value = value + ' ' + (val === 'excel' ? '' : setDate())
   /* 从表生成工作簿对象 */
   var wb = XLSX.utils.table_to_book(document.querySelector('#out-table'), { raw: true })
+  const arr = Object.keys(wb.Sheets['Sheet1'])
+  const obj = wb.Sheets['Sheet1']
+  wb.Sheets['Sheet1']['!cols'] = _wpxArr
 
   if (val && val === 'disposal-list-components') {
-    const tableTitleFont = {
-      font: {
-        italic: false,
-        underline: false
-      },
-      alignment: {
-        horizontal: 'center',
-        vertical: 'center'
-      },
-      border: {
-        bottom: { style: 'thin' },
-        top: { style: 'thin' },
-        left: { style: 'thin' },
-        right: { style: 'thin' }
-      }
-    }
     const _wpx = []
-    // const _tableTitleFont = JSON.parse(JSON.stringify(tableTitleFont))
-    const _tableTitleFont1 = JSON.parse(JSON.stringify(tableTitleFont))
+
     // const _length = Object.keys(wb.Sheets['Sheet1']).length
-    const arr = Object.keys(wb.Sheets['Sheet1'])
-    const obj = wb.Sheets['Sheet1']
-    const length = obj['!ref'].split(':')[1].length
-    const num = obj['!ref'].split(':')[1].substring(1, length) - 8
-    const num1 = obj['!ref'].split(':')[1].substring(1, length) - 5
-    const num2 = obj['!ref'].split(':')[1].substring(1, length) - 2
     const arr1 = []
     let arr2 = []
     arr.forEach(D => {
@@ -237,18 +245,31 @@ export function exportExcel(value = 'excel', val) {
       }
       arr1.push(D.substr(1))
       arr2.push(D.substr(0, 1))
-
-      _wpx.push({ wpx: 80 }, { wpx: 130 }, { wpx: 100 }, { wpx: 150 }, { wpx: 170 },
-        { wpx: 100 }, { wpx: 100 }, { wpx: 100 }, { wpx: 100 }, { wpx: 100 }, { wpx: 100 }, { wpx: 100 })
     })
 
     arr2 = [...new Set(arr2)]
-    arr1.forEach(D => {
+    const number = Math.max(...arr1) + 3
+    const num = number - 20
+    const num1 = number - 15
+    const num2 = number - 9
+    const num3 = number - 3
+    for (var D = 1; D <= number; D++) {
+      if (D === 2) {
+        _wpx.push({ wpx: 130 })
+      } else if (D === 4) {
+        _wpx.push({ wpx: 150 })
+      } else if (D === 5) {
+        _wpx.push({ wpx: 170 })
+      } else {
+        _wpx.push({ wpx: 70 })
+      }
       arr2.forEach(d => {
+        const _tableTitleFont1 = JSON.parse(JSON.stringify(tableTitleFont))
         if (obj[d + D]) {
           if (obj[d + D].v && (obj[d + D].v.indexOf('处理意见') > -1 ||
         obj[d + D].v.indexOf('不合格品') > -1 || obj[d + D].v.indexOf('备注') > -1 ||
-        obj[d + D].v.indexOf('质检编码') > -1 || obj[d + D].v.indexOf('经办人') > -1)) {
+        obj[d + D].v.indexOf('单据编号') > -1 || obj[d + D].v.indexOf('经办人') > -1 ||
+        (d === 'A' && [num, num1, num2, num3].includes(D)))) {
             _tableTitleFont1.alignment = {
               horizontal: 'left',
               vertical: 'left'
@@ -257,58 +278,66 @@ export function exportExcel(value = 'excel', val) {
           } else {
             obj[d + D].s = tableTitleFont
           }
+          if (d === 'A' && D === 1) {
+            _tableTitleFont1.alignment = {
+              horizontal: 'center',
+              vertical: 'center'
+            }
+            _tableTitleFont1.font.sz = 20
+            _tableTitleFont1.font.name = '宋体'
+          }
         } else {
           obj[d + D] = {
-            s: { border: {
-              bottom: { style: 'thin' },
-              top: { style: 'thin' },
-              left: { style: 'thin' },
-              right: { style: 'thin' }
-            }}
+            s: setBorder
           }
         }
       })
+    }
+    wb.Sheets['Sheet1']['!cols'] = _wpx
+  }
+
+  if (val && val === 'disposal-list') {
+    const _wpx = []
+    const arr1 = []
+    let arr2 = []
+    arr.forEach(D => {
+      if (['!cols', '!fullref', '!merges', '!ref', '!rows'].includes(D)) {
+        return
+      }
+      arr1.push(D.substr(1))
+      arr2.push(D.substr(0, 1))
     })
 
-    wb.Sheets['Sheet1']['A' + num].s = {									// 为某个单元格设置单独样式
-      alignment: {
-        horizontal: 'left',
-        vertical: 'left'
+    arr2 = [...new Set(arr2)]
+    const number = Math.max(...arr1)
+    for (var i = 1; i <= number; i++) {
+      if (i === 2) {
+        _wpx.push({ wpx: 130 })
+      } else if (i === 6) {
+        _wpx.push({ wpx: 280 })
+      } else {
+        _wpx.push({ wpx: 70 })
       }
+      arr2.forEach(d => {
+        const _tableTitleFont1 = JSON.parse(JSON.stringify(tableTitleFont))
+        if (obj[d + i]) {
+          if (d === 'A' && i === 1) {
+            _tableTitleFont1.font.sz = 20
+            _tableTitleFont1.font.name = '宋体'
+          }
+          if (d === 'A' && i === 2) {
+            _tableTitleFont1.font.sz = 12
+            _tableTitleFont1.font.name = '宋体'
+          }
+          obj[d + i].s = _tableTitleFont1
+        } else {
+          obj[d + i] = { s: setBorder }
+          obj['G' + i] = { s: setBorder }
+          obj['I' + i] = { s: setBorder }
+        }
+      })
     }
-
-    wb.Sheets['Sheet1']['A' + num1].s = {									// 为某个单元格设置单独样式
-      alignment: {
-        horizontal: 'left',
-        vertical: 'left'
-      }
-    }
-
-    wb.Sheets['Sheet1']['A' + num2].s = {									// 为某个单元格设置单独样式
-      alignment: {
-        horizontal: 'left',
-        vertical: 'left'
-      }
-    }
-
-    wb.Sheets['Sheet1']['A1'].s = {									// 为某个单元格设置单独样式
-      font: {
-        name: '宋体',
-        sz: 20,
-        italic: false,
-        underline: false
-      },
-      alignment: {
-        horizontal: 'center',
-        vertical: 'center'
-      },
-      border: {
-        bottom: { style: 'thin' },
-        top: { style: 'thin' },
-        left: { style: 'thin' },
-        right: { style: 'thin' }
-      }
-    }
+    console.log(wb.Sheets['Sheet1'])
     wb.Sheets['Sheet1']['!cols'] = _wpx
   }
 

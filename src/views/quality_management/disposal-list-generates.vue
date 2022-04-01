@@ -1,6 +1,6 @@
 <template>
   <div v-loading="loading">
-    <!-- 不合格处置单生成界面 -->
+    <!-- 不合格处置单生成 -->
     <el-form :inline="true">
       <el-form-item label="时间">
         <el-date-picker

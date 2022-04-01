@@ -129,7 +129,7 @@
       <el-table-column
         prop="equip_no"
         label="生产机号"
-        min-width="20"
+        min-width="10"
       />
       <el-table-column
         prop="production_group"
@@ -142,16 +142,16 @@
       <el-table-column
         prop="product_no"
         label="胶料规格"
-        min-width="20"
+        min-width="29"
       />
       <el-table-column
         prop="actual_trains"
         label="车次"
-        min-width="20"
+        min-width="10"
       />
       <el-table-column
         label="状态"
-        min-width="20"
+        min-width="18"
         :formatter="(row)=>{
           let obj = statusList[row.status]
           return obj
@@ -160,17 +160,17 @@
       <el-table-column
         prop="lot_no"
         label="收皮条码"
-        min-width="20"
+        min-width="30"
       />
       <el-table-column
         prop="test_equip"
         label="检测机台"
-        min-width="20"
+        min-width="10"
       />
       <el-table-column
         prop="plan_uid"
         label="检测计划编号"
-        min-width="20"
+        min-width="25"
       />
       <el-table-column
         prop="test_method_name"
@@ -180,18 +180,22 @@
       <el-table-column
         prop="test_times"
         label="实验次数"
-        min-width="20"
+        min-width="10"
       />
       <el-table-column
         prop="test_interval"
         label="实验间隔"
-        min-width="20"
+        min-width="10"
       />
       <el-table-column
-        prop="values"
+        prop="value"
         label="检测值"
-        min-width="20"
-      />
+        min-width="50"
+      >
+        <template v-if="row.value" slot-scope="{row}">
+          {{ row.value.replace(/{|}|'/g,"") }}
+        </template>
+      </el-table-column>
       <el-table-column
         prop="test_user"
         label="检测人员"
@@ -203,10 +207,11 @@
         min-width="20"
       />
       <el-table-column
+        v-if="['物性','钢拔'].includes(search.test_indicator_name)"
         label="查看绑定"
         width="70"
       >
-        <template v-if="['物性','钢拔'].includes(row.test_indicator_name)" slot-scope="{row}">
+        <template slot-scope="{row}">
           <el-button size="mini" type="primary" @click="showTestData(row)">查看</el-button>
         </template>
       </el-table-column>
@@ -572,6 +577,7 @@ export default {
         const data = await rubberMaxStretchTestResult('get', null, { params: { product_test_plan_detail_id: id }})
         this.tableDataValue = data.results || []
         this.tableDataValueLoading = false
+
         if (this.tableDataValue.length > 0) {
           this.tableDataValue.push({
             ordering: this.search.test_indicator_name === '物性' ? '平均值' : 'Mid',
