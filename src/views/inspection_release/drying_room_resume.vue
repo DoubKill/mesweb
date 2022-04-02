@@ -103,13 +103,13 @@
         min-width="20"
       />
       <el-table-column
-        v-if="search.inventory_type==='出库'"
+        v-if="search.inventory_type==='出烘房'"
         prop="baking_end_time"
         label="出烘房时间"
         min-width="30"
       />
       <el-table-column
-        else
+        v-if="search.inventory_type==='入烘房'"
         prop="baking_start_time"
         label="入烘房时间"
         min-width="30"
