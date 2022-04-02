@@ -61,7 +61,6 @@
           width="120"
         >
           <template
-
             slot-scope="{row}"
           >
             <el-input-number v-if="row.name==='外发无硫料(吨)'&&!exportTableShow" v-model="row[d]" controls-position="right" :min="0" style="width:110px" />
@@ -75,6 +74,11 @@
         width="90"
       />
     </el-table>
+
+    <div
+      id="taskLine"
+      style="width: 100%;height:500px;margin-top:100px"
+    />
 
     <el-dialog
       title="190E机台的产量（车数）输入"
@@ -196,6 +200,7 @@
 <script>
 import { dailyProductionCompletionReport, equip190e } from '@/api/jqy'
 import classSelect from '@/components/ClassSelect'
+import * as echarts from 'echarts'
 import { exportExcel } from '@/utils/index'
 import { setDate } from '@/utils'
 export default {
@@ -216,7 +221,127 @@ export default {
       optionsProduct: [],
       tableHead: [],
       tableData: [],
-      exportTableShow: false
+      exportTableShow: false,
+      option: {
+        title: {
+          left: 'center',
+          text: '安吉（炼胶）每日产能情况说明（含彩胶线）'
+        },
+        tooltip: {
+          trigger: 'axis'
+        },
+        legend: {
+          top: '6%',
+          orient: 'horizontal',
+          data: ['无硫', '发制造部吨位数', '发动力吨位数', '无硫发出吨位(收发)', '合计']
+        },
+        toolbox: {
+          show: true
+        },
+        calculable: true,
+        grid: {
+          x: 70,
+          y: 100,
+          x2: 0,
+          y2: 30
+        },
+        xAxis: [
+          {
+            type: 'category',
+            // prettier-ignore
+            data: []
+          }
+        ],
+        yAxis: [
+          {
+            type: 'value'
+          }
+        ],
+        series: [
+          {
+            z: 1,
+            barGap: '0%',
+            name: '无硫',
+            type: 'bar',
+            data: [],
+            label: {
+              position: 'top',
+              show: true,
+              formatter: function(params) {
+                if (params.value === 0) {
+                  return ''
+                } else {
+                  return params.value
+                }
+              }
+            }
+          },
+          {
+            name: '发制造部吨位数',
+            type: 'bar',
+            data: [],
+            label: {
+              position: 'top',
+              show: true,
+              formatter: function(params) {
+                if (params.value === 0) {
+                  return ''
+                } else {
+                  return params.value
+                }
+              }
+            }
+          },
+          {
+            name: '发动力吨位数',
+            type: 'bar',
+            data: [],
+            label: {
+              position: 'top',
+              show: true,
+              formatter: function(params) {
+                if (params.value === 0) {
+                  return ''
+                } else {
+                  return params.value
+                }
+              }
+            }
+          },
+          {
+            name: '无硫发出吨位(收发)',
+            type: 'bar',
+            data: [],
+            label: {
+              position: 'top',
+              show: true,
+              formatter: function(params) {
+                if (params.value === 0) {
+                  return ''
+                } else {
+                  return params.value
+                }
+              }
+            }
+          },
+          {
+            name: '合计',
+            type: 'line',
+            data: [],
+            label: {
+              position: 'top',
+              show: true,
+              formatter: function(params) {
+                if (params.value === 0) {
+                  return ''
+                } else {
+                  return params.value
+                }
+              }
+            }
+          }
+        ]
+      }
     }
   },
   created() {
@@ -375,21 +500,66 @@ export default {
         this.loading = true
         const data = await dailyProductionCompletionReport('get', null, { params: this.search })
         this.tableData = data.results || []
-        // this.tableData.forEach(d => {
-        //   if (d.name === '终炼实际完成(吨)') {
-        //     this.arr = []
-        //     for (const i in d) {
-        //       if (i !== 'name' && i !== 'weight') {
-        //         this.tableHead.forEach(item => {
-        //           this.arr.push({
-        //             [item]: d[i] })
-        //         })
-        //       }
-        //     }
-        //     console.log(this.arr)
-        //   }
-        // })
-
+        this.xList = []
+        this.tableHead.forEach(d => {
+          this.xList.push(parseInt(this.search.date.split('-')[1]) + '/' + d.split('日')[0])
+        })
+        this.tableData.forEach(d => {
+          if (d.name === '终炼胶实际完成(吨)') {
+            this.addList = []
+            this.tableHead.forEach(item => {
+              this.addList.push(
+                d[item] ? d[item].toFixed(0) : 0)
+            })
+          }
+          if (d.name === '混炼胶实际完成(吨)') {
+            this.yList1 = []
+            this.tableHead.forEach(item => {
+              this.yList1.push(
+                d[item] ? d[item].toFixed(0) : 0)
+            })
+          }
+          if (d.name === '实际完成数-1(吨)') {
+            this.yList2 = []
+            this.tableHead.forEach(item => {
+              this.yList2.push(
+                d[item] ? d[item].toFixed(0) : 0)
+            })
+          }
+          if (d.name === '实际完成数-2(吨)') {
+            this.yList3 = []
+            this.tableHead.forEach(item => {
+              this.yList3.push(
+                d[item] ? d[item].toFixed(0) : 0)
+            })
+          }
+          if (d.name === '外发无硫料(吨)') {
+            this.yList4 = []
+            this.tableHead.forEach(item => {
+              this.yList4.push(
+                d[item] ? d[item].toFixed(0) : 0)
+            })
+          }
+        })
+        this.yList5 = []
+        for (var i = 0; i < this.tableHead.length; i++) {
+          this.yList5.push(Number(this.addList[i]) + Number(this.yList1[i]))
+        }
+        console.log(this.yList5)
+        this.option.xAxis[0].data = this.xList
+        this.option.series[0].data = this.yList1
+        this.option.series[1].data = this.yList2
+        this.option.series[2].data = this.yList3
+        this.option.series[3].data = this.yList4
+        this.option.series[4].data = this.yList5
+        this.$nextTick(() => {
+          const chartBar = echarts.init(document.getElementById('taskLine'))
+          chartBar.setOption(this.option)
+        })
+        console.log(this.yList1)
+        console.log(this.yList2)
+        console.log(this.yList3)
+        console.log(this.yList4)
         this.loading = false
       } catch (e) {
         this.loading = false
