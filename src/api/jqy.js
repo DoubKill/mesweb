@@ -1301,3 +1301,30 @@ export function thMaterials(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function schedulingStockConfirm(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SchedulingStockConfirm + id + '/' : API.SchedulingStockConfirm,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function schedulingMaterialDemanded(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SchedulingMaterialDemanded + id + '/' : API.SchedulingMaterialDemanded,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function schedulingRecipeStages(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SchedulingRecipeStages + id + '/' : API.SchedulingRecipeStages,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

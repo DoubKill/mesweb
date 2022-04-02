@@ -649,6 +649,9 @@ export default {
   Equip190eImport: '/api/v1/production/equip-190e/import_xlsx/',
   MonthlyOutputStatisticsReport: '/api/v1/production/monthly-output-statistics-report/',
   SchedulingStockSummary: '/api/v1/plan/scheduling-stock-summary/',
+  SchedulingStockConfirm: '/api/v1/plan/scheduling-stock-summary/confirm/',
+  SchedulingMaterialDemanded: '/api/v1/plan/scheduling-material-demanded/', // 原材料需求量
+  SchedulingRecipeStages: '/api/v1/plan/scheduling-recipe-stages/',
   WmsNucleinManagement: '/api/v1/inventory/wms-nuclein-management/',
   MaterialTestPlan: '/api/v1/quality/material-test-plan/',
   MaterialTestPlanDetail: '/api/v1/quality/material-test-plan-detail/',

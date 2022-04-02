@@ -723,6 +723,16 @@ export let asyncRoutes = [
                 permissionName: 'materialdemanded'
               }
             },
+            {
+              path: '/schedule/material-demand',
+              component: () => import('@/views/plan/schedule/dispose/material-demand'),
+              name: 'MaterialDemand',
+              meta: {
+                faName: 'ScheduleDispose',
+                title: '原材料需求量 汇总表',
+                permissionName: 'materialdemanded'
+              }
+            },
             // {
             //   path: '/schedule/weighing-system-plan',
             //   component: () => import('@/views/plan/schedule/dispose/weighing-system-plan'),
