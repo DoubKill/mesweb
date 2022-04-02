@@ -1322,6 +1322,16 @@ export let asyncRoutes = [
               title: '密炼机台产量汇总表',
               permissionName: 'summary_of_mill_output'
             }
+          },
+          {
+            path: '/report/190e-setting',
+            component: () => import('@/views/equipment-management/report/190e_setting'),
+            name: 'SettingE190',
+            meta: {
+              faName: 'Achievements',
+              title: '190E机台规格信息维护',
+              permissionName: 'equip_190e'
+            }
           }
           // {
           //   path: '/report/set-attendance',
