@@ -45,9 +45,6 @@
           <el-form-item label="现场可修改计划数量(车)">
             <el-input-number v-model="typeForm.scheduling_adaptable_trains" :min="0" />
           </el-form-item>
-          <el-form-item label="确保最低库存量(天)" prop="min_stock_trains">
-            <el-input-number v-model="typeForm.min_stock_trains" :min="0" />
-          </el-form-item>
           <el-form-item label="排程参数自动统计时间">
             <el-time-select
               v-model="typeForm.scheduling_auto_time"
@@ -96,6 +93,15 @@
             ~
             <el-input-number v-model="typeForm.mixing_interval_et_time" style="width:150px" :min="typeForm.mixing_interval_st_time" />
           </el-form-item>
+          <el-form-item label="小吨位(<5吨)目标库存天数" prop="small_ton_stock_days">
+            <el-input-number v-model="typeForm.small_ton_stock_days" :min="0" precision="1" />
+          </el-form-item>
+          <el-form-item label="中吨位(5-10吨)目标库存天数" prop="middle_ton_stock_days">
+            <el-input-number v-model="typeForm.middle_ton_stock_days" :min="0" precision="1" />
+          </el-form-item>
+          <el-form-item label="大吨位(>10吨)目标库存天数" prop="big_ton_stock_days">
+            <el-input-number v-model="typeForm.big_ton_stock_days" :min="0" precision="1" />
+          </el-form-item>
           <br>
         </el-col>
       </el-row>
@@ -137,10 +143,16 @@ export default {
         scheduling_interval_trains: [
           { required: true, message: '不能为空', trigger: 'change' }
         ],
-        min_stock_trains: [
+        pkg_count: [
           { required: true, message: '不能为空', trigger: 'change' }
         ],
-        pkg_count: [
+        small_ton_stock_days: [
+          { required: true, message: '不能为空', trigger: 'change' }
+        ],
+        middle_ton_stock_days: [
+          { required: true, message: '不能为空', trigger: 'change' }
+        ],
+        big_ton_stock_days: [
           { required: true, message: '不能为空', trigger: 'change' }
         ]
       }
