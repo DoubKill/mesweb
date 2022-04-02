@@ -223,6 +223,7 @@ export default {
       tableData: [],
       exportTableShow: false,
       option: {
+        color: ['#C0504D', '#9BBB59', '#8064A2', '#4BACC6', '#4A7EBB'],
         title: {
           left: 'center',
           text: '安吉（炼胶）每日产能情况说明（含彩胶线）'
@@ -240,7 +241,7 @@ export default {
         },
         calculable: true,
         grid: {
-          x: 70,
+          x: 60,
           y: 100,
           x2: 0,
           y2: 30
@@ -259,12 +260,13 @@ export default {
         ],
         series: [
           {
-            z: 1,
             barGap: '0%',
             name: '无硫',
             type: 'bar',
             data: [],
             label: {
+              color: '#F5FFFF',
+              backgroundColor: '#C00000',
               position: 'top',
               show: true,
               formatter: function(params) {
@@ -277,10 +279,13 @@ export default {
             }
           },
           {
+            barGap: '0%',
             name: '发制造部吨位数',
             type: 'bar',
             data: [],
             label: {
+              color: '#000000',
+              backgroundColor: '#92D050',
               position: 'top',
               show: true,
               formatter: function(params) {
@@ -293,11 +298,13 @@ export default {
             }
           },
           {
+            barGap: '0%',
             name: '发动力吨位数',
             type: 'bar',
             data: [],
             label: {
-              position: 'top',
+              color: '#000000',
+              backgroundColor: '#FAC090',
               show: true,
               formatter: function(params) {
                 if (params.value === 0) {
@@ -309,10 +316,12 @@ export default {
             }
           },
           {
+            barGap: '0%',
             name: '无硫发出吨位(收发)',
             type: 'bar',
             data: [],
             label: {
+              color: '#000000',
               position: 'top',
               show: true,
               formatter: function(params) {
@@ -330,6 +339,8 @@ export default {
             data: [],
             label: {
               position: 'top',
+              color: 'black',
+              backgroundColor: '#FFFF00',
               show: true,
               formatter: function(params) {
                 if (params.value === 0) {
@@ -545,7 +556,6 @@ export default {
         for (var i = 0; i < this.tableHead.length; i++) {
           this.yList5.push(Number(this.addList[i]) + Number(this.yList1[i]))
         }
-        console.log(this.yList5)
         this.option.xAxis[0].data = this.xList
         this.option.series[0].data = this.yList1
         this.option.series[1].data = this.yList2
@@ -556,10 +566,6 @@ export default {
           const chartBar = echarts.init(document.getElementById('taskLine'))
           chartBar.setOption(this.option)
         })
-        console.log(this.yList1)
-        console.log(this.yList2)
-        console.log(this.yList3)
-        console.log(this.yList4)
         this.loading = false
       } catch (e) {
         this.loading = false
