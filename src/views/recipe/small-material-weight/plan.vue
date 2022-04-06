@@ -34,7 +34,7 @@
           </el-form-item>
           <el-form-item label="手自动状态:">
             <el-input v-model="item.search.auto" disabled style="width:80px;margin-right:8px" />
-            <el-button type="primary" :disabled="!item.search.auto||btnAutoLoading" @click="autoChange(item,index)">手自动切换</el-button>
+            <el-button v-permission="['xl_plan', 'auto']" type="primary" :disabled="!item.search.auto||btnAutoLoading" @click="autoChange(item,index)">手自动切换</el-button>
           </el-form-item>
           <!-- <el-form-item label="设定车次">
           <el-input v-model="item.search.setno" clearable placeholder="设定车次" @input="debounceListChange(item,index)" />
