@@ -563,5 +563,12 @@ export default {
       width:auto;
     }
   }
+  .el-table__fixed-right .el-table__fixed-header-wrapper {
+    left: auto !important;
+    right: 0 !important;
+  }
+  .el-table__fixed-right .el-table__fixed-body-wrapper{
+    right: auto !important;;
+  }
 }
 </style>
