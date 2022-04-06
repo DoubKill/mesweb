@@ -395,6 +395,14 @@ export function currentFactoryDate(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function autoMan(method, id, data = {}) {
+  const obj = {
+    url: id ? API.AutoMan + id + '/' : API.AutoMan,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 
 export function wmsStock(method, id, data = {}) {
   const obj = {
