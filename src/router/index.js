@@ -723,6 +723,16 @@ export let asyncRoutes = [
                 permissionName: 'materialdemanded'
               }
             },
+            {
+              path: '/schedule/material-demand',
+              component: () => import('@/views/plan/schedule/dispose/material-demand'),
+              name: 'MaterialDemand',
+              meta: {
+                faName: 'ScheduleDispose',
+                title: '原材料需求量 汇总表',
+                permissionName: 'materialdemanded'
+              }
+            },
             // {
             //   path: '/schedule/weighing-system-plan',
             //   component: () => import('@/views/plan/schedule/dispose/weighing-system-plan'),
@@ -1311,6 +1321,16 @@ export let asyncRoutes = [
               faName: 'Achievements',
               title: '密炼机台产量汇总表',
               permissionName: 'summary_of_mill_output'
+            }
+          },
+          {
+            path: '/report/190e-setting',
+            component: () => import('@/views/equipment-management/report/190e_setting'),
+            name: 'SettingE190',
+            meta: {
+              faName: 'Achievements',
+              title: '190E机台规格信息维护',
+              permissionName: 'equip_190e'
             }
           }
           // {

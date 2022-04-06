@@ -28,7 +28,7 @@
         align="center"
         prop="state"
         label="段次"
-        min-width="20"
+        width="110"
       />
       <el-table-column
         align="center"
@@ -175,6 +175,34 @@
           </template>
         </el-table-column>
       </el-table-column>
+      <el-table-column
+        align="center"
+        label="辅助"
+        min-width="20"
+      >
+        <el-table-column
+          align="center"
+          prop="fz_pt"
+          label="普通"
+          min-width="20"
+        >
+          <template slot-scope="{row}">
+            <span v-if="loading">{{ row.fz_pt }}</span>
+            <el-input-number v-else v-model="row.fz_pt" controls-position="right" :min="0" :max="99.99" :precision="2" />
+          </template>
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="fz_dj"
+          label="丁基"
+          min-width="20"
+        >
+          <template slot-scope="{row}">
+            <span v-if="loading">{{ row.fz_dj }}</span>
+            <el-input-number v-else v-model="row.fz_dj" controls-position="right" :min="0" :max="99.99" :precision="2" />
+          </template>
+        </el-table-column>
+      </el-table-column>
     </el-table>
   </div>
 </template>
@@ -217,7 +245,7 @@ export default {
       try {
         this.tableData.forEach(d => {
           if (!d.E580_pt || !d.E580_dj || !d.F370_pt || !d.F370_dj || !d.GK320_pt ||
-          !d.GK320_dj || !d.GK255_pt || !d.GK255_dj || !d.GK400_pt || !d.GK400_dj) {
+          !d.GK320_dj || !d.GK255_pt || !d.GK255_dj || !d.GK400_pt || !d.GK400_dj || !d.fz_pt || !d.fz_dj) {
             throw new Error('单价数据必填')
           }
         })
@@ -239,7 +267,7 @@ export default {
 <style lang="scss">
     .statisticalReportPrice{
         .el-input-number{
-            width:120px;
+            width:110px;
         }
     }
 </style>

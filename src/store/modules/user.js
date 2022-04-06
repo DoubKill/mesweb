@@ -146,7 +146,7 @@ const actions = {
       Cookies.remove('userId')
       Cookies.remove('name')
       Cookies.remove('zc-url')
-
+      Cookies.remove('password')
       dispatch('tagsView/delAllViews', null, { root: true })
 
       resolve()

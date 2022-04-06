@@ -213,7 +213,7 @@ export default {
   },
   created() {
     var reg = /(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[\W_]).{8,}/
-    if (this.$route.query.password && !reg.test(this.$route.query.password)) {
+    if (getCookie('password') && !reg.test(getCookie('password'))) {
       this.$message('密码强度低，请修改密码后再重新登录')
       this.dialogVisible = true
     } else {
@@ -233,7 +233,7 @@ export default {
     },
     handleClose(done) {
       var reg = /(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[\W_]).{8,}/
-      if (this.$route.query.password && !reg.test(this.$route.query.password)) {
+      if (getCookie('password') && !reg.test(getCookie('password'))) {
         this.logout()
       } else {
         this.loginForm = {}
@@ -310,6 +310,18 @@ function a(childrenVal = [], val) {
   } else {
     return val
   }
+}
+function getCookie(cName) {
+  if (document.cookie.length > 0) {
+    var cStart = document.cookie.indexOf(cName + '=')
+    if (cStart !== -1) {
+      cStart = cStart + cName.length + 1
+      var cEnd = document.cookie.indexOf(';', cStart)
+      if (cEnd === -1) cEnd = document.cookie.length
+      return document.cookie.substring(cStart, cEnd)
+    }
+  }
+  return ''
 }
 </script>
 

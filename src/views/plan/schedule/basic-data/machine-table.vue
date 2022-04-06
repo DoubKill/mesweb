@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 定机表(段次及主副机台) -->
+    <!-- 定机表(段次及主辅机台) -->
     <el-form
       :inline="true"
     >
@@ -22,11 +22,12 @@
       <el-form-item label="配方名称">
         <el-input
           v-model="search.product_no"
+          clearable
           @input="changeSearch"
         />
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button v-permission="['aps_machine_setting','export']" type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel模板</el-button>
+        <el-button v-permission="['aps_machine_setting','export']" type="primary" @click="exportTable">导出Excel</el-button>
         <el-upload
           style="margin:0 8px;display:inline-block"
           action="string"
@@ -34,7 +35,7 @@
           :http-request="Upload"
           :show-file-list="false"
         >
-          <el-button v-permission="['aps_machine_setting','import']" type="primary">导入Excel</el-button>
+          <el-button v-permission="['aps_machine_setting','import']" type="primary">导入定机表Excel</el-button>
         </el-upload>
         <el-button v-permission="['aps_machine_setting','add']" type="primary" @click="onSubmit">新建</el-button>
       </el-form-item>
@@ -43,6 +44,7 @@
       id="out-table"
       v-loading="loading"
       border
+      height="700"
       :data="tableData"
       style="width: 100%"
     >
@@ -53,60 +55,113 @@
       />
       <el-table-column
         header-align="center"
-        prop="stage"
-        label="段数"
-      />
-      <el-table-column
-        header-align="center"
         prop="product_no"
         label="配方名称"
       />
       <el-table-column
         header-align="center"
-        label="混炼MB"
+        prop="version"
+        label="配方尾号"
+      />
+      <el-table-column
+        header-align="center"
+        prop="stages1"
+        label="所需段数"
+      />
+      <el-table-column
+        header-align="center"
+        label="HMB"
       >
         <el-table-column
           header-align="center"
-          label="配方机台"
-        >
-          <el-table-column
-            header-align="center"
-            label="主"
-            prop="mixing_main_machine"
-          />
-
-          <el-table-column
-            header-align="center"
-            label="副"
-            prop="mixing_vice_machine1"
-          />
-        </el-table-column>
+          label="主"
+          prop="main_machine_HMB"
+        />
+        <el-table-column
+          header-align="center"
+          label="辅"
+          prop="vice_machine_HMB1"
+        />
       </el-table-column>
       <el-table-column
         header-align="center"
-        label="加硫FM"
+        label="CMB"
       >
         <el-table-column
           header-align="center"
-          label="配方机台"
-        >
-          <el-table-column
-            header-align="center"
-            label="主"
-            prop="final_main_machine"
-          />
-
-          <el-table-column
-            header-align="center"
-            label="副"
-            prop="final_vice_machine1"
-          />
-        </el-table-column>
+          label="主"
+          prop="main_machine_CMB"
+        />
+        <el-table-column
+          header-align="center"
+          label="辅"
+          prop="vice_machine_CMB1"
+        />
+      </el-table-column>
+      <el-table-column
+        header-align="center"
+        label="1MB"
+      >
+        <el-table-column
+          header-align="center"
+          label="主"
+          prop="main_machine_1MB"
+        />
+        <el-table-column
+          header-align="center"
+          label="辅"
+          prop="vice_machine_1MB1"
+        />
+      </el-table-column>
+      <el-table-column
+        header-align="center"
+        label="2MB"
+      >
+        <el-table-column
+          header-align="center"
+          label="主"
+          prop="main_machine_2MB"
+        />
+        <el-table-column
+          header-align="center"
+          label="辅"
+          prop="vice_machine_2MB1"
+        />
+      </el-table-column>
+      <el-table-column
+        header-align="center"
+        label="3MB"
+      >
+        <el-table-column
+          header-align="center"
+          label="主"
+          prop="main_machine_3MB"
+        />
+        <el-table-column
+          header-align="center"
+          label="辅"
+          prop="vice_machine_3MB1"
+        />
+      </el-table-column>
+      <el-table-column
+        header-align="center"
+        label="FM"
+      >
+        <el-table-column
+          header-align="center"
+          label="主"
+          prop="main_machine_FM"
+        />
+        <el-table-column
+          header-align="center"
+          label="辅"
+          prop="vice_machine_FM1"
+        />
       </el-table-column>
       <el-table-column
         v-if="!exportTableShow"
         label="操作"
-        width="200"
+        width="160"
       >
         <template slot-scope="scope">
           <el-button
@@ -130,7 +185,7 @@
     <el-dialog
       :title="`${typeForm.id?'修改':'新建'}定机表信息`"
       :visible.sync="dialogVisible"
-      width="30%"
+      width="50%"
       :before-close="handleClose"
     >
       <el-form ref="createForm" :inline="true" label-width="180px" :rules="rules" :model="typeForm">
@@ -149,28 +204,12 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="段次" prop="stage">
-          <el-select
-            v-model="typeForm.stage"
-            :disabled="typeForm.id?true:false"
-            placeholder="请选择"
-            clearable
-          >
-            <el-option
-              v-for="item in options1"
-              :key="item.id"
-              :label="item.global_name"
-              :value="item.global_name"
-            />
-          </el-select>
-        </el-form-item>
         <el-form-item label="配方名称" prop="product_no">
           <el-select
             v-model="typeForm.product_no"
             :disabled="typeForm.id?true:false"
             filterable
             placeholder="请选择"
-            clearable
           >
             <el-option
               v-for="item in options2"
@@ -180,9 +219,28 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="混炼MB主机台" prop="mixing_main_machine">
+        <el-form-item label="配方尾号" prop="version">
+          <el-input v-model="typeForm.version" :disabled="typeForm.id?true:false" style="width:200px" />
+        </el-form-item>
+        <el-form-item label="所需段数" prop="stages">
           <el-select
-            v-model="typeForm.mixing_main_machine"
+            v-model="typeForm.stages"
+            multiple
+            :disabled="typeForm.id?true:false"
+            placeholder="请选择"
+            @visible-change="visibleChange"
+          >
+            <el-option
+              v-for="item in options1"
+              :key="item.id"
+              :label="item.global_name"
+              :value="item.global_name"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="typeForm.stages.findIndex(d=>d==='HMB')!==-1" label="HMB主机台" prop="main_machine_HMB">
+          <el-select
+            v-model="typeForm.main_machine_HMB"
             placeholder="请选择"
             clearable
           >
@@ -194,9 +252,9 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="混炼MB副机台" prop="mixing_vice_machine">
+        <el-form-item v-if="typeForm.stages.findIndex(d=>d==='HMB')!==-1" label="HMB辅机台" prop="vice_machine_HMB">
           <el-select
-            v-model="typeForm.mixing_vice_machine"
+            v-model="typeForm.vice_machine_HMB"
             placeholder="请选择"
             clearable
             multiple
@@ -209,9 +267,9 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="终炼FM主机台" prop="final_main_machine">
+        <el-form-item v-if="typeForm.stages.findIndex(d=>d==='CMB')!==-1" label="CMB主机台" prop="main_machine_CMB">
           <el-select
-            v-model="typeForm.final_main_machine"
+            v-model="typeForm.main_machine_CMB"
             placeholder="请选择"
             clearable
           >
@@ -223,15 +281,131 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="终炼FM副机台" prop="final_vice_machine">
+        <el-form-item v-if="typeForm.stages.findIndex(d=>d==='CMB')!==-1" label="CMB辅机台" prop="vice_machine_CMB">
           <el-select
-            v-model="typeForm.final_vice_machine"
+            v-model="typeForm.vice_machine_CMB"
             placeholder="请选择"
             clearable
             multiple
           >
             <el-option
               v-for="item in options"
+              :key="item.id"
+              :label="item.equip_no"
+              :value="item.equip_no"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="typeForm.stages.findIndex(d=>d==='1MB')!==-1" label="1MB主机台" prop="main_machine_1MB">
+          <el-select
+            v-model="typeForm.main_machine_1MB"
+            placeholder="请选择"
+            clearable
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.id"
+              :label="item.equip_no"
+              :value="item.equip_no"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="typeForm.stages.findIndex(d=>d==='1MB')!==-1" label="1MB辅机台" prop="vice_machine_1MB">
+          <el-select
+            v-model="typeForm.vice_machine_1MB"
+            placeholder="请选择"
+            clearable
+            multiple
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.id"
+              :label="item.equip_no"
+              :value="item.equip_no"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="typeForm.stages.findIndex(d=>d==='2MB')!==-1" label="2MB主机台" prop="main_machine_2MB">
+          <el-select
+            v-model="typeForm.main_machine_2MB"
+            placeholder="请选择"
+            clearable
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.id"
+              :label="item.equip_no"
+              :value="item.equip_no"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="typeForm.stages.findIndex(d=>d==='2MB')!==-1" label="2MB辅机台" prop="vice_machine_2MB">
+          <el-select
+            v-model="typeForm.vice_machine_2MB"
+            placeholder="请选择"
+            clearable
+            multiple
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.id"
+              :label="item.equip_no"
+              :value="item.equip_no"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="typeForm.stages.findIndex(d=>d==='3MB')!==-1" label="3MB主机台" prop="main_machine_3MB">
+          <el-select
+            v-model="typeForm.main_machine_3MB"
+            placeholder="请选择"
+            clearable
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.id"
+              :label="item.equip_no"
+              :value="item.equip_no"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="typeForm.stages.findIndex(d=>d==='3MB')!==-1" label="3MB辅机台" prop="vice_machine_3MB">
+          <el-select
+            v-model="typeForm.vice_machine_3MB"
+            placeholder="请选择"
+            clearable
+            multiple
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.id"
+              :label="item.equip_no"
+              :value="item.equip_no"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="typeForm.stages.findIndex(d=>d==='FM')!==-1" label="FM主机台" prop="main_machine_FM">
+          <el-select
+            v-model="typeForm.main_machine_FM"
+            placeholder="请选择"
+            clearable
+          >
+            <el-option
+              v-for="item in options3"
+              :key="item.id"
+              :label="item.equip_no"
+              :value="item.equip_no"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="typeForm.stages.findIndex(d=>d==='FM')!==-1" label="FM辅机台" prop="vice_machine_FM">
+          <el-select
+            v-model="typeForm.vice_machine_FM"
+            placeholder="请选择"
+            clearable
+            multiple
+          >
+            <el-option
+              v-for="item in options3"
               :key="item.id"
               :label="item.equip_no"
               :value="item.equip_no"
@@ -249,9 +423,9 @@
 
 <script>
 import { classesListUrl, productInfosUrl } from '@/api/base_w'
-import { getEquip } from '@/api/banburying-performance-manage'
+// import { getEquip } from '@/api/banburying-performance-manage'
 import { exportExcel } from '@/utils/index'
-import { schedulingRecipeMachineSetting, schedulingRecipeMachineImport } from '@/api/jqy'
+import { schedulingRecipeMachineSetting, schedulingRecipeMachineImport, schedulingRecipeStages } from '@/api/jqy'
 export default {
   name: 'ScheduleMachineTable',
   components: {},
@@ -259,29 +433,63 @@ export default {
     return {
       dialogVisible: false,
       submit: false,
-      options: [],
+      options: [
+        { id: 1, equip_no: 'Z01' },
+        { id: 2, equip_no: 'Z02' },
+        { id: 3, equip_no: 'Z03' },
+        { id: 4, equip_no: 'Z04' },
+        { id: 5, equip_no: 'Z05' },
+        { id: 6, equip_no: 'Z06' },
+        { id: 7, equip_no: 'Z07' },
+        { id: 8, equip_no: 'Z08' },
+        { id: 9, equip_no: 'Z09' },
+        { id: 10, equip_no: 'Z10' }
+      ],
       options1: [],
       options2: [],
-      btnExportLoad: false,
+      options3: [
+        { id: 1, equip_no: 'Z09' },
+        { id: 2, equip_no: 'Z10' },
+        { id: 3, equip_no: 'Z11' },
+        { id: 4, equip_no: 'Z12' },
+        { id: 5, equip_no: 'Z13' },
+        { id: 6, equip_no: 'Z14' },
+        { id: 7, equip_no: 'Z15' }
+      ],
       search: {},
       exportTableShow: false,
       loading: false,
       tableData: [],
-      typeForm: {},
+      typeForm: { stages: [] },
       rules: {
         rubber_type: [
           { required: true, message: '不能为空', trigger: 'change' }
         ],
-        stage: [
+        stages: [
           { required: true, message: '不能为空', trigger: 'change' }
+        ],
+        version: [
+          { required: true, message: '不能为空', trigger: 'bulr' }
         ],
         product_no: [
           { required: true, message: '不能为空', trigger: 'change' }
         ],
-        mixing_main_machine: [
+        main_machine_HMB: [
           { required: true, message: '不能为空', trigger: 'change' }
         ],
-        final_main_machine: [
+        main_machine_CMB: [
+          { required: true, message: '不能为空', trigger: 'change' }
+        ],
+        main_machine_1MB: [
+          { required: true, message: '不能为空', trigger: 'change' }
+        ],
+        main_machine_2MB: [
+          { required: true, message: '不能为空', trigger: 'change' }
+        ],
+        main_machine_3MB: [
+          { required: true, message: '不能为空', trigger: 'change' }
+        ],
+        main_machine_FM: [
           { required: true, message: '不能为空', trigger: 'change' }
         ]
       }
@@ -290,17 +498,17 @@ export default {
 
   created() {
     this.getList()
-    this.equipChange()
+    // this.equipChange()
     this.classesChange()
     this.productChange()
   },
   methods: {
-    equipChange() {
-      const obj = { all: 1, category_name: '密炼设备' }
-      getEquip(obj).then(response => {
-        this.options = response.results
-      })
-    },
+    // equipChange() {
+    //   const obj = { all: 1, category_name: '密炼设备' }
+    //   getEquip(obj).then(response => {
+    //     this.options = response.results
+    //   })
+    // },
     editOrder(row) {
       this.typeForm = JSON.parse(JSON.stringify(row))
       this.dialogVisible = true
@@ -326,6 +534,22 @@ export default {
       const data = await classesListUrl('get', null, { params: obj })
       this.options1 = data.results
     },
+    async visibleChange(val) {
+      if (val) {
+        if (this.typeForm.product_no && this.typeForm.version) {
+          const obj = { product_no: this.typeForm.product_no, version: this.typeForm.version }
+          const data = await schedulingRecipeStages('get', null, { params: obj })
+          if (data.length > 0) {
+            this.typeForm.stages = data
+          } else {
+            this.$message('获取不到所需段数,请自行选择')
+          }
+          // this.options1 = data.results
+        } else {
+          this.$message('请先填写配方名称和尾号')
+        }
+      }
+    },
     async productChange() {
       const obj = { all: 1 }
       const data = await productInfosUrl('get', null, { params: obj })
@@ -337,8 +561,13 @@ export default {
         const data = await schedulingRecipeMachineSetting('get', null, { params: this.search })
         this.tableData = data || []
         this.tableData.forEach(d => {
-          d.mixing_vice_machine1 = getStringEquip(d.mixing_vice_machine)
-          d.final_vice_machine1 = getStringEquip(d.final_vice_machine)
+          d.stages1 = getStringEquip(d.stages)
+          d.vice_machine_1MB1 = getStringEquip(d.vice_machine_1MB)
+          d.vice_machine_2MB1 = getStringEquip(d.vice_machine_2MB)
+          d.vice_machine_3MB1 = getStringEquip(d.vice_machine_3MB)
+          d.vice_machine_FM1 = getStringEquip(d.vice_machine_FM)
+          d.vice_machine_CMB1 = getStringEquip(d.vice_machine_CMB)
+          d.vice_machine_HMB1 = getStringEquip(d.vice_machine_HMB)
         })
         this.loading = false
       } catch (e) {
@@ -356,7 +585,7 @@ export default {
     },
     handleClose(done) {
       this.$refs.createForm.clearValidate()
-      this.typeForm = {}
+      this.typeForm = { stages: [] }
       this.dialogVisible = false
       if (done) {
         done()

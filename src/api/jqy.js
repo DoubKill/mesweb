@@ -1086,6 +1086,24 @@ export function dailyProductionCompletionReport(method, id, data = {}) {
   return request(obj)
 }
 
+export function equip190e(method, id, data = {}) {
+  const obj = {
+    url: id ? API.Equip190e + id + '/' : API.Equip190e,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equip190eImport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.Equip190eImport + id + '/' : API.Equip190eImport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function schedulingStockSummary(method, id, data = {}) {
   const obj = {
     url: id ? API.SchedulingStockSummary + id + '/' : API.SchedulingStockSummary,
@@ -1278,6 +1296,33 @@ export function wmsMaterials(method, id, data = {}) {
 export function thMaterials(method, id, data = {}) {
   const obj = {
     url: id ? API.ThMaterials + id + '/' : API.ThMaterials,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function schedulingStockConfirm(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SchedulingStockConfirm + id + '/' : API.SchedulingStockConfirm,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function schedulingMaterialDemanded(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SchedulingMaterialDemanded + id + '/' : API.SchedulingMaterialDemanded,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function schedulingRecipeStages(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SchedulingRecipeStages + id + '/' : API.SchedulingRecipeStages,
     method: method
   }
   Object.assign(obj, data)
