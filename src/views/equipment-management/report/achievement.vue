@@ -120,14 +120,10 @@
         fixed="right"
       >
         <template slot-scope="{row}">
-          <!-- <el-link
-            type="primary"
-            @click="subsidyList(row,2)"
-          >{{ row.生产补贴 }}</el-link> -->
           <el-link
             type="primary"
             @click="subsidyList(row,2)"
-          >1111</el-link>
+          >{{ row.生产补贴 }}</el-link>
         </template>
       </u-table-column>
       <u-table-column
@@ -567,8 +563,12 @@ export default {
       width:auto;
     }
   }
-  .el-table__fixed-body-wrapper {
-    max-height: 100% !important;
+  .el-table__fixed-right .el-table__fixed-header-wrapper {
+    left: auto !important;
+    right: 0 !important;
+  }
+  .el-table__fixed-right .el-table__fixed-body-wrapper{
+    right: auto !important;;
   }
 }
 </style>
