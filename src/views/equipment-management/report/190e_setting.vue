@@ -49,7 +49,6 @@
             v-model="row.specification"
             placeholder="请选择规格"
             filterable
-            allow-create
           >
             <el-option
               v-for="item in optionsProduct"
@@ -72,7 +71,6 @@
             v-model="row.state"
             placeholder="请选择段数"
             filterable
-            allow-create
           >
             <el-option
               v-for="item in options"
