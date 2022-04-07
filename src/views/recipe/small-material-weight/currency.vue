@@ -488,7 +488,7 @@ export default {
         //
       }
     },
-    changeMaterial(val) {
+    async changeMaterial(val) {
       this.formData.split_num = 1
       this.formData.print_count = 1
       this.formData.begin_trains = 1
@@ -504,13 +504,22 @@ export default {
           this.formData._single_weight = b
         }
         if (this.formData.batching_type !== '配方') {
-          this.getWeight()
+          await this.getWeight()
+          await this.getHistory1()
         }
+      }
+    },
+    async getHistory1() {
+      try {
+        const data = await weightingPackageSingle('get', null, { params: { history: 1, material_name: this.formData.material_name }})
+        Object.assign(this.formData, data)
+      } catch (e) {
+        //
       }
     },
     async getWeight() {
       try {
-        const data = await weightingPackageSingle('get', null, { params: { material_name: this.formData.material_name }})
+        const data = await weightingPackageSingle('get', null, { params: { material_name: this.formData.material_name, weight: 1 }})
         this.formData.single_weight = data || null
       } catch (e) {
         //
@@ -533,7 +542,7 @@ export default {
 
       this.getManualList()
     },
-    changeProduct(id) {
+    async changeProduct(id) {
       this.formData = {
         split_num: 1,
         batching_type: '配方',
@@ -554,8 +563,8 @@ export default {
         this.formData.dev_type_name = ''
         this.formData.product_no = ''
       }
-      this.getHistory()
-      this.getManualList()
+      await this.getManualList()
+      await this.getHistory()
     },
     async getHistory() {
       try {

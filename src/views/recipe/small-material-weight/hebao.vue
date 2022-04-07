@@ -390,7 +390,7 @@ export default {
       this.tableData1New = []
       this.getManual()
     },
-    changeProductNo(no) {
+    async changeProductNo(no) {
       if (no) {
         const obj = this.productList.find(D => D.product_no === no)
         this.formData.dev_type = obj.dev_type
@@ -399,11 +399,11 @@ export default {
         this.formData.dev_type = ''
         this.formData.product_no = ''
       }
-      this.getHistory()
       this.formData.batching_equip = ''
       this.tableData1 = []
       this.tableData1New = []
-      this.getManual()
+      await this.getManual()
+      await this.getHistory()
     },
     async changeSplitNum() {
       if (!this.tableData1New.length) {
