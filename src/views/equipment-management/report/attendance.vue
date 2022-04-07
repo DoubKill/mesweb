@@ -31,7 +31,7 @@
           :http-request="Upload"
           :show-file-list="false"
         >
-          <el-button v-permission="['employee_attendance_records','import']" type="primary">导入Excel</el-button>
+          <el-button v-permission="['employee_attendance_records','import']" :loading="btnExportLoad1" type="primary">导入Excel</el-button>
         </el-upload>
       </el-form-item>
     </el-form>
@@ -99,6 +99,7 @@ export default {
       tableHead: [],
       tableData: [],
       btnExportLoad: false,
+      btnExportLoad1: false,
       exportTableShow: false
     }
   },
@@ -145,16 +146,22 @@ export default {
       this.$debounce(this, 'getList')
     },
     Upload(param) {
+      this.btnExportLoad1 = true
       const formData = new FormData()
       formData.append('file', param.file)
       formData.append('date', this.search.date)
-      employeeattendancerecords('post', null, { data: formData }).then(response => {
-        this.$message({
-          type: 'success',
-          message: response
+      employeeattendancerecords('post', null, { data: formData })
+        .then(response => {
+          this.$message({
+            type: 'success',
+            message: response
+          })
+          this.btnExportLoad1 = false
+          this.getList()
         })
-        this.getList()
-      })
+        .catch(e => {
+          this.btnExportLoad1 = false
+        })
     },
     objectSpanMethod({ row, column, rowIndex, columnIndex }) {
       if ([0].includes(columnIndex) && this.spanArr) {
