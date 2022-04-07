@@ -12,6 +12,11 @@
         width="60"
       />
       <el-table-column
+        prop="work_type"
+        label="员工类别"
+        width="60"
+      />
+      <el-table-column
         prop="是否定岗"
         label="是否独立上岗"
         width="40"
