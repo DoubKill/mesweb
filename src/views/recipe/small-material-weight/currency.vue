@@ -505,7 +505,16 @@ export default {
         }
         if (this.formData.batching_type !== '配方') {
           this.getWeight()
+          this.getHistory1()
         }
+      }
+    },
+    async getHistory1() {
+      try {
+        const data = await weightingPackageSingle('get', null, { params: { history: 1, material_name: this.formData.material_name }})
+        Object.assign(this.formData, data)
+      } catch (e) {
+        //
       }
     },
     async getWeight() {
