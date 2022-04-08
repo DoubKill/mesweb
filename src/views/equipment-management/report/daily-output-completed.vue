@@ -70,7 +70,7 @@
       </template>
       <el-table-column
         prop="weight"
-        label="日累计完成1日为起点"
+        label="月累计完成1日为起点"
         width="90"
       />
     </el-table>
@@ -377,7 +377,7 @@ export default {
           return
         }
         const data = await equip190e('get', null, { params: { specification: row.specification }})
-        this.options = data.results
+        this.options = data
       }
     },
     changeQty(row) {

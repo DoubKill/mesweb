@@ -175,7 +175,7 @@ export default {
       try {
         this.loading = true
         const data = await equip190e('get', null, { params: this.search })
-        this.tableData = data.results || []
+        this.tableData = data || []
       } catch (e) {
         //
       }
