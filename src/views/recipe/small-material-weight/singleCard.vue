@@ -428,7 +428,7 @@ export default {
   },
   methods: {
     // 第一个开始
-    changeProductNo(no) {
+    async changeProductNo(no) {
       if (no) {
         const obj = this.productList.find(D => D.product_no === no)
         this.formData.dev_type = obj.dev_type
@@ -437,11 +437,11 @@ export default {
         this.formData.dev_type = ''
         this.formData.product_no = ''
       }
-      this.getHistory()
       this.formData.batching_equip = ''
       this.tableData1 = []
       this.tableData1New = []
-      this.getManual()
+      await this.getManual()
+      await this.getHistory()
     },
     async getHistory() {
       try {
@@ -604,7 +604,7 @@ export default {
         //
       }
     },
-    changeProduct1(id) {
+    async changeProduct1(id) {
       this.formData1 = {
         split_num: 1,
         batching_type: '配方',
@@ -625,8 +625,8 @@ export default {
         this.formData1.dev_type_name = ''
         this.formData1.product_no = ''
       }
-      this.getHistory1()
-      this.getManualList1()
+      await this.getManualList1()
+      await this.getHistory1()
     },
     async getHistory1() {
       try {
@@ -707,7 +707,7 @@ export default {
         //
       }
     },
-    changeMaterial1(val) {
+    async changeMaterial1(val) {
       this.formData2.split_num = 1
       this.formData2.print_count = 1
       this.formData2.begin_trains = 1
@@ -722,9 +722,9 @@ export default {
           const b = Math.round(a * 1000) / 1000
           this.$set(this.formData2, '_single_weight', b)
         }
-        this.getWeight()
+        await this.getWeight()
       }
-      this.getHistory2()
+      await this.getHistory2()
     },
     async getWeight() {
       try {
