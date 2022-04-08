@@ -1380,7 +1380,7 @@ export let asyncRoutes = [
         meta: {
           title: '原材料消耗量 汇总表',
           icon: 'production',
-          permissionName: ''
+          permissionName: 'material_expend_summary'
         }
       },
       {

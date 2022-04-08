@@ -31,7 +31,7 @@
     <el-table
       id="out-table"
       v-loading="loading"
-      height="700"
+      max-height="700"
       :data="tableData"
       border
     >
