@@ -438,7 +438,7 @@ export default {
     async get190eList() {
       try {
         const data = await equip190e('get', null, { params: {}})
-        this.dataList = data.results || []
+        this.dataList = data || []
       } catch (e) {
         //
       }
