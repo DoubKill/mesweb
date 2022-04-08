@@ -172,7 +172,7 @@ export default {
             })
           })
           this.arr.forEach(d => {
-            this.tableData.[this.tableData.length - 1].[Object.keys(d)[0]] = Object.values(d)[0]
+            this.tableData[this.tableData.length - 1][Object.keys(d)[0]] = Object.values(d)[0]
           })
         }
         this.spanArr = []
@@ -294,7 +294,7 @@ function getNewGoodsList(params, days) {
       // temp[key].total_weight = temp[key].total_weight.toFixed(2)
       days.forEach(d => {
         // addMath(temp[key].[d], params[i].[d])
-        temp[key].[d] += params[i].[d] ?? 0
+        temp[key][d] += params[i][d] ?? 0
         // temp[key].[d] = temp[key].[d].toFixed(2)
       })
     } else {
@@ -304,7 +304,7 @@ function getNewGoodsList(params, days) {
       temp[key].total_weight = params[i].total_weight
       // temp[key].total_weight = temp[key].total_weight.toFixed(2)
       days.forEach(d => {
-        temp[key].[d] = params[i].[d] ?? 0
+        temp[key][d] = params[i][d] ?? 0
       })
     }
   }
@@ -315,7 +315,7 @@ function getNewGoodsList(params, days) {
   newArry.forEach(d => {
     d.total_weight = d.total_weight === 0 ? null : d.total_weight
     days.forEach(i => {
-      d.[i] = d.[i] === 0 ? null : d.[i]
+      d[i] = d[i] === 0 ? null : d[i]
     })
   })
   return newArry
