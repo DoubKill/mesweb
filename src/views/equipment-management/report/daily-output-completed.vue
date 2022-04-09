@@ -160,7 +160,7 @@
           min-width="20"
         >
           <template slot-scope="{row}">
-            <el-input-number v-model="row.qty" :min="1" controls-position="right" @change="changeQty(row)" />
+            <el-input-number v-model="row.qty" :precision="0" :min="1" controls-position="right" @change="changeQty(row)" />
           </template>
         </el-table-column>
         <el-table-column
