@@ -669,6 +669,8 @@ export default {
   WmsExceptHandle: '/api/v1/inventory/wms-except-handle/',
   HfStock: '/api/v1/inventory/hf-stock/', // 烘房胶料信息统计列表
   HfStockDetail: '/api/v1/inventory/hf-stock-detail/',
+  AttendanceClockDetail: '/api/v1/production/attendance-clock-detail/',
+  AttendanceTimeStatistics: '/api/v1/production/attendance-time-statistics/',
   AttendanceGroupSetup: '/api/v1/production/attendance-group-setup/',
 
   PerformanceSummary: '/api/v1/production/performance-summary/', // 薪资汇总表

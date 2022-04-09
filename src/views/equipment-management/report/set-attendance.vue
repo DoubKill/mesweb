@@ -8,6 +8,9 @@
       <el-form-item label="考勤负责人">
         <el-input v-model="search.principal" clearable placeholder="考勤负责人" @input="changeSearch" />
       </el-form-item>
+      <el-form-item label="参与考勤人员">
+        <el-input v-model="search.attendance_users" clearable placeholder="考勤负责人" @input="changeSearch" />
+      </el-form-item>
       <el-form-item style="float:right">
         <el-button v-permission="['performance_job_ladder', 'add']" type="primary" @click="onSubmit">新建</el-button>
       </el-form-item>
@@ -34,7 +37,7 @@
         label="参与考勤人员"
         min-width="20"
       />
-      <el-table-column
+      <!-- <el-table-column
         prop="attendance_type"
         label="考勤类型"
         min-width="20"
@@ -42,7 +45,7 @@
           let obj = options.find(d=>d.id === row.attendance_type)
           return obj.label
         }"
-      />
+      /> -->
       <el-table-column
         label="考勤时间"
         min-width="20"
@@ -130,7 +133,7 @@
             />
           </el-input>
         </el-form-item>
-        <el-form-item label="考勤类型" prop="attendance_type">
+        <!-- <el-form-item label="考勤类型" prop="attendance_type">
           <el-select v-model="dialogForm.attendance_type" placeholder="请选择" style="width:250px">
             <el-option
               v-for="item in options"
@@ -139,7 +142,7 @@
               :value="item.id"
             />
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="考勤时间" prop="time">
           <el-time-picker
             v-model="dialogForm.attendance_st"
@@ -255,7 +258,7 @@ export default {
         attendance_group: [{ required: true, message: '不能为空', trigger: 'blur' }],
         attendance_users: [{ required: true, message: '不能为空', trigger: 'blur' }],
         time: [{ required: true, validator: validatePass, trigger: 'change' }],
-        attendance_type: [{ required: true, message: '不能为空', trigger: 'change' }],
+        // attendance_type: [{ required: true, message: '不能为空', trigger: 'change' }],
         principal: [{ required: true, message: '不能为空', trigger: 'blur' }],
         range_time: [{ required: true, message: '不能为空', trigger: 'change' }],
         lead_time: [{ required: true, message: '不能为空', trigger: 'change' }]
