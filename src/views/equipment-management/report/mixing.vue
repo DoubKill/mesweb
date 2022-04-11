@@ -104,8 +104,8 @@ export default {
     return {
       search: {
         factory_date: setDate(),
-        auto:true,
-        manual:true
+        auto: true,
+        manual: true
       },
       machineList: [],
       loading: false,
