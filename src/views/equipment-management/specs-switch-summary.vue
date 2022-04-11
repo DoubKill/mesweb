@@ -41,6 +41,13 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item>
+        <el-button
+          :loading="btnExportLoad"
+          type="primary"
+          @click="exportTable"
+        >导出Excel</el-button>
+      </el-form-item>
     </el-form>
 
     <el-form :inline="true">
@@ -139,6 +146,7 @@ export default {
         date: []
       },
       allData: {},
+      btnExportLoad: false,
       tableData: [],
       options: ['秒', '分钟'],
       timeUnit: '秒'
@@ -148,6 +156,24 @@ export default {
     // this.getList()
   },
   methods: {
+    async exportTable() {
+      try {
+        this.btnExportLoad = true
+        this.search1 = JSON.parse(JSON.stringify(this.search))
+        this.search1.page_size = 999999999
+        const a = await cutTimeCollect('get', null, { params: this.search1 })
+        a.results.length = a.results.length - 1
+        this.$router.push({
+          path: '/summaryExcelTwo',
+          query: {
+            table: a.results,
+            timeUnit: this.timeUnit
+          }})
+        this.btnExportLoad = false
+      } catch {
+        this.btnExportLoad = false
+      }
+    },
     async getList() {
       try {
         this.loading = true

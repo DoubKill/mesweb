@@ -36,6 +36,13 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item>
+        <el-button
+          :loading="btnExportLoad"
+          type="primary"
+          @click="exportTable"
+        >导出Excel</el-button>
+      </el-form-item>
     </el-form>
     <el-form :inline="true">
       <el-form-item
@@ -127,6 +134,7 @@ export default {
   data() {
     return {
       total: 0,
+      btnExportLoad: false,
       loading: false,
       search: {
         page: 1,
@@ -144,6 +152,23 @@ export default {
     // this.getList()
   },
   methods: {
+    async exportTable() {
+      try {
+        this.btnExportLoad = true
+        this.search1 = JSON.parse(JSON.stringify(this.search))
+        this.search1.page_size = 999999999
+        const a = await collectTrainsFeed('get', null, { params: this.search1 })
+        this.$router.push({
+          path: '/summaryExcel',
+          query: {
+            table: a.results,
+            timeUnit: this.timeUnit
+          }})
+        this.btnExportLoad = false
+      } catch {
+        this.btnExportLoad = false
+      }
+    },
     async getList() {
       try {
         this.loading = true

@@ -49,6 +49,16 @@ export const constantRoutes = [
     hidden: true
   },
   {
+    path: '/summaryExcel',
+    hidden: true,
+    component: () => import('@/views/equipment-management/excel.vue')
+  },
+  {
+    path: '/summaryExcelTwo',
+    hidden: true,
+    component: () => import('@/views/equipment-management/excel-two.vue')
+  },
+  {
     path: '/excel',
     hidden: true,
     component: () => import('@/views/inventory/excel.vue')
