@@ -1275,6 +1275,24 @@ export function materialExpendSummary(method, id, data = {}) {
   return request(obj)
 }
 
+export function attendanceClockDetail(method, id, data = {}) {
+  const obj = {
+    url: id ? API.AttendanceClockDetail + id + '/' : API.AttendanceClockDetail,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function attendanceTimeStatistics(method, id, data = {}) {
+  const obj = {
+    url: id ? API.AttendanceTimeStatistics + id + '/' : API.AttendanceTimeStatistics,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function attendanceGroupSetup(method, id, data = {}) {
   const obj = {
     url: id ? API.AttendanceGroupSetup + id + '/' : API.AttendanceGroupSetup,
