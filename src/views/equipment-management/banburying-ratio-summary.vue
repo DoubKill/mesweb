@@ -163,7 +163,15 @@ export default {
     this.extend = {
       series: {
         smooth: false,
-        label: { show: true, position: 'top' }
+        label: { show: true,
+          formatter: function(params) {
+            if (params.value === 0) {
+              return ''
+            } else {
+              return params.value + '\n' + params.seriesName
+            }
+          },
+          position: 'top' }
       }
     }
     return {
