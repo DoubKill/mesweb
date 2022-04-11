@@ -1614,6 +1614,17 @@ export let asyncRoutes = [
             }
           },
           {
+            path: '/internal/drying-room-resume',
+            component: () => import('@/views/inspection_release/drying_room_resume'),
+            name: 'DryingRoomResume',
+            meta: {
+              faName: 'MaterialDelivery',
+              faShowName: '原材料库',
+              title: '入出烘房履历',
+              permissionName: 'material_hf_summary'
+            }
+          },
+          {
             path: '/internal/drying-room-status',
             component: () => import('@/views/inspection_release/drying_room_status'),
             name: 'DryingRoomStatus',
