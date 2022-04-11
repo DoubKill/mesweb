@@ -13,6 +13,12 @@
           @change="changeList"
         />
       </el-form-item>
+      <el-form-item label="">
+        <el-checkbox v-model="search.auto" @change="changeList">自动生产</el-checkbox>
+      </el-form-item>
+      <el-form-item label="">
+        <el-checkbox v-model="search.manual" @change="changeList">手动生产</el-checkbox>
+      </el-form-item>
       <el-form-item style="float:right">
         <el-button
           type="primary"
@@ -97,7 +103,9 @@ export default {
   data() {
     return {
       search: {
-        factory_date: setDate()
+        factory_date: setDate(),
+        auto:true,
+        manual:true
       },
       machineList: [],
       loading: false,
