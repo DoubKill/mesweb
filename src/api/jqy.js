@@ -1355,3 +1355,12 @@ export function schedulingRecipeStages(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function attendanceResultAudit(method, id, data = {}) {
+  const obj = {
+    url: id ? API.AttendanceResultAudit + id + '/' : API.AttendanceResultAudit,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

@@ -19,6 +19,12 @@
           @change="getListDay"
         />
       </el-form-item>
+      <el-form-item label="">
+        <el-checkbox v-model="search.auto" @change="getList">自动生产</el-checkbox>
+      </el-form-item>
+      <el-form-item label="">
+        <el-checkbox v-model="search.manual" @change="getList">手动生产</el-checkbox>
+      </el-form-item>
       <el-form-item>
         <el-button
           type="primary"
@@ -121,7 +127,9 @@ export default {
   data() {
     return {
       search: {
-        day_time: ''
+        day_time: '',
+        auto: true,
+        manual: true
       },
       loading: false,
       classOptions: [],
