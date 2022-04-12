@@ -152,22 +152,23 @@ export default {
     // this.getList()
   },
   methods: {
-    async exportTable() {
-      try {
-        this.btnExportLoad = true
-        this.search1 = JSON.parse(JSON.stringify(this.search))
-        this.search1.page_size = 999999999
-        const a = await collectTrainsFeed('get', null, { params: this.search1 })
-        this.$router.push({
-          path: '/summaryExcel',
-          query: {
-            table: a.results,
-            timeUnit: this.timeUnit
-          }})
-        this.btnExportLoad = false
-      } catch {
-        this.btnExportLoad = false
-      }
+    exportTable() {
+      this.btnExportLoad = true
+      const obj = Object.assign({ export: 1 }, this.search)
+      collectTrainsFeed('get', null, { params: obj, responseType: 'blob' })
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '胶料单车次时间汇总.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
     },
     async getList() {
       try {
