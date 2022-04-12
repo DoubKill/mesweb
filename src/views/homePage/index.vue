@@ -178,13 +178,13 @@ export default {
     return {
       yieldBarRadio: '1',
       equipProduction: {
-        dimension: '0',
+        dimension: '1',
         dateFinish: [],
         st: '',
         et: ''
       },
       equipMaintenance: {
-        dimension: '0',
+        dimension: '1',
         dateFinish: [],
         st: '',
         et: ''
