@@ -36,6 +36,13 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item>
+        <el-button
+          :loading="btnExportLoad"
+          type="primary"
+          @click="exportTable"
+        >导出Excel</el-button>
+      </el-form-item>
     </el-form>
     <el-form :inline="true">
       <el-form-item
@@ -127,6 +134,7 @@ export default {
   data() {
     return {
       total: 0,
+      btnExportLoad: false,
       loading: false,
       search: {
         page: 1,
@@ -144,6 +152,24 @@ export default {
     // this.getList()
   },
   methods: {
+    exportTable() {
+      this.btnExportLoad = true
+      const obj = Object.assign({ export: 1 }, this.search)
+      collectTrainsFeed('get', null, { params: obj, responseType: 'blob' })
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '胶料单车次时间汇总.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
+    },
     async getList() {
       try {
         this.loading = true
