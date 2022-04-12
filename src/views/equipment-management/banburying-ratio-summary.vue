@@ -46,9 +46,14 @@
       </el-form-item>
       <el-form-item>
         <el-button @click="viewGraph">密炼时间占比曲线图</el-button>
+        <el-button
+          type="primary"
+          @click="exportTable"
+        >导出Excel</el-button>
       </el-form-item>
     </el-form>
     <el-table
+      id="out-table"
       :data="tableData"
       border
       show-summary
@@ -143,6 +148,7 @@
 <script>
 import equipSelect from '@/components/select_w/equip'
 // import page from '@/components/page'
+import { exportExcel } from '@/utils/index'
 import timeSpanSelect from '@/components/select_w/timeSpan'
 import { equipBanburySummary } from '@/api/base_w'
 import myMixin from './aminxPublic'
@@ -156,8 +162,16 @@ export default {
     }
     this.extend = {
       series: {
-        smooth: false
-        // label: { show: true, position: 'top' }
+        smooth: false,
+        label: { show: true,
+          formatter: function(params) {
+            if (params.value === 0) {
+              return ''
+            } else {
+              return params.value + '\n' + params.seriesName
+            }
+          },
+          position: 'top' }
       }
     }
     return {
@@ -313,6 +327,9 @@ export default {
         } else {
           sums[index]
         }
+        if (index === 6) {
+          sums[index] = ((Number(sums[4]) / Number(sums[5])) * 100).toFixed(2) + '%'
+        }
       })
       return sums
     },
@@ -322,6 +339,9 @@ export default {
     viewGraph() {
       this.dialogVisibleGraph = true
       this.setLineData()
+    },
+    exportTable() {
+      exportExcel('密炼时间占比汇总')
     },
     setLineData() {
       let equipList = []
@@ -351,6 +371,7 @@ export default {
           }
         })
       })
+      // this.chartSettings.xAxis.data = equipList
       equipList.unshift('date')
       this.chartData.columns = equipList
       this.chartData.rows = rows
