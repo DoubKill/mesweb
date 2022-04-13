@@ -14,10 +14,10 @@
         />
       </el-form-item>
       <el-form-item label="">
-        <el-checkbox v-model="search.auto" @change="changeList">自动生产</el-checkbox>
+        <el-checkbox v-model="auto_" @change="changeList">自动生产</el-checkbox>
       </el-form-item>
       <el-form-item label="">
-        <el-checkbox v-model="search.manual" @change="changeList">手动生产</el-checkbox>
+        <el-checkbox v-model="manual_" @change="changeList">手动生产</el-checkbox>
       </el-form-item>
       <el-form-item style="float:right">
         <el-button
@@ -103,10 +103,10 @@ export default {
   data() {
     return {
       search: {
-        factory_date: setDate(),
-        auto: true,
-        manual: true
+        factory_date: setDate()
       },
+      auto_: true,
+      manual_: true,
       machineList: [],
       loading: false,
       tableHead: [],
@@ -119,6 +119,8 @@ export default {
   },
   methods: {
     async getList() {
+      this.search.auto = this.auto_ ? 1 : 0
+      this.search.manual = this.manual_ ? 1 : 0
       try {
         this.loading = true
         const data = await summaryOfMillOutput('get', null, { params: this.search })
