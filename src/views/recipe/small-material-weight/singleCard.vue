@@ -631,10 +631,11 @@ export default {
       try {
         const data = await weightingPackageSingle('get', null, { params: { history: 1, material_name: this.formData1.material_name, product_no: this.formData1.product_no, product_batching: this.product_batching }})
         Object.assign(this.formData1, data)
+
         if (this.formData1.split_num) {
           const a = this.formData1.single_weight / this.formData1.split_num
           const b = Math.round(a * 1000) / 1000
-          this.formData1._single_weight = b
+          this.$set(this.formData1, '_single_weight', b)
         }
       } catch (e) {
         //
@@ -676,7 +677,7 @@ export default {
         //   this.formData1._single_weight = b
         // }
       }
-      await this.getHistory1()
+      this.getHistory1()
     },
     submitFun1() {
       this.$refs.formRef1.validate(async(valid) => {

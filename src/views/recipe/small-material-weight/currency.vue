@@ -565,7 +565,7 @@ export default {
         this.formData.dev_type_name = ''
         this.formData.product_no = ''
       }
-      await this.getManualList()
+      this.getManualList()
       // await this.getHistory()
     },
     async getHistory() {
@@ -575,7 +575,7 @@ export default {
         if (this.formData.split_num) {
           const a = this.formData.single_weight / this.formData.split_num
           const b = Math.round(a * 1000) / 1000
-          this.formData._single_weight = b
+          this.$set(this.formData, '_single_weight', b)
         }
       } catch (e) {
         //
