@@ -70,7 +70,7 @@
       </template>
       <el-table-column
         prop="weight"
-        label="日累计完成1日为起点"
+        label="月累计完成1日为起点"
         width="90"
       />
     </el-table>
@@ -160,7 +160,7 @@
           min-width="20"
         >
           <template slot-scope="{row}">
-            <el-input-number v-model="row.qty" :min="1" controls-position="right" @change="changeQty(row)" />
+            <el-input-number v-model="row.qty" :precision="0" :min="1" controls-position="right" @change="changeQty(row)" />
           </template>
         </el-table-column>
         <el-table-column
@@ -377,7 +377,7 @@ export default {
           return
         }
         const data = await equip190e('get', null, { params: { specification: row.specification }})
-        this.options = data.results
+        this.options = data
       }
     },
     changeQty(row) {
@@ -438,7 +438,7 @@ export default {
     async get190eList() {
       try {
         const data = await equip190e('get', null, { params: {}})
-        this.dataList = data.results || []
+        this.dataList = data || []
       } catch (e) {
         //
       }
