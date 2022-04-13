@@ -312,7 +312,7 @@ export default {
       this.optionsType = data.results
     },
     async getGroupList() {
-      const data = await personnels('get', null, { params: { section_name: this.department }})
+      const data = await personnels('get', null, { params: { section_name: this.department, all: 1 }})
       this.staffList = data.results
     },
     async getList() {
