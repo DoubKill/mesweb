@@ -498,14 +498,16 @@ export default {
         const obj = this.materialList.find(d => d.material_name === val)
         this.formData.single_weight = obj.actual_weight
         this.formData.feeding_mode = obj.feeding_mode
-        if (this.formData.split_num) {
-          const a = this.formData.single_weight / this.formData.split_num
-          const b = Math.round(a * 1000) / 1000
-          this.formData._single_weight = b
-        }
+        // if (this.formData.split_num) {
+        //   const a = this.formData.single_weight / this.formData.split_num
+        //   const b = Math.round(a * 1000) / 1000
+        //   this.formData._single_weight = b
+        // }
         if (this.formData.batching_type !== '配方') {
           await this.getWeight()
           await this.getHistory1()
+        } else {
+          await this.getHistory()
         }
       }
     },
@@ -563,14 +565,18 @@ export default {
         this.formData.dev_type_name = ''
         this.formData.product_no = ''
       }
-      await this.getManualList()
-      await this.getHistory()
+      this.getManualList()
+      // await this.getHistory()
     },
     async getHistory() {
       try {
-        const data = await weightingPackageSingle('get', null, { params: { history: 1, product_no: this.formData.product_no, product_batching: this.product_batching }})
-        data._single_weight = data.single_weight
+        const data = await weightingPackageSingle('get', null, { params: { history: 1, material_name: this.formData.material_name, product_no: this.formData.product_no, product_batching: this.product_batching }})
         Object.assign(this.formData, data)
+        if (this.formData.split_num) {
+          const a = this.formData.single_weight / this.formData.split_num
+          const b = Math.round(a * 1000) / 1000
+          this.$set(this.formData, '_single_weight', b)
+        }
       } catch (e) {
         //
       }

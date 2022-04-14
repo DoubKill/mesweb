@@ -626,13 +626,17 @@ export default {
         this.formData1.product_no = ''
       }
       await this.getManualList1()
-      await this.getHistory1()
     },
     async getHistory1() {
       try {
-        const data = await weightingPackageSingle('get', null, { params: { history: 1, product_no: this.formData1.product_no, product_batching: this.product_batching }})
-        data._single_weight = data.single_weight
+        const data = await weightingPackageSingle('get', null, { params: { history: 1, material_name: this.formData1.material_name, product_no: this.formData1.product_no, product_batching: this.product_batching }})
         Object.assign(this.formData1, data)
+
+        if (this.formData1.split_num) {
+          const a = this.formData1.single_weight / this.formData1.split_num
+          const b = Math.round(a * 1000) / 1000
+          this.$set(this.formData1, '_single_weight', b)
+        }
       } catch (e) {
         //
       }
@@ -657,7 +661,7 @@ export default {
         this.$refs.formRef1.clearValidate()
       }, 200)
     },
-    changeMaterial(val) {
+    async changeMaterial(val) {
       this.formData1.split_num = 1
       this.formData1.print_count = 1
       this.formData1.begin_trains = 1
@@ -667,12 +671,13 @@ export default {
         const obj = this.materialList.find(d => d.material_name === val)
         this.formData1.single_weight = obj.actual_weight
         this.formData1.feeding_mode = obj.feeding_mode
-        if (this.formData1.split_num) {
-          const a = this.formData1.single_weight / this.formData1.split_num
-          const b = Math.round(a * 1000) / 1000
-          this.formData1._single_weight = b
-        }
+        // if (this.formData1.split_num) {
+        //   const a = this.formData1.single_weight / this.formData1.split_num
+        //   const b = Math.round(a * 1000) / 1000
+        //   this.formData1._single_weight = b
+        // }
       }
+      this.getHistory1()
     },
     submitFun1() {
       this.$refs.formRef1.validate(async(valid) => {
