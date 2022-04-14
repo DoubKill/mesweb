@@ -93,15 +93,11 @@
       <el-table-column
         v-for="(item,i) in days"
         :key="i"
+        :prop="item"
         align="center"
         :label="item"
         min-width="90"
-      >
-        <template slot-scope="{row}">
-          <span v-if="row.material_name==='小计'||row.material_name==='合计'"> {{ row[item]?row[item].toFixed(2):row[item] }}</span>
-          <span v-else> {{ row[item] }}</span>
-        </template>
-      </el-table-column>
+      />
     </el-table>
 
   </div>
@@ -117,7 +113,6 @@ export default {
   components: { EquipSelect },
   data() {
     return {
-      height: 650,
       loadingView: false,
       loading: false,
       days: [],
@@ -222,7 +217,13 @@ export default {
             }
           }
         }
-        this.height = 650
+        this.days.forEach(i => {
+          this.tableData.forEach(d => {
+            if (d.material_name === '小计' || d.material_name === '合计') {
+              d[i] = d[i] ? d[i].toFixed(2) : null
+            }
+          })
+        })
         this.loading = false
       } catch (e) {
         this.loading = false
