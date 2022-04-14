@@ -259,7 +259,7 @@ export default {
     },
     equipSelected(obj) {
       this.$set(this.search, 'equip_no', obj ? obj.equip_no : '')
-      this.getList(this.search.interval_type)
+      this.getList()
     },
     async exportTable() {
       await this.$set(this, 'loading', true)
