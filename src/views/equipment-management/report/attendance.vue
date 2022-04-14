@@ -40,12 +40,10 @@
           <el-button v-permission="['employee_attendance_records','import']" type="primary">导入Excel</el-button>
         </el-upload>
         <el-button
-          v-permission="['employee_attendance_records','export']"
           type="primary"
           @click="approve('审批')"
         >审批</el-button>
         <el-button
-          v-permission="['employee_attendance_records','export']"
           type="primary"
           @click="approve('审核')"
         >审核</el-button>
@@ -214,10 +212,12 @@
         class="dialog-footer"
       >
         <el-button
+          v-permission="['employee_attendance_records','add']"
           type="primary"
           @click="addStatus"
         >添加</el-button>
         <el-button
+          v-permission="['employee_attendance_records','abandon']"
           type="primary"
           @click="editStatus('废弃')"
         >废弃</el-button>
@@ -226,6 +226,7 @@
           @click="dialogVisibleList=false"
         >取消</el-button>
         <el-button
+          v-permission="['employee_attendance_records','affirm']"
           type="primary"
           @click="editStatus('确认')"
         >确认</el-button>
