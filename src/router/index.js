@@ -1144,6 +1144,16 @@ export let asyncRoutes = [
               title: '规格切换时间汇总',
               permissionName: 'product_exchange_consume'
             }
+          },
+          {
+            path: '/equipment/shift-handover-time',
+            component: () => import('@/views/equipment-management/shift-handover-time'),
+            name: 'SpecsSwitchSummary',
+            meta: {
+              faName: 'ShiftHandoverTime',
+              title: '交接班时间汇总',
+              permissionName: ''
+            }
           }
         ]
       },
