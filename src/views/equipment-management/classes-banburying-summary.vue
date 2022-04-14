@@ -301,7 +301,7 @@ export default {
           sums[index] = (sums[index] / data.length).toFixed(2)
         }
         if (index === 9) {
-          sums[index] = ((Number(sums[7]) + Number(sums[8])) / 2).toFixed(2)
+          sums[index] = (Number(sums[5]) / Number(sums[4])).toFixed(2)
         }
         if (index === 10) {
           sums[index] = ((Number(sums[5]) / Number(sums[6])) * 100).toFixed(2) + '%'
