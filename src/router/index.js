@@ -1332,17 +1332,17 @@ export let asyncRoutes = [
               title: '190E机台规格信息维护',
               permissionName: 'equip_190e'
             }
+          },
+          {
+            path: '/report/set-attendance',
+            component: () => import('@/views/equipment-management/report/set-attendance'),
+            name: 'SetAttendance',
+            meta: {
+              faName: 'Achievements',
+              title: '考勤组设置',
+              permissionName: ''
+            }
           }
-          // {
-          //   path: '/report/set-attendance',
-          //   component: () => import('@/views/equipment-management/report/set-attendance'),
-          //   name: 'SetAttendance',
-          //   meta: {
-          //     faName: 'Achievements',
-          //     title: '考勤组设置',
-          //     permissionName: ''
-          //   }
-          // }
         ]
       },
       /* {
