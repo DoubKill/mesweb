@@ -1266,6 +1266,33 @@ export function hfStockDetail(method, id, data = {}) {
   return request(obj)
 }
 
+export function materialExpendSummary(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MaterialExpendSummary + id + '/' : API.MaterialExpendSummary,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function attendanceClockDetail(method, id, data = {}) {
+  const obj = {
+    url: id ? API.AttendanceClockDetail + id + '/' : API.AttendanceClockDetail,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function attendanceTimeStatistics(method, id, data = {}) {
+  const obj = {
+    url: id ? API.AttendanceTimeStatistics + id + '/' : API.AttendanceTimeStatistics,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function attendanceGroupSetup(method, id, data = {}) {
   const obj = {
     url: id ? API.AttendanceGroupSetup + id + '/' : API.AttendanceGroupSetup,
@@ -1323,6 +1350,15 @@ export function schedulingMaterialDemanded(method, id, data = {}) {
 export function schedulingRecipeStages(method, id, data = {}) {
   const obj = {
     url: id ? API.SchedulingRecipeStages + id + '/' : API.SchedulingRecipeStages,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function attendanceResultAudit(method, id, data = {}) {
+  const obj = {
+    url: id ? API.AttendanceResultAudit + id + '/' : API.AttendanceResultAudit,
     method: method
   }
   Object.assign(obj, data)
