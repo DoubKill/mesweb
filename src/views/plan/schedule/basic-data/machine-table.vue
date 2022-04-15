@@ -44,29 +44,69 @@
       id="out-table"
       v-loading="loading"
       border
-      height="700"
+      max-height="700"
       :data="tableData"
       style="width: 100%"
     >
       <el-table-column
+        v-if="!exportTableShow"
+        label="操作"
+        width="160"
+        fixed
+      >
+        <template slot-scope="scope">
+          <el-button
+            v-if="!scope.row.isEdit&&scope.row.id"
+            v-permission="['aps_machine_setting','change']"
+            size="mini"
+            type="primary"
+            @click="handleDisposeEdit(scope.row)"
+          >
+            编辑
+          </el-button>
+          <el-button
+            v-if="scope.row.isEdit"
+            v-permission="['aps_machine_setting','change']"
+            type="primary"
+            size="mini"
+            @click="editOrder(scope.row)"
+          >保存
+          </el-button>
+          <el-button
+            v-permission="['aps_machine_setting','delete']"
+            :disabled="(scope.row.isEdit&&scope.row.id)?true:false"
+            type="danger"
+            size="mini"
+            @click="deleteOrder(scope.row)"
+          >删除
+          </el-button>
+        </template>
+      </el-table-column>
+      <el-table-column
         header-align="center"
         prop="rubber_type"
+        width="140"
         label="胶料类别"
+        fixed
       />
       <el-table-column
         header-align="center"
         prop="product_no"
         label="配方名称"
+        fixed
       />
       <el-table-column
         header-align="center"
         prop="version"
         label="配方尾号"
+        fixed
       />
       <el-table-column
         header-align="center"
         prop="stages1"
+        width="150"
         label="所需段数"
+        fixed
       />
       <el-table-column
         header-align="center"
@@ -75,13 +115,47 @@
         <el-table-column
           header-align="center"
           label="主"
-          prop="main_machine_HMB"
-        />
+          width="100"
+        >
+          <template slot-scope="{row}">
+            <el-select
+              v-if="row.stages.findIndex(d=>d==='HMB')!==-1&&!exportTableShow&&row.isEdit"
+              v-model="row.main_machine_HMB"
+              placeholder="请选择"
+            >
+              <el-option
+                v-for="item in options"
+                :key="item.id"
+                :label="item.equip_no"
+                :value="item.equip_no"
+              />
+            </el-select>
+            <span v-else>{{ row.main_machine_HMB }}</span>
+          </template>
+        </el-table-column>
         <el-table-column
           header-align="center"
           label="辅"
-          prop="vice_machine_HMB1"
-        />
+          width="120"
+        >
+          <template slot-scope="{row}">
+            <el-select
+              v-if="row.stages.findIndex(d=>d==='HMB')!==-1&&!exportTableShow&&row.isEdit"
+              v-model="row.vice_machine_HMB"
+              placeholder="请选择"
+              clearable
+              multiple
+            >
+              <el-option
+                v-for="item in options"
+                :key="item.id"
+                :label="item.equip_no"
+                :value="item.equip_no"
+              />
+            </el-select>
+            <span v-else>{{ row.vice_machine_HMB1 }}</span>
+          </template>
+        </el-table-column>
       </el-table-column>
       <el-table-column
         header-align="center"
@@ -90,13 +164,47 @@
         <el-table-column
           header-align="center"
           label="主"
-          prop="main_machine_CMB"
-        />
+          width="100"
+        >
+          <template slot-scope="{row}">
+            <el-select
+              v-if="row.stages.findIndex(d=>d==='CMB')!==-1&&!exportTableShow&&row.isEdit"
+              v-model="row.main_machine_CMB"
+              placeholder="请选择"
+            >
+              <el-option
+                v-for="item in options"
+                :key="item.id"
+                :label="item.equip_no"
+                :value="item.equip_no"
+              />
+            </el-select>
+            <span v-else>{{ row.main_machine_CMB }}</span>
+          </template>
+        </el-table-column>
         <el-table-column
           header-align="center"
           label="辅"
-          prop="vice_machine_CMB1"
-        />
+          width="120"
+        >
+          <template slot-scope="{row}">
+            <el-select
+              v-if="row.stages.findIndex(d=>d==='CMB')!==-1&&!exportTableShow&&row.isEdit"
+              v-model="row.vice_machine_CMB"
+              placeholder="请选择"
+              clearable
+              multiple
+            >
+              <el-option
+                v-for="item in options"
+                :key="item.id"
+                :label="item.equip_no"
+                :value="item.equip_no"
+              />
+            </el-select>
+            <span v-else>{{ row.vice_machine_CMB1 }}</span>
+          </template>
+        </el-table-column>
       </el-table-column>
       <el-table-column
         header-align="center"
@@ -105,13 +213,47 @@
         <el-table-column
           header-align="center"
           label="主"
-          prop="main_machine_1MB"
-        />
+          width="100"
+        >
+          <template slot-scope="{row}">
+            <el-select
+              v-if="row.stages.findIndex(d=>d==='1MB')!==-1&&!exportTableShow&&row.isEdit"
+              v-model="row.main_machine_1MB"
+              placeholder="请选择"
+            >
+              <el-option
+                v-for="item in options"
+                :key="item.id"
+                :label="item.equip_no"
+                :value="item.equip_no"
+              />
+            </el-select>
+            <span v-else>{{ row.main_machine_1MB }}</span>
+          </template>
+        </el-table-column>
         <el-table-column
           header-align="center"
           label="辅"
-          prop="vice_machine_1MB1"
-        />
+          width="120"
+        >
+          <template slot-scope="{row}">
+            <el-select
+              v-if="row.stages.findIndex(d=>d==='1MB')!==-1&&!exportTableShow&&row.isEdit"
+              v-model="row.vice_machine_1MB"
+              placeholder="请选择"
+              clearable
+              multiple
+            >
+              <el-option
+                v-for="item in options"
+                :key="item.id"
+                :label="item.equip_no"
+                :value="item.equip_no"
+              />
+            </el-select>
+            <span v-else>{{ row.vice_machine_1MB1 }}</span>
+          </template>
+        </el-table-column>
       </el-table-column>
       <el-table-column
         header-align="center"
@@ -120,13 +262,47 @@
         <el-table-column
           header-align="center"
           label="主"
-          prop="main_machine_2MB"
-        />
+          width="100"
+        >
+          <template slot-scope="{row}">
+            <el-select
+              v-if="row.stages.findIndex(d=>d==='2MB')!==-1&&!exportTableShow&&row.isEdit"
+              v-model="row.main_machine_2MB"
+              placeholder="请选择"
+            >
+              <el-option
+                v-for="item in options"
+                :key="item.id"
+                :label="item.equip_no"
+                :value="item.equip_no"
+              />
+            </el-select>
+            <span v-else>{{ row.main_machine_2MB }}</span>
+          </template>
+        </el-table-column>
         <el-table-column
           header-align="center"
           label="辅"
-          prop="vice_machine_2MB1"
-        />
+          width="120"
+        >
+          <template slot-scope="{row}">
+            <el-select
+              v-if="row.stages.findIndex(d=>d==='2MB')!==-1&&!exportTableShow&&row.isEdit"
+              v-model="row.vice_machine_2MB"
+              placeholder="请选择"
+              clearable
+              multiple
+            >
+              <el-option
+                v-for="item in options"
+                :key="item.id"
+                :label="item.equip_no"
+                :value="item.equip_no"
+              />
+            </el-select>
+            <span v-else>{{ row.vice_machine_2MB1 }}</span>
+          </template>
+        </el-table-column>
       </el-table-column>
       <el-table-column
         header-align="center"
@@ -135,13 +311,96 @@
         <el-table-column
           header-align="center"
           label="主"
-          prop="main_machine_3MB"
-        />
+          width="100"
+        >
+          <template slot-scope="{row}">
+            <el-select
+              v-if="row.stages.findIndex(d=>d==='3MB')!==-1&&!exportTableShow&&row.isEdit"
+              v-model="row.main_machine_3MB"
+              placeholder="请选择"
+            >
+              <el-option
+                v-for="item in options"
+                :key="item.id"
+                :label="item.equip_no"
+                :value="item.equip_no"
+              />
+            </el-select>
+            <span v-else>{{ row.main_machine_3MB }}</span>
+          </template>
+        </el-table-column>
         <el-table-column
           header-align="center"
           label="辅"
-          prop="vice_machine_3MB1"
-        />
+          width="120"
+        >
+          <template slot-scope="{row}">
+            <el-select
+              v-if="row.stages.findIndex(d=>d==='3MB')!==-1&&!exportTableShow&&row.isEdit"
+              v-model="row.vice_machine_3MB"
+              placeholder="请选择"
+              clearable
+              multiple
+            >
+              <el-option
+                v-for="item in options"
+                :key="item.id"
+                :label="item.equip_no"
+                :value="item.equip_no"
+              />
+            </el-select>
+            <span v-else>{{ row.vice_machine_3MB1 }}</span>
+          </template>
+        </el-table-column>
+      </el-table-column>
+      <el-table-column
+        header-align="center"
+        label="RMB"
+      >
+        <el-table-column
+          header-align="center"
+          label="主"
+          width="100"
+        >
+          <template slot-scope="{row}">
+            <el-select
+              v-if="row.stages.findIndex(d=>d==='RMB')!==-1&&!exportTableShow&&row.isEdit"
+              v-model="row.main_machine_RMB"
+              placeholder="请选择"
+            >
+              <el-option
+                v-for="item in options"
+                :key="item.id"
+                :label="item.equip_no"
+                :value="item.equip_no"
+              />
+            </el-select>
+            <span v-else>{{ row.main_machine_RMB }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          header-align="center"
+          label="辅"
+          width="120"
+        >
+          <template slot-scope="{row}">
+            <el-select
+              v-if="row.stages.findIndex(d=>d==='RMB')!==-1&&!exportTableShow&&row.isEdit"
+              v-model="row.vice_machine_RMB"
+              placeholder="请选择"
+              clearable
+              multiple
+            >
+              <el-option
+                v-for="item in options"
+                :key="item.id"
+                :label="item.equip_no"
+                :value="item.equip_no"
+              />
+            </el-select>
+            <span v-else>{{ row.vice_machine_RMB1 }}</span>
+          </template>
+        </el-table-column>
       </el-table-column>
       <el-table-column
         header-align="center"
@@ -150,35 +409,47 @@
         <el-table-column
           header-align="center"
           label="主"
-          prop="main_machine_FM"
-        />
+          width="100"
+        >
+          <template slot-scope="{row}">
+            <el-select
+              v-if="row.stages.findIndex(d=>d==='FM')!==-1&&!exportTableShow&&row.isEdit"
+              v-model="row.main_machine_FM"
+              placeholder="请选择"
+            >
+              <el-option
+                v-for="item in options"
+                :key="item.id"
+                :label="item.equip_no"
+                :value="item.equip_no"
+              />
+            </el-select>
+            <span v-else>{{ row.main_machine_FM }}</span>
+          </template>
+        </el-table-column>
         <el-table-column
           header-align="center"
           label="辅"
-          prop="vice_machine_FM1"
-        />
-      </el-table-column>
-      <el-table-column
-        v-if="!exportTableShow"
-        label="操作"
-        width="160"
-      >
-        <template slot-scope="scope">
-          <el-button
-            v-permission="['aps_machine_setting','change']"
-            type="primary"
-            size="mini"
-            @click="editOrder(scope.row)"
-          >编辑
-          </el-button>
-          <el-button
-            v-permission="['aps_machine_setting','delete']"
-            type="danger"
-            size="mini"
-            @click="deleteOrder(scope.row)"
-          >删除
-          </el-button>
-        </template>
+          width="120"
+        >
+          <template slot-scope="{row}">
+            <el-select
+              v-if="row.stages.findIndex(d=>d==='FM')!==-1&&!exportTableShow&&row.isEdit"
+              v-model="row.vice_machine_FM"
+              placeholder="请选择"
+              clearable
+              multiple
+            >
+              <el-option
+                v-for="item in options"
+                :key="item.id"
+                :label="item.equip_no"
+                :value="item.equip_no"
+              />
+            </el-select>
+            <span v-else>{{ row.vice_machine_FM1 }}</span>
+          </template>
+        </el-table-column>
       </el-table-column>
     </el-table>
 
@@ -383,6 +654,35 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item v-if="typeForm.stages.findIndex(d=>d==='RMB')!==-1" label="RMB主机台" prop="main_machine_RMB">
+          <el-select
+            v-model="typeForm.main_machine_RMB"
+            placeholder="请选择"
+            clearable
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.id"
+              :label="item.equip_no"
+              :value="item.equip_no"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="typeForm.stages.findIndex(d=>d==='RMB')!==-1" label="RMB辅机台" prop="vice_machine_RMB">
+          <el-select
+            v-model="typeForm.vice_machine_RMB"
+            placeholder="请选择"
+            clearable
+            multiple
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.id"
+              :label="item.equip_no"
+              :value="item.equip_no"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item v-if="typeForm.stages.findIndex(d=>d==='FM')!==-1" label="FM主机台" prop="main_machine_FM">
           <el-select
             v-model="typeForm.main_machine_FM"
@@ -390,7 +690,7 @@
             clearable
           >
             <el-option
-              v-for="item in options3"
+              v-for="item in options"
               :key="item.id"
               :label="item.equip_no"
               :value="item.equip_no"
@@ -405,7 +705,7 @@
             multiple
           >
             <el-option
-              v-for="item in options3"
+              v-for="item in options"
               :key="item.id"
               :label="item.equip_no"
               :value="item.equip_no"
@@ -423,7 +723,7 @@
 
 <script>
 import { classesListUrl, productInfosUrl } from '@/api/base_w'
-// import { getEquip } from '@/api/banburying-performance-manage'
+import { getEquip } from '@/api/banburying-performance-manage'
 import { exportExcel } from '@/utils/index'
 import { schedulingRecipeMachineSetting, schedulingRecipeMachineImport, schedulingRecipeStages } from '@/api/jqy'
 export default {
@@ -443,19 +743,15 @@ export default {
         { id: 7, equip_no: 'Z07' },
         { id: 8, equip_no: 'Z08' },
         { id: 9, equip_no: 'Z09' },
-        { id: 10, equip_no: 'Z10' }
+        { id: 10, equip_no: 'Z10' },
+        { id: 11, equip_no: 'Z11' },
+        { id: 12, equip_no: 'Z12' },
+        { id: 13, equip_no: 'Z13' },
+        { id: 14, equip_no: 'Z14' },
+        { id: 15, equip_no: 'Z15' }
       ],
       options1: [],
       options2: [],
-      options3: [
-        { id: 1, equip_no: 'Z09' },
-        { id: 2, equip_no: 'Z10' },
-        { id: 3, equip_no: 'Z11' },
-        { id: 4, equip_no: 'Z12' },
-        { id: 5, equip_no: 'Z13' },
-        { id: 6, equip_no: 'Z14' },
-        { id: 7, equip_no: 'Z15' }
-      ],
       search: {},
       exportTableShow: false,
       loading: false,
@@ -489,6 +785,9 @@ export default {
         main_machine_3MB: [
           { required: true, message: '不能为空', trigger: 'change' }
         ],
+        main_machine_RMB: [
+          { required: true, message: '不能为空', trigger: 'change' }
+        ],
         main_machine_FM: [
           { required: true, message: '不能为空', trigger: 'change' }
         ]
@@ -498,20 +797,29 @@ export default {
 
   created() {
     this.getList()
-    // this.equipChange()
+    this.equipChange()
     this.classesChange()
     this.productChange()
   },
   methods: {
-    // equipChange() {
-    //   const obj = { all: 1, category_name: '密炼设备' }
-    //   getEquip(obj).then(response => {
-    //     this.options = response.results
-    //   })
-    // },
-    editOrder(row) {
-      this.typeForm = JSON.parse(JSON.stringify(row))
-      this.dialogVisible = true
+    handleDisposeEdit(row) {
+      this.$set(row, 'isEdit', true)
+    },
+    equipChange() {
+      const obj = { all: 1, category_name: '密炼设备' }
+      getEquip(obj).then(response => {
+        this.options = response.results
+      })
+    },
+    async editOrder(row) {
+      try {
+        await schedulingRecipeMachineSetting('put', row.id, { data: row })
+        this.$message.success('操作成功')
+        this.$set(row, 'isEdit', false)
+        // this.getList()
+      } catch (e) {
+        //
+      }
     },
     deleteOrder: function(row) {
       this.$confirm('此操作将删除' + row.product_no + ', 是否继续?', '提示', {
@@ -565,6 +873,7 @@ export default {
           d.vice_machine_1MB1 = getStringEquip(d.vice_machine_1MB)
           d.vice_machine_2MB1 = getStringEquip(d.vice_machine_2MB)
           d.vice_machine_3MB1 = getStringEquip(d.vice_machine_3MB)
+          d.vice_machine_RMB1 = getStringEquip(d.vice_machine_RMB)
           d.vice_machine_FM1 = getStringEquip(d.vice_machine_FM)
           d.vice_machine_CMB1 = getStringEquip(d.vice_machine_CMB)
           d.vice_machine_HMB1 = getStringEquip(d.vice_machine_HMB)

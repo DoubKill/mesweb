@@ -646,12 +646,14 @@ export default {
   MachineTargetValue: '/api/v1/production/machine-target-value/', // 机台目标值设定
   MonthlyOutputStatistics: '/api/v1/production/monthly-output-statistics-and-performance/', // 月产量统计明细及绩效
   DailyProductionCompletionReport: '/api/v1/production/daily-production-completion-report/', // 月产量完成
+  AttendanceResultAudit: '/api/v1/production/attendance-result-audit/',
   Equip190e: '/api/v1/production/equip-190e/',
   Equip190eImport: '/api/v1/production/equip-190e/import_xlsx/',
   MonthlyOutputStatisticsReport: '/api/v1/production/monthly-output-statistics-report/',
   SchedulingStockSummary: '/api/v1/plan/scheduling-stock-summary/',
   SchedulingStockConfirm: '/api/v1/plan/scheduling-stock-summary/confirm/',
   SchedulingMaterialDemanded: '/api/v1/plan/scheduling-material-demanded/', // 原材料需求量
+  MaterialExpendSummary: '/api/v1/production/material-expend-summary/', // 原材料消耗量
   SchedulingRecipeStages: '/api/v1/plan/scheduling-recipe-stages/',
   WmsNucleinManagement: '/api/v1/inventory/wms-nuclein-management/',
   MaterialTestPlan: '/api/v1/quality/material-test-plan/',
@@ -669,6 +671,8 @@ export default {
   WmsExceptHandle: '/api/v1/inventory/wms-except-handle/',
   HfStock: '/api/v1/inventory/hf-stock/', // 烘房胶料信息统计列表
   HfStockDetail: '/api/v1/inventory/hf-stock-detail/',
+  AttendanceClockDetail: '/api/v1/production/attendance-clock-detail/',
+  AttendanceTimeStatistics: '/api/v1/production/attendance-time-statistics/',
   AttendanceGroupSetup: '/api/v1/production/attendance-group-setup/',
 
   PerformanceSummary: '/api/v1/production/performance-summary/', // 薪资汇总表
