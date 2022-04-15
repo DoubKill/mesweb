@@ -178,13 +178,13 @@ export default {
     return {
       yieldBarRadio: '1',
       equipProduction: {
-        dimension: '0',
+        dimension: '1',
         dateFinish: [],
         st: '',
         et: ''
       },
       equipMaintenance: {
-        dimension: '0',
+        dimension: '1',
         dateFinish: [],
         st: '',
         et: ''
@@ -628,7 +628,7 @@ export default {
       } else {
         this[str].st = ''
         this[str].et = ''
-        this[str].dimension = '0'
+        this[str].dimension = '1'
       }
       if (str === 'equipMaintenance') {
         this.getList(false, false, true)

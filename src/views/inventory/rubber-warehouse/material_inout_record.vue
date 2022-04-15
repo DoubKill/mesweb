@@ -76,18 +76,8 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item v-if="warehouseNameProps==='原材料库'" label="巷道">
-        <el-select v-model="search.tunnel" filterable clearable placeholder="请选择" @change="changeList">
-          <el-option
-            v-for="item in TunnelNameList"
-            :key="item.id"
-            :label="item.name"
-            :value="item.code"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item v-if="warehouseNameProps==='炭黑库'" label="巷道">
-        <el-select v-model="search.tunnel" filterable clearable placeholder="请选择" @change="changeList">
+      <el-form-item v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="巷道">
+        <el-select v-model="search.tunnel" filterable clearable placeholder="请选择" @visible-change="getTunnelNameList" @change="changeList">
           <el-option
             v-for="item in TunnelNameList"
             :key="item.id"
@@ -119,7 +109,7 @@
         <!-- <el-input v-model="search.material_no" clearable @input="debounceList" /> -->
       </el-form-item>
       <el-form-item v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="物料名称">
-        <el-select v-model="search.material_no" allow-create filterable placeholder="请选择" clearable @visible-change="getMaterialsList" @change="changeList">
+        <el-select v-model="search.material_name" allow-create filterable placeholder="请选择" clearable @visible-change="getMaterialsList" @change="changeList">
           <el-option
             v-for="item in options3"
             :key="item.name"
@@ -421,7 +411,6 @@ export default {
       this.search.warehouse_name = this.warehouseNameProps
     }
     this.searchDate = [this.search.start_time, this.search.end_time]
-    this.getTunnelNameList()
     this.getList()
   },
   methods: {
@@ -447,19 +436,21 @@ export default {
         }
       }
     },
-    async getTunnelNameList() {
-      try {
-        if (this.warehouseNameProps === '原材料库') {
-          const data = await wmsTunnels('get')
-          this.TunnelNameList = data || []
-        } else if (this.warehouseNameProps === '炭黑库') {
-          const data = await thTunnels('get')
-          this.TunnelNameList = data || []
-        } else {
-          return
-        }
-      } catch (e) {
+    async getTunnelNameList(val) {
+      if (val) {
+        try {
+          if (this.warehouseNameProps === '原材料库') {
+            const data = await wmsTunnels('get')
+            this.TunnelNameList = data || []
+          } else if (this.warehouseNameProps === '炭黑库') {
+            const data = await thTunnels('get')
+            this.TunnelNameList = data || []
+          } else {
+            return
+          }
+        } catch (e) {
         //
+        }
       }
     },
     async getList() {

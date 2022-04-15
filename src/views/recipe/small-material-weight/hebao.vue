@@ -30,7 +30,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item>
+      <el-form-item v-if="!isDialog">
         <el-button
           v-permission="['weighting_package_manual', 'add']"
           type="primary"
@@ -137,9 +137,10 @@
       @currentChange="currentChange"
     />
     <el-dialog
-      :title="`准备分厂机台单配（合包）化工流转卡${formData.id?'预览':'设置'}`"
+      :title="`细料硫磺单配 流转卡${formData.id?'预览':'设置'}`"
       :visible.sync="dialogVisible"
       width="900px"
+      append-to-body
       :before-close="handleClose"
     >
       <el-form ref="formRef" :model="formData" :rules="rules" label-width="120px">
@@ -276,6 +277,12 @@ import equipSelect from '@/components/select_w/equip'
 export default {
   name: 'SmallMaterialWeightHebao',
   components: { page, equipSelect },
+  props: {
+    isDialog: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       search: {},
@@ -383,7 +390,7 @@ export default {
       this.tableData1New = []
       this.getManual()
     },
-    changeProductNo(no) {
+    async changeProductNo(no) {
       if (no) {
         const obj = this.productList.find(D => D.product_no === no)
         this.formData.dev_type = obj.dev_type
@@ -392,11 +399,11 @@ export default {
         this.formData.dev_type = ''
         this.formData.product_no = ''
       }
-      this.getHistory()
       this.formData.batching_equip = ''
       this.tableData1 = []
       this.tableData1New = []
-      this.getManual()
+      await this.getManual()
+      await this.getHistory()
     },
     async changeSplitNum() {
       if (!this.tableData1New.length) {

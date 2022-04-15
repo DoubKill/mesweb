@@ -23,6 +23,7 @@
       </el-form-item>
     </el-form>
     <el-table
+      id="out-table"
       v-loading="loading"
       :data="tableData"
       :row-class-name="tableRowClassName"

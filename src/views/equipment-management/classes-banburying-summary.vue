@@ -48,8 +48,15 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item>
+        <el-button
+          type="primary"
+          @click="exportTable"
+        >导出Excel</el-button>
+      </el-form-item>
     </el-form>
     <el-table
+      id="out-table"
       :data="tableData"
       border
       show-summary
@@ -107,6 +114,7 @@
       </el-table-column>
       <el-table-column
         :key="8"
+        prop="min_train_time"
         :label="'单车最小耗时/'+(timeUnit==='秒'?'s':'min')"
       >
         <template slot-scope="{row}">
@@ -116,6 +124,7 @@
       </el-table-column>
       <el-table-column
         :key="9"
+        prop="max_train_time"
         :label="'单车最大耗时/'+(timeUnit==='秒'?'s':'min')"
       >
         <template slot-scope="{row}">
@@ -125,6 +134,7 @@
       </el-table-column>
       <el-table-column
         :key="10"
+        prop="max_train_time"
         :label="'单车平均耗时/'+(timeUnit==='秒'?'s':'min')"
       >
         <template slot-scope="{row}">
@@ -134,6 +144,7 @@
       </el-table-column>
       <el-table-column
         :key="11"
+        prop="max_train_time"
         label="利用率"
       >
         <template
@@ -164,6 +175,7 @@
 import equipSelect from '@/components/select_w/equip'
 // import page from '@/components/page'
 import timeSpanSelect from '@/components/select_w/timeSpan'
+import { exportExcel } from '@/utils/index'
 import { classesBanburySummary } from '@/api/base_w'
 import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import myMixin from './aminxPublic'
@@ -222,6 +234,9 @@ export default {
       this.search.page = page
       this.getList()
     },
+    exportTable() {
+      exportExcel('班次密炼时间汇总')
+    },
     productBatchingChanged(val) {
       this.search.product_no = val ? val.material_no : ''
       this.getList()
@@ -278,6 +293,18 @@ export default {
           }
         } else {
           sums[index]
+        }
+        if (index === 7) {
+          sums[index] = (sums[index] / data.length).toFixed(2)
+        }
+        if (index === 8) {
+          sums[index] = (sums[index] / data.length).toFixed(2)
+        }
+        if (index === 9) {
+          sums[index] = (Number(sums[5]) / Number(sums[4])).toFixed(2)
+        }
+        if (index === 10) {
+          sums[index] = ((Number(sums[5]) / Number(sums[6])) * 100).toFixed(2) + '%'
         }
       })
       return sums

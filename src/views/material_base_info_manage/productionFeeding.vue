@@ -16,7 +16,7 @@
           clearable
           placeholder="请选择"
           filterable
-          @change="getList"
+          @change="getProductList"
         >
           <el-option
             v-for="item in productList"
@@ -54,7 +54,7 @@
         min-width="20"
       />
     </el-table>
-    <h3>硫磺</h3>
+    <h3>{{ ['FM', 'RFM' ,'RE'].includes(type)?'硫磺':'细料' }}</h3>
     <el-table
       :data="tableData1"
       border
@@ -99,7 +99,8 @@ export default {
       tableData: [],
       tableData1: [],
       productList: [],
-      loading: false
+      loading: false,
+      type: null
     }
   },
   created() {
@@ -129,6 +130,12 @@ export default {
       this.searchForm.equip_no = val.equip_no
       this.searchForm.product_no = ''
       this.getProduct(val.category)
+    },
+    getProductList(val) {
+      if (val) {
+        this.type = val.split('-')[1]
+      }
+      this.getList()
     }
   }
 }
