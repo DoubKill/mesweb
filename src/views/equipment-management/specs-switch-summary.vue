@@ -208,7 +208,7 @@
             <el-table-column
               :prop="d+'_1'"
               label="换规格时间(秒)"
-              width="60"
+              width="70"
             >
               <template slot-scope="{row}">
                 <span>{{ row[d+'_1']*10!==0?row[d+'_1']:null }}</span>
@@ -234,7 +234,7 @@
           <el-table-column
             prop="true"
             label="换规格时间(秒)"
-            width="60"
+            width="70"
           >
             <template slot-scope="{row}">
               <span>{{ row.true*10!==0?row.true:null }}</span>
