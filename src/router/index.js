@@ -1374,6 +1374,16 @@ export let asyncRoutes = [
       //   }
       // },
       {
+        path: '/material/base/material-consumption',
+        name: 'MaterialConsumption',
+        component: () => import('@/views/production/material-consumption'),
+        meta: {
+          title: '原材料消耗量 汇总表',
+          icon: 'production',
+          permissionName: 'material_expend_summary'
+        }
+      },
+      {
         path: '/material/base/inventory-warning',
         name: 'MaterialBaseInventoryWarning',
         component: () => import('@/views/material_base_info_manage/inventory-warning'),

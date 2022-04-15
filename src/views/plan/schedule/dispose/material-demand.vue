@@ -16,7 +16,14 @@
         </el-select>
       </el-form-item>
       <el-form-item label="原材料名称">
-        <el-input v-model="search.material_name" @change="changeList" />
+        <el-input v-model="search.material_name" @input="changeList" />
+      </el-form-item>
+      <el-form-item label="机台">
+        <equip-select
+          style="width:150px"
+          equip-type="密炼设备"
+          @equipSelected="equipSelected"
+        />
       </el-form-item>
       <el-form-item>
         <el-button :type="search.interval_type===1?'warning':'primary'" @click="getList(1)">0-4小时需求量</el-button>
@@ -24,12 +31,12 @@
         <el-button :type="search.interval_type===3?'warning':'primary'" @click="getList(3)">8-12小时需求量</el-button>
         <el-button type="primary" @click="getList(search.interval_type)">刷新</el-button>
         <el-button type="primary" @click="exportTable">导出Excel</el-button>
-
       </el-form-item>
     </el-form>
     <el-table
-      id="out-table"
+      :id="loading?'out-table':''"
       v-loading="loading"
+      max-height="700"
       :span-method="objectSpanMethod"
       :data="tableData"
       border
@@ -51,7 +58,16 @@
         prop="total_weight"
         label="机台合计(kg)"
         min-width="50"
-      />
+      >
+        <template slot-scope="scope">
+          <el-link
+            v-if="scope.row.material_name!=='合计'"
+            type="primary"
+            @click="DetailList(scope.row)"
+          >{{ scope.row.total_weight }}</el-link>
+          <span v-else>{{ scope.row.total_weight }}</span>
+        </template>
+      </el-table-column>
       <el-table-column
         align="center"
         prop="Z01"
@@ -142,31 +158,100 @@
         label="Z15(kg)"
         min-width="40"
       />
-
     </el-table>
 
+    <el-dialog
+      title="原材料需求量 明细表"
+      :visible.sync="dialogVisible"
+      width="90%"
+    >
+      <el-form :inline="true">
+        <el-form-item label="原材料类别">
+          <el-input v-model="currentInfo.material_type" disabled />
+        </el-form-item>
+        <!-- <el-form-item label="原材料名称">
+          <el-input v-model="currentInfo.material_name" @change="DetailList(currentInfo)" />
+        </el-form-item>
+        <el-form-item label="机台">
+          <equip-select
+            style="width:150px"
+            :default-val="currentInfo.equip"
+            equip-type="密炼设备"
+            @equipSelected="equipSelected1"
+          />
+        </el-form-item> -->
+        <el-button type="primary" @click="exportTable1">导出Excel</el-button>
+      </el-form>
+      <el-table
+        :id="loadingView?'out-table':''"
+        v-loading="loadingView"
+        :data="tableDataView"
+        border
+      >
+        <el-table-column
+          prop="equip_no"
+          label="机台"
+          min-width="20"
+        />
+        <el-table-column
+          prop="recipe_name"
+          label="计划(配方)"
+          min-width="20"
+        />
+        <el-table-column
+          prop="material_type"
+          label="原材料类别"
+          min-width="20"
+        />
+        <el-table-column
+          prop="material_name"
+          label="原材料名称"
+          min-width="20"
+        />
+        <el-table-column
+          prop="weight"
+          label="消耗量(kg)"
+          min-width="20"
+        />
+      </el-table>
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button
+          type="primary"
+          @click="dialogVisible=false"
+        >返回</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import EquipSelect from '@/components/EquipSelect'
 import { classesListUrl } from '@/api/base_w'
 import { schedulingMaterialDemanded } from '@/api/jqy'
 import { exportExcel } from '@/utils'
 export default {
   name: 'MaterialDemand',
+  components: { EquipSelect },
   data() {
     return {
       st: null,
       et: null,
+      loadingView: false,
+      tableDataView: [],
+      dialogVisible: false,
       loading: false,
       btnLoading: false,
+      currentInfo: {},
       tableData: [],
       optionsProduct: [],
       search: {}
     }
   },
   created() {
-    this.getList()
+    this.getList(1)
     this.getProduct()
   },
   methods: {
@@ -178,12 +263,28 @@ export default {
         //
       }
     },
+    async DetailList(row) {
+      try {
+        if (row.material_name === '小计') {
+          this.currentInfo.material_type = row.material_type
+          this.currentInfo.material_name = ''
+        } else {
+          this.currentInfo.material_type = row.material_type
+          this.currentInfo.material_name = row.material_name
+        }
+        this.dialogVisible = true
+        this.loadingView = true
+        // const data = await thStorage('get', null, { params: this.searchView })
+        this.tableDataView = row.detail
+        this.loadingView = false
+      } catch (e) {
+        this.loadingView = false
+      }
+    },
     async getList(val) {
       try {
         if (val) {
           this.search.interval_type = val
-        } else {
-          this.search.interval_type = 1
         }
         this.loading = true
         const data = await schedulingMaterialDemanded('get', null, { params: this.search })
@@ -232,6 +333,7 @@ export default {
             }
           }
         }
+        console.log(this.tableData)
         this.loading = false
       } catch (e) {
         this.loading = false
@@ -250,11 +352,26 @@ export default {
     changeList() {
       this.$debounce(this, 'getList')
     },
+    equipSelected(obj) {
+      this.$set(this.search, 'equip_no', obj ? obj.equip_no : '')
+      this.getList(this.search.interval_type)
+    },
+    equipSelected1(obj) {
+      this.$set(this.currentInfo, 'equip_no', obj ? obj.equip_no : '')
+      this.DetailList(this.currentInfo)
+    },
     async exportTable() {
       await this.$set(this, 'loading', true)
       await exportExcel('原材料需求量 汇总表')
       setTimeout(() => {
         this.loading = false
+      }, 1000)
+    },
+    async exportTable1() {
+      await this.$set(this, 'loadingView', true)
+      await exportExcel('原材料需求量 明细表')
+      setTimeout(() => {
+        this.loadingView = false
       }, 1000)
     }
   }
@@ -280,6 +397,7 @@ function getNewGoodsList(params) {
       temp[key].material_type = params[i].material_type
       temp[key].material_name = '小计'
       temp[key].total_weight += params[i].total_weight
+      temp[key].detail = temp[key].detail.concat(params[i].detail)
       temp[key].Z01 += params[i].Z01 ?? 0// 相加值
       temp[key].Z02 += params[i].Z02 ?? 0
       temp[key].Z03 += params[i].Z03 ?? 0
@@ -299,6 +417,7 @@ function getNewGoodsList(params) {
       temp[key] = {}
       temp[key].material_type = params[i].material_type
       temp[key].material_name = '小计'
+      temp[key].detail = params[i].detail
       temp[key].total_weight = params[i].total_weight
       temp[key].Z01 = params[i].Z01 ?? 0
       temp[key].Z02 = params[i].Z02 ?? 0

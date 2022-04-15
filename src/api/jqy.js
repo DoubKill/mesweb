@@ -1266,6 +1266,15 @@ export function hfStockDetail(method, id, data = {}) {
   return request(obj)
 }
 
+export function materialExpendSummary(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MaterialExpendSummary + id + '/' : API.MaterialExpendSummary,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function attendanceClockDetail(method, id, data = {}) {
   const obj = {
     url: id ? API.AttendanceClockDetail + id + '/' : API.AttendanceClockDetail,

@@ -37,7 +37,7 @@
           :http-request="Upload"
           :show-file-list="false"
         >
-          <el-button v-permission="['employee_attendance_records','import']" type="primary">导入Excel</el-button>
+          <el-button v-permission="['employee_attendance_records','import']" :loading="btnExportLoad1" type="primary">导入Excel</el-button>
         </el-upload>
         <el-button
           type="primary"
@@ -638,6 +638,7 @@ export default {
       this.$debounce(this, 'getList')
     },
     Upload(param) {
+      this.btnExportLoad1 = true
       const formData = new FormData()
       formData.append('file', param.file)
       formData.append('date', this.search.date)
