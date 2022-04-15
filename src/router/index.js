@@ -1148,9 +1148,9 @@ export let asyncRoutes = [
           {
             path: '/equipment/shift-handover-time',
             component: () => import('@/views/equipment-management/shift-handover-time'),
-            name: 'SpecsSwitchSummary',
+            name: 'ShiftHandoverTime',
             meta: {
-              faName: 'ShiftHandoverTime',
+              faName: 'SummaryStatistics',
               title: '交接班时间汇总',
               permissionName: ''
             }

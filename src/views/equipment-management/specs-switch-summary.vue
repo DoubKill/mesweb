@@ -1,8 +1,42 @@
 <template>
-  <div v-loading="loading">
-    <!-- 规格切换时间汇总 -->
+  <div>
+    <!-- 规格切换时间明细 -->
+    <h3>{{ type==='明细'?'规格切换时间明细':'规格切换时间汇总' }}</h3>
     <el-form :inline="true">
-      <el-form-item label="时间:">
+      <el-form-item label="工厂日期">
+        <el-date-picker
+          v-model="dateValue"
+          type="daterange"
+          :clearable="false"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          value-format="yyyy-MM-dd"
+          @change="changeDate"
+        />
+      </el-form-item>
+      <el-form-item label="班次:">
+        <class-select
+          @classSelected="classChanged"
+        />
+      </el-form-item>
+      <!-- <el-form-item label="班组">
+        <el-select
+          v-model="search.group"
+          clearable
+          placeholder="请选择"
+          @change="getList"
+          @visible-change="getClassGroup"
+        >
+          <el-option
+            v-for="group in groups"
+            :key="group.id"
+            :label="group.global_name"
+            :value="group.global_name"
+          />
+        </el-select>
+      </el-form-item> -->
+      <!-- <el-form-item label="时间:">
         <el-date-picker
           v-model="search.st"
           type="date"
@@ -10,7 +44,7 @@
           value-format="yyyy-MM-dd"
           @change="changeDate"
         />
-      </el-form-item>
+      </el-form-item> -->
       <!-- <el-form-item>
         <el-radio-group v-model="search.radio">
           <el-radio :label="1">自然日</el-radio>
@@ -24,14 +58,14 @@
           @changeSearch="timeSpanChanged"
         />
       </el-form-item> -->
-      <el-form-item label="设备编码:">
+      <el-form-item v-if="type==='明细'" label="机台">
         <equip-select
           :equip_no_props.sync="search.equip_no"
           :is-created="true"
           @changeSearch="equipChanged"
         />
       </el-form-item>
-      <el-form-item label="时间单位:">
+      <!-- <el-form-item label="时间单位:">
         <el-select v-model="timeUnit" placeholder="请选择">
           <el-option
             v-for="item in options"
@@ -40,8 +74,13 @@
             :value="item"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
+        <el-button
+          :loading="btnExportLoad"
+          type="primary"
+          @click="changeType"
+        >{{ type==='汇总'?'查看明细':'查看汇总' }}</el-button>
         <el-button
           :loading="btnExportLoad"
           type="primary"
@@ -50,7 +89,7 @@
       </el-form-item>
     </el-form>
 
-    <el-form :inline="true">
+    <el-form v-show="type==='明细'" :inline="true">
       <el-form-item
         :label="'总耗时/'+(timeUnit==='秒'?'s':'min')"
       >
@@ -76,74 +115,145 @@
         <span v-else>{{ allData.avg_time |setTimeMin }}</span>
       </el-form-item>
     </el-form>
-
-    <el-table
-      :data="tableData"
-      border
-    >
-      <el-table-column
-        type="index"
-        label="No"
-      />
-      <el-table-column
-        prop="time"
-        label="时间"
-      />
-      <el-table-column
-        prop="equip_no"
-        label="设备编码"
-      />
-      <el-table-column
-        prop="plan_classes_uid_age"
-        label="切换前计划号"
-      />
-      <el-table-column
-        prop="plan_classes_uid_later"
-        label="切换后计划号"
-      />
-      <el-table-column
-        prop="cut_ago_product_no"
-        label="切换前胶料编码"
-      />
-      <el-table-column
-        prop="cut_later_product_no"
-        label="切换后胶料编码"
-      />
-      <el-table-column
-        :label="'耗时/'+(timeUnit==='秒'?'s':'min')"
+    <div v-show="type==='明细'">
+      <el-table
+        v-loading="loading"
+        :data="tableData"
+        border
       >
-        <template slot-scope="{row}">
-          <span v-if="timeUnit==='秒'">{{ row.time_consuming }}</span>
-          <span v-else>{{ row.time_consuming |setTimeMin }}</span>
+        <el-table-column
+          type="index"
+          label="No"
+        />
+        <el-table-column
+          prop="time"
+          label="时间"
+        />
+        <el-table-column
+          prop="equip_no"
+          label="设备编码"
+        />
+        <el-table-column
+          prop="plan_classes_uid_age"
+          label="切换前计划号"
+        />
+        <el-table-column
+          prop="plan_classes_uid_later"
+          label="切换后计划号"
+        />
+        <el-table-column
+          prop="cut_ago_product_no"
+          label="切换前胶料编码"
+        />
+        <el-table-column
+          prop="cut_later_product_no"
+          label="切换后胶料编码"
+        />
+        <el-table-column
+          :label="'切换规格耗时/'+(timeUnit==='秒'?'秒':'min')"
+        >
+          <template slot-scope="{row}">
+            <span v-if="timeUnit==='秒'">{{ row.time_consuming }}</span>
+            <span v-else>{{ row.time_consuming |setTimeMin }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="time_abnormal"
+          label="异常时间(秒)"
+        />
+      </el-table>
+      <page
+        :total="total"
+        :current-page="search.page"
+        @currentChange="currentChange"
+      />
+    </div>
+
+    <div v-show="type==='汇总'">
+      <el-table
+        id="out-table"
+        v-loading="loading"
+        max-height="650px"
+        :data="tableData1"
+        border
+      >
+        <el-table-column
+          prop="factory_date"
+          label="日期"
+          width="60"
+        />
+        <el-table-column
+          prop="classes"
+          label="班次"
+          width="60"
+        />
+        <el-table-column
+          prop="group"
+          label="班组"
+          width="60"
+        />
+        <template v-for="(d,index) in equipList">
+          <el-table-column
+            :key="index"
+            align="center"
+            :label="d"
+            min-width="20"
+          >
+            <el-table-column
+              :prop="d+'_1'"
+              label="换规格时间(秒)"
+              width="60"
+            />
+            <el-table-column
+              :prop="d+'_2'"
+              label="异常耗时(秒)"
+              width="60"
+            />
+          </el-table-column>
         </template>
-      </el-table-column>
-    </el-table>
-    <page
-      :total="total"
-      :current-page="search.page"
-      @currentChange="currentChange"
-    />
+        <el-table-column
+          prop="count"
+          align="center"
+          label="班次平均"
+          min-width="20"
+        >
+          <el-table-column
+            prop="true"
+            label="换规格时间(秒)"
+            width="60"
+          />
+          <el-table-column
+            prop="error"
+            label="异常耗时(秒)"
+            width="60"
+          />
+        </el-table-column>
+      </el-table>
+    </div>
   </div>
 </template>
 
 <script>
 import equipSelect from '@/components/select_w/equip'
+import classSelect from '@/components/ClassSelect'
 import page from '@/components/page'
-import { cutTimeCollect } from '@/api/base_w'
+import { cutTimeCollect, globalCodesUrl } from '@/api/base_w'
 // import timeSpanSelect from '@/components/select_w/timeSpan'
-import { setDate } from '@/utils/index'
+import { exportExcel, setDate } from '@/utils/index'
 export default {
   name: 'SpecsSwitchSummary',
-  components: { page, equipSelect },
+  components: { page, equipSelect, classSelect },
   data() {
     return {
+      type: '明细',
+      groups: [],
+      equipList: ['Z01', 'Z02', 'Z03', 'Z04', 'Z05', 'Z06', 'Z07', 'Z08', 'Z09', 'Z10', 'Z11', 'Z12', 'Z13', 'Z14', 'Z15'],
+      dateValue: [setDate(), setDate()],
       total: 0,
       loading: false,
       search: {
         page: 1,
-        equip_no: '',
-        st: setDate(),
-        date: []
+        equip_no: ''
       },
       allData: {},
       tableData: [],
@@ -153,26 +263,70 @@ export default {
     }
   },
   created() {
+    this.search.s_time = this.dateValue[0]
+    this.search.e_time = this.dateValue[1]
     // this.getList()
   },
   methods: {
-    exportTable() {
-      this.btnExportLoad = true
-      const obj = Object.assign({ export: 1 }, this.search)
-      cutTimeCollect('get', null, { params: obj, responseType: 'blob' })
-        .then(res => {
-          const link = document.createElement('a')
-          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
-          link.style.display = 'none'
-          link.href = URL.createObjectURL(blob)
-          link.download = '规格切换时间汇总.xlsx' // 下载的文件名
-          document.body.appendChild(link)
-          link.click()
-          document.body.removeChild(link)
-          this.btnExportLoad = false
-        }).catch(e => {
-          this.btnExportLoad = false
+    changeType() {
+      if (this.type === '明细') {
+        delete this.search.page
+        delete this.search.equip_no
+        this.search.collect = 1
+        this.type = '汇总'
+        this.getList1()
+      } else {
+        delete this.search.collect
+        this.search.page = 1
+        this.type = '明细'
+      }
+    },
+    getClassGroup(val) {
+      if (val) {
+        globalCodesUrl('get', {
+          params: {
+            class_name: '班组'
+          }
+        }).then((response) => {
+          this.groups = response.results
+        }).catch(function() {
         })
+      }
+    },
+    classChanged(val) {
+      this.search.classes = val
+      if (this.type === '明细') {
+        delete this.search.collect
+        this.search.page = 1
+        this.getList()
+      } else {
+        this.search.collect = 1
+        delete this.search.page
+        delete this.search.equip_no
+        this.getList1()
+      }
+    },
+    exportTable() {
+      if (this.type === '明细') {
+        this.btnExportLoad = true
+        const obj = Object.assign({ export: 1 }, this.search)
+        cutTimeCollect('get', null, { params: obj, responseType: 'blob' })
+          .then(res => {
+            const link = document.createElement('a')
+            const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+            link.style.display = 'none'
+            link.href = URL.createObjectURL(blob)
+            link.download = '规格切换时间明细.xlsx' // 下载的文件名
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+            this.btnExportLoad = false
+          }).catch(e => {
+            this.btnExportLoad = false
+          })
+      } else {
+        exportExcel('规格切换时间汇总')
+      }
     },
     async getList() {
       try {
@@ -186,18 +340,43 @@ export default {
         this.loading = false
       }
     },
+    async getList1() {
+      try {
+        this.loading = true
+        const data = await cutTimeCollect('get', null, { params: this.search })
+        this.tableData1 = data.results || []
+        if (this.tableData1.length > 0) {
+          this.tableData1.forEach(d => {
+
+          })
+        }
+        this.loading = false
+      } catch (error) {
+        this.loading = false
+      }
+    },
     currentChange(page) {
       this.search.page = page
       this.getList()
     },
-    changeDate(date) {
-      this.getList()
-      this.search.page = 1
+    changeDate(arr) {
+      this.search.s_time = arr ? arr[0] : ''
+      this.search.e_time = arr ? arr[1] : ''
+      if (this.type === '明细') {
+        delete this.search.collect
+        this.search.page = 1
+        this.getList()
+      } else {
+        this.search.collect = 1
+        delete this.search.page
+        delete this.search.equip_no
+        this.getList1()
+      }
     },
     equipChanged(val) {
       this.search.equip_no = val
-      this.getList()
       this.search.page = 1
+      this.getList()
     }
   }
 }
