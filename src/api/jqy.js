@@ -1364,3 +1364,21 @@ export function attendanceResultAudit(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function shiftTimeSummary(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ShiftTimeSummary + id + '/' : API.ShiftTimeSummary,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function shiftTimeSummaryDetail(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ShiftTimeSummaryDetail + id + '/' : API.ShiftTimeSummaryDetail,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

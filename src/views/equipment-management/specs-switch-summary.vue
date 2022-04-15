@@ -150,14 +150,20 @@
           label="切换后胶料编码"
         />
         <el-table-column
+          sortable
+          prop="time_consuming"
+          label="切换规格耗时/秒"
+        />
+        <!-- <el-table-column
           :label="'切换规格耗时/'+(timeUnit==='秒'?'秒':'min')"
         >
           <template slot-scope="{row}">
             <span v-if="timeUnit==='秒'">{{ row.time_consuming }}</span>
             <span v-else>{{ row.time_consuming |setTimeMin }}</span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
+          sortable
           prop="time_abnormal"
           label="异常时间(秒)"
         />
@@ -203,12 +209,20 @@
               :prop="d+'_1'"
               label="换规格时间(秒)"
               width="60"
-            />
+            >
+              <template slot-scope="{row}">
+                <span>{{ row[d+'_1'] }}</span>
+              </template>
+            </el-table-column>
             <el-table-column
               :prop="d+'_2'"
               label="异常耗时(秒)"
               width="60"
-            />
+            >
+              <template slot-scope="{row}">
+                <span>{{ row[d+'_2'] }}</span>
+              </template>
+            </el-table-column>
           </el-table-column>
         </template>
         <el-table-column
@@ -221,12 +235,20 @@
             prop="true"
             label="换规格时间(秒)"
             width="60"
-          />
+          >
+            <template slot-scope="{row}">
+              <span>{{ row.true }}</span>
+            </template>
+          </el-table-column>
           <el-table-column
             prop="error"
             label="异常耗时(秒)"
             width="60"
-          />
+          >
+            <template slot-scope="{row}">
+              <span>{{ row.error }}</span>
+            </template>
+          </el-table-column>
         </el-table-column>
       </el-table>
     </div>
@@ -257,6 +279,7 @@ export default {
       },
       allData: {},
       tableData: [],
+      tableData1: [],
       btnExportLoad: false,
       options: ['秒', '分钟'],
       timeUnit: '秒'
@@ -346,8 +369,15 @@ export default {
         const data = await cutTimeCollect('get', null, { params: this.search })
         this.tableData1 = data.results || []
         if (this.tableData1.length > 0) {
-          this.tableData1.forEach(d => {
-
+          this.tableData1.push({
+            factory_date: '平均值',
+            true: (sum(this.tableData1, 'true') / (sumNull(this.tableData1, 'true'))).toFixed(1),
+            error: (sum(this.tableData1, 'error') / (sumNull(this.tableData1, 'error'))).toFixed(1)
+          })
+          const index = this.tableData1.length
+          this.equipList.forEach(d => {
+            this.tableData1[index - 1][d + '_1'] = (sum(this.tableData1, [d] + '_1') / (sumNull(this.tableData1, [d] + '_1'))).toFixed(1)
+            this.tableData1[index - 1][d + '_2'] = (sum(this.tableData1, [d] + '_2') / (sumNull(this.tableData1, [d] + '_2'))).toFixed(1)
           })
         }
         this.loading = false
@@ -379,6 +409,25 @@ export default {
       this.getList()
     }
   }
+}
+function sum(arr, params) {
+  var s = 0
+  arr.forEach(function(val, idx, arr) {
+    const a = val[params] ? Number(val[params]) : 0
+    s += a
+  }, 0)
+  s = Math.round(s * 100) / 100
+  return s
+}
+function sumNull(arr, params) {
+  var s = 0
+  arr.forEach(d => {
+    if (d[params]) {
+      s++
+    }
+  })
+  s = s > 0 ? s : 1
+  return s
 }
 </script>
 

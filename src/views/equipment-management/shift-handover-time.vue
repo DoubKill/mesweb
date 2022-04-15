@@ -19,7 +19,7 @@
           @classSelected="classChanged"
         />
       </el-form-item>
-      <el-form-item label="班组">
+      <!-- <el-form-item label="班组">
         <el-select
           v-model="search.group"
           clearable
@@ -34,7 +34,7 @@
             :value="group.global_name"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
         <el-button
           v-permission="['durate_putin_reason','export']"
@@ -50,7 +50,7 @@
       border
     >
       <el-table-column
-        prop="date"
+        prop="factory_date"
         label="日期"
         width="60"
       />
@@ -72,21 +72,23 @@
           min-width="20"
         >
           <el-table-column
+            :prop="d"
             label="交接班耗时(分)"
-            width="60"
+            width="70"
           >
             <template slot-scope="scope">
-              <el-link v-if="scope.row.date==='平均值'" type="primary" @click="dialog(scope)">{{ scope.row[d.prop]===0?null:scope.row[d.prop] }}</el-link>
-              <span v-else>{{ scope.row[d.prop] }}</span>
+              <el-link v-if="scope.row.factory_date!=='平均值'" type="primary" @click="dialog(scope)">{{ scope.row[d+'_time_consuming']!==0?scope.row[d+'_time_consuming']:null }}</el-link>
+              <span v-else>{{ scope.row[d+'_time_consuming']!==0?scope.row[d+'_time_consuming']:null }}</span>
             </template>
           </el-table-column>
           <el-table-column
+            :prop="d"
             label="异常耗时(分)"
             width="60"
           >
             <template slot-scope="scope">
-              <el-link v-if="scope.row.date==='平均值'" type="primary" @click="dialog(scope.row)">{{ scope.row[d.prop]===0?null:scope.row[d.prop] }}</el-link>
-              <span v-else>{{ scope.row[d.prop] }}</span>
+              <el-link v-if="scope.row.factory_date!=='平均值'" type="primary" @click="dialog(scope)">{{ scope.row[d+'_time_abnormal'] }}</el-link>
+              <span v-else>{{ scope.row[d+'_time_abnormal'] }}</span>
             </template>
           </el-table-column>
         </el-table-column>
@@ -99,12 +101,20 @@
       >
         <el-table-column
           label="交接班耗时(分)"
-          width="60"
-        />
+          width="70"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.consuming }}</span>
+          </template>
+        </el-table-column>
         <el-table-column
           label="异常耗时(分)"
           width="60"
-        />
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.abnormal }}</span>
+          </template>
+        </el-table-column>
       </el-table-column>
     </el-table>
     <el-dialog
@@ -118,12 +128,12 @@
         border
       >
         <el-table-column
-          prop="不入库原因"
+          prop="begin"
           label="开始时间"
           min-width="20"
         />
         <el-table-column
-          prop="不入库原因"
+          prop="end"
           label="结束时间"
           min-width="20"
         />
@@ -134,7 +144,7 @@
 </template>
 
 <script>
-import { duratePutinReson } from '@/api/jqy'
+import { shiftTimeSummary, shiftTimeSummaryDetail } from '@/api/jqy'
 import classSelect from '@/components/ClassSelect'
 import { globalCodesUrl } from '@/api/base_w'
 import { exportExcel, setDate } from '@/utils/index'
@@ -147,7 +157,6 @@ export default {
       dateValue: [setDate(), setDate()],
       search: {},
       date: null,
-      tableHead: [],
       equipList: ['Z01', 'Z02', 'Z03', 'Z04', 'Z05', 'Z06', 'Z07', 'Z08', 'Z09', 'Z10', 'Z11', 'Z12', 'Z13', 'Z14', 'Z15'],
       dialogVisible: false,
       loading: false,
@@ -157,8 +166,8 @@ export default {
     }
   },
   created() {
-    this.search.s_time = this.dateValue[0]
-    this.search.e_time = this.dateValue[1]
+    this.search.st = this.dateValue[0]
+    this.search.et = this.dateValue[1]
     this.getList()
   },
   methods: {
@@ -181,17 +190,19 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const data = await duratePutinReson('get', null, { params: this.search })
+        const data = await shiftTimeSummary('get', null, { params: this.search })
         this.tableData = data.results
         if (this.tableData.length > 0) {
-          const index = this.tableData.length
           this.tableData.push({
-            date: '平均值'
+            factory_date: '平均值',
+            consuming: (sum(this.tableData, 'consuming') / (sumNull(this.tableData, 'consuming'))).toFixed(2),
+            abnormal: (sum(this.tableData, 'abnormal') / (sumNull(this.tableData, 'abnormal'))).toFixed(2)
           })
-          this.tableHead.forEach(d => {
-            this.tableData[index][d.prop] = sum(this.tableData, d.prop)
+          const index = this.tableData.length
+          this.equipList.forEach(d => {
+            this.tableData[index - 1][d + '_time_abnormal'] = (sum(this.tableData, [d] + '_time_abnormal') / (sumNull(this.tableData, [d] + '_time_abnormal'))).toFixed(2)
+            this.tableData[index - 1][d + '_time_consuming'] = (sum(this.tableData, [d] + '_time_consuming') / (sumNull(this.tableData, [d] + '_time_consuming'))).toFixed(2)
           })
-          this.tableData[index].count = sum(this.tableData, 'count') / this.tableData.length
         }
         this.loading = false
       } catch (e) {
@@ -199,16 +210,21 @@ export default {
       }
     },
     changeDate(arr) {
-      this.search.s_time = arr ? arr[0] : ''
-      this.search.e_time = arr ? arr[1] : ''
+      this.search.st = arr ? arr[0] : ''
+      this.search.et = arr ? arr[1] : ''
       this.getList()
     },
-    async dialog(row) {
+    async dialog(scope) {
+      const obj = {
+        factory_date: scope.row.factory_date,
+        classes: scope.row.classes,
+        equip_no: scope.column.property
+      }
       this.dialogVisible = true
       try {
         this.loading1 = true
-        const data = await duratePutinReson('get', null, { params: { factory_date: this.date }})
-        this.tableData1 = data.results
+        const data = await shiftTimeSummaryDetail('get', null, { params: obj })
+        this.tableData1 = [data.results]
         this.loading1 = false
       } catch (e) {
         this.loading1 = false
@@ -227,6 +243,16 @@ function sum(arr, params) {
     s += a
   }, 0)
   s = Math.round(s * 100) / 100
+  return s
+}
+function sumNull(arr, params) {
+  var s = 0
+  arr.forEach(d => {
+    if (d[params]) {
+      s++
+    }
+  })
+  s = s > 0 ? s : 1
   return s
 }
 
