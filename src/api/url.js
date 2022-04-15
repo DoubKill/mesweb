@@ -468,6 +468,7 @@ export default {
   // 快检设备履历
   ProductTestResume: '/api/v1/quality/product-test-resume/',
   ProductTestPlan: '/api/v1/quality/product-test-plan/',
+  UnderwayPlan: '/api/v1/quality/product-test-plan/underway-plan/',
   RubberMaxStretchTestResult: '/api/v1/quality/rubber-max-stretch-test-result/',
   ProductTestPlanDetail: '/api/v1/quality/product-test-plan-detail/',
   BulkCreate: '/api/v1/quality/product-test-plan-detail/bulk_create/',

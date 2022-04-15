@@ -332,6 +332,15 @@ export function productTestPlan(method, id, data = {}) {
   return request(obj)
 }
 
+export function underwayPlan(method, id, data = {}) {
+  const obj = {
+    url: id ? API.UnderwayPlan + id + '/' : API.UnderwayPlan,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function rubberMaxStretchTestResult(method, id, data = {}) {
   const obj = {
     url: id ? API.RubberMaxStretchTestResult + id + '/' : API.RubberMaxStretchTestResult,
