@@ -208,7 +208,12 @@
         </el-form-item>
         <br>
         <el-form-item label="选择人员" style="" prop="checkList">
-          <el-checkbox-group v-model="checkList" v-loading="loadPerson" style="width:400px">
+          <el-checkbox-group v-if="pickType==='参与'" v-model="checkList" v-loading="loadPerson" style="width:400px">
+            <template v-for="(item, index) in staffList">
+              <el-checkbox :key="index" :label="item.id">{{ item.username }}</el-checkbox>
+            </template>
+          </el-checkbox-group>
+          <el-checkbox-group v-else v-model="checkList" v-loading="loadPerson" style="width:400px">
             <template v-for="(item, index) in staffList">
               <el-checkbox :key="index" :label="item.username" />
             </template>
@@ -253,6 +258,7 @@ export default {
       optionsType: [],
       options: [{ id: 1, label: '不固定时间上下班' }, { id: 2, label: '按排班时间上下班' }, { id: 3, label: '固定时间上下班' }],
       dialogVisible: false,
+      allList: [],
       dialogVisiblePerson: false,
       rules: {
         attendance_group: [{ required: true, message: '不能为空', trigger: 'blur' }],
@@ -273,12 +279,17 @@ export default {
     this.getList()
     this.getSection()
     this.getTypeList()
+    this.getAllList()
   },
   methods: {
+    async getAllList() {
+      const data = await personnels('get', null, { params: { all: 1 }})
+      this.allList = data.results
+    },
     pickPerson(val) {
       this.pickType = val
       if (this.pickType === '参与') {
-        this.checkList = PickDisplay(this.dialogForm.attendance_users)
+        this.checkList = this.dialogForm.users
       } else {
         this.checkList = PickDisplay(this.dialogForm.principal)
       }
@@ -290,7 +301,16 @@ export default {
           this.$message('请选择考勤人员')
           return
         } else {
-          this.$set(this.dialogForm, 'attendance_users', PersonDisplay(this.checkList))
+          this.$set(this.dialogForm, 'users', this.checkList)
+          const arr = []
+          this.checkList.forEach(d => {
+            this.allList.forEach(item => {
+              if (item.id === d) {
+                arr.push(item.username)
+              }
+            })
+          })
+          this.$set(this.dialogForm, 'attendance_users', PersonDisplay(arr))
           this.dialogVisiblePerson = false
         }
       } else {
@@ -340,7 +360,7 @@ export default {
       this.getList()
     },
     async onSubmit() {
-      this.dialogForm = { range_time: 60, lead_time: 60 }
+      this.dialogForm = { range_time: 60, lead_time: 60, users: [] }
       this.dialogVisible = true
     },
     showEditDialog(row) {
