@@ -77,8 +77,8 @@
             width="70"
           >
             <template slot-scope="scope">
-              <el-link v-if="scope.row.factory_date!=='平均值'" type="primary" @click="dialog(scope)">{{ scope.row[d+'_time_consuming']!==0?scope.row[d+'_time_consuming']:null }}</el-link>
-              <span v-else>{{ scope.row[d+'_time_consuming']!==0?scope.row[d+'_time_consuming']:null }}</span>
+              <el-link v-if="scope.row.factory_date!=='平均值'" type="primary" @click="dialog(scope)">{{ scope.row[d+'_time_consuming'] }}</el-link>
+              <span v-else>{{ scope.row[d+'_time_consuming']*100!==0?scope.row[d+'_time_consuming']:null }}</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -88,7 +88,7 @@
           >
             <template slot-scope="scope">
               <el-link v-if="scope.row.factory_date!=='平均值'" type="primary" @click="dialog(scope)">{{ scope.row[d+'_time_abnormal'] }}</el-link>
-              <span v-else>{{ scope.row[d+'_time_abnormal'] }}</span>
+              <span v-else>{{ scope.row[d+'_time_abnormal']*100!==0?scope.row[d+'_time_abnormal']:null }}</span>
             </template>
           </el-table-column>
         </el-table-column>
@@ -104,7 +104,7 @@
           width="70"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.consuming }}</span>
+            <span>{{ scope.row.consuming*100!==0?scope.row.consuming:null }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -112,7 +112,7 @@
           width="60"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.abnormal }}</span>
+            <span>{{ scope.row.abnormal*100!==0?scope.row.abnormal:null }}</span>
           </template>
         </el-table-column>
       </el-table-column>

@@ -211,7 +211,7 @@
               width="60"
             >
               <template slot-scope="{row}">
-                <span>{{ row[d+'_1'] }}</span>
+                <span>{{ row[d+'_1']*10!==0?row[d+'_1']:null }}</span>
               </template>
             </el-table-column>
             <el-table-column
@@ -220,7 +220,7 @@
               width="60"
             >
               <template slot-scope="{row}">
-                <span>{{ row[d+'_2'] }}</span>
+                <span>{{ row[d+'_2']*10!==0?row[d+'_2']:null }}</span>
               </template>
             </el-table-column>
           </el-table-column>
@@ -237,7 +237,7 @@
             width="60"
           >
             <template slot-scope="{row}">
-              <span>{{ row.true }}</span>
+              <span>{{ row.true*10!==0?row.true:null }}</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -246,7 +246,7 @@
             width="60"
           >
             <template slot-scope="{row}">
-              <span>{{ row.error }}</span>
+              <span>{{ row.error*10!==0?row.error:null }}</span>
             </template>
           </el-table-column>
         </el-table-column>
