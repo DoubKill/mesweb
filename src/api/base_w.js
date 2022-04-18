@@ -318,6 +318,15 @@ export function matDataPointIndicators(method, id, data = {}) {
   return request(obj)
 }
 
+export function matDataPointIndicatorsHistory(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MatDataPointIndicatorsHistory + id + '/' : API.MatDataPointIndicatorsHistory,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function matTestIndicatorMethods(method, id, data = {}) {
   const obj = {
     url: id ? API.MatTestIndicatorMethods + id + '/' : API.MatTestIndicatorMethods,
