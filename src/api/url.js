@@ -147,6 +147,8 @@ export default {
   EquipBanburySummary: '/api/v1/production/equip-banbury-summary/',
   // 规格切换时间汇总
   CutTimeCollect: '/api/v1/production/cut-time-collect/',
+  ShiftTimeSummary: '/api/v1/production/shift-time-summary/', // 交接班时间汇总
+  ShiftTimeSummaryDetail: '/api/v1/production/shift-time-summary/detail/',
   // 设备管理计算总和
   SumSollectTrains: '/api/v1/production/sum-collect-trains/',
   // 物料库存管理
