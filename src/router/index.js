@@ -1708,16 +1708,6 @@ export let asyncRoutes = [
               title: '出入库履历查询',
               permissionName: 'material_inout_history'
             }
-          },
-          {
-            path: '/bar-code-registration',
-            component: () => import('@/views/inventory/material-delivery-manage/bar-code-registration.vue'),
-            name: 'BarCodeRegistration',
-            meta: {
-              faName: 'MaterialDelivery',
-              title: '总部送检条码登记',
-              permissionName: 'material_sjdj'
-            }
           }
         ]
       },
@@ -2662,6 +2652,16 @@ export let asyncRoutes = [
           title: '原材料库 质检信息设定',
           icon: 'quality',
           permissionName: 'material_quality_setting'
+        }
+      },
+      {
+        path: '/bar-code-registration',
+        component: () => import('@/views/inventory/material-delivery-manage/bar-code-registration.vue'),
+        name: 'BarCodeRegistration',
+        meta: {
+          title: '原材料 总部送检条码登记',
+          icon: 'quality',
+          permissionName: 'material_sjdj'
         }
       },
       {
