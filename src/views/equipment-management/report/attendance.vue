@@ -22,6 +22,9 @@
       <el-form-item label="审核人">
         <el-input v-model="audit_user" disabled />
       </el-form-item>
+      <el-form-item label="状态">
+        <el-input v-model="approveState" disabled />
+      </el-form-item>
       <el-form-item style="float:right">
         <el-button
           v-permission="['employee_attendance_records','export']"
@@ -30,7 +33,6 @@
           @click="exportTable"
         >导出Excel模板</el-button>
         <el-upload
-          v-permission="[]"
           style="margin:0 8px;display:inline-block"
           action="string"
           accept=".xls, .xlsx"
@@ -40,10 +42,12 @@
           <el-button v-permission="['employee_attendance_records','import']" :loading="btnExportLoad1" type="primary">导入Excel</el-button>
         </el-upload>
         <el-button
+          v-permission="['employee_attendance_records','examine']"
           type="primary"
           @click="approve('审批')"
         >审批</el-button>
         <el-button
+          v-permission="['employee_attendance_records','audit']"
           type="primary"
           @click="approve('审核')"
         >审核</el-button>
@@ -412,8 +416,9 @@ export default {
       options2: [],
       dialogForm: {},
       currentInfo: {},
-      approve_user: '',
-      audit_user: '',
+      approve_user: null,
+      audit_user: null,
+      approveState: null,
       resultForm: {},
       tableDataAttendance: [],
       dialogVisibleResult: false,
@@ -507,6 +512,7 @@ export default {
         this.tableHead1 = data.group_list || []
         this.approve_user = data.approve_user
         this.audit_user = data.audit_user
+        this.approveState = (this.approve_user !== null ? '已审批' : '未审批')
         this.tableData = data.results || []
         this.spanArr = []
         this.pos = null
