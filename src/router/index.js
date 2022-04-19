@@ -398,6 +398,16 @@ export let asyncRoutes = [
         permissionName: 'weight_tank'
       }
     }
+    // {
+    //   path: '/rb/formula-resume',
+    //   name: 'FormulaResume',
+    //   component: () => import('@/views/recipe/formula-resume'),
+    //   meta: {
+    //     title: 'MES配方变更履历',
+    //     icon: 'formula',
+    //     permissionName: ''
+    //   }
+    // }
       // {
       //   path: '/search/rubber/info',
       //   name: 'search-rubber-info',
@@ -1698,6 +1708,16 @@ export let asyncRoutes = [
               title: '出入库履历查询',
               permissionName: 'material_inout_history'
             }
+          },
+          {
+            path: '/bar-code-registration',
+            component: () => import('@/views/inventory/material-delivery-manage/bar-code-registration.vue'),
+            name: 'BarCodeRegistration',
+            meta: {
+              faName: 'MaterialDelivery',
+              title: '总部送检条码登记',
+              permissionName: 'material_sjdj'
+            }
           }
         ]
       },
@@ -2820,6 +2840,16 @@ export let asyncRoutes = [
           }
         ]
       }
+      // {
+      //   path: '/internal/material-statistics',
+      //   component: () => import('@/views/quality_management/material-statistics'),
+      //   name: 'MaterialStatistics',
+      //   meta: {
+      //     title: '称量机台物料统计',
+      //     icon: 'quality',
+      //     permissionName: ''
+      //   }
+      // }
     ]
   },
   // {
