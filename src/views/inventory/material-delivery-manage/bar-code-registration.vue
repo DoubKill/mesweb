@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="bar-code-registration">
     <!-- 总部送检条码登记 -->
     <el-form :inline="true">
       <el-form-item label="质检条码">
@@ -66,6 +66,7 @@
       :data="tableData"
       style="width: 100%"
       border
+      :row-class-name="tableRowClassName"
     >
       <el-table-column
         prop="tracking_num"
@@ -177,7 +178,7 @@ export default {
   components: { page },
   data() {
     return {
-      search: {},
+      search: { quality_status: '待检' },
       searchDate: [getDay(-7), getDay(0)],
       loading: false,
       tableData: [],
@@ -283,6 +284,13 @@ export default {
     dialogAdd() {
       this.dialogVisible = true
     },
+    tableRowClassName({ row, rowIndex }) {
+      if (row.quality_status === '合格') {
+        return 'green-row'
+      } else if (row.quality_status === '不合格') {
+        return 'red-row'
+      }
+    },
     exportTable() {
       this.btnExportLoad = true
       const obj = Object.assign({ export: 1 }, this.search)
@@ -326,8 +334,17 @@ function doHandleMonth(month) {
 }
 </script>
 
-<style scoped>
-    .el-input{
+<style lang="scss">
+.bar-code-registration{
+    .el-dialog__body .el-input{
         width:350px;
     }
+    .green-row{
+      background: rgb(149, 242, 4) !important;
+    }
+    .red-row{
+      background: rgb(236, 160, 169) !important;
+    }
+}
+
 </style>
