@@ -108,7 +108,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="是否机台关联">
+        <el-form-item label="是否机台关联" prop="relation">
           <el-checkbox v-model="dialogForm.relation">是否机台关联</el-checkbox>
         </el-form-item>
         <el-form-item
@@ -169,6 +169,7 @@ export default {
         name: [{ required: true, message: '不能为空', trigger: 'blur' }],
         coefficient: [{ required: true, message: '不能为空', trigger: 'blur' }],
         type: [{ required: true, message: '不能为空', trigger: 'change' }],
+        relation: [{ required: true, message: '不能为空', trigger: 'change' }],
         post_standard: [{ required: true, message: '不能为空', trigger: 'change' }],
         post_coefficient: [{ required: true, message: '不能为空', trigger: 'blur' }]
       },
