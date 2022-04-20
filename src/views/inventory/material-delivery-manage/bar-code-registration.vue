@@ -118,6 +118,15 @@
         label="送检人"
         min-width="20"
       />
+      <el-table-column label="操作" width="100px">
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="danger"
+            @click="delDialog(scope.row)"
+          >删除</el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <page
       :old-page="false"
@@ -170,7 +179,7 @@
 
 <script>
 import page from '@/components/page'
-import { debounce } from '@/utils'
+import { debounce, setDate } from '@/utils'
 import { materialCount, materialInspectionRegistration } from '@/api/base_w'
 import { wmsMaterialSearch } from '@/api/base_w_three'
 export default {
@@ -289,7 +298,33 @@ export default {
         return 'green-row'
       } else if (row.quality_status === '不合格') {
         return 'red-row'
+      } else {
+        var timestamp = new Date(setDate()).getTime()
+        const oldTimestamp = new Date(row.created_date).getTime()
+        const oneTimestamp = 1000 * 60 * 60 * 24 * 10
+        // 创建日期 过了十天 背景颜色变成紫色
+        if (oldTimestamp + oneTimestamp < timestamp) {
+          return 'purple-row'
+        }
       }
+    },
+    delDialog(row) {
+      this.$confirm('是否确定删除?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        materialInspectionRegistration('delete', row.id)
+          .then(response => {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+            this.getList()
+          }).catch(e => {
+            //
+          })
+      })
     },
     exportTable() {
       this.btnExportLoad = true
@@ -344,6 +379,9 @@ function doHandleMonth(month) {
     }
     .red-row{
       background: rgb(236, 160, 169) !important;
+    }
+    .purple-row{
+      background: rgb(214, 144, 214) !important;
     }
 }
 
