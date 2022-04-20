@@ -46,6 +46,7 @@
     <el-table
       id="out-table"
       v-loading="loading"
+      highlight-current-row="true"
       :data="tableData"
       border
     >
@@ -154,7 +155,7 @@ export default {
   data() {
     return {
       groups: [],
-      dateValue: [setDate(), setDate()],
+      dateValue: [setDate(null, null, 'month') + '-01', setDate()],
       search: {},
       date: null,
       equipList: ['Z01', 'Z02', 'Z03', 'Z04', 'Z05', 'Z06', 'Z07', 'Z08', 'Z09', 'Z10', 'Z11', 'Z12', 'Z13', 'Z14', 'Z15'],
