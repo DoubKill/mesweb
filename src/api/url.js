@@ -693,5 +693,6 @@ export default {
   FormulaPreparation: '/api/v1/terminal/formula-preparation/',
   WmsMaterials: '/api/v1/inventory/wms-materials/',
   ThMaterials: '/api/v1/inventory/th-materials/',
-  HfInventoryLog: '/api/v1/inventory/hf-inventory-log/'
+  HfInventoryLog: '/api/v1/inventory/hf-inventory-log/',
+  MaterialInspectionRegistration: '/api/v1/quality/material-inspection-registration/'
 }
