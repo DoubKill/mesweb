@@ -5,13 +5,16 @@
       <el-form-item label="质检条码">
         <el-input v-model="search.tracking_num" clearable placeholder="请输入内容" @input="getDebounce" />
       </el-form-item>
+      <el-form-item label="批次号">
+        <el-input v-model="search.batch" clearable placeholder="请输入内容" @input="getDebounce" />
+      </el-form-item>
       <el-form-item label="物料名称">
         <el-select v-model="search.material_name" allow-create filterable placeholder="请选择" clearable @visible-change="getMaterialsList" @change="changeList">
           <el-option
             v-for="item in options2"
-            :key="item.material_name"
-            :label="item.material_name"
-            :value="item.material_name"
+            :key="item.name"
+            :label="item.name"
+            :value="item.name"
           />
         </el-select>
       </el-form-item>
@@ -19,9 +22,9 @@
         <el-select v-model="search.material_no" allow-create filterable placeholder="请选择" clearable @visible-change="getMaterialsList" @change="changeList">
           <el-option
             v-for="item in options2"
-            :key="item.material_no"
-            :label="item.material_no"
-            :value="item.material_no"
+            :key="item.code"
+            :label="item.code"
+            :value="item.code"
           />
         </el-select>
       </el-form-item>
@@ -181,8 +184,9 @@
 <script>
 import page from '@/components/page'
 import { debounce, setDate } from '@/utils'
-import { materialCount, materialInspectionRegistration } from '@/api/base_w'
+import { materialInspectionRegistration } from '@/api/base_w'
 import { wmsMaterialSearch } from '@/api/base_w_three'
+import { wmsMaterials } from '@/api/jqy'
 export default {
   name: 'BarCodeRegistration',
   components: { page },
@@ -226,7 +230,7 @@ export default {
     async getMaterialsList(val) {
       if (val) {
         try {
-          const data = await materialCount('get', null, { params: { store_name: '原材料库' }})
+          const data = await wmsMaterials('get', null, { params: { all: 1 }})
           this.options2 = data || []
         } catch (e) {
         //
