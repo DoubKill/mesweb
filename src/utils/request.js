@@ -47,8 +47,7 @@ service.interceptors.response.use(
     }
   },
   error => {
-    if (error.response.status && error.response.status === 403 ||
-      error.response.status === 401) {
+    if (error.response.status && error.response.status === 401) {
       Message({
         message: '登录过期',
         type: 'error',
@@ -56,6 +55,14 @@ service.interceptors.response.use(
       })
       store.dispatch('user/logout')
       router.push('/login')
+      return Promise.reject()
+    }
+    if (error.response.status && error.response.status === 403) {
+      Message({
+        message: '权限不足',
+        type: 'error',
+        duration: 3 * 1000
+      })
       return Promise.reject()
     }
     if (Object.prototype.toString.call(error.response.data) === '[object Object]') {
