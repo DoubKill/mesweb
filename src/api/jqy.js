@@ -1095,6 +1095,15 @@ export function equip190e(method, id, data = {}) {
   return request(obj)
 }
 
+export function equip190eDown(params) {
+  return request({
+    url: API.Equip190e,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
+
 export function equip190eImport(method, id, data = {}) {
   const obj = {
     url: id ? API.Equip190eImport + id + '/' : API.Equip190eImport,
