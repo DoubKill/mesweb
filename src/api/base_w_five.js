@@ -72,6 +72,14 @@ export function getMaterialTolerance(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function replaceRecipeMaterial(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ReplaceRecipeMaterial + id + '/' : API.ReplaceRecipeMaterial,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 export function wmsSafetySettings(method, id, data = {}) {
   const obj = {
     url: id ? API.WmsSafetySettings + id + '/' : API.WmsSafetySettings,

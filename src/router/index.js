@@ -398,6 +398,16 @@ export let asyncRoutes = [
         permissionName: 'weight_tank'
       }
     }
+    // {
+    //   path: '/rb/formula-resume',
+    //   name: 'FormulaResume',
+    //   component: () => import('@/views/recipe/formula-resume'),
+    //   meta: {
+    //     title: 'MES配方变更履历',
+    //     icon: 'formula',
+    //     permissionName: ''
+    //   }
+    // }
       // {
       //   path: '/search/rubber/info',
       //   name: 'search-rubber-info',
@@ -2642,6 +2652,16 @@ export let asyncRoutes = [
           title: '原材料库 质检信息设定',
           icon: 'quality',
           permissionName: 'material_quality_setting'
+        }
+      },
+      {
+        path: '/bar-code-registration',
+        component: () => import('@/views/inventory/material-delivery-manage/bar-code-registration.vue'),
+        name: 'BarCodeRegistration',
+        meta: {
+          title: '原材料 总部送检条码登记',
+          icon: 'quality',
+          permissionName: 'material_sjdj'
         }
       },
       {

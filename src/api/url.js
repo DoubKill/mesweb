@@ -697,6 +697,6 @@ export default {
   MaterialInspectionRegistration: '/api/v1/quality/material-inspection-registration/',
 
   ReplaceRecipeMaterial: '/api/v1/recipe/product-batching-no-new/',
-  ReplaceRecipeOne: '/api/v1/recipe/replace-recipe-material/',
-  XlReportWeightStatics: '/api/v1/terminal/xl-report-weight-statics/'
+  XlReportWeightStatics: '/api/v1/terminal/xl-report-weight-statics/',
+  ReplaceRecipeOne: '/api/v1/recipe/replace-recipe-material/'
 }
