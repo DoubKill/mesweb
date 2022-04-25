@@ -119,6 +119,7 @@
             <template slot-scope="scope">
               <el-button-group>
                 <el-button size="small" :disabled="disabledSubmit" @click="submitClick(scope.row)">保存</el-button>
+                <el-button size="small" type="primary" @click="viewClick(scope.row)">查看履历</el-button>
                 <!-- <el-button size="small" type="danger" @click="clickDelete(scope.$index,scope.row)">删除</el-button> -->
               </el-button-group>
             </template>
@@ -132,16 +133,66 @@
         </div>
       </div>
     </el-dialog>
+    <el-dialog
+      title="履历记录"
+      :visible.sync="dialogVisible1"
+      width="80%"
+    >
+      <el-table
+        :data="tableData1"
+        style="width: 100%"
+        border
+      >
+        <el-table-column
+          label="数据点名称"
+          prop="data_point_name"
+        />
+        <el-table-column
+          label="上限"
+          prop="upper_limit"
+        />
+        <el-table-column
+          label="下限"
+          prop="lower_limit"
+        />
+        <el-table-column
+          label="等级"
+          prop="level"
+        />
+        <el-table-column
+          label="检测结果"
+          prop="result"
+        />
+        <el-table-column
+          label="更新人"
+        >
+          <template slot-scope="scope">
+            {{ scope.row.created_username || '--' }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="更新时间"
+          prop="created_date"
+        />
+      </el-table>
+      <page
+        :old-page="false"
+        :total="total"
+        :current-page="page"
+        @currentChange="currentChange"
+      />
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { matDataPointIndicators } from '@/api/base_w'
+import { matDataPointIndicators, matDataPointIndicatorsHistory } from '@/api/base_w'
 import gradeManageSelect from '@/components/select_w/gradeManageSelect'
 import { deepClone } from '@/utils/index'
+import page from '@/components/page'
 
 export default {
-  components: { gradeManageSelect },
+  components: { gradeManageSelect, page },
   props: {
     editShow: {
       type: Boolean,
@@ -161,7 +212,13 @@ export default {
       loading: true,
       disabledSubmit: false,
       tableData: [],
-      dataPointList: []
+      dataPointList: [],
+      dialogVisible1: false,
+      tableData1: [],
+      currentRowDialog: {},
+      total: 0,
+      page: 1,
+      page_size: 10
     }
   },
   watch: {
@@ -215,6 +272,34 @@ export default {
       } catch (e) {
         this.disabledSubmit = false
       }
+    },
+    viewClick(row) {
+      this.currentRowDialog = row
+      this.dialogVisible1 = true
+      this.page = 1
+      this.page_size = 10
+      this.getResume()
+    },
+    async getResume() {
+      try {
+        const data = await matDataPointIndicatorsHistory('get', null, { params: {
+          product_no: this.objEdit.material_no,
+          data_point_id: this.currentRowDialog.data_point,
+          level: this.currentRowDialog.level,
+          page: this.page,
+          page_size: this.page_size,
+          test_method_id: this.objEdit.test_method
+        }})
+        this.tableData1 = data.results
+        this.total = data.count
+      } catch (e) {
+        this.tableData1 = []
+      }
+    },
+    currentChange(page, page_size) {
+      this.page = page
+      this.page_size = page_size
+      this.getResume()
     },
     setRange(row) {
       let arr = deepClone(this.tableData)
