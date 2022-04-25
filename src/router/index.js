@@ -2827,7 +2827,7 @@ export let asyncRoutes = [
         meta: {
           title: '称量机台物料统计',
           icon: 'quality',
-          permissionName: ''
+          permissionName: 'xl_report_weight_statics'
         }
       }
     ]
