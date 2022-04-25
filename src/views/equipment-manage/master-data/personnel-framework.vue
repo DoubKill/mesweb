@@ -26,6 +26,16 @@
           <el-form-item label="负责人">
             <el-input v-model="formInline.in_charge_username" disabled clearable />
           </el-form-item>
+          <el-form-item v-show="formInline.children&&formInline.children.length===0" label="负责区域">
+            <el-select v-model="formInline.repair_areas" style="width:600px" multiple placeholder="请选择" @change="setRepairAreas">
+              <el-option
+                v-for="item in options"
+                :key="item"
+                :label="item"
+                :value="item"
+              />
+            </el-select>
+          </el-form-item>
         </el-form>
         <el-table
           :data="tableData"
@@ -96,6 +106,7 @@
 <script>
 import page from '@/components/page'
 import { sectionTree } from '@/api/base_w_four'
+import { equipAreaDefine } from '@/api/jqy'
 import { personnelsUrl } from '@/api/user'
 export default {
   name: 'EquipmentMasterDataPersonnelFramework',
@@ -113,7 +124,9 @@ export default {
       visible: false,
       selectedTag: '',
       selectedTagParent: '',
-      formInline: {},
+      formInline: {
+        repair_areas: []
+      },
       tableData: [],
       total: 0,
       dialogVisible: false,
@@ -123,7 +136,8 @@ export default {
       rules: {
         section_id: [{ required: true, message: '不能为空', trigger: 'blur' }],
         name: [{ required: true, message: '不能为空', trigger: 'blur' }]
-      }
+      },
+      options: []
     }
   },
   watch: {
@@ -137,6 +151,7 @@ export default {
   },
   created() {
     this.getTree()
+    this.getResponsibleArea()
     this.getUserList(true)
   },
   methods: {
@@ -159,9 +174,35 @@ export default {
         //
       }
     },
+    async getResponsibleArea() {
+      try {
+        const data = await equipAreaDefine('get', null, { params: { all: 1 }})
+        this.options = data
+      } catch (e) {
+        //
+      }
+    },
+    async setRepairAreas() {
+      try {
+        if (this.formInline.id) {
+          const repair_areas = this.formInline.repair_areas.join(',')
+          await sectionTree('patch', this.formInline.id, { data: { repair_areas }})
+          this.$message.success('设置成功')
+        }
+      } catch (e) {
+        //
+      }
+    },
     handleNodeClick(row) {
       this.closeMenu()
       this.formInline = row
+      if (!this.formInline.repair_areas) {
+        this.formInline.repair_areas = []
+      } else {
+        if (typeof this.formInline.repair_areas === 'string') {
+          this.formInline.repair_areas = this.formInline.repair_areas.split(',')
+        }
+      }
       this.getUserList()
     },
     async getUserList(bool) {

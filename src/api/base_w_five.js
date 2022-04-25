@@ -283,3 +283,21 @@ export function formulaPreparation(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function hfInventoryLog(method, id, data = {}) {
+  const obj = {
+    url: id ? API.HfInventoryLog + id + '/' : API.HfInventoryLog,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function xlReportWeightStatics(method, id, data = {}) {
+  const obj = {
+    url: id ? API.XlReportWeightStatics + id + '/' : API.XlReportWeightStatics,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

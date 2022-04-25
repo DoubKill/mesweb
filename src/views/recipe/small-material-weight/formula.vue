@@ -68,11 +68,24 @@
               label="总误差"
               min-width="20"
             />
-            <el-table-column
+            <!-- <el-table-column
               prop="remark1"
               label="备注"
               min-width="20"
-            />
+            /> -->
+            <el-table-column label="分包数" width="120px">
+              <template slot-scope="{row}">
+                <el-input-number
+                  v-model="row.split_count"
+                  :disabled="!checkPermission(['xl_recipe','merge'])||loading"
+                  style="width:100px"
+                  controls-position="right"
+                  :min="1"
+                  :max="9999"
+                  @change="changeSwitch(row, index,true)"
+                />
+              </template>
+            </el-table-column>
             <el-table-column
               prop="time"
               label="修改时间"
@@ -100,7 +113,7 @@
                 />
               </template>
             </el-table-column>
-            <el-table-column label="是否停用" width="80px">
+            <el-table-column label="操作" width="140px">
               <template slot-scope="{row}">
                 <el-button
                   size="mini"
@@ -108,19 +121,12 @@
                   :disabled="!checkPermission(['xl_recipe','merge'])"
                   @click.stop="handleGlobalCodeTypeDelete(row,index)"
                 >{{ row.use_not ? '启用' : '停用' }}</el-button>
-              </template>
-            </el-table-column>
-            <el-table-column label="分包数" width="120px">
-              <template slot-scope="{row}">
-                <el-input-number
-                  v-model="row.split_count"
-                  :disabled="!checkPermission(['xl_recipe','merge'])||loading"
-                  style="width:100px"
-                  controls-position="right"
-                  :min="1"
-                  :max="9999"
-                  @change="changeSwitch(row, index,true)"
-                />
+                <el-button
+                  size="mini"
+                  type="danger"
+                  :disabled="!checkPermission(['xl_recipe','del'])"
+                  @click.stop="remove(row,index)"
+                >删除</el-button>
               </template>
             </el-table-column>
             <!-- <el-table-column label="是否停用" width="80px">
@@ -355,6 +361,29 @@ export default {
           })
       }).catch(function() {
 
+      })
+    },
+    remove(row, faI) {
+      this.$confirm('是否确定删除?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        updateFlagCount('post', null, { data: {
+          equip_no: this.allTable[faI].equip_no,
+          id: row.id, delete_flag: 1 }})
+          .then(async response => {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+            const data = await this.getList()
+            this.allTable[faI].tableList = data.data
+            this.allTable[faI].total = data.total
+            this.allTable[faI].tableList1 = []
+          }).catch(e => {
+            //
+          })
       })
     }
   }

@@ -559,6 +559,16 @@ export let asyncRoutes = [
             permissionName: 'xl_weight_card'
           }
         },
+        {
+          path: '/small-material-weight/singleCard',
+          component: () => import('@/views/recipe/small-material-weight/singleCard'),
+          name: 'SmallMaterialWeightSingleCard',
+          meta: {
+            faName: 'SmallMaterialWeight',
+            title: '人工单配卡片打印',
+            permissionName: 'weighting_package_manual'
+          }
+        },
         // {
         //   path: '/small-material-weight/artificialCard',
         //   component: () => import('@/views/recipe/small-material-weight/artificialCard'),
@@ -569,7 +579,7 @@ export let asyncRoutes = [
         //     permissionName: ''
         //   }
         // },
-        {
+        /** {
           path: '/small-material-weight/hebao',
           component: () => import('@/views/recipe/small-material-weight/hebao'),
           name: 'SmallMaterialWeightHebao',
@@ -598,7 +608,7 @@ export let asyncRoutes = [
             title: '通用化工流转卡',
             permissionName: 'weighting_package_manual'
           }
-        },
+        },**/
         {
           path: '/small-material-weight/valid',
           component: () => import('@/views/recipe/small-material-weight/valid'),
@@ -710,6 +720,16 @@ export let asyncRoutes = [
               meta: {
                 faName: 'ScheduleDispose',
                 title: '物料需求量统计',
+                permissionName: 'materialdemanded'
+              }
+            },
+            {
+              path: '/schedule/material-demand',
+              component: () => import('@/views/plan/schedule/dispose/material-demand'),
+              name: 'MaterialDemand',
+              meta: {
+                faName: 'ScheduleDispose',
+                title: '原材料需求量 汇总表',
                 permissionName: 'materialdemanded'
               }
             },
@@ -1302,6 +1322,16 @@ export let asyncRoutes = [
               title: '密炼机台产量汇总表',
               permissionName: 'summary_of_mill_output'
             }
+          },
+          {
+            path: '/report/190e-setting',
+            component: () => import('@/views/equipment-management/report/190e_setting'),
+            name: 'SettingE190',
+            meta: {
+              faName: 'Achievements',
+              title: '190E机台规格信息维护',
+              permissionName: 'equip_190e'
+            }
           }
           // {
           //   path: '/report/set-attendance',
@@ -1343,6 +1373,16 @@ export let asyncRoutes = [
       //     permissionName: 'hl_dashboard'
       //   }
       // },
+      {
+        path: '/material/base/material-consumption',
+        name: 'MaterialConsumption',
+        component: () => import('@/views/production/material-consumption'),
+        meta: {
+          title: '原材料消耗量 汇总表',
+          icon: 'production',
+          permissionName: 'material_expend_summary'
+        }
+      },
       {
         path: '/material/base/inventory-warning',
         name: 'MaterialBaseInventoryWarning',
@@ -1570,6 +1610,17 @@ export let asyncRoutes = [
               faName: 'MaterialDelivery',
               faShowName: '原材料库',
               title: '烘房信息统计查询',
+              permissionName: 'material_hf_summary'
+            }
+          },
+          {
+            path: '/internal/drying-room-resume',
+            component: () => import('@/views/inspection_release/drying_room_resume'),
+            name: 'DryingRoomResume',
+            meta: {
+              faName: 'MaterialDelivery',
+              faShowName: '原材料库',
+              title: '入出烘房履历',
               permissionName: 'material_hf_summary'
             }
           },
@@ -2768,6 +2819,16 @@ export let asyncRoutes = [
             }
           }
         ]
+      },
+      {
+        path: '/internal/material-statistics',
+        component: () => import('@/views/quality_management/material-statistics'),
+        name: 'MaterialStatistics',
+        meta: {
+          title: '称量机台物料统计',
+          icon: 'quality',
+          permissionName: ''
+        }
       }
     ]
   },

@@ -32,9 +32,13 @@
             />
             <!-- @changeFun="changeList(item,index)" -->
           </el-form-item>
+          <el-form-item label="手自动状态:">
+            <el-input v-model="item.search.auto" disabled style="width:80px;margin-right:8px" />
+            <el-button v-permission="['xl_plan', 'auto']" type="primary" :disabled="!item.search.auto||btnAutoLoading" @click="autoChange(item,index)">手自动切换</el-button>
+          </el-form-item>
           <!-- <el-form-item label="设定车次">
           <el-input v-model="item.search.setno" clearable placeholder="设定车次" @input="debounceListChange(item,index)" />
-        </el-form-item> -->
+          </el-form-item> -->
           <el-form-item>
             <el-button v-permission="['xl_plan', 'add']" type="primary" @click="classDialog(item,index)">班次切换</el-button>
 
@@ -196,7 +200,7 @@ import { debounce, checkPermission, setDate } from '@/utils'
 import selectBatchingEquip from '../components/select-batching-equip'
 import classSelect from '@/components/ClassSelect'
 import recipeSelect from '../components/recipe-select'
-import { xlPlan, upDownMove, updateFlagCount, currentFactoryDate, rotateClasses } from '@/api/base_w_three'
+import { xlPlan, upDownMove, updateFlagCount, currentFactoryDate, rotateClasses, autoMan } from '@/api/base_w_three'
 // import page from '@/components/page'
 
 export default {
@@ -238,7 +242,8 @@ export default {
       getFactoryDate: {},
       next_classes: '',
       btnLoading1: false,
-      dialogVisible1: false
+      dialogVisible1: false,
+      btnAutoLoading: false
     }
   },
   created() {
@@ -257,6 +262,7 @@ export default {
         this.loading = true
         this.readIs = true
         const data = await xlPlan('get', null, { params: this.currentSearch })
+        this.getAutoMan(false)
         this.readIs = false
         this.loading = false
         return { data: data || [] }
@@ -264,6 +270,29 @@ export default {
       } catch (e) {
         this.loading = false
         this.readIs = false
+      }
+    },
+    async getAutoMan(bool, row) {
+      try {
+        const auto = !bool ? 2 : row.search.auto === '手动' ? 1 : 0
+        this.btnAutoLoading = true
+        const data1 = await autoMan('post', null, { data: { equip_no: this.currentSearch.equip_no, auto: auto }})
+        if (data1 === 1) {
+          this.$set(this.allTable[this.currentIndex].search, 'auto', '自动')
+        } else if (data1 === 0) {
+          this.$set(this.allTable[this.currentIndex].search, 'auto', '手动')
+        } else {
+          this.$set(this.allTable[this.currentIndex].search, 'auto', '')
+        }
+        if (bool) {
+          this.$message.success('切换成功')
+        }
+        if (bool && data1 === '获取手自动模式失败') {
+          this.$message.error('获取手自动模式失败')
+        }
+        this.btnAutoLoading = false
+      } catch (e) {
+        this.btnAutoLoading = false
       }
     },
     classChanged(val, row, index) {
@@ -293,6 +322,13 @@ export default {
     changeRecipeSelect(val, row, index) {
       row.search.recipe = val ? val.name : ''
       this.changeList(row, index)
+    },
+    autoChange(row, index) {
+      if (row) {
+        this.currentSearch = { ...row.search, equip_no: row.equip_no }
+        this.currentIndex = index
+      }
+      this.getAutoMan(true, row)
     },
     async debounceList(row, index) {
       try {
@@ -347,6 +383,7 @@ export default {
             if (c.length > 0) {
               this.allTable.push(...c)
             } else {
+              this.currentIndex = this.allTable.length
               const a = await this.getList()
               this.allTable.push(
                 {

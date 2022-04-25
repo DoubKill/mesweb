@@ -126,6 +126,7 @@ export default {
   MatTestMethods: '/api/v1/quality/mat-test-methods/',
   // 物料数据点评判指标
   MatDataPointIndicators: '/api/v1/quality/mat-data-point-indicators/',
+  MatDataPointIndicatorsHistory: '/api/v1/quality/mat-data-point-indicators-history/',
 
   MaterialDealResultUrl: '/api/v1/quality/material-deal-result/',
   DisposeTypeUrl: '/api/v1/basics/global-codes/',
@@ -405,6 +406,7 @@ export default {
   RotateClasses: '/api/v1/terminal/xl-plan/rotate_classes/',
   UpDownMove: '/api/v1/terminal/xl-plan/up_down_move/',
   CurrentFactoryDate: '/api/v1/basics/current-factory-date/',
+  AutoMan: '/api/v1/terminal/xl-plan/auto_man/',
   WmsStock: '/api/v1/inventory/wms-stock/',
   WmsWeightStock: '/api/v1/inventory/wms-weight-stock/',
   WmsEntrance: '/api/v1/inventory/wms-entrance/',
@@ -468,6 +470,7 @@ export default {
   // 快检设备履历
   ProductTestResume: '/api/v1/quality/product-test-resume/',
   ProductTestPlan: '/api/v1/quality/product-test-plan/',
+  UnderwayPlan: '/api/v1/quality/product-test-plan/underway-plan/',
   RubberMaxStretchTestResult: '/api/v1/quality/rubber-max-stretch-test-result/',
   ProductTestPlanDetail: '/api/v1/quality/product-test-plan-detail/',
   BulkCreate: '/api/v1/quality/product-test-plan-detail/bulk_create/',
@@ -645,8 +648,15 @@ export default {
   MachineTargetValue: '/api/v1/production/machine-target-value/', // 机台目标值设定
   MonthlyOutputStatistics: '/api/v1/production/monthly-output-statistics-and-performance/', // 月产量统计明细及绩效
   DailyProductionCompletionReport: '/api/v1/production/daily-production-completion-report/', // 月产量完成
+  AttendanceResultAudit: '/api/v1/production/attendance-result-audit/',
+  Equip190e: '/api/v1/production/equip-190e/',
+  Equip190eImport: '/api/v1/production/equip-190e/import_xlsx/',
   MonthlyOutputStatisticsReport: '/api/v1/production/monthly-output-statistics-report/',
   SchedulingStockSummary: '/api/v1/plan/scheduling-stock-summary/',
+  SchedulingStockConfirm: '/api/v1/plan/scheduling-stock-summary/confirm/',
+  SchedulingMaterialDemanded: '/api/v1/plan/scheduling-material-demanded/', // 原材料需求量
+  MaterialExpendSummary: '/api/v1/production/material-expend-summary/', // 原材料消耗量
+  SchedulingRecipeStages: '/api/v1/plan/scheduling-recipe-stages/',
   WmsNucleinManagement: '/api/v1/inventory/wms-nuclein-management/',
   MaterialTestPlan: '/api/v1/quality/material-test-plan/',
   MaterialTestPlanDetail: '/api/v1/quality/material-test-plan-detail/',
@@ -663,6 +673,8 @@ export default {
   WmsExceptHandle: '/api/v1/inventory/wms-except-handle/',
   HfStock: '/api/v1/inventory/hf-stock/', // 烘房胶料信息统计列表
   HfStockDetail: '/api/v1/inventory/hf-stock-detail/',
+  AttendanceClockDetail: '/api/v1/production/attendance-clock-detail/',
+  AttendanceTimeStatistics: '/api/v1/production/attendance-time-statistics/',
   AttendanceGroupSetup: '/api/v1/production/attendance-group-setup/',
 
   PerformanceSummary: '/api/v1/production/performance-summary/', // 薪资汇总表
@@ -680,5 +692,11 @@ export default {
   HfRealStatus: '/api/v1/inventory/hf-real-status/',
   FormulaPreparation: '/api/v1/terminal/formula-preparation/',
   WmsMaterials: '/api/v1/inventory/wms-materials/',
-  ThMaterials: '/api/v1/inventory/th-materials/'
+  ThMaterials: '/api/v1/inventory/th-materials/',
+  HfInventoryLog: '/api/v1/inventory/hf-inventory-log/',
+  MaterialInspectionRegistration: '/api/v1/quality/material-inspection-registration/',
+
+  ReplaceRecipeMaterial: '/api/v1/recipe/product-batching-no-new/',
+  ReplaceRecipeOne: '/api/v1/recipe/replace-recipe-material/',
+  XlReportWeightStatics: '/api/v1/terminal/xl-report-weight-statics/'
 }

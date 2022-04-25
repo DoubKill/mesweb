@@ -153,6 +153,7 @@
           <el-form-item label="检测班次" prop="test_classes">
             <class-select
               :value-default="ruleForm.test_classes"
+              :is-disabled="!noRecheck"
               @classSelected="classChangedTest"
             />
           </el-form-item>
@@ -160,6 +161,7 @@
             <el-select
               v-model="ruleForm.test_group"
               placeholder="请选择"
+              :disabled="!noRecheck"
               @visible-change="changeGroup"
             >
               <el-option
@@ -174,6 +176,7 @@
             <el-select
               v-model="ruleForm.test_method_name"
               placeholder="请选择"
+              :disabled="!noRecheck"
               @visible-change="changeTestMethod"
             >
               <el-option
@@ -205,6 +208,7 @@
             <el-select
               v-model="ruleForm.count"
               placeholder="请选择"
+              :disabled="!noRecheck"
             >
               <el-option
                 v-for="group in [5,4]"
@@ -219,6 +223,7 @@
               v-model="ruleForm.test_interval"
               clearable
               placeholder="请选择"
+              :disabled="!noRecheck"
             >
               <el-option
                 v-for="group in 5"
@@ -248,10 +253,10 @@
           </el-form-item>
           <el-form-item>
             <el-button v-permission="['examine_test_plan', 'begin']" size="mini" style="margin-left:10px" type="primary" @click="addSpace">添加</el-button>
-            <el-tag v-if="btnLoading" style="margin-left:60px;color:#000;padding:0 60px" color="rgba(149, 242, 4)" type="success" effect="dark">检测进行中</el-tag>
+            <el-tag v-if="btnLoading&&noRecheck" style="margin-left:60px;color:#000;padding:0 60px" color="rgba(149, 242, 4)" type="success" effect="dark">检测进行中</el-tag>
           </el-form-item>
         </el-form>
-        <el-button v-permission="['examine_test_plan', 'begin']" type="primary" :disabled="btnLoading" @click="startTestFun">开始检测</el-button>
+        <el-button v-permission="['examine_test_plan', 'begin']" type="primary" :disabled="btnLoading&&noRecheck" @click="startTestFun">开始检测</el-button>
         <el-button v-permission="['examine_test_plan', 'end']" type="primary" :disabled="endBtnLoading" @click="endTestFun">结束检测</el-button>
         <el-button type="primary" @click="refreshFun">刷新</el-button>
         <div style="float:right">
@@ -266,6 +271,7 @@
           :data="tableDataRight"
           style="width: 100%;margin-top:10px"
           border
+          :row-class-name="tableRowClassName"
         >
           <el-table-column
             prop="factory_date"
@@ -582,7 +588,7 @@
 import classSelect from '@/components/ClassSelect'
 import equipSelect from '@/components/select_w/equip'
 import { globalCodesUrl, testIndicators, palletTrainsFeedbacks, matTestIndicatorMethods } from '@/api/base_w'
-import { productReportEquip, productTestPlan, rubberMaxStretchTestResult, productTestPlanDetail, bulkCreate } from '@/api/base_w_four'
+import { productReportEquip, productTestPlan, rubberMaxStretchTestResult, productTestPlanDetail, bulkCreate, underwayPlan } from '@/api/base_w_four'
 import allProductNoSelect from '@/components/select_w/allProductNoSelect.vue'
 
 export default {
@@ -640,7 +646,8 @@ export default {
       searchValue: {},
       tableDataValue: [],
       TableDataValueId: '',
-      isDelRow: false
+      isDelRow: false,
+      noRecheck: true // false为复检中
     }
   },
   watch: {
@@ -764,29 +771,40 @@ export default {
     },
     async getWaitPlan(bool) {
       try {
-        let obj = { status: 1, test_equip: this.search.test_equip, test_indicator_name: this.search.test_indicator_name }
-        delete obj.plan_uid
-        if (bool) {
-          obj = { id: this.ruleForm.id }
-        }
-        const data = await productTestPlan('get', null, { params: obj })
-        if (data.results.length === 0) {
+        // let obj = { status: 1, test_equip: this.search.test_equip, test_indicator_name: this.search.test_indicator_name }
+        // delete obj.plan_uid
+        // if (bool) {
+        //   obj = { id: this.ruleForm.id }
+        // }
+        const obj = { test_equip: this.search.test_equip }
+        const data = await underwayPlan('get', null, { params: obj })
+
+        if (JSON.stringify(data) === '{}') {
           this.btnLoading = false
+          this.noRecheck = true
           this.tableDataRight = []
           this.btnLoading = false
           this.ruleForm.plan_uid = ''
           this.testMethodList = []
           return
         }
-        if (data.results[0].status === 1) {
+        if (!data.id) {
           this.btnLoading = true
-          this.ruleForm = data.results[0]
-          this.tableDataRight = data.results[0].product_test_plan_detail
+          this.noRecheck = false
+          this.ruleForm = data
+          this.tableDataRight = data.product_test_plan_detail
+          this.search.test_indicator_name = data.test_indicator_name
+          this.ruleForm.product_no = data.product_test_plan_detail[0].product_no
+        } else if (data.status === 1) {
+          this.btnLoading = true
+          this.noRecheck = true
+          this.ruleForm = data
+          this.tableDataRight = data.product_test_plan_detail
           if (!this.isDelRow) {
             this.$message.info('正在检测中')
           }
-          this.search.test_indicator_name = data.results[0].test_indicator_name
-          this.ruleForm.product_no = data.results[0].product_test_plan_detail[0].product_no
+          this.search.test_indicator_name = data.test_indicator_name
+          this.ruleForm.product_no = data.product_test_plan_detail[0].product_no
         } else {
           this.$message.success('全部检测完毕')
           this.tableDataRight = []
@@ -897,10 +915,11 @@ export default {
         try {
           await productTestPlan('delete', this.ruleForm.id, { params: { }})
           this.btnLoading = false
-          this.$message.success('已全部结束检测')
-          this.ruleForm.plan_uid = ''
-          this.tableDataRight = []
-          this.ruleForm.product_no = ''
+          this.getWaitPlan()
+          // this.$message.success('已全部结束检测')
+          // this.ruleForm.plan_uid = ''
+          // this.tableDataRight = []
+          // this.ruleForm.product_no = ''
           // this.$nextTick(() => {
           // this.$refs.ruleForm.clearValidate()
           // })
@@ -1084,7 +1103,7 @@ export default {
         }
       }
 
-      if (this.btnLoading) {
+      if (this.btnLoading && this.noRecheck) {
         try {
           const _tableDataRight = this.tableDataRight.filter(d => !d.id)
           await bulkCreate('post', null, { data: {
@@ -1146,6 +1165,11 @@ export default {
       if (row.row.is_tested === 'Y') {
         return 'background:#fafafa'
       }
+    },
+    tableRowClassName({ row, rowIndex }) {
+      if (row.is_qualified === false) {
+        return 'red-row'
+      }
     }
   }
 }
@@ -1192,6 +1216,9 @@ export default {
           left: 50%;
           transform: translate(-50%,-50%);
         }
+    }
+    .red-row{
+      background: red;
     }
   }
 </style>

@@ -552,7 +552,6 @@ export default {
       newtFormObj.reason = this.changeInput(newtFormObj.reason)
       newtFormObj.t_deal_suggestion = this.changeInput(newtFormObj.t_deal_suggestion)
       newtFormObj.c_deal_suggestion = this.changeInput(newtFormObj.c_deal_suggestion)
-      console.log(newtFormObj, 44444)
       this.$emit('preserveFun', newtFormObj)
     },
     cancelFun() {

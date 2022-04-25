@@ -19,7 +19,7 @@
           @changeSearch="changeSearch"
         />
       </el-form-item>
-      <el-form-item label="是否已发起">
+      <!-- <el-form-item label="是否已发起">
         <el-select
           v-model="search.is_deal"
           clearable
@@ -31,6 +31,21 @@
             :key="item.value"
             :label="item.label"
             :value="item.value"
+          />
+        </el-select>
+      </el-form-item> -->
+      <el-form-item label="胶料类别">
+        <el-select
+          v-model="search.sulfur_flag"
+          placeholder="请选择"
+          clearable
+          @change="changeSearch"
+        >
+          <el-option
+            v-for="item in ['加硫','无硫']"
+            :key="item"
+            :label="item"
+            :value="item"
           />
         </el-select>
       </el-form-item>
@@ -494,7 +509,14 @@ export default {
               const arr = this.list.filter(item1 => {
                 return JSON.stringify(item1.id) === JSON.stringify(item)
               })[0]
-              this.details.push({ ...arr, ordering: index + 1, reason1: a.reason, test: a.test_data })
+              arr.test_data.forEach(dd => {
+                const _arr = a.test_data.filter(ddd => ddd.data_point_name === dd.data_point_name)
+                if (_arr.length > 0) {
+                  dd.max_value = _arr[0].max_value
+                  dd.min_value = _arr[0].min_value
+                }
+              })
+              this.details.push({ ...arr, ordering: index + 1, reason1: a.reason, test: arr.test_data })
             }
           })
         } else {
@@ -504,7 +526,14 @@ export default {
             const arr = this.list.filter(item => {
               return JSON.stringify(item.id) === JSON.stringify(a.ids)
             })[0]
-            this.details.push({ ...arr, ordering: index + 1, reason1: a.reason, test: a.test_data })
+            arr.test_data.forEach(dd => {
+              const _arr = a.test_data.filter(ddd => ddd.data_point_name === dd.data_point_name)
+              if (_arr.length > 0) {
+                dd.max_value = _arr[0].max_value
+                dd.min_value = _arr[0].min_value
+              }
+            })
+            this.details.push({ ...arr, ordering: index + 1, reason1: a.reason, test: arr.test_data })
           }
         }
       })
@@ -583,6 +612,7 @@ export default {
         return
       }
       const deal_details = []
+      console.log(this.details)
       this.details.forEach(d => {
         deal_details.push({
           ordering: d.ordering,
