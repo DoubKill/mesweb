@@ -114,14 +114,14 @@
       </el-form-item>
       <el-form-item style="float: right">
         <el-button
-          v-if="checkPermission(['productbatching','add'])"
+          v-if="checkPermission(['productbatching','change'])"
           type="primary"
           @click="replacementDialog"
         >原材料替换</el-button>
       </el-form-item>
       <el-form-item style="float: right">
         <el-button
-          v-if="checkPermission(['productbatching','add'])"
+          v-if="checkPermission(['productbatching','change'])"
           type="primary"
           :loading="btnExportLoad"
           @click="exportTable"
