@@ -693,5 +693,10 @@ export default {
   FormulaPreparation: '/api/v1/terminal/formula-preparation/',
   WmsMaterials: '/api/v1/inventory/wms-materials/',
   ThMaterials: '/api/v1/inventory/th-materials/',
-  HfInventoryLog: '/api/v1/inventory/hf-inventory-log/'
+  HfInventoryLog: '/api/v1/inventory/hf-inventory-log/',
+  MaterialInspectionRegistration: '/api/v1/quality/material-inspection-registration/',
+
+  ReplaceRecipeMaterial: '/api/v1/recipe/product-batching-no-new/',
+  ReplaceRecipeOne: '/api/v1/recipe/replace-recipe-material/',
+  XlReportWeightStatics: '/api/v1/terminal/xl-report-weight-statics/'
 }

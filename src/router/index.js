@@ -2819,6 +2819,16 @@ export let asyncRoutes = [
             }
           }
         ]
+      },
+      {
+        path: '/internal/material-statistics',
+        component: () => import('@/views/quality_management/material-statistics'),
+        name: 'MaterialStatistics',
+        meta: {
+          title: '称量机台物料统计',
+          icon: 'quality',
+          permissionName: ''
+        }
       }
     ]
   },
