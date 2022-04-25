@@ -318,6 +318,15 @@ export function matDataPointIndicators(method, id, data = {}) {
   return request(obj)
 }
 
+export function matDataPointIndicatorsHistory(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MatDataPointIndicatorsHistory + id + '/' : API.MatDataPointIndicatorsHistory,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function matTestIndicatorMethods(method, id, data = {}) {
   const obj = {
     url: id ? API.MatTestIndicatorMethods + id + '/' : API.MatTestIndicatorMethods,
@@ -461,6 +470,14 @@ export function drussPlanManagement(method, id, data = {}) {
 export function materialCount(method, id, data = {}) {
   const obj = {
     url: id ? API.MaterialCount + id + '/' : API.MaterialCount,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function materialInspectionRegistration(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MaterialInspectionRegistration + id + '/' : API.MaterialInspectionRegistration,
     method: method
   }
   Object.assign(obj, data)
