@@ -32,10 +32,11 @@
       </el-form-item>
       <el-form-item label="物料名称">
         <el-select
-          v-model="getParams.e_material_name"
+          v-model="getParams.material_name"
           style="width:250px"
           placeholder="请选择物料名称"
           filterable
+          allow-create
           clearable
           @visible-change="getProduct"
           @change="changeList"
