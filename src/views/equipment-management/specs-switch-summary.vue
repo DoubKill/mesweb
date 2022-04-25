@@ -363,7 +363,7 @@ export default {
         this.loading = true
         const data = await cutTimeCollect('get', null, { params: this.search })
         this.total = data.count
-        this.allData = data.results.pop() || {}
+        // this.allData = data.results.pop() || {}
         this.tableData = data.results || []
         this.loading = false
       } catch (error) {
@@ -381,7 +381,6 @@ export default {
             var i = 0
             this.tableData1[index].error = 0
             var k = 0
-            console.log(Object.keys(this.tableData1[index]))
             Object.keys(this.tableData1[index]).forEach(d => {
               if (d.indexOf('normal_cut_time_consumer') !== -1) {
                 if (this.tableData1[index][d] !== null) {
@@ -396,8 +395,6 @@ export default {
                 }
               }
             })
-            console.log(i)
-            console.log(k)
             this.tableData1[index].true = (i !== 0 ? (this.tableData1[index].true / i).toFixed(0) : null)
             this.tableData1[index].error = (k !== 0 ? (this.tableData1[index].error / k).toFixed(0) : null)
           })
