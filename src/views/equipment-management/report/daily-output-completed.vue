@@ -449,7 +449,7 @@ export default {
       for (const key in obj) {
         if (key !== 'name' && key !== 'weight' && obj[key] !== undefined) {
           arr.push({
-            factory_date: this.search.date + '-' + (key.split('日')[0] > 10 ? key.split('日')[0] : '0' + key.split('日')[0]),
+            factory_date: this.search.date + '-' + (key.split('日')[0] >= 10 ? key.split('日')[0] : '0' + key.split('日')[0]),
             weight: obj[key]
           })
         }
