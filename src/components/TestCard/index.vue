@@ -75,14 +75,14 @@
         <tr>
           <td>检测结果</td>
           <td>{{ testData.test_result }}</td>
-          <td>备注</td>
-          <td>{{ testData.test ? testData.test.test_note : '' }}</td>
-        </tr>
-        <tr>
+          <!-- <td>备注</td>
+          <td>{{ testData.test ? testData.test.test_note : '' }}</td> -->
           <td>处理人</td>
           <td>{{ testData.deal_user }}</td>
+        </tr>
+        <tr>
           <td>处理时间</td>
-          <td>{{ testData.deal_time }}</td>
+          <td colspan="3">{{ testData.deal_time }}</td>
         </tr>
         <tr>
           <td>处理意见</td>
@@ -96,7 +96,7 @@
     >
       <tr>
         <th style="width:100px">车次</th>
-        <th v-for="(value, key) in mtrListHead" :key="key" style="min-width: 80px; max-width: 80px">{{ value }}</th>
+        <th v-for="(value, key) in mtrListHead" :key="key">{{ value }}</th>
         <th style="width:100px">综合判级</th>
       </tr>
       <!-- <tr>

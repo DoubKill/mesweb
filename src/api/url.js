@@ -126,6 +126,7 @@ export default {
   MatTestMethods: '/api/v1/quality/mat-test-methods/',
   // 物料数据点评判指标
   MatDataPointIndicators: '/api/v1/quality/mat-data-point-indicators/',
+  MatDataPointIndicatorsHistory: '/api/v1/quality/mat-data-point-indicators-history/',
 
   MaterialDealResultUrl: '/api/v1/quality/material-deal-result/',
   DisposeTypeUrl: '/api/v1/basics/global-codes/',
@@ -469,6 +470,7 @@ export default {
   // 快检设备履历
   ProductTestResume: '/api/v1/quality/product-test-resume/',
   ProductTestPlan: '/api/v1/quality/product-test-plan/',
+  UnderwayPlan: '/api/v1/quality/product-test-plan/underway-plan/',
   RubberMaxStretchTestResult: '/api/v1/quality/rubber-max-stretch-test-result/',
   ProductTestPlanDetail: '/api/v1/quality/product-test-plan-detail/',
   BulkCreate: '/api/v1/quality/product-test-plan-detail/bulk_create/',
