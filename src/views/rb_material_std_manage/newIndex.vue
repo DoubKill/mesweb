@@ -509,6 +509,8 @@ export default {
       this.rubber_material_list()
     },
     changeSearch() {
+      this.selectionList = []
+      this.$refs.multipleTable.clearSelection()
       this.search.page = 1
       this.rubber_material_list()
     },
