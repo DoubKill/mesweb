@@ -639,7 +639,7 @@ export default {
         return
       }
       this.btnExportLoad = true
-      const obj = Object.assign({ export: 1, wms_material_name: this.search.wms_material_name }, {})
+      const obj = Object.assign({ export: 1, wms_material_name: this.search.wms_material_name, exclude_used_type: 6 }, {})
       const _api = rubber_material_url
       _api('get', null, { params: obj, responseType: 'blob' })
         .then(res => {
