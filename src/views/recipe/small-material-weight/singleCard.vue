@@ -786,10 +786,6 @@ export default {
 </script>
 
 <style scoped>
-.singleCard-style{
-    /* min-width: 1000px; */
-/* overflow-x: scroll; */
-}
     .border-style{
         border:1px solid #000;
         padding-left: 10px;
