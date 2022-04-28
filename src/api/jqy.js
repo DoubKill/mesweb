@@ -753,6 +753,15 @@ export function multiUpdateInspection(method, id, data = {}) {
   return request(obj)
 }
 
+export function cutTimeCollectSummary(method, id, data = {}) {
+  const obj = {
+    url: id ? API.CutTimeCollectSummary + id + '/' : API.CutTimeCollectSummary,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function wmsStorageSummary(method, id, data = {}) {
   const obj = {
     url: id ? API.WmsStorageSummary + id + '/' : API.WmsStorageSummary,

@@ -1151,7 +1151,7 @@ export let asyncRoutes = [
             name: 'SpecsSwitchSummary',
             meta: {
               faName: 'SummaryStatistics',
-              title: '规格切换时间汇总',
+              title: '规格切换时间明细',
               permissionName: 'product_exchange_consume'
             }
           },
