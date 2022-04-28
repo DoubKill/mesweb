@@ -17,6 +17,7 @@
         <el-button
           v-permission="['daily_production_completion_report','export']"
           type="primary"
+          :loading="btnExportLoad"
           @click="exportTable"
         >导出Excel</el-button>
         <el-button
@@ -198,10 +199,10 @@
 </template>
 
 <script>
-import { dailyProductionCompletionReport, equip190e } from '@/api/jqy'
+import { dailyProductionCompletionReport, equip190e, dailyProductionCompletionDown } from '@/api/jqy'
 import classSelect from '@/components/ClassSelect'
 import * as echarts from 'echarts'
-import { exportExcel } from '@/utils/index'
+// import { exportExcel } from '@/utils/index'
 import { setDate } from '@/utils'
 export default {
   name: 'DailyOutputCompleted',
@@ -211,6 +212,7 @@ export default {
       search: {
         date: setDate(null, null, 'month')
       },
+      btnExportLoad: false,
       loading: false,
       btnLoading: false,
       dialogVisible: false,
@@ -575,12 +577,24 @@ export default {
       this.tableHead = getDiffDate(this.search.date + '-01', getCurrentMonthLastDay(this.search.date))
       this.getList()
     },
-    async exportTable() {
-      await this.$set(this, 'exportTableShow', true)
-      await exportExcel('月产量完成报表')
-      setTimeout(() => {
-        this.exportTableShow = false
-      }, 300)
+    exportTable() {
+      this.btnExportLoad = true
+      const obj = { export: 1 }
+      const _api = dailyProductionCompletionDown
+      _api(obj)
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '月常量完成.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
     }
   }
 }

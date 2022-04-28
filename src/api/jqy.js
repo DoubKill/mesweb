@@ -1086,6 +1086,15 @@ export function dailyProductionCompletionReport(method, id, data = {}) {
   return request(obj)
 }
 
+export function dailyProductionCompletionDown(params) {
+  return request({
+    url: API.DailyProductionCompletionReport,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
+
 export function equip190e(method, id, data = {}) {
   const obj = {
     url: id ? API.Equip190e + id + '/' : API.Equip190e,
