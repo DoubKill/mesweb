@@ -50,7 +50,7 @@
           @input="debounceList"
         />
       </el-form-item>
-      <el-form-item label="是否已处理">
+      <!-- <el-form-item label="是否已处理">
         <el-select
           v-model="search.t_solved"
           clearable
@@ -64,13 +64,14 @@
             :value="item.id"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
     <h3>不合格品 处置单列表</h3>
     <el-table
       :data="tableData"
       style="width: 100%;"
       border
+      :row-class-name="tableRowClassName"
       max-height="500px"
     >
       <el-table-column
@@ -112,7 +113,7 @@
             type="primary"
             size="mini"
             :disabled="isDisabled"
-            @click="dealFun(scope.row)"
+            @click="dealFun(scope.row,scope.$index)"
           >处理
           </el-button>
           <el-button
@@ -167,17 +168,19 @@
           />
         </template>
       </el-table-column>
-      <el-table-column
+      <!-- <el-table-column
         prop="unqualified_deal_order_uid"
         label="处置单号"
         min-width="20"
-      />
+      /> -->
       <el-table-column
         label="日期/班次"
         min-width="20"
         :formatter="(row)=>{
           if(row.factory_date){
-            return (row.factory_date||'') +'/'+(row.classes||'')
+            let a = row.factory_date.split('-')[1]
+            let b = row.factory_date.split('-')[2]
+            return (a+'/'+b) +' - '+(row.classes||'')
           }
         }"
       />
@@ -201,6 +204,15 @@
         label="生产过程-原因及程度"
         min-width="40"
       />
+      <el-table-column
+        prop=""
+        label="不合格描述"
+        min-width="40"
+      >
+        <template slot-scope="{row}">
+          {{ row.unqualifiedDescribe }}
+        </template>
+      </el-table-column>
     </el-table>
     <div style="width:100%;textAlign:center">
       <el-button
@@ -311,7 +323,9 @@ export default {
   components: { page, excel },
   data() {
     return {
-      search: {},
+      search: {
+        t_solved: 'N'
+      },
       tableData: [],
       total: 0,
       loading: false,
@@ -418,16 +432,36 @@ export default {
       this.isEdit = false
       this.handleCardDialogVisible = true
     },
-    async dealFun(row) {
+    async dealFun(row, index) {
       this.clearTable()
       try {
+        this.tableData.forEach((d, i) => {
+          if (i === index) {
+            d.timeout_color = true
+          } else {
+            d.timeout_color = false
+          }
+        })
         this.isDisabled = true
         const data = await unqualifiedDealOrders('get', row.id)
         this.tableData1 = data ? data.deal_details : []
         this.tableData1.forEach(d => {
+          d.unqualifiedDescribe = ''
+          d.test_data.forEach(DD => {
+            d.unqualifiedDescribe += DD.data_point_name + ': ' + DD.min_value + '-' + DD.max_value +
+            '\r(' + DD.judged_lower_limit + '-' + DD.judged_upper_limit + ')' + ';\n'
+          })
           d.children = d.trains
           d.train = ''
           d.children.forEach((D, i) => {
+            D.unqualifiedDescribe = ''
+            for (const key in D.pallet_test_data) {
+              if (Object.hasOwnProperty.call(D.pallet_test_data, key)) {
+                const element = D.pallet_test_data[key]
+                D.unqualifiedDescribe += key + ': ' + element.test_min_value + '-' + element.test_max_value +
+            '\r(' + element.judged_lower_limit + '-' + element.judged_upper_limit + ')' + ';\n'
+              }
+            }
             D.faId = d.ordering
             d.train += D.train + (d.children.length - 1 === i ? '' : ',')
           })
@@ -613,6 +647,11 @@ export default {
       return (restaurant) => {
         return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) > -1)
       }
+    },
+    tableRowClassName({ row, rowIndex }) {
+      if (row.timeout_color) {
+        return 'green-row'
+      }
     }
   }
 }
@@ -629,6 +668,9 @@ export default {
     .el-form-item__content{
        width:auto !important;
     }
+  }
+  .green-row{
+    background: greenyellow;
   }
 }
 

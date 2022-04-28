@@ -31,7 +31,7 @@
       <el-form-item label="处置单号">
         <el-input v-model="search.unqualified_deal_order_uid" clearable @input="changeSearch" />
       </el-form-item>
-      <el-form-item label="是否已处理">
+      <!-- <el-form-item label="是否已处理">
         <el-select
           v-model="search.c_solved"
           clearable
@@ -45,7 +45,7 @@
             :value="item"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
 
     <el-table
@@ -156,7 +156,7 @@ export default {
       formHeadData: [],
       search: {
         page: 1,
-        t_solved: 'Y'
+        c_solved: 'N'
       },
       use_flag: true,
       loading: false,
