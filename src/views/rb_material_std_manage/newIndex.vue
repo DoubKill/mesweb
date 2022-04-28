@@ -526,7 +526,7 @@ export default {
         versions: '',
         precept: '',
         stage_product_batch_no: '',
-        production_time_interval: ''
+        production_time_interval: 0
       }
       this.isCopy = false
       this.dialogAddRubberMaterial = true
