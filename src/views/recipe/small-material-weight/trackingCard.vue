@@ -153,7 +153,7 @@
         width="200"
       >
         <template slot-scope="scope">
-          <div v-if="!scope.row.bra_code" style="display:inline-block;margin:0 10px">
+          <div v-if="scope.row.order_flag" style="display:inline-block;margin:0 10px">
             <el-button
               v-permission="['xl_expire_data', 'save']"
               type="primary"
@@ -163,7 +163,7 @@
               打印
             </el-button>
           </div>
-          <div v-if="scope.row.bra_code" style="display:inline-block;margin:0 10px">
+          <div v-if="!scope.row.order_flag" style="display:inline-block;margin:0 10px">
             <el-button
               v-permission="['xl_expire_data', 'save']"
               type="primary"
