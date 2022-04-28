@@ -12,7 +12,7 @@
         <el-input v-model="search.attendance_users" clearable placeholder="考勤负责人" @input="changeSearch" />
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button v-permission="['performance_job_ladder', 'add']" type="primary" @click="onSubmit">新建</el-button>
+        <el-button v-permission="['attendance_group_setup', 'add']" type="primary" @click="onSubmit">新建</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -73,12 +73,12 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
-              v-permission="['performance_job_ladder', 'change']"
+              v-permission="['attendance_group_setup', 'change']"
               size="mini"
               @click="showEditDialog(scope.row)"
             >编辑</el-button>
             <el-button
-              v-permission="['performance_job_ladder', 'delete']"
+              v-permission="['attendance_group_setup', 'delete']"
               size="mini"
               type="danger"
               plain

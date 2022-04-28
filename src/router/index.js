@@ -1162,7 +1162,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'SummaryStatistics',
               title: '交接班时间汇总',
-              permissionName: ''
+              permissionName: 'shift_time_summary'
             }
           }
         ]
@@ -1360,7 +1360,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'Achievements',
               title: '考勤组设置',
-              permissionName: ''
+              permissionName: 'attendance_group_setup'
             }
           }
         ]
