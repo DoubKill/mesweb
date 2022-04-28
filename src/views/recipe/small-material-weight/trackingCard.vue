@@ -742,8 +742,9 @@ export default {
             if (this.againPrint) {
               _obj = { print_count: this.ruleForm.print_count }
             }
-            // console.log(_obj, 6666)
-            // return
+            if (typeof _obj.display_manual_info === 'string') {
+              _obj.display_manual_info = []
+            }
             this.btnLoading = true
             await weightingPackageLog(_api, this.againPrint ? this.ruleForm.id : '', { data: _obj })
             this.$message.success('已下发打印')
