@@ -1151,8 +1151,18 @@ export let asyncRoutes = [
             name: 'SpecsSwitchSummary',
             meta: {
               faName: 'SummaryStatistics',
-              title: '规格切换时间汇总',
+              title: '规格切换时间明细',
               permissionName: 'product_exchange_consume'
+            }
+          },
+          {
+            path: '/equipment/shift-handover-time',
+            component: () => import('@/views/equipment-management/shift-handover-time'),
+            name: 'ShiftHandoverTime',
+            meta: {
+              faName: 'SummaryStatistics',
+              title: '交接班时间汇总',
+              permissionName: 'shift_time_summary'
             }
           }
         ]
@@ -1342,17 +1352,17 @@ export let asyncRoutes = [
               title: '190E机台规格信息维护',
               permissionName: 'equip_190e'
             }
+          },
+          {
+            path: '/report/set-attendance',
+            component: () => import('@/views/equipment-management/report/set-attendance'),
+            name: 'SetAttendance',
+            meta: {
+              faName: 'Achievements',
+              title: '考勤组设置',
+              permissionName: 'attendance_group_setup'
+            }
           }
-          // {
-          //   path: '/report/set-attendance',
-          //   component: () => import('@/views/equipment-management/report/set-attendance'),
-          //   name: 'SetAttendance',
-          //   meta: {
-          //     faName: 'Achievements',
-          //     title: '考勤组设置',
-          //     permissionName: ''
-          //   }
-          // }
         ]
       },
       /* {

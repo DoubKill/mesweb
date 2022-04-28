@@ -8,8 +8,11 @@
       <el-form-item label="考勤负责人">
         <el-input v-model="search.principal" clearable placeholder="考勤负责人" @input="changeSearch" />
       </el-form-item>
+      <el-form-item label="参与考勤人员">
+        <el-input v-model="search.attendance_users" clearable placeholder="考勤负责人" @input="changeSearch" />
+      </el-form-item>
       <el-form-item style="float:right">
-        <el-button v-permission="['performance_job_ladder', 'add']" type="primary" @click="onSubmit">新建</el-button>
+        <el-button v-permission="['attendance_group_setup', 'add']" type="primary" @click="onSubmit">新建</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -34,7 +37,7 @@
         label="参与考勤人员"
         min-width="20"
       />
-      <el-table-column
+      <!-- <el-table-column
         prop="attendance_type"
         label="考勤类型"
         min-width="20"
@@ -42,7 +45,7 @@
           let obj = options.find(d=>d.id === row.attendance_type)
           return obj.label
         }"
-      />
+      /> -->
       <el-table-column
         label="考勤时间"
         min-width="20"
@@ -70,12 +73,12 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
-              v-permission="['performance_job_ladder', 'change']"
+              v-permission="['attendance_group_setup', 'change']"
               size="mini"
               @click="showEditDialog(scope.row)"
             >编辑</el-button>
             <el-button
-              v-permission="['performance_job_ladder', 'delete']"
+              v-permission="['attendance_group_setup', 'delete']"
               size="mini"
               type="danger"
               plain
@@ -130,7 +133,7 @@
             />
           </el-input>
         </el-form-item>
-        <el-form-item label="考勤类型" prop="attendance_type">
+        <!-- <el-form-item label="考勤类型" prop="attendance_type">
           <el-select v-model="dialogForm.attendance_type" placeholder="请选择" style="width:250px">
             <el-option
               v-for="item in options"
@@ -139,7 +142,7 @@
               :value="item.id"
             />
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="考勤时间" prop="time">
           <el-time-picker
             v-model="dialogForm.attendance_st"
@@ -205,7 +208,12 @@
         </el-form-item>
         <br>
         <el-form-item label="选择人员" style="" prop="checkList">
-          <el-checkbox-group v-model="checkList" v-loading="loadPerson" style="width:400px">
+          <el-checkbox-group v-if="pickType==='参与'" v-model="checkList" v-loading="loadPerson" style="width:400px">
+            <template v-for="(item, index) in staffList">
+              <el-checkbox :key="index" :label="item.id">{{ item.username }}</el-checkbox>
+            </template>
+          </el-checkbox-group>
+          <el-checkbox-group v-else v-model="checkList" v-loading="loadPerson" style="width:400px">
             <template v-for="(item, index) in staffList">
               <el-checkbox :key="index" :label="item.username" />
             </template>
@@ -250,12 +258,13 @@ export default {
       optionsType: [],
       options: [{ id: 1, label: '不固定时间上下班' }, { id: 2, label: '按排班时间上下班' }, { id: 3, label: '固定时间上下班' }],
       dialogVisible: false,
+      allList: [],
       dialogVisiblePerson: false,
       rules: {
         attendance_group: [{ required: true, message: '不能为空', trigger: 'blur' }],
         attendance_users: [{ required: true, message: '不能为空', trigger: 'blur' }],
         time: [{ required: true, validator: validatePass, trigger: 'change' }],
-        attendance_type: [{ required: true, message: '不能为空', trigger: 'change' }],
+        // attendance_type: [{ required: true, message: '不能为空', trigger: 'change' }],
         principal: [{ required: true, message: '不能为空', trigger: 'blur' }],
         range_time: [{ required: true, message: '不能为空', trigger: 'change' }],
         lead_time: [{ required: true, message: '不能为空', trigger: 'change' }]
@@ -270,12 +279,17 @@ export default {
     this.getList()
     this.getSection()
     this.getTypeList()
+    this.getAllList()
   },
   methods: {
+    async getAllList() {
+      const data = await personnels('get', null, { params: { all: 1 }})
+      this.allList = data.results
+    },
     pickPerson(val) {
       this.pickType = val
       if (this.pickType === '参与') {
-        this.checkList = PickDisplay(this.dialogForm.attendance_users)
+        this.checkList = this.dialogForm.users
       } else {
         this.checkList = PickDisplay(this.dialogForm.principal)
       }
@@ -287,7 +301,16 @@ export default {
           this.$message('请选择考勤人员')
           return
         } else {
-          this.$set(this.dialogForm, 'attendance_users', PersonDisplay(this.checkList))
+          this.$set(this.dialogForm, 'users', this.checkList)
+          const arr = []
+          this.checkList.forEach(d => {
+            this.allList.forEach(item => {
+              if (item.id === d) {
+                arr.push(item.username)
+              }
+            })
+          })
+          this.$set(this.dialogForm, 'attendance_users', PersonDisplay(arr))
           this.dialogVisiblePerson = false
         }
       } else {
@@ -309,7 +332,7 @@ export default {
       this.optionsType = data.results
     },
     async getGroupList() {
-      const data = await personnels('get', null, { params: { section_name: this.department }})
+      const data = await personnels('get', null, { params: { section_name: this.department, all: 1 }})
       this.staffList = data.results
     },
     async getList() {
@@ -337,7 +360,7 @@ export default {
       this.getList()
     },
     async onSubmit() {
-      this.dialogForm = { range_time: 60, lead_time: 60 }
+      this.dialogForm = { range_time: 60, lead_time: 60, users: [] }
       this.dialogVisible = true
     },
     showEditDialog(row) {

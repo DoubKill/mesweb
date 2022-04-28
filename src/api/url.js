@@ -148,6 +148,8 @@ export default {
   EquipBanburySummary: '/api/v1/production/equip-banbury-summary/',
   // 规格切换时间汇总
   CutTimeCollect: '/api/v1/production/cut-time-collect/',
+  ShiftTimeSummary: '/api/v1/production/shift-time-summary/', // 交接班时间汇总
+  ShiftTimeSummaryDetail: '/api/v1/production/shift-time-summary/detail/',
   // 设备管理计算总和
   SumSollectTrains: '/api/v1/production/sum-collect-trains/',
   // 物料库存管理
@@ -660,6 +662,7 @@ export default {
   WmsNucleinManagement: '/api/v1/inventory/wms-nuclein-management/',
   MaterialTestPlan: '/api/v1/quality/material-test-plan/',
   MaterialTestPlanDetail: '/api/v1/quality/material-test-plan-detail/',
+  CutTimeCollectSummary: '/api/v1/production/cut-time-collect-summary/', // 规格切换时间汇总
   PerformanceJobLadder: '/api/v1/production/performance-job-ladder/', // 绩效计算 岗位阶梯表
   ProductInfoDj: '/api/v1/production/product-info-dj/', // 丁基胶规格设定
   PerformanceUnitPrice: '/api/v1/production/performance-unit-price/', // 绩效计算 单价表

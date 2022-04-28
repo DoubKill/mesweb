@@ -19,6 +19,12 @@
           @change="getListDay"
         />
       </el-form-item>
+      <el-form-item label="">
+        <el-checkbox v-model="auto_" @change="getList">自动生产</el-checkbox>
+      </el-form-item>
+      <el-form-item label="">
+        <el-checkbox v-model="manual_" @change="getList">手动生产</el-checkbox>
+      </el-form-item>
       <el-form-item>
         <el-button
           type="primary"
@@ -123,6 +129,8 @@ export default {
       search: {
         day_time: ''
       },
+      auto_: true,
+      manual_: true,
       loading: false,
       classOptions: [],
       tableData: [],
@@ -142,6 +150,8 @@ export default {
   },
   methods: {
     async getList() {
+      this.search.auto = this.auto_ ? 1 : 0
+      this.search.manual = this.manual_ ? 1 : 0
       try {
         this.loading = true
         const data = await productClassesPlanReal('get', null, { params: this.search })
