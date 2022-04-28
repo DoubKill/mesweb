@@ -40,8 +40,12 @@
           <el-input v-model="item.search.setno" clearable placeholder="设定车次" @input="debounceListChange(item,index)" />
           </el-form-item> -->
           <el-form-item>
-            <el-button v-permission="['xl_plan', 'add']" type="primary" @click="classDialog(item,index)">班次切换</el-button>
-
+            <el-button
+              v-permission="['xl_plan', 'add']"
+              type="primary"
+              :disabled="btnLoading1"
+              @click="classDialog(item,index)"
+            >班次切换</el-button>
             <el-button v-permission="['xl_plan', 'add']" type="primary" @click="addFun(item,index,true)">新增计划</el-button>
             <el-button v-permission="['xl_plan', 'delete']" type="primary" :disabled="item.currentRow&&item.currentRow.state!=='等待'" @click="delFun(item,index,'删除')">删除计划</el-button>
             <el-button v-permission="['xl_plan', 'issue']" type="primary" :disabled="item.currentRow&&item.currentRow.state!=='等待'" @click="delFun(item,index,'下达',1)">下达计划</el-button>
