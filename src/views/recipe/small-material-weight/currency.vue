@@ -275,9 +275,10 @@
           prop="_single_weight"
           label="配料重量"
         >
-          <el-input
+          <el-input-number
             v-model="formData._single_weight"
-            style="width:100px"
+            controls-position="right"
+            :max="100"
             placeholder="配料重量"
             :disabled="(formData.id||formData.batching_type==='配方')?true:false"
           />
@@ -287,9 +288,10 @@
           prop="single_weight"
           label="配料重量"
         >
-          <el-input
+          <el-input-number
             v-model="formData.single_weight"
-            style="width:100px"
+            controls-position="right"
+            :max="100"
             placeholder="配料重量"
             :disabled="(formData.id||formData.batching_type==='配方')?true:false"
           />
@@ -326,6 +328,7 @@
             v-model="formData.package_count"
             controls-position="right"
             :min="1"
+            :max="30"
             :disabled="formData.id?true:false"
           />
         </el-form-item>

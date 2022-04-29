@@ -105,3 +105,11 @@ export function materials_type_url(method, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function replaceRecipeOne(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ReplaceRecipeOne + id + '/' : API.ReplaceRecipeOne,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

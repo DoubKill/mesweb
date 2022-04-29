@@ -245,11 +245,11 @@
             <el-form-item
               prop="single_weight"
               label="配料重量"
-              style="width:280px"
             >
-              <el-input
+              <el-input-number
                 v-model="formData2.single_weight"
-                placeholder="配料重量"
+                controls-position="right"
+                :max="100"
               />
             </el-form-item>
             <el-form-item
@@ -260,6 +260,7 @@
                 v-model="formData2.package_count"
                 controls-position="right"
                 :min="1"
+                :max="30"
               />
             </el-form-item>
             <el-form-item
@@ -785,10 +786,6 @@ export default {
 </script>
 
 <style scoped>
-.singleCard-style{
-    /* min-width: 1000px; */
-/* overflow-x: scroll; */
-}
     .border-style{
         border:1px solid #000;
         padding-left: 10px;
