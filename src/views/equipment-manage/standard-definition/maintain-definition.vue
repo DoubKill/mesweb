@@ -664,9 +664,10 @@
               <el-table-column
                 label="作业项目"
                 width="200px"
+                :show-overflow-tooltip="true"
               >
                 <template slot-scope="{row,$index}">
-                  <el-input v-model="row.equip_job_item_standard__standard_name" disabled>
+                  <el-input v-model="row.equip_job_item_standard__standard_name" disabled :title="row.equip_job_item_standard__standard_name">
                     <el-button slot="append" icon="el-icon-search" @click="Add1(row,$index)" />
                   </el-input>
                 </template>
@@ -678,6 +679,7 @@
                 <template slot-scope="{row}">
                   <el-input
                     v-model="row.work_details_column"
+                    :title="row.work_details_column"
                     disabled
                   />
                 </template>
