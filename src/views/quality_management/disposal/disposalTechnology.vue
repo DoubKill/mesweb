@@ -448,8 +448,14 @@ export default {
         this.tableData1.forEach(d => {
           d.unqualifiedDescribe = ''
           d.test_data.forEach(DD => {
+            DD.judged_lower_limit = DD.judged_lower_limit ? DD.judged_lower_limit : ''
+            DD.judged_upper_limit = DD.judged_upper_limit ? DD.judged_upper_limit : ''
+            let c = false
+            if (!DD.judged_lower_limit && !DD.judged_upper_limit) {
+              c = true
+            }
             d.unqualifiedDescribe += DD.data_point_name + ': ' + DD.min_value + '-' + DD.max_value +
-            '\r(' + DD.judged_lower_limit + '-' + DD.judged_upper_limit + ')' + ';\n'
+            (c ? '' : '\r(') + DD.judged_lower_limit + (c ? '' : '-') + DD.judged_upper_limit + (c ? '' : ')') + ';\n'
           })
           d.children = d.trains
           d.train = ''
@@ -458,8 +464,20 @@ export default {
             for (const key in D.pallet_test_data) {
               if (Object.hasOwnProperty.call(D.pallet_test_data, key)) {
                 const element = D.pallet_test_data[key]
-                D.unqualifiedDescribe += key + ': ' + element.test_min_value + '-' + element.test_max_value +
-            '\r(' + element.judged_lower_limit + '-' + element.judged_upper_limit + ')' + ';\n'
+                element.judged_lower_limit = element.judged_lower_limit ? element.judged_lower_limit : ''
+                element.judged_upper_limit = element.judged_upper_limit ? element.judged_upper_limit : ''
+                element.test_min_value = element.test_min_value ? element.test_min_value : ''
+                element.test_max_value = element.test_max_value ? element.test_max_value : ''
+                let a = false
+                if (!element.test_min_value && !element.test_max_value) {
+                  a = true
+                }
+                let b = false
+                if (!element.judged_lower_limit && !element.judged_upper_limit) {
+                  b = true
+                }
+                D.unqualifiedDescribe += key + ': ' + element.test_min_value + (a ? '' : '-') + element.test_max_value +
+            (b ? '' : '\r(') + element.judged_lower_limit + (b ? '' : '-') + element.judged_upper_limit + (b ? '' : ')') + ';\n'
               }
             }
             D.faId = d.ordering
