@@ -20,7 +20,7 @@
         </el-select> -->
         <!-- <warehouseSelect :created-is="true" @changSelect="changeWarehouse" /> -->
       </el-form-item>
-      <el-form-item label="物料编码">
+      <el-form-item v-if="warehouseNameProps!=='胶料库'" label="物料编码">
         <span v-if="materialCode">{{ materialCode }}</span>
         <materialCodeSelect
           v-else
@@ -43,6 +43,7 @@
       </el-form-item> -->
       <el-form-item style="float:right">
         <el-button
+          v-if="warehouseNameProps!=='胶料库'"
           type="primary"
           :disabled="btnExportLoad"
           @click="exportTable(1)"
@@ -62,9 +63,18 @@
       :data="tableData"
     >
       <el-table-column label="No" type="index" align="center" width="40" />
-      <el-table-column label="物料名称" align="center" prop="material_name" min-width="35" />
-      <el-table-column label="物料编码" align="center" prop="material_no" min-width="35" />
-      <el-table-column label="质检条码" align="center" prop="lot_no" min-width="35" />
+      <el-table-column
+        v-if="warehouseNameProps!=='胶料库'"
+        label="物料名称"
+        align="center"
+        prop="material_name"
+        min-width="35"
+      />
+      <el-table-column v-if="warehouseNameProps!=='胶料库'" label="物料编码" align="center" prop="material_no" min-width="35" />
+
+      <el-table-column v-if="warehouseNameProps==='胶料库'" label="库区" align="center" prop="store_name" min-width="35" />
+      <el-table-column v-if="warehouseNameProps==='胶料库'" label="胶料编码" align="center" prop="material_no" min-width="35" />
+      <el-table-column :label="`${warehouseNameProps==='胶料库'?'追踪码':'质检条码'}`" align="center" prop="lot_no" min-width="35" />
       <el-table-column v-if="getParams.warehouse_name === '帘布库'" label="货位状态" align="center" prop="location_status" min-width="16" />
       <!-- <el-table-column label="机台号" align="center" min-width="12">
         <template v-if="row.product_info" slot-scope="{row}">
@@ -83,8 +93,8 @@
       </el-table-column> -->
       <el-table-column label="托盘号" align="center" prop="container_no" min-width="18" />
       <el-table-column label="库存位" align="center" prop="location" min-width="18" />
-      <el-table-column label="库存数" align="center" prop="qty" min-width="16" />
-      <el-table-column label="单位" align="center" prop="unit" min-width="20" />
+      <el-table-column :label="`${warehouseNameProps==='胶料库'?'车数':'库存数'}`" align="center" prop="qty" min-width="16" />
+      <el-table-column v-if="warehouseNameProps!== '胶料库'" label="单位" align="center" prop="unit" min-width="20" />
       <el-table-column
         label="单位重量"
         prop="total_weight"
@@ -96,8 +106,9 @@
           return ''
         }"
       />
-      <el-table-column label="总重量" align="center" prop="total_weight" min-width="16" />
-      <el-table-column label="品质状态" align="center" prop="quality_status" min-width="15" />
+      <el-table-column label="总重量kg" align="center" prop="total_weight" min-width="16" />
+      <el-table-column v-if="warehouseNameProps!=='胶料库'" label="品质状态" align="center" prop="quality_status" min-width="15" />
+      <el-table-column v-if="warehouseNameProps==='胶料库'" label="品质状态" align="center" prop="quality_level" min-width="15" />
       <el-table-column label="入库时间" align="center" prop="in_storage_time" min-width="15" />
       <el-table-column label="有效期至" align="center" prop="expire_time" min-width="15" />
       <el-table-column label="剩余有效天数" align="center" prop="left_days" min-width="15" />
@@ -136,7 +147,7 @@
 </template>
 
 <script>
-import { bzFinalInventory, wmsExpireDetails, thExpireDetails, thExpireDetailsDown, wmsExpireDetailsDown } from '@/api/material-inventory-manage'
+import { bzFinalInventory, wmsExpireDetails, thExpireDetails, productExpiresDetailsDown, thExpireDetailsDown, wmsExpireDetailsDown, productExpiresDetails } from '@/api/material-inventory-manage'
 
 // import { getMaterialInventoryManage } from '@/api/material-inventory-manage'
 // import materielTypeSelect from '@/components/select_w/materielTypeSelect'
@@ -195,7 +206,7 @@ export default {
         quality_status: this.qualityStatus,
         expire_days: this.expireDays,
         // lot_no: this.lotNo,
-        warehouse_name: '混炼胶库' // 仓库名称
+        warehouse_name: this.warehouseNameProps // 仓库名称
       },
       currentPage: 1,
       total: 0,
@@ -213,25 +224,44 @@ export default {
   watch: {
     show(bool) {
       if (bool) {
-        this.getParams = {
-          page: 1,
-          page_size: 10,
-          // material_type: '', // 物料类型
-          material_code: this.materialCode, // 物料编号
-          container_no: this.containerNo, // 托盘号
-          quality_status: this.qualityStatus,
-          warehouse_name: this.warehouseNameProps,
-          expire_days: this.expireDays
+        if (this.getParams.warehouse_name === '胶料库') {
+          this.getParams = {
+            page: 1,
+            page_size: 10,
+            material_no: this.materialNo, // 物料编号
+            quality_status: this.qualityStatus,
+            expire_days: this.expireDays
+          }
+        } else {
+          this.getParams = {
+            page: 1,
+            page_size: 10,
+            // material_type: '', // 物料类型
+            material_code: this.materialCode, // 物料编号
+            container_no: this.containerNo, // 托盘号
+            quality_status: this.qualityStatus,
+            warehouse_name: this.warehouseNameProps,
+            expire_days: this.expireDays
           // lot_no: this.lotNo,
+          }
         }
         this.getTableData()
       }
     }
   },
-  created() {
+  mounted() {
     this.permissionObj = this.permission
     if (this.warehouseNameProps) {
       this.getParams.warehouse_name = this.warehouseNameProps
+    }
+    if (this.warehouseNameProps === '胶料库') {
+      this.getParams = {
+        page: 1,
+        page_size: 10,
+        material_no: this.materialNo, // 物料编号
+        quality_status: this.qualityStatus,
+        expire_days: this.expireDays
+      }
     }
     this.getTableData()
   },
@@ -245,6 +275,10 @@ export default {
       if (['原材料库', '炭黑库'].includes(this.getParams.warehouse_name)) {
         delete obj.store_name
         _api = this.getParams.warehouse_name === '原材料库' ? wmsExpireDetails : thExpireDetails
+      }
+      if (this.warehouseNameProps === '胶料库') {
+        delete obj.store_name
+        _api = productExpiresDetails
       }
       _api(obj)
         .then(response => {
@@ -314,13 +348,17 @@ export default {
         delete obj.store_name
         _api = this.getParams.warehouse_name === '原材料库' ? wmsExpireDetailsDown : thExpireDetailsDown
       }
+      if (this.warehouseNameProps === '胶料库') {
+        delete obj.store_name
+        _api = productExpiresDetailsDown
+      }
       _api(obj)
         .then(res => {
           const link = document.createElement('a')
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = this.getParams.warehouse_name + '-库存明细.xlsx' // 下载的文件名
+          link.download = this.warehouseNameProps + '-库存明细.xlsx' // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)

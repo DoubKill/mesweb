@@ -309,3 +309,12 @@ export function xlReportWeightStatics(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function productExpiresList(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ProductExpiresList + id + '/' : API.ProductExpiresList,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

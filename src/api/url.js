@@ -188,6 +188,7 @@ export default {
 
   // 物料属性管理
   materialsAttribute: '/api/v1/recipe/materials-attribute/',
+  BatchSet: '/api/v1/recipe/materials-attribute/batch-set/',
   // 物料条码信息
   materialsSupplier: '/api/v1/recipe/materials-supplier/',
 
@@ -701,5 +702,7 @@ export default {
 
   ReplaceRecipeMaterial: '/api/v1/recipe/product-batching-no-new/',
   ReplaceRecipeOne: '/api/v1/recipe/replace-recipe-material/',
-  XlReportWeightStatics: '/api/v1/terminal/xl-report-weight-statics/'
+  XlReportWeightStatics: '/api/v1/terminal/xl-report-weight-statics/',
+  ProductExpiresList: '/api/v1/inventory/product-expires-list/',
+  ProductExpiresDetails: '/api/v1/inventory/product-expires-details/'
 }
