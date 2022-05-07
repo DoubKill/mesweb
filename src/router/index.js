@@ -1562,7 +1562,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'RubberWarehouse',
               title: '胶料超期报警',
-              permissionName: ''
+              permissionName: 'product_expire_query'
             }
           }
         ]
