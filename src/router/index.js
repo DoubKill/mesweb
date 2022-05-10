@@ -1537,8 +1537,8 @@ export let asyncRoutes = [
           // },
           {
             path: '/material-inout-record',
-            component: () => import('@/views/inventory/rubber-warehouse/material_inout_record.vue'),
-            name: 'MaterialInOutRecord',
+            component: () => import('@/views/inventory/rubber-warehouse/material_inout_record_rubber.vue'),
+            name: 'MaterialInoutRecordRubber',
             meta: {
               faName: 'RubberWarehouse',
               title: '出入库履历查询',
