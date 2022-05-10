@@ -233,7 +233,10 @@ export default {
         material_no: '',
         page: 1
       },
-      attributeForm: {},
+      attributeForm: {
+        storage_time: null,
+        period_of_validity: null
+      },
       total: 0,
       barCodeData: [],
       getParamsBarCode: {
