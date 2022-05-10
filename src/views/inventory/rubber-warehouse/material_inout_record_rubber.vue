@@ -193,7 +193,7 @@
       fit
     >
       <el-table-column label="No" type="index" align="center" width="40" />
-      <el-table-column label="质检条码" align="center" prop="lot_no" width="50" />
+      <el-table-column label="质检条码" align="center" prop="lot_no" width="150" />
       <el-table-column label="入库单号" align="center" prop="inbound_order_no" />
       <!-- <el-table-column label="入库发起人" align="center" prop="" /> -->
       <el-table-column label="入库发起时间" align="center" prop="inbound_time" />
@@ -202,17 +202,17 @@
       <el-table-column label="出库发起人" align="center" prop="outbound_user" />
       <el-table-column label="出库发起时间" align="center" prop="outbound_time" />
       <!-- <el-table-column label="出库完成时间" align="center" prop="" /> -->
-      <el-table-column v-if="(warehouseNameProps!=='原材料库'&&warehouseNameProps!=='炭黑库')&&!isDialog" label="巷道" align="center" prop="location">
+      <el-table-column v-if="(warehouseNameProps!=='原材料库'&&warehouseNameProps!=='炭黑库')&&!isDialog" label="巷道" align="center" prop="location" width="50">
         <template slot-scope="{row}">
           {{ row.location?row.location.split('-')[0]:'' }}
         </template>
       </el-table-column>
-      <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="巷道" align="center">
+      <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="巷道" align="center" width="50">
         <template slot-scope="{row}">
           {{ row.location?row.location.split('-')[1]:'' }}
         </template>
       </el-table-column>
-      <el-table-column label="托盘号" align="center" prop="pallet_no" />
+      <el-table-column label="托盘号" align="center" prop="pallet_no" width="80" />
       <el-table-column label="胶料名称" align="center" prop="product_no" />
       <el-table-column label="车数" align="center" prop="qty" width="50" />
       <el-table-column label="重量(kg)" align="center" prop="weight" width="80" />
