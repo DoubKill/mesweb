@@ -290,6 +290,12 @@ export default {
         this.$message.info('请填写有效期')
         return
       }
+      if (!this.attributeForm.storage_time) {
+        this.attributeForm.storage_time = null
+      }
+      if (!this.attributeForm.period_of_validity) {
+        this.attributeForm.period_of_validity = null
+      }
       this.$refs.attributeForm.validate((valid) => {
         if (valid) {
           if (this.isBatch) {
