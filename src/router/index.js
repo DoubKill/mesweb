@@ -130,7 +130,7 @@ export const constantRoutes = [
     }
   },
   // http://localhost:9000/#/alone/material_base_info_manage/
-  // ?name=formula_preparation&arr=view&equip=Z05&key=
+  // ?name=formula_preparation&arr=view&equip=Z05&product_no=&key=
   {
     path: '/alone/material_base_info_manage/',
     component: () => import('@/views/material_base_info_manage/productionFeeding'),
