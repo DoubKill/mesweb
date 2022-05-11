@@ -302,6 +302,48 @@
             暂无图片
           </div>
         </el-form-item>
+        <el-form-item label="项目视频">
+          <span style="font-size: 12px;color: #999;">仅支持mp4视频格式，大小不超过50M，最多可一共上传1个视频</span>
+          <el-upload
+            v-if="operateType!=='报修申请详情'"
+            action="api/api/v1/equipment/upload-images/"
+            :data="{source_type:'维修'}"
+            name="video_file_name"
+            list-type="picture-card"
+            :limit="1"
+            :on-success="changeUrl"
+            :file-list="videoList"
+            accept=".mp4"
+          >
+            <i slot="default" class="el-icon-plus" />
+            <div slot="file" slot-scope="{file}" style="height: 100%;">
+              <video v-if="file" class="el-upload-list__item-thumbnail" :src="dialogVideoUrl" width="100%" height="100%" />
+              <span v-if="file" class="el-upload-list__item-actions">
+                <span class="el-upload-list__item-preview" @click="handleVideoPreview(file)">
+                  <i class="el-icon-video-play" />
+                </span>
+                <span class="el-upload-list__item-delete" @click="handleRemoveVideo(file)">
+                  <i class="el-icon-delete" />
+                </span>
+              </span>
+            </div>
+          </el-upload>
+          <el-dialog :visible.sync="dialogVisibleVideo" append-to-body>
+            <video width="100%" controls="controls" :src="dialogVideoUrl" />
+          </el-dialog>
+          <template v-for="(item, index) in ruleForm.apply_repair_video_url">
+            <video
+              v-if="operateType==='报修申请详情'&&ruleForm.apply_repair_video_url.length>0"
+              :key="index"
+              width="80%"
+              controls="controls"
+              src="http://10.4.14.188:8000/media/equipment/video/202205/1c3c4f7d2047fb9b151e65cd48bdb91d_fhW7y1Z.mp4"
+            />
+          </template>
+          <div v-if="operateType==='报修申请详情'&&ruleForm.apply_repair_video_url.length===0">
+            暂无视频
+          </div>
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose(false)">取 消</el-button>
@@ -464,7 +506,18 @@ export default {
         ]
       },
       dialogImageUrl: '',
-      operateType: ''
+      operateType: '',
+      dialogVisibleVideo: false,
+      videoList: [], // 视频列表, // 上传文件参数
+      dialogVideoUrl: '', // 视频
+      // 是否显示进度条
+      videoUploadPercent: '',
+      // 进度条的进度，
+      isShowUploadVideo: false,
+      // 显示上传按钮
+      videoForm: {
+        showVideoPath: ''
+      }
     }
   },
   computed: {
@@ -719,6 +772,20 @@ export default {
       } catch (e) {
         this.$set(this, 'objList', this.objList)
       }
+    },
+    changeUrl(res, file) {
+      this.ruleForm.video_url_list = [res.video_file_name]
+    },
+    handleRemoveVideo(file) {
+      this.videoList = []
+      this.dialogVideoUrl = ''
+      file = ''
+      this.ruleForm.video_url_list = []
+    },
+    // 视频
+    handleVideoPreview(file) {
+      this.dialogVideoUrl = file.url
+      this.dialogVisibleVideo = true
     },
     handleRemove(file, fileList) {
       this.objList = fileList
