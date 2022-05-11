@@ -376,6 +376,20 @@
             暂无图片
           </div>
         </el-form-item>
+        <el-form-item label="上传视频">
+          <template v-for="(item, index) in creatOrder.result_repair_video_url">
+            <video
+              v-if="creatOrder.result_repair_video_url.length>0"
+              :key="index"
+              width="80%"
+              controls="controls"
+              :src="item"
+            />
+          </template>
+          <div v-if="creatOrder.result_repair_video_url.length===0">
+            暂无视频
+          </div>
+        </el-form-item>
         <el-form-item label="巡检结论">
           <el-radio-group v-model="creatOrder.result_repair_final_result" disabled>
             <el-radio label="正常">正常</el-radio>
@@ -490,7 +504,7 @@ export default {
       dialogVisibleProject: false,
       dialogVisibleMaintain: false,
       projectForm: { abnormal_operation_url: [] },
-      creatOrder: { result_repair_graph_url: [] },
+      creatOrder: { result_repair_graph_url: [], result_repair_video_url: [] },
       dialogVisible: false,
       btnExportLoad: false,
       dateValue: [],

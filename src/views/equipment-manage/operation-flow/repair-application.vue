@@ -302,15 +302,15 @@
             暂无图片
           </div>
         </el-form-item>
-        <el-form-item label="项目视频">
-          <span style="font-size: 12px;color: #999;">仅支持mp4视频格式，大小不超过50M，最多可一共上传1个视频</span>
+        <el-form-item label="上传视频">
+          <span v-if="operateType!=='报修申请详情'" style="font-size: 12px;color: #999;">仅支持mp4视频格式，大小不超过50M，最多可一共上传3个视频</span>
           <el-upload
             v-if="operateType!=='报修申请详情'"
             action="api/api/v1/equipment/upload-images/"
             :data="{source_type:'维修'}"
             name="video_file_name"
             list-type="picture-card"
-            :limit="1"
+            :limit="3"
             :on-success="changeUrl"
             :file-list="videoList"
             accept=".mp4"
@@ -337,7 +337,7 @@
               :key="index"
               width="80%"
               controls="controls"
-              src="http://10.4.14.188:8000/media/equipment/video/202205/1c3c4f7d2047fb9b151e65cd48bdb91d_fhW7y1Z.mp4"
+              :src="item"
             />
           </template>
           <div v-if="operateType==='报修申请详情'&&ruleForm.apply_repair_video_url.length===0">
@@ -509,15 +509,7 @@ export default {
       operateType: '',
       dialogVisibleVideo: false,
       videoList: [], // 视频列表, // 上传文件参数
-      dialogVideoUrl: '', // 视频
-      // 是否显示进度条
-      videoUploadPercent: '',
-      // 进度条的进度，
-      isShowUploadVideo: false,
-      // 显示上传按钮
-      videoForm: {
-        showVideoPath: ''
-      }
+      dialogVideoUrl: '' // 视频
     }
   },
   computed: {
@@ -730,6 +722,8 @@ export default {
         this.operateType = type
         this.ruleForm = JSON.parse(JSON.stringify(row))
       }
+      this.ruleForm.video_url_list = []
+      this.videoList = []
       this.dialogVisible = true
     },
     equipSelected(obj) {
@@ -774,15 +768,15 @@ export default {
       }
     },
     changeUrl(res, file) {
-      this.ruleForm.video_url_list = [res.video_file_name]
+      this.ruleForm.video_url_list.push(res.video_file_name)
+      this.videoList.push({ url: res.video_file_name })
     },
     handleRemoveVideo(file) {
-      this.videoList = []
-      this.dialogVideoUrl = ''
-      file = ''
-      this.ruleForm.video_url_list = []
+      const index = this.videoList.findIndex(d => d.url === file.url)
+      this.videoList.splice(index, 1)
+      this.ruleForm.video_url_list.splice(this.ruleForm.video_url_list.indexOf(file.url), 1)
     },
-    // 视频
+    // 预览视频
     handleVideoPreview(file) {
       this.dialogVideoUrl = file.url
       this.dialogVisibleVideo = true

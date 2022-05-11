@@ -84,6 +84,20 @@
           暂无图片
         </div>
       </el-form-item>
+      <el-form-item label="上传视频">
+        <template v-for="(item, index) in ruleForm.apply_repair_video_url">
+          <video
+            v-if="ruleForm.apply_repair_video_url.length>0"
+            :key="index"
+            width="80%"
+            controls="controls"
+            :src="item"
+          />
+        </template>
+        <div v-if="ruleForm.apply_repair_video_url.length===0">
+          暂无视频
+        </div>
+      </el-form-item>
     </el-form>
   </div>
 </template>
