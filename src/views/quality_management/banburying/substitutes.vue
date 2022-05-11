@@ -1,5 +1,8 @@
 <template>
-  <div :style="{padding:this.$route.query.equip?'20px':''}">
+  <div
+    :class="{'substitutes_form_new':this.$route.query.equip?true:false}"
+    :style="{padding:this.$route.query.equip?'20px':''}"
+  >
     <!--细料胶块放行处理 -->
     <el-form :inline="true">
       <el-form-item label="原因类别">
@@ -20,10 +23,10 @@
       </el-form-item>
       <el-form-item label="机台">
         <equip-select
-          style="width:150px"
+          style="width:90px"
+          :equip_no_props.sync="search.equip_no"
           :is-created="true"
-          :default-val="search.equip_no"
-          @equipSelected="equipSelected"
+          @changeSearch="equipSelected"
         />
       </el-form-item>
       <el-form-item label="计划编号">
@@ -163,7 +166,7 @@
 </template>
 
 <script>
-import EquipSelect from '@/components/EquipSelect'
+import EquipSelect from '@/components/select_w/equip'
 import { debounce } from '@/utils'
 import { replaceMaterial, materialMultiUpdate, materialDetailsAux } from '@/api/jqy'
 export default {
@@ -232,8 +235,8 @@ export default {
         this.$message.info('请选择数据')
       }
     },
-    equipSelected(obj) {
-      this.$set(this.search, 'equip_no', obj ? obj.equip_no : '')
+    equipSelected(val) {
+      this.search.equip_no = val
       this.changeList()
     },
     handleSelectionChange(val) {
@@ -249,6 +252,24 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+  .substitutes_form_new{
+    font-size: 20px;
+    .el-form-item__label,.el-button,.el-table{
+      font-size:20px !important;
+    }
+    .el-input__inner{
+       font-size:18px;
+    }
+    .el-checkbox__inner{
+      width:20px;
+      height:20px;
+    }
+    .el-checkbox__inner::after{
+      height: 7px !important;
+      left: 5px!important;
+      top: 3px!important;
+    }
+  }
 
 </style>

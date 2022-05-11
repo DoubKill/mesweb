@@ -34,7 +34,6 @@
           v-else
           v-model="search.warehouse_name"
           placeholder="请选择"
-          clearable
           @change="warehouseSelectFun"
         >
           <el-option
@@ -233,6 +232,10 @@ export default {
     },
     async getList() {
       try {
+        if (!this.search.warehouse_name) {
+          this.$message('请选择仓库名称')
+          return
+        }
         this.loading = true
         const data = await inventoryLog('get', null, { params: this.search })
         this.tableData = data.results
