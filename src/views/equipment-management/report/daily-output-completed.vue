@@ -579,7 +579,7 @@ export default {
     },
     exportTable() {
       this.btnExportLoad = true
-      const obj = { export: 1 }
+      const obj = { export: 1, date: this.search.date }
       const _api = dailyProductionCompletionDown
       _api(obj)
         .then(res => {
