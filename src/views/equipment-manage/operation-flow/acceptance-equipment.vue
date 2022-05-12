@@ -307,8 +307,8 @@
         min-width="20"
       />
       <el-table-column
-        prop="receiveing_user_phone"
-        label="接单手机号"
+        prop="receiving_user_phone"
+        label="接单人手机号"
         min-width="20"
       />
       <el-table-column
