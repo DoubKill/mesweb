@@ -523,7 +523,7 @@
         <el-form-item label="上传视频">
           <span style="font-size: 12px;color: #999;">仅支持mp4视频格式，大小不超过50M，最多可一共上传3个视频</span>
           <el-upload
-            action="api/api/v1/equipment/upload-images/"
+            action="api/v1/equipment/upload-images/"
             :data="{source_type:'巡检'}"
             name="video_file_name"
             list-type="picture-card"

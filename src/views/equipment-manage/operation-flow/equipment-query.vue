@@ -326,6 +326,11 @@
         min-width="20"
       />
       <el-table-column
+        prop="receiveing_user_phone"
+        label="接单手机号"
+        min-width="20"
+      />
+      <el-table-column
         prop="receiving_datetime"
         label="接单时间"
         min-width="20"

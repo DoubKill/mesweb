@@ -307,6 +307,11 @@
         min-width="20"
       />
       <el-table-column
+        prop="receiveing_user_phone"
+        label="接单手机号"
+        min-width="20"
+      />
+      <el-table-column
         prop="receiving_datetime"
         label="接单时间"
         min-width="20"
@@ -405,7 +410,7 @@
           <span v-if="operateType!=='查看验收结果'" style="font-size: 12px;color: #999;">仅支持mp4视频格式，大小不超过50M，最多可一共上传3个视频</span>
           <el-upload
             v-if="operateType!=='查看验收结果'"
-            action="api/api/v1/equipment/upload-images/"
+            action="api/v1/equipment/upload-images/"
             :data="{source_type:'维修'}"
             name="video_file_name"
             list-type="picture-card"
