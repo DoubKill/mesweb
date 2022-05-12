@@ -491,6 +491,14 @@ export function inventoryLog(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function productInOutHistory(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ProductInOutHistory + id + '/' : API.ProductInOutHistory,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 export function palletTrainsFeedbacks(method, id, data = {}) {
   const obj = {
     url: id ? API.PalletTrainsFeedbacks + id + '/' : API.PalletTrainsFeedbacks,
