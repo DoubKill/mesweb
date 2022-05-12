@@ -65,6 +65,7 @@
       <el-form-item label="故障描述">
         <el-input
           v-model="ruleForm.result_fault_desc"
+          style="width:250px"
           disabled
           type="textarea"
           :rows="3"
@@ -89,7 +90,7 @@
           <video
             v-if="ruleForm.apply_repair_video_url.length>0"
             :key="index"
-            width="80%"
+            style="width:600px;height:300px"
             controls="controls"
             :src="item"
           />

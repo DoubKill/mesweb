@@ -265,6 +265,7 @@
         <el-form-item label="故障描述" prop="result_fault_desc">
           <el-input
             v-model="ruleForm.result_fault_desc"
+            style="width:250px"
             :disabled="operateType==='报修申请详情'"
             type="textarea"
             :rows="3"

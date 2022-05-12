@@ -391,7 +391,7 @@
     <el-dialog
       title="报修详情"
       :visible.sync="dialogVisibleRepair"
-      width="30%"
+      width="600"
     >
       <repair
         :rule-form="ruleForm"
@@ -500,7 +500,7 @@
     <el-dialog
       title="验收结果"
       :visible.sync="dialogVisibleResult"
-      width="30%"
+      width="500"
     >
       <el-form
         :model="resultForm"
