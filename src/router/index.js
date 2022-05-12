@@ -1537,8 +1537,8 @@ export let asyncRoutes = [
           // },
           {
             path: '/material-inout-record',
-            component: () => import('@/views/inventory/rubber-warehouse/material_inout_record.vue'),
-            name: 'MaterialInOutRecord',
+            component: () => import('@/views/inventory/rubber-warehouse/material_inout_record_rubber.vue'),
+            name: 'MaterialInoutRecordRubber',
             meta: {
               faName: 'RubberWarehouse',
               title: '出入库履历查询',
@@ -1553,6 +1553,16 @@ export let asyncRoutes = [
               faName: 'RubberWarehouse',
               title: '出库口补打印卡片',
               permissionName: 'additional_print'
+            }
+          },
+          {
+            path: '/rubber-overdue-alarm',
+            component: () => import('@/views/inventory/rubber-warehouse/rubber-overdue-alarm.vue'),
+            name: 'MaterialPrintCard',
+            meta: {
+              faName: 'RubberWarehouse',
+              title: '胶料超期报警',
+              permissionName: 'product_expire_query'
             }
           }
         ]

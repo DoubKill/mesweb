@@ -17,6 +17,14 @@ export function postMaterialsAttribute(data) {
 
   })
 }
+export function postBatchSet(data) {
+  return request({
+    url: API.BatchSet,
+    method: 'post',
+    data
+
+  })
+}
 
 export function getBarCode(params) {
   return request({
