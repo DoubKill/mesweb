@@ -439,7 +439,7 @@
             <video
               v-if="operateType==='查看验收结果'&&creatOrder.result_accept_video_url.length>0"
               :key="index"
-              width="80%"
+              style="width:600px;height:300px"
               controls="controls"
               :src="item"
             />
@@ -590,7 +590,7 @@
             <video
               v-if="creatOrder1.result_repair_video_url.length>0"
               :key="index"
-              width="80%"
+              style="width:600px;height:300px"
               controls="controls"
               :src="item"
             />
