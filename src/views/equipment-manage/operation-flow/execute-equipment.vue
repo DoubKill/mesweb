@@ -637,7 +637,7 @@
           </div>
         </el-form-item>
         <el-form-item label="上传视频">
-          <span v-if="operateType!=='查看处理结果'" style="font-size: 12px;color: #999;">仅支持mp4视频格式，大小不超过50M，视频时长不超过60秒，最多可一共上传3个视频</span>
+          <span v-if="operateType!=='查看处理结果'" style="font-size: 12px;color: #999;">仅支持mp4视频格式，大小不超过50M，视频时长不超过15秒，最多可一共上传3个视频</span>
           <el-upload
             v-if="operateType!=='查看处理结果'"
             action="api/v1/equipment/upload-images/"
@@ -1377,8 +1377,8 @@ export default {
         'loadedmetadata',
         function(_event) {
           duration = audioElement.duration // 时长为秒，小数
-          if (duration > 60) {
-            that.$message('上传视频不能超过60秒,请重新上传')
+          if (duration > 15) {
+            that.$message('上传视频不能超过15秒,请重新上传')
             that.$set(that, 'videoList', list)
             return false
           } else {
