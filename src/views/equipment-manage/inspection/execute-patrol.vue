@@ -1001,20 +1001,22 @@ export default {
       var url = URL.createObjectURL(file)
       var audioElement = new Audio(url)
       var duration
-      var that = this
       this.durationNumber = audioElement.addEventListener(
         'loadedmetadata',
         function(_event) {
           duration = audioElement.duration // 时长为秒，小数
-          if (duration > 15) {
-            that.$message('上传视频不能超过15秒,请重新上传')
-            that.$set(that, 'videoList', list)
-            return false
-          } else {
-            return true
-          }
+          return duration
         }
       )
+      setTimeout(() => {
+        if (duration > 15) {
+          this.$message('上传视频不能超过15秒,请重新上传')
+          this.$set(this, 'videoList', list)
+          return false
+        } else {
+          return true
+        }
+      }, 1000)
     },
     changeUrl(res, file) {
       this.creatOrder.video_url_list.push(res.video_file_name)
