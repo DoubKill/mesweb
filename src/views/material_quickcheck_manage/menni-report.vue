@@ -312,12 +312,12 @@ export default {
         const arr = await wmsMaterialSearch('get', null, { params: { tmh: this.aaaa }})
         const obj = arr[0]
         const arrT = JSON.parse(JSON.stringify(this.tableData))
-        arrT[this.currentIndex].material_sample_name = obj.WLMC
-        arrT[this.currentIndex].material_name = obj.WLMC
-        arrT[this.currentIndex].material_batch = obj.PH
-        arrT[this.currentIndex].material_supplier = obj.CD
-        arrT[this.currentIndex].material_tmh = obj.TMH
-        arrT[this.currentIndex].material_wlxxid = obj.WLXXID
+        arrT[this.currentIndex].material_sample_name = obj.wlmc
+        arrT[this.currentIndex].material_name = obj.wlmc
+        arrT[this.currentIndex].material_batch = obj.ph
+        arrT[this.currentIndex].material_supplier = obj.cd
+        arrT[this.currentIndex].material_tmh = obj.tmh
+        arrT[this.currentIndex].material_wlxxid = obj.wlxxid
         this.tableData = arrT
       } catch (e) { throw new Error(e) }
     },
