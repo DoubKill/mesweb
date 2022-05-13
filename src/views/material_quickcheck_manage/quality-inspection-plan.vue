@@ -238,12 +238,12 @@ export default {
         this.addLoading = false
         const arr = data[0]
         const obj = {
-          material_tmh: arr.TMH,
-          material_name: arr.WLMC,
-          material_sample_name: arr.WLMC,
-          material_supplier: arr.CD,
-          material_wlxxid: arr.WLXXID,
-          material_batch: arr.PH
+          material_tmh: arr.tmh,
+          material_name: arr.wlmc,
+          material_sample_name: arr.wlmc,
+          material_supplier: arr.cd,
+          material_wlxxid: arr.wlxxid,
+          material_batch: arr.ph
         }
         if (this.startBtnLoading === true) {
           await materialTestPlan('put', this.id, { data: obj })
