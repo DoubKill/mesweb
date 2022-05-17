@@ -780,7 +780,7 @@ export default {
         'loadedmetadata',
         function(_event) {
           duration = audioElement.duration // 时长为秒，小数
-          if (duration > 15) {
+          if (duration > 16) {
             that.$message('上传视频不能超过15秒,请重新上传')
             that.$set(that, 'videoList', list)
             return false
