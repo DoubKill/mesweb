@@ -783,7 +783,6 @@ export default {
           this.btnLoading = false
           this.noRecheck = true
           this.tableDataRight = []
-          this.btnLoading = false
           this.ruleForm.plan_uid = ''
           this.testMethodList = []
           return
@@ -1146,6 +1145,10 @@ export default {
     async delRow(index, row) {
       if (!row.id) {
         this.tableDataRight.splice(index, 1)
+        if (!this.tableDataRight.length) {
+          this.btnLoading = false
+          this.noRecheck = true
+        }
         return
       }
       if (this.tableDataRight.length === 1) {

@@ -78,12 +78,12 @@
       <el-table-column
         prop="dev_type"
         label="机型"
-        min-width="20"
+        min-width="15"
       />
       <el-table-column
         prop="plan_weight"
         label="单重/kg"
-        min-width="20"
+        min-width="15"
       />
       <el-table-column
         prop="equip_no"
@@ -98,7 +98,7 @@
       <el-table-column
         prop="print_flag"
         label="打印状态"
-        min-width="20"
+        min-width="15"
         :formatter="(row, column) => {
           if(!row.print_flag){
             return ''
@@ -115,7 +115,7 @@
       <el-table-column
         prop="package_count"
         label="配置数量"
-        min-width="20"
+        min-width="15"
       />
       <!-- <el-table-column
         prop="date"
@@ -136,32 +136,34 @@
       <el-table-column
         prop="noprint_count"
         label="未打印数量"
-        min-width="20"
+        min-width="16"
       />
       <el-table-column
         prop="package_fufil"
         label="完成总数"
-        min-width="20"
+        min-width="15"
       />
       <el-table-column
         prop="package_plan_count"
         label="计划总数"
-        min-width="20"
+        min-width="15"
       />
       <el-table-column
         label="操作"
-        width="250"
+        width="200"
       >
         <template slot-scope="scope">
-          <el-button
-            v-permission="['xl_expire_data', 'save']"
-            type="primary"
-            size="mini"
-            @click="reprintFun(scope.row,false,true)"
-          >
-            打印
-          </el-button>
-          <div v-if="scope.row.bra_code" style="display:inline-block;margin:0 10px">
+          <div v-if="scope.row.order_flag" style="display:inline-block;margin:0 10px">
+            <el-button
+              v-permission="['xl_expire_data', 'save']"
+              type="primary"
+              size="mini"
+              @click="reprintFun(scope.row,false,true)"
+            >
+              打印
+            </el-button>
+          </div>
+          <div v-if="!scope.row.order_flag" style="display:inline-block;margin:0 10px">
             <el-button
               v-permission="['xl_expire_data', 'save']"
               type="primary"
@@ -333,26 +335,6 @@
           <td>{{ ruleForm['manual_headers'].total_nums }}</td>
         </tr>
       </table>
-      <h3 v-if="ruleForm['display_manual_info']&&Array.isArray(ruleForm['display_manual_info'])&&ruleForm['display_manual_info'].length" style="text-align:center">其余待投入物料</h3>
-      <table
-        v-if="ruleForm['display_manual_info']&&Array.isArray(ruleForm['display_manual_info'])&&ruleForm['display_manual_info'].length"
-        border="1"
-        bordercolor="black"
-        class="info-table"
-      >
-        <tr>
-          <td>类别</td>
-          <td>物料名称</td>
-          <td>重量kg</td>
-          <td>误差kg</td>
-        </tr>
-        <tr v-for="(tdItem,i) in ruleForm['display_manual_info']" :key="i">
-          <td>{{ tdItem.material_type }}</td>
-          <td>{{ tdItem.handle_material_name }}</td>
-          <td>{{ tdItem.weight }}</td>
-          <td>{{ tdItem.error }}</td>
-        </tr>
-      </table>
       <h3 v-if="ruleForm['manual_body']&&ruleForm['manual_body'].length" style="text-align:center">合包配料物料信息</h3>
       <table
         v-if="ruleForm['manual_body']&&ruleForm['manual_body'].length"
@@ -377,6 +359,26 @@
       </table>
       <div v-if="otherNum&&otherNum>0" style="font-weight:700;margin-top:10px;">备注：有其他料包(
         {{ otherNum }}kg/车)</div>
+      <h3 v-if="ruleForm['display_manual_info']&&Array.isArray(ruleForm['display_manual_info'])&&ruleForm['display_manual_info'].length" style="text-align:center">其余待投入物料</h3>
+      <table
+        v-if="ruleForm['display_manual_info']&&Array.isArray(ruleForm['display_manual_info'])&&ruleForm['display_manual_info'].length"
+        border="1"
+        bordercolor="black"
+        class="info-table"
+      >
+        <tr>
+          <td>类别</td>
+          <td>合计重量kg</td>
+          <td>物料名称</td>
+          <td>重量kg</td>
+        </tr>
+        <tr v-for="(tdItem,i) in ruleForm['display_manual_info']" :key="i">
+          <td v-if="i===0" :rowspan="ruleForm['display_manual_info'].length">{{ tdItem.material_type }}</td>
+          <td v-if="i===0" :rowspan="ruleForm['display_manual_info'].length">{{ tdItem.all_manual_weight }}</td>
+          <td>{{ tdItem.handle_material_name }}</td>
+          <td>{{ tdItem.weight }}</td>
+        </tr>
+      </table>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose(false)">取 消</el-button>
         <el-button type="primary" :loading="btnLoading" @click="submitFun">打 印</el-button>
@@ -461,6 +463,13 @@ export default {
         )
         this.total = data.count
         this.tableData = data.results || []
+        this.tableData.forEach(d => {
+          if (d.display_manual_info && d.all_manual_weight) {
+            d.display_manual_info.forEach(dd => {
+              dd.all_manual_weight = d.all_manual_weight
+            })
+          }
+        })
         this.loading = false
       } catch (e) {
         this.loading = false
@@ -520,7 +529,8 @@ export default {
           package_count: this.ruleForm.package_count,
           split_count: this.ruleForm.split_count,
           manual_infos: this.ruleForm.manual_infos,
-          batching_equip: this.ruleForm.equip_no
+          batching_equip: this.ruleForm.equip_no,
+          plan_weight_uid: this.ruleForm.plan_weight_uid
         }
         const data = await manualPost('post', null, { data: obj })
         let _bool = false
@@ -732,8 +742,9 @@ export default {
             if (this.againPrint) {
               _obj = { print_count: this.ruleForm.print_count }
             }
-            // console.log(_obj, 6666)
-            // return
+            if (typeof _obj.display_manual_info === 'string') {
+              _obj.display_manual_info = []
+            }
             this.btnLoading = true
             await weightingPackageLog(_api, this.againPrint ? this.ruleForm.id : '', { data: _obj })
             this.$message.success('已下发打印')

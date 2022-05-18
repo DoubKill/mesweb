@@ -49,7 +49,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="炼胶时间">
+        <!-- <el-form-item label="炼胶时间">
           <el-input-number
             v-model.number="formInline.production_time_interval"
             size="mini"
@@ -59,7 +59,7 @@
             :disabled="isView"
             controls-position="right"
           />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item v-if="formInline.mixed_ratio" label="对搭比例">
           <el-select
             v-model="formInline.mixed_ratio.stage.f_feed"
@@ -94,6 +94,7 @@
           v-if="!isView"
           style="float:right;"
         >
+          <el-button v-if="!formObj._add&&!formObj._clone&&formObj.enable_equip&&formObj.enable_equip.length" @click="showEditDialog">无需下发设定变更</el-button>
           <el-button @click="putNewsaveMaterialClicked">保存</el-button>
           <!-- <el-button @click="addMaterial">新建料包</el-button> -->
         </el-form-item>
@@ -245,14 +246,13 @@
         ref="ingredientStandardRef"
         :add-table-data="addTableData"
         :is-ingredient-obj="isIngredientObj"
-        :form-obj="formObj"
+        :form-obj="formInline"
         :is-view="isView"
         :dialog-visible="dialogVisible"
         @pop_up_raw_material="pop_up_raw_material"
         @deleteRow="deleteRow"
         @deleteOneRow="deleteOneRow"
       />
-
     </el-dialog>
     <el-dialog
       title="新建料包"
@@ -330,6 +330,108 @@
       @handleCloseMaterialSelection="handleCloseMaterialSelection"
       @handleMaterialSelect="handleMaterialSelect"
     />
+    <el-dialog
+      title="直接修改无需下发的设定项目"
+      :visible.sync="dialogVisible1"
+      width="90%"
+      :before-close="handleClose1"
+      append-to-body
+      class="dialog1"
+    >
+      <el-row :gutter="12">
+        <el-col :span="7">
+          <el-card shadow="never">
+            <h3>机台设定变更</h3>
+            <el-form label-width="100px">
+              <el-form-item label="配方名称">
+                <el-input v-model="objDialog.stage_product_batch_no" style="width:250px !important" disabled />
+              </el-form-item>
+              <el-form-item label="机台">
+                <el-select
+                  v-model="objDialog.enable_equip"
+                  style="width:250px"
+                  multiple
+                  placeholder="请选择"
+                >
+                  <el-option
+                    v-for="item in objDialog.equips"
+                    :key="item"
+                    :label="item"
+                    :value="item"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-form>
+            <div style="text-align:right">
+              <el-button type="primary" :disabled="btnLoading" @click="dialogSubmit(1)">确定删除</el-button>
+            </div>
+          </el-card>
+        </el-col>
+        <el-col :span="8">
+          <el-card shadow="never">
+            <h3>胶料单配设定变更</h3>
+            <el-table :data="objDialog.batching_details" border>
+              <el-table-column label="类别" prop="material_type" width="80" />
+              <el-table-column
+                label="单配"
+                width="80"
+              >
+                <template slot-scope="{row}">
+                  <el-switch v-model="row.is_manual" />
+                </template>
+              </el-table-column>
+              <el-table-column label="原材料" prop="material_name" />
+            </el-table>
+            <div style="text-align:right;margin-top:10px">
+              <el-button type="primary" :disabled="btnLoading" @click="dialogSubmit(2)">确定修改</el-button>
+            </div>
+          </el-card>
+        </el-col>
+        <el-col :span="9">
+          <el-card shadow="never">
+            <h3>对搭比例</h3>
+            <el-form v-if="objDialog.mixed_ratio">
+              <el-form-item label="对搭比例">
+                <el-select
+                  v-model="objDialog.mixed_ratio.stage.f_feed"
+                  clearable
+                  placeholder="请选择"
+                  style="width:100px"
+                >
+                  <el-option
+                    v-for="item in stageOptions"
+                    :key="item.id"
+                    :label="item.global_name"
+                    :value="item.global_name"
+                  />
+                </el-select>&nbsp;:&nbsp;
+                <el-select
+                  v-model="objDialog.mixed_ratio.stage.s_feed"
+                  clearable
+                  placeholder="请选择"
+                  style="width:100px"
+                >
+                  <el-option
+                    v-for="item in stageOptions"
+                    :key="item.id"
+                    :label="item.global_name"
+                    :value="item.global_name"
+                  />
+                </el-select>&nbsp;=&nbsp;
+                <el-input-number v-model="objDialog.mixed_ratio.ratio.f_ratio" controls-position="right" style="width:100px" />&nbsp;:&nbsp;
+                <el-input-number v-model="objDialog.mixed_ratio.ratio.s_ratio" controls-position="right" style="width:100px" />
+              </el-form-item>
+            </el-form>
+            <div style="text-align:right">
+              <el-button type="primary" :disabled="btnLoading" @click="dialogSubmit(3)">确定修改</el-button>
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible1 = false">返回</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -339,7 +441,7 @@ import materialSelection from './materialSelection'
 import ingredientStandard from './ingredient-standard'
 import { rubber_material_url } from '@/api/rubber_recipe_fun'
 import { equipUrl } from '@/api/base_w'
-import { getMaterialTolerance } from '@/api/base_w_five'
+import { getMaterialTolerance, replaceRecipeMaterial } from '@/api/base_w_five'
 import { stage_global_url } from '@/api/display_static_fun'
 export default {
   components: { ingredientStandard, materialSelection },
@@ -407,7 +509,11 @@ export default {
       faI: null,
       optionsEquip: [],
       stageOptions: [],
-      postOwn: false // 标记第一次进来是不是没有配料过
+      postOwn: false, // 标记第一次进来是不是没有配料过
+      dialogVisible1: false,
+      objDialog: {},
+      tableData1: [],
+      btnLoading: false
     }
   },
   computed: {
@@ -416,7 +522,7 @@ export default {
     show(val) {
       this.dialogVisible = val
       if (val) {
-        this.formInline = this.formObj
+        this.formInline = JSON.parse(JSON.stringify(this.formObj))
         if (this.formObj._clone) {
           this.formInline.enable_equip = []
           this.formInline.send_success_equip = []
@@ -912,11 +1018,76 @@ export default {
       } catch (e) { //
         console.log(e, 8788)
       }
+    },
+    handleClose1(done) {
+      done()
+    },
+    async dialogSubmit(type) {
+      // this.dialogVisible1 = false
+      // this.$parent.directBatching(this.formObj.id) // 更新当前详情
+      // this.$emit('handleCloseIngredient') 关闭这个弹框
+      try {
+        let obj = {}
+        if (type === 1) {
+          if (this.objDialog.enable_equip.length === this.objDialog.equips.length) {
+            this.$message('最少保留一个可用机台')
+            return
+          }
+          obj = {
+            opera_type: type,
+            product_batching_id: this.objDialog.id,
+            equip_no_list: this.objDialog.enable_equip
+          }
+        } else if (type === 2) {
+          const arr = []
+          this.objDialog.batching_details.forEach(d => {
+            arr.push({ id: d.id, is_manual: d.is_manual })
+          })
+          obj = {
+            opera_type: 2,
+            product_batching_id: this.objDialog.id,
+            single_manual: arr
+          }
+        } else {
+          obj = {
+            opera_type: 3,
+            product_batching_id: this.objDialog.id,
+            mixed_ratio: this.objDialog.mixed_ratio
+          }
+        }
+        this.btnLoading = true
+        await replaceRecipeMaterial('post', null, { data: obj })
+        this.$message.success('操作成功')
+        this.btnLoading = false
+        this.dialogVisible1 = false
+        this.$emit('handleCloseIngredient')
+      } catch (e) {
+        this.btnLoading = false
+      }
+    },
+    showEditDialog() {
+      this.objDialog = {
+        equips: this.formObj.enable_equip,
+        id: this.formObj.id,
+        mixed_ratio: JSON.parse(JSON.stringify(this.formObj.mixed_ratio)),
+        batching_details: JSON.parse(JSON.stringify(this.batchingList.batching_details)),
+        stage_product_batch_no: this.formObj.stage_product_batch_no
+      }
+      if (JSON.stringify(this.objDialog.mixed_ratio) === '{}' || !this.objDialog.mixed_ratio) {
+        this.$set(this.objDialog, 'mixed_ratio', {
+          stage: { f_feed: '', s_feed: '' },
+          ratio: { f_ratio: undefined, s_ratio: undefined }
+        })
+      }
+      // console.log(this.objDialog, 'this.formObj')
+      this.dialogVisible1 = true
     }
   }
 }
 </script>
 
-<style>
-
+<style lang="scss" scoped>
+  .el-input{
+    width:auto !important;
+  }
 </style>

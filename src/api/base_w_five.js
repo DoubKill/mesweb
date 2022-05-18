@@ -72,6 +72,14 @@ export function getMaterialTolerance(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function replaceRecipeMaterial(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ReplaceRecipeMaterial + id + '/' : API.ReplaceRecipeMaterial,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 export function wmsSafetySettings(method, id, data = {}) {
   const obj = {
     url: id ? API.WmsSafetySettings + id + '/' : API.WmsSafetySettings,
@@ -287,6 +295,24 @@ export function formulaPreparation(method, id, data = {}) {
 export function hfInventoryLog(method, id, data = {}) {
   const obj = {
     url: id ? API.HfInventoryLog + id + '/' : API.HfInventoryLog,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function xlReportWeightStatics(method, id, data = {}) {
+  const obj = {
+    url: id ? API.XlReportWeightStatics + id + '/' : API.XlReportWeightStatics,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function productExpiresList(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ProductExpiresList + id + '/' : API.ProductExpiresList,
     method: method
   }
   Object.assign(obj, data)

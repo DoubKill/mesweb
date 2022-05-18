@@ -19,9 +19,14 @@
         </el-select>
       </el-form-item>
       <el-form-item style="float:right">
+        <el-button
+          type="primary"
+          :loading="btnExportLoad"
+          @click="exportTable"
+        >导出Excel模板</el-button>
         <el-upload
           v-permission="['equip_190e','import']"
-          style="display:inline-block"
+          style="display:inline-block;margin-left:8px"
           action="string"
           accept=".xls, .xlsx"
           :http-request="Upload"
@@ -49,7 +54,6 @@
             v-model="row.specification"
             placeholder="请选择规格"
             filterable
-            allow-create
           >
             <el-option
               v-for="item in optionsProduct"
@@ -72,7 +76,6 @@
             v-model="row.state"
             placeholder="请选择段数"
             filterable
-            allow-create
           >
             <el-option
               v-for="item in options"
@@ -141,7 +144,7 @@
 
 <script>
 import { classesListUrl, productInfosUrl } from '@/api/base_w'
-import { equip190e, equip190eImport } from '@/api/jqy'
+import { equip190e, equip190eImport, equip190eDown } from '@/api/jqy'
 
 export default {
   name: 'SettingE190',
@@ -149,6 +152,7 @@ export default {
     return {
       search: {},
       tableData: [],
+      btnExportLoad: false,
       options: [],
       optionsProduct: [],
       loading: false
@@ -177,7 +181,7 @@ export default {
       try {
         this.loading = true
         const data = await equip190e('get', null, { params: this.search })
-        this.tableData = data.results || []
+        this.tableData = data || []
       } catch (e) {
         //
       }
@@ -209,6 +213,25 @@ export default {
     },
     addCellDispose() {
       this.tableData.push({ isEdit: true })
+    },
+    exportTable() {
+      this.btnExportLoad = true
+      const obj = { export: 1 }
+      const _api = equip190eDown
+      _api(obj)
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '190E机台规格信息维护导入模板.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
     },
     Upload(param) {
       const formData = new FormData()

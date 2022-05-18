@@ -753,6 +753,15 @@ export function multiUpdateInspection(method, id, data = {}) {
   return request(obj)
 }
 
+export function cutTimeCollectSummary(method, id, data = {}) {
+  const obj = {
+    url: id ? API.CutTimeCollectSummary + id + '/' : API.CutTimeCollectSummary,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function wmsStorageSummary(method, id, data = {}) {
   const obj = {
     url: id ? API.WmsStorageSummary + id + '/' : API.WmsStorageSummary,
@@ -1086,6 +1095,15 @@ export function dailyProductionCompletionReport(method, id, data = {}) {
   return request(obj)
 }
 
+export function dailyProductionCompletionDown(params) {
+  return request({
+    url: API.DailyProductionCompletionReport,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
+
 export function equip190e(method, id, data = {}) {
   const obj = {
     url: id ? API.Equip190e + id + '/' : API.Equip190e,
@@ -1093,6 +1111,15 @@ export function equip190e(method, id, data = {}) {
   }
   Object.assign(obj, data)
   return request(obj)
+}
+
+export function equip190eDown(params) {
+  return request({
+    url: API.Equip190e,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
 }
 
 export function equip190eImport(method, id, data = {}) {

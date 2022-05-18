@@ -63,6 +63,37 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="配方类别">
+        <el-select
+          v-model="search.recipe_type"
+          clearable
+          placeholder="请选择"
+          @change="changeSearch"
+        >
+          <el-option
+            v-for="item in categoryOptions"
+            :key="item.id"
+            :label="item.global_no"
+            :value="item.global_name"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="原材料名称">
+        <el-select
+          v-model="search.wms_material_name"
+          clearable
+          placeholder="请选择"
+          filterable
+          @change="changeSearch"
+        >
+          <el-option
+            v-for="item in rawMaterialOptions"
+            :key="item.id"
+            :label="item.material_name"
+            :value="item.material_name"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item style="float: right">
         <el-button
           v-if="checkPermission(['productbatching','add'])"
@@ -81,15 +112,38 @@
           @click="copyClicked"
         >复制</el-button>
       </el-form-item>
+      <el-form-item style="float: right">
+        <el-button
+          v-if="checkPermission(['productbatching','change'])"
+          type="primary"
+          @click="replacementDialog"
+        >原材料替换</el-button>
+      </el-form-item>
+      <el-form-item style="float: right">
+        <el-button
+          v-if="checkPermission(['productbatching','change'])"
+          type="primary"
+          :loading="btnExportLoad"
+          @click="exportTable"
+        >导出Excel</el-button>
+      </el-form-item>
     </el-form>
     <el-table
+      ref="multipleTable"
       highlight-current-row
       :data="tableData"
       border
       size="mini"
+      row-key="id"
       :row-class-name="tableRowClassName"
       @row-click="handleCurrentChange"
+      @selection-change="handleSelectionChange"
     >
+      <el-table-column
+        type="selection"
+        width="55"
+        :reserve-selection="true"
+      />
       <el-table-column
         align="center"
         type="index"
@@ -136,11 +190,11 @@
         prop="batching_weight"
         label="配料重量"
       />
-      <el-table-column
+      <!-- <el-table-column
         min-width="10"
         prop="production_time_interval"
         label="炼胶时间"
-      />
+      /> -->
       <el-table-column
         prop="used_type"
         label="状态"
@@ -312,6 +366,82 @@
         >确 定</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      :title="`原材料替换 配方列表`"
+      :visible.sync="dialogVisible1"
+      width="70%"
+      :before-close="handleClose1"
+      class="material-replace"
+    >
+      <el-form ref="ruleForm" :model="userForm">
+        <el-form-item label="配方物料" prop="origin_material">
+          <el-input v-model="userForm.origin_material" disabled />
+        </el-form-item>
+        <el-form-item label="替换物料" prop="replace_material">
+          <el-select v-model="userForm.replace_material" clearable filterable placeholder="请选择">
+            <el-option
+              v-for="item in rawMaterialOptions"
+              :key="item.id"
+              :label="item.material_name"
+              :value="item.material_name"
+            />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <el-button type="primary" :loading="loadingBtn" @click="startReplace(false)">开始替换</el-button>
+      <el-button type="primary" :disabled="loadingBtn" @click="handleClose1(false)">返回</el-button>
+      <el-form style="margin-top:15px;">
+        <el-form-item label="替换结果" prop="status">
+          <el-select v-model="userForm.status" clearable placeholder="请选择" @change="changeStatus">
+            <el-option
+              v-for="item in ['成功','失败']"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <el-table
+        :data="tableData1"
+        border
+        size="mini"
+        :row-class-name="tableRowClassName1"
+      >
+        <el-table-column
+          prop="product_no"
+          min-width="30"
+          label="配方编号"
+        />
+        <el-table-column
+          prop="dev_type"
+          min-width="20"
+          label="机型"
+        />
+        <el-table-column
+          prop="equip_no"
+          min-width="20"
+          label="机台"
+        />
+        <el-table-column
+          prop="failed_reason"
+          min-width="30"
+          label="失败原因"
+        />
+        <el-table-column
+          prop="status"
+          min-width="20"
+          label="状态"
+        />
+      </el-table>
+      <page
+        :total="dialogTotal"
+        :current-page="dialogPage"
+        :old-page="true"
+        @currentChange="currentChangeDialog"
+      />
+    </el-dialog>
   </div>
 </template>
 
@@ -320,12 +450,13 @@ import { mapGetters } from 'vuex'
 import { checkPermission } from '@/utils'
 import commonVal from '@/utils/common'
 import { getToken } from '@/utils/auth'
-import { rubber_material_url, send_auxiliary_url, xlRecipeNotice } from '@/api/rubber_recipe_fun'
+import { rubber_material_url, send_auxiliary_url, xlRecipeNotice, replaceRecipeOne } from '@/api/rubber_recipe_fun'
 import StageIdSelect from '@/components/StageSelect/StageIdSelect'
 import SITESelect from './components/SITESelect'
 import createdRubberMaterial from './components/createdRubberMaterial'
 import page from '@/components/page'
 import EquipCategorySelect from '@/components/EquipCategorySelect'
+import { globalCodesUrl, materialsUrl } from '@/api/base_w'
 
 export default {
   name: 'RbMaterialStdManage',
@@ -350,7 +481,17 @@ export default {
       dialogList: [{ name: 'F1#细料', no: 'F01' }, { name: 'F2#细料', no: 'F02' }, { name: 'F3#细料', no: 'F03' },
         { name: 'S1#硫磺', no: 'S01' }, { name: 'S2#硫磺', no: 'S02' }],
       currentObj: {},
-      loadingSendWeight: false
+      loadingSendWeight: false,
+      categoryOptions: [],
+      rawMaterialOptions: [],
+      btnExportLoad: false,
+      userForm: {},
+      loadingBtn: false,
+      dialogVisible1: false,
+      tableData1: [],
+      selectionList: [],
+      dialogTotal: 0,
+      dialogPage: 1
     }
   },
   computed: {
@@ -359,6 +500,8 @@ export default {
   created() {
     this.permissionObj = this.permission
     this.rubber_material_list()
+    this.getFormulaType()
+    this.getRawMaterial()
   },
   methods: {
     checkPermission,
@@ -366,6 +509,8 @@ export default {
       this.rubber_material_list()
     },
     changeSearch() {
+      this.selectionList = []
+      this.$refs.multipleTable.clearSelection()
       this.search.page = 1
       this.rubber_material_list()
     },
@@ -381,7 +526,7 @@ export default {
         versions: '',
         precept: '',
         stage_product_batch_no: '',
-        production_time_interval: ''
+        production_time_interval: 0
       }
       this.isCopy = false
       this.dialogAddRubberMaterial = true
@@ -409,6 +554,112 @@ export default {
       this.materialForm = JSON.parse(JSON.stringify(this.currentRow))
       this.dialogAddRubberMaterial = true
       this.isCopy = true
+    },
+    async getFormulaType() {
+      try {
+        const data = await globalCodesUrl('get', { params: { class_name: '配方类别' }})
+        this.categoryOptions = data.results
+      } catch (e) {
+        //
+      }
+    },
+    async getRawMaterial() {
+      try {
+        const data = await materialsUrl('get', null, { params: { all: 1 }})
+        this.rawMaterialOptions = data.results
+      } catch (e) {
+        //
+      }
+    },
+    replacementDialog() {
+      if (!this.search.wms_material_name) {
+        this.$message('未设定替换用的原材料名称，不能导出相关内容')
+        return
+      }
+      if (this.selectionList.length === 0) {
+        this.$message('胶料配方未选择')
+        return
+      }
+      this.userForm.origin_material = this.search.wms_material_name
+      this.dialogVisible1 = true
+    },
+    changeStatus() {
+      this.startReplace(true)
+    },
+    async startReplace(bool) { // bool=>true 是获取列表
+      try {
+        const type = bool ? 'get' : 'post'
+        this.loadingBtn = true
+        const arr = []
+        this.selectionList.forEach(d => {
+          arr.push(d.id)
+        })
+        const obj = {
+          replace_ids: arr.join(','),
+          origin_material: this.userForm.origin_material,
+          replace_material: this.userForm.replace_material,
+          status: this.userForm.status,
+          page: this.dialogPage
+        }
+        const _obj = bool ? { params: obj } : { data: obj }
+        const data = await replaceRecipeOne(type, null, _obj)
+        if (bool) {
+          this.dialogTotal = data.count
+          this.tableData1 = data.results
+        } else {
+          this.startReplace(true)
+        }
+        this.loadingBtn = false
+      } catch (e) {
+        this.loadingBtn = false
+      }
+    },
+    handleClose1(done) {
+      this.rubber_material_list()
+      this.selectionList = []
+      this.$refs.multipleTable.clearSelection()
+      this.dialogTotal = 0
+      this.tableData1 = []
+      this.userForm = {}
+      this.dialogVisible1 = false
+      if (done) {
+        done()
+      }
+    },
+    tableRowClassName1({ row, rowIndex }) {
+      if (row.status === '失败') {
+        return 'red-row'
+      }
+    },
+    currentChangeDialog(page) {
+      this.dialogPage = page
+      this.startReplace(true)
+    },
+    exportTable() {
+      if (!this.search.wms_material_name) {
+        this.$message('未设定替换用的原材料名称，不能导出相关内容')
+        return
+      }
+      this.btnExportLoad = true
+      const obj = Object.assign({ export: 1, wms_material_name: this.search.wms_material_name, exclude_used_type: 6 }, {})
+      const _api = rubber_material_url
+      _api('get', null, { params: obj, responseType: 'blob' })
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = `原材料"${this.search.wms_material_name}"使用配方列表.xlsx` // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
+    },
+    handleSelectionChange(arr) {
+      this.selectionList = arr
     },
     showPutRubberMaterialDialog() {
       if (this.$refs.createdRubberMaterialRef) {
@@ -621,6 +872,12 @@ export default {
   }
   .warning-row{
     background: #b1ddf0  !important;
+  }
+  .material-replace .el-input{
+    width:250px
+  }
+  .red-row {
+    background: rgb(223, 164, 164);
   }
  }
 

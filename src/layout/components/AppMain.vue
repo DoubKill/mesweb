@@ -50,10 +50,10 @@ export default {
     padding-right: 15px;
   }
 }
-.el-card{
+.app-main .el-card{
     border-top: none !important;
 }
-.box-card{
+.app-main .box-card{
     margin: 14px !important;
     margin-top: 2px !important;
 }

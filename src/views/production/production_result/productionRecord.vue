@@ -1,5 +1,5 @@
 <template>
-  <div class="productionRecord-style" :style="{padding:this.$route.query.equip?'20px':''}">
+  <div :class="['productionRecord-style',this.$route.query.equip?'productionRecord-new':'']" :style="{padding:this.$route.query.equip?'20px':''}">
     <!-- 生产记录表 -->
     <el-form :inline="true">
       <el-form-item label="机台">
@@ -18,6 +18,12 @@
           :clearable="false"
           @change="getListDay"
         />
+      </el-form-item>
+      <el-form-item label="">
+        <el-checkbox v-model="auto_" @change="getList">自动生产</el-checkbox>
+      </el-form-item>
+      <el-form-item label="">
+        <el-checkbox v-model="manual_" @change="getList">手动生产</el-checkbox>
       </el-form-item>
       <el-form-item>
         <el-button
@@ -45,14 +51,14 @@
       show-summary
       :summary-method="getSummaries"
     >
-      <el-table-column width="120px">
+      <el-table-column width="140px">
         <template
           slot="header"
           slot-scope="{row}"
         >
           <span v-if="false">{{ row }}</span>
           <div v-if="!exportTableShow" class="header-style">
-            <div style="width:100%;text-align:right;margin:8px 0 20px 0">班次</div>
+            <div style="width:100%;text-align:right;margin:6px 0px 16px;">班次</div>
             <span>项目</span>
             <span style="margin-left:30px">内容</span>
             <div class="header-style-line one-line" />
@@ -123,6 +129,8 @@ export default {
       search: {
         day_time: ''
       },
+      auto_: true,
+      manual_: true,
       loading: false,
       classOptions: [],
       tableData: [],
@@ -142,6 +150,8 @@ export default {
   },
   methods: {
     async getList() {
+      this.search.auto = this.auto_ ? 1 : 0
+      this.search.manual = this.manual_ ? 1 : 0
       try {
         this.loading = true
         const data = await productClassesPlanReal('get', null, { params: this.search })
@@ -267,18 +277,36 @@ export default {
     .one-line{
         transform-origin:left center;
         transform:rotate(20deg);
-            width: 130px;
+            width: 150px;
         position: absolute;
         top:-8px;
         left:-6px;
     }
     .three-line{
         transform-origin:left center;
-        transform:rotate(48deg);
-        width:100px;
+        transform:rotate(44deg);
+        width:110px;
         position: absolute;
         top:-8px;
         left:-6px;
+    }
+}
+.productionRecord-new{
+  font-size: 20px;
+    .el-form-item__label,.el-button,.el-table,.el-checkbox__label,.el-form-item__content{
+      font-size:20px !important;
+    }
+    .el-input__inner{
+       font-size:18px;
+    }
+    .el-checkbox__inner{
+      width:20px;
+      height:20px;
+    }
+    .el-checkbox__inner::after{
+      height: 7px !important;
+      left: 5px!important;
+      top: 3px!important;
     }
 }
 </style>

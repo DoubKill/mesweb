@@ -3,7 +3,7 @@
     <!-- 机台下拉框 设备编码-->
     <el-select
       v-model="_equip_no"
-      :clearable="!isCreated"
+      :clearable="!isCreated||isClear"
       placeholder="请选择机台"
       :multiple="isMultiple"
       :disabled="disabled"
@@ -40,6 +40,10 @@ export default {
     },
     // 在created里面加载，并默认选中第一个
     isCreated: {
+      type: Boolean,
+      default: false
+    },
+    isClear: {
       type: Boolean,
       default: false
     },
@@ -99,6 +103,7 @@ export default {
         this.$emit('changeSearch', obj)
         return
       }
+      this._equip_no = id
       this.$emit('changeSearch', id)
     },
     visibleChange(bool) {

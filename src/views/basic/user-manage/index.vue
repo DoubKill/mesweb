@@ -53,6 +53,7 @@
         <el-button @click="showCreateUserDialog">新建</el-button>
       </el-form-item>
       <el-form-item style="float:right">
+        <el-button type="primary" :loading="btnExportLoad" @click="templateDownload">导出Excel</el-button>
         <el-button
           v-permission="['user','import']"
         >
@@ -703,6 +704,25 @@ export default {
         })
         this.currentChange()
       })
+    },
+    templateDownload() {
+      this.btnExportLoad = true
+      const obj = Object.assign({ export: 1 }, this.getParams)
+      const _api = personnelsUrl
+      _api('get', null, { responseType: 'blob', params: obj })
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '用户管理.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
     },
     handleClose(done) {
       this.$refs['userForm'].resetFields()

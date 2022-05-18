@@ -130,7 +130,7 @@ export const constantRoutes = [
     }
   },
   // http://localhost:9000/#/alone/material_base_info_manage/
-  // ?name=formula_preparation&arr=view&equip=Z05&key=
+  // ?name=formula_preparation&arr=view&equip=Z05&product_no=&key=
   {
     path: '/alone/material_base_info_manage/',
     component: () => import('@/views/material_base_info_manage/productionFeeding'),
@@ -1151,7 +1151,7 @@ export let asyncRoutes = [
             name: 'SpecsSwitchSummary',
             meta: {
               faName: 'SummaryStatistics',
-              title: '规格切换时间汇总',
+              title: '规格切换时间明细',
               permissionName: 'product_exchange_consume'
             }
           },
@@ -1162,7 +1162,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'SummaryStatistics',
               title: '交接班时间汇总',
-              permissionName: ''
+              permissionName: 'shift_time_summary'
             }
           }
         ]
@@ -1352,17 +1352,17 @@ export let asyncRoutes = [
               title: '190E机台规格信息维护',
               permissionName: 'equip_190e'
             }
+          },
+          {
+            path: '/report/set-attendance',
+            component: () => import('@/views/equipment-management/report/set-attendance'),
+            name: 'SetAttendance',
+            meta: {
+              faName: 'Achievements',
+              title: '考勤组设置',
+              permissionName: 'attendance_group_setup'
+            }
           }
-          // {
-          //   path: '/report/set-attendance',
-          //   component: () => import('@/views/equipment-management/report/set-attendance'),
-          //   name: 'SetAttendance',
-          //   meta: {
-          //     faName: 'Achievements',
-          //     title: '考勤组设置',
-          //     permissionName: ''
-          //   }
-          // }
         ]
       },
       /* {
@@ -1537,8 +1537,8 @@ export let asyncRoutes = [
           // },
           {
             path: '/material-inout-record',
-            component: () => import('@/views/inventory/rubber-warehouse/material_inout_record.vue'),
-            name: 'MaterialInOutRecord',
+            component: () => import('@/views/inventory/rubber-warehouse/material_inout_record_rubber.vue'),
+            name: 'MaterialInoutRecordRubber',
             meta: {
               faName: 'RubberWarehouse',
               title: '出入库履历查询',
@@ -1553,6 +1553,16 @@ export let asyncRoutes = [
               faName: 'RubberWarehouse',
               title: '出库口补打印卡片',
               permissionName: 'additional_print'
+            }
+          },
+          {
+            path: '/rubber-overdue-alarm',
+            component: () => import('@/views/inventory/rubber-warehouse/rubber-overdue-alarm.vue'),
+            name: 'MaterialPrintCard',
+            meta: {
+              faName: 'RubberWarehouse',
+              title: '胶料超期报警',
+              permissionName: 'product_expire_query'
             }
           }
         ]
@@ -2849,6 +2859,16 @@ export let asyncRoutes = [
             }
           }
         ]
+      },
+      {
+        path: '/internal/material-statistics',
+        component: () => import('@/views/quality_management/material-statistics'),
+        name: 'MaterialStatistics',
+        meta: {
+          title: '称量机台物料统计',
+          icon: 'quality',
+          permissionName: 'xl_report_weight_statics'
+        }
       }
       // {
       //   path: '/internal/material-statistics',

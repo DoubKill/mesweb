@@ -20,12 +20,12 @@
           @classSelected="classChanged"
         />
       </el-form-item>
-      <!-- <el-form-item label="班组">
+      <el-form-item label="班组">
         <el-select
           v-model="search.group"
           clearable
           placeholder="请选择"
-          @change="getList"
+          @change="groupChanged"
           @visible-change="getClassGroup"
         >
           <el-option
@@ -35,7 +35,7 @@
             :value="group.global_name"
           />
         </el-select>
-      </el-form-item> -->
+      </el-form-item>
       <!-- <el-form-item label="时间:">
         <el-date-picker
           v-model="search.st"
@@ -89,7 +89,7 @@
       </el-form-item>
     </el-form>
 
-    <el-form v-show="type==='明细'" :inline="true">
+    <!-- <el-form v-show="type==='明细'" :inline="true">
       <el-form-item
         :label="'总耗时/'+(timeUnit==='秒'?'s':'min')"
       >
@@ -114,7 +114,7 @@
         <span v-if="timeUnit==='秒'">{{ allData.avg_time }}</span>
         <span v-else>{{ allData.avg_time |setTimeMin }}</span>
       </el-form-item>
-    </el-form>
+    </el-form> -->
     <div v-show="type==='明细'">
       <el-table
         v-loading="loading"
@@ -151,7 +151,7 @@
         />
         <el-table-column
           sortable
-          prop="time_consuming"
+          prop="normal_cut_time_consumer"
           label="切换规格耗时/秒"
         />
         <!-- <el-table-column
@@ -164,7 +164,7 @@
         </el-table-column> -->
         <el-table-column
           sortable
-          prop="time_abnormal"
+          prop="err_cut_time_consumer"
           label="异常时间(秒)"
         />
       </el-table>
@@ -206,21 +206,21 @@
             min-width="20"
           >
             <el-table-column
-              :prop="d+'_1'"
+              :prop="d+'normal_cut_time_consumer'"
               label="换规格时间(秒)"
               width="70"
             >
               <template slot-scope="{row}">
-                <span>{{ row[d+'_1']*10!==0?row[d+'_1']:null }}</span>
+                <span>{{ row[d+'normal_cut_time_consumer']*10!==0?row[d+'normal_cut_time_consumer']:null }}</span>
               </template>
             </el-table-column>
             <el-table-column
-              :prop="d+'_2'"
+              :prop="d+'err_cut_time_consumer'"
               label="异常耗时(秒)"
               width="60"
             >
               <template slot-scope="{row}">
-                <span>{{ row[d+'_2']*10!==0?row[d+'_2']:null }}</span>
+                <span>{{ row[d+'err_cut_time_consumer']*10!==0?row[d+'err_cut_time_consumer']:null }}</span>
               </template>
             </el-table-column>
           </el-table-column>
@@ -259,6 +259,7 @@
 import equipSelect from '@/components/select_w/equip'
 import classSelect from '@/components/ClassSelect'
 import page from '@/components/page'
+import { cutTimeCollectSummary } from '@/api/jqy'
 import { cutTimeCollect, globalCodesUrl } from '@/api/base_w'
 // import timeSpanSelect from '@/components/select_w/timeSpan'
 import { exportExcel, setDate } from '@/utils/index'
@@ -286,8 +287,8 @@ export default {
     }
   },
   created() {
-    this.search.s_time = this.dateValue[0]
-    this.search.e_time = this.dateValue[1]
+    this.search.st = this.dateValue[0]
+    this.search.et = this.dateValue[1]
     // this.getList()
   },
   methods: {
@@ -295,11 +296,9 @@ export default {
       if (this.type === '明细') {
         delete this.search.page
         delete this.search.equip_no
-        this.search.collect = 1
         this.type = '汇总'
         this.getList1()
       } else {
-        delete this.search.collect
         this.search.page = 1
         this.type = '明细'
       }
@@ -319,11 +318,19 @@ export default {
     classChanged(val) {
       this.search.classes = val
       if (this.type === '明细') {
-        delete this.search.collect
         this.search.page = 1
         this.getList()
       } else {
-        this.search.collect = 1
+        delete this.search.page
+        delete this.search.equip_no
+        this.getList1()
+      }
+    },
+    groupChanged() {
+      if (this.type === '明细') {
+        this.search.page = 1
+        this.getList()
+      } else {
         delete this.search.page
         delete this.search.equip_no
         this.getList1()
@@ -356,7 +363,7 @@ export default {
         this.loading = true
         const data = await cutTimeCollect('get', null, { params: this.search })
         this.total = data.count
-        this.allData = data.results.pop() || {}
+        // this.allData = data.results.pop() || {}
         this.tableData = data.results || []
         this.loading = false
       } catch (error) {
@@ -366,18 +373,42 @@ export default {
     async getList1() {
       try {
         this.loading = true
-        const data = await cutTimeCollect('get', null, { params: this.search })
-        this.tableData1 = data.results || []
+        const data = await cutTimeCollectSummary('get', null, { params: this.search })
+        this.tableData1 = data || []
+        if (this.tableData1.length > 0) {
+          this.tableData1.forEach((d, index) => {
+            this.tableData1[index].true = 0
+            var i = 0
+            this.tableData1[index].error = 0
+            var k = 0
+            Object.keys(this.tableData1[index]).forEach(d => {
+              if (d.indexOf('normal_cut_time_consumer') !== -1) {
+                if (this.tableData1[index][d] !== null) {
+                  this.tableData1[index].true += this.tableData1[index][d]
+                  i++
+                }
+              }
+              if (d.indexOf('err_cut_time_consumer') !== -1) {
+                if (this.tableData1[index][d] !== null) {
+                  this.tableData1[index].error += this.tableData1[index][d]
+                  k++
+                }
+              }
+            })
+            this.tableData1[index].true = (i !== 0 ? (this.tableData1[index].true / i).toFixed(0) : null)
+            this.tableData1[index].error = (k !== 0 ? (this.tableData1[index].error / k).toFixed(0) : null)
+          })
+        }
         if (this.tableData1.length > 0) {
           this.tableData1.push({
             factory_date: '平均值',
-            true: (sum(this.tableData1, 'true') / (sumNull(this.tableData1, 'true'))).toFixed(1),
-            error: (sum(this.tableData1, 'error') / (sumNull(this.tableData1, 'error'))).toFixed(1)
+            true: (sum(this.tableData1, 'true') / (sumNull(this.tableData1, 'true'))).toFixed(0),
+            error: (sum(this.tableData1, 'error') / (sumNull(this.tableData1, 'error'))).toFixed(0)
           })
           const index = this.tableData1.length
           this.equipList.forEach(d => {
-            this.tableData1[index - 1][d + '_1'] = (sum(this.tableData1, [d] + '_1') / (sumNull(this.tableData1, [d] + '_1'))).toFixed(1)
-            this.tableData1[index - 1][d + '_2'] = (sum(this.tableData1, [d] + '_2') / (sumNull(this.tableData1, [d] + '_2'))).toFixed(1)
+            this.tableData1[index - 1][d + 'normal_cut_time_consumer'] = (sum(this.tableData1, [d] + 'normal_cut_time_consumer') / (sumNull(this.tableData1, [d] + 'normal_cut_time_consumer'))).toFixed(0)
+            this.tableData1[index - 1][d + 'err_cut_time_consumer'] = (sum(this.tableData1, [d] + 'err_cut_time_consumer') / (sumNull(this.tableData1, [d] + 'err_cut_time_consumer'))).toFixed(0)
           })
         }
         this.loading = false
@@ -390,14 +421,12 @@ export default {
       this.getList()
     },
     changeDate(arr) {
-      this.search.s_time = arr ? arr[0] : ''
-      this.search.e_time = arr ? arr[1] : ''
+      this.search.st = arr ? arr[0] : ''
+      this.search.et = arr ? arr[1] : ''
       if (this.type === '明细') {
-        delete this.search.collect
         this.search.page = 1
         this.getList()
       } else {
-        this.search.collect = 1
         delete this.search.page
         delete this.search.equip_no
         this.getList1()
