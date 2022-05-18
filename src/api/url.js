@@ -705,5 +705,7 @@ export default {
   ReplaceRecipeOne: '/api/v1/recipe/replace-recipe-material/',
   XlReportWeightStatics: '/api/v1/terminal/xl-report-weight-statics/',
   ProductExpiresList: '/api/v1/inventory/product-expires-list/',
-  ProductExpiresDetails: '/api/v1/inventory/product-expires-details/'
+  ProductExpiresDetails: '/api/v1/inventory/product-expires-details/',
+
+  WmsAddPrint: '/api/v1/terminal/wms-add-print/'
 }

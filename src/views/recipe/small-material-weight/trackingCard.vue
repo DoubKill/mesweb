@@ -5,8 +5,8 @@
       <el-form-item label="配料机台">
         <select-batching-equip v-model="formInline.equip" :is-default="true" :created-is="true" @changeFun="changeEquipList" />
       </el-form-item>
-      <!-- <el-form-item label="配料日期"> -->
-      <!-- <el-date-picker
+      <el-form-item label="起止日期">
+        <!-- <el-date-picker
           v-model="formInline.batch_time"
           type="date"
           placeholder="选择日期"
@@ -14,7 +14,7 @@
           :clearable="false"
           @change="changeList"
         /> -->
-      <!-- <el-date-picker
+        <el-date-picker
           v-model="dateValue"
           type="daterange"
           :clearable="false"
@@ -23,8 +23,8 @@
           end-placeholder="结束日期"
           value-format="yyyy-MM-dd"
           @change="changeList"
-        /> -->
-      <!-- </el-form-item> -->
+        />
+      </el-form-item>
       <el-form-item label="配方号">
         <el-select
           v-model="formInline.product_no"
@@ -146,6 +146,11 @@
       <el-table-column
         prop="package_plan_count"
         label="计划总数"
+        min-width="15"
+      />
+      <el-table-column
+        prop="used_trains"
+        label="已使用数量"
         min-width="15"
       />
       <el-table-column
@@ -401,7 +406,7 @@ export default {
   components: { SelectBatchingEquip, page },
   data() {
     return {
-      formInline: {},
+      formInline: { status: 'N' },
       tableData: [],
       total: 0,
       loading: false,
@@ -427,11 +432,13 @@ export default {
       againPrint: null,
       isfirst: false,
       created: false,
-      dateValue: [getNextDate(setDate(), -20), setDate()]
+      dateValue: [getNextDate(setDate(), -7), setDate()]
     }
   },
   created() {
     this.created = true
+    this.formInline.s_time = this.dateValue[0]
+    this.formInline.e_time = this.dateValue[1]
     this.getList()
     // this._setInterval = setInterval(() => {
     //   this.getList()
@@ -483,8 +490,8 @@ export default {
         }
         const data = await xlPlan('get', null, { params: {
           equip_no: this.formInline.equip_no,
-          // s_time: this.formInline.s_time,
-          // e_time: this.formInline.e_time,
+          s_time: this.formInline.s_time,
+          e_time: this.formInline.e_time,
           // batch_time: this.formInline.batch_time,
           state: '完成,运行中',
           all: 1
@@ -500,12 +507,12 @@ export default {
       }
     },
     changeList() {
-      // this.formInline.s_time = this.dateValue[0]
-      // this.formInline.e_time = this.dateValue[1]
-      // if (getDaysBetween(this.formInline.s_time, this.formInline.e_time) > 20) {
-      //   this.$message('查询日期间隔不得超过20天')
-      //   return
-      // }
+      this.formInline.s_time = this.dateValue ? this.dateValue[0] : ''
+      this.formInline.e_time = this.dateValue ? this.dateValue[1] : ''
+      if (getDaysBetween(this.formInline.s_time, this.formInline.e_time) > 15) {
+        this.$message('查询日期间隔不得超过15天')
+        return
+      }
       this.cancel()
       if (!this.formInline.status) {
         delete this.formInline.status
@@ -648,6 +655,15 @@ export default {
     },
     changeEquipList(val) {
       this.formInline.equip_no = val ? val.equip_no : ''
+      if (this.formInline.equip_no[0] === 'F') {
+        this.dateValue = [getNextDate(setDate(), -7), setDate()]
+        this.formInline.s_time = this.dateValue ? this.dateValue[0] : ''
+        this.formInline.e_time = this.dateValue ? this.dateValue[1] : ''
+      } else {
+        this.dateValue = [getNextDate(setDate(), -5), setDate()]
+        this.formInline.s_time = this.dateValue ? this.dateValue[0] : ''
+        this.formInline.e_time = this.dateValue ? this.dateValue[1] : ''
+      }
       this.changeList()
     },
     currentChange(page, page_size) {
@@ -762,18 +778,18 @@ export default {
   }
 }
 
-// function getDaysBetween(dateString1, dateString2) {
-//   var startDate = Date.parse(dateString1)
-//   var endDate = Date.parse(dateString2)
-//   if (startDate > endDate) {
-//     return 0
-//   }
-//   if (startDate === endDate) {
-//     return 1
-//   }
-//   var days = (endDate - startDate) / (1 * 24 * 60 * 60 * 1000)
-//   return days
-// }
+function getDaysBetween(dateString1, dateString2) {
+  var startDate = Date.parse(dateString1)
+  var endDate = Date.parse(dateString2)
+  if (startDate > endDate) {
+    return 0
+  }
+  if (startDate === endDate) {
+    return 1
+  }
+  var days = (endDate - startDate) / (1 * 24 * 60 * 60 * 1000)
+  return days
+}
 function getNextDate(date, day) {
   var dd = new Date(date)
   dd.setDate(dd.getDate() + day)
