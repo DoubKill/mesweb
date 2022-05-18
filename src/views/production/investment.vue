@@ -278,13 +278,13 @@
     >
       <el-form v-if="detailForm.equip_no" :inline="true" label-width="150px">
         <el-form-item label="胶料编码">
-          <el-input v-model="product_no" disabled style="width:250px" />
+          <el-input v-model="detailForm.product_no" disabled style="width:250px" />
         </el-form-item>
         <el-form-item label="机台">
           <el-input v-model="detailForm.equip_no" disabled style="width:250px" />
         </el-form-item>
         <el-form-item label="生产日期">
-          <el-input v-model="product_time" disabled style="width:250px" />
+          <el-input v-model="detailForm.product_time" disabled style="width:250px" />
         </el-form-item>
         <el-form-item label="班次/班组">
           <el-input v-model="detailForm.classes" disabled style="width:100px" />
