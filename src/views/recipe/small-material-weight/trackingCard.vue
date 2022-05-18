@@ -399,7 +399,6 @@ import { xlPlan } from '@/api/base_w_three'
 import { getMaterialTolerance } from '@/api/base_w_five'
 import { weightingPackageLog, manualPost } from '@/api/base_w_two'
 import { setDate } from '@/utils'
-import axios from 'axios'
 
 export default {
   name: 'SmallMaterialWeightTrackingCard',
@@ -439,7 +438,6 @@ export default {
     this.created = true
     this.formInline.s_time = this.dateValue[0]
     this.formInline.e_time = this.dateValue[1]
-    this.getList()
     // this._setInterval = setInterval(() => {
     //   this.getList()
     // }, 5000)
@@ -462,12 +460,7 @@ export default {
   methods: {
     async getList() {
       try {
-        const self = this
-        const data = await weightingPackageLog('get', null, { params: this.formInline },
-          new axios.CancelToken(function executor(c) {
-            self.cancel = c
-          })
-        )
+        const data = await weightingPackageLog('get', null, { params: this.formInline })
         this.total = data.count
         this.tableData = data.results || []
         this.tableData.forEach(d => {
@@ -513,7 +506,6 @@ export default {
         this.$message('查询日期间隔不得超过15天')
         return
       }
-      this.cancel()
       if (!this.formInline.status) {
         delete this.formInline.status
       }
