@@ -270,15 +270,7 @@ export default {
   components: { page },
   data() {
     return {
-      options: [
-        { id: '1', label: '1号烘箱' },
-        { id: '2', label: '2号烘箱' },
-        { id: '3', label: '3号烘箱' },
-        { id: '4', label: '4号烘箱' },
-        { id: '5', label: '5号烘箱' },
-        { id: '6', label: '6号烘箱' },
-        { id: '7', label: '7号烘箱' },
-        { id: '8', label: '8号烘箱' }],
+      options: [],
       submit: false,
       boxLoading: false,
       search: { type: 1 },
@@ -346,6 +338,10 @@ export default {
           } else if (d.OastState === 5) {
             this.boxList[index].color = '#D9001B'
           }
+          this.options
+          if (d.OastMatiles.length) {
+            this.options.push({ id: d.OastNo, label: d.OastNo + '号烘箱' })
+          }
         })
         this.boxLoading = false
       } catch (e) {
@@ -404,9 +400,11 @@ export default {
             const _api = this.type ? hfForceHandle : hfRealStatus
             if (this.type) {
               _obj.opera_type = this.type
-              _obj.OastMatiles = this.boxList.OastMatiles || []
               if (this.type === 1) {
                 delete _obj.OastMatiles
+              } else {
+                const _OastObj = this.boxList.find(d => d.OastNo === this.ruleForm.OastNo)
+                _obj.OastMatiles = _OastObj.OastMatiles
               }
             }
             await _api('post', null, { data: _obj })
