@@ -3,10 +3,13 @@
     <!-- 原材料库 烘房状态实时显示 -->
     <el-form :inline="true">
       <el-form-item>
-        <el-button v-permission="['material_hf_real_data','outbound']" type="primary" @click="dialogVisible=true">手动出库</el-button>
+        <el-button v-permission="['material_hf_real_data','outbound']" type="primary" @click="showDialog()">手动出库</el-button>
         <el-button type="primary" @click="getWorkList">任务列表</el-button>
         <el-button type="primary" @click="getBoxList">待入箱列表</el-button>
         <el-button type="primary" @click="getList">刷新</el-button>
+        <el-button type="primary" @click="showDialog(1)">强制出料</el-button>
+        <el-button type="primary" @click="showDialog(2)">强制烘烤</el-button>
+        <el-button type="primary" @click="temperatureDialog">设置温度时长</el-button>
       </el-form-item>
     </el-form>
     <div v-loading="boxLoading" class="conter-style">
@@ -19,34 +22,24 @@
           <span class="topText">{{ item.OastNo }}#烘箱</span>
           <span class="topText" :style="{background:item.OastState===5?'#D9001B':'#95F204'}">{{ boxStatus.find(d=>d.id === item.OastState)?boxStatus.find(d=>d.id === item.OastState).name:null }}</span>
           <span class="topText">{{ item.OastTemperature }}℃</span>
-          <span class="topText">开烘时间：{{ item.OastStartTime }}</span>
-          <span class="topText">已烘时长：{{ item.OastServiceTime }}</span>
+          <div v-if="item.OastMatiles&&item.OastMatiles.length" style="display:inline-block">
+            <span class="topText">设定烘烤时长：{{ item.OastStandardTime }}</span>
+            <span class="topText">设定烘烤温度：{{ item.OastSTemperature }}</span>
+            <span class="topText">开烘时间：{{ item.OastStartTime }}</span>
+            <span class="topText">已烘时长：{{ item.OastServiceTime }}</span>
+          </div>
         </div>
         <div style="display: flex;margin-left:2%;margin-top:2%">
-          <div class="bottomDiv" :style="{background:item.color}">
-            <div class="bottomText">{{ (item.OastMatiles?item.OastMatiles[0]:null)?item.OastMatiles[0].ProductName:null }}</div>
-          </div>
-          <div class="bottomDiv" :style="{background:item.color}">
-            <div class="bottomText">{{ (item.OastMatiles?item.OastMatiles[1]:null)?item.OastMatiles[1].ProductName:null }}</div>
-          </div>
-          <div class="bottomDiv" :style="{background:item.color}">
-            <div class="bottomText">{{ (item.OastMatiles?item.OastMatiles[2]:null)?item.OastMatiles[2].ProductName:null }}</div>
-          </div>
-          <div class="bottomDiv" :style="{background:item.color}">
-            <div class="bottomText">{{ (item.OastMatiles?item.OastMatiles[3]:null)?item.OastMatiles[3].ProductName:null }}</div>
-          </div>
-          <div class="bottomDiv" :style="{background:item.color}">
-            <div class="bottomText">{{ (item.OastMatiles?item.OastMatiles[4]:null)?item.OastMatiles[4].ProductName:null }}</div>
-          </div>
-          <div class="bottomDiv" :style="{background:item.color}">
-            <div class="bottomText"> {{ (item.OastMatiles?item.OastMatiles[5]:null)?item.OastMatiles[5].ProductName:null }}</div>
+          <div v-for="_item in 6" :key="_item" class="bottomDiv" :style="{background:item.color,'padding': '0 4px'}">
+            <div v-if="item.OastMatiles&&item.OastMatiles[_item]" class="bottomText">{{ item.OastMatiles[_item].ProductName }}
+              /{{ item.OastMatiles[_item].RFID }}</div>
           </div>
         </div>
       </div>
     </div>
 
     <el-dialog
-      title="手动出库选择"
+      :title="`${type===1?'强制出料 烘箱选择':type===2?'强制烘烤 烘箱选择':'手动出库选择'}`"
       :visible.sync="dialogVisible"
       width="30%"
     >
@@ -190,11 +183,87 @@
         @currentChange="currentChange1"
       />
     </el-dialog>
+
+    <el-dialog
+      title="原材料 烘烤温度及时长设置"
+      :visible.sync="dialogVisibleSet"
+      width="60%"
+    >
+      <div style="text-align:right;margin-bottom:5px">
+        <el-button :loading="loadingDialog" type="primary" @click="saveAll">
+          全部保存
+        </el-button>
+      </div>
+      <el-table
+        v-loading="loadingDialog"
+        :data="dialogFormData"
+        border
+        max-height="600px"
+      >
+        <el-table-column
+          label="原材料名称"
+          min-width="40"
+        >
+          <template slot-scope="{row}">
+            <el-select
+              v-model="row.material_name"
+              style="width:380px"
+              placeholder="请选择原材料"
+              filterable
+            >
+              <el-option
+                v-for="item in optionsProduct"
+                :key="item.name"
+                :label="item.name"
+                :value="item.name"
+              />
+            </el-select>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="烘烤温度（℃）"
+          min-width="20"
+        >
+          <template slot-scope="{row}">
+            <el-input-number v-model="row.temperature_set" :precision="0" :min="1" controls-position="right" :max="100" />
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="烘烤时长（小时）"
+          min-width="20"
+        >
+          <template slot-scope="{row}">
+            <el-input-number v-model="row.bake_time" :precision="1" :min="1" controls-position="right" :max="200" />
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="操作"
+          width="200px"
+        >
+          <template slot-scope="{row,$index}">
+            <el-button type="danger" :disabled="loadingDialog" @click="delSet(row,$index)">
+              删除</el-button>
+            <el-button :disabled="loadingDialog" type="primary" @click="saveSet([row],$index)">
+              保存</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div style="text-align:center;margin-top:15px">
+        <el-button
+          size="small"
+          :disabled="loadingDialog"
+          @click="addSet"
+        >插入一行</el-button>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFalse">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { hfRealStatus } from '@/api/jqy'
+import { hfRealStatus, hfForceHandle, hfConfigSet, wmsMaterials } from '@/api/jqy'
 import page from '@/components/page'
 export default {
   name: 'MaterialDelivery',
@@ -217,7 +286,7 @@ export default {
       dialogVisible: false,
       dialogVisibleWork: false,
       dialogVisibleList: false,
-      ruleForm: {},
+      ruleForm: { OastNo: null },
       total: 0,
       total1: 0,
       boxStatus: [
@@ -243,11 +312,17 @@ export default {
       tableData1: [],
       rules: {
         OastNo: [{ required: true, message: '不能为空', trigger: 'change' }]
-      }
+      },
+      type: null,
+      dialogVisibleSet: false,
+      dialogFormData: [],
+      optionsProduct: [],
+      loadingDialog: false
     }
   },
   created() {
     this.getList()
+    this.getProduct()
   },
   mounted() {
     this.timer = setInterval(d => {
@@ -302,6 +377,14 @@ export default {
         this.loading = false
       }
     },
+    async getProduct() {
+      try {
+        const data = await wmsMaterials('get', null, {})
+        this.optionsProduct = data || []
+      } catch (e) {
+        //
+      }
+    },
     currentChange(page, page_size) {
       this.search.page = page
       this.search.page_size = page_size
@@ -317,7 +400,16 @@ export default {
         if (valid) {
           try {
             this.submit = true
-            await hfRealStatus('post', null, { data: this.ruleForm })
+            const _obj = this.ruleForm
+            const _api = this.type ? hfForceHandle : hfRealStatus
+            if (this.type) {
+              _obj.opera_type = this.type
+              _obj.OastMatiles = this.boxList.OastMatiles || []
+              if (this.type === 1) {
+                delete _obj.OastMatiles
+              }
+            }
+            await _api('post', null, { data: _obj })
             this.$message.success('操作成功')
             this.submit = false
           } catch (e) {
@@ -327,6 +419,77 @@ export default {
           return false
         }
       })
+    },
+    showDialog(val) {
+      if (this.$refs.ruleForm) {
+        this.$refs.ruleForm.resetFields()
+      }
+      this.dialogVisible = true
+      this.type = val
+    },
+    temperatureDialog() {
+      this.dialogFormData = []
+      this.dialogVisibleSet = true
+      this.getDialogFormData()
+    },
+    async getDialogFormData() {
+      try {
+        this.loadingDialog = true
+        const data = await hfConfigSet('get', null, { })
+        this.dialogFormData = data.results || []
+      } catch (e) {
+        //
+      }
+      this.loadingDialog = false
+    },
+    saveAll() {
+      if (!this.dialogFormData.length) {
+        this.$message({
+          message: '暂无可提交的数据!'
+        })
+        return
+      }
+      this.saveSet(this.dialogFormData)
+    },
+    delSet(row, index) {
+      if (row.id) {
+        this.$confirm('是否确定删除?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          hfConfigSet('post', null, { data: { delete_data: row.id }})
+            .then(response => {
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              })
+              this.dialogFormData.splice(index, 1)
+            }).catch(e => {
+            //
+            })
+        })
+      } else {
+        this.dialogFormData.splice(index, 1)
+      }
+    },
+    async saveSet(row) {
+      try {
+        const arr = row
+        this.loadingDialog = true
+        await hfConfigSet('post', null, { data: { set_data: arr }})
+        this.$message.success('提交成功')
+        this.loadingDialog = false
+        this.getDialogFormData()
+      } catch (e) {
+        this.loadingDialog = false
+      }
+    },
+    addSet() {
+      this.dialogFormData.push({})
+    },
+    dialogFalse() {
+      this.dialogVisibleSet = false
     }
   }
 }
