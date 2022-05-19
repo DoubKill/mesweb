@@ -330,6 +330,7 @@ export default {
         this.boxLoading = true
         const data = await hfRealStatus('get', null, { params: { type: 0 }})
         this.boxList = data.results || []
+        this.options = []
         this.boxList.forEach((d, index) => {
           if (d.OastState === 2) {
             this.boxList[index].color = '#FFFF80'
@@ -340,7 +341,7 @@ export default {
           }
           this.options
           if (d.OastMatiles.length) {
-            this.options.push({ id: d.OastNo, label: d.OastNo + '号烘箱' })
+            this.options.push({ id: d.OastNo.toString(), label: d.OastNo + '号烘箱' })
           }
         })
         this.boxLoading = false
@@ -395,18 +396,18 @@ export default {
       this.$refs.ruleForm.validate(async(valid) => {
         if (valid) {
           try {
-            this.submit = true
-            const _obj = this.ruleForm
+            const _obj = JSON.parse(JSON.stringify(this.ruleForm))
             const _api = this.type ? hfForceHandle : hfRealStatus
             if (this.type) {
               _obj.opera_type = this.type
               if (this.type === 1) {
                 delete _obj.OastMatiles
               } else {
-                const _OastObj = this.boxList.find(d => d.OastNo === this.ruleForm.OastNo)
+                const _OastObj = this.boxList.find(d => Number(d.OastNo) === Number(this.ruleForm.OastNo))
                 _obj.OastMatiles = _OastObj.OastMatiles
               }
             }
+            this.submit = true
             await _api('post', null, { data: _obj })
             this.$message.success('操作成功')
             this.submit = false
