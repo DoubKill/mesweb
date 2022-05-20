@@ -9,31 +9,50 @@
       <el-form-item label="物料编码">
         <el-input v-model="getParams.material_no" @input="changeSearch" />
       </el-form-item>
+      <el-form-item label="">
+        <el-checkbox v-model="getParams.only_storage_flag" :label="1" @change="changeSearch">仅显示未设定有效期的物料</el-checkbox>
+      </el-form-item>
+      <el-form-item label="">
+        <el-checkbox v-model="getParams.only_safety_flag" @change="changeSearch">仅显示未设定安全库存标准的物料</el-checkbox>
+      </el-form-item>
+      <el-form-item label="">
+        <el-button type="primary" @click="showDialog">批量设置有效期及安全库存标准</el-button>
+      </el-form-item>
     </el-form>
     <el-table
+      ref="multipleTable"
       border
       fit
       style="width: 100%"
       :data="tableData"
+      @selection-change="handleSelectionChange"
     >
+      <el-table-column
+        type="selection"
+        width="55"
+      />
       <el-table-column label="No" type="index" align="center" />
-      <el-table-column label="物料类型" align="center" prop="material_type_name" />
+      <el-table-column label="物料类型" align="center" prop="material_type_name" width="80px" />
       <el-table-column label="物料编码" align="center" prop="material_no" />
       <el-table-column label="物料名称" align="center" prop="material_name" />
+      <el-table-column label="库存期限(小时)" align="center" prop="storage_time" />
       <el-table-column label="有效期(天)" align="center" prop="period_of_validity" />
       <el-table-column label="安全库存标准(车)" align="center" prop="safety_inventory" />
-      <el-table-column label="产地管理" align="center">
+      <el-table-column label="产地管理" align="center" width="300px">
         <template slot-scope="scope">
-          <el-button-group>
-            <el-button
-              v-permission="['material_attr', 'view']"
-              size="mini"
-              @click="showBarCodeManageDialog(scope.row)"
-            >管理</el-button>
-          </el-button-group>
+          <div style="display:flex">
+            <div style="flex:1">{{ scope.row.suppliers }}</div>
+            <el-button-group style="width:60px">
+              <el-button
+                v-permission="['material_attr', 'view']"
+                size="mini"
+                @click="showBarCodeManageDialog(scope.row)"
+              >管理</el-button>
+            </el-button-group>
+          </div>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center">
+      <el-table-column label="操作" align="center" width="90px">
         <template slot-scope="scope">
           <el-button-group>
             <el-button
@@ -46,6 +65,7 @@
       </el-table-column>
     </el-table>
     <page
+      :old-page="false"
       :total="total"
       :current-page="getParams.page"
       @currentChange="currentChange"
@@ -103,32 +123,41 @@
       </div>
     </el-dialog>
     <el-dialog
-      title="编辑物料属性"
+      :title="isBatch?'批量设置有效期及安全库存标准':'编辑物料属性'"
       :visible.sync="attributeEditDialogVisible"
       :close-on-click-modal="false"
     >
-      <el-form ref="attributeForm" :rules="rules" label-width="130px" :model="attributeForm">
+      <el-form ref="attributeForm" :rules="rules" label-width="130px" :model="attributeForm" inline>
         <el-form-item
+          v-if="!isBatch"
           label="物料类型"
         >{{ attributeForm.material_type_name }}
           <!-- <el-input v-model="attributeForm.material_type" :disabled="true" /> -->
-        </el-form-item>
+        </el-form-item><br v-if="!isBatch">
         <el-form-item
+          v-if="!isBatch"
           label="物料编码"
         >{{ attributeForm.material_no }}
           <!-- <el-input v-model="attributeForm.material_no" :disabled="true" /> -->
-        </el-form-item>
+        </el-form-item><br v-if="!isBatch">
         <el-form-item
+          v-if="!isBatch"
           label="物料名称"
         >{{ attributeForm.material_name }}
           <!-- <el-input v-model="attributeForm.material_name" :disabled="true" /> -->
+        </el-form-item><br v-if="!isBatch">
+        <el-form-item
+          label="库存期限(小时)"
+          prop="storage_time"
+        >
+          <el-input v-model="attributeForm.storage_time" />
         </el-form-item>
         <el-form-item
           label="有效期(天)"
           prop="period_of_validity"
         >
           <el-input v-model.number="attributeForm.period_of_validity" type="age" />
-        </el-form-item>
+        </el-form-item><br>
         <el-form-item
           label="安全库存标准(车)"
           prop="safety_inventory"
@@ -189,7 +218,7 @@
 </template>
 
 <script>
-import { getMaterialsAttribute, postMaterialsAttribute, getBarCode, postBarCode, deleteBarCode } from '@/api/material-attribute-manage'
+import { getMaterialsAttribute, postMaterialsAttribute, getBarCode, postBatchSet, postBarCode, deleteBarCode } from '@/api/material-attribute-manage'
 import materielTypeSelect from '@/components/select_w/materielTypeSelect'
 import page from '@/components/page'
 import { mapGetters } from 'vuex'
@@ -204,7 +233,10 @@ export default {
         material_no: '',
         page: 1
       },
-      attributeForm: {},
+      attributeForm: {
+        storage_time: null,
+        period_of_validity: null
+      },
       total: 0,
       barCodeData: [],
       getParamsBarCode: {
@@ -214,14 +246,18 @@ export default {
       barCodeForm: { provenance: null },
       totalBarCode: 0,
       rules: {
-        period_of_validity: [{ required: true, message: '不能为空', trigger: 'blur' },
+        period_of_validity: [{ required: false, message: '不能为空', trigger: 'blur' },
           { pattern: /^[1-9]\d*$/, message: '请输入正整数', trigger: 'blur' }],
+        storage_time: [{ required: false, message: '不能为空', trigger: 'blur' },
+          { pattern: /^[+]{0,1}(\d+)$|^[+]{0,1}(\d+\.\d+)$/, message: '请输入正数', trigger: 'blur' }],
         safety_inventory: [{ required: true, message: '不能为空', trigger: 'blur' },
           { pattern: /^[1-9]\d*$/, message: '请输入正整数', trigger: 'blur' }]
       },
       barCodeManageDialogVisible: false,
       barCodeCreateDialogVisible: false,
-      attributeEditDialogVisible: false
+      attributeEditDialogVisible: false,
+      currentArr: [],
+      isBatch: false
     }
   },
   computed: {
@@ -233,13 +269,17 @@ export default {
   },
   methods: {
     getMaterialsAttributeList() {
-      getMaterialsAttribute(this.getParams)
+      const obj = Object.assign({}, this.getParams)
+      obj.only_storage_flag = obj.only_storage_flag ? 1 : null
+      obj.only_safety_flag = obj.only_safety_flag ? 1 : null
+      getMaterialsAttribute(obj)
         .then(response => {
           this.tableData = response.results
           this.total = response.count
         })
     },
     showAttributeEditDialog(row) {
+      this.isBatch = false
       this.attributeForm = Object.assign({}, row)
       this.attributeForm.material = row.id
       this.attributeForm.validity_unit = '天'
@@ -249,12 +289,36 @@ export default {
       })
     },
     handleAttributeEdit() {
+      if (this.attributeForm.storage_time && !this.attributeForm.period_of_validity) {
+        this.$message.info('请填写有效期')
+        return
+      }
+      if (!this.attributeForm.storage_time) {
+        this.attributeForm.storage_time = null
+      }
+      if (!this.attributeForm.period_of_validity) {
+        this.attributeForm.period_of_validity = null
+      }
       this.$refs.attributeForm.validate((valid) => {
         if (valid) {
+          if (this.isBatch) {
+            const arr = []
+            this.currentArr.forEach(d => {
+              arr.push(d.id)
+            })
+            this.attributeForm.materials = arr
+            postBatchSet(this.attributeForm)
+              .then(response => {
+                this.attributeEditDialogVisible = false
+                this.$message.success('批量修改成功')
+                this.getMaterialsAttributeList()
+              })
+            return
+          }
           postMaterialsAttribute(this.attributeForm)
             .then(response => {
               this.attributeEditDialogVisible = false
-              this.$message(this.attributeForm.material_name + '编辑成功')
+              this.$message.success(this.attributeForm.material_name + '编辑成功')
               this.getMaterialsAttributeList()
             })
         }
@@ -269,8 +333,9 @@ export default {
       this.getParams.page = 1
       this.getMaterialsAttributeList()
     },
-    currentChange(page) {
+    currentChange(page, pageSize) {
       this.getParams.page = page
+      this.getParams.page_size = pageSize
       this.getMaterialsAttributeList()
     },
     getBarCodelist() {
@@ -338,6 +403,20 @@ export default {
     currentChangeBarCode(page) {
       this.getParamsBarCode.page = page
       this.getBarCodelist()
+    },
+    showDialog() {
+      if (!this.currentArr.length) {
+        this.$message('请选择物料')
+        return
+      }
+      this.isBatch = true
+      this.attributeEditDialogVisible = true
+      this.$nextTick(() => {
+        this.$refs.attributeForm.clearValidate()
+      })
+    },
+    handleSelectionChange(arr) {
+      this.currentArr = arr
     }
   }
 }

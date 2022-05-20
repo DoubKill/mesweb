@@ -1,5 +1,5 @@
 <template>
-  <div :style="{padding:this.$route.query.equip?'20px':''}">
+  <div :class="{'productionFeeding_new':this.$route.query.equip?true:false}" :style="{padding:this.$route.query.equip?'20px':''}">
     <!-- 生产投料配方查询 -->
     <el-form :inline="true">
       <el-form-item label="机台">
@@ -36,7 +36,7 @@
       <el-table-column
         type="index"
         label="序号"
-        width="50"
+        width="90"
       />
       <el-table-column
         prop="material__material_name"
@@ -63,7 +63,7 @@
       <el-table-column
         type="index"
         label="序号"
-        width="50"
+        width="90"
       />
       <el-table-column
         prop="material__material_name"
@@ -104,7 +104,6 @@ export default {
     }
   },
   created() {
-
   },
   methods: {
     async getList() {
@@ -122,6 +121,11 @@ export default {
       try {
         const data = await rubberMaterialUrl('get', null, { params: { dev_type: dev_type, all: 1, exclude_used_type: 6 }})
         this.productList = data.results || []
+
+        this.searchForm.product_no = this.$route.query.product_no || ''
+        if (this.$route.query.product_no) {
+          this.getProductList()
+        }
       } catch (e) {
         //
       }
@@ -141,6 +145,18 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-
+<style lang="scss">
+  .productionFeeding_new{
+      font-size: 20px;
+    .el-form-item__label,.el-button,.el-table,.el-checkbox__label,.el-form-item__content{
+      font-size:20px !important;
+    }
+    .el-input__inner{
+       font-size:18px;
+    }
+    .el-checkbox__inner{
+      width:20px;
+      height:20px;
+    }
+  }
 </style>

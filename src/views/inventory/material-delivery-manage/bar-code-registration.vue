@@ -272,9 +272,9 @@ export default {
     async getDebounceCode() {
       try {
         const data = await wmsMaterialSearch('get', null, { params: { tmh: this.objForm.tracking_num }})
-        this.objForm.material_name = data[0].WLMC
-        this.objForm.material_no = data[0].WLXXID
-        this.objForm.batch = data[0].PH
+        this.objForm.material_name = data[0].wlmc
+        this.objForm.material_no = data[0].wlxxid
+        this.objForm.batch = data[0].ph
       } catch (e) {
         //
       }

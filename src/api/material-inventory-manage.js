@@ -99,3 +99,18 @@ export function thStorageDown(params) {
     responseType: 'blob'
   })
 }
+export function productExpiresDetailsDown(params) {
+  return request({
+    url: API.ProductExpiresDetails,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
+export function productExpiresDetails(params) {
+  return request({
+    url: API.ProductExpiresDetails,
+    method: 'get',
+    params
+  })
+}

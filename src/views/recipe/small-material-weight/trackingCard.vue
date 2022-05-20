@@ -153,7 +153,7 @@
         width="200"
       >
         <template slot-scope="scope">
-          <div v-if="!scope.row.bra_code" style="display:inline-block;margin:0 10px">
+          <div v-if="scope.row.order_flag" style="display:inline-block;margin:0 10px">
             <el-button
               v-permission="['xl_expire_data', 'save']"
               type="primary"
@@ -163,7 +163,7 @@
               打印
             </el-button>
           </div>
-          <div v-if="scope.row.bra_code" style="display:inline-block;margin:0 10px">
+          <div v-if="!scope.row.order_flag" style="display:inline-block;margin:0 10px">
             <el-button
               v-permission="['xl_expire_data', 'save']"
               type="primary"
@@ -742,8 +742,9 @@ export default {
             if (this.againPrint) {
               _obj = { print_count: this.ruleForm.print_count }
             }
-            // console.log(_obj, 6666)
-            // return
+            if (typeof _obj.display_manual_info === 'string') {
+              _obj.display_manual_info = []
+            }
             this.btnLoading = true
             await weightingPackageLog(_api, this.againPrint ? this.ruleForm.id : '', { data: _obj })
             this.$message.success('已下发打印')

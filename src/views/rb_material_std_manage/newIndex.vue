@@ -114,14 +114,14 @@
       </el-form-item>
       <el-form-item style="float: right">
         <el-button
-          v-if="checkPermission(['productbatching','add'])"
+          v-if="checkPermission(['productbatching','change'])"
           type="primary"
           @click="replacementDialog"
         >原材料替换</el-button>
       </el-form-item>
       <el-form-item style="float: right">
         <el-button
-          v-if="checkPermission(['productbatching','add'])"
+          v-if="checkPermission(['productbatching','change'])"
           type="primary"
           :loading="btnExportLoad"
           @click="exportTable"
@@ -509,6 +509,8 @@ export default {
       this.rubber_material_list()
     },
     changeSearch() {
+      this.selectionList = []
+      this.$refs.multipleTable.clearSelection()
       this.search.page = 1
       this.rubber_material_list()
     },
@@ -524,7 +526,7 @@ export default {
         versions: '',
         precept: '',
         stage_product_batch_no: '',
-        production_time_interval: ''
+        production_time_interval: 0
       }
       this.isCopy = false
       this.dialogAddRubberMaterial = true
@@ -639,7 +641,7 @@ export default {
         return
       }
       this.btnExportLoad = true
-      const obj = Object.assign({ export: 1, wms_material_name: this.search.wms_material_name }, {})
+      const obj = Object.assign({ export: 1, wms_material_name: this.search.wms_material_name, exclude_used_type: 6 }, {})
       const _api = rubber_material_url
       _api('get', null, { params: obj, responseType: 'blob' })
         .then(res => {

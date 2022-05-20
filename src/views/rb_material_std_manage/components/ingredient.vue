@@ -246,14 +246,13 @@
         ref="ingredientStandardRef"
         :add-table-data="addTableData"
         :is-ingredient-obj="isIngredientObj"
-        :form-obj="formObj"
+        :form-obj="formInline"
         :is-view="isView"
         :dialog-visible="dialogVisible"
         @pop_up_raw_material="pop_up_raw_material"
         @deleteRow="deleteRow"
         @deleteOneRow="deleteOneRow"
       />
-
     </el-dialog>
     <el-dialog
       title="新建料包"

@@ -24,6 +24,7 @@
       <el-form-item label="机台">
         <selectEquip
           :is-created="true"
+          :is-clear="true"
           :equip_no_props.sync="getParams.equip_no"
           @changeSearch="changeSearch"
         />

@@ -148,6 +148,8 @@ export default {
   EquipBanburySummary: '/api/v1/production/equip-banbury-summary/',
   // 规格切换时间汇总
   CutTimeCollect: '/api/v1/production/cut-time-collect/',
+  ShiftTimeSummary: '/api/v1/production/shift-time-summary/', // 交接班时间汇总
+  ShiftTimeSummaryDetail: '/api/v1/production/shift-time-summary/detail/',
   // 设备管理计算总和
   SumSollectTrains: '/api/v1/production/sum-collect-trains/',
   // 物料库存管理
@@ -186,6 +188,7 @@ export default {
 
   // 物料属性管理
   materialsAttribute: '/api/v1/recipe/materials-attribute/',
+  BatchSet: '/api/v1/recipe/materials-attribute/batch-set/',
   // 物料条码信息
   materialsSupplier: '/api/v1/recipe/materials-supplier/',
 
@@ -195,6 +198,7 @@ export default {
   MaterialCount: '/api/v1/inventory/material_count/',
   // 物料出入库履历列表
   InventoryLog: '/api/v1/inventory/inventory-log/',
+  ProductInOutHistory: '/api/v1/inventory/product-in-out-history/',
   PalletTrainsFeedbacks: '/api/v1/production/pallet-trains-feedbacks/',
   // 仓库名
   WarehouseNamesUrl: '/api/v1/inventory/warehouse-info/warehouse_names/',
@@ -581,6 +585,7 @@ export default {
   // 新建出库单据
   EquipWarehouseOrder: '/api/v1/equipment/equip-warehouse-order/',
   EquipWarehouseRecord: '/api/v1/equipment/equip-warehouse-record/', // 备件出入库履历
+  CloseOrder: '/api/v1/equipment/equip-warehouse-order/close-order/',
   EquipWarehouseStatistical: '/api/v1/equipment/equip-warehouse-statistical/', // 备件入出库统计分析
   EquipWarehouseOrderDetail: '/api/v1/equipment/equip-warehouse-order-detail/',
   GetCode: '/api/v1/equipment/equip-warehouse-order/get_code/',
@@ -660,6 +665,7 @@ export default {
   WmsNucleinManagement: '/api/v1/inventory/wms-nuclein-management/',
   MaterialTestPlan: '/api/v1/quality/material-test-plan/',
   MaterialTestPlanDetail: '/api/v1/quality/material-test-plan-detail/',
+  CutTimeCollectSummary: '/api/v1/production/cut-time-collect-summary/', // 规格切换时间汇总
   PerformanceJobLadder: '/api/v1/production/performance-job-ladder/', // 绩效计算 岗位阶梯表
   ProductInfoDj: '/api/v1/production/product-info-dj/', // 丁基胶规格设定
   PerformanceUnitPrice: '/api/v1/production/performance-unit-price/', // 绩效计算 单价表
@@ -697,6 +703,9 @@ export default {
   MaterialInspectionRegistration: '/api/v1/quality/material-inspection-registration/',
 
   ReplaceRecipeMaterial: '/api/v1/recipe/product-batching-no-new/',
+  ReplaceRecipeOne: '/api/v1/recipe/replace-recipe-material/',
   XlReportWeightStatics: '/api/v1/terminal/xl-report-weight-statics/',
-  ReplaceRecipeOne: '/api/v1/recipe/replace-recipe-material/'
+  ProductExpiresList: '/api/v1/inventory/product-expires-list/',
+  ProductExpiresDetails: '/api/v1/inventory/product-expires-details/',
+  EquipmentIndex: '/api/v1/equipment/index/'
 }

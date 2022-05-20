@@ -17,6 +17,7 @@
         <el-button
           v-permission="['daily_production_completion_report','export']"
           type="primary"
+          :loading="btnExportLoad"
           @click="exportTable"
         >导出Excel</el-button>
         <el-button
@@ -70,7 +71,7 @@
       </template>
       <el-table-column
         prop="weight"
-        label="日累计完成1日为起点"
+        label="月累计完成1日为起点"
         width="90"
       />
     </el-table>
@@ -160,7 +161,7 @@
           min-width="20"
         >
           <template slot-scope="{row}">
-            <el-input-number v-model="row.qty" :min="1" controls-position="right" @change="changeQty(row)" />
+            <el-input-number v-model="row.qty" :precision="0" :min="1" controls-position="right" @change="changeQty(row)" />
           </template>
         </el-table-column>
         <el-table-column
@@ -198,10 +199,10 @@
 </template>
 
 <script>
-import { dailyProductionCompletionReport, equip190e } from '@/api/jqy'
+import { dailyProductionCompletionReport, equip190e, dailyProductionCompletionDown } from '@/api/jqy'
 import classSelect from '@/components/ClassSelect'
 import * as echarts from 'echarts'
-import { exportExcel } from '@/utils/index'
+// import { exportExcel } from '@/utils/index'
 import { setDate } from '@/utils'
 export default {
   name: 'DailyOutputCompleted',
@@ -211,6 +212,7 @@ export default {
       search: {
         date: setDate(null, null, 'month')
       },
+      btnExportLoad: false,
       loading: false,
       btnLoading: false,
       dialogVisible: false,
@@ -377,7 +379,7 @@ export default {
           return
         }
         const data = await equip190e('get', null, { params: { specification: row.specification }})
-        this.options = data.results
+        this.options = data
       }
     },
     changeQty(row) {
@@ -438,7 +440,7 @@ export default {
     async get190eList() {
       try {
         const data = await equip190e('get', null, { params: {}})
-        this.dataList = data.results || []
+        this.dataList = data || []
       } catch (e) {
         //
       }
@@ -449,7 +451,7 @@ export default {
       for (const key in obj) {
         if (key !== 'name' && key !== 'weight' && obj[key] !== undefined) {
           arr.push({
-            factory_date: this.search.date + '-' + (key.split('日')[0] > 10 ? key.split('日')[0] : '0' + key.split('日')[0]),
+            factory_date: this.search.date + '-' + (key.split('日')[0] >= 10 ? key.split('日')[0] : '0' + key.split('日')[0]),
             weight: obj[key]
           })
         }
@@ -575,12 +577,24 @@ export default {
       this.tableHead = getDiffDate(this.search.date + '-01', getCurrentMonthLastDay(this.search.date))
       this.getList()
     },
-    async exportTable() {
-      await this.$set(this, 'exportTableShow', true)
-      await exportExcel('月产量完成报表')
-      setTimeout(() => {
-        this.exportTableShow = false
-      }, 300)
+    exportTable() {
+      this.btnExportLoad = true
+      const obj = { export: 1, date: this.search.date }
+      const _api = dailyProductionCompletionDown
+      _api(obj)
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '月产量完成.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
     }
   }
 }

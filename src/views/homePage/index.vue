@@ -125,7 +125,7 @@
           />
           <div class="absoluteFa">
             <el-tabs v-model="equipMaintenance.dimension" style="width:190px" @tab-click="handleClick('equipMaintenance')">
-              <el-tab-pane label="总计" name="0" />
+              <el-tab-pane label="本月" name="0" />
               <el-tab-pane label="今天" name="1" />
               <el-tab-pane label="昨天" name="2" />
             </el-tabs>

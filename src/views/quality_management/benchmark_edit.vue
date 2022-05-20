@@ -268,7 +268,7 @@ export default {
     },
     async getRubber() {
       try {
-        const data = await batchingMaterials('get')
+        const data = await batchingMaterials('get', null, { params: { used_type: 4 }})
         this.optionsRubber = data || []
       } catch (e) {
         //
