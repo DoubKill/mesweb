@@ -77,7 +77,7 @@ export const constantRoutes = [
     component: () => import('@/views/quality_management/phone/fault-day-statistics'),
     hidden: true,
     meta: {
-      isPhone: true
+      isPhone: true // 走不走登录和全限
     }
   },
   {
@@ -139,6 +139,24 @@ export const constantRoutes = [
       isPhone: true,
       title: '生产投料配方查询',
       permissionName: 'formula_preparation'
+    }
+  },
+  {
+    path: '/homePage/index',
+    component: () => import('@/views/homePage/index'),
+    hidden: true,
+    meta: {
+      title: '首页',
+      permissionName: ''
+    }
+  },
+  {
+    path: '/operation-status',
+    component: () => import('@/views/equipment-manage/operation-status'),
+    hidden: true,
+    meta: {
+      title: '设备运行现况',
+      permissionName: ''
     }
   }
 ]

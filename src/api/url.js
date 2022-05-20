@@ -585,6 +585,7 @@ export default {
   // 新建出库单据
   EquipWarehouseOrder: '/api/v1/equipment/equip-warehouse-order/',
   EquipWarehouseRecord: '/api/v1/equipment/equip-warehouse-record/', // 备件出入库履历
+  CloseOrder: '/api/v1/equipment/equip-warehouse-order/close-order/',
   EquipWarehouseStatistical: '/api/v1/equipment/equip-warehouse-statistical/', // 备件入出库统计分析
   EquipWarehouseOrderDetail: '/api/v1/equipment/equip-warehouse-order-detail/',
   GetCode: '/api/v1/equipment/equip-warehouse-order/get_code/',
@@ -705,5 +706,6 @@ export default {
   ReplaceRecipeOne: '/api/v1/recipe/replace-recipe-material/',
   XlReportWeightStatics: '/api/v1/terminal/xl-report-weight-statics/',
   ProductExpiresList: '/api/v1/inventory/product-expires-list/',
-  ProductExpiresDetails: '/api/v1/inventory/product-expires-details/'
+  ProductExpiresDetails: '/api/v1/inventory/product-expires-details/',
+  EquipmentIndex: '/api/v1/equipment/index/'
 }

@@ -318,3 +318,12 @@ export function productExpiresList(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function equipmentIndex(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipmentIndex + id + '/' : API.EquipmentIndex,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
