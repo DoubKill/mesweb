@@ -249,8 +249,9 @@
               <el-input-number
                 v-model="formData2.single_weight"
                 controls-position="right"
-                :max="100"
-              />
+                :max="99.999"
+                style="margin-right:5px"
+              />最大值：99.999
             </el-form-item>
             <el-form-item
               prop="package_count"
@@ -260,8 +261,9 @@
                 v-model="formData2.package_count"
                 controls-position="right"
                 :min="1"
-                :max="30"
-              />
+                :max="999"
+                style="margin-right:5px"
+              />最大值：999
             </el-form-item>
             <el-form-item
               prop="expire_day"

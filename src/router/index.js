@@ -1211,7 +1211,7 @@ export let asyncRoutes = [
             name: 'SmallMaterialWeightCurrency1',
             meta: {
               faName: 'Resume1',
-              title: '通用化工流转卡',
+              title: '(内部)原材料流转卡',
               permissionName: 'material_add_print'
             }
           }
@@ -1576,7 +1576,7 @@ export let asyncRoutes = [
           {
             path: '/rubber-overdue-alarm',
             component: () => import('@/views/inventory/rubber-warehouse/rubber-overdue-alarm.vue'),
-            name: 'MaterialPrintCard',
+            name: 'RubberOverdueAlarm',
             meta: {
               faName: 'RubberWarehouse',
               title: '胶料超期报警',

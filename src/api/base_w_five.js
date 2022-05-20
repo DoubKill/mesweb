@@ -40,6 +40,14 @@ export function weightingPackageSingle(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function wmsAddPrint(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WmsAddPrint + id + '/' : API.WmsAddPrint,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 export function getManualInfo(method, id, data = {}) {
   const obj = {
     url: id ? API.GetManualInfo + id + '/' : API.GetManualInfo,

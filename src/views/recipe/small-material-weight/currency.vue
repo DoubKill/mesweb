@@ -2,6 +2,7 @@
   <div class="currency-style">
     <!-- 配方用原材料流转卡 -->
     <!-- 通用化工流转卡 -->
+    <!-- (内部)原材料流转卡 -->
     <el-form :inline="true">
       <!-- <el-form-item v-if="!isProduction" label="类别">
         <el-select
@@ -130,6 +131,7 @@
         }"
       />
       <el-table-column
+        v-if="!isProduction"
         label="包数"
         min-width="20"
         :formatter="d=>{
@@ -142,6 +144,7 @@
         min-width="20"
       />
       <el-table-column
+        v-if="!isProduction"
         prop="expire_day"
         label="有效期"
         min-width="20"
@@ -152,6 +155,7 @@
         min-width="20"
       />
       <el-table-column
+        v-if="!isProduction"
         prop="expire_datetime"
         label="有效时间"
         min-width="20"
@@ -291,7 +295,7 @@
           <el-input-number
             v-model="formData.single_weight"
             controls-position="right"
-            :max="100"
+            :max="99.999"
             placeholder="配料重量"
             :disabled="(formData.id||formData.batching_type==='配方')?true:false"
           />
@@ -321,6 +325,7 @@
           />
         </el-form-item>
         <el-form-item
+          v-if="!isProduction"
           prop="package_count"
           label="包数"
         >
@@ -328,11 +333,12 @@
             v-model="formData.package_count"
             controls-position="right"
             :min="1"
-            :max="30"
+            :max="999"
             :disabled="formData.id?true:false"
           />
         </el-form-item>
         <el-form-item
+          v-if="!isProduction"
           prop="expire_day"
           label="有效期（天）"
         >
@@ -346,6 +352,7 @@
           />
         </el-form-item>
         <el-form-item
+          v-if="!isProduction"
           prop="print_count"
           label="打印张数"
         >
@@ -369,7 +376,7 @@
 <script>
 import page from '@/components/page'
 import EquipCategorySelect from '@/components/EquipCategorySelect'
-import { weightingPackageSingle } from '@/api/base_w_five'
+import { weightingPackageSingle, wmsAddPrint } from '@/api/base_w_five'
 import { rubberMaterialUrl, materialsUrl } from '@/api/base_w'
 import { getRecipeManual } from '@/api/small-material-recipe'
 export default {
@@ -433,7 +440,8 @@ export default {
   },
   created() {
     // 只有通用
-    this.isProduction = (this.$route.path === '/small-material-weight/currency1') || (this.$route.path === '/small-material-weight/currency/')
+    this.isProduction = (this.$route.path === '/small-material-weight/currency1')
+    //  || (this.$route.path === '/small-material-weight/currency/')
     if (this.isDialog) {
       if (this.type === 2) {
         this.search.batching_type = '配方'
@@ -456,7 +464,8 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const data = await weightingPackageSingle('get', null, { params: this.search })
+        const _api = this.isProduction ? wmsAddPrint : weightingPackageSingle
+        const data = await _api('get', null, { params: this.search })
         this.tableData = data.results || []
         this.total = data.count
         this.loading = false
@@ -483,7 +492,12 @@ export default {
             data = await getRecipeManual(this.product_batching)
           }
         } else {
-          const { results } = await materialsUrl('get', null, { params: { all: 1, mc_code: 1 }})
+          const _obj = { all: 1, mc_code: 1 }
+          if (this.isProduction) {
+            delete _obj.mc_code
+            _obj.wms_code = 1
+          }
+          const { results } = await materialsUrl('get', null, { params: _obj })
           data = results
         }
         this.materialList = data || []
@@ -644,7 +658,8 @@ export default {
           try {
             this.loadingBtn = true
             const _mothod = this.formData.id ? 'put' : 'post'
-            await weightingPackageSingle(_mothod, this.formData.id || null, { data: this.formData })
+            const _api = this.isProduction ? wmsAddPrint : weightingPackageSingle
+            await _api(_mothod, this.formData.id || null, { data: this.formData })
             this.$message.success('操作成功')
             this.handleClose(false)
             this.getList()

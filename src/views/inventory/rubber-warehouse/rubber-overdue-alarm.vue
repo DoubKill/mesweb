@@ -90,7 +90,7 @@ import { productExpiresList } from '@/api/base_w_five'
 import { globalCodesUrl } from '@/api/base_w'
 import page from '@/components/page'
 export default {
-  name: 'CarbonDeliveryOverdueQuery',
+  name: 'RubberOverdueAlarm',
   components: { materialInventoryManage, page },
   data() {
     return {
