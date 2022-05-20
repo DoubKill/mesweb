@@ -21,6 +21,7 @@
           v-model="getParams.is_active"
           clearable
           placeholder="请选择"
+          style="width:150px"
           @change="numChanged"
         >
           <el-option
@@ -154,6 +155,11 @@
       <el-table-column label="创建日期" min-width="10">
         <template slot-scope="scope">
           {{ scope.row.created_date?scope.row.created_date:'--' }}
+        </template>
+      </el-table-column>
+      <el-table-column label="更新时间" min-width="10">
+        <template slot-scope="scope">
+          {{ scope.row.last_updated_date?scope.row.last_updated_date:'--' }}
         </template>
       </el-table-column>
       <el-table-column
