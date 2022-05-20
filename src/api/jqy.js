@@ -1345,6 +1345,22 @@ export function hfRealStatus(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function hfForceHandle(method, id, data = {}) {
+  const obj = {
+    url: id ? API.HfForceHandle + id + '/' : API.HfForceHandle,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function hfConfigSet(method, id, data = {}) {
+  const obj = {
+    url: id ? API.HfConfigSet + id + '/' : API.HfConfigSet,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 
 export function wmsMaterials(method, id, data = {}) {
   const obj = {

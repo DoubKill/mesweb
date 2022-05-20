@@ -707,5 +707,9 @@ export default {
   XlReportWeightStatics: '/api/v1/terminal/xl-report-weight-statics/',
   ProductExpiresList: '/api/v1/inventory/product-expires-list/',
   ProductExpiresDetails: '/api/v1/inventory/product-expires-details/',
-  EquipmentIndex: '/api/v1/equipment/index/'
+  EquipmentIndex: '/api/v1/equipment/index/',
+
+  WmsAddPrint: '/api/v1/terminal/wms-add-print/',
+  HfForceHandle: '/api/v1/inventory/hf-force-handle/',
+  HfConfigSet: '/api/v1/inventory/hf-config-set/'
 }
