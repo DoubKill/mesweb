@@ -157,7 +157,12 @@
           {{ scope.row.created_date?scope.row.created_date:'--' }}
         </template>
       </el-table-column>
-      <el-table-column label="更新时间" min-width="10">
+      <el-table-column label="修改人" min-width="10">
+        <template slot-scope="scope">
+          {{ scope.row.last_update_username?scope.row.last_update_username:'--' }}
+        </template>
+      </el-table-column>
+      <el-table-column label="修改日期" min-width="10">
         <template slot-scope="scope">
           {{ scope.row.last_updated_date?scope.row.last_updated_date:'--' }}
         </template>

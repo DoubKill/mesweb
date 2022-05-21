@@ -4,8 +4,11 @@
     <el-form :inline="true">
       <el-form-item label="生产日期">
         <el-date-picker
-          v-model="paramsObj.factory_date"
-          type="date"
+          v-model="dateValue"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
           value-format="yyyy-MM-dd"
           @change="changeSearch"
         />
@@ -308,10 +311,13 @@ export default {
       loading: false,
       listData: [],
       details: [],
-      orderRow: { department: '准备分厂', currentDate: setDate(), reason: '', status: '半成品' }
+      orderRow: { department: '准备分厂', currentDate: setDate(), reason: '', status: '半成品' },
+      dateValue: []
     }
   },
   created() {
+    this.search.st = this.dateValue ? this.dateValue[0] : ''
+    this.search.et = this.dateValue ? this.dateValue[1] : ''
     this.getList()
   },
   methods: {
@@ -368,6 +374,8 @@ export default {
       this.dialogVisible = true
     },
     changeSearch() {
+      this.search.st = this.dateValue ? this.dateValue[0] : ''
+      this.search.et = this.dateValue ? this.dateValue[1] : ''
       this.search.factory_date = this.paramsObj.factory_date
       this.search.equip_no = this.paramsObj.equip_no
       this.search.page = 1
