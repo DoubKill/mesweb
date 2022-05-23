@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 入库管理 -->
+    <!-- 备件入库管理 -->
     <el-form :inline="true">
       <el-form-item label="入库单据号">
         <el-input
@@ -138,6 +138,7 @@
       >
         <template slot-scope="scope">
           <el-button
+            v-if="scope.row.status_name!=='关闭'"
             v-permission="['equip_in_warehouse', 'change']"
             type="primary"
             size="mini"
@@ -152,6 +153,7 @@
           >删除
           </el-button>
           <el-button
+            v-if="scope.row.status_name!=='关闭'"
             v-permission="['equip_in_warehouse', 'delete']"
             size="mini"
             @click="closeOrder(scope.row)"
