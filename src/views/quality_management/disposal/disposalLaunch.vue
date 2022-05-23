@@ -447,7 +447,6 @@ export default {
                 }
                 if (aee[_index].trains.split(';').every(d => { return d !== ac[index].trains })) {
                   aee[_index].trains += ';' + ac[index].trains
-                  aee[_index].ids.push(ac[index].id)
                   for (let i = 0; i < aee[_index].test_data.length; i++) {
                     if (aee[_index].test_data[i].min_value) {
                       if (aee[_index].test_data[i].min_value > ac[index].test_data[i].min_value) {
