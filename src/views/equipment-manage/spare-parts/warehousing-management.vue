@@ -94,6 +94,7 @@
       >
         <template slot-scope="scope">
           <el-button
+            v-if="scope.row.status_name!=='关闭'"
             v-permission="['equip_in_warehouse', 'enter']"
             type="primary"
             size="mini"
@@ -138,7 +139,6 @@
       >
         <template slot-scope="scope">
           <el-button
-            v-if="scope.row.status_name!=='关闭'"
             v-permission="['equip_in_warehouse', 'change']"
             type="primary"
             size="mini"
@@ -906,6 +906,10 @@ export default {
       }
     },
     submitEdit() {
+      if (this.dialogForm.status_name === '关闭') {
+        this.$message('该单据已经关闭,不可修改')
+        return
+      }
       this.dialogForm.status = 1
       this.dialogForm.equip_spare.forEach(d => {
         if (d.quantity === undefined || d.quantity === 0) {
