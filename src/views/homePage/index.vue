@@ -519,8 +519,27 @@ export default {
       }
     }
   },
+  watch: {
+    $route: {
+      handler() {
+        if (this.$route.fullPath === '/homePage' || this.$route.fullPath === '/homePage/index') {
+          this.getList()
+          this._setInterval = setInterval(d => {
+            this.getList()
+          }, 15000)
+        } else {
+          window.clearInterval(this._setInterval)
+        }
+      },
+      deep: true, // 深度监听
+      immediate: true // 第一次初始化渲染就可以监听到
+    }
+  },
   created() {
-    this.getList()
+
+  },
+  destroyed() {
+    window.clearInterval(this._setInterval)
   },
   mounted() {
     this.myChartYieldBar = echarts.init(document.getElementById('yieldBar'))

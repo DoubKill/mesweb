@@ -116,7 +116,7 @@ export default {
   data() {
     return {
       currentTime: setDate(null, true),
-      loading: true,
+      loading: false,
       options: {},
       Wequip: [],
       Bequip: [],
@@ -125,16 +125,34 @@ export default {
       normalColor: 'rgb(56, 215, 72)'
     }
   },
+  watch: {
+    $route: {
+      handler() {
+        if (this.$route.fullPath === '/equipment-home' || this.$route.fullPath === '/operation-status') {
+          this.getList()
+          this._setInterval = setInterval(d => {
+            this.getList()
+          }, 15000)
+        } else {
+          window.clearInterval(this._setInterval)
+        }
+      },
+      deep: true, // 深度监听
+      immediate: true // 第一次初始化渲染就可以监听到
+    }
+  },
   created() {
     setInterval(d => {
       this.currentTime = setDate(null, true)
     }, 1000)
-    this.getList()
+  },
+  destroyed() {
+    window.clearInterval(this._setInterval)
   },
   methods: {
     async getList() {
       try {
-        this.loading = true
+        // this.loading = true
         const data = await equipmentIndex('get')
         this.options = data || []
         this.Wequip = this.options.equip_data.filter(d => d.equip_catetory === '称量设备')
@@ -155,8 +173,10 @@ export default {
      align-items: center;
   }
   .conter-style{
-    margin-left:10px;
+    margin-left:18px;
     margin-top:20px;
+    display: flex;
+    flex-wrap:wrap;
       .conter-style-box{
         text-align: left;
         display: inline-block;
@@ -164,8 +184,8 @@ export default {
          border-radius: 15px;
          box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
          width:19%;
-         height:166px;
-         margin-right: 14px;
+         height:180px;
+         margin-right: 16px;
       }
   }
   .icon-fa-style{
