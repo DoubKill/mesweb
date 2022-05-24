@@ -585,6 +585,7 @@ export default {
   // 新建出库单据
   EquipWarehouseOrder: '/api/v1/equipment/equip-warehouse-order/',
   EquipWarehouseRecord: '/api/v1/equipment/equip-warehouse-record/', // 备件出入库履历
+  CloseOrder: '/api/v1/equipment/equip-warehouse-order/close-order/',
   EquipWarehouseStatistical: '/api/v1/equipment/equip-warehouse-statistical/', // 备件入出库统计分析
   EquipWarehouseOrderDetail: '/api/v1/equipment/equip-warehouse-order-detail/',
   GetCode: '/api/v1/equipment/equip-warehouse-order/get_code/',
@@ -709,5 +710,6 @@ export default {
 
   WmsAddPrint: '/api/v1/terminal/wms-add-print/',
   HfForceHandle: '/api/v1/inventory/hf-force-handle/',
-  HfConfigSet: '/api/v1/inventory/hf-config-set/'
+  HfConfigSet: '/api/v1/inventory/hf-config-set/',
+  EquipmentIndex: '/api/v1/equipment/index/'
 }

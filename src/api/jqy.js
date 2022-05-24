@@ -634,6 +634,14 @@ export function equipWarehouseOrder(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function closeOrder(method, id, data = {}) {
+  const obj = {
+    url: id ? API.CloseOrder + id + '/' : API.CloseOrder,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 
 export function equipWarehouseOrderDetail(method, id, data = {}) {
   const obj = {
