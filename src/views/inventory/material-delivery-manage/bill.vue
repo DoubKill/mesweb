@@ -307,6 +307,10 @@
             @input="getDialogDebounce"
           />
         </el-form-item>
+        <el-form-item v-if="isLocation" label="门尼值">
+          <el-input-number v-model="formSearch.st_value" controls-position="right" :min="1" :max="formSearch.et_value" @change="getDialog" /> -
+          <el-input-number v-model="formSearch.et_value" controls-position="right" :min="formSearch.st_value" :max="999" @change="getDialog" />
+        </el-form-item>
       </el-form>
       <div
         v-if="isLocation"
@@ -372,7 +376,6 @@
             min-width="20"
           />
           <el-table-column
-            prop=""
             label="库位状态"
             min-width="15"
             :formatter="(row)=>{
@@ -387,6 +390,11 @@
           <el-table-column
             prop="position"
             label="伸位"
+            min-width="20"
+          />
+          <el-table-column
+            prop="ml_test_value"
+            label="门尼值"
             min-width="20"
           />
           <el-table-column
@@ -467,6 +475,11 @@
           <el-table-column
             prop="position"
             label="伸位"
+            min-width="20"
+          />
+          <el-table-column
+            prop="ml_test_value"
+            label="门尼值"
             min-width="20"
           />
           <el-table-column
@@ -657,7 +670,9 @@ export default {
       dialogVisible1: false,
       formSearch: {
         quality_status: 1,
-        is_entering: 'N'
+        is_entering: 'N',
+        st_value: 50,
+        et_value: 90
       },
       tableData2: [],
       tableData3: [],
@@ -767,6 +782,10 @@ export default {
     },
     getDialog() {
       if (this.isLocation) {
+        if (!this.formSearch.st_value || !this.formSearch.et_value) {
+          this.$message('请输入门尼值')
+          return
+        }
         this.formSearch.page = 1
         this.getDialogGoods()
       } else {
@@ -841,6 +860,8 @@ export default {
       this.formSearch.code = this.optionsEntrance[0].code
       this.formSearch.quality_status = 1
       this.formSearch.is_entering = 'N'
+      this.formSearch.st_value = 50
+      this.formSearch.et_value = 90
       this.EntranceCode = ''
       if (done) {
         done()
@@ -984,7 +1005,6 @@ export default {
       } else {
         this.formSearch.is_entering = 'N'
       }
-      console.log(obj, 'obj')
       this.formSearch.code = obj.code || ''
       if (this.isLocation) {
         this.tableData4 = []
