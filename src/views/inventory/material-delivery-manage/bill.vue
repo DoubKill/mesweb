@@ -782,10 +782,6 @@ export default {
     },
     getDialog() {
       if (this.isLocation) {
-        if (!this.formSearch.st_value || !this.formSearch.et_value) {
-          this.$message('请输入门尼值')
-          return
-        }
         this.formSearch.page = 1
         this.getDialogGoods()
       } else {
