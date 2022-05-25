@@ -18,7 +18,7 @@
             <span
               class="icon-style"
               :style="{border:'5px solid'
-                       ,borderColor:item.state==='运行中'?normalColor:item.state==='设备故障'?faultColor:haltColor}"
+                       ,borderColor:item.state==='运行中'?normalColor:item.state==='生产停机'?haltColor:faultColor}"
             >
               <div style="position: relative;">
                 <img src="@/assets/mixerEquipment.png" alt="" srcset="">
@@ -40,14 +40,14 @@
             <div class="right-font-style">
               <span style="width:95px">设备状态：</span><span
                 class="setFont"
-                :style="{color:item.state==='运行中'?normalColor:item.state==='设备故障'?faultColor:haltColor}"
+                :style="{color:item.state==='运行中'?normalColor:item.state==='生产停机'?haltColor:faultColor}"
               >{{ item.state }}</span>
             </div>
           </div>
         </div>
         <div>
           <div class="bottom-font-style">
-            <span style="width:95px">异常信息：</span><span class="setFont" :style="{color:item.state==='运行中'?normalColor:item.state==='设备故障'?faultColor:haltColor}">{{ item.error_reason }}</span>
+            <span style="width:95px">异常信息：</span><span class="setFont" :style="{color:item.state==='运行中'?normalColor:item.state==='生产停机'?haltColor:faultColor}">{{ item.error_reason }}</span>
           </div>
         </div>
       </div>
