@@ -2,7 +2,7 @@
   <div>
     <el-select
       :value="id"
-      clearable
+      :clearable="isClearable"
       placeholder="请选择"
       :multiple="isMultiple"
       :style="{'width':widthSelect}"
@@ -50,6 +50,10 @@ export default {
     isAllowCreate: {
       type: Boolean,
       default: false
+    },
+    isClearable: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -72,6 +76,8 @@ export default {
           arr.push(d.global_name)
         })
         this.$emit('change', arr)
+      } else if (this.isDefault && this.stageOptions.length) {
+        this.$emit('change', this.stageOptions[0].global_name)
       }
     },
     visibleChange(visible) {

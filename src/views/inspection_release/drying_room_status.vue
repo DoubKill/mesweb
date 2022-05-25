@@ -31,8 +31,8 @@
         </div>
         <div style="display: flex;margin-left:2%;margin-top:2%">
           <div v-for="_item in 6" :key="_item" class="bottomDiv" :style="{background:item.color,'padding': '0 4px'}">
-            <div v-if="item.OastMatiles&&item.OastMatiles[_item]" class="bottomText">{{ item.OastMatiles[_item].ProductName }}
-              /{{ item.OastMatiles[_item].RFID }}</div>
+            <div v-if="item.OastMatiles[_item-1]" class="bottomText">{{ item.OastMatiles[_item-1].ProductName }}
+              /{{ item.OastMatiles[_item-1].RFID }}</div>
           </div>
         </div>
       </div>
