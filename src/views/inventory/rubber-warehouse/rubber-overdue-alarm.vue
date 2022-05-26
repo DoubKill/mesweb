@@ -11,12 +11,20 @@
       step-strictly
       @change="changeList"
     />
-    物料类别/规格&nbsp;<el-select v-model="stage" filterable placeholder="请选择" clearable @change="changeList">
+    物料类别/规格&nbsp;<el-select v-model="stage" filterable placeholder="请选择" clearable style="margin-right:30px" @change="changeList">
       <el-option
         v-for="(item,k) in stageList"
         :key="k"
         :label="item.global_name"
         :value="item.global_name"
+      />
+    </el-select>
+    立库&nbsp;<el-select v-model="liKu" filterable placeholder="请选择" clearable @change="changeList">
+      <el-option
+        v-for="(item) in ['混炼胶库','终炼胶库']"
+        :key="item"
+        :label="item"
+        :value="item"
       />
     </el-select>
     <el-table
@@ -35,6 +43,16 @@
         prop="material_no"
         label="胶料编码"
         min-width="20"
+      />
+      <el-table-column
+        prop="warehouse_name"
+        label="立库"
+        min-width="10"
+      />
+      <el-table-column
+        prop="period_of_validity"
+        label="有效天数"
+        min-width="10"
       />
       <el-table-column
         label="库存数（车）"
@@ -104,7 +122,8 @@ export default {
         page_size: 10
       },
       stageList: [],
-      stage: ''
+      stage: '',
+      liKu: ''
     }
   },
   created() {
@@ -122,7 +141,7 @@ export default {
     async getList() {
       try {
         this.loading = true
-        Object.assign(this.getParams, { expire_days: this.expire_days, stage: this.stage })
+        Object.assign(this.getParams, { expire_days: this.expire_days, stage: this.stage, warehouse_name: this.liKu })
         const data = await productExpiresList('get', null, { params: this.getParams })
         this.tableData = data.results || []
         this.total = data.count

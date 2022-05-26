@@ -49,6 +49,16 @@
           @change="searchDate"
         />
       </el-form-item>
+      <el-form-item label="机台">
+        <selectEquip
+          :equip_no_props.sync="getParams.equip_no"
+          @changeSearch="quality_statusSearch"
+        />
+      </el-form-item>
+      <!-- <el-form-item label="车次">
+        <el-input-number v-model="getParams.num" controls-position="right" :min="1" :max="getParams.num1" @change="quality_statusSearch1" />-
+        <el-input-number v-model="getParams.num1" controls-position="right" :min="getParams.num" :max="999" @change="quality_statusSearch1" />
+      </el-form-item> -->
       <br>
       <el-form-item label="巷道">
         <el-select
@@ -101,14 +111,15 @@
         :reserve-selection="true"
       />
       <el-table-column :key="1" label="库房" width="80" align="center" prop="warehouse" />
-      <el-table-column :key="2" label="货位地址" align="center" prop="location" />
-      <el-table-column :key="3" label="物料编码" align="center" prop="material_no" />
       <el-table-column :key="4" label="物料名称" align="center" prop="material_no" />
-      <el-table-column :key="5" label="托盘号" align="center" prop="container_no" />
-      <el-table-column :key="6" label="品质状态" align="center" prop="quality_status" />
-      <el-table-column :key="7" width="60" label="车数/托" align="center" prop="qty" />
+      <el-table-column :key="3" label="机台" align="center" prop="equip_no" />
+      <el-table-column :key="7" width="60" label="车次" align="center" prop="memo" />
       <el-table-column :key="8" label="重量kg" align="center" prop="total_weight" />
+      <el-table-column :key="2" label="货位地址" align="center" prop="location" />
+      <el-table-column :key="5" label="托盘号" align="center" prop="container_no" />
       <el-table-column :key="9" label="入库时间" align="center" prop="in_storage_time" />
+      <el-table-column :key="6" label="品质状态" align="center" prop="quality_status" />
+      <el-table-column :key="10" label="处理意见" align="center" prop="deal_suggestion" />
     </el-table>
     <el-alert
       style="color:black"
@@ -121,8 +132,9 @@
 import { outbound } from '@/api/jqy'
 import { checkPermission } from '@/utils'
 import { bzFinalInventorySearch, bzMixinInventorySearch } from '@/api/base_w_four'
+import selectEquip from '@/components/select_w/equip'
 export default {
-  components: { },
+  components: { selectEquip },
   props: {
     warehouseName: {
       type: String,
