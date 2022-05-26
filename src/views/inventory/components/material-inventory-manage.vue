@@ -19,12 +19,13 @@
           />
         </el-select> -->
         <!-- <warehouseSelect :created-is="true" @changSelect="changeWarehouse" /> -->
+
       </el-form-item>
-      <el-form-item v-if="warehouseNameProps!=='胶料库'" label="物料编码">
+      <el-form-item v-if="warehouseNameProps!=='胶料库'&& !isRubber" label="物料编码">
         <span v-if="materialCode">{{ materialCode }}</span>
         <materialCodeSelect
           v-else
-          :store-name="getParams.warehouse_name"
+          :store-name="warehouseNameProps"
           :is-clearable="true"
           :is-allow-create="true"
           @changSelect="materialCodeFun"
@@ -43,7 +44,7 @@
       </el-form-item> -->
       <el-form-item style="float:right">
         <el-button
-          v-if="warehouseNameProps!=='胶料库'"
+          v-if="warehouseNameProps!=='胶料库' && !isRubber"
           type="primary"
           :disabled="btnExportLoad"
           @click="exportTable(1)"
@@ -64,18 +65,18 @@
     >
       <el-table-column label="No" type="index" align="center" width="40" />
       <el-table-column
-        v-if="warehouseNameProps!=='胶料库'"
+        v-if="warehouseNameProps!=='胶料库'&& !isRubber"
         label="物料名称"
         align="center"
         prop="material_name"
         min-width="35"
       />
-      <el-table-column v-if="warehouseNameProps!=='胶料库'" label="物料编码" align="center" prop="material_no" min-width="35" />
+      <el-table-column v-if="warehouseNameProps!=='胶料库'&& !isRubber" label="物料编码" align="center" prop="material_no" min-width="35" />
 
-      <el-table-column v-if="warehouseNameProps==='胶料库'" label="库区" align="center" prop="store_name" min-width="35" />
-      <el-table-column v-if="warehouseNameProps==='胶料库'" label="胶料编码" align="center" prop="material_no" min-width="35" />
-      <el-table-column :label="`${warehouseNameProps==='胶料库'?'追踪码':'质检条码'}`" align="center" prop="lot_no" min-width="35" />
-      <el-table-column v-if="getParams.warehouse_name === '帘布库'" label="货位状态" align="center" prop="location_status" min-width="16" />
+      <el-table-column v-if="warehouseNameProps==='胶料库'|| isRubber" label="库区" align="center" prop="store_name" min-width="35" />
+      <el-table-column v-if="warehouseNameProps==='胶料库'|| isRubber" label="胶料编码" align="center" prop="material_no" min-width="35" />
+      <el-table-column :label="`${warehouseNameProps==='胶料库'|| isRubber?'追踪码':'质检条码'}`" align="center" prop="lot_no" min-width="35" />
+      <el-table-column v-if="warehouseNameProps === '帘布库'" label="货位状态" align="center" prop="location_status" min-width="16" />
       <!-- <el-table-column label="机台号" align="center" min-width="12">
         <template v-if="row.product_info" slot-scope="{row}">
           {{ row.product_info.equip_no }}
@@ -93,8 +94,8 @@
       </el-table-column> -->
       <el-table-column label="托盘号" align="center" prop="container_no" min-width="18" />
       <el-table-column label="库存位" align="center" prop="location" min-width="18" />
-      <el-table-column :label="`${warehouseNameProps==='胶料库'?'车数':'库存数'}`" align="center" prop="qty" min-width="16" />
-      <el-table-column v-if="warehouseNameProps!== '胶料库'" label="单位" align="center" prop="unit" min-width="20" />
+      <el-table-column :label="`${warehouseNameProps==='胶料库'|| isRubber?'车数':'库存数'}`" align="center" prop="qty" min-width="16" />
+      <el-table-column v-if="warehouseNameProps!== '胶料库'&& !isRubber" label="单位" align="center" prop="unit" min-width="20" />
       <el-table-column
         label="单位重量"
         prop="total_weight"
@@ -107,8 +108,8 @@
         }"
       />
       <el-table-column label="总重量kg" align="center" prop="total_weight" min-width="16" />
-      <el-table-column v-if="warehouseNameProps!=='胶料库'" label="品质状态" align="center" prop="quality_status" min-width="15" />
-      <el-table-column v-if="warehouseNameProps==='胶料库'" label="品质状态" align="center" prop="quality_level" min-width="15" />
+      <el-table-column v-if="warehouseNameProps!=='胶料库'&&!isRubber" label="品质状态" align="center" prop="quality_status" min-width="15" />
+      <el-table-column v-if="warehouseNameProps==='胶料库'|| isRubber" label="品质状态" align="center" prop="quality_level" min-width="15" />
       <el-table-column label="入库时间" align="center" prop="in_storage_time" min-width="15" />
       <el-table-column label="有效期至" align="center" prop="expire_time" min-width="15" />
       <el-table-column label="剩余有效天数" align="center" prop="left_days" min-width="15" />
@@ -192,6 +193,10 @@ export default {
     show: {
       type: Boolean,
       default: false
+    },
+    isRubber: { // 胶料超期报警 弹框进来的
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -224,13 +229,14 @@ export default {
   watch: {
     show(bool) {
       if (bool) {
-        if (this.getParams.warehouse_name === '胶料库') {
+        if (this.warehouseNameProps === '胶料库' || this.isRubber) {
           this.getParams = {
             page: 1,
             page_size: 10,
             material_no: this.materialNo, // 物料编号
             quality_status: this.qualityStatus,
-            expire_days: this.expireDays
+            expire_days: this.expireDays,
+            warehouse_name: this.warehouseNameProps // 仓库名称
           }
         } else {
           this.getParams = {
@@ -254,13 +260,14 @@ export default {
     if (this.warehouseNameProps) {
       this.getParams.warehouse_name = this.warehouseNameProps
     }
-    if (this.warehouseNameProps === '胶料库') {
+    if (this.warehouseNameProps === '胶料库' || this.isRubber) {
       this.getParams = {
         page: 1,
         page_size: 10,
         material_no: this.materialNo, // 物料编号
         quality_status: this.qualityStatus,
-        expire_days: this.expireDays
+        expire_days: this.expireDays,
+        warehouse_name: this.warehouseNameProps // 仓库名称
       }
     }
     this.getTableData()
@@ -272,11 +279,11 @@ export default {
       const obj = Object.assign({ store_name: '帘布库' }, this.getParams)
       let _api = bzFinalInventory
 
-      if (['原材料库', '炭黑库'].includes(this.getParams.warehouse_name)) {
+      if (['原材料库', '炭黑库'].includes(this.warehouseNameProps)) {
         delete obj.store_name
-        _api = this.getParams.warehouse_name === '原材料库' ? wmsExpireDetails : thExpireDetails
+        _api = this.warehouseNameProps === '原材料库' ? wmsExpireDetails : thExpireDetails
       }
-      if (this.warehouseNameProps === '胶料库') {
+      if (this.warehouseNameProps === '胶料库' || this.isRubber) {
         delete obj.store_name
         _api = productExpiresDetails
       }
@@ -344,11 +351,11 @@ export default {
       this.btnExportLoad = true
       const obj = Object.assign({ store_name: '帘布库', export: val }, this.getParams)
       let _api
-      if (['原材料库', '炭黑库'].includes(this.getParams.warehouse_name)) {
+      if (['原材料库', '炭黑库'].includes(this.warehouseNameProps)) {
         delete obj.store_name
-        _api = this.getParams.warehouse_name === '原材料库' ? wmsExpireDetailsDown : thExpireDetailsDown
+        _api = this.warehouseNameProps === '原材料库' ? wmsExpireDetailsDown : thExpireDetailsDown
       }
-      if (this.warehouseNameProps === '胶料库') {
+      if (this.warehouseNameProps === '胶料库' || this.isRubber) {
         delete obj.store_name
         _api = productExpiresDetailsDown
       }

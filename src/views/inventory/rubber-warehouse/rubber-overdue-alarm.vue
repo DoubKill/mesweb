@@ -91,7 +91,7 @@
       :visible.sync="dialogVisible"
       width="90%"
     >
-      <materialInventoryManage :expire-days="expire_days" :quality-status="currentObj.quality_status" :material-no="currentObj.material_no" :show="dialogVisible" :warehouse-name-props="'胶料库'" />
+      <materialInventoryManage :expire-days="expire_days" :quality-status="currentObj.quality_status" :material-no="currentObj.material_no" :show="dialogVisible" :warehouse-name-props="currentObj.warehouse_name" :is-rubber="true" />
       <span slot="footer" class="dialog-footer">
         <el-button
           type="primary"
