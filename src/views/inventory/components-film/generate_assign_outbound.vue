@@ -76,6 +76,10 @@
           @changeSearch="quality_statusSearch"
         />
       </el-form-item>
+      <el-form-item label="车次">
+        <el-input-number v-model="getParams.begin_trains" controls-position="right" :min="1" :max="getParams.end_trains" @change="quality_statusSearch" />-
+        <el-input-number v-model="getParams.end_trains" controls-position="right" :min="getParams.begin_trains" :max="99999" @change="quality_statusSearch" />
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="getTableData">查询</el-button>
         <el-button type="primary" :loading="loadingBtn" @click="submitFun">确 定</el-button>
@@ -208,6 +212,7 @@ export default {
         this.station = this.list.station || null
         this.getParams.quality_status = this.list.quality_status || null
         this.getParams.material_no = this.list.product_no || null
+        this.getParams.outbound_order_id = this.list.id || null
         this.id = this.list.id || null
         this.tableData = []
         this.getTableData()
@@ -222,6 +227,7 @@ export default {
     this.station = this.list.station || null
     this.getParams.quality_status = this.list.quality_status || null
     this.getParams.material_no = this.list.product_no || null
+    this.getParams.outbound_order_id = this.list.id || null
     this.id = this.list.id || null
     this.getTableData()
   },

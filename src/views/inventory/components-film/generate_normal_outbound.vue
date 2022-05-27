@@ -55,10 +55,10 @@
           @changeSearch="quality_statusSearch"
         />
       </el-form-item>
-      <!-- <el-form-item label="车次">
-        <el-input-number v-model="getParams.num" controls-position="right" :min="1" :max="getParams.num1" @change="quality_statusSearch1" />-
-        <el-input-number v-model="getParams.num1" controls-position="right" :min="getParams.num" :max="999" @change="quality_statusSearch1" />
-      </el-form-item> -->
+      <el-form-item label="车次">
+        <el-input-number v-model="getParams.begin_trains" controls-position="right" :min="1" :max="getParams.end_trains" @change="quality_statusSearch" />-
+        <el-input-number v-model="getParams.end_trains" controls-position="right" :min="getParams.begin_trains" :max="99999" @change="quality_statusSearch" />
+      </el-form-item>
       <br>
       <el-form-item label="巷道">
         <el-select
@@ -204,6 +204,7 @@ export default {
         this.station = this.list.station || null
         this.getParams.quality_status = this.list.quality_status || null
         this.getParams.material_no = this.list.product_no || null
+        this.getParams.outbound_order_id = this.list.id || null
         this.id = this.list.id || null
         this.tableData = []
         this.getTableData()
@@ -217,6 +218,7 @@ export default {
     this.station = this.list.station || null
     this.getParams.quality_status = this.list.quality_status || null
     this.getParams.material_no = this.list.product_no || null
+    this.getParams.outbound_order_id = this.list.id || null
     this.id = this.list.id || null
     this.tableData = []
     this.getTableData()
@@ -260,7 +262,9 @@ export default {
       } catch (error) {
         this.loading = false
       }
-      this.$refs.multipleTable.toggleAllSelection()
+      if (this.tableData.length > 1) {
+        this.$refs.multipleTable.toggleAllSelection()
+      }
     },
     async submitFun() {
       if (this.multipleSelection.length === 0) {
