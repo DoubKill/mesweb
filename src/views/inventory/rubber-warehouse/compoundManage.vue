@@ -82,7 +82,7 @@
             @change="changeType"
           >
             <el-option
-              v-for="item in [{id:1,name:'普通'},{id:2,name:'指定胶料信息'},{id:3,name:'指定托盘号'}]"
+              v-for="item in typeList"
               :key="item.id"
               :label="item.name"
               :value="item.id"
@@ -260,7 +260,15 @@
       <el-table-column
         prop="warehouse"
         label="库房"
-        width="80"
+        min-width="20"
+      />
+      <el-table-column
+        prop="warehouse"
+        label="出库类型"
+        min-width="20"
+        :formatter="(row)=>{
+          return typeList.find(d=>d.id === row.order_type).name
+        }"
       />
       <el-table-column
         prop="station"
@@ -270,17 +278,46 @@
       <el-table-column
         prop="order_no"
         label="单据号"
-        width="160"
+        min-width="20"
       />
       <el-table-column
         prop="product_no"
         label="物料编码"
-        width="140"
+        min-width="20"
       />
       <el-table-column
         prop="quality_status"
         label="品质状态"
-        width="70"
+        min-width="20"
+      />
+      <el-table-column
+        prop="factory_date"
+        label="日期"
+        min-width="20"
+      />
+      <el-table-column
+        prop="classes"
+        label="班次"
+        min-width="20"
+      />
+      <el-table-column
+        prop="equip_no"
+        label="机台"
+        min-width="20"
+      />
+      <el-table-column
+        label="车次"
+        min-width="20"
+        :formatter="(row)=>{
+          if(row.begin_trains){
+            return row.begin_trains+'-'+row.end_trains
+          }
+        }"
+      />
+      <el-table-column
+        prop="pallet_no"
+        label="托盘号"
+        min-width="20"
       />
       <el-table-column
         prop="order_qty"
@@ -566,6 +603,7 @@ export default {
         { name: '关闭', id: 4 },
         { name: '失败', id: 5 }
       ],
+      typeList: [{ id: 1, name: '普通' }, { id: 2, name: '指定胶料信息' }, { id: 3, name: '指定托盘号' }],
       rules: {
         product_no: [
           { required: true, message: '请选择胶料编码', trigger: 'blur' }
