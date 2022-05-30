@@ -21,6 +21,7 @@
           v-model="getParams.is_active"
           clearable
           placeholder="请选择"
+          style="width:150px"
           @change="numChanged"
         >
           <el-option

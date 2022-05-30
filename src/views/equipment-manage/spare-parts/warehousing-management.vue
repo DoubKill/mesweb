@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 入库管理 -->
+    <!-- 备件入库管理 -->
     <el-form :inline="true">
       <el-form-item label="入库单据号">
         <el-input
@@ -46,7 +46,7 @@
           @change="changeSearch1"
         >
           <el-option
-            v-for="item in [{label:'未入库',value:1},{label:'入库中',value:2},{label:'已入库',value:3}]"
+            v-for="item in [{label:'未入库',value:1},{label:'入库中',value:2},{label:'已入库',value:3},{label:'关闭',value:7}]"
             :key="item.value"
             :label="item.label"
             :value="item.value"
@@ -94,6 +94,7 @@
       >
         <template slot-scope="scope">
           <el-button
+            v-if="scope.row.status_name!=='关闭'"
             v-permission="['equip_in_warehouse', 'enter']"
             type="primary"
             size="mini"
@@ -134,7 +135,7 @@
       />
       <el-table-column
         label="操作"
-        width="200"
+        width="220"
       >
         <template slot-scope="scope">
           <el-button
@@ -150,6 +151,13 @@
             size="mini"
             @click="deleteOrder(scope.row)"
           >删除
+          </el-button>
+          <el-button
+            v-if="scope.row.status_name!=='关闭'"
+            v-permission="['equip_in_warehouse', 'delete']"
+            size="mini"
+            @click="closeOrder(scope.row)"
+          >关闭
           </el-button>
         </template>
       </el-table-column>
@@ -586,7 +594,7 @@
 <script>
 import material from '../components/material-dialog'
 import { sectionTree } from '@/api/base_w_four'
-import { getOrderId, equipWarehouseOrder, equipWarehouseOrderDetail, equipWarehouseArea, equipWarehouseLocation, getSpareOrder } from '@/api/jqy'
+import { getOrderId, equipWarehouseOrder, equipWarehouseOrderDetail, equipWarehouseArea, equipWarehouseLocation, getSpareOrder, closeOrder } from '@/api/jqy'
 import page from '@/components/page'
 import { debounce } from '@/utils'
 export default {
@@ -779,6 +787,22 @@ export default {
           })
       })
     },
+    closeOrder: function(row) {
+      this.$confirm('此操作将关闭' + row.order_id + ', 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        closeOrder('post', null, { data: { id: row.id }})
+          .then(response => {
+            this.$message({
+              type: 'success',
+              message: '操作成功!'
+            })
+            this.getList()
+          })
+      })
+    },
     async getList() {
       try {
         this.loading = true
@@ -882,6 +906,10 @@ export default {
       }
     },
     submitEdit() {
+      if (this.dialogForm.status_name === '关闭') {
+        this.$message('该单据已经关闭,不可修改')
+        return
+      }
       this.dialogForm.status = 1
       this.dialogForm.equip_spare.forEach(d => {
         if (d.quantity === undefined || d.quantity === 0) {

@@ -255,6 +255,26 @@
           label="出烘房时间"
           min-width="20"
         />
+        <el-table-column
+          prop="bake_time_set"
+          label="设置烘烤时长(小时)"
+          min-width="20"
+        />
+        <el-table-column
+          prop="temperature_set"
+          label="设定烘烤温度(℃)"
+          min-width="20"
+        />
+        <el-table-column
+          prop="baking_begin"
+          label="开烘时间"
+          min-width="20"
+        />
+        <el-table-column
+          prop="baking_time"
+          label="已烘时长(小时)"
+          min-width="20"
+        />
         <!-- <el-table-column
           prop="confirm_time"
           label="二楼确认时间"
