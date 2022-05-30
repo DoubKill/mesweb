@@ -65,6 +65,7 @@
       <el-form-item label="故障描述">
         <el-input
           v-model="ruleForm.result_fault_desc"
+          style="width:250px"
           disabled
           type="textarea"
           :rows="3"
@@ -82,6 +83,20 @@
         </template>
         <div v-if="ruleForm.apply_repair_graph_url.length===0">
           暂无图片
+        </div>
+      </el-form-item>
+      <el-form-item label="上传视频">
+        <template v-for="(item, index) in ruleForm.apply_repair_video_url">
+          <video
+            v-if="ruleForm.apply_repair_video_url.length>0"
+            :key="index"
+            style="width:600px;height:300px"
+            controls="controls"
+            :src="item"
+          />
+        </template>
+        <div v-if="ruleForm.apply_repair_video_url.length===0">
+          暂无视频
         </div>
       </el-form-item>
     </el-form>

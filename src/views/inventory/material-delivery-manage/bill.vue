@@ -671,8 +671,8 @@ export default {
       formSearch: {
         quality_status: 1,
         is_entering: 'N',
-        st_value: 50,
-        et_value: 90
+        st_value: undefined,
+        et_value: undefined
       },
       tableData2: [],
       tableData3: [],
@@ -856,8 +856,8 @@ export default {
       this.formSearch.code = this.optionsEntrance[0].code
       this.formSearch.quality_status = 1
       this.formSearch.is_entering = 'N'
-      this.formSearch.st_value = 50
-      this.formSearch.et_value = 90
+      this.formSearch.st_value = undefined
+      this.formSearch.et_value = undefined
       this.EntranceCode = ''
       if (done) {
         done()

@@ -44,6 +44,14 @@
           @input="debounceSearch"
         />
       </el-form-item>
+      <el-form-item label="领用人">
+        <el-input
+          v-model="search.receive_user"
+          style="width:200px"
+          clearable
+          @input="debounceSearch"
+        />
+      </el-form-item>
       <el-form-item label="是否撤销">
         <el-select
           v-model="search.revocation"
@@ -181,6 +189,11 @@
       <el-table-column
         prop="location_name"
         label="库位"
+        min-width="20"
+      />
+      <el-table-column
+        prop="receive_user"
+        label="领用人"
         min-width="20"
       />
       <el-table-column
