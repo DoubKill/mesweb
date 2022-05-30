@@ -250,6 +250,7 @@
                 v-model="formData2.single_weight"
                 controls-position="right"
                 :max="1000"
+                :precision="2"
                 style="margin-right:5px"
               />最大值：1000
             </el-form-item>

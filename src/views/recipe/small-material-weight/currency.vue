@@ -283,6 +283,7 @@
             v-model="formData._single_weight"
             controls-position="right"
             :max="1000"
+            :precision="2"
             placeholder="配料重量"
             :disabled="(formData.id||formData.batching_type==='配方')?true:false"
           />
@@ -296,6 +297,7 @@
             v-model="formData.single_weight"
             controls-position="right"
             :max="1000"
+            :precision="2"
             placeholder="配料重量"
             :disabled="(formData.id||formData.batching_type==='配方')?true:false"
           />
