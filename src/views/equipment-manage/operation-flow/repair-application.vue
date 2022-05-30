@@ -265,6 +265,7 @@
         <el-form-item label="故障描述" prop="result_fault_desc">
           <el-input
             v-model="ruleForm.result_fault_desc"
+            style="width:250px"
             :disabled="operateType==='报修申请详情'"
             type="textarea"
             :rows="3"
@@ -300,6 +301,49 @@
           </template>
           <div v-if="operateType==='报修申请详情'&&ruleForm.apply_repair_graph_url.length===0">
             暂无图片
+          </div>
+        </el-form-item>
+        <el-form-item label="上传视频">
+          <span v-if="operateType!=='报修申请详情'" style="font-size: 12px;color: #999;">仅支持mp4视频格式，大小不超过50M，视频时长不超过15秒，最多可一共上传3个视频</span>
+          <el-upload
+            v-if="operateType!=='报修申请详情'"
+            action="api/v1/equipment/upload-images/"
+            :data="{source_type:'维修'}"
+            name="video_file_name"
+            list-type="picture-card"
+            :limit="3"
+            :before-upload="beforeAvatarUpload"
+            :on-success="changeUrl"
+            :file-list="videoList"
+            accept=".mp4"
+          >
+            <i slot="default" class="el-icon-plus" />
+            <div slot="file" slot-scope="{file}" style="height: 100%;">
+              <video v-if="file" class="el-upload-list__item-thumbnail" :src="dialogVideoUrl" width="100%" height="100%" />
+              <span v-if="file" class="el-upload-list__item-actions">
+                <span class="el-upload-list__item-preview" @click="handleVideoPreview(file)">
+                  <i class="el-icon-video-play" />
+                </span>
+                <span class="el-upload-list__item-delete" @click="handleRemoveVideo(file)">
+                  <i class="el-icon-delete" />
+                </span>
+              </span>
+            </div>
+          </el-upload>
+          <el-dialog :visible.sync="dialogVisibleVideo" append-to-body>
+            <video width="100%" controls="controls" :src="dialogVideoUrl" />
+          </el-dialog>
+          <template v-for="(item, index) in ruleForm.apply_repair_video_url">
+            <video
+              v-if="operateType==='报修申请详情'&&ruleForm.apply_repair_video_url.length>0"
+              :key="index"
+              style="width:600px;height:300px"
+              controls="controls"
+              :src="item"
+            />
+          </template>
+          <div v-if="operateType==='报修申请详情'&&ruleForm.apply_repair_video_url.length===0">
+            暂无视频
           </div>
         </el-form-item>
       </el-form>
@@ -464,7 +508,10 @@ export default {
         ]
       },
       dialogImageUrl: '',
-      operateType: ''
+      operateType: '',
+      dialogVisibleVideo: false,
+      videoList: [], // 视频列表, // 上传文件参数
+      dialogVideoUrl: '' // 视频
     }
   },
   computed: {
@@ -677,6 +724,8 @@ export default {
         this.operateType = type
         this.ruleForm = JSON.parse(JSON.stringify(row))
       }
+      this.ruleForm.video_url_list = []
+      this.videoList = []
       this.dialogVisible = true
     },
     equipSelected(obj) {
@@ -719,6 +768,43 @@ export default {
       } catch (e) {
         this.$set(this, 'objList', this.objList)
       }
+    },
+    beforeAvatarUpload(file) {
+      var list = JSON.parse(JSON.stringify(this.videoList))
+      // 获取视频时长
+      var url = URL.createObjectURL(file)
+      var audioElement = new Audio(url)
+      var duration
+      var that = this
+      this.durationNumber = audioElement.addEventListener(
+        'loadedmetadata',
+        function(_event) {
+          duration = audioElement.duration // 时长为秒，小数
+          if (duration > 15) {
+            that.$message('上传视频不能超过15秒,请重新上传')
+            that.$set(that, 'videoList', list)
+            return false
+          } else {
+            return true
+          }
+        }
+      )
+    },
+    changeUrl(res, file) {
+      this.ruleForm.video_url_list.push(res.video_file_name)
+      this.videoList.push({ url: res.video_file_name })
+    },
+    handleRemoveVideo(file) {
+      console.log(this.videoList)
+      const index = this.videoList.findIndex(d => d.url === file.url)
+      console.log(index)
+      this.videoList.splice(index, 1)
+      this.ruleForm.video_url_list.splice(this.ruleForm.video_url_list.indexOf(file.url), 1)
+    },
+    // 预览视频
+    handleVideoPreview(file) {
+      this.dialogVideoUrl = file.url
+      this.dialogVisibleVideo = true
     },
     handleRemove(file, fileList) {
       this.objList = fileList

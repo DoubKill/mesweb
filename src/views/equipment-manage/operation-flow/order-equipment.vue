@@ -203,7 +203,7 @@
     <el-dialog
       title="报修详情"
       :visible.sync="dialogVisibleRepair"
-      width="30%"
+      width="600"
     >
       <repair
         :rule-form="ruleForm"
