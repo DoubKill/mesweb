@@ -282,7 +282,7 @@
           <el-input-number
             v-model="formData._single_weight"
             controls-position="right"
-            :max="100"
+            :max="1000"
             placeholder="配料重量"
             :disabled="(formData.id||formData.batching_type==='配方')?true:false"
           />
@@ -295,7 +295,7 @@
           <el-input-number
             v-model="formData.single_weight"
             controls-position="right"
-            :max="99.999"
+            :max="1000"
             placeholder="配料重量"
             :disabled="(formData.id||formData.batching_type==='配方')?true:false"
           />
