@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="rubber-overdue-alarm">
     <!--胶料超期报警 -->
     剩余有效天数（天）<el-input-number
       v-model="expire_days"
@@ -27,12 +27,21 @@
         :value="item"
       />
     </el-select>
+    品质等级&nbsp; <el-select v-model="quality_level" clearable placeholder="请选择" style="width:150px" @change="changeList">
+      <el-option
+        v-for="item in ['一等品','三等品','待检品','PASS']"
+        :key="item"
+        :label="item"
+        :value="item"
+      />
+    </el-select>
     <el-table
       v-loading="loading"
       style="margin-top:10px"
       :data="tableData"
       border
       :row-class-name="tableRowClassName"
+      :cell-class-name="cellClassName"
     >
       <el-table-column
         label="No."
@@ -123,7 +132,8 @@ export default {
       },
       stageList: [],
       stage: '',
-      liKu: ''
+      liKu: '',
+      quality_level: ''
     }
   },
   created() {
@@ -141,7 +151,7 @@ export default {
     async getList() {
       try {
         this.loading = true
-        Object.assign(this.getParams, { expire_days: this.expire_days, stage: this.stage, warehouse_name: this.liKu })
+        Object.assign(this.getParams, { expire_days: this.expire_days, stage: this.stage, warehouse_name: this.liKu, quality_level: this.quality_level })
         const data = await productExpiresList('get', null, { params: this.getParams })
         this.tableData = data.results || []
         this.total = data.count
@@ -177,6 +187,11 @@ export default {
       if (row.material_no === '单页合计' || row.material_no === '汇总') {
         return 'summary-cell-style'
       }
+    },
+    cellClassName({ row, column, rowIndex, columnIndex }) {
+      if (column.label === '库存数（车）' && row.expire_flag) {
+        return 'red-cell-style'
+      }
     }
   }
 }
@@ -192,6 +207,13 @@ function sum(arr, params) {
 }
 </script>
 
-<style lang="scss" scoped>
-
+<style lang="scss">
+.rubber-overdue-alarm{
+  .red-cell-style{
+    background: rgb(222, 126, 137);
+  }
+  .el-link.el-link--primary{
+        color: #115091;
+  }
+}
 </style>
