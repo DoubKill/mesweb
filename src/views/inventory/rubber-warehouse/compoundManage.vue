@@ -197,8 +197,8 @@
             </el-select>
           </el-form-item>
           <el-form-item label="车次" prop="begin_trains" style="marginLeft:54px">
-            <el-input-number v-model="creatOrder.begin_trains" controls-position="right" :min="1" :max="creatOrder.end_trains" />-
-            <el-input-number v-model="creatOrder.end_trains" controls-position="right" :min="creatOrder.begin_trains" :max="999" />
+            <el-input-number v-model="creatOrder.begin_trains" controls-position="right" :min="minTrains" :max="creatOrder.end_trains" />-
+            <el-input-number v-model="creatOrder.end_trains" controls-position="right" :min="creatOrder.begin_trains" :max="maxTrains" />
           </el-form-item>
         </div>
         <el-form-item v-if="creatOrder.order_type===3" style="marginLeft:40px" label="托盘号" prop="pallet_no">
@@ -603,6 +603,8 @@ export default {
         { name: '关闭', id: 4 },
         { name: '失败', id: 5 }
       ],
+      minTrains: 1,
+      maxTrains: 9999,
       typeList: [{ id: 1, name: '普通' }, { id: 2, name: '指定胶料信息' }, { id: 3, name: '指定托盘号' }],
       rules: {
         product_no: [
@@ -913,6 +915,8 @@ export default {
     },
     changeProduct(val) {
       const arr = this.batchListNew.filter(d => val === d.product_no)
+      this.minTrains = arr[0] ? arr[0].min_trains : 1
+      this.maxTrains = arr[0] ? arr[0].max_trains : 9999
       this.creatOrder.begin_trains = arr[0] ? arr[0].min_trains : this.creatOrder.begin_trains
       this.creatOrder.end_trains = arr[0] ? arr[0].max_trains : this.creatOrder.end_trains
     }
