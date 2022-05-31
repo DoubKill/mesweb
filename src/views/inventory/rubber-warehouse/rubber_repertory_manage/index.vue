@@ -84,7 +84,7 @@
           @change="changeSearch"
         >
           <el-option
-            v-for="item in ['一等品','三等品','待检品','PASS']"
+            v-for="item in ['一等品','三等品','待检品']"
             :key="item"
             :label="item"
             :value="item"
