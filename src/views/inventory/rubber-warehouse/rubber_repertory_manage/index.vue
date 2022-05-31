@@ -370,12 +370,27 @@ export default {
       }
     },
     cellClassName({ row, column, rowIndex, columnIndex }) {
-      if (column.label === '一等品库存数(车)' && row['一等品'] && row['一等品'].expire_flag) {
-        return 'red-cell-style'
-      } else if (column.label === '三等品库存数(车)' && row['三等品'] && row['三等品'].expire_flag) {
-        return 'red-cell-style'
-      } else if (column.label === '待检品库存数(车)' && row['待检品'] && row['待检品'].expire_flag) {
-        return 'red-cell-style'
+      if (column.label === '一等品库存数(车)' && row['一等品']) {
+        if (row['一等品'].expire_flag) {
+          return 'red-cell-style'
+        }
+        if (row['一等品'].dj_flag) {
+          return 'yellow-cell-style'
+        }
+      } else if (column.label === '三等品库存数(车)' && row['三等品']) {
+        if (row['三等品'].expire_flag) {
+          return 'red-cell-style'
+        }
+        if (row['三等品'].dj_flag) {
+          return 'yellow-cell-style'
+        }
+      } else if (column.label === '待检品库存数(车)' && row['待检品']) {
+        if (row['待检品'].expire_flag) {
+          return 'red-cell-style'
+        }
+        if (row['待检品'].dj_flag) {
+          return 'yellow-cell-style'
+        }
       }
     }
   }
@@ -401,6 +416,9 @@ function sum(arr, str, params) {
 .rubber_repertory_manage{
     .red-cell-style{
     background: rgb(222, 126, 137);
+  }
+    .yellow-cell-style{
+    background: rgb(222, 190, 84);
   }
   .el-link.el-link--primary{
         color: #115091;

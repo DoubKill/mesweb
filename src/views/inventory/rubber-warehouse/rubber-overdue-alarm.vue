@@ -189,8 +189,13 @@ export default {
       }
     },
     cellClassName({ row, column, rowIndex, columnIndex }) {
-      if (column.label === '库存数（车）' && row.expire_flag) {
-        return 'red-cell-style'
+      if (column.label === '库存数（车）') {
+        if (row.expire_flag) {
+          return 'red-cell-style'
+        }
+        if (row.dj_flag) {
+          return 'yellow-cell-style'
+        }
       }
     }
   }
@@ -211,6 +216,9 @@ function sum(arr, params) {
 .rubber-overdue-alarm{
   .red-cell-style{
     background: rgb(222, 126, 137);
+  }
+      .yellow-cell-style{
+    background: rgb(222, 190, 84);
   }
   .el-link.el-link--primary{
         color: #115091;
