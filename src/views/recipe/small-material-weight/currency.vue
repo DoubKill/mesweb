@@ -524,7 +524,9 @@ export default {
         // }
         if (this.formData.batching_type !== '配方') {
           await this.getWeight()
-          await this.getHistory1()
+          if (!this.isProduction) {
+            await this.getHistory1()
+          }
         } else {
           await this.getHistory()
         }
