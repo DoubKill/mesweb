@@ -94,7 +94,7 @@
             v-model="creatOrder.warehouse"
             placeholder="请选择"
             clearable
-            @change="clear"
+            @change="changeWarehouse"
           >
             <el-option
               v-for="item in ['终炼胶库','混炼胶库']"
@@ -185,8 +185,8 @@
               placeholder="请选择胶料编码"
               filterable
               clearable
-              @visible-change="productBatchingChangedNew"
               @change="changeProduct"
+              @visible-change="productBatchingChangedNew"
             >
               <el-option
                 v-for="item in batchListNew"
@@ -707,7 +707,11 @@ export default {
     },
     async productBatchingChangedNew() {
       try {
-        const data = await outboundPproductInfo('get', null, { params: { factory_date: this.creatOrder.factory_date, equip_no: this.creatOrder.equip_no, classes: this.creatOrder.classes }})
+        if (!this.creatOrder.factory_date || !this.creatOrder.classes || !this.creatOrder.equip_no) {
+          this.$message('请填入日期、班次、机台')
+          return
+        }
+        const data = await outboundPproductInfo('get', null, { params: { factory_date: this.creatOrder.factory_date, equip_no: this.creatOrder.equip_no, classes: this.creatOrder.classes, warehouse: this.creatOrder.warehouse }})
         this.batchListNew = data
       } catch (e) {
         //
@@ -801,12 +805,16 @@ export default {
         }
       }
     },
-    clear() {
+    changeWarehouse() {
       if (this.creatOrder.station !== '') {
         this.creatOrder.station = ''
       }
       if (this.creatOrder.product_no !== '') {
         this.creatOrder.product_no = ''
+      }
+      if (this.creatOrder.order_type === 2) {
+        this.creatOrder.product_no = null
+        this.productBatchingChangedNew()
       }
     },
     clear1(val) {
