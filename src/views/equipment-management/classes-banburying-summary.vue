@@ -271,7 +271,6 @@ export default {
           sums[index] = '总计'
           return
         }
-
         const values = data.map(item => Number(item[column.property]))
         if (!values.every(value => isNaN(value))) {
           sums[index] = values.reduce((prev, curr) => {
@@ -282,6 +281,7 @@ export default {
               return prev
             }
           }, 0)
+
           if (index === 4) {
             sums[index]
           } else {
@@ -293,6 +293,29 @@ export default {
           }
         } else {
           sums[index]
+        }
+        if (index === 6) {
+          var obj = {}
+          var newArr = data.reduce((item, next) => {
+            if (this.search.dimension === 1) {
+              obj[next.classes + next.date]
+                ? ' '
+                : (obj[next.classes + next.date] = true && item.push(next))
+            } else {
+              obj[next.date]
+                ? ' '
+                : (obj[next.date] = true && item.push(next))
+            }
+            return item
+          }, [])
+          let num6 = 0
+          newArr.forEach(dd => {
+            num6 += dd.classes_time
+          })
+          sums[index] = num6
+        }
+        if (index === 7) {
+          sums[index] = (sums[index] / data.length).toFixed(2)
         }
         if (index === 7) {
           sums[index] = (sums[index] / data.length).toFixed(2)

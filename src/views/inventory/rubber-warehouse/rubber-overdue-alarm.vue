@@ -19,7 +19,7 @@
         :value="item.global_name"
       />
     </el-select>
-    立库&nbsp;<el-select v-model="liKu" filterable placeholder="请选择" clearable @change="changeList">
+    立库&nbsp;<el-select v-model="liKu" style="margin-right:30px" filterable placeholder="请选择" clearable @change="changeList">
       <el-option
         v-for="(item) in ['混炼胶库','终炼胶库']"
         :key="item"

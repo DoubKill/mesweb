@@ -327,6 +327,27 @@ export default {
         } else {
           sums[index]
         }
+        if (index === 5) {
+          var obj = {}
+          var newArr = data.reduce((item, next) => {
+            if (this.search.dimension === 1) {
+              obj[next.classes + next.date]
+                ? ' '
+                : (obj[next.classes + next.date] = true && item.push(next))
+            } else {
+              obj[next.date]
+                ? ' '
+                : (obj[next.date] = true && item.push(next))
+            }
+
+            return item
+          }, [])
+          let num6 = 0
+          newArr.forEach(dd => {
+            num6 += dd.classes_time
+          })
+          sums[index] = num6
+        }
         if (index === 6) {
           sums[index] = ((Number(sums[4]) / Number(sums[5])) * 100).toFixed(2) + '%'
         }
