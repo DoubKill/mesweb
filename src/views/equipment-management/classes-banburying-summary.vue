@@ -313,6 +313,13 @@ export default {
             num6 += dd.classes_time
           })
           sums[index] = num6
+          if (this.timeUnit === '分钟') {
+            sums[index] = this.setNum(sums[index])
+          } else if (this.timeUnit === '小时') {
+            sums[index] = this.setTimeHour(sums[index])
+          } else {
+            sums[index]
+          }
         }
         if (index === 7) {
           sums[index] = (sums[index] / data.length).toFixed(2)

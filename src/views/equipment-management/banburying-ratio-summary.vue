@@ -347,6 +347,13 @@ export default {
             num6 += dd.classes_time
           })
           sums[index] = num6
+          if (this.timeUnit === '分钟') {
+            sums[index] = this.setNum(sums[index])
+          } else if (this.timeUnit === '小时') {
+            sums[index] = this.setTimeHour(sums[index])
+          } else {
+            sums[index]
+          }
         }
         if (index === 6) {
           sums[index] = ((Number(sums[4]) / Number(sums[5])) * 100).toFixed(2) + '%'
