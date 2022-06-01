@@ -49,7 +49,7 @@
           @change="changeDevType"
         />
       </el-form-item>
-      <el-form-item label="卡片状态">
+      <el-form-item v-if="!isProduction" label="卡片状态">
         <el-select
           v-model="search.print_flag"
           clearable
@@ -59,6 +59,22 @@
           <el-option
             v-for="(item) in [{name:'未打印',id:0},{name:'已打印',id:1},
                               {name:'已失效',id:2},{name:'过期',id:3}]"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item v-if="isProduction" label="卡片状态">
+        <el-select
+          v-model="search.print_flag"
+          clearable
+          filterable
+          @change="changeSearch"
+        >
+          <el-option
+            v-for="(item) in [{name:'未打印',id:1},{name:'已打印',id:0},
+                              {name:'已失效',id:2}]"
             :key="item.id"
             :label="item.name"
             :value="item.id"
