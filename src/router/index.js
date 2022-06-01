@@ -415,6 +415,16 @@ export let asyncRoutes = [
         icon: 'formula',
         permissionName: 'weight_tank'
       }
+    },
+    {
+      path: '/material_level_management/',
+      name: 'MaterialLevelManagement',
+      component: () => import('@/views/rb_material_std_manage/material_level_management'),
+      meta: {
+        title: '物料门尼值等级管理',
+        icon: 'formula',
+        permissionName: ''
+      }
     }
     // {
     //   path: '/rb/formula-resume',
