@@ -6,6 +6,7 @@ export default {
   HomePageUrl: '/api/v1/index/',
   GlobalTypesUrl: BasicsUrl + 'global-types/',
   GlobalCodesUrl: BasicsUrl + 'global-codes/',
+  CommonCode: '/api/v1/basics/common-code/',
 
   EquipCategoryUrl: BasicsUrl + 'equips-category/',
   // const EquipCategoryUrl : BasicsUrl + "equips-category-list/",
