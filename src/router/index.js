@@ -423,7 +423,7 @@ export let asyncRoutes = [
       meta: {
         title: '物料门尼值等级管理',
         icon: 'formula',
-        permissionName: ''
+        permissionName: 'wms_mooney_level'
       }
     }
     // {

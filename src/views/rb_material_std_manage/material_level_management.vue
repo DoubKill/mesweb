@@ -22,7 +22,7 @@
         <el-input v-model.number="search.material_no" clearable @input="debounceFun" />
       </el-form-item>
       <el-form-item style="float: right">
-        <el-button v-permission="['location', 'add']" type="primary" @click="showCreateDialog">批量设定门尼值等级</el-button>
+        <el-button v-permission="['wms_mooney_level','change']" type="primary" @click="showCreateDialog">批量设定门尼值等级</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -89,12 +89,12 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
-              v-permission="['department','change']"
+              v-permission="['wms_mooney_level','change']"
               size="mini"
               @click="showEditDialog(scope.row)"
             >编辑等级</el-button>
             <el-button
-              v-permission="['department','delete']"
+              v-permission="['wms_mooney_level','change']"
               type="danger"
               size="mini"
               @click="handleDelete(scope.row)"
