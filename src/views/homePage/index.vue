@@ -1,5 +1,5 @@
 <template>
-  <div class="homePage-container">
+  <div :class="['homePage-container',bigScreen?'bigScreen':'']">
     <el-row :gutter="20" style="font-weight:700;font-size:16px">
       <el-col :span="4">
         <el-card class="box-card">
@@ -198,7 +198,8 @@ export default {
         },
         title: {
           left: 'left',
-          text: '产量分析'
+          text: '产量分析',
+          textStyle: { color: '#000' }
         },
         tooltip: {
           trigger: 'axis'
@@ -206,11 +207,23 @@ export default {
         xAxis: {
           type: 'category',
           name: '时间',
-          data: []
+          data: [],
+          axisLine: {
+            lineStyle: {
+              color: '#000',
+              width: 1// 这里是为了突出显示加上的
+            }
+          }
         },
         yAxis: {
           name: '车',
-          type: 'value'
+          type: 'value',
+          axisLine: {
+            lineStyle: {
+              color: '#000',
+              width: 1// 这里是为了突出显示加上的
+            }
+          }
         },
         grid: {
           top: '25%',
@@ -229,8 +242,14 @@ export default {
               normal: {
                 label: {
                   show: true,
-                  position: 'top'
-                }}}
+                  position: 'top',
+                  color: '#fff'
+                }}},
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: '#83bff6' },
+              { offset: 0.5, color: '#188df0' },
+              { offset: 1, color: '#188df0' }
+            ])
           },
           {
             name: '加硫',
@@ -266,8 +285,14 @@ export default {
             itemStyle: {
               normal: {
                 label: {
-                  show: true
-                }}}
+                  show: true,
+                  color: '#000'
+                }}},
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: 'rgb(231 219 201)' },
+              { offset: 0.5, color: 'rgb(239 196 131)' },
+              { offset: 1, color: 'rgb(239 196 131)' }
+            ])
           },
           {
             name: '加硫',
@@ -301,12 +326,13 @@ export default {
         color: this.color,
         title: {
           left: 'center',
-          text: '合格率分析'
+          text: '合格率分析',
+          textStyle: { color: '#000' }
         },
         tooltip: {
           trigger: 'axis',
           axisPointer: {
-            type: 'cross'
+            // type: 'cross'
           }
         },
         grid: {
@@ -322,14 +348,24 @@ export default {
             axisTick: {
               alignWithLabel: true
             },
-            data: []
+            data: [],
+            axisLine: {
+              lineStyle: {
+                color: '#000',
+                width: 1
+              }
+            }
           }
         ],
         yAxis: {
           type: 'value',
           name: '%',
           axisLine: {
-            show: true
+            show: true,
+            lineStyle: {
+              color: '#000',
+              width: 1
+            }
           },
           max: 100,
           min: 0
@@ -366,7 +402,8 @@ export default {
       optionFinishChart: {
         title: {
           left: 'left',
-          text: '机台产量分析'
+          text: '机台产量分析',
+          textStyle: { color: '#000' }
         },
         color: ['rgb(121, 187, 255)', 'rgb(179, 216, 255)', '#E6A23C'],
         tooltip: {
@@ -391,11 +428,25 @@ export default {
         xAxis: {
           // type: 'category',
           name: '机台',
-          data: []
+          data: [],
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: '#000',
+              width: 1
+            }
+          }
         },
         yAxis: {
           type: 'value',
-          name: '车'
+          name: '车',
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: '#000',
+              width: 1
+            }
+          }
         },
         series: [
           {
@@ -404,9 +455,15 @@ export default {
             stack: '11',
             barMaxWidth: 150,
             label: {
-              show: true
+              show: true,
+              color: '#000'
             },
-            data: []
+            data: [],
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: '#83bff6' },
+              { offset: 0.5, color: '#188df0' },
+              { offset: 1, color: '#188df0' }
+            ])
           },
           {
             name: '',
@@ -419,7 +476,12 @@ export default {
                 position: 'center'
               }
             },
-            data: []
+            data: [],
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: 'rgb(231 219 201)' },
+              { offset: 0.5, color: 'rgb(239 196 131)' },
+              { offset: 1, color: 'rgb(239 196 131)' }
+            ])
           },
           // {
           //   name: '折线',
@@ -451,7 +513,8 @@ export default {
         color: this.color,
         title: {
           left: 'left',
-          text: '机台停机时间分析'
+          text: '机台停机时间分析',
+          textStyle: { color: '#000' }
         },
         grid: {
           left: '3%',
@@ -469,11 +532,25 @@ export default {
         xAxis: {
           type: 'category',
           name: '机台',
-          data: []
+          data: [],
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: '#000',
+              width: 1
+            }
+          }
         },
         yAxis: {
           type: 'value',
-          name: '分钟'
+          name: '分钟',
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: '#000',
+              width: 1
+            }
+          }
         },
         series: [{
           data: [],
@@ -487,7 +564,8 @@ export default {
         color: this.color,
         title: {
           left: 'center',
-          text: '机台OEE分析'
+          text: '机台OEE分析',
+          textStyle: { color: '#000' }
         },
         grid: {
           left: '3%',
@@ -504,11 +582,19 @@ export default {
         xAxis: {
           type: 'category',
           name: '机台',
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          lineStyle: {
+            color: '#fff',
+            width: 1// 这里是为了突出显示加上的
+          }
         },
         yAxis: {
           type: 'value',
-          name: '%'
+          name: '%',
+          lineStyle: {
+            color: '#fff',
+            width: 1// 这里是为了突出显示加上的
+          }
         },
         series: [{
           data: [120, 200, 150, 80, 70, 110, 130],
@@ -536,7 +622,7 @@ export default {
     }
   },
   created() {
-
+    this.bigScreen = this.$route.fullPath === '/homePage/index'
   },
   destroyed() {
     window.clearInterval(this._setInterval)
@@ -577,6 +663,11 @@ export default {
           this.optionPassRateLine.series[2].data = qualified_rate_data_total
 
           this.optionPassRateLine.xAxis[0].data = arr[1].date_range
+          if (this.bigScreen) {
+            this.optionPassRateLine.xAxis[0].axisLine.lineStyle.color = '#fff'
+            this.optionPassRateLine.yAxis.axisLine.lineStyle.color = '#fff'
+            this.optionPassRateLine.title.textStyle.color = '#fff'
+          }
           this.myChartPassRateLine.setOption(this.optionPassRateLine, true)
         }
         if (!bool && !bool2) {
@@ -592,12 +683,18 @@ export default {
           for (let index = 1; index < legMaxVal; index++) {
             str += '0'
           }
-
+          if (this.bigScreen) {
+            this.optionFinishChart.xAxis.axisLine.lineStyle.color = '#fff'
+            this.optionFinishChart.yAxis.axisLine.lineStyle.color = '#fff'
+            this.optionFinishChart.title.textStyle.color = '#fff'
+            this.optionFinishChart.series[2].label.normal.textStyle.color = '#fff'
+          }
           this.optionFinishChart.yAxis.max = Math.ceil(maxVal / Number(str)) * str
           this.optionFinishChart.xAxis.data = arr[2].equip_data
           this.optionFinishChart.series[0].data = plan_actual_actual_trains
           this.optionFinishChart.series[1].data = plan_actual_diff_trains
           this.optionFinishChart.series[2].data = plan_actual_plan_trains
+
           this.myChartFinishChart.setOption(this.optionFinishChart)
         }
 
@@ -616,6 +713,11 @@ export default {
           this.optionYieldBar.series[2].data = plan_without_sulfur_trains
           this.optionYieldBar.series[4].data = actual_add_sulfur_trains
           this.optionYieldBar.series[5].data = actual_without_sulfur_trains
+          if (this.bigScreen) {
+            this.optionYieldBar.xAxis.axisLine.lineStyle.color = '#fff'
+            this.optionYieldBar.yAxis.axisLine.lineStyle.color = '#fff'
+            this.optionYieldBar.title.textStyle.color = '#fff'
+          }
           this.myChartYieldBar.setOption(this.optionYieldBar)
         }
         if (!bool && !bool1) {
@@ -623,6 +725,11 @@ export default {
           const maintenance_data_minutes = this.setVal(arr[3].maintenance_data, 'minutes')
           this.optionShutdownBar.series[0].data = maintenance_data_minutes
           this.optionShutdownBar.xAxis.data = arr[3].equip_data
+          if (this.bigScreen) {
+            this.optionShutdownBar.xAxis.axisLine.lineStyle.color = '#fff'
+            this.optionShutdownBar.yAxis.axisLine.lineStyle.color = '#fff'
+            this.optionShutdownBar.title.textStyle.color = '#fff'
+          }
           this.myChartShutdownBar.setOption(this.optionShutdownBar)
         }
       } catch (e) {
@@ -672,7 +779,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .homePage-container {
   // background-color: #f0f2f5;
   padding:0 20px;
@@ -740,4 +847,32 @@ export default {
     display: flex;
   }
 }
+.bigScreen{
+  min-height: 100vh;
+ background-image: url(../../assets/pageBg.f9f9dcd5.png);
+ .el-row{
+   padding-top:20px;
+ }
+ .el-card{
+   background: transparent !important;
+   border: 2px solid rgb(24 122 174 / 70%);
+ }
+ .volumeBoxChild{
+   padding: 10px 0;
+ }
+ .volumeBox{
+   background: transparent !important;
+   height: 350px!important;
+ }
+ .el-input__inner{
+   background: transparent !important;
+ }
+.el-date-editor .el-range-input{
+   background: transparent !important;
+ }
+ .el-tabs__item,.el-date-editor .el-range-input{
+   color:#fff;
+ }
+}
+
 </style>
