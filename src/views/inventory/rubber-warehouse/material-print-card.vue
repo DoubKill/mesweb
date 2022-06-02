@@ -66,7 +66,9 @@
         <el-input v-model="search.lot_no" clearable @input="debounceList" />
       </el-form-item>
       <el-form-item label="打印机所在出库口">
+        <span v-if="isProduction">一层前端</span>
         <stationInfoWarehouse
+          v-else
           ref="stationInfoWarehouseRef"
           :warehouse-name="search.warehouse_name"
           :start-using="true"
@@ -323,6 +325,9 @@ export default {
     },
     async printingFun() {
       try {
+        if (this.isProduction) {
+          this.search.station = '一层前端'
+        }
         if (!this.search.warehouse_name || !this.search.station) {
           this.$message('请选择仓库和出库口')
           return
