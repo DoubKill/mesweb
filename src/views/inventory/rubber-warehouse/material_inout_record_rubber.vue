@@ -170,6 +170,16 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="机台">
+        <selectEquip
+          :equip_no_props.sync="search.equip_no"
+          @changeSearch="changeList"
+        />
+      </el-form-item>
+      <!-- <el-form-item label="车次">
+        <el-input-number v-model="search.num" controls-position="right" :min="1" :max="search.num1" @change="changeList" />-
+        <el-input-number v-model="search.num1" controls-position="right" :min="search.num" :max="999" @change="changeList" />
+      </el-form-item> -->
       <el-form-item v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="批次号">
         <el-input v-model="search.l_batch_no" clearable @input="debounceList" />
       </el-form-item>
@@ -193,15 +203,11 @@
       fit
     >
       <el-table-column label="No" type="index" align="center" width="40" />
-      <el-table-column label="质检条码" align="center" prop="lot_no" width="150" />
-      <el-table-column label="入库单号" align="center" prop="inbound_order_no" />
-      <!-- <el-table-column label="入库发起人" align="center" prop="" /> -->
-      <el-table-column label="入库发起时间" align="center" prop="inbound_time" />
-      <!-- <el-table-column label="入库完成时间" align="center" prop="" /> -->
-      <el-table-column label="出库单号" align="center" prop="outbound_order_no" />
-      <el-table-column label="出库发起人" align="center" prop="outbound_user" />
-      <el-table-column label="出库发起时间" align="center" prop="outbound_time" />
-      <!-- <el-table-column label="出库完成时间" align="center" prop="" /> -->
+      <el-table-column label="胶料名称" align="center" prop="product_no" />
+      <el-table-column label="机台" align="center" prop="equip_no" />
+      <el-table-column label="车次" align="center" prop="memo" width="50" />
+      <el-table-column label="重量(kg)" align="center" prop="weight" width="80" />
+      <el-table-column label="托盘号" align="center" prop="pallet_no" width="80" />
       <el-table-column v-if="(warehouseNameProps!=='原材料库'&&warehouseNameProps!=='炭黑库')&&!isDialog" label="巷道" align="center" prop="location" width="50">
         <template slot-scope="{row}">
           {{ row.location?row.location.split('-')[0]:'' }}
@@ -212,10 +218,15 @@
           {{ row.location?row.location.split('-')[1]:'' }}
         </template>
       </el-table-column>
-      <el-table-column label="托盘号" align="center" prop="pallet_no" width="80" />
-      <el-table-column label="胶料名称" align="center" prop="product_no" />
-      <el-table-column label="车数" align="center" prop="qty" width="50" />
-      <el-table-column label="重量(kg)" align="center" prop="weight" width="80" />
+      <el-table-column label="质检条码" align="center" prop="lot_no" width="150" />
+      <el-table-column label="入库单号" align="center" prop="inbound_order_no" />
+      <!-- <el-table-column label="入库发起人" align="center" prop="" /> -->
+      <el-table-column label="入库发起时间" align="center" prop="inbound_time" />
+      <!-- <el-table-column label="入库完成时间" align="center" prop="" /> -->
+      <el-table-column label="出库单号" align="center" prop="outbound_order_no" />
+      <el-table-column label="出库发起时间" align="center" prop="outbound_time" />
+      <el-table-column label="出库发起人" align="center" prop="outbound_user" />
+      <!-- <el-table-column label="出库完成时间" align="center" prop="" /> -->
       <el-table-column
         v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'"
         label="查看处理履历"
@@ -310,9 +321,10 @@ import { batchingMaterials } from '@/api/base_w'
 import { wmsExceptHandle, wmsMaterials, thMaterials } from '@/api/jqy'
 // import warehouseSelect from '@/components/select_w/warehouseSelect'
 import { setDate, debounce, exportExcel } from '@/utils'
+import selectEquip from '@/components/select_w/equip'
 export default {
   name: 'MaterialInoutRecordRubber',
-  components: { page },
+  components: { page, selectEquip },
   props: {
     warehouseNameProps: {
       type: String,

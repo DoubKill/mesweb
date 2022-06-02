@@ -1,6 +1,6 @@
 <template>
   <!-- 库内库存统计 -->
-  <div v-loading="loading">
+  <div v-loading="loading" class="rubber_repertory_manage">
     <el-form :inline="true">
       <el-form-item label="库区">
         <el-select
@@ -43,22 +43,6 @@
           @changSelect="materialCodeFun"
         />
       </el-form-item>
-      <!-- <el-form-item label="品质状态">
-        <el-select
-          v-model="getParams.aaa"
-          style="width: 120px"
-          clearable
-          placeholder="请选择"
-          @change="changeSearch"
-        >
-          <el-option
-            v-for="item in ['一等品','三等品','待检品']"
-            :key="item"
-            :label="item"
-            :value="item"
-          />
-        </el-select>
-      </el-form-item> -->
       <el-form-item label="巷道">
         <el-select
           v-model="getParams.location"
@@ -91,6 +75,22 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="品质等级">
+        <el-select
+          v-model="getParams.quality_level"
+          clearable
+          placeholder="请选择"
+          style="width:150px"
+          @change="changeSearch"
+        >
+          <el-option
+            v-for="item in ['一等品','三等品','待检品']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="总货位数：">
         {{ allObj.total_goods_num || 0 }}
       </el-form-item>
@@ -119,6 +119,7 @@
       border
       style="width: 100%"
       :row-class-name="rowClassNameFn"
+      :cell-class-name="cellClassName"
     >
       <el-table-column
         label="no"
@@ -367,6 +368,30 @@ export default {
       if (row.all) {
         return 'summary-cell-style'
       }
+    },
+    cellClassName({ row, column, rowIndex, columnIndex }) {
+      if (column.label === '一等品库存数(车)' && row['一等品']) {
+        if (row['一等品'].expire_flag) {
+          return 'red-cell-style'
+        }
+        if (row['一等品'].dj_flag) {
+          return 'yellow-cell-style'
+        }
+      } else if (column.label === '三等品库存数(车)' && row['三等品']) {
+        if (row['三等品'].expire_flag) {
+          return 'red-cell-style'
+        }
+        if (row['三等品'].dj_flag) {
+          return 'yellow-cell-style'
+        }
+      } else if (column.label === '待检品库存数(车)' && row['待检品']) {
+        if (row['待检品'].expire_flag) {
+          return 'red-cell-style'
+        }
+        if (row['待检品'].dj_flag) {
+          return 'yellow-cell-style'
+        }
+      }
     }
   }
 }
@@ -387,7 +412,18 @@ function sum(arr, str, params) {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" >
+.rubber_repertory_manage{
+    .red-cell-style{
+    background: rgb(222, 126, 137);
+  }
+    .yellow-cell-style{
+    background: rgb(222, 190, 84);
+  }
+  .el-link.el-link--primary{
+        color: #115091;
+  }
+}
 
 </style>
 

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="rubber-overdue-alarm">
     <!--胶料超期报警 -->
     剩余有效天数（天）<el-input-number
       v-model="expire_days"
@@ -11,12 +11,28 @@
       step-strictly
       @change="changeList"
     />
-    物料类别/规格&nbsp;<el-select v-model="stage" filterable placeholder="请选择" clearable @change="changeList">
+    物料类别/规格&nbsp;<el-select v-model="stage" filterable placeholder="请选择" clearable style="margin-right:30px" @change="changeList">
       <el-option
         v-for="(item,k) in stageList"
         :key="k"
         :label="item.global_name"
         :value="item.global_name"
+      />
+    </el-select>
+    立库&nbsp;<el-select v-model="liKu" style="margin-right:30px" filterable placeholder="请选择" clearable @change="changeList">
+      <el-option
+        v-for="(item) in ['混炼胶库','终炼胶库']"
+        :key="item"
+        :label="item"
+        :value="item"
+      />
+    </el-select>
+    品质等级&nbsp; <el-select v-model="quality_level" clearable placeholder="请选择" style="width:150px" @change="changeList">
+      <el-option
+        v-for="item in ['一等品','三等品','待检品']"
+        :key="item"
+        :label="item"
+        :value="item"
       />
     </el-select>
     <el-table
@@ -25,6 +41,7 @@
       :data="tableData"
       border
       :row-class-name="tableRowClassName"
+      :cell-class-name="cellClassName"
     >
       <el-table-column
         label="No."
@@ -35,6 +52,16 @@
         prop="material_no"
         label="胶料编码"
         min-width="20"
+      />
+      <el-table-column
+        prop="warehouse_name"
+        label="立库"
+        min-width="10"
+      />
+      <el-table-column
+        prop="period_of_validity"
+        label="有效天数"
+        min-width="10"
       />
       <el-table-column
         label="库存数（车）"
@@ -73,7 +100,7 @@
       :visible.sync="dialogVisible"
       width="90%"
     >
-      <materialInventoryManage :expire-days="expire_days" :quality-status="currentObj.quality_status" :material-no="currentObj.material_no" :show="dialogVisible" :warehouse-name-props="'胶料库'" />
+      <materialInventoryManage :expire-days="expire_days" :quality-status="currentObj.quality_status" :material-no="currentObj.material_no" :show="dialogVisible" :warehouse-name-props="currentObj.warehouse_name" :is-rubber="true" />
       <span slot="footer" class="dialog-footer">
         <el-button
           type="primary"
@@ -104,7 +131,9 @@ export default {
         page_size: 10
       },
       stageList: [],
-      stage: ''
+      stage: '',
+      liKu: '',
+      quality_level: ''
     }
   },
   created() {
@@ -122,7 +151,7 @@ export default {
     async getList() {
       try {
         this.loading = true
-        Object.assign(this.getParams, { expire_days: this.expire_days, stage: this.stage })
+        Object.assign(this.getParams, { expire_days: this.expire_days, stage: this.stage, warehouse_name: this.liKu, quality_level: this.quality_level })
         const data = await productExpiresList('get', null, { params: this.getParams })
         this.tableData = data.results || []
         this.total = data.count
@@ -158,6 +187,16 @@ export default {
       if (row.material_no === '单页合计' || row.material_no === '汇总') {
         return 'summary-cell-style'
       }
+    },
+    cellClassName({ row, column, rowIndex, columnIndex }) {
+      if (column.label === '库存数（车）') {
+        if (row.expire_flag) {
+          return 'red-cell-style'
+        }
+        if (row.dj_flag) {
+          return 'yellow-cell-style'
+        }
+      }
     }
   }
 }
@@ -173,6 +212,16 @@ function sum(arr, params) {
 }
 </script>
 
-<style lang="scss" scoped>
-
+<style lang="scss">
+.rubber-overdue-alarm{
+  .red-cell-style{
+    background: rgb(222, 126, 137);
+  }
+      .yellow-cell-style{
+    background: rgb(222, 190, 84);
+  }
+  .el-link.el-link--primary{
+        color: #115091;
+  }
+}
 </style>
