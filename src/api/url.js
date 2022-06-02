@@ -501,6 +501,7 @@ export default {
   CarbonOutTask: '/api/v1/terminal/carbon-out-task/',
   // 胶片库出库单列表
   CompoundManage: '/api/v1/inventory/outbound-delivery-orders/',
+  OutboundPproductInfo: '/api/v1/inventory/outbound-product-info/',
   // 出库
   Outbound: '/api/v1/inventory/outbound-delivery-order-details/',
   // 机台别不合格率

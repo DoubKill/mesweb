@@ -11,6 +11,7 @@
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           value-format="yyyy-MM-dd"
+          :clearable="false"
           @change="dayChange"
         />
       </el-form-item>
@@ -29,7 +30,7 @@
         <class-select @classSelected="classSelected" />
       </el-form-item>
       <el-form-item label="段次">
-        <stage-select v-model="getParams.stage" @change="clickQuery" />
+        <stage-select v-model="getParams.stage" :is-default="true" :is-clearable="false" @change="clickQuery" />
       </el-form-item>
       <el-form-item label="综合检测结果">
         <el-select
@@ -216,7 +217,7 @@ import EquipSelect from '@/components/select_w/equip'
 import ClassSelect from '@/components/ClassSelect'
 import StageSelect from '@/components/StageSelect'
 import allProductNoSelect from '@/components/select_w/allProductNoSelect'
-import { testTypes, materialTestOrders, testResultHistory, datapointCurve } from '@/api/quick-check-detail'
+import { testTypes, materialTestOrdersAll, materialTestOrders, testResultHistory, datapointCurve } from '@/api/quick-check-detail'
 import elTableInfiniteScroll from 'el-table-infinite-scroll'
 import FileSaver from 'file-saver'
 import XLSX from 'xlsx'
@@ -445,17 +446,30 @@ export default {
     },
     async getALLData() {
       try {
-        if (getDaysBetween(this.getParams.st, this.getParams.et) > 1) {
-          this.$message('导出Excel日期间隔不得大于2天')
-          return
-        }
         this.btnLoading = true
-        const arr = await this.getMaterialTestOrders(true)
-        this.ALLData = arr || []
-        this.btnLoading = false
-        this.$nextTick(() => {
-          this.exportExcel()
-        })
+        // const arr = await this.getMaterialTestOrders(true)
+        // this.ALLData = arr || []
+        // this.btnLoading = false
+        // this.$nextTick(() => {
+        //   this.exportExcel()
+        // })
+        const obj = Object.assign({ export: 1 }, this.getParams)
+        const _api = materialTestOrdersAll
+        _api('get', null, { params: obj, responseType: 'blob' })
+          .then(res => {
+            this.btnLoading = false
+            const link = document.createElement('a')
+            const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+            link.style.display = 'none'
+            link.href = URL.createObjectURL(blob)
+            link.download = `胶料快检详细信息${setDate()}.xlsx`// 下载的文件名
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+            this.btnExportLoad = false
+          }).catch(e => {
+            this.btnExportLoad = false
+          })
       } catch (e) {
         this.btnLoading = false
       }
@@ -463,6 +477,10 @@ export default {
     async getMaterialTestOrders(bool = false) {
       this.listLoading = true
       try {
+        if (getDaysBetween(this.getParams.st, this.getParams.et) > 1) {
+          this.$message('日期间隔不得大于31天')
+          return
+        }
         const paramsObj = JSON.parse(JSON.stringify(this.getParams))
         paramsObj.page_size = bool ? 99999999 : 10
         paramsObj.page = bool ? 1 : this.getParams.page
@@ -660,7 +678,7 @@ function getDaysBetween(dateString1, dateString2) {
   if (startDate === endDate) {
     return 1
   }
-  var days = (endDate - startDate) / (1 * 24 * 60 * 60 * 1000)
+  var days = (endDate - startDate) / (30 * 24 * 60 * 60 * 1000)
   return days
 }
 </script>

@@ -47,6 +47,9 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item>
+        <el-checkbox v-model="getParams.checked" @change="numChanged">按修改日期排序</el-checkbox>
+      </el-form-item>
       <el-form-item
         v-if="permissionObj.user.indexOf('add')>-1"
         style="float: right"
@@ -201,6 +204,7 @@
       </el-table-column>
     </el-table>
     <page
+      :old-page="false"
       :total="count"
       :current-page="getParams.page"
       @currentChange="changePage"
@@ -596,6 +600,7 @@ export default {
       })
     },
     numChanged() {
+      this.getParams.ordering = this.getParams.checked ? '-last_updated_date' : ''
       this.getParams['page'] = 1
       this.currentChange()
     },
@@ -658,8 +663,9 @@ export default {
       }).catch(() => {
       })
     },
-    changePage(page) {
-      this.getParams['page'] = page
+    changePage(page, page_size) {
+      this.getParams.page = page
+      this.getParams.page_size = page_size
       this.currentChange()
     },
     handleCreateUser(formName) {
