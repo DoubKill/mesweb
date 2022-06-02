@@ -65,10 +65,8 @@
       <el-form-item label="质检条码">
         <el-input v-model="search.lot_no" clearable @input="debounceList" />
       </el-form-item>
-      <el-form-item label="打印机所在出库口">
-        <span v-if="isProduction">一层前端</span>
+      <el-form-item v-if="!isProduction" label="打印机所在出库口">
         <stationInfoWarehouse
-          v-else
           ref="stationInfoWarehouseRef"
           :warehouse-name="search.warehouse_name"
           :start-using="true"

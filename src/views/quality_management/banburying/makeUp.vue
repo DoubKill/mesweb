@@ -257,7 +257,9 @@ export default {
     return {
       search: {},
       val: null,
-      dialogForm: {},
+      dialogForm: {
+        print_count: 1
+      },
       dialogVisibleAdd: false,
       submit: false,
       options: [],
@@ -314,7 +316,7 @@ export default {
         if (this.$refs.createForm) {
           this.$refs.createForm.resetFields()
         }
-        this.dialogForm = {}
+        this.dialogForm = { print_count: 1 }
         this.dialogVisibleAdd = true
       } else {
         this.dialogForm = JSON.parse(JSON.stringify(row))
