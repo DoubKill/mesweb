@@ -115,31 +115,49 @@
         </u-table-column>
       </u-table-column>
       <u-table-column v-for="header in testTypeList.filter(type => type.show)" :key="header.test_type_name" align="center" :label="header.test_type_name">
-        <u-table-column v-for="subHeader in header.data_indicator_detail.filter(item => item.show)" :key="header.test_type_name + subHeader.detail" min-width="20px" :label="subHeader.detail" align="center">
-          <template slot-scope="{ row }">
-            <div :class="getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level')!==1&&getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level')!==''?'test_type_name_style':''">
-              {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'value') }}
-            </div>
-          </template>
-        </u-table-column>
-        <u-table-column v-if="header.test_type_name === '门尼' || header.test_type_name === '流变'" label="检测机台" min-width="20px" align="center">
-          <template slot-scope="{row}">
-            {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'machine_name') }}
-          </template>
-        </u-table-column>
-        <u-table-column min-width="20px" label="标准" align="center">
-          <template slot-scope="{row}">
-            {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'upper_lower') }}
-          </template>
-        </u-table-column>
         <u-table-column min-width="20px" label="等级" align="center">
           <template slot-scope="{row}">
             {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'level') }}
           </template>
         </u-table-column>
+        <div v-for="(subHeader,_ii) in header.data_indicator_detail.filter(item => item.show)" :key="subHeader.detail">
+          <u-table-column :key="subHeader.detail+_ii" min-width="20px" :label="subHeader.detail" align="center">
+            <template slot-scope="{ row }">
+              <div :class="getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level')!==1&&getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level')!==''?'test_type_name_style':''">
+                {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'value') }}
+              </div>
+            </template>
+          </u-table-column>
+          <u-table-column :key="_ii" min-width="20px" label="标准" align="center">
+            <template slot-scope="{ row }">
+              <div>
+                {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'upper_lower') }}
+              </div>
+            </template>
+          </u-table-column>
+        </div>
+        <!-- <u-table-column min-width="20px" label="标准" align="center">
+          <template slot-scope="{row}">
+            {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'upper_lower') }}
+          </template>
+        </u-table-column> -->
+        <u-table-column v-if="header.test_type_name === '门尼' || header.test_type_name === '流变'" label="检测机台" min-width="20px" align="center">
+          <template slot-scope="{row}">
+            {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'machine_name') }}
+          </template>
+        </u-table-column>
       </u-table-column>
       <u-table-column label="综合等级" min-width="20px" prop="level" align="center" />
-      <u-table-column label="综合检测结果" min-width="20px" prop="mes_result" align="center" />
+      <!-- <u-table-column label="综合检测结果" min-width="20px" prop="mes_result" align="center" /> -->
+      <u-table-column label="是否合格" min-width="20px" prop="is_qualified" align="center">
+        <template slot-scope="{row}">
+          {{ row.is_qualified?'合格':'不合格' }}
+        </template>
+      </u-table-column>
+      <u-table-column label="检测结果" min-width="20px" prop="deal_info.test_result" align="center" />
+      <u-table-column label="处理人" min-width="20px" prop="deal_info.deal_user" align="center" />
+      <u-table-column label="处理意见" min-width="20px" prop="deal_info.deal_suggestion" align="center" />
+      <u-table-column label="处理时间" min-width="20px" prop="deal_info.deal_time" align="center" />
     </u-table>
     <el-dialog
       title="选择过滤"
