@@ -235,7 +235,8 @@ import EquipSelect from '@/components/select_w/equip'
 import ClassSelect from '@/components/ClassSelect'
 import StageSelect from '@/components/StageSelect'
 import allProductNoSelect from '@/components/select_w/allProductNoSelect'
-import { testTypes, materialTestOrdersAll, materialTestOrders, testResultHistory, datapointCurve } from '@/api/quick-check-detail'
+import { testTypes, materialTestOrders, testResultHistory, datapointCurve } from '@/api/quick-check-detail'
+// materialTestOrdersAll,
 import elTableInfiniteScroll from 'el-table-infinite-scroll'
 import FileSaver from 'file-saver'
 import XLSX from 'xlsx'
@@ -465,29 +466,30 @@ export default {
     async getALLData() {
       try {
         this.btnLoading = true
-        // const arr = await this.getMaterialTestOrders(true)
-        // this.ALLData = arr || []
-        // this.btnLoading = false
-        // this.$nextTick(() => {
-        //   this.exportExcel()
-        // })
-        const obj = Object.assign({ export: 1 }, this.getParams)
-        const _api = materialTestOrdersAll
-        _api('get', null, { params: obj, responseType: 'blob' })
-          .then(res => {
-            this.btnLoading = false
-            const link = document.createElement('a')
-            const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
-            link.style.display = 'none'
-            link.href = URL.createObjectURL(blob)
-            link.download = `胶料快检详细信息${setDate()}.xlsx`// 下载的文件名
-            document.body.appendChild(link)
-            link.click()
-            document.body.removeChild(link)
-            this.btnExportLoad = false
-          }).catch(e => {
-            this.btnExportLoad = false
-          })
+        const arr = await this.getMaterialTestOrders(true)
+        this.ALLData = arr || []
+        this.btnLoading = false
+        this.$nextTick(() => {
+          this.exportExcel()
+        })
+
+        // const obj = Object.assign({ export: 1 }, this.getParams)
+        // const _api = materialTestOrdersAll
+        // _api('get', null, { params: obj, responseType: 'blob' })
+        //   .then(res => {
+        //     this.btnLoading = false
+        //     const link = document.createElement('a')
+        //     const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+        //     link.style.display = 'none'
+        //     link.href = URL.createObjectURL(blob)
+        //     link.download = `胶料快检详细信息${setDate()}.xlsx`// 下载的文件名
+        //     document.body.appendChild(link)
+        //     link.click()
+        //     document.body.removeChild(link)
+        //     this.btnExportLoad = false
+        //   }).catch(e => {
+        //     this.btnExportLoad = false
+        //   })
       } catch (e) {
         this.btnLoading = false
       }
