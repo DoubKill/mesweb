@@ -1,11 +1,36 @@
 <template>
   <div v-loading="loading" :style="{padding:this.$route.path === '/operation-status'?'15px':0}" :class="['operation-status',bigScreen?'bigScreen':'']">
     <!-- 设备运行现况 -->
+
     <div class="head-top">
       <img src="@/assets/logoHeard.png" alt="">
-      <h2>中策橡胶安吉准备分厂 设备监控系统</h2>
+      <!-- <h2>中策橡胶安吉准备分厂 设备监控系统</h2> -->
+      <div class="host-body">
+        <div class="d-flex jc-center">
+          <dv-decoration-10 style="width:500px;height:.0625rem;" />
+          <div class="d-flex jc-center">
+            <dv-decoration-8 :color="['#568aea', '#000000']" style="width:80px;height:70px" />
+            <div class="title">
+              <h2>中策橡胶安吉准备分厂 设备监控系统</h2>
+              <dv-decoration-6
+                class="title-bototm"
+                style="height:65px"
+                :reverse="true"
+                :color="['#50e3c2', '#67a1e5']"
+              />
+            </div>
+            <dv-decoration-8
+              :reverse="true"
+              :color="['#568aea', '#000000']"
+              style="width:80px;height:70px"
+            />
+          </div>
+          <dv-decoration-10 style="width:500px;height:.05rem; transform: rotateY(180deg);" />
+        </div>
+      </div>
       <h3>{{ currentTime }}</h3>
     </div>
+
     <el-divider content-position="left">密炼设备</el-divider>
     <div class="conter-style">
       <div
@@ -48,7 +73,7 @@
         <div class="bottom-font-style" style="cursor: pointer;" @click="showDialog(item)">
           <span class="setFont" :style="{color:item.state==='运行中'?normalColor:item.state==='生产停机'?haltColor:faultColor}">
             <span v-if="item.state==='运行中'" style="width:95px">{{ item.current_product }}</span>
-            <span v-else style="width:95px">({{ item.error_minutes }})
+            <span v-else style="width:95px">({{ item.error_minutes }}分钟)
               {{ item.error_reason }}
             </span>
           </span>
@@ -575,7 +600,17 @@ export default {
 </script>
 
 <style lang="scss">
+
 .operation-status{
+  .d-flex{
+    display: flex;
+    h2{
+      margin:15px;
+    }
+  }
+   .el-divider--horizontal{
+         margin:5px 0;
+    }
   .head-top{
     display: flex;
     justify-content: space-between ;

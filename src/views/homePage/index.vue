@@ -1,5 +1,32 @@
 <template>
   <div :class="['homePage-container',bigScreen?'bigScreen':'']">
+    <div v-if="bigScreen" class="head-top">
+      <img src="@/assets/logoHeard.png" alt="">
+      <div class="host-body">
+        <div class="d-flex jc-center">
+          <dv-decoration-10 style="width:500px;height:.0625rem;" />
+          <div class="d-flex jc-center">
+            <dv-decoration-8 :color="['#568aea', '#000000']" style="width:80px;height:70px" />
+            <div class="title">
+              <h2>中策橡胶安吉准备分厂 mes系统</h2>
+              <dv-decoration-6
+                class="title-bototm"
+                style="height:55px"
+                :reverse="true"
+                :color="['#50e3c2', '#67a1e5']"
+              />
+            </div>
+            <dv-decoration-8
+              :reverse="true"
+              :color="['#568aea', '#000000']"
+              style="width:80px;height:70px"
+            />
+          </div>
+          <dv-decoration-10 style="width:500px;height:.05rem; transform: rotateY(180deg);" />
+        </div>
+      </div>
+      <h3>{{ currentTime }}</h3>
+    </div>
     <el-row :gutter="20" style="font-weight:700;font-size:16px">
       <el-col :span="4">
         <el-card class="box-card">
@@ -155,6 +182,7 @@
 
 <script>
 import * as echarts from 'echarts'
+import { setDate } from '@/utils'
 import { indexOverview, indexProductionAyalyze, indexEquipProductionAyalyze, indexEquipMaintenanceAyalyze } from '@/api/base_w_three'
 export default {
   name: 'HomePageMain',
@@ -176,6 +204,7 @@ export default {
       radius: '90'
     }
     return {
+      currentTime: setDate(null, true),
       yieldBarRadio: '1',
       equipProduction: {
         dimension: '1',
@@ -623,6 +652,9 @@ export default {
   },
   created() {
     this.bigScreen = this.$route.fullPath === '/homePage/index'
+    setInterval(d => {
+      this.currentTime = setDate(null, true)
+    }, 1000)
   },
   destroyed() {
     window.clearInterval(this._setInterval)
@@ -873,6 +905,19 @@ export default {
  .el-tabs__item,.el-date-editor .el-range-input{
    color:#fff;
  }
+   .head-top{
+    display: flex;
+    justify-content: space-between ;
+     align-items: center;
+     color:#fff;
+  }
+    .d-flex{
+      margin-top: 10px;
+    display: flex;
+    h2{
+      margin:15px;
+    }
+  }
 }
 
 </style>
