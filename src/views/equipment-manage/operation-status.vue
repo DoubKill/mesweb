@@ -531,20 +531,20 @@ export default {
         this.options = data || []
         this.Wequip = this.options.equip_data.filter(d => d.equip_catetory === '称量设备')
         this.Bequip = this.options.equip_data.filter(d => d.equip_catetory === '密炼设备')
-        const a = localStorage.getItem('operationList')
-        const storageObj = a ? JSON.parse(a) : null
-        if (storageObj) {
-          this.options.equip_data.forEach(d => {
-            if (d.halt_time < storageObj[d.equip_no]) {
-              d.halt_time = storageObj[d.equip_no]
-            }
-          })
-        }
-        const obj = {}
-        this.options.equip_data.forEach(d => {
-          this.$set(obj, d.equip_no, d.halt_time)
-        })
-        localStorage.setItem('operationList', JSON.stringify(obj))
+        // const a = localStorage.getItem('operationList')
+        // const storageObj = a ? JSON.parse(a) : null
+        // if (storageObj) {
+        //   this.options.equip_data.forEach(d => {
+        //     if (d.halt_time < storageObj[d.equip_no]) {
+        //       d.halt_time = storageObj[d.equip_no]
+        //     }
+        //   })
+        // }
+        // const obj = {}
+        // this.options.equip_data.forEach(d => {
+        //   this.$set(obj, d.equip_no, d.halt_time)
+        // })
+        // localStorage.setItem('operationList', JSON.stringify(obj))
       } catch (e) {
         //
       }
