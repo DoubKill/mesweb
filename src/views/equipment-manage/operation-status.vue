@@ -5,7 +5,7 @@
     <div class="head-top">
       <img src="@/assets/logoHeard.png" alt="">
       <!-- <h2>中策橡胶安吉准备分厂 设备监控系统</h2> -->
-      <div class="host-body">
+      <div v-if="bigScreen" class="host-body">
         <div class="d-flex jc-center">
           <dv-decoration-10 style="width:500px;height:.0625rem;" />
           <div class="d-flex jc-center">
@@ -28,6 +28,7 @@
           <dv-decoration-10 style="width:500px;height:.05rem; transform: rotateY(180deg);" />
         </div>
       </div>
+      <h2 v-else>中策橡胶安吉准备分厂 设备监控系统</h2>
       <h3>{{ currentTime }}</h3>
     </div>
 
@@ -602,15 +603,14 @@ export default {
 <style lang="scss">
 
 .operation-status{
+   min-width:1000px;
+   width: 100%;
   .d-flex{
     display: flex;
     h2{
       margin:15px;
     }
   }
-   .el-divider--horizontal{
-         margin:5px 0;
-    }
   .head-top{
     display: flex;
     justify-content: space-between ;
@@ -709,6 +709,9 @@ export default {
     margin-left: 106px;
     width: 93%;
   }
+     .el-divider--horizontal{
+         margin:5px 0;
+    }
   .el-divider__text.is-left{
     left: -96px
   }
