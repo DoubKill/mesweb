@@ -139,7 +139,7 @@
           :error="globalCodeTypeFormError.type_no"
           label="类型编号"
         >
-          <el-input v-model="globalCodeTypeForm.type_no" />
+          <el-input v-model="globalCodeTypeForm.type_no" disabled />
         </el-form-item>
         <el-form-item
           :error="globalCodeTypeFormError.type_name"
@@ -226,7 +226,7 @@
           :error="globalCodeFormError.global_no"
           label="公用代码编号"
         >
-          <el-input v-model="globalCodeForm.global_no" />
+          <el-input v-model="globalCodeForm.global_no" disabled />
         </el-form-item>
         <el-form-item
           :error="globalCodeFormError.global_name"
@@ -308,7 +308,7 @@
 </template>
 
 <script>
-import { getGlobalTypes, postGlobalTypes, putGlobalTypes, deleteGlobalTypes, getGlobalCodes, postGlobalCodes, putGlobalCodes, deleteGlobalCodes } from '@/api/global-codes-manage'
+import { getGlobalTypes, postGlobalTypes, putGlobalTypes, deleteGlobalTypes, getGlobalCodes, postGlobalCodes, putGlobalCodes, deleteGlobalCodes, commonCode } from '@/api/global-codes-manage'
 import page from '@/components/page'
 import { mapGetters } from 'vuex'
 export default {
@@ -389,9 +389,22 @@ export default {
       }
     },
     showCreateGlobalCodeTypeDialog: function() {
+      this.getCode(1)
       this.clearGlobalCodeTypeForm()
       this.clearGlobalCodeTypeFormError()
       this.dialogCreateGlobalCodeTypeVisible = true
+    },
+    async getCode(num) {
+      try {
+        const { results } = await commonCode({ code: num })
+        if (num === 1) {
+          this.globalCodeTypeForm.type_no = results
+        } else {
+          this.globalCodeForm.global_no = results
+        }
+      } catch (e) {
+        //
+      }
     },
     handleCreateGlobalCodeType: function() { // 创建全局代码类型
       this.clearGlobalCodeTypeFormError()
@@ -486,6 +499,7 @@ export default {
       if (!this.globalCodeForm.global_type) { return }
       this.clearGlobalCodeForm()
       this.clearGlobalCodeFormError()
+      this.getCode(2)
       this.dialogCreateGlobalCodeVisible = true
     },
     handleCreateGlobalCode: function() {

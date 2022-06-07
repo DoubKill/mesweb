@@ -59,3 +59,10 @@ export function deleteGlobalCodes(id) {
     method: 'delete'
   })
 }
+export function commonCode(params) {
+  return request({
+    url: API.CommonCode,
+    method: 'get',
+    params
+  })
+}

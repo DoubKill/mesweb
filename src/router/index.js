@@ -1214,6 +1214,16 @@ export let asyncRoutes = [
               title: '(内部)原材料流转卡',
               permissionName: 'material_add_print'
             }
+          },
+          {
+            path: '/banburying/makeUp/',
+            component: () => import('@/views/quality_management/banburying/makeUp'),
+            name: 'BanburyingMakeUp',
+            meta: {
+              faName: 'Banburying',
+              title: '胶片补打卡片',
+              permissionName: 'return_rubber'
+            }
           }
         ]
       },
@@ -2824,16 +2834,6 @@ export let asyncRoutes = [
               faName: 'Banburying',
               title: '细料胶块放行处理',
               permissionName: 'replace_material'
-            }
-          },
-          {
-            path: '/banburying/makeUp',
-            component: () => import('@/views/quality_management/banburying/makeUp'),
-            name: 'BanburyingMakeUp',
-            meta: {
-              faName: 'Banburying',
-              title: '胶皮补打卡片',
-              permissionName: 'return_rubber'
             }
           },
           {
