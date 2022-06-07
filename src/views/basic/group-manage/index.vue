@@ -118,7 +118,7 @@
           :error="groupFormError.group_code"
           label="角色代码"
         >
-          <el-input v-model="groupForm.group_code" />
+          <el-input v-model="groupForm.group_code" disabled />
         </el-form-item>
         <el-row>
           <el-col :span="12">
@@ -174,6 +174,7 @@ import { roles } from '@/api/roles-manage'
 import page from '@/components/page'
 import transferLimit from '@/components/select_w/transferLimit'
 import { checkPermission } from '@/utils/index'
+import { commonCode } from '@/api/global-codes-manage'
 
 export default {
   name: 'GroupManage',
@@ -270,10 +271,19 @@ export default {
     },
     showCreateGroupDialog() {
       this.permission_name = null
+      this.getCode(3)
       this.clearGroupForm()
       this.clearGroupFormError()
       this.dialogTitle = '新增角色'
       this.dialogEditGroupVisible = true
+    },
+    async getCode(num) {
+      try {
+        const { results } = await commonCode({ code: num })
+        this.groupForm.group_code = results
+      } catch (e) {
+        //
+      }
     },
     handleEditGroup() {
       this.clearGroupFormError()
