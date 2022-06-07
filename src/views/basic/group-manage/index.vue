@@ -120,12 +120,23 @@
         >
           <el-input v-model="groupForm.group_code" />
         </el-form-item>
-        <el-form-item
-          :error="groupFormError.name"
-          label="角色名称"
-        >
-          <el-input v-model="groupForm.name" />
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item
+              :error="groupFormError.name"
+              label="角色名称"
+            >
+              <el-input v-model="groupForm.name" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item
+              label="菜单筛选"
+            >
+              <el-input v-model="permission_name" clearable @input="changeList" />
+            </el-form-item>
+          </el-col>
+        </el-row>
         <!-- <el-form-item
           :error="groupFormError.use_flag"
           label="是否使用"
@@ -137,6 +148,7 @@
           size="medium"
         >
           <transferLimit
+            ref="Permission"
             :group-id="groupForm.id"
             @changeTransferPermissions="changeTransferPermissions"
           />
@@ -176,6 +188,7 @@ export default {
       count: 0,
       group_code: '',
       name: '',
+      permission_name: '',
       groupForm: {
         name: '',
         group_code: '',
@@ -256,6 +269,7 @@ export default {
       }
     },
     showCreateGroupDialog() {
+      this.permission_name = null
       this.clearGroupForm()
       this.clearGroupFormError()
       this.dialogTitle = '新增角色'
@@ -279,10 +293,18 @@ export default {
     },
     showEditGroupDialog(group) {
       // this.
+      this.permission_name = null
       this.groupForm = JSON.parse(JSON.stringify(group))
       this.clearGroupFormError()
       this.dialogTitle = '编辑角色'
       this.dialogEditGroupVisible = true
+    },
+    changeList() {
+      if (this.permission_name !== '') {
+        this.$refs['Permission'].permissionsData = this.$refs['Permission'].permissionsList.filter(d => { return (d.name.indexOf(this.permission_name) !== -1) })
+      } else {
+        this.$refs['Permission'].permissionsData = this.$refs['Permission'].permissionsList
+      }
     },
     handleGroupDelete(group) {
       var boolStr = group.use_flag ? '停用' : '启用'
