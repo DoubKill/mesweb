@@ -129,7 +129,8 @@
           <u-table-column :key="_ii" min-width="20px" label="标准" align="center">
             <template slot-scope="{ row }">
               <div>
-                {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'upper_lower') }}
+                {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'judged_lower_limit') }}-
+                {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'judged_upper_limit') }}
               </div>
             </template>
           </u-table-column>
