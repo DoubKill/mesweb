@@ -145,7 +145,7 @@
           </template>
         </u-table-column>
       </u-table-column>
-      <u-table-column label="综合等级" min-width="20px" prop="level" align="center" />
+      <!-- <u-table-column label="综合等级" min-width="20px" prop="level" align="center" /> -->
       <!-- <u-table-column label="综合检测结果" min-width="20px" prop="mes_result" align="center" /> -->
       <u-table-column label="是否合格" min-width="20px" prop="is_qualified" align="center">
         <template slot-scope="{row}">
