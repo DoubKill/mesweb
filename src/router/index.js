@@ -1753,6 +1753,7 @@ export let asyncRoutes = [
             name: 'DeliveryInOutRecord',
             meta: {
               faName: 'MaterialDelivery',
+              faShowName: '原材料库',
               title: '出入库履历查询',
               permissionName: 'material_inout_history'
             }
