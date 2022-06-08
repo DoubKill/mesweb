@@ -125,7 +125,7 @@
         <div class="bottom-font-style" style="cursor: pointer;" @click="showDialog(item)">
           <span class="setFont" :style="{color:item.state==='运行中'?normalColor:item.state==='生产停机'?haltColor:faultColor}">
             <span v-if="item.state==='运行中'" style="width:95px">{{ item.current_product }}</span>
-            <span v-else style="width:95px">({{ item.error_minutes }})
+            <span v-else style="width:95px">({{ item.error_minutes }}分钟)
               {{ item.error_reason }}
             </span>
           </span>
