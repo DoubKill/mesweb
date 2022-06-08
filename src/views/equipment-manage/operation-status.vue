@@ -168,7 +168,7 @@
             placeholder="请输入内容"
           />
         </el-form-item>
-        <el-form-item label="上传图片">
+        <el-form-item v-if="resultForm.result_accept_graph_url" label="上传图片">
           <template v-for="(item, index) in resultForm.result_accept_graph_url">
             <el-image
               v-if="resultForm.result_accept_graph_url.length>0"
@@ -182,7 +182,7 @@
             暂无图片
           </div>
         </el-form-item>
-        <el-form-item label="上传视频">
+        <el-form-item v-if="resultForm.result_accept_video_url" label="上传视频">
           <template v-for="(item, index) in resultForm.result_accept_video_url">
             <video
               v-if="resultForm.result_accept_video_url.length>0"
@@ -192,7 +192,7 @@
               :src="item"
             />
           </template>
-          <div v-if="resultForm.result_accept_video_url.length===0">
+          <div v-if="resultForm.result_accept_video_url&&resultForm.result_accept_video_url.length===0">
             暂无视频
           </div>
         </el-form-item>
@@ -318,7 +318,7 @@
             :rows="3"
           />
         </el-form-item>
-        <el-form-item label="上传图片">
+        <el-form-item v-if="creatOrder1.result_repair_graph_url" label="上传图片">
           <template v-for="(item, index) in creatOrder1.result_repair_graph_url ">
             <el-image
               v-if="creatOrder1.result_repair_graph_url.length>0"
@@ -332,7 +332,7 @@
             暂无图片
           </div>
         </el-form-item>
-        <el-form-item label="上传视频">
+        <el-form-item v-if="creatOrder1.result_repair_video_url" label="上传视频">
           <template v-for="(item, index) in creatOrder1.result_repair_video_url">
             <video
               v-if="creatOrder1.result_repair_video_url.length>0"
@@ -552,7 +552,7 @@ export default {
       this.loading = false
     },
     showDialog(val) {
-      if (!val.repair_plan_id || this.bigScreen) {
+      if (!val.repair_plan_id || this.bigScreen || val.state === '运行中' || val.state === '生产停机') {
         return
       }
       this.plan_id = val.repair_plan_id[1]
