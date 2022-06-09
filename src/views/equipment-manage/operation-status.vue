@@ -708,11 +708,11 @@ export default {
  color:#fff;
  padding-top:30px !important;
   .el-divider{
-    margin-left: 106px;
     width: 93%;
   }
      .el-divider--horizontal{
          margin:5px 0;
+             margin-left: 106px;
     }
   .el-divider__text.is-left{
     left: -96px
