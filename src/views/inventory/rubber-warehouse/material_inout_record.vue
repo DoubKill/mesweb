@@ -230,13 +230,14 @@
       />
       <el-table-column label="重量(kg)" align="center" prop="weight" width="80" />
       <el-table-column label="发起人" align="center" prop="initiator" width="80" />
-      <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="品质状态" align="center" prop="initiator" width="80">
+      <el-table-column v-if="warehouseNameProps==='炭黑库'" label="品质状态" align="center" width="80">
         <template slot-scope="{row}">
           <span v-if="row.is_qualified===true">合格</span>
           <span v-if="row.is_qualified===false">不合格</span>
           <span v-if="row.is_qualified===null">待检</span>
         </template>
       </el-table-column>
+      <el-table-column v-if="warehouseNameProps==='原材料库'" label="品质状态" align="center" prop="quality_status" width="80" />
       <el-table-column label="发起时间" align="center" prop="start_time" />
       <el-table-column
         label="完成时间"
