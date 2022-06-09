@@ -858,9 +858,10 @@ export default {
       }
     },
     async dialog1(row) {
-      if (row.plan_out_quantity === row.out_quantity) {
-        this.$message('已经全部出库')
-      } else if (row.all_qty === 0) {
+      // if (row.plan_out_quantity === row.out_quantity) {
+      //   this.$message('已经全部出库')
+      // } else
+      if (row.all_qty === 0) {
         this.$message('库存数量为0，无法出库')
       } else {
         this.quantity = row.plan_out_quantity - row.out_quantity
