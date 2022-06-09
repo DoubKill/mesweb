@@ -19,7 +19,6 @@
           />
         </el-select> -->
         <!-- <warehouseSelect :created-is="true" @changSelect="changeWarehouse" /> -->
-
       </el-form-item>
       <el-form-item v-if="warehouseNameProps!=='胶料库'&& !isRubber" label="物料编码">
         <span v-if="materialCode">{{ materialCode }}</span>
@@ -64,6 +63,8 @@
       :data="tableData"
     >
       <el-table-column label="No" type="index" align="center" width="40" />
+      <el-table-column v-if="warehouseNameProps==='胶料库'|| isRubber" label="库区" align="center" prop="store_name" min-width="35" />
+      <el-table-column v-if="warehouseNameProps==='胶料库'|| isRubber" label="胶料编码" align="center" prop="material_no" min-width="35" />
       <el-table-column
         v-if="warehouseNameProps!=='胶料库'&& !isRubber"
         label="物料名称"
@@ -72,11 +73,21 @@
         min-width="35"
       />
       <el-table-column v-if="warehouseNameProps!=='胶料库'&& !isRubber" label="物料编码" align="center" prop="material_no" min-width="35" />
-
-      <el-table-column v-if="warehouseNameProps==='胶料库'|| isRubber" label="库区" align="center" prop="store_name" min-width="35" />
-      <el-table-column v-if="warehouseNameProps==='胶料库'|| isRubber" label="胶料编码" align="center" prop="material_no" min-width="35" />
+      <el-table-column
+        v-if="warehouseNameProps==='胶料库'|| isRubber"
+        label="机台"
+        align="center"
+        prop="equip_no"
+        min-width="35"
+      />
+      <el-table-column v-if="warehouseNameProps==='胶料库'|| isRubber" label="车次" align="center" prop="memo" min-width="16" />
+      <el-table-column v-else label="库存数" align="center" prop="qty" min-width="16" />
+      <el-table-column label="总重量kg" align="center" prop="total_weight" min-width="16" />
+      <el-table-column label="托盘号" align="center" prop="container_no" min-width="18" />
+      <el-table-column label="库存位" align="center" prop="location" min-width="18" />
       <el-table-column :label="`${warehouseNameProps==='胶料库'|| isRubber?'追踪码':'质检条码'}`" align="center" prop="lot_no" min-width="35" />
       <el-table-column v-if="warehouseNameProps === '帘布库'" label="货位状态" align="center" prop="location_status" min-width="16" />
+
       <!-- <el-table-column label="机台号" align="center" min-width="12">
         <template v-if="row.product_info" slot-scope="{row}">
           {{ row.product_info.equip_no }}
@@ -92,11 +103,9 @@
           {{ row.product_info.classes }}
         </template>
       </el-table-column> -->
-      <el-table-column label="托盘号" align="center" prop="container_no" min-width="18" />
-      <el-table-column label="库存位" align="center" prop="location" min-width="18" />
-      <el-table-column :label="`${warehouseNameProps==='胶料库'|| isRubber?'车数':'库存数'}`" align="center" prop="qty" min-width="16" />
       <el-table-column v-if="warehouseNameProps!== '胶料库'&& !isRubber" label="单位" align="center" prop="unit" min-width="20" />
       <el-table-column
+        v-if="warehouseNameProps!== '胶料库'&& !isRubber"
         label="单位重量"
         prop="total_weight"
         min-width="16"
@@ -107,7 +116,6 @@
           return ''
         }"
       />
-      <el-table-column label="总重量kg" align="center" prop="total_weight" min-width="16" />
       <el-table-column v-if="warehouseNameProps!=='胶料库'&&!isRubber" label="品质状态" align="center" prop="quality_status" min-width="15" />
       <el-table-column v-if="warehouseNameProps==='胶料库'|| isRubber" label="品质状态" align="center" prop="quality_level" min-width="15" />
       <el-table-column label="入库时间" align="center" prop="in_storage_time" min-width="15" />

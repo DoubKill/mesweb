@@ -3,6 +3,10 @@ import Vue from 'vue'
 import echarts from 'echarts'
 Vue.prototype.$echarts = echarts
 import VCharts from 'v-charts'
+import { decoration10, decoration8, decoration6 } from '@jiaminghi/data-view' // 首页头部动画
+Vue.use(decoration10)
+Vue.use(decoration8)
+Vue.use(decoration6)
 Vue.use(VCharts)
 
 // 按需引入虚拟表格
