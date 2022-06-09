@@ -151,10 +151,10 @@
         <el-form-item label="状态">
           <el-input v-model="status" disabled />
         </el-form-item>
-        <el-form-item label="物料编码">
+        <el-form-item label="备件代码">
           <el-input v-model="search1.spare_code" />
         </el-form-item>
-        <el-form-item label="物料名称">
+        <el-form-item label="备件名称">
           <el-input v-model="search1.spare_name" />
         </el-form-item>
         <el-button
