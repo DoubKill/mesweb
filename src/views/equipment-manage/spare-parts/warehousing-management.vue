@@ -182,6 +182,7 @@
       </el-form>
       <el-table
         v-loading="loadingView"
+        max-height="500"
         :data="tableDataView"
         border
       >
@@ -386,6 +387,7 @@
         <el-form-item label="入库物料详情列表" prop="equip_spare">
           <el-button type="primary" @click="Add">添加</el-button>
           <el-table
+            max-height="400"
             :data="dialogForm.equip_spare"
             border
             style="width: 100%"
@@ -482,6 +484,7 @@
         <el-form-item label="入库物料详情列表" prop="equip_spare">
           <el-button type="primary" @click="Add">添加</el-button>
           <el-table
+            max-height="400"
             :data="dialogForm.equip_spare"
             border
             style="width: 100%"
@@ -823,15 +826,19 @@ export default {
       this.getList()
     },
     async dialog(row) {
-      this.search1.order_id = row.order_id
-      this.status = row.status_name
+      if (row) {
+        this.dialogVisible = true
+        this.search1.order_id = row.order_id
+        this.status = row.status_name
+      }
       try {
+        this.loadingView = true
         const data = await equipWarehouseOrderDetail('get', null, { params: this.search1 })
+        this.loadingView = false
         this.tableDataView = data || []
       } catch (e) {
-        // this.loading = false
+        this.loadingView = false
       }
-      this.dialogVisible = true
     },
     spareDialog(row) {
       this.dialogVisibleSpare = true

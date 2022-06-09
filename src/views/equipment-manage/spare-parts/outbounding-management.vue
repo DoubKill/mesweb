@@ -151,9 +151,21 @@
         <el-form-item label="状态">
           <el-input v-model="status" disabled />
         </el-form-item>
+        <el-form-item label="物料编码">
+          <el-input v-model="search1.spare_code" />
+        </el-form-item>
+        <el-form-item label="物料名称">
+          <el-input v-model="search1.spare_name" />
+        </el-form-item>
+        <el-button
+          type="primary"
+          @click="dialog(false)"
+        >查询
+        </el-button>
       </el-form>
       <el-table
         v-loading="loadingView"
+        max-height="500"
         :data="tableDataView"
         border
       >
@@ -367,6 +379,7 @@
         <el-form-item label="出库物料详情列表" prop="equip_spare">
           <el-button type="primary" @click="Add">添加</el-button>
           <el-table
+            max-height="400"
             :data="dialogForm.equip_spare"
             border
             style="width: 100%"
@@ -469,6 +482,7 @@
         <el-form-item label="出库物料详情列表" prop="equip_spare">
           <el-button type="primary" @click="Add">添加</el-button>
           <el-table
+            max-height="400"
             :data="dialogForm.equip_spare"
             border
             style="width: 100%"
@@ -837,16 +851,20 @@ export default {
       }
     },
     async dialog(row) {
-      this.search1.order_id = row.order_id
-      this.search1.stage = 1
-      this.status = row.status_name
+      this.dialogVisible = true
+      if (row) {
+        this.search1.order_id = row.order_id
+        this.search1.stage = 1
+        this.status = row.status_name
+      }
       try {
+        this.loadingView = true
         const data = await equipWarehouseOrderDetail('get', null, { params: this.search1 })
+        this.loadingView = false
         this.tableDataView = data || []
       } catch (e) {
-        // this.loading = false
+        this.loadingView = false
       }
-      this.dialogVisible = true
     },
     spareDialog(row) {
       this.dialogVisibleSpare = true
