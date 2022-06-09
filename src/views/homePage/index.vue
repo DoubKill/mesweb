@@ -223,7 +223,10 @@ export default {
       optionYieldBar: {
         color: this.color,
         legend: {
-          data: ['计划车次', '实际车次']
+          data: ['计划车次', '实际车次'],
+          textStyle: {
+            color: '#000'// 字体颜色
+          }
         },
         title: {
           left: 'left',
@@ -749,6 +752,7 @@ export default {
             this.optionYieldBar.xAxis.axisLine.lineStyle.color = '#fff'
             this.optionYieldBar.yAxis.axisLine.lineStyle.color = '#fff'
             this.optionYieldBar.title.textStyle.color = '#fff'
+            this.optionYieldBar.legend.textStyle.color = '#fff'
           }
           this.myChartYieldBar.setOption(this.optionYieldBar)
         }
