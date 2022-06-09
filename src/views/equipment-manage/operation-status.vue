@@ -140,7 +140,7 @@
 
     <el-dialog
       title="设备故障维修详情"
-      width="80%"
+      width="900px"
       :visible.sync="dialogVisible"
     >
       <repair :rule-form="ruleForm" :is-home="true" @showMaintenanceRecords="showMaintenanceRecords" @showAcceptanceRecords="showAcceptanceRecords" />
