@@ -562,9 +562,11 @@ export default {
     },
     async repairDialog() {
       try {
+        this.creatOrder1 = {}
+        this.resultForm = {}
         const data = await equipApplyRepair('get', null, { params: { plan_id: this.plan_id }})
         const data1 = await equipApplyOrder('get', this.list_id)
-        this.ruleForm = data.results[0]
+        this.ruleForm = data.results[0] || {}
         this.ruleForm.work_order_no = data1.work_order_no
         this.ruleForm.created_username = data1.created_username
         this.ruleForm.created_date = data1.created_date
