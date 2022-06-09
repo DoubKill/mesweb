@@ -85,6 +85,7 @@ export default {
       permissions('get', null, obj).then(response => {
         const permissionsArr = response.result || []
         this.permissionsData = permissionsArr
+        this.permissionsList = permissionsArr
         this.permissionsData.forEach(data => {
           const arr = []
           data.permissions.forEach(D => {
@@ -123,7 +124,7 @@ export default {
     },
     setPermissionsData(permissionsData) {
       const arr = []
-      this.permissionsData.forEach(Data => {
+      this.permissionsList.forEach(Data => {
         arr.push(...Data.checkedCities)
       })
       this.$emit('changeTransferPermissions', arr)

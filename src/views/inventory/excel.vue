@@ -66,14 +66,23 @@ export default {
   components: { },
   data() {
     return {
+      fromPath: '',
       tableData: [],
+      search: {},
       total: 0,
       excelName: null
     }
   },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      //  这里的vm指的就是vue实例，可以用来当做this使用
+      vm.fromPath = from.path // 获取上一级路由的路径
+    })
+  },
   created() {
     this.tableData = this.$route.query.table
     this.excelName = this.$route.query.name
+    this.search = this.$route.query.search
   },
   mounted() {
     setTimeout(() => {
@@ -87,8 +96,14 @@ export default {
       this.$store.state.tagsView.visitedViews = visitedViews.filter(v => {
         return v.path !== this.$route.path
       })
-      this.$router.go(-1)
+      this.$router.push({
+        path: this.fromPath,
+        query: {
+          search: this.search
+        }})
+      // this.$router.go(-1)
     }
+
   }
 }
 </script>
