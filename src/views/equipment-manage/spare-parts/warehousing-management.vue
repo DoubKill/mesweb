@@ -182,7 +182,6 @@
       </el-form>
       <el-table
         v-loading="loadingView"
-        max-height="500"
         :data="tableDataView"
         border
       >
@@ -267,6 +266,12 @@
           min-width="20"
         />
       </el-table>
+      <page
+        :old-page="false"
+        :total="total1"
+        :current-page="search1.page"
+        @currentChange="currentChange1"
+      />
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="dialogVisible=false">关闭</el-button>
       </span>
@@ -449,6 +454,7 @@
     >
       <el-form
         ref="createForm"
+        v-loading="loadingList"
         :rules="rules"
         label-width="150px"
         :model="dialogForm"
@@ -621,9 +627,11 @@ export default {
       warehouseAreaList: [],
       warehouseLocationList: [],
       total: 0,
+      total1: 0,
       status: null,
       loading: false,
       loadingView: false,
+      loadingList: false,
       dialogVisibleAdd: false,
       dialogVisibleAdd1: false,
       dialogVisible: false,
@@ -758,21 +766,28 @@ export default {
         }
       }
     },
-    editOrder(row) {
-      this.dialogForm = JSON.parse(JSON.stringify(row))
-      this.dialogForm.equip_spare = []
-      this.dialogForm.order_detail.forEach(d => {
-        this.dialogForm.equip_spare.push({
-          id: d.equip_spare,
-          in_quantity: d.in_quantity,
-          unique_id: d.unique_id,
-          quantity: d.plan_in_quantity,
-          spare_code: d.spare_code,
-          spare_name: d.spare_name,
-          status: d.status
-        })
-      })
+    async editOrder(row) {
       this.dialogVisibleEdit = true
+      try {
+        this.loadingList = true
+        const data = await equipWarehouseOrder('get', row.id, {})
+        this.dialogForm = data
+        this.dialogForm.equip_spare = []
+        this.dialogForm.order_detail.forEach(d => {
+          this.dialogForm.equip_spare.push({
+            id: d.equip_spare,
+            in_quantity: d.in_quantity,
+            unique_id: d.unique_id,
+            quantity: d.plan_in_quantity,
+            spare_code: d.spare_code,
+            spare_name: d.spare_name,
+            status: d.status
+          })
+        })
+        this.loadingList = false
+      } catch {
+        this.loadingList = false
+      }
     },
     deleteOrder: function(row) {
       this.$confirm('此操作将删除' + row.order_id + ', 是否继续?', '提示', {
@@ -835,7 +850,8 @@ export default {
         this.loadingView = true
         const data = await equipWarehouseOrderDetail('get', null, { params: this.search1 })
         this.loadingView = false
-        this.tableDataView = data || []
+        this.total1 = data.count
+        this.tableDataView = data.results || []
       } catch (e) {
         this.loadingView = false
       }
@@ -1006,6 +1022,11 @@ export default {
       this.search.page = page
       this.search.page_size = page_size
       this.getList()
+    },
+    currentChange1(page, page_size) {
+      this.search1.page = page
+      this.search1.page_size = page_size
+      this.dialog()
     }
   }
 }
