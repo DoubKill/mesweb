@@ -265,24 +265,35 @@ export default {
     }
   },
   created() {
-    if (this.currentRouter === 'CarbonDeliveryDaily') {
-      this.search.EndTime = setDate(null, true)
-      this.search.StartTime = setDate() + ' 00:00:00'
-      this.datetimerange = [this.search.StartTime, this.search.EndTime]
-    } else if (this.currentRouter === 'CarbonDeliveryMonthly') {
-      const a = new Date()
-      const _year = a.getFullYear()
-      const _month = a.getMonth()
-      const firstDay = new Date(_year, _month, 1)
-      delete this.search.EndTime
-      this.search.StartTime = setDate(firstDay) + ' 00:00:00'
-      this.datetimerangeMonth = setDate(firstDay) + ' 00:00:00'
+    if (this.$route.query.search) {
+      this.search = this.$route.query.search
+      if (this.currentRouter === 'CarbonDeliveryDaily') {
+        this.datetimerange = [this.search.StartTime, this.search.EndTime]
+      } else if (this.currentRouter === 'CarbonDeliveryMonthly') {
+        this.datetimerangeMonth = this.search.StartTime
+      } else {
+        this.datetimerangeYear = this.search.StartTime
+      }
     } else {
-      const a = new Date()
-      const _year = a.getFullYear()
-      delete this.search.EndTime
-      this.search.StartTime = _year + '-01-01' + ' 00:00:00'
-      this.datetimerangeYear = _year + '-01-01' + ' 00:00:00'
+      if (this.currentRouter === 'CarbonDeliveryDaily') {
+        this.search.EndTime = setDate(null, true)
+        this.search.StartTime = setDate() + ' 00:00:00'
+        this.datetimerange = [this.search.StartTime, this.search.EndTime]
+      } else if (this.currentRouter === 'CarbonDeliveryMonthly') {
+        const a = new Date()
+        const _year = a.getFullYear()
+        const _month = a.getMonth()
+        const firstDay = new Date(_year, _month, 1)
+        delete this.search.EndTime
+        this.search.StartTime = setDate(firstDay) + ' 00:00:00'
+        this.datetimerangeMonth = setDate(firstDay) + ' 00:00:00'
+      } else {
+        const a = new Date()
+        const _year = a.getFullYear()
+        delete this.search.EndTime
+        this.search.StartTime = _year + '-01-01' + ' 00:00:00'
+        this.datetimerangeYear = _year + '-01-01' + ' 00:00:00'
+      }
     }
     this.getDownTaskCountByTodayCount()
     this.getMaterialList()
@@ -330,6 +341,7 @@ export default {
           path: '/excel',
           query: {
             table: a,
+            search: this.search,
             name: excelName + ' ' + time
           }})
       }).catch((e) => {

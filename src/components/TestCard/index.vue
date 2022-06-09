@@ -105,9 +105,11 @@
       <tr v-for="(row,i) in mtrListRow" :key="i">
         <td>{{ row.trains }}</td>
         <td v-for="(item, index) in mtrListHead" :key="index">
-          {{ row[item].value }}
-          <div v-if="row[item].value > mtrListRow[0][item].value">+</div>
-          <div v-if="row[item].value < mtrListRow[1][item].value">-</div>
+          <div v-if="row[item]">
+            {{ row[item].value }}
+            <div v-if="row[item].value > mtrListRow[0][item].value">+</div>
+            <div v-if="row[item].value < mtrListRow[1][item].value">-</div>
+          </div>
         </td>
         <td>{{ row.status }}</td>
         <!-- <td v-for="(item, index) in testData.mtr_list[row]" :key="index">

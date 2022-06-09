@@ -123,6 +123,11 @@
         <template slot-scope="scope">{{ scope.row.end_time }} -- {{ setEndTime(scope.row.end_time) }}</template>
       </el-table-column>
       <el-table-column
+        prop="pallet_no"
+        label="托盘号"
+        width="90px"
+      />
+      <el-table-column
         prop="lot_no"
         label="LOT NO"
         width="200px"
