@@ -114,6 +114,21 @@
         <span v-if="containerNo">{{ containerNo }}</span>
         <el-input v-else v-model="getParams.container_no" clearable @input="getDebounce" />
       </el-form-item>
+      <el-form-item v-if="warehouseNameProps==='原材料库'" label="门尼值等级">
+        <el-select
+          v-model="getParams.mooney_level"
+          clearable
+          placeholder="请选择"
+          @change="changeList"
+        >
+          <el-option
+            v-for="item in ['高级','中级','低级']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-form-item>
       <!-- <el-form-item label="质检条码">
         <span v-if="lotNo">{{ lotNo }}</span>
         <el-input v-else v-model="getParams.lot_no" clearable @input="changeSearch" />
@@ -175,6 +190,7 @@
       <el-table-column v-if="['炭黑库', '原材料库'].includes(warehouseNameProps)" label="入库时间" align="center" prop="in_storage_time" min-width="15" />
       <el-table-column v-if="['炭黑库', '原材料库'].includes(warehouseNameProps)" label="件数" align="center" prop="sl" min-width="15" />
       <el-table-column v-if="['炭黑库', '原材料库'].includes(warehouseNameProps)" label="唛头重量" align="center" prop="zl" min-width="15" />
+      <el-table-column v-if="['原材料库'].includes(warehouseNameProps)" label="门尼值等级" align="center" prop="mn_level" min-width="15" />
       <!-- <el-table-column label="操作" align="center" min-width="20">
         <template slot-scope="scope">
           <el-button

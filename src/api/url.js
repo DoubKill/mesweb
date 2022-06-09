@@ -261,7 +261,9 @@ export default {
   // 报表-车次记录-曲线图{id}
   CurveInformationUrl: '/api/v1/production/curve-information-list/',
   AlarmLogList: '/api/v1/production/alarm_log-list/',
-
+  WmsMooneyLevel: '/api/v1/quality/wms-mooney-level/',
+  ClearLevel: '/api/v1/quality/wms-mooney-level/clear-level/',
+  LevelBatchSet: '/api/v1/quality/wms-mooney-level/batch-set/',
   // 备品备件物料类型
   SparepartsSpareType: '/api/v1/spareparts/spare-type/',
   // 备品备件物料编码

@@ -307,9 +307,24 @@
             @input="getDialogDebounce"
           />
         </el-form-item>
-        <el-form-item v-if="isLocation" label="门尼值">
+        <!-- <el-form-item v-if="isLocation" label="门尼值">
           <el-input-number v-model="formSearch.st_value" controls-position="right" :min="1" :max="formSearch.et_value" @change="getDialog" /> -
           <el-input-number v-model="formSearch.et_value" controls-position="right" :min="formSearch.st_value" :max="999" @change="getDialog" />
+        </el-form-item> -->
+        <el-form-item v-if="isLocation" label="门尼值等级">
+          <el-select
+            v-model="formSearch.mooney_level"
+            clearable
+            placeholder="请选择"
+            @change="getDialog"
+          >
+            <el-option
+              v-for="item in ['高级','中级','低级']"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
         </el-form-item>
       </el-form>
       <div
@@ -393,8 +408,8 @@
             min-width="20"
           />
           <el-table-column
-            prop="ml_test_value"
-            label="门尼值"
+            prop="mn_level"
+            label="门尼值等级"
             min-width="20"
           />
           <el-table-column
@@ -478,8 +493,8 @@
             min-width="20"
           />
           <el-table-column
-            prop="ml_test_value"
-            label="门尼值"
+            prop="mn_level"
+            label="门尼值等级"
             min-width="20"
           />
           <el-table-column

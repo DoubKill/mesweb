@@ -667,3 +667,28 @@ export function dealMathodHistory(params) {
   })
 }
 
+export function wmsMooneyLevel(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WmsMooneyLevel + id + '/' : API.WmsMooneyLevel,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function clearLevel(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ClearLevel + id + '/' : API.ClearLevel,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function levelBatchSet(method, id, data = {}) {
+  const obj = {
+    url: id ? API.LevelBatchSet + id + '/' : API.LevelBatchSet,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
