@@ -19,7 +19,7 @@ const service = axios.create({
 // request interceptor
 service.interceptors.request.use(
   config => {
-    if (store.getters.token) {
+    if (store.getters.token && getToken()) {
       config.headers['Authorization'] = 'JWT ' + getToken()
     }
     currentUrl = config.responseType || false
