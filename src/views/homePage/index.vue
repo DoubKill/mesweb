@@ -4,14 +4,14 @@
       <img src="@/assets/logoHeard.png" alt="">
       <div class="host-body">
         <div class="d-flex jc-center">
-          <dv-decoration-10 style="width:500px;height:.0625rem;" />
+          <dv-decoration-10 style="width:450px;height:.0625rem;" />
           <div class="d-flex jc-center">
             <dv-decoration-8 :color="['#568aea', '#000000']" style="width:80px;height:70px" />
             <div class="title">
-              <h2>中策橡胶安吉准备分厂 mes系统</h2>
+              <h2 style="font-size:30px;">中策橡胶安吉准备分厂 mes系统</h2>
               <dv-decoration-6
                 class="title-bototm"
-                style="height:55px"
+                style="height:50px"
                 :reverse="true"
                 :color="['#50e3c2', '#67a1e5']"
               />
@@ -22,7 +22,7 @@
               style="width:80px;height:70px"
             />
           </div>
-          <dv-decoration-10 style="width:500px;height:.05rem; transform: rotateY(180deg);" />
+          <dv-decoration-10 style="width:450px;height:.05rem; transform: rotateY(180deg);" />
         </div>
       </div>
       <h3>{{ currentTime }}</h3>
@@ -223,7 +223,10 @@ export default {
       optionYieldBar: {
         color: this.color,
         legend: {
-          data: ['计划车次', '实际车次']
+          data: ['计划车次', '实际车次'],
+          textStyle: {
+            color: '#000'// 字体颜色
+          }
         },
         title: {
           left: 'left',
@@ -749,6 +752,7 @@ export default {
             this.optionYieldBar.xAxis.axisLine.lineStyle.color = '#fff'
             this.optionYieldBar.yAxis.axisLine.lineStyle.color = '#fff'
             this.optionYieldBar.title.textStyle.color = '#fff'
+            this.optionYieldBar.legend.textStyle.color = '#fff'
           }
           this.myChartYieldBar.setOption(this.optionYieldBar)
         }
