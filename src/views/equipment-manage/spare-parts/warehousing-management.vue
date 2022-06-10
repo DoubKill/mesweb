@@ -179,6 +179,17 @@
         <el-form-item label="状态">
           <el-input v-model="status" disabled />
         </el-form-item>
+        <el-form-item label="备件代码">
+          <el-input v-model="search1.spare_code" clearable />
+        </el-form-item>
+        <el-form-item label="备件名称">
+          <el-input v-model="search1.spare_name" clearable />
+        </el-form-item>
+        <el-button
+          type="primary"
+          @click="searchDialog"
+        >查询
+        </el-button>
       </el-form>
       <el-table
         v-loading="loadingView"
@@ -899,6 +910,10 @@ export default {
           }
         })
       }
+    },
+    searchDialog() {
+      this.search1.page = 1
+      this.dialog(false)
     },
     handleClose(done) {
       this.$refs.creatOrder.resetFields()

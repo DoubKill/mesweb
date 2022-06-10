@@ -152,10 +152,10 @@
           <el-input v-model="status" disabled />
         </el-form-item>
         <el-form-item label="备件代码">
-          <el-input v-model="search1.spare_code" />
+          <el-input v-model="search1.spare_code" clearable />
         </el-form-item>
         <el-form-item label="备件名称">
-          <el-input v-model="search1.spare_name" />
+          <el-input v-model="search1.spare_name" clearable />
         </el-form-item>
         <el-button
           type="primary"
@@ -286,7 +286,6 @@
             v-model="creatOrder.equip_warehouse_area"
             filterable
             placeholder="请选择"
-            clearable
             @change="clear"
           >
             <el-option
@@ -302,8 +301,8 @@
             v-model="creatOrder.equip_warehouse_location"
             filterable
             placeholder="请选择"
-            clearable
             @visible-change="getWarehouseLocation"
+            @change="searchNumber"
           >
             <el-option
               v-for="item in warehouseLocationList"
@@ -849,6 +848,14 @@ export default {
         }
       }
     },
+    async searchNumber() {
+      const data = await equipWarehouseInventory('get', null, { params: {
+        equip_spare: this.creatOrder.equip_spare,
+        area_id: this.creatOrder.equip_warehouse_area,
+        location_id: this.creatOrder.equip_warehouse_location }})
+      this.$set(this.creatOrder, 'out_quantity', data.quantity)
+      this.quantity = data.quantity
+    },
     changeSearch() {
       this.search.page = 1
       debounce(this, 'getList')
@@ -866,8 +873,8 @@ export default {
       }
     },
     async dialog(row) {
-      this.dialogVisible = true
       if (row) {
+        this.dialogVisible = true
         this.search1.order_id = row.order_id
         this.search1.stage = 1
         this.status = row.status_name
@@ -897,10 +904,9 @@ export default {
       } else if (row.all_qty === 0) {
         this.$message('库存数量为0，无法出库')
       } else {
-        this.quantity = row.plan_out_quantity - row.out_quantity
         this.creatOrder.spare_code = row.spare_code
         this.creatOrder.spare_name = row.spare_name
-        this.creatOrder.out_quantity = row.plan_out_quantity - row.out_quantity
+        // this.creatOrder.out_quantity = row.plan_out_quantity - row.out_quantity
         this.creatOrder.equip_warehouse_order = row.equip_warehouse_order
         this.creatOrder.status = 2
         this.creatOrder.unit = row.unit
@@ -910,6 +916,8 @@ export default {
         this.$set(this.creatOrder, 'equip_warehouse_area', data.first.area_id)
         this.warehouseLocationList = data.location.filter(d => d.equip_warehouse_area__id === this.creatOrder.equip_warehouse_area)
         this.$set(this.creatOrder, 'equip_warehouse_location', data.first.location_id)
+        this.$set(this.creatOrder, 'out_quantity', data.quantity)
+        this.quantity = data.quantity
         this.location = data.location
         this.dialogVisible1 = true
       }
