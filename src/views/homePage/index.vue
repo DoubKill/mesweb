@@ -278,9 +278,9 @@ export default {
                   color: '#fff'
                 }}},
             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-              { offset: 0, color: '#83bff6' },
-              { offset: 0.5, color: '#188df0' },
-              { offset: 1, color: '#188df0' }
+              { offset: 0, color: 'rgb(231 219 201)' },
+              { offset: 0.5, color: 'rgb(239 196 131)' },
+              { offset: 1, color: 'rgb(239 196 131)' }
             ])
           },
           {
@@ -321,9 +321,9 @@ export default {
                   color: '#000'
                 }}},
             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-              { offset: 0, color: 'rgb(231 219 201)' },
-              { offset: 0.5, color: 'rgb(239 196 131)' },
-              { offset: 1, color: 'rgb(239 196 131)' }
+              { offset: 0, color: '#83bff6' },
+              { offset: 0.5, color: '#188df0' },
+              { offset: 1, color: '#188df0' }
             ])
           },
           {
