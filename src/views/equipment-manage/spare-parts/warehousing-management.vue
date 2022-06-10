@@ -687,6 +687,7 @@ export default {
             const data = await equipWarehouseOrderDetail('get', null, { params: this.search1 })
             this.tableDataView = data || []
             this.handleClose(null)
+            this.dialog(false)
             this.getList()
             this.dialogVisible1 = false
           } catch (e) {
