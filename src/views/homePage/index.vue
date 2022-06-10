@@ -8,7 +8,7 @@
           <div class="d-flex jc-center">
             <dv-decoration-8 :color="['#568aea', '#000000']" style="width:80px;height:70px" />
             <div class="title">
-              <h2 style="font-size:30px;">中策橡胶安吉准备分厂 mes系统</h2>
+              <h2 style="font-size:30px;">中策橡胶安吉准备分厂 MES系统</h2>
               <dv-decoration-6
                 class="title-bototm"
                 style="height:50px"
