@@ -151,6 +151,17 @@
         <el-form-item label="状态">
           <el-input v-model="status" disabled />
         </el-form-item>
+        <el-form-item label="备件代码">
+          <el-input v-model="search1.spare_code" clearable />
+        </el-form-item>
+        <el-form-item label="备件名称">
+          <el-input v-model="search1.spare_name" clearable />
+        </el-form-item>
+        <el-button
+          type="primary"
+          @click="searchDialog"
+        >查询
+        </el-button>
       </el-form>
       <el-table
         v-loading="loadingView"
@@ -238,6 +249,12 @@
           min-width="20"
         />
       </el-table>
+      <page
+        :old-page="false"
+        :total="total1"
+        :current-page="search1.page"
+        @currentChange="currentChange1"
+      />
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="dialogVisible=false">关闭</el-button>
       </span>
@@ -269,7 +286,6 @@
             v-model="creatOrder.equip_warehouse_area"
             filterable
             placeholder="请选择"
-            clearable
             @change="clear"
           >
             <el-option
@@ -285,8 +301,8 @@
             v-model="creatOrder.equip_warehouse_location"
             filterable
             placeholder="请选择"
-            clearable
             @visible-change="getWarehouseLocation"
+            @change="searchNumber"
           >
             <el-option
               v-for="item in warehouseLocationList"
@@ -367,6 +383,7 @@
         <el-form-item label="出库物料详情列表" prop="equip_spare">
           <el-button type="primary" @click="Add">添加</el-button>
           <el-table
+            max-height="400"
             :data="dialogForm.equip_spare"
             border
             style="width: 100%"
@@ -428,6 +445,7 @@
     >
       <el-form
         ref="createForm"
+        v-loading="loadingList"
         :rules="rules"
         label-width="150px"
         :model="dialogForm"
@@ -469,6 +487,7 @@
         <el-form-item label="出库物料详情列表" prop="equip_spare">
           <el-button type="primary" @click="Add">添加</el-button>
           <el-table
+            max-height="400"
             :data="dialogForm.equip_spare"
             border
             style="width: 100%"
@@ -640,12 +659,14 @@ export default {
       warehouseLocationList: [],
       tableDataWork: [],
       total: 0,
+      total1: 0,
       status: null,
       selectionList: [],
       checkList: [],
       work_order_noList: {},
       loading: false,
       loadingView: false,
+      loadingList: false,
       dialogVisibleAdd: false,
       dialogVisibleAdd1: false,
       dialogVisibleEdit: false,
@@ -695,6 +716,7 @@ export default {
               const data = await equipWarehouseOrderDetail('get', null, { params: this.search1 })
               this.tableDataView = data || []
               this.handleClose(null)
+              this.dialog(false)
               this.getList()
               this.dialogVisible1 = false
             }
@@ -717,21 +739,28 @@ export default {
       this.dialogForm.work_order_no = this.work_order_noList.work_order_no
       this.dialogVisibleWork = false
     },
-    editOrder(row) {
-      this.dialogForm = JSON.parse(JSON.stringify(row))
-      this.dialogForm.equip_spare = []
-      this.dialogForm.order_detail.forEach(d => {
-        this.dialogForm.equip_spare.push({
-          id: d.equip_spare,
-          all_qty: d.all_qty,
-          out_quantity: d.out_quantity,
-          quantity: d.plan_out_quantity,
-          spare_code: d.spare_code,
-          spare_name: d.spare_name,
-          status: d.status
-        })
-      })
+    async editOrder(row) {
       this.dialogVisibleEdit = true
+      try {
+        this.loadingList = true
+        const data = await equipWarehouseOrder('get', row.id, {})
+        this.dialogForm = data
+        this.dialogForm.equip_spare = []
+        this.dialogForm.order_detail.forEach(d => {
+          this.dialogForm.equip_spare.push({
+            id: d.equip_spare,
+            all_qty: d.all_qty,
+            out_quantity: d.out_quantity,
+            quantity: d.plan_out_quantity,
+            spare_code: d.spare_code,
+            spare_name: d.spare_name,
+            status: d.status
+          })
+        })
+        this.loadingList = false
+      } catch {
+        this.loadingList = false
+      }
     },
     deleteOrder: function(row) {
       this.$confirm('此操作将删除' + row.order_id + ', 是否继续?', '提示', {
@@ -820,6 +849,14 @@ export default {
         }
       }
     },
+    async searchNumber() {
+      const data = await equipWarehouseInventory('get', null, { params: {
+        equip_spare: this.creatOrder.equip_spare,
+        area_id: this.creatOrder.equip_warehouse_area,
+        location_id: this.creatOrder.equip_warehouse_location }})
+      this.$set(this.creatOrder, 'out_quantity', data.quantity)
+      this.quantity = data.quantity
+    },
     changeSearch() {
       this.search.page = 1
       debounce(this, 'getList')
@@ -837,16 +874,21 @@ export default {
       }
     },
     async dialog(row) {
-      this.search1.order_id = row.order_id
-      this.search1.stage = 1
-      this.status = row.status_name
-      try {
-        const data = await equipWarehouseOrderDetail('get', null, { params: this.search1 })
-        this.tableDataView = data || []
-      } catch (e) {
-        // this.loading = false
+      if (row) {
+        this.dialogVisible = true
+        this.search1.order_id = row.order_id
+        this.search1.stage = 1
+        this.status = row.status_name
       }
-      this.dialogVisible = true
+      try {
+        this.loadingView = true
+        const data = await equipWarehouseOrderDetail('get', null, { params: this.search1 })
+        this.loadingView = false
+        this.total1 = data.count
+        this.tableDataView = data.results || []
+      } catch (e) {
+        this.loadingView = false
+      }
     },
     spareDialog(row) {
       this.dialogVisibleSpare = true
@@ -863,10 +905,9 @@ export default {
       } else if (row.all_qty === 0) {
         this.$message('库存数量为0，无法出库')
       } else {
-        this.quantity = row.plan_out_quantity - row.out_quantity
         this.creatOrder.spare_code = row.spare_code
         this.creatOrder.spare_name = row.spare_name
-        this.creatOrder.out_quantity = row.plan_out_quantity - row.out_quantity
+        // this.creatOrder.out_quantity = row.plan_out_quantity - row.out_quantity
         this.creatOrder.equip_warehouse_order = row.equip_warehouse_order
         this.creatOrder.status = 2
         this.creatOrder.unit = row.unit
@@ -876,6 +917,8 @@ export default {
         this.$set(this.creatOrder, 'equip_warehouse_area', data.first.area_id)
         this.warehouseLocationList = data.location.filter(d => d.equip_warehouse_area__id === this.creatOrder.equip_warehouse_area)
         this.$set(this.creatOrder, 'equip_warehouse_location', data.first.location_id)
+        this.$set(this.creatOrder, 'out_quantity', data.quantity)
+        this.quantity = data.quantity
         this.location = data.location
         this.dialogVisible1 = true
       }
@@ -890,6 +933,10 @@ export default {
           }
         })
       }
+    },
+    searchDialog() {
+      this.search1.page = 1
+      this.dialog(false)
     },
     handleClose(done) {
       this.$refs.creatOrder.resetFields()
@@ -1005,6 +1052,11 @@ export default {
       this.search.page = page
       this.search.page_size = page_size
       this.getList()
+    },
+    currentChange1(page, page_size) {
+      this.search1.page = page
+      this.search1.page_size = page_size
+      this.dialog()
     }
   }
 }
