@@ -7,7 +7,7 @@
       <!-- <h2>中策橡胶安吉准备分厂 设备监控系统</h2> -->
       <div v-if="bigScreen" class="host-body">
         <div class="d-flex jc-center">
-          <dv-decoration-10 style="width:450px;height:.0625rem;" />
+          <dv-decoration-10 style="width:400px;height:.0625rem;" />
           <div class="d-flex jc-center">
             <dv-decoration-8 :color="['#568aea', '#000000']" style="width:80px;height:70px" />
             <div class="title">
@@ -25,11 +25,11 @@
               style="width:80px;height:70px"
             />
           </div>
-          <dv-decoration-10 style="width:450px;height:.05rem; transform: rotateY(180deg);" />
+          <dv-decoration-10 style="width:400px;height:.05rem; transform: rotateY(180deg);" />
         </div>
       </div>
       <h2 v-else>中策橡胶安吉准备分厂 设备监控系统</h2>
-      <h3>{{ currentTime }}</h3>
+      <h3 class="set-current-time">{{ currentTime }}</h3>
     </div>
 
     <el-divider content-position="left">密炼设备</el-divider>
@@ -51,20 +51,20 @@
                 <img v-if="item.is_repairing" class="underRepairImg" src="@/assets/underRepair.png" alt="" srcset="">
               </div>
             </span>
-            <span style="font-size:19px;font-weight:700">{{ item.equip_no }}</span>
+            <span style="font-size:24px;font-weight:700">{{ item.equip_no }}</span>
           </div>
           <div style="inline-block;flex:1;margin:0px;">
             <div class="right-font-style">
-              <span style="width:95px">停机时间(分)：</span><span class="setFont">{{ item.breakdown_time }}/{{ item.halt_time }}</span>
+              <span style="width:107px">停机时间(分)：</span><span class="setFont">{{ item.breakdown_time }}/{{ item.halt_time }}</span>
             </div>
             <div class="right-font-style">
-              <span style="width:95px">当日产量：</span><span class="setFont">{{ item.plan_actual_data }}</span>
+              <span style="width:107px">当日产量：</span><span class="setFont">{{ item.plan_actual_data }}</span>
             </div>
             <div class="right-font-style">
-              <span style="width:95px">工单处理：</span><span class="setFont">{{ item.apply_orders }}</span>
+              <span style="width:107px">工单处理：</span><span class="setFont">{{ item.apply_orders }}</span>
             </div>
             <div class="right-font-style">
-              <span style="width:95px">设备状态：</span><span
+              <span style="width:107px">设备状态：</span><span
                 class="setFont"
                 :style="{color:item.state==='运行中'?normalColor:item.state==='生产停机'?haltColor:faultColor}"
               >{{ item.state }}</span>
@@ -73,8 +73,8 @@
         </div>
         <div class="bottom-font-style" style="cursor: pointer;" @click="showDialog(item)">
           <span class="setFont" :style="{color:item.state==='运行中'?normalColor:item.state==='生产停机'?haltColor:faultColor}">
-            <span v-if="item.state==='运行中'" style="width:95px">{{ item.current_product }}</span>
-            <span v-else style="width:95px">({{ item.error_minutes }}分钟)
+            <span v-if="item.state==='运行中'" style="width:107px">{{ item.current_product }}</span>
+            <span v-else style="width:107px">({{ item.error_minutes }}分钟)
               {{ item.error_reason }}
             </span>
           </span>
@@ -102,20 +102,20 @@
                 <img v-if="item.is_repairing" class="underRepairImg" src="@/assets/underRepair.png" alt="" srcset="">
               </div>
             </span>
-            <span style="font-size:19px;font-weight:700">{{ item.equip_no }}</span>
+            <span style="font-size:24px;font-weight:700">{{ item.equip_no }}</span>
           </div>
           <div style="inline-block;flex:1;margin:0px;">
             <div class="right-font-style">
-              <span style="width:95px">停机时间(分)：</span><span class="setFont">{{ item.breakdown_time }}/{{ item.halt_time }}</span>
+              <span style="width:107px">停机时间(分)：</span><span class="setFont">{{ item.breakdown_time }}/{{ item.halt_time }}</span>
             </div>
             <div class="right-font-style">
-              <span style="width:95px">当日产量：</span><span class="setFont">{{ item.plan_actual_data }}</span>
+              <span style="width:107px">当日产量：</span><span class="setFont">{{ item.plan_actual_data }}</span>
             </div>
             <div class="right-font-style">
-              <span style="width:95px">工单处理：</span><span class="setFont">{{ item.apply_orders }}</span>
+              <span style="width:107px">工单处理：</span><span class="setFont">{{ item.apply_orders }}</span>
             </div>
             <div class="right-font-style">
-              <span style="width:95px">设备状态：</span><span
+              <span style="width:107px">设备状态：</span><span
                 class="setFont"
                 :style="{color:item.state==='运行中'?normalColor:item.state==='生产停机'?haltColor:faultColor}"
               >{{ item.state }}</span>
@@ -124,8 +124,8 @@
         </div>
         <div class="bottom-font-style" style="cursor: pointer;" @click="showDialog(item)">
           <span class="setFont" :style="{color:item.state==='运行中'?normalColor:item.state==='生产停机'?haltColor:faultColor}">
-            <span v-if="item.state==='运行中'" style="width:95px">{{ item.current_product }}</span>
-            <span v-else style="width:95px">({{ item.error_minutes }}分钟)
+            <span v-if="item.state==='运行中'" style="width:100px">{{ item.current_product }}</span>
+            <span v-else style="width:100px">({{ item.error_minutes }}分钟)
               {{ item.error_reason }}
             </span>
           </span>
@@ -506,7 +506,7 @@ export default {
           this.getList()
           this._setInterval = setInterval(d => {
             this.getList()
-          }, 60000)
+          }, 30000)
         } else {
           window.clearInterval(this._setInterval)
         }
@@ -704,9 +704,12 @@ export default {
 }
 .bigScreen{
  min-height: 100vh;
+ min-width: 100vw;
  background-image: url(../../assets/pageBg.f9f9dcd5.png);
  color:#fff;
  padding-top:30px !important;
+ font-size: 16px;
+
   .el-divider{
     width: 93%;
   }
@@ -726,14 +729,23 @@ export default {
     box-shadow: 0 2px 12px 0 #2273c8;
   }
   .conter-style{
-    margin-left: 36px;
+    margin-left: 15px;
   }
   .conter-style-box{
     padding-top: 5px;
-    height: 198px !important;
+    height: 200px !important;
   }
   .bottom-font-style span{
     vertical-align: middle;
   }
+  .setFont{
+      font-size:20px;
+      }
+      .set-current-time{
+         font-size:20px;
+      }
+      .conter-style-box{
+        width:19.14% !important;
+      }
 }
 </style>
