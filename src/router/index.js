@@ -180,6 +180,53 @@ export let asyncRoutes = [
         title: '首页',
         icon: 'el-icon-s-home'
       }
+    },
+    {
+      path: '/homePage/index',
+      component: () => import('@/views/homePage/index'),
+      name: 'HomePageMainScreen',
+      meta: {
+        title: 'MES首页大屏',
+        permissionName: '',
+        icon: 'collection',
+        isPhone: true,
+        bigScreen: true
+      }
+    },
+    {
+      path: '/operation-status',
+      component: () => import('@/views/equipment-manage/operation-status'),
+      meta: {
+        title: '设备运行现况',
+        permissionName: '',
+        icon: 'collection',
+        isPhone: true,
+        bigScreen: true
+      }
+    },
+    {
+      path: '/Outbound-Kanban/2',
+      component: () => import('@/views/Z-Outbound-Kanban'),
+      meta: {
+        // 是否是单独页面
+        title: '混炼胶库运行综合看板',
+        permissionName: '',
+        icon: 'collection',
+        isPhone: true,
+        bigScreen: true
+      }
+    },
+    {
+      path: '/Outbound-Kanban/1',
+      component: () => import('@/views/Z-Outbound-Kanban'),
+      meta: {
+        // 是否是单独页面
+        title: '终炼胶库运行综合看板',
+        permissionName: '',
+        icon: 'collection',
+        isPhone: true,
+        bigScreen: true
+      }
     }
     ]
   },
