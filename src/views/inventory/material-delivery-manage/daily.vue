@@ -118,6 +118,16 @@
         min-width="20"
       />
       <el-table-column
+        prop="zcMaterialCode"
+        label="中策物料编码"
+        min-width="20"
+      />
+      <el-table-column
+        prop="pdm"
+        label="中策pdm号"
+        min-width="20"
+      />
+      <el-table-column
         prop="quantity"
         label="数量"
         min-width="8"
@@ -135,6 +145,11 @@
       <el-table-column
         prop="weightOfActual"
         label="总重量（kg）"
+        min-width="20"
+      />
+      <el-table-column
+        prop="weightUnit"
+        label="重量单位"
         min-width="20"
       />
       <el-table-column
@@ -162,12 +177,19 @@
     >
       <materialInoutRecord :dialog-search="dialogSearch" :is-dialog="true" :warehouse-name-props="'原材料库'" :show="dialogVisible" />
     </el-dialog>
+    <excel
+      v-show="false"
+      id="out-table"
+      :table-data="excelList"
+    />
   </div>
 </template>
 
 <script>
 import request from '@/utils/request-zc'
 import page from '@/components/page'
+import excel from '../excel'
+import { exportExcel } from '@/utils/index'
 import { debounce, setDate } from '@/utils'
 import { wmsMaterials } from '@/api/jqy'
 import * as echarts from 'echarts'
@@ -176,7 +198,7 @@ import { wmsMaterialGroups, wmsTunnels } from '@/api/base_w_four'
 import { wmsEntrance } from '@/api/base_w_three'
 export default {
   name: 'DeliveryDaily',
-  components: { page, materialInoutRecord },
+  components: { page, materialInoutRecord, excel },
   data() {
     return {
       tableData: [],
@@ -186,6 +208,7 @@ export default {
       },
       search1: {},
       options: [],
+      excelList: [],
       btnExportLoad: false,
       datetimerange: [],
       datetimerangeMonth: '',
@@ -322,7 +345,6 @@ export default {
           : '/stockOutTask/FindDownTaskReportByYear'
       const excelName = this.currentRouter === 'DeliveryDaily' ? '原材料库出库日报'
         : this.currentRouter === 'DeliveryMonthly' ? '原材料库出库月报' : '原材料库出库年报'
-      console.log(this.datetimerange)
       var time = ''
       if (this.datetimerange || this.datetimerangeMonth || this.datetimerangeYear) {
         time = this.currentRouter === 'DeliveryDaily' ? this.datetimerange[0].split(' ')[0] + '-' + this.datetimerange[1].split(' ')[0]
@@ -336,15 +358,18 @@ export default {
         method: 'get',
         params: this.search1
       }).then(data => {
-        const a = data.datas
+        this.excelList = data.datas
+        this.$nextTick(() => {
+          exportExcel(excelName + ' ' + time, 'excel')
+        })
         this.btnExportLoad = false
-        this.$router.push({
-          path: '/excel',
-          query: {
-            table: a,
-            search: this.search,
-            name: excelName + ' ' + time
-          }})
+        // this.$router.push({
+        //   path: '/excel',
+        //   query: {
+        //     table: a,
+        //     search: this.search,
+        //     name: excelName + ' ' + time
+        //   }})
       }).catch((e) => {
         this.btnExportLoad = false
       })
