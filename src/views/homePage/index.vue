@@ -644,7 +644,7 @@ export default {
           this.getList()
           this._setInterval = setInterval(d => {
             this.getList()
-          }, 60000)
+          }, 30000)
         } else {
           window.clearInterval(this._setInterval)
         }
