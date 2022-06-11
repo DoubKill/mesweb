@@ -147,7 +147,8 @@ export const constantRoutes = [
     hidden: true,
     meta: {
       title: '首页',
-      permissionName: ''
+      permissionName: '',
+      isPhone: true
     }
   },
   {
@@ -156,7 +157,8 @@ export const constantRoutes = [
     hidden: true,
     meta: {
       title: '设备运行现况',
-      permissionName: ''
+      permissionName: '',
+      isPhone: true
     }
   }
 ]
