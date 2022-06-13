@@ -30,24 +30,34 @@
         </el-select>
       </el-form-item>
       <el-form-item label="胶料规格">
-        <el-input
+        <el-select
           v-model="search.product_type"
-          size=""
+          style="width:250px"
+          filterable
+          placeholder="请选择"
           clearable
-          placeholder="请输入胶料规格"
-          @input="changeSearch"
-        />
+          @visible-change="visibleChange"
+          @change="getList"
+        >
+          <el-option
+            v-for="item in optionsProduct"
+            :key="item.id"
+            :label="item.product_no"
+            :value="item.product_no"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="生产机台">
-        <el-input
-          v-model="search.equip_no"
-          clearable
-          placeholder="请输入生产机台"
-          @input="changeSearch"
+        <selectEquip
+          :equip_no_props.sync="search.equip_no"
+          @changeSearch="getList"
         />
       </el-form-item>
       <el-form-item label="班次">
         <class-select @classSelected="classChanged" />
+      </el-form-item>
+      <el-form-item>
+        <el-checkbox v-model="checked" @change="getList">含试验科</el-checkbox>
       </el-form-item>
       <el-form-item style="float:right">
         <el-button
@@ -280,12 +290,13 @@
 
 <script>
 import ClassSelect from '@/components/ClassSelect'
-import { globalCodesUrl } from '@/api/base_w'
+import { globalCodesUrl, productInfosUrl } from '@/api/base_w'
 import { rubberPass } from '@/api/jqy'
 import { debounce, setDate, exportExcel } from '@/utils/index'
+import selectEquip from '@/components/select_w/equip'
 export default {
   name: 'RubberCompound',
-  components: { ClassSelect },
+  components: { ClassSelect, selectEquip },
   data() {
     return {
       tableData: [],
@@ -296,7 +307,9 @@ export default {
       loading: false,
       options: [],
       handleCardDialogVisible: false,
-      dateValue: [setDate(), setDate()]
+      dateValue: [setDate(), setDate()],
+      checked: false,
+      optionsProduct: []
     }
   },
   created() {
@@ -311,6 +324,10 @@ export default {
     },
     async getList() {
       try {
+        this.search.sy_flag = 'Y'
+        if (!this.checked) {
+          delete this.search.sy_flag
+        }
         this.loading = true
         this.tableData = []
         const data = await rubberPass('get', null, { params: this.search })
@@ -337,9 +354,9 @@ export default {
           this.sum_s = 0
           this.cp_all = 0
           this.tableData.forEach(D => {
-            D.RATE_1_PASS = Number(D.RATE_1_PASS)
-            D.RATE_S_PASS = Number(D.RATE_S_PASS)
-            D.rate = Number(D.rate)
+            // D.RATE_1_PASS = Number(D.RATE_1_PASS)
+            // D.RATE_S_PASS = Number(D.RATE_S_PASS)
+            // D.rate = Number(D.rate)
             this.JC += Number(D.JC)
             this.HG += Number(D.HG)
             this.mn_upper += Number(D.mn_upper)
@@ -438,6 +455,16 @@ export default {
     },
     exportTable(val) {
       exportExcel(val)
+    },
+    async visibleChange(val) {
+      if (val) {
+        try {
+          const data = await productInfosUrl('get', null, { params: { all: 1 }})
+          this.optionsProduct = data.results || []
+        } catch (e) {
+        //
+        }
+      }
     }
   }
 }
