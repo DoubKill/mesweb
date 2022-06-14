@@ -58,6 +58,24 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="生产日期">
+        <el-date-picker
+          v-model="search.factory_date"
+          type="date"
+          value-format="yyyy-MM-dd"
+          placeholder="选择日期"
+          @change="changeDate"
+        />
+      </el-form-item>
+      <el-form-item label="生产班次">
+        <class-select @classSelected="classChanged" />
+      </el-form-item>
+      <el-form-item label="生产机台">
+        <selectEquip :equip_no_props.sync="search.equip_no" @changeSearch="changeDate" />
+      </el-form-item>
+      <el-form-item label="规格">
+        <el-input v-model="search.product_no" placeholder="请输入内容" clearable @input="debounceList" />
+      </el-form-item>
     </el-form>
 
     <el-table
@@ -178,9 +196,11 @@ import page from '@/components/page'
 import { unqualifiedDealOrders } from '@/api/base_w'
 import { dataPoint } from '@/api/jqy'
 import excel from '../disposal-list-components/excelNew'
+import classSelect from '@/components/ClassSelect'
+import selectEquip from '@/components/select_w/equip'
 export default {
   name: 'DisposalSee',
-  components: { page, excel },
+  components: { page, excel, classSelect, selectEquip },
   data() {
     return {
       search: {},
@@ -222,10 +242,18 @@ export default {
       this.search.page = 1
       this.getList()
     },
+    classChanged(val) {
+      this.search.classes = val
+      this.search.page = 1
+      this.getList()
+    },
     currentChange(page, page_size) {
       this.search.page = page
       this.search.page_size = page_size
       this.getList()
+    },
+    debounceList() {
+      this.$debounce(this, 'changeDate')
     },
     changeInputBack(val) {
       if (!val) return ''
