@@ -1,6 +1,5 @@
 <template>
-  <div :style="{padding:this.$route.query.equip?'20px':''}">
-    <!-- :class="{'productionFeeding_new':this.$route.query.equip?true:false}" -->
+  <div :class="{'productionFeeding_new':this.$route.query.equip?true:false}" :style="{padding:this.$route.query.equip?'20px':''}">
     <!-- 生产投料配方查询 -->
     <el-form :inline="true">
       <el-form-item label="机台">
@@ -147,17 +146,17 @@ export default {
 </script>
 
 <style lang="scss">
-  // .productionFeeding_new{
-  //     font-size: 20px;
-  //   .el-form-item__label,.el-button,.el-table,.el-checkbox__label,.el-form-item__content{
-  //     font-size:20px !important;
-  //   }
-  //   .el-input__inner{
-  //      font-size:18px;
-  //   }
-  //   .el-checkbox__inner{
-  //     width:20px;
-  //     height:20px;
-  //   }
-  // }
+  .productionFeeding_new{
+      font-size: 20px;
+    .el-form-item__label,.el-button,.el-table,.el-checkbox__label,.el-form-item__content{
+      font-size:20px !important;
+    }
+    .el-input__inner{
+       font-size:18px;
+    }
+    .el-checkbox__inner{
+      width:20px;
+      height:20px;
+    }
+  }
 </style>
