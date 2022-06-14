@@ -277,16 +277,16 @@
           <el-input v-model="currentInfo.lot_no" disabled />
         </el-form-item>
         <el-form-item label="出库时WMS品质">
-          <el-input disabled style="width:100px" />
+          <el-input v-model="currentInfo.quality_status" disabled style="width:100px" />
         </el-form-item>
         <el-form-item label="出库时核酸管控">
-          <el-input style="width:100px" disabled />
+          <el-input v-model="currentInfo.hs_status" style="width:100px" disabled />
         </el-form-item>
         <el-form-item label="出库时安吉检测结果">
-          <el-input disabled style="width:100px" />
+          <el-input v-model="currentInfo.mes_test_result" disabled style="width:100px" />
         </el-form-item>
         <el-form-item label="出库时总厂检测结果">
-          <el-input disabled style="width:100px" />
+          <el-input v-model="currentInfo.zc_test_result" disabled style="width:100px" />
         </el-form-item>
       </el-form>
       <el-table
@@ -343,7 +343,7 @@ import { inventoryLog } from '@/api/base_w'
 import page from '@/components/page'
 import { wmsTunnels, thTunnels } from '@/api/base_w_four'
 import { batchingMaterials } from '@/api/base_w'
-import { wmsExceptHandle, wmsMaterials, thMaterials } from '@/api/jqy'
+import { wmsExceptHandle, wmsMaterials, thMaterials, wmsMnLevelSearch } from '@/api/jqy'
 // import warehouseSelect from '@/components/select_w/warehouseSelect'
 import { setDate, debounce, exportExcel } from '@/utils'
 export default {
@@ -502,6 +502,8 @@ export default {
         }
         this.loadingCheck = true
         const data = await wmsExceptHandle('get', null, { params: this.currentInfo })
+        const data1 = await wmsMnLevelSearch('get', null, { params: { task_no: row.order_no }})
+        Object.assign(this.currentInfo, data1)
         this.tableDataCheck = data.results
         this.loadingCheck = false
       } catch (e) {

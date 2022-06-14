@@ -74,7 +74,7 @@
         <selectEquip :equip_no_props.sync="search.equip_no" @changeSearch="changeDate" />
       </el-form-item>
       <el-form-item label="规格">
-        <el-input v-model="search.product_no" placeholder="请输入内容" clearable @input="debounceList" />
+        <all-product-no-select @productBatchingChanged="productBatchingChanged" />
       </el-form-item>
     </el-form>
 
@@ -198,9 +198,10 @@ import { dataPoint } from '@/api/jqy'
 import excel from '../disposal-list-components/excelNew'
 import classSelect from '@/components/ClassSelect'
 import selectEquip from '@/components/select_w/equip'
+import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 export default {
   name: 'DisposalSee',
-  components: { page, excel, classSelect, selectEquip },
+  components: { page, excel, classSelect, selectEquip, allProductNoSelect },
   data() {
     return {
       search: {},
@@ -254,6 +255,11 @@ export default {
     },
     debounceList() {
       this.$debounce(this, 'changeDate')
+    },
+    productBatchingChanged(val) {
+      this.search.product_no = val ? val.material_no : ''
+      this.search.page = 1
+      this.getList()
     },
     changeInputBack(val) {
       if (!val) return ''
