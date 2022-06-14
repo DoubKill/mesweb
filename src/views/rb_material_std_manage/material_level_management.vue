@@ -1,6 +1,6 @@
 <template>
   <div class="material_level_management">
-    <!-- 物料门尼值等级管理 -->
+    <!-- 原材料门尼值等级管理 -->
     <el-form :inline="true">
       <el-form-item label="物料类型">
         <el-select
@@ -18,8 +18,8 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="物料编码">
-        <el-input v-model.number="search.material_no" clearable @input="debounceFun" />
+      <el-form-item label="物料名称">
+        <el-input v-model.number="search.material_name" clearable @input="debounceFun" />
       </el-form-item>
       <el-form-item style="float: right">
         <el-button v-permission="['wms_mooney_level','change']" type="primary" @click="showCreateDialog">批量设定门尼值等级</el-button>

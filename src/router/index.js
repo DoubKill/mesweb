@@ -464,16 +464,6 @@ export let asyncRoutes = [
         icon: 'formula',
         permissionName: 'weight_tank'
       }
-    },
-    {
-      path: '/material_level_management/',
-      name: 'MaterialLevelManagement',
-      component: () => import('@/views/rb_material_std_manage/material_level_management'),
-      meta: {
-        title: '物料门尼值等级管理',
-        icon: 'formula',
-        permissionName: 'wms_mooney_level'
-      }
     }
     // {
     //   path: '/rb/formula-resume',
@@ -2946,6 +2936,16 @@ export let asyncRoutes = [
           title: '称量机台物料统计',
           icon: 'quality',
           permissionName: 'xl_report_weight_statics'
+        }
+      },
+      {
+        path: '/material_level_management/',
+        name: 'MaterialLevelManagement',
+        component: () => import('@/views/rb_material_std_manage/material_level_management'),
+        meta: {
+          title: '原材料门尼值等级管理',
+          icon: 'quality',
+          permissionName: 'wms_mooney_level'
         }
       }
       // {
