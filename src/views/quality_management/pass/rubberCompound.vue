@@ -57,7 +57,7 @@
         <class-select @classSelected="classChanged" />
       </el-form-item>
       <el-form-item>
-        <el-checkbox v-model="checked" @change="getList">含试验科</el-checkbox>
+        <el-checkbox v-model="checked" @change="getList">含试验料</el-checkbox>
       </el-form-item>
       <el-form-item style="float:right">
         <el-button
