@@ -122,7 +122,7 @@
           @change="changeList"
         >
           <el-option
-            v-for="item in ['高级','中级','低级']"
+            v-for="item in ['高门尼','标准门尼','低门尼']"
             :key="item"
             :label="item"
             :value="item"
