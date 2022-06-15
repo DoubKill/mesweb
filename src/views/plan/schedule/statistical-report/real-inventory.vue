@@ -55,6 +55,7 @@
         label="备注(加硫不合格待处理)"
       />
     </el-table>
+    <el-alert style="color:black" title="表格背景色说明：黄色预警-可用天数小于1.5且大于等于1.2，红色报警-可用天数小于1.2" type="success" />
   </div>
 </template>
 

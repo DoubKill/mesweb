@@ -217,6 +217,7 @@
       :current-page="search.page"
       @currentChange="currentChange"
     />
+    <el-alert style="color:black" title="表格背景色说明：红色超过设定时间未接单,可重新派单" type="success" />
 
     <el-dialog
       title="维修作业标准详情"

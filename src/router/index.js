@@ -147,7 +147,8 @@ export const constantRoutes = [
     hidden: true,
     meta: {
       title: '首页',
-      permissionName: ''
+      permissionName: '',
+      isPhone: true
     }
   },
   {
@@ -156,7 +157,8 @@ export const constantRoutes = [
     hidden: true,
     meta: {
       title: '设备运行现况',
-      permissionName: ''
+      permissionName: '',
+      isPhone: true
     }
   }
 ]
@@ -179,6 +181,53 @@ export let asyncRoutes = [
       meta: {
         title: '首页',
         icon: 'el-icon-s-home'
+      }
+    },
+    {
+      path: '/homePage/index',
+      component: () => import('@/views/homePage/index'),
+      name: 'HomePageMainScreen',
+      meta: {
+        title: 'MES首页大屏',
+        permissionName: '',
+        icon: 'collection',
+        isPhone: true,
+        bigScreen: true
+      }
+    },
+    {
+      path: '/operation-status',
+      component: () => import('@/views/equipment-manage/operation-status'),
+      meta: {
+        title: '设备运行现况',
+        permissionName: '',
+        icon: 'collection',
+        isPhone: true,
+        bigScreen: true
+      }
+    },
+    {
+      path: '/Outbound-Kanban/2',
+      component: () => import('@/views/Z-Outbound-Kanban'),
+      meta: {
+        // 是否是单独页面
+        title: '混炼胶库运行综合看板',
+        permissionName: '',
+        icon: 'collection',
+        isPhone: true,
+        bigScreen: true
+      }
+    },
+    {
+      path: '/Outbound-Kanban/1',
+      component: () => import('@/views/Z-Outbound-Kanban'),
+      meta: {
+        // 是否是单独页面
+        title: '终炼胶库运行综合看板',
+        permissionName: '',
+        icon: 'collection',
+        isPhone: true,
+        bigScreen: true
       }
     }
     ]
@@ -414,16 +463,6 @@ export let asyncRoutes = [
         title: '称量系统料仓信息管理',
         icon: 'formula',
         permissionName: 'weight_tank'
-      }
-    },
-    {
-      path: '/material_level_management/',
-      name: 'MaterialLevelManagement',
-      component: () => import('@/views/rb_material_std_manage/material_level_management'),
-      meta: {
-        title: '物料门尼值等级管理',
-        icon: 'formula',
-        permissionName: 'wms_mooney_level'
       }
     }
     // {
@@ -2897,6 +2936,16 @@ export let asyncRoutes = [
           title: '称量机台物料统计',
           icon: 'quality',
           permissionName: 'xl_report_weight_statics'
+        }
+      },
+      {
+        path: '/material_level_management/',
+        name: 'MaterialLevelManagement',
+        component: () => import('@/views/rb_material_std_manage/material_level_management'),
+        meta: {
+          title: '原材料门尼值等级管理',
+          icon: 'quality',
+          permissionName: 'wms_mooney_level'
         }
       }
       // {

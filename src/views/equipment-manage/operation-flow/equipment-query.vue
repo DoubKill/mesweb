@@ -379,6 +379,7 @@
       :current-page="search.page"
       @currentChange="currentChange"
     />
+    <el-alert style="color:black" title="表格背景色说明：红色超期未完成(有多种原因)；酱红超期未执行；粉红色未接单；橙色未指派" type="success" />
     <el-dialog
       title="工单详情"
       :visible.sync="dialogVisible"

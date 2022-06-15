@@ -207,7 +207,7 @@
       <!-- :formatter="StandardFlagChoice" -->
     </el-table>
     <page :total="total" :current-page="getParams.page" @currentChange="currentChange" />
-
+    <el-alert style="color:black" title="表格字体颜色说明：黄色-超过3天没出快检结果(品质状态还是待检品)；红色-超过3天没出快检结果和超期预警同时满足" type="success" />
     <el-dialog
       title="库位列表"
       :visible.sync="dialogVisible"

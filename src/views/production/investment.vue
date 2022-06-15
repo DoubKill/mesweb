@@ -409,7 +409,7 @@ export default {
           this.detailForm = {}
         }
       } catch (e) {
-        this.dialogVisibleDetail = true
+        this.dialogVisibleDetail = false
       }
     },
     async getList() {
