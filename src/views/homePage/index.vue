@@ -2,30 +2,17 @@
   <div :class="['homePage-container',bigScreen?'bigScreen':'']">
     <div v-if="bigScreen" class="head-top">
       <img src="@/assets/logoHeard.png" alt="">
-      <div class="host-body">
-        <div class="d-flex jc-center">
-          <dv-decoration-10 style="width:450px;height:.0625rem;" />
-          <div class="d-flex jc-center">
-            <dv-decoration-8 :color="['#568aea', '#000000']" style="width:80px;height:70px" />
-            <div class="title">
-              <h2 style="font-size:30px;">中策橡胶安吉准备分厂 MES系统</h2>
-              <dv-decoration-6
-                class="title-bototm"
-                style="height:50px"
-                :reverse="true"
-                :color="['#50e3c2', '#67a1e5']"
-              />
-            </div>
-            <dv-decoration-8
-              :reverse="true"
-              :color="['#568aea', '#000000']"
-              style="width:80px;height:70px"
-            />
-          </div>
-          <dv-decoration-10 style="width:450px;height:.05rem; transform: rotateY(180deg);" />
+      <div class="d-flex">
+        <span class="decoration10" />
+        <span class="decoration8" />
+        <div class="title">
+          <h2 style="font-size:30px;">中策橡胶安吉准备分厂 MES系统</h2>
+          <span class="title-border" />
         </div>
+        <span class="decoration8 decoration8-1" />
+        <span class="decoration10" />
       </div>
-      <h3>{{ currentTime }}</h3>
+      <h3 class="set-current-time">{{ currentTime }}</h3>
     </div>
     <el-row :gutter="20" style="font-weight:700;font-size:16px">
       <el-col :span="4">
@@ -184,8 +171,10 @@
 import * as echarts from 'echarts'
 import { setDate } from '@/utils'
 import { indexOverview, indexProductionAyalyze, indexEquipProductionAyalyze, indexEquipMaintenanceAyalyze } from '@/api/base_w_three'
+
 export default {
   name: 'HomePageMain',
+  components: {},
   data() {
     this.color = ['rgb(121, 187, 255)', '#E6A23C']
     this.chartSettings = {
@@ -889,6 +878,9 @@ export default {
  .el-row{
    padding-top:20px;
  }
+  .set-current-time{
+    font-size:20px !important;
+  }
  .el-card{
    background: transparent !important;
    border: 2px solid rgb(24 122 174 / 70%);
@@ -898,7 +890,7 @@ export default {
  }
  .volumeBox{
    background: transparent !important;
-   height: 350px!important;
+   height: 360px!important;
  }
  .el-input__inner{
    background: transparent !important;
@@ -920,6 +912,38 @@ export default {
     display: flex;
     h2{
       margin:15px;
+    }
+    .decoration10{
+      width:480px;
+      height: 3px;
+      background:rgb(74, 107, 178);
+      box-shadow: 0 2px 12px 0 rgb(74, 107, 178);
+    }
+    .decoration8{
+      transform: rotate(60deg);
+      margin-top:40px;
+      height: 3px;
+      width:86px;
+      background:rgb(74, 107, 178);
+      margin-left:-20px;
+      margin-right:-20px;
+      box-shadow: 0 2px 12px 0 rgb(74, 107, 178);
+    }
+    .decoration8-1{
+       transform: rotate(120deg)
+    }
+    .title{
+      padding-bottom:17px;
+      position: relative;
+      margin-bottom:10px ;
+    }
+    .title-border{
+      position: absolute;
+      bottom:0;
+      width:100%;
+      height: 3px;
+      background:rgb(74, 107, 178);
+      box-shadow: 0 2px 12px 0 rgb(74, 107, 178);
     }
   }
 }

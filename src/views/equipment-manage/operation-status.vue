@@ -6,7 +6,17 @@
       <div class="head-top">
         <img src="@/assets/logoHeard.png" alt="">
         <!-- <h2>中策橡胶安吉准备分厂 设备监控系统</h2> -->
-        <div v-if="bigScreen" class="host-body">
+        <div v-if="bigScreen" class="d-flex">
+          <span class="decoration10" />
+          <span class="decoration8" />
+          <div class="title">
+            <h2 style="font-size:30px;">中策橡胶安吉准备分厂 MES系统</h2>
+            <span class="title-border" />
+          </div>
+          <span class="decoration8 decoration8-1" />
+          <span class="decoration10" />
+        </div>
+        <!-- <div v-if="bigScreen" class="host-body">
           <div class="d-flex jc-center">
             <dv-decoration-10 style="width:400px;height:.0625rem;" />
             <div class="d-flex jc-center">
@@ -28,7 +38,7 @@
             </div>
             <dv-decoration-10 style="width:400px;height:.05rem; transform: rotateY(180deg);" />
           </div>
-        </div>
+        </div> -->
         <h2 v-else>中策橡胶安吉准备分厂 设备监控系统</h2>
         <h3 class="set-current-time">{{ currentTime }}</h3>
       </div>
@@ -713,14 +723,14 @@ export default {
  min-width: 100vw;
  background-image: url(../../assets/pageBg.f9f9dcd5.png);
  color:#fff;
- padding-top:30px !important;
+ padding-top:10px !important;
  font-size: 16px;
 
   .el-divider{
     width: 93%;
   }
      .el-divider--horizontal{
-         margin:5px 0;
+        //  margin:5px 0;
              margin-left: 106px;
     }
   .el-divider__text.is-left{
@@ -746,12 +756,49 @@ export default {
   }
   .setFont{
       font-size:20px;
-      }
-      .set-current-time{
-         font-size:20px;
-      }
-      .conter-style-box{
-        width:19.14% !important;
-      }
+  }
+  .set-current-time{
+      font-size:20px;
+  }
+  .conter-style-box{
+    width:19.14% !important;
+  }
+  .decoration10{
+      width:480px;
+      height: 3px;
+      background:rgb(74, 107, 178);
+      box-shadow: 0 2px 12px 0 rgb(74, 107, 178);
+  }
+  .decoration8{
+      transform: rotate(60deg);
+      margin-top:40px;
+      height: 3px;
+      width:86px;
+      background:rgb(74, 107, 178);
+      margin-left:-20px;
+      margin-right:-20px;
+      box-shadow: 0 2px 12px 0 rgb(74, 107, 178);
+  }
+  .decoration8-1{
+       transform: rotate(120deg)
+  }
+  .title{
+      padding-bottom:17px;
+      position: relative;
+      margin-bottom:10px ;
+  //     color:#5fd4f1;
+  //     background-image: linear-gradient(#5fd4f1, #8bbfcd);
+  // background-clip: text;
+  // -webkit-background-clip: text;
+  // color: transparent; /*需要文字透明*/
+  }
+  .title-border{
+      position: absolute;
+      bottom:0;
+      width:100%;
+      height: 3px;
+      background:rgb(74, 107, 178);
+      box-shadow: 0 2px 12px 0 rgb(74, 107, 178);
+  }
 }
 </style>

@@ -1,13 +1,15 @@
 import Vue from 'vue'
 
+import { debounce } from '@/utils'
 import echarts from 'echarts'
 Vue.prototype.$echarts = echarts
 import VCharts from 'v-charts'
-import { decoration10, decoration8, decoration6 } from '@jiaminghi/data-view' // 首页头部动画
-Vue.use(decoration10)
-Vue.use(decoration8)
-Vue.use(decoration6)
 Vue.use(VCharts)
+
+// import { decoration10, decoration8, decoration6 } from '@jiaminghi/data-view' // 首页头部动画
+// Vue.use(decoration10)
+// Vue.use(decoration8)
+// Vue.use(decoration6)
 
 // 按需引入虚拟表格
 import { UTable, UTableColumn } from 'umy-ui'
@@ -34,7 +36,6 @@ import '@/icons' // icon
 import '@/permission' // permission control
 
 import 'default-passive-events'
-import { debounce } from '@/utils'
 
 /**
  * If you don't want to use mock-server
