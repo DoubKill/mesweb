@@ -187,7 +187,6 @@
       :current-page="search.page"
       @currentChange="currentChange"
     />
-
     <el-dialog
       :title="(formData.id?'编辑':'添加')+'检测值'"
       :visible.sync="dialogVisible"

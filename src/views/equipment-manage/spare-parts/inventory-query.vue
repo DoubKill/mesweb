@@ -166,6 +166,7 @@
       :current-page="search.page"
       @currentChange="currentChange"
     />
+    <el-alert style="color:black" title="表格背景色说明：表示超过了设定的库存下限和库存上限" type="success" />
     <el-dialog
       title="库存变更 详细履历"
       :visible.sync="dialogVisible"

@@ -158,6 +158,7 @@
       <u-table-column label="处理意见" min-width="20px" prop="deal_info.deal_suggestion" align="center" />
       <u-table-column label="处理时间" min-width="20px" prop="deal_info.deal_time" align="center" />
     </u-table>
+    <el-alert style="color:black" title="表格背景色说明：表示不是一等品" type="success" />
     <el-dialog
       title="选择过滤"
       :visible.sync="filterDialogVisible"
