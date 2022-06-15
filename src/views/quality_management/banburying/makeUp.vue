@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!--胶片补打卡片 -->
+    <!--返回胶/无名胶卡片补打 -->
     <el-form :inline="true">
       <el-form-item label="类别">
         <el-select

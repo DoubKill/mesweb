@@ -1280,7 +1280,7 @@ export let asyncRoutes = [
             name: 'BanburyingMakeUp',
             meta: {
               faName: 'Banburying',
-              title: '胶片补打卡片',
+              title: '返回胶/无名胶卡片补打',
               permissionName: 'return_rubber'
             }
           }
