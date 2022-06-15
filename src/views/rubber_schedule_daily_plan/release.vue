@@ -156,6 +156,11 @@
               </el-table-column>
             </el-table>
             <div class="total_style">合计：车次-{{ setTrainTotal(tableItem) }}</div>
+            <el-alert
+              style="color:black"
+              title="表格字体颜色说明：黄色等待；粉色已保存；蓝色已下达；绿色运行中；紫色已完成"
+              type="success"
+            />
           </div>
         </div>
       </div>

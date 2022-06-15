@@ -331,6 +331,11 @@
       :old-page="false"
       @currentChange="currentChange"
     />
+    <el-alert
+      style="color:black"
+      title="表格背景色说明：配方里面选的可用机台发送失败或者未发送，列表显示蓝色"
+      type="success"
+    />
     <createdRubberMaterial
       ref="createdRubberMaterialRef"
       :show="dialogAddRubberMaterial"
@@ -440,6 +445,11 @@
         :current-page="dialogPage"
         :old-page="true"
         @currentChange="currentChangeDialog"
+      />
+      <el-alert
+        style="color:black"
+        title="表格背景色说明：粉色状态为失败"
+        type="success"
       />
     </el-dialog>
   </div>
