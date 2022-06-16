@@ -200,7 +200,8 @@ export default {
       try {
         this.loading = true
         const data = await replaceMaterial('get', null, { params: this.search })
-        this.tableData = data
+        this.tableData = data.results || []
+        this.total = data.count
         this.loading = false
       } catch (e) {
         this.loading = false
