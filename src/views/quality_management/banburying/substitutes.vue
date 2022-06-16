@@ -152,7 +152,7 @@
         min-width="20"
       />
       <el-table-column
-        prop="created_username"
+        prop="last_update_username"
         label="处理人"
         min-width="20"
       />
