@@ -50,7 +50,7 @@
           @change="changeList"
         >
           <el-option
-            v-for="item in ['未处理','已处理']"
+            v-for="item in ['未处理','已处理','超期失效']"
             :key="item"
             :label="item"
             :value="item"
@@ -181,7 +181,9 @@ export default {
   components: { EquipSelect, page },
   data() {
     return {
-      search: {},
+      search: {
+        status: '未处理'
+      },
       submit: false,
       submitNo: false,
       multipleSelection: [],
