@@ -58,6 +58,18 @@
           @input="getDebounce"
         /> -->
       </el-form-item>
+      <el-form-item label="起止创建日期">
+        <el-date-picker
+          v-model="dateValue"
+          clearable
+          type="datetimerange"
+          range-separator="至"
+          start-placeholder="开始日时"
+          end-placeholder="结束日时"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          @change="changeDate"
+        />
+      </el-form-item>
       <el-button
         v-permission="['material_outbound_record', 'space']"
         type="primary"
@@ -68,6 +80,7 @@
         type="primary"
         @click="showWeightDialog"
       >指定重量出库</el-button>
+      <el-button type="primary" :loading="btnExportLoad" @click="templateDownload">导出Excel</el-button>
       <el-button
         type="primary"
         @click="getList"
@@ -112,6 +125,11 @@
           let obj = options.find(d=>d.id === row.task_status)
           return obj.name
         }"
+      />
+      <el-table-column
+        prop="qty"
+        label="数量"
+        min-width="20"
       />
       <el-table-column
         prop="initiator"
@@ -727,7 +745,9 @@ export default {
       },
       dialogVisible2: false,
       btnDisabled: false,
-      positionObj: {}
+      positionObj: {},
+      dateValue: [],
+      btnExportLoad: false
     }
   },
   created() {
@@ -807,6 +827,8 @@ export default {
       if (!this.search.State) {
         delete this.search.State
       }
+      this.search.st = this.dateValue ? this.dateValue[0] : ''
+      this.search.et = this.dateValue ? this.dateValue[1] : ''
       this.search.page = 1
       this.getList()
     },
@@ -1089,6 +1111,25 @@ export default {
       } catch (error) {
         //
       } this.btnLoading = false
+    },
+    templateDownload() {
+      this.btnExportLoad = true
+      const obj = Object.assign({ export: 1 }, this.search)
+      const _api = wmsOutTasks
+      _api('get', null, { responseType: 'blob', params: obj })
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '原材料出库单据.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
     }
   }
 }

@@ -43,15 +43,35 @@
           @changSelect="selectStation"
         />
       </el-form-item> -->
-      <el-form-item style="float:right">
+      <el-form-item label="出库口选择" style="float:right">
+        <el-select
+          v-model="entrance_name"
+          placeholder="请选择"
+          style="margin-right:10px"
+          @visible-change="getWarehouseSelectPosition"
+          @change="changeEntrance"
+        >
+          <el-option
+            v-for="item in optionsList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.name"
+          />
+        </el-select>
+        <el-button
+          v-permission="['product_inventory','outbound']"
+          type="primary"
+          :disabled="btnLoading"
+          @click="confirmDelivery"
+        >确定出库</el-button>
         <el-button
           type="primary"
-          :loading="btnLoading"
+          :disabled="btnLoading"
           @click="exportTable(1)"
         >导出当前页面</el-button>
         <el-button
           type="primary"
-          :loading="btnLoading"
+          :disabled="btnLoading"
           @click="exportTable(2)"
         >导出所有</el-button>
       </el-form-item>
@@ -61,7 +81,33 @@
       border
       style="width: 100%"
       :data="tableData"
+      row-key="id"
+      @selection-change="handleSelectionChange"
     >
+      <el-table-column
+        type="selection"
+        width="40"
+        :reserve-selection="true"
+        :selectable="(row)=>{
+          if(row.location_status==='有货货位'){
+            if(warehouseName === '混炼胶库'&&row.location){
+              if(entrance_name==='一层后端')return false
+              if(entrance_name==='二层后端')return true
+              let firstVal = (row.location).substr(0,1)
+              if(entrance_name==='一层前端'&&(firstVal==='3'||firstVal==='4')){
+                return true
+              }else if(entrance_name==='二层前端'&&(firstVal==='1'||firstVal==='2')){
+                return true
+              }else{
+                return false
+              }
+            }
+            return true
+          }else{
+            return false
+          }
+        }"
+      />
       <el-table-column :key="1" label="物料类型" align="center" prop="material_type" min-width="40" />
       <el-table-column :key="2" label="物料编码" align="center" prop="material_no" />
       <el-table-column :key="4" label="lot" align="center" prop="lot_no" />
@@ -163,7 +209,7 @@ import page from '@/components/page'
 // import materialCodeSelect from '@/components/select_w/materialCodeSelect'
 import { debounce } from '@/utils'
 import detailsDialog from '@/views/quality_management/details.vue'
-import { stationInfo } from '@/api/warehouse'
+import { stationInfo, productStockOutbound } from '@/api/warehouse'
 // import materialInventoryManage from '@/views/inventory/rubber-warehouse/material-inventory-manage.vue'
 export default {
   name: 'GenerateAssignOutbound1',
@@ -223,7 +269,9 @@ export default {
       dispatch: '',
       containerNo: '',
       lotNo: '',
-      btnLoading: false
+      btnLoading: false,
+      entrance_name: '',
+      multipleArr: []
     }
   },
   computed: {
@@ -247,11 +295,11 @@ export default {
   },
   created() {
     this.getTableData()
-    // this.getWarehouseSelectPosition()
   },
   methods: {
     getTableData() {
       this.loading = true
+      this.entrance_name = null
       const _api = this.warehouseName === '混炼胶库' ? bzMixinInventory : bzFinalInventory
       _api(this.getParams)
         .then(response => {
@@ -275,7 +323,8 @@ export default {
           this.loading = false
         })
     },
-    async getWarehouseSelectPosition() {
+    async getWarehouseSelectPosition(bool) {
+      if (!bool) return
       try {
         if (!this.warehouseName) {
           this.optionsList = []
@@ -356,6 +405,47 @@ export default {
         this.$refs.multipleTable.clearSelection()
         this.multipleSelection = []
         this.handleSelection = []
+      }
+    },
+    handleSelectionChange(arr) {
+      this.multipleArr = arr
+    },
+    changeEntrance() {
+      this.$refs.multipleTable.clearSelection()
+    },
+    async confirmDelivery() {
+      if (!this.entrance_name || !this.multipleArr.length) {
+        this.$message('请选择出库口和库位')
+        return
+      }
+      const arr = []
+      this.multipleArr.forEach(d => {
+        arr.push({
+          'inventory_time': d.in_storage_time,
+          'location': d.location,
+          'lot_no': d.lot_no,
+          'memo': d.memo,
+          'pallet_no': d.container_no,
+          'qty': d.qty,
+          'quality_status': d.quality_level,
+          'weight': d.total_weight
+        })
+      })
+      const obj = {
+        product_no: this.multipleArr[0].material_no,
+        quality_status: this.multipleArr[0].quality_level,
+        tation: this.entrance_name,
+        warehouse: this.warehouseName,
+        stock_data: arr
+      }
+      try {
+        await productStockOutbound('post', null, obj)
+        this.$message.success('出库成功')
+        this.multipleArr = []
+        this.$refs.multipleTable.clearSelection()
+        this.getTableData()
+      } catch (e) {
+        //
       }
     },
     exportTable(val) {
