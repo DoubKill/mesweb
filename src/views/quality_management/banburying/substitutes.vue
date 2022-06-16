@@ -162,6 +162,12 @@
         min-width="20"
       />
     </el-table>
+    <page
+      :old-page="false"
+      :total="total"
+      :current-page="search.page"
+      @currentChange="currentChange"
+    />
   </div>
 </template>
 
@@ -169,9 +175,10 @@
 import EquipSelect from '@/components/select_w/equip'
 import { debounce } from '@/utils'
 import { replaceMaterial, materialMultiUpdate, materialDetailsAux } from '@/api/jqy'
+import page from '@/components/page'
 export default {
   name: 'BanburyingSubstitutes',
-  components: { EquipSelect },
+  components: { EquipSelect, page },
   data() {
     return {
       search: {},
@@ -180,12 +187,13 @@ export default {
       multipleSelection: [],
       options: [],
       tableData: [],
-      loading: false
+      loading: false,
+      total: 0
     }
   },
   created() {
     this.search.equip_no = this.$route.query.equip
-    this.getList()
+    // this.getList()
   },
   methods: {
     async getList() {
@@ -243,9 +251,15 @@ export default {
       this.multipleSelection = val
     },
     debounceFun() {
-      debounce(this, 'getList')
+      debounce(this, 'changeList')
     },
     changeList() {
+      this.search.page = 1
+      this.getList()
+    },
+    currentChange(page, page_size) {
+      this.search.page = page
+      this.search.page_size = page_size
       this.getList()
     }
   }
