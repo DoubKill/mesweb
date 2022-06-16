@@ -591,7 +591,7 @@ export default {
 
 <style lang="scss">
  .unqualified-card-container {
-    width: 600px;
+    width: 800px;
     margin: 0 auto;
     text-align: center;
     font-size: 14px;
