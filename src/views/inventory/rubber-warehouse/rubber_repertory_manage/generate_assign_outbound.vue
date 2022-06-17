@@ -135,6 +135,7 @@
           <span>{{ row.quality_level }}</span>
         </template>
       </el-table-column>
+      <el-table-column :key="15" label="处理意见" align="center" prop="deal_suggestion" />
       <el-table-column :key="9" label="入库时间" align="center" prop="in_storage_time" />
       <el-table-column :key="10" label="机台号" width="60" align="center" prop="equip_no" />
       <!-- <el-table-column
