@@ -681,6 +681,7 @@ export default {
   UserImport: '/api/v1/system/personnels/import_xlsx/',
   Sb: '/api/v1/production/nishisb/',
   WmsExceptHandle: '/api/v1/inventory/wms-except-handle/',
+  WmsMnLevelSearch: '/api/v1/inventory/wms-mn-level-search/',
   HfStock: '/api/v1/inventory/hf-stock/', // 烘房胶料信息统计列表
   HfStockDetail: '/api/v1/inventory/hf-stock-detail/',
   AttendanceClockDetail: '/api/v1/production/attendance-clock-detail/',

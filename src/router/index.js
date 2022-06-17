@@ -96,15 +96,6 @@ export const constantRoutes = [
       isPhone: true
     }
   },
-  {
-    path: '/Outbound-Kanban/:id',
-    component: () => import('@/views/Z-Outbound-Kanban'),
-    hidden: true,
-    meta: {
-      // 是否是单独页面
-      isPhone: true
-    }
-  },
   // http://localhost:9000/#/alone/banburying/
   // substitutes/?name=replace_material&arr=view,opera&equip=S01&key=
   {
@@ -160,6 +151,15 @@ export const constantRoutes = [
       permissionName: '',
       isPhone: true
     }
+  },
+  {
+    path: '/Outbound-Kanban/:id',
+    component: () => import('@/views/Z-Outbound-Kanban'),
+    hidden: true,
+    meta: {
+      // 是否是单独页面
+      isPhone: true
+    }
   }
 ]
 // 存在权限的路由
@@ -184,50 +184,43 @@ export let asyncRoutes = [
       }
     },
     {
-      path: '/homePage/index',
-      component: () => import('@/views/homePage/index'),
-      name: 'HomePageMainScreen',
+      path: '/bigScreen/1',
+      component: () => import('@/views/homePage/bigAcreen'),
+      name: 'HomePageMainScreen1',
       meta: {
         title: 'MES首页大屏',
-        permissionName: '',
         icon: 'collection',
-        isPhone: true,
-        bigScreen: true
+        type: 1
       }
     },
     {
-      path: '/operation-status',
-      component: () => import('@/views/equipment-manage/operation-status'),
+      path: '/bigScreen/2',
+      component: () => import('@/views/homePage/bigAcreen'),
+      name: 'HomePageMainScreen1',
       meta: {
         title: '设备运行现况',
-        permissionName: '',
         icon: 'collection',
-        isPhone: true,
-        bigScreen: true
+        type: 2
       }
     },
     {
-      path: '/Outbound-Kanban/2',
-      component: () => import('@/views/Z-Outbound-Kanban'),
+      path: '/bigScreen/3',
+      component: () => import('@/views/homePage/bigAcreen'),
+      name: 'HomePageMainScreen1',
       meta: {
-        // 是否是单独页面
         title: '混炼胶库运行综合看板',
-        permissionName: '',
         icon: 'collection',
-        isPhone: true,
-        bigScreen: true
+        type: 3
       }
     },
     {
-      path: '/Outbound-Kanban/1',
-      component: () => import('@/views/Z-Outbound-Kanban'),
+      path: '/bigScreen/4',
+      component: () => import('@/views/homePage/bigAcreen'),
+      name: 'HomePageMainScreen1',
       meta: {
-        // 是否是单独页面
         title: '终炼胶库运行综合看板',
-        permissionName: '',
         icon: 'collection',
-        isPhone: true,
-        bigScreen: true
+        type: 4
       }
     }
     ]

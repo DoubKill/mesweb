@@ -1256,6 +1256,15 @@ export function wmsExceptHandle(method, id, data = {}) {
   return request(obj)
 }
 
+export function wmsMnLevelSearch(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WmsMnLevelSearch + id + '/' : API.WmsMnLevelSearch,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function schedulingProductImport(method, id, data = {}) {
   const obj = {
     url: id ? API.SchedulingProductImport + id + '/' : API.SchedulingProductImport,

@@ -14,6 +14,16 @@
           @change="changeDate"
         />
       </el-form-item>
+      <el-form-item v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="状态">
+        <el-select v-model="search.task_status" clearable placeholder="请选择" @change="changeList">
+          <el-option
+            v-for="item in optionsStatus"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          />
+        </el-select>
+      </el-form-item>
       <!-- <el-form-item label="类型">
         <el-select
           v-model="search.type"
@@ -181,69 +191,55 @@
       fit
     >
       <el-table-column label="No" type="index" align="center" width="40" />
-      <el-table-column label="类型" align="center" prop="order_type" width="50" />
-      <el-table-column label="出入库单号" align="center" prop="order_no" />
-      <el-table-column label="质检条码" align="center" prop="lot_no" />
-      <el-table-column v-if="(warehouseNameProps!=='原材料库'&&warehouseNameProps!=='炭黑库')&&!isDialog" label="巷道" align="center" prop="location">
+      <el-table-column label="类型" align="center" prop="order_type" min-width="20" />
+      <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="出入库单号" align="center" prop="task_no" min-width="20" />
+      <el-table-column v-else label="出入库单号" align="center" prop="order_no" min-width="20" />
+      <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="下架任务号" align="center" prop="order_no" min-width="20" />
+      <el-table-column v-if="(warehouseNameProps!=='原材料库'&&warehouseNameProps!=='炭黑库')&&!isDialog" label="巷道编码" align="center" prop="location" min-width="20">
         <template slot-scope="{row}">
           {{ row.location?row.location.split('-')[0]:'' }}
         </template>
       </el-table-column>
-      <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="巷道" align="center">
+      <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="巷道编码" align="center" min-width="20">
         <template slot-scope="{row}">
           {{ row.location?row.location.split('-')[1]:'' }}
         </template>
       </el-table-column>
-      <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="批次号" align="center" prop="batch_no" />
-      <!-- <el-table-column label="仓库类型" align="center" prop="warehouse_type" /> -->
-      <!-- <el-table-column  label="仓库名称" align="center" prop="warehouse_name" /> -->
-      <el-table-column label="托盘号" align="center" prop="pallet_no" />
-      <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="是否进烘房" align="center" prop="is_entering" />
-      <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="供应商" align="center" />
-      <!-- <el-table-column label="机台" align="center">
-        <template v-if="row.product_info" slot-scope="{row}">
-          {{ row.product_info.equip_no }}
+      <el-table-column label="追踪码" align="center" prop="lot_no" min-width="20" />
+      <el-table-column label="识别卡ID" align="center" prop="pallet_no" min-width="20" />
+      <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="库位码" align="center" min-width="20">
+        <template slot-scope="{row}">
+          {{ row.location }}
         </template>
       </el-table-column>
-      <el-table-column label="时间/班次" align="center">
-        <template v-if="row.product_info" slot-scope="{row}">
-          {{ row.product_info.classes }}
-        </template>
-      </el-table-column>
-      <el-table-column label="车号" align="center">
-        <template v-if="row.product_info" slot-scope="{row}">
-          {{ row.product_info.memo }}
-        </template>
-      </el-table-column> -->
-      <el-table-column label="物料编码" align="center" prop="material_no" />
-      <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="物料名称" align="center" prop="material_name" />
-      <!-- <el-table-column label="出入库原因" align="center" prop="inout_reason" /> -->
-      <!-- <el-table-column label="出入库类型" align="center" prop="inout_num_type" /> -->
-      <el-table-column label="出入库数" align="center" prop="qty" width="50" />
-      <!-- <el-table-column label="单位" align="center" prop="unit" width="40" /> -->
+      <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="物料名称" align="center" prop="material_name" min-width="20" />
+      <el-table-column label="物料编码" align="center" prop="material_no" min-width="20" />
+      <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="批次号" align="center" prop="batch_no" min-width="20" />
+      <el-table-column label="创建时间" align="center" prop="start_time" min-width="20" />
+      <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="状态" min-width="20" prop="task_status_name" />
+      <el-table-column label="创建人" align="center" prop="initiator" min-width="20" />
+      <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="数量" align="center" prop="qty" min-width="20" />
+      <el-table-column v-else label="出入库数" align="center" prop="qty" width="50" />
+      <el-table-column label="重量(kg)" align="center" prop="weight" min-width="20" />
+      <el-table-column label="件数" align="center" prop="sl" width="80" />
+      <el-table-column label="麦头重量" align="center" prop="zl" min-width="20" />
+      <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="是否进烘房" align="center" prop="is_entering" min-width="20" />
       <el-table-column
         v-if="!warehouseNameProps"
         label="车次"
         align="center"
         prop="product_info.memo"
-        width="80"
+        min-width="20"
       />
-      <el-table-column label="重量(kg)" align="center" prop="weight" width="80" />
-      <el-table-column label="发起人" align="center" prop="initiator" width="80" />
-      <el-table-column v-if="warehouseNameProps==='炭黑库'" label="品质状态" align="center" width="80">
+      <el-table-column v-if="warehouseNameProps==='炭黑库'" label="品质状态" align="center" min-width="20">
         <template slot-scope="{row}">
           <span v-if="row.is_qualified===true">合格</span>
           <span v-if="row.is_qualified===false">不合格</span>
           <span v-if="row.is_qualified===null">待检</span>
         </template>
       </el-table-column>
-      <el-table-column v-if="warehouseNameProps==='原材料库'" label="品质状态" align="center" prop="quality_status" width="80" />
-      <el-table-column label="发起时间" align="center" prop="start_time" />
-      <el-table-column
-        label="完成时间"
-        align="center"
-        prop="fin_time"
-      />
+      <el-table-column v-if="warehouseNameProps==='原材料库'" label="品质状态" align="center" prop="quality_status" min-width="20" />
+      <el-table-column v-if="(warehouseNameProps!=='原材料库'&&warehouseNameProps!=='炭黑库')" label="完成时间" align="center" prop="fin_time" min-width="20" />
       <el-table-column
         v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'"
         label="查看处理履历"
@@ -268,7 +264,7 @@
     <el-dialog
       title="处理履历"
       :visible.sync="dialogVisibleList"
-      width="90%"
+      width="95%"
     >
       <el-form :inline="true">
         <el-form-item label="物料名称">
@@ -279,6 +275,18 @@
         </el-form-item>
         <el-form-item label="批次号">
           <el-input v-model="currentInfo.lot_no" disabled />
+        </el-form-item>
+        <el-form-item label="出库时WMS品质">
+          <el-input v-model="currentInfo.quality_status" disabled style="width:100px" />
+        </el-form-item>
+        <el-form-item label="出库时核酸管控">
+          <el-input v-model="currentInfo.hs_status" style="width:100px" disabled />
+        </el-form-item>
+        <el-form-item label="出库时安吉检测结果">
+          <el-input v-model="currentInfo.mes_test_result" disabled style="width:100px" />
+        </el-form-item>
+        <el-form-item label="出库时总厂检测结果">
+          <el-input v-model="currentInfo.zc_test_result" disabled style="width:100px" />
         </el-form-item>
       </el-form>
       <el-table
@@ -335,7 +343,7 @@ import { inventoryLog } from '@/api/base_w'
 import page from '@/components/page'
 import { wmsTunnels, thTunnels } from '@/api/base_w_four'
 import { batchingMaterials } from '@/api/base_w'
-import { wmsExceptHandle, wmsMaterials, thMaterials } from '@/api/jqy'
+import { wmsExceptHandle, wmsMaterials, thMaterials, wmsMnLevelSearch } from '@/api/jqy'
 // import warehouseSelect from '@/components/select_w/warehouseSelect'
 import { setDate, debounce, exportExcel } from '@/utils'
 export default {
@@ -381,7 +389,16 @@ export default {
       options2: [],
       options3: [],
       tableData: [],
-      btnExportLoad: false
+      btnExportLoad: false,
+      optionsStatus: [
+        { name: '待处理', id: 1 },
+        { name: '处理中', id: 2 },
+        { name: '完成', id: 3 },
+        { name: '已解绑', id: 4 },
+        { name: '取消', id: 5 },
+        { name: '异常', id: 6 },
+        { name: '强制完成', id: 12 }
+      ]
     }
   },
   watch: {
@@ -485,6 +502,8 @@ export default {
         }
         this.loadingCheck = true
         const data = await wmsExceptHandle('get', null, { params: this.currentInfo })
+        const data1 = await wmsMnLevelSearch('get', null, { params: { task_no: row.order_no }})
+        Object.assign(this.currentInfo, data1)
         this.tableDataCheck = data.results
         this.loadingCheck = false
       } catch (e) {

@@ -239,8 +239,8 @@ export default {
     },
     productBatchingChanged(val) {
       this.search.product_no = val ? val.material_no : ''
-      this.getList()
       this.search.page = 1
+      this.getList()
     },
     equipChanged(val) {
       this.search.equip_no = val
