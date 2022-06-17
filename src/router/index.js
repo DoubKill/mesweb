@@ -437,7 +437,7 @@ export let asyncRoutes = [
         icon: 'formula',
         permissionName: 'productbatching'
       }
-    },
+    }
     // {
     //   path: '/rb/material/std/manage111',
     //   name: 'rb-material-std-manage111',
@@ -448,16 +448,16 @@ export let asyncRoutes = [
     //     permissionName: 'productbatching'
     //   }
     // },
-    {
-      path: '/rb/material-tank/manage',
-      name: 'MaterialTank',
-      component: () => import('@/views/recipe/tankInformation/list'),
-      meta: {
-        title: '称量系统料仓信息管理',
-        icon: 'formula',
-        permissionName: 'weight_tank'
-      }
-    }
+    // {
+    //   path: '/rb/material-tank/manage',
+    //   name: 'MaterialTank',
+    //   component: () => import('@/views/recipe/tankInformation/list'),
+    //   meta: {
+    //     title: '称量系统料仓信息管理',
+    //     icon: 'formula',
+    //     permissionName: 'weight_tank'
+    //   }
+    // }
     // {
     //   path: '/rb/formula-resume',
     //   name: 'FormulaResume',
@@ -687,6 +687,16 @@ export let asyncRoutes = [
             faName: 'SmallMaterialWeight',
             title: '料包有效期管理',
             permissionName: 'xl_expire_data'
+          }
+        },
+        {
+          path: '/internal/material-statistics',
+          component: () => import('@/views/quality_management/material-statistics'),
+          name: 'MaterialStatistics',
+          meta: {
+            faName: 'SmallMaterialWeight',
+            title: '称量机台物料统计',
+            permissionName: 'xl_report_weight_statics'
           }
         }
       ]
@@ -2920,16 +2930,6 @@ export let asyncRoutes = [
             }
           }
         ]
-      },
-      {
-        path: '/internal/material-statistics',
-        component: () => import('@/views/quality_management/material-statistics'),
-        name: 'MaterialStatistics',
-        meta: {
-          title: '称量机台物料统计',
-          icon: 'quality',
-          permissionName: 'xl_report_weight_statics'
-        }
       },
       {
         path: '/material_level_management/',
