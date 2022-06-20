@@ -214,6 +214,7 @@ export default {
 
   MaterialTypesUrl: BasicsUrl + 'global-codes/',
 
+  ProductStockOutbound: '/api/v1/inventory/product-stock-outbound/',
   // 批量打印
   LabelPrint: '/api/v1/quality/label-print/',
   ShowQualifiedRange: '/api/v1/quality/show-qualified-range/',
