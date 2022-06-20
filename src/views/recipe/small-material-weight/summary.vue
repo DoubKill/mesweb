@@ -35,7 +35,7 @@
           :loading="btnExportLoad"
           @click="exportTable"
         >导出Excel</el-button>
-        <el-button type="primary" @click="getList">查询</el-button>
+        <el-button type="primary" @click="changePage">查询</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -128,6 +128,10 @@ export default {
       this.search.st = date ? date[0] : ''
       this.search.et = date ? date[1] : ''
     //   this.getList()
+    },
+    changePage() {
+      this.search.page = 1
+      this.getList()
     },
     currentChange(page, page_size) {
       this.search.page = page
