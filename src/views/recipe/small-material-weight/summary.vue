@@ -91,7 +91,7 @@ export default {
       },
       tableData: [],
       loading: false,
-      searchDate: [getDay(-1) + ' ' + '8:00:00', getDay(0) + ' ' + '8:00:00'],
+      searchDate: [getDay(-1) + ' ' + '08:00:00', getDay(0) + ' ' + '08:00:00'],
       total: 0,
       btnExportLoad: false
     }
