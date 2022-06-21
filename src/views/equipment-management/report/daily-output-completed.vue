@@ -491,7 +491,6 @@ export default {
       }
     },
     changeQty(row) {
-      console.log(row.qty)
       if (!row.weight1) {
         this.$message.info('请先选择规格和段数')
         return
