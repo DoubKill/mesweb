@@ -435,7 +435,7 @@ export default {
       const obj = {
         product_no: this.multipleArr[0].material_no,
         quality_status: this.multipleArr[0].quality_level,
-        tation: this.entrance_name,
+        station: this.entrance_name,
         warehouse: this.warehouseName,
         stock_data: arr
       }
