@@ -856,6 +856,7 @@ export default {
       if (row) {
         this.dialogVisible = true
         this.search1.order_id = row.order_id
+        this.search1.page = 1
         this.status = row.status_name
       }
       try {

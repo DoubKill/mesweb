@@ -610,6 +610,16 @@ export let asyncRoutes = [
           }
         },
         {
+          path: '/internal/material-statistics',
+          component: () => import('@/views/quality_management/material-statistics'),
+          name: 'MaterialStatistics',
+          meta: {
+            faName: 'SmallMaterialWeight',
+            title: '称量机台物料统计',
+            permissionName: 'xl_report_weight_statics'
+          }
+        },
+        {
           path: '/small-material-weight/consumption',
           component: () => import('@/views/recipe/small-material-weight/consumption'),
           name: 'SmallMaterialWeightConsumption',
@@ -617,6 +627,16 @@ export let asyncRoutes = [
             faName: 'SmallMaterialWeight',
             title: '物料消耗报表',
             permissionName: 'xl_report_weight'
+          }
+        },
+        {
+          path: '/small-material-weight/summary',
+          component: () => import('@/views/recipe/small-material-weight/summary'),
+          name: 'SmallMaterialWeightSummary',
+          meta: {
+            faName: 'SmallMaterialWeight',
+            title: '称量物料消耗汇总表',
+            permissionName: ''
           }
         },
         {
@@ -687,16 +707,6 @@ export let asyncRoutes = [
             faName: 'SmallMaterialWeight',
             title: '料包有效期管理',
             permissionName: 'xl_expire_data'
-          }
-        },
-        {
-          path: '/internal/material-statistics',
-          component: () => import('@/views/quality_management/material-statistics'),
-          name: 'MaterialStatistics',
-          meta: {
-            faName: 'SmallMaterialWeight',
-            title: '称量机台物料统计',
-            permissionName: 'xl_report_weight_statics'
           }
         }
       ]
@@ -1131,7 +1141,7 @@ export let asyncRoutes = [
         component: () => import('@/views/production/result_analysis/a-index.vue'),
         name: 'ResultAnalysis',
         meta: {
-          title: '生产结果分析统计',
+          title: '生产分析统计',
           icon: 'production'
         },
         children: [
