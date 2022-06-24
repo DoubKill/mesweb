@@ -481,6 +481,7 @@ export default {
           this.$message.info('请选择配料机台')
           return
         }
+        this.option = []
         const data = await xlPlan('get', null, { params: {
           equip_no: this.formInline.equip_no,
           s_time: this.formInline.s_time,
