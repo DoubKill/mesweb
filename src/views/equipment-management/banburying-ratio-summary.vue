@@ -331,13 +331,13 @@ export default {
           var obj = {}
           var newArr = data.reduce((item, next) => {
             if (this.search.dimension === 1) {
-              obj[next.classes + next.date]
+              obj[next.classes + next.date + next.equip_no]
                 ? ' '
-                : (obj[next.classes + next.date] = true && item.push(next))
+                : (obj[next.classes + next.date + next.equip_no] = true && item.push(next))
             } else {
-              obj[next.date]
+              obj[next.date + next.equip_no]
                 ? ' '
-                : (obj[next.date] = true && item.push(next))
+                : (obj[next.date + next.equip_no] = true && item.push(next))
             }
 
             return item
