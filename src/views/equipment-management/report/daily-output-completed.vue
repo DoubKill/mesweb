@@ -87,10 +87,10 @@
       id="taskLine"
       style="width: 100%;height:500px;margin-top:100px"
     />
-
+    <el-divider style="background:black" />
     <div
       id="taskLine1"
-      style="width: 100%;height:500px;margin-top:100px"
+      style="width: 100%;height:500px"
     />
 
     <el-dialog
@@ -368,10 +368,10 @@ export default {
         ]
       },
       option1: {
-        color: ['#C0504D', '#9BBB59', '#8064A2'],
+        color: ['#C0504D', '#9BBB59'],
         title: {
           left: 'center',
-          text: '安吉（炼胶）190E每日产能情况说明（含彩胶线）'
+          text: '安吉（炼胶）190E彩胶线每日产能情况说明'
         },
         tooltip: {
           trigger: 'axis'
@@ -379,7 +379,7 @@ export default {
         legend: {
           top: '6%',
           orient: 'horizontal',
-          data: ['无硫(吨)', '加硫(吨)', '段数']
+          data: ['无硫(吨)', '加硫(吨)']
         },
         toolbox: {
           show: true
@@ -431,25 +431,6 @@ export default {
             label: {
               color: '#000000',
               backgroundColor: '#92D050',
-              position: 'top',
-              show: true,
-              formatter: function(params) {
-                if (params.value === 0 || params.value === '0') {
-                  return ''
-                } else {
-                  return params.value
-                }
-              }
-            }
-          },
-          {
-            barGap: '0%',
-            name: '段数',
-            type: 'bar',
-            data: [],
-            label: {
-              color: '#000000',
-              backgroundColor: '#FAC090',
               position: 'top',
               show: true,
               formatter: function(params) {
@@ -684,21 +665,88 @@ export default {
         this.option1.xAxis[0].data = this.xList
         this.option1.series[0].data = data.data_190e.wl
         this.option1.series[1].data = data.data_190e.jl
-        var arr = []
-        for (i = 0; i < data.data_190e.dates.length; i++) {
-          if (data.data_190e.fm[i] === 0) {
-            arr.push(0)
-          } else {
-            arr.push((data.data_190e.total[i] / data.data_190e.fm[i]).toFixed(2))
-          }
-        }
-        this.option1.series[2].data = arr
         this.$nextTick(() => {
           const chartBar = echarts.init(document.getElementById('taskLine'))
           chartBar.setOption(this.option)
           const chartBar1 = echarts.init(document.getElementById('taskLine1'))
           chartBar1.setOption(this.option1)
         })
+        this.option.graphic = [{
+          type: 'group',
+          left: '85%',
+          top: 0,
+          children: [
+            {
+              type: 'rect',
+              z: 100,
+              left: 'center',
+              top: 'middle',
+              shape: {
+                width: 150,
+                height: 90
+              },
+              style: {
+                fill: '#fff',
+                stroke: '#555',
+                lineWidth: 1,
+                shadowBlur: 8,
+                shadowOffsetX: 3,
+                shadowOffsetY: 3,
+                shadowColor: 'rgba(0,0,0,0.2)'
+              }
+            },
+            {
+              type: 'text',
+              z: 100,
+              left: 'center',
+              top: 'middle',
+              style: {
+                text: [`日均产能`, `加硫:${data.avg_results.jl}`, `无硫:${data.avg_results.wl}`, `段数:${data.avg_results.ds}`].join('\n'),
+                font: '500 14px sy',
+                fill: '#1D2F2E',
+                textLineHeight: 22
+              }
+            }
+          ]
+        }]
+        this.option1.graphic = [{
+          type: 'group',
+          left: '85%',
+          top: 0,
+          children: [
+            {
+              type: 'rect',
+              z: 100,
+              left: 'center',
+              top: 'middle',
+              shape: {
+                width: 150,
+                height: 90
+              },
+              style: {
+                fill: '#fff',
+                stroke: '#555',
+                lineWidth: 1,
+                shadowBlur: 8,
+                shadowOffsetX: 3,
+                shadowOffsetY: 3,
+                shadowColor: 'rgba(0,0,0,0.2)'
+              }
+            },
+            {
+              type: 'text',
+              z: 100,
+              left: 'center',
+              top: 'middle',
+              style: {
+                text: [`日均产能`, `加硫:${data.avg_190e.jl}`, `无硫:${data.avg_190e.wl}`, `段数:${data.avg_190e.ds}`].join('\n'),
+                font: '500 14px sy',
+                fill: '#1D2F2E',
+                textLineHeight: 22
+              }
+            }
+          ]
+        }]
         this.loading = false
       } catch (e) {
         this.loading = false
@@ -752,6 +800,7 @@ function getDate(datestr) {
   var date = new Date(temp[0], temp[1], temp[2])
   return date
 }
+
 function getCurrentMonthLastDay(d) {
   const date = new Date(d)
   let currentMonth = date.getMonth()
@@ -773,6 +822,9 @@ function getCurrentMonthLastDay(d) {
 
 <style lang="scss">
 .dailyOutputCompleted{
+  .el-divider{
+    background: black;
+  }
 .el-table th{
         padding:0;
     }
