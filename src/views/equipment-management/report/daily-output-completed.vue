@@ -368,7 +368,7 @@ export default {
         ]
       },
       option1: {
-        color: ['#C0504D', '#9BBB59'],
+        color: ['#C0504D', '#9BBB59', '#4A7EBB'],
         title: {
           left: 'center',
           text: '安吉（炼胶）190E彩胶线每日产能情况说明'
@@ -379,7 +379,7 @@ export default {
         legend: {
           top: '6%',
           orient: 'horizontal',
-          data: ['无硫(吨)', '加硫(吨)']
+          data: ['无硫(吨)', '加硫(吨)', '合计']
         },
         toolbox: {
           show: true
@@ -435,6 +435,24 @@ export default {
               show: true,
               formatter: function(params) {
                 if (params.value === 0 || params.value === '0') {
+                  return ''
+                } else {
+                  return params.value
+                }
+              }
+            }
+          },
+          {
+            name: '合计',
+            type: 'line',
+            data: [],
+            label: {
+              position: 'top',
+              color: 'black',
+              backgroundColor: '#FFFF00',
+              show: true,
+              formatter: function(params) {
+                if (params.value === 0 || params.value === '0.00') {
                   return ''
                 } else {
                   return params.value
@@ -665,6 +683,11 @@ export default {
         this.option1.xAxis[0].data = this.xList
         this.option1.series[0].data = data.data_190e.wl
         this.option1.series[1].data = data.data_190e.jl
+        this.totalList = []
+        for (var index = 0; index < this.tableHead.length; index++) {
+          this.totalList.push((Number(data.data_190e.wl[index]) + Number(data.data_190e.jl[index])).toFixed(2))
+        }
+        this.option1.series[2].data = this.totalList
         this.$nextTick(() => {
           const chartBar = echarts.init(document.getElementById('taskLine'))
           chartBar.setOption(this.option)
