@@ -27,6 +27,17 @@
       </el-form-item>
       <el-form-item style="float:right">
         <el-button
+          v-permission="['employee_attendance_records','add']"
+          type="primary"
+          @click="addStatus('外面')"
+        >添加考勤数据</el-button>
+        <el-button
+          v-permission="['employee_attendance_records','export']"
+          type="primary"
+          :loading="btnExportLoad"
+          @click="exportTable1"
+        >导出Excel</el-button>
+        <el-button
           v-permission="['employee_attendance_records','export']"
           type="primary"
           :loading="btnExportLoad"
@@ -42,6 +53,12 @@
           <el-button v-permission="['employee_attendance_records','import']" :loading="btnExportLoad1" type="primary">导入Excel</el-button>
         </el-upload>
         <el-button
+          v-permission="['employee_attendance_records','addall']"
+          type="primary"
+          :loading="btnLoad"
+          @click="approve1('整体提交')"
+        >整体提交</el-button>
+        <el-button
           v-permission="['employee_attendance_records','examine']"
           type="primary"
           @click="approve('审批')"
@@ -54,6 +71,7 @@
       </el-form-item>
     </el-form>
     <el-table
+      id="out-table"
       v-loading="loading"
       max-height="700"
       :data="tableData"
@@ -93,18 +111,22 @@
           v-for="(item,i) in tableHead1[index]"
           :key="i"
           align="center"
+          :prop="d.prop+item"
           :label="item"
           width="70"
         >
           <template slot-scope="scope">
-            <el-link
-              v-for="(item1,index1) in scope.row[d.prop+item]"
-              :key="index1"
-              type="primary"
-              @click="attendanceList(item1)"
-            >
-              {{ item1 }}{{ scope.row[d.prop+item].length -1>index1 ? ',' : '' }}
-            </el-link>
+            <div>
+              <el-link
+                v-for="(item1,index1) in scope.row[d.prop+item]"
+                :key="index1"
+                :style="{color:item1.color}"
+                type="primary"
+                @click="attendanceList(item1.name,item,d.day,scope.row,i,tableHead1[index].length,item1.color)"
+              >
+                {{ item1.name }}{{ scope.row[d.prop+item].length -1>index1 ? ',' : '' }}
+              </el-link>
+            </div>
           </template>
         </el-table-column>
       </el-table-column>
@@ -216,9 +238,14 @@
         class="dialog-footer"
       >
         <el-button
+          v-permission="['employee_attendance_records','reject']"
+          type="primary"
+          @click="editStatus('审核驳回')"
+        >审核驳回</el-button>
+        <el-button
           v-permission="['employee_attendance_records','add']"
           type="primary"
-          @click="addStatus"
+          @click="addStatus('里面')"
         >添加</el-button>
         <el-button
           v-permission="['employee_attendance_records','abandon']"
@@ -231,6 +258,7 @@
         >取消</el-button>
         <el-button
           v-permission="['employee_attendance_records','affirm']"
+          :disabled="color==='#51A651'"
           type="primary"
           @click="editStatus('确认')"
         >确认</el-button>
@@ -332,7 +360,14 @@
     >
       <el-form ref="dialogForm" :rules="rules" label-width="150px" :model="dialogForm">
         <el-form-item label="姓名" prop="username">
-          <el-input v-model="dialogForm.username" disabled style="width:200px" />
+          <el-select v-model="dialogForm.username" :disabled="addType==='里面'?true:false" placeholder="请选择" style="width:200px" @change="changeIdCard">
+            <el-option
+              v-for="item in allList"
+              :key="item.id"
+              :label="item.username"
+              :value="item.username"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="身份证" prop="id_card_num">
           <el-input v-model="dialogForm.id_card_num" disabled style="width:200px" />
@@ -340,13 +375,14 @@
         <el-form-item label="日期" prop="factory_date">
           <el-date-picker
             v-model="dialogForm.factory_date"
+            :disabled="addType==='里面'?true:false"
             style="width:200px"
             type="date"
             value-format="yyyy-MM-dd"
           />
         </el-form-item>
         <el-form-item label="机台" prop="equip">
-          <el-select v-model="dialogForm.equip" placeholder="请选择" @visible-change="equipChange">
+          <el-select v-model="dialogForm.equip" :disabled="addType==='里面'?true:false" placeholder="请选择" @visible-change="equipChange">
             <el-option
               v-for="item in options"
               :key="item.id"
@@ -356,7 +392,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="班组" prop="group">
-          <el-select v-model="dialogForm.group" placeholder="请选择" @visible-change="getClassGroup">
+          <el-select v-model="dialogForm.group" :disabled="addType==='里面'?true:false" placeholder="请选择" @visible-change="getClassGroup">
             <el-option
               v-for="item in options1"
               :key="item.global_name"
@@ -367,6 +403,7 @@
         </el-form-item>
         <el-form-item label="班次" prop="classes">
           <class-select
+            :is-disabled="addType==='里面'?true:false"
             :value-default="dialogForm.classes"
             :is-clearable="false"
             @classSelected="classChanged"
@@ -396,6 +433,9 @@
 
 <script>
 import { globalCodesUrl } from '@/api/base_w'
+import { personnels } from '@/api/jqy'
+import { exportExcel } from '@/utils/index'
+import { currentFactoryDate } from '@/api/base_w_three'
 import classSelect from '@/components/ClassSelect'
 import { getEquip } from '@/api/banburying-performance-manage'
 import { attendanceResultAudit, performanceJobLadder, employeeattendancerecords, employeeattendancerecordsexport, attendanceTimeStatistics, attendanceClockDetail } from '@/api/jqy'
@@ -411,6 +451,7 @@ export default {
       getParams: {
         date: setDate(null, null, 'month')
       },
+      color: '',
       type: '',
       options: [],
       options1: [],
@@ -420,6 +461,7 @@ export default {
       approve_user: null,
       audit_user: null,
       approveState: null,
+      btnLoad: false,
       resultForm: {},
       tableDataAttendance: [],
       dialogVisibleResult: false,
@@ -452,7 +494,13 @@ export default {
         ]
       },
       loading: false,
+      addType: null,
       submit: false,
+      date: '',
+      equip: '',
+      group: '',
+      classes: '',
+      allList: [],
       multipleSelection: [],
       tableHead: [],
       tableData: [],
@@ -464,6 +512,7 @@ export default {
   created() {
     this.tableHead = getDiffDate(this.search.date + '-01', getCurrentMonthLastDay(setDate()))
     this.getList()
+    this.getAllList()
   },
   methods: {
     equipChange(val) {
@@ -482,6 +531,18 @@ export default {
         })
       }
     },
+    async getClasses(val, val1) {
+      try {
+        const data = await currentFactoryDate('get', null, { params: { select_date: val, group: val1 }})
+        this.dialogForm.classes = data.classes
+      } catch (e) {
+        //
+      }
+    },
+    async getAllList() {
+      const data = await personnels('get', null, { params: { all: 1, attendance: 1 }})
+      this.allList = data.results
+    },
     sectionChange(val) {
       if (val) {
         performanceJobLadder('get', null, { params: { all: 1 }}).then((response) => {
@@ -495,15 +556,32 @@ export default {
     classChanged(val) {
       this.$set(this.dialogForm, 'classes', val)
     },
-    addStatus() {
+    addStatus(val) {
       this.dialogVisibleAdd = true
-      if (this.$refs.dialogForm) {
-        this.$refs.dialogForm.clearValidate()
-      }
-      this.dialogForm = {
-        username: this.getParams.name,
-        is_use: '添加',
-        id_card_num: this.currentInfo.id_card_num
+      this.addType = val
+      if (val === '里面') {
+        if (this.$refs.dialogForm) {
+          this.$refs.dialogForm.clearValidate()
+        }
+        this.dialogForm = {
+          factory_date: this.date,
+          equip: this.equip,
+          group: this.group,
+          username: this.getParams.name,
+          is_use: '添加',
+          id_card_num: this.currentInfo.id_card_num
+        }
+        this.getClasses(this.date, this.group)
+      } else {
+        this.dialogForm = {
+          factory_date: setDate(),
+          equip: null,
+          group: null,
+          classes: null,
+          username: '',
+          is_use: '添加',
+          id_card_num: ''
+        }
       }
     },
     async getList() {
@@ -552,11 +630,30 @@ export default {
         } else {
           this.$message('请先选中一条数据')
         }
+      } else if (val === '确认') {
+        try {
+          var arr = JSON.parse(JSON.stringify(this.tableDataAttendance))
+          arr.forEach(d => {
+            d.is_use = '确认'
+          })
+          await attendanceTimeStatistics('post', null, { data: { confirm_list: arr }})
+          this.$message.success('操作成功')
+          this.color = '#51A651'
+          this.attendanceList()
+          this.getList()
+        } catch (e) {
+          //
+        }
       } else {
         try {
-          await attendanceTimeStatistics('post', null, { data: { confirm_list: this.tableDataAttendance }})
+          var arr1 = JSON.parse(JSON.stringify(this.tableDataAttendance))
+          arr1.forEach(d => {
+            d.is_use = '驳回'
+          })
+          await attendanceTimeStatistics('post', null, { data: { reject_list: arr1 }})
           this.$message.success('操作成功')
           this.attendanceList()
+          this.getList()
         } catch (e) {
           //
         }
@@ -566,6 +663,17 @@ export default {
       this.resultForm = { result: true }
       this.type = val
       this.dialogVisibleResult = true
+    },
+    async approve1() {
+      try {
+        this.btnLoad = true
+        await attendanceResultAudit('post', null, { data: { overall: 1 }})
+        this.$message.success('操作成功')
+        this.btnLoad = false
+        this.getList()
+      } catch (e) {
+        this.btnLoad = false
+      }
     },
     async submitFun() {
       if (this.type === '审批') {
@@ -597,6 +705,7 @@ export default {
             this.submit = false
             this.dialogVisibleAdd = false
             this.attendanceList()
+            this.getList()
           } catch (e) {
             this.submit = false
           }
@@ -605,8 +714,24 @@ export default {
         }
       })
     },
-    async attendanceList(val) {
+    changeIdCard() {
+      if (this.allList.find(d => this.dialogForm.username === d.username)) {
+        this.dialogForm.id_card_num = this.allList.find(d => this.dialogForm.username === d.username).id_card_num
+      } else {
+        this.dialogForm.id_card_num = ''
+      }
+    },
+    async attendanceList(val, group, day, row, classes, length, color) {
       if (val) {
+        this.color = color
+        this.group = group
+        this.date = this.search.date + '-' + day
+        this.equip = row.equip
+        if (length > 2) {
+          this.classes = (classes === 0 ? '早班' : classes === 1 ? '中班' : '夜班')
+        } else {
+          this.classes = (classes === 0 ? '早班' : '夜班')
+        }
         this.getParams.date = this.search.date
         this.getParams.name = val.split('(')[0]
         this.currentInfo.station = '生产部'
@@ -691,6 +816,9 @@ export default {
         .catch(e => {
           this.btnExportLoad = false
         })
+    },
+    exportTable1() {
+      exportExcel('员工出勤记录表')
     }
   }
 }
@@ -700,7 +828,8 @@ function getDiffDate(start, end) {
   var dateArr = []
   while ((endTime.getTime() - startTime.getTime()) >= 0) {
     var d = startTime.getDate()
-    dateArr.push({ label: d + '日', prop: d })
+    var e = d < 10 ? '0' + d : d
+    dateArr.push({ label: d + '日', prop: d, day: e })
     startTime.setDate(startTime.getDate() + 1)
   }
   return dateArr
@@ -757,7 +886,8 @@ function getCurrentMonthLastDay(d) {
         left:-6px;
     }
     .el-table .wl-row{
-        background: #F6ECFF;
+        background: #f6ecff;
     }
 }
+
 </style>
