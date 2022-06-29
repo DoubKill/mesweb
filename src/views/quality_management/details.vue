@@ -197,7 +197,7 @@
       <test-card ref="testCard" />
     </el-dialog>
     <el-dialog
-      title="快检值历史曲线"
+      :title="`${row_roduct_no}数据推移`"
       :visible.sync="historyDialogVisible"
       width="80%"
       append-to-body
@@ -213,8 +213,8 @@
         @change="changeHistoryDate"
       />
       <div
-        id="historyBar"
-        style="width: 100%;height:300px;margin-top:8px"
+        id="historySpot"
+        style="width: 100%;height:1000px;margin-top:8px"
       />
     </el-dialog>
 
@@ -318,29 +318,69 @@ export default {
       historyDialogVisible: false,
       historyDate: [],
       row_roduct_no: '',
-      optionBar: {
+      historySpot: {
+        title: [{
+          text: "Anscombe's quartet"
+        }],
         tooltip: {
           trigger: 'axis'
         },
-        legend: {
-          data: []
+        toolbox: {
+          feature: {
+            saveAsImage: {}
+          }
         },
-        grid: {
-          left: '3%',
-          right: '4%',
-          bottom: '3%',
-          containLabel: true
-        },
-        xAxis: {
-          type: 'category',
-          boundaryGap: false,
-          data: []
-        },
-        yAxis: {
-          type: 'value',
-          name: '测试点值'
-        },
-        series: []
+        grid: [
+          { left: '7%', top: '7%', width: '38%', height: '38%' }
+        ],
+        xAxis: [
+          { gridIndex: 0 },
+          { gridIndex: 1 }
+        ],
+        yAxis: [
+          { gridIndex: 0 },
+          { gridIndex: 1 }
+        ],
+        series: [
+          {
+            name: 'I',
+            type: 'scatter',
+            xAxisIndex: 0,
+            yAxisIndex: 0,
+            data: [
+              [10.0, 8.04],
+              [8.0, 6.95],
+              [13.0, 7.58],
+              [9.0, 8.81],
+              [11.0, 8.33],
+              [14.0, 9.96],
+              [6.0, 7.24],
+              [4.0, 4.26],
+              [12.0, 10.84],
+              [7.0, 4.82],
+              [5.0, 5.68]
+            ]
+          },
+          {
+            name: 'II',
+            type: 'scatter',
+            xAxisIndex: 1,
+            yAxisIndex: 1,
+            data: [
+              [10.0, 9.14],
+              [8.0, 8.14],
+              [13.0, 8.74],
+              [9.0, 8.77],
+              [11.0, 9.26],
+              [14.0, 8.1],
+              [6.0, 6.13],
+              [4.0, 3.1],
+              [12.0, 9.13],
+              [7.0, 7.26],
+              [5.0, 4.74]
+            ]
+          }
+        ]
       }
     }
   },
@@ -638,30 +678,55 @@ export default {
         const data = await datapointCurve(obj)
         this.historyLoading = false
 
-        data.y_axis.forEach(d => {
-          d.markLine = {
-            silent: true,
-            lineStyle: {
-              color: '#333'
-            },
-            data: [{
-              yAxis: data.indicators[d.name] ? data.indicators[d.name][0] : ''
-            }, {
-              yAxis: data.indicators[d.name] ? data.indicators[d.name][1] : ''
-            }]
+        const _x = []
+        const _y = []
+        const _title = []
+        const _grid = []
+        const _series = []
+        const _num = Math.ceil(data.y_axis.length / 2) + 2
+        const _height = (1 / _num * 100).toFixed(0) + '%'
+        const _height1 = (1 / _num * 100 + 8).toFixed(0)
+        data.y_axis.forEach((d, _i) => {
+          const _dataSeries = []
+          d.data.forEach((dd, ii) => {
+            dd.forEach((ddd, iii) => {
+              _dataSeries.push([data.x_axis[ii], Number(ddd)])
+            })
+          })
+          _x.push({
+            gridIndex: _i,
+            data: data.x_axis
+          })
+          _y.push({
+            gridIndex: _i
+          })
+          if (_i % 2 === 0 || _i === 0) {
+            const _top1 = (_i / 2) * _height1 + 5 + '%'
+            const _topTitle1 = (_i / 2) * _height1 + 2 + '%'
+            _title.push({ text: d.name, left: '8%', top: _topTitle1 })
+            _grid.push({ left: '5%', top: _top1, width: '40%', height: _height })
+          } else {
+            const _top2 = ((_i - 1) / 2) * _height1 + 5 + '%'
+            const _topTitle2 = ((_i - 1) / 2) * _height1 + 2 + '%'
+            _title.push({ text: d.name, right: '8%', top: _topTitle2 })
+            _grid.push({ right: '5%', top: _top2, width: '40%', height: _height })
           }
+          _series.push({
+            name: d.name,
+            type: 'scatter',
+            xAxisIndex: _i,
+            yAxisIndex: _i,
+            data: _dataSeries
+          })
         })
+        this.historySpot.xAxis = _x || []
+        this.historySpot.yAxis = _y || []
+        this.historySpot.title = _title || []
+        this.historySpot.grid = _grid || []
+        this.historySpot.series = _series || []
 
-        const arr = []
-        for (const iterator in data.indicators) {
-          arr.push(iterator)
-        }
-
-        this.optionBar.xAxis.data = data.x_axis || []
-        this.optionBar.series = data.y_axis || []
-        this.optionBar.legend.data = arr
-        this.chartHistoryBar = echarts.init(document.getElementById('historyBar'))
-        this.chartHistoryBar.setOption(this.optionBar, true)
+        this.chartHistoryBar = echarts.init(document.getElementById('historySpot'))
+        this.chartHistoryBar.setOption(this.historySpot, true)
       } catch (e) {
         //
       }
