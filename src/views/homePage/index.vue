@@ -264,7 +264,7 @@ export default {
                 label: {
                   show: true,
                   position: 'top',
-                  color: '#fff'
+                  color: '#000'
                 }}},
             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
               { offset: 0, color: 'rgb(231 219 201)' },

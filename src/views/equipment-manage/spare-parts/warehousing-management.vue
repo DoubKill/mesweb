@@ -1019,7 +1019,7 @@ export default {
       if (this.$refs['List'].multipleSelection.length > 0) {
         for (let index = 0; index < this.$refs['List'].multipleSelection.length; index++) {
           if (data.indexOf(this.$refs['List'].multipleSelection[index].id) === -1) {
-            this.dialogForm.equip_spare.push({
+            this.dialogForm.equip_spare.unshift({
               spare_code: this.$refs['List'].multipleSelection[index].spare_code,
               id: this.$refs['List'].multipleSelection[index].id,
               spare_name: this.$refs['List'].multipleSelection[index].spare_name,
