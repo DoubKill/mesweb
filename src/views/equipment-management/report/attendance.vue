@@ -669,6 +669,7 @@ export default {
             await attendanceTimeStatistics('put', this.multipleSelection.id, { data: { is_use: val }})
             this.$message.success('操作成功')
             this.attendanceList()
+            this.getList()
           } catch (e) {
           //
           }
@@ -697,6 +698,7 @@ export default {
           })
           await attendanceTimeStatistics('post', null, { data: { reject_list: arr1 }})
           this.$message.success('操作成功')
+          this.color = '#DA1F27'
           this.attendanceList()
           this.getList()
         } catch (e) {
@@ -789,7 +791,9 @@ export default {
         this.group = group
         this.date = this.search.date + '-' + day
         this.equip = row.equip
-        this.getClasses(this.date, this.group)
+        const data = await currentFactoryDate('get', null, { params: { select_date: this.date, group: this.group }})
+        this.classes = data.classes
+        this.$set(this.dialogForm, 'classes', data.classes)
         this.getParams.date = this.search.date
         this.getParams.name = val.split('(')[0]
         this.currentInfo.station = '生产部'
