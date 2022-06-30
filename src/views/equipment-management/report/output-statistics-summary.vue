@@ -33,23 +33,28 @@
             min-width="20"
           />
           <el-table-column
-            prop="weight"
+            prop="total_weight"
             label="吨数"
             min-width="20"
           />
           <el-table-column
-            prop="value"
+            prop="total_trains"
             label="车数"
             min-width="20"
           />
           <el-table-column
-            prop="settings_value"
+            prop="target"
             label="机台目标值"
             min-width="20"
           />
           <el-table-column
-            prop="max_value"
+            prop="max_weight"
             label="机台最高值"
+            min-width="20"
+          />
+          <el-table-column
+            prop="group"
+            label="班组"
             min-width="20"
           />
         </el-table>
@@ -64,7 +69,7 @@
           >
             <template slot-scope="{row}">
               <el-link
-                v-if="row.name&&row.name.indexOf('合计')===-1&&row.name.indexOf('总计')===-1"
+                v-if="row.name&&row.name.indexOf('合计')===-1&&row.name.indexOf('总计')===-1&&row.name.indexOf('段数')===-1"
                 type="primary"
                 @click="repairDialog(row)"
               >{{ row.name }}</el-link>
@@ -209,7 +214,7 @@
 <script>
 import { debounce, setDate, exportExcel } from '@/utils'
 import { equipUrl } from '@/api/base_w'
-import { monthlyOutputStatisticsReport } from '@/api/base_w_five'
+import { monthlyOutputStatisticsReport, monthlyOutputStatisticsReportDetail } from '@/api/base_w_five'
 export default {
   name: 'OutputStatisticsSummary',
   data() {
@@ -242,8 +247,12 @@ export default {
         this.tableData3 = JSON.parse(JSON.stringify(this.tableData)) || []
         const jl = data.jl || []
         const wl = data.wl || []
+        const _fmArr = data.jl.filter(d => d.name === 'FM')
+        const _fm = _fmArr.length ? _fmArr[0].value : null
         this.tableData2 = [...wl, ...jl]
+        const _all = sum(this.tableData2, 'value') / 2
         this.tableData2.push({ name: '总计', value: (sum(this.tableData2, 'value') / 2).toFixed(2) })
+        this.tableData2.push({ name: '段数', value: _fm ? (_all / _fm).toFixed(2) : '' })
         this.tableData2.forEach((d, i) => {
           if (d.name === 'jl') {
             d.name = '加硫合计'
@@ -264,7 +273,7 @@ export default {
       try {
         this.search.st = this.getParams.st
         this.search.et = this.getParams.et
-        const data = await monthlyOutputStatisticsReport('get', null, { params: this.search })
+        const data = await monthlyOutputStatisticsReportDetail('get', null, { params: this.search })
         this.tableData1 = data.result
       } catch (e) { throw new Error(e) }
     },

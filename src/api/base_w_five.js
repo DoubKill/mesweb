@@ -192,6 +192,14 @@ export function monthlyOutputStatisticsReport(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function monthlyOutputStatisticsReportDetail(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MonthlyOutputStatisticsReportDetail + id + '/' : API.MonthlyOutputStatisticsReportDetail,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 export function performanceSummary(method, id, data = {}) {
   const obj = {
     url: id ? API.PerformanceSummary + id + '/' : API.PerformanceSummary,
