@@ -39,7 +39,7 @@
         />
         <el-table-column
           prop="target_weight"
-          label="机台目标值(车）"
+          label="机台目标值(车)"
           min-width="20"
         >
           <template slot-scope="{row}">
@@ -54,7 +54,15 @@
           prop="max_weight"
           label="最高值"
           min-width="20"
-        />
+        >
+          <template slot-scope="{row}">
+            <div v-if="!exportTableShow">
+              <span v-if="row.equip_no==='合计'">{{ row.max_weight }}</span>
+              <el-input-number v-else v-model="row.max_weight" :min="0" />
+            </div>
+            <span v-else>{{ row.max_weight }}</span>
+          </template>
+        </el-table-column>
       </el-table>
     </div>
   </div>
