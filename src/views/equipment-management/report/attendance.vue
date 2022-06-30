@@ -147,6 +147,7 @@
         <el-form-item label="月份">
           <el-date-picker
             v-model="getParams.date"
+            :disabled="!isShow"
             type="month"
             :clearable="false"
             format="yyyy-MM"
@@ -155,6 +156,9 @@
             @change="changeAttendance"
           />
         </el-form-item>
+        <!-- <el-form-item label="日期">
+          <el-input v-model="date" disabled />
+        </el-form-item> -->
         <el-form-item label="姓名">
           <el-input v-model="getParams.name" disabled />
         </el-form-item>
@@ -166,6 +170,9 @@
         </el-form-item>
         <el-form-item label="经办人">
           <el-input v-model="currentInfo.principal" disabled />
+        </el-form-item>
+        <el-form-item label="">
+          <el-checkbox v-model="isShow" @change="showList">显示该员工当月所有考勤数据</el-checkbox>
         </el-form-item>
       </el-form>
       <el-table
@@ -245,17 +252,19 @@
       >
         <el-button
           v-permission="['employee_attendance_records','reject']"
+          :disabled="color==='#DA1F27'||color==='#1010FF'||isShow"
           type="primary"
           @click="editStatus('审核驳回')"
         >审核驳回</el-button>
         <el-button
           v-permission="['employee_attendance_records','add']"
-          :disabled="color==='#51A651'"
+          :disabled="color==='#51A651'||color==='#141414'||isShow"
           type="primary"
           @click="addStatus('里面')"
         >添加</el-button>
         <el-button
           v-permission="['employee_attendance_records','abandon']"
+          :disabled="color==='#51A651'||color==='#141414'||isShow"
           type="primary"
           @click="editStatus('废弃')"
         >废弃</el-button>
@@ -265,7 +274,7 @@
         >取消</el-button>
         <el-button
           v-permission="['employee_attendance_records','affirm']"
-          :disabled="color==='#51A651'"
+          :disabled="color==='#51A651'||color==='#141414'||isShow"
           type="primary"
           @click="editStatus('确认')"
         >确认</el-button>
@@ -418,7 +427,7 @@
           />
         </el-form-item>
         <el-form-item label="岗位" prop="section">
-          <el-select v-model="dialogForm.section" placeholder="请选择" @visible-change="sectionChange">
+          <el-select v-model="dialogForm.section" :disabled="addType==='里面'?true:false" placeholder="请选择" @visible-change="sectionChange">
             <el-option
               v-for="item in options2"
               :key="item.id"
@@ -471,6 +480,7 @@ export default {
       approveState: null,
       btnLoad: false,
       resultForm: {},
+      isShow: false,
       tableDataAttendance: [],
       dialogVisibleResult: false,
       tableDataRecord: [],
@@ -507,6 +517,8 @@ export default {
       loading: false,
       addType: null,
       submit: false,
+      tableTop: [],
+      section: '',
       date: '',
       equip: '',
       group: '',
@@ -558,6 +570,7 @@ export default {
     async getClasses(val, val1) {
       try {
         const data = await currentFactoryDate('get', null, { params: { select_date: val, group: val1 }})
+        this.classes = data.classes
         this.$set(this.dialogForm, 'classes', data.classes)
       } catch (e) {
         //
@@ -591,12 +604,16 @@ export default {
           factory_date: this.date,
           equip: this.equip,
           group: this.group,
+          section: this.section,
+          classes: this.classes,
           username: this.getParams.name,
           is_use: '添加',
           id_card_num: this.currentInfo.id_card_num
         }
-        this.getClasses(this.date, this.group)
       } else {
+        if (this.$refs.dialogForm) {
+          this.$refs.dialogForm.resetFields()
+        }
         this.dialogForm = {
           factory_date: setDate(),
           equip: null,
@@ -692,6 +709,19 @@ export default {
       this.type = val
       this.dialogVisibleResult = true
     },
+    showList() {
+      if (this.isShow) {
+        this.tableDataAttendance = this.tableTop
+      } else {
+        this.tableDataAttendance = this.tableTop.filter(d =>
+          d.factory_date === this.date &&
+          d.equip === this.equip &&
+          d.classes === this.classes &&
+          d.group === this.group &&
+          d.section === this.section
+        )
+      }
+    },
     async approve1() {
       try {
         this.btnLoad = true
@@ -753,15 +783,13 @@ export default {
     },
     async attendanceList(val, group, day, row, classes, length, color) {
       if (val) {
+        this.isShow = false
         this.color = color
+        this.section = row.section
         this.group = group
         this.date = this.search.date + '-' + day
         this.equip = row.equip
-        if (length > 2) {
-          this.classes = (classes === 0 ? '早班' : classes === 1 ? '中班' : '夜班')
-        } else {
-          this.classes = (classes === 0 ? '早班' : '夜班')
-        }
+        this.getClasses(this.date, this.group)
         this.getParams.date = this.search.date
         this.getParams.name = val.split('(')[0]
         this.currentInfo.station = '生产部'
@@ -772,7 +800,8 @@ export default {
         const data = await attendanceTimeStatistics('get', null, { params: this.getParams })
         this.currentInfo.id_card_num = data.id_card_num
         this.currentInfo.principal = data.principal
-        this.tableDataAttendance = data.results || []
+        this.tableTop = data.results
+        this.showList()
         this.loadingAttendance = false
       } catch (e) {
         this.loadingAttendance = false
