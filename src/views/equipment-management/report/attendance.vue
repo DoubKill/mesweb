@@ -73,12 +73,12 @@
     <el-table
       id="out-table"
       v-loading="loading"
-      max-height="700"
+      max-height="600"
       :data="tableData"
       :span-method="objectSpanMethod"
       border
     >
-      <el-table-column width="120px">
+      <el-table-column fixed width="120px">
         <template
           slot="header"
         >
@@ -95,6 +95,7 @@
         </template>
       </el-table-column>
       <el-table-column
+        fixed
         prop="section"
         align="center"
         label="岗位"
@@ -131,6 +132,11 @@
         </el-table-column>
       </el-table-column>
     </el-table>
+    <el-alert
+      style="color:black"
+      title="表格字体颜色说明:蓝色:有考勤数据,班长还未确认;绿色:考勤班长已确认;红色:考勤班长已确认,但是被审批驳回;黑色:考勤班长整体提交"
+      type="success"
+    />
 
     <el-dialog
       title="绩效计算 员工出勤工时统计"
@@ -244,6 +250,7 @@
         >审核驳回</el-button>
         <el-button
           v-permission="['employee_attendance_records','add']"
+          :disabled="color==='#51A651'"
           type="primary"
           @click="addStatus('里面')"
         >添加</el-button>
@@ -379,6 +386,7 @@
             style="width:200px"
             type="date"
             value-format="yyyy-MM-dd"
+            @change="getGroup(dialogForm.factory_date)"
           />
         </el-form-item>
         <el-form-item label="机台" prop="equip">
@@ -392,18 +400,18 @@
           </el-select>
         </el-form-item>
         <el-form-item label="班组" prop="group">
-          <el-select v-model="dialogForm.group" :disabled="addType==='里面'?true:false" placeholder="请选择" @visible-change="getClassGroup">
+          <el-select v-model="dialogForm.group" :disabled="addType==='里面'?true:false" placeholder="请选择" @change="pickClasses">
             <el-option
-              v-for="item in options1"
-              :key="item.global_name"
-              :label="item.global_name"
-              :value="item.global_name"
+              v-for="item in optionsGroup"
+              :key="item.group__global_name"
+              :label="item.group__global_name"
+              :value="item.group__global_name"
             />
           </el-select>
         </el-form-item>
         <el-form-item label="班次" prop="classes">
           <class-select
-            :is-disabled="addType==='里面'?true:false"
+            :is-disabled="true"
             :value-default="dialogForm.classes"
             :is-clearable="false"
             @classSelected="classChanged"
@@ -432,7 +440,7 @@
 </template>
 
 <script>
-import { globalCodesUrl } from '@/api/base_w'
+import { globalCodesUrl, classesListUrl } from '@/api/base_w'
 import { personnels } from '@/api/jqy'
 import { exportExcel } from '@/utils/index'
 import { currentFactoryDate } from '@/api/base_w_three'
@@ -474,6 +482,9 @@ export default {
       machineList: [],
       tableHead1: [],
       rules: {
+        username: [
+          { required: true, message: '不能为空', trigger: 'change' }
+        ],
         factory_date: [
           { required: true, message: '不能为空', trigger: 'change' }
         ],
@@ -501,6 +512,7 @@ export default {
       group: '',
       classes: '',
       allList: [],
+      optionsGroup: [],
       multipleSelection: [],
       tableHead: [],
       tableData: [],
@@ -531,10 +543,22 @@ export default {
         })
       }
     },
+    async getGroup(val) {
+      this.dialogForm.classes = null
+      this.dialogForm.group = null
+      const obj = { class_name: '班组', factory_date: val }
+      const data = await classesListUrl('get', null, { params: obj })
+      if (data.results.length > 0) {
+        this.optionsGroup = data.results
+      } else {
+        this.optionsGroup = []
+        this.$message.info('当天没有排班记录')
+      }
+    },
     async getClasses(val, val1) {
       try {
         const data = await currentFactoryDate('get', null, { params: { select_date: val, group: val1 }})
-        this.dialogForm.classes = data.classes
+        this.$set(this.dialogForm, 'classes', data.classes)
       } catch (e) {
         //
       }
@@ -582,7 +606,11 @@ export default {
           is_use: '添加',
           id_card_num: ''
         }
+        this.getGroup(this.dialogForm.factory_date)
       }
+    },
+    pickClasses() {
+      this.$set(this.dialogForm, 'classes', this.optionsGroup.find(d => d.group__global_name === this.dialogForm.group).classes__global_name)
     },
     async getList() {
       try {
@@ -704,7 +732,9 @@ export default {
             this.$message.success('操作成功')
             this.submit = false
             this.dialogVisibleAdd = false
-            this.attendanceList()
+            if (this.addType === '里面') {
+              this.attendanceList()
+            }
             this.getList()
           } catch (e) {
             this.submit = false
