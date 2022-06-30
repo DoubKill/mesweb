@@ -711,12 +711,34 @@ export default {
             _title.push({ text: d.name, right: '8%', top: _topTitle2 })
             _grid.push({ right: '5%', top: _top2, width: '40%', height: _height })
           }
+          const _1 = data.indicators[d.name][0]
+          const _3 = data.indicators[d.name][1]
+          const _2 = ((_3 + _1) / 2).toFixed(2)
           _series.push({
             name: d.name,
             type: 'scatter',
             xAxisIndex: _i,
             yAxisIndex: _i,
-            data: _dataSeries
+            data: _dataSeries,
+            markLine: {
+              data: [{
+                silent: true,
+                yAxis: _1, label: {
+                  position: 'end',
+                  formatter: `下限(${_1})`
+                }},
+              {
+                yAxis: _2, label: {
+                  position: 'end',
+                  formatter: `中限(${_2})`
+                }},
+              {
+                yAxis: _3, label: {
+                  position: 'end',
+                  formatter: `上限(${_3})`
+                }}
+              ]
+            }
           })
         })
         this.historySpot.xAxis = _x || []
