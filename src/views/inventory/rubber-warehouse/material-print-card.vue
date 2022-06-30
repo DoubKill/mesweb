@@ -345,7 +345,8 @@ export default {
             initiator: row.initiator,
             material_no: row.material_no,
             type: row.warehouse_name === '混炼胶库' ? 'H' : 'Z',
-            location: row.location
+            location: row.location,
+            enable_ip: this.isProduction ? 1 : ''
           })
         })
         this.loadingBtn = true
