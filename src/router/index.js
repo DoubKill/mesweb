@@ -2374,6 +2374,24 @@ export let asyncRoutes = [
               title: '班次别合格率统计',
               permissionName: 'classes_quality_analyze'
             }
+          },
+          { path: '/statistics/monthly-ummary',
+            component: () => import('@/views/quality_management/pass/monthly-ummary.vue'),
+            name: 'MonthlyUmmary',
+            meta: {
+              faName: 'QualityStatistics',
+              title: '综合合格率月度汇总',
+              permissionName: ''
+            }
+          },
+          { path: '/statistics/year-ummary',
+            component: () => import('@/views/quality_management/pass/year-ummary.vue'),
+            name: 'YearUmmary',
+            meta: {
+              faName: 'QualityStatistics',
+              title: '综合合格率年度汇总',
+              permissionName: ''
+            }
           }
           /** {
             path: '/statistics/month-pass-detail',
