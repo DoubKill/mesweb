@@ -14,6 +14,9 @@
         />
       </el-form-item>
       <el-form-item>
+        <el-checkbox v-model="checked" @change="getList">含试验料</el-checkbox>
+      </el-form-item>
+      <el-form-item>
         <el-button
           type="primary"
           @click="exportTable"
@@ -70,6 +73,7 @@ export default {
       search: {
         s_time: setDate(false, false, 'month')
       },
+      checked: false,
       optionPassRateLine: {
         title: {
           left: 'left',
@@ -154,7 +158,14 @@ export default {
       try {
         this.loading = true
         const aa = this.search.s_time.split('-')[0]
-        const arr = await productSynthesisMonthRate('get', null, { params: { year: aa }})
+        const obj = {
+          year: aa,
+          sy_flag: 'Y'
+        }
+        if (!this.checked) {
+          delete obj.sy_flag
+        }
+        const arr = await productSynthesisMonthRate('get', null, { params: obj })
         this.loading = false
         this.tableData = arr.data || []
 

@@ -14,6 +14,9 @@
         />
       </el-form-item>
       <el-form-item>
+        <el-checkbox v-model="checked" @change="getList">含试验料</el-checkbox>
+      </el-form-item>
+      <el-form-item>
         <el-button
           type="primary"
           :disabled="btnExportLoad"
@@ -195,7 +198,8 @@ export default {
       tableHead: [],
       tableData: [],
       spanArr: [],
-      pos: null
+      pos: null,
+      checked: false
     }
   },
   created() {
@@ -211,11 +215,18 @@ export default {
         this.loading = true
         this.spanArr = []
         this.pos = null
+        const obj = {
+          date: this.search.s_time,
+          sy_flag: 'Y'
+        }
+        if (!this.checked) {
+          delete obj.sy_flag
+        }
         const arr = await Promise.all([
-          productSynthesisRate('get', null, { params: { date: this.search.s_time }}),
-          productSynthesisEquipRate('get', null, { params: { date: this.search.s_time }}),
-          productSynthesisGroupRate('get', null, { params: { date: this.search.s_time }}),
-          productSynthesisProductRate('get', null, { params: { date: this.search.s_time }})
+          productSynthesisRate('get', null, { params: obj }),
+          productSynthesisEquipRate('get', null, { params: obj }),
+          productSynthesisGroupRate('get', null, { params: obj }),
+          productSynthesisProductRate('get', null, { params: obj })
         ])
         const _3 = arr[3].data || []
         for (var i = 0; i < _3.length; i++) {
