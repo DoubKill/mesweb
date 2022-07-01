@@ -99,23 +99,28 @@
         min-width="20"
       />
       <el-table-column
-        prop="weight"
+        prop="total_weight"
         label="吨数"
         min-width="20"
       />
       <el-table-column
-        prop="value"
+        prop="total_trains"
         label="车数"
         min-width="20"
       />
       <el-table-column
-        prop="settings_value"
+        prop="target"
         label="机台目标值"
         min-width="20"
       />
       <el-table-column
-        prop="max_value"
+        prop="max_weight"
         label="机台最高值"
+        min-width="20"
+      />
+      <el-table-column
+        prop="group"
+        label="班组"
         min-width="20"
       />
       <el-table-column
