@@ -2381,7 +2381,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'QualityStatistics',
               title: '综合合格率月度汇总',
-              permissionName: ''
+              permissionName: 'product_daily_rate'
             }
           },
           { path: '/statistics/year-ummary',
@@ -2390,7 +2390,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'QualityStatistics',
               title: '综合合格率年度汇总',
-              permissionName: ''
+              permissionName: 'product_monthly_rate'
             }
           }
           /** {
