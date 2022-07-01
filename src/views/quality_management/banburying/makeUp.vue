@@ -336,6 +336,10 @@ export default {
       this.$refs.createForm.validate(async(valid) => {
         if (valid) {
           try {
+            if (this.dialogForm.end_trains - this.dialogForm.begin_trains > 2) {
+              this.$message('车次间隔不可大于2')
+              return
+            }
             const _api = this.dialogForm.id ? 'put' : 'post'
             this.submit = true
             await returnRubber(_api, this.dialogForm.id || null, { data: this.dialogForm })
