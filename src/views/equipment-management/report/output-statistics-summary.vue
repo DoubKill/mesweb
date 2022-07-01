@@ -129,10 +129,13 @@
         prop="name"
       />
       <el-table-column
-        prop="stateValue"
         label="吨数"
         min-width="20"
-      />
+      >
+        <template slot-scope="{row}">
+          {{ row.stateValue }}
+        </template>
+      </el-table-column>
     </el-table>
 
     <el-dialog
