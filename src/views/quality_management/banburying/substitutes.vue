@@ -25,7 +25,7 @@
         <equip-select
           style="width:90px"
           :equip_no_props.sync="search.equip_no"
-          :is-created="true"
+          :is-created="$route.query.equip?false:true"
           @changeSearch="equipSelected"
         />
       </el-form-item>
