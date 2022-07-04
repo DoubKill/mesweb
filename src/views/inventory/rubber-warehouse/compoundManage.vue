@@ -532,7 +532,7 @@
         />
         <el-table-column
           label="操作"
-          width="85"
+          width="140"
         >
           <template slot-scope="{row}">
             <!-- <el-button :disabled="row.status===3||row.status===4||row.status===5" type="danger" @click="closeOrderNo(row)">关闭</el-button> -->
