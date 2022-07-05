@@ -163,7 +163,7 @@
             />
           </el-form-item>
         </div>
-        <el-form-item label="设定车次" prop="setno">
+        <el-form-item label="密炼车次" prop="setno">
           <el-input-number
             v-model="ruleForm.setno"
             :min="ruleForm.actno||0"
@@ -236,7 +236,7 @@ export default {
           { required: true, message: '请选择配方', trigger: 'change' }
         ],
         setno: [
-          { required: true, message: '请输入设定车次', trigger: 'blur' }
+          { required: true, message: '请输入密炼车次', trigger: 'blur' }
         ]
       },
       dialogAdd: false,
