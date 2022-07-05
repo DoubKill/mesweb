@@ -64,11 +64,10 @@
         width="55px"
       />
       <el-table-column
-        prop="equip_no"
-        label="作业时间"
+        label="工厂日期"
         width="95px"
       >
-        <template slot-scope="scope">{{ scope.row.end_time.split(' ')[0] }}</template>
+        <template slot-scope="scope">{{ scope.row.factory_date }}</template>
       </el-table-column>
       <el-table-column
         prop="classes"
@@ -120,7 +119,7 @@
         prop="equip_no"
         label="有效时间"
       >
-        <template slot-scope="scope">{{ scope.row.end_time }} -- {{ setEndTime(scope.row.end_time) }}</template>
+        <template slot-scope="scope">{{ scope.row.end_time }} -- {{ setEndTime(scope.row.validtime) }}</template>
       </el-table-column>
       <el-table-column
         prop="pallet_no"
