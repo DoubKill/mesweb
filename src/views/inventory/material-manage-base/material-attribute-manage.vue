@@ -1,18 +1,32 @@
 <template>
   <div class="app-container">
-    <!-- 物料基础信息管理 -->
+    <!-- 物料属性管理 -->
     <el-form :inline="true">
-      <el-form-item label="物料类型">
+      <el-form-item label="物料种类">
+        <el-select
+          v-model="getParams.aaa"
+          placeholder="请选择"
+          @change="changeSearch(11)"
+        >
+          <el-option
+            v-for="item in ['胶料','原材料']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item v-show="getParams.aaa==='胶料'" label="物料类型">
         <materielTypeSelect :params-type="false" @changSelect="changeMaterialType" />
         <!-- <el-input v-model="getParams.material_type" @input="changeSearch" /> -->
       </el-form-item>
       <el-form-item label="物料编码">
-        <el-input v-model="getParams.material_no" @input="changeSearch" />
+        <el-input v-model="getParams.material_no" clearable @input="changeSearch" />
       </el-form-item>
       <el-form-item label="">
         <el-checkbox v-model="getParams.only_storage_flag" :label="1" @change="changeSearch">仅显示未设定有效期的物料</el-checkbox>
       </el-form-item>
-      <el-form-item label="">
+      <el-form-item v-if="getParams.aaa==='胶料'" label="">
         <el-checkbox v-model="getParams.only_safety_flag" @change="changeSearch">仅显示未设定安全库存标准的物料</el-checkbox>
       </el-form-item>
       <el-form-item label="">
@@ -32,13 +46,13 @@
         width="55"
       />
       <el-table-column label="No" type="index" align="center" />
-      <el-table-column label="物料类型" align="center" prop="material_type_name" width="80px" />
+      <el-table-column v-if="getParams.aaa==='胶料'" label="物料类型" align="center" prop="material_type_name" width="80px" />
       <el-table-column label="物料编码" align="center" prop="material_no" />
       <el-table-column label="物料名称" align="center" prop="material_name" />
-      <el-table-column label="库存期限(小时)" align="center" prop="storage_time" />
+      <el-table-column v-if="getParams.aaa==='胶料'" label="库存期限(小时)" align="center" prop="storage_time" />
       <el-table-column label="有效期(天)" align="center" prop="period_of_validity" />
-      <el-table-column label="安全库存标准(车)" align="center" prop="safety_inventory" />
-      <el-table-column label="产地管理" align="center" width="300px">
+      <el-table-column v-if="getParams.aaa==='胶料'" label="安全库存标准(车)" align="center" prop="safety_inventory" />
+      <el-table-column v-if="getParams.aaa==='胶料'" label="产地管理" align="center" width="300px">
         <template slot-scope="scope">
           <div style="display:flex">
             <div style="flex:1">{{ scope.row.suppliers }}</div>
@@ -129,7 +143,7 @@
     >
       <el-form ref="attributeForm" :rules="rules" label-width="130px" :model="attributeForm" inline>
         <el-form-item
-          v-if="!isBatch"
+          v-if="!isBatch&&getParams.aaa==='胶料'"
           label="物料类型"
         >{{ attributeForm.material_type_name }}
           <!-- <el-input v-model="attributeForm.material_type" :disabled="true" /> -->
@@ -147,6 +161,7 @@
           <!-- <el-input v-model="attributeForm.material_name" :disabled="true" /> -->
         </el-form-item><br v-if="!isBatch">
         <el-form-item
+          v-if="getParams.aaa==='胶料'"
           label="库存期限(小时)"
           prop="storage_time"
         >
@@ -159,6 +174,7 @@
           <el-input v-model.number="attributeForm.period_of_validity" type="age" />
         </el-form-item><br>
         <el-form-item
+          v-if="getParams.aaa==='胶料'"
           label="安全库存标准(车)"
           prop="safety_inventory"
         >
@@ -218,7 +234,7 @@
 </template>
 
 <script>
-import { getMaterialsAttribute, postMaterialsAttribute, getBarCode, postBatchSet, postBarCode, deleteBarCode } from '@/api/material-attribute-manage'
+import { getMaterialsAttribute, postMaterialsAttribute, getBarCode, postBatchSet, postBarCode, deleteBarCode, getThMaterialsAttribute, postThMaterialsAttribute } from '@/api/material-attribute-manage'
 import materielTypeSelect from '@/components/select_w/materielTypeSelect'
 import page from '@/components/page'
 import { mapGetters } from 'vuex'
@@ -231,7 +247,8 @@ export default {
       getParams: {
         material_type_id: '',
         material_no: '',
-        page: 1
+        page: 1,
+        aaa: '原材料'
       },
       attributeForm: {
         storage_time: null,
@@ -272,7 +289,8 @@ export default {
       const obj = Object.assign({}, this.getParams)
       obj.only_storage_flag = obj.only_storage_flag ? 1 : null
       obj.only_safety_flag = obj.only_safety_flag ? 1 : null
-      getMaterialsAttribute(obj)
+      const _api = this.getParams.aaa === '原材料' ? getThMaterialsAttribute : getMaterialsAttribute
+      _api(obj)
         .then(response => {
           this.tableData = response.results
           this.total = response.count
@@ -289,7 +307,7 @@ export default {
       })
     },
     handleAttributeEdit() {
-      if (this.attributeForm.storage_time && !this.attributeForm.period_of_validity) {
+      if (this.getParams.aaa === '胶料' && this.attributeForm.storage_time && !this.attributeForm.period_of_validity) {
         this.$message.info('请填写有效期')
         return
       }
@@ -301,6 +319,23 @@ export default {
       }
       this.$refs.attributeForm.validate((valid) => {
         if (valid) {
+          if (this.getParams.aaa === '原材料') {
+            let arr = []
+            if (this.isBatch) {
+              this.currentArr.forEach(d => {
+                arr.push(d.id)
+              })
+            } else {
+              arr = [this.attributeForm.id]
+            }
+            postThMaterialsAttribute({ materials: arr, period_of_validity: this.attributeForm.period_of_validity })
+              .then(response => {
+                this.attributeEditDialogVisible = false
+                this.$message.success(this.attributeForm.material_name + '编辑成功')
+                this.getMaterialsAttributeList()
+              })
+            return
+          }
           if (this.isBatch) {
             const arr = []
             this.currentArr.forEach(d => {
@@ -396,7 +431,11 @@ export default {
           })
       })
     },
-    changeSearchBarCode() {
+    changeSearchBarCode(val) {
+      if (val === 11 && this.$refs.multipleTable) {
+        this.$refs.multipleTable.clearSelection()
+        this.currentArr = []
+      }
       this.getParamsBarCode.page = 1
       this.getBarCodeList()
     },
