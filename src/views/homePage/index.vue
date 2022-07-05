@@ -81,25 +81,33 @@
     </el-row>
 
     <el-row :gutter="20">
-      <el-col :span="24" style="margin-top:5px;margin-bottom:10px">
-        <el-card>
-          <div class="yieldBar" style="display:flex;">
-            <div
-              id="yieldBar"
-              class="volumeBox"
-              style="width: 100%;height:300px;flex:1;border-radius: 0"
-            />
-            <div class="yieldBarRadio">
-              <el-radio-group v-model="yieldBarRadio" size="mini" @change="yieldBarChange">
-                <el-radio-button label="1">本周</el-radio-button>
-                <el-radio-button label="2">本月</el-radio-button>
-              </el-radio-group>
-            </div>
-            <div
-              id="passRateLine"
-              class="volumeBox"
-              style="width: 100%;height:300px;flex:1;border-radius: 0"
-            />
+      <el-col :span="12" style="margin-top:5px;margin-bottom:10px">
+        <el-card class="yieldBar">
+          <div
+            id="yieldBar"
+            class="volumeBox"
+            style="width: 100%;height:300px;flex:1;border-radius: 0"
+          />
+          <!-- <div class="yieldBarRadio">
+            <el-radio-group v-model="yieldBarRadio" size="mini" @change="yieldBarChange">
+              <el-radio-button label="1">本周</el-radio-button>
+              <el-radio-button label="2">本月</el-radio-button>
+            </el-radio-group>
+          </div> -->
+        </el-card>
+      </el-col>
+      <el-col :span="12" style="margin-top:5px;margin-bottom:10px">
+        <el-card class="yieldBar">
+          <div
+            id="passRateLine"
+            class="volumeBox"
+            style="width: 100%;height:300px;flex:1;border-radius: 0"
+          />
+          <div class="yieldBarLine">
+            <el-radio-group v-model="yieldBarRadio" size="mini" @change="yieldBarChange">
+              <el-radio-button label="1">本周</el-radio-button>
+              <el-radio-button label="2">本月</el-radio-button>
+            </el-radio-group>
           </div>
         </el-card>
       </el-col>
@@ -176,7 +184,7 @@ export default {
   name: 'HomePageMain',
   components: {},
   data() {
-    this.color = ['rgb(121, 187, 255)', '#E6A23C']
+    this.color = ['#188df0', '#E6A23C']
     this.chartSettings = {
       labelMap: {
         time: '时间',
@@ -227,7 +235,6 @@ export default {
         },
         xAxis: {
           type: 'category',
-          name: '时间',
           data: [],
           axisLine: {
             lineStyle: {
@@ -346,7 +353,7 @@ export default {
       optionPassRateLine: {
         color: this.color,
         title: {
-          left: 'center',
+          left: 'left',
           text: '合格率分析',
           textStyle: { color: '#000' }
         },
@@ -426,6 +433,15 @@ export default {
           text: '机台产量分析',
           textStyle: { color: '#000' }
         },
+        legend: {
+          data: ['实际车次', '计划车次'],
+          x: 'left',
+          y: 'left',
+          padding: [5, 0, 0, 170],
+          textStyle: {
+            color: '#000' // 字体颜色
+          }
+        },
         color: ['rgb(121, 187, 255)', 'rgb(179, 216, 255)', '#E6A23C'],
         tooltip: {
           trigger: 'axis',
@@ -435,20 +451,18 @@ export default {
           formatter: function(params) {
             const firstParams = params[0]
             const sndParams = params[2]
-            return firstParams.name + '<br>' + firstParams.seriesName + '：' + firstParams.value + '<br>' +
-            sndParams.seriesName + '：' + sndParams.value
+
+            return firstParams.name + '<br>' + firstParams.seriesName + '：' + (firstParams.value ? firstParams.value : 0) + '<br>' +
+            sndParams.seriesName + '：' + (sndParams.value ? sndParams.value : 0)
           }
         },
         grid: {
           left: '3%',
           right: '6%',
           bottom: '3%',
-          // top: '25%',
           containLabel: true
         },
         xAxis: {
-          // type: 'category',
-          name: '机台',
           data: [],
           axisLine: {
             show: true,
@@ -487,7 +501,7 @@ export default {
             ])
           },
           {
-            name: '',
+            name: '计划车次',
             type: 'bar',
             stack: '11',
             barMaxWidth: 150,
@@ -552,7 +566,6 @@ export default {
         },
         xAxis: {
           type: 'category',
-          name: '机台',
           data: [],
           axisLine: {
             show: true,
@@ -696,9 +709,9 @@ export default {
         }
         if (!bool && !bool2) {
           // 第三个数据
-          const plan_actual_actual_trains = this.setVal(arr[2].plan_actual_data, 'actual_trains')
-          const plan_actual_diff_trains = this.setVal(arr[2].plan_actual_data, 'diff_trains')
-          const plan_actual_plan_trains = this.setVal(arr[2].plan_actual_data, 'plan_trains')
+          const plan_actual_actual_trains = this.setVal(arr[2].plan_actual_data, 'actual_trains', true)
+          const plan_actual_diff_trains = this.setVal(arr[2].plan_actual_data, 'diff_trains', true)
+          const plan_actual_plan_trains = this.setVal(arr[2].plan_actual_data, 'plan_trains', true)
 
           // 算y最大值
           const maxVal = Math.max(...plan_actual_plan_trains)
@@ -712,6 +725,7 @@ export default {
             this.optionFinishChart.yAxis.axisLine.lineStyle.color = '#fff'
             this.optionFinishChart.title.textStyle.color = '#fff'
             this.optionFinishChart.series[2].label.normal.textStyle.color = '#fff'
+            this.optionFinishChart.legend.textStyle.color = '#fff'
           }
           this.optionFinishChart.yAxis.max = Math.ceil(maxVal / Number(str)) * str
           this.optionFinishChart.xAxis.data = arr[2].equip_data
@@ -787,11 +801,14 @@ export default {
         this.getList(false, true, false)
       }
     },
-    setVal(a, b) {
+    setVal(a, b, bool) {
       const c = []
       for (const key in a) {
         if (Object.hasOwnProperty.call(a, key)) {
           const element = a[key]
+          if (element[b] === 0 && bool) {
+            element[b] = ''
+          }
           c.push(element[b])
         }
       }
@@ -817,6 +834,12 @@ export default {
     right:20px;
     z-index: 100;
   }
+  .yieldBarLine{
+      position: absolute;
+    top:13px;
+    right:20px;
+    z-index: 100;
+  }
   .volumeBox{
     background: #fff;
     // padding:10px;
@@ -825,7 +848,7 @@ export default {
   }
   .volumeBoxChild{
     text-align:center;
-    font-size:20px;
+    font-size:25px;
     padding: 6px 0;
   }
   .homePage-title{
