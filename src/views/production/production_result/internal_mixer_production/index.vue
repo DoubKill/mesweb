@@ -3,6 +3,7 @@
     v-loading="loading"
     class="report-batch-style"
   >
+    <!-- 密炼生产履历 -->
     <!-- <el-button
       size="mini"
       @click="clickView({},1)"
@@ -116,10 +117,9 @@
         width="90px"
       />
       <el-table-column
-        prop="equip_no"
         label="有效时间"
       >
-        <template slot-scope="scope">{{ scope.row.end_time }} -- {{ setEndTime(scope.row.validtime) }}</template>
+        <template slot-scope="scope">{{ scope.row.end_time }} -- {{ scope.row.validtime }}</template>
       </el-table-column>
       <el-table-column
         prop="pallet_no"
