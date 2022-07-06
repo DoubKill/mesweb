@@ -1049,10 +1049,20 @@ export default {
             single_manual: arr
           }
         } else {
+          const arr1 = [this.objDialog.mixed_ratio.stage.f_feed, this.objDialog.mixed_ratio.stage.s_feed, this.objDialog.mixed_ratio.ratio.f_ratio, this.objDialog.mixed_ratio.ratio.s_ratio]
+          if (!arr1.every(d => d) && !arr1.every(d => !d)) {
+            this.$message.info({
+              message: '对搭比例配置不完整'
+            })
+            return
+          }
           obj = {
             opera_type: 3,
             product_batching_id: this.objDialog.id,
             mixed_ratio: this.objDialog.mixed_ratio
+          }
+          if (arr1.every(d => !d)) {
+            obj.mixed_ratio = {}
           }
         }
         this.btnLoading = true

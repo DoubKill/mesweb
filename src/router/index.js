@@ -692,7 +692,7 @@ export let asyncRoutes = [
           meta: {
             faName: 'SmallMaterialWeight',
             title: '称量物料消耗汇总表',
-            permissionName: ''
+            permissionName: 'xl_report_weight'
           }
         },
         {
