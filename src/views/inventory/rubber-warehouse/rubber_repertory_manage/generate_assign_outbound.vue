@@ -1,9 +1,24 @@
 <template>
-  <div v-loading="loading" class="app-container">
+  <div v-loading="loading" class="app-container rubber_repertory_manage-dialog">
     <!-- 库位列表 混炼终练使用-->
     <el-form :inline="true">
       <el-form-item label="仓库名称">
         {{ warehouseName }}
+      </el-form-item>
+      <el-form-item label="有效期状态">
+        <el-select
+          v-model="getParams.yx_state"
+          placeholder="请选择"
+          clearable
+          @change="changeSearch"
+        >
+          <el-option
+            v-for="(item,key) in [{name:'已超期',id:'expired'},{name:'超期预警',id:'warning'},{name:'正常',id:'normal'}]"
+            :key="key"
+            :label="item.name"
+            :value="item.id"
+          />
+        </el-select>
       </el-form-item>
       <!-- <el-form-item label="库存位">
         <el-input v-model="getParams.location" @input="changeSearch" />
@@ -82,6 +97,7 @@
       style="width: 100%"
       :data="tableData"
       row-key="id"
+      :row-class-name="rowClassNameFn"
       @selection-change="handleSelectionChange"
     >
       <el-table-column
@@ -184,7 +200,7 @@
       :current-page="getParams.page"
       @currentChange="currentChange"
     />
-
+    <el-alert style="color:black" title="表格字体颜色说明：浅红色-超期预警，红色-已超期。" type="success" />
     <el-dialog
       title="快检信息"
       :visible.sync="dialogVisible"
@@ -449,6 +465,16 @@ export default {
         //
       }
     },
+    rowClassNameFn({ row, rowIndex }) {
+      if (row.all) {
+        return 'summary-cell-style'
+      }
+      if (row.yx_state === 'expired') {
+        return 'deepred-cell-style'
+      } else if (row.yx_state === 'warning') {
+        return 'red-cell-style'
+      }
+    },
     exportTable(val) {
       this.btnLoading = true
       const obj = Object.assign({ export: val }, this.getParams)
@@ -481,9 +507,19 @@ function sum(arr, params) {
   return s
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
+.rubber_repertory_manage-dialog{
   .dialog-footer{
     width:100%;
     text-align: right;
   }
+  .red-cell-style{
+    background: rgb(225, 148, 157);
+    color:#000;
+  }
+  .deepred-cell-style{
+    background: red;
+    color:#000;
+  }
+}
 </style>

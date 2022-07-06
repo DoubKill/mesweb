@@ -35,6 +35,10 @@
         :value="item"
       />
     </el-select>
+    &nbsp; <el-button
+      type="primary"
+      @click="exportTable"
+    >导出Excel</el-button>
     <el-table
       v-loading="loading"
       style="margin-top:10px"
@@ -96,7 +100,7 @@
       :current-page="getParams.page"
       @currentChange="currentChange"
     />
-    <el-alert style="color:black" title="表格字体颜色说明：黄色-超过3天没出快检结果(品质状态还是待检品)；红色-超过3天没出快检结果和超期预警同时满足" type="success" />
+    <el-alert style="color:black" title="表格字体颜色说明：黄色-超过3天没出快检结果（品质状态还是待检品）； 浅红色-含有超期预警的物料；红色-含有已超期的物料。" type="success" />
     <el-dialog
       :visible.sync="dialogVisible"
       width="90%"
@@ -116,6 +120,7 @@
 import materialInventoryManage from '../components/material-inventory-manage.vue'
 import { productExpiresList } from '@/api/base_w_five'
 import { globalCodesUrl } from '@/api/base_w'
+import { productExpiresDetailsDown } from '@/api/material-inventory-manage'
 import page from '@/components/page'
 export default {
   name: 'RubberOverdueAlarm',
@@ -184,6 +189,24 @@ export default {
       this.currentObj = row
       this.dialogVisible = true
     },
+    exportTable() {
+      this.btnExportLoad = true
+      const obj = Object.assign({ export: 1, expire_days: this.expire_days }, {})
+      productExpiresDetailsDown(obj)
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '胶料超期报警.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
+    },
     tableRowClassName({ row, rowIndex }) {
       if (row.material_no === '单页合计' || row.material_no === '汇总') {
         return 'summary-cell-style'
@@ -192,6 +215,9 @@ export default {
     cellClassName({ row, column, rowIndex, columnIndex }) {
       if (column.label === '库存数（车）') {
         if (row.expire_flag) {
+          return 'deepred-cell-style'
+        }
+        if (row.yj_flag) {
           return 'red-cell-style'
         }
         if (row.dj_flag) {
@@ -220,6 +246,9 @@ function sum(arr, params) {
   }
       .yellow-cell-style{
     background: rgb(222, 190, 84);
+  }
+      .deepred-cell-style{
+    background: red;
   }
   .el-link.el-link--primary{
         color: #115091;
