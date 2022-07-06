@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="app-container details_style"
-  >
+  <div class="app-container details_style">
     <el-form v-if="!isProps" :inline="true">
       <el-form-item label="日期">
         <el-date-picker
@@ -11,6 +9,7 @@
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           value-format="yyyy-MM-dd"
+          :clearable="false"
           @change="dayChange"
         />
       </el-form-item>
@@ -29,7 +28,7 @@
         <class-select @classSelected="classSelected" />
       </el-form-item>
       <el-form-item label="段次">
-        <stage-select v-model="getParams.stage" @change="clickQuery" />
+        <stage-select v-model="getParams.stage" :is-default="true" :is-clearable="false" @change="clickQuery" />
       </el-form-item>
       <el-form-item label="综合检测结果">
         <el-select
@@ -114,32 +113,52 @@
         </u-table-column>
       </u-table-column>
       <u-table-column v-for="header in testTypeList.filter(type => type.show)" :key="header.test_type_name" align="center" :label="header.test_type_name">
-        <u-table-column v-for="subHeader in header.data_indicator_detail.filter(item => item.show)" :key="header.test_type_name + subHeader.detail" min-width="20px" :label="subHeader.detail" align="center">
-          <template slot-scope="{ row }">
-            <div :class="getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level')!==1&&getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level')!==''?'test_type_name_style':''">
-              {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'value') }}
-            </div>
-          </template>
-        </u-table-column>
-        <u-table-column v-if="header.test_type_name === '门尼' || header.test_type_name === '流变'" label="检测机台" min-width="20px" align="center">
-          <template slot-scope="{row}">
-            {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'machine_name') }}
-          </template>
-        </u-table-column>
-        <u-table-column min-width="20px" label="标准" align="center">
-          <template slot-scope="{row}">
-            {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'upper_lower') }}
-          </template>
-        </u-table-column>
         <u-table-column min-width="20px" label="等级" align="center">
           <template slot-scope="{row}">
             {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'level') }}
           </template>
         </u-table-column>
+        <div v-for="(subHeader,_ii) in header.data_indicator_detail.filter(item => item.show)" :key="subHeader.detail">
+          <u-table-column :key="subHeader.detail+_ii" min-width="20px" :label="subHeader.detail" align="center">
+            <template slot-scope="{ row }">
+              <div :class="getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level')!==1&&getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level')!==''?'test_type_name_style':''">
+                {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'value') }}
+              </div>
+            </template>
+          </u-table-column>
+          <u-table-column :key="_ii" min-width="20px" label="标准" align="center">
+            <template slot-scope="{ row }">
+              <div>
+                {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'judged_lower_limit') }}-
+                {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'judged_upper_limit') }}
+              </div>
+            </template>
+          </u-table-column>
+        </div>
+        <!-- <u-table-column min-width="20px" label="标准" align="center">
+          <template slot-scope="{row}">
+            {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'upper_lower') }}
+          </template>
+        </u-table-column> -->
+        <u-table-column v-if="header.test_type_name === '门尼' || header.test_type_name === '流变'" label="检测机台" min-width="20px" align="center">
+          <template slot-scope="{row}">
+            {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'machine_name') }}
+          </template>
+        </u-table-column>
       </u-table-column>
-      <u-table-column label="综合等级" min-width="20px" prop="level" align="center" />
-      <u-table-column label="综合检测结果" min-width="20px" prop="mes_result" align="center" />
+      <!-- <u-table-column label="综合等级" min-width="20px" prop="level" align="center" /> -->
+      <!-- <u-table-column label="综合检测结果" min-width="20px" prop="mes_result" align="center" /> -->
+      <u-table-column label="是否合格" min-width="20px" prop="is_qualified" align="center">
+        <template slot-scope="{row}">
+          {{ row.is_qualified?'合格':'不合格' }}
+        </template>
+      </u-table-column>
+      <u-table-column label="检测结果" min-width="20px" prop="deal_info.test_result" align="center" />
+      <u-table-column label="处理人" min-width="20px" prop="deal_info.deal_user" align="center" />
+      <u-table-column label="处理意见" min-width="20px" prop="deal_info.deal_suggestion" align="center" />
+      <u-table-column label="处理时间" min-width="20px" prop="deal_info.deal_time" align="center" />
     </u-table>
+    <el-alert style="color:black" title="表格背景色说明：表示不是一等品" type="success" />
     <el-dialog
       title="选择过滤"
       :visible.sync="filterDialogVisible"
@@ -216,7 +235,8 @@ import EquipSelect from '@/components/select_w/equip'
 import ClassSelect from '@/components/ClassSelect'
 import StageSelect from '@/components/StageSelect'
 import allProductNoSelect from '@/components/select_w/allProductNoSelect'
-import { testTypes, materialTestOrders, testResultHistory, datapointCurve } from '@/api/quick-check-detail'
+import { testTypes, materialTestOrders, testResultHistory,
+  materialTestOrdersAll, datapointCurve } from '@/api/quick-check-detail'
 import elTableInfiniteScroll from 'el-table-infinite-scroll'
 import FileSaver from 'file-saver'
 import XLSX from 'xlsx'
@@ -445,17 +465,34 @@ export default {
     },
     async getALLData() {
       try {
-        if (getDaysBetween(this.getParams.st, this.getParams.et) > 1) {
-          this.$message('导出Excel日期间隔不得大于2天')
+        if (!this.testOrders.length) {
+          this.$message('暂无数据')
           return
         }
         this.btnLoading = true
-        const arr = await this.getMaterialTestOrders(true)
-        this.ALLData = arr || []
-        this.btnLoading = false
-        this.$nextTick(() => {
-          this.exportExcel()
-        })
+        // const arr = await this.getMaterialTestOrders(true)
+        // this.ALLData = arr || []
+        // this.btnLoading = false
+        // this.$nextTick(() => {
+        //   this.exportExcel()
+        // })
+        const obj = Object.assign({ export: 1 }, this.getParams)
+        const _api = materialTestOrdersAll
+        _api('get', null, { params: obj, responseType: 'blob' })
+          .then(res => {
+            this.btnLoading = false
+            const link = document.createElement('a')
+            const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+            link.style.display = 'none'
+            link.href = URL.createObjectURL(blob)
+            link.download = `胶料快检详细信息${setDate()}.xlsx`// 下载的文件名
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+            this.btnExportLoad = false
+          }).catch(e => {
+            this.btnExportLoad = false
+          })
       } catch (e) {
         this.btnLoading = false
       }
@@ -463,6 +500,10 @@ export default {
     async getMaterialTestOrders(bool = false) {
       this.listLoading = true
       try {
+        if (getDaysBetween(this.getParams.st, this.getParams.et) > 1) {
+          this.$message('日期间隔不得大于31天')
+          return
+        }
         const paramsObj = JSON.parse(JSON.stringify(this.getParams))
         paramsObj.page_size = bool ? 99999999 : 10
         paramsObj.page = bool ? 1 : this.getParams.page
@@ -660,7 +701,7 @@ function getDaysBetween(dateString1, dateString2) {
   if (startDate === endDate) {
     return 1
   }
-  var days = (endDate - startDate) / (1 * 24 * 60 * 60 * 1000)
+  var days = (endDate - startDate) / (30 * 24 * 60 * 60 * 1000)
   return days
 }
 </script>

@@ -66,7 +66,7 @@
     <el-dialog
       title="新建胶料出库单据"
       :visible.sync="dialogVisibleNo"
-      width="20%"
+      width="600px"
       :before-close="handleClose"
     >
       <el-form
@@ -75,12 +75,26 @@
         :model="creatOrder"
         :rules="rules"
       >
+        <el-form-item style="marginLeft:25px" label="出库类别" prop="order_type">
+          <el-select
+            v-model="creatOrder.order_type"
+            placeholder="请选择"
+            @change="changeType"
+          >
+            <el-option
+              v-for="item in typeList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item style="marginLeft:54px" label="库区" prop="warehouse">
           <el-select
             v-model="creatOrder.warehouse"
             placeholder="请选择"
             clearable
-            @change="clear"
+            @change="changeWarehouse"
           >
             <el-option
               v-for="item in ['终炼胶库','混炼胶库']"
@@ -105,43 +119,92 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item style="marginLeft:25px" label="品质状态" prop="quality_status">
-          <el-select
-            v-model="creatOrder.quality_status"
-            :disabled="unqualified"
-            placeholder="请选择"
-            clearable
-            @change="clear2"
-          >
-            <el-option
-              v-for="item in options"
-              :key="item"
-              :label="item"
-              :value="item"
+        <div v-if="creatOrder.order_type===1">
+          <el-form-item style="marginLeft:25px" label="品质状态" prop="quality_status">
+            <el-select
+              v-model="creatOrder.quality_status"
+              :disabled="unqualified"
+              placeholder="请选择"
+              clearable
+              @change="clear2"
+            >
+              <el-option
+                v-for="item in options"
+                :key="item"
+                :label="item"
+                :value="item"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item style="marginLeft:25px" label="胶料编码" prop="product_no">
+            <el-select
+              v-model="creatOrder.product_no"
+              placeholder="请选择胶料编码"
+              filterable
+              clearable
+              @visible-change="productBatchingChanged"
+              @change="clear1"
+            >
+              <el-option
+                v-for="item in batchList"
+                :key="item.material_no"
+                :label="item.material_name"
+                :value="item.material_no"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item style="marginLeft:10px" label="订单数量(车)" prop="order_qty">
+            <el-input-number v-model="creatOrder.order_qty" controls-position="right" :min="1" />
+          </el-form-item>
+        </div>
+        <div v-if="creatOrder.order_type===2">
+          <el-form-item label="日期" prop="factory_date" style="marginLeft:54px">
+            <el-date-picker
+              v-model="creatOrder.factory_date"
+              type="date"
+              value-format="yyyy-MM-dd"
+              placeholder="选择日期"
+              @change="creatOrder.product_no = null"
             />
-          </el-select>
-        </el-form-item>
-        <el-form-item style="marginLeft:25px" label="胶料编码" prop="product_no">
-          <el-select
-            v-model="creatOrder.product_no"
-            placeholder="请选择胶料编码"
-            filterable
-            clearable
-            @visible-change="productBatchingChanged"
-            @change="clear1"
-          >
-            <el-option
-              v-for="item in batchList"
-              :key="item.material_no"
-              :label="item.material_name"
-              :value="item.material_no"
+          </el-form-item>
+          <el-form-item label="班次" prop="classes" style="marginLeft:54px">
+            <classSelect
+              :value-default="creatOrder.classes"
+              @classSelected="classChanged"
             />
-          </el-select>
-        </el-form-item>
-        <el-form-item style="marginLeft:10px" label="订单数量(车)" prop="order_qty">
+          </el-form-item>
+          <el-form-item label="机台" prop="equip_no" style="marginLeft:54px">
+            <selectEquip
+              :equip_no_props.sync="creatOrder.equip_no"
+              @changeSearch="changeSearch"
+            />
+          </el-form-item>
+          <el-form-item style="marginLeft:25px" label="胶料编码" prop="product_no">
+            <el-select
+              v-model="creatOrder.product_no"
+              placeholder="请选择胶料编码"
+              filterable
+              clearable
+              @change="changeProduct"
+              @visible-change="productBatchingChangedNew"
+            >
+              <el-option
+                v-for="item in batchListNew"
+                :key="item.product_no"
+                :label="item.product_no"
+                :value="item.product_no"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="车次" prop="begin_trains" style="marginLeft:54px">
+            <el-input-number v-model="creatOrder.begin_trains" controls-position="right" :min="minTrains" :max="creatOrder.end_trains" />-
+            <el-input-number v-model="creatOrder.end_trains" controls-position="right" :min="creatOrder.begin_trains" :max="maxTrains" />
+          </el-form-item>
+        </div>
+        <el-form-item v-if="creatOrder.order_type===3" style="marginLeft:40px" label="托盘号" prop="pallet_no">
           <el-input
-            v-model="creatOrder.order_qty"
-            placeholder="请输入订单数量"
+            v-model="creatOrder.pallet_no"
+            placeholder="请输入托盘号"
           />
         </el-form-item>
       </el-form>
@@ -197,7 +260,15 @@
       <el-table-column
         prop="warehouse"
         label="库房"
-        width="80"
+        min-width="20"
+      />
+      <el-table-column
+        prop="warehouse"
+        label="出库类型"
+        min-width="20"
+        :formatter="(row)=>{
+          return typeList.find(d=>d.id === row.order_type).name
+        }"
       />
       <el-table-column
         prop="station"
@@ -207,17 +278,46 @@
       <el-table-column
         prop="order_no"
         label="单据号"
-        width="160"
+        min-width="20"
       />
       <el-table-column
         prop="product_no"
         label="物料编码"
-        width="140"
+        min-width="20"
       />
       <el-table-column
         prop="quality_status"
         label="品质状态"
-        width="70"
+        min-width="20"
+      />
+      <el-table-column
+        prop="factory_date"
+        label="日期"
+        min-width="20"
+      />
+      <el-table-column
+        prop="classes"
+        label="班次"
+        min-width="20"
+      />
+      <el-table-column
+        prop="equip_no"
+        label="机台"
+        min-width="20"
+      />
+      <el-table-column
+        label="车次"
+        min-width="20"
+        :formatter="(row)=>{
+          if(row.begin_trains){
+            return row.begin_trains+'-'+row.end_trains
+          }
+        }"
+      />
+      <el-table-column
+        prop="pallet_no"
+        label="托盘号"
+        min-width="20"
       />
       <el-table-column
         prop="order_qty"
@@ -356,12 +456,24 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="cancelOrderNo(selectionData)">取消任务</el-button>
+        </el-form-item>
       </el-form>
       <el-table
+        ref="multipleTable"
         v-loading="loadingView"
         :data="tableDataView"
         border
+        row-key="id"
+        @selection-change="handleSelectionChange"
       >
+        <el-table-column
+          type="selection"
+          width="55"
+          :reserve-selection="true"
+          :selectable="(row)=>{return row.status===1}"
+        />
         <el-table-column
           prop="order_no"
           label="出库任务号"
@@ -420,10 +532,11 @@
         />
         <el-table-column
           label="操作"
-          width="85"
+          width="140"
         >
           <template slot-scope="{row}">
-            <el-button :disabled="row.status===3||row.status===4||row.status===5" type="danger" @click="closeOrderNo(row)">关闭</el-button>
+            <!-- <el-button :disabled="row.status===3||row.status===4||row.status===5" type="danger" @click="closeOrderNo(row)">关闭</el-button> -->
+            <el-button :disabled="row.status!==1" type="primary" @click="cancelOrderNo([row])">取消任务</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -441,7 +554,7 @@
 import GenerateAssignOutbound from '../components-film/generate_assign_outbound'
 import GenerateNormalOutbound from '../components-film/generate_normal_outbound'
 import { bzMixinInventorySummary, bzFinalInventorySummary } from '@/api/base_w_four'
-import { compoundManage, userStation } from '@/api/jqy'
+import { compoundManage, userStation, outboundPproductInfo } from '@/api/jqy'
 import { batchingMaterials } from '@/api/base_w'
 import { mapGetters } from 'vuex'
 import myMixin from '../components-zl-hl/mixin-zl-hl'
@@ -449,10 +562,12 @@ import { stationInfo } from '@/api/warehouse'
 import { checkPermission } from '@/utils'
 import page from '@/components/page'
 import { debounce } from '@/utils/index'
+import classSelect from '@/components/ClassSelect'
+import selectEquip from '@/components/select_w/equip'
 
 export default {
   name: 'CompoundManage',
-  components: { page, GenerateAssignOutbound, GenerateNormalOutbound },
+  components: { selectEquip, classSelect, page, GenerateAssignOutbound, GenerateNormalOutbound },
   mixins: [myMixin],
   data() {
     return {
@@ -467,8 +582,9 @@ export default {
         product_no: '',
         warehouse: '',
         station: '',
-        order_qty: '',
-        quality_status: '一等品'
+        order_qty: undefined,
+        quality_status: '一等品',
+        order_type: 1
       },
       options: ['一等品', '三等品', '待检品'],
       close: true,
@@ -478,6 +594,7 @@ export default {
       dateSearch: [],
       stationList: [],
       batchList: [],
+      batchListNew: [],
       stationList1: [],
       total: 0,
       list: {},
@@ -496,9 +613,12 @@ export default {
         { name: '新建', id: 1 },
         { name: '执行中', id: 2 },
         { name: '已出库', id: 3 },
-        { name: '关闭', id: 4 },
+        { name: '取消', id: 4 },
         { name: '失败', id: 5 }
       ],
+      minTrains: 1,
+      maxTrains: 9999,
+      typeList: [{ id: 1, name: '普通' }, { id: 2, name: '指定胶料信息' }, { id: 3, name: '指定托盘号' }],
       rules: {
         product_no: [
           { required: true, message: '请选择胶料编码', trigger: 'blur' }
@@ -510,11 +630,44 @@ export default {
           { pattern: /^[1-9]\d*$/, message: '只能输入正整数' }
         ],
         warehouse: [
-          { required: true, message: '请选择库区', trigger: 'blur' }
+          { required: true, message: '请选择库区', trigger: 'change' }
         ],
         station: [
-          { required: true, message: '请选择出库口', trigger: 'blur' }
-        ]
+          { required: true, message: '请选择出库口', trigger: 'change' }
+        ],
+        order_type: [
+          { required: true, message: '请选择类别', trigger: 'change' }
+        ],
+        pallet_no: [
+          { required: true, message: '请输入托盘号', trigger: 'blur' }
+        ],
+        factory_date: [
+          { required: true, message: '请选择日期', trigger: 'change' }
+        ],
+        classes: [{ required: true, message: '不能为空', trigger: 'change',
+          validator: (rule, value, callback) => {
+            if (!this.creatOrder.classes && !value) {
+              callback(new Error('请选择班次'))
+            } else {
+              callback()
+            }
+          } }],
+        equip_no: [{ required: true, message: '不能为空', trigger: 'change',
+          validator: (rule, value, callback) => {
+            if (!this.creatOrder.equip_no && !value) {
+              callback(new Error('请选择机台'))
+            } else {
+              callback()
+            }
+          } }],
+        begin_trains: [{ required: true, message: '不能为空', trigger: 'blur',
+          validator: (rule, value, callback) => {
+            if (!this.creatOrder.begin_trains || !this.creatOrder.end_trains) {
+              callback(new Error('请填写车次'))
+            } else {
+              callback()
+            }
+          } }]
       }
     }
   },
@@ -553,8 +706,31 @@ export default {
     },
     dialog() {
       this.creatOrder.product_no = ''
-      this.creatOrder.order_qty = ''
+      this.creatOrder.order_qty = null
+      this.$set(this.creatOrder, 'factory_date', null)
+      this.$set(this.creatOrder, 'classes', null)
+      this.$set(this.creatOrder, 'equip_no', null)
+      this.$set(this.creatOrder, 'begin_trains', null)
+      this.$set(this.creatOrder, 'end_trains', null)
+      this.$set(this.creatOrder, 'pallet_no', null)
       this.dialogVisibleNo = true
+      if (this.$refs.ruleForm) {
+        setTimeout(d => {
+          this.$refs.ruleForm.clearValidate()
+        }, 300)
+      }
+    },
+    async productBatchingChangedNew() {
+      try {
+        if (!this.creatOrder.factory_date || !this.creatOrder.classes || !this.creatOrder.equip_no) {
+          this.$message('请填入日期、班次、机台')
+          return
+        }
+        const data = await outboundPproductInfo('get', null, { params: { factory_date: this.creatOrder.factory_date, equip_no: this.creatOrder.equip_no, classes: this.creatOrder.classes, warehouse: this.creatOrder.warehouse }})
+        this.batchListNew = data
+      } catch (e) {
+        //
+      }
     },
     async productBatchingChanged(val) {
       if (val === true) {
@@ -590,6 +766,9 @@ export default {
       this.$refs.ruleForm.validate(async(valid) => {
         if (valid) {
           try {
+            if (!this.creatOrder.order_qty) {
+              delete this.creatOrder.order_qty
+            }
             this.submit = true
             await compoundManage('post', null, { data: this.creatOrder })
             this.submit = false
@@ -641,12 +820,16 @@ export default {
         }
       }
     },
-    clear() {
+    changeWarehouse() {
       if (this.creatOrder.station !== '') {
         this.creatOrder.station = ''
       }
       if (this.creatOrder.product_no !== '') {
         this.creatOrder.product_no = ''
+      }
+      if (this.creatOrder.order_type === 2) {
+        this.creatOrder.product_no = null
+        this.productBatchingChangedNew()
       }
     },
     clear1(val) {
@@ -659,8 +842,8 @@ export default {
       if (this.creatOrder.product_no !== '') {
         this.creatOrder.product_no = ''
       }
-      if (this.creatOrder.order_qty !== '') {
-        this.creatOrder.order_qty = ''
+      if (this.creatOrder.order_qty) {
+        this.creatOrder.order_qty = null
       }
     },
     async getStation1(val) {
@@ -729,6 +912,26 @@ export default {
       this.list = scope.row
       this.warehouseName = scope.row.warehouse
       this.assignOutboundDialogVisible = true
+    },
+    changeType() {
+      if (this.$refs.ruleForm) {
+        this.$refs.ruleForm.clearValidate()
+      }
+    },
+    classChanged(val) {
+      this.creatOrder.classes = val
+      this.creatOrder.product_no = null
+    },
+    changeSearch(val) {
+      this.creatOrder.equip_no = val
+      this.creatOrder.product_no = null
+    },
+    changeProduct(val) {
+      const arr = this.batchListNew.filter(d => val === d.product_no)
+      this.minTrains = arr[0] ? arr[0].min_trains : 1
+      this.maxTrains = arr[0] ? arr[0].max_trains : 9999
+      this.creatOrder.begin_trains = arr[0] ? arr[0].min_trains : this.creatOrder.begin_trains
+      this.creatOrder.end_trains = arr[0] ? arr[0].max_trains : this.creatOrder.end_trains
     }
   }
 }

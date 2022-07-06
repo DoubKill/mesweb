@@ -38,28 +38,27 @@ export default {
       stateVal: false
     }
   },
+  watch: {
+    $route: {
+      handler() {
+        if (this.$route.fullPath === '/quickCheck/deviceMonitor') {
+          this.getInfo()
+          this.getBottomList()
+          this.getCheckEquip()
+          this._setInterval = setInterval(d => {
+            this.getInfo()
+            this.getBottomList()
+            this.getCheckEquip()
+          }, 30000)
+        } else {
+          window.clearInterval(this._setInterval)
+        }
+      },
+      deep: true, // 深度监听
+      immediate: true // 第一次初始化渲染就可以监听到
+    }
+  },
   created() {
-    this.getInfo()
-    this.getBottomList()
-    this.getCheckEquip()
-    this.timer = setInterval(() => {
-      this.getInfo()
-      this.getBottomList()
-      this.getCheckEquip()
-    }, 10000)
-  },
-  destroyed() {
-    clearInterval(this.timer)
-  },
-  deactivated() {
-    clearInterval(this.timer)
-  },
-  activated() {
-    this.timer = setInterval(() => {
-      this.getInfo()
-      this.getBottomList()
-      this.getCheckEquip()
-    }, 10000)
   },
   methods: {
     async getInfo() {

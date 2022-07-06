@@ -96,15 +96,6 @@ export const constantRoutes = [
       isPhone: true
     }
   },
-  {
-    path: '/Outbound-Kanban/:id',
-    component: () => import('@/views/Z-Outbound-Kanban'),
-    hidden: true,
-    meta: {
-      // 是否是单独页面
-      isPhone: true
-    }
-  },
   // http://localhost:9000/#/alone/banburying/
   // substitutes/?name=replace_material&arr=view,opera&equip=S01&key=
   {
@@ -147,7 +138,8 @@ export const constantRoutes = [
     hidden: true,
     meta: {
       title: '首页',
-      permissionName: ''
+      permissionName: '',
+      isPhone: true
     }
   },
   {
@@ -156,7 +148,17 @@ export const constantRoutes = [
     hidden: true,
     meta: {
       title: '设备运行现况',
-      permissionName: ''
+      permissionName: '',
+      isPhone: true
+    }
+  },
+  {
+    path: '/Outbound-Kanban/:id',
+    component: () => import('@/views/Z-Outbound-Kanban'),
+    hidden: true,
+    meta: {
+      // 是否是单独页面
+      isPhone: true
     }
   }
 ]
@@ -179,6 +181,46 @@ export let asyncRoutes = [
       meta: {
         title: '首页',
         icon: 'el-icon-s-home'
+      }
+    },
+    {
+      path: '/bigScreen/1',
+      component: () => import('@/views/homePage/bigAcreen'),
+      name: 'HomePageMainScreen1',
+      meta: {
+        title: 'MES首页大屏',
+        icon: 'collection',
+        type: 1
+      }
+    },
+    {
+      path: '/bigScreen/2',
+      component: () => import('@/views/homePage/bigAcreen'),
+      name: 'HomePageMainScreen1',
+      meta: {
+        title: '设备运行现况',
+        icon: 'collection',
+        type: 2
+      }
+    },
+    {
+      path: '/bigScreen/3',
+      component: () => import('@/views/homePage/bigAcreen'),
+      name: 'HomePageMainScreen1',
+      meta: {
+        title: '混炼胶库运行综合看板',
+        icon: 'collection',
+        type: 3
+      }
+    },
+    {
+      path: '/bigScreen/4',
+      component: () => import('@/views/homePage/bigAcreen'),
+      name: 'HomePageMainScreen1',
+      meta: {
+        title: '终炼胶库运行综合看板',
+        icon: 'collection',
+        type: 4
       }
     }
     ]
@@ -395,7 +437,7 @@ export let asyncRoutes = [
         icon: 'formula',
         permissionName: 'productbatching'
       }
-    },
+    }
     // {
     //   path: '/rb/material/std/manage111',
     //   name: 'rb-material-std-manage111',
@@ -406,16 +448,16 @@ export let asyncRoutes = [
     //     permissionName: 'productbatching'
     //   }
     // },
-    {
-      path: '/rb/material-tank/manage',
-      name: 'MaterialTank',
-      component: () => import('@/views/recipe/tankInformation/list'),
-      meta: {
-        title: '称量系统料仓信息管理',
-        icon: 'formula',
-        permissionName: 'weight_tank'
-      }
-    }
+    // {
+    //   path: '/rb/material-tank/manage',
+    //   name: 'MaterialTank',
+    //   component: () => import('@/views/recipe/tankInformation/list'),
+    //   meta: {
+    //     title: '称量系统料仓信息管理',
+    //     icon: 'formula',
+    //     permissionName: 'weight_tank'
+    //   }
+    // }
     // {
     //   path: '/rb/formula-resume',
     //   name: 'FormulaResume',
@@ -568,6 +610,16 @@ export let asyncRoutes = [
           }
         },
         {
+          path: '/internal/material-statistics',
+          component: () => import('@/views/quality_management/material-statistics'),
+          name: 'MaterialStatistics',
+          meta: {
+            faName: 'SmallMaterialWeight',
+            title: '称量机台物料统计',
+            permissionName: 'xl_report_weight_statics'
+          }
+        },
+        {
           path: '/small-material-weight/consumption',
           component: () => import('@/views/recipe/small-material-weight/consumption'),
           name: 'SmallMaterialWeightConsumption',
@@ -575,6 +627,16 @@ export let asyncRoutes = [
             faName: 'SmallMaterialWeight',
             title: '物料消耗报表',
             permissionName: 'xl_report_weight'
+          }
+        },
+        {
+          path: '/small-material-weight/summary',
+          component: () => import('@/views/recipe/small-material-weight/summary'),
+          name: 'SmallMaterialWeightSummary',
+          meta: {
+            faName: 'SmallMaterialWeight',
+            title: '称量物料消耗汇总表',
+            permissionName: ''
           }
         },
         {
@@ -1079,7 +1141,7 @@ export let asyncRoutes = [
         component: () => import('@/views/production/result_analysis/a-index.vue'),
         name: 'ResultAnalysis',
         meta: {
-          title: '生产结果分析统计',
+          title: '生产分析统计',
           icon: 'production'
         },
         children: [
@@ -1213,6 +1275,16 @@ export let asyncRoutes = [
               faName: 'Resume1',
               title: '(内部)原材料流转卡',
               permissionName: 'material_add_print'
+            }
+          },
+          {
+            path: '/banburying/makeUp/',
+            component: () => import('@/views/quality_management/banburying/makeUp'),
+            name: 'BanburyingMakeUp',
+            meta: {
+              faName: 'Banburying',
+              title: '返回胶/无名胶卡片补打',
+              permissionName: 'return_rubber'
             }
           }
         ]
@@ -1743,6 +1815,7 @@ export let asyncRoutes = [
             name: 'DeliveryInOutRecord',
             meta: {
               faName: 'MaterialDelivery',
+              faShowName: '原材料库',
               title: '出入库履历查询',
               permissionName: 'material_inout_history'
             }
@@ -2827,16 +2900,6 @@ export let asyncRoutes = [
             }
           },
           {
-            path: '/banburying/makeUp',
-            component: () => import('@/views/quality_management/banburying/makeUp'),
-            name: 'BanburyingMakeUp',
-            meta: {
-              faName: 'Banburying',
-              title: '胶皮补打卡片',
-              permissionName: 'return_rubber'
-            }
-          },
-          {
             path: '/banburying/toleranceEntry',
             component: () => import('@/views/quality_management/banburying/toleranceEntry'),
             name: 'BanburyingToleranceEntry',
@@ -2879,13 +2942,13 @@ export let asyncRoutes = [
         ]
       },
       {
-        path: '/internal/material-statistics',
-        component: () => import('@/views/quality_management/material-statistics'),
-        name: 'MaterialStatistics',
+        path: '/material_level_management/',
+        name: 'MaterialLevelManagement',
+        component: () => import('@/views/rb_material_std_manage/material_level_management'),
         meta: {
-          title: '称量机台物料统计',
+          title: '原材料门尼值等级管理',
           icon: 'quality',
-          permissionName: 'xl_report_weight_statics'
+          permissionName: 'wms_mooney_level'
         }
       }
     ]

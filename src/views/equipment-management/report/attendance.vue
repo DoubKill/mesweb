@@ -367,6 +367,7 @@
         </el-form-item>
         <el-form-item label="班次" prop="classes">
           <class-select
+            :value-default="dialogForm.classes"
             :is-clearable="false"
             @classSelected="classChanged"
           />
@@ -492,7 +493,7 @@ export default {
       this.multipleSelection = val
     },
     classChanged(val) {
-      this.dialogForm.classes = val
+      this.$set(this.dialogForm, 'classes', val)
     },
     addStatus() {
       this.dialogVisibleAdd = true

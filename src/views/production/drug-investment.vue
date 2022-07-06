@@ -226,13 +226,13 @@ export default {
   methods: {
     async clickName(row, val) {
       try {
-        val === 1 ? this.dialogVisibleDetail = true : this.dialogVisibleList = true
         const obj = {}
         obj.batch_time = this.getParams.batch_time
         obj.bra_code = row.bra_code
         obj.opera_type = val
         this.loadingList = true
         const data = await weightBatchingLogList('get', null, { params: obj })
+        val === 1 ? this.dialogVisibleDetail = true : this.dialogVisibleList = true
         if (val === 1) {
           if (data.length > 0) {
             this.detailForm = data[0]

@@ -1,5 +1,19 @@
 <template>
-  <div class="homePage-container">
+  <div :class="['homePage-container',bigScreen?'bigScreen':'']">
+    <div v-if="bigScreen" class="head-top">
+      <img src="@/assets/logoHeard.png" alt="">
+      <div class="d-flex">
+        <span class="decoration10" />
+        <span class="decoration8" />
+        <div class="title">
+          <h2 style="font-size:30px;">中策橡胶安吉准备分厂 MES系统</h2>
+          <span class="title-border" />
+        </div>
+        <span class="decoration8 decoration8-1" />
+        <span class="decoration10" />
+      </div>
+      <h3 class="set-current-time">{{ currentTime }}</h3>
+    </div>
     <el-row :gutter="20" style="font-weight:700;font-size:16px">
       <el-col :span="4">
         <el-card class="box-card">
@@ -67,25 +81,33 @@
     </el-row>
 
     <el-row :gutter="20">
-      <el-col :span="24" style="margin-top:5px;margin-bottom:10px">
-        <el-card>
-          <div class="yieldBar" style="display:flex;">
-            <div
-              id="yieldBar"
-              class="volumeBox"
-              style="width: 100%;height:300px;flex:1;border-radius: 0"
-            />
-            <div class="yieldBarRadio">
-              <el-radio-group v-model="yieldBarRadio" size="mini" @change="yieldBarChange">
-                <el-radio-button label="1">本周</el-radio-button>
-                <el-radio-button label="2">本月</el-radio-button>
-              </el-radio-group>
-            </div>
-            <div
-              id="passRateLine"
-              class="volumeBox"
-              style="width: 100%;height:300px;flex:1;border-radius: 0"
-            />
+      <el-col :span="12" style="margin-top:5px;margin-bottom:10px">
+        <el-card class="yieldBar">
+          <div
+            id="yieldBar"
+            class="volumeBox"
+            style="width: 100%;height:300px;flex:1;border-radius: 0"
+          />
+          <!-- <div class="yieldBarRadio">
+            <el-radio-group v-model="yieldBarRadio" size="mini" @change="yieldBarChange">
+              <el-radio-button label="1">本周</el-radio-button>
+              <el-radio-button label="2">本月</el-radio-button>
+            </el-radio-group>
+          </div> -->
+        </el-card>
+      </el-col>
+      <el-col :span="12" style="margin-top:5px;margin-bottom:10px">
+        <el-card class="yieldBar">
+          <div
+            id="passRateLine"
+            class="volumeBox"
+            style="width: 100%;height:300px;flex:1;border-radius: 0"
+          />
+          <div class="yieldBarLine">
+            <el-radio-group v-model="yieldBarRadio" size="mini" @change="yieldBarChange">
+              <el-radio-button label="1">本周</el-radio-button>
+              <el-radio-button label="2">本月</el-radio-button>
+            </el-radio-group>
           </div>
         </el-card>
       </el-col>
@@ -155,11 +177,14 @@
 
 <script>
 import * as echarts from 'echarts'
+import { setDate } from '@/utils'
 import { indexOverview, indexProductionAyalyze, indexEquipProductionAyalyze, indexEquipMaintenanceAyalyze } from '@/api/base_w_three'
+
 export default {
   name: 'HomePageMain',
+  components: {},
   data() {
-    this.color = ['rgb(121, 187, 255)', '#E6A23C']
+    this.color = ['#188df0', '#E6A23C']
     this.chartSettings = {
       labelMap: {
         time: '时间',
@@ -176,6 +201,7 @@ export default {
       radius: '90'
     }
     return {
+      currentTime: setDate(null, true),
       yieldBarRadio: '1',
       equipProduction: {
         dimension: '1',
@@ -194,23 +220,38 @@ export default {
       optionYieldBar: {
         color: this.color,
         legend: {
-          data: ['计划车次', '实际车次']
+          data: ['计划车次', '实际车次'],
+          textStyle: {
+            color: '#000'// 字体颜色
+          }
         },
         title: {
           left: 'left',
-          text: '产量分析'
+          text: '产量分析',
+          textStyle: { color: '#000' }
         },
         tooltip: {
           trigger: 'axis'
         },
         xAxis: {
           type: 'category',
-          name: '时间',
-          data: []
+          data: [],
+          axisLine: {
+            lineStyle: {
+              color: '#000',
+              width: 1// 这里是为了突出显示加上的
+            }
+          }
         },
         yAxis: {
           name: '车',
-          type: 'value'
+          type: 'value',
+          axisLine: {
+            lineStyle: {
+              color: '#000',
+              width: 1// 这里是为了突出显示加上的
+            }
+          }
         },
         grid: {
           top: '25%',
@@ -229,8 +270,14 @@ export default {
               normal: {
                 label: {
                   show: true,
-                  position: 'top'
-                }}}
+                  position: 'top',
+                  color: '#000'
+                }}},
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: 'rgb(231 219 201)' },
+              { offset: 0.5, color: 'rgb(239 196 131)' },
+              { offset: 1, color: 'rgb(239 196 131)' }
+            ])
           },
           {
             name: '加硫',
@@ -266,8 +313,14 @@ export default {
             itemStyle: {
               normal: {
                 label: {
-                  show: true
-                }}}
+                  show: true,
+                  color: '#000'
+                }}},
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: '#83bff6' },
+              { offset: 0.5, color: '#188df0' },
+              { offset: 1, color: '#188df0' }
+            ])
           },
           {
             name: '加硫',
@@ -300,13 +353,14 @@ export default {
       optionPassRateLine: {
         color: this.color,
         title: {
-          left: 'center',
-          text: '合格率分析'
+          left: 'left',
+          text: '合格率分析',
+          textStyle: { color: '#000' }
         },
         tooltip: {
           trigger: 'axis',
           axisPointer: {
-            type: 'cross'
+            // type: 'cross'
           }
         },
         grid: {
@@ -322,14 +376,24 @@ export default {
             axisTick: {
               alignWithLabel: true
             },
-            data: []
+            data: [],
+            axisLine: {
+              lineStyle: {
+                color: '#000',
+                width: 1
+              }
+            }
           }
         ],
         yAxis: {
           type: 'value',
           name: '%',
           axisLine: {
-            show: true
+            show: true,
+            lineStyle: {
+              color: '#000',
+              width: 1
+            }
           },
           max: 100,
           min: 0
@@ -366,7 +430,17 @@ export default {
       optionFinishChart: {
         title: {
           left: 'left',
-          text: '机台产量分析'
+          text: '机台产量分析',
+          textStyle: { color: '#000' }
+        },
+        legend: {
+          data: ['实际车次', '计划车次'],
+          x: 'left',
+          y: 'left',
+          padding: [5, 0, 0, 170],
+          textStyle: {
+            color: '#000' // 字体颜色
+          }
         },
         color: ['rgb(121, 187, 255)', 'rgb(179, 216, 255)', '#E6A23C'],
         tooltip: {
@@ -377,25 +451,37 @@ export default {
           formatter: function(params) {
             const firstParams = params[0]
             const sndParams = params[2]
-            return firstParams.name + '<br>' + firstParams.seriesName + '：' + firstParams.value + '<br>' +
-            sndParams.seriesName + '：' + sndParams.value
+
+            return firstParams.name + '<br>' + firstParams.seriesName + '：' + (firstParams.value ? firstParams.value : 0) + '<br>' +
+            sndParams.seriesName + '：' + (sndParams.value ? sndParams.value : 0)
           }
         },
         grid: {
           left: '3%',
           right: '6%',
           bottom: '3%',
-          // top: '25%',
           containLabel: true
         },
         xAxis: {
-          // type: 'category',
-          name: '机台',
-          data: []
+          data: [],
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: '#000',
+              width: 1
+            }
+          }
         },
         yAxis: {
           type: 'value',
-          name: '车'
+          name: '车',
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: '#000',
+              width: 1
+            }
+          }
         },
         series: [
           {
@@ -404,12 +490,18 @@ export default {
             stack: '11',
             barMaxWidth: 150,
             label: {
-              show: true
+              show: true,
+              color: '#000'
             },
-            data: []
+            data: [],
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: '#83bff6' },
+              { offset: 0.5, color: '#188df0' },
+              { offset: 1, color: '#188df0' }
+            ])
           },
           {
-            name: '',
+            name: '计划车次',
             type: 'bar',
             stack: '11',
             barMaxWidth: 150,
@@ -419,7 +511,12 @@ export default {
                 position: 'center'
               }
             },
-            data: []
+            data: [],
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: 'rgb(231 219 201)' },
+              { offset: 0.5, color: 'rgb(239 196 131)' },
+              { offset: 1, color: 'rgb(239 196 131)' }
+            ])
           },
           // {
           //   name: '折线',
@@ -451,7 +548,8 @@ export default {
         color: this.color,
         title: {
           left: 'left',
-          text: '机台停机时间分析'
+          text: '机台停机时间分析',
+          textStyle: { color: '#000' }
         },
         grid: {
           left: '3%',
@@ -468,12 +566,25 @@ export default {
         },
         xAxis: {
           type: 'category',
-          name: '机台',
-          data: []
+          data: [],
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: '#000',
+              width: 1
+            }
+          }
         },
         yAxis: {
           type: 'value',
-          name: '分钟'
+          name: '分钟',
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: '#000',
+              width: 1
+            }
+          }
         },
         series: [{
           data: [],
@@ -487,7 +598,8 @@ export default {
         color: this.color,
         title: {
           left: 'center',
-          text: '机台OEE分析'
+          text: '机台OEE分析',
+          textStyle: { color: '#000' }
         },
         grid: {
           left: '3%',
@@ -504,11 +616,19 @@ export default {
         xAxis: {
           type: 'category',
           name: '机台',
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          lineStyle: {
+            color: '#fff',
+            width: 1// 这里是为了突出显示加上的
+          }
         },
         yAxis: {
           type: 'value',
-          name: '%'
+          name: '%',
+          lineStyle: {
+            color: '#fff',
+            width: 1// 这里是为了突出显示加上的
+          }
         },
         series: [{
           data: [120, 200, 150, 80, 70, 110, 130],
@@ -526,7 +646,7 @@ export default {
           this.getList()
           this._setInterval = setInterval(d => {
             this.getList()
-          }, 60000)
+          }, 30000)
         } else {
           window.clearInterval(this._setInterval)
         }
@@ -536,7 +656,10 @@ export default {
     }
   },
   created() {
-
+    this.bigScreen = this.$route.fullPath === '/homePage/index'
+    setInterval(d => {
+      this.currentTime = setDate(null, true)
+    }, 1000)
   },
   destroyed() {
     window.clearInterval(this._setInterval)
@@ -577,13 +700,18 @@ export default {
           this.optionPassRateLine.series[2].data = qualified_rate_data_total
 
           this.optionPassRateLine.xAxis[0].data = arr[1].date_range
+          if (this.bigScreen) {
+            this.optionPassRateLine.xAxis[0].axisLine.lineStyle.color = '#fff'
+            this.optionPassRateLine.yAxis.axisLine.lineStyle.color = '#fff'
+            this.optionPassRateLine.title.textStyle.color = '#fff'
+          }
           this.myChartPassRateLine.setOption(this.optionPassRateLine, true)
         }
         if (!bool && !bool2) {
           // 第三个数据
-          const plan_actual_actual_trains = this.setVal(arr[2].plan_actual_data, 'actual_trains')
-          const plan_actual_diff_trains = this.setVal(arr[2].plan_actual_data, 'diff_trains')
-          const plan_actual_plan_trains = this.setVal(arr[2].plan_actual_data, 'plan_trains')
+          const plan_actual_actual_trains = this.setVal(arr[2].plan_actual_data, 'actual_trains', true)
+          const plan_actual_diff_trains = this.setVal(arr[2].plan_actual_data, 'diff_trains', true)
+          const plan_actual_plan_trains = this.setVal(arr[2].plan_actual_data, 'plan_trains', true)
 
           // 算y最大值
           const maxVal = Math.max(...plan_actual_plan_trains)
@@ -592,12 +720,19 @@ export default {
           for (let index = 1; index < legMaxVal; index++) {
             str += '0'
           }
-
+          if (this.bigScreen) {
+            this.optionFinishChart.xAxis.axisLine.lineStyle.color = '#fff'
+            this.optionFinishChart.yAxis.axisLine.lineStyle.color = '#fff'
+            this.optionFinishChart.title.textStyle.color = '#fff'
+            this.optionFinishChart.series[2].label.normal.textStyle.color = '#fff'
+            this.optionFinishChart.legend.textStyle.color = '#fff'
+          }
           this.optionFinishChart.yAxis.max = Math.ceil(maxVal / Number(str)) * str
           this.optionFinishChart.xAxis.data = arr[2].equip_data
           this.optionFinishChart.series[0].data = plan_actual_actual_trains
           this.optionFinishChart.series[1].data = plan_actual_diff_trains
           this.optionFinishChart.series[2].data = plan_actual_plan_trains
+
           this.myChartFinishChart.setOption(this.optionFinishChart)
         }
 
@@ -616,6 +751,12 @@ export default {
           this.optionYieldBar.series[2].data = plan_without_sulfur_trains
           this.optionYieldBar.series[4].data = actual_add_sulfur_trains
           this.optionYieldBar.series[5].data = actual_without_sulfur_trains
+          if (this.bigScreen) {
+            this.optionYieldBar.xAxis.axisLine.lineStyle.color = '#fff'
+            this.optionYieldBar.yAxis.axisLine.lineStyle.color = '#fff'
+            this.optionYieldBar.title.textStyle.color = '#fff'
+            this.optionYieldBar.legend.textStyle.color = '#fff'
+          }
           this.myChartYieldBar.setOption(this.optionYieldBar)
         }
         if (!bool && !bool1) {
@@ -623,6 +764,11 @@ export default {
           const maintenance_data_minutes = this.setVal(arr[3].maintenance_data, 'minutes')
           this.optionShutdownBar.series[0].data = maintenance_data_minutes
           this.optionShutdownBar.xAxis.data = arr[3].equip_data
+          if (this.bigScreen) {
+            this.optionShutdownBar.xAxis.axisLine.lineStyle.color = '#fff'
+            this.optionShutdownBar.yAxis.axisLine.lineStyle.color = '#fff'
+            this.optionShutdownBar.title.textStyle.color = '#fff'
+          }
           this.myChartShutdownBar.setOption(this.optionShutdownBar)
         }
       } catch (e) {
@@ -655,11 +801,14 @@ export default {
         this.getList(false, true, false)
       }
     },
-    setVal(a, b) {
+    setVal(a, b, bool) {
       const c = []
       for (const key in a) {
         if (Object.hasOwnProperty.call(a, key)) {
           const element = a[key]
+          if (element[b] === 0 && bool) {
+            element[b] = ''
+          }
           c.push(element[b])
         }
       }
@@ -672,7 +821,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .homePage-container {
   // background-color: #f0f2f5;
   padding:0 20px;
@@ -685,6 +834,12 @@ export default {
     right:20px;
     z-index: 100;
   }
+  .yieldBarLine{
+      position: absolute;
+    top:13px;
+    right:20px;
+    z-index: 100;
+  }
   .volumeBox{
     background: #fff;
     // padding:10px;
@@ -693,7 +848,7 @@ export default {
   }
   .volumeBoxChild{
     text-align:center;
-    font-size:20px;
+    font-size:25px;
     padding: 6px 0;
   }
   .homePage-title{
@@ -740,4 +895,80 @@ export default {
     display: flex;
   }
 }
+.bigScreen{
+  min-height: 100vh;
+ background-image: url(../../assets/pageBg.f9f9dcd5.png);
+ .el-row{
+   padding-top:20px;
+ }
+  .set-current-time{
+    font-size:20px !important;
+  }
+ .el-card{
+   background: transparent !important;
+   border: 2px solid rgb(24 122 174 / 70%);
+ }
+ .volumeBoxChild{
+   padding: 10px 0;
+ }
+ .volumeBox{
+   background: transparent !important;
+   height: 360px!important;
+ }
+ .el-input__inner{
+   background: transparent !important;
+ }
+.el-date-editor .el-range-input{
+   background: transparent !important;
+ }
+ .el-tabs__item,.el-date-editor .el-range-input{
+   color:#fff;
+ }
+   .head-top{
+    display: flex;
+    justify-content: space-between ;
+     align-items: center;
+     color:#fff;
+  }
+    .d-flex{
+      margin-top: 10px;
+    display: flex;
+    h2{
+      margin:15px;
+    }
+    .decoration10{
+      width:480px;
+      height: 3px;
+      background:rgb(74, 107, 178);
+      box-shadow: 0 2px 12px 0 rgb(74, 107, 178);
+    }
+    .decoration8{
+      transform: rotate(60deg);
+      margin-top:40px;
+      height: 3px;
+      width:86px;
+      background:rgb(74, 107, 178);
+      margin-left:-20px;
+      margin-right:-20px;
+      box-shadow: 0 2px 12px 0 rgb(74, 107, 178);
+    }
+    .decoration8-1{
+       transform: rotate(120deg)
+    }
+    .title{
+      padding-bottom:17px;
+      position: relative;
+      margin-bottom:10px ;
+    }
+    .title-border{
+      position: absolute;
+      bottom:0;
+      width:100%;
+      height: 3px;
+      background:rgb(74, 107, 178);
+      box-shadow: 0 2px 12px 0 rgb(74, 107, 178);
+    }
+  }
+}
+
 </style>

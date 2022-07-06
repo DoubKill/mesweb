@@ -5,7 +5,7 @@
       <el-form-item label="机台">
         <selectEquip
           :equip_no_props.sync="search.equip_no"
-          :is-created="true"
+          :is-created="$route.query.equip?false:true"
           @changeSearch="equipChange"
         />
       </el-form-item>

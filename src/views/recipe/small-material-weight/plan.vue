@@ -49,9 +49,9 @@
             <el-button v-permission="['xl_plan', 'add']" type="primary" @click="addFun(item,index,true)">新增计划</el-button>
             <el-button v-permission="['xl_plan', 'delete']" type="primary" :disabled="item.currentRow&&item.currentRow.state!=='等待'" @click="delFun(item,index,'删除')">删除计划</el-button>
             <el-button v-permission="['xl_plan', 'issue']" type="primary" :disabled="item.currentRow&&item.currentRow.state!=='等待'" @click="delFun(item,index,'下达',1)">下达计划</el-button>
-            <!-- <el-button v-permission="['xl_plan', 'reload']" type="primary" :disabled="item.currentRow&&item.currentRow.state!=='运行中'" @click="delFun(item,index,'重传',2)">计划重传</el-button> -->
-            <el-button v-permission="['xl_plan', 'change']" type="primary" :disabled="item.currentRow&&item.currentRow.state!=='运行中'" @click="addFun(item,index,false)">修改车次</el-button>
-            <el-button v-permission="['xl_plan', 'stop']" type="primary" :disabled="item.currentRow&&item.currentRow.state!=='运行中'" @click="delFun(item,index,'停止',4)">计划停止</el-button>
+            <!-- <el-button v-permission="['xl_plan', 'reload']" type="primary" :disabled="item.currentRow&&item.currentRow.state!=='运行'" @click="delFun(item,index,'重传',2)">计划重传</el-button> -->
+            <el-button v-permission="['xl_plan', 'change']" type="primary" :disabled="item.currentRow&&item.currentRow.state&&(item.currentRow.state).indexOf('运行')===-1" @click="addFun(item,index,false)">修改车次</el-button>
+            <el-button v-permission="['xl_plan', 'stop']" type="primary" :disabled="item.currentRow&&item.currentRow.state&&(item.currentRow.state).indexOf('运行')===-1" @click="delFun(item,index,'停止',4)">计划停止</el-button>
 
             <el-button v-permission="['xl_plan', 'add']" type="primary" :disabled="item.currentRow&&item.currentRow.state!=='等待'" @click="delFun(item,index,'上移',null)">上移</el-button>
             <el-button v-permission="['xl_plan', 'add']" type="primary" :disabled="item.currentRow&&item.currentRow.state!=='等待'" @click="delFun(item,index,'下移',null)">下移</el-button>
@@ -163,7 +163,7 @@
             />
           </el-form-item>
         </div>
-        <el-form-item label="设定车次" prop="setno">
+        <el-form-item label="密炼车次" prop="setno">
           <el-input-number
             v-model="ruleForm.setno"
             :min="ruleForm.actno||0"
@@ -236,7 +236,7 @@ export default {
           { required: true, message: '请选择配方', trigger: 'change' }
         ],
         setno: [
-          { required: true, message: '请输入设定车次', trigger: 'blur' }
+          { required: true, message: '请输入密炼车次', trigger: 'blur' }
         ]
       },
       dialogAdd: false,
@@ -412,7 +412,7 @@ export default {
     addFun(row, index, bool) {
       // bool 是 true == 新增 否则 修改
       if (!bool) {
-        if (!this.allTable[index].currentRow) {
+        if (!this.allTable[index].currentRow || JSON.stringify(this.allTable[index].currentRow) === '{}') {
           this.$message.info('请选中一行计划')
           return
         }
@@ -429,7 +429,7 @@ export default {
       this.ruleForm.recipe_ver = val ? val.ver : ''
     },
     delFun(row, index, val, action) {
-      if (!this.allTable[index].currentRow) {
+      if (!this.allTable[index].currentRow || JSON.stringify(this.allTable[index].currentRow) === '{}') {
         this.$message.info('请选中一行计划')
         return
       }

@@ -16,6 +16,15 @@ export function materialTestOrders(query) {
   })
 }
 
+export function materialTestOrdersAll(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MaterialTestOrdersUrl + id + '/' : API.MaterialTestOrdersUrl,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function testResultHistory(test_order_id) {
   return request({
     url: API.testResultHistoryUrl,

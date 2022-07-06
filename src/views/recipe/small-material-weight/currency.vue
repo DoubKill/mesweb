@@ -49,7 +49,7 @@
           @change="changeDevType"
         />
       </el-form-item>
-      <el-form-item label="卡片状态">
+      <el-form-item v-if="!isProduction" label="卡片状态">
         <el-select
           v-model="search.print_flag"
           clearable
@@ -59,6 +59,22 @@
           <el-option
             v-for="(item) in [{name:'未打印',id:0},{name:'已打印',id:1},
                               {name:'已失效',id:2},{name:'过期',id:3}]"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item v-if="isProduction" label="卡片状态">
+        <el-select
+          v-model="search.print_flag"
+          clearable
+          filterable
+          @change="changeSearch"
+        >
+          <el-option
+            v-for="(item) in [{name:'未打印',id:1},{name:'已打印',id:0},
+                              {name:'已失效',id:2}]"
             :key="item.id"
             :label="item.name"
             :value="item.id"
@@ -282,7 +298,8 @@
           <el-input-number
             v-model="formData._single_weight"
             controls-position="right"
-            :max="100"
+            :max="1000"
+            :precision="2"
             placeholder="配料重量"
             :disabled="(formData.id||formData.batching_type==='配方')?true:false"
           />
@@ -295,7 +312,8 @@
           <el-input-number
             v-model="formData.single_weight"
             controls-position="right"
-            :max="99.999"
+            :max="1000"
+            :precision="2"
             placeholder="配料重量"
             :disabled="(formData.id||formData.batching_type==='配方')?true:false"
           />
@@ -522,7 +540,9 @@ export default {
         // }
         if (this.formData.batching_type !== '配方') {
           await this.getWeight()
-          await this.getHistory1()
+          if (!this.isProduction) {
+            await this.getHistory1()
+          }
         } else {
           await this.getHistory()
         }

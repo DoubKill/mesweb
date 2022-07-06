@@ -98,6 +98,15 @@ export function compoundManage(method, id, data = {}) {
   return request(obj)
 }
 
+export function outboundPproductInfo(method, id, data = {}) {
+  const obj = {
+    url: id ? API.OutboundPproductInfo + id + '/' : API.OutboundPproductInfo,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 // 出库
 export function outbound(method, id, data = {}) {
   const obj = {
@@ -1241,6 +1250,15 @@ export function summaryOfMillOutput(method, id, data = {}) {
 export function wmsExceptHandle(method, id, data = {}) {
   const obj = {
     url: id ? API.WmsExceptHandle + id + '/' : API.WmsExceptHandle,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function wmsMnLevelSearch(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WmsMnLevelSearch + id + '/' : API.WmsMnLevelSearch,
     method: method
   }
   Object.assign(obj, data)

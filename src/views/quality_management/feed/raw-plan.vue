@@ -231,7 +231,7 @@
         </div>
       </el-col>
     </el-row>
-
+    <el-alert style="color:black" title="表格字体颜色说明：红色-优先度高，密炼计划中使用到的物料，且料罐料位低的；黄色-优先度中，密炼计划中使用到的物料，且料罐料位中的；绿色-优先度中，密炼计划中未使用到的物料，且料罐料位低或中" type="success" />
     <el-dialog
       title="炭黑罐投料 出库信息确认"
       :visible.sync="dialogVisible"

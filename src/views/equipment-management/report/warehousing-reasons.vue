@@ -152,6 +152,11 @@
           min-width="20"
         />
         <el-table-column
+          prop="trains"
+          label="车次"
+          min-width="20"
+        />
+        <el-table-column
           prop="lot_no"
           label="收皮条码"
           min-width="20"
@@ -163,7 +168,7 @@
         />
         <el-table-column
           prop="input_datetime"
-          label="登陆时间"
+          label="登录时间"
           min-width="20"
         />
       </el-table>
@@ -275,11 +280,23 @@ export default {
     },
     async exportTable(val) {
       if (val === 1) {
-        document.getElementById('table').id = 'out-table'
-        await exportExcel('期间别不入库原因统计报表')
-        setTimeout(() => {
-          document.getElementById('out-table').id = 'table'
-        }, 1000)
+        this.btnExportLoad = true
+        const obj = Object.assign({ export: 1 }, this.search)
+        const _api = duratePutinReson
+        _api('get', null, { responseType: 'blob', params: obj })
+          .then(res => {
+            const link = document.createElement('a')
+            const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+            link.style.display = 'none'
+            link.href = URL.createObjectURL(blob)
+            link.download = '期间别不入库原因报表.xlsx' // 下载的文件名
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+            this.btnExportLoad = false
+          }).catch(e => {
+            this.btnExportLoad = false
+          })
       }
       if (val === 2) {
         document.getElementById('table1').id = 'out-table'

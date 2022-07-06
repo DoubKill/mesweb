@@ -272,11 +272,29 @@
     </el-dialog>
 
     <el-dialog
-      title="原材料基础信息"
+      :title="detailForm.equip_no?'密炼投入物料 胶料详细信息':'密炼投入物料 原材料基础信息'"
       :visible.sync="dialogVisibleDetail"
       width="50%"
     >
-      <el-form :inline="true" label-width="150px">
+      <el-form v-if="detailForm.equip_no" :inline="true" label-width="150px">
+        <el-form-item label="胶料编码">
+          <el-input v-model="detailForm.product_no" disabled style="width:250px" />
+        </el-form-item>
+        <el-form-item label="机台">
+          <el-input v-model="detailForm.equip_no" disabled style="width:250px" />
+        </el-form-item>
+        <el-form-item label="生产日期">
+          <el-input v-model="detailForm.product_time" disabled style="width:250px" />
+        </el-form-item>
+        <el-form-item label="班次/班组">
+          <el-input v-model="detailForm.classes" disabled style="width:100px" />
+          <el-input v-model="detailForm.batch_group" disabled style="width:150px" />
+        </el-form-item>
+        <el-form-item label="车次">
+          <el-input v-model="detailForm.trains" disabled style="width:100px" />
+        </el-form-item>
+      </el-form>
+      <el-form v-else :inline="true" label-width="150px">
         <el-form-item label="代码">
           <el-input v-model="detailForm.TOFAC" disabled style="width:250px" />
         </el-form-item>
@@ -381,6 +399,7 @@ export default {
         const obj = {}
         obj.opera_type = 2
         obj.bra_code = row.bra_code
+        obj.select_name = row.material_name
         const data = await batchChargeLogList('get', null, { params: obj })
         if (data.length > 0) {
           this.detailForm = data[0]
@@ -390,7 +409,7 @@ export default {
           this.detailForm = {}
         }
       } catch (e) {
-        this.dialogVisibleDetail = true
+        this.dialogVisibleDetail = false
       }
     },
     async getList() {

@@ -206,7 +206,7 @@
         min-width="50"
       >
         <template v-if="row.value" slot-scope="{row}">
-          {{ row.value.replace(/{|}|'/g,"") }}
+          <span v-for="item in JSON.parse(row.value)" :key="item.name" :style="{'color':item.flag==='H'?'red':item.flag==='L'?'blue':''}">{{ item.name }}:{{ item.value }};</span>
         </template>
       </el-table-column>
       <el-table-column

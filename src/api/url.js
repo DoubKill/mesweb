@@ -6,6 +6,7 @@ export default {
   HomePageUrl: '/api/v1/index/',
   GlobalTypesUrl: BasicsUrl + 'global-types/',
   GlobalCodesUrl: BasicsUrl + 'global-codes/',
+  CommonCode: '/api/v1/basics/common-code/',
 
   EquipCategoryUrl: BasicsUrl + 'equips-category/',
   // const EquipCategoryUrl : BasicsUrl + "equips-category-list/",
@@ -213,6 +214,7 @@ export default {
 
   MaterialTypesUrl: BasicsUrl + 'global-codes/',
 
+  ProductStockOutbound: '/api/v1/inventory/product-stock-outbound/',
   // 批量打印
   LabelPrint: '/api/v1/quality/label-print/',
   ShowQualifiedRange: '/api/v1/quality/show-qualified-range/',
@@ -260,7 +262,9 @@ export default {
   // 报表-车次记录-曲线图{id}
   CurveInformationUrl: '/api/v1/production/curve-information-list/',
   AlarmLogList: '/api/v1/production/alarm_log-list/',
-
+  WmsMooneyLevel: '/api/v1/quality/wms-mooney-level/',
+  ClearLevel: '/api/v1/quality/wms-mooney-level/clear-level/',
+  LevelBatchSet: '/api/v1/quality/wms-mooney-level/batch-set/',
   // 备品备件物料类型
   SparepartsSpareType: '/api/v1/spareparts/spare-type/',
   // 备品备件物料编码
@@ -501,6 +505,7 @@ export default {
   CarbonOutTask: '/api/v1/terminal/carbon-out-task/',
   // 胶片库出库单列表
   CompoundManage: '/api/v1/inventory/outbound-delivery-orders/',
+  OutboundPproductInfo: '/api/v1/inventory/outbound-product-info/',
   // 出库
   Outbound: '/api/v1/inventory/outbound-delivery-order-details/',
   // 机台别不合格率
@@ -677,6 +682,7 @@ export default {
   UserImport: '/api/v1/system/personnels/import_xlsx/',
   Sb: '/api/v1/production/nishisb/',
   WmsExceptHandle: '/api/v1/inventory/wms-except-handle/',
+  WmsMnLevelSearch: '/api/v1/inventory/wms-mn-level-search/',
   HfStock: '/api/v1/inventory/hf-stock/', // 烘房胶料信息统计列表
   HfStockDetail: '/api/v1/inventory/hf-stock-detail/',
   AttendanceClockDetail: '/api/v1/production/attendance-clock-detail/',

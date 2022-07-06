@@ -131,6 +131,11 @@
       :current-page="search.page"
       @currentChange="currentChange"
     />
+    <el-alert
+      style="color:black"
+      title="表格背景色说明：绿色为处理中处置单"
+      type="success"
+    />
     <h3 style="margin-top:1em">不合格品 处置单详情</h3>
     <el-table
       :data="tableData1"
