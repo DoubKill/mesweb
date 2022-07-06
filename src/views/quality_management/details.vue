@@ -347,38 +347,14 @@ export default {
             type: 'scatter',
             xAxisIndex: 0,
             yAxisIndex: 0,
-            data: [
-              [10.0, 8.04],
-              [8.0, 6.95],
-              [13.0, 7.58],
-              [9.0, 8.81],
-              [11.0, 8.33],
-              [14.0, 9.96],
-              [6.0, 7.24],
-              [4.0, 4.26],
-              [12.0, 10.84],
-              [7.0, 4.82],
-              [5.0, 5.68]
-            ]
+            data: []
           },
           {
             name: 'II',
             type: 'scatter',
             xAxisIndex: 1,
             yAxisIndex: 1,
-            data: [
-              [10.0, 9.14],
-              [8.0, 8.14],
-              [13.0, 8.74],
-              [9.0, 8.77],
-              [11.0, 9.26],
-              [14.0, 8.1],
-              [6.0, 6.13],
-              [4.0, 3.1],
-              [12.0, 9.13],
-              [7.0, 7.26],
-              [5.0, 4.74]
-            ]
+            data: []
           }
         ]
       }
@@ -711,8 +687,8 @@ export default {
             _title.push({ text: d.name, right: '8%', top: _topTitle2 })
             _grid.push({ right: '5%', top: _top2, width: '40%', height: _height })
           }
-          const _1 = data.indicators[d.name][0]
-          const _3 = data.indicators[d.name][1]
+          const _1 = data.indicators[d.name] ? data.indicators[d.name][0] : 0
+          const _3 = data.indicators[d.name] ? data.indicators[d.name][1] : 0
           const _2 = ((_3 + _1) / 2).toFixed(2)
           _series.push({
             name: d.name,
@@ -720,7 +696,7 @@ export default {
             xAxisIndex: _i,
             yAxisIndex: _i,
             data: _dataSeries,
-            markLine: {
+            markLine: data.indicators[d.name] ? {
               data: [{
                 silent: true,
                 yAxis: _1, label: {
@@ -738,7 +714,7 @@ export default {
                   formatter: `上限(${_3})`
                 }}
               ]
-            }
+            } : {}
           })
         })
         this.historySpot.xAxis = _x || []
