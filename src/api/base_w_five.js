@@ -192,6 +192,14 @@ export function monthlyOutputStatisticsReport(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function monthlyOutputStatisticsReportDetail(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MonthlyOutputStatisticsReportDetail + id + '/' : API.MonthlyOutputStatisticsReportDetail,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 export function performanceSummary(method, id, data = {}) {
   const obj = {
     url: id ? API.PerformanceSummary + id + '/' : API.PerformanceSummary,
@@ -330,6 +338,47 @@ export function productExpiresList(method, id, data = {}) {
 export function equipmentIndex(method, id, data = {}) {
   const obj = {
     url: id ? API.EquipmentIndex + id + '/' : API.EquipmentIndex,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function productSynthesisRate(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ProductSynthesisRate + id + '/' : API.ProductSynthesisRate,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function productSynthesisEquipRate(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ProductSynthesisEquipRate + id + '/' : API.ProductSynthesisEquipRate,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function productSynthesisGroupRate(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ProductSynthesisGroupRate + id + '/' : API.ProductSynthesisGroupRate,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function productSynthesisProductRate(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ProductSynthesisProductRate + id + '/' : API.ProductSynthesisProductRate,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function productSynthesisMonthRate(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ProductSynthesisMonthRate + id + '/' : API.ProductSynthesisMonthRate,
     method: method
   }
   Object.assign(obj, data)

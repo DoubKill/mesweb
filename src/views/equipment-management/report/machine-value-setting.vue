@@ -3,14 +3,14 @@
   <div>
     <el-form :inline="true">
       <el-form-item label="日期">
-        <el-select v-model="time" placeholder="请选择" @change="getList">
-          <el-option
-            v-for="item in dayList"
-            :key="item"
-            :label="item"
-            :value="item"
-          />
-        </el-select>
+        <el-date-picker
+          v-model="monthValue"
+          type="month"
+          value-format="yyyy-MM"
+          format="yyyy-MM"
+          placeholder="选择月"
+          @change="getList"
+        />
       </el-form-item>
       <el-form-item>
         <el-button v-permission="['machine_target_value','export']" type="primary" @click="exportTable">导出Excel</el-button>
@@ -38,16 +38,29 @@
           min-width="20"
         />
         <el-table-column
-          prop="value"
-          label="机台目标值(车）"
+          prop="target_weight"
+          label="机台目标值(车)"
           min-width="20"
         >
           <template slot-scope="{row}">
             <div v-if="!exportTableShow">
-              <span v-if="row.equip_no==='合计'||time!==dayList.slice(-1)[0]">{{ row.value }}</span>
-              <el-input-number v-else v-model="row.value" :min="0" @change="changeTotal" />
+              <span v-if="row.equip_no==='合计'">{{ row.target_weight }}</span>
+              <el-input-number v-else v-model="row.target_weight" :min="0" @change="changeTotal" />
             </div>
-            <span v-else>{{ row.value }}</span>
+            <span v-else>{{ row.target_weight }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="max_weight"
+          label="最高值"
+          min-width="20"
+        >
+          <template slot-scope="{row}">
+            <div v-if="!exportTableShow">
+              <span v-if="row.equip_no==='合计'">{{ row.max_weight }}</span>
+              <el-input-number v-else v-model="row.max_weight" :min="0" />
+            </div>
+            <span v-else>{{ row.max_weight }}</span>
           </template>
         </el-table-column>
       </el-table>
@@ -56,7 +69,7 @@
 </template>
 
 <script>
-import { exportExcel } from '@/utils/index'
+import { exportExcel, setDate } from '@/utils/index'
 import { machineTargetValue } from '@/api/jqy'
 export default {
   name: 'MachineValueSetting',
@@ -67,7 +80,8 @@ export default {
       exportTableShow: false,
       tableData: [],
       loading: false,
-      btnLoading: false
+      btnLoading: false,
+      monthValue: setDate(null, null, 'month')
     }
   },
   created() {
@@ -76,16 +90,12 @@ export default {
   methods: {
     async getList() {
       try {
-        const data = await machineTargetValue('get', null, { params: { time: this.time }})
+        const data = await machineTargetValue('get', null, { params: { target_month: this.monthValue }})
         this.tableData = data.results || []
-        this.dayList = data.date
-        if (this.time === null) {
-          this.time = this.dayList.slice(-1)[0]
-        }
         if (this.tableData.length > 0) {
           this.tableData.push({
             equip_no: '合计',
-            value: sum(this.tableData, 'value')
+            target_weight: sum(this.tableData, 'target_weight')
           })
         }
       } catch (e) {
@@ -112,28 +122,33 @@ export default {
           obj.push(item)
         }
       })
-      this.tableData[index - 1].value = sum(obj, 'value')
+      this.tableData[index - 1].target_weight = sum(obj, 'target_weight')
     },
     async submitFun() {
       try {
-        if (this.time !== this.dayList.slice(-1)[0]) {
-          this.$message.info('不是最新数据，无需进行保存操作')
-          return
-        }
+        // if (this.time !== this.dayList.slice(-1)[0]) {
+        //   this.$message.info('不是最新数据，无需进行保存操作')
+        //   return
+        // }
         this.tableData.forEach(d => {
-          if (!d.value) {
+          if (!d.target_weight) {
             throw new Error('每行数据必填')
           }
         })
+
+        const _obj = {
+          target_month: this.monthValue,
+          data: truncate(this.tableData)
+        }
         this.btnLoading = true
-        await machineTargetValue('post', null, { data: truncate(this.tableData) })
+        await machineTargetValue('post', null, { data: _obj })
         this.$message.success('保存成功')
         this.getList()
-        this.time = this.dayList.slice(-1)[0]
+        // this.time = this.dayList.slice(-1)[0]
         this.btnLoading = false
       } catch (e) {
         this.btnLoading = false
-        if (e.message) {
+        if (e.message === '每行数据必填') {
           this.$message(e.message)
         }
       }
@@ -158,7 +173,7 @@ function truncate(arr) {
 
 <style lang="scss" scoped>
   .machineValueSetting{
-    width: 50%;
+    width: 60%;
    .el-input{
       width:200px;
     }
