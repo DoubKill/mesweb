@@ -437,7 +437,7 @@ export let asyncRoutes = [
         redirect: '/rb/recipe/std/manage',
         name: 'RbRecipe',
         meta: {
-          title: '原材料信息管理',
+          title: '配方管理',
           icon: 'formula'
         },
         children: [
@@ -1351,7 +1351,7 @@ export let asyncRoutes = [
         component: () => import('@/views/production/track/track-fa'),
         name: 'Track',
         meta: {
-          title: '条码追朔',
+          title: '条码追溯',
           icon: 'production'
         },
         children: [
@@ -1361,7 +1361,7 @@ export let asyncRoutes = [
             component: () => import('@/views/production/track/track-raw-material'),
             meta: {
               faName: 'Track',
-              title: '原材料到胶片 条码追朔',
+              title: '原材料到胶片 条码追溯',
               permissionName: 'material_retrospect'
             }
           },
@@ -1371,7 +1371,7 @@ export let asyncRoutes = [
             component: () => import('@/views/production/track/track-raw-rubber'),
             meta: {
               faName: 'Track',
-              title: '胶片到原材料 条码追朔',
+              title: '胶片到原材料 条码追溯',
               permissionName: 'product_retrospect'
             }
           }
