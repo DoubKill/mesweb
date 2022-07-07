@@ -16,6 +16,7 @@
           <el-date-picker
             v-model="item.search.c_time"
             type="daterange"
+            :clearable="false"
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
@@ -117,7 +118,7 @@
 </template>
 
 <script>
-import { debounce } from '@/utils'
+import { debounce, setDate } from '@/utils'
 import selectBatchingEquip from '../components/select-batching-equip'
 import { xlReportWeight } from '@/api/base_w_three'
 import page from '@/components/page'
@@ -170,6 +171,10 @@ export default {
         const b = this.allTable[this.currentIndex].search.c_time
         this.currentSearch.st = b ? b[0] : ''
         this.currentSearch.et = b ? b[1] : ''
+        if (getDaysBetween(this.currentSearch.st, this.currentSearch.et) > 30) {
+          this.$message('查询日期间隔不得超过31天')
+          return
+        }
         //   获取当前改变的那个列表 替换上去
         const data = await this.getList()
         this.allTable[this.currentIndex].tableList = data.data
@@ -196,7 +201,9 @@ export default {
               this.allTable.push(
                 {
                   equip_no: d.equip_no,
-                  search: {},
+                  search: {
+                    c_time: [getNextDate(setDate(), -31), setDate()]
+                  },
                   tableList: a.data,
                   total: a.total
                 }
@@ -208,6 +215,27 @@ export default {
     }
   }
 }
+function getNextDate(date, day) {
+  var dd = new Date(date)
+  dd.setDate(dd.getDate() + day)
+  var y = dd.getFullYear()
+  var m = dd.getMonth() + 1 < 10 ? '0' + (dd.getMonth() + 1) : dd.getMonth() + 1
+  var d = dd.getDate() < 10 ? '0' + dd.getDate() : dd.getDate()
+  return y + '-' + m + '-' + d
+}
+function getDaysBetween(dateString1, dateString2) {
+  var startDate = Date.parse(dateString1)
+  var endDate = Date.parse(dateString2)
+  if (startDate > endDate) {
+    return 0
+  }
+  if (startDate === endDate) {
+    return 1
+  }
+  var days = (endDate - startDate) / (1 * 24 * 60 * 60 * 1000)
+  return days
+}
+
 </script>
 
 <style lang='scss' scoped>
