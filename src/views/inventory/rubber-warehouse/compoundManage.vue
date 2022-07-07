@@ -456,12 +456,24 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="cancelOrderNo(selectionData)">取消任务</el-button>
+        </el-form-item>
       </el-form>
       <el-table
+        ref="multipleTable"
         v-loading="loadingView"
         :data="tableDataView"
         border
+        row-key="id"
+        @selection-change="handleSelectionChange"
       >
+        <el-table-column
+          type="selection"
+          width="55"
+          :reserve-selection="true"
+          :selectable="(row)=>{return row.status===1}"
+        />
         <el-table-column
           prop="order_no"
           label="出库任务号"
@@ -520,10 +532,11 @@
         />
         <el-table-column
           label="操作"
-          width="85"
+          width="140"
         >
           <template slot-scope="{row}">
-            <el-button :disabled="row.status===3||row.status===4||row.status===5" type="danger" @click="closeOrderNo(row)">关闭</el-button>
+            <!-- <el-button :disabled="row.status===3||row.status===4||row.status===5" type="danger" @click="closeOrderNo(row)">关闭</el-button> -->
+            <el-button :disabled="row.status!==1" type="primary" @click="cancelOrderNo([row])">取消任务</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -600,7 +613,7 @@ export default {
         { name: '新建', id: 1 },
         { name: '执行中', id: 2 },
         { name: '已出库', id: 3 },
-        { name: '关闭', id: 4 },
+        { name: '取消', id: 4 },
         { name: '失败', id: 5 }
       ],
       minTrains: 1,
