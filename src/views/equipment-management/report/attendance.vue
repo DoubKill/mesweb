@@ -34,6 +34,7 @@
         <el-button
           v-permission="['employee_attendance_records','export']"
           type="primary"
+          :disabled="!isDownload"
           :loading="btnExportLoad"
           @click="exportTable1"
         >导出Excel</el-button>
@@ -518,6 +519,7 @@ export default {
       addType: null,
       submit: false,
       tableTop: [],
+      isDownload: true,
       section: '',
       date: '',
       equip: '',
@@ -633,6 +635,7 @@ export default {
       try {
         this.loading = true
         const data = await employeeattendancerecords('get', null, { params: this.search })
+        this.isDownload = data.export_flag
         this.tableHead1 = data.group_list || []
         this.approve_user = data.approve_user
         this.audit_user = data.audit_user
