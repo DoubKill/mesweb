@@ -666,7 +666,9 @@ export default {
         data.y_axis.forEach((d, _i) => {
           const _dataSeries = []
           d.data.forEach((dd, ii) => {
-            _dataSeries.push([data.x_axis[ii], Number(dd)])
+            dd.forEach((ddd, iii) => {
+              _dataSeries.push([data.x_axis[ii], Number(ddd)])
+            })
           })
           _x.push({
             gridIndex: _i,
