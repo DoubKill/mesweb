@@ -662,12 +662,11 @@ export default {
         const _num = Math.ceil(data.y_axis.length / 2) + 2
         const _height = (1 / _num * 100).toFixed(0) + '%'
         const _height1 = (1 / _num * 100 + 8).toFixed(0)
+
         data.y_axis.forEach((d, _i) => {
           const _dataSeries = []
           d.data.forEach((dd, ii) => {
-            dd.forEach((ddd, iii) => {
-              _dataSeries.push([data.x_axis[ii], Number(ddd)])
-            })
+            _dataSeries.push([data.x_axis[ii], Number(dd)])
           })
           _x.push({
             gridIndex: _i,
@@ -685,7 +684,7 @@ export default {
             const _top2 = ((_i - 1) / 2) * _height1 + 5 + '%'
             const _topTitle2 = ((_i - 1) / 2) * _height1 + 2 + '%'
             _title.push({ text: d.name, right: '8%', top: _topTitle2 })
-            _grid.push({ right: '5%', top: _top2, width: '40%', height: _height })
+            _grid.push({ right: '6%', top: _top2, width: '40%', height: _height })
           }
           const _1 = data.indicators[d.name] ? data.indicators[d.name][0] : 0
           const _3 = data.indicators[d.name] ? data.indicators[d.name][1] : 0

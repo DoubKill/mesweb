@@ -354,7 +354,7 @@ export default {
         color: this.color,
         title: {
           left: 'left',
-          text: '合格率分析',
+          text: '综合合格率分析',
           textStyle: { color: '#000' }
         },
         tooltip: {
@@ -400,10 +400,11 @@ export default {
         },
         series: [
           {
-            name: '合格率',
+            name: '综合合格率',
             type: 'line',
             data: [],
-            itemStyle: { normal: { label: { show: true }}}
+            itemStyle: { normal: {
+              label: { show: true, color: '#000' }}}
           },
           {
             name: '合格车数',
@@ -591,7 +592,13 @@ export default {
           name: '机台停机时间',
           type: 'bar',
           barMaxWidth: 150,
-          itemStyle: { normal: { label: { show: true, position: 'top' }}}
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: '#83bff6' },
+            { offset: 0.5, color: '#188df0' },
+            { offset: 1, color: '#188df0' }
+          ]),
+          itemStyle: { normal: {
+            label: { show: true, position: 'top', color: '#000' }}}
         }]
       },
       optionOEEBar: {
@@ -704,6 +711,7 @@ export default {
             this.optionPassRateLine.xAxis[0].axisLine.lineStyle.color = '#fff'
             this.optionPassRateLine.yAxis.axisLine.lineStyle.color = '#fff'
             this.optionPassRateLine.title.textStyle.color = '#fff'
+            this.optionPassRateLine.series[0].itemStyle.normal.label.color = '#fff'
           }
           this.myChartPassRateLine.setOption(this.optionPassRateLine, true)
         }
@@ -756,6 +764,7 @@ export default {
             this.optionYieldBar.yAxis.axisLine.lineStyle.color = '#fff'
             this.optionYieldBar.title.textStyle.color = '#fff'
             this.optionYieldBar.legend.textStyle.color = '#fff'
+            this.optionYieldBar.series[0].itemStyle.normal.label.color = '#fff'
           }
           this.myChartYieldBar.setOption(this.optionYieldBar)
         }
@@ -768,6 +777,7 @@ export default {
             this.optionShutdownBar.xAxis.axisLine.lineStyle.color = '#fff'
             this.optionShutdownBar.yAxis.axisLine.lineStyle.color = '#fff'
             this.optionShutdownBar.title.textStyle.color = '#fff'
+            this.optionShutdownBar.series[0].itemStyle.normal.label.color = '#fff'
           }
           this.myChartShutdownBar.setOption(this.optionShutdownBar)
         }
