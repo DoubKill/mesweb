@@ -28,7 +28,7 @@
         <class-select @classSelected="classSelected" />
       </el-form-item>
       <el-form-item label="段次">
-        <stage-select v-model="getParams.stage" :is-default="true" :is-clearable="false" @change="clickQuery" />
+        <stage-select v-model="getParams.stage" @change="clickQuery" />
       </el-form-item>
       <el-form-item label="综合检测结果">
         <el-select
