@@ -28,6 +28,11 @@
         min-width="20"
       />
       <el-table-column
+        prop="work_schedule_name"
+        label="倒班名称"
+        min-width="20"
+      />
+      <el-table-column
         prop="type"
         label="类别"
         min-width="20"
@@ -46,14 +51,14 @@
           return obj.label
         }"
       /> -->
-      <el-table-column
+      <!-- <el-table-column
         label="考勤时间"
         min-width="20"
       >
         <template slot-scope="{row}">
           <span> {{ row.attendance_st }}-{{ row.attendance_et }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         prop="principal"
         label="考勤组负责人"
@@ -110,6 +115,16 @@
         <el-form-item label="考勤组名称" prop="attendance_group">
           <el-input v-model="dialogForm.attendance_group" style="width:250px" :disabled="dialogForm.id?true:false" />
         </el-form-item>
+        <el-form-item label="倒班规则" prop="work_schedule">
+          <el-select v-model="dialogForm.work_schedule" placeholder="请选择" style="width:250px">
+            <el-option
+              v-for="item in workList"
+              :key="item.id"
+              :label="item.schedule_name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item label="类别" prop="type">
           <el-select v-model="dialogForm.type" placeholder="请选择" style="width:250px">
             <el-option
@@ -123,6 +138,7 @@
         <el-form-item label="考勤参与人员" prop="attendance_users">
           <el-input
             v-model="dialogForm.attendance_users"
+            :title="dialogForm.attendance_users"
             style="width:250px"
             disabled
           >
@@ -143,7 +159,7 @@
             />
           </el-select>
         </el-form-item> -->
-        <el-form-item label="考勤时间" prop="time">
+        <!-- <el-form-item label="考勤时间" prop="time">
           <el-time-picker
             v-model="dialogForm.attendance_st"
             :picker-options="{
@@ -163,7 +179,7 @@
             format="HH:mm:ss"
             placeholder="任意时间点"
           />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="考勤负责人" prop="principal">
           <el-input
             v-model="dialogForm.principal"
@@ -193,11 +209,11 @@
     <el-dialog
       :title="pickType==='参与'?'添加考勤参与人员':'添加考勤负责人'"
       :visible.sync="dialogVisiblePerson"
-      width="30%"
+      width="60%"
     >
       <el-form :inline="true" label-width="120px">
         <el-form-item label="部门" prop="type">
-          <el-select v-model="department" placeholder="请选择" style="width:250px" @change="getGroupList">
+          <el-select v-model="department" clearable filterable placeholder="请选择" style="width:250px" @change="getGroupList">
             <el-option
               v-for="item in sectionList"
               :key="item.id"
@@ -206,18 +222,37 @@
             />
           </el-select>
         </el-form-item>
+        <!-- <el-form-item v-if="pickType!=='参与'" label="名字">
+          <el-input v-model="name" clearable placeholder="" style="width:250px" @input="nameSearch" />
+        </el-form-item> -->
         <br>
         <el-form-item label="选择人员" style="" prop="checkList">
-          <el-checkbox-group v-if="pickType==='参与'" v-model="checkList" v-loading="loadPerson" style="width:400px">
-            <template v-for="(item, index) in staffList">
+          <!-- <el-checkbox-group  v-model="checkList" v-loading="loadPerson" style="width:400px"> -->
+          <el-transfer
+            v-model="checkList"
+            filterable
+            :filter-method="filterMethod"
+            filter-placeholder="请输入人员名字"
+            :titles="['备选人员','已选人员']"
+            :data="pickType==='参与'?staffList1:staffList3"
+          >
+            <div slot-scope="{ option }">
+              <el-row>
+                <el-col :span="12"><span style="color: #8492a6;width:70px">{{ option.department }}</span></el-col>
+                <el-col :span="12"><span style="text-align:left">{{ option.label }}</span></el-col>
+              </el-row>
+            </div>
+          </el-transfer>
+
+          <!-- <template v-for="(item, index) in staffList">
               <el-checkbox :key="index" :label="item.id">{{ item.username }}</el-checkbox>
-            </template>
-          </el-checkbox-group>
-          <el-checkbox-group v-else v-model="checkList" v-loading="loadPerson" style="width:400px">
+            </template> -->
+          <!-- </el-checkbox-group> -->
+          <!-- <el-checkbox-group v-else v-model="checkList" v-loading="loadPerson" style="width:400px">
             <template v-for="(item, index) in staffList">
               <el-checkbox :key="index" :label="item.username" />
             </template>
-          </el-checkbox-group>
+          </el-checkbox-group> -->
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -230,26 +265,30 @@
 
 <script>
 import page from '@/components/page'
-import { classesListUrl } from '@/api/base_w'
+import { classesListUrl, workSchedulesUrl } from '@/api/base_w'
 import { sectionTree } from '@/api/base_w_four'
 import { attendanceGroupSetup, personnels } from '@/api/jqy'
 export default {
   name: 'SetAttendance',
   components: { page },
   data() {
-    var validatePass = (rule, value, callback) => {
-      if (!this.dialogForm.attendance_st) {
-        callback(new Error('请选择考勤开始时间'))
-      } else if (!this.dialogForm.attendance_et) {
-        callback(new Error('请选择考勤结束时间'))
-      } else {
-        callback()
-      }
-    }
+    // var validatePass = (rule, value, callback) => {
+    //   if (!this.dialogForm.attendance_st) {
+    //     callback(new Error('请选择考勤开始时间'))
+    //   } else if (!this.dialogForm.attendance_et) {
+    //     callback(new Error('请选择考勤结束时间'))
+    //   } else {
+    //     callback()
+    //   }
+    // }
     return {
       search: {},
       tableData: [],
+      staffList1: [],
+      staffList2: [],
+      staffList3: [],
       total: 0,
+      name: '',
       loading: false,
       loadPerson: false,
       department: '',
@@ -263,14 +302,19 @@ export default {
       rules: {
         attendance_group: [{ required: true, message: '不能为空', trigger: 'blur' }],
         attendance_users: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        time: [{ required: true, validator: validatePass, trigger: 'change' }],
+        work_schedule: [{ required: true, message: '不能为空', trigger: 'change' }],
+        // time: [{ required: true, validator: validatePass, trigger: 'change' }],
         // attendance_type: [{ required: true, message: '不能为空', trigger: 'change' }],
         principal: [{ required: true, message: '不能为空', trigger: 'blur' }],
         range_time: [{ required: true, message: '不能为空', trigger: 'change' }],
         lead_time: [{ required: true, message: '不能为空', trigger: 'change' }]
       },
+      filterMethod(query, item) {
+        return item.label.indexOf(query) > -1
+      },
       checkList: [],
       staffList: [],
+      workList: [],
       dialogForm: {},
       btnLoading: false
     }
@@ -280,11 +324,21 @@ export default {
     this.getSection()
     this.getTypeList()
     this.getAllList()
+    this.getWorkSchedules()
   },
   methods: {
     async getAllList() {
       const data = await personnels('get', null, { params: { all: 1 }})
       this.allList = data.results
+    },
+    async getWorkSchedules() {
+      try {
+        // eslint-disable-next-line object-curly-spacing
+        const workSchedulesData = await workSchedulesUrl('get', null,
+          { params: { all: 1 }})
+        this.workList = workSchedulesData.results
+        // eslint-disable-next-line no-empty
+      } catch (e) { }
     },
     pickPerson(val) {
       this.pickType = val
@@ -293,6 +347,8 @@ export default {
       } else {
         this.checkList = PickDisplay(this.dialogForm.principal)
       }
+      this.department = ''
+      this.getGroupList()
       this.dialogVisiblePerson = true
     },
     generatePerson() {
@@ -317,9 +373,6 @@ export default {
         if (this.checkList.length === 0) {
           this.$message('请选择考勤负责人')
           return
-        } else if (this.checkList.length > 1) {
-          this.$message('考勤组负责人只能选择一位')
-          return
         } else {
           this.$set(this.dialogForm, 'principal', PersonDisplay(this.checkList))
           this.dialogVisiblePerson = false
@@ -331,9 +384,38 @@ export default {
       const data = await classesListUrl('get', null, { params: obj })
       this.optionsType = data.results
     },
+    nameSearch() {
+      if (this.name !== '') {
+        this.staffList = this.staffList2.filter(d => { return (d.username.indexOf(this.name) !== -1) })
+      } else {
+        this.staffList = this.staffList2
+      }
+    },
     async getGroupList() {
-      const data = await personnels('get', null, { params: { section_name: this.department, all: 1 }})
+      this.staffList1 = []
+      this.staffList3 = []
+      var params = {}
+      if (this.department === '') {
+        params = { all: 1 }
+      } else {
+        params = { section_name: this.department, all: 1 }
+      }
+      const data = await personnels('get', null, { params: params })
       this.staffList = data.results
+      this.staffList2 = JSON.parse(JSON.stringify(data.results))
+      this.staffList.forEach(d => {
+        this.staffList1.push({
+          key: d.id,
+          department: d.section__name,
+          label: d.username
+        })
+        this.staffList3.push({
+          key: d.username,
+          department: d.section__name,
+          label: d.username
+        })
+      }
+      )
     },
     async getList() {
       try {
@@ -432,4 +514,22 @@ function PickDisplay(string) {
 </script>
 
 <style lang="scss">
+.setAttendance{
+  .el-transfer-panel__item{
+    margin-right:10px
+  }
+  .el-checkbox:last-of-type{
+    margin-right:10px
+  }
+  .el-transfer-panel{
+    width:250px;
+    // height:650px
+  }
+  .el-transfer-panel__body{
+    height: 450px;
+  }
+  .el-transfer-panel__list.is-filterable{
+    height:395px;
+  }
+}
 </style>
