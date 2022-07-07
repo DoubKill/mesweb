@@ -28,7 +28,7 @@
         <class-select @classSelected="classSelected" />
       </el-form-item>
       <el-form-item label="段次">
-        <stage-select v-model="getParams.stage" :is-default="true" :is-clearable="false" @change="clickQuery" />
+        <stage-select v-model="getParams.stage" @change="clickQuery" />
       </el-form-item>
       <el-form-item label="综合检测结果">
         <el-select
@@ -233,7 +233,7 @@
 import dayjs from 'dayjs'
 import EquipSelect from '@/components/select_w/equip'
 import ClassSelect from '@/components/ClassSelect'
-import StageSelect from '@/components/StageSelect'
+import StageSelect from '@/components/StageSelect/index'
 import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import { testTypes, materialTestOrders, testResultHistory,
   materialTestOrdersAll, datapointCurve } from '@/api/quick-check-detail'
@@ -662,12 +662,11 @@ export default {
         const _num = Math.ceil(data.y_axis.length / 2) + 2
         const _height = (1 / _num * 100).toFixed(0) + '%'
         const _height1 = (1 / _num * 100 + 8).toFixed(0)
+
         data.y_axis.forEach((d, _i) => {
           const _dataSeries = []
           d.data.forEach((dd, ii) => {
-            dd.forEach((ddd, iii) => {
-              _dataSeries.push([data.x_axis[ii], Number(ddd)])
-            })
+            _dataSeries.push([data.x_axis[ii], Number(dd)])
           })
           _x.push({
             gridIndex: _i,
@@ -685,7 +684,7 @@ export default {
             const _top2 = ((_i - 1) / 2) * _height1 + 5 + '%'
             const _topTitle2 = ((_i - 1) / 2) * _height1 + 2 + '%'
             _title.push({ text: d.name, right: '8%', top: _topTitle2 })
-            _grid.push({ right: '5%', top: _top2, width: '40%', height: _height })
+            _grid.push({ right: '6%', top: _top2, width: '40%', height: _height })
           }
           const _1 = data.indicators[d.name] ? data.indicators[d.name][0] : 0
           const _3 = data.indicators[d.name] ? data.indicators[d.name][1] : 0

@@ -53,7 +53,7 @@ export default {
     },
     isClearable: {
       type: Boolean,
-      default: false
+      default: true
     }
   },
   data() {
