@@ -15,6 +15,22 @@
           @change="getParamsChanged"
         />
       </el-form-item>
+      <el-form-item label="工序">
+        <el-select
+          v-model="getParams.work_procedure"
+          clearable
+          placeholder="请选择"
+          @change="getParamsChanged"
+        >
+          <el-option
+            v-for="item in typeList"
+            :key="item.id"
+            :label="item.global_name"
+            :value="item.id"
+          />
+
+        </el-select>
+      </el-form-item>
       <el-form-item label="倒班名称">
         <el-input
           v-model="getParams.work_schedule__schedule_name"
@@ -46,6 +62,10 @@
       <el-table-column
         prop="work_schedule_name"
         label="倒班名"
+      />
+      <el-table-column
+        prop="work_schedule_type"
+        label="工序"
       />
       <el-table-column v-for="(item,i) in heardClasses" :key="i" :label="item.global_name">
         <el-table-column
@@ -96,6 +116,7 @@ export default {
         st: setDate(),
         et: setDate()
       },
+      typeList: [],
       total: 0,
       loading: true,
       heardClasses: [],
@@ -111,6 +132,16 @@ export default {
     this.getParams.st = setDate(firstDay)
     this.getParams.et = setDate(lastDay)
     this.dateValue = [setDate(firstDay), setDate(lastDay)]
+
+    globalCodesUrl('get', {
+      params: {
+        class_name: '工序'
+      }
+    }).then((response) => {
+      this.typeList = response.results
+      // eslint-disable-next-line handle-callback-err
+    }).catch(function(error) {
+    })
 
     globalCodesUrl('get', {
       params: {
@@ -135,7 +166,6 @@ export default {
       }).then(function(response) {
         app.total = response.count
         app.tableData = response.results || []
-        console.log(app.tableData, 'app.tableData')
         for (const [row] of app.tableData.entries()) {
           const work_schedule_plan = [null, null, null]
           work_schedule_plan[0] = app.findSchedulePlanByClassesName(row.work_schedule_plan, '早班')

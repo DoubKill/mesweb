@@ -59,31 +59,36 @@
         align="center"
         prop="material_type"
         label="原材料类别"
-        min-width="100"
+        width="90"
+        fixed
       />
       <el-table-column
         align="center"
         prop="material_name"
         label="原材料名称"
-        min-width="100"
+        width="120"
+        fixed
       />
       <el-table-column
         align="center"
         prop="equip_no"
         label="机台"
-        min-width="90"
+        width="80"
+        fixed
       />
       <el-table-column
         align="center"
         prop="product_no"
         label="配方号"
-        min-width="120"
+        width="120"
+        fixed
       />
       <el-table-column
         align="center"
         prop="total_weight"
         label="机台合计(kg)"
-        min-width="100"
+        width="100"
+        fixed
       >
         <template slot-scope="{row}">
           <span v-if="row.material_name==='小计'||row.material_name==='合计'"> {{ row.total_weight?row.total_weight.toFixed(2):row.total_weight }}</span>
@@ -96,7 +101,7 @@
         :prop="item"
         align="center"
         :label="item"
-        min-width="90"
+        min-width="100"
       />
     </el-table>
 
@@ -133,8 +138,8 @@ export default {
     changeDate(arr) {
       this.search.s_time = arr ? arr[0] : ''
       this.search.e_time = arr ? arr[1] : ''
-      if (getDaysBetween(this.search.s_time, this.search.e_time) > 29) {
-        this.$message('查询日期总数不得超过30天')
+      if (getDaysBetween(this.search.s_time, this.search.e_time) > 14) {
+        this.$message('查询日期总数不得超过15天')
         return
       }
       this.getList()
