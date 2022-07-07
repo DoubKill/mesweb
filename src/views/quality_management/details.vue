@@ -233,7 +233,7 @@
 import dayjs from 'dayjs'
 import EquipSelect from '@/components/select_w/equip'
 import ClassSelect from '@/components/ClassSelect'
-import StageSelect from '@/components/StageSelect'
+import StageSelect from '@/components/StageSelect/index'
 import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import { testTypes, materialTestOrders, testResultHistory,
   materialTestOrdersAll, datapointCurve } from '@/api/quick-check-detail'
