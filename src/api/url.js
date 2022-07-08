@@ -717,5 +717,6 @@ export default {
   WmsAddPrint: '/api/v1/terminal/wms-add-print/',
   HfForceHandle: '/api/v1/inventory/hf-force-handle/',
   HfConfigSet: '/api/v1/inventory/hf-config-set/',
-  EquipmentIndex: '/api/v1/equipment/index/'
+  EquipmentIndex: '/api/v1/equipment/index/',
+  RubberFrameRepair: '/api/v1/production/rubber-frame-repair/'
 }

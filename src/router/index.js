@@ -1512,6 +1512,16 @@ export let asyncRoutes = [
           icon: 'production',
           permissionName: 'th_warning_setting'
         }
+      },
+      {
+        path: '/rubber-frame-repair',
+        name: 'RubberFrameRepair',
+        component: () => import('@/views/material_base_info_manage/rubber-frame-repair'),
+        meta: {
+          title: '胶架维修记录',
+          icon: 'production',
+          permissionName: ''
+        }
       }
 
       // {
