@@ -266,6 +266,7 @@ export default {
             type: 'bar',
             barMaxWidth: 150,
             data: [],
+            showSymbol: false,
             itemStyle: {
               normal: {
                 label: {
@@ -283,8 +284,9 @@ export default {
             name: '加硫',
             type: 'line',
             label: {
-              show: true
+              show: false
             },
+            showSymbol: false,
             data: [],
             itemStyle: {
               normal: {
@@ -296,8 +298,9 @@ export default {
             name: '无硫',
             type: 'line',
             label: {
-              show: true
+              show: false
             },
+            showSymbol: false,
             data: [],
             itemStyle: {
               normal: {
@@ -310,6 +313,7 @@ export default {
             type: 'bar',
             barMaxWidth: 150,
             data: [],
+            showSymbol: false,
             itemStyle: {
               normal: {
                 label: {
@@ -326,21 +330,23 @@ export default {
             name: '加硫',
             type: 'line',
             data: [],
+            showSymbol: false,
             itemStyle: {
               normal: {
                 color: 'rgba(128, 128, 128, 0)' // 柱状图颜色设为透明
               }
             },
             label: {
-              show: true
+              show: false
             }
           },
           {
             name: '无硫',
             type: 'line',
+            showSymbol: false,
             data: [],
             label: {
-              show: true
+              show: false
             },
             itemStyle: {
               normal: {
@@ -920,6 +926,7 @@ export default {
  }
  .volumeBoxChild{
    padding: 10px 0;
+   color:#fff !important;
  }
  .volumeBox{
    background: transparent !important;
