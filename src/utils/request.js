@@ -7,6 +7,7 @@ import store from '@/store'
 import {
   getToken
 } from '@/utils/auth'
+import Cookies from 'js-cookie'
 
 let currentUrl = ''
 // create an axios instance
@@ -19,6 +20,16 @@ const service = axios.create({
 // request interceptor
 service.interceptors.request.use(
   config => {
+    const _user = store.getters.name
+    const _newUser = Cookies.get('name')
+    if (_user && _user !== _newUser) {
+      Message({
+        message: '当前账号已退出，请刷新页面',
+        type: 'error',
+        duration: 3 * 1000
+      })
+      return
+    }
     if (store.getters.token && getToken()) {
       config.headers['Authorization'] = 'JWT ' + getToken()
     }

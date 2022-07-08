@@ -720,10 +720,10 @@ export default {
   WmsAddPrint: '/api/v1/terminal/wms-add-print/',
   HfForceHandle: '/api/v1/inventory/hf-force-handle/',
   HfConfigSet: '/api/v1/inventory/hf-config-set/',
-
   ProductSynthesisRate: '/api/v1/quality/product-synthesis-rate/',
   ProductSynthesisEquipRate: '/api/v1/quality/product-synthesis-equip-rate/',
   ProductSynthesisGroupRate: '/api/v1/quality/product-synthesis-group-rate/',
   ProductSynthesisProductRate: '/api/v1/quality/product-synthesis-product-rate/',
-  ProductSynthesisMonthRate: '/api/v1/quality/product-synthesis-month-rate/'
+  ProductSynthesisMonthRate: '/api/v1/quality/product-synthesis-month-rate/',
+  RubberFrameRepair: '/api/v1/production/rubber-frame-repair/'
 }

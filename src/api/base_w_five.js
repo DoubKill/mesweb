@@ -384,3 +384,12 @@ export function productSynthesisMonthRate(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function rubberFrameRepair(method, id, data = {}) {
+  const obj = {
+    url: id ? API.RubberFrameRepair + id + '/' : API.RubberFrameRepair,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
