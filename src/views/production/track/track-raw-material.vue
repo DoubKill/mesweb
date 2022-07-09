@@ -1,6 +1,6 @@
 <template>
   <div v-loading="loading">
-    <!-- 原材料条码追朔 -->
+    <!-- 原材料条码追溯 -->
     条形码：
     <el-input
       v-model="barCodeSearch"

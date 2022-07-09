@@ -32,6 +32,7 @@ export default {
   GroupAddUserUrl: SystemUrl + 'group_add_user/',
   ResetPassword: '/api/v1/system/reset-password/',
   MaterialsUrl: '/api/v1/recipe/materials/',
+  ThMaterialsAttribute: '/api/v1/inventory/th-materials-attribute/',
   XlRecipeNotice: '/api/v1/terminal/xl-recipe-notice/',
   MaterialInfoIssue: '/api/v1/terminal/material-info-issue/', // 原材料下发至称量系统接口
   ProductInfosUrl: '/api/v1/recipe/product-infos/',
