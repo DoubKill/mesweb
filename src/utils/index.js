@@ -143,8 +143,12 @@ export function setDate(_data, bool, type) {
       formatObj.h + formatObj.i + formatObj.s
   } else if (type && type === 'month') {
     return formatObj.y + '-' + formatObj.m
+  } else if (type && type === 'onlyMonth') {
+    return formatObj.m
   } else if (type && type === 'hour') {
     return formatObj.h + ':' + formatObj.i
+  } else if (type && type === 'year') {
+    return formatObj.y
   } else {
     return formatObj.y + '-' + formatObj.m + '-' + formatObj.d
   }
@@ -229,7 +233,7 @@ export function exportExcel(value = 'excel', val, _wpxArr = []) {
   value = value + ' ' + (val === 'excel' ? '' : setDate())
   /* 从表生成工作簿对象 */
   var wb
-  if (val && val === 'disposal-list-components') {
+  if (val && (val === 'disposal-list-components' || val === '综合合格率汇总')) {
     wb = XLSX.utils.table_to_book(document.querySelector('#out-table'), { raw: true })
   } else {
     wb = XLSX.utils.table_to_book(document.querySelector('#out-table'), { raw: false })
