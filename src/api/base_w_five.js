@@ -336,6 +336,15 @@ export function equipmentIndex(method, id, data = {}) {
   return request(obj)
 }
 
+export function toolManageAccount(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ToolManageAccount + id + '/' : API.ToolManageAccount,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function rubberFrameRepair(method, id, data = {}) {
   const obj = {
     url: id ? API.RubberFrameRepair + id + '/' : API.RubberFrameRepair,
@@ -344,3 +353,4 @@ export function rubberFrameRepair(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+

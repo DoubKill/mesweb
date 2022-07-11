@@ -718,5 +718,6 @@ export default {
   HfForceHandle: '/api/v1/inventory/hf-force-handle/',
   HfConfigSet: '/api/v1/inventory/hf-config-set/',
   EquipmentIndex: '/api/v1/equipment/index/',
+  ToolManageAccount: '/api/v1/production/tool-manage-account/',
   RubberFrameRepair: '/api/v1/production/rubber-frame-repair/'
 }
