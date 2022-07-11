@@ -1093,7 +1093,7 @@ export default {
             })
           }
           if (data1.indexOf(this.$refs['List'].multipleSelection[index].equip_spare) === -1) {
-            this.dialogForm.equip_spare.unshift({
+            this.firstList.unshift({
               spare_code: this.$refs['List'].multipleSelection[index].spare__code,
               id: this.$refs['List'].multipleSelection[index].equip_spare,
               spare_name: this.$refs['List'].multipleSelection[index].spare_name,
