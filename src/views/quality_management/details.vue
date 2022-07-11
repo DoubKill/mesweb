@@ -28,7 +28,7 @@
         <class-select @classSelected="classSelected" />
       </el-form-item>
       <el-form-item label="段次">
-        <stage-select v-model="getParams.stage" :is-default="true" :is-clearable="false" @change="clickQuery" />
+        <stage-select v-model="getParams.stage" @change="clickQuery" />
       </el-form-item>
       <el-form-item label="综合检测结果">
         <el-select
@@ -197,7 +197,7 @@
       <test-card ref="testCard" />
     </el-dialog>
     <el-dialog
-      title="快检值历史曲线"
+      :title="`${row_roduct_no}数据推移`"
       :visible.sync="historyDialogVisible"
       width="80%"
       append-to-body
@@ -213,8 +213,8 @@
         @change="changeHistoryDate"
       />
       <div
-        id="historyBar"
-        style="width: 100%;height:300px;margin-top:8px"
+        id="historySpot"
+        style="width: 100%;height:1000px;margin-top:8px"
       />
     </el-dialog>
 
@@ -233,7 +233,7 @@
 import dayjs from 'dayjs'
 import EquipSelect from '@/components/select_w/equip'
 import ClassSelect from '@/components/ClassSelect'
-import StageSelect from '@/components/StageSelect'
+import StageSelect from '@/components/StageSelect/index'
 import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import { testTypes, materialTestOrders, testResultHistory,
   materialTestOrdersAll, datapointCurve } from '@/api/quick-check-detail'
@@ -318,29 +318,45 @@ export default {
       historyDialogVisible: false,
       historyDate: [],
       row_roduct_no: '',
-      optionBar: {
+      historySpot: {
+        title: [{
+          text: "Anscombe's quartet"
+        }],
         tooltip: {
           trigger: 'axis'
         },
-        legend: {
-          data: []
+        toolbox: {
+          feature: {
+            saveAsImage: {}
+          }
         },
-        grid: {
-          left: '3%',
-          right: '4%',
-          bottom: '3%',
-          containLabel: true
-        },
-        xAxis: {
-          type: 'category',
-          boundaryGap: false,
-          data: []
-        },
-        yAxis: {
-          type: 'value',
-          name: '测试点值'
-        },
-        series: []
+        grid: [
+          { left: '7%', top: '7%', width: '38%', height: '38%' }
+        ],
+        xAxis: [
+          { gridIndex: 0 },
+          { gridIndex: 1 }
+        ],
+        yAxis: [
+          { gridIndex: 0 },
+          { gridIndex: 1 }
+        ],
+        series: [
+          {
+            name: 'I',
+            type: 'scatter',
+            xAxisIndex: 0,
+            yAxisIndex: 0,
+            data: []
+          },
+          {
+            name: 'II',
+            type: 'scatter',
+            xAxisIndex: 1,
+            yAxisIndex: 1,
+            data: []
+          }
+        ]
       }
     }
   },
@@ -638,30 +654,78 @@ export default {
         const data = await datapointCurve(obj)
         this.historyLoading = false
 
-        data.y_axis.forEach(d => {
-          d.markLine = {
-            silent: true,
-            lineStyle: {
-              color: '#333'
-            },
-            data: [{
-              yAxis: data.indicators[d.name] ? data.indicators[d.name][0] : ''
-            }, {
-              yAxis: data.indicators[d.name] ? data.indicators[d.name][1] : ''
-            }]
+        const _x = []
+        const _y = []
+        const _title = []
+        const _grid = []
+        const _series = []
+        const _num = Math.ceil(data.y_axis.length / 2) + 2
+        const _height = (1 / _num * 100).toFixed(0) + '%'
+        const _height1 = (1 / _num * 100 + 8).toFixed(0)
+
+        data.y_axis.forEach((d, _i) => {
+          const _dataSeries = []
+          d.data.forEach((dd, ii) => {
+            dd.forEach((ddd, iii) => {
+              _dataSeries.push([data.x_axis[ii], Number(ddd)])
+            })
+          })
+          _x.push({
+            gridIndex: _i,
+            data: data.x_axis
+          })
+          _y.push({
+            gridIndex: _i
+          })
+          if (_i % 2 === 0 || _i === 0) {
+            const _top1 = (_i / 2) * _height1 + 5 + '%'
+            const _topTitle1 = (_i / 2) * _height1 + 2 + '%'
+            _title.push({ text: d.name, left: '8%', top: _topTitle1 })
+            _grid.push({ left: '5%', top: _top1, width: '40%', height: _height })
+          } else {
+            const _top2 = ((_i - 1) / 2) * _height1 + 5 + '%'
+            const _topTitle2 = ((_i - 1) / 2) * _height1 + 2 + '%'
+            _title.push({ text: d.name, right: '8%', top: _topTitle2 })
+            _grid.push({ right: '6%', top: _top2, width: '40%', height: _height })
           }
+          const _1 = data.indicators[d.name] ? data.indicators[d.name][0] : 0
+          const _3 = data.indicators[d.name] ? data.indicators[d.name][1] : 0
+          const _2 = ((_3 + _1) / 2).toFixed(2)
+          _series.push({
+            name: d.name,
+            type: 'scatter',
+            xAxisIndex: _i,
+            yAxisIndex: _i,
+            data: _dataSeries,
+            markLine: data.indicators[d.name] ? {
+              data: [{
+                silent: true,
+                yAxis: _1, label: {
+                  position: 'end',
+                  formatter: `下限(${_1})`
+                }},
+              {
+                yAxis: _2, label: {
+                  position: 'end',
+                  formatter: `中限(${_2})`
+                }},
+              {
+                yAxis: _3, label: {
+                  position: 'end',
+                  formatter: `上限(${_3})`
+                }}
+              ]
+            } : {}
+          })
         })
+        this.historySpot.xAxis = _x || []
+        this.historySpot.yAxis = _y || []
+        this.historySpot.title = _title || []
+        this.historySpot.grid = _grid || []
+        this.historySpot.series = _series || []
 
-        const arr = []
-        for (const iterator in data.indicators) {
-          arr.push(iterator)
-        }
-
-        this.optionBar.xAxis.data = data.x_axis || []
-        this.optionBar.series = data.y_axis || []
-        this.optionBar.legend.data = arr
-        this.chartHistoryBar = echarts.init(document.getElementById('historyBar'))
-        this.chartHistoryBar.setOption(this.optionBar, true)
+        this.chartHistoryBar = echarts.init(document.getElementById('historySpot'))
+        this.chartHistoryBar.setOption(this.historySpot, true)
       } catch (e) {
         //
       }
