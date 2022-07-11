@@ -386,8 +386,8 @@ export default {
     }
   },
   created() {
-    this.search.in_st = setDate() + ' 00:00:00'
-    this.search.in_et = setDate(null, true)
+    this.search.out_st = setDate() + ' 00:00:00'
+    this.search.out_et = setDate(null, true)
 
     if (this.isDialog) {
       Object.assign(this.search, this.dialogSearch)
@@ -395,7 +395,7 @@ export default {
     if (this.warehouseNameProps) {
       this.search.warehouse_name = this.warehouseNameProps
     }
-    this.searchDate = [this.search.in_st, this.search.in_et]
+    this.searchDate1 = [this.search.out_st, this.search.out_et]
     this.getList()
   },
   methods: {
@@ -442,7 +442,7 @@ export default {
       try {
         this.loading = true
         const data = await productInOutHistory('get', null, { params: this.search })
-        this.tableData = data.result
+        this.tableData = data.results
         this.total = data.count
         this.loading = false
       } catch (e) {

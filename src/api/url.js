@@ -32,6 +32,7 @@ export default {
   GroupAddUserUrl: SystemUrl + 'group_add_user/',
   ResetPassword: '/api/v1/system/reset-password/',
   MaterialsUrl: '/api/v1/recipe/materials/',
+  ThMaterialsAttribute: '/api/v1/inventory/th-materials-attribute/',
   XlRecipeNotice: '/api/v1/terminal/xl-recipe-notice/',
   MaterialInfoIssue: '/api/v1/terminal/material-info-issue/', // 原材料下发至称量系统接口
   ProductInfosUrl: '/api/v1/recipe/product-infos/',
@@ -662,6 +663,7 @@ export default {
   Equip190e: '/api/v1/production/equip-190e/',
   Equip190eImport: '/api/v1/production/equip-190e/import_xlsx/',
   MonthlyOutputStatisticsReport: '/api/v1/production/monthly-output-statistics-report/',
+  MonthlyOutputStatisticsReportDetail: '/api/v1/production/monthly-output-statistics-report-detail/',
   SchedulingStockSummary: '/api/v1/plan/scheduling-stock-summary/',
   SchedulingStockConfirm: '/api/v1/plan/scheduling-stock-summary/confirm/',
   SchedulingMaterialDemanded: '/api/v1/plan/scheduling-material-demanded/', // 原材料需求量
@@ -717,5 +719,11 @@ export default {
   WmsAddPrint: '/api/v1/terminal/wms-add-print/',
   HfForceHandle: '/api/v1/inventory/hf-force-handle/',
   HfConfigSet: '/api/v1/inventory/hf-config-set/',
-  EquipmentIndex: '/api/v1/equipment/index/'
+  EquipmentIndex: '/api/v1/equipment/index/',
+
+  ProductSynthesisRate: '/api/v1/quality/product-synthesis-rate/',
+  ProductSynthesisEquipRate: '/api/v1/quality/product-synthesis-equip-rate/',
+  ProductSynthesisGroupRate: '/api/v1/quality/product-synthesis-group-rate/',
+  ProductSynthesisProductRate: '/api/v1/quality/product-synthesis-product-rate/',
+  ProductSynthesisMonthRate: '/api/v1/quality/product-synthesis-month-rate/'
 }

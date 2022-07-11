@@ -2,7 +2,7 @@
   <div>
     <el-select
       :value="id"
-      clearable
+      :clearable="true"
       placeholder="请选择"
       :multiple="isMultiple"
       :style="{'width':widthSelect}"
