@@ -58,6 +58,18 @@
           @input="getDebounce"
         /> -->
       </el-form-item>
+      <el-form-item label="起止创建日期">
+        <el-date-picker
+          v-model="dateValue"
+          clearable
+          type="datetimerange"
+          range-separator="至"
+          start-placeholder="开始日时"
+          end-placeholder="结束日时"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          @change="changeDate"
+        />
+      </el-form-item>
       <el-button
         v-permission="['material_outbound_record', 'space']"
         type="primary"
@@ -68,6 +80,7 @@
         type="primary"
         @click="showWeightDialog"
       >指定重量出库</el-button>
+      <el-button type="primary" :loading="btnExportLoad" @click="templateDownload">导出Excel</el-button>
       <el-button
         type="primary"
         @click="getList"
@@ -112,6 +125,11 @@
           let obj = options.find(d=>d.id === row.task_status)
           return obj.name
         }"
+      />
+      <el-table-column
+        prop="qty"
+        label="数量"
+        min-width="20"
       />
       <el-table-column
         prop="initiator"
@@ -307,6 +325,25 @@
             @input="getDialogDebounce"
           />
         </el-form-item>
+        <!-- <el-form-item v-if="isLocation" label="门尼值">
+          <el-input-number v-model="formSearch.st_value" controls-position="right" :min="1" :max="formSearch.et_value" @change="getDialog" /> -
+          <el-input-number v-model="formSearch.et_value" controls-position="right" :min="formSearch.st_value" :max="999" @change="getDialog" />
+        </el-form-item> -->
+        <el-form-item v-if="isLocation" label="门尼值等级">
+          <el-select
+            v-model="formSearch.mooney_level"
+            clearable
+            placeholder="请选择"
+            @change="getDialog"
+          >
+            <el-option
+              v-for="item in ['高门尼','标准门尼','低门尼']"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
+        </el-form-item>
       </el-form>
       <div
         v-if="isLocation"
@@ -372,7 +409,6 @@
             min-width="20"
           />
           <el-table-column
-            prop=""
             label="库位状态"
             min-width="15"
             :formatter="(row)=>{
@@ -387,6 +423,11 @@
           <el-table-column
             prop="position"
             label="伸位"
+            min-width="20"
+          />
+          <el-table-column
+            prop="mn_level"
+            label="门尼值等级"
             min-width="20"
           />
           <el-table-column
@@ -467,6 +508,11 @@
           <el-table-column
             prop="position"
             label="伸位"
+            min-width="20"
+          />
+          <el-table-column
+            prop="mn_level"
+            label="门尼值等级"
             min-width="20"
           />
           <el-table-column
@@ -657,7 +703,9 @@ export default {
       dialogVisible1: false,
       formSearch: {
         quality_status: 1,
-        is_entering: 'N'
+        is_entering: 'N',
+        st_value: undefined,
+        et_value: undefined
       },
       tableData2: [],
       tableData3: [],
@@ -697,7 +745,9 @@ export default {
       },
       dialogVisible2: false,
       btnDisabled: false,
-      positionObj: {}
+      positionObj: {},
+      dateValue: [],
+      btnExportLoad: false
     }
   },
   created() {
@@ -777,6 +827,8 @@ export default {
       if (!this.search.State) {
         delete this.search.State
       }
+      this.search.st = this.dateValue ? this.dateValue[0] : ''
+      this.search.et = this.dateValue ? this.dateValue[1] : ''
       this.search.page = 1
       this.getList()
     },
@@ -841,6 +893,8 @@ export default {
       this.formSearch.code = this.optionsEntrance[0].code
       this.formSearch.quality_status = 1
       this.formSearch.is_entering = 'N'
+      this.formSearch.st_value = undefined
+      this.formSearch.et_value = undefined
       this.EntranceCode = ''
       if (done) {
         done()
@@ -984,7 +1038,6 @@ export default {
       } else {
         this.formSearch.is_entering = 'N'
       }
-      console.log(obj, 'obj')
       this.formSearch.code = obj.code || ''
       if (this.isLocation) {
         this.tableData4 = []
@@ -1058,6 +1111,25 @@ export default {
       } catch (error) {
         //
       } this.btnLoading = false
+    },
+    templateDownload() {
+      this.btnExportLoad = true
+      const obj = Object.assign({ export: 1 }, this.search)
+      const _api = wmsOutTasks
+      _api('get', null, { responseType: 'blob', params: obj })
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '原材料出库单据.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
     }
   }
 }

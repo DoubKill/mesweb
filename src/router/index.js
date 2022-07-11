@@ -77,7 +77,7 @@ export const constantRoutes = [
     component: () => import('@/views/quality_management/phone/fault-day-statistics'),
     hidden: true,
     meta: {
-      isPhone: true
+      isPhone: true // 走不走登录和全限
     }
   },
   {
@@ -93,15 +93,6 @@ export const constantRoutes = [
     component: () => import('@/views/quality_management/phone/fault-month-statistics'),
     hidden: true,
     meta: {
-      isPhone: true
-    }
-  },
-  {
-    path: '/Outbound-Kanban/:id',
-    component: () => import('@/views/Z-Outbound-Kanban'),
-    hidden: true,
-    meta: {
-      // 是否是单独页面
       isPhone: true
     }
   },
@@ -140,6 +131,35 @@ export const constantRoutes = [
       title: '生产投料配方查询',
       permissionName: 'formula_preparation'
     }
+  },
+  {
+    path: '/homePage/index',
+    component: () => import('@/views/homePage/index'),
+    hidden: true,
+    meta: {
+      title: '首页',
+      permissionName: '',
+      isPhone: true
+    }
+  },
+  {
+    path: '/operation-status',
+    component: () => import('@/views/equipment-manage/operation-status'),
+    hidden: true,
+    meta: {
+      title: '设备运行现况',
+      permissionName: '',
+      isPhone: true
+    }
+  },
+  {
+    path: '/Outbound-Kanban/:id',
+    component: () => import('@/views/Z-Outbound-Kanban'),
+    hidden: true,
+    meta: {
+      // 是否是单独页面
+      isPhone: true
+    }
   }
 ]
 // 存在权限的路由
@@ -161,6 +181,46 @@ export let asyncRoutes = [
       meta: {
         title: '首页',
         icon: 'el-icon-s-home'
+      }
+    },
+    {
+      path: '/bigScreen/1',
+      component: () => import('@/views/homePage/bigAcreen'),
+      name: 'HomePageMainScreen1',
+      meta: {
+        title: 'MES首页大屏',
+        icon: 'collection',
+        type: 1
+      }
+    },
+    {
+      path: '/bigScreen/2',
+      component: () => import('@/views/homePage/bigAcreen'),
+      name: 'HomePageMainScreen1',
+      meta: {
+        title: '设备运行现况',
+        icon: 'collection',
+        type: 2
+      }
+    },
+    {
+      path: '/bigScreen/3',
+      component: () => import('@/views/homePage/bigAcreen'),
+      name: 'HomePageMainScreen1',
+      meta: {
+        title: '混炼胶库运行综合看板',
+        icon: 'collection',
+        type: 3
+      }
+    },
+    {
+      path: '/bigScreen/4',
+      component: () => import('@/views/homePage/bigAcreen'),
+      name: 'HomePageMainScreen1',
+      meta: {
+        title: '终炼胶库运行综合看板',
+        icon: 'collection',
+        type: 4
       }
     }
     ]
@@ -325,59 +385,115 @@ export let asyncRoutes = [
     redirect: '/material/base/info/manage',
     name: 'recipe',
     meta: {
-      title: '配方管理',
+      title: '工艺管理',
       icon: 'formula'
     },
-    children: [{
-      path: '/material/base/info/manage',
-      name: 'MaterialBaseInfoManage',
-      component: () => import('@/views/material_base_info_manage/index'),
-      meta: {
-        title: '原材料基础信息',
-        icon: 'formula',
-        permissionName: 'material'
+    children: [
+      {
+        path: '/recipe/index',
+        component: () => import('@/views/material_base_info_manage/a-index'),
+        redirect: '/material/base/info/manage',
+        name: 'PlanIndex',
+        meta: {
+          title: '原材料信息管理',
+          icon: 'formula'
+        },
+        children: [
+          {
+            path: '/material/base/info/manage',
+            name: 'MaterialBaseInfoManage',
+            component: () => import('@/views/material_base_info_manage/index'),
+            meta: {
+              title: '原材料基础信息',
+              permissionName: 'material',
+              faName: 'PlanIndex'
+            }
+          },
+          // {
+          //   path: '/material-info-mapping',
+          //   component: () => import('@/views/quality_management/material-info-mapping/material-info-mapping'),
+          //   name: 'MaterialInfoMapping',
+          //   meta: {
+          //     title: 'mes与子系统物料信息映射',
+          //     icon: 'formula',
+          //     permissionName: 'material_map'
+          //   }
+          // },
+          {
+            path: '/rb/recipe/ERP-material-info',
+            component: () => import('@/views/quality_management/material-info-mapping/ERP-material-info'),
+            name: 'ERPMaterialInfo',
+            meta: {
+              title: 'ERP原材料信息',
+              faName: 'PlanIndex',
+              permissionName: 'material_map'
+            }
+          }
+        ]
+      },
+      {
+        path: '/rb/recipe',
+        component: () => import('@/views/rubber_recipe_standard_manage/a-index'),
+        redirect: '/rb/recipe/std/manage',
+        name: 'RbRecipe',
+        meta: {
+          title: '配方管理',
+          icon: 'formula'
+        },
+        children: [
+          {
+            path: '/rb/recipe/std/manage',
+            name: 'RbRecipeStdManage',
+            component: () => import('@/views/rubber_recipe_standard_manage/index'),
+            meta: {
+              title: '胶料代码管理',
+              faName: 'RbRecipe',
+              permissionName: 'productinfo'
+            }
+          },
+          {
+            path: '/rb/material/std/manage',
+            name: 'RbMaterialStdManage',
+            component: () => import('@/views/rb_material_std_manage/newIndex'),
+            meta: {
+              title: '胶料配方标准管理',
+              faName: 'RbRecipe',
+              permissionName: 'productbatching'
+            }
+          }
+        ] },
+      {
+        path: '/resume',
+        redirect: '/internal/investment',
+        component: () => import('@/views/production/resume-fa'),
+        name: 'Resume',
+        meta: {
+          title: '投料履历查询',
+          icon: 'formula'
+        },
+        children: [
+          {
+            path: '/internal/investment',
+            component: () => import('@/views/production/investment'),
+            name: 'InternalInvestment',
+            meta: {
+              faName: 'Resume',
+              title: '密炼投入履历',
+              permissionName: 'batch_log'
+            }
+          },
+          {
+            path: '/drug-investment',
+            component: () => import('@/views/production/drug-investment'),
+            name: 'DrugInvestment',
+            meta: {
+              faName: 'Resume',
+              title: '称量投入履历',
+              permissionName: 'drug_analyze'
+            }
+          }
+        ]
       }
-    },
-    // {
-    //   path: '/material-info-mapping',
-    //   component: () => import('@/views/quality_management/material-info-mapping/material-info-mapping'),
-    //   name: 'MaterialInfoMapping',
-    //   meta: {
-    //     title: 'mes与子系统物料信息映射',
-    //     icon: 'formula',
-    //     permissionName: 'material_map'
-    //   }
-    // },
-    {
-      path: '/rb/recipe/ERP-material-info',
-      component: () => import('@/views/quality_management/material-info-mapping/ERP-material-info'),
-      name: 'ERPMaterialInfo',
-      meta: {
-        title: 'ERP原材料信息',
-        icon: 'formula',
-        permissionName: 'material_map'
-      }
-    },
-    {
-      path: '/rb/recipe/std/manage',
-      name: 'RbRecipeStdManage',
-      component: () => import('@/views/rubber_recipe_standard_manage/index'),
-      meta: {
-        title: '胶料代码管理',
-        icon: 'formula',
-        permissionName: 'productinfo'
-      }
-    },
-    {
-      path: '/rb/material/std/manage',
-      name: 'RbMaterialStdManage',
-      component: () => import('@/views/rb_material_std_manage/newIndex'),
-      meta: {
-        title: '胶料配方标准管理',
-        icon: 'formula',
-        permissionName: 'productbatching'
-      }
-    },
     // {
     //   path: '/rb/material/std/manage111',
     //   name: 'rb-material-std-manage111',
@@ -388,16 +504,16 @@ export let asyncRoutes = [
     //     permissionName: 'productbatching'
     //   }
     // },
-    {
-      path: '/rb/material-tank/manage',
-      name: 'MaterialTank',
-      component: () => import('@/views/recipe/tankInformation/list'),
-      meta: {
-        title: '称量系统料仓信息管理',
-        icon: 'formula',
-        permissionName: 'weight_tank'
-      }
-    }
+    // {
+    //   path: '/rb/material-tank/manage',
+    //   name: 'MaterialTank',
+    //   component: () => import('@/views/recipe/tankInformation/list'),
+    //   meta: {
+    //     title: '称量系统料仓信息管理',
+    //     icon: 'formula',
+    //     permissionName: 'weight_tank'
+    //   }
+    // }
     // {
     //   path: '/rb/formula-resume',
     //   name: 'FormulaResume',
@@ -550,12 +666,32 @@ export let asyncRoutes = [
           }
         },
         {
+          path: '/internal/material-statistics',
+          component: () => import('@/views/quality_management/material-statistics'),
+          name: 'MaterialStatistics',
+          meta: {
+            faName: 'SmallMaterialWeight',
+            title: '称量机台物料统计',
+            permissionName: 'xl_report_weight_statics'
+          }
+        },
+        {
           path: '/small-material-weight/consumption',
           component: () => import('@/views/recipe/small-material-weight/consumption'),
           name: 'SmallMaterialWeightConsumption',
           meta: {
             faName: 'SmallMaterialWeight',
             title: '物料消耗报表',
+            permissionName: 'xl_report_weight'
+          }
+        },
+        {
+          path: '/small-material-weight/summary',
+          component: () => import('@/views/recipe/small-material-weight/summary'),
+          name: 'SmallMaterialWeightSummary',
+          meta: {
+            faName: 'SmallMaterialWeight',
+            title: '称量物料消耗汇总表',
             permissionName: 'xl_report_weight'
           }
         },
@@ -1061,7 +1197,7 @@ export let asyncRoutes = [
         component: () => import('@/views/production/result_analysis/a-index.vue'),
         name: 'ResultAnalysis',
         meta: {
-          title: '生产结果分析统计',
+          title: '生产分析统计',
           icon: 'production'
         },
         children: [
@@ -1193,40 +1329,18 @@ export let asyncRoutes = [
             name: 'SmallMaterialWeightCurrency1',
             meta: {
               faName: 'Resume1',
-              title: '通用化工流转卡',
+              title: '(内部)原材料流转卡',
               permissionName: 'material_add_print'
-            }
-          }
-        ]
-      },
-      {
-        path: '/resume',
-        redirect: '/internal/investment',
-        component: () => import('@/views/production/resume-fa'),
-        name: 'Resume',
-        meta: {
-          title: '投料履历查询',
-          icon: 'production'
-        },
-        children: [
-          {
-            path: '/internal/investment',
-            component: () => import('@/views/production/investment'),
-            name: 'InternalInvestment',
-            meta: {
-              faName: 'Resume',
-              title: '密炼投入履历',
-              permissionName: 'batch_log'
             }
           },
           {
-            path: '/drug-investment',
-            component: () => import('@/views/production/drug-investment'),
-            name: 'DrugInvestment',
+            path: '/banburying/makeUp/',
+            component: () => import('@/views/quality_management/banburying/makeUp'),
+            name: 'BanburyingMakeUp',
             meta: {
-              faName: 'Resume',
-              title: '称量投入履历',
-              permissionName: 'drug_analyze'
+              faName: 'Banburying',
+              title: '返回胶/无名胶卡片补打',
+              permissionName: 'return_rubber'
             }
           }
         ]
@@ -1237,7 +1351,7 @@ export let asyncRoutes = [
         component: () => import('@/views/production/track/track-fa'),
         name: 'Track',
         meta: {
-          title: '条码追朔',
+          title: '条码追溯',
           icon: 'production'
         },
         children: [
@@ -1247,7 +1361,7 @@ export let asyncRoutes = [
             component: () => import('@/views/production/track/track-raw-material'),
             meta: {
               faName: 'Track',
-              title: '原材料到胶片 条码追朔',
+              title: '原材料到胶片 条码追溯',
               permissionName: 'material_retrospect'
             }
           },
@@ -1257,7 +1371,7 @@ export let asyncRoutes = [
             component: () => import('@/views/production/track/track-raw-rubber'),
             meta: {
               faName: 'Track',
-              title: '胶片到原材料 条码追朔',
+              title: '胶片到原材料 条码追溯',
               permissionName: 'product_retrospect'
             }
           }
@@ -1558,7 +1672,7 @@ export let asyncRoutes = [
           {
             path: '/rubber-overdue-alarm',
             component: () => import('@/views/inventory/rubber-warehouse/rubber-overdue-alarm.vue'),
-            name: 'MaterialPrintCard',
+            name: 'RubberOverdueAlarm',
             meta: {
               faName: 'RubberWarehouse',
               title: '胶料超期报警',
@@ -1725,6 +1839,7 @@ export let asyncRoutes = [
             name: 'DeliveryInOutRecord',
             meta: {
               faName: 'MaterialDelivery',
+              faShowName: '原材料库',
               title: '出入库履历查询',
               permissionName: 'material_inout_history'
             }
@@ -2283,6 +2398,24 @@ export let asyncRoutes = [
               title: '班次别合格率统计',
               permissionName: 'classes_quality_analyze'
             }
+          },
+          { path: '/statistics/monthly-ummary',
+            component: () => import('@/views/quality_management/pass/monthly-ummary.vue'),
+            name: 'MonthlyUmmary',
+            meta: {
+              faName: 'QualityStatistics',
+              title: '综合合格率月度汇总',
+              permissionName: 'product_daily_rate'
+            }
+          },
+          { path: '/statistics/year-ummary',
+            component: () => import('@/views/quality_management/pass/year-ummary.vue'),
+            name: 'YearUmmary',
+            meta: {
+              faName: 'QualityStatistics',
+              title: '综合合格率年度汇总',
+              permissionName: 'product_monthly_rate'
+            }
           }
           /** {
             path: '/statistics/month-pass-detail',
@@ -2809,16 +2942,6 @@ export let asyncRoutes = [
             }
           },
           {
-            path: '/banburying/makeUp',
-            component: () => import('@/views/quality_management/banburying/makeUp'),
-            name: 'BanburyingMakeUp',
-            meta: {
-              faName: 'Banburying',
-              title: '胶皮补打卡片',
-              permissionName: 'return_rubber'
-            }
-          },
-          {
             path: '/banburying/toleranceEntry',
             component: () => import('@/views/quality_management/banburying/toleranceEntry'),
             name: 'BanburyingToleranceEntry',
@@ -2861,13 +2984,13 @@ export let asyncRoutes = [
         ]
       },
       {
-        path: '/internal/material-statistics',
-        component: () => import('@/views/quality_management/material-statistics'),
-        name: 'MaterialStatistics',
+        path: '/material_level_management/',
+        name: 'MaterialLevelManagement',
+        component: () => import('@/views/rb_material_std_manage/material_level_management'),
         meta: {
-          title: '称量机台物料统计',
+          title: '原材料门尼值等级管理',
           icon: 'quality',
-          permissionName: 'xl_report_weight_statics'
+          permissionName: 'wms_mooney_level'
         }
       }
       // {

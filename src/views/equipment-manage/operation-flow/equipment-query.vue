@@ -326,6 +326,11 @@
         min-width="20"
       />
       <el-table-column
+        prop="receiving_user_phone"
+        label="接单人手机号"
+        min-width="20"
+      />
+      <el-table-column
         prop="receiving_datetime"
         label="接单时间"
         min-width="20"
@@ -374,6 +379,7 @@
       :current-page="search.page"
       @currentChange="currentChange"
     />
+    <el-alert style="color:black" title="表格背景色说明：红色超期未完成(有多种原因)；酱红超期未执行；粉红色未接单；橙色未指派" type="success" />
     <el-dialog
       title="工单详情"
       :visible.sync="dialogVisible"
@@ -386,7 +392,7 @@
     <el-dialog
       title="报修详情"
       :visible.sync="dialogVisibleRepair"
-      width="30%"
+      width="600"
     >
       <repair
         :rule-form="ruleForm"
@@ -495,7 +501,7 @@
     <el-dialog
       title="验收结果"
       :visible.sync="dialogVisibleResult"
-      width="30%"
+      width="500"
     >
       <el-form
         :model="resultForm"
@@ -523,6 +529,20 @@
           </template>
           <div v-if="resultForm.result_accept_graph_url.length===0">
             暂无图片
+          </div>
+        </el-form-item>
+        <el-form-item label="上传视频">
+          <template v-for="(item, index) in resultForm.result_accept_video_url">
+            <video
+              v-if="resultForm.result_accept_video_url.length>0"
+              :key="index"
+              style="width:600px;height:300px"
+              controls="controls"
+              :src="item"
+            />
+          </template>
+          <div v-if="resultForm.result_accept_video_url.length===0">
+            暂无视频
           </div>
         </el-form-item>
         <el-form-item label="验收结论" prop="result_accept_result">
@@ -562,7 +582,7 @@ export default {
       tableDataView: [],
       creatOrder: {},
       search: {},
-      resultForm: { result_accept_graph_url: [] },
+      resultForm: { result_accept_graph_url: [], result_accept_video_url: [] },
       dateValue: [],
       tableData: [],
       ruleForm: {},

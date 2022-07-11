@@ -1,6 +1,6 @@
 <template>
   <div v-loading="loading">
-    <!-- 胶片条码追朔 -->
+    <!-- 胶片条码追溯 -->
     lot_no：
     <el-input
       v-model="barCodeSearch"

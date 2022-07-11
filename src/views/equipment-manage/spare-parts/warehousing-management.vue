@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 入库管理 -->
+    <!-- 备件入库管理 -->
     <el-form :inline="true">
       <el-form-item label="入库单据号">
         <el-input
@@ -46,7 +46,7 @@
           @change="changeSearch1"
         >
           <el-option
-            v-for="item in [{label:'未入库',value:1},{label:'入库中',value:2},{label:'已入库',value:3}]"
+            v-for="item in [{label:'未入库',value:1},{label:'入库中',value:2},{label:'已入库',value:3},{label:'关闭',value:7}]"
             :key="item.value"
             :label="item.label"
             :value="item.value"
@@ -94,6 +94,7 @@
       >
         <template slot-scope="scope">
           <el-button
+            v-if="scope.row.status_name!=='关闭'"
             v-permission="['equip_in_warehouse', 'enter']"
             type="primary"
             size="mini"
@@ -134,7 +135,7 @@
       />
       <el-table-column
         label="操作"
-        width="200"
+        width="220"
       >
         <template slot-scope="scope">
           <el-button
@@ -150,6 +151,13 @@
             size="mini"
             @click="deleteOrder(scope.row)"
           >删除
+          </el-button>
+          <el-button
+            v-if="scope.row.status_name!=='关闭'"
+            v-permission="['equip_in_warehouse', 'delete']"
+            size="mini"
+            @click="closeOrder(scope.row)"
+          >关闭
           </el-button>
         </template>
       </el-table-column>
@@ -171,6 +179,17 @@
         <el-form-item label="状态">
           <el-input v-model="status" disabled />
         </el-form-item>
+        <el-form-item label="备件代码">
+          <el-input v-model="search1.spare_code" clearable />
+        </el-form-item>
+        <el-form-item label="备件名称">
+          <el-input v-model="search1.spare_name" clearable />
+        </el-form-item>
+        <el-button
+          type="primary"
+          @click="searchDialog"
+        >查询
+        </el-button>
       </el-form>
       <el-table
         v-loading="loadingView"
@@ -258,6 +277,12 @@
           min-width="20"
         />
       </el-table>
+      <page
+        :old-page="false"
+        :total="total1"
+        :current-page="search1.page"
+        @currentChange="currentChange1"
+      />
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="dialogVisible=false">关闭</el-button>
       </span>
@@ -378,6 +403,7 @@
         <el-form-item label="入库物料详情列表" prop="equip_spare">
           <el-button type="primary" @click="Add">添加</el-button>
           <el-table
+            max-height="400"
             :data="dialogForm.equip_spare"
             border
             style="width: 100%"
@@ -439,6 +465,7 @@
     >
       <el-form
         ref="createForm"
+        v-loading="loadingList"
         :rules="rules"
         label-width="150px"
         :model="dialogForm"
@@ -474,6 +501,7 @@
         <el-form-item label="入库物料详情列表" prop="equip_spare">
           <el-button type="primary" @click="Add">添加</el-button>
           <el-table
+            max-height="400"
             :data="dialogForm.equip_spare"
             border
             style="width: 100%"
@@ -586,7 +614,7 @@
 <script>
 import material from '../components/material-dialog'
 import { sectionTree } from '@/api/base_w_four'
-import { getOrderId, equipWarehouseOrder, equipWarehouseOrderDetail, equipWarehouseArea, equipWarehouseLocation, getSpareOrder } from '@/api/jqy'
+import { getOrderId, equipWarehouseOrder, equipWarehouseOrderDetail, equipWarehouseArea, equipWarehouseLocation, getSpareOrder, closeOrder } from '@/api/jqy'
 import page from '@/components/page'
 import { debounce } from '@/utils'
 export default {
@@ -610,9 +638,11 @@ export default {
       warehouseAreaList: [],
       warehouseLocationList: [],
       total: 0,
+      total1: 0,
       status: null,
       loading: false,
       loadingView: false,
+      loadingList: false,
       dialogVisibleAdd: false,
       dialogVisibleAdd1: false,
       dialogVisible: false,
@@ -657,6 +687,7 @@ export default {
             const data = await equipWarehouseOrderDetail('get', null, { params: this.search1 })
             this.tableDataView = data || []
             this.handleClose(null)
+            this.dialog(false)
             this.getList()
             this.dialogVisible1 = false
           } catch (e) {
@@ -747,21 +778,28 @@ export default {
         }
       }
     },
-    editOrder(row) {
-      this.dialogForm = JSON.parse(JSON.stringify(row))
-      this.dialogForm.equip_spare = []
-      this.dialogForm.order_detail.forEach(d => {
-        this.dialogForm.equip_spare.push({
-          id: d.equip_spare,
-          in_quantity: d.in_quantity,
-          unique_id: d.unique_id,
-          quantity: d.plan_in_quantity,
-          spare_code: d.spare_code,
-          spare_name: d.spare_name,
-          status: d.status
-        })
-      })
+    async editOrder(row) {
       this.dialogVisibleEdit = true
+      try {
+        this.loadingList = true
+        const data = await equipWarehouseOrder('get', row.id, {})
+        this.dialogForm = data
+        this.dialogForm.equip_spare = []
+        this.dialogForm.order_detail.forEach(d => {
+          this.dialogForm.equip_spare.push({
+            id: d.equip_spare,
+            in_quantity: d.in_quantity,
+            unique_id: d.unique_id,
+            quantity: d.plan_in_quantity,
+            spare_code: d.spare_code,
+            spare_name: d.spare_name,
+            status: d.status
+          })
+        })
+        this.loadingList = false
+      } catch {
+        this.loadingList = false
+      }
     },
     deleteOrder: function(row) {
       this.$confirm('此操作将删除' + row.order_id + ', 是否继续?', '提示', {
@@ -770,6 +808,22 @@ export default {
         type: 'warning'
       }).then(() => {
         equipWarehouseOrder('delete', row.id, {})
+          .then(response => {
+            this.$message({
+              type: 'success',
+              message: '操作成功!'
+            })
+            this.getList()
+          })
+      })
+    },
+    closeOrder: function(row) {
+      this.$confirm('此操作将关闭' + row.order_id + ', 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        closeOrder('post', null, { data: { id: row.id }})
           .then(response => {
             this.$message({
               type: 'success',
@@ -799,15 +853,21 @@ export default {
       this.getList()
     },
     async dialog(row) {
-      this.search1.order_id = row.order_id
-      this.status = row.status_name
-      try {
-        const data = await equipWarehouseOrderDetail('get', null, { params: this.search1 })
-        this.tableDataView = data || []
-      } catch (e) {
-        // this.loading = false
+      if (row) {
+        this.dialogVisible = true
+        this.search1.order_id = row.order_id
+        this.search1.page = 1
+        this.status = row.status_name
       }
-      this.dialogVisible = true
+      try {
+        this.loadingView = true
+        const data = await equipWarehouseOrderDetail('get', null, { params: this.search1 })
+        this.loadingView = false
+        this.total1 = data.count
+        this.tableDataView = data.results || []
+      } catch (e) {
+        this.loadingView = false
+      }
     },
     spareDialog(row) {
       this.dialogVisibleSpare = true
@@ -853,6 +913,10 @@ export default {
         })
       }
     },
+    searchDialog() {
+      this.search1.page = 1
+      this.dialog(false)
+    },
     handleClose(done) {
       this.$refs.creatOrder.resetFields()
       this.dialogVisible1 = false
@@ -882,6 +946,10 @@ export default {
       }
     },
     submitEdit() {
+      if (this.dialogForm.status_name === '关闭') {
+        this.$message('该单据已经关闭,不可修改')
+        return
+      }
       this.dialogForm.status = 1
       this.dialogForm.equip_spare.forEach(d => {
         if (d.quantity === undefined || d.quantity === 0) {
@@ -951,7 +1019,7 @@ export default {
       if (this.$refs['List'].multipleSelection.length > 0) {
         for (let index = 0; index < this.$refs['List'].multipleSelection.length; index++) {
           if (data.indexOf(this.$refs['List'].multipleSelection[index].id) === -1) {
-            this.dialogForm.equip_spare.push({
+            this.dialogForm.equip_spare.unshift({
               spare_code: this.$refs['List'].multipleSelection[index].spare_code,
               id: this.$refs['List'].multipleSelection[index].id,
               spare_name: this.$refs['List'].multipleSelection[index].spare_name,
@@ -971,6 +1039,11 @@ export default {
       this.search.page = page
       this.search.page_size = page_size
       this.getList()
+    },
+    currentChange1(page, page_size) {
+      this.search1.page = page
+      this.search1.page_size = page_size
+      this.dialog()
     }
   }
 }

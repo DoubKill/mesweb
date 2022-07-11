@@ -296,36 +296,36 @@
       </el-form>
       <el-form v-else :inline="true" label-width="150px">
         <el-form-item label="代码">
-          <el-input v-model="detailForm.tofac" disabled style="width:250px" />
+          <el-input v-model="detailForm.TOFAC" disabled style="width:250px" />
         </el-form-item>
         <el-form-item label="品名">
-          <el-input v-model="detailForm.wlmc" disabled style="width:250px" />
+          <el-input v-model="detailForm.WLMC" disabled style="width:250px" />
         </el-form-item>
         <el-form-item label="批号">
-          <el-input v-model="detailForm.ph" disabled style="width:250px" />
+          <el-input v-model="detailForm.PH" disabled style="width:250px" />
         </el-form-item>
         <el-form-item label="数量">
-          <el-input v-model="detailForm.sl" disabled style="width:100px" />
-          <el-input v-model="detailForm.sldw" disabled style="width:150px" />
+          <el-input v-model="detailForm.SL" disabled style="width:100px" />
+          <el-input v-model="detailForm.SLDW" disabled style="width:150px" />
         </el-form-item>
         <el-form-item label="重量">
-          <el-input v-model="detailForm.zl" disabled style="width:100px" />
-          <el-input v-model="detailForm.zldw" disabled style="width:150px" />
+          <el-input v-model="detailForm.ZL" disabled style="width:100px" />
+          <el-input v-model="detailForm.ZLDW" disabled style="width:150px" />
         </el-form-item>
         <el-form-item label="产地">
-          <el-input v-model="detailForm.cd" disabled style="width:250px" />
+          <el-input v-model="detailForm.CD" disabled style="width:250px" />
         </el-form-item>
         <el-form-item label="供货商">
-          <el-input v-model="detailForm.wldwmc" disabled style="width:250px" />
+          <el-input v-model="detailForm.WLDWMC" disabled style="width:250px" />
         </el-form-item>
         <el-form-item label="生产日期">
-          <el-input v-model="detailForm.scrq" disabled style="width:250px" />
+          <el-input v-model="detailForm.SCRQ" disabled style="width:250px" />
         </el-form-item>
         <el-form-item label="使用期限">
-          <el-input v-model="detailForm.syqx" disabled style="width:250px" />
+          <el-input v-model="detailForm.SYQX" disabled style="width:250px" />
         </el-form-item>
         <el-form-item label="订单编号">
-          <el-input v-model="detailForm.ddh" disabled style="width:250px" />
+          <el-input v-model="detailForm.DDH" disabled style="width:250px" />
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -409,7 +409,7 @@ export default {
           this.detailForm = {}
         }
       } catch (e) {
-        this.dialogVisibleDetail = true
+        this.dialogVisibleDetail = false
       }
     },
     async getList() {

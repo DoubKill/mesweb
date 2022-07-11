@@ -138,6 +138,7 @@
       :current-page="search.page"
       @currentChange="currentChange"
     />
+    <el-alert style="color:black" title="表格背景色说明：绿色合格；红色不合格；紫色代表一直没查到总部结果，送检日期超过设定天数，可以删除该行数据" type="success" />
     <el-dialog
       title="总部送检条码  添加"
       :visible.sync="dialogVisible"
@@ -272,9 +273,9 @@ export default {
     async getDebounceCode() {
       try {
         const data = await wmsMaterialSearch('get', null, { params: { tmh: this.objForm.tracking_num }})
-        this.objForm.material_name = data[0].wlmc
-        this.objForm.material_no = data[0].wlxxid
-        this.objForm.batch = data[0].ph
+        this.objForm.material_name = data[0].WLMC
+        this.objForm.material_no = data[0].WLXXID
+        this.objForm.batch = data[0].PH
       } catch (e) {
         //
       }

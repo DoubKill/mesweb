@@ -4,8 +4,11 @@
     <el-form :inline="true">
       <el-form-item label="生产日期">
         <el-date-picker
-          v-model="paramsObj.factory_date"
-          type="date"
+          v-model="dateValue"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
           value-format="yyyy-MM-dd"
           @change="changeSearch"
         />
@@ -50,7 +53,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="胶料规格">
-        <all-product-no-select :params-obj="paramsObj" :params-obj-must="false" @productBatchingChanged="productBatchingChanged" />
+        <all-product-no-select :params-obj-must="false" @productBatchingChanged="productBatchingChanged" />
       </el-form-item>
     </el-form>
     <h3>
@@ -308,10 +311,13 @@ export default {
       loading: false,
       listData: [],
       details: [],
-      orderRow: { department: '准备分厂', currentDate: setDate(), reason: '', status: '半成品' }
+      orderRow: { department: '准备分厂', currentDate: setDate(), reason: '', status: '半成品' },
+      dateValue: []
     }
   },
   created() {
+    this.search.st = this.dateValue ? this.dateValue[0] : ''
+    this.search.et = this.dateValue ? this.dateValue[1] : ''
     this.getList()
   },
   methods: {
@@ -368,6 +374,8 @@ export default {
       this.dialogVisible = true
     },
     changeSearch() {
+      this.search.st = this.dateValue ? this.dateValue[0] : ''
+      this.search.et = this.dateValue ? this.dateValue[1] : ''
       this.search.factory_date = this.paramsObj.factory_date
       this.search.equip_no = this.paramsObj.equip_no
       this.search.page = 1
@@ -414,14 +422,17 @@ export default {
       const _this = this
       let a = 0
       const aee = []
-      let obj = {}
+      let obj = {} // 当前的数据
+      // ac 要比较下一个数据
       // 判断逻辑
       aaa(aee)
       function aaa(aee) {
         const ac = JSON.parse(JSON.stringify(_this.listData))
         for (let index = 0; index < ac.length; index++) {
-          if (aee.length === 0) {
-            aee.push(ac[0])
+          if (aee.length === 0 && index === 0) {
+            if (!ac[0].ids) { ac[0].ids = [] }
+            ac[0].ids.push(ac[0].id)
+            aee.push(JSON.parse(JSON.stringify(ac[0])))
             obj = ac[0]
             obj.ids = []
             obj.ids[0] = obj.id
@@ -439,9 +450,11 @@ export default {
                 d.product_no === obj.product_no &&
                 d.a === obj.a))
               if (_index > -1) {
+                if (((aee[_index].trains.split(';').every(d => { return d !== ac[index].trains })) || (obj.trains === ac[index].trains && ac[index].id !== obj.id)) && aee[_index].ids.findIndex(d => { return d === ac[index].id }) === -1) {
+                  aee[_index].ids.push(ac[index].id)
+                }
                 if (aee[_index].trains.split(';').every(d => { return d !== ac[index].trains })) {
                   aee[_index].trains += ';' + ac[index].trains
-                  aee[_index].ids.push(ac[index].id)
                   for (let i = 0; i < aee[_index].test_data.length; i++) {
                     if (aee[_index].test_data[i].min_value) {
                       if (aee[_index].test_data[i].min_value > ac[index].test_data[i].min_value) {
@@ -466,7 +479,8 @@ export default {
               if (_index === -1) {
                 ac[index].ids = []
                 ac[index].ids[0] = ac[index].id
-                aee.push(ac[index])
+                if (!ac[index].ids) { ac[index].ids = [] }
+                aee.push(JSON.parse(JSON.stringify(ac[index])))
               }
             }
           }

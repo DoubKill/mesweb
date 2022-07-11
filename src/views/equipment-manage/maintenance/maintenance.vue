@@ -611,7 +611,7 @@ export default {
               })
           })
         } else {
-          this.$message.info('请先未生成工单计划列表')
+          this.$message.info('请勾选未生成工单计划列表')
         }
       } else {
         this.$message.info('请先勾选计划列表')

@@ -6,6 +6,7 @@ export default {
   HomePageUrl: '/api/v1/index/',
   GlobalTypesUrl: BasicsUrl + 'global-types/',
   GlobalCodesUrl: BasicsUrl + 'global-codes/',
+  CommonCode: '/api/v1/basics/common-code/',
 
   EquipCategoryUrl: BasicsUrl + 'equips-category/',
   // const EquipCategoryUrl : BasicsUrl + "equips-category-list/",
@@ -31,6 +32,7 @@ export default {
   GroupAddUserUrl: SystemUrl + 'group_add_user/',
   ResetPassword: '/api/v1/system/reset-password/',
   MaterialsUrl: '/api/v1/recipe/materials/',
+  ThMaterialsAttribute: '/api/v1/inventory/th-materials-attribute/',
   XlRecipeNotice: '/api/v1/terminal/xl-recipe-notice/',
   MaterialInfoIssue: '/api/v1/terminal/material-info-issue/', // 原材料下发至称量系统接口
   ProductInfosUrl: '/api/v1/recipe/product-infos/',
@@ -213,6 +215,7 @@ export default {
 
   MaterialTypesUrl: BasicsUrl + 'global-codes/',
 
+  ProductStockOutbound: '/api/v1/inventory/product-stock-outbound/',
   // 批量打印
   LabelPrint: '/api/v1/quality/label-print/',
   ShowQualifiedRange: '/api/v1/quality/show-qualified-range/',
@@ -260,7 +263,9 @@ export default {
   // 报表-车次记录-曲线图{id}
   CurveInformationUrl: '/api/v1/production/curve-information-list/',
   AlarmLogList: '/api/v1/production/alarm_log-list/',
-
+  WmsMooneyLevel: '/api/v1/quality/wms-mooney-level/',
+  ClearLevel: '/api/v1/quality/wms-mooney-level/clear-level/',
+  LevelBatchSet: '/api/v1/quality/wms-mooney-level/batch-set/',
   // 备品备件物料类型
   SparepartsSpareType: '/api/v1/spareparts/spare-type/',
   // 备品备件物料编码
@@ -501,6 +506,7 @@ export default {
   CarbonOutTask: '/api/v1/terminal/carbon-out-task/',
   // 胶片库出库单列表
   CompoundManage: '/api/v1/inventory/outbound-delivery-orders/',
+  OutboundPproductInfo: '/api/v1/inventory/outbound-product-info/',
   // 出库
   Outbound: '/api/v1/inventory/outbound-delivery-order-details/',
   // 机台别不合格率
@@ -585,6 +591,7 @@ export default {
   // 新建出库单据
   EquipWarehouseOrder: '/api/v1/equipment/equip-warehouse-order/',
   EquipWarehouseRecord: '/api/v1/equipment/equip-warehouse-record/', // 备件出入库履历
+  CloseOrder: '/api/v1/equipment/equip-warehouse-order/close-order/',
   EquipWarehouseStatistical: '/api/v1/equipment/equip-warehouse-statistical/', // 备件入出库统计分析
   EquipWarehouseOrderDetail: '/api/v1/equipment/equip-warehouse-order-detail/',
   GetCode: '/api/v1/equipment/equip-warehouse-order/get_code/',
@@ -656,6 +663,7 @@ export default {
   Equip190e: '/api/v1/production/equip-190e/',
   Equip190eImport: '/api/v1/production/equip-190e/import_xlsx/',
   MonthlyOutputStatisticsReport: '/api/v1/production/monthly-output-statistics-report/',
+  MonthlyOutputStatisticsReportDetail: '/api/v1/production/monthly-output-statistics-report-detail/',
   SchedulingStockSummary: '/api/v1/plan/scheduling-stock-summary/',
   SchedulingStockConfirm: '/api/v1/plan/scheduling-stock-summary/confirm/',
   SchedulingMaterialDemanded: '/api/v1/plan/scheduling-material-demanded/', // 原材料需求量
@@ -676,6 +684,7 @@ export default {
   UserImport: '/api/v1/system/personnels/import_xlsx/',
   Sb: '/api/v1/production/nishisb/',
   WmsExceptHandle: '/api/v1/inventory/wms-except-handle/',
+  WmsMnLevelSearch: '/api/v1/inventory/wms-mn-level-search/',
   HfStock: '/api/v1/inventory/hf-stock/', // 烘房胶料信息统计列表
   HfStockDetail: '/api/v1/inventory/hf-stock-detail/',
   AttendanceClockDetail: '/api/v1/production/attendance-clock-detail/',
@@ -705,5 +714,16 @@ export default {
   ReplaceRecipeOne: '/api/v1/recipe/replace-recipe-material/',
   XlReportWeightStatics: '/api/v1/terminal/xl-report-weight-statics/',
   ProductExpiresList: '/api/v1/inventory/product-expires-list/',
-  ProductExpiresDetails: '/api/v1/inventory/product-expires-details/'
+  ProductExpiresDetails: '/api/v1/inventory/product-expires-details/',
+
+  WmsAddPrint: '/api/v1/terminal/wms-add-print/',
+  HfForceHandle: '/api/v1/inventory/hf-force-handle/',
+  HfConfigSet: '/api/v1/inventory/hf-config-set/',
+  EquipmentIndex: '/api/v1/equipment/index/',
+
+  ProductSynthesisRate: '/api/v1/quality/product-synthesis-rate/',
+  ProductSynthesisEquipRate: '/api/v1/quality/product-synthesis-equip-rate/',
+  ProductSynthesisGroupRate: '/api/v1/quality/product-synthesis-group-rate/',
+  ProductSynthesisProductRate: '/api/v1/quality/product-synthesis-product-rate/',
+  ProductSynthesisMonthRate: '/api/v1/quality/product-synthesis-month-rate/'
 }

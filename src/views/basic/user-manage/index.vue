@@ -21,6 +21,7 @@
           v-model="getParams.is_active"
           clearable
           placeholder="请选择"
+          style="width:150px"
           @change="numChanged"
         >
           <el-option
@@ -45,6 +46,9 @@
             :value="item.id"
           />
         </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-checkbox v-model="getParams.checked" @change="numChanged">按修改日期排序</el-checkbox>
       </el-form-item>
       <el-form-item
         v-if="permissionObj.user.indexOf('add')>-1"
@@ -156,6 +160,16 @@
           {{ scope.row.created_date?scope.row.created_date:'--' }}
         </template>
       </el-table-column>
+      <el-table-column label="修改人" min-width="10">
+        <template slot-scope="scope">
+          {{ scope.row.last_update_username?scope.row.last_update_username:'--' }}
+        </template>
+      </el-table-column>
+      <el-table-column label="修改日期" min-width="10">
+        <template slot-scope="scope">
+          {{ scope.row.last_updated_date?scope.row.last_updated_date:'--' }}
+        </template>
+      </el-table-column>
       <el-table-column
         label="操作"
         width="220"
@@ -190,6 +204,7 @@
       </el-table-column>
     </el-table>
     <page
+      :old-page="false"
       :total="count"
       :current-page="getParams.page"
       @currentChange="changePage"
@@ -585,6 +600,7 @@ export default {
       })
     },
     numChanged() {
+      this.getParams.ordering = this.getParams.checked ? '-last_updated_date' : ''
       this.getParams['page'] = 1
       this.currentChange()
     },
@@ -647,8 +663,9 @@ export default {
       }).catch(() => {
       })
     },
-    changePage(page) {
-      this.getParams['page'] = page
+    changePage(page, page_size) {
+      this.getParams.page = page
+      this.getParams.page_size = page_size
       this.currentChange()
     },
     handleCreateUser(formName) {

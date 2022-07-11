@@ -187,7 +187,6 @@
       :current-page="search.page"
       @currentChange="currentChange"
     />
-
     <el-dialog
       :title="(formData.id?'编辑':'添加')+'检测值'"
       :visible.sync="dialogVisible"
@@ -680,12 +679,12 @@ export default {
       try {
         const data = await wmsMaterialSearch('get', null, { params: { tmh: val }})
         // this.formDataMaterial = data[0]
-        this.$set(this.formData, 'material_tmh', data[0].tmh)
-        this.$set(this.formData, 'material_wlxxid', data[0].wldwxxid)
-        this.$set(this.formData, 'material_name', data[0].wlmc)
-        this.$set(this.formData, 'material_batch', data[0].ph)
-        this.$set(this.formData, 'material_supplier', data[0].cd)
-        this.$set(this.formData, 'material_sample_name', data[0].wlmc)
+        this.$set(this.formData, 'material_tmh', data[0].TMH)
+        this.$set(this.formData, 'material_wlxxid', data[0].WLXXID)
+        this.$set(this.formData, 'material_name', data[0].WLMC)
+        this.$set(this.formData, 'material_batch', data[0].PH)
+        this.$set(this.formData, 'material_supplier', data[0].CD)
+        this.$set(this.formData, 'material_sample_name', data[0].WLMC)
       } catch (e) {
         //
       }

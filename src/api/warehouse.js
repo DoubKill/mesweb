@@ -60,6 +60,13 @@ export function editStationInfo(method, id, data) {
     data
   })
 }
+export function productStockOutbound(method, id, data) {
+  return request({
+    url: id ? API.ProductStockOutbound + id + '/' : API.ProductStockOutbound,
+    method,
+    data
+  })
+}
 export function updateSUseFlag(id) {
   return request({
     url: API.StationInfoUrl + id + '/reversal_use_flag/',

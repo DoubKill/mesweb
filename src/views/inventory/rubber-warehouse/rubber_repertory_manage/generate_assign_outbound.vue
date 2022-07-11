@@ -1,9 +1,24 @@
 <template>
-  <div v-loading="loading" class="app-container">
+  <div v-loading="loading" class="app-container rubber_repertory_manage-dialog">
     <!-- 库位列表 混炼终练使用-->
     <el-form :inline="true">
       <el-form-item label="仓库名称">
         {{ warehouseName }}
+      </el-form-item>
+      <el-form-item label="有效期状态">
+        <el-select
+          v-model="getParams.yx_state"
+          placeholder="请选择"
+          clearable
+          @change="changeSearch"
+        >
+          <el-option
+            v-for="(item,key) in [{name:'已超期',id:'expired'},{name:'超期预警',id:'warning'},{name:'正常',id:'normal'}]"
+            :key="key"
+            :label="item.name"
+            :value="item.id"
+          />
+        </el-select>
       </el-form-item>
       <!-- <el-form-item label="库存位">
         <el-input v-model="getParams.location" @input="changeSearch" />
@@ -43,15 +58,35 @@
           @changSelect="selectStation"
         />
       </el-form-item> -->
-      <el-form-item style="float:right">
+      <el-form-item label="出库口选择" style="float:right">
+        <el-select
+          v-model="entrance_name"
+          placeholder="请选择"
+          style="margin-right:10px"
+          @visible-change="getWarehouseSelectPosition"
+          @change="changeEntrance"
+        >
+          <el-option
+            v-for="item in optionsList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.name"
+          />
+        </el-select>
+        <el-button
+          v-permission="['product_inventory','outbound']"
+          type="primary"
+          :disabled="btnLoading"
+          @click="confirmDelivery"
+        >确定出库</el-button>
         <el-button
           type="primary"
-          :loading="btnLoading"
+          :disabled="btnLoading"
           @click="exportTable(1)"
         >导出当前页面</el-button>
         <el-button
           type="primary"
-          :loading="btnLoading"
+          :disabled="btnLoading"
           @click="exportTable(2)"
         >导出所有</el-button>
       </el-form-item>
@@ -61,7 +96,34 @@
       border
       style="width: 100%"
       :data="tableData"
+      row-key="id"
+      :row-class-name="rowClassNameFn"
+      @selection-change="handleSelectionChange"
     >
+      <el-table-column
+        type="selection"
+        width="40"
+        :reserve-selection="true"
+        :selectable="(row)=>{
+          if(row.location_status==='有货货位'){
+            if(warehouseName === '混炼胶库'&&row.location){
+              if(entrance_name==='一层后端')return false
+              if(entrance_name==='二层后端')return true
+              let firstVal = (row.location).substr(0,1)
+              if(entrance_name==='一层前端'&&(firstVal==='3'||firstVal==='4')){
+                return true
+              }else if(entrance_name==='二层前端'&&(firstVal==='1'||firstVal==='2')){
+                return true
+              }else{
+                return false
+              }
+            }
+            return true
+          }else{
+            return false
+          }
+        }"
+      />
       <el-table-column :key="1" label="物料类型" align="center" prop="material_type" min-width="40" />
       <el-table-column :key="2" label="物料编码" align="center" prop="material_no" />
       <el-table-column :key="4" label="lot" align="center" prop="lot_no" />
@@ -89,6 +151,7 @@
           <span>{{ row.quality_level }}</span>
         </template>
       </el-table-column>
+      <el-table-column :key="15" label="处理意见" align="center" prop="deal_suggestion" />
       <el-table-column :key="9" label="入库时间" align="center" prop="in_storage_time" />
       <el-table-column :key="10" label="机台号" width="60" align="center" prop="equip_no" />
       <!-- <el-table-column
@@ -137,7 +200,7 @@
       :current-page="getParams.page"
       @currentChange="currentChange"
     />
-
+    <el-alert style="color:black" title="表格字体颜色说明：浅红色-超期预警，红色-已超期。" type="success" />
     <el-dialog
       title="快检信息"
       :visible.sync="dialogVisible"
@@ -163,7 +226,7 @@ import page from '@/components/page'
 // import materialCodeSelect from '@/components/select_w/materialCodeSelect'
 import { debounce } from '@/utils'
 import detailsDialog from '@/views/quality_management/details.vue'
-import { stationInfo } from '@/api/warehouse'
+import { stationInfo, productStockOutbound } from '@/api/warehouse'
 // import materialInventoryManage from '@/views/inventory/rubber-warehouse/material-inventory-manage.vue'
 export default {
   name: 'GenerateAssignOutbound1',
@@ -223,7 +286,9 @@ export default {
       dispatch: '',
       containerNo: '',
       lotNo: '',
-      btnLoading: false
+      btnLoading: false,
+      entrance_name: '',
+      multipleArr: []
     }
   },
   computed: {
@@ -247,11 +312,11 @@ export default {
   },
   created() {
     this.getTableData()
-    // this.getWarehouseSelectPosition()
   },
   methods: {
     getTableData() {
       this.loading = true
+      this.entrance_name = null
       const _api = this.warehouseName === '混炼胶库' ? bzMixinInventory : bzFinalInventory
       _api(this.getParams)
         .then(response => {
@@ -275,7 +340,8 @@ export default {
           this.loading = false
         })
     },
-    async getWarehouseSelectPosition() {
+    async getWarehouseSelectPosition(bool) {
+      if (!bool) return
       try {
         if (!this.warehouseName) {
           this.optionsList = []
@@ -358,6 +424,57 @@ export default {
         this.handleSelection = []
       }
     },
+    handleSelectionChange(arr) {
+      this.multipleArr = arr
+    },
+    changeEntrance() {
+      this.$refs.multipleTable.clearSelection()
+    },
+    async confirmDelivery() {
+      if (!this.entrance_name || !this.multipleArr.length) {
+        this.$message('请选择出库口和库位')
+        return
+      }
+      const arr = []
+      this.multipleArr.forEach(d => {
+        arr.push({
+          'inventory_time': d.in_storage_time,
+          'location': d.location,
+          'lot_no': d.lot_no,
+          'memo': d.memo,
+          'pallet_no': d.container_no,
+          'qty': d.qty,
+          'quality_status': d.quality_level,
+          'weight': d.total_weight
+        })
+      })
+      const obj = {
+        product_no: this.multipleArr[0].material_no,
+        quality_status: this.multipleArr[0].quality_level,
+        station: this.entrance_name,
+        warehouse: this.warehouseName,
+        stock_data: arr
+      }
+      try {
+        await productStockOutbound('post', null, obj)
+        this.$message.success('出库成功')
+        this.multipleArr = []
+        this.$refs.multipleTable.clearSelection()
+        this.getTableData()
+      } catch (e) {
+        //
+      }
+    },
+    rowClassNameFn({ row, rowIndex }) {
+      if (row.all) {
+        return 'summary-cell-style'
+      }
+      if (row.yx_state === 'expired') {
+        return 'deepred-cell-style'
+      } else if (row.yx_state === 'warning') {
+        return 'red-cell-style'
+      }
+    },
     exportTable(val) {
       this.btnLoading = true
       const obj = Object.assign({ export: val }, this.getParams)
@@ -390,9 +507,19 @@ function sum(arr, params) {
   return s
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
+.rubber_repertory_manage-dialog{
   .dialog-footer{
     width:100%;
     text-align: right;
   }
+  .red-cell-style{
+    background: rgb(225, 148, 157);
+    color:#000;
+  }
+  .deepred-cell-style{
+    background: red;
+    color:#000;
+  }
+}
 </style>

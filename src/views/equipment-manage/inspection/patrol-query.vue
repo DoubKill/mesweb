@@ -266,7 +266,7 @@
       :current-page="search.page"
       @currentChange="currentChange"
     />
-
+    <el-alert style="color:black" title="表格背景色说明：红色超期未完成(有多种原因)；酱红超期未执行；粉红色未接单；橙色未指派" type="success" />
     <el-dialog
       title="巡检详情"
       :visible.sync="dialogVisible"
@@ -374,6 +374,20 @@
           </template>
           <div v-if="creatOrder.result_repair_graph_url.length===0">
             暂无图片
+          </div>
+        </el-form-item>
+        <el-form-item label="上传视频">
+          <template v-for="(item, index) in creatOrder.result_repair_video_url">
+            <video
+              v-if="creatOrder.result_repair_video_url.length>0"
+              :key="index"
+              style="width:600px;height:300px"
+              controls="controls"
+              :src="item"
+            />
+          </template>
+          <div v-if="creatOrder.result_repair_video_url.length===0">
+            暂无视频
           </div>
         </el-form-item>
         <el-form-item label="巡检结论">
@@ -490,7 +504,7 @@ export default {
       dialogVisibleProject: false,
       dialogVisibleMaintain: false,
       projectForm: { abnormal_operation_url: [] },
-      creatOrder: { result_repair_graph_url: [] },
+      creatOrder: { result_repair_graph_url: [], result_repair_video_url: [] },
       dialogVisible: false,
       btnExportLoad: false,
       dateValue: [],

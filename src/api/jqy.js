@@ -98,6 +98,15 @@ export function compoundManage(method, id, data = {}) {
   return request(obj)
 }
 
+export function outboundPproductInfo(method, id, data = {}) {
+  const obj = {
+    url: id ? API.OutboundPproductInfo + id + '/' : API.OutboundPproductInfo,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 // 出库
 export function outbound(method, id, data = {}) {
   const obj = {
@@ -629,6 +638,14 @@ export function getCode(method, id, data = {}) {
 export function equipWarehouseOrder(method, id, data = {}) {
   const obj = {
     url: id ? API.EquipWarehouseOrder + id + '/' : API.EquipWarehouseOrder,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function closeOrder(method, id, data = {}) {
+  const obj = {
+    url: id ? API.CloseOrder + id + '/' : API.CloseOrder,
     method: method
   }
   Object.assign(obj, data)
@@ -1239,6 +1256,15 @@ export function wmsExceptHandle(method, id, data = {}) {
   return request(obj)
 }
 
+export function wmsMnLevelSearch(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WmsMnLevelSearch + id + '/' : API.WmsMnLevelSearch,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function schedulingProductImport(method, id, data = {}) {
   const obj = {
     url: id ? API.SchedulingProductImport + id + '/' : API.SchedulingProductImport,
@@ -1332,6 +1358,22 @@ export function attendanceGroupSetup(method, id, data = {}) {
 export function hfRealStatus(method, id, data = {}) {
   const obj = {
     url: id ? API.HfRealStatus + id + '/' : API.HfRealStatus,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function hfForceHandle(method, id, data = {}) {
+  const obj = {
+    url: id ? API.HfForceHandle + id + '/' : API.HfForceHandle,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function hfConfigSet(method, id, data = {}) {
+  const obj = {
+    url: id ? API.HfConfigSet + id + '/' : API.HfConfigSet,
     method: method
   }
   Object.assign(obj, data)

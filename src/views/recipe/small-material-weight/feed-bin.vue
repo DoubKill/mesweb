@@ -26,6 +26,7 @@
                 v-else
                 v-model="itemChild.name"
                 placeholder="请选择物料"
+                @change="changeMaterial($event,indexChild,'A',item)"
               >
                 <el-option
                   v-for="(itemEquip,i) in item.equipOptions"
@@ -50,6 +51,7 @@
                 v-else
                 v-model="itemChild.name"
                 placeholder="请选择物料"
+                @change="changeMaterial($event,indexChild,'B',item)"
               >
                 <el-option
                   v-for="(itemEquip,i) in item.equipOptions"
@@ -163,7 +165,11 @@ export default {
         this.btnLoading = false
       }
     },
-    showEdit() {}
+    showEdit() {},
+    changeMaterial(event, index, val, item) {
+      const obj = item.equipOptions.find(d => d.name === event)
+      this.allTable[0][val][index].code = obj.code
+    }
   }
 }
 </script>

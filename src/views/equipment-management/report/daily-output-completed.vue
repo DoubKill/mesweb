@@ -34,7 +34,7 @@
       :data="tableData"
       border
     >
-      <el-table-column width="140px">
+      <el-table-column fixed width="140px">
         <template
           slot="header"
           slot-scope="{row}"
@@ -53,6 +53,18 @@
           <span>{{ row.name }}</span>
         </template>
       </el-table-column>
+      <el-table-column
+        prop="weight"
+        label="总计"
+        fixed
+        width="90"
+      />
+      <el-table-column
+        prop="avg"
+        label="平均"
+        fixed
+        width="90"
+      />
       <template v-for="(d,index) in tableHead">
         <el-table-column
           :key="index"
@@ -64,21 +76,21 @@
           <template
             slot-scope="{row}"
           >
-            <el-input-number v-if="row.name==='外发无硫料(吨)'&&!exportTableShow" v-model="row[d]" controls-position="right" :min="0" style="width:110px" />
+            <el-input-number v-if="(row.name==='外发无硫料(吨)'||row.name==='实际生产工作日数')&&!exportTableShow" v-model="row[d]" controls-position="right" :min="0" style="width:110px" />
             <span v-else>{{ row[d] }}</span>
           </template>
         </el-table-column>
       </template>
-      <el-table-column
-        prop="weight"
-        label="月累计完成1日为起点"
-        width="90"
-      />
     </el-table>
 
     <div
       id="taskLine"
       style="width: 100%;height:500px;margin-top:100px"
+    />
+    <el-divider style="background:black" />
+    <div
+      id="taskLine1"
+      style="width: 100%;height:500px"
     />
 
     <el-dialog
@@ -272,7 +284,7 @@ export default {
               position: 'top',
               show: true,
               formatter: function(params) {
-                if (params.value === 0) {
+                if (params.value === 0 || params.value === '0') {
                   return ''
                 } else {
                   return params.value
@@ -291,7 +303,7 @@ export default {
               position: 'top',
               show: true,
               formatter: function(params) {
-                if (params.value === 0) {
+                if (params.value === 0 || params.value === '0') {
                   return ''
                 } else {
                   return params.value
@@ -309,7 +321,7 @@ export default {
               backgroundColor: '#FAC090',
               show: true,
               formatter: function(params) {
-                if (params.value === 0) {
+                if (params.value === 0 || params.value === '0') {
                   return ''
                 } else {
                   return params.value
@@ -327,7 +339,7 @@ export default {
               position: 'top',
               show: true,
               formatter: function(params) {
-                if (params.value === 0) {
+                if (params.value === 0 || params.value === '0') {
                   return ''
                 } else {
                   return params.value
@@ -345,7 +357,102 @@ export default {
               backgroundColor: '#FFFF00',
               show: true,
               formatter: function(params) {
-                if (params.value === 0) {
+                if (params.value === 0 || params.value === '0') {
+                  return ''
+                } else {
+                  return params.value
+                }
+              }
+            }
+          }
+        ]
+      },
+      option1: {
+        color: ['#C0504D', '#9BBB59', '#4A7EBB'],
+        title: {
+          left: 'center',
+          text: '安吉（炼胶）190E彩胶线每日产能情况说明'
+        },
+        tooltip: {
+          trigger: 'axis'
+        },
+        legend: {
+          top: '6%',
+          orient: 'horizontal',
+          data: ['无硫(吨)', '加硫(吨)', '合计']
+        },
+        toolbox: {
+          show: true
+        },
+        calculable: true,
+        grid: {
+          x: 60,
+          y: 100,
+          x2: 0,
+          y2: 30
+        },
+        xAxis: [
+          {
+            type: 'category',
+            // prettier-ignore
+            data: []
+          }
+        ],
+        yAxis: [
+          {
+            type: 'value'
+          }
+        ],
+        series: [
+          {
+            barGap: '0%',
+            name: '无硫(吨)',
+            type: 'bar',
+            data: [],
+            label: {
+              color: '#F5FFFF',
+              backgroundColor: '#C00000',
+              position: 'top',
+              show: true,
+              formatter: function(params) {
+                if (params.value === 0 || params.value === '0') {
+                  return ''
+                } else {
+                  return params.value
+                }
+              }
+            }
+          },
+          {
+            barGap: '0%',
+            name: '加硫(吨)',
+            type: 'bar',
+            data: [],
+            label: {
+              color: '#000000',
+              backgroundColor: '#92D050',
+              position: 'top',
+              show: true,
+              formatter: function(params) {
+                if (params.value === 0 || params.value === '0') {
+                  return ''
+                } else {
+                  return params.value
+                }
+              }
+            }
+          },
+          {
+            name: '合计',
+            type: 'line',
+            data: [],
+            label: {
+              position: 'top',
+              color: 'black',
+              backgroundColor: '#FFFF00',
+              show: true,
+              formatter: function(params) {
+                if (params.value === 0 || params.value === '0.00') {
                   return ''
                 } else {
                   return params.value
@@ -383,7 +490,6 @@ export default {
       }
     },
     changeQty(row) {
-      console.log(row.qty)
       if (!row.weight1) {
         this.$message.info('请先选择规格和段数')
         return
@@ -391,7 +497,7 @@ export default {
       if (row.qty === undefined) {
         row.weight = null
       } else {
-        row.weight = row.qty * row.weight1
+        row.weight = (row.qty * row.weight1).toFixed(1)
       }
     },
     handleDisposeDelete(row) {
@@ -413,7 +519,7 @@ export default {
       row.weight1 = this.dataList.find(d => d.specification === row.specification && d.state === row.state).weight
       row.setup = this.dataList.find(d => d.specification === row.specification && d.state === row.state).id
       row.qty = 1
-      row.weight = row.qty * row.weight1
+      row.weight = (row.qty * row.weight1).toFixed(1)
     },
     classChanged(val) {
       this.dialogForm.classes = val
@@ -447,18 +553,28 @@ export default {
     },
     async save() {
       const obj = this.tableData.find(d => d.name === '外发无硫料(吨)')
+      const obj1 = this.tableData.find(d => d.name === '实际生产工作日数')
       var arr = []
+      var arr1 = []
       for (const key in obj) {
-        if (key !== 'name' && key !== 'weight' && obj[key] !== undefined) {
+        if (key !== 'name' && key !== 'weight' && key !== 'avg' && obj[key] !== undefined) {
           arr.push({
             factory_date: this.search.date + '-' + (key.split('日')[0] >= 10 ? key.split('日')[0] : '0' + key.split('日')[0]),
             weight: obj[key]
           })
         }
       }
+      for (const key in obj1) {
+        if (key !== 'name' && key !== 'weight' && key !== 'avg' && obj1[key] !== undefined) {
+          arr1.push({
+            factory_date: this.search.date + '-' + (key.split('日')[0] >= 10 ? key.split('日')[0] : '0' + key.split('日')[0]),
+            num: obj1[key]
+          })
+        }
+      }
       try {
         this.btnLoading = true
-        await dailyProductionCompletionReport('post', null, { data: { date: this.search.date, outer_data: arr }})
+        await dailyProductionCompletionReport('post', null, { data: { date: this.search.date, outer_data: arr, working_data: arr1 }})
         this.$message.success('操作成功')
         this.btnLoading = false
         this.getList()
@@ -564,10 +680,96 @@ export default {
         this.option.series[2].data = this.yList3
         this.option.series[3].data = this.yList4
         this.option.series[4].data = this.yList5
+        this.option1.xAxis[0].data = this.xList
+        this.option1.series[0].data = data.data_190e.wl
+        this.option1.series[1].data = data.data_190e.jl
+        this.totalList = []
+        for (var index = 0; index < this.tableHead.length; index++) {
+          this.totalList.push((Number(data.data_190e.wl[index]) + Number(data.data_190e.jl[index])).toFixed(2))
+        }
+        this.option1.series[2].data = this.totalList
         this.$nextTick(() => {
           const chartBar = echarts.init(document.getElementById('taskLine'))
           chartBar.setOption(this.option)
+          const chartBar1 = echarts.init(document.getElementById('taskLine1'))
+          chartBar1.setOption(this.option1)
         })
+        this.option.graphic = [{
+          type: 'group',
+          left: '85%',
+          top: 0,
+          children: [
+            {
+              type: 'rect',
+              z: 100,
+              left: 'center',
+              top: 'middle',
+              shape: {
+                width: 150,
+                height: 90
+              },
+              style: {
+                fill: '#fff',
+                stroke: '#555',
+                lineWidth: 1,
+                shadowBlur: 8,
+                shadowOffsetX: 3,
+                shadowOffsetY: 3,
+                shadowColor: 'rgba(0,0,0,0.2)'
+              }
+            },
+            {
+              type: 'text',
+              z: 100,
+              left: 'center',
+              top: 'middle',
+              style: {
+                text: [`日均产能`, `加硫:${data.avg_results.jl}`, `无硫:${data.avg_results.wl}`, `段数:${data.avg_results.ds}`].join('\n'),
+                font: '500 14px sy',
+                fill: '#1D2F2E',
+                textLineHeight: 22
+              }
+            }
+          ]
+        }]
+        this.option1.graphic = [{
+          type: 'group',
+          left: '85%',
+          top: 0,
+          children: [
+            {
+              type: 'rect',
+              z: 100,
+              left: 'center',
+              top: 'middle',
+              shape: {
+                width: 150,
+                height: 90
+              },
+              style: {
+                fill: '#fff',
+                stroke: '#555',
+                lineWidth: 1,
+                shadowBlur: 8,
+                shadowOffsetX: 3,
+                shadowOffsetY: 3,
+                shadowColor: 'rgba(0,0,0,0.2)'
+              }
+            },
+            {
+              type: 'text',
+              z: 100,
+              left: 'center',
+              top: 'middle',
+              style: {
+                text: [`日均产能`, `加硫:${data.avg_190e.jl}`, `无硫:${data.avg_190e.wl}`, `段数:${data.avg_190e.ds}`].join('\n'),
+                font: '500 14px sy',
+                fill: '#1D2F2E',
+                textLineHeight: 22
+              }
+            }
+          ]
+        }]
         this.loading = false
       } catch (e) {
         this.loading = false
@@ -621,6 +823,7 @@ function getDate(datestr) {
   var date = new Date(temp[0], temp[1], temp[2])
   return date
 }
+
 function getCurrentMonthLastDay(d) {
   const date = new Date(d)
   let currentMonth = date.getMonth()
@@ -642,6 +845,9 @@ function getCurrentMonthLastDay(d) {
 
 <style lang="scss">
 .dailyOutputCompleted{
+  .el-divider{
+    background: black;
+  }
 .el-table th{
         padding:0;
     }

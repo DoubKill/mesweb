@@ -3,6 +3,7 @@
     v-loading="loading"
     class="report-batch-style"
   >
+    <!-- 密炼生产履历 -->
     <!-- <el-button
       size="mini"
       @click="clickView({},1)"
@@ -64,11 +65,10 @@
         width="55px"
       />
       <el-table-column
-        prop="equip_no"
-        label="作业时间"
+        label="工厂日期"
         width="95px"
       >
-        <template slot-scope="scope">{{ scope.row.end_time.split(' ')[0] }}</template>
+        <template slot-scope="scope">{{ scope.row.factory_date }}</template>
       </el-table-column>
       <el-table-column
         prop="classes"
@@ -117,11 +117,15 @@
         width="90px"
       />
       <el-table-column
-        prop="equip_no"
         label="有效时间"
       >
-        <template slot-scope="scope">{{ scope.row.end_time }} -- {{ setEndTime(scope.row.end_time) }}</template>
+        <template slot-scope="scope">{{ scope.row.end_time }} -- {{ scope.row.validtime }}</template>
       </el-table-column>
+      <el-table-column
+        prop="pallet_no"
+        label="托盘号"
+        width="90px"
+      />
       <el-table-column
         prop="lot_no"
         label="LOT NO"

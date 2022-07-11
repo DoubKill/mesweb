@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!--胶皮补打卡片 -->
+    <!--返回胶/无名胶卡片补打 -->
     <el-form :inline="true">
       <el-form-item label="类别">
         <el-select
@@ -84,11 +84,11 @@
         label="打印时间"
         width="150"
       />
-      <el-table-column
+      <!-- <el-table-column
         prop="recipe_user"
-        label="工艺员"
+        label="打印人"
         min-width="20"
-      />
+      /> -->
       <el-table-column
         prop="print_username"
         label="打印员"
@@ -121,7 +121,7 @@
     </el-table>
 
     <el-dialog
-      :title="`准备分厂机台单配（配方）化工流转卡`+val"
+      :title="`准备分厂机台胶片卡片补打`+val"
       :visible.sync="dialogVisibleAdd"
       width="35%"
       :before-close="handleCloseAdd"
@@ -137,6 +137,7 @@
             v-model="dialogForm.print_type"
             :disabled="val==='预览'"
             placeholder="请选择"
+            @change="changeType"
           >
             <el-option
               v-for="item in ['加硫','无硫']"
@@ -150,7 +151,21 @@
           label="配方名称"
           prop="product_no"
         >
-          <el-input v-model="dialogForm.product_no" clearable :disabled="val==='预览'" style="width:300px" />
+          <el-select
+            v-model="dialogForm.product_no"
+            placeholder="请选择"
+            :disabled="val==='预览'"
+            filterable
+            allow-create
+          >
+            <el-option
+              v-for="item in productNoList"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
+          <!-- <el-input v-model="dialogForm.product_no" clearable :disabled="val==='预览'" style="width:300px" /> -->
         </el-form-item>
         <el-form-item
           label="车次"
@@ -191,7 +206,7 @@
             :rows="3"
           />
         </el-form-item>
-        <el-form-item label="工艺员" prop="recipe_user">
+        <!-- <el-form-item label="打印人" prop="recipe_user">
           <el-select
             v-model="dialogForm.recipe_user"
             :disabled="val==='预览'"
@@ -205,7 +220,7 @@
               :value="item.username"
             />
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="打印张数" prop="print_count">
           <el-input-number
             v-model="dialogForm.print_count"
@@ -225,6 +240,7 @@
 <script>
 import { debounce } from '@/utils'
 import { returnRubber, personnels } from '@/api/jqy'
+import { rubberMaterialUrl } from '@/api/base_w'
 export default {
   name: 'BanburyingMakeUp',
   components: {},
@@ -241,7 +257,9 @@ export default {
     return {
       search: {},
       val: null,
-      dialogForm: {},
+      dialogForm: {
+        print_count: 1
+      },
       dialogVisibleAdd: false,
       submit: false,
       options: [],
@@ -263,7 +281,8 @@ export default {
           { required: true, message: '不能为空', trigger: 'change' }
         ]
       },
-      loading: false
+      loading: false,
+      productNoList: []
     }
   },
   created() {
@@ -297,7 +316,7 @@ export default {
         if (this.$refs.createForm) {
           this.$refs.createForm.resetFields()
         }
-        this.dialogForm = {}
+        this.dialogForm = { print_count: 1 }
         this.dialogVisibleAdd = true
       } else {
         this.dialogForm = JSON.parse(JSON.stringify(row))
@@ -317,6 +336,10 @@ export default {
       this.$refs.createForm.validate(async(valid) => {
         if (valid) {
           try {
+            if (this.dialogForm.end_trains - this.dialogForm.begin_trains > 2) {
+              this.$message('车次间隔不可大于2')
+              return
+            }
             const _api = this.dialogForm.id ? 'put' : 'post'
             this.submit = true
             await returnRubber(_api, this.dialogForm.id || null, { data: this.dialogForm })
@@ -343,6 +366,18 @@ export default {
     },
     changeList() {
       this.getList()
+    },
+    changeType() {
+      this.$set(this.dialogForm, 'product_no', null)
+      this.getProductNoList()
+    },
+    async getProductNoList() {
+      try {
+        const data = await rubberMaterialUrl('get', null, { params: { exclude_used_type: 6, all: 1, print_type: this.dialogForm.print_type }})
+        this.productNoList = data.results
+      } catch (e) {
+        this.productNoList = []
+      }
     }
   }
 }

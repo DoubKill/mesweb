@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="app-container details_style"
-  >
+  <div class="app-container details_style">
     <el-form v-if="!isProps" :inline="true">
       <el-form-item label="日期">
         <el-date-picker
@@ -11,6 +9,7 @@
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           value-format="yyyy-MM-dd"
+          :clearable="false"
           @change="dayChange"
         />
       </el-form-item>
@@ -114,32 +113,52 @@
         </u-table-column>
       </u-table-column>
       <u-table-column v-for="header in testTypeList.filter(type => type.show)" :key="header.test_type_name" align="center" :label="header.test_type_name">
-        <u-table-column v-for="subHeader in header.data_indicator_detail.filter(item => item.show)" :key="header.test_type_name + subHeader.detail" min-width="20px" :label="subHeader.detail" align="center">
-          <template slot-scope="{ row }">
-            <div :class="getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level')!==1&&getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level')!==''?'test_type_name_style':''">
-              {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'value') }}
-            </div>
-          </template>
-        </u-table-column>
-        <u-table-column v-if="header.test_type_name === '门尼' || header.test_type_name === '流变'" label="检测机台" min-width="20px" align="center">
-          <template slot-scope="{row}">
-            {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'machine_name') }}
-          </template>
-        </u-table-column>
-        <u-table-column min-width="20px" label="标准" align="center">
-          <template slot-scope="{row}">
-            {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'upper_lower') }}
-          </template>
-        </u-table-column>
         <u-table-column min-width="20px" label="等级" align="center">
           <template slot-scope="{row}">
             {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'level') }}
           </template>
         </u-table-column>
+        <div v-for="(subHeader,_ii) in header.data_indicator_detail.filter(item => item.show)" :key="subHeader.detail">
+          <u-table-column :key="subHeader.detail+_ii" min-width="20px" :label="subHeader.detail" align="center">
+            <template slot-scope="{ row }">
+              <div :class="getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level')!==1&&getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level')!==''?'test_type_name_style':''">
+                {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'value') }}
+              </div>
+            </template>
+          </u-table-column>
+          <u-table-column :key="_ii" min-width="20px" label="标准" align="center">
+            <template slot-scope="{ row }">
+              <div>
+                {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'judged_lower_limit') }}-
+                {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'judged_upper_limit') }}
+              </div>
+            </template>
+          </u-table-column>
+        </div>
+        <!-- <u-table-column min-width="20px" label="标准" align="center">
+          <template slot-scope="{row}">
+            {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'upper_lower') }}
+          </template>
+        </u-table-column> -->
+        <u-table-column v-if="header.test_type_name === '门尼' || header.test_type_name === '流变'" label="检测机台" min-width="20px" align="center">
+          <template slot-scope="{row}">
+            {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'machine_name') }}
+          </template>
+        </u-table-column>
       </u-table-column>
-      <u-table-column label="综合等级" min-width="20px" prop="level" align="center" />
-      <u-table-column label="综合检测结果" min-width="20px" prop="mes_result" align="center" />
+      <!-- <u-table-column label="综合等级" min-width="20px" prop="level" align="center" /> -->
+      <!-- <u-table-column label="综合检测结果" min-width="20px" prop="mes_result" align="center" /> -->
+      <u-table-column label="是否合格" min-width="20px" prop="is_qualified" align="center">
+        <template slot-scope="{row}">
+          {{ row.is_qualified?'合格':'不合格' }}
+        </template>
+      </u-table-column>
+      <u-table-column label="检测结果" min-width="20px" prop="deal_info.test_result" align="center" />
+      <u-table-column label="处理人" min-width="20px" prop="deal_info.deal_user" align="center" />
+      <u-table-column label="处理意见" min-width="20px" prop="deal_info.deal_suggestion" align="center" />
+      <u-table-column label="处理时间" min-width="20px" prop="deal_info.deal_time" align="center" />
     </u-table>
+    <el-alert style="color:black" title="表格背景色说明：表示不是一等品" type="success" />
     <el-dialog
       title="选择过滤"
       :visible.sync="filterDialogVisible"
@@ -178,7 +197,7 @@
       <test-card ref="testCard" />
     </el-dialog>
     <el-dialog
-      title="快检值历史曲线"
+      :title="`${row_roduct_no}数据推移`"
       :visible.sync="historyDialogVisible"
       width="80%"
       append-to-body
@@ -194,8 +213,8 @@
         @change="changeHistoryDate"
       />
       <div
-        id="historyBar"
-        style="width: 100%;height:300px;margin-top:8px"
+        id="historySpot"
+        style="width: 100%;height:1000px;margin-top:8px"
       />
     </el-dialog>
 
@@ -214,9 +233,10 @@
 import dayjs from 'dayjs'
 import EquipSelect from '@/components/select_w/equip'
 import ClassSelect from '@/components/ClassSelect'
-import StageSelect from '@/components/StageSelect'
+import StageSelect from '@/components/StageSelect/index'
 import allProductNoSelect from '@/components/select_w/allProductNoSelect'
-import { testTypes, materialTestOrders, testResultHistory, datapointCurve } from '@/api/quick-check-detail'
+import { testTypes, materialTestOrders, testResultHistory,
+  materialTestOrdersAll, datapointCurve } from '@/api/quick-check-detail'
 import elTableInfiniteScroll from 'el-table-infinite-scroll'
 import FileSaver from 'file-saver'
 import XLSX from 'xlsx'
@@ -298,29 +318,45 @@ export default {
       historyDialogVisible: false,
       historyDate: [],
       row_roduct_no: '',
-      optionBar: {
+      historySpot: {
+        title: [{
+          text: "Anscombe's quartet"
+        }],
         tooltip: {
           trigger: 'axis'
         },
-        legend: {
-          data: []
+        toolbox: {
+          feature: {
+            saveAsImage: {}
+          }
         },
-        grid: {
-          left: '3%',
-          right: '4%',
-          bottom: '3%',
-          containLabel: true
-        },
-        xAxis: {
-          type: 'category',
-          boundaryGap: false,
-          data: []
-        },
-        yAxis: {
-          type: 'value',
-          name: '测试点值'
-        },
-        series: []
+        grid: [
+          { left: '7%', top: '7%', width: '38%', height: '38%' }
+        ],
+        xAxis: [
+          { gridIndex: 0 },
+          { gridIndex: 1 }
+        ],
+        yAxis: [
+          { gridIndex: 0 },
+          { gridIndex: 1 }
+        ],
+        series: [
+          {
+            name: 'I',
+            type: 'scatter',
+            xAxisIndex: 0,
+            yAxisIndex: 0,
+            data: []
+          },
+          {
+            name: 'II',
+            type: 'scatter',
+            xAxisIndex: 1,
+            yAxisIndex: 1,
+            data: []
+          }
+        ]
       }
     }
   },
@@ -445,17 +481,34 @@ export default {
     },
     async getALLData() {
       try {
-        if (getDaysBetween(this.getParams.st, this.getParams.et) > 1) {
-          this.$message('导出Excel日期间隔不得大于2天')
+        if (!this.testOrders.length) {
+          this.$message('暂无数据')
           return
         }
         this.btnLoading = true
-        const arr = await this.getMaterialTestOrders(true)
-        this.ALLData = arr || []
-        this.btnLoading = false
-        this.$nextTick(() => {
-          this.exportExcel()
-        })
+        // const arr = await this.getMaterialTestOrders(true)
+        // this.ALLData = arr || []
+        // this.btnLoading = false
+        // this.$nextTick(() => {
+        //   this.exportExcel()
+        // })
+        const obj = Object.assign({ export: 1 }, this.getParams)
+        const _api = materialTestOrdersAll
+        _api('get', null, { params: obj, responseType: 'blob' })
+          .then(res => {
+            this.btnLoading = false
+            const link = document.createElement('a')
+            const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+            link.style.display = 'none'
+            link.href = URL.createObjectURL(blob)
+            link.download = `胶料快检详细信息${setDate()}.xlsx`// 下载的文件名
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+            this.btnExportLoad = false
+          }).catch(e => {
+            this.btnExportLoad = false
+          })
       } catch (e) {
         this.btnLoading = false
       }
@@ -463,6 +516,10 @@ export default {
     async getMaterialTestOrders(bool = false) {
       this.listLoading = true
       try {
+        if (getDaysBetween(this.getParams.st, this.getParams.et) > 1) {
+          this.$message('日期间隔不得大于31天')
+          return
+        }
         const paramsObj = JSON.parse(JSON.stringify(this.getParams))
         paramsObj.page_size = bool ? 99999999 : 10
         paramsObj.page = bool ? 1 : this.getParams.page
@@ -597,30 +654,78 @@ export default {
         const data = await datapointCurve(obj)
         this.historyLoading = false
 
-        data.y_axis.forEach(d => {
-          d.markLine = {
-            silent: true,
-            lineStyle: {
-              color: '#333'
-            },
-            data: [{
-              yAxis: data.indicators[d.name] ? data.indicators[d.name][0] : ''
-            }, {
-              yAxis: data.indicators[d.name] ? data.indicators[d.name][1] : ''
-            }]
+        const _x = []
+        const _y = []
+        const _title = []
+        const _grid = []
+        const _series = []
+        const _num = Math.ceil(data.y_axis.length / 2) + 2
+        const _height = (1 / _num * 100).toFixed(0) + '%'
+        const _height1 = (1 / _num * 100 + 8).toFixed(0)
+
+        data.y_axis.forEach((d, _i) => {
+          const _dataSeries = []
+          d.data.forEach((dd, ii) => {
+            dd.forEach((ddd, iii) => {
+              _dataSeries.push([data.x_axis[ii], Number(ddd)])
+            })
+          })
+          _x.push({
+            gridIndex: _i,
+            data: data.x_axis
+          })
+          _y.push({
+            gridIndex: _i
+          })
+          if (_i % 2 === 0 || _i === 0) {
+            const _top1 = (_i / 2) * _height1 + 5 + '%'
+            const _topTitle1 = (_i / 2) * _height1 + 2 + '%'
+            _title.push({ text: d.name, left: '8%', top: _topTitle1 })
+            _grid.push({ left: '5%', top: _top1, width: '40%', height: _height })
+          } else {
+            const _top2 = ((_i - 1) / 2) * _height1 + 5 + '%'
+            const _topTitle2 = ((_i - 1) / 2) * _height1 + 2 + '%'
+            _title.push({ text: d.name, right: '8%', top: _topTitle2 })
+            _grid.push({ right: '6%', top: _top2, width: '40%', height: _height })
           }
+          const _1 = data.indicators[d.name] ? data.indicators[d.name][0] : 0
+          const _3 = data.indicators[d.name] ? data.indicators[d.name][1] : 0
+          const _2 = ((_3 + _1) / 2).toFixed(2)
+          _series.push({
+            name: d.name,
+            type: 'scatter',
+            xAxisIndex: _i,
+            yAxisIndex: _i,
+            data: _dataSeries,
+            markLine: data.indicators[d.name] ? {
+              data: [{
+                silent: true,
+                yAxis: _1, label: {
+                  position: 'end',
+                  formatter: `下限(${_1})`
+                }},
+              {
+                yAxis: _2, label: {
+                  position: 'end',
+                  formatter: `中限(${_2})`
+                }},
+              {
+                yAxis: _3, label: {
+                  position: 'end',
+                  formatter: `上限(${_3})`
+                }}
+              ]
+            } : {}
+          })
         })
+        this.historySpot.xAxis = _x || []
+        this.historySpot.yAxis = _y || []
+        this.historySpot.title = _title || []
+        this.historySpot.grid = _grid || []
+        this.historySpot.series = _series || []
 
-        const arr = []
-        for (const iterator in data.indicators) {
-          arr.push(iterator)
-        }
-
-        this.optionBar.xAxis.data = data.x_axis || []
-        this.optionBar.series = data.y_axis || []
-        this.optionBar.legend.data = arr
-        this.chartHistoryBar = echarts.init(document.getElementById('historyBar'))
-        this.chartHistoryBar.setOption(this.optionBar, true)
+        this.chartHistoryBar = echarts.init(document.getElementById('historySpot'))
+        this.chartHistoryBar.setOption(this.historySpot, true)
       } catch (e) {
         //
       }
@@ -660,7 +765,7 @@ function getDaysBetween(dateString1, dateString2) {
   if (startDate === endDate) {
     return 1
   }
-  var days = (endDate - startDate) / (1 * 24 * 60 * 60 * 1000)
+  var days = (endDate - startDate) / (30 * 24 * 60 * 60 * 1000)
   return days
 }
 </script>

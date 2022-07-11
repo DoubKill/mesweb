@@ -25,7 +25,7 @@
         <equip-select
           style="width:90px"
           :equip_no_props.sync="search.equip_no"
-          :is-created="true"
+          :is-created="$route.query.equip?false:true"
           @changeSearch="equipSelected"
         />
       </el-form-item>
@@ -50,7 +50,7 @@
           @change="changeList"
         >
           <el-option
-            v-for="item in ['未处理','已处理']"
+            v-for="item in ['未处理','已处理','超期失效']"
             :key="item"
             :label="item"
             :value="item"
@@ -152,16 +152,22 @@
         min-width="20"
       />
       <el-table-column
-        prop="created_username"
+        prop="last_update_username"
         label="处理人"
         min-width="20"
       />
       <el-table-column
-        prop="created_date"
+        prop="last_updated_date"
         label="处理时间"
         min-width="20"
       />
     </el-table>
+    <page
+      :old-page="false"
+      :total="total"
+      :current-page="search.page"
+      @currentChange="currentChange"
+    />
   </div>
 </template>
 
@@ -169,30 +175,35 @@
 import EquipSelect from '@/components/select_w/equip'
 import { debounce } from '@/utils'
 import { replaceMaterial, materialMultiUpdate, materialDetailsAux } from '@/api/jqy'
+import page from '@/components/page'
 export default {
   name: 'BanburyingSubstitutes',
-  components: { EquipSelect },
+  components: { EquipSelect, page },
   data() {
     return {
-      search: {},
+      search: {
+        status: '未处理'
+      },
       submit: false,
       submitNo: false,
       multipleSelection: [],
       options: [],
       tableData: [],
-      loading: false
+      loading: false,
+      total: 0
     }
   },
   created() {
     this.search.equip_no = this.$route.query.equip
-    this.getList()
+    // this.getList()
   },
   methods: {
     async getList() {
       try {
         this.loading = true
         const data = await replaceMaterial('get', null, { params: this.search })
-        this.tableData = data
+        this.tableData = data.results || []
+        this.total = data.count
         this.loading = false
       } catch (e) {
         this.loading = false
@@ -243,9 +254,15 @@ export default {
       this.multipleSelection = val
     },
     debounceFun() {
-      debounce(this, 'getList')
+      debounce(this, 'changeList')
     },
     changeList() {
+      this.search.page = 1
+      this.getList()
+    },
+    currentChange(page, page_size) {
+      this.search.page = page
+      this.search.page_size = page_size
       this.getList()
     }
   }

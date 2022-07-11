@@ -118,14 +118,25 @@
           :error="groupFormError.group_code"
           label="角色代码"
         >
-          <el-input v-model="groupForm.group_code" />
+          <el-input v-model="groupForm.group_code" disabled />
         </el-form-item>
-        <el-form-item
-          :error="groupFormError.name"
-          label="角色名称"
-        >
-          <el-input v-model="groupForm.name" />
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item
+              :error="groupFormError.name"
+              label="角色名称"
+            >
+              <el-input v-model="groupForm.name" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item
+              label="菜单筛选"
+            >
+              <el-input v-model="permission_name" clearable @input="changeList" />
+            </el-form-item>
+          </el-col>
+        </el-row>
         <!-- <el-form-item
           :error="groupFormError.use_flag"
           label="是否使用"
@@ -137,6 +148,7 @@
           size="medium"
         >
           <transferLimit
+            ref="Permission"
             :group-id="groupForm.id"
             @changeTransferPermissions="changeTransferPermissions"
           />
@@ -162,6 +174,7 @@ import { roles } from '@/api/roles-manage'
 import page from '@/components/page'
 import transferLimit from '@/components/select_w/transferLimit'
 import { checkPermission } from '@/utils/index'
+import { commonCode } from '@/api/global-codes-manage'
 
 export default {
   name: 'GroupManage',
@@ -176,6 +189,7 @@ export default {
       count: 0,
       group_code: '',
       name: '',
+      permission_name: '',
       groupForm: {
         name: '',
         group_code: '',
@@ -256,10 +270,20 @@ export default {
       }
     },
     showCreateGroupDialog() {
+      this.permission_name = null
+      this.getCode(3)
       this.clearGroupForm()
       this.clearGroupFormError()
       this.dialogTitle = '新增角色'
       this.dialogEditGroupVisible = true
+    },
+    async getCode(num) {
+      try {
+        const { results } = await commonCode({ code: num })
+        this.groupForm.group_code = results
+      } catch (e) {
+        //
+      }
     },
     handleEditGroup() {
       this.clearGroupFormError()
@@ -279,10 +303,18 @@ export default {
     },
     showEditGroupDialog(group) {
       // this.
+      this.permission_name = null
       this.groupForm = JSON.parse(JSON.stringify(group))
       this.clearGroupFormError()
       this.dialogTitle = '编辑角色'
       this.dialogEditGroupVisible = true
+    },
+    changeList() {
+      if (this.permission_name !== '') {
+        this.$refs['Permission'].permissionsData = this.$refs['Permission'].permissionsList.filter(d => { return (d.name.indexOf(this.permission_name) !== -1) })
+      } else {
+        this.$refs['Permission'].permissionsData = this.$refs['Permission'].permissionsList
+      }
     },
     handleGroupDelete(group) {
       var boolStr = group.use_flag ? '停用' : '启用'
