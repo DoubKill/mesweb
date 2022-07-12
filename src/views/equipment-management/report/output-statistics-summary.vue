@@ -327,6 +327,7 @@ export default {
           if (index === 6) {
             sums[index] = ''
           }
+          sums[index] = Number(sums[index]).toFixed(2)
         } else {
           sums[index] = ''
         }

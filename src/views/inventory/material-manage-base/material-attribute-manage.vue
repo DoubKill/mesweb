@@ -263,7 +263,7 @@ export default {
       barCodeForm: { provenance: null },
       totalBarCode: 0,
       rules: {
-        period_of_validity: [{ required: false, message: '不能为空', trigger: 'blur' },
+        period_of_validity: [{ required: true, message: '不能为空', trigger: 'blur' },
           { pattern: /^[1-9]\d*$/, message: '请输入正整数', trigger: 'blur' }],
         storage_time: [{ required: false, message: '不能为空', trigger: 'blur' },
           { pattern: /^[+]{0,1}(\d+)$|^[+]{0,1}(\d+\.\d+)$/, message: '请输入正数', trigger: 'blur' }],
@@ -307,10 +307,10 @@ export default {
       })
     },
     handleAttributeEdit() {
-      if (this.getParams.aaa === '胶料' && this.attributeForm.storage_time && !this.attributeForm.period_of_validity) {
-        this.$message.info('请填写有效期')
-        return
-      }
+      // if (this.getParams.aaa === '胶料' && this.attributeForm.storage_time && !this.attributeForm.period_of_validity) {
+      //   this.$message.info('请填写有效期')
+      //   return
+      // }
       if (!this.attributeForm.storage_time) {
         this.attributeForm.storage_time = null
       }

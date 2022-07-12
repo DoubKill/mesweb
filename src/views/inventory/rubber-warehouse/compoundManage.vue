@@ -456,9 +456,9 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item>
+        <!-- <el-form-item>
           <el-button type="primary" @click="cancelOrderNo(selectionData)">取消任务</el-button>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <el-table
         ref="multipleTable"
@@ -530,15 +530,15 @@
             return obj.name
           }"
         />
-        <el-table-column
+        <!-- <el-table-column
           label="操作"
           width="140"
         >
           <template slot-scope="{row}">
-            <!-- <el-button :disabled="row.status===3||row.status===4||row.status===5" type="danger" @click="closeOrderNo(row)">关闭</el-button> -->
+            <el-button :disabled="row.status===3||row.status===4||row.status===5" type="danger" @click="closeOrderNo(row)">关闭</el-button>
             <el-button :disabled="row.status!==1" type="primary" @click="cancelOrderNo([row])">取消任务</el-button>
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
       <page
         :old-page="false"
