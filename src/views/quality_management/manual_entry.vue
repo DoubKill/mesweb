@@ -212,9 +212,17 @@
     <el-dialog
       title="编辑"
       :visible.sync="dialogVisibleEdit"
-      width="300px"
+      width="600px"
     >
-      <el-input-number v-model="allValue" />
+      <el-form label-width="100px">
+        <el-form-item label="检测值">
+          <el-input-number v-model="allValue" />
+        </el-form-item>
+        <el-form-item label="起止车次">
+          <el-input-number v-model="begin_trains" style="width:130px" controls-position="right" :min="1" :max="end_trains" />-
+          <el-input-number v-model="end_trains" style="width:130px" controls-position="right" :min="begin_trains" :max="99999" />
+        </el-form-item>
+      </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisibleEdit = false">取 消</el-button>
         <el-button type="primary" @click="allValueSure">确 定</el-button>
@@ -257,6 +265,8 @@ export default {
       arr: [],
       dialogVisibleEdit: false,
       allValue: undefined,
+      begin_trains: undefined,
+      end_trains: undefined,
       // 当前的 指标点 和 数据点
       current_test_indicator: '',
       current_data_point_name: ''
@@ -491,6 +501,8 @@ export default {
     },
     clickValue(test_indicator_name, data_point_name) {
       this.allValue = undefined
+      this.begin_trains = undefined
+      this.end_trains = undefined
       this.dialogVisibleEdit = true
       this.current_test_indicator = test_indicator_name
       this.current_data_point_name = data_point_name
@@ -500,12 +512,48 @@ export default {
         this.dialogVisibleEdit = false
         return
       }
+      const all = this.tableDataChild[this.tableDataChild.length - 1].actual_trains
+      const begin_trains = this.begin_trains ? this.begin_trains : 1
+      const end_trains = this.end_trains ? this.end_trains : all
+
+      let val = ''
       this.tableDataChild.map(D => {
-        D._list[this.current_test_indicator][this.current_data_point_name].value = this.allValue
-        D._filledIn = true
-        return D
+        if (D.actual_trains <= end_trains && D.actual_trains >= begin_trains && D.actual_trains) {
+          if (D._list[this.current_test_indicator][this.current_data_point_name].value) {
+            val += D.actual_trains + ' '
+          }
+        }
       })
-      this.dialogVisibleEdit = false
+      if (val) {
+        this.$confirm(`${val}车已设定检测值, 是否覆盖？`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.tableDataChild.map(D => {
+            if (D.actual_trains <= end_trains && D.actual_trains >= begin_trains) {
+              D._list[this.current_test_indicator][this.current_data_point_name].value = this.allValue
+              D._filledIn = true
+              return D
+            } else {
+              return D
+            }
+          })
+          this.dialogVisibleEdit = false
+        }).catch(() => {
+        })
+      } else {
+        this.tableDataChild.map(D => {
+          if (D.actual_trains <= end_trains && D.actual_trains >= begin_trains) {
+            D._list[this.current_test_indicator][this.current_data_point_name].value = this.allValue
+            D._filledIn = true
+            return D
+          } else {
+            return D
+          }
+        })
+        this.dialogVisibleEdit = false
+      }
     },
     async submitTable() {
       const arr = []
