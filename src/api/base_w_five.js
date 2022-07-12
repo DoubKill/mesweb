@@ -344,6 +344,14 @@ export function equipmentIndex(method, id, data = {}) {
   return request(obj)
 }
 
+export function toolManageAccount(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ToolManageAccount + id + '/' : API.ToolManageAccount,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 export function productSynthesisRate(method, id, data = {}) {
   const obj = {
     url: id ? API.ProductSynthesisRate + id + '/' : API.ProductSynthesisRate,
@@ -352,6 +360,16 @@ export function productSynthesisRate(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function rubberFrameRepair(method, id, data = {}) {
+  const obj = {
+    url: id ? API.RubberFrameRepair + id + '/' : API.RubberFrameRepair,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function productSynthesisEquipRate(method, id, data = {}) {
   const obj = {
     url: id ? API.ProductSynthesisEquipRate + id + '/' : API.ProductSynthesisEquipRate,
@@ -360,6 +378,7 @@ export function productSynthesisEquipRate(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
 export function productSynthesisGroupRate(method, id, data = {}) {
   const obj = {
     url: id ? API.ProductSynthesisGroupRate + id + '/' : API.ProductSynthesisGroupRate,
@@ -379,14 +398,6 @@ export function productSynthesisProductRate(method, id, data = {}) {
 export function productSynthesisMonthRate(method, id, data = {}) {
   const obj = {
     url: id ? API.ProductSynthesisMonthRate + id + '/' : API.ProductSynthesisMonthRate,
-    method: method
-  }
-  Object.assign(obj, data)
-  return request(obj)
-}
-export function rubberFrameRepair(method, id, data = {}) {
-  const obj = {
-    url: id ? API.RubberFrameRepair + id + '/' : API.RubberFrameRepair,
     method: method
   }
   Object.assign(obj, data)

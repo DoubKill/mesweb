@@ -15,13 +15,12 @@
       </el-form-item>
       <el-form-item>
         <el-button
-          v-permission="['performance_summary', 'export']"
           type="primary"
           :loading="btnExportLoad"
           @click="exportTable"
         >导出Excel</el-button>
         <el-button
-          v-permission="['performance_summary', 'export']"
+          v-permission="['rubber_frame_repair', 'add']"
           type="primary"
           :loading="btnLoading"
           @click="submitFun"
@@ -37,12 +36,12 @@
       <el-table-column
         prop="name"
         label="项目"
-        fixed
+        :fixed="!isExport"
       />
       <el-table-column
         prop="总计"
         label="总计"
-        fixed
+        :fixed="!isExport"
       />
       <el-table-column v-for="(item) in day" :key="item" :label="month+'/'+item" width="120px">
         <template slot-scope="{row,$index}">
@@ -101,7 +100,6 @@ export default {
         const m = a.getMonth() + 1
         this.day = new Date(y, m, 0).getDate()
         this.month = m
-        // this.year = y
         this.loading = true
         const data = await rubberFrameRepair('get', null, { params: this.search })
         this.tableData = data.results.details || []
@@ -136,13 +134,13 @@ export default {
       }
     },
     async exportTable() {
-      this.loading = true
       this.btnExportLoad = true
+      this.loading = true
 
       setTimeout(d => {
         this.isExport = true
         setTimeout(d => {
-          exportExcel('胶架维修记录')
+          exportExcel('胶架维修记录', 'disposal-list-components')
           this.isExport = false
           this.btnExportLoad = false
           this.loading = false
