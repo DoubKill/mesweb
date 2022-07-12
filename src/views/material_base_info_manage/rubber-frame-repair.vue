@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-loading="loading">
     <!-- 胶架维修记录 -->
     <el-form :inline="true">
       <el-form-item label="月份">
@@ -29,7 +29,6 @@
     </el-form>
     <el-table
       id="out-table"
-      v-loading="loading"
       :data="tableData"
       border
     >
@@ -89,24 +88,29 @@ export default {
     this.getOptionsUser()
   },
   methods: {
-    async getList() {
+    getList() {
       try {
         if (!this.search.date_time) {
           this.$message('请选择月份')
           return
         }
-        const a = new Date(this.search.date_time)
-        const y = a.getFullYear()
-        const m = a.getMonth() + 1
-        this.day = new Date(y, m, 0).getDate()
-        this.month = m
         this.loading = true
-        const data = await rubberFrameRepair('get', null, { params: this.search })
-        this.tableData = data.results.details || []
+        setTimeout(async d => {
+          this.day = []
+          this.month = null
+          this.tableData = []
+          const data = await rubberFrameRepair('get', null, { params: this.search })
+          const a = new Date(this.search.date_time)
+          const y = a.getFullYear()
+          const m = a.getMonth() + 1
+          this.day = new Date(y, m, 0).getDate()
+          this.month = m
+          this.tableData = data.results.details || []
+          this.loading = false
+        }, 300)
       } catch (e) {
-        //
+        this.loading = false
       }
-      this.loading = false
     },
     async getOptionsUser() {
       try {
