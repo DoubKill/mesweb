@@ -530,8 +530,11 @@ export default {
       }
       const all = this.tableDataChild[this.tableDataChild.length - 1].actual_trains
       const begin_trains = this.begin_trains ? this.begin_trains : 1
-      const end_trains = this.end_trains ? this.end_trains : all
-
+      let end_trains = this.end_trains ? this.end_trains : all
+      if (begin_trains > all) {
+        this.$message('没有该车次')
+        end_trains = begin_trains
+      }
       let val = ''
       if (begin_trains >= this.history_begin_trains && end_trains <= this.history_end_trains) {
         val = begin_trains + '车~' + end_trains + '车'
