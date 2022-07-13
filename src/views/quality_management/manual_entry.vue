@@ -232,7 +232,7 @@
 </template>
 
 <script>
-import { palletFeedBacksUrl, matTestIndicatorMethods, materialTestOrders, palletTrainsFeedbacks, importMaterialMestMrders, importMaterialTestOrders } from '@/api/base_w'
+import { palletFeedBacksUrl, matTestIndicatorMethods, materialTestOrders, palletTrainsFeedbacks, importMaterialMestMrders, importMaterialTestOrders, productTestValueHistory } from '@/api/base_w'
 import { setDate, deepClone } from '@/utils/index'
 // import planSchedulesSelect from '@/components/PlanSchedulesSelect'
 import equipSelect from '@/components/select_w/equip'
@@ -269,7 +269,9 @@ export default {
       end_trains: undefined,
       // 当前的 指标点 和 数据点
       current_test_indicator: '',
-      current_data_point_name: ''
+      current_data_point_name: '',
+      history_begin_trains: 0,
+      history_end_trains: 0
     }
   },
   mounted() {
@@ -506,6 +508,20 @@ export default {
       this.dialogVisibleEdit = true
       this.current_test_indicator = test_indicator_name
       this.current_data_point_name = data_point_name
+      this.getDefaultValue()
+    },
+    async getDefaultValue() {
+      try {
+        const obj = Object.assign({ data_point: this.current_data_point_name }, this.search)
+        const data = await productTestValueHistory('get', null, { params: obj })
+        if (data.max_trains) {
+          this.begin_trains = data.max_trains + 1
+        }
+        this.history_begin_trains = data.min_trains || 0
+        this.history_end_trains = data.max_trains || 0
+      } catch (e) {
+        //
+      }
     },
     allValueSure() {
       if (!this.allValue) {
@@ -517,15 +533,15 @@ export default {
       const end_trains = this.end_trains ? this.end_trains : all
 
       let val = ''
-      this.tableDataChild.map(D => {
-        if (D.actual_trains <= end_trains && D.actual_trains >= begin_trains && D.actual_trains) {
-          if (D._list[this.current_test_indicator][this.current_data_point_name].value) {
-            val += D.actual_trains + ' '
-          }
-        }
-      })
+      if (begin_trains >= this.history_begin_trains && end_trains <= this.history_end_trains) {
+        val = begin_trains + '车~' + end_trains + '车'
+      } else if (begin_trains <= this.history_end_trains && begin_trains >= this.history_begin_trains) {
+        val = begin_trains + '车~' + this.history_end_trains + '车'
+      } else if (end_trains <= this.history_end_trains && end_trains >= this.history_begin_trains) {
+        val = this.history_begin_trains + '车~' + end_trains + '车'
+      }
       if (val) {
-        this.$confirm(`${val}车已设定检测值, 是否覆盖？`, '提示', {
+        this.$confirm(`${val}已设定检测值, 是否覆盖？`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
