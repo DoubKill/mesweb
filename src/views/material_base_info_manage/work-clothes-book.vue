@@ -522,7 +522,7 @@ export default {
         const m = a.getMonth() + 1
         this.day = new Date(y, m, 0).getDate()
         this.month = m
-
+        this.tableList = []
         this.loading = true
         const data = await toolManageAccount('get', null, { params: this.search })
         if (data.results.details.length) {
