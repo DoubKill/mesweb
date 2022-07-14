@@ -1536,6 +1536,26 @@ export let asyncRoutes = [
           icon: 'production',
           permissionName: 'th_warning_setting'
         }
+      },
+      {
+        path: '/rubber-frame-repair',
+        name: 'RubberFrameRepair',
+        component: () => import('@/views/material_base_info_manage/rubber-frame-repair'),
+        meta: {
+          title: '胶架维修记录',
+          icon: 'production',
+          permissionName: 'rubber_frame_repair'
+        }
+      },
+      {
+        path: '/work-clothes-book',
+        name: 'work-clothes-book',
+        component: () => import('@/views/material_base_info_manage/work-clothes-book'),
+        meta: {
+          title: '工装管理台账',
+          icon: 'production',
+          permissionName: 'tool_manage_account'
+        }
       }
 
       // {
