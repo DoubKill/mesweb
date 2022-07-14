@@ -79,7 +79,7 @@
       :span-method="objectSpanMethod"
       border
     >
-      <el-table-column fixed width="120px">
+      <el-table-column width="120px">
         <template
           slot="header"
         >
@@ -96,7 +96,6 @@
         </template>
       </el-table-column>
       <el-table-column
-        fixed
         prop="section"
         align="center"
         label="岗位"
@@ -177,7 +176,6 @@
         </el-form-item>
       </el-form>
       <el-table
-        id="out-table"
         v-loading="loadingAttendance"
         :data="tableDataAttendance"
         highlight-current-row
@@ -288,7 +286,6 @@
       width="90%"
     >
       <el-table
-        id="out-table"
         v-loading="loadingRecord"
         max-height="600px"
         :data="tableDataRecord"
