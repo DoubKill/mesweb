@@ -49,7 +49,7 @@
           v-model="search.spare_code"
           style="width:150px"
           clearable
-          @input="changeSearch"
+          @input="lengthSearch"
         />
       </el-form-item>
       <el-form-item label="物料名称">
@@ -57,7 +57,7 @@
           v-model="search.spare_name"
           style="width:150px"
           clearable
-          @input="changeSearch"
+          @input="lengthSearch1"
         />
       </el-form-item>
       <el-form-item style="float:right">
@@ -141,6 +141,7 @@
       @currentChange="currentChange"
     />
     <el-dialog
+      title="确认出库"
       :visible.sync="dialogVisible"
       width="80%"
     >
@@ -485,7 +486,14 @@
           />
         </el-form-item>
         <el-form-item label="出库物料详情列表" prop="equip_spare">
-          <el-button type="primary" @click="Add">添加</el-button>
+          <el-button type="primary" :disabled="spare_code!==''" @click="Add">添加</el-button>
+          <span style="margin-left:20px">备件编号：</span>
+          <el-input
+            v-model="spare_code"
+            style="width:200px"
+            clearable
+            @input="codeSearch"
+          />
           <el-table
             max-height="400"
             :data="dialogForm.equip_spare"
@@ -562,7 +570,7 @@
     <el-dialog
       :title="`备件详情`"
       :visible.sync="dialogVisibleSpare"
-      width="50%"
+      width="500px"
     >
       <el-form
         label-width="100px"
@@ -641,6 +649,13 @@ export default {
   name: 'OutboundingManagement',
   components: { page, material },
   data() {
+    var validatePass = (rule, value, callback) => {
+      if (value.length === 0 && this.firstList.length === 0) {
+        callback(new Error('不能为空'))
+      } else {
+        callback()
+      }
+    }
     return {
       search: { order: 'out' },
       search1: {},
@@ -663,6 +678,8 @@ export default {
       status: null,
       selectionList: [],
       checkList: [],
+      spare_code: '',
+      firstList: [],
       work_order_noList: {},
       loading: false,
       loadingView: false,
@@ -679,7 +696,7 @@ export default {
           { required: true, message: '不能为空', trigger: 'change' }
         ],
         equip_spare: [
-          { type: 'array', required: true, message: '不能为空', trigger: 'change' }
+          { validator: validatePass, required: true, trigger: 'change' }
         ]
       },
       rules1: {
@@ -742,6 +759,7 @@ export default {
     async editOrder(row) {
       this.dialogVisibleEdit = true
       try {
+        this.spare_code = ''
         this.loadingList = true
         const data = await equipWarehouseOrder('get', row.id, {})
         this.dialogForm = data
@@ -757,6 +775,7 @@ export default {
             status: d.status
           })
         })
+        this.firstList = JSON.parse(JSON.stringify(this.dialogForm.equip_spare))
         this.loadingList = false
       } catch {
         this.loadingList = false
@@ -857,6 +876,13 @@ export default {
       this.$set(this.creatOrder, 'out_quantity', data.quantity)
       this.quantity = data.quantity
     },
+    codeSearch() {
+      if (this.spare_code) {
+        this.$set(this.dialogForm, 'equip_spare', this.firstList.filter(d => d.spare_code.indexOf(this.spare_code) !== -1))
+      } else {
+        this.dialogForm.equip_spare = JSON.parse(JSON.stringify(this.firstList))
+      }
+    },
     changeSearch() {
       this.search.page = 1
       debounce(this, 'getList')
@@ -864,6 +890,20 @@ export default {
     changeSearch1() {
       this.search.page = 1
       this.getList()
+    },
+    lengthSearch() {
+      if (this.search.spare_code.length > 0 && this.search.spare_code.length < 4) {
+        return
+      }
+      this.search.page = 1
+      debounce(this, 'getList')
+    },
+    lengthSearch1() {
+      if (this.search.spare_name.length > 0 && this.search.spare_name.length < 2) {
+        return
+      }
+      this.search.page = 1
+      debounce(this, 'getList')
     },
     async getSection() {
       try {
@@ -933,6 +973,11 @@ export default {
             this.dialogForm.equip_spare.splice(index, 1)
           }
         })
+        this.firstList.forEach((item, index) => {
+          if (row.id === item.id) {
+            this.firstList.splice(index, 1)
+          }
+        })
       }
     },
     searchDialog() {
@@ -969,11 +1014,14 @@ export default {
     },
     submitEdit() {
       this.dialogForm.status = 4
+      if (this.spare_code !== '') {
+        this.spare_code = ''
+        this.dialogForm.equip_spare = this.firstList
+      }
       this.dialogForm.equip_spare.forEach(d => {
         if (d.quantity === undefined || d.quantity === 0) {
           d.quantity = d.out_quantity > 0 ? d.out_quantity : 1
         }
-        console.log(d.quantity)
       })
       if (this.dialogForm.desc === undefined) {
         this.dialogForm.desc = null
@@ -1027,13 +1075,25 @@ export default {
     submitFun1() {
       this.$refs.createForm.clearValidate()
       let data = []
+      let data1 = []
       for (const i in this.dialogForm.equip_spare) {
         data = data.concat(this.dialogForm.equip_spare[i].id)
+        data1 = data1.concat(this.firstList[i].id)
       }
       if (this.$refs['List'].multipleSelection.length > 0) {
         for (let index = 0; index < this.$refs['List'].multipleSelection.length; index++) {
           if (data.indexOf(this.$refs['List'].multipleSelection[index].equip_spare) === -1) {
-            this.dialogForm.equip_spare.push({
+            this.dialogForm.equip_spare.unshift({
+              spare_code: this.$refs['List'].multipleSelection[index].spare__code,
+              id: this.$refs['List'].multipleSelection[index].equip_spare,
+              spare_name: this.$refs['List'].multipleSelection[index].spare_name,
+              // specification: this.$refs['List'].multipleSelection[index].specification,
+              all_qty: this.$refs['List'].multipleSelection[index].qty,
+              quantity: 1
+            })
+          }
+          if (data1.indexOf(this.$refs['List'].multipleSelection[index].equip_spare) === -1) {
+            this.firstList.unshift({
               spare_code: this.$refs['List'].multipleSelection[index].spare__code,
               id: this.$refs['List'].multipleSelection[index].equip_spare,
               spare_name: this.$refs['List'].multipleSelection[index].spare_name,
