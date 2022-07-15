@@ -263,7 +263,7 @@
           label="计划价格(元)"
           prop="cost"
         >
-          <el-input-number v-model="dialogForm.cost" controls-position="right" :min="1" />
+          <el-input-number v-model="dialogForm.cost" controls-position="right" :min="0" />
         </el-form-item>
         <el-form-item
           label="用途"
