@@ -666,9 +666,17 @@ export default {
         data.data.forEach((d, _i) => {
           const _dataSeries = []
           const _dataSeriesX = []
-          const _1 = data.indicators[d.name] ? data.indicators[d.name].lower_limit : 0
+          const _1 = data.indicators[d.name] ? data.indicators[d.name].lower_limit : 0 // 下限
+          const _3 = data.indicators[d.name] ? data.indicators[d.name].upper_limit : 0 // 上限
           const _2 = ((_3 + _1) / 2).toFixed(2)
-          const _3 = data.indicators[d.name] ? data.indicators[d.name].upper_limit : 0
+          let _min = Math.floor(_1 - (_3 - (_3 + _1) / 2))
+          if (_3 > 999) {
+            _min = Math.floor(_1 - 10)
+          }
+          if (_min < 0) {
+            _min = 0
+          }
+
           d.data.forEach((dd, ii) => {
             _dataSeries.push(dd.v)
             _dataSeriesX.push(dd.date)
@@ -681,8 +689,8 @@ export default {
           })
           _y.push({
             gridIndex: _i,
-            type: 'value'
-            // min: 0
+            type: 'value',
+            min: _min
           })
           if (_i % 2 === 0 || _i === 0) {
             const _top1 = (_i / 2) * _height1 + 5 + '%'
