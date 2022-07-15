@@ -123,13 +123,13 @@
     >
       <el-table-column
         label="No"
-        width="75"
+        width="70"
       >
         <template slot-scope="{row,$index}">
           {{ row.all===1?'汇总': row.all===2?"页面小计":$index+1 }}
         </template>
       </el-table-column>
-      <el-table-column prop="stage" label="胶料类型" align="center" min-width="16" />
+      <el-table-column prop="stage" label="胶料类型" align="center" width="70" />
       <el-table-column prop="material_no" label="胶料编码" align="center" min-width="28">
         <template slot-scope="{row}">
           <!-- <el-link type="primary" @click="clickMaterialNo">{{ row.material_no }}</el-link> -->

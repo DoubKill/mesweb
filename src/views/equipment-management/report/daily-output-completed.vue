@@ -76,7 +76,16 @@
           <template
             slot-scope="{row}"
           >
-            <el-input-number v-if="(row.name==='外发无硫料(吨)'||row.name==='实际生产工作日数')&&!exportTableShow" v-model="row[d]" controls-position="right" :min="0" style="width:110px" />
+            <el-input-number
+              v-if="(row.name==='外发无硫料(吨)'
+                ||row.name==='实际生产工作日数'
+                ||row.name==='190E实际生产工作日数'
+                ||row.name==='实际生产机台数')&&!exportTableShow"
+              v-model="row[d]"
+              controls-position="right"
+              :min="0"
+              style="width:110px"
+            />
             <span v-else>{{ row[d] }}</span>
           </template>
         </el-table-column>
@@ -552,29 +561,56 @@ export default {
       }
     },
     async save() {
-      const obj = this.tableData.find(d => d.name === '外发无硫料(吨)')
-      const obj1 = this.tableData.find(d => d.name === '实际生产工作日数')
+      const obj = this.tableData.filter(
+        d => d.name === '外发无硫料(吨)' ||
+      d.name === '实际生产工作日数' ||
+      d.name === '190E实际生产工作日数' ||
+      d.name === '实际生产机台数')
       var arr = []
       var arr1 = []
-      for (const key in obj) {
-        if (key !== 'name' && key !== 'weight' && key !== 'avg' && obj[key] !== undefined) {
-          arr.push({
-            factory_date: this.search.date + '-' + (key.split('日')[0] >= 10 ? key.split('日')[0] : '0' + key.split('日')[0]),
-            weight: obj[key]
-          })
+      var arr2 = []
+      var arr3 = []
+      obj.forEach(d => {
+        for (const key in d) {
+          if (d.name === '外发无硫料(吨)') {
+            if (key !== 'name' && key !== 'weight' && key !== 'avg' && d[key] !== undefined) {
+              arr.push({
+                factory_date: this.search.date + '-' + (key.split('日')[0] >= 10 ? key.split('日')[0] : '0' + key.split('日')[0]),
+                weight: d[key]
+              })
+            }
+          }
+          if (d.name === '实际生产工作日数') {
+            if (key !== 'name' && key !== 'weight' && key !== 'avg' && d[key] !== undefined) {
+              arr1.push({
+                factory_date: this.search.date + '-' + (key.split('日')[0] >= 10 ? key.split('日')[0] : '0' + key.split('日')[0]),
+                num: d[key]
+              })
+            }
+          }
+          if (d.name === '190E实际生产工作日数') {
+            if (key !== 'name' && key !== 'weight' && key !== 'avg' && d[key] !== undefined) {
+              arr2.push({
+                factory_date: this.search.date + '-' + (key.split('日')[0] >= 10 ? key.split('日')[0] : '0' + key.split('日')[0]),
+                num: d[key]
+              })
+            }
+          }
+          if (d.name === '实际生产机台数') {
+            if (key !== 'name' && key !== 'weight' && key !== 'avg' && d[key] !== undefined) {
+              arr3.push({
+                factory_date: this.search.date + '-' + (key.split('日')[0] >= 10 ? key.split('日')[0] : '0' + key.split('日')[0]),
+                num: d[key]
+              })
+            }
+          }
         }
-      }
-      for (const key in obj1) {
-        if (key !== 'name' && key !== 'weight' && key !== 'avg' && obj1[key] !== undefined) {
-          arr1.push({
-            factory_date: this.search.date + '-' + (key.split('日')[0] >= 10 ? key.split('日')[0] : '0' + key.split('日')[0]),
-            num: obj1[key]
-          })
-        }
-      }
+      })
       try {
         this.btnLoading = true
-        await dailyProductionCompletionReport('post', null, { data: { date: this.search.date, outer_data: arr, working_data: arr1 }})
+        await dailyProductionCompletionReport('post', null, { data: {
+          date: this.search.date, outer_data: arr, working_data: arr1,
+          working_190e_data: arr2, equip_data: arr3 }})
         this.$message.success('操作成功')
         this.btnLoading = false
         this.getList()
@@ -847,6 +883,9 @@ function getCurrentMonthLastDay(d) {
 .dailyOutputCompleted{
   .el-divider{
     background: black;
+  }
+  .el-table .cell{
+    text-overflow:clip;
   }
 .el-table th{
         padding:0;

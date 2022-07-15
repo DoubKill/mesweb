@@ -93,6 +93,11 @@
             min-width="20"
           />
           <el-table-column
+            prop="mix_trains"
+            label="密炼车数"
+            min-width="20"
+          />
+          <el-table-column
             prop="setno"
             label="设定车数"
             min-width="20"
@@ -163,7 +168,7 @@
             />
           </el-form-item>
         </div>
-        <el-form-item label="密炼车次" prop="setno">
+        <el-form-item label="密炼车数" prop="setno">
           <el-input-number
             v-model="ruleForm.setno"
             :min="ruleForm.actno||0"
@@ -236,7 +241,7 @@ export default {
           { required: true, message: '请选择配方', trigger: 'change' }
         ],
         setno: [
-          { required: true, message: '请输入密炼车次', trigger: 'blur' }
+          { required: true, message: '请输入密炼车数', trigger: 'blur' }
         ]
       },
       dialogAdd: false,
@@ -416,7 +421,9 @@ export default {
           this.$message.info('请选中一行计划')
           return
         }
-        this.ruleForm.actno = this.allTable[index].currentRow.actno
+        this.ruleForm.actno = this.allTable[index].currentRow.actno || 0
+      } else {
+        this.ruleForm.actno = 0
       }
       this.currentSearch = { ...row.search, equip_no: row.equip_no }
       this.currentIndex = index
