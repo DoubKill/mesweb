@@ -556,6 +556,7 @@
       :before-close="handleCloseAdd1"
     >
       <material
+        :id="dialogForm.id"
         ref="List"
         :show="dialogVisibleAdd1"
         type="出库"

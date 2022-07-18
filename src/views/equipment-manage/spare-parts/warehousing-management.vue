@@ -329,7 +329,6 @@
             v-model="creatOrder.equip_warehouse_location"
             filterable
             placeholder="请选择"
-            clearable
             @visible-change="getWarehouseLocation"
           >
             <el-option
@@ -678,7 +677,7 @@ export default {
           { required: true, message: '不能为空', trigger: 'change' }
         ],
         equip_warehouse_location: [
-          { required: true, message: '不能为空', trigger: 'change' }
+          { required: true, message: '不能为空', trigger: 'bulr' }
         ],
         in_quantity: [
           { required: true, message: '不能为空', trigger: 'change' }
@@ -775,9 +774,18 @@ export default {
     //     }
     //   }
     // },
-    clear() {
+    async clear() {
       if (this.creatOrder.equip_warehouse_location) {
         this.creatOrder.equip_warehouse_location = null
+      }
+      try {
+        const data = await equipWarehouseLocation('get', null, { params: { equip_warehouse_area_id: this.creatOrder.equip_warehouse_area, all: 1 }})
+        this.warehouseLocationList = data
+        if (data.length > 0) {
+          this.creatOrder.equip_warehouse_location = data[0].id
+        }
+      } catch (e) {
+        this.warehouseLocationList = []
       }
     },
     async getWarehouseLocation(val) {
