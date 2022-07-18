@@ -44,7 +44,7 @@
       />
       <el-table-column v-for="(item) in day" :key="item" :label="month+'/'+item" width="120px">
         <template slot-scope="{row,$index}">
-          <span v-if="isExport">{{ row[item] }}</span>
+          <span v-if="isExport||row.name.indexOf('待维修胶架数量')>-1">{{ row[item] }}</span>
           <span v-else-if="row.name.indexOf('人员')>-1">
             <el-select v-model="row[item]" filterable placeholder="请选择" clearable>
               <el-option
@@ -56,7 +56,7 @@
             </el-select>
           </span>
           <span v-else>
-            <el-input-number v-model="row[item]" style="width:100px" controls-position="right" @change="handleChange(row,$index)" />
+            <el-input-number v-model="row[item]" style="width:100px" controls-position="right" :min="0" @change="handleChange(row,$index,item)" />
           </span>
         </template>
       </el-table-column>
@@ -120,8 +120,15 @@ export default {
         //
       }
     },
-    handleChange(row, index) {
+    handleChange(row, index, item) {
       this.tableData[index].总计 = sum(row)
+
+      let _num = 0
+      let _all = 0
+      _num = Number(this.tableData[1][item]) + Number(this.tableData[0][item])
+      _all = Number(this.tableData[1].总计) + Number(this.tableData[0].总计)
+      this.tableData[2][item] = Math.round(_num * 100) / 100
+      this.tableData[2].总计 = Math.round(_all * 100) / 100
     },
     async submitFun() {
       try {
