@@ -35,7 +35,7 @@
           v-permission="['employee_attendance_records','export']"
           type="primary"
           :disabled="!isDownload"
-          :loading="btnExportLoad"
+          :loading="isExport"
           @click="exportTable1"
         >导出Excel</el-button>
         <el-button
@@ -79,7 +79,7 @@
       :span-method="objectSpanMethod"
       border
     >
-      <el-table-column width="120px">
+      <el-table-column :fixed="!isExport" width="120px">
         <template
           slot="header"
         >
@@ -96,6 +96,7 @@
         </template>
       </el-table-column>
       <el-table-column
+        :fixed="!isExport"
         prop="section"
         align="center"
         label="岗位"
@@ -523,6 +524,7 @@ export default {
       group: '',
       classes: '',
       allList: [],
+      isExport: false,
       optionsGroup: [],
       multipleSelection: [],
       tableHead: [],
@@ -881,7 +883,13 @@ export default {
         })
     },
     exportTable1() {
-      exportExcel('员工出勤记录表')
+      setTimeout(d => {
+        this.isExport = true
+        setTimeout(d => {
+          exportExcel('员工出勤记录表', 'disposal-list-components')
+          this.isExport = false
+        }, 1000)
+      }, 100)
     }
   }
 }
