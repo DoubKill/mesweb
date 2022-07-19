@@ -46,7 +46,15 @@
         <template slot-scope="{row,$index}">
           <span v-if="isExport||row.name.indexOf('待维修胶架数量')>-1">{{ row[item] }}</span>
           <span v-else-if="row.name.indexOf('人员')>-1">
-            <el-select v-model="row[item]" filterable placeholder="请选择" clearable>
+            <el-select
+              v-model="row[item]"
+              filterable
+              placeholder="请选择"
+              clearable
+              :loading="loadingUser"
+              :remote-method="remoteMethod"
+              remote
+            >
               <el-option
                 v-for="userItem in optionsUser"
                 :key="userItem.id"
@@ -73,51 +81,59 @@ export default {
   data() {
     return {
       search: { date_time: setDate(false, false, 'month') },
-      day: '',
+      day: [],
       month: '',
       loading: false,
       btnExportLoad: false,
       isExport: false,
       btnLoading: false,
       tableData: [],
-      optionsUser: []
+      optionsUser: [],
+      loadingUser: false
     }
   },
   created() {
     this.getList()
-    this.getOptionsUser()
   },
   methods: {
-    getList() {
+    async getList() {
       try {
         if (!this.search.date_time) {
           this.$message('请选择月份')
           return
         }
         this.loading = true
-        setTimeout(async d => {
-          this.day = []
-          this.month = null
-          this.tableData = []
-          const data = await rubberFrameRepair('get', null, { params: this.search })
-          const a = new Date(this.search.date_time)
-          const y = a.getFullYear()
-          const m = a.getMonth() + 1
-          this.day = new Date(y, m, 0).getDate()
-          this.month = m
-          this.tableData = data.results.details || []
-          this.loading = false
-        }, 300)
+        this.day = []
+        this.month = null
+        this.tableData = []
+        const data = await rubberFrameRepair('get', null, { params: this.search })
+        const a = new Date(this.search.date_time)
+        const y = a.getFullYear()
+        const m = a.getMonth() + 1
+        this.day = new Date(y, m, 0).getDate()
+        this.month = m
+        this.tableData = data.results.details || []
+        this.loading = false
       } catch (e) {
         this.loading = false
       }
     },
-    async getOptionsUser() {
+    remoteMethod(query) {
+      if (query !== '') {
+        this.loadingUser = true
+        // this.optionsUser = []
+        this.getOptionsUser(query)
+      } else {
+        this.optionsUser = []
+      }
+    },
+    async getOptionsUser(query) {
       try {
-        const data = await personnels('get', null, { params: { all: 1 }})
+        const data = await personnels('get', null, { params: { username: query }})
         this.optionsUser = data.results
+        this.loadingUser = false
       } catch (e) {
-        //
+        this.loadingUser = false
       }
     },
     handleChange(row, index, item) {
