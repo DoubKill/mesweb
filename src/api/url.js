@@ -114,6 +114,7 @@ export default {
   MatTestIndicatorMethods: '/api/v1/quality/mat-test-indicator-methods/',
   // 录入新增提交
   MaterialTestOrders: '/api/v1/quality/material-test-orders/',
+  ProductTestValueHistory: '/api/v1/quality/product-test-value-history/',
   MatIndicatorTab: '/api/v1/quality/mat-indicator-tab/',
   MaterialDataPoints: '/api/v1/quality/material-data-points/',
   // 不合格品处理导出

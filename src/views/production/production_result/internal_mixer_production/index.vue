@@ -47,6 +47,9 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="LOT NO">
+        <el-input v-model="getParams.lot_no" clearable @input="debounceList" />
+      </el-form-item>
     </el-form>
     <el-table
       v-loading="loadingTable"
@@ -605,6 +608,9 @@ export default {
       this.getParams.page = 1
       this.loadingTable = true
       this.getList()
+    },
+    debounceList() {
+      this.$debounce(this, 'changeSearch')
     },
     changeSearch() {
       this.loadingTable = true

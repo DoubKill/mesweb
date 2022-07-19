@@ -255,6 +255,15 @@ export function materialTestOrders(method, id, data = {}) {
   return request(obj)
 }
 
+export function productTestValueHistory(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ProductTestValueHistory + id + '/' : API.ProductTestValueHistory,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function matIndicatorTab(method, id, data = {}) {
   const obj = {
     url: id ? API.MatIndicatorTab + id + '/' : API.MatIndicatorTab,
