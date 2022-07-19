@@ -91,6 +91,12 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="机台">
+        <selectEquip
+          :equip_no_props.sync="getParams.equip_no"
+          @changeSearch="changeSearch"
+        />
+      </el-form-item>
       <el-form-item label="总货位数：">
         {{ allObj.total_goods_num || 0 }}
       </el-form-item>
@@ -225,9 +231,10 @@ import page from '@/components/page'
 import { stage_global_url, inLibraryInventory } from '@/api/display_static_fun'
 import materialCodeSelect from '@/components/select_w/materialCodeSelect'
 import generateAssignOutbound from './generate_assign_outbound.vue'
+import selectEquip from '@/components/select_w/equip'
 export default {
   name: 'RubberRepertoryManage',
-  components: { page, materialCodeSelect, generateAssignOutbound },
+  components: { selectEquip, page, materialCodeSelect, generateAssignOutbound },
   data: function() {
     return {
       loading: false,

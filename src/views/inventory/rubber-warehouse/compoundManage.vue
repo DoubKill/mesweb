@@ -26,7 +26,15 @@
           @change="searchDate"
         />
       </el-form-item>
-      <br>
+      <el-form-item label="出库任务号">
+        <el-input v-model="search.task_no" size="" clearable placeholder="请输入出库任务号" @input="changeList" />
+      </el-form-item>
+      <el-form-item label="追溯号">
+        <el-input v-model="search.lot_no" size="" clearable placeholder="请输入追溯号" @input="changeList" />
+      </el-form-item>
+      <el-form-item label="托盘号">
+        <el-input v-model="search.pallet_no" size="" clearable placeholder="请输入托盘号" @input="changeList" />
+      </el-form-item>
       <el-form-item label="库区">
         <el-select
           v-model="search.warehouse"
@@ -350,6 +358,11 @@
         min-width="25"
       />
       <el-table-column
+        prop="latest_task_time"
+        label="最新任务创建时间"
+        min-width="25"
+      />
+      <el-table-column
         label="查看"
         width="80"
       >
@@ -514,6 +527,16 @@
         <el-table-column
           prop="location"
           label="库位编号"
+          min-width="20"
+        />
+        <el-table-column
+          prop="created_username"
+          label="任务创建人"
+          min-width="20"
+        />
+        <el-table-column
+          prop="created_date"
+          label="任务创建时间"
           min-width="20"
         />
         <el-table-column
