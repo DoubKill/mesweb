@@ -113,3 +113,11 @@ export function replaceRecipeOne(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function wfProductBatching(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WfProductBatching + id + '/' : API.WfProductBatching,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

@@ -460,6 +460,16 @@ export let asyncRoutes = [
               faName: 'RbRecipe',
               permissionName: 'productbatching'
             }
+          },
+          {
+            path: '/rb/material/external-feeding-bag',
+            name: 'ExternalFeedingBag',
+            component: () => import('@/views/rb_material_std_manage/external-feeding-bag'),
+            meta: {
+              title: '外供料包的配方',
+              faName: 'RbRecipe',
+              permissionName: ''
+            }
           }
         ] },
       {
