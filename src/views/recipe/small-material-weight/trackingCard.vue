@@ -716,7 +716,8 @@ export default {
       this.$refs.ruleForm.validate(async(valid) => {
         if (valid) {
           try {
-            if (!this.ruleForm.dev_type) {
+            const bool = this.ruleForm.product_no.indexOf('外发') > -1
+            if (!this.ruleForm.dev_type && !bool) {
               this.$message.info('暂无机型')
               return
             }
