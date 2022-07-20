@@ -795,8 +795,10 @@ export default {
     },
     submitSendWeight() {
       try {
+        if (this.checkList.length) {
+          this.loadingSendWeight = true
+        }
         let _i = 0
-        this.loadingSendWeight = true
         this.checkList.forEach(async d => {
           try {
             const data = await xlRecipeNotice('post', { params: { product_batching_id: this.currentRow.id, product_no: this.currentRow.stage_product_batch_no, xl_equip: d }})
@@ -813,6 +815,8 @@ export default {
                   this.handleClose(false)
                   this.loadingSendWeight = false
                 }
+              }).catch(() => {
+                this.loadingSendWeight = false
               })
             } else {
               this.$message.success(data)

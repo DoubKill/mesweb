@@ -125,7 +125,7 @@
           <el-link
             type="primary"
             :underline="false"
-            @click="showGridTable(scope.row.id)"
+            @click="showGridTable(scope.row)"
           >{{ scope.row.stage_product_batch_no }}</el-link>
         </template>
       </el-table-column>
@@ -416,21 +416,23 @@
       :before-close="handleCloseIngredient"
     >
       <el-form
+        v-if="!loadingForm"
         :inline="true"
         :model="rubberMaterialForm"
       >
-        <!-- <el-form-item label="胶料编码">
+        <el-form-item label="胶料编码">
           <el-input
             v-model="rubberMaterialForm.product_info"
             :disabled="true"
             placeholder="胶料编码"
           />
-        </el-form-item> -->
+        </el-form-item>
         <el-form-item label="胶料配方编码">
           <el-input
             v-model="rubberMaterialForm.stage_product_batch_no"
             :disabled="true"
             placeholder="胶料配方编码"
+            style="width:300px"
           />
         </el-form-item>
         <el-form-item
@@ -441,8 +443,9 @@
         </el-form-item>
         <div style="clear:both" />
       </el-form>
-      <h3>{{ Number(rubberMaterialForm.weigh_type)===2?'细料':'硫磺' }}</h3>
+      <h3 v-if="!loadingForm">{{ Number(rubberMaterialForm.weigh_type)===2?'细料':'硫磺' }}</h3>
       <el-table
+        v-loading="loadingForm"
         :data="tableDataIngredient"
         border
         show-summary
@@ -510,6 +513,7 @@
             <el-select
               v-model="row.master"
               clearable
+              :disabled="isView"
               placeholder="请选择"
             >
               <el-option
@@ -642,8 +646,8 @@ export default {
       // this.materialForm = JSON.parse(JSON.stringify(this.currentRow))
       // this.rubberMaterialForm = {}
       this.dialogAddRubberMaterial = true
-      this.getInfo()
       // this.isCopy = true
+      this.getInfo()
     },
     async getFormulaType() {
       try {
@@ -762,7 +766,9 @@ export default {
         this.loadingForm = false
         const a = data.stage_product_batch_no.split('(')
         const b = a[1].split(')')
-        this.rubberMaterialForm = { stage_product_batch_no: data.stage_product_batch_no, weigh_type: data.weigh_type, _modify: this.currentRow.id, product_info: a[0], precept: b[0] }
+        const _modify = this.currentRow.id && !this.dialogAddRubberMaterial
+        console.log(_modify, 888)
+        this.rubberMaterialForm = { stage_product_batch_no: data.stage_product_batch_no, weigh_type: data.weigh_type, _modify: _modify, product_info: a[0], precept: b[0] }
         this.tableDataIngredient = data.weight_cnt_types[0].weight_details
         if (this.tableDataIngredient.length > 0) {
           this.tableDataIngredient.forEach(d => {
@@ -777,12 +783,11 @@ export default {
         this.loadingForm = false
       }
     },
-    showGridTable(id) {
-      if (this.$refs.createdRubberMaterialRef) {
-        this.isView = true
-        this.isCopy = false
-        this.$refs.createdRubberMaterialRef.directBatching(id, false)
-      }
+    showGridTable(row) {
+      this.currentRow = JSON.parse(JSON.stringify(row))
+      this.isView = true
+      this.showIngredient = true
+      this.getInfo()
     },
     handleCurrentChange(val) {
       this.currentRow = val
@@ -842,8 +847,10 @@ export default {
     },
     submitSendWeight() {
       try {
+        if (this.checkList.length) {
+          this.loadingSendWeight = true
+        }
         let _i = 0
-        this.loadingSendWeight = true
         this.checkList.forEach(async d => {
           try {
             const data = await xlRecipeNotice('post', { params: { product_batching_id: this.currentRow.id, product_no: this.currentRow.stage_product_batch_no, xl_equip: d }})
@@ -860,6 +867,8 @@ export default {
                   this.handleClose(false)
                   this.loadingSendWeight = false
                 }
+              }).catch(() => {
+                this.loadingSendWeight = false
               })
             } else {
               this.$message.success(data)
@@ -881,6 +890,7 @@ export default {
     },
     handleCloseMaterial(done) {
       this.dialogAddRubberMaterial = false
+      this.handleCloseIngredient()
       this.isView = false
       setTimeout(s => {
         this.$refs['rubberMaterialForm'].clearValidate()
