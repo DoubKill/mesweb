@@ -570,12 +570,17 @@ export default {
         this.$message.info('没有物料')
         return
       }
+      const _obj = JSON.parse(JSON.stringify(this.formData))
+      const bool = _obj.product_no.indexOf('[') > -1
+      if (bool) {
+        _obj.dev_type = 'ZWF'
+      }
       this.$refs.formRef.validate(async(valid) => {
         if (valid) {
           try {
             this.loadingBtn = true
             const _method = this.formData.id ? 'put' : 'post'
-            await weightingPackageManua(_method, this.formData.id || null, { data: this.formData })
+            await weightingPackageManua(_method, this.formData.id || null, { data: _obj })
             this.$message.success('细料硫磺单配流转卡,操作成功')
             this.handleClose()
             this.loadingBtn = false
