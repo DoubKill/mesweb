@@ -659,7 +659,7 @@ export default {
         const _title = []
         const _grid = []
         const _series = []
-        const _num = Math.ceil(data.data.length / 2) + 2
+        const _num = Math.ceil(data.data.length / 2) + 3.1
         const _height = (1 / _num * 100).toFixed(0) + '%'
         const _height1 = (1 / _num * 100 + 8).toFixed(0)
 
@@ -731,6 +731,10 @@ export default {
             } : {}
           })
         })
+
+        _title.push({ text: this.row_roduct_no + '数据推移' +
+        ' ' + this.historyDate[0] + '-' + this.historyDate[1], left: 'center', top: 0 })
+        this.historySpot.toolbox.feature.saveAsImage.name = this.row_roduct_no + ' ' + this.historyDate[0] + '-' + this.historyDate[1] + ' ' + setDate()
         this.historySpot.xAxis = _x || []
         this.historySpot.yAxis = _y || []
         this.historySpot.title = _title || []
@@ -739,6 +743,10 @@ export default {
 
         this.chartHistoryBar = echarts.init(document.getElementById('historySpot'))
         this.chartHistoryBar.setOption(this.historySpot, true)
+
+        this.chartHistoryBar.on('click', function(params) {
+          console.log(params, 3333)
+        })
       } catch (e) {
         //
       }
