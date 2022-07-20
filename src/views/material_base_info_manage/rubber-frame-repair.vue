@@ -141,8 +141,9 @@ export default {
 
       let _num = 0
       let _all = 0
-      _num = Number(this.tableData[1][item]) + Number(this.tableData[0][item])
-      _all = Number(this.tableData[1].总计) + Number(this.tableData[0].总计)
+      _num = Number(this.tableData[0][item]) - Number(this.tableData[1][item])
+      _all = Number(this.tableData[0].总计) - Number(this.tableData[1].总计)
+
       this.tableData[2][item] = Math.round(_num * 100) / 100
       this.tableData[2].总计 = Math.round(_all * 100) / 100
     },
