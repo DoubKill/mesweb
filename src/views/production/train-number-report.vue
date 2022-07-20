@@ -79,6 +79,10 @@
         label="机台"
       />
       <el-table-column
+        prop="factory_date"
+        label="工厂日期"
+      />
+      <el-table-column
         prop="product_no"
         label="配方编号"
       />

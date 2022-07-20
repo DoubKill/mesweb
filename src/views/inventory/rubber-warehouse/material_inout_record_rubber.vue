@@ -131,8 +131,11 @@
         </el-select>
         <!-- <el-input v-model="search.material_name" clearable @input="debounceList" /> -->
       </el-form-item>
-      <el-form-item label="出入库单号">
+      <el-form-item label="出库单据号">
         <el-input v-model="search.order_no" clearable @input="debounceList" />
+      </el-form-item>
+      <el-form-item label="出库任务号">
+        <el-input v-model="search.task_no" clearable @input="debounceList" />
       </el-form-item>
       <el-form-item label="托盘号">
         <el-input v-model="search.pallet_no" clearable @input="debounceList" />
@@ -223,7 +226,8 @@
       <!-- <el-table-column label="入库发起人" align="center" prop="" /> -->
       <el-table-column label="入库发起时间" align="center" prop="inbound_time" />
       <!-- <el-table-column label="入库完成时间" align="center" prop="" /> -->
-      <el-table-column label="出库单号" align="center" prop="outbound_order_no" />
+      <el-table-column label="出库单据号" align="center" prop="order_no" />
+      <el-table-column label="出库任务号" align="center" prop="outbound_order_no" />
       <el-table-column label="出库发起时间" align="center" prop="outbound_time" />
       <el-table-column label="出库发起人" align="center" prop="outbound_user" />
       <!-- <el-table-column label="出库完成时间" align="center" prop="" /> -->
