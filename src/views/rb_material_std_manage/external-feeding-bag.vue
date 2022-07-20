@@ -764,9 +764,9 @@ export default {
         this.loadingForm = true
         const data = await wfProductBatching('get', this.currentRow.id)
         this.loadingForm = false
-        const a = data.stage_product_batch_no.split('(')
-        const b = a[1].split(')')
-        const _modify = this.currentRow.id && !this.dialogAddRubberMaterial
+        const a = data.stage_product_batch_no.split('[')
+        const b = a[1].split(']')
+        const _modify = (this.currentRow.id && !this.dialogAddRubberMaterial) ? this.currentRow.id : ''
         this.rubberMaterialForm = { stage_product_batch_no: data.stage_product_batch_no, weigh_type: data.weigh_type, _modify: _modify, product_info: a[0], precept: b[0] }
         this.tableDataIngredient = data.weight_cnt_types[0].weight_details
         if (this.tableDataIngredient.length > 0) {
@@ -950,6 +950,7 @@ export default {
       this.tableDataIngredient = []
       this.formInline = {}
       this.showIngredient = false
+      this.isView = false
       if (done) {
         done()
       }
