@@ -716,13 +716,17 @@ export default {
       this.$refs.ruleForm.validate(async(valid) => {
         if (valid) {
           try {
-            const bool = this.ruleForm.product_no.indexOf('外发') > -1
-            if (!this.ruleForm.dev_type && !bool) {
+            let _obj = JSON.parse(JSON.stringify(this.ruleForm))
+            const bool = _obj.product_no.indexOf('[') > -1
+            if (bool) {
+              _obj.dev_type = 'ZWF'
+            }
+            if (!_obj.dev_type) {
               this.$message.info('暂无机型')
               return
             }
             // 计算公差
-            const _tolerance = this.ruleForm.machine_manual_tolerance
+            const _tolerance = _obj.machine_manual_tolerance
             let otherNum_tolerance
             if (_tolerance) {
               const lastStr = _tolerance.slice(_tolerance.length - 1)
@@ -730,7 +734,7 @@ export default {
               if (lastStr === '%') {
                 _toleranceA = Number(_tolerance.slice(1, _tolerance.length - 1))
                 const a = _toleranceA / 100
-                const b = Number(this.ruleForm.machine_manual_weight) * a
+                const b = Number(_obj.machine_manual_weight) * a
                 otherNum_tolerance = Math.round(b * 1000) / 1000
               } else {
                 _toleranceA = Number(_tolerance.slice(1, _tolerance.length - 2))
@@ -748,9 +752,9 @@ export default {
               }
             }
             const _api = this.againPrint ? 'put' : 'post'
-            let _obj = JSON.parse(JSON.stringify(this.ruleForm))
+            // let _obj = JSON.parse(JSON.stringify(this.ruleForm))
             if (this.againPrint) {
-              _obj = { print_count: this.ruleForm.print_count }
+              _obj = { print_count: _obj.print_count }
             }
             if (typeof _obj.display_manual_info === 'string') {
               _obj.display_manual_info = []

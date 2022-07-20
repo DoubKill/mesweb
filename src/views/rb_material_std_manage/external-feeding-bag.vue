@@ -767,7 +767,6 @@ export default {
         const a = data.stage_product_batch_no.split('(')
         const b = a[1].split(')')
         const _modify = this.currentRow.id && !this.dialogAddRubberMaterial
-        console.log(_modify, 888)
         this.rubberMaterialForm = { stage_product_batch_no: data.stage_product_batch_no, weigh_type: data.weigh_type, _modify: _modify, product_info: a[0], precept: b[0] }
         this.tableDataIngredient = data.weight_cnt_types[0].weight_details
         if (this.tableDataIngredient.length > 0) {
@@ -929,7 +928,7 @@ export default {
       } catch (e) { throw new Error(e) }
     },
     rubberMaterialChanged() {
-      const a = this.rubberMaterialForm.product_info + '(' + this.rubberMaterialForm.precept + ')'
+      const a = this.rubberMaterialForm.product_info + '[' + this.rubberMaterialForm.precept + ']'
       this.$set(this.rubberMaterialForm, 'stage_product_batch_no', a)
     },
     NewAddMaterial(formName, bool) {
