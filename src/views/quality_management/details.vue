@@ -659,23 +659,38 @@ export default {
         const _title = []
         const _grid = []
         const _series = []
-        const _num = Math.ceil(data.y_axis.length / 2) + 2
+        const _num = Math.ceil(data.data.length / 2) + 3.1
         const _height = (1 / _num * 100).toFixed(0) + '%'
         const _height1 = (1 / _num * 100 + 8).toFixed(0)
 
-        data.y_axis.forEach((d, _i) => {
+        data.data.forEach((d, _i) => {
           const _dataSeries = []
+          const _dataSeriesX = []
+          const _1 = data.indicators[d.name] ? data.indicators[d.name].lower_limit : 0 // 下限
+          const _3 = data.indicators[d.name] ? data.indicators[d.name].upper_limit : 0 // 上限
+          const _2 = ((_3 + _1) / 2).toFixed(2)
+          let _min = Math.floor(_1 - (_3 - (_3 + _1) / 2))
+          if (_3 > 999) {
+            _min = Math.floor(_1 - 10)
+          }
+          if (_min < 0) {
+            _min = 0
+          }
+
           d.data.forEach((dd, ii) => {
-            dd.forEach((ddd, iii) => {
-              _dataSeries.push([data.x_axis[ii], Number(ddd)])
-            })
+            _dataSeries.push(dd.v)
+            _dataSeriesX.push(dd.date)
           })
           _x.push({
             gridIndex: _i,
-            data: data.x_axis
+            data: _dataSeriesX,
+            type: 'category',
+            boundaryGap: false
           })
           _y.push({
-            gridIndex: _i
+            gridIndex: _i,
+            type: 'value',
+            min: _min
           })
           if (_i % 2 === 0 || _i === 0) {
             const _top1 = (_i / 2) * _height1 + 5 + '%'
@@ -688,15 +703,13 @@ export default {
             _title.push({ text: d.name, right: '8%', top: _topTitle2 })
             _grid.push({ right: '6%', top: _top2, width: '40%', height: _height })
           }
-          const _1 = data.indicators[d.name] ? data.indicators[d.name][0] : 0
-          const _3 = data.indicators[d.name] ? data.indicators[d.name][1] : 0
-          const _2 = ((_3 + _1) / 2).toFixed(2)
           _series.push({
             name: d.name,
             type: 'scatter',
             xAxisIndex: _i,
             yAxisIndex: _i,
             data: _dataSeries,
+            smooth: true,
             markLine: data.indicators[d.name] ? {
               data: [{
                 silent: true,
@@ -718,6 +731,10 @@ export default {
             } : {}
           })
         })
+
+        _title.push({ text: this.row_roduct_no + '数据推移' +
+        ' ' + this.historyDate[0] + '-' + this.historyDate[1], left: 'center', top: 0 })
+        this.historySpot.toolbox.feature.saveAsImage.name = this.row_roduct_no + ' ' + this.historyDate[0] + '-' + this.historyDate[1] + ' ' + setDate()
         this.historySpot.xAxis = _x || []
         this.historySpot.yAxis = _y || []
         this.historySpot.title = _title || []
@@ -726,6 +743,10 @@ export default {
 
         this.chartHistoryBar = echarts.init(document.getElementById('historySpot'))
         this.chartHistoryBar.setOption(this.historySpot, true)
+
+        this.chartHistoryBar.on('click', function(params) {
+          console.log(params, 3333)
+        })
       } catch (e) {
         //
       }
