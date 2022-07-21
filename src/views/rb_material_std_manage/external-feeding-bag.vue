@@ -63,18 +63,18 @@
       </el-form-item>
       <el-form-item style="float: right">
         <el-button
-          v-if="checkPermission(['productbatching','add'])"
+          v-if="checkPermission(['wfproductbatching','add'])"
           @click="newRubberClicked"
         >新建</el-button>
         <el-button
-          v-if="checkPermission(['productbatching','change'])"
+          v-if="checkPermission(['wfproductbatching','change'])"
           :disabled="![1,4].includes(currentRow.used_type)"
           @click="showPutRubberMaterialDialog"
         >配料</el-button>
       </el-form-item>
       <el-form-item style="float: right">
         <el-button
-          v-if="checkPermission(['productbatching','add'])"
+          v-if="checkPermission(['wfproductbatching','add'])"
           :disabled="!currentRow.id"
           @click="copyClicked"
         >复制</el-button>
@@ -88,7 +88,7 @@
       </el-form-item> -->
       <el-form-item style="float: right">
         <el-button
-          v-if="checkPermission(['productbatching','change'])"
+          v-if="checkPermission(['wfproductbatching','change'])"
           type="primary"
           :loading="btnExportLoad"
           @click="exportTable"
@@ -153,39 +153,38 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
-              v-if="scope.row.used_type === 5 && permissionObj.productbatching.indexOf('abandon')>-1"
+              v-if="scope.row.used_type === 5 && checkPermission(['wfproductbatching','edit'])"
               size="mini"
               @click="status_recipe_fun(scope.row.id,true)"
             >编辑</el-button>
             <el-button
-              v-if="scope.row.used_type === 1 && checkPermission(['productbatching','submit'])"
+              v-if="scope.row.used_type === 1 && checkPermission(['wfproductbatching','submit'])"
               size="mini"
               @click="status_recipe_fun(scope.row.id,true)"
             >提交</el-button>
             <el-button
-              v-if="scope.row.used_type === 2 && checkPermission(['productbatching','check'])"
+              v-if="scope.row.used_type === 2 && checkPermission(['wfproductbatching','check'])"
               size="mini"
               @click="status_recipe_fun(scope.row.id,true)"
             >校对</el-button>
             <el-button
-              v-if="[3,7].includes(scope.row.used_type) && checkPermission(['productbatching','use'])"
+              v-if="[3,7].includes(scope.row.used_type) && checkPermission(['wfproductbatching','use'])"
               size="mini"
               @click="status_recipe_fun(scope.row.id,true)"
             >启用</el-button>
             <el-button
-              v-if="(scope.row.used_type === 2 && checkPermission(['productbatching','check'])) |
-                (scope.row.used_type === 3 && checkPermission(['productbatching','use']))"
+              v-if="(![5,4,7].includes(scope.row.used_type) && checkPermission(['wfproductbatching','refuse']))"
               size="mini"
               @click="status_recipe_fun(scope.row.id,false)"
             >驳回</el-button>
             <el-button
-              v-if="checkPermission(['productbatching','abandon'])&&
+              v-if="checkPermission(['wfproductbatching','abandon'])&&
                 [5,4,7].includes(scope.row.used_type)"
               size="mini"
               @click="status_recipe_fun(scope.row.id,false,'废弃')"
             >废弃</el-button>
             <el-button
-              v-if="checkPermission(['productbatching','stop'])&&
+              v-if="checkPermission(['wfproductbatching','stop'])&&
                 [4].includes(scope.row.used_type)"
               size="mini"
               @click="status_recipe_fun(scope.row.id,false,'停用')"
@@ -201,7 +200,7 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
-              v-if="scope.row.used_type === 4 && checkPermission(['productbatching','sendXl'])"
+              v-if="scope.row.used_type === 4 && checkPermission(['wfproductbatching','sendXl'])"
               title="请配置可用机台"
               type="primary"
               size="mini"

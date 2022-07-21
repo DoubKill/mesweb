@@ -468,7 +468,7 @@ export let asyncRoutes = [
             meta: {
               title: '外供料包的配方',
               faName: 'RbRecipe',
-              permissionName: ''
+              permissionName: 'wfproductbatching'
             }
           }
         ] },

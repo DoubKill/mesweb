@@ -209,7 +209,7 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
-              v-if="scope.row.used_type === 5 && permissionObj.productbatching.indexOf('abandon')>-1"
+              v-if="scope.row.used_type === 5 && checkPermission(['productbatching','edit'])"
               size="mini"
               @click="status_recipe_fun(scope.row.id,true)"
             >编辑</el-button>
@@ -228,9 +228,10 @@
               size="mini"
               @click="status_recipe_fun(scope.row.id,true)"
             >启用</el-button>
+            <!-- v-if="(scope.row.used_type === 2 && checkPermission(['productbatching','check'])) |
+                (scope.row.used_type === 3 && checkPermission(['productbatching','use']))" -->
             <el-button
-              v-if="(scope.row.used_type === 2 && checkPermission(['productbatching','check'])) |
-                (scope.row.used_type === 3 && checkPermission(['productbatching','use']))"
+              v-if="(![5,4,7].includes(scope.row.used_type) && checkPermission(['wfproductbatching','refuse']))"
               size="mini"
               @click="status_recipe_fun(scope.row.id,false)"
             >驳回</el-button>
