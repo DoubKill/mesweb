@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-loading="loading">
     <!-- 胶架维修记录 -->
     <el-form :inline="true">
       <el-form-item label="月份">
@@ -29,7 +29,6 @@
     </el-form>
     <el-table
       id="out-table"
-      v-loading="loading"
       :data="tableData"
       border
     >
@@ -45,9 +44,17 @@
       />
       <el-table-column v-for="(item) in day" :key="item" :label="month+'/'+item" width="120px">
         <template slot-scope="{row,$index}">
-          <span v-if="isExport">{{ row[item] }}</span>
+          <span v-if="isExport||row.name.indexOf('待维修胶架数量')>-1">{{ row[item] }}</span>
           <span v-else-if="row.name.indexOf('人员')>-1">
-            <el-select v-model="row[item]" filterable placeholder="请选择" clearable>
+            <el-select
+              v-model="row[item]"
+              filterable
+              placeholder="请选择"
+              clearable
+              :loading="loadingUser"
+              :remote-method="remoteMethod"
+              remote
+            >
               <el-option
                 v-for="userItem in optionsUser"
                 :key="userItem.id"
@@ -57,7 +64,7 @@
             </el-select>
           </span>
           <span v-else>
-            <el-input-number v-model="row[item]" style="width:100px" controls-position="right" @change="handleChange(row,$index)" />
+            <el-input-number v-model="row[item]" style="width:100px" controls-position="right" :min="0" @change="handleChange(row,$index,item)" />
           </span>
         </template>
       </el-table-column>
@@ -74,19 +81,19 @@ export default {
   data() {
     return {
       search: { date_time: setDate(false, false, 'month') },
-      day: '',
+      day: [],
       month: '',
       loading: false,
       btnExportLoad: false,
       isExport: false,
       btnLoading: false,
       tableData: [],
-      optionsUser: []
+      optionsUser: [],
+      loadingUser: false
     }
   },
   created() {
     this.getList()
-    this.getOptionsUser()
   },
   methods: {
     async getList() {
@@ -95,29 +102,50 @@ export default {
           this.$message('请选择月份')
           return
         }
+        this.loading = true
+        this.day = []
+        this.month = null
+        this.tableData = []
+        const data = await rubberFrameRepair('get', null, { params: this.search })
         const a = new Date(this.search.date_time)
         const y = a.getFullYear()
         const m = a.getMonth() + 1
         this.day = new Date(y, m, 0).getDate()
         this.month = m
-        this.loading = true
-        const data = await rubberFrameRepair('get', null, { params: this.search })
         this.tableData = data.results.details || []
+        this.loading = false
       } catch (e) {
-        //
+        this.loading = false
       }
-      this.loading = false
     },
-    async getOptionsUser() {
+    remoteMethod(query) {
+      if (query !== '') {
+        this.loadingUser = true
+        // this.optionsUser = []
+        this.getOptionsUser(query)
+      } else {
+        this.optionsUser = []
+      }
+    },
+    async getOptionsUser(query) {
       try {
-        const data = await personnels('get', null, { params: { all: 1 }})
+        const data = await personnels('get', null, { params: { username: query }})
         this.optionsUser = data.results
+        this.loadingUser = false
       } catch (e) {
-        //
+        this.loadingUser = false
       }
     },
-    handleChange(row, index) {
+    handleChange(row, index, item) {
       this.tableData[index].总计 = sum(row)
+
+      let _num = 0
+      let _all = 0
+      _num = Number(this.tableData[0][item]) - Number(this.tableData[1][item])
+      _all = Number(this.tableData[0].总计) - Number(this.tableData[1].总计)
+
+      this.tableData[2][item] = Math.round(_num * 100) / 100
+      this.tableData[2].总计 = Math.round(_all * 100) / 100
     },
     async submitFun() {
       try {

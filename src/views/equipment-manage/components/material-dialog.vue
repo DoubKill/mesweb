@@ -16,6 +16,7 @@
     <el-table
       ref="multipleTable"
       v-loading="loadingView"
+      :max-height="500"
       :data="tableDataView"
       :row-key="getRowKeys"
       border

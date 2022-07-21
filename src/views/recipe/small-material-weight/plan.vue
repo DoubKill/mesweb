@@ -421,7 +421,9 @@ export default {
           this.$message.info('请选中一行计划')
           return
         }
-        this.ruleForm.actno = this.allTable[index].currentRow.actno
+        this.ruleForm.actno = this.allTable[index].currentRow.actno || 0
+      } else {
+        this.ruleForm.actno = 0
       }
       this.currentSearch = { ...row.search, equip_no: row.equip_no }
       this.currentIndex = index

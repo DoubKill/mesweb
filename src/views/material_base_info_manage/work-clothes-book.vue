@@ -58,6 +58,7 @@
               v-else
               v-model="value.value"
               style="width:100px"
+              size="mini"
               controls-position="right"
               @change="handleChange(0,_key)"
             />
@@ -75,6 +76,7 @@
               v-else
               v-model="value.value"
               style="width:100px"
+              size="mini"
               controls-position="right"
               @change="handleChange(0,_key)"
             />
@@ -93,6 +95,7 @@
               v-else
               v-model="value.value"
               style="width:100px"
+              size="mini"
               controls-position="right"
               @change="handleChange(0,_key)"
             />
@@ -110,6 +113,7 @@
               v-else
               v-model="value.value"
               style="width:100px"
+              size="mini"
               controls-position="right"
               @change="handleChange(0,_key)"
             />
@@ -127,6 +131,7 @@
               v-else
               v-model="value.value"
               style="width:100px"
+              size="mini"
               controls-position="right"
               @change="handleChange(0,_key)"
             />
@@ -145,6 +150,7 @@
               v-else
               v-model="value.value"
               style="width:100px"
+              size="mini"
               controls-position="right"
               @change="handleChange(0,_key)"
             />
@@ -162,6 +168,7 @@
               v-else
               v-model="value.value"
               style="width:100px"
+              size="mini"
               controls-position="right"
               @change="handleChange(0,_key)"
             />
@@ -192,6 +199,7 @@
               v-else
               v-model="value.value"
               style="width:100px"
+              size="mini"
               controls-position="right"
               @change="handleChange(1,_key)"
             />
@@ -209,6 +217,7 @@
               v-else
               v-model="value.value"
               style="width:100px"
+              size="mini"
               controls-position="right"
               @change="handleChange(1,_key)"
             />
@@ -226,6 +235,7 @@
               v-else
               v-model="value.value"
               style="width:100px"
+              size="mini"
               controls-position="right"
               @change="handleChange(1,_key)"
             />
@@ -244,6 +254,7 @@
               v-else
               v-model="value.value"
               style="width:100px"
+              size="mini"
               controls-position="right"
               @change="handleChange(1,_key)"
             />
@@ -274,6 +285,7 @@
               v-else
               v-model="value.value"
               style="width:100px"
+              size="mini"
               controls-position="right"
               @change="handleChange(2,_key)"
             />
@@ -304,6 +316,7 @@
               v-else
               v-model="value.value"
               style="width:100px"
+              size="mini"
               controls-position="right"
               @change="handleChange(3,_key)"
             />
@@ -321,6 +334,7 @@
               v-else
               v-model="value.value"
               style="width:100px"
+              size="mini"
               controls-position="right"
               @change="handleChange(3,_key)"
             />
@@ -340,6 +354,7 @@
               v-else
               v-model="value.value"
               style="width:100px"
+              size="mini"
               controls-position="right"
               @change="handleChange(3,_key)"
             />
@@ -357,6 +372,7 @@
               v-else
               v-model="value.value"
               style="width:100px"
+              size="mini"
               controls-position="right"
               @change="handleChange(3,_key)"
             />
@@ -387,6 +403,7 @@
               v-else
               v-model="value.value"
               style="width:100px"
+              size="mini"
               controls-position="right"
               @change="handleChange(4,_key)"
             />
@@ -404,6 +421,7 @@
               v-else
               v-model="value.value"
               style="width:100px"
+              size="mini"
               controls-position="right"
               @change="handleChange(4,_key)"
             />
@@ -423,6 +441,7 @@
               v-else
               v-model="value.value"
               style="width:100px"
+              size="mini"
               controls-position="right"
               @change="handleChange(4,_key)"
             />
@@ -440,6 +459,7 @@
               v-else
               v-model="value.value"
               style="width:100px"
+              size="mini"
               controls-position="right"
               @change="handleChange(4,_key)"
             />
@@ -470,6 +490,7 @@
               v-else
               v-model="value.value"
               style="width:100px"
+              size="mini"
               controls-position="right"
               @change="handleChange(5,_key)"
             />
@@ -522,7 +543,7 @@ export default {
         const m = a.getMonth() + 1
         this.day = new Date(y, m, 0).getDate()
         this.month = m
-
+        this.tableList = []
         this.loading = true
         const data = await toolManageAccount('get', null, { params: this.search })
         if (data.results.details.length) {
@@ -619,7 +640,7 @@ export default {
    .info-table {
       td,th {
         min-width: 80px;
-        padding: 5px 0;
+        padding: 2px 0;
       }
     }
     .td-style{
