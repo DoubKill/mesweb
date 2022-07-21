@@ -927,7 +927,9 @@ export default {
       } catch (e) { throw new Error(e) }
     },
     rubberMaterialChanged() {
-      const a = this.rubberMaterialForm.product_info + '[' + this.rubberMaterialForm.precept + ']'
+      const aa = this.rubberMaterialForm.product_info ? this.rubberMaterialForm.product_info : ''
+      const bb = this.rubberMaterialForm.precept ? this.rubberMaterialForm.precept : ''
+      const a = aa + '[' + bb + ']'
       this.$set(this.rubberMaterialForm, 'stage_product_batch_no', a)
     },
     NewAddMaterial(formName, bool) {
