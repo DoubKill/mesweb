@@ -92,6 +92,10 @@ export default {
         return {}
       }
     },
+    id: {
+      type: Number,
+      default: null
+    },
     show: {
       type: Boolean,
       default: false
@@ -127,6 +131,7 @@ export default {
           }
         } else {
           this.search = {
+            order_id: this.id,
             use: 1,
             page: 1,
             page_size: 10
@@ -145,6 +150,7 @@ export default {
       }
     } else {
       this.search = {
+        order_id: this.id,
         use: 1,
         page: 1,
         page_size: 10
