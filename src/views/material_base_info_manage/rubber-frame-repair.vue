@@ -49,7 +49,7 @@
             <el-select
               v-model="row[item]"
               filterable
-              placeholder="请选择"
+              placeholder="请输入"
               clearable
               :loading="loadingUser"
               :remote-method="remoteMethod"

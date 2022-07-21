@@ -717,6 +717,7 @@ export default {
   ProductExpiresList: '/api/v1/inventory/product-expires-list/',
   ProductExpiresDetails: '/api/v1/inventory/product-expires-details/',
   EquipmentIndex: '/api/v1/equipment/index/',
+  WfProductBatching: '/api/v1/recipe/wf-product-batching/',
 
   WmsAddPrint: '/api/v1/terminal/wms-add-print/',
   HfForceHandle: '/api/v1/inventory/hf-force-handle/',
