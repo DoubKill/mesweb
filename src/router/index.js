@@ -1556,6 +1556,46 @@ export let asyncRoutes = [
           icon: 'production',
           permissionName: 'tool_manage_account'
         }
+      },
+      {
+        path: '/spot-check-set',
+        name: 'SpotCheckSet',
+        component: () => import('@/views/spot_check/spot-check-set'),
+        meta: {
+          title: '安全点检内容定义',
+          icon: 'production',
+          permissionName: 'tool_manage_account'
+        }
+      },
+      {
+        path: '/spot-check-confirm',
+        name: 'SpotCheckConfirm',
+        component: () => import('@/views/spot_check/spot-check-confirm'),
+        meta: {
+          title: '安全点检表确认',
+          icon: 'production',
+          permissionName: 'tool_manage_account'
+        }
+      },
+      {
+        path: '/temperature-set',
+        name: 'TemperatureSet',
+        component: () => import('@/views/spot_check/temperature-set'),
+        meta: {
+          title: '除尘袋滤器检查内容定义',
+          icon: 'production',
+          permissionName: 'tool_manage_account'
+        }
+      },
+      {
+        path: '/temperature-confirm',
+        name: 'TemperatureConfirm',
+        component: () => import('@/views/spot_check/temperature-confirm'),
+        meta: {
+          title: '除尘袋滤器记录表确认',
+          icon: 'production',
+          permissionName: 'tool_manage_account'
+        }
       }
 
       // {
