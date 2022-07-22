@@ -171,10 +171,12 @@
 
 <script>
 import { roles } from '@/api/roles-manage'
+import { userOperationLog } from '@/api/base_w_two'
 import page from '@/components/page'
 import transferLimit from '@/components/select_w/transferLimit'
 import { checkPermission } from '@/utils/index'
 import { commonCode } from '@/api/global-codes-manage'
+import Cookies from 'js-cookie'
 
 export default {
   name: 'GroupManage',
@@ -323,7 +325,8 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(() => {
+      }).then(async() => {
+        userOperationLog('post', null, { data: { 'operator': Cookies.get('name'), 'menu_name': '角色管理', 'operations': '停用' + group.name + '角色' }})
         roles('delete', group.id).then(response => {
           this.$message({
             type: 'success',

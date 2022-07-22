@@ -3,6 +3,12 @@
  * 公用方法
  */
 import store from '@/store'
+import axios from 'axios'
+import router from '@/router'
+import Cookies from 'js-cookie'
+import {
+  getToken
+} from '@/utils/auth'
 
 /**
  * Parse the time to string
@@ -230,6 +236,22 @@ const setBorder = {
   }
 }
 export function exportExcel(value = 'excel', val, _wpxArr = []) {
+  // 走进来的是导出 掉接口记录当前操作 start
+  const _newUser = Cookies.get('name')
+  const routeName = router.history.current.meta.title
+  const a = axios.create({
+    baseURL: process.env.NODE_ENV === 'production' ? '/' : '/api',
+    timeout: 10000000000
+  })
+  a.interceptors.request.use(config => {
+    if (store.getters.token && getToken()) {
+      config.headers['Authorization'] = 'JWT ' + getToken()
+    }
+    return config
+  })
+  a({ url: '/api/v1/system/user-operation-log/', method: 'post', data: { 'operator': _newUser, 'menu_name': routeName, 'operations': `操作了导出按钮` }})
+  // 走进来的是导出 掉接口记录当前操作 end
+
   value = value + ' ' + (val === 'excel' ? '' : setDate())
   /* 从表生成工作簿对象 */
   var wb

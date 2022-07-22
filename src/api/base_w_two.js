@@ -298,3 +298,12 @@ export function EquipMaintenanceOrderLog(method, id, data = {}) {
   return request(obj)
 }
 
+export function userOperationLog(method, id, data = {}) {
+  const obj = {
+    url: id ? API.UserOperationLog + id + '/' : API.UserOperationLog,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
