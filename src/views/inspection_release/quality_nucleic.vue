@@ -198,6 +198,8 @@
 <script>
 import { debounce } from '@/utils'
 import page from '@/components/page'
+import { userOperationLog } from '@/api/base_w_two'
+import Cookies from 'js-cookie'
 import inspection from './quality_inspection_release_dialog'
 import { wmsNucleinManagement, wmsStorage } from '@/api/jqy'
 export default {
@@ -281,6 +283,7 @@ export default {
                 message: '操作成功'
               })
               this.submit = false
+              userOperationLog('post', null, { data: { 'operator': Cookies.get('name'), 'menu_name': '原材料库 核酸检测管控/核酸' + val, 'operations': val + '：' + row.material_name + ' ' + row.batch_no }})
               this.getList()
             })
             .catch(response => {
