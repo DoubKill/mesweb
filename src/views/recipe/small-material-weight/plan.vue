@@ -358,7 +358,7 @@ export default {
         const data = await currentFactoryDate('get')
         this.getFactoryDate = data
         this.ruleForm.date_time = data.factory_date
-        this.ruleForm.grouptime = data.classes
+        // this.ruleForm.grouptime = data.classes
 
         const current = setDate(false, false, 'hour').toString()
         if ((current < '08:15' && current > '07:45')) {
@@ -424,12 +424,21 @@ export default {
         this.ruleForm.actno = this.allTable[index].currentRow.actno || 0
       } else {
         this.ruleForm.actno = 0
+        this.getHistoryClass(row.equip_no)
       }
       this.currentSearch = { ...row.search, equip_no: row.equip_no }
       this.currentIndex = index
       this.ruleForm.equip_no = row.equip_no
       this.dialogAdd = bool
       this.dialogVisible = true
+    },
+    getHistoryClass(equip_no) {
+      xlPlan('get', null, { params: { get_classes: 1, equip_no: equip_no }})
+        .then(response => {
+          this.ruleForm.grouptime = response.results || ''
+        }).catch(e => {
+          //
+        })
     },
     recipeChange(val) {
       this.ruleForm.recipe = val ? val.name : ''

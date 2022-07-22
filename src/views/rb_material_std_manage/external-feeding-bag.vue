@@ -30,7 +30,7 @@
           @input="changeSearch"
         />
       </el-form-item>
-      <el-form-item label="配方类别">
+      <!-- <el-form-item label="配方类别">
         <el-select
           v-model="search.recipe_type"
           clearable
@@ -44,7 +44,7 @@
             :value="item.global_name"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="原材料名称">
         <el-select
           v-model="search.wms_material_name"
