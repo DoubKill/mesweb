@@ -64,10 +64,6 @@
       />
       <el-table-column
         prop="created_username"
-        label="温度上限"
-      />
-      <el-table-column
-        prop="created_username"
         label="温度是否有超标"
       />
       <el-table-column
@@ -119,9 +115,6 @@
             placeholder="选择日期"
           />
         </el-form-item>
-        <el-form-item label="温度上限" prop="classes">
-          <el-input-number v-model="typeForm.classes" controls-position="right" style="width:250px" />
-        </el-form-item>
         <br>
         <el-form-item label="具体位置">
           <el-select
@@ -158,7 +151,7 @@
             :data="tableData1"
             border
             max-height="350"
-            style="width: 680px"
+            style="width: 780px"
           >
             <el-table-column
               prop="date"
@@ -168,12 +161,17 @@
             <el-table-column
               prop="date"
               label="具体位置"
-              width="200"
+              width="150"
             />
             <el-table-column
               prop="date"
               label="名称"
               width="200"
+            />
+            <el-table-column
+              prop="date"
+              label="温度上限(℃)"
+              width="150"
             />
             <el-table-column
               prop="date"

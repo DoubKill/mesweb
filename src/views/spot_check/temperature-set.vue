@@ -50,6 +50,10 @@
         label="名称"
       />
       <el-table-column
+        prop="standard_code"
+        label="温度上限(℃)"
+      />
+      <el-table-column
         prop="created_username"
         label="录入人"
       />
@@ -101,6 +105,9 @@
         <el-form-item label="名称" prop="standard_name">
           <el-input v-model="typeForm.standard_name" style="width:250px" />
         </el-form-item>
+        <el-form-item label="温度上限" prop="temperature">
+          <el-input-number v-model="typeForm.temperature" controls-position="right" style="width:250px" />
+        </el-form-item>
       </el-form>
       <div
         slot="footer"
@@ -132,7 +139,8 @@ export default {
       typeForm: {},
       rules: {
         standard_code: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        standard_name: [{ required: true, message: '不能为空', trigger: 'blur' }]
+        standard_name: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        temperature: [{ required: true, message: '不能为空', trigger: 'change' }]
       },
       getParams: {
         page: 1
