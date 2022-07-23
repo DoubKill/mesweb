@@ -21,7 +21,7 @@
         <el-input v-model="search.operator" clearable @input="debounceFun" />
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button type="primary" :loading="btnExportLoad" @click="templateDownload">导出Excel</el-button>
+        <el-button v-permission="['user_operation_log','export']" type="primary" :loading="btnExportLoad" @click="templateDownload">导出Excel</el-button>
       </el-form-item>
     </el-form>
     <el-table
