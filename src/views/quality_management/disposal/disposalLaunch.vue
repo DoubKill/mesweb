@@ -648,13 +648,21 @@ export default {
           reason: obj.reason,
           department: obj.department
         }
+        if (this.$refs.handleCard) {
+          this.$refs.handleCard.loadingBtn = true
+        }
         await unqualifiedDealOrders('post', null, { data: paramsData })
+        if (this.$refs.handleCard) {
+          this.$refs.handleCard.loadingBtn = false
+        }
         this.$message.success('发起成功！！！！')
         this.handleCardDialogVisible = false
         this.getList()
         this.tableData2 = []
       } catch (e) {
-        //
+        if (this.$refs.handleCard) {
+          this.$refs.handleCard.loadingBtn = false
+        }
       }
     },
     move(scope) {
