@@ -665,6 +665,19 @@ export default {
 
         data.y_axis.forEach((d, _i) => {
           const _dataSeries = []
+          const _dataSeriesX = []
+          const _1 = data.indicators[d.name] ? data.indicators[d.name].lower_limit : 0 // 下限
+          const _3 = data.indicators[d.name] ? data.indicators[d.name].upper_limit : 0 // 上限
+          const _2 = setData((_3 + _1) / 2)
+          let _min = setData(_1 - (_3 - (_3 + _1) / 2))
+          const aaa = setData(_3 + (_3 - (_3 + _1) / 2))
+          if (_3 >= 999) {
+            _min = setData(_1 - 10)
+          }
+          if (_min < 0) {
+            _min = 0
+          }
+
           d.data.forEach((dd, ii) => {
             dd.forEach((ddd, iii) => {
               _dataSeries.push([data.x_axis[ii], Number(ddd)])
@@ -675,7 +688,11 @@ export default {
             data: data.x_axis
           })
           _y.push({
-            gridIndex: _i
+            gridIndex: _i,
+            type: 'value',
+            max: aaa,
+            min: _min,
+            interval: setData(_1 - _min)
           })
           if (_i % 2 === 0 || _i === 0) {
             const _top1 = (_i / 2) * _height1 + 5 + '%'
@@ -688,9 +705,6 @@ export default {
             _title.push({ text: d.name, right: '8%', top: _topTitle2 })
             _grid.push({ right: '6%', top: _top2, width: '40%', height: _height })
           }
-          const _1 = data.indicators[d.name] ? data.indicators[d.name][0] : 0
-          const _3 = data.indicators[d.name] ? data.indicators[d.name][1] : 0
-          const _2 = ((_3 + _1) / 2).toFixed(2)
           _series.push({
             name: d.name,
             type: 'scatter',
@@ -698,8 +712,10 @@ export default {
             yAxisIndex: _i,
             data: _dataSeries,
             markLine: data.indicators[d.name] ? {
+              // symbol: 'none',
+              precision: 3,
               data: [{
-                silent: true,
+                // silent: true,
                 yAxis: _1, label: {
                   position: 'end',
                   formatter: `下限(${_1})`
