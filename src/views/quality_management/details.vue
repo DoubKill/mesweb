@@ -670,9 +670,10 @@ export default {
           const _3 = data.indicators[d.name] ? data.indicators[d.name].upper_limit : 0 // 上限
           const _2 = setData((_3 + _1) / 2)
           let _min = setData(_1 - (_3 - (_3 + _1) / 2))
-          const aaa = setData(_3 + (_3 - (_3 + _1) / 2))
+          let _max = setData(_3 + (_3 - (_3 + _1) / 2))
           if (_3 >= 999) {
             _min = setData(_1 - 10)
+            _max = setData(_1 + 30)
           }
           if (_min < 0) {
             _min = 0
@@ -691,7 +692,7 @@ export default {
           _y.push({
             gridIndex: _i,
             type: 'value',
-            max: aaa,
+            max: _max,
             min: _min,
             interval: setData(_1 - _min)
           })
