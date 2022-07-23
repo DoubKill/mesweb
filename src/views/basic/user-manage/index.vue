@@ -387,6 +387,8 @@ import page from '@/components/page'
 import { mapGetters } from 'vuex'
 // import transferLimit from '@/components/select_w/transferLimit'
 import transferRoles from '@/components/select_w/transferRoles'
+import { userOperationLog } from '@/api/base_w_two'
+import Cookies from 'js-cookie'
 export default {
   name: 'UserManage',
   components: { page, transferRoles },
@@ -630,6 +632,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        userOperationLog('post', null, { data: { 'operator': Cookies.get('name'), 'menu_name': '用户管理', 'operations': boolStr + '：' + row.username + '用户' }})
         // eslint-disable-next-line no-undef
         personnelsUrl('delete', row.id)
           .then((response) => {
@@ -650,6 +653,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        userOperationLog('post', null, { data: { 'operator': Cookies.get('name'), 'menu_name': '用户管理', 'operations': '删除：' + row.username + '用户' }})
         // eslint-disable-next-line no-undef
         delUser('delete', row.id)
           .then((response) => {
@@ -696,6 +700,9 @@ export default {
             obj.section = ''
           }
           this.btnloading = true
+          if (app.userForm.id) {
+            userOperationLog('post', null, { data: { 'operator': Cookies.get('name'), 'menu_name': '用户管理', 'operations': '变更：' + obj.username + '用户' }})
+          }
           personnelsUrl(type, paramsId, { data: obj })
             .then((response) => {
               app.dialogCreateUserVisible = false

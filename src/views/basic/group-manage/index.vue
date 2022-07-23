@@ -291,8 +291,8 @@ export default {
       this.clearGroupFormError()
       const type = this.groupForm.id ? 'put' : 'post'
       const id = this.groupForm.id ? this.groupForm.id : ''
-      // eslint-disable-next-line object-curly-spacing
-      roles(type, id, { data: { ...this.groupForm } })
+      userOperationLog('post', null, { data: { 'operator': Cookies.get('name'), 'menu_name': '角色管理', 'operations': '变更：' + this.groupForm.name + '角色' }})
+      roles(type, id, { data: { ...this.groupForm }})
         .then(response => {
           this.dialogEditGroupVisible = false
           this.$message.success(this.groupForm.name + this.groupForm.id ? '编辑成功' : '创建成功')
@@ -326,7 +326,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(async() => {
-        userOperationLog('post', null, { data: { 'operator': Cookies.get('name'), 'menu_name': '角色管理', 'operations': '停用' + group.name + '角色' }})
+        userOperationLog('post', null, { data: { 'operator': Cookies.get('name'), 'menu_name': '角色管理', 'operations': '停用：' + group.name + '角色' }})
         roles('delete', group.id).then(response => {
           this.$message({
             type: 'success',
