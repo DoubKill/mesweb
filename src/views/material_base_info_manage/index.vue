@@ -583,7 +583,7 @@ export default {
       var app = this
       this.$refs['materialBaseInfoEditForm'].validate(valid => {
         if (valid) {
-          userOperationLog('post', null, { data: { 'operator': Cookies.get('name'), 'menu_name': '原材料基础信息', 'operations': '修改：' + app.materialBaseInfoForm.material_no }})
+          userOperationLog('post', null, { data: { 'operator': Cookies.get('name'), 'menu_name': '原材料基础信息', 'operations': '编辑：' + app.materialBaseInfoForm.material_no }})
           materialsUrl('put', app.materialBaseInfoForm.id, { data: app.materialBaseInfoForm })
             .then(function(response) {
               app.dialogEditMaterialBaseInfoVisible = false
