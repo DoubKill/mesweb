@@ -670,6 +670,7 @@ export default {
           const _3 = data.indicators[d.name] ? data.indicators[d.name].upper_limit : 0 // 上限
           const _2 = setData((_3 + _1) / 2)
           let _min = setData(_1 - (_3 - (_3 + _1) / 2))
+          const aaa = setData(_3 + (_3 - (_3 + _1) / 2))
           if (_3 >= 999) {
             _min = setData(_1 - 10)
           }
@@ -690,6 +691,7 @@ export default {
           _y.push({
             gridIndex: _i,
             type: 'value',
+            max: aaa,
             min: _min,
             interval: setData(_1 - _min)
           })
@@ -717,8 +719,9 @@ export default {
             smooth: true,
             markLine: data.indicators[d.name] ? {
               // symbol: 'none',
+              precision: 3,
               data: [{
-                silent: true,
+                // silent: true,
                 yAxis: _1, label: {
                   position: 'end',
                   formatter: `下限(${_1})`
