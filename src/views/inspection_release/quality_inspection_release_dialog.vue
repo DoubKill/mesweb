@@ -93,6 +93,8 @@
 </template>
 
 <script>
+import { userOperationLog } from '@/api/base_w_two'
+import Cookies from 'js-cookie'
 import { debounce } from '@/utils'
 import page from '@/components/page'
 import { wmsStorageSummary, wmsNucleinManagement } from '@/api/jqy'
@@ -166,6 +168,9 @@ export default {
         })
         this.addLoading = true
         await wmsNucleinManagement('post', null, { data: obj })
+        obj.forEach(d => {
+          userOperationLog('post', null, { data: { 'operator': Cookies.get('name'), 'menu_name': '原材料库 核酸检测管控/添加物料', 'operations': '添加物料：' + d.material_name + ' ' + d.batch_no }})
+        })
         this.addLoading = false
         this.$emit('fatherMethod')
       } catch (e) {
