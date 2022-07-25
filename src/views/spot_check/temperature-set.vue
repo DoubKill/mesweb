@@ -3,10 +3,10 @@
     <!-- 除尘袋滤器记录检查表确认 -->
     <el-form :inline="true">
       <el-form-item label="具体位置">
-        <el-input v-model="getParams.standard_name" clearable @input="changDebounce" />
+        <el-input v-model="getParams.location" clearable @input="changDebounce" />
       </el-form-item>
       <el-form-item label="名称">
-        <el-input v-model="getParams.standard_name" clearable @input="changDebounce" />
+        <el-input v-model="getParams.station_name" clearable @input="changDebounce" />
       </el-form-item>
       <el-form-item style="float:right">
         <el-button v-permission="['equip_job_standard', 'export']" :loading="btnExportLoad" type="primary" style="margin-right:8px" @click="templateDownload">导出Excel</el-button>
@@ -36,21 +36,27 @@
       highlight-current-row
       row-key="id"
       :reserve-selection="true"
+      @selection-change="handleSelectionChange"
     >
       <el-table-column
-        prop="standard_code"
+        type="selection"
+        width="40"
+        :reserve-selection="true"
+      />
+      <el-table-column
+        prop="sn"
         label="序号"
       />
       <el-table-column
-        prop="standard_name"
+        prop="location"
         label="具体位置"
       />
       <el-table-column
-        prop="standard_code"
+        prop="station_name"
         label="名称"
       />
       <el-table-column
-        prop="standard_code"
+        prop="temperature_limit"
         label="温度上限(℃)"
       />
       <el-table-column
@@ -97,16 +103,16 @@
     >
       <el-form ref="typeForm" :rules="rules" :model="typeForm" label-width="100px">
         <el-form-item label="序号">
-          <el-input v-model="typeForm.standard_name" style="width:250px" disabled />
+          <el-input v-model="typeForm.sn" style="width:250px" disabled />
         </el-form-item>
-        <el-form-item label="具体位置" prop="standard_code">
-          <el-input v-model="typeForm.standard_code" style="width:250px" />
+        <el-form-item label="具体位置" prop="location">
+          <el-input v-model="typeForm.location" style="width:250px" />
         </el-form-item>
-        <el-form-item label="名称" prop="standard_name">
-          <el-input v-model="typeForm.standard_name" style="width:250px" />
+        <el-form-item label="名称" prop="station_name">
+          <el-input v-model="typeForm.station_name" style="width:250px" />
         </el-form-item>
-        <el-form-item label="温度上限" prop="temperature">
-          <el-input-number v-model="typeForm.temperature" controls-position="right" style="width:250px" />
+        <el-form-item label="温度上限" prop="temperature_limit">
+          <el-input-number v-model="typeForm.temperature_limit" controls-position="right" style="width:250px" :min="0" />
         </el-form-item>
       </el-form>
       <div
@@ -126,7 +132,7 @@
 
 <script>
 import page from '@/components/page'
-import { equipJobItemStandard, equipJobItemStandardImport } from '@/api/base_w_four'
+import { checkTemperatureStandard, checkTemperatureStandardExport } from '@/api/jqy'
 
 export default {
   name: 'TemperatureSet',
@@ -134,17 +140,20 @@ export default {
   data: function() {
     return {
       tableData: [],
-      tableData1: [],
       dialogEditVisible: false,
       typeForm: {},
       rules: {
-        standard_code: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        standard_name: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        temperature: [{ required: true, message: '不能为空', trigger: 'change' }]
+        location: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        station_name: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        temperature_limit: [{ required: true, message: '不能为空', trigger: 'change' }]
       },
       getParams: {
         page: 1
       },
+      excelParams: {
+        export_ids: []
+      },
+      multipleSelection: [],
       currentPage: 1,
       total: 1,
       loading: false,
@@ -160,7 +169,7 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const data = await equipJobItemStandard('get', null, { params: this.getParams })
+        const data = await checkTemperatureStandard('get', null, { params: this.getParams })
         this.tableData = data.results || []
         this.total = data.count || 0
         this.loading = false
@@ -171,7 +180,6 @@ export default {
     },
     handleClose(done) {
       this.dialogEditVisible = false
-      this.tableData1 = []
       this.typeForm = {}
       setTimeout(d => {
         this.$refs.typeForm.clearValidate()
@@ -193,34 +201,24 @@ export default {
     },
     showDialog(row) {
       this.typeForm = JSON.parse(JSON.stringify(row))
-      this.tableData1 = this.typeForm.work_details
       this.dialogEditVisible = true
     },
     handleEdit: function() {
       this.$refs.typeForm.validate(async(valid) => {
         if (valid) {
           try {
-            if (this.tableData1.length === 0) {
-              throw new Error('点检内容未添加')
-            }
             if (!this.typeForm.id) {
               this.typeForm.work_details = this.tableData1
             }
             const _api = this.typeForm.id ? 'put' : 'post'
-            this.tableData1.forEach(d => {
-              if (!d.content || !d.check_standard_desc) {
-                throw new Error('点检内容及检查方法必填')
-              }
-            })
             this.btnLoading = true
-            await equipJobItemStandard(_api, this.typeForm.id || null, { data: this.typeForm })
+            await checkTemperatureStandard(_api, this.typeForm.id || null, { data: this.typeForm })
             this.btnLoading = false
             this.handleClose(false)
-            this.$message.success('添加成功')
+            this.$message.success('操作成功')
             this.getList()
           } catch (e) {
             this.btnLoading = false
-            this.loading = false
             if (e.message) {
               this.$message(e.message)
             }
@@ -229,12 +227,12 @@ export default {
       })
     },
     handleDelete: function(row) {
-      this.$confirm('此操作将删除' + row.standard_name + ', 是否继续?', '提示', {
+      this.$confirm('此操作将删除' + row.station_name + ', 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        equipJobItemStandard('delete', row.id)
+        checkTemperatureStandard('delete', row.id)
           .then(response => {
             this.$message({
               type: 'success',
@@ -244,32 +242,44 @@ export default {
           })
       })
     },
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+      this.excelParams.export_ids = []
+    },
     currentChange(page, pageSize) {
       this.getParams.page = page
       this.getParams.page_size = pageSize
       this.getList()
     },
     templateDownload() {
-      this.btnExportLoad = true
-      const obj = Object.assign({ export: 1 }, this.getParams)
-      equipJobItemStandard('get', null, { responseType: 'blob', params: obj }).then(response => {
-        const link = document.createElement('a')
-        const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
-        link.style.display = 'none'
-        link.href = URL.createObjectURL(blob)
-        link.download = '作业项目标准定义.xls' // 下载的文件名
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-        this.btnExportLoad = false
-      }).catch(e => {
-        this.btnExportLoad = false
-      })
+      if (this.multipleSelection.length > 0) {
+        this.multipleSelection.forEach(d => {
+          this.excelParams.export_ids.push(d.id)
+        })
+        this.btnExportLoad = true
+        this.excelParams.excel_flag = 'export'
+        checkTemperatureStandardExport('post', null, { responseType: 'blob', data: this.excelParams }).then(response => {
+          const link = document.createElement('a')
+          const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '除尘袋滤器温度标准定义.xls' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
+      } else {
+        this.$message.info('请选择导出数据')
+      }
     },
     Upload(param) {
       const formData = new FormData()
       formData.append('file', param.file)
-      equipJobItemStandardImport('post', null, { data: formData }).then(response => {
+      formData.append('excel_flag', 'import')
+      checkTemperatureStandardExport('post', null, { data: formData }).then(response => {
         this.$message({
           type: 'success',
           message: response

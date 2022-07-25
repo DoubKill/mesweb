@@ -3,7 +3,7 @@
     <!-- 安全装置点检表点检内容定义 -->
     <el-form :inline="true">
       <el-form-item label="点检表名称">
-        <el-input v-model="getParams.standard_name" clearable @input="changDebounce" />
+        <el-input v-model="getParams.point_standard_name" clearable @input="changDebounce" />
       </el-form-item>
       <el-form-item label="机台">
         <el-select
@@ -11,6 +11,7 @@
           style="width:150px"
           placeholder="请选择"
           clearable
+          @change="changSelect"
         >
           <el-option
             v-for="item in options"
@@ -21,20 +22,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="岗位">
-        <el-select
-          v-model="getParams.work_type"
-          style="width:150px"
-          placeholder="请选择"
-          clearable
-          @change="changSelect"
-        >
-          <el-option
-            v-for="item in ['巡检','保养','维修','润滑','标定']"
-            :key="item"
-            :label="item"
-            :value="item"
-          />
-        </el-select>
+        <el-input v-model="getParams.station" clearable @input="changDebounce" />
       </el-form-item>
       <el-form-item style="float:right">
         <el-button v-permission="['equip_job_standard', 'export']" :loading="btnExportLoad" type="primary" style="margin-right:8px" @click="templateDownload">导出Excel</el-button>
@@ -64,7 +52,13 @@
       highlight-current-row
       row-key="id"
       :reserve-selection="true"
+      @selection-change="handleSelectionChange"
     >
+      <el-table-column
+        type="selection"
+        width="40"
+        :reserve-selection="true"
+      />
       <el-table-column
         label="点检表编号"
       >
@@ -72,23 +66,23 @@
           <el-link
             type="primary"
             @click="showDialog(scope.row,true)"
-          >{{ scope.row.standard_code }}</el-link>
+          >{{ scope.row.point_standard_code }}</el-link>
         </template>
       </el-table-column>
       <el-table-column
-        prop="standard_code"
+        prop="point_standard_name"
         label="点检表名称"
       />
       <el-table-column
-        prop="standard_name"
+        prop="doc_code"
         label="文档编号"
       />
       <el-table-column
-        prop="standard_code"
+        prop="equip_no"
         label="适用机台"
       />
       <el-table-column
-        prop="standard_code"
+        prop="station"
         label="岗位"
       />
       <el-table-column
@@ -135,14 +129,14 @@
     >
       <el-form ref="typeForm" :rules="rules" :model="typeForm" label-width="100px" inline>
         <el-form-item label="点检表编号">
-          <el-input v-model="typeForm.standard_name" style="width:250px" disabled />
+          <el-input v-model="typeForm.point_standard_code" style="width:250px" disabled />
         </el-form-item>
         <br>
-        <el-form-item label="点检表名称" prop="standard_code">
-          <el-input v-model="typeForm.standard_code" style="width:250px" :disabled="isLook" />
+        <el-form-item label="点检表名称" prop="point_standard_name">
+          <el-input v-model="typeForm.point_standard_name" style="width:250px" :disabled="isLook" />
         </el-form-item>
         <el-form-item label="文档编号">
-          <el-input v-model="typeForm.standard_name" style="width:250px" :disabled="isLook" />
+          <el-input v-model="typeForm.doc_code" style="width:250px" :disabled="isLook" />
         </el-form-item>
         <br>
         <el-form-item label="适用机台" prop="equip_no">
@@ -162,12 +156,12 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="岗位" prop="standard_name">
-          <el-input v-model="typeForm.standard_name" :disabled="isLook" style="width:250px" />
+        <el-form-item label="岗位" prop="station">
+          <el-input v-model="typeForm.station" :disabled="isLook" style="width:250px" />
         </el-form-item>
         <br>
         <el-form-item label="点检内容">
-          <el-button type="primary" style="" @click="addList">添加</el-button>
+          <el-button v-if="!isLook" type="primary" @click="addList">添加</el-button>
           <el-table
             :data="tableData1"
             border
@@ -180,7 +174,7 @@
               width="320"
             >
               <template slot-scope="{row}">
-                <el-input v-model="row.content" :disabled="isLook" />
+                <el-input v-model="row.check_content" :disabled="isLook" />
               </template>
             </el-table-column>
             <el-table-column
@@ -189,7 +183,7 @@
               width="260"
             >
               <template slot-scope="{row}">
-                <el-input v-model="row.content" :disabled="isLook" />
+                <el-input v-model="row.check_style" :disabled="isLook" />
               </template>
             </el-table-column>
             <el-table-column label="操作" width="149">
@@ -211,6 +205,7 @@
       >
         <el-button @click="handleClose(false)">取 消</el-button>
         <el-button
+          v-if="!isLook"
           type="primary"
           :loading="btnLoading"
           @click="handleEdit"
@@ -223,7 +218,7 @@
 <script>
 import page from '@/components/page'
 import { getEquip } from '@/api/banburying-performance-manage'
-import { equipJobItemStandard, equipJobItemStandardImport } from '@/api/base_w_four'
+import { checkPointStandard, checkPointStandardExport } from '@/api/jqy'
 
 export default {
   name: 'SpotCheckSet',
@@ -235,14 +230,18 @@ export default {
       dialogEditVisible: false,
       typeForm: {},
       rules: {
-        work_type: [{ required: true, message: '不能为空', trigger: 'change' }],
-        standard_code: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        station: [{ required: true, message: '不能为空', trigger: 'change' }],
+        point_standard_name: [{ required: true, message: '不能为空', trigger: 'blur' }],
         standard_name: [{ required: true, message: '不能为空', trigger: 'blur' }],
         equip_no: [{ required: true, message: '不能为空', trigger: 'change' }]
       },
       getParams: {
         page: 1
       },
+      excelParams: {
+        export_ids: []
+      },
+      multipleSelection: [],
       isLook: false,
       currentPage: 1,
       total: 1,
@@ -266,7 +265,7 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const data = await equipJobItemStandard('get', null, { params: this.getParams })
+        const data = await checkPointStandard('get', null, { params: this.getParams })
         this.tableData = data.results || []
         this.total = data.count || 0
         this.loading = false
@@ -305,7 +304,8 @@ export default {
         this.isLook = false
       }
       this.typeForm = JSON.parse(JSON.stringify(row))
-      this.tableData1 = this.typeForm.work_details
+      this.typeForm.equip_no = PickDisplay(this.typeForm.equip_no)
+      this.tableData1 = this.typeForm.check_details
       this.dialogEditVisible = true
     },
     handleEdit: function() {
@@ -316,23 +316,24 @@ export default {
               throw new Error('点检内容未添加')
             }
             if (!this.typeForm.id) {
-              this.typeForm.work_details = this.tableData1
+              this.typeForm.check_details = this.tableData1
             }
             const _api = this.typeForm.id ? 'put' : 'post'
             this.tableData1.forEach(d => {
-              if (!d.content || !d.check_standard_desc) {
+              if (!d.check_content || !d.check_style) {
                 throw new Error('点检内容及检查方法必填')
               }
             })
+            this.typeForm.equip_no = PersonDisplay(this.typeForm.equip_no)
             this.btnLoading = true
-            await equipJobItemStandard(_api, this.typeForm.id || null, { data: this.typeForm })
+            await checkPointStandard(_api, this.typeForm.id || null, { data: this.typeForm })
             this.btnLoading = false
             this.handleClose(false)
-            this.$message.success('添加成功')
+            this.$message.success('操作成功')
             this.getList()
           } catch (e) {
+            this.typeForm.equip_no = PickDisplay(this.typeForm.equip_no)
             this.btnLoading = false
-            this.loading = false
             if (e.message) {
               this.$message(e.message)
             }
@@ -341,12 +342,12 @@ export default {
       })
     },
     handleDelete: function(row) {
-      this.$confirm('此操作将删除' + row.standard_name + ', 是否继续?', '提示', {
+      this.$confirm('此操作将删除' + row.point_standard_name + ', 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        equipJobItemStandard('delete', row.id)
+        checkPointStandard('delete', row.id)
           .then(response => {
             this.$message({
               type: 'success',
@@ -355,6 +356,10 @@ export default {
             this.getList()
           })
       })
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+      this.excelParams.export_ids = []
     },
     currentChange(page, pageSize) {
       this.getParams.page = page
@@ -368,26 +373,34 @@ export default {
       this.tableData1.splice(index, 1)
     },
     templateDownload() {
-      this.btnExportLoad = true
-      const obj = Object.assign({ export: 1 }, this.getParams)
-      equipJobItemStandard('get', null, { responseType: 'blob', params: obj }).then(response => {
-        const link = document.createElement('a')
-        const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
-        link.style.display = 'none'
-        link.href = URL.createObjectURL(blob)
-        link.download = '作业项目标准定义.xls' // 下载的文件名
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-        this.btnExportLoad = false
-      }).catch(e => {
-        this.btnExportLoad = false
-      })
+      if (this.multipleSelection.length > 0) {
+        this.multipleSelection.forEach(d => {
+          this.excelParams.export_ids.push(d.id)
+        })
+        this.btnExportLoad = true
+        this.excelParams.excel_flag = 'export'
+        checkPointStandardExport('post', null, { responseType: 'blob', data: this.excelParams }).then(response => {
+          const link = document.createElement('a')
+          const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '岗位安全装置点检标准及内容.xls' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
+      } else {
+        this.$message.info('请选择导出数据')
+      }
     },
     Upload(param) {
       const formData = new FormData()
       formData.append('file', param.file)
-      equipJobItemStandardImport('post', null, { data: formData }).then(response => {
+      formData.append('excel_flag', 'import')
+      checkPointStandardExport('post', null, { data: formData }).then(response => {
         this.$message({
           type: 'success',
           message: response
@@ -397,8 +410,26 @@ export default {
       })
     }
   }
-}
 
+}
+function PersonDisplay(arr) {
+  if (arr.length === 0) {
+    return
+  } else {
+    var a = ''
+    arr.forEach(d => {
+      a += d + ','
+    })
+    return a.substr(0, a.length - 1)
+  }
+}
+function PickDisplay(string) {
+  if (!string) {
+    return []
+  } else {
+    return string.split(',')
+  }
+}
 </script>
 <style lang="scss">
 .spot-check-set{
