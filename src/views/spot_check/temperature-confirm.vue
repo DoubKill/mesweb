@@ -61,14 +61,21 @@
       <el-table-column
         prop="select_date"
         label="日期"
-      />
+      >
+        <template slot-scope="scope">
+          <el-link
+            type="primary"
+            @click="showDialog(scope.row,true)"
+          >{{ scope.row.select_date }}</el-link>
+        </template>
+      </el-table-column>
       <el-table-column
         prop="is_exceed"
         label="温度是否有超标"
       >
         <template slot-scope="scope">
           <span>
-            {{ scope.row.is_exceed?'是':'否' }}
+            {{ scope.row.is_exceed?'有':'无' }}
           </span>
         </template>
       </el-table-column>
@@ -177,7 +184,7 @@
               width="199"
             >
               <template slot-scope="scope">
-                <el-input-number v-model="scope.row.input_value" style="width:160px" controls-position="right" :min="0" @change="changValue(scope)" />
+                <el-input-number v-model="scope.row.input_value" :disabled="isLook" style="width:160px" controls-position="right" :min="0" @change="changValue(scope)" />
               </template>
             </el-table-column>
           </el-table>
@@ -189,6 +196,7 @@
       >
         <el-button @click="handleClose(false)">取 消</el-button>
         <el-button
+          v-if="!isLook"
           type="primary"
           :loading="btnLoading"
           @click="handleEdit"
@@ -247,6 +255,7 @@ export default {
       excelParams: {
         ids: []
       },
+      isLook: false,
       multipleSelection: [],
       station_name: null,
       location: null,
@@ -297,6 +306,7 @@ export default {
     },
     async onSubmit() {
       try {
+        this.isLook = false
         this.check = false
         this.dialogEditVisible = true
         this.loading1 = true
@@ -383,7 +393,12 @@ export default {
         this.btnLoading = false
       }
     },
-    showDialog(row) {
+    showDialog(row, val) {
+      if (val) {
+        this.isLook = true
+      } else {
+        this.isLook = false
+      }
       this.check = false
       this.typeForm = JSON.parse(JSON.stringify(row))
       this.tableData1 = JSON.parse(JSON.stringify(this.typeForm.table_details))
