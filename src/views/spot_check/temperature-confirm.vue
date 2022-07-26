@@ -112,7 +112,7 @@
       @currentChange="currentChange"
     />
     <el-dialog
-      :title="`岗位安全装置点检表${typeForm.id?'检查':'新建'}`"
+      :title="`除尘袋滤器温度${typeForm.id&&isLook?'查看':typeForm.id?'检查':'新建'}`"
       width="1150px"
       :visible.sync="dialogEditVisible"
       :close-on-click-modal="false"
