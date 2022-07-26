@@ -254,12 +254,20 @@ export default {
         } else {
           paramsData.c_agreed = false
         }
+        if (this.$refs.handleCard) {
+          this.$refs.handleCard.loadingBtn = true
+        }
         await unqualifiedDealOrders('patch', obj.id, { data: paramsData })
+        if (this.$refs.handleCard) {
+          this.$refs.handleCard.loadingBtn = false
+        }
         this.$message.success('处理成功！！！！')
         this.handleCardDialogVisible = false
         this.getList()
       } catch (e) {
-        //
+        if (this.$refs.handleCard) {
+          this.$refs.handleCard.loadingBtn = false
+        }
       }
     }
   }
