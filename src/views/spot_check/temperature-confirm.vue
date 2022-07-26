@@ -1,6 +1,6 @@
 <template>
   <div class="temperature-confirm">
-    <!-- 安全装置点检表确认及查询 -->
+    <!-- 除尘袋滤器记录检查表确认 -->
     <el-form :inline="true">
       <el-form-item label="起止日期">
         <el-date-picker
@@ -31,13 +31,13 @@
       </el-form-item>
       <el-form-item style="float:right">
         <el-button
-          v-permission="['equip_job_standard', 'add']"
+          v-permission="['check_temperature_table', 'confirm']"
           type="primary"
           @click="confirm"
         >批量确认</el-button>
-        <el-button v-permission="['equip_job_standard', 'export']" :loading="btnExportLoad" type="primary" @click="templateDownload">导出Excel</el-button>
+        <el-button v-permission="['check_temperature_table', 'export']" :loading="btnExportLoad" type="primary" @click="templateDownload">导出Excel</el-button>
         <el-button
-          v-permission="['equip_job_standard', 'add']"
+          v-permission="['check_temperature_table', 'add']"
           type="primary"
           @click="onSubmit"
         >新建</el-button>
@@ -95,11 +95,19 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
-              v-permission="['equip_job_standard', 'change']"
+              v-permission="['check_temperature_table', 'change']"
               :disabled="scope.row.status==='已确认'"
               size="mini"
               @click="showDialog(scope.row)"
             >检查</el-button>
+            <el-button
+              v-permission="['check_temperature_table', 'delete']"
+              size="mini"
+              type="danger"
+              plain
+              @click="handleDelete(scope.row)"
+            >删除
+            </el-button>
           </el-button-group>
         </template>
       </el-table-column>
@@ -404,6 +412,22 @@ export default {
       this.tableData1 = JSON.parse(JSON.stringify(this.typeForm.table_details))
       this.firstList = JSON.parse(JSON.stringify(this.typeForm.table_details))
       this.dialogEditVisible = true
+    },
+    handleDelete: function(row) {
+      this.$confirm('此操作将删除该除尘袋滤器温度检查表是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        checkTemperatureTable('delete', row.id)
+          .then(response => {
+            this.$message({
+              type: 'success',
+              message: '操作成功!'
+            })
+            this.getList()
+          })
+      })
     },
     handleEdit: function() {
       this.$refs.typeForm.validate(async(valid) => {

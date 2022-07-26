@@ -1562,9 +1562,9 @@ export let asyncRoutes = [
         name: 'SpotCheckSet',
         component: () => import('@/views/spot_check/spot-check-set'),
         meta: {
-          title: '安全点检内容定义',
+          title: '岗位安全装置点检标准',
           icon: 'production',
-          permissionName: 'tool_manage_account'
+          permissionName: 'check_point_standard'
         }
       },
       {
@@ -1572,9 +1572,9 @@ export let asyncRoutes = [
         name: 'SpotCheckConfirm',
         component: () => import('@/views/spot_check/spot-check-confirm'),
         meta: {
-          title: '安全点检表确认',
+          title: '岗位安全装置点检表确认',
           icon: 'production',
-          permissionName: 'tool_manage_account'
+          permissionName: 'check_point_table'
         }
       },
       {
@@ -1582,9 +1582,9 @@ export let asyncRoutes = [
         name: 'TemperatureSet',
         component: () => import('@/views/spot_check/temperature-set'),
         meta: {
-          title: '除尘袋滤器检查内容定义',
+          title: '除尘袋滤器温度标准',
           icon: 'production',
-          permissionName: 'tool_manage_account'
+          permissionName: 'check_temperature_standard'
         }
       },
       {
@@ -1594,7 +1594,7 @@ export let asyncRoutes = [
         meta: {
           title: '除尘袋滤器记录表确认',
           icon: 'production',
-          permissionName: 'tool_manage_account'
+          permissionName: 'check_temperature_table'
         }
       }
 

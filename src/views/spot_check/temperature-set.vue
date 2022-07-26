@@ -1,6 +1,6 @@
 <template>
   <div class="temperature-set">
-    <!-- 除尘袋滤器记录检查表确认 -->
+    <!-- 除尘袋滤器温度标准 -->
     <el-form :inline="true">
       <el-form-item label="具体位置">
         <el-input v-model="getParams.location" clearable @input="changDebounce" />
@@ -9,9 +9,9 @@
         <el-input v-model="getParams.station_name" clearable @input="changDebounce" />
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button v-permission="['equip_job_standard', 'export']" :loading="btnExportLoad" type="primary" style="margin-right:8px" @click="templateDownload">导出Excel</el-button>
+        <el-button v-permission="['check_temperature_standard', 'excel']" :loading="btnExportLoad" type="primary" style="margin-right:8px" @click="templateDownload">导出Excel</el-button>
         <el-upload
-          v-permission="['equip_job_standard', 'import']"
+          v-permission="['check_temperature_standard', 'excel']"
           style="margin-right:8px;display:inline-block"
           action="string"
           accept=".xls, .xlsx"
@@ -21,7 +21,7 @@
           <el-button type="primary">导入Excel</el-button>
         </el-upload>
         <el-button
-          v-permission="['equip_job_standard', 'add']"
+          v-permission="['check_temperature_standard', 'add']"
           type="primary"
           @click="onSubmit"
         >新建</el-button>
@@ -71,12 +71,12 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
-              v-permission="['equip_job_standard', 'change']"
+              v-permission="['check_temperature_standard', 'change']"
               size="mini"
               @click="showDialog(scope.row)"
             >编辑</el-button>
             <el-button
-              v-permission="['equip_job_standard', 'delete']"
+              v-permission="['check_temperature_standard', 'delete']"
               size="mini"
               type="danger"
               plain

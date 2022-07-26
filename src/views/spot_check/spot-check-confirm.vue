@@ -71,9 +71,9 @@
         </el-select>
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button v-permission="['equip_job_standard', 'export']" :loading="btnExportLoad" type="primary" style="margin-right:8px" @click="templateDownload">导出Excel</el-button>
+        <el-button v-permission="['check_point_table', 'export']" :loading="btnExportLoad" type="primary" style="margin-right:8px" @click="templateDownload">导出Excel</el-button>
         <el-button
-          v-permission="['equip_job_standard', 'add']"
+          v-permission="['check_point_table', 'add']"
           type="primary"
           @click="onSubmit"
         >新建</el-button>
@@ -154,13 +154,13 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
-              v-permission="['equip_job_standard', 'change']"
+              v-permission="['check_point_table', 'change']"
               :disabled="scope.row.status==='已确认'"
               size="mini"
               @click="showDialog(scope.row)"
             >点检</el-button>
             <el-button
-              v-permission="['equip_job_standard', 'delete']"
+              v-permission="['check_point_table', 'confirm']"
               :disabled="scope.row.status==='已确认'"
               size="mini"
               type="success"
@@ -169,7 +169,7 @@
             >确认
             </el-button>
             <el-button
-              v-permission="['equip_job_standard', 'delete']"
+              v-permission="['check_point_table', 'delete']"
               size="mini"
               type="danger"
               plain
