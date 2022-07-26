@@ -28,7 +28,7 @@
       </el-form-item>
     </el-form>
     <el-table
-      ref="singleTable"
+      ref="multipleTable"
       v-loading="loading"
       :data="tableData"
       border
@@ -244,7 +244,6 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
-      this.excelParams.export_ids = []
     },
     currentChange(page, pageSize) {
       this.getParams.page = page
@@ -253,6 +252,7 @@ export default {
     },
     templateDownload() {
       if (this.multipleSelection.length > 0) {
+        this.excelParams.export_ids = []
         this.multipleSelection.forEach(d => {
           this.excelParams.export_ids.push(d.id)
         })
@@ -267,6 +267,7 @@ export default {
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)
+          this.$refs.multipleTable.clearSelection()
           this.btnExportLoad = false
         }).catch(e => {
           this.btnExportLoad = false

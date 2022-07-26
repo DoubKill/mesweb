@@ -736,5 +736,6 @@ export default {
   CheckPointTableExport: '/api/v1/equipment/check-point-table/handle-table/',
   CheckTemperatureStandard: '/api/v1/equipment/check-temperature-standard/',
   CheckTemperatureStandardExport: '/api/v1/equipment/check-temperature-standard/excel-handle/',
-  CheckTemperatureTable: '/api/v1/equipment/check-temperature-table/'
+  CheckTemperatureTable: '/api/v1/equipment/check-temperature-table/',
+  CheckTemperatureTableExport: '/api/v1/equipment/check-temperature-table/handle-table/'
 }

@@ -20,7 +20,7 @@
         />
       </el-form-item>
       <el-form-item label="点检表名称">
-        <el-input v-model="getParams.standard_name" clearable @input="changDebounce" />
+        <el-input v-model="getParams.point_standard_name" clearable @input="changDebounce" />
       </el-form-item>
       <el-form-item label="机台">
         <el-select
@@ -28,6 +28,7 @@
           style="width:150px"
           placeholder="请选择"
           clearable
+          @change="changSelect"
         >
           <el-option
             v-for="item in options"
@@ -39,14 +40,14 @@
       </el-form-item>
       <el-form-item label="岗位">
         <el-select
-          v-model="getParams.work_type"
+          v-model="getParams.station"
           style="width:150px"
           placeholder="请选择"
           clearable
           @change="changSelect"
         >
           <el-option
-            v-for="item in ['巡检','保养','维修','润滑','标定']"
+            v-for="item in options1"
             :key="item"
             :label="item"
             :value="item"
@@ -55,7 +56,7 @@
       </el-form-item>
       <el-form-item label="状态">
         <el-select
-          v-model="getParams.work_type"
+          v-model="getParams.status"
           style="width:100px"
           placeholder="请选择"
           clearable
@@ -79,7 +80,7 @@
       </el-form-item>
     </el-form>
     <el-table
-      ref="singleTable"
+      ref="multipleTable"
       v-loading="loading"
       :data="tableData"
       border
@@ -87,74 +88,93 @@
       highlight-current-row
       row-key="id"
       :reserve-selection="true"
+      @selection-change="handleSelectionChange"
     >
       <el-table-column
-        prop="standard_code"
+        type="selection"
+        width="40"
+        :reserve-selection="true"
+      />
+      <el-table-column
+        prop="select_date"
         label="日期"
       />
       <el-table-column
-        prop="standard_name"
+        prop="classes"
         label="班次"
       />
       <el-table-column
-        prop="standard_code"
+        prop="point_standard_code"
         label="点检表编号"
-      />
+      >
+        <template slot-scope="scope">
+          <el-link
+            type="primary"
+            @click="showDialog(scope.row,true,true)"
+          >{{ scope.row.point_standard_code }}</el-link>
+        </template>
+      </el-table-column>
       <el-table-column
-        prop="standard_code"
+        prop="point_standard_name"
         label="点检表名称"
       />
       <el-table-column
-        prop="equip"
+        prop="equip_no"
         label="机台"
       />
       <el-table-column
-        prop="created_username"
+        prop="station"
         label="岗位"
       />
       <el-table-column
-        prop="created_username"
+        prop="check_result"
         label="点检结果"
       />
       <el-table-column
-        prop="created_username"
-        label="是否修复"
-      />
-      <el-table-column
-        prop="created_username"
+        prop="status"
         label="状态"
       />
       <el-table-column
-        prop="created_username"
+        prop="point_user"
         label="点检人"
       />
       <el-table-column
-        prop="created_date"
+        prop="point_time"
         label="点检时间"
       />
       <el-table-column
-        prop="created_username"
+        prop="confirm_user"
         label="确认人"
       />
       <el-table-column
-        prop="created_date"
+        prop="confirm_time"
         label="确认时间"
       />
-      <el-table-column label="操作" width="130">
+      <el-table-column label="操作" width="190">
         <template slot-scope="scope">
           <el-button-group>
             <el-button
               v-permission="['equip_job_standard', 'change']"
+              :disabled="scope.row.status==='已确认'"
               size="mini"
               @click="showDialog(scope.row)"
             >点检</el-button>
             <el-button
               v-permission="['equip_job_standard', 'delete']"
+              :disabled="scope.row.status==='已确认'"
               size="mini"
               type="success"
               plain
               @click="showDialog(scope.row,true)"
             >确认
+            </el-button>
+            <el-button
+              v-permission="['equip_job_standard', 'delete']"
+              size="mini"
+              type="danger"
+              plain
+              @click="handleDelete(scope.row)"
+            >删除
             </el-button>
           </el-button-group>
         </template>
@@ -176,12 +196,12 @@
     >
       <el-form ref="typeForm" :rules="rules" :model="typeForm" label-width="150px" inline>
         <el-form-item label="点检表编号">
-          <el-input v-model="typeForm.standard_name" style="width:250px" disabled />
+          <el-input v-model="typeForm.point_standard_code" style="width:250px" disabled />
         </el-form-item>
         <br>
-        <el-form-item label="日期" prop="date">
+        <el-form-item label="日期" prop="select_date">
           <el-date-picker
-            v-model="typeForm.date"
+            v-model="typeForm.select_date"
             style="width:250px"
             :disabled="typeForm.id?true:false"
             type="date"
@@ -191,6 +211,7 @@
         </el-form-item>
         <el-form-item label="班次" prop="classes">
           <class-select
+            :value-default="typeForm.classes"
             :is-disabled="typeForm.id?true:false"
             style="width:250px"
             @classSelected="classChanged1"
@@ -203,6 +224,7 @@
             :disabled="typeForm.id?true:false"
             style="width:250px"
             placeholder="请选择"
+            @change="searchContent"
           >
             <el-option
               v-for="item in options"
@@ -212,8 +234,21 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="岗位" prop="standard_name">
-          <el-input v-model="typeForm.standard_name" :disabled="typeForm.id?true:false" style="width:250px" />
+        <el-form-item label="岗位" prop="station">
+          <el-select
+            v-model="typeForm.station"
+            :disabled="typeForm.id?true:false"
+            style="width:250px"
+            placeholder="请选择"
+            @change="searchContent"
+          >
+            <el-option
+              v-for="item in options1"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
         </el-form-item>
         <br>
         <el-form-item label="点检内容">
@@ -224,26 +259,27 @@
             style="width: 940px"
           >
             <el-table-column
-              prop="date"
+              prop="check_content"
               label="作业内容"
               width="320"
             />
             <el-table-column
-              prop="date"
+              prop="check_style"
               label="检查方法"
               width="320"
             />
             <el-table-column
-              prop="date"
+              prop="check_result"
               label="检查结果"
               width="150"
             >
               <template slot-scope="{row}">
                 <el-select
-                  v-model="row.content"
+                  v-model="row.check_result"
                   :disabled="isLook"
                   placeholder=""
                   clearable
+                  @change="changeRepaired(row)"
                 >
                   <el-option
                     v-for="item in ['好','坏']"
@@ -255,31 +291,20 @@
               </template>
             </el-table-column>
             <el-table-column
-              prop="date"
+              prop="is_repaired"
               label="是否修复"
               width="149"
             >
               <template slot-scope="{row}">
-                <el-select
-                  v-model="row.content"
-                  :disabled="isLook"
-                  placeholder=""
-                  clearable
-                >
-                  <el-option
-                    v-for="item in ['是','否']"
-                    :key="item"
-                    :label="item"
-                    :value="item"
-                  />
-                </el-select>
+                <el-checkbox v-model="row.is_repaired" :disabled="isLook||row.check_result==='好'">已修复</el-checkbox>
               </template>
             </el-table-column>
           </el-table>
         </el-form-item>
         <el-form-item v-if="isLook" label="异常确认说明">
           <el-input
-            v-model="typeForm.standard_name"
+            v-model="typeForm.confirm_desc"
+            :disabled="isLook1"
             type="textarea"
             :rows="4"
             style="width:350px"
@@ -292,10 +317,11 @@
       >
         <el-button @click="handleClose(false)">取 消</el-button>
         <el-button
+          v-if="!isLook1"
           type="primary"
           :loading="btnLoading"
           @click="handleEdit"
-        >确 定</el-button>
+        >{{ isLook?'确 认':'确 定' }}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -304,7 +330,7 @@
 <script>
 import page from '@/components/page'
 import { getEquip } from '@/api/banburying-performance-manage'
-import { equipJobItemStandard } from '@/api/base_w_four'
+import { checkPointTable, checkPointStandard, checkPointTableExport } from '@/api/jqy'
 import classSelect from '@/components/ClassSelect'
 import { setDate } from '@/utils'
 
@@ -319,19 +345,25 @@ export default {
       dialogEditVisible: false,
       typeForm: {},
       rules: {
-        date: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        standard_name: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        select_date: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        station: [{ required: true, message: '不能为空', trigger: 'blur' }],
         classes: [{ required: true, message: '不能为空', trigger: 'change' }],
         equip_no: [{ required: true, message: '不能为空', trigger: 'change' }]
       },
       getParams: {
         page: 1
       },
+      excelParams: {
+        ids: []
+      },
+      multipleSelection: [],
       isLook: false,
+      isLook1: false,
       currentPage: 1,
       total: 1,
       loading: false,
       options: [],
+      options1: [],
       btnLoading: false,
       btnExportLoad: false
     }
@@ -341,16 +373,18 @@ export default {
     this.visibleChange()
   },
   methods: {
-    visibleChange() {
+    async visibleChange() {
       const obj = { all: 1, category_name: '密炼设备' }
       getEquip(obj).then(response => {
         this.options = response.results
       })
+      const data = await checkPointStandard('get', null, { params: { all_station: 1 }})
+      this.options1 = data.results
     },
     async getList() {
       try {
         this.loading = true
-        const data = await equipJobItemStandard('get', null, { params: this.getParams })
+        const data = await checkPointTable('get', null, { params: this.getParams })
         this.tableData = data.results || []
         this.total = data.count || 0
         this.loading = false
@@ -372,8 +406,22 @@ export default {
     },
     onSubmit() {
       this.isLook = false
+      this.isLook1 = false
       this.dialogEditVisible = true
-      this.typeForm = { date: setDate() }
+      this.typeForm = { select_date: setDate(), classes: null }
+    },
+    async searchContent() {
+      if (!this.typeForm.equip_no) {
+        this.$message.info('请选择适用机台')
+      } else if (!this.typeForm.station) {
+        this.$message.info('请选择岗位')
+      } else {
+        const data = await checkPointTable('get', null, { params: { all_detail: 1, equip_no: this.typeForm.equip_no, station: this.typeForm.station }})
+        this.typeForm.check_point_standard = data.check_point_standard
+        this.typeForm.point_standard_code = data.point_standard_code
+        this.typeForm.point_standard_name = data.point_standard_name
+        this.tableData1 = data.table_details
+      }
     },
     changSelect() {
       this.getParams.page = 1
@@ -383,8 +431,8 @@ export default {
       this.$debounce(this, 'changSelect')
     },
     changeDate(arr) {
-      this.getParams.s_time = arr ? arr[0] : ''
-      this.getParams.e_time = arr ? arr[1] : ''
+      this.getParams.select_date_after = arr ? arr[0] : ''
+      this.getParams.select_date_before = arr ? arr[1] : ''
       this.getList()
     },
     classChanged(val) {
@@ -392,44 +440,73 @@ export default {
       this.getParams.page = 1
       this.getList()
     },
+    changeRepaired(row) {
+      if (row.check_result === '好') {
+        row.is_repaired = false
+      }
+    },
     classChanged1(val) {
       this.$set(this.typeForm, 'classes', val)
     },
-    showDialog(row, val) {
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+    },
+    showDialog(row, val, val1) {
       if (val) {
         this.isLook = true
       } else {
         this.isLook = false
       }
+      if (val1) {
+        this.isLook1 = true
+      } else {
+        this.isLook1 = false
+      }
       this.typeForm = JSON.parse(JSON.stringify(row))
-      this.tableData1 = this.typeForm.work_details
+      this.tableData1 = this.typeForm.table_details
       this.dialogEditVisible = true
+    },
+    handleDelete: function(row) {
+      this.$confirm('此操作将删除' + row.point_standard_name + ', 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        checkPointTable('delete', row.id)
+          .then(response => {
+            this.$message({
+              type: 'success',
+              message: '操作成功!'
+            })
+            this.getList()
+          })
+      })
     },
     handleEdit: function() {
       this.$refs.typeForm.validate(async(valid) => {
         if (valid) {
+          if (this.typeForm.id) {
+            this.typeForm.ids = [this.typeForm.id]
+            this.typeForm.opera_type = (this.isLook ? 2 : 1)
+          }
           try {
             if (this.tableData1.length === 0) {
-              throw new Error('作业详情内容未添加')
+              throw new Error('点检内容未添加,请选择机台及岗位来获取点检内容')
             }
             if (!this.typeForm.id) {
-              this.typeForm.work_details = this.tableData1
+              this.typeForm.table_details = this.tableData1
             }
-            const _api = this.typeForm.id ? 'put' : 'post'
-            this.tableData1.forEach(d => {
-              if (!d.content || !d.check_standard_desc || !d.check_standard_type) {
-                throw new Error('除单位外每行数据必填')
-              }
-            })
+            if (!this.tableData1.some(d => d.check_result === '好' || d.check_result === '坏')) {
+              throw new Error('点检内容中检查结果至少填一个')
+            }
             this.btnLoading = true
-            await equipJobItemStandard(_api, this.typeForm.id || null, { data: this.typeForm })
+            this.typeForm.id ? await checkPointTableExport('post', null, { data: this.typeForm }) : await checkPointTable('post', null, { data: this.typeForm })
             this.btnLoading = false
             this.handleClose(false)
-            this.$message.success('添加成功')
+            this.$message.success('操作成功')
             this.getList()
           } catch (e) {
             this.btnLoading = false
-            this.loading = false
             if (e.message) {
               this.$message(e.message)
             }
@@ -443,21 +520,30 @@ export default {
       this.getList()
     },
     templateDownload() {
-      this.btnExportLoad = true
-      const obj = Object.assign({ export: 1 }, this.getParams)
-      equipJobItemStandard('get', null, { responseType: 'blob', params: obj }).then(response => {
-        const link = document.createElement('a')
-        const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
-        link.style.display = 'none'
-        link.href = URL.createObjectURL(blob)
-        link.download = '作业项目标准定义.xls' // 下载的文件名
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-        this.btnExportLoad = false
-      }).catch(e => {
-        this.btnExportLoad = false
-      })
+      if (this.multipleSelection.length > 0) {
+        this.excelParams.ids = []
+        this.multipleSelection.forEach(d => {
+          this.excelParams.ids.push(d.id)
+        })
+        this.btnExportLoad = true
+        this.excelParams.opera_type = 3
+        checkPointTableExport('post', null, { responseType: 'blob', data: this.excelParams }).then(response => {
+          const link = document.createElement('a')
+          const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '岗位安全装置点检表.xls' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.$refs.multipleTable.clearSelection()
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
+      } else {
+        this.$message.info('请选择导出数据')
+      }
     }
   }
 }

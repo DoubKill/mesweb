@@ -15,7 +15,7 @@
       </el-form-item>
       <el-form-item label="状态">
         <el-select
-          v-model="getParams.work_type"
+          v-model="getParams.status"
           style="width:100px"
           placeholder="请选择"
           clearable
@@ -44,7 +44,7 @@
       </el-form-item>
     </el-form>
     <el-table
-      ref="singleTable"
+      ref="multipleTable"
       v-loading="loading"
       :data="tableData"
       border
@@ -59,15 +59,21 @@
         :reserve-selection="true"
       />
       <el-table-column
-        prop="standard_code"
+        prop="select_date"
         label="日期"
       />
       <el-table-column
-        prop="created_username"
+        prop="is_exceed"
         label="温度是否有超标"
-      />
+      >
+        <template slot-scope="scope">
+          <span>
+            {{ scope.row.is_exceed?'是':'否' }}
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column
-        prop="created_username"
+        prop="status"
         label="状态"
       />
       <el-table-column
@@ -83,6 +89,7 @@
           <el-button-group>
             <el-button
               v-permission="['equip_job_standard', 'change']"
+              :disabled="scope.row.status==='已确认'"
               size="mini"
               @click="showDialog(scope.row)"
             >检查</el-button>
@@ -105,9 +112,9 @@
       :before-close="handleClose"
     >
       <el-form ref="typeForm" :rules="rules" :model="typeForm" label-width="150px" inline>
-        <el-form-item label="日期" prop="date">
+        <el-form-item label="日期" prop="select_date">
           <el-date-picker
-            v-model="typeForm.date"
+            v-model="typeForm.select_date"
             style="width:250px"
             :disabled="typeForm.id?true:false"
             type="date"
@@ -117,69 +124,60 @@
         </el-form-item>
         <br>
         <el-form-item label="具体位置">
-          <el-select
-            v-model="typeForm.equip_no"
+          <el-input
+            v-model="location"
             style="width:250px"
             placeholder=""
-          >
-            <el-option
-              v-for="item in options"
-              :key="item.id"
-              :label="item.equip_no"
-              :value="item.equip_no"
-            />
-          </el-select>
+            clearable
+            @input="searchList"
+          />
         </el-form-item>
         <el-form-item label="名称">
-          <el-select
-            v-model="typeForm.equip_no"
+          <el-input
+            v-model="station_name"
             style="width:250px"
             placeholder=""
-          >
-            <el-option
-              v-for="item in options"
-              :key="item.id"
-              :label="item.equip_no"
-              :value="item.equip_no"
-            />
-          </el-select>
+            clearable
+            @input="searchList"
+          />
         </el-form-item>
         <br>
         <el-form-item label="检查内容">
-          <el-checkbox v-model="check">只显示超标项目</el-checkbox>
+          <el-checkbox v-model="check" @change="searchList1">只显示超标项目</el-checkbox>
           <el-table
+            v-loading="loading1"
             :data="tableData1"
             border
             max-height="350"
             style="width: 780px"
           >
             <el-table-column
-              prop="date"
+              prop="sn"
               label="序号"
               width="80"
             />
             <el-table-column
-              prop="date"
+              prop="location"
               label="具体位置"
               width="150"
             />
             <el-table-column
-              prop="date"
+              prop="station_name"
               label="名称"
               width="200"
             />
             <el-table-column
-              prop="date"
+              prop="temperature_limit"
               label="温度上限(℃)"
               width="150"
             />
             <el-table-column
-              prop="date"
+              prop="input_value"
               label="温度"
               width="199"
             >
-              <template slot-scope="{row}">
-                <el-input-number v-model="row.classes" style="width:160px" controls-position="right" />
+              <template slot-scope="scope">
+                <el-input-number v-model="scope.row.input_value" style="width:160px" controls-position="right" :min="0" @change="changValue(scope)" />
               </template>
             </el-table-column>
           </el-table>
@@ -207,7 +205,7 @@
       <el-form :model="typeForm1" label-width="150px" inline>
         <el-form-item label="确认备注" prop="classes">
           <el-input
-            v-model="typeForm1.classes"
+            v-model="typeForm1.confirm_desc"
             type="textarea"
             :rows="4"
             controls-position="right"
@@ -232,7 +230,7 @@
 
 <script>
 import page from '@/components/page'
-import { equipJobItemStandard } from '@/api/base_w_four'
+import { checkTemperatureTable, checkTemperatureTableExport } from '@/api/jqy'
 import { setDate } from '@/utils'
 
 export default {
@@ -246,14 +244,17 @@ export default {
       check: false,
       dialogEditVisible: false,
       dialogVisible: false,
+      excelParams: {
+        ids: []
+      },
       multipleSelection: [],
+      station_name: null,
+      location: null,
       typeForm: {},
       typeForm1: {},
+      firstList: [],
       rules: {
-        date: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        standard_name: [{ required: true, message: '不能为空', trigger: 'blur' }],
-        classes: [{ required: true, message: '不能为空', trigger: 'change' }],
-        equip_no: [{ required: true, message: '不能为空', trigger: 'change' }]
+        select_date: [{ required: true, message: '不能为空', trigger: 'blur' }]
       },
       getParams: {
         page: 1
@@ -261,6 +262,7 @@ export default {
       currentPage: 1,
       total: 1,
       loading: false,
+      loading1: false,
       options: [],
       btnLoading: false,
       btnExportLoad: false
@@ -273,7 +275,7 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const data = await equipJobItemStandard('get', null, { params: this.getParams })
+        const data = await checkTemperatureTable('get', null, { params: this.getParams })
         this.tableData = data.results || []
         this.total = data.count || 0
         this.loading = false
@@ -293,12 +295,44 @@ export default {
         done()
       }
     },
-    onSubmit() {
-      this.dialogEditVisible = true
-      this.typeForm = { date: setDate() }
+    async onSubmit() {
+      try {
+        this.check = false
+        this.dialogEditVisible = true
+        this.loading1 = true
+        const data = await checkTemperatureTable('get', null, { params: { all_detail: 1 }})
+        this.typeForm = { select_date: setDate() }
+        this.tableData1 = JSON.parse(JSON.stringify(data.results))
+        this.firstList = JSON.parse(JSON.stringify(data.results))
+        this.loading1 = false
+      } catch (error) {
+        this.loading1 = false
+        this.tableData = []
+      }
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
+    },
+    changValue(scope) {
+      this.$set(this.firstList[scope.$index], 'input_value', scope.row.input_value)
+    },
+    searchList() {
+      if (this.location && !this.station_name) {
+        this.$set(this, 'tableData1', this.firstList.filter(d => d.location.indexOf(this.location) !== -1))
+      } else if (!this.location && this.station_name) {
+        this.$set(this, 'tableData1', this.firstList.filter(d => d.station_name.indexOf(this.station_name) !== -1))
+      } else if (this.location && this.station_name) {
+        this.$set(this, 'tableData1', this.firstList.filter(d => (d.location.indexOf(this.location) !== -1) && (d.station_name.indexOf(this.station_name) !== -1)))
+      } else {
+        this.tableData1 = JSON.parse(JSON.stringify(this.firstList))
+      }
+    },
+    searchList1() {
+      if (this.check) {
+        this.$set(this, 'tableData1', this.firstList.filter(d => { return d.temperature_limit < d.input_value }))
+      } else {
+        this.tableData1 = JSON.parse(JSON.stringify(this.firstList))
+      }
     },
     changSelect() {
       this.getParams.page = 1
@@ -308,8 +342,8 @@ export default {
       this.$debounce(this, 'changSelect')
     },
     changeDate(arr) {
-      this.getParams.s_time = arr ? arr[0] : ''
-      this.getParams.e_time = arr ? arr[1] : ''
+      this.getParams.select_date_after = arr ? arr[0] : ''
+      this.getParams.select_date_before = arr ? arr[1] : ''
       this.getList()
     },
     classChanged(val) {
@@ -322,46 +356,70 @@ export default {
     },
     confirm() {
       if (this.multipleSelection.length > 0) {
+        if (this.multipleSelection.some(d => d.status === '已确认')) {
+          this.$message.info('所选择数据有已确认状态')
+          return
+        }
         this.dialogVisible = true
-        this.typeForm1 = {}
+        this.typeForm1 = { ids: [], opera_type: 2 }
+        this.multipleSelection.forEach(d => {
+          this.typeForm1.ids.push(d.id)
+        })
       } else {
         this.$message.info('请选择所需确认数据')
         return
       }
     },
-    handleConfirm() {
-      this.dialogVisible = false
+    async handleConfirm() {
+      try {
+        this.btnLoading = true
+        await checkTemperatureTableExport('post', null, { data: this.typeForm1 })
+        this.$refs.multipleTable.clearSelection()
+        this.dialogVisible = false
+        this.btnLoading = false
+        this.$message.success('操作成功')
+        this.getList()
+      } catch (e) {
+        this.btnLoading = false
+      }
     },
     showDialog(row) {
+      this.check = false
       this.typeForm = JSON.parse(JSON.stringify(row))
-      this.tableData1 = this.typeForm.work_details
+      this.tableData1 = JSON.parse(JSON.stringify(this.typeForm.table_details))
+      this.firstList = JSON.parse(JSON.stringify(this.typeForm.table_details))
       this.dialogEditVisible = true
     },
     handleEdit: function() {
       this.$refs.typeForm.validate(async(valid) => {
         if (valid) {
           try {
+            if (this.typeForm.id) {
+              this.typeForm.ids = [this.typeForm.id]
+              this.typeForm.opera_type = 1
+            }
+            if (this.location !== null || this.station_name !== null) {
+              this.location = null
+              this.station_name = null
+              this.tableData1 = JSON.parse(JSON.stringify(this.firstList))
+            }
             if (this.tableData1.length === 0) {
-              throw new Error('作业详情内容未添加')
+              throw new Error('检查内容未添加')
             }
-            if (!this.typeForm.id) {
-              this.typeForm.work_details = this.tableData1
-            }
-            const _api = this.typeForm.id ? 'put' : 'post'
-            this.tableData1.forEach(d => {
-              if (!d.content || !d.check_standard_desc || !d.check_standard_type) {
-                throw new Error('除单位外每行数据必填')
+            this.typeForm.table_details = this.tableData1
+            this.firstList.forEach(d => {
+              if (!d.input_value) {
+                throw new Error('温度为必填项')
               }
             })
             this.btnLoading = true
-            await equipJobItemStandard(_api, this.typeForm.id || null, { data: this.typeForm })
+            this.typeForm.id ? await checkTemperatureTableExport('post', null, { data: this.typeForm }) : await checkTemperatureTable('post', null, { data: this.typeForm })
             this.btnLoading = false
             this.handleClose(false)
-            this.$message.success('添加成功')
+            this.$message.success('操作成功')
             this.getList()
           } catch (e) {
             this.btnLoading = false
-            this.loading = false
             if (e.message) {
               this.$message(e.message)
             }
@@ -375,21 +433,30 @@ export default {
       this.getList()
     },
     templateDownload() {
-      this.btnExportLoad = true
-      const obj = Object.assign({ export: 1 }, this.getParams)
-      equipJobItemStandard('get', null, { responseType: 'blob', params: obj }).then(response => {
-        const link = document.createElement('a')
-        const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
-        link.style.display = 'none'
-        link.href = URL.createObjectURL(blob)
-        link.download = '作业项目标准定义.xls' // 下载的文件名
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-        this.btnExportLoad = false
-      }).catch(e => {
-        this.btnExportLoad = false
-      })
+      if (this.multipleSelection.length > 0) {
+        this.excelParams.ids = []
+        this.multipleSelection.forEach(d => {
+          this.excelParams.ids.push(d.id)
+        })
+        this.btnExportLoad = true
+        this.excelParams.opera_type = 3
+        checkTemperatureTableExport('post', null, { responseType: 'blob', data: this.excelParams }).then(response => {
+          const link = document.createElement('a')
+          const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '除尘袋滤器温度检查表.xls' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.$refs.multipleTable.clearSelection()
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
+      } else {
+        this.$message.info('请选择导出数据')
+      }
     }
   }
 }

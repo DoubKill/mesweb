@@ -1515,3 +1515,12 @@ export function checkTemperatureTable(method, id, data = {}) {
   return request(obj)
 }
 
+export function checkTemperatureTableExport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.CheckTemperatureTableExport + id + '/' : API.CheckTemperatureTableExport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
