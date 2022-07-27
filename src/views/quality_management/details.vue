@@ -197,7 +197,7 @@
       <test-card ref="testCard" />
     </el-dialog>
     <el-dialog
-      :title="`${row_roduct_no}数据推移`"
+      title=""
       :visible.sync="historyDialogVisible"
       width="80%"
       append-to-body
@@ -668,10 +668,12 @@ export default {
           const _dataSeriesX = []
           const _1 = data.indicators[d.name] ? data.indicators[d.name].lower_limit : 0 // 下限
           const _3 = data.indicators[d.name] ? data.indicators[d.name].upper_limit : 0 // 上限
-          const _2 = ((_3 + _1) / 2).toFixed(2)
-          let _min = Math.floor(_1 - (_3 - (_3 + _1) / 2))
-          if (_3 > 999) {
-            _min = Math.floor(_1 - 10)
+          const _2 = setData((_3 + _1) / 2)
+          let _min = setData(_1 - (_3 - (_3 + _1) / 2))
+          let _max = setData(_3 + (_3 - (_3 + _1) / 2))
+          if (_3 >= 999) {
+            _min = setData(_1 - 10)
+            _max = setData(_1 + 30)
           }
           if (_min < 0) {
             _min = 0
@@ -690,18 +692,24 @@ export default {
           _y.push({
             gridIndex: _i,
             type: 'value',
-            min: _min
+            max: _max,
+            min: _min,
+            interval: setData(_1 - _min)
           })
           if (_i % 2 === 0 || _i === 0) {
             const _top1 = (_i / 2) * _height1 + 5 + '%'
             const _topTitle1 = (_i / 2) * _height1 + 2 + '%'
             _title.push({ text: d.name, left: '8%', top: _topTitle1 })
-            _grid.push({ left: '5%', top: _top1, width: '40%', height: _height })
+            _grid.push({ left: '3%', top: _top1, width: '40%', height: _height })
           } else {
             const _top2 = ((_i - 1) / 2) * _height1 + 5 + '%'
             const _topTitle2 = ((_i - 1) / 2) * _height1 + 2 + '%'
             _title.push({ text: d.name, right: '8%', top: _topTitle2 })
-            _grid.push({ right: '6%', top: _top2, width: '40%', height: _height })
+            _grid.push({ right: '7%', top: _top2, width: '40%', height: _height })
+          }
+
+          if (_3 < 999) {
+            _dataSeries.push(_3)
           }
           _series.push({
             name: d.name,
@@ -711,8 +719,10 @@ export default {
             data: _dataSeries,
             smooth: true,
             markLine: data.indicators[d.name] ? {
+              // symbol: 'none',
+              precision: 3,
               data: [{
-                silent: true,
+                // silent: true,
                 yAxis: _1, label: {
                   position: 'end',
                   formatter: `下限(${_1})`
@@ -720,7 +730,7 @@ export default {
               {
                 yAxis: _2, label: {
                   position: 'end',
-                  formatter: `中限(${_2})`
+                  formatter: `中央值(${_2})`
                 }},
               {
                 yAxis: _3, label: {
@@ -733,8 +743,8 @@ export default {
         })
 
         _title.push({ text: this.row_roduct_no + '数据推移' +
-        ' ' + this.historyDate[0] + '-' + this.historyDate[1], left: 'center', top: 0 })
-        this.historySpot.toolbox.feature.saveAsImage.name = this.row_roduct_no + ' ' + this.historyDate[0] + '-' + this.historyDate[1] + ' ' + setDate()
+        ' (' + this.historyDate[0] + '至' + this.historyDate[1] + ')', left: 'center', top: 0 })
+        this.historySpot.toolbox.feature.saveAsImage.name = this.row_roduct_no + ' (' + this.historyDate[0] + '至' + this.historyDate[1] + ') ' + setDate()
         this.historySpot.xAxis = _x || []
         this.historySpot.yAxis = _y || []
         this.historySpot.title = _title || []
@@ -743,10 +753,6 @@ export default {
 
         this.chartHistoryBar = echarts.init(document.getElementById('historySpot'))
         this.chartHistoryBar.setOption(this.historySpot, true)
-
-        this.chartHistoryBar.on('click', function(params) {
-          console.log(params, 3333)
-        })
       } catch (e) {
         //
       }
@@ -788,6 +794,9 @@ function getDaysBetween(dateString1, dateString2) {
   }
   var days = (endDate - startDate) / (30 * 24 * 60 * 60 * 1000)
   return days
+}
+function setData(val) {
+  return Math.round(val * 1000) / 1000
 }
 </script>
 

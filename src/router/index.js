@@ -365,6 +365,16 @@ export let asyncRoutes = [
         }
       }
       ]
+    },
+    {
+      path: '/operation-history',
+      name: 'OperationHistory',
+      component: () => import('@/views/basic/operation-history'),
+      meta: {
+        title: '操作履历',
+        icon: 'dashboard',
+        permissionName: 'user_operation_log'
+      }
     }
     /*,
     {

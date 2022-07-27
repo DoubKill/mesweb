@@ -13,7 +13,10 @@
           @change="changeList"
         />
       </el-form-item>
-      <el-form-item>
+      <el-form-item label="">
+        <el-checkbox v-model="td_flag" @change="changeList">总计和平均统计包含当日产量</el-checkbox>
+      </el-form-item>
+      <el-form-item style="margin-left:50px">
         <el-button
           v-permission="['daily_production_completion_report','export']"
           type="primary"
@@ -241,6 +244,7 @@ export default {
       options: [],
       loading1: false,
       dataList: [],
+      td_flag: false,
       optionsProduct: [],
       tableHead: [],
       tableData: [],
@@ -812,6 +816,7 @@ export default {
       }
     },
     changeList() {
+      this.search.td_flag = this.td_flag ? 'Y' : undefined
       this.tableHead = getDiffDate(this.search.date + '-01', getCurrentMonthLastDay(this.search.date))
       this.getList()
     },
