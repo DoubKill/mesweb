@@ -348,6 +348,7 @@ export default {
   // 通知配置
   PlatformConfig: '/api/v1/equipment/platform-config/',
   EquipMaintenanceOrderLog: '/api/v1/equipment/equip-maintenance-order-log/',
+  UserOperationLog: '/api/v1/system/user-operation-log/',
   // 原材料临时快检结果录入
   BarcodeQuality: '/api/v1/inventory/barcode-quality/',
   // 原材料临时快检结果录入导出

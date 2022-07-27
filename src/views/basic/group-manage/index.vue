@@ -171,10 +171,12 @@
 
 <script>
 import { roles } from '@/api/roles-manage'
+import { userOperationLog } from '@/api/base_w_two'
 import page from '@/components/page'
 import transferLimit from '@/components/select_w/transferLimit'
 import { checkPermission } from '@/utils/index'
 import { commonCode } from '@/api/global-codes-manage'
+import Cookies from 'js-cookie'
 
 export default {
   name: 'GroupManage',
@@ -289,8 +291,8 @@ export default {
       this.clearGroupFormError()
       const type = this.groupForm.id ? 'put' : 'post'
       const id = this.groupForm.id ? this.groupForm.id : ''
-      // eslint-disable-next-line object-curly-spacing
-      roles(type, id, { data: { ...this.groupForm } })
+      userOperationLog('post', null, { data: { 'operator': Cookies.get('name'), 'menu_name': '角色管理', 'operations': '变更：' + this.groupForm.name + '角色' }})
+      roles(type, id, { data: { ...this.groupForm }})
         .then(response => {
           this.dialogEditGroupVisible = false
           this.$message.success(this.groupForm.name + this.groupForm.id ? '编辑成功' : '创建成功')
@@ -323,7 +325,8 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(() => {
+      }).then(async() => {
+        userOperationLog('post', null, { data: { 'operator': Cookies.get('name'), 'menu_name': '角色管理', 'operations': '停用：' + group.name + '角色' }})
         roles('delete', group.id).then(response => {
           this.$message({
             type: 'success',
