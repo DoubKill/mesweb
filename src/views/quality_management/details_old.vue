@@ -84,44 +84,79 @@
       :row-class-name="tableRowClassName"
     >
       <!-- use-virtual 省略号 -->
-      <u-table-column label="胶料编码" min-width="20px" align="center" prop="product_no">
-        <template slot-scope="scope">
-          <el-link type="primary" @click="clickOrderNum(scope.$index,scope.row)">{{ scope.row.product_no }}</el-link>
+      <u-table-column label="生产信息" align="center">
+        <u-table-column
+          label="工厂日期"
+          min-width="20px"
+          prop="production_factory_date"
+          align="center"
+          :tree-node="true"
+        >
+          <template v-if="row.production_factory_date" slot-scope="{row}">
+            {{ (row.production_factory_date).split(' ')[0] }}
+          </template>
+        </u-table-column>
+        <u-table-column label="生产班次/班组" prop="class_group" min-width="20px" />
+        <u-table-column align="center" label="生产机台" min-width="20px" prop="production_equip_no" />
+        <u-table-column label="胶料编码" min-width="20px" align="center" prop="product_no">
+          <template slot-scope="scope">
+            <el-link type="primary" @click="clickOrderNum(scope.$index,scope.row)">{{ scope.row.product_no }}</el-link>
+          </template>
+        </u-table-column>
+        <u-table-column label="车次" align="center" min-width="20px" prop="actual_trains" />
+        <u-table-column label="检测状态" prop="test_status" align="center" min-width="20px">
+          <template slot-scope="{ row }">
+            <div :class="row.test_status === '复检' ? 'test_type_name_style': ''">
+              {{ row.test_status }}
+            </div>
+          </template>
+        </u-table-column>
+      </u-table-column>
+      <u-table-column v-for="header in testTypeList.filter(type => type.show)" :key="header.test_type_name" align="center" :label="header.test_type_name">
+        <u-table-column min-width="20px" label="等级" align="center">
+          <template slot-scope="{row}">
+            {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'level') }}
+          </template>
+        </u-table-column>
+        <div v-for="(subHeader,_ii) in header.data_indicator_detail.filter(item => item.show)" :key="subHeader.detail">
+          <u-table-column :key="subHeader.detail+_ii" min-width="20px" :label="subHeader.detail" align="center">
+            <template slot-scope="{ row }">
+              <div :class="getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level')!==1&&getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level')!==''?'test_type_name_style':''">
+                {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'value') }}
+              </div>
+            </template>
+          </u-table-column>
+          <u-table-column :key="_ii" min-width="20px" label="标准" align="center">
+            <template slot-scope="{ row }">
+              <div>
+                {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'judged_lower_limit') }}-
+                {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'judged_upper_limit') }}
+              </div>
+            </template>
+          </u-table-column>
+        </div>
+        <!-- <u-table-column min-width="20px" label="标准" align="center">
+          <template slot-scope="{row}">
+            {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'upper_lower') }}
+          </template>
+        </u-table-column> -->
+        <u-table-column v-if="header.test_type_name === '门尼' || header.test_type_name === '流变'" label="检测机台" min-width="20px" align="center">
+          <template slot-scope="{row}">
+            {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'machine_name') }}
+          </template>
+        </u-table-column>
+      </u-table-column>
+      <!-- <u-table-column label="综合等级" min-width="20px" prop="level" align="center" /> -->
+      <!-- <u-table-column label="综合检测结果" min-width="20px" prop="mes_result" align="center" /> -->
+      <u-table-column label="是否合格" min-width="20px" prop="is_qualified" align="center">
+        <template slot-scope="{row}">
+          {{ row.is_qualified?'合格':'不合格' }}
         </template>
       </u-table-column>
-      <u-table-column
-        label="工厂日期"
-        min-width="20px"
-        prop="production_factory_date"
-        align="center"
-        :tree-node="true"
-      >
-        <template v-if="row.production_factory_date" slot-scope="{row}">
-          {{ (row.production_factory_date).split(' ')[0] }}
-        </template>
-      </u-table-column>
-      <u-table-column align="center" label="生产班次" prop="production_class" min-width="20px" />
-      <u-table-column label="班组" align="center" prop="production_group" min-width="20px" />
-      <u-table-column align="center" label="生产机台" min-width="20px" prop="production_equip_no" />
-      <u-table-column label="门尼机台" min-width="20px" align="center" prop="" />
-      <u-table-column label="流变机台" min-width="20px" align="center" prop="" />
-      <u-table-column label="车次" align="center" min-width="20px" prop="actual_trains" />
-      <u-table-column label="检查结果" align="center" min-width="20px" prop="is_recheck">
-        <template slot-scope="{ row }">
-          <div>
-            {{ row.is_recheck ?'复检':'正常' }}
-          </div>
-        </template>
-      </u-table-column>
-      <u-table-column v-for="header in newHead" :key="header.detail" min-width="20px" align="center" :label="header.detail">
-        <template v-if="row.order_results.find(d=>d.data_point_name===header.detail)" slot-scope="{row}">
-          <div :class="row.order_results.find(d=>d.data_point_name===header.detail).level>1 ? 'test_type_name_style': ''">
-            {{ row.order_results.find(d=>d.data_point_name===header.detail).value }}
-          </div>
-        </template>
-      </u-table-column>
-      <u-table-column label="检测状态" prop="state" align="center" min-width="20px" />
+      <!-- <u-table-column label="检测结果" min-width="20px" prop="deal_info.test_result" align="center" /> -->
+      <!-- <u-table-column label="处理人" min-width="20px" prop="deal_info.deal_user" align="center" /> -->
       <u-table-column label="处理意见" min-width="20px" prop="deal_info.deal_suggestion" align="center" />
+      <!-- <u-table-column label="处理时间" min-width="20px" prop="deal_info.deal_time" align="center" /> -->
     </u-table>
     <el-alert style="color:black" title="表格背景色说明：表示不是一等品" type="success" />
     <el-dialog
@@ -134,7 +169,7 @@
       >
         <el-table-column label="选择" min-width="50">
           <template slot-scope="{row}">
-            <el-checkbox v-model="row.show" @change="checkboxFilter(true)" />
+            <el-checkbox v-model="row.show" />
           </template>
         </el-table-column>
         <el-table-column label="实验方法" min-width="80">
@@ -145,7 +180,7 @@
         <el-table-column label="检测项">
           <template slot-scope="{row}">
             <template v-for="item in row.data_indicator_detail">
-              <el-checkbox :key="item.detail" v-model="item.show" @change="checkboxFilter(false)">{{ item.detail }}</el-checkbox>
+              <el-checkbox :key="item.detail" v-model="item.show">{{ item.detail }}</el-checkbox>
             </template>
           </template>
         </el-table-column>
@@ -283,7 +318,6 @@ export default {
       historyDialogVisible: false,
       historyDate: [],
       row_roduct_no: '',
-      newHead: [],
       historySpot: {
         title: [{
           text: "Anscombe's quartet"
@@ -490,38 +524,40 @@ export default {
         paramsObj.page_size = bool ? 99999999 : 10
         paramsObj.page = bool ? 1 : this.getParams.page
         const data = await materialTestOrders(paramsObj)
-        const arr = data.results // 加分页
-        // arr = arr.map(row => {
-        //   row.level = 0
-        //   row.mes_result = '未检测'
-        //   for (const testTypeName in row.order_results) {
-        //     const testType = row.order_results[testTypeName]
-        //     let maxLevel = 0
-        //     for (const dataPointName in testType) {
-        //       const dataPoint = testType[dataPointName]
-        //       if (dataPoint.test_times > 1) {
-        //         this.$set(row, 'test_status', '复检')
-        //         this.$set(row, 'hasChildren', true)
-        //       } else {
-        //         this.$set(row, 'test_status', '正常')
-        //         this.$set(row, 'hasChildren', false)
-        //       }
-        //       if (dataPoint.level > maxLevel) {
-        //         maxLevel = dataPoint.level
-        //         testType['maxLevelItem'] = dataPoint
-        //       }
-        //     }
-        //     if (maxLevel > row.level) {
-        //       row.level = maxLevel
-        //       row.mes_result = row.level === 1 ? '一等品' : '三等品'
-        //     }
-        //   }
-        // return {
-        //   ...row,
-        //   index: this.index++,
-        //   class_group: `${row.production_class}/${row.production_group}`
-        // }
-        // })
+        let arr = data.results // 加分页
+        arr = arr.map(row => {
+          row.level = 0
+          row.mes_result = '未检测'
+          for (const testTypeName in row.order_results) {
+            const testType = row.order_results[testTypeName]
+            let maxLevel = 0
+            // let mes_result = '未检测'
+            for (const dataPointName in testType) {
+              const dataPoint = testType[dataPointName]
+              if (dataPoint.test_times > 1) {
+                this.$set(row, 'test_status', '复检')
+                this.$set(row, 'hasChildren', true)
+              } else {
+                this.$set(row, 'test_status', '正常')
+                this.$set(row, 'hasChildren', false)
+              }
+              if (dataPoint.level > maxLevel) {
+                maxLevel = dataPoint.level
+                // mes_result = dataPoint.mes_result
+                testType['maxLevelItem'] = dataPoint
+              }
+            }
+            if (maxLevel > row.level) {
+              row.level = maxLevel
+              row.mes_result = row.level === 1 ? '一等品' : '三等品'
+            }
+          }
+          return {
+            ...row,
+            index: this.index++,
+            class_group: `${row.production_class}/${row.production_group}`
+          }
+        })
         // arr.forEach(row => {
         // })
         // for (let i = 1; i < 8; i++) {
@@ -533,7 +569,6 @@ export default {
         }
         this.allPage = data.count
 
-        console.log(arr, 8888)
         this.testOrdersAll.push(...arr)
         this.testOrders = this.testOrdersAll
       } catch (e) {
@@ -557,10 +592,8 @@ export default {
       try {
         this.testTypeList = []
         const testTypeList = await testTypes()
-        this.newHead = []
         this.testTypeList = testTypeList.map(testType => {
           testType.data_indicator_detail = testType.data_indicator_detail.map(detail => {
-            this.newHead.push({ detail: detail, show: true })
             return {
               detail,
               show: true
@@ -719,28 +752,6 @@ export default {
       } catch (e) {
         //
       }
-    },
-    checkboxFilter(bool) {
-      const arr = []
-      if (bool) {
-        this.testTypeList.forEach(d => {
-          d.data_indicator_detail.forEach(dd => {
-            if (!d.show) {
-              dd.show = false
-            } else {
-              dd.show = true
-            }
-          })
-        })
-      }
-      this.testTypeList.forEach(d => {
-        d.data_indicator_detail.forEach(dd => {
-          if (dd.show) {
-            arr.push(dd)
-          }
-        })
-      })
-      this.newHead = arr
     },
     exportExcel() {
       /* 从表生成工作簿对象 */
