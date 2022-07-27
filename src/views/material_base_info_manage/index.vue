@@ -350,6 +350,8 @@ import { globalCodesUrl, materialsUrl, materialInfoIssue } from '@/api/base_w'
 import pagination from '@/components/page'
 import { mapGetters } from 'vuex'
 import equipSelect from '@/components/select_w/equip'
+import { userOperationLog } from '@/api/base_w_two'
+import Cookies from 'js-cookie'
 export default {
   name: 'MaterialBaseInfoManage',
   components: { pagination, equipSelect },
@@ -562,6 +564,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        userOperationLog('post', null, { data: { 'operator': Cookies.get('name'), 'menu_name': '原材料基础信息', 'operations': str + '：' + row.material_name }})
         materialsUrl('delete', row.id)
           .then(function(response) {
             app.$message({
@@ -580,6 +583,7 @@ export default {
       var app = this
       this.$refs['materialBaseInfoEditForm'].validate(valid => {
         if (valid) {
+          userOperationLog('post', null, { data: { 'operator': Cookies.get('name'), 'menu_name': '原材料基础信息', 'operations': '编辑：' + app.materialBaseInfoForm.material_no }})
           materialsUrl('put', app.materialBaseInfoForm.id, { data: app.materialBaseInfoForm })
             .then(function(response) {
               app.dialogEditMaterialBaseInfoVisible = false
