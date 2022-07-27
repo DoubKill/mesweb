@@ -30,24 +30,51 @@
       <el-form-item label="段次">
         <stage-select v-model="getParams.stage" @change="clickQuery" />
       </el-form-item>
-      <el-form-item label="综合检测结果">
+      <el-form-item label="班组" prop="production_group">
         <el-select
-          v-model="getParams.is_qualified"
+          v-model="getParams.production_group"
           placeholder="请选择"
           clearable
           @change="clickQuery"
         >
           <el-option
-            v-for="(item,i) in options"
-            :key="i"
-            :label="item.name"
-            :value="item.bool"
+            v-for="group in groups"
+            :key="group.id"
+            :label="group.global_name"
+            :value="group.global_name"
           />
         </el-select>
       </el-form-item>
-      <!-- <el-form-item>
-        <el-button type="primary" @click="clickQuery">查询</el-button>
-      </el-form-item> -->
+      <el-form-item label="检测结果">
+        <el-select
+          v-model="getParams.is_recheck"
+          placeholder="请选择"
+          clearable
+          @change="clickQuery"
+        >
+          <el-option
+            v-for="(item) in [{name:'复检',id:true},{name:'正常',id:false}]"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="检测状态">
+        <el-select
+          v-model="getParams.state"
+          placeholder="请选择"
+          clearable
+          @change="clickQuery"
+        >
+          <el-option
+            v-for="(item) in ['检测中','合格','不合格']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-form-item>
       <br>
       <el-form-item>
         <el-button @click="filterDialogVisible = true">
@@ -82,11 +109,13 @@
         hasChildren: 'hasChildren'}"
       :data-changes-scroll-top="false"
       :row-class-name="tableRowClassName"
+      @current-change="handleCurrentChange"
     >
       <!-- use-virtual 省略号 -->
-      <u-table-column label="胶料编码" min-width="20px" align="center" prop="product_no">
+      <u-table-column label="胶料编码" min-width="35px" align="center" prop="product_no">
         <template slot-scope="scope">
-          <el-link type="primary" @click="clickOrderNum(scope.$index,scope.row)">{{ scope.row.product_no }}</el-link>
+          <el-link v-if="!scope.row._current" type="primary" @click="clickOrderNum(scope.$index,scope.row)">{{ scope.row.product_no }}</el-link>
+          <span v-else>{{ scope.row.product_no }}</span>
         </template>
       </u-table-column>
       <u-table-column
@@ -100,16 +129,16 @@
           {{ (row.production_factory_date).split(' ')[0] }}
         </template>
       </u-table-column>
-      <u-table-column align="center" label="生产班次" prop="production_class" min-width="20px" />
-      <u-table-column label="班组" align="center" prop="production_group" min-width="20px" />
-      <u-table-column align="center" label="生产机台" min-width="20px" prop="production_equip_no" />
+      <u-table-column align="center" label="生产班次" prop="production_class" min-width="15px" />
+      <u-table-column label="班组" align="center" prop="production_group" min-width="10px" />
+      <u-table-column align="center" label="生产机台" min-width="15px" prop="production_equip_no" />
       <u-table-column label="门尼机台" min-width="20px" align="center" prop="" />
       <u-table-column label="流变机台" min-width="20px" align="center" prop="" />
-      <u-table-column label="车次" align="center" min-width="20px" prop="actual_trains" />
-      <u-table-column label="检查结果" align="center" min-width="20px" prop="is_recheck">
+      <u-table-column label="车次" align="center" min-width="10px" prop="actual_trains" />
+      <u-table-column label="检测结果" align="center" min-width="15px" prop="is_recheck">
         <template slot-scope="{ row }">
           <div>
-            {{ row.is_recheck ?'复检':'正常' }}
+            {{ row.is_recheck===true ?'复检':row.is_recheck===false?'正常':'' }}
           </div>
         </template>
       </u-table-column>
@@ -199,9 +228,10 @@ import dayjs from 'dayjs'
 import EquipSelect from '@/components/select_w/equip'
 import ClassSelect from '@/components/ClassSelect'
 import StageSelect from '@/components/StageSelect/index'
+import { globalCodesUrl } from '@/api/base_w'
 import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import { testTypes, materialTestOrders, testResultHistory,
-  materialTestOrdersAll, datapointCurve } from '@/api/quick-check-detail'
+  materialTestOrdersAll, datapointCurve, productIndicatorStandard } from '@/api/quick-check-detail'
 import elTableInfiniteScroll from 'el-table-infinite-scroll'
 import FileSaver from 'file-saver'
 import XLSX from 'xlsx'
@@ -284,6 +314,7 @@ export default {
       historyDate: [],
       row_roduct_no: '',
       newHead: [],
+      groups: [],
       historySpot: {
         title: [{
           text: "Anscombe's quartet"
@@ -350,6 +381,7 @@ export default {
     this.testOrders = []
     this.testOrdersAll = []
     this.getMaterialTestOrders()
+    this.getClassGroup()
   },
   mounted() {
     // window.addEventListener('scroll', () => {
@@ -372,6 +404,16 @@ export default {
   methods: {
     dayTimeChanged() {
       this.clickQuery()
+    },
+    getClassGroup() {
+      globalCodesUrl('get', {
+        params: {
+          class_name: '班组'
+        }
+      }).then((response) => {
+        this.groups = response.results
+      }).catch(function() {
+      })
     },
     clearList() {
       this.getParams.page = 1
@@ -587,7 +629,7 @@ export default {
       return result ? result[key] : ''
     },
     tableRowClassName({ row, rowIndex }) {
-      if (row.mes_result !== '一等品') {
+      if (row.state === '不合格') {
         return 'warning-row'
       }
       return ''
@@ -720,6 +762,62 @@ export default {
 
         this.chartHistoryBar = echarts.init(document.getElementById('historySpot'))
         this.chartHistoryBar.setOption(this.historySpot, true)
+      } catch (e) {
+        //
+      }
+    },
+    async handleCurrentChange(row) {
+      try {
+        const data = await productIndicatorStandard({ product_no: row.product_no })
+        const arr = []
+        const names = [row.product_no, '中央值', '规格幅(+-)', '上规格幅', '下规格幅']
+        for (let index = 0; index < 5; index++) {
+          const order_results = []
+          data.forEach(d => {
+            if (index === 0) {
+              order_results.push({
+                data_point_name: d.data_point__name,
+                value: d.data_point__unit
+              })
+            }
+            d.upper_limit = d.upper_limit ? d.upper_limit : 0
+            d.lower_limit = d.lower_limit ? d.lower_limit : 0
+            if (index === 1) {
+              order_results.push({
+                data_point_name: d.data_point__name,
+                value: setData((d.upper_limit + d.lower_limit) / 2)
+              })
+            }
+            if (index === 2) {
+              order_results.push({
+                data_point_name: d.data_point__name,
+                value: setData(d.upper_limit - (d.upper_limit + d.lower_limit) / 2)
+              })
+            }
+            if (index === 3) {
+              order_results.push({
+                data_point_name: d.data_point__name,
+                value: d.upper_limit
+              })
+            }
+            if (index === 4) {
+              order_results.push({
+                data_point_name: d.data_point__name,
+                value: d.lower_limit
+              })
+            }
+          })
+          arr.push({
+            _current: true,
+            product_no: names[index],
+            order_results: order_results
+          })
+        }
+        if (this.testOrders[0]._current) {
+          this.testOrders.splice(0, 5)
+        }
+        console.log(this.testOrders, 999)
+        this.testOrders = [...arr, ...this.testOrders]
       } catch (e) {
         //
       }
