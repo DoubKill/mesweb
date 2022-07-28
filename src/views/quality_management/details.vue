@@ -109,7 +109,6 @@
         hasChildren: 'hasChildren'}"
       :data-changes-scroll-top="false"
       :row-class-name="tableRowClassName"
-      @current-change="handleCurrentChange"
     >
       <!-- use-virtual 省略号 -->
       <u-table-column label="胶料编码" min-width="35px" align="center" prop="product_no">
@@ -305,7 +304,7 @@ export default {
       recordList: [],
       isMoreLoad: true,
       // 默认每页数量
-      definePafeSize: 10,
+      definePafeSize: 20,
       valueResult: '',
       ALLData: [],
       btnLoading: false,
@@ -315,6 +314,7 @@ export default {
       row_roduct_no: '',
       newHead: [],
       groups: [],
+      viewHeard: false,
       historySpot: {
         title: [{
           text: "Anscombe's quartet"
@@ -431,8 +431,9 @@ export default {
       this.getParams.classes = className || null
       this.clickQuery()
     },
-    productBatchingChanged(val) {
+    async productBatchingChanged(val) {
       this.getParams.product_no = val ? val.material_no : null
+      this.viewHeard = true
       this.clickQuery()
     },
     load(tree, resolve) {
@@ -479,7 +480,7 @@ export default {
       this.testOrders = []
       this.testOrdersAll = []
       this.allPage = 0
-      this.definePafeSize = 10
+      this.definePafeSize = 20
       this.getMaterialTestOrders()
     },
     dayChange(val) {
@@ -529,7 +530,7 @@ export default {
           return
         }
         const paramsObj = JSON.parse(JSON.stringify(this.getParams))
-        paramsObj.page_size = bool ? 99999999 : 10
+        paramsObj.page_size = bool ? 99999999 : 20
         paramsObj.page = bool ? 1 : this.getParams.page
         const data = await materialTestOrders(paramsObj)
         const arr = data.results // 加分页
@@ -574,10 +575,13 @@ export default {
           return arr
         }
         this.allPage = data.count
-
-        console.log(arr, 8888)
         this.testOrdersAll.push(...arr)
         this.testOrders = this.testOrdersAll
+
+        if (this.viewHeard && this.getParams.product_no) {
+          await this.handleCurrentChange()
+          this.viewHeard = false
+        }
       } catch (e) {
         this.listLoading = false
       }
@@ -766,11 +770,11 @@ export default {
         //
       }
     },
-    async handleCurrentChange(row) {
+    async handleCurrentChange() {
       try {
-        const data = await productIndicatorStandard({ product_no: row.product_no })
+        const data = await productIndicatorStandard({ product_no: this.getParams.product_no })
         const arr = []
-        const names = [row.product_no, '中央值', '规格幅(+-)', '上规格幅', '下规格幅']
+        const names = [this.getParams.product_no, '中央值', '规格幅(+-)', '上规格幅', '下规格幅']
         for (let index = 0; index < 5; index++) {
           const order_results = []
           data.forEach(d => {
@@ -816,8 +820,11 @@ export default {
         if (this.testOrders[0]._current) {
           this.testOrders.splice(0, 5)
         }
-        console.log(this.testOrders, 999)
+        if (this.testOrdersAll[0]._current) {
+          this.testOrdersAll.splice(0, 5)
+        }
         this.testOrders = [...arr, ...this.testOrders]
+        this.testOrdersAll = [...arr, ...this.testOrdersAll]
       } catch (e) {
         //
       }
