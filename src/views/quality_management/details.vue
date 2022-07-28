@@ -698,6 +698,10 @@ export default {
             _min = setData(_1 - 10)
             _max = setData(_1 + 30)
           }
+          if (_3 >= 999 && ['伸长率%', '钢拔'].includes(d.name)) {
+            _min = setData(_1 - 150)
+            _max = setData(_1 + 450)
+          }
           if (_min < 0) {
             _min = 0
           }
