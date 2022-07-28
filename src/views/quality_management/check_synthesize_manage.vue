@@ -93,12 +93,16 @@
       <el-table-column type="index" label="No" width="30" />
       <el-table-column align="center" label="生产信息">
         <el-table-column label="工厂日期" prop="day_time" width="80" />
-        <el-table-column label="收皮条码" prop="lot_no" />
-        <el-table-column label="生产班次/班组" width="60" align="center" prop="classes_group" />
+        <el-table-column label="收皮条码" prop="lot_no" width="200" />
+        <el-table-column label="生产班次/班组" width="60" align="center" prop="classes_group">
+          <template slot-scope="{row}">
+            {{ row.classes_group.replace(/班/g, '') }}
+          </template>
+        </el-table-column>
         <el-table-column label="生产机台" prop="equip_no" width="40" />
         <el-table-column label="胶料编码" prop="product_no" />
-        <el-table-column label="收皮重量" prop="actual_weight" width="40" />
-        <el-table-column label="余量" prop="residual_weight" align="center" width="40" />
+        <el-table-column label="收皮重量" prop="actual_weight" width="60" />
+        <el-table-column label="余量" prop="residual_weight" align="center" width="60" />
         <el-table-column label="生产时间" width="80" align="center" prop="production_factory_date" />
         <el-table-column label="有效时间" width="80" align="center" prop="valid_time" />
       </el-table-column>
@@ -109,16 +113,20 @@
             {{ setDate(row.test.test_factory_date,true) }}
           </template>
         </el-table-column>
-        <el-table-column label="检测班次" prop="test.test_class" width="45" />
+        <el-table-column label="检测班次" prop="test.test_class" width="45">
+          <template slot-scope="{row}">
+            {{ row.test.test_class.replace(/班/g, '') }}
+          </template>
+        </el-table-column>
         <el-table-column label="打印时间" width="80" align="center" prop="print_time" />
         <el-table-column label="检测员" prop="test.test_user" width="60" />
-        <el-table-column label="检测结果" prop="test_result" width="30" />
+        <el-table-column label="检测结果" prop="test_result" width="60" />
         <el-table-column label="处理人" prop="deal_user" width="50" />
-        <el-table-column label="处理意见" prop="deal_suggestion" width="40" />
+        <el-table-column label="处理意见" prop="deal_suggestion" width="60" />
         <el-table-column label="处理时间" align="center" prop="deal_time" width="80" />
       </el-table-column>
       <el-table-column label="车次" prop="trains" width="60" />
-      <el-table-column label="打印次数" align="center" width="60">
+      <el-table-column label="打印次数" align="center" width="50">
         <template slot-scope="{row}">
           <el-link type="primary" @click="showList(row)">{{ row.print_times }}</el-link>
         </template>
