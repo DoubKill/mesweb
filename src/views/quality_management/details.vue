@@ -128,8 +128,16 @@
           {{ (row.production_factory_date).split(' ')[0] }}
         </template>
       </u-table-column>
-      <u-table-column align="center" label="生产班次" prop="production_class" min-width="15px" />
-      <u-table-column label="班组" align="center" prop="production_group" min-width="10px" />
+      <u-table-column align="center" label="生产班次" prop="production_class" min-width="15px">
+        <template v-if="row.production_class" slot-scope="{row}">
+          {{ row.production_class.replace(/班/g, '') }}
+        </template>
+      </u-table-column>
+      <u-table-column label="班组" align="center" prop="production_group" min-width="10px">
+        <template v-if="row.production_group" slot-scope="{row}">
+          {{ row.production_group.replace(/班/g, '') }}
+        </template>
+      </u-table-column>
       <u-table-column align="center" label="生产机台" min-width="15px" prop="production_equip_no" />
       <u-table-column label="门尼机台" min-width="20px" align="center" prop="menn" />
       <u-table-column label="流变机台" min-width="20px" align="center" prop="liub" />
