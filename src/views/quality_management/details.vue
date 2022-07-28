@@ -131,8 +131,8 @@
       <u-table-column align="center" label="生产班次" prop="production_class" min-width="15px" />
       <u-table-column label="班组" align="center" prop="production_group" min-width="10px" />
       <u-table-column align="center" label="生产机台" min-width="15px" prop="production_equip_no" />
-      <u-table-column label="门尼机台" min-width="20px" align="center" prop="" />
-      <u-table-column label="流变机台" min-width="20px" align="center" prop="" />
+      <u-table-column label="门尼机台" min-width="20px" align="center" prop="menn" />
+      <u-table-column label="流变机台" min-width="20px" align="center" prop="liub" />
       <u-table-column label="车次" align="center" min-width="10px" prop="actual_trains" />
       <u-table-column label="检测结果" align="center" min-width="15px" prop="is_recheck">
         <template slot-scope="{ row }">
@@ -570,6 +570,16 @@ export default {
         // for (let i = 1; i < 8; i++) {
         //   arr = arr.concat(arr)
         // }
+        arr.forEach(d => {
+          const arr = d.order_results.filter(dd => dd.test_indicator_name === '门尼')
+          const arr1 = d.order_results.filter(dd => dd.test_indicator_name === '流变')
+          if (arr.length) {
+            d.menn = arr[0].machine_name
+          }
+          if (arr1.length) {
+            d.liub = arr1[0].machine_name
+          }
+        })
         this.listLoading = false
         if (bool) {
           return arr
