@@ -64,8 +64,8 @@
             <el-select
               v-model="ruleForm.test_interval"
               :clearable="false"
+              :disabled="!!ruleForm.plan_uid"
               placeholder="请选择"
-              :disabled="!noRecheck"
             >
               <el-option
                 v-for="group in 5"
@@ -128,7 +128,6 @@
             </el-select>
           </el-form-item> -->
         </el-form>
-
         <el-table
           ref="multipleTable"
           v-loading="loading"
@@ -139,6 +138,7 @@
           @selection-change="handleSelectionChange"
         >
           <el-table-column
+            v-if="!add_w"
             type="selection"
             width="40"
           />
@@ -689,6 +689,7 @@ export default {
       isDelRow: false,
       maxTrain: 0,
       minTrain: 0,
+      add_w: false,
       noRecheck: true // false为复检中
     }
   },
@@ -722,10 +723,11 @@ export default {
           this.tableData = data
         } else {
           data.forEach(d => { // 去掉左边相同得数据
-            if (this.removeFun(d)) {
-              return
+            const _min = this.tableDataRight[0].actual_trains
+            const _max = this.tableDataRight[this.tableDataRight.length - 1].actual_trains
+            if (d.actual_trains < _min || d.actual_trains > _max) {
+              this.tableData.push(d)
             }
-            this.tableData.push(d)
           })
         }
         // this.alltableData = data
@@ -734,6 +736,12 @@ export default {
         // 获取最大车次和最小车次
         this.maxTrain = data[data.length - 1].actual_trains
         this.minTrain = data[0].actual_trains
+
+        if (this.tableDataRight.length) {
+          this.add_w = true
+        } else {
+          this.add_w = false
+        }
       } catch (e) {
         this.loading = false
       }
@@ -1167,6 +1175,7 @@ export default {
         this.$message.info('请选择胶料规格')
         return
       }
+      this.add_w = false
       this.tableData = []
       let obj = {
         production_classes: this.search.classes,
