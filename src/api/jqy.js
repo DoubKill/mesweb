@@ -1524,3 +1524,11 @@ export function checkTemperatureTableExport(method, id, data = {}) {
   return request(obj)
 }
 
+export function rubberFrameRepairSummary(method, id, data = {}) {
+  const obj = {
+    url: id ? API.RubberFrameRepairSummary + id + '/' : API.RubberFrameRepairSummary,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

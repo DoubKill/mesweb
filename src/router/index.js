@@ -1558,6 +1558,16 @@ export let asyncRoutes = [
         }
       },
       {
+        path: '/rubber-frame-repair-total',
+        name: 'RubberFrameRepairTotal',
+        component: () => import('@/views/material_base_info_manage/rubber-frame-repair-total'),
+        meta: {
+          title: '胶架维修记录汇总',
+          icon: 'production',
+          permissionName: 'rubber_frame_repair_summary'
+        }
+      },
+      {
         path: '/work-clothes-book',
         name: 'work-clothes-book',
         component: () => import('@/views/material_base_info_manage/work-clothes-book'),

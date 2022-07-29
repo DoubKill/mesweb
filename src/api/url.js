@@ -732,6 +732,7 @@ export default {
   ProductSynthesisProductRate: '/api/v1/quality/product-synthesis-product-rate/',
   ProductSynthesisMonthRate: '/api/v1/quality/product-synthesis-month-rate/',
 
+  RubberFrameRepairSummary: '/api/v1/production/rubber-frame-repair—summary/',
   CheckPointStandard: '/api/v1/equipment/check-point-standard/',
   CheckPointTable: '/api/v1/equipment/check-point-table/',
   CheckPointStandardExport: '/api/v1/equipment/check-point-standard/excel-handle/',
