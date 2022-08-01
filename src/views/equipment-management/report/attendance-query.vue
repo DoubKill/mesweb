@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 投料操作履历查询 -->
+    <!-- 出勤记录表操作履历查询 -->
     <el-form :inline="true">
       <el-form-item label="考勤日期">
         <el-date-picker
