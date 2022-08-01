@@ -1229,6 +1229,15 @@ export function employeeattendancerecords(method, id, data = {}) {
   return request(obj)
 }
 
+export function employeeattendancerecordsLogs(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EmployeeattendancerecordsLogs + id + '/' : API.EmployeeattendancerecordsLogs,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function employeeattendancerecordsexport(params) {
   return request({
     url: API.Employeeattendancerecordsexport,
