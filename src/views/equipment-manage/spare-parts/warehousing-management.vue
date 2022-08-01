@@ -329,7 +329,6 @@
             v-model="creatOrder.equip_warehouse_location"
             filterable
             placeholder="请选择"
-            clearable
             @visible-change="getWarehouseLocation"
           >
             <el-option
@@ -343,7 +342,6 @@
         <el-form-item label="数量" prop="in_quantity">
           <el-input-number
             v-model="creatOrder.in_quantity"
-            :max="quantity"
             :min="1"
             style="width:250px"
           />
@@ -678,7 +676,7 @@ export default {
           { required: true, message: '不能为空', trigger: 'change' }
         ],
         equip_warehouse_location: [
-          { required: true, message: '不能为空', trigger: 'change' }
+          { required: true, message: '不能为空', trigger: 'bulr' }
         ],
         in_quantity: [
           { required: true, message: '不能为空', trigger: 'change' }
@@ -775,9 +773,18 @@ export default {
     //     }
     //   }
     // },
-    clear() {
+    async clear() {
       if (this.creatOrder.equip_warehouse_location) {
         this.creatOrder.equip_warehouse_location = null
+      }
+      try {
+        const data = await equipWarehouseLocation('get', null, { params: { equip_warehouse_area_id: this.creatOrder.equip_warehouse_area, all: 1 }})
+        this.warehouseLocationList = data
+        if (data.length > 0) {
+          this.creatOrder.equip_warehouse_location = data[0].id
+        }
+      } catch (e) {
+        this.warehouseLocationList = []
       }
     },
     async getWarehouseLocation(val) {
@@ -919,28 +926,28 @@ export default {
       }
     },
     async dialog1(row) {
-      if (row.plan_in_quantity <= row.in_quantity) {
-        this.$message('已经全部入库')
-      } else {
-        this.order = row.id
-        this.quantity = row.plan_in_quantity - row.in_quantity
-        this.creatOrder.spare_code = row.spare_code
-        this.creatOrder.spare_name = row.spare_name
-        this.creatOrder.in_quantity = row.plan_in_quantity - row.in_quantity
-        this.creatOrder.equip_warehouse_order = row.equip_warehouse_order
-        this.creatOrder.unit = row.unit
-        this.creatOrder.status = 1
-        this.creatOrder.equip_spare = row.equip_spare
-        const data = await equipWarehouseArea('get', null, { params: { equip_spare: this.creatOrder.equip_spare }})
-        this.warehouseAreaList = data.data.results
-        if (data.data.first) {
-          this.$set(this.creatOrder, 'equip_warehouse_area', data.data.first.area_id)
-          this.warehouseLocationList = await equipWarehouseLocation('get', null, { params: { equip_warehouse_area_id: this.creatOrder.equip_warehouse_area, all: 1 }})
-          // this.warehouseLocationList = data1.filter(d => d.equip_warehouse_area === this.creatOrder.equip_warehouse_area)
-          this.$set(this.creatOrder, 'equip_warehouse_location', data.data.first.location_id)
-        }
-        this.dialogVisible1 = true
+      // if (row.plan_in_quantity <= row.in_quantity) {
+      //   this.$message('已经全部入库')
+      // } else {
+      this.order = row.id
+      this.quantity = row.plan_in_quantity - row.in_quantity
+      this.creatOrder.spare_code = row.spare_code
+      this.creatOrder.spare_name = row.spare_name
+      this.creatOrder.in_quantity = row.plan_in_quantity - row.in_quantity
+      this.creatOrder.equip_warehouse_order = row.equip_warehouse_order
+      this.creatOrder.unit = row.unit
+      this.creatOrder.status = 1
+      this.creatOrder.equip_spare = row.equip_spare
+      const data = await equipWarehouseArea('get', null, { params: { equip_spare: this.creatOrder.equip_spare }})
+      this.warehouseAreaList = data.data.results
+      if (data.data.first) {
+        this.$set(this.creatOrder, 'equip_warehouse_area', data.data.first.area_id)
+        this.warehouseLocationList = await equipWarehouseLocation('get', null, { params: { equip_warehouse_area_id: this.creatOrder.equip_warehouse_area, all: 1 }})
+        // this.warehouseLocationList = data1.filter(d => d.equip_warehouse_area === this.creatOrder.equip_warehouse_area)
+        this.$set(this.creatOrder, 'equip_warehouse_location', data.data.first.location_id)
       }
+      this.dialogVisible1 = true
+      // }
     },
     handleDelete(row) {
       if (row.status === 2 || row.status === 3) {
