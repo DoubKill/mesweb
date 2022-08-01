@@ -22,6 +22,22 @@ service.interceptors.request.use(
   config => {
     const _user = store.getters.name
     const _newUser = Cookies.get('name')
+    if (config.responseType) {
+      const routeName = router.history.current.meta.title
+      // 走进来的是导出 掉接口记录当前操作
+      const a = axios.create({
+        baseURL: process.env.NODE_ENV === 'production' ? '/' : '/api',
+        timeout: 10000000000
+      })
+      a.interceptors.request.use(config => {
+        if (store.getters.token && getToken()) {
+          config.headers['Authorization'] = 'JWT ' + getToken()
+        }
+        return config
+      })
+      a({ url: '/api/v1/system/user-operation-log/', method: 'post', data: { 'operator': _newUser, 'menu_name': routeName, 'operations': `导出：${routeName}列表` }})
+    }
+
     if (_user && _user !== _newUser) {
       Message({
         message: '当前账号已退出，请刷新页面',

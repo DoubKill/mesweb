@@ -69,3 +69,11 @@ export function datapointCurve(params) {
     params
   })
 }
+
+export function productIndicatorStandard(params) {
+  return request({
+    url: API.ProductIndicatorStandard,
+    method: 'get',
+    params
+  })
+}

@@ -403,10 +403,18 @@ export default {
           t_deal_user: obj.t_deal_user,
           tech_deal_result: this.tech_deal_result
         }
+        if (this.$refs.handleCard) {
+          this.$refs.handleCard.loadingBtn = true
+        }
         await unqualifiedDealOrders('patch', obj.id, { data: paramsData })
         this.$message.success('处理成功！！！！')
+        if (this.$refs.handleCard) {
+          this.$refs.handleCard.loadingBtn = false
+        }
       } catch (e) {
-        //
+        if (this.$refs.handleCard) {
+          this.$refs.handleCard.loadingBtn = false
+        }
       }
     },
     cancelFun() {
