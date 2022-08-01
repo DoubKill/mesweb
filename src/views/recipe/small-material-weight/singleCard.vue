@@ -521,10 +521,15 @@ export default {
     },
     async getManual() {
       try {
-        if (!this.formData.product_no || !this.formData.dev_type || !this.formData.batching_equip) {
+        const _obj = { product_no: this.formData.product_no, dev_type: this.formData.dev_type, batching_equip: this.formData.batching_equip }
+        const bool = _obj.product_no.indexOf('[') > -1
+        if (bool) {
+          _obj.dev_type = 'ZWF'
+        }
+        if (!_obj.product_no || !_obj.dev_type || !_obj.batching_equip) {
           return
         }
-        const data = await getManualInfo('get', null, { params: { product_no: this.formData.product_no, dev_type: this.formData.dev_type, batching_equip: this.formData.batching_equip }})
+        const data = await getManualInfo('get', null, { params: _obj })
         this.tableData1New = data.results || []
         this.tableData1 = JSON.parse(JSON.stringify(data.results || []))
 
@@ -565,12 +570,17 @@ export default {
         this.$message.info('没有物料')
         return
       }
+      const _obj = JSON.parse(JSON.stringify(this.formData))
+      const bool = _obj.product_no.indexOf('[') > -1
+      if (bool) {
+        _obj.dev_type = 'ZWF'
+      }
       this.$refs.formRef.validate(async(valid) => {
         if (valid) {
           try {
             this.loadingBtn = true
             const _method = this.formData.id ? 'put' : 'post'
-            await weightingPackageManua(_method, this.formData.id || null, { data: this.formData })
+            await weightingPackageManua(_method, this.formData.id || null, { data: _obj })
             this.$message.success('细料硫磺单配流转卡,操作成功')
             this.handleClose()
             this.loadingBtn = false
