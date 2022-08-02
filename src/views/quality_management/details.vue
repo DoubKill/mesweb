@@ -129,7 +129,7 @@
           <span class="line_w" />
         </template>
       </u-table-column>
-      <u-table-column align="center" label="生产班次" prop="production_class" width="50px">
+      <u-table-column align="center" label="生产班次" prop="production_class" width="70px">
         <template slot-scope="{row}">
           <span v-if="row.production_class"> {{ row.production_class.replace(/班/g, '') }}</span>
           <span class="line_w" />
@@ -141,7 +141,7 @@
           <span class="line_w" />
         </template>
       </u-table-column>
-      <u-table-column align="center" label="生产机台" width="50px" prop="production_equip_no">
+      <u-table-column align="center" label="生产机台" width="60px" prop="production_equip_no">
         <template slot-scope="{row}">
           <span> {{ row.production_equip_no }}</span>
           <span class="line_w" />
@@ -165,7 +165,7 @@
           <span class="line_w" />
         </template>
       </u-table-column>
-      <u-table-column label="检测结果" align="center" width="40px" prop="is_recheck">
+      <u-table-column label="检测结果" align="center" width="60px" prop="is_recheck">
         <template slot-scope="{ row }">
           <div>
             {{ row.is_recheck===true ?'复检':row.is_recheck===false?'正常':'' }}
@@ -187,7 +187,7 @@
       <u-table-column label="处理意见" min-width="60px" prop="deal_suggestion" align="center">
         <template slot-scope="{row}">
           <span> {{ row.deal_suggestion }}</span>
-          <span class="line_w" />
+          <span class="line_w line_w1" />
         </template>
       </u-table-column>
     </u-table>
@@ -229,7 +229,7 @@
           {{ (row.production_factory_date).split(' ')[0] }}
         </template>
       </u-table-column>
-      <u-table-column align="center" label="生产班次" prop="production_class" width="50px">
+      <u-table-column align="center" label="生产班次" prop="production_class" width="70px">
         <template v-if="row.production_class" slot-scope="{row}">
           {{ row.production_class.replace(/班/g, '') }}
         </template>
@@ -239,11 +239,11 @@
           {{ row.production_group.replace(/班/g, '') }}
         </template>
       </u-table-column>
-      <u-table-column align="center" label="生产机台" width="50px" prop="production_equip_no" />
+      <u-table-column align="center" label="生产机台" width="60px" prop="production_equip_no" />
       <u-table-column label="门尼机台" width="60px" align="center" prop="menn" />
       <u-table-column label="流变机台" width="60px" align="center" prop="liub" />
       <u-table-column label="车次" align="center" width="50px" prop="actual_trains" />
-      <u-table-column label="检测结果" align="center" width="40px" prop="is_recheck">
+      <u-table-column label="检测结果" align="center" width="60px" prop="is_recheck">
         <template slot-scope="{ row }">
           <div>
             {{ row.is_recheck===true ?'复检':row.is_recheck===false?'正常':'' }}
@@ -1089,9 +1089,12 @@ function setData(val) {
     display: inline-block;
     width: 100%;
     height: 2px;
-    background: #000;
+    background: #c2bcbc;
     transform: rotate(11deg);
     vertical-align: middle;
+  }
+  .line_w1{
+     transform: rotate(9deg);
   }
 }
 
