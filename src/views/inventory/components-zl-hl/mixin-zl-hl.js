@@ -1,5 +1,5 @@
 import { outboundDeliveryOrderDetails } from '@/api/base_w'
-import { outbound } from '@/api/jqy'
+import { outbound, cancelTask } from '@/api/jqy'
 import { debounce } from '@/utils/index'
 export default {
   data() {
@@ -77,10 +77,13 @@ export default {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
-        }).then(() => {
-          arr.forEach(async d => {
-            await outbound('patch', d.id, { data: { status: '4' }})
+        }).then(async() => {
+          const _arr = []
+          arr.forEach(d => {
+            _arr.push(d.id)
           })
+          await cancelTask('post', null, { data: { 'warehouse_name': this.rowObj.warehouse, 'task_ids': _arr }})
+
           this.$message.success('取消成功')
           if (this.$refs.multipleTable) {
             this.$refs.multipleTable.clearSelection()
