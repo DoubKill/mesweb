@@ -61,20 +61,20 @@
           @click="modifyTrainNewFun(true)"
         >设定批量修改车次</el-button>
       </el-form-item>
+      <el-form-item style="float:right">
+        <el-switch
+          v-model="is_showed"
+          v-permission="['deal_result','range']"
+          active-text="打印时显示区间"
+          @change="showedChange"
+        />
+        <el-button
+          v-permission="['deal_result','print']"
+          style="margin-left:10px"
+          @click="printingFun"
+        >打印</el-button>
+      </el-form-item>
     </el-form>
-    <div style="width:100%;text-align:right;margin-top:-10px">
-      <el-switch
-        v-model="is_showed"
-        v-permission="['deal_result','range']"
-        active-text="打印时显示区间"
-        @change="showedChange"
-      />
-    </div>
-    <el-button
-      v-permission="['deal_result','print']"
-      style="float:right;margin:10px 0;"
-      @click="printingFun"
-    >打印</el-button>
     <el-table
       v-loading="listLoading"
       border
