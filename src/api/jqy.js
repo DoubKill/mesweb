@@ -117,6 +117,15 @@ export function outbound(method, id, data = {}) {
   return request(obj)
 }
 
+export function cancelTask(method, id, data = {}) {
+  const obj = {
+    url: id ? API.CancelTask + id + '/' : API.CancelTask,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 // 机台别不合格率
 export function machinePass(method, id, data = {}) {
   const obj = {

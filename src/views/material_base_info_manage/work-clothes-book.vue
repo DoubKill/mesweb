@@ -31,13 +31,14 @@
       <table
         v-if="tableList.length"
         id="out-table"
-        border="1"
-        bordercolor="black"
-        class="info-table"
+        class="info-table table_wrap"
+        style="transform-style:preserve-3d;"
       >
+        <!-- border="1"
+        bordercolor="black" -->
         <tr>
-          <th>工装类型</th>
-          <th colspan="2">放置区域</th>
+          <th class="leftOne">工装类型</th>
+          <th colspan="2" class="leftTwo">放置区域</th>
           <th
             v-for="(value) in day"
             :key="value"
@@ -45,9 +46,9 @@
           >{{ month }}/{{ value }}</th>
         </tr>
         <tr>
-          <td rowspan="7">胶架</td>
-          <td rowspan="2">立体库</td>
-          <td>混炼库</td>
+          <td rowspan="7" class="leftOne">胶架</td>
+          <td rowspan="2" class="leftTwo">立体库</td>
+          <td class="leftThree">混炼库</td>
           <td
             v-for="(value,_key) in tableList[0][0]"
             :key="_key"
@@ -65,7 +66,7 @@
           </td>
         </tr>
         <tr>
-          <td>终练库</td>
+          <td class="leftThree">终练库</td>
           <td
             v-for="(value,_key) in tableList[0][1]"
             :key="_key"
@@ -83,8 +84,8 @@
           </td>
         </tr>
         <tr>
-          <td rowspan="3">现场</td>
-          <td>一楼</td>
+          <td rowspan="3" class="leftTwo">现场</td>
+          <td class="leftThree">一楼</td>
           <td
             v-for="(value,_key) in tableList[0][2]"
             :key="_key"
@@ -102,7 +103,7 @@
           </td>
         </tr>
         <tr>
-          <td>二楼</td>
+          <td class="leftThree">二楼</td>
           <td
             v-for="(value,_key) in tableList[0][3]"
             :key="_key"
@@ -120,7 +121,7 @@
           </td>
         </tr>
         <tr>
-          <td>三楼</td>
+          <td class="leftThree">三楼</td>
           <td
             v-for="(value,_key) in tableList[0][4]"
             :key="_key"
@@ -138,8 +139,8 @@
           </td>
         </tr>
         <tr>
-          <td rowspan="2">厂外</td>
-          <td>分厂区外</td>
+          <td rowspan="2" class="leftTwo">厂外</td>
+          <td class="leftThree">分厂区外</td>
           <td
             v-for="(value,_key) in tableList[0][5]"
             :key="_key"
@@ -157,7 +158,7 @@
           </td>
         </tr>
         <tr>
-          <td>硫磺库外</td>
+          <td class="leftThree">硫磺库外</td>
           <td
             v-for="(value,_key) in tableList[0][6]"
             :key="_key"
@@ -175,7 +176,7 @@
           </td>
         </tr>
         <tr>
-          <td colspan="3">小计</td>
+          <td colspan="3" class="leftOne">小计</td>
           <td
             v-for="(value,_key) in tableList[0][7]"
             :key="_key"
@@ -186,9 +187,9 @@
         </tr>
         <!-- 第二个合计 -->
         <tr>
-          <td rowspan="4">小胶架</td>
-          <td rowspan="3">现场</td>
-          <td>一楼</td>
+          <td rowspan="4" class="leftOne">小胶架</td>
+          <td rowspan="3" class="leftTwo">现场</td>
+          <td class="leftThree">一楼</td>
           <td
             v-for="(value,_key) in tableList[1][0]"
             :key="_key"
@@ -206,7 +207,7 @@
           </td>
         </tr>
         <tr>
-          <td>二楼</td>
+          <td class="leftThree">二楼</td>
           <td
             v-for="(value,_key) in tableList[1][1]"
             :key="_key"
@@ -224,7 +225,7 @@
           </td>
         </tr>
         <tr>
-          <td>三楼</td>
+          <td class="leftThree">三楼</td>
           <td
             v-for="(value,_key) in tableList[1][2]"
             :key="_key"
@@ -242,8 +243,8 @@
           </td>
         </tr>
         <tr>
-          <td>厂外</td>
-          <td>硫磺库外</td>
+          <td class="leftTwo">厂外</td>
+          <td class="leftThree">硫磺库外</td>
           <td
             v-for="(value,_key) in tableList[1][3]"
             :key="_key"
@@ -261,7 +262,7 @@
           </td>
         </tr>
         <tr>
-          <td colspan="3">小计</td>
+          <td colspan="3" class="leftOne">小计</td>
           <td
             v-for="(value,_key) in tableList[1][4]"
             :key="_key"
@@ -272,9 +273,9 @@
         </tr>
         <!-- 第三个合计 -->
         <tr>
-          <td>坏胶架</td>
-          <td />
-          <td />
+          <td class="leftOne">坏胶架</td>
+          <td class="leftTwo" />
+          <td class="leftThree" />
           <td
             v-for="(value,_key) in tableList[2][0]"
             :key="_key"
@@ -292,7 +293,7 @@
           </td>
         </tr>
         <tr>
-          <td colspan="3">胶架合计</td>
+          <td colspan="3" class="leftOne">胶架合计</td>
           <td
             v-for="(value,_key) in tableList[2][1]"
             :key="_key"
@@ -303,9 +304,9 @@
         </tr>
         <!-- 第四个合计 -->
         <tr>
-          <td rowspan="2">细料车（红）</td>
-          <td rowspan="2">现场</td>
-          <td>二楼</td>
+          <td rowspan="2" class="leftOne">细料车（红）</td>
+          <td rowspan="2" class="leftTwo">现场</td>
+          <td class="leftThree">二楼</td>
           <td
             v-for="(value,_key) in tableList[3][0]"
             :key="_key"
@@ -323,7 +324,7 @@
           </td>
         </tr>
         <tr>
-          <td>三楼</td>
+          <td class="leftThree">三楼</td>
           <td
             v-for="(value,_key) in tableList[3][1]"
             :key="_key"
@@ -341,9 +342,9 @@
           </td>
         </tr>
         <tr>
-          <td rowspan="2">细料车（绿）</td>
-          <td rowspan="2">现场</td>
-          <td>二楼</td>
+          <td rowspan="2" class="leftOne">细料车（绿）</td>
+          <td rowspan="2" class="leftTwo">现场</td>
+          <td class="leftThree">二楼</td>
           <td
             v-for="(value,_key) in tableList[3][2]"
             :key="_key"
@@ -361,7 +362,7 @@
           </td>
         </tr>
         <tr>
-          <td>三楼</td>
+          <td class="leftThree">三楼</td>
           <td
             v-for="(value,_key) in tableList[3][3]"
             :key="_key"
@@ -379,7 +380,7 @@
           </td>
         </tr>
         <tr>
-          <td colspan="3">小计</td>
+          <td colspan="3" class="leftOne">小计</td>
           <td
             v-for="(value,_key) in tableList[3][4]"
             :key="_key"
@@ -390,9 +391,9 @@
         </tr>
         <!-- 第五个合计 -->
         <tr>
-          <td rowspan="2">自制硫磺箱</td>
-          <td rowspan="2">现场</td>
-          <td>二楼</td>
+          <td rowspan="2" class="leftOne">自制硫磺箱</td>
+          <td rowspan="2" class="leftTwo">现场</td>
+          <td class="leftThree">二楼</td>
           <td
             v-for="(value,_key) in tableList[4][0]"
             :key="_key"
@@ -410,7 +411,7 @@
           </td>
         </tr>
         <tr>
-          <td>三楼</td>
+          <td class="leftThree">三楼</td>
           <td
             v-for="(value,_key) in tableList[4][1]"
             :key="_key"
@@ -428,9 +429,9 @@
           </td>
         </tr>
         <tr>
-          <td rowspan="2">购买硫磺箱</td>
-          <td rowspan="2">现场</td>
-          <td>二楼</td>
+          <td rowspan="2" class="leftOne">购买硫磺箱</td>
+          <td rowspan="2" class="leftTwo">现场</td>
+          <td class="leftThree">二楼</td>
           <td
             v-for="(value,_key) in tableList[4][2]"
             :key="_key"
@@ -448,7 +449,7 @@
           </td>
         </tr>
         <tr>
-          <td>三楼</td>
+          <td class="leftThree">三楼</td>
           <td
             v-for="(value,_key) in tableList[4][3]"
             :key="_key"
@@ -466,7 +467,7 @@
           </td>
         </tr>
         <tr>
-          <td colspan="3">小计</td>
+          <td colspan="3" class="leftOne">小计</td>
           <td
             v-for="(value,_key) in tableList[4][4]"
             :key="_key"
@@ -477,9 +478,9 @@
         </tr>
         <!-- 第六个合计 -->
         <tr>
-          <td>圆桶（单配）</td>
-          <td>现场</td>
-          <td>三楼</td>
+          <td class="leftOne">圆桶（单配）</td>
+          <td class="leftTwo">现场</td>
+          <td class="leftThree">三楼</td>
           <td
             v-for="(value,_key) in tableList[5][0]"
             :key="_key"
@@ -497,7 +498,7 @@
           </td>
         </tr>
         <tr>
-          <td colspan="3">小计</td>
+          <td colspan="3" class="leftOne">小计</td>
           <td
             v-for="(value,_key) in tableList[5][1]"
             :key="_key"
@@ -530,6 +531,8 @@ export default {
   },
   created() {
     this.getList()
+  },
+  mounted() {
   },
   methods: {
     async getList() {
@@ -631,19 +634,53 @@ export default {
     .table-fa{
         overflow-x:scroll;
     }
-    table {
-    //   width: 100%;
-      border-collapse: collapse;
-      text-align: center;
-    }
+
+    //
+ .table_wrap{
+  width:100%;
+  overflow: auto;
+  border-top:1px solid #000;
+}
+table {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse:separate;
+  border-spacing:0;
+  border:0;
+}
+
+td, th{
+    width:130px;
+    height: 30px;
+     text-align: center;
+    box-sizing: border-box;
+    border-right:1px solid #000;
+    border-bottom:1px solid #000;
+    /*超出长度...*/
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
 
    .info-table {
       td,th {
-        min-width: 80px;
         padding: 2px 0;
       }
     }
-    .td-style{
-        min-width: 120px !important;
+
+    .leftOne, .leftTwo,.leftThree{
+       position:sticky;
+      left:0;
+      background:#FFF;
+      border-left:1px solid #000;
+      z-index:2;
+    }
+    .leftTwo {
+      left:130px;
+      border-left:none;
+    }
+    .leftThree {
+      left:195px;
+      border-left:none;
     }
 </style>

@@ -222,6 +222,7 @@
       >
         <template slot-scope="scope">
           <el-button
+            v-if="scope.row.revocation==='N'"
             v-permission="['equip_warehouse_record', 'revocation']"
             type="primary"
             size="mini"
