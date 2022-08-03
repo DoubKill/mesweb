@@ -212,6 +212,7 @@
         </el-form-item>
         <el-form-item label="班次" prop="classes">
           <class-select
+            :is-clearable="false"
             :value-default="typeForm.classes"
             :is-disabled="typeForm.id?true:false"
             style="width:250px"
@@ -225,7 +226,7 @@
             :disabled="typeForm.id?true:false"
             style="width:250px"
             placeholder="请选择"
-            @change="searchContent"
+            @change="searchContent(true)"
           >
             <el-option
               v-for="item in options"
@@ -241,7 +242,8 @@
             :disabled="typeForm.id?true:false"
             style="width:250px"
             placeholder="请选择"
-            @change="searchContent"
+            @visible-change="visibleStation"
+            @change="searchContent(false)"
           >
             <el-option
               v-for="item in options1"
@@ -380,8 +382,16 @@ export default {
       getEquip(obj).then(response => {
         this.options = response.results
       })
-      const data = await checkPointStandard('get', null, { params: { all_station: 1 }})
-      this.options1 = data.results
+    },
+    async visibleStation(val) {
+      if (val) {
+        if (this.typeForm.equip_no) {
+          const data = await checkPointStandard('get', null, { params: { all_station: this.typeForm.equip_no }})
+          this.options1 = data.results
+        } else {
+          this.$message('请先选择机台')
+        }
+      }
     },
     async getList() {
       try {
@@ -412,7 +422,15 @@ export default {
       this.dialogEditVisible = true
       this.typeForm = { select_date: setDate(), classes: null }
     },
-    async searchContent() {
+    async searchContent(val) {
+      if (val) {
+        this.typeForm.station = null
+        this.typeForm.check_point_standard = null
+        this.typeForm.point_standard_code = null
+        this.typeForm.point_standard_name = null
+        this.tableData1 = []
+        return
+      }
       if (!this.typeForm.equip_no) {
         this.$message.info('请选择适用机台')
       } else if (!this.typeForm.station) {
