@@ -196,7 +196,8 @@
     >
       <el-form ref="typeForm" :rules="rules" :model="typeForm" label-width="150px" inline>
         <el-form-item label="点检表编号">
-          <el-input v-model="typeForm.point_standard_code" style="width:250px" disabled />
+          <el-input v-if="typeForm.id" v-model="typeForm.point_standard_code" style="width:250px" disabled />
+          <el-input v-else style="width:250px" disabled />
         </el-form-item>
         <br>
         <el-form-item label="日期" prop="select_date">
@@ -342,6 +343,7 @@ export default {
       dateValue: [],
       tableData: [],
       tableData1: [],
+      point_standard_code: null,
       dialogEditVisible: false,
       typeForm: {},
       rules: {
