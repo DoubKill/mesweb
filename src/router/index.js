@@ -488,7 +488,7 @@ export let asyncRoutes = [
             meta: {
               title: '原材料配比查询',
               faName: 'RbRecipe',
-              permissionName: ''
+              permissionName: 'product_ratio'
             }
           }
         ] },
