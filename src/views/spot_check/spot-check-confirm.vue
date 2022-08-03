@@ -39,20 +39,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="岗位">
-        <el-select
-          v-model="getParams.station"
-          style="width:150px"
-          placeholder="请选择"
-          clearable
-          @change="changSelect"
-        >
-          <el-option
-            v-for="item in options1"
-            :key="item"
-            :label="item"
-            :value="item"
-          />
-        </el-select>
+        <el-input v-model="getParams.station" style="width:150px" clearable @input="changDebounce" />
       </el-form-item>
       <el-form-item label="状态">
         <el-select
