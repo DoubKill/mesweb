@@ -470,6 +470,16 @@ export let asyncRoutes = [
               faName: 'RbRecipe',
               permissionName: 'productbatching'
             }
+          },
+          {
+            path: '/rb/material-compare/',
+            name: 'RbMaterialCompare',
+            component: () => import('@/views/rubber_recipe_standard_manage/material-compare'),
+            meta: {
+              title: '原材料配比查询',
+              faName: 'RbRecipe',
+              permissionName: ''
+            }
           }
         ] },
       {

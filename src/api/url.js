@@ -730,5 +730,7 @@ export default {
   ProductSynthesisEquipRate: '/api/v1/quality/product-synthesis-equip-rate/',
   ProductSynthesisGroupRate: '/api/v1/quality/product-synthesis-group-rate/',
   ProductSynthesisProductRate: '/api/v1/quality/product-synthesis-product-rate/',
-  ProductSynthesisMonthRate: '/api/v1/quality/product-synthesis-month-rate/'
+  ProductSynthesisMonthRate: '/api/v1/quality/product-synthesis-month-rate/',
+
+  ProductRatio: '/api/v1/recipe/product-ratio/'
 }

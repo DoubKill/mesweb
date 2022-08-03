@@ -700,4 +700,12 @@ export function levelBatchSet(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function productRatio(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ProductRatio + id + '/' : API.ProductRatio,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 
