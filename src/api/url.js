@@ -512,6 +512,7 @@ export default {
   OutboundPproductInfo: '/api/v1/inventory/outbound-product-info/',
   // 出库
   Outbound: '/api/v1/inventory/outbound-delivery-order-details/',
+  CancelTask: '/api/v1/inventory/outbound-delivery-order-details/cancel-task/',
   // 机台别不合格率
   MachinePass: '/api/v1/quality/unqialified-equip/',
   // 胶料别不合格率
@@ -718,6 +719,7 @@ export default {
   XlReportWeightStatics: '/api/v1/terminal/xl-report-weight-statics/',
   ProductExpiresList: '/api/v1/inventory/product-expires-list/',
   ProductExpiresDetails: '/api/v1/inventory/product-expires-details/',
+  WfProductBatching: '/api/v1/recipe/wf-product-batching/',
 
   WmsAddPrint: '/api/v1/terminal/wms-add-print/',
   HfForceHandle: '/api/v1/inventory/hf-force-handle/',

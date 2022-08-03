@@ -112,6 +112,11 @@
         min-width="20"
       />
       <el-table-column
+        prop="single_price"
+        label="单价"
+        min-width="20"
+      />
+      <el-table-column
         prop="quantity"
         label="在库数量"
         min-width="20"
@@ -123,6 +128,11 @@
           >{{ scope.row.quantity }}</el-link>
         </template>
       </el-table-column>
+      <el-table-column
+        prop="total_price"
+        label="总金额"
+        min-width="20"
+      />
       <el-table-column
         prop="unit"
         label="标准单位"

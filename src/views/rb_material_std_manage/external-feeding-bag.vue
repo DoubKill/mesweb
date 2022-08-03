@@ -4,7 +4,7 @@
     class="newIndex"
     element-loading-text="加载中..."
   >
-    <!-- 胶料配方标准管理 -->
+    <!-- 外供料包的配方 -->
     <el-form :inline="true">
       <el-form-item label="状态">
         <el-select
@@ -22,48 +22,15 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="SITE">
-        <SITESelect
-          v-model="search.site"
-          @returnBack="changeSearch"
-        />
-      </el-form-item>
-      <el-form-item label="段次">
-        <StageIdSelect
-          v-model="search.stage_id"
-          @change="changeSearch"
-        />
-      </el-form-item>
-      <el-form-item label="生产机型">
-        <equip-category-select
-          v-model="search.dev_type"
-          @change="changeSearch"
-        />
-      </el-form-item>
       <el-form-item label="胶料编码">
         <el-input
           v-model="search.stage_product_batch_no"
           style="width: 200px"
+          clearable
           @input="changeSearch"
         />
       </el-form-item>
-      <el-form-item label="发送上辅机情况">
-        <el-select
-          v-model="search.filter_type"
-          style="width: 120px"
-          clearable
-          placeholder="请选择"
-          @change="changeSearch"
-        >
-          <el-option
-            v-for="item in [{name:'部分发送',label:1},{name:'未设定机台',label:2}]"
-            :key="item.name"
-            :label="item.name"
-            :value="item.label"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="配方类别">
+      <!-- <el-form-item label="配方类别">
         <el-select
           v-model="search.recipe_type"
           clearable
@@ -77,7 +44,7 @@
             :value="item.global_name"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="原材料名称">
         <el-select
           v-model="search.wms_material_name"
@@ -96,32 +63,32 @@
       </el-form-item>
       <el-form-item style="float: right">
         <el-button
-          v-if="checkPermission(['productbatching','add'])"
+          v-if="checkPermission(['wfproductbatching','add'])"
           @click="newRubberClicked"
         >新建</el-button>
         <el-button
-          v-if="checkPermission(['productbatching','change'])"
+          v-if="checkPermission(['wfproductbatching','change'])"
           :disabled="![1,4].includes(currentRow.used_type)"
           @click="showPutRubberMaterialDialog"
         >配料</el-button>
       </el-form-item>
       <el-form-item style="float: right">
         <el-button
-          v-if="checkPermission(['productbatching','add'])"
+          v-if="checkPermission(['wfproductbatching','add'])"
           :disabled="!currentRow.id"
           @click="copyClicked"
         >复制</el-button>
       </el-form-item>
-      <el-form-item style="float: right">
+      <!-- <el-form-item style="float: right">
         <el-button
           v-if="checkPermission(['productbatching','change'])"
           type="primary"
           @click="replacementDialog"
         >原材料替换</el-button>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item style="float: right">
         <el-button
-          v-if="checkPermission(['productbatching','change'])"
+          v-if="checkPermission(['wfproductbatching','change'])"
           type="primary"
           :loading="btnExportLoad"
           @click="exportTable"
@@ -135,15 +102,14 @@
       border
       size="mini"
       row-key="id"
-      :row-class-name="tableRowClassName"
       @row-click="handleCurrentChange"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column
+      <!-- <el-table-column
         type="selection"
         width="55"
         :reserve-selection="true"
-      />
+      /> -->
       <el-table-column
         align="center"
         type="index"
@@ -159,32 +125,10 @@
           <el-link
             type="primary"
             :underline="false"
-            @click="showGridTable(scope.row.id)"
+            @click="showGridTable(scope.row)"
           >{{ scope.row.stage_product_batch_no }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column
-        min-width="10"
-        prop="product_name"
-        label="胶料名称"
-      />
-      <el-table-column
-        align="center"
-        prop="site_name"
-        label="site"
-        width="40px"
-      />
-      <el-table-column
-        align="center"
-        prop="stage_name"
-        label="段次"
-        width="45px"
-      />
-      <el-table-column
-        min-width="10"
-        prop="dev_type_name"
-        label="炼胶机类型"
-      />
       <el-table-column
         min-width="10"
         prop="batching_weight"
@@ -209,61 +153,42 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
-              v-if="scope.row.used_type === 5 && checkPermission(['productbatching','edit'])"
+              v-if="scope.row.used_type === 5 && checkPermission(['wfproductbatching','edit'])"
               size="mini"
               @click="status_recipe_fun(scope.row.id,true)"
             >编辑</el-button>
             <el-button
-              v-if="scope.row.used_type === 1 && checkPermission(['productbatching','submit'])"
+              v-if="scope.row.used_type === 1 && checkPermission(['wfproductbatching','submit'])"
               size="mini"
               @click="status_recipe_fun(scope.row.id,true)"
             >提交</el-button>
             <el-button
-              v-if="scope.row.used_type === 2 && checkPermission(['productbatching','check'])"
+              v-if="scope.row.used_type === 2 && checkPermission(['wfproductbatching','check'])"
               size="mini"
               @click="status_recipe_fun(scope.row.id,true)"
             >校对</el-button>
             <el-button
-              v-if="[3,7].includes(scope.row.used_type) && checkPermission(['productbatching','use'])"
+              v-if="[3,7].includes(scope.row.used_type) && checkPermission(['wfproductbatching','use'])"
               size="mini"
               @click="status_recipe_fun(scope.row.id,true)"
             >启用</el-button>
-            <!-- v-if="(scope.row.used_type === 2 && checkPermission(['productbatching','check'])) |
-                (scope.row.used_type === 3 && checkPermission(['productbatching','use']))" -->
             <el-button
               v-if="(![5,4,7].includes(scope.row.used_type) && checkPermission(['wfproductbatching','refuse']))"
               size="mini"
               @click="status_recipe_fun(scope.row.id,false)"
             >驳回</el-button>
             <el-button
-              v-if="checkPermission(['productbatching','abandon'])&&
+              v-if="checkPermission(['wfproductbatching','abandon'])&&
                 [5,4,7].includes(scope.row.used_type)"
               size="mini"
               @click="status_recipe_fun(scope.row.id,false,'废弃')"
             >废弃</el-button>
             <el-button
-              v-if="checkPermission(['productbatching','stop'])&&
+              v-if="checkPermission(['wfproductbatching','stop'])&&
                 [4].includes(scope.row.used_type)"
               size="mini"
               @click="status_recipe_fun(scope.row.id,false,'停用')"
             >停用</el-button>
-          </el-button-group>
-        </template>
-      </el-table-column>
-      <el-table-column
-        align="center"
-        width="70px"
-        label="发送到上辅机"
-      >
-        <template slot-scope="scope">
-          <el-button-group>
-            <el-button
-              v-if="scope.row.used_type === 4 && checkPermission(['productbatching','send'])"
-              :disabled="!scope.row.enable_equip.length"
-              size="mini"
-              title="请配置可用机台"
-              @click="send_auxiliary(scope.row)"
-            >发送</el-button>
           </el-button-group>
         </template>
       </el-table-column>
@@ -275,11 +200,10 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
-              v-if="scope.row.used_type === 4 && checkPermission(['productbatching','sendXl'])"
+              v-if="scope.row.used_type === 4 && checkPermission(['wfproductbatching','sendXl'])"
               title="请配置可用机台"
               type="primary"
               size="mini"
-              :disabled="!scope.row.enable_equip.length"
               @click="send_weighing(scope.row)"
             >发送</el-button>
           </el-button-group>
@@ -332,20 +256,50 @@
       :old-page="false"
       @currentChange="currentChange"
     />
-    <el-alert
-      style="color:black"
-      title="表格背景色说明：配方里面选的可用机台发送失败或者未发送，列表显示蓝色"
-      type="success"
-    />
-    <createdRubberMaterial
-      ref="createdRubberMaterialRef"
-      :show="dialogAddRubberMaterial"
-      :material-form="materialForm"
-      :is-view="isView"
-      :is-copy="isCopy"
-      @handleCloseMaterial="handleCloseMaterial"
-      @refreshList="refreshList"
-    />
+    <el-dialog
+      :title="`${isCopy?'复制':'新建'}外发料包配方`"
+      :visible.sync="dialogAddRubberMaterial"
+      width="600"
+      :before-close="handleCloseMaterial"
+      class="add-style"
+    >
+      <el-form ref="rubberMaterialForm" v-loading="loadingForm" :model="rubberMaterialForm" :rules="rules" label-width="100px">
+        <el-form-item
+          prop="weigh_type"
+        >
+          <el-radio v-model="rubberMaterialForm.weigh_type" :label="2">细料包</el-radio>
+          <el-radio v-model="rubberMaterialForm.weigh_type" :label="1">硫磺包</el-radio>
+        </el-form-item>
+        <el-form-item
+          label="胶料编码"
+          prop="product_info"
+        >
+          <el-input v-model="rubberMaterialForm.product_info" placeholder="胶料编码" @change="rubberMaterialChanged" />
+        </el-form-item>
+        <el-form-item label="备注" prop="precept">
+          <el-input v-model="rubberMaterialForm.precept" placeholder="备注" @change="rubberMaterialChanged" />
+        </el-form-item>
+        <el-form-item label="胶料配方编码">
+          <el-input
+            v-model="rubberMaterialForm.stage_product_batch_no"
+            placeholder="胶料配方编码"
+            disabled
+          />
+        </el-form-item>
+        <br>
+        <el-form-item style="text-align:right">
+          <el-button
+            type="primary"
+            @click="NewAddMaterial('rubberMaterialForm',true)"
+          >配料</el-button>
+          <el-button
+            type="primary"
+            :loading="btnLoading"
+            @click="NewAddMaterial('rubberMaterialForm',false)"
+          >生成</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
 
     <el-dialog
       :title="`称量配方发送  MES->称量系统`"
@@ -453,6 +407,149 @@
         type="success"
       />
     </el-dialog>
+
+    <el-dialog
+      title="胶料配料标准"
+      :visible.sync="showIngredient"
+      width="90%"
+      :before-close="handleCloseIngredient"
+    >
+      <el-form
+        v-if="!loadingForm"
+        :inline="true"
+        :model="rubberMaterialForm"
+      >
+        <el-form-item label="胶料编码">
+          <el-input
+            v-model="rubberMaterialForm.product_info"
+            :disabled="true"
+            placeholder="胶料编码"
+          />
+        </el-form-item>
+        <el-form-item label="胶料配方编码">
+          <el-input
+            v-model="rubberMaterialForm.stage_product_batch_no"
+            :disabled="true"
+            placeholder="胶料配方编码"
+            style="width:300px"
+          />
+        </el-form-item>
+        <el-form-item
+          v-if="!isView"
+          style="float:right;"
+        >
+          <el-button @click="putNewsaveMaterialClicked">保存</el-button>
+        </el-form-item>
+        <div style="clear:both" />
+      </el-form>
+      <h3 v-if="!loadingForm">{{ Number(rubberMaterialForm.weigh_type)===2?'细料':'硫磺' }}</h3>
+      <el-table
+        v-loading="loadingForm"
+        :data="tableDataIngredient"
+        border
+        show-summary
+      >
+        <el-table-column
+          label="No"
+          type="index"
+          width="60"
+        />
+        <el-table-column
+          prop="material_type"
+          label="类别"
+          width="80"
+          column-key="material_type"
+        />
+        <el-table-column label="原材料">
+          <template slot-scope="{row,$index}">
+            <el-input
+              v-model="row.material_name"
+              size="mini"
+              :disabled="true"
+            >
+              <el-button
+                v-if="!isView"
+                slot="append"
+                icon="el-icon-search"
+                @click="pop_up_raw_material($index)"
+              />
+            </el-input>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="实际重量/kg"
+          prop="actual_weight"
+        >
+          <template slot-scope="{row,$index}">
+            <el-input-number
+              v-model.number="row.standard_weight"
+              size="mini"
+              :min="0"
+              controls-position="right"
+              :disabled="isView"
+              @change="checkTolerance(row,$index)"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="误差"
+          prop="standard_error"
+        >
+          <template slot-scope="{row}">
+            <el-input-number
+              v-model.number="row.standard_error"
+              size="mini"
+              controls-position="right"
+              :disabled="isView"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column
+          width="120"
+          label="配料"
+        >
+          <template slot-scope="{row}">
+            <el-select
+              v-model="row.master"
+              clearable
+              :disabled="isView"
+              placeholder="请选择"
+            >
+              <el-option
+                v-for="item1 in ['S','F']"
+                :key="item1"
+                :label="item1"
+                :value="item1"
+              />
+            </el-select>
+          </template>
+        </el-table-column>
+        <el-table-column
+          v-if="!isView"
+          label="操作"
+        >
+          <template slot-scope="{$index}">
+            <el-button
+              size="mini"
+              @click="del_raw_material_row($index)"
+            >删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div v-if="!isView" style="text-align: center">
+        <el-button
+          size="mini"
+          @click="insert_NewPracticalWeightChanged"
+        >插入一行</el-button>
+      </div>
+    </el-dialog>
+
+    <materialSelection
+      ref="rawMaterialSync"
+      :show="dialogRawMaterialSync"
+      @handleCloseMaterialSelection="handleCloseMaterialSelection"
+      @handleMaterialSelect="handleMaterialSelect"
+    />
   </div>
 </template>
 
@@ -460,22 +557,21 @@
 import { mapGetters } from 'vuex'
 import { checkPermission } from '@/utils'
 import commonVal from '@/utils/common'
-import { getToken } from '@/utils/auth'
-import { rubber_material_url, send_auxiliary_url, xlRecipeNotice, replaceRecipeOne } from '@/api/rubber_recipe_fun'
-import StageIdSelect from '@/components/StageSelect/StageIdSelect'
-import SITESelect from './components/SITESelect'
-import createdRubberMaterial from './components/createdRubberMaterial'
+import { product_info_url, xlRecipeNotice, replaceRecipeOne, wfProductBatching } from '@/api/rubber_recipe_fun'
 import page from '@/components/page'
-import EquipCategorySelect from '@/components/EquipCategorySelect'
 import { globalCodesUrl, materialsUrl } from '@/api/base_w'
+import materialSelection from './components/materialSelection'
+import { getMaterialTolerance } from '@/api/base_w_five'
 
 export default {
-  name: 'RbMaterialStdManage',
-  components: { page, StageIdSelect, createdRubberMaterial, SITESelect, EquipCategorySelect },
+  name: 'ExternalFeedingBag',
+  components: { page, materialSelection },
   data() {
     return {
       loading: false,
-      search: {},
+      search: {
+        page: 1, page_size: 10
+      },
       currentRow: {},
       rubberStateOptions: commonVal.rubberStateList,
       tableData: [],
@@ -502,7 +598,20 @@ export default {
       tableData1: [],
       selectionList: [],
       dialogTotal: 0,
-      dialogPage: 1
+      dialogPage: 1,
+      productBatchNoOptions: [],
+      rules: {
+        product_info: [{ required: true, message: '请选择胶料编码', trigger: 'blur' }],
+        weigh_type: [{ required: true, message: '请选择新建类型', trigger: 'change' }],
+        precept: [{ required: true, message: '请选择新建类型', trigger: 'blur' }]
+      },
+      btnLoading: false,
+      showIngredient: false,
+      formInline: {},
+      tableDataIngredient: [],
+      dialogRawMaterialSync: false,
+      currentMaterialIndex: null,
+      loadingForm: false
     }
   },
   computed: {
@@ -513,6 +622,8 @@ export default {
     this.rubber_material_list()
     this.getFormulaType()
     this.getRawMaterial()
+
+    this.product_info_list()
   },
   methods: {
     checkPermission,
@@ -526,45 +637,16 @@ export default {
       this.rubber_material_list()
     },
     newRubberClicked() {
-      this.materialForm = {
-        factory: '',
-        site: '',
-        SITE_name: '',
-        stage_name: '',
-        stage: '',
-        product_info: '',
-        product_name: '',
-        versions: '',
-        precept: '',
-        stage_product_batch_no: '',
-        production_time_interval: 0
-      }
       this.isCopy = false
+      this.rubberMaterialForm = {}
       this.dialogAddRubberMaterial = true
     },
     copyClicked() {
-      // this.materialForm = {
-      //   factory: this.currentRow.factory,
-      //   site: this.currentRow.site,
-      //   SITE_name: this.currentRow.site_name,
-      //   stage_name: this.currentRow.stage_name,
-      //   stage: this.currentRow.stage,
-      //   product_info: this.currentRow.product_info,
-      //   product_name: this.currentRow.product_name,
-      //   versions: this.currentRow.versions,
-      //   precept: this.currentRow.precept,
-      //   stage_product_batch_no: this.currentRow.stage_product_batch_no,
-      //   id: this.currentRow.id,
-      //   dev_type: this.currentRow.dev_type,
-      //   dev_type_name: this.currentRow.dev_type_name,
-      //   production_time_interval: this.currentRow.production_time_interval || '',
-      //   enable_equip: this.currentRow.enable_equip || [],
-      //   new_recipe_id: this.currentRow.new_recipe_id || 0,
-      //   send_success_equip: this.currentRow.send_success_equip || []
-      // }
-      this.materialForm = JSON.parse(JSON.stringify(this.currentRow))
+      // this.materialForm = JSON.parse(JSON.stringify(this.currentRow))
+      // this.rubberMaterialForm = {}
       this.dialogAddRubberMaterial = true
-      this.isCopy = true
+      // this.isCopy = true
+      this.getInfo()
     },
     async getFormulaType() {
       try {
@@ -653,7 +735,7 @@ export default {
       }
       this.btnExportLoad = true
       const obj = Object.assign({ export: 1, wms_material_name: this.search.wms_material_name, exclude_used_type: 6 }, {})
-      const _api = rubber_material_url
+      const _api = wfProductBatching
       _api('get', null, { params: obj, responseType: 'blob' })
         .then(res => {
           const link = document.createElement('a')
@@ -673,19 +755,37 @@ export default {
       this.selectionList = arr
     },
     showPutRubberMaterialDialog() {
-      if (this.$refs.createdRubberMaterialRef) {
-        this.isView = false
-        this.isCopy = false
-        this.$refs.createdRubberMaterialRef.objParames._clone = false
-        this.$refs.createdRubberMaterialRef.directBatching(this.currentRow.id, false)
+      this.showIngredient = true
+      this.getInfo()
+    },
+    async getInfo() {
+      try {
+        this.loadingForm = true
+        const data = await wfProductBatching('get', this.currentRow.id)
+        this.loadingForm = false
+        const a = data.stage_product_batch_no.split('[')
+        const b = a[1].split(']')
+        const _modify = (this.currentRow.id && !this.dialogAddRubberMaterial) ? this.currentRow.id : ''
+        this.rubberMaterialForm = { stage_product_batch_no: data.stage_product_batch_no, weigh_type: data.weigh_type, _modify: _modify, product_info: a[0], precept: b[0] }
+        this.tableDataIngredient = data.weight_cnt_types[0].weight_details
+        if (this.tableDataIngredient.length > 0) {
+          this.tableDataIngredient.forEach(d => {
+            if (d.master.ZWF.indexOf('-H') > -1) {
+              d.master = ''
+            } else {
+              d.master = d.master.ZWF
+            }
+          })
+        }
+      } catch (e) {
+        this.loadingForm = false
       }
     },
-    showGridTable(id) {
-      if (this.$refs.createdRubberMaterialRef) {
-        this.isView = true
-        this.isCopy = false
-        this.$refs.createdRubberMaterialRef.directBatching(id, false)
-      }
+    showGridTable(row) {
+      this.currentRow = JSON.parse(JSON.stringify(row))
+      this.isView = true
+      this.showIngredient = true
+      this.getInfo()
     },
     handleCurrentChange(val) {
       this.currentRow = val
@@ -699,7 +799,7 @@ export default {
           type: 'warning'
         }).then(async() => {
           try {
-            await rubber_material_url('patch', id, { data: { pass_flag: bool, used_or_abandon: val === '停用' ? 1 : 0 }})
+            await wfProductBatching('patch', id, { data: { pass_flag: bool, used_or_abandon: val === '停用' ? 1 : 0 }})
             this.$message.success('状态切换成功')
             this.rubber_material_list()
           } catch (e) { throw new Error(e) }
@@ -707,7 +807,7 @@ export default {
         return
       }
       try {
-        await rubber_material_url('patch', id, { data: { pass_flag: bool }})
+        await wfProductBatching('patch', id, { data: { pass_flag: bool }})
         this.$message.success('状态切换成功')
         this.rubber_material_list()
       } catch (e) { throw new Error(e) }
@@ -715,11 +815,7 @@ export default {
     async rubber_material_list() {
       try {
         this.loading = true
-        this.search.exclude_used_type = 6
-        if (this.search.used_type === 6) {
-          delete this.search.exclude_used_type
-        }
-        const data = await rubber_material_url('get', null, { params: this.search })
+        const data = await wfProductBatching('get', null, { params: this.search })
         this.tableData = data.results || []
         this.total = data.count
         this.loading = false
@@ -735,53 +831,6 @@ export default {
       this.search.page = page
       this.search.page_size = page_size
       this.rubber_material_list()
-    },
-    async send_auxiliary(row) {
-      try {
-        this.$confirm('是否将该配方下传给群控系统？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(async() => {
-          let data = await send_auxiliary_url('post', {
-            params: {
-              'product_batching_id': row.id,
-              'product_no': row.stage_product_batch_no
-            }
-          })
-          if (data.notice_flag) {
-            this.$confirm('群控系统已有同名配方，继续下传会覆盖群控系统的同名配方，是否继续下传？', '提示', {
-              confirmButtonText: '确定',
-              cancelButtonText: '取消',
-              type: 'warning'
-            }).then(async() => {
-              data = await send_auxiliary_url('post', {
-                params: {
-                  'product_batching_id': row.id,
-                  'product_no': row.stage_product_batch_no,
-                  notice_flag: true
-                }
-              })
-              this.$message.success(data.send_recipe_msg)
-              this.rubber_material_list()
-              const url = data.auxiliary_url + '#/recipe/list'
-
-              window.open(url + '?AAA=' + getToken() +
-                '&batch_no=' + row.stage_product_batch_no)
-            })
-            return
-          }
-
-          this.$message.success(data.send_recipe_msg)
-          this.rubber_material_list()
-          const url = data.auxiliary_url + '#/recipe/list'
-
-          window.open(url + '?AAA=' + getToken() +
-            '&batch_no=' + row.stage_product_batch_no)
-        })
-      } catch (e) {
-        //
-      }
     },
     send_weighing(row) {
       this.currentObj = JSON.parse(JSON.stringify(row))
@@ -837,10 +886,16 @@ export default {
         throw new Error(e)
       }
     },
-    handleCloseMaterial() {
+    handleCloseMaterial(done) {
       this.dialogAddRubberMaterial = false
-      this.materialForm = {}
+      this.handleCloseIngredient()
       this.isView = false
+      setTimeout(s => {
+        this.$refs['rubberMaterialForm'].clearValidate()
+      }, 300)
+      if (done) {
+        done()
+      }
     },
     usedTypeFormatter: function(row) {
       return this.usedTypeChoice(row.used_type)
@@ -863,11 +918,136 @@ export default {
           return '停用'
       }
     },
-    tableRowClassName({ row, rowIndex }) {
-      if (row.used_type === 4 && (row.send_success_equip.length !== row.enable_equip.length)) {
-        return 'warning-row'
+    async product_info_list() {
+      try {
+        const data = await product_info_url('get', {
+          params: { all: 1 }
+        })
+        this.productBatchNoOptions = data.results
+      } catch (e) { throw new Error(e) }
+    },
+    rubberMaterialChanged() {
+      const aa = this.rubberMaterialForm.product_info ? this.rubberMaterialForm.product_info : ''
+      const bb = this.rubberMaterialForm.precept ? this.rubberMaterialForm.precept : ''
+      const a = aa + '[' + bb + ']'
+      this.$set(this.rubberMaterialForm, 'stage_product_batch_no', a)
+    },
+    NewAddMaterial(formName, bool) {
+      this.$refs[formName].validate(async(valid) => {
+        if (valid) {
+          if (bool) {
+            this.handleCloseMaterial(false)
+            this.showIngredient = true
+          } else {
+            this.rubberMaterialForm._modify = null
+            this.putNewsaveMaterialClicked()
+          }
+        } else {
+          return false
+        }
+      })
+    },
+    handleCloseIngredient(done) {
+      this.tableDataIngredient = []
+      this.formInline = {}
+      this.showIngredient = false
+      this.isView = false
+      if (done) {
+        done()
       }
-      return ''
+    },
+    async putNewsaveMaterialClicked() {
+      try {
+        const arr = JSON.parse(JSON.stringify(this.tableDataIngredient))
+        if (arr.length > 0) {
+          try {
+            arr.forEach((D, i) => {
+              if (!D.material || !D.standard_weight) {
+                throw Error('原材料、实际重量')
+              }
+              if (i === 0 && !D.master) {
+                throw Error('请选择投料方式')
+              }
+              if (Object.prototype.toString.call(D.master) !== '[object Object]') {
+                if (!D.master) {
+                  D.master = this.tableDataIngredient[i - 1].master + '-H'
+                }
+                D.master = { ZWF: D.master }
+              }
+            })
+          } catch (e) {
+            this.$message.info(e.message)
+            return
+          }
+        }
+
+        const obj = {
+          stage_product_batch_no: this.rubberMaterialForm.stage_product_batch_no,
+          weigh_type: this.rubberMaterialForm.weigh_type,
+          weight_cnt_types: [{
+            weight_details: arr || []
+          }]
+        }
+        const _api = this.rubberMaterialForm._modify ? 'put' : 'post'
+        await wfProductBatching(_api, this.rubberMaterialForm._modify || '', { data: obj })
+        this.dialogAddRubberMaterial = false
+        this.handleCloseIngredient(false)
+        this.rubber_material_list()
+      } catch (e) {
+        //
+      }
+    },
+    async checkTolerance(row, index) {
+      try {
+        const data = await getMaterialTolerance('get', null, {
+          params: {
+            material_name: row.material_name,
+            standard_weight: row.standard_weight,
+            only_num: true
+          }
+        })
+        if (data) {
+          this.tableDataIngredient[index].standard_error = data
+        }
+      } catch (e) {
+        //
+      }
+    },
+    del_raw_material_row(index, faI) {
+      this.tableDataIngredient.splice(index, 1)
+    },
+    pop_up_raw_material(index) {
+      // isIngredient true=> 细料选原材料
+      // if (index || index === 0) {
+      this.currentMaterialIndex = index
+      //   this.faI = faI
+      //   this.isIngredient = false
+      // } else {
+      //   this.isIngredient = true
+      // }
+      // this.listType = faI === 1 ? '炭黑' : faI === 2 ? '油料' : '胶料'
+      // this.setCurrentMaterialList()
+      this.dialogRawMaterialSync = true
+    },
+    insert_NewPracticalWeightChanged(i) {
+      let _master = null
+      if (this.tableDataIngredient.length === 0) {
+        _master = 'F'
+      }
+      this.tableDataIngredient.push({
+        type: 1,
+        master: _master
+      })
+    },
+    handleCloseMaterialSelection() {
+      this.dialogRawMaterialSync = false
+    },
+    handleMaterialSelect(row) {
+      const a = this.tableDataIngredient[this.currentMaterialIndex]
+      this.$set(a, 'material_name', row.material_name)
+      this.$set(a, 'material', row.id)
+      this.$set(a, 'material_type', row.material_type_name)
+      this.dialogRawMaterialSync = false
     }
   }
 }
@@ -875,7 +1055,9 @@ export default {
 
 <style lang="scss">
  .newIndex{
-
+    .add-style .el-input{
+        width: 250px;
+    }
   .el-table__row:hover > td {
     background-color: transparent !important;
   }

@@ -472,6 +472,16 @@ export let asyncRoutes = [
             }
           },
           {
+            path: '/rb/material/external-feeding-bag',
+            name: 'ExternalFeedingBag',
+            component: () => import('@/views/rb_material_std_manage/external-feeding-bag'),
+            meta: {
+              title: '外供料包的配方',
+              faName: 'RbRecipe',
+              permissionName: 'wfproductbatching'
+            }
+          },
+          {
             path: '/rb/material-compare/',
             name: 'RbMaterialCompare',
             component: () => import('@/views/rubber_recipe_standard_manage/material-compare'),
