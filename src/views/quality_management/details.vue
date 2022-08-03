@@ -909,6 +909,8 @@ export default {
         if (this.history_equip_no) {
           equip_nos = '[' + JSON.stringify(this.history_equip_no) + ']'
         }
+        equip_nos = equip_nos.replace(/"/g, '')
+        equip_nos = equip_nos.replace(/,/g, '/')
         _title.push({ text: this.row_roduct_no + '数据推移' +
         ' (' + this.historyDate[0] + '至' + this.historyDate[1] + ') ' +
         equip_nos, left: 'center', top: 0 })
