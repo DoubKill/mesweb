@@ -175,6 +175,7 @@
         >
           <template slot-scope="scope">
             <el-button
+              v-if="scope.row.all_qty!==0"
               type="primary"
               size="mini"
               @click="dialog1(scope.row)"

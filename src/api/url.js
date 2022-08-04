@@ -323,6 +323,7 @@ export default {
   MaterialInventoryList: '/api/v1/inventory/material-inventory-list/',
   QualityPalletFeedTest: '/api/v1/quality/pallet-feed-test/',
   DatapointCurve: '/api/v1/quality/datapoint-curve/',
+  ProductIndicatorStandard: '/api/v1/quality/product-indicator-standard/',
   // 录入导入
   ImportMaterialMestMrders: '/api/v1/quality/import-material-test-orders/',
   // 不合格历史记录
@@ -348,6 +349,7 @@ export default {
   // 通知配置
   PlatformConfig: '/api/v1/equipment/platform-config/',
   EquipMaintenanceOrderLog: '/api/v1/equipment/equip-maintenance-order-log/',
+  UserOperationLog: '/api/v1/system/user-operation-log/',
   // 原材料临时快检结果录入
   BarcodeQuality: '/api/v1/inventory/barcode-quality/',
   // 原材料临时快检结果录入导出
@@ -510,6 +512,7 @@ export default {
   OutboundPproductInfo: '/api/v1/inventory/outbound-product-info/',
   // 出库
   Outbound: '/api/v1/inventory/outbound-delivery-order-details/',
+  CancelTask: '/api/v1/inventory/outbound-delivery-order-details/cancel-task/',
   // 机台别不合格率
   MachinePass: '/api/v1/quality/unqialified-equip/',
   // 胶料别不合格率

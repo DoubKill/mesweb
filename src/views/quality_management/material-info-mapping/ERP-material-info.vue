@@ -374,10 +374,11 @@ import MaterialTypeSelect from '@/components/MaterialTypeSelect'
 import Page from '@/components/page'
 import { erpMaterials } from '@/api/base_w_four'
 import materialCodeSelect from '@/components/materialCodeSelect'
-import { zcMaterials } from '@/api/base_w_two'
+import { zcMaterials, userOperationLog } from '@/api/base_w_two'
 import { classesListUrl } from '@/api/base_w'
 import { debounce } from '@/utils'
 import { materialsUrl } from '@/api/base_w'
+import Cookies from 'js-cookie'
 let timer
 export default {
   name: 'ERPMaterialInfo',
@@ -604,6 +605,9 @@ export default {
             this.objForm.erp_material_data = arr
             this.btnLoading = true
             const _api = this.objForm.id ? 'put' : 'post'
+            if (this.objForm.id) {
+              userOperationLog('post', null, { data: { 'operator': Cookies.get('name'), 'menu_name': 'ERP原材料信息', 'operations': '变更：' + this.objForm.material_name }})
+            }
             await erpMaterials(_api, this.objForm.id || null, { data: this.objForm })
             this.$message.success('操作成功')
             this.handleClose(false)
@@ -678,6 +682,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        userOperationLog('post', null, { data: { 'operator': Cookies.get('name'), 'menu_name': 'ERP原材料信息', 'operations': str + '：' + row.material_name }})
         erpMaterials('delete', row.id)
           .then((response) => {
             this.$message({

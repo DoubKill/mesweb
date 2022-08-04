@@ -36,8 +36,9 @@
         min-width="20"
       >
         <template slot-scope="scope">
-          <span v-if="scope.row.relation===true">是</span>
-          <span v-else>否</span>
+          <span v-if="scope.row.relation===1">单机台</span>
+          <span v-if="scope.row.relation===2">多机台</span>
+          <span v-if="scope.row.relation===0">与机台无关</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -109,7 +110,9 @@
           </el-select>
         </el-form-item>
         <el-form-item label="是否机台关联" prop="relation">
-          <el-checkbox v-model="dialogForm.relation">是否机台关联</el-checkbox>
+          <el-radio key="1" v-model="dialogForm.relation" :label="1">单机台</el-radio>
+          <el-radio key="2" v-model="dialogForm.relation" :label="2">多机台</el-radio>
+          <el-radio key="0" v-model="dialogForm.relation" :label="0">不关联机台</el-radio>
         </el-form-item>
         <el-form-item
           label="岗位名称"
@@ -208,7 +211,7 @@ export default {
       this.getList()
     },
     async onSubmit() {
-      this.dialogForm = { coefficient: null, relation: true, post_standard: 1, post_coefficient: 100 }
+      this.dialogForm = { coefficient: null, relation: 0, post_standard: 1, post_coefficient: 100 }
       this.dialogVisible = true
     },
     showEditDialog(row) {

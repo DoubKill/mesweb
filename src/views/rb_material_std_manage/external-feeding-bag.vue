@@ -30,7 +30,7 @@
           @input="changeSearch"
         />
       </el-form-item>
-      <el-form-item label="配方类别">
+      <!-- <el-form-item label="配方类别">
         <el-select
           v-model="search.recipe_type"
           clearable
@@ -44,7 +44,7 @@
             :value="item.global_name"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="原材料名称">
         <el-select
           v-model="search.wms_material_name"
@@ -927,7 +927,9 @@ export default {
       } catch (e) { throw new Error(e) }
     },
     rubberMaterialChanged() {
-      const a = this.rubberMaterialForm.product_info + '[' + this.rubberMaterialForm.precept + ']'
+      const aa = this.rubberMaterialForm.product_info ? this.rubberMaterialForm.product_info : ''
+      const bb = this.rubberMaterialForm.precept ? this.rubberMaterialForm.precept : ''
+      const a = aa + '[' + bb + ']'
       this.$set(this.rubberMaterialForm, 'stage_product_batch_no', a)
     },
     NewAddMaterial(formName, bool) {

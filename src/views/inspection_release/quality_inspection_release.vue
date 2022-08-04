@@ -348,6 +348,8 @@
 
 <script>
 import { debounce } from '@/utils'
+import { userOperationLog } from '@/api/base_w_two'
+import Cookies from 'js-cookie'
 import page from '@/components/page'
 import { wmsStorageSummary, wmsStorage, wmsRelease, wmsExceptHandle } from '@/api/jqy'
 export default {
@@ -366,6 +368,7 @@ export default {
       submitPass: false,
       submit: false,
       submit1: false,
+      material_name: null,
       abnormalForm: {},
       dialogVisible: false,
       dialogVisibleList: false,
@@ -456,6 +459,7 @@ export default {
     async qualified(row, val) {
       try {
         this.loadId = row.batch_no
+        this.material_name = row.material_name
         this.searchView.material_name = row.material_name
         this.searchView.e_material_no = row.material_no
         this.searchView.zc_material_code = row.zc_material_code
@@ -498,6 +502,7 @@ export default {
                         message: '操作成功'
                       })
                       this.submitQualified = false
+                      userOperationLog('post', null, { data: { 'operator': Cookies.get('name'), 'menu_name': '原材料库 质检信息设定/原材料设定合格', 'operations': '设定合格：' + row.material_name + ' ' + row.batch_no }})
                       this.getList()
                     })
                     .catch(response => {
@@ -532,6 +537,7 @@ export default {
         this.submitPass = true
         await wmsRelease('post', null, { data: { tracking_nums: this.trackingList, operation_type: this.abnormalForm.result }})
         await wmsExceptHandle('post', null, { data: this.abnormalForm })
+        await userOperationLog('post', null, { data: { 'operator': Cookies.get('name'), 'menu_name': '原材料库 质检信息设定/原材料异常处理', 'operations': '放行处理：' + this.material_name + ' ' + this.abnormalForm.batch_no + ' ' + this.abnormalForm.result }})
         this.$message.success('操作成功')
         this.submitPass = false
         this.dialogVisibleAbnormal = false
@@ -545,11 +551,26 @@ export default {
       this.multipleSelection.forEach(d => {
         obj.push(d.lot_no)
       })
+      const obj1 = []
+      this.multipleSelection.forEach(d => {
+        obj1.push({
+          lot_no: d.lot_no,
+          batch_no: d.batch_no })
+      })
       const type = val
       if ((obj.length > 0 && val === '合格' && this.multipleSelection.every(d => d.quality_status === '待检')) || (obj.length > 0 && val === '放行')) {
         try {
           val === '合格' ? this.submit = true : this.submit1 = true
           await wmsRelease('post', null, { data: { tracking_nums: obj, operation_type: type }})
+          if (val === '合格') {
+            obj1.forEach(d => {
+              userOperationLog('post', null, { data: { 'operator': Cookies.get('name'), 'menu_name': '原材料库 质检信息设定/原材料设定合格', 'operations': '设定合格：' + d.batch_no + ' ' + d.lot_no }})
+            })
+          } else {
+            obj1.forEach(d => {
+              userOperationLog('post', null, { data: { 'operator': Cookies.get('name'), 'menu_name': '原材料库 质检信息设定/原材料异常处理', 'operations': '放行处理：' + d.batch_no + ' ' + d.lot_no + ' 放行' }})
+            })
+          }
           this.$message.success('操作成功')
           val === '合格' ? this.submit = false : this.submit1 = false
           this.$refs.multipleTable.clearSelection()
