@@ -304,6 +304,7 @@
       width="80%"
       append-to-body
     >
+      <h3 style="display:inline-block;margin:0 10px">日期</h3>
       <el-date-picker
         v-model="historyDate"
         type="daterange"
@@ -313,6 +314,11 @@
         value-format="yyyy-MM-dd"
         :clearable="false"
         @change="changeHistoryDate"
+      />
+      <h3 style="display:inline-block;margin:0 10px">机台</h3>
+      <equip-select
+        :equip_no_props.sync="history_equip_no"
+        @changeSearch="changeHistoryDate"
       />
       <div
         id="historySpot"
@@ -420,6 +426,7 @@ export default {
       options: [{ name: '一等品', bool: true }, { name: '三等品', bool: false }],
       historyDialogVisible: false,
       historyDate: [],
+      history_equip_no: '',
       row_roduct_no: '',
       newHead: [],
       groups: [],
@@ -800,7 +807,8 @@ export default {
         const obj = {
           st: this.historyDate[0] || '',
           et: this.historyDate[1] || '',
-          product_no: this.row_roduct_no || ''
+          product_no: this.row_roduct_no || '',
+          equip_no: this.history_equip_no
         }
         this.historyLoading = true
         const data = await datapointCurve(obj)
@@ -897,9 +905,15 @@ export default {
             } : {}
           })
         })
-
+        let equip_nos = JSON.stringify(data.equip_nos)
+        if (this.history_equip_no) {
+          equip_nos = '[' + JSON.stringify(this.history_equip_no) + ']'
+        }
+        equip_nos = equip_nos.replace(/"/g, '')
+        equip_nos = equip_nos.replace(/,/g, '/')
         _title.push({ text: this.row_roduct_no + '数据推移' +
-        ' (' + this.historyDate[0] + '至' + this.historyDate[1] + ')', left: 'center', top: 0 })
+        ' (' + this.historyDate[0] + '至' + this.historyDate[1] + ') ' +
+        equip_nos, left: 'center', top: 0 })
         this.historySpot.toolbox.feature.saveAsImage.name = this.row_roduct_no + ' (' + this.historyDate[0] + '至' + this.historyDate[1] + ') ' + setDate()
         this.historySpot.xAxis = _x || []
         this.historySpot.yAxis = _y || []
