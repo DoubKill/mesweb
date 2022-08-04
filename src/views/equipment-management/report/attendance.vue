@@ -57,8 +57,8 @@
           v-permission="['employee_attendance_records','addall']"
           type="primary"
           :loading="btnLoad"
-          @click="approve1('整体提交')"
-        >整体提交</el-button>
+          @click="approveCheck()"
+        >班次提交</el-button>
         <el-button
           v-permission="['employee_attendance_records','examine']"
           type="primary"
@@ -444,6 +444,157 @@
         <el-button type="primary" :loading="submit" @click="generateFun">确 定</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      title="班次提交考勤数据"
+      :visible.sync="dialogVisibleCheck"
+      width="90%"
+    >
+      <el-form :inline="true">
+        <el-form-item label="日期">
+          <el-date-picker
+            v-model="searchCheck.date"
+            type="date"
+            :clearable="false"
+            format="yyyy-MM-dd"
+            value-format="yyyy-MM-dd"
+            placeholder="选择日期"
+            @change="getCheckList"
+          />
+        </el-form-item>
+        <el-form-item label="班次" prop="classes">
+          <class-select
+            :value-default="searchCheck.classes"
+            :is-clearable="true"
+            @classSelected="classCheckList"
+          />
+        </el-form-item>
+        <el-form-item label="机台">
+          <el-select v-model="searchCheck1.equip" clearable multiple placeholder="请选择" @change="getCheckEquip" @visible-change="equipChange">
+            <el-option
+              v-for="item in options"
+              :key="item.id"
+              :label="item.equip_no"
+              :value="item.equip_no"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="岗位">
+          <el-select v-model="searchCheck1.section" clearable multiple placeholder="请选择" @change="getCheckSection" @visible-change="sectionChange">
+            <el-option
+              v-for="item in options2"
+              :key="item.id"
+              :label="item.name"
+              :value="item.name"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="班组">
+          <el-select v-model="searchCheck.group" clearable placeholder="请选择" @change="getCheckList">
+            <el-option
+              v-for="item in optionsGroup1"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <el-table
+        ref="multipleTable"
+        v-loading="loadingCheck"
+        :data="tableDataCheck"
+        highlight-current-row
+        border
+        max-height="550px"
+        row-key="index"
+        @selection-change="handleSelectionChangeCheck"
+      >
+        <el-table-column
+          type="selection"
+          width="40"
+          :selectable="select"
+          :reserve-selection="true"
+        />
+
+        <el-table-column
+          prop="username"
+          label="姓名"
+          min-width="20"
+        />
+        <el-table-column
+          prop="group"
+          label="班组"
+          min-width="20"
+        />
+        <el-table-column
+          prop="equip"
+          label="机台"
+          min-width="20"
+        />
+        <el-table-column
+          prop="section"
+          label="岗位名称"
+          min-width="20"
+        />
+        <el-table-column
+          prop="begin_date"
+          label="上岗时间"
+          min-width="20"
+        />
+        <el-table-column
+          prop="end_date"
+          label="离岗时间"
+          min-width="20"
+        />
+        <el-table-column
+          prop="work_time"
+          label="计算作业时间(小时)"
+          min-width="20"
+        />
+        <el-table-column
+          width="200"
+          prop="actual_time"
+          label="承认作业时间(小时)"
+          min-width="20"
+        >
+          <template
+            slot-scope="{row}"
+          >
+            <el-input-number v-model="row.actual_time" controls-position="right" :min="0" />
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="is_use"
+          label="状态"
+          min-width="20"
+        />
+      </el-table>
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button
+          v-permission="['employee_attendance_records','add']"
+          type="primary"
+          @click="addStatus('外面')"
+        >添加</el-button>
+        <el-button
+          v-permission="['employee_attendance_records','abandon']"
+          type="primary"
+          @click="editStatusCheck('废弃')"
+        >废弃</el-button>
+        <el-button
+          type="primary"
+          @click="dialogVisibleCheck=false"
+        >取消</el-button>
+        <el-button
+          v-permission="['employee_attendance_records','affirm']"
+          type="primary"
+          @click="editStatusCheck('确认')"
+        >确认</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -485,6 +636,7 @@ export default {
       tableDataRecord: [],
       dialogVisibleAdd: false,
       loadingRecord: false,
+      loadingCheck: false,
       loadingAttendance: false,
       dialogVisibleList: false,
       dialogVisibleRecord: false,
@@ -518,6 +670,10 @@ export default {
       submit: false,
       tableTop: [],
       isDownload: true,
+      dialogVisibleCheck: false,
+      tableDataCheck: [],
+      searchCheck: {},
+      searchCheck1: {},
       section: '',
       date: '',
       equip: '',
@@ -526,6 +682,7 @@ export default {
       allList: [],
       isExport: false,
       optionsGroup: [],
+      optionsGroup1: ['A班', 'B班', 'C班'],
       multipleSelection: [],
       tableHead: [],
       tableData: [],
@@ -577,6 +734,14 @@ export default {
         //
       }
     },
+    getCheckEquip() {
+      this.searchCheck.equip = this.searchCheck1.equip.join(',')
+      this.getCheckList()
+    },
+    getCheckSection() {
+      this.searchCheck.section = this.searchCheck1.section.join(',')
+      this.getCheckList()
+    },
     async getAllList() {
       const data = await personnels('get', null, { params: { all: 1, attendance: 1 }})
       this.allList = data.results
@@ -591,8 +756,15 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val
     },
+    handleSelectionChangeCheck(val) {
+      this.multipleSelectionCheck = val
+    },
     classChanged(val) {
       this.$set(this.dialogForm, 'classes', val)
+    },
+    classCheckList(val) {
+      this.$set(this.searchCheck, 'classes', val)
+      this.getCheckList()
     },
     addStatus(val) {
       this.dialogVisibleAdd = true
@@ -708,6 +880,38 @@ export default {
         }
       }
     },
+    async editStatusCheck(val) {
+      if (this.multipleSelectionCheck.length > 0) {
+        var arr = JSON.parse(JSON.stringify(this.multipleSelectionCheck))
+        if (val === '废弃') {
+          try {
+            arr.forEach(d => {
+              d.is_use = '废弃'
+            })
+            await attendanceTimeStatistics('post', null, { data: { abandon_list: arr }})
+            this.$message.success('操作成功')
+            this.getCheckList()
+            this.getList()
+          } catch (e) {
+            //
+          }
+        } else if (val === '确认') {
+          try {
+            arr.forEach(d => {
+              d.is_use = '确认'
+            })
+            await attendanceTimeStatistics('post', null, { data: { confirm_list: arr }})
+            this.$message.success('操作成功')
+            this.getCheckList()
+            this.getList()
+          } catch (e) {
+          //
+          }
+        }
+      } else {
+        this.$message('请选择数据')
+      }
+    },
     approve(val) {
       this.resultForm = { result: true }
       this.type = val
@@ -726,16 +930,26 @@ export default {
         )
       }
     },
-    async approve1() {
+    async getCheckList() {
       try {
-        this.btnLoad = true
-        await attendanceResultAudit('post', null, { data: { overall: 1 }})
-        this.$message.success('操作成功')
-        this.btnLoad = false
-        this.getList()
+        this.loadingCheck = true
+        const data = await attendanceTimeStatistics('get', null, { params: this.searchCheck })
+        this.tableDataCheck = data.results
+        this.$refs.multipleTable.clearSelection()
+        this.loadingCheck = false
       } catch (e) {
-        this.btnLoad = false
+        this.loadingCheck = false
       }
+    },
+    async approveCheck() {
+      this.dialogVisibleCheck = true
+      this.searchCheck = {
+        classes_handle: 1,
+        date: setDate()
+      }
+      const data = await currentFactoryDate('get', null, { params: { select_date: setDate() }})
+      this.$set(this.searchCheck, 'classes', data.classes)
+      this.getCheckList()
     },
     async submitFun() {
       if (this.type === '审批') {
@@ -768,6 +982,9 @@ export default {
             this.dialogVisibleAdd = false
             if (this.addType === '里面') {
               this.attendanceList()
+            }
+            if (this.dialogVisibleCheck) {
+              this.getCheckList()
             }
             this.getList()
           } catch (e) {
@@ -826,6 +1043,13 @@ export default {
     },
     changeAttendance() {
       this.attendanceList()
+    },
+    select(row, index) {
+      if (row.record_status === '#141414') { // 判断条件
+        return false // 不可勾选
+      } else {
+        return true // 可勾选
+      }
     },
     changeList() {
       this.tableHead = getDiffDate(this.search.date + '-01', getCurrentMonthLastDay(this.search.date))
