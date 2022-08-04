@@ -1097,7 +1097,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .el-input{
-    width:auto !important;
-  }
+  // .el-input{
+    // width:auto !important;
+  // }
 </style>
