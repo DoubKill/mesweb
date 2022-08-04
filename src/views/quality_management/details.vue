@@ -200,7 +200,7 @@
       border
       fit
       row-id="id"
-      max-height="600"
+      max-height="550"
       size="mini"
       :tree-config="{
         children: 'children',
