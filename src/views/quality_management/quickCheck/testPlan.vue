@@ -854,13 +854,15 @@ export default {
           this.testMethodList = []
           return
         }
-        const _product_test_plan_detail = []
+        let _product_test_plan_detail = []
         if (data.product_test_plan_detail && data.product_test_plan_detail.length) {
           this.rightMin = data.product_test_plan_detail[0].actual_trains
           this.rightMax = data.product_test_plan_detail[data.product_test_plan_detail.length - 1].actual_trains
 
+          // 只取10个已检测的
           let _i_w = 0
-          data.product_test_plan_detail.forEach(d => {
+          const a_reverse = data.product_test_plan_detail.reverse()
+          a_reverse.forEach(d => {
             if (!d.value) {
               _product_test_plan_detail.push(d)
             } else if (!d.is_qualified) {
@@ -870,6 +872,7 @@ export default {
               _i_w++
             }
           })
+          _product_test_plan_detail = _product_test_plan_detail.reverse()
         }
         if (!data.id) {
           this.btnLoading = true
