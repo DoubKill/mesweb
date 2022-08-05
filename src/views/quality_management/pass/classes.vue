@@ -55,6 +55,7 @@
       border
       tooltip-effect="dark"
       style="width: 100%"
+      max-height="600"
     >
       <el-table-column
         prop="date"
@@ -208,7 +209,7 @@
         <el-table-column
           prop="sum_s"
           label="硫变合计"
-          min-width="20"
+          min-width="25"
         />
       </el-table-column>
       <el-table-column

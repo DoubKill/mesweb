@@ -690,7 +690,9 @@ export default {
       maxTrain: 0,
       minTrain: 0,
       add_w: false,
-      noRecheck: true // false为复检中
+      noRecheck: true, // false为复检中
+      rightMin: null,
+      rightMax: null
     }
   },
   watch: {
@@ -723,9 +725,7 @@ export default {
           this.tableData = data
         } else {
           data.forEach(d => { // 去掉左边相同得数据
-            const _min = this.tableDataRight[0].actual_trains
-            const _max = this.tableDataRight[this.tableDataRight.length - 1].actual_trains
-            if (d.actual_trains < _min || d.actual_trains > _max) {
+            if (d.actual_trains < this.rightMin || d.actual_trains > this.rightMax) {
               this.tableData.push(d)
             }
           })
@@ -854,6 +854,26 @@ export default {
           this.testMethodList = []
           return
         }
+        let _product_test_plan_detail = []
+        if (data.product_test_plan_detail && data.product_test_plan_detail.length) {
+          this.rightMin = data.product_test_plan_detail[0].actual_trains
+          this.rightMax = data.product_test_plan_detail[data.product_test_plan_detail.length - 1].actual_trains
+
+          // 只取10个已检测的
+          let _i_w = 0
+          const a_reverse = data.product_test_plan_detail.reverse()
+          a_reverse.forEach(d => {
+            if (!d.value) {
+              _product_test_plan_detail.push(d)
+            } else if (!d.is_qualified) {
+              _product_test_plan_detail.push(d)
+            } else if (_i_w < 10) { // 10
+              _product_test_plan_detail.push(d)
+              _i_w++
+            }
+          })
+          _product_test_plan_detail = _product_test_plan_detail.reverse()
+        }
         if (!data.id) {
           this.btnLoading = true
           this.noRecheck = false
@@ -864,7 +884,7 @@ export default {
           this.search.equip_no = data.product_test_plan_detail[0].equip_no
           this.search.product_no = data.product_test_plan_detail[0].product_no
 
-          this.tableDataRight = data.product_test_plan_detail
+          this.tableDataRight = _product_test_plan_detail
           this.search.test_indicator_name = data.test_indicator_name
           this.ruleForm.product_no = data.product_test_plan_detail[0].product_no
 
@@ -878,7 +898,7 @@ export default {
           this.search.equip_no = data.product_test_plan_detail[0].equip_no
           this.search.product_no = data.product_test_plan_detail[0].product_no
 
-          this.tableDataRight = data.product_test_plan_detail
+          this.tableDataRight = _product_test_plan_detail
           if (!this.isDelRow) {
             this.$message.info('正在检测中')
           }
