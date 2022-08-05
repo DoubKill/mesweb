@@ -376,8 +376,8 @@ export default {
     },
     confirm() {
       if (this.multipleSelection.length > 0) {
-        if (this.multipleSelection.some(d => d.status === '已确认')) {
-          this.$message.info('所选择数据有已确认状态')
+        if (this.multipleSelection.every(d => d.status === '已检查')) {
+          this.$message.info('确认数据只能选择已检查数据')
           return
         }
         this.dialogVisible = true
