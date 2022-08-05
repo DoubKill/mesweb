@@ -1578,6 +1578,16 @@ export let asyncRoutes = [
         }
       },
       {
+        path: '/rubber-frame-repair-total',
+        name: 'RubberFrameRepairTotal',
+        component: () => import('@/views/material_base_info_manage/rubber-frame-repair-total'),
+        meta: {
+          title: '胶架维修记录汇总',
+          icon: 'production',
+          permissionName: 'rubber_frame_repair_summary'
+        }
+      },
+      {
         path: '/work-clothes-book',
         name: 'work-clothes-book',
         component: () => import('@/views/material_base_info_manage/work-clothes-book'),
@@ -1585,6 +1595,46 @@ export let asyncRoutes = [
           title: '工装管理台账',
           icon: 'production',
           permissionName: 'tool_manage_account'
+        }
+      },
+      {
+        path: '/spot-check-set',
+        name: 'SpotCheckSet',
+        component: () => import('@/views/spot_check/spot-check-set'),
+        meta: {
+          title: '岗位安全装置点检标准',
+          icon: 'production',
+          permissionName: 'check_point_standard'
+        }
+      },
+      {
+        path: '/spot-check-confirm',
+        name: 'SpotCheckConfirm',
+        component: () => import('@/views/spot_check/spot-check-confirm'),
+        meta: {
+          title: '岗位安全装置点检表确认',
+          icon: 'production',
+          permissionName: 'check_point_table'
+        }
+      },
+      {
+        path: '/temperature-set',
+        name: 'TemperatureSet',
+        component: () => import('@/views/spot_check/temperature-set'),
+        meta: {
+          title: '除尘袋滤器温度标准',
+          icon: 'production',
+          permissionName: 'check_temperature_standard'
+        }
+      },
+      {
+        path: '/temperature-confirm',
+        name: 'TemperatureConfirm',
+        component: () => import('@/views/spot_check/temperature-confirm'),
+        meta: {
+          title: '除尘袋滤器记录表确认',
+          icon: 'production',
+          permissionName: 'check_temperature_table'
         }
       }
 

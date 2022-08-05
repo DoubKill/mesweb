@@ -1469,3 +1469,84 @@ export function shiftTimeSummaryDetail(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function checkPointStandard(method, id, data = {}) {
+  const obj = {
+    url: id ? API.CheckPointStandard + id + '/' : API.CheckPointStandard,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function checkPointStandardExport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.CheckPointStandardExport + id + '/' : API.CheckPointStandardExport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function checkPointTable(method, id, data = {}) {
+  const obj = {
+    url: id ? API.CheckPointTable + id + '/' : API.CheckPointTable,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function checkPointTableExport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.CheckPointTableExport + id + '/' : API.CheckPointTableExport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function checkTemperatureStandard(method, id, data = {}) {
+  const obj = {
+    url: id ? API.CheckTemperatureStandard + id + '/' : API.CheckTemperatureStandard,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function checkTemperatureStandardExport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.CheckTemperatureStandardExport + id + '/' : API.CheckTemperatureStandardExport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function checkTemperatureTable(method, id, data = {}) {
+  const obj = {
+    url: id ? API.CheckTemperatureTable + id + '/' : API.CheckTemperatureTable,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function checkTemperatureTableExport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.CheckTemperatureTableExport + id + '/' : API.CheckTemperatureTableExport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function rubberFrameRepairSummary(method, id, data = {}) {
+  const obj = {
+    url: id ? API.RubberFrameRepairSummary + id + '/' : API.RubberFrameRepairSummary,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
