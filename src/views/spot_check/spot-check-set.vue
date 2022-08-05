@@ -114,7 +114,6 @@
       </el-table-column>
     </el-table>
     <page
-      v-if="!loading"
       :old-page="false"
       :total="total"
       :current-page="getParams.page"
@@ -260,6 +259,7 @@ export default {
       const obj = { all: 1, category_name: '密炼设备' }
       getEquip(obj).then(response => {
         this.options = response.results
+        this.options.push({ id: 16, equip_no: '190E' })
       })
     },
     async getList() {
