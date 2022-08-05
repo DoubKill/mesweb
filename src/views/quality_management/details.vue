@@ -75,7 +75,6 @@
           />
         </el-select>
       </el-form-item>
-      <br>
       <el-form-item>
         <el-button @click="filterDialogVisible = true">
           显示过滤界面
@@ -92,14 +91,116 @@
       </el-form-item>
     </el-form>
     <u-table
+      v-if="testOrdersTop.length"
       v-el-table-infinite-scroll="infiniteScroll"
+      :data="testOrdersTop"
+      style="height:auto"
+      fixed-columns-roll
+      border
+      fit
+      row-id="id"
+      max-height="550"
+      size="mini"
+      :tree-config="{
+        children: 'children',
+        expandAll: false,
+        lazy: true,
+        load: load,
+        hasChildren: 'hasChildren'}"
+      :data-changes-scroll-top="false"
+      :row-class-name="tableRowClassName1"
+    >
+      <!-- use-virtual 省略号 -->
+      <u-table-column label="胶料编码" width="140px" align="center" prop="product_no">
+        <template slot-scope="scope">
+          <el-link v-if="!scope.row._current" type="primary" @click="clickOrderNum(scope.$index,scope.row)">{{ scope.row.product_no }}</el-link>
+          <span v-else>{{ scope.row.product_no }}</span>
+        </template>
+      </u-table-column>
+      <u-table-column
+        label="工厂日期"
+        width="90px"
+        prop="production_factory_date"
+        align="center"
+        :tree-node="true"
+      >
+        <template slot-scope="{row}">
+          <span v-if="row.production_factory_date">{{ (row.production_factory_date).split(' ')[0] }}</span>
+          <span class="line_w" />
+        </template>
+      </u-table-column>
+      <u-table-column align="center" label="生产班次" prop="production_class" width="70px">
+        <template slot-scope="{row}">
+          <span v-if="row.production_class"> {{ row.production_class.replace(/班/g, '') }}</span>
+          <span class="line_w" />
+        </template>
+      </u-table-column>
+      <u-table-column label="班组" align="center" prop="production_group" width="40px">
+        <template slot-scope="{row}">
+          <span v-if="row.production_group"> {{ row.production_group.replace(/班/g, '') }}</span>
+          <span class="line_w" />
+        </template>
+      </u-table-column>
+      <u-table-column align="center" label="生产机台" width="60px" prop="production_equip_no">
+        <template slot-scope="{row}">
+          <span> {{ row.production_equip_no }}</span>
+          <span class="line_w" />
+        </template>
+      </u-table-column>
+      <u-table-column label="门尼机台" width="60px" align="center" prop="menn">
+        <template slot-scope="{row}">
+          <span> {{ row.menn }}</span>
+          <span class="line_w" />
+        </template>
+      </u-table-column>
+      <u-table-column label="流变机台" width="60px" align="center" prop="liub">
+        <template slot-scope="{row}">
+          <span> {{ row.liub }}</span>
+          <span class="line_w" />
+        </template>
+      </u-table-column>
+      <u-table-column label="车次" align="center" width="50px" prop="actual_trains">
+        <template slot-scope="{row}">
+          <span> {{ row.actual_trains }}</span>
+          <span class="line_w" />
+        </template>
+      </u-table-column>
+      <u-table-column label="检测结果" align="center" width="60px" prop="is_recheck">
+        <template slot-scope="{ row }">
+          <div>
+            {{ row.is_recheck===true ?'复检':row.is_recheck===false?'正常':'' }}
+          </div>
+          <span class="line_w" />
+        </template>
+      </u-table-column>
+      <u-table-column v-for="header in newHead" :key="header.detail" width="60px" align="center" :label="header.detail">
+        <template v-if="row.order_results.find(d=>d.data_point_name===header.detail)" slot-scope="{row}">
+          {{ row.order_results.find(d=>d.data_point_name===header.detail).value }}
+        </template>
+      </u-table-column>
+      <u-table-column label="检测状态" prop="state" align="center" width="60px">
+        <template slot-scope="{row}">
+          <span> {{ row.state }}</span>
+          <span class="line_w" />
+        </template>
+      </u-table-column>
+      <u-table-column label="处理意见" min-width="60px" prop="deal_suggestion" align="center">
+        <template slot-scope="{row}">
+          <span> {{ row.deal_suggestion }}</span>
+          <span class="line_w line_w1" />
+        </template>
+      </u-table-column>
+    </u-table>
+    <u-table
+      v-el-table-infinite-scroll="infiniteScroll"
+      :show-header="!testOrdersTop.length"
       style="height:auto"
       :data="testOrders"
       fixed-columns-roll
       border
       fit
       row-id="id"
-      max-height="600"
+      max-height="550"
       size="mini"
       :tree-config="{
         children: 'children',
@@ -111,7 +212,7 @@
       :row-class-name="tableRowClassName"
     >
       <!-- use-virtual 省略号 -->
-      <u-table-column label="胶料编码" min-width="35px" align="center" prop="product_no">
+      <u-table-column label="胶料编码" width="140px" align="center" prop="product_no">
         <template slot-scope="scope">
           <el-link v-if="!scope.row._current" type="primary" @click="clickOrderNum(scope.$index,scope.row)">{{ scope.row.product_no }}</el-link>
           <span v-else>{{ scope.row.product_no }}</span>
@@ -119,7 +220,7 @@
       </u-table-column>
       <u-table-column
         label="工厂日期"
-        min-width="20px"
+        width="90px"
         prop="production_factory_date"
         align="center"
         :tree-node="true"
@@ -128,38 +229,38 @@
           {{ (row.production_factory_date).split(' ')[0] }}
         </template>
       </u-table-column>
-      <u-table-column align="center" label="生产班次" prop="production_class" min-width="15px">
+      <u-table-column align="center" label="生产班次" prop="production_class" width="70px">
         <template v-if="row.production_class" slot-scope="{row}">
           {{ row.production_class.replace(/班/g, '') }}
         </template>
       </u-table-column>
-      <u-table-column label="班组" align="center" prop="production_group" min-width="10px">
+      <u-table-column label="班组" align="center" prop="production_group" width="40px">
         <template v-if="row.production_group" slot-scope="{row}">
           {{ row.production_group.replace(/班/g, '') }}
         </template>
       </u-table-column>
-      <u-table-column align="center" label="生产机台" min-width="15px" prop="production_equip_no" />
-      <u-table-column label="门尼机台" min-width="20px" align="center" prop="menn" />
-      <u-table-column label="流变机台" min-width="20px" align="center" prop="liub" />
-      <u-table-column label="车次" align="center" min-width="10px" prop="actual_trains" />
-      <u-table-column label="检测结果" align="center" min-width="15px" prop="is_recheck">
+      <u-table-column align="center" label="生产机台" width="60px" prop="production_equip_no" />
+      <u-table-column label="门尼机台" width="60px" align="center" prop="menn" />
+      <u-table-column label="流变机台" width="60px" align="center" prop="liub" />
+      <u-table-column label="车次" align="center" width="50px" prop="actual_trains" />
+      <u-table-column label="检测结果" align="center" width="60px" prop="is_recheck">
         <template slot-scope="{ row }">
           <div>
             {{ row.is_recheck===true ?'复检':row.is_recheck===false?'正常':'' }}
           </div>
         </template>
       </u-table-column>
-      <u-table-column v-for="header in newHead" :key="header.detail" min-width="20px" align="center" :label="header.detail">
+      <u-table-column v-for="header in newHead" :key="header.detail" width="60px" align="center" :label="header.detail">
         <template v-if="row.order_results.find(d=>d.data_point_name===header.detail)" slot-scope="{row}">
-          <div :class="row.order_results.find(d=>d.data_point_name===header.detail).level>1 ? 'test_type_name_style': ''">
+          <div :class="[row.order_results.find(d=>d.data_point_name===header.detail)._red ? 'test_type_name_style': '',row.order_results.find(d=>d.data_point_name===header.detail)._blue ? 'test_type_name_style1': '']">
             {{ row.order_results.find(d=>d.data_point_name===header.detail).value }}
           </div>
         </template>
       </u-table-column>
-      <u-table-column label="检测状态" prop="state" align="center" min-width="20px" />
-      <u-table-column label="处理意见" min-width="20px" prop="deal_suggestion" align="center" />
+      <u-table-column label="检测状态" prop="state" align="center" width="60px" />
+      <u-table-column label="处理意见" min-width="60px" prop="deal_suggestion" align="center" />
     </u-table>
-    <el-alert style="color:black" title="表格背景色说明：表示不是一等品" type="success" />
+    <el-alert style="color:black" title="表格背景色说明：黄色表示不是一等品；红色表示超出规格上限；绿色表示低于规格下限" type="success" />
     <el-dialog
       title="选择过滤"
       :visible.sync="filterDialogVisible"
@@ -323,6 +424,7 @@ export default {
       newHead: [],
       groups: [],
       viewHeard: false,
+      testOrdersTop: [],
       historySpot: {
         title: [{
           text: "Anscombe's quartet"
@@ -442,6 +544,9 @@ export default {
     async productBatchingChanged(val) {
       this.getParams.product_no = val ? val.material_no : null
       this.viewHeard = true
+      if (!val) {
+        this.testOrdersTop = []
+      }
       this.clickQuery()
     },
     load(tree, resolve) {
@@ -587,6 +692,12 @@ export default {
           if (arr1.length) {
             d.liub = arr1[0].machine_name
           }
+          d.order_results.forEach(D => {
+            const _min = D.judged_lower_limit ? Number(D.judged_lower_limit) : 0
+            const _max = D.judged_upper_limit ? Number(D.judged_upper_limit) : 0
+            D._red = D.value > _max
+            D._blue = D.value < _min
+          })
         })
         this.listLoading = false
         if (bool) {
@@ -616,6 +727,8 @@ export default {
       }
       this.getParams.page = this.getParams.page + 1
       this.getMaterialTestOrders()
+    },
+    infiniteScroll1() {
     },
     async getTestTypes() {
       try {
@@ -655,6 +768,14 @@ export default {
         return 'warning-row'
       }
       return ''
+    },
+    tableRowClassName1({ row, rowIndex }) {
+      if (['中央值', '规格幅(+-)'].includes(row.product_no)) {
+        return 'topColor1'
+      }
+      if (['上规格幅', '下规格幅'].includes(row.product_no)) {
+        return 'topColor2'
+      }
     },
     changeHistoryDate() {
       this.getHistoryDate()
@@ -839,14 +960,10 @@ export default {
             order_results: order_results
           })
         }
-        if (this.testOrders[0]._current) {
-          this.testOrders.splice(0, 5)
+        if (this.testOrdersTop.length) {
+          this.testOrdersTop.splice(0, 5)
         }
-        if (this.testOrdersAll[0]._current) {
-          this.testOrdersAll.splice(0, 5)
-        }
-        this.testOrders = [...arr, ...this.testOrders]
-        this.testOrdersAll = [...arr, ...this.testOrdersAll]
+        this.testOrdersTop = [...arr]
       } catch (e) {
         //
       }
@@ -940,6 +1057,10 @@ function setData(val) {
   // .el-table td, .el-table th.is-center{
     // padding: 2px !important;
   // }
+  .test_type_name_style1{
+ background: rgb(124, 192, 103);
+  color:#fff;
+  }
   .test_type_name_style{
     // position: absolute;
     // top: 0;
@@ -953,7 +1074,28 @@ function setData(val) {
     // align-items: center;
     color:#fff;
   }
-
+  .topColor1{
+    background: rgb(255,255,153) !important;
+    color:#000;
+  }
+  .topColor2{
+    background: rgb(153,204,255) !important;
+    color:#000;
+  }
+  .cell{
+    vertical-align: middle;
+  }
+  .line_w{
+    display: inline-block;
+    width: 100%;
+    height: 2px;
+    background: #c2bcbc;
+    transform: rotate(11deg);
+    vertical-align: middle;
+  }
+  .line_w1{
+     transform: rotate(9deg);
+  }
 }
 
 </style>
