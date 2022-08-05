@@ -44,6 +44,11 @@
         </template>
       </el-table-column>
       <el-table-column
+        prop="总计"
+        label="总计"
+        min-width="20"
+      />
+      <el-table-column
         prop="1月"
         label="1月"
         min-width="20"

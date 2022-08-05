@@ -1588,46 +1588,57 @@ export let asyncRoutes = [
         }
       },
       {
-        path: '/spot-check-set',
-        name: 'SpotCheckSet',
-        component: () => import('@/views/spot_check/spot-check-set'),
+        path: '/spot-check',
+        redirect: '/spot-check-set',
+        component: () => import('@/views/spot_check/a-index'),
+        name: 'SpotCheck',
         meta: {
-          title: '岗位安全装置点检标准',
-          icon: 'production',
-          permissionName: 'check_point_standard'
-        }
-      },
-      {
-        path: '/spot-check-confirm',
-        name: 'SpotCheckConfirm',
-        component: () => import('@/views/spot_check/spot-check-confirm'),
-        meta: {
-          title: '岗位安全装置点检表确认',
-          icon: 'production',
-          permissionName: 'check_point_table'
-        }
-      },
-      {
-        path: '/temperature-set',
-        name: 'TemperatureSet',
-        component: () => import('@/views/spot_check/temperature-set'),
-        meta: {
-          title: '除尘袋滤器温度标准',
-          icon: 'production',
-          permissionName: 'check_temperature_standard'
-        }
-      },
-      {
-        path: '/temperature-confirm',
-        name: 'TemperatureConfirm',
-        component: () => import('@/views/spot_check/temperature-confirm'),
-        meta: {
-          title: '除尘袋滤器记录表确认',
-          icon: 'production',
-          permissionName: 'check_temperature_table'
-        }
+          title: '安全点检及除尘袋滤器测温',
+          icon: 'production'
+        },
+        children: [
+          {
+            path: '/spot-check-set',
+            name: 'SpotCheckSet',
+            component: () => import('@/views/spot_check/spot-check-set'),
+            meta: {
+              faName: 'SpotCheck',
+              title: '岗位安全装置点检标准',
+              permissionName: 'check_point_standard'
+            }
+          },
+          {
+            path: '/spot-check-confirm',
+            name: 'SpotCheckConfirm',
+            component: () => import('@/views/spot_check/spot-check-confirm'),
+            meta: {
+              faName: 'SpotCheck',
+              title: '岗位安全装置点检表确认',
+              permissionName: 'check_point_table'
+            }
+          },
+          {
+            path: '/temperature-set',
+            name: 'TemperatureSet',
+            component: () => import('@/views/spot_check/temperature-set'),
+            meta: {
+              faName: 'SpotCheck',
+              title: '除尘袋滤器温度标准',
+              permissionName: 'check_temperature_standard'
+            }
+          },
+          {
+            path: '/temperature-confirm',
+            name: 'TemperatureConfirm',
+            component: () => import('@/views/spot_check/temperature-confirm'),
+            meta: {
+              faName: 'SpotCheck',
+              title: '除尘袋滤器记录表确认',
+              permissionName: 'check_temperature_table'
+            }
+          }
+        ]
       }
-
       // {
       //   path: 'collect/rub/daily',
       //   component: () => import('@/views/collect_rubber_daily_manage/index'),
