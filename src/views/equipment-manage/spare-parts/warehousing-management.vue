@@ -620,7 +620,7 @@
 <script>
 import material from '../components/material-dialog'
 import { sectionTree } from '@/api/base_w_four'
-import { getOrderId, equipWarehouseOrder, equipWarehouseOrderDetail, equipWarehouseArea, equipWarehouseLocation, getSpareOrder, closeOrder } from '@/api/jqy'
+import { getSpare, getOrderId, equipWarehouseOrder, equipWarehouseOrderDetail, equipWarehouseArea, equipWarehouseLocation, getSpareOrder, closeOrder } from '@/api/jqy'
 import page from '@/components/page'
 import { debounce } from '@/utils'
 export default {
@@ -749,14 +749,20 @@ export default {
         type: 'warning'
       }).then(() => {
         this.btnLoad = true
-        getSpareOrder('get', null, {})
+        getSpare('get', null, {})
           .then(response => {
-            this.btnLoad = false
-            this.$message({
-              type: 'success',
-              message: '操作成功!'
-            })
-            this.getList()
+            getSpareOrder('get', null, {})
+              .then(response => {
+                this.btnLoad = false
+                this.$message({
+                  type: 'success',
+                  message: '操作成功!'
+                })
+                this.getList()
+              })
+              .catch(response => {
+                this.btnLoad = false
+              })
           })
           .catch(response => {
             this.btnLoad = false
