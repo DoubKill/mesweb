@@ -116,7 +116,13 @@
       <el-table-column
         prop="check_result"
         label="点检结果"
-      />
+      >
+        <template slot-scope="scope">
+          <span :style="{color:scope.row.check_result==='点检异常'?'red':'#606266'}">
+            {{ scope.row.check_result }}
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column
         prop="status"
         label="状态"
@@ -150,7 +156,6 @@
               v-permission="['check_point_table', 'confirm']"
               :disabled="scope.row.status==='已确认'"
               size="mini"
-              type="success"
               plain
               @click="showDialog(scope.row,true)"
             >确认

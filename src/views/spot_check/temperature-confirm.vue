@@ -74,7 +74,7 @@
         label="温度是否有超标"
       >
         <template slot-scope="scope">
-          <span>
+          <span :style="{color:scope.row.is_exceed?'red':'#606266'}">
             {{ scope.row.is_exceed?'有':'无' }}
           </span>
         </template>
@@ -446,11 +446,6 @@ export default {
               throw new Error('检查内容未添加')
             }
             this.typeForm.table_details = this.tableData1
-            this.firstList.forEach(d => {
-              if (!d.input_value) {
-                throw new Error('温度为必填项')
-              }
-            })
             this.btnLoading = true
             this.typeForm.id ? await checkTemperatureTableExport('post', null, { data: this.typeForm }) : await checkTemperatureTable('post', null, { data: this.typeForm })
             this.btnLoading = false
