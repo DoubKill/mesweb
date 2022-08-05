@@ -20,9 +20,22 @@
         />
       </el-form-item>
       <el-form-item label="胶料">
-        <all-product-no-select
-          @productBatchingChanged="productBatchingChanged"
-        />
+        <el-select
+          v-model="getParams.product_no"
+          placeholder="请选择"
+          clearable
+          filterable
+          @change="productBatchingChanged"
+        >
+          <el-option
+            v-for="(group) in products"
+            :key="group.product_no"
+            :label="group.product_no"
+            :value="group.product_no"
+          >
+            <span :style="{color: group.used?'blue':''}">{{ group.product_no }}</span>
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="班次">
         <class-select @classSelected="classSelected" />
@@ -342,8 +355,7 @@ import dayjs from 'dayjs'
 import EquipSelect from '@/components/select_w/equip'
 import ClassSelect from '@/components/ClassSelect'
 import StageSelect from '@/components/StageSelect/index'
-import { globalCodesUrl } from '@/api/base_w'
-import allProductNoSelect from '@/components/select_w/allProductNoSelect'
+import { globalCodesUrl, productMaterials } from '@/api/base_w'
 import { testTypes, materialTestOrders, testResultHistory,
   materialTestOrdersAll, datapointCurve, productIndicatorStandard } from '@/api/quick-check-detail'
 import elTableInfiniteScroll from 'el-table-infinite-scroll'
@@ -357,7 +369,7 @@ export default {
   directives: {
     'el-table-infinite-scroll': elTableInfiniteScroll
   },
-  components: { EquipSelect, DetailsUTable, allProductNoSelect, ClassSelect, StageSelect },
+  components: { EquipSelect, DetailsUTable, ClassSelect, StageSelect },
   props: {
     isProps: {
       type: Boolean,
@@ -430,6 +442,7 @@ export default {
       row_roduct_no: '',
       newHead: [],
       groups: [],
+      products: [],
       viewHeard: false,
       testOrdersTop: [],
       historySpot: {
@@ -531,6 +544,11 @@ export default {
         this.groups = response.results
       }).catch(function() {
       })
+
+      productMaterials('get').then((response) => {
+        this.products = response
+      }).catch(function() {
+      })
     },
     clearList() {
       this.getParams.page = 1
@@ -548,10 +566,9 @@ export default {
       this.getParams.classes = className || null
       this.clickQuery()
     },
-    async productBatchingChanged(val) {
-      this.getParams.product_no = val ? val.material_no : null
+    async productBatchingChanged() {
       this.viewHeard = true
-      if (!val) {
+      if (!this.getParams.product_no) {
         this.testOrdersTop = []
       }
       this.clickQuery()
