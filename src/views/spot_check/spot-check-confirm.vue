@@ -154,7 +154,7 @@
             >点检</el-button>
             <el-button
               v-permission="['check_point_table', 'confirm']"
-              :disabled="scope.row.status==='已确认'"
+              :disabled="scope.row.status!=='已点检'"
               size="mini"
               plain
               @click="showDialog(scope.row,true)"
@@ -508,8 +508,10 @@ export default {
             if (!this.typeForm.id) {
               this.typeForm.table_details = this.tableData1
             }
-            if (!this.tableData1.some(d => d.check_result === '好' || d.check_result === '坏')) {
-              throw new Error('点检内容中检查结果至少填一个')
+            if (this.typeForm.id) {
+              if (!this.tableData1.some(d => d.check_result === '好' || d.check_result === '坏')) {
+                throw new Error('点检内容中检查结果至少填一个')
+              }
             }
             this.btnLoading = true
             this.typeForm.id ? await checkPointTableExport('post', null, { data: this.typeForm }) : await checkPointTable('post', null, { data: this.typeForm })
