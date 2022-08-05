@@ -88,7 +88,6 @@
       </el-table-column>
     </el-table>
     <page
-      v-if="!loading"
       :old-page="false"
       :total="total"
       :current-page="getParams.page"

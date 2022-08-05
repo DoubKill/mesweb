@@ -113,7 +113,6 @@
       </el-table-column>
     </el-table>
     <page
-      v-if="!loading"
       :old-page="false"
       :total="total"
       :current-page="getParams.page"
@@ -332,7 +331,8 @@ export default {
       this.multipleSelection = val
     },
     changValue(scope) {
-      this.$set(this.firstList[scope.$index], 'input_value', scope.row.input_value)
+      const index = this.firstList.findIndex(d => d.sn === scope.row.sn)
+      this.$set(this.firstList[index], 'input_value', scope.row.input_value)
     },
     searchList() {
       if (this.location && !this.station_name) {
@@ -347,7 +347,9 @@ export default {
     },
     searchList1() {
       if (this.check) {
-        this.$set(this, 'tableData1', this.firstList.filter(d => { return d.temperature_limit < d.input_value }))
+        this.location = null
+        this.station_name = null
+        this.$set(this, 'tableData1', this.firstList.filter(d => { return Number(d.temperature_limit) < Number(d.input_value) }))
       } else {
         this.tableData1 = JSON.parse(JSON.stringify(this.firstList))
       }
@@ -374,8 +376,8 @@ export default {
     },
     confirm() {
       if (this.multipleSelection.length > 0) {
-        if (this.multipleSelection.some(d => d.status === '已确认')) {
-          this.$message.info('所选择数据有已确认状态')
+        if (this.multipleSelection.some(d => d.status !== '已检查')) {
+          this.$message.info('确认数据只能选择已检查数据')
           return
         }
         this.dialogVisible = true
@@ -408,6 +410,11 @@ export default {
         this.isLook = false
       }
       this.check = false
+      row.table_details.forEach(d => {
+        if (d.input_value === null) {
+          d.input_value = undefined
+        }
+      })
       this.typeForm = JSON.parse(JSON.stringify(row))
       this.tableData1 = JSON.parse(JSON.stringify(this.typeForm.table_details))
       this.firstList = JSON.parse(JSON.stringify(this.typeForm.table_details))
@@ -437,13 +444,19 @@ export default {
               this.typeForm.ids = [this.typeForm.id]
               this.typeForm.opera_type = 1
             }
-            if (this.location !== null || this.station_name !== null) {
+            if (this.location !== null || this.station_name !== null || this.check) {
+              this.check = false
               this.location = null
               this.station_name = null
               this.tableData1 = JSON.parse(JSON.stringify(this.firstList))
             }
             if (this.tableData1.length === 0) {
               throw new Error('检查内容未添加')
+            }
+            if (this.typeForm.id) {
+              if (!this.tableData1.some(d => d.input_value)) {
+                throw new Error('检查内容中温度至少填一个')
+              }
             }
             this.typeForm.table_details = this.tableData1
             this.btnLoading = true

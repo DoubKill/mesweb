@@ -67,224 +67,223 @@
       </el-form-item>
     </el-form>
     <div id="out-table">
-      <div
+      <!-- <div
         v-for="(item,key) in [tableData,tableData1]"
         :key="key"
+      > -->
+      <el-table
+        v-loading="loading"
+        :data="tableData"
+        :row-class-name="tableRowClassName"
+        border
+        tooltip-effect="dark"
+        style="width: 100%"
+        max-height="600"
       >
-        <el-table
-          v-if="key===1?tableData.length>0?true:false:true"
-          v-loading="loading"
-          :data="item"
-          :row-class-name="tableRowClassName"
-          border
-          tooltip-effect="dark"
-          style="width: 100%"
-          :show-header="key===1?false:true"
+        <el-table-column
+          prop="product_type"
+          label="胶料"
+          width="70"
+        />
+        <el-table-column
+          prop="JC"
+          label="检查数"
+          width="80"
+          sortable
+        />
+        <el-table-column
+          prop="HG"
+          label="合格量"
+          width="80"
+          sortable
+        />
+        <el-table-column
+          label="门尼不合格"
+          width="110"
+          align="center"
         >
           <el-table-column
-            prop="product_type"
-            label="胶料"
-            width="70"
-          />
-          <el-table-column
-            prop="JC"
-            label="检查数"
-            width="80"
+            prop="mn_upper"
+            label="+"
+            width="55"
             sortable
           />
           <el-table-column
-            prop="HG"
-            label="合格量"
-            width="80"
+            prop="mn_lower"
+            label="-"
+            width="55"
+            sortable
+          />
+        </el-table-column>
+        <el-table-column
+          label="硬度不合格"
+          width="110"
+          align="center"
+        >
+          <el-table-column
+            prop="yd_upper"
+            label="+"
+            width="55"
             sortable
           />
           <el-table-column
-            label="门尼不合格"
-            width="110"
+            prop="yd_lower"
+            label="-"
+            width="55"
+            sortable
+          />
+        </el-table-column>
+        <el-table-column
+          label="比重不合格"
+          width="110"
+          align="center"
+        >
+          <el-table-column
+            prop="bz_upper"
+            label="+"
+            width="55"
+            sortable
+          />
+          <el-table-column
+            prop="bz_lower"
+            label="-"
+            width="55"
+            sortable
+          />
+        </el-table-column>
+        <el-table-column
+          label="硫变不合格"
+          align="center"
+        >
+          <el-table-column
+            prop="MH"
+            label="MH"
+            min-width="20"
             align="center"
           >
             <el-table-column
-              prop="mn_upper"
+              prop="MH_upper"
               label="+"
-              width="55"
+              min-width="20"
               sortable
             />
             <el-table-column
-              prop="mn_lower"
+              prop="MH_lower"
               label="-"
-              width="55"
+              min-width="20"
               sortable
             />
           </el-table-column>
           <el-table-column
-            label="硬度不合格"
-            width="110"
+            prop="ML"
+            label="ML"
+            min-width="20"
             align="center"
           >
             <el-table-column
-              prop="yd_upper"
+              prop="ML_upper"
               label="+"
-              width="55"
+              min-width="20"
               sortable
             />
             <el-table-column
-              prop="yd_lower"
+              prop="ML_lower"
               label="-"
-              width="55"
+              min-width="20"
               sortable
             />
           </el-table-column>
           <el-table-column
-            label="比重不合格"
-            width="110"
+            prop="TC10"
+            label="TC10"
+            min-width="20"
             align="center"
           >
             <el-table-column
-              prop="bz_upper"
+              prop="TC10_upper"
               label="+"
-              width="55"
+              min-width="20"
               sortable
             />
             <el-table-column
-              prop="bz_lower"
+              prop="TC10_lower"
               label="-"
-              width="55"
+              min-width="20"
               sortable
             />
           </el-table-column>
           <el-table-column
-            label="硫变不合格"
+            prop="TC50"
+            label="TC50"
+            min-width="20"
             align="center"
           >
             <el-table-column
-              prop="MH"
-              label="MH"
+              prop="TC50_upper"
+              label="+"
               min-width="20"
-              align="center"
-            >
-              <el-table-column
-                prop="MH_upper"
-                label="+"
-                min-width="20"
-                sortable
-              />
-              <el-table-column
-                prop="MH_lower"
-                label="-"
-                min-width="20"
-                sortable
-              />
-            </el-table-column>
+              sortable
+            />
             <el-table-column
-              prop="ML"
-              label="ML"
+              prop="TC50_lower"
+              label="-"
               min-width="20"
-              align="center"
-            >
-              <el-table-column
-                prop="ML_upper"
-                label="+"
-                min-width="20"
-                sortable
-              />
-              <el-table-column
-                prop="ML_lower"
-                label="-"
-                min-width="20"
-                sortable
-              />
-            </el-table-column>
-            <el-table-column
-              prop="TC10"
-              label="TC10"
-              min-width="20"
-              align="center"
-            >
-              <el-table-column
-                prop="TC10_upper"
-                label="+"
-                min-width="20"
-                sortable
-              />
-              <el-table-column
-                prop="TC10_lower"
-                label="-"
-                min-width="20"
-                sortable
-              />
-            </el-table-column>
-            <el-table-column
-              prop="TC50"
-              label="TC50"
-              min-width="20"
-              align="center"
-            >
-              <el-table-column
-                prop="TC50_upper"
-                label="+"
-                min-width="20"
-                sortable
-              />
-              <el-table-column
-                prop="TC50_lower"
-                label="-"
-                min-width="20"
-                sortable
-              />
-            </el-table-column>
-            <el-table-column
-              prop="TC90"
-              label="TC90"
-              min-width="20"
-              align="center"
-            >
-              <el-table-column
-                prop="TC90_upper"
-                label="+"
-                min-width="20"
-                sortable
-              />
-              <el-table-column
-                prop="TC90_lower"
-                label="-"
-                min-width="20"
-                sortable
-              />
-            </el-table-column>
-            <el-table-column
-              prop="sum_s"
-              label="硫变合计"
-              min-width="15"
               sortable
             />
           </el-table-column>
           <el-table-column
-            prop="RATE_1_PASS"
-            label="一次合格率"
+            prop="TC90"
+            label="TC90"
+            min-width="20"
+            align="center"
+          >
+            <el-table-column
+              prop="TC90_upper"
+              label="+"
+              min-width="20"
+              sortable
+            />
+            <el-table-column
+              prop="TC90_lower"
+              label="-"
+              min-width="20"
+              sortable
+            />
+          </el-table-column>
+          <el-table-column
+            prop="sum_s"
+            label="硫变合计"
             min-width="35"
             sortable
           />
-          <el-table-column
-            prop="RATE_S_PASS"
-            label="硫变合格率"
-            sortable
-            min-width="35"
-          />
-          <el-table-column
-            prop="cp_all"
-            label="次品合计"
-            min-width="35"
-            sortable
-          />
-          <el-table-column
-            prop="rate"
-            label="合格率"
-            min-width="30"
-            sortable
-          />
-        </el-table>
-      </div>
+        </el-table-column>
+        <el-table-column
+          prop="RATE_1_PASS"
+          label="一次合格率"
+          min-width="35"
+          sortable
+        />
+        <el-table-column
+          prop="RATE_S_PASS"
+          label="硫变合格率"
+          sortable
+          min-width="35"
+        />
+        <el-table-column
+          prop="cp_all"
+          label="次品合计"
+          min-width="35"
+          sortable
+        />
+        <el-table-column
+          prop="rate"
+          label="合格率"
+          min-width="30"
+          sortable
+        />
+      </el-table>
     </div>
+    <!-- </div> -->
   </div>
 </template>
 
@@ -405,6 +404,7 @@ export default {
               cp_all: this.cp_all,
               rate: (this.HG / this.JC * 100).toFixed(2)
             }]
+            this.tableData.push(...this.tableData1)
           }
         }
         this.loading = false
