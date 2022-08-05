@@ -453,6 +453,11 @@ export default {
             if (this.tableData1.length === 0) {
               throw new Error('检查内容未添加')
             }
+            if (this.typeForm.id) {
+              if (!this.tableData1.some(d => d.input_value)) {
+                throw new Error('检查内容中温度至少填一个')
+              }
+            }
             this.typeForm.table_details = this.tableData1
             this.btnLoading = true
             this.typeForm.id ? await checkTemperatureTableExport('post', null, { data: this.typeForm }) : await checkTemperatureTable('post', null, { data: this.typeForm })
