@@ -332,7 +332,8 @@ export default {
       this.multipleSelection = val
     },
     changValue(scope) {
-      this.$set(this.firstList[scope.$index], 'input_value', scope.row.input_value)
+      const index = this.firstList.findIndex(d => d.sn === scope.row.sn)
+      this.$set(this.firstList[index], 'input_value', scope.row.input_value)
     },
     searchList() {
       if (this.location && !this.station_name) {
@@ -347,7 +348,9 @@ export default {
     },
     searchList1() {
       if (this.check) {
-        this.$set(this, 'tableData1', this.firstList.filter(d => { return d.temperature_limit < d.input_value }))
+        this.location = null
+        this.station_name = null
+        this.$set(this, 'tableData1', this.firstList.filter(d => { return Number(d.temperature_limit) < Number(d.input_value) }))
       } else {
         this.tableData1 = JSON.parse(JSON.stringify(this.firstList))
       }
@@ -408,6 +411,11 @@ export default {
         this.isLook = false
       }
       this.check = false
+      row.table_details.forEach(d => {
+        if (d.input_value === null) {
+          d.input_value = undefined
+        }
+      })
       this.typeForm = JSON.parse(JSON.stringify(row))
       this.tableData1 = JSON.parse(JSON.stringify(this.typeForm.table_details))
       this.firstList = JSON.parse(JSON.stringify(this.typeForm.table_details))
@@ -437,7 +445,8 @@ export default {
               this.typeForm.ids = [this.typeForm.id]
               this.typeForm.opera_type = 1
             }
-            if (this.location !== null || this.station_name !== null) {
+            if (this.location !== null || this.station_name !== null || this.check) {
+              this.check = false
               this.location = null
               this.station_name = null
               this.tableData1 = JSON.parse(JSON.stringify(this.firstList))

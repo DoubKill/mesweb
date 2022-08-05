@@ -291,7 +291,7 @@
               width="149"
             >
               <template slot-scope="{row}">
-                <el-checkbox v-model="row.is_repaired" :disabled="isLook||row.check_result==='好'">已修复</el-checkbox>
+                <el-checkbox v-model="row.is_repaired" :disabled="isLook||row.check_result==='好'||!row.check_result">已修复</el-checkbox>
               </template>
             </el-table-column>
           </el-table>
@@ -453,7 +453,7 @@ export default {
       this.getList()
     },
     changeRepaired(row) {
-      if (row.check_result === '好') {
+      if (row.check_result === '好' || !row.check_result) {
         row.is_repaired = false
       }
     },
