@@ -968,11 +968,15 @@ export default {
               if (i === 0 && !D.master) {
                 throw Error('请选择投料方式')
               }
-              if (Object.prototype.toString.call(D.master) !== '[object Object]') {
-                if (!D.master) {
-                  D.master = this.tableDataIngredient[i - 1].master + '-H'
+              if (Object.prototype.toString.call(arr[i].master) !== '[object Object]') {
+                arr[i].master = { ZWF: arr[i].master || '' }
+              }
+              if (!arr[i].master.ZWF && i > 0) {
+                if ((arr[i - 1].master.ZWF).indexOf('-H') > -1) {
+                  D.master = arr[i - 1].master
+                } else {
+                  D.master.ZWF = arr[i - 1].master.ZWF + '-H'
                 }
-                D.master = { ZWF: D.master }
               }
             })
           } catch (e) {
