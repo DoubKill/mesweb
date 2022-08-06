@@ -279,7 +279,7 @@ export default {
       }
     },
     async changeMaterialType(arr) {
-      this.search.material_ids = []
+      this.search.material_names = []
       this.getRawMaterial(arr)
     },
     currentChange(page, page_size) {
