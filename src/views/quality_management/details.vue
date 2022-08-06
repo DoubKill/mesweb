@@ -20,9 +20,22 @@
         />
       </el-form-item>
       <el-form-item label="胶料">
-        <all-product-no-select
-          @productBatchingChanged="productBatchingChanged"
-        />
+        <el-select
+          v-model="getParams.product_no"
+          placeholder="请选择"
+          clearable
+          filterable
+          @change="productBatchingChanged"
+        >
+          <el-option
+            v-for="(group) in products"
+            :key="group.product_no"
+            :label="group.product_no"
+            :value="group.product_no"
+          >
+            <span :style="{color: group.used?'blue':''}">{{ group.product_no }}</span>
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="班次">
         <class-select @classSelected="classSelected" />
@@ -304,6 +317,7 @@
       width="80%"
       append-to-body
     >
+      <h3 style="display:inline-block;margin:0 10px">日期</h3>
       <el-date-picker
         v-model="historyDate"
         type="daterange"
@@ -313,6 +327,11 @@
         value-format="yyyy-MM-dd"
         :clearable="false"
         @change="changeHistoryDate"
+      />
+      <h3 style="display:inline-block;margin:0 10px">机台</h3>
+      <equip-select
+        :equip_no_props.sync="history_equip_no"
+        @changeSearch="changeHistoryDate"
       />
       <div
         id="historySpot"
@@ -336,8 +355,7 @@ import dayjs from 'dayjs'
 import EquipSelect from '@/components/select_w/equip'
 import ClassSelect from '@/components/ClassSelect'
 import StageSelect from '@/components/StageSelect/index'
-import { globalCodesUrl } from '@/api/base_w'
-import allProductNoSelect from '@/components/select_w/allProductNoSelect'
+import { globalCodesUrl, productMaterials } from '@/api/base_w'
 import { testTypes, materialTestOrders, testResultHistory,
   materialTestOrdersAll, datapointCurve, productIndicatorStandard } from '@/api/quick-check-detail'
 import elTableInfiniteScroll from 'el-table-infinite-scroll'
@@ -351,7 +369,7 @@ export default {
   directives: {
     'el-table-infinite-scroll': elTableInfiniteScroll
   },
-  components: { EquipSelect, DetailsUTable, allProductNoSelect, ClassSelect, StageSelect },
+  components: { EquipSelect, DetailsUTable, ClassSelect, StageSelect },
   props: {
     isProps: {
       type: Boolean,
@@ -420,9 +438,11 @@ export default {
       options: [{ name: '一等品', bool: true }, { name: '三等品', bool: false }],
       historyDialogVisible: false,
       historyDate: [],
+      history_equip_no: '',
       row_roduct_no: '',
       newHead: [],
       groups: [],
+      products: [],
       viewHeard: false,
       testOrdersTop: [],
       historySpot: {
@@ -524,6 +544,11 @@ export default {
         this.groups = response.results
       }).catch(function() {
       })
+
+      productMaterials('get').then((response) => {
+        this.products = response
+      }).catch(function() {
+      })
     },
     clearList() {
       this.getParams.page = 1
@@ -541,10 +566,9 @@ export default {
       this.getParams.classes = className || null
       this.clickQuery()
     },
-    async productBatchingChanged(val) {
-      this.getParams.product_no = val ? val.material_no : null
+    async productBatchingChanged() {
       this.viewHeard = true
-      if (!val) {
+      if (!this.getParams.product_no) {
         this.testOrdersTop = []
       }
       this.clickQuery()
@@ -618,7 +642,6 @@ export default {
         const _api = materialTestOrdersAll
         _api('get', null, { params: obj, responseType: 'blob' })
           .then(res => {
-            this.btnLoading = false
             const link = document.createElement('a')
             const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
             link.style.display = 'none'
@@ -627,9 +650,9 @@ export default {
             document.body.appendChild(link)
             link.click()
             document.body.removeChild(link)
-            this.btnExportLoad = false
+            this.btnLoading = false
           }).catch(e => {
-            this.btnExportLoad = false
+            this.btnLoading = false
           })
       } catch (e) {
         this.btnLoading = false
@@ -800,7 +823,8 @@ export default {
         const obj = {
           st: this.historyDate[0] || '',
           et: this.historyDate[1] || '',
-          product_no: this.row_roduct_no || ''
+          product_no: this.row_roduct_no || '',
+          equip_no: this.history_equip_no
         }
         this.historyLoading = true
         const data = await datapointCurve(obj)
@@ -897,9 +921,15 @@ export default {
             } : {}
           })
         })
-
+        let equip_nos = JSON.stringify(data.equip_nos)
+        if (this.history_equip_no) {
+          equip_nos = '[' + JSON.stringify(this.history_equip_no) + ']'
+        }
+        equip_nos = equip_nos.replace(/"/g, '')
+        equip_nos = equip_nos.replace(/,/g, '/')
         _title.push({ text: this.row_roduct_no + '数据推移' +
-        ' (' + this.historyDate[0] + '至' + this.historyDate[1] + ')', left: 'center', top: 0 })
+        ' (' + this.historyDate[0] + '至' + this.historyDate[1] + ') ' +
+        equip_nos, left: 'center', top: 0 })
         this.historySpot.toolbox.feature.saveAsImage.name = this.row_roduct_no + ' (' + this.historyDate[0] + '至' + this.historyDate[1] + ') ' + setDate()
         this.historySpot.xAxis = _x || []
         this.historySpot.yAxis = _y || []

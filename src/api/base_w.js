@@ -708,4 +708,12 @@ export function productRatio(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function productMaterials(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ProductMaterials + id + '/' : API.ProductMaterials,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 

@@ -116,7 +116,13 @@
       <el-table-column
         prop="check_result"
         label="点检结果"
-      />
+      >
+        <template slot-scope="scope">
+          <span :style="{color:scope.row.check_result==='点检异常'?'red':'#606266'}">
+            {{ scope.row.check_result }}
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column
         prop="status"
         label="状态"
@@ -148,9 +154,8 @@
             >点检</el-button>
             <el-button
               v-permission="['check_point_table', 'confirm']"
-              :disabled="scope.row.status==='已确认'"
+              :disabled="scope.row.status!=='已点检'"
               size="mini"
-              type="success"
               plain
               @click="showDialog(scope.row,true)"
             >确认
@@ -168,7 +173,6 @@
       </el-table-column>
     </el-table>
     <page
-      v-if="!loading"
       :old-page="false"
       :total="total"
       :current-page="getParams.page"
@@ -286,7 +290,7 @@
               width="149"
             >
               <template slot-scope="{row}">
-                <el-checkbox v-model="row.is_repaired" :disabled="isLook||row.check_result==='好'">已修复</el-checkbox>
+                <el-checkbox v-model="row.is_repaired" :disabled="isLook||row.check_result==='好'||!row.check_result">已修复</el-checkbox>
               </template>
             </el-table-column>
           </el-table>
@@ -368,6 +372,7 @@ export default {
       const obj = { all: 1, category_name: '密炼设备' }
       getEquip(obj).then(response => {
         this.options = response.results
+        this.options.push({ id: 16, equip_no: '190E' })
       })
     },
     async visibleStation(val) {
@@ -448,7 +453,7 @@ export default {
       this.getList()
     },
     changeRepaired(row) {
-      if (row.check_result === '好') {
+      if (row.check_result === '好' || !row.check_result) {
         row.is_repaired = false
       }
     },
@@ -503,8 +508,10 @@ export default {
             if (!this.typeForm.id) {
               this.typeForm.table_details = this.tableData1
             }
-            if (!this.tableData1.some(d => d.check_result === '好' || d.check_result === '坏')) {
-              throw new Error('点检内容中检查结果至少填一个')
+            if (this.typeForm.id) {
+              if (!this.tableData1.some(d => d.check_result === '好' || d.check_result === '坏')) {
+                throw new Error('点检内容中检查结果至少填一个')
+              }
             }
             this.btnLoading = true
             this.typeForm.id ? await checkPointTableExport('post', null, { data: this.typeForm }) : await checkPointTable('post', null, { data: this.typeForm })
