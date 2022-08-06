@@ -642,7 +642,6 @@ export default {
         const _api = materialTestOrdersAll
         _api('get', null, { params: obj, responseType: 'blob' })
           .then(res => {
-            this.btnLoading = false
             const link = document.createElement('a')
             const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
             link.style.display = 'none'
@@ -651,9 +650,9 @@ export default {
             document.body.appendChild(link)
             link.click()
             document.body.removeChild(link)
-            this.btnExportLoad = false
+            this.btnLoading = false
           }).catch(e => {
-            this.btnExportLoad = false
+            this.btnLoading = false
           })
       } catch (e) {
         this.btnLoading = false

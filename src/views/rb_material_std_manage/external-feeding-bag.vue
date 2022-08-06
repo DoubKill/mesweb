@@ -478,7 +478,7 @@
         </el-table-column>
         <el-table-column
           label="实际重量/kg"
-          prop="actual_weight"
+          prop="standard_weight"
         >
           <template slot-scope="{row,$index}">
             <el-input-number
