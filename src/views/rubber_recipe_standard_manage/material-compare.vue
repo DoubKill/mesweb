@@ -49,6 +49,7 @@
           v-model="materialType"
           multiple
           clearable
+          filterable
           placeholder="请选择"
           style="width:300px"
           @change="changeMaterialType"
