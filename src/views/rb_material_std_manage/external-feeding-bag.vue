@@ -68,7 +68,7 @@
         >新建</el-button>
         <el-button
           v-if="checkPermission(['wfproductbatching','change'])"
-          :disabled="![1,4].includes(currentRow.used_type)"
+          :disabled="![1,2,4].includes(currentRow.used_type)"
           @click="showPutRubberMaterialDialog"
         >配料</el-button>
       </el-form-item>
