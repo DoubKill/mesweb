@@ -354,7 +354,8 @@ export default {
             new_recipe_id: data.new_recipe_id || 0,
             production_time_interval: data.production_time_interval || 0,
             send_success_equip: data.send_success_equip || [],
-            mixed_ratio: data.mixed_ratio || {}
+            mixed_ratio: data.mixed_ratio || {},
+            send_xl_equip: data.send_xl_equip || ''
           }
         }
         this.objParames._add = _post
