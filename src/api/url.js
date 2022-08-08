@@ -734,6 +734,7 @@ export default {
   ProductSynthesisProductRate: '/api/v1/quality/product-synthesis-product-rate/',
   ProductSynthesisMonthRate: '/api/v1/quality/product-synthesis-month-rate/',
 
+  ProductRatio: '/api/v1/recipe/product-ratio/',
   ProductMaterials: '/api/v1/quality/product-materials/',
   RubberFrameRepairSummary: '/api/v1/production/rubber-frame-repair—summary/',
   CheckPointStandard: '/api/v1/equipment/check-point-standard/',
