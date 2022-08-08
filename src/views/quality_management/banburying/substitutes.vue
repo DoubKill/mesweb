@@ -152,6 +152,11 @@
         min-width="20"
       />
       <el-table-column
+        prop="created_date"
+        label="投料扫码时间"
+        min-width="20"
+      />
+      <el-table-column
         prop="last_update_username"
         label="处理人"
         min-width="20"
