@@ -1036,7 +1036,11 @@ export default {
     insert_NewPracticalWeightChanged(i) {
       let _master = null
       if (this.tableDataIngredient.length === 0) {
-        _master = 'F'
+        if (Number(this.rubberMaterialForm.weigh_type) === 1) {
+          _master = 'S'
+        } else {
+          _master = 'F'
+        }
       }
       this.tableDataIngredient.push({
         type: 1,
