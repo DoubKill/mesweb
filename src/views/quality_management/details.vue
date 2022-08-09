@@ -227,7 +227,7 @@
       <!-- use-virtual 省略号 -->
       <u-table-column label="胶料编码" width="140px" align="center" prop="product_no">
         <template slot-scope="scope">
-          <el-link v-if="!scope.row._current" type="primary" @click="clickOrderNum(scope.$index,scope.row)">{{ scope.row.product_no }}</el-link>
+          <el-link v-if="!scope.row._current&&checkPermission(['result_info','curve'])" type="primary" @click="clickOrderNum(scope.$index,scope.row)">{{ scope.row.product_no }}</el-link>
           <span v-else>{{ scope.row.product_no }}</span>
         </template>
       </u-table-column>
@@ -362,7 +362,7 @@ import elTableInfiniteScroll from 'el-table-infinite-scroll'
 import FileSaver from 'file-saver'
 import XLSX from 'xlsx'
 import DetailsUTable from './components/details-u-table'
-import { setDate } from '@/utils'
+import { setDate, checkPermission } from '@/utils'
 import * as echarts from 'echarts'
 export default {
   name: 'Details',
@@ -532,6 +532,7 @@ export default {
 
   },
   methods: {
+    checkPermission,
     dayTimeChanged() {
       this.clickQuery()
     },
