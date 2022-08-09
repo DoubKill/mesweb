@@ -44,6 +44,38 @@
       <el-form-item label="收皮条码">
         <el-input v-model="getParams.lot_no" clearable @input="changeSearch" />
       </el-form-item>
+      <el-form-item label="锁定状态">
+        <el-select
+          v-model="getParams.is_locked"
+          style="width:100px"
+          clearable
+          placeholder="请选择"
+          @change="dayTimeChanged"
+        >
+          <el-option
+            v-for="item in [{label:'锁定',value:'Y'},{label:'未锁定',value:'N'}]"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="在库状态">
+        <el-select
+          v-model="getParams.is_instock"
+          style="width:100px"
+          clearable
+          placeholder="请选择"
+          @change="dayTimeChanged"
+        >
+          <el-option
+            v-for="item in [{label:'在库',value:'Y'},{label:'未在库',value:'N'}]"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item v-if="!listLoading">
         <el-button
           v-permission="['deal_result','all']"
@@ -60,6 +92,16 @@
           type="primary"
           @click="modifyTrainNewFun(true)"
         >设定批量修改车次</el-button>
+        <el-button
+          v-permission="['deal_result','all']"
+          type="primary"
+          @click="lockDialog"
+        >出库锁定</el-button>
+        <el-button
+          v-permission="['deal_result','all']"
+          type="primary"
+          @click="modifyTrainFun(false)"
+        >出库解锁</el-button>
       </el-form-item>
       <el-form-item style="float:right">
         <el-switch
@@ -76,6 +118,7 @@
       </el-form-item>
     </el-form>
     <el-table
+      ref="multipleTable"
       v-loading="listLoading"
       border
       fit
@@ -83,12 +126,15 @@
       :data="palletFeedTestList"
       size="mini"
       highlight-current-row
+      row-key="id"
+      :reserve-selection="true"
       @selection-change="handleSelectionChange"
       @current-change="handleCurrentChange"
     >
       <el-table-column
         type="selection"
         width="30"
+        :reserve-selection="true"
       />
       <el-table-column type="index" label="No" width="30" />
       <el-table-column align="center" label="生产信息">
@@ -101,6 +147,16 @@
         </el-table-column>
         <el-table-column label="生产机台" prop="equip_no" width="40" />
         <el-table-column label="胶料编码" prop="product_no" />
+        <el-table-column label="锁定状态" prop="equip_no" width="40">
+          <template slot-scope="{row}">
+            {{ row.is_locked?'锁定':'未锁定' }}
+          </template>
+        </el-table-column>
+        <el-table-column label="在库状态" prop="equip_no" width="40">
+          <template slot-scope="{row}">
+            {{ row.is_instock?'在库':'未在库' }}
+          </template>
+        </el-table-column>
         <el-table-column label="收皮重量" prop="actual_weight" width="60" />
         <el-table-column label="余量" prop="residual_weight" align="center" width="60" />
         <el-table-column label="生产时间" width="80" align="center" prop="production_factory_date" />
@@ -119,13 +175,13 @@
           </template>
         </el-table-column>
         <el-table-column label="打印时间" width="80" align="center" prop="print_time" />
-        <el-table-column label="检测员" prop="test.test_user" width="60" />
-        <el-table-column label="检测结果" prop="test_result" width="60" />
+        <el-table-column label="检测员" prop="test.test_user" width="50" />
+        <el-table-column label="检测结果" prop="test_result" width="50" />
         <el-table-column label="处理人" prop="deal_user" width="50" />
-        <el-table-column label="处理意见" prop="deal_suggestion" width="60" />
+        <el-table-column label="处理意见" prop="deal_suggestion" width="50" />
         <el-table-column label="处理时间" align="center" prop="deal_time" width="80" />
       </el-table-column>
-      <el-table-column label="车次" prop="trains" width="60" />
+      <el-table-column label="车次" prop="trains" width="50" />
       <el-table-column label="打印次数" align="center" width="50">
         <template slot-scope="{row}">
           <el-link type="primary" @click="showList(row)">{{ row.print_times }}</el-link>
@@ -378,6 +434,25 @@
         <el-table-column label="打印时间" prop="created_date" min-width="20" />
       </el-table>
     </el-dialog>
+
+    <el-dialog
+      title="胶料 快检锁定处理"
+      :visible.sync="dialogVisible"
+      width="25%"
+    >
+      <el-form
+        label-width="100px"
+        :model="lockForm"
+      >
+        <el-form-item label="处理说明">
+          <el-input v-model="lockForm.desc" type="textarea" style="width:300px" rows="4" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible=false">取 消</el-button>
+        <el-button type="primary" @click="submitFun">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -415,6 +490,7 @@ export default {
         suggestion_desc: null
       },
       palletFeedTestList: [],
+      dialogVisible: false,
       listLoading: false,
       dialogFormVisible: false,
       formData: {
@@ -470,6 +546,7 @@ export default {
         trains: [{ required: true, message: '请填写现有车次', trigger: 'blur' }]
       },
       valCurrent: {},
+      lockForm: {},
       btnLoading: false,
       dialogVisibleTrainNew: false,
       btnLoadingNew: false,
@@ -671,6 +748,18 @@ export default {
       if (!this.modifyTrain) {
         this.$set(this.ruleFormTrain, 'product_no', null)
       }
+    },
+    lockDialog() {
+      if (this.labelPrintList.length === 0) {
+        this.$message.info('请选择需要锁定的快检数据')
+      } else {
+        this.dialogVisible = true
+        this.lockForm = {}
+      }
+    },
+    submitFun() {
+      this.$refs.multipleTable.clearSelection()
+      this.dialogVisible = false
     },
     submitTrain() {
       const a = this.ruleFormTrain.begin_trains + ',' + this.ruleFormTrain.end_trains

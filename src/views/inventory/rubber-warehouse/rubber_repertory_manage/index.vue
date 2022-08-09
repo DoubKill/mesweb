@@ -97,6 +97,22 @@
           @changeSearch="changeSearch"
         />
       </el-form-item>
+      <el-form-item label="锁定状态">
+        <el-select
+          v-model="getParams.is_print"
+          style="width:100px"
+          clearable
+          placeholder="请选择"
+          @change="dayTimeChanged"
+        >
+          <el-option
+            v-for="item in ['已锁定','未锁定']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="总货位数：">
         {{ allObj.total_goods_num || 0 }}
       </el-form-item>
@@ -212,7 +228,7 @@
       <el-table-column prop="active_qty" label="有效库存数(车)" align="center" min-width="20" />
       <!-- :formatter="StandardFlagChoice" -->
     </el-table>
-    <page :total="total" :current-page="getParams.page" @currentChange="currentChange" />
+    <page :old-page="false" :total="total" :current-page="getParams.page" @currentChange="currentChange" />
     <el-alert style="color:black" title="表格字体颜色说明：黄色-超过3天没出快检结果（品质状态还是待检品）； 浅红色-含有超期预警的物料；红色-含有已超期的物料。" type="success" />
     <el-dialog
       title="库位列表"
@@ -330,8 +346,9 @@ export default {
       this.getParams.material_no = ''
       this.changeSearch()
     },
-    currentChange(page) {
+    currentChange(page, page_size) {
       this.getParams.page = page
+      this.getParams.page_size = page_size
       this.rubber_repertory_list()
     },
     handleClose(done) {

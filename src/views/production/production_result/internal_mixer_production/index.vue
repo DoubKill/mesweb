@@ -50,13 +50,68 @@
       <el-form-item label="LOT NO">
         <el-input v-model="getParams.lot_no" clearable @input="debounceList" />
       </el-form-item>
+      <el-form-item label="计划编号">
+        <el-input v-model="getParams.lot_no" clearable @input="debounceList" />
+      </el-form-item>
+      <el-form-item label="锁定状态">
+        <el-select
+          v-model="getParams.is_print"
+          style="width:100px"
+          clearable
+          placeholder="请选择"
+          @change="dayTimeChanged"
+        >
+          <el-option
+            v-for="item in ['已锁定','未锁定']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="在库状态">
+        <el-select
+          v-model="getParams.is_print"
+          style="width:100px"
+          clearable
+          placeholder="请选择"
+          @change="dayTimeChanged"
+        >
+          <el-option
+            v-for="item in ['在库','已出库']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button
+          v-permission="['deal_result','all']"
+          type="primary"
+          @click="lockDialog"
+        >出库锁定</el-button>
+        <el-button
+          v-permission="['deal_result','all']"
+          type="primary"
+        >出库解锁</el-button>
+      </el-form-item>
     </el-form>
     <el-table
+      ref="multipleTable"
       v-loading="loadingTable"
       border
       :data="tableData"
+      row-key="id"
+      :reserve-selection="true"
       style="width: 100%"
+      @selection-change="handleSelectionChange"
     >
+      <el-table-column
+        type="selection"
+        width="30"
+        :reserve-selection="true"
+      />
       <el-table-column
         type="index"
         label="No"
@@ -88,6 +143,11 @@
       <el-table-column label="生产时间" width="80px">
         <template slot-scope="scope">{{ scope.row.end_time.split(' ')[1] }}</template>
       </el-table-column>
+      <el-table-column
+        prop="actual_weight"
+        label="计划编号"
+        width="90px"
+      />
       <el-table-column
         prop="product_no"
         label="胶料编码"
@@ -141,9 +201,20 @@
         label="作业者"
         width="70px"
       />
+      <el-table-column
+        prop="operation_user"
+        label="锁定状态"
+        width="70px"
+      />
+      <el-table-column
+        prop="operation_user"
+        label="在库状态"
+        width="70px"
+      />
     </el-table>
 
     <page
+      :old-page="false"
       :total="total"
       :current-page="getParams.page"
       @currentChange="currentChange"
@@ -307,6 +378,25 @@
         :toolbox="toolbox"
       />
     </el-dialog>
+
+    <el-dialog
+      title="胶料 工艺锁定处理"
+      :visible.sync="dialogVisible"
+      width="25%"
+    >
+      <el-form
+        label-width="100px"
+        :model="lockForm"
+      >
+        <el-form-item label="处理说明">
+          <el-input v-model="lockForm.desc" type="textarea" style="width:300px" rows="4" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible=false">取 消</el-button>
+        <el-button type="primary" @click="submitFun">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -382,6 +472,9 @@ export default {
       BATObj: {},
       BATList: [],
       total: 0,
+      dialogVisible: false,
+      labelPrintList: [],
+      lockForm: {},
       dialogVisibleGraph: false,
       totalRubber: 0,
       pageRubber: 1,
@@ -494,6 +587,21 @@ export default {
       this.palletFeedObj = row
       this.pageRubber = 1
       this.getRubberCoding()
+    },
+    handleSelectionChange(arr) {
+      this.labelPrintList = arr
+    },
+    lockDialog() {
+      if (this.labelPrintList.length === 0) {
+        this.$message.info('请选择需要锁定的数据')
+      } else {
+        this.dialogVisible = true
+        this.lockForm = {}
+      }
+    },
+    submitFun() {
+      this.$refs.multipleTable.clearSelection()
+      this.dialogVisible = false
     },
     getRubberCoding() {
       var _this = this
@@ -635,8 +743,9 @@ export default {
         // echarts.init(this.$refs.main).setOption(this.option1);
       })
     },
-    currentChange(page) {
+    currentChange(page, page_size) {
       this.getParams.page = page
+      this.getParams.page_size = page_size
       this.getList()
     }
   }

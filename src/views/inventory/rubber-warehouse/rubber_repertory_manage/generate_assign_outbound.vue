@@ -183,6 +183,7 @@
       /> -->
       <el-table-column :key="11" label="车号" align="center" prop="memo" min-width="40" />
       <el-table-column :key="13" label="货位状态" align="center" prop="location_status" min-width="40" />
+      <el-table-column :key="18" label="锁定状态" align="center" prop="location_status" min-width="40" />
       <el-table-column :key="14" label="操作" align="center" min-width="40">
         <template slot-scope="scope">
           <el-button

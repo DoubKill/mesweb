@@ -120,6 +120,7 @@
       <el-table-column :key="9" label="入库时间" align="center" prop="in_storage_time" />
       <el-table-column :key="6" label="品质状态" align="center" prop="quality_status" />
       <el-table-column :key="10" label="处理意见" align="center" prop="deal_suggestion" />
+      <el-table-column :key="11" label="锁定状态" align="center" prop="deal_suggestion" />
     </el-table>
     <el-alert
       style="color:black"
