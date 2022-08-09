@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 药品投入 -->
+    <!-- 称量投入履历 -->
     <el-form :inline="true">
       <el-form-item label="日期">
         <el-date-picker
@@ -12,9 +12,9 @@
           @change="changeList"
         />
       </el-form-item>
-      <el-form-item label="班次">
+      <!-- <el-form-item label="班次">
         <class-select @classSelected="classChanged" />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="称量机台">
         <el-select
           v-model="getParams.equip_no"
@@ -47,15 +47,15 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="投入物料">
+      <el-form-item label="物料名称">
         <el-input v-model="getParams.material_name" clearable @input="changeInput" />
       </el-form-item>
-      <el-form-item label="条码">
+      <!-- <el-form-item label="条码">
         <el-input v-model="getParams.bra_code" clearable @input="changeInput" />
-      </el-form-item>
-      <el-form-item label="操作人">
+      </el-form-item> -->
+      <!-- <el-form-item label="操作人">
         <el-input v-model="getParams.created_username" clearable @input="changeInput" />
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
 
     <el-table
@@ -76,41 +76,13 @@
         label="罐号"
       />
       <el-table-column
-        prop="scan_material"
-        label="投入原材料"
+        prop="material_name"
+        label="物料名称"
       >
         <template slot-scope="{row}">
-          <el-link type="primary" @click="clickName(row,1)">{{ row.scan_material }}</el-link>
+          <el-link type="primary" @click="clickName(row,2)">{{ row.material_name }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="bra_code"
-        label="原材料条码"
-      />
-      <el-table-column
-        prop="scan_material"
-        label="投入包数"
-      >
-        <template slot-scope="{row}">
-          <el-link type="primary" @click="clickName(row,2)">{{ row.total_num }}</el-link>
-        </template>
-      </el-table-column>
-      <!-- <el-table-column
-        prop="batch_group"
-        label="投入班组"
-      /> -->
-      <el-table-column
-        prop="batch_classes"
-        label="投入班次"
-      />
-      <el-table-column
-        prop="batch_time"
-        label="投入时间"
-      />
-      <el-table-column
-        prop="created_username"
-        label="投入操作人"
-      />
     </el-table>
     <page
       :old-page="false"
@@ -120,9 +92,9 @@
     />
 
     <el-dialog
-      title="投料明细"
+      title=""
       :visible.sync="dialogVisibleList"
-      width="50%"
+      width="80%"
     >
       <el-table
         v-loading="loadingList"
@@ -130,8 +102,28 @@
         border
       >
         <el-table-column
+          type="index"
+          width="40"
+          label="No"
+        />
+        <el-table-column
+          prop="material_name"
+          label="投入原材料"
+          min-width="20"
+        />
+        <el-table-column
           prop="bra_code"
-          label="条码"
+          label="原材料条码"
+          min-width="20"
+        />
+        <el-table-column
+          prop="total_num"
+          label="投入包数"
+          min-width="20"
+        />
+        <el-table-column
+          prop="batch_classes"
+          label="投入班次"
           min-width="20"
         />
         <el-table-column
@@ -140,13 +132,18 @@
           min-width="20"
         />
         <el-table-column
-          prop="created_username"
-          label="投入人"
+          prop="open_time"
+          label="开门时间"
+          min-width="20"
+        />
+        <el-table-column
+          prop="created_user__username"
+          label="投入操作人"
           min-width="20"
         />
       </el-table>
     </el-dialog>
-
+    <!--
     <el-dialog
       title="原材料基础信息"
       :visible.sync="dialogVisibleDetail"
@@ -186,12 +183,12 @@
           <el-input v-model="detailForm.DDH" disabled style="width:250px" />
         </el-form-item>
       </el-form>
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 
 <script>
-import ClassSelect from '@/components/ClassSelect'
+// import ClassSelect from '@/components/ClassSelect'
 // import MaterialCodeSelect from '@/components/materialCodeSelect'
 // import inputDevices from './components/input-devices'
 import Page from '@/components/page'
@@ -199,13 +196,14 @@ import { setDate } from '@/utils'
 import { weightBatchingLogList } from '@/api/base_w_two'
 export default {
   name: 'DrugInvestment',
-  components: { Page, ClassSelect },
+  components: { Page },
   data() {
     return {
       getParams: {
         page: 1,
         page_size: 10,
-        batch_time: setDate()
+        batch_time: setDate(),
+        opera_type: 3
       },
       detailForm: {},
       dialogVisibleList: false,
@@ -226,22 +224,11 @@ export default {
   methods: {
     async clickName(row, val) {
       try {
-        const obj = {}
-        obj.batch_time = this.getParams.batch_time
-        obj.bra_code = row.bra_code
-        obj.opera_type = val
+        this.dialogVisibleList = true
+        const obj = Object.assign({ batch_time: this.getParams.batch_time, opera_type: val }, row)
         this.loadingList = true
         const data = await weightBatchingLogList('get', null, { params: obj })
-        val === 1 ? this.dialogVisibleDetail = true : this.dialogVisibleList = true
-        if (val === 1) {
-          if (data.length > 0) {
-            this.detailForm = data[0]
-          } else {
-            this.detailForm = {}
-          }
-        } else {
-          this.tableDataList = data || []
-        }
+        this.tableDataList = data || []
         this.loadingList = false
       } catch (e) {
         this.loadingList = false
