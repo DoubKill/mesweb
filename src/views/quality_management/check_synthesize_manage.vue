@@ -100,7 +100,8 @@
         <el-button
           v-permission="['deal_result','all']"
           type="primary"
-          @click="modifyTrainFun(false)"
+          :loading="btnLoad"
+          @click="unlock"
         >出库解锁</el-button>
       </el-form-item>
       <el-form-item style="float:right">
@@ -147,12 +148,12 @@
         </el-table-column>
         <el-table-column label="生产机台" prop="equip_no" width="40" />
         <el-table-column label="胶料编码" prop="product_no" />
-        <el-table-column label="锁定状态" prop="equip_no" width="40">
+        <el-table-column label="锁定状态" width="40">
           <template slot-scope="{row}">
             {{ row.is_locked?'锁定':'未锁定' }}
           </template>
         </el-table-column>
-        <el-table-column label="在库状态" prop="equip_no" width="40">
+        <el-table-column label="在库状态" width="40">
           <template slot-scope="{row}">
             {{ row.is_instock?'在库':'未在库' }}
           </template>
@@ -445,12 +446,12 @@
         :model="lockForm"
       >
         <el-form-item label="处理说明">
-          <el-input v-model="lockForm.desc" type="textarea" style="width:300px" rows="4" />
+          <el-input v-model="lockForm.reason" type="textarea" style="width:300px" rows="4" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible=false">取 消</el-button>
-        <el-button type="primary" @click="submitFun">确 定</el-button>
+        <el-button type="primary" :loading="btnLoad" @click="submitFun">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -466,6 +467,7 @@ import DealSuggestionSelect from '@/components/DealSuggestionSelect'
 import TestCard from '@/components/TestCard'
 import { palletFeedTest, changelValidTime, qualityPalletFeedTest } from '@/api/quick-check-detail'
 import { labelPrint, showQualifiedRange, trainsFix, palletTrainBatchFix, labelPrintLogs } from '@/api/base_w'
+import { productInventoryLock } from '@/api/jqy'
 import { debounce, setDate } from '@/utils'
 export default {
   name: 'CheckSynthesizeManage',
@@ -489,6 +491,7 @@ export default {
         product_no: null,
         suggestion_desc: null
       },
+      btnLoad: false,
       palletFeedTestList: [],
       dialogVisible: false,
       listLoading: false,
@@ -656,6 +659,10 @@ export default {
     },
     async printingFun() {
       try {
+        if (this.labelPrintList.some(d => d.is_locked === true)) {
+          this.$message.info('锁定状态不能打印')
+          return
+        }
         if (this.labelPrintList.length === 0) return
         const arr = []
         let str = ''
@@ -750,16 +757,62 @@ export default {
       }
     },
     lockDialog() {
+      if (this.labelPrintList.some(d => d.is_instock !== true)) {
+        this.$message.info('请选择在库状态的快检数据')
+        return
+      }
+      if (this.labelPrintList.some(d => d.is_locked === true)) {
+        this.$message.info('请选择未锁定状态的快检数据')
+        return
+      }
       if (this.labelPrintList.length === 0) {
         this.$message.info('请选择需要锁定的快检数据')
       } else {
         this.dialogVisible = true
-        this.lockForm = {}
+        this.lockForm = { operation_type: 2, locked_type: 1, lot_nos: [] }
+        this.labelPrintList.forEach(d => {
+          this.lockForm.lot_nos.push(d.lot_no)
+        })
       }
     },
-    submitFun() {
-      this.$refs.multipleTable.clearSelection()
-      this.dialogVisible = false
+    async submitFun() {
+      try {
+        this.btnLoad = true
+        await productInventoryLock('post', null, { data: this.lockForm })
+        this.btnLoad = false
+        this.$refs.multipleTable.clearSelection()
+        this.dayTimeChanged()
+        this.dialogVisible = false
+      } catch (e) {
+        this.btnLoad = false
+      }
+    },
+    async unlock() {
+      if (this.labelPrintList.some(d => d.is_instock !== true)) {
+        this.$message.info('请选择在库状态的快检数据')
+        return
+      }
+      if (this.labelPrintList.length === 0) {
+        this.$message.info('请选择需要解锁的快检数据')
+        return
+      }
+      if (this.labelPrintList.some(d => d.is_locked !== true)) {
+        this.$message.info('请选择锁定状态的快检数据')
+        return
+      }
+      try {
+        const obj = { operation_type: 2, locked_type: 2, lot_nos: [] }
+        this.labelPrintList.forEach(d => {
+          obj.lot_nos.push(d.lot_no)
+        })
+        this.btnLoad = true
+        await productInventoryLock('post', null, { data: obj })
+        this.btnLoad = false
+        this.$refs.multipleTable.clearSelection()
+        this.dayTimeChanged()
+      } catch (e) {
+        this.btnLoad = false
+      }
     },
     submitTrain() {
       const a = this.ruleFormTrain.begin_trains + ',' + this.ruleFormTrain.end_trains
