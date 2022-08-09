@@ -119,7 +119,7 @@
         min-width="20"
       />
       <el-table-column
-        prop="created_username"
+        prop="add_username"
         label="领料人"
         min-width="20"
       />
@@ -382,9 +382,9 @@
         >
           <el-input v-model="dialogForm.order_id" disabled style="width:300px" />
         </el-form-item>
-        <el-form-item label="领料人" prop="created_user">
+        <el-form-item label="领料人" prop="add_username">
           <el-select
-            v-model="dialogForm.created_user"
+            v-model="dialogForm.add_username"
             filterable
             placeholder="请选择"
           >
@@ -700,7 +700,7 @@ export default {
       dialogVisible1: false,
       submit: false,
       rules: {
-        created_user: [
+        add_username: [
           { required: true, message: '不能为空', trigger: 'change' }
         ],
         lluser: [
@@ -786,7 +786,7 @@ export default {
         const orderId = await getOrderId('get', null, { params: { status: '入库' }})
         this.dialogForm = {
           lluser: null,
-          created_user: this.name,
+          add_username: this.name,
           order_id: orderId,
           equip_spare: [],
           submission_department: '设备科' }
