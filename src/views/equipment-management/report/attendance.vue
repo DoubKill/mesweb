@@ -375,7 +375,7 @@
     >
       <el-form ref="dialogForm" :rules="rules" label-width="150px" :model="dialogForm">
         <el-form-item label="姓名" prop="username">
-          <el-select v-model="dialogForm.username" :disabled="addType==='里面'?true:false" placeholder="请选择" style="width:200px" @change="changeIdCard">
+          <el-select v-model="dialogForm.username" filterable :disabled="addType==='里面'?true:false" placeholder="请选择" style="width:200px" @change="changeIdCard">
             <el-option
               v-for="item in allList"
               :key="item.id"
@@ -492,10 +492,10 @@
         <el-form-item label="班组">
           <el-select v-model="searchCheck.group" clearable placeholder="请选择" @change="getCheckList">
             <el-option
-              v-for="item in optionsGroup1"
-              :key="item"
-              :label="item"
-              :value="item"
+              v-for="item in options1"
+              :key="item.id"
+              :label="item.global_name"
+              :value="item.global_name"
             />
           </el-select>
         </el-form-item>
@@ -682,7 +682,6 @@ export default {
       allList: [],
       isExport: false,
       optionsGroup: [],
-      optionsGroup1: ['A班', 'B班', 'C班'],
       multipleSelection: [],
       tableHead: [],
       tableData: [],
@@ -693,6 +692,7 @@ export default {
   },
   created() {
     this.tableHead = getDiffDate(this.search.date + '-01', getCurrentMonthLastDay(setDate()))
+    this.getClassGroup(true)
     this.getList()
     this.getAllList()
   },
