@@ -99,17 +99,17 @@
       </el-form-item>
       <el-form-item label="锁定状态">
         <el-select
-          v-model="getParams.is_print"
-          style="width:100px"
+          v-model="getParams.locked_status"
+          style="width:150px"
           clearable
           placeholder="请选择"
-          @change="dayTimeChanged"
+          @change="changeSearch"
         >
           <el-option
-            v-for="item in ['已锁定','未锁定']"
-            :key="item"
-            :label="item"
-            :value="item"
+            v-for="item in [{label:'工艺锁定',value:1},{label:'快检锁定',value:2}]"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
           />
         </el-select>
       </el-form-item>
@@ -161,6 +161,13 @@
       <el-table-column prop="material_no" label="胶料名称" align="center" min-width="28" />
       <el-table-column prop="warehouse_name" label="库区" align="center" min-width="20" />
       <el-table-column prop="location" label="巷道" align="center" min-width="10" />
+      <el-table-column label="锁定车数" align="center" min-width="20">
+        <template slot-scope="{row}">
+          <el-link :type="row.all?'':'primary'" :underline="false" @click="clickVehicleLock(row)">
+            {{ row.locked_trains }}
+          </el-link>
+        </template>
+      </el-table-column>
       <el-table-column label="一等品库存数(车)" align="center" min-width="20">
         <template slot-scope="{row}">
           <el-link v-if="row['一等品']" :type="row.all?'':'primary'" :underline="false" @click="clickVehicle(row,'一等品')">
@@ -238,6 +245,15 @@
     >
       <generateAssignOutbound :warehouse-name="warehouseName" :location-status="locationStatus" :material-no="materialNo" :quality-status="qualityStatus" :show="dialogVisible" />
     </el-dialog>
+
+    <el-dialog
+      title="库位列表"
+      :visible.sync="dialogVisible1"
+      width="90%"
+      :before-close="handleClose"
+    >
+      <generateAssignOutboundLock :equip="getParams.equip_no" :locked-status="getParams.locked_status?getParams.locked_status:null" :warehouse-name="warehouseName" :tunnel="getParams.location" :material-no="materialNo" :quality-status="getParams.quality_level" :show="dialogVisible1" />
+    </el-dialog>
   </div>
 </template>
 
@@ -246,11 +262,12 @@ import page from '@/components/page'
 // import { getMaterialInventoryManage } from '@/api/material-inventory-manage'
 import { stage_global_url, inLibraryInventory } from '@/api/display_static_fun'
 import materialCodeSelect from '@/components/select_w/materialCodeSelect'
+import generateAssignOutboundLock from './generate_assign_outbound_lock.vue'
 import generateAssignOutbound from './generate_assign_outbound.vue'
 import selectEquip from '@/components/select_w/equip'
 export default {
   name: 'RubberRepertoryManage',
-  components: { selectEquip, page, materialCodeSelect, generateAssignOutbound },
+  components: { selectEquip, page, materialCodeSelect, generateAssignOutbound, generateAssignOutboundLock },
   data: function() {
     return {
       loading: false,
@@ -262,8 +279,10 @@ export default {
       },
       RubberStageOptions: [],
       dialogVisible: false,
+      dialogVisible1: false,
       qualityStatus: '',
       materialNo: '',
+      tunnel: '',
       locationStatus: '',
       warehouseName: '',
       btnLoading: false,
@@ -286,6 +305,7 @@ export default {
         this.tableData = data.results
         this.tableData.push({
           all: 2,
+          locked_trains: sum(this.tableData, '', 'locked_trains'),
           '一等品': { qty: sum(this.tableData, '一等品', 'qty'), total_weight: sum(this.tableData, '一等品', 'total_weight') },
           '待检品': { qty: sum(this.tableData, '待检品', 'qty'), total_weight: sum(this.tableData, '待检品', 'total_weight') },
           '三等品': { qty: sum(this.tableData, '三等品', 'qty'), total_weight: sum(this.tableData, '三等品', 'total_weight') },
@@ -295,6 +315,7 @@ export default {
           active_qty: sum(this.tableData, '', 'active_qty')
         }, {
           all: 1,
+          locked_trains: data.total_locked_qty,
           '一等品': { qty: data.qty_1, total_weight: data.weight_1 },
           '待检品': { qty: data.qty_dj, total_weight: data.weight_dj },
           '三等品': { qty: data.qty_3, total_weight: data.weight_3 },
@@ -369,6 +390,12 @@ export default {
       this.materialNo = row.material_no ? row.material_no : ''
       this.warehouseName = row.warehouse_name ? row.warehouse_name : ''
       this.dialogVisible = true
+    },
+    clickVehicleLock(row) {
+      if (row.all) return
+      this.materialNo = row.material_no ? row.material_no : ''
+      this.warehouseName = row.warehouse_name ? row.warehouse_name : ''
+      this.dialogVisible1 = true
     },
     exportTable(val) {
       this.btnLoading = true

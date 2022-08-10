@@ -87,12 +87,12 @@
       </el-form-item>
       <el-form-item>
         <el-button
-          v-permission="['deal_result','all']"
+          v-permission="['product_record','lock']"
           type="primary"
           @click="lockDialog"
         >出库锁定</el-button>
         <el-button
-          v-permission="['deal_result','all']"
+          v-permission="['product_record','unlock']"
           type="primary"
           :loading="btnLoad"
           @click="unlock"
@@ -627,7 +627,7 @@ export default {
         //
       }
     },
-    async unlock() {
+    unlock() {
       if (this.labelPrintList.some(d => d.is_instock !== true)) {
         this.$message.info('请选择在库状态的数据')
         return
@@ -640,19 +640,24 @@ export default {
         this.$message.info('请选择工艺锁定状态的数据')
         return
       }
-      try {
+      this.$confirm('是否确定解锁?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
         const obj = { operation_type: 1, locked_type: 2, lot_nos: [] }
         this.labelPrintList.forEach(d => {
           obj.lot_nos.push(d.lot_no)
         })
         this.btnLoad = true
-        await productInventoryLock('post', null, { data: obj })
-        this.btnLoad = false
-        this.$refs.multipleTable.clearSelection()
-        this.changeSearch()
-      } catch (e) {
-        this.btnLoad = false
-      }
+        productInventoryLock('post', null, { data: obj }).then(() => {
+          this.btnLoad = false
+          this.changeSearch()
+          this.$refs.multipleTable.clearSelection()
+        }).catch(() => {
+          this.btnLoad = false
+        })
+      })
     },
     getRubberCoding() {
       var _this = this
