@@ -62,7 +62,7 @@
           @change="changeSearch"
         >
           <el-option
-            v-for="item in [{label:'未锁定',value:0},{label:'工艺锁定',value:1},{label:'快检锁定',value:2}]"
+            v-for="item in [{label:'工艺锁定',value:1},{label:'快检锁定',value:2}]"
             :key="item.value"
             :label="item.label"
             :value="item.value"
