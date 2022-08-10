@@ -318,12 +318,14 @@ export default {
     async changeSwitch(row, faI, bool) {
       try {
         this.loading = true
+        this.currentIndex = faI
         await updateFlagCount('post', null, { data: {
           equip_no: this.allTable[faI].equip_no,
           id: row.id, oper_type: '配方', merge_flag: row.merge_flag, split_count: row.split_count
         }})
         this.$message.success('操作成功')
         if (bool) {
+          this.currentSearch.equip_no = this.allTable[faI].equip_no
           const data = await this.getList()
           this.allTable[this.currentIndex].tableList = data.data
           this.allTable[this.currentIndex].total = data.total
@@ -343,6 +345,8 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        this.currentIndex = faI
+        this.currentSearch.equip_no = this.allTable[faI].equip_no
         updateFlagCount('post', null, { data: {
           equip_no: this.allTable[faI].equip_no,
           id: row.id, use_not: use_not
