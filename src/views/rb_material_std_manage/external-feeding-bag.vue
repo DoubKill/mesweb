@@ -434,10 +434,11 @@
             style="width:300px"
           />
         </el-form-item>
-        <el-form-item
-          v-if="isView&&rubberMaterialForm.send_xl_equip"
-        >
-          <h1 style="margin:0;color:red">已下传线体:{{ rubberMaterialForm.send_xl_equip }}</h1>
+        <el-form-item>
+          <h1 style="margin:0;color:red">
+            已下传线体:
+            <span v-if="isView&&rubberMaterialForm.send_xl_equip">{{ rubberMaterialForm.send_xl_equip }}</span>
+          </h1>
         </el-form-item>
         <el-form-item
           v-if="!isView"
