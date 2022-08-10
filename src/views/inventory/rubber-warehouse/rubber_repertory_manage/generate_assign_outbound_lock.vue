@@ -6,6 +6,7 @@
       border
       style="width: 100%"
       :data="tableData"
+      :row-class-name="rowClassNameFn"
       row-key="id"
       @selection-change="handleSelectionChange"
     >
@@ -45,7 +46,7 @@
       <el-table-column :key="10" label="机台号" width="60" align="center" prop="equip_no" />
       <el-table-column :key="11" label="车号" align="center" prop="memo" min-width="40" />
       <el-table-column :key="12" label="锁定状态" width="70">
-        <template slot-scope="{row}">
+        <template v-if="row.locked_status" slot-scope="{row}">
           {{ row.locked_status===1?'工艺锁定':row.locked_status===2?'快检锁定':'工艺/快检锁定' }}
         </template>
       </el-table-column>
@@ -133,19 +134,39 @@ export default {
   methods: {
     getTableData() {
       this.loading = true
-
       productInventoryLock('get', null, { params: this.getParams })
         .then(response => {
           this.tableData = response
+          this.tableData.push({
+            all: 1,
+            material_type: '汇总',
+            qty: sum(this.tableData, 'qty'),
+            total_weight: sum(this.tableData, 'total_weight')
+          })
           this.loading = false
         }).catch(() => {
           this.loading = false
         })
     },
+    rowClassNameFn({ row, rowIndex }) {
+      if (row.all) {
+        return 'summary-cell-style'
+      }
+    },
     handleSelectionChange(arr) {
       this.multipleArr = arr
     }
   }
+}
+function sum(arr, params) {
+  var s = 0
+
+  arr.forEach(function(val, idx, arr) {
+    const a = val[params] ? Number(val[params]) : 0
+    s += a
+  }, 0)
+  s = Math.round(s * 1000) / 1000
+  return s
 }
 </script>
 <style lang="scss">
