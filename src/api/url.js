@@ -745,5 +745,6 @@ export default {
   CheckTemperatureStandard: '/api/v1/equipment/check-temperature-standard/',
   CheckTemperatureStandardExport: '/api/v1/equipment/check-temperature-standard/excel-handle/',
   CheckTemperatureTable: '/api/v1/equipment/check-temperature-table/',
-  CheckTemperatureTableExport: '/api/v1/equipment/check-temperature-table/handle-table/'
+  CheckTemperatureTableExport: '/api/v1/equipment/check-temperature-table/handle-table/',
+  EquipAutoPlan: '/api/v1/equipment/equip-auto-plan/'
 }
