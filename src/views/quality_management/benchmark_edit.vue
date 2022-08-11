@@ -2,24 +2,96 @@
   <div v-loading="loading">
     <!-- 胶料快检判定基准录入 -->
     <el-form :inline="true">
-      <el-form-item label="胶料编码:">
-        <all-product-no-select @productBatchingChanged="productBatchingChanged" />
-        <!-- <product-no-select @productBatchingChanged="productBatchingChanged" /> -->
+      <el-form-item label="段次">
+        <stage-select v-model="search.stage" @change="changeList" />
       </el-form-item>
-      <el-form-item label="试验指标:">
-        <detection-index @changeSelect="detectionIndexSelect" />
+      <el-form-item label="检测指标:">
+        <!-- <detection-index @changeSelect="detectionIndexSelect" /> -->
+        <el-select
+          v-model="search.test_indicator_id"
+          placeholder="请选择"
+          clearable
+          filterable
+          @change="changeDetectionIndex"
+        >
+          <el-option
+            v-for="item in optionsDetectionIndex"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="试验类型:">
-        <test-type-select @changeSelect="typeSelectTable" />
+        <test-type-select :obj="true" @changeSelect="typeSelectTable" />
+      </el-form-item>
+      <el-form-item label="试验方法:">
+        <el-select
+          v-model="search.test_method_id"
+          placeholder="请选择"
+          clearable
+          filterable
+          @change="changeList"
+        >
+          <el-option
+            v-for="item in optionsTestMethod"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="胶料代码:">
+        <el-select
+          v-model="search.product_type"
+          placeholder="请选择"
+          clearable
+          filterable
+          @change="changeList"
+        >
+          <el-option
+            v-for="item in optionsProductCode"
+            :key="item.id"
+            :label="item.product_no"
+            :value="item.product_no"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="胶料编码:">
+        <!-- <all-product-no-select @productBatchingChanged="productBatchingChanged" /> -->
+        <el-select
+          v-model="search.material_no"
+          placeholder="请选择"
+          clearable
+          filterable
+          @change="changeList"
+        >
+          <el-option
+            v-for="item in optionsProduct"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item v-permission="['evaluating','add']">
         <el-button @click="addDialog">新增</el-button>
+        <el-button type="primary" @click="batchDialog">批量修改判定基准</el-button>
       </el-form-item>
     </el-form>
     <el-table
+      ref="multipleTable"
+      v-loading="loading"
       :data="tableData"
       border
+      row-key="id"
+      @selection-change="handleSelectionChange"
     >
+      <el-table-column
+        type="selection"
+        width="55"
+        :reserve-selection="true"
+      />
       <el-table-column
         type="index"
         label="No"
@@ -175,6 +247,11 @@
       :obj-edit="objEdit"
       @handleCloseEdit="handleCloseEdit"
     />
+    <batchEditDialog
+      :edit-show="batchEditShow"
+      :obj-edit="batchObjEdit"
+      @handleCloseEdit="batchHandleCloseEdit"
+    />
   </div>
 </template>
 
@@ -182,16 +259,17 @@
 // import productNoSelect from '@/components/ProductNoSelect'
 import testTypeSelect from '@/components/select_w/testTypeSelect'
 import testMethodSelect from '@/components/select_w/testMethodSelect'
-import detectionIndex from '@/components/select_w/detectionIndex'
 import testTypeDotSelect from '@/components/select_w/testTypeDotSelect'
-import { batchingMaterials, matTestMethods } from '@/api/base_w'
+import { batchingMaterials, matTestMethods, testSubTypes, productInfosUrl, testedMaterials, testIndicators } from '@/api/base_w'
 import page from '@/components/page'
-import allProductNoSelect from '@/components/select_w/allProductNoSelect'
+// import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import editDialog from './benchmark_edit_dialog/benchmark_edit_dialog'
+import batchEditDialog from './benchmark_edit_dialog/benchmark_edit_dialog_batch'
 import { checkPermission } from '@/utils/'
+import StageSelect from '@/components/StageSelect/index'
 export default {
   name: 'BenchmarkEdit',
-  components: { editDialog, page, testTypeDotSelect, allProductNoSelect, testTypeSelect, testMethodSelect, detectionIndex },
+  components: { editDialog, page, testTypeDotSelect, testTypeSelect, testMethodSelect, StageSelect, batchEditDialog },
   data() {
     var validatePass = (rule, value, callback, _val, error) => {
       if (!_val || _val.length === 0) {
@@ -242,12 +320,23 @@ export default {
         ]
       },
       tableData: [],
-      objEdit: {}
+      objEdit: {},
+      batchObjEdit: {},
+      optionsDetectionIndex: [],
+      optionsTestMethod: [],
+      optionsProductCode: [],
+      handleSelection: [],
+      optionsProduct: [],
+      batchEditShow: false
     }
   },
   created() {
     this.getList()
     this.getRubber()
+    this.getDetectionIndex()
+    this.getTestMethod()
+    this.getProductCode()
+    this.getProduct()
   },
   methods: {
     checkPermission,
@@ -266,6 +355,12 @@ export default {
       this.search.page = page
       this.getList()
     },
+    changeList() {
+      this.search.page = 1
+      this.$refs.multipleTable.clearSelection()
+      this.getProduct()
+      this.getList()
+    },
     async getRubber() {
       try {
         const data = await batchingMaterials('get', null, { params: { used_type: 4 }})
@@ -274,14 +369,63 @@ export default {
         //
       }
     },
-    typeSelectTable(id) {
-      this.search.test_type_id = id || ''
+    async getTestMethod() {
+      try {
+        const data = await testSubTypes('get', null, { params: { all: 1 }})
+        this.optionsTestMethod = data.results || []
+      } catch (e) {
+        //
+      }
+    },
+    async getDetectionIndex() {
+      try {
+        const data = await testIndicators('get', null, { params: { all: 1 }})
+        this.optionsDetectionIndex = data || []
+      } catch (e) {
+        //
+      }
+    },
+    async getProduct() {
+      try {
+        const data = await testedMaterials('get', null, { params: this.search })
+        this.optionsProduct = data || []
+      } catch (e) {
+        //
+      }
+    },
+    async getProductCode() {
+      try {
+        const data = await productInfosUrl('get', null, { params: { all: 1 }})
+        this.optionsProductCode = data.results || []
+      } catch (e) {
+        //
+      }
+    },
+    typeSelectTable(val) {
+      this.search.test_type_id = val ? val.id : ''
+      this.search.test_type_name = val ? val.name : ''
       this.search.page = 1
+      this.$refs.multipleTable.clearSelection()
+      this.getProduct()
       this.getList()
     },
     detectionIndexSelect(id) {
       this.search.test_indicator_id = id || ''
       this.search.page = 1
+      this.$refs.multipleTable.clearSelection()
+      this.getProduct()
+      this.getList()
+    },
+    changeDetectionIndex(val) {
+      if (val) {
+        const arr = this.optionsDetectionIndex.filter(d => d.id === val)
+        this.search.test_indicator_name = arr[0].name
+      } else {
+        this.search.test_indicator_name = ''
+      }
+      this.search.page = 1
+      this.$refs.multipleTable.clearSelection()
+      this.getProduct()
       this.getList()
     },
     typeSelect(val) {
@@ -302,6 +446,36 @@ export default {
     handleClose(done) {
       this.clearForm()
       done()
+    },
+    handleSelectionChange(val) {
+      this.handleSelection = val
+    },
+    async batchDialog() {
+      if (!this.search.test_indicator_id || !this.search.test_type_id || !this.search.product_type) {
+        this.$message('请选择检测指标、试验类型、胶料代码')
+        return
+      }
+      if (!this.handleSelection.length) {
+        this.$message('请选择胶料')
+        return
+      }
+      this.batchObjEdit.test_indicator_name = this.search.test_indicator_name
+      this.batchObjEdit.test_type_name = this.search.test_type_name
+      this.batchObjEdit.test_method_ids = []
+      const _first = (this.handleSelection[0].data_point.sort()).toString()
+      const _bool = this.handleSelection.every(D => {
+        this.batchObjEdit.test_method_ids.push(D.id)
+        return (D.data_point.sort()).toString() === _first
+      })
+      if (!_bool) {
+        this.$message('选择的胶料,数据点不一样')
+        return
+      }
+      this.$set(this.batchObjEdit, 'tableData', JSON.parse(JSON.stringify(this.handleSelection[0].data_points)))
+      this.batchObjEdit.tableData.forEach(d => {
+        d.data_point = d.id
+      })
+      this.batchEditShow = true
     },
     addDialog() {
       this.dialogVisible = true
@@ -370,6 +544,9 @@ export default {
     },
     handleCloseEdit() {
       this.editShow = false
+    },
+    batchHandleCloseEdit() {
+      this.batchEditShow = false
     },
     editClick(val) {
       this.editShow = true

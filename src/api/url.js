@@ -130,6 +130,7 @@ export default {
   // 物料数据点评判指标
   MatDataPointIndicators: '/api/v1/quality/mat-data-point-indicators/',
   MatDataPointIndicatorsHistory: '/api/v1/quality/mat-data-point-indicators-history/',
+  BatchSetMethods: '/api/v1/quality/mat-test-methods/batch-set/',
 
   MaterialDealResultUrl: '/api/v1/quality/material-deal-result/',
   DisposeTypeUrl: '/api/v1/basics/global-codes/',
@@ -745,5 +746,7 @@ export default {
   CheckTemperatureStandardExport: '/api/v1/equipment/check-temperature-standard/excel-handle/',
   CheckTemperatureTable: '/api/v1/equipment/check-temperature-table/',
   CheckTemperatureTableExport: '/api/v1/equipment/check-temperature-table/handle-table/',
-  EquipAutoPlan: '/api/v1/equipment/equip-auto-plan/'
+  EquipAutoPlan: '/api/v1/equipment/equip-auto-plan/',
+
+  TestedMaterials: '/api/v1/quality/tested-materials/'
 }
