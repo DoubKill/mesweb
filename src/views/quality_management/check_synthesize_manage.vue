@@ -46,14 +46,14 @@
       </el-form-item>
       <el-form-item label="锁定状态">
         <el-select
-          v-model="getParams.is_locked"
-          style="width:100px"
+          v-model="getParams.locked_status"
+          style="width:120px"
           clearable
           placeholder="请选择"
           @change="dayTimeChanged"
         >
           <el-option
-            v-for="item in [{label:'锁定',value:'Y'},{label:'未锁定',value:'N'}]"
+            v-for="item in [{label:'工艺锁定',value:1},{label:'快检锁定',value:2}]"
             :key="item.value"
             :label="item.label"
             :value="item.value"
@@ -148,9 +148,9 @@
         </el-table-column>
         <el-table-column label="生产机台" prop="equip_no" width="40" />
         <el-table-column label="胶料编码" prop="product_no" />
-        <el-table-column label="锁定状态" width="40">
+        <el-table-column label="锁定状态" width="60">
           <template slot-scope="{row}">
-            {{ row.is_locked?'锁定':'未锁定' }}
+            {{ row.locked_status===0?'未锁定':row.locked_status===1?'工艺锁定':row.locked_status===2?'快检锁定':'工艺/快检锁定' }}
           </template>
         </el-table-column>
         <el-table-column label="在库状态" width="40">
@@ -158,7 +158,7 @@
             {{ row.is_instock?'在库':'未在库' }}
           </template>
         </el-table-column>
-        <el-table-column label="收皮重量" prop="actual_weight" width="60" />
+        <el-table-column label="收皮重量" prop="actual_weight" width="50" />
         <el-table-column label="余量" prop="residual_weight" align="center" width="60" />
         <el-table-column label="生产时间" width="80" align="center" prop="production_factory_date" />
         <el-table-column label="有效时间" width="80" align="center" prop="valid_time" />
@@ -183,7 +183,7 @@
         <el-table-column label="处理时间" align="center" prop="deal_time" width="80" />
       </el-table-column>
       <el-table-column label="车次" prop="trains" width="50" />
-      <el-table-column label="打印次数" align="center" width="50">
+      <el-table-column label="打印次数" align="center" width="40">
         <template slot-scope="{row}">
           <el-link type="primary" @click="showList(row)">{{ row.print_times }}</el-link>
         </template>
@@ -796,8 +796,8 @@ export default {
         this.$message.info('请选择需要解锁的快检数据')
         return
       }
-      if (this.labelPrintList.some(d => d.is_locked !== true)) {
-        this.$message.info('请选择锁定状态的快检数据')
+      if (this.labelPrintList.some(d => d.locked_status === 0 || d.locked_status === 1)) {
+        this.$message.info('请选择快检锁定状态的数据')
         return
       }
       this.$confirm('是否确定解锁?', '提示', {
@@ -809,6 +809,7 @@ export default {
         this.labelPrintList.forEach(d => {
           obj.lot_nos.push(d.lot_no)
         })
+        this.listLoading = true
         this.btnLoad = true
         productInventoryLock('post', null, { data: obj }).then(() => {
           this.btnLoad = false
@@ -958,7 +959,6 @@ export default {
             this.$message.success('修改成功')
             this.handleCloseNew(false)
             this.btnLoadingNew = false
-
             this.getPalletFeedTest()
           } catch (e) {
             this.btnLoadingNew = false

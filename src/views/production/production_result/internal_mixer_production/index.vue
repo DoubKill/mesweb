@@ -649,6 +649,7 @@ export default {
         this.labelPrintList.forEach(d => {
           obj.lot_nos.push(d.lot_no)
         })
+        this.loadingTable = true
         this.btnLoad = true
         productInventoryLock('post', null, { data: obj }).then(() => {
           this.btnLoad = false
