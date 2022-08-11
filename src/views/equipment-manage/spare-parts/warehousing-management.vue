@@ -18,7 +18,7 @@
           @input="changeSearch"
         />
       </el-form-item>
-      <el-form-item label="提交人">
+      <el-form-item label="领料人">
         <el-input
           v-model="search.created_user"
           style="width:150px"
@@ -119,8 +119,13 @@
         min-width="20"
       />
       <el-table-column
-        prop="created_username"
-        label="提交人"
+        prop="add_username"
+        label="领料人"
+        min-width="20"
+      />
+      <el-table-column
+        prop="lluser"
+        label="审核人"
         min-width="20"
       />
       <el-table-column
@@ -377,7 +382,34 @@
         >
           <el-input v-model="dialogForm.order_id" disabled style="width:300px" />
         </el-form-item>
-        <el-form-item label="提交部门" prop="submission_department">
+        <el-form-item label="领料人" prop="add_username">
+          <el-select
+            v-model="dialogForm.add_username"
+            filterable
+            placeholder="请选择"
+          >
+            <el-option
+              v-for="item in options1"
+              :key="item.id"
+              :label="item.order_id"
+              :value="item.order_id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="审核人" prop="lluser">
+          <el-select
+            v-model="dialogForm.lluser"
+            placeholder="请选择"
+          >
+            <el-option
+              v-for="item in options2"
+              :key="item.id"
+              :label="item.global_name"
+              :value="item.global_name"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item filterable label="提交部门" prop="submission_department">
           <el-select
             v-model="dialogForm.submission_department"
             placeholder="请选择"
@@ -619,8 +651,10 @@
 
 <script>
 import material from '../components/material-dialog'
+import { mapGetters } from 'vuex'
+import { classesListUrl } from '@/api/base_w'
 import { sectionTree } from '@/api/base_w_four'
-import { getSpare, getOrderId, equipWarehouseOrder, equipWarehouseOrderDetail, equipWarehouseArea, equipWarehouseLocation, getSpareOrder, closeOrder } from '@/api/jqy'
+import { getSpare, getOrderId, equipWarehouseOrder, equipWarehouseOrderDetail, equipWarehouseArea, equipWarehouseLocation, getSpareOrder, closeOrder, equipAutoPlan } from '@/api/jqy'
 import page from '@/components/page'
 import { debounce } from '@/utils'
 export default {
@@ -642,6 +676,8 @@ export default {
       dateValue: [],
       order: null,
       options: [],
+      options1: [],
+      options2: [],
       SpareForm: {},
       dialogVisibleSpare: false,
       dialogVisibleEdit: false,
@@ -664,6 +700,12 @@ export default {
       dialogVisible1: false,
       submit: false,
       rules: {
+        add_username: [
+          { required: true, message: '不能为空', trigger: 'change' }
+        ],
+        lluser: [
+          { required: true, message: '不能为空', trigger: 'change' }
+        ],
         submission_department: [
           { required: true, message: '不能为空', trigger: 'change' }
         ],
@@ -685,6 +727,11 @@ export default {
       creatOrder: { in_quantity: null, equip_warehouse_area: '',
         equip_warehouse_location: '' }
     }
+  },
+  computed: {
+    ...mapGetters([
+      'name'
+    ])
   },
   created() {
     this.getList()
@@ -720,7 +767,11 @@ export default {
     async getSection() {
       try {
         const data = await sectionTree('get', null, { params: { all: 1 }})
+        const data1 = await equipAutoPlan('get', null, { params: { default_staff: 1, section_name: '设备科' }})
+        const data2 = await classesListUrl('get', null, { params: { all: 1, class_name: '备品备件领用审核人' }})
         this.options = data.results || []
+        this.options1 = data1.data || []
+        this.options2 = data2.results || []
       } catch (e) {
         //
       }
@@ -734,6 +785,8 @@ export default {
       try {
         const orderId = await getOrderId('get', null, { params: { status: '入库' }})
         this.dialogForm = {
+          lluser: null,
+          add_username: this.name,
           order_id: orderId,
           equip_spare: [],
           submission_department: '设备科' }
@@ -749,7 +802,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.btnLoad = true
-        getSpare('get', null, {})
+        getSpare('get', null, { params: { days: 5 }})
           .then(response => {
             getSpareOrder('get', null, {})
               .then(response => {
@@ -1057,6 +1110,9 @@ export default {
       this.$refs.createForm.validate(async(valid) => {
         if (valid) {
           try {
+            if (this.dialogForm.equip_spare.length === 0) {
+              throw new Error('入库物料未添加')
+            }
             this.btnLoad = true
             await equipWarehouseOrder('post', null, { data: this.dialogForm })
             this.$message.success('操作成功')
@@ -1064,6 +1120,9 @@ export default {
             this.handleCloseAdd(null)
             this.getList()
           } catch (e) {
+            if (e.message) {
+              this.$message(e.message)
+            }
             this.btnLoad = false
             this.dialogVisibleAdd = true
           }
