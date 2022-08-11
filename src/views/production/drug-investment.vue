@@ -4,11 +4,13 @@
     <el-form :inline="true">
       <el-form-item label="日期">
         <el-date-picker
-          v-model="getParams.batch_time"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="选择日期"
+          v-model="getParamsDate"
+          type="daterange"
           :clearable="false"
+          value-format="yyyy-MM-dd"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
           @change="changeList"
         />
       </el-form-item>
@@ -202,7 +204,8 @@ export default {
       getParams: {
         page: 1,
         page_size: 10,
-        batch_time: setDate(),
+        batch_time_after: setDate(),
+        batch_time_before: setDate(),
         opera_type: 3
       },
       detailForm: {},
@@ -214,11 +217,12 @@ export default {
         '1B', '2B', '3B', '4B', '5B', '6B', '7B', '8B', '9B', '10B', '11B'],
       options1: ['F01', 'F02', 'F03', 'S01', 'S02'],
       tableData: [],
-      total: 0
-
+      total: 0,
+      getParamsDate: null
     }
   },
   created() {
+    this.getParamsDate = [this.getParams.batch_time_after, this.getParams.batch_time_before]
     this.getList()
   },
   methods: {
@@ -257,10 +261,12 @@ export default {
       debounce(this)
     },
     changeList() {
-      if (!this.getParams.batch_time) {
+      if (!this.getParamsDate) {
         this.$message.info('请选择工厂日期')
         return
       }
+      this.getParams.batch_time_after = this.getParamsDate[0] || ''
+      this.getParams.batch_time_before = this.getParamsDate[1] || ''
       this.getParams.page = 1
       this.getList()
     }
