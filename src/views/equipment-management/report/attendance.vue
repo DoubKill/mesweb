@@ -814,6 +814,7 @@ export default {
       this.dialogForm.group = null
       this.dialogForm.actual_begin_date = null
       this.dialogForm.actual_end_date = null
+      this.dialogForm.actual_time = null
       const obj = { class_name: '班组', factory_date: val }
       const data = await classesListUrl('get', null, { params: obj })
       if (data.results.length > 0) {
@@ -883,6 +884,9 @@ export default {
           section: this.section,
           classes: this.classes,
           username: this.getParams.name,
+          actual_begin_date: null,
+          actual_end_date: null,
+          actual_time: null,
           is_use: '添加',
           id_card_num: this.currentInfo.id_card_num
         }
@@ -897,6 +901,9 @@ export default {
           classes: null,
           username: '',
           is_use: '添加',
+          actual_begin_date: null,
+          actual_end_date: null,
+          actual_time: null,
           id_card_num: ''
         }
         this.getGroup(this.dialogForm.factory_date)
@@ -906,6 +913,7 @@ export default {
       this.$set(this.dialogForm, 'classes', this.optionsGroup.find(d => d.group__global_name === this.dialogForm.group).classes__global_name)
       this.dialogForm.actual_begin_date = null
       this.dialogForm.actual_end_date = null
+      this.dialogForm.actual_time = null
     },
     async getList() {
       try {
@@ -961,7 +969,7 @@ export default {
         this.dialogForm.actual_end_date = null
       } else {
         this.dialogForm.end_date = this.dialogForm.actual_end_date
-        this.dialogForm.actual_time = getHour(this.dialogForm.actual_begin_date, this.dialogForm.actual_end_date)
+        this.$set(this.dialogForm, 'actual_time', getHour(this.dialogForm.actual_begin_date, this.dialogForm.actual_end_date))
       }
     },
     addEndTime() {
@@ -981,7 +989,7 @@ export default {
         this.dialogForm.actual_end_date = null
       } else {
         this.dialogForm.end_date = this.dialogForm.actual_end_date
-        this.dialogForm.actual_time = getHour(this.dialogForm.actual_begin_date, this.dialogForm.actual_end_date)
+        this.$set(this.dialogForm, 'actual_time', getHour(this.dialogForm.actual_begin_date, this.dialogForm.actual_end_date))
       }
     },
     changeStartTime(row) {
