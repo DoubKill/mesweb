@@ -25,7 +25,7 @@
       <el-form-item label="试验类型:">
         <test-type-select :obj="true" @changeSelect="typeSelectTable" />
       </el-form-item>
-      <el-form-item label="试验方法:">
+      <el-form-item v-if="search.test_indicator_name==='流变'" label="试验方法:">
         <el-select
           v-model="search.test_method_id"
           placeholder="请选择"
