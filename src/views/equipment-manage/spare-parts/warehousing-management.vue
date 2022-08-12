@@ -654,7 +654,7 @@ import material from '../components/material-dialog'
 import { mapGetters } from 'vuex'
 import { classesListUrl } from '@/api/base_w'
 import { sectionTree } from '@/api/base_w_four'
-import { getSpare, getOrderId, equipWarehouseOrder, equipWarehouseOrderDetail, equipWarehouseArea, equipWarehouseLocation, getSpareOrder, closeOrder, equipAutoPlan } from '@/api/jqy'
+import { getOrderId, equipWarehouseOrder, equipWarehouseOrderDetail, equipWarehouseArea, equipWarehouseLocation, getSpareOrder, closeOrder, equipAutoPlan } from '@/api/jqy'
 import page from '@/components/page'
 import { debounce } from '@/utils'
 export default {
@@ -802,20 +802,14 @@ export default {
         type: 'warning'
       }).then(() => {
         this.btnLoad = true
-        getSpare('get', null, { params: { days: 5 }})
+        getSpareOrder('get', null, {})
           .then(response => {
-            getSpareOrder('get', null, {})
-              .then(response => {
-                this.btnLoad = false
-                this.$message({
-                  type: 'success',
-                  message: '操作成功!'
-                })
-                this.getList()
-              })
-              .catch(response => {
-                this.btnLoad = false
-              })
+            this.btnLoad = false
+            this.$message({
+              type: 'success',
+              message: '操作成功!'
+            })
+            this.getList()
           })
           .catch(response => {
             this.btnLoad = false
