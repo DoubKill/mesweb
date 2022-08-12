@@ -524,6 +524,14 @@ export function palletTrainsFeedbacks(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function productTestedTrains(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ProductTestedTrains + id + '/' : API.ProductTestedTrains,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 
 export function lbPlanManagement(method, id, data = {}) {
   const obj = {

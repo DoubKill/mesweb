@@ -204,6 +204,7 @@ export default {
   InventoryLog: '/api/v1/inventory/inventory-log/',
   ProductInOutHistory: '/api/v1/inventory/product-in-out-history/',
   PalletTrainsFeedbacks: '/api/v1/production/pallet-trains-feedbacks/',
+  ProductTestedTrains: '/api/v1/quality/product-tested-trains/',
   // 仓库名
   WarehouseNamesUrl: '/api/v1/inventory/warehouse-info/warehouse_names/',
   // 仓库信息
