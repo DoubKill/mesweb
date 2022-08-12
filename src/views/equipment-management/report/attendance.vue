@@ -812,6 +812,8 @@ export default {
     async getGroup(val) {
       this.dialogForm.classes = null
       this.dialogForm.group = null
+      this.dialogForm.actual_begin_date = null
+      this.dialogForm.actual_end_date = null
       const obj = { class_name: '班组', factory_date: val }
       const data = await classesListUrl('get', null, { params: obj })
       if (data.results.length > 0) {
@@ -902,6 +904,8 @@ export default {
     },
     pickClasses() {
       this.$set(this.dialogForm, 'classes', this.optionsGroup.find(d => d.group__global_name === this.dialogForm.group).classes__global_name)
+      this.dialogForm.actual_begin_date = null
+      this.dialogForm.actual_end_date = null
     },
     async getList() {
       try {
@@ -940,6 +944,7 @@ export default {
     addStartTime() {
       if (!this.dialogForm.classes) {
         this.$message('请先选择班组')
+        this.dialogForm.actual_begin_date = null
         return
       }
       this.time_interval = this.allowTime[this.dialogForm.classes]
