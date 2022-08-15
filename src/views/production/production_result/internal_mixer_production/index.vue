@@ -50,13 +50,70 @@
       <el-form-item label="LOT NO">
         <el-input v-model="getParams.lot_no" clearable @input="debounceList" />
       </el-form-item>
+      <el-form-item label="计划编号">
+        <el-input v-model="getParams.plan_classes_uid" clearable @input="debounceList" />
+      </el-form-item>
+      <el-form-item label="锁定状态">
+        <el-select
+          v-model="getParams.locked_status"
+          style="width:130px"
+          clearable
+          placeholder="请选择"
+          @change="changeSearch"
+        >
+          <el-option
+            v-for="item in [{label:'工艺锁定',value:1},{label:'快检锁定',value:2}]"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="在库状态">
+        <el-select
+          v-model="getParams.is_instock"
+          style="width:100px"
+          clearable
+          placeholder="请选择"
+          @change="changeSearch"
+        >
+          <el-option
+            v-for="item in [{label:'在库',value:'Y'},{label:'未在库',value:'N'}]"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button
+          v-permission="['product_record','lock']"
+          type="primary"
+          @click="lockDialog"
+        >出库锁定</el-button>
+        <el-button
+          v-permission="['product_record','unlock']"
+          type="primary"
+          :loading="btnLoad"
+          @click="unlock"
+        >出库解锁</el-button>
+      </el-form-item>
     </el-form>
     <el-table
+      ref="multipleTable"
       v-loading="loadingTable"
       border
       :data="tableData"
+      row-key="id"
+      :reserve-selection="true"
       style="width: 100%"
+      @selection-change="handleSelectionChange"
     >
+      <el-table-column
+        type="selection"
+        width="30"
+        :reserve-selection="true"
+      />
       <el-table-column
         type="index"
         label="No"
@@ -88,6 +145,11 @@
       <el-table-column label="生产时间" width="80px">
         <template slot-scope="scope">{{ scope.row.end_time.split(' ')[1] }}</template>
       </el-table-column>
+      <el-table-column
+        prop="plan_classes_uid"
+        label="计划编号"
+        width="90px"
+      />
       <el-table-column
         prop="product_no"
         label="胶料编码"
@@ -141,9 +203,20 @@
         label="作业者"
         width="70px"
       />
+      <el-table-column label="锁定状态" width="70">
+        <template slot-scope="{row}">
+          {{ row.locked_status===0?'未锁定':row.locked_status===1?'工艺锁定':row.locked_status===2?'快检锁定':'工艺/快检锁定' }}
+        </template>
+      </el-table-column>
+      <el-table-column label="在库状态" width="70">
+        <template slot-scope="{row}">
+          {{ row.is_instock?'在库':'未在库' }}
+        </template>
+      </el-table-column>
     </el-table>
 
     <page
+      :old-page="false"
       :total="total"
       :current-page="getParams.page"
       @currentChange="currentChange"
@@ -307,6 +380,25 @@
         :toolbox="toolbox"
       />
     </el-dialog>
+
+    <el-dialog
+      title="胶料 工艺锁定处理"
+      :visible.sync="dialogVisible"
+      width="25%"
+    >
+      <el-form
+        label-width="100px"
+        :model="lockForm"
+      >
+        <el-form-item label="处理说明">
+          <el-input v-model="lockForm.reason" type="textarea" style="width:300px" rows="4" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible=false">取 消</el-button>
+        <el-button type="primary" :loading="btnLoad" @click="submitFun">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -314,6 +406,7 @@
 import { setDate } from '@/utils/index'
 import page from '@/components/page'
 import selectEquip from '@/components/select_w/equip'
+import { productInventoryLock } from '@/api/jqy'
 // import ProductNoSelect from '@/components/ProductNoSelect'
 import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import {
@@ -358,6 +451,7 @@ export default {
       loadingTable: false,
       tableData: [],
       search_date: [],
+      btnLoad: false,
       getParams: {
         page: 1,
         equip_no: null,
@@ -382,6 +476,9 @@ export default {
       BATObj: {},
       BATList: [],
       total: 0,
+      dialogVisible: false,
+      labelPrintList: [],
+      lockForm: {},
       dialogVisibleGraph: false,
       totalRubber: 0,
       pageRubber: 1,
@@ -494,6 +591,74 @@ export default {
       this.palletFeedObj = row
       this.pageRubber = 1
       this.getRubberCoding()
+    },
+    handleSelectionChange(arr) {
+      this.labelPrintList = arr
+    },
+    lockDialog() {
+      if (this.labelPrintList.some(d => d.is_instock !== true)) {
+        this.$message.info('请选择在库状态的数据')
+        return
+      }
+      if (this.labelPrintList.some(d => d.locked_status === 1 || d.locked_status === 3)) {
+        this.$message.info('请选择快检锁定或者未锁定状态的数据')
+        return
+      }
+      if (this.labelPrintList.length === 0) {
+        this.$message.info('请选择需要锁定的数据')
+      } else {
+        this.dialogVisible = true
+        this.lockForm = { operation_type: 1, locked_type: 1, lot_nos: [] }
+        this.labelPrintList.forEach(d => {
+          this.lockForm.lot_nos.push(d.lot_no)
+        })
+      }
+    },
+    async submitFun() {
+      try {
+        this.btnLoad = true
+        await productInventoryLock('post', null, { data: this.lockForm })
+        this.btnLoad = false
+        this.$refs.multipleTable.clearSelection()
+        this.changeSearch()
+        this.dialogVisible = false
+      } catch (e) {
+        this.btnLoad = true
+        //
+      }
+    },
+    unlock() {
+      if (this.labelPrintList.some(d => d.is_instock !== true)) {
+        this.$message.info('请选择在库状态的数据')
+        return
+      }
+      if (this.labelPrintList.length === 0) {
+        this.$message.info('请选择需要解锁的数据')
+        return
+      }
+      if (this.labelPrintList.some(d => d.locked_status === 0 || d.locked_status === 2)) {
+        this.$message.info('请选择工艺锁定状态的数据')
+        return
+      }
+      this.$confirm('是否确定解锁?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const obj = { operation_type: 1, locked_type: 2, lot_nos: [] }
+        this.labelPrintList.forEach(d => {
+          obj.lot_nos.push(d.lot_no)
+        })
+        this.loadingTable = true
+        this.btnLoad = true
+        productInventoryLock('post', null, { data: obj }).then(() => {
+          this.btnLoad = false
+          this.changeSearch()
+          this.$refs.multipleTable.clearSelection()
+        }).catch(() => {
+          this.btnLoad = false
+        })
+      })
     },
     getRubberCoding() {
       var _this = this
@@ -635,8 +800,9 @@ export default {
         // echarts.init(this.$refs.main).setOption(this.option1);
       })
     },
-    currentChange(page) {
+    currentChange(page, page_size) {
       this.getParams.page = page
+      this.getParams.page_size = page_size
       this.getList()
     }
   }

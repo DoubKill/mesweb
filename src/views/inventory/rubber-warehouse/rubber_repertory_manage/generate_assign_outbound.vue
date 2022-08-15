@@ -105,6 +105,7 @@
         width="40"
         :reserve-selection="true"
         :selectable="(row)=>{
+          if(row.locked_status===1||row.locked_status===2||row.locked_status===3)return false
           if(row.location_status==='有货货位'){
             if(warehouseName === '混炼胶库'&&row.location){
               if(entrance_name==='一层后端')return false
@@ -183,6 +184,11 @@
       /> -->
       <el-table-column :key="11" label="车号" align="center" prop="memo" min-width="40" />
       <el-table-column :key="13" label="货位状态" align="center" prop="location_status" min-width="40" />
+      <el-table-column :key="18" label="锁定状态" width="70">
+        <template v-if="row.locked_status" slot-scope="{row}">
+          {{ row.locked_status===1?'工艺锁定':row.locked_status===2?'快检锁定':'工艺/快检锁定' }}
+        </template>
+      </el-table-column>
       <el-table-column :key="14" label="操作" align="center" min-width="40">
         <template slot-scope="scope">
           <el-button
