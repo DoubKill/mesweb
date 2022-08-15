@@ -23,7 +23,6 @@
           <br>
           每一排上下限请给个连续区间范围(比如：第一排1-10;第二排11-100;第三排101-200,以此类推)
           <br>
-          请单行保存
         </div>
         <el-table
           :data="objEdit.tableData"
@@ -86,31 +85,27 @@
               {{ scope.row.result }}
             </template>
           </el-table-column>
-          <el-table-column
+          <!-- <el-table-column
             label="更新人"
           >
             <template slot-scope="scope">
               {{ scope.row.last_updated_username || '--' }}
             </template>
-          </el-table-column>
-          <el-table-column
+          </el-table-column> -->
+          <!-- <el-table-column
             label="更新时间"
           >
             <template slot-scope="scope">
               {{ scope.row.last_updated_date || '--' }}
             </template>
-          </el-table-column>
-          <el-table-column
+          </el-table-column> -->
+          <!-- <el-table-column
             label="操作"
           >
             <template slot-scope="scope">
-              <el-button-group>
-                <!-- <el-button size="small" :disabled="disabledSubmit" @click="submitClick(scope.row)">保存</el-button> -->
-                <el-button size="small" type="primary" @click="viewClick(scope.row)">查看履历</el-button>
-                <!-- <el-button size="small" type="danger" @click="clickDelete(scope.$index,scope.row)">删除</el-button> -->
-              </el-button-group>
+              <el-button size="small" type="primary" @click="viewClick(scope.row)">查看履历</el-button>
             </template>
-          </el-table-column>
+          </el-table-column> -->
         </el-table>
         <!-- <div style="width:100%;text-align:center;margin-top:15px">
           <el-button
