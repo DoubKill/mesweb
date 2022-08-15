@@ -735,6 +735,7 @@ export default {
   ProductSynthesisProductRate: '/api/v1/quality/product-synthesis-product-rate/',
   ProductSynthesisMonthRate: '/api/v1/quality/product-synthesis-month-rate/',
 
+  ProductInventoryLock: '/api/v1/inventory/product-inventory-lock/',
   ProductRatio: '/api/v1/recipe/product-ratio/',
   ProductMaterials: '/api/v1/quality/product-materials/',
   RubberFrameRepairSummary: '/api/v1/production/rubber-frame-repair—summary/',

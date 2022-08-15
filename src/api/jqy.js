@@ -1515,6 +1515,15 @@ export function checkTemperatureStandard(method, id, data = {}) {
   return request(obj)
 }
 
+export function productInventoryLock(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ProductInventoryLock + id + '/' : API.ProductInventoryLock,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function checkTemperatureStandardExport(method, id, data = {}) {
   const obj = {
     url: id ? API.CheckTemperatureStandardExport + id + '/' : API.CheckTemperatureStandardExport,
