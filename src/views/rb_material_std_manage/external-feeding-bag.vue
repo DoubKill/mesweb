@@ -434,6 +434,12 @@
             style="width:300px"
           />
         </el-form-item>
+        <el-form-item>
+          <h1 style="margin:0;color:red">
+            已下传线体:
+            <span v-if="isView&&rubberMaterialForm.send_xl_equip">{{ rubberMaterialForm.send_xl_equip }}</span>
+          </h1>
+        </el-form-item>
         <el-form-item
           v-if="!isView"
           style="float:right;"
@@ -766,7 +772,12 @@ export default {
         const a = data.stage_product_batch_no.split('[')
         const b = a[1].split(']')
         const _modify = (this.currentRow.id && !this.dialogAddRubberMaterial) ? this.currentRow.id : ''
-        this.rubberMaterialForm = { stage_product_batch_no: data.stage_product_batch_no, weigh_type: data.weigh_type, _modify: _modify, product_info: a[0], precept: b[0] }
+        this.rubberMaterialForm = {
+          stage_product_batch_no: data.stage_product_batch_no, weigh_type: data.weigh_type,
+          _modify: _modify,
+          product_info: a[0],
+          precept: b[0],
+          send_xl_equip: data.send_xl_equip }
         this.tableDataIngredient = data.weight_cnt_types[0].weight_details
         if (this.tableDataIngredient.length > 0) {
           this.tableDataIngredient.forEach(d => {

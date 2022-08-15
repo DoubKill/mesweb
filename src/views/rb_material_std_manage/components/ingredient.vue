@@ -90,6 +90,11 @@
           <el-input-number v-model="formInline.mixed_ratio.ratio.f_ratio" controls-position="right" style="width:100px" />&nbsp;:&nbsp;
           <el-input-number v-model="formInline.mixed_ratio.ratio.s_ratio" controls-position="right" style="width:100px" />
         </el-form-item>
+        <el-form-item>
+          <h1 style="margin:0;color:red">已下传线体:
+            <span v-if="isView&&formInline.send_xl_equip">{{ formInline.send_xl_equip }}</span>
+          </h1>
+        </el-form-item>
         <el-form-item
           v-if="!isView"
           style="float:right;"
