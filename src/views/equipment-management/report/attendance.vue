@@ -953,6 +953,7 @@ export default {
       if (!this.dialogForm.classes) {
         this.$message('请先选择班组')
         this.dialogForm.actual_begin_date = null
+        this.dialogForm.actual_time = null
         return
       }
       this.time_interval = this.allowTime[this.dialogForm.classes]
@@ -960,6 +961,7 @@ export default {
       Date.parse(new Date(this.dialogForm.actual_begin_date)) < Date.parse(new Date(this.time_interval[0]))) {
         this.$message('上岗时间不在可选范围内，可选范围为：' + this.time_interval.join('-'))
         this.dialogForm.actual_begin_date = null
+        this.dialogForm.actual_time = null
         return
       } else {
         this.dialogForm.begin_date = this.dialogForm.actual_begin_date
@@ -967,6 +969,7 @@ export default {
       if (Date.parse(new Date(this.dialogForm.actual_begin_date)) >= Date.parse(new Date(this.dialogForm.actual_end_date))) {
         this.$message('请选择正确的离岗时间,离岗时间不得在上岗时间之前')
         this.dialogForm.actual_end_date = null
+        this.dialogForm.actual_time = null
       } else {
         this.dialogForm.end_date = this.dialogForm.actual_end_date
         this.$set(this.dialogForm, 'actual_time', getHour(this.dialogForm.actual_begin_date, this.dialogForm.actual_end_date))
@@ -976,17 +979,20 @@ export default {
       if (!this.dialogForm.actual_begin_date) {
         this.$message('请先选择上岗时间')
         this.dialogForm.actual_end_date = null
+        this.dialogForm.actual_time = null
         return
       }
       if (Date.parse(new Date(this.dialogForm.actual_end_date)) > Date.parse(new Date(this.time_interval[1])) ||
       Date.parse(new Date(this.dialogForm.actual_end_date)) < Date.parse(new Date(this.time_interval[0]))) {
         this.$message('离岗时间不在可选范围内，可选范围为：' + this.time_interval.join('-'))
         this.dialogForm.actual_end_date = null
+        this.dialogForm.actual_time = null
         return
       }
       if (Date.parse(new Date(this.dialogForm.actual_begin_date)) >= Date.parse(new Date(this.dialogForm.actual_end_date))) {
         this.$message('请选择正确的离岗时间,离岗时间不得在上岗时间之前')
         this.dialogForm.actual_end_date = null
+        this.dialogForm.actual_time = null
       } else {
         this.dialogForm.end_date = this.dialogForm.actual_end_date
         this.$set(this.dialogForm, 'actual_time', getHour(this.dialogForm.actual_begin_date, this.dialogForm.actual_end_date))
@@ -998,11 +1004,13 @@ export default {
       Date.parse(new Date(row.actual_begin_date)) < Date.parse(new Date(this.time_interval[0]))) {
         this.$message('承认上岗时间不在可选范围内，可选范围为：' + this.time_interval.join('-'))
         row.actual_begin_date = null
+        row.actual_time = null
         return
       }
       if (Date.parse(new Date(row.actual_begin_date)) >= Date.parse(new Date(row.actual_end_date))) {
         this.$message('请选择正确的承认离岗时间,离岗时间不得在上岗时间之前')
         row.actual_end_date = null
+        row.actual_time = null
       } else {
         row.actual_time = getHour(row.actual_begin_date, row.actual_end_date)
       }
@@ -1011,6 +1019,7 @@ export default {
       if (!row.actual_begin_date) {
         this.$message('请先选择承认上岗时间')
         row.actual_end_date = null
+        row.actual_time = null
         return
       }
       this.time_interval = this.allowTime[row.classes]
@@ -1018,11 +1027,13 @@ export default {
       Date.parse(new Date(row.actual_end_date)) < Date.parse(new Date(this.time_interval[0]))) {
         this.$message('承认离岗时间不在可选范围内，可选范围为：' + this.time_interval.join('-'))
         row.actual_end_date = null
+        row.actual_time = null
         return
       }
       if (Date.parse(new Date(row.actual_begin_date)) >= Date.parse(new Date(row.actual_end_date))) {
         this.$message('请选择正确的承认离岗时间,离岗时间不得在上岗时间之前')
         row.actual_end_date = null
+        row.actual_time = null
       } else {
         row.actual_time = getHour(row.actual_begin_date, row.actual_end_date)
       }
