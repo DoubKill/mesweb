@@ -681,6 +681,7 @@ export default {
         }).then(async() => {
           await labelPrint('post', null, { data: { lot_no: arr }})
           this.$message.success('打印任务已连接')
+          this.$refs.multipleTable.clearSelection()
         }).catch(() => {
           //
         })
