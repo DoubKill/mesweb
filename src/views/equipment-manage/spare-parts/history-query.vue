@@ -28,6 +28,14 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="出入库时间">
+        <el-date-picker
+          v-model="search.real_time"
+          type="date"
+          value-format="yyyy-MM-dd"
+          @change="changeSearch"
+        />
+      </el-form-item>
       <el-form-item label="出入库单号">
         <el-input
           v-model="search.order_id"
@@ -39,7 +47,7 @@
       <el-form-item label="操作人">
         <el-input
           v-model="search.created_user"
-          style="width:200px"
+          style="width:100px"
           clearable
           @input="debounceSearch"
         />
@@ -47,7 +55,7 @@
       <el-form-item label="领用人">
         <el-input
           v-model="search.receive_user"
-          style="width:200px"
+          style="width:100px"
           clearable
           @input="debounceSearch"
         />
@@ -111,6 +119,7 @@
     </el-form>
     <el-table
       v-loading="loading"
+      size="mini"
       :data="tableData"
       border
     >
@@ -199,6 +208,11 @@
       <el-table-column
         prop="created_username"
         label="操作人"
+        min-width="20"
+      />
+      <el-table-column
+        prop="real_time"
+        label="出入库时间"
         min-width="20"
       />
       <el-table-column
