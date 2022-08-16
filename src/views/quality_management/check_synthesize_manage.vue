@@ -659,8 +659,8 @@ export default {
     },
     async printingFun() {
       try {
-        if (this.labelPrintList.some(d => d.is_locked === true)) {
-          this.$message.info('锁定状态不能打印')
+        if (this.labelPrintList.some(d => d.locked_status === 2 || d.locked_status === 3)) {
+          this.$message.info('请选择工艺锁定或者未锁定状态的数据')
           return
         }
         if (this.labelPrintList.length === 0) return
@@ -762,8 +762,8 @@ export default {
         this.$message.info('请选择在库状态的快检数据')
         return
       }
-      if (this.labelPrintList.some(d => d.is_locked === true)) {
-        this.$message.info('请选择未锁定状态的快检数据')
+      if (this.labelPrintList.some(d => d.locked_status === 2 || d.locked_status === 3)) {
+        this.$message.info('请选择工艺锁定或者未锁定状态的数据')
         return
       }
       if (this.labelPrintList.length === 0) {
