@@ -89,7 +89,7 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button @click="filterDialogVisible = true">
+        <el-button type="primary" @click="filterDialogVisible = true">
           显示过滤界面
         </el-button>
       </el-form-item>
@@ -97,9 +97,19 @@
         <el-button
           v-permission="['result_info','export']"
           :loading="btnLoading"
+          type="primary"
           @click="getALLData"
         >
           导出Excel
+        </el-button>
+      </el-form-item>
+      <el-form-item>
+        <el-button
+          v-permission="['result_info','export']"
+          type="primary"
+          @click="statisticsFun"
+        >
+          统计工程能力
         </el-button>
       </el-form-item>
     </el-form>
@@ -569,6 +579,8 @@ export default {
     },
     async productBatchingChanged() {
       this.viewHeard = true
+      this.statisticsBool = false
+      delete this.getParams.sum_project
       if (!this.getParams.product_no) {
         this.testOrdersTop = []
       }
@@ -620,6 +632,9 @@ export default {
       this.allPage = 0
       this.definePafeSize = 20
       this.getMaterialTestOrders()
+      if (this.statisticsBool) {
+        this.handleCurrentChange()
+      }
     },
     dayChange(val) {
       this.getParams.st = val ? val[0] : ''
@@ -944,11 +959,24 @@ export default {
         //
       }
     },
+    statisticsFun() {
+      if (!this.getParams.product_no) {
+        this.$message('请选择胶料')
+        return
+      }
+      this.statisticsBool = true
+      this.handleCurrentChange()
+    },
     async handleCurrentChange() {
       try {
-        const data = await productIndicatorStandard({ product_no: this.getParams.product_no })
+        let obj = { product_no: this.getParams.product_no }
+        if (this.statisticsBool) {
+          obj = Object.assign(this.getParams, { sum_project: 1 })
+        }
+        const data = await productIndicatorStandard(obj)
         const arr = []
         const names = [this.getParams.product_no, '中央值', '规格幅(+-)', '上规格幅', '下规格幅']
+        const names1 = ['均值', 'σ', 'Cｐ', 'CPK', 'K', '等级']
         for (let index = 0; index < 5; index++) {
           const order_results = []
           data.forEach(d => {
@@ -991,8 +1019,73 @@ export default {
             order_results: order_results
           })
         }
+        if (this.statisticsBool) {
+          for (let index = 0; index < 6; index++) {
+            const order_results = []
+            data.forEach(d => {
+              // 均值：avg
+              // σ：std
+              // Cｐ：（上规格幅-下规格幅）/6/σ
+              // CPK：(1-K)*Cｐ
+              // K:ABS(中央值-均值)/规格幅
+              // 等级：CPK≥1.67（A+），1.33≤CPK<1.67（A），1≤CPK<1.33（B），0.67≤CPK<1（C），CPK<0.67（D）
+              if (index === 0) {
+                order_results.push({
+                  data_point_name: d.data_point__name,
+                  value: setData(d.avg)
+                })
+              }
+              if (index === 1) {
+                order_results.push({
+                  data_point_name: d.data_point__name,
+                  value: setData(d.std)
+                })
+              }
+              const Cｐ = (d.upper_limit - d.lower_limit) / 6 / d.std
+              const 中 = (d.upper_limit + d.lower_limit) / 2
+              const 幅 = d.upper_limit - (d.upper_limit + d.lower_limit) / 2
+              const k = 幅 ? Math.abs(中 - d.avg) / 幅 : ''
+              const CPK = d.std ? (1 - k) * Cｐ : ''
+
+              if (index === 2) {
+                order_results.push({
+                  data_point_name: d.data_point__name,
+                  value: d.std ? setData(Cｐ) : ''
+                })
+              }
+              if (index === 3) {
+                order_results.push({
+                  data_point_name: d.data_point__name,
+                  value: setData(CPK)
+                })
+              }
+              if (index === 4) {
+                order_results.push({
+                  data_point_name: d.data_point__name,
+                  value: setData(k)
+                })
+              }
+              if (index === 5) {
+                order_results.push({
+                  data_point_name: d.data_point__name,
+                  value: CPK ? CPK > 1.67 || CPK === 1.67 ? '（A+）'
+                    : (CPK === 1.33 || CPK > 1.33) && CPK < 1.67 ? '（A）'
+                      : (CPK === 1 || CPK > 1) && CPK < 1.33 ? '（B）' : (CPK === 0.67 || CPK > 0.67) && CPK < 1 ? '（C）' : CPK < 0.67 ? '（D）' : '' : ''
+                })
+              }
+            })
+            arr.push({
+              _current: true,
+              product_no: names1[index],
+              order_results: order_results
+            })
+          }
+        }
         if (this.testOrdersTop.length) {
           this.testOrdersTop.splice(0, 5)
+        }
+        if (this.testOrdersTop.length > 5) {
+          this.testOrdersTop.splice(5, this.testOrdersTop.length)
         }
         this.testOrdersTop = [...arr]
       } catch (e) {
