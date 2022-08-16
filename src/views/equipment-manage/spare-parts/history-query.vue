@@ -2,7 +2,7 @@
   <div class="history-query">
     <!-- 备件出入库履历查询 -->
     <el-form :inline="true">
-      <el-form-item label="起止时间">
+      <el-form-item label="操作起止时间">
         <el-date-picker
           v-model="dateValue"
           type="daterange"
