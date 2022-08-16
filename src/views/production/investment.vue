@@ -3,11 +3,21 @@
     <!-- 密炼投入履历 -->
     <el-form :inline="true">
       <el-form-item label="工厂日期">
-        <el-date-picker
+        <!-- <el-date-picker
           v-model="getParams.production_factory_date"
           type="date"
           value-format="yyyy-MM-dd"
           placeholder="选择日期"
+          @change="changeList"
+        /> -->
+        <el-date-picker
+          v-model="dateValue"
+          :clearable="false"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          value-format="yyyy-MM-dd"
           @change="changeList"
         />
       </el-form-item>
@@ -19,6 +29,8 @@
       <el-form-item label="机台">
         <equip-select
           :equip_no_props="getParams.equip_no"
+          :is-clear="false"
+          :is-created="true"
           @changeSearch="equipSelected"
         />
       </el-form-item>
@@ -70,27 +82,32 @@
       <el-table-column
         prop="production_factory_date"
         label="工厂日期"
+        min-width="12"
       />
       <el-table-column
         prop="production_classes"
         label="班次"
+        min-width="6"
       />
       <el-table-column
         prop="equip_no"
         label="生产机台"
-        width="80px"
+        min-width="12"
       />
       <el-table-column
         prop="plan_classes_uid"
         label="计划编号"
+        min-width="20"
       />
       <el-table-column
         prop="mixing_finished"
         label="混炼/终练"
+        min-width="12"
       />
       <el-table-column
         prop="product_no"
         label="胶料编码"
+        min-width="18"
       />
       <!-- <template slot-scope="{row}">
           <el-link type="primary" @click="clickTrack(row)">{{ row.product_no }}</el-link>
@@ -99,26 +116,38 @@
       <el-table-column
         prop="trains"
         label="车次"
-        width="80px"
+        min-width="8"
       />
       <el-table-column
         label="投入物料"
+        min-width="20"
       >
         <template slot-scope="{row}">
           <el-link type="primary" @click="checkList(row)">{{ row.display_name }}</el-link>
         </template>
       </el-table-column>
       <el-table-column
+        label="实际投入物料"
+        min-width="20"
+      >
+        <template slot-scope="{row}">
+          {{ row.replace_material }}
+        </template>
+      </el-table-column>
+      <el-table-column
         prop="bra_code"
         label="条码"
+        min-width="20"
       />
       <el-table-column
         prop="created_date"
         label="投入时间"
+        min-width="20"
       />
       <el-table-column
         prop="created_username"
         label="投入操作人"
+        min-width="12"
       />
     </el-table>
     <page
@@ -350,8 +379,8 @@ export default {
     return {
       getParams: {
         page: 1,
-        page_size: 10,
-        production_factory_date: setDate()
+        page_size: 10
+        // production_factory_date: setDate()
       },
       detailForm: {},
       currentInfo: {},
@@ -373,11 +402,12 @@ export default {
       pageMaterial: 1,
       page_sizeMaterial: 10,
       lot_no_obj: {},
-      tableDataDialog: []
+      tableDataDialog: [],
+      dateValue: [setDate(), setDate()]
     }
   },
   created() {
-    this.getList()
+    // this.getList()
   },
   methods: {
     async checkList(row) {
@@ -445,6 +475,8 @@ export default {
       this.showTableDataChild = false
     },
     changeList() {
+      this.getParams.st = this.dateValue ? this.dateValue[0] : ''
+      this.getParams.et = this.dateValue ? this.dateValue[1] : ''
       this.getParams.page = 1
       this.getList()
     },
