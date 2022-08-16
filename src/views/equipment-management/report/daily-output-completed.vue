@@ -37,7 +37,7 @@
       :data="tableData"
       border
     >
-      <el-table-column fixed width="140px">
+      <el-table-column fixed width="160px">
         <template
           slot="header"
           slot-scope="{row}"
@@ -97,7 +97,7 @@
 
     <div
       id="taskLine"
-      style="width: 100%;height:500px;margin-top:100px"
+      style="width: 100%;height:550px;margin-top:100px"
     />
     <el-divider style="background:black" />
     <div
@@ -269,7 +269,7 @@ export default {
         calculable: true,
         grid: {
           x: 60,
-          y: 100,
+          y: 150,
           x2: 0,
           y2: 30
         },
@@ -746,7 +746,7 @@ export default {
               top: 'middle',
               shape: {
                 width: 150,
-                height: 90
+                height: 140
               },
               style: {
                 fill: '#fff',
@@ -764,7 +764,7 @@ export default {
               left: 'center',
               top: 'middle',
               style: {
-                text: [`日均产能`, `加硫:${data.avg_results.jl}`, `无硫:${data.avg_results.wl}`, `段数:${data.avg_results.ds}`].join('\n'),
+                text: [`日均产能/吨`, `无硫:${data.results[0].avg}`, `发制造部:${data.results[7].avg}`, `发动力:${data.results[8].avg}`, `无硫发出:${data.results[2].avg}`, `段数:${data.avg_results.ds}`].join('\n'),
                 font: '500 14px sy',
                 fill: '#1D2F2E',
                 textLineHeight: 22
@@ -904,8 +904,8 @@ function getCurrentMonthLastDay(d) {
     }
     .three-line{
         transform-origin:left center;
-        transform:rotate(17.8deg);
-        width:160px;
+        transform:rotate(16deg);
+        width:170px;
         position: absolute;
         top:0px;
         left:-6px;
