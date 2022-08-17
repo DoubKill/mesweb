@@ -519,7 +519,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'Resume',
               title: '密炼扫码结果查询',
-              permissionName: 'scan_message'
+              permissionName: 'batch_scan_log'
             }
           },
           {
