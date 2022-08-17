@@ -164,7 +164,7 @@ import equipSelect from '@/components/select_w/equip'
 import classSelect from '@/components/ClassSelect'
 import { batchScanLog } from '@/api/base_w_two'
 import Page from '@/components/page'
-// import { setDate } from '@/utils'
+import { setDate } from '@/utils'
 
 export default {
   name: 'InvestmentResult',
@@ -196,7 +196,7 @@ export default {
       page_sizeMaterial: 10,
       lot_no_obj: {},
       tableDataDialog: [],
-      dateValue: null
+      dateValue: [setDate(), setDate()]
     }
   },
   created() {
