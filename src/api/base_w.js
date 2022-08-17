@@ -326,6 +326,14 @@ export function matDataPointIndicators(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function batchSetMethods(method, id, data = {}) {
+  const obj = {
+    url: id ? API.BatchSetMethods + id + '/' : API.BatchSetMethods,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 
 export function matDataPointIndicatorsHistory(method, id, data = {}) {
   const obj = {
@@ -511,6 +519,14 @@ export function productInOutHistory(method, id, data = {}) {
 export function palletTrainsFeedbacks(method, id, data = {}) {
   const obj = {
     url: id ? API.PalletTrainsFeedbacks + id + '/' : API.PalletTrainsFeedbacks,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function productTestedTrains(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ProductTestedTrains + id + '/' : API.ProductTestedTrains,
     method: method
   }
   Object.assign(obj, data)
@@ -711,6 +727,14 @@ export function productRatio(method, id, data = {}) {
 export function productMaterials(method, id, data = {}) {
   const obj = {
     url: id ? API.ProductMaterials + id + '/' : API.ProductMaterials,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function testedMaterials(method, id, data = {}) {
+  const obj = {
+    url: id ? API.TestedMaterials + id + '/' : API.TestedMaterials,
     method: method
   }
   Object.assign(obj, data)

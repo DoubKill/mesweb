@@ -130,6 +130,7 @@ export default {
   // 物料数据点评判指标
   MatDataPointIndicators: '/api/v1/quality/mat-data-point-indicators/',
   MatDataPointIndicatorsHistory: '/api/v1/quality/mat-data-point-indicators-history/',
+  BatchSetMethods: '/api/v1/quality/mat-test-methods/batch-set/',
 
   MaterialDealResultUrl: '/api/v1/quality/material-deal-result/',
   DisposeTypeUrl: '/api/v1/basics/global-codes/',
@@ -203,6 +204,7 @@ export default {
   InventoryLog: '/api/v1/inventory/inventory-log/',
   ProductInOutHistory: '/api/v1/inventory/product-in-out-history/',
   PalletTrainsFeedbacks: '/api/v1/production/pallet-trains-feedbacks/',
+  ProductTestedTrains: '/api/v1/quality/product-tested-trains/',
   // 仓库名
   WarehouseNamesUrl: '/api/v1/inventory/warehouse-info/warehouse_names/',
   // 仓库信息
@@ -735,6 +737,7 @@ export default {
   ProductSynthesisProductRate: '/api/v1/quality/product-synthesis-product-rate/',
   ProductSynthesisMonthRate: '/api/v1/quality/product-synthesis-month-rate/',
 
+  ProductInventoryLock: '/api/v1/inventory/product-inventory-lock/',
   ProductRatio: '/api/v1/recipe/product-ratio/',
   ProductMaterials: '/api/v1/quality/product-materials/',
   RubberFrameRepairSummary: '/api/v1/production/rubber-frame-repair—summary/',
@@ -746,5 +749,7 @@ export default {
   CheckTemperatureStandardExport: '/api/v1/equipment/check-temperature-standard/excel-handle/',
   CheckTemperatureTable: '/api/v1/equipment/check-temperature-table/',
   CheckTemperatureTableExport: '/api/v1/equipment/check-temperature-table/handle-table/',
-  EquipAutoPlan: '/api/v1/equipment/equip-auto-plan/'
+  EquipAutoPlan: '/api/v1/equipment/equip-auto-plan/',
+
+  TestedMaterials: '/api/v1/quality/tested-materials/'
 }
