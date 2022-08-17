@@ -764,7 +764,7 @@ export default {
               left: 'center',
               top: 'middle',
               style: {
-                text: [`日均产能/吨`, `无硫:${data.results[0].avg}`, `发制造部:${data.results[7].avg}`, `发动力:${data.results[8].avg}`, `无硫发出:${data.results[2].avg}`, `段数:${data.avg_results.ds}`].join('\n'),
+                text: [`日均产能/吨`, `无硫:${data.results[0].avg}`, `发制造部:${data.results[3].avg}`, `发动力:${data.results[4].avg}`, `无硫发出:${data.results[2].avg}`, `段数:${data.avg_results.ds}`].join('\n'),
                 font: '500 14px sy',
                 fill: '#1D2F2E',
                 textLineHeight: 22
