@@ -316,6 +316,7 @@ export default {
   WeightingTackStatus: '/api/v1/terminal/weighting-tack-status/',
   // 密炼投入履历
   BatchChargeLogList: '/api/v1/terminal/batch-charge-log-list/',
+  BatchScanLog: 'api/v1/terminal/batch-scan-log/',
   // 罐号 和 投入设备
   EquipTank: '/api/v1/production/equip-tank/',
   // 药品投入统计
