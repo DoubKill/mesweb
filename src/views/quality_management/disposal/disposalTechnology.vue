@@ -307,6 +307,7 @@
         :form-head-data="formHeadData"
         :list-data-props="isChecked"
         :edit-type="2"
+        :untreated="untreated"
         :is-edit="isEdit"
         :show="handleCardDialogVisible"
         @preserveFun="preserveFun"
@@ -427,7 +428,8 @@ export default {
       currentRow: {},
       isChecked: [],
       noChecked: [],
-      untreatedDialogVisible: false
+      untreatedDialogVisible: false,
+      untreated: false
     }
   },
   created() {
@@ -525,6 +527,7 @@ export default {
       this.checkedAll = false
     },
     viewFun(row) {
+      this.untreated = false
       this.currentRow = { id: row.id }
       this.isEdit = false
       this.handleCardDialogVisible = true
@@ -725,12 +728,8 @@ export default {
       this.checkedAll = false
     },
     unqualifiedFun1() {
+      this.untreated = true
       const bool = this.tableData1.every(d => d.forbidden)
-      if (bool) {
-        this.unqualifiedFun()
-        this.isChecked = this.tableData1
-        return
-      }
       const arr1 = []
       const arrno1 = []
       this.tableData1.forEach(d => {
@@ -783,6 +782,10 @@ export default {
         })
       })
       this.noChecked = arrno1
+      if (bool) {
+        this.unqualifiedFun()
+        return
+      }
       this.untreatedDialogVisible = true
     },
     unqualifiedFun() {

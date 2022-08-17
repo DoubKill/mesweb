@@ -324,6 +324,12 @@ export default {
         return false
       }
     },
+    untreated: {
+      type: Boolean,
+      default() {
+        return false
+      }
+    },
     // 编辑类型  1不合格处置单发起 2不合格处置工艺技术科处理 3处理意见(检查科)
     editType: {
       type: Number,
@@ -392,7 +398,7 @@ export default {
         this.loading = true
         const data = await unqualifiedDealOrders('get', this.orderNum)
         this.formObj = data
-        if (this.editType === 2) {
+        if (this.untreated) {
           data.deal_details = this.listDataProps
         }
         this.loading = false
