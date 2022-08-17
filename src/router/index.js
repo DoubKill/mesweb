@@ -523,6 +523,28 @@ export let asyncRoutes = [
             }
           }
         ]
+      },
+      {
+        path: '/experience-data',
+        redirect: '/experience-data/scorching-time',
+        component: () => import('@/views/production/experience_data/a-index'),
+        name: 'ExperienceData',
+        meta: {
+          title: '经验数据查询',
+          icon: 'formula'
+        },
+        children: [
+          {
+            path: '/experience-data/scorching-time',
+            component: () => import('@/views/production/experience_data/scorching_time'),
+            name: 'ScorchingTime',
+            meta: {
+              faName: 'ExperienceData',
+              title: '焦烧时间录入及查询',
+              permissionName: 'batch_log'
+            }
+          }
+        ]
       }
     // {
     //   path: '/rb/material/std/manage111',
