@@ -80,7 +80,7 @@
       />
       <el-table-column
         prop="plan_classes_uid"
-        label="小料称量计划号"
+        label="计划号"
       />
       <el-table-column
         prop="mix_classes"
@@ -106,6 +106,10 @@
         label="扫码物料名"
       />
       <el-table-column
+        prop="scan_material_type"
+        label="扫码物料类别"
+      />
+      <el-table-column
         prop="bar_code"
         label="条码"
       />
@@ -113,14 +117,6 @@
         prop="scan_train"
         label="扫码车次"
         width="80"
-      />
-      <el-table-column
-        prop="created_date"
-        label="投入时间"
-      />
-      <el-table-column
-        prop="created_date"
-        label="投入时间"
       />
       <el-table-column
         prop="unit"
