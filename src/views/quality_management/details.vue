@@ -654,6 +654,9 @@ export default {
         // this.$nextTick(() => {
         //   this.exportExcel()
         // })
+        if (!this.statisticsBool) {
+          delete this.getParams.sum_project
+        }
         const obj = Object.assign({ export: 1 }, this.getParams)
         const _api = materialTestOrdersAll
         _api('get', null, { params: obj, responseType: 'blob' })
@@ -964,7 +967,7 @@ export default {
         this.$message('请选择胶料')
         return
       }
-      this.statisticsBool = true
+      this.statisticsBool = !this.statisticsBool
       this.handleCurrentChange()
     },
     async handleCurrentChange() {
