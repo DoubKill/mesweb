@@ -413,6 +413,7 @@ export default {
     },
     async showEditDialog(row) {
       if (row) {
+        this.date = ''
         this.searchView = { recipe_type: row.recipe_type, product_no: row.product_no }
       }
       try {
