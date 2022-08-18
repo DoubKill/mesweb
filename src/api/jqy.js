@@ -1559,3 +1559,12 @@ export function equipAutoPlan(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function scorchTime(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ScorchTime + id + '/' : API.ScorchTime,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

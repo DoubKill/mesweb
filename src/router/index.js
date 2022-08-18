@@ -541,7 +541,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'ExperienceData',
               title: '焦烧时间录入及查询',
-              permissionName: 'batch_log'
+              permissionName: 'scorch_time'
             }
           }
         ]
