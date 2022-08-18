@@ -121,7 +121,7 @@
           label="规格"
           prop="product_no"
         >
-          <el-select v-model="dialogForm.product_no" allow-create filterable placeholder="请选择" clearable @visible-change="getProductList">
+          <el-select v-model="dialogForm.product_no" filterable placeholder="请选择" clearable @visible-change="getProductList">
             <el-option
               v-for="item in options"
               :key="item.id"
