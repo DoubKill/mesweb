@@ -28,6 +28,7 @@
       <el-form-item style="float:right">
         <el-button
           v-permission="['employee_attendance_records','add']"
+          :disabled="approveState==='已审批'||approveState==='已审核'"
           type="primary"
           @click="addStatus('外面')"
         >添加考勤数据</el-button>
@@ -289,7 +290,7 @@
         >审批驳回</el-button>
         <el-button
           v-permission="['employee_attendance_records','add']"
-          :disabled="color==='#51A651'||color==='#141414'||isShow"
+          :disabled="color==='#51A651'||color==='#141414'||isShow||approveState==='已审批'||approveState==='已审核'"
           type="primary"
           @click="addStatus('里面')"
         >添加</el-button>
@@ -657,6 +658,7 @@
       >
         <el-button
           v-permission="['employee_attendance_records','add']"
+          :disabled="approveState==='已审批'||approveState==='已审核'"
           type="primary"
           @click="addStatus('外面')"
         >添加</el-button>
@@ -928,7 +930,7 @@ export default {
         this.tableHead1 = data.group_list || []
         this.approve_user = data.approve_user
         this.audit_user = data.audit_user
-        this.approveState = (this.approve_user !== null ? '已审批' : '未审批')
+        this.approveState = (data.state === 0 ? '' : data.state === 1 ? '确认中' : data.state === 2 ? '已审批' : '已审核')
         this.tableData = data.results || []
         this.groupList = data.user_groups
         this.spanArr = []
