@@ -442,10 +442,10 @@
         <el-form-item label="班组" prop="group">
           <el-select v-model="dialogForm.group" :disabled="addType==='里面'?true:false" placeholder="请选择" @change="pickClasses">
             <el-option
-              v-for="item in optionsGroup"
-              :key="item.group__global_name"
-              :label="item.group__global_name"
-              :value="item.group__global_name"
+              v-for="item in groupList"
+              :key="item"
+              :label="item"
+              :value="item"
             />
           </el-select>
         </el-form-item>
@@ -544,10 +544,10 @@
         <el-form-item label="班组">
           <el-select v-model="searchCheck.group" clearable placeholder="请选择" @change="getCheckList">
             <el-option
-              v-for="item in options1"
-              :key="item.id"
-              :label="item.global_name"
-              :value="item.global_name"
+              v-for="item in groupList"
+              :key="item"
+              :label="item"
+              :value="item"
             />
           </el-select>
         </el-form-item>
@@ -776,6 +776,7 @@ export default {
       classes: '',
       allList: [],
       isExport: false,
+      groupList: [],
       optionsGroup: [],
       allowTime: {},
       multipleSelection: [],
@@ -788,7 +789,7 @@ export default {
   },
   created() {
     this.tableHead = getDiffDate(this.search.date + '-01', getCurrentMonthLastDay(setDate()))
-    this.getClassGroup(true)
+    // this.getClassGroup(true)
     this.getList()
     this.getAllList()
   },
@@ -910,10 +911,14 @@ export default {
       }
     },
     pickClasses() {
-      this.$set(this.dialogForm, 'classes', this.optionsGroup.find(d => d.group__global_name === this.dialogForm.group).classes__global_name)
-      this.dialogForm.actual_begin_date = null
-      this.dialogForm.actual_end_date = null
-      this.dialogForm.actual_time = null
+      if (this.optionsGroup.find(d => d.group__global_name === this.dialogForm.group)) {
+        this.$set(this.dialogForm, 'classes', this.optionsGroup.find(d => d.group__global_name === this.dialogForm.group).classes__global_name)
+        this.dialogForm.actual_begin_date = null
+        this.dialogForm.actual_end_date = null
+        this.dialogForm.actual_time = null
+      } else {
+        this.$message('当天排班没有此班组')
+      }
     },
     async getList() {
       try {
@@ -925,6 +930,7 @@ export default {
         this.audit_user = data.audit_user
         this.approveState = (this.approve_user !== null ? '已审批' : '未审批')
         this.tableData = data.results || []
+        this.groupList = data.user_groups
         this.spanArr = []
         this.pos = null
         for (var i = 0; i < this.tableData.length; i++) {
