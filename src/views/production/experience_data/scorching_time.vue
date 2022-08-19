@@ -108,7 +108,7 @@
         :model="dialogForm"
       >
         <el-form-item label="配方类别" prop="recipe_type">
-          <el-select v-model="dialogForm.recipe_type">
+          <el-select v-model="dialogForm.recipe_type" @change="clearProduct">
             <el-option
               v-for="item in optionsType"
               :key="item.id"
@@ -369,7 +369,7 @@ export default {
       debounce(this, 'changeSearch')
     },
     async onSubmit() {
-      this.dialogForm = { }
+      this.dialogForm = { recipe_type: '车胎' }
       this.dialogVisible = true
     },
     exportTable() {
@@ -393,10 +393,15 @@ export default {
       const data = await classesListUrl('get', null, { params: obj })
       this.optionsType = data.results
     },
+    clearProduct() {
+      if (this.dialogForm.product_no) {
+        this.dialogForm.product_no = null
+      }
+    },
     async getProductList(val) {
       if (val) {
         try {
-          const data = await batchingMaterials('get', null, { params: { all: 1, stage: 'FM,RFM,RE' }})
+          const data = await batchingMaterials('get', null, { params: { all: 1, stage: 'FM,RFM,RE', recipe_type: this.optionsType.find(d => d.global_no === this.dialogForm.recipe_type).global_name }})
           this.options = data || []
         } catch (e) {
         //
@@ -405,7 +410,7 @@ export default {
     },
     async getTestMethod() {
       try {
-        const data = await testSubTypes('get', null, { params: { all: 1 }})
+        const data = await testSubTypes('get', null, { params: { all: 1, test_type_name: '门尼焦烧' }})
         this.optionsTestMethod = data.results || []
       } catch (e) {
         //
