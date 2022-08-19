@@ -38,7 +38,7 @@
           :loading="isExport"
           @click="exportTable1"
         >导出Excel</el-button>
-        <el-button
+        <!-- <el-button
           v-permission="['employee_attendance_records','export']"
           type="primary"
           :loading="btnExportLoad"
@@ -52,7 +52,7 @@
           :show-file-list="false"
         >
           <el-button v-permission="['employee_attendance_records','import']" :loading="btnExportLoad1" type="primary">导入Excel</el-button>
-        </el-upload>
+        </el-upload> -->
         <el-button
           v-permission="['employee_attendance_records','addall']"
           type="primary"
