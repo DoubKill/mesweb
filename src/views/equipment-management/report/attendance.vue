@@ -285,8 +285,8 @@
           v-permission="['employee_attendance_records','reject']"
           :disabled="color==='#DA1F27'||color==='#1010FF'||isShow"
           type="primary"
-          @click="editStatus('审核驳回')"
-        >审核驳回</el-button>
+          @click="editStatus('审批驳回')"
+        >审批驳回</el-button>
         <el-button
           v-permission="['employee_attendance_records','add']"
           :disabled="color==='#51A651'||color==='#141414'||isShow"
