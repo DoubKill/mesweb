@@ -1595,9 +1595,10 @@ export default {
                 this.$message('物料列表为空')
                 return
               }
-              const orderId = await getOrderId('get', null, { params: { status: '出库' }})
+              const orderId = await getOrderId('get', null, { params: { status: '出库', apply: 1 }})
               const orderData = {}
               orderData.order_id = orderId
+              orderData.add_username = this.name
               orderData.submission_department = this.creatOrder.product_name
               orderData.status = 4
               orderData.equip_spare = this.tableDataView.map(item => ({ id: item.id, quantity: item.apply }))
