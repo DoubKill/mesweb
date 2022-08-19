@@ -979,6 +979,7 @@ export default {
       } else {
         this.dialogForm.end_date = this.dialogForm.actual_end_date
         this.$set(this.dialogForm, 'actual_time', getHour(this.dialogForm.actual_begin_date, this.dialogForm.actual_end_date))
+        this.dialogForm.work_time = this.dialogForm.actual_time
       }
     },
     addEndTime() {
@@ -1002,6 +1003,7 @@ export default {
       } else {
         this.dialogForm.end_date = this.dialogForm.actual_end_date
         this.$set(this.dialogForm, 'actual_time', getHour(this.dialogForm.actual_begin_date, this.dialogForm.actual_end_date))
+        this.dialogForm.work_time = this.dialogForm.actual_time
       }
     },
     changeStartTime(row) {
