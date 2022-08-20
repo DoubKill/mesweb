@@ -19,6 +19,21 @@
           @changeSearch="clickQuery"
         />
       </el-form-item>
+      <el-form-item label="胶料类别">
+        <el-select
+          v-model="getParams.recipe_type"
+          clearable
+          placeholder="请选择"
+          @change="clickQuery"
+        >
+          <el-option
+            v-for="item in categoryOptions"
+            :key="item.id"
+            :label="item.global_no"
+            :value="item.global_name"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="胶料">
         <el-select
           v-model="getParams.product_no"
@@ -455,6 +470,7 @@ export default {
       products: [],
       viewHeard: false,
       testOrdersTop: [],
+      categoryOptions: [],
       historySpot: {
         title: [{
           text: "Anscombe's quartet"
@@ -522,6 +538,7 @@ export default {
     this.testOrdersAll = []
     this.getMaterialTestOrders()
     this.getClassGroup()
+    this.getFormulaType()
   },
   mounted() {
     // window.addEventListener('scroll', () => {
@@ -576,6 +593,14 @@ export default {
     classSelected(className) {
       this.getParams.classes = className || null
       this.clickQuery()
+    },
+    async getFormulaType() {
+      try {
+        const data = await globalCodesUrl('get', { params: { class_name: '配方类别' }})
+        this.categoryOptions = data.results
+      } catch (e) {
+        //
+      }
     },
     async productBatchingChanged() {
       this.viewHeard = true
