@@ -614,6 +614,7 @@
         ref="singleTable"
         highlight-current-row
         row-key="id"
+        max-height="550"
         :reserve-selection="true"
         :data="tableDataWork"
         border
@@ -643,6 +644,7 @@
 
 <script>
 import material from '../components/material-dialog'
+import { mapGetters } from 'vuex'
 import { sectionTree } from '@/api/base_w_four'
 import { getOrderId, equipWarehouseOrder, equipWarehouseOrderDetail, equipWarehouseInventory } from '@/api/jqy'
 import page from '@/components/page'
@@ -714,6 +716,11 @@ export default {
       },
       creatOrder: { out_quantity: null }
     }
+  },
+  computed: {
+    ...mapGetters([
+      'name'
+    ])
   },
   created() {
     this.getList()
@@ -1048,6 +1055,7 @@ export default {
     },
     submitFun() {
       this.dialogForm.status = 4
+      this.dialogForm.add_username = this.name
       this.dialogForm.equip_spare.forEach(d => {
         if (d.quantity === undefined) {
           d.quantity = 1
