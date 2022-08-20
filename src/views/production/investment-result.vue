@@ -29,9 +29,9 @@
       <el-form-item label="胶料编码">
         <el-input v-model="getParams.product_no" clearable @input="changeInput" />
       </el-form-item>
-      <el-form-item label="物料名">
+      <!-- <el-form-item label="物料名">
         <el-input v-model="getParams.material_name" clearable @input="changeInput" />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="计划编号">
         <el-input v-model="getParams.plan_classes_uid" clearable @input="changeInput" />
       </el-form-item>
