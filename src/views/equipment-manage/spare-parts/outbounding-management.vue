@@ -614,6 +614,7 @@
         ref="singleTable"
         highlight-current-row
         row-key="id"
+        max-height="550"
         :reserve-selection="true"
         :data="tableDataWork"
         border
