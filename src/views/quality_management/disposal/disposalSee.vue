@@ -180,6 +180,7 @@
     >
       <excel
         ref="handleCard"
+        style="width:800px"
         :order-row="currentRow"
         :form-head-data="formHeadData"
         :edit-type="3"

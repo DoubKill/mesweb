@@ -324,7 +324,13 @@ export default {
         return false
       }
     },
-    // 编辑类型  1不合格品详情 2处理意见(技术科) 3处理意见(检查科)
+    untreated: {
+      type: Boolean,
+      default() {
+        return false
+      }
+    },
+    // 编辑类型  1不合格处置单发起 2不合格处置工艺技术科处理 3处理意见(检查科)
     editType: {
       type: Number,
       default() {
@@ -392,7 +398,9 @@ export default {
         this.loading = true
         const data = await unqualifiedDealOrders('get', this.orderNum)
         this.formObj = data
-
+        if (this.untreated) {
+          data.deal_details = this.listDataProps
+        }
         this.loading = false
         this.setName()
         if (this.orderRow.t_deal_suggestion && this.isEdit) {
@@ -413,6 +421,7 @@ export default {
             d.train += D.train + (d.trains.length > 1 && d.trains.length - 1 > i ? ',' : '')
           })
         })
+
         this.listData = data.deal_details
       } catch (e) {
         this.listData = []
@@ -591,7 +600,7 @@ export default {
 
 <style lang="scss">
  .unqualified-card-container {
-    width: 800px;
+    // width: 800px;
     margin: 0 auto;
     text-align: center;
     font-size: 14px;

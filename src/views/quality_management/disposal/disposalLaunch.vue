@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 发生部门发起 -->
+    <!-- 不合格处置发生部门发起 -->
     <el-form :inline="true">
       <el-form-item label="生产日期">
         <el-date-picker
@@ -72,12 +72,12 @@
     >
       <el-table-column
         type="selection"
-        width="55"
+        width="40"
         :reserve-selection="true"
       />
       <el-table-column
         label="日期/班次"
-        min-width="130"
+        min-width="120"
         show-overflow-tooltip
       >
         <template slot-scope="scope">
@@ -87,15 +87,16 @@
       <el-table-column
         prop="equip_no"
         label="生产机台"
-        min-width="60"
+        min-width="50"
       />
       <el-table-column
         prop="product_no"
         label="胶料规格"
-        min-width="120"
+        min-width="130"
       />
       <el-table-column
         label="车次"
+        min-width="60"
       >
         <template slot-scope="scope">
           {{ scope.row.trains }}
@@ -104,6 +105,7 @@
       <el-table-column
         prop="is_deal"
         label="是否已发起"
+        min-width="60"
       >
         <template slot-scope="scope">
           <span v-if="scope.row.is_deal === true">Y</span>
@@ -146,6 +148,14 @@
             </div>
           </template>
         </el-table-column>
+      </el-table-column>
+      <el-table-column
+        label="备注"
+        min-width="60"
+      >
+        <template slot-scope="scope">
+          {{ scope.row.desc }}
+        </template>
       </el-table-column>
     </el-table>
     <page
@@ -253,7 +263,6 @@
     <el-dialog
       title="不合格处置单发起"
       :fullscreen="false"
-      width="800px"
       :visible.sync="handleCardDialogVisible"
       center
     >
@@ -312,7 +321,7 @@ export default {
       listData: [],
       details: [],
       orderRow: { department: '准备分厂', currentDate: setDate(), reason: '', status: '半成品' },
-      dateValue: []
+      dateValue: [setDate(), setDate()]
     }
   },
   created() {
