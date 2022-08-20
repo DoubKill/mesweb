@@ -1470,6 +1470,16 @@ export let asyncRoutes = [
             }
           },
           {
+            path: '/report/attendance-query',
+            component: () => import('@/views/equipment-management/report/attendance-query'),
+            name: 'Attendanceuery',
+            meta: {
+              faName: 'Achievements',
+              title: '员工出勤记录表操作履历',
+              permissionName: 'employee_attendance_records'
+            }
+          },
+          {
             path: '/report/postTable',
             component: () => import('@/views/equipment-management/report/postTable'),
             name: 'StatisticalReportPost',

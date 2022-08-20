@@ -683,6 +683,7 @@ export default {
   ProductInfoDj: '/api/v1/production/product-info-dj/', // 丁基胶规格设定
   PerformanceUnitPrice: '/api/v1/production/performance-unit-price/', // 绩效计算 单价表
   Employeeattendancerecords: '/api/v1/production/employee-attendance-records/', // 员工出勤记录表
+  EmployeeattendancerecordsLogs: '/api/v1/production/employee-attendance-records-log/',
   Employeeattendancerecordsexport: '/api/v1/production/employee-attendance-records-export/', // 员工出勤记录表导出模板
   SummaryOfMillOutput: '/api/v1/production/summary-of-mill-output/', // 密炼机台产量汇总表
   SetThePrice: '/api/v1/production/set-the-price/', // 称量机台产量汇总表单价设定
