@@ -86,6 +86,7 @@
         :key="4"
         prop="product_no"
         label="胶料编码"
+        width="160px"
       />
       <el-table-column
         :key="5"

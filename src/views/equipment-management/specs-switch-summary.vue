@@ -128,18 +128,22 @@
         <el-table-column
           prop="time"
           label="时间"
+          width="100"
         />
         <el-table-column
           prop="equip_no"
           label="设备编码"
+          width="80"
         />
         <el-table-column
           prop="plan_classes_uid_age"
           label="切换前计划号"
+          width="300"
         />
         <el-table-column
           prop="plan_classes_uid_later"
           label="切换后计划号"
+          width="300"
         />
         <el-table-column
           prop="cut_ago_product_no"
@@ -166,6 +170,7 @@
           sortable
           prop="err_cut_time_consumer"
           label="异常时间(秒)"
+          width="120"
         />
       </el-table>
       <page
