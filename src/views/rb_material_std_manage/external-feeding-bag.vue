@@ -435,7 +435,7 @@
           />
         </el-form-item>
         <el-form-item>
-          <h1 style="margin:0;color:red">
+          <h1 style="margin:0;">
             已下传线体:
             <span v-if="isView&&rubberMaterialForm.send_xl_equip">{{ rubberMaterialForm.send_xl_equip }}</span>
           </h1>
