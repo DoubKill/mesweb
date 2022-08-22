@@ -77,27 +77,31 @@
       <el-table-column
         prop="equip_no"
         label="机台"
+        width="50px"
       />
       <el-table-column
         prop="factory_date"
         label="工厂日期"
+        width="100"
       />
       <el-table-column
         prop="product_no"
         label="配方编号"
+        width="130"
       />
       <el-table-column
         prop="classes"
         label="班次"
+        width="50px"
       />
       <el-table-column
         prop="plan_classes_uid"
         label="计划编号"
-        width="140"
+        width="170"
       />
       <el-table-column
         prop="begin_time"
-        width="110"
+        width="150"
         sortable
         label="开始时间"
       />
@@ -105,7 +109,7 @@
         prop="end_time"
         label="结束时间"
         sortable
-        width="110"
+        width="150"
       />
       <el-table-column
         prop="plan_trains"
@@ -150,7 +154,7 @@
       <el-table-column
         :prop="editionNo === 'v1'?'production_details.存盘时间':'product_time'"
         label="存盘时间(s)"
-        width="100"
+        width="150"
       />
       <el-table-column
         :prop="editionNo === 'v1'?'production_details.密炼时间':'mixer_time'"

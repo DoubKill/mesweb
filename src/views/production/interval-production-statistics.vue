@@ -54,12 +54,12 @@
         <el-table-column
           type="index"
           label="序号"
-          min-width="50px"
+          width="50"
         />
         <el-table-column
           prop="name"
           :label="'时间区间('+itemDiv+')'"
-          min-width="50px"
+          width="90px"
         >
           <template slot-scope="{row}">
             {{ row.time_span }}

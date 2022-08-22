@@ -35,7 +35,7 @@
       <el-table-column
         prop="bra_code"
         label="卡片条码"
-        width="170"
+        width="180"
       />
       <el-table-column
         prop="created_date"
@@ -54,7 +54,7 @@
       <el-table-column
         prop="print_type"
         label="类别"
-        min-width="20"
+        min-width="15"
       />
       <el-table-column
         prop="product_no"
@@ -63,7 +63,7 @@
       />
       <el-table-column
         label="车次"
-        min-width="20"
+        min-width="15"
       >
         <template slot-scope="scope">
           <span> {{ scope.row.begin_trains+ '-' + scope.row.end_trains }}</span>
