@@ -15,9 +15,9 @@
       <el-form-item
         label="规格"
       >
-        <el-select v-model="search.product_no" filterable placeholder="请选择" clearable @visible-change="getProductList" @change="changeSearch">
+        <el-select v-model="search.product_no" filterable placeholder="请选择" clearable @visible-change="getProductSearch" @change="changeSearch">
           <el-option
-            v-for="item in options"
+            v-for="item in options1"
             :key="item.id"
             :label="item.material_no"
             :value="item.material_no"
@@ -307,6 +307,7 @@ export default {
       tableDataView: [],
       value: [],
       options: [],
+      options1: [],
       optionsType: [],
       tableHeader: [],
       optionsTestMethod: [],
@@ -396,6 +397,16 @@ export default {
     clearProduct() {
       if (this.dialogForm.product_no) {
         this.dialogForm.product_no = null
+      }
+    },
+    async getProductSearch(val) {
+      if (val) {
+        try {
+          const data = await batchingMaterials('get', null, { params: { all: 1, stage: 'FM,RFM,RE' }})
+          this.options1 = data || []
+        } catch (e) {
+        //
+        }
       }
     },
     async getProductList(val) {
