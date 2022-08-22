@@ -44,9 +44,9 @@
       :summary-method="getSummaries"
       :show-summary="true"
       sum-text="合计"
-      max-height="500"
       style="width: 100%"
     >
+      <!-- max-height="700" -->
       <el-table-column fixed label="机台" prop="equip_no" width="50" align="center" />
       <el-table-column fixed label="目标产量" prop="plan_train_sum" width="55" align="center" />
       <el-table-column :label="value1" align="center">
