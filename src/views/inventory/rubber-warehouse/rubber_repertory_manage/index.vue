@@ -142,6 +142,7 @@
       style="width: 100%"
       :row-class-name="rowClassNameFn"
       :cell-class-name="cellClassName"
+      @sort-change="sortChange"
     >
       <el-table-column
         label="No"
@@ -161,49 +162,49 @@
       <el-table-column prop="material_no" label="胶料名称" align="center" min-width="28" />
       <el-table-column prop="warehouse_name" label="库区" align="center" min-width="20" />
       <el-table-column prop="location" label="巷道" align="center" min-width="10" />
-      <el-table-column label="锁定车数" align="center" min-width="20">
+      <el-table-column label="锁定车数" sortable="custom" align="center" min-width="20" prop="locked_trains">
         <template slot-scope="{row}">
           <el-link :type="row.all?'':'primary'" :underline="false" @click="clickVehicleLock(row)">
-            {{ row.locked_trains }}
+            {{ row.locked_trains?row.locked_trains:'' }}
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column label="一等品库存数(车)" align="center" min-width="20">
+      <el-table-column label="一等品库存数(车)" align="center" min-width="20" sortable="custom" prop="1_qty">
         <template slot-scope="{row}">
           <el-link v-if="row['一等品']" :type="row.all?'':'primary'" :underline="false" @click="clickVehicle(row,'一等品')">
             {{ row['一等品'].qty }}
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column prop="" label="重量(kg)" align="center" min-width="20">
+      <el-table-column label="重量(kg)" align="center" min-width="20" sortable="custom" prop="1_weight">
         <template slot-scope="{row}">
           <span v-if="row['一等品']">
             {{ row['一等品'].total_weight }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column prop="" label="三等品库存数(车)" align="center" min-width="20">
+      <el-table-column label="三等品库存数(车)" align="center" min-width="20" sortable="custom" prop="3_qty">
         <template slot-scope="{row}">
           <el-link v-if="row['三等品']" :type="row.all?'':'primary'" :underline="false" @click="clickVehicle(row,'三等品')">
             {{ row['三等品'].qty }}
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column prop="" label="重量(kg)" align="center" min-width="20">
+      <el-table-column sortable="custom" prop="3_weight" label="重量(kg)" align="center" min-width="20">
         <template slot-scope="{row}">
           <span v-if="row['三等品']">
             {{ row['三等品'].total_weight }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column label="待检品库存数(车)" align="center" min-width="20">
+      <el-table-column label="待检品库存数(车)" align="center" min-width="20" sortable="custom" prop="2_qty">
         <template slot-scope="{row}">
           <el-link v-if="row['待检品']" :type="row.all?'':'primary'" :underline="false" @click="clickVehicle(row,'待检品')">
             {{ row['待检品'].qty }}
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column prop="" label="重量(kg)" align="center" min-width="20">
+      <el-table-column label="重量(kg)" align="center" min-width="20" sortable="custom" prop="2_weight">
         <template slot-scope="{row}">
           <span v-if="row['待检品']">
             {{ row['待检品'].total_weight }}
@@ -396,6 +397,11 @@ export default {
       this.materialNo = row.material_no ? row.material_no : ''
       this.warehouseName = row.warehouse_name ? row.warehouse_name : ''
       this.dialogVisible1 = true
+    },
+    sortChange({ column, prop, order }) {
+      this.getParams.ordering_field = prop
+      this.getParams.order_by = order
+      this.rubber_repertory_list()
     },
     exportTable(val) {
       this.btnLoading = true
