@@ -751,5 +751,6 @@ export default {
   CheckTemperatureTableExport: '/api/v1/equipment/check-temperature-table/handle-table/',
   EquipAutoPlan: '/api/v1/equipment/equip-auto-plan/',
 
-  TestedMaterials: '/api/v1/quality/tested-materials/'
+  TestedMaterials: '/api/v1/quality/tested-materials/',
+  ScorchTime: '/api/v1/quality/scorch-time/'
 }
