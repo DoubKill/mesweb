@@ -530,8 +530,8 @@
           />
         </el-form-item>
         <el-form-item label="入库物料详情列表" prop="equip_spare">
-          <el-button type="primary" :disabled="spare_code!==''" @click="Add">添加</el-button>
-          <span style="margin-left:20px">备件编号：</span>
+          <el-button v-if="dialogForm.status_name!=='关闭'&&dialogForm.status_name!=='已入库'" type="primary" :disabled="spare_code!==''" @click="Add">添加</el-button>
+          <span :style="{marginLeft:dialogForm.status_name!=='关闭'&&dialogForm.status_name!=='已入库'?'20px':0}">备件编号：</span>
           <el-input
             v-model="spare_code"
             style="width:200px"
@@ -577,6 +577,7 @@
             <el-table-column label="操作" width="130px">
               <template slot-scope="scope">
                 <el-button
+                  v-if="dialogForm.status_name!=='关闭'&&dialogForm.status_name!=='已入库'"
                   size="mini"
                   type="danger"
                   @click="handleDelete(scope.row)"
@@ -589,7 +590,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleCloseEdit(false)">取 消</el-button>
-        <el-button type="primary" :loading="btnLoad" @click="submitEdit">确 定</el-button>
+        <el-button v-if="dialogForm.status_name!=='关闭'&&dialogForm.status_name!=='已入库'" type="primary" :loading="btnLoad" @click="submitEdit">确 定</el-button>
       </span>
     </el-dialog>
 
