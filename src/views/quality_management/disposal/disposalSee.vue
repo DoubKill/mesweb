@@ -99,7 +99,7 @@
         min-width="14"
       >
         <template slot-scope="{row}">
-          {{ (row.created_date).split(' ')[0] }}
+          {{ row.created_date }}
         </template>
       </el-table-column>
       <el-table-column
