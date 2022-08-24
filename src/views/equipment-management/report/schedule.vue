@@ -28,7 +28,7 @@
       <el-form-item
         label="人员"
       >
-        <el-select v-model="search.username" filterable placeholder="请选择" @change="getList">
+        <el-select v-model="search.username" clearable filterable placeholder="请选择" @change="getList">
           <el-option
             v-for="item in personList"
             :key="item.id"
