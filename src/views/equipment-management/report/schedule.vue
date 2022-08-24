@@ -4,7 +4,7 @@
     <el-form :inline="true">
       <el-form-item label="月份">
         <el-date-picker
-          v-model="search.date"
+          v-model="search.target_month"
           type="month"
           :clearable="false"
           format="yyyy-MM"
@@ -16,7 +16,7 @@
       <el-form-item
         label="组别"
       >
-        <el-select v-model="search.group" clearable placeholder="请选择" @visible-change="getGroup" @change="getList">
+        <el-select v-model="search.classes" clearable placeholder="请选择" @visible-change="getGroup" @change="getList">
           <el-option
             v-for="item in optionsGroup"
             :key="item.id"
@@ -28,7 +28,7 @@
       <el-form-item
         label="人员"
       >
-        <el-select v-model="dialogForm.product_no" filterable placeholder="请选择" @change="getList">
+        <el-select v-model="search.username" filterable placeholder="请选择" @change="getList">
           <el-option
             v-for="item in personList"
             :key="item.id"
@@ -61,26 +61,46 @@
       <el-table-column
         :fixed="!btnExportLoad"
         align="center"
-        prop="group"
+        prop="classes"
         label="组别"
         min-width="80"
       />
       <el-table-column
         :fixed="!btnExportLoad"
         align="center"
-        prop="name"
+        prop="username"
         label="姓名"
         min-width="80"
       />
       <el-table-column
+        :fixed="!btnExportLoad"
+        align="center"
+        label="岗位"
+        min-width="140"
+      >
+        <template slot-scope="scope">
+          <el-select v-if="scope.row.isEdit" v-model="scope.row.station" style="width:110px" filterable placeholder="请选择" @visible-change="sectionChange">
+            <el-option
+              v-for="item in options"
+              :key="item.id"
+              :label="item.name"
+              :value="item.name"
+            />
+          </el-select>
+          <span v-else>
+            {{ scope.row.station }}
+          </span>
+        </template>
+      </el-table-column>
+      <el-table-column
         v-for="(herder,index) in tableHeader"
-        :key="index"
+        :key="Date.now()+index"
         align="center"
         :label="herder"
         min-width="140"
       >
         <template slot-scope="scope">
-          <el-select v-if="scope.row.isEdit" v-model="scope.row[herder]" style="width:130px">
+          <el-select v-if="scope.row.isEdit&&(search.target_month+'-'+(Number(herder.split('/')[1]<10)?'0'+herder.split('/')[1]:herder.split('/')[1]))>date" v-model="scope.row.weight_class_details[herder]" style="width:110px">
             <el-option
               v-for="item in optionsType"
               :key="item.id"
@@ -89,7 +109,7 @@
             />
           </el-select>
           <span v-else>
-            {{ scope.row[herder] }}
+            {{ scope.row.weight_class_details[herder] }}
           </span>
         </template>
       </el-table-column>
@@ -97,7 +117,7 @@
         v-if="!btnExportLoad"
         fixed="right"
         label="操作"
-        width="200"
+        width="210"
       >
         <template slot-scope="scope">
           <el-button
@@ -140,9 +160,9 @@
       >
         <el-form-item
           label="组别"
-          prop="group"
+          prop="classes"
         >
-          <el-select v-model="dialogForm.group" placeholder="请选择" @visible-change="getGroup">
+          <el-select v-model="dialogForm.classes" placeholder="请选择" @visible-change="getGroup">
             <el-option
               v-for="item in optionsGroup"
               :key="item.id"
@@ -153,19 +173,19 @@
         </el-form-item>
         <el-form-item
           label="人员"
-          prop="product_no"
+          prop="user"
         >
-          <el-select v-model="dialogForm.product_no" filterable placeholder="请选择">
+          <el-select v-model="dialogForm.user" filterable placeholder="请选择">
             <el-option
               v-for="item in personList"
               :key="item.id"
               :label="item.username"
-              :value="item.username"
+              :value="item.id"
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="岗位" prop="input_date">
-          <el-select v-model="dialogForm.product_no" filterable placeholder="请选择" @visible-change="sectionChange">
+        <el-form-item label="岗位" prop="station">
+          <el-select v-model="dialogForm.station" filterable placeholder="请选择" @visible-change="sectionChange">
             <el-option
               v-for="item in options"
               :key="item.id"
@@ -187,13 +207,14 @@
 import { classesListUrl } from '@/api/base_w'
 import { exportExcel } from '@/utils/index'
 import { setDate } from '@/utils'
-import { scorchTime, personnels, performanceJobLadder, employeeattendancerecords } from '@/api/jqy'
+import { weightClassPlan, personnels, performanceJobLadder } from '@/api/jqy'
 export default {
   name: 'Schedule',
   components: {},
   data() {
     return {
-      search: { date: setDate(null, null, 'month') },
+      date: setDate(),
+      search: { target_month: setDate(null, null, 'month') },
       tableData: [],
       tableDataView: [],
       options: [],
@@ -206,16 +227,16 @@ export default {
       btnExportLoad1: false,
       dialogVisible: false,
       rules: {
-        group: [{ required: true, message: '不能为空', trigger: 'change' }],
-        product_no: [{ required: true, message: '不能为空', trigger: 'change' }],
-        input_date: [{ required: true, message: '不能为空', trigger: 'change' }]
+        classes: [{ required: true, message: '不能为空', trigger: 'change' }],
+        station: [{ required: true, message: '不能为空', trigger: 'change' }],
+        user: [{ required: true, message: '不能为空', trigger: 'change' }]
       },
       dialogForm: {},
       btnLoading: false
     }
   },
   created() {
-    this.tableHeader = getDiffDate(this.search.date + '-01', getCurrentMonthLastDay(setDate()))
+    this.tableHeader = getDiffDate(this.search.target_month + '-01', getCurrentMonthLastDay(setDate()))
     this.getList()
     this.getAllList()
     this.getType()
@@ -224,28 +245,28 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const data = await scorchTime('get', null, { params: this.search })
-        this.tableData = data.data || []
+        const data = await weightClassPlan('get', null, { params: this.search })
+        this.tableData = data || []
         this.tableData.forEach(d => { d.isEdit = false })
-        // this.tableHeader = data.dates
         this.loading = false
       } catch (e) {
         this.loading = false
       }
     },
     changeList() {
-      this.tableHeader = getDiffDate(this.search.date + '-01', getCurrentMonthLastDay(this.search.date))
+      this.tableHeader = getDiffDate(this.search.target_month + '-01', getCurrentMonthLastDay(this.search.target_month))
       this.getList()
     },
     async onSubmit() {
-      this.dialogForm = { }
+      this.dialogForm = { target_month: this.search.target_month }
       this.dialogVisible = true
     },
     exportTable() {
       setTimeout(d => {
         this.btnExportLoad = true
+        this.tableData.forEach(d => { d.isEdit = false })
         setTimeout(d => {
-          exportExcel('月度配料间排班表')
+          exportExcel('月度配料间排班表', 'disposal-list-components')
           this.btnExportLoad = false
         }, 1000)
       }, 100)
@@ -254,8 +275,8 @@ export default {
       this.btnExportLoad1 = true
       const formData = new FormData()
       formData.append('file', param.file)
-      formData.append('date', this.search.date)
-      employeeattendancerecords('post', null, { data: formData })
+      formData.append('target_month', this.search.target_month)
+      weightClassPlan('post', null, { data: formData })
         .then(response => {
           this.$message({
             type: 'success',
@@ -300,12 +321,12 @@ export default {
       }
     },
     handleDelete(row) {
-      this.$confirm('此操作将删除' + row.group + '是否继续?', '提示', {
+      this.$confirm('此操作将删除' + row.classes + ' ' + row.username + '是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        scorchTime('delete', row.id, {})
+        weightClassPlan('delete', row.id, {})
           .then(response => {
             this.$message({
               type: 'success',
@@ -316,12 +337,15 @@ export default {
       })
     },
     edit(row) {
+      console.log(Date.now())
       this.$set(row, 'isEdit', true)
+      this.$forceUpdate()
     },
     async save(row) {
       try {
-        await scorchTime('put', row.id, { data: row })
+        await weightClassPlan('put', row.id, { data: row })
         this.$set(row, 'isEdit', false)
+        this.$forceUpdate()
         this.$message.success('操作成功')
         // this.getList()
       } catch (e) {
@@ -333,7 +357,7 @@ export default {
         if (valid) {
           try {
             this.btnLoading = true
-            await scorchTime('post', null, { data: this.dialogForm })
+            await weightClassPlan('post', null, { data: this.dialogForm })
             this.$message.success('操作成功')
             this.handleClose(null)
             this.getList()
@@ -393,9 +417,6 @@ function getCurrentMonthLastDay(d) {
 
 <style lang="scss">
 .schedule{
-  .el-input{
-    width:200px;
-  }
   .el-table{
     .cell {
       white-space: pre-line;
