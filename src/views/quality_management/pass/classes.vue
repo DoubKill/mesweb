@@ -215,17 +215,17 @@
       <el-table-column
         prop="RATE_1_PASS"
         label="一次合格率"
-        width="100"
+        width="90"
       />
       <el-table-column
         prop="RATE_S_PASS"
         label="硫变合格率"
-        width="100"
+        width="90"
       />
       <el-table-column
         prop="cp_all"
         label="次品合计"
-        width="100"
+        width="90"
       />
       <el-table-column
         prop="rate"

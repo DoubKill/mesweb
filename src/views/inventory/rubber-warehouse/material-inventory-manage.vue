@@ -182,12 +182,12 @@
       <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="供应商" align="center" prop="supplier_name" min-width="16" />
       <el-table-column label="库存位" align="center" prop="location" min-width="18" />
       <el-table-column label="库存数" align="center" prop="qty" min-width="16" />
-      <el-table-column label="单位" align="center" prop="unit" min-width="20" />
+      <el-table-column label="单位" align="center" prop="unit" min-width="16" />
       <el-table-column label="单位重量" align="center" prop="unit_weight" min-width="16" />
       <el-table-column label="总重量" align="center" prop="total_weight" min-width="16" />
       <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="核酸管控" align="center" prop="in_charged_tag" min-width="16" />
       <el-table-column label="品质状态" align="center" prop="quality_status" min-width="15" />
-      <el-table-column v-if="['炭黑库', '原材料库'].includes(warehouseNameProps)" label="入库时间" align="center" prop="in_storage_time" min-width="15" />
+      <el-table-column v-if="['炭黑库', '原材料库'].includes(warehouseNameProps)" label="入库时间" align="center" prop="in_storage_time" width="90" />
       <el-table-column v-if="['炭黑库', '原材料库'].includes(warehouseNameProps)" label="件数" align="center" prop="sl" min-width="15" />
       <el-table-column v-if="['炭黑库', '原材料库'].includes(warehouseNameProps)" label="唛头重量" align="center" prop="zl" min-width="15" />
       <el-table-column v-if="['原材料库'].includes(warehouseNameProps)" label="门尼值等级" align="center" prop="mn_level" min-width="15" />

@@ -58,7 +58,7 @@
       <el-table-column
         prop="spare_code"
         label="备件代码"
-        min-width="20"
+        width="120"
       />
       <el-table-column
         prop="spare_name"
@@ -73,27 +73,27 @@
       <el-table-column
         prop="equip_component_type_name"
         label="备件分类"
-        min-width="20"
+        width="70"
       />
       <el-table-column
         prop="specification"
         label="规格型号"
-        min-width="20"
+        width="80"
       />
       <el-table-column
         prop="technical_params"
         label="用途"
-        min-width="20"
+        width="80"
       />
       <el-table-column
         prop="unit"
         label="标准单位"
-        min-width="20"
+        width="70"
       />
       <el-table-column
         prop="key_parts_flag"
         label="关键部件"
-        min-width="20"
+        width="80"
       >
         <template slot-scope="scope">
           <span v-if="scope.row.key_parts_flag===true">是</span>
@@ -103,22 +103,22 @@
       <el-table-column
         prop="cost"
         label="计划价格(元)"
-        min-width="20"
+        width="100"
       />
       <el-table-column
         prop="texture_material"
         label="材质"
-        min-width="20"
+        width="80"
       />
       <el-table-column
         prop="supplier_name"
         label="供应商名称"
-        min-width="20"
+        width="100"
       />
       <el-table-column
         prop="use_flag"
         label="是否启用"
-        min-width="20"
+        width="80"
       >
         <template slot-scope="scope">
           <span v-if="scope.row.use_flag===true">Y</span>
@@ -128,7 +128,7 @@
       <el-table-column
         prop="created_username"
         label="操作者"
-        min-width="20"
+        width="70"
       />
       <el-table-column
         prop="created_date"
