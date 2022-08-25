@@ -312,17 +312,30 @@ export default {
       loadingDialog: false
     }
   },
+  watch: {
+    $route: {
+      handler() {
+        if (this.$route.fullPath === '/internal/drying-room-status') {
+          this.getList()
+          this._setInterval = setInterval(d => {
+            this.getList()
+          }, 30000)
+        } else {
+          window.clearInterval(this._setInterval)
+        }
+      },
+      deep: true, // 深度监听
+      immediate: true // 第一次初始化渲染就可以监听到
+    }
+  },
   created() {
-    this.getList()
+    // this.getList()
     this.getProduct()
   },
   mounted() {
-    this.timer = setInterval(d => {
-      this.getList()
-    }, 300000)
   },
-  beforeDestroy() {
-    clearInterval(this.timer)
+  destroyed() {
+    window.clearInterval(this._setInterval)
   },
   methods: {
     async getList() {
