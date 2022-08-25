@@ -1586,3 +1586,12 @@ export function weightClassPlan(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function weightClassPlanImport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WeightClassPlanImport + id + '/' : API.WeightClassPlanImport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

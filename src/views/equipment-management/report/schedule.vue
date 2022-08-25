@@ -45,10 +45,10 @@
           :http-request="Upload"
           :show-file-list="false"
         >
-          <el-button v-permission="['employee_attendance_records','import']" :loading="btnExportLoad1" type="primary">导入Excel</el-button>
+          <el-button v-permission="['weight_class_plan','import']" :loading="btnExportLoad1" type="primary">导入Excel</el-button>
         </el-upload>
-        <el-button v-permission="['scorch_time', 'export']" type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
-        <el-button v-permission="['scorch_time', 'add']" type="primary" @click="onSubmit">添加排班人员</el-button>
+        <el-button v-permission="['weight_class_plan', 'export']" type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
+        <el-button v-permission="['weight_class_plan', 'add']" type="primary" @click="onSubmit">添加排班人员</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -59,21 +59,21 @@
       border
     >
       <el-table-column
-        :fixed="!btnExportLoad"
+        fixed
         align="center"
         prop="classes"
         label="组别"
         min-width="80"
       />
       <el-table-column
-        :fixed="!btnExportLoad"
+        fixed
         align="center"
         prop="username"
         label="姓名"
         min-width="80"
       />
       <el-table-column
-        :fixed="!btnExportLoad"
+        fixed
         align="center"
         label="岗位"
         min-width="140"
@@ -114,14 +114,13 @@
         </template>
       </el-table-column>
       <el-table-column
-        v-if="!btnExportLoad"
         fixed="right"
         label="操作"
         width="210"
       >
         <template slot-scope="scope">
           <el-button
-            v-permission="['scorch_time', 'change']"
+            v-permission="['weight_class_plan', 'edit']"
             :disabled="scope.row.isEdit"
             type="primary"
             size="mini"
@@ -129,7 +128,7 @@
           >编辑
           </el-button>
           <el-button
-            v-permission="['scorch_time', 'change']"
+            v-permission="['weight_class_plan', 'edit']"
             :disabled="!scope.row.isEdit"
             type="primary"
             size="mini"
@@ -137,7 +136,7 @@
           >保存
           </el-button>
           <el-button
-            v-permission="['scorch_time', 'delete']"
+            v-permission="['weight_class_plan', 'delete']"
             type="danger"
             size="mini"
             @click="handleDelete(scope.row)"
@@ -205,9 +204,9 @@
 
 <script>
 import { classesListUrl } from '@/api/base_w'
-import { exportExcel } from '@/utils/index'
+// import { exportExcel } from '@/utils/index'
 import { setDate } from '@/utils'
-import { weightClassPlan, personnels, performanceJobLadder } from '@/api/jqy'
+import { weightClassPlan, personnels, performanceJobLadder, weightClassPlanImport } from '@/api/jqy'
 export default {
   name: 'Schedule',
   components: {},
@@ -262,21 +261,36 @@ export default {
       this.dialogVisible = true
     },
     exportTable() {
-      setTimeout(d => {
-        this.btnExportLoad = true
-        this.tableData.forEach(d => { d.isEdit = false })
-        setTimeout(d => {
-          exportExcel('月度配料间排班表', 'disposal-list-components')
+      this.btnExportLoad = true
+      const obj = Object.assign({ export: 1 }, this.search)
+      weightClassPlan('get', null, { responseType: 'blob', params: obj })
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '月度配料间排班表.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
           this.btnExportLoad = false
-        }, 1000)
-      }, 100)
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
+      // setTimeout(d => {
+      //   this.btnExportLoad = true
+      //   this.tableData.forEach(d => { d.isEdit = false })
+      //   setTimeout(d => {
+      //     exportExcel('月度配料间排班表', 'disposal-list-components')
+      //     this.btnExportLoad = false
+      //   }, 1000)
+      // }, 100)
     },
     Upload(param) {
       this.btnExportLoad1 = true
       const formData = new FormData()
       formData.append('file', param.file)
-      formData.append('target_month', this.search.target_month)
-      weightClassPlan('post', null, { data: formData })
+      weightClassPlanImport('post', null, { data: formData })
         .then(response => {
           this.$message({
             type: 'success',

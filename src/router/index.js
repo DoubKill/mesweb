@@ -1476,7 +1476,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'Achievements',
               title: '月度配料间排班表',
-              permissionName: 'employee_attendance_records'
+              permissionName: 'weight_class_plan'
             }
           },
           {
