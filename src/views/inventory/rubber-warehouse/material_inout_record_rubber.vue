@@ -207,7 +207,7 @@
     >
       <el-table-column label="No" type="index" align="center" width="40" />
       <el-table-column label="胶料名称" align="center" prop="product_no" />
-      <el-table-column label="机台" align="center" prop="equip_no" />
+      <el-table-column width="50" label="机台" align="center" prop="equip_no" />
       <el-table-column label="车次" align="center" prop="memo" width="50" />
       <el-table-column label="重量(kg)" align="center" prop="weight" width="80" />
       <el-table-column label="托盘号" align="center" prop="pallet_no" width="80" />

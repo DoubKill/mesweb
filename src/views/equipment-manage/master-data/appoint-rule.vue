@@ -72,7 +72,7 @@
       <el-table-column
         prop="rule_code"
         label="规则编号"
-        min-width="20"
+        width="90"
       />
       <el-table-column
         prop="rule_name"
@@ -82,26 +82,26 @@
       <el-table-column
         prop="work_type"
         label="作业类型"
-        min-width="20"
+        width="80"
       />
       <el-table-column
         prop="equip_type_name"
         label="设备类型"
-        min-width="20"
+        width="80"
       />
       <el-table-column
         prop="equip_condition"
         label="设备条件"
-        min-width="20"
+        width="80"
       />
       <el-table-column
         prop="important_level"
         label="重要程度"
-        min-width="20"
+        width="80"
       />
       <el-table-column
         prop="receive_interval"
-        label="接单间隔时间（分钟）"
+        label="接单间隔时间(分钟)"
         min-width="20"
       />
       <el-table-column
@@ -111,7 +111,7 @@
       />
       <el-table-column
         prop="start_interval"
-        label="维修开始时间间隔（分钟）"
+        label="维修开始时间间隔(分钟)"
         min-width="20"
       />
       <el-table-column
@@ -121,7 +121,7 @@
       />
       <el-table-column
         prop="accept_interval"
-        label="验收间隔时间（分钟）"
+        label="验收间隔时间(分钟)"
         min-width="20"
       />
       <el-table-column
@@ -132,17 +132,17 @@
       <el-table-column
         prop="use_flag_name"
         label="是否启用"
-        min-width="20"
+        width="80"
       />
       <el-table-column
         prop="created_username"
         label="录入人"
-        min-width="20"
+        width="60"
       />
       <el-table-column
         prop="created_date"
         label="录入时间"
-        min-width="20"
+        width="90"
       />
       <el-table-column label="操作" width="140px">
         <template slot-scope="scope">

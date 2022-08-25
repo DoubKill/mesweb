@@ -46,21 +46,21 @@
       <el-table-column
         prop="material_type"
         label="物料类型"
-        min-width="20"
+        min-width="10"
       />
       <el-table-column
         prop="material_no"
         label="物料编码"
-        min-width="20"
+        min-width="25"
       />
       <el-table-column
         prop="material_name"
         label="物料名称"
-        min-width="20"
+        min-width="25"
       />
       <el-table-column
         label="低门尼"
-        min-width="20"
+        width="80"
         :formatter="(row)=>{
           if(row.l_lower_limit_value&&row.l_upper_limit_value){
             return row.l_lower_limit_value +'-' + row.l_upper_limit_value
@@ -69,7 +69,7 @@
       />
       <el-table-column
         label="标准门尼"
-        min-width="20"
+        width="80"
         :formatter="(row)=>{
           if(row.m_lower_limit_value&&row.m_upper_limit_value){
             return row.m_lower_limit_value +'-' + row.m_upper_limit_value
@@ -78,7 +78,7 @@
       />
       <el-table-column
         label="高门尼"
-        min-width="20"
+        width="80"
         :formatter="(row)=>{
           if(row.h_lower_limit_value&&row.h_upper_limit_value){
             return row.h_lower_limit_value +'-' + row.h_upper_limit_value
