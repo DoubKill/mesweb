@@ -147,22 +147,22 @@
       <el-table-column
         prop="equip_condition"
         label="设备条件"
-        min-width="20"
+        width="70"
       />
       <el-table-column
         prop="importance_level"
         label="重要程度"
-        min-width="20"
+        width="70"
       />
       <el-table-column
         prop="status"
         label="状态"
-        min-width="20"
+        width="70"
       />
       <el-table-column
         prop="created_username"
         label="报修人"
-        min-width="20"
+        width="70"
       />
       <el-table-column
         prop="created_date"

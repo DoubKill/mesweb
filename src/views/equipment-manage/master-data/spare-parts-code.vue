@@ -78,7 +78,7 @@
       <el-table-column
         prop="unique_id"
         label="ERP物料信息id"
-        min-width="20"
+        width="120"
       />
       <el-table-column
         prop="equip_component_type_name"
@@ -93,17 +93,17 @@
       <el-table-column
         prop="technical_params"
         label="用途"
-        min-width="20"
+        width="60"
       />
       <el-table-column
         prop="unit"
         label="标准单位"
-        min-width="20"
+        width="80"
       />
       <el-table-column
         prop="key_parts_flag"
         label="关键部件"
-        min-width="20"
+        width="80"
       >
         <template slot-scope="scope">
           <span v-if="scope.row.key_parts_flag===true">是</span>
@@ -128,22 +128,22 @@
       <el-table-column
         prop="texture_material"
         label="材质"
-        min-width="20"
+        width="60"
       />
       <el-table-column
         prop="period_validity"
         label="有效期(天)"
-        min-width="20"
+        width="80"
       />
       <el-table-column
         prop="supplier_name"
         label="供应商名称"
-        min-width="20"
+        width="90"
       />
       <el-table-column
         prop="use_flag"
         label="是否启用"
-        min-width="20"
+        width="70"
       >
         <template slot-scope="scope">
           <span v-if="scope.row.use_flag===true">Y</span>
@@ -153,14 +153,14 @@
       <el-table-column
         prop="created_username"
         label="录入人"
-        min-width="20"
+        width="60"
       />
       <el-table-column
         prop="created_date"
         label="录入时间"
-        width="160"
+        width="90"
       />
-      <el-table-column v-if="!isSearch" label="操作" width="240">
+      <el-table-column v-if="!isSearch" label="操作" width="230">
         <template slot-scope="scope">
           <el-button-group>
             <el-button
