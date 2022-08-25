@@ -126,12 +126,12 @@
       <el-table-column
         prop="status"
         label="出库/入库"
-        min-width="20"
+        width="70"
       />
       <el-table-column
         prop="order_id"
         label="出入库单号"
-        min-width="20"
+        width="110"
       />
       <el-table-column
         prop="work_order_no"
@@ -158,77 +158,82 @@
       <el-table-column
         prop="component_type_name"
         label="备件分类"
-        min-width="20"
+        width="70"
       />
       <el-table-column
         prop="specification"
         label="规格型号"
-        min-width="20"
+        width="70"
       />
       <el-table-column
         prop="technical_params"
         label="用途"
+        width="70"
+      />
+      <el-table-column
+        prop="purpose"
+        label="领用用途"
         min-width="20"
       />
       <el-table-column
         prop="cost"
         label="单价"
-        min-width="20"
+        width="50"
       />
       <el-table-column
         prop="quantity"
         label="数量"
-        min-width="20"
+        width="50"
       />
       <el-table-column
         prop="unit"
         label="单位"
-        min-width="20"
+        width="50"
       />
       <el-table-column
         prop="money"
         label="金额"
-        min-width="20"
+        width="50"
       />
       <el-table-column
         prop="area_name"
         label="库区"
-        min-width="20"
+        width="60"
       />
       <el-table-column
         prop="location_name"
         label="库位"
-        min-width="20"
+        width="60"
       />
       <el-table-column
         prop="receive_user"
         label="领用人"
-        min-width="20"
+        width="60"
       />
       <el-table-column
         prop="created_username"
         label="操作人"
-        min-width="20"
+        width="60"
       />
       <el-table-column
         prop="real_time"
         label="出入库时间"
-        min-width="20"
+        width="80"
       />
       <el-table-column
         prop="last_updated_date"
         label="操作时间"
-        min-width="20"
+        width="80"
       />
       <el-table-column
         prop="revocation"
         label="是否撤销"
-        min-width="20"
+        width="70"
       />
       <el-table-column
         prop="revocation_desc"
         label="撤销备注"
-        min-width="20"
+        width="70"
       />
       <el-table-column
         label="操作"
