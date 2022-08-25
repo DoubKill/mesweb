@@ -139,7 +139,7 @@
       <el-table-column
         prop="task_status"
         label="状态"
-        min-width="20"
+        width="70"
         :formatter="(row)=>{
           let obj = options.find(d=>d.id === row.task_status)
           return obj.name
@@ -158,7 +158,7 @@
       <el-table-column
         prop="weight"
         label="重量"
-        min-width="20"
+        width="70"
       />
       <el-table-column
         prop="entrance_name"

@@ -153,7 +153,7 @@
     >
       <el-table-column
         type="selection"
-        width="55"
+        width="40"
         :reserve-selection="true"
         :selectable="selectableFun"
       />
@@ -243,7 +243,7 @@
         </template>
       </el-table-column>
       <el-table-column label="样品名称" prop="sample_name" align="center" />
-      <el-table-column label="批次" prop="batch" align="center">
+      <el-table-column width="100" label="批次" prop="batch" align="center">
         <template slot-scope="{row}">
           <span v-if="row.qualified">{{ row.batch }}</span>
           <el-link v-else type="primary" @click="unqualifiedFun(row, false)">{{ row.batch }}</el-link>
@@ -259,7 +259,7 @@
       </el-table-column>
       <el-table-column
         label="记录时间"
-        width="160"
+        width="150"
         prop="create_time"
         align="center"
       />
@@ -283,11 +283,11 @@
       />
       <el-table-column
         label="处理时间"
-        width="160"
+        width="150"
         prop="deal_time"
         align="center"
       />
-      <el-table-column width="230" label="操作" align="center">
+      <el-table-column width="110" label="操作" align="center">
         <template slot-scope="scope">
           <el-button size="mini" :disabled="scope.row.qualified||scope.row.deal_status === '已处理'" @click="unqualifiedFun(scope.row,true)">不合格处理</el-button>
           <!-- <el-button size="mini" :disabled="scope.row.qualified" @click="downloadFun(scope.row)">下载不合格单</el-button> -->

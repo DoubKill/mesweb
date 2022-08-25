@@ -335,7 +335,7 @@
           <el-table-column
             prop="actual_trains"
             label="车次"
-            width="80px"
+            width="50"
           >
             <template slot-scope="{row,$index}">
               <div v-if="row.add" class="actualTrains">
@@ -356,7 +356,7 @@
           </el-table-column>
           <el-table-column
             label="状态"
-            min-width="18"
+            width="60"
             :formatter="(row)=>{
               return row.value?'已检测':'待检测'
             }"
