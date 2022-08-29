@@ -998,7 +998,11 @@ export default {
         this.$set(this.creatOrder, 'equip_warehouse_area', data.data.first.area_id)
         this.warehouseLocationList = await equipWarehouseLocation('get', null, { params: { equip_warehouse_area_id: this.creatOrder.equip_warehouse_area, all: 1 }})
         // this.warehouseLocationList = data1.filter(d => d.equip_warehouse_area === this.creatOrder.equip_warehouse_area)
-        this.$set(this.creatOrder, 'equip_warehouse_location', data.data.first.location_id)
+        if (data.data.first.location_id) {
+          this.$set(this.creatOrder, 'equip_warehouse_location', data.data.first.location_id)
+        } else {
+          this.$set(this.creatOrder, 'equip_warehouse_location', this.warehouseLocationList[0].id)
+        }
       }
       this.dialogVisible1 = true
       // }
