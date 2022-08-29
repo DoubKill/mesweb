@@ -113,6 +113,11 @@
         min-width="20"
       />
       <el-table-column
+        prop="desc"
+        label="备注"
+        min-width="20"
+      />
+      <el-table-column
         label="操作"
         width="200"
       >
@@ -241,7 +246,7 @@
           min-width="20"
         />
         <el-table-column
-          prop="created_date"
+          prop="outer_time"
           label="出库时间"
           width="160"
         />

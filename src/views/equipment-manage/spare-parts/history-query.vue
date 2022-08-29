@@ -236,6 +236,11 @@
         width="70"
       />
       <el-table-column
+        prop="desc"
+        label="盘库/移库备注"
+        width="90"
+      />
+      <el-table-column
         label="操作"
         width="80"
       >

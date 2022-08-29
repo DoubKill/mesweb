@@ -139,6 +139,11 @@
         min-width="20"
       />
       <el-table-column
+        prop="desc"
+        label="备注"
+        min-width="20"
+      />
+      <el-table-column
         label="操作"
         width="220"
       >
@@ -273,7 +278,7 @@
           min-width="20"
         />
         <el-table-column
-          prop="created_date"
+          prop="enter_time"
           label="入库时间"
           width="160"
         />
