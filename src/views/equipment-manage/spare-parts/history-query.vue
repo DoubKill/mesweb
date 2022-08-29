@@ -199,7 +199,14 @@
         prop="area_name"
         label="库区"
         width="60"
-      />
+      ><template slot-scope="scope">
+
+        <el-link
+          type="primary"
+          @click="dialogDesc(scope.row)"
+        >{{ scope.row.area_name }}</el-link>
+      </template>
+      </el-table-column>
       <el-table-column
         prop="location_name"
         label="库位"
@@ -236,11 +243,6 @@
         width="70"
       />
       <el-table-column
-        prop="desc"
-        label="盘库/移库备注"
-        width="90"
-      />
-      <el-table-column
         label="操作"
         width="80"
       >
@@ -262,6 +264,7 @@
       :current-page="search.page"
       @currentChange="currentChange"
     />
+
     <el-dialog
       :visible.sync="dialogVisible"
       width="500px"
@@ -329,6 +332,71 @@
         <el-button :loading="submit" type="primary" @click="generateFun">确 定</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      :visible.sync="dialogVisibleDesc"
+      width="70%"
+      title="盘库/移库备注"
+      class="dialogStyle"
+    >
+      <el-table
+        v-loading="loading"
+        :data="tableDataDesc"
+        border
+      >
+
+        <el-table-column
+          prop="status"
+          label="操作类型"
+          width="90"
+        />
+        <el-table-column
+          prop="spare_code"
+          label="备件代码"
+          width="120"
+        />
+        <el-table-column
+          prop="spare_name"
+          label="备件名称"
+          min-width="20"
+        />
+        <el-table-column
+          prop="component_type_name"
+          label="备件分类"
+          width="90"
+        />
+        <el-table-column
+          prop="area_name"
+          label="库区"
+          width="90"
+        />
+        <el-table-column
+          prop="location_name"
+          label="库位"
+          width="90"
+        />
+        <el-table-column
+          prop="created_username"
+          label="操作人"
+          width="70"
+        />
+        <el-table-column
+          prop="created_date"
+          label="操作时间"
+          width="150"
+        />
+        <el-table-column
+          prop="revocation_desc"
+          label="备注"
+          min-width="20"
+        />
+
+      </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogVisibleDesc=false">返回</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -351,11 +419,13 @@ export default {
       submit: false,
       loading: false,
       dialogVisibleRevoke: false,
+      dialogVisibleDesc: false,
       btnExportLoad: false,
       dialogVisible: false,
       loadingView: false,
       tableDataView: [],
       currentObj: {},
+      tableDataDesc: [],
       currentRevoke: {}
     }
   },
@@ -439,6 +509,19 @@ export default {
         this.loadingView = false
       } catch (e) {
         this.loadingView = false
+      }
+    },
+    async dialogDesc(row) {
+      try {
+        const data = await equipWarehouseRecord('get', row.id, { params: {}})
+        if (data.length > 0) {
+          this.tableDataDesc = data
+          this.dialogVisibleDesc = true
+        } else {
+          this.$message('没有盘库移库记录')
+        }
+      } catch (e) {
+        // this.loadingView = false
       }
     },
     exportTable() {
