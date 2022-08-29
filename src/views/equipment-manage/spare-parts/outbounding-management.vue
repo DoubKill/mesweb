@@ -762,9 +762,13 @@ export default {
     handleCurrentChange(val) {
       this.work_order_noList = val
     },
-    submitFunwork() {
+    async submitFunwork() {
       this.dialogForm.work_order_no = this.work_order_noList.work_order_no
       this.dialogVisibleWork = false
+      if (this.dialogForm.work_order_no) {
+        const orderId = await getOrderId('get', null, { params: { status: '出库', apply: 1 }})
+        this.dialogForm.order_id = orderId
+      }
     },
     async editOrder(row) {
       this.dialogVisibleEdit = true
