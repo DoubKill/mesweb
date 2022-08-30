@@ -144,6 +144,16 @@
         width="90"
       />
       <el-table-column
+        prop="check_desc"
+        label="盘库备注"
+        width="90"
+      />
+      <el-table-column
+        prop="move_desc"
+        label="移库备注"
+        width="90"
+      />
+      <el-table-column
         prop="upper_stock"
         label="库存上限"
         width="90"
