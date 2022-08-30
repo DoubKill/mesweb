@@ -84,7 +84,7 @@
       <el-table-column
         prop="equip_no"
         label="机台"
-        min-width="20"
+        min-width="10"
       />
       <el-table-column
         prop="plan_classes_uid"
@@ -149,7 +149,7 @@
       <el-table-column
         prop="status"
         label="状态"
-        min-width="20"
+        min-width="10"
       />
       <el-table-column
         prop="created_date"
@@ -159,7 +159,7 @@
       <el-table-column
         prop="last_update_username"
         label="处理人"
-        min-width="20"
+        min-width="14"
       />
       <el-table-column
         prop="last_updated_date"
