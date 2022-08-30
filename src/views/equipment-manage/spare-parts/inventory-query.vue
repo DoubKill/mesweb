@@ -72,12 +72,12 @@
       <el-table-column
         prop="equip_warehouse_area__area_name"
         label="库区"
-        width="90"
+        width="60"
       />
       <el-table-column
         prop="equip_warehouse_location__location_name"
         label="库位"
-        width="90"
+        width="80"
       />
       <el-table-column
         prop="component_type_name"
@@ -87,7 +87,7 @@
       <el-table-column
         prop="spare__code"
         label="备件代码"
-        min-width="10"
+        min-width="60"
       >
         <template slot-scope="scope">
           <el-link
@@ -99,7 +99,7 @@
       <el-table-column
         prop="spare_name"
         label="备件名称"
-        min-width="20"
+        min-width="120"
       />
       <el-table-column
         prop="specification"
@@ -114,12 +114,12 @@
       <el-table-column
         prop="single_price"
         label="单价"
-        width="90"
+        width="70"
       />
       <el-table-column
         prop="quantity"
         label="在库数量"
-        width="90"
+        width="70"
       >
         <template slot-scope="scope">
           <el-link
@@ -131,17 +131,22 @@
       <el-table-column
         prop="total_price"
         label="总金额"
-        width="90"
+        width="80"
       />
       <el-table-column
         prop="unit"
         label="标准单位"
-        width="90"
+        width="80"
       />
       <el-table-column
         prop="lower_stock"
         label="库存下限"
-        width="90"
+        width="70"
+      />
+      <el-table-column
+        prop="upper_stock"
+        label="库存上限"
+        width="70"
       />
       <el-table-column
         prop="check_desc"
@@ -151,11 +156,6 @@
       <el-table-column
         prop="move_desc"
         label="移库备注"
-        width="90"
-      />
-      <el-table-column
-        prop="upper_stock"
-        label="库存上限"
         width="90"
       />
       <el-table-column
