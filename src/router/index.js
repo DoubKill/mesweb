@@ -513,6 +513,16 @@ export let asyncRoutes = [
             }
           },
           {
+            path: '/internal/investment-result',
+            component: () => import('@/views/production/investment-result'),
+            name: 'InvestmentResult',
+            meta: {
+              faName: 'Resume',
+              title: '密炼扫码结果查询',
+              permissionName: 'batch_scan_log'
+            }
+          },
+          {
             path: '/drug-investment',
             component: () => import('@/views/production/drug-investment'),
             name: 'DrugInvestment',

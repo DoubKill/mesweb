@@ -120,6 +120,15 @@ export function batchChargeLogList(method, id, data = {}) {
   return request(obj)
 }
 
+export function batchScanLog(method, id, data = {}) {
+  const obj = {
+    url: id ? API.BatchScanLog + id + '/' : API.BatchScanLog,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function equipTank(method, id, data = {}) {
   const obj = {
     url: id ? API.EquipTank + id + '/' : API.EquipTank,
