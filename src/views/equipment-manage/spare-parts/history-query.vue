@@ -136,7 +136,7 @@
       <el-table-column
         prop="work_order_no"
         label="工单编号"
-        min-width="20"
+        min-width="70"
       >
         <template slot-scope="scope">
           <el-link
@@ -148,12 +148,12 @@
       <el-table-column
         prop="spare_code"
         label="备件代码"
-        min-width="20"
+        min-width="70"
       />
       <el-table-column
         prop="spare_name"
         label="备件名称"
-        min-width="20"
+        min-width="70"
       />
       <el-table-column
         prop="component_type_name"
@@ -173,7 +173,7 @@
       <el-table-column
         prop="purpose"
         label="领用用途"
-        min-width="20"
+        width="70"
       />
       <el-table-column
         prop="cost"
