@@ -179,6 +179,7 @@
 import * as echarts from 'echarts'
 import { setDate } from '@/utils'
 import { indexOverview, indexProductionAyalyze, indexEquipProductionAyalyze, indexEquipMaintenanceAyalyze } from '@/api/base_w_three'
+import { globalCodesUrl } from '@/api/base_w'
 
 export default {
   name: 'HomePageMain',
@@ -357,7 +358,11 @@ export default {
         ]
       },
       optionPassRateLine: {
-        color: this.color,
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          { offset: 0, color: '#83bff6' },
+          { offset: 0.5, color: '#188df0' },
+          { offset: 1, color: '#188df0' }
+        ]),
         title: {
           left: 'left',
           text: '综合合格率分析',
@@ -407,7 +412,7 @@ export default {
         series: [
           {
             name: '综合合格率',
-            type: 'line',
+            type: 'bar',
             data: [],
             itemStyle: { normal: {
               label: { show: true, color: '#000' }}}
@@ -415,6 +420,7 @@ export default {
           {
             name: '合格车数',
             type: 'line',
+            showSymbol: false,
             data: [],
             itemStyle: {
               normal: {
@@ -426,6 +432,7 @@ export default {
             name: '检测车数',
             type: 'line',
             data: [],
+            showSymbol: false,
             itemStyle: {
               normal: {
                 color: 'rgba(128, 128, 128, 0)' // 柱状图颜色设为透明
@@ -649,13 +656,15 @@ export default {
           barMaxWidth: 150,
           itemStyle: { normal: { label: { show: true, position: 'top' }}}
         }]
-      }
+      },
+      modeType: true
     }
   },
   watch: {
     $route: {
       handler() {
         if (this.$route.fullPath === '/homePage' || this.$route.fullPath === '/homePage/index') {
+          this.bigScreen = this.$route.fullPath === '/homePage/index'
           this.getList()
           this._setInterval = setInterval(d => {
             this.getList()
@@ -693,6 +702,17 @@ export default {
   methods: {
     async getList(bool, bool1, bool2) {
       // 哪个图 那个bool就设置为true
+      let modelVal = []
+      if (this.bigScreen) {
+        try {
+          const data = await globalCodesUrl('get', { params: { class_name: '首页参观展示切换（正常/参观）' }})
+          const obj = data.results.find(d => d.use_flag)
+          this.modeType = obj.global_name === '正常模式'
+          modelVal = obj.description.split(',')
+        } catch (e) {
+          //
+        }
+      }
       try {
         const arr = await Promise.all([
           bool || bool1 || bool2 ? '' : indexOverview('get'),
@@ -708,9 +728,14 @@ export default {
           const qualified_rate_data_rate = this.setVal(arr[1].qualified_rate_data, 'rate')
           const qualified_rate_data_qualified_count = this.setVal(arr[1].qualified_rate_data, 'qualified_count')
           const qualified_rate_data_total = this.setVal(arr[1].qualified_rate_data, 'total')
-          this.optionPassRateLine.series[0].data = qualified_rate_data_rate
-          this.optionPassRateLine.series[1].data = qualified_rate_data_qualified_count
-          this.optionPassRateLine.series[2].data = qualified_rate_data_total
+          if (this.modeType) {
+            this.optionPassRateLine.series[0].data = qualified_rate_data_rate
+            this.optionPassRateLine.series[1].data = qualified_rate_data_qualified_count
+            this.optionPassRateLine.series[2].data = qualified_rate_data_total
+          } else {
+            this.optionPassRateLine.series[0].data = modelVal
+            this.overviewObj.qualified_rate = modelVal[modelVal.length - 1] + '%'
+          }
 
           this.optionPassRateLine.xAxis[0].data = arr[1].date_range
           if (this.bigScreen) {
