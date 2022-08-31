@@ -72,7 +72,7 @@
       <el-table-column
         prop="equip_warehouse_area__area_name"
         label="库区"
-        width="60"
+        width="80"
       />
       <el-table-column
         prop="equip_warehouse_location__location_name"
@@ -557,8 +557,8 @@ export default {
       checkList: [],
       warehouseAreaList: [],
       warehouseLocationList: [],
-      EditForm: {},
-      MoveForm: {},
+      EditForm: { desc: '' },
+      MoveForm: { desc: '' },
       dialogEdit: false,
       dialogMove: false,
       loadingView: false,
@@ -708,11 +708,13 @@ export default {
     },
     async generateFunEdit(row) {
       this.EditForm = JSON.parse(JSON.stringify(row))
+      this.EditForm.desc = row.check_desc
       this.dialogEdit = true
     },
     async generateFunMove(row) {
       this.MoveForm = JSON.parse(JSON.stringify(row))
       this.quantity = this.MoveForm.quantity
+      this.MoveForm.desc = row.move_desc
       this.dialogMove = true
     },
     async MoveOne() {
