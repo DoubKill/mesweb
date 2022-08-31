@@ -72,7 +72,7 @@
       <el-table-column
         prop="equip_warehouse_area__area_name"
         label="库区"
-        width="60"
+        width="80"
       />
       <el-table-column
         prop="equip_warehouse_location__location_name"
