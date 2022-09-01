@@ -357,7 +357,6 @@ export default {
       })
     },
     edit(row) {
-      console.log(Date.now())
       this.$set(row, 'isEdit', true)
       this.$forceUpdate()
     },
