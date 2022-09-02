@@ -5,6 +5,7 @@
       <el-form-item label="月份">
         <el-date-picker
           v-model="search.date"
+          style="width:120px"
           type="month"
           :clearable="false"
           format="yyyy-MM"
@@ -13,17 +14,29 @@
           @change="changeList"
         />
       </el-form-item>
+      <el-form-item
+        label="类别"
+      >
+        <el-select v-model="search.clock_type" style="width:120px" placeholder="请选择" @change="getList">
+          <el-option
+            v-for="item in optionsType"
+            :key="item.id"
+            :label="item.global_name"
+            :value="item.global_name"
+          />
+        </el-select>
+      </el-form-item>
       <!-- <el-form-item label="姓名">
         <el-input v-model="search.name" clearable placeholder="请输入" @change="debounceList" />
       </el-form-item> -->
       <el-form-item label="审批人">
-        <el-input v-model="approve_user" disabled />
+        <el-input v-model="approve_user" style="width:140px" disabled />
       </el-form-item>
       <el-form-item label="审核人">
-        <el-input v-model="audit_user" disabled />
+        <el-input v-model="audit_user" style="width:140px" disabled />
       </el-form-item>
       <el-form-item label="状态">
-        <el-input v-model="approveState" disabled />
+        <el-input v-model="approveState" style="width:140px" disabled />
       </el-form-item>
       <el-form-item style="float:right">
         <el-button
@@ -696,6 +709,7 @@ export default {
   data() {
     return {
       search: {
+        clock_type: '密炼',
         date: setDate(null, null, 'month')
       },
       getParams: {
@@ -715,6 +729,7 @@ export default {
       btnLoad: false,
       resultForm: {},
       isShow: false,
+      optionsType: [],
       tableDataAttendance: [],
       dialogVisibleResult: false,
       tableDataRecord: [],
@@ -793,6 +808,7 @@ export default {
     this.tableHead = getDiffDate(this.search.date + '-01', getCurrentMonthLastDay(setDate()))
     // this.getClassGroup(true)
     this.getList()
+    this.getTypeList()
     this.getAllList()
   },
   methods: {
@@ -859,6 +875,11 @@ export default {
           this.options2 = response.results
         })
       }
+    },
+    async getTypeList() {
+      const obj = { all: 1, class_name: '绩效计算岗位类别' }
+      const data = await classesListUrl('get', null, { params: obj })
+      this.optionsType = data.results
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
