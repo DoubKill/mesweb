@@ -358,11 +358,7 @@ export default {
         ]
       },
       optionPassRateLine: {
-        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-          { offset: 0, color: '#83bff6' },
-          { offset: 0.5, color: '#188df0' },
-          { offset: 1, color: '#188df0' }
-        ]),
+        color: ['#8498f9'],
         title: {
           left: 'left',
           text: '综合合格率分析',
@@ -412,8 +408,20 @@ export default {
         series: [
           {
             name: '综合合格率',
-            type: 'bar',
+            type: 'line',
             data: [],
+            areaStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                {
+                  offset: 0,
+                  color: 'rgba(58,77,233,0.8)'
+                },
+                {
+                  offset: 1,
+                  color: 'rgba(58,77,233,0.1)'
+                }
+              ])
+            },
             itemStyle: { normal: {
               label: { show: true, color: '#000' }}}
           },
