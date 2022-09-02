@@ -50,6 +50,9 @@
       <el-form-item>
         <el-checkbox v-model="getParams.checked" @change="numChanged">按修改日期排序</el-checkbox>
       </el-form-item>
+      <el-form-item v-if="is_superuser==='true'">
+        <el-checkbox v-model="getParams.is_superuser" @change="numChanged">只显示系统管理员</el-checkbox>
+      </el-form-item>
       <el-form-item
         v-if="permissionObj.user.indexOf('add')>-1"
         style="float: right"
@@ -109,7 +112,7 @@
         label="身份证"
       />
       <el-table-column
-        min-width="10"
+        min-width="12"
         prop="phone_number"
         label="手机号"
       />
@@ -124,7 +127,7 @@
         label="职务"
       />
       <el-table-column
-        min-width="10"
+        width="50"
         prop="repair_group"
         label="班组"
       />
@@ -172,7 +175,7 @@
       </el-table-column>
       <el-table-column
         label="操作"
-        width="220"
+        width="200"
       >
         <template slot-scope="scope">
           <el-button-group>
@@ -200,6 +203,7 @@
               删除
             </el-button>
           </el-button-group>
+          <el-checkbox v-if="is_superuser==='true'" v-model="scope.row.is_superuser" style="" @change="setSuperuser(scope.row)">系统管理员</el-checkbox>
         </template>
       </el-table-column>
     </el-table>
@@ -329,12 +333,12 @@
         <el-form-item
           label="部门"
           :error="userFormError.section"
+          prop="section"
         >
           <el-cascader
             v-model="userForm.section"
             :options="optionsSection"
             :props="{ checkStrictly: true,value:'id' }"
-            clearable
             @change="changeSection"
           />
         </el-form-item>
@@ -349,17 +353,20 @@
             @changeTransferGroup="changeTransferGroup"
           />
         </el-form-item>
-        <!-- <el-form-item
+        <br>
+        <el-form-item
           label="权限"
           size="medium"
           class="permissions-transfer"
         >
           <transferLimit
-            :default-permissions="userForm.user_permissions"
-            :permissions-arr="permissionsArr"
+            style="width:900px"
+            :view-section-permission="true"
+            :default-permissions="userForm.permissions"
+            :section-id="departmentId"
             @changeTransferPermissions="changeTransferPermissions"
           />
-        </el-form-item> -->
+        </el-form-item>
       </el-form>
       <div
         slot="footer"
@@ -377,21 +384,21 @@
 </template>
 
 <script>
-import { personnelsUrl } from '@/api/user'
+import { personnelsUrl, setSuperuser } from '@/api/user'
 import { delUser, userImport } from '@/api/jqy'
-import { sectionTree } from '@/api/base_w_four'
+import { sectionTree, permissionSection } from '@/api/base_w_four'
 import { globalCodesUrl } from '@/api/base_w'
 // import { permissions } from '@/api/permission'
 import { roles } from '@/api/roles-manage'
 import page from '@/components/page'
 import { mapGetters } from 'vuex'
-// import transferLimit from '@/components/select_w/transferLimit'
+import transferLimit from '@/components/select_w/transferLimit'
 import transferRoles from '@/components/select_w/transferRoles'
 import { userOperationLog } from '@/api/base_w_two'
 import Cookies from 'js-cookie'
 export default {
   name: 'UserManage',
-  components: { page, transferRoles },
+  components: { page, transferRoles, transferLimit },
   data() {
     var validatePass = (rule, value, callback) => {
       var reg = /(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[\W_]).{8,}/
@@ -479,9 +486,11 @@ export default {
         ],
         num: [
           { required: true, message: '请填写工号', trigger: 'blur' }
+        ],
+        section: [
+          { required: true, message: '请选择部门', trigger: 'change' }
         ]
       },
-      // permissionsArr: [],
       group_extensions: [],
       loading: true,
       card_num: false,
@@ -500,7 +509,10 @@ export default {
       ],
       optionsSection: [],
       sectionPick: [],
-      teamList: []
+      teamList: [],
+      is_superuser: Cookies.get('is_superuser'),
+      departmentId: '',
+      permission_section: JSON.parse(Cookies.get('permission_section'))
     }
   },
   computed: {
@@ -511,18 +523,6 @@ export default {
     this.loading = true
     if (this.permissionObj.user.indexOf('change') > -1 ||
       this.permissionObj.user.indexOf('add') > -1) {
-      roles('get', null, {
-        params: { all: 1 }
-      }).then(response => {
-        const groups = response.results
-        groups.forEach(D => {
-          D.key = D.id
-          D.label = D.name
-        })
-        this.group_extensions = groups
-        // eslint-disable-next-line handle-callback-err
-      }).catch(error => {
-      })
       // permissions('get', null).then(response => {
       //   const permissionsArr = response.results
       //   permissionsArr.forEach(D => {
@@ -562,8 +562,13 @@ export default {
         } else {
           this.optionsSection = []
         }
-        const data1 = await sectionTree('get', null, { params: { all: 1 }})
-        this.sectionPick = data1.results
+        if (this.optionsSection.length && this.is_superuser === 'false') {
+          // 不是系统管理员 过滤当前下的部门
+          const arr = this.optionsSection.filter(d => { return (this.permission_section.findIndex(D => D.id === d.id)) > -1 })
+          this.optionsSection = arr
+        }
+        const data1 = await permissionSection('get', null, { params: { all: 1 }})
+        this.sectionPick = data1
       } catch (error) {
         //
       }
@@ -580,8 +585,29 @@ export default {
         //
       }
     },
+    async getGroupList() {
+      try {
+        if (!this.departmentId) {
+          return
+        }
+        roles('get', null, {
+          params: { all: 1, section_id: this.departmentId }
+        }).then(response => {
+          const groups = response.results
+          groups.forEach(D => {
+            D.key = D.id
+            D.label = D.name
+          })
+          this.group_extensions = groups
+        }).catch()
+      } catch (error) {
+        //
+      }
+    },
     changeSection(val) {
-      // this.userForm.section = val.slice(-1)[0]
+      this.group_extensions = []
+      this.departmentId = val ? val[0] : ''
+      this.getGroupList()
     },
     currentChange() {
       const app = this
@@ -621,8 +647,12 @@ export default {
       }
     },
     showEditUserDialog(row) {
-      this.userForm = JSON.parse(JSON.stringify(row))
-      this.dialogCreateUserVisible = true
+      personnelsUrl('get', row.id).then((response) => {
+        this.userForm = response
+        this.departmentId = response.factory_id
+        this.getGroupList()
+        this.dialogCreateUserVisible = true
+      }).catch()
     },
     handleUserDelete(row) {
       var boolStr = row.is_active ? '停用' : '启用'
@@ -666,6 +696,15 @@ export default {
           })
       }).catch(() => {
       })
+    },
+    async setSuperuser(row) {
+      try {
+        await setSuperuser('post', null, {
+          data: { 'user_id': row.id }
+        })
+      } catch (error) {
+        //
+      }
     },
     changePage(page, page_size) {
       this.getParams.page = page
@@ -759,10 +798,10 @@ export default {
     },
     changeTransferGroup(val) {
       this.$set(this.userForm, 'group_extensions', val)
+    },
+    changeTransferPermissions(val) {
+      this.$set(this.userForm, 'permissions', val)
     }
-    // changeTransferPermissions(val) {
-    //   this.$set(this.userForm, 'user_permissions', val)
-    // }
   }
 }
 // 去掉最后一个空children
@@ -814,7 +853,8 @@ function filterMy(data) {
         margin-top: 1px;
    }
    .el-form-item__error{
-     width: 150%;
+     width: 170%;
+    margin-left: -49px;
    }
 }
 </style>

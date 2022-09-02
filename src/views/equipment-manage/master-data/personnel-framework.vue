@@ -19,7 +19,7 @@
       </el-aside>
       <el-main v-loading="loading" class="border-style">
         <h3>人员</h3>
-        <el-form :inline="true" label-width="100px">
+        <el-form :inline="true" label-width="80px">
           <el-form-item label="部门名称">
             <el-input v-model="formInline.label" disabled clearable />
           </el-form-item>
@@ -35,6 +35,12 @@
                 :value="item"
               />
             </el-select>
+          </el-form-item>
+          <el-form-item v-if="secondFloor&&is_superuser==='true'">
+            <el-button type="primary" @click="showControl">本部门管控界面</el-button>
+          </el-form-item>
+          <el-form-item v-if="secondFloor&&is_superuser==='true'">
+            <el-button type="primary" @click="showManage">本部门管理员设定</el-button>
           </el-form-item>
         </el-form>
         <el-table
@@ -100,6 +106,65 @@
         <el-button type="primary" :loading="btnLoading" @click="submitFun">确 定</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      title="部门级管理员 管控范围设定"
+      :visible.sync="dialogVisible1"
+      width="1000px"
+      :before-close="handleClose1"
+    >
+      <el-form inline>
+        <!-- <el-form-item
+          label="功能选择"
+        >
+          <el-select v-model="userForm.repair_group" clearable placeholder="请选择">
+            <el-option
+              v-for="group in []"
+              :key="group.id"
+              :label="group.global_name"
+              :value="group.global_name"
+            />
+          </el-select>
+        </el-form-item> -->
+        <el-form-item label="菜单">
+          <el-input v-model="userForm.technology" clearable />
+        </el-form-item>
+        <el-form-item
+          label="权限"
+          size="medium"
+        >
+          <transferLimit
+            style="width:900px"
+            :menu="userForm.technology"
+            :section-id="formInline.id"
+            @changeTransferPermissions="changeTransferPermissions"
+          />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="handleClose1(false)">取 消</el-button>
+        <el-button type="primary" :loading="btnloading" @click="handleCreateUser(1)">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog
+      title="部门级 管理员设定"
+      :visible.sync="dialogVisible2"
+      width="600px"
+      :before-close="handleClose2"
+    >
+      <el-form>
+        <el-form-item
+          label="本组织管理员（可多选）"
+        >
+          <userMangeSelect class="userMangeSelect" width-px="300px" :default-val="sampling_user" :is-multiple="true" :section-name="null" :is-created="true" :is-superuser="true" @changeSelect="changeSelectUser" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="handleClose2(false)">取 消</el-button>
+        <el-button type="primary" :loading="btnloading" @click="createMangeUser">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -108,9 +173,12 @@ import page from '@/components/page'
 import { sectionTree } from '@/api/base_w_four'
 import { equipAreaDefine } from '@/api/jqy'
 import { personnelsUrl } from '@/api/user'
+import transferLimit from '@/components/select_w/transferLimit'
+import userMangeSelect from '@/components/select_w/userMangeSelect'
+import Cookies from 'js-cookie'
 export default {
   name: 'EquipmentMasterDataPersonnelFramework',
-  components: { page },
+  components: { page, transferLimit, userMangeSelect },
   data() {
     return {
       data: [],
@@ -137,7 +205,16 @@ export default {
         section_id: [{ required: true, message: '不能为空', trigger: 'blur' }],
         name: [{ required: true, message: '不能为空', trigger: 'blur' }]
       },
-      options: []
+      options: [],
+      secondFloor: '',
+      is_superuser: Cookies.get('is_superuser'),
+      permissionsArr: [],
+      userForm: {},
+      dialogVisible1: false,
+      btnloading: false,
+      sampling_user: [],
+      dialogVisible2: false,
+      permissionsRange: []
     }
   },
   watch: {
@@ -193,6 +270,16 @@ export default {
         //
       }
     },
+    getPermission() {
+      // permissions('get', null).then(response => {
+      //   const permissionsArr = response.results
+      //   permissionsArr.forEach(D => {
+      //     D.key = D.id
+      //     D.label = D.name
+      //   })
+      //   this.permissionsArr = permissionsArr
+      // }).catch()
+    },
     handleNodeClick(row) {
       this.closeMenu()
       this.formInline = row
@@ -204,6 +291,7 @@ export default {
         }
       }
       this.getUserList()
+      this.secondFloor = this.data[0].children.some(d => d.id === row.id)
     },
     async getUserList(bool) {
       try {
@@ -317,6 +405,66 @@ export default {
           return false
         }
       })
+    },
+    showControl() {
+      this.dialogVisible1 = true
+      this.getPermission()
+    },
+    async showManage() {
+      try {
+        // 获取默认的管理员
+        const data = await sectionTree('get', this.formInline.id, { params: { }})
+        this.sampling_user = data.permission_user
+      } catch (e) {
+        //
+      }
+      this.dialogVisible2 = true
+    },
+    async handleCreateUser(type) {
+      try {
+        let val = ''
+        let obj = {}
+        if (type === 1) {
+          val = '管控范围设定设置成功'
+          obj = { permissions: this.permissionsRange }
+        } else {
+          val = '管理员设定设置成功'
+          obj = { permission_user: this.sampling_user }
+        }
+        await sectionTree('patch', this.formInline.id, { data: obj })
+        this.$message.success(val)
+        this.handleClose1(false)
+        this.handleClose2(false)
+      } catch (e) {
+        //
+      }
+    },
+    handleClose1(done) {
+      this.dialogVisible1 = false
+      this.userForm = {}
+      if (done) {
+        done()
+      }
+    },
+    changeTransferPermissions(val) {
+      this.permissionsRange = val
+    },
+    changeSelectUser(obj) {
+      this.sampling_user = obj
+    },
+    handleClose2(done) {
+      this.dialogVisible2 = false
+      this.sampling_user = []
+      if (done) {
+        done()
+      }
+    },
+    createMangeUser() {
+      if (!this.sampling_user || !this.sampling_user.length) {
+        this.$message('请选择本部门管理员')
+        return
+      }
+      this.handleCreateUser(2)
     }
   }
 }
@@ -367,5 +515,4 @@ export default {
     }
   }
 }
-
 </style>

@@ -60,6 +60,10 @@
         label="角色名称"
       />
       <el-table-column
+        prop="section_name"
+        label="部门"
+      />
+      <el-table-column
         prop="use_flag"
         label="使用"
         width="80"
@@ -114,12 +118,27 @@
         ref="groupForm"
         :model="groupForm"
       >
-        <el-form-item
-          :error="groupFormError.group_code"
-          label="角色代码"
-        >
-          <el-input v-model="groupForm.group_code" disabled />
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item
+              :error="groupFormError.group_code"
+              label="角色代码"
+            >
+              <el-input v-model="groupForm.group_code" disabled />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="部门">
+              <el-cascader
+                v-model="groupForm.section"
+                :options="optionsSection"
+                :props="{ checkStrictly: true,value:'id' }"
+                :disabled="dialogTitle==='编辑角色'"
+                @change="changeSection"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item
@@ -149,7 +168,9 @@
         >
           <transferLimit
             ref="Permission"
+            :view-section-permission="true"
             :group-id="groupForm.id"
+            :section-id="departmentId"
             @changeTransferPermissions="changeTransferPermissions"
           />
         </el-form-item>
@@ -172,6 +193,7 @@
 <script>
 import { roles } from '@/api/roles-manage'
 import { userOperationLog } from '@/api/base_w_two'
+import { sectionTree } from '@/api/base_w_four'
 import page from '@/components/page'
 import transferLimit from '@/components/select_w/transferLimit'
 import { checkPermission } from '@/utils/index'
@@ -216,13 +238,20 @@ export default {
           value: 0,
           label: 'N'
         }
-      ]
+      ],
+      optionsSection: [],
+      is_superuser: Cookies.get('is_superuser'),
+      departmentId: '',
+      permission_section: JSON.parse(Cookies.get('permission_section'))
     }
   },
   computed: {
   },
   created() {
     this.currentChange()
+  },
+  mounted() {
+    this.getOptionsSection()
   },
   methods: {
     checkPermission,
@@ -241,6 +270,29 @@ export default {
         this.loading = false
         this.loadingTable = false
       })
+    },
+    async getOptionsSection() {
+      try {
+        if (this.is_superuser === 'true') {
+          const data = await sectionTree('get')
+          if (data.results && data.results[0].children.length > 0) {
+            this.optionsSection = data.results[0].children
+            this.optionsSection = filterMy(this.optionsSection)
+            this.optionsSection.forEach(d => {
+              delete d.children
+            })
+          } else {
+            this.optionsSection = []
+          }
+        } else {
+          this.optionsSection = this.permission_section
+          this.optionsSection.forEach(d => {
+            d.label = d.name
+          })
+        }
+      } catch (error) {
+        //
+      }
     },
     formatter: function(row, column) {
       return row.use_flag ? 'Y' : 'N'
@@ -261,8 +313,11 @@ export default {
       this.groupForm = {
         name: '',
         group_code: '',
-        use_flag: true
+        use_flag: true,
+        section: ''
       }
+      this.departmentId = ''
+      this.permission_name = ''
     },
     clearGroupFormError() {
       this.groupFormError = {
@@ -289,10 +344,22 @@ export default {
     },
     handleEditGroup() {
       this.clearGroupFormError()
+      if (!this.groupForm.section) {
+        this.$message('请选择部门')
+        return
+      }
+      if (!this.groupForm.name) {
+        this.$message('请填写角色名称')
+        return
+      }
       const type = this.groupForm.id ? 'put' : 'post'
       const id = this.groupForm.id ? this.groupForm.id : ''
+      const obj = JSON.parse(JSON.stringify(this.groupForm))
+      if (obj.section instanceof Array) {
+        obj.section = obj.section[0]
+      }
       userOperationLog('post', null, { data: { 'operator': Cookies.get('name'), 'menu_name': '角色管理', 'operations': '变更：' + this.groupForm.name + '角色' }})
-      roles(type, id, { data: { ...this.groupForm }})
+      roles(type, id, { data: { ...obj }})
         .then(response => {
           this.dialogEditGroupVisible = false
           this.$message.success(this.groupForm.name + this.groupForm.id ? '编辑成功' : '创建成功')
@@ -304,9 +371,9 @@ export default {
         })
     },
     showEditGroupDialog(group) {
-      // this.
       this.permission_name = null
       this.groupForm = JSON.parse(JSON.stringify(group))
+      this.departmentId = this.groupForm.section
       this.clearGroupFormError()
       this.dialogTitle = '编辑角色'
       this.dialogEditGroupVisible = true
@@ -345,8 +412,32 @@ export default {
     handleClose(done) {
       this.groupForm.id = null
       done()
+    },
+    changeSection(val) {
+      if (!val) {
+        return
+      }
+      this.$set(this.groupForm, 'permissions', [])
+      // 获取第二级id
+      this.departmentId = val[0]
     }
   }
+}
+// 去掉最后一个空children
+function filterMy(data) {
+  const res = []
+  data.forEach(D => {
+    const tmp = {
+      ...D
+    }
+    if (tmp.children.length > 0) {
+      tmp.children = filterMy(tmp.children)
+    } else {
+      delete tmp.children
+    }
+    res.push(tmp)
+  })
+  return res
 }
 </script>
 <style lang="scss">
