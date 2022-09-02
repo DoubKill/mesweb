@@ -76,19 +76,16 @@
         fixed
         align="center"
         label="岗位"
-        min-width="170"
+        min-width="130"
       >
         <template slot-scope="scope">
-          <el-select v-if="scope.row.isEdit" v-model="scope.row.station" style="width:145px" filterable placeholder="请选择" @visible-change="sectionChange">
+          <el-select v-if="scope.row.isEdit" v-model="scope.row.station" style="width:110px" filterable placeholder="请选择" @visible-change="sectionChange">
             <el-option
-              v-for="item in options"
-              :key="item.id"
+              v-for="(item,index) in options"
+              :key="index"
               :label="item.name"
               :value="item.name"
-            >
-              <span style="float: left">{{ item.name }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.type }}</span>
-            </el-option>
+            />
           </el-select>
           <span v-else>
             {{ scope.row.station }}
@@ -189,14 +186,11 @@
         <el-form-item label="岗位" prop="station">
           <el-select v-model="dialogForm.station" filterable placeholder="请选择" @visible-change="sectionChange">
             <el-option
-              v-for="item in options"
-              :key="item.id"
+              v-for="(item,index) in options"
+              :key="index"
               :label="item.name"
               :value="item.name"
-            >
-              <span style="float: left">{{ item.name }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.type }}</span>
-            </el-option>
+            />
           </el-select>
         </el-form-item>
       </el-form>
@@ -311,7 +305,7 @@ export default {
     },
     sectionChange(val) {
       if (val) {
-        performanceJobLadder('get', null, { params: { all: 1, type: '称量' }}).then((response) => {
+        performanceJobLadder('get', null, { params: { all: 1, type: '称量', weight: 1 }}).then((response) => {
           this.options = response.results
         })
       }
