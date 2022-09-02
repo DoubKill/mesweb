@@ -614,8 +614,12 @@ export default {
       if (!this.loading) {
         this.loadingTable = true
       }
+      const obj = JSON.parse(JSON.stringify(this.getParams))
+      if (!obj.is_superuser) {
+        delete obj.is_superuser
+      }
       personnelsUrl('get', null, {
-        params: this.getParams
+        params: obj
       }).then((response) => {
         this.count = response.count || 0
         app.tableData = response.results || []
