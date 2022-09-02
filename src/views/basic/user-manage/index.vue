@@ -372,7 +372,7 @@
         slot="footer"
         class="dialog-footer"
       >
-        <el-button @click="dialogCreateUserVisible = false">取 消</el-button>
+        <el-button @click="handleClose(false)">取 消</el-button>
         <el-button
           type="primary"
           :loading="btnloading"
@@ -751,7 +751,8 @@ export default {
               app.dialogCreateUserVisible = false
               app.$message.success(app.userForm.username + '操作成功')
               app.currentChange()
-              this.btnloading = false
+              app.handleClose(false)
+              app.btnloading = false
             }).catch((e) => {
               this.userFormError = e
               this.btnloading = false
@@ -795,7 +796,11 @@ export default {
       this.$refs['userForm'].resetFields()
       this.isError = false
       this.isErrorOldPassword = false
-      done()
+      this.departmentId = ''
+      this.dialogCreateUserVisible = false
+      if (done) {
+        done()
+      }
     },
     formatter: function(row, column) {
       return row.is_active ? 'Y' : 'N'

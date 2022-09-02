@@ -166,11 +166,12 @@
           label="权限设置"
           size="medium"
         >
+          <!-- :group-id="groupForm.id" -->
           <transferLimit
             ref="Permission"
             :view-section-permission="true"
-            :group-id="groupForm.id"
             :section-id="departmentId"
+            :default-permissions="groupForm.permissions"
             @changeTransferPermissions="changeTransferPermissions"
           />
         </el-form-item>
@@ -179,7 +180,7 @@
         slot="footer"
         class="dialog-footer"
       >
-        <el-button @click="dialogEditGroupVisible = false">取 消</el-button>
+        <el-button @click="handleClose(false)">取 消</el-button>
         <el-button
           type="primary"
           @click="handleEditGroup('groupForm')"
@@ -365,10 +366,8 @@ export default {
           this.$message.success(this.groupForm.name + this.groupForm.id ? '编辑成功' : '创建成功')
           this.groupForm.id = null
           this.currentChange()
-          // eslint-disable-next-line handle-callback-err
-        }).catch(error => {
-
-        })
+          this.handleClose(false)
+        }).catch()
     },
     showEditGroupDialog(group) {
       this.permission_name = null
@@ -411,7 +410,11 @@ export default {
     },
     handleClose(done) {
       this.groupForm.id = null
-      done()
+      this.dialogEditGroupVisible = false
+      this.departmentId = null
+      if (done) {
+        done()
+      }
     },
     changeSection(val) {
       if (!val) {
