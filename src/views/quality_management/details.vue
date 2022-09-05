@@ -475,9 +475,6 @@ export default {
         title: [{
           text: "Anscombe's quartet"
         }],
-        tooltip: {
-          trigger: 'axis'
-        },
         toolbox: {
           feature: {
             saveAsImage: {}
@@ -494,6 +491,12 @@ export default {
           { gridIndex: 0 },
           { gridIndex: 1 }
         ],
+        tooltip: {
+          trigger: 'axis'
+        },
+        // tooltip: {
+        //   triggerOn: 'click'
+        // },
         series: [
           {
             name: 'I',
