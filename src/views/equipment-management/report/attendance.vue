@@ -587,17 +587,17 @@
         <el-table-column
           prop="username"
           label="姓名"
-          min-width="20"
+          width="70"
         />
         <el-table-column
           prop="group"
           label="班组"
-          min-width="20"
+          width="70"
         />
         <el-table-column
           prop="equip"
           label="机台"
-          min-width="20"
+          width="70"
         />
         <el-table-column
           prop="section"
@@ -815,7 +815,7 @@ export default {
   methods: {
     equipChange(val) {
       if (val) {
-        const obj = { all: 1, category_name: '密炼设备' }
+        const obj = { all: 1, equip_no: this.search.clock_type === '密炼' ? 'Z' : this.search.clock_type === '细料称量' ? 'F' : 'S' }
         getEquip(obj).then(response => {
           this.options = response.results
         })
@@ -915,7 +915,7 @@ export default {
     },
     sectionChange(val) {
       if (val) {
-        performanceJobLadder('get', null, { params: { all: 1 }}).then((response) => {
+        performanceJobLadder('get', null, { params: { all: 1, weight: 1, type: this.search.clock_type }}).then((response) => {
           this.options2 = response.results
         })
       }
@@ -1139,7 +1139,7 @@ export default {
           arr.forEach(d => {
             d.is_use = '确认'
           })
-          await attendanceTimeStatistics('post', null, { data: { confirm_list: arr }})
+          await attendanceTimeStatistics('post', null, { data: { confirm_list: arr, clock_type: this.search.clock_type }})
           this.$message.success('操作成功')
           this.color = '#141414'
           this.attendanceList()
@@ -1153,7 +1153,7 @@ export default {
           arr1.forEach(d => {
             d.is_use = '驳回'
           })
-          await attendanceTimeStatistics('post', null, { data: { reject_list: arr1 }})
+          await attendanceTimeStatistics('post', null, { data: { reject_list: arr1, clock_type: this.search.clock_type }})
           this.$message.success('操作成功')
           this.color = '#DA1F27'
           this.attendanceList()
@@ -1171,7 +1171,7 @@ export default {
             arr.forEach(d => {
               d.is_use = '废弃'
             })
-            await attendanceTimeStatistics('post', null, { data: { abandon_list: arr }})
+            await attendanceTimeStatistics('post', null, { data: { abandon_list: arr, clock_type: this.search.clock_type }})
             this.$message.success('操作成功')
             this.getCheckList()
             this.getList()
@@ -1187,7 +1187,7 @@ export default {
             arr.forEach(d => {
               d.is_use = '确认'
             })
-            await attendanceTimeStatistics('post', null, { data: { confirm_list: arr }})
+            await attendanceTimeStatistics('post', null, { data: { confirm_list: arr, clock_type: this.search.clock_type }})
             this.$message.success('操作成功')
             this.getCheckList()
             this.getList()
@@ -1249,6 +1249,7 @@ export default {
         delete this.resultForm.approve
       }
       try {
+        this.resultForm.clock_type = this.search.clock_type
         this.resultForm.date = this.search.date
         this.submit = true
         await attendanceResultAudit('post', null, { data: this.resultForm })
@@ -1261,6 +1262,11 @@ export default {
       }
     },
     async generateFun() {
+      this.dialogForm.clock_type = this.search.clock_type
+      this.dialogForm.standard_begin_date = this.time_interval[0]
+      this.dialogForm.standard_end_date = this.time_interval[1]
+      this.dialogForm.calculate_begin_date = this.dialogForm.actual_begin_date
+      this.dialogForm.calculate_end_date = this.dialogForm.actual_end_date
       this.$refs.dialogForm.validate(async(valid) => {
         if (valid) {
           try {
