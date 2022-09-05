@@ -435,6 +435,7 @@
         <el-form-item label="日期" prop="factory_date">
           <el-date-picker
             v-model="dialogForm.factory_date"
+            :clearable="false"
             :picker-options="pickerOptions"
             :disabled="addType==='里面'?true:false"
             style="width:200px"
@@ -829,19 +830,23 @@ export default {
       }
     },
     async getGroup(val) {
-      this.dialogForm.classes = null
-      this.dialogForm.group = null
-      this.dialogForm.actual_begin_date = null
-      this.dialogForm.actual_end_date = null
-      this.dialogForm.actual_time = null
-      const obj = { class_name: '班组', factory_date: val }
-      const data = await classesListUrl('get', null, { params: obj })
-      if (data.results.length > 0) {
-        this.optionsGroup = data.results
-        this.getAllowTime(val)
+      if (this.dialogForm.username) {
+        this.dialogForm.classes = null
+        this.dialogForm.group = null
+        this.dialogForm.actual_begin_date = null
+        this.dialogForm.actual_end_date = null
+        this.dialogForm.actual_time = null
+        const obj = { class_name: '班组', factory_date: val }
+        const data = await classesListUrl('get', null, { params: obj })
+        if (data.results.length > 0) {
+          this.optionsGroup = data.results
+          this.getAllowTime(val, this.dialogForm.username)
+        } else {
+          this.optionsGroup = []
+          this.$message.info('当天没有排班记录')
+        }
       } else {
-        this.optionsGroup = []
-        this.$message.info('当天没有排班记录')
+        this.$message('请先选择姓名')
       }
     },
     async getClasses(val, val1) {
@@ -865,9 +870,48 @@ export default {
       const data = await personnels('get', null, { params: { all: 1, attendance: 1 }})
       this.allList = data.results
     },
-    async getAllowTime(date) {
-      const data = await attendanceTimeStatistics('get', null, { params: { work_time: date }})
+    async getAllowTime(date, name, row, type) {
+      const data = await attendanceTimeStatistics('get', null, { params: { name: name, work_time: date, clock_type: this.search.clock_type }})
       this.allowTime = data
+      if (type === 1) {
+        this.time_interval = this.allowTime[row.classes]
+        if (Date.parse(new Date(row.actual_begin_date)) > Date.parse(new Date(this.time_interval[1])) ||
+      Date.parse(new Date(row.actual_begin_date)) < Date.parse(new Date(this.time_interval[0]))) {
+          this.$message('承认上岗时间不在可选范围内，可选范围为：' + this.time_interval.join('-'))
+          row.actual_begin_date = null
+          row.actual_time = null
+          return
+        }
+        if (Date.parse(new Date(row.actual_begin_date)) >= Date.parse(new Date(row.actual_end_date))) {
+          this.$message('请选择正确的承认离岗时间,离岗时间不得在上岗时间之前')
+          row.actual_end_date = null
+          row.actual_time = null
+        } else {
+          row.actual_time = getHour(row.actual_begin_date, row.actual_end_date)
+        }
+      } else if (type === 2) {
+        if (!row.actual_begin_date) {
+          this.$message('请先选择承认上岗时间')
+          row.actual_end_date = null
+          row.actual_time = null
+          return
+        }
+        this.time_interval = this.allowTime[row.classes]
+        if (Date.parse(new Date(row.actual_end_date)) > Date.parse(new Date(this.time_interval[1])) ||
+      Date.parse(new Date(row.actual_end_date)) < Date.parse(new Date(this.time_interval[0]))) {
+          this.$message('承认离岗时间不在可选范围内，可选范围为：' + this.time_interval.join('-'))
+          row.actual_end_date = null
+          row.actual_time = null
+          return
+        }
+        if (Date.parse(new Date(row.actual_begin_date)) >= Date.parse(new Date(row.actual_end_date))) {
+          this.$message('请选择正确的承认离岗时间,离岗时间不得在上岗时间之前')
+          row.actual_end_date = null
+          row.actual_time = null
+        } else {
+          row.actual_time = getHour(row.actual_begin_date, row.actual_end_date)
+        }
+      }
     },
     sectionChange(val) {
       if (val) {
@@ -930,7 +974,7 @@ export default {
           actual_time: null,
           id_card_num: ''
         }
-        this.getGroup(this.dialogForm.factory_date)
+        // this.getGroup(this.dialogForm.factory_date)
       }
     },
     pickClasses() {
@@ -1030,44 +1074,46 @@ export default {
       }
     },
     changeStartTime(row) {
-      this.time_interval = this.allowTime[row.classes]
-      if (Date.parse(new Date(row.actual_begin_date)) > Date.parse(new Date(this.time_interval[1])) ||
-      Date.parse(new Date(row.actual_begin_date)) < Date.parse(new Date(this.time_interval[0]))) {
-        this.$message('承认上岗时间不在可选范围内，可选范围为：' + this.time_interval.join('-'))
-        row.actual_begin_date = null
-        row.actual_time = null
-        return
-      }
-      if (Date.parse(new Date(row.actual_begin_date)) >= Date.parse(new Date(row.actual_end_date))) {
-        this.$message('请选择正确的承认离岗时间,离岗时间不得在上岗时间之前')
-        row.actual_end_date = null
-        row.actual_time = null
-      } else {
-        row.actual_time = getHour(row.actual_begin_date, row.actual_end_date)
-      }
+      this.getAllowTime(row.factory_date, row.username, row, 1)
+      // this.time_interval = this.allowTime[row.classes]
+      // if (Date.parse(new Date(row.actual_begin_date)) > Date.parse(new Date(this.time_interval[1])) ||
+      // Date.parse(new Date(row.actual_begin_date)) < Date.parse(new Date(this.time_interval[0]))) {
+      //   this.$message('承认上岗时间不在可选范围内，可选范围为：' + this.time_interval.join('-'))
+      //   row.actual_begin_date = null
+      //   row.actual_time = null
+      //   return
+      // }
+      // if (Date.parse(new Date(row.actual_begin_date)) >= Date.parse(new Date(row.actual_end_date))) {
+      //   this.$message('请选择正确的承认离岗时间,离岗时间不得在上岗时间之前')
+      //   row.actual_end_date = null
+      //   row.actual_time = null
+      // } else {
+      //   row.actual_time = getHour(row.actual_begin_date, row.actual_end_date)
+      // }
     },
     changeEndTime(row) {
-      if (!row.actual_begin_date) {
-        this.$message('请先选择承认上岗时间')
-        row.actual_end_date = null
-        row.actual_time = null
-        return
-      }
-      this.time_interval = this.allowTime[row.classes]
-      if (Date.parse(new Date(row.actual_end_date)) > Date.parse(new Date(this.time_interval[1])) ||
-      Date.parse(new Date(row.actual_end_date)) < Date.parse(new Date(this.time_interval[0]))) {
-        this.$message('承认离岗时间不在可选范围内，可选范围为：' + this.time_interval.join('-'))
-        row.actual_end_date = null
-        row.actual_time = null
-        return
-      }
-      if (Date.parse(new Date(row.actual_begin_date)) >= Date.parse(new Date(row.actual_end_date))) {
-        this.$message('请选择正确的承认离岗时间,离岗时间不得在上岗时间之前')
-        row.actual_end_date = null
-        row.actual_time = null
-      } else {
-        row.actual_time = getHour(row.actual_begin_date, row.actual_end_date)
-      }
+      this.getAllowTime(row.factory_date, row.username, row, 2)
+      // if (!row.actual_begin_date) {
+      //   this.$message('请先选择承认上岗时间')
+      //   row.actual_end_date = null
+      //   row.actual_time = null
+      //   return
+      // }
+      // this.time_interval = this.allowTime[row.classes]
+      // if (Date.parse(new Date(row.actual_end_date)) > Date.parse(new Date(this.time_interval[1])) ||
+      // Date.parse(new Date(row.actual_end_date)) < Date.parse(new Date(this.time_interval[0]))) {
+      //   this.$message('承认离岗时间不在可选范围内，可选范围为：' + this.time_interval.join('-'))
+      //   row.actual_end_date = null
+      //   row.actual_time = null
+      //   return
+      // }
+      // if (Date.parse(new Date(row.actual_begin_date)) >= Date.parse(new Date(row.actual_end_date))) {
+      //   this.$message('请选择正确的承认离岗时间,离岗时间不得在上岗时间之前')
+      //   row.actual_end_date = null
+      //   row.actual_time = null
+      // } else {
+      //   row.actual_time = getHour(row.actual_begin_date, row.actual_end_date)
+      // }
     },
     async editStatus(val) {
       if (val === '废弃') {
@@ -1173,6 +1219,7 @@ export default {
     },
     async getCheckList() {
       try {
+        this.searchCheck.clock_type = this.search.clock_type
         this.loadingCheck = true
         const data = await attendanceTimeStatistics('get', null, { params: this.searchCheck })
         this.tableDataCheck = data.results
@@ -1238,6 +1285,7 @@ export default {
       })
     },
     changeIdCard() {
+      this.getGroup(this.dialogForm.factory_date)
       if (this.allList.find(d => this.dialogForm.username === d.username)) {
         this.dialogForm.id_card_num = this.allList.find(d => this.dialogForm.username === d.username).id_card_num
       } else {
@@ -1252,12 +1300,13 @@ export default {
         this.group = group
         this.date = this.search.date + '-' + day
         this.equip = row.equip
-        this.getAllowTime(this.date)
+        this.getAllowTime(this.date, val.split('(')[0])
         const data = await currentFactoryDate('get', null, { params: { select_date: this.date, group: this.group }})
         this.classes = data.classes
         this.$set(this.dialogForm, 'classes', data.classes)
         this.getParams.date = this.search.date
         this.getParams.name = val.split('(')[0]
+        this.getParams.clock_type = this.search.clock_type
         this.currentInfo.station = '生产部'
         this.dialogVisibleList = true
       }
