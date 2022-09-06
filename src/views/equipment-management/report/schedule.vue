@@ -311,7 +311,7 @@ export default {
       }
     },
     async getAllList() {
-      const data = await personnels('get', null, { params: { all: 1, section_name: '生产科' }})
+      const data = await personnels('get', null, { params: { all: 1, section_name: '生产配料' }})
       this.personList = data.results
     },
     async getGroup(val) {
