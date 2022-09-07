@@ -1208,13 +1208,22 @@ export default {
       if (this.isShow) {
         this.tableDataAttendance = this.tableTop
       } else {
-        this.tableDataAttendance = this.tableTop.filter(d =>
-          d.factory_date === this.date &&
+        if (this.search.clock_type === '密炼') {
+          this.tableDataAttendance = this.tableTop.filter(d =>
+            d.factory_date === this.date &&
           d.equip === this.equip &&
           d.classes === this.classes &&
           d.group === this.group &&
           d.section === this.section
-        )
+          )
+        } else {
+          this.tableDataAttendance = this.tableTop.filter(d =>
+            d.factory_date === this.date &&
+          d.equip === this.equip &&
+          d.group === this.group &&
+          d.section === this.section
+          )
+        }
       }
     },
     async getCheckList() {
