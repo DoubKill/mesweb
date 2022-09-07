@@ -54,6 +54,7 @@
     <el-table
       id="out-table"
       v-loading="loading"
+      max-height="650"
       :data="tableData"
       style="width: 100%"
       border
