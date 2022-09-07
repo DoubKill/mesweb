@@ -4,6 +4,14 @@
     <el-form :inline="true">
       <el-form-item label="时间:">
         <el-date-picker
+          v-model="search_time"
+          type="date"
+          :clearable="false"
+          value-format="yyyy-MM-dd"
+          placeholder="选择日期"
+          @change="changeDate"
+        />
+        <!-- <el-date-picker
           v-model="search.date"
           :clearable="true"
           type="daterange"
@@ -12,7 +20,7 @@
           end-placeholder="结束日期"
           value-format="yyyy-MM-dd"
           @change="changeDate"
-        />
+        /> -->
       </el-form-item>
       <el-form-item>
         <el-radio-group v-model="search.day_type" @change="changeRadio">
@@ -176,7 +184,7 @@
 import equipSelect from '@/components/select_w/equip'
 // import page from '@/components/page'
 import timeSpanSelect from '@/components/select_w/timeSpan'
-import { exportExcel } from '@/utils/index'
+import { exportExcel, setDate } from '@/utils/index'
 import { classesBanburySummary } from '@/api/base_w'
 import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import myMixin from './aminxPublic'
@@ -188,12 +196,13 @@ export default {
     return {
       // total: 0,
       loading: false,
+      search_time: setDate(),
       search: {
         page: 1,
         equip_no: null,
         dimension: 1,
         day_type: 2,
-        date: []
+        date: ''
       },
       tableData: [],
       options: ['秒', '分钟'],
@@ -206,6 +215,10 @@ export default {
   methods: {
     async getList() {
       try {
+        if (!this.search_time) {
+          this.$message('请选择时间')
+          return
+        }
         this.loading = true
         const data = await classesBanburySummary('get', null, { params: this.search })
         // this.total = data.count
@@ -254,8 +267,8 @@ export default {
       this.search.page = 1
     },
     changeDate(date) {
-      this.search.st = date ? date[0] : ''
-      this.search.et = date ? date[1] : ''
+      this.search.st = this.search_time || ''
+      this.search.et = this.search_time || ''
       this.getList()
       this.search.page = 1
     },
