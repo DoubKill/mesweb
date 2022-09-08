@@ -35,7 +35,7 @@
       <el-table-column
         prop="bra_code"
         label="卡片条码"
-        width="180"
+        min-width="50"
       />
       <el-table-column
         prop="created_date"
@@ -45,7 +45,7 @@
       <el-table-column
         prop="batch_no"
         label="班次/班组"
-        min-width="20"
+        width="80"
       >
         <template slot-scope="scope">
           <span> {{ scope.row.batch_class + '/' + scope.row.batch_group }}</span>
@@ -54,16 +54,16 @@
       <el-table-column
         prop="print_type"
         label="类别"
-        min-width="15"
+        width="50"
       />
       <el-table-column
         prop="product_no"
         label="配方名称"
-        width="150"
+        min-width="50"
       />
       <el-table-column
         label="车次"
-        min-width="15"
+        width="50"
       >
         <template slot-scope="scope">
           <span> {{ scope.row.begin_trains+ '-' + scope.row.end_trains }}</span>
@@ -119,6 +119,12 @@
         </template>
       </el-table-column>
     </el-table>
+    <page
+      :old-page="false"
+      :total="count"
+      :current-page="search.page"
+      @currentChange="changePage"
+    />
 
     <el-dialog
       :title="`准备分厂机台胶片卡片补打`+val"
@@ -241,9 +247,10 @@
 import { debounce } from '@/utils'
 import { returnRubber, personnels } from '@/api/jqy'
 import { rubberMaterialUrl } from '@/api/base_w'
+import page from '@/components/page'
 export default {
   name: 'BanburyingMakeUp',
-  components: {},
+  components: { page },
   data() {
     var validatePass = (rule, value, callback) => {
       if (this.dialogForm.begin_trains === undefined || this.dialogForm.begin_trains === '') {
@@ -282,7 +289,8 @@ export default {
         ]
       },
       loading: false,
-      productNoList: []
+      productNoList: [],
+      count: 0
     }
   },
   created() {
@@ -293,7 +301,8 @@ export default {
       try {
         this.loading = true
         const data = await returnRubber('get', null, { params: this.search })
-        this.tableData = data
+        this.count = data.count
+        this.tableData = data.results
         this.loading = false
       } catch (e) {
         this.loading = false
@@ -345,7 +354,7 @@ export default {
             await returnRubber(_api, this.dialogForm.id || null, { data: this.dialogForm })
             this.$message.success('操作成功')
             this.handleCloseAdd(null)
-            this.getList()
+            this.changeList()
             this.submit = false
             this.dialogVisibleAdd = false
           } catch (e) {
@@ -362,9 +371,10 @@ export default {
       this.changeSearch()
     },
     debounceFun() {
-      debounce(this, 'getList')
+      debounce(this, 'changeList')
     },
     changeList() {
+      this.search.page = 1
       this.getList()
     },
     changeType() {
@@ -378,6 +388,11 @@ export default {
       } catch (e) {
         this.productNoList = []
       }
+    },
+    changePage(page, page_size) {
+      this.search.page = page
+      this.search.page_size = page_size
+      this.getList()
     }
   }
 }

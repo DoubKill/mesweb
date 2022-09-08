@@ -4,6 +4,14 @@
     <el-form :inline="true">
       <el-form-item label="时间:">
         <el-date-picker
+          v-model="search_time"
+          type="date"
+          :clearable="false"
+          value-format="yyyy-MM-dd"
+          placeholder="选择日期"
+          @change="changeDate"
+        />
+        <!-- <el-date-picker
           v-model="search.date"
           :clearable="false"
           type="daterange"
@@ -12,7 +20,7 @@
           end-placeholder="结束日期"
           value-format="yyyy-MM-dd"
           @change="changeDate"
-        />
+        /> -->
       </el-form-item>
       <el-form-item>
         <el-radio-group v-model="search.day_type" @change="changeRadio">
@@ -136,6 +144,7 @@
         <el-radio :label="3">利用率%</el-radio>
       </el-radio-group>
       <ve-histogram
+        v-if="chartData.rows.length"
         height="500px"
         :data="chartData"
         :extend="extend"
@@ -148,7 +157,7 @@
 <script>
 import equipSelect from '@/components/select_w/equip'
 // import page from '@/components/page'
-import { exportExcel } from '@/utils/index'
+import { exportExcel, setDate } from '@/utils/index'
 import timeSpanSelect from '@/components/select_w/timeSpan'
 import { equipBanburySummary } from '@/api/base_w'
 import myMixin from './aminxPublic'
@@ -180,9 +189,9 @@ export default {
       search: {
         page: 1,
         dimension: 1,
-        day_type: 2,
-        date: []
+        day_type: 2
       },
+      search_time: setDate(),
       tableData: [],
       options: ['秒', '分钟', '小时'],
       timeUnit: '秒',
@@ -242,8 +251,8 @@ export default {
       return Number(num)
     },
     changeDate(date) {
-      this.search.st = date ? date[0] : ''
-      this.search.et = date ? date[1] : ''
+      this.search.st = this.search_time || ''
+      this.search.et = this.search_time || ''
       this.getList()
       this.search.page = 1
     },
