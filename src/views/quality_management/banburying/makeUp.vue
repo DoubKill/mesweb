@@ -29,6 +29,7 @@
     </el-form>
     <el-table
       v-loading="loading"
+      max-height="650"
       :data="tableData"
       border
     >
@@ -119,12 +120,12 @@
         </template>
       </el-table-column>
     </el-table>
-    <page
+    <!-- <page
       :old-page="false"
       :total="count"
       :current-page="search.page"
       @currentChange="changePage"
-    />
+    /> -->
 
     <el-dialog
       :title="`准备分厂机台胶片卡片补打`+val"
@@ -247,10 +248,10 @@
 import { debounce } from '@/utils'
 import { returnRubber, personnels } from '@/api/jqy'
 import { rubberMaterialUrl } from '@/api/base_w'
-import page from '@/components/page'
+// import page from '@/components/page'
 export default {
   name: 'BanburyingMakeUp',
-  components: { page },
+  components: {},
   data() {
     var validatePass = (rule, value, callback) => {
       if (this.dialogForm.begin_trains === undefined || this.dialogForm.begin_trains === '') {
@@ -301,8 +302,8 @@ export default {
       try {
         this.loading = true
         const data = await returnRubber('get', null, { params: this.search })
-        this.count = data.count
-        this.tableData = data.results
+        // this.count = data.count
+        this.tableData = data
         this.loading = false
       } catch (e) {
         this.loading = false
@@ -374,7 +375,7 @@ export default {
       debounce(this, 'changeList')
     },
     changeList() {
-      this.search.page = 1
+      // this.search.page = 1
       this.getList()
     },
     changeType() {
@@ -388,12 +389,12 @@ export default {
       } catch (e) {
         this.productNoList = []
       }
-    },
-    changePage(page, page_size) {
-      this.search.page = page
-      this.search.page_size = page_size
-      this.getList()
     }
+    // changePage(page, page_size) {
+    //   this.search.page = page
+    //   this.search.page_size = page_size
+    //   this.getList()
+    // }
   }
 }
 </script>
