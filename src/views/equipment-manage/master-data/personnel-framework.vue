@@ -114,18 +114,18 @@
       :before-close="handleClose1"
     >
       <el-form inline>
-        <!-- <el-form-item
+        <el-form-item
           label="功能选择"
         >
-          <el-select v-model="userForm.repair_group" clearable placeholder="请选择">
+          <el-select v-model="userForm.category_name" clearable placeholder="请选择">
             <el-option
-              v-for="group in []"
-              :key="group.id"
-              :label="group.global_name"
-              :value="group.global_name"
+              v-for="group in categoryList"
+              :key="group"
+              :label="group"
+              :value="group"
             />
           </el-select>
-        </el-form-item> -->
+        </el-form-item>
         <el-form-item label="菜单">
           <el-input v-model="userForm.technology" clearable />
         </el-form-item>
@@ -135,6 +135,7 @@
         >
           <transferLimit
             style="width:900px"
+            :category="userForm.category_name"
             :menu="userForm.technology"
             :section-id="formInline.id"
             @changeTransferPermissions="changeTransferPermissions"
@@ -214,7 +215,8 @@ export default {
       btnloading: false,
       sampling_user: [],
       dialogVisible2: false,
-      permissionsRange: []
+      permissionsRange: [],
+      categoryList: ['基础信息管理', '工艺管理', '生产计划管理', '生产管理', '库存管理', '质量管理', '设备管理', '钉钉小程序']
     }
   },
   watch: {

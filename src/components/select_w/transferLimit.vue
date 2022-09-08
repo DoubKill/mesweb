@@ -66,6 +66,10 @@ export default {
       type: [Number, String],
       default: ''
     },
+    category: { // 主菜单
+      type: [Number, String],
+      default: ''
+    },
     sectionId: {
       type: [Number, String],
       default: ''
@@ -107,9 +111,21 @@ export default {
       }
     },
     menu(val) {
+      this.checkAll = false
       if (val) {
         this.permissionsData = this.permissionsDataAll.filter(item => {
           return item.name.toLowerCase()
+            .indexOf(val.toLowerCase()) > -1
+        })
+      } else {
+        this.permissionsData = this.permissionsDataAll
+      }
+    },
+    category(val) {
+      this.checkAll = false
+      if (val) {
+        this.permissionsData = this.permissionsDataAll.filter(item => {
+          return item.category_name.toLowerCase()
             .indexOf(val.toLowerCase()) > -1
         })
       } else {
@@ -141,31 +157,40 @@ export default {
       if (this.groupId) {
         obj = { group_id: this.groupId }
       }
-
+      this.loading = true
       permissions('get', null, { params: obj }).then(response => {
         const permissionsArr = response.result || []
         this.permissionsData = permissionsArr
         this.permissionsList = permissionsArr
-        if (this.defaultPermissions && this.defaultPermissions.length) {
-          // 设置默认值
-          this.permissionsData.forEach(d => {
-            if (d.permissions) {
-              d.permissions.forEach(dd => {
-                this.defaultPermissions.forEach(D => {
-                  if (dd.id === D) {
-                    dd.has_permission = true
-                  }
-                })
-              })
-            }
-          })
-        }
+        // if (this.defaultPermissions && this.defaultPermissions.length) {
+        //   // 设置默认值
+        //   this.permissionsData.forEach(d => {
+        //     if (d.permissions) {
+        //       d.permissions.forEach(dd => {
+        //         this.defaultPermissions.forEach(D => {
+        //           if (dd.id === D) {
+        //             dd.has_permission = true
+        //           }
+        //         })
+        //       })
+        //     }
+        //   })
+        // }
 
         this.permissionsData.forEach(data => {
           const arr = []
           data.permissions.forEach(D => {
-            if (D.has_permission) {
-              arr.push(D.id)
+            if (this.defaultPermissions && this.defaultPermissions.length) {
+              this.defaultPermissions.forEach(dd => {
+                if (D.id === dd) {
+                  D.has_permission = true
+                  arr.push(D.id)
+                }
+              })
+            } else {
+              if (D.has_permission) {
+                arr.push(D.id)
+              }
             }
           })
           if (data.permissions.length === arr.length) {
