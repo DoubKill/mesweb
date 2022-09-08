@@ -48,7 +48,8 @@
           border
         >
           <el-table-column
-            prop="id"
+            align="center"
+            type="index"
             label="序号"
             min-width="20"
           />
