@@ -836,7 +836,7 @@ export default {
         this.dialogForm.actual_begin_date = null
         this.dialogForm.actual_end_date = null
         this.dialogForm.actual_time = null
-        const obj = { class_name: '班组', factory_date: val }
+        const obj = { class_name: '班组', factory_date: val, clock_type: this.search.clock_type, name: this.dialogForm.username }
         const data = await classesListUrl('get', null, { params: obj })
         if (data.results.length > 0) {
           this.optionsGroup = data.results
