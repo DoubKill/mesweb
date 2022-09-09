@@ -385,7 +385,7 @@
     <el-dialog
       :title="'考勤结果处理 --'+type"
       :visible.sync="dialogVisibleResult"
-      width="30%"
+      width="50%"
     >
       <el-form
         :model="resultForm"
@@ -406,10 +406,45 @@
             placeholder="请输入内容"
           />
         </el-form-item>
+        <el-form-item label="处理履历">
+          <el-table
+            v-loading="loadingApprove"
+            max-height="600px"
+            :data="tableDataApprove"
+            border
+          >
+            <el-table-column
+              prop="date"
+              label="日期"
+              min-width="20"
+            />
+            <el-table-column
+              prop="opera_user"
+              label="操作人"
+              min-width="20"
+            />
+            <el-table-column
+              prop="opera_type"
+              label="处理类别"
+              min-width="20"
+            />
+            <el-table-column
+              prop="opera_result"
+              label="处理结果"
+              min-width="20"
+            />
+            <el-table-column
+              prop="result_desc"
+              label="处理说明"
+              min-width="40"
+            />
+          </el-table>
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisibleResult=false">取 消</el-button>
-        <el-button :loading="submit" type="primary" @click="submitFun">确 定</el-button>
+        <el-button v-if="approveState==='已审核'||(type==='审批'&&approveState==='已审批')" @click="dialogVisibleResult=false">关 闭</el-button>
+        <el-button v-if="approveState==='确认中'||approveState===''||(type==='审核'&&approveState==='已审批')" @click="dialogVisibleResult=false">取 消</el-button>
+        <el-button v-if="approveState==='确认中'||approveState===''||(type==='审核'&&approveState==='已审批')" :loading="submit" type="primary" @click="submitFun">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -731,6 +766,8 @@ export default {
       resultForm: {},
       isShow: false,
       optionsType: [],
+      loadingApprove: false,
+      tableDataApprove: [],
       tableDataAttendance: [],
       dialogVisibleResult: false,
       tableDataRecord: [],
@@ -1199,10 +1236,18 @@ export default {
         this.$message('请选择数据')
       }
     },
-    approve(val) {
-      this.resultForm = { result: true }
-      this.type = val
-      this.dialogVisibleResult = true
+    async approve(val) {
+      try {
+        this.resultForm = { result: true }
+        this.type = val
+        this.dialogVisibleResult = true
+        this.loadingApprove = true
+        const data = await attendanceResultAudit('get', null, { params: { clock_type: this.search.clock_type, date: this.search.date }})
+        this.tableDataApprove = data.results
+        this.loadingApprove = false
+      } catch (e) {
+        this.loadingApprove = false
+      }
     },
     showList() {
       if (this.isShow) {
