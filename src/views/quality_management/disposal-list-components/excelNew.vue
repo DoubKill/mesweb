@@ -125,7 +125,7 @@
             <th v-for="(subHead, index) in headData" :key="index">{{ subHead }}</th>
           </tr>
           <tr v-for="(itemVal,i) in listData" :key="i">
-            <td>{{ Number(i) + 1 }}</td>
+            <td>{{ itemVal.ordering?itemVal.ordering:Number(i) + 1 }}</td>
             <td>{{ itemVal.factory_date }}/{{ itemVal.classes }}</td>
             <td>{{ itemVal.equip_no }}</td>
             <td>{{ itemVal.product_no }}</td>
