@@ -199,6 +199,11 @@
         @current-change="handleSelectionChange"
       >
         <el-table-column
+          type="index"
+          label="序号"
+          width="60"
+        />
+        <el-table-column
           label="日期"
           min-width="20"
         >
@@ -613,12 +618,16 @@
         @selection-change="handleSelectionChangeCheck"
       >
         <el-table-column
+          type="index"
+          label="序号"
+          width="60"
+        />
+        <el-table-column
           type="selection"
           width="40"
           :selectable="select"
           :reserve-selection="true"
         />
-
         <el-table-column
           prop="username"
           label="姓名"
