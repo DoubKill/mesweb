@@ -1480,6 +1480,16 @@ export let asyncRoutes = [
             }
           },
           {
+            path: '/report/schedule',
+            component: () => import('@/views/equipment-management/report/schedule'),
+            name: 'Schedule',
+            meta: {
+              faName: 'Achievements',
+              title: '月度配料间排班表',
+              permissionName: 'weight_class_plan'
+            }
+          },
+          {
             path: '/report/attendance-query',
             component: () => import('@/views/equipment-management/report/attendance-query'),
             name: 'Attendanceuery',

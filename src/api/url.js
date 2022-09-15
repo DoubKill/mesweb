@@ -753,5 +753,7 @@ export default {
   EquipAutoPlan: '/api/v1/equipment/equip-auto-plan/',
 
   TestedMaterials: '/api/v1/quality/tested-materials/',
-  ScorchTime: '/api/v1/quality/scorch-time/'
+  ScorchTime: '/api/v1/quality/scorch-time/',
+  WeightClassPlan: '/api/v1/production/weight-class-plan/',
+  WeightClassPlanImport: '/api/v1/production/weight-class-plan/import-xlsx/'
 }
