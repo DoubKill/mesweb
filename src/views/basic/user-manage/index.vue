@@ -107,6 +107,9 @@
         min-width="10"
         prop="id_card_num"
         label="身份证"
+        :formatter="(row)=>{
+          let a = row.id_card_num.split('').fill('*',5,15).join('')
+          return a}"
       />
       <el-table-column
         min-width="10"
