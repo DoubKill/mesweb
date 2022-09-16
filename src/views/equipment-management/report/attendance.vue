@@ -243,6 +243,17 @@
           width="150"
         />
         <el-table-column
+          prop="is_check"
+          label="适用排班时间"
+          width="120"
+        >
+          <template
+            slot-scope="{row}"
+          >
+            <el-checkbox v-model="row.is_check" @change="checkTime(row)" />
+          </template>
+        </el-table-column>
+        <el-table-column
           prop="begin_date"
           label="承认上岗时间"
           width="230"
@@ -252,7 +263,7 @@
           >
             <el-date-picker
               v-model="row.actual_begin_date"
-              :disabled="isShow"
+              :disabled="isShow||row.is_check"
               value-format="yyyy-MM-dd HH:mm:ss"
               style="width:220px"
               type="datetime"
@@ -271,7 +282,7 @@
           >
             <el-date-picker
               v-model="row.actual_end_date"
-              :disabled="isShow"
+              :disabled="isShow||row.is_check"
               value-format="yyyy-MM-dd HH:mm:ss"
               style="width:220px"
               type="datetime"
@@ -646,7 +657,7 @@
         <el-table-column
           prop="section"
           label="岗位名称"
-          min-width="20"
+          width="80"
         />
         <el-table-column
           prop="begin_date"
@@ -659,6 +670,17 @@
           min-width="20"
         />
         <el-table-column
+          prop="is_check"
+          label="适用排班时间"
+          width="100"
+        >
+          <template
+            slot-scope="{row}"
+          >
+            <el-checkbox v-model="row.is_check" @change="checkTime(row)" />
+          </template>
+        </el-table-column>
+        <el-table-column
           prop="begin_date"
           label="承认上岗时间"
           width="230"
@@ -668,6 +690,7 @@
           >
             <el-date-picker
               v-model="row.actual_begin_date"
+              :disabled="row.is_check"
               value-format="yyyy-MM-dd HH:mm:ss"
               style="width:220px"
               type="datetime"
@@ -686,6 +709,7 @@
           >
             <el-date-picker
               v-model="row.actual_end_date"
+              :disabled="row.is_check"
               value-format="yyyy-MM-dd HH:mm:ss"
               style="width:220px"
               type="datetime"
@@ -1117,6 +1141,15 @@ export default {
         this.dialogForm.end_date = this.dialogForm.actual_end_date
         this.$set(this.dialogForm, 'actual_time', getHour(this.dialogForm.actual_begin_date, this.dialogForm.actual_end_date))
         this.dialogForm.work_time = this.dialogForm.actual_time
+      }
+    },
+    async checkTime(row) {
+      if (row.is_check) {
+        const data = await attendanceTimeStatistics('get', null, { params: { name: row.name, work_time: row.factory_date, clock_type: this.search.clock_type }})
+        this.allowTime = data
+        this.$set(row, 'actual_begin_date', this.allowTime[row.classes][0])
+        this.$set(row, 'actual_end_date', this.allowTime[row.classes][1])
+        this.$set(row, 'actual_time', getHour(row.actual_begin_date, row.actual_end_date))
       }
     },
     changeStartTime(row) {
