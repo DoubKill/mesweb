@@ -1,7 +1,7 @@
 <template>
   <div class="personnel-framework">
     <!-- 人员组织架构 -->
-    <el-container style="height:75vh;">
+    <el-container style="height:75vh;" class="container-style">
       <el-aside width="400px" class="border-style aside-style">
         <h3>部门管理</h3>
         <el-tree
@@ -116,7 +116,7 @@
     >
       <el-form inline>
         <el-form-item
-          label="功能选择"
+          label="模块选择"
         >
           <el-select v-model="userForm.category_name" clearable placeholder="请选择">
             <el-option
@@ -476,9 +476,10 @@ export default {
 
 <style lang="scss" scoped>
 .personnel-framework{
-
+  .container-style{
   ::-webkit-scrollbar {
     width: 1px;
+  }
   }
   ::-webkit-scrollbar-thumb {
       background: #eee

@@ -13,10 +13,16 @@
       v-if="permissionsData.length>0"
       id="out-table"
       :data="permissionsData"
-      style="width: 100%"
+      style="width: 100%;"
       border
       row-key="id"
+      :span-method="objectSpanMethod"
     >
+      <el-table-column
+        prop="category_name"
+        label="模块"
+        width="100"
+      />
       <el-table-column
         prop="name"
         label="菜单"
@@ -100,7 +106,9 @@ export default {
       loading: false,
       checkAll: false,
       permissionsDataAll: [],
-      exportBool: false
+      exportBool: false,
+      spanArr: [],
+      pos: null
     }
   },
   computed: {
@@ -178,22 +186,10 @@ export default {
         const permissionsArr = response.result || []
         this.permissionsData = permissionsArr
         this.permissionsList = permissionsArr
-        // if (this.defaultPermissions && this.defaultPermissions.length) {
-        //   // 设置默认值
-        //   this.permissionsData.forEach(d => {
-        //     if (d.permissions) {
-        //       d.permissions.forEach(dd => {
-        //         this.defaultPermissions.forEach(D => {
-        //           if (dd.id === D) {
-        //             dd.has_permission = true
-        //           }
-        //         })
-        //       })
-        //     }
-        //   })
-        // }
 
-        this.permissionsData.forEach(data => {
+        this.spanArr = []
+        this.pos = null
+        this.permissionsData.forEach((data, i) => {
           const arr = []
           data.permissions.forEach(D => {
             if (this.defaultPermissions && this.defaultPermissions.length) {
@@ -215,6 +211,22 @@ export default {
             this.$set(data, 'checkAll', false)
           }
           this.$set(data, 'checkedCities', arr)
+
+          if (i === 0) {
+            // 如果是第一条记录（即索引是0的时候），向数组中加入１
+            this.spanArr.push(1)
+            this.pos = 0
+          } else {
+            if (this.permissionsData[i].category_name === this.permissionsData[i - 1].category_name) {
+              // 如果a相等就累加，并且push 0  这里是根据一样的a匹配
+              this.spanArr[this.pos] += 1
+              this.spanArr.push(0)
+            } else {
+              // 不相等push 1
+              this.spanArr.push(1)
+              this.pos = i
+            }
+          }
         })
 
         this.permissionsDataAll = this.permissionsData
@@ -272,6 +284,16 @@ export default {
         exportExcel('权限')
         this.exportBool = false
       }, 300)
+    },
+    objectSpanMethod({ row, column, rowIndex, columnIndex }) {
+      if ([0].includes(columnIndex) && this.spanArr) {
+        const _row = this.spanArr[rowIndex]
+        const _col = _row > 0 ? 1 : 0
+        return {
+          rowspan: _row,
+          colspan: _col
+        }
+      }
     }
   }
 }
