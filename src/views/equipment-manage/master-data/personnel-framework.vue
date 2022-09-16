@@ -136,6 +136,7 @@
         >
           <transferLimit
             style="width:900px"
+            :is-export="true"
             :category="userForm.category_name"
             :menu="userForm.technology"
             :section-id="formInline.id"

@@ -4,8 +4,14 @@
     class="transferLimit"
   >
     <h3 v-if="!sectionId && !groupId" style="color:red">请选择部门</h3>
+    <el-button
+      v-if="isExport"
+      type="primary"
+      @click="exportTable"
+    >导出Excel</el-button>
     <el-table
       v-if="permissionsData.length>0"
+      id="out-table"
       :data="permissionsData"
       style="width: 100%"
       border
@@ -20,6 +26,7 @@
         <template slot="header" slot-scope="scope">
           权限
           <el-checkbox
+            v-if="!exportBool"
             v-model="checkAll"
             style="margin-left:20px"
             @change="checkAllChange"
@@ -28,6 +35,7 @@
         </template>
         <template slot-scope="scope">
           <el-checkbox
+            v-if="!exportBool"
             v-model="scope.row.checkAll"
             @change="handleCheckAllChange($event,scope.row,scope.row.permissions)"
           >全选</el-checkbox>
@@ -37,10 +45,12 @@
             @change="handleCheckedCitiesChange($event,scope.row)"
           >
             <el-checkbox
-              v-for="itemData in scope.row.permissions"
+              v-for="(itemData,_i) in scope.row.permissions"
               :key="itemData.id"
               :label="itemData.id"
-            >{{ itemData.name }}</el-checkbox>
+            >{{ itemData.name }}
+              <span v-if="exportBool&&scope.row.permissions.length!==_i+1">、</span>
+            </el-checkbox>
           </el-checkbox-group>
         </template>
       </el-table-column>
@@ -50,6 +60,7 @@
 
 <script>
 import { permissions } from '@/api/permission'
+import { exportExcel } from '@/utils/index'
 export default {
   props: {
     defaultPermissions: {
@@ -70,6 +81,10 @@ export default {
       type: [Number, String],
       default: ''
     },
+    isExport: { // 主菜单
+      type: Boolean,
+      default: false
+    },
     sectionId: {
       type: [Number, String],
       default: ''
@@ -84,7 +99,8 @@ export default {
       permissionsData: [],
       loading: false,
       checkAll: false,
-      permissionsDataAll: []
+      permissionsDataAll: [],
+      exportBool: false
     }
   },
   computed: {
@@ -249,6 +265,13 @@ export default {
       })
 
       this.setPermissionsData()
+    },
+    exportTable() {
+      this.exportBool = true
+      setTimeout(d => {
+        exportExcel('权限')
+        this.exportBool = false
+      }, 300)
     }
   }
 }
@@ -256,7 +279,7 @@ export default {
 
 <style lang="scss" scoped>
 .transferLimit{
-  height: 500px;
+  max-height: 500px;
   overflow-y: scroll;
 }
 </style>
