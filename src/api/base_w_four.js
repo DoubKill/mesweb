@@ -483,6 +483,14 @@ export function sectionTree(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function permissionSection(method, id, data = {}) {
+  const obj = {
+    url: id ? API.PermissionSection + id + '/' : API.PermissionSection,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 export function equipFaultTypes(method, id, data = {}) {
   const obj = {
     url: id ? API.EquipFaultTypes + id + '/' : API.EquipFaultTypes,

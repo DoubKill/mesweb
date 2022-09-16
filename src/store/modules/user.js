@@ -63,6 +63,7 @@ const actions = {
         // 登录中策
         Cookies.set('zc-url', response.wms_url)
         Cookies.set('zc-th-url', response.th_url)
+
         // const loginId = 'mes'
         // request({
         //   url: '/user/Login',
@@ -92,6 +93,8 @@ const actions = {
         commit('SET_PERMISSION', JSON.stringify(response.permissions))
         // 登录获取token,存到全局中
         setToken(response.token)
+        Cookies.set('is_superuser', response.is_superuser)
+        Cookies.set('permission_section', JSON.stringify(response.permission_section))
         resolve()
       }).catch(error => {
         reject(error)
@@ -147,6 +150,8 @@ const actions = {
       Cookies.remove('name')
       Cookies.remove('zc-url')
       Cookies.remove('password')
+      Cookies.remove('is_superuser')
+      Cookies.remove('permission_section')
       dispatch('tagsView/delAllViews', null, { root: true })
 
       resolve()

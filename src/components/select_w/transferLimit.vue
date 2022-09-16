@@ -3,11 +3,13 @@
     v-loading="loading"
     class="transferLimit"
   >
+    <h3 v-if="!sectionId && !groupId" style="color:red">请选择部门</h3>
     <el-table
       v-if="permissionsData.length>0"
       :data="permissionsData"
       style="width: 100%"
       border
+      row-key="id"
     >
       <el-table-column
         prop="name"
@@ -15,6 +17,15 @@
         width="180"
       />
       <el-table-column label="权限">
+        <template slot="header" slot-scope="scope">
+          权限
+          <el-checkbox
+            v-model="checkAll"
+            style="margin-left:20px"
+            @change="checkAllChange"
+          >全选</el-checkbox>
+          <span v-if="false">{{ scope }}</span>
+        </template>
         <template slot-scope="scope">
           <el-checkbox
             v-model="scope.row.checkAll"
@@ -50,25 +61,76 @@ export default {
     groupId: {
       type: Number,
       default: 0
+    },
+    menu: {
+      type: [Number, String],
+      default: ''
+    },
+    category: { // 主菜单
+      type: [Number, String],
+      default: ''
+    },
+    sectionId: {
+      type: [Number, String],
+      default: ''
+    },
+    viewSectionPermission: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
       permissionsData: [],
-      loading: true
+      loading: false,
+      checkAll: false,
+      permissionsDataAll: []
     }
   },
   computed: {
   },
   watch: {
     groupId() {
-      this.permissionsData.forEach(data => {
+      this.permissionsData.forEach(data => { // 查看角色
         data.permissions.forEach(D => {
           D.checkedCities = []
         })
         data.checkAll = false
       })
       this.getPermissions()
+    },
+    sectionId() {
+      this.permissionsData.forEach(data => {
+        data.permissions.forEach(D => {
+          D.checkedCities = []
+        })
+        data.checkAll = false
+      })
+      if (!this.groupId) {
+        this.getPermissions()
+      }
+    },
+    menu(val) {
+      this.checkAll = false
+      if (val) {
+        this.permissionsData = this.permissionsDataAll.filter(item => {
+          return item.name.toLowerCase()
+            .indexOf(val.toLowerCase()) > -1
+        })
+      } else {
+        this.permissionsData = this.permissionsDataAll
+      }
+    },
+    category(val) {
+      this.checkAll = false
+      if (val) {
+        this.permissionsData = this.permissionsDataAll.filter(item => {
+          return item.category_name.toLowerCase()
+            .indexOf(val.toLowerCase()) > -1
+        })
+      } else {
+        this.permissionsData = this.permissionsDataAll
+      }
     }
   },
   mounted() {
@@ -76,21 +138,59 @@ export default {
   },
   methods: {
     getPermissions() {
+      this.permissionsData = []
+      if (!this.sectionId && !this.groupId) {
+        return
+      }
       this.loading = true
       let obj = {}
-      if (this.groupId) {
-        // eslint-disable-next-line object-curly-spacing
-        obj = { params: { group_id: this.groupId } }
+      if (this.sectionId) {
+        obj.section_id = this.sectionId
+      } else {
+        delete obj.section_id
       }
-      permissions('get', null, obj).then(response => {
+      if (this.viewSectionPermission) {
+        obj.view_section_permission = 1
+      } else {
+        delete obj.view_section_permission
+      }
+      if (this.groupId) {
+        obj = { group_id: this.groupId }
+      }
+      this.loading = true
+      permissions('get', null, { params: obj }).then(response => {
         const permissionsArr = response.result || []
         this.permissionsData = permissionsArr
         this.permissionsList = permissionsArr
+        // if (this.defaultPermissions && this.defaultPermissions.length) {
+        //   // 设置默认值
+        //   this.permissionsData.forEach(d => {
+        //     if (d.permissions) {
+        //       d.permissions.forEach(dd => {
+        //         this.defaultPermissions.forEach(D => {
+        //           if (dd.id === D) {
+        //             dd.has_permission = true
+        //           }
+        //         })
+        //       })
+        //     }
+        //   })
+        // }
+
         this.permissionsData.forEach(data => {
           const arr = []
           data.permissions.forEach(D => {
-            if (D.has_permission) {
-              arr.push(D.id)
+            if (this.defaultPermissions && this.defaultPermissions.length) {
+              this.defaultPermissions.forEach(dd => {
+                if (D.id === dd) {
+                  D.has_permission = true
+                  arr.push(D.id)
+                }
+              })
+            } else {
+              if (D.has_permission) {
+                arr.push(D.id)
+              }
             }
           })
           if (data.permissions.length === arr.length) {
@@ -100,6 +200,8 @@ export default {
           }
           this.$set(data, 'checkedCities', arr)
         })
+
+        this.permissionsDataAll = this.permissionsData
         this.loading = false
       }).catch(() => {
         this.loading = false
@@ -128,6 +230,25 @@ export default {
         arr.push(...Data.checkedCities)
       })
       this.$emit('changeTransferPermissions', arr)
+    },
+    checkAllChange(bool) {
+      this.permissionsData.forEach(data => {
+        const arr = []
+        data.permissions.forEach(D => {
+          D.has_permission = bool
+          if (D.has_permission) {
+            arr.push(D.id)
+          }
+        })
+        if (data.permissions.length === arr.length) {
+          this.$set(data, 'checkAll', true)
+        } else {
+          this.$set(data, 'checkAll', false)
+        }
+        this.$set(data, 'checkedCities', arr)
+      })
+
+      this.setPermissionsData()
     }
   }
 }

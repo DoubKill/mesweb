@@ -25,3 +25,11 @@ export function planScheduleUrl(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function setSuperuser(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SetSuperuser + id + '/' : API.SetSuperuser,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
