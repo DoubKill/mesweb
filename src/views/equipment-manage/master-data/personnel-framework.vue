@@ -2,7 +2,7 @@
   <div class="personnel-framework">
     <!-- 人员组织架构 -->
     <el-container style="height:75vh;" class="container-style">
-      <el-aside width="400px" class="border-style aside-style">
+      <el-aside width="380px" class="border-style aside-style">
         <h3>部门管理</h3>
         <el-tree
           ref="tree"
@@ -19,15 +19,15 @@
       </el-aside>
       <el-main v-loading="loading" class="border-style">
         <h3>人员</h3>
-        <el-form :inline="true" label-width="80px">
+        <el-form :inline="true" label-width="68px">
           <el-form-item label="部门名称">
-            <el-input v-model="formInline.label" disabled clearable />
+            <el-input v-model="formInline.label" style="width:200px" disabled />
           </el-form-item>
           <el-form-item label="负责人">
-            <el-input v-model="formInline.in_charge_username" disabled clearable />
+            <el-input v-model="formInline.in_charge_username" style="width:100px" disabled />
           </el-form-item>
           <el-form-item v-show="formInline.children&&formInline.children.length===0" label="负责区域">
-            <el-select v-model="formInline.repair_areas" style="width:600px" multiple placeholder="请选择" @change="setRepairAreas">
+            <el-select v-model="formInline.repair_areas" style="width:400px" multiple placeholder="请选择" @change="setRepairAreas">
               <el-option
                 v-for="item in options"
                 :key="item"
@@ -38,8 +38,6 @@
           </el-form-item>
           <el-form-item v-if="secondFloor&&is_superuser==='true'">
             <el-button type="primary" @click="showControl">本部门管控界面</el-button>
-          </el-form-item>
-          <el-form-item v-if="secondFloor&&is_superuser==='true'">
             <el-button type="primary" @click="showManage">本部门管理员设定</el-button>
           </el-form-item>
         </el-form>
