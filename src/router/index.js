@@ -1240,17 +1240,17 @@ export let asyncRoutes = [
               title: '车次报表',
               permissionName: 'trains_report'
             }
-          },
-          {
-            path: '/report/produce-work',
-            component: () => import('@/views/equipment-management/report/produce-work'),
-            name: 'ProduceWork',
-            meta: {
-              faName: 'ProductionResult',
-              title: '生产运行记录',
-              permissionName: 'production_record'
-            }
           }
+          // {
+          //   path: '/report/produce-work',
+          //   component: () => import('@/views/equipment-management/report/produce-work'),
+          //   name: 'ProduceWork',
+          //   meta: {
+          //     faName: 'ProductionResult',
+          //     title: '生产运行记录',
+          //     permissionName: 'production_record'
+          //   }
+          // }
         ]
       },
       {
@@ -1293,26 +1293,26 @@ export let asyncRoutes = [
               permissionName: 'durate_putin_reason'
             }
           },
-          {
-            path: '/product-plan-reality-analyse',
-            component: () => import('@/views/production/product-plan-reality-analyse.vue'),
-            name: 'ProductPlanRealityAnalyse',
-            meta: {
-              faName: 'ResultAnalysis',
-              title: '产量计划实际分析（车数）',
-              permissionName: 'production_analyze'
-            }
-          },
-          {
-            path: '/interval-production-statistics',
-            component: () => import('@/views/production/interval-production-statistics.vue'),
-            name: 'IntervalProductionStatistics',
-            meta: {
-              faName: 'ResultAnalysis',
-              title: '区间产量统计（车数）',
-              permissionName: 'section_production'
-            }
-          },
+          // {
+          //   path: '/product-plan-reality-analyse',
+          //   component: () => import('@/views/production/product-plan-reality-analyse.vue'),
+          //   name: 'ProductPlanRealityAnalyse',
+          //   meta: {
+          //     faName: 'ResultAnalysis',
+          //     title: '产量计划实际分析（车数）',
+          //     permissionName: 'production_analyze'
+          //   }
+          // },
+          // {
+          //   path: '/interval-production-statistics',
+          //   component: () => import('@/views/production/interval-production-statistics.vue'),
+          //   name: 'IntervalProductionStatistics',
+          //   meta: {
+          //     faName: 'ResultAnalysis',
+          //     title: '区间产量统计（车数）',
+          //     permissionName: 'section_production'
+          //   }
+          // },
           {
             path: '/equipment/classes-banburying-summary',
             component: () => import('@/views/equipment-management/classes-banburying-summary'),
