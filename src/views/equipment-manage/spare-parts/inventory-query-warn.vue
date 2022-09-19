@@ -440,7 +440,6 @@ export default {
       } else {
         this.search.alarm_type = this.alarm_type.join(',')
       }
-
       this.search.page = 1
       this.getList()
     },
