@@ -1595,3 +1595,12 @@ export function weightClassPlanImport(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function inventoryAlarm(method, id, data = {}) {
+  const obj = {
+    url: id ? API.InventoryAlarm + id + '/' : API.InventoryAlarm,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
