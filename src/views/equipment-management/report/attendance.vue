@@ -843,7 +843,7 @@ export default {
       groupList: [],
       optionsGroup: [],
       allowTime: {},
-      multipleSelection: [],
+      multipleSelection: {},
       tableHead: [],
       tableData: [],
       btnExportLoad: false,
@@ -1163,7 +1163,7 @@ export default {
     },
     async editStatus(val) {
       if (val === '废弃') {
-        if (this.multipleSelection) {
+        if (this.multipleSelection.id) {
           try {
             await attendanceTimeStatistics('put', this.multipleSelection.id, { data: { is_use: val }})
             this.$message.success('操作成功')
