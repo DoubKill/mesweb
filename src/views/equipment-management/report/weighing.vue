@@ -80,6 +80,12 @@
           width="60"
         />
         <el-table-column
+          :prop="d.prop+'中班'"
+          align="center"
+          label="中班"
+          width="60"
+        />
+        <el-table-column
           :prop="d.prop+'夜班'"
           align="center"
           label="夜班"
@@ -129,6 +135,12 @@
           :prop="d.prop+'早班'"
           align="center"
           label="早班"
+          width="60"
+        />
+        <el-table-column
+          :prop="d.prop+'中班'"
+          align="center"
+          label="中班"
           width="60"
         />
         <el-table-column

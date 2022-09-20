@@ -137,8 +137,8 @@ export default {
       this.getParams['group_code'] = this.group_code
       this.getParams['name'] = this.name
     },
-    getUsersByGrouplist() {
-      getUsersByGroup().then(response => {
+    getUsersByGrouplist(row) {
+      getUsersByGroup({ factory_id: row.section }).then(response => {
         this.users = response.results
       })
     },
@@ -157,14 +157,14 @@ export default {
       })
     },
     showAddGroupUsersDialog(row) {
-      this.getUsersByGrouplist()
+      this.getUsersByGrouplist(row)
       this.addGroupUsersTitle = '编辑' + row.name + '所属用户'
       this.dialogAddGroupUsersDialogVisible = true
     },
     handleAddGroupUsersDialog() {
       var app = this
       putGroupAddUser({ group_users: app.selectedUsers }, app.groupsCurrentRow.id).then(function(response) {
-        app.$message(app.groupsCurrentRow.name + '修改成功')
+        app.$message.success(app.groupsCurrentRow.name + '修改成功')
         app.handleGroupsCurrentRowChange(app.groupsCurrentRow)
         app.dialogAddGroupUsersDialogVisible = false
       })

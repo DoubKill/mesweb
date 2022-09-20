@@ -62,6 +62,7 @@ export default {
   // 排产配料小料日计划---选择胶料
   RubberSelectUrl: '/api/v1/plan/product-batching-day-plan-manycreate/',
   PlanScheduleUrl: '/api/v1/basics/plan-schedule/',
+  SetSuperuser: '/api/v1/system/personnels/set-superuser/',
 
   ProductActualUrl: '/api/v1/production/product-actual/',
   // 密炼实绩
@@ -535,6 +536,7 @@ export default {
   SectionUserTree: '/api/v1/system/section/tree/', // 部门用户树结构
   EquipMaintenanceAreaSettings: '/api/v1/equipment/equip-maintenance-area-settings/', // 维护包干设置
   SectionTree: '/api/v1/system/section/',
+  PermissionSection: '/api/v1/system/permission-section/',
   EquipFaultTypes: '/api/v1/equipment/equip-fault-types/', // 设备故障分类 大分类
   EquipFaultCodes: '/api/v1/equipment/equip-fault-codes/', // 设备故障分类 中分类
   EquipBom: '/api/v1/equipment/equip-bom/',
@@ -753,5 +755,7 @@ export default {
   EquipAutoPlan: '/api/v1/equipment/equip-auto-plan/',
 
   TestedMaterials: '/api/v1/quality/tested-materials/',
-  ScorchTime: '/api/v1/quality/scorch-time/'
+  ScorchTime: '/api/v1/quality/scorch-time/',
+  WeightClassPlan: '/api/v1/production/weight-class-plan/',
+  WeightClassPlanImport: '/api/v1/production/weight-class-plan/import-xlsx/'
 }

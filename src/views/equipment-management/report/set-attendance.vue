@@ -30,17 +30,17 @@
       <el-table-column
         prop="group"
         label="关联班组"
-        min-width="20"
+        width="80"
       />
       <el-table-column
         prop="work_schedule_name"
         label="倒班名称"
-        min-width="20"
+        width="100"
       />
       <el-table-column
         prop="type"
         label="类别"
-        min-width="20"
+        width="60"
       />
       <el-table-column
         prop="attendance_users"
@@ -79,7 +79,12 @@
         label="提前多久可打上班卡(分钟)"
         min-width="20"
       />
-      <el-table-column label="操作" width="200px">
+      <el-table-column
+        prop="leave_time"
+        label="下班多久后不能打下班卡(分钟)"
+        min-width="20"
+      />
+      <el-table-column label="操作" width="160">
         <template slot-scope="scope">
           <el-button-group>
             <el-button
@@ -219,6 +224,9 @@
         </el-form-item>
         <el-form-item label="提前多久可打上班卡(分钟)" prop="lead_time">
           <el-input-number v-model="dialogForm.lead_time" :min="0" style="width:250px" />
+        </el-form-item>
+        <el-form-item label="下班多久后不能打下班卡(分钟)" prop="lead_time">
+          <el-input-number v-model="dialogForm.leave_time" :min="0" style="width:250px" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -478,7 +486,7 @@ export default {
       this.getList()
     },
     async onSubmit() {
-      this.dialogForm = { range_time: 60, lead_time: 60, users: [] }
+      this.dialogForm = { range_time: 60, lead_time: 60, leave_time: 30, users: [] }
       this.dialogVisible = true
     },
     showEditDialog(row) {

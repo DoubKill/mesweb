@@ -1577,3 +1577,21 @@ export function scorchTime(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function weightClassPlan(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WeightClassPlan + id + '/' : API.WeightClassPlan,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function weightClassPlanImport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WeightClassPlanImport + id + '/' : API.WeightClassPlanImport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
