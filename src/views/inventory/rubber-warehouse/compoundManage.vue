@@ -304,6 +304,7 @@
         min-width="20"
       />
       <el-table-column
+        v-if="search.order_type!==2"
         prop="product_no"
         label="物料编码"
         min-width="30"
