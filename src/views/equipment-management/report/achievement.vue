@@ -54,16 +54,19 @@
     >
       <u-table-column
         prop="name"
+        fixed
         label="名字"
         width="60"
       />
       <u-table-column
         prop="work_type"
+        fixed
         label="员工类别"
         width="60"
       />
       <u-table-column
         prop="是否定岗"
+        fixed
         label="是否独立上岗"
         width="40"
       >
