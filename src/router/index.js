@@ -1753,6 +1753,16 @@ export let asyncRoutes = [
             }
           },**/
           {
+            path: '/film-issueTask',
+            component: () => import('@/views/inventory/rubber-warehouse/film-issueTask.vue'),
+            name: 'film-issueTask',
+            meta: {
+              faName: 'RubberWarehouse',
+              title: '胶片库出库任务',
+              permissionName: 'product_outbound_plan'
+            }
+          },
+          {
             path: '/compound-manage',
             component: () => import('@/views/inventory/rubber-warehouse/compoundManage.vue'),
             name: 'compoundManage',
