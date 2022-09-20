@@ -28,6 +28,15 @@ export function productReportEquip(method, id, data = {}) {
   return request(obj)
 }
 
+export function productTestPlanInterval(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ProductTestPlanInterval + id + '/' : API.ProductTestPlanInterval,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function equipTestData(method, id, data = {}) {
   const obj = {
     url: id ? API.EquipTestData + id + '/' : API.EquipTestData,
