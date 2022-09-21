@@ -19,7 +19,7 @@
       </el-form-item>
     </el-form>
     <el-row :gutter="20">
-      <el-col :span="16">
+      <el-col :span="18">
         <el-table
           :data="tableData"
           style="width: 100%"
@@ -44,12 +44,12 @@
           />
           <el-table-column
             prop="target"
-            label="机台目标值"
+            label="机台目标值(车)"
             min-width="20"
           />
           <el-table-column
             prop="max_weight"
-            label="机台最高值"
+            label="机台最高值(吨)"
             min-width="20"
           />
           <el-table-column
@@ -57,9 +57,19 @@
             label="班组"
             min-width="20"
           />
+          <el-table-column
+            prop="history_max_weight"
+            label="历史最高值(吨)"
+            min-width="20"
+          />
+          <el-table-column
+            prop="history_group"
+            label="历史班组"
+            min-width="20"
+          />
         </el-table>
       </el-col>
-      <el-col :span="8">
+      <el-col :span="6">
         <el-table
           :data="tableData2"
           border
