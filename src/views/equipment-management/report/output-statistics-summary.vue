@@ -120,17 +120,27 @@
       />
       <el-table-column
         prop="target"
-        label="机台目标值"
+        label="机台目标值(车)"
         min-width="20"
       />
       <el-table-column
         prop="max_weight"
-        label="机台最高值"
+        label="机台最高值(吨)"
         min-width="20"
       />
       <el-table-column
         prop="group"
         label="班组"
+        min-width="20"
+      />
+      <el-table-column
+        prop="history_max_weight"
+        label="历史最高值(吨)"
+        min-width="20"
+      />
+      <el-table-column
+        prop="history_group"
+        label="历史班组"
         min-width="20"
       />
       <el-table-column
@@ -334,7 +344,7 @@ export default {
           if (index === 1 || index === 6) {
             sums[index] = sums[index].toFixed(2)
           }
-          if (index === 6) {
+          if (index === 8) {
             sums[index] = ''
           }
           sums[index] = Number(sums[index]).toFixed(2)
