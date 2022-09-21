@@ -25,21 +25,6 @@
           {{ row.是否定岗?'是':'否' }}
         </template>
       </el-table-column>
-      <el-table-column v-for="(item,_index) in day" :key="item" :label="item+'日'">
-        <el-table-column
-          v-for="_item in groupList[_index]"
-          :key="_item"
-          :label="_item"
-          width="65"
-        >
-          <template slot-scope="{row}">
-            <el-link
-              type="primary"
-              @click="subsidyInfo(row,_item,item)"
-            >{{ row[item+'_'+_item] }}</el-link>
-          </template>
-        </el-table-column>
-      </el-table-column>
       <el-table-column
         prop="hj"
         label="产量工资合计"
@@ -86,6 +71,21 @@
         label="工资总计"
         width="90"
       />
+      <el-table-column v-for="(item,_index) in day" :key="item" :label="item+'日'">
+        <el-table-column
+          v-for="_item in groupList[_index]"
+          :key="_item"
+          :label="_item"
+          width="65"
+        >
+          <template slot-scope="{row}">
+            <el-link
+              type="primary"
+              @click="subsidyInfo(row,_item,item)"
+            >{{ row[item+'_'+_item] }}</el-link>
+          </template>
+        </el-table-column>
+      </el-table-column>
     </el-table>
     <!-- 导出使用结束 -->
   </div>

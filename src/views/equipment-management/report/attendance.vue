@@ -88,7 +88,7 @@
     <el-table
       id="out-table"
       v-loading="loading"
-      max-height="600"
+      max-height="670"
       :data="tableData"
       :span-method="objectSpanMethod"
       border
