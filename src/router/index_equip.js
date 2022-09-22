@@ -289,6 +289,16 @@ export const equipRoutes = [
             }
           },
           {
+            path: '/equipment/inventory-query-warn',
+            component: () => import('@/views/equipment-manage/spare-parts/inventory-query-warn'),
+            name: 'InventoryWarn',
+            meta: {
+              faName: 'SparePartsWarehouse',
+              title: '备件库存预警',
+              permissionName: 'equip_warehouse_inventory'
+            }
+          },
+          {
             path: '/equipment/history-query',
             component: () => import('@/views/equipment-manage/spare-parts/history-query'),
             name: 'HistoryQuery',
