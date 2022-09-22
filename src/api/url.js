@@ -592,6 +592,7 @@ export default {
   MultiUpdate: '/api/v1/equipment/equip-apply-order/multi_update/',
   MaterialReq: '/api/v1/equipment/equip-repair-material-req/',
   EquipWarehouseInventory: '/api/v1/equipment/equip-warehouse-inventory/', // 备件库存查询
+  InventoryAlarm: '/api/v1/equipment/equip-warehouse-inventory/inventory-alarm/',
   // 新建库区库位
   EquipWarehouseArea: '/api/v1/equipment/equip-warehouse-area/',
   EquipWarehouseLocation: '/api/v1/equipment/equip-warehouse-location/',

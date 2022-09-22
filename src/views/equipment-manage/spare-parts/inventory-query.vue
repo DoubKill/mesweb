@@ -186,7 +186,7 @@
       :current-page="search.page"
       @currentChange="currentChange"
     />
-    <el-alert style="color:black" title="表格背景色说明：表示超过了设定的库存下限和库存上限" type="success" />
+    <el-alert style="color:black" title="表格背景色说明：正常库存白色，低于库存下限橙色，高于库存上限黄色。" type="success" />
     <el-dialog
       title="库存变更 详细履历"
       :visible.sync="dialogVisible"
@@ -617,8 +617,11 @@ export default {
       }
     },
     tableRowClassName({ row, rowIndex }) {
-      if (row.quantity < row.lower_stock || row.quantity > row.upper_stock) {
+      if (row.quantity < row.lower_stock) {
         return 'warning-row'
+      }
+      if (row.quantity > row.upper_stock) {
+        return 'max-warning-row'
       }
       return ''
     },
@@ -804,7 +807,10 @@ export default {
 <style lang="scss">
 .inventory-query{
   .el-table .warning-row {
-    background: oldlace;
+    background: orange;
+  }
+  .el-table .max-warning-row {
+    background: yellow;
   }
 }
 
