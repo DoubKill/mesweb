@@ -1753,22 +1753,22 @@ export let asyncRoutes = [
             }
           },**/
           {
-            path: '/film-issueTask',
-            component: () => import('@/views/inventory/rubber-warehouse/film-issueTask.vue'),
-            name: 'film-issueTask',
-            meta: {
-              faName: 'RubberWarehouse',
-              title: '胶片库出库任务',
-              permissionName: 'product_outbound_plan'
-            }
-          },
-          {
             path: '/compound-manage',
             component: () => import('@/views/inventory/rubber-warehouse/compoundManage.vue'),
             name: 'compoundManage',
             meta: {
               faName: 'RubberWarehouse',
               title: '胶片库出库计划',
+              permissionName: 'product_outbound_plan'
+            }
+          },
+          {
+            path: '/film-issueTask',
+            component: () => import('@/views/inventory/rubber-warehouse/film-issueTask.vue'),
+            name: 'FilmIssueTask',
+            meta: {
+              faName: 'RubberWarehouse',
+              title: '胶片库出库任务',
               permissionName: 'product_outbound_plan'
             }
           },
