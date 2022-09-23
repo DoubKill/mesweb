@@ -2,6 +2,22 @@
   <div class="history-query">
     <!-- 备件出入库履历查询 -->
     <el-form :inline="true">
+      <el-form-item label="库区">
+        <el-input
+          v-model="search.warehouse_area"
+          style="width:150px"
+          clearable
+          @input="debounceSearch"
+        />
+      </el-form-item>
+      <el-form-item label="库位">
+        <el-input
+          v-model="search.warehouse_location"
+          style="width:150px"
+          clearable
+          @input="debounceSearch"
+        />
+      </el-form-item>
       <el-form-item label="操作起止时间">
         <el-date-picker
           v-model="dateValue"
@@ -13,28 +29,21 @@
           @change="changeDate"
         />
       </el-form-item>
-      <el-form-item label="出库/入库">
+      <el-form-item label="操作类型">
         <el-select
           v-model="search.status"
+          style="width:150px"
           placeholder="请选择"
           clearable
           @change="changeSearch"
         >
           <el-option
-            v-for="item in ['出库','入库']"
+            v-for="item in ['出库','入库', '盘库', '移库', '删除']"
             :key="item"
             :label="item"
             :value="item"
           />
         </el-select>
-      </el-form-item>
-      <el-form-item label="出入库时间">
-        <el-date-picker
-          v-model="search.real_time"
-          type="date"
-          value-format="yyyy-MM-dd"
-          @change="changeSearch"
-        />
       </el-form-item>
       <el-form-item label="出入库单号">
         <el-input
@@ -125,7 +134,7 @@
     >
       <el-table-column
         prop="status"
-        label="出库/入库"
+        label="操作类型"
         width="70"
       />
       <el-table-column
@@ -248,7 +257,7 @@
       >
         <template slot-scope="scope">
           <el-button
-            v-if="scope.row.revocation==='N'"
+            v-if="scope.row.revocation==='N'&&(scope.row.status==='入库'||scope.row.status==='出库')"
             v-permission="['equip_warehouse_record', 'revocation']"
             type="primary"
             size="mini"
