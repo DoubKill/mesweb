@@ -541,7 +541,7 @@ export default {
     },
     changeRepaired(row) {
       if (row.check_result === '好' || !row.check_result) {
-        row.is_repaired = false
+        this.$set(row, 'is_repaired', false)
       }
     },
     classChanged1(val) {
