@@ -1655,7 +1655,7 @@ export let asyncRoutes = [
         component: () => import('@/views/spot_check/a-index'),
         name: 'SpotCheck',
         meta: {
-          title: '安全点检及除尘袋滤器测温',
+          title: '点检及除尘袋测温',
           icon: 'production'
         },
         children: [

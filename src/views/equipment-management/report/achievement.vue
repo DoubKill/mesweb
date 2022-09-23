@@ -68,7 +68,7 @@
         prop="是否定岗"
         fixed
         label="是否独立上岗"
-        width="40"
+        width="65"
       >
         <template slot-scope="{row}">
           {{ row.是否定岗?'是':'否' }}
