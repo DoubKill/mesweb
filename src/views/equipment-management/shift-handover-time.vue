@@ -238,7 +238,6 @@ export default {
           this.equipList.forEach(d => {
             this.tableData[0][d + '_time_consuming'] = data.equip_sts_time[d]
           })
-          console.log(this.tableData)
         }
         this.loading = false
       } catch (e) {
