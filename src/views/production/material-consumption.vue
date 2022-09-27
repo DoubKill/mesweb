@@ -68,7 +68,13 @@
         label="原材料名称"
         width="120"
         fixed
-      />
+      >
+        <template slot-scope="scope">
+          <i v-if="scope.row.material_name!=='合计'&&scope.row.material_name!=='小计'&&(type===2||scope.row.material_name!==material_name)" class="el-icon-arrow-down" style="vertical-align: middle;margin-left:10px;" @click="clear(scope, 1)" />
+          <i v-if="scope.row.material_name!=='合计'&&scope.row.material_name!=='小计'&&type===1&&scope.row.material_name===material_name" class="el-icon-arrow-up" style="vertical-align: middle;margin-left:10px" @click="clear(scope, 2)" />
+          <span> {{ scope.row.material_name }}</span>
+        </template>
+      </el-table-column>
       <el-table-column
         align="center"
         prop="equip_no"
@@ -120,7 +126,10 @@ export default {
     return {
       loadingView: false,
       loading: false,
+      type: 2,
       days: [],
+      index: null,
+      material_name: null,
       btnLoading: false,
       tableData: [],
       optionsProduct: [],
@@ -251,17 +260,29 @@ export default {
           colspan: _col
         }
       }
-      if ([2].includes(columnIndex) && this.spanArr2) {
-        const _row = this.spanArr2[rowIndex]
+      if (((this.type === 2) ||
+      (this.type === 1 && rowIndex !== this.index && row.material_name !== this.material_name))) {
+        const _row = this.spanArr1[rowIndex]
         const _col = _row > 0 ? 1 : 0
         return {
           rowspan: _row,
           colspan: _col
         }
       }
+      if (this.type === 1 && rowIndex === this.index && row.material_name === this.material_name) {
+        return {
+          rowspan: 1,
+          colspan: 1
+        }
+      }
     },
     changeList() {
       this.$debounce(this, 'getList')
+    },
+    clear(scope, val) {
+      this.$set(this, 'index', scope.$index)
+      this.$set(this, 'type', val)
+      this.$set(this, 'material_name', scope.row.material_name)
     },
     equipSelected(obj) {
       this.$set(this.search, 'equip_no', obj ? obj.equip_no : '')
@@ -364,6 +385,12 @@ function getDaysBetween(dateString1, dateString2) {
   .el-input-number{
     width:130px;
    }
+  .showRow {
+    display: none;
+  }
+  .showRow1 {
+    display: inline;
+  }
  .dialog{
   .el-input-number{
     width:200px;
