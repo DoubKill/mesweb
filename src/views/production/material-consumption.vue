@@ -423,12 +423,6 @@ function getDaysBetween(dateString1, dateString2) {
   .el-input-number{
     width:130px;
    }
-  .showRow {
-    display: none;
-  }
-  .showRow1 {
-    display: inline;
-  }
  .dialog{
   .el-input-number{
     width:200px;
