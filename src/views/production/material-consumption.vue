@@ -70,8 +70,8 @@
         fixed
       >
         <template slot-scope="scope">
-          <i v-if="scope.row.material_name!=='合计'&&scope.row.material_name!=='小计'&&(type===2||scope.row.material_name!==material_name)" class="el-icon-arrow-down" style="vertical-align: middle" @click="clear(scope, 1)" />
-          <i v-if="scope.row.material_name!=='合计'&&scope.row.material_name!=='小计'&&type===1&&scope.row.material_name===material_name" class="el-icon-arrow-up" style="vertical-align: middle" @click="clear(scope, 2)" />
+          <i v-if="scope.row.material_name!=='合计'&&scope.row.material_name!=='小计'&&(type===2||scope.row.material_name!==material_name)" class="el-icon-arrow-right" style="vertical-align: middle" @click="clear(scope, 1)" />
+          <i v-if="scope.row.material_name!=='合计'&&scope.row.material_name!=='小计'&&type===1&&scope.row.material_name===material_name" class="el-icon-arrow-down" style="vertical-align: middle" @click="clear(scope, 2)" />
           <span> {{ scope.row.material_name }}</span>
         </template>
       </el-table-column>
