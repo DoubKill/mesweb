@@ -47,7 +47,7 @@
             <span v-if="isExport&&!valueDay.value" />
             <span v-else-if="isExport&&valueDay.value"> {{ month }}/{{ valueDay.value }}</span>
             <div v-else>
-              {{ month }} /
+              {{ month }} 月
               <el-input-number
                 v-model="valueDay.value"
                 style="width:80px"
@@ -55,7 +55,7 @@
                 controls-position="right"
                 :max="Maxday"
                 @change="dayChange(i,valueDay)"
-              />
+              /> 日
               <i v-if="i!==0" class="el-icon-delete" style="font-size:18px;cursor:pointer;" @click="delFun(i)" />
             </div>
           </th>
@@ -734,7 +734,6 @@ td, th{
         padding: 2px 0;
       }
     }
-
     .leftOne, .leftTwo,.leftThree{
        position:sticky;
       left:0;
@@ -749,6 +748,9 @@ td, th{
     .leftThree {
       left:195px;
       border-left:none;
+    }
+    .td-style{
+      width:155px;
     }
 }
 </style>
