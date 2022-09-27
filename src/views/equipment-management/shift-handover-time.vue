@@ -45,22 +45,25 @@
     <el-table
       id="out-table"
       v-loading="loading"
-      highlight-current-row="true"
+      :span-method="arraySpanMethod"
       :data="tableData"
       border
     >
       <el-table-column
         prop="factory_date"
+        align="center"
         label="日期"
-        width="60"
+        width="90"
       />
       <el-table-column
         prop="classes"
+        align="center"
         label="班次"
         width="60"
       />
       <el-table-column
         prop="group"
+        align="center"
         label="班组"
         width="60"
       />
@@ -73,22 +76,46 @@
         >
           <el-table-column
             :prop="d"
+            align="center"
             label="交接班耗时(分)"
             width="70"
           >
             <template slot-scope="scope">
-              <el-link v-if="scope.row.factory_date!=='平均值'" type="primary" @click="dialog(scope)">{{ scope.row[d+'_time_consuming'] }}</el-link>
-              <span v-else>{{ scope.row[d+'_time_consuming']*100!==0?scope.row[d+'_time_consuming']:null }}</span>
+              <span v-if="scope.row.factory_date==='交接班时间标准'">{{ scope.row[d+'_time_consuming']*100!==0?scope.row[d+'_time_consuming']:null }}</span>
+              <el-link v-if="scope.row.factory_date!=='平均值'&&scope.row.factory_date!=='交接班时间标准'" type="primary" @click="dialog(scope)">{{ scope.row[d+'_time_consuming'] }}</el-link>
+              <span v-if="scope.row.factory_date==='平均值'">{{ scope.row[d+'_time_consuming']*100!==0?scope.row[d+'_time_consuming']:null }}</span>
             </template>
           </el-table-column>
           <el-table-column
             :prop="d"
+            align="center"
             label="异常耗时(分)"
-            width="60"
+            width="70"
           >
             <template slot-scope="scope">
               <el-link v-if="scope.row.factory_date!=='平均值'" type="primary" @click="dialog(scope)">{{ scope.row[d+'_time_abnormal'] }}</el-link>
               <span v-else>{{ scope.row[d+'_time_abnormal']*100!==0?scope.row[d+'_time_abnormal']:null }}</span>
+            </template>
+          </el-table-column>
+          <!-- <el-table-column
+            :prop="d"
+            label="交接班时间标准"
+            width="70"
+          >
+            <template slot-scope="scope">
+              <span v-if="scope.row.factory_date!=='平均值'" type="primary">{{ scope.row[d+'_standard_time'] }}</span>
+              <span v-else>{{ scope.row[d+'_standard_time']*100!==0?scope.row[d+'_standard_time']:null }}</span>
+            </template>
+          </el-table-column> -->
+          <el-table-column
+            :prop="d"
+            align="center"
+            label="交接班时间完成率"
+            width="70"
+          >
+            <template slot-scope="scope">
+              <span v-if="scope.row.factory_date!=='平均值'" type="primary">{{ scope.row[d+'_rate']?scope.row[d+'_rate'] +'%':null }}</span>
+              <span v-else>{{ scope.row[d+'_rate']*100!==0?scope.row[d+'_rate']+'%':null }}</span>
             </template>
           </el-table-column>
         </el-table-column>
@@ -193,6 +220,7 @@ export default {
         const data = await shiftTimeSummary('get', null, { params: this.search })
         this.tableData = data.results
         if (this.tableData.length > 0) {
+          this.tableData.forEach
           this.tableData.push({
             factory_date: '平均值',
             consuming: (sum(this.tableData, 'consuming') / (sumNull(this.tableData, 'consuming'))).toFixed(2),
@@ -202,7 +230,15 @@ export default {
           this.equipList.forEach(d => {
             this.tableData[index - 1][d + '_time_abnormal'] = (sum(this.tableData, [d] + '_time_abnormal') / (sumNull(this.tableData, [d] + '_time_abnormal'))).toFixed(2)
             this.tableData[index - 1][d + '_time_consuming'] = (sum(this.tableData, [d] + '_time_consuming') / (sumNull(this.tableData, [d] + '_time_consuming'))).toFixed(2)
+            this.tableData[index - 1][d + '_rate'] = (sum(this.tableData, [d] + '_rate') / (sumNull(this.tableData, [d] + '_rate'))).toFixed(2)
           })
+          this.tableData.unshift({
+            factory_date: '交接班时间标准'
+          })
+          this.equipList.forEach(d => {
+            this.tableData[0][d + '_time_consuming'] = data.equip_sts_time[d]
+          })
+          console.log(this.tableData)
         }
         this.loading = false
       } catch (e) {
@@ -213,6 +249,23 @@ export default {
       this.search.st = arr ? arr[0] : ''
       this.search.et = arr ? arr[1] : ''
       this.getList()
+    },
+    arraySpanMethod({ row, column, rowIndex, columnIndex }) {
+      if (rowIndex / 2 === 0) {
+        if (columnIndex < 48) {
+          if (columnIndex % 3 === 0) {
+            return {
+              rowspan: 1,
+              colspan: 3
+            }
+          } else {
+            return {
+              rowspan: 1,
+              colspan: 0
+            }
+          }
+        }
+      }
     },
     async dialog(scope) {
       const obj = {
