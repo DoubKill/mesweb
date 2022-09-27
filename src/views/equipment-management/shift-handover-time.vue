@@ -127,6 +127,7 @@
         min-width="20"
       >
         <el-table-column
+          align="center"
           label="交接班耗时(分)"
           width="70"
         >
@@ -135,6 +136,7 @@
           </template>
         </el-table-column>
         <el-table-column
+          align="center"
           label="异常耗时(分)"
           width="60"
         >
