@@ -66,15 +66,22 @@
         align="center"
         prop="material_name"
         label="原材料名称"
-        width="120"
+        width="140"
         fixed
       >
         <template slot-scope="scope">
-          <i v-if="scope.row.material_name!=='合计'&&scope.row.material_name!=='小计'&&(type===2||scope.row.material_name!==material_name)" class="el-icon-arrow-down" style="vertical-align: middle;margin-left:10px;" @click="clear(scope, 1)" />
-          <i v-if="scope.row.material_name!=='合计'&&scope.row.material_name!=='小计'&&type===1&&scope.row.material_name===material_name" class="el-icon-arrow-up" style="vertical-align: middle;margin-left:10px" @click="clear(scope, 2)" />
+          <i v-if="scope.row.material_name!=='合计'&&scope.row.material_name!=='小计'&&(type===2||scope.row.material_name!==material_name)" class="el-icon-arrow-down" style="vertical-align: middle" @click="clear(scope, 1)" />
+          <i v-if="scope.row.material_name!=='合计'&&scope.row.material_name!=='小计'&&type===1&&scope.row.material_name===material_name" class="el-icon-arrow-up" style="vertical-align: middle" @click="clear(scope, 2)" />
           <span> {{ scope.row.material_name }}</span>
         </template>
       </el-table-column>
+      <el-table-column
+        align="center"
+        prop="total"
+        label="合计"
+        width="120"
+        fixed
+      />
       <el-table-column
         align="center"
         prop="equip_no"
@@ -86,7 +93,7 @@
         align="center"
         prop="product_no"
         label="配方号"
-        width="120"
+        width="140"
         fixed
       />
       <el-table-column
@@ -97,7 +104,8 @@
         fixed
       >
         <template slot-scope="{row}">
-          <span v-if="row.material_name==='小计'||row.material_name==='合计'"> {{ row.total_weight?row.total_weight.toFixed(2):row.total_weight }}</span>
+          <span v-if="row.material_name==='小计'||row.material_name==='合计'"> {{ null }}</span>
+          <!-- <span v-if="row.material_name==='合计'"> {{ row.total_weight?row.total_weight.toFixed(2):row.total_weight }}</span> -->
           <span v-else> {{ row.total_weight }}</span>
         </template>
       </el-table-column>
@@ -108,7 +116,12 @@
         align="center"
         :label="item"
         min-width="100"
-      />
+      >
+        <template slot-scope="{row}">
+          <span v-if="row.material_name==='小计'||row.material_name==='合计'"> {{ null }}</span>
+          <span v-else> {{ row[item] }}</span>
+        </template>
+      </el-table-column>
     </el-table>
 
   </div>
@@ -163,15 +176,24 @@ export default {
     },
     async getList() {
       try {
+        this.type = 2
         this.loading = true
         const data = await materialExpendSummary('get', null, { params: this.search })
         this.tableData = data.data || []
         this.days = data.days || []
         this.tableData = this.tableData.concat(getNewGoodsList(this.tableData, this.days))
+        this.tableData.forEach(d => {
+          if (d.material_name !== '小计') {
+            d.total = data.material_weight_dict[d.material_name]
+          } else {
+            d.total = d.total_weight.toFixed(2)
+          }
+        })
         this.tableData.sort(compare('material_type'))
         if (this.tableData.length > 0) {
           this.tableData.push({
             material_name: '合计',
+            total: sum(this.tableData, 'total_weight'),
             total_weight: sum(this.tableData, 'total_weight')
           })
           this.arr = []
@@ -260,6 +282,14 @@ export default {
           colspan: _col
         }
       }
+      if ([2].includes(columnIndex) && this.spanArr1) {
+        const _row = this.spanArr1[rowIndex]
+        const _col = _row > 0 ? 1 : 0
+        return {
+          rowspan: _row,
+          colspan: _col
+        }
+      }
       if (((this.type === 2) ||
       (this.type === 1 && rowIndex !== this.index && row.material_name !== this.material_name))) {
         const _row = this.spanArr1[rowIndex]
@@ -270,6 +300,12 @@ export default {
         }
       }
       if (this.type === 1 && rowIndex === this.index && row.material_name === this.material_name) {
+        return {
+          rowspan: 1,
+          colspan: 1
+        }
+      }
+      if (this.type === 3) {
         return {
           rowspan: 1,
           colspan: 1
@@ -290,9 +326,11 @@ export default {
     },
     async exportTable() {
       await this.$set(this, 'loading', true)
+      await this.$set(this, 'type', 3)
       await exportExcel('原材料消耗量 汇总表')
       setTimeout(() => {
         this.loading = false
+        this.type = 2
       }, 1000)
     }
   }
