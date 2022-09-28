@@ -1,19 +1,7 @@
 <template>
-  <div class="materialConsumption">
-    <!-- 原材料消耗量 汇总表 -->
+  <div class="materialPlan">
+    <!-- 细料分解每日计划用量 -->
     <el-form :inline="true">
-      <el-form-item label="起止日期">
-        <el-date-picker
-          v-model="dateValue"
-          type="daterange"
-          :clearable="false"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          value-format="yyyy-MM-dd"
-          @change="changeDate"
-        />
-      </el-form-item>
       <el-form-item label="原材料类别">
         <el-select v-model="search.material_type" clearable allow-create filterable @change="getList()">
           <el-option
@@ -59,15 +47,11 @@
         align="center"
         prop="material_type"
         label="原材料类别"
-        width="90"
-        fixed
       />
       <el-table-column
         align="center"
         prop="material_name"
         label="原材料名称"
-        width="140"
-        fixed
       >
         <template slot-scope="scope">
           <i v-if="scope.row.material_name!=='合计'&&scope.row.material_name!=='小计'&&(type===2||scope.row.material_name!==material_name)" class="el-icon-arrow-right" style="vertical-align: middle" @click="clear(scope, 1)" />
@@ -79,46 +63,25 @@
         align="center"
         prop="total"
         label="合计"
-        width="120"
-        fixed
       />
       <el-table-column
         align="center"
         prop="equip_no"
         label="机台"
-        width="80"
-        fixed
       />
       <el-table-column
         align="center"
         prop="product_no"
         label="配方号"
-        width="140"
-        fixed
       />
       <el-table-column
         align="center"
         prop="total_weight"
-        label="机台合计(kg)"
-        width="100"
-        fixed
+        label="重量（kg）"
       >
         <template slot-scope="{row}">
           <span v-if="row.material_name==='小计'||row.material_name==='合计'"> {{ null }}</span>
           <span v-else> {{ row.total_weight }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        v-for="(item,i) in days"
-        :key="i"
-        :prop="item"
-        align="center"
-        :label="item"
-        min-width="100"
-      >
-        <template slot-scope="{row}">
-          <span v-if="row.material_name==='小计'||row.material_name==='合计'"> {{ null }}</span>
-          <span v-else> {{ row[item] }}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -129,8 +92,8 @@
 <script>
 import EquipSelect from '@/components/EquipSelect'
 import { classesListUrl } from '@/api/base_w'
-import { materialExpendSummary } from '@/api/jqy'
-import { exportExcel, setDate } from '@/utils'
+import { xlPlanConsume } from '@/api/jqy'
+import { exportExcel } from '@/utils'
 export default {
   name: 'MaterialConsumption',
   components: { EquipSelect },
@@ -139,32 +102,19 @@ export default {
       loadingView: false,
       loading: false,
       type: 2,
-      days: [],
       index: null,
       material_name: null,
       btnLoading: false,
       tableData: [],
       optionsProduct: [],
-      dateValue: [setDate(), setDate()],
       search: {}
     }
   },
   created() {
-    this.search.s_time = this.dateValue[0]
-    this.search.e_time = this.dateValue[1]
     this.getList()
     this.getProduct()
   },
   methods: {
-    changeDate(arr) {
-      this.search.s_time = arr ? arr[0] : ''
-      this.search.e_time = arr ? arr[1] : ''
-      if (getDaysBetween(this.search.s_time, this.search.e_time) > 14) {
-        this.$message('查询日期总数不得超过15天')
-        return
-      }
-      this.getList()
-    },
     async getProduct() {
       try {
         const data = await classesListUrl('get', null, { params: { class_name: '原材料类别', all: 1 }})
@@ -177,10 +127,9 @@ export default {
       try {
         this.type = 2
         this.loading = true
-        const data = await materialExpendSummary('get', null, { params: this.search })
-        this.tableData = data.data || []
-        this.days = data.days || []
-        this.tableData = this.tableData.concat(getNewGoodsList(this.tableData, this.days))
+        const data = await xlPlanConsume('get', null, { params: this.search })
+        this.tableData = data.result || []
+        this.tableData = this.tableData.concat(getNewGoodsList(this.tableData))
         this.tableData.forEach(d => {
           if (d.material_name !== '小计') {
             d.total = data.material_weight_dict[d.material_name]
@@ -196,11 +145,6 @@ export default {
             total_weight: sum(this.tableData, 'total_weight').toFixed(2)
           })
           this.arr = []
-          this.days.forEach(d => {
-            this.arr.push({
-              [d]: sum(this.tableData, [d]) === 0 ? null : sum(this.tableData, [d])
-            })
-          })
           this.arr.forEach(d => {
             this.tableData[this.tableData.length - 1][Object.keys(d)[0]] = Object.values(d)[0]
           })
@@ -252,13 +196,6 @@ export default {
             }
           }
         }
-        this.days.forEach(i => {
-          this.tableData.forEach(d => {
-            if (d.material_name === '小计' || d.material_name === '合计') {
-              d[i] = d[i] ? d[i].toFixed(2) : null
-            }
-          })
-        })
         this.loading = false
       } catch (e) {
         this.loading = false
@@ -326,7 +263,7 @@ export default {
     async exportTable() {
       await this.$set(this, 'loading', true)
       await this.$set(this, 'type', 3)
-      await exportExcel('原材料消耗量 汇总表')
+      await exportExcel('细料分解每日计划用量')
       setTimeout(() => {
         this.loading = false
         this.type = 2
@@ -347,7 +284,7 @@ var compare = function(prop) {
     }
   }
 }
-function getNewGoodsList(params, days) {
+function getNewGoodsList(params) {
   var temp = {}
   for (var i in params) {
     var key = params[i].material_type // 判断依据.
@@ -355,21 +292,11 @@ function getNewGoodsList(params, days) {
       temp[key].material_type = params[i].material_type
       temp[key].material_name = '小计'
       temp[key].total_weight += params[i].total_weight
-      // temp[key].total_weight = temp[key].total_weight.toFixed(2)
-      days.forEach(d => {
-        // addMath(temp[key].[d], params[i].[d])
-        temp[key][d] += params[i][d] ?? 0
-        // temp[key].[d] = temp[key].[d].toFixed(2)
-      })
     } else {
       temp[key] = {}
       temp[key].material_type = params[i].material_type
       temp[key].material_name = '小计'
       temp[key].total_weight = params[i].total_weight
-      // temp[key].total_weight = temp[key].total_weight.toFixed(2)
-      days.forEach(d => {
-        temp[key][d] = params[i][d] ?? 0
-      })
     }
   }
   var newArry = []
@@ -378,9 +305,6 @@ function getNewGoodsList(params, days) {
   }
   newArry.forEach(d => {
     d.total_weight = d.total_weight === 0 ? null : d.total_weight
-    days.forEach(i => {
-      d[i] = d[i] === 0 ? null : d[i]
-    })
   })
   return newArry
 }
@@ -395,22 +319,10 @@ function sum(arr, params) {
   s = Math.round(s * 1000) / 1000
   return s
 }
-function getDaysBetween(dateString1, dateString2) {
-  var startDate = Date.parse(dateString1)
-  var endDate = Date.parse(dateString2)
-  if (startDate > endDate) {
-    return 0
-  }
-  if (startDate === endDate) {
-    return 1
-  }
-  var days = (endDate - startDate) / (1 * 24 * 60 * 60 * 1000)
-  return days
-}
 </script>
 
 <style lang="scss">
-.materialConsumption{
+.materialPlan{
   .el-input-number{
     width:130px;
    }
