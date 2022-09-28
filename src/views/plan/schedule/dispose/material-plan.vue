@@ -3,7 +3,7 @@
     <!-- 细料分解每日计划用量 -->
     <el-form :inline="true">
       <el-form-item label="原材料类别">
-        <el-select v-model="search.material_type" clearable allow-create filterable @change="getList()">
+        <el-select v-model="search.material_type" clearable filterable @change="getList()">
           <el-option
             v-for="item in optionsProduct"
             :key="item.id"
@@ -13,7 +13,14 @@
         </el-select>
       </el-form-item>
       <el-form-item label="原材料名称">
-        <el-input v-model="search.material_name" clearable @input="changeList" />
+        <el-select v-model="search.material_name" clearable filterable @change="getList()">
+          <el-option
+            v-for="item in MaterialOptions"
+            :key="item.id"
+            :label="item.material_name"
+            :value="item.material_name"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="机台">
         <equip-select
@@ -23,12 +30,14 @@
         />
       </el-form-item>
       <el-form-item label="配方号">
-        <el-input
-          v-model="search.product_no"
-          clearable
-          placeholder="配方号"
-          @input="changeList"
-        />
+        <el-select v-model="search.product_no" filterable placeholder="请选择" clearable @change="getList()">
+          <el-option
+            v-for="item in options"
+            :key="item.material_no"
+            :label="item.material_no"
+            :value="item.material_no"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="getList()">刷新</el-button>
@@ -91,7 +100,7 @@
 
 <script>
 import EquipSelect from '@/components/EquipSelect'
-import { classesListUrl } from '@/api/base_w'
+import { classesListUrl, materialsUrl, batchingMaterials } from '@/api/base_w'
 import { xlPlanConsume } from '@/api/jqy'
 import { exportExcel } from '@/utils'
 export default {
@@ -102,6 +111,8 @@ export default {
       loadingView: false,
       loading: false,
       type: 2,
+      MaterialOptions: [],
+      options: [],
       index: null,
       material_name: null,
       btnLoading: false,
@@ -113,12 +124,30 @@ export default {
   created() {
     this.getList()
     this.getProduct()
+    this.getMaterial()
+    this.getProductList()
   },
   methods: {
     async getProduct() {
       try {
         const data = await classesListUrl('get', null, { params: { class_name: '原材料类别', all: 1 }})
         this.optionsProduct = data.results || []
+      } catch (e) {
+        //
+      }
+    },
+    async getProductList() {
+      try {
+        const data = await batchingMaterials('get', null, { params: { all: 1 }})
+        this.options = data || []
+      } catch (e) {
+        //
+      }
+    },
+    async getMaterial() {
+      try {
+        const data = await materialsUrl('get', null, { params: { all: 1 }})
+        this.MaterialOptions = data.results
       } catch (e) {
         //
       }
@@ -247,9 +276,6 @@ export default {
           colspan: 1
         }
       }
-    },
-    changeList() {
-      this.$debounce(this, 'getList')
     },
     clear(scope, val) {
       this.$set(this, 'index', scope.$index)
