@@ -101,7 +101,7 @@
         min-width="140"
       >
         <template slot-scope="scope">
-          <el-select v-if="scope.row.isEdit&&(search.target_month+'-'+(Number(herder.split('/')[1]<10)?'0'+herder.split('/')[1]:herder.split('/')[1]))>date" v-model="scope.row.weight_class_details[herder]" style="width:110px">
+          <el-select v-if="scope.row.isEdit&&(search.target_month+'-'+(Number(herder.split('/')[1]<10)?'0'+herder.split('/')[1]:herder.split('/')[1]))>=date" v-model="scope.row.weight_class_details[herder]" style="width:110px">
             <el-option
               v-for="item in optionsType"
               :key="item.id"

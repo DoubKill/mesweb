@@ -68,12 +68,12 @@
         prop="是否定岗"
         fixed
         label="是否独立上岗"
-        width="40"
-      >
-        <template slot-scope="{row}">
+        width="65"
+      />
+      <!-- <template slot-scope="{row}">
           {{ row.是否定岗?'是':'否' }}
         </template>
-      </u-table-column>
+      </u-table-column> -->
       <u-table-column
         prop="hj"
         label="产量工资合计"
@@ -441,7 +441,7 @@ export default {
     async subsidyInfo(row, group, day) {
       this.currentInfo = JSON.parse(JSON.stringify(row))
       this.dialogVisible2 = true
-      this.currentInfo.是否定岗 = this.currentInfo.是否定岗 ? '是' : '否'
+      // this.currentInfo.是否定岗 = this.currentInfo.是否定岗 ? '是' : '否'
       this.currentInfo._class = group
       this.currentInfo.factoryDate = this.year + '-' + this.month + '-' + day
       try {
