@@ -1,9 +1,15 @@
 import Vue from 'vue'
 
+import { debounce } from '@/utils'
 import echarts from 'echarts'
 Vue.prototype.$echarts = echarts
 import VCharts from 'v-charts'
 Vue.use(VCharts)
+
+// import { decoration10, decoration8, decoration6 } from '@jiaminghi/data-view' // 首页头部动画
+// Vue.use(decoration10)
+// Vue.use(decoration8)
+// Vue.use(decoration6)
 
 // 按需引入虚拟表格
 import { UTable, UTableColumn } from 'umy-ui'
@@ -50,6 +56,8 @@ import 'default-passive-events'
 Vue.use(ElementUI)
 
 Vue.config.productionTip = false
+
+Vue.prototype.$debounce = debounce
 
 new Vue({
   el: '#app',

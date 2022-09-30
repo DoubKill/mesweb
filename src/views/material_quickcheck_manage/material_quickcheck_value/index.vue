@@ -187,7 +187,6 @@
       :current-page="search.page"
       @currentChange="currentChange"
     />
-
     <el-dialog
       :title="(formData.id?'编辑':'添加')+'检测值'"
       :visible.sync="dialogVisible"
@@ -527,6 +526,10 @@ export default {
           try {
             if (!this.formData.material_sample_name) {
               this.$message.info('未找到该条码对应物料信息')
+              return
+            }
+            if (!this.formData.material_batch) {
+              this.$message.info('没有批次号，不可添加')
               return
             }
             const obj = JSON.parse(JSON.stringify(this.formData))

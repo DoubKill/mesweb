@@ -60,6 +60,13 @@ export function editStationInfo(method, id, data) {
     data
   })
 }
+export function productStockOutbound(method, id, data) {
+  return request({
+    url: id ? API.ProductStockOutbound + id + '/' : API.ProductStockOutbound,
+    method,
+    data
+  })
+}
 export function updateSUseFlag(id) {
   return request({
     url: API.StationInfoUrl + id + '/reversal_use_flag/',
@@ -69,7 +76,7 @@ export function updateSUseFlag(id) {
 
 export function stationTypes() {
   return request({
-    url: API.StationTypesUrl,
+    url: API.StationTypesUrl + '?all=1&class_name=站点类型',
     methods: 'get'
   })
 }
@@ -99,7 +106,7 @@ export function updateMUseFlag(id) {
 
 export function materialTypes() {
   return request({
-    url: API.MaterialTypesUrl,
+    url: API.MaterialTypesUrl + '?all=1&class_name=原材料类别',
     methods: 'get'
   })
 }

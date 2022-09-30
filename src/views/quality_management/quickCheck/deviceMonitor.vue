@@ -1,12 +1,16 @@
 <template>
   <div>
     <!-- 快检设备监控 -->
-    <div v-for="(item,i) in topTableData" :key="i" class="tagBox">
-      <el-tag :type="item.status===1?'success':'danger'">{{ item.no }}</el-tag>
-      <el-tag type="info" effect="plain">
-        {{ item.last_time||'--' }}
-      </el-tag>
+    <h3>设备状态</h3>
+    <div style="border:1px solid #EBEEF5;padding:18px">
+      <div v-for="(item,i) in topTableData" :key="i" class="tagBox">
+        <el-tag :type="item.status===1?'success':'danger'">{{ item.no }}</el-tag>
+        <el-tag type="info" effect="plain">
+          {{ item.last_time||'--' }}
+        </el-tag>
+      </div>
     </div>
+    <h3>当前操作信息</h3>
     <el-table
       :data="tableData"
       :show-header="false"
@@ -19,7 +23,6 @@
         min-width="20"
       />
     </el-table>
-
     <el-tag :type="stateVal?'success':'danger'">数据采集程序通信{{ stateVal?'正常':'不正常' }}</el-tag>
   </div>
 </template>
@@ -35,28 +38,27 @@ export default {
       stateVal: false
     }
   },
+  watch: {
+    $route: {
+      handler() {
+        if (this.$route.fullPath === '/quickCheck/deviceMonitor') {
+          this.getInfo()
+          this.getBottomList()
+          this.getCheckEquip()
+          this._setInterval = setInterval(d => {
+            this.getInfo()
+            this.getBottomList()
+            this.getCheckEquip()
+          }, 30000)
+        } else {
+          window.clearInterval(this._setInterval)
+        }
+      },
+      deep: true, // 深度监听
+      immediate: true // 第一次初始化渲染就可以监听到
+    }
+  },
   created() {
-    this.getInfo()
-    this.getBottomList()
-    this.getCheckEquip()
-    this.timer = setInterval(() => {
-      this.getInfo()
-      this.getBottomList()
-      this.getCheckEquip()
-    }, 10000)
-  },
-  destroyed() {
-    clearInterval(this.timer)
-  },
-  deactivated() {
-    clearInterval(this.timer)
-  },
-  activated() {
-    this.timer = setInterval(() => {
-      this.getInfo()
-      this.getBottomList()
-      this.getCheckEquip()
-    }, 10000)
   },
   methods: {
     async getInfo() {
@@ -92,6 +94,5 @@ export default {
     .tagBox{
         display: inline-flex;
         margin: 0 20px 10px 0;
-
     }
 </style>

@@ -1,6 +1,7 @@
 <template>
-  <div class="card-container">
+  <div v-loading="loading" class="card-container">
     <table
+
       border="1"
       bordercolor="black"
       class="info-table"
@@ -74,14 +75,14 @@
         <tr>
           <td>检测结果</td>
           <td>{{ testData.test_result }}</td>
-          <td>备注</td>
-          <td>{{ testData.test ? testData.test.test_note : '' }}</td>
-        </tr>
-        <tr>
+          <!-- <td>备注</td>
+          <td>{{ testData.test ? testData.test.test_note : '' }}</td> -->
           <td>处理人</td>
           <td>{{ testData.deal_user }}</td>
+        </tr>
+        <tr>
           <td>处理时间</td>
-          <td>{{ testData.deal_time }}</td>
+          <td colspan="3">{{ testData.deal_time }}</td>
         </tr>
         <tr>
           <td>处理意见</td>
@@ -95,7 +96,7 @@
     >
       <tr>
         <th style="width:100px">车次</th>
-        <th v-for="(value, key) in mtrListHead" :key="key" style="min-width: 80px; max-width: 80px">{{ value }}</th>
+        <th v-for="(value, key) in mtrListHead" :key="key">{{ value }}</th>
         <th style="width:100px">综合判级</th>
       </tr>
       <!-- <tr>
@@ -104,9 +105,11 @@
       <tr v-for="(row,i) in mtrListRow" :key="i">
         <td>{{ row.trains }}</td>
         <td v-for="(item, index) in mtrListHead" :key="index">
-          {{ row[item].value }}
-          <div v-if="row[item].value > mtrListRow[0][item].value">+</div>
-          <div v-if="row[item].value < mtrListRow[1][item].value">-</div>
+          <div v-if="row[item]">
+            {{ row[item].value }}
+            <div v-if="row[item].value > mtrListRow[0][item].value">+</div>
+            <div v-if="row[item].value < mtrListRow[1][item].value">-</div>
+          </div>
         </td>
         <td>{{ row.status }}</td>
         <!-- <td v-for="(item, index) in testData.mtr_list[row]" :key="index">
@@ -134,6 +137,7 @@ export default {
     return {
       mtrListHead: [],
       mtrListRow: [],
+      loading: true,
       testData: {}
     }
   },
@@ -187,6 +191,7 @@ export default {
       })
       this.mtrListRow.unshift(obj2)
       this.mtrListRow.unshift(obj1)
+      this.loading = false
       /** for (const key in this.testData.mtr_list) {
         if (key !== 'table_head' && key !== 'rows' && key !== 'sub_head') {
           this.testData.mtr_list.rows.push(key)

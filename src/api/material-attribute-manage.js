@@ -8,10 +8,32 @@ export function getMaterialsAttribute(params) {
     params
   })
 }
+export function getThMaterialsAttribute(params) {
+  return request({
+    url: API.ThMaterialsAttribute,
+    method: 'get',
+    params
+  })
+}
+export function postThMaterialsAttribute(data) {
+  return request({
+    url: API.ThMaterialsAttribute,
+    method: 'post',
+    data
+  })
+}
 
 export function postMaterialsAttribute(data) {
   return request({
     url: API.materialsAttribute,
+    method: 'post',
+    data
+
+  })
+}
+export function postBatchSet(data) {
+  return request({
+    url: API.BatchSet,
     method: 'post',
     data
 

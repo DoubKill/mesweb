@@ -202,7 +202,7 @@
             @visible-change="visibleChange1"
           >
             <el-option
-              v-for="item in formObj.depot?options1.filter(d=>d.depot === formObj.depot):options1"
+              v-for="item in formObj.depot?options1.filter(d=>d.depot === formObj.depot):[]"
               :key="item.id"
               :label="item.depot_site_name"
               :value="item.id"
@@ -215,7 +215,7 @@
           <span v-else>{{ formObj.weight }}</span>
         </el-form-item>
         <el-form-item label="数量（包）" prop="num">
-          <el-input v-model="formObj.num" />
+          <el-input-number v-model="formObj.num" controls-position="right" :min="0" :step="1" step-strictly />
         </el-form-item>
         <el-form-item label="总重（kg）" prop="ccc">
           <el-input v-model="formObj.ccc" disabled />
@@ -383,7 +383,7 @@ export default {
       }
     },
     changeDepot() {
-      this.$set(this.formObj, 'depot_site', null)
+      this.$set(this.formObj, 'depot_site', undefined)
     },
     submitFun() {
       this.$refs.formObj.validate(async(valid) => {
@@ -392,7 +392,7 @@ export default {
             this.loadingBtn = true
             this.formObj.sulfur_status = this.formObj.id ? 2 : 1
             await sulfurData('post', null, { data: this.formObj })
-            this.$message.success('入库成功')
+            this.$message.success('操作成功')
             this.handleClose(false)
             this.getList()
             this.loadingBtn = false
@@ -416,9 +416,9 @@ export default {
         }
         const data = await sulfurData('get', null, { params: obj })
         const _obj = data.results[0]
-        this.formObj.depot = _obj.depot
-        this.formObj.depot_site = _obj.depot_site
-        this.formObj.weight = _obj.weight
+        this.$set(this.formObj, 'depot', _obj.depot)
+        this.$set(this.formObj, 'depot_site', _obj.depot_site)
+        this.$set(this.formObj, 'weight', _obj.weight)
       } catch (e) {
         //
       }
@@ -454,8 +454,14 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 .liuh .el-input{
   width:209px;
+}
+.liuh {
+  .el-input-number .el-input{
+    width:auto !important;
+  }
+
 }
 </style>

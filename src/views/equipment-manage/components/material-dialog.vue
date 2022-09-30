@@ -1,0 +1,210 @@
+
+<template>
+  <div>
+    <!-- 入库出库物料弹框 -->
+    <el-form :inline="true">
+      <el-form-item label="物料编码">
+        <el-input v-model="search.spare_code" clearable @input="changeSearch" />
+      </el-form-item>
+      <el-form-item label="物料名称">
+        <el-input v-model="search.spare_name" clearable @input="changeSearch" />
+      </el-form-item>
+      <el-form-item v-if="type==='入库'" label="ERP物料信息id:">
+        <el-input v-model="search.unique_id" clearable @input="changeSearch" />
+      </el-form-item>
+    </el-form>
+    <el-table
+      ref="multipleTable"
+      v-loading="loadingView"
+      :max-height="500"
+      :data="tableDataView"
+      :row-key="getRowKeys"
+      border
+      @selection-change="handleSelectionChange"
+    >
+      <el-table-column
+        type="selection"
+        width="40"
+        :reserve-selection="true"
+      />
+      <el-table-column
+        prop="spare__code"
+        label="物料编码"
+        min-width="20"
+      />
+      <el-table-column
+        prop="spare_name"
+        label="物料名称"
+        min-width="20"
+      />
+      <el-table-column
+        v-if="type==='入库'"
+        prop="unique_id"
+        label="ERP物料信息id"
+        min-width="20"
+      />
+      <el-table-column
+        prop="component_type_name"
+        label="备件分类"
+        min-width="20"
+      />
+      <el-table-column
+        prop="specification"
+        label="规格型号"
+        min-width="20"
+      />
+      <el-table-column
+        prop="technical_params"
+        label="用途"
+        min-width="20"
+      />
+      <el-table-column
+        prop="unit"
+        label="标准单位"
+        min-width="20"
+      />
+      <el-table-column
+        v-if="type==='出库'"
+        prop="qty"
+        label="库存数量"
+        min-width="20"
+      />
+    </el-table>
+    <page
+      :old-page="false"
+      :total="total"
+      :current-page="search.page"
+      @currentChange="currentChange"
+    />
+  </div>
+</template>
+
+<script>
+import page from '@/components/page'
+import { equipWarehouseInventory, equipWarehouseOrder } from '@/api/jqy'
+import { debounce } from '@/utils'
+export default {
+  components: { page },
+  props: {
+    typeForm: {
+      type: Object,
+      default() {
+        return {}
+      }
+    },
+    id: {
+      type: Number,
+      default: null
+    },
+    show: {
+      type: Boolean,
+      default: false
+    },
+    type: {
+      type: String,
+      default: null
+    },
+    list: {
+      type: Array,
+      default: () => {
+        return []
+      }
+    }
+  },
+  data() {
+    return {
+      total: 0,
+      loadingView: false,
+      tableDataView: [],
+      search: {},
+      multipleSelection: []
+    }
+  },
+  watch: {
+    show(val) {
+      if (val) {
+        if (this.type === '入库') {
+          this.search = {
+            page: 1,
+            page_size: 10,
+            status: '入库'
+          }
+        } else {
+          this.search = {
+            order_id: this.id,
+            use: 1,
+            page: 1,
+            page_size: 10
+          }
+        }
+        this.dialogSelect()
+      }
+    }
+  },
+  created() {
+    if (this.type === '入库') {
+      this.search = {
+        page: 1,
+        page_size: 10,
+        status: '入库'
+      }
+    } else {
+      this.search = {
+        order_id: this.id,
+        use: 1,
+        page: 1,
+        page_size: 10
+      }
+    }
+    this.dialogSelect()
+  },
+  methods: {
+    async dialogSelect() {
+      try {
+        this.loadingView = true
+        const data = await (this.type === '出库' ? equipWarehouseInventory('get', null, { params: this.search }) : equipWarehouseOrder('get', null, { params: this.search }))
+        this.total = data.count
+        this.tableDataView = data.results || []
+        let data1 = []
+        for (const i in this.list) {
+          data1 = data1.concat(this.list[i].id)
+        }
+        this.tableDataView.forEach(row => {
+          if (data1.indexOf(this.type === '入库' ? row.id : row.equip_spare) >= 0) {
+            this.$refs.multipleTable.toggleRowSelection(row, true)
+          }
+        })
+        this.loadingView = false
+      } catch (e) {
+        this.loadingView = false
+      }
+      this.dialogVisibleSelect = true
+    },
+    getRowKeys(row) {
+      if (this.type === '入库') {
+        return row.id
+      } else {
+        return row.equip_spare
+      }
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+    },
+    currentChange(page, page_size) {
+      this.search.page = page
+      this.search.page_size = page_size
+      this.dialogSelect()
+    },
+    changeSearch() {
+      this.search.page = 1
+      debounce(this, 'dialogSelect')
+    }
+  }
+
+}
+</script>
+
+<style lang="scss" scoped>
+
+</style>
+

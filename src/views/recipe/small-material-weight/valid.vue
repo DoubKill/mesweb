@@ -38,6 +38,8 @@
       <el-table-column
         label="硫磺包有效时长（天）"
         min-width="20"
+        sortable
+        prop="package_sulfur_usefullife"
       >
         <template slot-scope="{row}">
           <el-input-number
@@ -51,6 +53,8 @@
       <el-table-column
         label="细料包有效时长（天）"
         min-width="20"
+        sortable
+        prop="package_fine_usefullife"
       >
         <template slot-scope="{row}">
           <el-input-number
@@ -67,7 +71,7 @@
         min-width="20"
       >
         <template slot-scope="scoped">
-          <el-button v-permission="['xl_weight_card', 'print']" :loading="loadingBtn" @click="buttonSubmit(scoped.row,scoped.$index)">保存</el-button>
+          <el-button v-permission="['xl_weight_card', 'print']" :disabled="loadingBtn" @click="buttonSubmit(scoped.row,scoped.$index)">保存</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -83,7 +87,8 @@ export default {
     return {
       search: {},
       tableData: [],
-      loading: true
+      loading: true,
+      loadingBtn: false
     }
   },
   created() {
@@ -115,6 +120,7 @@ export default {
     }
   }
 }
+
 </script>
 
 <style lang="scss" scoped>

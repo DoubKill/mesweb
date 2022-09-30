@@ -1,0 +1,197 @@
+<template>
+  <div v-loading="loading">
+    <!-- 胶架维修记录 -->
+    <el-form :inline="true">
+      <el-form-item label="月份">
+        <el-date-picker
+          v-model="search.date_time"
+          type="month"
+          :clearable="false"
+          format="yyyy-MM"
+          value-format="yyyy-MM"
+          placeholder="选择月"
+          @change="getList"
+        />
+      </el-form-item>
+      <el-form-item>
+        <el-button
+          type="primary"
+          :loading="btnExportLoad"
+          @click="exportTable"
+        >导出Excel</el-button>
+        <el-button
+          v-permission="['rubber_frame_repair', 'add']"
+          type="primary"
+          :loading="btnLoading"
+          @click="submitFun"
+        >保存</el-button>
+      </el-form-item>
+    </el-form>
+    <el-table
+      id="out-table"
+      :data="tableData"
+      border
+    >
+      <el-table-column
+        prop="name"
+        label="项目"
+        :fixed="!isExport"
+      />
+      <el-table-column
+        prop="总计"
+        label="总计"
+        :fixed="!isExport"
+      />
+      <el-table-column v-for="(item) in day" :key="item" :label="month+'/'+item" width="120px">
+        <template slot-scope="{row,$index}">
+          <span v-if="isExport||row.name.indexOf('待维修胶架数量')>-1">{{ row[item] }}</span>
+          <span v-else-if="row.name.indexOf('人员')>-1">
+            <el-select
+              v-model="row[item]"
+              filterable
+              placeholder="请输入"
+              clearable
+              :loading="loadingUser"
+              :remote-method="remoteMethod"
+              remote
+            >
+              <el-option
+                v-for="userItem in optionsUser"
+                :key="userItem.id"
+                :label="userItem.username"
+                :value="userItem.username"
+              />
+            </el-select>
+          </span>
+          <span v-else>
+            <el-input-number v-model="row[item]" style="width:100px" controls-position="right" :min="0" @change="handleChange(row,$index,item)" />
+          </span>
+        </template>
+      </el-table-column>
+    </el-table>
+  </div>
+</template>
+
+<script>
+import { setDate, exportExcel } from '@/utils'
+import { rubberFrameRepair } from '@/api/base_w_five'
+import { personnels } from '@/api/jqy'
+export default {
+  name: 'RubberFrameRepair',
+  data() {
+    return {
+      search: { date_time: setDate(false, false, 'month') },
+      day: [],
+      month: '',
+      loading: false,
+      btnExportLoad: false,
+      isExport: false,
+      btnLoading: false,
+      tableData: [],
+      optionsUser: [],
+      loadingUser: false
+    }
+  },
+  created() {
+    this.getList()
+  },
+  methods: {
+    async getList() {
+      try {
+        if (!this.search.date_time) {
+          this.$message('请选择月份')
+          return
+        }
+        this.loading = true
+        this.day = []
+        this.month = null
+        this.tableData = []
+        const data = await rubberFrameRepair('get', null, { params: this.search })
+        const a = new Date(this.search.date_time)
+        const y = a.getFullYear()
+        const m = a.getMonth() + 1
+        this.day = new Date(y, m, 0).getDate()
+        this.month = m
+        this.tableData = data.results.details || []
+        this.loading = false
+      } catch (e) {
+        this.loading = false
+      }
+    },
+    remoteMethod(query) {
+      if (query !== '') {
+        this.loadingUser = true
+        // this.optionsUser = []
+        this.getOptionsUser(query)
+      } else {
+        this.optionsUser = []
+      }
+    },
+    async getOptionsUser(query) {
+      try {
+        const data = await personnels('get', null, { params: { username: query }})
+        this.optionsUser = data.results
+        this.loadingUser = false
+      } catch (e) {
+        this.loadingUser = false
+      }
+    },
+    handleChange(row, index, item) {
+      this.tableData[index].总计 = sum(row)
+
+      let _num = 0
+      let _all = 0
+      _num = Number(this.tableData[0][item]) - Number(this.tableData[1][item])
+      _all = Number(this.tableData[0].总计) - Number(this.tableData[1].总计)
+
+      this.tableData[2][item] = Math.round(_num * 100) / 100
+      this.tableData[2].总计 = Math.round(_all * 100) / 100
+    },
+    async submitFun() {
+      try {
+        const obj = {
+          'date_time': this.search.date_time,
+          details: this.tableData
+        }
+        this.btnLoading = true
+        await rubberFrameRepair('post', null, { data: obj })
+        this.$message.success('保存成功')
+        this.btnLoading = false
+      } catch (e) {
+        this.btnLoading = false
+      }
+    },
+    async exportTable() {
+      this.btnExportLoad = true
+      this.loading = true
+
+      setTimeout(d => {
+        this.isExport = true
+        setTimeout(d => {
+          exportExcel('胶架维修记录', 'disposal-list-components')
+          this.isExport = false
+          this.btnExportLoad = false
+          this.loading = false
+        }, 1000)
+      }, 100)
+    }
+  }
+}
+function sum(obj) {
+  var s = 0
+  for (const key in obj) {
+    if (Object.hasOwnProperty.call(obj, key)) {
+      const element = obj[key]
+      if (Number(element) && key !== '总计') {
+        s += Number(element)
+      }
+    }
+  }
+  s = Math.round(s * 100) / 100
+  return s
+}
+</script>
+
+<style lang="scss" scoped>
+
+</style>

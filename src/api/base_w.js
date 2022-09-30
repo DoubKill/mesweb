@@ -9,6 +9,14 @@ export function globalCodesUrl(method, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function changePassword(method, data = {}) {
+  const obj = {
+    url: API.ResetPassword,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 export function workSchedulesUrl(method, id, data = {}) {
   const obj = {
     url: id ? API.WorkSchedulesUrl + id + '/' : API.WorkSchedulesUrl,
@@ -38,6 +46,14 @@ export function planScheduleUrl(method, id, data = {}) {
 export function materialsUrl(method, id, data = {}) {
   const obj = {
     url: id ? API.MaterialsUrl + id + '/' : API.MaterialsUrl,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function materialInfoIssue(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MaterialInfoIssue + id + '/' : API.MaterialInfoIssue,
     method: method
   }
   Object.assign(obj, data)
@@ -239,6 +255,15 @@ export function materialTestOrders(method, id, data = {}) {
   return request(obj)
 }
 
+export function productTestValueHistory(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ProductTestValueHistory + id + '/' : API.ProductTestValueHistory,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function matIndicatorTab(method, id, data = {}) {
   const obj = {
     url: id ? API.MatIndicatorTab + id + '/' : API.MatIndicatorTab,
@@ -296,6 +321,23 @@ export function matTestMethods(method, id, data = {}) {
 export function matDataPointIndicators(method, id, data = {}) {
   const obj = {
     url: id ? API.MatDataPointIndicators + id + '/' : API.MatDataPointIndicators,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function batchSetMethods(method, id, data = {}) {
+  const obj = {
+    url: id ? API.BatchSetMethods + id + '/' : API.BatchSetMethods,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function matDataPointIndicatorsHistory(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MatDataPointIndicatorsHistory + id + '/' : API.MatDataPointIndicatorsHistory,
     method: method
   }
   Object.assign(obj, data)
@@ -383,6 +425,32 @@ export function mixinRubberyOutboundOrder(method, id, data = {}) {
   return request(obj)
 }
 
+export function outboundDeliveryOrdersExport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.OutboundDeliveryOrdersExport + id + '/' : API.OutboundDeliveryOrdersExport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function outboundDeliveryOrders(method, id, data = {}) {
+  const obj = {
+    url: id ? API.OutboundDeliveryOrders + id + '/' : API.OutboundDeliveryOrders,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function outboundDeliveryOrderDetails(method, id, data = {}) {
+  const obj = {
+    url: id ? API.OutboundDeliveryOrderDetails + id + '/' : API.OutboundDeliveryOrderDetails,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function finalPlanManagement(method, id, data = {}) {
   const obj = {
     url: id ? API.FinalPlanManagement + id + '/' : API.FinalPlanManagement,
@@ -424,6 +492,14 @@ export function materialCount(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function materialInspectionRegistration(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MaterialInspectionRegistration + id + '/' : API.MaterialInspectionRegistration,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 export function inventoryLog(method, id, data = {}) {
   const obj = {
     url: id ? API.InventoryLog + id + '/' : API.InventoryLog,
@@ -432,9 +508,25 @@ export function inventoryLog(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function productInOutHistory(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ProductInOutHistory + id + '/' : API.ProductInOutHistory,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 export function palletTrainsFeedbacks(method, id, data = {}) {
   const obj = {
     url: id ? API.PalletTrainsFeedbacks + id + '/' : API.PalletTrainsFeedbacks,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function productTestedTrains(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ProductTestedTrains + id + '/' : API.ProductTestedTrains,
     method: method
   }
   Object.assign(obj, data)
@@ -465,6 +557,22 @@ export function showQualifiedRange(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function additionalPrintDetail(method, id, data = {}) {
+  const obj = {
+    url: id ? API.AdditionalPrintDetail + id + '/' : API.AdditionalPrintDetail,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function additionalPrint(method, id, data = {}) {
+  const obj = {
+    url: id ? API.AdditionalPrint + id + '/' : API.AdditionalPrint,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 export function trainsFix(method, id, data = {}) {
   const obj = {
     url: id ? API.TrainsFix + id + '/' : API.TrainsFix,
@@ -476,6 +584,14 @@ export function trainsFix(method, id, data = {}) {
 export function palletTrainBatchFix(method, id, data = {}) {
   const obj = {
     url: id ? API.PalletTrainBatchFix + id + '/' : API.PalletTrainBatchFix,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function labelPrintLogs(method, id, data = {}) {
+  const obj = {
+    url: id ? API.LabelPrintLogs + id + '/' : API.LabelPrintLogs,
     method: method
   }
   Object.assign(obj, data)
@@ -574,5 +690,54 @@ export function dealMathodHistory(params) {
     method: 'get',
     params
   })
+}
+
+export function wmsMooneyLevel(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WmsMooneyLevel + id + '/' : API.WmsMooneyLevel,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function clearLevel(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ClearLevel + id + '/' : API.ClearLevel,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function levelBatchSet(method, id, data = {}) {
+  const obj = {
+    url: id ? API.LevelBatchSet + id + '/' : API.LevelBatchSet,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function productRatio(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ProductRatio + id + '/' : API.ProductRatio,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function productMaterials(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ProductMaterials + id + '/' : API.ProductMaterials,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function testedMaterials(method, id, data = {}) {
+  const obj = {
+    url: id ? API.TestedMaterials + id + '/' : API.TestedMaterials,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
 }
 

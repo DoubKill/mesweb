@@ -212,9 +212,17 @@
     <el-dialog
       title="编辑"
       :visible.sync="dialogVisibleEdit"
-      width="300px"
+      width="600px"
     >
-      <el-input-number v-model="allValue" />
+      <el-form label-width="100px">
+        <el-form-item label="检测值">
+          <el-input-number v-model="allValue" />
+        </el-form-item>
+        <el-form-item label="起止车次">
+          <el-input-number v-model="begin_trains" style="width:130px" controls-position="right" :min="1" :max="end_trains" />-
+          <el-input-number v-model="end_trains" style="width:130px" controls-position="right" :min="begin_trains" :max="99999" />
+        </el-form-item>
+      </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisibleEdit = false">取 消</el-button>
         <el-button type="primary" @click="allValueSure">确 定</el-button>
@@ -224,7 +232,7 @@
 </template>
 
 <script>
-import { palletFeedBacksUrl, matTestIndicatorMethods, materialTestOrders, palletTrainsFeedbacks, importMaterialMestMrders, importMaterialTestOrders } from '@/api/base_w'
+import { palletFeedBacksUrl, matTestIndicatorMethods, materialTestOrders, palletTrainsFeedbacks, importMaterialMestMrders, importMaterialTestOrders, productTestValueHistory } from '@/api/base_w'
 import { setDate, deepClone } from '@/utils/index'
 // import planSchedulesSelect from '@/components/PlanSchedulesSelect'
 import equipSelect from '@/components/select_w/equip'
@@ -257,9 +265,13 @@ export default {
       arr: [],
       dialogVisibleEdit: false,
       allValue: undefined,
+      begin_trains: undefined,
+      end_trains: undefined,
       // 当前的 指标点 和 数据点
       current_test_indicator: '',
-      current_data_point_name: ''
+      current_data_point_name: '',
+      history_begin_trains: 0,
+      history_end_trains: 0
     }
   },
   mounted() {
@@ -491,21 +503,76 @@ export default {
     },
     clickValue(test_indicator_name, data_point_name) {
       this.allValue = undefined
+      this.begin_trains = undefined
+      this.end_trains = undefined
       this.dialogVisibleEdit = true
       this.current_test_indicator = test_indicator_name
       this.current_data_point_name = data_point_name
+      this.getDefaultValue()
+    },
+    async getDefaultValue() {
+      try {
+        const obj = Object.assign({ data_point: this.current_data_point_name }, this.search)
+        const data = await productTestValueHistory('get', null, { params: obj })
+        if (data.max_trains) {
+          this.begin_trains = data.max_trains + 1
+        }
+        this.history_begin_trains = data.min_trains || 0
+        this.history_end_trains = data.max_trains || 0
+      } catch (e) {
+        //
+      }
     },
     allValueSure() {
       if (!this.allValue) {
         this.dialogVisibleEdit = false
         return
       }
-      this.tableDataChild.map(D => {
-        D._list[this.current_test_indicator][this.current_data_point_name].value = this.allValue
-        D._filledIn = true
-        return D
-      })
-      this.dialogVisibleEdit = false
+      const all = this.tableDataChild[this.tableDataChild.length - 1].actual_trains
+      const begin_trains = this.begin_trains ? this.begin_trains : 1
+      let end_trains = this.end_trains ? this.end_trains : all
+      if (begin_trains > all) {
+        this.$message('没有该车次')
+        end_trains = begin_trains
+      }
+      let val = ''
+      if (begin_trains >= this.history_begin_trains && end_trains <= this.history_end_trains) {
+        val = begin_trains + '车~' + end_trains + '车'
+      } else if (begin_trains <= this.history_end_trains && begin_trains >= this.history_begin_trains) {
+        val = begin_trains + '车~' + this.history_end_trains + '车'
+      } else if (end_trains <= this.history_end_trains && end_trains >= this.history_begin_trains) {
+        val = this.history_begin_trains + '车~' + end_trains + '车'
+      }
+      if (val) {
+        this.$confirm(`${val}已设定检测值, 是否覆盖？`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.tableDataChild.map(D => {
+            if (D.actual_trains <= end_trains && D.actual_trains >= begin_trains) {
+              D._list[this.current_test_indicator][this.current_data_point_name].value = this.allValue
+              D._filledIn = true
+              return D
+            } else {
+              return D
+            }
+          })
+          this.dialogVisibleEdit = false
+        }).catch(() => {
+        })
+      } else {
+        this.tableDataChild.map(D => {
+          if (D.actual_trains <= end_trains && D.actual_trains >= begin_trains) {
+            D._list[this.current_test_indicator][this.current_data_point_name].value = this.allValue
+            D._filledIn = true
+            return D
+          } else {
+            return D
+          }
+        })
+        this.dialogVisibleEdit = false
+      }
     },
     async submitTable() {
       const arr = []

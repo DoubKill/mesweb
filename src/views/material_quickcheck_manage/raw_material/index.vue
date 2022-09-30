@@ -51,6 +51,48 @@
           @change="materialCreateTimeshandleFilter"
         />
       </el-form-item>
+      <el-form-item label="是否已处理">
+        <el-select
+          v-model="listQuery.deal_status"
+          clearable
+          placeholder="请选择"
+          @change="handleFilter"
+        >
+          <el-option
+            v-for="item in [
+              { name: '已处理', value: '已处理' },
+              { name: '未处理', value: '未处理' },
+            ]"
+            :key="item.name"
+            :label="item.name"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="处理结果">
+        <el-select
+          v-model="listQuery.deal_result"
+          clearable
+          placeholder="请选择"
+          @change="handleFilter"
+        >
+          <el-option
+            v-for="item in [
+              { name: '放行', value: '放行' },
+              { name: '不放行', value: '不放行' },
+            ]"
+            :key="item.name"
+            :label="item.name"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button
+          type="primary"
+          @click="submitForm"
+        >不合格品批量处理</el-button>
+      </el-form-item>
       <!--
       <el-form-item label="检测日期">
         <el-date-picker
@@ -99,13 +141,22 @@
       </el-form-item> -->
     </el-form>
     <el-table
+      ref="multipleTable"
       v-loading="listLoading"
       :data="materialList"
       border
       fit
+      row-key="id"
       highlight-current-row
       style="width: 100%"
+      @selection-change="handleSelectionChange"
     >
+      <el-table-column
+        type="selection"
+        width="40"
+        :reserve-selection="true"
+        :selectable="selectableFun"
+      />
       <el-table-column label="检测信息" width="70" type="expand" align="center">
         <template slot-scope="props">
           <el-table
@@ -192,9 +243,9 @@
         </template>
       </el-table-column>
       <el-table-column label="样品名称" prop="sample_name" align="center" />
-      <el-table-column label="批次" prop="batch" align="center">
+      <el-table-column width="100" label="批次" prop="batch" align="center">
         <template slot-scope="{row}">
-          <span v-if="row.qualified">{{ row.name }}</span>
+          <span v-if="row.qualified">{{ row.batch }}</span>
           <el-link v-else type="primary" @click="unqualifiedFun(row, false)">{{ row.batch }}</el-link>
         </template>
       </el-table-column>
@@ -208,13 +259,37 @@
       </el-table-column>
       <el-table-column
         label="记录时间"
-        width="160"
+        width="150"
         prop="create_time"
         align="center"
       />
-      <el-table-column width="230" label="操作" align="center">
+      <el-table-column
+        label="处理结果"
+        width="70"
+        prop="deal_result"
+        align="center"
+      />
+      <el-table-column
+        label="处理说明"
+        width="160"
+        prop="desc"
+        align="center"
+      />
+      <el-table-column
+        label="记录人"
+        width="70"
+        prop="deal_username"
+        align="center"
+      />
+      <el-table-column
+        label="处理时间"
+        width="150"
+        prop="deal_time"
+        align="center"
+      />
+      <el-table-column width="110" label="操作" align="center">
         <template slot-scope="scope">
-          <el-button size="mini" :disabled="scope.row.qualified" @click="unqualifiedFun(scope.row,true)">不合格处理</el-button>
+          <el-button size="mini" :disabled="scope.row.qualified||scope.row.deal_status === '已处理'" @click="unqualifiedFun(scope.row,true)">不合格处理</el-button>
           <!-- <el-button size="mini" :disabled="scope.row.qualified" @click="downloadFun(scope.row)">下载不合格单</el-button> -->
         </template>
       </el-table-column>
@@ -246,7 +321,7 @@
           {{ unqualifiedObj.material_data.supplier }}
         </el-form-item>
         <el-form-item label="抽检人">
-          {{ unqualifiedObj.material_data.supplier }}
+          {{ unqualifiedObj.material_data.sampling_username }}
         </el-form-item>
         <el-form-item label="检测日期">
           {{ unqualifiedObj.material_data.examine_date }}
@@ -267,10 +342,23 @@
           </el-form-item>
           <div style="width:100%;height:0.5px;background:#DCDFE6;margin-bottom:25px" />
         </div>
-        <el-form-item label="处理方式">
+        <el-form-item label="处理结果">
+          <el-radio v-model="unqualifiedObj.material_data.deal_result" :disabled="!unqualifiedObj.boolOperate" label="放行">放行</el-radio>
+          <el-radio v-model="unqualifiedObj.material_data.deal_result" :disabled="!unqualifiedObj.boolOperate" label="不放行">不放行</el-radio>
+        </el-form-item>
+        <el-form-item label="处理说明">
+          <el-input
+            v-model="unqualifiedObj.material_data.desc"
+            type="textarea"
+            :rows="3"
+            :disabled="!unqualifiedObj.boolOperate"
+            placeholder="请输入内容"
+          />
+        </el-form-item>
+        <!-- <el-form-item label="处理方式">
           <span v-if="!unqualifiedObj.boolOperate" class="fontWeight">{{ unqualifiedObj.mode.mode }}</span>
           <el-input v-else v-model="unqualifiedObj.mode.mode" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item v-if="!unqualifiedObj.boolOperate" label="经办人">
           <span class="fontWeight">{{ unqualifiedObj.mode.created_username }}</span>
         </el-form-item>
@@ -302,6 +390,32 @@
       />
       <div id="yieldLine" style="width: 100%;height:400px" />
     </el-dialog>
+
+    <el-dialog
+      title="不合格原材料 批量处理"
+      :visible.sync="dialogVisible2"
+      width="600px"
+      :before-close="handleClose2"
+    >
+      <el-form ref="formBatch" :model="formBatch" label-width="80px">
+        <el-form-item label="处理结果">
+          <el-radio v-model="formBatch.deal_result" label="放行">放行</el-radio>
+          <el-radio v-model="formBatch.deal_result" label="不放行">不放行</el-radio>
+        </el-form-item>
+        <el-form-item label="处理说明">
+          <el-input
+            v-model="formBatch.desc"
+            type="textarea"
+            :rows="3"
+            placeholder="请输入内容"
+          />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleClose2(false)">取 消</el-button>
+        <el-button type="primary" :loading="btnDealLoading" @click="submitBatch">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -309,7 +423,8 @@
 import page from '@/components/page'
 import * as echarts from 'echarts'
 import { setDate } from '@/utils'
-import { examineMaterial, materialUnqualifiedTypes, materialUnqualifiedProcess, materialExamineResultCurve } from '@/api/material-check'
+// materialUnqualifiedProcess
+import { examineMaterial, materialUnqualifiedTypes, materialExamineResultCurve, disqualification } from '@/api/material-check'
 // import testTypeSelect from '../components/test-type-select'
 
 export default {
@@ -374,7 +489,10 @@ export default {
           name: '值'
         },
         series: []
-      }
+      },
+      dialogVisible2: false,
+      formBatch: { deal_result: '不放行' },
+      multipleTableArr: []
     }
   },
 
@@ -407,7 +525,6 @@ export default {
       }).catch(() => { this.listLoading = false })
     },
     getExamineValueByName(results, type) {
-      console.log(results, 'results')
       if (!results) {
         return ''
       }
@@ -443,6 +560,9 @@ export default {
         this.unqualifiedObj = data
         this.unqualifiedObj.boolOperate = bool
         this.unqualifiedLoading = false
+        if (bool && !this.unqualifiedObj.material_data.deal_result) {
+          this.unqualifiedObj.material_data.deal_result = '不放行'
+        }
       } catch (e) { this.unqualifiedLoading = false }
     },
     downloadFun() {},
@@ -458,11 +578,23 @@ export default {
       this.getExamineMaterial()
     },
     async submitDeal() {
+      if (!this.unqualifiedObj.material_data.deal_result) {
+        this.$message.info('请选择处理结果')
+        return
+      }
       try {
+        const obj = {
+          material_ids: [this.unqualifiedObj.material_data.id],
+          desc: this.unqualifiedObj.material_data.desc,
+          deal_result: this.unqualifiedObj.material_data.deal_result
+        }
+
         this.btnDealLoading = true
-        await materialUnqualifiedProcess('post', null, { data: { mode: this.unqualifiedObj.mode.mode, material: this.unqualifiedObj.material_data.id }})
+        await disqualification('post', null, { data: obj })
+        this.$message.success('提交成功')
         this.btnDealLoading = false
         this.dialogVisible = false
+        this.getExamineMaterial()
       } catch (e) {
         this.btnDealLoading = false
       }
@@ -494,6 +626,54 @@ export default {
     handleClose1(done) {
       if (done) {
         done()
+      }
+    },
+    selectableFun(row) {
+      if (row.deal_status === '已处理' || row.qualified) {
+        return false
+      }
+      return true
+    },
+    handleSelectionChange(arr) {
+      this.multipleTableArr = arr
+    },
+    submitForm() {
+      if (!this.multipleTableArr.length) {
+        this.$message.info('请选择不合格品')
+        return
+      }
+      this.dialogVisible2 = true
+    },
+    handleClose2(done) {
+      this.dialogVisible2 = false
+      if (this.$refs.multipleTable) {
+        this.$refs.multipleTable.clearSelection()
+      }
+      this.formBatch = { deal_result: '不放行' }
+      if (done) {
+        done()
+      }
+    },
+    async submitBatch() {
+      try {
+        const arr = []
+        this.multipleTableArr.forEach(d => {
+          arr.push(d.id)
+        })
+        const obj = {
+          material_ids: arr,
+          desc: this.formBatch.desc,
+          deal_result: this.formBatch.deal_result
+        }
+        this.btnDealLoading = true
+        await disqualification('post', null, { data: obj })
+        this.$message.success('提交成功')
+        this.handleClose2(false)
+        this.btnDealLoading = false
+        this.getExamineMaterial()
+        this.multipleTableArr = []
+      } catch (e) {
+        this.btnDealLoading = false
       }
     }
   }

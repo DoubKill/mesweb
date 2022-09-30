@@ -3,8 +3,11 @@
     <!-- 机台下拉框 设备编码-->
     <el-select
       v-model="_equip_no"
-      :clearable="!isCreated"
+      :clearable="!isCreated||isClear"
       placeholder="请选择机台"
+      :multiple="isMultiple"
+      :disabled="disabled"
+      :multiple-limit="multipleLimit"
       @change="changeSearch"
       @visible-change="visibleChange"
     >
@@ -24,11 +27,27 @@ export default {
   props: {
     // eslint-disable-next-line vue/prop-name-casing
     equip_no_props: {
-      type: String,
+      type: [String, Array],
       default: null
+    },
+    isObj: {
+      type: Boolean,
+      default: false
+    },
+    isMultiple: {
+      type: Boolean,
+      default: false
     },
     // 在created里面加载，并默认选中第一个
     isCreated: {
+      type: Boolean,
+      default: false
+    },
+    isClear: {
+      type: Boolean,
+      default: false
+    },
+    disabled: {
       type: Boolean,
       default: false
     },
@@ -36,6 +55,10 @@ export default {
     equipType: {
       type: String,
       default: '密炼设备'
+    },
+    multipleLimit: {
+      type: Number,
+      default: 0
     }
   },
   data() {
@@ -65,16 +88,26 @@ export default {
         .then(function(response) {
           _this.machineList = response.results || []
           if (_this.isCreated) {
+            if (_this.$route.path === '/alone/material_base_info_manage/') {
+              _this.changeSearch(_this.$route.query.equip)
+              return
+            }
             _this.changeSearch(_this.machineList[0].equip_no)
           }
         })
         .catch(function() { })
     },
     changeSearch(id) {
+      if (this.isObj) {
+        const obj = this.machineList.find(d => d.equip_no === id)
+        this.$emit('changeSearch', obj)
+        return
+      }
+      this._equip_no = id
       this.$emit('changeSearch', id)
     },
     visibleChange(bool) {
-      if (bool && this.machineList.length === 0 && !this.isCreated) {
+      if (bool && !this.isCreated) {
         this.getMachineList()
       }
     }

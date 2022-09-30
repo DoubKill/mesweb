@@ -129,7 +129,7 @@
       <el-table-column
         prop="equip_no"
         label="生产机号"
-        min-width="20"
+        min-width="10"
       />
       <el-table-column
         prop="production_group"
@@ -142,16 +142,29 @@
       <el-table-column
         prop="product_no"
         label="胶料规格"
-        min-width="20"
+        min-width="29"
       />
+      <el-table-column
+        label="是否复测"
+        min-width="15"
+      >
+        <template slot-scope="scope">
+          <el-link
+            v-if="scope.row.is_recheck"
+            type="primary"
+            @click="retestDialog(scope.row)"
+          >{{ '复测' }}</el-link>
+          <!-- <span v-else>否</span> -->
+        </template>
+      </el-table-column>
       <el-table-column
         prop="actual_trains"
         label="车次"
-        min-width="20"
+        min-width="10"
       />
       <el-table-column
         label="状态"
-        min-width="20"
+        min-width="18"
         :formatter="(row)=>{
           let obj = statusList[row.status]
           return obj
@@ -160,17 +173,17 @@
       <el-table-column
         prop="lot_no"
         label="收皮条码"
-        min-width="20"
+        min-width="30"
       />
       <el-table-column
         prop="test_equip"
         label="检测机台"
-        min-width="20"
+        min-width="10"
       />
       <el-table-column
         prop="plan_uid"
         label="检测计划编号"
-        min-width="20"
+        min-width="25"
       />
       <el-table-column
         prop="test_method_name"
@@ -180,18 +193,22 @@
       <el-table-column
         prop="test_times"
         label="实验次数"
-        min-width="20"
+        min-width="10"
       />
       <el-table-column
         prop="test_interval"
         label="实验间隔"
-        min-width="20"
+        min-width="10"
       />
       <el-table-column
-        prop="values"
+        prop="value"
         label="检测值"
-        min-width="20"
-      />
+        min-width="50"
+      >
+        <template v-if="row.value" slot-scope="{row}">
+          <span v-for="item in JSON.parse(row.value)" :key="item.name" :style="{'color':item.flag==='H'?'red':item.flag==='L'?'blue':''}">{{ item.name }}:{{ item.value }};</span>
+        </template>
+      </el-table-column>
       <el-table-column
         prop="test_user"
         label="检测人员"
@@ -203,10 +220,11 @@
         min-width="20"
       />
       <el-table-column
+        v-if="['物性','钢拔'].includes(search.test_indicator_name)"
         label="查看绑定"
         width="70"
       >
-        <template v-if="['物性','钢拔'].includes(row.test_indicator_name)" slot-scope="{row}">
+        <template slot-scope="{row}">
           <el-button size="mini" type="primary" @click="showTestData(row)">查看</el-button>
         </template>
       </el-table-column>
@@ -431,6 +449,119 @@
         <el-button @click="dialogVisible = false">关闭</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      title="检测履历"
+      :visible.sync="dialogVisible1"
+      width="90%"
+    >
+      <el-table
+        v-loading="loading1"
+        :data="tableData1"
+        border
+        style="width: 100%"
+      >
+        <el-table-column
+          prop="factory_date"
+          label="生产日期"
+          min-width="20"
+        />
+        <el-table-column
+          prop="equip_no"
+          label="生产机号"
+          min-width="10"
+        />
+        <el-table-column
+          label="生产班组"
+          min-width="20"
+          :formatter="(row)=>{
+            return row.production_classes+'/'+row.production_group
+          }"
+        />
+        <el-table-column
+          prop="product_no"
+          label="胶料规格"
+          min-width="29"
+        />
+        <el-table-column
+          prop="actual_trains"
+          label="车次"
+          min-width="10"
+        />
+        <el-table-column
+          label="状态"
+          min-width="18"
+          :formatter="(row)=>{
+            let obj = statusList[row.status]
+            return obj
+          }"
+        />
+        <el-table-column
+          prop="lot_no"
+          label="收皮条码"
+          min-width="30"
+        />
+        <el-table-column
+          prop="test_equip"
+          label="检测机台"
+          min-width="10"
+        />
+        <el-table-column
+          prop="plan_uid"
+          label="检测计划编号"
+          min-width="25"
+        />
+        <el-table-column
+          prop="test_method_name"
+          label="实验方法"
+          min-width="20"
+        />
+        <el-table-column
+          prop="test_times"
+          label="实验次数"
+          min-width="10"
+        />
+        <el-table-column
+          prop="test_interval"
+          label="实验间隔"
+          min-width="10"
+        />
+        <el-table-column
+          prop="value"
+          label="检测值"
+          min-width="50"
+        >
+          <template v-if="row.value" slot-scope="{row}">
+            {{ row.value.replace(/{|}|'/g,"") }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="test_user"
+          label="检测人员"
+          min-width="20"
+        />
+        <el-table-column
+          prop="test_time"
+          label="检测时间"
+          min-width="20"
+        />
+        <!-- <el-table-column
+          v-if="['物性','钢拔'].includes(search.test_indicator_name)"
+          label="查看绑定"
+          width="70"
+        >
+          <template slot-scope="{row}">
+            <el-button size="mini" type="primary" @click="showTestData(row)">查看</el-button>
+          </template>
+        </el-table-column> -->
+      </el-table>
+      <page
+        :old-page="false"
+        :total="total1"
+        :current-page="page1"
+        @currentChange="currentChange1"
+      />
+    </el-dialog>
   </div>
 </template>
 
@@ -464,7 +595,13 @@ export default {
       tableDataValue: [],
       test_indicator_name: '',
       ruleForm: {},
-      tableDataValueLoading: false
+      tableDataValueLoading: false,
+      dialogVisible1: false,
+      loading1: false,
+      tableData1: [],
+      total1: 0,
+      page1: 1,
+      page_size1: 10
     }
   },
   created() {
@@ -572,6 +709,7 @@ export default {
         const data = await rubberMaxStretchTestResult('get', null, { params: { product_test_plan_detail_id: id }})
         this.tableDataValue = data.results || []
         this.tableDataValueLoading = false
+
         if (this.tableDataValue.length > 0) {
           this.tableDataValue.push({
             ordering: this.search.test_indicator_name === '物性' ? '平均值' : 'Mid',
@@ -589,6 +727,28 @@ export default {
         this.tableDataValue = []
         this.tableDataValueLoading = false
       }
+    },
+    retestDialog(row) {
+      this.currentObj = row
+      this.dialogVisible1 = true
+      this.getRetestList()
+    },
+    async getRetestList() {
+      try {
+        this.loading1 = true
+        const data = await productTestResume('get', null, { params: { page: this.page1, page_size: this.page_size1, lot_no: this.currentObj.lot_no, test_indicator_name: this.currentObj.test_indicator_name }})
+        this.tableData1 = data.results
+        this.loading1 = false
+        this.total1 = data.count
+      } catch (e) {
+        this.tableData1 = []
+        this.loading1 = false
+      }
+    },
+    currentChange1(page, page_size) {
+      this.page1 = page
+      this.page_size1 = page_size
+      this.getRetestList()
     }
   }
 }

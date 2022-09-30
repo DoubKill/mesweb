@@ -120,6 +120,15 @@ export function batchChargeLogList(method, id, data = {}) {
   return request(obj)
 }
 
+export function batchScanLog(method, id, data = {}) {
+  const obj = {
+    url: id ? API.BatchScanLog + id + '/' : API.BatchScanLog,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function equipTank(method, id, data = {}) {
   const obj = {
     url: id ? API.EquipTank + id + '/' : API.EquipTank,
@@ -162,12 +171,28 @@ export function zcMaterials(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function zcMaterialsThoughMes(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ZcMaterialsThoughMes + id + '/' : API.ZcMaterialsThoughMes,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 
 export function weightingPackageLog(method, id, data = {}, aaa) {
   const obj = {
     url: id ? API.WeightingPackageLog + id + '/' : API.WeightingPackageLog,
     method: method,
     cancelToken: aaa
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function manualPost(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ManualPost + id + '/' : API.ManualPost,
+    method: method
   }
   Object.assign(obj, data)
   return request(obj)
@@ -276,6 +301,15 @@ export function platformConfig(method, id, data = {}) {
 export function EquipMaintenanceOrderLog(method, id, data = {}) {
   const obj = {
     url: id ? API.EquipMaintenanceOrderLog + id + '/' : API.EquipMaintenanceOrderLog,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function userOperationLog(method, id, data = {}) {
+  const obj = {
+    url: id ? API.UserOperationLog + id + '/' : API.UserOperationLog,
     method: method
   }
   Object.assign(obj, data)

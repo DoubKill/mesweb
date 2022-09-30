@@ -29,6 +29,10 @@ export default {
     defaultVal: {
       type: [Array, String, Number],
       default: null
+    },
+    obj: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -62,6 +66,11 @@ export default {
       }
     },
     changeSelect(val) {
+      if (this.obj) {
+        const arr = this.options.filter(D => D.id === val)
+        this.$emit('changeSelect', arr.length > 0 ? arr[0] : null)
+        return
+      }
       this.$emit('changeSelect', val)
     }
   }

@@ -1,0 +1,531 @@
+<template>
+  <div v-loading="loading" class="app-container rubber_repertory_manage-dialog">
+    <!-- 库位列表 混炼终练使用-->
+    <el-form :inline="true">
+      <el-form-item label="仓库名称">
+        {{ warehouseName }}
+      </el-form-item>
+      <el-form-item label="有效期状态">
+        <el-select
+          v-model="getParams.yx_state"
+          placeholder="请选择"
+          clearable
+          @change="changeSearch"
+        >
+          <el-option
+            v-for="(item,key) in [{name:'已超期',id:'expired'},{name:'超期预警',id:'warning'},{name:'正常',id:'normal'}]"
+            :key="key"
+            :label="item.name"
+            :value="item.id"
+          />
+        </el-select>
+      </el-form-item>
+      <!-- <el-form-item label="库存位">
+        <el-input v-model="getParams.location" @input="changeSearch" />
+      </el-form-item> -->
+      <!-- <el-form-item label="托盘号">
+        <el-input v-model="getParams.container_no" clearable @input="changeSearch" />
+      </el-form-item>
+      <el-form-item label="质检条码">
+        <el-input v-model="getParams.lot_no" clearable @input="changeSearchLotNo" />
+      </el-form-item> -->
+      <!-- <el-form-item label="巷道">
+        <el-input v-model="getParams.tunnel" @input="changeSearchTunnel" />
+      </el-form-item> -->
+      <!-- <el-form-item label="lot_no有无">
+        <el-select
+          v-model="getParams.lot_existed"
+          placeholder="请选择"
+          clearable
+          @change="changeSearch"
+        >
+          <el-option
+            v-for="(item,key) in [{name:'有',id:1},{name:'无',id:0}]"
+            :key="key"
+            :label="item.name"
+            :value="item.id"
+          />
+        </el-select>
+      </el-form-item> -->
+      <!-- <el-form-item v-if="warehouseName ==='混炼胶库'" label="出库口">
+        <stationInfoWarehouse
+          :warehouse-name="warehouseName"
+          :assign-type="true"
+          :created-is="false"
+          :options-list="optionsList"
+          :is-clear="true"
+          :default-val="station_no"
+          @changSelect="selectStation"
+        />
+      </el-form-item> -->
+      <el-form-item label="出库口选择" style="float:right">
+        <el-select
+          v-model="entrance_name"
+          placeholder="请选择"
+          style="margin-right:10px"
+          @visible-change="getWarehouseSelectPosition"
+          @change="changeEntrance"
+        >
+          <el-option
+            v-for="item in optionsList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.name"
+          />
+        </el-select>
+        <el-button
+          v-permission="['product_inventory','outbound']"
+          type="primary"
+          :disabled="btnLoading"
+          @click="confirmDelivery"
+        >确定出库</el-button>
+        <el-button
+          type="primary"
+          :disabled="btnLoading"
+          @click="exportTable(1)"
+        >导出当前页面</el-button>
+        <el-button
+          type="primary"
+          :disabled="btnLoading"
+          @click="exportTable(2)"
+        >导出所有</el-button>
+      </el-form-item>
+    </el-form>
+    <el-table
+      ref="multipleTable"
+      border
+      style="width: 100%"
+      :data="tableData"
+      row-key="id"
+      :row-class-name="rowClassNameFn"
+      @selection-change="handleSelectionChange"
+    >
+      <el-table-column
+        type="selection"
+        width="40"
+        :reserve-selection="true"
+        :selectable="(row)=>{
+          if(row.locked_status===1||row.locked_status===2||row.locked_status===3)return false
+          if(row.location_status==='有货货位'){
+            if(warehouseName === '混炼胶库'&&row.location){
+              if(entrance_name==='一层后端')return false
+              if(entrance_name==='二层后端')return true
+              let firstVal = (row.location).substr(0,1)
+              if(entrance_name==='一层前端'&&(firstVal==='3'||firstVal==='4')){
+                return true
+              }else if(entrance_name==='二层前端'&&(firstVal==='1'||firstVal==='2')){
+                return true
+              }else{
+                return false
+              }
+            }
+            return true
+          }else{
+            return false
+          }
+        }"
+      />
+      <el-table-column :key="1" label="物料类型" align="center" prop="material_type" min-width="40" />
+      <el-table-column :key="2" label="物料编码" align="center" prop="material_no" />
+      <el-table-column :key="4" label="lot" align="center" prop="lot_no" />
+      <el-table-column :key="5" label="托盘号" align="center" prop="container_no" min-width="50" />
+      <el-table-column :key="6" label="库存位" align="center" prop="location" min-width="50" />
+      <el-table-column
+        :key="7"
+        min-width="40"
+        label="车数"
+        align="center"
+        prop=""
+      >
+        <template slot-scope="{row}">
+          {{ row.qty }}
+        </template>
+      </el-table-column>
+      <el-table-column :key="17" label="总重量" align="center" prop="total_weight" min-width="50" />
+      <el-table-column
+        :key="8"
+        label="品质状态"
+        align="center"
+        min-width="50"
+      >
+        <template slot-scope="{row}">
+          <span>{{ row.quality_level }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :key="15" label="处理意见" align="center" prop="deal_suggestion" />
+      <el-table-column :key="9" label="入库时间" align="center" prop="in_storage_time" />
+      <el-table-column :key="10" label="机台号" width="60" align="center" prop="equip_no" />
+      <!-- <el-table-column
+        :key="18"
+        min-width="40"
+        label="计划车数"
+        align="center"
+        :formatter="(row)=>{
+          if(!row.qty){
+            return
+          }
+          let a = Number(row.qty)
+          return a.toFixed(0)
+        }"
+      /> -->
+      <!-- <el-table-column
+        v-if="['终炼胶库'].includes($route.meta.title)"
+        :key="12"
+        label="车次"
+        min-width="40"
+        align="center"
+        prop="memo"
+        :formatter="(row)=>{
+          if(!row.memo){
+            return
+          }
+          return row.memo.replace(',','-')
+        }"
+      /> -->
+      <el-table-column :key="11" label="车号" align="center" prop="memo" min-width="40" />
+      <el-table-column :key="13" label="货位状态" align="center" prop="location_status" min-width="40" />
+      <el-table-column :key="18" label="锁定状态" width="70">
+        <template v-if="row.locked_status" slot-scope="{row}">
+          {{ row.locked_status===1?'工艺锁定':row.locked_status===2?'快检锁定':'工艺/快检锁定' }}
+        </template>
+      </el-table-column>
+      <el-table-column :key="14" label="操作" align="center" min-width="40">
+        <template slot-scope="scope">
+          <el-button
+            v-if="!scope.row.all"
+            size="mini"
+            type="primary"
+            :disabled="!['一等品','三等品'].includes(scope.row.quality_level)"
+            @click="viewFun(scope.row)"
+          >查看</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <page
+      :total="total"
+      :current-page="getParams.page"
+      @currentChange="currentChange"
+    />
+    <el-alert style="color:black" title="表格字体颜色说明：浅红色-超期预警，红色-已超期。" type="success" />
+    <el-dialog
+      title="快检信息"
+      :visible.sync="dialogVisible"
+      width="90%"
+      append-to-body
+    >
+      <detailsDialog
+        :is-props="true"
+        :show="dialogVisible"
+        :lot-no="lotNo"
+      />
+    </el-dialog>
+  </div>
+</template>
+
+<script>
+import { bzMixinInventory, bzFinalInventory,
+  bzMixinInventoryDown, bzFinalInventoryDown } from '@/api/material-inventory-manage'
+import page from '@/components/page'
+// import stationInfoWarehouse from '@/components/select_w/warehouseSelectPosition'
+// import receiveList from '../material-outgoing/receive-list.vue'
+// import EquipSelect from '@/components/EquipSelect'
+// import materialCodeSelect from '@/components/select_w/materialCodeSelect'
+import { debounce } from '@/utils'
+import detailsDialog from '@/views/quality_management/details.vue'
+import { stationInfo, productStockOutbound } from '@/api/warehouse'
+// import materialInventoryManage from '@/views/inventory/rubber-warehouse/material-inventory-manage.vue'
+export default {
+  name: 'GenerateAssignOutbound1',
+  components: { page, detailsDialog },
+  props: {
+    warehouseName: {
+      type: String,
+      default: ''
+    },
+    warehouseInfo: {
+      type: Number,
+      default: null
+    },
+    qualityStatus: {
+      type: String,
+      default: null
+    },
+    materialNo: {
+      type: String,
+      default: null
+    },
+    locationStatus: {
+      type: String,
+      default: null
+    },
+    show: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data() {
+    return {
+      tableData: [],
+      getParams: {
+        page: 1,
+        location_status: this.locationStatus,
+        container_no: '', // 托盘号
+        station_no: '', // 出库口
+        quality_status: this.qualityStatus,
+        material_no: this.materialNo,
+        warehouse_name: this.warehouseName // 仓库名称
+      },
+      currentPage: 1,
+      total: 0,
+      options: ['一等品', '三等品', '待检品'],
+      loading: false,
+      multipleSelection: [],
+      loadingBtn: false,
+      dialogVisible: false,
+      material_no_current: '',
+      currentIndex: null,
+      handleSelection: [],
+      optionsList: [],
+      equipArr: '',
+      station: '',
+      station_no: '',
+      dispatch: '',
+      containerNo: '',
+      lotNo: '',
+      btnLoading: false,
+      entrance_name: '',
+      multipleArr: []
+    }
+  },
+  computed: {
+  },
+  watch: {
+    show(bool) {
+      if (bool) {
+        this.tableData = []
+        this.getParams = {
+          page: 1,
+          location_status: this.locationStatus,
+          container_no: '', // 托盘号
+          station_no: '', // 出库口
+          quality_status: this.qualityStatus,
+          material_no: this.materialNo,
+          warehouse_name: this.warehouseName // 仓库名称
+        }
+        this.getTableData()
+      }
+    }
+  },
+  created() {
+    this.getTableData()
+  },
+  methods: {
+    getTableData() {
+      this.loading = true
+      this.entrance_name = null
+      const _api = this.warehouseName === '混炼胶库' ? bzMixinInventory : bzFinalInventory
+      _api(this.getParams)
+        .then(response => {
+          this.tableData = response.results
+          this.total = response.count
+
+          this.tableData.push({
+            all: 2,
+            material_type: '单页合计',
+            qty: sum(this.tableData, 'qty'),
+            total_weight: sum(this.tableData, 'total_weight')
+          }, {
+            all: 1,
+            material_type: '汇总',
+            qty: response.total_trains,
+            total_weight: response.total_weight
+          })
+
+          this.loading = false
+        }).catch(() => {
+          this.loading = false
+        })
+    },
+    async getWarehouseSelectPosition(bool) {
+      if (!bool) return
+      try {
+        if (!this.warehouseName) {
+          this.optionsList = []
+          return
+        }
+        const _api = stationInfo
+        const data = await _api({ all: 1, warehouse_name: this.warehouseName })
+        this.optionsList = data || []
+      } catch (e) {
+        //
+      }
+    },
+    currentChange(page) {
+      this.currentPage = page
+      this.getParams.page = page
+      this.getTableData()
+    },
+    changeSearch() {
+      this.getParams.page = 1
+      this.getTableData()
+    },
+    quality_statusSearch() {
+      this.getParams.material_no = ''
+      this.getParams.page = 1
+      this.getTableData()
+    },
+    changeSearchTunnel() {
+      debounce(this, 'changeSearch')
+    },
+    changeSearchLotNo() {
+      debounce(this, 'changeSearch')
+    },
+    changeMaterialType(data) {
+      this.getParams.material_type = data
+      this.getParams.page = 1
+      this.getTableData()
+    },
+    warehouseSelect(val) {
+      this.getParams.page = 1
+      this.getParams.warehouse_name = val
+      this.getTableData()
+    },
+    creadVal() {
+      this.$refs.multipleTable.clearSelection()
+      this.loadingBtn = false
+      this.multipleSelection = []
+      this.handleSelection = []
+      this.tableData.forEach(D => {
+        D.equipNoArr = null
+        D.station = null
+        D.station_no = null
+      })
+      this.equipArr = []
+      this.station_no = ''
+      this.station = ''
+      this.getParams = {
+        page: 1,
+        material_type: '',
+        material_no: '',
+        container_no: '',
+        station_no: '',
+        warehouse_name: this.warehouseName
+      }
+    },
+    viewFun(row) {
+      this.dialogVisible = true
+      // this.containerNo = row.container_no
+      this.lotNo = row.lot_no
+    },
+    selectStation(obj, index) {
+      this.getParams.station = obj ? obj.name : ''
+      this.station = obj ? obj.name : ''
+      this.station_no = obj ? obj.id : ''
+
+      if (this.warehouseName === '混炼胶库') {
+        // 过滤列表
+        this.changeSearch()
+        this.$refs.multipleTable.clearSelection()
+        this.multipleSelection = []
+        this.handleSelection = []
+      }
+    },
+    handleSelectionChange(arr) {
+      this.multipleArr = arr
+    },
+    changeEntrance() {
+      this.$refs.multipleTable.clearSelection()
+    },
+    async confirmDelivery() {
+      if (!this.entrance_name || !this.multipleArr.length) {
+        this.$message('请选择出库口和库位')
+        return
+      }
+      const arr = []
+      this.multipleArr.forEach(d => {
+        arr.push({
+          'inventory_time': d.in_storage_time,
+          'location': d.location,
+          'lot_no': d.lot_no,
+          'memo': d.memo,
+          'pallet_no': d.container_no,
+          'qty': d.qty,
+          'quality_status': d.quality_level,
+          'weight': d.total_weight
+        })
+      })
+      const obj = {
+        product_no: this.multipleArr[0].material_no,
+        quality_status: this.multipleArr[0].quality_level,
+        station: this.entrance_name,
+        warehouse: this.warehouseName,
+        stock_data: arr
+      }
+      try {
+        await productStockOutbound('post', null, obj)
+        this.$message.success('出库成功')
+        this.multipleArr = []
+        this.$refs.multipleTable.clearSelection()
+        this.getTableData()
+      } catch (e) {
+        //
+      }
+    },
+    rowClassNameFn({ row, rowIndex }) {
+      if (row.all) {
+        return 'summary-cell-style'
+      }
+      if (row.yx_state === 'expired') {
+        return 'deepred-cell-style'
+      } else if (row.yx_state === 'warning') {
+        return 'red-cell-style'
+      }
+    },
+    exportTable(val) {
+      this.btnLoading = true
+      const obj = Object.assign({ export: val }, this.getParams)
+      const _api = this.warehouseName === '混炼胶库' ? bzMixinInventoryDown : bzFinalInventoryDown
+      _api(obj)
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '车间库存统计.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnLoading = false
+        }).catch(e => {
+          this.btnLoading = false
+        })
+    }
+  }
+}
+function sum(arr, params) {
+  var s = 0
+
+  arr.forEach(function(val, idx, arr) {
+    const a = val[params] ? Number(val[params]) : 0
+    s += a
+  }, 0)
+  s = Math.round(s * 1000) / 1000
+  return s
+}
+</script>
+<style lang="scss">
+.rubber_repertory_manage-dialog{
+  .dialog-footer{
+    width:100%;
+    text-align: right;
+  }
+  .red-cell-style{
+    background: rgb(225, 148, 157);
+    color:#000;
+  }
+  .deepred-cell-style{
+    background: red;
+    color:#000;
+  }
+}
+</style>

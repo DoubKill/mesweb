@@ -21,6 +21,7 @@
           v-model="getParams.is_active"
           clearable
           placeholder="请选择"
+          style="width:150px"
           @change="numChanged"
         >
           <el-option
@@ -31,11 +32,53 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="部门">
+        <el-select
+          v-model="getParams.section_id"
+          clearable
+          placeholder="请选择部门"
+          @change="numChanged"
+        >
+          <el-option
+            v-for="item in sectionPick"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-checkbox v-model="getParams.checked" @change="numChanged">按修改日期排序</el-checkbox>
+      </el-form-item>
+      <el-form-item v-if="is_superuser==='true'">
+        <el-checkbox v-model="getParams.is_superuser" @change="numChanged">只显示系统管理员</el-checkbox>
+      </el-form-item>
       <el-form-item
         v-if="permissionObj.user.indexOf('add')>-1"
         style="float: right"
       >
         <el-button @click="showCreateUserDialog">新建</el-button>
+      </el-form-item>
+      <el-form-item style="float:right">
+        <el-button type="primary" :loading="btnExportLoad" @click="templateDownload">导出Excel</el-button>
+        <el-button
+          v-permission="['user','import']"
+        >
+          <a
+            :href="`${templateFileUrl}user.xlsx`"
+            download="用户管理导入模板.xlsx"
+          >导出Excel模板</a>
+        </el-button>
+        <el-upload
+          v-permission="['user','import']"
+          style="margin-left:8px;display:inline-block"
+          action="string"
+          accept=".xls, .xlsx"
+          :http-request="Upload"
+          :show-file-list="false"
+        >
+          <el-button>导入Excel</el-button>
+        </el-upload>
       </el-form-item>
     </el-form>
 
@@ -65,6 +108,14 @@
       />
       <el-table-column
         min-width="10"
+        prop="id_card_num"
+        label="身份证"
+        :formatter="(row)=>{
+          let a = row.id_card_num.split('').fill('*',4,14).join('')
+          return a}"
+      />
+      <el-table-column
+        min-width="12"
         prop="phone_number"
         label="手机号"
       />
@@ -76,7 +127,12 @@
       <el-table-column
         min-width="10"
         prop="workshop"
-        label="车间"
+        label="职务"
+      />
+      <el-table-column
+        width="50"
+        prop="repair_group"
+        label="班组"
       />
       <el-table-column
         min-width="10"
@@ -110,9 +166,19 @@
           {{ scope.row.created_date?scope.row.created_date:'--' }}
         </template>
       </el-table-column>
+      <el-table-column label="修改人" min-width="10">
+        <template slot-scope="scope">
+          {{ scope.row.last_update_username?scope.row.last_update_username:'--' }}
+        </template>
+      </el-table-column>
+      <el-table-column label="修改日期" min-width="10">
+        <template slot-scope="scope">
+          {{ scope.row.last_updated_date?scope.row.last_updated_date:'--' }}
+        </template>
+      </el-table-column>
       <el-table-column
         label="操作"
-        width="150"
+        width="200"
       >
         <template slot-scope="scope">
           <el-button-group>
@@ -131,11 +197,21 @@
             >
               {{ scope.row.is_active?'停用':'启用' }}
             </el-button>
+            <el-button
+              v-if="permissionObj.user.indexOf('del')>-1"
+              size="mini"
+              type="danger"
+              @click="userDelete(scope.row)"
+            >
+              删除
+            </el-button>
           </el-button-group>
+          <el-checkbox v-if="is_superuser==='true'" v-model="scope.row.is_superuser" style="" @change="setSuperuser(scope.row)">系统管理员</el-checkbox>
         </template>
       </el-table-column>
     </el-table>
     <page
+      :old-page="false"
       :total="count"
       :current-page="getParams.page"
       @currentChange="changePage"
@@ -164,6 +240,16 @@
             v-model="userForm.username"
             :disabled="userForm.id ? true:false"
           />
+        </el-form-item>
+        <el-form-item
+          label="身份证"
+          prop="id_card_num"
+        >
+          <el-input
+            v-model="userForm.id_card_num"
+            :disabled="userForm.id&&!card_num"
+          />
+          <el-button v-if="userForm.id" v-permission="['user','cid']" style="margin-left:20px" @click="card_num=true">修改身份证</el-button>
         </el-form-item>
         <el-form-item
           v-if="userForm.id"
@@ -218,13 +304,25 @@
           />
         </el-form-item>
         <el-form-item
-          label="车间"
+          label="职务"
         >
           <el-input
             v-model="userForm.workshop"
-            placeholder="车间"
+            placeholder="职务"
             :error="userFormError.workshop"
           />
+        </el-form-item>
+        <el-form-item
+          label="班组"
+        >
+          <el-select v-model="userForm.repair_group" clearable placeholder="请选择">
+            <el-option
+              v-for="group in teamList"
+              :key="group.id"
+              :label="group.global_name"
+              :value="group.global_name"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item
           label="技术资格"
@@ -238,47 +336,46 @@
         <el-form-item
           label="部门"
           :error="userFormError.section"
+          prop="section"
         >
-          <el-select v-model="userForm.section" placeholder="请选择" clearable>
-            <el-option
-              v-for="item in optionsSection"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-              :disabled="item.delete_flag"
-            />
-          </el-select>
+          <el-cascader
+            v-model="userForm.section"
+            :options="optionsSection"
+            :props="{ checkStrictly: true,value:'id' }"
+            @change="changeSection"
+          />
         </el-form-item>
         <br>
         <el-form-item
           label="角色"
           size="medium"
         >
-          <div>
-            <transferRoles
-              :default-groups="userForm.group_extensions"
-              :groups="group_extensions"
-              @changeTransferGroup="changeTransferGroup"
-            />
-          </div>
+          <transferRoles
+            :default-groups="userForm.group_extensions"
+            :groups="group_extensions"
+            @changeTransferGroup="changeTransferGroup"
+          />
         </el-form-item>
-        <!-- <el-form-item
+        <br>
+        <el-form-item
           label="权限"
           size="medium"
           class="permissions-transfer"
         >
           <transferLimit
-            :default-permissions="userForm.user_permissions"
-            :permissions-arr="permissionsArr"
+            style="width:900px"
+            :view-section-permission="true"
+            :default-permissions="userForm.permissions"
+            :section-id="departmentId"
             @changeTransferPermissions="changeTransferPermissions"
           />
-        </el-form-item> -->
+        </el-form-item>
       </el-form>
       <div
         slot="footer"
         class="dialog-footer"
       >
-        <el-button @click="dialogCreateUserVisible = false">取 消</el-button>
+        <el-button @click="handleClose(false)">取 消</el-button>
         <el-button
           type="primary"
           :loading="btnloading"
@@ -290,23 +387,28 @@
 </template>
 
 <script>
-import { personnelsUrl } from '@/api/user'
-import { departmentManage } from '@/api/department-manage'
+import { personnelsUrl, setSuperuser } from '@/api/user'
+import { delUser, userImport } from '@/api/jqy'
+import { sectionTree, permissionSection } from '@/api/base_w_four'
+import { globalCodesUrl } from '@/api/base_w'
 // import { permissions } from '@/api/permission'
 import { roles } from '@/api/roles-manage'
 import page from '@/components/page'
 import { mapGetters } from 'vuex'
-// import transferLimit from '@/components/select_w/transferLimit'
+import transferLimit from '@/components/select_w/transferLimit'
 import transferRoles from '@/components/select_w/transferRoles'
+import { userOperationLog } from '@/api/base_w_two'
+import Cookies from 'js-cookie'
 export default {
   name: 'UserManage',
-  components: { page, transferRoles },
+  components: { page, transferRoles, transferLimit },
   data() {
     var validatePass = (rule, value, callback) => {
+      var reg = /(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[\W_]).{8,}/
       if (!value) {
         callback(new Error('请输入密码'))
-      } else if (value && (value.length < 3 || value.length > 16)) {
-        callback(new Error('请输入3~16位长度的密码'))
+      } else if (value && !reg.test(value)) {
+        callback(new Error('密码必须同时包含大写英文,小写英文,数字,符号,且不少于8位'))
       } else {
         if (this.userForm.checkPass !== '') {
           this.$refs.userForm.validateField('checkPass')
@@ -331,21 +433,23 @@ export default {
       }
     }
     var validatePass3 = (rule, value, callback) => {
-      if (!value) {
+      const _value = value.trim()
+      if (!_value) {
         callback(new Error('请输入用户名!'))
-      } else if (!/^[a-zA-Z0-9\u4e00-\u9fa5]+$/g.test(value)) {
-        callback(new Error('用户名格式错误，请输入字母和数字组合'))
-      } else if (value.length > 64) {
+      } else if (!/^[a-zA-Z0-9\u4e00-\u9fa5]+$/g.test(_value)) {
+        callback(new Error('用户名格式错误，请输入字母或数字'))
+      } else if (_value.length > 64) {
         callback(new Error('长度小于64个字符!'))
-      } else if (value.length < 2) {
+      } else if (_value.length < 2) {
         callback(new Error('请输入最少两个字符!'))
       } else {
         callback()
       }
     }
     var validatePass4 = (rule, value, callback) => {
-      if (value && (value.length < 3 || value.length > 16)) {
-        callback(new Error('请输入3~16位长度的密码'))
+      var reg = /(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[\W_]).{8,}/
+      if (value && (!reg.test(value))) {
+        callback(new Error('密码必须同时包含大写英文,小写英文,数字,符号,且不少于8位'))
       } else {
         callback()
       }
@@ -385,11 +489,15 @@ export default {
         ],
         num: [
           { required: true, message: '请填写工号', trigger: 'blur' }
+        ],
+        section: [
+          { required: true, message: '请选择部门', trigger: 'change' }
         ]
       },
-      // permissionsArr: [],
       group_extensions: [],
       loading: true,
+      card_num: false,
+      btnExportLoad: false,
       loadingTable: false,
       userFormError: {},
       optionsUser: [
@@ -402,7 +510,12 @@ export default {
           label: 'N'
         }
       ],
-      optionsSection: []
+      optionsSection: [],
+      sectionPick: [],
+      teamList: [],
+      is_superuser: Cookies.get('is_superuser'),
+      departmentId: '',
+      permission_section: JSON.parse(Cookies.get('permission_section'))
     }
   },
   computed: {
@@ -413,18 +526,6 @@ export default {
     this.loading = true
     if (this.permissionObj.user.indexOf('change') > -1 ||
       this.permissionObj.user.indexOf('add') > -1) {
-      roles('get', null, {
-        params: { all: 1 }
-      }).then(response => {
-        const groups = response.results
-        groups.forEach(D => {
-          D.key = D.id
-          D.label = D.name
-        })
-        this.group_extensions = groups
-        // eslint-disable-next-line handle-callback-err
-      }).catch(error => {
-      })
       // permissions('get', null).then(response => {
       //   const permissionsArr = response.results
       //   permissionsArr.forEach(D => {
@@ -438,6 +539,8 @@ export default {
     }
     this.currentChange()
     this.getOptionsSection()
+    this.getTeamList()
+    this.templateFileUrl = process.env.BASE_URL
   },
   methods: {
     changeUsername(e) {
@@ -455,19 +558,71 @@ export default {
     },
     async getOptionsSection() {
       try {
-        const data = await departmentManage('get', null, { params: { all: 1 }})
-        this.optionsSection = data.results || []
+        const data = await sectionTree('get')
+        if (data.results && data.results[0].children.length > 0) {
+          this.optionsSection = data.results[0].children
+          this.optionsSection = filterMy(this.optionsSection)
+        } else {
+          this.optionsSection = []
+        }
+        if (this.optionsSection.length && this.is_superuser === 'false') {
+          // 不是系统管理员 过滤当前下的部门
+          const arr = this.optionsSection.filter(d => { return (this.permission_section.findIndex(D => D.id === d.id)) > -1 })
+          this.optionsSection = arr
+        }
+        const data1 = await permissionSection('get', null, { params: { all: 1 }})
+        this.sectionPick = data1
       } catch (error) {
         //
       }
+    },
+    async getTeamList() {
+      try {
+        const data = await globalCodesUrl('get', {
+          params: {
+            class_name: '班组'
+          }
+        })
+        this.teamList = data.results || []
+      } catch (error) {
+        //
+      }
+    },
+    async getGroupList() {
+      try {
+        if (!this.departmentId) {
+          return
+        }
+        roles('get', null, {
+          params: { all: 1, section_id: this.departmentId }
+        }).then(response => {
+          const groups = response.results
+          groups.forEach(D => {
+            D.key = D.id
+            D.label = D.name
+          })
+          this.group_extensions = groups
+        }).catch()
+      } catch (error) {
+        //
+      }
+    },
+    changeSection(val) {
+      this.group_extensions = []
+      this.departmentId = val ? val[0] : ''
+      this.getGroupList()
     },
     currentChange() {
       const app = this
       if (!this.loading) {
         this.loadingTable = true
       }
+      const obj = JSON.parse(JSON.stringify(this.getParams))
+      if (!obj.is_superuser) {
+        delete obj.is_superuser
+      }
       personnelsUrl('get', null, {
-        params: this.getParams
+        params: obj
       }).then((response) => {
         this.count = response.count || 0
         app.tableData = response.results || []
@@ -480,6 +635,7 @@ export default {
       })
     },
     numChanged() {
+      this.getParams.ordering = this.getParams.checked ? '-last_updated_date' : ''
       this.getParams['page'] = 1
       this.currentChange()
     },
@@ -498,8 +654,12 @@ export default {
       }
     },
     showEditUserDialog(row) {
-      this.userForm = JSON.parse(JSON.stringify(row))
-      this.dialogCreateUserVisible = true
+      personnelsUrl('get', row.id).then((response) => {
+        this.userForm = response
+        this.departmentId = response.factory_id
+        this.getGroupList()
+        this.dialogCreateUserVisible = true
+      }).catch()
     },
     handleUserDelete(row) {
       var boolStr = row.is_active ? '停用' : '启用'
@@ -509,6 +669,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        userOperationLog('post', null, { data: { 'operator': Cookies.get('name'), 'menu_name': '用户管理', 'operations': boolStr + '：' + row.username + '用户' }})
         // eslint-disable-next-line no-undef
         personnelsUrl('delete', row.id)
           .then((response) => {
@@ -522,8 +683,39 @@ export default {
       }).catch(() => {
       })
     },
-    changePage(page) {
-      this.getParams['page'] = page
+    userDelete(row) {
+      var app = this
+      this.$confirm('确定删除' + row.username + ', 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        userOperationLog('post', null, { data: { 'operator': Cookies.get('name'), 'menu_name': '用户管理', 'operations': '删除：' + row.username + '用户' }})
+        // eslint-disable-next-line no-undef
+        delUser('delete', row.id)
+          .then((response) => {
+            app.$message({
+              type: 'success',
+              message: '操作成功!'
+            })
+            app.currentChange()
+          }).catch(() => {
+          })
+      }).catch(() => {
+      })
+    },
+    async setSuperuser(row) {
+      try {
+        await setSuperuser('post', null, {
+          data: { 'user_id': row.id }
+        })
+      } catch (error) {
+        //
+      }
+    },
+    changePage(page, page_size) {
+      this.getParams.page = page
+      this.getParams.page_size = page_size
       this.currentChange()
     },
     handleCreateUser(formName) {
@@ -547,18 +739,23 @@ export default {
           if (this.userForm.num === '') {
             delete app.userForm.num
           }
-          // app.userForm.group_extensions = app.userForm.groups
-          // if (app.userForm.group_extensions.length === 0) {
-          //   app.$message.info('请选择角色')
-          //   return
-          // }
+          const obj = JSON.parse(JSON.stringify(app.userForm))
+          if (obj.section && obj.section.length > 0 && obj.section instanceof Array) {
+            obj.section = obj.section.slice(-1)[0]
+          } else if (!obj.section || obj.section.length === 0) {
+            obj.section = ''
+          }
           this.btnloading = true
-          personnelsUrl(type, paramsId, { data: app.userForm })
+          if (app.userForm.id) {
+            userOperationLog('post', null, { data: { 'operator': Cookies.get('name'), 'menu_name': '用户管理', 'operations': '变更：' + obj.username + '用户' }})
+          }
+          personnelsUrl(type, paramsId, { data: obj })
             .then((response) => {
               app.dialogCreateUserVisible = false
               app.$message.success(app.userForm.username + '操作成功')
               app.currentChange()
-              this.btnloading = false
+              app.handleClose(false)
+              app.btnloading = false
             }).catch((e) => {
               this.userFormError = e
               this.btnloading = false
@@ -568,22 +765,72 @@ export default {
         }
       })
     },
+    Upload(param) {
+      const formData = new FormData()
+      formData.append('file', param.file)
+      userImport('post', null, { data: formData }).then(response => {
+        this.$message({
+          type: 'success',
+          message: response
+        })
+        this.currentChange()
+      })
+    },
+    templateDownload() {
+      this.btnExportLoad = true
+      const obj = Object.assign({ export: 1 }, this.getParams)
+      const _api = personnelsUrl
+      _api('get', null, { responseType: 'blob', params: obj })
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '用户管理.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
+    },
     handleClose(done) {
       this.$refs['userForm'].resetFields()
       this.isError = false
       this.isErrorOldPassword = false
-      done()
+      this.departmentId = ''
+      this.dialogCreateUserVisible = false
+      if (done) {
+        done()
+      }
     },
     formatter: function(row, column) {
       return row.is_active ? 'Y' : 'N'
     },
     changeTransferGroup(val) {
       this.$set(this.userForm, 'group_extensions', val)
+    },
+    changeTransferPermissions(val) {
+      this.$set(this.userForm, 'permissions', val)
     }
-    // changeTransferPermissions(val) {
-    //   this.$set(this.userForm, 'user_permissions', val)
-    // }
   }
+}
+// 去掉最后一个空children
+function filterMy(data) {
+  const res = []
+  data.forEach(D => {
+    const tmp = {
+      ...D
+    }
+    if (tmp.children.length > 0) {
+      tmp.children = filterMy(tmp.children)
+    } else {
+      delete tmp.children
+    }
+    res.push(tmp)
+  })
+  return res
 }
 </script>
 
@@ -616,6 +863,10 @@ export default {
     }
      .show-enter-to,.show-leave-to{
         margin-top: 1px;
+   }
+   .el-form-item__error{
+     width: 170%;
+    margin-left: -49px;
    }
 }
 </style>

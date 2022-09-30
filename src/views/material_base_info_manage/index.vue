@@ -87,7 +87,7 @@
       <el-table-column
         prop="package_unit_name"
         label="包装单位"
-        width="60px"
+        width="70px"
       />
       <el-table-column
         width="50"
@@ -119,7 +119,7 @@
         -->
       <el-table-column
         label="操作"
-        width="140"
+        width="240"
       >
         <template slot-scope="scope">
           <el-button-group>
@@ -136,6 +136,12 @@
               plain
               @click="handleMaterialDelete(scope.row)"
             >{{ scope.row.use_flag ? '停用' : '启用' }}
+            </el-button>
+            <el-button
+              v-if="permissionObj.material.indexOf('change')>-1"
+              size="mini"
+              @click="issueMetage(scope.row)"
+            >下发到称量系统
             </el-button>
           </el-button-group>
         </template>
@@ -247,7 +253,10 @@
           label="原材料编码"
           prop="material_no"
         >
-          <el-input v-model="materialBaseInfoForm.material_no" :disabled="true" />
+          <el-input
+            v-model="materialBaseInfoForm.material_no"
+            :disabled="true"
+          />
         </el-form-item>
         <el-form-item
           :error="materialBaseInfoFormError.material_name"
@@ -319,17 +328,33 @@
         >确 定</el-button>
       </div>
     </el-dialog>
+
+    <el-dialog
+      title="选择机台"
+      :visible.sync="dialogVisibleMachine"
+      width="30%"
+      :before-close="handleCloseMachine"
+    >
+      <equipSelect equip-type="称量设备" :is-multiple="true" :equip_no_props="equip_no" @changeSearch="equipSearch" />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleCloseMachine(false)">取 消</el-button>
+        <el-button type="primary" :loading="machineBtnLoading" @click="issuedPlan">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import commonVal from '@/utils/common'
-import { globalCodesUrl, materialsUrl } from '@/api/base_w'
+import { globalCodesUrl, materialsUrl, materialInfoIssue } from '@/api/base_w'
 import pagination from '@/components/page'
 import { mapGetters } from 'vuex'
+import equipSelect from '@/components/select_w/equip'
+import { userOperationLog } from '@/api/base_w_two'
+import Cookies from 'js-cookie'
 export default {
   name: 'MaterialBaseInfoManage',
-  components: { pagination },
+  components: { pagination, equipSelect },
   data: function() {
     return {
       tableData: [],
@@ -382,11 +407,15 @@ export default {
       },
       getParams: {
         page: 1,
-        use_flag:	'',
-        material_no:	'',
+        use_flag: '',
+        material_no: '',
         material_name: ''
       },
-      total: 0
+      total: 0,
+      equip_no: null,
+      dialogVisibleMachine: false,
+      currentObj: {},
+      machineBtnLoading: false
     }
   },
   computed: {
@@ -499,6 +528,34 @@ export default {
       this.materialBaseInfoForm = Object.assign({}, row)
       this.dialogEditMaterialBaseInfoVisible = true
     },
+    handleCloseMachine(done) {
+      this.equip_no = ''
+      this.dialogVisibleMachine = false
+      if (done) {
+        done()
+      }
+    },
+    equipSearch(obj) {
+      this.equip_no = obj
+    },
+    async issuedPlan() {
+      if (!this.equip_no) {
+        this.$message('请选择机台')
+        return
+      }
+      try {
+        this.machineBtnLoading = true
+        await materialInfoIssue('post', null, { data: { equip_nos: this.equip_no, material_id: this.currentObj.id }})
+        this.machineBtnLoading = false
+        this.handleCloseMachine(false)
+      } catch (e) {
+        this.machineBtnLoading = false
+      }
+    },
+    issueMetage(row) {
+      this.dialogVisibleMachine = true
+      this.currentObj = row
+    },
     handleMaterialDelete(row) {
       var app = this
       var str = row.use_flag ? '停用' : '启用'
@@ -507,6 +564,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        userOperationLog('post', null, { data: { 'operator': Cookies.get('name'), 'menu_name': '原材料基础信息', 'operations': str + '：' + row.material_name }})
         materialsUrl('delete', row.id)
           .then(function(response) {
             app.$message({
@@ -525,6 +583,7 @@ export default {
       var app = this
       this.$refs['materialBaseInfoEditForm'].validate(valid => {
         if (valid) {
+          userOperationLog('post', null, { data: { 'operator': Cookies.get('name'), 'menu_name': '原材料基础信息', 'operations': '编辑：' + app.materialBaseInfoForm.material_no }})
           materialsUrl('put', app.materialBaseInfoForm.id, { data: app.materialBaseInfoForm })
             .then(function(response) {
               app.dialogEditMaterialBaseInfoVisible = false

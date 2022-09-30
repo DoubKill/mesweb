@@ -1,11 +1,12 @@
 <template>
   <div v-loading="loading">
-    <!-- 胶片条码追朔 -->
+    <!-- 胶片条码追溯 -->
     lot_no：
     <el-input
       v-model="barCodeSearch"
-      style="width:200px;margin-right:20px"
+      style="width:300px;margin-right:20px"
       placeholder="请输入内容"
+      clearable
       @input="barCodeInput"
     />
     流程：<el-select v-model="value" placeholder="流程" @change="clickFun">
@@ -275,7 +276,7 @@ export default {
   components: { testCard, trainNumberReport },
   data() {
     return {
-      loading: true,
+      loading: false,
       cardLoading: true,
       value: '',
       barCodeSearch: '', // KTP005
@@ -308,7 +309,7 @@ export default {
     ...mapGetters(['editionNo'])
   },
   created() {
-    this.getList()
+    // this.getList()
   },
   methods: {
     setDate,
@@ -345,10 +346,11 @@ export default {
           data.product_details[0].batch_classes = data.product_info[0].classes_name || ''
           data.product_details[0].created_date = data.product_info[0].created_date || ''
         }
-        this.activities = data
+        this.activities = data || []
         this.loading = false
       } catch (e) {
         this.loading = false
+        this.activities = []
       }
     },
     productInView(row) {

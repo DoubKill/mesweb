@@ -6,13 +6,30 @@
         label="日期"
       >
         <el-date-picker
-          v-model="getParams.day_time"
-          style="width: 100%"
-          type="date"
+          v-model="dateValue"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
           value-format="yyyy-MM-dd"
-          placeholder="选择日期"
           @change="getParamsChanged"
         />
+      </el-form-item>
+      <el-form-item label="工序">
+        <el-select
+          v-model="getParams.work_procedure"
+          clearable
+          placeholder="请选择"
+          @change="getParamsChanged"
+        >
+          <el-option
+            v-for="item in typeList"
+            :key="item.id"
+            :label="item.global_name"
+            :value="item.id"
+          />
+
+        </el-select>
       </el-form-item>
       <el-form-item label="倒班名称">
         <el-input
@@ -45,6 +62,10 @@
       <el-table-column
         prop="work_schedule_name"
         label="倒班名"
+      />
+      <el-table-column
+        prop="work_schedule_type"
+        label="工序"
       />
       <el-table-column v-for="(item,i) in heardClasses" :key="i" :label="item.global_name">
         <el-table-column
@@ -92,14 +113,36 @@ export default {
       getParams: {
         page: 1,
         work_schedule__schedule_name: '',
-        day_time: setDate()
+        st: setDate(),
+        et: setDate()
       },
+      typeList: [],
       total: 0,
       loading: true,
-      heardClasses: []
+      heardClasses: [],
+      dateValue: []
     }
   },
   created() {
+    const a = new Date()
+    const _year = a.getFullYear()
+    const _month = a.getMonth()
+    const firstDay = new Date(_year, _month, 1)
+    const lastDay = new Date(_year, _month + 1, 0)
+    this.getParams.st = setDate(firstDay)
+    this.getParams.et = setDate(lastDay)
+    this.dateValue = [setDate(firstDay), setDate(lastDay)]
+
+    globalCodesUrl('get', {
+      params: {
+        class_name: '工序'
+      }
+    }).then((response) => {
+      this.typeList = response.results
+      // eslint-disable-next-line handle-callback-err
+    }).catch(function(error) {
+    })
+
     globalCodesUrl('get', {
       params: {
         class_name: '班次'
@@ -123,7 +166,6 @@ export default {
       }).then(function(response) {
         app.total = response.count
         app.tableData = response.results || []
-        console.log(app.tableData, 'app.tableData')
         for (const [row] of app.tableData.entries()) {
           const work_schedule_plan = [null, null, null]
           work_schedule_plan[0] = app.findSchedulePlanByClassesName(row.work_schedule_plan, '早班')
@@ -138,6 +180,8 @@ export default {
       })
     },
     getParamsChanged() {
+      this.getParams.st = this.dateValue ? this.dateValue[0] : ''
+      this.getParams.et = this.dateValue ? this.dateValue[1] : ''
       this.getParams.page = 1
       this.getList()
     },

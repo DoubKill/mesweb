@@ -54,12 +54,12 @@
         <el-table-column
           type="index"
           label="序号"
-          min-width="50px"
+          width="50"
         />
         <el-table-column
           prop="name"
           :label="'时间区间('+itemDiv+')'"
-          min-width="50px"
+          width="90px"
         >
           <template slot-scope="{row}">
             {{ row.time_span }}
@@ -175,6 +175,7 @@ export default {
           params: { all: 1, class_name: '班次' }
         })
         this.classesList = data.results || []
+        this.classesList = this.classesList.filter(d => d.global_name !== '中班')
         if (this.classesList.length > 0) {
           if (this.classesList.length > 1) {
             this.search.classes = [this.classesList[0].global_name, this.classesList[1].global_name]

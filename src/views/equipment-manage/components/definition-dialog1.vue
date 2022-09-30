@@ -1,0 +1,229 @@
+<template>
+  <div>
+    <!-- 维护标准弹框 -->
+    <el-form
+      ref="createForm"
+      :inline="true"
+      :model="typeForm"
+      label-width="150px"
+    >
+      <el-row>
+        <el-col :span="8">
+          <el-form-item label="作业类型">
+            <el-select
+              v-model="typeForm.work_type"
+              disabled
+              placeholder="请选择"
+            >
+              <el-option
+                v-for="item in ['巡检','保养','润滑','标定']"
+                :key="item"
+                :label="item"
+                :value="item"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="标准编号">
+            <el-input v-model="typeForm.standard_code" disabled />
+          </el-form-item>
+          <el-form-item label="标准名称">
+            <el-input v-model="typeForm.standard_name" disabled />
+          </el-form-item>
+          <el-form-item label="机台">
+            <el-input v-model="typeForm.equip" disabled />
+          </el-form-item>
+          <el-form-item label="部位名称">
+            <el-input v-model="typeForm.equip_part_name" disabled />
+          </el-form-item>
+          <el-form-item label="部件名称">
+            <el-input v-model="typeForm.equip_component_name" disabled />
+          </el-form-item>
+          <el-form-item label="设备条件">
+            <el-select
+              v-model="typeForm.equip_condition"
+              disabled
+              placeholder="请选择"
+              clearable
+            >
+              <el-option
+                v-for="item in ['停机', '不停机']"
+                :key="item"
+                :label="item"
+                :value="item"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="重要程度">
+            <el-select
+              v-model="typeForm.important_level"
+              disabled
+              placeholder="请选择"
+              clearable
+            >
+              <el-option
+                v-for="item in ['高', '中', '低']"
+                :key="item"
+                :label="item"
+                :value="item"
+              />
+            </el-select>
+          </el-form-item></el-col>
+        <el-col :span="8">
+          <el-form-item
+            label="作业项目"
+            prop="equip_job_item_standard_name"
+          >
+            <el-input v-model="typeForm.equip_job_item_standard_name" disabled />
+            <br>
+            <el-input
+              v-model="typeForm.equip_job_item_standard_detail"
+              style="marginTop:20px"
+              type="textarea"
+              :rows="4"
+              disabled
+            />
+          </el-form-item>
+          <el-form-item label="起始时间">
+            <el-input v-model="typeForm.start_time" disabled />
+          </el-form-item>
+
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="维护周期">
+            <el-input-number v-model="typeForm.maintenance_cycle" controls-position="right" disabled />
+            <el-form-item>
+              <el-select
+                v-model="typeForm.cycle_unit"
+                placeholder=""
+                style="width:100px"
+                disabled
+                clearable
+              >
+                <el-option
+                  v-for="item in ['日','小时','分钟','秒','车次']"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                />
+              </el-select>
+            </el-form-item>
+          </el-form-item>
+          <el-form-item label="周期数">
+            <el-input-number v-model="typeForm.cycle_num" controls-position="right" disabled />
+          </el-form-item>
+          <el-form-item label="所需人数">
+            <el-input-number v-model="typeForm.cycle_person_num" controls-position="right" disabled />
+          </el-form-item>
+          <el-form-item label="作业时间">
+            <el-input-number v-model="typeForm.operation_time" controls-position="right" disabled />
+            <el-form-item>
+              <el-select
+                v-model="typeForm.operation_time_unit"
+                placeholder=""
+                style="width:100px"
+                clearable
+                disabled
+              >
+                <el-option
+                  v-for="item in ['日','小时','分钟','秒','车次']"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                />
+              </el-select>
+            </el-form-item>
+          </el-form-item>
+          <el-form-item label="钉钉提醒发送">
+            <el-checkbox v-model="typeForm.remind_flag1" label="包干人" disabled />
+            <el-checkbox v-model="typeForm.remind_flag2" label="上级" disabled />
+            <el-checkbox v-model="typeForm.remind_flag3" label="上上级" disabled />
+          </el-form-item>
+        </el-col>
+        <!-- <el-form-item label="所需物料">
+          <el-table
+            :data="typeForm.spare_list"
+            border
+            style="width: 100%"
+          >
+            <el-table-column
+              prop="equip_spare_erp__spare_code"
+              label="物料编码"
+            />
+            <el-table-column
+              prop="equip_spare_erp__spare_name"
+              label="物料名称"
+            />
+            <el-table-column
+              prop="equip_spare_erp__specification"
+              label="规格"
+            />
+            <el-table-column
+              prop="equip_spare_erp__technical_params"
+              label="用途"
+            />
+            <el-table-column
+              prop="quantity"
+              label="数量"
+              width="140px"
+            />
+            <el-table-column
+              prop="equip_spare_erp__unit"
+              label="单位"
+            />
+          </el-table>
+        </el-form-item> -->
+      </el-row>
+    </el-form>
+  </div>
+</template>
+
+<script>
+export default {
+  props: {
+    typeForm: {
+      type: Object,
+      default() {
+        return {}
+      }
+    },
+    show: {
+      type: Boolean,
+      default() {
+        return false
+      }
+    }
+  },
+  watch: {
+    show(val) {
+      if (val) {
+        if (this.typeForm.cycle_person_num === null) {
+          this.typeForm.cycle_person_num = undefined
+        }
+        if (this.typeForm.operation_time === null) {
+          this.typeForm.operation_time = undefined
+        }
+        if (this.typeForm.maintenance_cycle === null) {
+          this.typeForm.maintenance_cycle = undefined
+        }
+      }
+    }
+  },
+  created() {
+    if (this.typeForm.cycle_person_num === null) {
+      this.typeForm.cycle_person_num = undefined
+    }
+    if (this.typeForm.operation_time === null) {
+      this.typeForm.operation_time = undefined
+    }
+    if (this.typeForm.maintenance_cycle === null) {
+      this.typeForm.maintenance_cycle = undefined
+    }
+  }
+
+}
+</script>
+
+<style lang="scss" scoped>
+
+</style>
+

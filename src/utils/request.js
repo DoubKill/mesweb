@@ -7,20 +7,49 @@ import store from '@/store'
 import {
   getToken
 } from '@/utils/auth'
+import Cookies from 'js-cookie'
 
+let currentUrl = ''
 // create an axios instance
 const service = axios.create({
   baseURL: process.env.NODE_ENV === 'production' ? '/' : '/api', // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 50000 // request timeout
+  timeout: 10000000000 // request timeout
 })
 
 // request interceptor
 service.interceptors.request.use(
   config => {
-    if (store.getters.token) {
+    const _user = store.getters.name
+    const _newUser = Cookies.get('name')
+    if (config.responseType) {
+      const routeName = router.history.current.meta.title
+      // 走进来的是导出 掉接口记录当前操作
+      const a = axios.create({
+        baseURL: process.env.NODE_ENV === 'production' ? '/' : '/api',
+        timeout: 10000000000
+      })
+      a.interceptors.request.use(config => {
+        if (store.getters.token && getToken()) {
+          config.headers['Authorization'] = 'JWT ' + getToken()
+        }
+        return config
+      })
+      a({ url: '/api/v1/system/user-operation-log/', method: 'post', data: { 'operator': _newUser, 'menu_name': routeName, 'operations': `导出：${routeName}列表` }})
+    }
+
+    if (_user && _user !== _newUser) {
+      Message({
+        message: '当前账号已退出，请刷新页面',
+        type: 'error',
+        duration: 3 * 1000
+      })
+      return
+    }
+    if (store.getters.token && getToken()) {
       config.headers['Authorization'] = 'JWT ' + getToken()
     }
+    currentUrl = config.responseType || false
     return config
   },
   error => {
@@ -45,8 +74,7 @@ service.interceptors.response.use(
     }
   },
   error => {
-    if (error.response.status && error.response.status === 403 ||
-      error.response.status === 401) {
+    if (error.response.status && error.response.status === 401) {
       Message({
         message: '登录过期',
         type: 'error',
@@ -54,6 +82,14 @@ service.interceptors.response.use(
       })
       store.dispatch('user/logout')
       router.push('/login')
+      return Promise.reject()
+    }
+    if (error.response.status && error.response.status === 403) {
+      Message({
+        message: '权限不足',
+        type: 'error',
+        duration: 3 * 1000
+      })
       return Promise.reject()
     }
     if (Object.prototype.toString.call(error.response.data) === '[object Object]') {
@@ -82,7 +118,9 @@ service.interceptors.response.use(
           }
         }
       }
-
+      // if (obj.detail && obj.detail === '无效页面。') {
+      //   return Promise.resolve({ results: [] })
+      // }
       Message({
         message: str,
         type: 'error',
@@ -133,6 +171,19 @@ service.interceptors.response.use(
       })
       return Promise.reject(error.response.data)
     } else if (typeof error.message === 'string') {
+      if (currentUrl) {
+        const resData = error.response.data
+        const fileReader = new FileReader()
+        fileReader.onloadend = () => {
+          Message({
+            message: JSON.parse(fileReader.result)[0],
+            type: 'error',
+            duration: 3 * 1000
+          })
+        }
+        fileReader.readAsText(resData)
+        return Promise.reject(error)
+      }
       Message({
         message: error.message,
         type: 'error',

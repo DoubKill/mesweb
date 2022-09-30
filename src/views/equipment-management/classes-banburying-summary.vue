@@ -4,6 +4,14 @@
     <el-form :inline="true">
       <el-form-item label="时间:">
         <el-date-picker
+          v-model="search_time"
+          type="date"
+          :clearable="false"
+          value-format="yyyy-MM-dd"
+          placeholder="选择日期"
+          @change="changeDate"
+        />
+        <!-- <el-date-picker
           v-model="search.date"
           :clearable="true"
           type="daterange"
@@ -12,7 +20,7 @@
           end-placeholder="结束日期"
           value-format="yyyy-MM-dd"
           @change="changeDate"
-        />
+        /> -->
       </el-form-item>
       <el-form-item>
         <el-radio-group v-model="search.day_type" @change="changeRadio">
@@ -48,8 +56,15 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item>
+        <el-button
+          type="primary"
+          @click="exportTable"
+        >导出Excel</el-button>
+      </el-form-item>
     </el-form>
     <el-table
+      id="out-table"
       :data="tableData"
       border
       show-summary
@@ -79,6 +94,7 @@
         :key="4"
         prop="product_no"
         label="胶料编码"
+        width="160px"
       />
       <el-table-column
         :key="5"
@@ -107,6 +123,7 @@
       </el-table-column>
       <el-table-column
         :key="8"
+        prop="min_train_time"
         :label="'单车最小耗时/'+(timeUnit==='秒'?'s':'min')"
       >
         <template slot-scope="{row}">
@@ -116,6 +133,7 @@
       </el-table-column>
       <el-table-column
         :key="9"
+        prop="max_train_time"
         :label="'单车最大耗时/'+(timeUnit==='秒'?'s':'min')"
       >
         <template slot-scope="{row}">
@@ -125,6 +143,7 @@
       </el-table-column>
       <el-table-column
         :key="10"
+        prop="max_train_time"
         :label="'单车平均耗时/'+(timeUnit==='秒'?'s':'min')"
       >
         <template slot-scope="{row}">
@@ -134,6 +153,7 @@
       </el-table-column>
       <el-table-column
         :key="11"
+        prop="max_train_time"
         label="利用率"
       >
         <template
@@ -164,6 +184,7 @@
 import equipSelect from '@/components/select_w/equip'
 // import page from '@/components/page'
 import timeSpanSelect from '@/components/select_w/timeSpan'
+import { exportExcel, setDate } from '@/utils/index'
 import { classesBanburySummary } from '@/api/base_w'
 import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import myMixin from './aminxPublic'
@@ -175,12 +196,13 @@ export default {
     return {
       // total: 0,
       loading: false,
+      search_time: setDate(),
       search: {
         page: 1,
         equip_no: null,
         dimension: 1,
         day_type: 2,
-        date: []
+        date: ''
       },
       tableData: [],
       options: ['秒', '分钟'],
@@ -193,6 +215,10 @@ export default {
   methods: {
     async getList() {
       try {
+        if (!this.search_time) {
+          this.$message('请选择时间')
+          return
+        }
         this.loading = true
         const data = await classesBanburySummary('get', null, { params: this.search })
         // this.total = data.count
@@ -222,10 +248,13 @@ export default {
       this.search.page = page
       this.getList()
     },
+    exportTable() {
+      exportExcel('班次密炼时间汇总')
+    },
     productBatchingChanged(val) {
       this.search.product_no = val ? val.material_no : ''
-      this.getList()
       this.search.page = 1
+      this.getList()
     },
     equipChanged(val) {
       this.search.equip_no = val
@@ -238,8 +267,8 @@ export default {
       this.search.page = 1
     },
     changeDate(date) {
-      this.search.st = date ? date[0] : ''
-      this.search.et = date ? date[1] : ''
+      this.search.st = this.search_time || ''
+      this.search.et = this.search_time || ''
       this.getList()
       this.search.page = 1
     },
@@ -256,7 +285,6 @@ export default {
           sums[index] = '总计'
           return
         }
-
         const values = data.map(item => Number(item[column.property]))
         if (!values.every(value => isNaN(value))) {
           sums[index] = values.reduce((prev, curr) => {
@@ -267,6 +295,7 @@ export default {
               return prev
             }
           }, 0)
+
           if (index === 4) {
             sums[index]
           } else {
@@ -278,6 +307,48 @@ export default {
           }
         } else {
           sums[index]
+        }
+        if (index === 6) {
+          var obj = {}
+          var newArr = data.reduce((item, next) => {
+            if (this.search.dimension === 1) {
+              obj[next.classes + next.date + next.equip_no]
+                ? ' '
+                : (obj[next.classes + next.date + next.equip_no] = true && item.push(next))
+            } else {
+              obj[next.date + next.equip_no]
+                ? ' '
+                : (obj[next.date + next.equip_no] = true && item.push(next))
+            }
+            return item
+          }, [])
+          let num6 = 0
+          newArr.forEach(dd => {
+            num6 += dd.classes_time
+          })
+          sums[index] = num6
+          if (this.timeUnit === '分钟') {
+            sums[index] = this.setNum(sums[index])
+          } else if (this.timeUnit === '小时') {
+            sums[index] = this.setTimeHour(sums[index])
+          } else {
+            sums[index]
+          }
+        }
+        if (index === 7) {
+          sums[index] = (sums[index] / data.length).toFixed(2)
+        }
+        if (index === 7) {
+          sums[index] = (sums[index] / data.length).toFixed(2)
+        }
+        if (index === 8) {
+          sums[index] = (sums[index] / data.length).toFixed(2)
+        }
+        if (index === 9) {
+          sums[index] = (Number(sums[5]) / Number(sums[4])).toFixed(2)
+        }
+        if (index === 10) {
+          sums[index] = ((Number(sums[5]) / Number(sums[6])) * 100).toFixed(2) + '%'
         }
       })
       return sums

@@ -16,7 +16,7 @@
                 v-for="(group,groupI) in testEquipList"
                 :key="groupI"
                 :label="group&&group.no"
-                :value="group&&group.no"
+                :value="group&&group.id"
               />
             </el-select>
           </el-form-item>
@@ -40,6 +40,7 @@
             <el-date-picker
               v-model="search.factory_date"
               type="date"
+              :disabled="!!ruleForm.plan_uid"
               value-format="yyyy-MM-dd"
               placeholder="选择日期"
               clearable
@@ -48,161 +49,22 @@
           </el-form-item>
           <el-form-item label="生产班次">
             <class-select
+              :is-disabled="!!ruleForm.plan_uid"
+              :value-default="search.classes"
               @classSelected="classChanged"
             />
           </el-form-item>
           <el-form-item label="生产机号">
-            <equip-select class="equipStyle" :equip_no_props="search.equip_no" @changeSearch="equipSearch" />
+            <equip-select class="equipStyle" :equip_no_props="search.equip_no" :disabled="!!ruleForm.plan_uid" @changeSearch="equipSearch" />
           </el-form-item>
           <el-form-item label="胶料规格">
-            <allProductNoSelect :is-disabled="btnLoading" :default-val="search.product_no" :params-obj="search" @productBatchingChanged="productBatchingChanged" />
-          </el-form-item>
-          <el-form-item label="胶料段次">
-            <el-select
-              v-model="search.stage"
-              clearable
-              placeholder="请选择"
-              @visible-change="visibleStageList"
-              @change="getList"
-            >
-              <el-option
-                v-for="(item,k) in stageList"
-                :key="k"
-                :label="item.global_name"
-                :value="item.global_name"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="是否检测">
-            <el-select
-              v-model="search.is_tested"
-              clearable
-              placeholder="请选择"
-              @change="changeTested"
-            >
-              <el-option
-                v-for="(item,k) in [{name:'已检测',id:'Y'},{name:'未检测',id:'N'}]"
-                :key="k"
-                :label="item.name"
-                :value="item.id"
-              />
-            </el-select>
-          </el-form-item>
-        </el-form>
-
-        <el-table
-          ref="multipleTable"
-          :data="tableData"
-          style="width: 100%"
-          border
-          :cell-style="cellStyle"
-          @selection-change="handleSelectionChange"
-        >
-          <el-table-column
-            type="selection"
-            width="40"
-          />
-          <el-table-column
-            prop="equip_no"
-            label="生产机号"
-            min-width="10"
-          />
-          <el-table-column
-            prop="classes"
-            label="生产班次"
-            min-width="10"
-          />
-          <el-table-column
-            prop="product_no"
-            label="胶料规格"
-            min-width="20"
-          />
-          <el-table-column
-            prop="actual_trains"
-            label="车次"
-            min-width="8"
-          />
-          <el-table-column
-            prop="lot_no"
-            label="收皮条码"
-            min-width="20"
-          />
-          <el-table-column
-            prop="is_tested"
-            label="已检测"
-            min-width="10"
-          />
-        </el-table>
-      </el-col>
-      <el-col :span="1" class="center-box">
-        <div class="center-box-child">
-          <el-button size="small" type="primary" :disabled="btnLoading" @click="moveRight">>></el-button>
-        </div>
-      </el-col>
-      <el-col :span="12">
-        <el-form ref="ruleForm" label-width="80px" :inline="true" :rules="rules" :model="ruleForm">
-          <el-form-item label="检测日期" prop="test_time">
-            <el-date-picker
-              v-model="ruleForm.test_time"
-              type="date"
-              value-format="yyyy-MM-dd"
-              placeholder="选择日期"
-            />
-          </el-form-item>
-          <el-form-item label="检测班次" prop="test_classes">
-            <class-select
-              :value-default="ruleForm.test_classes"
-              @classSelected="classChangedTest"
-            />
-          </el-form-item>
-          <el-form-item label="检测班组" prop="test_group">
-            <el-select
-              v-model="ruleForm.test_group"
-              placeholder="请选择"
-              @visible-change="changeGroup"
-            >
-              <el-option
-                v-for="group in groups"
-                :key="group.id"
-                :label="group.global_name"
-                :value="group.id"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="试验方法" prop="test_method_name">
-            <el-select
-              v-model="ruleForm.test_method_name"
-              placeholder="请选择"
-              @visible-change="changeTestMethod"
-            >
-              <el-option
-                v-for="group in testMethodList"
-                :key="group.id"
-                :label="group.name"
-                :value="group.name"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="试验次数" prop="test_times">
-            <el-select
-              v-model="ruleForm.test_times"
-              placeholder="请选择"
-            >
-              <el-option
-                v-for="group in 5"
-                :key="group"
-                :label="group"
-                :value="group"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="胶料规格">
-            {{ ruleForm.product_no }}
+            <allProductNoSelect :is-disabled="!!ruleForm.plan_uid" :default-val="search.product_no" :params-obj="search" @productBatchingChanged="productBatchingChanged" />
           </el-form-item>
           <el-form-item label="检测间隔" prop="test_interval">
             <el-select
               v-model="ruleForm.test_interval"
-              clearable
+              :clearable="false"
+              :disabled="!!ruleForm.plan_uid"
               placeholder="请选择"
             >
               <el-option
@@ -232,10 +94,208 @@
             />
           </el-form-item>
           <el-form-item>
-            <el-button v-permission="['examine_test_plan', 'begin']" size="mini" style="margin-left:10px" type="primary" :disabled="btnLoading" @click="addSpace">添加</el-button>
+            <el-button v-permission="['examine_test_plan', 'begin']" size="mini" style="margin-left:10px" type="primary" @click="addSpace">添加</el-button>
+          </el-form-item>
+          <!-- <el-form-item label="胶料段次">
+            <el-select
+              v-model="search.stage"
+              clearable
+              placeholder="请选择"
+              @visible-change="visibleStageList"
+              @change="getList"
+            >
+              <el-option
+                v-for="(item,k) in stageList"
+                :key="k"
+                :label="item.global_name"
+                :value="item.global_name"
+              />
+            </el-select>
+          </el-form-item> -->
+          <!-- <el-form-item label="是否检测">
+            <el-select
+              v-model="search.is_tested"
+              clearable
+              placeholder="请选择"
+              @change="changeTested"
+            >
+              <el-option
+                v-for="(item,k) in [{name:'已检测',id:'Y'},{name:'未检测',id:'N'}]"
+                :key="k"
+                :label="item.name"
+                :value="item.id"
+              />
+            </el-select>
+          </el-form-item> -->
+        </el-form>
+        <el-table
+          ref="multipleTable"
+          v-loading="loading"
+          :data="tableData"
+          style="width: 100%"
+          border
+          :cell-style="cellStyle"
+          @selection-change="handleSelectionChange"
+        >
+          <el-table-column
+            v-if="!add_w"
+            type="selection"
+            width="40"
+          />
+          <el-table-column
+            prop="equip_no"
+            label="生产机号"
+            min-width="10"
+          />
+          <el-table-column
+            prop="production_classes"
+            label="生产班次"
+            min-width="10"
+          />
+          <el-table-column
+            prop="product_no"
+            label="胶料规格"
+            min-width="20"
+          />
+          <el-table-column
+            prop="actual_trains"
+            label="车次"
+            min-width="8"
+          />
+          <!-- <el-table-column
+            prop="lot_no"
+            label="收皮条码"
+            min-width="20"
+          />
+          <el-table-column
+            prop="is_tested"
+            label="已检测"
+            min-width="10"
+          /> -->
+        </el-table>
+      </el-col>
+      <el-col :span="1" class="center-box">
+        <div class="center-box-child">
+          <el-button size="small" type="primary" @click="moveRight">>></el-button>
+        </div>
+      </el-col>
+      <el-col :span="12">
+        <el-form ref="ruleForm" label-width="80px" :inline="true" :rules="rules" :model="ruleForm">
+          <el-form-item label="检测日期" prop="test_time">
+            <el-date-picker
+              v-model="ruleForm.test_time"
+              type="date"
+              value-format="yyyy-MM-dd"
+              placeholder="选择日期"
+            />
+          </el-form-item>
+          <el-form-item label="检测班次" prop="test_classes">
+            <class-select
+              :value-default="ruleForm.test_classes"
+              :is-disabled="!noRecheck"
+              @classSelected="classChangedTest"
+            />
+          </el-form-item>
+          <el-form-item label="检测班组" prop="test_group">
+            <el-select
+              v-model="ruleForm.test_group"
+              placeholder="请选择"
+              :disabled="!noRecheck"
+              @visible-change="changeGroup"
+            >
+              <el-option
+                v-for="group in groups"
+                :key="group.id"
+                :label="group.global_name"
+                :value="group.global_name"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="试验方法" prop="test_method_name">
+            <el-select
+              v-model="ruleForm.test_method_name"
+              placeholder="请选择"
+              :disabled="!noRecheck"
+              @visible-change="changeTestMethod"
+            >
+              <el-option
+                v-for="group in testMethodList"
+                :key="group.id"
+                :label="group.name"
+                :value="group.name"
+                :disabled="!group.allowed"
+              />
+            </el-select>
+          </el-form-item>
+          <!-- <el-form-item label="试验次数" prop="test_times">
+            <el-select
+              v-model="ruleForm.test_times"
+              placeholder="请选择"
+            >
+              <el-option
+                v-for="group in 5"
+                :key="group"
+                :label="group"
+                :value="group"
+              />
+            </el-select>
+          </el-form-item> -->
+          <el-form-item label="胶料规格">
+            {{ ruleForm.product_no }}
+          </el-form-item>
+          <el-form-item v-if="search.test_indicator_name==='钢拔'" label="检测次数" prop="count">
+            <el-select
+              v-model="ruleForm.count"
+              placeholder="请选择"
+              :disabled="!noRecheck"
+            >
+              <el-option
+                v-for="group in [5,4]"
+                :key="group"
+                :label="group"
+                :value="group"
+              />
+            </el-select>
+          </el-form-item>
+          <!-- <el-form-item label="检测间隔" prop="test_interval">
+            <el-select
+              v-model="ruleForm.test_interval"
+              clearable
+              placeholder="请选择"
+              :disabled="!noRecheck"
+            >
+              <el-option
+                v-for="group in 5"
+                :key="group"
+                :label="group"
+                :value="group"
+              />
+            </el-select>
+          </el-form-item> -->
+          <!-- <el-form-item label="试验车次" class="trainsNumStyle">
+            <el-input-number
+              v-model="ruleForm.num"
+              controls-position="right"
+              :min="1"
+              :max="ruleForm.num1"
+              size="mini"
+              clearable
+            /> --
+            <el-input-number
+              v-model="ruleForm.num1"
+              size="mini"
+              controls-position="right"
+              :min="ruleForm.num"
+              :max="tableData[tableData.length-1]&&tableData[tableData.length-1].actual_trains"
+              clearable
+            />
+          </el-form-item> -->
+          <el-form-item>
+            <!-- <el-button v-permission="['examine_test_plan', 'begin']" size="mini" style="margin-left:10px" type="primary" @click="addSpace">添加</el-button> -->
+            <el-tag v-if="btnLoading&&noRecheck" style="margin-left:60px;color:#000;padding:0 60px" color="rgba(149, 242, 4)" type="success" effect="dark">检测进行中</el-tag>
           </el-form-item>
         </el-form>
-        <el-button v-permission="['examine_test_plan', 'begin']" type="primary" :disabled="btnLoading" @click="startTestFun">开始检测</el-button>
+        <el-button v-permission="['examine_test_plan', 'begin']" type="primary" :disabled="btnLoading&&noRecheck" @click="startTestFun">开始检测</el-button>
         <el-button v-permission="['examine_test_plan', 'end']" type="primary" :disabled="endBtnLoading" @click="endTestFun">结束检测</el-button>
         <el-button type="primary" @click="refreshFun">刷新</el-button>
         <div style="float:right">
@@ -243,12 +303,14 @@
           <el-input
             v-model="ruleForm.plan_uid"
             :disabled="true"
+            style="width:250px !important"
           />
         </div>
         <el-table
           :data="tableDataRight"
           style="width: 100%;margin-top:10px"
           border
+          :row-class-name="tableRowClassName"
         >
           <el-table-column
             prop="factory_date"
@@ -256,7 +318,7 @@
             min-width="24"
           />
           <el-table-column
-            prop="classes"
+            prop="production_classes"
             label="生产班次"
             min-width="15"
           />
@@ -273,7 +335,7 @@
           <el-table-column
             prop="actual_trains"
             label="车次"
-            width="80px"
+            width="50"
           >
             <template slot-scope="{row,$index}">
               <div v-if="row.add" class="actualTrains">
@@ -283,15 +345,20 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="values"
+            prop="value"
             label="检测值"
-            min-width="20"
-          />
+            min-width="40"
+          >
+            <template v-if="row.value" slot-scope="{row}">
+              <!-- {{ row.value.replace(/{|}|'/g,"") }} -->
+              <span v-for="item in JSON.parse(row.value)" :key="item.name" :style="{'color':item.flag==='H'?'red':item.flag==='L'?'blue':''}">{{ item.name }}:{{ item.value }};</span>
+            </template>
+          </el-table-column>
           <el-table-column
             label="状态"
-            min-width="18"
+            width="60"
             :formatter="(row)=>{
-              return row.values?'已检测':'待检测'
+              return row.value?'已检测':'待检测'
             }"
           />
           <el-table-column
@@ -303,8 +370,8 @@
             label="操作"
             width="70"
           >
-            <template slot-scope="{$index}">
-              <el-button size="mini" type="primary" :disabled="btnLoading" @click="delRow($index)">删除</el-button>
+            <template slot-scope="{row,$index}">
+              <el-button size="mini" type="primary" :disabled="row.value?true:false" @click="delRow($index,row)">删除</el-button>
             </template>
           </el-table-column>
           <el-table-column
@@ -382,7 +449,6 @@
           </template>
         </el-table-column>
         <el-table-column
-          prop="date"
           label="检测时间"
           min-width="20"
         >
@@ -537,7 +603,7 @@
           width="160px"
         >
           <template slot-scope="{row,$index}">
-            <el-button v-if="tableDataValue.length!==$index" type="primary" @click="modifyFun(row)">{{ row.edit?'保存':'修改' }}</el-button>
+            <el-button v-if="tableDataValue.length-1!==$index" type="primary" @click="modifyFun(row)">{{ row.edit?'保存':'修改' }}</el-button>
             <el-upload
               v-if="false"
               style="display:inline-block;margin-left:5px"
@@ -561,8 +627,8 @@
 <script>
 import classSelect from '@/components/ClassSelect'
 import equipSelect from '@/components/select_w/equip'
-import { globalCodesUrl, testIndicators, palletTrainsFeedbacks, matTestIndicatorMethods } from '@/api/base_w'
-import { productReportEquip, productTestPlan, rubberMaxStretchTestResult } from '@/api/base_w_four'
+import { globalCodesUrl, testIndicators, palletTrainsFeedbacks, matTestIndicatorMethods, productTestedTrains } from '@/api/base_w'
+import { productReportEquip, productTestPlan, rubberMaxStretchTestResult, productTestPlanDetail, bulkCreate, underwayPlan } from '@/api/base_w_four'
 import allProductNoSelect from '@/components/select_w/allProductNoSelect.vue'
 
 export default {
@@ -591,8 +657,9 @@ export default {
         test_time: { required: true, message: '请选择检测日期', trigger: 'change' },
         test_group: { required: true, message: '请选择检测班组', trigger: 'change' },
         test_method_name: { required: true, message: '请选择试验方法', trigger: 'change' },
-        test_times: { required: true, message: '请选择试验次数', trigger: 'change' },
+        // test_times: { required: true, message: '请选择试验次数', trigger: 'change' },
         test_interval: { required: true, message: '请选择检测间隔', trigger: 'change' },
+        count: { required: true, message: '请选择检测次数', trigger: 'change' },
         test_classes: [
           { required: true, trigger: 'change', validator: (rule, value, callback) => {
             validator(rule, value, callback,
@@ -603,14 +670,12 @@ export default {
       rulesLeft: {},
       groups: [],
       ruleForm: {
-        test_interval: 1
+        test_interval: 1,
+        test_method_name: '',
+        count: 5
       },
       btnLoading: false,
       testEquipList: [],
-      // { name: '门尼', id: 1 },
-      // { name: '流变', id: 2 },
-      // { name: '物性', id: 3 },
-      // { name: '钢拔', id: 4 }
       testIndicatorsList: [],
       endBtnLoading: false,
       stageList: [],
@@ -620,7 +685,14 @@ export default {
       dialogVisible: false,
       searchValue: {},
       tableDataValue: [],
-      TableDataValueId: ''
+      TableDataValueId: '',
+      isDelRow: false,
+      maxTrain: 0,
+      minTrain: 0,
+      add_w: false,
+      noRecheck: true, // false为复检中
+      rightMin: null,
+      rightMax: null
     }
   },
   watch: {
@@ -642,12 +714,37 @@ export default {
         this.titleInfo(this.search.classes, '请输入班次')
         this.titleInfo(this.search.product_no, '请输入胶料')
         this.titleInfo(this.search.factory_date, '请输入时间')
-        this.loading = true
+        // this.loading = true
         const data = await palletTrainsFeedbacks('get', null, { params: this.search })
+        data.forEach(d => {
+          d.production_classes = d.classes
+        })
         this.loading = false
-        this.tableData = data
-        this.alltableData = data
+        this.tableData = []
+        if (!this.tableDataRight.length) {
+          this.tableData = data
+        } else {
+          const data1 = await productTestedTrains('get', null, { params: this.search })
+          this.rightMin = data1.min_trains || 0
+          this.rightMax = data1.max_trains || 0
+          data.forEach(d => { // 去掉左边相同得数据
+            if (d.actual_trains < this.rightMin || d.actual_trains > this.rightMax) {
+              this.tableData.push(d)
+            }
+          })
+        }
+        // this.alltableData = data
         this.search.is_tested = ''
+
+        // 获取最大车次和最小车次
+        this.maxTrain = data[data.length - 1].actual_trains
+        this.minTrain = data[0].actual_trains
+
+        if (this.tableDataRight.length) {
+          this.add_w = true
+        } else {
+          this.add_w = false
+        }
       } catch (e) {
         this.loading = false
       }
@@ -657,7 +754,7 @@ export default {
         const data = await productReportEquip('get', null, { params: { all: 1 }})
         this.testEquipList = data || []
         if (bool) {
-          this.search.test_equip = data && data[0].no
+          this.search.test_equip = data && data[0].id
           this.getWaitPlan()
           this.getTestIndicatorsList()
         }
@@ -726,6 +823,7 @@ export default {
     },
     changeTestEquip() {
       this.tableDataRight = []
+      this.tableData = []
       this.btnLoading = false
       this.ruleForm.plan_uid = ''
       this.ruleForm.product_no = ''
@@ -735,7 +833,7 @@ export default {
     },
     getTestIndicatorsList() {
       this.search.test_indicator_name = ''
-      const obj = this.testEquipList.find(d => d.no === this.search.test_equip)
+      const obj = this.testEquipList.find(d => d.id === this.search.test_equip)
       this.testIndicatorsList = obj.test_indicator_name || []
       if (!this.ruleForm.plan_uid) {
         this.search.test_indicator_name = this.testIndicatorsList[0].test_indicator__name
@@ -743,32 +841,76 @@ export default {
     },
     async getWaitPlan(bool) {
       try {
-        const obj = { test_equip: this.search.test_equip, test_indicator_name: this.search.test_indicator_name }
-        delete obj.plan_uid
-        if (bool) {
-          obj.plan_uid = this.ruleForm.plan_uid
-          delete obj.test_equip
-        }
-        const data = await productTestPlan('get', null, { params: obj })
-        if (data.results.length === 0) {
+        // let obj = { status: 1, test_equip: this.search.test_equip, test_indicator_name: this.search.test_indicator_name }
+        // delete obj.plan_uid
+        // if (bool) {
+        //   obj = { id: this.ruleForm.id }
+        // }
+        const obj = { test_equip: this.search.test_equip }
+        const data = await underwayPlan('get', null, { params: obj })
+
+        if (JSON.stringify(data) === '{}') {
+          this.btnLoading = false
+          this.noRecheck = true
+          this.tableDataRight = []
+          this.ruleForm.plan_uid = ''
+          this.testMethodList = []
           return
         }
-        // const _test_indicator_name = data.results[0].test_indicator_name
-        // if (this.search.test_indicator_name !== _test_indicator_name) {
-        //   this.btnLoading = false
-        //   this.ruleForm.plan_uid = ''
-        //   this.tableDataRight = []
-        //   return
-        // }
-        if (!data.msg) {
+        let _product_test_plan_detail = []
+        if (data.product_test_plan_detail && data.product_test_plan_detail.length) {
+          // this.rightMin = data.product_test_plan_detail[0].actual_trains
+          // this.rightMax = data.product_test_plan_detail[data.product_test_plan_detail.length - 1].actual_trains
+
+          // 只取10个已检测的
+          let _i_w = 0
+          const a_reverse = data.product_test_plan_detail.reverse()
+          a_reverse.forEach(d => {
+            if (!d.value) {
+              _product_test_plan_detail.push(d)
+            } else if (!d.is_qualified) {
+              _product_test_plan_detail.push(d)
+            } else if (_i_w < 10) { // 10
+              _product_test_plan_detail.push(d)
+              _i_w++
+            }
+          })
+          _product_test_plan_detail = _product_test_plan_detail.reverse()
+        }
+        if (!data.id) {
           this.btnLoading = true
-          this.ruleForm = data.results[0]
-          this.tableDataRight = data.results[0].product_test_plan_detail
-          this.$message.info('正在检测中')
-          this.search.test_indicator_name = data.results[0].test_indicator_name
-          this.ruleForm.product_no = data.results[0].product_test_plan_detail[0].product_no
+          this.noRecheck = false
+          this.ruleForm = data
+
+          this.search.factory_date = data.product_test_plan_detail[0].factory_date
+          this.search.classes = data.product_test_plan_detail[0].production_classes
+          this.search.equip_no = data.product_test_plan_detail[0].equip_no
+          this.search.product_no = data.product_test_plan_detail[0].product_no
+
+          this.tableDataRight = _product_test_plan_detail
+          this.search.test_indicator_name = data.test_indicator_name
+          this.ruleForm.product_no = data.product_test_plan_detail[0].product_no
+
+          this.getList()
+        } else if (data.status === 1) {
+          this.btnLoading = true
+          this.noRecheck = true
+          this.ruleForm = data
+          this.search.factory_date = data.product_test_plan_detail[0].factory_date
+          this.search.classes = data.product_test_plan_detail[0].production_classes
+          this.search.equip_no = data.product_test_plan_detail[0].equip_no
+          this.search.product_no = data.product_test_plan_detail[0].product_no
+
+          this.tableDataRight = _product_test_plan_detail
+          if (!this.isDelRow) {
+            this.$message.info('正在检测中')
+          }
+          this.search.test_indicator_name = data.test_indicator_name
+          this.ruleForm.product_no = data.product_test_plan_detail[0].product_no
+
+          this.getList()
         } else {
-          this.$message.info('全部检测完毕')
+          this.$message.success('全部检测完毕')
           this.tableDataRight = []
           this.btnLoading = false
           this.ruleForm.plan_uid = ''
@@ -776,12 +918,13 @@ export default {
           // this.ruleForm = {}
           // this.$refs.ruleForm.clearValidate()
         }
+        this.isDelRow = false
       } catch (e) {
         //
       }
     },
     changeTestIndicators() {
-      // this.getWaitPlan()
+      this.ruleForm.test_method_name = ''
     },
     classChanged(val) {
       this.search.classes = val
@@ -792,6 +935,7 @@ export default {
     },
     searchList() {
       this.search.product_no = ''
+      this.ruleForm.product_no = ''
       this.getList()
     },
     equipSearch(val) {
@@ -832,7 +976,6 @@ export default {
               }
             })
             this.btnLoading = true
-            // this.ruleForm.test_method_name = '222'
             const obj = {
               ...this.ruleForm,
               test_indicator_name: this.search.test_indicator_name,
@@ -843,7 +986,7 @@ export default {
             this.ruleForm.plan_uid = plan_uid
             this.$message.success('已开始检测')
 
-            this.getWaitPlan(true)
+            this.getWaitPlan()
           } catch (e) {
             if (e.message) {
               this.$message.info(e.message)
@@ -863,29 +1006,38 @@ export default {
         this.tableDataRight[index].actual_trains = undefined
       }
     },
-    async endTestFun() {
-      try {
-        if (!this.ruleForm.plan_uid) {
-          return
-        }
-        await productTestPlan('get', null, { params: { close: 1, plan_uid: this.ruleForm.plan_uid }})
-        this.btnLoading = false
-        this.$message.success('已全部结束检测')
-        // this.ruleForm = {}
-        this.ruleForm.plan_uid = ''
-        this.tableDataRight = []
-        // this.$nextTick(() => {
-        // this.$refs.ruleForm.clearValidate()
-        // })
-      } catch (e) {
-        // this.btnLoading = false
+    endTestFun() {
+      if (!this.ruleForm.plan_uid) {
+        this.$message.info('没有可结束计划,如果存在请刷新页面查看')
+        return
       }
+      this.$confirm('此操作将结束检测, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        try {
+          await productTestPlan('delete', this.ruleForm.id, { params: { }})
+          this.btnLoading = false
+          this.getWaitPlan()
+          // this.$message.success('已全部结束检测')
+          // this.ruleForm.plan_uid = ''
+          // this.tableDataRight = []
+          // this.ruleForm.product_no = ''
+          // this.$nextTick(() => {
+          // this.$refs.ruleForm.clearValidate()
+          // })
+        } catch (e) {
+          //
+        }
+      })
     },
     refreshFun() {
       if (!this.ruleForm.plan_uid) {
-        return
+        this.changeTestEquip()
+      } else {
+        this.getWaitPlan(true)
       }
-      this.getWaitPlan(true)
     },
     showTestData(row) {
       this.dialogVisible = true
@@ -919,28 +1071,30 @@ export default {
         break_strength: row.break_strength,
         break_length: row.break_length
       }
-      let bool = false
+      // let bool = false
       if (this.search.test_indicator_name === '钢拔') {
         obj = {
           max_strength: row.max_strength,
           end_strength: row.end_strength
         }
-        if (row.max_strength && row.end_strength) {
-          bool = true
-        }
-      } else if (this.search.test_indicator_name === '物性') {
-        if (row.thickness && row.ds1 && !row.ds2 && !row.break_strength && !row.break_length) {
-          bool = true
-        }
+        // if (row.max_strength && row.end_strength) {
+        //   bool = true
+        // }
       }
-      if (!bool && !row.edit) {
-        this.$set(row, 'edit', !row.edit)
-        return
-      } else if (row.edit) {
-        this.$set(row, 'edit', !row.edit)
-      } else {
-        return
-      }
+      // else if (this.search.test_indicator_name === '物性') {
+      //   if (row.thickness && row.ds1 && !row.ds2 && !row.break_strength && !row.break_length) {
+      //     bool = true
+      //   }
+      // }
+      // if (!bool && !row.edit) {
+      //   this.$set(row, 'edit', !row.edit)
+      //   return
+      // } else if (row.edit) {
+      //   this.$set(row, 'edit', !row.edit)
+      // } else {
+      //   return
+      // }
+      this.$set(row, 'edit', !row.edit)
       if (!row.edit) {
         try {
           await rubberMaxStretchTestResult('put', row.id, { data: obj })
@@ -956,17 +1110,51 @@ export default {
         this.$message.info('请选择胶料规格')
         return
       }
-      const obj = {
-        classes: this.search.classes,
+      let obj = {
+        production_classes: this.search.classes,
         equip_no: this.search.equip_no,
         factory_date: this.search.factory_date,
         product_no: this.search.product_no,
         add: 1
       }
+      obj = JSON.parse(JSON.stringify(obj))
       this.tableDataRight.push(obj)
     },
-    moveRight() {
+    async moveRight() {
       if (this.handleList.length === 0) {
+        return
+      }
+      if (this.btnLoading && this.noRecheck) {
+        try {
+          const _tableDataRight = this.handleList.filter(d => !d.id)
+          _tableDataRight.forEach(d => {
+            if (!d.production_classes) {
+              d.production_classes = d.classes
+            }
+          })
+          await bulkCreate('post', null, { data: {
+            'product_test_plan_detail': _tableDataRight,
+            'test_plan': this.ruleForm.id
+          }})
+          this.$message.success('添加成功')
+          this.isDelRow = true
+          this.refreshFun()
+        } catch (e) {
+          this.refreshFun()
+          const _tableDataRight1 = this.tableDataRight.filter(d => d.id)
+          this.tableDataRight = _tableDataRight1
+        }
+        this.handleList.forEach(d => { // 去掉左边移到右边得数据
+          const _index = this.tableData.findIndex(dd => dd.actual_trains === d.actual_trains)
+          this.tableData.splice(_index, 1)
+        })
+        return
+      }
+      const handleMax = this.handleList[this.handleList.length - 1].actual_trains
+      const handleMin = this.handleList[0].actual_trains
+      if (handleMin < this.minTrain || handleMax > this.maxTrain) {
+        this.$message(`不在该胶料规格车数范围内${this.minTrain}-
+        ${this.maxTrain}，请检查`)
         return
       }
       let bool
@@ -975,25 +1163,29 @@ export default {
           bool = true
           return
         }
+        // d.production_classes = d.classes
         this.tableDataRight.push(d)
+        const _index = this.tableData.findIndex(dd => dd.actual_trains === d.actual_trains)
+        this.tableData.splice(_index, 1)
       })
       if (bool) {
-        this.$message.success('已去掉相同记录，请确认')
+        this.$message.success('已去掉右边相同记录，请确认')
       } else {
         this.$message.success('已添加到右侧检测列表')
       }
     },
     removeFun(d) {
-      const arr = this.tableDataRight.filter(D => d.factory_date === D.factory_date &&
-        d.classes === D.classes && d.equip_no === D.equip_no &&
-        d.product_no === D.product_no && d.actual_trains === D.actual_trains)
+      // d.factory_date === D.factory_date &&
+      //   d.production_classes === D.production_classes && d.equip_no === D.equip_no &&
+      //   d.product_no === D.product_no &&
+      const arr = this.tableDataRight.filter(D => d.actual_trains === D.actual_trains)
       if (arr.length > 0) {
         return true
       } else {
         return false
       }
     },
-    addSpace() {
+    async addSpace() {
       if (!this.ruleForm.test_interval) {
         this.$message.info('请选择检测间隔')
         return
@@ -1006,12 +1198,24 @@ export default {
         this.$message.info('请选择胶料规格')
         return
       }
-      const obj = {
-        classes: this.search.classes,
+      this.add_w = false
+      this.tableData = []
+      let obj = {
+        production_classes: this.search.classes,
         equip_no: this.search.equip_no,
         factory_date: this.search.factory_date,
         product_no: this.search.product_no
       }
+      if (this.btnLoading) {
+        const _objRight = this.tableDataRight[0]
+        obj = {
+          production_classes: _objRight.production_classes,
+          equip_no: _objRight.equip_no,
+          factory_date: _objRight.factory_date,
+          product_no: _objRight.product_no
+        }
+      }
+
       let bool = false
       let _val = this.ruleForm.num
       for (let index = this.ruleForm.num; index < this.ruleForm.num1 + 1; index++) {
@@ -1022,31 +1226,51 @@ export default {
           if (_val <= this.ruleForm.num1) {
             obj.actual_trains = _val
           } else {
-            return
+            break
           }
         }
         const _obj = JSON.parse(JSON.stringify(obj))
         if (!this.removeFun(_obj)) {
-          this.tableDataRight.push(_obj)
+          this.tableData.push(_obj)
         } else {
           bool = true
         }
       }
+      // if (!this.btnLoading) {
       if (bool) {
-        this.$message.success('已去掉相同记录，请确认')
+        this.$message.success('已去掉右边相同记录，请确认')
       } else {
-        this.$message.success('已添加到右侧检测列表')
+        this.$message.success('已添加到左侧检测列表')
       }
+      // }
+
+      // if (this.btnLoading && this.noRecheck) {
+      //   try {
+      //     const _tableDataRight = this.tableDataRight.filter(d => !d.id)
+      //     await bulkCreate('post', null, { data: {
+      //       'product_test_plan_detail': _tableDataRight,
+      //       'test_plan': this.ruleForm.id
+      //     }})
+      //     this.$message.success('添加成功')
+      //     this.isDelRow = true
+      //     this.refreshFun()
+      //   } catch (e) {
+      //     const _tableDataRight1 = this.tableDataRight.filter(d => d.id)
+      //     this.tableDataRight = _tableDataRight1
+      //   }
+      // }
     },
     async getTableDataValue() {
       try {
         this.tableDataValue = []
         const data = await rubberMaxStretchTestResult('get', null, { params: { product_test_plan_detail_id: this.TableDataValueId }})
         this.tableDataValue = data.results || []
+
         if (this.tableDataValue.length > 0) {
           this.tableDataValue.push({
             ordering: this.search.test_indicator_name === '物性' ? '平均值' : 'Mid',
             product_no: this.tableDataValue[0].product_no,
+            // Math.round(data.avg_value['厚度'] * num) / num,
             thickness: data.avg_value['厚度'],
             ds1: data.avg_value['百分之百'],
             ds2: data.avg_value['百分之三百'],
@@ -1060,12 +1284,40 @@ export default {
         this.tableDataValue = []
       }
     },
-    delRow(index) {
-      this.tableDataRight.splice(index, 1)
+    async delRow(index, row) {
+      if (!row.id) {
+        this.tableDataRight.splice(index, 1)
+        this.tableData.unshift(row)
+        if (!this.tableDataRight.length) {
+          this.btnLoading = false
+          this.noRecheck = true
+        }
+        if (!this.ruleForm.num) {
+          this.getList()
+        }
+        return
+      }
+      if (this.tableDataRight.length === 1) {
+        this.$message.info('最少保留一列数据')
+        return
+      }
+      try {
+        await productTestPlanDetail('delete', row.id)
+        this.$message.success('操作成功')
+        this.isDelRow = true
+        this.refreshFun()
+      } catch (e) {
+        //
+      }
     },
     cellStyle(row, column, rowIndex, columnIndex) {
       if (row.row.is_tested === 'Y') {
         return 'background:#fafafa'
+      }
+    },
+    tableRowClassName({ row, rowIndex }) {
+      if (row.is_qualified === false) {
+        // return 'red-row'
       }
     }
   }
@@ -1113,6 +1365,9 @@ export default {
           left: 50%;
           transform: translate(-50%,-50%);
         }
+    }
+    .red-row{
+      background: red;
     }
   }
 </style>

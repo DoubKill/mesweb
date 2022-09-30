@@ -1,8 +1,6 @@
 <template>
-  <div
-    class="app-container details_style"
-  >
-    <el-form :inline="true">
+  <div class="app-container details_style">
+    <el-form v-if="!isProps" :inline="true">
       <el-form-item label="日期">
         <el-date-picker
           v-model="day_time"
@@ -11,6 +9,7 @@
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           value-format="yyyy-MM-dd"
+          :clearable="false"
           @change="dayChange"
         />
       </el-form-item>
@@ -20,10 +19,38 @@
           @changeSearch="clickQuery"
         />
       </el-form-item>
+      <el-form-item label="胶料类别">
+        <el-select
+          v-model="getParams.recipe_type"
+          clearable
+          placeholder="请选择"
+          @change="clickQuery"
+        >
+          <el-option
+            v-for="item in categoryOptions"
+            :key="item.id"
+            :label="item.global_no"
+            :value="item.global_name"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="胶料">
-        <all-product-no-select
-          @productBatchingChanged="productBatchingChanged"
-        />
+        <el-select
+          v-model="getParams.product_no"
+          placeholder="请选择"
+          clearable
+          filterable
+          @change="productBatchingChanged"
+        >
+          <el-option
+            v-for="(group) in products"
+            :key="group.product_no"
+            :label="group.product_no"
+            :value="group.product_no"
+          >
+            <span :style="{color: group.used?'blue':''}">{{ group.product_no }}</span>
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="班次">
         <class-select @classSelected="classSelected" />
@@ -31,27 +58,53 @@
       <el-form-item label="段次">
         <stage-select v-model="getParams.stage" @change="clickQuery" />
       </el-form-item>
-      <el-form-item label="综合检测结果">
+      <el-form-item label="班组" prop="production_group">
         <el-select
-          v-model="getParams.is_qualified"
+          v-model="getParams.production_group"
           placeholder="请选择"
           clearable
           @change="clickQuery"
         >
           <el-option
-            v-for="(item,i) in options"
-            :key="i"
-            :label="item.name"
-            :value="item.bool"
+            v-for="group in groups"
+            :key="group.id"
+            :label="group.global_name"
+            :value="group.global_name"
           />
         </el-select>
       </el-form-item>
-      <!-- <el-form-item>
-        <el-button type="primary" @click="clickQuery">查询</el-button>
-      </el-form-item> -->
-      <br>
+      <el-form-item label="检测结果">
+        <el-select
+          v-model="getParams.is_recheck"
+          placeholder="请选择"
+          clearable
+          @change="clickQuery"
+        >
+          <el-option
+            v-for="(item) in [{name:'复检',id:true},{name:'正常',id:false}]"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="检测状态">
+        <el-select
+          v-model="getParams.state"
+          placeholder="请选择"
+          clearable
+          @change="clickQuery"
+        >
+          <el-option
+            v-for="(item) in ['检测中','合格','不合格']"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item>
-        <el-button @click="filterDialogVisible = true">
+        <el-button type="primary" @click="filterDialogVisible = true">
           显示过滤界面
         </el-button>
       </el-form-item>
@@ -59,21 +112,133 @@
         <el-button
           v-permission="['result_info','export']"
           :loading="btnLoading"
+          type="primary"
           @click="getALLData"
         >
-          导出
+          导出Excel
+        </el-button>
+      </el-form-item>
+      <el-form-item>
+        <el-button
+          v-permission="['result_info','export']"
+          type="primary"
+          @click="statisticsFun"
+        >
+          统计工程能力
         </el-button>
       </el-form-item>
     </el-form>
     <u-table
+      v-if="testOrdersTop.length"
       v-el-table-infinite-scroll="infiniteScroll"
+      :data="testOrdersTop"
+      style="height:auto"
+      fixed-columns-roll
+      border
+      fit
+      row-id="id"
+      max-height="550"
+      size="mini"
+      :tree-config="{
+        children: 'children',
+        expandAll: false,
+        lazy: true,
+        load: load,
+        hasChildren: 'hasChildren'}"
+      :data-changes-scroll-top="false"
+      :row-class-name="tableRowClassName1"
+    >
+      <!-- use-virtual 省略号和树形 -->
+      <u-table-column label="胶料编码" width="140px" align="center" prop="product_no">
+        <template slot-scope="scope">
+          <el-link v-if="!scope.row._current" type="primary" @click="clickOrderNum(scope.$index,scope.row)">{{ scope.row.product_no }}</el-link>
+          <span v-else>{{ scope.row.product_no }}</span>
+        </template>
+      </u-table-column>
+      <u-table-column
+        label="工厂日期"
+        width="90px"
+        prop="production_factory_date"
+        align="center"
+        :tree-node="true"
+      >
+        <template slot-scope="{row}">
+          <span v-if="row.production_factory_date">{{ (row.production_factory_date).split(' ')[0] }}</span>
+          <span class="line_w" />
+        </template>
+      </u-table-column>
+      <u-table-column align="center" label="生产班次" prop="production_class" width="70px">
+        <template slot-scope="{row}">
+          <span v-if="row.production_class"> {{ row.production_class.replace(/班/g, '') }}</span>
+          <span class="line_w" />
+        </template>
+      </u-table-column>
+      <u-table-column label="班组" align="center" prop="production_group" width="40px">
+        <template slot-scope="{row}">
+          <span v-if="row.production_group"> {{ row.production_group.replace(/班/g, '') }}</span>
+          <span class="line_w" />
+        </template>
+      </u-table-column>
+      <u-table-column align="center" label="生产机台" width="60px" prop="production_equip_no">
+        <template slot-scope="{row}">
+          <span> {{ row.production_equip_no }}</span>
+          <span class="line_w" />
+        </template>
+      </u-table-column>
+      <u-table-column label="门尼机台" width="60px" align="center" prop="menn">
+        <template slot-scope="{row}">
+          <span> {{ row.menn }}</span>
+          <span class="line_w" />
+        </template>
+      </u-table-column>
+      <u-table-column label="流变机台" width="60px" align="center" prop="liub">
+        <template slot-scope="{row}">
+          <span> {{ row.liub }}</span>
+          <span class="line_w" />
+        </template>
+      </u-table-column>
+      <u-table-column label="车次" align="center" width="50px" prop="actual_trains">
+        <template slot-scope="{row}">
+          <span> {{ row.actual_trains }}</span>
+          <span class="line_w" />
+        </template>
+      </u-table-column>
+      <u-table-column label="检测结果" align="center" width="80px" prop="is_recheck">
+        <template slot-scope="{ row }">
+          <div>
+            {{ row.is_recheck===true ?'复检':row.is_recheck===false?'正常':'' }}
+          </div>
+          <span class="line_w" />
+        </template>
+      </u-table-column>
+      <u-table-column v-for="header in newHead" :key="header.detail" width="60px" align="center" :label="header.detail">
+        <template v-if="row.order_results.find(d=>d.data_point_name===header.detail)" slot-scope="{row}">
+          {{ row.order_results.find(d=>d.data_point_name===header.detail).value }}
+        </template>
+      </u-table-column>
+      <u-table-column label="检测状态" prop="state" align="center" width="60px">
+        <template slot-scope="{row}">
+          <span> {{ row.state }}</span>
+          <span class="line_w" />
+        </template>
+      </u-table-column>
+      <u-table-column label="处理意见" min-width="60px" prop="deal_suggestion" align="center">
+        <template slot-scope="{row}">
+          <span> {{ row.deal_suggestion }}</span>
+          <span class="line_w line_w1" />
+        </template>
+      </u-table-column>
+    </u-table>
+    <u-table
+      v-el-table-infinite-scroll="infiniteScroll"
+      :show-header="!testOrdersTop.length"
       style="height:auto"
       :data="testOrders"
       fixed-columns-roll
       border
       fit
       row-id="id"
-      max-height="600"
+      max-height="550"
       size="mini"
       :tree-config="{
         children: 'children',
@@ -83,63 +248,56 @@
         hasChildren: 'hasChildren'}"
       :data-changes-scroll-top="false"
       :row-class-name="tableRowClassName"
+      use-virtual
     >
-      <!-- use-virtual 省略号 -->
-      <u-table-column label="生产信息" align="center">
-        <u-table-column
-          label="工厂日期"
-          min-width="20px"
-          prop="production_factory_date"
-          align="center"
-          :tree-node="true"
-        >
-          <template v-if="row.production_factory_date" slot-scope="{row}">
-            {{ (row.production_factory_date).split(' ')[0] }}
-          </template>
-        </u-table-column>
-        <u-table-column label="生产班次/班组" prop="class_group" min-width="20px" />
-        <u-table-column align="center" label="生产机台" min-width="20px" prop="production_equip_no" />
-        <u-table-column label="胶料编码" min-width="20px" align="center" prop="product_no">
-          <template slot-scope="scope">
-            <el-link type="primary" @click="clickOrderNum(scope.$index,scope.row)">{{ scope.row.product_no }}</el-link>
-          </template>
-        </u-table-column>
-        <u-table-column label="车次" align="center" min-width="20px" prop="actual_trains" />
-        <u-table-column label="检测状态" prop="test_status" align="center" min-width="20px">
-          <template slot-scope="{ row }">
-            <div :class="row.test_status === '复检' ? 'test_type_name_style': ''">
-              {{ row.test_status }}
-            </div>
-          </template>
-        </u-table-column>
+      <u-table-column label="胶料编码" width="140px" align="center" prop="product_no">
+        <template slot-scope="scope">
+          <el-link v-if="!scope.row._current&&checkPermission(['result_info','curve'])" type="primary" @click="clickOrderNum(scope.$index,scope.row)">{{ scope.row.product_no }}</el-link>
+          <span v-else>{{ scope.row.product_no }}</span>
+        </template>
       </u-table-column>
-      <u-table-column v-for="header in testTypeList.filter(type => type.show)" :key="header.test_type_name" align="center" :label="header.test_type_name">
-        <u-table-column v-for="subHeader in header.data_indicator_detail.filter(item => item.show)" :key="header.test_type_name + subHeader.detail" min-width="20px" :label="subHeader.detail" align="center">
-          <template slot-scope="{ row }">
-            <div :class="getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level')!==1&&getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'level')!==''?'test_type_name_style':''">
-              {{ getDataPoint(header.test_type_name, subHeader.detail, row.order_results, 'value') }}
-            </div>
-          </template>
-        </u-table-column>
-        <u-table-column v-if="header.test_type_name === '门尼' || header.test_type_name === '流变'" label="检测机台" min-width="20px" align="center">
-          <template slot-scope="{row}">
-            {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'machine_name') }}
-          </template>
-        </u-table-column>
-        <u-table-column min-width="20px" label="标准" align="center">
-          <template slot-scope="{row}">
-            {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'upper_lower') }}
-          </template>
-        </u-table-column>
-        <u-table-column min-width="20px" label="等级" align="center">
-          <template slot-scope="{row}">
-            {{ getDataPoint(header.test_type_name, 'maxLevelItem', row.order_results, 'level') }}
-          </template>
-        </u-table-column>
+      <u-table-column
+        label="工厂日期"
+        width="90px"
+        prop="production_factory_date"
+        align="center"
+      >
+        <template v-if="row.production_factory_date" slot-scope="{row}">
+          {{ (row.production_factory_date).split(' ')[0] }}
+        </template>
       </u-table-column>
-      <u-table-column label="综合等级" min-width="20px" prop="level" align="center" />
-      <u-table-column label="综合检测结果" min-width="20px" prop="mes_result" align="center" />
+      <u-table-column align="center" label="生产班次" prop="production_class" width="70px">
+        <template v-if="row.production_class" slot-scope="{row}">
+          {{ row.production_class.replace(/班/g, '') }}
+        </template>
+      </u-table-column>
+      <u-table-column label="班组" align="center" prop="production_group" width="40px">
+        <template v-if="row.production_group" slot-scope="{row}">
+          {{ row.production_group.replace(/班/g, '') }}
+        </template>
+      </u-table-column>
+      <u-table-column align="center" label="生产机台" width="60px" prop="production_equip_no" />
+      <u-table-column label="门尼机台" width="60px" align="center" prop="menn" />
+      <u-table-column label="流变机台" width="60px" align="center" prop="liub" />
+      <u-table-column label="车次" align="center" width="50px" prop="actual_trains" />
+      <u-table-column label="检测结果" align="center" width="80px" prop="is_recheck" :tree-node="true">
+        <template slot-scope="{ row }">
+          <div>
+            {{ row.is_recheck===true ?'复检':row.is_recheck===false?'正常':'' }}
+          </div>
+        </template>
+      </u-table-column>
+      <u-table-column v-for="header in newHead" :key="header.detail" width="60px" align="center" :label="header.detail">
+        <template v-if="row.order_results.find(d=>d.data_point_name===header.detail)" slot-scope="{row}">
+          <div :class="[row.order_results.find(d=>d.data_point_name===header.detail)._red ? 'test_type_name_style': '',row.order_results.find(d=>d.data_point_name===header.detail)._blue ? 'test_type_name_style1': '']">
+            {{ row.order_results.find(d=>d.data_point_name===header.detail).value }}
+          </div>
+        </template>
+      </u-table-column>
+      <u-table-column label="检测状态" prop="state" align="center" width="60px" />
+      <u-table-column label="处理意见" min-width="60px" prop="deal_suggestion" align="center" />
     </u-table>
+    <el-alert style="color:black" title="表格背景色说明：黄色表示不是一等品；红色表示超出规格上限；绿色表示低于规格下限" type="success" />
     <el-dialog
       title="选择过滤"
       :visible.sync="filterDialogVisible"
@@ -150,7 +308,7 @@
       >
         <el-table-column label="选择" min-width="50">
           <template slot-scope="{row}">
-            <el-checkbox v-model="row.show" />
+            <el-checkbox v-model="row.show" @change="checkboxFilter(true)" />
           </template>
         </el-table-column>
         <el-table-column label="实验方法" min-width="80">
@@ -161,7 +319,7 @@
         <el-table-column label="检测项">
           <template slot-scope="{row}">
             <template v-for="item in row.data_indicator_detail">
-              <el-checkbox :key="item.detail" v-model="item.show">{{ item.detail }}</el-checkbox>
+              <el-checkbox :key="item.detail" v-model="item.show" @change="checkboxFilter(false)">{{ item.detail }}</el-checkbox>
             </template>
           </template>
         </el-table-column>
@@ -178,10 +336,12 @@
       <test-card ref="testCard" />
     </el-dialog>
     <el-dialog
-      title="快检值历史曲线"
+      title=""
       :visible.sync="historyDialogVisible"
       width="80%"
+      append-to-body
     >
+      <h3 style="display:inline-block;margin:0 10px">日期</h3>
       <el-date-picker
         v-model="historyDate"
         type="daterange"
@@ -192,9 +352,14 @@
         :clearable="false"
         @change="changeHistoryDate"
       />
+      <h3 style="display:inline-block;margin:0 10px">机台</h3>
+      <equip-select
+        :equip_no_props.sync="history_equip_no"
+        @changeSearch="changeHistoryDate"
+      />
       <div
-        id="historyBar"
-        style="width: 100%;height:300px;margin-top:8px"
+        id="historySpot"
+        style="width: 100%;height:1000px;margin-top:8px"
       />
     </el-dialog>
 
@@ -213,21 +378,52 @@
 import dayjs from 'dayjs'
 import EquipSelect from '@/components/select_w/equip'
 import ClassSelect from '@/components/ClassSelect'
-import StageSelect from '@/components/StageSelect'
-import allProductNoSelect from '@/components/select_w/allProductNoSelect'
-import { testTypes, materialTestOrders, testResultHistory, datapointCurve } from '@/api/quick-check-detail'
+import StageSelect from '@/components/StageSelect/index'
+import { globalCodesUrl, productMaterials } from '@/api/base_w'
+import { testTypes, materialTestOrders,
+  materialTestOrdersAll, datapointCurve, productIndicatorStandard } from '@/api/quick-check-detail'
 import elTableInfiniteScroll from 'el-table-infinite-scroll'
 import FileSaver from 'file-saver'
 import XLSX from 'xlsx'
 import DetailsUTable from './components/details-u-table'
-import { setDate } from '@/utils'
+import { setDate, checkPermission } from '@/utils'
 import * as echarts from 'echarts'
 export default {
   name: 'Details',
   directives: {
     'el-table-infinite-scroll': elTableInfiniteScroll
   },
-  components: { EquipSelect, DetailsUTable, allProductNoSelect, ClassSelect, StageSelect },
+  components: { EquipSelect, DetailsUTable, ClassSelect, StageSelect },
+  props: {
+    isProps: {
+      type: Boolean,
+      default: false
+    },
+    lotNo: {
+      type: String,
+      default: ''
+    },
+    equipNo: {
+      type: String,
+      default: ''
+    },
+    productNo: {
+      type: String,
+      default: ''
+    },
+    classesNo: {
+      type: String,
+      default: ''
+    },
+    isQualified: {
+      type: String,
+      default: ''
+    },
+    show: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       count: 0,
@@ -259,45 +455,92 @@ export default {
       recordList: [],
       isMoreLoad: true,
       // 默认每页数量
-      definePafeSize: 10,
+      definePafeSize: 20,
       valueResult: '',
       ALLData: [],
       btnLoading: false,
       options: [{ name: '一等品', bool: true }, { name: '三等品', bool: false }],
       historyDialogVisible: false,
       historyDate: [],
+      history_equip_no: '',
       row_roduct_no: '',
-      optionBar: {
+      newHead: [],
+      groups: [],
+      products: [],
+      viewHeard: false,
+      testOrdersTop: [],
+      categoryOptions: [],
+      historySpot: {
+        title: [{
+          text: "Anscombe's quartet"
+        }],
+        toolbox: {
+          feature: {
+            saveAsImage: {}
+          }
+        },
+        grid: [
+          { left: '7%', top: '7%', width: '38%', height: '38%' }
+        ],
+        xAxis: [
+          { gridIndex: 0 },
+          { gridIndex: 1 }
+        ],
+        yAxis: [
+          { gridIndex: 0 },
+          { gridIndex: 1 }
+        ],
         tooltip: {
           trigger: 'axis'
         },
-        legend: {
-          data: []
-        },
-        grid: {
-          left: '3%',
-          right: '4%',
-          bottom: '3%',
-          containLabel: true
-        },
-        xAxis: {
-          type: 'category',
-          boundaryGap: false,
-          data: []
-        },
-        yAxis: {
-          type: 'value',
-          name: '测试点值'
-        },
-        series: []
+        // tooltip: {
+        //   triggerOn: 'click'
+        // },
+        series: [
+          {
+            name: 'I',
+            type: 'scatter',
+            xAxisIndex: 0,
+            yAxisIndex: 0,
+            data: []
+          },
+          {
+            name: 'II',
+            type: 'scatter',
+            xAxisIndex: 1,
+            yAxisIndex: 1,
+            data: []
+          }
+        ]
+      }
+    }
+  },
+  watch: {
+    show(bool) {
+      if (bool) {
+        this.testOrders = []
+        this.testOrdersAll = []
+        this.day_time = ''
+        this.getParams.st = ''
+        this.getParams.et = ''
+        this.getParams.lot_no = this.lotNo
+        this.getMaterialTestOrders()
       }
     }
   },
   created() {
+    if (this.isProps) {
+      this.day_time = ''
+      this.getParams.st = ''
+      this.getParams.et = ''
+      this.getParams.lot_no = this.lotNo
+    }
     this.getTestTypes()
     this.testOrders = []
     this.testOrdersAll = []
     this.getMaterialTestOrders()
+    this.getClassGroup()
+    this.getFormulaType()
   },
   mounted() {
     // window.addEventListener('scroll', () => {
@@ -318,8 +561,24 @@ export default {
 
   },
   methods: {
+    checkPermission,
     dayTimeChanged() {
       this.clickQuery()
+    },
+    getClassGroup() {
+      globalCodesUrl('get', {
+        params: {
+          class_name: '班组'
+        }
+      }).then((response) => {
+        this.groups = response.results
+      }).catch(function() {
+      })
+
+      productMaterials('get').then((response) => {
+        this.products = response
+      }).catch(function() {
+      })
     },
     clearList() {
       this.getParams.page = 1
@@ -337,54 +596,53 @@ export default {
       this.getParams.classes = className || null
       this.clickQuery()
     },
-    productBatchingChanged(val) {
-      this.getParams.product_no = val ? val.material_no : null
+    async getFormulaType() {
+      try {
+        const data = await globalCodesUrl('get', { params: { class_name: '配方类别' }})
+        this.categoryOptions = data.results
+      } catch (e) {
+        //
+      }
+    },
+    async productBatchingChanged() {
+      this.viewHeard = true
+      this.statisticsBool = false
+      delete this.getParams.sum_project
+      if (!this.getParams.product_no) {
+        this.testOrdersTop = []
+      }
       this.clickQuery()
     },
     load(tree, resolve) {
-      // expand-change
-      const subRows = []
-      testResultHistory(tree.id).then(testResul => {
-        for (const testTime in testResul) {
-          const row = JSON.parse(JSON.stringify(tree))
-          row.test_status = '正常'
-          row.index = this.index++
-          row.hasChildren = false
-          row.order_results = testResul[testTime]
+      let subRows = {}
+      const order_results = JSON.parse(JSON.stringify(tree.order_results))
+      order_results.forEach(d => {
+        d.judged_lower_limit = d.judged_lower_limit0
+        d.judged_upper_limit = d.judged_upper_limit0
+        d.value = d.value0
 
-          row.level = 0
-          row.mes_result = '未检测'
-          for (const testTypeName in row.order_results) {
-            const testType = row.order_results[testTypeName]
-            let maxLevel = 0
-            // let mes_result = '未检测'
-            for (const dataPointName in testType) {
-              const dataPoint = testType[dataPointName]
-              if (dataPoint.test_times > 1) {
-                row.test_status = '复检'
-              }
-              if (dataPoint.level > maxLevel) {
-                maxLevel = dataPoint.level
-                // mes_result = dataPoint.mes_result
-                testType['maxLevelItem'] = dataPoint
-              }
-            }
-            if (maxLevel > row.level) {
-              row.level = maxLevel
-              row.mes_result = row.level === 1 ? '一等品' : '三等品'
-            }
-          }
-
-          subRows.push(row)
-        }
-        resolve(subRows)
+        const _min = d.judged_lower_limit ? Number(d.judged_lower_limit) : 0
+        const _max = d.judged_upper_limit ? Number(d.judged_upper_limit) : 0
+        d._red = d.value > _max
+        d._blue = d.value < _min
+        d.id = new Date().getTime()
       })
+      subRows = {
+        order_results: order_results,
+        is_recheck: false
+      }
+      resolve([subRows])
     },
     clickQuery() {
       this.getParams.page = 1
       this.testOrders = []
       this.testOrdersAll = []
+      this.allPage = 0
+      this.definePafeSize = 20
       this.getMaterialTestOrders()
+      if (this.statisticsBool) {
+        this.handleCurrentChange()
+      }
     },
     dayChange(val) {
       this.getParams.st = val ? val[0] : ''
@@ -393,87 +651,108 @@ export default {
     },
     async getALLData() {
       try {
+        if (!this.testOrders.length) {
+          this.$message('暂无数据')
+          return
+        }
         this.btnLoading = true
-        const arr = await this.getMaterialTestOrders(true)
-        this.ALLData = arr || []
-        this.btnLoading = false
-        this.exportExcel()
+        // const arr = await this.getMaterialTestOrders(true)
+        // this.ALLData = arr || []
+        // this.btnLoading = false
+        // this.$nextTick(() => {
+        //   this.exportExcel()
+        // })
+        if (!this.statisticsBool) {
+          delete this.getParams.sum_project
+        }
+        const obj = Object.assign({ export: 1 }, this.getParams)
+        const _api = materialTestOrdersAll
+        _api('get', null, { params: obj, responseType: 'blob' })
+          .then(res => {
+            const link = document.createElement('a')
+            const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+            link.style.display = 'none'
+            link.href = URL.createObjectURL(blob)
+            link.download = `胶料快检详细信息${setDate()}.xlsx`// 下载的文件名
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+            this.btnLoading = false
+          }).catch(e => {
+            this.btnLoading = false
+          })
       } catch (e) {
-        //
+        this.btnLoading = false
       }
     },
     async getMaterialTestOrders(bool = false) {
       this.listLoading = true
       try {
+        if (getDaysBetween(this.getParams.st, this.getParams.et) > 1) {
+          this.$message('日期间隔不得大于31天')
+          return
+        }
         const paramsObj = JSON.parse(JSON.stringify(this.getParams))
-        paramsObj.page_size = bool ? 99999999 : 10
+        paramsObj.page_size = bool ? 99999999 : 20
+        paramsObj.page = bool ? 1 : this.getParams.page
         const data = await materialTestOrders(paramsObj)
-        let arr = data.results // 加分页
-        // let arr = data
-        arr = arr.map(row => {
-          row.level = 0
-          row.mes_result = '未检测'
-          for (const testTypeName in row.order_results) {
-            const testType = row.order_results[testTypeName]
-            let maxLevel = 0
-            // let mes_result = '未检测'
-            for (const dataPointName in testType) {
-              const dataPoint = testType[dataPointName]
-              if (dataPoint.test_times > 1) {
-                this.$set(row, 'test_status', '复检')
-                this.$set(row, 'hasChildren', true)
-              } else {
-                this.$set(row, 'test_status', '正常')
-                this.$set(row, 'hasChildren', false)
-              }
-              if (dataPoint.level > maxLevel) {
-                maxLevel = dataPoint.level
-                // mes_result = dataPoint.mes_result
-                testType['maxLevelItem'] = dataPoint
-              }
-            }
-            if (maxLevel > row.level) {
-              row.level = maxLevel
-              row.mes_result = row.level === 1 ? '一等品' : '三等品'
-            }
+        const arr = data.results // 加分页
+        arr.forEach(d => {
+          const arr = d.order_results.filter(dd => dd.test_indicator_name === '门尼')
+          const arr1 = d.order_results.filter(dd => dd.test_indicator_name === '流变')
+          if (arr.length) {
+            d.menn = arr[0].machine_name
           }
-          return {
-            ...row,
-            index: this.index++,
-            class_group: `${row.production_class}/${row.production_group}`
+          if (arr1.length) {
+            d.liub = arr1[0].machine_name
           }
+          d.order_results.forEach(D => {
+            const _min = D.judged_lower_limit ? Number(D.judged_lower_limit) : 0
+            const _max = D.judged_upper_limit ? Number(D.judged_upper_limit) : 0
+            D._red = D.value > _max
+            D._blue = D.value < _min
+          })
+          d.hasChildren = d.is_recheck
         })
-        // arr.forEach(row => {
-        // })
-        // for (let i = 1; i < 8; i++) {
-        //   arr = arr.concat(arr)
-        // }
-
+        this.listLoading = false
         if (bool) {
           return arr
         }
-        this.listLoading = false
         this.allPage = data.count
-
         this.testOrdersAll.push(...arr)
         this.testOrders = this.testOrdersAll
+
+        if (this.viewHeard && this.getParams.product_no) {
+          await this.handleCurrentChange()
+          this.viewHeard = false
+        }
       } catch (e) {
         this.listLoading = false
       }
     },
     infiniteScroll() {
+      if (this.allPage <= this.definePafeSize) {
+        return
+      }
       if (Number(this.allPage - this.getParams.page * this.definePafeSize) <= 0) {
+        return
+      }
+      if (this.listLoading) {
         return
       }
       this.getParams.page = this.getParams.page + 1
       this.getMaterialTestOrders()
     },
+    infiniteScroll1() {
+    },
     async getTestTypes() {
       try {
         this.testTypeList = []
         const testTypeList = await testTypes()
+        this.newHead = []
         this.testTypeList = testTypeList.map(testType => {
           testType.data_indicator_detail = testType.data_indicator_detail.map(detail => {
+            this.newHead.push({ detail: detail, show: true })
             return {
               detail,
               show: true
@@ -500,10 +779,18 @@ export default {
       return result ? result[key] : ''
     },
     tableRowClassName({ row, rowIndex }) {
-      if (row.mes_result !== '一等品') {
+      if (row.state === '不合格') {
         return 'warning-row'
       }
       return ''
+    },
+    tableRowClassName1({ row, rowIndex }) {
+      if (['中央值', '规格幅(+-)'].includes(row.product_no)) {
+        return 'topColor1'
+      }
+      if (['上规格幅', '下规格幅'].includes(row.product_no)) {
+        return 'topColor2'
+      }
     },
     changeHistoryDate() {
       this.getHistoryDate()
@@ -528,39 +815,280 @@ export default {
         const obj = {
           st: this.historyDate[0] || '',
           et: this.historyDate[1] || '',
-          product_no: this.row_roduct_no || ''
+          product_no: this.row_roduct_no || '',
+          equip_no: this.history_equip_no
         }
         this.historyLoading = true
         const data = await datapointCurve(obj)
         this.historyLoading = false
 
-        data.y_axis.forEach(d => {
-          d.markLine = {
-            silent: true,
-            lineStyle: {
-              color: '#333'
-            },
-            data: [{
-              yAxis: data.indicators[d.name] ? data.indicators[d.name][0] : ''
-            }, {
-              yAxis: data.indicators[d.name] ? data.indicators[d.name][1] : ''
-            }]
+        const _x = []
+        const _y = []
+        const _title = []
+        const _grid = []
+        const _series = []
+        const _num = Math.ceil(data.data.length / 2) + 3.1
+        const _height = (1 / _num * 100).toFixed(0) + '%'
+        const _height1 = (1 / _num * 100 + 8).toFixed(0)
+
+        data.data.forEach((d, _i) => {
+          const _dataSeries = []
+          const _dataSeriesX = []
+          const _1 = data.indicators[d.name] ? data.indicators[d.name].lower_limit : 0 // 下限
+          const _3 = data.indicators[d.name] ? data.indicators[d.name].upper_limit : 0 // 上限
+          const _2 = setData((_3 + _1) / 2)
+          let _min = setData(_1 - (_3 - (_3 + _1) / 2))
+          let _max = setData(_3 + (_3 - (_3 + _1) / 2))
+          if (_3 >= 999) {
+            _min = setData(_1 - 10)
+            _max = setData(_1 + 30)
           }
+          if (_3 >= 999 && ['伸长率%', '钢拔'].includes(d.name)) {
+            _min = setData(_1 - 150)
+            _max = setData(_1 + 450)
+          }
+          if (_min < 0) {
+            _min = 0
+          }
+
+          d.data.forEach((dd, ii) => {
+            _dataSeries.push(dd.v)
+            _dataSeriesX.push(dd.date)
+          })
+          _x.push({
+            gridIndex: _i,
+            data: _dataSeriesX,
+            type: 'category',
+            boundaryGap: false
+          })
+          _y.push({
+            gridIndex: _i,
+            type: 'value',
+            max: _max,
+            min: _min,
+            interval: setData(_1 - _min)
+          })
+          if (_i % 2 === 0 || _i === 0) {
+            const _top1 = (_i / 2) * _height1 + 5 + '%'
+            const _topTitle1 = (_i / 2) * _height1 + 2 + '%'
+            _title.push({ text: d.name, left: '8%', top: _topTitle1 })
+            _grid.push({ left: '3%', top: _top1, width: '40%', height: _height })
+          } else {
+            const _top2 = ((_i - 1) / 2) * _height1 + 5 + '%'
+            const _topTitle2 = ((_i - 1) / 2) * _height1 + 2 + '%'
+            _title.push({ text: d.name, right: '8%', top: _topTitle2 })
+            _grid.push({ right: '7%', top: _top2, width: '40%', height: _height })
+          }
+
+          if (_3 < 999) {
+            _dataSeries.push(_3)
+          }
+          _series.push({
+            name: d.name,
+            type: 'scatter',
+            xAxisIndex: _i,
+            yAxisIndex: _i,
+            data: _dataSeries,
+            smooth: true,
+            markLine: data.indicators[d.name] ? {
+              // symbol: 'none',
+              precision: 3,
+              data: [{
+                // silent: true,
+                yAxis: _1, label: {
+                  position: 'end',
+                  formatter: `下限(${_1})`
+                }},
+              {
+                yAxis: _2, label: {
+                  position: 'end',
+                  formatter: `中央值(${_2})`
+                }},
+              {
+                yAxis: _3, label: {
+                  position: 'end',
+                  formatter: `上限(${_3})`
+                }}
+              ]
+            } : {}
+          })
         })
-
-        const arr = []
-        for (const iterator in data.indicators) {
-          arr.push(iterator)
+        let equip_nos = JSON.stringify(data.equip_nos)
+        if (this.history_equip_no) {
+          equip_nos = '[' + JSON.stringify(this.history_equip_no) + ']'
         }
+        equip_nos = equip_nos.replace(/"/g, '')
+        equip_nos = equip_nos.replace(/,/g, '/')
+        _title.push({ text: this.row_roduct_no + '数据推移' +
+        ' (' + this.historyDate[0] + '至' + this.historyDate[1] + ') ' +
+        equip_nos, left: 'center', top: 0 })
+        this.historySpot.toolbox.feature.saveAsImage.name = this.row_roduct_no + ' (' + this.historyDate[0] + '至' + this.historyDate[1] + ') ' + setDate()
+        this.historySpot.xAxis = _x || []
+        this.historySpot.yAxis = _y || []
+        this.historySpot.title = _title || []
+        this.historySpot.grid = _grid || []
+        this.historySpot.series = _series || []
 
-        this.optionBar.xAxis.data = data.x_axis || []
-        this.optionBar.series = data.y_axis || []
-        this.optionBar.legend.data = arr
-        this.chartHistoryBar = echarts.init(document.getElementById('historyBar'))
-        this.chartHistoryBar.setOption(this.optionBar, true)
+        this.chartHistoryBar = echarts.init(document.getElementById('historySpot'))
+        this.chartHistoryBar.setOption(this.historySpot, true)
       } catch (e) {
         //
       }
+    },
+    statisticsFun() {
+      if (!this.getParams.product_no) {
+        this.$message('请选择胶料')
+        return
+      }
+      this.statisticsBool = !this.statisticsBool
+      this.handleCurrentChange()
+    },
+    async handleCurrentChange() {
+      try {
+        let obj = { product_no: this.getParams.product_no }
+        if (this.statisticsBool) {
+          obj = Object.assign(this.getParams, { sum_project: 1 })
+        }
+        const data = await productIndicatorStandard(obj)
+        const arr = []
+        const names = [this.getParams.product_no, '中央值', '规格幅(+-)', '上规格幅', '下规格幅']
+        const names1 = ['均值', 'σ', 'Cｐ', 'CPK', 'K', '等级']
+        for (let index = 0; index < 5; index++) {
+          const order_results = []
+          data.forEach(d => {
+            if (index === 0) {
+              order_results.push({
+                data_point_name: d.data_point__name,
+                value: d.data_point__unit
+              })
+            }
+            d.upper_limit = d.upper_limit ? d.upper_limit : 0
+            d.lower_limit = d.lower_limit ? d.lower_limit : 0
+            if (index === 1) {
+              order_results.push({
+                data_point_name: d.data_point__name,
+                value: setData((d.upper_limit + d.lower_limit) / 2)
+              })
+            }
+            if (index === 2) {
+              order_results.push({
+                data_point_name: d.data_point__name,
+                value: setData(d.upper_limit - (d.upper_limit + d.lower_limit) / 2)
+              })
+            }
+            if (index === 3) {
+              order_results.push({
+                data_point_name: d.data_point__name,
+                value: d.upper_limit
+              })
+            }
+            if (index === 4) {
+              order_results.push({
+                data_point_name: d.data_point__name,
+                value: d.lower_limit
+              })
+            }
+          })
+          arr.push({
+            _current: true,
+            product_no: names[index],
+            order_results: order_results
+          })
+        }
+        if (this.statisticsBool) {
+          for (let index = 0; index < 6; index++) {
+            const order_results = []
+            data.forEach(d => {
+              // 均值：avg
+              // σ：std
+              // Cｐ：（上规格幅-下规格幅）/6/σ
+              // CPK：(1-K)*Cｐ
+              // K:ABS(中央值-均值)/规格幅
+              // 等级：CPK≥1.67（A+），1.33≤CPK<1.67（A），1≤CPK<1.33（B），0.67≤CPK<1（C），CPK<0.67（D）
+              if (index === 0) {
+                order_results.push({
+                  data_point_name: d.data_point__name,
+                  value: setData(d.avg)
+                })
+              }
+              if (index === 1) {
+                order_results.push({
+                  data_point_name: d.data_point__name,
+                  value: setData(d.std)
+                })
+              }
+              const Cｐ = (d.upper_limit - d.lower_limit) / 6 / d.std
+              const 中 = (d.upper_limit + d.lower_limit) / 2
+              const 幅 = d.upper_limit - (d.upper_limit + d.lower_limit) / 2
+              const k = 幅 ? Math.abs(中 - d.avg) / 幅 : ''
+              const CPK = d.std ? (1 - k) * Cｐ : ''
+
+              if (index === 2) {
+                order_results.push({
+                  data_point_name: d.data_point__name,
+                  value: d.std ? setData(Cｐ) : ''
+                })
+              }
+              if (index === 3) {
+                order_results.push({
+                  data_point_name: d.data_point__name,
+                  value: setData(CPK)
+                })
+              }
+              if (index === 4) {
+                order_results.push({
+                  data_point_name: d.data_point__name,
+                  value: setData(k)
+                })
+              }
+              if (index === 5) {
+                order_results.push({
+                  data_point_name: d.data_point__name,
+                  value: CPK ? CPK > 1.67 || CPK === 1.67 ? '（A+）'
+                    : (CPK === 1.33 || CPK > 1.33) && CPK < 1.67 ? '（A）'
+                      : (CPK === 1 || CPK > 1) && CPK < 1.33 ? '（B）' : (CPK === 0.67 || CPK > 0.67) && CPK < 1 ? '（C）' : CPK < 0.67 ? '（D）' : '' : ''
+                })
+              }
+            })
+            arr.push({
+              _current: true,
+              product_no: names1[index],
+              order_results: order_results
+            })
+          }
+        }
+        if (this.testOrdersTop.length) {
+          this.testOrdersTop.splice(0, 5)
+        }
+        if (this.testOrdersTop.length > 5) {
+          this.testOrdersTop.splice(5, this.testOrdersTop.length)
+        }
+        this.testOrdersTop = [...arr]
+      } catch (e) {
+        //
+      }
+    },
+    checkboxFilter(bool) {
+      const arr = []
+      if (bool) {
+        this.testTypeList.forEach(d => {
+          d.data_indicator_detail.forEach(dd => {
+            if (!d.show) {
+              dd.show = false
+            } else {
+              dd.show = true
+            }
+          })
+        })
+      }
+      this.testTypeList.forEach(d => {
+        d.data_indicator_detail.forEach(dd => {
+          if (dd.show) {
+            arr.push(dd)
+          }
+        })
+      })
+      this.newHead = arr
     },
     exportExcel() {
       /* 从表生成工作簿对象 */
@@ -588,6 +1116,21 @@ export default {
     }
   }
 }
+function getDaysBetween(dateString1, dateString2) {
+  var startDate = Date.parse(dateString1)
+  var endDate = Date.parse(dateString2)
+  if (startDate > endDate) {
+    return 0
+  }
+  if (startDate === endDate) {
+    return 1
+  }
+  var days = (endDate - startDate) / (30 * 24 * 60 * 60 * 1000)
+  return days
+}
+function setData(val) {
+  return Math.round(val * 1000) / 1000
+}
 </script>
 
 <style lang="scss">
@@ -614,6 +1157,10 @@ export default {
   // .el-table td, .el-table th.is-center{
     // padding: 2px !important;
   // }
+  .test_type_name_style1{
+ background: rgb(124, 192, 103);
+  color:#fff;
+  }
   .test_type_name_style{
     // position: absolute;
     // top: 0;
@@ -627,7 +1174,28 @@ export default {
     // align-items: center;
     color:#fff;
   }
-
+  .topColor1{
+    background: rgb(255,255,153) !important;
+    color:#000;
+  }
+  .topColor2{
+    background: rgb(153,204,255) !important;
+    color:#000;
+  }
+  .cell{
+    vertical-align: middle;
+  }
+  .line_w{
+    display: inline-block;
+    width: 100%;
+    height: 2px;
+    background: #c2bcbc;
+    transform: rotate(11deg);
+    vertical-align: middle;
+  }
+  .line_w1{
+     transform: rotate(9deg);
+  }
 }
 
 </style>
