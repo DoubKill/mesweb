@@ -759,5 +759,6 @@ export default {
   TestedMaterials: '/api/v1/quality/tested-materials/',
   ScorchTime: '/api/v1/quality/scorch-time/',
   WeightClassPlan: '/api/v1/production/weight-class-plan/',
+  XlPlanConsume: '/api/v1/plan/xl-plan-consume/',
   WeightClassPlanImport: '/api/v1/production/weight-class-plan/import-xlsx/'
 }

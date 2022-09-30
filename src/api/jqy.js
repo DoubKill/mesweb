@@ -1604,3 +1604,12 @@ export function inventoryAlarm(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function xlPlanConsume(method, id, data = {}) {
+  const obj = {
+    url: id ? API.XlPlanConsume + id + '/' : API.XlPlanConsume,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
