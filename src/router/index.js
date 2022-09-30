@@ -1660,12 +1660,12 @@ export let asyncRoutes = [
         }
       },
       {
-        path: '/spot-check',
-        redirect: '/spot-check-set',
-        component: () => import('@/views/spot_check/a-index'),
-        name: 'SpotCheck',
+        path: '/spot-clear',
+        redirect: '/spot-clear-set',
+        component: () => import('@/views/spot_check/index'),
+        name: 'SpotClear',
         meta: {
-          title: '点检及除尘袋测温',
+          title: '日清扫检查',
           icon: 'production'
         },
         children: [
@@ -1674,7 +1674,7 @@ export let asyncRoutes = [
             name: 'SpotClearSet',
             component: () => import('@/views/spot_check/spot-clear-set'),
             meta: {
-              faName: 'SpotCheck',
+              faName: 'SpotClear',
               title: '日清扫检查标准',
               permissionName: 'check_point_standard'
             }
@@ -1684,11 +1684,23 @@ export let asyncRoutes = [
             name: 'SpotClearConfirm',
             component: () => import('@/views/spot_check/spot-clear-confirm'),
             meta: {
-              faName: 'SpotCheck',
+              faName: 'SpotClear',
               title: '日清扫检查确认',
               permissionName: 'check_point_table'
             }
-          },
+          }
+        ]
+      },
+      {
+        path: '/spot-check',
+        redirect: '/spot-check-set',
+        component: () => import('@/views/spot_check/a-index'),
+        name: 'SpotCheck',
+        meta: {
+          title: '点检及除尘袋测温',
+          icon: 'production'
+        },
+        children: [
           {
             path: '/spot-check-set',
             name: 'SpotCheckSet',

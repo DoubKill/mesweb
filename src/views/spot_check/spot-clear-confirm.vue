@@ -19,7 +19,7 @@
           @classSelected="classChanged"
         />
       </el-form-item>
-      <el-form-item label="点检表名称">
+      <el-form-item label="检查表名称">
         <el-input v-model="getParams.point_standard_name" clearable @input="changDebounce" />
       </el-form-item>
       <el-form-item label="机台">
@@ -50,7 +50,7 @@
           @change="changSelect"
         >
           <el-option
-            v-for="item in ['新建','已点检','已确认']"
+            v-for="item in ['新建','已检查','已确认']"
             :key="item"
             :label="item"
             :value="item"
@@ -94,7 +94,7 @@
       />
       <el-table-column
         prop="point_standard_code"
-        label="点检表编号"
+        label="检查表编号"
       >
         <template slot-scope="scope">
           <el-link
@@ -105,7 +105,7 @@
       </el-table-column>
       <el-table-column
         prop="point_standard_name"
-        label="点检表名称"
+        label="检查表名称"
       />
       <el-table-column
         prop="equip_no"
@@ -119,11 +119,11 @@
       />
       <el-table-column
         prop="check_result"
-        label="点检结果"
+        label="检查结果"
         width="100"
       >
         <template slot-scope="scope">
-          <span :style="{color:scope.row.check_result==='点检异常'?'red':'#606266'}">
+          <span :style="{color:scope.row.check_result==='检查异常'?'red':'#606266'}">
             {{ scope.row.check_result }}
           </span>
         </template>
@@ -135,12 +135,12 @@
       />
       <el-table-column
         prop="point_user"
-        label="点检人"
+        label="检查人"
         width="70"
       />
       <el-table-column
         prop="point_time"
-        label="点检时间"
+        label="检查时间"
         width="150"
       />
       <el-table-column
@@ -189,14 +189,14 @@
       @currentChange="currentChange"
     />
     <el-dialog
-      :title="`岗位安全装置点检表${typeForm.id&&isLook?'确认':typeForm.id?'检查':'新建'}`"
+      :title="`岗位安全装置检查表${typeForm.id&&isLook?'确认':typeForm.id?'检查':'新建'}`"
       width="1150px"
       :visible.sync="dialogEditVisible"
       :close-on-click-modal="false"
       :before-close="handleClose"
     >
       <el-form ref="typeForm" :rules="rules" :model="typeForm" label-width="150px" inline>
-        <el-form-item label="点检表编号">
+        <el-form-item label="检查表编号">
           <el-input v-if="typeForm.id" v-model="typeForm.point_standard_code" style="width:250px" disabled />
           <el-input v-else style="width:250px" disabled />
         </el-form-item>
@@ -255,7 +255,7 @@
           </el-select>
         </el-form-item>
         <br>
-        <el-form-item label="点检内容">
+        <el-form-item label="检查内容">
           <el-table
             :data="tableData1"
             border
@@ -607,7 +607,7 @@ export default {
             this.objList.forEach(d => url.push(d.url))
             this.typeForm.check_image_urls = url.join(',')
             if (this.tableData1.length === 0) {
-              throw new Error('点检内容未添加,请选择机台及岗位来获取点检内容')
+              throw new Error('检查内容未添加,请选择机台及岗位来获取检查内容')
             }
             if (!this.typeForm.id) {
               this.typeForm.table_details = this.tableData1
@@ -615,7 +615,7 @@ export default {
             this.typeForm.finish_flag = 0
             if (val) {
               if (!this.tableData1.every(d => d.check_result === '好' || d.check_result === '坏')) {
-                throw new Error('点检内容中检查结果必须全填')
+                throw new Error('检查内容中检查结果必须全填')
               }
               this.typeForm.finish_flag = 1
             }

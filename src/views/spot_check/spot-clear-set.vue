@@ -2,7 +2,7 @@
   <div class="spot-clear-set">
     <!-- 日清扫检查标准 -->
     <el-form :inline="true">
-      <el-form-item label="点检表名称">
+      <el-form-item label="检查表名称">
         <el-input v-model="getParams.point_standard_name" clearable @input="changDebounce" />
       </el-form-item>
       <el-form-item label="机台">
@@ -60,7 +60,7 @@
         :reserve-selection="true"
       />
       <el-table-column
-        label="点检表编号"
+        label="检查表编号"
       >
         <template slot-scope="scope">
           <el-link
@@ -71,7 +71,7 @@
       </el-table-column>
       <el-table-column
         prop="point_standard_name"
-        label="点检表名称"
+        label="检查表名称"
       />
       <el-table-column
         prop="doc_code"
@@ -120,18 +120,18 @@
       @currentChange="currentChange"
     />
     <el-dialog
-      :title="`${typeForm.id&&isLook?'查看':typeForm.id?'修改':'新建'}岗位安全装置点检表`"
+      :title="`${typeForm.id&&isLook?'查看':typeForm.id?'修改':'新建'}岗位安全装置检查表`"
       width="950px"
       :visible.sync="dialogEditVisible"
       :close-on-click-modal="false"
       :before-close="handleClose"
     >
       <el-form ref="typeForm" :rules="rules" :model="typeForm" label-width="100px" inline>
-        <el-form-item label="点检表编号">
+        <el-form-item label="检查表编号">
           <el-input v-model="typeForm.point_standard_code" style="width:250px" disabled />
         </el-form-item>
         <br>
-        <el-form-item label="点检表名称" prop="point_standard_name">
+        <el-form-item label="检查表名称" prop="point_standard_name">
           <el-input v-model="typeForm.point_standard_name" style="width:250px" :disabled="isLook" />
         </el-form-item>
         <el-form-item label="文档编号">
@@ -159,7 +159,7 @@
           <el-input v-model="typeForm.station" :disabled="isLook" style="width:250px" />
         </el-form-item>
         <br>
-        <el-form-item label="点检内容">
+        <el-form-item label="检查内容">
           <el-button v-if="!isLook" type="primary" @click="addList">添加</el-button>
           <el-table
             :data="tableData1"
@@ -315,7 +315,7 @@ export default {
           try {
             this.typeForm.standard_type = '日清扫'
             if (this.tableData1.length === 0) {
-              throw new Error('点检内容未添加')
+              throw new Error('检查内容未添加')
             }
             if (!this.typeForm.id) {
               this.typeForm.check_details = this.tableData1
@@ -323,7 +323,7 @@ export default {
             const _api = this.typeForm.id ? 'put' : 'post'
             this.tableData1.forEach(d => {
               if (!d.check_content || !d.check_style) {
-                throw new Error('点检内容及检查方法必填')
+                throw new Error('检查内容及检查方法必填')
               }
             })
             this.typeForm.equip_no = PersonDisplay(this.typeForm.equip_no)
