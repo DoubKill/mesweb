@@ -1660,6 +1660,26 @@ export let asyncRoutes = [
         },
         children: [
           {
+            path: '/spot-clear-set',
+            name: 'SpotClearSet',
+            component: () => import('@/views/spot_check/spot-clear-set'),
+            meta: {
+              faName: 'SpotCheck',
+              title: '日清扫检查标准',
+              permissionName: 'check_point_standard'
+            }
+          },
+          {
+            path: '/spot-clear-confirm',
+            name: 'SpotClearConfirm',
+            component: () => import('@/views/spot_check/spot-clear-confirm'),
+            meta: {
+              faName: 'SpotCheck',
+              title: '日清扫检查确认',
+              permissionName: 'check_point_table'
+            }
+          },
+          {
             path: '/spot-check-set',
             name: 'SpotCheckSet',
             component: () => import('@/views/spot_check/spot-check-set'),

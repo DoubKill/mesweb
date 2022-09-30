@@ -1,6 +1,6 @@
 <template>
-  <div class="spot-check-set">
-    <!-- 安全装置点检表点检内容定义 -->
+  <div class="spot-clear-set">
+    <!-- 日清扫检查标准 -->
     <el-form :inline="true">
       <el-form-item label="点检表名称">
         <el-input v-model="getParams.point_standard_name" clearable @input="changDebounce" />
@@ -220,7 +220,7 @@ import { getEquip } from '@/api/banburying-performance-manage'
 import { checkPointStandard, checkPointStandardExport } from '@/api/jqy'
 
 export default {
-  name: 'SpotCheckSet',
+  name: 'SpotClearSet',
   components: { page },
   data: function() {
     return {
@@ -312,7 +312,7 @@ export default {
       this.$refs.typeForm.validate(async(valid) => {
         if (valid) {
           try {
-            this.typeForm.standard_type = '点检'
+            this.typeForm.standard_type = '日清扫'
             if (this.tableData1.length === 0) {
               throw new Error('点检内容未添加')
             }
@@ -436,7 +436,7 @@ function PickDisplay(string) {
 }
 </script>
 <style lang="scss">
-.spot-check-set{
+.spot-clear-set{
   .el-dialog{
     margin-top:10vh !important
   }

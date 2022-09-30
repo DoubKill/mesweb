@@ -1,6 +1,6 @@
 <template>
-  <div class="spot-check-confirm">
-    <!-- 安全装置点检表确认及查询 -->
+  <div class="spot-clear-confirm">
+    <!-- 日清扫检查确认 -->
     <el-form :inline="true">
       <el-form-item label="起止日期">
         <el-date-picker
@@ -161,7 +161,7 @@
               :disabled="scope.row.finish_flag"
               size="mini"
               @click="showDialog(scope.row)"
-            >点检</el-button>
+            >检查</el-button>
             <el-button
               v-permission="['check_point_table', 'confirm']"
               :disabled="scope.row.status==='已确认'||!scope.row.finish_flag"
@@ -189,7 +189,7 @@
       @currentChange="currentChange"
     />
     <el-dialog
-      :title="`岗位安全装置点检表${typeForm.id&&isLook?'确认':typeForm.id?'点检':'新建'}`"
+      :title="`岗位安全装置点检表${typeForm.id&&isLook?'确认':typeForm.id?'检查':'新建'}`"
       width="1150px"
       :visible.sync="dialogEditVisible"
       :close-on-click-modal="false"
@@ -296,11 +296,11 @@
             </el-table-column>
             <el-table-column
               prop="is_repaired"
-              label="是否修复"
+              label="是否整改"
               width="149"
             >
               <template slot-scope="{row}">
-                <el-checkbox v-model="row.is_repaired" :disabled="isLook1||row.check_result==='好'||!row.check_result">已修复</el-checkbox>
+                <el-checkbox v-model="row.is_repaired" :disabled="isLook1||row.check_result==='好'||!row.check_result">已整改</el-checkbox>
               </template>
             </el-table-column>
           </el-table>
@@ -379,7 +379,7 @@ import classSelect from '@/components/ClassSelect'
 import { setDate } from '@/utils'
 
 export default {
-  name: 'SpotCheckConfirm',
+  name: 'SpotClearConfirm',
   components: { page, classSelect },
   data: function() {
     return {
@@ -596,7 +596,7 @@ export default {
     handleEdit: function(val) {
       this.$refs.typeForm.validate(async(valid) => {
         if (valid) {
-          this.typeForm.standard_type = '点检'
+          this.typeForm.standard_type = '日清扫'
           if (this.typeForm.id) {
             this.typeForm.ids = [this.typeForm.id]
             this.typeForm.opera_type = (this.isLook ? 2 : 1)
@@ -669,7 +669,7 @@ export default {
 
 </script>
 <style lang="scss">
-.spot-check-confirm{
+.spot-clear-confirm{
   .el-dialog{
     margin-top:10vh !important
   }
