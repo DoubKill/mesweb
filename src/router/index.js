@@ -1772,6 +1772,16 @@ export let asyncRoutes = [
               permissionName: 'product_outbound_plan'
             }
           },
+          {
+            path: '/film-issueTask',
+            component: () => import('@/views/inventory/rubber-warehouse/film-issueTask.vue'),
+            name: 'FilmIssueTask',
+            meta: {
+              faName: 'RubberWarehouse',
+              title: '胶片库出库任务',
+              permissionName: 'product_outbound_plan'
+            }
+          },
           // {
           //   path: '/delivery-document',
           //   component: () => import('@/views/inventory/rubber-warehouse/delivery-document.vue'),

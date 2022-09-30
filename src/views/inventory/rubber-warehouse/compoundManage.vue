@@ -66,6 +66,21 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="出库方式">
+        <el-select
+          v-model="search.order_type"
+          placeholder="请选择出库方式"
+          :clearable="false"
+          @change="changeList2"
+        >
+          <el-option
+            v-for="item in typeList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item>
         <el-button class="button-right" type="primary" @click="getList">查询</el-button>
         <el-button v-permission="['product_outbound_plan','add']" class="button-right" type="primary" @click="dialog">新建单据</el-button>
@@ -228,7 +243,7 @@
     >
       <el-table-column
         label="批量出库"
-        width="100"
+        width="95"
       >
         <template slot-scope="scope">
           <el-button
@@ -241,7 +256,7 @@
       </el-table-column>
       <el-table-column
         label="指定出库"
-        width="100"
+        width="95"
       >
         <template slot-scope="scope">
           <el-button
@@ -254,7 +269,7 @@
       </el-table-column>
       <el-table-column
         label="关闭"
-        width="80"
+        width="70"
       >
         <template slot-scope="scope">
           <el-button
@@ -268,7 +283,7 @@
       <el-table-column
         prop="warehouse"
         label="库房"
-        min-width="20"
+        width="70"
       />
       <el-table-column
         prop="warehouse"
@@ -289,33 +304,39 @@
         min-width="20"
       />
       <el-table-column
+        v-if="search.order_type!==2"
         prop="product_no"
         label="物料编码"
-        min-width="20"
+        min-width="30"
       />
       <el-table-column
+        v-if="search.order_type===1"
         prop="quality_status"
         label="品质状态"
-        min-width="20"
+        width="70"
       />
       <el-table-column
+        v-if="search.order_type===2"
         prop="factory_date"
         label="日期"
         min-width="20"
       />
       <el-table-column
+        v-if="search.order_type===2"
         prop="classes"
         label="班次"
-        min-width="20"
+        width="50"
       />
       <el-table-column
+        v-if="search.order_type===2"
         prop="equip_no"
         label="机台"
-        min-width="20"
+        width="50"
       />
       <el-table-column
+        v-if="search.order_type===2"
         label="车次"
-        min-width="20"
+        width="50"
         :formatter="(row)=>{
           if(row.begin_trains){
             return row.begin_trains+'-'+row.end_trains
@@ -323,6 +344,7 @@
         }"
       />
       <el-table-column
+        v-if="search.order_type===3"
         prop="pallet_no"
         label="托盘号"
         min-width="20"
@@ -330,22 +352,22 @@
       <el-table-column
         prop="order_qty"
         label="订单数量(车)"
-        min-width="20"
+        min-width="12"
       />
       <el-table-column
         prop="need_qty"
         label="需求数量(车)"
-        min-width="20"
+        min-width="12"
       />
       <el-table-column
         prop="work_qty"
         label="工作数量(车)"
-        min-width="20"
+        min-width="12"
       />
       <el-table-column
         prop="finished_qty"
         label="完成数量(车)"
-        min-width="20"
+        min-width="12"
       />
       <el-table-column
         prop="created_username"
@@ -355,12 +377,12 @@
       <el-table-column
         prop="created_date"
         label="创建时间"
-        min-width="25"
+        width="90"
       />
       <el-table-column
         prop="latest_task_time"
         label="最新任务创建时间"
-        min-width="25"
+        width="90"
       />
       <el-table-column
         label="查看"
@@ -599,7 +621,8 @@ export default {
       search: {
         page: 1,
         warehouse: '',
-        station: ''
+        station: '',
+        order_type: 1
       },
       creatOrder: {
         product_no: '',
@@ -811,6 +834,7 @@ export default {
         this.search.station = data.station || null
         this.creatOrder.warehouse = data.warehouse || null
         this.creatOrder.station = data.station || null
+        this.creatOrder.quality_status = data.quality_status || null
         this.getList()
       } catch (error) {
         this.getList()
