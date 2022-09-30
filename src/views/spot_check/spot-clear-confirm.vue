@@ -374,7 +374,7 @@
 <script>
 import page from '@/components/page'
 import { getEquip } from '@/api/banburying-performance-manage'
-import { checkPointTable, checkPointStandard, checkPointTableExport, uploadImages } from '@/api/jqy'
+import { dailyCleanTable, dailyCleanStandard, dailyCleanTableExport, uploadImages } from '@/api/jqy'
 import classSelect from '@/components/ClassSelect'
 import { setDate } from '@/utils'
 
@@ -396,6 +396,7 @@ export default {
         equip_no: [{ required: true, message: '不能为空', trigger: 'change' }]
       },
       getParams: {
+        standard_type: '日清扫',
         page: 1
       },
       excelParams: {
@@ -431,7 +432,7 @@ export default {
     async visibleStation(val) {
       if (val) {
         if (this.typeForm.equip_no) {
-          const data = await checkPointStandard('get', null, { params: { all_station: this.typeForm.equip_no }})
+          const data = await dailyCleanStandard('get', null, { params: { all_station: this.typeForm.equip_no, standard_type: '日清扫' }})
           this.options1 = data.results
         } else {
           this.$message('请先选择机台')
@@ -441,7 +442,7 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const data = await checkPointTable('get', null, { params: this.getParams })
+        const data = await dailyCleanTable('get', null, { params: this.getParams })
         this.tableData = data.results || []
         this.total = data.count || 0
         this.loading = false
@@ -482,7 +483,7 @@ export default {
       } else if (!this.typeForm.station) {
         this.$message.info('请选择岗位')
       } else {
-        const data = await checkPointTable('get', null, { params: { all_detail: 1, equip_no: this.typeForm.equip_no, station: this.typeForm.station }})
+        const data = await dailyCleanTable('get', null, { params: { all_detail: 1, equip_no: this.typeForm.equip_no, station: this.typeForm.station }})
         this.typeForm.check_point_standard = data.check_point_standard
         this.typeForm.point_standard_code = data.point_standard_code
         this.typeForm.point_standard_name = data.point_standard_name
@@ -583,7 +584,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        checkPointTable('delete', row.id)
+        dailyCleanTable('delete', row.id)
           .then(response => {
             this.$message({
               type: 'success',
@@ -619,7 +620,7 @@ export default {
               this.typeForm.finish_flag = 1
             }
             this.btnLoading = true
-            this.typeForm.id ? await checkPointTableExport('post', null, { data: this.typeForm }) : await checkPointTable('post', null, { data: this.typeForm })
+            this.typeForm.id ? await dailyCleanTableExport('post', null, { data: this.typeForm }) : await dailyCleanTable('post', null, { data: this.typeForm })
             this.btnLoading = false
             this.handleClose(false)
             this.$message.success('操作成功')
@@ -646,12 +647,12 @@ export default {
         })
         this.btnExportLoad = true
         this.excelParams.opera_type = 3
-        checkPointTableExport('post', null, { responseType: 'blob', data: this.excelParams }).then(response => {
+        dailyCleanTableExport('post', null, { responseType: 'blob', data: this.excelParams }).then(response => {
           const link = document.createElement('a')
           const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = '岗位安全装置点检表.xls' // 下载的文件名
+          link.download = '日清扫检查确认表.xls' // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)

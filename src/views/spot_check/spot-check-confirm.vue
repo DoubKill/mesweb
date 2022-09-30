@@ -431,7 +431,7 @@ export default {
     async visibleStation(val) {
       if (val) {
         if (this.typeForm.equip_no) {
-          const data = await checkPointStandard('get', null, { params: { all_station: this.typeForm.equip_no }})
+          const data = await checkPointStandard('get', null, { params: { all_station: this.typeForm.equip_no, standard_type: '点检' }})
           this.options1 = data.results
         } else {
           this.$message('请先选择机台')

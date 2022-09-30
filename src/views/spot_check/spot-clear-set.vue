@@ -217,7 +217,7 @@
 <script>
 import page from '@/components/page'
 import { getEquip } from '@/api/banburying-performance-manage'
-import { checkPointStandard, checkPointStandardExport } from '@/api/jqy'
+import { dailyCleanStandard, dailyCleanStandardExport } from '@/api/jqy'
 
 export default {
   name: 'SpotClearSet',
@@ -235,6 +235,7 @@ export default {
         equip_no: [{ required: true, message: '不能为空', trigger: 'change' }]
       },
       getParams: {
+        standard_type: '日清扫',
         page: 1
       },
       excelParams: {
@@ -265,7 +266,7 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const data = await checkPointStandard('get', null, { params: this.getParams })
+        const data = await dailyCleanStandard('get', null, { params: this.getParams })
         this.tableData = data.results || []
         this.total = data.count || 0
         this.loading = false
@@ -327,7 +328,7 @@ export default {
             })
             this.typeForm.equip_no = PersonDisplay(this.typeForm.equip_no)
             this.btnLoading = true
-            await checkPointStandard(_api, this.typeForm.id || null, { data: this.typeForm })
+            await dailyCleanStandard(_api, this.typeForm.id || null, { data: this.typeForm })
             this.btnLoading = false
             this.handleClose(false)
             this.$message.success('操作成功')
@@ -350,7 +351,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        checkPointStandard('delete', row.id)
+        dailyCleanStandard('delete', row.id)
           .then(response => {
             this.$message({
               type: 'success',
@@ -382,12 +383,12 @@ export default {
         })
         this.btnExportLoad = true
         this.excelParams.excel_flag = 'export'
-        checkPointStandardExport('post', null, { responseType: 'blob', data: this.excelParams }).then(response => {
+        dailyCleanStandardExport('post', null, { responseType: 'blob', data: this.excelParams }).then(response => {
           const link = document.createElement('a')
           const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = '岗位安全装置点检标准及内容.xls' // 下载的文件名
+          link.download = '日清扫检查标准.xls' // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)
@@ -404,7 +405,7 @@ export default {
       const formData = new FormData()
       formData.append('file', param.file)
       formData.append('excel_flag', 'import')
-      checkPointStandardExport('post', null, { data: formData }).then(response => {
+      dailyCleanStandardExport('post', null, { data: formData }).then(response => {
         this.$message({
           type: 'success',
           message: response
