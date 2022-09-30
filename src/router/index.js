@@ -555,6 +555,38 @@ export let asyncRoutes = [
             }
           }
         ]
+      },
+      {
+        path: '/track',
+        redirect: '/track-raw-material',
+        component: () => import('@/views/production/track/track-fa'),
+        name: 'Track',
+        meta: {
+          title: '条码追溯',
+          icon: 'formula'
+        },
+        children: [
+          {
+            path: '/track-raw-material',
+            name: 'TrackRawMaterial',
+            component: () => import('@/views/production/track/track-raw-rubber'),
+            meta: {
+              faName: 'Track',
+              title: '条码追溯(终炼胶->原材料)',
+              permissionName: 'material_retrospect'
+            }
+          },
+          {
+            path: '/track-raw-rubber',
+            name: 'TrackRawRubber',
+            component: () => import('@/views/production/track/track-raw-material'),
+            meta: {
+              faName: 'Track',
+              title: '条码追溯(原材料->终炼胶)',
+              permissionName: 'product_retrospect'
+            }
+          }
+        ]
       }
     // {
     //   path: '/rb/material/std/manage111',
@@ -1407,7 +1439,7 @@ export let asyncRoutes = [
           }
         ]
       },
-      {
+      /** {
         path: '/track',
         redirect: '/track-raw-material',
         component: () => import('@/views/production/track/track-fa'),
@@ -1438,7 +1470,7 @@ export let asyncRoutes = [
             }
           }
         ]
-      },
+      },**/
       {
         path: '/achievements',
         redirect: '/report/achievement',
