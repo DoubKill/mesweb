@@ -1,4 +1,5 @@
 <template>
+  <!-- 手工检测数据录入 -->
   <div v-loading="loading" class="manual_entry_style">
     <el-form :inline="true">
       <el-form-item label="工厂日期：">
@@ -43,7 +44,7 @@
             v-model="valItem.checkedC"
             :label="itemData"
             :disabled="!itemData.allowed"
-            @change="changeMethods(valItem.test_indicator,valItem)"
+            @change="changeMethods(valItem.test_indicator,valItem,itemData)"
           >
             {{ itemData.name }}
           </el-radio>
@@ -121,7 +122,7 @@
               :key="indexChild"
             >
               <template slot="header">
-                <div @click="clickValue(itemTa.test_indicator,itemChild.name)">
+                <div @click="clickValue(itemTa.test_indicator,itemChild.name,itemChild)">
                   {{ itemChild.name }}
                   <i class="el-icon-edit" />
                 </div>
@@ -215,7 +216,10 @@
       width="600px"
     >
       <el-form label-width="100px">
-        <el-form-item label="检测值">
+        <el-form-item :label="`标准`">
+          {{ check_begin_trains||check_begin_trains===0?check_begin_trains:'∞' }} - {{ check_end_trains||check_end_trains===0?check_end_trains:'∞' }}
+        </el-form-item>
+        <el-form-item :label="`${current_test_indicator}检测值`">
           <el-input-number v-model="allValue" />
         </el-form-item>
         <el-form-item label="起止车次">
@@ -270,8 +274,10 @@ export default {
       // 当前的 指标点 和 数据点
       current_test_indicator: '',
       current_data_point_name: '',
-      history_begin_trains: 0,
-      history_end_trains: 0
+      history_begin_trains: null,
+      history_end_trains: null,
+      check_begin_trains: null,
+      check_end_trains: null
     }
   },
   mounted() {
@@ -325,7 +331,7 @@ export default {
         //
       }
     },
-    changeMethods(test_indicator, valItem) {
+    changeMethods(test_indicator, valItem, itemData) {
       setDataChild(this, valItem)
     },
     clearRadio(val, index) {
@@ -501,13 +507,15 @@ export default {
         document.body.removeChild(link)
       })
     },
-    clickValue(test_indicator_name, data_point_name) {
+    clickValue(test_indicator_name, data_point_name, itemChild) {
       this.allValue = undefined
       this.begin_trains = undefined
       this.end_trains = undefined
       this.dialogVisibleEdit = true
       this.current_test_indicator = test_indicator_name
       this.current_data_point_name = data_point_name
+      this.check_begin_trains = itemChild.judge_lower_limit || null
+      this.check_end_trains = itemChild.judge_upper_limit || null
       this.getDefaultValue()
     },
     async getDefaultValue() {
@@ -517,16 +525,28 @@ export default {
         if (data.max_trains) {
           this.begin_trains = data.max_trains + 1
         }
-        this.history_begin_trains = data.min_trains || 0
-        this.history_end_trains = data.max_trains || 0
+        this.history_begin_trains = data.min_trains || null
+        this.history_end_trains = data.max_trains || null
       } catch (e) {
         //
       }
     },
-    allValueSure() {
+    async allValueSure() {
       if (!this.allValue) {
         this.dialogVisibleEdit = false
         return
+      }
+
+      if (this.allValue && (this.allValue < this.check_begin_trains || this.allValue > this.check_end_trains)) {
+        try {
+          await this.$confirm(`输入检测值不在标准内，是否继续？`, '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          })
+        } catch (e) {
+          return
+        }
       }
       const all = this.tableDataChild[this.tableDataChild.length - 1].actual_trains
       const begin_trains = this.begin_trains ? this.begin_trains : 1

@@ -439,6 +439,7 @@ export default {
   MaterialReportValue: '/api/v1/quality/material-report-value/',
   // 胶料上报设备
   ProductReportEquip: '/api/v1/quality/product-report-equip/',
+  ProductTestPlanInterval: 'api/v1/quality/product-test-plan-interval/',
   // 快检设备监控
   EquipTestData: '/api/v1/quality/equip-test-data/',
   CheckEquip: '/api/v1/quality/check-equip/',
@@ -758,5 +759,6 @@ export default {
   TestedMaterials: '/api/v1/quality/tested-materials/',
   ScorchTime: '/api/v1/quality/scorch-time/',
   WeightClassPlan: '/api/v1/production/weight-class-plan/',
+  XlPlanConsume: '/api/v1/plan/xl-plan-consume/',
   WeightClassPlanImport: '/api/v1/production/weight-class-plan/import-xlsx/'
 }
