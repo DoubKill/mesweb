@@ -628,7 +628,7 @@
 import classSelect from '@/components/ClassSelect'
 import equipSelect from '@/components/select_w/equip'
 import { globalCodesUrl, testIndicators, palletTrainsFeedbacks, matTestIndicatorMethods, productTestedTrains } from '@/api/base_w'
-import { productReportEquip, productTestPlan, rubberMaxStretchTestResult, productTestPlanDetail, bulkCreate, underwayPlan } from '@/api/base_w_four'
+import { productReportEquip, productTestPlan, productTestPlanInterval, rubberMaxStretchTestResult, productTestPlanDetail, bulkCreate, underwayPlan } from '@/api/base_w_four'
 import allProductNoSelect from '@/components/select_w/allProductNoSelect.vue'
 
 export default {
@@ -744,6 +744,8 @@ export default {
           this.add_w = true
         } else {
           this.add_w = false
+          const dataNum = await productTestPlanInterval('get', null, { params: { product_no: this.search.product_no }})
+          this.ruleForm.test_interval = dataNum.interval || ''
         }
       } catch (e) {
         this.loading = false

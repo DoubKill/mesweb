@@ -210,6 +210,10 @@ export default {
   watch: {
     show(bool) {
       if (bool) {
+        this.multipleSelection = []
+        if (this.$refs.multipleTable) {
+          this.$refs.multipleTable.clearSelection()
+        }
         this.period_of_validity = this.list.period_of_validity || null
         this.order_no = this.list.order_no || null
         this.need_qty = this.list.need_qty || null
@@ -270,7 +274,6 @@ export default {
         })
     },
     async submitFun() {
-      console.log(this.multipleSelection)
       if (this.multipleSelection.length === 0) {
         this.$message.info('请选择出库')
         return
@@ -285,6 +288,7 @@ export default {
             weight: d.total_weight,
             quality_status: d.quality_status,
             inventory_time: d.in_storage_time,
+            product_no: d.material_no,
             outbound_delivery_order: this.id })
         })
         try {
