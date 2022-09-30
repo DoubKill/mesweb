@@ -64,7 +64,7 @@
           />
           <el-table-column
             prop="history_group"
-            label="历史班组"
+            label="历史最高值班组"
             min-width="20"
           />
         </el-table>
@@ -140,7 +140,7 @@
       />
       <el-table-column
         prop="history_group"
-        label="历史班组"
+        label="历史最高值班组"
         min-width="20"
       />
       <el-table-column
@@ -275,12 +275,12 @@ export default {
         this.tableData3 = JSON.parse(JSON.stringify(this.tableData)) || []
         const jl = data.jl || []
         const wl = data.wl || []
-        const _fmArr = data.jl.filter(d => d.name === 'FM')
-        const _fm = _fmArr.length ? _fmArr[0].value : null
+        // const _fmArr = data.jl.filter(d => d.name === 'FM')
+        // const _fm = _fmArr.length ? _fmArr[0].value : null
+        // const _all = sum(this.tableData2, 'value') / 2
         this.tableData2 = [...wl, ...jl]
-        const _all = sum(this.tableData2, 'value') / 2
         this.tableData2.push({ name: '总计', value: (sum(this.tableData2, 'value') / 2).toFixed(2) })
-        this.tableData2.push({ name: '段数', value: _fm ? (_all / _fm).toFixed(2) : '' })
+        this.tableData2.push({ name: '段数', value: data.ds })
         this.tableData2.forEach((d, i) => {
           if (d.name === 'jl') {
             d.name = '加硫合计'
