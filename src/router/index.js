@@ -973,6 +973,16 @@ export let asyncRoutes = [
                 permissionName: 'materialdemanded'
               }
             },
+            {
+              path: '/schedule/material-plan/',
+              component: () => import('@/views/plan/schedule/dispose/material-plan'),
+              name: 'materialPlan',
+              meta: {
+                faName: 'ScheduleDispose',
+                title: '细料分解每日计划用量',
+                permissionName: 'materialdemanded'
+              }
+            },
             // {
             //   path: '/schedule/weighing-system-plan',
             //   component: () => import('@/views/plan/schedule/dispose/weighing-system-plan'),
@@ -1791,6 +1801,16 @@ export let asyncRoutes = [
             meta: {
               faName: 'RubberWarehouse',
               title: '胶片库出库计划',
+              permissionName: 'product_outbound_plan'
+            }
+          },
+          {
+            path: '/film-issueTask',
+            component: () => import('@/views/inventory/rubber-warehouse/film-issueTask.vue'),
+            name: 'FilmIssueTask',
+            meta: {
+              faName: 'RubberWarehouse',
+              title: '胶片库出库任务',
               permissionName: 'product_outbound_plan'
             }
           },

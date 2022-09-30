@@ -20,11 +20,11 @@
         prop="是否定岗"
         label="是否独立上岗"
         width="40"
-      >
-        <template slot-scope="{row}">
+      />
+      <!-- <template slot-scope="{row}">
           {{ row.是否定岗?'是':'否' }}
-        </template>
-      </el-table-column>
+        </template> -->
+      <!-- </el-table-column> -->
       <el-table-column
         prop="hj"
         label="产量工资合计"
