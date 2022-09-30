@@ -25,9 +25,9 @@
         <el-input v-model="getParams.station" clearable @input="changDebounce" />
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button v-permission="['check_point_standard', 'excel']" :loading="btnExportLoad" type="primary" style="margin-right:8px" @click="templateDownload">导出Excel</el-button>
+        <el-button v-permission="['daily_clean_standard', 'excel']" :loading="btnExportLoad" type="primary" style="margin-right:8px" @click="templateDownload">导出Excel</el-button>
         <el-upload
-          v-permission="['check_point_standard', 'excel']"
+          v-permission="['daily_clean_standard', 'excel']"
           style="margin-right:8px;display:inline-block"
           action="string"
           accept=".xls, .xlsx"
@@ -37,7 +37,7 @@
           <el-button type="primary">导入Excel</el-button>
         </el-upload>
         <el-button
-          v-permission="['check_point_standard', 'add']"
+          v-permission="['daily_clean_standard', 'add']"
           type="primary"
           @click="onSubmit"
         >新建</el-button>
@@ -97,12 +97,12 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
-              v-permission="['check_point_standard', 'change']"
+              v-permission="['daily_clean_standard', 'change']"
               size="mini"
               @click="showDialog(scope.row)"
             >编辑</el-button>
             <el-button
-              v-permission="['check_point_standard', 'delete']"
+              v-permission="['daily_clean_standard', 'delete']"
               size="mini"
               type="danger"
               plain

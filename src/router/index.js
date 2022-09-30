@@ -1676,7 +1676,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'SpotClear',
               title: '日清扫检查标准',
-              permissionName: 'check_point_standard'
+              permissionName: 'daily_clean_standard'
             }
           },
           {
@@ -1686,7 +1686,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'SpotClear',
               title: '日清扫检查确认',
-              permissionName: 'check_point_table'
+              permissionName: 'daily_clean_table'
             }
           }
         ]
