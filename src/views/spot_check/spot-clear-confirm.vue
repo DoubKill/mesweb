@@ -1,6 +1,6 @@
 <template>
-  <div class="spot-check-confirm">
-    <!-- 安全装置点检表确认及查询 -->
+  <div class="spot-clear-confirm">
+    <!-- 日清扫检查确认 -->
     <el-form :inline="true">
       <el-form-item label="起止日期">
         <el-date-picker
@@ -19,7 +19,7 @@
           @classSelected="classChanged"
         />
       </el-form-item>
-      <el-form-item label="点检表名称">
+      <el-form-item label="检查表名称">
         <el-input v-model="getParams.point_standard_name" clearable @input="changDebounce" />
       </el-form-item>
       <el-form-item label="机台">
@@ -50,7 +50,7 @@
           @change="changSelect"
         >
           <el-option
-            v-for="item in ['新建','已点检','已确认']"
+            v-for="item in ['新建','已检查','已确认']"
             :key="item"
             :label="item"
             :value="item"
@@ -58,9 +58,9 @@
         </el-select>
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button v-permission="['check_point_table', 'export']" :loading="btnExportLoad" type="primary" style="margin-right:8px" @click="templateDownload">导出Excel</el-button>
+        <el-button v-permission="['daily_clean_table', 'export']" :loading="btnExportLoad" type="primary" style="margin-right:8px" @click="templateDownload">导出Excel</el-button>
         <el-button
-          v-permission="['check_point_table', 'add']"
+          v-permission="['daily_clean_table', 'add']"
           type="primary"
           @click="onSubmit"
         >新建</el-button>
@@ -94,7 +94,7 @@
       />
       <el-table-column
         prop="point_standard_code"
-        label="点检表编号"
+        label="检查表编号"
       >
         <template slot-scope="scope">
           <el-link
@@ -105,7 +105,7 @@
       </el-table-column>
       <el-table-column
         prop="point_standard_name"
-        label="点检表名称"
+        label="检查表名称"
       />
       <el-table-column
         prop="equip_no"
@@ -119,11 +119,11 @@
       />
       <el-table-column
         prop="check_result"
-        label="点检结果"
+        label="检查结果"
         width="100"
       >
         <template slot-scope="scope">
-          <span :style="{color:scope.row.check_result==='点检异常'?'red':'#606266'}">
+          <span :style="{color:scope.row.check_result==='检查异常'?'red':'#606266'}">
             {{ scope.row.check_result }}
           </span>
         </template>
@@ -135,12 +135,12 @@
       />
       <el-table-column
         prop="point_user"
-        label="点检人"
+        label="检查人"
         width="70"
       />
       <el-table-column
         prop="point_time"
-        label="点检时间"
+        label="检查时间"
         width="150"
       />
       <el-table-column
@@ -157,13 +157,13 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
-              v-permission="['check_point_table', 'change']"
+              v-permission="['daily_clean_table', 'change']"
               :disabled="scope.row.finish_flag"
               size="mini"
               @click="showDialog(scope.row)"
-            >点检</el-button>
+            >检查</el-button>
             <el-button
-              v-permission="['check_point_table', 'confirm']"
+              v-permission="['daily_clean_table', 'confirm']"
               :disabled="scope.row.status==='已确认'||!scope.row.finish_flag"
               size="mini"
               plain
@@ -171,7 +171,7 @@
             >确认
             </el-button>
             <el-button
-              v-permission="['check_point_table', 'delete']"
+              v-permission="['daily_clean_table', 'delete']"
               size="mini"
               type="danger"
               plain
@@ -189,14 +189,14 @@
       @currentChange="currentChange"
     />
     <el-dialog
-      :title="`岗位安全装置点检表${typeForm.id&&isLook?'确认':typeForm.id?'点检':'新建'}`"
+      :title="`岗位安全装置检查表${typeForm.id&&isLook?'确认':typeForm.id?'检查':'新建'}`"
       width="1150px"
       :visible.sync="dialogEditVisible"
       :close-on-click-modal="false"
       :before-close="handleClose"
     >
       <el-form ref="typeForm" :rules="rules" :model="typeForm" label-width="150px" inline>
-        <el-form-item label="点检表编号">
+        <el-form-item label="检查表编号">
           <el-input v-if="typeForm.id" v-model="typeForm.point_standard_code" style="width:250px" disabled />
           <el-input v-else style="width:250px" disabled />
         </el-form-item>
@@ -255,7 +255,7 @@
           </el-select>
         </el-form-item>
         <br>
-        <el-form-item label="点检内容">
+        <el-form-item label="检查内容">
           <el-table
             :data="tableData1"
             border
@@ -296,11 +296,11 @@
             </el-table-column>
             <el-table-column
               prop="is_repaired"
-              label="是否修复"
+              label="是否整改"
               width="149"
             >
               <template slot-scope="{row}">
-                <el-checkbox v-model="row.is_repaired" :disabled="isLook1||row.check_result==='好'||!row.check_result">已修复</el-checkbox>
+                <el-checkbox v-model="row.is_repaired" :disabled="isLook1||row.check_result==='好'||!row.check_result">已整改</el-checkbox>
               </template>
             </el-table-column>
           </el-table>
@@ -374,12 +374,12 @@
 <script>
 import page from '@/components/page'
 import { getEquip } from '@/api/banburying-performance-manage'
-import { checkPointTable, checkPointStandard, checkPointTableExport, uploadImages } from '@/api/jqy'
+import { dailyCleanTable, dailyCleanStandard, dailyCleanTableExport, uploadImages } from '@/api/jqy'
 import classSelect from '@/components/ClassSelect'
 import { setDate } from '@/utils'
 
 export default {
-  name: 'SpotCheckConfirm',
+  name: 'SpotClearConfirm',
   components: { page, classSelect },
   data: function() {
     return {
@@ -396,6 +396,7 @@ export default {
         equip_no: [{ required: true, message: '不能为空', trigger: 'change' }]
       },
       getParams: {
+        standard_type: '日清扫',
         page: 1
       },
       excelParams: {
@@ -431,7 +432,7 @@ export default {
     async visibleStation(val) {
       if (val) {
         if (this.typeForm.equip_no) {
-          const data = await checkPointStandard('get', null, { params: { all_station: this.typeForm.equip_no, standard_type: '点检' }})
+          const data = await dailyCleanStandard('get', null, { params: { all_station: this.typeForm.equip_no, standard_type: '日清扫' }})
           this.options1 = data.results
         } else {
           this.$message('请先选择机台')
@@ -441,7 +442,7 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const data = await checkPointTable('get', null, { params: this.getParams })
+        const data = await dailyCleanTable('get', null, { params: this.getParams })
         this.tableData = data.results || []
         this.total = data.count || 0
         this.loading = false
@@ -482,7 +483,7 @@ export default {
       } else if (!this.typeForm.station) {
         this.$message.info('请选择岗位')
       } else {
-        const data = await checkPointTable('get', null, { params: { all_detail: 1, equip_no: this.typeForm.equip_no, station: this.typeForm.station }})
+        const data = await dailyCleanTable('get', null, { params: { all_detail: 1, equip_no: this.typeForm.equip_no, station: this.typeForm.station }})
         this.typeForm.check_point_standard = data.check_point_standard
         this.typeForm.point_standard_code = data.point_standard_code
         this.typeForm.point_standard_name = data.point_standard_name
@@ -583,7 +584,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        checkPointTable('delete', row.id)
+        dailyCleanTable('delete', row.id)
           .then(response => {
             this.$message({
               type: 'success',
@@ -596,7 +597,7 @@ export default {
     handleEdit: function(val) {
       this.$refs.typeForm.validate(async(valid) => {
         if (valid) {
-          this.typeForm.standard_type = '点检'
+          this.typeForm.standard_type = '日清扫'
           if (this.typeForm.id) {
             this.typeForm.ids = [this.typeForm.id]
             this.typeForm.opera_type = (this.isLook ? 2 : 1)
@@ -606,7 +607,7 @@ export default {
             this.objList.forEach(d => url.push(d.url))
             this.typeForm.check_image_urls = url.join(',')
             if (this.tableData1.length === 0) {
-              throw new Error('点检内容未添加,请选择机台及岗位来获取点检内容')
+              throw new Error('检查内容未添加,请选择机台及岗位来获取检查内容')
             }
             if (!this.typeForm.id) {
               this.typeForm.table_details = this.tableData1
@@ -614,12 +615,12 @@ export default {
             this.typeForm.finish_flag = 0
             if (val) {
               if (!this.tableData1.every(d => d.check_result === '好' || d.check_result === '坏')) {
-                throw new Error('点检内容中检查结果必须全填')
+                throw new Error('检查内容中检查结果必须全填')
               }
               this.typeForm.finish_flag = 1
             }
             this.btnLoading = true
-            this.typeForm.id ? await checkPointTableExport('post', null, { data: this.typeForm }) : await checkPointTable('post', null, { data: this.typeForm })
+            this.typeForm.id ? await dailyCleanTableExport('post', null, { data: this.typeForm }) : await dailyCleanTable('post', null, { data: this.typeForm })
             this.btnLoading = false
             this.handleClose(false)
             this.$message.success('操作成功')
@@ -646,12 +647,12 @@ export default {
         })
         this.btnExportLoad = true
         this.excelParams.opera_type = 3
-        checkPointTableExport('post', null, { responseType: 'blob', data: this.excelParams }).then(response => {
+        dailyCleanTableExport('post', null, { responseType: 'blob', data: this.excelParams }).then(response => {
           const link = document.createElement('a')
           const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = '岗位安全装置点检表.xls' // 下载的文件名
+          link.download = '日清扫检查确认表.xls' // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)
@@ -669,7 +670,7 @@ export default {
 
 </script>
 <style lang="scss">
-.spot-check-confirm{
+.spot-clear-confirm{
   .el-dialog{
     margin-top:10vh !important
   }

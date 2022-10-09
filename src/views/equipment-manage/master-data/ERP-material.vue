@@ -15,6 +15,9 @@
       <el-form-item label="备件名称:">
         <el-input v-model="search.spare_name" placeholder="请输入内容" @input="debounceList" />
       </el-form-item>
+      <el-form-item label="备件编码:">
+        <el-input v-model="search.spare_code" placeholder="请输入内容" @input="debounceList" />
+      </el-form-item>
       <el-form-item label="ERP物料信息id:">
         <el-input v-model="search.unique_id" clearable placeholder="请输入内容" @input="debounceList" />
       </el-form-item>

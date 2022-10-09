@@ -1660,12 +1660,44 @@ export let asyncRoutes = [
         }
       },
       {
+        path: '/spot-clear',
+        redirect: '/spot-clear-set',
+        component: () => import('@/views/spot_check/index'),
+        name: 'SpotClear',
+        meta: {
+          title: '日清扫检查',
+          icon: 'production'
+        },
+        children: [
+          {
+            path: '/spot-clear-set',
+            name: 'SpotClearSet',
+            component: () => import('@/views/spot_check/spot-clear-set'),
+            meta: {
+              faName: 'SpotClear',
+              title: '日清扫检查标准',
+              permissionName: 'daily_clean_standard'
+            }
+          },
+          {
+            path: '/spot-clear-confirm',
+            name: 'SpotClearConfirm',
+            component: () => import('@/views/spot_check/spot-clear-confirm'),
+            meta: {
+              faName: 'SpotClear',
+              title: '日清扫检查确认',
+              permissionName: 'daily_clean_table'
+            }
+          }
+        ]
+      },
+      {
         path: '/spot-check',
         redirect: '/spot-check-set',
         component: () => import('@/views/spot_check/a-index'),
         name: 'SpotCheck',
         meta: {
-          title: '安全点检及除尘袋滤器测温',
+          title: '点检及除尘袋测温',
           icon: 'production'
         },
         children: [

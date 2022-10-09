@@ -1,8 +1,8 @@
 <template>
-  <div class="spot-check-set">
-    <!-- 安全装置点检表点检内容定义 -->
+  <div class="spot-clear-set">
+    <!-- 日清扫检查标准 -->
     <el-form :inline="true">
-      <el-form-item label="点检表名称">
+      <el-form-item label="检查表名称">
         <el-input v-model="getParams.point_standard_name" clearable @input="changDebounce" />
       </el-form-item>
       <el-form-item label="机台">
@@ -25,9 +25,9 @@
         <el-input v-model="getParams.station" clearable @input="changDebounce" />
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button v-permission="['check_point_standard', 'excel']" :loading="btnExportLoad" type="primary" style="margin-right:8px" @click="templateDownload">导出Excel</el-button>
+        <el-button v-permission="['daily_clean_standard', 'excel']" :loading="btnExportLoad" type="primary" style="margin-right:8px" @click="templateDownload">导出Excel</el-button>
         <el-upload
-          v-permission="['check_point_standard', 'excel']"
+          v-permission="['daily_clean_standard', 'excel']"
           style="margin-right:8px;display:inline-block"
           action="string"
           accept=".xls, .xlsx"
@@ -37,7 +37,7 @@
           <el-button type="primary">导入Excel</el-button>
         </el-upload>
         <el-button
-          v-permission="['check_point_standard', 'add']"
+          v-permission="['daily_clean_standard', 'add']"
           type="primary"
           @click="onSubmit"
         >新建</el-button>
@@ -60,7 +60,7 @@
         :reserve-selection="true"
       />
       <el-table-column
-        label="点检表编号"
+        label="检查表编号"
       >
         <template slot-scope="scope">
           <el-link
@@ -71,7 +71,7 @@
       </el-table-column>
       <el-table-column
         prop="point_standard_name"
-        label="点检表名称"
+        label="检查表名称"
       />
       <el-table-column
         prop="doc_code"
@@ -97,12 +97,12 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button
-              v-permission="['check_point_standard', 'change']"
+              v-permission="['daily_clean_standard', 'change']"
               size="mini"
               @click="showDialog(scope.row)"
             >编辑</el-button>
             <el-button
-              v-permission="['check_point_standard', 'delete']"
+              v-permission="['daily_clean_standard', 'delete']"
               size="mini"
               type="danger"
               plain
@@ -120,18 +120,18 @@
       @currentChange="currentChange"
     />
     <el-dialog
-      :title="`${typeForm.id&&isLook?'查看':typeForm.id?'修改':'新建'}岗位安全装置点检表`"
+      :title="`${typeForm.id&&isLook?'查看':typeForm.id?'修改':'新建'}岗位安全装置检查表`"
       width="950px"
       :visible.sync="dialogEditVisible"
       :close-on-click-modal="false"
       :before-close="handleClose"
     >
       <el-form ref="typeForm" :rules="rules" :model="typeForm" label-width="100px" inline>
-        <el-form-item label="点检表编号">
+        <el-form-item label="检查表编号">
           <el-input v-model="typeForm.point_standard_code" style="width:250px" disabled />
         </el-form-item>
         <br>
-        <el-form-item label="点检表名称" prop="point_standard_name">
+        <el-form-item label="检查表名称" prop="point_standard_name">
           <el-input v-model="typeForm.point_standard_name" style="width:250px" :disabled="isLook" />
         </el-form-item>
         <el-form-item label="文档编号">
@@ -159,7 +159,7 @@
           <el-input v-model="typeForm.station" :disabled="isLook" style="width:250px" />
         </el-form-item>
         <br>
-        <el-form-item label="点检内容">
+        <el-form-item label="检查内容">
           <el-button v-if="!isLook" type="primary" @click="addList">添加</el-button>
           <el-table
             :data="tableData1"
@@ -217,10 +217,10 @@
 <script>
 import page from '@/components/page'
 import { getEquip } from '@/api/banburying-performance-manage'
-import { checkPointStandard, checkPointStandardExport } from '@/api/jqy'
+import { dailyCleanStandard, dailyCleanStandardExport } from '@/api/jqy'
 
 export default {
-  name: 'SpotCheckSet',
+  name: 'SpotClearSet',
   components: { page },
   data: function() {
     return {
@@ -235,6 +235,7 @@ export default {
         equip_no: [{ required: true, message: '不能为空', trigger: 'change' }]
       },
       getParams: {
+        standard_type: '日清扫',
         page: 1
       },
       excelParams: {
@@ -265,7 +266,7 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const data = await checkPointStandard('get', null, { params: this.getParams })
+        const data = await dailyCleanStandard('get', null, { params: this.getParams })
         this.tableData = data.results || []
         this.total = data.count || 0
         this.loading = false
@@ -312,9 +313,9 @@ export default {
       this.$refs.typeForm.validate(async(valid) => {
         if (valid) {
           try {
-            this.typeForm.standard_type = '点检'
+            this.typeForm.standard_type = '日清扫'
             if (this.tableData1.length === 0) {
-              throw new Error('点检内容未添加')
+              throw new Error('检查内容未添加')
             }
             if (!this.typeForm.id) {
               this.typeForm.check_details = this.tableData1
@@ -322,12 +323,12 @@ export default {
             const _api = this.typeForm.id ? 'put' : 'post'
             this.tableData1.forEach(d => {
               if (!d.check_content || !d.check_style) {
-                throw new Error('点检内容及检查方法必填')
+                throw new Error('检查内容及检查方法必填')
               }
             })
             this.typeForm.equip_no = PersonDisplay(this.typeForm.equip_no)
             this.btnLoading = true
-            await checkPointStandard(_api, this.typeForm.id || null, { data: this.typeForm })
+            await dailyCleanStandard(_api, this.typeForm.id || null, { data: this.typeForm })
             this.btnLoading = false
             this.handleClose(false)
             this.$message.success('操作成功')
@@ -350,7 +351,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        checkPointStandard('delete', row.id)
+        dailyCleanStandard('delete', row.id)
           .then(response => {
             this.$message({
               type: 'success',
@@ -382,12 +383,12 @@ export default {
         })
         this.btnExportLoad = true
         this.excelParams.excel_flag = 'export'
-        checkPointStandardExport('post', null, { responseType: 'blob', data: this.excelParams }).then(response => {
+        dailyCleanStandardExport('post', null, { responseType: 'blob', data: this.excelParams }).then(response => {
           const link = document.createElement('a')
           const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = '岗位安全装置点检标准及内容.xls' // 下载的文件名
+          link.download = '日清扫检查标准.xls' // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)
@@ -404,7 +405,7 @@ export default {
       const formData = new FormData()
       formData.append('file', param.file)
       formData.append('excel_flag', 'import')
-      checkPointStandardExport('post', null, { data: formData }).then(response => {
+      dailyCleanStandardExport('post', null, { data: formData }).then(response => {
         this.$message({
           type: 'success',
           message: response
@@ -436,7 +437,7 @@ function PickDisplay(string) {
 }
 </script>
 <style lang="scss">
-.spot-check-set{
+.spot-clear-set{
   .el-dialog{
     margin-top:10vh !important
   }
