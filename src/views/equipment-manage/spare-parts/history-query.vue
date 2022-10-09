@@ -247,10 +247,13 @@
         width="70"
       />
       <el-table-column
-        prop="revocation_desc"
         label="撤销备注"
         width="70"
-      />
+      >
+        <template slot-scope="scope">
+          <span v-if="scope.row.status==='撤销'">{{ scope.row.revocation_desc }}</span>
+        </template>
+      </el-table-column>
       <el-table-column
         label="操作"
         width="80"
