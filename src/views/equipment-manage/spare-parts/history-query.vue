@@ -38,7 +38,7 @@
           @change="changeSearch"
         >
           <el-option
-            v-for="item in ['出库','入库', '盘库', '移库', '删除']"
+            v-for="item in ['出库','入库', '盘库', '移库', '删除', '撤销']"
             :key="item"
             :label="item"
             :value="item"
