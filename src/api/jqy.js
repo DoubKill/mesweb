@@ -1075,6 +1075,14 @@ export function trainsFeedbacksApiviewDown(params) {
     responseType: 'blob'
   })
 }
+export function timeEnergyConsuming(params) {
+  return request({
+    url: API.TimeEnergyConsuming,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
 
 export function schedulingProcedures(method, id, data = {}) {
   const obj = {

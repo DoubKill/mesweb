@@ -259,6 +259,7 @@ export default {
   IntervalOutputStatistics: '/api/v1/production/interval-output-statistics/',
   // 报表-车次列表
   TrainsFeedbacksApiview: '/api/v1/production/trains-feedbacks-apiview/',
+  TimeEnergyConsuming: 'api/v1/production/time-energy-consuming/',
   TrainsFeedbacksApiviewDown: '/api/v1/production/trains-feedbacks-apiview/',
   // 报表-车次记录-称量信息{id}
   WeighInformationUrl: '/api/v1/production/weigh-information-list/',
