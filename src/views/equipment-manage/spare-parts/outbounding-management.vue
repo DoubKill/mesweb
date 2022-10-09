@@ -322,6 +322,7 @@
         <el-form-item label="数量" prop="out_quantity">
           <el-input-number
             v-model="creatOrder.out_quantity"
+            :precision="1"
             :max="quantity"
             :min="1"
             style="width:250px"
@@ -419,6 +420,7 @@
               <template slot-scope="{row}">
                 <el-input-number
                   v-model="row.quantity"
+                  :precision="1"
                   size="small"
                   :min="1"
                   :max="row.all_qty"
@@ -530,6 +532,7 @@
               <template slot-scope="{row}">
                 <el-input-number
                   v-model="row.quantity"
+                  :precision="1"
                   size="small"
                   :min="row.out_quantity"
                   :max="row.all_qty"
