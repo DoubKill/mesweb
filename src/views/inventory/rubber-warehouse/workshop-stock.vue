@@ -48,6 +48,7 @@
       <el-table-column
         prop="product_no"
         label="规格"
+        :fixed="!exportLoading"
       />
       <el-table-column label="现场库存" align="center">
         <el-table-column
@@ -148,7 +149,8 @@ export default {
       RM小计: ['C/HMB', '1MB', '2MB', '3MB', '4MB', 'RMB',
         'HMB', 'CMB'],
       loading: true,
-      allHj: null
+      allHj: null,
+      exportLoading: false
     }
   },
   created() {
@@ -291,6 +293,7 @@ export default {
       return sums
     },
     exportTable() {
+      this.exportLoading = true
       const tds = document.querySelectorAll('.el-table__footer-wrapper td')
       tds[0].setAttribute('rowspan', '1')
       tds[tds.length - 1].setAttribute('rowspan', '1')
@@ -300,6 +303,7 @@ export default {
       tds[tds.length - 5].setAttribute('rowspan', '1')
       setTimeout(() => {
         exportExcel('车间库存统计')
+        this.exportLoading = false
       }, 300)
 
       // const obj = Object.assign({ export: 'all' }, this.search)
