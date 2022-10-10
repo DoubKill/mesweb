@@ -324,7 +324,7 @@
             v-model="creatOrder.out_quantity"
             :precision="1"
             :max="quantity"
-            :min="1"
+            :min="0.1"
             style="width:250px"
           />
         </el-form-item>

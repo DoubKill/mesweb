@@ -353,7 +353,7 @@
           <el-input-number
             v-model="creatOrder.in_quantity"
             :precision="1"
-            :min="1"
+            :min="0.1"
             style="width:250px"
           />
         </el-form-item>
@@ -996,6 +996,9 @@ export default {
       this.creatOrder.spare_code = row.spare_code
       this.creatOrder.spare_name = row.spare_name
       this.creatOrder.in_quantity = row.plan_in_quantity - row.in_quantity
+      if (row.plan_in_quantity - row.in_quantity < 0) {
+        this.creatOrder.in_quantity = 1
+      }
       this.creatOrder.equip_warehouse_order = row.equip_warehouse_order
       this.creatOrder.unit = row.unit
       this.creatOrder.status = 1
@@ -1012,6 +1015,7 @@ export default {
           this.$set(this.creatOrder, 'equip_warehouse_location', this.warehouseLocationList[0].id)
         }
       }
+
       this.dialogVisible1 = true
       // }
     },
