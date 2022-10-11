@@ -189,7 +189,7 @@
       @currentChange="currentChange"
     />
     <el-dialog
-      :title="`岗位安全装置检查表${typeForm.id&&isLook?'确认':typeForm.id?'检查':'新建'}`"
+      :title="`日清扫检查表${typeForm.id&&isLook?'确认':typeForm.id?'检查':'新建'}`"
       width="1150px"
       :visible.sync="dialogEditVisible"
       :close-on-click-modal="false"
