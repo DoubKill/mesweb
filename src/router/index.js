@@ -563,7 +563,7 @@ export let asyncRoutes = [
         meta: {
           title: 'MES配方变更履历',
           icon: 'formula',
-          permissionName: ''
+          permissionName: 'recipe_change_history'
         }
       }
     // {
