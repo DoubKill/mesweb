@@ -146,7 +146,6 @@
           <el-form-item style="marginLeft:25px" label="品质状态" prop="quality_status">
             <el-select
               v-model="creatOrder.quality_status"
-              :disabled="unqualified"
               placeholder="请选择"
               clearable
               @change="clear2"
@@ -636,7 +635,7 @@ export default {
       close: true,
       assign: true,
       normal: true,
-      unqualified: true,
+      // unqualified: true,
       dateSearch: [],
       stationList: [],
       batchList: [],
@@ -724,7 +723,6 @@ export default {
     })
   },
   created() {
-    this.getUser()
     if (checkPermission(['product_outbound_plan', 'close'])) {
       this.close = false
     }
@@ -734,9 +732,12 @@ export default {
     if (checkPermission(['product_outbound_plan', 'normal'])) {
       this.normal = false
     }
-    if (checkPermission(['product_outbound_plan', 'unqualified'])) {
-      this.unqualified = false
+    if (!checkPermission(['product_outbound_plan', 'unqualified'])) {
+      // this.unqualified = false
+      this.options = ['一等品', '待检品']
     }
+    this.loading = true
+    this.getUser()
   },
   methods: {
     checkPermission,
@@ -834,7 +835,9 @@ export default {
         this.search.station = data.station || null
         this.creatOrder.warehouse = data.warehouse || null
         this.creatOrder.station = data.station || null
-        this.creatOrder.quality_status = data.quality_status || null
+        if (data.quality_status && this.options.indexOf(data.quality_status) > -1) {
+          this.creatOrder.quality_status = data.quality_status || null
+        }
         this.getList()
       } catch (error) {
         this.getList()
