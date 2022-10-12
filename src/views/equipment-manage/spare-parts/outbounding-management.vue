@@ -422,7 +422,7 @@
                   v-model="row.quantity"
                   :precision="1"
                   size="small"
-                  :min="1"
+                  :min="0.1"
                   :max="row.all_qty"
                 />
               </template>

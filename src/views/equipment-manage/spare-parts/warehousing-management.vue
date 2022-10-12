@@ -471,7 +471,7 @@
                   v-model="row.quantity"
                   :precision="1"
                   size="small"
-                  :min="1"
+                  :min="0.1"
                   :max="99999"
                 />
               </template>
