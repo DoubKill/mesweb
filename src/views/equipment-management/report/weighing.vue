@@ -132,23 +132,32 @@
         width="120"
       >
         <el-table-column
-          :prop="d.prop+'早班'"
           align="center"
           label="早班"
           width="60"
-        />
+        >
+          <template slot-scope="{row}">
+            <span :title="row[d.prop+'早班_count']">{{ row[d.prop+'早班'] }}</span>
+          </template>
+        </el-table-column>
         <el-table-column
-          :prop="d.prop+'中班'"
           align="center"
           label="中班"
           width="60"
-        />
+        >
+          <template slot-scope="{row}">
+            <span :title="row[d.prop+'中班_count']">{{ row[d.prop+'中班'] }}</span>
+          </template>
+        </el-table-column>
         <el-table-column
-          :prop="d.prop+'夜班'"
           align="center"
           label="夜班"
           width="60"
-        />
+        >
+          <template slot-scope="{row}">
+            <span :title="row[d.prop+'夜班_count']">{{ row[d.prop+'夜班'] }}</span>
+          </template>
+        </el-table-column>
       </el-table-column>
       <el-table-column
         prop="xl"
