@@ -11,8 +11,7 @@
           type="daterange"
           range-separator="至"
           :clearable="true"
-          value-format="yyyy-MM-dd HH:mm:ss"
-          :default-time="['00:00:00', '23:59:59']"
+          value-format="yyyy-MM-dd"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           @change="changeSearch"
@@ -51,7 +50,8 @@
         />
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button v-permission="['trains_report', 'export']" type="primary" :loading="btnExportLoad" @click="exportTable">导出Excel</el-button>
+        <el-button v-permission="['trains_report', 'export']" type="primary" :disabled="btnExportLoad" @click="exportTableEnergy">导出吨能耗及吨耗时</el-button>
+        <el-button v-permission="['trains_report', 'export']" type="primary" :disabled="btnExportLoad" @click="exportTable">导出Excel</el-button>
         <!-- <el-button @click="showRowTable = true">展示详情</el-button> -->
 
         <!-- <el-button @click="selectRubber">导出批记录</el-button>
@@ -529,7 +529,7 @@ import {
   curveInformationUrl,
   alarmLogList
 } from '@/api/base_w'
-import { trainsFeedbacksApiviewDown } from '@/api/jqy'
+import { trainsFeedbacksApiviewDown, timeEnergyConsuming } from '@/api/jqy'
 import { personnelsUrl } from '@/api/user'
 import page from '@/components/page'
 import selectEquip from '@/components/select_w/equip'
@@ -627,6 +627,33 @@ export default {
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
           link.download = '车次报表.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
+    },
+    exportTableEnergy() {
+      if (!this.search_date) {
+        this.$message('请选择日期')
+        return
+      }
+      const obj = { st: this.search_date[0], et: this.search_date[1] }
+      if (getDaysBetween(obj.st, obj.et) > 1) {
+        this.$message('日期间隔不得大于31天')
+        return
+      }
+      this.btnExportLoad = true
+      const _api = timeEnergyConsuming
+      _api(obj)
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = '吨能耗及吨耗时.xlsx' // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)
@@ -952,6 +979,19 @@ function base64ToBlob(code) {
     uInt8Array[i] = raw.charCodeAt(i)
   }
   return new Blob([uInt8Array], { type: contentType })
+}
+
+function getDaysBetween(dateString1, dateString2) {
+  var startDate = Date.parse(dateString1)
+  var endDate = Date.parse(dateString2)
+  if (startDate > endDate) {
+    return 0
+  }
+  if (startDate === endDate) {
+    return 1
+  }
+  var days = (endDate - startDate) / (31 * 24 * 60 * 60 * 1000)
+  return days
 }
 </script>
 
