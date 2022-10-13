@@ -403,4 +403,20 @@ export function productSynthesisMonthRate(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function shiftProductionSummary(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ShiftProductionSummary + id + '/' : API.ShiftProductionSummary,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function equipDownDetail(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipDownDetail + id + '/' : API.EquipDownDetail,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 

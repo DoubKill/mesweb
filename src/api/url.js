@@ -765,5 +765,8 @@ export default {
   ScorchTime: '/api/v1/quality/scorch-time/',
   WeightClassPlan: '/api/v1/production/weight-class-plan/',
   XlPlanConsume: '/api/v1/plan/xl-plan-consume/',
-  WeightClassPlanImport: '/api/v1/production/weight-class-plan/import-xlsx/'
+  WeightClassPlanImport: '/api/v1/production/weight-class-plan/import-xlsx/',
+
+  ShiftProductionSummary: '/api/v1/production/shift-production-summary/',
+  EquipDownDetail: '/api/v1/production/equip-down-detail/'
 }
