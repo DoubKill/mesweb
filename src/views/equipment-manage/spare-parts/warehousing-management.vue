@@ -352,7 +352,8 @@
         <el-form-item label="数量" prop="in_quantity">
           <el-input-number
             v-model="creatOrder.in_quantity"
-            :min="1"
+            :precision="1"
+            :min="0.1"
             style="width:250px"
           />
         </el-form-item>
@@ -468,8 +469,9 @@
               <template slot-scope="{row}">
                 <el-input-number
                   v-model="row.quantity"
+                  :precision="1"
                   size="small"
-                  :min="1"
+                  :min="0.1"
                   :max="99999"
                 />
               </template>
@@ -573,6 +575,7 @@
               <template slot-scope="{row}">
                 <el-input-number
                   v-model="row.quantity"
+                  :precision="1"
                   size="small"
                   :min="row.in_quantity"
                   :max="99999"
@@ -993,6 +996,9 @@ export default {
       this.creatOrder.spare_code = row.spare_code
       this.creatOrder.spare_name = row.spare_name
       this.creatOrder.in_quantity = row.plan_in_quantity - row.in_quantity
+      if (row.plan_in_quantity - row.in_quantity < 0) {
+        this.creatOrder.in_quantity = 1
+      }
       this.creatOrder.equip_warehouse_order = row.equip_warehouse_order
       this.creatOrder.unit = row.unit
       this.creatOrder.status = 1
@@ -1009,6 +1015,7 @@ export default {
           this.$set(this.creatOrder, 'equip_warehouse_location', this.warehouseLocationList[0].id)
         }
       }
+
       this.dialogVisible1 = true
       // }
     },
