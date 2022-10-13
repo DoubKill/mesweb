@@ -72,12 +72,8 @@ export default {
       search: {
         target_month: setDate(null, null, 'month')
       },
-      tableData: [{ equip_no: 'z01', '5/2-早-B': 111 },
-        { equip_no: 'z02', '5/2-早-B': 111 }],
-      headData: {
-        '5/1-夜': 'A',
-        '5/1-早': 'C'
-      },
+      tableData: [],
+      headData: {},
       btnExportLoad: false,
       loading: false
     }
