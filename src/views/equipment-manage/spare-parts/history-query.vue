@@ -2,7 +2,23 @@
   <div class="history-query">
     <!-- 备件出入库履历查询 -->
     <el-form :inline="true">
-      <el-form-item label="起止时间">
+      <el-form-item label="库区">
+        <el-input
+          v-model="search.warehouse_area"
+          style="width:150px"
+          clearable
+          @input="debounceSearch"
+        />
+      </el-form-item>
+      <el-form-item label="库位">
+        <el-input
+          v-model="search.warehouse_location"
+          style="width:150px"
+          clearable
+          @input="debounceSearch"
+        />
+      </el-form-item>
+      <el-form-item label="操作起止时间">
         <el-date-picker
           v-model="dateValue"
           type="daterange"
@@ -13,15 +29,16 @@
           @change="changeDate"
         />
       </el-form-item>
-      <el-form-item label="出库/入库">
+      <el-form-item label="操作类型">
         <el-select
           v-model="search.status"
+          style="width:150px"
           placeholder="请选择"
           clearable
           @change="changeSearch"
         >
           <el-option
-            v-for="item in ['出库','入库']"
+            v-for="item in ['出库','入库', '盘库', '移库', '删除', '撤销']"
             :key="item"
             :label="item"
             :value="item"
@@ -39,7 +56,7 @@
       <el-form-item label="操作人">
         <el-input
           v-model="search.created_user"
-          style="width:200px"
+          style="width:100px"
           clearable
           @input="debounceSearch"
         />
@@ -47,7 +64,7 @@
       <el-form-item label="领用人">
         <el-input
           v-model="search.receive_user"
-          style="width:200px"
+          style="width:100px"
           clearable
           @input="debounceSearch"
         />
@@ -111,23 +128,24 @@
     </el-form>
     <el-table
       v-loading="loading"
+      size="mini"
       :data="tableData"
       border
     >
       <el-table-column
         prop="status"
-        label="出库/入库"
-        min-width="20"
+        label="操作类型"
+        width="70"
       />
       <el-table-column
         prop="order_id"
         label="出入库单号"
-        min-width="20"
+        width="110"
       />
       <el-table-column
         prop="work_order_no"
         label="工单编号"
-        min-width="20"
+        min-width="70"
       >
         <template slot-scope="scope">
           <el-link
@@ -139,90 +157,110 @@
       <el-table-column
         prop="spare_code"
         label="备件代码"
-        min-width="20"
+        min-width="70"
       />
       <el-table-column
         prop="spare_name"
         label="备件名称"
-        min-width="20"
+        min-width="70"
       />
       <el-table-column
         prop="component_type_name"
         label="备件分类"
-        min-width="20"
+        width="70"
       />
       <el-table-column
         prop="specification"
         label="规格型号"
-        min-width="20"
+        width="70"
       />
       <el-table-column
         prop="technical_params"
         label="用途"
-        min-width="20"
+        width="70"
+      />
+      <el-table-column
+        prop="purpose"
+        label="领用用途"
+        width="70"
       />
       <el-table-column
         prop="cost"
         label="单价"
-        min-width="20"
+        width="50"
       />
       <el-table-column
         prop="quantity"
         label="数量"
-        min-width="20"
+        width="50"
       />
       <el-table-column
         prop="unit"
         label="单位"
-        min-width="20"
+        width="50"
       />
       <el-table-column
         prop="money"
         label="金额"
-        min-width="20"
+        width="50"
       />
       <el-table-column
         prop="area_name"
         label="库区"
-        min-width="20"
-      />
+        width="60"
+      ><template slot-scope="scope">
+
+        <el-link
+          type="primary"
+          @click="dialogDesc(scope.row)"
+        >{{ scope.row.area_name }}</el-link>
+      </template>
+      </el-table-column>
       <el-table-column
         prop="location_name"
         label="库位"
-        min-width="20"
+        width="60"
       />
       <el-table-column
         prop="receive_user"
         label="领用人"
-        min-width="20"
+        width="60"
       />
       <el-table-column
         prop="created_username"
         label="操作人"
-        min-width="20"
+        width="60"
+      />
+      <el-table-column
+        prop="real_time"
+        label="出入库时间"
+        width="80"
       />
       <el-table-column
         prop="last_updated_date"
         label="操作时间"
-        min-width="20"
+        width="80"
       />
       <el-table-column
         prop="revocation"
         label="是否撤销"
-        min-width="20"
+        width="70"
       />
       <el-table-column
-        prop="revocation_desc"
         label="撤销备注"
-        min-width="20"
-      />
+        width="70"
+      >
+        <template slot-scope="scope">
+          <span v-if="scope.row.status==='撤销'">{{ scope.row.revocation_desc }}</span>
+        </template>
+      </el-table-column>
       <el-table-column
         label="操作"
         width="80"
       >
         <template slot-scope="scope">
           <el-button
-            v-if="scope.row.revocation==='N'"
+            v-if="scope.row.revocation==='N'&&(scope.row.status==='入库'||scope.row.status==='出库')"
             v-permission="['equip_warehouse_record', 'revocation']"
             type="primary"
             size="mini"
@@ -238,6 +276,7 @@
       :current-page="search.page"
       @currentChange="currentChange"
     />
+
     <el-dialog
       :visible.sync="dialogVisible"
       width="500px"
@@ -305,6 +344,71 @@
         <el-button :loading="submit" type="primary" @click="generateFun">确 定</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      :visible.sync="dialogVisibleDesc"
+      width="70%"
+      title="盘库/移库备注"
+      class="dialogStyle"
+    >
+      <el-table
+        v-loading="loading"
+        :data="tableDataDesc"
+        border
+      >
+
+        <el-table-column
+          prop="status"
+          label="操作类型"
+          width="90"
+        />
+        <el-table-column
+          prop="spare_code"
+          label="备件代码"
+          width="120"
+        />
+        <el-table-column
+          prop="spare_name"
+          label="备件名称"
+          min-width="20"
+        />
+        <el-table-column
+          prop="component_type_name"
+          label="备件分类"
+          width="90"
+        />
+        <el-table-column
+          prop="area_name"
+          label="库区"
+          width="90"
+        />
+        <el-table-column
+          prop="location_name"
+          label="库位"
+          width="90"
+        />
+        <el-table-column
+          prop="created_username"
+          label="操作人"
+          width="70"
+        />
+        <el-table-column
+          prop="created_date"
+          label="操作时间"
+          width="150"
+        />
+        <el-table-column
+          prop="revocation_desc"
+          label="备注"
+          min-width="20"
+        />
+
+      </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogVisibleDesc=false">返回</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -327,11 +431,13 @@ export default {
       submit: false,
       loading: false,
       dialogVisibleRevoke: false,
+      dialogVisibleDesc: false,
       btnExportLoad: false,
       dialogVisible: false,
       loadingView: false,
       tableDataView: [],
       currentObj: {},
+      tableDataDesc: [],
       currentRevoke: {}
     }
   },
@@ -415,6 +521,19 @@ export default {
         this.loadingView = false
       } catch (e) {
         this.loadingView = false
+      }
+    },
+    async dialogDesc(row) {
+      try {
+        const data = await equipWarehouseRecord('get', row.id, { params: {}})
+        if (data.length > 0) {
+          this.tableDataDesc = data
+          this.dialogVisibleDesc = true
+        } else {
+          this.$message('没有盘库移库记录')
+        }
+      } catch (e) {
+        // this.loadingView = false
       }
     },
     exportTable() {

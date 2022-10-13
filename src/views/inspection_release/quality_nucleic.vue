@@ -65,7 +65,7 @@
       <el-table-column
         prop="material_name"
         label="物料名称"
-        min-width="20"
+        min-width="16"
       >
         <template slot-scope="scope">
           <el-link
@@ -82,12 +82,12 @@
       <el-table-column
         prop="zc_material_code"
         label="中策物料编码"
-        min-width="20"
+        min-width="15"
       />
       <el-table-column
         prop="batch_no"
         label="批次号"
-        min-width="20"
+        min-width="15"
       />
       <el-table-column
         prop="locked_status"

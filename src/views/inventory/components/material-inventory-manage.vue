@@ -63,7 +63,7 @@
       :data="tableData"
     >
       <el-table-column label="No" type="index" align="center" width="40" />
-      <el-table-column v-if="warehouseNameProps==='胶料库'|| isRubber" label="库区" align="center" prop="store_name" min-width="35" />
+      <el-table-column v-if="warehouseNameProps==='胶料库'|| isRubber" label="库区" align="center" prop="store_name" width="100" />
       <el-table-column v-if="warehouseNameProps==='胶料库'|| isRubber" label="胶料编码" align="center" prop="material_no" min-width="35" />
       <el-table-column
         v-if="warehouseNameProps!=='胶料库'&& !isRubber"
@@ -78,9 +78,9 @@
         label="机台"
         align="center"
         prop="equip_no"
-        min-width="35"
+        width="60"
       />
-      <el-table-column v-if="warehouseNameProps==='胶料库'|| isRubber" label="车次" align="center" prop="memo" min-width="16" />
+      <el-table-column v-if="warehouseNameProps==='胶料库'|| isRubber" label="车次" align="center" prop="memo" width="70" />
       <el-table-column v-else label="库存数" align="center" prop="qty" min-width="16" />
       <el-table-column label="总重量kg" align="center" prop="total_weight" min-width="16" />
       <el-table-column label="托盘号" align="center" prop="container_no" min-width="18" />
@@ -121,6 +121,9 @@
       <el-table-column label="入库时间" align="center" prop="in_storage_time" min-width="15" />
       <el-table-column label="有效期至" align="center" prop="expire_time" min-width="15" />
       <el-table-column label="剩余有效天数" align="center" prop="left_days" min-width="15" />
+      <el-table-column label="剩余有效天数" align="center" prop="left_days" min-width="15" />
+      <el-table-column label="货位状态" align="center" prop="location_status" min-width="15" />
+      <el-table-column label="处理意见" align="center" prop="deal_suggestion" min-width="15" />
       <!-- <el-table-column label="操作" align="center" min-width="20">
         <template slot-scope="scope">
           <el-button

@@ -48,29 +48,83 @@
       use-virtual
       show-body-overflow="title"
       show-header-overflow="title"
-      :max-height="600"
+      :max-height="700"
       style="width: 100%"
       border
     >
       <u-table-column
         prop="name"
+        fixed
         label="名字"
         width="60"
       />
       <u-table-column
         prop="work_type"
+        fixed
         label="员工类别"
         width="60"
       />
       <u-table-column
         prop="是否定岗"
+        fixed
         label="是否独立上岗"
-        width="40"
-      >
-        <template slot-scope="{row}">
+        width="65"
+      />
+      <!-- <template slot-scope="{row}">
           {{ row.是否定岗?'是':'否' }}
         </template>
+      </u-table-column> -->
+      <u-table-column
+        prop="hj"
+        label="产量工资合计"
+        width="65"
+        fixed
+      />
+      <u-table-column
+        prop="超产奖励"
+        label="超产奖励"
+        width="65"
+        fixed
+      >
+        <template slot-scope="{row}">
+          <el-link
+            type="primary"
+            @click="subsidyList(row,3)"
+          >{{ row.超产奖励 }}</el-link>
+        </template>
       </u-table-column>
+      <u-table-column
+        prop="其他奖惩"
+        label="其他奖惩"
+        width="65"
+        fixed
+      >
+        <template slot-scope="{row}">
+          <el-link
+            type="primary"
+            @click="subsidyList(row,1)"
+          >{{ row.其他奖惩 }}</el-link>
+        </template>
+      </u-table-column>
+      <u-table-column
+        prop="生产补贴"
+        label="生产补贴"
+        width="65"
+        fixed
+      >
+        <template slot-scope="{row}">
+          <el-link
+            type="primary"
+            @click="subsidyList(row,2)"
+          >{{ row.生产补贴 }}</el-link>
+        </template>
+      </u-table-column>
+      <u-table-column
+        prop="all"
+        label="工资总计"
+        width="90"
+        fixed
+      />
       <u-table-column v-for="(item,_index) in day" :key="item" :label="item+'日'">
         <u-table-column
           v-for="_item in group_list[_index]"
@@ -86,57 +140,7 @@
           </template>
         </u-table-column>
       </u-table-column>
-      <u-table-column
-        prop="hj"
-        label="产量工资合计"
-        width="65"
-        fixed="right"
-      />
-      <u-table-column
-        prop="超产奖励"
-        label="超产奖励"
-        width="65"
-        fixed="right"
-      >
-        <template slot-scope="{row}">
-          <el-link
-            type="primary"
-            @click="subsidyList(row,3)"
-          >{{ row.超产奖励 }}</el-link>
-        </template>
-      </u-table-column>
-      <u-table-column
-        prop="其他奖惩"
-        label="其他奖惩"
-        width="65"
-        fixed="right"
-      >
-        <template slot-scope="{row}">
-          <el-link
-            type="primary"
-            @click="subsidyList(row,1)"
-          >{{ row.其他奖惩 }}</el-link>
-        </template>
-      </u-table-column>
-      <u-table-column
-        prop="生产补贴"
-        label="生产补贴"
-        width="65"
-        fixed="right"
-      >
-        <template slot-scope="{row}">
-          <el-link
-            type="primary"
-            @click="subsidyList(row,2)"
-          >{{ row.生产补贴 }}</el-link>
-        </template>
-      </u-table-column>
-      <u-table-column
-        prop="all"
-        label="工资总计"
-        width="90"
-        fixed="right"
-      />
+
     </u-table>
     <achievementC
       v-if="isExport"
@@ -437,7 +441,7 @@ export default {
     async subsidyInfo(row, group, day) {
       this.currentInfo = JSON.parse(JSON.stringify(row))
       this.dialogVisible2 = true
-      this.currentInfo.是否定岗 = this.currentInfo.是否定岗 ? '是' : '否'
+      // this.currentInfo.是否定岗 = this.currentInfo.是否定岗 ? '是' : '否'
       this.currentInfo._class = group
       this.currentInfo.factoryDate = this.year + '-' + this.month + '-' + day
       try {

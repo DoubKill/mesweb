@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 原材料 库存统计 -->
+    <!-- 原材料 巷道别批次库存统计 -->
     <el-form :inline="true">
       <el-form-item label="物料编码">
         <el-select v-model="search.material_no" allow-create filterable placeholder="请选择" clearable @visible-change="getMaterialsList" @change="changeList">
@@ -88,7 +88,7 @@
       <el-table-column
         prop="code"
         label="物料编码"
-        min-width="20"
+        min-width="25"
       />
       <el-table-column
         prop="zc_material_code"
@@ -103,12 +103,12 @@
       <el-table-column
         prop="unit"
         label="单位"
-        min-width="10"
+        width="70"
       />
       <el-table-column
         prop="pdm"
         label="PDM"
-        min-width="15"
+        width="70"
       />
       <el-table-column
         prop="group_name"
@@ -118,17 +118,17 @@
       <el-table-column
         prop="tunnel_name"
         label="巷道"
-        min-width="20"
+        width="90"
       />
       <el-table-column
         prop="quantity"
         label="可用数量"
-        min-width="15"
+        width="70"
       />
       <el-table-column
         prop="weight"
         label="重量"
-        min-width="15"
+        width="70"
       />
     </el-table>
     <page

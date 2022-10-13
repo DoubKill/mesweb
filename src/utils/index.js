@@ -249,7 +249,7 @@ export function exportExcel(value = 'excel', val, _wpxArr = []) {
     }
     return config
   })
-  a({ url: '/api/v1/system/user-operation-log/', method: 'post', data: { 'operator': _newUser, 'menu_name': routeName, 'operations': `操作了导出按钮` }})
+  a({ url: '/api/v1/system/user-operation-log/', method: 'post', data: { 'operator': _newUser, 'menu_name': routeName, 'operations': `导出：${routeName}列表` }})
   // 走进来的是导出 掉接口记录当前操作 end
 
   value = value + ' ' + (val === 'excel' ? '' : setDate())

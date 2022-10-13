@@ -113,6 +113,11 @@
         min-width="20"
       />
       <el-table-column
+        prop="desc"
+        label="备注"
+        min-width="20"
+      />
+      <el-table-column
         label="操作"
         width="200"
       >
@@ -241,7 +246,7 @@
           min-width="20"
         />
         <el-table-column
-          prop="created_date"
+          prop="outer_time"
           label="出库时间"
           width="160"
         />
@@ -487,7 +492,7 @@
           />
         </el-form-item>
         <el-form-item label="出库物料详情列表" prop="equip_spare">
-          <el-button type="primary" :disabled="spare_code!==''" @click="Add">添加</el-button>
+          <el-button v-if="dialogForm.status_name!=='已出库'" type="primary" :disabled="spare_code!==''" @click="Add">添加</el-button>
           <span style="margin-left:20px">备件编号：</span>
           <el-input
             v-model="spare_code"
@@ -534,6 +539,7 @@
             <el-table-column label="操作" width="130px">
               <template slot-scope="scope">
                 <el-button
+                  v-if="dialogForm.status_name!=='已出库'"
                   size="mini"
                   type="danger"
                   @click="handleDelete(scope.row)"
@@ -546,7 +552,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleCloseEdit(false)">取 消</el-button>
-        <el-button type="primary" :loading="btnLoad" @click="submitEdit">确 定</el-button>
+        <el-button v-if="dialogForm.status_name!=='已出库'" type="primary" :loading="btnLoad" @click="submitEdit">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -614,6 +620,7 @@
         ref="singleTable"
         highlight-current-row
         row-key="id"
+        max-height="550"
         :reserve-selection="true"
         :data="tableDataWork"
         border
@@ -643,6 +650,7 @@
 
 <script>
 import material from '../components/material-dialog'
+import { mapGetters } from 'vuex'
 import { sectionTree } from '@/api/base_w_four'
 import { getOrderId, equipWarehouseOrder, equipWarehouseOrderDetail, equipWarehouseInventory } from '@/api/jqy'
 import page from '@/components/page'
@@ -715,6 +723,11 @@ export default {
       creatOrder: { out_quantity: null }
     }
   },
+  computed: {
+    ...mapGetters([
+      'name'
+    ])
+  },
   created() {
     this.getList()
     this.getSection()
@@ -754,9 +767,13 @@ export default {
     handleCurrentChange(val) {
       this.work_order_noList = val
     },
-    submitFunwork() {
+    async submitFunwork() {
       this.dialogForm.work_order_no = this.work_order_noList.work_order_no
       this.dialogVisibleWork = false
+      if (this.dialogForm.work_order_no) {
+        const orderId = await getOrderId('get', null, { params: { status: '出库', apply: 1 }})
+        this.dialogForm.order_id = orderId
+      }
     },
     async editOrder(row) {
       this.dialogVisibleEdit = true
@@ -1048,6 +1065,7 @@ export default {
     },
     submitFun() {
       this.dialogForm.status = 4
+      this.dialogForm.add_username = this.name
       this.dialogForm.equip_spare.forEach(d => {
         if (d.quantity === undefined) {
           d.quantity = 1

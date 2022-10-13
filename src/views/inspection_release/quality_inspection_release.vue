@@ -98,7 +98,7 @@
       <el-table-column
         prop="quality_status"
         label="品质状态"
-        min-width="20"
+        width="70"
         :formatter="(row)=>{
           let obj = qualityStatus.find(d=>d.id === row.quality_status)
           return obj.name
@@ -112,17 +112,17 @@
       <el-table-column
         prop="unit"
         label="单位"
-        min-width="10"
+        width="50"
       />
       <el-table-column
         prop="quantity"
         label="库存数量"
-        min-width="15"
+        width="70"
       />
       <el-table-column
         prop="weight"
         label="重量/kg"
-        min-width="15"
+        width="75"
       />
       <el-table-column
         prop="creater_time"

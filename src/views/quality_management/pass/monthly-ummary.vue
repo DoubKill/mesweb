@@ -77,7 +77,7 @@
           prop="name"
           align="center"
           label="机台综合合格率%"
-          width="100"
+          width="130"
         />
         <el-table-column
           v-for="(d) in tableHead"
@@ -116,7 +116,7 @@
           prop="name"
           align="center"
           label="班组综合合格率%"
-          width="100"
+          width="130"
         />
         <el-table-column
           v-for="(d) in tableHead"

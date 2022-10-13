@@ -85,10 +85,12 @@
       <el-table-column
         prop="select_date"
         label="日期"
+        width="90"
       />
       <el-table-column
         prop="classes"
         label="班次"
+        width="60"
       />
       <el-table-column
         prop="point_standard_code"
@@ -108,14 +110,17 @@
       <el-table-column
         prop="equip_no"
         label="机台"
+        width="60"
       />
       <el-table-column
         prop="station"
         label="岗位"
+        width="150"
       />
       <el-table-column
         prop="check_result"
         label="点检结果"
+        width="100"
       >
         <template slot-scope="scope">
           <span :style="{color:scope.row.check_result==='点检异常'?'red':'#606266'}">
@@ -126,35 +131,40 @@
       <el-table-column
         prop="status"
         label="状态"
+        width="70"
       />
       <el-table-column
         prop="point_user"
         label="点检人"
+        width="70"
       />
       <el-table-column
         prop="point_time"
         label="点检时间"
+        width="150"
       />
       <el-table-column
         prop="confirm_user"
         label="确认人"
+        width="70"
       />
       <el-table-column
         prop="confirm_time"
         label="确认时间"
+        width="150"
       />
       <el-table-column label="操作" width="190">
         <template slot-scope="scope">
           <el-button-group>
             <el-button
               v-permission="['check_point_table', 'change']"
-              :disabled="scope.row.status==='已确认'"
+              :disabled="scope.row.finish_flag"
               size="mini"
               @click="showDialog(scope.row)"
             >点检</el-button>
             <el-button
               v-permission="['check_point_table', 'confirm']"
-              :disabled="scope.row.status!=='已点检'"
+              :disabled="scope.row.status==='已确认'||!scope.row.finish_flag"
               size="mini"
               plain
               @click="showDialog(scope.row,true)"
@@ -270,7 +280,7 @@
               <template slot-scope="{row}">
                 <el-select
                   v-model="row.check_result"
-                  :disabled="isLook"
+                  :disabled="isLook1"
                   placeholder=""
                   clearable
                   @change="changeRepaired(row)"
@@ -290,11 +300,45 @@
               width="149"
             >
               <template slot-scope="{row}">
-                <el-checkbox v-model="row.is_repaired" :disabled="isLook||row.check_result==='好'||!row.check_result">已修复</el-checkbox>
+                <el-checkbox v-model="row.is_repaired" :disabled="isLook1||row.check_result==='好'||!row.check_result">已修复</el-checkbox>
               </template>
             </el-table-column>
           </el-table>
         </el-form-item>
+        <el-form-item label="上传图片">
+          <el-upload
+            v-if="!isLook1"
+            ref="elUploadImg"
+            :disabled="isLook"
+            action=""
+            :on-remove="handleRemove"
+            :file-list="objList"
+            :auto-upload="false"
+            list-type="picture-card"
+            :on-preview="handlePictureCardPreview"
+            :on-change="onChangeImg"
+            :on-exceed="onExceed"
+            :limit="5"
+          >
+            <i class="el-icon-plus" />
+          </el-upload>
+          <el-dialog :visible.sync="dialogVisibleImg" :modal-append-to-body="false" :append-to-body="true">
+            <img width="100%" :src="dialogImageUrl" alt>
+          </el-dialog>
+          <template v-for="(item, index) in typeForm.check_image_urls">
+            <el-image
+              v-if="isLook1&&typeForm.check_image_urls.length>0"
+              :key="index"
+              style="width: 100px; height: 100px"
+              :src="item"
+              :preview-src-list="[item]"
+            />
+          </template>
+          <div v-if="typeForm.id&&isLook1&&typeForm.check_image_urls.length===0">
+            暂无图片
+          </div>
+        </el-form-item>
+        <br>
         <el-form-item v-if="isLook" label="异常确认说明">
           <el-input
             v-model="typeForm.confirm_desc"
@@ -311,11 +355,17 @@
       >
         <el-button @click="handleClose(false)">取 消</el-button>
         <el-button
+          v-if="!isLook1&&!isLook"
+          type="primary"
+          :loading="btnLoading"
+          @click="handleEdit(false)"
+        >{{ '保 存' }}</el-button>
+        <el-button
           v-if="!isLook1"
           type="primary"
           :loading="btnLoading"
-          @click="handleEdit"
-        >{{ isLook?'确 认':'确 定' }}</el-button>
+          @click="handleEdit(true)"
+        >{{ isLook?'确 认':'提 交' }}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -324,7 +374,7 @@
 <script>
 import page from '@/components/page'
 import { getEquip } from '@/api/banburying-performance-manage'
-import { checkPointTable, checkPointStandard, checkPointTableExport } from '@/api/jqy'
+import { checkPointTable, checkPointStandard, checkPointTableExport, uploadImages } from '@/api/jqy'
 import classSelect from '@/components/ClassSelect'
 import { setDate } from '@/utils'
 
@@ -351,6 +401,9 @@ export default {
       excelParams: {
         ids: []
       },
+      objList: [],
+      dialogImageUrl: '',
+      dialogVisibleImg: false,
       multipleSelection: [],
       isLook: false,
       isLook1: false,
@@ -378,7 +431,7 @@ export default {
     async visibleStation(val) {
       if (val) {
         if (this.typeForm.equip_no) {
-          const data = await checkPointStandard('get', null, { params: { all_station: this.typeForm.equip_no }})
+          const data = await checkPointStandard('get', null, { params: { all_station: this.typeForm.equip_no, standard_type: '点检' }})
           this.options1 = data.results
         } else {
           this.$message('请先选择机台')
@@ -411,6 +464,7 @@ export default {
     onSubmit() {
       this.isLook = false
       this.isLook1 = false
+      this.objList = []
       this.dialogEditVisible = true
       this.typeForm = { select_date: setDate(), classes: null }
     },
@@ -442,6 +496,39 @@ export default {
     changDebounce() {
       this.$debounce(this, 'changSelect')
     },
+    onExceed() {
+      this.$message.info('最多上传五张图片')
+    },
+    async onChangeImg(file, fileList) {
+      const isJPG = ['image/jpeg', 'image/jpg', 'image/png'].includes(file.raw.type)
+      const isLt2M = file.size / 1024 / 1024 < 2
+      if (!isJPG) {
+        this.$message.error('上传图片只能是 jpeg、jpg 、png格式!')
+        fileList.pop()
+        return
+      }
+      if (!isLt2M) {
+        this.$message.error('上传图片大小不能超过 2MB!')
+        fileList.pop()
+        return
+      }
+      const picture = new FormData()
+      picture.append('image_file_name', file.raw)
+      picture.append('source_type', '点检')
+      try {
+        const data = await uploadImages('post', null, { data: picture })
+        this.objList.push({ url: data.image_file_name })
+      } catch (e) {
+        this.$set(this, 'objList', this.objList)
+      }
+    },
+    handleRemove(file, fileList) {
+      this.objList = fileList
+    },
+    handlePictureCardPreview(file) {
+      this.dialogImageUrl = file.url
+      this.dialogVisibleImg = true
+    },
     changeDate(arr) {
       this.getParams.select_date_after = arr ? arr[0] : ''
       this.getParams.select_date_before = arr ? arr[1] : ''
@@ -454,7 +541,7 @@ export default {
     },
     changeRepaired(row) {
       if (row.check_result === '好' || !row.check_result) {
-        row.is_repaired = false
+        this.$set(row, 'is_repaired', false)
       }
     },
     classChanged1(val) {
@@ -475,6 +562,18 @@ export default {
         this.isLook1 = false
       }
       this.typeForm = JSON.parse(JSON.stringify(row))
+      this.typeForm.check_image_urls = []
+      if (row.check_image_urls) {
+        this.typeForm.check_image_urls = row.check_image_urls.split(',')
+      }
+      this.objList = []
+      if (this.typeForm.check_image_urls.length > 0) {
+        this.typeForm.check_image_urls.forEach(d =>
+          this.objList.push({ url: d })
+        )
+      } else {
+        this.objList = []
+      }
       this.tableData1 = this.typeForm.table_details
       this.dialogEditVisible = true
     },
@@ -494,24 +593,30 @@ export default {
           })
       })
     },
-    handleEdit: function() {
+    handleEdit: function(val) {
       this.$refs.typeForm.validate(async(valid) => {
         if (valid) {
+          this.typeForm.standard_type = '点检'
           if (this.typeForm.id) {
             this.typeForm.ids = [this.typeForm.id]
             this.typeForm.opera_type = (this.isLook ? 2 : 1)
           }
           try {
+            const url = []
+            this.objList.forEach(d => url.push(d.url))
+            this.typeForm.check_image_urls = url.join(',')
             if (this.tableData1.length === 0) {
               throw new Error('点检内容未添加,请选择机台及岗位来获取点检内容')
             }
             if (!this.typeForm.id) {
               this.typeForm.table_details = this.tableData1
             }
-            if (this.typeForm.id) {
-              if (!this.tableData1.some(d => d.check_result === '好' || d.check_result === '坏')) {
-                throw new Error('点检内容中检查结果至少填一个')
+            this.typeForm.finish_flag = 0
+            if (val) {
+              if (!this.tableData1.every(d => d.check_result === '好' || d.check_result === '坏')) {
+                throw new Error('点检内容中检查结果必须全填')
               }
+              this.typeForm.finish_flag = 1
             }
             this.btnLoading = true
             this.typeForm.id ? await checkPointTableExport('post', null, { data: this.typeForm }) : await checkPointTable('post', null, { data: this.typeForm })

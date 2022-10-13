@@ -64,7 +64,7 @@
     >
       <el-table-column
         label="类别"
-        min-width="20"
+        width="70"
       >
         <template>
           {{ search.inventory_type }}
@@ -73,11 +73,11 @@
       <el-table-column
         prop="oven_no"
         label="烘箱编号"
-        min-width="20"
+        width="70"
       />
       <el-table-column
         label="状态"
-        min-width="20"
+        width="90"
         :formatter="(row)=>{
           return row.status
         }"
@@ -106,13 +106,13 @@
         v-if="search.inventory_type==='出烘房'"
         prop="baking_end_time"
         label="出烘房时间"
-        min-width="30"
+        width="90"
       />
       <el-table-column
         v-if="search.inventory_type==='入烘房'"
         prop="baking_start_time"
         label="入烘房时间"
-        min-width="30"
+        width="90"
       />
       <el-table-column
         prop="lot_no"
@@ -132,12 +132,12 @@
       <el-table-column
         prop="weight"
         label="单位重量"
-        min-width="20"
+        width="70"
       />
       <el-table-column
         prop="piece_count"
         label="件数"
-        min-width="20"
+        width="60"
       />
     </el-table>
     <page

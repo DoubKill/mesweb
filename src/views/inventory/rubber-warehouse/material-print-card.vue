@@ -112,13 +112,13 @@
     >
       <el-table-column type="selection" width="30" />
       <el-table-column label="No" type="index" align="center" width="40" />
-      <el-table-column label="类型" align="center" prop="order_type" min-width="20" />
+      <el-table-column label="类型" align="center" prop="order_type" width="60" />
       <el-table-column label="出入库单号" align="center" prop="order_no" min-width="20" />
       <el-table-column label="质检条码" align="center" prop="lot_no" min-width="20" />
       <!-- <el-table-column label="仓库类型" align="center" prop="warehouse_type" /> -->
       <!-- <el-table-column  label="仓库名称" align="center" prop="warehouse_name" /> -->
       <el-table-column label="托盘号" align="center" prop="pallet_no" min-width="20" />
-      <el-table-column label="机台" align="center" min-width="20">
+      <el-table-column label="机台" align="center" width="70">
         <template v-if="row.product_info" slot-scope="{row}" min-width="20">
           {{ row.product_info.equip_no }}
         </template>
@@ -138,8 +138,8 @@
       <el-table-column label="出入库类型" align="center" prop="inout_num_type" min-width="20" />
       <el-table-column label="出入库数" align="center" prop="qty" min-width="20" />
       <el-table-column label="重量" align="center" prop="weight" min-width="20" />
-      <el-table-column label="单位" align="center" prop="unit" min-width="20" />
-      <el-table-column label="库位号" align="center" prop="location" min-width="20" />
+      <el-table-column label="单位" align="center" prop="unit" width="50" />
+      <el-table-column label="库位号" align="center" prop="location" width="70" />
       <el-table-column label="发起人" align="center" prop="initiator" min-width="20" />
       <el-table-column label="发起时间" align="center" prop="start_time" min-width="20" />
       <el-table-column

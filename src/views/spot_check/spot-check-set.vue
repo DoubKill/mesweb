@@ -312,6 +312,7 @@ export default {
       this.$refs.typeForm.validate(async(valid) => {
         if (valid) {
           try {
+            this.typeForm.standard_type = '点检'
             if (this.tableData1.length === 0) {
               throw new Error('点检内容未添加')
             }

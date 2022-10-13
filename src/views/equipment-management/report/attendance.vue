@@ -5,6 +5,7 @@
       <el-form-item label="月份">
         <el-date-picker
           v-model="search.date"
+          style="width:120px"
           type="month"
           :clearable="false"
           format="yyyy-MM"
@@ -13,21 +14,34 @@
           @change="changeList"
         />
       </el-form-item>
+      <el-form-item
+        label="类别"
+      >
+        <el-select v-model="search.clock_type" style="width:120px" placeholder="请选择" @change="getList">
+          <el-option
+            v-for="item in optionsType"
+            :key="item.id"
+            :label="item.global_name"
+            :value="item.global_name"
+          />
+        </el-select>
+      </el-form-item>
       <!-- <el-form-item label="姓名">
         <el-input v-model="search.name" clearable placeholder="请输入" @change="debounceList" />
       </el-form-item> -->
       <el-form-item label="审批人">
-        <el-input v-model="approve_user" disabled />
+        <el-input v-model="approve_user" style="width:140px" disabled />
       </el-form-item>
       <el-form-item label="审核人">
-        <el-input v-model="audit_user" disabled />
+        <el-input v-model="audit_user" style="width:140px" disabled />
       </el-form-item>
       <el-form-item label="状态">
-        <el-input v-model="approveState" disabled />
+        <el-input v-model="approveState" style="width:140px" disabled />
       </el-form-item>
       <el-form-item style="float:right">
         <el-button
           v-permission="['employee_attendance_records','add']"
+          :disabled="approveState==='已审批'||approveState==='已审核'"
           type="primary"
           @click="addStatus('外面')"
         >添加考勤数据</el-button>
@@ -38,7 +52,7 @@
           :loading="isExport"
           @click="exportTable1"
         >导出Excel</el-button>
-        <el-button
+        <!-- <el-button
           v-permission="['employee_attendance_records','export']"
           type="primary"
           :loading="btnExportLoad"
@@ -52,7 +66,7 @@
           :show-file-list="false"
         >
           <el-button v-permission="['employee_attendance_records','import']" :loading="btnExportLoad1" type="primary">导入Excel</el-button>
-        </el-upload>
+        </el-upload> -->
         <el-button
           v-permission="['employee_attendance_records','addall']"
           type="primary"
@@ -74,7 +88,7 @@
     <el-table
       id="out-table"
       v-loading="loading"
-      max-height="600"
+      max-height="670"
       :data="tableData"
       :span-method="objectSpanMethod"
       border
@@ -135,7 +149,7 @@
     </el-table>
     <el-alert
       style="color:black"
-      title="表格字体颜色说明:蓝色:有考勤数据,班长还未确认;绿色:考勤班长已确认;红色:考勤班长已确认,但是被审批驳回;黑色:考勤班长整体提交"
+      title="表格字体颜色说明:蓝色:有考勤数据,班长还未确认;红色:考勤班长已确认,但是被审批驳回;黑色:考勤班长班次提交"
       type="success"
     />
 
@@ -185,6 +199,11 @@
         @current-change="handleSelectionChange"
       >
         <el-table-column
+          type="index"
+          label="序号"
+          width="60"
+        />
+        <el-table-column
           label="日期"
           min-width="20"
         >
@@ -216,30 +235,72 @@
         <el-table-column
           prop="begin_date"
           label="上岗时间"
-          min-width="20"
+          width="150"
         />
         <el-table-column
           prop="end_date"
           label="离岗时间"
-          min-width="20"
+          width="150"
         />
         <el-table-column
-          prop="work_time"
-          label="计算作业时间(小时)"
-          min-width="20"
-        />
-        <el-table-column
-          width="200"
-          prop="actual_time"
-          label="承认作业时间(小时)"
-          min-width="20"
+          prop="is_check"
+          label="适用排班时间"
+          width="120"
         >
           <template
             slot-scope="{row}"
           >
-            <el-input-number v-model="row.actual_time" controls-position="right" :min="0" />
+            <el-checkbox v-model="row.is_check" @change="checkTime(row)" />
           </template>
         </el-table-column>
+        <el-table-column
+          prop="begin_date"
+          label="承认上岗时间"
+          width="230"
+        >
+          <template
+            slot-scope="{row}"
+          >
+            <el-date-picker
+              v-model="row.actual_begin_date"
+              :disabled="isShow||row.is_check"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              style="width:220px"
+              type="datetime"
+              :clearable="false"
+              @blur="changeStartTime(row)"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="end_date"
+          label="承认离岗时间"
+          width="230"
+        >
+          <template
+            slot-scope="{row}"
+          >
+            <el-date-picker
+              v-model="row.actual_end_date"
+              :disabled="isShow||row.is_check"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              style="width:220px"
+              type="datetime"
+              :clearable="false"
+              @blur="changeEndTime(row)"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="work_time"
+          label="计算作业时间(小时)"
+          width="150"
+        />
+        <el-table-column
+          width="150"
+          prop="actual_time"
+          label="承认作业时间(小时)"
+        />
         <el-table-column
           prop="is_use"
           label="状态"
@@ -254,11 +315,11 @@
           v-permission="['employee_attendance_records','reject']"
           :disabled="color==='#DA1F27'||color==='#1010FF'||isShow"
           type="primary"
-          @click="editStatus('审核驳回')"
-        >审核驳回</el-button>
+          @click="editStatus('审批驳回')"
+        >审批驳回</el-button>
         <el-button
           v-permission="['employee_attendance_records','add']"
-          :disabled="color==='#51A651'||color==='#141414'||isShow"
+          :disabled="color==='#51A651'||color==='#141414'||isShow||approveState==='已审批'||approveState==='已审核'"
           type="primary"
           @click="addStatus('里面')"
         >添加</el-button>
@@ -340,7 +401,7 @@
     <el-dialog
       :title="'考勤结果处理 --'+type"
       :visible.sync="dialogVisibleResult"
-      width="30%"
+      width="50%"
     >
       <el-form
         :model="resultForm"
@@ -361,10 +422,45 @@
             placeholder="请输入内容"
           />
         </el-form-item>
+        <el-form-item label="处理履历">
+          <el-table
+            v-loading="loadingApprove"
+            max-height="600px"
+            :data="tableDataApprove"
+            border
+          >
+            <el-table-column
+              prop="date"
+              label="日期"
+              min-width="20"
+            />
+            <el-table-column
+              prop="opera_user"
+              label="操作人"
+              min-width="20"
+            />
+            <el-table-column
+              prop="opera_type"
+              label="处理类别"
+              min-width="20"
+            />
+            <el-table-column
+              prop="opera_result"
+              label="处理结果"
+              min-width="20"
+            />
+            <el-table-column
+              prop="result_desc"
+              label="处理说明"
+              min-width="40"
+            />
+          </el-table>
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisibleResult=false">取 消</el-button>
-        <el-button :loading="submit" type="primary" @click="submitFun">确 定</el-button>
+        <el-button v-if="approveState==='已审核'||(type==='审批'&&approveState==='已审批')" @click="dialogVisibleResult=false">关 闭</el-button>
+        <el-button v-if="approveState==='确认中'||approveState===''||(type==='审核'&&approveState==='已审批')" @click="dialogVisibleResult=false">取 消</el-button>
+        <el-button v-if="approveState==='确认中'||approveState===''||(type==='审核'&&approveState==='已审批')" :loading="submit" type="primary" @click="submitFun">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -375,7 +471,7 @@
     >
       <el-form ref="dialogForm" :rules="rules" label-width="150px" :model="dialogForm">
         <el-form-item label="姓名" prop="username">
-          <el-select v-model="dialogForm.username" :disabled="addType==='里面'?true:false" placeholder="请选择" style="width:200px" @change="changeIdCard">
+          <el-select v-model="dialogForm.username" filterable :disabled="addType==='里面'?true:false" placeholder="请选择" style="width:200px" @change="changeIdCard">
             <el-option
               v-for="item in allList"
               :key="item.id"
@@ -390,6 +486,8 @@
         <el-form-item label="日期" prop="factory_date">
           <el-date-picker
             v-model="dialogForm.factory_date"
+            :clearable="false"
+            :picker-options="pickerOptions"
             :disabled="addType==='里面'?true:false"
             style="width:200px"
             type="date"
@@ -410,10 +508,10 @@
         <el-form-item label="班组" prop="group">
           <el-select v-model="dialogForm.group" :disabled="addType==='里面'?true:false" placeholder="请选择" @change="pickClasses">
             <el-option
-              v-for="item in optionsGroup"
-              :key="item.group__global_name"
-              :label="item.group__global_name"
-              :value="item.group__global_name"
+              v-for="item in groupList"
+              :key="item"
+              :label="item"
+              :value="item"
             />
           </el-select>
         </el-form-item>
@@ -435,8 +533,28 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item label="上岗时间" prop="actual_begin_date">
+          <el-date-picker
+            v-model="dialogForm.actual_begin_date"
+            style="width:200px"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            type="datetime"
+            :clearable="false"
+            @blur="addStartTime"
+          />
+        </el-form-item>
+        <el-form-item label="离岗时间" prop="actual_end_date">
+          <el-date-picker
+            v-model="dialogForm.actual_end_date"
+            style="width:200px"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            type="datetime"
+            :clearable="false"
+            @blur="addEndTime"
+          />
+        </el-form-item>
         <el-form-item label="作业时间(小时)" prop="actual_time">
-          <el-input-number v-model="dialogForm.actual_time" />
+          <el-input-number v-model="dialogForm.actual_time" disabled />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -492,7 +610,7 @@
         <el-form-item label="班组">
           <el-select v-model="searchCheck.group" clearable placeholder="请选择" @change="getCheckList">
             <el-option
-              v-for="item in optionsGroup1"
+              v-for="item in groupList"
               :key="item"
               :label="item"
               :value="item"
@@ -511,31 +629,35 @@
         @selection-change="handleSelectionChangeCheck"
       >
         <el-table-column
+          type="index"
+          label="序号"
+          width="60"
+        />
+        <el-table-column
           type="selection"
           width="40"
           :selectable="select"
           :reserve-selection="true"
         />
-
         <el-table-column
           prop="username"
           label="姓名"
-          min-width="20"
+          width="70"
         />
         <el-table-column
           prop="group"
           label="班组"
-          min-width="20"
+          width="70"
         />
         <el-table-column
           prop="equip"
           label="机台"
-          min-width="20"
+          width="70"
         />
         <el-table-column
           prop="section"
           label="岗位名称"
-          min-width="20"
+          width="80"
         />
         <el-table-column
           prop="begin_date"
@@ -548,22 +670,64 @@
           min-width="20"
         />
         <el-table-column
-          prop="work_time"
-          label="计算作业时间(小时)"
-          min-width="20"
-        />
-        <el-table-column
-          width="200"
-          prop="actual_time"
-          label="承认作业时间(小时)"
-          min-width="20"
+          prop="is_check"
+          label="适用排班时间"
+          width="100"
         >
           <template
             slot-scope="{row}"
           >
-            <el-input-number v-model="row.actual_time" controls-position="right" :min="0" />
+            <el-checkbox v-model="row.is_check" @change="checkTime(row)" />
           </template>
         </el-table-column>
+        <el-table-column
+          prop="begin_date"
+          label="承认上岗时间"
+          width="230"
+        >
+          <template
+            slot-scope="{row}"
+          >
+            <el-date-picker
+              v-model="row.actual_begin_date"
+              :disabled="row.is_check"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              style="width:220px"
+              type="datetime"
+              :clearable="false"
+              @blur="changeStartTime(row)"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="end_date"
+          label="承认离岗时间"
+          width="230"
+        >
+          <template
+            slot-scope="{row}"
+          >
+            <el-date-picker
+              v-model="row.actual_end_date"
+              :disabled="row.is_check"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              style="width:220px"
+              type="datetime"
+              :clearable="false"
+              @blur="changeEndTime(row)"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="work_time"
+          label="计算作业时间(小时)"
+          width="150"
+        />
+        <el-table-column
+          width="150"
+          prop="actual_time"
+          label="承认作业时间(小时)"
+        />
         <el-table-column
           prop="is_use"
           label="状态"
@@ -576,6 +740,7 @@
       >
         <el-button
           v-permission="['employee_attendance_records','add']"
+          :disabled="approveState==='已审批'||approveState==='已审核'"
           type="primary"
           @click="addStatus('外面')"
         >添加</el-button>
@@ -613,6 +778,7 @@ export default {
   data() {
     return {
       search: {
+        clock_type: '密炼',
         date: setDate(null, null, 'month')
       },
       getParams: {
@@ -621,6 +787,7 @@ export default {
       color: '',
       type: '',
       options: [],
+      multipleSelectionCheck: [],
       options1: [],
       options2: [],
       dialogForm: {},
@@ -631,6 +798,9 @@ export default {
       btnLoad: false,
       resultForm: {},
       isShow: false,
+      optionsType: [],
+      loadingApprove: false,
+      tableDataApprove: [],
       tableDataAttendance: [],
       dialogVisibleResult: false,
       tableDataRecord: [],
@@ -642,6 +812,12 @@ export default {
       dialogVisibleRecord: false,
       machineList: [],
       tableHead1: [],
+      pickerOptions: {
+        disabledDate(time) {
+          // 选择今天以及今天之前的日期
+          return time.getTime() > Date.now()
+        }
+      },
       rules: {
         username: [
           { required: true, message: '不能为空', trigger: 'change' }
@@ -661,6 +837,12 @@ export default {
         section: [
           { required: true, message: '不能为空', trigger: 'change' }
         ],
+        actual_begin_date: [
+          { required: true, message: '不能为空', trigger: 'change' }
+        ],
+        actual_end_date: [
+          { required: true, message: '不能为空', trigger: 'change' }
+        ],
         work_time: [
           { required: true, message: '不能为空', trigger: 'change' }
         ]
@@ -669,6 +851,7 @@ export default {
       addType: null,
       submit: false,
       tableTop: [],
+      time_interval: [],
       isDownload: true,
       dialogVisibleCheck: false,
       tableDataCheck: [],
@@ -681,9 +864,10 @@ export default {
       classes: '',
       allList: [],
       isExport: false,
+      groupList: [],
       optionsGroup: [],
-      optionsGroup1: ['A班', 'B班', 'C班'],
-      multipleSelection: [],
+      allowTime: {},
+      multipleSelection: {},
       tableHead: [],
       tableData: [],
       btnExportLoad: false,
@@ -693,13 +877,15 @@ export default {
   },
   created() {
     this.tableHead = getDiffDate(this.search.date + '-01', getCurrentMonthLastDay(setDate()))
+    // this.getClassGroup(true)
     this.getList()
+    this.getTypeList()
     this.getAllList()
   },
   methods: {
     equipChange(val) {
       if (val) {
-        const obj = { all: 1, category_name: '密炼设备' }
+        const obj = { all: 1, equip_no: this.search.clock_type === '密炼' ? 'Z' : this.search.clock_type === '细料称量' ? 'F' : 'S' }
         getEquip(obj).then(response => {
           this.options = response.results
         })
@@ -714,15 +900,23 @@ export default {
       }
     },
     async getGroup(val) {
-      this.dialogForm.classes = null
-      this.dialogForm.group = null
-      const obj = { class_name: '班组', factory_date: val }
-      const data = await classesListUrl('get', null, { params: obj })
-      if (data.results.length > 0) {
-        this.optionsGroup = data.results
+      if (this.dialogForm.username) {
+        this.dialogForm.classes = null
+        this.dialogForm.group = null
+        this.dialogForm.actual_begin_date = null
+        this.dialogForm.actual_end_date = null
+        this.dialogForm.actual_time = null
+        const obj = { class_name: '班组', factory_date: val, clock_type: this.search.clock_type, name: this.dialogForm.username }
+        const data = await classesListUrl('get', null, { params: obj })
+        if (data.results.length > 0) {
+          this.optionsGroup = data.results
+          this.getAllowTime(val, this.dialogForm.username)
+        } else {
+          this.optionsGroup = []
+          this.$message.info('当天没有排班记录')
+        }
       } else {
-        this.optionsGroup = []
-        this.$message.info('当天没有排班记录')
+        this.$message('请先选择姓名')
       }
     },
     async getClasses(val, val1) {
@@ -746,12 +940,60 @@ export default {
       const data = await personnels('get', null, { params: { all: 1, attendance: 1 }})
       this.allList = data.results
     },
+    async getAllowTime(date, name, row, type) {
+      const data = await attendanceTimeStatistics('get', null, { params: { name: name, work_time: date, clock_type: this.search.clock_type }})
+      this.allowTime = data
+      if (type === 1) {
+        this.time_interval = this.allowTime[row.classes]
+        if (Date.parse(new Date(row.actual_begin_date)) > Date.parse(new Date(this.time_interval[1])) ||
+      Date.parse(new Date(row.actual_begin_date)) < Date.parse(new Date(this.time_interval[0]))) {
+          this.$message('承认上岗时间不在可选范围内，可选范围为：' + this.time_interval.join('-'))
+          row.actual_begin_date = null
+          row.actual_time = null
+          return
+        }
+        if (Date.parse(new Date(row.actual_begin_date)) >= Date.parse(new Date(row.actual_end_date))) {
+          this.$message('请选择正确的承认离岗时间,离岗时间不得在上岗时间之前')
+          row.actual_end_date = null
+          row.actual_time = null
+        } else {
+          row.actual_time = getHour(row.actual_begin_date, row.actual_end_date)
+        }
+      } else if (type === 2) {
+        if (!row.actual_begin_date) {
+          this.$message('请先选择承认上岗时间')
+          row.actual_end_date = null
+          row.actual_time = null
+          return
+        }
+        this.time_interval = this.allowTime[row.classes]
+        if (Date.parse(new Date(row.actual_end_date)) > Date.parse(new Date(this.time_interval[1])) ||
+      Date.parse(new Date(row.actual_end_date)) < Date.parse(new Date(this.time_interval[0]))) {
+          this.$message('承认离岗时间不在可选范围内，可选范围为：' + this.time_interval.join('-'))
+          row.actual_end_date = null
+          row.actual_time = null
+          return
+        }
+        if (Date.parse(new Date(row.actual_begin_date)) >= Date.parse(new Date(row.actual_end_date))) {
+          this.$message('请选择正确的承认离岗时间,离岗时间不得在上岗时间之前')
+          row.actual_end_date = null
+          row.actual_time = null
+        } else {
+          row.actual_time = getHour(row.actual_begin_date, row.actual_end_date)
+        }
+      }
+    },
     sectionChange(val) {
       if (val) {
-        performanceJobLadder('get', null, { params: { all: 1 }}).then((response) => {
+        performanceJobLadder('get', null, { params: { all: 1, weight: 1, type: this.search.clock_type }}).then((response) => {
           this.options2 = response.results
         })
       }
+    },
+    async getTypeList() {
+      const obj = { all: 1, class_name: '绩效计算岗位类别' }
+      const data = await classesListUrl('get', null, { params: obj })
+      this.optionsType = data.results
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
@@ -780,6 +1022,9 @@ export default {
           section: this.section,
           classes: this.classes,
           username: this.getParams.name,
+          actual_begin_date: null,
+          actual_end_date: null,
+          actual_time: null,
           is_use: '添加',
           id_card_num: this.currentInfo.id_card_num
         }
@@ -794,13 +1039,23 @@ export default {
           classes: null,
           username: '',
           is_use: '添加',
+          actual_begin_date: null,
+          actual_end_date: null,
+          actual_time: null,
           id_card_num: ''
         }
-        this.getGroup(this.dialogForm.factory_date)
+        // this.getGroup(this.dialogForm.factory_date)
       }
     },
     pickClasses() {
-      this.$set(this.dialogForm, 'classes', this.optionsGroup.find(d => d.group__global_name === this.dialogForm.group).classes__global_name)
+      if (this.optionsGroup.find(d => d.group__global_name === this.dialogForm.group)) {
+        this.$set(this.dialogForm, 'classes', this.optionsGroup.find(d => d.group__global_name === this.dialogForm.group).classes__global_name)
+        this.dialogForm.actual_begin_date = null
+        this.dialogForm.actual_end_date = null
+        this.dialogForm.actual_time = null
+      } else {
+        this.$message('当天排班没有此班组')
+      }
     },
     async getList() {
       try {
@@ -810,8 +1065,9 @@ export default {
         this.tableHead1 = data.group_list || []
         this.approve_user = data.approve_user
         this.audit_user = data.audit_user
-        this.approveState = (this.approve_user !== null ? '已审批' : '未审批')
+        this.approveState = (data.state === 0 ? '' : data.state === 1 ? '确认中' : data.state === 2 ? '已审批' : '已审核')
         this.tableData = data.results || []
+        this.groupList = data.user_groups
         this.spanArr = []
         this.pos = null
         for (var i = 0; i < this.tableData.length; i++) {
@@ -836,6 +1092,108 @@ export default {
         this.loading = false
       }
     },
+    addStartTime() {
+      if (!this.dialogForm.classes) {
+        this.$message('请先选择班组')
+        this.dialogForm.actual_begin_date = null
+        this.dialogForm.actual_time = null
+        return
+      }
+      this.time_interval = this.allowTime[this.dialogForm.classes]
+      if (Date.parse(new Date(this.dialogForm.actual_begin_date)) > Date.parse(new Date(this.time_interval[1])) ||
+      Date.parse(new Date(this.dialogForm.actual_begin_date)) < Date.parse(new Date(this.time_interval[0]))) {
+        this.$message('上岗时间不在可选范围内，可选范围为：' + this.time_interval.join('-'))
+        this.dialogForm.actual_begin_date = null
+        this.dialogForm.actual_time = null
+        return
+      } else {
+        this.dialogForm.begin_date = this.dialogForm.actual_begin_date
+      }
+      if (Date.parse(new Date(this.dialogForm.actual_begin_date)) >= Date.parse(new Date(this.dialogForm.actual_end_date))) {
+        this.$message('请选择正确的离岗时间,离岗时间不得在上岗时间之前')
+        this.dialogForm.actual_end_date = null
+        this.dialogForm.actual_time = null
+      } else {
+        this.dialogForm.end_date = this.dialogForm.actual_end_date
+        this.$set(this.dialogForm, 'actual_time', getHour(this.dialogForm.actual_begin_date, this.dialogForm.actual_end_date))
+        this.dialogForm.work_time = this.dialogForm.actual_time
+      }
+    },
+    addEndTime() {
+      if (!this.dialogForm.actual_begin_date) {
+        this.$message('请先选择上岗时间')
+        this.dialogForm.actual_end_date = null
+        this.dialogForm.actual_time = null
+        return
+      }
+      if (Date.parse(new Date(this.dialogForm.actual_end_date)) > Date.parse(new Date(this.time_interval[1])) ||
+      Date.parse(new Date(this.dialogForm.actual_end_date)) < Date.parse(new Date(this.time_interval[0]))) {
+        this.$message('离岗时间不在可选范围内，可选范围为：' + this.time_interval.join('-'))
+        this.dialogForm.actual_end_date = null
+        this.dialogForm.actual_time = null
+        return
+      }
+      if (Date.parse(new Date(this.dialogForm.actual_begin_date)) >= Date.parse(new Date(this.dialogForm.actual_end_date))) {
+        this.$message('请选择正确的离岗时间,离岗时间不得在上岗时间之前')
+        this.dialogForm.actual_end_date = null
+        this.dialogForm.actual_time = null
+      } else {
+        this.dialogForm.end_date = this.dialogForm.actual_end_date
+        this.$set(this.dialogForm, 'actual_time', getHour(this.dialogForm.actual_begin_date, this.dialogForm.actual_end_date))
+        this.dialogForm.work_time = this.dialogForm.actual_time
+      }
+    },
+    async checkTime(row) {
+      if (row.is_check) {
+        const data = await attendanceTimeStatistics('get', null, { params: { name: row.name, work_time: row.factory_date, clock_type: this.search.clock_type }})
+        this.allowTime = data
+        this.$set(row, 'actual_begin_date', this.allowTime[row.classes][0])
+        this.$set(row, 'actual_end_date', this.allowTime[row.classes][1])
+        this.$set(row, 'actual_time', getHour(row.actual_begin_date, row.actual_end_date))
+      }
+    },
+    changeStartTime(row) {
+      this.getAllowTime(row.factory_date, row.username, row, 1)
+      // this.time_interval = this.allowTime[row.classes]
+      // if (Date.parse(new Date(row.actual_begin_date)) > Date.parse(new Date(this.time_interval[1])) ||
+      // Date.parse(new Date(row.actual_begin_date)) < Date.parse(new Date(this.time_interval[0]))) {
+      //   this.$message('承认上岗时间不在可选范围内，可选范围为：' + this.time_interval.join('-'))
+      //   row.actual_begin_date = null
+      //   row.actual_time = null
+      //   return
+      // }
+      // if (Date.parse(new Date(row.actual_begin_date)) >= Date.parse(new Date(row.actual_end_date))) {
+      //   this.$message('请选择正确的承认离岗时间,离岗时间不得在上岗时间之前')
+      //   row.actual_end_date = null
+      //   row.actual_time = null
+      // } else {
+      //   row.actual_time = getHour(row.actual_begin_date, row.actual_end_date)
+      // }
+    },
+    changeEndTime(row) {
+      this.getAllowTime(row.factory_date, row.username, row, 2)
+      // if (!row.actual_begin_date) {
+      //   this.$message('请先选择承认上岗时间')
+      //   row.actual_end_date = null
+      //   row.actual_time = null
+      //   return
+      // }
+      // this.time_interval = this.allowTime[row.classes]
+      // if (Date.parse(new Date(row.actual_end_date)) > Date.parse(new Date(this.time_interval[1])) ||
+      // Date.parse(new Date(row.actual_end_date)) < Date.parse(new Date(this.time_interval[0]))) {
+      //   this.$message('承认离岗时间不在可选范围内，可选范围为：' + this.time_interval.join('-'))
+      //   row.actual_end_date = null
+      //   row.actual_time = null
+      //   return
+      // }
+      // if (Date.parse(new Date(row.actual_begin_date)) >= Date.parse(new Date(row.actual_end_date))) {
+      //   this.$message('请选择正确的承认离岗时间,离岗时间不得在上岗时间之前')
+      //   row.actual_end_date = null
+      //   row.actual_time = null
+      // } else {
+      //   row.actual_time = getHour(row.actual_begin_date, row.actual_end_date)
+      // }
+    },
     async editStatus(val) {
       if (val === '废弃') {
         if (this.multipleSelection.id) {
@@ -853,12 +1211,16 @@ export default {
       } else if (val === '确认') {
         try {
           var arr = JSON.parse(JSON.stringify(this.tableDataAttendance))
+          if (arr.some(d => !d.actual_begin_date || !d.actual_end_date)) {
+            this.$message('承认上岗时间和承认离岗时间必填')
+            return
+          }
           arr.forEach(d => {
             d.is_use = '确认'
           })
-          await attendanceTimeStatistics('post', null, { data: { confirm_list: arr }})
+          await attendanceTimeStatistics('post', null, { data: { confirm_list: arr, clock_type: this.search.clock_type }})
           this.$message.success('操作成功')
-          this.color = '#51A651'
+          this.color = '#141414'
           this.attendanceList()
           this.getList()
         } catch (e) {
@@ -870,7 +1232,7 @@ export default {
           arr1.forEach(d => {
             d.is_use = '驳回'
           })
-          await attendanceTimeStatistics('post', null, { data: { reject_list: arr1 }})
+          await attendanceTimeStatistics('post', null, { data: { reject_list: arr1, clock_type: this.search.clock_type }})
           this.$message.success('操作成功')
           this.color = '#DA1F27'
           this.attendanceList()
@@ -888,7 +1250,7 @@ export default {
             arr.forEach(d => {
               d.is_use = '废弃'
             })
-            await attendanceTimeStatistics('post', null, { data: { abandon_list: arr }})
+            await attendanceTimeStatistics('post', null, { data: { abandon_list: arr, clock_type: this.search.clock_type }})
             this.$message.success('操作成功')
             this.getCheckList()
             this.getList()
@@ -897,10 +1259,14 @@ export default {
           }
         } else if (val === '确认') {
           try {
+            if (arr.some(d => !d.actual_begin_date || !d.actual_end_date)) {
+              this.$message('承认上岗时间和承认离岗时间必填')
+              return
+            }
             arr.forEach(d => {
               d.is_use = '确认'
             })
-            await attendanceTimeStatistics('post', null, { data: { confirm_list: arr }})
+            await attendanceTimeStatistics('post', null, { data: { confirm_list: arr, clock_type: this.search.clock_type }})
             this.$message.success('操作成功')
             this.getCheckList()
             this.getList()
@@ -912,29 +1278,48 @@ export default {
         this.$message('请选择数据')
       }
     },
-    approve(val) {
-      this.resultForm = { result: true }
-      this.type = val
-      this.dialogVisibleResult = true
+    async approve(val) {
+      try {
+        this.resultForm = { result: true }
+        this.type = val
+        this.dialogVisibleResult = true
+        this.loadingApprove = true
+        const data = await attendanceResultAudit('get', null, { params: { clock_type: this.search.clock_type, date: this.search.date }})
+        this.tableDataApprove = data.results
+        this.loadingApprove = false
+      } catch (e) {
+        this.loadingApprove = false
+      }
     },
     showList() {
       if (this.isShow) {
         this.tableDataAttendance = this.tableTop
       } else {
-        this.tableDataAttendance = this.tableTop.filter(d =>
-          d.factory_date === this.date &&
+        if (this.search.clock_type === '密炼') {
+          this.tableDataAttendance = this.tableTop.filter(d =>
+            d.factory_date === this.date &&
           d.equip === this.equip &&
           d.classes === this.classes &&
           d.group === this.group &&
           d.section === this.section
-        )
+          )
+        } else {
+          this.tableDataAttendance = this.tableTop.filter(d =>
+            d.factory_date === this.date &&
+          d.equip === this.equip &&
+          d.group === this.group &&
+          d.section === this.section
+          )
+        }
       }
     },
     async getCheckList() {
       try {
+        this.searchCheck.clock_type = this.search.clock_type
         this.loadingCheck = true
         const data = await attendanceTimeStatistics('get', null, { params: this.searchCheck })
         this.tableDataCheck = data.results
+        this.getAllowTime(this.searchCheck.date)
         this.$refs.multipleTable.clearSelection()
         this.loadingCheck = false
       } catch (e) {
@@ -960,6 +1345,7 @@ export default {
         delete this.resultForm.approve
       }
       try {
+        this.resultForm.clock_type = this.search.clock_type
         this.resultForm.date = this.search.date
         this.submit = true
         await attendanceResultAudit('post', null, { data: this.resultForm })
@@ -972,6 +1358,11 @@ export default {
       }
     },
     async generateFun() {
+      this.dialogForm.clock_type = this.search.clock_type
+      this.dialogForm.standard_begin_date = this.time_interval[0]
+      this.dialogForm.standard_end_date = this.time_interval[1]
+      this.dialogForm.calculate_begin_date = this.dialogForm.actual_begin_date
+      this.dialogForm.calculate_end_date = this.dialogForm.actual_end_date
       this.$refs.dialogForm.validate(async(valid) => {
         if (valid) {
           try {
@@ -996,6 +1387,7 @@ export default {
       })
     },
     changeIdCard() {
+      this.getGroup(this.dialogForm.factory_date)
       if (this.allList.find(d => this.dialogForm.username === d.username)) {
         this.dialogForm.id_card_num = this.allList.find(d => this.dialogForm.username === d.username).id_card_num
       } else {
@@ -1010,11 +1402,13 @@ export default {
         this.group = group
         this.date = this.search.date + '-' + day
         this.equip = row.equip
+        this.getAllowTime(this.date, val.split('(')[0])
         const data = await currentFactoryDate('get', null, { params: { select_date: this.date, group: this.group }})
         this.classes = data.classes
         this.$set(this.dialogForm, 'classes', data.classes)
         this.getParams.date = this.search.date
         this.getParams.name = val.split('(')[0]
+        this.getParams.clock_type = this.search.clock_type
         this.currentInfo.station = '生产部'
         this.dialogVisibleList = true
       }
@@ -1158,12 +1552,22 @@ function getCurrentMonthLastDay(d) {
   }
   return date.getFullYear() + '-' + month + '-' + day
 }
+function getHour(s1, s2) {
+  s1 = new Date(s1.replace(/-/g, '/'))
+  s2 = new Date(s2.replace(/-/g, '/'))
+  var ms = Math.abs(s1.getTime() - s2.getTime())
+  var hour = Number((ms / 1000 / 60 / 60).toFixed(2))
+  return hour
+}
 </script>
 
 <style lang="scss">
 .statisticalReportAttendance{
     .el-table th{
         padding:0;
+    }
+    .el-table .cell{
+    text-overflow:clip;
     }
     .header-style{
         position: relative;

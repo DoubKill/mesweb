@@ -72,22 +72,22 @@
       <el-table-column
         prop="equip_warehouse_area__area_name"
         label="库区"
-        min-width="20"
+        width="80"
       />
       <el-table-column
         prop="equip_warehouse_location__location_name"
         label="库位"
-        min-width="20"
+        width="80"
       />
       <el-table-column
         prop="component_type_name"
         label="备件分类"
-        min-width="20"
+        width="90"
       />
       <el-table-column
         prop="spare__code"
         label="备件代码"
-        min-width="20"
+        min-width="60"
       >
         <template slot-scope="scope">
           <el-link
@@ -99,27 +99,27 @@
       <el-table-column
         prop="spare_name"
         label="备件名称"
-        min-width="20"
+        min-width="120"
       />
       <el-table-column
         prop="specification"
         label="规格型号"
-        min-width="20"
+        width="90"
       />
       <el-table-column
         prop="technical_params"
         label="用途"
-        min-width="20"
+        width="90"
       />
       <el-table-column
         prop="single_price"
         label="单价"
-        min-width="20"
+        width="70"
       />
       <el-table-column
         prop="quantity"
         label="在库数量"
-        min-width="20"
+        width="70"
       >
         <template slot-scope="scope">
           <el-link
@@ -131,22 +131,32 @@
       <el-table-column
         prop="total_price"
         label="总金额"
-        min-width="20"
+        width="80"
       />
       <el-table-column
         prop="unit"
         label="标准单位"
-        min-width="20"
+        width="80"
       />
       <el-table-column
         prop="lower_stock"
         label="库存下限"
-        min-width="20"
+        width="70"
       />
       <el-table-column
         prop="upper_stock"
         label="库存上限"
-        min-width="20"
+        width="70"
+      />
+      <el-table-column
+        prop="check_desc"
+        label="盘库备注"
+        width="90"
+      />
+      <el-table-column
+        prop="move_desc"
+        label="移库备注"
+        width="90"
       />
       <el-table-column
         label="操作"
@@ -176,7 +186,7 @@
       :current-page="search.page"
       @currentChange="currentChange"
     />
-    <el-alert style="color:black" title="表格背景色说明：表示超过了设定的库存下限和库存上限" type="success" />
+    <el-alert style="color:black" title="表格背景色说明：正常库存白色，低于库存下限橙色，高于库存上限黄色。" type="success" />
     <el-dialog
       title="库存变更 详细履历"
       :visible.sync="dialogVisible"
@@ -547,8 +557,8 @@ export default {
       checkList: [],
       warehouseAreaList: [],
       warehouseLocationList: [],
-      EditForm: {},
-      MoveForm: {},
+      EditForm: { desc: '' },
+      MoveForm: { desc: '' },
       dialogEdit: false,
       dialogMove: false,
       loadingView: false,
@@ -607,8 +617,11 @@ export default {
       }
     },
     tableRowClassName({ row, rowIndex }) {
-      if (row.quantity < row.lower_stock || row.quantity > row.upper_stock) {
+      if (row.quantity < row.lower_stock) {
         return 'warning-row'
+      }
+      if (row.quantity > row.upper_stock) {
+        return 'max-warning-row'
       }
       return ''
     },
@@ -698,11 +711,13 @@ export default {
     },
     async generateFunEdit(row) {
       this.EditForm = JSON.parse(JSON.stringify(row))
+      this.EditForm.desc = row.check_desc
       this.dialogEdit = true
     },
     async generateFunMove(row) {
       this.MoveForm = JSON.parse(JSON.stringify(row))
       this.quantity = this.MoveForm.quantity
+      this.MoveForm.desc = row.move_desc
       this.dialogMove = true
     },
     async MoveOne() {
@@ -792,7 +807,10 @@ export default {
 <style lang="scss">
 .inventory-query{
   .el-table .warning-row {
-    background: oldlace;
+    background: orange;
+  }
+  .el-table .max-warning-row {
+    background: yellow;
   }
 }
 

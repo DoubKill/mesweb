@@ -28,14 +28,19 @@
         min-width="20"
       />
       <el-table-column
+        prop="group"
+        label="关联班组"
+        width="80"
+      />
+      <el-table-column
         prop="work_schedule_name"
         label="倒班名称"
-        min-width="20"
+        width="100"
       />
       <el-table-column
         prop="type"
         label="类别"
-        min-width="20"
+        width="60"
       />
       <el-table-column
         prop="attendance_users"
@@ -74,7 +79,12 @@
         label="提前多久可打上班卡(分钟)"
         min-width="20"
       />
-      <el-table-column label="操作" width="200px">
+      <el-table-column
+        prop="leave_time"
+        label="下班多久后不能打下班卡(分钟)"
+        min-width="20"
+      />
+      <el-table-column label="操作" width="160">
         <template slot-scope="scope">
           <el-button-group>
             <el-button
@@ -114,6 +124,22 @@
       >
         <el-form-item label="考勤组名称" prop="attendance_group">
           <el-input v-model="dialogForm.attendance_group" style="width:250px" :disabled="dialogForm.id?true:false" />
+        </el-form-item>
+        <el-form-item label="班组" prop="group">
+          <el-select
+            v-model="dialogForm.group"
+            style="width:250px"
+            clearable
+            placeholder="请选择"
+            @visible-change="getClassGroup"
+          >
+            <el-option
+              v-for="group in groups"
+              :key="group.id"
+              :label="group.global_name"
+              :value="group.global_name"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="倒班规则" prop="work_schedule">
           <el-select v-model="dialogForm.work_schedule" placeholder="请选择" style="width:250px">
@@ -199,6 +225,9 @@
         <el-form-item label="提前多久可打上班卡(分钟)" prop="lead_time">
           <el-input-number v-model="dialogForm.lead_time" :min="0" style="width:250px" />
         </el-form-item>
+        <el-form-item label="下班多久后不能打下班卡(分钟)" prop="lead_time">
+          <el-input-number v-model="dialogForm.leave_time" :min="0" style="width:250px" />
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose(false)">取 消</el-button>
@@ -265,7 +294,7 @@
 
 <script>
 import page from '@/components/page'
-import { classesListUrl, workSchedulesUrl } from '@/api/base_w'
+import { classesListUrl, workSchedulesUrl, globalCodesUrl } from '@/api/base_w'
 import { sectionTree } from '@/api/base_w_four'
 import { attendanceGroupSetup, personnels } from '@/api/jqy'
 export default {
@@ -293,6 +322,7 @@ export default {
       loadPerson: false,
       department: '',
       pickType: '',
+      groups: [],
       sectionList: [],
       optionsType: [],
       options: [{ id: 1, label: '不固定时间上下班' }, { id: 2, label: '按排班时间上下班' }, { id: 3, label: '固定时间上下班' }],
@@ -301,6 +331,8 @@ export default {
       dialogVisiblePerson: false,
       rules: {
         attendance_group: [{ required: true, message: '不能为空', trigger: 'blur' }],
+        type: [{ required: true, message: '不能为空', trigger: 'change' }],
+        group: [{ required: true, message: '不能为空', trigger: 'change' }],
         attendance_users: [{ required: true, message: '不能为空', trigger: 'blur' }],
         work_schedule: [{ required: true, message: '不能为空', trigger: 'change' }],
         // time: [{ required: true, validator: validatePass, trigger: 'change' }],
@@ -417,6 +449,18 @@ export default {
       }
       )
     },
+    getClassGroup(val) {
+      if (val) {
+        globalCodesUrl('get', {
+          params: {
+            class_name: '班组'
+          }
+        }).then((response) => {
+          this.groups = response.results
+        }).catch(function() {
+        })
+      }
+    },
     async getList() {
       try {
         this.loading = true
@@ -442,7 +486,7 @@ export default {
       this.getList()
     },
     async onSubmit() {
-      this.dialogForm = { range_time: 60, lead_time: 60, users: [] }
+      this.dialogForm = { range_time: 60, lead_time: 60, leave_time: 30, users: [] }
       this.dialogVisible = true
     },
     showEditDialog(row) {

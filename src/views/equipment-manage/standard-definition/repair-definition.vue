@@ -74,6 +74,7 @@
       <el-table-column
         prop="standard_code"
         label="标准编号"
+        width="90"
       />
       <el-table-column
         prop="standard_name"
@@ -86,26 +87,32 @@
       <el-table-column
         prop="equip_part_name"
         label="部位名称"
+        width="90"
       />
       <el-table-column
         prop="equip_component_name"
         label="部件名称"
+        width="90"
       />
       <el-table-column
         prop="equip_condition"
         label="设备条件"
+        width="70"
       />
       <el-table-column
         prop="important_level"
         label="重要程度"
+        width="70"
       />
       <el-table-column
         prop="equip_fault_name"
         label="故障分类"
+        width="140"
       />
       <el-table-column
         prop="equip_job_item_standard_name"
         label="作业项目"
+        width="140"
       >
         <template slot-scope="scope">
           <el-link
@@ -117,14 +124,17 @@
       <el-table-column
         prop="cycle_person_num"
         label="所需人数"
+        width="70"
       />
       <el-table-column
         prop="operation_time"
         label="作业时间"
+        width="70"
       />
       <el-table-column
         prop="operation_time_unit"
         label="作业时间单位"
+        width="100"
       />
       <!-- <el-table-column
         prop="spare_list_str"
@@ -139,10 +149,12 @@
       <el-table-column
         prop="created_username"
         label="录入人"
+        width="60"
       />
       <el-table-column
         prop="created_date"
         label="录入时间"
+        width="90"
       />
       <el-table-column v-if="!isDialog" label="操作" width="130px">
         <template slot-scope="scope">

@@ -29,7 +29,7 @@
           clearable
         />
       </el-form-item>
-      <el-form-item label="配方类别">
+      <el-form-item label="胶料类别">
         <el-select
           v-model="search.recipe_type"
           clearable
@@ -49,6 +49,7 @@
           v-model="materialType"
           multiple
           clearable
+          filterable
           placeholder="请选择"
           style="width:300px"
           @change="changeMaterialType"
@@ -93,6 +94,10 @@
           type="index"
           width="50"
           label="No"
+        />
+        <el-table-column
+          prop="recipe_type"
+          label="胶料类别"
         />
         <el-table-column
           prop="stage_product_batch_no"
@@ -215,7 +220,21 @@ export default {
         this.tableData = data.results || []
         this.total = data.count
         this.loading = false
-        this.headList = this.search.material_names
+        const arr = []
+        this.search.material_names.forEach(d => {
+          let bool = true
+          for (let index = 0; index < this.tableData.length; index++) {
+            const element = this.tableData[index]
+            bool = element.detail.every(dd => dd.material_name !== d) // 都没有为true
+            if (!bool) {
+              break
+            }
+          }
+          if (!bool) {
+            arr.push(d)
+          }
+        })
+        this.headList = arr
 
         if (this.btnExportLoad) {
           this.tableData1 = data.results
@@ -279,7 +298,7 @@ export default {
       }
     },
     async changeMaterialType(arr) {
-      this.search.material_ids = []
+      this.search.material_names = []
       this.getRawMaterial(arr)
     },
     currentChange(page, page_size) {

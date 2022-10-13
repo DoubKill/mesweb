@@ -43,10 +43,21 @@
       :data="tableData"
       border
       style="width:60%"
+      :span-method="arraySpanMethod"
     >
       <el-table-column
         prop="s_equip_no"
         label="机台"
+        min-width="10"
+      />
+      <el-table-column
+        prop="material"
+        label="物料名称"
+        min-width="30"
+      />
+      <el-table-column
+        prop="material_total_weight"
+        label="合计"
         min-width="20"
       />
       <el-table-column
@@ -55,12 +66,7 @@
         min-width="40"
       />
       <el-table-column
-        prop="material"
-        label="物料名称"
-        min-width="40"
-      />
-      <el-table-column
-        prop="material_total_weight"
+        prop="recipe_weight"
         label="实际重量（kg）"
         min-width="20"
       />
@@ -92,8 +98,11 @@ export default {
       tableData: [],
       loading: false,
       searchDate: [getDay(-1) + ' ' + '08:00:00', getDay(0) + ' ' + '08:00:00'],
+      // searchDate: ['2022-03-01' + ' ' + '08:00:00', '2022-03-10' + ' ' + '08:00:00'],
       total: 0,
-      btnExportLoad: false
+      btnExportLoad: false,
+      spanArr: [],
+      pos: null
     }
   },
   created() {
@@ -114,6 +123,22 @@ export default {
         this.tableData = []
         const data = await xlReportWeightStatics('get', null, { params: this.search })
         this.tableData = data.page_result
+        this.spanArr = []
+        this.pos = null
+        for (let index = 0; index < this.tableData.length; index++) {
+          if (index === 0) {
+            this.spanArr.push(1)
+            this.pos = 0
+          } else {
+            if (this.tableData[index].material === this.tableData[index - 1].material) {
+              this.spanArr[this.pos] += 1
+              this.spanArr.push(0)
+            } else {
+              this.spanArr.push(1)
+              this.pos = index
+            }
+          }
+        }
         this.total = data.total_data
       } catch (e) {
         //
@@ -137,6 +162,16 @@ export default {
       this.search.page = page
       this.search.page_size = page_size
       this.getList()
+    },
+    arraySpanMethod({ row, column, rowIndex, columnIndex }) {
+      if ([0, 1, 2].includes(columnIndex) && this.spanArr) {
+        const _row = this.spanArr[rowIndex]
+        const _col = _row > 0 ? 1 : 0
+        return {
+          rowspan: _row,
+          colspan: _col
+        }
+      }
     },
     exportTable() {
       this.btnExportLoad = true

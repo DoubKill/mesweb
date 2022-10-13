@@ -15,7 +15,7 @@
         />
       </el-form-item>
       <el-form-item label="原材料类别">
-        <el-select v-model="search.material_type" clearable allow-create filterable @change="getList()">
+        <el-select v-model="search.material_type" clearable filterable @change="getList()">
           <el-option
             v-for="item in optionsProduct"
             :key="item.id"
@@ -25,7 +25,14 @@
         </el-select>
       </el-form-item>
       <el-form-item label="原材料名称">
-        <el-input v-model="search.material_name" clearable @input="changeList" />
+        <el-select v-model="search.material_name" clearable filterable @change="getList()">
+          <el-option
+            v-for="item in MaterialOptions"
+            :key="item.id"
+            :label="item.material_name"
+            :value="item.material_name"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="机台">
         <equip-select
@@ -35,12 +42,14 @@
         />
       </el-form-item>
       <el-form-item label="配方号">
-        <el-input
-          v-model="search.product_no"
-          clearable
-          placeholder="配方号"
-          @input="changeList"
-        />
+        <el-select v-model="search.product_no" filterable placeholder="请选择" clearable @change="getList()">
+          <el-option
+            v-for="item in options"
+            :key="item.material_no"
+            :label="item.material_no"
+            :value="item.material_no"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="getList()">刷新</el-button>
@@ -66,6 +75,19 @@
         align="center"
         prop="material_name"
         label="原材料名称"
+        width="140"
+        fixed
+      >
+        <template slot-scope="scope">
+          <i v-if="scope.row.material_name!=='合计'&&scope.row.material_name!=='小计'&&(type===2||scope.row.material_name!==material_name)" class="el-icon-arrow-right" style="vertical-align: middle" @click="clear(scope, 1)" />
+          <i v-if="scope.row.material_name!=='合计'&&scope.row.material_name!=='小计'&&type===1&&scope.row.material_name===material_name" class="el-icon-arrow-down" style="vertical-align: middle" @click="clear(scope, 2)" />
+          <span> {{ scope.row.material_name }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        align="center"
+        prop="total"
+        label="合计"
         width="120"
         fixed
       />
@@ -80,7 +102,7 @@
         align="center"
         prop="product_no"
         label="配方号"
-        width="120"
+        width="140"
         fixed
       />
       <el-table-column
@@ -91,7 +113,7 @@
         fixed
       >
         <template slot-scope="{row}">
-          <span v-if="row.material_name==='小计'||row.material_name==='合计'"> {{ row.total_weight?row.total_weight.toFixed(2):row.total_weight }}</span>
+          <span v-if="row.material_name==='小计'||row.material_name==='合计'"> {{ null }}</span>
           <span v-else> {{ row.total_weight }}</span>
         </template>
       </el-table-column>
@@ -102,7 +124,12 @@
         align="center"
         :label="item"
         min-width="100"
-      />
+      >
+        <template slot-scope="{row}">
+          <span v-if="row.material_name==='小计'||row.material_name==='合计'"> {{ null }}</span>
+          <span v-else> {{ row[item] }}</span>
+        </template>
+      </el-table-column>
     </el-table>
 
   </div>
@@ -110,7 +137,7 @@
 
 <script>
 import EquipSelect from '@/components/EquipSelect'
-import { classesListUrl } from '@/api/base_w'
+import { classesListUrl, materialsUrl, batchingMaterials } from '@/api/base_w'
 import { materialExpendSummary } from '@/api/jqy'
 import { exportExcel, setDate } from '@/utils'
 export default {
@@ -120,7 +147,12 @@ export default {
     return {
       loadingView: false,
       loading: false,
+      type: 2,
       days: [],
+      MaterialOptions: [],
+      options: [],
+      index: null,
+      material_name: null,
       btnLoading: false,
       tableData: [],
       optionsProduct: [],
@@ -133,6 +165,8 @@ export default {
     this.search.e_time = this.dateValue[1]
     this.getList()
     this.getProduct()
+    this.getMaterial()
+    this.getProductList()
   },
   methods: {
     changeDate(arr) {
@@ -152,18 +186,43 @@ export default {
         //
       }
     },
+    async getProductList() {
+      try {
+        const data = await batchingMaterials('get', null, { params: { all: 1 }})
+        this.options = data || []
+      } catch (e) {
+        //
+      }
+    },
+    async getMaterial() {
+      try {
+        const data = await materialsUrl('get', null, { params: { all: 1 }})
+        this.MaterialOptions = data.results
+      } catch (e) {
+        //
+      }
+    },
     async getList() {
       try {
+        this.type = 2
         this.loading = true
         const data = await materialExpendSummary('get', null, { params: this.search })
         this.tableData = data.data || []
         this.days = data.days || []
         this.tableData = this.tableData.concat(getNewGoodsList(this.tableData, this.days))
+        this.tableData.forEach(d => {
+          if (d.material_name !== '小计') {
+            d.total = data.material_weight_dict[d.material_name]
+          } else {
+            d.total = d.total_weight.toFixed(2)
+          }
+        })
         this.tableData.sort(compare('material_type'))
         if (this.tableData.length > 0) {
           this.tableData.push({
             material_name: '合计',
-            total_weight: sum(this.tableData, 'total_weight')
+            total: sum(this.tableData, 'total_weight').toFixed(2),
+            total_weight: sum(this.tableData, 'total_weight').toFixed(2)
           })
           this.arr = []
           this.days.forEach(d => {
@@ -251,17 +310,40 @@ export default {
           colspan: _col
         }
       }
-      if ([2].includes(columnIndex) && this.spanArr2) {
-        const _row = this.spanArr2[rowIndex]
+      if ([2].includes(columnIndex) && this.spanArr1) {
+        const _row = this.spanArr1[rowIndex]
         const _col = _row > 0 ? 1 : 0
         return {
           rowspan: _row,
           colspan: _col
         }
       }
+      if (((this.type === 2) ||
+      (this.type === 1 && rowIndex !== this.index && row.material_name !== this.material_name))) {
+        const _row = this.spanArr1[rowIndex]
+        const _col = _row > 0 ? 1 : 0
+        return {
+          rowspan: _row,
+          colspan: _col
+        }
+      }
+      if (this.type === 1 && rowIndex === this.index && row.material_name === this.material_name) {
+        return {
+          rowspan: 1,
+          colspan: 1
+        }
+      }
+      if (this.type === 3) {
+        return {
+          rowspan: 1,
+          colspan: 1
+        }
+      }
     },
-    changeList() {
-      this.$debounce(this, 'getList')
+    clear(scope, val) {
+      this.$set(this, 'index', scope.$index)
+      this.$set(this, 'type', val)
+      this.$set(this, 'material_name', scope.row.material_name)
     },
     equipSelected(obj) {
       this.$set(this.search, 'equip_no', obj ? obj.equip_no : '')
@@ -269,9 +351,11 @@ export default {
     },
     async exportTable() {
       await this.$set(this, 'loading', true)
+      await this.$set(this, 'type', 3)
       await exportExcel('原材料消耗量 汇总表')
       setTimeout(() => {
         this.loading = false
+        this.type = 2
       }, 1000)
     }
   }
@@ -337,14 +421,6 @@ function sum(arr, params) {
   s = Math.round(s * 1000) / 1000
   return s
 }
-// function getNextDate(date, day) {
-//   var dd = new Date(date)
-//   dd.setDate(dd.getDate() + day)
-//   var y = dd.getFullYear()
-//   var m = dd.getMonth() + 1 < 10 ? '0' + (dd.getMonth() + 1) : dd.getMonth() + 1
-//   var d = dd.getDate() < 10 ? '0' + dd.getDate() : dd.getDate()
-//   return y + '-' + m + '-' + d
-// }
 function getDaysBetween(dateString1, dateString2) {
   var startDate = Date.parse(dateString1)
   var endDate = Date.parse(dateString2)

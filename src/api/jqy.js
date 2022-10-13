@@ -1515,6 +1515,51 @@ export function checkTemperatureStandard(method, id, data = {}) {
   return request(obj)
 }
 
+export function dailyCleanTable(method, id, data = {}) {
+  const obj = {
+    url: id ? API.DailyCleanTable + id + '/' : API.DailyCleanTable,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function dailyCleanTableExport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.DailyCleanTableExport + id + '/' : API.DailyCleanTableExport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function dailyCleanStandard(method, id, data = {}) {
+  const obj = {
+    url: id ? API.DailyCleanStandard + id + '/' : API.DailyCleanStandard,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function dailyCleanStandardExport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.DailyCleanStandardExport + id + '/' : API.DailyCleanStandardExport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function productInventoryLock(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ProductInventoryLock + id + '/' : API.ProductInventoryLock,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function checkTemperatureStandardExport(method, id, data = {}) {
   const obj = {
     url: id ? API.CheckTemperatureStandardExport + id + '/' : API.CheckTemperatureStandardExport,
@@ -1545,6 +1590,60 @@ export function checkTemperatureTableExport(method, id, data = {}) {
 export function rubberFrameRepairSummary(method, id, data = {}) {
   const obj = {
     url: id ? API.RubberFrameRepairSummary + id + '/' : API.RubberFrameRepairSummary,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipAutoPlan(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipAutoPlan + id + '/' : API.EquipAutoPlan,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function scorchTime(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ScorchTime + id + '/' : API.ScorchTime,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function weightClassPlan(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WeightClassPlan + id + '/' : API.WeightClassPlan,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function weightClassPlanImport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WeightClassPlanImport + id + '/' : API.WeightClassPlanImport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function inventoryAlarm(method, id, data = {}) {
+  const obj = {
+    url: id ? API.InventoryAlarm + id + '/' : API.InventoryAlarm,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function xlPlanConsume(method, id, data = {}) {
+  const obj = {
+    url: id ? API.XlPlanConsume + id + '/' : API.XlPlanConsume,
     method: method
   }
   Object.assign(obj, data)

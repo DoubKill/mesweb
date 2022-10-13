@@ -60,6 +60,7 @@
       border
     >
       <el-table-column
+        :fixed="!isExport"
         prop="equip_no"
         align="center"
         label="机台"
@@ -76,6 +77,12 @@
           :prop="d.prop+'早班'"
           align="center"
           label="早班"
+          width="60"
+        />
+        <el-table-column
+          :prop="d.prop+'中班'"
+          align="center"
+          label="中班"
           width="60"
         />
         <el-table-column
@@ -111,6 +118,7 @@
       border
     >
       <el-table-column
+        :fixed="!isExport"
         prop="name"
         align="center"
         label="姓名"
@@ -127,6 +135,12 @@
           :prop="d.prop+'早班'"
           align="center"
           label="早班"
+          width="60"
+        />
+        <el-table-column
+          :prop="d.prop+'中班'"
+          align="center"
+          label="中班"
           width="60"
         />
         <el-table-column
@@ -163,6 +177,7 @@ export default {
       search: {
         factory_date: setDate(null, null, 'month')
       },
+      isExport: false,
       machineList: [],
       loading: false,
       tableHead: [],
@@ -218,13 +233,25 @@ export default {
     debounceList() {
       this.$debounce(this, 'getList')
     },
-    async exportTable(val) {
+    exportTable(val) {
       if (val === '产量') {
-        await this.$set(this, 'exportTableShow', true)
-        exportExcel('称量机台产量汇总表(包数)')
+        setTimeout(d => {
+          this.isExport = true
+          this.$set(this, 'exportTableShow', true)
+          setTimeout(d => {
+            exportExcel('称量机台产量汇总表(包数)')
+            this.isExport = false
+          }, 1000)
+        }, 100)
       } else {
-        await this.$set(this, 'exportTableShow', false)
-        exportExcel('称量机台员工绩效计算')
+        setTimeout(d => {
+          this.isExport = true
+          this.$set(this, 'exportTableShow', false)
+          setTimeout(d => {
+            exportExcel('称量机台员工绩效计算')
+            this.isExport = false
+          }, 1000)
+        }, 100)
       }
     //   this.btnExportLoad = true
     //   const obj = {

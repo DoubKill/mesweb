@@ -27,6 +27,10 @@ export default {
       type: Boolean,
       default: false
     },
+    valFirst: {
+      type: Boolean,
+      default: false
+    },
     defaultVal: {
       type: Number,
       default: null
@@ -48,6 +52,9 @@ export default {
     },
     defaultVal(val) {
       this.value = val
+      if (this.valFirst) {
+        this.getList()
+      }
     }
   },
   created() {
@@ -63,6 +70,10 @@ export default {
         const data = await levelResult('get', null, { params: { all: 1 }})
         this.options = data.results || []
         this.loading = false
+        if (this.valFirst && this.options.length) {
+          this.value = this.options[0].id
+          this.changSelect(this.value)
+        }
       } catch (e) {
         this.loading = false
       }

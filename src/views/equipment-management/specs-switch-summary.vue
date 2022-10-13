@@ -128,18 +128,22 @@
         <el-table-column
           prop="time"
           label="时间"
+          width="100"
         />
         <el-table-column
           prop="equip_no"
           label="设备编码"
+          width="80"
         />
         <el-table-column
           prop="plan_classes_uid_age"
           label="切换前计划号"
+          width="260"
         />
         <el-table-column
           prop="plan_classes_uid_later"
           label="切换后计划号"
+          width="260"
         />
         <el-table-column
           prop="cut_ago_product_no"
@@ -148,6 +152,10 @@
         <el-table-column
           prop="cut_later_product_no"
           label="切换后胶料编码"
+        />
+        <el-table-column
+          prop="standard_time"
+          label="切换时间规格标准"
         />
         <el-table-column
           sortable
@@ -166,6 +174,13 @@
           sortable
           prop="err_cut_time_consumer"
           label="异常时间(秒)"
+          width="120"
+        />
+        <el-table-column
+          sortable
+          prop="rate"
+          label="切换时间规格完成率"
+          width="180"
         />
       </el-table>
       <page
@@ -365,6 +380,13 @@ export default {
         this.total = data.count
         // this.allData = data.results.pop() || {}
         this.tableData = data.results || []
+        if (this.tableData.length > 0) {
+          this.tableData.push({
+            time: '平均',
+            err_cut_time_consumer: data.avg_error,
+            normal_cut_time_consumer: data.avg_normal,
+            rate: data.avg_rate + '%' })
+        }
         this.loading = false
       } catch (error) {
         this.loading = false

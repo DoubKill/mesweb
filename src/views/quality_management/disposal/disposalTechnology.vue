@@ -233,7 +233,7 @@
         v-permission="['tech_unqualified_order','add']"
         size="mini"
         type="primary"
-        @click="unqualifiedFun"
+        @click="unqualifiedFun1"
       >不合格处理
       </el-button>
     </div>
@@ -299,20 +299,88 @@
 
     <el-dialog
       :visible.sync="handleCardDialogVisible"
-      width="800px"
       :fullscreen="false"
     >
       <excel
         ref="handleCard"
         :order-row="currentRow"
         :form-head-data="formHeadData"
-        :list-data-props="currentRow.deal_details"
+        :list-data-props="isChecked"
         :edit-type="2"
+        :untreated="untreated"
         :is-edit="isEdit"
         :show="handleCardDialogVisible"
         @preserveFun="preserveFun"
         @cancelFun="cancelFun"
       />
+    </el-dialog>
+
+    <el-dialog
+      :visible.sync="untreatedDialogVisible"
+      width="80%"
+    >
+      <h3>未处理车次列表</h3>
+      <el-table
+        :data="noChecked"
+        style="width: 100%;margin-bottom: 10px;"
+        row-key="id"
+        max-height="500px"
+        border
+        :default-expand-all="false"
+        :tree-props="{children: 'trains', hasChildren: 'hasChildren'}"
+      >
+        <el-table-column
+          prop="ordering"
+          label="序号"
+          min-width="8"
+          align="right"
+          header-align="left"
+        />
+        <el-table-column
+          label="日期/班次"
+          min-width="10"
+          :formatter="(row)=>{
+            if(row.factory_date){
+              let a = row.factory_date.split('-')[1]
+              let b = row.factory_date.split('-')[2]
+              return (a+'/'+b) +' - '+(row.classes||'')
+            }
+          }"
+        />
+        <el-table-column
+          prop="equip_no"
+          label="生产机台"
+          min-width="8"
+        />
+        <el-table-column
+          prop="product_no"
+          label="胶料规格"
+          min-width="16"
+        />
+        <el-table-column
+          prop="train"
+          label="车次"
+          min-width="20"
+        />
+        <el-table-column
+          prop="reason"
+          label="生产过程-原因及程度"
+          min-width="30"
+        />
+        <el-table-column
+          prop=""
+          label="不合格描述"
+          min-width="40"
+        >
+          <template slot-scope="{row}">
+            {{ row.unqualifiedDescribe }}
+          </template>
+        </el-table-column>
+      </el-table>
+      <div style="text-align:right;margin-top:10px;">
+        <el-button type="primary" @click="unqualifiedFun">确定</el-button>
+        <el-button type="primary" @click="cancelFun1">返回</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -357,7 +425,11 @@ export default {
       ],
       tableData2: [],
       restaurants: [],
-      currentRow: {}
+      currentRow: {},
+      isChecked: [],
+      noChecked: [],
+      untreatedDialogVisible: false,
+      untreated: false
     }
   },
   created() {
@@ -396,12 +468,21 @@ export default {
     },
     async preserveFun(obj) {
       try {
+        let arr = []
+        if (this.noChecked.length) {
+          this.noChecked.forEach(d => {
+            d.trains.forEach(D => {
+              arr.push({ id: D.id, rehandle: true })
+            })
+          })
+        }
+        arr = arr.concat(this.tech_deal_result)
         const paramsData = {
           status: obj.status,
           t_deal_suggestion: obj.t_deal_suggestion,
           t_deal_date: obj.t_deal_date,
           t_deal_user: obj.t_deal_user,
-          tech_deal_result: this.tech_deal_result
+          tech_deal_result: arr
         }
         if (this.$refs.handleCard) {
           this.$refs.handleCard.loadingBtn = true
@@ -411,10 +492,15 @@ export default {
         if (this.$refs.handleCard) {
           this.$refs.handleCard.loadingBtn = false
         }
+        this.getList()
+        this.clearTable()
+        this.handleCardDialogVisible = false
+        this.untreatedDialogVisible = false
       } catch (e) {
         if (this.$refs.handleCard) {
           this.$refs.handleCard.loadingBtn = false
         }
+        this.handleCardDialogVisible = false
       }
     },
     cancelFun() {
@@ -441,6 +527,7 @@ export default {
       this.checkedAll = false
     },
     viewFun(row) {
+      this.untreated = false
       this.currentRow = { id: row.id }
       this.isEdit = false
       this.handleCardDialogVisible = true
@@ -640,10 +727,70 @@ export default {
       })
       this.checkedAll = false
     },
-    unqualifiedFun() {
+    unqualifiedFun1() {
+      this.untreated = true
       const bool = this.tableData1.every(d => d.forbidden)
-      if (!bool || this.tableData2.length === 0) {
-        this.$message.info('处置单详情未处理完')
+      const arr1 = []
+      const arrno1 = []
+      this.tableData1.forEach(d => {
+        const arr2 = []
+        const arrno2 = []
+        let obj1 = {}
+        let objno1 = {}
+        d.trains.forEach((D, i) => {
+          if (D.checked) {
+            if (arr2.length === 0) {
+              obj1 = JSON.parse(JSON.stringify(d))
+            }
+            arr2.push(D)
+            obj1.trains = arr2
+          } else {
+            let str_checkedStr = ''
+            if (arrno2.length === 0) {
+              objno1 = JSON.parse(JSON.stringify(d))
+            }
+            str_checkedStr += '' + D.train
+            arrno2.push(D)
+            objno1.train = str_checkedStr
+            objno1.trains = arrno2
+          }
+        })
+        if (arr2.length) {
+          arr1.push(obj1)
+        }
+        if (arrno2.length) {
+          arrno1.push(objno1)
+        }
+      })
+      this.isChecked = arr1
+      this.isChecked.forEach(d => {
+        d.test_data.forEach(D => {
+          const dd = d.trains[0]
+          let max_value = dd.pallet_test_data[D.data_point_name].test_max_value
+          let min_value = dd.pallet_test_data[D.data_point_name].test_min_value
+          for (let index = 1; index < d.trains.length; index++) {
+            const element = d.trains[index]
+            if (element.pallet_test_data[D.data_point_name].test_max_value > max_value) {
+              max_value = element.pallet_test_data[D.data_point_name].test_max_value
+            }
+            if (element.pallet_test_data[D.data_point_name].test_max_value < min_value) {
+              min_value = element.pallet_test_data[D.data_point_name].test_min_value
+            }
+          }
+          D.max_value = max_value
+          D.min_value = min_value
+        })
+      })
+      this.noChecked = arrno1
+      if (bool) {
+        this.unqualifiedFun()
+        return
+      }
+      this.untreatedDialogVisible = true
+    },
+    unqualifiedFun() {
+      if (this.tableData2.length === 0) {
+        this.$message.info('请选择处置单详情')
         return
       }
       try {
@@ -660,6 +807,7 @@ export default {
           })
           t_deal_suggestion += '序号' + d.ordering.join(',') + '：' + d._showTrainExcel + (d.is_release ? '放行,' : '不放行,') + d.suggestion + '\r'
         })
+
         this.tech_deal_result = arr
         this.currentRow.t_deal_suggestion = t_deal_suggestion
         this.isEdit = true
@@ -683,6 +831,9 @@ export default {
       if (row.timeout_color) {
         return 'green-row'
       }
+    },
+    cancelFun1() {
+      this.untreatedDialogVisible = false
     }
   }
 }

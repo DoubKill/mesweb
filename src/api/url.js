@@ -62,6 +62,7 @@ export default {
   // 排产配料小料日计划---选择胶料
   RubberSelectUrl: '/api/v1/plan/product-batching-day-plan-manycreate/',
   PlanScheduleUrl: '/api/v1/basics/plan-schedule/',
+  SetSuperuser: '/api/v1/system/personnels/set-superuser/',
 
   ProductActualUrl: '/api/v1/production/product-actual/',
   // 密炼实绩
@@ -130,6 +131,7 @@ export default {
   // 物料数据点评判指标
   MatDataPointIndicators: '/api/v1/quality/mat-data-point-indicators/',
   MatDataPointIndicatorsHistory: '/api/v1/quality/mat-data-point-indicators-history/',
+  BatchSetMethods: '/api/v1/quality/mat-test-methods/batch-set/',
 
   MaterialDealResultUrl: '/api/v1/quality/material-deal-result/',
   DisposeTypeUrl: '/api/v1/basics/global-codes/',
@@ -203,6 +205,7 @@ export default {
   InventoryLog: '/api/v1/inventory/inventory-log/',
   ProductInOutHistory: '/api/v1/inventory/product-in-out-history/',
   PalletTrainsFeedbacks: '/api/v1/production/pallet-trains-feedbacks/',
+  ProductTestedTrains: '/api/v1/quality/product-tested-trains/',
   // 仓库名
   WarehouseNamesUrl: '/api/v1/inventory/warehouse-info/warehouse_names/',
   // 仓库信息
@@ -316,6 +319,7 @@ export default {
   WeightingTackStatus: '/api/v1/terminal/weighting-tack-status/',
   // 密炼投入履历
   BatchChargeLogList: '/api/v1/terminal/batch-charge-log-list/',
+  BatchScanLog: 'api/v1/terminal/batch-scan-log/',
   // 罐号 和 投入设备
   EquipTank: '/api/v1/production/equip-tank/',
   // 药品投入统计
@@ -435,6 +439,7 @@ export default {
   MaterialReportValue: '/api/v1/quality/material-report-value/',
   // 胶料上报设备
   ProductReportEquip: '/api/v1/quality/product-report-equip/',
+  ProductTestPlanInterval: 'api/v1/quality/product-test-plan-interval/',
   // 快检设备监控
   EquipTestData: '/api/v1/quality/equip-test-data/',
   CheckEquip: '/api/v1/quality/check-equip/',
@@ -532,6 +537,7 @@ export default {
   SectionUserTree: '/api/v1/system/section/tree/', // 部门用户树结构
   EquipMaintenanceAreaSettings: '/api/v1/equipment/equip-maintenance-area-settings/', // 维护包干设置
   SectionTree: '/api/v1/system/section/',
+  PermissionSection: '/api/v1/system/permission-section/',
   EquipFaultTypes: '/api/v1/equipment/equip-fault-types/', // 设备故障分类 大分类
   EquipFaultCodes: '/api/v1/equipment/equip-fault-codes/', // 设备故障分类 中分类
   EquipBom: '/api/v1/equipment/equip-bom/',
@@ -587,6 +593,7 @@ export default {
   MultiUpdate: '/api/v1/equipment/equip-apply-order/multi_update/',
   MaterialReq: '/api/v1/equipment/equip-repair-material-req/',
   EquipWarehouseInventory: '/api/v1/equipment/equip-warehouse-inventory/', // 备件库存查询
+  InventoryAlarm: '/api/v1/equipment/equip-warehouse-inventory/inventory-alarm/',
   // 新建库区库位
   EquipWarehouseArea: '/api/v1/equipment/equip-warehouse-area/',
   EquipWarehouseLocation: '/api/v1/equipment/equip-warehouse-location/',
@@ -735,15 +742,27 @@ export default {
   ProductSynthesisProductRate: '/api/v1/quality/product-synthesis-product-rate/',
   ProductSynthesisMonthRate: '/api/v1/quality/product-synthesis-month-rate/',
 
+  ProductInventoryLock: '/api/v1/inventory/product-inventory-lock/',
   ProductRatio: '/api/v1/recipe/product-ratio/',
   ProductMaterials: '/api/v1/quality/product-materials/',
   RubberFrameRepairSummary: '/api/v1/production/rubber-frame-repair—summary/',
   CheckPointStandard: '/api/v1/equipment/check-point-standard/',
   CheckPointTable: '/api/v1/equipment/check-point-table/',
+  DailyCleanStandard: '/api/v1/equipment/daily-clean-standard/',
+  DailyCleanTable: '/api/v1/equipment/daily-clean-table/',
   CheckPointStandardExport: '/api/v1/equipment/check-point-standard/excel-handle/',
   CheckPointTableExport: '/api/v1/equipment/check-point-table/handle-table/',
+  DailyCleanStandardExport: '/api/v1/equipment/daily-clean-standard/excel-handle/',
+  DailyCleanTableExport: '/api/v1/equipment/daily-clean-table/handle-table/',
   CheckTemperatureStandard: '/api/v1/equipment/check-temperature-standard/',
   CheckTemperatureStandardExport: '/api/v1/equipment/check-temperature-standard/excel-handle/',
   CheckTemperatureTable: '/api/v1/equipment/check-temperature-table/',
-  CheckTemperatureTableExport: '/api/v1/equipment/check-temperature-table/handle-table/'
+  CheckTemperatureTableExport: '/api/v1/equipment/check-temperature-table/handle-table/',
+  EquipAutoPlan: '/api/v1/equipment/equip-auto-plan/',
+
+  TestedMaterials: '/api/v1/quality/tested-materials/',
+  ScorchTime: '/api/v1/quality/scorch-time/',
+  WeightClassPlan: '/api/v1/production/weight-class-plan/',
+  XlPlanConsume: '/api/v1/plan/xl-plan-consume/',
+  WeightClassPlanImport: '/api/v1/production/weight-class-plan/import-xlsx/'
 }

@@ -54,7 +54,7 @@
       <el-table-column
         prop="spare__code"
         label="备件代码"
-        min-width="20"
+        min-width="15"
       >
         <template slot-scope="scope">
           <el-link
@@ -71,22 +71,22 @@
       <el-table-column
         prop="component_type_name"
         label="备件分类"
-        min-width="20"
+        width="100"
       />
       <el-table-column
         prop="specification"
         label="规格型号"
-        min-width="20"
+        width="120"
       />
       <el-table-column
         prop="technical_params"
         label="用途"
-        min-width="20"
+        width="120"
       />
       <el-table-column
         prop="in_qty"
         label="入库数量"
-        min-width="20"
+        width="120"
       >
         <template slot-scope="scope">
           <el-link
@@ -98,17 +98,17 @@
       <el-table-column
         prop="unit"
         label="数量单位"
-        min-width="20"
+        width="120"
       />
       <el-table-column
         prop="in_money"
         label="入库金额"
-        min-width="20"
+        width="120"
       />
       <el-table-column
         prop="out_qty"
         label="出库数量"
-        min-width="20"
+        width="120"
       >
         <template slot-scope="scope">
           <el-link
@@ -120,7 +120,7 @@
       <el-table-column
         prop="out_money"
         label="出库金额"
-        min-width="20"
+        width="120"
       />
     </el-table>
     <page

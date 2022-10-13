@@ -112,6 +112,11 @@
       <el-table-column :key="9" label="入库时间" align="center" prop="in_storage_time" />
       <el-table-column :key="6" label="品质状态" align="center" prop="quality_status" />
       <el-table-column :key="10" label="处理意见" align="center" prop="deal_suggestion" />
+      <el-table-column :key="11" label="锁定状态">
+        <template v-if="row.locked_status" slot-scope="{row}">
+          {{ row.locked_status===1?'工艺锁定':row.locked_status===2?'快检锁定':'工艺/快检锁定' }}
+        </template>
+      </el-table-column>
     </el-table>
     <el-alert
       style="color:black"
@@ -205,6 +210,10 @@ export default {
   watch: {
     show(bool) {
       if (bool) {
+        this.multipleSelection = []
+        if (this.$refs.multipleTable) {
+          this.$refs.multipleTable.clearSelection()
+        }
         this.period_of_validity = this.list.period_of_validity || null
         this.order_no = this.list.order_no || null
         this.need_qty = this.list.need_qty || null
@@ -265,7 +274,6 @@ export default {
         })
     },
     async submitFun() {
-      console.log(this.multipleSelection)
       if (this.multipleSelection.length === 0) {
         this.$message.info('请选择出库')
         return
@@ -280,6 +288,7 @@ export default {
             weight: d.total_weight,
             quality_status: d.quality_status,
             inventory_time: d.in_storage_time,
+            product_no: d.material_no,
             outbound_delivery_order: this.id })
         })
         try {
@@ -321,7 +330,7 @@ export default {
       }
     },
     select(row, index) {
-      if (row.warehouse === '单页小计' || row.warehouse === '汇总') { // 判断条件
+      if (row.warehouse === '单页小计' || row.warehouse === '汇总' || row.locked_status === 1 || row.locked_status === 2 || row.locked_status === 3) { // 判断条件
         return false // 不可勾选
       } else {
         return true // 可勾选

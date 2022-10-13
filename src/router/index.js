@@ -513,6 +513,16 @@ export let asyncRoutes = [
             }
           },
           {
+            path: '/internal/investment-result',
+            component: () => import('@/views/production/investment-result'),
+            name: 'InvestmentResult',
+            meta: {
+              faName: 'Resume',
+              title: '密炼扫码结果查询',
+              permissionName: 'batch_scan_log'
+            }
+          },
+          {
             path: '/drug-investment',
             component: () => import('@/views/production/drug-investment'),
             name: 'DrugInvestment',
@@ -520,6 +530,28 @@ export let asyncRoutes = [
               faName: 'Resume',
               title: '称量投入履历',
               permissionName: 'drug_analyze'
+            }
+          }
+        ]
+      },
+      {
+        path: '/experience-data',
+        redirect: '/experience-data/scorching-time',
+        component: () => import('@/views/production/experience_data/a-index'),
+        name: 'ExperienceData',
+        meta: {
+          title: '经验数据查询',
+          icon: 'formula'
+        },
+        children: [
+          {
+            path: '/experience-data/scorching-time',
+            component: () => import('@/views/production/experience_data/scorching_time'),
+            name: 'ScorchingTime',
+            meta: {
+              faName: 'ExperienceData',
+              title: '焦烧时间录入及查询',
+              permissionName: 'scorch_time'
             }
           }
         ]
@@ -909,6 +941,16 @@ export let asyncRoutes = [
                 permissionName: 'materialdemanded'
               }
             },
+            {
+              path: '/schedule/material-plan/',
+              component: () => import('@/views/plan/schedule/dispose/material-plan'),
+              name: 'materialPlan',
+              meta: {
+                faName: 'ScheduleDispose',
+                title: '细料分解每日计划用量',
+                permissionName: 'materialdemanded'
+              }
+            },
             // {
             //   path: '/schedule/weighing-system-plan',
             //   component: () => import('@/views/plan/schedule/dispose/weighing-system-plan'),
@@ -1208,17 +1250,17 @@ export let asyncRoutes = [
               title: '车次报表',
               permissionName: 'trains_report'
             }
-          },
-          {
-            path: '/report/produce-work',
-            component: () => import('@/views/equipment-management/report/produce-work'),
-            name: 'ProduceWork',
-            meta: {
-              faName: 'ProductionResult',
-              title: '生产运行记录',
-              permissionName: 'production_record'
-            }
           }
+          // {
+          //   path: '/report/produce-work',
+          //   component: () => import('@/views/equipment-management/report/produce-work'),
+          //   name: 'ProduceWork',
+          //   meta: {
+          //     faName: 'ProductionResult',
+          //     title: '生产运行记录',
+          //     permissionName: 'production_record'
+          //   }
+          // }
         ]
       },
       {
@@ -1261,26 +1303,26 @@ export let asyncRoutes = [
               permissionName: 'durate_putin_reason'
             }
           },
-          {
-            path: '/product-plan-reality-analyse',
-            component: () => import('@/views/production/product-plan-reality-analyse.vue'),
-            name: 'ProductPlanRealityAnalyse',
-            meta: {
-              faName: 'ResultAnalysis',
-              title: '产量计划实际分析（车数）',
-              permissionName: 'production_analyze'
-            }
-          },
-          {
-            path: '/interval-production-statistics',
-            component: () => import('@/views/production/interval-production-statistics.vue'),
-            name: 'IntervalProductionStatistics',
-            meta: {
-              faName: 'ResultAnalysis',
-              title: '区间产量统计（车数）',
-              permissionName: 'section_production'
-            }
-          },
+          // {
+          //   path: '/product-plan-reality-analyse',
+          //   component: () => import('@/views/production/product-plan-reality-analyse.vue'),
+          //   name: 'ProductPlanRealityAnalyse',
+          //   meta: {
+          //     faName: 'ResultAnalysis',
+          //     title: '产量计划实际分析（车数）',
+          //     permissionName: 'production_analyze'
+          //   }
+          // },
+          // {
+          //   path: '/interval-production-statistics',
+          //   component: () => import('@/views/production/interval-production-statistics.vue'),
+          //   name: 'IntervalProductionStatistics',
+          //   meta: {
+          //     faName: 'ResultAnalysis',
+          //     title: '区间产量统计（车数）',
+          //     permissionName: 'section_production'
+          //   }
+          // },
           {
             path: '/equipment/classes-banburying-summary',
             component: () => import('@/views/equipment-management/classes-banburying-summary'),
@@ -1448,6 +1490,16 @@ export let asyncRoutes = [
             }
           },
           {
+            path: '/report/schedule',
+            component: () => import('@/views/equipment-management/report/schedule'),
+            name: 'Schedule',
+            meta: {
+              faName: 'Achievements',
+              title: '月度配料间排班表',
+              permissionName: 'weight_class_plan'
+            }
+          },
+          {
             path: '/report/attendance-query',
             component: () => import('@/views/equipment-management/report/attendance-query'),
             name: 'Attendanceuery',
@@ -1608,12 +1660,44 @@ export let asyncRoutes = [
         }
       },
       {
+        path: '/spot-clear',
+        redirect: '/spot-clear-set',
+        component: () => import('@/views/spot_check/index'),
+        name: 'SpotClear',
+        meta: {
+          title: '日清扫检查',
+          icon: 'production'
+        },
+        children: [
+          {
+            path: '/spot-clear-set',
+            name: 'SpotClearSet',
+            component: () => import('@/views/spot_check/spot-clear-set'),
+            meta: {
+              faName: 'SpotClear',
+              title: '日清扫检查标准',
+              permissionName: 'daily_clean_standard'
+            }
+          },
+          {
+            path: '/spot-clear-confirm',
+            name: 'SpotClearConfirm',
+            component: () => import('@/views/spot_check/spot-clear-confirm'),
+            meta: {
+              faName: 'SpotClear',
+              title: '日清扫检查确认',
+              permissionName: 'daily_clean_table'
+            }
+          }
+        ]
+      },
+      {
         path: '/spot-check',
         redirect: '/spot-check-set',
         component: () => import('@/views/spot_check/a-index'),
         name: 'SpotCheck',
         meta: {
-          title: '安全点检及除尘袋滤器测温',
+          title: '点检及除尘袋测温',
           icon: 'production'
         },
         children: [
@@ -1717,6 +1801,16 @@ export let asyncRoutes = [
             meta: {
               faName: 'RubberWarehouse',
               title: '胶片库出库计划',
+              permissionName: 'product_outbound_plan'
+            }
+          },
+          {
+            path: '/film-issueTask',
+            component: () => import('@/views/inventory/rubber-warehouse/film-issueTask.vue'),
+            name: 'FilmIssueTask',
+            meta: {
+              faName: 'RubberWarehouse',
+              title: '胶片库出库任务',
               permissionName: 'product_outbound_plan'
             }
           },

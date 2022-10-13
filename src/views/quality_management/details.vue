@@ -19,6 +19,21 @@
           @changeSearch="clickQuery"
         />
       </el-form-item>
+      <el-form-item label="胶料类别">
+        <el-select
+          v-model="getParams.recipe_type"
+          clearable
+          placeholder="请选择"
+          @change="clickQuery"
+        >
+          <el-option
+            v-for="item in categoryOptions"
+            :key="item.id"
+            :label="item.global_no"
+            :value="item.global_name"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="胶料">
         <el-select
           v-model="getParams.product_no"
@@ -89,7 +104,7 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button @click="filterDialogVisible = true">
+        <el-button type="primary" @click="filterDialogVisible = true">
           显示过滤界面
         </el-button>
       </el-form-item>
@@ -97,9 +112,19 @@
         <el-button
           v-permission="['result_info','export']"
           :loading="btnLoading"
+          type="primary"
           @click="getALLData"
         >
           导出Excel
+        </el-button>
+      </el-form-item>
+      <el-form-item>
+        <el-button
+          v-permission="['result_info','export']"
+          type="primary"
+          @click="statisticsFun"
+        >
+          统计工程能力
         </el-button>
       </el-form-item>
     </el-form>
@@ -123,7 +148,7 @@
       :data-changes-scroll-top="false"
       :row-class-name="tableRowClassName1"
     >
-      <!-- use-virtual 省略号 -->
+      <!-- use-virtual 省略号和树形 -->
       <u-table-column label="胶料编码" width="140px" align="center" prop="product_no">
         <template slot-scope="scope">
           <el-link v-if="!scope.row._current" type="primary" @click="clickOrderNum(scope.$index,scope.row)">{{ scope.row.product_no }}</el-link>
@@ -178,7 +203,7 @@
           <span class="line_w" />
         </template>
       </u-table-column>
-      <u-table-column label="检测结果" align="center" width="60px" prop="is_recheck">
+      <u-table-column label="检测结果" align="center" width="80px" prop="is_recheck">
         <template slot-scope="{ row }">
           <div>
             {{ row.is_recheck===true ?'复检':row.is_recheck===false?'正常':'' }}
@@ -223,11 +248,11 @@
         hasChildren: 'hasChildren'}"
       :data-changes-scroll-top="false"
       :row-class-name="tableRowClassName"
+      use-virtual
     >
-      <!-- use-virtual 省略号 -->
       <u-table-column label="胶料编码" width="140px" align="center" prop="product_no">
         <template slot-scope="scope">
-          <el-link v-if="!scope.row._current" type="primary" @click="clickOrderNum(scope.$index,scope.row)">{{ scope.row.product_no }}</el-link>
+          <el-link v-if="!scope.row._current&&checkPermission(['result_info','curve'])" type="primary" @click="clickOrderNum(scope.$index,scope.row)">{{ scope.row.product_no }}</el-link>
           <span v-else>{{ scope.row.product_no }}</span>
         </template>
       </u-table-column>
@@ -236,7 +261,6 @@
         width="90px"
         prop="production_factory_date"
         align="center"
-        :tree-node="true"
       >
         <template v-if="row.production_factory_date" slot-scope="{row}">
           {{ (row.production_factory_date).split(' ')[0] }}
@@ -256,7 +280,7 @@
       <u-table-column label="门尼机台" width="60px" align="center" prop="menn" />
       <u-table-column label="流变机台" width="60px" align="center" prop="liub" />
       <u-table-column label="车次" align="center" width="50px" prop="actual_trains" />
-      <u-table-column label="检测结果" align="center" width="60px" prop="is_recheck">
+      <u-table-column label="检测结果" align="center" width="80px" prop="is_recheck" :tree-node="true">
         <template slot-scope="{ row }">
           <div>
             {{ row.is_recheck===true ?'复检':row.is_recheck===false?'正常':'' }}
@@ -356,13 +380,13 @@ import EquipSelect from '@/components/select_w/equip'
 import ClassSelect from '@/components/ClassSelect'
 import StageSelect from '@/components/StageSelect/index'
 import { globalCodesUrl, productMaterials } from '@/api/base_w'
-import { testTypes, materialTestOrders, testResultHistory,
+import { testTypes, materialTestOrders,
   materialTestOrdersAll, datapointCurve, productIndicatorStandard } from '@/api/quick-check-detail'
 import elTableInfiniteScroll from 'el-table-infinite-scroll'
 import FileSaver from 'file-saver'
 import XLSX from 'xlsx'
 import DetailsUTable from './components/details-u-table'
-import { setDate } from '@/utils'
+import { setDate, checkPermission } from '@/utils'
 import * as echarts from 'echarts'
 export default {
   name: 'Details',
@@ -445,13 +469,11 @@ export default {
       products: [],
       viewHeard: false,
       testOrdersTop: [],
+      categoryOptions: [],
       historySpot: {
         title: [{
           text: "Anscombe's quartet"
         }],
-        tooltip: {
-          trigger: 'axis'
-        },
         toolbox: {
           feature: {
             saveAsImage: {}
@@ -468,6 +490,12 @@ export default {
           { gridIndex: 0 },
           { gridIndex: 1 }
         ],
+        tooltip: {
+          trigger: 'axis'
+        },
+        // tooltip: {
+        //   triggerOn: 'click'
+        // },
         series: [
           {
             name: 'I',
@@ -512,6 +540,7 @@ export default {
     this.testOrdersAll = []
     this.getMaterialTestOrders()
     this.getClassGroup()
+    this.getFormulaType()
   },
   mounted() {
     // window.addEventListener('scroll', () => {
@@ -532,6 +561,7 @@ export default {
 
   },
   methods: {
+    checkPermission,
     dayTimeChanged() {
       this.clickQuery()
     },
@@ -566,51 +596,42 @@ export default {
       this.getParams.classes = className || null
       this.clickQuery()
     },
+    async getFormulaType() {
+      try {
+        const data = await globalCodesUrl('get', { params: { class_name: '配方类别' }})
+        this.categoryOptions = data.results
+      } catch (e) {
+        //
+      }
+    },
     async productBatchingChanged() {
       this.viewHeard = true
+      this.statisticsBool = false
+      delete this.getParams.sum_project
       if (!this.getParams.product_no) {
         this.testOrdersTop = []
       }
       this.clickQuery()
     },
     load(tree, resolve) {
-      // expand-change
-      const subRows = []
-      testResultHistory(tree.id).then(testResul => {
-        for (const testTime in testResul) {
-          const row = JSON.parse(JSON.stringify(tree))
-          row.test_status = '正常'
-          row.index = this.index++
-          row.hasChildren = false
-          row.order_results = testResul[testTime]
+      let subRows = {}
+      const order_results = JSON.parse(JSON.stringify(tree.order_results))
+      order_results.forEach(d => {
+        d.judged_lower_limit = d.judged_lower_limit0
+        d.judged_upper_limit = d.judged_upper_limit0
+        d.value = d.value0
 
-          row.level = 0
-          row.mes_result = '未检测'
-          for (const testTypeName in row.order_results) {
-            const testType = row.order_results[testTypeName]
-            let maxLevel = 0
-            // let mes_result = '未检测'
-            for (const dataPointName in testType) {
-              const dataPoint = testType[dataPointName]
-              if (dataPoint.test_times > 1) {
-                row.test_status = '复检'
-              }
-              if (dataPoint.level > maxLevel) {
-                maxLevel = dataPoint.level
-                // mes_result = dataPoint.mes_result
-                testType['maxLevelItem'] = dataPoint
-              }
-            }
-            if (maxLevel > row.level) {
-              row.level = maxLevel
-              row.mes_result = row.level === 1 ? '一等品' : '三等品'
-            }
-          }
-
-          subRows.push(row)
-        }
-        resolve(subRows)
+        const _min = d.judged_lower_limit ? Number(d.judged_lower_limit) : 0
+        const _max = d.judged_upper_limit ? Number(d.judged_upper_limit) : 0
+        d._red = d.value > _max
+        d._blue = d.value < _min
+        d.id = new Date().getTime()
       })
+      subRows = {
+        order_results: order_results,
+        is_recheck: false
+      }
+      resolve([subRows])
     },
     clickQuery() {
       this.getParams.page = 1
@@ -619,6 +640,9 @@ export default {
       this.allPage = 0
       this.definePafeSize = 20
       this.getMaterialTestOrders()
+      if (this.statisticsBool) {
+        this.handleCurrentChange()
+      }
     },
     dayChange(val) {
       this.getParams.st = val ? val[0] : ''
@@ -638,6 +662,9 @@ export default {
         // this.$nextTick(() => {
         //   this.exportExcel()
         // })
+        if (!this.statisticsBool) {
+          delete this.getParams.sum_project
+        }
         const obj = Object.assign({ export: 1 }, this.getParams)
         const _api = materialTestOrdersAll
         _api('get', null, { params: obj, responseType: 'blob' })
@@ -670,42 +697,6 @@ export default {
         paramsObj.page = bool ? 1 : this.getParams.page
         const data = await materialTestOrders(paramsObj)
         const arr = data.results // 加分页
-        // arr = arr.map(row => {
-        //   row.level = 0
-        //   row.mes_result = '未检测'
-        //   for (const testTypeName in row.order_results) {
-        //     const testType = row.order_results[testTypeName]
-        //     let maxLevel = 0
-        //     for (const dataPointName in testType) {
-        //       const dataPoint = testType[dataPointName]
-        //       if (dataPoint.test_times > 1) {
-        //         this.$set(row, 'test_status', '复检')
-        //         this.$set(row, 'hasChildren', true)
-        //       } else {
-        //         this.$set(row, 'test_status', '正常')
-        //         this.$set(row, 'hasChildren', false)
-        //       }
-        //       if (dataPoint.level > maxLevel) {
-        //         maxLevel = dataPoint.level
-        //         testType['maxLevelItem'] = dataPoint
-        //       }
-        //     }
-        //     if (maxLevel > row.level) {
-        //       row.level = maxLevel
-        //       row.mes_result = row.level === 1 ? '一等品' : '三等品'
-        //     }
-        //   }
-        // return {
-        //   ...row,
-        //   index: this.index++,
-        //   class_group: `${row.production_class}/${row.production_group}`
-        // }
-        // })
-        // arr.forEach(row => {
-        // })
-        // for (let i = 1; i < 8; i++) {
-        //   arr = arr.concat(arr)
-        // }
         arr.forEach(d => {
           const arr = d.order_results.filter(dd => dd.test_indicator_name === '门尼')
           const arr1 = d.order_results.filter(dd => dd.test_indicator_name === '流变')
@@ -721,6 +712,7 @@ export default {
             D._red = D.value > _max
             D._blue = D.value < _min
           })
+          d.hasChildren = d.is_recheck
         })
         this.listLoading = false
         if (bool) {
@@ -943,11 +935,24 @@ export default {
         //
       }
     },
+    statisticsFun() {
+      if (!this.getParams.product_no) {
+        this.$message('请选择胶料')
+        return
+      }
+      this.statisticsBool = !this.statisticsBool
+      this.handleCurrentChange()
+    },
     async handleCurrentChange() {
       try {
-        const data = await productIndicatorStandard({ product_no: this.getParams.product_no })
+        let obj = { product_no: this.getParams.product_no }
+        if (this.statisticsBool) {
+          obj = Object.assign(this.getParams, { sum_project: 1 })
+        }
+        const data = await productIndicatorStandard(obj)
         const arr = []
         const names = [this.getParams.product_no, '中央值', '规格幅(+-)', '上规格幅', '下规格幅']
+        const names1 = ['均值', 'σ', 'Cｐ', 'CPK', 'K', '等级']
         for (let index = 0; index < 5; index++) {
           const order_results = []
           data.forEach(d => {
@@ -990,8 +995,73 @@ export default {
             order_results: order_results
           })
         }
+        if (this.statisticsBool) {
+          for (let index = 0; index < 6; index++) {
+            const order_results = []
+            data.forEach(d => {
+              // 均值：avg
+              // σ：std
+              // Cｐ：（上规格幅-下规格幅）/6/σ
+              // CPK：(1-K)*Cｐ
+              // K:ABS(中央值-均值)/规格幅
+              // 等级：CPK≥1.67（A+），1.33≤CPK<1.67（A），1≤CPK<1.33（B），0.67≤CPK<1（C），CPK<0.67（D）
+              if (index === 0) {
+                order_results.push({
+                  data_point_name: d.data_point__name,
+                  value: setData(d.avg)
+                })
+              }
+              if (index === 1) {
+                order_results.push({
+                  data_point_name: d.data_point__name,
+                  value: setData(d.std)
+                })
+              }
+              const Cｐ = (d.upper_limit - d.lower_limit) / 6 / d.std
+              const 中 = (d.upper_limit + d.lower_limit) / 2
+              const 幅 = d.upper_limit - (d.upper_limit + d.lower_limit) / 2
+              const k = 幅 ? Math.abs(中 - d.avg) / 幅 : ''
+              const CPK = d.std ? (1 - k) * Cｐ : ''
+
+              if (index === 2) {
+                order_results.push({
+                  data_point_name: d.data_point__name,
+                  value: d.std ? setData(Cｐ) : ''
+                })
+              }
+              if (index === 3) {
+                order_results.push({
+                  data_point_name: d.data_point__name,
+                  value: setData(CPK)
+                })
+              }
+              if (index === 4) {
+                order_results.push({
+                  data_point_name: d.data_point__name,
+                  value: setData(k)
+                })
+              }
+              if (index === 5) {
+                order_results.push({
+                  data_point_name: d.data_point__name,
+                  value: CPK ? CPK > 1.67 || CPK === 1.67 ? '（A+）'
+                    : (CPK === 1.33 || CPK > 1.33) && CPK < 1.67 ? '（A）'
+                      : (CPK === 1 || CPK > 1) && CPK < 1.33 ? '（B）' : (CPK === 0.67 || CPK > 0.67) && CPK < 1 ? '（C）' : CPK < 0.67 ? '（D）' : '' : ''
+                })
+              }
+            })
+            arr.push({
+              _current: true,
+              product_no: names1[index],
+              order_results: order_results
+            })
+          }
+        }
         if (this.testOrdersTop.length) {
           this.testOrdersTop.splice(0, 5)
+        }
+        if (this.testOrdersTop.length > 5) {
+          this.testOrdersTop.splice(5, this.testOrdersTop.length)
         }
         this.testOrdersTop = [...arr]
       } catch (e) {

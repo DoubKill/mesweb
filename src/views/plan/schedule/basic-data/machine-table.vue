@@ -87,26 +87,26 @@
         prop="rubber_type"
         width="140"
         label="胶料类别"
-        fixed
+        :fixed="!exportTableShow"
       />
       <el-table-column
         header-align="center"
         prop="product_no"
         label="配方名称"
-        fixed
+        :fixed="!exportTableShow"
       />
       <el-table-column
         header-align="center"
         prop="version"
         label="配方尾号"
-        fixed
+        :fixed="!exportTableShow"
       />
       <el-table-column
         header-align="center"
         prop="stages1"
         width="150"
         label="所需段数"
-        fixed
+        :fixed="!exportTableShow"
       />
       <el-table-column
         header-align="center"

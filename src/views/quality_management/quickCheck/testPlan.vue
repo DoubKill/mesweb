@@ -335,7 +335,7 @@
           <el-table-column
             prop="actual_trains"
             label="车次"
-            width="80px"
+            width="50"
           >
             <template slot-scope="{row,$index}">
               <div v-if="row.add" class="actualTrains">
@@ -356,7 +356,7 @@
           </el-table-column>
           <el-table-column
             label="状态"
-            min-width="18"
+            width="60"
             :formatter="(row)=>{
               return row.value?'已检测':'待检测'
             }"
@@ -627,8 +627,8 @@
 <script>
 import classSelect from '@/components/ClassSelect'
 import equipSelect from '@/components/select_w/equip'
-import { globalCodesUrl, testIndicators, palletTrainsFeedbacks, matTestIndicatorMethods } from '@/api/base_w'
-import { productReportEquip, productTestPlan, rubberMaxStretchTestResult, productTestPlanDetail, bulkCreate, underwayPlan } from '@/api/base_w_four'
+import { globalCodesUrl, testIndicators, palletTrainsFeedbacks, matTestIndicatorMethods, productTestedTrains } from '@/api/base_w'
+import { productReportEquip, productTestPlan, productTestPlanInterval, rubberMaxStretchTestResult, productTestPlanDetail, bulkCreate, underwayPlan } from '@/api/base_w_four'
 import allProductNoSelect from '@/components/select_w/allProductNoSelect.vue'
 
 export default {
@@ -724,6 +724,9 @@ export default {
         if (!this.tableDataRight.length) {
           this.tableData = data
         } else {
+          const data1 = await productTestedTrains('get', null, { params: this.search })
+          this.rightMin = data1.min_trains || 0
+          this.rightMax = data1.max_trains || 0
           data.forEach(d => { // 去掉左边相同得数据
             if (d.actual_trains < this.rightMin || d.actual_trains > this.rightMax) {
               this.tableData.push(d)
@@ -741,6 +744,8 @@ export default {
           this.add_w = true
         } else {
           this.add_w = false
+          const dataNum = await productTestPlanInterval('get', null, { params: { product_no: this.search.product_no }})
+          this.ruleForm.test_interval = dataNum.interval || ''
         }
       } catch (e) {
         this.loading = false
@@ -856,8 +861,8 @@ export default {
         }
         let _product_test_plan_detail = []
         if (data.product_test_plan_detail && data.product_test_plan_detail.length) {
-          this.rightMin = data.product_test_plan_detail[0].actual_trains
-          this.rightMax = data.product_test_plan_detail[data.product_test_plan_detail.length - 1].actual_trains
+          // this.rightMin = data.product_test_plan_detail[0].actual_trains
+          // this.rightMax = data.product_test_plan_detail[data.product_test_plan_detail.length - 1].actual_trains
 
           // 只取10个已检测的
           let _i_w = 0

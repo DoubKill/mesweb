@@ -134,12 +134,12 @@
       <el-table-column
         prop="created_time"
         label="创建时间"
-        min-width="20"
+        width="90"
       />
       <el-table-column
         prop="task_status"
         label="状态"
-        min-width="20"
+        width="70"
         :formatter="(row)=>{
           let obj = options.find(d=>d.id === row.task_status)
           return obj.name
@@ -158,12 +158,12 @@
       <el-table-column
         prop="weight"
         label="重量"
-        min-width="20"
+        width="75"
       />
       <el-table-column
         prop="entrance_name"
         label="出库站台"
-        min-width="20"
+        min-width="18"
       />
     </el-table>
     <page

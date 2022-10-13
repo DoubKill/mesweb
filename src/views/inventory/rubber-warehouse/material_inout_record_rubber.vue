@@ -207,7 +207,7 @@
     >
       <el-table-column label="No" type="index" align="center" width="40" />
       <el-table-column label="胶料名称" align="center" prop="product_no" />
-      <el-table-column label="机台" align="center" prop="equip_no" />
+      <el-table-column width="50" label="机台" align="center" prop="equip_no" />
       <el-table-column label="车次" align="center" prop="memo" width="50" />
       <el-table-column label="重量(kg)" align="center" prop="weight" width="80" />
       <el-table-column label="托盘号" align="center" prop="pallet_no" width="80" />
@@ -230,6 +230,9 @@
       <el-table-column label="出库任务号" align="center" prop="outbound_order_no" />
       <el-table-column label="出库发起时间" align="center" prop="outbound_time" />
       <el-table-column label="出库发起人" align="center" prop="outbound_user" />
+      <el-table-column label="锁定人" align="center" prop="locked_user" />
+      <el-table-column label="处理说明" align="center" prop="locked_reason" />
+      <el-table-column label="解锁人" align="center" prop="unlocked_user" />
       <!-- <el-table-column label="出库完成时间" align="center" prop="" /> -->
       <el-table-column
         v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'"

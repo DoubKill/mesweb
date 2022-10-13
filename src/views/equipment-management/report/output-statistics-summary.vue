@@ -19,7 +19,7 @@
       </el-form-item>
     </el-form>
     <el-row :gutter="20">
-      <el-col :span="16">
+      <el-col :span="18">
         <el-table
           :data="tableData"
           style="width: 100%"
@@ -44,12 +44,12 @@
           />
           <el-table-column
             prop="target"
-            label="机台目标值"
+            label="机台目标值(车)"
             min-width="20"
           />
           <el-table-column
             prop="max_weight"
-            label="机台最高值"
+            label="机台最高值(吨)"
             min-width="20"
           />
           <el-table-column
@@ -57,9 +57,19 @@
             label="班组"
             min-width="20"
           />
+          <el-table-column
+            prop="history_max_weight"
+            label="历史最高值(吨)"
+            min-width="20"
+          />
+          <el-table-column
+            prop="history_group"
+            label="历史最高值班组"
+            min-width="20"
+          />
         </el-table>
       </el-col>
-      <el-col :span="8">
+      <el-col :span="6">
         <el-table
           :data="tableData2"
           border
@@ -110,17 +120,27 @@
       />
       <el-table-column
         prop="target"
-        label="机台目标值"
+        label="机台目标值(车)"
         min-width="20"
       />
       <el-table-column
         prop="max_weight"
-        label="机台最高值"
+        label="机台最高值(吨)"
         min-width="20"
       />
       <el-table-column
         prop="group"
         label="班组"
+        min-width="20"
+      />
+      <el-table-column
+        prop="history_max_weight"
+        label="历史最高值(吨)"
+        min-width="20"
+      />
+      <el-table-column
+        prop="history_group"
+        label="历史最高值班组"
         min-width="20"
       />
       <el-table-column
@@ -255,12 +275,12 @@ export default {
         this.tableData3 = JSON.parse(JSON.stringify(this.tableData)) || []
         const jl = data.jl || []
         const wl = data.wl || []
-        const _fmArr = data.jl.filter(d => d.name === 'FM')
-        const _fm = _fmArr.length ? _fmArr[0].value : null
+        // const _fmArr = data.jl.filter(d => d.name === 'FM')
+        // const _fm = _fmArr.length ? _fmArr[0].value : null
+        // const _all = sum(this.tableData2, 'value') / 2
         this.tableData2 = [...wl, ...jl]
-        const _all = sum(this.tableData2, 'value') / 2
         this.tableData2.push({ name: '总计', value: (sum(this.tableData2, 'value') / 2).toFixed(2) })
-        this.tableData2.push({ name: '段数', value: _fm ? (_all / _fm).toFixed(2) : '' })
+        this.tableData2.push({ name: '段数', value: data.ds })
         this.tableData2.forEach((d, i) => {
           if (d.name === 'jl') {
             d.name = '加硫合计'
@@ -324,7 +344,7 @@ export default {
           if (index === 1 || index === 6) {
             sums[index] = sums[index].toFixed(2)
           }
-          if (index === 6) {
+          if (index === 8) {
             sums[index] = ''
           }
           sums[index] = Number(sums[index]).toFixed(2)

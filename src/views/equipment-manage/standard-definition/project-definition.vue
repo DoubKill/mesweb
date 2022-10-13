@@ -54,14 +54,17 @@
       <el-table-column
         prop="work_type"
         label="作业类型"
+        width="70"
       />
       <el-table-column
         prop="standard_code"
         label="标准编号"
+        width="70"
       />
       <el-table-column
         prop="standard_name"
         label="作业项目标准名称"
+        width="130"
       />
       <el-table-column
         prop="work_details_column"
@@ -78,12 +81,14 @@
       <el-table-column
         prop="created_username"
         label="录入人"
+        width="60"
       />
       <el-table-column
         prop="created_date"
         label="录入时间"
+        width="90"
       />
-      <el-table-column v-if="!isDialog" label="操作">
+      <el-table-column v-if="!isDialog" label="操作" width="140">
         <template slot-scope="scope">
           <el-button-group>
             <el-button

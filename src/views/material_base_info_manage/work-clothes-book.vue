@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="work-clothes-book">
     <!-- 工装管理台账 -->
     <el-form :inline="true">
       <el-form-item label="月份">
@@ -40,10 +40,25 @@
           <th class="leftOne">工装类型</th>
           <th colspan="2" class="leftTwo">放置区域</th>
           <th
-            v-for="(value) in day"
-            :key="value"
+            v-for="(valueDay,i) in day"
+            :key="i"
             class="td-style"
-          >{{ month }}/{{ value }}</th>
+          >
+            <span v-if="isExport&&!valueDay.value" />
+            <span v-else-if="isExport&&valueDay.value"> {{ month }}/{{ valueDay.value }}</span>
+            <div v-else>
+              {{ month }} 月
+              <el-input-number
+                v-model="valueDay.value"
+                style="width:80px"
+                size="mini"
+                controls-position="right"
+                :max="Maxday"
+                @change="dayChange(i,valueDay)"
+              /> 日
+              <i v-if="i!==0" class="el-icon-delete" style="font-size:18px;cursor:pointer;" @click="delFun(i)" />
+            </div>
+          </th>
         </tr>
         <tr>
           <td rowspan="7" class="leftOne">胶架</td>
@@ -524,9 +539,10 @@ export default {
       btnLoading: false,
       loading: false,
       isExport: false,
-      day: [],
+      day: [{ value: undefined }],
       month: '',
-      tableList: []
+      tableList: [],
+      Maxday: 0
     }
   },
   created() {
@@ -544,11 +560,15 @@ export default {
         const a = new Date(this.search.date_time)
         const y = a.getFullYear()
         const m = a.getMonth() + 1
-        this.day = new Date(y, m, 0).getDate()
+        this.Maxday = new Date(y, m, 0).getDate()
         this.month = m
         this.tableList = []
+        this.day = [{ value: undefined }]
         this.loading = true
         const data = await toolManageAccount('get', null, { params: this.search })
+        if (data.results.day && data.results.day.length) {
+          this.day = data.results.day
+        }
         if (data.results.details.length) {
           this.tableList = data.results.details || []
         } else {
@@ -560,7 +580,7 @@ export default {
       }
     },
     initialData() {
-      for (let key = 1; key < this.day + 1; key++) {
+      for (let key = 1; key < this.day.length + 1; key++) {
         for (let indexFa = 0; indexFa < 6; indexFa++) {
           if (!this.tableList[indexFa]) {
             this.$set(this.tableList, indexFa, [])
@@ -614,9 +634,15 @@ export default {
     },
     async submitFun() {
       try {
+        // const bool = this.day.every(d => d.value)
+        // if (!bool) {
+        //   this.$message('日期不可为空')
+        //   return
+        // }
         const obj = {
           'date_time': this.search.date_time,
-          details: this.tableList
+          details: this.tableList,
+          day: this.day
         }
         this.btnLoading = true
         await toolManageAccount('post', null, { data: obj })
@@ -625,16 +651,57 @@ export default {
       } catch (e) {
         this.btnLoading = false
       }
+    },
+    dayChange(_index, item) {
+      if (item.value <= 0) {
+        item.value = 1
+      }
+      if (item.value && _index + 1 === this.day.length) {
+        this.day.push({
+          value: undefined
+        })
+        for (let indexFa = 0; indexFa < 6; indexFa++) {
+          if (!this.tableList[indexFa]) {
+            this.$set(this.tableList, indexFa, [])
+          }
+          const _arr = [8, 5, 2, 5, 5, 2]
+          for (let index = 0; index < _arr[indexFa]; index++) {
+            if (!this.tableList[indexFa][index]) {
+              this.$set(this.tableList[indexFa], index, [])
+            }
+            this.tableList[indexFa][index].push({ value: undefined })
+          }
+        }
+      }
+    },
+    delFun(_index) {
+      this.day.splice(_index, 1)
+      for (let indexFa = 0; indexFa < 6; indexFa++) {
+        if (!this.tableList[indexFa]) {
+          this.$set(this.tableList, indexFa, [])
+        }
+        const _arr = [8, 5, 2, 5, 5, 2]
+        for (let index = 0; index < _arr[indexFa]; index++) {
+          if (!this.tableList[indexFa][index]) {
+            this.$set(this.tableList[indexFa], index, [])
+          }
+          this.tableList[indexFa][index].splice(_index, 1)
+        }
+      }
     }
   }
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+.work-clothes-book{
+
     .table-fa{
         overflow-x:scroll;
     }
-
+.el-input-number.is-controls-right .el-input__inner{
+  padding-right: 38px !important;
+}
     //
  .table_wrap{
   width:100%;
@@ -667,7 +734,6 @@ td, th{
         padding: 2px 0;
       }
     }
-
     .leftOne, .leftTwo,.leftThree{
        position:sticky;
       left:0;
@@ -683,4 +749,8 @@ td, th{
       left:195px;
       border-left:none;
     }
+    .td-style{
+      width:155px;
+    }
+}
 </style>
