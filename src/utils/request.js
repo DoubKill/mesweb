@@ -38,7 +38,7 @@ service.interceptors.request.use(
       a({ url: '/api/v1/system/user-operation-log/', method: 'post', data: { 'operator': _newUser, 'menu_name': routeName, 'operations': `导出：${routeName}列表` }})
     }
 
-    if (_user && _user !== _newUser) {
+    if (_user && _newUser && _user !== _newUser) {
       Message({
         message: '当前账号已退出，请刷新页面',
         type: 'error',
