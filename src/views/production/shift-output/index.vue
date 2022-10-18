@@ -17,18 +17,18 @@
         <el-select
           v-model="groud"
           placeholder="请选择"
-          @change="changeList"
+          @change="changeGroup"
         >
           <el-option
-            v-for="item in ['A','B','C']"
-            :key="item"
-            :label="item"
-            :value="item"
+            v-for="groupItem in groups"
+            :key="groupItem.id"
+            :label="groupItem.global_name"
+            :value="groupItem.global_name"
           />
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button v-permission="['equip_fault_signal', 'export']" type="primary" :disabled="btnExportLoad" @click="exportTable(1)">导出Excel</el-button>
+        <el-button type="primary" :disabled="btnExportLoad" @click="exportTable(1)">导出Excel</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -99,6 +99,7 @@
 <script>
 import { setDate, exportExcel } from '@/utils'
 import { shiftProductionSummary } from '@/api/base_w_five'
+import { globalCodesUrl } from '@/api/base_w'
 export default {
   name: 'ShiftOutputIndex',
   data() {
@@ -106,7 +107,7 @@ export default {
       search: {
         target_month: setDate(null, null, 'month')
       },
-      groud: 'A',
+      groud: '',
       tableData: [],
       headData: {},
       btnExportLoad: false,
@@ -114,16 +115,19 @@ export default {
       loading: false,
       headDataGroup: [],
       tableData1: [],
-      headDataNew: {}
+      headDataNew: {},
+      groups: []
     }
   },
-  created() {
-    this.getList()
+  async created() {
+    await this.getClassGroup()
+    await this.getList()
   },
   methods: {
     async getList() {
       try {
         this.loading = true
+        this.search.group_name = this.groud
         const data = await shiftProductionSummary('get', null, { params: this.search })
         this.headData = data.table_head || []
         this.tableData = data.data || []
@@ -133,13 +137,17 @@ export default {
         this.loading = false
       }
     },
+    changeGroup(){
+      this.getList()
+    },
     changeList() {
       const obj = {}
       const arrOne = []
       for (const key in this.headData) {
         if (Object.hasOwnProperty.call(this.headData, key)) {
           const element = this.headData[key]
-          if (element.indexOf(this.groud) > -1) {
+          const _groud = this.groud.split('')
+          if (element.indexOf(_groud[0]) > -1) {
             obj[key] = element
           }
           arrOne.push(key + ':' + element)
@@ -175,8 +183,8 @@ export default {
       const arr = []
       this.tableData.forEach(d => {
         // 计算日均产量（日均产量=total_trains/days）和完成率（日均产量/目标值）
-        d.dailyOutput = d.total_trains ? Math.round((d.total_trains / d.days) * 100) / 100 : ''
-        d.completionRate = d.dailyOutput ? Math.round((d.dailyOutput / d.target_trains * 100) * 100) / 100 + '%' : ''
+        d.dailyOutput = d.total_trains&&d.days ? Math.round((d.total_trains / d.days) * 100) / 100 : ''
+        d.completionRate = d.dailyOutput && d.target_trains ? Math.round((d.dailyOutput / d.target_trains/2 * 100) * 100) / 100 + '%' : ''
         // end
         // 获取每一排的不重复日期 总计使用
         let arrDay = []
@@ -196,9 +204,11 @@ export default {
           if (Object.hasOwnProperty.call(d, key)) {
             const element = d[key]
             obj1.equip_no = d.equip_no
+            obj1.days = d.group_days
             obj1.target_trains = d.target_trains
             // 单独计算总产量给班组列表用
-            if (key.indexOf(this.groud) > -1) {
+            const _groud = this.groud.split('')
+            if (key.indexOf(_groud[0]) > -1) {
               obj1[key] = Number(element)
               obj1.total_trains += element
             }
@@ -213,11 +223,11 @@ export default {
         })
         arrDay1 = [...new Set(arrDay1)]
         // end
-        obj1.days = arrDay1.length
-        obj1.total_trains = Math.round(obj1.total_trains * 100) / 100
-        // 计算日均产量（日均产量=total_trains/days）和完成率（日均产量/目标值） 班组列表使用
-        obj1.dailyOutput = obj1.total_trains ? Math.round((obj1.total_trains / obj1.days) * 100) / 100 : ''
-        obj1.completionRate = obj1.dailyOutput ? Math.round((obj1.dailyOutput / obj1.target_trains * 100) * 100) / 100 + '%' : ''
+        obj1.total_trains = obj1.total_trains?Math.round(obj1.total_trains * 100) / 100:''
+        // 计算日均产量（日均产量=total_trains/days）
+        // 完成率（日均产量/目标值）   班组列表使用
+        obj1.dailyOutput = obj1.total_trains&&obj1.days ? Math.round((obj1.total_trains / obj1.days) * 100) / 100 : ''
+        obj1.completionRate = obj1.dailyOutput&&obj1.target_trains ? Math.round((obj1.dailyOutput / obj1.target_trains * 100) * 100) / 100 + '%' : ''
         // end
         arr.push(obj1)
       })
@@ -236,6 +246,18 @@ export default {
         }
       }
       return Math.round(strNum * 100) / 100
+    },
+    getClassGroup(val) {
+      globalCodesUrl('get', {
+        params: {
+          class_name: '班组'
+        }
+      }).then((response) => {
+        this.groups = response.results
+        this.groud = this.groups[0].global_name
+      }).catch(function() {
+        this.groups = []
+      })
     },
     arraySpanMethod({ row, column, rowIndex, columnIndex }) {
       if (columnIndex === 0) {
