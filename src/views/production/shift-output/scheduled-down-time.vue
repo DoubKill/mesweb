@@ -14,7 +14,7 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button v-permission="['equip_fault_signal', 'export']" type="primary" :disabled="btnExportLoad" @click="exportTable">导出Excel</el-button>
+        <el-button type="primary" :disabled="btnExportLoad" @click="exportTable">导出Excel</el-button>
         <el-button
           v-permission="['user','import']"
         >
