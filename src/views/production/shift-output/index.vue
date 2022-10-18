@@ -121,7 +121,6 @@ export default {
   },
   async created() {
     await this.getClassGroup()
-    await this.getList()
   },
   methods: {
     async getList() {
@@ -255,6 +254,7 @@ export default {
       }).then((response) => {
         this.groups = response.results
         this.groud = this.groups[0].global_name
+        this.getList()
       }).catch(function() {
         this.groups = []
       })
