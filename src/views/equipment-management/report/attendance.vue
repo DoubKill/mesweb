@@ -885,7 +885,7 @@ export default {
   methods: {
     equipChange(val) {
       if (val) {
-        const obj = { all: 1, equip_no: this.search.clock_type === '密炼' ? 'Z' : this.search.clock_type === '细料称量' ? 'F' : 'S' }
+        const obj = { all: 1, category_name: this.search.clock_type === '密炼' ? '密炼设备' : '称量设备' }
         getEquip(obj).then(response => {
           this.options = response.results
         })

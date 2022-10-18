@@ -490,6 +490,16 @@ export let asyncRoutes = [
               faName: 'RbRecipe',
               permissionName: 'product_ratio'
             }
+          },
+          {
+            path: '/rb/formula-resume',
+            name: 'FormulaResume',
+            component: () => import('@/views/recipe/formula-resume'),
+            meta: {
+              title: 'MES配方变更履历',
+              faName: 'RbRecipe',
+              permissionName: 'recipe_change_history'
+            }
           }
         ] },
       {
@@ -606,16 +616,6 @@ export let asyncRoutes = [
     //     title: '称量系统料仓信息管理',
     //     icon: 'formula',
     //     permissionName: 'weight_tank'
-    //   }
-    // }
-    // {
-    //   path: '/rb/formula-resume',
-    //   name: 'FormulaResume',
-    //   component: () => import('@/views/recipe/formula-resume'),
-    //   meta: {
-    //     title: 'MES配方变更履历',
-    //     icon: 'formula',
-    //     permissionName: ''
     //   }
     // }
       // {
