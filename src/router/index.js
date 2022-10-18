@@ -573,7 +573,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'Track',
               title: '条码追溯(终炼胶->原材料)',
-              permissionName: 'material_retrospect'
+              permissionName: 'barcode_trace1'
             }
           },
           {
@@ -583,7 +583,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'Track',
               title: '条码追溯(原材料->终炼胶)',
-              permissionName: 'product_retrospect'
+              permissionName: 'barcode_trace'
             }
           }
         ]

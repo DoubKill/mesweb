@@ -1,215 +1,323 @@
 <template>
-  <div v-loading="loading">
-    <!-- 原材料条码追溯 -->
-    条形码：
-    <el-input
-      v-model="barCodeSearch"
-      style="width:300px;margin-right:20px"
-      placeholder="请输入内容"
-      clearable
-      @input="barCodeInput"
+  <div v-loading="loading" class="track-raw-rubber">
+    <!-- 条码追溯(原材料->终炼胶) -->
+    <el-form :inline="true" size="small">
+      <el-form-item label="追溯码">
+        <el-input
+          v-model="search.bra_code"
+          placeholder="请输入内容"
+          clearable
+          style="width:300px"
+          @input="barCodeInput"
+        />
+      </el-form-item>
+      <br>
+      <el-form-item label="商品名">
+        <el-input
+          v-model="search.trace_material"
+          placeholder="请输入内容"
+          clearable
+          @input="barCodeInput"
+        />
+      </el-form-item>
+      <el-form-item label="厂商">
+        <el-input
+          v-model="search.supplier"
+          placeholder="请输入内容"
+          clearable
+          @input="barCodeInput"
+        />
+      </el-form-item>
+      <el-form-item label="批次号">
+        <el-input
+          v-model="search.batch_no"
+          placeholder="请输入内容"
+          clearable
+          @input="barCodeInput"
+        />
+      </el-form-item>
+      <el-form-item label="生产日期">
+        <el-date-picker
+          v-model="dateValue"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          value-format="yyyy-MM-dd"
+          @change="changeDate"
+        />
+      </el-form-item>
+      <el-form-item label="ERP入库日期">
+        <el-date-picker
+          v-model="dateValue1"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          value-format="yyyy-MM-dd"
+          @change="changeDate"
+        />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="changeList">查询</el-button>
+        <el-button v-permission="['barcode_trace','add']" type="primary" :disabled="btnExportLoad" @click="templateDownload(1)">导出Excel</el-button>
+      </el-form-item>
+    </el-form>
+    <el-table ref="singleTable" :data="tableData" border highlight-current-row @current-change="handleCurrentChange">
+      <el-table-column type="index" width="40" label="No" />
+      <el-table-column prop="scan_material_record" label="商品名" min-width="20" />
+      <el-table-column prop="supplier" label="厂商" min-width="20" />
+      <el-table-column prop="batch_no" label="批次号" min-width="20" />
+      <el-table-column prop="product_time" label="生产日期" min-width="20" />
+      <el-table-column prop="erp_in_time" label="ERP入库日期" min-width="20" />
+      <el-table-column label="质检条码" min-width="23">
+        <template slot-scope="scope">
+          <el-link type="primary" :underline="false">{{ scope.row.bra_code }}</el-link>
+        </template>
+      </el-table-column>
+      <el-table-column prop="pallet_no" label="托盘号" min-width="20" />
+      <el-table-column prop="standard_weight" label="重量kg" min-width="20" />
+    </el-table>
+    <page
+      :old-page="false"
+      :total="total"
+      :current-page="search.page"
+      @currentChange="currentChange"
     />
-    流程：<el-select v-model="value" placeholder="流程" @change="clickFun">
-      <el-option
-        v-for="item in options"
-        :key="item.value"
-        :label="item.value"
-        :value="item.value"
-      />
-    </el-select>
-    <el-timeline v-if="activities" style="margin-top:18px;">
-      <el-timeline-item
-        v-for="(activity, key) in options"
-        :key="key"
-        :timestamp="activities[activity.label]&&activities[activity.label][0]?activities[activity.label][0].time:''"
-        placement="top"
-        size="large"
-        :color="value === activity.value?'#0bbd87':''"
+    <h3 v-if="showInfo">追溯详情</h3>
+    <el-form v-if="showInfo&&formData" :inline="true" size="small">
+      <el-form-item label="质检条码">{{ formData.bra_code }}</el-form-item>
+      <el-form-item label="商品名">{{ formData.material_name_record }}</el-form-item>
+      <el-form-item label="厂商">{{ formData.supplier }}</el-form-item>
+      <el-form-item label="批次号">{{ formData.batch_no }}</el-form-item>
+      <el-form-item label="生产日期">{{ formData.product_time }}</el-form-item>
+      <el-form-item label="ERP入库日期">{{ formData.erp_in_time }}</el-form-item>
+      <el-form-item label="托盘号">{{ formData.pallet_no }}</el-form-item>
+      <el-form-item label="重量">{{ formData.standard_weight }}</el-form-item>
+    </el-form>
+    <h4 v-if="showInfo" style="display:inline-block">物料追溯信息</h4>
+    <div v-if="showInfo" style="float:right">
+      <el-button type="primary" :disabled="btnExportLoad" @click="templateDownload(2)">导出PDF(正向追溯)</el-button>
+    </div>
+    <el-tabs v-if="showInfo" v-model="activeName" type="border-card" @tab-click="handleClick">
+      <el-tab-pane v-for="(tabItem,index) in tabList" :key="tabItem" :label="tabItem" :name="index.toString()" />
+      <el-table
+        :data="tableData1"
+        style="width: 100%"
+        border
+        :row-class-name="getRowClass"
       >
-        <span
-          :id="activity.value"
-          :ref="activity.value"
-          style="width:35px;display: inline-block;"
-        >
-          {{ activities[activity.label]&&activities[activity.label][0]?activities[activity.label][0].classes_name:'--' }}
-        </span>
-        <span style="margin-left:10px;display: inline-block;" @click="activity._show = !activity._show">{{ activity.value }}</span>
-        <i v-if="activity._show" class="el-icon-arrow-down" style="vertical-align: middle;margin-left:10px;" @click="activity._show = !activity._show" />
-        <i v-if="!activity._show" class="el-icon-arrow-up" style="vertical-align: middle;margin-left:10px" @click="activity._show = !activity._show" />
-        <table
-          v-if="activity._show"
-          border="1"
-          bordercolor="#72716d"
-          class="info-table"
-        >
-          <thead>
-            <tr v-if="activity.label === 'material_sample'">
-              <td>计划编码</td>
-              <td>胶料编码</td>
-              <td>设备编码</td>
-              <td>创建时间</td>
-              <td>下发时间</td>
-              <td>开始生产时间</td>
-              <td>结束生产时间</td>
-            </tr>
-            <tr v-if="activity.label === 'material_in'">
-              <td>条码</td>
-              <td>物料编码</td>
-              <td>物料名称</td>
-              <td>仓库信息</td>
-              <td>库存信息</td>
-              <td>库位信息</td>
-              <td>托盘号</td>
-              <td>操作员</td>
-              <td>供应商</td>
-              <td>供应商批次</td>
-            </tr>
-            <tr v-if="activity.label === 'material_out'">
-              <td>条码</td>
-              <td>物料编码</td>
-              <td>物料名称</td>
-              <td>仓库信息</td>
-              <td>库存信息</td>
-              <td>库位信息</td>
-              <td>托盘号</td>
-              <td>操作员</td>
-              <td>供应商</td>
-              <td>供应商批次</td>
-              <td>质量状态</td>
-            </tr>
-            <tr v-if="activity.label === 'material_weight'">
-              <td>条码</td>
-              <td>物料编码</td>
-              <td>配料设备</td>
-              <td>料罐信息</td>
-              <td>称量投入时间</td>
-              <td>操作员</td>
-            </tr>
-            <tr v-if="activity.label === 'material_load'">
-              <td>条码</td>
-              <td>物料编码</td>
-              <td>生产机台</td>
-              <td>密炼投入时间</td>
-              <td>操作员</td>
-            </tr>
-          </thead>
-          <tbody v-for="(itemVal,index) in activities[activity.label]" :key="index">
-            <tr v-if="activity.label === 'material_sample'">
-              <!-- <td>{{}}</td> -->
-            </tr>
-            <tr v-if="activity.label === 'material_in'">
-              <td>{{ itemVal.lot_no }}</td>
-              <td>{{ itemVal.material_no }}</td>
-              <td>{{ itemVal.material_name }}</td>
-              <td>--</td>
-              <td>--</td>
-              <td>{{ itemVal.location }}</td>
-              <td>{{ itemVal.pallet_no }}</td>
-              <td>{{ itemVal.task__initiator }}</td>
-              <td>{{ itemVal.supplier }}</td>
-              <td>{{ itemVal.batch_no || '--' }}</td>
-            </tr>
-            <tr v-if="activity.label === 'material_out'">
-              <td>{{ itemVal.lot_no }}</td>
-              <td>{{ itemVal.material_no }}</td>
-              <td>{{ itemVal.material_name }}</td>
-              <td>--</td>
-              <td>--</td>
-              <td>{{ itemVal.location }}</td>
-              <td>{{ itemVal.pallet_no }}</td>
-              <td>{{ itemVal.task__initiator }}</td>
-              <td>{{ itemVal.supplier }}</td>
-              <td>{{ itemVal.batch_no || '--' }}</td>
-              <td>--</td>
-            </tr>
-            <tr v-if="activity.label === 'material_weight'">
-              <td>{{ itemVal.bra_code }}</td>
-              <td>{{ itemVal.material_no }}</td>
-              <td>{{ itemVal.equip_no }}</td>
-              <td>{{ itemVal.tank_no }}</td>
-              <td>{{ itemVal.created_date || '--' }}</td>
-              <td>{{ itemVal.created_user__username }}</td>
-            </tr>
-            <tr v-if="activity.label === 'material_load'">
-              <td>{{ itemVal.bra_code }}</td>
-              <td>{{ itemVal.material_no }}</td>
-              <td>{{ itemVal.feed_log__equip_no }}</td>
-              <td>{{ itemVal.weight_time || '--' }}</td>
-              <td>{{ itemVal.feed_log__batch_group }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </el-timeline-item>
-    </el-timeline>
+        <el-table-column type="expand">
+          <template slot-scope="{row}">
+            <el-table :data="row.xl_detail" style="width: 100%" border>
+              <el-table-column label="物料" prop="material_name" />
+              <el-table-column label="商品名" prop="material_name" />
+              <el-table-column label="厂商" prop="supplier" />
+              <el-table-column label="批次号" prop="batch_no" />
+              <el-table-column label="生产日期" prop="product_time" />
+              <el-table-column label="ERP入库日期" prop="erp_in_time" />
+              <el-table-column label="重量kg" prop="standard_weight" />
+            </el-table>
+          </template>
+        </el-table-column>
+        <el-table-column type="index" width="40" label="No" />
+        <el-table-column v-if="activeName!=='0'" prop="before" label="前段名-行号" width="90" />
+        <el-table-column prop="scan_material_type" label="类别" width="60" />
+        <el-table-column prop="scan_material" label="投入物料编码" min-width="20" />
+        <el-table-column prop="product_no" label="胶料编码" min-width="20" />
+        <el-table-column prop="equip_no" label="机台" width="50" />
+        <el-table-column prop="product_time" label="生产日期" width="90" />
+        <el-table-column label="班次/班组" width="80" :formatter="d=>{return (d.classes?d.classes:'')+'/'+(d.group?d.group:'')}" />
+        <el-table-column prop="plan_classes_uid" label="计划编号" min-width="20" />
+        <el-table-column prop="trains" label="车次" width="60" />
+        <el-table-column prop="bra_code" label="追溯码" min-width="20" />
+        <el-table-column prop="pallet_no" label="托盘号" min-width="20" />
+        <el-table-column prop="standard_weight" label="重量kg" width="60" />
+        <el-table-column prop="begin_time" label="密炼/配料 开始时间" min-width="20" />
+        <el-table-column prop="end_time" label="密炼/配料 结束时间" min-width="20" />
+        <el-table-column prop="arrange_rubber_time" label="收皮时间" min-width="20" />
+      </el-table>
+    </el-tabs>
   </div>
 </template>
 
 <script>
-import { materialTrace } from '@/api/base_w_three'
-import { debounce } from '@/utils'
+import Page from '@/components/page'
+import { barcodeTrace } from '@/api/base_w_five'
+import { setDate } from '@/utils'
 export default {
   name: 'TrackRawMaterial',
+  components: { Page },
   data() {
     return {
-      value: '',
-      barCodeSearch: '', // KTP001
-      activities: [],
+      search: { bra_code: '' },
+      dateValue: [],
+      dateValue1: [],
       loading: false,
-      options: [{ label: 'material_sample', value: '取样', _show: true },
-        { label: 'material_in', value: '入库', _show: true },
-        { label: 'material_out', value: '出库', _show: true },
-        { label: 'material_weight', value: '称量投入', _show: true },
-        { label: 'material_load', value: '密炼投入', _show: true }],
-      headList: {
-        material_in: []
-      }
+      loadingInfo: false,
+      btnExportLoad: false,
+      total: 0,
+      tableData: [],
+      activeName: '0',
+      tableData1: [],
+      tabList: [],
+      formData: {},
+      showInfo: false,
+      tableDataInfo: {}
     }
   },
+  computed: {
+  },
   created() {
-    // this.getList()
   },
   methods: {
     async getList() {
+      const obj = JSON.parse(JSON.stringify(this.search))
+      if (obj.bra_code) {
+        if (obj.bra_code.length < 9) {
+          this.$message('追溯码最少输入9位')
+          return
+        }
+      }
+      obj.trace_flag = 0
       this.loading = true
       try {
-        const data = await materialTrace('get', null, { params: { lot_no: this.barCodeSearch }})
-        this.activities = data || []
+        const data = await barcodeTrace('get', null, { params: obj })
+        this.tableData = data.page_result || []
+        this.total = data.total_data
         this.loading = false
       } catch (e) {
         this.loading = false
-        this.activities = []
+        this.tableData = []
       }
     },
-    clickFun(val) {
-      try {
-        this.$nextTick(() => {
-          setTimeout(() => {
-            const targetbox = document.getElementById(val)
-            const target = targetbox.getBoundingClientRect().top
-            document.documentElement.scrollTop = target
-          })
-        })
-      } catch (e) {
-        console.log(e)
-      }
+    classChanged(val) {
+      this.search.classes = val
+    },
+    changeDate() {
+      this.search.st = this.dateValue ? this.dateValue[0] : ''
+      this.search.et = this.dateValue ? this.dateValue[1] : ''
+      this.search.se = this.dateValue1 ? this.dateValue1[0] : ''
+      this.search.ee = this.dateValue1 ? this.dateValue1[1] : ''
+    },
+    changeList() {
+      this.$refs.singleTable.setCurrentRow()
+      this.showInfo = false
+      this.search.page = 1
+      this.getList()
     },
     barCodeInput() {
-      debounce(this, 'getList')
+      // this.$debounce(this, 'changeDate')
+    },
+    equipSelected(obj) {
+      this.$set(this.search, 'equip_no', obj ? obj.equip_no : '')
+    },
+    handleClick(val) {
+      this.getTrace(val.label)
+    },
+    handleCurrentChange(val) {
+      this.showInfo = true
+      this.formData = JSON.parse(JSON.stringify(val))
+
+      this.getInfo()
+    },
+    async getInfo() {
+      try {
+        this.loadingInfo = true
+        this.tableDataInfo = {}
+        this.tableData1 = []
+        const data = await barcodeTrace('post', null, { data: {
+          trace_flag: 0, bra_code: this.formData.bra_code,
+          code_type: this.formData.code_type
+        }})
+        this.activeName = '0'
+        const key = Object.keys(data)
+        this.tabList = key || []
+        this.tableDataInfo = data || {}
+        this.getTrace(key[0])
+
+        this.loadingInfo = false
+      } catch (e) {
+        this.loadingInfo = false
+      }
+    },
+    getTrace(key) {
+      const arr = []
+      const data = this.tableDataInfo || {}
+      if (!data[key]) {
+        return
+      }
+      data[key].forEach(d => {
+        for (const product_no in d) {
+          if (Object.hasOwnProperty.call(d, product_no)) {
+            const element = d[product_no]
+            if (Array.isArray(element)) {
+              element[0].product_no = product_no
+              element.forEach(dd => {
+                dd.before = d.before
+                dd.begin_time = setDate(dd.begin_time, true)
+                dd.end_time = setDate(dd.end_time, true)
+                dd.arrange_rubber_time = setDate(dd.arrange_rubber_time, true)
+                dd.product_time = setDate(dd.product_time)
+              })
+              arr.push(...element)
+            }
+          }
+        }
+      })
+      this.tableData1 = arr || []
+    },
+    currentChange(page, pageSize) {
+      this.search.page = page
+      this.search.page_size = pageSize
+      this.$refs.singleTable.setCurrentRow()
+      this.showInfo = false
+      this.getList()
+    },
+    getRowClass(row, rowIndex) {
+      if (!row.row.xl_detail || row.row.xl_detail.length === 0) { // 判断当前行是否有子数据或者根据实际情况设置
+        return 'row-expand-cover'
+      }
+    },
+    templateDownload(type) {
+      this.btnExportLoad = true
+      let obj = Object.assign({ export: 1 }, {
+        trace_flag: 0, bra_code: this.formData.bra_code,
+        code_type: this.formData.code_type
+      })
+      if (type === 1) {
+        obj = Object.assign({ export: 1, trace_flag: 0 }, this.search)
+      }
+      const _api = type === 1 ? 'get' : 'post'
+      const _obj = type === 1 ? { params: obj } : { data: obj }
+      barcodeTrace(_api, null, { responseType: 'blob', ..._obj })
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = type === 1 ? '条码追溯(终炼胶->原材料).xlsx'
+            : this.formData.bra_code + '追溯详情.xlsx' // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
     }
   }
 }
+
 </script>
 
-<style lang="scss" scoped>
-.info-table{
-    margin-top:5px;
-    border-collapse: collapse;
-    td{
-        width: 150px;
-        text-align: center;
-        color: #72716d;
-        padding:4px 0;
-        word-break : break-all;
+<style lang="scss">
+.track-raw-rubber{
+    .row-expand-cover .cell .el-table__expand-icon {
+      display: none;
+    }
+    .el-table__body tr.current-row>td{
+      background-color: greenyellow;
     }
 }
 </style>
