@@ -742,6 +742,7 @@ export default {
   ProductSynthesisGroupRate: '/api/v1/quality/product-synthesis-group-rate/',
   ProductSynthesisProductRate: '/api/v1/quality/product-synthesis-product-rate/',
   ProductSynthesisMonthRate: '/api/v1/quality/product-synthesis-month-rate/',
+  RecipeChangeHistory: '/api/v1/recipe/recipe-change-history/',
 
   ProductInventoryLock: '/api/v1/inventory/product-inventory-lock/',
   ProductRatio: '/api/v1/recipe/product-ratio/',
