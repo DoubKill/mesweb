@@ -427,4 +427,12 @@ export function recipeChangeHistory(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function barcodeTrace(method, id, data = {}) {
+  const obj = {
+    url: id ? API.BarcodeTrace + id + '/' : API.BarcodeTrace,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 
