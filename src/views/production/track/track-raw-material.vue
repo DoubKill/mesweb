@@ -66,7 +66,7 @@
     <el-table ref="singleTable" :data="tableData" border highlight-current-row @current-change="handleCurrentChange">
       <el-table-column type="index" width="40" label="No" />
       <el-table-column prop="scan_material_record" label="商品名" min-width="20" />
-      <el-table-column prop="supplier" label="厂商" min-width="20" />
+      <el-table-column prop="supplier" label="厂商" min-width="30" />
       <el-table-column prop="batch_no" label="批次号" min-width="20" />
       <el-table-column prop="product_time" label="生产日期" min-width="20" />
       <el-table-column prop="erp_in_time" label="ERP入库日期" min-width="20" />
@@ -75,8 +75,8 @@
           <el-link type="primary" :underline="false">{{ scope.row.bra_code }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column prop="pallet_no" label="托盘号" min-width="20" />
-      <el-table-column prop="standard_weight" label="重量kg" min-width="20" />
+      <el-table-column prop="pallet_no" label="托盘号" min-width="10" />
+      <el-table-column prop="standard_weight" label="重量kg" min-width="10" />
     </el-table>
     <page
       :old-page="false"
