@@ -304,7 +304,7 @@ export const equipRoutes = [
             name: 'HistoryQuery',
             meta: {
               faName: 'SparePartsWarehouse',
-              title: '备件出入库履历查询',
+              title: '备件操作履历查询',
               permissionName: 'equip_warehouse_record'
             }
           },

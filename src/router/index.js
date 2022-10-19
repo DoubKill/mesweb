@@ -1660,12 +1660,44 @@ export let asyncRoutes = [
         }
       },
       {
+        path: '/spot-clear',
+        redirect: '/spot-clear-set',
+        component: () => import('@/views/spot_check/index'),
+        name: 'SpotClear',
+        meta: {
+          title: '日清扫检查',
+          icon: 'production'
+        },
+        children: [
+          {
+            path: '/spot-clear-set',
+            name: 'SpotClearSet',
+            component: () => import('@/views/spot_check/spot-clear-set'),
+            meta: {
+              faName: 'SpotClear',
+              title: '日清扫检查标准',
+              permissionName: 'daily_clean_standard'
+            }
+          },
+          {
+            path: '/spot-clear-confirm',
+            name: 'SpotClearConfirm',
+            component: () => import('@/views/spot_check/spot-clear-confirm'),
+            meta: {
+              faName: 'SpotClear',
+              title: '日清扫检查确认',
+              permissionName: 'daily_clean_table'
+            }
+          }
+        ]
+      },
+      {
         path: '/spot-check',
         redirect: '/spot-check-set',
         component: () => import('@/views/spot_check/a-index'),
         name: 'SpotCheck',
         meta: {
-          title: '安全点检及除尘袋滤器测温',
+          title: '点检及除尘袋测温',
           icon: 'production'
         },
         children: [
@@ -1707,6 +1739,48 @@ export let asyncRoutes = [
               faName: 'SpotCheck',
               title: '除尘袋滤器记录表确认',
               permissionName: 'check_temperature_table'
+            }
+          }
+        ]
+      },
+      {
+        path: '/shift-output',
+        redirect: '/shift-output-index/',
+        component: () => import('@/views/production/shift-output/a-index.vue'),
+        name: 'ShiftOutput',
+        meta: {
+          title: '各班产量统计',
+          icon: 'production'
+        },
+        children: [
+          {
+            path: '/shift-output-index/',
+            component: () => import('@/views/production/shift-output/index'),
+            name: 'ShiftOutputIndex',
+            meta: {
+              faName: 'ShiftOutput',
+              title: '各班产量统计',
+              permissionName: 'shift_production_summary'
+            }
+          },
+          {
+            path: '/scheduled-down-time/',
+            component: () => import('@/views/production/shift-output/scheduled-down-time'),
+            name: 'ScheduledDownTime',
+            meta: {
+              faName: 'ShiftOutput',
+              title: '计划停机时间',
+              permissionName: 'equip_down_detail'
+            }
+          },
+          {
+            path: '/output-details-summary/',
+            component: () => import('@/views/production/shift-output/output-details-summary'),
+            name: 'OutputDetailsSummary',
+            meta: {
+              faName: 'ShiftOutput',
+              title: '班组产量明细汇总',
+              permissionName: 'group_production_summary'
             }
           }
         ]

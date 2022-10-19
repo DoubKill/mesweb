@@ -1,12 +1,10 @@
 <template>
-  <div id="app">
+  <div>
     <router-view />
-    <el-backtop target="#app" />
   </div>
 </template>
-
 <script>
 export default {
-  name: 'App'
+  name: 'SpotClear'
 }
 </script>

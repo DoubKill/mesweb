@@ -1075,6 +1075,14 @@ export function trainsFeedbacksApiviewDown(params) {
     responseType: 'blob'
   })
 }
+export function timeEnergyConsuming(params) {
+  return request({
+    url: API.TimeEnergyConsuming,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
 
 export function schedulingProcedures(method, id, data = {}) {
   const obj = {
@@ -1509,6 +1517,42 @@ export function checkPointTableExport(method, id, data = {}) {
 export function checkTemperatureStandard(method, id, data = {}) {
   const obj = {
     url: id ? API.CheckTemperatureStandard + id + '/' : API.CheckTemperatureStandard,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function dailyCleanTable(method, id, data = {}) {
+  const obj = {
+    url: id ? API.DailyCleanTable + id + '/' : API.DailyCleanTable,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function dailyCleanTableExport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.DailyCleanTableExport + id + '/' : API.DailyCleanTableExport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function dailyCleanStandard(method, id, data = {}) {
+  const obj = {
+    url: id ? API.DailyCleanStandard + id + '/' : API.DailyCleanStandard,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function dailyCleanStandardExport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.DailyCleanStandardExport + id + '/' : API.DailyCleanStandardExport,
     method: method
   }
   Object.assign(obj, data)

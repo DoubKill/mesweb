@@ -439,7 +439,8 @@
         <el-form-item label="数量" prop="quantity">
           <el-input-number
             v-model="EditForm.quantity"
-            :min="1"
+            :precision="1"
+            :min="0.1"
             style="width:250px"
           />
         </el-form-item>
@@ -512,7 +513,8 @@
         <el-form-item label="数量" prop="quantity">
           <el-input-number
             v-model="MoveForm.quantity"
-            :min="1"
+            :precision="1"
+            :min="0.1"
             :max="quantity"
             style="width:250px"
           />
