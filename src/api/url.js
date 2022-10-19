@@ -350,6 +350,8 @@ export default {
   EquipmentProperty: '/api/v1/equipment/property/',
   // 维修表单
   EquipMaintenanceOrder: '/api/v1/equipment/equip-maintenance-order/',
+  EquipFaultStatistic: '/api/v1/equipment/equip-fault-statistic/',
+  EquipFaultAnalyse: '/api/v1/equipment/equip-fault-analyse/',
   // 通知配置
   PlatformConfig: '/api/v1/equipment/platform-config/',
   EquipMaintenanceOrderLog: '/api/v1/equipment/equip-maintenance-order-log/',
