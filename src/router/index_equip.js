@@ -589,7 +589,7 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentReportForm',
               title: '设备故障统计列表',
-              permissionName: ''
+              permissionName: 'equip_fault_statistic'
             }
           },
           {
@@ -599,7 +599,7 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentReportForm',
               title: '设备故障分析报表',
-              permissionName: ''
+              permissionName: 'equip_fault_analyse'
             }
           },
           /** {
