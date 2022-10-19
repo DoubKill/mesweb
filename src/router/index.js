@@ -1742,6 +1742,48 @@ export let asyncRoutes = [
             }
           }
         ]
+      },
+      {
+        path: '/shift-output',
+        redirect: '/shift-output-index/',
+        component: () => import('@/views/production/shift-output/a-index.vue'),
+        name: 'ShiftOutput',
+        meta: {
+          title: '各班产量统计',
+          icon: 'production'
+        },
+        children: [
+          {
+            path: '/shift-output-index/',
+            component: () => import('@/views/production/shift-output/index'),
+            name: 'ShiftOutputIndex',
+            meta: {
+              faName: 'ShiftOutput',
+              title: '各班产量统计',
+              permissionName: 'shift_production_summary'
+            }
+          },
+          {
+            path: '/scheduled-down-time/',
+            component: () => import('@/views/production/shift-output/scheduled-down-time'),
+            name: 'ScheduledDownTime',
+            meta: {
+              faName: 'ShiftOutput',
+              title: '计划停机时间',
+              permissionName: 'equip_down_detail'
+            }
+          },
+          {
+            path: '/output-details-summary/',
+            component: () => import('@/views/production/shift-output/output-details-summary'),
+            name: 'OutputDetailsSummary',
+            meta: {
+              faName: 'ShiftOutput',
+              title: '班组产量明细汇总',
+              permissionName: 'group_production_summary'
+            }
+          }
+        ]
       }
       // {
       //   path: 'collect/rub/daily',

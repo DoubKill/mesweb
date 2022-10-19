@@ -259,6 +259,7 @@ export default {
   IntervalOutputStatistics: '/api/v1/production/interval-output-statistics/',
   // 报表-车次列表
   TrainsFeedbacksApiview: '/api/v1/production/trains-feedbacks-apiview/',
+  TimeEnergyConsuming: 'api/v1/production/time-energy-consuming/',
   TrainsFeedbacksApiviewDown: '/api/v1/production/trains-feedbacks-apiview/',
   // 报表-车次记录-称量信息{id}
   WeighInformationUrl: '/api/v1/production/weigh-information-list/',
@@ -354,6 +355,7 @@ export default {
   PlatformConfig: '/api/v1/equipment/platform-config/',
   EquipMaintenanceOrderLog: '/api/v1/equipment/equip-maintenance-order-log/',
   UserOperationLog: '/api/v1/system/user-operation-log/',
+  GroupProductionSummary: '/api/v1/production/group-production-summary/',
   // 原材料临时快检结果录入
   BarcodeQuality: '/api/v1/inventory/barcode-quality/',
   // 原材料临时快检结果录入导出
@@ -765,5 +767,8 @@ export default {
   ScorchTime: '/api/v1/quality/scorch-time/',
   WeightClassPlan: '/api/v1/production/weight-class-plan/',
   XlPlanConsume: '/api/v1/plan/xl-plan-consume/',
-  WeightClassPlanImport: '/api/v1/production/weight-class-plan/import-xlsx/'
+  WeightClassPlanImport: '/api/v1/production/weight-class-plan/import-xlsx/',
+
+  ShiftProductionSummary: '/api/v1/production/shift-production-summary/',
+  EquipDownDetail: '/api/v1/production/equip-down-detail/'
 }
