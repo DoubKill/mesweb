@@ -33,33 +33,33 @@
         align="center"
         :fixed="!btnExportLoad"
       >
-        <el-table-column label="班组" align="center" prop="equip_no"></el-table-column>
+        <el-table-column label="班组" align="center" prop="equip_no" />
       </el-table-column>
-      <el-table-column  v-for="item in groups" :key="item.id" :label="item.global_name" align="center">
-        <el-table-column  label="总产量/车" align="center">
+      <el-table-column v-for="item in groups" :key="item.id" :label="item.global_name" align="center">
+        <el-table-column label="总产量/车" align="center">
           <template slot-scope="{row}">
-            {{row['trains_'+item.global_name]?row['trains_'+item.global_name]:''}}
+            {{ row['trains_'+item.global_name]?row['trains_'+item.global_name]:'' }}
           </template>
         </el-table-column>
       </el-table-column>
-      <el-table-column  v-for="item in groups" :key="item.id+'d'" :label="item.global_name" align="center">
-        <el-table-column  label="工作时长/天" align="center">
+      <el-table-column v-for="item in groups" :key="item.id+'d'" :label="item.global_name" align="center">
+        <el-table-column label="工作时长/天" align="center">
           <template slot-scope="{row}">
-            {{row['days_'+item.global_name]?row['days_'+item.global_name]:''}}
+            {{ row['days_'+item.global_name]?row['days_'+item.global_name]:'' }}
           </template>
         </el-table-column>
       </el-table-column>
-      <el-table-column  v-for="item in groups" :key="item.id+'a'" :label="item.global_name" align="center">
-        <el-table-column  label="停机时间/min" align="center">
+      <el-table-column v-for="item in groups" :key="item.id+'a'" :label="item.global_name" align="center">
+        <el-table-column label="停机时间/min" align="center">
           <template slot-scope="{row}">
-            {{row['down_'+item.global_name]?row['down_'+item.global_name]:''}}
+            {{ row['down_'+item.global_name]?row['down_'+item.global_name]:'' }}
           </template>
         </el-table-column>
       </el-table-column>
-       <el-table-column  v-for="item in groups" :key="item.id+'b'" :label="item.global_name" align="center">
-        <el-table-column  label="平均产量" align="center">
+      <el-table-column v-for="item in groups" :key="item.id+'b'" :label="item.global_name" align="center">
+        <el-table-column label="平均产量" align="center">
           <template slot-scope="{row}">
-            {{row['ave_'+item.global_name]?row['ave_'+item.global_name]:''}}
+            {{ row['ave_'+item.global_name]?row['ave_'+item.global_name]:'' }}
           </template>
         </el-table-column>
       </el-table-column>
@@ -68,10 +68,10 @@
         label="目标值"
         prop="target_trains"
       />
-      <el-table-column  v-for="item in groups" :key="item.id+'c'" :label="item.global_name" align="center">
-        <el-table-column  label="完成率" align="center">
+      <el-table-column v-for="item in groups" :key="item.id+'c'" :label="item.global_name" align="center">
+        <el-table-column label="完成率" align="center">
           <template slot-scope="{row}">
-            {{row['completion_'+item.global_name]?row['completion_'+item.global_name]+'%':''}}
+            {{ row['completion_'+item.global_name]?row['completion_'+item.global_name]+'%':'' }}
           </template>
         </el-table-column>
       </el-table-column>
@@ -90,7 +90,7 @@ export default {
       search: {
         target_month: setDate(null, null, 'month')
       },
-      groups:[],
+      groups: [],
       tableData: [],
       btnExportLoad: false,
       loading: false
@@ -108,14 +108,14 @@ export default {
         // 平均产量=总产量/（工作时长-停机时间/60/24）
         // 完成率=平均产量/目标值
         this.tableData = data || []
-        this.tableData.forEach(d=>{
-          this.groups.forEach(dd=>{
-            d['ave_' + dd.global_name] = d['trains_' + dd.global_name]/
-            (d['days_' + dd.global_name]-(d['down_' + dd.global_name]?d['down_' + dd.global_name]/60/24:0))
-            d['ave_' + dd.global_name] = d['trains_' + dd.global_name]?Math.round(d['ave_' + dd.global_name] * 100) / 100 : ''
+        this.tableData.forEach(d => {
+          this.groups.forEach(dd => {
+            d['ave_' + dd.global_name] = d['trains_' + dd.global_name] /
+            (d['days_' + dd.global_name] - (d['down_' + dd.global_name] ? d['down_' + dd.global_name] / 60 / 24 : 0))
+            d['ave_' + dd.global_name] = d['trains_' + dd.global_name] ? Math.round(d['ave_' + dd.global_name] * 100) / 100 : ''
 
-            d['completion_' + dd.global_name] = d['ave_' + dd.global_name]/d.target_trains
-            d['completion_' + dd.global_name] = d['ave_' + dd.global_name]?Math.round((d['completion_' + dd.global_name]*100) * 100) / 100 : ''
+            d['completion_' + dd.global_name] = d['ave_' + dd.global_name] / d.target_trains
+            d['completion_' + dd.global_name] = d['ave_' + dd.global_name] ? Math.round((d['completion_' + dd.global_name] * 100) * 100) / 100 : ''
           })
         })
         this.loading = false

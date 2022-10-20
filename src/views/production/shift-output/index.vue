@@ -139,7 +139,7 @@ export default {
         this.loading = false
       }
     },
-    changeGroup(){
+    changeGroup() {
       this.getList()
     },
     changeList() {
@@ -185,8 +185,8 @@ export default {
       const arr = []
       this.tableData.forEach(d => {
         // 计算日均产量（日均产量=total_trains/days）和完成率（日均产量/目标值）
-        d.dailyOutput = d.total_trains&&d.days ? Math.round((d.total_trains / d.days) * 100) / 100 : ''
-        d.completionRate = d.dailyOutput && d.target_trains ? Math.round((d.dailyOutput / d.target_trains/2 * 100) * 100) / 100 + '%' : ''
+        d.dailyOutput = d.total_trains && d.days ? Math.round((d.total_trains / d.days) * 100) / 100 : ''
+        d.completionRate = d.dailyOutput && d.target_trains ? Math.round((d.dailyOutput / d.target_trains / 2 * 100) * 100) / 100 + '%' : ''
         // end
         // 获取每一排的不重复日期 总计使用
         let arrDay = []
@@ -225,11 +225,11 @@ export default {
         })
         arrDay1 = [...new Set(arrDay1)]
         // end
-        obj1.total_trains = obj1.total_trains?Math.round(obj1.total_trains * 100) / 100:''
+        obj1.total_trains = obj1.total_trains ? Math.round(obj1.total_trains * 100) / 100 : ''
         // 计算日均产量（日均产量=total_trains/days）
         // 完成率（日均产量/目标值）   班组列表使用
-        obj1.dailyOutput = obj1.total_trains&&obj1.days ? Math.round((obj1.total_trains / obj1.days) * 100) / 100 : ''
-        obj1.completionRate = obj1.dailyOutput&&obj1.target_trains ? Math.round((obj1.dailyOutput / obj1.target_trains * 100) * 100) / 100 + '%' : ''
+        obj1.dailyOutput = obj1.total_trains && obj1.days ? Math.round((obj1.total_trains / obj1.days) * 100) / 100 : ''
+        obj1.completionRate = obj1.dailyOutput && obj1.target_trains ? Math.round((obj1.dailyOutput / obj1.target_trains * 100) * 100) / 100 + '%' : ''
         // end
         arr.push(obj1)
       })
