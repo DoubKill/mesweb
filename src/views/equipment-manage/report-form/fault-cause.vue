@@ -18,7 +18,7 @@
         />
       </el-form-item>
       <el-form-item label="部位">
-        <el-select v-model="search.part_id"  placeholder="请选择" clearable>
+        <el-select v-model="search.part_id" placeholder="请选择" clearable>
           <el-option
             v-for="item in options"
             :key="item.id"
@@ -132,8 +132,8 @@
       title="分析图表"
       :visible.sync="dialogVisible"
     >
-      <div id="bar" style="width: 100%;height:300px;"/>
-      <div id="pie" style="width: 100%;height:300px;"/>
+      <div id="bar" style="width: 100%;height:300px;" />
+      <div id="pie" style="width: 100%;height:300px;" />
     </el-dialog>
   </div>
 </template>
@@ -180,7 +180,7 @@ export default {
           name: '',
           type: 'pie',
           radius: '60%',
-          data: [],
+          data: []
         }]
       },
       optionBar: {
@@ -205,7 +205,7 @@ export default {
             data: [],
             type: 'bar',
             itemStyle: { normal: {
-            label: { show: true, position: 'top', color: '#000' }}}
+              label: { show: true, position: 'top', color: '#000' }}}
           }
         ]
       }
@@ -223,11 +223,11 @@ export default {
         this.pieData = []
         this.loading = true
         const data = await equipFaultAnalyse('get', null, { params: this.search })
-        let arr = []
+        const arr = []
         for (const key in data.results) {
           if (Object.hasOwnProperty.call(data.results, key)) {
-            const element = data.results[key];
-            if(key.indexOf('_')===-1){
+            const element = data.results[key]
+            if (key.indexOf('_') === -1) {
               element.equip_no = key
               arr.push(element)
               this.xDataBar.push(key)
@@ -241,8 +241,8 @@ export default {
 
         for (const key1 in data.results.part_time) {
           if (Object.hasOwnProperty.call(data.results.part_time, key1)) {
-            const element1 = data.results.part_time[key1];
-            this.pieData.push({value: element1, name: key1})
+            const element1 = data.results.part_time[key1]
+            this.pieData.push({ value: element1, name: key1 })
           }
         }
       } catch (e) {
@@ -277,10 +277,10 @@ export default {
     exportTable() {
       exportExcel('期间别处理时间报表')
     },
-    showDialog(){
+    showDialog() {
       this.dialogVisible = true
 
-      setTimeout(d=>{
+      setTimeout(d => {
         const chartPie = echarts.init(document.getElementById('pie'))
         this.optionPie.series[0].data = this.pieData
         chartPie.setOption(this.optionPie)
@@ -291,23 +291,6 @@ export default {
       })
     }
   }
-}
-function sum(arr, params) {
-  var s = 0
-  arr.forEach(function(val, idx, arr) {
-    const a = val[params] ? Number(val[params]) : 0
-    s += a
-  }, 0)
-  s = Math.round(s * 100) / 100
-  return s
-}
-function handleDecimalPoint(value) {
-  value = +value
-  if (!value) return 0
-  if (!Number.isInteger(value)) {
-    value = +value.toFixed(2)
-  }
-  return value
 }
 </script>
 
