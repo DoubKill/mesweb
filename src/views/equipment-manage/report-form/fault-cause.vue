@@ -72,7 +72,7 @@
       </el-form-item>
       <el-form-item>
         <el-button
-          v-permission="['equip_period_statement','export']"
+          v-permission="['equip_fault_analyse','export']"
           type="primary"
           @click="exportTable"
         >导出Excel</el-button>

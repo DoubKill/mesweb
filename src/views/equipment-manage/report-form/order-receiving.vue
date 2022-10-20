@@ -17,7 +17,7 @@
           <!-- @change="getList" -->
       </el-form-item>
       <el-form-item>
-        <el-button :loading="btnExportLoad" type="primary" @click="exportTable">导出Excel</el-button>
+        <el-button :loading="btnExportLoad" type="primary" v-permission="['equip_fault_statistic','export']" @click="exportTable">导出Excel</el-button>
         <el-button type="primary" @click="getList">查询</el-button>
       </el-form-item>
     </el-form>
