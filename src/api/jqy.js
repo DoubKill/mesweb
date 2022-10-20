@@ -1657,3 +1657,12 @@ export function xlPlanConsume(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function rubberLog(method, id, data = {}) {
+  const obj = {
+    url: id ? API.RubberLog + id + '/' : API.RubberLog,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
