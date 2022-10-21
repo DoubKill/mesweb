@@ -99,7 +99,9 @@ export default {
         this.tableData = []
         const data = await rubberLog('get', null, { params: this.search })
         this.tableheader = data.title
-        this.tableheader.unshift('总计')
+        if (this.tableheader.length > 0) {
+          this.tableheader.unshift('总计')
+        }
         this.tableData = data.results || []
         this.loading = false
       } catch (e) {

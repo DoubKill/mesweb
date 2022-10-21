@@ -44,13 +44,13 @@
       />
       <el-table-column
         v-for="(item,index) in tableheader"
-        :key="item"
+        :key="item+Date.now()"
         align="center"
         :label="item"
       >
-        <template v-if="index===tableheader.length-1&&tableheaderAdd.length===0" slot="header">
+        <template slot="header">
           <span> {{ item }}</span>
-          <i class="el-icon-circle-plus-outline" size="30" @click="addTableheader" />
+          <i v-if="index===tableheader.length-1&&tableheaderAdd.length===0" class="el-icon-circle-plus-outline" size="30" @click="addTableheader()" />
         </template>
         <el-table-column align="center" label="进">
           <el-table-column align="center" label="大" min-width="120">
@@ -85,12 +85,12 @@
       </el-table-column>
       <el-table-column
         v-for="(item,index) in tableheaderAdd"
-        :key="index+Date.now()"
+        :key="index"
         align="center"
       >
         <template slot="header">
-          <el-input v-model="tableheaderAdd[index]" style="width:120px" />
-          <i v-if="index===tableheaderAdd.length-1" class="el-icon-circle-plus-outline" size="30" @click="addTableheader" />
+          <el-input v-model="tableheaderAdd[index]" style="width:120px" @input="changeDom(index)" />
+          <i v-if="index===tableheaderAdd.length-1" class="el-icon-circle-plus-outline" size="30" @click="addTableheader()" />
         </template>
         <el-table-column align="center" label="进">
           <el-table-column align="center" label="大" min-width="120">
@@ -135,6 +135,7 @@ export default {
   data() {
     return {
       search: { target_month: setDate(false, false, 'month') },
+      data: '',
       loading: false,
       tableheader: [],
       tableheaderAdd: [],
@@ -148,8 +149,8 @@ export default {
     this.getList()
   },
   methods: {
-    change() {
-      this.$forceUpdate()
+    changeDom() {
+      this.$nextTick(() => this.$forceUpdate())
     },
     async getList() {
       try {
@@ -157,7 +158,9 @@ export default {
         this.tableData = []
         const data = await rubberLog('get', null, { params: this.search })
         this.tableheader = data.title
-        this.tableheader.unshift('总计')
+        if (this.tableheader.length > 0) {
+          this.tableheader.unshift('总计')
+        }
         this.tableData = data.results || []
         this.loading = false
       } catch (e) {
@@ -165,11 +168,12 @@ export default {
       }
     },
     async submitFun() {
+      const isLike = Array.from(new Set(this.tableheaderAdd)).length < this.tableheaderAdd.length
       const newA = new Set(this.tableheader)
       const newB = new Set(this.tableheaderAdd)
       const intersectionSet = new Set([...newA].filter(x => newB.has(x)))
       const arr = Array.from(intersectionSet)
-      if (arr.length === 0) {
+      if (arr.length === 0 && !isLike) {
         try {
           const obj = {
             'target_month': this.search.target_month,
@@ -180,6 +184,7 @@ export default {
           this.$message.success('保存成功')
           this.btnLoading = false
           this.getList()
+          this.tableheaderAdd = []
         } catch (e) {
           this.btnLoading = false
         }
@@ -190,6 +195,7 @@ export default {
     },
     addTableheader() {
       this.tableheaderAdd.push('')
+      this.$nextTick(() => this.$forceUpdate())
     },
     arraySpanMethod({ row, column, rowIndex, columnIndex }) {
       const length1 = this.tableheader.concat(this.tableheaderAdd).length
