@@ -306,7 +306,7 @@ export default {
     },
     sectionChange(val) {
       if (val) {
-        performanceJobLadder('get', null, { params: { all: 1, type: '称量', weight: 1 }}).then((response) => {
+        performanceJobLadder('get', null, { params: { all: 1, type: '生产配料', weight: 1 }}).then((response) => {
           this.options = response.results
         })
       }
