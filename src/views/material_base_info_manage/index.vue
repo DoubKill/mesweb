@@ -90,7 +90,7 @@
         width="70px"
       />
       <el-table-column
-        width="50"
+        width="70"
         align="center"
         :formatter="formatter"
         prop="used_flag"
@@ -99,7 +99,7 @@
       <el-table-column
         prop="created_user_name"
         label="创建人员"
-        width="100px"
+        width="80px"
       />
       <el-table-column
         prop="created_date"
