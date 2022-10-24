@@ -70,8 +70,8 @@
       :visible.sync="dialogVisibleWork"
       width="90%"
     >
-      <el-form>
-        <el-form-item label="任务状态" prop="OastNo">
+      <el-form :inline="true">
+        <el-form-item label="任务状态">
           <el-select
             v-model="search.TaskState"
             clearable
@@ -85,6 +85,42 @@
               :value="item.id"
             />
           </el-select>
+        </el-form-item>
+        <el-form-item label="物料名称">
+          <el-input
+            v-model="search.ProductName"
+            style="width:200px"
+            clearable
+            placeholder=""
+            @change="debounceList"
+          />
+        </el-form-item>
+        <el-form-item label="RFID号">
+          <el-input
+            v-model="search.RFID"
+            style="width:200px"
+            clearable
+            placeholder=""
+            @change="debounceList"
+          />
+        </el-form-item>
+        <el-form-item label="烘箱编号">
+          <el-input
+            v-model="search.RFID"
+            style="width:200px"
+            clearable
+            placeholder=""
+            @change="debounceList"
+          />
+        </el-form-item>
+        <el-form-item label="巷道">
+          <el-input
+            v-model="search.RoadWay"
+            style="width:200px"
+            clearable
+            placeholder=""
+            @change="debounceList"
+          />
         </el-form-item>
       </el-form>
       <el-table
@@ -387,6 +423,9 @@ export default {
         this.boxLoading = false
         //
       }
+    },
+    debounceList() {
+      this.$debounce(this, 'getWorkList')
     },
     async getWorkList() {
       this.dialogVisibleWork = true
