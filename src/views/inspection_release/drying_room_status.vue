@@ -70,6 +70,23 @@
       :visible.sync="dialogVisibleWork"
       width="90%"
     >
+      <el-form>
+        <el-form-item label="任务状态" prop="OastNo">
+          <el-select
+            v-model="search.TaskState"
+            clearable
+            placeholder="请选择"
+            @change="getWorkList"
+          >
+            <el-option
+              v-for="(item, index) in optionsStatus"
+              :key="index"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+      </el-form>
       <el-table
         v-loading="loading"
         :data="tableData"
@@ -296,6 +313,14 @@ export default {
         { id: 4, name: '等待烘烤' },
         { id: 5, name: '等待出库' },
         { id: 6, name: '已出库' },
+        { id: 7, name: '取消' }
+      ],
+      optionsStatus: [
+        { id: 1, name: '入库中' },
+        { id: 2, name: '烘烤运行' },
+        { id: 3, name: '出库中' },
+        { id: 4, name: '等待烘烤' },
+        { id: 5, name: '等待出库' },
         { id: 7, name: '取消' }
       ],
       loading: false,

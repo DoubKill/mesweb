@@ -103,6 +103,17 @@ export default {
           this.tableheader.unshift('总计')
         }
         this.tableData = data.results || []
+        this.tableData.forEach(d => {
+          if (d.day === 32) {
+            d.day = '合计'
+          }
+          if (d.day === 33) {
+            d.day = '结余(大)'
+          }
+          if (d.day === 34) {
+            d.day = '结余(小)'
+          }
+        })
         this.loading = false
       } catch (e) {
         this.loading = false

@@ -31,6 +31,7 @@
     </el-form>
     <el-table
       id="out-table"
+      max-height="650"
       :data="tableData"
       :span-method="arraySpanMethod"
       border
@@ -38,13 +39,21 @@
       <el-table-column
         prop="day"
         align="center"
-        min-width="120"
+        width="120"
         label="胶架进出"
         :fixed="!isExport"
-      />
+      >
+        <!-- <template slot="header">
+          <span>胶架进出</span>
+          <i v-if="tableheader.length===0&&tableheaderAdd.length===0" class="el-icon-circle-plus-outline" size="30" @click="addTableheader()" />
+        </template> -->
+        <!-- <template slot-scope="{row}">
+          <span>{{ row.day }}</span>
+        </template> -->
+      </el-table-column>
       <el-table-column
         v-for="(item,index) in tableheader"
-        :key="item+Date.now()"
+        :key="index+Date.now()"
         align="center"
         :label="item"
       >
@@ -89,20 +98,20 @@
         align="center"
       >
         <template slot="header">
-          <el-input v-model="tableheaderAdd[index]" style="width:120px" @input="changeDom(index)" />
+          <el-input v-model="tableheaderAdd[index]" style="width:120px" @input="changeDom()" />
           <i v-if="index===tableheaderAdd.length-1" class="el-icon-circle-plus-outline" size="30" @click="addTableheader()" />
         </template>
         <el-table-column align="center" label="进">
           <el-table-column align="center" label="大" min-width="120">
             <template slot-scope="{row}">
               <span v-if="row.day=='结余(大)'||row.day=='结余(小)'">{{ row[item] }}</span>
-              <el-input-number v-if="row.day!=='结余(大)'&&row.day!=='结余(小)'&&item!=='总计'&&!isExport&&row.day!=='合计'" v-model="row[item+'-进-大']" style="width:100px" controls-position="right" :min="0" />
+              <el-input-number v-if="row.day!=='结余(大)'&&row.day!=='结余(小)'&&item!=='总计'&&!isExport&&row.day!=='合计'" v-model="row[item+'-进-大']" :disabled="item===''" style="width:100px" controls-position="right" :min="0" />
               <span v-if="row.day!=='结余(大)'&&row.day!=='结余(小)'&&(item=='总计'||isExport||row.day==='合计')">{{ row[item+'-进-大'] }}</span>
             </template>
           </el-table-column>
           <el-table-column align="center" label="小" min-width="120">
             <template slot-scope="{row}">
-              <el-input-number v-if="item!=='总计'&&!isExport&&row.day!=='合计'" v-model="row[item+'-进-小']" style="width:100px" controls-position="right" :min="0" />
+              <el-input-number v-if="item!=='总计'&&!isExport&&row.day!=='合计'" v-model="row[item+'-进-小']" :disabled="item===''" style="width:100px" controls-position="right" :min="0" />
               <span v-if="item=='总计'||isExport||row.day==='合计'">{{ row[item+'-进-小'] }}</span>
             </template>
           </el-table-column>
@@ -111,13 +120,13 @@
           <el-table-column align="center" label="大" min-width="120">
             <template slot-scope="{row}">
               <span v-if="row.day=='结余(大)'||row.day=='结余(小)'">{{ row[item] }}</span>
-              <el-input-number v-if="row.day!=='结余(大)'&&row.day!=='结余(小)'&&item!=='总计'&&!isExport&&row.day!=='合计'" v-model="row[item+'-出-大']" style="width:100px" controls-position="right" :min="0" />
+              <el-input-number v-if="row.day!=='结余(大)'&&row.day!=='结余(小)'&&item!=='总计'&&!isExport&&row.day!=='合计'" v-model="row[item+'-出-大']" :disabled="item===''" style="width:100px" controls-position="right" :min="0" />
               <span v-if="row.day!=='结余(大)'&&row.day!=='结余(小)'&&(item=='总计'||isExport||row.day==='合计')">{{ row[item+'-出-大'] }}</span>
             </template>
           </el-table-column>
           <el-table-column align="center" label="小" min-width="120">
             <template slot-scope="{row}">
-              <el-input-number v-if="item!=='总计'&&!isExport&&row.day!=='合计'" v-model="row[item+'-出-小']" style="width:100px" controls-position="right" :min="0" />
+              <el-input-number v-if="item!=='总计'&&!isExport&&row.day!=='合计'" v-model="row[item+'-出-小']" :disabled="item===''" style="width:100px" controls-position="right" :min="0" />
               <span v-if="item=='总计'||isExport||row.day==='合计'">{{ row[item+'-出-小'] }}</span>
             </template>
           </el-table-column>
@@ -154,14 +163,24 @@ export default {
     },
     async getList() {
       try {
+        this.tableheaderAdd = []
         this.loading = true
         this.tableData = []
         const data = await rubberLog('get', null, { params: this.search })
         this.tableheader = data.title
-        if (this.tableheader.length > 0) {
-          this.tableheader.unshift('总计')
-        }
+        this.tableheader.unshift('总计')
         this.tableData = data.results || []
+        this.tableData.forEach(d => {
+          if (d.day === 32) {
+            d.day = '合计'
+          }
+          if (d.day === 33) {
+            d.day = '结余(大)'
+          }
+          if (d.day === 34) {
+            d.day = '结余(小)'
+          }
+        })
         this.loading = false
       } catch (e) {
         this.loading = false
@@ -184,7 +203,6 @@ export default {
           this.$message.success('保存成功')
           this.btnLoading = false
           this.getList()
-          this.tableheaderAdd = []
         } catch (e) {
           this.btnLoading = false
         }
