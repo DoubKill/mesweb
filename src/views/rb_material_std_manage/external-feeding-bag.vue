@@ -240,12 +240,12 @@
         min-width="10"
       />
       <el-table-column
-        min-width="10"
+        min-width="12"
         prop="created_date"
         label="创建时间"
       />
       <el-table-column
-        min-width="10"
+        min-width="12"
         prop="last_updated_date"
         label="修改时间"
       />

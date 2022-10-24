@@ -157,12 +157,12 @@
       <el-table-column
         prop="created_date"
         label="创建时间"
-        min-width="20"
+        min-width="22"
       />
       <el-table-column
         prop="update_user_name"
         label="更新人员"
-        min-width="20"
+        min-width="18"
       />
       <el-table-column
         label="操作"
