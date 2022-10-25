@@ -166,7 +166,7 @@ import { bzFinalInventory, wmsExpireDetails, thExpireDetails, productExpiresDeta
 // import warehouseSelect from '@/components/select_w/warehouseSelect'
 import page from '@/components/page'
 import { mapGetters } from 'vuex'
-import { debounce } from '@/utils/index'
+import { debounce, setDate } from '@/utils/index'
 import materialCodeSelect from '@/components/select_w/materialCodeSelect'
 // import detailsDialog from '@/views/quality_management/details.vue'
 export default {
@@ -376,7 +376,7 @@ export default {
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = this.warehouseNameProps + '-库存明细.xlsx' // 下载的文件名
+          link.download = this.warehouseNameProps + `-库存明细${setDate('', true)}.xlsx` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)
