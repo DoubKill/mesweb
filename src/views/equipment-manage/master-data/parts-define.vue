@@ -402,6 +402,7 @@
 import page from '@/components/page'
 import { equipComponent, equipsCategory, equipComponentType, equipPartNew, equipComponentImport, equipComponentDown, getDefaultCode } from '@/api/jqy'
 import PartsDefineMixin from '../components/parts-define-mixin'
+import { setDate } from '@/utils/index'
 export default {
   name: 'EquipmentMasterDataPartsDefine',
   components: { page },
@@ -607,7 +608,7 @@ export default {
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = '设备部件定义.xlsx' // 下载的文件名
+          link.download = `设备部件定义${setDate('', true)}.xlsx` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)

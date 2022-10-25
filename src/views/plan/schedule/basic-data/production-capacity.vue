@@ -145,6 +145,7 @@
 <script>
 import selectEquip from '@/components/select_w/equip'
 import page from '@/components/page'
+import { setDate } from '@/utils/index'
 import { batchingMaterials } from '@/api/base_w'
 import { schedulingEquipCapacity } from '@/api/base_w_five'
 export default {
@@ -279,7 +280,7 @@ export default {
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = '机台设备生产能力.xlsx' // 下载的文件名
+          link.download = `机台设备生产能力${setDate('', true)}.xlsx` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)

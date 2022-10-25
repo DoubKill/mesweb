@@ -367,7 +367,7 @@
 
 <script>
 import page from '@/components/page'
-import { exportExcel } from '@/utils/index'
+import { exportExcel, setDate } from '@/utils/index'
 import { inventoryAlarm, equipSpareErp } from '@/api/jqy'
 export default {
   name: 'InventoryQuery',
@@ -456,7 +456,7 @@ export default {
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = '备件库存预警.xlsx' // 下载的文件名
+          link.download = `备件库存预警${setDate('', true)}.xlsx` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)

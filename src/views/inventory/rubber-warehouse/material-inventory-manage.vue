@@ -232,6 +232,7 @@ import { bzFinalInventory, wmsStorage, thStorage,
 // import materielTypeSelect from '@/components/select_w/materielTypeSelect'
 // import warehouseSelect from '@/components/select_w/warehouseSelect'
 import page from '@/components/page'
+import { setDate } from '@/utils/index'
 import { wmsTunnels, thTunnels } from '@/api/base_w_four'
 import { mapGetters } from 'vuex'
 import { materialCount } from '@/api/base_w'
@@ -428,7 +429,7 @@ export default {
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = this.getParams.warehouse_name + '-库存明细.xlsx' // 下载的文件名
+          link.download = this.getParams.warehouse_name + `-库存明细${setDate('', true)}.xlsx` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)

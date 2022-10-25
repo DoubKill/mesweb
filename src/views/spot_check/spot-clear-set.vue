@@ -216,6 +216,7 @@
 
 <script>
 import page from '@/components/page'
+import { setDate } from '@/utils/index'
 import { getEquip } from '@/api/banburying-performance-manage'
 import { dailyCleanStandard, dailyCleanStandardExport } from '@/api/jqy'
 
@@ -388,7 +389,7 @@ export default {
           const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = '日清扫检查标准.xls' // 下载的文件名
+          link.download = `日清扫检查标准${setDate('', true)}.xls` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)

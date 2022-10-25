@@ -240,6 +240,7 @@
 import { outboundDeliveryOrders, outboundDeliveryOrdersExport } from '@/api/base_w'
 import { warehouseInfo } from '@/api/warehouse'
 import page from '@/components/page'
+import { setDate } from '@/utils/index'
 import commitVal from '@/utils/common'
 import { debounce } from '@/utils/index'
 import myMixin from '../components-zl-hl/mixin-zl-hl'
@@ -372,7 +373,7 @@ export default {
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = '出库单据信息.xlsx' // 下载的文件名
+          link.download = `出库单据信息${setDate('', true)}.xlsx` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)
