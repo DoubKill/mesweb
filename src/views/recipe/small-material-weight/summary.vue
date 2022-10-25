@@ -82,6 +82,7 @@
 
 <script>
 import { xlReportWeightStatics } from '@/api/base_w_five'
+import { setDate } from '@/utils/index'
 import Page from '@/components/page'
 import equipSelect from '@/components/select_w/equip'
 export default {
@@ -182,7 +183,7 @@ export default {
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = '称量物料消耗汇总表.xlsx' // 下载的文件名
+          link.download = `称量物料消耗汇总表${setDate('', true)}.xlsx` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)

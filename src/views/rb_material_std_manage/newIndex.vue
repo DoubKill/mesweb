@@ -466,6 +466,7 @@ import StageIdSelect from '@/components/StageSelect/StageIdSelect'
 import SITESelect from './components/SITESelect'
 import createdRubberMaterial from './components/createdRubberMaterial'
 import page from '@/components/page'
+import { setDate } from '@/utils/index'
 import EquipCategorySelect from '@/components/EquipCategorySelect'
 import { globalCodesUrl, materialsUrl } from '@/api/base_w'
 
@@ -660,7 +661,7 @@ export default {
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = `原材料"${this.search.wms_material_name}"使用配方列表.xlsx` // 下载的文件名
+          link.download = `原材料"${this.search.wms_material_name}"使用配方列表${setDate('', true)}.xlsx` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)
