@@ -260,6 +260,7 @@
 
 <script>
 import page from '@/components/page'
+import { setDate } from '@/utils/index'
 // import { getMaterialInventoryManage } from '@/api/material-inventory-manage'
 import { stage_global_url, inLibraryInventory } from '@/api/display_static_fun'
 import materialCodeSelect from '@/components/select_w/materialCodeSelect'
@@ -412,7 +413,7 @@ export default {
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = '车间库存统计.xlsx' // 下载的文件名
+          link.download = `车间库存统计${setDate('', true)}.xlsx` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)

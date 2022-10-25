@@ -230,6 +230,7 @@ import page from '@/components/page'
 // import receiveList from '../material-outgoing/receive-list.vue'
 // import EquipSelect from '@/components/EquipSelect'
 // import materialCodeSelect from '@/components/select_w/materialCodeSelect'
+import { setDate } from '@/utils/index'
 import { debounce } from '@/utils'
 import detailsDialog from '@/views/quality_management/details.vue'
 import { stationInfo, productStockOutbound } from '@/api/warehouse'
@@ -491,7 +492,7 @@ export default {
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = '车间库存统计.xlsx' // 下载的文件名
+          link.download = `车间库存统计${setDate('', true)}.xlsx` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)

@@ -486,7 +486,7 @@
 </template>
 
 <script>
-import { debounce } from '@/utils'
+import { debounce, setDate } from '@/utils'
 import maintain from '../components/definition-dialog2'
 import { equipInspectionOrder, equipInspectionOrderDown, equipMaintenanceStandard } from '@/api/jqy'
 import page from '@/components/page'
@@ -612,7 +612,7 @@ export default {
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = '设备巡检工单.xlsx' // 下载的文件名
+          link.download = `设备巡检工单${setDate('', true)}.xlsx` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)
