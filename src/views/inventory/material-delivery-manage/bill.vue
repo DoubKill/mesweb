@@ -344,6 +344,19 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item v-if="isLocation" label="巷道">
+          <el-select v-model="formSearch.tunnel" filterable clearable placeholder="请选择" @visible-change="getTunnelNameList" @change="getDialog">
+            <el-option
+              v-for="item in TunnelNameList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.code"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="托盘号">
+          <el-input v-model="formSearch.pallet_no" clearable @input="getDialogDebounce" />
+        </el-form-item>
       </el-form>
       <div
         v-if="isLocation"
@@ -668,6 +681,7 @@ import { wmsMaterials } from '@/api/jqy'
 import { materialCount } from '@/api/base_w'
 import page from '@/components/page'
 import { debounce, checkPermission, setDate } from '@/utils'
+import { wmsTunnels } from '@/api/base_w_four'
 import { wmsStock, wmsWeightStock, wmsEntrance, wmsInstock } from '@/api/base_w_three'
 export default {
   name: 'DeliveryBill',
@@ -747,7 +761,8 @@ export default {
       btnDisabled: false,
       positionObj: {},
       dateValue: [],
-      btnExportLoad: false
+      btnExportLoad: false,
+      TunnelNameList: []
     }
   },
   created() {
@@ -796,6 +811,16 @@ export default {
       } catch (e) {
         //
       } this.loading = false
+    },
+    async getTunnelNameList(val) {
+      if (val) {
+        try {
+          const data = await wmsTunnels('get')
+          this.TunnelNameList = data || []
+        } catch (e) {
+        //
+        }
+      }
     },
     changeUnit(row) {
       row.WeightOfActualUnit = Math.round(row.Unit * row.avg_weight)
