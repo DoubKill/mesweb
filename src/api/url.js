@@ -737,6 +737,7 @@ export default {
   WmsAddPrint: '/api/v1/terminal/wms-add-print/',
   HfForceHandle: '/api/v1/inventory/hf-force-handle/',
   HfConfigSet: '/api/v1/inventory/hf-config-set/',
+  RubberLog: '/api/v1/production/rubber-log/',
   ToolManageAccount: '/api/v1/production/tool-manage-account/',
   RubberFrameRepair: '/api/v1/production/rubber-frame-repair/',
 
