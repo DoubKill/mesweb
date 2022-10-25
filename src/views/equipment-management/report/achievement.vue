@@ -46,8 +46,6 @@
       v-loading="loading"
       :data="tableData"
       use-virtual
-      show-body-overflow="title"
-      show-header-overflow="title"
       :max-height="700"
       style="width: 100%"
       border
