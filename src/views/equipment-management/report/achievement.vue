@@ -326,7 +326,7 @@
             <el-input v-model="currentInfo.all_price" disabled />
           </el-form-item><br>
           <el-form-item label="超产奖励">
-            <el-input v-model="currentInfo.超产奖励" disabled />
+            <el-input v-model="currentInfo.超产奖励" style="width:400px" disabled />
           </el-form-item>
           <!-- <el-form-item label="机台目标值">
             <el-input v-model="currentInfo.input" disabled />
@@ -341,7 +341,7 @@
             />
           </el-form-item>
           <el-form-item label="奖惩说明">
-            <el-input v-model="currentInfo.奖惩说明1" style="width:350px;" />
+            <el-input v-model="currentInfo.奖惩说明1" style="width:400px;" />
           </el-form-item><br>
           <el-form-item label="生产补贴">
             <el-input-number
@@ -350,7 +350,7 @@
             />
           </el-form-item>
           <el-form-item label="补贴说明">
-            <el-input v-model="currentInfo.补贴说明1" style="width:350px;" />
+            <el-input v-model="currentInfo.补贴说明1" style="width:400px;" />
           </el-form-item><br>
           <!-- <el-form-item label="工资总计">
             <el-input v-model="currentInfo.工资总计" disabled />
@@ -489,7 +489,7 @@ export default {
         const data1 = await performanceSubsidy('get', null, { params: { date: this.year + '-' + this.month + '-' + day, name: row.name }})
         this.allArr = data1 || []
         this.currentInfo.all_price = Number(data.all_price ? data.all_price : 0)
-        this.currentInfo.超产奖励 = Number(data.超产奖励 ? data.超产奖励 : 0)
+        this.currentInfo.超产奖励 = data.超产奖励
         this.tableData2 = data.results
         this.tableData2.push(data.hj)
         if (data1.length) {
