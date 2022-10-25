@@ -263,10 +263,10 @@
           label="日期"
         />
         <el-table-column
-          v-for="item in tableHeard"
+          v-for="(item,_key) in tableHeard"
           :key="item"
           :prop="`price-${item}`"
-          label="超产奖金额（元）"
+          :label="`超产奖${_key+1}金额(元)`"
         >
           <template slot-scope="{row}">
             {{ row.price[item-1]?row.price[item-1]:'' }}
