@@ -291,6 +291,7 @@ import equipTypeSelect from '../components/equip-type-select'
 import commons from '@/utils/common'
 import { equipOrderAssignRule, equipOrderAssignRuleImportXlsx } from '@/api/base_w_four'
 import { equipOrderAssignRuleGetName } from '@/api/jqy'
+import { setDate } from '@/utils/index'
 export default {
   name: 'EquipmentMasterDataAppointRule',
   components: { page, equipTypeSelect },
@@ -392,7 +393,7 @@ export default {
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = '工单指派规则.xlsx' // 下载的文件名
+          link.download = `工单指派规则${setDate('', true)}.xlsx` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)

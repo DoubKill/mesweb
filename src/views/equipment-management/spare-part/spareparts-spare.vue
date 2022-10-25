@@ -259,6 +259,7 @@ import { getSparepartsSpare,
   postSpareImportExport } from '@/api/spareparts-spare'
 import page from '@/components/page'
 import { getSpareType } from '@/api/spare-type'
+import { setDate } from '@/utils/index'
 
 export default {
   name: 'SparepartsSpare',
@@ -393,7 +394,7 @@ export default {
         const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
         link.style.display = 'none'
         link.href = URL.createObjectURL(blob)
-        link.download = '备品备件基本信息模板.xlsx' // 下载的文件名
+        link.download = `备品备件基本信息模板${setDate('', true)}.xlsx` // 下载的文件名
         document.body.appendChild(link)
         link.click()
         document.body.removeChild(link)

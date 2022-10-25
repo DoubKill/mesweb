@@ -145,6 +145,7 @@
 <script>
 import { classesListUrl, productInfosUrl } from '@/api/base_w'
 import { equip190e, equip190eImport, equip190eDown } from '@/api/jqy'
+import { setDate } from '@/utils/index'
 
 export default {
   name: 'SettingE190',
@@ -224,7 +225,7 @@ export default {
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = '190E机台规格信息维护导入模板.xlsx' // 下载的文件名
+          link.download = `190E机台规格信息维护导入模板${setDate('', true)}.xlsx` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)

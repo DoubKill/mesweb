@@ -424,7 +424,7 @@ export default {
         const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
         link.style.display = 'none'
         link.href = URL.createObjectURL(blob)
-        link.download = '原料检测数据录入模板.xls' // 下载的文件名
+        link.download = `原料检测数据录入模板${setDate('', true)}.xls` // 下载的文件名
         document.body.appendChild(link)
         link.click()
         document.body.removeChild(link)

@@ -182,6 +182,7 @@ import { wmsOutTaskDetails } from '@/api/base_w_five'
 import { wmsTunnels } from '@/api/base_w_four'
 import { wmsEntrance } from '@/api/base_w_three'
 import page from '@/components/page'
+import { setDate } from '@/utils/index'
 import { debounce } from '@/utils'
 export default {
   name: 'DeliveryTask',
@@ -285,7 +286,7 @@ export default {
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = '原材料库-出库任务.xlsx' // 下载的文件名
+          link.download = `原材料库-出库任务${setDate('', true)}.xlsx` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)

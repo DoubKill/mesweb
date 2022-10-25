@@ -272,6 +272,7 @@ import page from '@/components/page'
 import { classesListUrl } from '@/api/base_w'
 import { equipJobItemStandard, equipJobItemStandardImport } from '@/api/base_w_four'
 import { getDefaultCode } from '@/api/jqy'
+import { setDate } from '@/utils/index'
 
 // import { errorRepeat } from '@/utils'
 
@@ -509,7 +510,7 @@ export default {
         const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
         link.style.display = 'none'
         link.href = URL.createObjectURL(blob)
-        link.download = '作业项目标准定义.xls' // 下载的文件名
+        link.download = `作业项目标准定义${setDate('', true)}.xls` // 下载的文件名
         document.body.appendChild(link)
         link.click()
         document.body.removeChild(link)

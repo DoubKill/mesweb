@@ -399,6 +399,7 @@ import transferLimit from '@/components/select_w/transferLimit'
 import transferRoles from '@/components/select_w/transferRoles'
 import { userOperationLog } from '@/api/base_w_two'
 import Cookies from 'js-cookie'
+import { setDate } from '@/utils/index'
 export default {
   name: 'UserManage',
   components: { page, transferRoles, transferLimit },
@@ -786,7 +787,7 @@ export default {
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = '用户管理.xlsx' // 下载的文件名
+          link.download = `用户管理${setDate('', true)}.xlsx` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)

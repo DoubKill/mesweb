@@ -803,7 +803,7 @@
 </template>
 
 <script>
-import { debounce } from '@/utils'
+import { debounce, setDate } from '@/utils'
 import locationArea from '../master-data/location-area.vue'
 import { getEquip } from '@/api/banburying-performance-manage'
 import project from '../components/project-dialog'
@@ -1355,7 +1355,7 @@ export default {
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = '设备维护标准定义.xlsx' // 下载的文件名
+          link.download = `设备维护标准定义${setDate('', true)}.xlsx` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)
