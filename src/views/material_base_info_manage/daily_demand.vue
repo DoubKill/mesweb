@@ -21,6 +21,7 @@
         <el-date-picker
           v-model="search.factory_date"
           type="date"
+          :clearable="false"
           format="yyyy-MM-dd"
           value-format="yyyy-MM-dd"
           placeholder="选择工厂日期"
@@ -66,27 +67,53 @@
       <el-table :data="tableData" size="mini" style="width: 100%" border show-summary>
         <el-table-column prop="product_no" label="规格" min-width="20" />
         <el-table-column prop="mixin_dev_type" label="计划(吨)" min-width="20" />
-        <el-table-column prop="xl_split_qty" label="细料分包" min-width="20" />
+        <el-table-column prop="mixin_weight" label="混炼单车重量" min-width="20" />
+        <el-table-column prop="mixin_dev_type" label="机型" min-width="20" />
+        <el-table-column label="细料分包" min-width="20">
+          <template slot-scope="{row}">
+            {{ row.xl_split_qty }}
+          </template>
+        </el-table-column>
         <el-table-column prop="xl_plan_qty" label="细料计划包数" min-width="20" />
         <el-table-column prop="xl_dp_qty" label="单配需求包数" min-width="20" />
         <!-- <el-table-column prop="" label="单配总耗时" min-width="20" /> -->
         <el-table-column label="单配耗时及单配明细">
-          <el-table-column prop="mixin_chemical_kind" label="化工种数" min-width="20" />
+          <el-table-column prop="" label="化工种数" min-width="20">
+            <template slot-scope="{row}">
+              {{ row.mixin_chemical_kind }}
+            </template>
+          </el-table-column>
           <el-table-column prop="hl_materials" label="合练/母胶" min-width="30" />
           <el-table-column prop="hl_time_consume" label="耗时" min-width="20" />
           <el-table-column prop="mixin_materials" label="混炼1/2段" min-width="30" />
           <el-table-column prop="mixin_time_consume" label="耗时" min-width="20" />
         </el-table-column>
-        <el-table-column prop="aw_qty" label="AW" min-width="20" />
+        <el-table-column label="AW" min-width="20">
+          <template slot-scope="{row}">
+            {{ row.aw_qty }}
+          </template>
+        </el-table-column>
         <el-table-column prop="AW总数" label="AW总数" min-width="20" />
-        <el-table-column prop="final_devoted_weight" label="加硫单车重量" min-width="20" />
+        <el-table-column prop="" label="加硫单车重量" min-width="20">
+          <template slot-scope="{row}">
+            {{ row.final_devoted_weight }}
+          </template>
+        </el-table-column>
         <el-table-column prop="final_dev_type" label="机型" min-width="20" />
-        <el-table-column prop="lh_split_qty" label="硫磺分包" min-width="20" />
+        <el-table-column label="硫磺分包" min-width="20">
+          <template slot-scope="{row}">
+            {{ row.lh_split_qty }}
+          </template>
+        </el-table-column>
         <el-table-column prop="lh_plan_qty" label="硫磺计划包数" min-width="20" />
         <el-table-column prop="lh_dp_qty" label="单配需求包数" min-width="20" />
         <!-- <el-table-column prop="date" label="单配总耗时" min-width="20" /> -->
         <el-table-column label="单配耗时及单配明细">
-          <el-table-column prop="final_chemical_kind" label="化工种数" min-width="20" />
+          <el-table-column label="化工种数" min-width="20">
+            <template slot-scope="{row}">
+              {{ row.final_chemical_kind }}
+            </template>
+          </el-table-column>
           <el-table-column prop="final_mate" label="加硫单配" min-width="30" />
           <el-table-column prop="final_time_consume" label="耗时" min-width="20" />
         </el-table-column>
