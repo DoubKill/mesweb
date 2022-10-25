@@ -611,8 +611,8 @@ export default {
     }
     this.currentTime = setDate('', true)
     const _setDateCurrent = setDate()
-    this.getParams.begin_time = _setDateCurrent + ' 00:00:00'
-    this.getParams.end_time = _setDateCurrent + ' 23:59:59'
+    this.getParams.begin_time = _setDateCurrent
+    this.getParams.end_time = _setDateCurrent
     this.search_date = [this.getParams.begin_time, this.getParams.end_time]
   },
   methods: {
@@ -626,7 +626,7 @@ export default {
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = '车次报表.xlsx' // 下载的文件名
+          link.download = `车次报表${setDate('', true)}.xlsx` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)
@@ -653,7 +653,7 @@ export default {
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = '吨能耗及吨耗时.xlsx' // 下载的文件名
+          link.download = `吨能耗及吨耗时${setDate('', true)}.xlsx` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)

@@ -566,7 +566,7 @@ import EquipSelect from '@/components/EquipSelect/index'
 import definition from '../components/definition-dialog'
 import maintain from '../components/definition-dialog1'
 import repair from '../components/repair-dialog'
-import { debounce } from '@/utils'
+import { debounce, setDate } from '@/utils'
 export default {
   name: 'EquipmentQuery',
   components: { EquipSelect, page, repair, definition, maintain },
@@ -689,7 +689,7 @@ export default {
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = '维修工单.xlsx' // 下载的文件名
+          link.download = `维修工单${setDate('', true)}.xlsx` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)

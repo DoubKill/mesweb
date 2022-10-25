@@ -142,6 +142,7 @@
 
 <script>
 import Page from '@/components/page'
+import { setDate } from '@/utils/index'
 import UnqualifiedTreatmentOpinions from './unqualified_treatment_opinions_manage'
 import { materialDealResult, editMaterialDeal, resultStatus, dealSuggestion, printMaterialDealResult } from '@/api/material-deal-result'
 
@@ -300,7 +301,7 @@ export default {
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = '不合格品.xlsx' // 下载的文件名
+          link.download = `不合格品${setDate('', true)}.xlsx` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)

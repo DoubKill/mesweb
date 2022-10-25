@@ -252,7 +252,7 @@ export function exportExcel(value = 'excel', val, _wpxArr = []) {
   a({ url: '/api/v1/system/user-operation-log/', method: 'post', data: { 'operator': _newUser, 'menu_name': routeName, 'operations': `导出：${routeName}列表` }})
   // 走进来的是导出 掉接口记录当前操作 end
 
-  value = value + ' ' + (val === 'excel' ? '' : setDate())
+  value = value + ' ' + (val === 'excel' ? '' : setDate('', true))
   /* 从表生成工作簿对象 */
   var wb
   if (val && (val === 'disposal-list-components' || val === '综合合格率汇总')) {
@@ -368,7 +368,6 @@ export function exportExcel(value = 'excel', val, _wpxArr = []) {
         }
       })
     }
-    console.log(wb.Sheets['Sheet1'])
     wb.Sheets['Sheet1']['!cols'] = _wpx
   }
 

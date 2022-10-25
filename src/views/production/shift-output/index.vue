@@ -30,6 +30,9 @@
       <el-form-item>
         <el-button type="primary" :disabled="btnExportLoad" @click="exportTable(1)">导出Excel</el-button>
       </el-form-item>
+      <el-form-item>
+        <h3 style="display: inline-block;margin:0">单位：车</h3>
+      </el-form-item>
     </el-form>
     <el-table
       :id="type===1?'out-table':''"
@@ -121,7 +124,6 @@ export default {
   },
   async created() {
     await this.getClassGroup()
-    await this.getList()
   },
   methods: {
     async getList() {
@@ -255,6 +257,7 @@ export default {
       }).then((response) => {
         this.groups = response.results
         this.groud = this.groups[0].global_name
+        this.getList()
       }).catch(function() {
         this.groups = []
       })

@@ -182,7 +182,7 @@ import { thTunnels } from '@/api/base_w_four'
 import { thEntrance } from '@/api/base_w_three'
 // import request from '@/utils/request-zc-th'
 import page from '@/components/page'
-import { debounce } from '@/utils'
+import { debounce, setDate } from '@/utils'
 export default {
   name: 'CarbonDeliveryTask',
   components: { page },
@@ -285,7 +285,7 @@ export default {
         const blob = new Blob([data], { type: 'application/vnd.ms-excel' })
         link.style.display = 'none'
         link.href = URL.createObjectURL(blob)
-        link.download = '炭黑库-出库任务.xlsx' // 下载的文件名
+        link.download = `炭黑库-出库任务${setDate('', true)}.xlsx` // 下载的文件名
         document.body.appendChild(link)
         link.click()
         document.body.removeChild(link)

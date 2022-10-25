@@ -240,12 +240,12 @@
         min-width="10"
       />
       <el-table-column
-        min-width="10"
+        min-width="12"
         prop="created_date"
         label="创建时间"
       />
       <el-table-column
-        min-width="10"
+        min-width="12"
         prop="last_updated_date"
         label="修改时间"
       />
@@ -563,6 +563,7 @@
 import { mapGetters } from 'vuex'
 import { checkPermission } from '@/utils'
 import commonVal from '@/utils/common'
+import { setDate } from '@/utils/index'
 import { product_info_url, xlRecipeNotice, replaceRecipeOne, wfProductBatching } from '@/api/rubber_recipe_fun'
 import page from '@/components/page'
 import { globalCodesUrl, materialsUrl } from '@/api/base_w'
@@ -748,7 +749,7 @@ export default {
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = `原材料"${this.search.wms_material_name}"使用配方列表.xlsx` // 下载的文件名
+          link.download = `原材料"${this.search.wms_material_name}"使用配方列表${setDate('', true)}.xlsx` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)
