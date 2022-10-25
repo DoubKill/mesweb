@@ -1188,6 +1188,16 @@ export let asyncRoutes = [
         icon: 'formula',
         permissionName: 'formula_preparation'
       }
+    },
+    {
+      path: '/daily_demand/',
+      component: () => import('@/views/material_base_info_manage/daily_demand'),
+      name: 'daily_demand',
+      meta: {
+        title: '料包日需求及耗时统计',
+        icon: 'formula',
+        permissionName: 'daily_weight_package'
+      }
     }
     ]
   },

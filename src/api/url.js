@@ -36,6 +36,9 @@ export default {
   XlRecipeNotice: '/api/v1/terminal/xl-recipe-notice/',
   MaterialInfoIssue: '/api/v1/terminal/material-info-issue/', // 原材料下发至称量系统接口
   ProductInfosUrl: '/api/v1/recipe/product-infos/',
+  WeightPackageDailyTimeConsumer: '/api/v1/plan/weight-package-daily-time-consumer/',
+  FindRecipeImportXlsx: '/api/v1/plan/weight-package-daily-time-consumer/import-xlsx/',
+  FindRecipe: 'api/v1/plan/weight-package-daily-time-consumer/find-recipe/',
   ValidateVersionsUrl: '/api/v1/recipe/validate-versions/',
   CopyProductInfosUrl: '/api/v1/recipe/copy-product-infos/',
   // 胶料配料标准管理接口 所有配方接口
