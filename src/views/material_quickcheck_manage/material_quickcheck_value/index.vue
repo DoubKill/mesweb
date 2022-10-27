@@ -210,8 +210,9 @@
             value-format="yyyy-MM-dd"
           />
         </el-form-item>
-        <el-form-item label="原材料" prop="material">
-          <el-input ref="materialInput" v-model="formData.material" placeholder="请输入" @input="changeFormDataMaterial" />
+        <el-form-item label="原材料" prop="material_tmh">
+          <el-input v-if="!formData.id" ref="materialInput" v-model="formData.material_tmh" placeholder="请输入" @input="changeFormDataMaterial" />
+          <span v-else>{{ formData.material_tmh }}</span>
           <!-- <el-select
             v-model="formData.material"
             placeholder="请选择"
@@ -384,7 +385,7 @@ export default {
         transport_date: [
           { required: true, message: '请选择时间', trigger: 'change' }
         ],
-        material: [
+        material_tmh: [
           { required: true, message: '请选择', trigger: 'blur' }
         ],
         sampling_user: [
@@ -470,10 +471,19 @@ export default {
         this.formData._copy = true
         delete this.formData.id
       }
+      this.$set(this.formData, 'material_tmh', this.formData.tmh)
+      this.$set(this.formData, 'material_batch', this.formData.batch)
+      this.$set(this.formData, 'material_supplier', this.formData.supplier)
+      this.$set(this.formData, 'material_sample_name', this.formData.sample_name)
       this.dialogVisible = true
       this.$nextTick(d => {
-        this.$refs.materialInput.focus()
+        if (this.$refs.materialInput) {
+          this.$refs.materialInput.focus()
+        }
       })
+      if (this.$refs.formData) {
+        this.$refs.formData.clearValidate()
+      }
     },
     addFun() {
       if (this.$refs.formData) {

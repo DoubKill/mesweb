@@ -67,6 +67,30 @@ export function productInfosUrl(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function weightPackageDailyTimeConsumer(method, id, data = {}) {
+  const obj = {
+    url: id ? API.WeightPackageDailyTimeConsumer + id + '/' : API.WeightPackageDailyTimeConsumer,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function findRecipeImportXlsx(method, id, data = {}) {
+  const obj = {
+    url: id ? API.FindRecipeImportXlsx + id + '/' : API.FindRecipeImportXlsx,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+export function findRecipe(method, id, data = {}) {
+  const obj = {
+    url: id ? API.FindRecipe + id + '/' : API.FindRecipe,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 export function copyProductInfosUrl(method, data = {}) {
   const obj = {
     url: API.CopyProductInfosUrl,
