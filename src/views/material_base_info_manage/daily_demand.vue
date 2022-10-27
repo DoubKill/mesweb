@@ -114,7 +114,7 @@
               {{ row.final_chemical_kind }}
             </template>
           </el-table-column>
-          <el-table-column prop="final_mate" label="加硫单配" min-width="30" />
+          <el-table-column prop="final_materials" label="加硫单配" min-width="30" />
           <el-table-column prop="final_time_consume" label="耗时" min-width="20" />
         </el-table-column>
         <el-table-column v-if="!btnExportLoad" label="操作" width="140">
