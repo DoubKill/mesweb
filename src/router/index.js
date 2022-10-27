@@ -109,7 +109,7 @@ export const constantRoutes = [
     }
   },
   // http://localhost:9000/#/alone/performance/productionRecord/
-  // ?name=plan_reality&arr=view&equip=S01&day_time=2022-03-23&key=
+  // ?name=plan_reality&arr=view&equip=Z01&day_time=2022-03-23&key=
   {
     path: '/alone/performance/productionRecord/',
     component: () => import('@/views/production/production_result/productionRecord'),
