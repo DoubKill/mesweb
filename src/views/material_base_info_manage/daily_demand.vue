@@ -272,10 +272,10 @@ export default {
           { required: true, message: '请选择终练机型', trigger: 'change' }
         ],
         mixin_weight: [
-          { required: true, message: '不可提交', trigger: 'change' }
+          { required: true, message: '暂无数据不可提交', trigger: 'change' }
         ],
         final_devoted_weight: [
-          { required: true, message: '不可提交', trigger: 'change' }
+          { required: true, message: '暂无数据不可提交', trigger: 'change' }
         ]
       }
     }
