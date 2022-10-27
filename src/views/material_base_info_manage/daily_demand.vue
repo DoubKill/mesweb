@@ -66,7 +66,7 @@
     <div id="out-table" v-loading="loading">
       <el-table :data="tableData" size="mini" style="width: 100%" border show-summary>
         <el-table-column prop="product_no" label="规格" min-width="20" />
-        <el-table-column prop="mixin_dev_type" label="计划(吨)" min-width="20" />
+        <el-table-column prop="plan_weight" label="计划(吨)" min-width="20" />
         <el-table-column prop="mixin_weight" label="混炼单车重量" min-width="20" />
         <el-table-column prop="mixin_dev_type" label="机型" min-width="20" />
         <el-table-column label="细料分包" min-width="20">
