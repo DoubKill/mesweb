@@ -1630,6 +1630,26 @@ export let asyncRoutes = [
         }
       },
       {
+        path: '/rubber-access-repair',
+        name: 'RubberAccessRepair',
+        component: () => import('@/views/material_base_info_manage/rubber-access-repair'),
+        meta: {
+          title: '胶架进出登记表',
+          icon: 'production',
+          permissionName: 'rubber_log'
+        }
+      },
+      {
+        path: '/rubber-access-repair-total',
+        name: 'RubberAccessRepairTotal',
+        component: () => import('@/views/material_base_info_manage/rubber-access-repair-total'),
+        meta: {
+          title: '胶架进出登记表汇总',
+          icon: 'production',
+          permissionName: 'rubber_log'
+        }
+      },
+      {
         path: '/rubber-frame-repair',
         name: 'RubberFrameRepair',
         component: () => import('@/views/material_base_info_manage/rubber-frame-repair'),
