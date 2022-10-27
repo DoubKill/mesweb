@@ -272,10 +272,10 @@ export default {
           { required: true, message: '请选择终练机型', trigger: 'change' }
         ],
         mixin_weight: [
-          { required: true, message: '未找到该胶料启用状态终炼配方数据', trigger: 'change' }
+          { required: true, message: '不可提交', trigger: 'change' }
         ],
         final_devoted_weight: [
-          { required: true, message: '未找到该胶料启用状态终炼配方数据', trigger: 'change' }
+          { required: true, message: '不可提交', trigger: 'change' }
         ]
       }
     }
