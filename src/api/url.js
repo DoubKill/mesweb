@@ -179,6 +179,7 @@ export default {
   OutboundDeliveryOrders: '/api/v1/inventory/outbound-delivery-orders/',
   OutboundDeliveryOrderDetails: '/api/v1/inventory/outbound-delivery-order-details/',
   OutboundDeliveryOrdersExport: '/api/v1/inventory/outbound-delivery-orders/export/',
+  BzInventoryWorkingTasks: 'api/v1/inventory/bz-inventory-working-tasks/',
 
   //  终炼胶库计划管理
   FinalPlanManagement: '/api/v1/inventory/final-plan-management/',
