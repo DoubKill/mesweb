@@ -495,8 +495,26 @@
             @change="getGroup(dialogForm.factory_date)"
           />
         </el-form-item>
+        <el-form-item label="岗位" prop="section">
+          <el-select v-model="dialogForm.section" :disabled="addType==='里面'?true:false" placeholder="请选择" @visible-change="sectionChange">
+            <el-option
+              v-for="item in options2"
+              :key="item.id"
+              :label="item.name"
+              :value="item.name"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item label="机台" prop="equip">
-          <el-select v-model="dialogForm.equip" :disabled="addType==='里面'?true:false" placeholder="请选择" @visible-change="equipChange">
+          <el-select
+            v-model="dialogForm.equip"
+            multiple
+            :disabled="(addType==='里面'?true:false)
+              ||(m_choice.every(d => d !== dialogForm.section)
+                &&s_choice.every(d => d !== dialogForm.section))"
+            placeholder="请选择"
+            @visible-change="equipChange"
+          >
             <el-option
               v-for="item in options"
               :key="item.id"
@@ -523,16 +541,7 @@
             @classSelected="classChanged"
           />
         </el-form-item>
-        <el-form-item label="岗位" prop="section">
-          <el-select v-model="dialogForm.section" :disabled="addType==='里面'?true:false" placeholder="请选择" @visible-change="sectionChange">
-            <el-option
-              v-for="item in options2"
-              :key="item.id"
-              :label="item.name"
-              :value="item.name"
-            />
-          </el-select>
-        </el-form-item>
+
         <el-form-item label="上岗时间" prop="actual_begin_date">
           <el-date-picker
             v-model="dialogForm.actual_begin_date"
@@ -786,6 +795,8 @@ export default {
       },
       color: '',
       type: '',
+      m_choice: [],
+      s_choice: [],
       options: [],
       multipleSelectionCheck: [],
       options1: [],
@@ -823,9 +834,6 @@ export default {
           { required: true, message: '不能为空', trigger: 'change' }
         ],
         factory_date: [
-          { required: true, message: '不能为空', trigger: 'change' }
-        ],
-        equip: [
           { required: true, message: '不能为空', trigger: 'change' }
         ],
         classes: [
@@ -1017,7 +1025,7 @@ export default {
         }
         this.dialogForm = {
           factory_date: this.date,
-          equip: this.equip,
+          equip: [this.equip],
           group: this.group,
           section: this.section,
           classes: this.classes,
@@ -1032,9 +1040,10 @@ export default {
         if (this.$refs.dialogForm) {
           this.$refs.dialogForm.resetFields()
         }
+        this.equipChange(true)
         this.dialogForm = {
           factory_date: setDate(),
-          equip: null,
+          equip: [],
           group: null,
           classes: null,
           username: '',
@@ -1061,6 +1070,8 @@ export default {
       try {
         this.loading = true
         const data = await employeeattendancerecords('get', null, { params: this.search })
+        this.m_choice = data.m_choice
+        this.s_choice = data.s_choice
         this.isDownload = data.export_flag
         this.tableHead1 = data.group_list || []
         this.approve_user = data.approve_user
@@ -1358,6 +1369,10 @@ export default {
       }
     },
     async generateFun() {
+      var equipList = []
+      this.options.forEach(d => {
+        equipList.push(d.equip_no)
+      })
       this.dialogForm.clock_type = this.search.clock_type
       this.dialogForm.standard_begin_date = this.time_interval[0]
       this.dialogForm.standard_end_date = this.time_interval[1]
@@ -1366,6 +1381,23 @@ export default {
       this.$refs.dialogForm.validate(async(valid) => {
         if (valid) {
           try {
+            if (this.m_choice.some(d => d === this.dialogForm.section)) {
+              if (this.dialogForm.equip.length < 1) {
+                this.$message.info('机台至少选一个')
+                return
+              }
+            }
+            if (this.s_choice.some(d => d === this.dialogForm.section)) {
+              if (this.dialogForm.equip.length !== 1) {
+                this.$message.info('岗位机台必选且只能选一个')
+                return
+              }
+            }
+            if (this.s_choice.every(d => d !== this.dialogForm.section) &&
+             this.m_choice.every(d => d !== this.dialogForm.section) &&
+              this.addType === '外面') {
+              this.dialogForm.equip = equipList
+            }
             this.submit = true
             await attendanceTimeStatistics('post', null, { data: { report_list: [this.dialogForm] }})
             this.$message.success('操作成功')

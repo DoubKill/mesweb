@@ -1075,6 +1075,14 @@ export function trainsFeedbacksApiviewDown(params) {
     responseType: 'blob'
   })
 }
+export function timeEnergyConsuming(params) {
+  return request({
+    url: API.TimeEnergyConsuming,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
 
 export function schedulingProcedures(method, id, data = {}) {
   const obj = {
@@ -1644,6 +1652,15 @@ export function inventoryAlarm(method, id, data = {}) {
 export function xlPlanConsume(method, id, data = {}) {
   const obj = {
     url: id ? API.XlPlanConsume + id + '/' : API.XlPlanConsume,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function rubberLog(method, id, data = {}) {
+  const obj = {
+    url: id ? API.RubberLog + id + '/' : API.RubberLog,
     method: method
   }
   Object.assign(obj, data)

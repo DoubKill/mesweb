@@ -46,8 +46,6 @@
       v-loading="loading"
       :data="tableData"
       use-virtual
-      show-body-overflow="title"
-      show-header-overflow="title"
       :max-height="700"
       style="width: 100%"
       border
@@ -210,6 +208,7 @@
         </el-form-item>
       </el-form>
       <el-table
+        v-if="subsidyIs!==3"
         :id="dialogVisible1?'out-table':''"
         v-loading="loading1"
         :data="tableData1"
@@ -227,6 +226,17 @@
           label="班次"
         />
         <el-table-column
+          v-for="item in tableHeard"
+          :key="item"
+          prop="price"
+          label="超产奖金额（元）"
+        >
+          <template slot-scope="{row}">
+            {{ row.price }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          v-if="subsidyIs!==3"
           prop="price"
           :label="subsidyIs===2?'补贴金额（元）':'超产奖金额（元）'"
         />
@@ -235,6 +245,31 @@
           prop="desc"
           :label="subsidyIs===2?'补贴说明':'超产奖说明'"
         />
+      </el-table>
+      <el-table
+        v-if="subsidyIs===3"
+        :id="dialogVisible1?'out-table':''"
+        v-loading="loading1"
+        :data="tableData1"
+        style="width: 100%"
+        show-summary
+        :summary-method="getSummaries"
+        border
+      >
+        <el-table-column
+          prop="date"
+          label="日期"
+        />
+        <el-table-column
+          v-for="(item,_key) in tableHeard"
+          :key="item"
+          :prop="`price-${item}`"
+          :label="`超产奖${_key+1}金额(元)`"
+        >
+          <template slot-scope="{row}">
+            {{ row.price[item-1]?row.price[item-1]:'' }}
+          </template>
+        </el-table-column>
       </el-table>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible1 = false">取 消</el-button>
@@ -289,7 +324,7 @@
             <el-input v-model="currentInfo.all_price" disabled />
           </el-form-item><br>
           <el-form-item label="超产奖励">
-            <el-input v-model="currentInfo.超产奖励" disabled />
+            <el-input v-model="currentInfo.超产奖励" style="width:400px" disabled />
           </el-form-item>
           <!-- <el-form-item label="机台目标值">
             <el-input v-model="currentInfo.input" disabled />
@@ -304,7 +339,7 @@
             />
           </el-form-item>
           <el-form-item label="奖惩说明">
-            <el-input v-model="currentInfo.奖惩说明1" style="width:350px;" />
+            <el-input v-model="currentInfo.奖惩说明1" style="width:400px;" />
           </el-form-item><br>
           <el-form-item label="生产补贴">
             <el-input-number
@@ -313,11 +348,11 @@
             />
           </el-form-item>
           <el-form-item label="补贴说明">
-            <el-input v-model="currentInfo.补贴说明1" style="width:350px;" />
+            <el-input v-model="currentInfo.补贴说明1" style="width:400px;" />
           </el-form-item><br>
-          <el-form-item label="工资总计">
+          <!-- <el-form-item label="工资总计">
             <el-input v-model="currentInfo.工资总计" disabled />
-          </el-form-item>
+          </el-form-item> -->
         </el-form>
         <div slot="footer" style="text-align:right">
           <el-button @click="dialogVisible2 = false">取 消</el-button>
@@ -367,7 +402,8 @@ export default {
       btnLoading: false,
       sectionList: [],
       group_list: [],
-      isExport: false
+      isExport: false,
+      tableHeard: []
     }
   },
   created() {
@@ -427,6 +463,7 @@ export default {
           const data = await performanceSummary('get', null, { params: { name_d: row.name, date: this.search.date, ccjl: 1 }})
           this.tableData1 = data.results || []
           this.loading1 = false
+          this.tableHeard = data.max_id || 0
           return
         }
         this.loading1 = true
@@ -450,7 +487,7 @@ export default {
         const data1 = await performanceSubsidy('get', null, { params: { date: this.year + '-' + this.month + '-' + day, name: row.name }})
         this.allArr = data1 || []
         this.currentInfo.all_price = Number(data.all_price ? data.all_price : 0)
-        this.currentInfo.超产奖励 = Number(data.超产奖励 ? data.超产奖励 : 0)
+        this.currentInfo.超产奖励 = data.超产奖励
         this.tableData2 = data.results
         this.tableData2.push(data.hj)
         if (data1.length) {
@@ -459,10 +496,10 @@ export default {
           this.$set(this.currentInfo, '生产补贴1', data1[1].price)
           this.$set(this.currentInfo, '补贴说明1', data1[1].desc)
         }
-        const a = this.currentInfo.其他奖惩1 ? this.currentInfo.其他奖惩1 : 0
-        const b = this.currentInfo.生产补贴1 ? this.currentInfo.生产补贴1 : 0
-        this.currentInfo.工资总计 = this.currentInfo.all_price + this.currentInfo.超产奖励 + a + b
-        this.currentInfo.工资总计 = Math.round(this.currentInfo.工资总计 * 100) / 100
+        // const a = this.currentInfo.其他奖惩1 ? this.currentInfo.其他奖惩1 : 0
+        // const b = this.currentInfo.生产补贴1 ? this.currentInfo.生产补贴1 : 0
+        // this.currentInfo.工资总计 = this.currentInfo.all_price + this.currentInfo.超产奖励 + a + b
+        // this.currentInfo.工资总计 = Math.round(this.currentInfo.工资总计 * 100) / 100
       } catch (e) {
         //
       }
@@ -520,7 +557,7 @@ export default {
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = '是否独立上岗模版.xlsx' // 下载的文件名
+          link.download = `是否独立上岗模版${setDate('', true)}.xlsx` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)
@@ -554,6 +591,25 @@ export default {
       if (row.name === '产量工资合计') {
         return 'summary-cell-style'
       }
+    },
+    getSummaries(param) {
+      const { columns, data } = param
+      const sums = []
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = '合计'
+          return
+        }
+        const values = data.map(item => item['price'])
+        if (values.every(value => value)) {
+          sums[index] = values.reduce((prev, curr) => {
+            const _index = Number(column.property.split('-')[1])
+            return prev + (curr[_index - 1] ? curr[_index - 1] : 0)
+          }, 0)
+          sums[index] = Math.round(sums[index] * 1000) / 1000
+        }
+      })
+      return sums
     }
   }
 }

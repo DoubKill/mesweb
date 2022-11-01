@@ -288,6 +288,7 @@
 
 <script>
 import { debounce } from '@/utils'
+import { setDate } from '@/utils/index'
 import page from '@/components/page'
 import { materialExamineType, materialUnit, exportTemplate, importData } from '@/api/base_w_three'
 export default {
@@ -399,7 +400,7 @@ export default {
         const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
         link.style.display = 'none'
         link.href = URL.createObjectURL(blob)
-        link.download = '快检类型.xls' // 下载的文件名
+        link.download = `快检类型${setDate('', true)}.xls` // 下载的文件名
         document.body.appendChild(link)
         link.click()
         document.body.removeChild(link)

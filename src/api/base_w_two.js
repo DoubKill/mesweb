@@ -316,3 +316,12 @@ export function userOperationLog(method, id, data = {}) {
   return request(obj)
 }
 
+export function groupProductionSummary(method, id, data = {}) {
+  const obj = {
+    url: id ? API.GroupProductionSummary + id + '/' : API.GroupProductionSummary,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+

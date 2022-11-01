@@ -541,7 +541,7 @@
 
 <script>
 import page from '@/components/page'
-import { exportExcel } from '@/utils/index'
+import { exportExcel, setDate } from '@/utils/index'
 // import { equipWarehouseStatistical } from '@/api/base_w_five'
 import { equipWarehouseInventory, equipSpareErp, equipWarehouseLocation, equipWarehouseArea } from '@/api/jqy'
 export default {
@@ -679,7 +679,7 @@ export default {
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = '备件库存.xlsx' // 下载的文件名
+          link.download = `备件库存${setDate('', true)}.xlsx` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)

@@ -399,7 +399,7 @@
 <script>
 import page from '@/components/page'
 import { equipSpareErp, equipSpareErpDown, equipSpareErpImport, equipCodePrint } from '@/api/jqy'
-import { debounce } from '@/utils'
+import { debounce, setDate } from '@/utils'
 export default {
   name: 'EquipmentMasterDataSparePartsCode',
   components: { page },
@@ -592,7 +592,7 @@ export default {
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = '备件代码定义.xlsx' // 下载的文件名
+          link.download = `备件代码定义${setDate('', true)}.xlsx` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)

@@ -109,7 +109,7 @@ export const constantRoutes = [
     }
   },
   // http://localhost:9000/#/alone/performance/productionRecord/
-  // ?name=plan_reality&arr=view&equip=S01&day_time=2022-03-23&key=
+  // ?name=plan_reality&arr=view&equip=Z01&day_time=2022-03-23&key=
   {
     path: '/alone/performance/productionRecord/',
     component: () => import('@/views/production/production_result/productionRecord'),
@@ -1220,6 +1220,16 @@ export let asyncRoutes = [
         icon: 'formula',
         permissionName: 'formula_preparation'
       }
+    },
+    {
+      path: '/daily_demand/',
+      component: () => import('@/views/material_base_info_manage/daily_demand'),
+      name: 'daily_demand',
+      meta: {
+        title: '料包日需求及耗时统计',
+        icon: 'formula',
+        permissionName: 'daily_weight_package'
+      }
     }
     ]
   },
@@ -1662,6 +1672,26 @@ export let asyncRoutes = [
         }
       },
       {
+        path: '/rubber-access-repair',
+        name: 'RubberAccessRepair',
+        component: () => import('@/views/material_base_info_manage/rubber-access-repair'),
+        meta: {
+          title: '胶架进出登记表',
+          icon: 'production',
+          permissionName: 'rubber_log'
+        }
+      },
+      {
+        path: '/rubber-access-repair-total',
+        name: 'RubberAccessRepairTotal',
+        component: () => import('@/views/material_base_info_manage/rubber-access-repair-total'),
+        meta: {
+          title: '胶架进出登记表汇总',
+          icon: 'production',
+          permissionName: 'rubber_log'
+        }
+      },
+      {
         path: '/rubber-frame-repair',
         name: 'RubberFrameRepair',
         component: () => import('@/views/material_base_info_manage/rubber-frame-repair'),
@@ -1771,6 +1801,48 @@ export let asyncRoutes = [
               faName: 'SpotCheck',
               title: '除尘袋滤器记录表确认',
               permissionName: 'check_temperature_table'
+            }
+          }
+        ]
+      },
+      {
+        path: '/shift-output',
+        redirect: '/shift-output-index/',
+        component: () => import('@/views/production/shift-output/a-index.vue'),
+        name: 'ShiftOutput',
+        meta: {
+          title: '各班产量统计',
+          icon: 'production'
+        },
+        children: [
+          {
+            path: '/shift-output-index/',
+            component: () => import('@/views/production/shift-output/index'),
+            name: 'ShiftOutputIndex',
+            meta: {
+              faName: 'ShiftOutput',
+              title: '各班产量统计',
+              permissionName: 'shift_production_summary'
+            }
+          },
+          {
+            path: '/scheduled-down-time/',
+            component: () => import('@/views/production/shift-output/scheduled-down-time'),
+            name: 'ScheduledDownTime',
+            meta: {
+              faName: 'ShiftOutput',
+              title: '计划停机时间',
+              permissionName: 'equip_down_detail'
+            }
+          },
+          {
+            path: '/output-details-summary/',
+            component: () => import('@/views/production/shift-output/output-details-summary'),
+            name: 'OutputDetailsSummary',
+            meta: {
+              faName: 'ShiftOutput',
+              title: '班组产量明细汇总',
+              permissionName: 'group_production_summary'
             }
           }
         ]
