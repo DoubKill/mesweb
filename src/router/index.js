@@ -490,6 +490,16 @@ export let asyncRoutes = [
               faName: 'RbRecipe',
               permissionName: 'product_ratio'
             }
+          },
+          {
+            path: '/rb/formula-resume',
+            name: 'FormulaResume',
+            component: () => import('@/views/recipe/formula-resume'),
+            meta: {
+              title: 'MES配方变更履历',
+              faName: 'RbRecipe',
+              permissionName: 'recipe_change_history'
+            }
           }
         ] },
       {
@@ -557,14 +567,36 @@ export let asyncRoutes = [
         ]
       },
       {
-        path: '/rb/formula-resume',
-        name: 'FormulaResume',
-        component: () => import('@/views/recipe/formula-resume'),
+        path: '/track',
+        redirect: '/track-raw-material',
+        component: () => import('@/views/production/track/track-fa'),
+        name: 'Track',
         meta: {
-          title: 'MES配方变更履历',
-          icon: 'formula',
-          permissionName: 'recipe_change_history'
-        }
+          title: '条码追溯',
+          icon: 'formula'
+        },
+        children: [
+          {
+            path: '/track-raw-material',
+            name: 'TrackRawMaterial',
+            component: () => import('@/views/production/track/track-raw-rubber'),
+            meta: {
+              faName: 'Track',
+              title: '条码追溯(终炼胶->原材料)',
+              permissionName: 'barcode_trace1'
+            }
+          },
+          {
+            path: '/track-raw-rubber',
+            name: 'TrackRawRubber',
+            component: () => import('@/views/production/track/track-raw-material'),
+            meta: {
+              faName: 'Track',
+              title: '条码追溯(原材料->终炼胶)',
+              permissionName: 'barcode_trace'
+            }
+          }
+        ]
       }
     // {
     //   path: '/rb/material/std/manage111',
@@ -1427,7 +1459,7 @@ export let asyncRoutes = [
           }
         ]
       },
-      {
+      /** {
         path: '/track',
         redirect: '/track-raw-material',
         component: () => import('@/views/production/track/track-fa'),
@@ -1458,7 +1490,7 @@ export let asyncRoutes = [
             }
           }
         ]
-      },
+      },**/
       {
         path: '/achievements',
         redirect: '/report/achievement',
