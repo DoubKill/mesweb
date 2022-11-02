@@ -26,7 +26,7 @@
         </el-form-item>
       </el-form>
       <el-table
-        v-loading="loading"
+        v-loading="loading&&index === currentIndex"
         :data="item.tableList"
         style="width: 100%"
         border
