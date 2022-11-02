@@ -8,7 +8,7 @@
     >
       <tbody>
         <tr>
-          <td colspan="5">胶料信息卡</td>
+          <td colspan="5" class="title-style"><span v-if="testData.emergency_release_flag" class="xx-style">☆</span>胶料信息卡</td>
         </tr>
         <tr>
           <td colspan="4">{{ testData.product_no }}</td>
@@ -258,6 +258,15 @@ export default {
       border-radius: 50%;
       font-size:60px;
       line-height: 300px;
+    }
+    .title-style{
+      position: relative;
+    }
+    .xx-style{
+      font-size: 40px;
+      position: absolute;
+      left: 10px;
+      top:-3px;
     }
   }
 </style>
