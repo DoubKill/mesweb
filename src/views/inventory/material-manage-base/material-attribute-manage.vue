@@ -383,6 +383,7 @@ export default {
     showBarCodeManageDialog(row) {
       this.getParamsBarCode.material = row.id
       this.barCodeManageDialogVisible = true
+      this.getParamsBarCode.page = 1
       this.barCodeForm = {
         material: row.id,
         material_type_name: row.material_type_name,

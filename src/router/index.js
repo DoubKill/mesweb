@@ -438,6 +438,16 @@ export let asyncRoutes = [
               faName: 'PlanIndex',
               permissionName: 'material_map'
             }
+          },
+          {
+            path: '/material-attribute-manage',
+            component: () => import('@/views/inventory/material-manage-base/material-attribute-manage.vue'),
+            name: 'MaterialAttributeManage',
+            meta: {
+              faName: 'PlanIndex',
+              title: '物料属性管理',
+              permissionName: 'material_attr'
+            }
           }
         ]
       },
@@ -2575,16 +2585,6 @@ export let asyncRoutes = [
               faName: 'MaterialManageBase',
               title: '仓库基础信息管理',
               permissionName: 'warehouse'
-            }
-          },
-          {
-            path: '/material-attribute-manage',
-            component: () => import('@/views/inventory/material-manage-base/material-attribute-manage.vue'),
-            name: 'MaterialAttributeManage',
-            meta: {
-              faName: 'MaterialManageBase',
-              title: '物料属性管理',
-              permissionName: 'material_attr'
             }
           }
         ]
