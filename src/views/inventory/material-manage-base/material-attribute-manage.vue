@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <!-- 物料属性管理 -->
+    <!-- 物料属性管理  日限管理-->
     <el-form :inline="true">
       <el-form-item label="物料种类">
         <el-select
