@@ -445,7 +445,7 @@ export let asyncRoutes = [
             name: 'MaterialAttributeManage',
             meta: {
               faName: 'PlanIndex',
-              title: '物料属性管理',
+              title: '日限管理',
               permissionName: 'material_attr'
             }
           }
