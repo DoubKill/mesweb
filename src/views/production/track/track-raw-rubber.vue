@@ -113,12 +113,12 @@
         <el-table-column prop="product_no" label="胶料编码" min-width="20" />
         <el-table-column prop="equip_no" label="机台" width="50" />
         <el-table-column prop="product_time" label="生产日期" min-width="20" />
-        <el-table-column label="班次/班组" min-width="20" :formatter="d=>{return (d.classes?d.classes:'')+'/'+(d.group?d.group:'')}" />
+        <el-table-column label="班次/班组" width="80" :formatter="d=>{return (d.classes?d.classes:'')+'/'+(d.group?d.group:'')}" />
         <el-table-column prop="plan_classes_uid" label="计划编号" min-width="20" />
         <el-table-column prop="trains" label="车次" width="60" />
         <el-table-column prop="bra_code" label="追溯码" min-width="20" />
         <el-table-column prop="pallet_no" label="托盘号" min-width="20" />
-        <el-table-column prop="standard_weight" label="重量kg" width="60" />
+        <el-table-column prop="standard_weight" label="重量kg/包" width="80" />
         <el-table-column prop="begin_time" label="密炼/配料 开始时间" min-width="20" />
         <el-table-column prop="end_time" label="密炼/配料 结束时间" min-width="20" />
         <el-table-column prop="arrange_rubber_time" label="收皮时间" min-width="20" />
@@ -253,10 +253,10 @@ export default {
               element[0].product_no = product_no
               element.forEach(dd => {
                 dd.behind = d.behind
-                dd.begin_time = setDate(dd.begin_time, true)
-                dd.end_time = setDate(dd.end_time, true)
-                dd.arrange_rubber_time = setDate(dd.arrange_rubber_time, true)
-                dd.product_time = setDate(dd.product_time)
+                dd.begin_time = dd.begin_time ? setDate(dd.begin_time, true) : ''
+                dd.end_time = dd.end_time ? setDate(dd.end_time, true) : ''
+                dd.arrange_rubber_time = dd.arrange_rubber_time ? setDate(dd.arrange_rubber_time, true) : ''
+                dd.product_time = dd.product_time ? setDate(dd.product_time) : ''
               })
               arr.push(...element)
             }
