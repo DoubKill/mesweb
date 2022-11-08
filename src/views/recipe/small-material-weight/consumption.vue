@@ -26,7 +26,7 @@
         </el-form-item>
       </el-form>
       <el-table
-        v-loading="loading"
+        v-loading="loading&&index === currentIndex"
         :data="item.tableList"
         style="width: 100%"
         border
@@ -189,7 +189,9 @@ export default {
         this.allTable = []
         val.forEach(async d => {
           this.currentSearch = {
-            equip_no: d.equip_no
+            equip_no: d.equip_no,
+            st: getNextDate(setDate(), -30),
+            et: setDate()
           }
           const b = this.allTable.filter(D => D.equip_no === d.equip_no)
           if (b.length === 0) {
@@ -202,7 +204,7 @@ export default {
                 {
                   equip_no: d.equip_no,
                   search: {
-                    c_time: [getNextDate(setDate(), -31), setDate()]
+                    c_time: [getNextDate(setDate(), -30), setDate()]
                   },
                   tableList: a.data,
                   total: a.total

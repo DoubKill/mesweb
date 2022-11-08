@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <!-- 物料属性管理 -->
+    <!-- 物料属性管理  日限管理-->
     <el-form :inline="true">
       <el-form-item label="物料种类">
         <el-select
@@ -383,6 +383,7 @@ export default {
     showBarCodeManageDialog(row) {
       this.getParamsBarCode.material = row.id
       this.barCodeManageDialogVisible = true
+      this.getParamsBarCode.page = 1
       this.barCodeForm = {
         material: row.id,
         material_type_name: row.material_type_name,
