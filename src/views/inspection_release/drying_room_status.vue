@@ -106,7 +106,7 @@
         </el-form-item>
         <el-form-item label="烘箱编号">
           <el-input
-            v-model="search.RFID"
+            v-model="search.OastNo"
             style="width:200px"
             clearable
             placeholder=""
