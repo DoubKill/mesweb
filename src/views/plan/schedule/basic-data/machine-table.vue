@@ -355,7 +355,7 @@
       </el-table-column>
       <el-table-column
         header-align="center"
-        label="RMB"
+        label="4MB"
       >
         <el-table-column
           header-align="center"
@@ -364,8 +364,8 @@
         >
           <template slot-scope="{row}">
             <el-select
-              v-if="row.stages.findIndex(d=>d==='RMB')!==-1&&!exportTableShow&&row.isEdit"
-              v-model="row.main_machine_RMB"
+              v-if="row.stages.findIndex(d=>d==='4MB')!==-1&&!exportTableShow&&row.isEdit"
+              v-model="row.main_machine_4MB"
               placeholder="请选择"
             >
               <el-option
@@ -375,7 +375,7 @@
                 :value="item.equip_no"
               />
             </el-select>
-            <span v-else>{{ row.main_machine_RMB }}</span>
+            <span v-else>{{ row.main_machine_4MB }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -385,8 +385,8 @@
         >
           <template slot-scope="{row}">
             <el-select
-              v-if="row.stages.findIndex(d=>d==='RMB')!==-1&&!exportTableShow&&row.isEdit"
-              v-model="row.vice_machine_RMB"
+              v-if="row.stages.findIndex(d=>d==='4MB')!==-1&&!exportTableShow&&row.isEdit"
+              v-model="row.vice_machine_4MB"
               placeholder="请选择"
               clearable
               multiple
@@ -398,7 +398,7 @@
                 :value="item.equip_no"
               />
             </el-select>
-            <span v-else>{{ row.vice_machine_RMB1 }}</span>
+            <span v-else>{{ row.vice_machine_4MB1 }}</span>
           </template>
         </el-table-column>
       </el-table-column>
@@ -654,9 +654,9 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item v-if="typeForm.stages.findIndex(d=>d==='RMB')!==-1" label="RMB主机台" prop="main_machine_RMB">
+        <el-form-item v-if="typeForm.stages.findIndex(d=>d==='4MB')!==-1" label="4MB主机台" prop="main_machine_4MB">
           <el-select
-            v-model="typeForm.main_machine_RMB"
+            v-model="typeForm.main_machine_4MB"
             placeholder="请选择"
             clearable
           >
@@ -668,9 +668,9 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item v-if="typeForm.stages.findIndex(d=>d==='RMB')!==-1" label="RMB辅机台" prop="vice_machine_RMB">
+        <el-form-item v-if="typeForm.stages.findIndex(d=>d==='4MB')!==-1" label="4MB辅机台" prop="vice_machine_4MB">
           <el-select
-            v-model="typeForm.vice_machine_RMB"
+            v-model="typeForm.vice_machine_4MB"
             placeholder="请选择"
             clearable
             multiple
@@ -785,7 +785,7 @@ export default {
         main_machine_3MB: [
           { required: true, message: '不能为空', trigger: 'change' }
         ],
-        main_machine_RMB: [
+        main_machine_4MB: [
           { required: true, message: '不能为空', trigger: 'change' }
         ],
         main_machine_FM: [
@@ -816,14 +816,14 @@ export default {
         await schedulingRecipeMachineSetting('put', row.id, { data: row })
         this.$message.success('操作成功')
         this.$set(row, 'isEdit', false)
-        // this.getList()
+        this.getList()
       } catch (e) {
         //
       }
     },
     deleteOrder: function(row) {
       this.$confirm('此操作将删除' + row.product_no + ', 是否继续?', '提示', {
-        confirmButtonText: '确定',
+        confi4MButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
@@ -873,7 +873,7 @@ export default {
           d.vice_machine_1MB1 = getStringEquip(d.vice_machine_1MB)
           d.vice_machine_2MB1 = getStringEquip(d.vice_machine_2MB)
           d.vice_machine_3MB1 = getStringEquip(d.vice_machine_3MB)
-          d.vice_machine_RMB1 = getStringEquip(d.vice_machine_RMB)
+          d.vice_machine_4MB1 = getStringEquip(d.vice_machine_4MB)
           d.vice_machine_FM1 = getStringEquip(d.vice_machine_FM)
           d.vice_machine_CMB1 = getStringEquip(d.vice_machine_CMB)
           d.vice_machine_HMB1 = getStringEquip(d.vice_machine_HMB)
