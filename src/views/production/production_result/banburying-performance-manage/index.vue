@@ -62,7 +62,7 @@
         label="胶料代码"
       >
         <template slot-scope="scope">
-          <el-link v-if="scope.row.product_no!=='合计'" type="primary" @click="clickProductNo(scope.row)">{{ scope.row.product_no }}</el-link>
+          <el-link v-if="scope.row.product_no.indexOf('合计') === -1" type="primary" @click="clickProductNo(scope.row)">{{ scope.row.product_no }}</el-link>
           <span v-else>{{ scope.row.product_no }}</span>
         </template>
       </el-table-column>
@@ -429,7 +429,7 @@ export default {
     downloadClick(rew) {
     },
     tableRowClassName({ row, rowIndex }) {
-      if (row.product_no === '合计') {
+      if (row.product_no.indexOf('合计') > -1) {
         return 'warning-row'
       }
       return ''
@@ -449,7 +449,7 @@ export default {
       this.currentChange(1)
     },
     clickProductNo(row) {
-      if (row.product_no === '合计') {
+      if (row.product_no.indexOf('合计') > -1) {
         return
       }
       this.dialogVisibleRubber = true
@@ -554,7 +554,9 @@ export default {
             { plan_trains: 0, actual_trains: 0 }
           ]
         }
+        let num = 0
         response.data.forEach(item => {
+          num = num + 1
           if (eq_sum.equip_no === '') {
             eq_sum.equip_no = item.equip_no
           } else if (eq_sum.equip_no !== item.equip_no) {
@@ -570,8 +572,10 @@ export default {
                 { plan_trains: 0, actual_trains: 0 }
               ]
             }
+            num = 1
             eq_sum.equip_no = item.equip_no
           }
+          eq_sum.product_no = '合计 ' + num
           eq_sum.plan_trains = eq_sum.plan_trains + item.plan_trains
           eq_sum.actual_trains = eq_sum.actual_trains + item.actual_trains
           eq_sum.classes_data[0].plan_trains = eq_sum.classes_data[0].plan_trains + item.classes_data[0].plan_trains
@@ -580,12 +584,13 @@ export default {
           eq_sum.classes_data[1].actual_trains = eq_sum.classes_data[1].actual_trains + item.classes_data[1].actual_trains
           eq_sum.classes_data[2].plan_trains = eq_sum.classes_data[2].plan_trains + item.classes_data[2].plan_trains
           eq_sum.classes_data[2].actual_trains = eq_sum.classes_data[2].actual_trains + item.classes_data[2].actual_trains
+
           this.tableData.push(item)
         })
         this.tableData.push(eq_sum)
-        if ((response.data).length === 0) {
-          this.tableData = response.data
-        }
+        // if ((response.data).length === 0) {
+        //   this.tableData = response.data
+        // }
         // this.tableData = response.data
       })
     },
