@@ -164,6 +164,7 @@ import { bzInventoryWorkingTasks } from '@/api/base_w'
 import { cancelTask } from '@/api/jqy'
 import { batchingMaterials } from '@/api/base_w'
 import { stationInfo } from '@/api/warehouse'
+import Cookies from 'js-cookie'
 export default {
   name: 'FilmIssueTask',
   // components: { page },
@@ -171,7 +172,7 @@ export default {
     return {
       search: {
         status: 2,
-        warehouse: '终炼胶库'
+        warehouse: Cookies.get('FI-warehouse') ? Cookies.get('FI-warehouse') : '终炼胶库'
       },
       total: 0,
       loading: false,
@@ -230,6 +231,7 @@ export default {
       }
     },
     changeList() {
+      Cookies.set('FI-warehouse', this.search.warehouse)
       this.search.page = 1
       this.getList()
     },
