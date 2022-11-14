@@ -514,7 +514,7 @@ export default {
             const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
             link.style.display = 'none'
             link.href = URL.createObjectURL(blob)
-            link.download = this.search.warehouse_name + '出入库履历.xlsx' // 下载的文件名
+            link.download = this.search.warehouse_name + `出入库履历${setDate('', true)}.xlsx` // 下载的文件名
             document.body.appendChild(link)
             link.click()
             document.body.removeChild(link)

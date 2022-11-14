@@ -179,6 +179,7 @@ export default {
   OutboundDeliveryOrders: '/api/v1/inventory/outbound-delivery-orders/',
   OutboundDeliveryOrderDetails: '/api/v1/inventory/outbound-delivery-order-details/',
   OutboundDeliveryOrdersExport: '/api/v1/inventory/outbound-delivery-orders/export/',
+  BzInventoryWorkingTasks: 'api/v1/inventory/bz-inventory-working-tasks/',
 
   //  终炼胶库计划管理
   FinalPlanManagement: '/api/v1/inventory/final-plan-management/',
@@ -738,6 +739,7 @@ export default {
   HfForceHandle: '/api/v1/inventory/hf-force-handle/',
   HfConfigSet: '/api/v1/inventory/hf-config-set/',
   EquipmentIndex: '/api/v1/equipment/index/',
+  RubberLog: '/api/v1/production/rubber-log/',
   ToolManageAccount: '/api/v1/production/tool-manage-account/',
   RubberFrameRepair: '/api/v1/production/rubber-frame-repair/',
 
@@ -746,6 +748,7 @@ export default {
   ProductSynthesisGroupRate: '/api/v1/quality/product-synthesis-group-rate/',
   ProductSynthesisProductRate: '/api/v1/quality/product-synthesis-product-rate/',
   ProductSynthesisMonthRate: '/api/v1/quality/product-synthesis-month-rate/',
+  BarcodeTrace: '/api/v1/inventory/barcode-trace/',
   RecipeChangeHistory: '/api/v1/recipe/recipe-change-history/',
 
   ProductInventoryLock: '/api/v1/inventory/product-inventory-lock/',

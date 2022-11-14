@@ -15,16 +15,13 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" :disabled="btnExportLoad" @click="exportTable">导出Excel</el-button>
-        <el-button
-          v-permission="['user','import']"
-        >
+        <el-button>
           <a
             :href="`${templateFileUrl}scheduled-down-time.xlsx`"
             download="计划停机时间导入模板.xlsx"
           >导出Excel模板</a>
         </el-button>
         <el-upload
-          v-permission="['user','import']"
           style="margin-left:8px;display:inline-block"
           action="string"
           accept=".xls, .xlsx"

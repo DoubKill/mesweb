@@ -188,7 +188,7 @@
 
 <script>
 import page from '@/components/page'
-import { debounce } from '@/utils'
+import { debounce, setDate } from '@/utils'
 import { equipSupplierList, getSupplierType, equipSupplierListDown, equipSupplierImport, equipSupplierGetName } from '@/api/jqy'
 export default {
   name: 'EquipmentMasterDataSupplier',
@@ -309,7 +309,7 @@ export default {
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = '供应商管理台账.xlsx' // 下载的文件名
+          link.download = `供应商管理台账${setDate('', true)}.xlsx` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)

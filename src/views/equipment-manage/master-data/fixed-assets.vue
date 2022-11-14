@@ -341,6 +341,7 @@
 <script>
 import { equipPropertyList, equipsCategory, equipPropertyListDown, equipSupplierList, equipPropertyImport } from '@/api/jqy'
 import page from '@/components/page'
+import { setDate } from '@/utils/index'
 export default {
   name: 'EquipmentMasterDataFixedAssets',
   components: { page },
@@ -583,7 +584,7 @@ export default {
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = '设备固定资产台账.xlsx' // 下载的文件名
+          link.download = `设备固定资产台账${setDate('', true)}.xlsx` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)

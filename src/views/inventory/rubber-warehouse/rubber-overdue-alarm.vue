@@ -120,6 +120,7 @@
 import materialInventoryManage from '../components/material-inventory-manage.vue'
 import { productExpiresList } from '@/api/base_w_five'
 import { globalCodesUrl } from '@/api/base_w'
+import { setDate } from '@/utils/index'
 import { productExpiresDetailsDown } from '@/api/material-inventory-manage'
 import page from '@/components/page'
 export default {
@@ -198,7 +199,7 @@ export default {
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = '胶料超期报警.xlsx' // 下载的文件名
+          link.download = `胶料超期报警${setDate('', true)}.xlsx` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)

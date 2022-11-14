@@ -475,6 +475,15 @@ export function outboundDeliveryOrderDetails(method, id, data = {}) {
   return request(obj)
 }
 
+export function bzInventoryWorkingTasks(method, id, data = {}) {
+  const obj = {
+    url: id ? API.BzInventoryWorkingTasks + id + '/' : API.BzInventoryWorkingTasks,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function finalPlanManagement(method, id, data = {}) {
   const obj = {
     url: id ? API.FinalPlanManagement + id + '/' : API.FinalPlanManagement,
