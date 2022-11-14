@@ -190,13 +190,33 @@ export default {
       stationList: []
     }
   },
+  watch: {
+    $route: {
+      handler() {
+        if (this.$route.fullPath === '/film-issueTask') {
+          this.getList()
+          this._setInterval = setInterval(d => {
+            this.getList()
+          }, 5000)
+        } else {
+          window.clearInterval(this._setInterval)
+        }
+      },
+      deep: true, // 深度监听
+      immediate: true // 第一次初始化渲染就可以监听到
+    }
+  },
+  destroyed() {
+    window.clearInterval(this._setInterval)
+  },
   created() {
-    this.getList()
+    // this.getList()
   },
   methods: {
     async getList() {
       try {
-        this.loading = true
+        // this.loading = true
+        console.log(1111)
         const _api = outboundDeliveryOrderDetails
         const data = await _api('get', null, { params: this.search })
         this.total = data.count
