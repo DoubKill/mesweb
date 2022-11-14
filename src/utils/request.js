@@ -174,6 +174,14 @@ service.interceptors.response.use(
       if (currentUrl) {
         const resData = error.response.data
         const fileReader = new FileReader()
+        if (!fileReader.result) {
+          Message({
+            message: '导出失败',
+            type: 'error',
+            duration: 3 * 1000
+          })
+          return Promise.reject('导出失败')
+        }
         fileReader.onloadend = () => {
           Message({
             message: JSON.parse(fileReader.result)[0],
