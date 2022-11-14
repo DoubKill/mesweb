@@ -109,7 +109,7 @@ export const constantRoutes = [
     }
   },
   // http://localhost:9000/#/alone/performance/productionRecord/
-  // ?name=plan_reality&arr=view&equip=S01&day_time=2022-03-23&key=
+  // ?name=plan_reality&arr=view&equip=Z01&day_time=2022-03-23&key=
   {
     path: '/alone/performance/productionRecord/',
     component: () => import('@/views/production/production_result/productionRecord'),
@@ -437,6 +437,16 @@ export let asyncRoutes = [
               title: 'ERP原材料信息',
               faName: 'PlanIndex',
               permissionName: 'material_map'
+            }
+          },
+          {
+            path: '/material-attribute-manage',
+            component: () => import('@/views/inventory/material-manage-base/material-attribute-manage.vue'),
+            name: 'MaterialAttributeManage',
+            meta: {
+              faName: 'PlanIndex',
+              title: '日限管理',
+              permissionName: 'material_attr'
             }
           }
         ]
@@ -1219,6 +1229,16 @@ export let asyncRoutes = [
         title: '生产投料配方查询',
         icon: 'formula',
         permissionName: 'formula_preparation'
+      }
+    },
+    {
+      path: '/daily_demand/',
+      component: () => import('@/views/material_base_info_manage/daily_demand'),
+      name: 'daily_demand',
+      meta: {
+        title: '料包日需求及耗时统计',
+        icon: 'formula',
+        permissionName: 'daily_weight_package'
       }
     }
     ]
@@ -2565,16 +2585,6 @@ export let asyncRoutes = [
               faName: 'MaterialManageBase',
               title: '仓库基础信息管理',
               permissionName: 'warehouse'
-            }
-          },
-          {
-            path: '/material-attribute-manage',
-            component: () => import('@/views/inventory/material-manage-base/material-attribute-manage.vue'),
-            name: 'MaterialAttributeManage',
-            meta: {
-              faName: 'MaterialManageBase',
-              title: '物料属性管理',
-              permissionName: 'material_attr'
             }
           }
         ]

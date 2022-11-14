@@ -3,11 +3,19 @@
     <!-- 生产记录表 -->
     <el-form :inline="true">
       <el-form-item label="机台">
-        <selectEquip
-          :equip_no_props.sync="search.equip_no"
-          :is-created="$route.query.equip?false:true"
-          @changeSearch="equipChange"
-        />
+        <el-select
+          v-model="search.equip_no"
+          :clearable="false"
+          placeholder="请选择机台"
+          @change="getList"
+        >
+          <el-option
+            v-for="item in machineList"
+            :key="item.equip_no"
+            :label="item.equip_no"
+            :value="item.equip_no"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="工厂日期">
         <el-date-picker
@@ -116,14 +124,15 @@
 </template>
 
 <script>
-import selectEquip from '@/components/select_w/equip'
+// import selectEquip from '@/components/select_w/equip'
 import { class_arrange_url } from '@/api/display_static_fun'
 import { exportExcel } from '@/utils'
 import { productClassesPlanReal } from '@/api/base_w_four'
 import { currentFactoryDate } from '@/api/base_w_three'
+import { equipUrl } from '@/api/base_w'
 export default {
   name: 'BanburyingProductionRecord',
-  components: { selectEquip },
+  // components: { selectEquip },
   data() {
     return {
       search: {
@@ -136,7 +145,8 @@ export default {
       tableData: [],
       exportTableShow: false,
       planTrainAll: 0,
-      completeTrainAll: 0
+      completeTrainAll: 0,
+      machineList: []
     }
   },
   async created() {
@@ -145,6 +155,8 @@ export default {
 
     if (!this.search.day_time) {
       this.getFactoryDate()
+    } else {
+      this.getMachineList()
     }
     await this.getClasses()
   },
@@ -187,17 +199,27 @@ export default {
         this.classOptions = response.results
       })
     },
+    getMachineList() {
+      var _this = this
+      equipUrl('get', { params: { all: 1, category_name: '密炼设备' }})
+        .then(function(response) {
+          _this.machineList = response.results || []
+          _this.search.equip_no = response.results[0] ? response.results[0].equip_no : ''
+          _this.getList()
+        })
+        .catch(function() { })
+    },
     async getFactoryDate() {
       try {
         const data = await currentFactoryDate('get', null, { params: {}})
         this.search.day_time = data.factory_date
+        this.getMachineList()
       } catch (e) {
         //
       }
     },
     equipChange(val) {
       this.search.equip_no = val
-      this.getList()
     },
     getListDay() {
       if (!this.search.day_time) {

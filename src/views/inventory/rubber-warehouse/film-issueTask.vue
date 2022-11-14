@@ -116,7 +116,7 @@
       <el-table-column
         prop="memo"
         label="车次"
-        min-width="15"
+        min-width="12"
       />
       <el-table-column
         prop="location"
@@ -126,7 +126,7 @@
       <el-table-column
         prop="created_username"
         label="任务创建人"
-        min-width="20"
+        min-width="18"
       />
       <el-table-column
         prop="created_date"
@@ -134,12 +134,10 @@
         min-width="20"
       />
       <el-table-column
-        prop="status"
         label="状态"
         width="70"
         :formatter="(row)=>{
-          let obj = optionsState1.find(d=>d.id === row.status)
-          return obj.name
+          return row.task_status
         }"
       />
       <el-table-column
@@ -151,29 +149,30 @@
         </template>
       </el-table-column>
     </el-table>
-    <page
+    <!-- <page
       :old-page="false"
       :total="total"
       :current-page="search.page"
       @currentChange="currentChange"
-    />
+    /> -->
   </div>
 </template>
 
 <script>
-import page from '@/components/page'
-import { outboundDeliveryOrderDetails } from '@/api/base_w'
+// import page from '@/components/page'
+import { bzInventoryWorkingTasks } from '@/api/base_w'
 import { cancelTask } from '@/api/jqy'
 import { batchingMaterials } from '@/api/base_w'
 import { stationInfo } from '@/api/warehouse'
+import Cookies from 'js-cookie'
 export default {
   name: 'FilmIssueTask',
-  components: { page },
+  // components: { page },
   data() {
     return {
       search: {
         status: 2,
-        warehouse: '终炼胶库'
+        warehouse: Cookies.get('FI-warehouse') ? Cookies.get('FI-warehouse') : '终炼胶库'
       },
       total: 0,
       loading: false,
@@ -197,10 +196,10 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const _api = outboundDeliveryOrderDetails
+        const _api = bzInventoryWorkingTasks
         const data = await _api('get', null, { params: this.search })
-        this.total = data.count
-        this.tableData = data.results
+        // this.total = data.count
+        this.tableData = data
         this.loading = false
       } catch (error) {
         this.loading = false
@@ -232,6 +231,7 @@ export default {
       }
     },
     changeList() {
+      Cookies.set('FI-warehouse', this.search.warehouse)
       this.search.page = 1
       this.getList()
     },
