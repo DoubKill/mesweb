@@ -653,7 +653,7 @@ export default {
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = `吨能耗及吨耗时${setDate('', true)}.xlsx` // 下载的文件名
+          link.download = `吨能耗及吨耗时${obj.st}至${obj.et}.xlsx` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)
