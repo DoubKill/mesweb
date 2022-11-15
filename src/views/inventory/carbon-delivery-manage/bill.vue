@@ -250,6 +250,19 @@
             @input="getDialogDebounce"
           />
         </el-form-item>
+        <el-form-item v-if="isLocation" label="巷道">
+          <el-select v-model="formSearch.tunnel" filterable clearable placeholder="请选择" @visible-change="getTunnelNameList" @change="getDialog">
+            <el-option
+              v-for="item in TunnelNameList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.code"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="托盘号">
+          <el-input v-model="formSearch.pallet_no" clearable @input="getDialogDebounce" />
+        </el-form-item>
       </el-form>
       <div v-if="isLocation" :key="1" v-loading="loading2">
         <h3>库位货物列表</h3>
@@ -525,6 +538,7 @@ import { thMaterials } from '@/api/jqy'
 import { materialCount } from '@/api/base_w'
 import page from '@/components/page'
 import { debounce, checkPermission } from '@/utils'
+import { thTunnels } from '@/api/base_w_four'
 import { thStock, thWeightStock, thEntrance, thInstock } from '@/api/base_w_three'
 export default {
   name: 'CarbonDeliveryBill',
@@ -599,7 +613,8 @@ export default {
       },
       dialogVisible2: false,
       btnDisabled: false,
-      positionObj: {}
+      positionObj: {},
+      TunnelNameList: []
     }
   },
   created() {
@@ -907,6 +922,16 @@ export default {
         }
       } catch (error) {
         this.loading2 = false
+      }
+    },
+    async getTunnelNameList(val) {
+      if (val) {
+        try {
+          const data = await thTunnels('get')
+          this.TunnelNameList = data || []
+        } catch (e) {
+        //
+        }
       }
     },
     async submitForm() {
