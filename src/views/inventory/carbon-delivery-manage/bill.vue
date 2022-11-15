@@ -677,6 +677,9 @@ export default {
     },
     getDebounce() {
       this.search.page = 1
+      if (this.search.order_no) {
+        this.search.order_no = this.search.order_no.trim()
+      }
       debounce(this, 'getList')
     },
     getDialogDebounce() {
