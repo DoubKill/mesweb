@@ -680,6 +680,12 @@ export default {
       debounce(this, 'getList')
     },
     getDialogDebounce() {
+      if (this.formSearch.pallet_no) {
+        this.formSearch.pallet_no = this.formSearch.pallet_no.trim()
+      }
+      if (this.formSearch.batch_no) {
+        this.formSearch.batch_no = this.formSearch.batch_no.trim()
+      }
       if (this.isLocation) {
         this.formSearch.page = 1
         debounce(this, 'getDialogGoods')
