@@ -137,7 +137,10 @@
           width="60"
         >
           <template slot-scope="{row}">
-            <span :title="row[d.prop+'早班_count']">{{ row[d.prop+'早班'] }}</span>
+            <el-link
+              type="primary"
+              @click="dialogResult(row,d.prop,'早班')"
+            >{{ row[d.prop+'早班'] }}</el-link>
           </template>
         </el-table-column>
         <el-table-column
@@ -146,7 +149,10 @@
           width="60"
         >
           <template slot-scope="{row}">
-            <span :title="row[d.prop+'中班_count']">{{ row[d.prop+'中班'] }}</span>
+            <el-link
+              type="primary"
+              @click="dialogResult(row,d.prop,'中班')"
+            >{{ row[d.prop+'中班'] }}</el-link>
           </template>
         </el-table-column>
         <el-table-column
@@ -155,7 +161,10 @@
           width="60"
         >
           <template slot-scope="{row}">
-            <span :title="row[d.prop+'夜班_count']">{{ row[d.prop+'夜班'] }}</span>
+            <el-link
+              type="primary"
+              @click="dialogResult(row,d.prop,'夜班')"
+            >{{ row[d.prop+'夜班'] }}</el-link>
           </template>
         </el-table-column>
       </el-table-column>
@@ -172,6 +181,47 @@
         width="90"
       />
     </el-table>
+    <el-dialog
+      title="配料明细"
+      :visible.sync="dialogVisible"
+      width="30%"
+    >
+      <el-table
+        v-loading="loadingDialog"
+        max-height="600"
+        :data="tableDataDialog"
+        :span-method="objectSpanMethod"
+        border
+      >
+        <el-table-column
+          prop="equip_no"
+          align="center"
+          label="机台"
+          min-width="90"
+        />
+        <el-table-column
+          prop="section"
+          align="center"
+          label="岗位"
+          min-width="90"
+        />
+        <el-table-column
+          prop="num"
+          align="center"
+          label="包数"
+          min-width="90"
+        />
+        <el-table-column
+          prop="total"
+          align="center"
+          label="合计"
+          min-width="90"
+        />
+      </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible=false">取 消</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -188,6 +238,9 @@ export default {
       },
       isExport: false,
       machineList: [],
+      loadingDialog: false,
+      dialogVisible: false,
+      tableDataDialog: [],
       loading: false,
       tableHead: [],
       btnLoading: false,
@@ -238,6 +291,55 @@ export default {
     changeList() {
       this.tableHead = getDiffDate(this.search.factory_date + '-01', getCurrentMonthLastDay(this.search.factory_date))
       this.getList()
+    },
+    async dialogResult(row, day, classes) {
+      try {
+        this.dialogVisible = true
+        this.loadingDialog = true
+        const data = await summaryOfWeighingOutput('get', null, { params: { factory_date: this.search.factory_date, name: row.name, day: day, classes: classes }})
+        this.loadingDialog = false
+        this.tableDataDialog = data.detail
+        this.tableDataDialog.forEach(d => {
+          d.total = data.user_total[d.equip_no]
+        })
+        if (this.tableDataDialog.length > 0) {
+          this.tableDataDialog.push({
+            equip_no: '合计',
+            total: sum(this.tableDataDialog, 'num')
+          })
+        }
+        this.spanArr = []
+        this.pos = null
+        for (var i = 0; i < this.tableDataDialog.length; i++) {
+          if (i === 0) {
+            // 如果是第一条记录（即索引是0的时候），向数组中加入１
+            this.spanArr.push(1)
+            this.pos = 0
+          } else {
+            if (this.tableDataDialog[i].equip_no === this.tableDataDialog[i - 1].equip_no) {
+              // 如果a相等就累加，并且push 0  这里是根据一样的a匹配
+              this.spanArr[this.pos] += 1
+              this.spanArr.push(0)
+            } else {
+              // 不相等push 1
+              this.spanArr.push(1)
+              this.pos = i
+            }
+          }
+        }
+      } catch (e) {
+        this.loadingDialog = false
+      }
+    },
+    objectSpanMethod({ row, column, rowIndex, columnIndex }) {
+      if ([0, 3].includes(columnIndex) && this.spanArr) {
+        const _row = this.spanArr[rowIndex]
+        const _col = _row > 0 ? 1 : 0
+        return {
+          rowspan: _row,
+          colspan: _col
+        }
+      }
     },
     debounceList() {
       this.$debounce(this, 'getList')
@@ -322,6 +424,15 @@ function getCurrentMonthLastDay(d) {
     day = '0' + day
   }
   return date.getFullYear() + '-' + month + '-' + day
+}
+function sum(arr, params) {
+  var s = 0
+  arr.forEach(function(val, idx, arr) {
+    const a = val[params] ? Number(val[params]) : 0
+    s += a
+  }, 0)
+  s = Math.round(s * 100) / 100
+  return s
 }
 </script>
 
