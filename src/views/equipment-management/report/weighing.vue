@@ -109,6 +109,13 @@
           type="primary"
           @click="exportTable('绩效')"
         >导出员工绩效Excel</el-button>
+        <el-button
+          v-permission="['summary_of_weighing_output','export']"
+          style="margin-left:20px"
+          type="primary"
+          :loading="btnExportLoad"
+          @click="exportTable1"
+        >导出员工考勤</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -226,7 +233,7 @@
 </template>
 
 <script>
-import { summaryOfWeighingOutput, setThePrice } from '@/api/jqy'
+import { summaryOfWeighingOutput, setThePrice, summaryOfWeighingOutputDown } from '@/api/jqy'
 import { exportExcel } from '@/utils/index'
 import { setDate } from '@/utils'
 export default {
@@ -236,6 +243,7 @@ export default {
       search: {
         factory_date: setDate(null, null, 'month')
       },
+      btnExportLoad: false,
       isExport: false,
       machineList: [],
       loadingDialog: false,
@@ -343,6 +351,25 @@ export default {
     },
     debounceList() {
       this.$debounce(this, 'getList')
+    },
+    exportTable1() {
+      this.btnExportLoad = true
+      const obj = Object.assign({ export: 1 }, this.search)
+      const _api = summaryOfWeighingOutputDown
+      _api(obj)
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = `配料间实际考勤数据${setDate('', true)}.xlsx` // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad = false
+        }).catch(e => {
+          this.btnExportLoad = false
+        })
     },
     exportTable(val) {
       if (val === '产量') {
