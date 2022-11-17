@@ -431,7 +431,7 @@ export default {
       againPrint: null,
       isfirst: false,
       created: false,
-      dateValue: [getNextDate(setDate(), -7), setDate()]
+      dateValue: [getNextDate(setDate(), -2), setDate()]
     }
   },
   created() {
@@ -649,11 +649,11 @@ export default {
     changeEquipList(val) {
       this.formInline.equip_no = val ? val.equip_no : ''
       if (this.formInline.equip_no[0] === 'F') {
-        this.dateValue = [getNextDate(setDate(), -7), setDate()]
+        this.dateValue = [getNextDate(setDate(), -2), setDate()]
         this.formInline.s_time = this.dateValue ? this.dateValue[0] : ''
         this.formInline.e_time = this.dateValue ? this.dateValue[1] : ''
       } else {
-        this.dateValue = [getNextDate(setDate(), -5), setDate()]
+        this.dateValue = [getNextDate(setDate(), -2), setDate()]
         this.formInline.s_time = this.dateValue ? this.dateValue[0] : ''
         this.formInline.e_time = this.dateValue ? this.dateValue[1] : ''
       }
