@@ -462,6 +462,7 @@ export default {
   ThInventory: '/api/v1/inventory/th-inventory/',
   ThMaterialGroups: '/api/v1/inventory/th-material-groups/',
   ThTunnels: '/api/v1/inventory/th-tunnels/',
+  EmptyTrayOutboundDelivery: '/api/v1/inventory/empty-tray-outbound-delivery/',
   // 线边库 库区
   Depot: '/api/v1/inventory/depot/',
   // 库位

@@ -152,6 +152,15 @@ export function thTunnels(method, id, data = {}) {
   return request(obj)
 }
 
+export function emptyTrayOutboundDelivery(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EmptyTrayOutboundDelivery + id + '/' : API.EmptyTrayOutboundDelivery,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function depot(method, id, data = {}) {
   const obj = {
     url: id ? API.Depot + id + '/' : API.Depot,
