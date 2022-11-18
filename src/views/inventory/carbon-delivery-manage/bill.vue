@@ -648,7 +648,7 @@ export default {
       positionObj: {},
       TunnelNameList: [],
       dialogVisiblePallet: false,
-      formData: { out_type: '手动' },
+      formData: { out_type: '手动', out_num: 0 },
       btnLoadingPallet: false
     }
   },
@@ -1048,7 +1048,7 @@ export default {
       this.btnLoadingPallet = false
     },
     handleClosePallet(done) {
-      this.formData.out_num = undefined
+      this.formData.out_num = 0
       this.dialogVisiblePallet = false
       if (done) {
         done()
