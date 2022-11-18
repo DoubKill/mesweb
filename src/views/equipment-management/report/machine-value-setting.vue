@@ -38,7 +38,9 @@
           min-width="20"
         >
           <template slot-scope="scope">
+            <span v-if="scope.row.equip_no==='合计'">{{ scope.row.equip_no }}</span>
             <el-link
+              v-else
               type="primary"
               @click="dialogResult(scope.row)"
             >{{ scope.row.equip_no }}</el-link>
@@ -59,7 +61,7 @@
         </el-table-column>
         <el-table-column
           prop="max_weight"
-          label="最高值"
+          label="最高值(车)"
           min-width="20"
         >
           <template slot-scope="{row}">
@@ -94,7 +96,11 @@
           align="center"
           label="日期"
           min-width="90"
-        />
+        >
+          <template slot-scope="{row}">
+            <span>{{ row.day }}</span>
+          </template>
+        </el-table-column>
         <el-table-column
           prop="classes"
           align="center"
@@ -104,13 +110,13 @@
         <el-table-column
           prop="target_weight"
           align="center"
-          label="目标值"
+          label="目标值(车)"
           min-width="90"
         />
         <el-table-column
           prop="max_weight"
           align="center"
-          label="最高值"
+          label="最高值(车)"
           min-width="90"
         />
       </el-table>
@@ -165,6 +171,13 @@ export default {
         const data = await machineTargetValue('get', null, { params: { target_month: this.monthValue, equip_no: row.equip_no }})
         this.loadingDialog = false
         this.tableDataDialog = data.results
+        this.tableDataDialog.forEach(d => {
+          if (d.day < 10) {
+            d.day = this.monthValue + '-0' + d.day
+          } else {
+            d.day = this.monthValue + '-' + d.day
+          }
+        })
       } catch (e) {
         this.loadingDialog = false
       }
