@@ -552,7 +552,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item v-if="formData.out_type==='手动'" label="出库数量">
-          <el-input-number v-model="formData.out_num" controls-position="right" />
+          <el-input-number v-model="formData.out_num" controls-position="right" :min="0" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -1034,7 +1034,7 @@ export default {
     },
     async submitFormPallet() {
       try {
-        if (this.formData.out_type === '手动' && !this.formData.out_num) {
+        if (this.formData.out_type === '手动' && (!this.formData.out_num && this.formData.out_num !== 0)) {
           this.$message('请填写出库数量')
           return
         }
