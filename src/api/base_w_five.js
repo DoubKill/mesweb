@@ -176,6 +176,14 @@ export function scheduleNos(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function apsGantt(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ApsGantt + id + '/' : API.ApsGantt,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 export function ImportXlx(method, id, data = {}) {
   const obj = {
     url: id ? API.ImportXlx + id + '/' : API.ImportXlx,

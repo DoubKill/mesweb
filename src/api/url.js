@@ -667,6 +667,7 @@ export default {
   SchedulingResult: '/api/v1/plan/scheduling-result/', // 机台生产计划-整体列表
   ImportXlx: '/api/v1/plan/scheduling-result/import_xlx/',
   ScheduleNos: '/api/v1/plan/scheduling-result/schedule_nos/',
+  ApsGantt: '/api/v1/plan/aps-gantt/',
   SchedulingProductDeclareSummary: '/api/v1/plan/scheduling-product-declare-summary/', // 胶料计划库存汇总
   SchedulingProductImport: '/api/v1/plan/scheduling-product-declare-summary/import_xlsx/',
   SchedulingProcedures: '/api/v1/plan/scheduling-procedures/', // 自动排程
