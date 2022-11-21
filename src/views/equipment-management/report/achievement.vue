@@ -38,6 +38,12 @@
           :disabled="btnExportLoad"
           @click="exportTable"
         >导出Excel</el-button>
+        <el-button
+          v-permission="['performance_summary', 'export']"
+          type="primary"
+          :disabled="btnExportLoad1"
+          @click="exportTable1"
+        >导出考勤数据</el-button>
       </el-form-item>
     </el-form>
     <div style="clear:both" />
@@ -366,6 +372,7 @@
 <script>
 import { debounce, setDate, exportExcel } from '@/utils'
 import { globalCodesUrl } from '@/api/base_w'
+import { performanceSummaryDown } from '@/api/jqy'
 import achievementC from '../components/achievement-c'
 import { performanceSummary, performanceSubsidy, independentPostTemplate, independentPostTemplatePOST } from '@/api/base_w_five'
 export default {
@@ -379,6 +386,7 @@ export default {
       value2: '',
       btnExportTemplateLoad: false,
       btnExportLoad: false,
+      btnExportLoad1: false,
       tableData: [],
       month: '',
       year: '',
@@ -579,6 +587,25 @@ export default {
           this.loading = false
         }, 1000)
       }, 100)
+    },
+    exportTable1() {
+      this.btnExportLoad1 = true
+      const obj = Object.assign({ export: 1 }, this.search)
+      const _api = performanceSummaryDown
+      _api(obj)
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = `密炼实际考勤数据${setDate('', true)}.xlsx` // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.btnExportLoad1 = false
+        }).catch(e => {
+          this.btnExportLoad1 = false
+        })
     },
     exportSubsidy(bool) {
       let str = this.subsidyIs === 1 ? '其他奖惩列表' : this.subsidyIs === 2 ? '补贴列表' : '超产奖列表'
