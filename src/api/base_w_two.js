@@ -289,6 +289,24 @@ export function equipMaintenanceOrder(method, id, data = {}) {
   return request(obj)
 }
 
+export function equipFaultStatistic(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipFaultStatistic + id + '/' : API.EquipFaultStatistic,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipFaultAnalyse(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipFaultAnalyse + id + '/' : API.EquipFaultAnalyse,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function platformConfig(method, id, data = {}) {
   const obj = {
     url: id ? API.PlatformConfig + id + '/' : API.PlatformConfig,
