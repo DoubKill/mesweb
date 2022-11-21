@@ -954,16 +954,6 @@ export let asyncRoutes = [
               }
             },
             // {
-            //   path: '/schedule/gantt-chart',
-            //   component: () => import('@/views/plan/schedule/dispose/gantt-chart'),
-            //   name: 'ScheduleGanttChart',
-            //   meta: {
-            //     faName: 'ScheduleDispose',
-            //     title: '胶料计划-甘特图',
-            //     permissionName: ''
-            //   }
-            // },
-            // {
             //   path: '/schedule/machine',
             //   component: () => import('@/views/plan/schedule/dispose/machine'),
             //   name: 'ScheduleMachine',
