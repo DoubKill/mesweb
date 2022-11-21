@@ -354,12 +354,12 @@
         class="dialog-footer"
       >
         <el-button @click="handleClose(false)">取 消</el-button>
-        <el-button
+        <!-- <el-button
           v-if="!isLook1&&!isLook"
           type="primary"
           :loading="btnLoading"
           @click="handleEdit(false)"
-        >{{ '保 存' }}</el-button>
+        >{{ '保 存' }}</el-button> -->
         <el-button
           v-if="!isLook1"
           type="primary"

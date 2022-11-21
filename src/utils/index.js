@@ -155,6 +155,9 @@ export function setDate(_data, bool, type) {
     return formatObj.h + ':' + formatObj.i
   } else if (type && type === 'year') {
     return formatObj.y
+  } else if (type && type === 'gantt') {
+    return formatObj.y + '-' + formatObj.m + '-' + formatObj.d + ' ' +
+    formatObj.h + ':' + formatObj.i
   } else {
     return formatObj.y + '-' + formatObj.m + '-' + formatObj.d
   }
