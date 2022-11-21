@@ -581,15 +581,14 @@ export const equipRoutes = [
               title: '交旧率报表',
               permissionName: 'equip_old_rate'
             }
-          }
-          /** ,{
+          }, {
             path: '/equipment/order-receiving',
             component: () => import('@/views/equipment-manage/report-form/order-receiving'),
             name: 'EquipmentReportFormOrderReceiving',
             meta: {
               faName: 'EquipmentReportForm',
               title: '设备故障统计列表',
-              permissionName: ''
+              permissionName: 'equip_fault_statistic'
             }
           },
           {
@@ -599,10 +598,10 @@ export const equipRoutes = [
             meta: {
               faName: 'EquipmentReportForm',
               title: '设备故障分析报表',
-              permissionName: ''
+              permissionName: 'equip_fault_analyse'
             }
-          },
-          {
+          }
+          /** {
             path: '/equipment/energy-consumption',
             component: () => import('@/views/equipment-manage/report-form/energy-consumption'),
             name: 'EquipmentReportFormEnergyConsumption',
