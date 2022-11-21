@@ -1059,9 +1059,16 @@ export default {
     pickClasses() {
       if (this.optionsGroup.find(d => d.group__global_name === this.dialogForm.group)) {
         this.$set(this.dialogForm, 'classes', this.optionsGroup.find(d => d.group__global_name === this.dialogForm.group).classes__global_name)
-        this.dialogForm.actual_begin_date = null
-        this.dialogForm.actual_end_date = null
-        this.dialogForm.actual_time = null
+        const time = this.allowTime[this.dialogForm.classes]
+        this.dialogForm.actual_begin_date = time[0]
+        this.dialogForm.begin_date = this.dialogForm.actual_begin_date
+        this.dialogForm.actual_end_date = time[1]
+        this.dialogForm.end_date = this.dialogForm.actual_end_date
+        this.$set(this.dialogForm, 'actual_time', getHour(this.dialogForm.actual_begin_date, this.dialogForm.actual_end_date))
+        this.dialogForm.work_time = this.dialogForm.actual_time
+        // this.dialogForm.actual_begin_date = null
+        // this.dialogForm.actual_end_date = null
+        // this.dialogForm.actual_time = null
       } else {
         this.$message('当天排班没有此班组')
       }
@@ -1374,8 +1381,8 @@ export default {
         equipList.push(d.equip_no)
       })
       this.dialogForm.clock_type = this.search.clock_type
-      this.dialogForm.standard_begin_date = this.time_interval[0]
-      this.dialogForm.standard_end_date = this.time_interval[1]
+      this.dialogForm.standard_begin_date = this.allowTime[this.dialogForm.classes][0]
+      this.dialogForm.standard_end_date = this.allowTime[this.dialogForm.classes][1]
       this.dialogForm.calculate_begin_date = this.dialogForm.actual_begin_date
       this.dialogForm.calculate_end_date = this.dialogForm.actual_end_date
       this.$refs.dialogForm.validate(async(valid) => {
