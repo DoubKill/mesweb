@@ -104,7 +104,11 @@
       id="taskLine1"
       style="width: 100%;height:500px"
     />
-
+    <el-divider style="background:black" />
+    <div
+      id="taskLine2"
+      style="width: 100%;height:500px"
+    />
     <el-dialog
       title="190E机台的产量（车数）输入"
       :visible.sync="dialogVisible"
@@ -474,6 +478,98 @@ export default {
             }
           }
         ]
+      },
+      option2: {
+        color: ['#5B9BD5', '#ED7D31'],
+        title: {
+          left: 'center',
+          text: '准备分厂吨耗时/吨耗能趋势图'
+        },
+        tooltip: {
+          trigger: 'axis'
+        },
+        legend: {
+          top: '6%',
+          orient: 'horizontal',
+          data: ['吨耗能（KWH/吨）', '吨耗时（分钟/吨）']
+        },
+        toolbox: {
+          show: true
+        },
+        calculable: true,
+        grid: {
+          x: 60,
+          y: 100,
+          x2: 60,
+          y2: 30
+        },
+        xAxis: [
+          {
+            type: 'category',
+            // prettier-ignore
+            data: []
+          }
+        ],
+        yAxis: [
+          {
+            type: 'value',
+            name: 'KWH/吨',
+            splitLine: {
+              show: false
+            },
+            nameGap: 20
+          },
+          {
+            type: 'value',
+            name: '分钟/吨',
+            splitLine: {
+              show: false
+            },
+            nameGap: 20
+          }
+        ],
+        series: [
+          {
+            name: '吨耗能（KWH/吨）',
+            barWidth: 15,
+            type: 'bar',
+            yAxisIndex: 0,
+            data: [],
+            label: {
+              fontSize: 15,
+              color: '#F5FFFF',
+              backgroundColor: '#5B9BD5',
+              show: true,
+              formatter: function(params) {
+                if (params.value === 0 || params.value === '0') {
+                  return ''
+                } else {
+                  return params.value
+                }
+              }
+            }
+          },
+          {
+            name: '吨耗时（分钟/吨）',
+            type: 'line',
+            yAxisIndex: 1,
+            data: [],
+            label: {
+              fontSize: 15,
+              position: 'top',
+              color: 'black',
+              backgroundColor: '#ED7D31',
+              show: true,
+              formatter: function(params) {
+                if (params.value === 0 || params.value === '0') {
+                  return ''
+                } else {
+                  return params.value
+                }
+              }
+            }
+          }
+        ]
       }
     }
   },
@@ -709,6 +805,20 @@ export default {
                 d[item] ? d[item].toFixed(0) : 0)
             })
           }
+          if (d.name === '吨耗能（KWH/吨）') {
+            this.yList6 = []
+            this.tableHead.forEach(item => {
+              this.yList6.push(
+                d[item] ? d[item].toFixed(2) : 0)
+            })
+          }
+          if (d.name === '吨耗时（分钟/吨）') {
+            this.yList7 = []
+            this.tableHead.forEach(item => {
+              this.yList7.push(
+                d[item] ? d[item].toFixed(2) : 0)
+            })
+          }
         })
         this.yList5 = []
         for (var i = 0; i < this.tableHead.length; i++) {
@@ -723,6 +833,9 @@ export default {
         this.option1.xAxis[0].data = this.xList
         this.option1.series[0].data = data.data_190e.wl
         this.option1.series[1].data = data.data_190e.jl
+        this.option2.xAxis[0].data = this.xList
+        this.option2.series[0].data = this.yList6
+        this.option2.series[1].data = this.yList7
         this.totalList = []
         for (var index = 0; index < this.tableHead.length; index++) {
           this.totalList.push((Number(data.data_190e.wl[index]) + Number(data.data_190e.jl[index])).toFixed(2))
@@ -733,6 +846,8 @@ export default {
           chartBar.setOption(this.option)
           const chartBar1 = echarts.init(document.getElementById('taskLine1'))
           chartBar1.setOption(this.option1)
+          const chartBar2 = echarts.init(document.getElementById('taskLine2'))
+          chartBar2.setOption(this.option2)
         })
         this.option.graphic = [{
           type: 'group',
@@ -803,6 +918,44 @@ export default {
               top: 'middle',
               style: {
                 text: [`日均产能`, `加硫:${data.avg_190e.jl}`, `无硫:${data.avg_190e.wl}`, `段数:${data.avg_190e.ds}`].join('\n'),
+                font: '500 14px sy',
+                fill: '#1D2F2E',
+                textLineHeight: 22
+              }
+            }
+          ]
+        }]
+        this.option2.graphic = [{
+          type: 'group',
+          left: '85%',
+          top: 0,
+          children: [
+            {
+              type: 'rect',
+              z: 100,
+              left: 'center',
+              top: 'middle',
+              shape: {
+                width: 150,
+                height: 90
+              },
+              style: {
+                fill: '#fff',
+                stroke: '#555',
+                lineWidth: 1,
+                shadowBlur: 8,
+                shadowOffsetX: 3,
+                shadowOffsetY: 3,
+                shadowColor: 'rgba(0,0,0,0.2)'
+              }
+            },
+            {
+              type: 'text',
+              z: 100,
+              left: 'center',
+              top: 'middle',
+              style: {
+                text: [`日均耗能/耗时`, `吨耗能:${data.results[14].avg}`, `吨耗时:${data.results[13].avg}`].join('\n'),
                 font: '500 14px sy',
                 fill: '#1D2F2E',
                 textLineHeight: 22
