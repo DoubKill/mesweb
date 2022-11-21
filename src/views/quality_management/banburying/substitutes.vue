@@ -58,8 +58,8 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button v-permission="['replace_material', 'opera']" type="primary" :loading="submit" @click="feed('可投料')">可投料</el-button>
-        <el-button v-permission="['replace_material', 'opera']" type="primary" :loading="submitNo" @click="feed('不可投料')">不可投料</el-button>
+        <el-button v-permission="['replace_material', 'opera']" :disabled="search.status==='已处理'||search.status==='超期失效'" type="primary" :loading="submit" @click="feed('可投料')">可投料</el-button>
+        <el-button v-permission="['replace_material', 'opera']" :disabled="search.status==='已处理'||search.status==='超期失效'" type="primary" :loading="submitNo" @click="feed('不可投料')">不可投料</el-button>
         <!-- <el-button type="primary">导出Excel</el-button> -->
       </el-form-item>
     </el-form>
