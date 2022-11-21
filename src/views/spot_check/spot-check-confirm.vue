@@ -354,12 +354,12 @@
         class="dialog-footer"
       >
         <el-button @click="handleClose(false)">取 消</el-button>
-        <el-button
+        <!-- <el-button
           v-if="!isLook1&&!isLook"
           type="primary"
           :loading="btnLoading"
           @click="handleEdit(false)"
-        >{{ '保 存' }}</el-button>
+        >{{ '保 存' }}</el-button> -->
         <el-button
           v-if="!isLook1"
           type="primary"
@@ -651,7 +651,7 @@ export default {
           const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = '岗位安全装置点检表.xls' // 下载的文件名
+          link.download = `岗位安全装置点检表${setDate('', true)}.xls` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)

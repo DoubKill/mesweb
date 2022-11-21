@@ -270,7 +270,7 @@ export default {
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = '月度配料间排班表.xlsx' // 下载的文件名
+          link.download = `月度配料间排班表${setDate('', true)}.xlsx` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)
@@ -306,7 +306,7 @@ export default {
     },
     sectionChange(val) {
       if (val) {
-        performanceJobLadder('get', null, { params: { all: 1, type: '称量', weight: 1 }}).then((response) => {
+        performanceJobLadder('get', null, { params: { all: 1, type: '生产配料', weight: 1 }}).then((response) => {
           this.options = response.results
         })
       }

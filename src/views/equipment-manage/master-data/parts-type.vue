@@ -142,7 +142,7 @@
 <script>
 import page from '@/components/page'
 import { equipComponentType, equipComponentTypeDown, equipComponentTypeImport } from '@/api/jqy'
-// import { errorRepeat } from '@/utils'
+import { setDate } from '@/utils'
 
 export default {
   name: 'EquipmentMasterDataPartsType',
@@ -260,7 +260,7 @@ export default {
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = '设备部件分类.xlsx' // 下载的文件名
+          link.download = `设备部件分类${setDate('', true)}.xlsx` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)

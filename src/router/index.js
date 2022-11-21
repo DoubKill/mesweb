@@ -109,7 +109,7 @@ export const constantRoutes = [
     }
   },
   // http://localhost:9000/#/alone/performance/productionRecord/
-  // ?name=plan_reality&arr=view&equip=S01&day_time=2022-03-23&key=
+  // ?name=plan_reality&arr=view&equip=Z01&day_time=2022-03-23&key=
   {
     path: '/alone/performance/productionRecord/',
     component: () => import('@/views/production/production_result/productionRecord'),
@@ -438,6 +438,16 @@ export let asyncRoutes = [
               faName: 'PlanIndex',
               permissionName: 'material_map'
             }
+          },
+          {
+            path: '/material-attribute-manage',
+            component: () => import('@/views/inventory/material-manage-base/material-attribute-manage.vue'),
+            name: 'MaterialAttributeManage',
+            meta: {
+              faName: 'PlanIndex',
+              title: '日限管理',
+              permissionName: 'material_attr'
+            }
           }
         ]
       },
@@ -489,6 +499,16 @@ export let asyncRoutes = [
               title: '原材料配比查询',
               faName: 'RbRecipe',
               permissionName: 'product_ratio'
+            }
+          },
+          {
+            path: '/rb/formula-resume',
+            name: 'FormulaResume',
+            component: () => import('@/views/recipe/formula-resume'),
+            meta: {
+              title: 'MES配方变更履历',
+              faName: 'RbRecipe',
+              permissionName: 'recipe_change_history'
             }
           }
         ] },
@@ -557,14 +577,36 @@ export let asyncRoutes = [
         ]
       },
       {
-        path: '/rb/formula-resume',
-        name: 'FormulaResume',
-        component: () => import('@/views/recipe/formula-resume'),
+        path: '/track',
+        redirect: '/track-raw-material',
+        component: () => import('@/views/production/track/track-fa'),
+        name: 'Track',
         meta: {
-          title: 'MES配方变更履历',
-          icon: 'formula',
-          permissionName: 'recipe_change_history'
-        }
+          title: '条码追溯',
+          icon: 'formula'
+        },
+        children: [
+          {
+            path: '/track-raw-material',
+            name: 'TrackRawMaterial',
+            component: () => import('@/views/production/track/track-raw-rubber'),
+            meta: {
+              faName: 'Track',
+              title: '条码追溯(终炼胶->原材料)',
+              permissionName: 'barcode_trace1'
+            }
+          },
+          {
+            path: '/track-raw-rubber',
+            name: 'TrackRawRubber',
+            component: () => import('@/views/production/track/track-raw-material'),
+            meta: {
+              faName: 'Track',
+              title: '条码追溯(原材料->终炼胶)',
+              permissionName: 'barcode_trace'
+            }
+          }
+        ]
       }
     // {
     //   path: '/rb/material/std/manage111',
@@ -902,6 +944,16 @@ export let asyncRoutes = [
               }
             },
             // {
+            //   path: '/schedule/gantt-chart',
+            //   component: () => import('@/views/plan/schedule/dispose/gantt-chart'),
+            //   name: 'ScheduleGanttChart',
+            //   meta: {
+            //     faName: 'ScheduleDispose',
+            //     title: '胶料计划-甘特图',
+            //     permissionName: ''
+            //   }
+            // },
+            // {
             //   path: '/schedule/machine',
             //   component: () => import('@/views/plan/schedule/dispose/machine'),
             //   name: 'ScheduleMachine',
@@ -1188,6 +1240,16 @@ export let asyncRoutes = [
         icon: 'formula',
         permissionName: 'formula_preparation'
       }
+    },
+    {
+      path: '/daily_demand/',
+      component: () => import('@/views/material_base_info_manage/daily_demand'),
+      name: 'daily_demand',
+      meta: {
+        title: '料包日需求及耗时统计',
+        icon: 'formula',
+        permissionName: 'daily_weight_package'
+      }
     }
     ]
   },
@@ -1417,7 +1479,7 @@ export let asyncRoutes = [
           }
         ]
       },
-      {
+      /** {
         path: '/track',
         redirect: '/track-raw-material',
         component: () => import('@/views/production/track/track-fa'),
@@ -1448,7 +1510,7 @@ export let asyncRoutes = [
             }
           }
         ]
-      },
+      },**/
       {
         path: '/achievements',
         redirect: '/report/achievement',
@@ -1627,6 +1689,26 @@ export let asyncRoutes = [
           title: '炭黑库-预警参数设定',
           icon: 'production',
           permissionName: 'th_warning_setting'
+        }
+      },
+      {
+        path: '/rubber-access-repair',
+        name: 'RubberAccessRepair',
+        component: () => import('@/views/material_base_info_manage/rubber-access-repair'),
+        meta: {
+          title: '胶架进出登记表',
+          icon: 'production',
+          permissionName: 'rubber_log'
+        }
+      },
+      {
+        path: '/rubber-access-repair-total',
+        name: 'RubberAccessRepairTotal',
+        component: () => import('@/views/material_base_info_manage/rubber-access-repair-total'),
+        meta: {
+          title: '胶架进出登记表汇总',
+          icon: 'production',
+          permissionName: 'rubber_log'
         }
       },
       {
@@ -2513,16 +2595,6 @@ export let asyncRoutes = [
               faName: 'MaterialManageBase',
               title: '仓库基础信息管理',
               permissionName: 'warehouse'
-            }
-          },
-          {
-            path: '/material-attribute-manage',
-            component: () => import('@/views/inventory/material-manage-base/material-attribute-manage.vue'),
-            name: 'MaterialAttributeManage',
-            meta: {
-              faName: 'MaterialManageBase',
-              title: '物料属性管理',
-              permissionName: 'material_attr'
             }
           }
         ]

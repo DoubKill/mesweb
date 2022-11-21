@@ -1318,6 +1318,24 @@ export function summaryOfWeighingOutput(method, id, data = {}) {
   return request(obj)
 }
 
+export function performanceSummaryDown(params) {
+  return request({
+    url: API.PerformanceSummary,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
+
+export function summaryOfWeighingOutputDown(params) {
+  return request({
+    url: API.SummaryOfWeighingOutput,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
+
 export function userImport(method, id, data = {}) {
   const obj = {
     url: id ? API.UserImport + id + '/' : API.UserImport,
@@ -1652,6 +1670,15 @@ export function inventoryAlarm(method, id, data = {}) {
 export function xlPlanConsume(method, id, data = {}) {
   const obj = {
     url: id ? API.XlPlanConsume + id + '/' : API.XlPlanConsume,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function rubberLog(method, id, data = {}) {
+  const obj = {
+    url: id ? API.RubberLog + id + '/' : API.RubberLog,
     method: method
   }
   Object.assign(obj, data)

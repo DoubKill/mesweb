@@ -171,6 +171,28 @@
       <el-form-item v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="批次号">
         <el-input v-model="search.l_batch_no" clearable @input="debounceList" />
       </el-form-item>
+      <el-form-item v-if="(warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库')&&!isDialog" label="任务开始时间">
+        <el-date-picker
+          v-model="startDate"
+          type="datetimerange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          @change="changeDate"
+        />
+      </el-form-item>
+      <el-form-item v-if="(warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库')&&!isDialog" label="任务结束时间">
+        <el-date-picker
+          v-model="endDate"
+          type="datetimerange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          @change="changeDate"
+        />
+      </el-form-item>
       <el-form-item style="float:right">
         <el-button
           type="primary"
@@ -191,11 +213,11 @@
       fit
     >
       <el-table-column label="No" type="index" align="center" width="40" />
-      <el-table-column label="类型" align="center" prop="order_type" min-width="20" />
+      <el-table-column label="类型" align="center" prop="order_type" width="50" />
       <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="出入库单号" align="center" prop="task_no" min-width="20" />
       <el-table-column v-else label="出入库单号" align="center" prop="order_no" min-width="20" />
       <el-table-column v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'" label="下架任务号" align="center" prop="order_no" min-width="20" />
-      <el-table-column v-if="(warehouseNameProps!=='原材料库'&&warehouseNameProps!=='炭黑库')&&!isDialog" label="巷道编码" align="center" prop="location" min-width="20">
+      <el-table-column v-if="(warehouseNameProps!=='原材料库'&&warehouseNameProps!=='炭黑库')&&!isDialog" label="巷道编码" align="center" prop="location" width="50">
         <template slot-scope="{row}">
           {{ row.location?row.location.split('-')[0]:'' }}
         </template>
@@ -239,7 +261,8 @@
         </template>
       </el-table-column>
       <el-table-column v-if="warehouseNameProps==='原材料库'" label="品质状态" align="center" prop="quality_status" min-width="20" />
-      <el-table-column v-if="(warehouseNameProps!=='原材料库'&&warehouseNameProps!=='炭黑库')" label="完成时间" align="center" prop="fin_time" min-width="20" />
+      <el-table-column v-if="(warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库')" label="开始时间" align="center" prop="last_time" min-width="20" />
+      <el-table-column label="完成时间" align="center" prop="fin_time" min-width="20" />
       <el-table-column
         v-if="warehouseNameProps==='原材料库'||warehouseNameProps==='炭黑库'"
         label="查看处理履历"
@@ -377,6 +400,8 @@ export default {
         warehouse_name: '混炼胶库'
       },
       searchDate: [],
+      startDate: [],
+      endDate: [],
       currentInfo: {},
       TunnelNameList: [],
       tableDataCheck: [],
@@ -486,9 +511,13 @@ export default {
       this.search.page = page
       this.getList()
     },
-    changeDate(val) {
-      this.search.start_time = val ? val[0] : ''
-      this.search.end_time = val ? val[1] : ''
+    changeDate() {
+      this.search.start_time = this.searchDate ? this.searchDate[0] : ''
+      this.search.end_time = this.searchDate ? this.searchDate[1] : ''
+      this.search.task_start_st = this.startDate ? this.startDate[0] : ''
+      this.search.task_start_et = this.startDate ? this.startDate[1] : ''
+      this.search.task_end_st = this.endDate ? this.endDate[0] : ''
+      this.search.task_end_et = this.endDate ? this.endDate[1] : ''
       this.search.page = 1
       this.getList()
     },
@@ -536,7 +565,7 @@ export default {
             const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
             link.style.display = 'none'
             link.href = URL.createObjectURL(blob)
-            link.download = this.search.warehouse_name + '出入库履历.xlsx' // 下载的文件名
+            link.download = this.search.warehouse_name + `出入库履历${setDate('', true)}.xlsx` // 下载的文件名
             document.body.appendChild(link)
             link.click()
             document.body.removeChild(link)

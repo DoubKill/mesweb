@@ -141,7 +141,7 @@
 </template>
 
 <script>
-import { debounce } from '@/utils'
+import { debounce, setDate } from '@/utils'
 import { materialCount } from '@/api/base_w'
 import page from '@/components/page'
 import { thInventory, thInventoryDown, thMaterialGroups, thTunnels } from '@/api/base_w_four'
@@ -243,7 +243,7 @@ export default {
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = '炭黑库-库存统计.xlsx' // 下载的文件名
+          link.download = `炭黑库-库存统计${setDate('', true)}.xlsx` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)

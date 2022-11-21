@@ -44,6 +44,12 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="RFID">
+        <el-input v-model="search.pallet_no" clearable @input="debounceFun" />
+      </el-form-item>
+      <el-form-item label="质检条码">
+        <el-input v-model="search.lot_no" clearable @input="debounceFun" />
+      </el-form-item>
       <el-form-item>
         <el-button
           type="primary"
@@ -153,6 +159,7 @@
 import { wmsMaterials } from '@/api/jqy'
 import { hfInventoryLog } from '@/api/base_w_five'
 import page from '@/components/page'
+import { setDate } from '@/utils/index'
 export default {
   name: 'DryingRoomResume',
   components: { page },
@@ -212,6 +219,9 @@ export default {
       this.search.et = arr ? arr[1] : ''
       this.changeList()
     },
+    debounceFun() {
+      this.$debounce(this, 'changeList')
+    },
     changeList() {
       this.search.page = 1
       this.getList()
@@ -232,7 +242,7 @@ export default {
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = '原材料库-入出烘房履历.xlsx' // 下载的文件名
+          link.download = `原材料库-入出烘房履历${setDate('', true)}.xlsx` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)

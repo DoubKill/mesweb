@@ -36,6 +36,9 @@ export default {
   XlRecipeNotice: '/api/v1/terminal/xl-recipe-notice/',
   MaterialInfoIssue: '/api/v1/terminal/material-info-issue/', // 原材料下发至称量系统接口
   ProductInfosUrl: '/api/v1/recipe/product-infos/',
+  WeightPackageDailyTimeConsumer: '/api/v1/plan/weight-package-daily-time-consumer/',
+  FindRecipeImportXlsx: '/api/v1/plan/weight-package-daily-time-consumer/import-xlsx/',
+  FindRecipe: 'api/v1/plan/weight-package-daily-time-consumer/find-recipe/',
   ValidateVersionsUrl: '/api/v1/recipe/validate-versions/',
   CopyProductInfosUrl: '/api/v1/recipe/copy-product-infos/',
   // 胶料配料标准管理接口 所有配方接口
@@ -176,6 +179,7 @@ export default {
   OutboundDeliveryOrders: '/api/v1/inventory/outbound-delivery-orders/',
   OutboundDeliveryOrderDetails: '/api/v1/inventory/outbound-delivery-order-details/',
   OutboundDeliveryOrdersExport: '/api/v1/inventory/outbound-delivery-orders/export/',
+  BzInventoryWorkingTasks: 'api/v1/inventory/bz-inventory-working-tasks/',
 
   //  终炼胶库计划管理
   FinalPlanManagement: '/api/v1/inventory/final-plan-management/',
@@ -460,6 +464,7 @@ export default {
   ThInventory: '/api/v1/inventory/th-inventory/',
   ThMaterialGroups: '/api/v1/inventory/th-material-groups/',
   ThTunnels: '/api/v1/inventory/th-tunnels/',
+  EmptyTrayOutboundDelivery: '/api/v1/inventory/empty-tray-outbound-delivery/',
   // 线边库 库区
   Depot: '/api/v1/inventory/depot/',
   // 库位
@@ -737,6 +742,7 @@ export default {
   HfForceHandle: '/api/v1/inventory/hf-force-handle/',
   HfConfigSet: '/api/v1/inventory/hf-config-set/',
   EquipmentIndex: '/api/v1/equipment/index/',
+  RubberLog: '/api/v1/production/rubber-log/',
   ToolManageAccount: '/api/v1/production/tool-manage-account/',
   RubberFrameRepair: '/api/v1/production/rubber-frame-repair/',
 
@@ -745,6 +751,7 @@ export default {
   ProductSynthesisGroupRate: '/api/v1/quality/product-synthesis-group-rate/',
   ProductSynthesisProductRate: '/api/v1/quality/product-synthesis-product-rate/',
   ProductSynthesisMonthRate: '/api/v1/quality/product-synthesis-month-rate/',
+  BarcodeTrace: '/api/v1/inventory/barcode-trace/',
   RecipeChangeHistory: '/api/v1/recipe/recipe-change-history/',
 
   ProductInventoryLock: '/api/v1/inventory/product-inventory-lock/',

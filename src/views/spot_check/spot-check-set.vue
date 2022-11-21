@@ -216,6 +216,7 @@
 
 <script>
 import page from '@/components/page'
+import { setDate } from '@/utils/index'
 import { getEquip } from '@/api/banburying-performance-manage'
 import { checkPointStandard, checkPointStandardExport } from '@/api/jqy'
 
@@ -387,7 +388,7 @@ export default {
           const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = '岗位安全装置点检标准及内容.xls' // 下载的文件名
+          link.download = `岗位安全装置点检标准及内容${setDate('', true)}.xls` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)

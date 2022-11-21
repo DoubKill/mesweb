@@ -151,7 +151,7 @@
 <script>
 import page from '@/components/page'
 import { equipSpareErp, equipSpareErpDown, equipSpareErpImport, getSpare } from '@/api/jqy'
-import { debounce } from '@/utils'
+import { debounce, setDate } from '@/utils'
 export default {
   name: 'EquipmentMasterDataERPMaterial',
   components: { page },
@@ -224,7 +224,7 @@ export default {
           const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
           link.style.display = 'none'
           link.href = URL.createObjectURL(blob)
-          link.download = 'ERP备件物料信息.xlsx' // 下载的文件名
+          link.download = `ERP备件物料信息${setDate('', true)}.xlsx` // 下载的文件名
           document.body.appendChild(link)
           link.click()
           document.body.removeChild(link)
