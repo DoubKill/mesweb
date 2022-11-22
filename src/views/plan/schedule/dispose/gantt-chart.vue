@@ -43,14 +43,14 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="changeList">刷新</el-button>
-        <el-button v-permission="['user','import']">
+        <el-button v-permission="['aps_result','import']">
           <a
             :href="`${templateFileUrl}scheduling.xlsx`"
             download="排程导入模板.xlsx"
           >导出Excel模板</a>
         </el-button>
         <el-upload
-          v-permission="['user','import']"
+          v-permission="['aps_result','import']"
           style="margin-left:8px;display:inline-block"
           action="string"
           accept=".xls, .xlsx"

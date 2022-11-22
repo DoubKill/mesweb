@@ -950,7 +950,7 @@ export let asyncRoutes = [
               meta: {
                 faName: 'ScheduleDispose',
                 title: '机台生产计划-甘特图',
-                permissionName: ''
+                permissionName: 'aps_result'
               }
             },
             // {
