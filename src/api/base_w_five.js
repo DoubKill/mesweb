@@ -184,6 +184,14 @@ export function apsGantt(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function apsPlanImport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ApsPlanImport + id + '/' : API.ApsPlanImport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 export function ImportXlx(method, id, data = {}) {
   const obj = {
     url: id ? API.ImportXlx + id + '/' : API.ImportXlx,

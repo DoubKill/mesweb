@@ -26,6 +26,40 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="时间间隔/min">
+        <el-select
+          v-model="timeInterval"
+          placeholder="请选择"
+          style="width:80px"
+          @change="changeList"
+        >
+          <el-option
+            v-for="item in [1,5,15,30]"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="changeList">刷新</el-button>
+        <el-button v-permission="['user','import']">
+          <a
+            :href="`${templateFileUrl}scheduling.xlsx`"
+            download="排程导入模板.xlsx"
+          >导出Excel模板</a>
+        </el-button>
+        <el-upload
+          v-permission="['user','import']"
+          style="margin-left:8px;display:inline-block"
+          action="string"
+          accept=".xls, .xlsx"
+          :http-request="importScheduling"
+          :show-file-list="false"
+        >
+          <el-button>导入Excel</el-button>
+        </el-upload>
+      </el-form-item>
     </el-form>
     <!-- <el-button @click="handleClick">保存</el-button> -->
     <el-tabs v-model="type" type="border-card" @tab-click="handleClickTab">
@@ -44,25 +78,31 @@
 import gantt from 'dhtmlx-gantt'
 import 'dhtmlx-gantt/codebase/dhtmlxgantt.css'
 import { setDate } from '@/utils'
-import { scheduleNos, apsGantt } from '@/api/base_w_five'
+import { scheduleNos, apsGantt, apsPlanImport } from '@/api/base_w_five'
 export default {
   name: 'ScheduleGanttChart',
   data() {
     return {
-      getParams: { schedule_no: '' },
+      getParams: { schedule_no: '', factory_date: setDate() },
       scheduleNoList: [],
       tasks: {
         data: [
           // { id: 1, render: 'split', owner: 'z01' },
           // { id: 11, parent: 1, text: 'Task #1', start_date: '2022-01-01 10:30', end_date: '2022-01-01 11:30' },
-          // { id: 111, parent: 1, text: 'Task #1', start_date: '2022-01-01 11:40', end_date: '2022-01-01 12:30' },
+          // { id: 111, parent: 1, text: 'Task #1', start_date: '2022-01-01 10:50', end_date: '2022-01-01 12:30' },
 
           // { id: 7, text: 'Task #2', start_date: '2022-01-02 10:50', end_date: '2022-01-02 10:50', owner: 'z02' },
           // { id: 8, text: 'Task #3', start_date: '2022-01-02 11:10', end_date: '2022-01-02 11:30', owner: 'z03' }
+
+          // { id: 1, text: 'Z01-11', owner: 'z01', start_date: '2022-01-01 10:30', end_date: '2022-01-01 11:30' },
+          // { id: 2, text: 'Z01 #1', owner: 'z01', start_date: '2022-01-01 10:30', end_date: '2022-01-01 11:30', parent: 1 },
+          // { id: 3, text: 'Z01 #1', start_date: '2022-01-01 10:30', end_date: '2022-01-01 11:30', owner: 'z01', parent: 1 }
         ]
       },
       tasksSubmit: {},
-      type: '1' // 1机台 2胶料编码
+      type: '1', // 1机台 2胶料编码
+      templateFileUrl: process.env.BASE_URL,
+      timeInterval: 15
     }
   },
   created() {
@@ -74,6 +114,14 @@ export default {
     gantt.config.show_links = false // 隐藏线
     gantt.config.duration_unit = 'minute'
     gantt.config.readonly = true // 只读
+    gantt.config.open_tree_initially = true
+
+    gantt.templates.task_class = function(start, end, task) {
+      if (task.planned_end) {
+        return ['has-baseline'].join('class-name')
+      }
+    }
+
     gantt.plugins({
       tooltip: true
     })
@@ -98,9 +146,10 @@ export default {
       width: '*',
       max_width: 200
     }]
-
+    // gantt.config.columns[0].label = '机台'
+    // gantt.config.columns[0].name = 'owner'
     // if (gantt.config.columns.length > 3) {
-    //   gantt.config.columns.splice(-2, 2)
+    //   gantt.config.columns.splice(1, gantt.config.columns.length)
     // }
     gantt.createDataProcessor({
       task: {
@@ -141,6 +190,7 @@ export default {
     //   }
     //   return true
     // })
+    this.changeListDate()
   },
   methods: {
     async getList() {
@@ -153,6 +203,7 @@ export default {
         const data = await apsGantt('get', null, { params: this.getParams })
         this.tasks.data = data || []
         setTimeout(d => {
+          gantt.config.scales[1].step = this.timeInterval
           gantt.init(this.$refs.gantt)
           gantt.parse(this.tasks)
         })
@@ -164,6 +215,8 @@ export default {
       try {
         const data = await scheduleNos('get', null, { params: { factory_date: this.getParams.factory_date }})
         this.scheduleNoList = data
+        this.getParams.schedule_no = data[0] ? data[0] : ''
+        this.changeList()
       } catch (e) {
         this.scheduleNoList = []
       }
@@ -172,13 +225,12 @@ export default {
       console.log(this.tasks)
     },
     handleClickTab() {
-      this.clearData()
       if (this.type === '2') {
         gantt.config.columns[0].label = '胶料编码'
       } else {
         gantt.config.columns[0].label = '机台'
       }
-      this.getList()
+      this.changeList()
     },
     clearData() {
       this.tasks.data = []
@@ -191,7 +243,29 @@ export default {
     },
     changeList() {
       this.clearData()
+      if (!this.getParams.factory_date || !this.getParams.schedule_no) {
+        this.$message('请选择日期和单号')
+        return
+      }
       this.getList()
+    },
+    importScheduling(param) {
+      if (!this.getParams.factory_date) {
+        this.$message('请选择日期')
+        return
+      }
+      const formData = new FormData()
+      formData.append('file', param.file)
+      formData.append('factory_date', this.getParams.factory_date)
+      apsPlanImport('post', null, { data: formData }).then(response => {
+        this.$message({
+          type: 'success',
+          message: response
+        })
+        this.getParams.factory_date = setDate()
+        this.clearData()
+        this.getList()
+      })
     }
   }
 }

@@ -22,7 +22,7 @@
         />
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button v-permission="['aps_plan_summary','procedures']" :loading="submit" type="primary" @click="scheduling">自动排程</el-button>
+        <el-button v-permission="['aps_plan_summary','procedures']" :loading="submit" type="primary" @click="exportAps">导出自动排程数据</el-button>
         <el-button type="primary" @click="getList">查询</el-button>
         <el-button v-permission="['aps_plan_summary','export']" type="primary" @click="exportTable">导出Excel</el-button>
         <!-- <el-button v-permission="['aps_plan_summary','export']" type="primary">
@@ -330,7 +330,7 @@
 <script>
 import { productInfosUrl } from '@/api/base_w'
 import { schedulingProductDemandedDeclare } from '@/api/base_w_five'
-import { schedulingProductDeclareSummary, upSequence, downSequence, schedulingProcedures, schedulingProductImport, schedulingParamsSetting } from '@/api/jqy'
+import { schedulingProductDeclareSummary, upSequence, downSequence, schedulingProcedures, schedulingProductImport, schedulingParamsSetting, apsExportData } from '@/api/jqy'
 import { setDate, exportExcel } from '@/utils'
 export default {
   name: 'ScheduleInventorySummary',
@@ -597,6 +597,25 @@ export default {
         })
         this.getList()
       })
+    },
+    exportAps() {
+      this.submit = true
+      const obj = { export: 1, factory_date: this.search.factory_date }
+      const _api = apsExportData
+      _api('get', null, { responseType: 'blob', params: obj })
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = `自动排程结果${setDate('', true)}.xlsx` // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.submit = false
+        }).catch(e => {
+          this.submit = false
+        })
     }
   }
 

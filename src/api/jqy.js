@@ -1092,6 +1092,14 @@ export function schedulingProcedures(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function apsExportData(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ApsExportData + id + '/' : API.ApsExportData,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 
 export function delUser(method, id, data = {}) {
   const obj = {
