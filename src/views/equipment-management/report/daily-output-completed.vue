@@ -37,7 +37,7 @@
       :data="tableData"
       border
     >
-      <el-table-column fixed width="160px">
+      <el-table-column fixed width="180px">
         <template
           slot="header"
           slot-scope="{row}"
@@ -483,7 +483,7 @@ export default {
         color: ['#5B9BD5', '#ED7D31'],
         title: {
           left: 'center',
-          text: '准备分厂吨耗时/吨耗能趋势图'
+          text: '准备分厂吨耗时/吨胶密炼耗能趋势图'
         },
         tooltip: {
           trigger: 'axis'
@@ -491,7 +491,7 @@ export default {
         legend: {
           top: '6%',
           orient: 'horizontal',
-          data: ['吨耗能（KWH/吨）', '吨耗时（分钟/吨）']
+          data: ['吨胶密炼耗能（KWH/吨）', '吨耗时（分钟/吨）']
         },
         toolbox: {
           show: true
@@ -530,7 +530,7 @@ export default {
         ],
         series: [
           {
-            name: '吨耗能（KWH/吨）',
+            name: '吨胶密炼耗能（KWH/吨）',
             barWidth: 15,
             type: 'bar',
             yAxisIndex: 0,
@@ -805,7 +805,7 @@ export default {
                 d[item] ? d[item].toFixed(0) : 0)
             })
           }
-          if (d.name === '吨耗能（KWH/吨）') {
+          if (d.name === '吨胶密炼耗能（KWH/吨）') {
             this.yList6 = []
             this.tableHead.forEach(item => {
               this.yList6.push(
@@ -955,7 +955,7 @@ export default {
               left: 'center',
               top: 'middle',
               style: {
-                text: [`日均耗能/耗时`, `吨耗能:${data.results[14].avg}`, `吨耗时:${data.results[13].avg}`].join('\n'),
+                text: [`日均耗能/耗时`, `吨胶密炼耗能:${data.results[14].avg}`, `吨耗时:${data.results[13].avg}`].join('\n'),
                 font: '500 14px sy',
                 fill: '#1D2F2E',
                 textLineHeight: 22
@@ -1057,8 +1057,8 @@ function getCurrentMonthLastDay(d) {
     }
     .three-line{
         transform-origin:left center;
-        transform:rotate(16deg);
-        width:170px;
+        transform:rotate(14.5deg);
+        width:185px;
         position: absolute;
         top:0px;
         left:-6px;
