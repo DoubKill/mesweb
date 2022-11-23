@@ -16,7 +16,8 @@
         <el-select
           v-model="getParams.schedule_no"
           placeholder="请选择"
-          @change="changeList"
+          style="width:260px"
+          @change="changeNo"
         >
           <el-option
             v-for="item in scheduleNoList"
@@ -43,7 +44,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="changeList">刷新</el-button>
-        <el-button v-permission="['aps_result','import']">
+        <el-button v-permission="['aps_result','import']" type="primary">
           <a
             :href="`${templateFileUrl}scheduling.xlsx`"
             download="排程导入模板.xlsx"
@@ -57,7 +58,7 @@
           :http-request="importScheduling"
           :show-file-list="false"
         >
-          <el-button>导入Excel</el-button>
+          <el-button type="primary">导入自动排程结果</el-button>
         </el-upload>
       </el-form-item>
     </el-form>
@@ -88,7 +89,7 @@ export default {
       tasks: {
         data: [
           // { id: 1, render: 'split', owner: 'z01' },
-          // { id: 11, parent: 1, text: 'Task #1', start_date: '2022-01-01 10:30', end_date: '2022-01-01 11:30' },
+          // { id: 11, parent: 1, text: 'Task #1', start_date: '2022-01-01 10:30', end_date: '2022-01-01 11:30', color: '#2F80ED' },
           // { id: 111, parent: 1, text: 'Task #1', start_date: '2022-01-01 10:50', end_date: '2022-01-01 12:30' },
 
           // { id: 7, text: 'Task #2', start_date: '2022-01-02 10:50', end_date: '2022-01-02 10:50', owner: 'z02' },
@@ -102,10 +103,15 @@ export default {
       tasksSubmit: {},
       type: '1', // 1机台 2胶料编码
       templateFileUrl: process.env.BASE_URL,
-      timeInterval: 15
+      timeInterval: 15,
+      equieList: []
     }
   },
   created() {
+    this.colors = []
+    for (let index = 0; index < 20; index++) {
+      this.colors.push(getColor())
+    }
   },
   mounted() {
     // 本地化
@@ -130,7 +136,9 @@ export default {
       { unit: 'minute', step: 15, format: '%H:%i' }
     ]
     gantt.templates.tooltip_text = function(start, end, task) {
-      return '<b>名称:</b>' + (task.text || '') + '<br/><b>时间:</b>' + (start ? setDate(start, 'gantt') : '') + ' 至 ' + (end ? setDate(end, 'gantt') : '')
+      if (task.$level) {
+        return '<b>名称:</b>' + (task.text || '') + '<br/><b>时间:</b>' + (start ? setDate(start, 'gantt') : '') + ' 至 ' + (end ? setDate(end, 'gantt') : '')
+      }
     }
     gantt.templates.grid_row_class = function(start, end, task) {
       if (task.$level === 0) {
@@ -201,7 +209,39 @@ export default {
           delete this.getParams.data_type
         }
         const data = await apsGantt('get', null, { params: this.getParams })
-        this.tasks.data = data || []
+        if (this.type !== '2') {
+          this.equieList = data
+        }
+        let _i = 0
+        if (this.type !== '2' && this.equieList.length > 0) {
+          for (let index = 0; index < this.equieList.length; index++) {
+            const element = this.equieList[index]
+            if (!element.render) {
+              element.color = this.colors[_i]
+              _i++
+              if (_i === this.colors.length - 1) {
+                _i = 0
+              }
+            }
+          }
+          this.tasks.data = this.equieList || []
+        } else if (data.length > 0) {
+          data.forEach(d => {
+            if (d.text) {
+              const obj = this.equieList.find(dd => {
+                if (dd.text) {
+                  const no = dd.text.split('/')[0]
+                  const equip_no = dd.equip_no
+                  if (d.text.indexOf(no) > -1 && d.text.indexOf(equip_no) > -1) {
+                    return true
+                  }
+                }
+              })
+              d.color = obj.color
+            }
+          })
+          this.tasks.data = data || []
+        }
         setTimeout(d => {
           gantt.config.scales[1].step = this.timeInterval
           gantt.init(this.$refs.gantt)
@@ -238,8 +278,14 @@ export default {
     },
     changeListDate() {
       this.getParams.schedule_no = ''
+      this.type = '1'
       this.clearData()
       this.getSchedule()
+    },
+    changeNo() {
+      this.type = '1'
+      this.clearData()
+      this.getList()
     },
     changeList() {
       this.clearData()
@@ -262,12 +308,23 @@ export default {
           type: 'success',
           message: response
         })
-        this.getParams.factory_date = setDate()
-        this.clearData()
-        this.getList()
+        // this.getParams.factory_date = setDate()
+        this.changeListDate()
       })
     }
   }
+}
+function getColor() {
+  var str = '#' // #号
+  var arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8',
+    '9', 'a', 'b', 'c', 'd', 'e', 'f'] // 0-e的数组
+
+  for (var i = 0; i < 6; i++) { //    循环6次
+    var num = parseInt(Math.random() * 16) //    随机这16位中的数字字母
+    arr[num]
+    str += arr[num] //    把每一项添加给str
+  }
+  return str
 }
 </script>
 
