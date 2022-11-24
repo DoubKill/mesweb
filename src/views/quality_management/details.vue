@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container details_style">
+  <div class="app-container details_style_new">
     <el-form v-if="!isProps" :inline="true">
       <el-form-item label="日期">
         <el-date-picker
@@ -149,7 +149,7 @@
       :row-class-name="tableRowClassName1"
     >
       <!-- use-virtual 省略号和树形 -->
-      <u-table-column label="胶料编码" width="140px" align="center" prop="product_no">
+      <u-table-column label="胶料编码" width="120px" align="center" prop="product_no">
         <template slot-scope="scope">
           <el-link v-if="!scope.row._current" type="primary" @click="clickOrderNum(scope.$index,scope.row)">{{ scope.row.product_no }}</el-link>
           <span v-else>{{ scope.row.product_no }}</span>
@@ -157,7 +157,7 @@
       </u-table-column>
       <u-table-column
         label="工厂日期"
-        width="90px"
+        width="80px"
         prop="production_factory_date"
         align="center"
         :tree-node="true"
@@ -167,7 +167,7 @@
           <span class="line_w" />
         </template>
       </u-table-column>
-      <u-table-column align="center" label="生产班次" prop="production_class" width="70px">
+      <u-table-column align="center" label="生产班次" prop="production_class" width="60px">
         <template slot-scope="{row}">
           <span v-if="row.production_class"> {{ row.production_class.replace(/班/g, '') }}</span>
           <span class="line_w" />
@@ -197,13 +197,13 @@
           <span class="line_w" />
         </template>
       </u-table-column>
-      <u-table-column label="车次" align="center" width="50px" prop="actual_trains">
+      <u-table-column label="车次" align="center" width="40px" prop="actual_trains">
         <template slot-scope="{row}">
           <span> {{ row.actual_trains }}</span>
           <span class="line_w" />
         </template>
       </u-table-column>
-      <u-table-column label="检测结果" align="center" width="80px" prop="is_recheck">
+      <u-table-column label="检测结果" align="center" width="60px" prop="is_recheck">
         <template slot-scope="{ row }">
           <div>
             {{ row.is_recheck===true ?'复检':row.is_recheck===false?'正常':'' }}
@@ -211,18 +211,18 @@
           <span class="line_w" />
         </template>
       </u-table-column>
-      <u-table-column v-for="header in newHead" :key="header.detail" width="60px" align="center" :label="header.detail">
+      <u-table-column v-for="header in newHead" :key="header.detail" width="50px" align="center" :label="header.detail">
         <template v-if="row.order_results.find(d=>d.data_point_name===header.detail)" slot-scope="{row}">
           {{ row.order_results.find(d=>d.data_point_name===header.detail).value }}
         </template>
       </u-table-column>
-      <u-table-column label="检测状态" prop="state" align="center" width="60px">
+      <u-table-column label="检测状态" prop="state" align="center" width="50px">
         <template slot-scope="{row}">
           <span> {{ row.state }}</span>
           <span class="line_w" />
         </template>
       </u-table-column>
-      <u-table-column label="处理意见" min-width="60px" prop="deal_suggestion" align="center">
+      <u-table-column label="处理意见" min-width="20px" prop="deal_suggestion" align="center">
         <template slot-scope="{row}">
           <span> {{ row.deal_suggestion }}</span>
           <span class="line_w line_w1" />
@@ -250,7 +250,7 @@
       :row-class-name="tableRowClassName"
       use-virtual
     >
-      <u-table-column label="胶料编码" width="140px" align="center" prop="product_no">
+      <u-table-column label="胶料编码" width="120px" align="center" prop="product_no">
         <template slot-scope="scope">
           <el-link v-if="!scope.row._current&&checkPermission(['result_info','curve'])" type="primary" @click="clickOrderNum(scope.$index,scope.row)">{{ scope.row.product_no }}</el-link>
           <span v-else>{{ scope.row.product_no }}</span>
@@ -258,7 +258,7 @@
       </u-table-column>
       <u-table-column
         label="工厂日期"
-        width="90px"
+        width="80px"
         prop="production_factory_date"
         align="center"
       >
@@ -266,7 +266,7 @@
           {{ (row.production_factory_date).split(' ')[0] }}
         </template>
       </u-table-column>
-      <u-table-column align="center" label="生产班次" prop="production_class" width="70px">
+      <u-table-column align="center" label="生产班次" prop="production_class" width="60px">
         <template v-if="row.production_class" slot-scope="{row}">
           {{ row.production_class.replace(/班/g, '') }}
         </template>
@@ -279,23 +279,23 @@
       <u-table-column align="center" label="生产机台" width="60px" prop="production_equip_no" />
       <u-table-column label="门尼机台" width="60px" align="center" prop="menn" />
       <u-table-column label="流变机台" width="60px" align="center" prop="liub" />
-      <u-table-column label="车次" align="center" width="50px" prop="actual_trains" />
-      <u-table-column label="检测结果" align="center" width="80px" prop="is_recheck" :tree-node="true">
+      <u-table-column label="车次" align="center" width="40px" prop="actual_trains" />
+      <u-table-column label="检测结果" align="center" width="60px" prop="is_recheck" :tree-node="true">
         <template slot-scope="{ row }">
           <div>
             {{ row.is_recheck===true ?'复检':row.is_recheck===false?'正常':'' }}
           </div>
         </template>
       </u-table-column>
-      <u-table-column v-for="header in newHead" :key="header.detail" width="60px" align="center" :label="header.detail">
+      <u-table-column v-for="header in newHead" :key="header.detail" width="50px" align="center" :label="header.detail">
         <template v-if="row.order_results.find(d=>d.data_point_name===header.detail)" slot-scope="{row}">
           <div :class="[row.order_results.find(d=>d.data_point_name===header.detail)._red ? 'test_type_name_style': '',row.order_results.find(d=>d.data_point_name===header.detail)._blue ? 'test_type_name_style1': '']">
             {{ row.order_results.find(d=>d.data_point_name===header.detail).value }}
           </div>
         </template>
       </u-table-column>
-      <u-table-column label="检测状态" prop="state" align="center" width="60px" />
-      <u-table-column label="处理意见" min-width="60px" prop="deal_suggestion" align="center" />
+      <u-table-column label="检测状态" prop="state" align="center" width="50px" />
+      <u-table-column label="处理意见" min-width="20px" prop="deal_suggestion" align="center" />
     </u-table>
     <el-alert style="color:black" title="表格背景色说明：黄色表示不是一等品；红色表示超出规格上限；绿色表示低于规格下限" type="success" />
     <el-dialog
@@ -1134,7 +1134,7 @@ function setData(val) {
 </script>
 
 <style lang="scss">
-.details_style{
+.details_style_new{
   .el-table .warning-row {
     background: oldlace;
 
