@@ -222,7 +222,7 @@
           <span class="line_w" />
         </template>
       </u-table-column>
-      <u-table-column label="处理意见" min-width="50px" prop="deal_suggestion" align="center">
+      <u-table-column label="处理意见" min-width="20px" prop="deal_suggestion" align="center">
         <template slot-scope="{row}">
           <span> {{ row.deal_suggestion }}</span>
           <span class="line_w line_w1" />
@@ -295,7 +295,7 @@
         </template>
       </u-table-column>
       <u-table-column label="检测状态" prop="state" align="center" width="50px" />
-      <u-table-column label="处理意见" min-width="50px" prop="deal_suggestion" align="center" />
+      <u-table-column label="处理意见" min-width="20px" prop="deal_suggestion" align="center" />
     </u-table>
     <el-alert style="color:black" title="表格背景色说明：黄色表示不是一等品；红色表示超出规格上限；绿色表示低于规格下限" type="success" />
     <el-dialog
