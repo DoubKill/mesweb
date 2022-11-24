@@ -923,7 +923,7 @@ export default {
     },
     async exportTable() {
       await this.$set(this, 'exportTableShow', true)
-      await exportExcel('定机表')
+      await exportExcel('定机表', '综合合格率汇总')
       setTimeout(() => {
         this.exportTableShow = false
       }, 1000)
