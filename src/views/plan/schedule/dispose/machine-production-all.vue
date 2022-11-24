@@ -16,6 +16,7 @@
         <el-select
           v-model="getParams.schedule_no"
           placeholder="请选择"
+          style="width:260px"
           @change="changeList"
         >
           <el-option
