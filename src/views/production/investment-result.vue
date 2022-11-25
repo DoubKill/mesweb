@@ -145,6 +145,17 @@
         prop="scan_message"
         label="扫码返回信息"
       />
+      <el-table-column
+        prop="release_msg"
+        label="放行结果"
+      />
+      <el-table-column label="操作">
+        <template slot-scope="scope">
+          <el-button-group>
+            <el-button :disabled="scope.row.is_release" size="mini" type="primary" @click="showRelease(scope.row)">放行</el-button>
+          </el-button-group>
+        </template>
+      </el-table-column>
     </el-table>
     <page
       :old-page="false"
@@ -232,6 +243,25 @@ export default {
       this.getParams.page = page
       this.getParams.page_size = pageSize
       this.getList()
+    },
+    showRelease(row) {
+      this.$confirm('是否放行该车次?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        batchScanLog('post', null, { data: { equip_no: row.equip_no,
+          scan_train: row.scan_train, plan_classes_uid: row.plan_classes_uid }})
+          .then(response => {
+            this.$message({
+              type: 'success',
+              message: '已放行!'
+            })
+            this.changeList()
+          }).catch(e => {
+            //
+          })
+      })
     }
   }
 }
