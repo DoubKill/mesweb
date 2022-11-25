@@ -75,6 +75,10 @@
         </template>
       </el-table-column>
       <el-table-column
+        prop="version"
+        label="版本号"
+      />
+      <el-table-column
         prop="plan_weight"
         label="计划(吨)"
       />
@@ -177,6 +181,9 @@
               :value="item.product_no"
             />
           </el-select>
+        </el-form-item>
+        <el-form-item label="版本号" prop="version">
+          <el-input v-model="formData.version" style="width:250px" />
         </el-form-item>
         <el-form-item label="计划(吨)" prop="plan_weight">
           <el-input-number
@@ -358,7 +365,8 @@ export default {
       rules: {
         product_no: [{ required: true, message: '不能为空', trigger: 'change' }],
         plan_weight: [{ required: true, message: '不能为空', trigger: 'change' }],
-        demanded_weight: [{ required: true, message: '不能为空', trigger: 'change' }]
+        demanded_weight: [{ required: true, message: '不能为空', trigger: 'change' }],
+        version: [{ required: true, message: '不能为空', trigger: 'change' }]
       }
     }
   },
