@@ -117,9 +117,9 @@ export default {
         this.loading = false
       } catch (e) { this.loading = false }
     },
-    async getProduct(dev_type) {
+    async getProduct() {
       try {
-        const data = await rubberMaterialUrl('get', null, { params: { dev_type: dev_type, all: 1, exclude_used_type: 6 }})
+        const data = await rubberMaterialUrl('get', null, { params: { sfj_recipe: 1, all: 1, equip_no: this.searchForm.equip_no }})
         this.productList = data.results || []
 
         this.searchForm.product_no = this.$route.query.product_no || ''
@@ -133,7 +133,7 @@ export default {
     changeEquip(val) {
       this.searchForm.equip_no = val.equip_no
       this.searchForm.product_no = ''
-      this.getProduct(val.category)
+      this.getProduct()
     },
     getProductList(val) {
       if (val) {
