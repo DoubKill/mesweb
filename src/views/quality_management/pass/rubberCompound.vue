@@ -80,11 +80,17 @@
         style="width: 100%"
         max-height="600"
       >
-        <el-table-column
+        <!-- <el-table-column
           prop="product_type"
           label="胶料"
           width="70"
-        />
+        /> -->
+        <el-table-column label="胶料">
+          <template slot-scope="scope">
+            <el-link v-if="scope.row.product_type!=='合计'" type="primary" @click="clickOrderNum(scope.$index,scope.row)">{{ scope.row.product_type }}</el-link>
+            <span v-else>{{ scope.row.product_type }}</span>
+          </template>
+        </el-table-column>
         <el-table-column
           prop="JC"
           label="检查数"
@@ -283,6 +289,34 @@
         />
       </el-table>
     </div>
+
+    <el-dialog
+      title=""
+      :visible.sync="historyDialogVisible"
+      width="80%"
+      append-to-body
+    >
+      <h3 style="display:inline-block;margin:0 10px">日期</h3>
+      <el-date-picker
+        v-model="historyDate"
+        type="daterange"
+        range-separator="至"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        value-format="yyyy-MM-dd"
+        :clearable="false"
+        @change="getHistoryDate"
+      />
+      <h3 style="display:inline-block;margin:0 10px">机台</h3>
+      <selectEquip
+        :equip_no_props.sync="history_equip_no"
+        @changeSearch="getHistoryDate"
+      />
+      <div
+        id="historySpot"
+        style="width: 100%;height:1000px;margin-top:8px"
+      />
+    </el-dialog>
     <!-- </div> -->
   </div>
 </template>
@@ -293,6 +327,8 @@ import { globalCodesUrl, productInfosUrl } from '@/api/base_w'
 import { rubberPass } from '@/api/jqy'
 import { debounce, setDate, exportExcel } from '@/utils/index'
 import selectEquip from '@/components/select_w/equip'
+import * as echarts from 'echarts'
+import { datapointCurve, pbRecentName } from '@/api/quick-check-detail'
 export default {
   name: 'RubberCompound',
   components: { ClassSelect, selectEquip },
@@ -308,7 +344,54 @@ export default {
       handleCardDialogVisible: false,
       dateValue: [setDate(), setDate()],
       checked: false,
-      optionsProduct: []
+      optionsProduct: [],
+      historySpot: {
+        title: [{
+          text: "Anscombe's quartet"
+        }],
+        toolbox: {
+          feature: {
+            saveAsImage: {}
+          }
+        },
+        grid: [
+          { left: '7%', top: '7%', width: '38%', height: '38%' }
+        ],
+        xAxis: [
+          { gridIndex: 0 },
+          { gridIndex: 1 }
+        ],
+        yAxis: [
+          { gridIndex: 0 },
+          { gridIndex: 1 }
+        ],
+        tooltip: {
+          trigger: 'axis'
+        },
+        // tooltip: {
+        //   triggerOn: 'click'
+        // },
+        series: [
+          {
+            name: 'I',
+            type: 'scatter',
+            xAxisIndex: 0,
+            yAxisIndex: 0,
+            data: []
+          },
+          {
+            name: 'II',
+            type: 'scatter',
+            xAxisIndex: 1,
+            yAxisIndex: 1,
+            data: []
+          }
+        ]
+      },
+      historyDialogVisible: false,
+      historyDate: [],
+      history_equip_no: '',
+      row_roduct_no: ''
     }
   },
   created() {
@@ -465,7 +548,158 @@ export default {
         //
         }
       }
+    },
+    clickOrderNum(index, row) {
+      this.showRoductNo(row)
+      this.historyDialogVisible = true
+    },
+    async showRoductNo(row) {
+      try {
+        const data = await pbRecentName({ product_no: row.product_type })
+        let a = setDate()
+        let timestamp = new Date().getTime()
+        let b = setDate(timestamp - 1000 * 60 * 60 * 24 * 10)
+        if (this.dateValue && this.dateValue.length > 0) {
+          a = this.dateValue[1]
+          timestamp = new Date(this.dateValue[0]).getTime()
+          b = setDate(timestamp - 1000 * 60 * 60 * 24 * 10)
+        }
+        this.historyDate = [b, a]
+
+        this.row_roduct_no = data || ''
+        this.getHistoryDate()
+      } catch (e) {
+        this.$message.info('没有查到该类型的胶料')
+      }
+    },
+    async getHistoryDate() {
+      try {
+        const obj = {
+          st: this.historyDate[0] || '',
+          et: this.historyDate[1] || '',
+          product_no: this.row_roduct_no || '',
+          equip_no: this.history_equip_no
+        }
+        this.historyLoading = true
+        const data = await datapointCurve(obj)
+        this.historyLoading = false
+
+        const _x = []
+        const _y = []
+        const _title = []
+        const _grid = []
+        const _series = []
+        const _num = Math.ceil(data.data.length / 2) + 3.1
+        const _height = (1 / _num * 100).toFixed(0) + '%'
+        const _height1 = (1 / _num * 100 + 8).toFixed(0)
+
+        data.data.forEach((d, _i) => {
+          const _dataSeries = []
+          const _dataSeriesX = []
+          const _1 = data.indicators[d.name] ? data.indicators[d.name].lower_limit : 0 // 下限
+          const _3 = data.indicators[d.name] ? data.indicators[d.name].upper_limit : 0 // 上限
+          const _2 = setData((_3 + _1) / 2)
+          let _min = setData(_1 - (_3 - (_3 + _1) / 2))
+          let _max = setData(_3 + (_3 - (_3 + _1) / 2))
+          if (_3 >= 999) {
+            _min = setData(_1 - 10)
+            _max = setData(_1 + 30)
+          }
+          if (_3 >= 999 && ['伸长率%', '钢拔'].includes(d.name)) {
+            _min = setData(_1 - 150)
+            _max = setData(_1 + 450)
+          }
+          if (_min < 0) {
+            _min = 0
+          }
+
+          d.data.forEach((dd, ii) => {
+            _dataSeries.push(dd.v)
+            _dataSeriesX.push(dd.date)
+          })
+          _x.push({
+            gridIndex: _i,
+            data: _dataSeriesX,
+            type: 'category',
+            boundaryGap: false
+          })
+          _y.push({
+            gridIndex: _i,
+            type: 'value',
+            max: _max,
+            min: _min,
+            interval: setData(_1 - _min)
+          })
+          if (_i % 2 === 0 || _i === 0) {
+            const _top1 = (_i / 2) * _height1 + 5 + '%'
+            const _topTitle1 = (_i / 2) * _height1 + 2 + '%'
+            _title.push({ text: d.name, left: '8%', top: _topTitle1 })
+            _grid.push({ left: '3%', top: _top1, width: '40%', height: _height })
+          } else {
+            const _top2 = ((_i - 1) / 2) * _height1 + 5 + '%'
+            const _topTitle2 = ((_i - 1) / 2) * _height1 + 2 + '%'
+            _title.push({ text: d.name, right: '8%', top: _topTitle2 })
+            _grid.push({ right: '7%', top: _top2, width: '40%', height: _height })
+          }
+
+          if (_3 < 999) {
+            _dataSeries.push(_3)
+          }
+          _series.push({
+            name: d.name,
+            type: 'scatter',
+            xAxisIndex: _i,
+            yAxisIndex: _i,
+            data: _dataSeries,
+            smooth: true,
+            markLine: data.indicators[d.name] ? {
+              // symbol: 'none',
+              precision: 3,
+              data: [{
+                // silent: true,
+                yAxis: _1, label: {
+                  position: 'end',
+                  formatter: `下限(${_1})`
+                }},
+              {
+                yAxis: _2, label: {
+                  position: 'end',
+                  formatter: `中央值(${_2})`
+                }},
+              {
+                yAxis: _3, label: {
+                  position: 'end',
+                  formatter: `上限(${_3})`
+                }}
+              ]
+            } : {}
+          })
+        })
+        let equip_nos = JSON.stringify(data.equip_nos)
+        if (this.history_equip_no) {
+          equip_nos = '[' + JSON.stringify(this.history_equip_no) + ']'
+        }
+        equip_nos = equip_nos.replace(/"/g, '')
+        equip_nos = equip_nos.replace(/,/g, '/')
+        _title.push({ text: this.row_roduct_no + '数据推移' +
+        ' (' + this.historyDate[0] + '至' + this.historyDate[1] + ') ' +
+        equip_nos, left: 'center', top: 0 })
+        this.historySpot.toolbox.feature.saveAsImage.name = this.row_roduct_no + ' (' + this.historyDate[0] + '至' + this.historyDate[1] + ') ' + setDate()
+        this.historySpot.xAxis = _x || []
+        this.historySpot.yAxis = _y || []
+        this.historySpot.title = _title || []
+        this.historySpot.grid = _grid || []
+        this.historySpot.series = _series || []
+
+        this.chartHistoryBar = echarts.init(document.getElementById('historySpot'))
+        this.chartHistoryBar.setOption(this.historySpot, true)
+      } catch (e) {
+        //
+      }
     }
   }
+}
+function setData(val) {
+  return Math.round(val * 1000) / 1000
 }
 </script>

@@ -332,6 +332,7 @@ export default {
   MaterialInventoryList: '/api/v1/inventory/material-inventory-list/',
   QualityPalletFeedTest: '/api/v1/quality/pallet-feed-test/',
   DatapointCurve: '/api/v1/quality/datapoint-curve/',
+  PbRecentName: '/api/v1/production/pb-recent-name/',
   ProductIndicatorStandard: '/api/v1/quality/product-indicator-standard/',
   // 录入导入
   ImportMaterialMestMrders: '/api/v1/quality/import-material-test-orders/',
