@@ -149,6 +149,10 @@
         prop="release_msg"
         label="放行结果"
       />
+      <el-table-column
+        prop="release_user"
+        label="放行处理人"
+      />
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button-group>
@@ -259,7 +263,7 @@ export default {
             })
             this.changeList()
           }).catch(e => {
-            //
+            // this.changeList()
           })
       })
     }
