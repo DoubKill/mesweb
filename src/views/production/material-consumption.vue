@@ -75,7 +75,7 @@
         align="center"
         prop="material_name"
         label="原材料名称"
-        width="140"
+        width="150"
         fixed
       >
         <template slot-scope="scope">
@@ -88,6 +88,13 @@
         align="center"
         prop="total"
         label="合计"
+        width="120"
+        fixed
+      />
+      <el-table-column
+        align="center"
+        prop="avg"
+        label="平均"
         width="120"
         fixed
       />
@@ -213,6 +220,9 @@ export default {
         this.tableData.forEach(d => {
           if (d.material_name !== '小计') {
             d.total = data.material_weight_dict[d.material_name]
+            d.avg = (data.material_weight_dict[d.material_name] /
+            (this.search.s_time === this.search.e_time
+              ? 1 : getDaysBetween(this.search.s_time, this.search.e_time) + 1)).toFixed(2)
           } else {
             d.total = d.total_weight.toFixed(2)
           }
@@ -311,6 +321,14 @@ export default {
         }
       }
       if ([2].includes(columnIndex) && this.spanArr1) {
+        const _row = this.spanArr1[rowIndex]
+        const _col = _row > 0 ? 1 : 0
+        return {
+          rowspan: _row,
+          colspan: _col
+        }
+      }
+      if ([3].includes(columnIndex) && this.spanArr1) {
         const _row = this.spanArr1[rowIndex]
         const _col = _row > 0 ? 1 : 0
         return {
