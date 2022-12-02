@@ -30,7 +30,7 @@
           <el-table-column
             prop="equip_no"
             label="机台"
-            min-width="20"
+            min-width="15"
           />
           <el-table-column
             prop="total_weight"
@@ -40,7 +40,7 @@
           <el-table-column
             prop="total_trains"
             label="车数"
-            min-width="20"
+            min-width="15"
           />
           <el-table-column
             prop="target"
@@ -53,13 +53,23 @@
             min-width="20"
           />
           <el-table-column
+            prop="max_classes_trains"
+            label="机台最高值(车)"
+            min-width="20"
+          />
+          <el-table-column
             prop="group"
             label="班组"
-            min-width="20"
+            min-width="15"
           />
           <el-table-column
             prop="history_max_weight"
             label="历史最高值(吨)"
+            min-width="20"
+          />
+          <el-table-column
+            prop="history_max_trains"
+            label="历史最高值(车)"
             min-width="20"
           />
           <el-table-column
@@ -129,6 +139,11 @@
         min-width="20"
       />
       <el-table-column
+        prop="max_classes_trains"
+        label="机台最高值(车)"
+        min-width="20"
+      />
+      <el-table-column
         prop="group"
         label="班组"
         min-width="20"
@@ -136,6 +151,11 @@
       <el-table-column
         prop="history_max_weight"
         label="历史最高值(吨)"
+        min-width="20"
+      />
+      <el-table-column
+        prop="history_max_trains"
+        label="历史最高值(车)"
         min-width="20"
       />
       <el-table-column
