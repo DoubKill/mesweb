@@ -193,8 +193,28 @@
     <el-dialog
       title="配料明细"
       :visible.sync="dialogVisible"
-      width="30%"
+      width="50%"
     >
+      <el-form :inline="true">
+        <el-form-item label="日期">
+          <el-input
+            v-model="dialogForm.date"
+            disabled
+          />
+        </el-form-item>
+        <el-form-item label="姓名">
+          <el-input
+            v-model="dialogForm.name"
+            disabled
+          />
+        </el-form-item>
+        <el-form-item label="班次">
+          <el-input
+            v-model="dialogForm.classes"
+            disabled
+          />
+        </el-form-item>
+      </el-form>
       <el-table
         v-loading="loadingDialog"
         max-height="600"
@@ -220,10 +240,22 @@
           label="包数"
           min-width="90"
         />
-        <el-table-column
+        <!-- <el-table-column
           prop="total"
           align="center"
           label="合计"
+          min-width="90"
+        /> -->
+        <el-table-column
+          prop="unit"
+          align="center"
+          label="单价"
+          min-width="90"
+        />
+        <el-table-column
+          prop="all"
+          align="center"
+          label="绩效总计"
           min-width="90"
         />
       </el-table>
@@ -248,6 +280,7 @@ export default {
       btnExportLoad: false,
       isExport: false,
       machineList: [],
+      dialogForm: {},
       loadingDialog: false,
       dialogVisible: false,
       tableDataDialog: [],
@@ -304,18 +337,23 @@ export default {
     },
     async dialogResult(row, day, classes) {
       try {
+        this.dialogForm.date = this.search.factory_date + '-' + (day < 10 ? '0' + day : day)
+        this.dialogForm.name = row.name
+        this.dialogForm.classes = classes
         this.dialogVisible = true
         this.loadingDialog = true
         const data = await summaryOfWeighingOutput('get', null, { params: { factory_date: this.search.factory_date, name: row.name, day: day, classes: classes }})
         this.loadingDialog = false
         this.tableDataDialog = data.detail
         this.tableDataDialog.forEach(d => {
+          d.all = d.unit * d.num
           d.total = data.user_total[d.equip_no]
         })
         if (this.tableDataDialog.length > 0) {
           this.tableDataDialog.push({
             equip_no: '合计',
-            total: sum(this.tableDataDialog, 'num')
+            all: sum(this.tableDataDialog, 'all'),
+            num: sum(this.tableDataDialog, 'num')
           })
         }
         this.spanArr = []
