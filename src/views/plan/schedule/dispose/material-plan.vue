@@ -16,10 +16,12 @@
         <el-select v-model="search.material_name" clearable filterable @change="getList()">
           <el-option
             v-for="item in MaterialOptions"
-            :key="item.id"
-            :label="item.material_name"
-            :value="item.material_name"
-          />
+            :key="item.product_no"
+            :label="item.product_no"
+            :value="item.product_no"
+          >
+            <span :style="{color: item.used?'blue':''}">{{ item.product_no }}</span>
+          </el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="机台">
@@ -100,7 +102,7 @@
 
 <script>
 import EquipSelect from '@/components/EquipSelect'
-import { classesListUrl, materialsUrl, batchingMaterials } from '@/api/base_w'
+import { classesListUrl, batchingMaterials, productMaterials } from '@/api/base_w'
 import { xlPlanConsume } from '@/api/jqy'
 import { exportExcel } from '@/utils'
 export default {
@@ -146,8 +148,8 @@ export default {
     },
     async getMaterial() {
       try {
-        const data = await materialsUrl('get', null, { params: { all: 1 }})
-        this.MaterialOptions = data.results
+        const data = await productMaterials('get')
+        this.MaterialOptions = data || []
       } catch (e) {
         //
       }
