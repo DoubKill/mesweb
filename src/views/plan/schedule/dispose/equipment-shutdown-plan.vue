@@ -123,7 +123,7 @@
             placeholder="选择停机开始时间"
           />
         </el-form-item>
-        <el-form-item label="停机时长" prop="duration">
+        <el-form-item label="停机时长(小时)" prop="duration">
           <el-input-number
             v-model="formData.duration"
             :precision="1"

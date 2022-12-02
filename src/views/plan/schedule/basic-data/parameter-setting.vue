@@ -68,6 +68,10 @@
               inactive-color="#ff4949"
             />
           </el-form-item>
+
+          <el-form-item label="排程时间点之后的锁定期间(小时)">
+            <el-input-number v-model="typeForm.lock_durations" :min="0" :precision="1" />
+          </el-form-item>
         </el-col>
 
         <el-col :span="12">
@@ -94,13 +98,13 @@
             <el-input-number v-model="typeForm.mixing_interval_et_time" style="width:150px" :min="typeForm.mixing_interval_st_time" />
           </el-form-item>
           <el-form-item label="小吨位(<5吨)目标库存天数" prop="small_ton_stock_days">
-            <el-input-number v-model="typeForm.small_ton_stock_days" :min="0" precision="1" />
+            <el-input-number v-model="typeForm.small_ton_stock_days" :min="0" :precision="1" />
           </el-form-item>
           <el-form-item label="中吨位(5-10吨)目标库存天数" prop="middle_ton_stock_days">
-            <el-input-number v-model="typeForm.middle_ton_stock_days" :min="0" precision="1" />
+            <el-input-number v-model="typeForm.middle_ton_stock_days" :min="0" :precision="1" />
           </el-form-item>
           <el-form-item label="大吨位(>10吨)目标库存天数" prop="big_ton_stock_days">
-            <el-input-number v-model="typeForm.big_ton_stock_days" :min="0" precision="1" />
+            <el-input-number v-model="typeForm.big_ton_stock_days" :min="0" :precision="1" />
           </el-form-item>
           <br>
         </el-col>
