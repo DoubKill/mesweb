@@ -27,7 +27,17 @@
         </el-select>
       </el-form-item>
       <el-form-item v-if="!isDialog" label="物料编码">
-        <material-code-select @changeSelect="materialCodeFun" />
+        <el-select v-model="getParams.material_no" filterable placeholder="请选择" clearable @change="materialCodeFun">
+          <el-option
+            v-for="(item,key) in options"
+            :key="key"
+            :label="item.product_no"
+            :value="item.product_no"
+          >
+            <span :style="{color: item.used?'blue':''}">{{ item.product_no }}</span>
+          </el-option>
+        </el-select>
+        <!-- <material-code-select @changeSelect="materialCodeFun" /> -->
       </el-form-item>
       <el-form-item label="发货类型">
         <deliverTypeSelect @changeSelect="deliverTypeSelectFun" />
@@ -118,6 +128,16 @@
           label="物料编码"
           prop="material"
         >
+          <!-- <el-select ref="materialCodeSelect" v-model="createForm.material" filterable placeholder="请选择" clearable @change="materialCodeFun">
+            <el-option
+              v-for="(item,key) in options"
+              :key="key"
+              :label="item.product_no"
+              :value="item.product_no"
+            >
+              <span :style="{color: item.used?'blue':''}">{{ item.product_no }}</span>
+            </el-option>
+          </el-select> -->
           <material-code-select ref="materialCodeSelect" @changeSelect="materialCreateForm" />
         </el-form-item>
         <el-form-item
@@ -191,6 +211,7 @@
 
 <script>
 import { getDispatchPlan, postDispatchPlan, putDispatchPlan, deleteDispatchPlan } from '@/api/receive'
+import { productMaterials } from '@/api/base_w'
 import { setDate } from '@/utils/index'
 import page from '@/components/page'
 import commitVal from '@/utils/common'
@@ -223,6 +244,7 @@ export default {
   data() {
     return {
       tableData: [],
+      options: [],
       options1: commitVal.statusList,
       getParams: {
         start_time: setDate(),
@@ -253,6 +275,7 @@ export default {
         this.getParams.page = 1
         this.getParams.material_no = this.materialNo || null
         this.getTableData()
+        this.getProductList()
       }
     }
   },
@@ -261,8 +284,17 @@ export default {
   created() {
     this.getParams.material_no = this.materialNo || null
     this.getTableData()
+    this.getProductList()
   },
   methods: {
+    async getProductList() {
+      try {
+        const data = await productMaterials('get', null, { params: { all: 1 }})
+        this.options = data || []
+      } catch (e) {
+        //
+      }
+    },
     async getTableData() {
       this.loading = true
       await getDispatchPlan(this.getParams).then(response => {
@@ -291,8 +323,8 @@ export default {
       this.getParams.page = 1
       this.getTableData()
     },
-    materialCodeFun(val) {
-      this.getParams.material = val
+    materialCodeFun() {
+      // this.getParams.material = val
       this.getParams.page = 1
       this.getTableData()
     },

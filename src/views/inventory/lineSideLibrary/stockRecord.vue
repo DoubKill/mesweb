@@ -5,11 +5,13 @@
       <el-form-item label="胶料编码:">
         <el-select v-model="search.product_no" clearable filterable placeholder="请选择" @change="changeList">
           <el-option
-            v-for="item in tableData"
-            :key="item.id"
+            v-for="(item,key) in productList"
+            :key="key"
             :label="item.product_no"
             :value="item.product_no"
-          />
+          >
+            <span :style="{color: item.used?'blue':''}">{{ item.product_no }}</span>
+          </el-option>
         </el-select>
         <!-- <all-product-no-select @productBatchingChanged="productBatchingChanged" /> -->
       </el-form-item>
@@ -97,6 +99,7 @@
 <script>
 // import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import { depot, depotSite, depotPallet, depotPalletInfo } from '@/api/base_w_four'
+import { productMaterials } from '@/api/base_w'
 
 export default {
   name: 'LineSideStockRecord',
@@ -106,6 +109,7 @@ export default {
       search: {},
       loading: false,
       tableData: [],
+      productList: [],
       tableData1: [],
       loading1: false,
       options: [],
@@ -116,8 +120,17 @@ export default {
     this.getDepotList()
     this.getDepotSiteList()
     this.getList()
+    this.getProductList()
   },
   methods: {
+    async getProductList() {
+      try {
+        const data = await productMaterials('get', null, { params: { all: 1 }})
+        this.productList = data
+      } catch (e) {
+        //
+      }
+    },
     async getList() {
       try {
         // 取消选中

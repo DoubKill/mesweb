@@ -16,7 +16,9 @@
             :key="key"
             :label="item.product_no"
             :value="item.product_no"
-          />
+          >
+            <span :style="{color: item.used?'blue':''}">{{ item.product_no }}</span>
+          </el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="生产机台:">
@@ -219,6 +221,7 @@
 
 <script>
 // import allProductNoSelect from '@/components/select_w/allProductNoSelect'
+import { productMaterials } from '@/api/base_w'
 import classSelect from '@/components/ClassSelect'
 import selectEquip from '@/components/select_w/equip'
 import { debounce, checkPermission } from '@/utils'
@@ -278,8 +281,8 @@ export default {
     },
     async getProductList() {
       try {
-        const data = await palletData('get', null, { params: { all: 1 }})
-        this.productList = data.results
+        const data = await productMaterials('get', null, { params: { all: 1 }})
+        this.productList = data
       } catch (e) {
         //
       }

@@ -53,7 +53,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="胶料规格">
-        <all-product-no-select :params-obj-must="false" @productBatchingChanged="productBatchingChanged" />
+        <all-product-no-select :show-color="true" :params-obj-must="false" @productBatchingChanged="productBatchingChanged" />
       </el-form-item>
     </el-form>
     <h3>
@@ -397,7 +397,7 @@ export default {
       this.getList()
     },
     productBatchingChanged(val) {
-      this.search.product_no = val ? val.material_no : ''
+      this.search.product_no = val || ''
       this.getList()
     },
     handleSelectionChange(arr) {
