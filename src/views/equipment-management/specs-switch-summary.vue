@@ -3,15 +3,15 @@
     <!-- 规格切换时间明细 -->
     <h3>{{ type==='明细'?'规格切换时间明细':'规格切换时间汇总' }}</h3>
     <el-form :inline="true">
-      <el-form-item label="工厂日期">
+      <el-form-item label="工厂时间">
         <el-date-picker
           v-model="dateValue"
-          type="daterange"
+          type="datetimerange"
           :clearable="false"
+          value-format="yyyy-MM-dd HH:mm:ss"
           range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          value-format="yyyy-MM-dd"
+          start-placeholder="开始时间"
+          end-placeholder="结束时间"
           @change="changeDate"
         />
       </el-form-item>
@@ -201,7 +201,7 @@
         <el-table-column
           prop="factory_date"
           label="日期"
-          width="60"
+          width="90"
         />
         <el-table-column
           prop="classes"
@@ -286,7 +286,7 @@ export default {
       type: '明细',
       groups: [],
       equipList: ['Z01', 'Z02', 'Z03', 'Z04', 'Z05', 'Z06', 'Z07', 'Z08', 'Z09', 'Z10', 'Z11', 'Z12', 'Z13', 'Z14', 'Z15'],
-      dateValue: [setDate(), setDate()],
+      dateValue: [setDate() + ' 08:00:00', getNextDate(setDate(), 1) + ' 08:00:00'],
       total: 0,
       loading: false,
       search: {
@@ -460,6 +460,14 @@ export default {
       this.getList()
     }
   }
+}
+function getNextDate(date, day) {
+  var dd = new Date(date)
+  dd.setDate(dd.getDate() + day)
+  var y = dd.getFullYear()
+  var m = dd.getMonth() + 1 < 10 ? '0' + (dd.getMonth() + 1) : dd.getMonth() + 1
+  var d = dd.getDate() < 10 ? '0' + dd.getDate() : dd.getDate()
+  return y + '-' + m + '-' + d
 }
 function sum(arr, params) {
   var s = 0
