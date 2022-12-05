@@ -12,10 +12,12 @@
         <el-select v-model="search.product_no" clearable filterable placeholder="请选择" @change="changeList">
           <el-option
             v-for="item in options"
-            :key="item.material_no"
-            :label="item.material_no"
-            :value="item.material_no"
-          />
+            :key="item.product_no"
+            :label="item.product_no"
+            :value="item.product_no"
+          >
+            <span :style="{color: item.used?'blue':''}">{{ item.product_no }}</span>
+          </el-option>
         </el-select>
       </el-form-item>
       <el-form-item style="float:right">
@@ -118,10 +120,12 @@
           <el-select v-model="formData.product_no" filterable placeholder="请选择">
             <el-option
               v-for="item in options"
-              :key="item.material_no"
-              :label="item.material_no"
-              :value="item.material_no"
-            />
+              :key="item.product_no"
+              :label="item.product_no"
+              :value="item.product_no"
+            >
+              <span :style="{color: item.used?'blue':''}">{{ item.product_no }}</span>
+            </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="平均工作时间(秒）" prop="avg_mixing_time">
@@ -146,7 +150,7 @@
 import selectEquip from '@/components/select_w/equip'
 import page from '@/components/page'
 import { setDate } from '@/utils/index'
-import { batchingMaterials } from '@/api/base_w'
+import { productMaterials } from '@/api/base_w'
 import { schedulingEquipCapacity } from '@/api/base_w_five'
 export default {
   name: 'ScheduleProductionCapacity',
@@ -204,8 +208,8 @@ export default {
     },
     async getProductList() {
       try {
-        const data = await batchingMaterials('get', null, { params: { all: 1 }})
-        this.options = data || []
+        const data = await productMaterials('get')
+        this.options = data.filter(d => d.used) || []
       } catch (e) {
         //
       }

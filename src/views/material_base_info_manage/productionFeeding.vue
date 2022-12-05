@@ -23,7 +23,9 @@
             :key="item.id"
             :label="item.stage_product_batch_no"
             :value="item.stage_product_batch_no"
-          />
+          >
+            <span :style="{color: 'blue'}">{{ item.stage_product_batch_no }}</span>
+          </el-option>
         </el-select>
       </el-form-item>
     </el-form>

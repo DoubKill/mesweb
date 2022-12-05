@@ -49,10 +49,12 @@
         <el-select v-model="search.material_no" allow-create filterable placeholder="请选择" clearable @visible-change="getProductList" @change="changeList">
           <el-option
             v-for="item in options"
-            :key="item.material_no"
-            :label="item.material_no"
-            :value="item.material_no"
-          />
+            :key="item.product_no"
+            :label="item.product_no"
+            :value="item.product_no"
+          >
+            <span :style="{color: item.used?'blue':''}">{{ item.product_no }}</span>
+          </el-option>
         </el-select>
         <!-- <el-input v-model="search.material_no" clearable @input="debounceList" /> -->
       </el-form-item>
@@ -170,7 +172,7 @@
 </template>
 <script>
 import { inventoryLog, showQualifiedRange, additionalPrintDetail, additionalPrint } from '@/api/base_w'
-import { batchingMaterials } from '@/api/base_w'
+import { productMaterials } from '@/api/base_w'
 import stationInfoWarehouse from '@/components/select_w/warehouseSelectPosition'
 import page from '@/components/page'
 // import warehouseSelect from '@/components/select_w/warehouseSelect'
@@ -223,7 +225,7 @@ export default {
     async getProductList(val) {
       if (val) {
         try {
-          const data = await batchingMaterials('get', null, { params: { all: 1 }})
+          const data = await productMaterials('get')
           this.options = data || []
         } catch (e) {
         //
