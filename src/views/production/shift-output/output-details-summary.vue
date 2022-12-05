@@ -78,7 +78,7 @@
         prop="target_trains"
       />
       <el-table-column v-for="item in groups" :key="item.id+'c'" :label="item.global_name" align="center">
-        <el-table-column label="完成率" align="center">
+        <el-table-column label="完成率%" align="center">
           <template slot-scope="{row}">
             <span :style="{background:row['completion_max'] === item.global_name?'rgb(147,208,11)':row['completion_min'] === item.global_name?'rgb(218 123 123)':''}">
               {{ row['completion_'+item.global_name]?row['completion_'+item.global_name]:'' }}
