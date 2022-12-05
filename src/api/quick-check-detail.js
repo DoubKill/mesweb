@@ -69,6 +69,13 @@ export function datapointCurve(params) {
     params
   })
 }
+export function pbRecentName(params) {
+  return request({
+    url: API.PbRecentName,
+    method: 'get',
+    params
+  })
+}
 
 export function productIndicatorStandard(params) {
   return request({
