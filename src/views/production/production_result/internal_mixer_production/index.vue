@@ -23,7 +23,16 @@
         />
       </el-form-item>
       <el-form-item label="胶料">
-        <all-product-no-select @productBatchingChanged="productBatchingChanged" />
+        <el-select v-model="getParams.product_no" clearable filterable placeholder="请选择" @change="changeList">
+          <el-option
+            v-for="item in optionsProduct"
+            :key="item.product_no"
+            :label="item.product_no"
+            :value="item.product_no"
+          >
+            <span :style="{color: item.used?'blue':''}">{{ item.product_no }}</span>
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="机台">
         <selectEquip
@@ -408,16 +417,16 @@ import page from '@/components/page'
 import selectEquip from '@/components/select_w/equip'
 import { productInventoryLock } from '@/api/jqy'
 // import ProductNoSelect from '@/components/ProductNoSelect'
-import allProductNoSelect from '@/components/select_w/allProductNoSelect'
+// import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import {
   internalMixerUrl,
   classesListUrl, palletFeedBacksUrl, trainsFeedbacksUrl,
-  echartsListUrl
+  echartsListUrl, productMaterials
 } from '@/api/base_w'
 import { mapGetters } from 'vuex'
 export default {
   name: 'InternalMixerProduction',
-  components: { page, selectEquip, allProductNoSelect },
+  components: { page, selectEquip },
   data() {
     this.toolbox = {
       feature: {
@@ -482,6 +491,7 @@ export default {
       dialogVisibleGraph: false,
       totalRubber: 0,
       pageRubber: 1,
+      optionsProduct: [],
       chartData: {
         columns: [
           'created_date_date',
@@ -538,6 +548,7 @@ export default {
     this.search_date = [this.getParams.st, this.getParams.et]
 
     this.getList()
+    this.getProductList()
   },
   methods: {
     getList() {
@@ -790,6 +801,11 @@ export default {
       this.getParams.page = 1
       this.getList()
     },
+    changeList() {
+      this.loadingTable = true
+      this.getParams.page = 1
+      this.getList()
+    },
     setEndTime(val) {
       var end_time = new Date(val).getTime()
       var add = end_time + this.fixedTime
@@ -804,6 +820,14 @@ export default {
       this.getParams.page = page
       this.getParams.page_size = page_size
       this.getList()
+    },
+    async getProductList() {
+      try {
+        const data = await productMaterials('get')
+        this.optionsProduct = data || []
+      } catch (e) {
+        //
+      }
     }
   }
 }

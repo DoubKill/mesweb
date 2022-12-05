@@ -9,10 +9,12 @@
         <el-select v-model="search.product_no" allow-create filterable placeholder="请选择" clearable @visible-change="getProductList" @change="changeList2">
           <el-option
             v-for="item in options1"
-            :key="item.material_no"
-            :label="item.material_no"
-            :value="item.material_no"
-          />
+            :key="item.product_no"
+            :label="item.product_no"
+            :value="item.product_no"
+          >
+            <span :style="{color: item.used?'blue':''}">{{ item.product_no }}</span>
+          </el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="建单起止时间">
@@ -599,7 +601,7 @@ import GenerateAssignOutbound from '../components-film/generate_assign_outbound'
 import GenerateNormalOutbound from '../components-film/generate_normal_outbound'
 import { bzMixinInventorySummary, bzFinalInventorySummary } from '@/api/base_w_four'
 import { compoundManage, userStation, outboundPproductInfo } from '@/api/jqy'
-import { batchingMaterials } from '@/api/base_w'
+import { productMaterials } from '@/api/base_w'
 import { mapGetters } from 'vuex'
 import myMixin from '../components-zl-hl/mixin-zl-hl'
 import { stationInfo } from '@/api/warehouse'
@@ -744,7 +746,7 @@ export default {
     async getProductList(val) {
       if (val) {
         try {
-          const data = await batchingMaterials('get', null, { params: { all: 1 }})
+          const data = await productMaterials('get', null, { params: { all: 1 }})
           this.options1 = data || []
         } catch (e) {
         //
