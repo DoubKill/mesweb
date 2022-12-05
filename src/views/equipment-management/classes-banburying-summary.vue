@@ -43,7 +43,7 @@
         />
       </el-form-item>
       <el-form-item label="胶料编码:">
-        <all-product-no-select @productBatchingChanged="productBatchingChanged" />
+        <all-product-no-select :show-color="true" @productBatchingChanged="productBatchingChanged" />
         <!-- <product-no-select @productBatchingChanged="productBatchingChanged" /> -->
       </el-form-item>
       <el-form-item label="时间单位:">
@@ -252,7 +252,7 @@ export default {
       exportExcel('班次密炼时间汇总')
     },
     productBatchingChanged(val) {
-      this.search.product_no = val ? val.material_no : ''
+      this.search.product_no = val || ''
       this.search.page = 1
       this.getList()
     },

@@ -20,10 +20,12 @@
         <el-select v-model="search.product_no" allow-create filterable placeholder="请选择" clearable @visible-change="getProductList" @change="changeList">
           <el-option
             v-for="item in options1"
-            :key="item.material_no"
-            :label="item.material_no"
-            :value="item.material_no"
-          />
+            :key="item.product_no"
+            :label="item.product_no"
+            :value="item.product_no"
+          >
+            <span :style="{color: item.used?'blue':''}">{{ item.product_no }}</span>
+          </el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="出库口">
@@ -60,6 +62,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="cancelOrderNo(selectionData)">取消任务</el-button>
+        <el-button type="primary" @click="getList">刷新</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -162,7 +165,7 @@
 // import page from '@/components/page'
 import { bzInventoryWorkingTasks } from '@/api/base_w'
 import { cancelTask } from '@/api/jqy'
-import { batchingMaterials } from '@/api/base_w'
+import { productMaterials } from '@/api/base_w'
 import { stationInfo } from '@/api/warehouse'
 import Cookies from 'js-cookie'
 export default {
@@ -226,7 +229,7 @@ export default {
     async getProductList(val) {
       if (val) {
         try {
-          const data = await batchingMaterials('get', null, { params: { all: 1 }})
+          const data = await productMaterials('get', null, { params: { all: 1 }})
           this.options1 = data || []
         } catch (e) {
         //

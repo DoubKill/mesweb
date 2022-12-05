@@ -21,7 +21,7 @@
         <class-select @classSelected="classSelected" />
       </el-form-item>
       <el-form-item label="胶料">
-        <all-product-no-select @productBatchingChanged="productBatchingChanged" />
+        <all-product-no-select :show-color="true" @productBatchingChanged="productBatchingChanged" />
       </el-form-item>
       <el-form-item label="处理意见">
         <deal-suggestion-select @dealSuggestionChange="dealSuggestionChange" />
@@ -648,7 +648,7 @@ export default {
       this.currentChange(1)
     },
     productBatchingChanged(val) {
-      this.getParams.product_no = val ? val.material_no : null
+      this.getParams.product_no = val || null
       this.currentChange(1)
     },
     handleSelectionChange(arr) {

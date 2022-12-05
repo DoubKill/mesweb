@@ -18,7 +18,16 @@
         />
       </el-form-item>
       <el-form-item label="胶料">
-        <all-product-no-select @productBatchingChanged="productBatchingChanged" />
+        <el-select v-model="getParams.product_no" clearable filterable placeholder="请选择" @change="changeList">
+          <el-option
+            v-for="item in optionsProduct"
+            :key="item.product_no"
+            :label="item.product_no"
+            :value="item.product_no"
+          >
+            <span :style="{color: item.used?'blue':''}">{{ item.product_no }}</span>
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="机台">
         <selectEquip
@@ -527,7 +536,7 @@ import {
   weighInformationUrl,
   mixerInformationUrl,
   curveInformationUrl,
-  alarmLogList
+  alarmLogList, productMaterials
 } from '@/api/base_w'
 import { trainsFeedbacksApiviewDown, timeEnergyConsuming } from '@/api/jqy'
 import { personnelsUrl } from '@/api/user'
@@ -536,11 +545,11 @@ import selectEquip from '@/components/select_w/equip'
 // import ProductNoSelect from '@/components/ProductNoSelect'
 import chartMixin from './chartMixin'
 import { mapGetters } from 'vuex'
-import allProductNoSelect from '@/components/select_w/allProductNoSelect'
+// import allProductNoSelect from '@/components/select_w/allProductNoSelect'
 import classSelect from '@/components/ClassSelect'
 export default {
   name: 'TrainNumberReport',
-  components: { page, selectEquip, allProductNoSelect, classSelect },
+  components: { page, selectEquip, classSelect },
   mixins: [chartMixin],
   props: {
     isComponents: {
@@ -584,7 +593,8 @@ export default {
       totalAlarmRecord: 0,
       // table高度
       maxHeightTable: '',
-      dialogVisible: false
+      dialogVisible: false,
+      optionsProduct: []
     }
   },
   computed: {
@@ -614,6 +624,8 @@ export default {
     this.getParams.begin_time = _setDateCurrent
     this.getParams.end_time = _setDateCurrent
     this.search_date = [this.getParams.begin_time, this.getParams.end_time]
+
+    this.getProductList()
   },
   methods: {
     exportTable() {
@@ -756,11 +768,17 @@ export default {
         // console.log(e,88877)
       }
     },
-    productBatchingChanged(val) {
-      this.getParams.product_no = val ? val.material_no : ''
-
+    changeList() {
       this.getParams.page = 1
       this.getList()
+    },
+    async getProductList() {
+      try {
+        const data = await productMaterials('get')
+        this.optionsProduct = data || []
+      } catch (e) {
+        //
+      }
     },
     changeSearch() {
       this.loadingTable = false

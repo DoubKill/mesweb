@@ -74,7 +74,7 @@
         <selectEquip :equip_no_props.sync="search.equip_no" @changeSearch="changeDate" />
       </el-form-item>
       <el-form-item label="规格">
-        <all-product-no-select @productBatchingChanged="productBatchingChanged" />
+        <all-product-no-select :show-color="true" @productBatchingChanged="productBatchingChanged" />
       </el-form-item>
     </el-form>
 
@@ -258,7 +258,7 @@ export default {
       this.$debounce(this, 'changeDate')
     },
     productBatchingChanged(val) {
-      this.search.product_no = val ? val.material_no : ''
+      this.search.product_no = val || ''
       this.search.page = 1
       this.getList()
     },

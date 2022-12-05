@@ -649,47 +649,48 @@ export let asyncRoutes = [
       title: '生产计划管理',
       icon: 'productionPlanManagement'
     },
-    children: [{
-      path: '/rubber/schedule/daily/plan',
-      name: 'RubberScheduleDailyPlan',
-      component: () => import('@/views/rubber_schedule_daily_plan/index'),
-      meta: {
-        title: '排产胶料日计划',
-        icon: 'productionPlanManagement',
-        permissionName: 'productdayplan'
-      }
-    },
-    {
-      path: '/rubber/schedule/daily/plan/release',
-      name: 'RubberScheduleDailyPlanRelease',
-      component: () => import('@/views/rubber_schedule_daily_plan/release'),
-      meta: {
-        title: '排产胶料日计划下达',
-        icon: 'productionPlanManagement',
-        permissionName: 'productdayplan'
-      }
-    },
-    {
-      path: '/material/requisitions/plan',
-      name: 'MaterialRequisitionsPlan',
-      component: () => import('@/views/plan/material-requisitions-plan/index'),
-      meta: {
-        title: '排产领料计划',
-        icon: 'productionPlanManagement',
-        permissionName: 'productdayplan'
-      }
-    },
-    // {
-    //   path: '/material/quantity/demanded',
-    //   name: 'MaterialQuantityDemanded',
-    //   component: () => import('@/views/material_quantity_demanded/index'),
+    children: [
+    //   {
+    //   path: '/rubber/schedule/daily/plan',
+    //   name: 'RubberScheduleDailyPlan',
+    //   component: () => import('@/views/rubber_schedule_daily_plan/index'),
     //   meta: {
-    //     title: '物料需求量',
+    //     title: '排产胶料日计划',
     //     icon: 'productionPlanManagement',
-    //     permissionName: 'materialdemanded'
+    //     permissionName: 'productdayplan'
     //   }
     // },
-    /* {
+      // {
+      //   path: '/rubber/schedule/daily/plan/release',
+      //   name: 'RubberScheduleDailyPlanRelease',
+      //   component: () => import('@/views/rubber_schedule_daily_plan/release'),
+      //   meta: {
+      //     title: '排产胶料日计划下达',
+      //     icon: 'productionPlanManagement',
+      //     permissionName: 'productdayplan'
+      //   }
+      // },
+      {
+        path: '/material/requisitions/plan',
+        name: 'MaterialRequisitionsPlan',
+        component: () => import('@/views/plan/material-requisitions-plan/index'),
+        meta: {
+          title: '排产领料计划',
+          icon: 'productionPlanManagement',
+          permissionName: 'productdayplan'
+        }
+      },
+      // {
+      //   path: '/material/quantity/demanded',
+      //   name: 'MaterialQuantityDemanded',
+      //   component: () => import('@/views/material_quantity_demanded/index'),
+      //   meta: {
+      //     title: '物料需求量',
+      //     icon: 'productionPlanManagement',
+      //     permissionName: 'materialdemanded'
+      //   }
+      // },
+      /* {
       path: '/rubber-plan-release',
       name: 'RubberPlanRelease',
       component: () => import('@/views/recipe/rubber-plan-release'),
@@ -699,137 +700,137 @@ export let asyncRoutes = [
         permissionName: 'batching_plan'
       }
     },*/
-    // {
-    //   path: '/actual-comparison',
-    //   name: 'ActualComparison',
-    //   component: () => import('@/views/recipe/actual-comparison'),
-    //   meta: {
-    //     title: '小料称量计划与实际对比',
-    //     icon: 'formula',
-    //     permissionName: 'batching_reality'
-    //   }
-    // },
-    {
-      path: '/small-material-weight',
-      redirect: '/small-material-weight/material',
-      component: () => import('@/views/recipe/small-material-weight/index'),
-      name: 'SmallMaterialWeight',
-      meta: {
-        title: '小料称量管理',
-        icon: 'formula'
-      },
-      children: [
-        {
-          path: '/small-material-weight/material',
-          component: () => import('@/views/recipe/small-material-weight/material'),
-          name: 'SmallMaterialWeightMaterial',
-          meta: {
-            faName: 'SmallMaterialWeight',
-            title: '物料管理',
-            permissionName: 'xl_material'
-          }
+      // {
+      //   path: '/actual-comparison',
+      //   name: 'ActualComparison',
+      //   component: () => import('@/views/recipe/actual-comparison'),
+      //   meta: {
+      //     title: '小料称量计划与实际对比',
+      //     icon: 'formula',
+      //     permissionName: 'batching_reality'
+      //   }
+      // },
+      {
+        path: '/small-material-weight',
+        redirect: '/small-material-weight/material',
+        component: () => import('@/views/recipe/small-material-weight/index'),
+        name: 'SmallMaterialWeight',
+        meta: {
+          title: '小料称量管理',
+          icon: 'formula'
         },
-        {
-          path: '/small-material-weight/feed-bin',
-          component: () => import('@/views/recipe/small-material-weight/feed-bin'),
-          name: 'SmallMaterialWeightFeedBin',
-          meta: {
-            faName: 'SmallMaterialWeight',
-            title: '料仓管理',
-            permissionName: 'xl_bin'
-          }
-        },
-        {
-          path: '/small-material-weight/formula',
-          component: () => import('@/views/recipe/small-material-weight/formula'),
-          name: 'SmallMaterialWeightFormula',
-          meta: {
-            faName: 'SmallMaterialWeight',
-            title: '配方管理',
-            permissionName: 'xl_recipe'
-          }
-        },
-        {
-          path: '/small-material-weight/plan',
-          component: () => import('@/views/recipe/small-material-weight/plan'),
-          name: 'SmallMaterialWeightPlan',
-          meta: {
-            faName: 'SmallMaterialWeight',
-            title: '计划管理',
-            permissionName: 'xl_plan'
-          }
-        },
-        {
-          path: '/small-material-weight/train-number',
-          component: () => import('@/views/recipe/small-material-weight/train-number'),
-          name: 'SmallMaterialWeightTrainNumber',
-          meta: {
-            faName: 'SmallMaterialWeight',
-            title: '车次报表',
-            permissionName: 'xl_report_basic'
-          }
-        },
-        {
-          path: '/internal/material-statistics',
-          component: () => import('@/views/quality_management/material-statistics'),
-          name: 'MaterialStatistics',
-          meta: {
-            faName: 'SmallMaterialWeight',
-            title: '称量机台物料统计',
-            permissionName: 'xl_report_weight_statics'
-          }
-        },
-        {
-          path: '/small-material-weight/consumption',
-          component: () => import('@/views/recipe/small-material-weight/consumption'),
-          name: 'SmallMaterialWeightConsumption',
-          meta: {
-            faName: 'SmallMaterialWeight',
-            title: '物料消耗报表',
-            permissionName: 'xl_report_weight'
-          }
-        },
-        {
-          path: '/small-material-weight/summary',
-          component: () => import('@/views/recipe/small-material-weight/summary'),
-          name: 'SmallMaterialWeightSummary',
-          meta: {
-            faName: 'SmallMaterialWeight',
-            title: '称量物料消耗汇总表',
-            permissionName: 'xl_report_weight'
-          }
-        },
-        {
-          path: '/small-material-weight/trackingCard',
-          component: () => import('@/views/recipe/small-material-weight/trackingCard'),
-          name: 'SmallMaterialWeightTrackingCard',
-          meta: {
-            faName: 'SmallMaterialWeight',
-            title: '细料硫磺机配流转卡',
-            permissionName: 'xl_weight_card'
-          }
-        },
-        {
-          path: '/small-material-weight/singleCard',
-          component: () => import('@/views/recipe/small-material-weight/singleCard'),
-          name: 'SmallMaterialWeightSingleCard',
-          meta: {
-            faName: 'SmallMaterialWeight',
-            title: '人工单配卡片打印',
-            permissionName: 'weighting_package_manual'
-          }
-        },
-        // {
-        //   path: '/small-material-weight/artificialCard',
-        //   component: () => import('@/views/recipe/small-material-weight/artificialCard'),
-        //   name: 'SmallMaterialWeightArtificialCard',
-        //   meta: {
-        //     faName: 'SmallMaterialWeight',
-        //     title: '机配料包卡片补打',
-        //     permissionName: ''
-        //   }
-        // },
-        /** {
+        children: [
+          {
+            path: '/small-material-weight/material',
+            component: () => import('@/views/recipe/small-material-weight/material'),
+            name: 'SmallMaterialWeightMaterial',
+            meta: {
+              faName: 'SmallMaterialWeight',
+              title: '物料管理',
+              permissionName: 'xl_material'
+            }
+          },
+          {
+            path: '/small-material-weight/feed-bin',
+            component: () => import('@/views/recipe/small-material-weight/feed-bin'),
+            name: 'SmallMaterialWeightFeedBin',
+            meta: {
+              faName: 'SmallMaterialWeight',
+              title: '料仓管理',
+              permissionName: 'xl_bin'
+            }
+          },
+          {
+            path: '/small-material-weight/formula',
+            component: () => import('@/views/recipe/small-material-weight/formula'),
+            name: 'SmallMaterialWeightFormula',
+            meta: {
+              faName: 'SmallMaterialWeight',
+              title: '配方管理',
+              permissionName: 'xl_recipe'
+            }
+          },
+          {
+            path: '/small-material-weight/plan',
+            component: () => import('@/views/recipe/small-material-weight/plan'),
+            name: 'SmallMaterialWeightPlan',
+            meta: {
+              faName: 'SmallMaterialWeight',
+              title: '计划管理',
+              permissionName: 'xl_plan'
+            }
+          },
+          {
+            path: '/small-material-weight/train-number',
+            component: () => import('@/views/recipe/small-material-weight/train-number'),
+            name: 'SmallMaterialWeightTrainNumber',
+            meta: {
+              faName: 'SmallMaterialWeight',
+              title: '车次报表',
+              permissionName: 'xl_report_basic'
+            }
+          },
+          {
+            path: '/internal/material-statistics',
+            component: () => import('@/views/quality_management/material-statistics'),
+            name: 'MaterialStatistics',
+            meta: {
+              faName: 'SmallMaterialWeight',
+              title: '称量机台物料统计',
+              permissionName: 'xl_report_weight_statics'
+            }
+          },
+          {
+            path: '/small-material-weight/consumption',
+            component: () => import('@/views/recipe/small-material-weight/consumption'),
+            name: 'SmallMaterialWeightConsumption',
+            meta: {
+              faName: 'SmallMaterialWeight',
+              title: '物料消耗报表',
+              permissionName: 'xl_report_weight'
+            }
+          },
+          {
+            path: '/small-material-weight/summary',
+            component: () => import('@/views/recipe/small-material-weight/summary'),
+            name: 'SmallMaterialWeightSummary',
+            meta: {
+              faName: 'SmallMaterialWeight',
+              title: '称量物料消耗汇总表',
+              permissionName: 'xl_report_weight'
+            }
+          },
+          {
+            path: '/small-material-weight/trackingCard',
+            component: () => import('@/views/recipe/small-material-weight/trackingCard'),
+            name: 'SmallMaterialWeightTrackingCard',
+            meta: {
+              faName: 'SmallMaterialWeight',
+              title: '细料硫磺机配流转卡',
+              permissionName: 'xl_weight_card'
+            }
+          },
+          {
+            path: '/small-material-weight/singleCard',
+            component: () => import('@/views/recipe/small-material-weight/singleCard'),
+            name: 'SmallMaterialWeightSingleCard',
+            meta: {
+              faName: 'SmallMaterialWeight',
+              title: '人工单配卡片打印',
+              permissionName: 'weighting_package_manual'
+            }
+          },
+          // {
+          //   path: '/small-material-weight/artificialCard',
+          //   component: () => import('@/views/recipe/small-material-weight/artificialCard'),
+          //   name: 'SmallMaterialWeightArtificialCard',
+          //   meta: {
+          //     faName: 'SmallMaterialWeight',
+          //     title: '机配料包卡片补打',
+          //     permissionName: ''
+          //   }
+          // },
+          /** {
           path: '/small-material-weight/hebao',
           component: () => import('@/views/recipe/small-material-weight/hebao'),
           name: 'SmallMaterialWeightHebao',
@@ -859,183 +860,183 @@ export let asyncRoutes = [
             permissionName: 'weighting_package_manual'
           }
         },**/
-        {
-          path: '/small-material-weight/valid',
-          component: () => import('@/views/recipe/small-material-weight/valid'),
-          name: 'SmallMaterialWeightValid',
-          meta: {
-            faName: 'SmallMaterialWeight',
-            title: '料包有效期管理',
-            permissionName: 'xl_expire_data'
+          {
+            path: '/small-material-weight/valid',
+            component: () => import('@/views/recipe/small-material-weight/valid'),
+            name: 'SmallMaterialWeightValid',
+            meta: {
+              faName: 'SmallMaterialWeight',
+              title: '料包有效期管理',
+              permissionName: 'xl_expire_data'
+            }
           }
-        }
-      ]
-    },
-    {
-      path: '/auto-schedule',
-      redirect: '/schedule/factory-declare',
-      name: 'AutoSchedule',
-      component: () => import('@/views/plan/schedule/a-index'),
-      meta: {
-        title: '自动排程',
-        icon: 'formula'
+        ]
       },
-      children: [
-        {
-          path: '/schedule/factory-declare',
-          component: () => import('@/views/plan/schedule/factory-declare/a-index'),
-          name: 'ScheduleFactoryDeclare',
-          redirect: '/schedule/plan-declare',
-          meta: {
-            faName: 'AutoSchedule',
-            title: '分厂申报'
-          },
-          children: [
-            {
-              path: '/schedule/plan-declare',
-              component: () => import('@/views/plan/schedule/factory-declare/plan-declare'),
-              name: 'SchedulePlanDeclare',
-              meta: {
-                faName: 'ScheduleFactoryDeclare',
-                title: '各分厂胶料计划申报',
-                permissionName: 'aps_demanded_declare'
-              }
-            },
-            {
-              path: '/schedule/safety-declare',
-              component: () => import('@/views/plan/schedule/factory-declare/safety-declare'),
-              name: 'ScheduleSafetyDeclare',
-              meta: {
-                faName: 'ScheduleFactoryDeclare',
-                title: '安全库存及安全系数申报',
-                permissionName: 'aps_safety_params_declare'
-              }
-            }
-          ]
+      {
+        path: '/auto-schedule',
+        redirect: '/schedule/factory-declare',
+        name: 'AutoSchedule',
+        component: () => import('@/views/plan/schedule/a-index'),
+        meta: {
+          title: '自动排程',
+          icon: 'formula'
         },
-        {
-          path: '/schedule/dispose',
-          component: () => import('@/views/plan/schedule/dispose/a-index'),
-          name: 'ScheduleDispose',
-          redirect: '/schedule/plan-declare',
-          meta: {
-            faName: 'AutoSchedule',
-            title: '排程处理'
+        children: [
+          {
+            path: '/schedule/factory-declare',
+            component: () => import('@/views/plan/schedule/factory-declare/a-index'),
+            name: 'ScheduleFactoryDeclare',
+            redirect: '/schedule/plan-declare',
+            meta: {
+              faName: 'AutoSchedule',
+              title: '分厂申报'
+            },
+            children: [
+              {
+                path: '/schedule/plan-declare',
+                component: () => import('@/views/plan/schedule/factory-declare/plan-declare'),
+                name: 'SchedulePlanDeclare',
+                meta: {
+                  faName: 'ScheduleFactoryDeclare',
+                  title: '各分厂胶料计划申报',
+                  permissionName: 'aps_demanded_declare'
+                }
+              },
+              {
+                path: '/schedule/safety-declare',
+                component: () => import('@/views/plan/schedule/factory-declare/safety-declare'),
+                name: 'ScheduleSafetyDeclare',
+                meta: {
+                  faName: 'ScheduleFactoryDeclare',
+                  title: '安全库存及安全系数申报',
+                  permissionName: 'aps_safety_params_declare'
+                }
+              }
+            ]
           },
-          children: [
-            {
-              path: '/schedule/dispose-inventory-summary',
-              component: () => import('@/views/plan/schedule/dispose/inventory-summary'),
-              name: 'ScheduleInventorySummary',
-              meta: {
-                faName: 'ScheduleDispose',
-                title: '胶料计划库存汇总',
-                permissionName: 'aps_plan_summary'
-              }
+          {
+            path: '/schedule/dispose',
+            component: () => import('@/views/plan/schedule/dispose/a-index'),
+            name: 'ScheduleDispose',
+            redirect: '/schedule/plan-declare',
+            meta: {
+              faName: 'AutoSchedule',
+              title: '排程处理'
             },
-            {
-              path: '/schedule/machine-production-all',
-              component: () => import('@/views/plan/schedule/dispose/machine-production-all'),
-              name: 'ScheduleMachineProduction',
-              meta: {
-                faName: 'ScheduleDispose',
-                title: '机台生产计划-整体列表',
-                permissionName: 'aps_result'
+            children: [
+              {
+                path: '/schedule/dispose-inventory-summary',
+                component: () => import('@/views/plan/schedule/dispose/inventory-summary'),
+                name: 'ScheduleInventorySummary',
+                meta: {
+                  faName: 'ScheduleDispose',
+                  title: '胶料计划库存汇总',
+                  permissionName: 'aps_plan_summary'
+                }
+              },
+              {
+                path: '/schedule/machine-production-all',
+                component: () => import('@/views/plan/schedule/dispose/machine-production-all'),
+                name: 'ScheduleMachineProduction',
+                meta: {
+                  faName: 'ScheduleDispose',
+                  title: '机台生产计划-整体列表',
+                  permissionName: 'aps_result'
+                }
+              },
+              {
+                path: '/schedule/gantt-chart',
+                component: () => import('@/views/plan/schedule/dispose/gantt-chart'),
+                name: 'ScheduleGanttChart',
+                meta: {
+                  faName: 'ScheduleDispose',
+                  title: '机台生产计划-甘特图',
+                  permissionName: 'aps_result'
+                }
+              },
+              // {
+              //   path: '/schedule/machine',
+              //   component: () => import('@/views/plan/schedule/dispose/machine'),
+              //   name: 'ScheduleMachine',
+              //   meta: {
+              //     faName: 'ScheduleDispose',
+              //     title: '机台生产计划-机台列表',
+              //     permissionName: ''
+              //   }
+              // },
+              {
+                path: '/schedule/daily-plan',
+                component: () => import('@/views/plan/schedule/dispose/daily-plan'),
+                name: 'ScheduleDailyPlan',
+                meta: {
+                  faName: 'ScheduleDispose',
+                  title: '排产胶料日计划下达',
+                  permissionName: 'productdayplan'
+                }
+              },
+              {
+                path: '/schedule/material-requirement',
+                component: () => import('@/views/plan/schedule/dispose/material-requirement'),
+                name: 'ScheduleMaterialRequirement',
+                meta: {
+                  faName: 'ScheduleDispose',
+                  title: '物料需求量统计',
+                  permissionName: 'materialdemanded'
+                }
+              },
+              {
+                path: '/schedule/material-demand',
+                component: () => import('@/views/plan/schedule/dispose/material-demand'),
+                name: 'MaterialDemand',
+                meta: {
+                  faName: 'ScheduleDispose',
+                  title: '原材料需求量 汇总表',
+                  permissionName: 'materialdemanded'
+                }
+              },
+              {
+                path: '/schedule/material-plan/',
+                component: () => import('@/views/plan/schedule/dispose/material-plan'),
+                name: 'materialPlan',
+                meta: {
+                  faName: 'ScheduleDispose',
+                  title: '细料分解每日计划用量',
+                  permissionName: 'materialdemanded'
+                }
+              },
+              // {
+              //   path: '/schedule/weighing-system-plan',
+              //   component: () => import('@/views/plan/schedule/dispose/weighing-system-plan'),
+              //   name: 'ScheduleWeighingSystemPlan',
+              //   meta: {
+              //     faName: 'ScheduleDispose',
+              //     title: '称量系统计划',
+              //     permissionName: ''
+              //   }
+              // },
+              {
+                path: '/schedule/equipment-shutdown-plan',
+                component: () => import('@/views/plan/schedule/dispose/equipment-shutdown-plan'),
+                name: 'ScheduleEquipmentShutdownPlan',
+                meta: {
+                  faName: 'ScheduleDispose',
+                  title: '机台设备停机计划设置',
+                  permissionName: 'aps_halt_plan'
+                }
+              },
+              {
+                path: '/schedule/scheduled-inventory',
+                component: () => import('@/views/plan/schedule/dispose/scheduled-inventory'),
+                name: 'ScheduledInventory',
+                meta: {
+                  faName: 'ScheduleDispose',
+                  title: '排程无硫库存单',
+                  permissionName: 'aps_stock_summary'
+                }
               }
-            },
-            {
-              path: '/schedule/gantt-chart',
-              component: () => import('@/views/plan/schedule/dispose/gantt-chart'),
-              name: 'ScheduleGanttChart',
-              meta: {
-                faName: 'ScheduleDispose',
-                title: '机台生产计划-甘特图',
-                permissionName: 'aps_result'
-              }
-            },
-            // {
-            //   path: '/schedule/machine',
-            //   component: () => import('@/views/plan/schedule/dispose/machine'),
-            //   name: 'ScheduleMachine',
-            //   meta: {
-            //     faName: 'ScheduleDispose',
-            //     title: '机台生产计划-机台列表',
-            //     permissionName: ''
-            //   }
-            // },
-            {
-              path: '/schedule/daily-plan',
-              component: () => import('@/views/plan/schedule/dispose/daily-plan'),
-              name: 'ScheduleDailyPlan',
-              meta: {
-                faName: 'ScheduleDispose',
-                title: '排产胶料日计划下达',
-                permissionName: 'productdayplan'
-              }
-            },
-            {
-              path: '/schedule/material-requirement',
-              component: () => import('@/views/plan/schedule/dispose/material-requirement'),
-              name: 'ScheduleMaterialRequirement',
-              meta: {
-                faName: 'ScheduleDispose',
-                title: '物料需求量统计',
-                permissionName: 'materialdemanded'
-              }
-            },
-            {
-              path: '/schedule/material-demand',
-              component: () => import('@/views/plan/schedule/dispose/material-demand'),
-              name: 'MaterialDemand',
-              meta: {
-                faName: 'ScheduleDispose',
-                title: '原材料需求量 汇总表',
-                permissionName: 'materialdemanded'
-              }
-            },
-            {
-              path: '/schedule/material-plan/',
-              component: () => import('@/views/plan/schedule/dispose/material-plan'),
-              name: 'materialPlan',
-              meta: {
-                faName: 'ScheduleDispose',
-                title: '细料分解每日计划用量',
-                permissionName: 'materialdemanded'
-              }
-            },
-            // {
-            //   path: '/schedule/weighing-system-plan',
-            //   component: () => import('@/views/plan/schedule/dispose/weighing-system-plan'),
-            //   name: 'ScheduleWeighingSystemPlan',
-            //   meta: {
-            //     faName: 'ScheduleDispose',
-            //     title: '称量系统计划',
-            //     permissionName: ''
-            //   }
-            // },
-            {
-              path: '/schedule/equipment-shutdown-plan',
-              component: () => import('@/views/plan/schedule/dispose/equipment-shutdown-plan'),
-              name: 'ScheduleEquipmentShutdownPlan',
-              meta: {
-                faName: 'ScheduleDispose',
-                title: '机台设备停机计划设置',
-                permissionName: 'aps_halt_plan'
-              }
-            },
-            {
-              path: '/schedule/scheduled-inventory',
-              component: () => import('@/views/plan/schedule/dispose/scheduled-inventory'),
-              name: 'ScheduledInventory',
-              meta: {
-                faName: 'ScheduleDispose',
-                title: '排程无硫库存单',
-                permissionName: 'aps_stock_summary'
-              }
-            }
-          ]
-        },
-        /** {
+            ]
+          },
+          /** {
           path: '/schedule/statistical-report',
           component: () => import('@/views/plan/schedule/statistical-report/a-index'),
           name: 'ScheduleStatisticalReport',
@@ -1127,130 +1128,130 @@ export let asyncRoutes = [
             }
           ]
         },**/
-        {
-          path: '/schedule/basic-data',
-          component: () => import('@/views/plan/schedule/basic-data/a-index'),
-          name: 'ScheduleBasicData',
-          redirect: '/schedule/parameter-setting',
-          meta: {
-            faName: 'AutoSchedule',
-            title: '基础数据'
-          },
-          children: [
-            {
-              path: '/schedule/parameter-setting',
-              component: () => import('@/views/plan/schedule/basic-data/parameter-setting'),
-              name: 'ScheduleParameterSetting',
-              meta: {
-                faName: 'ScheduleBasicData',
-                title: '排程参数设定',
-                permissionName: 'aps_params_setting'
-              }
+          {
+            path: '/schedule/basic-data',
+            component: () => import('@/views/plan/schedule/basic-data/a-index'),
+            name: 'ScheduleBasicData',
+            redirect: '/schedule/parameter-setting',
+            meta: {
+              faName: 'AutoSchedule',
+              title: '基础数据'
             },
-            {
-              path: '/schedule/machine-table',
-              component: () => import('@/views/plan/schedule/basic-data/machine-table'),
-              name: 'ScheduleMachineTable',
-              meta: {
-                faName: 'ScheduleBasicData',
-                title: '定机表(段次及主副机台)',
-                permissionName: 'aps_machine_setting'
+            children: [
+              {
+                path: '/schedule/parameter-setting',
+                component: () => import('@/views/plan/schedule/basic-data/parameter-setting'),
+                name: 'ScheduleParameterSetting',
+                meta: {
+                  faName: 'ScheduleBasicData',
+                  title: '排程参数设定',
+                  permissionName: 'aps_params_setting'
+                }
+              },
+              {
+                path: '/schedule/machine-table',
+                component: () => import('@/views/plan/schedule/basic-data/machine-table'),
+                name: 'ScheduleMachineTable',
+                meta: {
+                  faName: 'ScheduleBasicData',
+                  title: '定机表(段次及主副机台)',
+                  permissionName: 'aps_machine_setting'
+                }
+              },
+              {
+                path: '/schedule/weight-statistics',
+                component: () => import('@/views/plan/schedule/basic-data/weight-statistics'),
+                name: 'ScheduleWeightStatistics',
+                meta: {
+                  faName: 'ScheduleBasicData',
+                  title: '胶料机台配方物料统计',
+                  permissionName: 'aps_machine_recipe'
+                }
+              },
+              {
+                path: '/schedule/material-specification',
+                component: () => import('@/views/plan/schedule/basic-data/material-specification'),
+                name: 'ScheduleMaterialSpecification',
+                meta: {
+                  faName: 'ScheduleBasicData',
+                  title: '炭黑粉料罐物料规格汇总',
+                  permissionName: 'aps_tank_status'
+                }
+              },
+              {
+                path: '/schedule/production-capacity',
+                component: () => import('@/views/plan/schedule/basic-data/production-capacity'),
+                name: 'ScheduleProductionCapacity',
+                meta: {
+                  faName: 'ScheduleBasicData',
+                  title: '机台设备生产能力',
+                  permissionName: 'aps_equip_capacity'
+                }
+              },
+              {
+                path: '/schedule/washing-rules',
+                component: () => import('@/views/plan/schedule/basic-data/washing-rules'),
+                name: 'ScheduleWashingRules',
+                meta: {
+                  faName: 'ScheduleBasicData',
+                  title: '洗车规则及放置规则',
+                  permissionName: 'aps_wash_rules'
+                }
+              },
+              {
+                path: '/schedule/compound-unit',
+                component: () => import('@/views/plan/schedule/basic-data/compound-unit'),
+                name: 'ScheduleCompoundUnit',
+                meta: {
+                  faName: 'ScheduleBasicData',
+                  title: '胶料/单位关键字定义',
+                  permissionName: 'aps_product_keyword'
+                }
+              },
+              {
+                path: '/schedule/processing-keywords',
+                component: () => import('@/views/plan/schedule/basic-data/processing-keywords'),
+                name: 'ScheduleProcessingKeywords',
+                meta: {
+                  faName: 'ScheduleBasicData',
+                  title: '处理关键字定义',
+                  permissionName: 'aps_opera_keyword'
+                }
+              },
+              {
+                path: '/equipment-management/report/specification_setting',
+                name: 'SpecificationSetting',
+                component: () => import('@/views/equipment-management/report/specification_setting'),
+                meta: {
+                  faName: 'ScheduleBasicData',
+                  title: '丁基胶规格设定',
+                  permissionName: 'product_info_dj'
+                }
               }
-            },
-            {
-              path: '/schedule/weight-statistics',
-              component: () => import('@/views/plan/schedule/basic-data/weight-statistics'),
-              name: 'ScheduleWeightStatistics',
-              meta: {
-                faName: 'ScheduleBasicData',
-                title: '胶料机台配方物料统计',
-                permissionName: 'aps_machine_recipe'
-              }
-            },
-            {
-              path: '/schedule/material-specification',
-              component: () => import('@/views/plan/schedule/basic-data/material-specification'),
-              name: 'ScheduleMaterialSpecification',
-              meta: {
-                faName: 'ScheduleBasicData',
-                title: '炭黑粉料罐物料规格汇总',
-                permissionName: 'aps_tank_status'
-              }
-            },
-            {
-              path: '/schedule/production-capacity',
-              component: () => import('@/views/plan/schedule/basic-data/production-capacity'),
-              name: 'ScheduleProductionCapacity',
-              meta: {
-                faName: 'ScheduleBasicData',
-                title: '机台设备生产能力',
-                permissionName: 'aps_equip_capacity'
-              }
-            },
-            {
-              path: '/schedule/washing-rules',
-              component: () => import('@/views/plan/schedule/basic-data/washing-rules'),
-              name: 'ScheduleWashingRules',
-              meta: {
-                faName: 'ScheduleBasicData',
-                title: '洗车规则及放置规则',
-                permissionName: 'aps_wash_rules'
-              }
-            },
-            {
-              path: '/schedule/compound-unit',
-              component: () => import('@/views/plan/schedule/basic-data/compound-unit'),
-              name: 'ScheduleCompoundUnit',
-              meta: {
-                faName: 'ScheduleBasicData',
-                title: '胶料/单位关键字定义',
-                permissionName: 'aps_product_keyword'
-              }
-            },
-            {
-              path: '/schedule/processing-keywords',
-              component: () => import('@/views/plan/schedule/basic-data/processing-keywords'),
-              name: 'ScheduleProcessingKeywords',
-              meta: {
-                faName: 'ScheduleBasicData',
-                title: '处理关键字定义',
-                permissionName: 'aps_opera_keyword'
-              }
-            },
-            {
-              path: '/equipment-management/report/specification_setting',
-              name: 'SpecificationSetting',
-              component: () => import('@/views/equipment-management/report/specification_setting'),
-              meta: {
-                faName: 'ScheduleBasicData',
-                title: '丁基胶规格设定',
-                permissionName: 'product_info_dj'
-              }
-            }
-          ]
+            ]
+          }
+        ]
+      },
+      {
+        path: '/material_base_info_manage/',
+        component: () => import('@/views/material_base_info_manage/productionFeeding'),
+        name: 'ProductionFeeding',
+        meta: {
+          title: '生产投料配方查询',
+          icon: 'formula',
+          permissionName: 'formula_preparation'
         }
-      ]
-    },
-    {
-      path: '/material_base_info_manage/',
-      component: () => import('@/views/material_base_info_manage/productionFeeding'),
-      name: 'ProductionFeeding',
-      meta: {
-        title: '生产投料配方查询',
-        icon: 'formula',
-        permissionName: 'formula_preparation'
+      },
+      {
+        path: '/daily_demand/',
+        component: () => import('@/views/material_base_info_manage/daily_demand'),
+        name: 'daily_demand',
+        meta: {
+          title: '料包日需求及耗时统计',
+          icon: 'formula',
+          permissionName: 'daily_weight_package'
+        }
       }
-    },
-    {
-      path: '/daily_demand/',
-      component: () => import('@/views/material_base_info_manage/daily_demand'),
-      name: 'daily_demand',
-      meta: {
-        title: '料包日需求及耗时统计',
-        icon: 'formula',
-        permissionName: 'daily_weight_package'
-      }
-    }
     ]
   },
   {
