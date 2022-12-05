@@ -27,7 +27,17 @@
         </el-select>
       </el-form-item>
       <el-form-item label="物料编码">
-        <material-code-select @changeSelect="materialCodeFun" />
+        <el-select v-model="getParams.material_no" filterable placeholder="请选择" clearable @change="materialCodeFun">
+          <el-option
+            v-for="(item,key) in options"
+            :key="key"
+            :label="item.product_no"
+            :value="item.product_no"
+          >
+            <span :style="{color: item.used?'blue':''}">{{ item.product_no }}</span>
+          </el-option>
+        </el-select>
+        <!-- <material-code-select @changeSelect="materialCodeFun" /> -->
       </el-form-item>
       <el-form-item label="发货类型">
         <deliverTypeSelect @changeSelect="deliverTypeSelectFun" />
@@ -104,19 +114,21 @@
 
 <script>
 import { getDispatchPlan, getDispatchLog } from '@/api/receive'
+import { productMaterials } from '@/api/base_w'
 import { setDate } from '@/utils/index'
 import page from '@/components/page'
 import commitVal from '@/utils/common'
-import MaterialCodeSelect from '@/components/materialCodeSelect'
+// import MaterialCodeSelect from '@/components/materialCodeSelect'
 import deliverTypeSelect from '@/components/select_w/deliverTypeSelect'
 import destinationSelect from '@/components/select_w/destinationSelect'
 export default {
   name: 'ReceiveGoodManageView',
-  components: { page, MaterialCodeSelect, deliverTypeSelect, destinationSelect },
+  components: { page, deliverTypeSelect, destinationSelect },
   data() {
     return {
       tableData: [],
       detailTable: [],
+      options: [],
       options1: commitVal.statusList,
       getParams: {
         start_time: setDate(),
@@ -132,8 +144,17 @@ export default {
   },
   created() {
     this.getTableData()
+    this.getProductList()
   },
   methods: {
+    async getProductList() {
+      try {
+        const data = await productMaterials('get', null, { params: { all: 1 }})
+        this.options = data || []
+      } catch (e) {
+        //
+      }
+    },
     getTableData() {
       getDispatchPlan(this.getParams).then(response => {
         this.tableData = response.results
@@ -144,8 +165,8 @@ export default {
       this.getParams.page = 1
       this.getTableData()
     },
-    materialCodeFun(val) {
-      this.getParams.material = val
+    materialCodeFun() {
+      // this.getParams.material = val
       this.getParams.page = 1
       this.getTableData()
     },

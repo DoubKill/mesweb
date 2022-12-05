@@ -48,8 +48,8 @@
       <el-form-item label="物料编码">
         <el-select v-model="search.material_no" allow-create filterable placeholder="请选择" clearable @visible-change="getProductList" @change="changeList">
           <el-option
-            v-for="item in options"
-            :key="item.product_no"
+            v-for="(item,key) in options"
+            :key="key"
             :label="item.product_no"
             :value="item.product_no"
           >
@@ -225,7 +225,7 @@ export default {
     async getProductList(val) {
       if (val) {
         try {
-          const data = await productMaterials('get')
+          const data = await productMaterials('get', null, { params: { all: 1 }})
           this.options = data || []
         } catch (e) {
         //
