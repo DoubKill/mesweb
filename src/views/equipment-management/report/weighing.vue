@@ -22,7 +22,7 @@
         >导出产量汇总Excel</el-button>
       </el-form-item>
 
-      <el-form-item style="float:right">
+      <el-form-item v-permission="['summary_of_weighing_output','save']" style="float:right">
         <el-table
           :data="tableDataPrice"
           style="width:400px"
@@ -48,7 +48,7 @@
           </el-table-column>
         </el-table>
       </el-form-item>
-      <el-form-item style="float:right">
+      <el-form-item v-permission="['summary_of_weighing_output','save']" style="float:right">
         <el-button v-permission="['summary_of_weighing_output','save']" :loading="btnLoading" type="primary" @click="savePrice">保存单价</el-button>
       </el-form-item>
     </el-form>
@@ -100,99 +100,121 @@
       />
     </el-table>
     <br>
-    <el-form>
-      <el-form-item>
-        <span style="font-size:17px;font-weight:bold">称量机台员工绩效计算</span>
-        <el-button
-          v-permission="['summary_of_weighing_output','export']"
-          style="margin-left:20px"
-          type="primary"
-          @click="exportTable('绩效')"
-        >导出员工绩效Excel</el-button>
-        <el-button
-          v-permission="['summary_of_weighing_output','export']"
-          style="margin-left:20px"
-          type="primary"
-          :loading="btnExportLoad"
-          @click="exportTable1"
-        >导出员工考勤</el-button>
-      </el-form-item>
-    </el-form>
-    <el-table
-      :id="exportTableShow?'false':'out-table'"
-      v-loading="loading"
-      :data="tableDataUser"
-      border
-    >
-      <el-table-column
-        :fixed="!isExport"
-        prop="name"
-        align="center"
-        label="姓名"
-        width="90"
-      />
-      <el-table-column
-        v-for="(d,index) in tableHead"
-        :key="Date.now()+index"
-        align="center"
-        :label="d.label"
-        width="120"
+    <div v-permission="['summary_of_weighing_output','save']">
+      <el-form>
+        <el-form-item>
+          <span style="font-size:17px;font-weight:bold">称量机台员工绩效计算</span>
+          <el-button
+            v-permission="['summary_of_weighing_output','export']"
+            style="margin-left:20px"
+            type="primary"
+            @click="exportTable('绩效')"
+          >导出员工绩效Excel</el-button>
+          <el-button
+            v-permission="['summary_of_weighing_output','export']"
+            style="margin-left:20px"
+            type="primary"
+            :loading="btnExportLoad"
+            @click="exportTable1"
+          >导出员工考勤</el-button>
+        </el-form-item>
+      </el-form>
+      <el-table
+        :id="exportTableShow?'false':'out-table'"
+        v-loading="loading"
+        :data="tableDataUser"
+        border
       >
         <el-table-column
+          :fixed="!isExport"
+          prop="name"
           align="center"
-          label="早班"
-          width="60"
+          label="姓名"
+          width="90"
+        />
+        <el-table-column
+          v-for="(d,index) in tableHead"
+          :key="Date.now()+index"
+          align="center"
+          :label="d.label"
+          width="120"
         >
-          <template slot-scope="{row}">
-            <el-link
-              type="primary"
-              @click="dialogResult(row,d.prop,'早班')"
-            >{{ row[d.prop+'早班'] }}</el-link>
-          </template>
+          <el-table-column
+            align="center"
+            label="早班"
+            width="60"
+          >
+            <template slot-scope="{row}">
+              <el-link
+                type="primary"
+                @click="dialogResult(row,d.prop,'早班')"
+              >{{ row[d.prop+'早班'] }}</el-link>
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            label="中班"
+            width="60"
+          >
+            <template slot-scope="{row}">
+              <el-link
+                type="primary"
+                @click="dialogResult(row,d.prop,'中班')"
+              >{{ row[d.prop+'中班'] }}</el-link>
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            label="夜班"
+            width="60"
+          >
+            <template slot-scope="{row}">
+              <el-link
+                type="primary"
+                @click="dialogResult(row,d.prop,'夜班')"
+              >{{ row[d.prop+'夜班'] }}</el-link>
+            </template>
+          </el-table-column>
         </el-table-column>
         <el-table-column
+          prop="xl"
           align="center"
-          label="中班"
-          width="60"
-        >
-          <template slot-scope="{row}">
-            <el-link
-              type="primary"
-              @click="dialogResult(row,d.prop,'中班')"
-            >{{ row[d.prop+'中班'] }}</el-link>
-          </template>
-        </el-table-column>
+          label="细料合计"
+          width="90"
+        />
         <el-table-column
+          prop="lh"
           align="center"
-          label="夜班"
-          width="60"
-        >
-          <template slot-scope="{row}">
-            <el-link
-              type="primary"
-              @click="dialogResult(row,d.prop,'夜班')"
-            >{{ row[d.prop+'夜班'] }}</el-link>
-          </template>
-        </el-table-column>
-      </el-table-column>
-      <el-table-column
-        prop="xl"
-        align="center"
-        label="细料合计"
-        width="90"
-      />
-      <el-table-column
-        prop="lh"
-        align="center"
-        label="硫磺合计"
-        width="90"
-      />
-    </el-table>
+          label="硫磺合计"
+          width="90"
+        />
+      </el-table>
+    </div>
     <el-dialog
       title="配料明细"
       :visible.sync="dialogVisible"
-      width="30%"
+      width="50%"
     >
+      <el-form :inline="true">
+        <el-form-item label="日期">
+          <el-input
+            v-model="dialogForm.date"
+            disabled
+          />
+        </el-form-item>
+        <el-form-item label="姓名">
+          <el-input
+            v-model="dialogForm.name"
+            disabled
+          />
+        </el-form-item>
+        <el-form-item label="班次">
+          <el-input
+            v-model="dialogForm.classes"
+            disabled
+          />
+        </el-form-item>
+      </el-form>
       <el-table
         v-loading="loadingDialog"
         max-height="600"
@@ -218,10 +240,22 @@
           label="包数"
           min-width="90"
         />
-        <el-table-column
+        <!-- <el-table-column
           prop="total"
           align="center"
           label="合计"
+          min-width="90"
+        /> -->
+        <el-table-column
+          prop="unit"
+          align="center"
+          label="单价"
+          min-width="90"
+        />
+        <el-table-column
+          prop="all"
+          align="center"
+          label="绩效总计"
           min-width="90"
         />
       </el-table>
@@ -246,6 +280,7 @@ export default {
       btnExportLoad: false,
       isExport: false,
       machineList: [],
+      dialogForm: {},
       loadingDialog: false,
       dialogVisible: false,
       tableDataDialog: [],
@@ -302,18 +337,23 @@ export default {
     },
     async dialogResult(row, day, classes) {
       try {
+        this.dialogForm.date = this.search.factory_date + '-' + (day < 10 ? '0' + day : day)
+        this.dialogForm.name = row.name
+        this.dialogForm.classes = classes
         this.dialogVisible = true
         this.loadingDialog = true
         const data = await summaryOfWeighingOutput('get', null, { params: { factory_date: this.search.factory_date, name: row.name, day: day, classes: classes }})
         this.loadingDialog = false
         this.tableDataDialog = data.detail
         this.tableDataDialog.forEach(d => {
+          d.all = d.unit * d.num
           d.total = data.user_total[d.equip_no]
         })
         if (this.tableDataDialog.length > 0) {
           this.tableDataDialog.push({
             equip_no: '合计',
-            total: sum(this.tableDataDialog, 'num')
+            all: sum(this.tableDataDialog, 'all'),
+            num: sum(this.tableDataDialog, 'num')
           })
         }
         this.spanArr = []

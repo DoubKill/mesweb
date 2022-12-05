@@ -44,11 +44,13 @@
       <el-form-item label="配方号">
         <el-select v-model="search.product_no" filterable placeholder="请选择" clearable @change="getList()">
           <el-option
-            v-for="item in options"
-            :key="item.material_no"
-            :label="item.material_no"
-            :value="item.material_no"
-          />
+            v-for="(item,key) in options"
+            :key="key"
+            :label="item.product_no"
+            :value="item.product_no"
+          >
+            <span :style="{color: item.used?'blue':''}">{{ item.product_no }}</span>
+          </el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -75,7 +77,7 @@
         align="center"
         prop="material_name"
         label="原材料名称"
-        width="140"
+        width="150"
         fixed
       >
         <template slot-scope="scope">
@@ -88,6 +90,13 @@
         align="center"
         prop="total"
         label="合计"
+        width="120"
+        fixed
+      />
+      <el-table-column
+        align="center"
+        prop="avg"
+        label="平均"
         width="120"
         fixed
       />
@@ -137,7 +146,7 @@
 
 <script>
 import EquipSelect from '@/components/EquipSelect'
-import { classesListUrl, materialsUrl, batchingMaterials } from '@/api/base_w'
+import { classesListUrl, materialsUrl, productMaterials } from '@/api/base_w'
 import { materialExpendSummary } from '@/api/jqy'
 import { exportExcel, setDate } from '@/utils'
 export default {
@@ -188,7 +197,7 @@ export default {
     },
     async getProductList() {
       try {
-        const data = await batchingMaterials('get', null, { params: { all: 1 }})
+        const data = await productMaterials('get', null, { params: { all: 1 }})
         this.options = data || []
       } catch (e) {
         //
@@ -213,6 +222,9 @@ export default {
         this.tableData.forEach(d => {
           if (d.material_name !== '小计') {
             d.total = data.material_weight_dict[d.material_name]
+            d.avg = (data.material_weight_dict[d.material_name] /
+            (this.search.s_time === this.search.e_time
+              ? 1 : getDaysBetween(this.search.s_time, this.search.e_time) + 1)).toFixed(2)
           } else {
             d.total = d.total_weight.toFixed(2)
           }
@@ -311,6 +323,14 @@ export default {
         }
       }
       if ([2].includes(columnIndex) && this.spanArr1) {
+        const _row = this.spanArr1[rowIndex]
+        const _col = _row > 0 ? 1 : 0
+        return {
+          rowspan: _row,
+          colspan: _col
+        }
+      }
+      if ([3].includes(columnIndex) && this.spanArr1) {
         const _row = this.spanArr1[rowIndex]
         const _col = _row > 0 ? 1 : 0
         return {
