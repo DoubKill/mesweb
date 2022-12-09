@@ -974,16 +974,16 @@ export let asyncRoutes = [
                   permissionName: 'productdayplan'
                 }
               },*/
-              {
-                path: '/schedule/material-requirement',
-                component: () => import('@/views/plan/schedule/dispose/material-requirement'),
-                name: 'ScheduleMaterialRequirement',
-                meta: {
-                  faName: 'ScheduleDispose',
-                  title: '物料需求量统计',
-                  permissionName: 'materialdemanded'
-                }
-              },
+              // {
+              //   path: '/schedule/material-requirement',
+              //   component: () => import('@/views/plan/schedule/dispose/material-requirement'),
+              //   name: 'ScheduleMaterialRequirement',
+              //   meta: {
+              //     faName: 'ScheduleDispose',
+              //     title: '物料需求量统计',
+              //     permissionName: 'materialdemanded'
+              //   }
+              // },
               {
                 path: '/schedule/material-demand',
                 component: () => import('@/views/plan/schedule/dispose/material-demand'),
