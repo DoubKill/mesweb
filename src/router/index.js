@@ -882,7 +882,7 @@ export let asyncRoutes = [
           icon: 'formula'
         },
         children: [
-          {
+          /* {
             path: '/schedule/factory-declare',
             component: () => import('@/views/plan/schedule/factory-declare/a-index'),
             name: 'ScheduleFactoryDeclare',
@@ -913,7 +913,7 @@ export let asyncRoutes = [
                 }
               }
             ]
-          },
+          },*/
           {
             path: '/schedule/dispose',
             component: () => import('@/views/plan/schedule/dispose/a-index'),
@@ -964,7 +964,7 @@ export let asyncRoutes = [
               //     permissionName: ''
               //   }
               // },
-              {
+              /* {
                 path: '/schedule/daily-plan',
                 component: () => import('@/views/plan/schedule/dispose/daily-plan'),
                 name: 'ScheduleDailyPlan',
@@ -973,7 +973,7 @@ export let asyncRoutes = [
                   title: '排产胶料日计划下达',
                   permissionName: 'productdayplan'
                 }
-              },
+              },*/
               {
                 path: '/schedule/material-requirement',
                 component: () => import('@/views/plan/schedule/dispose/material-requirement'),
@@ -1168,7 +1168,7 @@ export let asyncRoutes = [
                   permissionName: 'aps_machine_recipe'
                 }
               },
-              {
+              /* {
                 path: '/schedule/material-specification',
                 component: () => import('@/views/plan/schedule/basic-data/material-specification'),
                 name: 'ScheduleMaterialSpecification',
@@ -1177,7 +1177,7 @@ export let asyncRoutes = [
                   title: '炭黑粉料罐物料规格汇总',
                   permissionName: 'aps_tank_status'
                 }
-              },
+              },*/
               {
                 path: '/schedule/production-capacity',
                 component: () => import('@/views/plan/schedule/basic-data/production-capacity'),
@@ -1188,7 +1188,7 @@ export let asyncRoutes = [
                   permissionName: 'aps_equip_capacity'
                 }
               },
-              {
+              /* {
                 path: '/schedule/washing-rules',
                 component: () => import('@/views/plan/schedule/basic-data/washing-rules'),
                 name: 'ScheduleWashingRules',
@@ -1217,7 +1217,7 @@ export let asyncRoutes = [
                   title: '处理关键字定义',
                   permissionName: 'aps_opera_keyword'
                 }
-              },
+              },*/
               {
                 path: '/equipment-management/report/specification_setting',
                 name: 'SpecificationSetting',
