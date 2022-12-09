@@ -206,7 +206,7 @@ export default {
           },
           {
             type: 'value',
-            name: '%',
+            name: '',
             splitLine: {
               show: false
             },
@@ -300,7 +300,7 @@ export default {
           },
           {
             type: 'value',
-            name: '%',
+            name: '',
             splitLine: {
               show: false
             },
