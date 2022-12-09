@@ -44,14 +44,15 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="exportTable('停机')">导出停机时间汇总Excel</el-button>
-        <el-button type="primary" @click="exportTable('生产')">导出生产分析汇总Excel</el-button>
+        <el-button v-permission="['equip_down_summary','export']" type="primary" @click="exportTable('停机')">导出停机时间汇总Excel</el-button>
+        <el-button v-permission="['equip_down_summary','export']" type="primary" @click="exportTable('生产')">导出生产分析汇总Excel</el-button>
       </el-form-item>
     </el-form>
     <h3 style="font-size:17px;font-weight:bold">各班机台停机时间汇总</h3>
     <el-table
       :id="exportTableShow?'out-table':'false'"
       v-loading="loading"
+      :max-height="300"
       :data="tableData"
       border
     >
@@ -74,11 +75,6 @@
         align="center"
         label="班组"
         prop="group"
-      />
-      <el-table-column
-        align="center"
-        label="班次"
-        prop="times"
       />
       <el-table-column
         align="center"
@@ -113,7 +109,7 @@
     <el-table
       :id="exportTableShow?'false':'out-table'"
       v-loading="loading"
-      :max-height="450"
+      :max-height="300"
       :span-method="arraySpanMethod"
       :data="tableDataBottom"
       border

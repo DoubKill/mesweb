@@ -1853,7 +1853,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'ShiftOutput',
               title: '各机台停机原因分析',
-              permissionName: 'equip_down_detail'
+              permissionName: 'equip_down_analysis'
             }
           },
           {
@@ -1863,7 +1863,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'ShiftOutput',
               title: '各机台停机时间汇总',
-              permissionName: 'equip_down_detail'
+              permissionName: 'equip_down_summary'
             }
           },
           {
@@ -1873,7 +1873,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'ShiftOutput',
               title: '各机台停机原因分析图表',
-              permissionName: 'equip_down_detail'
+              permissionName: 'equip_down_summary_table'
             }
           },
           {

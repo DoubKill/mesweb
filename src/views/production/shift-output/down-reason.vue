@@ -48,7 +48,7 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button v-if="search.equip_no&&search.group" :disabled="loadingBtn" type="primary" @click="saveAll">
+        <el-button v-if="search.equip_no&&search.group" v-permission="['equip_down_analysis','add']" :disabled="loadingBtn" type="primary" @click="saveAll">
           全部保存
         </el-button>
         <el-button type="primary" @click="lookAll">
@@ -128,9 +128,21 @@
         width="200px"
       >
         <template slot-scope="{row,$index}">
-          <el-button v-if="search.equip_no&&search.group" type="danger" :disabled="loadingBtn" @click="delSet(row,$index)">
+          <el-button
+            v-if="search.equip_no&&search.group"
+            v-permission="['equip_down_analysis','delete']"
+            type="danger"
+            :disabled="loadingBtn"
+            @click="delSet(row,$index)"
+          >
             删除</el-button>
-          <el-button v-if="search.equip_no&&search.group" :disabled="loadingBtn" type="primary" @click="saveSet([row],$index)">
+          <el-button
+            v-if="search.equip_no&&search.group"
+            v-permission="['equip_down_analysis','add']"
+            :disabled="loadingBtn"
+            type="primary"
+            @click="saveSet([row],$index)"
+          >
             保存</el-button>
         </template>
       </el-table-column>

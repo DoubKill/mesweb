@@ -30,18 +30,16 @@
       </el-form-item>
       <el-form-item style="margin-left:50px">
         <el-button
-          v-permission="['daily_production_completion_report','export']"
+          v-permission="['equip_down_summary_table','export']"
           type="primary"
           :loading="btnExportLoad"
           @click="exportTable"
         >导出各机台图表(TOP10)</el-button>
         <el-button
-          v-permission="['daily_production_completion_report','export']"
           type="primary"
           @click="lookAll"
         >查看各机台数据</el-button>
         <el-button
-          v-permission="['daily_production_completion_report','export']"
           type="primary"
           :loading="btnExportLoad"
           @click="lookDown"
@@ -88,7 +86,6 @@
       <el-table
         v-loading="loadingDialog"
         :max-height="450"
-        :span-method="arraySpanMethod"
         :data="tableDataTop"
         border
       >
@@ -106,7 +103,7 @@
         />
       </el-table>
       <el-button
-        v-permission="['daily_production_completion_report','export']"
+        v-permission="['equip_down_summary_table','export']"
         type="primary"
         @click="exportTableDialog"
       >导出班别停机类型汇总Excel</el-button>
@@ -531,8 +528,10 @@ export default {
         })
         this.list1 = data.results.reason
         if (this.list1.length > 0) {
+          this.list1.unshift({ down_reason: '班别停机原因时长(min)' })
           this.list1.push({
-            down_reason: '总计'
+            down_reason: '总计',
+            '总计': sum(this.list1, '总计')
           })
           this.header.forEach(d => {
             this.list1[this.list1.length - 1][d] = sum(this.list1, d)
@@ -540,7 +539,7 @@ export default {
         }
         this.list2 = data.results.ratio
         if (this.list2.length > 0) {
-          this.list2.unshift({ down_reason: '停机类型所占比例' })
+          this.list2.unshift({ down_reason: '停机类型所占比例(%)' })
         }
         this.tableData = this.list1.concat(this.list2)
         this.loadingDialog = false
@@ -549,7 +548,7 @@ export default {
       }
     },
     arraySpanMethod({ row, column, rowIndex, columnIndex }) {
-      if (rowIndex === this.list1.length) {
+      if (rowIndex === 0 || rowIndex === this.list1.length) {
         if (columnIndex === 0) {
           return [1, this.header.length + 2]
         }
