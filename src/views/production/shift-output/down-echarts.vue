@@ -58,7 +58,7 @@
       width="80%"
       append-to-body
     >
-      <el-button v-if="arrData.length>0" v-permission="['equip_down_summary_table','export']" type="primary" @click="download">下载各机台图表</el-button>
+      <el-button v-if="arrData.length>0" v-permission="['equip_down_summary_table','export']" style="margin-bottom:10px;margin-left:85%" type="primary" @click="download">下载各机台图表</el-button>
       <el-row id="echartsBox" v-loading="loadingDialog">
         <el-col v-for="(d,i) in arrData" :key="i" :span="8">
           <div
@@ -102,6 +102,7 @@
       </el-table>
       <el-button
         v-permission="['equip_down_summary_table','export']"
+        style="float:right;margin-bottom:10px;margin-top:10px;"
         type="primary"
         @click="exportTableDialog"
       >导出班别停机类型汇总Excel</el-button>
