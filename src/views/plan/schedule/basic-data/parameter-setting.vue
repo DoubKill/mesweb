@@ -42,10 +42,10 @@
           <el-form-item label="前后工序间隔车数(车)" prop="scheduling_interval_trains">
             <el-input-number v-model="typeForm.scheduling_interval_trains" :min="0" />
           </el-form-item>
-          <el-form-item label="现场可修改计划数量(车)">
+          <!-- <el-form-item label="现场可修改计划数量(车)">
             <el-input-number v-model="typeForm.scheduling_adaptable_trains" :min="0" />
-          </el-form-item>
-          <el-form-item label="排程参数自动统计时间">
+          </el-form-item> -->
+          <!-- <el-form-item label="排程参数自动统计时间">
             <el-time-select
               v-model="typeForm.scheduling_auto_time"
               style="width:200px"
@@ -67,7 +67,7 @@
               active-color="#13ce66"
               inactive-color="#ff4949"
             />
-          </el-form-item>
+          </el-form-item> -->
 
           <el-form-item label="排程时间点之后的锁定期间(小时)">
             <el-input-number v-model="typeForm.lock_durations" :min="0" :precision="1" />
@@ -78,7 +78,7 @@
           <el-form-item label="混炼各段之间放置期时间(小时)">
             <el-input-number v-model="typeForm.mixing_place_interval_time" :min="0" />
           </el-form-item>
-          <el-form-item label="无S打加S放置期时间(小时)">
+          <!-- <el-form-item label="无S打加S放置期时间(小时)">
             <el-input-number v-model="typeForm.standing_time" :min="0" />
           </el-form-item>
           <el-form-item label="小料包一车包数" prop="pkg_count">
@@ -86,7 +86,7 @@
           </el-form-item>
           <el-form-item label="小料包有效期(小时)">
             <el-input-number v-model="typeForm.validity" :min="0" />
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label="密炼时间统计范围(秒)">
             <el-input-number v-model="typeForm.mixing_summary_st_time" style="width:150px" :min="0" :max="typeForm.mixing_summary_et_time" />
             ~
