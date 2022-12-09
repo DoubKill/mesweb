@@ -46,10 +46,10 @@
         prop="batching_weight"
         label="单车产出kg"
       />
-      <el-table-column
+      <!-- <el-table-column
         prop="resting_period"
         label="放置期(小时)"
-      />
+      /> -->
     </el-table>
     <page
       :old-page="false"
