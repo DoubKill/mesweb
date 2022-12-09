@@ -75,9 +75,9 @@
         </el-col>
 
         <el-col :span="12">
-          <el-form-item label="混炼各段之间放置期时间(小时)">
+          <!-- <el-form-item label="混炼各段之间放置期时间(小时)">
             <el-input-number v-model="typeForm.mixing_place_interval_time" :min="0" />
-          </el-form-item>
+          </el-form-item> -->
           <!-- <el-form-item label="无S打加S放置期时间(小时)">
             <el-input-number v-model="typeForm.standing_time" :min="0" />
           </el-form-item>
