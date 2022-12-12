@@ -555,7 +555,8 @@ export default {
     },
     async showRoductNo(row) {
       try {
-        const data = await pbRecentName({ product_no: row.product_type })
+        const data = await pbRecentName({ product_no: row.product_type,
+          st: this.dateValue[0], et: this.dateValue[1] })
         let a = setDate()
         let timestamp = new Date().getTime()
         let b = setDate(timestamp - 1000 * 60 * 60 * 24 * 10)
