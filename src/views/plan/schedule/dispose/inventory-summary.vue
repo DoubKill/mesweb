@@ -63,15 +63,21 @@
         type="index"
         label="序号"
       />
+      <!-- <el-table-column
+        prop="sn"
+        label="序号"
+      /> -->
       <el-table-column
         prop="product_no"
         label="规格"
       >
         <template slot-scope="scope">
           <el-link
+            v-if="scope.row.product_no!=='合计'"
             type="primary"
             @click="dialogStock(scope.row)"
           >{{ scope.row.product_no }}</el-link>
+          <span v-else>{{ scope.row.product_no }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -384,7 +390,7 @@ export default {
         this.tableData = data || []
         if (this.tableData.length > 0) {
           this.tableData.push({
-            sn: '合计',
+            product_no: '合计',
             plan_weight: sum(this.tableData, 'plan_weight'),
             workshop_weight: sum(this.tableData, 'workshop_weight'),
             current_stock: sum(this.tableData, 'current_stock'),
@@ -429,7 +435,7 @@ export default {
       }
     },
     tableRowClassName({ row, rowIndex }) {
-      if (row.sn === '合计') {
+      if (row.product_no === '合计') {
         return 'summary-cell-style'
       }
     },
@@ -525,7 +531,10 @@ export default {
       this.dialogVisible2 = true
     },
     onSubmit() {
-      this.formData = {}
+      this.formData = {
+        workshop_weight: 0,
+        current_stock: 0
+      }
       if (this.$refs.formRef) {
         this.$refs.formRef.clearValidate()
       }
