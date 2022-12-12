@@ -259,7 +259,7 @@ export default {
                 dd.end_time = dd.end_time ? setDate(dd.end_time, true) : ''
                 dd.arrange_rubber_time = dd.arrange_rubber_time ? setDate(dd.arrange_rubber_time, true) : ''
                 dd.product_time = dd.product_time ? setDate(dd.product_time) : ''
-                dd.scan_time = dd.scan_time ? setDate(dd.scan_time) : ''
+                dd.scan_time = dd.scan_time ? setDate(dd.scan_time, true) : ''
               })
               arr.push(...element)
             }
