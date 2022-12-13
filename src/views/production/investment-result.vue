@@ -76,11 +76,12 @@
       <el-table-column
         prop="factory_date"
         label="工厂日期"
-        width="100"
+        min-width="20"
       />
       <el-table-column
         prop="plan_classes_uid"
         label="计划号"
+        min-width="20"
       />
       <el-table-column
         prop="mix_classes"
@@ -95,28 +96,32 @@
       <el-table-column
         prop="mixing_finished"
         label="混炼/终练"
-        width="80"
+        min-width="20"
       />
       <el-table-column
         prop="product_no"
         label="胶料编码"
+        min-width="20"
       />
       <el-table-column
         prop="scan_material"
         label="扫码物料名"
+        min-width="20"
       />
       <el-table-column
         prop="scan_material_type"
         label="扫码物料类别"
+        min-width="20"
       />
       <el-table-column
         prop="bar_code"
         label="条码"
+        min-width="20"
       />
       <el-table-column
         prop="scan_train"
         label="扫码车次"
-        width="80"
+        min-width="15"
       />
       <el-table-column
         prop="unit"
@@ -126,37 +131,42 @@
       <el-table-column
         prop="scan_username"
         label="扫码人"
-        width="70"
+        min-width="20"
       />
       <el-table-column
         prop="scan_time"
         label="扫码时间"
+        min-width="20"
       />
       <el-table-column
         prop="init_weight"
         label="初始重量/包数"
+        min-width="20"
       />
       <el-table-column
         prop="scan_result"
         label="扫码结果"
-        width="70"
+        min-width="20"
       />
       <el-table-column
         prop="scan_message"
         label="扫码返回信息"
+        min-width="20"
       />
       <el-table-column
         prop="release_msg"
         label="放行结果"
+        min-width="20"
       />
       <el-table-column
         prop="release_user"
         label="放行处理人"
+        min-width="20"
       />
-      <el-table-column label="操作">
+      <el-table-column label="操作" width="70">
         <template slot-scope="scope">
           <el-button-group>
-            <el-button :disabled="scope.row.is_release" size="mini" type="primary" @click="showRelease(scope.row)">放行</el-button>
+            <el-button v-if="!scope.row.is_release" size="mini" type="primary" @click="showRelease(scope.row)">放行</el-button>
           </el-button-group>
         </template>
       </el-table-column>
