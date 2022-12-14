@@ -216,7 +216,7 @@ export default {
       sampling_user: [],
       dialogVisible2: false,
       permissionsRange: [],
-      categoryList: ['基础信息管理', '工艺管理', '生产计划管理', '生产管理', '库存管理', '质量管理', '设备管理', '钉钉小程序']
+      categoryList: ['基础信息管理', '工艺管理', '生产计划管理', '生产管理', '库存管理', '质量管理', '设备管理', '备品备件管理', '钉钉小程序']
     }
   },
   watch: {
