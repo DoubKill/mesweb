@@ -1,6 +1,6 @@
 module.exports = {
 
-  title: '中策安吉炼胶MES系统',
+  title: '中策安吉MES系统',
 
   /**
    * @type {boolean} true | false
