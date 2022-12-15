@@ -488,7 +488,7 @@ export default {
         }
         this.list2 = data.results.ratio
         if (this.list2.length > 0) {
-          this.list2.unshift({ down_reason: '停机类型所占比例(%)' })
+          this.list2.unshift({ down_reason: '停机原因所占比例(%)' })
         }
         this.tableData = this.list1.concat(this.list2)
         this.loadingDialog = false
