@@ -13,6 +13,9 @@
           @change="getList"
         />
       </el-form-item>
+      <el-form-item label="">
+        <el-checkbox v-model="td_flag" @change="changeList">是否包含当日产量</el-checkbox>
+      </el-form-item>
       <el-form-item>
         <el-button
           type="primary"
@@ -101,6 +104,7 @@ export default {
       search: {
         target_month: setDate(null, null, 'month')
       },
+      td_flag: false,
       groups: [],
       tableData: [],
       btnExportLoad: false,
@@ -126,7 +130,7 @@ export default {
           let trainsMinName = ''; let daysMinName = ''; let downMinName = ''; let aveMinName = ''; let completionMinName = ''
           this.groups.forEach(dd => {
             d['ave_' + dd.global_name] = d['trains_' + dd.global_name] /
-            (d['days_' + dd.global_name] - (d['down_' + dd.global_name] ? d['down_' + dd.global_name] / 60 / 24 : 0))
+            (d['days_' + dd.global_name] - (d['down_' + dd.global_name] ? d['down_' + dd.global_name] / 60 / 12 : 0))
             d['ave_' + dd.global_name] = d['trains_' + dd.global_name] ? Math.round(d['ave_' + dd.global_name] * 100) / 100 : undefined
 
             d['completion_' + dd.global_name] = d['ave_' + dd.global_name] / d.target_trains
@@ -188,6 +192,10 @@ export default {
       } catch (e) {
         this.loading = false
       }
+    },
+    changeList() {
+      this.search.td_flag = this.td_flag ? 'Y' : undefined
+      this.getList()
     },
     getClassGroup(val) {
       globalCodesUrl('get', {
