@@ -106,20 +106,31 @@
         />
       </el-table-column>
     </el-table>
+    <page
+      :old-page="false"
+      :total="total"
+      :current-page="search.page"
+      @currentChange="currentChange"
+    />
   </div>
 </template>
 
 <script>
 import { productStationStatics } from '@/api/base_w_three'
+import page from '@/components/page'
 import { productInfosUrl } from '@/api/base_w'
 import StageSelect from '@/components/StageSelect'
 import { exportExcel, setDate } from '@/utils'
 export default {
   name: 'RubberStock',
-  components: { StageSelect },
+  components: { StageSelect, page },
   data() {
     return {
-      search: {},
+      search: {
+        page_size: 10,
+        page: 1
+      },
+      total: 0,
       stageVal: '',
       options: [],
       tableData: [],
@@ -166,11 +177,16 @@ export default {
           }
         }
         this.tableData = arr || []
-
+        this.total = data.count
         this.loading = false
       } catch (e) {
         this.loading = false
       }
+    },
+    currentChange(page, page_size) {
+      this.search.page = page
+      this.search.page_size = page_size
+      this.getList()
     },
     productBatchingChanged(val) {
     //   this.search.product_no = val ? val.material_no : ''

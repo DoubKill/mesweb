@@ -252,6 +252,7 @@
       </el-table-column>
     </el-table>
     <page
+      :old-page="false"
       :total="total"
       :current-page="search.page"
       @currentChange="currentChange"
@@ -458,8 +459,9 @@ export default {
         this.loading = false
       }
     },
-    currentChange(page) {
+    currentChange(page, page_size) {
       this.search.page = page
+      this.search.page_size = page_size
       this.getList()
     },
     changeDate(val) {

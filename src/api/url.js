@@ -783,5 +783,6 @@ export default {
   WeightClassPlanImport: '/api/v1/production/weight-class-plan/import-xlsx/',
 
   ShiftProductionSummary: '/api/v1/production/shift-production-summary/',
-  EquipDownDetail: '/api/v1/production/equip-down-detail/'
+  EquipDownDetail: '/api/v1/production/equip-down-detail/',
+  SchedulingStockSummaryExport: '/api/v1/plan/scheduling-stock-summary/export/'
 }

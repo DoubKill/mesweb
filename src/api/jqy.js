@@ -1692,3 +1692,12 @@ export function rubberLog(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function schedulingStockSummaryExport(params) {
+  return request({
+    url: API.SchedulingStockSummaryExport,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}

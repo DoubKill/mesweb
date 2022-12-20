@@ -154,7 +154,7 @@
       </el-table-column>
     </el-table>
     <page
-      v-if="!loading"
+      :old-page="false"
       :total="total"
       :current-page="search.page"
       @currentChange="currentChange"
@@ -429,6 +429,7 @@
             }"
           />
           <el-table-column
+            sortable
             prop="inventory_time"
             label="入库时间"
             min-width="20"
@@ -561,6 +562,7 @@
             min-width="20"
           />
           <el-table-column
+            sortable
             prop="WeightOfActual"
             label="所在巷道库存总重量/kg"
             min-width="20"
@@ -866,8 +868,9 @@ export default {
       this.search.page = 1
       this.getList()
     },
-    currentChange(page) {
+    currentChange(page, page_size) {
       this.search.page = page
+      this.search.page_size = page_size
       this.getList()
     },
     showEditDialog(row) {

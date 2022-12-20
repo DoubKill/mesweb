@@ -148,6 +148,7 @@
       </el-table-column>
     </el-table>
     <pagination
+      :old-page="false"
       :total="total"
       :current-page="getParams.page"
       @currentChange="currentChange"
@@ -458,8 +459,9 @@ export default {
         app.loading = false
       })
     },
-    currentChange(page) {
+    currentChange(page, page_size) {
       this.getParams.page = page
+      this.getParams.page_size = page_size
       this.getList()
     },
     formatter: function(row, column) {
