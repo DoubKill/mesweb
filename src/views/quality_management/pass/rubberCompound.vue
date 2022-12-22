@@ -308,12 +308,21 @@
         @change="getHistoryDate"
       />
       <h3 style="display:inline-block;margin:0 10px">机台</h3>
-      <selectEquip
-        :equip_no_props.sync="history_equip_no"
-        @changeSearch="getHistoryDate"
-      />
+      <el-select
+        v-model="history_equip_no"
+        placeholder="请选择"
+        clearable
+        @change="getHistoryDate"
+      >
+        <el-option
+          v-for="(item) in echartsEquip"
+          :key="item"
+          :label="item"
+          :value="item"
+        />
+      </el-select>
       <div
-        id="historySpot"
+        id="historySpot1"
         style="width: 100%;height:1000px;margin-top:8px"
       />
     </el-dialog>
@@ -391,7 +400,8 @@ export default {
       historyDialogVisible: false,
       historyDate: [],
       history_equip_no: '',
-      row_roduct_no: ''
+      row_roduct_no: '',
+      echartsEquip: []
     }
   },
   created() {
@@ -550,6 +560,7 @@ export default {
       }
     },
     clickOrderNum(index, row) {
+      this.history_equip_no = null
       this.showRoductNo(row)
       this.historyDialogVisible = true
     },
@@ -574,6 +585,7 @@ export default {
       }
     },
     async getHistoryDate() {
+      console.log(777)
       try {
         const obj = {
           st: this.historyDate[0] || '',
@@ -680,6 +692,7 @@ export default {
         if (this.history_equip_no) {
           equip_nos = '[' + JSON.stringify(this.history_equip_no) + ']'
         }
+        this.echartsEquip = data.equip_nos
         equip_nos = equip_nos.replace(/"/g, '')
         equip_nos = equip_nos.replace(/,/g, '/')
         _title.push({ text: this.row_roduct_no + '数据推移' +
@@ -692,7 +705,7 @@ export default {
         this.historySpot.grid = _grid || []
         this.historySpot.series = _series || []
 
-        this.chartHistoryBar = echarts.init(document.getElementById('historySpot'))
+        this.chartHistoryBar = echarts.init(document.getElementById('historySpot1'))
         this.chartHistoryBar.setOption(this.historySpot, true)
       } catch (e) {
         //
