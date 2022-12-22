@@ -353,10 +353,23 @@
         @change="changeHistoryDate"
       />
       <h3 style="display:inline-block;margin:0 10px">机台</h3>
-      <equip-select
+      <!-- <equip-select
         :equip_no_props.sync="history_equip_no"
         @changeSearch="changeHistoryDate"
-      />
+      /> -->
+      <el-select
+        v-model="history_equip_no"
+        placeholder="请选择"
+        clearable
+        @change="changeHistoryDate"
+      >
+        <el-option
+          v-for="(item) in echartsEquip"
+          :key="item"
+          :label="item"
+          :value="item"
+        />
+      </el-select>
       <div
         id="historySpot"
         style="width: 100%;height:1000px;margin-top:8px"
@@ -512,7 +525,8 @@ export default {
             data: []
           }
         ]
-      }
+      },
+      echartsEquip: []
     }
   },
   watch: {
@@ -796,6 +810,7 @@ export default {
       this.getHistoryDate()
     },
     clickOrderNum(index, row) {
+      this.history_equip_no = null
       let a = setDate()
       let timestamp = new Date().getTime()
       let b = setDate(timestamp - 1000 * 60 * 60 * 24 * 10)
@@ -917,6 +932,7 @@ export default {
         if (this.history_equip_no) {
           equip_nos = '[' + JSON.stringify(this.history_equip_no) + ']'
         }
+        this.echartsEquip = data.equip_nos
         equip_nos = equip_nos.replace(/"/g, '')
         equip_nos = equip_nos.replace(/,/g, '/')
         _title.push({ text: this.row_roduct_no + '数据推移' +
