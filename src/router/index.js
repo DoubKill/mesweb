@@ -1847,6 +1847,36 @@ export let asyncRoutes = [
             }
           },
           {
+            path: '/down-reason/',
+            component: () => import('@/views/production/shift-output/down-reason'),
+            name: 'DownReason',
+            meta: {
+              faName: 'ShiftOutput',
+              title: '各机台停机原因分析',
+              permissionName: 'equip_down_analysis'
+            }
+          },
+          {
+            path: '/down-time/',
+            component: () => import('@/views/production/shift-output/down-time'),
+            name: 'DownTime',
+            meta: {
+              faName: 'ShiftOutput',
+              title: '各机台停机时间汇总',
+              permissionName: 'equip_down_summary'
+            }
+          },
+          {
+            path: '/down-echarts/',
+            component: () => import('@/views/production/shift-output/down-echarts'),
+            name: 'DownReason',
+            meta: {
+              faName: 'ShiftOutput',
+              title: '各机台停机原因分析图表',
+              permissionName: 'equip_down_summary_table'
+            }
+          },
+          {
             path: '/scheduled-down-time/',
             component: () => import('@/views/production/shift-output/scheduled-down-time'),
             name: 'ScheduledDownTime',
