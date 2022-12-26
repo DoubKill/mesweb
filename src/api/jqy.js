@@ -1701,3 +1701,39 @@ export function schedulingStockSummaryExport(params) {
     responseType: 'blob'
   })
 }
+
+export function equipDownAnalysis(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipDownAnalysis + id + '/' : API.EquipDownAnalysis,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipDownSummary(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipDownSummary + id + '/' : API.EquipDownSummary,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipDownSummaryTable(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipDownSummaryTable + id + '/' : API.EquipDownSummaryTable,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipDownSummaryTableDown(params) {
+  return request({
+    url: API.EquipDownSummaryTable,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
