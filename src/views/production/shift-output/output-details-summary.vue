@@ -49,7 +49,7 @@
         </el-table-column>
       </el-table-column>
       <el-table-column v-for="item in groups" :key="item.id+'d'" :label="item.global_name" align="center">
-        <el-table-column label="工作时长/天" align="center">
+        <el-table-column label="工作时长/班" align="center">
           <template slot-scope="{row}">
             <span :style="{background:row['days_max'] === item.global_name?'rgb(147,208,11)':row['days_min'] === item.global_name?'rgb(218 123 123)':''}">
               {{ row['days_'+item.global_name]?row['days_'+item.global_name]:'' }}
