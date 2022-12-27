@@ -237,6 +237,7 @@ export default {
   },
   created() {
     this.tableHeader = getDiffDate(this.search.target_month + '-01', getCurrentMonthLastDay(setDate()))
+    this.date = dayAgo(3)
     this.getList()
     this.getAllList()
     this.getType()
@@ -410,6 +411,22 @@ function getDate(datestr) {
   var date = new Date(temp[0], temp[1], temp[2])
   return date
 }
+
+function dayAgo(d) {
+  var date = new Date()
+  date.setDate(date.getDate() - d)// 获取3天前的日期
+  var year = date.getFullYear()
+  var month = date.getMonth() + 1
+  if (month < 10) {
+    month = '0' + month
+  }
+  var day = date.getDate()
+  if (day < 10) {
+    day = '0' + day
+  }
+  return year + '-' + month + '-' + day
+}
+
 function getCurrentMonthLastDay(d) {
   const date = new Date(d)
   let currentMonth = date.getMonth()
