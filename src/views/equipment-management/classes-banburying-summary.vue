@@ -77,6 +77,11 @@
         width="60"
       />
       <el-table-column
+        :key="3"
+        prop="equip_no"
+        label="设备编码"
+      />
+      <el-table-column
         :key="2"
         :label="search.dimension === 3?'月份':search.dimension === 1?'班次':'时间'"
       >
@@ -85,11 +90,6 @@
           <span v-if="search.dimension === 1">/{{ scope.row.classes }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        :key="3"
-        prop="equip_no"
-        label="设备编码"
-      />
       <el-table-column
         :key="4"
         prop="product_no"

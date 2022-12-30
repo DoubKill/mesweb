@@ -202,6 +202,7 @@
       </el-table-column> -->
     </el-table>
     <page
+      :old-page="false"
       :total="total"
       :current-page="getParams.page"
       @currentChange="currentChange"
@@ -383,9 +384,10 @@ export default {
     getDebounce() {
       debounce(this, 'changeSearch')
     },
-    currentChange(page) {
+    currentChange(page, page_size) {
       this.currentPage = page
       this.getParams.page = page
+      this.getParams.page_size = page_size
       this.getTableData()
     },
     changeSearch() {

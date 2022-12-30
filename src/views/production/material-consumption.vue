@@ -80,10 +80,10 @@
         width="150"
         fixed
       >
-        <template slot-scope="scope">
-          <i v-if="scope.row.material_name!=='合计'&&scope.row.material_name!=='小计'&&(type===2||scope.row.material_name!==material_name)" class="el-icon-arrow-right" style="vertical-align: middle" @click="clear(scope, 1)" />
-          <i v-if="scope.row.material_name!=='合计'&&scope.row.material_name!=='小计'&&type===1&&scope.row.material_name===material_name" class="el-icon-arrow-down" style="vertical-align: middle" @click="clear(scope, 2)" />
-          <span> {{ scope.row.material_name }}</span>
+        <template slot-scope="{row,$index}">
+          <i v-if="spanArr1[$index]>1&&row.material_name!=='合计'&&row.material_name!=='小计'&&(type===2||row.material_name!==material_name)" class="el-icon-arrow-right" style="vertical-align: middle" @click="clear(row, 1, $index)" />
+          <i v-if="spanArr1[$index]>1&&row.material_name!=='合计'&&row.material_name!=='小计'&&type===1&&row.material_name===material_name" class="el-icon-arrow-down" style="vertical-align: middle" @click="clear(row, 2, $index)" />
+          <span> {{ row.material_name }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -300,6 +300,7 @@ export default {
             }
           })
         })
+        console.log(this.spanArr, this.pos, this.spanArr1, this.pos1, this.spanArr2, this.pos2)
         this.loading = false
       } catch (e) {
         this.loading = false
@@ -360,10 +361,10 @@ export default {
         }
       }
     },
-    clear(scope, val) {
-      this.$set(this, 'index', scope.$index)
+    clear(row, val, index) {
+      this.$set(this, 'index', index)
       this.$set(this, 'type', val)
-      this.$set(this, 'material_name', scope.row.material_name)
+      this.$set(this, 'material_name', row.material_name)
     },
     equipSelected(obj) {
       this.$set(this.search, 'equip_no', obj ? obj.equip_no : '')

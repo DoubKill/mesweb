@@ -56,6 +56,7 @@
       />
     </el-table>
     <pagination
+      :old-page="false"
       :total="total"
       :current-page="getParams.page"
       @currentChange="currentChange"
@@ -486,8 +487,9 @@ export default {
       }).catch(function() {
       })
     },
-    currentChange(page) {
+    currentChange(page, page_size) {
       this.getParams.page = page
+      this.getParams.page_size = page_size
       this.getList()
     },
     productNoChange() {
