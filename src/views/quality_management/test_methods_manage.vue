@@ -29,7 +29,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <page :total="total" :current-page="getParams.page" @currentChange="currentChange" />
+    <page :old-page="false" :total="total" :current-page="getParams.page" @currentChange="currentChange" />
     <el-dialog
       :title="textMap[dialogStatus] + '试验方法'"
       :visible.sync="dialogFormVisible"
@@ -123,8 +123,9 @@ export default {
       this.getParams.page = 1
       this.getTestMethodList()
     },
-    currentChange(page) {
+    currentChange(page, page_size) {
       this.getParams.page = page
+      this.getParams.page_size = page_size
       this.getTestMethodList()
     },
     async getTestMethodList() {

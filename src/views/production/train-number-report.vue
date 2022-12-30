@@ -76,7 +76,6 @@
       :data="tableData"
       style="width: 100%"
       :height="maxHeightTable"
-      :default-sort="{prop: 'begin_time', order: 'ascending'}"
       @selection-change="handleSelectionChange"
     >
       <el-table-column
