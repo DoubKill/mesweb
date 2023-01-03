@@ -23,9 +23,20 @@
         </el-select>
       </el-form-item>
       <el-form-item>
+        <el-upload
+          v-permission="['aps_result','import']"
+          style="display:inline-block;margin:0 6px"
+          action="string"
+          accept=".xls, .xlsx"
+          :http-request="Upload"
+          :show-file-list="false"
+        >
+          <el-button type="primary">导入Excel</el-button>
+        </el-upload>
         <el-button v-permission="['aps_stock_summary','export']" type="primary" @click="exportTable">导出Excel</el-button>
         <el-button v-permission="['aps_stock_summary','export']" type="primary" @click="addProduce">新增规格</el-button>
         <el-button v-permission="['aps_stock_summary','export']" :loading="btnLoading" type="primary" @click="save">保存</el-button>
+
       </el-form-item>
     </el-form>
     <el-table
@@ -262,7 +273,7 @@
 
 <script>
 import { productInfosUrl } from '@/api/base_w'
-import { schedulingStockSummary, schedulingStockConfirm, schedulingStockSummaryExport } from '@/api/jqy'
+import { schedulingStockSummary, schedulingStockConfirm, schedulingStockSummaryExport, schedulingStockSummaryImport } from '@/api/jqy'
 import { setDate } from '@/utils'
 export default {
   name: 'ScheduledInventory',
@@ -398,6 +409,22 @@ export default {
       // setTimeout(() => {
       //   this.loading = false
       // }, 1000)
+    },
+    Upload(param) {
+      if (!this.search.factory_date) {
+        this.$message('请选择工厂日期')
+        return
+      }
+      const formData = new FormData()
+      formData.append('file', param.file)
+      formData.append('factory_date', this.search.factory_date)
+      schedulingStockSummaryImport('post', null, { data: formData }).then(response => {
+        this.$message({
+          type: 'success',
+          message: response
+        })
+        this.getList()
+      })
     },
     submitExport() {
       if (getDaysBetween(this.exportForm.st, this.exportForm.et) > 31) {
