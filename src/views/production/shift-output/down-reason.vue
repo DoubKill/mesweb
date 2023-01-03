@@ -13,20 +13,6 @@
           @change="dateSearch"
         />
       </el-form-item>
-      <el-form-item label="机台">
-        <el-select
-          v-model="search.equip_no"
-          placeholder="请选择"
-          @change="getList"
-        >
-          <el-option
-            v-for="item in optionsEquip"
-            :key="item.id"
-            :label="item.equip_no"
-            :value="item.equip_no"
-          />
-        </el-select>
-      </el-form-item>
       <el-form-item label="班组">
         <el-select
           v-model="search.group"
@@ -38,6 +24,20 @@
             :key="key"
             :label="item.group__global_name"
             :value="item.group__global_name"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="机台">
+        <el-select
+          v-model="search.equip_no"
+          placeholder="请选择"
+          @change="getList(false)"
+        >
+          <el-option
+            v-for="item in optionsEquip"
+            :key="item.id"
+            :label="item.equip_no"
+            :value="item.equip_no"
           />
         </el-select>
       </el-form-item>
