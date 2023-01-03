@@ -24,7 +24,7 @@
       </el-form-item>
       <el-form-item>
         <el-upload
-          v-permission="['aps_result','import']"
+          v-permission="['aps_stock_summary','export']"
           style="display:inline-block;margin:0 6px"
           action="string"
           accept=".xls, .xlsx"
