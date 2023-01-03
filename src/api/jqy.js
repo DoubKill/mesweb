@@ -1737,3 +1737,12 @@ export function equipDownSummaryTableDown(params) {
     responseType: 'blob'
   })
 }
+
+export function schedulingStockSummaryImport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SchedulingStockSummaryImport + id + '/' : API.SchedulingStockSummaryImport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

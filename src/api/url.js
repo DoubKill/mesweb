@@ -787,5 +787,6 @@ export default {
   SchedulingStockSummaryExport: '/api/v1/plan/scheduling-stock-summary/export/',
   EquipDownAnalysis: '/api/v1/production/equip-down-analysis/',
   EquipDownSummary: '/api/v1/production/equip-down-summary/',
-  EquipDownSummaryTable: '/api/v1/production/equip-down-summary-table/'
+  EquipDownSummaryTable: '/api/v1/production/equip-down-summary-table/',
+  SchedulingStockSummaryImport: '/api/v1/plan/scheduling-stock-summary/import-xlsx/'
 }
