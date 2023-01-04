@@ -176,7 +176,7 @@ export default {
         legend: {
           top: '6%',
           orient: 'horizontal',
-          data: ['分钟数', '累计百分比']
+          data: ['分钟数', '百分比']
         },
         toolbox: {
           show: true
@@ -235,7 +235,7 @@ export default {
             }
           },
           {
-            name: '累计百分比',
+            name: '百分比',
             type: 'line',
             yAxisIndex: 1,
             data: [],
@@ -267,7 +267,7 @@ export default {
         legend: {
           top: '6%',
           orient: 'horizontal',
-          data: ['分钟数', '累计百分比']
+          data: ['分钟数', '百分比']
         },
         toolbox: {
           show: true
@@ -326,7 +326,7 @@ export default {
             }
           },
           {
-            name: '累计百分比',
+            name: '百分比',
             type: 'line',
             yAxisIndex: 1,
             data: [],
