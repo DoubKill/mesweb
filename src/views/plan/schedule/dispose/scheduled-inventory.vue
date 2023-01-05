@@ -53,6 +53,12 @@
       />
       <el-table-column
         align="center"
+        prop="version"
+        label="版本号"
+        min-width="20"
+      />
+      <el-table-column
+        align="center"
         prop="HMB"
         label="HMB（kg）"
         min-width="40"
