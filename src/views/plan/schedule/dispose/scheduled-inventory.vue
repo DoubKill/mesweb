@@ -36,7 +36,6 @@
         <el-button v-permission="['aps_stock_summary','export']" type="primary" @click="exportTable">导出Excel</el-button>
         <el-button v-permission="['aps_stock_summary','export']" type="primary" @click="addProduce">新增规格</el-button>
         <el-button v-permission="['aps_stock_summary','export']" :loading="btnLoading" type="primary" @click="save">保存</el-button>
-
       </el-form-item>
     </el-form>
     <el-table
@@ -206,6 +205,9 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item label="版本号" prop="version">
+          <el-input v-model="createForm.version" />
+        </el-form-item>
         <el-form-item label="HMB库内库存" prop="stock_weight_HMB">
           <el-input-number v-model="createForm.stock_weight_HMB" controls-position="right" :min="0" />
         </el-form-item>
@@ -287,6 +289,9 @@ export default {
       createForm: {},
       rules: {
         product_no: [
+          { required: true, message: '不能为空', trigger: 'blur' }
+        ],
+        version: [
           { required: true, message: '不能为空', trigger: 'blur' }
         ],
         stock_weight_HMB: [
