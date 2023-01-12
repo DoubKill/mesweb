@@ -248,7 +248,7 @@ export default {
                 if (params.value === 0 || params.value === '0') {
                   return ''
                 } else {
-                  return params.value
+                  return params.value + '%'
                 }
               }
             }
