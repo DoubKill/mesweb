@@ -137,6 +137,9 @@ export default {
     ]
     gantt.templates.tooltip_text = function(start, end, task) {
       if (task.$level) {
+        if (task.text && task.is_locked) {
+          return '<b>名称:</b>' + (task.text || '') + '<br/><b>时间:</b>' + (start ? setDate(start, 'gantt') : '') + ' 至 ' + (end ? setDate(end, 'gantt') : '') + '<br><b>已锁定</b>'
+        }
         return '<b>名称:</b>' + (task.text || '') + '<br/><b>时间:</b>' + (start ? setDate(start, 'gantt') : '') + ' 至 ' + (end ? setDate(end, 'gantt') : '')
       }
     }
@@ -217,8 +220,12 @@ export default {
           for (let index = 0; index < this.equieList.length; index++) {
             const element = this.equieList[index]
             if (!element.render) {
-              element.color = this.colors[_i]
-              _i++
+              if (element.text && element.is_locked) {
+                element.color = '#808080'
+              } else {
+                element.color = this.colors[_i]
+                _i++
+              }
               if (_i === this.colors.length - 1) {
                 _i = 0
               }
@@ -230,14 +237,17 @@ export default {
             if (d.text) {
               const obj = this.equieList.find(dd => {
                 if (dd.text) {
-                  const no = dd.text.split('/')[0]
                   const equip_no = dd.equip_no
-                  if (d.text.indexOf(no) > -1 && d.text.indexOf(equip_no) > -1) {
+                  if ((equip_no + '/' + dd.text) === d.text) {
                     return true
                   }
                 }
               })
-              d.color = obj.color
+              if (d.is_locked) {
+                d.color = '#808080'
+              } else {
+                d.color = obj.color
+              }
             }
           })
           this.tasks.data = data || []
