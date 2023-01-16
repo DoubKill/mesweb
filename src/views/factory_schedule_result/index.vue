@@ -230,6 +230,7 @@ export default {
         await deletePlan('post', null, { data: this.deleteForm })
         this.$message.success('删除成功')
         this.btnLoading = false
+        this.dialogExport = false
         this.getList()
       } catch (e) {
         this.btnLoading = false
