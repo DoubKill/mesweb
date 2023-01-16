@@ -54,6 +54,7 @@
         <el-button type="primary" @click="lookAll">
           查看全部
         </el-button>
+        <el-button v-if="bottomTable" type="primary" @click="exportTable">导出excel</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -156,52 +157,56 @@
       >插入一行</el-button>
     </div>
     <br>
-    <el-table
-      v-if="bottomTable"
-      v-loading="bottomLoading"
-      :data="tableDataAll"
-      style="width: 100%"
-      border
-    >
-      <el-table-column
-        v-for="item in optionsEquip"
-        :key="item.id"
-        align="center"
-        :label="item.equip_no"
+    <div v-if="bottomTable" id="out-table">
+      <el-table
+        v-for="(item,index) in tableDataAll"
+        :key="index"
+        v-loading="bottomLoading"
+        :data="item.values"
+        style="width: 100%"
+        border
       >
         <el-table-column
-          width="100"
+          v-for="item1 in item.headers"
+          :key="item1"
           align="center"
-          label="时间区间"
+          :label="item1"
         >
-          <template slot-scope="{row}">
-            <span>{{ row[item.equip_no+'-begin_time']+(row[item.equip_no+'-begin_time']?'-':'')+row[item.equip_no+'-end_time'] }}</span>
-          </template>
+          <el-table-column
+            width="100"
+            align="center"
+            label="时间区间"
+          >
+            <template slot-scope="{row}">
+              <span>{{ row[item1+'-begin_time']+(row[item1+'-begin_time']?'-':'')+row[item1+'-end_time'] }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            width="100"
+            align="center"
+            :prop="item1+'-times'"
+            label="时间间隔/min"
+          />
+          <el-table-column
+            align="center"
+            :prop="item1+'-down_reason'"
+            label="停机原因"
+          />
+          <el-table-column
+            align="center"
+            :prop="item1+'-down_type'"
+            label="停机类型"
+          />
         </el-table-column>
-        <el-table-column
-          width="100"
-          align="center"
-          :prop="item.equip_no+'-times'"
-          label="时间间隔/min"
-        />
-        <el-table-column
-          align="center"
-          :prop="item.equip_no+'-down_reason'"
-          label="停机原因"
-        />
-        <el-table-column
-          align="center"
-          :prop="item.equip_no+'-down_type'"
-          label="停机类型"
-        />
-      </el-table-column>
-    </el-table>
+      </el-table>
+    </div>
   </div>
 </template>
 
 <script>
 import { setDate } from '@/utils'
 import { getEquip } from '@/api/banburying-performance-manage'
+import { exportExcel } from '@/utils/index'
 import { equipDownAnalysis } from '@/api/jqy'
 import { classesListUrl } from '@/api/base_w'
 
@@ -231,6 +236,9 @@ export default {
     this.visibleChange()
   },
   methods: {
+    exportTable() {
+      exportExcel('各机台停机原因分析', 'machine-production-all')
+    },
     visibleChange() {
       const obj = { all: 1, category_name: '密炼设备' }
       getEquip(obj).then(response => {
