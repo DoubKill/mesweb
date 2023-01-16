@@ -37,6 +37,9 @@
           @input="getParamsChanged"
         />
       </el-form-item>
+      <el-form-item>
+        <el-button v-permission="[]" type="primary" @click="exportTable">删除排班</el-button>
+      </el-form-item>
     </el-form>
     <el-table
       :data="tableData"
@@ -98,11 +101,40 @@
       :current-page="getParams.page"
       @currentChange="currentChange"
     />
+
+    <el-dialog
+      class="dialog"
+      title="排班删除"
+      :visible.sync="dialogExport"
+      width="30%"
+    >
+      <el-form label-width="150px">
+        <el-form-item label="起止日期">
+          <el-date-picker
+            v-model="dateValue1"
+            :clearable="false"
+            type="daterange"
+            :picker-options="pickerOptions"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            value-format="yyyy-MM-dd"
+            @change="changeDate"
+          />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogExport=false">取 消</el-button>
+        <el-button type="primary" :loading="btnLoading" @click="submitDelete">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { planScheduleUrl, globalCodesUrl } from '@/api/base_w'
+import { deletePlan } from '@/api/jqy'
+import { currentFactoryDate } from '@/api/base_w_three'
 import pagination from '@/components/page'
 import { setDate } from '@/utils/index'
 export default {
@@ -111,6 +143,11 @@ export default {
   data() {
     return {
       tableData: [],
+      pickerOptions: this.limitDate(),
+      dialogExport: false,
+      factory_date: '',
+      deleteForm: {},
+      btnLoading: false,
       getParams: {
         page: 1,
         work_schedule__schedule_name: '',
@@ -121,7 +158,8 @@ export default {
       total: 0,
       loading: true,
       heardClasses: [],
-      dateValue: []
+      dateValue: [],
+      dateValue1: []
     }
   },
   created() {
@@ -156,8 +194,46 @@ export default {
     })
   },
   methods: {
+    limitDate() {
+      const that = this
+      return {
+        disabledDate(time) {
+          // 选择工厂日期之后的日期
+          return time.getTime() - 1 * 24 * 3600 * 1000 < new Date(that.factory_date).getTime()
+        }
+      }
+    },
     findSchedulePlanByClassesName(work_schedule_plan, name) {
       return work_schedule_plan.find(plan => plan.classes_name === name)
+    },
+    async getFactoryDate() {
+      try {
+        const data = await currentFactoryDate('get', null, { params: {}})
+        this.factory_date = data.factory_date
+      } catch (e) {
+        //
+      }
+    },
+    async exportTable() {
+      this.dialogExport = true
+      this.getFactoryDate()
+      this.dateValue1 = []
+      this.deleteForm = {}
+    },
+    async submitDelete() {
+      if (!this.deleteForm.st) {
+        this.$message('请选择起止日期')
+        return
+      }
+      try {
+        this.btnLoading = true
+        await deletePlan('post', null, { data: this.deleteForm })
+        this.$message.success('删除成功')
+        this.btnLoading = false
+        this.getList()
+      } catch (e) {
+        this.btnLoading = false
+      }
     },
     getList() {
       const app = this
@@ -179,6 +255,10 @@ export default {
         app.loading = false
         // this.$message.error(error)
       })
+    },
+    changeDate() {
+      this.deleteForm.st = this.dateValue1[0]
+      this.deleteForm.et = this.dateValue1[1]
     },
     getParamsChanged() {
       this.getParams.st = this.dateValue ? this.dateValue[0] : ''
