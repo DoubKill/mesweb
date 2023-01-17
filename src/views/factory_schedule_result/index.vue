@@ -38,7 +38,7 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button v-permission="[]" type="primary" @click="exportTable">删除排班</el-button>
+        <el-button v-permission="['planschedule', 'delete']" type="primary" @click="exportTable">删除排班</el-button>
       </el-form-item>
     </el-form>
     <el-table
