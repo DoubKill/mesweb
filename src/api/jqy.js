@@ -1746,3 +1746,12 @@ export function schedulingStockSummaryImport(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function deletePlan(method, id, data = {}) {
+  const obj = {
+    url: id ? API.DeletePlan + id + '/' : API.DeletePlan,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
