@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="machineTable">
     <!-- 定机表(段次及主辅机台) -->
     <el-form
       :inline="true"
@@ -43,6 +43,7 @@
     <el-table
       id="out-table"
       v-loading="loading"
+      :row-class-name="tableRowClassName"
       border
       max-height="700"
       :data="tableData"
@@ -51,7 +52,7 @@
       <el-table-column
         v-if="!exportTableShow"
         label="操作"
-        width="160"
+        width="240"
         fixed
       >
         <template slot-scope="scope">
@@ -79,6 +80,15 @@
             size="mini"
             @click="deleteOrder(scope.row)"
           >删除
+          </el-button>
+          <el-button
+            v-if="!scope.row.confirmed"
+            v-permission="['aps_machine_setting','change']"
+            :disabled="(scope.row.isEdit&&scope.row.id)?true:false"
+            type="primary"
+            size="mini"
+            @click="submitOrder(scope.row)"
+          >确认
           </el-button>
         </template>
       </el-table-column>
@@ -725,7 +735,7 @@
 import { classesListUrl, productInfosUrl } from '@/api/base_w'
 import { getEquip } from '@/api/banburying-performance-manage'
 import { exportExcel } from '@/utils/index'
-import { schedulingRecipeMachineSetting, schedulingRecipeMachineImport, schedulingRecipeStages } from '@/api/jqy'
+import { schedulingRecipeMachineSetting, schedulingRecipeMachineImport, schedulingRecipeStages, schedulingRecipeConfirm } from '@/api/jqy'
 export default {
   name: 'ScheduleMachineTable',
   components: {},
@@ -805,6 +815,11 @@ export default {
     handleDisposeEdit(row) {
       this.$set(row, 'isEdit', true)
     },
+    tableRowClassName({ row, rowIndex }) {
+      if (!row.confirmed) {
+        return 'red-row'
+      }
+    },
     equipChange() {
       const obj = { all: 1, category_name: '密炼设备' }
       getEquip(obj).then(response => {
@@ -820,6 +835,22 @@ export default {
       } catch (e) {
         //
       }
+    },
+    async submitOrder(row) {
+      this.$confirm('此操作将确认' + row.product_no + ', 是否继续?', '提示', {
+        confi4MButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        schedulingRecipeConfirm('post', null, { data: { id: row.id }})
+          .then(response => {
+            this.$message({
+              type: 'success',
+              message: '操作成功!'
+            })
+            this.getList()
+          })
+      })
     },
     deleteOrder: function(row) {
       this.$confirm('此操作将删除' + row.product_no + ', 是否继续?', '提示', {
@@ -951,5 +982,11 @@ function getStringEquip(arr) {
 }
 </script>
 
-<style scoped lang='scss'>
+<style lang='scss'>
+.machineTable{
+  .el-table .red-row {
+    background: red;
+    color:black;
+  }
+}
 </style>

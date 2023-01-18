@@ -789,5 +789,6 @@ export default {
   EquipDownSummary: '/api/v1/production/equip-down-summary/',
   EquipDownSummaryTable: '/api/v1/production/equip-down-summary-table/',
   SchedulingStockSummaryImport: '/api/v1/plan/scheduling-stock-summary/import-xlsx/',
-  DeletePlan: '/api/v1/basics/plan-schedule/delete-plan/'
+  DeletePlan: '/api/v1/basics/plan-schedule/delete-plan/',
+  SchedulingRecipeConfirm: '/api/v1/plan/scheduling-recipe-machine-setting/confirm/'
 }
