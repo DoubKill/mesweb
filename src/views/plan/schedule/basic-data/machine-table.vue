@@ -43,7 +43,7 @@
     <el-table
       id="out-table"
       v-loading="loading"
-      :row-class-name="tableRowClassName"
+      :cell-style="cellStyle"
       border
       max-height="700"
       :data="tableData"
@@ -815,9 +815,20 @@ export default {
     handleDisposeEdit(row) {
       this.$set(row, 'isEdit', true)
     },
-    tableRowClassName({ row, rowIndex }) {
-      if (!row.confirmed) {
-        return 'red-row'
+    cellStyle({ row, column, rowIndex, columnIndex }) {
+      let cellStyle
+      switch (row.confirmed) {
+        case false:
+          cellStyle = 'background: red'
+          break
+        case true:
+          cellStyle = ''
+          break
+        default:
+          cellStyle = ''
+      }
+      if (column.label !== '操作') {
+        return cellStyle
       }
     },
     equipChange() {
