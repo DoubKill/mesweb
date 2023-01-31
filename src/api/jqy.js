@@ -1755,3 +1755,12 @@ export function deletePlan(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function schedulingRecipeConfirm(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SchedulingRecipeConfirm + id + '/' : API.SchedulingRecipeConfirm,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
