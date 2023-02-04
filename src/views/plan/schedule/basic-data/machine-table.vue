@@ -920,6 +920,16 @@ export default {
           d.vice_machine_CMB1 = getStringEquip(d.vice_machine_CMB)
           d.vice_machine_HMB1 = getStringEquip(d.vice_machine_HMB)
         })
+        const arr1 = []
+        const arr2 = []
+        this.tableData.forEach(d => {
+          if (d.confirmed) {
+            arr1.push(d)
+          } else {
+            arr2.push(d)
+          }
+        })
+        this.tableData = arr2.concat(arr1)
         this.loading = false
       } catch (e) {
         this.loading = false
