@@ -78,6 +78,24 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="原材料类别">
+        <el-select
+          v-model="materialType"
+          multiple
+          clearable
+          filterable
+          placeholder="请选择"
+          style="width:300px"
+          @change="changeMaterialType"
+        >
+          <el-option
+            v-for="item in materialTypeOptions"
+            :key="item.id"
+            :label="item.global_name"
+            :value="item.id"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="原材料名称">
         <el-select
           v-model="search.wms_material_name"
@@ -495,6 +513,8 @@ export default {
       currentObj: {},
       loadingSendWeight: false,
       categoryOptions: [],
+      materialType: [],
+      materialTypeOptions: [],
       rawMaterialOptions: [],
       btnExportLoad: false,
       userForm: {},
@@ -514,9 +534,25 @@ export default {
     this.rubber_material_list()
     this.getFormulaType()
     this.getRawMaterial()
+    this.getType()
   },
   methods: {
     checkPermission,
+    getType() {
+      globalCodesUrl('get', {
+        params: {
+          class_name: '原材料类别',
+          all: 1
+        }
+      }).then((response) => {
+        this.materialTypeOptions = response.results
+      }).catch(function() {
+      })
+    },
+    async changeMaterialType(arr) {
+      this.search.material_names = []
+      this.getRawMaterial(arr)
+    },
     refreshList() {
       this.rubber_material_list()
     },
@@ -575,12 +611,39 @@ export default {
         //
       }
     },
-    async getRawMaterial() {
+    // async getRawMaterial() {
+    //   try {
+    //     const data = await materialsUrl('get', null, { params: { all: 1 }})
+    //     this.rawMaterialOptions = data.results
+    //   } catch (e) {
+    //     //
+    //   }
+    // },
+    async getRawMaterial(arr = []) {
       try {
-        const data = await materialsUrl('get', null, { params: { all: 1 }})
+        const _arr = arr.join(',')
+        const data = await materialsUrl('get', null, { params: { all: 1, material_type_ids: _arr }})
         this.rawMaterialOptions = data.results
+        // 去掉-c-x后缀
+        this.rawMaterialOptions.forEach((d, i) => {
+          const a = d.material_name.slice(-2)
+          if (['-C', '-X'].includes(a)) {
+            d.material_name.slice(0, d.material_name.length - 2)
+            d.material_name = d.material_name.slice(0, d.material_name.length - 2)
+          }
+        })
+
+        // 去重
+        var obj = {}
+        var newArr = this.rawMaterialOptions.reduce((item, next) => {
+          obj[next.material_name]
+            ? ' '
+            : (obj[next.material_name] = true && item.push(next))
+          return item
+        }, [])
+        this.rawMaterialOptions = newArr || []
       } catch (e) {
-        //
+        this.rawMaterialOptions = []
       }
     },
     replacementDialog() {
