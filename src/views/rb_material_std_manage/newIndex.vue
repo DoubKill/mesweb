@@ -624,14 +624,14 @@ export default {
         const _arr = arr.join(',')
         const data = await materialsUrl('get', null, { params: { all: 1, material_type_ids: _arr }})
         this.rawMaterialOptions = data.results
-        // 去掉-c-x后缀
-        this.rawMaterialOptions.forEach((d, i) => {
-          const a = d.material_name.slice(-2)
-          if (['-C', '-X'].includes(a)) {
-            d.material_name.slice(0, d.material_name.length - 2)
-            d.material_name = d.material_name.slice(0, d.material_name.length - 2)
-          }
-        })
+        // // 去掉-c-x后缀
+        // this.rawMaterialOptions.forEach((d, i) => {
+        //   const a = d.material_name.slice(-2)
+        //   if (['-C', '-X'].includes(a)) {
+        //     d.material_name.slice(0, d.material_name.length - 2)
+        //     d.material_name = d.material_name.slice(0, d.material_name.length - 2)
+        //   }
+        // })
 
         // 去重
         var obj = {}
