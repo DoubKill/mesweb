@@ -522,6 +522,7 @@ export default {
           {
             type: 'value',
             name: '分钟/吨',
+            min: 10,
             splitLine: {
               show: false
             },
