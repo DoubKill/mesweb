@@ -514,7 +514,6 @@ export default {
           {
             type: 'value',
             name: 'KWH/吨',
-
             splitLine: {
               show: false
             },
