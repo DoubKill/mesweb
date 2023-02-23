@@ -68,7 +68,7 @@
           min-width="20"
         />
         <el-table-column
-          prop="时间"
+          prop="time"
           label="称量耗时"
           min-width="20"
         />
