@@ -720,16 +720,16 @@ export let asyncRoutes = [
           icon: 'formula'
         },
         children: [
-          {
-            path: '/small-material-weight/material',
-            component: () => import('@/views/recipe/small-material-weight/material'),
-            name: 'SmallMaterialWeightMaterial',
-            meta: {
-              faName: 'SmallMaterialWeight',
-              title: '物料管理',
-              permissionName: 'xl_material'
-            }
-          },
+          // {
+          //   path: '/small-material-weight/material',
+          //   component: () => import('@/views/recipe/small-material-weight/material'),
+          //   name: 'SmallMaterialWeightMaterial',
+          //   meta: {
+          //     faName: 'SmallMaterialWeight',
+          //     title: '物料管理',
+          //     permissionName: 'xl_material'
+          //   }
+          // },
           {
             path: '/small-material-weight/feed-bin',
             component: () => import('@/views/recipe/small-material-weight/feed-bin'),
@@ -1876,16 +1876,16 @@ export let asyncRoutes = [
               permissionName: 'equip_down_summary_table'
             }
           },
-          // {
-          //   path: '/scheduled-down-time/',
-          //   component: () => import('@/views/production/shift-output/scheduled-down-time'),
-          //   name: 'ScheduledDownTime',
-          //   meta: {
-          //     faName: 'ShiftOutput',
-          //     title: '计划停机时间',
-          //     permissionName: 'equip_down_detail'
-          //   }
-          // },
+          {
+            path: '/scheduled-down-time/',
+            component: () => import('@/views/production/shift-output/scheduled-down-time'),
+            name: 'ScheduledDownTime',
+            meta: {
+              faName: 'ShiftOutput',
+              title: '计划停机时间',
+              permissionName: 'equip_down_detail'
+            }
+          },
           {
             path: '/output-details-summary/',
             component: () => import('@/views/production/shift-output/output-details-summary'),
