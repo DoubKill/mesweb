@@ -819,7 +819,7 @@ export default {
       let cellStyle
       switch (row.confirmed) {
         case false:
-          cellStyle = 'background: red'
+          cellStyle = 'background: rgba(255,0,0,0.5)'
           break
         case true:
           cellStyle = ''
