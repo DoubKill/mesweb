@@ -122,6 +122,7 @@ service.interceptors.response.use(
       //   return Promise.resolve({ results: [] })
       // }
       Message({
+        dangerouslyUseHTMLString: true,
         message: str,
         type: 'error',
         duration: 3 * 1000
@@ -165,6 +166,7 @@ service.interceptors.response.use(
         // }
       })
       Message({
+        dangerouslyUseHTMLString: true,
         message: str,
         type: 'error',
         duration: 3 * 1000
@@ -185,6 +187,7 @@ service.interceptors.response.use(
           }
           Message({
             message: JSON.parse(fileReader.result)[0],
+            dangerouslyUseHTMLString: true,
             type: 'error',
             duration: 3 * 1000
           })
@@ -193,6 +196,7 @@ service.interceptors.response.use(
         return Promise.reject(error)
       }
       Message({
+        dangerouslyUseHTMLString: true,
         message: error.message,
         type: 'error',
         duration: 3 * 1000
