@@ -29,6 +29,12 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="班次">
+        <class-select
+          :value-default="getParams.classes"
+          @classSelected="classSearch"
+        />
+      </el-form-item>
       <el-form-item style="float:right">
         <el-button
           v-permission="['check_temperature_table', 'confirm']"
@@ -82,6 +88,10 @@
       <el-table-column
         prop="status"
         label="状态"
+      />
+      <el-table-column
+        prop="classes"
+        label="班次"
       />
       <el-table-column
         prop="created_username"
@@ -363,6 +373,11 @@ export default {
       }
     },
     changSelect() {
+      this.getParams.page = 1
+      this.getList()
+    },
+    classSearch(val) {
+      this.getParams.classes = val
       this.getParams.page = 1
       this.getList()
     },
