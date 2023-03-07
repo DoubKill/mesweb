@@ -510,7 +510,68 @@ export let asyncRoutes = [
               faName: 'RbRecipe',
               permissionName: 'recipe_change_history'
             }
-          }
+          },
+          {
+            path: '/rb/small-formula',
+            component: () => import('@/views/recipe/small-formula/a-index'),
+            name: 'SmallFormula',
+            redirect: '/schedule/plan-declare',
+            meta: {
+              faName: 'RbRecipe',
+              title: '小料配方管理'
+            },
+            children: [
+              {
+                path: '/small-material-weight/feed-bin',
+                component: () => import('@/views/recipe/small-material-weight/feed-bin'),
+                name: 'SmallMaterialWeightFeedBin',
+                meta: {
+                  faName: 'SmallFormula',
+                  title: '料仓管理',
+                  permissionName: 'xl_bin'
+                }
+              },
+              {
+                path: '/small-material-weight/formula',
+                component: () => import('@/views/recipe/small-material-weight/formula'),
+                name: 'SmallMaterialWeightFormula',
+                meta: {
+                  faName: 'SmallFormula',
+                  title: '配方管理',
+                  permissionName: 'xl_recipe'
+                }
+              },
+              {
+                path: '/small-material-weight/train-number',
+                component: () => import('@/views/recipe/small-material-weight/train-number'),
+                name: 'SmallMaterialWeightTrainNumber',
+                meta: {
+                  faName: 'SmallFormula',
+                  title: '车次报表',
+                  permissionName: 'xl_report_basic'
+                }
+              },
+              {
+                path: '/small-material-weight/consumption',
+                component: () => import('@/views/recipe/small-material-weight/consumption'),
+                name: 'SmallMaterialWeightConsumption',
+                meta: {
+                  faName: 'SmallFormula',
+                  title: '物料消耗报表',
+                  permissionName: 'xl_report_weight'
+                }
+              },
+              {
+                path: '/small-material-weight/valid',
+                component: () => import('@/views/recipe/small-material-weight/valid'),
+                name: 'SmallMaterialWeightValid',
+                meta: {
+                  faName: 'SmallFormula',
+                  title: '料包有效期管理',
+                  permissionName: 'xl_expire_data'
+                }
+              }
+            ] }
         ] },
       {
         path: '/resume',
@@ -730,26 +791,7 @@ export let asyncRoutes = [
           //     permissionName: 'xl_material'
           //   }
           // },
-          {
-            path: '/small-material-weight/feed-bin',
-            component: () => import('@/views/recipe/small-material-weight/feed-bin'),
-            name: 'SmallMaterialWeightFeedBin',
-            meta: {
-              faName: 'SmallMaterialWeight',
-              title: '料仓管理',
-              permissionName: 'xl_bin'
-            }
-          },
-          {
-            path: '/small-material-weight/formula',
-            component: () => import('@/views/recipe/small-material-weight/formula'),
-            name: 'SmallMaterialWeightFormula',
-            meta: {
-              faName: 'SmallMaterialWeight',
-              title: '配方管理',
-              permissionName: 'xl_recipe'
-            }
-          },
+
           {
             path: '/small-material-weight/plan',
             component: () => import('@/views/recipe/small-material-weight/plan'),
@@ -760,46 +802,16 @@ export let asyncRoutes = [
               permissionName: 'xl_plan'
             }
           },
-          {
-            path: '/small-material-weight/train-number',
-            component: () => import('@/views/recipe/small-material-weight/train-number'),
-            name: 'SmallMaterialWeightTrainNumber',
-            meta: {
-              faName: 'SmallMaterialWeight',
-              title: '车次报表',
-              permissionName: 'xl_report_basic'
-            }
-          },
-          {
-            path: '/internal/material-statistics',
-            component: () => import('@/views/quality_management/material-statistics'),
-            name: 'MaterialStatistics',
-            meta: {
-              faName: 'SmallMaterialWeight',
-              title: '称量机台物料统计',
-              permissionName: 'xl_report_weight_statics'
-            }
-          },
-          {
-            path: '/small-material-weight/consumption',
-            component: () => import('@/views/recipe/small-material-weight/consumption'),
-            name: 'SmallMaterialWeightConsumption',
-            meta: {
-              faName: 'SmallMaterialWeight',
-              title: '物料消耗报表',
-              permissionName: 'xl_report_weight'
-            }
-          },
-          {
-            path: '/small-material-weight/summary',
-            component: () => import('@/views/recipe/small-material-weight/summary'),
-            name: 'SmallMaterialWeightSummary',
-            meta: {
-              faName: 'SmallMaterialWeight',
-              title: '称量物料消耗汇总表',
-              permissionName: 'xl_report_weight'
-            }
-          },
+          // {
+          //   path: '/internal/material-statistics',
+          //   component: () => import('@/views/quality_management/material-statistics'),
+          //   name: 'MaterialStatistics',
+          //   meta: {
+          //     faName: 'SmallMaterialWeight',
+          //     title: '称量机台物料统计',
+          //     permissionName: 'xl_report_weight_statics'
+          //   }
+          // },
           {
             path: '/small-material-weight/trackingCard',
             component: () => import('@/views/recipe/small-material-weight/trackingCard'),
@@ -820,6 +832,16 @@ export let asyncRoutes = [
               permissionName: 'weighting_package_manual'
             }
           },
+          {
+            path: '/schedule/material-plan/',
+            component: () => import('@/views/plan/schedule/dispose/material-plan'),
+            name: 'materialPlan',
+            meta: {
+              faName: 'SmallMaterialWeight',
+              title: '细料分解每日计划用量',
+              permissionName: 'xl_plan_consume'
+            }
+          }
           // {
           //   path: '/small-material-weight/artificialCard',
           //   component: () => import('@/views/recipe/small-material-weight/artificialCard'),
@@ -860,16 +882,6 @@ export let asyncRoutes = [
             permissionName: 'weighting_package_manual'
           }
         },**/
-          {
-            path: '/small-material-weight/valid',
-            component: () => import('@/views/recipe/small-material-weight/valid'),
-            name: 'SmallMaterialWeightValid',
-            meta: {
-              faName: 'SmallMaterialWeight',
-              title: '料包有效期管理',
-              permissionName: 'xl_expire_data'
-            }
-          }
         ]
       },
       {
@@ -984,26 +996,6 @@ export let asyncRoutes = [
               //     permissionName: 'materialdemanded'
               //   }
               // },
-              {
-                path: '/schedule/material-demand',
-                component: () => import('@/views/plan/schedule/dispose/material-demand'),
-                name: 'MaterialDemand',
-                meta: {
-                  faName: 'ScheduleDispose',
-                  title: '原材料需求量 汇总表',
-                  permissionName: 'materialdemanded'
-                }
-              },
-              {
-                path: '/schedule/material-plan/',
-                component: () => import('@/views/plan/schedule/dispose/material-plan'),
-                name: 'materialPlan',
-                meta: {
-                  faName: 'ScheduleDispose',
-                  title: '细料分解每日计划用量',
-                  permissionName: 'materialdemanded'
-                }
-              },
               // {
               //   path: '/schedule/weighing-system-plan',
               //   component: () => import('@/views/plan/schedule/dispose/weighing-system-plan'),
@@ -1158,16 +1150,16 @@ export let asyncRoutes = [
                   permissionName: 'aps_machine_setting'
                 }
               },
-              {
-                path: '/schedule/weight-statistics',
-                component: () => import('@/views/plan/schedule/basic-data/weight-statistics'),
-                name: 'ScheduleWeightStatistics',
-                meta: {
-                  faName: 'ScheduleBasicData',
-                  title: '胶料机台配方物料统计',
-                  permissionName: 'aps_machine_recipe'
-                }
-              },
+              // {
+              //   path: '/schedule/weight-statistics',
+              //   component: () => import('@/views/plan/schedule/basic-data/weight-statistics'),
+              //   name: 'ScheduleWeightStatistics',
+              //   meta: {
+              //     faName: 'ScheduleBasicData',
+              //     title: '胶料机台配方物料统计',
+              //     permissionName: 'aps_machine_recipe'
+              //   }
+              // },
               /* {
                 path: '/schedule/material-specification',
                 component: () => import('@/views/plan/schedule/basic-data/material-specification'),
@@ -1178,16 +1170,6 @@ export let asyncRoutes = [
                   permissionName: 'aps_tank_status'
                 }
               },*/
-              {
-                path: '/schedule/production-capacity',
-                component: () => import('@/views/plan/schedule/basic-data/production-capacity'),
-                name: 'ScheduleProductionCapacity',
-                meta: {
-                  faName: 'ScheduleBasicData',
-                  title: '机台设备生产能力',
-                  permissionName: 'aps_equip_capacity'
-                }
-              },
               /* {
                 path: '/schedule/washing-rules',
                 component: () => import('@/views/plan/schedule/basic-data/washing-rules'),
@@ -1233,16 +1215,6 @@ export let asyncRoutes = [
         ]
       },
       {
-        path: '/material_base_info_manage/',
-        component: () => import('@/views/material_base_info_manage/productionFeeding'),
-        name: 'ProductionFeeding',
-        meta: {
-          title: '生产投料配方查询',
-          icon: 'formula',
-          permissionName: 'formula_preparation'
-        }
-      },
-      {
         path: '/daily_demand/',
         component: () => import('@/views/material_base_info_manage/daily_demand'),
         name: 'daily_demand',
@@ -1251,7 +1223,48 @@ export let asyncRoutes = [
           icon: 'formula',
           permissionName: 'daily_weight_package'
         }
-      }
+      },
+      {
+        path: '/raw-plan-manage',
+        component: () => import('@/views/equipment-management/raw-plan-manage/a-index'),
+        name: 'RawPlanManage',
+        redirect: '/schedule/parameter-setting',
+        meta: {
+          title: '原材料计划管理',
+          icon: 'formula'
+        },
+        children: [
+          {
+            path: '/schedule/material-demand',
+            component: () => import('@/views/plan/schedule/dispose/material-demand'),
+            name: 'MaterialDemand',
+            meta: {
+              faName: 'ScheduleDispose',
+              title: '原材料需求量 汇总表',
+              permissionName: 'materialdemanded'
+            }
+          },
+          {
+            path: '/material/base/material-consumption',
+            name: 'MaterialConsumption',
+            component: () => import('@/views/production/material-consumption'),
+            meta: {
+              title: '原材料消耗量 汇总表',
+              faName: 'ScheduleDispose',
+              permissionName: 'material_expend_summary'
+            }
+          },
+          {
+            path: '/small-material-weight/summary',
+            component: () => import('@/views/recipe/small-material-weight/summary'),
+            name: 'SmallMaterialWeightSummary',
+            meta: {
+              faName: 'SmallMaterialWeight',
+              title: '称量物料消耗汇总表',
+              permissionName: 'xl_report_weight'
+            }
+          }
+        ] }
     ]
   },
   {
@@ -1266,7 +1279,7 @@ export let asyncRoutes = [
     children: [
       {
         path: '/production_result',
-        redirect: '/performance/productionRecord/',
+        redirect: '/performance/manage',
         component: () => import('@/views/production/production_result/a-index.vue'),
         name: 'ProductionResult',
         meta: {
@@ -1274,16 +1287,16 @@ export let asyncRoutes = [
           icon: 'production'
         },
         children: [
-          {
-            path: '/performance/productionRecord/',
-            component: () => import('@/views/production/production_result/productionRecord'),
-            name: 'BanburyingProductionRecord',
-            meta: {
-              faName: 'ProductionResult',
-              title: '生产记录表',
-              permissionName: 'plan_reality'
-            }
-          },
+          // {
+          //   path: '/performance/productionRecord/',
+          //   component: () => import('@/views/production/production_result/productionRecord'),
+          //   name: 'BanburyingProductionRecord',
+          //   meta: {
+          //     faName: 'ProductionResult',
+          //     title: '生产记录表',
+          //     permissionName: 'plan_reality'
+          //   }
+          // },
           {
             path: '/performance/manage',
             component: () => import('@/views/production/production_result/banburying-performance-manage/index'),
@@ -1313,6 +1326,26 @@ export let asyncRoutes = [
               title: '车次报表',
               permissionName: 'trains_report'
             }
+          },
+          {
+            path: '/material_base_info_manage/',
+            component: () => import('@/views/material_base_info_manage/productionFeeding'),
+            name: 'ProductionFeeding',
+            meta: {
+              faName: 'ProductionResult',
+              title: '生产投料配方查询',
+              permissionName: 'formula_preparation'
+            }
+          },
+          {
+            path: '/schedule/production-capacity',
+            component: () => import('@/views/plan/schedule/basic-data/production-capacity'),
+            name: 'ScheduleProductionCapacity',
+            meta: {
+              faName: 'ProductionResult',
+              title: '机台设备生产能力',
+              permissionName: 'aps_equip_capacity'
+            }
           }
           // {
           //   path: '/report/produce-work',
@@ -1332,7 +1365,7 @@ export let asyncRoutes = [
         component: () => import('@/views/production/result_analysis/a-index.vue'),
         name: 'ResultAnalysis',
         meta: {
-          title: '生产分析统计',
+          title: '生产产量统计',
           icon: 'production'
         },
         children: [
@@ -1342,7 +1375,7 @@ export let asyncRoutes = [
             name: 'OutputStatisticsSummary',
             meta: {
               faName: 'ResultAnalysis',
-              title: '月产量统计汇总',
+              title: '生产段次汇总',
               permissionName: 'monthly_output_statistics_report'
             }
           },
@@ -1352,7 +1385,7 @@ export let asyncRoutes = [
             name: 'DailyOutputCompleted',
             meta: {
               faName: 'ResultAnalysis',
-              title: '月产量完成',
+              title: '日产量完成',
               permissionName: 'daily_production_completion_report'
             }
           },
@@ -1365,7 +1398,7 @@ export let asyncRoutes = [
               title: '不入库原因统计',
               permissionName: 'durate_putin_reason'
             }
-          },
+          }
           // {
           //   path: '/product-plan-reality-analyse',
           //   component: () => import('@/views/production/product-plan-reality-analyse.vue'),
@@ -1386,56 +1419,6 @@ export let asyncRoutes = [
           //     permissionName: 'section_production'
           //   }
           // },
-          {
-            path: '/equipment/classes-banburying-summary',
-            component: () => import('@/views/equipment-management/classes-banburying-summary'),
-            name: 'ClassesBanburyingSummary',
-            meta: {
-              faName: 'ResultAnalysis',
-              title: '班次密炼时间汇总',
-              permissionName: 'class_production_summary'
-            }
-          },
-          {
-            path: '/equipment/banburying-ratio-summary',
-            component: () => import('@/views/equipment-management/banburying-ratio-summary'),
-            name: 'BanburyingRatioSummary',
-            meta: {
-              faName: 'ResultAnalysis',
-              title: '密炼时间占比汇总',
-              permissionName: 'production_time_summary'
-            }
-          },
-          {
-            path: '/equipment/rubber-acar-summary',
-            component: () => import('@/views/equipment-management/rubber-acar-summary'),
-            name: 'RubberAcarSummary',
-            meta: {
-              faName: 'ResultAnalysis',
-              title: '胶料单车次时间汇总',
-              permissionName: 'single_trains_time_consume'
-            }
-          },
-          {
-            path: '/equipment/specs-switch-summary',
-            component: () => import('@/views/equipment-management/specs-switch-summary'),
-            name: 'SpecsSwitchSummary',
-            meta: {
-              faName: 'SummaryStatistics',
-              title: '规格切换时间明细',
-              permissionName: 'product_exchange_consume'
-            }
-          },
-          {
-            path: '/equipment/shift-handover-time',
-            component: () => import('@/views/equipment-management/shift-handover-time'),
-            name: 'ShiftHandoverTime',
-            meta: {
-              faName: 'SummaryStatistics',
-              title: '交接班时间汇总',
-              permissionName: 'shift_time_summary'
-            }
-          }
         ]
       },
       {
@@ -1518,7 +1501,7 @@ export let asyncRoutes = [
         component: () => import('@/views/equipment-management/report/achievements-fa'),
         name: 'Achievements',
         meta: {
-          title: '绩效计算',
+          title: '绩效管理',
           icon: 'production'
         },
         children: [
@@ -1663,84 +1646,66 @@ export let asyncRoutes = [
       //   }
       // },
       {
-        path: '/material/base/material-consumption',
-        name: 'MaterialConsumption',
-        component: () => import('@/views/production/material-consumption'),
+        path: '/frock-manage',
+        redirect: '/rubber-access-repair',
+        component: () => import('@/views/equipment-management/frock-manage/a-index'),
+        name: 'FrockManage',
         meta: {
-          title: '原材料消耗量 汇总表',
-          icon: 'production',
-          permissionName: 'material_expend_summary'
-        }
-      },
-      {
-        path: '/material/base/inventory-warning',
-        name: 'MaterialBaseInventoryWarning',
-        component: () => import('@/views/material_base_info_manage/inventory-warning'),
-        meta: {
-          title: '原材料-预警参数设定',
-          icon: 'production',
-          permissionName: 'material_warning_setting'
-        }
-      },
-      {
-        path: '/base/carbon-warning',
-        name: 'CarbonBaseInventoryWarning',
-        component: () => import('@/views/material_base_info_manage/carbon-warning'),
-        meta: {
-          title: '炭黑库-预警参数设定',
-          icon: 'production',
-          permissionName: 'th_warning_setting'
-        }
-      },
-      {
-        path: '/rubber-access-repair',
-        name: 'RubberAccessRepair',
-        component: () => import('@/views/material_base_info_manage/rubber-access-repair'),
-        meta: {
-          title: '胶架进出登记表',
-          icon: 'production',
-          permissionName: 'rubber_log'
-        }
-      },
-      {
-        path: '/rubber-access-repair-total',
-        name: 'RubberAccessRepairTotal',
-        component: () => import('@/views/material_base_info_manage/rubber-access-repair-total'),
-        meta: {
-          title: '胶架进出登记表汇总',
-          icon: 'production',
-          permissionName: 'rubber_log'
-        }
-      },
-      {
-        path: '/rubber-frame-repair',
-        name: 'RubberFrameRepair',
-        component: () => import('@/views/material_base_info_manage/rubber-frame-repair'),
-        meta: {
-          title: '胶架维修记录',
-          icon: 'production',
-          permissionName: 'rubber_frame_repair'
-        }
-      },
-      {
-        path: '/rubber-frame-repair-total',
-        name: 'RubberFrameRepairTotal',
-        component: () => import('@/views/material_base_info_manage/rubber-frame-repair-total'),
-        meta: {
-          title: '胶架维修记录汇总',
-          icon: 'production',
-          permissionName: 'rubber_frame_repair_summary'
-        }
-      },
-      {
-        path: '/work-clothes-book',
-        name: 'work-clothes-book',
-        component: () => import('@/views/material_base_info_manage/work-clothes-book'),
-        meta: {
-          title: '工装管理台账',
-          icon: 'production',
-          permissionName: 'tool_manage_account'
-        }
+          title: '工装管理',
+          icon: 'production'
+        },
+        children: [
+          {
+            path: '/rubber-access-repair',
+            name: 'RubberAccessRepair',
+            component: () => import('@/views/material_base_info_manage/rubber-access-repair'),
+            meta: {
+              title: '胶架进出登记表',
+              faName: 'FrockManage',
+              permissionName: 'rubber_log'
+            }
+          },
+          {
+            path: '/rubber-access-repair-total',
+            name: 'RubberAccessRepairTotal',
+            component: () => import('@/views/material_base_info_manage/rubber-access-repair-total'),
+            meta: {
+              title: '胶架进出登记表汇总',
+              faName: 'FrockManage',
+              permissionName: 'rubber_log'
+            }
+          },
+          {
+            path: '/rubber-frame-repair',
+            name: 'RubberFrameRepair',
+            component: () => import('@/views/material_base_info_manage/rubber-frame-repair'),
+            meta: {
+              title: '胶架维修记录',
+              faName: 'FrockManage',
+              permissionName: 'rubber_frame_repair'
+            }
+          },
+          {
+            path: '/rubber-frame-repair-total',
+            name: 'RubberFrameRepairTotal',
+            component: () => import('@/views/material_base_info_manage/rubber-frame-repair-total'),
+            meta: {
+              title: '胶架维修记录汇总',
+              faName: 'FrockManage',
+              permissionName: 'rubber_frame_repair_summary'
+            }
+          },
+          {
+            path: '/work-clothes-book',
+            name: 'work-clothes-book',
+            component: () => import('@/views/material_base_info_manage/work-clothes-book'),
+            meta: {
+              title: '工装管理台账',
+              faName: 'FrockManage',
+              permissionName: 'tool_manage_account'
+            }
+          }
+        ]
       },
       {
         path: '/spot-clear',
@@ -1748,7 +1713,7 @@ export let asyncRoutes = [
         component: () => import('@/views/spot_check/index'),
         name: 'SpotClear',
         meta: {
-          title: '日清扫检查',
+          title: '5S点检模块/安全检查',
           icon: 'production'
         },
         children: [
@@ -1771,25 +1736,13 @@ export let asyncRoutes = [
               title: '日清扫检查确认',
               permissionName: 'daily_clean_table'
             }
-          }
-        ]
-      },
-      {
-        path: '/spot-check',
-        redirect: '/spot-check-set',
-        component: () => import('@/views/spot_check/a-index'),
-        name: 'SpotCheck',
-        meta: {
-          title: '点检及除尘袋测温',
-          icon: 'production'
-        },
-        children: [
+          },
           {
             path: '/spot-check-set',
             name: 'SpotCheckSet',
             component: () => import('@/views/spot_check/spot-check-set'),
             meta: {
-              faName: 'SpotCheck',
+              faName: 'SpotClear',
               title: '岗位安全装置点检标准',
               permissionName: 'check_point_standard'
             }
@@ -1799,7 +1752,7 @@ export let asyncRoutes = [
             name: 'SpotCheckConfirm',
             component: () => import('@/views/spot_check/spot-check-confirm'),
             meta: {
-              faName: 'SpotCheck',
+              faName: 'SpotClear',
               title: '岗位安全装置点检表确认',
               permissionName: 'check_point_table'
             }
@@ -1809,7 +1762,7 @@ export let asyncRoutes = [
             name: 'TemperatureSet',
             component: () => import('@/views/spot_check/temperature-set'),
             meta: {
-              faName: 'SpotCheck',
+              faName: 'SpotClear',
               title: '除尘袋滤器温度标准',
               permissionName: 'check_temperature_standard'
             }
@@ -1819,7 +1772,7 @@ export let asyncRoutes = [
             name: 'TemperatureConfirm',
             component: () => import('@/views/spot_check/temperature-confirm'),
             meta: {
-              faName: 'SpotCheck',
+              faName: 'SpotClear',
               title: '除尘袋滤器记录表确认',
               permissionName: 'check_temperature_table'
             }
@@ -1832,20 +1785,10 @@ export let asyncRoutes = [
         component: () => import('@/views/production/shift-output/a-index.vue'),
         name: 'ShiftOutput',
         meta: {
-          title: '各班产量统计',
+          title: '生产时间管控',
           icon: 'production'
         },
         children: [
-          {
-            path: '/shift-output-index/',
-            component: () => import('@/views/production/shift-output/index'),
-            name: 'ShiftOutputIndex',
-            meta: {
-              faName: 'ShiftOutput',
-              title: '各班产量统计',
-              permissionName: 'shift_production_summary'
-            }
-          },
           {
             path: '/down-reason/',
             component: () => import('@/views/production/shift-output/down-reason'),
@@ -1894,6 +1837,66 @@ export let asyncRoutes = [
               faName: 'ShiftOutput',
               title: '班组产量明细汇总',
               permissionName: 'group_production_summary'
+            }
+          },
+          {
+            path: '/equipment/classes-banburying-summary',
+            component: () => import('@/views/equipment-management/classes-banburying-summary'),
+            name: 'ClassesBanburyingSummary',
+            meta: {
+              faName: 'ShiftOutput',
+              title: '班性能稼动率',
+              permissionName: 'class_production_summary'
+            }
+          },
+          {
+            path: '/equipment/banburying-ratio-summary',
+            component: () => import('@/views/equipment-management/banburying-ratio-summary'),
+            name: 'BanburyingRatioSummary',
+            meta: {
+              faName: 'ShiftOutput',
+              title: '密炼时间占比汇总',
+              permissionName: 'production_time_summary'
+            }
+          },
+          // {
+          //   path: '/equipment/rubber-acar-summary',
+          //   component: () => import('@/views/equipment-management/rubber-acar-summary'),
+          //   name: 'RubberAcarSummary',
+          //   meta: {
+          //     faName: 'ShiftOutput',
+          //     title: '胶料单车次时间汇总',
+          //     permissionName: 'single_trains_time_consume'
+          //   }
+          // },
+          {
+            path: '/equipment/specs-switch-summary',
+            component: () => import('@/views/equipment-management/specs-switch-summary'),
+            name: 'SpecsSwitchSummary',
+            meta: {
+              faName: 'ShiftOutput',
+              title: '切换时间管控',
+              permissionName: 'product_exchange_consume'
+            }
+          },
+          {
+            path: '/equipment/shift-handover-time',
+            component: () => import('@/views/equipment-management/shift-handover-time'),
+            name: 'ShiftHandoverTime',
+            meta: {
+              faName: 'ShiftOutput',
+              title: '交接班时间管理',
+              permissionName: 'shift_time_summary'
+            }
+          },
+          {
+            path: '/shift-output-index/',
+            component: () => import('@/views/production/shift-output/index'),
+            name: 'ShiftOutputIndex',
+            meta: {
+              faName: 'ShiftOutput',
+              title: '各班产量统计',
+              permissionName: 'shift_production_summary'
             }
           }
         ]
@@ -2213,6 +2216,16 @@ export let asyncRoutes = [
               title: '出入库履历查询',
               permissionName: 'material_inout_history'
             }
+          },
+          {
+            path: '/material/base/inventory-warning',
+            name: 'MaterialBaseInventoryWarning',
+            component: () => import('@/views/material_base_info_manage/inventory-warning'),
+            meta: {
+              title: '原材料-预警参数设定',
+              faName: 'MaterialDelivery',
+              permissionName: 'material_warning_setting'
+            }
           }
         ]
       },
@@ -2334,8 +2347,17 @@ export let asyncRoutes = [
               title: '出入库履历查询',
               permissionName: 'th_inout_history'
             }
+          },
+          {
+            path: '/base/carbon-warning',
+            name: 'CarbonBaseInventoryWarning',
+            component: () => import('@/views/material_base_info_manage/carbon-warning'),
+            meta: {
+              title: '炭黑库-预警参数设定',
+              faName: 'CarbonDelivery',
+              permissionName: 'th_warning_setting'
+            }
           }
-
         ]
       },
       {
@@ -3353,16 +3375,6 @@ export let asyncRoutes = [
           permissionName: 'wms_mooney_level'
         }
       }
-      // {
-      //   path: '/internal/material-statistics',
-      //   component: () => import('@/views/quality_management/material-statistics'),
-      //   name: 'MaterialStatistics',
-      //   meta: {
-      //     title: '称量机台物料统计',
-      //     icon: 'quality',
-      //     permissionName: ''
-      //   }
-      // }
     ]
   },
   // {

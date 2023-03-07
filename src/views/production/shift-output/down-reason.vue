@@ -55,6 +55,17 @@
           查看全部
         </el-button>
         <el-button v-if="bottomTable" type="primary" @click="exportTable">导出excel</el-button>
+        <el-upload
+          v-if="bottomTable"
+          v-permission="['equip_down_analysis','add']"
+          style="margin-left:8px;display:inline-block"
+          action="string"
+          accept=".xls, .xlsx"
+          :http-request="Upload"
+          :show-file-list="false"
+        >
+          <el-button type="primary">导入Excel</el-button>
+        </el-upload>
       </el-form-item>
     </el-form>
     <el-table
@@ -238,6 +249,17 @@ export default {
   methods: {
     exportTable() {
       exportExcel('各机台停机原因分析', 'machine-production-all')
+    },
+    Upload(param) {
+      const formData = new FormData()
+      formData.append('file', param.file)
+      equipDownAnalysis('post', null, { data: formData }).then(response => {
+        this.$message({
+          type: 'success',
+          message: response
+        })
+        this.getList(true)
+      })
     },
     visibleChange() {
       const obj = { all: 1, category_name: '密炼设备' }

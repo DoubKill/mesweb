@@ -73,7 +73,7 @@
       <el-table-column
         align="center"
         prop="total"
-        label="合计"
+        label="合计（kg）"
       />
       <el-table-column
         align="center"

@@ -77,7 +77,7 @@
     <el-dialog
       title="历史设定值"
       :visible.sync="dialogVisible"
-      width="30%"
+      width="800px"
     >
       <el-table
         v-loading="loadingDialog"
@@ -111,14 +111,28 @@
           prop="target_weight"
           align="center"
           label="目标值(车)"
-          min-width="90"
-        />
+          min-width="120"
+        >
+          <template slot-scope="{row}">
+            <el-input-number v-model="row.target_weight" style="width:120px" controls-position="right" :min="0" />
+          </template>
+        </el-table-column>
         <el-table-column
           prop="max_weight"
           align="center"
           label="最高值(车)"
-          min-width="90"
-        />
+          min-width="120"
+        >
+          <template slot-scope="{row}">
+            <el-input-number v-model="row.max_weight" style="width:120px" controls-position="right" :min="0" />
+          </template>
+        </el-table-column>
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <el-button size="mini" @click="handleSubmit(scope.row)">保存
+            </el-button>
+          </template>
+        </el-table-column>
       </el-table>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible=false">取 消</el-button>
@@ -203,6 +217,14 @@ export default {
         }
       })
       this.tableData[index - 1].target_weight = sum(obj, 'target_weight')
+    },
+    async handleSubmit(row) {
+      try {
+        await machineTargetValue('post', null, { data: row })
+        this.$message.success('保存成功')
+      } catch (e) {
+        //
+      }
     },
     async submitFun() {
       try {

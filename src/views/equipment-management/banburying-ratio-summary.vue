@@ -118,7 +118,7 @@
         </template>
       </el-table-column>
       <el-table-column
-        label="利用率"
+        label="时间稼动率"
       >
         <template slot-scope="{row}">
           <span>{{ row.availability }}%</span>

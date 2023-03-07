@@ -1,7 +1,7 @@
 <template>
   <div>
-    <!-- 规格切换时间明细 -->
-    <h3>{{ type==='明细'?'规格切换时间明细':'规格切换时间汇总' }}</h3>
+    <!-- 切换时间管控 -->
+    <h3>{{ type==='明细'?'切换时间管控':'规格切换时间汇总' }}</h3>
     <el-form :inline="true">
       <el-form-item label="工厂时间">
         <el-date-picker
@@ -214,8 +214,9 @@
           label="班组"
           width="60"
         />
-        <template v-for="(d,index) in equipList">
+        <template>
           <el-table-column
+            v-for="(d,index) in equipList"
             :key="index"
             align="center"
             :label="d"
@@ -362,7 +363,7 @@ export default {
             const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
             link.style.display = 'none'
             link.href = URL.createObjectURL(blob)
-            link.download = `规格切换时间明细${setDate('', true)}.xlsx` // 下载的文件名
+            link.download = `切换时间管控${setDate('', true)}.xlsx` // 下载的文件名
             document.body.appendChild(link)
             link.click()
             document.body.removeChild(link)
@@ -371,7 +372,7 @@ export default {
             this.btnExportLoad = false
           })
       } else {
-        exportExcel('规格切换时间汇总')
+        exportExcel('切换时间管控')
       }
     },
     async getList() {

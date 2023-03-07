@@ -1,6 +1,6 @@
 <template>
   <div v-loading="loading">
-    <!-- 班次密炼时间汇总 -->
+    <!-- 班性能稼动率 -->
     <el-form :inline="true">
       <el-form-item label="时间:">
         <el-date-picker
@@ -154,7 +154,7 @@
       <el-table-column
         :key="11"
         prop="max_train_time"
-        label="利用率"
+        label="时间稼动率"
       >
         <template
           slot-scope="{row}"
@@ -167,6 +167,18 @@
           </span>
           <span v-if="search.dimension === 3">
             {{ (setUse(row.total_time,24*60*60*30,true))+ '%' }}
+          </span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        :key="12"
+        label="性能稼动率"
+      >
+        <template
+          slot-scope="{row}"
+        >
+          <span>
+            {{ (setUse(row.min_train_time,setUse(row.total_time,row.total_trains,false),true))+ '%' }}
           </span>
         </template>
       </el-table-column>

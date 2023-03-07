@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 交接班时间汇总 -->
+    <!-- 交接班时间管理 -->
     <el-form :inline="true">
       <el-form-item label="工厂日期">
         <el-date-picker
@@ -67,8 +67,9 @@
         label="班组"
         width="60"
       />
-      <template v-for="(d,index) in equipList">
+      <template>
         <el-table-column
+          v-for="(d,index) in equipList"
           :key="index"
           align="center"
           :label="d"
