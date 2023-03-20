@@ -1390,16 +1390,6 @@ export let asyncRoutes = [
             }
           },
           {
-            path: '/report/warehousing-reasons',
-            component: () => import('@/views/equipment-management/report/warehousing-reasons'),
-            name: 'WarehousingReasons',
-            meta: {
-              faName: 'ResultAnalysis',
-              title: '不入库原因统计',
-              permissionName: 'durate_putin_reason'
-            }
-          },
-          {
             path: '/shift-output-index/',
             component: () => import('@/views/production/shift-output/index'),
             name: 'ShiftOutputIndex',
@@ -1897,6 +1887,16 @@ export let asyncRoutes = [
               faName: 'ShiftOutput',
               title: '交接班时间管理',
               permissionName: 'shift_time_summary'
+            }
+          },
+          {
+            path: '/report/warehousing-reasons',
+            component: () => import('@/views/equipment-management/report/warehousing-reasons'),
+            name: 'WarehousingReasons',
+            meta: {
+              faName: 'ShiftOutput',
+              title: '不入库原因统计',
+              permissionName: 'durate_putin_reason'
             }
           }
         ]
