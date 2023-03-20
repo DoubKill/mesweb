@@ -56,7 +56,6 @@
         </el-button>
         <el-button v-if="bottomTable" type="primary" @click="exportTable">导出excel</el-button>
         <el-upload
-          v-if="bottomTable"
           v-permission="['equip_down_analysis','add']"
           style="margin-left:8px;display:inline-block"
           action="string"

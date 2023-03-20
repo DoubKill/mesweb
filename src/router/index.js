@@ -841,6 +841,16 @@ export let asyncRoutes = [
               title: '细料分解每日计划用量',
               permissionName: 'xl_plan_consume'
             }
+          },
+          {
+            path: '/daily_demand/',
+            component: () => import('@/views/material_base_info_manage/daily_demand'),
+            name: 'daily_demand',
+            meta: {
+              faName: 'SmallMaterialWeight',
+              title: '料包日需求及耗时统计',
+              permissionName: 'daily_weight_package'
+            }
           }
           // {
           //   path: '/small-material-weight/artificialCard',
@@ -1215,16 +1225,6 @@ export let asyncRoutes = [
         ]
       },
       {
-        path: '/daily_demand/',
-        component: () => import('@/views/material_base_info_manage/daily_demand'),
-        name: 'daily_demand',
-        meta: {
-          title: '料包日需求及耗时统计',
-          icon: 'formula',
-          permissionName: 'daily_weight_package'
-        }
-      },
-      {
         path: '/raw-plan-manage',
         component: () => import('@/views/equipment-management/raw-plan-manage/a-index'),
         name: 'RawPlanManage',
@@ -1397,6 +1397,16 @@ export let asyncRoutes = [
               faName: 'ResultAnalysis',
               title: '不入库原因统计',
               permissionName: 'durate_putin_reason'
+            }
+          },
+          {
+            path: '/shift-output-index/',
+            component: () => import('@/views/production/shift-output/index'),
+            name: 'ShiftOutputIndex',
+            meta: {
+              faName: 'ResultAnalysis',
+              title: '各班产量统计',
+              permissionName: 'shift_production_summary'
             }
           }
           // {
@@ -1887,16 +1897,6 @@ export let asyncRoutes = [
               faName: 'ShiftOutput',
               title: '交接班时间管理',
               permissionName: 'shift_time_summary'
-            }
-          },
-          {
-            path: '/shift-output-index/',
-            component: () => import('@/views/production/shift-output/index'),
-            name: 'ShiftOutputIndex',
-            meta: {
-              faName: 'ShiftOutput',
-              title: '各班产量统计',
-              permissionName: 'shift_production_summary'
             }
           }
         ]
