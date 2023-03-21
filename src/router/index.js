@@ -737,7 +737,7 @@ export let asyncRoutes = [
         component: () => import('@/views/plan/material-requisitions-plan/index'),
         meta: {
           title: '排产领料计划',
-          icon: 'productionPlanManagement',
+          icon: 'formula',
           permissionName: 'productdayplan'
         }
       },
