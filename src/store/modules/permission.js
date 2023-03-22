@@ -54,6 +54,11 @@ export function filterAsyncRoutesMy(routes, permission) {
       if (Object.prototype.hasOwnProperty.call(tmp, 'children') && tmp.children.length === 0) {
         return
       }
+      if (tmp.children && tmp.children.length > 0) {
+        if (tmp.redirect !== tmp.children[0].path) {
+          tmp.redirect = tmp.children[0].path
+        }
+      }
       res.push(tmp)
     }
   })
