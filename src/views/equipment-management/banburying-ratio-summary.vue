@@ -141,7 +141,7 @@
       <el-radio-group v-model="radioDataType" @change="changeRadioType">
         <el-radio :label="1">车数</el-radio>
         <el-radio :label="2">耗时/s</el-radio>
-        <el-radio :label="3">利用率%</el-radio>
+        <el-radio :label="3">时间稼动率%</el-radio>
       </el-radio-group>
       <ve-histogram
         v-if="chartData.rows.length"

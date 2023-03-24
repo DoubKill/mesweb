@@ -737,7 +737,7 @@ export let asyncRoutes = [
         component: () => import('@/views/plan/material-requisitions-plan/index'),
         meta: {
           title: '排产领料计划',
-          icon: 'productionPlanManagement',
+          icon: 'formula',
           permissionName: 'productdayplan'
         }
       },
@@ -840,6 +840,16 @@ export let asyncRoutes = [
               faName: 'SmallMaterialWeight',
               title: '细料分解每日计划用量',
               permissionName: 'xl_plan_consume'
+            }
+          },
+          {
+            path: '/daily_demand/',
+            component: () => import('@/views/material_base_info_manage/daily_demand'),
+            name: 'daily_demand',
+            meta: {
+              faName: 'SmallMaterialWeight',
+              title: '料包日需求及耗时统计',
+              permissionName: 'daily_weight_package'
             }
           }
           // {
@@ -1215,16 +1225,6 @@ export let asyncRoutes = [
         ]
       },
       {
-        path: '/daily_demand/',
-        component: () => import('@/views/material_base_info_manage/daily_demand'),
-        name: 'daily_demand',
-        meta: {
-          title: '料包日需求及耗时统计',
-          icon: 'formula',
-          permissionName: 'daily_weight_package'
-        }
-      },
-      {
         path: '/raw-plan-manage',
         component: () => import('@/views/equipment-management/raw-plan-manage/a-index'),
         name: 'RawPlanManage',
@@ -1390,13 +1390,13 @@ export let asyncRoutes = [
             }
           },
           {
-            path: '/report/warehousing-reasons',
-            component: () => import('@/views/equipment-management/report/warehousing-reasons'),
-            name: 'WarehousingReasons',
+            path: '/shift-output-index/',
+            component: () => import('@/views/production/shift-output/index'),
+            name: 'ShiftOutputIndex',
             meta: {
               faName: 'ResultAnalysis',
-              title: '不入库原因统计',
-              permissionName: 'durate_putin_reason'
+              title: '各班产量统计',
+              permissionName: 'shift_production_summary'
             }
           }
           // {
@@ -1890,13 +1890,13 @@ export let asyncRoutes = [
             }
           },
           {
-            path: '/shift-output-index/',
-            component: () => import('@/views/production/shift-output/index'),
-            name: 'ShiftOutputIndex',
+            path: '/report/warehousing-reasons',
+            component: () => import('@/views/equipment-management/report/warehousing-reasons'),
+            name: 'WarehousingReasons',
             meta: {
               faName: 'ShiftOutput',
-              title: '各班产量统计',
-              permissionName: 'shift_production_summary'
+              title: '不入库原因统计',
+              permissionName: 'durate_putin_reason'
             }
           }
         ]
