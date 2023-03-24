@@ -534,14 +534,20 @@
           </el-select>
         </el-form-item>
         <el-form-item label="班次" prop="classes">
-          <class-select
-            :is-disabled="true"
-            :value-default="dialogForm.classes"
-            :is-clearable="false"
-            @classSelected="classChanged"
-          />
+          <el-select
+            v-model="dialogForm.classes"
+            :disabled="search.clock_type!=='生产配料'"
+            placeholder="请选择"
+            @change="classChanged"
+          >
+            <el-option
+              v-for="item in classesList"
+              :key="item.global_name"
+              :label="item.global_name"
+              :value="item.global_name"
+            />
+          </el-select>
         </el-form-item>
-
         <el-form-item label="上岗时间" prop="actual_begin_date">
           <el-date-picker
             v-model="dialogForm.actual_begin_date"
@@ -860,6 +866,7 @@ export default {
       submit: false,
       tableTop: [],
       time_interval: [],
+      classesList: [],
       isDownload: true,
       dialogVisibleCheck: false,
       tableDataCheck: [],
@@ -1002,6 +1009,10 @@ export default {
       const obj = { all: 1, class_name: '绩效计算岗位类别' }
       const data = await classesListUrl('get', null, { params: obj })
       this.optionsType = data.results
+      const data1 = await globalCodesUrl('get', {
+        params: { all: 1, class_name: '班次' }
+      })
+      this.classesList = data1.results || []
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
@@ -1010,7 +1021,25 @@ export default {
       this.multipleSelectionCheck = val
     },
     classChanged(val) {
+      if (this.optionsGroup.every(d => d.classes__global_name !== val)) {
+        this.$message('当天无此班次')
+        this.$set(this.dialogForm, 'classes', '')
+        this.dialogForm.actual_begin_date = null
+        this.dialogForm.begin_date = null
+        this.dialogForm.actual_end_date = null
+        this.dialogForm.end_date = null
+        this.dialogForm.actual_time = null
+        this.dialogForm.work_time = null
+        return
+      }
       this.$set(this.dialogForm, 'classes', val)
+      const time = this.allowTime[this.dialogForm.classes]
+      this.dialogForm.actual_begin_date = time[0]
+      this.dialogForm.begin_date = this.dialogForm.actual_begin_date
+      this.dialogForm.actual_end_date = time[1]
+      this.dialogForm.end_date = this.dialogForm.actual_end_date
+      this.$set(this.dialogForm, 'actual_time', getHour(this.dialogForm.actual_begin_date, this.dialogForm.actual_end_date))
+      this.dialogForm.work_time = this.dialogForm.actual_time
     },
     classCheckList(val) {
       this.$set(this.searchCheck, 'classes', val)
