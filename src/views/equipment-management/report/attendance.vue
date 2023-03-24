@@ -1141,7 +1141,7 @@ export default {
     },
     addStartTime() {
       if (!this.dialogForm.classes) {
-        this.$message('请先选择班组')
+        this.$message('请检查班次班组')
         this.dialogForm.actual_begin_date = null
         this.dialogForm.actual_time = null
         return
