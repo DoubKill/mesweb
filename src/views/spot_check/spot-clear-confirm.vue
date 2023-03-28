@@ -422,7 +422,7 @@ export default {
   },
   methods: {
     async visibleChange() {
-      const obj = { all: 1, category_name: '密炼设备' }
+      const obj = { all: 1 }
       getEquip(obj).then(response => {
         this.options = response.results
         this.options.push({ id: 16, equip_no: '190E' })
