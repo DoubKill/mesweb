@@ -47,11 +47,11 @@
               @click="classDialog(item,index)"
             >班次切换</el-button>
             <el-button v-permission="['xl_plan', 'add']" type="primary" @click="addFun(item,index,true)">新增计划</el-button>
-            <el-button v-permission="['xl_plan', 'delete']" type="primary" :disabled="item.currentRow&&item.currentRow.state!=='等待'" @click="delFun(item,index,'删除')">删除计划</el-button>
-            <el-button v-permission="['xl_plan', 'issue']" type="primary" :disabled="item.currentRow&&item.currentRow.state!=='等待'" @click="delFun(item,index,'下达',1)">下达计划</el-button>
+            <el-button v-permission="['xl_plan', 'delete']" type="primary" :disabled="item.currentRow&&item.currentRow.state!=='等待'||(item.equip_no==='F02'&&item.currentRow.downtime)" @click="delFun(item,index,'删除')">删除计划</el-button>
+            <el-button v-permission="['xl_plan', 'issue']" type="primary" :disabled="item.currentRow&&item.currentRow.state!=='等待'||(item.equip_no==='F02'&&item.currentRow.downtime)" @click="delFun(item,index,'下达',1)">下达计划</el-button>
             <!-- <el-button v-permission="['xl_plan', 'reload']" type="primary" :disabled="item.currentRow&&item.currentRow.state!=='运行'" @click="delFun(item,index,'重传',2)">计划重传</el-button> -->
             <el-button v-permission="['xl_plan', 'change']" type="primary" :disabled="item.currentRow&&item.currentRow.state&&(item.currentRow.state).indexOf('运行')===-1" @click="addFun(item,index,false)">修改车次</el-button>
-            <el-button v-permission="['xl_plan', 'stop']" type="primary" :disabled="item.currentRow&&item.currentRow.state&&(item.currentRow.state).indexOf('运行')===-1" @click="delFun(item,index,'停止',4)">计划停止</el-button>
+            <el-button v-permission="['xl_plan', 'stop']" type="primary" :disabled="(item.currentRow&&item.currentRow.state&&(item.currentRow.state).indexOf('运行')===-1)&&!(item.equip_no==='F02'&&item.currentRow.downtime)" @click="delFun(item,index,'停止',4)">计划停止</el-button>
 
             <el-button v-permission="['xl_plan', 'add']" type="primary" :disabled="item.currentRow&&item.currentRow.state!=='等待'" @click="delFun(item,index,'上移',null)">上移</el-button>
             <el-button v-permission="['xl_plan', 'add']" type="primary" :disabled="item.currentRow&&item.currentRow.state!=='等待'" @click="delFun(item,index,'下移',null)">下移</el-button>
