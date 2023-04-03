@@ -827,6 +827,10 @@ export default {
     async rubber_material_list() {
       try {
         this.loading = true
+        this.search.exclude_used_type = 6
+        if (this.search.used_type === 6) {
+          delete this.search.exclude_used_type
+        }
         const data = await wfProductBatching('get', null, { params: this.search })
         this.tableData = data.results || []
         this.total = data.count
