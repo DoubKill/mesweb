@@ -472,6 +472,8 @@ export default {
         performanceDate = setDate()
       }
       getPalletFeedBacks({
+        auto: this.auto_ ? 1 : 0,
+        manual: this.manual_ ? 1 : 0,
         page: _this.pageRubber,
         product_no: _this.palletFeedObj.product_no,
         // product_no: 'L-1MB-J260-01',
