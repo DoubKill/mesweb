@@ -193,7 +193,7 @@ export default {
           {
             barWidth: 20,
             barGap: '0%',
-            name: '分钟数',
+            name: '当天产量',
             type: 'bar',
             yAxisIndex: 0,
             data: [],
@@ -211,7 +211,7 @@ export default {
             }
           },
           {
-            name: '百分比',
+            name: '当天完成率',
             type: 'line',
             yAxisIndex: 1,
             data: [],
