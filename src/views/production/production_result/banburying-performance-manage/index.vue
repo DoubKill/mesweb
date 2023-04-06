@@ -35,6 +35,12 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="">
+        <el-checkbox v-model="auto_" @change="currentChange(1)">自动生产</el-checkbox>
+      </el-form-item>
+      <el-form-item label="">
+        <el-checkbox v-model="manual_" @change="currentChange(1)">手动生产</el-checkbox>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="exportTable">
           导出Excel
@@ -373,6 +379,8 @@ export default {
       getParams: {
         page: 1
       },
+      auto_: true,
+      manual_: true,
       chartData: {
         columns: [
           'created_date_date',
@@ -541,6 +549,8 @@ export default {
       this.getParams['page'] = page
       // this.performanceDate = new Date('yyyy-mm-dd')
       this.tableData = []
+      this.getParams.auto = this.auto_ ? 1 : 0
+      this.getParams.manual = this.manual_ ? 1 : 0
       getProductActual(this.getParams).then(response => {
         // this.total = response.count
         var eq_sum = {
