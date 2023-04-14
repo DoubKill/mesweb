@@ -7,8 +7,8 @@
           v-model="search.date"
           type="year"
           :clearable="false"
-          format="yyyy"
           value-format="yyyy"
+          :editable="false"
           placeholder="选择年"
           @change="changeList"
         />
