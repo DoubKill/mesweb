@@ -335,6 +335,26 @@
             style="width:250px"
           />
         </el-form-item>
+        <el-form-item label="领用人" prop="receive_user">
+          <el-select
+            v-model="creatOrder.receive_user"
+            filterable
+            placeholder="请选择"
+          >
+            <el-option
+              v-for="item in options1"
+              :key="item.id"
+              :label="item.order_id"
+              :value="item.order_id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="用途" style="">
+          <el-input
+            v-model="creatOrder.purpose"
+            style="width:250px"
+          />
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose(false)">取 消</el-button>
@@ -655,7 +675,7 @@
 import material from '../components/material-dialog'
 import { mapGetters } from 'vuex'
 import { sectionTree } from '@/api/base_w_four'
-import { getOrderId, equipWarehouseOrder, equipWarehouseOrderDetail, equipWarehouseInventory } from '@/api/jqy'
+import { getOrderId, equipWarehouseOrder, equipWarehouseOrderDetail, equipWarehouseInventory, equipAutoPlan } from '@/api/jqy'
 import page from '@/components/page'
 import { debounce } from '@/utils'
 export default {
@@ -693,6 +713,7 @@ export default {
       checkList: [],
       spare_code: '',
       firstList: [],
+      options1: [],
       work_order_noList: {},
       loading: false,
       loadingView: false,
@@ -723,7 +744,7 @@ export default {
           { required: true, message: '不能为空', trigger: 'change' }
         ]
       },
-      creatOrder: { out_quantity: null }
+      creatOrder: { out_quantity: null, purpose: null }
     }
   },
   computed: {
@@ -748,8 +769,8 @@ export default {
             } else {
               this.$message.success('操作成功')
               this.submit = false
-              const data = await equipWarehouseOrderDetail('get', null, { params: this.search1 })
-              this.tableDataView = data || []
+              // const data = await equipWarehouseOrderDetail('get', null, { params: this.search1 })
+              // this.tableDataView = data.results || []
               this.handleClose(null)
               this.dialog(false)
               this.getList()
@@ -930,7 +951,9 @@ export default {
     async getSection() {
       try {
         const data = await sectionTree('get', null, { params: { all: 1 }})
+        const data1 = await equipAutoPlan('get', null, { params: { default_staff: 1, section_name: '设备科' }})
         this.options = data.results || []
+        this.options1 = data1.data || []
       } catch (e) {
         //
       }
@@ -973,6 +996,7 @@ export default {
         // this.creatOrder.out_quantity = row.plan_out_quantity - row.out_quantity
         this.creatOrder.equip_warehouse_order = row.equip_warehouse_order
         this.creatOrder.status = 2
+        this.creatOrder.purpose = null
         this.creatOrder.unit = row.unit
         this.creatOrder.equip_spare = row.equip_spare
         const data = await equipWarehouseInventory('get', null, { params: { equip_spare: this.creatOrder.equip_spare }})
