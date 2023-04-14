@@ -1396,7 +1396,7 @@ export let asyncRoutes = [
             meta: {
               faName: 'ResultAnalysis',
               title: '月产量完成',
-              permissionName: 'daily_production_completion_report'
+              permissionName: 'monthly_production_completion_report'
             }
           },
           {

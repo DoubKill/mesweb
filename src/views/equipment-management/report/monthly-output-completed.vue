@@ -18,7 +18,7 @@
       </el-form-item>
       <el-form-item style="margin-left:50px">
         <el-button
-          v-permission="['daily_production_completion_report','export']"
+          v-permission="['monthly_production_completion_report','export']"
           type="primary"
           :loading="btnExportLoad"
           @click="exportTable"
