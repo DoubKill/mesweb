@@ -1137,6 +1137,15 @@ export function dailyProductionCompletionReport(method, id, data = {}) {
   return request(obj)
 }
 
+export function monthlyProductionCompletionReport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MonthlyProductionCompletionReport + id + '/' : API.MonthlyProductionCompletionReport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function dailyProductionCompletionDown(params) {
   return request({
     url: API.DailyProductionCompletionReport,

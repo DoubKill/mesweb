@@ -683,6 +683,7 @@ export default {
   MachineTargetValue: '/api/v1/production/machine-target-value/', // 机台目标值设定
   MonthlyOutputStatistics: '/api/v1/production/monthly-output-statistics-and-performance/', // 月产量统计明细及绩效
   DailyProductionCompletionReport: '/api/v1/production/daily-production-completion-report/', // 月产量完成
+  MonthlyProductionCompletionReport: '/api/v1/production/monthly-production-completion-report/', // 年产量完成
   AttendanceResultAudit: '/api/v1/production/attendance-result-audit/',
   Equip190e: '/api/v1/production/equip-190e/',
   Equip190eImport: '/api/v1/production/equip-190e/import_xlsx/',

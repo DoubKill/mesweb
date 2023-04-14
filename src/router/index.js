@@ -1390,6 +1390,16 @@ export let asyncRoutes = [
             }
           },
           {
+            path: '/report/monthly-output-completed',
+            component: () => import('@/views/equipment-management/report/monthly-output-completed'),
+            name: 'MonthlyOutputCompleted',
+            meta: {
+              faName: 'ResultAnalysis',
+              title: '月产量完成',
+              permissionName: 'daily_production_completion_report'
+            }
+          },
+          {
             path: '/shift-output-index/',
             component: () => import('@/views/production/shift-output/index'),
             name: 'ShiftOutputIndex',
@@ -1698,7 +1708,7 @@ export let asyncRoutes = [
           {
             path: '/work-clothes-book',
             name: 'work-clothes-book',
-            component: () => import('@/views/material_base_info_manage/work-clothes-book'),
+            component: () => import('@/views/material_base_info_manage/work-clothes-book-new'),
             meta: {
               title: '工装管理台账',
               faName: 'FrockManage',
