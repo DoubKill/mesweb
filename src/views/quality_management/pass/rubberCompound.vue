@@ -87,7 +87,7 @@
         /> -->
         <el-table-column label="胶料">
           <template slot-scope="scope">
-            <el-link v-if="scope.row.product_type!=='合计'" type="primary" @click="clickOrderNum(scope.$index,scope.row)">{{ scope.row.product_type }}</el-link>
+            <el-link v-if="scope.row.product_type!=='合计'&&checkPermission(['product_quality_analyze','curve'])" type="primary" @click="clickOrderNum(scope.$index,scope.row)">{{ scope.row.product_type }}</el-link>
             <span v-else>{{ scope.row.product_type }}</span>
           </template>
         </el-table-column>
@@ -334,7 +334,7 @@
 import ClassSelect from '@/components/ClassSelect'
 import { globalCodesUrl, productInfosUrl } from '@/api/base_w'
 import { rubberPass } from '@/api/jqy'
-import { debounce, setDate, exportExcel } from '@/utils/index'
+import { debounce, setDate, exportExcel, checkPermission } from '@/utils/index'
 import selectEquip from '@/components/select_w/equip'
 import * as echarts from 'echarts'
 import { datapointCurve, pbRecentName } from '@/api/quick-check-detail'
@@ -410,6 +410,7 @@ export default {
     this.getList()
   },
   methods: {
+    checkPermission,
     submitFun() {
       this.handleCardDialogVisible = false
       this.getList()
