@@ -7,6 +7,7 @@
           v-model="search.date"
           type="year"
           :clearable="false"
+          format="yyyy"
           value-format="yyyy"
           :editable="false"
           placeholder="选择年"
@@ -14,7 +15,7 @@
         />
       </el-form-item>
       <el-form-item label="">
-        <el-checkbox v-model="td_flag" @change="changeList">总计和平均统计包含当日产量</el-checkbox>
+        <el-checkbox v-model="td_flag" @change="changeList">总计和平均统计包含当月产量</el-checkbox>
       </el-form-item>
       <el-form-item style="margin-left:50px">
         <el-button
@@ -238,7 +239,7 @@ export default {
   data() {
     return {
       search: {
-        date: setDate(null, null, 'year')
+        date: setDate(null, null, 'year').toString()
       },
       btnExportLoad: false,
       loading: false,
@@ -250,14 +251,14 @@ export default {
       dataList: [],
       td_flag: false,
       optionsProduct: [],
-      tableHead: [],
+      tableHead: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
       tableData: [],
       exportTableShow: false,
       option: {
         color: ['#C0504D', '#9BBB59', '#8064A2', '#4BACC6', '#4A7EBB'],
         title: {
           left: 'center',
-          text: '安吉（炼胶）每日产能情况说明（含彩胶线）'
+          text: '安吉（炼胶）每月产能情况说明（含彩胶线）'
         },
         tooltip: {
           trigger: 'axis'
@@ -388,7 +389,7 @@ export default {
         color: ['#C0504D', '#9BBB59', '#4A7EBB'],
         title: {
           left: 'center',
-          text: '安吉（炼胶）190E彩胶线每日产能情况说明'
+          text: '安吉（炼胶）190E彩胶线每月产能情况说明'
         },
         tooltip: {
           trigger: 'axis'
@@ -575,7 +576,6 @@ export default {
     }
   },
   created() {
-    this.tableHead = getDiffDate(this.search.date + '-01', getCurrentMonthLastDay(setDate()))
     this.getList()
   },
   methods: {
@@ -661,64 +661,64 @@ export default {
         //
       }
     },
-    async save() {
-      const obj = this.tableData.filter(
-        d => d.name === '外发无硫料(吨)' ||
-      d.name === '实际生产工作日数' ||
-      d.name === '190E实际生产工作日数' ||
-      d.name === '实际生产机台数')
-      var arr = []
-      var arr1 = []
-      var arr2 = []
-      var arr3 = []
-      obj.forEach(d => {
-        for (const key in d) {
-          if (d.name === '外发无硫料(吨)') {
-            if (key !== 'name' && key !== 'weight' && key !== 'avg' && d[key] !== undefined) {
-              arr.push({
-                factory_date: this.search.date + '-' + (key.split('日')[0] >= 10 ? key.split('日')[0] : '0' + key.split('日')[0]),
-                weight: d[key]
-              })
-            }
-          }
-          if (d.name === '实际生产工作日数') {
-            if (key !== 'name' && key !== 'weight' && key !== 'avg' && d[key] !== undefined) {
-              arr1.push({
-                factory_date: this.search.date + '-' + (key.split('日')[0] >= 10 ? key.split('日')[0] : '0' + key.split('日')[0]),
-                num: d[key]
-              })
-            }
-          }
-          if (d.name === '190E实际生产工作日数') {
-            if (key !== 'name' && key !== 'weight' && key !== 'avg' && d[key] !== undefined) {
-              arr2.push({
-                factory_date: this.search.date + '-' + (key.split('日')[0] >= 10 ? key.split('日')[0] : '0' + key.split('日')[0]),
-                num: d[key]
-              })
-            }
-          }
-          if (d.name === '实际生产机台数') {
-            if (key !== 'name' && key !== 'weight' && key !== 'avg' && d[key] !== undefined) {
-              arr3.push({
-                factory_date: this.search.date + '-' + (key.split('日')[0] >= 10 ? key.split('日')[0] : '0' + key.split('日')[0]),
-                num: d[key]
-              })
-            }
-          }
-        }
-      })
-      try {
-        this.btnLoading = true
-        await monthlyProductionCompletionReport('post', null, { data: {
-          date: this.search.date, outer_data: arr, working_data: arr1,
-          working_190e_data: arr2, equip_data: arr3 }})
-        this.$message.success('操作成功')
-        this.btnLoading = false
-        this.getList()
-      } catch (e) {
-        this.btnLoading = false
-      }
-    },
+    // async save() {
+    //   const obj = this.tableData.filter(
+    //     d => d.name === '外发无硫料(吨)' ||
+    //   d.name === '实际生产工作日数' ||
+    //   d.name === '190E实际生产工作日数' ||
+    //   d.name === '实际生产机台数')
+    //   var arr = []
+    //   var arr1 = []
+    //   var arr2 = []
+    //   var arr3 = []
+    //   obj.forEach(d => {
+    //     for (const key in d) {
+    //       if (d.name === '外发无硫料(吨)') {
+    //         if (key !== 'name' && key !== 'weight' && key !== 'avg' && d[key] !== undefined) {
+    //           arr.push({
+    //             factory_date: this.search.date + '-' + (key.split('日')[0] >= 10 ? key.split('日')[0] : '0' + key.split('日')[0]),
+    //             weight: d[key]
+    //           })
+    //         }
+    //       }
+    //       if (d.name === '实际生产工作日数') {
+    //         if (key !== 'name' && key !== 'weight' && key !== 'avg' && d[key] !== undefined) {
+    //           arr1.push({
+    //             factory_date: this.search.date + '-' + (key.split('日')[0] >= 10 ? key.split('日')[0] : '0' + key.split('日')[0]),
+    //             num: d[key]
+    //           })
+    //         }
+    //       }
+    //       if (d.name === '190E实际生产工作日数') {
+    //         if (key !== 'name' && key !== 'weight' && key !== 'avg' && d[key] !== undefined) {
+    //           arr2.push({
+    //             factory_date: this.search.date + '-' + (key.split('日')[0] >= 10 ? key.split('日')[0] : '0' + key.split('日')[0]),
+    //             num: d[key]
+    //           })
+    //         }
+    //       }
+    //       if (d.name === '实际生产机台数') {
+    //         if (key !== 'name' && key !== 'weight' && key !== 'avg' && d[key] !== undefined) {
+    //           arr3.push({
+    //             factory_date: this.search.date + '-' + (key.split('日')[0] >= 10 ? key.split('日')[0] : '0' + key.split('日')[0]),
+    //             num: d[key]
+    //           })
+    //         }
+    //       }
+    //     }
+    //   })
+    //   try {
+    //     this.btnLoading = true
+    //     await monthlyProductionCompletionReport('post', null, { data: {
+    //       date: this.search.date, outer_data: arr, working_data: arr1,
+    //       working_190e_data: arr2, equip_data: arr3 }})
+    //     this.$message.success('操作成功')
+    //     this.btnLoading = false
+    //     this.getList()
+    //   } catch (e) {
+    //     this.btnLoading = false
+    //   }
+    // },
     addCellDispose() {
       this.dialogForm.data.push({ })
     },
@@ -768,7 +768,7 @@ export default {
         this.tableData = data.results || []
         this.xList = []
         this.tableHead.forEach(d => {
-          this.xList.push(parseInt(this.search.date.split('-')[1]) + '/' + d.split('日')[0])
+          this.xList.push(d.split('月')[0] + '月')
         })
         this.tableData.forEach(d => {
           if (d.name === '终炼胶实际完成(吨)') {
@@ -880,7 +880,7 @@ export default {
               left: 'center',
               top: 'middle',
               style: {
-                text: [`日均产能/吨`, `无硫:${data.results[0].avg}`, `发制造部:${data.results[3].avg}`, `发动力:${data.results[4].avg}`, `无硫发出:${data.results[2].avg}`, `段数:${data.avg_results.ds}`].join('\n'),
+                text: [`月均产能/吨`, `无硫:${data.results[0].avg}`, `发制造部:${data.results[3].avg}`, `发动力:${data.results[4].avg}`, `无硫发出:${data.results[2].avg}`, `段数:${data.avg_results.ds}`].join('\n'),
                 font: '500 14px sy',
                 fill: '#1D2F2E',
                 textLineHeight: 22
@@ -918,7 +918,7 @@ export default {
               left: 'center',
               top: 'middle',
               style: {
-                text: [`日均产能`, `加硫:${data.avg_190e.jl}`, `无硫:${data.avg_190e.wl}`, `段数:${data.avg_190e.ds}`].join('\n'),
+                text: [`月均产能`, `加硫:${data.avg_190e.jl}`, `无硫:${data.avg_190e.wl}`, `段数:${data.avg_190e.ds}`].join('\n'),
                 font: '500 14px sy',
                 fill: '#1D2F2E',
                 textLineHeight: 22
@@ -956,7 +956,7 @@ export default {
               left: 'center',
               top: 'middle',
               style: {
-                text: [`日均耗能/耗时`, `吨胶密炼耗能:${data.results[14].avg}`, `吨耗时:${data.results[13].avg}`].join('\n'),
+                text: [`月均耗能/耗时`, `吨胶密炼耗能:${data.results[14].avg}`, `吨耗时:${data.results[13].avg}`].join('\n'),
                 font: '500 14px sy',
                 fill: '#1D2F2E',
                 textLineHeight: 22
@@ -971,7 +971,6 @@ export default {
     },
     changeList() {
       this.search.td_flag = this.td_flag ? 'Y' : undefined
-      this.tableHead = getDiffDate(this.search.date + '-01', getCurrentMonthLastDay(this.search.date))
       this.getList()
     },
     exportTable() {
@@ -994,47 +993,6 @@ export default {
         })
     }
   }
-}
-function getDiffDate(start, end) {
-  var startTime = getDate(start)
-  var endTime = getDate(end)
-  var dateArr = []
-  while ((endTime.getTime() - startTime.getTime()) >= 0) {
-    var d = startTime.getDate()
-    dateArr.push(d + '日')
-    startTime.setDate(startTime.getDate() + 1)
-  }
-  return dateArr
-}
-function getDate(datestr) {
-  var temp = datestr.split('-')
-  if (temp[1] === '01') {
-    temp[0] = parseInt(temp[0], 10) - 1
-    temp[1] = '12'
-  } else {
-    temp[1] = parseInt(temp[1], 10) - 1
-  }
-  // new Date()的月份入参实际都是当前值-1
-  var date = new Date(temp[0], temp[1], temp[2])
-  return date
-}
-
-function getCurrentMonthLastDay(d) {
-  const date = new Date(d)
-  let currentMonth = date.getMonth()
-  const nextMonth = ++currentMonth
-  const nextMonthFirstDay = new Date(date.getFullYear(), nextMonth, 1)
-  const oneDay = 1000 * 60 * 60 * 24
-  const lastTime = new Date(nextMonthFirstDay - oneDay)
-  let month = parseInt(lastTime.getMonth() + 1)
-  let day = lastTime.getDate()
-  if (month < 10) {
-    month = '0' + month
-  }
-  if (day < 10) {
-    day = '0' + day
-  }
-  return date.getFullYear() + '-' + month + '-' + day
 }
 </script>
 
