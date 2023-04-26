@@ -286,7 +286,12 @@
           label="合格率"
           min-width="30"
           sortable
-        />
+        >
+          <template slot-scope="scope">
+            <el-link v-if="scope.row.product_type!=='合计'" type="primary" @click="dialogTable(scope.row)">{{ scope.row.rate }}</el-link>
+            <span v-else>{{ scope.row.rate }}</span>
+          </template>
+        </el-table-column>
       </el-table>
     </div>
 
@@ -326,6 +331,28 @@
         style="width: 100%;height:1000px;margin-top:8px"
       />
     </el-dialog>
+
+    <el-dialog
+      title=""
+      :visible.sync="dialogVisible"
+      width="30%"
+      append-to-body
+    >
+      <el-table
+        :data="tableDataView"
+        border
+        style="width: 100%"
+      >
+        <el-table-column
+          prop="product_date"
+          label="日期"
+        />
+        <el-table-column
+          prop="ratio"
+          label="合格率"
+        />
+      </el-table>
+    </el-dialog>
     <!-- </div> -->
   </div>
 </template>
@@ -333,7 +360,7 @@
 <script>
 import ClassSelect from '@/components/ClassSelect'
 import { globalCodesUrl, productInfosUrl } from '@/api/base_w'
-import { rubberPass } from '@/api/jqy'
+import { rubberPass, dailyProductTestStatics } from '@/api/jqy'
 import { debounce, setDate, exportExcel } from '@/utils/index'
 import selectEquip from '@/components/select_w/equip'
 import * as echarts from 'echarts'
@@ -346,10 +373,12 @@ export default {
       tableData: [],
       tableData1: null,
       formHeadData: [],
+      tableDataView: [],
       search: {
       },
       loading: false,
       options: [],
+      dialogVisible: false,
       handleCardDialogVisible: false,
       dateValue: [setDate(), setDate()],
       checked: false,
@@ -413,6 +442,16 @@ export default {
     submitFun() {
       this.handleCardDialogVisible = false
       this.getList()
+    },
+    async dialogTable(row) {
+      const obj = {}
+      obj.s_time = this.search.s_time
+      obj.e_time = this.search.e_time
+      obj.sy_flag = this.search.sy_flag
+      obj.product_type = row.product_type
+      const data = await dailyProductTestStatics('get', null, { params: obj })
+      this.tableDataView = data.results || []
+      this.dialogVisible = true
     },
     async getList() {
       try {

@@ -1773,3 +1773,12 @@ export function schedulingRecipeConfirm(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function dailyProductTestStatics(method, id, data = {}) {
+  const obj = {
+    url: id ? API.DailyProductTestStatics + id + '/' : API.DailyProductTestStatics,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
