@@ -196,7 +196,6 @@
     >
       <el-button
         v-if="arrData.length>0"
-        v-permission="['equip_down_summary_table','export']"
         style="margin-bottom:10px;margin-left:85%"
         type="primary"
         @click="download"
