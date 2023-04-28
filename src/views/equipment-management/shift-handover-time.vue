@@ -40,6 +40,18 @@
           type="primary"
           @click="exportTable()"
         >导出Excel</el-button>
+        <el-button
+          type="primary"
+          @click="lookAll(1)"
+        >按机台查看图表</el-button>
+        <el-button
+          type="primary"
+          @click="lookAll(2)"
+        >按班次查看图表</el-button>
+        <el-button
+          type="primary"
+          @click="lookAll(3)"
+        >按日期查看图表</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -176,11 +188,57 @@
       </el-table>
     </el-dialog>
 
+    <el-dialog
+      title="图表详情"
+      :visible.sync="historyDialogVisible"
+      width="80%"
+      append-to-body
+    >
+      <el-button
+        v-if="arrData.length>0"
+        v-permission="['equip_down_summary_table','export']"
+        style="margin-bottom:10px;margin-left:85%"
+        type="primary"
+        @click="download"
+      >下载图表</el-button>
+      <el-row
+        v-if="lookType===1"
+        id="echartsBox"
+        v-loading="loadingDialog"
+      >
+        <el-col
+          :span="24"
+        >
+          <div
+            id="equipEchart0"
+            style="width: 100%;height:300px;margin-top:8px"
+          />
+        </el-col>
+      </el-row>
+      <el-row
+        v-else
+        id="echartsBox"
+        v-loading="loadingDialog"
+      >
+        <el-col
+          v-for="(d,i) in arrData"
+          :key="i"
+          :span="8"
+        >
+          <div
+            :id="'equipEchart'+i"
+            style="width: 100%;height:300px;margin-top:8px"
+          />
+        </el-col>
+      </el-row>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { shiftTimeSummary, shiftTimeSummaryDetail } from '@/api/jqy'
+import * as echarts from 'echarts'
+import html2canvas from 'html2canvas'
+import { shiftTimeSummary, shiftTimeSummaryDetail, shiftTimeAnalysis } from '@/api/jqy'
 import page from '@/components/page'
 import classSelect from '@/components/ClassSelect'
 import { globalCodesUrl } from '@/api/base_w'
@@ -191,6 +249,10 @@ export default {
   data() {
     return {
       groups: [],
+      historyDialogVisible: false,
+      loadingDialog: false,
+      arrData: [],
+      lookType: 1,
       dateValue: [setDate(null, null, 'month') + '-01', setDate()],
       search: {
         page_size: 10,
@@ -203,7 +265,91 @@ export default {
       loading: false,
       loading1: false,
       tableData: [],
-      tableData1: []
+      tableData1: [],
+      chartHistoryBar: null,
+      option: {
+        color: ['#0000FF', '#ED7D31'],
+        title: {
+          left: 'center',
+          text: ''
+        },
+        tooltip: {
+          trigger: 'axis'
+        },
+        legend: {
+          top: '6%',
+          orient: 'horizontal',
+          data: ['标准交接班耗时', '实际交接班耗时']
+        },
+        toolbox: {
+          show: true
+        },
+        calculable: true,
+        grid: {
+          x: 60,
+          y: 100,
+          x2: 60,
+          y2: 30
+        },
+        xAxis: [
+          {
+            type: 'category',
+            // prettier-ignore
+            data: []
+          }
+        ],
+        yAxis: [
+          {
+            type: 'value',
+            name: '分',
+            splitLine: {
+              show: false
+            },
+            nameGap: 20
+          }
+        ],
+        series: [
+          {
+            barWidth: 20,
+            barGap: '0%',
+            name: '标准交接班耗时',
+            type: 'bar',
+            yAxisIndex: 0,
+            data: [],
+            label: {
+              color: '#F5FFFF',
+              backgroundColor: '#C00000',
+              show: true,
+              formatter: function(params) {
+                if (params.value === 0 || params.value === '0') {
+                  return ''
+                } else {
+                  return params.value
+                }
+              }
+            }
+          },
+          {
+            name: '实际交接班耗时',
+            type: 'line',
+            yAxisIndex: 0,
+            data: [],
+            label: {
+              position: 'top',
+              color: 'black',
+              backgroundColor: '#FFFF00',
+              show: true,
+              formatter: function(params) {
+                if (params.value === 0 || params.value === '0') {
+                  return ''
+                } else {
+                  return params.value
+                }
+              }
+            }
+          }
+        ]
+      }
     }
   },
   created() {
@@ -212,6 +358,55 @@ export default {
     this.getList()
   },
   methods: {
+    async lookAll(val) {
+      this.lookType = val
+      if (this.chartHistoryBar) {
+        this.chartHistoryBar.dispose()
+      }
+      try {
+        if (getDaysBetween(this.search.st, this.search.et) > 1) {
+          this.$message('日期间隔不得大于31天')
+          return
+        }
+        var obj = {
+          st: this.search.st,
+          et: this.search.et,
+          analysis_type: val
+        }
+        this.historyDialogVisible = true
+        this.loadingDialog = true
+        const data = await shiftTimeAnalysis('get', null, { params: obj })
+        this.arrData = data
+        var ops = []
+        data.forEach((d, _i) => {
+          ops.push(JSON.parse(JSON.stringify(this.option)))
+          ops[_i].title.text = d.title
+          ops[_i].xAxis[0].data = d.axis || []
+          ops[_i].series[0].data = d.standard || []
+          ops[_i].series[1].data = d.actual || []
+          const a = 'equipEchart' + _i
+          this.$nextTick(() => {
+            this.chartHistoryBar = echarts.init(document.getElementById(a))
+            this.chartHistoryBar.setOption(ops[_i])
+          })
+        })
+        this.loadingDialog = false
+      } catch (e) {
+        this.loadingDialog = false
+      }
+    },
+    download() {
+      html2canvas(document.querySelector('#echartsBox')).then(canvas => {
+        // 新增代码 返回图片的URL,设置为png格式
+        var dataURL = canvas.toDataURL('image/png')
+        const creatDom = document.createElement('a')
+        document.body.appendChild(creatDom)
+        creatDom.href = dataURL
+        creatDom.download = '各机台图表(TOP10)'
+        creatDom.click()
+        document.body.removeChild(creatDom)
+      })
+    },
     classChanged(val) {
       this.search.classes = val
       this.getList()
@@ -327,7 +522,18 @@ function sumNull(arr, params) {
   s = s > 0 ? s : 1
   return s
 }
-
+function getDaysBetween(dateString1, dateString2) {
+  var startDate = Date.parse(dateString1)
+  var endDate = Date.parse(dateString2)
+  if (startDate > endDate) {
+    return 0
+  }
+  if (startDate === endDate) {
+    return 1
+  }
+  var days = (endDate - startDate) / (31 * 24 * 60 * 60 * 1000)
+  return days
+}
 </script>
 
 <style  lang="scss">

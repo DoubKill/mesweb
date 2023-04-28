@@ -792,5 +792,7 @@ export default {
   SchedulingStockSummaryImport: '/api/v1/plan/scheduling-stock-summary/import-xlsx/',
   DeletePlan: '/api/v1/basics/plan-schedule/delete-plan/',
   SchedulingRecipeConfirm: '/api/v1/plan/scheduling-recipe-machine-setting/confirm/',
-  DailyProductTestStatics: '/api/v1/quality/daily_product-test-statics/'
+  DailyProductTestStatics: '/api/v1/quality/daily_product-test-statics/',
+  CutTimeAnalysis: '/api/v1/production/cut-time-analysis/',
+  ShiftTimeAnalysis: '/api/v1/production/shift-time-analysis/'
 }
