@@ -202,21 +202,21 @@
       >下载图表</el-button>
       <el-row
         v-if="lookType===1"
-        id="echartsBox"
+        id="echartsShift"
         v-loading="loadingDialog"
       >
         <el-col
           :span="24"
         >
           <div
-            id="equipEchart0"
+            id="shiftEchart0"
             style="width: 100%;height:300px;margin-top:8px"
           />
         </el-col>
       </el-row>
       <el-row
         v-else
-        id="echartsBox"
+        id="echartsShift"
         v-loading="loadingDialog"
       >
         <el-col
@@ -225,7 +225,7 @@
           :span="8"
         >
           <div
-            :id="'equipEchart'+i"
+            :id="'shiftEchart'+i"
             style="width: 100%;height:300px;margin-top:8px"
           />
         </el-col>
@@ -383,7 +383,7 @@ export default {
           ops[_i].xAxis[0].data = d.axis || []
           ops[_i].series[0].data = d.standard || []
           ops[_i].series[1].data = d.actual || []
-          const a = 'equipEchart' + _i
+          const a = 'shiftEchart' + _i
           this.$nextTick(() => {
             this.chartHistoryBar = echarts.init(document.getElementById(a))
             this.chartHistoryBar.setOption(ops[_i])
@@ -395,13 +395,13 @@ export default {
       }
     },
     download() {
-      html2canvas(document.querySelector('#echartsBox')).then(canvas => {
+      html2canvas(document.querySelector('#echartsShift')).then(canvas => {
         // 新增代码 返回图片的URL,设置为png格式
         var dataURL = canvas.toDataURL('image/png')
         const creatDom = document.createElement('a')
         document.body.appendChild(creatDom)
         creatDom.href = dataURL
-        creatDom.download = '各机台图表(TOP10)'
+        creatDom.download = '图表'
         creatDom.click()
         document.body.removeChild(creatDom)
       })
