@@ -835,7 +835,7 @@ export let asyncRoutes = [
           {
             path: '/schedule/material-plan/',
             component: () => import('@/views/plan/schedule/dispose/material-plan'),
-            name: 'materialPlan',
+            name: 'MaterialPlan',
             meta: {
               faName: 'SmallMaterialWeight',
               title: '细料分解每日计划用量',
@@ -1242,6 +1242,16 @@ export let asyncRoutes = [
               faName: 'ScheduleDispose',
               title: '原材料需求量 汇总表',
               permissionName: 'materialdemanded'
+            }
+          },
+          {
+            path: '/planned-usage/',
+            component: () => import('@/views/plan/schedule/dispose/planned-usage'),
+            name: 'PlannedUsage',
+            meta: {
+              faName: 'ScheduleDispose',
+              title: '胶料/炭黑/油料日计划用量',
+              permissionName: 'xl_plan_consume'
             }
           },
           {
