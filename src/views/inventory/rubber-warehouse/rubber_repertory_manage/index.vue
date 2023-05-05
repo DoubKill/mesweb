@@ -255,7 +255,7 @@
       width="90%"
       :before-close="handleClose"
     >
-      <generateAssignOutbound :warehouse-name="warehouseName" :location-status="locationStatus" :material-no="materialNo" :quality-status="qualityStatus" :show="dialogVisible" />
+      <generateAssignOutbound :warehouse-name="warehouseName" :location-status="locationStatus" :material-no="materialNo" :quality-status="qualityStatus" :show="dialogVisible" :day-time="day_time" />
     </el-dialog>
 
     <el-dialog

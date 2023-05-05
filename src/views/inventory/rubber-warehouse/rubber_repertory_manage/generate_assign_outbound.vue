@@ -262,6 +262,12 @@ export default {
     show: {
       type: Boolean,
       default: false
+    },
+    dayTime: {
+      type: [Array, String],
+      default() {
+        return {}
+      }
     }
   },
   data() {
@@ -305,6 +311,8 @@ export default {
       if (bool) {
         this.tableData = []
         this.getParams = {
+          st: this.dayTime ? this.dayTime[0] : '',
+          et: this.dayTime ? this.dayTime[1] : '',
           page: 1,
           location_status: this.locationStatus,
           container_no: '', // 托盘号
