@@ -326,6 +326,8 @@ export default {
     }
   },
   created() {
+    this.getParams.st = this.dayTime ? this.dayTime[0] : ''
+    this.getParams.et = this.dayTime ? this.dayTime[1] : ''
     this.getTableData()
   },
   methods: {
