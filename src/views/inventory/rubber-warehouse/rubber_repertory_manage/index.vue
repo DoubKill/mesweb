@@ -113,6 +113,17 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="入库日期">
+        <el-date-picker
+          v-model="day_time"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          value-format="yyyy-MM-dd"
+          @change="dayChange"
+        />
+      </el-form-item>
       <el-form-item label="总货位数：">
         {{ allObj.total_goods_num || 0 }}
       </el-form-item>
@@ -288,7 +299,8 @@ export default {
       locationStatus: '',
       warehouseName: '',
       btnLoading: false,
-      allObj: {}
+      allObj: {},
+      day_time: []
     }
   },
   created() {
@@ -342,6 +354,15 @@ export default {
           this.RubberStageOptions = stage_global_list.results
         }
       } catch (e) { throw new Error(e) }
+    },
+    dayChange(val) {
+      this.getParams.begin_date = val ? val[0] : ''
+      this.getParams.end_date = val ? val[1] : ''
+      if (getDaysBetween(this.getParams.begin_date, this.getParams.end_date) > 1) {
+        this.$message('日期间隔不得大于31天')
+        return
+      }
+      this.rubber_repertory_list()
     },
     RubberStageChange: function(bool) {
       if (bool) {
@@ -477,6 +498,20 @@ function sum(arr, str, params) {
   s = Math.round(s * 1000) / 1000
   return s
 }
+
+function getDaysBetween(dateString1, dateString2) {
+  var startDate = Date.parse(dateString1)
+  var endDate = Date.parse(dateString2)
+  if (startDate > endDate) {
+    return 0
+  }
+  if (startDate === endDate) {
+    return 1
+  }
+  var days = (endDate - startDate) / (30 * 24 * 60 * 60 * 1000)
+  return days
+}
+
 </script>
 
 <style lang="scss" >
