@@ -528,7 +528,7 @@ export default {
           })
       } else {
         // null, [{ wpx: 50 }, { wpx: 50 }, { wpx: 120 }]
-        exportExcel(this.search.warehouse_name + '出入库履历')
+        exportExcel(this.search.warehouse_name + '出入库履历', 'material_inout_record_rubber')
       }
     }
   }
