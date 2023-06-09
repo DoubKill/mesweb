@@ -267,7 +267,7 @@ export function exportExcel(value = 'excel', val, _wpxArr = []) {
   value = value + ' ' + (val === 'excel' ? '' : setDate('', true))
   /* 从表生成工作簿对象 */
   var wb
-  if (val && (val === 'disposal-list-components' || val === '综合合格率汇总')) {
+  if (val && (val === 'disposal-list-components' || val === '综合合格率汇总' || val === 'material_inout_record_rubber')) {
     wb = XLSX.utils.table_to_book(document.querySelector('#out-table'), { raw: true })
   } else {
     wb = XLSX.utils.table_to_book(document.querySelector('#out-table'), { raw: false })
