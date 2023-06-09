@@ -1,6 +1,6 @@
 <template>
   <div v-loading="loading" class="app-container rubber_repertory_manage-dialog">
-    <!-- 库位列表 混炼终练使用-->
+    <!-- 锁定车数 混炼终练使用-->
     <el-table
       ref="multipleTable"
       border

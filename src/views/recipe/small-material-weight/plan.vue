@@ -170,7 +170,7 @@
         <el-form-item label="密炼车数" prop="setno">
           <el-input-number
             v-model="ruleForm.setno"
-            :min="ruleForm.actno||0"
+            :min="0"
             controls-position="right"
           />
         </el-form-item>

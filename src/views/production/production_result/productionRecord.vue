@@ -204,7 +204,7 @@ export default {
       equipUrl('get', { params: { all: 1, category_name: '密炼设备' }})
         .then(function(response) {
           _this.machineList = response.results || []
-          _this.search.equip_no = response.results[0] ? response.results[0].equip_no : ''
+          _this.search.equip_no = (_this.$route.query && _this.$route.query.equip) ? _this.$route.query.equip : response.results[0] ? response.results[0].equip_no : ''
           _this.getList()
         })
         .catch(function() { })
