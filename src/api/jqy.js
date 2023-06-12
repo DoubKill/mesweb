@@ -1773,3 +1773,30 @@ export function schedulingRecipeConfirm(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+
+export function dailyProductTestStatics(method, id, data = {}) {
+  const obj = {
+    url: id ? API.DailyProductTestStatics + id + '/' : API.DailyProductTestStatics,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function cutTimeAnalysis(method, id, data = {}) {
+  const obj = {
+    url: id ? API.CutTimeAnalysis + id + '/' : API.CutTimeAnalysis,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function shiftTimeAnalysis(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ShiftTimeAnalysis + id + '/' : API.ShiftTimeAnalysis,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}

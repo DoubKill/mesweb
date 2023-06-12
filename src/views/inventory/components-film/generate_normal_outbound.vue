@@ -90,7 +90,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="quality_statusSearch1">查询</el-button>
-        <el-button type="primary" :loading="loadingBtn" @click="submitFun">确 定</el-button>
+        <el-button type="primary" :loading="loadingBtn" @click="submitDialog">确 定</el-button>
         <el-button type="primary" @click="visibleMethod(true)">取 消</el-button>
       </el-form-item>
     </el-form>
@@ -131,11 +131,48 @@
       title="表格背景色说明：红色超期报警；黄色超期预警；白色放置期正常；灰色未设置有效期"
       type="success"
     />
+
+    <el-dialog
+      title="胶料出库目的地选择"
+      :visible.sync="dialogVisible"
+      :append-to-body="true"
+      :before-close="closeDialog"
+      width="30%"
+    >
+      <el-form>
+        <el-form-item label="胶料出库目的地">
+          <el-select
+            v-model="destination"
+            style="width: 100%"
+            placeholder="请选择"
+            @visible-change="getDestinationList"
+          >
+            <el-option
+              v-for="item in destinationList"
+              :key="item.id"
+              :value="item.global_name"
+              :label="item.global_name"
+            />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button @click="closeDialog">取 消</el-button>
+        <el-button
+          type="primary"
+          @click="submitFun"
+        >确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
 import { outbound } from '@/api/jqy'
 import { checkPermission } from '@/utils'
+import { globalCodesUrl } from '@/api/base_w'
 import { bzFinalInventorySearch, bzMixinInventorySearch } from '@/api/base_w_four'
 import selectEquip from '@/components/select_w/equip'
 export default {
@@ -174,6 +211,9 @@ export default {
         need_qty: 99999
       },
       need_qty: 0,
+      dialogVisible: false,
+      destination: null,
+      destinationList: [],
       period_of_validity: '',
       dateSearch: [],
       qty_total: 0,
@@ -243,6 +283,30 @@ export default {
     //     this.getTableData()
     //   }
     // },
+    submitDialog() {
+      if (this.multipleSelection.length === 0) {
+        this.$message.info('请选择出库')
+        return
+      } else {
+        this.dialogVisible = true
+      }
+    },
+    closeDialog() {
+      this.destination = null
+      this.dialogVisible = false
+    },
+    async getDestinationList() {
+      try {
+        const data = await globalCodesUrl('get', {
+          params: {
+            class_name: '胶料出库目的地'
+          }
+        })
+        this.destinationList = data.results || []
+      } catch (error) {
+        //
+      }
+    },
     async getTableData() {
       if (this.warehouseName === '混炼胶库') {
         this.getParams.station = this.list.station
@@ -285,6 +349,7 @@ export default {
           obj.push({ pallet_no: d.container_no,
             location: d.location,
             lot_no: d.lot_no,
+            destination: this.destination,
             memo: d.memo,
             qty: d.qty,
             weight: d.total_weight,
@@ -299,6 +364,7 @@ export default {
           this.loadingBtn = false
           this.$message.success('出库成功')
           this.$refs.multipleTable.clearSelection()
+          this.dialogVisible = false
           this.visibleMethod(true)
           this.$emit('getList')
         } catch (error) {
