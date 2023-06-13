@@ -190,7 +190,7 @@
           </tr>
           <tr style="text-align:left;">
             <td :colspan="5+headDataLength" style="padding-left:25px">
-              <div>处理意见(品质技术部工艺技术科)：</div>
+              <div>处理意见(工艺技术处)：</div>
             </td>
           </tr>
           <tr style="text-align:left;">
@@ -217,7 +217,7 @@
           </tr>
           <tr style="text-align:left;">
             <td :colspan="5+headDataLength" style="padding-left:25px">
-              <div>处理意见(品质技术部工艺检查科)：</div>
+              <div>处理意见(质量管理处)：</div>
             </td>
           </tr>
           <tr style="text-align:left;">
