@@ -57,7 +57,7 @@
           @change="changeList"
         >
           <el-option
-            v-for="item in [{value:1,label:'合格'},{value:2,label:'抽检中'},{value:3,label:'不合格'},{value:4,label:'过期'},{value:5,label:'待检'}]"
+            v-for="item in (special_flag?[{value:1,label:'合格'},{value:5,label:'待检'}]:[{value:1,label:'合格'},{value:2,label:'抽检中'},{value:3,label:'不合格'},{value:4,label:'过期'},{value:5,label:'待检'}])"
             :key="item.value"
             :label="item.label"
             :value="item.value"
@@ -279,6 +279,7 @@ export default {
       },
       currentPage: 1,
       total: 0,
+      special_flag: false,
       options: [],
       loading: false,
       dialogVisible: false,
@@ -360,6 +361,7 @@ export default {
         .then(response => {
           this.tableData = response.results
           this.total = response.count
+          if (this.warehouseNameProps === '原材料库') { this.special_flag = response.special_flag }
           this.loading = false
           this.tableData.push({
             all: 2,
