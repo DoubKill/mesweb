@@ -363,7 +363,7 @@
         :key="1"
         v-loading="loading2"
       >
-        <h3>库位货物列表</h3>
+        <h3>库位货物列表{{ '(可选库存数'+total1+'条)' }}</h3>
         <el-table
           :data="tableData2"
           style="width: 100%"
@@ -450,18 +450,18 @@
           >
             <template slot-scope="{row,$index}">
               <el-button
-                :disabled="row.btnDisabled||btnDisabled"
+                :disabled="(row.btnDisabled||btnDisabled)||($index>0?!tableData2[$index-1].btnDisabled:false)"
                 @click="showDialog(row,$index)"
               >添加</el-button>
             </template>
           </el-table-column>
         </el-table>
-        <page
+        <!-- <page
           :total="total1"
           :page-size-props="15"
           :current-page="formSearch.page"
           @currentChange="currentChange1"
-        />
+        /> -->
         <h3>待出库库位货物</h3>
         <el-table
           :data="tableData4"
@@ -903,6 +903,7 @@ export default {
     async getDialogGoods() {
       try {
         this.loading2 = true
+        this.formSearch.page_size = 100
         const data = await wmsStock('get', null, { params: this.formSearch })
         this.tableData2 = data.results
         this.loading2 = false
@@ -994,16 +995,22 @@ export default {
       }
     },
     showDialog(row, index, bool) {
-      if (row.position === '外' && !bool) {
-        // 是外伸位
-        this.setWmsInstock(row, index)
-        return
+      var arr = []
+      arr = this.tableData2.slice(0, index)
+      if (arr.every(d => d.btnDisabled === true)) {
+        if (row.position === '外' && !bool) {
+          // 是外伸位
+          this.setWmsInstock(row, index)
+          return
+        }
+        this.$set(this.tableData2[index], 'btnDisabled', true)
+        row.Quantity = 1
+        row.TaskDetailNumber = 'MesD' + new Date().getTime()
+        row.SpaceCode = row.SpaceId
+        this.tableData4.push(row)
+      } else {
+        this.$message('请先选择前面的数据')
       }
-      this.$set(this.tableData2[index], 'btnDisabled', true)
-      row.Quantity = 1
-      row.TaskDetailNumber = 'MesD' + new Date().getTime()
-      row.SpaceCode = row.SpaceId
-      this.tableData4.push(row)
     },
     submitLocation() {
       const _table = []
