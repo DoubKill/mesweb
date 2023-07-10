@@ -489,6 +489,11 @@
             min-width="20"
           />
           <el-table-column
+            prop="RFID"
+            label="托盘RFID"
+            min-width="20"
+          />
+          <el-table-column
             prop="StockDetailState"
             label="品质状态"
             min-width="20"
