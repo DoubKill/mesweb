@@ -30,7 +30,7 @@
         <el-select v-model="search.material_name" allow-create filterable placeholder="请选择" clearable @visible-change="getMaterialsList" @change="changeDate">
           <el-option
             v-for="item in options1"
-            :key="item.name"
+            :key="item.code"
             :label="item.name"
             :value="item.name"
           />
