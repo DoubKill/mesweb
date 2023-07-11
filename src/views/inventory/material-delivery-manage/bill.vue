@@ -1065,7 +1065,8 @@ export default {
       this.tableData2.forEach((d, i) => {
         const a = arr.indexOf(d.Sn)
         if (a > -1) {
-          this.$set(this.tableData2[i], 'btnDisabled', true)
+          // this.$set(this.tableData2[i], 'btnDisabled', true)
+          this.tableData2.splice(i, 1)
         }
       })
       _table.forEach(d => {
