@@ -1062,13 +1062,12 @@ export default {
     },
     submitLocationFor(_table) {
       const arr = _table.map(d => d.Sn)
-      this.tableData2.forEach((d, i) => {
+      const arr2 = this.tableData2.filter((d, i) => {
         const a = arr.indexOf(d.Sn)
-        if (a > -1) {
-          // this.$set(this.tableData2[i], 'btnDisabled', true)
-          this.tableData2.splice(i, 1)
-        }
+        return a === -1
       })
+      this.tableData2 = arr2
+
       _table.forEach(d => {
         const _arr = this.tableData4.filter(D => D.Sn === d.Sn)
         if (_arr.length === 0) {
