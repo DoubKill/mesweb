@@ -450,7 +450,7 @@
           >
             <template slot-scope="{row,$index}">
               <el-button
-                :disabled="(row.btnDisabled||btnDisabled)||($index>0?!tableData2[$index-1].btnDisabled:false)"
+                :disabled="(row.btnDisabled||btnDisabled)||($index>0)"
                 @click="showDialog(row,$index)"
               >添加</el-button>
             </template>
@@ -534,14 +534,14 @@
             label="门尼值等级"
             min-width="20"
           />
-          <el-table-column
+          <!-- <el-table-column
             label="操作"
             width="100"
           >
             <template slot-scope="{row}">
               <el-button @click="cancelDialog(row)">取消</el-button>
             </template>
-          </el-table-column>
+          </el-table-column> -->
         </el-table>
       </div>
       <div
@@ -1000,22 +1000,34 @@ export default {
       }
     },
     showDialog(row, index, bool) {
-      var arr = []
-      arr = this.tableData2.slice(0, index)
-      if (arr.every(d => d.btnDisabled === true)) {
-        if (row.position === '外' && !bool) {
-          // 是外伸位
-          this.setWmsInstock(row, index)
-          return
-        }
-        this.$set(this.tableData2[index], 'btnDisabled', true)
-        row.Quantity = 1
-        row.TaskDetailNumber = 'MesD' + new Date().getTime()
-        row.SpaceCode = row.SpaceId
-        this.tableData4.push(row)
-      } else {
-        this.$message('请先选择前面的数据')
+      if (row.position === '外' && !bool) {
+        // 是外伸位
+        this.setWmsInstock(row, index)
+        return
       }
+      this.tableData2.splice(0, 1)
+      // this.$set(this.tableData2[index], 'btnDisabled', true)
+      row.Quantity = 1
+      row.TaskDetailNumber = 'MesD' + new Date().getTime()
+      row.SpaceCode = row.SpaceId
+      this.tableData4.push(row)
+      //
+      // var arr = []
+      // arr = this.tableData2.slice(0, index)
+      // if (arr.every(d => d.btnDisabled === true)) {
+      //   if (row.position === '外' && !bool) {
+      //     // 是外伸位
+      //     this.setWmsInstock(row, index)
+      //     return
+      //   }
+      //   this.$set(this.tableData2[index], 'btnDisabled', true)
+      //   row.Quantity = 1
+      //   row.TaskDetailNumber = 'MesD' + new Date().getTime()
+      //   row.SpaceCode = row.SpaceId
+      //   this.tableData4.push(row)
+      // } else {
+      //   this.$message('请先选择前面的数据')
+      // }
     },
     submitLocation() {
       const _table = []
@@ -1067,11 +1079,7 @@ export default {
     cancelDialog(row) {
       const arr = this.tableData4.filter(d => d.Sn !== row.Sn)
       this.tableData4 = arr
-      this.tableData2.forEach(d => {
-        if (d.Sn === row.Sn) {
-          this.$set(d, 'btnDisabled', false)
-        }
-      })
+      this.tableData2.unshift(row)
     },
     currentChange1(page) {
       this.formSearch.page = page

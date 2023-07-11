@@ -120,7 +120,7 @@ export default {
       try {
         this.loading = true
         const data = await groupProductionSummary('get', null, { params: this.search })
-        // 平均产量=总产量/（工作时长-停机时间/60/24）
+        // 平均产量=总产量/（工作时长-停机时间/60/12）
         // 完成率=平均产量/目标值
         this.tableData = data || []
         this.tableData.forEach(d => {
