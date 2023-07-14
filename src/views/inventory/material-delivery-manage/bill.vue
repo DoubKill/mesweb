@@ -357,6 +357,9 @@
         <el-form-item label="托盘号">
           <el-input v-model="formSearch.pallet_no" clearable @input="getDialogDebounce" />
         </el-form-item>
+        <!-- <el-form-item label="单位">
+          <el-input v-model="formSearch.aaa" clearable @input="getDialogDebounce" />
+        </el-form-item> -->
       </el-form>
       <div
         v-if="isLocation"
@@ -907,22 +910,27 @@ export default {
     },
     async getDialogGoods() {
       try {
-        this.loading2 = true
+        // this.loading2 = true
         this.formSearch.page_size = 100
         const data = await wmsStock('get', null, { params: this.formSearch })
         this.tableData2 = data.results
         this.loading2 = false
         this.total1 = data.count
         if (this.tableData4.length > 0) {
-          this.tableData2.forEach(d => {
-            let arr = []
-            arr = this.tableData4.filter(D => D.Sn === d.Sn)
-            if (arr.length > 0) {
-              d.btnDisabled = true
-            } else {
-              d.btnDisabled = false
-            }
+          // this.tableData2.forEach(d => {
+          //   let arr = []
+          //   arr = this.tableData4.filter(D => D.Sn === d.Sn)
+          //   if (arr.length > 0) {
+          //     d.btnDisabled = true
+          //   } else {
+          //     d.btnDisabled = false
+          //   }
+          // })
+          const arr2 = this.tableData2.filter((d, i) => {
+            const a = this.tableData4.findIndex(dd => dd.Sn === d.Sn)
+            return a === -1
           })
+          this.tableData2 = arr2
         }
       } catch (error) {
         this.loading2 = false
@@ -1079,7 +1087,7 @@ export default {
     cancelDialog(row) {
       const arr = this.tableData4.filter(d => d.Sn !== row.Sn)
       this.tableData4 = arr
-      this.tableData2.unshift(row)
+      this.getDialogGoods()
     },
     currentChange1(page) {
       this.formSearch.page = page
