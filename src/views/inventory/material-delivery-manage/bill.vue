@@ -30,7 +30,7 @@
         <el-select v-model="search.material_name" allow-create filterable placeholder="请选择" clearable @visible-change="getMaterialsList" @change="changeDate">
           <el-option
             v-for="item in options1"
-            :key="item.name"
+            :key="item.code"
             :label="item.name"
             :value="item.name"
           />
@@ -357,13 +357,16 @@
         <el-form-item label="托盘号">
           <el-input v-model="formSearch.pallet_no" clearable @input="getDialogDebounce" />
         </el-form-item>
+        <!-- <el-form-item label="单位">
+          <el-input v-model="formSearch.aaa" clearable @input="getDialogDebounce" />
+        </el-form-item> -->
       </el-form>
       <div
         v-if="isLocation"
         :key="1"
         v-loading="loading2"
       >
-        <h3>库位货物列表</h3>
+        <h3>库位货物列表{{ '(可选库存数'+total1+'条)' }}</h3>
         <el-table
           :data="tableData2"
           style="width: 100%"
@@ -450,18 +453,18 @@
           >
             <template slot-scope="{row,$index}">
               <el-button
-                :disabled="row.btnDisabled||btnDisabled"
+                :disabled="(row.btnDisabled||btnDisabled)||($index>0)"
                 @click="showDialog(row,$index)"
               >添加</el-button>
             </template>
           </el-table-column>
         </el-table>
-        <page
+        <!-- <page
           :total="total1"
           :page-size-props="15"
           :current-page="formSearch.page"
           @currentChange="currentChange1"
-        />
+        /> -->
         <h3>待出库库位货物</h3>
         <el-table
           :data="tableData4"
@@ -486,6 +489,11 @@
           <el-table-column
             prop="BatchNo"
             label="批次号"
+            min-width="20"
+          />
+          <el-table-column
+            prop="RFID"
+            label="托盘RFID"
             min-width="20"
           />
           <el-table-column
@@ -529,14 +537,14 @@
             label="门尼值等级"
             min-width="20"
           />
-          <el-table-column
+          <!-- <el-table-column
             label="操作"
             width="100"
           >
             <template slot-scope="{row}">
               <el-button @click="cancelDialog(row)">取消</el-button>
             </template>
-          </el-table-column>
+          </el-table-column> -->
         </el-table>
       </div>
       <div
@@ -902,21 +910,27 @@ export default {
     },
     async getDialogGoods() {
       try {
-        this.loading2 = true
+        // this.loading2 = true
+        this.formSearch.page_size = 100
         const data = await wmsStock('get', null, { params: this.formSearch })
         this.tableData2 = data.results
         this.loading2 = false
         this.total1 = data.count
         if (this.tableData4.length > 0) {
-          this.tableData2.forEach(d => {
-            let arr = []
-            arr = this.tableData4.filter(D => D.Sn === d.Sn)
-            if (arr.length > 0) {
-              d.btnDisabled = true
-            } else {
-              d.btnDisabled = false
-            }
+          // this.tableData2.forEach(d => {
+          //   let arr = []
+          //   arr = this.tableData4.filter(D => D.Sn === d.Sn)
+          //   if (arr.length > 0) {
+          //     d.btnDisabled = true
+          //   } else {
+          //     d.btnDisabled = false
+          //   }
+          // })
+          const arr2 = this.tableData2.filter((d, i) => {
+            const a = this.tableData4.findIndex(dd => dd.Sn === d.Sn)
+            return a === -1
           })
+          this.tableData2 = arr2
         }
       } catch (error) {
         this.loading2 = false
@@ -999,11 +1013,29 @@ export default {
         this.setWmsInstock(row, index)
         return
       }
-      this.$set(this.tableData2[index], 'btnDisabled', true)
+      this.tableData2.splice(0, 1)
+      // this.$set(this.tableData2[index], 'btnDisabled', true)
       row.Quantity = 1
       row.TaskDetailNumber = 'MesD' + new Date().getTime()
       row.SpaceCode = row.SpaceId
       this.tableData4.push(row)
+      //
+      // var arr = []
+      // arr = this.tableData2.slice(0, index)
+      // if (arr.every(d => d.btnDisabled === true)) {
+      //   if (row.position === '外' && !bool) {
+      //     // 是外伸位
+      //     this.setWmsInstock(row, index)
+      //     return
+      //   }
+      //   this.$set(this.tableData2[index], 'btnDisabled', true)
+      //   row.Quantity = 1
+      //   row.TaskDetailNumber = 'MesD' + new Date().getTime()
+      //   row.SpaceCode = row.SpaceId
+      //   this.tableData4.push(row)
+      // } else {
+      //   this.$message('请先选择前面的数据')
+      // }
     },
     submitLocation() {
       const _table = []
@@ -1038,12 +1070,12 @@ export default {
     },
     submitLocationFor(_table) {
       const arr = _table.map(d => d.Sn)
-      this.tableData2.forEach((d, i) => {
+      const arr2 = this.tableData2.filter((d, i) => {
         const a = arr.indexOf(d.Sn)
-        if (a > -1) {
-          this.$set(this.tableData2[i], 'btnDisabled', true)
-        }
+        return a === -1
       })
+      this.tableData2 = arr2
+
       _table.forEach(d => {
         const _arr = this.tableData4.filter(D => D.Sn === d.Sn)
         if (_arr.length === 0) {
@@ -1055,11 +1087,7 @@ export default {
     cancelDialog(row) {
       const arr = this.tableData4.filter(d => d.Sn !== row.Sn)
       this.tableData4 = arr
-      this.tableData2.forEach(d => {
-        if (d.Sn === row.Sn) {
-          this.$set(d, 'btnDisabled', false)
-        }
-      })
+      this.getDialogGoods()
     },
     currentChange1(page) {
       this.formSearch.page = page
