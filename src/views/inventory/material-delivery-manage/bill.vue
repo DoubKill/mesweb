@@ -103,7 +103,7 @@
         label="出库单据号"
         min-width="20"
       />
-      <el-table-column
+      <!-- <el-table-column
         prop="task_type"
         label="单据类型"
         min-width="20"
@@ -111,7 +111,7 @@
           let obj = optionsType.find(d=>d.id === row.task_type)
           return obj.name
         }"
-      />
+      /> -->
       <el-table-column
         prop="start_time"
         label="创建时间"
