@@ -110,7 +110,7 @@
       <el-table :data="tableData1" style="width: 100%">
         <el-table-column label="日期" min-width="20">
           <template slot-scope="{row}">
-            <el-date-picker v-model="row.s_factory_date" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" :picker-options="pickerOptions">
+            <el-date-picker v-model="row.s_factory_date" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" :picker-options="pickerOptions" :default-value="factory_date">
             </el-date-picker>
           </template>
         </el-table-column>
@@ -151,7 +151,7 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible1=false">取 消</el-button>
-        <el-button type="primary" :loading="btnLoading1" @click="submitChange">保 存</el-button>
+        <el-button type="primary" :loading="btnLoading1" @click="submitChange(true)">保 存</el-button>
       </span>
     </el-dialog>
   </div>
@@ -187,7 +187,7 @@ export default {
       exportTableShow: false,
       dialogVisible1: false,
       btnLoading1: false,
-      tableData1: [{}],
+      tableData1: [],
       factory_date: false,
       pickerOptions: this.pickerOptionsFun(),
       machineList: [],
@@ -397,7 +397,7 @@ export default {
     },
     delDialogFun(index, row) {
       this.tableData1.splice(index, 1)
-      this.submitChange()
+      this.submitChange(false)
     },
     changeEquip(index, row) {
       this.$set(row, 'product_no', null)
@@ -418,13 +418,16 @@ export default {
       this.getMachineList()
       this.getDialogList()
     },
-    async submitChange() {
+    async submitChange(bool) {
       try {
         this.btnLoading1 = true
         await summaryOfWeighingOutput('post', null, { data: { factory_date: this.factory_date, manual_data: this.tableData1 } })
         this.$message.success('提交成功')
-        // this.dialogVisible1 = false
         this.btnLoading1 = false
+        if (bool) {
+          this.dialogVisible1 = false
+        }
+        this.getList()
       } catch (e) {
         this.btnLoading1 = false
       }
