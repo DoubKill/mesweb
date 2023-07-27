@@ -155,9 +155,9 @@ export default {
       this.headDataGroup = obj || {}
       const arr = []
       this.tableData.forEach(d => {
-        // 计算日均产量（日均产量=total_trains/days）和完成率（日均产量/目标值）
+        // 计算日均产量（日均产量=total_trains/days/2）和完成率（日均产量/目标值）
         d.dailyOutput = d.total_trains && d.days ? Math.round((d.total_trains / d.days / 2) * 100) / 100 : ''
-        d.completionRate = d.dailyOutput && d.target_trains ? Math.round((d.dailyOutput / d.target_trains / 2 * 100) * 100) / 100 + '%' : ''
+        d.completionRate = d.dailyOutput && d.target_trains ? Math.round((d.dailyOutput / d.target_trains * 100) * 100) / 100 + '%' : ''
         // end
         // 获取每一排的不重复日期 总计使用
         let arrDay = []
