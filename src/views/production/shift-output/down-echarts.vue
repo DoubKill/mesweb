@@ -58,12 +58,25 @@
       width="80%"
       append-to-body
     >
-      <el-button v-if="arrData.length>0" v-permission="['equip_down_summary_table','export']" style="margin-bottom:10px;margin-left:85%" type="primary" @click="download">下载各机台图表</el-button>
-      <el-row id="echartsBox" v-loading="loadingDialog">
-        <el-col v-for="(d,i) in arrData" :key="i" :span="8">
+      <el-button
+        v-if="arrData.length>0"
+        v-permission="['equip_down_summary_table','export']"
+        style="margin-bottom:10px;margin-left:85%"
+        type="primary"
+        @click="download"
+      >下载各机台图表</el-button>
+      <el-row
+        id="echartsBox"
+        v-loading="loadingDialog"
+      >
+        <el-col
+          v-for="(d,i) in arrData"
+          :key="i"
+          :span="8"
+        >
           <div
             :id="'equipEchart'+i"
-            style="width: 100%;height:300px;margin-top:8px"
+            style="width: 100%;height:400px;margin-top:8px"
           />
         </el-col>
 
@@ -145,7 +158,7 @@ import { exportExcel } from '@/utils/index'
 import { setDate } from '@/utils'
 export default {
   name: 'DownEcharts',
-  components: { },
+  components: {},
   data() {
     return {
       search: {},
@@ -192,7 +205,10 @@ export default {
           {
             type: 'category',
             // prettier-ignore
-            data: []
+            data: [],
+            axisLabel: {
+              interval: 0
+            }
           }
         ],
         yAxis: [
@@ -277,13 +293,24 @@ export default {
           x: 60,
           y: 100,
           x2: 60,
-          y2: 30
+          y2: 100
         },
         xAxis: [
           {
             type: 'category',
             // prettier-ignore
-            data: []
+            data: [],
+            axisLabel: {
+              formatter: function(data) {
+                if (data.length > 7) {
+                  return data.substr(0, 7) + '...'
+                } else {
+                  return data
+                }
+              },
+              interval: 0,
+              rotate: 40
+            }
           }
         ],
         yAxis: [
@@ -377,7 +404,10 @@ export default {
           {
             type: 'category',
             // prettier-ignore
-            data: []
+            data: [],
+            axisLabel: {
+              interval: 0
+            }
           }
         ],
         yAxis: [
@@ -542,7 +572,7 @@ export default {
         this.arrData = data.results
         var ops = []
         data.results.forEach((d, _i) => {
-          ops.push(JSON.parse(JSON.stringify(this.option1)))
+          ops.push(deepClone(this.option1))
           ops[_i].title.text = d.equip_no + '密炼机TOP10停机原因汇总(总' + (d.times ? d.times : 0) + 'min)'
           ops[_i].xAxis[0].data = d.titles || []
           ops[_i].series[0].data = d.details || []
@@ -587,6 +617,23 @@ function sum(arr, params) {
   }, 0)
   s = Math.round(s * 100) / 100
   return s
+}
+
+function deepClone(obj) {
+  let newObj = null // 声明一个对象来存储拷贝之后的内容
+  // 判断数据类型是否是复杂的数据类型，如果是则调用自己，如果不是则直接赋值即可！
+  // 由于null不可以循环但是他的类型又是object，所以这个需要对null进行判断
+  if (typeof (obj) === 'object' && obj !== null) {
+    // 声明一个变量用以存储拷贝出来的值，根据参数的具体数据类型声明不同的类型来存储
+    newObj = obj instanceof Array ? [] : {}
+    // 循环obj的每一项，如果里面还有复杂的数据类型的话，则直接利用递归函数再次调用。
+    for (var i in obj) {
+      newObj[i] = deepClone(obj[i])
+    }
+  } else {
+    newObj = obj
+  }
+  return newObj // 函数没有返回的值的话，则为undefined
 }
 </script>
 
