@@ -178,7 +178,7 @@
       >
         <template slot-scope="scope">
           <el-link
-            v-if="scope.row.name!=='汇总'&&scope.row.name!=='单页合计'"
+            v-if="scope.row.name!=='汇总'&&scope.row.name!=='单页合计'&&scope.row.quantity_3"
             type="primary"
             @click="dialogShow(scope.row,3)"
           >{{ scope.row.quantity_3 }}</el-link>
