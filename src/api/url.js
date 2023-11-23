@@ -683,6 +683,7 @@ export default {
   MachineTargetValue: '/api/v1/production/machine-target-value/', // 机台目标值设定
   MonthlyOutputStatistics: '/api/v1/production/monthly-output-statistics-and-performance/', // 月产量统计明细及绩效
   DailyProductionCompletionReport: '/api/v1/production/daily-production-completion-report/', // 月产量完成
+  MonthlyProductionCompletionReport: '/api/v1/production/monthly-production-completion-report/', // 年产量完成
   AttendanceResultAudit: '/api/v1/production/attendance-result-audit/',
   Equip190e: '/api/v1/production/equip-190e/',
   Equip190eImport: '/api/v1/production/equip-190e/import_xlsx/',
@@ -790,5 +791,8 @@ export default {
   EquipDownSummaryTable: '/api/v1/production/equip-down-summary-table/',
   SchedulingStockSummaryImport: '/api/v1/plan/scheduling-stock-summary/import-xlsx/',
   DeletePlan: '/api/v1/basics/plan-schedule/delete-plan/',
-  SchedulingRecipeConfirm: '/api/v1/plan/scheduling-recipe-machine-setting/confirm/'
+  SchedulingRecipeConfirm: '/api/v1/plan/scheduling-recipe-machine-setting/confirm/',
+  DailyProductTestStatics: '/api/v1/quality/daily_product-test-statics/',
+  CutTimeAnalysis: '/api/v1/production/cut-time-analysis/',
+  ShiftTimeAnalysis: '/api/v1/production/shift-time-analysis/'
 }
