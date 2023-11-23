@@ -67,6 +67,7 @@
         <equip-select
           :equip_no_props.sync="search.equip_no"
           :is-created="true"
+          :isMultiple="true"
           @changeSearch="equipChanged"
         />
       </el-form-item>
@@ -364,7 +365,7 @@ export default {
       loading: false,
       search: {
         page: 1,
-        equip_no: ''
+        equip_no: []
       },
       allData: {},
       tableData: [],

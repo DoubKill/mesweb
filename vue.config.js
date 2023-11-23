@@ -40,9 +40,9 @@ module.exports = {
     disableHostCheck: true,
     proxy: {
       '/api': {
-        // target: 'http://10.10.120.40:15008',
-        // target: 'http://10.10.120.40:9009/', //  测试环境
-        target: 'http://10.20.181.237:8000/', //  博文
+        // target: 'http://10.10.130.58:15008',
+        target: 'http://10.10.130.58:9009/', //  测试环境
+        // target: 'http://10.20.181.237:8000/', //  博文
         // target: 'http://liubowen.vaiwan.com', //  博文
         // target: 'http://10.4.14.249:8000', //  博文外
         // target: 'http://10.20.180.40:8000/', // 龙霄

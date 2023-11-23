@@ -27,6 +27,7 @@
       </el-form-item>
       <el-form-item>
         <el-button :type="search.interval_type===1?'warning':'primary'" @click="getList(1)">0-4小时需求量</el-button>
+        <el-button :type="search.interval_type===1?'warning':'primary'" @click="getList(4)">0-24小时需求量</el-button>
         <el-button :type="search.interval_type===2?'warning':'primary'" @click="getList(2)">4-8小时需求量</el-button>
         <el-button :type="search.interval_type===3?'warning':'primary'" @click="getList(3)">8-12小时需求量</el-button>
         <el-button type="primary" @click="getList(search.interval_type)">刷新</el-button>

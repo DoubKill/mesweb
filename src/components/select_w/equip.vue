@@ -1,22 +1,8 @@
 <template>
   <div style="display:inline-block">
     <!-- 机台下拉框 设备编码-->
-    <el-select
-      v-model="_equip_no"
-      :clearable="!isCreated||isClear"
-      placeholder="请选择机台"
-      :multiple="isMultiple"
-      :disabled="disabled"
-      :multiple-limit="multipleLimit"
-      @change="changeSearch"
-      @visible-change="visibleChange"
-    >
-      <el-option
-        v-for="item in machineList"
-        :key="item.equip_no"
-        :label="item.equip_no"
-        :value="item.equip_no"
-      />
+    <el-select v-model="_equip_no" :clearable="!isCreated||isClear" placeholder="请选择机台" :multiple="isMultiple" :disabled="disabled" :multiple-limit="multipleLimit" @change="changeSearch" @visible-change="visibleChange">
+      <el-option v-for="(item,index) in machineList" :key="index" :label="item.equip_no" :value="item.equip_no" />
     </el-select>
   </div>
 </template>
@@ -84,15 +70,23 @@ export default {
   methods: {
     getMachineList() {
       var _this = this
-      equipUrl('get', { params: { all: 1, category_name: this.equipType }})
-        .then(function(response) {
+      equipUrl('get', { params: { all: 1, category_name: this.equipType } })
+        .then((response) => {
           _this.machineList = response.results || []
           if (_this.isCreated) {
             if (_this.$route.path === '/alone/material_base_info_manage/') {
-              _this.changeSearch(_this.$route.query.equip)
+              if (this.isMultiple) {
+                _this.changeSearch([_this.$route.query.equip])
+              } else {
+                _this.changeSearch(_this.$route.query.equip)
+              }
               return
             }
-            _this.changeSearch(_this.machineList[0].equip_no)
+            if (this.isMultiple) {
+              _this.changeSearch([_this.machineList[0].equip_no])
+            } else {
+              _this.changeSearch(_this.machineList[0].equip_no)
+            }
           }
         })
         .catch(function() { })
