@@ -835,7 +835,7 @@ export let asyncRoutes = [
           {
             path: '/schedule/material-plan/',
             component: () => import('@/views/plan/schedule/dispose/material-plan'),
-            name: 'materialPlan',
+            name: 'MaterialPlan',
             meta: {
               faName: 'SmallMaterialWeight',
               title: '细料分解每日计划用量',
@@ -1245,6 +1245,16 @@ export let asyncRoutes = [
             }
           },
           {
+            path: '/planned-usage/',
+            component: () => import('@/views/plan/schedule/dispose/planned-usage'),
+            name: 'PlannedUsage',
+            meta: {
+              faName: 'ScheduleDispose',
+              title: '胶料/炭黑/油料日计划用量',
+              permissionName: 'xl_plan_consume'
+            }
+          },
+          {
             path: '/material/base/material-consumption',
             name: 'MaterialConsumption',
             component: () => import('@/views/production/material-consumption'),
@@ -1387,6 +1397,16 @@ export let asyncRoutes = [
               faName: 'ResultAnalysis',
               title: '日产量完成',
               permissionName: 'daily_production_completion_report'
+            }
+          },
+          {
+            path: '/report/monthly-output-completed',
+            component: () => import('@/views/equipment-management/report/monthly-output-completed'),
+            name: 'MonthlyOutputCompleted',
+            meta: {
+              faName: 'ResultAnalysis',
+              title: '月产量完成',
+              permissionName: 'monthly_production_completion_report'
             }
           },
           {
@@ -1698,7 +1718,7 @@ export let asyncRoutes = [
           {
             path: '/work-clothes-book',
             name: 'work-clothes-book',
-            component: () => import('@/views/material_base_info_manage/work-clothes-book'),
+            component: () => import('@/views/material_base_info_manage/work-clothes-book-new'),
             meta: {
               title: '工装管理台账',
               faName: 'FrockManage',

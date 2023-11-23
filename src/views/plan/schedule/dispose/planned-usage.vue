@@ -1,6 +1,6 @@
 <template>
   <div class="materialPlan">
-    <!-- 细料分解每日计划用量 -->
+    <!-- 胶料/炭黑/油料日计划用量 -->
     <el-form :inline="true">
       <el-form-item label="原材料类别">
         <el-select v-model="search.material_type" clearable filterable @change="getList()">
@@ -106,7 +106,7 @@ import { classesListUrl, materialsUrl, productMaterials } from '@/api/base_w'
 import { xlPlanConsume } from '@/api/jqy'
 import { exportExcel } from '@/utils'
 export default {
-  name: 'MaterialPlan',
+  name: 'PlannedUsage',
   components: { EquipSelect },
   data() {
     return {
@@ -158,7 +158,7 @@ export default {
       try {
         this.type = 2
         this.loading = true
-        this.search.xl_display = 1
+        this.search.other_display = 1
         const data = await xlPlanConsume('get', null, { params: this.search })
         this.tableData = data.result || []
         this.tableData = this.tableData.concat(getNewGoodsList(this.tableData))

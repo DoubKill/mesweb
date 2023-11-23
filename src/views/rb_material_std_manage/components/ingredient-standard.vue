@@ -270,10 +270,14 @@ export default {
       if (JSON.stringify(row) === '{}') {
         return
       }
-      this.$set(this.tableData[this.currentFaIndex][this.currentIndex], 'material_name', row.material_name)
-      this.$set(this.tableData[this.currentFaIndex][this.currentIndex], 'material', row.id)
-      this.$set(this.tableData[this.currentFaIndex][this.currentIndex], 'sn', 0)
-      this.$set(this.tableData[this.currentFaIndex][this.currentIndex], 'material_type', row.material_type_name)
+      const a = this.tableData[this.currentFaIndex][this.currentIndex]
+      this.$set(a, 'material_name', row.material_name)
+      this.$set(a, 'material', row.id)
+      this.$set(a, 'sn', 0)
+      this.$set(a, 'material_type', row.material_type_name)
+      if (a.standard_weight) {
+        this.checkTolerance(a, this.currentIndex, this.currentFaIndex)
+      }
     },
     'formObj.enable_equip'(arr) {
       if (!arr) {
@@ -331,9 +335,14 @@ export default {
     updateRow() {},
     async checkTolerance(row, index, faI) {
       try {
+        if (!row.material_name) {
+          return
+        }
         const data = await getMaterialTolerance('get', null, { params: {
           material_name: row.material_name,
           standard_weight: row.actual_weight || row.standard_weight,
+          material_type: row.material_type,
+          material_species: this.formObj.stage_name === 'FM' ? '硫磺' : '细料',
           only_num: true }})
         if (data) {
           this.tableData[faI][index].standard_error = data

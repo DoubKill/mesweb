@@ -15,6 +15,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" :disabled="btnExportLoad" @click="exportTable(1)">导出Excel</el-button>
+        <el-button type="primary" @click="getEcharts()">查看折线图</el-button>
       </el-form-item>
       <el-form-item>
         <h3 style="display: inline-block;margin:0">单位：车</h3>
@@ -31,6 +32,8 @@
       <el-table-column prop="total_trains" label="总产量" width="60" align="center" />
       <el-table-column prop="dailyOutput" label="日均产量" width="70" align="center" />
       <el-table-column prop="completionRate" label="完成率" width="80" align="center" />
+      <el-table-column prop="max_trains" label="历史最高产量" width="120" align="center" />
+      <el-table-column prop="max_group" label="最高产班组" width="100" align="center" />
       <el-table-column v-for="(item,_key) in headDataNew" :key="_key+new Date().getTime()" align="center" :label="_key.split('-')[0]">
         <el-table-column :label="_key.split('-')[1]" align="center">
           <el-table-column :label="item" align="center">
@@ -64,11 +67,24 @@
         </el-table-column>
       </el-table-column>
     </el-table>
+
+    <el-dialog
+      title=""
+      :visible.sync="dialogVisible"
+      width="80%"
+      append-to-body
+    >
+      <div
+        id="taskLine"
+        style="width: 100%;height:550px"
+      />
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { setDate, exportExcel } from '@/utils'
+import * as echarts from 'echarts'
 import { shiftProductionSummary } from '@/api/base_w_five'
 import { globalCodesUrl } from '@/api/base_w'
 export default {
@@ -88,7 +104,102 @@ export default {
       headDataGroup: [],
       tableData1: [],
       headDataNew: {},
-      groups: []
+      equip_list: [],
+      day_trains: [],
+      day_ratio: [],
+      dialogVisible: false,
+      groups: [],
+      option: {
+        color: ['#0000FF', '#ED7D31'],
+        title: {
+          left: 'center',
+          text: '各班产量完成率折线图'
+        },
+        tooltip: {
+          trigger: 'axis'
+        },
+        legend: {
+          top: '6%',
+          orient: 'horizontal',
+          data: ['当天产量', '当天完成率']
+        },
+        toolbox: {
+          show: true
+        },
+        calculable: true,
+        grid: {
+          x: 60,
+          y: 100,
+          x2: 60,
+          y2: 30
+        },
+        xAxis: [
+          {
+            type: 'category',
+            // prettier-ignore
+            data: []
+          }
+        ],
+        yAxis: [
+          {
+            type: 'value',
+            name: '车',
+            splitLine: {
+              show: false
+            },
+            nameGap: 20
+          },
+          {
+            type: 'value',
+            name: '',
+            splitLine: {
+              show: false
+            },
+            nameGap: 20
+          }
+        ],
+        series: [
+          {
+            barWidth: 20,
+            barGap: '0%',
+            name: '当天产量',
+            type: 'bar',
+            yAxisIndex: 0,
+            data: [],
+            label: {
+              color: '#F5FFFF',
+              backgroundColor: '#C00000',
+              show: true,
+              formatter: function(params) {
+                if (params.value === 0 || params.value === '0') {
+                  return ''
+                } else {
+                  return params.value
+                }
+              }
+            }
+          },
+          {
+            name: '当天完成率',
+            type: 'line',
+            yAxisIndex: 1,
+            data: [],
+            label: {
+              position: 'top',
+              color: 'black',
+              backgroundColor: '#FFFF00',
+              show: true,
+              formatter: function(params) {
+                if (params.value === 0 || params.value === '0') {
+                  return ''
+                } else {
+                  return params.value + '%'
+                }
+              }
+            }
+          }
+        ]
+      }
     }
   },
   async created() {
@@ -104,6 +215,9 @@ export default {
         const data = await shiftProductionSummary('get', null, { params: this.search })
         this.headData = data.table_head || []
         this.tableData = data.data || []
+        this.equip_list = data.equip_list
+        this.day_trains = data.day_trains
+        this.day_ratio = data.day_ratio
         this.loading = false
         this.changeList()
       } catch (e) {
@@ -239,6 +353,16 @@ export default {
       } else if (columnIndex === 1) {
         return [0, 0]
       }
+    },
+    getEcharts() {
+      this.dialogVisible = true
+      this.option.xAxis[0].data = this.equip_list || []
+      this.option.series[0].data = this.day_trains || []
+      this.option.series[1].data = this.day_ratio || []
+      this.$nextTick(() => {
+        const chartBar = echarts.init(document.getElementById('taskLine'))
+        chartBar.setOption(this.option)
+      })
     },
     exportTable(type) {
       this.type = type

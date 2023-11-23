@@ -1137,6 +1137,15 @@ export function dailyProductionCompletionReport(method, id, data = {}) {
   return request(obj)
 }
 
+export function monthlyProductionCompletionReport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.MonthlyProductionCompletionReport + id + '/' : API.MonthlyProductionCompletionReport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
 export function dailyProductionCompletionDown(params) {
   return request({
     url: API.DailyProductionCompletionReport,
@@ -1759,6 +1768,33 @@ export function deletePlan(method, id, data = {}) {
 export function schedulingRecipeConfirm(method, id, data = {}) {
   const obj = {
     url: id ? API.SchedulingRecipeConfirm + id + '/' : API.SchedulingRecipeConfirm,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function dailyProductTestStatics(method, id, data = {}) {
+  const obj = {
+    url: id ? API.DailyProductTestStatics + id + '/' : API.DailyProductTestStatics,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function cutTimeAnalysis(method, id, data = {}) {
+  const obj = {
+    url: id ? API.CutTimeAnalysis + id + '/' : API.CutTimeAnalysis,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function shiftTimeAnalysis(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ShiftTimeAnalysis + id + '/' : API.ShiftTimeAnalysis,
     method: method
   }
   Object.assign(obj, data)
