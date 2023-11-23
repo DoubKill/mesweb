@@ -59,6 +59,9 @@
       <el-form-item label="LOT NO">
         <el-input v-model="getParams.lot_no" clearable @input="debounceList" />
       </el-form-item>
+      <el-form-item label="托盘号">
+        <el-input v-model="getParams.pallet_no" clearable @input="debounceList" />
+      </el-form-item>
       <el-form-item label="计划编号">
         <el-input v-model="getParams.plan_classes_uid" clearable @input="debounceList" />
       </el-form-item>

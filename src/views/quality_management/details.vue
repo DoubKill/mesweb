@@ -318,9 +318,9 @@
         </el-table-column>
         <el-table-column label="检测项">
           <template slot-scope="{row}">
-            <template v-for="item in row.data_indicator_detail">
+            <div v-for="item in row.data_indicator_detail" :key="item.detail">
               <el-checkbox :key="item.detail" v-model="item.show" @change="checkboxFilter(false)">{{ item.detail }}</el-checkbox>
-            </template>
+            </div>
           </template>
         </el-table-column>
       </el-table>

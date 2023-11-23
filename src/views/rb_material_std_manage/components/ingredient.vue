@@ -684,11 +684,19 @@ export default {
     },
     async checkTolerance(row, index, faI) {
       try {
+        if (faI === 0) {
+          return
+        }
+        if (!row.material_name) {
+          return
+        }
         const data = await getMaterialTolerance('get', null, {
           params: {
             material_name: row.material_name,
             standard_weight: row.actual_weight,
-            only_num: true
+            only_num: true,
+            material_type: row.material_type,
+            material_species: faI === 1 ? '炭黑' : '油料'
           }
         })
         if (data) {
@@ -826,6 +834,9 @@ export default {
         this.$set(a, 'material', row.id)
         // this.$set(a, 'sn', this.currentMaterialIndex + 1)
         this.$set(a, 'material_type', row.material_type_name)
+        if (a.actual_weight) {
+          this.checkTolerance(a, this.currentMaterialIndex, this.faI)
+        }
         if (!a.type) {
           if (row.material_type_name.indexOf('炭黑') > -1) {
             this.$set(a, 'type', 2)
