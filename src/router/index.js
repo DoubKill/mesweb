@@ -1375,7 +1375,7 @@ export let asyncRoutes = [
         component: () => import('@/views/production/result_analysis/a-index.vue'),
         name: 'ResultAnalysis',
         meta: {
-          title: '生产产量统计',
+          title: '生产产量汇总',
           icon: 'production'
         },
         children: [
