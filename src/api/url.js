@@ -741,12 +741,12 @@ export default {
   XlReportWeightStatics: '/api/v1/terminal/xl-report-weight-statics/',
   ProductExpiresList: '/api/v1/inventory/product-expires-list/',
   ProductExpiresDetails: '/api/v1/inventory/product-expires-details/',
+  EquipmentIndex: '/api/v1/equipment/index/',
   WfProductBatching: '/api/v1/recipe/wf-product-batching/',
 
   WmsAddPrint: '/api/v1/terminal/wms-add-print/',
   HfForceHandle: '/api/v1/inventory/hf-force-handle/',
   HfConfigSet: '/api/v1/inventory/hf-config-set/',
-  EquipmentIndex: '/api/v1/equipment/index/',
   RubberLog: '/api/v1/production/rubber-log/',
   ToolManageAccount: '/api/v1/production/tool-manage-account/',
   RubberFrameRepair: '/api/v1/production/rubber-frame-repair/',
