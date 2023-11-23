@@ -41,13 +41,13 @@ module.exports = {
     proxy: {
       '/api': {
         // target: 'http://10.10.130.58:15008',
-        target: 'http://10.10.130.58:9009/', //  测试环境
+        // target: 'http://10.10.130.58:9009/', //  测试环境
         // target: 'http://10.20.181.237:8000/', //  博文
         // target: 'http://liubowen.vaiwan.com', //  博文
         // target: 'http://10.4.14.249:8000', //  博文外
         // target: 'http://10.20.180.40:8000/', // 龙霄
         // target: 'http://10.4.14.188:8000', // 杨振超外
-        // target: 'http://10.10.230.101:8000/', // 杨振超
+        target: 'http://10.10.230.136:8000/', // 杨振超
         // target: 'http://10.4.10.54:80',
         ws: true,
         changeOrigin: true,

@@ -102,7 +102,7 @@ export default {
       extend: {
         series: {
           animation: false,
-          center: ['50%', '160'],
+          center: ['50%', '200'],
           labelLine: {
             normal: {
               length: 1

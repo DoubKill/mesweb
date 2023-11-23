@@ -41,7 +41,7 @@
       <h4 style="text-align:center">{{ index }}各部位故障占比</h4>
       <ve-pie
         style="width:100%;"
-        height="350px"
+        height="250px"
         :data="item.data"
         :extend="extend"
         :settings="chartSettings"
@@ -103,7 +103,7 @@ export default {
       extend: {
         series: {
           animation: false,
-          center: ['50%', '90'],
+          center: ['50%', '120'],
           labelLine: {
             normal: {
               length: 1

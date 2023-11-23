@@ -17,7 +17,7 @@
       <div v-for="(itemChil,index) in item.class_name" :key="index" class="box-child">
         <span style="width:70px">{{ itemChil }}</span>
         <span style="margin:0 20px">故障时间：{{ item.error_time[index] }}</span>
-        <span>故障率：{{ item.error_percent[index] * 100 }}%</span>
+        <span>故障率：{{ (item.error_percent[index] * 100).toFixed(2) }}%</span>
       </div>
     </div>
     <div v-if="chartData2.rows.length===0" style="text-align:center">暂无数据</div>
@@ -42,7 +42,7 @@ export default {
     this.extend = {
       series: {
         animation: false,
-        center: ['50%', '150']
+        center: ['50%', '220']
       }
     }
     this.chartSettings = {
@@ -50,6 +50,7 @@ export default {
     }
     return {
       searchDate: setDate(),
+      // searchDate: '2023-02-19',
       chartData2: {
         columns: ['global_name', 'global_no'],
         rows: []
