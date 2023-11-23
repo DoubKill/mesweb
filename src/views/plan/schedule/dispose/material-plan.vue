@@ -30,13 +30,15 @@
         />
       </el-form-item>
       <el-form-item label="配方号">
-        <el-select v-model="search.product_no" filterable placeholder="请选择" clearable @change="getList()">
+        <el-select v-model="search.product_no" clearable filterable @change="getList()">
           <el-option
             v-for="item in options"
-            :key="item.material_no"
-            :label="item.material_no"
-            :value="item.material_no"
-          />
+            :key="item.product_no"
+            :label="item.product_no"
+            :value="item.product_no"
+          >
+            <span :style="{color: item.used?'blue':''}">{{ item.product_no }}</span>
+          </el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -71,7 +73,7 @@
       <el-table-column
         align="center"
         prop="total"
-        label="合计"
+        label="合计（kg）"
       />
       <el-table-column
         align="center"
@@ -100,7 +102,7 @@
 
 <script>
 import EquipSelect from '@/components/EquipSelect'
-import { classesListUrl, materialsUrl, batchingMaterials } from '@/api/base_w'
+import { classesListUrl, materialsUrl, productMaterials } from '@/api/base_w'
 import { xlPlanConsume } from '@/api/jqy'
 import { exportExcel } from '@/utils'
 export default {
@@ -138,7 +140,7 @@ export default {
     },
     async getProductList() {
       try {
-        const data = await batchingMaterials('get', null, { params: { all: 1 }})
+        const data = await productMaterials('get', null, { params: { all: 1 }})
         this.options = data || []
       } catch (e) {
         //

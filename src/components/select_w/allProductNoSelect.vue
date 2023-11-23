@@ -1,6 +1,7 @@
 <template>
   <!-- 上辅机和mes全部胶料下拉框 -->
   <el-select
+    v-if="!showColor"
     v-model="productBatchingId"
     clearable
     filterable
@@ -17,10 +18,30 @@
       :value="item.id"
     />
   </el-select>
+  <el-select
+    v-else
+    v-model="productBatchingId"
+    clearable
+    filterable
+    :loading="loading"
+    :allow-create="isCreated"
+    :disabled="isDisabled"
+    @change="productBatchingChanged"
+    @visible-change="visibleChange"
+  >
+    <el-option
+      v-for="item in productBatchings"
+      :key="item.product_no"
+      :label="item.product_no"
+      :value="item.product_no"
+    >
+      <span :style="{color: item.used?'blue':''}">{{ item.product_no }}</span>
+    </el-option>
+  </el-select>
 </template>
 
 <script>
-import { batchingMaterials } from '@/api/base_w'
+import { batchingMaterials, productMaterials } from '@/api/base_w'
 export default {
   props: {
     isStageProductbatchNoRemove: {
@@ -67,6 +88,10 @@ export default {
     isDisabled: {
       type: Boolean,
       default: false
+    },
+    showColor: { // 是否显示启用的 颜色区分
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -93,6 +118,10 @@ export default {
   },
   methods: {
     productBatchingChanged() {
+      if (this.showColor) {
+        this.$emit('productBatchingChanged', this.productBatchingId)
+        return
+      }
       if (this.isCreated) {
         this.$emit('productBatchingChanged', this.productBatchingById[this.productBatchingId] ? this.productBatchingById[this.productBatchingId] : this.productBatchingId)
         return
@@ -119,6 +148,15 @@ export default {
           }
         }
         this.loading = true
+        if (this.showColor) {
+          productMaterials('get').then(response => {
+            this.loading = false
+            this.productBatchings = response || []
+          }).catch(() => {
+            this.loading = false
+          })
+          return
+        }
         batchingMaterials('get', null, { params: obj }).then(response => {
           let productBatchings = response
           productBatchings.forEach(productBatching => {

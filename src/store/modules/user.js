@@ -149,7 +149,7 @@ const actions = {
       Cookies.remove('userId')
       Cookies.remove('name')
       Cookies.remove('zc-url')
-      Cookies.remove('password')
+      // Cookies.remove('password')
       Cookies.remove('is_superuser')
       Cookies.remove('permission_section')
       dispatch('tagsView/delAllViews', null, { root: true })

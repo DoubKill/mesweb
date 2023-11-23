@@ -239,88 +239,6 @@ export const equipRoutes = [
         ]
       },
       {
-        path: '/equipment/spare-parts',
-        redirect: '/equipment/location-management',
-        component: () => import('@/views/equipment-manage/spare-parts/a-index'),
-        name: 'SparePartsWarehouse',
-        meta: {
-          title: '备品备件库',
-          icon: 'quality'
-        },
-        children: [
-          {
-            path: '/equipment/location-management',
-            component: () => import('@/views/equipment-manage/spare-parts/location-management'),
-            name: 'LocationManagement',
-            meta: {
-              faName: 'SparePartsWarehouse',
-              title: '备件库区库位管理',
-              permissionName: 'equip_warehouse'
-            }
-          },
-          {
-            path: '/equipment/warehousing-management',
-            component: () => import('@/views/equipment-manage/spare-parts/warehousing-management'),
-            name: 'WarehousingManagement',
-            meta: {
-              faName: 'SparePartsWarehouse',
-              title: '备件入库管理',
-              permissionName: 'equip_in_warehouse'
-            }
-          },
-          {
-            path: '/equipment/outbounding-management',
-            component: () => import('@/views/equipment-manage/spare-parts/outbounding-management'),
-            name: 'OutboundingManagement',
-            meta: {
-              faName: 'SparePartsWarehouse',
-              title: '备件出库管理',
-              permissionName: 'equip_out_warehouse'
-            }
-          },
-          {
-            path: '/equipment/inventory-query',
-            component: () => import('@/views/equipment-manage/spare-parts/inventory-query'),
-            name: 'InventoryQuery',
-            meta: {
-              faName: 'SparePartsWarehouse',
-              title: '备件库存查询',
-              permissionName: 'equip_warehouse_inventory'
-            }
-          },
-          {
-            path: '/equipment/inventory-query-warn',
-            component: () => import('@/views/equipment-manage/spare-parts/inventory-query-warn'),
-            name: 'InventoryWarn',
-            meta: {
-              faName: 'SparePartsWarehouse',
-              title: '备件库存预警',
-              permissionName: 'equip_warehouse_inventory'
-            }
-          },
-          {
-            path: '/equipment/history-query',
-            component: () => import('@/views/equipment-manage/spare-parts/history-query'),
-            name: 'HistoryQuery',
-            meta: {
-              faName: 'SparePartsWarehouse',
-              title: '备件操作履历查询',
-              permissionName: 'equip_warehouse_record'
-            }
-          },
-          {
-            path: '/equipment/statistics',
-            component: () => import('@/views/equipment-manage/spare-parts/statistics'),
-            name: 'Statistics',
-            meta: {
-              faName: 'SparePartsWarehouse',
-              title: '备件出入库统计分析',
-              permissionName: 'equip_warehouse_statistical'
-            }
-          }
-        ]
-      },
-      {
         path: '/equipment/master-data',
         redirect: '/equipment/supplier',
         component: () => import('@/views/equipment-manage/master-data/a-index'),
@@ -581,8 +499,7 @@ export const equipRoutes = [
               title: '交旧率报表',
               permissionName: 'equip_old_rate'
             }
-          }
-          ,{
+          }, {
             path: '/equipment/order-receiving',
             component: () => import('@/views/equipment-manage/report-form/order-receiving'),
             name: 'EquipmentReportFormOrderReceiving',
@@ -601,7 +518,7 @@ export const equipRoutes = [
               title: '设备故障分析报表',
               permissionName: 'equip_fault_analyse'
             }
-          },
+          }
           /** {
             path: '/equipment/energy-consumption',
             component: () => import('@/views/equipment-manage/report-form/energy-consumption'),
@@ -612,6 +529,100 @@ export const equipRoutes = [
               permissionName: ''
             }
           }**/
+        ]
+      }
+    ]
+  },
+  {
+    path: '/spare-parts',
+    component: Layout,
+    redirect: '/equipment/spare-parts',
+    name: 'SpareParts',
+    meta: {
+      title: '备品备件管理',
+      icon: 'quality'
+    },
+    children: [
+      {
+        path: '/equipment/spare-parts',
+        redirect: '/equipment/location-management',
+        component: () => import('@/views/equipment-manage/spare-parts/a-index'),
+        name: 'SparePartsWarehouse',
+        meta: {
+          title: '备品备件库',
+          icon: 'quality'
+        },
+        children: [
+          {
+            path: '/equipment/location-management',
+            component: () => import('@/views/equipment-manage/spare-parts/location-management'),
+            name: 'LocationManagement',
+            meta: {
+              faName: 'SparePartsWarehouse',
+              title: '备件库区库位管理',
+              permissionName: 'equip_warehouse'
+            }
+          },
+          {
+            path: '/equipment/warehousing-management',
+            component: () => import('@/views/equipment-manage/spare-parts/warehousing-management'),
+            name: 'WarehousingManagement',
+            meta: {
+              faName: 'SparePartsWarehouse',
+              title: '备件入库管理',
+              permissionName: 'equip_in_warehouse'
+            }
+          },
+          {
+            path: '/equipment/outbounding-management',
+            component: () => import('@/views/equipment-manage/spare-parts/outbounding-management'),
+            name: 'OutboundingManagement',
+            meta: {
+              faName: 'SparePartsWarehouse',
+              title: '备件出库管理',
+              permissionName: 'equip_out_warehouse'
+            }
+          },
+          {
+            path: '/equipment/inventory-query',
+            component: () => import('@/views/equipment-manage/spare-parts/inventory-query'),
+            name: 'InventoryQuery',
+            meta: {
+              faName: 'SparePartsWarehouse',
+              title: '备件库存查询',
+              permissionName: 'equip_warehouse_inventory'
+            }
+          },
+          {
+            path: '/equipment/inventory-query-warn',
+            component: () => import('@/views/equipment-manage/spare-parts/inventory-query-warn'),
+            name: 'InventoryWarn',
+            meta: {
+              faName: 'SparePartsWarehouse',
+              title: '备件库存预警',
+              permissionName: 'equip_warehouse_inventory'
+            }
+          },
+          {
+            path: '/equipment/history-query',
+            component: () => import('@/views/equipment-manage/spare-parts/history-query'),
+            name: 'HistoryQuery',
+            meta: {
+              faName: 'SparePartsWarehouse',
+              title: '备件操作履历查询',
+              permissionName: 'equip_warehouse_record'
+            }
+          },
+          {
+            path: '/equipment/statistics',
+            component: () => import('@/views/equipment-manage/spare-parts/statistics'),
+            name: 'Statistics',
+            meta: {
+              faName: 'SparePartsWarehouse',
+              title: '备件出入库统计分析',
+              permissionName: 'equip_warehouse_statistical'
+            }
+          }
         ]
       }
     ]

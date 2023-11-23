@@ -1,6 +1,6 @@
 <template>
   <div class="temperature-confirm">
-    <!-- 除尘袋滤器记录检查表确认 -->
+    <!-- 除尘袋滤器记录表确认 -->
     <el-form :inline="true">
       <el-form-item label="起止日期">
         <el-date-picker
@@ -28,6 +28,12 @@
             :value="item"
           />
         </el-select>
+      </el-form-item>
+      <el-form-item label="班次">
+        <class-select
+          :value-default="getParams.classes"
+          @classSelected="classSearch"
+        />
       </el-form-item>
       <el-form-item style="float:right">
         <el-button
@@ -84,6 +90,10 @@
         label="状态"
       />
       <el-table-column
+        prop="classes"
+        label="班次"
+      />
+      <el-table-column
         prop="created_username"
         label="录入人"
       />
@@ -134,6 +144,12 @@
             type="date"
             value-format="yyyy-MM-dd"
             placeholder="选择日期"
+          />
+        </el-form-item>
+        <el-form-item label="班次">
+          <class-select
+            :value-default="typeForm.classes"
+            @classSelected="classChanged"
           />
         </el-form-item>
         <br>
@@ -218,7 +234,7 @@
       :close-on-click-modal="false"
     >
       <el-form :model="typeForm1" label-width="150px" inline>
-        <el-form-item label="确认备注" prop="classes">
+        <el-form-item label="确认备注">
           <el-input
             v-model="typeForm1.confirm_desc"
             type="textarea"
@@ -247,10 +263,11 @@
 import page from '@/components/page'
 import { checkTemperatureTable, checkTemperatureTableExport } from '@/api/jqy'
 import { setDate } from '@/utils'
+import classSelect from '@/components/ClassSelect'
 
 export default {
   name: 'SpotCheckConfirm',
-  components: { page },
+  components: { page, classSelect },
   data: function() {
     return {
       dateValue: [],
@@ -304,6 +321,7 @@ export default {
       this.dialogEditVisible = false
       this.tableData1 = []
       this.typeForm = {}
+      this.typeForm.classes = null
       setTimeout(d => {
         this.$refs.typeForm.clearValidate()
       })
@@ -358,6 +376,11 @@ export default {
       this.getParams.page = 1
       this.getList()
     },
+    classSearch(val) {
+      this.getParams.classes = val
+      this.getParams.page = 1
+      this.getList()
+    },
     changDebounce() {
       this.$debounce(this, 'changSelect')
     },
@@ -367,12 +390,7 @@ export default {
       this.getList()
     },
     classChanged(val) {
-      this.getParams.classes = val
-      this.getParams.page = 1
-      this.getList()
-    },
-    classChanged1(val) {
-      this.$set(this.typeForm, 'classes', val)
+      this.typeForm.classes = val
     },
     confirm() {
       if (this.multipleSelection.length > 0) {
@@ -443,6 +461,9 @@ export default {
             if (this.typeForm.id) {
               this.typeForm.ids = [this.typeForm.id]
               this.typeForm.opera_type = 1
+            }
+            if (!this.typeForm.classes) {
+              throw new Error('请选择班次')
             }
             if (this.location !== null || this.station_name !== null || this.check) {
               this.check = false

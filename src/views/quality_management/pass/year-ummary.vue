@@ -2,7 +2,7 @@
   <div v-loading="loading">
     <!-- 综合合格率年度汇总 -->
     <el-form :inline="true">
-      <el-form-item label="月份">
+      <el-form-item label="年">
         <el-date-picker
           v-model="search.s_time"
           type="year"

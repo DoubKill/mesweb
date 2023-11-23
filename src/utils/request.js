@@ -122,6 +122,7 @@ service.interceptors.response.use(
       //   return Promise.resolve({ results: [] })
       // }
       Message({
+        dangerouslyUseHTMLString: true,
         message: str,
         type: 'error',
         duration: 3 * 1000
@@ -165,6 +166,7 @@ service.interceptors.response.use(
         // }
       })
       Message({
+        dangerouslyUseHTMLString: true,
         message: str,
         type: 'error',
         duration: 3 * 1000
@@ -174,17 +176,18 @@ service.interceptors.response.use(
       if (currentUrl) {
         const resData = error.response.data
         const fileReader = new FileReader()
-        if (!fileReader.result) {
-          Message({
-            message: '导出失败',
-            type: 'error',
-            duration: 3 * 1000
-          })
-          return Promise.reject('导出失败')
-        }
         fileReader.onloadend = () => {
+          if (!fileReader.result) {
+            Message({
+              message: '导出失败',
+              type: 'error',
+              duration: 3 * 1000
+            })
+            return Promise.reject('导出失败')
+          }
           Message({
             message: JSON.parse(fileReader.result)[0],
+            dangerouslyUseHTMLString: true,
             type: 'error',
             duration: 3 * 1000
           })
@@ -193,6 +196,7 @@ service.interceptors.response.use(
         return Promise.reject(error)
       }
       Message({
+        dangerouslyUseHTMLString: true,
         message: error.message,
         type: 'error',
         duration: 3 * 1000

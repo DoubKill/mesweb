@@ -3,29 +3,15 @@
     <!-- 各班产量统计 -->
     <el-form :inline="true">
       <el-form-item label="月份">
-        <el-date-picker
-          v-model="search.target_month"
-          type="month"
-          value-format="yyyy-MM"
-          format="yyyy-MM"
-          placeholder="选择月"
-          :clearable="false"
-          @change="getList"
-        />
+        <el-date-picker v-model="search.target_month" type="month" value-format="yyyy-MM" format="yyyy-MM" placeholder="选择月" :clearable="false" @change="getList" />
       </el-form-item>
       <el-form-item label="班组">
-        <el-select
-          v-model="groud"
-          placeholder="请选择"
-          @change="changeGroup"
-        >
-          <el-option
-            v-for="groupItem in groups"
-            :key="groupItem.id"
-            :label="groupItem.global_name"
-            :value="groupItem.global_name"
-          />
+        <el-select v-model="groud" placeholder="请选择" @change="changeGroup">
+          <el-option v-for="groupItem in groups" :key="groupItem.id" :label="groupItem.global_name" :value="groupItem.global_name" />
         </el-select>
+      </el-form-item>
+      <el-form-item label="">
+        <el-checkbox v-model="td_flag" @change="getList">是否包含当日产量</el-checkbox>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" :disabled="btnExportLoad" @click="exportTable(1)">导出Excel</el-button>
@@ -34,13 +20,7 @@
         <h3 style="display: inline-block;margin:0">单位：车</h3>
       </el-form-item>
     </el-form>
-    <el-table
-      :id="type===1?'out-table':''"
-      :data="tableData"
-      border
-      style="width: 100%"
-      :span-method="arraySpanMethod"
-    >
+    <el-table :id="type===1?'out-table':''" :data="tableData" border style="width: 100%" :span-method="arraySpanMethod">
       <el-table-column prop="equip_no" label="机台" width="60" :fixed="!btnExportLoad" />
       <el-table-column :key="1" label="日期" align="center">
         <el-table-column label="班次" align="center">
@@ -53,10 +33,7 @@
       <el-table-column prop="completionRate" label="完成率" width="80" align="center" />
       <el-table-column v-for="(item,_key) in headDataNew" :key="_key+new Date().getTime()" align="center" :label="_key.split('-')[0]">
         <el-table-column :label="_key.split('-')[1]" align="center">
-          <el-table-column
-            :label="item"
-            align="center"
-          >
+          <el-table-column :label="item" align="center">
             <template slot-scope="{row}">
               {{ row[_key+'-'+item]||'' }}
               {{ row[_key]||'' }}
@@ -66,13 +43,7 @@
       </el-table-column>
     </el-table>
     <el-button v-permission="['equip_fault_signal', 'export']" style="margin-top:5px" type="primary" :disabled="btnExportLoad" @click="exportTable(2)">导出单班班组产量</el-button>
-    <el-table
-      :id="type===2?'out-table':''"
-      :data="tableData1"
-      border
-      style="width: 100%"
-      :span-method="arraySpanMethod"
-    >
+    <el-table :id="type===2?'out-table':''" :data="tableData1" border style="width: 100%" :span-method="arraySpanMethod">
       <el-table-column prop="equip_no" label="机台" width="60" :fixed="!btnExportLoad" />
       <el-table-column :key="1" label="日期" align="center">
         <el-table-column label="班次" align="center">
@@ -85,10 +56,7 @@
       <el-table-column prop="completionRate" label="完成率" width="80" align="center" />
       <el-table-column v-for="(item,_key) in headDataGroup" :key="_key+new Date().getTime()" align="center" :label="_key.split('-')[0]">
         <el-table-column :label="_key.split('-')[1]" align="center">
-          <el-table-column
-            :label="item"
-            align="center"
-          >
+          <el-table-column :label="item" align="center">
             <template slot-scope="{row}">
               {{ row[_key+'-'+item] }}
             </template>
@@ -108,8 +76,9 @@ export default {
   data() {
     return {
       search: {
-        target_month: setDate(null, null, 'month')
+        target_month: setDate(null, null, 'month'),
       },
+      td_flag: false,
       groud: '',
       tableData: [],
       headData: {},
@@ -130,6 +99,8 @@ export default {
       try {
         this.loading = true
         this.search.group_name = this.groud
+
+        this.search.td_flag = this.td_flag ? 'Y' : undefined
         const data = await shiftProductionSummary('get', null, { params: this.search })
         this.headData = data.table_head || []
         this.tableData = data.data || []
@@ -184,9 +155,9 @@ export default {
       this.headDataGroup = obj || {}
       const arr = []
       this.tableData.forEach(d => {
-        // 计算日均产量（日均产量=total_trains/days）和完成率（日均产量/目标值）
-        d.dailyOutput = d.total_trains && d.days ? Math.round((d.total_trains / d.days) * 100) / 100 : ''
-        d.completionRate = d.dailyOutput && d.target_trains ? Math.round((d.dailyOutput / d.target_trains / 2 * 100) * 100) / 100 + '%' : ''
+        // 计算日均产量（日均产量=total_trains/days/2）和完成率（日均产量/目标值）
+        d.dailyOutput = d.total_trains && d.days ? Math.round((d.total_trains / d.days / 2) * 100) / 100 : ''
+        d.completionRate = d.dailyOutput && d.target_trains ? Math.round((d.dailyOutput / d.target_trains * 100) * 100) / 100 + '%' : ''
         // end
         // 获取每一排的不重复日期 总计使用
         let arrDay = []

@@ -1,17 +1,17 @@
 <template>
   <div>
-    <!-- 规格切换时间明细 -->
-    <h3>{{ type==='明细'?'规格切换时间明细':'规格切换时间汇总' }}</h3>
+    <!-- 切换时间管控 -->
+    <h3>{{ type==='明细'?'切换时间管控':'规格切换时间汇总' }}</h3>
     <el-form :inline="true">
-      <el-form-item label="工厂日期">
+      <el-form-item label="工厂时间">
         <el-date-picker
           v-model="dateValue"
-          type="daterange"
+          type="datetimerange"
           :clearable="false"
+          value-format="yyyy-MM-dd HH:mm:ss"
           range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          value-format="yyyy-MM-dd"
+          start-placeholder="开始时间"
+          end-placeholder="结束时间"
           @change="changeDate"
         />
       </el-form-item>
@@ -184,6 +184,7 @@
         />
       </el-table>
       <page
+        :old-page="false"
         :total="total"
         :current-page="search.page"
         @currentChange="currentChange"
@@ -201,7 +202,7 @@
         <el-table-column
           prop="factory_date"
           label="日期"
-          width="60"
+          width="90"
         />
         <el-table-column
           prop="classes"
@@ -213,8 +214,9 @@
           label="班组"
           width="60"
         />
-        <template v-for="(d,index) in equipList">
+        <template>
           <el-table-column
+            v-for="(d,index) in equipList"
             :key="index"
             align="center"
             :label="d"
@@ -286,7 +288,7 @@ export default {
       type: '明细',
       groups: [],
       equipList: ['Z01', 'Z02', 'Z03', 'Z04', 'Z05', 'Z06', 'Z07', 'Z08', 'Z09', 'Z10', 'Z11', 'Z12', 'Z13', 'Z14', 'Z15'],
-      dateValue: [setDate(), setDate()],
+      dateValue: [setDate() + ' 08:00:00', getNextDate(setDate(), 1) + ' 08:00:00'],
       total: 0,
       loading: false,
       search: {
@@ -361,7 +363,7 @@ export default {
             const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
             link.style.display = 'none'
             link.href = URL.createObjectURL(blob)
-            link.download = `规格切换时间明细${setDate('', true)}.xlsx` // 下载的文件名
+            link.download = `切换时间管控${setDate('', true)}.xlsx` // 下载的文件名
             document.body.appendChild(link)
             link.click()
             document.body.removeChild(link)
@@ -370,7 +372,7 @@ export default {
             this.btnExportLoad = false
           })
       } else {
-        exportExcel('规格切换时间汇总')
+        exportExcel('切换时间管控')
       }
     },
     async getList() {
@@ -438,8 +440,9 @@ export default {
         this.loading = false
       }
     },
-    currentChange(page) {
+    currentChange(page, page_size) {
       this.search.page = page
+      this.search.page_size = page_size
       this.getList()
     },
     changeDate(arr) {
@@ -460,6 +463,14 @@ export default {
       this.getList()
     }
   }
+}
+function getNextDate(date, day) {
+  var dd = new Date(date)
+  dd.setDate(dd.getDate() + day)
+  var y = dd.getFullYear()
+  var m = dd.getMonth() + 1 < 10 ? '0' + (dd.getMonth() + 1) : dd.getMonth() + 1
+  var d = dd.getDate() < 10 ? '0' + dd.getDate() : dd.getDate()
+  return y + '-' + m + '-' + d
 }
 function sum(arr, params) {
   var s = 0

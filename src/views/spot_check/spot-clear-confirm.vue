@@ -400,7 +400,6 @@ export default {
         page: 1
       },
       excelParams: {
-        ids: []
       },
       objList: [],
       dialogImageUrl: '',
@@ -423,7 +422,7 @@ export default {
   },
   methods: {
     async visibleChange() {
-      const obj = { all: 1, category_name: '密炼设备' }
+      const obj = { all: 1 }
       getEquip(obj).then(response => {
         this.options = response.results
         this.options.push({ id: 16, equip_no: '190E' })
@@ -640,30 +639,36 @@ export default {
       this.getList()
     },
     templateDownload() {
-      if (this.multipleSelection.length > 0) {
-        this.excelParams.ids = []
-        this.multipleSelection.forEach(d => {
-          this.excelParams.ids.push(d.id)
-        })
-        this.btnExportLoad = true
-        this.excelParams.opera_type = 3
-        dailyCleanTableExport('post', null, { responseType: 'blob', data: this.excelParams }).then(response => {
-          const link = document.createElement('a')
-          const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
-          link.style.display = 'none'
-          link.href = URL.createObjectURL(blob)
-          link.download = `日清扫检查确认表${setDate('', true)}.xls` // 下载的文件名
-          document.body.appendChild(link)
-          link.click()
-          document.body.removeChild(link)
-          this.$refs.multipleTable.clearSelection()
-          this.btnExportLoad = false
-        }).catch(e => {
-          this.btnExportLoad = false
-        })
-      } else {
-        this.$message.info('请选择导出数据')
+      // if (this.multipleSelection.length > 0) {
+      //   this.excelParams.ids = []
+      //   this.multipleSelection.forEach(d => {
+      //   this.excelParams.ids.push(d.id)
+      // })
+      if (!this.getParams.select_date_after) {
+        this.$message.info('请选择起始时间再导出')
+        return
       }
+      this.excelParams.st = this.getParams.select_date_after
+      this.excelParams.et = this.getParams.select_date_before
+      this.btnExportLoad = true
+      this.excelParams.opera_type = 3
+      dailyCleanTableExport('post', null, { responseType: 'blob', data: this.excelParams }).then(response => {
+        const link = document.createElement('a')
+        const blob = new Blob([response], { type: 'application/vnd.ms-excel' })
+        link.style.display = 'none'
+        link.href = URL.createObjectURL(blob)
+        link.download = `日清扫检查确认表${setDate('', true)}.xls` // 下载的文件名
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        this.$refs.multipleTable.clearSelection()
+        this.btnExportLoad = false
+      }).catch(e => {
+        this.btnExportLoad = false
+      })
+      // } else {
+      //   this.$message.info('请选择导出数据')
+      // }
     }
   }
 }

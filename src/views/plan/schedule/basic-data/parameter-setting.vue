@@ -42,10 +42,10 @@
           <el-form-item label="前后工序间隔车数(车)" prop="scheduling_interval_trains">
             <el-input-number v-model="typeForm.scheduling_interval_trains" :min="0" />
           </el-form-item>
-          <el-form-item label="现场可修改计划数量(车)">
+          <!-- <el-form-item label="现场可修改计划数量(车)">
             <el-input-number v-model="typeForm.scheduling_adaptable_trains" :min="0" />
-          </el-form-item>
-          <el-form-item label="排程参数自动统计时间">
+          </el-form-item> -->
+          <!-- <el-form-item label="排程参数自动统计时间">
             <el-time-select
               v-model="typeForm.scheduling_auto_time"
               style="width:200px"
@@ -67,14 +67,18 @@
               active-color="#13ce66"
               inactive-color="#ff4949"
             />
+          </el-form-item> -->
+
+          <el-form-item label="排程时间点之后的锁定期间(小时)">
+            <el-input-number v-model="typeForm.lock_durations" :min="0" :precision="1" />
           </el-form-item>
         </el-col>
 
         <el-col :span="12">
-          <el-form-item label="混炼各段之间放置期时间(小时)">
+          <!-- <el-form-item label="混炼各段之间放置期时间(小时)">
             <el-input-number v-model="typeForm.mixing_place_interval_time" :min="0" />
-          </el-form-item>
-          <el-form-item label="无S打加S放置期时间(小时)">
+          </el-form-item> -->
+          <!-- <el-form-item label="无S打加S放置期时间(小时)">
             <el-input-number v-model="typeForm.standing_time" :min="0" />
           </el-form-item>
           <el-form-item label="小料包一车包数" prop="pkg_count">
@@ -82,7 +86,7 @@
           </el-form-item>
           <el-form-item label="小料包有效期(小时)">
             <el-input-number v-model="typeForm.validity" :min="0" />
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label="密炼时间统计范围(秒)">
             <el-input-number v-model="typeForm.mixing_summary_st_time" style="width:150px" :min="0" :max="typeForm.mixing_summary_et_time" />
             ~
@@ -94,13 +98,13 @@
             <el-input-number v-model="typeForm.mixing_interval_et_time" style="width:150px" :min="typeForm.mixing_interval_st_time" />
           </el-form-item>
           <el-form-item label="小吨位(<5吨)目标库存天数" prop="small_ton_stock_days">
-            <el-input-number v-model="typeForm.small_ton_stock_days" :min="0" precision="1" />
+            <el-input-number v-model="typeForm.small_ton_stock_days" :min="0" :precision="1" />
           </el-form-item>
           <el-form-item label="中吨位(5-10吨)目标库存天数" prop="middle_ton_stock_days">
-            <el-input-number v-model="typeForm.middle_ton_stock_days" :min="0" precision="1" />
+            <el-input-number v-model="typeForm.middle_ton_stock_days" :min="0" :precision="1" />
           </el-form-item>
           <el-form-item label="大吨位(>10吨)目标库存天数" prop="big_ton_stock_days">
-            <el-input-number v-model="typeForm.big_ton_stock_days" :min="0" precision="1" />
+            <el-input-number v-model="typeForm.big_ton_stock_days" :min="0" :precision="1" />
           </el-form-item>
           <br>
         </el-col>

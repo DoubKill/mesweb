@@ -229,7 +229,8 @@ export default {
     async clickName(row, val) {
       try {
         this.dialogVisibleList = true
-        const obj = Object.assign({ batch_time: this.getParams.batch_time, opera_type: val }, row)
+        const obj = Object.assign({ batch_time: this.getParams.batch_time, opera_type: val, batch_time_after: this.getParams.batch_time_after,
+          batch_time_before: this.getParams.batch_time_before }, row)
         this.loadingList = true
         const data = await weightBatchingLogList('get', null, { params: obj })
         this.tableDataList = data || []

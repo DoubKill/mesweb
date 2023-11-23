@@ -136,6 +136,8 @@
         <el-table-column prop="begin_time" label="密炼/配料 开始时间" min-width="20" />
         <el-table-column prop="end_time" label="密炼/配料 结束时间" min-width="20" />
         <el-table-column prop="arrange_rubber_time" label="收皮时间" min-width="20" />
+        <el-table-column prop="feed_log__trains" label="密炼车次" min-width="20" />
+        <el-table-column prop="scan_time" label="扫码时间" min-width="20" />
       </el-table>
     </el-tabs>
   </div>
@@ -259,6 +261,7 @@ export default {
                 dd.end_time = dd.end_time ? setDate(dd.end_time, true) : ''
                 dd.arrange_rubber_time = dd.arrange_rubber_time ? setDate(dd.arrange_rubber_time, true) : ''
                 dd.product_time = dd.product_time ? setDate(dd.product_time) : ''
+                dd.scan_time = dd.scan_time ? setDate(dd.scan_time, true) : ''
               })
               arr.push(...element)
             }

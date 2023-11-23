@@ -44,11 +44,13 @@
       <el-form-item label="配方号">
         <el-select v-model="search.product_no" filterable placeholder="请选择" clearable @change="getList()">
           <el-option
-            v-for="item in options"
-            :key="item.material_no"
-            :label="item.material_no"
-            :value="item.material_no"
-          />
+            v-for="(item,key) in options"
+            :key="key"
+            :label="item.product_no"
+            :value="item.product_no"
+          >
+            <span :style="{color: item.used?'blue':''}">{{ item.product_no }}</span>
+          </el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -75,19 +77,26 @@
         align="center"
         prop="material_name"
         label="原材料名称"
-        width="140"
+        width="150"
         fixed
       >
-        <template slot-scope="scope">
-          <i v-if="scope.row.material_name!=='合计'&&scope.row.material_name!=='小计'&&(type===2||scope.row.material_name!==material_name)" class="el-icon-arrow-right" style="vertical-align: middle" @click="clear(scope, 1)" />
-          <i v-if="scope.row.material_name!=='合计'&&scope.row.material_name!=='小计'&&type===1&&scope.row.material_name===material_name" class="el-icon-arrow-down" style="vertical-align: middle" @click="clear(scope, 2)" />
-          <span> {{ scope.row.material_name }}</span>
+        <template slot-scope="{row,$index}">
+          <i v-if="spanArr1[$index]>1&&row.material_name!=='合计'&&row.material_name!=='小计'&&(type===2||row.material_name!==material_name)" class="el-icon-arrow-right" style="vertical-align: middle" @click="clear(row, 1, $index)" />
+          <i v-if="spanArr1[$index]>1&&row.material_name!=='合计'&&row.material_name!=='小计'&&type===1&&row.material_name===material_name" class="el-icon-arrow-down" style="vertical-align: middle" @click="clear(row, 2, $index)" />
+          <span> {{ row.material_name }}</span>
         </template>
       </el-table-column>
       <el-table-column
         align="center"
         prop="total"
         label="合计"
+        width="120"
+        fixed
+      />
+      <el-table-column
+        align="center"
+        prop="avg"
+        label="平均"
         width="120"
         fixed
       />
@@ -137,7 +146,7 @@
 
 <script>
 import EquipSelect from '@/components/EquipSelect'
-import { classesListUrl, materialsUrl, batchingMaterials } from '@/api/base_w'
+import { classesListUrl, materialsUrl, productMaterials } from '@/api/base_w'
 import { materialExpendSummary } from '@/api/jqy'
 import { exportExcel, setDate } from '@/utils'
 export default {
@@ -188,7 +197,7 @@ export default {
     },
     async getProductList() {
       try {
-        const data = await batchingMaterials('get', null, { params: { all: 1 }})
+        const data = await productMaterials('get', null, { params: { all: 1 }})
         this.options = data || []
       } catch (e) {
         //
@@ -213,6 +222,9 @@ export default {
         this.tableData.forEach(d => {
           if (d.material_name !== '小计') {
             d.total = data.material_weight_dict[d.material_name]
+            d.avg = (data.material_weight_dict[d.material_name] /
+            (this.search.s_time === this.search.e_time
+              ? 1 : getDaysBetween(this.search.s_time, this.search.e_time) + 1)).toFixed(2)
           } else {
             d.total = d.total_weight.toFixed(2)
           }
@@ -288,6 +300,7 @@ export default {
             }
           })
         })
+        console.log(this.spanArr, this.pos, this.spanArr1, this.pos1, this.spanArr2, this.pos2)
         this.loading = false
       } catch (e) {
         this.loading = false
@@ -318,6 +331,14 @@ export default {
           colspan: _col
         }
       }
+      if ([3].includes(columnIndex) && this.spanArr1) {
+        const _row = this.spanArr1[rowIndex]
+        const _col = _row > 0 ? 1 : 0
+        return {
+          rowspan: _row,
+          colspan: _col
+        }
+      }
       if (((this.type === 2) ||
       (this.type === 1 && rowIndex !== this.index && row.material_name !== this.material_name))) {
         const _row = this.spanArr1[rowIndex]
@@ -340,10 +361,10 @@ export default {
         }
       }
     },
-    clear(scope, val) {
-      this.$set(this, 'index', scope.$index)
+    clear(row, val, index) {
+      this.$set(this, 'index', index)
       this.$set(this, 'type', val)
-      this.$set(this, 'material_name', scope.row.material_name)
+      this.$set(this, 'material_name', row.material_name)
     },
     equipSelected(obj) {
       this.$set(this.search, 'equip_no', obj ? obj.equip_no : '')

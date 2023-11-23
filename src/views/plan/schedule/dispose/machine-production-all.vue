@@ -16,6 +16,7 @@
         <el-select
           v-model="getParams.schedule_no"
           placeholder="请选择"
+          style="width:260px"
           @change="changeList"
         >
           <el-option
@@ -46,6 +47,7 @@
         >
           <el-button type="primary">导入人工排程结果</el-button>
         </el-upload>
+        <el-button type="primary" @click="exportTable">导出excel</el-button>
       </el-form-item>
     </el-form>
     <div id="out-table" v-loading="loading">
@@ -276,7 +278,7 @@ export default {
       this.getList()
     },
     exportTable() {
-      exportExcel('机台生产计划')
+      exportExcel('机台生产计划', 'machine-production-all')
     },
     Upload(param) {
       if (!this.getParams.factory_date) {

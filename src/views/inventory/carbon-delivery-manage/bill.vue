@@ -57,6 +57,11 @@
         type="primary"
         @click="showWeightDialog"
       >指定重量出库</el-button>
+      <el-button
+        v-permission="['th_outbound_record', 'empty']"
+        type="primary"
+        @click="showPalletDialog"
+      >空托盘出库</el-button>
       <el-button type="primary" @click="getList">刷新</el-button>
     </el-form>
 
@@ -122,7 +127,7 @@
       </el-table-column>
     </el-table>
     <page
-      v-if="!loading"
+      :old-page="false"
       :total="total"
       :current-page="search.page"
       @currentChange="currentChange"
@@ -250,6 +255,19 @@
             @input="getDialogDebounce"
           />
         </el-form-item>
+        <el-form-item v-if="isLocation" label="巷道">
+          <el-select v-model="formSearch.tunnel" filterable clearable placeholder="请选择" @visible-change="getTunnelNameList" @change="getDialog">
+            <el-option
+              v-for="item in TunnelNameList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.code"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="托盘号">
+          <el-input v-model="formSearch.pallet_no" clearable @input="getDialogDebounce" />
+        </el-form-item>
       </el-form>
       <div v-if="isLocation" :key="1" v-loading="loading2">
         <h3>库位货物列表</h3>
@@ -272,6 +290,11 @@
           <el-table-column
             prop="BatchNo"
             label="批次号"
+            min-width="20"
+          />
+          <el-table-column
+            prop="RFID"
+            label="托盘RFID"
             min-width="20"
           />
           <el-table-column
@@ -515,6 +538,28 @@
         <el-button type="primary" @click="submitLocation">确 定</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      title="空托盘出库"
+      :visible.sync="dialogVisiblePallet"
+      :before-close="handleClosePallet"
+    >
+      <el-form>
+        <el-form-item label="出库模式">
+          <el-radio-group v-model="formData.out_type" @change="changeType">
+            <el-radio label="手动">手动</el-radio>
+            <el-radio label="自动">自动</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item v-if="formData.out_type==='手动'" label="出库数量">
+          <el-input-number v-model="formData.out_num" controls-position="right" :min="0" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleClosePallet(false)">取 消</el-button>
+        <el-button type="primary" :loading="btnLoadingPallet" @click="submitFormPallet">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -525,6 +570,7 @@ import { thMaterials } from '@/api/jqy'
 import { materialCount } from '@/api/base_w'
 import page from '@/components/page'
 import { debounce, checkPermission } from '@/utils'
+import { thTunnels, emptyTrayOutboundDelivery } from '@/api/base_w_four'
 import { thStock, thWeightStock, thEntrance, thInstock } from '@/api/base_w_three'
 export default {
   name: 'CarbonDeliveryBill',
@@ -599,7 +645,11 @@ export default {
       },
       dialogVisible2: false,
       btnDisabled: false,
-      positionObj: {}
+      positionObj: {},
+      TunnelNameList: [],
+      dialogVisiblePallet: false,
+      formData: { out_type: '手动', out_num: 0 },
+      btnLoadingPallet: false
     }
   },
   created() {
@@ -657,9 +707,18 @@ export default {
     },
     getDebounce() {
       this.search.page = 1
+      if (this.search.order_no) {
+        this.search.order_no = this.search.order_no.trim()
+      }
       debounce(this, 'getList')
     },
     getDialogDebounce() {
+      if (this.formSearch.pallet_no) {
+        this.formSearch.pallet_no = this.formSearch.pallet_no.trim()
+      }
+      if (this.formSearch.batch_no) {
+        this.formSearch.batch_no = this.formSearch.batch_no.trim()
+      }
       if (this.isLocation) {
         this.formSearch.page = 1
         debounce(this, 'getDialogGoods')
@@ -682,8 +741,9 @@ export default {
       this.search.page = 1
       this.getList()
     },
-    currentChange(page) {
+    currentChange(page, page_size) {
       this.search.page = page
+      this.search.page_size = page_size
       this.getList()
     },
     showEditDialog(row) {
@@ -909,6 +969,16 @@ export default {
         this.loading2 = false
       }
     },
+    async getTunnelNameList(val) {
+      if (val) {
+        try {
+          const data = await thTunnels('get')
+          this.TunnelNameList = data || []
+        } catch (e) {
+        //
+        }
+      }
+    },
     async submitForm() {
       const obj = {
         entrance_code: this.formSearch.code,
@@ -945,6 +1015,45 @@ export default {
       } catch (error) {
         //
       } this.btnLoading = false
+    },
+    showPalletDialog() {
+      this.dialogVisiblePallet = true
+      this.getPallet()
+    },
+    async getPallet() {
+      try {
+        const data = await emptyTrayOutboundDelivery('get')
+        this.formData.out_type = data.out_type || '手动'
+      } catch (e) {
+        //
+      }
+    },
+    changeType() {
+      if (this.formData.out_type === '自动') {
+        delete this.formData.out_num
+      }
+    },
+    async submitFormPallet() {
+      try {
+        if (this.formData.out_type === '手动' && (!this.formData.out_num && this.formData.out_num !== 0)) {
+          this.$message('请填写出库数量')
+          return
+        }
+        this.btnLoadingPallet = true
+        await emptyTrayOutboundDelivery('post', null, { data: this.formData })
+        this.$message.success('操作成功')
+        this.handleClosePallet()
+      } catch (e) {
+        //
+      }
+      this.btnLoadingPallet = false
+    },
+    handleClosePallet(done) {
+      this.formData.out_num = 0
+      this.dialogVisiblePallet = false
+      if (done) {
+        done()
+      }
     }
   }
 }

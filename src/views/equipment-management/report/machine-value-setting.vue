@@ -36,7 +36,16 @@
           prop="equip_no"
           label="机台"
           min-width="20"
-        />
+        >
+          <template slot-scope="scope">
+            <span v-if="scope.row.equip_no==='合计'">{{ scope.row.equip_no }}</span>
+            <el-link
+              v-else
+              type="primary"
+              @click="dialogResult(scope.row)"
+            >{{ scope.row.equip_no }}</el-link>
+          </template>
+        </el-table-column>
         <el-table-column
           prop="target_weight"
           label="机台目标值(车)"
@@ -52,7 +61,7 @@
         </el-table-column>
         <el-table-column
           prop="max_weight"
-          label="最高值"
+          label="最高值(车)"
           min-width="20"
         >
           <template slot-scope="{row}">
@@ -65,6 +74,70 @@
         </el-table-column>
       </el-table>
     </div>
+    <el-dialog
+      title="历史设定值"
+      :visible.sync="dialogVisible"
+      width="800px"
+    >
+      <el-table
+        v-loading="loadingDialog"
+        max-height="600"
+        :data="tableDataDialog"
+        border
+      >
+        <el-table-column
+          prop="equip_no"
+          align="center"
+          label="机台"
+          min-width="90"
+        />
+        <el-table-column
+          prop="day"
+          align="center"
+          label="日期"
+          min-width="90"
+        >
+          <template slot-scope="{row}">
+            <span>{{ row.day }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="classes"
+          align="center"
+          label="班次"
+          min-width="90"
+        />
+        <el-table-column
+          prop="target_weight"
+          align="center"
+          label="目标值(车)"
+          min-width="120"
+        >
+          <template slot-scope="{row}">
+            <el-input-number v-model="row.target_weight" style="width:120px" controls-position="right" :min="0" />
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="max_weight"
+          align="center"
+          label="最高值(车)"
+          min-width="120"
+        >
+          <template slot-scope="{row}">
+            <el-input-number v-model="row.max_weight" style="width:120px" controls-position="right" :min="0" />
+          </template>
+        </el-table-column>
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <el-button size="mini" @click="handleSubmit(scope.row)">保存
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible=false">取 消</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -78,6 +151,9 @@ export default {
       time: null,
       dayList: [],
       exportTableShow: false,
+      loadingDialog: false,
+      dialogVisible: false,
+      tableDataDialog: [],
       tableData: [],
       loading: false,
       btnLoading: false,
@@ -102,6 +178,24 @@ export default {
         //
       }
     },
+    async dialogResult(row) {
+      try {
+        this.dialogVisible = true
+        this.loadingDialog = true
+        const data = await machineTargetValue('get', null, { params: { target_month: this.monthValue, equip_no: row.equip_no }})
+        this.loadingDialog = false
+        this.tableDataDialog = data.results
+        this.tableDataDialog.forEach(d => {
+          if (d.day < 10) {
+            d.day = this.monthValue + '-0' + d.day
+          } else {
+            d.day = this.monthValue + '-' + d.day
+          }
+        })
+      } catch (e) {
+        this.loadingDialog = false
+      }
+    },
     async exportTable() {
       await this.$set(this, 'exportTableShow', true)
       await exportExcel('机台目标值设定')
@@ -123,6 +217,14 @@ export default {
         }
       })
       this.tableData[index - 1].target_weight = sum(obj, 'target_weight')
+    },
+    async handleSubmit(row) {
+      try {
+        await machineTargetValue('post', null, { data: row })
+        this.$message.success('保存成功')
+      } catch (e) {
+        //
+      }
     },
     async submitFun() {
       try {

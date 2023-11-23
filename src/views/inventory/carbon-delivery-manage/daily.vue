@@ -163,7 +163,7 @@
       />
     </el-table>
     <page
-      v-if="!loading"
+      :old-page="false"
       :total="total"
       :current-page="search.pageNo"
       @currentChange="currentChange"
@@ -497,8 +497,9 @@ export default {
       this.search.pageNo = 1
       debounce(this, 'getList')
     },
-    currentChange(page) {
+    currentChange(page, page_size) {
       this.search.pageNo = page
+      this.search.pageSize = page_size
       this.getList()
     },
     check_(row) {

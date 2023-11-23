@@ -61,9 +61,7 @@
       </el-form-item>
       <el-form-item style="float:right">
         <el-button type="primary" :loading="btnExportLoad" @click="templateDownload">导出Excel</el-button>
-        <el-button
-          v-permission="['user','import']"
-        >
+        <el-button v-permission="['user','import']">
           <a
             :href="`${templateFileUrl}user.xlsx`"
             download="用户管理导入模板.xlsx"

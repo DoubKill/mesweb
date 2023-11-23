@@ -24,7 +24,7 @@
         />
       </el-form-item>
       <el-form-item label="胶料编码:">
-        <all-product-no-select @productBatchingChanged="productBatchingChanged" />
+        <all-product-no-select :show-color="true" @productBatchingChanged="productBatchingChanged" />
       </el-form-item>
       <el-form-item label="时间单位:">
         <el-select v-model="timeUnit" placeholder="请选择">
@@ -113,6 +113,7 @@
       </el-table-column>
     </el-table>
     <page
+      :old-page="false"
       :total="total"
       :current-page="search.page"
       @currentChange="currentChange"
@@ -187,12 +188,13 @@ export default {
         this.loading = false
       }
     },
-    currentChange(page) {
+    currentChange(page, page_size) {
       this.search.page = page
+      this.search.page_size = page_size
       this.getList()
     },
     productBatchingChanged(val) {
-      this.search.product_no = val ? val.material_no : ''
+      this.search.product_no = val || ''
       this.getList()
       this.search.page = 1
     },

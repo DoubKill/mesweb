@@ -29,7 +29,14 @@
         prop="state"
         label="段次"
         width="110"
-      />
+      >
+        <template slot-scope="{row}">
+          <el-link
+            type="primary"
+            @click="dialogResult(row)"
+          >{{ row.state }}</el-link>
+        </template>
+      </el-table-column>
       <el-table-column
         align="center"
         prop="E580"
@@ -204,6 +211,140 @@
         </el-table-column>
       </el-table-column>
     </el-table>
+    <el-dialog
+      title="历史单价表"
+      :visible.sync="dialogVisible"
+      width="90%"
+    >
+      <el-table
+        v-loading="loadingDialog"
+        max-height="600"
+        :data="tableDataDialog"
+        border
+      >
+        <el-table-column
+          prop="target_month"
+          align="center"
+          label="日期"
+          min-width="40"
+        />
+        <el-table-column
+          align="center"
+          prop="E580"
+          label="E580"
+          min-width="20"
+        >
+          <el-table-column
+            align="center"
+            prop="E580_pt"
+            label="普通"
+            min-width="20"
+          />
+          <el-table-column
+            align="center"
+            prop="E580_dj"
+            label="丁基"
+            min-width="20"
+          />
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="F370"
+          label="F370"
+          min-width="20"
+        >
+          <el-table-column
+            align="center"
+            prop="F370_pt"
+            label="普通"
+            min-width="20"
+          />
+          <el-table-column
+            align="center"
+            prop="F370_dj"
+            label="丁基"
+            min-width="20"
+          />
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="GK320"
+          label="GK320"
+          min-width="20"
+        >
+          <el-table-column
+            align="center"
+            prop="GK320_pt"
+            label="普通"
+            min-width="20"
+          />
+          <el-table-column
+            align="center"
+            prop="GK320_dj"
+            label="丁基"
+            min-width="20"
+          />
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="GK255"
+          label="GK255"
+          min-width="20"
+        >
+          <el-table-column
+            align="center"
+            prop="GK255_pt"
+            label="普通"
+            min-width="20"
+          />
+          <el-table-column
+            align="center"
+            prop="GK255_dj"
+            label="丁基"
+            min-width="20"
+          />
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="GK400"
+          label="GK400"
+          min-width="20"
+        >
+          <el-table-column
+            align="center"
+            prop="GK400_pt"
+            label="普通"
+            min-width="20"
+          />
+          <el-table-column
+            align="center"
+            prop="GK400_dj"
+            label="丁基"
+            min-width="20"
+          />
+        </el-table-column>
+        <el-table-column
+          align="center"
+          label="辅助"
+          min-width="20"
+        >
+          <el-table-column
+            align="center"
+            prop="fz_pt"
+            label="普通"
+            min-width="20"
+          />
+          <el-table-column
+            align="center"
+            prop="fz_dj"
+            label="丁基"
+            min-width="20"
+          />
+        </el-table-column></el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible=false">取 消</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -217,6 +358,9 @@ export default {
       options: [],
       tableData: [],
       loading: false,
+      loadingDialog: false,
+      dialogVisible: false,
+      tableDataDialog: [],
       btnLoading: false
     }
   },
@@ -232,6 +376,17 @@ export default {
         this.loading = false
       } catch (e) {
         this.loading = false
+      }
+    },
+    async dialogResult(row) {
+      try {
+        this.dialogVisible = true
+        this.loadingDialog = true
+        const data = await performanceUnitPrice('get', null, { params: { state: row.state }})
+        this.loadingDialog = false
+        this.tableDataDialog = data.result
+      } catch (e) {
+        this.loadingDialog = false
       }
     },
     async exportTable() {

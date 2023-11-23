@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 月产量统计汇总 -->
+    <!-- 生产段数统计 -->
     <el-form :inline="true">
       <el-form-item label="起止日期:">
         <el-date-picker
@@ -19,7 +19,7 @@
       </el-form-item>
     </el-form>
     <el-row :gutter="20">
-      <el-col :span="18">
+      <!--<el-col :span="18">
         <el-table
           :data="tableData"
           style="width: 100%"
@@ -30,7 +30,7 @@
           <el-table-column
             prop="equip_no"
             label="机台"
-            min-width="20"
+            min-width="15"
           />
           <el-table-column
             prop="total_weight"
@@ -40,7 +40,7 @@
           <el-table-column
             prop="total_trains"
             label="车数"
-            min-width="20"
+            min-width="15"
           />
           <el-table-column
             prop="target"
@@ -53,13 +53,23 @@
             min-width="20"
           />
           <el-table-column
+            prop="max_classes_trains"
+            label="机台最高值(车)"
+            min-width="20"
+          />
+          <el-table-column
             prop="group"
             label="班组"
-            min-width="20"
+            min-width="15"
           />
           <el-table-column
             prop="history_max_weight"
             label="历史最高值(吨)"
+            min-width="20"
+          />
+          <el-table-column
+            prop="history_max_trains"
+            label="历史最高值(车)"
             min-width="20"
           />
           <el-table-column
@@ -68,8 +78,8 @@
             min-width="20"
           />
         </el-table>
-      </el-col>
-      <el-col :span="6">
+      </el-col>-->
+      <el-col>
         <el-table
           :data="tableData2"
           border
@@ -103,7 +113,7 @@
       :summary-method="getSummaries"
       show-summary
     >
-      <el-table-column
+      <!-- <el-table-column
         prop="equip_no"
         label="机台"
         min-width="20"
@@ -129,6 +139,11 @@
         min-width="20"
       />
       <el-table-column
+        prop="max_classes_trains"
+        label="机台最高值(车)"
+        min-width="20"
+      />
+      <el-table-column
         prop="group"
         label="班组"
         min-width="20"
@@ -139,10 +154,15 @@
         min-width="20"
       />
       <el-table-column
+        prop="history_max_trains"
+        label="历史最高值(车)"
+        min-width="20"
+      />
+      <el-table-column
         prop="history_group"
         label="历史最高值班组"
         min-width="20"
-      />
+      /> -->
       <el-table-column
         label="段数"
         min-width="20"
@@ -159,7 +179,7 @@
     </el-table>
 
     <el-dialog
-      :title="`月产量统计汇总 ${search.state}明细`"
+      :title="`生产段数统计 ${search.state}明细`"
       :visible.sync="dialogVisible"
       width="80%"
       :before-close="handleClose"
@@ -356,7 +376,7 @@ export default {
       return sums
     },
     exportTable() {
-      const str = this.outTable ? '月产量统计汇总' : `月产量统计汇总 ${this.search.state}明细`
+      const str = this.outTable ? '生产段数统计' : `生产段数统计 ${this.search.state}明细`
       exportExcel(str)
     },
     repairDialog(row) {

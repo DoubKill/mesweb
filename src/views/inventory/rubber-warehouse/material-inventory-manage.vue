@@ -57,7 +57,7 @@
           @change="changeList"
         >
           <el-option
-            v-for="item in [{value:1,label:'合格'},{value:2,label:'抽检中'},{value:3,label:'不合格'},{value:4,label:'过期'},{value:5,label:'待检'}]"
+            v-for="item in (special_flag?[{value:1,label:'合格'},{value:3,label:'不合格'},{value:5,label:'待检'}]:[{value:1,label:'合格'},{value:2,label:'抽检中'},{value:3,label:'不合格'},{value:4,label:'过期'},{value:5,label:'待检'}])"
             :key="item.value"
             :label="item.label"
             :value="item.value"
@@ -202,6 +202,7 @@
       </el-table-column> -->
     </el-table>
     <page
+      :old-page="false"
       :total="total"
       :current-page="getParams.page"
       @currentChange="currentChange"
@@ -278,6 +279,7 @@ export default {
       },
       currentPage: 1,
       total: 0,
+      special_flag: false,
       options: [],
       loading: false,
       dialogVisible: false,
@@ -348,32 +350,49 @@ export default {
     getTableData() {
       this.loading = true
       this.tableData = []
-      const obj = Object.assign({ store_name: '帘布库' }, this.getParams)
-      let _api = bzFinalInventory
-
-      if (['原材料库', '炭黑库'].includes(this.getParams.warehouse_name)) {
-        delete obj.store_name
-        _api = this.getParams.warehouse_name === '原材料库' ? wmsStorage : thStorage
-      }
-      _api(obj)
-        .then(response => {
-          this.tableData = response.results
-          this.total = response.count
-          this.loading = false
-          this.tableData.push({
-            all: 2,
-            material_name: '单页合计',
-            qty: sum(this.tableData, 'qty'),
-            total_weight: sum(this.tableData, 'total_weight')
-          }, {
-            all: 1,
-            material_name: '汇总',
-            qty: response.total_trains,
-            total_weight: response.total_weight
-          })
-        }).catch(e => {
-          this.loading = false
+      if (this.warehouseNameProps === '原材料库' && this.special_flag === true && this.getParams.quality_status === 3) {
+        this.tableData = []
+        this.loading = false
+        this.total = 0
+        this.tableData.push({
+          all: 2,
+          material_name: '单页合计',
+          qty: sum(this.tableData, 'qty'),
+          total_weight: sum(this.tableData, 'total_weight')
+        }, {
+          all: 1,
+          material_name: '汇总',
+          qty: null,
+          total_weight: null
         })
+      } else {
+        const obj = Object.assign({ store_name: '帘布库' }, this.getParams)
+        let _api = bzFinalInventory
+        if (['原材料库', '炭黑库'].includes(this.getParams.warehouse_name)) {
+          delete obj.store_name
+          _api = this.getParams.warehouse_name === '原材料库' ? wmsStorage : thStorage
+        }
+        _api(obj)
+          .then(response => {
+            this.tableData = response.results
+            this.total = response.count
+            if (this.warehouseNameProps === '原材料库') { this.special_flag = response.special_flag }
+            this.loading = false
+            this.tableData.push({
+              all: 2,
+              material_name: '单页合计',
+              qty: sum(this.tableData, 'qty'),
+              total_weight: sum(this.tableData, 'total_weight')
+            }, {
+              all: 1,
+              material_name: '汇总',
+              qty: response.total_trains,
+              total_weight: response.total_weight
+            })
+          }).catch(e => {
+            this.loading = false
+          })
+      }
     },
     tableRowClassName({ row, rowIndex }) {
       if (row.material_name === '单页合计' || row.material_name === '汇总') {
@@ -383,9 +402,10 @@ export default {
     getDebounce() {
       debounce(this, 'changeSearch')
     },
-    currentChange(page) {
+    currentChange(page, page_size) {
       this.currentPage = page
       this.getParams.page = page
+      this.getParams.page_size = page_size
       this.getTableData()
     },
     changeSearch() {

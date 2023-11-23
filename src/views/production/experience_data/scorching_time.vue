@@ -17,11 +17,13 @@
       >
         <el-select v-model="search.product_no" filterable placeholder="请选择" clearable @visible-change="getProductSearch" @change="changeSearch">
           <el-option
-            v-for="item in options1"
-            :key="item.id"
-            :label="item.material_no"
-            :value="item.material_no"
-          />
+            v-for="(item,key) in options1"
+            :key="key"
+            :label="item.product_no"
+            :value="item.product_no"
+          >
+            <span :style="{color: item.used?'blue':''}">{{ item.product_no }}</span>
+          </el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="月份">
@@ -289,7 +291,7 @@
 </template>
 
 <script>
-import { batchingMaterials, testSubTypes, classesListUrl } from '@/api/base_w'
+import { batchingMaterials, testSubTypes, classesListUrl, productMaterials } from '@/api/base_w'
 import { exportExcel } from '@/utils/index'
 import EquipSelect from '@/components/EquipSelect'
 import { debounce } from '@/utils'
@@ -402,7 +404,7 @@ export default {
     async getProductSearch(val) {
       if (val) {
         try {
-          const data = await batchingMaterials('get', null, { params: { all: 1, stage: 'FM,RFM,RE' }})
+          const data = await productMaterials('get')
           this.options1 = data || []
         } catch (e) {
         //

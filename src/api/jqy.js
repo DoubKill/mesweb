@@ -1092,6 +1092,14 @@ export function schedulingProcedures(method, id, data = {}) {
   Object.assign(obj, data)
   return request(obj)
 }
+export function apsExportData(method, id, data = {}) {
+  const obj = {
+    url: id ? API.ApsExportData + id + '/' : API.ApsExportData,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
 
 export function delUser(method, id, data = {}) {
   const obj = {
@@ -1316,6 +1324,24 @@ export function summaryOfWeighingOutput(method, id, data = {}) {
   }
   Object.assign(obj, data)
   return request(obj)
+}
+
+export function performanceSummaryDown(params) {
+  return request({
+    url: API.PerformanceSummary,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
+
+export function summaryOfWeighingOutputDown(params) {
+  return request({
+    url: API.SummaryOfWeighingOutput,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
 }
 
 export function userImport(method, id, data = {}) {
@@ -1661,6 +1687,78 @@ export function xlPlanConsume(method, id, data = {}) {
 export function rubberLog(method, id, data = {}) {
   const obj = {
     url: id ? API.RubberLog + id + '/' : API.RubberLog,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function schedulingStockSummaryExport(params) {
+  return request({
+    url: API.SchedulingStockSummaryExport,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
+
+export function equipDownAnalysis(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipDownAnalysis + id + '/' : API.EquipDownAnalysis,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipDownSummary(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipDownSummary + id + '/' : API.EquipDownSummary,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipDownSummaryTable(method, id, data = {}) {
+  const obj = {
+    url: id ? API.EquipDownSummaryTable + id + '/' : API.EquipDownSummaryTable,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function equipDownSummaryTableDown(params) {
+  return request({
+    url: API.EquipDownSummaryTable,
+    method: 'get',
+    params,
+    responseType: 'blob'
+  })
+}
+
+export function schedulingStockSummaryImport(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SchedulingStockSummaryImport + id + '/' : API.SchedulingStockSummaryImport,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function deletePlan(method, id, data = {}) {
+  const obj = {
+    url: id ? API.DeletePlan + id + '/' : API.DeletePlan,
+    method: method
+  }
+  Object.assign(obj, data)
+  return request(obj)
+}
+
+export function schedulingRecipeConfirm(method, id, data = {}) {
+  const obj = {
+    url: id ? API.SchedulingRecipeConfirm + id + '/' : API.SchedulingRecipeConfirm,
     method: method
   }
   Object.assign(obj, data)

@@ -167,7 +167,7 @@
       />
     </el-table>
     <page
-      v-if="!loading"
+      :old-page="false"
       :total="total"
       :current-page="search.page"
       @currentChange="currentChange"
@@ -239,8 +239,9 @@ export default {
         //
       }
     },
-    currentChange(page) {
+    currentChange(page, page_size) {
       this.search.page = page
+      this.search.page_size = page_size
       this.getList()
     },
     changeDate() {

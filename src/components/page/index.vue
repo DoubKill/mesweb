@@ -62,9 +62,8 @@ export default {
       pageSize: this.pageSizeProps,
       options: [
         { id: 10, name: '10条/页' },
-        { id: 50, name: '50条/页' },
         { id: 100, name: '100条/页' },
-        { id: 1000000000000, name: '全部' }
+        { id: 1000, name: '1000条/页' }
       ]
     }
   },

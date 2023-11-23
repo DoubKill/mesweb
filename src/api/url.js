@@ -332,6 +332,7 @@ export default {
   MaterialInventoryList: '/api/v1/inventory/material-inventory-list/',
   QualityPalletFeedTest: '/api/v1/quality/pallet-feed-test/',
   DatapointCurve: '/api/v1/quality/datapoint-curve/',
+  PbRecentName: '/api/v1/production/pb-recent-name/',
   ProductIndicatorStandard: '/api/v1/quality/product-indicator-standard/',
   // 录入导入
   ImportMaterialMestMrders: '/api/v1/quality/import-material-test-orders/',
@@ -464,6 +465,7 @@ export default {
   ThInventory: '/api/v1/inventory/th-inventory/',
   ThMaterialGroups: '/api/v1/inventory/th-material-groups/',
   ThTunnels: '/api/v1/inventory/th-tunnels/',
+  EmptyTrayOutboundDelivery: '/api/v1/inventory/empty-tray-outbound-delivery/',
   // 线边库 库区
   Depot: '/api/v1/inventory/depot/',
   // 库位
@@ -669,9 +671,12 @@ export default {
   SchedulingResult: '/api/v1/plan/scheduling-result/', // 机台生产计划-整体列表
   ImportXlx: '/api/v1/plan/scheduling-result/import_xlx/',
   ScheduleNos: '/api/v1/plan/scheduling-result/schedule_nos/',
+  ApsGantt: '/api/v1/plan/aps-gantt/',
+  ApsPlanImport: '/api/v1/plan/aps-plan-import/',
   SchedulingProductDeclareSummary: '/api/v1/plan/scheduling-product-declare-summary/', // 胶料计划库存汇总
   SchedulingProductImport: '/api/v1/plan/scheduling-product-declare-summary/import_xlsx/',
   SchedulingProcedures: '/api/v1/plan/scheduling-procedures/', // 自动排程
+  ApsExportData: '/api/v1/plan/aps-export-data/',
   UpSequence: '/api/v1/plan/scheduling-product-declare-summary/up-sequence/', // 上调计划
   DownSequence: '/api/v1/plan/scheduling-product-declare-summary/down-sequence/', // 下调计划
   SchedulingEquipShutdownPlan: '/api/v1/plan/scheduling-equip-shutdown-plan/', // 机台设备停机计划设置
@@ -778,5 +783,12 @@ export default {
   WeightClassPlanImport: '/api/v1/production/weight-class-plan/import-xlsx/',
 
   ShiftProductionSummary: '/api/v1/production/shift-production-summary/',
-  EquipDownDetail: '/api/v1/production/equip-down-detail/'
+  EquipDownDetail: '/api/v1/production/equip-down-detail/',
+  SchedulingStockSummaryExport: '/api/v1/plan/scheduling-stock-summary/export/',
+  EquipDownAnalysis: '/api/v1/production/equip-down-analysis/',
+  EquipDownSummary: '/api/v1/production/equip-down-summary/',
+  EquipDownSummaryTable: '/api/v1/production/equip-down-summary-table/',
+  SchedulingStockSummaryImport: '/api/v1/plan/scheduling-stock-summary/import-xlsx/',
+  DeletePlan: '/api/v1/basics/plan-schedule/delete-plan/',
+  SchedulingRecipeConfirm: '/api/v1/plan/scheduling-recipe-machine-setting/confirm/'
 }

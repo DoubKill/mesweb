@@ -102,10 +102,12 @@
         <el-select v-model="search.product_no" allow-create filterable placeholder="请选择" clearable @visible-change="getProductList" @change="changeList">
           <el-option
             v-for="item in options"
-            :key="item.material_no"
-            :label="item.material_no"
-            :value="item.material_no"
-          />
+            :key="item.product_no"
+            :label="item.product_no"
+            :value="item.product_no"
+          >
+            <span :style="{color: item.used?'blue':''}">{{ item.product_no }}</span>
+          </el-option>
         </el-select>
         <!-- <el-input v-model="search.material_no" clearable @input="debounceList" /> -->
       </el-form-item>
@@ -250,6 +252,7 @@
       </el-table-column>
     </el-table>
     <page
+      :old-page="false"
       :total="total"
       :current-page="search.page"
       @currentChange="currentChange"
@@ -324,7 +327,7 @@
 import { productInOutHistory } from '@/api/base_w'
 import page from '@/components/page'
 import { wmsTunnels, thTunnels } from '@/api/base_w_four'
-import { batchingMaterials } from '@/api/base_w'
+import { productMaterials } from '@/api/base_w'
 import { wmsExceptHandle, wmsMaterials, thMaterials } from '@/api/jqy'
 // import warehouseSelect from '@/components/select_w/warehouseSelect'
 import { setDate, debounce, exportExcel } from '@/utils'
@@ -421,7 +424,7 @@ export default {
     async getProductList(val) {
       if (val) {
         try {
-          const data = await batchingMaterials('get', null, { params: { all: 1 }})
+          const data = await productMaterials('get', null, { params: { all: 1 }})
           this.options = data || []
         } catch (e) {
         //
@@ -456,8 +459,9 @@ export default {
         this.loading = false
       }
     },
-    currentChange(page) {
+    currentChange(page, page_size) {
       this.search.page = page
+      this.search.page_size = page_size
       this.getList()
     },
     changeDate(val) {
@@ -524,7 +528,7 @@ export default {
           })
       } else {
         // null, [{ wpx: 50 }, { wpx: 50 }, { wpx: 120 }]
-        exportExcel(this.search.warehouse_name + '出入库履历')
+        exportExcel(this.search.warehouse_name + '出入库履历', 'material_inout_record_rubber')
       }
     }
   }

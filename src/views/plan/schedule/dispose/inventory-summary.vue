@@ -22,7 +22,7 @@
         />
       </el-form-item>
       <el-form-item style="float:right">
-        <el-button v-permission="['aps_plan_summary','procedures']" :loading="submit" type="primary" @click="scheduling">自动排程</el-button>
+        <el-button v-permission="['aps_plan_summary','procedures']" :loading="submit" type="primary" @click="exportAps">导出自动排程数据</el-button>
         <el-button type="primary" @click="getList">查询</el-button>
         <el-button v-permission="['aps_plan_summary','export']" type="primary" @click="exportTable">导出Excel</el-button>
         <!-- <el-button v-permission="['aps_plan_summary','export']" type="primary">
@@ -54,6 +54,7 @@
     <el-table
       id="out-table"
       v-loading="loading"
+      max-height="650"
       border
       :row-class-name="tableRowClassName"
       :data="tableData"
@@ -63,17 +64,27 @@
         type="index"
         label="序号"
       />
+      <!-- <el-table-column
+        prop="sn"
+        label="序号"
+      /> -->
       <el-table-column
         prop="product_no"
         label="规格"
       >
         <template slot-scope="scope">
           <el-link
+            v-if="scope.row.product_no!=='合计'"
             type="primary"
             @click="dialogStock(scope.row)"
           >{{ scope.row.product_no }}</el-link>
+          <span v-else>{{ scope.row.product_no }}</span>
         </template>
       </el-table-column>
+      <el-table-column
+        prop="version"
+        label="版本号"
+      />
       <el-table-column
         prop="plan_weight"
         label="计划(吨)"
@@ -177,6 +188,9 @@
               :value="item.product_no"
             />
           </el-select>
+        </el-form-item>
+        <el-form-item label="版本号" prop="version">
+          <el-input v-model="formData.version" style="width:250px" />
         </el-form-item>
         <el-form-item label="计划(吨)" prop="plan_weight">
           <el-input-number
@@ -330,7 +344,7 @@
 <script>
 import { productInfosUrl } from '@/api/base_w'
 import { schedulingProductDemandedDeclare } from '@/api/base_w_five'
-import { schedulingProductDeclareSummary, upSequence, downSequence, schedulingProcedures, schedulingProductImport, schedulingParamsSetting } from '@/api/jqy'
+import { schedulingProductDeclareSummary, upSequence, downSequence, schedulingProcedures, schedulingProductImport, schedulingParamsSetting, apsExportData } from '@/api/jqy'
 import { setDate, exportExcel } from '@/utils'
 export default {
   name: 'ScheduleInventorySummary',
@@ -358,7 +372,8 @@ export default {
       rules: {
         product_no: [{ required: true, message: '不能为空', trigger: 'change' }],
         plan_weight: [{ required: true, message: '不能为空', trigger: 'change' }],
-        demanded_weight: [{ required: true, message: '不能为空', trigger: 'change' }]
+        demanded_weight: [{ required: true, message: '不能为空', trigger: 'change' }],
+        version: [{ required: true, message: '不能为空', trigger: 'change' }]
       }
     }
   },
@@ -376,7 +391,7 @@ export default {
         this.tableData = data || []
         if (this.tableData.length > 0) {
           this.tableData.push({
-            sn: '合计',
+            product_no: '合计',
             plan_weight: sum(this.tableData, 'plan_weight'),
             workshop_weight: sum(this.tableData, 'workshop_weight'),
             current_stock: sum(this.tableData, 'current_stock'),
@@ -421,7 +436,7 @@ export default {
       }
     },
     tableRowClassName({ row, rowIndex }) {
-      if (row.sn === '合计') {
+      if (row.product_no === '合计') {
         return 'summary-cell-style'
       }
     },
@@ -517,7 +532,10 @@ export default {
       this.dialogVisible2 = true
     },
     onSubmit() {
-      this.formData = {}
+      this.formData = {
+        workshop_weight: 0,
+        current_stock: 0
+      }
       if (this.$refs.formRef) {
         this.$refs.formRef.clearValidate()
       }
@@ -597,6 +615,25 @@ export default {
         })
         this.getList()
       })
+    },
+    exportAps() {
+      this.submit = true
+      const obj = { export: 1, factory_date: this.search.factory_date }
+      const _api = apsExportData
+      _api('get', null, { responseType: 'blob', params: obj })
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = `自动排程结果${setDate('', true)}.xlsx` // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.submit = false
+        }).catch(e => {
+          this.submit = false
+        })
     }
   }
 

@@ -1,6 +1,6 @@
 <template>
   <div v-loading="loading">
-    <!-- 班次密炼时间汇总 -->
+    <!-- 班性能稼动率 -->
     <el-form :inline="true">
       <el-form-item label="时间:">
         <el-date-picker
@@ -43,7 +43,7 @@
         />
       </el-form-item>
       <el-form-item label="胶料编码:">
-        <all-product-no-select @productBatchingChanged="productBatchingChanged" />
+        <all-product-no-select :show-color="true" @productBatchingChanged="productBatchingChanged" />
         <!-- <product-no-select @productBatchingChanged="productBatchingChanged" /> -->
       </el-form-item>
       <el-form-item label="时间单位:">
@@ -77,6 +77,11 @@
         width="60"
       />
       <el-table-column
+        :key="3"
+        prop="equip_no"
+        label="设备编码"
+      />
+      <el-table-column
         :key="2"
         :label="search.dimension === 3?'月份':search.dimension === 1?'班次':'时间'"
       >
@@ -85,11 +90,6 @@
           <span v-if="search.dimension === 1">/{{ scope.row.classes }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        :key="3"
-        prop="equip_no"
-        label="设备编码"
-      />
       <el-table-column
         :key="4"
         prop="product_no"
@@ -154,7 +154,7 @@
       <el-table-column
         :key="11"
         prop="max_train_time"
-        label="利用率"
+        label="时间稼动率"
       >
         <template
           slot-scope="{row}"
@@ -167,6 +167,18 @@
           </span>
           <span v-if="search.dimension === 3">
             {{ (setUse(row.total_time,24*60*60*30,true))+ '%' }}
+          </span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        :key="12"
+        label="性能稼动率"
+      >
+        <template
+          slot-scope="{row}"
+        >
+          <span>
+            {{ (setUse(row.min_train_time,setUse(row.total_time,row.total_trains,false),true))+ '%' }}
           </span>
         </template>
       </el-table-column>
@@ -252,7 +264,7 @@ export default {
       exportExcel('班次密炼时间汇总')
     },
     productBatchingChanged(val) {
-      this.search.product_no = val ? val.material_no : ''
+      this.search.product_no = val || ''
       this.search.page = 1
       this.getList()
     },

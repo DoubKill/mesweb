@@ -44,6 +44,12 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="RFID">
+        <el-input v-model="search.pallet_no" clearable @input="debounceFun" />
+      </el-form-item>
+      <el-form-item label="质检条码">
+        <el-input v-model="search.lot_no" clearable @input="debounceFun" />
+      </el-form-item>
       <el-form-item>
         <el-button
           type="primary"
@@ -212,6 +218,9 @@ export default {
       this.search.st = arr ? arr[0] : ''
       this.search.et = arr ? arr[1] : ''
       this.changeList()
+    },
+    debounceFun() {
+      this.$debounce(this, 'changeList')
     },
     changeList() {
       this.search.page = 1

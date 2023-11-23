@@ -8,14 +8,14 @@
     >
       <tbody>
         <tr>
-          <td colspan="5">胶料信息卡</td>
+          <td colspan="5" class="title-style"><span v-if="testData.emergency_release_flag" class="xx-style">☆</span>胶料信息卡</td>
         </tr>
         <tr>
           <td colspan="4">{{ testData.product_no }}</td>
           <!-- <td rowspan="14" style="transform:rotate(-90deg); width: 150px; max-width: 150px;">
             <img class="barcode" style="margin-left: -120px">
           </td> -->
-          <td rowspan="14" style="width:200px;position:relative">
+          <td rowspan="15" style="width:200px;position:relative">
             <img
               class="barcode"
               style="max-width:540px;position:absolute;top:50%;left:50%;
@@ -79,6 +79,10 @@
           <td>{{ testData.test ? testData.test.test_note : '' }}</td> -->
           <td>处理人</td>
           <td>{{ testData.deal_user }}</td>
+        </tr>
+        <tr>
+          <td>异常描述</td>
+          <td colspan="3">{{ testData.wrong_reason }}</td>
         </tr>
         <tr>
           <td>处理时间</td>
@@ -258,6 +262,15 @@ export default {
       border-radius: 50%;
       font-size:60px;
       line-height: 300px;
+    }
+    .title-style{
+      position: relative;
+    }
+    .xx-style{
+      font-size: 40px;
+      position: absolute;
+      left: 10px;
+      top:-3px;
     }
   }
 </style>

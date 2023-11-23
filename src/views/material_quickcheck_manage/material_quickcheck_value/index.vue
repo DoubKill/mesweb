@@ -211,7 +211,7 @@
           />
         </el-form-item>
         <el-form-item label="原材料" prop="material_tmh">
-          <el-input v-if="!formData.id" ref="materialInput" v-model="formData.material_tmh" placeholder="请输入" @input="changeFormDataMaterial" />
+          <el-input v-if="!formData.id" ref="materialInput" v-model="formData.material_tmh" placeholder="请输入" @input="changeMaterialDebounce" />
           <span v-else>{{ formData.material_tmh }}</span>
           <!-- <el-select
             v-model="formData.material"
@@ -423,7 +423,8 @@ export default {
       total: 0,
       loading: false,
       btnLoading: false,
-      materialBtnLoading: false
+      materialBtnLoading: false,
+      noMaterial: false // true未查到原材料
     }
   },
 
@@ -471,6 +472,7 @@ export default {
         this.formData._copy = true
         delete this.formData.id
       }
+      this.noMaterial = false
       this.$set(this.formData, 'material_tmh', this.formData.tmh)
       this.$set(this.formData, 'material_batch', this.formData.batch)
       this.$set(this.formData, 'material_supplier', this.formData.supplier)
@@ -534,7 +536,7 @@ export default {
       this.$refs.formData.validate(async(valid) => {
         if (valid) {
           try {
-            if (!this.formData.material_sample_name) {
+            if (!this.formData.material_sample_name || this.noMaterial) {
               this.$message.info('未找到该条码对应物料信息')
               return
             }
@@ -545,7 +547,6 @@ export default {
             const obj = JSON.parse(JSON.stringify(this.formData))
             const _api = this.formData.id ? 'patch' : 'post'
             this.btnLoading = true
-
             await materialExamineResult(_api, this.formData.id || '', { data: obj })
             this.handleClose(false)
             this.btnLoading = false
@@ -685,10 +686,14 @@ export default {
         return '待定'
       }
     },
-    async changeFormDataMaterial(val) {
+    changeMaterialDebounce() {
+      this.$debounce(this, 'changeFormDataMaterial')
+    },
+    async changeFormDataMaterial() {
       try {
-        const data = await wmsMaterialSearch('get', null, { params: { tmh: val }})
+        const data = await wmsMaterialSearch('get', null, { params: { tmh: this.formData.material_tmh }})
         // this.formDataMaterial = data[0]
+        this.noMaterial = false
         this.$set(this.formData, 'material_tmh', data[0].TMH)
         this.$set(this.formData, 'material_wlxxid', data[0].WLXXID)
         this.$set(this.formData, 'material_name', data[0].WLMC)
@@ -696,7 +701,7 @@ export default {
         this.$set(this.formData, 'material_supplier', data[0].CD)
         this.$set(this.formData, 'material_sample_name', data[0].WLMC)
       } catch (e) {
-        //
+        this.noMaterial = true
       }
     }
   }

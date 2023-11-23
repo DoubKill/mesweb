@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 交接班时间汇总 -->
+    <!-- 交接班时间管理 -->
     <el-form :inline="true">
       <el-form-item label="工厂日期">
         <el-date-picker
@@ -67,8 +67,9 @@
         label="班组"
         width="60"
       />
-      <template v-for="(d,index) in equipList">
+      <template>
         <el-table-column
+          v-for="(d,index) in equipList"
           :key="index"
           align="center"
           :label="d"
@@ -146,6 +147,12 @@
         </el-table-column>
       </el-table-column>
     </el-table>
+    <page
+      :old-page="false"
+      :total="total"
+      :current-page="search.page"
+      @currentChange="currentChange"
+    />
     <el-dialog
       title="交接班时间明细"
       width="20%"
@@ -174,17 +181,22 @@
 
 <script>
 import { shiftTimeSummary, shiftTimeSummaryDetail } from '@/api/jqy'
+import page from '@/components/page'
 import classSelect from '@/components/ClassSelect'
 import { globalCodesUrl } from '@/api/base_w'
 import { exportExcel, setDate } from '@/utils/index'
 export default {
   name: 'ShiftHandoverTime',
-  components: { classSelect },
+  components: { classSelect, page },
   data() {
     return {
       groups: [],
       dateValue: [setDate(null, null, 'month') + '-01', setDate()],
-      search: {},
+      search: {
+        page_size: 10,
+        page: 1
+      },
+      total: 0,
       date: null,
       equipList: ['Z01', 'Z02', 'Z03', 'Z04', 'Z05', 'Z06', 'Z07', 'Z08', 'Z09', 'Z10', 'Z11', 'Z12', 'Z13', 'Z14', 'Z15'],
       dialogVisible: false,
@@ -241,10 +253,16 @@ export default {
             this.tableData[0][d + '_time_consuming'] = data.equip_sts_time[d]
           })
         }
+        this.total = data.total_data
         this.loading = false
       } catch (e) {
         this.loading = false
       }
+    },
+    currentChange(page, page_size) {
+      this.search.page = page
+      this.search.page_size = page_size
+      this.getList()
     },
     changeDate(arr) {
       this.search.st = arr ? arr[0] : ''

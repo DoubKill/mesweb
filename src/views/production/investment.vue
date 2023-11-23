@@ -41,7 +41,7 @@
         <el-input v-model="getParams.plan_classes_uid" clearable @input="changeInput" />
       </el-form-item>
       <el-form-item label="车次">
-        <el-input v-model="getParams.trains" clearable @input="changeInput" />
+        <el-input-number v-model="getParams.trains" clearable controls-position="right" @input="changeInput" />
       </el-form-item>
       <el-form-item label="投入物料">
         <el-input v-model="getParams.display_name" clearable @input="changeInput" />

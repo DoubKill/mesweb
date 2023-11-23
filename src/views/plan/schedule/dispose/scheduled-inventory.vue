@@ -23,6 +23,16 @@
         </el-select>
       </el-form-item>
       <el-form-item>
+        <el-upload
+          v-permission="['aps_stock_summary','export']"
+          style="display:inline-block;margin:0 6px"
+          action="string"
+          accept=".xls, .xlsx"
+          :http-request="Upload"
+          :show-file-list="false"
+        >
+          <el-button type="primary">导入Excel</el-button>
+        </el-upload>
         <el-button v-permission="['aps_stock_summary','export']" type="primary" @click="exportTable">导出Excel</el-button>
         <el-button v-permission="['aps_stock_summary','export']" type="primary" @click="addProduce">新增规格</el-button>
         <el-button v-permission="['aps_stock_summary','export']" :loading="btnLoading" type="primary" @click="save">保存</el-button>
@@ -39,6 +49,12 @@
         align="center"
         prop="product_no"
         label="规格"
+        min-width="20"
+      />
+      <el-table-column
+        align="center"
+        prop="version"
+        label="版本号"
         min-width="20"
       />
       <el-table-column
@@ -195,6 +211,9 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item label="版本号" prop="version">
+          <el-input v-model="createForm.version" />
+        </el-form-item>
         <el-form-item label="HMB库内库存" prop="stock_weight_HMB">
           <el-input-number v-model="createForm.stock_weight_HMB" controls-position="right" :min="0" />
         </el-form-item>
@@ -231,22 +250,54 @@
         <el-button type="primary" :loading="btnLoading" @click="submitFun">确 定</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      class="dialog"
+      title="导出日期选择"
+      :visible.sync="dialogExport"
+      width="30%"
+    >
+      <el-form label-width="150px">
+        <el-form-item label="起止日期">
+          <el-date-picker
+            v-model="dateValue"
+            :clearable="false"
+            type="daterange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            value-format="yyyy-MM-dd"
+            @change="changeDate"
+          />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogExport=false">取 消</el-button>
+        <el-button type="primary" :loading="btnLoading" @click="submitExport">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { productInfosUrl } from '@/api/base_w'
-import { schedulingStockSummary, schedulingStockConfirm } from '@/api/jqy'
-import { setDate, exportExcel } from '@/utils'
+import { schedulingStockSummary, schedulingStockConfirm, schedulingStockSummaryExport, schedulingStockSummaryImport } from '@/api/jqy'
+import { setDate } from '@/utils'
 export default {
   name: 'ScheduledInventory',
   data() {
     return {
       loading: false,
       dialogVisible: false,
+      dialogExport: false,
+      dateValue: [],
+      exportForm: {},
       createForm: {},
       rules: {
         product_no: [
+          { required: true, message: '不能为空', trigger: 'blur' }
+        ],
+        version: [
           { required: true, message: '不能为空', trigger: 'blur' }
         ],
         stock_weight_HMB: [
@@ -306,6 +357,10 @@ export default {
         //
       }
     },
+    changeDate() {
+      this.exportForm.st = this.dateValue[0]
+      this.exportForm.et = this.dateValue[1]
+    },
     async getList() {
       try {
         this.loading = true
@@ -354,13 +409,71 @@ export default {
       this.$debounce(this, 'getList')
     },
     async exportTable() {
-      await this.$set(this, 'loading', true)
-      await exportExcel('排程无硫库存单')
-      setTimeout(() => {
-        this.loading = false
-      }, 1000)
+      this.dialogExport = true
+      this.dateValue = [this.search.factory_date, this.search.factory_date]
+      this.exportForm = {
+        st: this.search.factory_date,
+        et: this.search.factory_date
+      }
+      // await this.$set(this, 'loading', true)
+      // await exportExcel('排程无硫库存单')
+      // setTimeout(() => {
+      //   this.loading = false
+      // }, 1000)
+    },
+    Upload(param) {
+      if (!this.search.factory_date) {
+        this.$message('请选择工厂日期')
+        return
+      }
+      const formData = new FormData()
+      formData.append('file', param.file)
+      formData.append('factory_date', this.search.factory_date)
+      schedulingStockSummaryImport('post', null, { data: formData }).then(response => {
+        this.$message({
+          type: 'success',
+          message: response
+        })
+        this.getList()
+      })
+    },
+    submitExport() {
+      if (getDaysBetween(this.exportForm.st, this.exportForm.et) > 31) {
+        this.$message('日期间隔不得大于31天')
+        return
+      }
+      this.btnLoading = true
+      const obj = Object.assign({ }, this.exportForm)
+      const _api = schedulingStockSummaryExport
+      _api(obj)
+        .then(res => {
+          const link = document.createElement('a')
+          const blob = new Blob([res], { type: 'application/vnd.ms-excel' })
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download = `排程无硫库存单${setDate('', true)}.xlsx` // 下载的文件名
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          this.dialogExport = false
+          this.btnLoading = false
+        }).catch(e => {
+          this.btnLoading = false
+        })
     }
   }
+}
+function getDaysBetween(dateString1, dateString2) {
+  var startDate = Date.parse(dateString1)
+  var endDate = Date.parse(dateString2)
+  if (startDate > endDate) {
+    return 0
+  }
+  if (startDate === endDate) {
+    return 1
+  }
+  var days = (endDate - startDate) / (1 * 24 * 60 * 60 * 1000)
+  return days
 }
 </script>
 

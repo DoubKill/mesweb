@@ -155,6 +155,9 @@ export function setDate(_data, bool, type) {
     return formatObj.h + ':' + formatObj.i
   } else if (type && type === 'year') {
     return formatObj.y
+  } else if (type && type === 'gantt') {
+    return formatObj.y + '-' + formatObj.m + '-' + formatObj.d + ' ' +
+    formatObj.h + ':' + formatObj.i
   } else {
     return formatObj.y + '-' + formatObj.m + '-' + formatObj.d
   }
@@ -235,6 +238,15 @@ const setBorder = {
     right: { style: 'thin' }
   }
 }
+const setBg = {
+  border: {
+    bottom: { style: 'thin' },
+    top: { style: 'thin' },
+    left: { style: 'thin' },
+    right: { style: 'thin' }
+  },
+  fill: { fgColor: { rgb: 'ebebeb' }}
+}
 export function exportExcel(value = 'excel', val, _wpxArr = []) {
   // 走进来的是导出 掉接口记录当前操作 start
   const _newUser = Cookies.get('name')
@@ -255,7 +267,7 @@ export function exportExcel(value = 'excel', val, _wpxArr = []) {
   value = value + ' ' + (val === 'excel' ? '' : setDate('', true))
   /* 从表生成工作簿对象 */
   var wb
-  if (val && (val === 'disposal-list-components' || val === '综合合格率汇总')) {
+  if (val && (val === 'disposal-list-components' || val === '综合合格率汇总' || val === 'material_inout_record_rubber')) {
     wb = XLSX.utils.table_to_book(document.querySelector('#out-table'), { raw: true })
   } else {
     wb = XLSX.utils.table_to_book(document.querySelector('#out-table'), { raw: false })
@@ -326,7 +338,6 @@ export function exportExcel(value = 'excel', val, _wpxArr = []) {
     }
     wb.Sheets['Sheet1']['!cols'] = _wpx
   }
-
   if (val && val === 'disposal-list') {
     const _wpx = []
     const arr1 = []
@@ -369,6 +380,33 @@ export function exportExcel(value = 'excel', val, _wpxArr = []) {
       })
     }
     wb.Sheets['Sheet1']['!cols'] = _wpx
+  }
+  if (val && val === 'machine-production-all') {
+    let arr3 = []
+    arr.forEach(D => {
+      if (['!cols', '!fullref', '!merges', '!ref', '!rows'].includes(D)) {
+        return
+      }
+      arr3.push(D.substr(0, 1))
+    })
+    arr3 = [...new Set(arr3)]
+    arr3.forEach(d => {
+      for (const key in obj) {
+        if (Object.hasOwnProperty.call(obj, key)) {
+          const element = obj[key]
+          if (element.v === '规格') {
+            const num = key.substr(1, key.length)
+            const num1 = num - 1
+            if (obj[d + num]) {
+              obj[d + num].s = setBg
+            }
+            if (obj[d + num1]) {
+              obj[d + num1].s = setBg
+            }
+          }
+        }
+      }
+    })
   }
 
   var wbout = XLSXStyle.write(wb, {
