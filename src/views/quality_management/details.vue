@@ -2,52 +2,19 @@
   <div class="app-container details_style_new">
     <el-form v-if="!isProps" :inline="true">
       <el-form-item label="日期">
-        <el-date-picker
-          v-model="day_time"
-          type="daterange"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          value-format="yyyy-MM-dd"
-          :clearable="false"
-          @change="dayChange"
-        />
+        <el-date-picker v-model="day_time" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd" :clearable="false" @change="dayChange" />
       </el-form-item>
       <el-form-item label="机台">
-        <equip-select
-          :equip_no_props.sync="getParams.equip_no"
-          @changeSearch="clickQuery"
-        />
+        <equip-select :equip_no_props.sync="getParams.equip_no" @changeSearch="clickQuery" />
       </el-form-item>
       <el-form-item label="胶料类别">
-        <el-select
-          v-model="getParams.recipe_type"
-          clearable
-          placeholder="请选择"
-          @change="clickQuery"
-        >
-          <el-option
-            v-for="item in categoryOptions"
-            :key="item.id"
-            :label="item.global_no"
-            :value="item.global_name"
-          />
+        <el-select v-model="getParams.recipe_type" clearable placeholder="请选择" @change="clickQuery">
+          <el-option v-for="item in categoryOptions" :key="item.id" :label="item.global_no" :value="item.global_name" />
         </el-select>
       </el-form-item>
       <el-form-item label="胶料">
-        <el-select
-          v-model="getParams.product_no"
-          placeholder="请选择"
-          clearable
-          filterable
-          @change="productBatchingChanged"
-        >
-          <el-option
-            v-for="(group) in products"
-            :key="group.product_no"
-            :label="group.product_no"
-            :value="group.product_no"
-          >
+        <el-select v-model="getParams.product_no" placeholder="请选择" clearable filterable @change="productBatchingChanged">
+          <el-option v-for="(group) in products" :key="group.product_no" :label="group.product_no" :value="group.product_no">
             <span :style="{color: group.used?'blue':''}">{{ group.product_no }}</span>
           </el-option>
         </el-select>
@@ -59,48 +26,18 @@
         <stage-select v-model="getParams.stage" @change="clickQuery" />
       </el-form-item>
       <el-form-item label="班组" prop="production_group">
-        <el-select
-          v-model="getParams.production_group"
-          placeholder="请选择"
-          clearable
-          @change="clickQuery"
-        >
-          <el-option
-            v-for="group in groups"
-            :key="group.id"
-            :label="group.global_name"
-            :value="group.global_name"
-          />
+        <el-select v-model="getParams.production_group" placeholder="请选择" clearable @change="clickQuery">
+          <el-option v-for="group in groups" :key="group.id" :label="group.global_name" :value="group.global_name" />
         </el-select>
       </el-form-item>
       <el-form-item label="检测结果">
-        <el-select
-          v-model="getParams.is_recheck"
-          placeholder="请选择"
-          clearable
-          @change="clickQuery"
-        >
-          <el-option
-            v-for="(item) in [{name:'复检',id:true},{name:'正常',id:false}]"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id"
-          />
+        <el-select v-model="getParams.is_recheck" placeholder="请选择" clearable @change="clickQuery">
+          <el-option v-for="(item) in [{name:'复检',id:true},{name:'正常',id:false}]" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
       </el-form-item>
       <el-form-item label="检测状态">
-        <el-select
-          v-model="getParams.state"
-          placeholder="请选择"
-          clearable
-          @change="clickQuery"
-        >
-          <el-option
-            v-for="(item) in ['检测中','合格','不合格']"
-            :key="item"
-            :label="item"
-            :value="item"
-          />
+        <el-select v-model="getParams.state" placeholder="请选择" clearable @change="clickQuery">
+          <el-option v-for="(item) in ['检测中','合格','不合格']" :key="item" :label="item" :value="item" />
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -109,45 +46,22 @@
         </el-button>
       </el-form-item>
       <el-form-item>
-        <el-button
-          v-permission="['result_info','export']"
-          :loading="btnLoading"
-          type="primary"
-          @click="getALLData"
-        >
+        <el-button v-permission="['result_info','export']" :loading="btnLoading" type="primary" @click="getALLData">
           导出Excel
         </el-button>
       </el-form-item>
       <el-form-item>
-        <el-button
-          v-permission="['result_info','export']"
-          type="primary"
-          @click="statisticsFun"
-        >
+        <el-button v-permission="['result_info','export']" type="primary" @click="statisticsFun">
           统计工程能力
         </el-button>
       </el-form-item>
     </el-form>
-    <u-table
-      v-if="testOrdersTop.length"
-      v-el-table-infinite-scroll="infiniteScroll"
-      :data="testOrdersTop"
-      style="height:auto"
-      fixed-columns-roll
-      border
-      fit
-      row-id="id"
-      max-height="550"
-      size="mini"
-      :tree-config="{
+    <u-table v-if="testOrdersTop.length" v-el-table-infinite-scroll="infiniteScroll" :data="testOrdersTop" style="height:auto" fixed-columns-roll border fit row-id="id" max-height="550" size="mini" :tree-config="{
         children: 'children',
         expandAll: false,
         lazy: true,
         load: load,
-        hasChildren: 'hasChildren'}"
-      :data-changes-scroll-top="false"
-      :row-class-name="tableRowClassName1"
-    >
+        hasChildren: 'hasChildren'}" :data-changes-scroll-top="false" :row-class-name="tableRowClassName1">
       <!-- use-virtual 省略号和树形 -->
       <u-table-column label="胶料编码" width="120px" align="center" prop="product_no">
         <template slot-scope="scope">
@@ -155,13 +69,7 @@
           <span v-else>{{ scope.row.product_no }}</span>
         </template>
       </u-table-column>
-      <u-table-column
-        label="工厂日期"
-        width="80px"
-        prop="production_factory_date"
-        align="center"
-        :tree-node="true"
-      >
+      <u-table-column label="工厂日期" width="80px" prop="production_factory_date" align="center" :tree-node="true">
         <template slot-scope="{row}">
           <span v-if="row.production_factory_date">{{ (row.production_factory_date).split(' ')[0] }}</span>
           <span class="line_w" />
@@ -229,39 +137,19 @@
         </template>
       </u-table-column>
     </u-table>
-    <u-table
-      v-el-table-infinite-scroll="infiniteScroll"
-      :show-header="!testOrdersTop.length"
-      style="height:auto"
-      :data="testOrders"
-      fixed-columns-roll
-      border
-      fit
-      row-id="id"
-      max-height="550"
-      size="mini"
-      :tree-config="{
+    <u-table v-el-table-infinite-scroll="infiniteScroll" :show-header="!testOrdersTop.length" style="height:auto" :data="testOrders" fixed-columns-roll border fit row-id="id" max-height="550" size="mini" :tree-config="{
         children: 'children',
         expandAll: false,
         lazy: true,
         load: load,
-        hasChildren: 'hasChildren'}"
-      :data-changes-scroll-top="false"
-      :row-class-name="tableRowClassName"
-      use-virtual
-    >
+        hasChildren: 'hasChildren'}" :data-changes-scroll-top="false" :row-class-name="tableRowClassName" use-virtual>
       <u-table-column label="胶料编码" width="120px" align="center" prop="product_no">
         <template slot-scope="scope">
           <el-link v-if="!scope.row._current&&checkPermission(['result_info','curve'])" type="primary" @click="clickOrderNum(scope.$index,scope.row)">{{ scope.row.product_no }}</el-link>
           <span v-else>{{ scope.row.product_no }}</span>
         </template>
       </u-table-column>
-      <u-table-column
-        label="工厂日期"
-        width="80px"
-        prop="production_factory_date"
-        align="center"
-      >
+      <u-table-column label="工厂日期" width="80px" prop="production_factory_date" align="center">
         <template v-if="row.production_factory_date" slot-scope="{row}">
           {{ (row.production_factory_date).split(' ')[0] }}
         </template>
@@ -289,7 +177,7 @@
       </u-table-column>
       <u-table-column v-for="header in newHead" :key="header.detail" width="50px" align="center" :label="header.detail">
         <template v-if="row.order_results.find(d=>d.data_point_name===header.detail)" slot-scope="{row}">
-          <div :class="[row.order_results.find(d=>d.data_point_name===header.detail)._red ? 'test_type_name_style': '',row.order_results.find(d=>d.data_point_name===header.detail)._blue ? 'test_type_name_style1': '']">
+          <div :class="[row.order_results.find(d=>d.data_point_name===header.detail)._red ? 'test_type_name_style': '',row.order_results.find(d=>d.data_point_name===header.detail)._blue ? 'test_type_name_style1': '',row.order_results.find(d=>d.data_point_name===header.detail)._yellow ? 'colorYellow': '']">
             {{ row.order_results.find(d=>d.data_point_name===header.detail).value }}
           </div>
         </template>
@@ -298,14 +186,8 @@
       <u-table-column label="处理意见" min-width="20px" prop="deal_suggestion" align="center" />
     </u-table>
     <el-alert style="color:black" title="表格背景色说明：黄色表示不是一等品；红色表示超出规格上限；绿色表示低于规格下限" type="success" />
-    <el-dialog
-      title="选择过滤"
-      :visible.sync="filterDialogVisible"
-    >
-      <el-table
-        border
-        :data="testTypeList"
-      >
+    <el-dialog title="选择过滤" :visible.sync="filterDialogVisible">
+      <el-table border :data="testTypeList">
         <el-table-column label="选择" min-width="50">
           <template slot-scope="{row}">
             <el-checkbox v-model="row.show" @change="checkboxFilter(true)" />
@@ -328,61 +210,25 @@
         <el-button @click="filterDialogVisible = false">关闭</el-button>
       </div>
     </el-dialog>
-    <el-dialog
-      title="胶料信息卡"
-      width="80%"
-      :visible.sync="testCardDialogVisible"
-    >
+    <el-dialog title="胶料信息卡" width="80%" :visible.sync="testCardDialogVisible">
       <test-card ref="testCard" />
     </el-dialog>
-    <el-dialog
-      title=""
-      :visible.sync="historyDialogVisible"
-      width="80%"
-      append-to-body
-    >
+    <el-dialog title="" :visible.sync="historyDialogVisible" width="80%" append-to-body>
       <h3 style="display:inline-block;margin:0 10px">日期</h3>
-      <el-date-picker
-        v-model="historyDate"
-        type="daterange"
-        range-separator="至"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
-        value-format="yyyy-MM-dd"
-        :clearable="false"
-        @change="changeHistoryDate"
-      />
+      <el-date-picker v-model="historyDate" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd" :clearable="false" @change="changeHistoryDate" />
       <h3 style="display:inline-block;margin:0 10px">机台</h3>
       <!-- <equip-select
         :equip_no_props.sync="history_equip_no"
         @changeSearch="changeHistoryDate"
       /> -->
-      <el-select
-        v-model="history_equip_no"
-        placeholder="请选择"
-        clearable
-        @change="changeHistoryDate"
-      >
-        <el-option
-          v-for="(item) in echartsEquip"
-          :key="item"
-          :label="item"
-          :value="item"
-        />
+      <el-select v-model="history_equip_no" placeholder="请选择" clearable @change="changeHistoryDate">
+        <el-option v-for="(item) in echartsEquip" :key="item" :label="item" :value="item" />
       </el-select>
-      <div
-        id="historySpot"
-        style="width: 100%;height:1000px;margin-top:8px"
-      />
+      <div id="historySpot" style="width: 100%;height:1000px;margin-top:8px" />
     </el-dialog>
 
     <!-- 下载使用 -->
-    <DetailsUTable
-      v-show="false"
-      id="out-table"
-      :test-orders="ALLData"
-      :test-type-list="testTypeList"
-    />
+    <DetailsUTable v-show="false" id="out-table" :test-orders="ALLData" :test-type-list="testTypeList" />
 
   </div>
 </template>
@@ -393,8 +239,10 @@ import EquipSelect from '@/components/select_w/equip'
 import ClassSelect from '@/components/ClassSelect'
 import StageSelect from '@/components/StageSelect/index'
 import { globalCodesUrl, productMaterials } from '@/api/base_w'
-import { testTypes, materialTestOrders,
-  materialTestOrdersAll, datapointCurve, productIndicatorStandard } from '@/api/quick-check-detail'
+import {
+  testTypes, materialTestOrders,
+  materialTestOrdersAll, datapointCurve, productIndicatorStandard
+} from '@/api/quick-check-detail'
 import elTableInfiniteScroll from 'el-table-infinite-scroll'
 import FileSaver from 'file-saver'
 import XLSX from 'xlsx'
@@ -612,7 +460,7 @@ export default {
     },
     async getFormulaType() {
       try {
-        const data = await globalCodesUrl('get', { params: { class_name: '配方类别' }})
+        const data = await globalCodesUrl('get', { params: { class_name: '配方类别' } })
         this.categoryOptions = data.results
       } catch (e) {
         //
@@ -639,6 +487,9 @@ export default {
         const _max = d.judged_upper_limit ? Number(d.judged_upper_limit) : 0
         d._red = d.value > _max
         d._blue = d.value < _min
+
+        console.log(d, 8888);
+
         d.id = new Date().getTime()
       })
       subRows = {
@@ -725,6 +576,17 @@ export default {
             const _max = D.judged_upper_limit ? Number(D.judged_upper_limit) : 0
             D._red = D.value > _max
             D._blue = D.value < _min
+
+            let 幅 = _max - (_max + _min) / 2
+            if (_min < D.value && (_min + 幅 / 3) > D.value) {
+              D._yellow = true
+            }
+            if (_min + 幅 / 3 * 5 < D.value && _max > D.value) {
+              D._yellow = true
+            }
+            if (_max > 990 && _min < D.value && _min + 10 > D.value) {
+              D._yellow = true
+            }
           })
           d.hasChildren = d.is_recheck
         })
@@ -913,17 +775,20 @@ export default {
                 yAxis: _1, label: {
                   position: 'end',
                   formatter: `下限(${_1})`
-                }},
+                }
+              },
               {
                 yAxis: _2, label: {
                   position: 'end',
                   formatter: `中央值(${_2})`
-                }},
+                }
+              },
               {
                 yAxis: _3, label: {
                   position: 'end',
                   formatter: `上限(${_3})`
-                }}
+                }
+              }
               ]
             } : {}
           })
@@ -935,9 +800,11 @@ export default {
         this.echartsEquip = data.equip_nos
         equip_nos = equip_nos.replace(/"/g, '')
         equip_nos = equip_nos.replace(/,/g, '/')
-        _title.push({ text: this.row_roduct_no + '数据推移' +
-        ' (' + this.historyDate[0] + '至' + this.historyDate[1] + ') ' +
-        equip_nos, left: 'center', top: 0 })
+        _title.push({
+          text: this.row_roduct_no + '数据推移' +
+            ' (' + this.historyDate[0] + '至' + this.historyDate[1] + ') ' +
+            equip_nos, left: 'center', top: 0
+        })
         this.historySpot.toolbox.feature.saveAsImage.name = this.row_roduct_no + ' (' + this.historyDate[0] + '至' + this.historyDate[1] + ') ' + setDate()
         this.historySpot.xAxis = _x || []
         this.historySpot.yAxis = _y || []
@@ -1033,11 +900,11 @@ export default {
                   value: setData(d.std)
                 })
               }
-              const Cｐ = (d.upper_limit - d.lower_limit) / 6 / d.std
-              const 中 = (d.upper_limit + d.lower_limit) / 2
-              const 幅 = d.upper_limit - (d.upper_limit + d.lower_limit) / 2
-              const k = 幅 ? Math.abs(中 - d.avg) / 幅 : ''
-              const CPK = d.std ? (1 - k) * Cｐ : ''
+              let Cｐ = (d.upper_limit - d.lower_limit) / 6 / d.std
+              let 中 = (d.upper_limit + d.lower_limit) / 2
+              let 幅 = d.upper_limit - (d.upper_limit + d.lower_limit) / 2
+              let k = 幅 ? Math.abs(中 - d.avg) / 幅 : ''
+              let CPK = d.std ? (1 - k) * Cｐ : ''
 
               if (index === 2) {
                 order_results.push({
@@ -1106,6 +973,12 @@ export default {
       })
       this.newHead = arr
     },
+    isColorYellow(row, num) {
+      console.log(row, num);
+      // if(){
+
+      // }
+    },
     exportExcel() {
       /* 从表生成工作簿对象 */
       var wb = XLSX.utils.table_to_book(document.querySelector('#out-table'))
@@ -1173,6 +1046,10 @@ function setData(val) {
   // .el-table td, .el-table th.is-center{
     // padding: 2px !important;
   // }
+  .colorYellow{
+  background: yellow;
+  color:#000;
+  }
   .test_type_name_style1{
  background: rgb(124, 192, 103);
   color:#fff;

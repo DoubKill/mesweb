@@ -4,38 +4,14 @@
     <h3>{{ type==='明细'?'切换时间管控':'规格切换时间汇总' }}</h3>
     <el-form :inline="true">
       <el-form-item label="工厂时间">
-        <el-date-picker
-          v-model="dateValue"
-          type="datetimerange"
-          :clearable="false"
-          value-format="yyyy-MM-dd HH:mm:ss"
-          range-separator="至"
-          start-placeholder="开始时间"
-          end-placeholder="结束时间"
-          @change="changeDate"
-        />
+        <el-date-picker v-model="dateValue" type="datetimerange" :clearable="false" value-format="yyyy-MM-dd HH:mm:ss" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" @change="changeDate" />
       </el-form-item>
       <el-form-item label="班次:">
-        <class-select
-          style="width: 150px;"
-          @classSelected="classChanged"
-        />
+        <class-select style="width: 150px;" @classSelected="classChanged" />
       </el-form-item>
       <el-form-item label="班组">
-        <el-select
-          v-model="search.group"
-          style="width: 150px;"
-          clearable
-          placeholder="请选择"
-          @change="groupChanged"
-          @visible-change="getClassGroup"
-        >
-          <el-option
-            v-for="group in groups"
-            :key="group.id"
-            :label="group.global_name"
-            :value="group.global_name"
-          />
+        <el-select v-model="search.group" style="width: 150px;" clearable placeholder="请选择" @change="groupChanged" @visible-change="getClassGroup">
+          <el-option v-for="group in groups" :key="group.id" :label="group.global_name" :value="group.global_name" />
         </el-select>
       </el-form-item>
       <!-- <el-form-item label="时间:">
@@ -60,16 +36,8 @@
           @changeSearch="timeSpanChanged"
         />
       </el-form-item> -->
-      <el-form-item
-        v-if="type==='明细'"
-        label="机台"
-      >
-        <equip-select
-          :equip_no_props.sync="search.equip_no"
-          :is-created="true"
-          :isMultiple="true"
-          @changeSearch="equipChanged"
-        />
+      <el-form-item v-if="type==='明细'" label="机台">
+        <equip-select :equip_no_props.sync="search.equip_no" :is-created="true" :isMultiple="true" @changeSearch="equipChanged" />
       </el-form-item>
       <!-- <el-form-item label="时间单位:">
         <el-select v-model="timeUnit" placeholder="请选择">
@@ -82,31 +50,11 @@
         </el-select>
       </el-form-item> -->
       <el-form-item>
-        <el-button
-          :loading="btnExportLoad"
-          type="primary"
-          @click="changeType"
-        >{{ type==='汇总'?'查看明细':'查看汇总' }}</el-button>
-        <el-button
-          :loading="btnExportLoad"
-          type="primary"
-          @click="exportTable"
-        >导出Excel</el-button>
-        <el-button
-          v-if="type==='汇总'"
-          type="primary"
-          @click="lookAll(1)"
-        >按机台查看图表</el-button>
-        <el-button
-          v-if="type==='汇总'"
-          type="primary"
-          @click="lookAll(2)"
-        >按班次查看图表</el-button>
-        <el-button
-          v-if="type==='汇总'"
-          type="primary"
-          @click="lookAll(3)"
-        >按日期查看图表</el-button>
+        <el-button :loading="btnExportLoad" type="primary" @click="changeType">{{ type==='汇总'?'查看明细':'查看汇总' }}</el-button>
+        <el-button :loading="btnExportLoad" type="primary" @click="exportTable">导出Excel</el-button>
+        <el-button v-if="type==='汇总'" type="primary" @click="lookAll(1)">按机台查看图表</el-button>
+        <el-button v-if="type==='汇总'" type="primary" @click="lookAll(2)">按班次查看图表</el-button>
+        <el-button v-if="type==='汇总'" type="primary" @click="lookAll(3)">按日期查看图表</el-button>
       </el-form-item>
     </el-form>
 
@@ -137,52 +85,16 @@
       </el-form-item>
     </el-form> -->
     <div v-show="type==='明细'">
-      <el-table
-        v-loading="loading"
-        :data="tableData"
-        border
-      >
-        <el-table-column
-          type="index"
-          label="No"
-        />
-        <el-table-column
-          prop="time"
-          label="时间"
-          width="100"
-        />
-        <el-table-column
-          prop="equip_no"
-          label="设备编码"
-          width="80"
-        />
-        <el-table-column
-          prop="plan_classes_uid_age"
-          label="切换前计划号"
-          width="260"
-        />
-        <el-table-column
-          prop="plan_classes_uid_later"
-          label="切换后计划号"
-          width="260"
-        />
-        <el-table-column
-          prop="cut_ago_product_no"
-          label="切换前胶料编码"
-        />
-        <el-table-column
-          prop="cut_later_product_no"
-          label="切换后胶料编码"
-        />
-        <el-table-column
-          prop="standard_time"
-          label="切换时间规格标准"
-        />
-        <el-table-column
-          sortable
-          prop="normal_cut_time_consumer"
-          label="切换规格耗时/秒"
-        />
+      <el-table v-loading="loading" :data="tableData" border>
+        <el-table-column type="index" label="No" />
+        <el-table-column prop="time" label="时间" width="100" />
+        <el-table-column prop="equip_no" label="设备编码" width="80" />
+        <el-table-column prop="plan_classes_uid_age" label="切换前计划号" width="260" />
+        <el-table-column prop="plan_classes_uid_later" label="切换后计划号" width="260" />
+        <el-table-column prop="cut_ago_product_no" label="切换前胶料编码" />
+        <el-table-column prop="cut_later_product_no" label="切换后胶料编码" />
+        <el-table-column prop="standard_time" label="切换时间规格标准" />
+        <el-table-column sortable prop="normal_cut_time_consumer" label="切换规格耗时/秒" />
         <!-- <el-table-column
           :label="'切换规格耗时/'+(timeUnit==='秒'?'秒':'min')"
         >
@@ -191,98 +103,38 @@
             <span v-else>{{ row.time_consuming |setTimeMin }}</span>
           </template>
         </el-table-column> -->
-        <el-table-column
-          sortable
-          prop="err_cut_time_consumer"
-          label="异常时间(秒)"
-          width="120"
-        />
-        <el-table-column
-          sortable
-          prop="rate"
-          label="切换时间规格完成率"
-          width="180"
-        />
+        <el-table-column sortable prop="err_cut_time_consumer" label="异常时间(秒)" width="120" />
+        <el-table-column sortable prop="rate" label="切换时间规格完成率" width="180" />
       </el-table>
-      <page
-        :old-page="false"
-        :total="total"
-        :current-page="search.page"
-        @currentChange="currentChange"
-      />
+      <page :old-page="false" :total="total" :current-page="search.page" @currentChange="currentChange" />
     </div>
 
     <div v-show="type==='汇总'">
-      <el-table
-        id="out-table"
-        v-loading="loading"
-        max-height="650px"
-        :data="tableData1"
-        border
-      >
-        <el-table-column
-          prop="factory_date"
-          label="日期"
-          width="90"
-        />
-        <el-table-column
-          prop="classes"
-          label="班次"
-          width="60"
-        />
-        <el-table-column
-          prop="group"
-          label="班组"
-          width="60"
-        />
+      <el-table id="out-table" v-loading="loading" max-height="650px" :data="tableData1" border>
+        <el-table-column prop="factory_date" label="日期" width="90" />
+        <el-table-column prop="classes" label="班次" width="60" />
+        <el-table-column prop="group" label="班组" width="60" />
         <template>
-          <el-table-column
-            v-for="(d,index) in equipList"
-            :key="index"
-            align="center"
-            :label="d"
-            min-width="20"
-          >
-            <el-table-column
-              :prop="d+'normal_cut_time_consumer'"
-              label="换规格时间(秒)"
-              width="70"
-            >
+          <el-table-column v-for="(d,index) in equipList" :key="index" align="center" :label="d" min-width="20">
+            <el-table-column :prop="d+'normal_cut_time_consumer'" label="换规格时间(秒)" width="70">
               <template slot-scope="{row}">
                 <span>{{ row[d+'normal_cut_time_consumer']*10!==0?row[d+'normal_cut_time_consumer']:null }}</span>
               </template>
             </el-table-column>
-            <el-table-column
-              :prop="d+'err_cut_time_consumer'"
-              label="异常耗时(秒)"
-              width="60"
-            >
+            <el-table-column :prop="d+'err_cut_time_consumer'" label="异常耗时(秒)" width="60">
               <template slot-scope="{row}">
                 <span>{{ row[d+'err_cut_time_consumer']*10!==0?row[d+'err_cut_time_consumer']:null }}</span>
               </template>
             </el-table-column>
           </el-table-column>
         </template>
-        <el-table-column
-          prop="count"
-          align="center"
-          label="班次平均"
-          min-width="20"
-        >
-          <el-table-column
-            prop="true"
-            label="换规格时间(秒)"
-            width="70"
-          >
+        <el-table-column prop="count" align="center" label="班次平均" min-width="20">
+          <el-table-column prop="true" label="换规格时间(秒)" width="70">
             <template slot-scope="{row}">
               <span>{{ row.true*10!==0?row.true:null }}</span>
             </template>
           </el-table-column>
-          <el-table-column
-            prop="error"
-            label="异常耗时(秒)"
-            width="60"
-          >
+          <el-table-column prop="error" label="异常耗时(秒)" width="60">
             <template slot-scope="{row}">
               <span>{{ row.error*10!==0?row.error:null }}</span>
             </template>
@@ -291,46 +143,16 @@
       </el-table>
     </div>
 
-    <el-dialog
-      title="图表详情"
-      :visible.sync="historyDialogVisible"
-      width="80%"
-      append-to-body
-    >
-      <el-button
-        v-if="arrData.length>0"
-        style="margin-bottom:10px;margin-left:85%"
-        type="primary"
-        @click="download"
-      >下载图表</el-button>
-      <el-row
-        v-if="lookType===1"
-        id="echartsSpecs"
-        v-loading="loadingDialog"
-      >
-        <el-col
-          :span="24"
-        >
-          <div
-            id="specsEchart0"
-            style="width: 100%;height:300px;margin-top:8px"
-          />
+    <el-dialog title="图表详情" :visible.sync="historyDialogVisible" width="80%" append-to-body>
+      <el-button v-if="arrData.length>0" style="margin-bottom:10px;margin-left:85%" type="primary" @click="download">下载图表</el-button>
+      <el-row v-if="lookType===1" id="echartsSpecs" v-loading="loadingDialog">
+        <el-col :span="24">
+          <div id="specsEchart0" style="width: 100%;height:300px;margin-top:8px" />
         </el-col>
       </el-row>
-      <el-row
-        v-else
-        id="echartsSpecs"
-        v-loading="loadingDialog"
-      >
-        <el-col
-          v-for="(d,i) in arrData"
-          :key="i"
-          :span="8"
-        >
-          <div
-            :id="'specsEchart'+i"
-            style="width: 100%;height:300px;margin-top:8px"
-          />
+      <el-row v-else id="echartsSpecs" v-loading="loadingDialog">
+        <el-col v-for="(d,i) in arrData" :key="i" :span="8">
+          <div :id="'specsEchart'+i" style="width: 100%;height:300px;margin-top:8px" />
         </el-col>
       </el-row>
     </el-dialog>
@@ -583,9 +405,10 @@ export default {
     async getList() {
       try {
         this.loading = true
-        const data = await cutTimeCollect('get', null, { params: this.search })
+        let obj = JSON.parse(JSON.stringify(this.search))
+        obj.equip_no = obj.equip_no.join(',')
+        const data = await cutTimeCollect('get', null, { params: obj })
         this.total = data.count
-        // this.allData = data.results.pop() || {}
         this.tableData = data.results || []
         if (this.tableData.length > 0) {
           this.tableData.push({
